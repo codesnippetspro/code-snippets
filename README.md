@@ -1,11 +1,13 @@
 Code Snippets
 =============
 
-**Requires at least:** WordPress 3.3
-**Tested up to:** WordPress 3.4.2
-**Current stable version:** 1.5
-**License:** [GPLv3 or later](http://www.gnu.org/copyleft/gpl.html)
-**Project Website:** <http://cs.bungeshea.tk/>
+<table>
+<tr><th>Requires at least:</th><td>WordPress 3.3</td></tr>
+<tr><th>Tested up to:</th><td>WordPress 3.4.2</td></tr>
+<tr><th>Current stable version:</th><td>Code Snippets 1.5</td></tr>
+<tr><th>License:</th><td>[GPLv3 or later](http://www.gnu.org/copyleft/gpl.html)</td></tr>
+<tr><th>Project Website:</th><td><http://cs.bungeshea.tk/></td></tr>
+</table>
 
 An easy, clean and simple way to add code snippets to your site.
 
