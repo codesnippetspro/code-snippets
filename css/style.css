@@ -1,0 +1,60 @@
+#icon-snippets.icon32 {
+	background: url('../images/icon32.png') no-repeat scroll transparent;
+}
+
+/* Snippets > Manage Snippets */
+
+.snippets .inactive a {
+	color: #557799;
+}
+
+.snippets .inactive a:hover,
+#all-snippets-table .snippets .inactive a:hover,
+#search-snippets-table .snippets .inactive a:hover {
+	color: #d54e21;
+}
+
+.snippets .delete a{
+	color: #21759b;
+}
+
+#wpbody-content .snippets tr {
+	background-color: #fcfcfc;
+}
+
+.snippets .inactive,
+.snippets .inactive th,
+.snippets .inactive td {
+	background-color: #f4f4f4;
+}
+
+.snippets .active,
+.snippets .active th,
+.snippets .active td {
+	color: #000;
+}
+
+#wpbody-content .snippets  .column-name {
+	white-space: nowrap; /* prevents wrapping of snippet title */
+}
+
+#wpbody-content .snippets .manage-column.column-id.sortable{
+	min-width: 44px;
+}
+
+/* Snippets > Add New */
+
+.CodeMirror {
+	border: 1px solid #ccc;
+	-o-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.CodeMirror-scroll {
+	height: auto;
+	overflow-y: hidden;
+	overflow-x: auto;
+	min-height: 242px;
+}
