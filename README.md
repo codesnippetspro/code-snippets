@@ -5,8 +5,8 @@ Code Snippets
 <tr><th>Requires at least:</th><td>WordPress 3.3</td></tr>
 <tr><th>Tested up to:</th><td>WordPress 3.4.2</td></tr>
 <tr><th>Current stable version:</th><td>Code Snippets 1.5</td></tr>
-<tr><th>License:</th><td>[GPLv3 or later](http://www.gnu.org/copyleft/gpl.html)</td></tr>
-<tr><th>Project Website:</th><td><http://cs.bungeshea.tk/></td></tr>
+<tr><th>License:</th><td><a href="http://www.gnu.org/copyleft/gpl.html">GPLv3 or later</a></td></tr>
+<tr><th>Project Website:</th><td><a href="http://cs.bungeshea.com">cs.bungeshea.com</a></td></tr>
 </table>
 
 An easy, clean and simple way to add code snippets to your site.
@@ -22,7 +22,7 @@ You can use a graphical interface similar to the Plugins menu to manage, activat
 
 Although Code Snippets is designed to be easy-to-use and its interface looks, feels and acts as if it was a native part of WordPress, each screen includes a help tab, just in case you get stuck.
 
-Further information, documentation and updates are available on the [plugin homepage](http://cs.bungeshea.tk).
+Further information, documentation and updates are available on the [plugin homepage](http://cs.bungeshea.com).
 
 [As featured on the WPMU blog](http://wpmu.org/wordpress-code-snippets)
 
@@ -52,7 +52,7 @@ Installation
 Frequently Asked Questions
 --------------------------
 
-Further documentation available on the [plugin website](http://cs.bungeshea.tk/docs/).
+Further documentation available on the [plugin website](http://cs.bungeshea.com/docs/).
 
 ### Do I need to include the `&lt;?php`, `&lt;?` or `?&gt;` tags in my snippet?
 No, just copy all the content inside those tags.
@@ -82,7 +82,7 @@ You can run snippets across an entire multisite network by 'Network Activating' 
 That's great! Let me know by starting (or adding to) a topic in the [Support Forums](http://wordpress.org/support/plugin/code-snippets/).
 
 ### I want to contribute to and help develop the Code Snippets plugin!
-That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets), and also be sure to check out the [development page](http://cs.bungeshea.tk/dev) on the [project website](http://cs.bungeshea.tk).
+That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets), and also be sure to check out the [development page](http://cs.bungeshea.com/dev) on the [project website](http://cs.bungeshea.com).
 
 Changelog
 ---------
@@ -135,7 +135,7 @@ Changelog
 Other Notes
 -----------
 
-Plugin updates will be posted on the [plugin's homepage](http://cs.bungeshea.tk) ([RSS](http://cs.bungehea.tk/feed/)).
+Plugin updates will be posted on the [plugin's homepage](http://cs.bungeshea.com) ([RSS](http://cs.bungehea.tk/feed/)).
 
 * Snippets are stored in the `wp_snippets` table in the WordPress database (the table name may differ depending on what your table prefix is set to).
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.

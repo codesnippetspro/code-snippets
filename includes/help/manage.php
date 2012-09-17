@@ -20,14 +20,12 @@ $screen->add_help_tab( array(
 	'title'		=> __('Uninstall', 'code-snippets'),
 	'content'	=>
 		'<p>' . sprintf( __('When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP.', 'code-snippets'), $this->table, $this->plugin_dir ) .
-		'<p>' . "Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installation, you may want to use the export feature to back up your snippets." . '</p>'
+		'<p>' . __("Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installation, you may want to use the export feature to back up your snippets.", 'code-snippets') . '</p>'
 ) );
 
 $screen->set_help_sidebar(
 	'<p><strong>' . __('For more information:', 'code-snippets') . '</strong></p>' .
 	'<p>' . __('<a href="http://wordpress.org/extend/plugins/code-snippets" target="_blank">WordPress Extend</a></p>', 'code-snippets') . '</p>' .
 	'<p>' . __('<a href="http://wordpress.org/support/plugin/code-snippets" target="_blank">Support Forums</a>', 'code-snippets') . '</p>' .
-	'<p>' . __('<a href="http://cs.bungeshea.tk" target="_blank">Project Website</a>', 'code-snippets') .  '</p>'
+	'<p>' . __('<a href="http://cs.bungeshea.com" target="_blank">Project Website</a>', 'code-snippets') .  '</p>'
 );
-
-?>

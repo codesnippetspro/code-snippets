@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * This file handles the export functions
+ *
+ * It's better to call the $cs->export()
+ * and $cs->exportphp() methods then
+ * directly use those in this file
+ *
+ * @package Code Snippets
+ * @subpackage Export
+ */
+
 if( ! function_exists( 'cs_export') ) :
 
 /**
@@ -81,5 +92,3 @@ function cs_export( $ids, $format = 'xml' ) {
 }
 
 endif; // function exists check
-
-?>

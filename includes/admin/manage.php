@@ -3,13 +3,11 @@ if( ! class_exists( 'Code_Snippets' ) ) exit;
 
 require_once $this->plugin_dir . 'includes/class-list-table.php';
 
-$screen = get_current_screen();
-
 global $cs_list_table;
-$cs_list_table->prepare_items();
+$screen = get_current_screen();
 ?>
 <?php if( defined( 'CS_SAFE_MODE' ) ) if( CS_SAFE_MODE ) : ?>
-	<div class="error"><p><strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="http://cs.bungeshea.tk/docs/safe-mode/" target="_blank">Help</a></p></div>
+	<div class="error"><p><strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="http://cs.bungeshea.com/docs/safe-mode/" target="_blank">Help</a></p></div>
 <?php endif; ?>
 	
 <?php if ( isset($_GET['activate']) ) : ?>

@@ -19,8 +19,6 @@ if( isset( $_REQUEST['edit'] ) )
 	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong>.', 'code-snippets'); ?></p></div>
 <?php elseif( isset( $_REQUEST['added'] ) && $_REQUEST['added'] ) : ?>
 	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>added</strong>.', 'code-snippets'); ?></p></div>
-<?php else : ?>
-	<div id="message"><p></p></div>
 <?php endif; ?>
 
 <div class="wrap">

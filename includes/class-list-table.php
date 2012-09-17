@@ -36,9 +36,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ) );
 		
 		parent::__construct( array(
-			'singular'  => 'snippet',
-			'plural'	=> 'snippets',
-			'ajax'	  => true,
+			'singular' => 'snippet',
+			'plural'   => 'snippets',
+			'ajax'     => true,
 		) );
 	}
 	
@@ -64,9 +64,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$actions['activate'] = sprintf('<a href="?page=%s&action=activate&id=%s">%s</a>',$_REQUEST['page'],$item['id'], $screen->is_network ? __('Network Activate', 'code-snippets') : __('Activate', 'code-snippets') );
 		}
 	
-		$actions['edit'] = sprintf('<a href="%s&edit=%s">Edit</a>',$cs->admin_single_url,$item['id']);
-		$actions['export'] = sprintf('<a href="?page=%s&action=export&id=%s">Export</a>',$_REQUEST['page'],$item['id']);
-		$actions['delete'] = sprintf('<a href="?page=%s&action=delete&id=%s" class="delete" onclick="return confirm( "You are about to permanently delete the selected item.\n  \'Cancel\' to stop, \'OK\' to delete.">Delete</a>', $_REQUEST['page'], $item['id'] );
+		$actions['edit'] = sprintf( '<a href="%s&edit=%s">Edit</a>',$cs->admin_single_url,$item['id'] );
+		$actions['export'] = sprintf( '<a href="?page=%s&action=export&id=%s">Export</a>',$_REQUEST['page'],$item['id'] );
+		$actions['delete'] = sprintf( '<a href="?page=%s&action=delete&id=%s" class="delete" onclick="return confirm( "You are about to permanently delete the selected item.\n  \'Cancel\' to stop, \'OK\' to delete.">Delete</a>', $_REQUEST['page'], $item['id'] );
 		
 		// Return the name contents
 		return '<strong>' . stripslashes( $item['name'] ) . '</strong>' . $this->row_actions( $actions, true );
@@ -191,32 +191,26 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		global $cs;
 		$ids = $_POST[ $this->_args['singular'] ];
 		
+		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'activate', 'deactivate', 'delete', 'activate-multi', 'deactivate-multi', 'delete-multi' ) );
+		
 		switch( $this->current_action() ) {
 				
 			case 'activate-selected':
-				foreach( $ids as $id ) {
-					$cs->activate( $id );
-				}
+				$cs->activate( $ids );
 				wp_redirect( add_query_arg( 'activate-multi', true ) );
 				break;
-					
+				
 			case 'deactivate-selected':
-				foreach( $ids as $id ) {
-					$cs->deactivate( $id );
-				}
+				$cs->deactivate( $ids );
 				wp_redirect( add_query_arg( 'deactivate-multi', true ) );
 				break;
 				
 			case 'export-selected':
-				if( ! function_exists( 'cs_export' ) )
-					require_once $cs->plugin_dir . 'includes/export.php';
-				cs_export( $ids );
+				$cs->export( $ids );
 				break;
 				
 			case 'exportphp-selected':
-				if( ! function_exists( 'cs_export' ) )
-					require_once $cs->plugin_dir . 'includes/export.php';
-				cs_export( $ids, 'php' );
+				$cs->exportphp( $ids );
 				break;
 				
 			case 'delete-selected':
@@ -314,11 +308,23 @@ class Code_Snippets_List_Table extends WP_List_Table {
          * This checks for sorting input and sorts the data in our array accordingly.
          */
         function usort_reorder( $a, $b ) {
-            $orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'id'; //If no sort, default to id
-            $order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
-            $result = strcmp($a[$orderby], $b[$orderby]); //Determine sort order
-            return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
+		
+			// If no sort, default to id
+            $orderby = ( ! empty($_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : 'id';
+			
+			// If no order, default to asc
+            $order = ( ! empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'asc';
+			
+			// Determine sort order
+			if( $orderby === 'id' )
+				$result = $a[$orderby] - $b[$orderby]; // get the result for numerical data
+			else
+				$result = strcmp( $a[$orderby], $b[$orderby] ); // get the result for string data
+			
+			// Send final sort direction to usort
+            return ( $order === 'asc' ) ? $result : -$result;
         }
+		
         usort($data, 'usort_reorder');
         
                 
@@ -338,7 +344,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
          * The WP_List_Table class does not handle pagination for us, so we need
          * to ensure that the data is trimmed to only the current page.
          */
-        $data = array_slice($data,(($current_page-1)*$per_page), $per_page);
+        $data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
       
 	  
         /**
@@ -352,9 +358,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
          * We also have to register our pagination options & calculations.
          */
         $this->set_pagination_args( array(
-			'total_items' => $total_items,                  //WE have to calculate the total number of items
-			'per_page'    => $per_page,                     //WE have to determine how many items to show on a page
-			'total_pages' => ceil($total_items/$per_page)   //WE have to calculate the total number of pages
+			'total_items' => $total_items,                  // WE have to calculate the total number of items
+			'per_page'    => $per_page,                     // WE have to determine how many items to show on a page
+			'total_pages' => ceil($total_items/$per_page)   // WE have to calculate the total number of pages
         ) );
 	}
 	
@@ -382,5 +388,3 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		echo '</tr>';
 	}
 }
-
-?>

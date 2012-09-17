@@ -4,13 +4,13 @@ $screen->add_help_tab( array(
 	'id'		=> 'overview',
 	'title'		=> __('Overview', 'code-snippets'),
 	'content'	=>
-		__('<p>Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can add a new snippet, or edit an existing one.</p>', 'code-snippets'),
+		'<p>' . __('Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can add a new snippet, or edit an existing one.', 'code-snippets') . '</p>',
 ) );
 $screen->add_help_tab( array(
 	'id'		=> 'finding',
 	'title'		=> __('Finding Snippets', 'code-snippets'),
 	'content'	=>
-		__('<p>Here are some links to websites which host a large number of snippets that you can add to your site.
+		'<p>' . __('Here are some links to websites which host a large number of snippets that you can add to your site.
 		<ul>
 			<li><a href="http://wp-snippets.com" title="WordPress Snippets">WP-Snippets</a></li>
 			<li><a href="http://wpsnipp.com" title="WP Snipp">WP Snipp</a></li>
@@ -43,7 +43,5 @@ $screen->set_help_sidebar(
 	'<p><strong>' . __('For more information:', 'code-snippets') . '</strong></p>' .
 	'<p>' . __('<a href="http://wordpress.org/extend/plugins/code-snippets" target="_blank">WordPress Extend</a>', 'code-snippets') . '</p>' . 
 	'<p>' . __('<a href="http://wordpress.org/support/plugin/code-snippets" target="_blank">Support Forums</a>', 'code-snippets') . '</p>' .
-	'<p>' . __('<a href="http://cs.bungeshea.tk" target="_blank">Project Website</a>', 'code-snippets') .  '</p>'
+	'<p>' . __('<a href="http://cs.bungeshea.com" target="_blank">Project Website</a>', 'code-snippets') .  '</p>'
 );
-
-?>

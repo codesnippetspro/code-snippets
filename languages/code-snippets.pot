@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Code Snippets 1.5\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/code-snippets\n"
-"POT-Creation-Date: 2012-09-10 08:39:10+00:00\n"
+"POT-Creation-Date: 2012-09-17 05:53:30+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,66 +12,66 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: code-snippets.php:282 code-snippets.php:283 code-snippets.php:292
-#: code-snippets.php:328 code-snippets.php:329 code-snippets.php:338
-#: includes/admin/manage.php:31
+#: code-snippets.php:357 code-snippets.php:358 code-snippets.php:367
+#: code-snippets.php:404 code-snippets.php:405 code-snippets.php:414
+#: includes/admin/manage.php:29
 msgid "Snippets"
 msgstr ""
 
-#: code-snippets.php:293 code-snippets.php:339
+#: code-snippets.php:368 code-snippets.php:415
 msgid "Manage Snippets"
 msgstr ""
 
-#: code-snippets.php:300 code-snippets.php:347 code-snippets.php:675
-#: includes/admin/single.php:38
+#: code-snippets.php:375 code-snippets.php:422 code-snippets.php:829
+#: includes/admin/single.php:36
 msgid "Add New Snippet"
 msgstr ""
 
-#: code-snippets.php:301 code-snippets.php:348
+#: code-snippets.php:376 code-snippets.php:423
 msgid "Add New"
 msgstr ""
 
-#: code-snippets.php:308 code-snippets.php:355 includes/admin/import.php:16
+#: code-snippets.php:383 code-snippets.php:430 includes/admin/import.php:16
 msgid "Import Snippets"
 msgstr ""
 
-#: code-snippets.php:309 code-snippets.php:356
+#: code-snippets.php:384 code-snippets.php:431
 msgid "Import"
 msgstr ""
 
-#: code-snippets.php:676 includes/admin/single.php:30
+#: code-snippets.php:830 includes/admin/single.php:28
 msgid "Edit Snippet"
 msgstr ""
 
-#: code-snippets.php:845
+#: code-snippets.php:1006
 msgid "Manage your existing snippets"
 msgstr ""
 
-#: code-snippets.php:846
+#: code-snippets.php:1007
 msgid "Manage"
 msgstr ""
 
-#: code-snippets.php:865
+#: code-snippets.php:1026
 msgid "Visit the WordPress.org plugin page"
 msgstr ""
 
-#: code-snippets.php:866
+#: code-snippets.php:1027
 msgid "About"
 msgstr ""
 
-#: code-snippets.php:870
+#: code-snippets.php:1031
 msgid "Visit the support forums"
 msgstr ""
 
-#: code-snippets.php:871
+#: code-snippets.php:1032
 msgid "Support"
 msgstr ""
 
-#: code-snippets.php:875
+#: code-snippets.php:1036
 msgid "Support this plugin's development"
 msgstr ""
 
-#: code-snippets.php:876
+#: code-snippets.php:1037
 msgid "Donate"
 msgstr ""
 
@@ -111,40 +111,40 @@ msgstr ""
 msgid "Upload file and import"
 msgstr ""
 
-#: includes/admin/manage.php:16
+#: includes/admin/manage.php:14
 msgid "Snippet <strong>activated</strong>."
 msgstr ""
 
-#: includes/admin/manage.php:18
+#: includes/admin/manage.php:16
 msgid "Selected snippets <strong>activated</strong>."
 msgstr ""
 
-#: includes/admin/manage.php:20
+#: includes/admin/manage.php:18
 msgid "Snippet <strong>deactivated</strong>."
 msgstr ""
 
-#: includes/admin/manage.php:22
+#: includes/admin/manage.php:20
 msgid "Selected snippets <strong>deactivated</strong>."
 msgstr ""
 
-#: includes/admin/manage.php:24
+#: includes/admin/manage.php:22
 msgid "Snippet <strong>deleted</strong>."
 msgstr ""
 
-#: includes/admin/manage.php:26
+#: includes/admin/manage.php:24
 msgid "Selected snippets <strong>deleted</strong>."
 msgstr ""
 
-#: includes/admin/manage.php:33
+#: includes/admin/manage.php:31
 msgctxt "snippet"
 msgid "Add New"
 msgstr ""
 
-#: includes/admin/manage.php:36
+#: includes/admin/manage.php:34
 msgid "Search results for &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/admin/manage.php:42
+#: includes/admin/manage.php:40
 msgid "Search Installed Snippets"
 msgstr ""
 
@@ -164,33 +164,33 @@ msgstr ""
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: includes/admin/single.php:58 includes/admin/single.php:59
+#: includes/admin/single.php:56 includes/admin/single.php:57
 msgid "Name (short title)"
 msgstr ""
 
-#: includes/admin/single.php:64
+#: includes/admin/single.php:62
 msgid "Code"
 msgstr ""
 
-#: includes/admin/single.php:65
+#: includes/admin/single.php:63
 msgid ""
 "Enter or paste the snippet code without the <code>&lt;?php</code> and <code>?"
 "&gt;</code> tags."
 msgstr ""
 
-#: includes/admin/single.php:72 includes/class-list-table.php:88
+#: includes/admin/single.php:70 includes/class-list-table.php:88
 msgid "Description"
 msgstr ""
 
-#: includes/admin/single.php:72
+#: includes/admin/single.php:70
 msgid "(Optional)"
 msgstr ""
 
-#: includes/admin/single.php:88
+#: includes/admin/single.php:86
 msgid "Save"
 msgstr ""
 
-#: includes/admin/single.php:89
+#: includes/admin/single.php:87
 msgid "Cancel"
 msgstr ""
 
@@ -262,7 +262,7 @@ msgstr[1] ""
 msgid "Clear List"
 msgstr ""
 
-#: includes/class-list-table.php:239
+#: includes/class-list-table.php:233
 msgid ""
 "You do not appear to have any snippets available at this time. <a href=\"%s"
 "\">Add New&rarr;</a>"
@@ -275,11 +275,11 @@ msgstr ""
 
 #: includes/help/import.php:7
 msgid ""
-"<p>Snippets are similar to plugins - they both extend and expand the "
+"Snippets are similar to plugins - they both extend and expand the "
 "functionality of WordPress. Snippets are more light-weight, just a few lines "
 "of code, and do not put as much load on your server. Here you can load "
 "snippets from a Code Snippets (.xml) import file into the database with your "
-"existing snippets.</p>"
+"existing snippets."
 msgstr ""
 
 #: includes/help/import.php:12
@@ -306,8 +306,8 @@ msgstr ""
 
 #: includes/help/import.php:22
 msgid ""
-"<p>You can save your snippets to a Code Snippets (.xml) export file using "
-"the <a href=\"%s\">Manage Snippets</a> page.</p>"
+"You can save your snippets to a Code Snippets (.xml) export file using the "
+"<a href=\"%s\">Manage Snippets</a> page."
 msgstr ""
 
 #: includes/help/import.php:26 includes/help/manage.php:27
@@ -331,7 +331,7 @@ msgstr ""
 #: includes/help/import.php:29 includes/help/manage.php:30
 #: includes/help/single.php:46
 msgid ""
-"<a href=\"http://cs.bungeshea.tk\" target=\"_blank\">Project Website</a>"
+"<a href=\"http://cs.bungeshea.com\" target=\"_blank\">Project Website</a>"
 msgstr ""
 
 #: includes/help/manage.php:7
@@ -376,6 +376,13 @@ msgid ""
 "FTP."
 msgstr ""
 
+#: includes/help/manage.php:23
+msgid ""
+"Even if you're sure that you don't want to use Code Snippets ever again on "
+"this WordPress installation, you may want to use the export feature to back "
+"up your snippets."
+msgstr ""
+
 #: includes/help/manage.php:28
 msgid ""
 "<a href=\"http://wordpress.org/extend/plugins/code-snippets\" target=\"_blank"
@@ -384,10 +391,10 @@ msgstr ""
 
 #: includes/help/single.php:7
 msgid ""
-"<p>Snippets are similar to plugins - they both extend and expand the "
+"Snippets are similar to plugins - they both extend and expand the "
 "functionality of WordPress. Snippets are more light-weight, just a few lines "
 "of code, and do not put as much load on your server. Here you can add a new "
-"snippet, or edit an existing one.</p>"
+"snippet, or edit an existing one."
 msgstr ""
 
 #: includes/help/single.php:11
@@ -396,8 +403,8 @@ msgstr ""
 
 #: includes/help/single.php:13
 msgid ""
-"<p>Here are some links to websites which host a large number of snippets "
-"that you can add to your site.\r\n"
+"Here are some links to websites which host a large number of snippets that "
+"you can add to your site.\r\n"
 "\t\t<ul>\r\n"
 "\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets\">WP-"
 "Snippets</a></li>\r\n"
@@ -470,11 +477,13 @@ msgid "Code Snippets"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
-msgid "http://cs.bungeshea.tk"
+msgid "http://cs.bungeshea.com"
 msgstr ""
 
 #. Description of the plugin/theme
-msgid "An easy, clean and simple way to add code snippets to your site."
+msgid ""
+"An easy, clean and simple way to add code snippets to your site. No need to "
+"edit to your theme's functions.php file again!"
 msgstr ""
 
 #. Author of the plugin/theme
@@ -482,5 +491,5 @@ msgid "Shea Bunge"
 msgstr ""
 
 #. Author URI of the plugin/theme
-msgid "http://bungeshea.tk"
+msgid "http://bungeshea.com"
 msgstr ""
