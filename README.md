@@ -4,7 +4,7 @@ Code Snippets
 <table>
 <tr><th>Requires at least:</th><td>WordPress 3.3</td></tr>
 <tr><th>Tested up to:</th><td>WordPress 3.4.2</td></tr>
-<tr><th>Current stable version:</th><td>Code Snippets 1.5</td></tr>
+<tr><th>Current stable version:</th><td>Code Snippets 1.4</td></tr>
 <tr><th>License:</th><td><a href="http://www.gnu.org/copyleft/gpl.html">GPLv3 or later</a></td></tr>
 <tr><th>Project Website:</th><td><a href="http://cs.bungeshea.com">cs.bungeshea.com</a></td></tr>
 </table>
