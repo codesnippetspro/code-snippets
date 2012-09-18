@@ -15,20 +15,9 @@ $screen->add_help_tab( array(
 			<li><a href="http://wp-snippets.com" title="WordPress Snippets">WP-Snippets</a></li>
 			<li><a href="http://wpsnipp.com" title="WP Snipp">WP Snipp</a></li>
 			<li><a href="http://www.catswhocode.com/blog/snippets" title="Cats Who Code Snippet Library">Cats Who Code</a></li>
-			<li><a href="http://wpmu.org">WPMU - The WordPress Experts</a></li>
-		</ul>
-		And below is a selection of snippets to get you started:
-		<ul>
-			<li><a title="Track post views using post meta" href="http://wpsnipp.com/index.php/functions-php/track-post-views-without-a-plugin-using-post-meta/" >Track post views using post meta</a></li>
-			<li><a title="Disable Admin Bar" href="http://wp-snippets.com/disable-wp-3-1-admin-bar/">Disable Admin Bar</a></li>
-			<li><a title="Disable the Visual Editor" href="http://wp-snippets.com/disable-the-visual-editor/">Disable the Visual Editor</a></li>
-			<li><a title="Change Admin Logo" href="http://wp-snippets.com/change-admin-logo/">Change Admin Logo</a></li>
-			<li><a title="Display Code in Posts" href="http://wp-snippets.com/code-in-posts/">Display Code in Posts</a></li>
-			<li><a title="Grab Tweets from Twitter Feed" href="http://www.catswhocode.com/blog/snippets/grab-tweets-from-twitter-feed">Grab Tweets from Twitter Feed</a></li>
-			<li><a title="Watermark images on the fly" href="http://www.catswhocode.com/blog/snippets/watermark-images-on-the-fly">Watermark images on the fly</a></li>
-			<li><a title="Display number of Facebook fans in full text" href="http://www.catswhocode.com/blog/snippets/display-number-of-facebook-fans-in-full-text">Display number of Facebook fans in full text</a></li>
-		</ul>', 'code-snippets'),
-		sprintf( __('Snippets can be installed through the <a href="%s">Add New Snippet</a> page. Once a snippet has been installed, you can activate it here.', 'code-snippets'), $this->admin_single_url ) . '</p>'
+			<li><a href="http://www.wpfunction.me">WP Function Me</a></li>
+		</ul>', 'code-snippets') .
+		 __('More places to find snippets, as well as a selection of example snippets, can be found in the <a href="http://cs.bungeshea.com/docs/finding-snippets/">plugin documentation</a>', 'code-snippets') . '</p>'
 ) );
 $screen->add_help_tab( array(
 	'id'		=> 'adding',

@@ -12,7 +12,7 @@
 	?></p></div>
 <?php endif; ?>
 <div class="wrap">
-	<div id="icon-snippets" class="icon32"><br /></div>
+	<?php screen_icon(); ?>
 	<h2><?php _e('Import Snippets', 'code-snippets'); ?></h2>
 	<div class="narrow">
 		<p><?php _e('Howdy! Upload your Code Snippets export file and we&#8217;ll import the snippets to this site.', 'code-snippets' ); ?></p>

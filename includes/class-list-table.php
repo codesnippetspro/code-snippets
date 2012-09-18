@@ -59,14 +59,50 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions = array(); // Build row actions
 		
 		if( $item['active'] ) {
-			$actions['deactivate'] = sprintf('<a href="?page=%s&action=deactivate&id=%s">%s</a>',$_REQUEST['page'],$item['id'], $screen->is_network ? __('Network Deactivate', 'code-snippets') : __('Deactivate', 'code-snippets') );
+			$actions['deactivate'] = sprintf(
+				'<a href="%1$s">%2$s</a>',
+				add_query_arg( array(
+					'page' => $_REQUEST['page'],
+					'action' => 'deactivate',
+					'id' =>	$item['id']
+				) ),
+				$screen->is_network ? __('Network Deactivate', 'code-snippets') : __('Deactivate', 'code-snippets')
+			);
 		} else {
-			$actions['activate'] = sprintf('<a href="?page=%s&action=activate&id=%s">%s</a>',$_REQUEST['page'],$item['id'], $screen->is_network ? __('Network Activate', 'code-snippets') : __('Activate', 'code-snippets') );
+			$actions['activate'] = sprintf(
+				'<a href="%1$s">%2$s</a>',
+				add_query_arg( array(
+					'page' => $_REQUEST['page'],
+					'action' => 'activate',
+					'id' =>	$item['id']
+				) ),
+				$screen->is_network ? __('Network Activate', 'code-snippets') : __('Activate', 'code-snippets')
+			);
 		}
 	
-		$actions['edit'] = sprintf( '<a href="%s&edit=%s">Edit</a>',$cs->admin_single_url,$item['id'] );
-		$actions['export'] = sprintf( '<a href="?page=%s&action=export&id=%s">Export</a>',$_REQUEST['page'],$item['id'] );
-		$actions['delete'] = sprintf( '<a href="?page=%s&action=delete&id=%s" class="delete" onclick="return confirm( "You are about to permanently delete the selected item.\n  \'Cancel\' to stop, \'OK\' to delete.">Delete</a>', $_REQUEST['page'], $item['id'] );
+		$actions['edit'] = sprintf(
+			'<a href="%s&edit=%s">Edit</a>',
+			$cs->admin_single_url,
+			$item['id']
+		);
+		$actions['export'] = sprintf(
+			'<a href="%s">Export</a>',
+			add_query_arg( array(
+				'page' => $_REQUEST['page'],
+				'action' => 'export',
+				'id' =>	$item['id']
+			) )
+		);
+		$actions['delete'] = sprintf(
+			'<a href="%1$s" class="delete" onclick="%2$s">Delete</a>',
+			add_query_arg( array(
+				'page' => $_REQUEST['page'],
+				'action' => 'delete',
+				'id' =>	$item['id']
+			) ),
+			esc_js( 'return confirm( "You are about to permanently delete the selected item.
+			\'Cancel\' to stop, \'OK\' to delete.");' )
+		);
 		
 		// Return the name contents
 		return '<strong>' . stripslashes( $item['name'] ) . '</strong>' . $this->row_actions( $actions, true );
@@ -189,6 +225,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	function process_bulk_actions() {
 		global $cs;
+		if( ! isset( $_POST[ $this->_args['singular'] ] ) ) return;
 		$ids = $_POST[ $this->_args['singular'] ];
 		
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'activate', 'deactivate', 'delete', 'activate-multi', 'deactivate-multi', 'delete-multi' ) );
@@ -241,6 +278,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		
 		$screen = get_current_screen();
 		$user = get_current_user_id();
+		
+		// first, lets process the bulk actions
+		$this->process_bulk_actions();
 		
 		$snippets = array(
 			'all' => $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $cs->table" ), ARRAY_A ),
@@ -301,8 +341,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$per_page = (int) $per_page;
 		
 		$this->_column_headers = $this->get_column_info();
-		
-		$this->process_bulk_actions();
 		
         /**
          * This checks for sorting input and sorts the data in our array accordingly.

@@ -83,10 +83,10 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 == Screenshots ==
 
 1. Managing existing snippets
-2. Adding a new snippet
-3. Editing a snippet
-4. Importing snppets from an XML file
-5. Managing network-wide snippets
+2. Managing network-wide snippets
+3. Adding a new snippet
+4. Editing a snippet
+5. Importing snppets from an XML file
 
 == Changelog ==
 

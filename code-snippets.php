@@ -726,15 +726,10 @@ class Code_Snippets {
 	 */
 	public function import( $file, $network = null ) {
 	
-		if( ! file_exists( $file ) || ! is_file( $file ) ) 
+		if( ! file_exists( $file ) || ! is_file( $file ) )
 			return false;
-			
-		if( ! isset( $network ) ) {
-			$screen = get_current_screen();
-			$network = $screen->is_network;
-		}
 		
-		$xml = simplexml_load_string( file_get_contents( $file ) );
+		$xml = simplexml_load_file( $file );
 		
 		foreach( $xml->children() as $child ) {
 			$this->save_snippet( array(
@@ -1049,7 +1044,7 @@ class Code_Snippets {
 	 * @uses $this->execute_snippet() To execute a snippet
 	 */
 	function run_snippets( $network = false ) {
-		if( defined( 'CS_SAFE_MODE' ) ) if( CS_SAFE_MODE ) return;
+		if( defined( 'CS_SAFE_MODE' ) && CS_SAFE_MODE ) return;
 		
 		$table = ( $network ? $this->ms_table : $this->table );
 		

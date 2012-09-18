@@ -22,7 +22,7 @@ if( isset( $_REQUEST['edit'] ) )
 <?php endif; ?>
 
 <div class="wrap">
-	<div id="icon-snippets" class="icon32"><br /></div>
+	<?php screen_icon(); ?>
 	<h2><?php
 		if( isset( $edit_id ) ) {
 			esc_html_e('Edit Snippet', 'code-snippets');
@@ -54,7 +54,7 @@ if( isset( $_REQUEST['edit'] ) )
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php esc_html_e('Name (short title)', 'code-snippets'); ?></label>
-				<input id="title" type="text" autocomplete="off" size="30" maxlength="64" name="snippet_name" value="<?php echo stripslashes( $snippet->name ); ?>" placeholder="<?php _e('Name (short title)', 'code-snippets'); ?>" required="required">
+				<input id="title" type="text" autocomplete="off" size="30"  maxlength="64" name="snippet_name" value="<?php echo stripslashes( $snippet->name ); ?>" placeholder="<?php _e('Name (short title)', 'code-snippets'); ?>" required="required">
 			</div>
 		</div>
 
