@@ -83,11 +83,11 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 
 ## Screenshots
 
-![Managing existing snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-1.png)
-![Managing network-wide snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-2.png)
-![Adding a new snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-3.png)
-![Editing a snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-4.png)
-![Importing snppets from an XML file](https://raw.github.com/bungeshea/code-snippets/master/screenshot-5.png)
+![Managing existing snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-1.jpg)
+![Managing network-wide snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-2.jpg)
+![Adding a new snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-3.jpg)
+![Editing a snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-4.jpg)
+![Importing snppets from an XML file](https://raw.github.com/bungeshea/code-snippets/master/screenshot-5.jpg)
 
 ## Changelog
 
