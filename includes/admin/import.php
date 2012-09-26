@@ -1,4 +1,4 @@
-<?php if( isset( $_REQUEST['imported'] ) && intval( $_REQUEST['imported'] ) != 0 ) : ?>
+<?php if ( isset( $_REQUEST['imported'] ) && intval( $_REQUEST['imported'] ) != 0 ) : ?>
 	<div id="message" class="updated fade"><p><?php
 		printf(
 			_n(

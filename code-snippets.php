@@ -42,7 +42,7 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if( ! class_exists( 'Code_Snippets' ) ) :
+if ( ! class_exists( 'Code_Snippets' ) ) :
 
 /**
  * The main class for our plugin
@@ -114,7 +114,7 @@ class Code_Snippets {
 	public $admin_manage, $admin_single, $admin_import;
 
 	/**
-	 * The main function for our class
+	 * The constructor function for our class
 	 *
 	 * @since Code Snippets 1.0
 	 * @access public
@@ -124,7 +124,7 @@ class Code_Snippets {
 	}
 	
 	/**
-	 * The constructor function for our class
+	 * The main function for our class
 	 *
 	 * @since Code Snippets 1.0
 	 * @access private
@@ -133,7 +133,7 @@ class Code_Snippets {
 		$this->setup();			// initialise the variables and run the hooks
 		$this->create_table();	// create the snippet tables if they do not exist
 		$this->upgrade();		// check if we need to change some stuff
-		if( is_multisite() ) {  // perform multisite-specific actions
+		if ( is_multisite() ) {  // perform multisite-specific actions
 			$this->create_table( true );
 			$this->run_snippets( true );
 		}
@@ -164,12 +164,12 @@ class Code_Snippets {
 		$this->admin_single_url = apply_filters( 'cs_single_url', 'snippet' );
 		$this->admin_import_url = apply_filters( 'cs_import_url', 'import-snippets' );
 		
-		if( ! get_option( 'cs_db_version' ) ) {
+		if ( ! get_option( 'cs_db_version' ) ) {
 			// This is the first time the plugin has run
 			
 			$this->add_caps(); // register the capabilities ONCE ONLY
 			
-			if( is_multisite() ) {
+			if ( is_multisite() ) {
 				$this->add_caps( true ); // register the multisite capabilities ONCE ONLY
 			}
 		}
@@ -194,7 +194,7 @@ class Code_Snippets {
 		
 		global $wpdb;
 		
-		if( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) != $table ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) != $table ) {
 			$sql = "CREATE TABLE $table (
 				id			MEDIUMINT	NOT NULL AUTO_INCREMENT,
 				name		VARCHAR(64)	NOT NULL,
@@ -216,13 +216,13 @@ class Code_Snippets {
 	 * @access private
 	 */
 	function upgrade() {
-		if( $this->current_version < 1.5 ) {
+		if ( $this->current_version < 1.5 ) {
 			global $wpdb;
 			
 			// Let's alter the name column to accept up to 64 characters
 			$wpdb->query( "ALTER TABLE $this->table CHANGE COLUMN name name VARCHAR(64) NOT NULL" );
 			
-			if( is_multisite() ) {
+			if ( is_multisite() ) {
 				// We must not forget the multisite table!
 				$wpdb->query( "ALTER TABLE $this->ms_table CHANGE COLUMN name name VARCHAR(64) NOT NULL" );
 			}
@@ -231,12 +231,12 @@ class Code_Snippets {
 			$this->add_roles();
 		}
 		
-		if( $this->current_version < 1.2 ) {
+		if ( $this->current_version < 1.2 ) {
 			// The 'Complete Uninstall' option was removed in version 1.2
 			delete_option( 'cs_complete_uninstall' );
 		}
 		
-		if( $this->current_version < $this->version ) {
+		if ( $this->current_version < $this->version ) {
 			// Update the current version
 			update_option( 'cs_db_version', $this->version );
 		}
@@ -267,7 +267,7 @@ class Code_Snippets {
 	 * @param bool $multisite Add site-specific or multisite-specific capabilities?
 	 */
 	public function add_caps( $multisite = false ) {
-		if( $multisite && is_multisite() )
+		if ( $multisite && is_multisite() )
 			$this->setup_ms_roles( true );
 		else
 			$this->setup_roles( true );
@@ -284,7 +284,7 @@ class Code_Snippets {
 	 * @param bool $multisite Add site-specific or multisite-specific capabilities?
 	 */
 	public function remove_caps( $multisite = false ) {
-		if( $multisite && is_multisite() )
+		if ( $multisite && is_multisite() )
 			$this->setup_ms_roles( false );
 		else
 			$this->setup_roles( false );
@@ -309,7 +309,7 @@ class Code_Snippets {
 		$this->role = get_role( apply_filters( 'cs_role', 'administrator' ) );
 		
 		foreach( $this->caps as $cap ) {
-			if( $install )
+			if ( $install )
 				$this->role->add_cap( $cap );
 			else
 				$this->role->remove_cap( $cap );
@@ -326,7 +326,7 @@ class Code_Snippets {
 	 */
 	function setup_ms_roles( $install = true ) {
 	
-		if( ! is_multisite() ) return;
+		if ( ! is_multisite() ) return;
 		
 		$this->network_caps = apply_filters( 'cs_network_caps', array(
 			'manage_network_snippets',
@@ -338,7 +338,7 @@ class Code_Snippets {
 		foreach( $supers as $admin ) {
 			$user = new WP_User( 0, $admin );
 			foreach( $this->network_caps as $cap ) {
-				if( $install )
+				if ( $install )
 					$user->add_cap( $cap );
 				else
 					$user->remove_cap( $cap );
@@ -602,7 +602,7 @@ class Code_Snippets {
 		
 		$ids = (array) $ids;
 		
-		if( ! isset( $network ) ) {
+		if ( ! isset( $network ) ) {
 			$screen = get_current_screen();
 			$network = $screen->is_network;
 		}
@@ -633,14 +633,12 @@ class Code_Snippets {
 		global $wpdb;
 		
 		$ids = (array) $ids;
+		$recently_active = array();
 		
-		if( ! isset( $network ) ) {
+		if ( ! isset( $network ) ) {
 			$screen = get_current_screen();
 			$network = $screen->is_network;
 		}
-		
-		// Where in the database are the recently activated snippets stored?
-		$option = ( $network ? 'recently_network_activated_snippets' : 'recently_activated_snippets' );
 		
 		foreach( $ids as $id ) {
 			$wpdb->update(
@@ -650,14 +648,25 @@ class Code_Snippets {
 				array( '%d' ),
 				array( '%d' )
 			);
-			update_option( $option, array( $id => time() ) + (array) get_option( $option ) );
+			$recently_active = array( $id => time() ) + (array) $recently_active;
 		}
+		
+		if ( $network )
+			update_option(
+				'recently_network_activated_snippets',
+				$recently_active + (array) get_option( 'recently_network_activated_snippets' )
+			);
+		else
+			update_option(
+				'recently_activated_snippets',
+				$recently_active + (array) get_option( 'recently_activated_snippets' )
+			);
 	}
 	
 	public function delete_snippet( $id, $network = null ) {
 		global $wpdb;
 		
-		if( ! isset( $network ) ) {
+		if ( ! isset( $network ) ) {
 			$screen = get_current_screen();
 			$network = $screen->is_network;
 		}
@@ -686,17 +695,17 @@ class Code_Snippets {
 		$description = mysql_real_escape_string( htmlspecialchars( $snippet['description'] ) );
 		$code = mysql_real_escape_string( htmlspecialchars( $snippet['code'] ) );
 
-		if( empty( $name ) or empty( $code ) )
+		if ( empty( $name ) or empty( $code ) )
 			return false;
 		
-		if( ! isset( $network ) ) {
+		if ( ! isset( $network ) ) {
 			$screen = get_current_screen();
 			$network = $screen->is_network;
 		}
 		
 		$table = ( $network ? $this->ms_table : $this->table );
 		
-		if( isset( $snippet['id'] ) && ( intval( $snippet['id'] ) != 0 )  ) {
+		if ( isset( $snippet['id'] ) && ( intval( $snippet['id'] ) != 0 )  ) {
 			$wpdb->query( "UPDATE $table SET
 				name='$name',
 				description='$description',
@@ -726,12 +735,12 @@ class Code_Snippets {
 	 */
 	public function import( $file, $network = null ) {
 	
-		if( ! file_exists( $file ) || ! is_file( $file ) )
+		if ( ! file_exists( $file ) || ! is_file( $file ) )
 			return false;
 		
 		$xml = simplexml_load_file( $file );
 		
-		foreach( $xml->children() as $child ) {
+		foreach ( $xml->children() as $child ) {
 			$this->save_snippet( array(
 				'name' => $child->name,
 				'description' => $child->description,
@@ -754,14 +763,14 @@ class Code_Snippets {
 	 */	
 	public function export( $ids, $network = null ) {
 		
-		if( ! isset( $network ) ) {
+		if ( ! isset( $network ) ) {
 			$screen = get_current_screen();
 			$network = $screen->is_network;
 		}
 		
 		$table = ( $network ? $this->ms_table : $this->table );
 		
-		if( ! function_exists( 'cs_export' ) )
+		if ( ! function_exists( 'cs_export' ) )
 			require_once $this->plugin_dir . 'includes/export.php';
 			
 		cs_export( $ids, 'xml', $table );
@@ -780,14 +789,14 @@ class Code_Snippets {
 	 */	
 	public function exportphp( $ids, $network = null ) {
 		
-		if( ! isset( $network ) ) {
+		if ( ! isset( $network ) ) {
 			$screen = get_current_screen();
 			$network = $screen->is_network;
 		}
 		
 		$table = ( $network ? $this->ms_table : $this->table );
 		
-		if( ! function_exists( 'cs_export' ) )
+		if ( ! function_exists( 'cs_export' ) )
 			require_once $this->plugin_dir . 'includes/export.php';
 			
 		cs_export( $ids, 'php', $table );
@@ -834,7 +843,7 @@ class Code_Snippets {
 	 * @access private
 	 */
 	function set_screen_option( $status, $option, $value ) {
-		if( 'snippets_per_page' == $option ) return $value;
+		if ( 'snippets_per_page' === $option ) return $value;
 	}
 	
 	/**
@@ -848,28 +857,28 @@ class Code_Snippets {
 	function load_admin_manage() {
 		global $wpdb;
 		
-		if( isset( $_GET['action'], $_GET['id'] ) ) :
+		if ( isset( $_GET['action'], $_GET['id'] ) ) :
 		
 			$id = intval( $_GET['id'] );
 			
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id' ) );
 		
-			if( 'activate' == $_GET['action'] ) {
-				$this->activate( $id, $this->is_network );
+			if ( 'activate' == $_GET['action'] ) {
+				$this->activate( $id );
 				wp_redirect( add_query_arg( 'activate', true ) );
 			}
-			elseif( 'deactivate' == $_GET['action'] ) {
+			elseif ( 'deactivate' == $_GET['action'] ) {
 				$this->deactivate( $id );
 				wp_redirect( add_query_arg( 'deactivate', true ) );
 			}
-			elseif( 'delete' == $_GET['action'] ) {
+			elseif ( 'delete' == $_GET['action'] ) {
 				$this->delete_snippet( $id );
 				wp_redirect( add_query_arg( 'delete', true ) );
 			}
-			elseif( 'export' == $_GET['action'] ) {
+			elseif ( 'export' == $_GET['action'] ) {
 				$this->export( $id );
 			}
-			elseif( 'exportphp' == $_GET['action'] ) {
+			elseif ( 'exportphp' == $_GET['action'] ) {
 				$this->exportphp( $id );
 			}
 			
@@ -898,9 +907,9 @@ class Code_Snippets {
 	 */
 	function load_admin_single() {
 	
-		if( isset( $_REQUEST['save_snippet'] ) ) {
+		if ( isset( $_REQUEST['save_snippet'] ) ) {
 		
-			if( isset( $_REQUEST['snippet_id'] ) ) {
+			if ( isset( $_REQUEST['snippet_id'] ) ) {
 				$result = $this->save_snippet( array(
 					'name' => $_REQUEST['snippet_name'],
 					'description' => $_REQUEST['snippet_description'],
@@ -917,10 +926,10 @@ class Code_Snippets {
 			
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'invalid' ) );
 				
-			if( ! $result || $result < 1 ) {
+			if ( ! $result || $result < 1 ) {
 				wp_redirect( add_query_arg( 'invalid', true ) );
 			}
-			elseif( isset( $_REQUEST['snippet_id'] ) ) {
+			elseif ( isset( $_REQUEST['snippet_id'] ) ) {
 				wp_redirect( add_query_arg(	array(
 					'edit' => $result,
 					'updated' => true
@@ -934,7 +943,7 @@ class Code_Snippets {
 			}
 		}
 			
-		if( isset( $_GET['edit'] ) )
+		if ( isset( $_GET['edit'] ) )
 			add_filter( 'admin_title',  array( $this, 'admin_single_title' ) );
 	
 		include $this->plugin_dir . 'includes/help/single.php'; // Load the help tabs
@@ -950,9 +959,9 @@ class Code_Snippets {
 	 * @uses add_query_arg() To append the results to the current URI
 	 */
 	function load_admin_import() {
-		if( isset( $_FILES['cs_import_file']['tmp_name'] ) ) {
+		if ( isset( $_FILES['cs_import_file']['tmp_name'] ) ) {
 			$count = $this->import( $_FILES['cs_import_file']['tmp_name'] );
-			if( $count ) {
+			if ( $count ) {
 				wp_redirect( add_query_arg( 'imported', $count ) );
 			}
 		}
@@ -1011,7 +1020,7 @@ class Code_Snippets {
 	 */
 	function plugin_meta( $links, $file ) {
 	
-		if( $file != $this->basename ) return $links;
+		if ( $file != $this->basename ) return $links;
 		
 		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
 		
@@ -1044,7 +1053,7 @@ class Code_Snippets {
 	 * @uses $this->execute_snippet() To execute a snippet
 	 */
 	function run_snippets( $network = false ) {
-		if( defined( 'CS_SAFE_MODE' ) && CS_SAFE_MODE ) return;
+		if ( defined( 'CS_SAFE_MODE' ) && CS_SAFE_MODE ) return;
 		
 		$table = ( $network ? $this->ms_table : $this->table );
 		
@@ -1052,7 +1061,7 @@ class Code_Snippets {
 		
 		// grab the active snippets from the database
 		$active_snippets = $wpdb->get_results( "SELECT code FROM $table WHERE active=1;");
-		if( count( $active_snippets ) ) {
+		if ( count( $active_snippets ) ) {
 			foreach( $active_snippets as $snippet ) {
 				// execute the php code
 				$this->execute_snippet( htmlspecialchars_decode( stripslashes( $snippet->code ) ) );
@@ -1089,9 +1098,9 @@ register_uninstall_hook( $cs->file, 'cs_uninstall' );
  */
 function cs_uninstall() {
 	global $wpdb, $cs;
-	if( is_multisite() ) {
+	if ( is_multisite() ) {
 		$blogs = $wpdb->get_results( "SELECT blog_id FROM $wpdb->blogs", ARRAY_A );
-		if( $blogs ) {
+		if ( $blogs ) {
 			foreach( $blogs as $blog ) {
 				switch_to_blog( $blog['blog_id'] );
 				$table = apply_filters( 'cs_table', $wpdb->prefix . 'snippets' );

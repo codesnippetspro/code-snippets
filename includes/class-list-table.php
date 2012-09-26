@@ -1,6 +1,6 @@
 <?php
 
-if( ! class_exists( 'WP_List_Table' ) ) {
+if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
@@ -58,7 +58,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$screen = get_current_screen();
 		$actions = array(); // Build row actions
 		
-		if( $item['active'] ) {
+		if ( $item['active'] ) {
 			$actions['deactivate'] = sprintf(
 				'<a href="%1$s">%2$s</a>',
 				add_query_arg( array(
@@ -133,7 +133,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 	
 	function get_default_hidden_columns( $result ) {
-		if( ! $result )
+		if ( ! $result )
 			return array( 'id' );
 		else
 			return $result;
@@ -225,7 +225,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	function process_bulk_actions() {
 		global $cs;
-		if( ! isset( $_POST[ $this->_args['singular'] ] ) ) return;
+		if ( ! isset( $_POST[ $this->_args['singular'] ] ) ) return;
 		$ids = $_POST[ $this->_args['singular'] ];
 		
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'activate', 'deactivate', 'delete', 'activate-multi', 'deactivate-multi', 'delete-multi' ) );
@@ -259,8 +259,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				
 			case 'clear-recent-list':
 				$screen = get_current_screen();
-				$option = ( $screen->is_network ? 'recently_network_activated_snippets' : 'recently_activated_snippets' );
-				update_option( $option,	array() );
+				if ( $screen->is_network )
+					update_option( 'recently_network_activated_snippets', array() );
+				else
+					update_option( 'recently_activated_snippets', array() );
 				break;
 		}
 	}
@@ -290,14 +292,20 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'recently_activated' => array(),
 		);
 		
-		$option = $screen->is_network ? 'recently_network_activated_snippets' : 'recently_activated_snippets';
-		$recently_activated = get_option( $option, array() );
+		if ( $screen->is_network )
+			$recently_activated = get_option( 'recently_network_activated_snippets', array() );
+		else
+			$recently_activated = get_option( 'recently_activated_snippets', array() );
 
 		$one_week = 7*24*60*60;
 		foreach ( $recently_activated as $key => $time )
 			if ( $time + $one_week < time() )
 				unset( $recently_activated[$key] );
-		update_option( $option, $recently_activated );
+				
+		if ( $screen->is_network )
+			update_option( 'recently_network_activated_snippets', $recently_activated );
+		else
+			update_option( 'recently_activated_snippets', $recently_activated );
 		
 		foreach ( (array) $snippets['all'] as $snippet ) {
 			// Filter into individual sections
@@ -310,7 +318,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 		}
 
-		if( $s ) {
+		if ( $s ) {
 			$status = 'search';
 			$snippets['search'] = array_filter( $snippets['all'], array( &$this, '_search_callback' ) );
 		}
@@ -334,7 +342,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		
 		$per_page = get_user_meta( $user, $screen_option, true );
 		
-		if( empty ( $per_page ) || $per_page < 1 ) {
+		if ( empty ( $per_page ) || $per_page < 1 ) {
 			$per_page = $screen->get_option( 'per_page', 'default' );
 		}
 		
@@ -354,7 +362,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
             $order = ( ! empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'asc';
 			
 			// Determine sort order
-			if( $orderby === 'id' )
+			if ( $orderby === 'id' )
 				$result = $a[$orderby] - $b[$orderby]; // get the result for numerical data
 			else
 				$result = strcmp( $a[$orderby], $b[$orderby] ); // get the result for string data

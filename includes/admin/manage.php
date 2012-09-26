@@ -1,12 +1,12 @@
 <?php
-if( ! class_exists( 'Code_Snippets' ) ) exit;
+if ( ! class_exists( 'Code_Snippets' ) ) exit;
 
 require_once $this->plugin_dir . 'includes/class-list-table.php';
 
 global $cs_list_table;
 $screen = get_current_screen();
 ?>
-<?php if( defined( 'CS_SAFE_MODE' ) ) if( CS_SAFE_MODE ) : ?>
+<?php if ( defined( 'CS_SAFE_MODE' ) ) if ( CS_SAFE_MODE ) : ?>
 	<div class="error"><p><strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="http://cs.bungeshea.com/docs/safe-mode/" target="_blank">Help</a></p></div>
 <?php endif; ?>
 	
@@ -27,10 +27,10 @@ $screen = get_current_screen();
 <div class="wrap">
 	<?php screen_icon(); ?>
 	<h2><?php _e('Snippets', 'code-snippets'); ?>
-	<?php if( current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' ) ) { ?>
+	<?php if ( current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' ) ) { ?>
 	<a href="<?php echo $this->admin_single_url; ?>" class="add-new-h2"><?php echo esc_html_x('Add New', 'snippet', 'code-snippets'); ?></a>
 <?php }
-if( isset( $s ) && $s )
+if ( isset( $s ) && $s )
 	printf( '<span class="subtitle">' . __('Search results for &#8220;%s&#8221;', 'code-snippets') . '</span>', esc_html( $s ) ); ?></h2>
 	
 	<?php $cs_list_table->views(); ?>

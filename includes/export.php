@@ -11,7 +11,7 @@
  * @subpackage Export
  */
 
-if( ! function_exists( 'cs_export') ) :
+if ( ! function_exists( 'cs_export') ) :
 
 /**
  * Exports seleted snippets to a XML or PHP file.
@@ -28,7 +28,7 @@ function cs_export( $ids, $format = 'xml' ) {
 	
 	$ids = (array) $ids;
 	
-	if( count( $ids ) < 2 ) {
+	if ( count( $ids ) < 2 ) {
 		// If there is only snippet to export, use its name instead of the site name
 		$entry = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $cs->table WHERE id=%d", $ids ) );
 		$sitename = sanitize_key( $entry->name );
@@ -41,7 +41,7 @@ function cs_export( $ids, $format = 'xml' ) {
 
 	header( 'Content-Disposition: attachment; filename=' . $filename );
 	
-	if( $format === 'xml' ) {
+	if ( $format === 'xml' ) {
 		header( 'Content-Type: text/xml; charset=utf-8' );
 	
 		echo '<?xml version="1.0"?>' . "\n";
@@ -49,7 +49,7 @@ function cs_export( $ids, $format = 'xml' ) {
 	
 		foreach( $ids as $id ) {
 		
-			if( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
+			if ( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
 		
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $cs->table WHERE id=%d", $id ) );
 		
@@ -62,20 +62,20 @@ function cs_export( $ids, $format = 'xml' ) {
 	
 		echo "\n</snippets>";
 		
-	} elseif( $format === 'php' ) {
+	} elseif ( $format === 'php' ) {
 	
 		echo "<?php\n";
 	
 		foreach( $ids as $id ) {
 		
-			if( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
+			if ( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
 		
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $cs->table WHERE id=%d", $id ) );
 ?>
 
 /**
  * <?php echo htmlspecialchars_decode( stripslashes( $snippet->name ) ) . "\n"; ?>
-<?php if( ! empty( $snippet->description ) ) : ?>
+<?php if ( ! empty( $snippet->description ) ) : ?>
  *
  * <?php echo htmlspecialchars_decode( stripslashes( $snippet->description ) ) . "\n"; ?>
 <?php endif; ?>

@@ -1,33 +1,33 @@
 <?php
-if( ! class_exists( 'Code_Snippets' ) ) exit;
+if ( ! class_exists( 'Code_Snippets' ) ) exit;
 global $wpdb;
 
 $screen = get_current_screen();
 $can_edit = current_user_can( $screen->is_network ? 'edit_network_snippets' : 'edit_snippets' );
 $can_install = current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' );
 
-if( isset( $_REQUEST['edit'] ) && ! $can_edit )
+if ( isset( $_REQUEST['edit'] ) && ! $can_edit )
 	wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets') );
 	
-if( isset( $_REQUEST['edit'] ) )
+if ( isset( $_REQUEST['edit'] ) )
 	$edit_id = intval( $_REQUEST['edit'] );
 ?>
 
-<?php if( isset( $_REQUEST['invalid'] ) && $_REQUEST['invalid'] ) : ?>
+<?php if ( isset( $_REQUEST['invalid'] ) && $_REQUEST['invalid'] ) : ?>
 	<div id="message" class="error fade"><p><?php _e('Please provide a name for the snippet and its code.', 'code-snippets'); ?></p></div>
-<?php elseif( isset( $_REQUEST['updated'] ) && $_REQUEST['updated'] ) : ?>
+<?php elseif ( isset( $_REQUEST['updated'] ) && $_REQUEST['updated'] ) : ?>
 	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong>.', 'code-snippets'); ?></p></div>
-<?php elseif( isset( $_REQUEST['added'] ) && $_REQUEST['added'] ) : ?>
+<?php elseif ( isset( $_REQUEST['added'] ) && $_REQUEST['added'] ) : ?>
 	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>added</strong>.', 'code-snippets'); ?></p></div>
 <?php endif; ?>
 
 <div class="wrap">
 	<?php screen_icon(); ?>
 	<h2><?php
-		if( isset( $edit_id ) ) {
+		if ( isset( $edit_id ) ) {
 			esc_html_e('Edit Snippet', 'code-snippets');
 			
-			if(	$can_install )
+			if ( $can_install )
 				printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
 					$this->admin_single_url,
 					esc_html('Add New', 'code-snippets')
@@ -38,7 +38,7 @@ if( isset( $_REQUEST['edit'] ) )
 	?></h2>
 	
 	<form method="post" action="" style="margin-top: 10px;">
-		<?php if( isset( $edit_id ) ) : ?>
+		<?php if ( isset( $edit_id ) ) : ?>
 			<?php $snippet = $wpdb->get_row( "SELECT * FROM $this->table WHERE id = $edit_id" ); ?>
 			<input type="hidden" name="snippet_id" value="<?php echo $snippet->id; ?>" />
 		<?php else : ?>
