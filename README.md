@@ -87,9 +87,13 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 ![Managing network-wide snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-2.jpg)
 ![Adding a new snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-3.jpg)
 ![Editing a snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-4.jpg)
-![Importing snppets from an XML file](https://raw.github.com/bungeshea/code-snippets/master/screenshot-5.jpg)
+![Importing snippets from an XML file](https://raw.github.com/bungeshea/code-snippets/master/screenshot-5.jpg)
 
 ## Changelog
+
+### 1.5.1
+* Updated CodeMirror to version 2.35
+* Improved compatibility with Clean Options plugin
 
 ### 1.5
 * Updated CodeMirror to version 2.33

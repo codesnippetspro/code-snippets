@@ -489,7 +489,7 @@ class Code_Snippets {
 	 * @uses wp_enqueue_style() To add the scripts to the queue
 	 */
 	function load_editor_scripts() {
-		$version = 2.34;
+		$version = 2.35;
 		wp_register_script(
 			'codemirror',
 			plugins_url( 'js/codemirror.js', $this->file ),
@@ -568,7 +568,7 @@ class Code_Snippets {
 	 * @uses wp_enqueue_style() To add the stylesheets to the queue
 	 */
 	function load_editor_styles() {
-		$version = 2.34;
+		$version = 2.35;
 		wp_register_style(
 			'codemirror',
 			plugins_url( 'css/codemirror.css', $this->file ),

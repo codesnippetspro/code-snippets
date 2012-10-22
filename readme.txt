@@ -91,7 +91,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 == Changelog ==
 
 = 1.5.1 =
-* Updated CodeMirror to version 2.34
+* Updated CodeMirror to version 2.35
 * Improved compatibility with Clean Options plugin
 
 
