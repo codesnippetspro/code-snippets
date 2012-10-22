@@ -148,23 +148,24 @@ class Code_Snippets {
 	 */
 	function setup() {
 		global $wpdb;
-		$this->file      		= __FILE__;
-		$this->table			= apply_filters( 'cs_table', $wpdb->prefix . $this->table );
-		$this->ms_table			= apply_filters( 'cs_ms_table', $wpdb->base_prefix . $this->ms_table );
-		$this->current_version	= get_option( 'cs_db_version', $this->version );
+		$this->file             = __FILE__;
+		$this->table            = apply_filters( 'cs_table', $wpdb->prefix . $this->table );
+		$this->ms_table         = apply_filters( 'cs_ms_table', $wpdb->base_prefix . $this->ms_table );
+		$this->current_version  = get_option( 'cs_db_version', $this->version );
 		
 		$wpdb->snippets         = $this->table;
 		$wpdb->ms_snippets      = $this->ms_table;
 		
-		$this->basename			= plugin_basename( $this->file );
-		$this->plugin_dir		= plugin_dir_path( $this->file );
-		$this->plugin_url		= plugin_dir_url ( $this->file );
+		$this->basename	        = plugin_basename( $this->file );
+		$this->plugin_dir       = plugin_dir_path( $this->file );
+		$this->plugin_url       = plugin_dir_url ( $this->file );
 		
 		$this->admin_manage_url = apply_filters( 'cs_manage_url', 'snippets' );
 		$this->admin_single_url = apply_filters( 'cs_single_url', 'snippet' );
 		$this->admin_import_url = apply_filters( 'cs_import_url', 'import-snippets' );
 		
 		if ( ! get_option( 'cs_db_version' ) ) {
+			
 			// This is the first time the plugin has run
 			
 			$this->add_caps(); // register the capabilities ONCE ONLY
@@ -449,7 +450,7 @@ class Code_Snippets {
 		$this->admin_single_url = self_admin_url( 'admin.php?page=' . $this->admin_single_url );
 		$this->admin_import_url = self_admin_url( 'admin.php?page=' . $this->admin_import_url );
 
-		add_action( "admin_print_styles-$this->admin_single", array( $this, 'load_editor_styles' ) );
+		add_action( "admin_print_styles-$this->admin_single",  array( $this, 'load_editor_styles' ) );
 		add_action( "admin_print_scripts-$this->admin_single", array( $this, 'load_editor_scripts' ) );
 		
 		add_action( "admin_print_styles-$this->admin_manage", array( $this, 'load_stylesheet' ) );
