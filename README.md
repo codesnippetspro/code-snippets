@@ -83,11 +83,16 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 
 ## Screenshots
 
-![Managing existing snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-1.jpg)
-![Managing network-wide snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-2.jpg)
-![Adding a new snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-3.jpg)
-![Editing a snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-4.jpg)
-![Importing snippets from an XML file](https://raw.github.com/bungeshea/code-snippets/master/screenshot-5.jpg)
+### Managing existing snippets
+![Managing existing snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-1.jpg "Managing existing snippets")
+### Managing network-wide snippets
+![Managing network-wide snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-2.jpg "Managing network-wide snippets")
+### Adding a new snippet
+![Adding a new snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-3.jpg "Adding a new snippet")
+### Editing a snippet
+![Editing a snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-4.jpg "Editing a snippet")
+### Importing snippets from an XML file
+![Importing snippets from an XML file](https://raw.github.com/bungeshea/code-snippets/master/screenshot-5.jpg "Importing snippets from an XML file")
 
 ## Changelog
 
@@ -142,7 +147,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 
 ## Other Notes
 
-Plugin updates will be posted on the [plugin's homepage](http://cs.bungeshea.com) ([RSS](http://cs.bungshea.com/feed/)).
+Plugin updates will be posted on the [plugin's homepage](http://cs.bungeshea.com) ([RSS](http://cs.bungeshea.com/feed/)).
 
 * Snippets are stored in the `wp_snippets` table in the WordPress database (the table name may differ depending on what your table prefix is set to).
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
