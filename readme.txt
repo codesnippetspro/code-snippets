@@ -86,9 +86,14 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 2. Managing network-wide snippets
 3. Adding a new snippet
 4. Editing a snippet
-5. Importing snppets from an XML file
+5. Importing snippets from an XML file
 
 == Changelog ==
+
+= 1.5.1 =
+* Updated CodeMirror to version 2.34
+* Improved compatibility with Clean Options plugin
+
 
 = 1.5 =
 * Updated CodeMirror to version 2.33
@@ -137,7 +142,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 
 == Other Notes ==
 
-Plugin updates will be posted on the [plugin's homepage](http://cs.bungeshea.com) ([RSS](http://cs.bungehea.tk/feed/)).
+Plugin updates will be posted on the [plugin's homepage](http://cs.bungeshea.com) ([RSS](http://cs.bungeshea.com/feed/)).
 
 * Snippets are stored in the `wp_snippets` table in the WordPress database (the table name may differ depending on what your table prefix is set to).
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
@@ -146,6 +151,9 @@ You can also contribute to the code at [GitHub](https://github.com/bungeshea/cod
 
 == Upgrade Notice ==
 
+= 1.5.1 =
+Minor improvements
+
 = 1.5 =
 Improvements on the 'Manage Snippets' page and localization
 
@@ -153,7 +161,7 @@ Improvements on the 'Manage Snippets' page and localization
 Better code highlighting and improved multisite support
 
 = 1.3.2 =
-Check out Code Snippet's new website: http://cs.bungeshea.com
+Code Snippets has a new website: http://cs.bungeshea.com
 
 = 1.3 =
 Added import/export feature
