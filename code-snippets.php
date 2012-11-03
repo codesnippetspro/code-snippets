@@ -492,37 +492,37 @@ class Code_Snippets {
 		$version = 2.35;
 		wp_register_script(
 			'codemirror',
-			plugins_url( 'js/codemirror.js', $this->file ),
+			plugins_url( 'assets/lib/codemirror.js', $this->file ),
 			false,
 			$version
 		);
 		wp_register_script(
 			'codemirror-php',
-			plugins_url( 'js/php.js', $this->file ),
+			plugins_url( 'assets/mode/php.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
 		wp_register_script(
 			'codemirror-xml',
-			plugins_url( 'js/xml.js', $this->file ),
+			plugins_url( 'assets/mode/xml.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
 		wp_register_script(
 			'codemirror-js',
-			plugins_url( 'js/javascript.js', $this->file ),
+			plugins_url( 'assets/mode/javascript.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
 		wp_register_script(
 			'codemirror-css',
-			plugins_url( 'js/css.js', $this->file ),
+			plugins_url( 'assets/mode/css.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
 		wp_register_script(
 			'codemirror-clike',
-			plugins_url( 'js/clike.js', $this->file ),
+			plugins_url( 'assets/mode/clike.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
@@ -531,19 +531,19 @@ class Code_Snippets {
 		
 		wp_register_script(
 			'codemirror-dialog.js',
-			plugins_url( 'js/dialog.js', $this->file ),
+			plugins_url( 'assets/util/dialog.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
 		wp_register_script(
 			'codemirror-searchcursor.js',
-			plugins_url( 'js/searchcursor.js', $this->file ),
+			plugins_url( 'assets/util/searchcursor.js', $this->file ),
 			array( 'codemirror-dialog.js' ),
 			$version
 		);
 		wp_register_script(
 			'codemirror-search.js',
-			plugins_url( 'js/search.js', $this->file ),
+			plugins_url( 'assets/util/search.js', $this->file ),
 			array( 'codemirror-searchcursor.js' ),
 			$version
 		);
@@ -571,13 +571,13 @@ class Code_Snippets {
 		$version = 2.35;
 		wp_register_style(
 			'codemirror',
-			plugins_url( 'css/codemirror.css', $this->file ),
+			plugins_url( 'assets/lib/codemirror.css', $this->file ),
 			false,
 			$version
 		);
 		wp_register_style(
 			'codemirror-dialog',
-			plugins_url( 'css/dialog.css', $this->file ),
+			plugins_url( 'assets/util/dialog.css', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
