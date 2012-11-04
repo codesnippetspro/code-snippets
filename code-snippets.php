@@ -170,17 +170,6 @@ class Code_Snippets {
 		$this->admin_single_url = apply_filters( 'code_snippets_single_url', 'snippet' );
 		$this->admin_import_url = apply_filters( 'code_snippets_import_url', 'import-snippets' );
 		
-		if ( ! get_site_option( 'code_snippets_version' ) ) {
-			
-			// This is the first time the plugin has run
-			
-			$this->add_caps(); // register the capabilities ONCE ONLY
-			
-			if ( is_multisite() ) {
-				$this->add_caps( true ); // register the multisite capabilities ONCE ONLY
-			}
-		}
-		
 		add_action( 'admin_menu', array( $this, 'add_admin_menus' ) );
 		add_action( 'network_admin_menu', array( $this, 'add_network_admin_menus' ) );
 		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
@@ -234,9 +223,6 @@ class Code_Snippets {
 			define( 'CODE_SNIPPETS_SAFE_MODE', CS_SAFE_MODE );
 		}
 		
-		/* bail early if we're on the latest version */
-		if ( ! ($this->current_version < $this->version ) ) return false;
-		
 		/* get the current plugin version from the database */
 		if ( get_option( 'cs_db_version' ) ) {
 			$this->current_version = get_option( 'cs_db_version', $this->version );
@@ -247,13 +233,27 @@ class Code_Snippets {
 			$this->current_version = get_site_option( 'code_snippets_version', $this->version );	
 		}
 		
+		/* bail early if we're on the latest version */
+		if ( ! ( $this->current_version < $this->version ) ) return false;
+		
+		if ( ! get_site_option( 'code_snippets_version' ) ) {
+			
+			/* This is the first time the plugin has run */
+			
+			$this->add_caps(); // register the capabilities ONCE ONLY
+			
+			if ( is_multisite() ) {
+				$this->add_caps( true ); // register the multisite capabilities ONCE ONLY
+			}
+		}
+		
 		/* miagrate the recently_network_activated_snippets to the site options */
-		if ( is_network() && get_option( 'recently_network_activated_snippets' ) ) {
+		if ( is_multisite() && get_option( 'recently_network_activated_snippets' ) ) {
 			add_site_option( 'recently_network_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
 			delete_option( 'recently_network_activated_snippets' );
 		}
 		
-		/* preform version specific upgrades */.
+		/* preform version specific upgrades */
 		
 		if ( $this->current_version < 1.5 ) {
 			global $wpdb;
