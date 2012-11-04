@@ -54,7 +54,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 	
 	function column_name( $item ) {
-		global $cs;
+		global $code_snippets;
 		$screen = get_current_screen();
 		$actions = array(); // Build row actions
 		
@@ -82,7 +82,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	
 		$actions['edit'] = sprintf(
 			'<a href="%s&edit=%s">Edit</a>',
-			$cs->admin_single_url,
+			$code_snippets->admin_single_url,
 			$item['id']
 		);
 		$actions['export'] = sprintf(
@@ -146,7 +146,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'deactivate-selected' => $screen->is_network ? __('Network Deactivate', 'code-snippets') : __('Deactivate', 'code-snippets'),
 			'export-selected' => __('Export', 'code-snippets'),
 			'delete-selected' => __('Delete', 'code-snippets'),
-			'exportphp-selected' => __('Export to PHP', 'code-snippets'),
+			'export-php-selected' => __('Export to PHP', 'code-snippets'),
 		);
 		return $actions;
 	}
@@ -216,15 +216,15 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Processes a bulk action
 	 *
-	 * @uses $cs->activate() To activate snippets
-	 * @uses $cs->deactivate() To deactivate snippets
-	 * @uses $cs->delete_snippet() To delete snippets
-	 * @uses cs_export() To export selected snippets
+	 * @uses $code_snippets->activate() To activate snippets
+	 * @uses $code_snippets->deactivate() To deactivate snippets
+	 * @uses $code_snippets->delete_snippet() To delete snippets
+	 * @uses $code_snippets->export() To export selected snippets
 	 * @uses wp_redirect To pass the results to the current page
 	 * @uses add_query_arg() To append the results to the current URI
 	 */
 	function process_bulk_actions() {
-		global $cs;
+		global $code_snippets;
 		if ( ! isset( $_POST[ $this->_args['singular'] ] ) ) return;
 		$ids = $_POST[ $this->_args['singular'] ];
 		
@@ -233,26 +233,26 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		switch( $this->current_action() ) {
 				
 			case 'activate-selected':
-				$cs->activate( $ids );
+				$code_snippets->activate( $ids );
 				wp_redirect( add_query_arg( 'activate-multi', true ) );
 				break;
 				
 			case 'deactivate-selected':
-				$cs->deactivate( $ids );
+				$code_snippets->deactivate( $ids );
 				wp_redirect( add_query_arg( 'deactivate-multi', true ) );
 				break;
 				
 			case 'export-selected':
-				$cs->export( $ids );
+				$code_snippets->export( $ids );
 				break;
 				
-			case 'exportphp-selected':
-				$cs->exportphp( $ids );
+			case 'export-php-selected':
+				$code_snippets->export_php( $ids );
 				break;
 				
 			case 'delete-selected':
 				foreach( $ids as $id ) {
-					$cs->delete_snippet( $id );
+					$code_snippets->delete_snippet( $id );
 				}
 				wp_redirect( add_query_arg( 'delete-multi', true ) );
 				break;
@@ -268,13 +268,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 	
 	function no_items() {
-		global $cs;
-		printf( __('You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets'), $cs->admin_single_url );
+		global $code_snippets;
+		printf( __('You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets'), $code_snippets->admin_single_url );
 	}
 	
 	function prepare_items() {
 	
-		global $wpdb, $cs, $status, $snippets, $totals, $page, $orderby, $order, $s;
+		global $wpdb, $code_snippets, $status, $snippets, $totals, $page, $orderby, $order, $s;
 
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
 		
@@ -285,7 +285,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$this->process_bulk_actions();
 		
 		$snippets = array(
-			'all' => $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $cs->table" ), ARRAY_A ),
+			'all' => $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $code_snippets->table" ), ARRAY_A ),
 			'search' => array(),
 			'active' => array(),
 			'inactive' => array(),

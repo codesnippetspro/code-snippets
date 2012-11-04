@@ -12,7 +12,7 @@ $screen->add_help_tab( array(
 	'title'		=> __('Safe Mode', 'code-snippets'),
 	'content'	=>
 		'<p>' . __('Be sure to check your snippets for errors before you activate them, as a faulty snippet could bring your whole blog down. If your site starts doing strange things, deactivate all your snippets and activate them one at a time.', 'code-snippets') . '</p>' .
-		'<p>' . __("If something goes wrong with a snippet and you can't use WordPress, you can cause all snippets to stop executing by adding <code>define('CS_SAFE_MODE', true);</code> to your <code>wp-config.php</code> file. After you have deactivated the offending snippet, you can turn off safe mode by removing this line or replacing <strong>true</strong> with <strong>false</strong>.", 'code-snippets') . '</p>'
+		'<p>' . __("If something goes wrong with a snippet and you can't use WordPress, you can cause all snippets to stop executing by adding <code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-config.php</code> file. After you have deactivated the offending snippet, you can turn off safe mode by removing this line or replacing <strong>true</strong> with <strong>false</strong>.", 'code-snippets') . '</p>'
 ) );
 
 $screen->add_help_tab( array(
@@ -27,5 +27,5 @@ $screen->set_help_sidebar(
 	'<p><strong>' . __('For more information:', 'code-snippets') . '</strong></p>' .
 	'<p>' . __('<a href="http://wordpress.org/extend/plugins/code-snippets" target="_blank">WordPress Extend</a></p>', 'code-snippets') . '</p>' .
 	'<p>' . __('<a href="http://wordpress.org/support/plugin/code-snippets" target="_blank">Support Forums</a>', 'code-snippets') . '</p>' .
-	'<p>' . __('<a href="http://cs.bungeshea.com" target="_blank">Project Website</a>', 'code-snippets') .  '</p>'
+	'<p>' . __('<a href="http://code-snippets.bungeshea.com/" target="_blank">Project Website</a>', 'code-snippets') .  '</p>'
 );

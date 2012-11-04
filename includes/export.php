@@ -3,15 +3,15 @@
 /**
  * This file handles the export functions
  *
- * It's better to call the $cs->export()
- * and $cs->exportphp() methods then
+ * It's better to call the $code_snippets->export()
+ * and $code_snippets->export_php() methods then
  * directly use those in this file
  *
  * @package Code Snippets
  * @subpackage Export
  */
 
-if ( ! function_exists( 'cs_export') ) :
+if ( ! function_exists( 'code_snippets_export') ) :
 
 /**
  * Exports seleted snippets to a XML or PHP file.
@@ -20,24 +20,25 @@ if ( ! function_exists( 'cs_export') ) :
  * @since Code Snippets 1.3
  *
  * @param array $ids The IDs of the snippets to export
- * $param string $format The format of the export file
+ * @param string $format The format of the export file
+ * @return void
  */
-function cs_export( $ids, $format = 'xml' ) {
+function code_snippets_export( $ids, $format = 'xml' ) {
 	
-	global $wpdb, $cs;
+	global $wpdb, $code_snippets;
 	
 	$ids = (array) $ids;
 	
 	if ( count( $ids ) < 2 ) {
 		// If there is only snippet to export, use its name instead of the site name
-		$entry = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $cs->table WHERE id=%d", $ids ) );
+		$entry = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $code_snippets->table WHERE id=%d", $ids ) );
 		$sitename = sanitize_key( $entry->name );
 	} else {
 		// Otherwise, use the site name as set in Settings > General
 		$sitename = sanitize_key( get_bloginfo( 'name' ) );
 	}
 	
-	$filename = apply_filters( 'cs_export_filename', "{$sitename}.code-snippets.{$format}" );
+	$filename = apply_filters( 'code_snippets_export_filename', "{$sitename}.code-snippets.{$format}" );
 
 	header( 'Content-Disposition: attachment; filename=' . $filename );
 	
@@ -51,7 +52,7 @@ function cs_export( $ids, $format = 'xml' ) {
 		
 			if ( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
 		
-			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $cs->table WHERE id=%d", $id ) );
+			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $code_snippets->table WHERE id=%d", $id ) );
 		
 			echo "\n\t" . '<snippet>';
 			echo "\n\t\t" . "<name>$snippet->name</name>";
@@ -70,7 +71,7 @@ function cs_export( $ids, $format = 'xml' ) {
 		
 			if ( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
 		
-			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $cs->table WHERE id=%d", $id ) );
+			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $code_snippets->table WHERE id=%d", $id ) );
 ?>
 
 /**

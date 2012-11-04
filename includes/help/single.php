@@ -17,7 +17,7 @@ $screen->add_help_tab( array(
 			<li><a href="http://www.catswhocode.com/blog/snippets" title="Cats Who Code Snippet Library">Cats Who Code</a></li>
 			<li><a href="http://www.wpfunction.me">WP Function Me</a></li>
 		</ul>', 'code-snippets') .
-		 __('More places to find snippets, as well as a selection of example snippets, can be found in the <a href="http://cs.bungeshea.com/docs/finding-snippets/">plugin documentation</a>', 'code-snippets') . '</p>'
+		 __('More places to find snippets, as well as a selection of example snippets, can be found in the <a href="http://code-snippets.bungeshea.com/docs/finding-snippets/">plugin documentation</a>', 'code-snippets') . '</p>'
 ) );
 $screen->add_help_tab( array(
 	'id'		=> 'adding',
@@ -32,5 +32,5 @@ $screen->set_help_sidebar(
 	'<p><strong>' . __('For more information:', 'code-snippets') . '</strong></p>' .
 	'<p>' . __('<a href="http://wordpress.org/extend/plugins/code-snippets" target="_blank">WordPress Extend</a>', 'code-snippets') . '</p>' . 
 	'<p>' . __('<a href="http://wordpress.org/support/plugin/code-snippets" target="_blank">Support Forums</a>', 'code-snippets') . '</p>' .
-	'<p>' . __('<a href="http://cs.bungeshea.com" target="_blank">Project Website</a>', 'code-snippets') .  '</p>'
+	'<p>' . __('<a href="http://code-snippets.bungeshea.com/" target="_blank">Project Website</a>', 'code-snippets') .  '</p>'
 );
