@@ -1,7 +1,7 @@
 # Code Snippets
 
 * Contributors: [bungeshea](http://profiles.wordpress.org/bungeshea)
-* Donate link: http://cs.bungeshea.com/donate/
+* Donate link: http://code-snippets.bungeshea.com/donate/
 * Tags: snippets, code, php, network, multisite
 * Requires at least: 3.3
 * Tested up to: 3.4.2
@@ -21,15 +21,15 @@ You can use a graphical interface similar to the Plugins menu to manage, activat
 
 Although Code Snippets is designed to be easy-to-use and its interface looks, feels and acts as if it was a native part of WordPress, each screen includes a help tab, just in case you get stuck.
 
-Further information, documentation and updates are available on the [plugin homepage](http://cs.bungeshea.com).
+Further information, documentation and updates are available on the [plugin homepage](http://code-snippets.bungeshea.com/).
 
 [As featured on the WPMU blog](http://wpmu.org/wordpress-code-snippets)
 
-If you have any feedback, issues or suggestions for improvements please leave a topic in the [Support Forum](http://wordpress.org/support/plugin/code-snippets) and if you like the plugin please give it a perfect rating at [WordPress.org](http://wordpress.org/extend/plugins/code-snippets)
+If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](http://wordpress.org/support/plugin/code-snippets). If you like the plugin, or it is useful to you in any way, please review it on [WordPress.org](http://wordpress.org/support/view/plugin-reviews/code-snippets)
 
 ## Installation
 
-### Automatic installation 
+### Automatic installation
 
 1. Log into your WordPress admin
 2. Click __Plugins__
@@ -47,9 +47,11 @@ If you have any feedback, issues or suggestions for improvements please leave a 
 
 'Network Activating' Code Snippets through the Network Dashboard will enable a special interface for running snippets across the entire network.
 
+[youtube http://www.youtube.com/watch?v=aywXBTaffr8]
+
 ## Frequently Asked Questions
 
-Further documentation available on the [plugin website](http://cs.bungeshea.com/docs/).
+Further documentation available on the [plugin website](http://code-snippets.bungeshea.com/docs/).
 
 ### Do I need to include the `<?php`, `<?` or `?>` tags in my snippet?
 No, just copy all the content inside those tags.
@@ -79,26 +81,32 @@ You can run snippets across an entire multisite network by 'Network Activating' 
 That's great! Let me know by starting (or adding to) a topic in the [Support Forums](http://wordpress.org/support/plugin/code-snippets/).
 
 ### I want to contribute to and help develop the Code Snippets plugin!
-That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets), and also be sure to check out the [development page](http://cs.bungeshea.com/dev) on the [project website](http://cs.bungeshea.com).
+That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets), and also be sure to check out the [development page](http://code-snippets.bungeshea.com/dev/) on the [plugin's website](http://code-snippets.bungeshea.com/).
 
 ## Screenshots
 
 ### Managing existing snippets
 ![Managing existing snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-1.jpg "Managing existing snippets")
+
 ### Managing network-wide snippets
 ![Managing network-wide snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-2.jpg "Managing network-wide snippets")
+
 ### Adding a new snippet
 ![Adding a new snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-3.jpg "Adding a new snippet")
+
 ### Editing a snippet
 ![Editing a snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-4.jpg "Editing a snippet")
+
 ### Importing snippets from an XML file
 ![Importing snippets from an XML file](https://raw.github.com/bungeshea/code-snippets/master/screenshot-5.jpg "Importing snippets from an XML file")
 
 ## Changelog
 
-### 1.5.1
+### 1.6
 * Updated CodeMirror to version 2.35
 * Improved compatibility with Clean Options plugin
+* Code improvements
+* Current line of code editor is highlighted
 
 ### 1.5
 * Updated CodeMirror to version 2.33
@@ -121,7 +129,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 * Small improvements
 
 ### 1.3.2
-* Fixed a bug with version 1.3.1
+* Fixed a major bug in version 1.3.1
 
 ### 1.3.1
 * Changed plugin website URI
@@ -147,7 +155,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 
 ## Other Notes
 
-Plugin updates will be posted on the [plugin's homepage](http://cs.bungeshea.com) ([RSS](http://cs.bungeshea.com/feed/)).
+Plugin updates will be posted on the [plugin's homepage](http://code-snippets.bungeshea.com/) ([RSS](http://code-snippets.bungeshea.com/feed/)).
 
 * Snippets are stored in the `wp_snippets` table in the WordPress database (the table name may differ depending on what your table prefix is set to).
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
