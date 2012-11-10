@@ -285,7 +285,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$this->process_bulk_actions();
 		
 		$snippets = array(
-			'all' => $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $code_snippets->table" ), ARRAY_A ),
+			'all' => $wpdb->get_results( "SELECT * FROM $code_snippets->table", ARRAY_A ),
 			'search' => array(),
 			'active' => array(),
 			'inactive' => array(),
