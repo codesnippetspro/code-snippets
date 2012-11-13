@@ -260,7 +260,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			case 'clear-recent-list':
 				$screen = get_current_screen();
 				if ( $screen->is_network )
-					update_option( 'recently_network_activated_snippets', array() );
+					update_site_option( 'recently_activated_snippets', array() );
 				else
 					update_option( 'recently_activated_snippets', array() );
 				break;
@@ -293,7 +293,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		);
 		
 		if ( $screen->is_network )
-			$recently_activated = get_option( 'recently_network_activated_snippets', array() );
+			$recently_activated = get_site_option( 'recently_activated_snippets', array() );
 		else
 			$recently_activated = get_option( 'recently_activated_snippets', array() );
 
@@ -303,7 +303,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				unset( $recently_activated[$key] );
 				
 		if ( $screen->is_network )
-			update_option( 'recently_network_activated_snippets', $recently_activated );
+			update_site_option( 'recently_activated_snippets', $recently_activated );
 		else
 			update_option( 'recently_activated_snippets', $recently_activated );
 		

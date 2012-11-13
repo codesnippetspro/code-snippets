@@ -249,7 +249,7 @@ class Code_Snippets {
 		
 		/* miagrate the recently_network_activated_snippets to the site options */
 		if ( is_multisite() && get_option( 'recently_network_activated_snippets' ) ) {
-			add_site_option( 'recently_network_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
+			add_site_option( 'recently_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
 			delete_option( 'recently_network_activated_snippets' );
 		}
 		
@@ -525,12 +525,14 @@ class Code_Snippets {
 	 * @return void
 	 */
 	function load_stylesheet() {
+		
 		wp_enqueue_style(
 			'code-snippets',
 			plugins_url( 'assets/style.css', $this->file ),
 			false,
 			$this->version
 		);
+	
 	}
 	
 	/**
@@ -545,39 +547,47 @@ class Code_Snippets {
 	 * @return void
 	 */
 	function load_editor_scripts() {
+		
+		/* CodeMirror package version */
 		$version = 2.35;
+	
+		/* CodeMirror base framework */
+	
 		wp_register_script(
 			'codemirror',
 			plugins_url( 'assets/lib/codemirror.js', $this->file ),
 			false,
 			$version
 		);
+	
+		/* CodeMirror modes */
+	
 		wp_register_script(
-			'codemirror-php',
+			'codemirror-mode-php',
 			plugins_url( 'assets/mode/php.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
 		wp_register_script(
-			'codemirror-xml',
+			'codemirror-mode-xml',
 			plugins_url( 'assets/mode/xml.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
 		wp_register_script(
-			'codemirror-js',
+			'codemirror-mode-js',
 			plugins_url( 'assets/mode/javascript.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
 		wp_register_script(
-			'codemirror-css',
+			'codemirror-mode-css',
 			plugins_url( 'assets/mode/css.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
 		wp_register_script(
-			'codemirror-clike',
+			'codemirror-mode-clike',
 			plugins_url( 'assets/mode/clike.js', $this->file ),
 			array( 'codemirror' ),
 			$version
@@ -586,31 +596,33 @@ class Code_Snippets {
 		/* CodeMirror utilities */
 		
 		wp_register_script(
-			'codemirror-dialog.js',
+			'codemirror-util-dialog',
 			plugins_url( 'assets/util/dialog.js', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
 		wp_register_script(
-			'codemirror-searchcursor.js',
+			'codemirror-util-searchcursor',
 			plugins_url( 'assets/util/searchcursor.js', $this->file ),
-			array( 'codemirror-dialog.js' ),
+			array( 'codemirror-util-dialog' ),
 			$version
 		);
 		wp_register_script(
-			'codemirror-search.js',
+			'codemirror-util-search',
 			plugins_url( 'assets/util/search.js', $this->file ),
-			array( 'codemirror-searchcursor.js' ),
+			array( 'codemirror-util-searchcursor' ),
 			$version
 		);
+	
+		/* Enqueue the registered scripts */
 		
 		wp_enqueue_script( array(
-			'codemirror-xml',
-			'codemirror-js',
-			'codemirror-css',
-			'codemirror-clike',
-			'codemirror-php',
-			'codemirror-search.js',
+			'codemirror-mode-xml',
+			'codemirror-mode-js',
+			'codemirror-mode-css',
+			'codemirror-mode-clike',
+			'codemirror-mode-php',
+			'codemirror-util-search',
 		) );
 	}
 	
@@ -626,23 +638,35 @@ class Code_Snippets {
 	 * @return void
 	 */
 	function load_editor_styles() {
+		
+		/* CodeMirror package version */
 		$version = 2.35;
+	
+		/* CodeMirror base framework */
+		
 		wp_register_style(
 			'codemirror',
 			plugins_url( 'assets/lib/codemirror.css', $this->file ),
 			false,
 			$version
 		);
+	
+		/* CodeMirror utilities */
+	
 		wp_register_style(
-			'codemirror-dialog',
+			'codemirror-util-dialog',
 			plugins_url( 'assets/util/dialog.css', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
+	
+		/* Enqueue the registered stylesheets */
+	
 		wp_enqueue_style( array(
 			'codemirror',
-			'codemirror-dialog'
+			'codemirror-util-dialog'
 		) );
+	
 	}
 	
 	/**
@@ -713,9 +737,9 @@ class Code_Snippets {
 		}
 		
 		if ( $network )
-			update_option(
-				'recently_network_activated_snippets',
-				$recently_active + (array) get_option( 'recently_network_activated_snippets' )
+			update_site_option(
+				'recently_activated_snippets',
+				$recently_active + (array) get_site_option( 'recently_activated_snippets' )
 			);
 		else
 			update_option(
@@ -791,7 +815,7 @@ class Code_Snippets {
 	 *
 	 * @uses $this->save_snippet() To add the snippets to the database
 	 *
-	 * @param file $file The XML file to import
+	 * @param file $file The path to the XML file to import
 	 * @return mixed The number of snippets imported on success, false on failure
 	 */
 	public function import( $file, $network = null ) {
@@ -1166,7 +1190,7 @@ endif; // class exists check
 global $code_snippets;
 $code_snippets = new Code_Snippets;
 
-/* set up a pointer in the old variable for backwards-compatibility */
+/* set up a pointer in the old variable (for backwards-compatibility) */
 global $cs;
 $cs = &$code_snippets;
 
@@ -1203,7 +1227,7 @@ function code_snippets_uninstall() {
 			restore_current_blog();
 		}
 		$wpdb->query( "DROP TABLE IF EXISTS $code_snippets->ms_table" );
-		delete_site_option( 'recently_network_activated_snippets' );
+		delete_site_option( 'recently_activated_snippets' );
 		$code_snippets->remove_caps( true );
 	} else {
 		$wpdb->query( "DROP TABLE IF EXISTS $code_snippets->table" );
