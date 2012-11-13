@@ -105,8 +105,13 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 ### 1.6
 * Updated CodeMirror to version 2.35
 * Improved compatibility with Clean Options plugin
-* Code improvements an optimization
-* Current line of code editor is highlighted
+* Code improvements and optimization
+	* Changed namespace from `cs` to `code_snippets`
+	* Store multisite only options in site options table
+	* Move css and js under assets
+	* Organized CodeMirror scripts
+	* Improved updating process
+* Current line of code editor is now highlighted
 
 ### 1.5
 * Updated CodeMirror to version 2.33
