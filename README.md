@@ -112,6 +112,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 	* Organized CodeMirror scripts
 	* Improved updating process
 * Current line of code editor is now highlighted
+* Highlight matches of selected text in code editor
 
 ### 1.5
 * Updated CodeMirror to version 2.33

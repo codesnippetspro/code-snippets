@@ -59,6 +59,7 @@
 	min-height: 242px;
 }
 
-.activeline {
-	background: #e8f2ff !important;
-}
+.activeline { background: #e8f2ff !important; }
+
+ span.CodeMirror-matchhighlight { background: #e9e9e9 }
+ .CodeMirror-focused span.CodeMirror-matchhighlight { background: #e7e4ff; !important }

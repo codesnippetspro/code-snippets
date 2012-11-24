@@ -93,7 +93,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 == Changelog ==
 
 = 1.6 =
-* Updated CodeMirror to version 2.35
+* Updated CodeMirror to version 2.36
 * Improved compatibility with Clean Options plugin
 * Code improvements and optimization
 	* Changed namespace from `cs` to `code_snippets`
@@ -102,6 +102,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 	* Organized CodeMirror scripts
 	* Improved updating process
 * Current line of code editor is now highlighted
+* Highlight matches of selected text in code editor
 
 = 1.5 =
 * Updated CodeMirror to version 2.33
