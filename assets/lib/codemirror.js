@@ -1,4 +1,4 @@
-// CodeMirror version 2.35
+// CodeMirror version 2.36
 //
 // All functions that need access to the editor's state live inside
 // the CodeMirror function. Below that, at the bottom of the file,
@@ -232,6 +232,7 @@ window.CodeMirror = (function() {
         var off = eltOffset(lineSpace);
         return coordsChar(coords.x - off.left, coords.y - off.top);
       },
+      defaultTextHeight: function() { return textHeight(); },
       markText: operation(markText),
       setBookmark: setBookmark,
       findMarksAt: findMarksAt,
@@ -346,6 +347,11 @@ window.CodeMirror = (function() {
         return {x: scroller.scrollLeft, y: scrollbar.scrollTop,
                 height: scrollbar.scrollHeight, width: scroller.scrollWidth};
       },
+      scrollIntoView: function(pos) {
+        var coords = localCoords(pos ? clipPos(pos) : sel.inverted ? sel.from : sel.to);
+        scrollIntoView(coords.x, coords.y, coords.x, coords.yBot);
+      },
+
       setSize: function(width, height) {
         function interpret(val) {
           val = String(val);
@@ -395,7 +401,7 @@ window.CodeMirror = (function() {
     }
 
     function onScrollBar(e) {
-      if (scrollbar.scrollTop != lastScrollTop) {
+      if (Math.abs(scrollbar.scrollTop - lastScrollTop) > 1) {
         lastScrollTop = scroller.scrollTop = scrollbar.scrollTop;
         updateDisplay([]);
       }
@@ -404,7 +410,7 @@ window.CodeMirror = (function() {
     function onScrollMain(e) {
       if (options.fixedGutter && gutter.style.left != scroller.scrollLeft + "px")
         gutter.style.left = scroller.scrollLeft + "px";
-      if (scroller.scrollTop != lastScrollTop) {
+      if (Math.abs(scroller.scrollTop - lastScrollTop) > 1) {
         lastScrollTop = scroller.scrollTop;
         if (scrollbar.scrollTop != lastScrollTop)
           scrollbar.scrollTop = lastScrollTop;
@@ -637,7 +643,7 @@ window.CodeMirror = (function() {
       if (handled) {
         e_preventDefault(e);
         restartBlink();
-        if (ie) { e.oldKeyCode = e.keyCode; e.keyCode = 0; }
+        if (ie_lt9) { e.oldKeyCode = e.keyCode; e.keyCode = 0; }
       }
       return handled;
     }
@@ -2174,7 +2180,7 @@ window.CodeMirror = (function() {
   keyMap.emacsy = {
     "Ctrl-F": "goCharRight", "Ctrl-B": "goCharLeft", "Ctrl-P": "goLineUp", "Ctrl-N": "goLineDown",
     "Alt-F": "goWordRight", "Alt-B": "goWordLeft", "Ctrl-A": "goLineStart", "Ctrl-E": "goLineEnd",
-    "Ctrl-V": "goPageUp", "Shift-Ctrl-V": "goPageDown", "Ctrl-D": "delCharRight", "Ctrl-H": "delCharLeft",
+    "Ctrl-V": "goPageDown", "Shift-Ctrl-V": "goPageUp", "Ctrl-D": "delCharRight", "Ctrl-H": "delCharLeft",
     "Alt-D": "delWordRight", "Alt-Backspace": "delWordLeft", "Ctrl-K": "killLine", "Ctrl-T": "transposeChars"
   };
 
@@ -2232,15 +2238,13 @@ window.CodeMirror = (function() {
     if (textarea.form) {
       // Deplorable hack to make the submit method do the right thing.
       var rmSubmit = connect(textarea.form, "submit", save, true);
-      if (typeof textarea.form.submit == "function") {
-        var realSubmit = textarea.form.submit;
-        textarea.form.submit = function wrappedSubmit() {
-          save();
-          textarea.form.submit = realSubmit;
-          textarea.form.submit();
-          textarea.form.submit = wrappedSubmit;
-        };
-      }
+      var realSubmit = textarea.form.submit;
+      textarea.form.submit = function wrappedSubmit() {
+        save();
+        textarea.form.submit = realSubmit;
+        textarea.form.submit();
+        textarea.form.submit = wrappedSubmit;
+      };
     }
 
     textarea.style.display = "none";
@@ -3102,8 +3106,10 @@ window.CodeMirror = (function() {
       if (collection[i] == elt) return i;
     return -1;
   }
+  var nonASCIISingleCaseWordChar = /[\u3040-\u309f\u30a0-\u30ff\u3400-\u4db5\u4e00-\u9fcc]/;
   function isWordChar(ch) {
-    return /\w/.test(ch) || ch.toUpperCase() != ch.toLowerCase() || /[\u4E00-\u9FA5]/.test(ch);
+    return /\w/.test(ch) || ch > "\x80" &&
+      (ch.toUpperCase() != ch.toLowerCase() || nonASCIISingleCaseWordChar.test(ch));
   }
 
   // See if "".split is the broken IE version, if so, provide an
@@ -3159,7 +3165,7 @@ window.CodeMirror = (function() {
     for (var i = 1; i <= 12; i++) keyNames[i + 111] = keyNames[i + 63235] = "F" + i;
   })();
 
-  CodeMirror.version = "2.35";
+  CodeMirror.version = "2.36";
 
   return CodeMirror;
 })();

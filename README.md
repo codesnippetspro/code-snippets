@@ -111,7 +111,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 ## Changelog
 
 ### 1.6
-* Updated CodeMirror to version 2.35
+* Updated CodeMirror to version 2.36
 * Improved compatibility with Clean Options plugin
 * Code improvements and optimization
 	* Changed namespace from `cs` to `code_snippets`
