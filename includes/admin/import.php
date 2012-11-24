@@ -2,8 +2,8 @@
 	<div id="message" class="updated fade"><p><?php
 		printf(
 			_n(
-				'Imported <strong>%s</strong> snippet.',
-				'Imported <strong>%s</strong> snippets.',
+				'Imported <strong>%d</strong> snippet.',
+				'Imported <strong>%d</strong> snippets.',
 				$_REQUEST['imported'],
 				'code-snippets'
 			),
