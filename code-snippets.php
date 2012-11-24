@@ -139,8 +139,8 @@ class Code_Snippets {
 		$this->create_table();	// create the snippet tables if they do not exist
 		$this->upgrade();		// check if we need to change some stuff
 		if ( is_multisite() ) {  // perform multisite-specific actions
-			$this->create_table( true );
-			$this->run_snippets( true );
+			$this->create_table( 'multisite' );
+			$this->run_snippets( 'mulsisite' );
 		}
 		$this->run_snippets();	// execute the snippets
 	}
@@ -219,7 +219,7 @@ class Code_Snippets {
 	function upgrade() {
 		
 		/* add backwards-compatibly for the CS_SAFE_MODE constant */
-		if ( defined( 'CS_SAFE_MODE' ) ) {
+		if ( defined( 'CS_SAFE_MODE' ) && ! defined( 'CODE_SNIPPETS_SAFE_MODE' ) ) {
 			define( 'CODE_SNIPPETS_SAFE_MODE', CS_SAFE_MODE );
 		}
 		
@@ -243,7 +243,7 @@ class Code_Snippets {
 			$this->add_caps(); // register the capabilities ONCE ONLY
 			
 			if ( is_multisite() ) {
-				$this->add_caps( true ); // register the multisite capabilities ONCE ONLY
+				$this->add_caps( 'multisite' ); // register the multisite capabilities ONCE ONLY
 			}
 		}
 		
@@ -307,14 +307,17 @@ class Code_Snippets {
 	 *
 	 * @uses $this->setup_roles() To register the capabilities
 	 *
-	 * @param bool $multisite Add site-specific or multisite-specific capabilities?
+	 * @param string $scope Add site-specific or multisite-specific capabilities?
 	 * @return void
 	 */
-	public function add_caps( $multisite = false ) {
+	public function add_caps( $scope = '' ) {
+	
+		$multisite = ( $scope == 'multisite' || $scope == 'network' ? true : false );
+	
 		if ( $multisite && is_multisite() )
-			$this->setup_ms_roles( true );
+			$this->setup_ms_roles( 'add' );
 		else
-			$this->setup_roles( true );
+			$this->setup_roles( 'add' );
 	}
 	
 	/**
@@ -325,14 +328,17 @@ class Code_Snippets {
 	 *
 	 * @uses $this->setup_roles() To register the capabilities
 	 *
-	 * @param bool $multisite Add site-specific or multisite-specific capabilities?
+	 * @param string $scope Add site-specific or multisite-specific capabilities?
 	 * @return void
 	 */
-	public function remove_caps( $multisite = false ) {
+	public function remove_caps( $scope = '' ) {
+	
+		$multisite = ( $scope == 'multisite' || $scope == 'network' ? true : false );
+		
 		if ( $multisite && is_multisite() )
-			$this->setup_ms_roles( false );
+			$this->setup_ms_roles( 'remove' );
 		else
-			$this->setup_roles( false );
+			$this->setup_roles( 'remove' );
 	}
 	
 	/**
@@ -344,7 +350,17 @@ class Code_Snippets {
 	 * @param bool $install True to add the capabilities, false to remove
 	 * @return void
 	 */
-	function setup_roles( $install = true ) {
+	function setup_roles( $action = 'install' ) {
+	
+		if ( $action == 'install' || $action = 'add' )
+			$install = true;
+			
+		elseif ( $action == 'uninstall' || $action = 'remove' )
+			$install = false;	
+		
+		else
+			$install = true;
+		
 		
 		$this->caps = apply_filters( 'code_snippets_caps', array(
 			'manage_snippets',
@@ -368,12 +384,21 @@ class Code_Snippets {
 	 * @since Code Snippets 1.5
 	 * @access private
 	 *
-	 * @param bool $install True to add the capabilities, false to remove
+	 * @param string $action True to add the capabilities, false to remove
 	 * @return void
 	 */
-	function setup_ms_roles( $install = true ) {
+	function setup_ms_roles( $action = 'install' ) {
 	
 		if ( ! is_multisite() ) return;
+		
+		if ( $action == 'install' || $action = 'add' )
+			$install = true;
+			
+		elseif ( $action == 'uninstall' || $action = 'remove' )
+			$install = false;	
+		
+		else
+			$install = true;
 		
 		$this->network_caps = apply_filters( 'code_snippets_network_caps', array(
 			'manage_network_snippets',
@@ -1158,11 +1183,14 @@ class Code_Snippets {
 	 * @uses $wpdb To grab the active snippets from the database
 	 * @uses $this->execute_snippet() To execute a snippet
 	 *
-	 * @param bool $network Execute multisite-wide (true) or site-wide (false) snippets?
+	 * @param string $scope Execute multisite-wide or site-wide snippets?
 	 * @return void
 	 */
-	function run_snippets( $network = false ) {
+	function run_snippets( $scope = '' ) {
+	
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) return;
+		
+		$multisite = ( $scope == 'multisite' || $scope == 'network' ? true : false );
 		
 		$table = ( $network ? $this->ms_table : $this->table );
 		
@@ -1228,7 +1256,7 @@ function code_snippets_uninstall() {
 		}
 		$wpdb->query( "DROP TABLE IF EXISTS $code_snippets->ms_table" );
 		delete_site_option( 'recently_activated_snippets' );
-		$code_snippets->remove_caps( true );
+		$code_snippets->remove_caps( 'multisite' );
 	} else {
 		$wpdb->query( "DROP TABLE IF EXISTS $code_snippets->table" );
 		delete_option( 'recently_activated_snippets' );
