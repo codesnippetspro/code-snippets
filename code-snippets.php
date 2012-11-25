@@ -4,7 +4,7 @@
  * Code Snippets - An easy, clean and simple way to add code snippets to your site.
  *
  * If you're interested in helping to develop Code Snippets, or perhaps contribute
- * to the localization, please see http://code-snippets.bungeshea.com/dev/.
+ * to the localization, please see http://code-snippets.bungeshea.com/development/
  *
  * @package Code Snippets
  * @subpackage Main
@@ -179,17 +179,54 @@ class Code_Snippets {
 	}
 	
 	/**
+	 * Return the appropriate snippet table name
+	 *
+	 * @since Code Snippets 1.6
+	 * @access private
+	 *
+	 * @param string $scope Retrieve the multisite table name or the site table name?
+	 * @param bool $check_screen Query the current screen if no scope passed?
+	 * @return string $table The snippet table name
+	 */
+	function get_table_name( $scope = '', $check_screen = true ) {
+	
+		if ( ! is_multisite() ) {
+			$network = false;
+		}
+		elseif ( empty( $network ) && $check_screen ) {
+			/* if no scope is set, query the current screen to see if in network admin */
+			$screen = get_current_screen();
+			$network = $screen->is_network;
+		}
+		elseif ( $scope == 'multisite' || $scope == 'network' ) {
+			$network = true;
+		}
+		elseif ( $scope == 'site' ) {
+			$network = false;
+		}
+		else {
+			$network = false;
+		}
+		
+		$table = ( $network ? $this->ms_table : $this->table );
+		
+		return $table;
+	}
+	
+	/**
 	 * Create the snippet table if it does not already exist
 	 *
 	 * @since Code Snippets 1.2
 	 * @access private
 	 *
-	 * @param bool $network
+	 * @uses $this->get_table_name() To retrieve the name of the snippet table
+	 *
+	 * @param string $scope Create a multisite-wide or site-wide table?
 	 * @return void
 	 */
-	function create_table( $network = false ) {
+	function create_table( $scope = 'site' ) {
 		
-		$table = ( $network ? $this->ms_table : $this->table );
+		$table = $this->get_table_name( $scope, false );
 		
 		global $wpdb;
 		
@@ -288,7 +325,7 @@ class Code_Snippets {
 	 * Place it in this plugin's "languages" folder and name it "code-snippets-[value in wp-config].mo"
 	 *
 	 * If you wish to contribute a language file to be included in the Code Snippets package,
-	 * please see the plugin's development website at http://code-snippets.bungeshea.com/dev/.
+	 * please see the plugin's development website at http://code-snippets.bungeshea.com/development/
 	 *
 	 * @since Code Snippets 1.5
 	 * @access private
@@ -312,9 +349,9 @@ class Code_Snippets {
 	 */
 	public function add_caps( $scope = '' ) {
 	
-		$multisite = ( $scope == 'multisite' || $scope == 'network' ? true : false );
+		$network = ( $scope == 'multisite' || $scope == 'network' ? true : false );
 	
-		if ( $multisite && is_multisite() )
+		if ( $network && is_multisite() )
 			$this->setup_ms_roles( 'add' );
 		else
 			$this->setup_roles( 'add' );
@@ -333,9 +370,9 @@ class Code_Snippets {
 	 */
 	public function remove_caps( $scope = '' ) {
 	
-		$multisite = ( $scope == 'multisite' || $scope == 'network' ? true : false );
+		$network = ( $scope == 'multisite' || $scope == 'network' ? true : false );
 		
-		if ( $multisite && is_multisite() )
+		if ( $network && is_multisite() )
 			$this->setup_ms_roles( 'remove' );
 		else
 			$this->setup_roles( 'remove' );
@@ -347,7 +384,7 @@ class Code_Snippets {
 	 * @since Code Snippets 1.5
 	 * @access private
 	 *
-	 * @param bool $install True to add the capabilities, false to remove
+	 * @param string $install True to add the capabilities, false to remove
 	 * @return void
 	 */
 	function setup_roles( $action = 'install' ) {
@@ -384,7 +421,7 @@ class Code_Snippets {
 	 * @since Code Snippets 1.5
 	 * @access private
 	 *
-	 * @param string $action True to add the capabilities, false to remove
+	 * @param string $action Add or remove the capabilities
 	 * @return void
 	 */
 	function setup_ms_roles( $action = 'install' ) {
@@ -514,7 +551,7 @@ class Code_Snippets {
 	}
 	
 	/**
-	 * Preform necessary tasks on the subpages such as setting the URLs
+	 * Preform necessary tasks on the subpages such as setting the urls
 	 * and enqueueing the styles and scripts
 	 *
 	 * @since Code Snippets 1.5
@@ -574,7 +611,7 @@ class Code_Snippets {
 	function load_editor_scripts() {
 		
 		/* CodeMirror package version */
-		$version = 2.35;
+		$version = 2.36;
 	
 		/* CodeMirror base framework */
 	
@@ -665,7 +702,7 @@ class Code_Snippets {
 	function load_editor_styles() {
 		
 		/* CodeMirror package version */
-		$version = 2.35;
+		$version = 2.36;
 	
 		/* CodeMirror base framework */
 		
@@ -702,23 +739,20 @@ class Code_Snippets {
 	 *
 	 * @uses $wpdb To set the snippets' active status
 	 *
-	 * @param array $ids The IDs of the snippets to activate
-	 * @param bool $network Are the snippets network-wide (true) or site-wide (false)?
+	 * @param array $ids The ids of the snippets to activate
+	 * @param string $scope Are the snippets multisite-wide or site-wide?
 	 * @return void
 	 */
-	public function activate( $ids, $network = null ) {
+	public function activate( $ids, $scope = '' ) {
 		global $wpdb;
 		
 		$ids = (array) $ids;
-		
-		if ( ! isset( $network ) ) {
-			$screen = get_current_screen();
-			$network = $screen->is_network;
-		}
+			
+		$table = $this->get_table_name( $scope );
 		
 		foreach( $ids as $id ) {
 			$wpdb->update(
-				( $network ? $this->ms_table : $this->table ),
+				$table,
 				array( 'active' => '1' ),
 				array( 'id' => $id ),
 				array( '%d' ),
@@ -736,19 +770,16 @@ class Code_Snippets {
 	 * @uses $wpdb To set the snippets' active status
 	 *
 	 * @param array $ids The IDs of the snippets to deactivate
-	 * @param bool $network Are the snippets network-wide (true) or site-wide (false)?
+	 * @param string $scope Are the snippets multisite-wide or site-wide?
 	 * @return void
 	 */
-	public function deactivate( $ids, $network = null ) {
+	public function deactivate( $ids, $scope = '' ) {
 		global $wpdb;
 		
 		$ids = (array) $ids;
 		$recently_active = array();
 		
-		if ( ! isset( $network ) ) {
-			$screen = get_current_screen();
-			$network = $screen->is_network;
-		}
+		$table = $this->get_table_name( $scope );
 		
 		foreach( $ids as $id ) {
 			$wpdb->update(
@@ -773,15 +804,10 @@ class Code_Snippets {
 			);
 	}
 	
-	public function delete_snippet( $id, $network = null ) {
+	public function delete_snippet( $id, $scope = '' ) {
 		global $wpdb;
 		
-		if ( ! isset( $network ) ) {
-			$screen = get_current_screen();
-			$network = $screen->is_network;
-		}
-		
-		$table = ( $network ? $this->ms_table : $this->table );
+		$table = get_table_name( $scope );
 		$id = intval( $id );
 		
 		$wpdb->query( "DELETE FROM $table WHERE id='$id' LIMIT 1" );
@@ -794,11 +820,12 @@ class Code_Snippets {
 	 * @access public
 	 *
 	 * @uses $wpdb To update/add the snippet to the database
+	 * @uses $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
 	 * @param array $snippet The snippet to add/update to the database
 	 * @return int|bool The ID of the snippet on success, false on failure
 	 */
-	public function save_snippet( $snippet, $network = null ) {	
+	public function save_snippet( $snippet, $scope = '' ) {	
 		global $wpdb;
 		
 		$name = mysql_real_escape_string( htmlspecialchars( $snippet['name'] ) );
@@ -808,12 +835,7 @@ class Code_Snippets {
 		if ( empty( $name ) or empty( $code ) )
 			return false;
 		
-		if ( ! isset( $network ) ) {
-			$screen = get_current_screen();
-			$network = $screen->is_network;
-		}
-		
-		$table = ( $network ? $this->ms_table : $this->table );
+		$table = $this->get_table_name( $scope );
 		
 		if ( isset( $snippet['id'] ) && ( intval( $snippet['id'] ) != 0 )  ) {
 			$wpdb->query( "UPDATE $table SET
@@ -841,9 +863,10 @@ class Code_Snippets {
 	 * @uses $this->save_snippet() To add the snippets to the database
 	 *
 	 * @param file $file The path to the XML file to import
+	 * @param string $scope Import into network-wide table or site-wide table?
 	 * @return mixed The number of snippets imported on success, false on failure
 	 */
-	public function import( $file, $network = null ) {
+	public function import( $file, $scope = '' ) {
 	
 		if ( ! file_exists( $file ) || ! is_file( $file ) )
 			return false;
@@ -855,7 +878,7 @@ class Code_Snippets {
 				'name' => $child->name,
 				'description' => $child->description,
 				'code' => $child->code,
-			), $network );
+			), $scope );
 		}
 		return $xml->count();
 	}
@@ -867,19 +890,15 @@ class Code_Snippets {
 	 * @access public
 	 *
 	 * @uses code_snippets_export() To export selected snippets
+	 * @uses $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
 	 * @param array $id An array if the IDs of the snippets to export
-	 * @param bool $network Is the snippet a network-wide (true) or site-wide (false) snippet?
+	 * @param string $scope Is the snippet a network-wide or site-wide snippet?
 	 * @return void
 	 */	
-	public function export( $ids, $network = null ) {
+	public function export( $ids, $scope = '' ) {
 		
-		if ( ! isset( $network ) ) {
-			$screen = get_current_screen();
-			$network = $screen->is_network;
-		}
-		
-		$table = ( $network ? $this->ms_table : $this->table );
+		$table = get_table_name( $scope );
 		
 		if ( ! function_exists( 'code_snippets_export' ) )
 			require_once $this->plugin_dir . 'includes/export.php';
@@ -894,19 +913,15 @@ class Code_Snippets {
 	 * @access public
 	 *
 	 * @uses code_snippets_export() To export selected snippets
+	 * @uses $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
 	 * @param array $id An array if the IDs of the snippets to export
-	 * @param bool $network Is the snippet a network-wide (true) or site-wide (false) snippet?
+	 * @param string $scope Is the snippet a network-wide or site-wide snippet?
 	 * @return void
 	 */	
-	public function export_php( $ids, $network = null ) {
+	public function export_php( $ids, $scope = '' ) {
 		
-		if ( ! isset( $network ) ) {
-			$screen = get_current_screen();
-			$network = $screen->is_network;
-		}
-		
-		$table = ( $network ? $this->ms_table : $this->table );
+		$table = get_table_name( $scope );
 		
 		if ( ! function_exists( 'code_snippets_export' ) )
 			require_once $this->plugin_dir . 'includes/export.php';
@@ -1182,17 +1197,16 @@ class Code_Snippets {
 	 *
 	 * @uses $wpdb To grab the active snippets from the database
 	 * @uses $this->execute_snippet() To execute a snippet
+	 * @uses $this->get_table_name() To retrieve the name of the snippet table
 	 *
-	 * @param string $scope Execute multisite-wide or site-wide snippets?
+	 * @param string $scope Execute network-wide or site-wide snippets?
 	 * @return void
 	 */
-	function run_snippets( $scope = '' ) {
+	function run_snippets( $scope = 'site' ) {
 	
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) return;
 		
-		$multisite = ( $scope == 'multisite' || $scope == 'network' ? true : false );
-		
-		$table = ( $network ? $this->ms_table : $this->table );
+		$table = $this->get_table_name( $scope, false );
 		
 		global $wpdb;
 		

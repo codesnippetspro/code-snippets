@@ -89,7 +89,7 @@ You can run snippets across an entire multisite network by **Network Activating*
 That's great! Let me know by starting (or adding to) a topic in the [Support Forums](http://wordpress.org/support/plugin/code-snippets/).
 
 ### I want to contribute to and help develop the Code Snippets plugin!
-That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets), and also be sure to check out the [development page](http://code-snippets.bungeshea.com/dev/) on the [project website](http://code-snippets.bungeshea.com).
+That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets), and also be sure to check out the [development page](http://code-snippets.bungeshea.com/development/) on the [project website](http://code-snippets.bungeshea.com).
 
 ## Screenshots
 
