@@ -113,18 +113,6 @@ class Code_Snippets {
 	 * @access public
 	 */
 	public $admin_manage, $admin_single, $admin_import;
-
-	/**
-	 * The main function for our class
-	 *
-	 * @since Code Snippets 1.0
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function Code_Snippets() {
-		$this->__construct();
-	}
 	
 	/**
 	 * The constructor function for our class
@@ -473,6 +461,7 @@ class Code_Snippets {
 			$this->plugin_url . 'images/icon16.png',
 			67
 		);
+		
 		add_submenu_page(
 			$this->admin_manage_url,
 			__('Snippets', 'code-snippets'),
@@ -481,23 +470,16 @@ class Code_Snippets {
 			$this->admin_manage_url,
 			array( $this, 'display_admin_manage')
 		);
+		
 		$this->admin_single = add_submenu_page(
 			$this->admin_manage_url,
 			__('Add New Snippet', 'code-snippets'),
 			__('Add New', 'code-snippets'),
-			'install_snippets',
+			'install_network_snippets',
 			$this->admin_single_url,
 			array( $this, 'display_admin_single' )
 		);
-		$this->admin_import = add_submenu_page(
-			$this->admin_manage_url,
-			__('Import Snippets', 'code-snippets'),
-			__('Import', 'code-snippets'),
-			'install_snippets',
-			$this->admin_import_url,
-			array( $this, 'display_admin_import' )
-		);
-		
+
 		$this->after_admin_menu();
 	}
 	
@@ -522,6 +504,7 @@ class Code_Snippets {
 			$this->plugin_url . 'images/icon16.png',
 			21
 		);
+		
 		add_submenu_page(
 			$this->admin_manage_url,
 			__('Snippets', 'code-snippets'),
@@ -530,6 +513,7 @@ class Code_Snippets {
 			$this->admin_manage_url,
 			array( $this, 'display_admin_manage' )
 		);
+		
 		$this->admin_single = add_submenu_page(
 			$this->admin_manage_url,
 			__('Add New Snippet', 'code-snippets'),
@@ -537,14 +521,6 @@ class Code_Snippets {
 			'install_network_snippets',
 			$this->admin_single_url,
 			array( $this, 'display_admin_single' )
-		);
-		$this->admin_import = add_submenu_page(
-			$this->admin_manage_url,
-			__('Import Snippets', 'code-snippets'),
-			__('Import', 'code-snippets'),
-			'install_network_snippets',
-			$this->admin_import_url,
-			array( $this, 'display_admin_import' )
 		);
 		
 		$this->after_admin_menu();
@@ -562,18 +538,15 @@ class Code_Snippets {
 	function after_admin_menu() {
 		$this->admin_manage_url	= self_admin_url( 'admin.php?page=' . $this->admin_manage_url );
 		$this->admin_single_url = self_admin_url( 'admin.php?page=' . $this->admin_single_url );
-		$this->admin_import_url = self_admin_url( 'admin.php?page=' . $this->admin_import_url );
 
 		add_action( "admin_print_styles-$this->admin_single",  array( $this, 'load_editor_styles' ) );
 		add_action( "admin_print_scripts-$this->admin_single", array( $this, 'load_editor_scripts' ) );
 		
 		add_action( "admin_print_styles-$this->admin_manage", array( $this, 'load_stylesheet' ) );
 		add_action( "admin_print_styles-$this->admin_single", array( $this, 'load_stylesheet' ) );
-		add_action( "admin_print_styles-$this->admin_import", array( $this, 'load_stylesheet' ) );
 		
 		add_action( "load-$this->admin_manage", array( $this, 'load_admin_manage' ) );
 		add_action( "load-$this->admin_single", array( $this, 'load_admin_single' ) );
-		add_action( "load-$this->admin_import", array( $this, 'load_admin_import' ) );
 	}
 	
 	/**
