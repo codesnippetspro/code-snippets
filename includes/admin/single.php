@@ -2,6 +2,7 @@
 if ( ! class_exists( 'Code_Snippets' ) ) exit;
 global $wpdb;
 
+$table = $this->get_table_name();
 $screen = get_current_screen();
 $can_edit = current_user_can( $screen->is_network ? 'edit_network_snippets' : 'edit_snippets' );
 $can_install = current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' );
@@ -39,7 +40,7 @@ if ( isset( $_REQUEST['edit'] ) )
 	
 	<form method="post" action="" style="margin-top: 10px;">
 		<?php if ( isset( $edit_id ) ) : ?>
-			<?php $snippet = $wpdb->get_row( "SELECT * FROM $this->table WHERE id = $edit_id" ); ?>
+			<?php $snippet = $wpdb->get_row( "SELECT * FROM $table WHERE id = $edit_id" ); ?>
 			<input type="hidden" name="snippet_id" value="<?php echo $snippet->id; ?>" />
 		<?php else : ?>
 			<?php

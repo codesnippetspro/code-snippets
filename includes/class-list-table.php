@@ -280,12 +280,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		
 		$screen = get_current_screen();
 		$user = get_current_user_id();
+		$table = $code_snippets->get_table_name();
 		
 		// first, lets process the bulk actions
 		$this->process_bulk_actions();
 		
+		
 		$snippets = array(
-			'all' => $wpdb->get_results( "SELECT * FROM $code_snippets->table", ARRAY_A ),
+			'all' => $wpdb->get_results( "SELECT * FROM $table", ARRAY_A ),
 			'search' => array(),
 			'active' => array(),
 			'inactive' => array(),

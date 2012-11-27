@@ -29,9 +29,11 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 	
 	$ids = (array) $ids;
 	
+	$table = $code_snippets->get_table_name();
+	
 	if ( count( $ids ) < 2 ) {
 		// If there is only snippet to export, use its name instead of the site name
-		$entry = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $code_snippets->table WHERE id=%d", $ids ) );
+		$entry = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d", $ids ) );
 		$sitename = sanitize_key( $entry->name );
 	} else {
 		// Otherwise, use the site name as set in Settings > General
@@ -52,7 +54,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 		
 			if ( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
 		
-			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $code_snippets->table WHERE id=%d", $id ) );
+			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d", $id ) );
 		
 			echo "\n\t" . '<snippet>';
 			echo "\n\t\t" . "<name>$snippet->name</name>";
@@ -71,7 +73,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 		
 			if ( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
 		
-			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $code_snippets->table WHERE id=%d", $id ) );
+			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d", $id ) );
 ?>
 
 /**
