@@ -9,7 +9,7 @@ $screen = get_current_screen();
 <?php if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) : ?>
 	<div class="error"><p><strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="http://code-snippets.bungeshea.com/docs/safe-mode/" target="_blank">Help</a></p></div>
 <?php endif; ?>
-	
+
 <?php if ( isset($_GET['activate']) ) : ?>
 	<div id="message" class="updated"><p><?php _e('Snippet <strong>activated</strong>.', 'code-snippets') ?></p></div>
 <?php elseif (isset($_GET['activate-multi'])) : ?>
@@ -23,7 +23,7 @@ $screen = get_current_screen();
 <?php elseif (isset($_GET['delete-multi'])) : ?>
 	<div id="message" class="updated"><p><?php _e('Selected snippets <strong>deleted</strong>.', 'code-snippets'); ?></p></div>
 <?php endif; ?>
-	
+
 <div class="wrap">
 	<?php screen_icon(); ?>
 	<h2><?php _e('Snippets', 'code-snippets'); ?>
@@ -32,9 +32,9 @@ $screen = get_current_screen();
 <?php }
 if ( isset( $s ) && $s )
 	printf( '<span class="subtitle">' . __('Search results for &#8220;%s&#8221;', 'code-snippets') . '</span>', esc_html( $s ) ); ?></h2>
-	
+
 	<?php $code_snippets_list_table->views(); ?>
-	
+
 	<form method="get" action="">
 		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
 		<?php $code_snippets_list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' ); ?>
