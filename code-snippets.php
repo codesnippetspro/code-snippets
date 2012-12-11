@@ -55,7 +55,7 @@ if ( ! class_exists( 'Code_Snippets' ) ) :
  * @since Code Snippets 1.0
  * @access private
  */
-class Code_Snippets {
+final class Code_Snippets {
 
 	/**
 	 * The base name for the snippets table in the database
@@ -92,12 +92,12 @@ class Code_Snippets {
 	 * This will later be used for upgrades and enqueueing files
 	 *
 	 * This should be set to the 'Plugin Version' value,
-	 * as defined above
+	 * as defined above in the plugin header
 	 *
 	 * @since Code Snippets 1.0
 	 * @access public
 	 */
-	public $version  = 1.6;
+	public $version = 1.6;
 
 	/**
 	 * The base URLs for the admin pages
@@ -118,7 +118,7 @@ class Code_Snippets {
 	 * @since Code Snippets 1.0
 	 * @access public
 	 */
-	public $admin_manage, $admin_single;
+	public $admin_manage, $admin_single, $admin_import;
 
 	/**
 	 * The constructor function for our class
@@ -129,44 +129,72 @@ class Code_Snippets {
 	 * @return void
 	 */
 	function __construct() {
-		$this->setup();			// initialise the variables and run the hooks
-		$this->create_table();	// create the snippet tables if they do not exist
-		$this->upgrade();		// check if we need to change some stuff
-		if ( is_multisite() ) { // perform multisite-specific actions
-			$this->create_table( 'multisite' );
-			$this->run_snippets( 'mulsisite' );
-		}
-		$this->run_snippets();	// execute the snippets
+		$this->setup_vars();    // initialise the variables
+		$this->setup_hooks();   // register the action and filter hooks
+		$this->create_tables(); // create the snippet tables if they do not exist
+		$this->upgrade();       // check if we need to change some stuff
 	}
 
 	/**
-	 * Initialise variables and add actions and filters
+	 * Initialise variables
 	 *
 	 * @since Code Snippets 1.2
 	 * @access private
 	 *
 	 * @return void
 	 */
-	function setup() {
+	function setup_vars() {
 		global $wpdb;
-		$this->file             = __FILE__;
-		$this->table            = apply_filters( 'code_snippets_table', $wpdb->prefix . $this->table );
-		$this->ms_table         = apply_filters( 'code_snippets_multisite_table', $wpdb->base_prefix . $this->ms_table );
+		$this->file       = __FILE__;
 
-		$this->basename	        = plugin_basename( $this->file );
-		$this->plugin_dir       = plugin_dir_path( $this->file );
-		$this->plugin_url       = plugin_dir_url ( $this->file );
+		$this->table      = apply_filters( 'code_snippets_table', $wpdb->prefix . $this->table );
+		$this->ms_table   = apply_filters( 'code_snippets_multisite_table', $wpdb->base_prefix . $this->ms_table );
 
-		add_action( 'admin_init', array( $this, 'load_importer' ), 999 );
-		add_action( 'admin_menu', array( $this, 'add_admin_menus' ) );
-		add_action( 'network_admin_menu', array( $this, 'add_network_admin_menus' ) );
-		add_action( 'network_admin_menu', array( $this, 'add_import_admin_menu' ) );
-		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
-		add_filter( 'plugin_action_links_' . $this->basename, array( $this, 'settings_link' ) );
-		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta' ), 10, 2 );
-		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
+		$this->basename	  = plugin_basename( $this->file );
+		$this->plugin_dir = plugin_dir_path( $this->file );
+		$this->plugin_url = plugin_dir_url ( $this->file );
 	}
 
+	/**
+	 * Register action and filter hooks
+	 *
+	 * @since Code Snippets 1.6
+	 * @access private
+	 *
+	 * @return void
+	 */
+	function setup_hooks() {
+
+		/* execute the snippets once the plugins are loaded */
+		add_action( 'plugins_loaded', array( $this, 'run_snippets' ) );
+
+		/* add the administration menus */
+		add_action( 'admin_menu', array( $this, 'add_admin_menus' ) );
+		add_action( 'network_admin_menu', array( $this, 'add_network_admin_menus' ) );
+
+		/* register the importer */
+		add_action( 'admin_init', array( $this, 'load_importer' ), 999 );
+		add_action( 'network_admin_menu', array( $this, 'add_import_admin_menu' ) );
+
+		/* load the translations */
+		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
+
+		/* add helpful links to the Plugins menu */
+		add_filter( 'plugin_action_links_' . $this->basename, array( $this, 'settings_link' ) );
+		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta' ), 10, 2 );
+	}
+
+	/**
+	 * Load the Code Snippets importer
+	 *
+	 * Add both an importer to the Tools menu,
+	 * and an Import Snippets page to the network admin menu
+	 *
+	 * @since Code Snippets 1.6
+	 * @access private
+	 *
+	 * @return void
+	 */
 	function load_importer() {
 
 		if ( defined( 'WP_LOAD_IMPORTERS' ) ) {
@@ -207,7 +235,7 @@ class Code_Snippets {
 		if ( ! is_multisite() ) {
 			$network = false;
 		}
-		elseif ( empty( $network ) && $check_screen ) {
+		elseif ( empty( $network ) && $check_screen && function_exists( 'get_current_screen' ) ) {
 			/* if no scope is set, query the current screen to see if in network admin */
 			$screen = get_current_screen();
 			$network = $screen->is_network;
@@ -235,12 +263,15 @@ class Code_Snippets {
 	 *
 	 * @uses $this->get_table_name() To retrieve the name of the snippet table
 	 *
-	 * @param string $scope Create a multisite-wide or site-wide table?
 	 * @return void
 	 */
-	function create_table( $scope = 'site' ) {
-		$table = $this->get_table_name( $scope, false );
-		$this->__create_table( $table );
+	function create_tables() {
+
+		$this->__create_table( $this->get_table_name( 'site' ) );
+
+		if ( is_multisite() )
+			$this->__create_table( $this->get_table_name( 'multisite' ) );
+
 		add_site_option( 'code_snippets_version', $this->version );
 	}
 
@@ -479,6 +510,10 @@ class Code_Snippets {
 	 * @since Code Snippets 1.0
 	 * @access private
 	 *
+	 * @uses add_menu_page() To register a top-level menu
+	 * @uses add_submenu_page() To register a submenu page
+	 * @uses apply_filters() To retrieve the corrent menu slug
+	 * @uses plugins_url() To retrive the URL to a resource
 	 * @return void
 	 */
 	function add_admin_menus() {
@@ -520,6 +555,10 @@ class Code_Snippets {
 	 * @since Code Snippets 1.4
 	 * @access private
 	 *
+	 * @uses add_menu_page() To register a top-level menu
+	 * @uses add_submenu_page() To register a submenu page
+	 * @uses apply_filters() To retrieve the corrent menu slug
+	 * @uses plugins_url() To retrive the URL to a resource
 	 * @return void
 	 */
 	function add_network_admin_menus() {
@@ -555,6 +594,19 @@ class Code_Snippets {
 		$this->after_admin_menu();
 	}
 
+	/**
+	 * Add an Import Snippets page to the network admin menu
+	 * We need to do this as there is no Tools menu in the network
+	 * admin, and so we cannot register an importer
+	 *
+	 * @since Code Snippets 1.6
+	 * @access private
+	 *
+	 * @uses add_submenu_page() To register the menu page
+	 * @uses apply_filters() To retrieve the corrent menu slug
+	 * @uses add_action() To enqueue scripts and styles
+	 * @return void
+	 */
 	function add_import_admin_menu() {
 
 		$this->admin_import = add_submenu_page(
@@ -994,16 +1046,6 @@ class Code_Snippets {
 	}
 
 	/**
-	 * Handles saving the user's screen option preference
-	 *
-	 * @since Code Snippets 1.5
-	 * @access private
-	 */
-	function set_screen_option( $status, $option, $value ) {
-		if ( 'snippets_per_page' === $option ) return $value;
-	}
-
-	/**
 	 * Processes any action command and loads the help tabs
 	 *
 	 * @since Code Snippets 1.0
@@ -1229,17 +1271,22 @@ class Code_Snippets {
 	 * @param string $scope Execute network-wide or site-wide snippets?
 	 * @return void
 	 */
-	function run_snippets( $scope = 'site' ) {
+	function run_snippets() {
 
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE )
 			return;
 
-		$table = $this->get_table_name( $scope, false );
-
 		global $wpdb;
 
 		// grab the active snippets from the database
-		$active_snippets = $wpdb->get_results( "SELECT code FROM $table WHERE active=1;");
+		$active_snippets = $wpdb->get_results( "SELECT code FROM $this->table WHERE active=1;" );
+
+		if ( is_multisite() ) {
+			$active_snippets = array_merge(
+				$wpdb->get_results( "SELECT code FROM $this->ms_table WHERE active=1;" ),
+				$active_snippets
+			);
+		}
 
 		if ( count( $active_snippets ) ) {
 			foreach( $active_snippets as $snippet ) {
@@ -1249,8 +1296,6 @@ class Code_Snippets {
 		}
 	}
 }
-
-endif; // class exists check
 
 /**
  * The global variable in which the Code Snippets class is stored
@@ -1262,8 +1307,10 @@ global $code_snippets;
 $code_snippets = new Code_Snippets;
 
 /* set up a pointer in the old variable (for backwards-compatibility) */
-#global $cs;
-#$cs = &$code_snippets;
+global $cs;
+$cs = &$code_snippets;
+
+endif; // class exists check
 
 register_uninstall_hook( $code_snippets->file, 'code_snippets_uninstall' );
 

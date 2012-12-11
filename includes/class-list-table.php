@@ -35,11 +35,23 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ) );
 
+		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
+
 		parent::__construct( array(
 			'singular' => 'snippet',
 			'plural'   => 'snippets',
 			'ajax'     => true,
 		) );
+	}
+
+	/**
+	 * Handles saving the user's screen option preference
+	 *
+	 * @since Code Snippets 1.5
+	 * @access private
+	 */
+	function set_screen_option( $status, $option, $value ) {
+		if ( 'snippets_per_page' === $option ) return $value;
 	}
 
 	function column_default( $item, $column_name ) {
