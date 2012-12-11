@@ -9,7 +9,7 @@ $can_install = current_user_can( $screen->is_network ? 'install_network_snippets
 
 if ( isset( $_REQUEST['edit'] ) && ! $can_edit )
 	wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets') );
-	
+
 if ( isset( $_REQUEST['edit'] ) )
 	$edit_id = intval( $_REQUEST['edit'] );
 ?>
@@ -27,7 +27,7 @@ if ( isset( $_REQUEST['edit'] ) )
 	<h2><?php
 		if ( isset( $edit_id ) ) {
 			esc_html_e('Edit Snippet', 'code-snippets');
-			
+
 			if ( $can_install )
 				printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
 					$this->admin_single_url,
@@ -37,7 +37,7 @@ if ( isset( $_REQUEST['edit'] ) )
 			_e('Add New Snippet', 'code-snippets');
 		}
 	?></h2>
-	
+
 	<form method="post" action="" style="margin-top: 10px;">
 		<?php if ( isset( $edit_id ) ) : ?>
 			<?php $snippet = $wpdb->get_row( "SELECT * FROM $table WHERE id = $edit_id" ); ?>
@@ -51,7 +51,7 @@ if ( isset( $_REQUEST['edit'] ) )
 				$snippet->code = '';
 			?>
 		<?php endif; ?>
-		
+
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php esc_html_e('Name (short title)', 'code-snippets'); ?></label>
@@ -70,9 +70,9 @@ if ( isset( $_REQUEST['edit'] ) )
 		<label for="description" style="text-align: center; margin: 10px auto;">
 			<h3 style="display: inline;"><?php esc_html_e('Description', 'code-snippets'); ?></h3> <?php _e('(Optional)', 'code-snippets'); ?>
 		</label>
-		
+
 		<br />
-		
+
 		<?php
 		wp_editor(
 			htmlspecialchars_decode( stripslashes( $snippet->description ) ),
