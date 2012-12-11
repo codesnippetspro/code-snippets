@@ -11,7 +11,7 @@
  * @subpackage Export
  */
 
-if ( ! function_exists( 'code_snippets_export') ) :
+if ( ! function_exists( 'code_snippets_export' ) ) :
 
 /**
  * Exports seleted snippets to a XML or PHP file.
@@ -40,7 +40,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 		$sitename = sanitize_key( get_bloginfo( 'name' ) );
 	}
 	
-	$filename = apply_filters( 'code_snippets_export_filename', "{$sitename}.code-snippets.{$format}" );
+	$filename = apply_filters( 'code_snippets_export_filename', "{$sitename}.code-snippets.{$format}", $format, $sitename );
 
 	header( 'Content-Disposition: attachment; filename=' . $filename );
 	
