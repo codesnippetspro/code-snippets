@@ -65,7 +65,7 @@ final class Code_Snippets {
 	 * Instead, use the 'code_snippets_table' filter
 	 *
 	 * If you need to use the table name in your own code,
-	 * use the get_table_name() function
+	 * use the $code_snippets->get_table_name() function
 	 *
 	 * @since Code Snippets 1.0
 	 * @access public
@@ -80,7 +80,7 @@ final class Code_Snippets {
 	 * Instead, use the 'code_snippets_multisite_table' filter
 	 *
 	 * If you need to use the table name in your own code,
-	 * use the get_table_name() function
+	 * use the $code_snippets->get_table_name() function
 	 *
 	 * @since Code Snippets 1.4
 	 * @access private
@@ -129,10 +129,9 @@ final class Code_Snippets {
 	 * @return void
 	 */
 	function __construct() {
-		$this->setup_vars();    // initialise the variables
-		$this->setup_hooks();   // register the action and filter hooks
-		$this->create_tables(); // create the snippet tables if they do not exist
-		$this->upgrade();       // check if we need to change some stuff
+		$this->setup_vars();  // initialise the variables
+		$this->setup_hooks(); // register the action and filter hooks
+		$this->upgrade();     // check if we need to change some stuff
 	}
 
 	/**
@@ -231,6 +230,8 @@ final class Code_Snippets {
 	 * @return string $table The snippet table name
 	 */
 	function get_table_name( $scope = '', $check_screen = true ) {
+
+		$this->create_tables(); // create the snippet tables if they do not exist
 
 		if ( ! is_multisite() ) {
 			$network = false;
@@ -886,7 +887,7 @@ final class Code_Snippets {
 	public function delete_snippet( $id, $scope = '' ) {
 		global $wpdb;
 
-		$table = get_table_name( $scope );
+		$table = $this->get_table_name( $scope );
 		$id = intval( $id );
 
 		$wpdb->query( "DELETE FROM $table WHERE id='$id' LIMIT 1" );
@@ -977,7 +978,7 @@ final class Code_Snippets {
 	 */
 	public function export( $ids, $scope = '' ) {
 
-		$table = get_table_name( $scope );
+		$table = $this->get_table_name( $scope );
 
 		if ( ! function_exists( 'code_snippets_export' ) )
 			require_once $this->plugin_dir . 'includes/export.php';
@@ -1000,7 +1001,7 @@ final class Code_Snippets {
 	 */
 	public function export_php( $ids, $scope = '' ) {
 
-		$table = get_table_name( $scope );
+		$table = $this->get_table_name( $scope );
 
 		if ( ! function_exists( 'code_snippets_export' ) )
 			require_once $this->plugin_dir . 'includes/export.php';
@@ -1058,6 +1059,8 @@ final class Code_Snippets {
 	function load_admin_manage() {
 		global $wpdb;
 
+		$this->create_tables(); // create the snippet tables if they do not exist
+
 		if ( isset( $_GET['action'], $_GET['id'] ) ) :
 
 			$id = intval( $_GET['id'] );
@@ -1109,6 +1112,8 @@ final class Code_Snippets {
 	 * @return void
 	 */
 	function load_admin_single() {
+
+		$this->create_tables(); // create the snippet tables if they do not exist
 
 		if ( isset( $_REQUEST['save_snippet'] ) ) {
 
@@ -1164,6 +1169,9 @@ final class Code_Snippets {
 	 * @return void
 	 */
 	function load_admin_import() {
+
+		$this->create_tables(); // create the snippet tables if they do not exist
+
 		if ( isset( $_FILES['code_snippets_import_file']['tmp_name'] ) ) {
 			$count = $this->import( $_FILES['code_snippets_import_file']['tmp_name'] );
 			if ( $count ) {
