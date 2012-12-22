@@ -3,11 +3,19 @@
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: monospace;
-  height: 300px;
+  height: auto;
+  min-height: 300px;
+  border: 1px solid #eee;
+  -moz-border-radius: 3px; -webkit-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px;
 }
 .CodeMirror-scroll {
   /* Set scrolling behaviour here */
-  overflow: auto;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+.CodeMirror-sizer {
+  min-height: 300px !important;
 }
 
 /* PADDING */
@@ -97,6 +105,11 @@
 
 div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}
 div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
+
+.activeline { background: #e8f2ff !important; }
+
+span.CodeMirror-matchhighlight { background: #e9e9e9 }
+.CodeMirror-focused span.CodeMirror-matchhighlight { background: #e7e4ff; !important }
 
 /* STOP */
 

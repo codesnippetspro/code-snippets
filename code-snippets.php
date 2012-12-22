@@ -3,8 +3,8 @@
 /**
  * Code Snippets - An easy, clean and simple way to add code snippets to your site.
  *
- * If you're interested in helping to develop Code Snippets, or perhaps contribute
- * to the localization, please see http://code-snippets.bungeshea.com/development/
+ * If you're interested in helping to develop Code Snippets, or perhaps
+ * contribute to the localization, please see http://code-snippets.bungeshea.com
  *
  * @package Code Snippets
  * @subpackage Main
@@ -102,10 +102,6 @@ final class Code_Snippets {
 	/**
 	 * The base URLs for the admin pages
 	 *
-	 * DO NOT EDIT THESE VARIABLES!
-	 * Instead, use the 'code_snippets_manage_url', 'code_snippets_single_url'
-	 * and 'code_snippets_import_url' filters
-	 *
 	 * @since Code Snippets 1.0
 	 * @access public
 	 */
@@ -152,6 +148,12 @@ final class Code_Snippets {
 		$this->basename	  = plugin_basename( $this->file );
 		$this->plugin_dir = plugin_dir_path( $this->file );
 		$this->plugin_url = plugin_dir_url ( $this->file );
+
+		$this->admin_manage_slug = apply_filters( 'code_snippets_admin_manage', 'snippets' );
+		$this->admin_single_slug = apply_filters( 'code_snippets_admin_single', 'snippet' );
+
+		$this->admin_manage_url	= self_admin_url( 'admin.php?page=' . $this->admin_manage_slug );
+		$this->admin_single_url = self_admin_url( 'admin.php?page=' . $this->admin_single_slug );
 	}
 
 	/**
@@ -181,12 +183,15 @@ final class Code_Snippets {
 		/* add helpful links to the Plugins menu */
 		add_filter( 'plugin_action_links_' . $this->basename, array( $this, 'settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta' ), 10, 2 );
+
+		/* Add a custom icon to Snippets menu pages */
+		add_action( 'admin_head', array( $this, 'load_admin_icon_style' ) );
 	}
 
 	/**
 	 * Load the Code Snippets importer
 	 *
-	 * Add both an importer to the Tools menu,
+	 * Add both an importer to the Tools menu
 	 * and an Import Snippets page to the network admin menu
 	 *
 	 * @since Code Snippets 1.6
@@ -244,7 +249,7 @@ final class Code_Snippets {
 		elseif ( $scope == 'multisite' || $scope == 'network' ) {
 			$network = true;
 		}
-		elseif ( $scope == 'site' ) {
+		elseif ( $scope == 'site' || $scope = 'single' ) {
 			$network = false;
 		}
 		else {
@@ -257,31 +262,41 @@ final class Code_Snippets {
 	}
 
 	/**
-	 * Create the snippet table if it does not already exist
+	 * Create the snippet tables if they do not already exist
 	 *
 	 * @since Code Snippets 1.2
-	 * @access private
+	 * @access public
 	 *
-	 * @uses $this->get_table_name() To retrieve the name of the snippet table
+	 * @uses $this->create_table() To create a single snippet table
 	 *
 	 * @return void
 	 */
-	function create_tables() {
+	public function create_tables() {
 
-		$this->__create_table( $this->get_table_name( 'site' ) );
+		$this->create_table( $this->table );
 
 		if ( is_multisite() )
-			$this->__create_table( $this->get_table_name( 'multisite' ) );
+			$this->create_table( $this->ms_table );
 
 		add_site_option( 'code_snippets_version', $this->version );
 	}
 
-	function __create_table( $table ) {
+	/**
+	 * Create a single snippet table
+	 * if one of the same name does not already exist
+	 *
+	 * @since Code Snippets 1.6
+	 * @access public
+	 *
+	 * @param string $table_name The name of the table to create
+	 * @return void
+	 */
+	function create_table( $table_name ) {
 
 		global $wpdb;
 
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) != $table ) {
-			$sql = "CREATE TABLE $table (
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
+			$sql = "CREATE TABLE $table_name (
 				id			MEDIUMINT	NOT NULL AUTO_INCREMENT,
 				name		VARCHAR(64)	NOT NULL,
 				description	TEXT,
@@ -292,7 +307,6 @@ final class Code_Snippets {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 			dbDelta( $sql );
 		}
-
 	}
 
 	/**
@@ -334,7 +348,7 @@ final class Code_Snippets {
 			}
 		}
 
-		/* miagrate the recently_network_activated_snippets to the site options */
+		/* migrate the recently_network_activated_snippets to the site options */
 		if ( is_multisite() && get_option( 'recently_network_activated_snippets' ) ) {
 			add_site_option( 'recently_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
 			delete_option( 'recently_network_activated_snippets' );
@@ -375,7 +389,7 @@ final class Code_Snippets {
 	 * Place it in this plugin's "languages" folder and name it "code-snippets-[value in wp-config].mo"
 	 *
 	 * If you wish to contribute a language file to be included in the Code Snippets package,
-	 * please see the plugin's development website at http://code-snippets.bungeshea.com/development/
+	 * please see the plugin's website at http://code-snippets.bungeshea.com
 	 *
 	 * @since Code Snippets 1.5
 	 * @access private
@@ -514,7 +528,7 @@ final class Code_Snippets {
 	 * @uses add_menu_page() To register a top-level menu
 	 * @uses add_submenu_page() To register a submenu page
 	 * @uses apply_filters() To retrieve the corrent menu slug
-	 * @uses plugins_url() To retrive the URL to a resource
+	 * @uses plugins_url() To retrieve the URL to a resource
 	 * @return void
 	 */
 	function add_admin_menus() {
@@ -547,7 +561,10 @@ final class Code_Snippets {
 			array( $this, 'display_admin_single' )
 		);
 
-		$this->after_admin_menu();
+		add_action( "load-$this->admin_manage", array( $this, 'load_admin_manage' ) );
+		add_action( "load-$this->admin_single", array( $this, 'load_admin_single' ) );
+		add_action( "admin_print_styles-$this->admin_single",  array( $this, 'load_editor_styles' ) );
+		add_action( "admin_print_scripts-$this->admin_single",  array( $this, 'load_editor_scripts' ) );
 	}
 
 	/**
@@ -559,7 +576,7 @@ final class Code_Snippets {
 	 * @uses add_menu_page() To register a top-level menu
 	 * @uses add_submenu_page() To register a submenu page
 	 * @uses apply_filters() To retrieve the corrent menu slug
-	 * @uses plugins_url() To retrive the URL to a resource
+	 * @uses plugins_url() To retrieve the URL to a resource
 	 * @return void
 	 */
 	function add_network_admin_menus() {
@@ -592,7 +609,9 @@ final class Code_Snippets {
 			array( $this, 'display_admin_single' )
 		);
 
-		$this->after_admin_menu();
+		add_action( "load-$this->admin_manage", array( $this, 'load_admin_manage' ) );
+		add_action( "load-$this->admin_single", array( $this, 'load_admin_single' ) );
+		add_action( "admin_print_styles-$this->admin_single",  array( $this, 'load_editor_styles' ) );
 	}
 
 	/**
@@ -625,30 +644,7 @@ final class Code_Snippets {
 	}
 
 	/**
-	 * Preform necessary tasks on the subpages such as setting the urls
-	 * and enqueueing the styles and scripts
-	 *
-	 * @since Code Snippets 1.5
-	 * @access private
-	 *
-	 * @return void
-	 */
-	function after_admin_menu() {
-		$this->admin_manage_url	= self_admin_url( 'admin.php?page=' . apply_filters( 'code_snippets_manage_url', 'snippets' ) );
-		$this->admin_single_url = self_admin_url( 'admin.php?page=' . apply_filters( 'code_snippets_single_url', 'snippet' ) );
-
-		add_action( "admin_print_styles-$this->admin_single",  array( $this, 'load_editor_styles' ) );
-		add_action( "admin_print_scripts-$this->admin_single", array( $this, 'load_editor_scripts' ) );
-
-		add_action( "admin_print_styles-$this->admin_manage", array( $this, 'load_stylesheet' ) );
-		add_action( "admin_print_styles-$this->admin_single", array( $this, 'load_stylesheet' ) );
-
-		add_action( "load-$this->admin_manage", array( $this, 'load_admin_manage' ) );
-		add_action( "load-$this->admin_single", array( $this, 'load_admin_single' ) );
-	}
-
-	/**
-	 * Enqueue the admin stylesheet
+	 * Enqueue the icon stylesheet
 	 *
 	 * @since Code Snippets 1.0
 	 * @access private
@@ -657,15 +653,14 @@ final class Code_Snippets {
 	 *
 	 * @return void
 	 */
-	function load_stylesheet() {
+	function load_admin_icon_style() {
 
 		wp_enqueue_style(
-			'code-snippets',
-			plugins_url( 'assets/style.css', $this->file ),
+			'icon-snippets',
+			plugins_url( 'assets/icon.css', $this->file ),
 			false,
 			$this->version
 		);
-
 	}
 
 	/**
@@ -682,74 +677,50 @@ final class Code_Snippets {
 	function load_editor_scripts() {
 
 		/* CodeMirror package version */
-		$version = 3.0;
+		$version = '3.0';
 
 		/* CodeMirror base framework */
 
 		wp_register_script(
 			'codemirror',
-			plugins_url( 'assets/lib/codemirror.js', $this->file ),
+			plugins_url( 'assets/codemirror.js', $this->file ),
 			false,
 			$version
 		);
 
 		/* CodeMirror modes */
 
-		wp_register_script(
-			'codemirror-mode-php',
-			plugins_url( 'assets/mode/php.js', $this->file ),
-			array( 'codemirror' ),
-			$version
-		);
-		wp_register_script(
-			'codemirror-mode-xml',
-			plugins_url( 'assets/mode/xml.js', $this->file ),
-			array( 'codemirror' ),
-			$version
-		);
-		wp_register_script(
-			'codemirror-mode-js',
-			plugins_url( 'assets/mode/javascript.js', $this->file ),
-			array( 'codemirror' ),
-			$version
-		);
-		wp_register_script(
-			'codemirror-mode-css',
-			plugins_url( 'assets/mode/css.js', $this->file ),
-			array( 'codemirror' ),
-			$version
-		);
-		wp_register_script(
-			'codemirror-mode-clike',
-			plugins_url( 'assets/mode/clike.js', $this->file ),
-			array( 'codemirror' ),
-			$version
-		);
+		$modes = array( 'php', 'xml', 'javascript', 'css', 'clike', 'htmlmixed' );
+
+		foreach ( $modes as $mode ) {
+
+			wp_register_script(
+				"codemirror-mode-$mode",
+				plugins_url( "assets/mode/$mode.js", $this->file ),
+				array( 'codemirror' ),
+				$version
+			);
+		}
 
 		/* CodeMirror utilities */
 
-		wp_register_script(
-			'codemirror-util-dialog',
-			plugins_url( 'assets/util/dialog.js', $this->file ),
-			array( 'codemirror' ),
-			$version
-		);
-		wp_register_script(
-			'codemirror-util-searchcursor',
-			plugins_url( 'assets/util/searchcursor.js', $this->file ),
-			array( 'codemirror-util-dialog' ),
-			$version
-		);
-		wp_register_script(
-			'codemirror-util-search',
-			plugins_url( 'assets/util/search.js', $this->file ),
-			array( 'codemirror-util-searchcursor' ),
-			$version
-		);
+		$utils = array( 'dialog', 'searchcursor', 'search', 'matchbrackets' );
+
+		foreach ( $utils as $util ) {
+
+			wp_register_script(
+				"codemirror-util-$util",
+				plugins_url( "assets/util/$util.js", $this->file ),
+				array( 'codemirror' ),
+				$version
+			);
+		}
 
 		/* Enqueue the registered scripts */
 
 		wp_enqueue_script( array(
+			'codemirror-util-matchbrackets',
+			'codemirror-mode-htmlmixed',
 			'codemirror-mode-xml',
 			'codemirror-mode-js',
 			'codemirror-mode-css',
@@ -773,13 +744,13 @@ final class Code_Snippets {
 	function load_editor_styles() {
 
 		/* CodeMirror package version */
-		$version = 3.0;
+		$version = '3.0';
 
 		/* CodeMirror base framework */
 
 		wp_register_style(
 			'codemirror',
-			plugins_url( 'assets/lib/codemirror.css', $this->file ),
+			plugins_url( 'assets/codemirror.css', $this->file ),
 			false,
 			$version
 		);
@@ -797,7 +768,7 @@ final class Code_Snippets {
 
 		wp_enqueue_style( array(
 			'codemirror',
-			'codemirror-util-dialog'
+			'codemirror-util-dialog',
 		) );
 
 	}

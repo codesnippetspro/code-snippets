@@ -14,7 +14,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class Code_Snippets_List_Table extends WP_List_Table {
 
 	function __construct() {
-		global $status, $page;
+		global $status, $page, $code_snippets;
 
 		$screen = get_current_screen();
 
@@ -34,8 +34,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		) );
 
 		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ) );
-
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
+		add_action( "admin_print_scripts-$code_snippets->admin_manage", array( $this, 'load_table_style' ) );
 
 		parent::__construct( array(
 			'singular' => 'snippet',
@@ -54,12 +54,32 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( 'snippets_per_page' === $option ) return $value;
 	}
 
+	/**
+	 * Enqueue the table stylesheet
+	 *
+	 * @since Code Snippets 1.6
+	 * @access private
+	 *
+	 * @uses wp_enqueue_style() To add the stylesheet to the queue
+	 *
+	 * @return void
+	 */
+	function load_table_style() {
+		global $code_snippets;
+		wp_enqueue_style(
+			'snippets-table',
+			plugins_url( 'assets/table.css', $code_snippets->file ),
+			false,
+			$code_snippets->version
+		);
+	}
+
 	function column_default( $item, $column_name ) {
 		switch( $column_name ) {
 			case 'id':
-				return intval( $item[$column_name] );
+				return intval( $item[ $column_name ] );
 			case 'description':
-				return stripslashes( html_entity_decode( $item[$column_name] ) );
+				return stripslashes( html_entity_decode( $item[ $column_name ] ) );
 			default:
 				return print_r( $item, true ); // Show the whole array for troubleshooting purposes
 		}
@@ -296,7 +316,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		// first, lets process the bulk actions
 		$this->process_bulk_actions();
-
 
 		$snippets = array(
 			'all' => $wpdb->get_results( "SELECT * FROM $table", ARRAY_A ),

@@ -8,7 +8,7 @@ $can_edit = current_user_can( $screen->is_network ? 'edit_network_snippets' : 'e
 $can_install = current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' );
 
 if ( isset( $_REQUEST['edit'] ) && ! $can_edit )
-	wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets') );
+	wp_die( __('Sorry, you&#8217;re not allowed to edit snippets', 'code-snippets') );
 
 if ( isset( $_REQUEST['edit'] ) )
 	$edit_id = intval( $_REQUEST['edit'] );
@@ -39,19 +39,18 @@ if ( isset( $_REQUEST['edit'] ) )
 	?></h2>
 
 	<form method="post" action="" style="margin-top: 10px;">
-		<?php if ( isset( $edit_id ) ) : ?>
-			<?php $snippet = $wpdb->get_row( "SELECT * FROM $table WHERE id = $edit_id" ); ?>
-			<input type="hidden" name="snippet_id" value="<?php echo $snippet->id; ?>" />
-		<?php else : ?>
-			<?php
+		<?php
+			if ( isset( $edit_id ) ) {
+				$snippet = $wpdb->get_row( "SELECT * FROM $table WHERE id = $edit_id" );
+				printf ( '<input type="hidden" name="snippet_id" value="%d" />', $snippet->id );
+			} else {
 				// define a empty object (or one with default values)
 				$snippet = new stdClass();
 				$snippet->name = '';
 				$snippet->description = '';
 				$snippet->code = '';
-			?>
-		<?php endif; ?>
-
+			}
+		?>
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php esc_html_e('Name (short title)', 'code-snippets'); ?></label>
@@ -63,15 +62,15 @@ if ( isset( $_REQUEST['edit'] ) )
 			<h3 style="display: inline;"><?php esc_html_e('Code', 'code-snippets'); ?></h3>
 			<span style="float: right;"><?php _e('Enter or paste the snippet code without the <code>&lt;?php</code> and <code>?&gt;</code> tags.', 'code-snippets'); ?></span>
 		</label>
-		<br />
-		<textarea id="snippet_code" name="snippet_code" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo stripslashes( $snippet->code ); ?></textarea>
-		<br style="margin: 20px;" />
 
-		<label for="description" style="text-align: center; margin: 10px auto;">
-			<h3 style="display: inline;"><?php esc_html_e('Description', 'code-snippets'); ?></h3> <?php _e('(Optional)', 'code-snippets'); ?>
+		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo stripslashes( $snippet->code ); ?></textarea>
+
+		<label for="description">
+			<h3>
+				<?php esc_html_e('Description', 'code-snippets'); ?>
+				<span style="font-weight: normal; font-size: normal;"><?php _e('(Optional)', 'code-snippets'); ?></span>
+			</h3>
 		</label>
-
-		<br />
 
 		<?php
 		wp_editor(
@@ -80,6 +79,7 @@ if ( isset( $_REQUEST['edit'] ) )
 			array(
 				'textarea_name' => 'snippet_description',
 				'textarea_rows' => 10,
+				'media_buttons' => false,
 			)
 		);
 		?>
@@ -91,10 +91,10 @@ if ( isset( $_REQUEST['edit'] ) )
 </div>
 <script type="text/javascript">
 	var editor = CodeMirror.fromTextArea(document.getElementById("snippet_code"), {
-		mode: "application/x-httpd-php-open",
 		lineNumbers: true,
-		lineWrapping: true,
 		matchBrackets: true,
+		lineWrapping: true,
+		mode: "application/x-httpd-php-open",
 		indentUnit: 4,
 		indentWithTabs: true,
 		enterMode: "keep",
