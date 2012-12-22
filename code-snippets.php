@@ -612,6 +612,7 @@ final class Code_Snippets {
 		add_action( "load-$this->admin_manage", array( $this, 'load_admin_manage' ) );
 		add_action( "load-$this->admin_single", array( $this, 'load_admin_single' ) );
 		add_action( "admin_print_styles-$this->admin_single",  array( $this, 'load_editor_styles' ) );
+		add_action( "admin_print_scripts-$this->admin_single",  array( $this, 'load_editor_scripts' ) );
 	}
 
 	/**
