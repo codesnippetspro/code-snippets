@@ -58,8 +58,11 @@ No, just copy all the content inside those tags.
 = Is there a way to add a snippet but not run it right away? =
 Yes. Just add it but do not activate it yet.
 
+= How can I insert my snippet into the post text editor? =
+Snippets that you add to this plugin are not ment to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
+
 = What do I use to write my snippets? =
-The [CodeMirror](http://codemirror.net) source-code editor will add line numbers, syntax highlighting, search, tabulate and other cool features to the code editor.
+The [CodeMirror](http://codemirror.net) source-code editor will add line numbers, syntax highlighting, bracket matching, search, tabulate and other cool features to the code editor.
 
 = Can I preform search and replace commands in the code editor? =
 
