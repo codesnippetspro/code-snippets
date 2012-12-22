@@ -389,7 +389,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
         function usort_reorder( $a, $b ) {
 
 			// If no sort, default to id
-            $orderby = ( ! empty($_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : 'id';
+            $orderby = ( ! empty($_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : apply_filters( 'code_snippets_default_orderby', 'id' );
 
 			// If no order, default to asc
             $order = ( ! empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'asc';
