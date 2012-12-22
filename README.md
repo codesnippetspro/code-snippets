@@ -59,7 +59,7 @@ No, just copy all the content inside those tags.
 ### Is there a way to add a snippet but not run it right away?
 Yes. Just add it but do not activate it yet.
 
-### How can I insert my snippet into the post text editor? =
+### How can I insert my snippet into the post text editor?
 Snippets that you add to this plugin are not ment to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
 ### What do I use to write my snippets?
