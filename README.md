@@ -60,7 +60,7 @@ No, just copy all the content inside those tags.
 Yes. Just add it but do not activate it yet.
 
 ### How can I insert my snippet into the post text editor?
-Snippets that you add to this plugin are not ment to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
+Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
 ### What do I use to write my snippets?
 The [CodeMirror](http://codemirror.net) source-code editor will add line numbers, syntax highlighting, bracket matching, search, tabulate and other cool features to the code editor.
@@ -185,8 +185,6 @@ Plugin updates will be posted on the [plugin's homepage][homepage] ([RSS](http:/
 
 * Snippets are stored in the `wp_snippets` table in the WordPress database (the table name may differ depending on what your table prefix is set to).
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
-
-You can also contribute to the code at [GitHub].
 
   [support]: http://wordpress.org/support/plugin/code-snippets/
   [github]: https://github.com/bungeshea/code-snippets
