@@ -54,35 +54,34 @@ if ( isset( $_REQUEST['edit'] ) )
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php esc_html_e('Name (short title)', 'code-snippets'); ?></label>
-				<input id="title" type="text" autocomplete="off" size="30"  maxlength="64" name="snippet_name" value="<?php echo stripslashes( $snippet->name ); ?>" placeholder="<?php _e('Name (short title)', 'code-snippets'); ?>" required="required">
+				<input id="title" type="text" autocomplete="off" size="30"  maxlength="64" name="snippet_name" value="<?php echo stripslashes( $snippet->name ); ?>" placeholder="<?php _e('Name (short title)', 'code-snippets'); ?>" required="required" />
 			</div>
 		</div>
 
 		<label for="snippet_code">
-			<h3 style="display: inline;"><?php esc_html_e('Code', 'code-snippets'); ?></h3>
-			<span style="float: right;"><?php _e('Enter or paste the snippet code without the <code>&lt;?php</code> and <code>?&gt;</code> tags.', 'code-snippets'); ?></span>
+			<h3><?php esc_html_e('Code', 'code-snippets'); ?>
+			<span style="float: right; font-weight: normal;"><?php _e('Enter or paste the snippet code without the <code>&lt;?php</code> and <code>?&gt;</code> tags.', 'code-snippets'); ?></span></h3>
 		</label>
 
 		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo stripslashes( $snippet->code ); ?></textarea>
 
-		<label for="description">
-			<h3>
-				<?php esc_html_e('Description', 'code-snippets'); ?>
-				<span style="font-weight: normal; font-size: normal;"><?php _e('(Optional)', 'code-snippets'); ?></span>
-			</h3>
+		<label for="snippet_description">
+			<h3><?php esc_html_e('Description', 'code-snippets'); ?>
+			<span style="font-weight: normal;"><?php esc_html_e('(Optional)', 'code-snippets'); ?></span></h3>
 		</label>
 
 		<?php
-		wp_editor(
-			htmlspecialchars_decode( stripslashes( $snippet->description ) ),
-			'description',
-			array(
-				'textarea_name' => 'snippet_description',
-				'textarea_rows' => 10,
-				'media_buttons' => false,
-			)
-		);
+			wp_editor(
+				htmlspecialchars_decode( stripslashes( $snippet->description ) ),
+				'description',
+				array(
+					'textarea_name' => 'snippet_description',
+					'textarea_rows' => 10,
+				//	'media_buttons' => false,
+				)
+			);
 		?>
+
 		<p class="submit">
 			<input type="submit" name="save_snippet" class="button-primary" value="<?php _e('Save', 'code-snippets'); ?>" />
 			<a href="<?php echo $this->admin_manage_url; ?>" class="button"><?php _e('Cancel', 'code-snippets'); ?></a>
