@@ -5,7 +5,7 @@
 * Tags: snippets, code, php, network, multisite
 * Requires at least: 3.3
 * Tested up to: 3.5
-* Stable tag: 1.6
+* Stable tag: 1.6.1
 * License: GPLv3 or later
 * License URI: http://www.gnu.org/copyleft/gpl.html
 
@@ -89,7 +89,7 @@ Yes. Click the checkboxes next to the snippets you want to export, and then choo
 You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard.
 
 ### I need help with Code Snippets
-You can get help with Code Snippets either on the [WordPress Support Forums][support] or on [GithHub][issues].
+You can get help with Code Snippets either on the [WordPress Support Forums][support], on [GithHub][issues], or on [WordPress Answers](http://wordpress.stackexchange.com).
 
 ### I have an idea for a cool feature for Code Snippets!
 That's great! Let me know by starting (or adding to) a topic in the [Support Forums][support] or open an issue on [GitHub][issues].
@@ -115,6 +115,10 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 ![Importing snippets from an XML file](https://raw.github.com/bungeshea/code-snippets/master/screenshot-5.jpg "Importing snippets from an XML file")
 
 ## Changelog
+
+### 1.6.1
+* Fixed a bug with permissions not being applied on install ([#](http://wordpress.org/support/topic/permissions-problem-after-install))
+* Fixed a bug in the uninstall method ([#](http://wordpress.org/support/topic/bug-in-delete-script))
 
 ### 1.6
 * Updated code editor to use CodeMirror 3

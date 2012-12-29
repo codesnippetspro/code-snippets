@@ -4,7 +4,7 @@ Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 3.5
-Stable tag: 1.6
+Stable tag: 1.6.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/copyleft/gpl.html
 
@@ -88,7 +88,7 @@ Yes. Click the checkboxes next to the snippets you want to export, and then choo
 You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard.
 
 = I need help with Code Snippets =
-You can get help with Code Snippets either on the [WordPress Support Forums](http://wordpress.org/support/plugin/code-snippets/) or on [GithHub](https://github.com/bungeshea/code-snippets/issues).
+You can get help with Code Snippets either on the [WordPress Support Forums](http://wordpress.org/support/plugin/code-snippets/), on [GithHub](https://github.com/bungeshea/code-snippets/issues), or on [WordPress Answers](http://wordpress.stackexchange.com).
 
 = I have an idea for a cool feature for Code Snippets! =
 That's great! Let me know by starting (or adding to) a topic in the [Support Forums](http://wordpress.org/support/plugin/code-snippets/) or open an issue on [GitHub](https://github.com/bungeshea/code-snippets/issues).
@@ -105,6 +105,10 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 5. Importing snippets from an XML file
 
 == Changelog ==
+
+= 1.6.1 =
+* Fixed a bug with permissions not being applied on install ([#](http://wordpress.org/support/topic/permissions-problem-after-install))
+* Fixed a bug in the uninstall method ([#](http://wordpress.org/support/topic/bug-in-delete-script))
 
 = 1.6 =
 * Updated code editor to use CodeMirror 3
