@@ -15,7 +15,7 @@
  * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
- * Version: 1.6
+ * Version: 1.6.1
  * License: GPLv3 or later
  * Network: true
  * Text Domain: code-snippets
@@ -152,8 +152,8 @@ final class Code_Snippets {
 		$this->admin_manage_slug = apply_filters( 'code_snippets_admin_manage', 'snippets' );
 		$this->admin_single_slug = apply_filters( 'code_snippets_admin_single', 'snippet' );
 
-		$this->admin_manage_url	= self_admin_url( 'admin.php?page=' . $this->admin_manage_slug );
-		$this->admin_single_url = self_admin_url( 'admin.php?page=' . $this->admin_single_slug );
+		$this->admin_manage_url	 = self_admin_url( 'admin.php?page=' . $this->admin_manage_slug );
+		$this->admin_single_url  = self_admin_url( 'admin.php?page=' . $this->admin_single_slug );
 	}
 
 	/**
@@ -556,7 +556,7 @@ final class Code_Snippets {
 			apply_filters( 'code_snippets_manage_url', 'snippets' ),
 			__('Add New Snippet', 'code-snippets'),
 			__('Add New', 'code-snippets'),
-			'install_network_snippets',
+			'install_snippets',
 			apply_filters( 'code_snippets_single_url', 'snippet' ),
 			array( $this, 'display_admin_single' )
 		);
@@ -1129,6 +1129,7 @@ final class Code_Snippets {
 			add_filter( 'admin_title',  array( $this, 'admin_single_title' ) );
 
 		include $this->plugin_dir . 'includes/help/single.php'; // Load the help tabs
+
 	}
 
 	/**
@@ -1303,7 +1304,7 @@ register_uninstall_hook( $code_snippets->file, 'code_snippets_uninstall' );
  * @access private
  *
  * @uses $wpdb To remove tables from the database
- * @uses $code_snippets To find out which table to drop
+ * @uses $code_snippets->get_table_name() To find out which table to drop
  * @uses is_multisite() To check the type of installation
  * @uses switch_to_blog() To switch between blogs
  * @uses restore_current_blog() To switch between blogs
@@ -1318,19 +1319,18 @@ function code_snippets_uninstall() {
 		if ( $blogs ) {
 			foreach( $blogs as $blog ) {
 				switch_to_blog( $blog['blog_id'] );
-				$table = apply_filters( 'code_snippets_table', $wpdb->prefix . 'snippets' );
-				$wpdb->query( "DROP TABLE IF EXISTS $table" );
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . apply_filters( 'code_snippets_table', $wpdb->prefix . 'snippets' ) );
 				delete_option( 'cs_db_version' );
 				delete_option( 'recently_activated_snippets' );
 				$code_snippets->remove_caps();
 			}
 			restore_current_blog();
 		}
-		$wpdb->query( "DROP TABLE IF EXISTS $code_snippets->ms_table" );
+		$wpdb->query( 'DROP TABLE IF EXISTS ' . $code_snippets->get_table_name( 'multisite' ) );
 		delete_site_option( 'recently_activated_snippets' );
 		$code_snippets->remove_caps( 'multisite' );
 	} else {
-		$wpdb->query( "DROP TABLE IF EXISTS $code_snippets->table" );
+		$wpdb->query( 'DROP TABLE IF EXISTS ' . $code_snippets->get_table_name( 'site' ) );
 		delete_option( 'recently_activated_snippets' );
 		delete_option( 'cs_db_version' );
 		$code_snippets->remove_caps();
