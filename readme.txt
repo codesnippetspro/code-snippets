@@ -52,7 +52,7 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 
 Further documentation available on the [plugin website](http://code-snippets.bungeshea.com/docs/).
 
-= Do I need to include the `&lt;?php`, `&lt;?` or `?&gt;` tags in my snippet? =
+= Do I need to include the &lt;?php, &lt;? or ?&gt; tags in my snippet? =
 No, just copy all the content inside those tags.
 
 = Is there a way to add a snippet but not run it right away? =
