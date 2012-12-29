@@ -335,7 +335,7 @@ final class Code_Snippets {
 		}
 
 		/* bail early if we're on the latest version */
-		if ( ! ( $this->current_version < $this->version ) ) return false;
+		if ( $this->current_version < $this->version ) return false;
 
 		if ( ! get_site_option( 'code_snippets_version' ) ) {
 
