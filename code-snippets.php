@@ -15,7 +15,7 @@
  * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
- * Version: 1.6.1
+ * Version: 1.7
  * License: GPLv3 or later
  * Network: true
  * Text Domain: code-snippets
