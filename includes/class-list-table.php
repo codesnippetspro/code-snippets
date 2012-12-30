@@ -13,6 +13,11 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  */
 class Code_Snippets_List_Table extends WP_List_Table {
 
+	/**
+	 * The constructor function for our class
+	 *
+	 * Adds hooks, initializes variables, setups class
+	 */
 	function __construct() {
 		global $status, $page, $code_snippets;
 
@@ -299,11 +304,19 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 	}
 
+	/**
+	 * Message to display if no snippets are found
+	 */
 	function no_items() {
 		global $code_snippets;
 		printf( __('You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets'), $code_snippets->admin_single_url );
 	}
 
+	/**
+	 * Prepares the items to later display in the table
+	 *
+	 * Should run before any headers are sent
+	 */
 	function prepare_items() {
 
 		global $code_snippets, $status, $snippets, $totals, $page, $orderby, $order, $s;
@@ -366,7 +379,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/**
 		 * First, lets decide how many records per page to show
-		 * by getting the user's setting in the Screen Opions
+		 * by getting the user's setting in the Screen Options
 		 * panel.
 		 */
 		$sort_by = $screen->get_option( 'per_page', 'option' );
