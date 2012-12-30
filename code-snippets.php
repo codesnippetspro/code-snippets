@@ -1260,11 +1260,19 @@ final class Code_Snippets {
 			return;
 
 		global $wpdb;
+		$active_snippets = array();
 
-		// grab the active snippets from the database
-		$active_snippets = $wpdb->get_results( "SELECT code FROM $this->table WHERE active=1;" );
+		// check that the table exists before continuing
+		if ( ! $wpdb->get_var( "SHOW TABLES LIKE '$this->table';" ) ) {
 
-		if ( is_multisite() ) {
+			// grab the active snippets from the database
+			$active_snippets = $wpdb->get_results( "SELECT code FROM $this->table WHERE active=1;" );
+
+		}
+
+		if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$this->ms_table';" ) ) {
+
+			// grab the network active snippets from the database
 			$active_snippets = array_merge(
 				$wpdb->get_results( "SELECT code FROM $this->ms_table WHERE active=1;" ),
 				$active_snippets
