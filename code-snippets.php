@@ -97,7 +97,7 @@ final class Code_Snippets {
 	 * @since Code Snippets 1.0
 	 * @access public
 	 */
-	public $version = 1.6;
+	public $version = 1.7;
 
 	/**
 	 * The base URLs for the admin pages
@@ -301,6 +301,7 @@ final class Code_Snippets {
 				name		VARCHAR(64)	NOT NULL,
 				description	TEXT,
 				code		TEXT		NOT NULL,
+				tags		LONGTEXT,
 				active		TINYINT(1)	NOT NULL DEFAULT 0,
 				UNIQUE KEY id (id)
 			);";
@@ -355,6 +356,18 @@ final class Code_Snippets {
 		}
 
 		/* preform version specific upgrades */
+
+		if ( $this->current_version < 1.7 ) {
+			global $wpdb;
+
+			/* Add the tags database table column */
+			$wpdb->query( "ALTER TABLE $this->table ADD COLUMN tags LONGTEXT AFTER code" );
+
+			if ( is_multisite() ) {
+				/* We must not forget the multisite table! */
+				$wpdb->query( "ALTER TABLE $this->ms_table ADD COLUMN tags LONGTEXT AFTER code" );
+			}
+		}
 
 		if ( $this->current_version < 1.5 ) {
 			global $wpdb;
