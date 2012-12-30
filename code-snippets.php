@@ -820,6 +820,61 @@ final class Code_Snippets {
 	}
 
 	/**
+	 * Retrive a list of snippets from the database
+	 *
+	 * @since Code Snippets 1.7
+	 * @access public
+	 *
+	 * @uses $wpdb To query the database for snippets
+	 * @uses $this->get_table_name() To dynamically retrieve the snippet table name
+	 *
+	 * @param string $scope Retrieve multisite-wide or site-wide snippets?
+	 * @return array An array of snippet objects
+	 */
+	 public function get_snippets( $scope = '' ) {
+		global $wpdb;
+
+		$table = $this->get_table_name( $scope );
+		$snippets = $wpdb->get_results( "SELECT * FROM $table", ARRAY_A );
+
+		return $snippets;
+	}
+
+	/**
+	 * Retrive a single snippets from the database
+	 * Will return empty snippe object if no snippet
+	 * ID is specified
+	 *
+	 * @since Code Snippets 1.7
+	 * @access public
+	 *
+	 * @uses $wpdb To query the database for snippets
+	 * @uses $this->get_table_name() To dynamically retrieve the snippet table name
+	 *
+	 * @param string $scope Retrieve a multisite-wide or site-wide snippet?
+	 * @return stdClass A single snippet object
+	 */
+	 public function get_snippet( $id = 0, $scope = '' ) {
+		global $wpdb;
+		$table = $this->get_table_name( $scope );
+
+		if ( ! empty( $id ) && intval( $id ) != 0 ) {
+
+			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
+
+		} else {
+			// define a empty object (or one with default values)
+			$snippet = new stdClass();
+			$snippet->name = '';
+			$snippet->description = '';
+			$snippet->code = '';
+			$snippet->tags = array();
+		}
+
+		return $snippet;
+	}
+
+	/**
 	 * Deactivates selected snippets
 	 *
 	 * @since Code Snippets 1.5

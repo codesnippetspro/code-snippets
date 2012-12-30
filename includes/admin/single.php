@@ -40,15 +40,12 @@ if ( isset( $_REQUEST['edit'] ) )
 
 	<form method="post" action="" style="margin-top: 10px;">
 		<?php
+
 			if ( isset( $edit_id ) ) {
-				$snippet = $wpdb->get_row( "SELECT * FROM $table WHERE id = $edit_id" );
+				$snippet = $this->get_snippet( $edit_id );
 				printf ( '<input type="hidden" name="snippet_id" value="%d" />', $snippet->id );
 			} else {
-				// define a empty object (or one with default values)
-				$snippet = new stdClass();
-				$snippet->name = '';
-				$snippet->description = '';
-				$snippet->code = '';
+				$snippet = $this->get_snippet();
 			}
 		?>
 		<div id="titlediv">

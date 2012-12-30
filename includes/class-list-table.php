@@ -306,19 +306,18 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	function prepare_items() {
 
-		global $wpdb, $code_snippets, $status, $snippets, $totals, $page, $orderby, $order, $s;
+		global $code_snippets, $status, $snippets, $totals, $page, $orderby, $order, $s;
 
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
 
 		$screen = get_current_screen();
 		$user = get_current_user_id();
-		$table = $code_snippets->get_table_name();
 
 		// first, lets process the bulk actions
 		$this->process_bulk_actions();
 
 		$snippets = array(
-			'all' => $wpdb->get_results( "SELECT * FROM $table", ARRAY_A ),
+			'all' => $code_snippets->get_snippets(),
 			'search' => array(),
 			'active' => array(),
 			'inactive' => array(),
