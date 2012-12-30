@@ -537,27 +537,27 @@ final class Code_Snippets {
 			__('Snippets', 'code-snippets'),
 			__('Snippets', 'code-snippets'),
 			'manage_snippets',
-			$this->admin_manage_url,
+			$this->admin_manage_slug,
 			array( $this, 'display_admin_manage' ),
 			plugins_url( 'images/icon16.png', $this->file ),
 			67
 		);
 
 		add_submenu_page(
-			$this->admin_manage_url,
+			$this->admin_manage_slug,
 			__('Snippets', 'code-snippets'),
 			__('Manage Snippets', 'code-snippets'),
 			'manage_snippets',
-			$this->admin_manage_url,
+			$this->admin_manage_slug,
 			array( $this, 'display_admin_manage')
 		);
 
 		$this->admin_single = add_submenu_page(
-			$this->admin_manage_url,
+			$this->admin_manage_slug,
 			__('Add New Snippet', 'code-snippets'),
 			__('Add New', 'code-snippets'),
 			'install_snippets',
-			$this->admin_single_url,
+			$this->admin_single_slug,
 			array( $this, 'display_admin_single' )
 		);
 
@@ -586,27 +586,27 @@ final class Code_Snippets {
 			__('Snippets', 'code-snippets'),
 			__('Snippets', 'code-snippets'),
 			'manage_network_snippets',
-			$this->admin_manage_url,
+			$this->admin_manage_slug,
 			array( $this, 'display_admin_manage' ),
 			plugins_url( 'images/icon16.png', $this->file ),
 			21
 		);
 
 		add_submenu_page(
-			$this->admin_manage_url,
+			$this->admin_manage_slug,
 			__('Snippets', 'code-snippets'),
 			__('Manage Snippets', 'code-snippets'),
 			'manage_network_snippets',
-			$this->admin_manage_url,
+			$this->admin_manage_slug,
 			array( $this, 'display_admin_manage' )
 		);
 
 		$this->admin_single = add_submenu_page(
-			$this->admin_manage_url,
+			$this->admin_manage_slug,
 			__('Add New Snippet', 'code-snippets'),
 			__('Add New', 'code-snippets'),
 			'install_network_snippets',
-			$this->admin_single_url,
+			$this->admin_single_slug,
 			array( $this, 'display_admin_single' )
 		);
 
@@ -633,7 +633,7 @@ final class Code_Snippets {
 	function add_import_admin_menu() {
 
 		$this->admin_import = add_submenu_page(
-			$this->admin_manage_url,
+			$this->admin_manage_slug,
 			__('Import Snippets', 'code-snippets'),
 			__('Import', 'code-snippets'),
 			'import_snippets',
@@ -1203,7 +1203,7 @@ final class Code_Snippets {
 	function settings_link( $links ) {
 		array_unshift( $links, sprintf(
 			'<a href="%1$s" title="%2$s">%3$s</a>',
-			$this->admin_manage_url,
+			$this->admin_manage_slug,
 			__('Manage your existing snippets', 'code-snippets'),
 			__('Manage', 'code-snippets')
 		) );
