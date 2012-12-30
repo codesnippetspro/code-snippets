@@ -537,27 +537,27 @@ final class Code_Snippets {
 			__('Snippets', 'code-snippets'),
 			__('Snippets', 'code-snippets'),
 			'manage_snippets',
-			apply_filters( 'code_snippets_manage_url', 'snippets' ),
+			$this->admin_manage_url,
 			array( $this, 'display_admin_manage' ),
 			plugins_url( 'images/icon16.png', $this->file ),
 			67
 		);
 
 		add_submenu_page(
-			apply_filters( 'code_snippets_manage_url', 'snippets' ),
+			$this->admin_manage_url,
 			__('Snippets', 'code-snippets'),
 			__('Manage Snippets', 'code-snippets'),
 			'manage_snippets',
-			apply_filters( 'code_snippets_manage_url', 'snippets' ),
+			$this->admin_manage_url,
 			array( $this, 'display_admin_manage')
 		);
 
 		$this->admin_single = add_submenu_page(
-			apply_filters( 'code_snippets_manage_url', 'snippets' ),
+			$this->admin_manage_url,
 			__('Add New Snippet', 'code-snippets'),
 			__('Add New', 'code-snippets'),
 			'install_snippets',
-			apply_filters( 'code_snippets_single_url', 'snippet' ),
+			$this->admin_single_url,
 			array( $this, 'display_admin_single' )
 		);
 
@@ -586,27 +586,27 @@ final class Code_Snippets {
 			__('Snippets', 'code-snippets'),
 			__('Snippets', 'code-snippets'),
 			'manage_network_snippets',
-			apply_filters( 'code_snippets_manage_url', 'snippets' ),
+			$this->admin_manage_url,
 			array( $this, 'display_admin_manage' ),
 			plugins_url( 'images/icon16.png', $this->file ),
 			21
 		);
 
 		add_submenu_page(
-			apply_filters( 'code_snippets_manage_url', 'snippets' ),
+			$this->admin_manage_url,
 			__('Snippets', 'code-snippets'),
 			__('Manage Snippets', 'code-snippets'),
 			'manage_network_snippets',
-			apply_filters( 'code_snippets_manage_url', 'snippets' ),
+			$this->admin_manage_url,
 			array( $this, 'display_admin_manage' )
 		);
 
 		$this->admin_single = add_submenu_page(
-			apply_filters( 'code_snippets_manage_url', 'snippets' ),
+			$this->admin_manage_url,
 			__('Add New Snippet', 'code-snippets'),
 			__('Add New', 'code-snippets'),
 			'install_network_snippets',
-			apply_filters( 'code_snippets_single_url', 'snippet' ),
+			$this->admin_single_url,
 			array( $this, 'display_admin_single' )
 		);
 
@@ -633,7 +633,7 @@ final class Code_Snippets {
 	function add_import_admin_menu() {
 
 		$this->admin_import = add_submenu_page(
-			apply_filters( 'code_snippets_manage_url', 'snippets' ),
+			$this->admin_manage_url,
 			__('Import Snippets', 'code-snippets'),
 			__('Import', 'code-snippets'),
 			'import_snippets',
