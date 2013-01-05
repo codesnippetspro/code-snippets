@@ -137,8 +137,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				'action' => 'delete',
 				'id' =>	$item['id']
 			) ),
-			esc_js( 'return confirm( "You are about to permanently delete the selected item.
-			\'Cancel\' to stop, \'OK\' to delete.");' )
+			esc_js( sprintf(
+				'return confirm("%s");',
+				__("You are about to permanently delete the selected item.
+				'Cancel' to stop, 'OK' to delete.", 'code-snippets')
+			) )
 		);
 
 		// Return the name contents
