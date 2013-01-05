@@ -241,10 +241,10 @@ final class Code_Snippets {
 			$screen = get_current_screen();
 			$network = $screen->is_network;
 		}
-		elseif ( 'multisite' == $scope || 'network' == $scope ) {
+		elseif ( 'multisite' === $scope || 'network' === $scope ) {
 			$network = true;
 		}
-		elseif ( 'site' == $scope || 'single' == $scope ) {
+		elseif ( 'site' === $scope || 'single' === $scope ) {
 			$network = false;
 		}
 		else {
@@ -420,7 +420,7 @@ final class Code_Snippets {
 	 */
 	public function add_caps( $scope = '' ) {
 
-		$network = ( 'multisite' == $scope || 'network' == $scope ? true : false );
+		$network = ( 'multisite' === $scope || 'network' === $scope ? true : false );
 
 		if ( $network && is_multisite() )
 			$this->setup_ms_roles( 'add' );
@@ -441,7 +441,7 @@ final class Code_Snippets {
 	 */
 	public function remove_caps( $scope = '' ) {
 
-		$network = ( 'multisite' == $scope || 'network' == $scope ? true : false );
+		$network = ( 'multisite' === $scope || 'network' === $scope ? true : false );
 
 		if ( $network && is_multisite() )
 			$this->setup_ms_roles( 'remove' );
@@ -460,10 +460,10 @@ final class Code_Snippets {
 	 */
 	function setup_roles( $action = 'install' ) {
 
-		if ( 'install' == $action || 'add' == $action )
+		if ( 'install' === $action || 'add' === $action )
 			$install = true;
 
-		elseif ( 'uninstall' == $action || 'remove' == $action )
+		elseif ( 'uninstall' === $action || 'remove' === $action )
 			$install = false;
 
 		else
@@ -499,10 +499,10 @@ final class Code_Snippets {
 
 		if ( ! is_multisite() ) return;
 
-		if ( 'install' == $action || 'add' == $action )
+		if ( 'install' === $action || 'add' === $action )
 			$install = true;
 
-		elseif ( 'uninstall' == $action || 'remove' == $action )
+		elseif ( 'uninstall' === $action || 'remove' === $action )
 			$install = false;
 
 		else
@@ -1114,22 +1114,22 @@ final class Code_Snippets {
 
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id' ) );
 
-			if ( 'activate' == $_GET['action'] ) {
+			if ( 'activate' === $_GET['action'] ) {
 				$this->activate( $id );
 				wp_redirect( add_query_arg( 'activate', true ) );
 			}
-			elseif ( 'deactivate' == $_GET['action'] ) {
+			elseif ( 'deactivate' === $_GET['action'] ) {
 				$this->deactivate( $id );
 				wp_redirect( add_query_arg( 'deactivate', true ) );
 			}
-			elseif ( 'delete' == $_GET['action'] ) {
+			elseif ( 'delete' === $_GET['action'] ) {
 				$this->delete_snippet( $id );
 				wp_redirect( add_query_arg( 'delete', true ) );
 			}
-			elseif ( 'export' == $_GET['action'] ) {
+			elseif ( 'export' === $_GET['action'] ) {
 				$this->export( $id );
 			}
-			elseif ( 'export-php' == $_GET['action'] ) {
+			elseif ( 'export-php' === $_GET['action'] ) {
 				$this->export_php( $id );
 			}
 

@@ -221,7 +221,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			if ( 'search' != $type ) {
 				$status_links[$type] = sprintf( '<a href="%s"%s>%s</a>',
 					add_query_arg('status', $type, '?page=' . $_REQUEST['page'] ),
-					( $type == $status ) ? ' class="current"' : '',
+					( $type === $status ) ? ' class="current"' : '',
 					sprintf( $text, number_format_i18n( $count ) )
 				);
 			}
@@ -240,7 +240,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$screen = get_current_screen();
 
-		if ( 'recently_activated' == $status )
+		if ( 'recently_activated' === $status )
 			submit_button( __('Clear List', 'code-snippets'), 'secondary', 'clear-recent-list', false );
 
 		echo '</div>';
