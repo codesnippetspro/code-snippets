@@ -246,10 +246,10 @@ final class Code_Snippets {
 			$screen = get_current_screen();
 			$network = $screen->is_network;
 		}
-		elseif ( $scope == 'multisite' || $scope == 'network' ) {
+		elseif ( 'multisite' == $scope || 'network' == $scope ) {
 			$network = true;
 		}
-		elseif ( $scope == 'site' || $scope = 'single' ) {
+		elseif ( 'site' == $scope || 'single' == $scope ) {
 			$network = false;
 		}
 		else {
@@ -413,7 +413,7 @@ final class Code_Snippets {
 	 */
 	public function add_caps( $scope = '' ) {
 
-		$network = ( $scope == 'multisite' || $scope == 'network' ? true : false );
+		$network = ( 'multisite' == $scope || 'network' == $scope ? true : false );
 
 		if ( $network && is_multisite() )
 			$this->setup_ms_roles( 'add' );
@@ -434,7 +434,7 @@ final class Code_Snippets {
 	 */
 	public function remove_caps( $scope = '' ) {
 
-		$network = ( $scope == 'multisite' || $scope == 'network' ? true : false );
+		$network = ( 'multisite' == $scope || 'network' == $scope ? true : false );
 
 		if ( $network && is_multisite() )
 			$this->setup_ms_roles( 'remove' );
@@ -453,10 +453,10 @@ final class Code_Snippets {
 	 */
 	function setup_roles( $action = 'install' ) {
 
-		if ( $action == 'install' || $action = 'add' )
+		if ( 'install' == $action || 'add' == $action )
 			$install = true;
 
-		elseif ( $action == 'uninstall' || $action = 'remove' )
+		elseif ( 'uninstall' == $action || 'remove' == $action )
 			$install = false;
 
 		else
@@ -492,10 +492,10 @@ final class Code_Snippets {
 
 		if ( ! is_multisite() ) return;
 
-		if ( $action == 'install' || $action = 'add' )
+		if ( 'install' == $action || 'add' == $action )
 			$install = true;
 
-		elseif ( $action == 'uninstall' || $action = 'remove' )
+		elseif ( 'uninstall' == $action || 'remove' == $action )
 			$install = false;
 
 		else

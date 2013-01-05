@@ -44,7 +44,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 
 	header( 'Content-Disposition: attachment; filename=' . $filename );
 
-	if ( $format === 'xml' ) {
+	if ( 'xml' === $format ) {
 		header( 'Content-Type: text/xml; charset=utf-8' );
 
 		echo '<?xml version="1.0"?>' . "\n";
@@ -65,7 +65,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 
 		echo "\n</snippets>";
 
-	} elseif ( $format === 'php' ) {
+	} elseif ( 'php' === $format ) {
 
 		echo "<?php\n";
 
