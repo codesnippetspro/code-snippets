@@ -79,6 +79,13 @@ if ( isset( $_REQUEST['edit'] ) )
 			);
 		?>
 
+		<label for="snippet_tags" style="cursor: auto;">
+			<h3><?php esc_html_e('Tags', 'code-snippets'); ?>
+			<span style="font-weight: normal;"><?php esc_html_e('(Optional)', 'code-snippets'); ?></span></h3>
+		</label>
+
+		<input type="text" value="<?php echo join( ', ', $snippet->tags ); ?>" style="width: 100%" />
+
 		<p class="submit">
 			<input type="submit" name="save_snippet" class="button-primary" value="<?php _e('Save', 'code-snippets'); ?>" />
 			<a href="<?php echo $this->admin_manage_url; ?>" class="button"><?php _e('Cancel', 'code-snippets'); ?></a>
