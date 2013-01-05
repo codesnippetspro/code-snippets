@@ -156,12 +156,23 @@ class Code_Snippets_List_Table extends WP_List_Table {
         );
     }
 
+	function column_tags( $item ) {
+
+		if ( $item['tags'] ) {
+			/* translators: used between list items, there is a space after the comma */
+			return join( __( ', ' ), $item['tags'] );
+		} else {
+			return '&#8212;';
+		}
+	}
+
 	function get_columns() {
 		return array(
 			'cb' => '<input type="checkbox" />',
 			'name' => __('Name', 'code-snippets'),
 			'id' => __('ID', 'code-snippets'),
 			'description' => __('Description', 'code-snippets'),
+			'tags' => __('Tags', 'code-snippets'),
 		);
 	}
 
