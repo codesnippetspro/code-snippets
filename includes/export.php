@@ -42,19 +42,33 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 
 	$filename = apply_filters( 'code_snippets_export_filename', "{$sitename}.code-snippets.{$format}", $format, $sitename );
 
+	/* Apply the file headers */
+
 	header( 'Content-Disposition: attachment; filename=' . $filename );
 
-	if ( 'xml' === $format ) {
+	if ( $format === 'xml' ) {
 		header( 'Content-Type: text/xml; charset=utf-8' );
 
 		echo '<?xml version="1.0"?>' . "\n";
 		echo '<snippets sitename="' . $sitename . '">';
 
-		foreach( $ids as $id ) {
+	} elseif ( $format === 'php' ) {
 
-			if ( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
+		echo "<?php\n";
 
-			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d", $id ) );
+	}
+
+	do_action( 'code_snippets_export_file_header', $format, $ids, $filename );
+
+	/* Loop through the snippets */
+
+	foreach( $ids as $id ) {
+
+		if ( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
+
+		$snippet = $code_snippets->get_snippet( $id );
+
+		if ( $format === 'xml' ) {
 
 			echo "\n\t" . '<snippet>';
 			echo "\n\t\t" . "<name>$snippet->name</name>";
@@ -62,34 +76,56 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 			echo "\n\t\t" . "<code>$snippet->code</code>";
 			echo "\n\t" . '</snippet>';
 		}
+		elseif ( $format === 'php' ) {
+
+			if ( ! empty( $snippet->description ) ) {
+				printf (
+					'/**
+					  * %1$s
+					  *
+					  * %2$s
+					  */
+
+					  %3$s
+
+					  ',
+					 htmlspecialchars_decode( stripslashes( $snippet->name ) ),
+					 htmlspecialchars_decode( stripslashes( $snippet->description ) ),
+					 htmlspecialchars_decode( stripslashes( $snippet->code ) )
+				);
+			} else {
+				printf (
+					'/**' . "\n" .
+					' * %1$s' . "\n" .
+					' * '  . "\n" .
+					' */
+
+					  %3$s
+
+					  ',
+					 htmlspecialchars_decode( stripslashes( $snippet->name ) ),
+					 htmlspecialchars_decode( stripslashes( $snippet->description ) ),
+					 htmlspecialchars_decode( stripslashes( $snippet->code ) )
+				);
+			}
+		}
+	}
+
+	do_action( 'code_snippets_export_file_snippet', $format, $id, $filename );
+
+	/* Finish off the file */
+
+	if ( 'xml' === $format ) {
 
 		echo "\n</snippets>";
 
 	} elseif ( 'php' === $format ) {
 
-		echo "<?php\n";
-
-		foreach( $ids as $id ) {
-
-			if ( ! intval( $id ) > 0 ) continue; // skip this one if we don't have a valid ID
-
-			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d", $id ) );
-?>
-
-/**
- * <?php echo htmlspecialchars_decode( stripslashes( $snippet->name ) ) . "\n"; ?>
-<?php if ( ! empty( $snippet->description ) ) : ?>
- *
- * <?php echo htmlspecialchars_decode( stripslashes( $snippet->description ) ) . "\n"; ?>
-<?php endif; ?>
- */
-<?php echo htmlspecialchars_decode( stripslashes( $snippet->code ) ) . "\n"; ?>
-
-<?php
-		}
-
 		echo '?>';
+
 	}
+
+	do_action( 'code_snippets_export_file_footer', $format, $ids, $filename );
 
 	exit;
 }
