@@ -4,11 +4,7 @@ global $wpdb;
 
 $table = $this->get_table_name();
 $screen = get_current_screen();
-$can_edit = current_user_can( $screen->is_network ? 'edit_network_snippets' : 'edit_snippets' );
 $can_install = current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' );
-
-if ( isset( $_REQUEST['edit'] ) && ! $can_edit )
-	wp_die( __('Sorry, you&#8217;re not allowed to edit snippets', 'code-snippets') );
 
 if ( isset( $_REQUEST['edit'] ) )
 	$edit_id = intval( $_REQUEST['edit'] );
