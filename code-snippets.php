@@ -58,36 +58,6 @@ if ( ! class_exists( 'Code_Snippets' ) ) :
 final class Code_Snippets {
 
 	/**
-	 * The base name for the snippets table in the database
-	 * This will later be prepended with the WordPress table prefix
-	 *
-	 * DO NOT EDIT THIS VARIABLE!
-	 * Instead, use the 'code_snippets_table' filter
-	 *
-	 * If you need to use the table name in your own code,
-	 * use the $code_snippets->get_table_name() function
-	 *
-	 * @since Code Snippets 1.0
-	 * @access public
-	 */
-	private $table = 'snippets';
-
-	/**
-	 * The base name for the network snippets table in the database
-	 * This will later be prepended with the WordPress base table prefix
-	 *
-	 * DO NOT EDIT THIS VARIABLE!
-	 * Instead, use the 'code_snippets_multisite_table' filter
-	 *
-	 * If you need to use the table name in your own code,
-	 * use the $code_snippets->get_table_name() function
-	 *
-	 * @since Code Snippets 1.4
-	 * @access private
-	 */
-	private $ms_table = 'ms_snippets';
-
-	/**
 	 * The version number for this release of the plugin.
 	 * This will later be used for upgrades and enqueueing files
 	 *
@@ -142,9 +112,6 @@ final class Code_Snippets {
 		global $wpdb;
 		$this->file       = __FILE__;
 
-		$this->table      = apply_filters( 'code_snippets_table', $wpdb->prefix . $this->table );
-		$this->ms_table   = apply_filters( 'code_snippets_multisite_table', $wpdb->base_prefix . $this->ms_table );
-
 		$this->basename	  = plugin_basename( $this->file );
 		$this->plugin_dir = plugin_dir_path( $this->file );
 		$this->plugin_url = plugin_dir_url ( $this->file );
@@ -154,6 +121,8 @@ final class Code_Snippets {
 
 		$this->admin_manage_url	 = self_admin_url( 'admin.php?page=' . $this->admin_manage_slug );
 		$this->admin_single_url  = self_admin_url( 'admin.php?page=' . $this->admin_single_slug );
+
+		$this->set_table_vars();
 	}
 
 	/**
@@ -186,6 +155,30 @@ final class Code_Snippets {
 
 		/* Add a custom icon to Snippets menu pages */
 		add_action( 'admin_head', array( $this, 'load_admin_icon_style' ) );
+
+		/* Register the table name with WordPress */
+		add_action( 'init', array( $this, 'set_table_vars' ) );
+		add_action( 'switch_blog', array( $this, 'set_table_vars' ) );
+	}
+
+	/**
+	 * Initialize the variables holding the table names
+	 *
+	 * @since Code Snippets 1.7
+	 * @access public
+	 *
+	 * @uses $wpdb
+	 *
+	 * @return void
+	 */
+	public function set_table_vars() {
+		global $wpdb;
+
+		$wpdb->snippets    = apply_filters( 'code_snippets_table', $wpdb->prefix . 'snippets' );
+		$wpdb->ms_snippets = apply_filters( 'code_snippets_multisite_table', $wpdb->base_prefix . 'ms_snippets' );
+
+		$this->table       = &$wpdb->snippets;
+		$this->ms_snippets = &$wpdb->ms_snippets;
 	}
 
 	/**
@@ -236,6 +229,8 @@ final class Code_Snippets {
 	 */
 	function get_table_name( $scope = '', $check_screen = true ) {
 
+		global $wpdb;
+
 		$this->create_tables(); // create the snippet tables if they do not exist
 
 		if ( ! is_multisite() ) {
@@ -256,7 +251,7 @@ final class Code_Snippets {
 			$network = false;
 		}
 
-		$table = ( $network ? $this->ms_table : $this->table );
+		$table = ( $network ? $wpdb->ms_snippets : $wpdb->snippets );
 
 		return $table;
 	}
@@ -273,12 +268,13 @@ final class Code_Snippets {
 	 */
 	public function create_tables() {
 
-		$this->create_table( $this->table );
+		global $wpdb;
+
+		$this->create_table( $wpdb->snippets );
 
 		if ( is_multisite() )
-			$this->create_table( $this->ms_table );
+			$this->create_table( $wpdb->ms_snippets );
 
-		add_site_option( 'code_snippets_version', $this->version );
 	}
 
 	/**
@@ -288,24 +284,28 @@ final class Code_Snippets {
 	 * @since Code Snippets 1.6
 	 * @access public
 	 *
+	 * @uses dbDelta() To add the table to the database
+	 *
 	 * @param string $table_name The name of the table to create
 	 * @return void
 	 */
 	function create_table( $table_name ) {
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		global $wpdb;
 
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name';" ) != $table_name ) {
+
 			$sql = "CREATE TABLE $table_name (
-				id			MEDIUMINT	NOT NULL AUTO_INCREMENT,
-				name		VARCHAR(64)	NOT NULL,
+				id			BIGINT(20)	NOT NULL AUTO_INCREMENT,
+				name		TINYTEXT	NOT NULL,
 				description	TEXT,
-				code		TEXT		NOT NULL,
+				code		LONGTEXT	NOT NULL,
 				tags		LONGTEXT,
 				active		TINYINT(1)	NOT NULL DEFAULT 0,
-				UNIQUE KEY id (id)
+				PRIMARY KEY  (id)
 			);";
-			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
 			dbDelta( $sql );
 		}
 	}
@@ -360,26 +360,20 @@ final class Code_Snippets {
 		if ( $this->current_version < 1.7 ) {
 			global $wpdb;
 
-			/* Add the tags database table column */
-			$wpdb->query( "ALTER TABLE $this->table ADD COLUMN tags LONGTEXT AFTER code" );
+			/* Improve column structure and add tags column */
+			$sql = " CHANGE name name TINYTEXT NOT NULL,
+				CHANGE description description TEXT,
+				CHANGE code code LONGTEXT NOT NULL,
+				ADD COLUMN tags LONGTEXT AFTER code";
 
-			if ( is_multisite() ) {
-				/* We must not forget the multisite table! */
-				$wpdb->query( "ALTER TABLE $this->ms_table ADD COLUMN tags LONGTEXT AFTER code" );
-			}
+			/* Execute the query */
+			$wpdb->query( 'ALTER TABLE ' . $wpdb->snippets . $sql );
+
+			if ( is_multisite() )
+				$wpdb->query( 'ALTER TABLE ' . $wpdb->ms_snippets . $sql );
 		}
 
 		if ( $this->current_version < 1.5 ) {
-			global $wpdb;
-
-			/* Let's alter the name column to accept up to 64 characters */
-			$wpdb->query( "ALTER TABLE $this->table CHANGE COLUMN name name VARCHAR(64) NOT NULL" );
-
-			if ( is_multisite() ) {
-				/* We must not forget the multisite table! */
-				$wpdb->query( "ALTER TABLE $this->ms_table CHANGE COLUMN name name VARCHAR(64) NOT NULL" );
-			}
-
 			/* Add the custom capabilities that were introduced in version 1.5 */
 			$this->add_roles();
 		}
@@ -862,6 +856,13 @@ final class Code_Snippets {
 
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 
+			$snippet->code = htmlspecialchars_decode( $snippet->code );
+		#	$snippet->tags = unserialize( $snippet->tags );
+
+
+			if ( empty( $snippet->tags ) )
+				$snippet->tags = array();
+
 		} else {
 			// define a empty object (or one with default values)
 			$snippet = new stdClass();
@@ -905,12 +906,12 @@ final class Code_Snippets {
 			$recently_active = array( $id => time() ) + (array) $recently_active;
 		}
 
-		if ( $table == $this->ms_table )
+		if ( $table === $wpdb->ms_table )
 			update_site_option(
 				'recently_activated_snippets',
 				$recently_active + (array) get_site_option( 'recently_activated_snippets' )
 			);
-		else
+		elseif ( $table === $wpdb->table )
 			update_option(
 				'recently_activated_snippets',
 				$recently_active + (array) get_option( 'recently_activated_snippets' )
@@ -953,6 +954,7 @@ final class Code_Snippets {
 		$name = mysql_real_escape_string( htmlspecialchars( $snippet['name'] ) );
 		$description = mysql_real_escape_string( htmlspecialchars( $snippet['description'] ) );
 		$code = mysql_real_escape_string( htmlspecialchars( $snippet['code'] ) );
+		$tags = implode( ' ',  $snippet['tags'] );
 
 		if ( empty( $name ) or empty( $code ) )
 			return false;
@@ -960,12 +962,14 @@ final class Code_Snippets {
 		$table = $this->get_table_name( $scope );
 
 		if ( isset( $snippet['id'] ) && ( intval( $snippet['id'] ) != 0 )  ) {
-			$wpdb->query( "UPDATE $table SET
+			$wpdb->query( $wpdb->prepare( "UPDATE $table SET
 				name='$name',
 				description='$description',
-				code='$code' WHERE id=" . intval( $snippet['id'] ) . "
-				LIMIT 1"
-			);
+				code='$code',
+				tags='$tags',
+				WHERE id='%d' LIMIT 1",
+				intval( $snippet['id'] )
+			) );
 			return intval( $snippet['id'] );
 		} else {
 			$wpdb->query(
@@ -1000,6 +1004,7 @@ final class Code_Snippets {
 				'name' => $child->name,
 				'description' => $child->description,
 				'code' => $child->code,
+				'tags' => $child->tags,
 			), $scope );
 		}
 		return $xml->count();
@@ -1164,13 +1169,16 @@ final class Code_Snippets {
 					'name' => $_REQUEST['snippet_name'],
 					'description' => $_REQUEST['snippet_description'],
 					'code' => $_REQUEST['snippet_code'],
+					'tags' => $_REQUEST['snippet_tags'],
 					'id' => $_REQUEST['snippet_id'],
+
 				) );
 			} else {
 				$result = $this->save_snippet( array(
 					'name' => $_REQUEST['snippet_name'],
 					'description' => $_REQUEST['snippet_description'],
 					'code' => $_REQUEST['snippet_code'],
+					'tags' => $_REQUEST['snippet_tags'],
 				) );
 			}
 
@@ -1331,18 +1339,18 @@ final class Code_Snippets {
 		$active_snippets = array();
 
 		// check that the table exists before continuing
-		if ( ! $wpdb->get_var( "SHOW TABLES LIKE '$this->table';" ) ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->snippets}';" ) ) {
 
 			// grab the active snippets from the database
-			$active_snippets = $wpdb->get_results( "SELECT code FROM $this->table WHERE active=1;" );
+			$active_snippets = $wpdb->get_results( "SELECT code FROM {$wpdb->snippets} WHERE active=1;" );
 
 		}
 
-		if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$this->ms_table';" ) ) {
+		if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->ms_snippets}';" ) ) {
 
 			// grab the network active snippets from the database
 			$active_snippets = array_merge(
-				$wpdb->get_results( "SELECT code FROM $this->ms_table WHERE active=1;" ),
+				$wpdb->get_results( "SELECT code FROM {$wpdb->ms_snippets} WHERE active=1;" ),
 				$active_snippets
 			);
 		}
@@ -1395,18 +1403,18 @@ function code_snippets_uninstall() {
 		if ( $blogs ) {
 			foreach( $blogs as $blog ) {
 				switch_to_blog( $blog['blog_id'] );
-				$wpdb->query( 'DROP TABLE IF EXISTS ' . apply_filters( 'code_snippets_table', $wpdb->prefix . 'snippets' ) );
+				$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
 				delete_option( 'cs_db_version' );
 				delete_option( 'recently_activated_snippets' );
 				$code_snippets->remove_caps();
 			}
 			restore_current_blog();
 		}
-		$wpdb->query( 'DROP TABLE IF EXISTS ' . $code_snippets->get_table_name( 'multisite' ) );
+		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->ms_snippets" );
 		delete_site_option( 'recently_activated_snippets' );
 		$code_snippets->remove_caps( 'multisite' );
 	} else {
-		$wpdb->query( 'DROP TABLE IF EXISTS ' . $code_snippets->get_table_name( 'site' ) );
+		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
 		delete_option( 'recently_activated_snippets' );
 		delete_option( 'cs_db_version' );
 		$code_snippets->remove_caps();
