@@ -410,13 +410,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
             $order = ( ! empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'asc';
 
 			// Determine sort order
-			if ( $orderby === 'id' )
+			if ( 'id' === $orderby )
 				$result = $a[$orderby] - $b[$orderby]; // get the result for numerical data
 			else
 				$result = strcmp( $a[$orderby], $b[$orderby] ); // get the result for string data
 
 			// Send final sort direction to usort
-            return ( $order === 'asc' ) ? $result : -$result;
+            return ( 'asc' === $order ) ? $result : -$result;
         }
 
         usort($data, 'usort_reorder');
@@ -464,7 +464,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$term = stripslashes( $_REQUEST['s'] );
 
 		foreach ( $item as $value )
-			if ( stripos( $value, $term ) !== false )
+			if ( false !== stripos( $value, $term ) )
 				return true;
 
 		return false;
