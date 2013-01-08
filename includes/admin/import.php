@@ -36,6 +36,9 @@ if ( isset( $_REQUEST['imported'] ) && intval( $_REQUEST['imported'] ) != 0 ) {
 				<input type="hidden" name="action" value="save" />
 				<input type="hidden" name="max_file_size" value="8388608" />
 			</p>
+
+			<?php do_action( 'code_snippets_admin_import_form' ); ?>
+
 			<p class="submit">
 				<input type="submit" name="submit" id="submit" class="button" value="<?php _e('Upload file and import', 'code-snippets'); ?>" />
 			</p>

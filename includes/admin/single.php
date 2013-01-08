@@ -58,29 +58,7 @@ if ( isset( $_REQUEST['edit'] ) )
 
 		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo stripslashes( $snippet->code ); ?></textarea>
 
-		<label for="snippet_description" style="cursor: auto;">
-			<h3><?php esc_html_e('Description', 'code-snippets'); ?>
-			<span style="font-weight: normal;"><?php esc_html_e('(Optional)', 'code-snippets'); ?></span></h3>
-		</label>
-
-		<?php
-			wp_editor(
-				htmlspecialchars_decode( stripslashes( $snippet->description ) ),
-				'description',
-				array(
-					'textarea_name' => 'snippet_description',
-					'textarea_rows' => 10,
-				//	'media_buttons' => false,
-				)
-			);
-		?>
-
-		<label for="snippet_tags" style="cursor: auto;">
-			<h3><?php esc_html_e('Tags', 'code-snippets'); ?>
-			<span style="font-weight: normal;"><?php esc_html_e('(Optional)', 'code-snippets'); ?></span></h3>
-		</label>
-
-		<input type="text" value="<?php echo join( ', ', $snippet->tags ); ?>" style="width: 100%" />
+		<?php do_action( 'code_snippets_admin_single' ); ?>
 
 		<p class="submit">
 			<input type="submit" name="save_snippet" class="button-primary" value="<?php _e('Save', 'code-snippets'); ?>" />

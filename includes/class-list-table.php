@@ -156,31 +156,22 @@ class Code_Snippets_List_Table extends WP_List_Table {
         );
     }
 
-	function column_tags( $item ) {
-
-		if ( $item['tags'] ) {
-			/* translators: used between list items, there is a space after the comma */
-			return join( __( ', ' ), $item['tags'] );
-		} else {
-			return '&#8212;';
-		}
-	}
-
 	function get_columns() {
-		return array(
+		$columns = array(
 			'cb' => '<input type="checkbox" />',
 			'name' => __('Name', 'code-snippets'),
 			'id' => __('ID', 'code-snippets'),
 			'description' => __('Description', 'code-snippets'),
-			'tags' => __('Tags', 'code-snippets'),
 		);
+		return apply_filters( 'code_snippets_list_table_columns', $columns );
 	}
 
 	function get_sortable_columns() {
-		return array(
+		$sortable_columns array(
 			'id' => array( 'id', true ),
 			'name' => array( 'name', false ),
 		);
+		return apply_filters( 'code_snippets_list_table_sortable_columns', $sortable_columns );
 	}
 
 	function get_default_hidden_columns( $result ) {

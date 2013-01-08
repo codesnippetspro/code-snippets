@@ -43,4 +43,7 @@ if ( isset( $s ) && $s )
 		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
 		<?php $code_snippets_list_table->display(); ?>
 	</form>
+
+	<?php do_action( 'code_snippets_admin_manage' ); ?>
+
 </div>
