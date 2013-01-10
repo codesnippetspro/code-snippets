@@ -139,7 +139,7 @@ final class Code_Snippets {
 	function setup_hooks() {
 
 		/* execute the snippets once the plugins are loaded */
-		add_action( 'plugins_loaded', array( $this, 'run_snippets', 1 ) );
+		add_action( 'plugins_loaded', array( $this, 'run_snippets' ), 1 );
 
 		/* add the administration menus */
 		add_action( 'admin_menu', array( $this, 'add_admin_menus' ), 5 );
@@ -164,7 +164,7 @@ final class Code_Snippets {
 		add_action( 'switch_blog', array( $this, 'set_table_vars' ), 1 );
 
 		/* Add the description editor to the Snippets > Add New page */
-		add_action( 'code_snippets_admin_single', array( $this, 'description_editor' ), 5 );
+		add_action( 'code_snippets_admin_single', array( $this, 'description_editor_box' ), 5 );
 	}
 
 	/**
@@ -265,6 +265,7 @@ final class Code_Snippets {
 	/**
 	 * Create the snippet tables if they do not already exist
 	 *
+	 * @since Code Snippets 1.2
 	 * @since Code Snippets 1.2
 	 * @access public
 	 *
@@ -1271,6 +1272,30 @@ final class Code_Snippets {
 	 */
 	function display_admin_import() {
 		require_once $this->plugin_dir . 'includes/admin/import.php';
+	}
+
+	/**
+	 * Add a description editor to the Add New/Edit Snippet page
+	 */
+	function description_editor_box( $snippet ) {
+		?>
+
+		<label for="snippet_description">
+			<h3><?php esc_html_e('Description', 'code-snippets'); ?>
+			<span style="font-weight: normal;"><?php esc_html_e('(Optional)', 'code-snippets'); ?></span></h3>
+		</label>
+
+		<?php
+
+		wp_editor(
+			htmlspecialchars_decode( stripslashes( $snippet->description ) ),
+			'description',
+			array(
+				'textarea_name' => 'snippet_description',
+				'textarea_rows' => 10,
+			//	'media_buttons' => false,
+			)
+		);
 	}
 
 	/**

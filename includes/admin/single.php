@@ -58,7 +58,7 @@ if ( isset( $_REQUEST['edit'] ) )
 
 		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo stripslashes( $snippet->code ); ?></textarea>
 
-		<?php do_action( 'code_snippets_admin_single' ); ?>
+		<?php do_action( 'code_snippets_admin_single', $snippet ); ?>
 
 		<p class="submit">
 			<input type="submit" name="save_snippet" class="button-primary" value="<?php _e('Save', 'code-snippets'); ?>" />
