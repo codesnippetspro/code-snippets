@@ -167,7 +167,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	function get_sortable_columns() {
-		$sortable_columns array(
+		$sortable_columns = array(
 			'id' => array( 'id', true ),
 			'name' => array( 'name', false ),
 		);
