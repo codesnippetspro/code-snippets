@@ -4,7 +4,7 @@ Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 3.5
-Stable tag: 1.7
+Stable tag: 1.6.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/copyleft/gpl.html
 
@@ -15,7 +15,7 @@ An easy, clean and simple way to add code snippets to your site.
 **Code Snippets** is an easy, clean and simple way to add code snippets to your site. No need to edit to your theme's `functions.php` file again!
 
 A snippet is a small chunk of PHP code that you can use to extend the functionality of a WordPress-powered website; essentially a mini-plugin with a *lot* less load on your site.
-Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while. 
+Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while.
 Code Snippets changes that by providing a GUI interface for adding snippets and **actually running them on your site** as if they were in your theme's `functions.php` file.
 
 You can use a graphical interface, similar to the Plugins menu, to manage, activate, deactivate, edit and delete your snippets. Easily organise your snippets by adding a name and description using the visual editor. Code Snippets includes built-in syntax highlighting and other features to help you write your code. Snippets can be exported for transfer to another side, either in XML for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
@@ -194,8 +194,8 @@ Code Snippets has a new website: http://code-snippets.bungeshea.com/
 Added import/export feature
 
 = 1.2 =
-Minor improvements | 
-Added code highlighting | 
+Minor improvements |
+Added code highlighting |
 Plugin data will now be cleaned up when you delete the plugin.
 
 = 1.1 =

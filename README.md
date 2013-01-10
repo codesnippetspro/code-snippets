@@ -5,7 +5,7 @@
 * Tags: snippets, code, php, network, multisite
 * Requires at least: 3.3
 * Tested up to: 3.5
-* Stable tag: 1.7
+* Stable tag: 1.6.1
 * License: GPLv3 or later
 * License URI: http://www.gnu.org/copyleft/gpl.html
 
