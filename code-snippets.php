@@ -165,6 +165,9 @@ final class Code_Snippets {
 
 		/* Add the description editor to the Snippets > Add New page */
 		add_action( 'code_snippets_admin_single', array( $this, 'description_editor_box' ), 5 );
+
+		/* Handle saving the user's screen option perferences */
+		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 	}
 
 	/**
@@ -311,7 +314,7 @@ final class Code_Snippets {
 			PRIMARY KEY  (id)
 		);";
 
-		dbDelta( $sql );
+		dbDelta( apply_filters( 'code_snippets_table_sql', $sql ) );
 
 		do_action( 'code_snippets_create_table', $table_name );
 	}
@@ -386,7 +389,7 @@ final class Code_Snippets {
 	 * Place it in this plugin's "languages" folder and name it "code-snippets-[value in wp-config].mo"
 	 *
 	 * If you wish to contribute a language file to be included in the Code Snippets package,
-	 * please see the plugin's website at http://code-snippets.bungeshea.com
+	 * please see create an issue on GitHub: https://github.com/bungeshea/code-snippets/issues
 	 *
 	 * @since Code Snippets 1.5
 	 * @access private
@@ -395,6 +398,16 @@ final class Code_Snippets {
 	 */
 	function load_textdomain() {
 		load_plugin_textdomain( 'code-snippets', false, dirname( $this->basename ) . '/languages/' );
+	}
+
+	/**
+	 * Handles saving the user's screen option preference
+	 *
+	 * @since Code Snippets 1.5
+	 * @access private
+	 */
+	function set_screen_option( $status, $option, $value ) {
+		if ( 'snippets_per_page' == $option ) return $value;
 	}
 
 	/**
@@ -850,7 +863,19 @@ final class Code_Snippets {
 
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 
-			$snippet->code = htmlspecialchars_decode( $snippet->code );
+			if ( ! isset( $snippet->id ) ) {
+
+				// define a empty object (or one with default values)
+				$snippet = new stdClass();
+				$snippet->name = '';
+				$snippet->description = '';
+				$snippet->code = '';
+				$snippet->id = null;
+
+			} else {
+				// unescape data
+				$snippet->code = htmlspecialchars_decode( $snippet->code );
+			}
 
 		} else {
 			// define a empty object (or one with default values)
