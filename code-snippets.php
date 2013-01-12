@@ -15,7 +15,7 @@
  * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
- * Version: 1.7
+ * Version: 1.6.2
  * License: GPLv3 or later
  * Network: true
  * Text Domain: code-snippets
@@ -269,10 +269,10 @@ final class Code_Snippets {
 	 * Create the snippet tables if they do not already exist
 	 *
 	 * @since Code Snippets 1.2
-	 * @since Code Snippets 1.2
 	 * @access public
 	 *
 	 * @uses $this->create_table() To create a single snippet table
+	 * @uses $wpdb->get_var() To test of the table exists
 	 *
 	 * @return void
 	 */
@@ -280,9 +280,10 @@ final class Code_Snippets {
 
 		global $wpdb;
 
-		$this->create_table( $wpdb->snippets );
+		if ( $wpdb->get_var( "SHOW TABLES LIKE $wpdb->snippets" ) !== $wpdb->snippets )
+			$this->create_table( $wpdb->snippets );
 
-		if ( is_multisite() )
+		if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE $wpdb->ms_snippets" ) !== $wpdb->ms_snippets )
 			$this->create_table( $wpdb->ms_snippets );
 
 	}
@@ -328,6 +329,7 @@ final class Code_Snippets {
 	 * @return bool True on successful upgrade, false on failure
 	 */
 	function upgrade() {
+		global $wpdb;
 
 		/* add backwards-compatibly for the CS_SAFE_MODE constant */
 		if ( defined( 'CS_SAFE_MODE' ) && ! defined( 'CODE_SNIPPETS_SAFE_MODE' ) ) {
@@ -345,16 +347,18 @@ final class Code_Snippets {
 		}
 
 		/* bail early if we're on the latest version */
-		if ( $this->current_version < $this->version ) return false;
+		if ( $this->current_version >= $this->version ) {
+			return false;
+		}
 
-		if ( ! get_site_option( 'code_snippets_version' ) ) {
+		if ( ! get_site_option( 'code_snippets_version' ) || $this->current_version < 1.5 ) {
 
 			/* This is the first time the plugin has run */
 
-			$this->add_caps(); // register the capabilities ONCE ONLY
+			$this->add_caps(); // register the capabilities once only
 
 			if ( is_multisite() ) {
-				$this->add_caps( 'multisite' ); // register the multisite capabilities ONCE ONLY
+				$this->add_caps( 'multisite' ); // register the multisite capabilities once only
 			}
 		}
 
@@ -364,11 +368,12 @@ final class Code_Snippets {
 			delete_option( 'recently_network_activated_snippets' );
 		}
 
-		/* preform version specific upgrades */
+		/* create (or upgrade) the snippet tables */
 
-		if ( $this->current_version < 1.5 ) {
-			/* Add the custom capabilities that were introduced in version 1.5 */
-			$this->add_roles();
+		$this->create_table( $wpdb->snippets );
+
+		if ( is_multisite() ) {
+			$this->create_table( $wpdb->ms_snippets );
 		}
 
 		if ( $this->current_version < 1.2 ) {
@@ -381,7 +386,7 @@ final class Code_Snippets {
 			update_site_option( 'code_snippets_version', $this->version );
 		}
 
-		return true;
+		return true; // the upgrade was successful
 	}
 
 	/**
