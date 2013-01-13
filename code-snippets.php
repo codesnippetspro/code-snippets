@@ -280,10 +280,10 @@ final class Code_Snippets {
 
 		global $wpdb;
 
-		if ( $wpdb->get_var( "SHOW TABLES LIKE $wpdb->snippets" ) !== $wpdb->snippets )
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) !== $wpdb->snippets )
 			$this->create_table( $wpdb->snippets );
 
-		if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE $wpdb->ms_snippets" ) !== $wpdb->ms_snippets )
+		if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) !== $wpdb->ms_snippets )
 			$this->create_table( $wpdb->ms_snippets );
 
 	}
@@ -305,15 +305,24 @@ final class Code_Snippets {
 
 		global $wpdb;
 
+		if ( ! empty( $wpdb->charset ) ) {
+			$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
+		}
+
+		if ( ! empty( $wpdb->collate ) ) {
+			$charset_collate .= " COLLATE $wpdb->collate";
+		}
+
 		$sql = "CREATE TABLE $table_name (
-			id			BIGINT(20)	NOT NULL AUTO_INCREMENT,
-			name		TINYTEXT	NOT NULL,
-			description	TEXT,
-			code		LONGTEXT	NOT NULL,
-			active		TINYINT(1)	NOT NULL DEFAULT 0,
-			UNIQUE KEY id (id),
-			PRIMARY KEY  (id)
-		);";
+					id			bigint(20)	auto_increment,
+					name		tinytext	not null,
+					description	text,
+					code		longtext	not null,
+					active		tinyint(1)	not null default 0,
+				PRIMARY KEY  (id),
+					KEY id (id)
+
+				) {$charset_collate};";
 
 		dbDelta( apply_filters( 'code_snippets_table_sql', $sql ) );
 
