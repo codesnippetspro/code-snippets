@@ -39,7 +39,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		) );
 
 		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ) );
-		add_action( "admin_print_scripts-$code_snippets->admin_manage", array( $this, 'load_table_style' ) );
+		add_action( "admin_print_scripts-{$code_snippets->admin_manage}", array( $this, 'load_table_style' ) );
 
 		parent::__construct( array(
 			'singular' => 'snippet',
@@ -69,13 +69,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	function column_default( $item, $column_name ) {
+
 		switch( $column_name ) {
 			case 'id':
 				return intval( $item[ $column_name ] );
 			case 'description':
 				return stripslashes( html_entity_decode( $item[ $column_name ] ) );
 			default:
-				return print_r( $item, true ); // Show the whole array for troubleshooting purposes
+				return do_action( "code_snippets_list_table_column_{$column_name}", $item );
 		}
 	}
 
@@ -134,15 +135,23 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		);
 
 		// Return the name contents
-		return '<strong>' . stripslashes( $item['name'] ) . '</strong>' . $this->row_actions( $actions, true );
+		return apply_filters(
+			'code_snippets_list_table_column_name',
+			'<strong>' . stripslashes( $item['name'] ) . '</strong>' . $this->row_actions( $actions, true ),
+			$item
+		);
 	}
 
     function column_cb( $item ) {
-        return sprintf(
-            '<input type="checkbox" name="%1$s[]" value="%2$s" />',
-            /*$1%s*/ $this->_args['singular'],  // Let's simply repurpose the table's singular label ("snippet")
-            /*$2%s*/ $item['id']                // The value of the checkbox should be the snippet's id
-        );
+        return apply_filters(
+			'code_snippets_list_table_column_cb',
+			sprintf(
+				'<input type="checkbox" name="%1$s[]" value="%2$s" />',
+				/*$1%s*/ $this->_args['singular'],  // Let's simply repurpose the table's singular label ("snippet")
+				/*$2%s*/ $item['id']                // The value of the checkbox should be the snippet's id
+			),
+			$item
+		);
     }
 
 	function get_columns() {
@@ -179,11 +188,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'delete-selected' => __('Delete', 'code-snippets'),
 			'export-php-selected' => __('Export to PHP', 'code-snippets'),
 		);
-		return $actions;
+		return apply_filters( 'code_snippets_bulk_actions', $actions );
 	}
 
 	function get_table_classes() {
-		return array( 'widefat', $this->_args['plural'] );
+		$classes = array( 'widefat', $this->_args['plural'] );
+		return apply_filters( 'code_snippets_table_classes', $classes );
 	}
 
 	function get_views() {
@@ -218,14 +228,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 		}
 
-		return $status_links;
+		return apply_filters( 'code_snippets_list_table_views', $status_links );
 	}
 
 	function extra_tablenav( $which ) {
 		global $status;
-
-		if ( ! in_array($status, array('recently_activated') ) )
-			return;
 
 		echo '<div class="alignleft actions">';
 
@@ -234,14 +241,17 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( 'recently_activated' === $status )
 			submit_button( __('Clear List', 'code-snippets'), 'secondary', 'clear-recent-list', false );
 
+		do_action( 'code_snippets_list_table_actions', $which );
+
 		echo '</div>';
 	}
 
 	function current_action() {
 		if ( isset( $_POST['clear-recent-list'] ) )
-			return 'clear-recent-list';
-
-		return parent::current_action();
+			$action = 'clear-recent-list';
+		else
+			$action = parent::current_action();
+		return apply_filters( 'code_snippets_list_table_current_action', $action );
 	}
 
 	/**

@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * HTML code for the Add New/Edit Snippet page
+ *
+ * @package    Code Snippets
+ * @subpackage Administration
+ */
+
 if ( ! class_exists( 'Code_Snippets' ) ) exit;
 global $wpdb;
 
@@ -6,8 +14,13 @@ $table = $this->get_table_name();
 $screen = get_current_screen();
 $can_install = current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' );
 
-if ( isset( $_REQUEST['edit'] ) )
+if ( isset( $_REQUEST['edit'] ) ) {
 	$edit_id = intval( $_REQUEST['edit'] );
+	$snippet = $this->get_snippet( $edit_id );
+} else {
+	$snippet = $this->get_snippet();
+}
+
 ?>
 
 <?php if ( isset( $_REQUEST['invalid'] ) && $_REQUEST['invalid'] ) : ?>
@@ -17,6 +30,8 @@ if ( isset( $_REQUEST['edit'] ) )
 <?php elseif ( isset( $_REQUEST['added'] ) && $_REQUEST['added'] ) : ?>
 	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>added</strong>.', 'code-snippets'); ?></p></div>
 <?php endif; ?>
+
+
 
 <div class="wrap">
 	<?php screen_icon(); ?>
@@ -35,14 +50,8 @@ if ( isset( $_REQUEST['edit'] ) )
 	?></h2>
 
 	<form method="post" action="" style="margin-top: 10px;">
-		<?php
-
-			if ( isset( $edit_id ) ) {
-				$snippet = $this->get_snippet( $edit_id );
+		<?php if ( isset( $edit_id ) )
 				printf ( '<input type="hidden" name="snippet_id" value="%d" />', $snippet->id );
-			} else {
-				$snippet = $this->get_snippet();
-			}
 		?>
 		<div id="titlediv">
 			<div id="titlewrap">

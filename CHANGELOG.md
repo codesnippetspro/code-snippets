@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7 (development)
+* Improved API
+* Fixed a bug with saving snippets per page option ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippets-per-page-does-not-work#post-3710991))
+*
+
 ## 1.6.1
 * Fixed a bug with permissions not being applied on install ([#](http://wordpress.org/support/topic/permissions-problem-after-install))
 * Fixed a bug in the uninstall method ([#](http://wordpress.org/support/topic/bug-in-delete-script))

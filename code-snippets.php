@@ -15,7 +15,7 @@
  * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
- * Version: 1.6.2
+ * Version: 1.7-dev
  * License: GPLv3 or later
  * Network: true
  * Text Domain: code-snippets
@@ -86,7 +86,21 @@ final class Code_Snippets {
 	 */
 	public $admin_manage, $admin_single, $admin_import;
 
+	/**
+	 * Variables to hold plugin paths
+	 *
+	 * @since Code Snippets 1.0
+	 * @access public
+	 */
 	public $file, $basename, $plugin_dir, $plugin_url;
+
+	/**
+	 * Stores an instance of the list table class
+	 *
+	 * @since Code Snippets 1.5
+	 * @access public
+	 */
+	public $list_table;
 
 	/**
 	 * The constructor function for our class
@@ -100,7 +114,7 @@ final class Code_Snippets {
 		$this->setup_vars();  // initialise the variables
 		$this->setup_hooks(); // register the action and filter hooks
 		$this->upgrade();     // check if we need to change some stuff
-		do_action( 'code_snippets_plugin_loaded' );
+		require_once $this->plugin_dir . 'includes/class-plugin.php';
 	}
 
 	/**
@@ -166,7 +180,7 @@ final class Code_Snippets {
 		/* Add the description editor to the Snippets > Add New page */
 		add_action( 'code_snippets_admin_single', array( $this, 'description_editor_box' ), 5 );
 
-		/* Handle saving the user's screen option perferences */
+		/* Handle saving the user's screen option preferences */
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 	}
 
@@ -421,7 +435,7 @@ final class Code_Snippets {
 	 * @access private
 	 */
 	function set_screen_option( $status, $option, $value ) {
-		if ( 'snippets_per_page' == $option ) return $value;
+		if ( 'snippets_per_page' === $option ) return $value;
 	}
 
 	/**
@@ -801,41 +815,7 @@ final class Code_Snippets {
 	}
 
 	/**
-	 * Activates a snippet
-	 *
-	 * @since Code Snippets 1.5
-	 * @access public
-	 *
-	 * @uses $wpdb To set the snippets' active status
-	 *
-	 * @param array $ids The ids of the snippets to activate
-	 * @param string $scope Are the snippets multisite-wide or site-wide?
-	 * @return void
-	 */
-	public function activate( $ids, $scope = '' ) {
-		global $wpdb;
-
-		$ids = (array) $ids;
-
-		$table = $this->get_table_name( $scope );
-
-		foreach( $ids as $id ) {
-			$wpdb->update(
-				$table,
-				array( 'active' => '1' ),
-				array( 'id' => $id ),
-				array( '%d' ),
-				array( '%d' )
-			);
-
-			do_action( 'code_snippets_activate', $id, $scope );
-		}
-
-		do_action( 'code_snippets_activate', $ids, $scope );
-	}
-
-	/**
-	 * Retrive a list of snippets from the database
+	 * Retrieve a list of snippets from the database
 	 *
 	 * @since Code Snippets 1.7
 	 * @access public
@@ -856,8 +836,8 @@ final class Code_Snippets {
 	}
 
 	/**
-	 * Retrive a single snippets from the database
-	 * Will return empty snippe object if no snippet
+	 * Retrieve a single snippets from the database
+	 * Will return empty snippet object if no snippet
 	 * ID is specified
 	 *
 	 * @since Code Snippets 1.7
@@ -900,6 +880,40 @@ final class Code_Snippets {
 		}
 
 		return apply_filters( 'code_snippets_get_snippet', $snippet, $id, $scope );
+	}
+
+	/**
+	 * Activates a snippet
+	 *
+	 * @since Code Snippets 1.5
+	 * @access public
+	 *
+	 * @uses $wpdb To set the snippets' active status
+	 *
+	 * @param array $ids The ids of the snippets to activate
+	 * @param string $scope Are the snippets multisite-wide or site-wide?
+	 * @return void
+	 */
+	public function activate( $ids, $scope = '' ) {
+		global $wpdb;
+
+		$ids = (array) $ids;
+
+		$table = $this->get_table_name( $scope );
+
+		foreach( $ids as $id ) {
+			$wpdb->update(
+				$table,
+				array( 'active' => '1' ),
+				array( 'id' => $id ),
+				array( '%d' ),
+				array( '%d' )
+			);
+
+			do_action( 'code_snippets_activate', $id, $scope );
+		}
+
+		do_action( 'code_snippets_activate', $ids, $scope );
 	}
 
 	/**
@@ -1116,6 +1130,47 @@ final class Code_Snippets {
 	}
 
 	/**
+	 * Returns the (de)activate link for a snippet
+	 *
+	 * @since Code Snippets 1.7
+	 * @access public
+	 *
+	 * @param mixed $snippet A snippet object or array
+	 * @return The HTML code for the (de)activation link
+	 */
+	public function get_activate_link( $snippet ) {
+
+		/* convert an object to an array */
+		if ( is_object( $snippet ) ) {
+			$snippet = get_object_vars( $snippet );
+		}
+
+		$screen = get_current_screen();
+
+		if ( $snippet['active'] ) {
+			$activate_link = sprintf(
+				'<a href="%1$s">%2$s</a>',
+				add_query_arg( array(
+					'action' => 'deactivate',
+					'id' =>	$snippet['id']
+				), $this->admin_manage_url ),
+				$screen->is_network ? __('Network Deactivate', 'code-snippets') : __('Deactivate', 'code-snippets')
+			);
+		} else {
+			$activate_link = sprintf(
+				'<a href="%1$s">%2$s</a>',
+				add_query_arg( array(
+					'action' => 'activate',
+					'id' =>	$snippet['id']
+				), $this->admin_manage_url ),
+				$screen->is_network ? __('Network Activate', 'code-snippets') : __('Activate', 'code-snippets')
+			);
+		}
+
+		return apply_filters( 'code_snippets_activate_link', $activate_link, $snippet );
+	}
+
+	/**
 	 * Replaces the text 'Add New Snippet' with 'Edit Snippet'
 	 *
 	 * @since Code Snippets 1.1
@@ -1153,23 +1208,29 @@ final class Code_Snippets {
 
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id' ) );
 
-			if ( 'activate' === $_GET['action'] ) {
+			$action = sanitize_key( $_GET['action'] );
+
+			if ( 'activate' === $action ) {
 				$this->activate( $id );
-				wp_redirect( add_query_arg( 'activate', true ) );
 			}
-			elseif ( 'deactivate' === $_GET['action'] ) {
+			elseif ( 'deactivate' === $action ) {
 				$this->deactivate( $id );
-				wp_redirect( add_query_arg( 'deactivate', true ) );
 			}
-			elseif ( 'delete' === $_GET['action'] ) {
+			elseif ( 'delete' === $action ) {
 				$this->delete_snippet( $id );
-				wp_redirect( add_query_arg( 'delete', true ) );
 			}
-			elseif ( 'export' === $_GET['action'] ) {
+			elseif ( 'export' === $action ) {
 				$this->export( $id );
 			}
-			elseif ( 'export-php' === $_GET['action'] ) {
+			elseif ( 'export-php' === $action ) {
 				$this->export_php( $id );
+			}
+
+			if ( 'export' !== $action || 'export-php' !== $action ) {
+				wp_redirect( apply_filters(
+					"code_snippets_{$action}_redirect",
+					add_query_arg( $action, true )
+				) );
 			}
 
 		endif;
@@ -1181,9 +1242,8 @@ final class Code_Snippets {
 		 */
 		require_once $this->plugin_dir . 'includes/class-list-table.php';
 
-		global $code_snippets_list_table;
-		$code_snippets_list_table = new Code_Snippets_List_Table();
-		$code_snippets_list_table->prepare_items();
+		$this->list_table = new Code_Snippets_List_Table();
+		$this->list_table->prepare_items();
 	}
 
 	/**
@@ -1315,6 +1375,10 @@ final class Code_Snippets {
 
 	/**
 	 * Add a description editor to the Add New/Edit Snippet page
+	 *
+	 * @since Code Snippets 1.7
+	 * @access private
+	 *
 	 */
 	function description_editor_box( $snippet ) {
 		?>
@@ -1326,14 +1390,17 @@ final class Code_Snippets {
 
 		<?php
 
+		remove_editor_styles(); // stop custom theme styling interfering with the editor
+
 		wp_editor(
 			htmlspecialchars_decode( stripslashes( $snippet->description ) ),
 			'description',
-			array(
+			apply_filters( 'code_snippets_description_editor_settings', array(
 				'textarea_name' => 'snippet_description',
 				'textarea_rows' => 10,
-			//	'media_buttons' => false,
-			)
+				'teeny' => true,
+				'media_buttons' => false,
+			) )
 		);
 	}
 
@@ -1363,7 +1430,7 @@ final class Code_Snippets {
 	 */
 	function plugin_meta( $links, $file ) {
 
-		if ( $file != $this->basename ) return $links;
+		if ( $file !== $this->basename ) return $links;
 
 		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
 
@@ -1380,7 +1447,7 @@ final class Code_Snippets {
 			),
 			sprintf( $format,
 				'http://code-snippets.bungeshea.com/donate/',
-				__('Support this plugin\'s development', 'code-snippets'),
+				__("Support this plugin's development", 'code-snippets'),
 				__('Donate', 'code-snippets')
 			)
 		) );
@@ -1401,8 +1468,7 @@ final class Code_Snippets {
 	 */
 	function run_snippets() {
 
-		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE )
-			return;
+		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) return;
 
 		global $wpdb;
 		$active_snippets = array();
@@ -1411,7 +1477,7 @@ final class Code_Snippets {
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->snippets}';" ) ) {
 
 			// grab the active snippets from the database
-			$active_snippets = $wpdb->get_results( "SELECT code FROM {$wpdb->snippets} WHERE active=1;" );
+			$active_snippets = $wpdb->get_col( "SELECT code FROM {$wpdb->snippets} WHERE active=1;" );
 
 		}
 
@@ -1419,7 +1485,7 @@ final class Code_Snippets {
 
 			// grab the network active snippets from the database
 			$active_snippets = array_merge(
-				$wpdb->get_results( "SELECT code FROM {$wpdb->ms_snippets} WHERE active=1;" ),
+				$wpdb->get_col( "SELECT code FROM {$wpdb->ms_snippets} WHERE active=1;" ),
 				$active_snippets
 			);
 		}
@@ -1427,7 +1493,7 @@ final class Code_Snippets {
 		if ( count( $active_snippets ) ) {
 			foreach( $active_snippets as $snippet ) {
 				// execute the php code
-				$this->execute_snippet( htmlspecialchars_decode( stripslashes( $snippet->code ) ) );
+				$this->execute_snippet( htmlspecialchars_decode( stripslashes( $snippet ) ) );
 			}
 		}
 	}
@@ -1445,8 +1511,6 @@ $code_snippets = new Code_Snippets;
 /* set up a pointer in the old variable (for backwards-compatibility) */
 global $cs;
 $cs = &$code_snippets;
-
-endif; // class exists check
 
 register_uninstall_hook( $code_snippets->file, 'code_snippets_uninstall' );
 
@@ -1468,10 +1532,10 @@ register_uninstall_hook( $code_snippets->file, 'code_snippets_uninstall' );
 function code_snippets_uninstall() {
 	global $wpdb, $code_snippets;
 	if ( is_multisite() ) {
-		$blogs = $wpdb->get_results( "SELECT blog_id FROM $wpdb->blogs", ARRAY_A );
-		if ( $blogs ) {
-			foreach( $blogs as $blog ) {
-				switch_to_blog( $blog['blog_id'] );
+		$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
+		if ( $blog_ids ) {
+			foreach ( $blog_ids as $blog_id ) {
+				switch_to_blog( $blog_id );
 				$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
 				delete_option( 'cs_db_version' );
 				delete_option( 'recently_activated_snippets' );
@@ -1488,6 +1552,7 @@ function code_snippets_uninstall() {
 		delete_option( 'cs_db_version' );
 		$code_snippets->remove_caps();
 	}
-
 	delete_site_option( 'code_snippets_version' );
 }
+
+endif; // class exists check

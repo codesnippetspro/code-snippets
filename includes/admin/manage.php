@@ -1,9 +1,16 @@
 <?php
+
+/**
+ * HTML code for the Manage Snippets page
+ *
+ * @package    Code Snippets
+ * @subpackage Administration
+ */
+
 if ( ! class_exists( 'Code_Snippets' ) ) exit;
 
 require_once $this->plugin_dir . 'includes/class-list-table.php';
 
-global $code_snippets_list_table;
 $screen = get_current_screen();
 ?>
 <?php if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) : ?>
@@ -33,15 +40,15 @@ $screen = get_current_screen();
 if ( isset( $s ) && $s )
 	printf( '<span class="subtitle">' . __('Search results for &#8220;%s&#8221;', 'code-snippets') . '</span>', esc_html( $s ) ); ?></h2>
 
-	<?php $code_snippets_list_table->views(); ?>
+	<?php $this->list_table->views(); ?>
 
 	<form method="get" action="">
 		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-		<?php $code_snippets_list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' ); ?>
+		<?php $this->list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' ); ?>
 	</form>
 	<form method="post" action="">
 		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-		<?php $code_snippets_list_table->display(); ?>
+		<?php $this->list_table->display(); ?>
 	</form>
 
 	<?php do_action( 'code_snippets_admin_manage' ); ?>

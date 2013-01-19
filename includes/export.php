@@ -7,7 +7,7 @@
  * and $code_snippets->export_php() methods then
  * directly use those in this file
  *
- * @package Code Snippets
+ * @package    Code Snippets
  * @subpackage Export
  */
 
@@ -31,7 +31,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 
 	$table = $code_snippets->get_table_name();
 
-	if ( count( $ids ) < 2 ) {
+	if ( 1 === count( $ids ) ) {
 		// If there is only snippet to export, use its name instead of the site name
 		$entry = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d", $ids ) );
 		$sitename = sanitize_key( $entry->name );
@@ -95,11 +95,11 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 				);
 			} else {
 				printf (
-					'/**' . "\n" .
-					' * %1$s' . "\n" .
-					' * '  . "\n" .
-					' */
-
+				"\n" . '/**' .
+				"\n" . ' * %1$s' .
+				"\n" . 	' * ' .
+				"\n" . 	' */
+				"\n" .
 					  %3$s
 
 					  ',
