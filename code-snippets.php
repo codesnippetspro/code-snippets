@@ -718,7 +718,7 @@ final class Code_Snippets {
 	function load_editor_scripts() {
 
 		/* CodeMirror package version */
-		$version = '3.0';
+		$version = '3.0.2';
 
 		/* CodeMirror base framework */
 
@@ -743,15 +743,15 @@ final class Code_Snippets {
 			);
 		}
 
-		/* CodeMirror utilities */
+		/* CodeMirror addons */
 
-		$utils = array( 'dialog', 'searchcursor', 'search', 'matchbrackets' );
+		$addons = array( 'dialog', 'searchcursor', 'search', 'matchbrackets' );
 
-		foreach ( $utils as $util ) {
+		foreach ( $addons as $addon ) {
 
 			wp_register_script(
-				"codemirror-util-$util",
-				plugins_url( "assets/util/$util.js", $this->file ),
+				"codemirror-addon-$addon",
+				plugins_url( "assets/addon/$addon.js", $this->file ),
 				array( 'codemirror' ),
 				$version
 			);
@@ -760,14 +760,14 @@ final class Code_Snippets {
 		/* Enqueue the registered scripts */
 
 		wp_enqueue_script( array(
-			'codemirror-util-matchbrackets',
+			'codemirror-addon-matchbrackets',
 			'codemirror-mode-htmlmixed',
 			'codemirror-mode-xml',
 			'codemirror-mode-js',
 			'codemirror-mode-css',
 			'codemirror-mode-clike',
 			'codemirror-mode-php',
-			'codemirror-util-search',
+			'codemirror-addon-search',
 		) );
 	}
 
@@ -785,7 +785,7 @@ final class Code_Snippets {
 	function load_editor_styles() {
 
 		/* CodeMirror package version */
-		$version = '3.0';
+		$version = '3.0.2';
 
 		/* CodeMirror base framework */
 
@@ -796,11 +796,11 @@ final class Code_Snippets {
 			$version
 		);
 
-		/* CodeMirror utilities */
+		/* CodeMirror addons */
 
 		wp_register_style(
-			'codemirror-util-dialog',
-			plugins_url( 'assets/util/dialog.css', $this->file ),
+			'codemirror-addon-dialog',
+			plugins_url( 'assets/addon/dialog.css', $this->file ),
 			array( 'codemirror' ),
 			$version
 		);
@@ -809,7 +809,7 @@ final class Code_Snippets {
 
 		wp_enqueue_style( array(
 			'codemirror',
-			'codemirror-util-dialog',
+			'codemirror-addon-dialog',
 		) );
 
 	}
@@ -1012,7 +1012,6 @@ final class Code_Snippets {
 				name='$name',
 				description='$description',
 				code='$code',
-				tags='$tags',
 				WHERE id='%d' LIMIT 1",
 				intval( $snippet['id'] )
 			) );
@@ -1052,7 +1051,6 @@ final class Code_Snippets {
 				'name' => $child->name,
 				'description' => $child->description,
 				'code' => $child->code,
-				'tags' => $child->tags,
 			), $scope );
 		}
 
@@ -1274,7 +1272,6 @@ final class Code_Snippets {
 					'name' => $_REQUEST['snippet_name'],
 					'description' => $_REQUEST['snippet_description'],
 					'code' => $_REQUEST['snippet_code'],
-					'tags' => $_REQUEST['snippet_tags'],
 					'id' => $_REQUEST['snippet_id'],
 
 				) );
@@ -1283,7 +1280,6 @@ final class Code_Snippets {
 					'name' => $_REQUEST['snippet_name'],
 					'description' => $_REQUEST['snippet_description'],
 					'code' => $_REQUEST['snippet_code'],
-					'tags' => $_REQUEST['snippet_tags'],
 				) );
 			}
 
