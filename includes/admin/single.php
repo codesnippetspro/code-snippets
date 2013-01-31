@@ -86,4 +86,17 @@ if ( isset( $_REQUEST['edit'] ) ) {
 		enterMode: "keep",
 		tabMode: "shift"
 	});
+
+	window.onbeforeunload = function() {
+		<?php
+
+		if ( isset( $edit_id ) ) {
+				printf( 'return "%s"', __('You will loose any unsaved edits if you navigate away', 'code_snippets') );
+		} else {
+				printf( 'return "%s"', __('You will discard the current snippet if you navigate away', 'code_snippets') );
+		}
+
+		?>
+
+	}
 </script>
