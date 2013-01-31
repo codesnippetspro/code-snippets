@@ -110,19 +110,19 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 ## Screenshots
 
 ### Managing existing snippets
-![Managing existing snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-1.jpg "Managing existing snippets")
+![Managing existing snippets](screenshot-1.jpg "Managing existing snippets")
 
 ### Managing network-wide snippets
-![Managing network-wide snippets](https://raw.github.com/bungeshea/code-snippets/master/screenshot-2.jpg "Managing network-wide snippets")
+![Managing network-wide snippets](screenshot-2.jpg "Managing network-wide snippets")
 
 ### Adding a new snippet
-![Adding a new snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-3.jpg "Adding a new snippet")
+![Adding a new snippet](screenshot-3.jpg "Adding a new snippet")
 
 ### Editing a snippet
-![Editing a snippet](https://raw.github.com/bungeshea/code-snippets/master/screenshot-4.jpg "Editing a snippet")
+![Editing a snippet](screenshot-4.jpg "Editing a snippet")
 
 ### Importing snippets from an XML file
-![Importing snippets from an XML file](https://raw.github.com/bungeshea/code-snippets/master/screenshot-5.jpg "Importing snippets from an XML file")
+![Importing snippets from an XML file](screenshot-5.jpg "Importing snippets from an XML file")
 
   [support]: http://wordpress.org/support/plugin/code-snippets/
   [github]: https://github.com/bungeshea/code-snippets
