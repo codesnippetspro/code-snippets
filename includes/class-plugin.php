@@ -9,9 +9,10 @@ class Code_Snippets_Plugin {
 
 	function __construct( $plugin_name = '' ) {
 
-		$this->plugin_name = ( isset( $plugin_name ) ? $plugin_name : sanitize_key( __CLASS__ ) );
-		add_action( 'plugins_loaded', array( $this, 'setup' ) );
+		if ( ! isset( $this->plugin_name ) )
+			$this->plugin_name = ( isset( $plugin_name ) ? $plugin_name : sanitize_key( __CLASS__ ) );
 
+		add_action( 'plugins_loaded', array( $this, 'setup' ) );
 	}
 
 	function setup() {

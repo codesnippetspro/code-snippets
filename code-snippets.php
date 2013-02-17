@@ -15,9 +15,8 @@
  * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
- * Version: 1.7-dev
+ * Version: 1.7
  * License: GPLv3 or later
- * Network: true
  * Text Domain: code-snippets
  * Domain Path: /languages/
  *
@@ -70,7 +69,7 @@ final class Code_Snippets {
 	public $version = 1.7;
 
 	/**
-	 * The base URLs for the admin pages
+	 * The full URLs to the admin pages
 	 *
 	 * @since Code Snippets 1.0
 	 * @access public
@@ -815,6 +814,63 @@ final class Code_Snippets {
 	}
 
 	/**
+	 * Converts an array of snippet data into a snippet object
+	 *
+	 * @since Code Snippets 1.7
+	 * @access public
+	 *
+	 * @param mixed $data The snippet data to convert
+	 * @return object The resulting snippet object
+	 */
+	public function build_snippet_object( $data = null ) {
+
+		$snippet = new stdClass;
+
+		// define an empty snippet object (or one with default values )
+
+		$snippet->name = '';
+		$snippet->description = '';
+		$snippet->code = '';
+		$snippet->id = 0;
+		$snippet = apply_filters( 'code_snippets_build_default_snippet', $snippet );
+
+		if ( ! isset( $data ) ) {
+			return $snippet;
+		}
+		elseif ( is_object( $data ) ) {
+			/* If we already have a snippet object, merge it with the default */
+			return (object) array_merge( (array) $snippet, (array) $data );
+		}
+		elseif ( is_array( $data ) ) {
+
+			if ( isset( $data['name' ] ) )
+				$snippet->name = $data['name'];
+			elseif ( isset( $data['snippet_name' ] ) )
+				$snippet->name = $data['snippet_name'];
+
+			if ( isset( $data['description' ] ) )
+				$snippet->description = $data['description'];
+			elseif ( isset( $data['snippet_description' ] ) )
+				$snippet->description = $data['snippet_description'];
+
+			if ( isset( $data['code' ] ) )
+				$snippet->code = $data['code'];
+			elseif ( isset( $data['snippet_code' ] ) )
+				$snippet->code = $data['snippet_code'];
+
+
+			if ( isset( $data['active' ] ) )
+				$snippet->active = $data['active'];
+			elseif ( isset( $data['snippet_active' ] ) )
+				$snippet->active = $data['snippet_active'];
+
+			return apply_filters( 'code_snippets_build_snippet_object', $snippet, $data );
+		}
+
+		return $snippet;
+	}
+
+	/**
 	 * Retrieve a list of snippets from the database
 	 *
 	 * @since Code Snippets 1.7
@@ -836,6 +892,48 @@ final class Code_Snippets {
 	}
 
 	/**
+	 * Escape snippet data for inserting into the database
+	 *
+	 * @since Code Snippets 1.7
+	 * @access public
+	 *
+	 * @param mixed $snippet An object or array containing the data to escape
+	 * @return object The resulting snippet object, with data escaped
+	 */
+	public function escape_snippet_data( $snippet ) {
+
+		$snippet = $this->build_snippet_object( $snippet );
+
+		$snippet->name = mysql_real_escape_string( htmlspecialchars( $snippet->name ) );
+		$snippet->description = mysql_real_escape_string( htmlspecialchars( $snippet->description ) );
+		$snippet->code = mysql_real_escape_string( htmlspecialchars( $snippet->code ) );
+		$snippet->id = intval( $snippet->id );
+
+		return apply_filters( 'code_snippets_escape_snippet_data', $snippet );
+	}
+
+	/**
+	 * Unescape snippet data after retrieving from the database
+	 * ready for use
+	 *
+	 * @since Code Snippets 1.7
+	 * @access public
+	 *
+	 * @param mixed $snippet An object or array containing the data to unescape
+	 * @return object The resulting snippet object, with data unescaped
+	 */
+	public function unescape_snippet_data( $snippet ) {
+
+		$snippet = $this->build_snippet_object( $snippet );
+
+		$snippet->name = htmlspecialchars_decode( stripslashes( $snippet->name ) );
+		$snippet->code = htmlspecialchars_decode( stripslashes( $snippet->code ) );
+		$snippet->description = htmlspecialchars_decode( stripslashes( $snippet->description ) );
+
+		return apply_filters( 'code_snippets_unescape_snippet_data', $snippet );
+	}
+
+	/**
 	 * Retrieve a single snippets from the database
 	 * Will return empty snippet object if no snippet
 	 * ID is specified
@@ -847,38 +945,21 @@ final class Code_Snippets {
 	 * @uses $this->get_table_name() To dynamically retrieve the snippet table name
 	 *
 	 * @param string $scope Retrieve a multisite-wide or site-wide snippet?
-	 * @return stdClass A single snippet object
+	 * @return object A single snippet object
 	 */
 	 public function get_snippet( $id = 0, $scope = '' ) {
 		global $wpdb;
 		$table = $this->get_table_name( $scope );
 
-		if ( ! empty( $id ) && intval( $id ) != 0 ) {
-
+		if ( ! empty( $id ) && 0 !== intval( $id ) ) {
+			/* Retrieve the snippet from the database */
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
-
-			if ( ! isset( $snippet->id ) ) {
-
-				// define a empty object (or one with default values)
-				$snippet = new stdClass();
-				$snippet->name = '';
-				$snippet->description = '';
-				$snippet->code = '';
-				$snippet->id = null;
-
-			} else {
-				// unescape data
-				$snippet->code = htmlspecialchars_decode( $snippet->code );
-			}
-
+			/* Unescape the snippet data, ready for use */
+			$snippet = $this->unescape_snippet_data( $snippet );
 		} else {
-			// define a empty object (or one with default values)
-			$snippet = new stdClass();
-			$snippet->name = '';
-			$snippet->description = '';
-			$snippet->code = '';
+			// get an empty snippet object
+			$snippet = $this->build_snippet_object();
 		}
-
 		return apply_filters( 'code_snippets_get_snippet', $snippet, $id, $scope );
 	}
 
@@ -910,7 +991,7 @@ final class Code_Snippets {
 				array( '%d' )
 			);
 
-			do_action( 'code_snippets_activate', $id, $scope );
+			do_action( 'code_snippets_activate_snippet', $id, $scope );
 		}
 
 		do_action( 'code_snippets_activate', $ids, $scope );
@@ -976,9 +1057,8 @@ final class Code_Snippets {
 		global $wpdb;
 
 		$table = $this->get_table_name( $scope );
-		$id = intval( $id );
 
-		$wpdb->query( "DELETE FROM $table WHERE id='$id' LIMIT 1" );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE id='%d' LIMIT 1", intval( $id ) ) );
 
 		do_action( 'code_snippets_delete_snippet', $id, $scope );
 	}
@@ -992,30 +1072,28 @@ final class Code_Snippets {
 	 * @uses $wpdb To update/add the snippet to the database
 	 * @uses $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
-	 * @param array $snippet The snippet to add/update to the database
+	 * @param object $snippet The snippet to add/update to the database
 	 * @return int|bool The ID of the snippet on success, false on failure
 	 */
 	public function save_snippet( $snippet, $scope = '' ) {
 		global $wpdb;
 
-		$name = mysql_real_escape_string( htmlspecialchars( $snippet['name'] ) );
-		$description = mysql_real_escape_string( htmlspecialchars( $snippet['description'] ) );
-		$code = mysql_real_escape_string( htmlspecialchars( $snippet['code'] ) );
+		$snippet = $this->escape_snippet_data( $snippet );
 
 		if ( empty( $name ) or empty( $code ) )
 			return false;
 
 		$table = $this->get_table_name( $scope );
 
-		if ( isset( $snippet['id'] ) && ( intval( $snippet['id'] ) != 0 )  ) {
+		if ( isset( $snippet->id ) && 0 !== $snippet->id ) {
 			$wpdb->query( $wpdb->prepare( "UPDATE $table SET
 				name='$name',
 				description='$description',
 				code='$code',
 				WHERE id='%d' LIMIT 1",
-				intval( $snippet['id'] )
+				$snippet->id
 			) );
-			return intval( $snippet['id'] );
+			return $snippet->id;
 		} else {
 			$wpdb->query(
 				"INSERT INTO $table(name,description,code)
@@ -1024,7 +1102,7 @@ final class Code_Snippets {
 			return $wpdb->insert_id;
 		}
 
-		do_action( 'code_snippets_save_snippet', $snippet, $scope, $name, $description, $code );
+		do_action( 'code_snippets_save_snippet', $snippet, $scope, $snippet );
 	}
 
 	/**
@@ -1047,15 +1125,10 @@ final class Code_Snippets {
 		$xml = simplexml_load_file( $file );
 
 		foreach ( $xml->children() as $child ) {
-			$this->save_snippet( array(
-				'name' => $child->name,
-				'description' => $child->description,
-				'code' => $child->code,
-			), $scope );
+			$this->save_snippet( $child, $scope );
 		}
 
 		do_action( 'code_snippets_import', $xml, $scope );
-
 
 		return $xml->count();
 	}
@@ -1133,24 +1206,20 @@ final class Code_Snippets {
 	 * @since Code Snippets 1.7
 	 * @access public
 	 *
-	 * @param mixed $snippet A snippet object or array
+	 * @param mixed $snippet A snippet object
 	 * @return The HTML code for the (de)activation link
 	 */
 	public function get_activate_link( $snippet ) {
 
-		/* convert an object to an array */
-		if ( is_object( $snippet ) ) {
-			$snippet = get_object_vars( $snippet );
-		}
-
+		$snippet = $this->build_snippet_object( $snippet );
 		$screen = get_current_screen();
 
-		if ( $snippet['active'] ) {
+		if ( $snippet->active ) {
 			$activate_link = sprintf(
 				'<a href="%1$s">%2$s</a>',
 				add_query_arg( array(
 					'action' => 'deactivate',
-					'id' =>	$snippet['id']
+					'id' =>	$snippet->id
 				), $this->admin_manage_url ),
 				$screen->is_network ? __('Network Deactivate', 'code-snippets') : __('Deactivate', 'code-snippets')
 			);
@@ -1159,7 +1228,7 @@ final class Code_Snippets {
 				'<a href="%1$s">%2$s</a>',
 				add_query_arg( array(
 					'action' => 'activate',
-					'id' =>	$snippet['id']
+					'id' =>	$snippet->id
 				), $this->admin_manage_url ),
 				$screen->is_network ? __('Network Activate', 'code-snippets') : __('Activate', 'code-snippets')
 			);
@@ -1267,21 +1336,7 @@ final class Code_Snippets {
 
 		if ( isset( $_REQUEST['save_snippet'] ) ) {
 
-			if ( isset( $_REQUEST['snippet_id'] ) ) {
-				$result = $this->save_snippet( array(
-					'name' => $_REQUEST['snippet_name'],
-					'description' => $_REQUEST['snippet_description'],
-					'code' => $_REQUEST['snippet_code'],
-					'id' => $_REQUEST['snippet_id'],
-
-				) );
-			} else {
-				$result = $this->save_snippet( array(
-					'name' => $_REQUEST['snippet_name'],
-					'description' => $_REQUEST['snippet_description'],
-					'code' => $_REQUEST['snippet_code'],
-				) );
-			}
+			$result = $this->save_snippet( $_POST );
 
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'invalid' ) );
 
@@ -1389,7 +1444,7 @@ final class Code_Snippets {
 		remove_editor_styles(); // stop custom theme styling interfering with the editor
 
 		wp_editor(
-			htmlspecialchars_decode( stripslashes( $snippet->description ) ),
+			$snippet->description,
 			'description',
 			apply_filters( 'code_snippets_description_editor_settings', array(
 				'textarea_name' => 'snippet_description',

@@ -1,9 +1,11 @@
 # Changelog
 
-## 1.7 (development)
+## 1.7
 * Improved API
 * Fixed a bug with saving snippets per page option ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippets-per-page-does-not-work#post-3710991))
-*
+* Updated CodeMirror to version 3.0.2
+* Allow plugin to be activated on individual sites on multisite ([#](http://wordpress.org/support/topic/dont-work-at-multisite))
+* New plugin boilerplate class for plugins built on Code Snippets
 
 ## 1.6.1
 * Fixed a bug with permissions not being applied on install ([#](http://wordpress.org/support/topic/permissions-problem-after-install))

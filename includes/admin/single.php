@@ -56,7 +56,7 @@ if ( isset( $_REQUEST['edit'] ) ) {
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php esc_html_e('Name (short title)', 'code-snippets'); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo stripslashes( $snippet->name ); ?>" placeholder="<?php _e('Name (short title)', 'code-snippets'); ?>" required="required" />
+				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_html( $snippet->name ); ?>" placeholder="<?php _e('Name (short title)', 'code-snippets'); ?>" required="required" />
 			</div>
 		</div>
 
@@ -65,7 +65,7 @@ if ( isset( $_REQUEST['edit'] ) ) {
 			<span style="float: right; font-weight: normal;"><?php _e('Enter or paste the snippet code without the <code>&lt;?php</code> and <code>?&gt;</code> tags.', 'code-snippets'); ?></span></h3>
 		</label>
 
-		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo stripslashes( $snippet->code ); ?></textarea>
+		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo $snippet->code; ?></textarea>
 
 		<?php do_action( 'code_snippets_admin_single', $snippet ); ?>
 

@@ -4,4 +4,5 @@ Desktop.ini
 *.bat
 *.sh
 *.cmd
-wiki/
+wiki
+.idea
