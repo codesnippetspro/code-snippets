@@ -16,7 +16,7 @@
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
  * Version: 1.7
- * License: GPLv3 or later
+ * License: MIT
  * Text Domain: code-snippets
  * Domain Path: /languages/
  *
