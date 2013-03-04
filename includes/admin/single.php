@@ -69,10 +69,7 @@ if ( isset( $_REQUEST['edit'] ) ) {
 
 		<?php do_action( 'code_snippets_admin_single', $snippet ); ?>
 
-		<p class="submit">
-			<input type="submit" name="save_snippet" class="button-primary" value="<?php _e('Save', 'code-snippets'); ?>" />
-			<a href="<?php echo $this->admin_manage_url; ?>" class="button"><?php _e('Cancel', 'code-snippets'); ?></a>
-		</p>
+		<?php submit_button(); ?>
 	</form>
 </div>
 <script type="text/javascript">
