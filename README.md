@@ -1,13 +1,9 @@
 # Code Snippets
 
-* Contributors: [bungeshea](http://profiles.wordpress.org/bungeshea)
-* Donate link: http://code-snippets.bungeshea.com/donate/
-* Tags: snippets, code, php, network, multisite
-* Requires at least: 3.3
-* Tested up to: 3.5
-* Stable tag: 1.6.1
-* License: GPLv3 or later
-* License URI: http://www.gnu.org/copyleft/gpl.html
+* __Requires at least:__ WordPress 3.3 or later
+* __Tested up to:__ WordPress 3.5.1
+* __Stable version:__ [1.6.1](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __License:__ [MIT](license.txt)
 
 An easy, clean and simple way to add code snippets to your site.
 
