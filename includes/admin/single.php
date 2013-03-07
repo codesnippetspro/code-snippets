@@ -8,7 +8,6 @@
  */
 
 if ( ! class_exists( 'Code_Snippets' ) ) exit;
-global $wpdb;
 
 $table = $this->get_table_name();
 $screen = get_current_screen();
@@ -45,7 +44,7 @@ if ( isset( $_REQUEST['edit'] ) ) {
 					esc_html('Add New', 'code-snippets')
 				);
 		} else {
-			_e('Add New Snippet', 'code-snippets');
+			esc_html_e('Add New Snippet', 'code-snippets');
 		}
 	?></h2>
 
@@ -69,31 +68,19 @@ if ( isset( $_REQUEST['edit'] ) ) {
 
 		<?php do_action( 'code_snippets_admin_single', $snippet ); ?>
 
-		<?php submit_button(); ?>
+		<?php submit_button( null, 'primary', 'save_snippet' ); ?>
+
 	</form>
 </div>
 <script type="text/javascript">
-	var editor = CodeMirror.fromTextArea(document.getElementById("snippet_code"), {
-		lineNumbers: true,
-		matchBrackets: true,
-		lineWrapping: true,
-		mode: "application/x-httpd-php-open",
-		indentUnit: 4,
-		indentWithTabs: true,
-		enterMode: "keep",
-		tabMode: "shift"
-	});
-
-	window.onbeforeunload = function() {
-		<?php
-
-		if ( isset( $edit_id ) ) {
-				printf( 'return "%s"', __('You will loose any unsaved edits if you navigate away', 'code_snippets') );
-		} else {
-				printf( 'return "%s"', __('You will discard the current snippet if you navigate away', 'code_snippets') );
-		}
-
-		?>
-
-	}
+var editor = CodeMirror.fromTextArea(document.getElementById("snippet_code"), {
+	lineNumbers: true,
+	matchBrackets: true,
+	lineWrapping: true,
+	mode: "application/x-httpd-php-open",
+	indentUnit: 4,
+	indentWithTabs: true,
+	enterMode: "keep",
+	tabMode: "shift"
+});
 </script>

@@ -103,6 +103,7 @@ final class Code_Snippets {
 
 	/**
 	 * The constructor function for our class
+	 * Hooks our initialize function to the init action
 	 *
 	 * @since Code Snippets 1.0
 	 * @access private
@@ -110,10 +111,22 @@ final class Code_Snippets {
 	 * @return void
 	 */
 	function __construct() {
+		add_action( 'init', array( $this, 'init' ) );
+	}
+
+	/**
+	 * Call our loader functions
+	 *
+	 * @since Code Snippets 1.7
+	 * @access private
+	 *
+	 * @return void
+	 */
+	function init() {
 		$this->setup_vars();  // initialise the variables
 		$this->setup_hooks(); // register the action and filter hooks
 		$this->upgrade();     // check if we need to change some stuff
-		require_once $this->plugin_dir . 'includes/class-plugin.php';
+		do_action( 'code_snippets_init' );
 	}
 
 	/**
@@ -843,25 +856,30 @@ final class Code_Snippets {
 		}
 		elseif ( is_array( $data ) ) {
 
-			if ( isset( $data['name' ] ) )
+			if ( isset( $data['id'] ) )
+				$snippet->id = $data['id'];
+			elseif ( isset( $data['snippet_id'] ) )
+				$snippet->id = $data['snippet_id'];
+
+			if ( isset( $data['name'] ) )
 				$snippet->name = $data['name'];
-			elseif ( isset( $data['snippet_name' ] ) )
+			elseif ( isset( $data['snippet_name'] ) )
 				$snippet->name = $data['snippet_name'];
 
-			if ( isset( $data['description' ] ) )
+			if ( isset( $data['description'] ) )
 				$snippet->description = $data['description'];
-			elseif ( isset( $data['snippet_description' ] ) )
+			elseif ( isset( $data['snippet_description'] ) )
 				$snippet->description = $data['snippet_description'];
 
-			if ( isset( $data['code' ] ) )
+			if ( isset( $data['code'] ) )
 				$snippet->code = $data['code'];
-			elseif ( isset( $data['snippet_code' ] ) )
+			elseif ( isset( $data['snippet_code'] ) )
 				$snippet->code = $data['snippet_code'];
 
 
 			if ( isset( $data['active' ] ) )
 				$snippet->active = $data['active'];
-			elseif ( isset( $data['snippet_active' ] ) )
+			elseif ( isset( $data['snippet_active'] ) )
 				$snippet->active = $data['snippet_active'];
 
 			return apply_filters( 'code_snippets_build_snippet_object', $snippet, $data );
@@ -1077,32 +1095,41 @@ final class Code_Snippets {
 	 */
 	public function save_snippet( $snippet, $scope = '' ) {
 		global $wpdb;
+		$wpdb->show_errors = true;
 
 		$snippet = $this->escape_snippet_data( $snippet );
 
-		if ( empty( $name ) or empty( $code ) )
+		if ( empty( $snippet->name ) or empty( $snippet->code ) )
 			return false;
 
 		$table = $this->get_table_name( $scope );
 
+		$fields = '';
+		foreach ( get_object_vars( $snippet ) as $field => $value ) {
+			if ( 'id' !== $field ) {
+				$fields .= "{$field}='{$value}',";
+			}
+		}
+		$fields = rtrim( $fields, ',' );
+
 		if ( isset( $snippet->id ) && 0 !== $snippet->id ) {
-			$wpdb->query( $wpdb->prepare( "UPDATE $table SET
-				name='$name',
-				description='$description',
-				code='$code',
-				WHERE id='%d' LIMIT 1",
-				$snippet->id
-			) );
+
+			if ( $fields ) {
+				$wpdb->query( $wpdb->prepare( "UPDATE $table SET $fields WHERE id='%d' LIMIT 1", $snippet->id ) );
+			}
+
+			do_action( 'code_snippets_update_snippet', $snippet, $table );
 			return $snippet->id;
+
 		} else {
-			$wpdb->query(
-				"INSERT INTO $table(name,description,code)
-				VALUES ('$name','$description','$code')"
-			);
+
+			if ( $fields ) {
+				$wpdb->query( $wpdb->prepare( "INSERT INTO $table SET $fields" ) );
+			}
+
+			do_action( 'code_snippets_create_snippet', $snippet, $table );
 			return $wpdb->insert_id;
 		}
-
-		do_action( 'code_snippets_save_snippet', $snippet, $scope, $snippet );
 	}
 
 	/**
@@ -1330,7 +1357,7 @@ final class Code_Snippets {
 		$can_edit = current_user_can( $screen->is_network ? 'edit_network_snippets' : 'edit_snippets' );
 
 		if ( isset( $_REQUEST['edit'] ) && ! $can_edit )
-			wp_die( __('Sorry, you&#8217;re not allowed to edit snippets', 'code-snippets') );
+			wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets') );
 
 		$this->create_tables(); // create the snippet tables if they do not exist
 
@@ -1361,7 +1388,6 @@ final class Code_Snippets {
 			add_filter( 'admin_title',  array( $this, 'admin_single_title' ) );
 
 		include $this->plugin_dir . 'includes/help/single.php'; // Load the help tabs
-
 	}
 
 	/**
