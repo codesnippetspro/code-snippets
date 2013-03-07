@@ -68,13 +68,24 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		);
 	}
 
+
+	function format_description( $desc ) {
+		$desc = wptexturize( $desc );
+		$desc = convert_smilies( $desc );
+		$desc = convert_chars( $desc );
+		$desc = wpautop( $desc );
+		$desc = shortcode_unautop( $desc );
+		$desc = capital_P_dangit( $desc );
+		return $desc;
+	}
+
 	function column_default( $item, $column_name ) {
 
 		switch( $column_name ) {
 			case 'id':
 				return intval( $item[ $column_name ] );
 			case 'description':
-				return stripslashes( html_entity_decode( $item[ $column_name ] ) );
+				return $this->format_description( stripslashes( html_entity_decode( $item[ $column_name ] ) ) );
 			default:
 				return do_action( "code_snippets_list_table_column_{$column_name}", $item );
 		}
