@@ -926,6 +926,12 @@ final class Code_Snippets {
 
 		$snippet = $this->build_snippet_object( $snippet );
 
+		/* remove the <?php and ?> tags from the snippet */
+		$snippet->code = ltrim( $snippet->code, '<?php' );
+		$snippet->code = ltrim( $snippet->code, '<?' );
+		$snippet->code = rtrim( $snippet->code, '?>' );
+
+		/* escape the data */
 		$snippet->name = mysql_real_escape_string( htmlspecialchars( $snippet->name ) );
 		$snippet->description = mysql_real_escape_string( htmlspecialchars( $snippet->description ) );
 		$snippet->code = mysql_real_escape_string( htmlspecialchars( $snippet->code ) );
