@@ -1,7 +1,7 @@
 === Code Snippets ===
 Contributors: bungeshea
 Donate link: http://code-snippets.bungeshea.com/donate/
-Tags: snippets, code, php, network, multisite
+Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 3.5
 Stable tag: 1.6.1
