@@ -906,6 +906,10 @@ final class Code_Snippets {
 		$table = $this->get_table_name( $scope );
 		$snippets = $wpdb->get_results( "SELECT * FROM $table", ARRAY_A );
 
+		foreach( $snippets as $index => $snippet ) {
+			$snippets[ $index ] = $this->unescape_snippet_data( $snippet );
+		}
+
 		return apply_filters( 'code_snippets_get_snippets', $snippets, $scope );
 	}
 

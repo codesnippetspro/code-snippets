@@ -68,7 +68,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		);
 	}
 
-
 	function format_description( $desc ) {
 		$desc = wptexturize( $desc );
 		$desc = convert_smilies( $desc );
@@ -79,30 +78,30 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		return $desc;
 	}
 
-	function column_default( $item, $column_name ) {
+	function column_default( $snippet, $column_name ) {
 
 		switch( $column_name ) {
 			case 'id':
-				return intval( $item[ $column_name ] );
+				return $snippet->id;
 			case 'description':
-				return $this->format_description( stripslashes( html_entity_decode( $item[ $column_name ] ) ) );
+				return $this->format_description( $snippet->description );
 			default:
-				return do_action( "code_snippets_list_table_column_{$column_name}", $item );
+				return do_action( "code_snippets_list_table_column_{$column_name}", $snippet );
 		}
 	}
 
-	function column_name( $item ) {
+	function column_name( $snippet ) {
 		global $code_snippets;
 		$screen = get_current_screen();
 		$actions = array(); // Build row actions
 
-		if ( $item['active'] ) {
+		if ( $snippet->active ) {
 			$actions['deactivate'] = sprintf(
 				'<a href="%1$s">%2$s</a>',
 				add_query_arg( array(
 					'page' => $_REQUEST['page'],
 					'action' => 'deactivate',
-					'id' =>	$item['id']
+					'id' =>	$snippet->id
 				) ),
 				$screen->is_network ? __('Network Deactivate', 'code-snippets') : __('Deactivate', 'code-snippets')
 			);
@@ -112,7 +111,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				add_query_arg( array(
 					'page' => $_REQUEST['page'],
 					'action' => 'activate',
-					'id' =>	$item['id']
+					'id' =>	$snippet->id
 				) ),
 				$screen->is_network ? __('Network Activate', 'code-snippets') : __('Activate', 'code-snippets')
 			);
@@ -121,14 +120,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions['edit'] = sprintf(
 			'<a href="%s&edit=%s">Edit</a>',
 			$code_snippets->admin_single_url,
-			$item['id']
+			$snippet->id
 		);
 		$actions['export'] = sprintf(
 			'<a href="%s">Export</a>',
 			add_query_arg( array(
 				'page' => $_REQUEST['page'],
 				'action' => 'export',
-				'id' =>	$item['id']
+				'id' =>	$snippet->id
 			) )
 		);
 		$actions['delete'] = sprintf(
@@ -136,7 +135,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			add_query_arg( array(
 				'page' => $_REQUEST['page'],
 				'action' => 'delete',
-				'id' =>	$item['id']
+				'id' =>	$snippet->id
 			) ),
 			esc_js( sprintf(
 				'return confirm("%s");',
@@ -148,20 +147,20 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		// Return the name contents
 		return apply_filters(
 			'code_snippets_list_table_column_name',
-			'<strong>' . stripslashes( $item['name'] ) . '</strong>' . $this->row_actions( $actions, true ),
-			$item
+			'<strong>' . stripslashes( $snippet->name ) . '</strong>' . $this->row_actions( $actions, true ),
+			$snippet
 		);
 	}
 
-    function column_cb( $item ) {
+    function column_cb( $snippet ) {
         return apply_filters(
 			'code_snippets_list_table_column_cb',
 			sprintf(
 				'<input type="checkbox" name="%1$s[]" value="%2$s" />',
 				/*$1%s*/ $this->_args['singular'],  // Let's simply repurpose the table's singular label ("snippet")
-				/*$2%s*/ $item['id']                // The value of the checkbox should be the snippet's id
+				/*$2%s*/ $snippet->id               // The value of the checkbox should be the snippet's id
 			),
-			$item
+			$snippet
 		);
     }
 
@@ -369,10 +368,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		foreach ( (array) $snippets['all'] as $snippet ) {
 			// Filter into individual sections
-			if ( $snippet['active'] ) {
+			if ( $snippet->active ) {
 				$snippets['active'][] = $snippet;
 			} else {
-				if ( isset( $recently_activated[ $snippet['id'] ] ) ) // Was the snippet recently activated?
+				if ( isset( $recently_activated[ $snippet->id ] ) ) // Was the snippet recently activated?
 					$snippets['recently_activated'][] = $snippet;
 				$snippets['inactive'][] = $snippet;
 			}
@@ -423,9 +422,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			// Determine sort order
 			if ( 'id' === $orderby )
-				$result = $a[$orderby] - $b[$orderby]; // get the result for numerical data
+				$result = $a->$orderby - $b->$orderby; // get the result for numerical data
 			else
-				$result = strcmp( $a[$orderby], $b[$orderby] ); // get the result for string data
+				$result = strcmp( $a->$orderby, $b->$orderby ); // get the result for string data
 
 			// Send final sort direction to usort
             return ( 'asc' === $order ) ? $result : -$result;
@@ -470,12 +469,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
         ) );
 	}
 
-	function _search_callback( $item ) {
+	function _search_callback( $snippet ) {
 		static $term;
 		if ( is_null( $term ) )
 			$term = stripslashes( $_REQUEST['s'] );
 
-		foreach ( $item as $value )
+		foreach ( $snippet as $value )
 			if ( false !== stripos( $value, $term ) )
 				return true;
 
@@ -485,12 +484,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Generates content for a single row of the table
 	 */
-	function single_row( $item ) {
+	function single_row( $snippet ) {
 		static $row_class = '';
-		$row_class = ( $item['active'] ? 'active' : 'inactive' );
+		$row_class = ( $snippet->active ? 'active' : 'inactive' );
 
 		echo '<tr class="' . $row_class . '">';
-		echo $this->single_row_columns( $item );
+		echo $this->single_row_columns( $snippet );
 		echo '</tr>';
 	}
 }
