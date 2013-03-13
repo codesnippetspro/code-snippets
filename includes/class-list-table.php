@@ -84,7 +84,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			case 'id':
 				return $snippet->id;
 			case 'description':
-				return $this->format_description( $snippet->description );
+				if ( ! empty( $snippet->description ) )
+					return $this->format_description( $snippet->description );
+				else
+					return '&#8212;';
 			default:
 				return do_action( "code_snippets_list_table_column_{$column_name}", $snippet );
 		}
@@ -242,11 +245,31 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	function extra_tablenav( $which ) {
-		global $status;
-
-		echo '<div class="alignleft actions">';
+		global $status, $code_snippets;
 
 		$screen = get_current_screen();
+
+		if ( 'top' === $which && has_action( 'code_snippets_list_table_filter_controls' ) ) {
+		?>
+			</form>
+			<form method="get" action="">
+				<input type="hidden" name="page" value="<?php echo $_GET['page']; ?>" />
+				<?php if ( ! empty( $_GET['s'] ) ) : ?><input type="hidden" name="s" value="<?php echo $_GET['s']; ?>" /><?php endif; ?>
+				<div class="alignleft actions">
+				<?php
+					do_action( 'code_snippets_list_table_filter_controls' );
+					submit_button( __( 'Filter' ), 'button', false, false );
+				?>
+				</div>
+			</form>
+			<form method="post" action="">
+		<?php
+			foreach ( $_GET as $key => $var )
+				if ( ! empty ( $var ) )
+					printf ( '<input type="hidden" name="%s" value="%s" />', $key, $var );
+		}
+
+		echo '<div class="alignleft actions">';
 
 		if ( 'recently_activated' === $status )
 			submit_button( __('Clear List', 'code-snippets'), 'secondary', 'clear-recent-list', false );
@@ -389,6 +412,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( empty( $snippets[ $status ] ) && !in_array( $status, array( 'all', 'search' ) ) )
 			$status = 'all';
 
+		do_action( 'code_snippets_list_table_prepare_items' );
+
 		$data = $snippets[ $status ];
 
 		/**
@@ -458,7 +483,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
          */
         $this->items = $data;
 
-
         /**
          * We also have to register our pagination options & calculations.
          */
@@ -474,9 +498,17 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( is_null( $term ) )
 			$term = stripslashes( $_REQUEST['s'] );
 
-		foreach ( $snippet as $value )
-			if ( false !== stripos( $value, $term ) )
-				return true;
+		foreach ( $snippet as $value ) {
+
+			if ( is_string( $value ) ) {
+				if ( false !== stripos( $value, $term ) )
+					return true;
+			}
+			elseif ( is_array( $value ) ) {
+				if ( false !== in_array( $term, $value ) )
+					return true;
+			}
+		}
 
 		return false;
 	}
