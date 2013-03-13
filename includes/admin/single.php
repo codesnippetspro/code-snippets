@@ -41,7 +41,7 @@ if ( isset( $_REQUEST['edit'] ) ) {
 			if ( $can_install )
 				printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
 					$this->admin_single_url,
-					esc_html('Add New', 'code-snippets')
+					esc_html_x('Add New', 'snippet', 'code-snippets')
 				);
 		} else {
 			esc_html_e('Add New Snippet', 'code-snippets');
@@ -54,7 +54,7 @@ if ( isset( $_REQUEST['edit'] ) ) {
 		?>
 		<div id="titlediv">
 			<div id="titlewrap">
-				<label for="title" style="display: none;"><?php esc_html_e('Name (short title)', 'code-snippets'); ?></label>
+				<label for="title" style="display: none;"><?php _e('Name (short title)', 'code-snippets'); ?></label>
 				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_html( $snippet->name ); ?>" placeholder="<?php _e('Name (short title)', 'code-snippets'); ?>" required="required" />
 			</div>
 		</div>
