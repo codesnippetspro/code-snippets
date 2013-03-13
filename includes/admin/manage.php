@@ -33,12 +33,12 @@ $screen = get_current_screen();
 
 <div class="wrap">
 	<?php screen_icon(); ?>
-	<h2><?php _e('Snippets', 'code-snippets'); ?>
+	<h2><?php esc_html_e('Snippets', 'code-snippets'); ?>
 	<?php if ( current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' ) ) { ?>
 	<a href="<?php echo $this->admin_single_url; ?>" class="add-new-h2"><?php echo esc_html_x('Add New', 'snippet', 'code-snippets'); ?></a>
 <?php }
-if ( isset( $s ) && $s )
-	printf( '<span class="subtitle">' . __('Search results for &#8220;%s&#8221;', 'code-snippets') . '</span>', esc_html( $s ) ); ?></h2>
+if ( ! empty( $_REQUEST['s'] ) )
+	printf( '<span class="subtitle">' . __('Search results for &#8220;%s&#8221;') . '</span>', esc_url( $_REQUEST['s'] ) ); ?></h2>
 
 	<?php $this->list_table->views(); ?>
 
