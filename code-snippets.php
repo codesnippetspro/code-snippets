@@ -583,13 +583,18 @@ final class Code_Snippets {
 	 */
 	function add_admin_menus() {
 
+		if ( get_user_option( 'admin_color' )  !== 'mp6' )
+			$menu_icon = apply_filters( 'code_snippets_menu_icon', plugins_url( 'images/menu-icon.png', $this->file ) );
+		else
+			$menu_icon = 'div';
+
 		$this->admin_manage = add_menu_page(
 			__('Snippets', 'code-snippets'),
 			__('Snippets', 'code-snippets'),
 			'manage_snippets',
 			$this->admin_manage_slug,
 			array( $this, 'display_admin_manage' ),
-			plugins_url( 'images/icon16.png', $this->file ),
+			$menu_icon,
 			67
 		);
 
@@ -632,13 +637,18 @@ final class Code_Snippets {
 	 */
 	function add_network_admin_menus() {
 
+		if ( get_user_option( 'admin_color' )  !== 'mp6' )
+			$menu_icon = apply_filters( 'code_snippets_menu_icon', plugins_url( 'images/menu-icon.png', $this->file ) );
+		else
+			$menu_icon = 'div';
+
 		$this->admin_manage = add_menu_page(
 			__('Snippets', 'code-snippets'),
 			__('Snippets', 'code-snippets'),
 			'manage_network_snippets',
 			$this->admin_manage_slug,
 			array( $this, 'display_admin_manage' ),
-			plugins_url( 'images/icon16.png', $this->file ),
+			$menu_icon,
 			21
 		);
 
@@ -708,12 +718,24 @@ final class Code_Snippets {
 	 */
 	function load_admin_icon_style() {
 
-		wp_enqueue_style(
-			'icon-snippets',
-			plugins_url( 'assets/icon.css', $this->file ),
-			false,
-			$this->version
-		);
+		if ( get_user_option( 'admin_color' )  === 'mp6' ) {
+
+			wp_enqueue_style(
+				'icon-snippets',
+				plugins_url( 'assets/mp6-menu-icon.css', $this->file ),
+				false,
+				$this->version
+			);
+
+		} else {
+
+			wp_enqueue_style(
+				'icon-snippets',
+				plugins_url( 'assets/screen-icon.css', $this->file ),
+				false,
+				$this->version
+			);
+		}
 	}
 
 	/**
@@ -1058,12 +1080,12 @@ final class Code_Snippets {
 			do_action( 'code_snippets_deactivate_snippet', $id, $scope );
 		}
 
-		if ( $table === $wpdb->ms_table )
+		if ( $table === $wpdb->ms_snippets )
 			update_site_option(
 				'recently_activated_snippets',
 				$recently_active + (array) get_site_option( 'recently_activated_snippets' )
 			);
-		elseif ( $table === $wpdb->table )
+		elseif ( $table === $wpdb->snippets )
 			update_option(
 				'recently_activated_snippets',
 				$recently_active + (array) get_option( 'recently_activated_snippets' )
