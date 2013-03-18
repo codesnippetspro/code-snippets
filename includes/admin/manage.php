@@ -38,16 +38,18 @@ $screen = get_current_screen();
 	<a href="<?php echo $this->admin_single_url; ?>" class="add-new-h2"><?php echo esc_html_x('Add New', 'snippet', 'code-snippets'); ?></a>
 <?php }
 if ( ! empty( $_REQUEST['s'] ) )
-	printf( '<span class="subtitle">' . __('Search results for &#8220;%s&#8221;') . '</span>', esc_url( $_REQUEST['s'] ) ); ?></h2>
+	printf( '<span class="subtitle">' . __('Search results for &#8220;%s&#8221;') . '</span>', esc_html( $_REQUEST['s'] ) ); ?></h2>
 
 	<?php $this->list_table->views(); ?>
 
 	<form method="get" action="">
-		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-		<?php $this->list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' ); ?>
+		<?php
+			$this->list_table->required_form_fields( 'search_box' );
+			$this->list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' );
+		?>
 	</form>
 	<form method="post" action="">
-		<input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+		<?php $this->list_table->required_form_fields(); ?>
 		<?php $this->list_table->display(); ?>
 	</form>
 

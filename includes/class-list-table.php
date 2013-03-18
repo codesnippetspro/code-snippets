@@ -232,13 +232,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					break;
 			}
 
-			if ( 'search' != $type ) {
-				$status_links[$type] = sprintf( '<a href="%s"%s>%s</a>',
-					add_query_arg('status', $type, '?page=' . $_REQUEST['page'] ),
-					( $type === $status ) ? ' class="current"' : '',
-					sprintf( $text, number_format_i18n( $count ) )
-				);
-			}
+			$status_links[$type] = sprintf( '<a href="%s"%s>%s</a>',
+				add_query_arg( 'status', $type ),
+				( $type === $status ) ? ' class="current"' : '',
+				sprintf( $text, number_format_i18n( $count ) )
+			);
+
 		}
 
 		return apply_filters( 'code_snippets_list_table_views', $status_links );
@@ -253,8 +252,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		?>
 			</form>
 			<form method="get" action="">
-				<input type="hidden" name="page" value="<?php echo $_GET['page']; ?>" />
-				<?php if ( ! empty( $_GET['s'] ) ) : ?><input type="hidden" name="s" value="<?php echo $_GET['s']; ?>" /><?php endif; ?>
+				<?php $this->required_form_fields( 'filter_controls' ); ?>
 				<div class="alignleft actions">
 				<?php
 					do_action( 'code_snippets_list_table_filter_controls' );
@@ -264,9 +262,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			</form>
 			<form method="post" action="">
 		<?php
-			foreach ( $_GET as $key => $var )
-				if ( ! empty ( $var ) )
-					printf ( '<input type="hidden" name="%s" value="%s" />', $key, $var );
+			$this->required_form_fields();
 		}
 
 		echo '<div class="alignleft actions">';
@@ -278,6 +274,31 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		echo '</div>';
 	}
+
+	function required_form_fields( $context = 'main' ) {
+
+		$vars = apply_filters( 'code_snippets_list_table_required_form_fields', array( 'page', 's', 'status', 'paged' ), $context );
+
+		if ( 'search_box' === $context ) {
+			// remove the 's' var if we're doing this for the search box
+			$vars = array_diff( $vars, array( 's' ) );
+		}
+
+		if ( 'filter_controls' === $context ) {
+			// remove the 'tag' var if we're doing this for the filter controls
+			$vars = array_diff( $vars, array( 'tag' ) );
+		}
+
+		foreach ( $vars as $var ) {
+			if ( ! empty( $_REQUEST[ $var ] ) ) {
+				printf ( '<input type="hidden" name="%s" value="%s" />', $var, $_REQUEST[ $var ] );
+				print "\n";
+			}
+		}
+
+		do_action( 'code_snippets_list_table_required_form_fields', $context );
+	}
+
 
 	function current_action() {
 		if ( isset( $_POST['clear-recent-list'] ) )
@@ -367,7 +388,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$this->process_bulk_actions();
 
 		$snippets = array(
-			'all' => $code_snippets->get_snippets(),
+			'all' => apply_filters( 'code_snippets_list_table_get_snippets', $code_snippets->get_snippets() ),
 			'search' => array(),
 			'active' => array(),
 			'inactive' => array(),
@@ -400,19 +421,16 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 		}
 
-		if ( $s ) {
-			$status = 'search';
-			$snippets['search'] = array_filter( $snippets['all'], array( &$this, '_search_callback' ) );
-		}
-
 		$totals = array();
 		foreach ( $snippets as $type => $list )
 			$totals[ $type ] = count( $list );
 
-		if ( empty( $snippets[ $status ] ) && !in_array( $status, array( 'all', 'search' ) ) )
+		if ( empty( $snippets[ $status ] ) )
 			$status = 'all';
 
-		do_action( 'code_snippets_list_table_prepare_items' );
+		if ( $s ) {
+			$snippets[ $status ] = array_filter( $snippets['all'], array( &$this, '_search_callback' ) );
+		}
 
 		$data = $snippets[ $status ];
 
