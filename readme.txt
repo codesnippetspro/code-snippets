@@ -4,7 +4,7 @@ Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 3.5
-Stable tag: 1.6.1
+Stable tag: 1.67
 License: MIT
 License URI: license.txt
 
@@ -105,6 +105,17 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 5. Importing snippets from an XML file
 
 == Changelog ==
+
+= 1.7 =
+* Improved plugin API
+* Fixed a bug with saving snippets per page option ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippets-per-page-does-not-work#post-3710991))
+* Updated CodeMirror to version 3.1
+* Allow plugin to be activated on individual sites on multisite ([#](http://wordpress.org/support/topic/dont-work-at-multisite))
+* Added icon for the new MP6 admin UI ([#](http://wordpress.org/support/topic/icon-disappears-with-mp6))
+* Strip PHP tags from the beginning and end of a snippet in case someone forgets
+* Changed to [MIT license](http://opensource.org/licenses/mit-license.php)
+* Removed HTML, CSS and JavaScript CodeMirror modes that were messing things up
+* Made everything leaner, faster, and better
 
 = 1.6.1 =
 * Fixed a bug with permissions not being applied on install ([#](http://wordpress.org/support/topic/permissions-problem-after-install))

@@ -1,11 +1,15 @@
 # Changelog
 
 ## 1.7
-* Improved API
+* Improved plugin API
 * Fixed a bug with saving snippets per page option ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippets-per-page-does-not-work#post-3710991))
-* Updated CodeMirror to version 3.0.2
+* Updated CodeMirror to version 3.1
 * Allow plugin to be activated on individual sites on multisite ([#](http://wordpress.org/support/topic/dont-work-at-multisite))
-* New plugin boilerplate class for plugins built on Code Snippets
+* Added icon for the new MP6 admin UI ([#](http://wordpress.org/support/topic/icon-disappears-with-mp6))
+* Strip PHP tags from the beginning and end of a snippet in case someone forgets
+* Changed to [MIT license](http://opensource.org/licenses/mit-license.php)
+* Removed HTML, CSS and JavaScript CodeMirror modes that were messing things up
+* Made everything leaner, faster, and better
 
 ## 1.6.1
 * Fixed a bug with permissions not being applied on install ([#](http://wordpress.org/support/topic/permissions-problem-after-install))
