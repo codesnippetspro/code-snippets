@@ -183,7 +183,7 @@ final class Code_Snippets {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta' ), 10, 2 );
 
 		/* Add a custom icon to Snippets menu pages */
-		add_action( 'admin_head', array( $this, 'load_admin_icon_style' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_icon_style' ) );
 
 		/* Register the table name with WordPress */
 		add_action( 'init', array( $this, 'set_table_vars' ), 1 );
