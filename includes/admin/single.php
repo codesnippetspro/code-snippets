@@ -77,7 +77,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("snippet_code"), {
 	lineNumbers: true,
 	matchBrackets: true,
 	lineWrapping: true,
-	mode: "application/x-httpd-php-open",
+	mode: "text/x-php",
 	indentUnit: 4,
 	indentWithTabs: true,
 	enterMode: "keep",

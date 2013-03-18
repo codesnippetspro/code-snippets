@@ -752,20 +752,20 @@ final class Code_Snippets {
 	function load_editor_scripts() {
 
 		/* CodeMirror package version */
-		$version = '3.0.2';
+		$version = '3.1';
 
 		/* CodeMirror base framework */
 
 		wp_register_script(
 			'codemirror',
-			plugins_url( 'assets/codemirror.js', $this->file ),
+			plugins_url( 'assets/lib/codemirror.js', $this->file ),
 			false,
 			$version
 		);
 
 		/* CodeMirror modes */
 
-		$modes = array( 'php', 'xml', 'javascript', 'css', 'clike', 'htmlmixed' );
+		$modes = array( 'php', 'clike' );
 
 		foreach ( $modes as $mode ) {
 
@@ -819,13 +819,13 @@ final class Code_Snippets {
 	function load_editor_styles() {
 
 		/* CodeMirror package version */
-		$version = '3.0.2';
+		$version = '3.1';
 
 		/* CodeMirror base framework */
 
 		wp_register_style(
 			'codemirror',
-			plugins_url( 'assets/codemirror.css', $this->file ),
+			plugins_url( 'assets/lib/codemirror.css', $this->file ),
 			false,
 			$version
 		);
