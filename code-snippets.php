@@ -1523,7 +1523,7 @@ final class Code_Snippets {
 	function settings_link( $links ) {
 		array_unshift( $links, sprintf(
 			'<a href="%1$s" title="%2$s">%3$s</a>',
-			$this->admin_manage_slug,
+			$this->admin_manage_url,
 			__('Manage your existing snippets', 'code-snippets'),
 			__('Manage', 'code-snippets')
 		) );
