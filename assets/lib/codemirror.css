@@ -18,6 +18,12 @@
   min-height: 300px !important;
 }
 
+/* MP6 STYLES */
+.admin-color-mp6 .CodeMirror {
+	width: 100%;
+	background-color: #fff;
+}
+
 /* PADDING */
 
 .CodeMirror-lines {

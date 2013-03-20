@@ -702,7 +702,6 @@ final class Code_Snippets {
 		);
 
 		$this->admin_import_url = self_admin_url( 'admin.php?page=import-code-snippets' );
-		add_action( "admin_print_styles-$this->admin_import", array( $this, 'load_stylesheet' ) );
 		add_action( "load-$this->admin_import", array( $this, 'load_admin_import' ) );
 	}
 
@@ -722,7 +721,7 @@ final class Code_Snippets {
 
 			wp_enqueue_style(
 				'icon-snippets',
-				plugins_url( 'assets/mp6-menu-icon.css', $this->file ),
+				plugins_url( 'assets/menu-icon.mp6.css', $this->file ),
 				false,
 				$this->version
 			);

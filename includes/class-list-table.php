@@ -38,8 +38,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'option' => 'snippets_per_page'
 		) );
 
-		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ) );
-		add_action( "admin_print_scripts-{$code_snippets->admin_manage}", array( $this, 'load_table_style' ) );
+		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ), 15 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'load_table_style' ) );
 
 		parent::__construct( array(
 			'singular' => 'snippet',
@@ -60,12 +60,28 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	function load_table_style() {
 		global $code_snippets;
-		wp_enqueue_style(
-			'snippets-table',
-			plugins_url( 'assets/table.css', $code_snippets->file ),
-			false,
-			$code_snippets->version
-		);
+
+		if ( get_current_screen()->id != $code_snippets->admin_manage )
+			return;
+
+		if ( get_user_option( 'admin_color' )  === 'mp6' ) {
+
+			wp_enqueue_style(
+				'snippets-table',
+				plugins_url( 'assets/table.mp6.css', $code_snippets->file ),
+				false,
+				$code_snippets->version
+			);
+
+		} else {
+
+			wp_enqueue_style(
+				'snippets-table',
+				plugins_url( 'assets/table.css', $code_snippets->file ),
+				false,
+				$code_snippets->version
+			);
+		}
 	}
 
 	function format_description( $desc ) {
@@ -284,11 +300,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$vars = array_diff( $vars, array( 's' ) );
 		}
 
-		if ( 'filter_controls' === $context ) {
-			// remove the 'tag' var if we're doing this for the filter controls
-			$vars = array_diff( $vars, array( 'tag' ) );
-		}
-
 		foreach ( $vars as $var ) {
 			if ( ! empty( $_REQUEST[ $var ] ) ) {
 				printf ( '<input type="hidden" name="%s" value="%s" />', $var, $_REQUEST[ $var ] );
@@ -296,7 +307,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 		}
 
-		do_action( 'code_snippets_list_table_required_form_fields', $context );
+		do_action( 'code_snippets_list_table_print_required_form_fields', $context );
 	}
 
 
@@ -529,6 +540,24 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		return false;
+	}
+
+	function search_notice() {
+		if ( ! empty( $_REQUEST['s'] ) || apply_filters( 'code_snippets_list_table_search_notice', '' ) ) {
+
+			echo '<span class="subtitle">' . __('Search results', 'code-snippets');
+
+			if ( ! empty ( $_REQUEST['s'] ) )
+				echo sprintf ( __(' for &#8220;%s&#8221;'), esc_html( $_REQUEST['s'] ) );
+
+			echo apply_filters( 'code_snippets_list_table_search_notice', '' );
+			echo '</span>';
+
+			printf (
+				'&nbsp;<a class="button" href="%s">' . __('Clear Filters', 'code-snippets') . '</a>',
+				remove_query_arg( apply_filters( 'code_snippets_list_table_query_filters', array( 's' ) ) )
+			);
+		}
 	}
 
 	/**

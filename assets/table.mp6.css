@@ -1,0 +1,60 @@
+.snippets .inactive a {
+	color: #579;
+}
+
+.snippets .inactive a:hover,
+#all-snippets-table .snippets .inactive a:hover,
+#search-snippets-table .snippets .inactive a:hover {
+	color: #2ea2cc;
+}
+
+.snippets .delete a {
+	color: #0074a2;
+}
+
+.snippets .delete a:hover {
+	color: #f00;
+	border-bottom-color: #f00;
+}
+
+#wpbody-content .snippets tr {
+	background: #fff;
+}
+
+.snippets .row-actions-visible {
+	color: #ddd;
+}
+
+.snippets tfoot th {
+	border-top: none !important;
+}
+
+.snippets .inactive {
+	opacity: 0.6;
+}
+
+.snippets .inactive:hover{
+	opacity: 1;
+}
+
+.snippets,
+.snippets th,
+.snippets td {
+	color: #000;
+}
+
+.snippets tbody th.check-column {
+	padding: 10px 0;
+}
+
+.snippets .inactive td,
+.snippets .inactive th,
+.snippets .active td,
+.snippets .active th {
+	border-bottom: 1px solid #e9e9e9;
+	padding: 7px 9px;
+}
+
+#wpbody-content .snippets  .column-name {
+	white-space: nowrap; /* prevents wrapping of snippet title */
+}

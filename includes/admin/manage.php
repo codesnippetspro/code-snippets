@@ -37,8 +37,7 @@ $screen = get_current_screen();
 	<?php if ( current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' ) ) { ?>
 	<a href="<?php echo $this->admin_single_url; ?>" class="add-new-h2"><?php echo esc_html_x('Add New', 'snippet', 'code-snippets'); ?></a>
 <?php }
-if ( ! empty( $_REQUEST['s'] ) )
-	printf( '<span class="subtitle">' . __('Search results for &#8220;%s&#8221;') . '</span>', esc_html( $_REQUEST['s'] ) ); ?></h2>
+	$this->list_table->search_notice(); ?></h2>
 
 	<?php $this->list_table->views(); ?>
 
