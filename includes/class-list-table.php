@@ -555,7 +555,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			printf (
 				'&nbsp;<a class="button" href="%s">' . __('Clear Filters', 'code-snippets') . '</a>',
-				remove_query_arg( apply_filters( 'code_snippets_list_table_query_filters', array( 's' ) ) )
+				remove_query_arg( apply_filters( 'code_snippets_list_table_required_form_fields', array( 's' ), 'clear_filters' ) )
 			);
 		}
 	}
