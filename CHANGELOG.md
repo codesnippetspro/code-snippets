@@ -3,7 +3,7 @@
 ## 1.7
 * Improved plugin API
 * Fixed a bug with saving snippets per page option ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippets-per-page-does-not-work#post-3710991))
-* Updated CodeMirror to version 3.1
+* Updated CodeMirror to version 3.11
 * Allow plugin to be activated on individual sites on multisite ([#](http://wordpress.org/support/topic/dont-work-at-multisite))
 * Added icon for the new MP6 admin UI ([#](http://wordpress.org/support/topic/icon-disappears-with-mp6))
 * Strip PHP tags from the beginning and end of a snippet in case someone forgets

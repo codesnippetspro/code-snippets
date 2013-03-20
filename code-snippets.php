@@ -751,7 +751,7 @@ final class Code_Snippets {
 	function load_editor_scripts() {
 
 		/* CodeMirror package version */
-		$version = '3.1';
+		$version = '3.11';
 
 		/* CodeMirror base framework */
 
@@ -818,7 +818,7 @@ final class Code_Snippets {
 	function load_editor_styles() {
 
 		/* CodeMirror package version */
-		$version = '3.1';
+		$version = '3.11';
 
 		/* CodeMirror base framework */
 
