@@ -1,3 +1,10 @@
+/**
+ * Add the snippet screen icon to admin pages
+ *
+ * @package Code Snippets
+ * @subpackage Assets
+ */
+
 #icon-snippets.icon32 {
 	background: url('../images/screen-icon.png') no-repeat scroll transparent;
 }

@@ -605,9 +605,6 @@ final class Code_Snippets {
 
 		add_action( "load-$this->admin_manage", array( $this, 'load_admin_manage' ) );
 		add_action( "load-$this->admin_single", array( $this, 'load_admin_single' ) );
-
-		add_action( "admin_print_styles-$this->admin_single", array( $this, 'load_editor_styles' ) );
-		add_action( "admin_print_scripts-$this->admin_single", array( $this, 'load_editor_scripts' ) );
 	}
 
 	/**
@@ -659,9 +656,6 @@ final class Code_Snippets {
 
 		add_action( "load-$this->admin_manage", array( $this, 'load_admin_manage' ) );
 		add_action( "load-$this->admin_single", array( $this, 'load_admin_single' ) );
-
-		add_action( "admin_print_styles-$this->admin_single", array( $this, 'load_editor_styles' ) );
-		add_action( "admin_print_scripts-$this->admin_single", array( $this, 'load_editor_scripts' ) );
 	}
 
 	/**
@@ -722,116 +716,6 @@ final class Code_Snippets {
 				$this->version
 			);
 		}
-	}
-
-	/**
-	 * Registers and loads the code editor's scripts
-	 *
-	 * @since Code Snippets 1.4
-	 * @access private
-	 *
-	 * @uses wp_register_script()
-	 * @uses wp_enqueue_style() To add the scripts to the queue
-	 *
-	 * @return void
-	 */
-	function load_editor_scripts() {
-
-		/* CodeMirror package version */
-		$version = '3.11';
-
-		/* CodeMirror base framework */
-
-		wp_register_script(
-			'codemirror',
-			plugins_url( 'assets/lib/codemirror.js', $this->file ),
-			false,
-			$version
-		);
-
-		/* CodeMirror modes */
-
-		$modes = array( 'php', 'clike' );
-
-		foreach ( $modes as $mode ) {
-
-			wp_register_script(
-				"codemirror-mode-$mode",
-				plugins_url( "assets/mode/$mode.js", $this->file ),
-				array( 'codemirror' ),
-				$version
-			);
-		}
-
-		/* CodeMirror addons */
-
-		$addons = array( 'dialog', 'searchcursor', 'search', 'matchbrackets' );
-
-		foreach ( $addons as $addon ) {
-
-			wp_register_script(
-				"codemirror-addon-$addon",
-				plugins_url( "assets/addon/$addon.js", $this->file ),
-				array( 'codemirror' ),
-				$version
-			);
-		}
-
-		/* Enqueue the registered scripts */
-
-		wp_enqueue_script( array(
-			'codemirror-addon-matchbrackets',
-			'codemirror-mode-htmlmixed',
-			'codemirror-mode-xml',
-			'codemirror-mode-js',
-			'codemirror-mode-css',
-			'codemirror-mode-clike',
-			'codemirror-mode-php',
-			'codemirror-addon-search',
-		) );
-	}
-
-	/**
-	 * Registers and loads the code editor's styles
-	 *
-	 * @since Code Snippets 1.4
-	 * @access private
-	 *
-	 * @uses wp_register_style()
-	 * @uses wp_enqueue_style() To add the stylesheets to the queue
-	 *
-	 * @return void
-	 */
-	function load_editor_styles() {
-
-		/* CodeMirror package version */
-		$version = '3.11';
-
-		/* CodeMirror base framework */
-
-		wp_register_style(
-			'codemirror',
-			plugins_url( 'assets/lib/codemirror.css', $this->file ),
-			false,
-			$version
-		);
-
-		/* CodeMirror addons */
-
-		wp_register_style(
-			'codemirror-addon-dialog',
-			plugins_url( 'assets/addon/dialog.css', $this->file ),
-			array( 'codemirror' ),
-			$version
-		);
-
-		/* Enqueue the registered stylesheets */
-
-		wp_enqueue_style( array(
-			'codemirror',
-			'codemirror-addon-dialog',
-		) );
-
 	}
 
 	/**
@@ -1406,6 +1290,104 @@ final class Code_Snippets {
 			add_filter( 'admin_title',  array( $this, 'admin_single_title' ) );
 
 		include $this->plugin_dir . 'includes/help/single.php'; // Load the help tabs
+
+		add_filter( 'admin_enqueue_scripts', array( $this, 'admin_single_enqueue_scripts' ) );
+	}
+
+	/**
+	 * Registers and loads the code editor's scripts
+	 *
+	 * @since Code Snippets 1.7
+	 * @access private
+	 *
+	 * @uses wp_register_script()
+	 * @uses wp_register_style()
+	 * @uses wp_enqueue_script() To add the scripts to the queue
+	 * @uses wp_enqueue_style() To add the stylesheets to the queue
+	 *
+	 * @return void
+	 */
+	function admin_single_enqueue_scripts() {
+
+		/* CodeMirror package version */
+		$codemirror_version = '3.11';
+
+		/* CodeMirror base framework */
+
+		wp_register_script(
+			'codemirror',
+			plugins_url( 'assets/lib/codemirror.js', $this->file ),
+			false,
+			$codemirror_version
+		);
+
+		wp_register_style(
+			'codemirror',
+			plugins_url( 'assets/lib/codemirror.css', $this->file ),
+			false,
+			$codemirror_version
+		);
+
+		/* CodeMirror modes */
+
+		$modes = array( 'php', 'clike' );
+
+		foreach ( $modes as $mode ) {
+
+			wp_register_script(
+				"codemirror-mode-$mode",
+				plugins_url( "assets/mode/$mode.js", $this->file ),
+				array( 'codemirror' ),
+				$codemirror_version
+			);
+		}
+
+		/* CodeMirror addons */
+
+		$addons = array( 'dialog', 'searchcursor', 'search', 'matchbrackets' );
+
+		foreach ( $addons as $addon ) {
+
+			wp_register_script(
+				"codemirror-addon-$addon",
+				plugins_url( "assets/addon/$addon.js", $this->file ),
+				array( 'codemirror' ),
+				$codemirror_version
+			);
+		}
+
+		wp_register_style(
+			'codemirror-addon-dialog',
+			plugins_url( 'assets/addon/dialog.css', $this->file ),
+			array( 'codemirror' ),
+			$codemirror_version
+		);
+
+		/* Enqueue the registered scripts */
+		wp_enqueue_script( array(
+			'codemirror-addon-matchbrackets',
+			'codemirror-mode-htmlmixed',
+			'codemirror-mode-xml',
+			'codemirror-mode-js',
+			'codemirror-mode-css',
+			'codemirror-mode-clike',
+			'codemirror-mode-php',
+			'codemirror-addon-search',
+		) );
+
+		/* Enqueue the registered stylesheets */
+		wp_enqueue_style( array(
+			'codemirror',
+			'codemirror-addon-dialog',
+		) );
+
+		/* Enqueue custom styling */
+		wp_enqueue_style(
+			'code-snippets-admin-single',
+			plugins_url( 'assets/admin-single.css', $this->file ),
+			false,
+			$this->version
+		);
 	}
 
 	/**
@@ -1479,8 +1461,8 @@ final class Code_Snippets {
 		?>
 
 		<label for="snippet_description">
-			<h3><?php esc_html_e('Description', 'code-snippets'); ?>
-			<span style="font-weight: normal;"><?php esc_html_e('(Optional)', 'code-snippets'); ?></span></h3>
+			<h3><div style="position: absolute;"><?php _e('Description', 'code-snippets');
+			?> <span style="font-weight: normal;"><?php esc_html_e('(Optional)', 'code-snippets'); ?></span></div></h3>
 		</label>
 
 		<?php

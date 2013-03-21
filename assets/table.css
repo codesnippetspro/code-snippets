@@ -1,3 +1,10 @@
+/**
+ * Custom styling for the snippets table
+ *
+ * @package Code Snippets
+ * @subpackage Assets
+ */
+
 .snippets .inactive a {
 	color: #557799;
 }

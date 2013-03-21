@@ -1,3 +1,11 @@
+/**
+ * Custom styling for the snippets table
+ * and the MP6 interface
+ *
+ * @package Code Snippets
+ * @subpackage Assets
+ */
+
 .snippets .inactive a {
 	color: #579;
 }

@@ -3,30 +3,11 @@
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: monospace;
-  height: auto;
-  min-height: 300px;
-  border: 1px solid #eee;
-  -moz-border-radius: 3px; -webkit-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px;
+  height: 300px;
 }
 .CodeMirror-scroll {
   /* Set scrolling behaviour here */
-  overflow-y: hidden;
-  overflow-x: auto;
-}
-
-.CodeMirror-sizer {
-  min-height: 300px !important;
-}
-
-/* MP6 STYLES */
-.admin-color-mp6 .CodeMirror {
-	width: 100%;
-	background-color: #fff;
-}
-
-.admin-color-mp6 .CodeMirror * {
-	/* Override Open Sans font */
-	font-family: monospace !important;
+  overflow: auto;
 }
 
 /* PADDING */

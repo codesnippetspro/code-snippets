@@ -30,8 +30,6 @@ if ( isset( $_REQUEST['edit'] ) ) {
 	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>added</strong>.', 'code-snippets'); ?></p></div>
 <?php endif; ?>
 
-
-
 <div class="wrap">
 	<?php screen_icon(); ?>
 	<h2><?php
@@ -59,9 +57,8 @@ if ( isset( $_REQUEST['edit'] ) ) {
 			</div>
 		</div>
 
-		<label for="snippet_code" style="cursor: auto;">
-			<h3><?php esc_html_e('Code', 'code-snippets'); ?>
-			<span style="float: right; font-weight: normal;"><?php _e('Enter or paste the snippet code without the <code>&lt;?php</code> and <code>?&gt;</code> tags.', 'code-snippets'); ?></span></h3>
+		<label for="snippet_code">
+			<h3><?php _e('Code', 'code-snippets'); ?></h3>
 		</label>
 
 		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo $snippet->code; ?></textarea>

@@ -1,0 +1,49 @@
+/**
+ * Custom styling for the single snippet admin page
+ *
+ * @package Code Snippets
+ * @subpackage Assets
+ */
+
+h3 {
+	/* Provide some decent space between the fields and titles */
+	margin: 1em 0;
+}
+
+label {
+	/* What's with the pointer mouse on labels? */
+	cursor: auto;
+}
+
+/**
+ * Customise the CodeMirror editor
+ * to look pretty and support auto-resizing
+ */
+.CodeMirror {
+	height: auto;
+	min-height: 300px;
+	border: 1px solid #eee;
+	-moz-border-radius: 3px; -webkit-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px;
+}
+
+.CodeMirror-scroll {
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+.CodeMirror-sizer {
+  min-height: 300px !important;
+}
+
+/**
+ * Tweak things for the MP6 interface
+ */
+.admin-color-mp6 .CodeMirror {
+	width: 100%;
+	background-color: #fff;
+}
+
+.admin-color-mp6 .CodeMirror * {
+	/* Override Open Sans font */
+	font-family: monospace !important;
+}
