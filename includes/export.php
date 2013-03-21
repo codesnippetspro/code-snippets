@@ -25,15 +25,13 @@ if ( ! function_exists( 'code_snippets_export' ) ) :
  */
 function code_snippets_export( $ids, $format = 'xml' ) {
 
-	global $wpdb, $code_snippets;
+	global $code_snippets;
 
 	$ids = (array) $ids;
 
-	$table = $code_snippets->get_table_name();
-
 	if ( 1 === count( $ids ) ) {
 		// If there is only snippet to export, use its name instead of the site name
-		$entry = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d", $ids ) );
+		$entry = $code_snippets->get_snippet( $ids );
 		$sitename = sanitize_key( $entry->name );
 	} else {
 		// Otherwise, use the site name as set in Settings > General
@@ -50,7 +48,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 		header( 'Content-Type: text/xml; charset=utf-8' );
 
 		echo '<?xml version="1.0"?>' . "\n";
-		echo '<snippets sitename="' . $sitename . '">';
+		echo '<snippets>';
 
 	} elseif ( $format === 'php' ) {
 
@@ -78,36 +76,15 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 		}
 		elseif ( $format === 'php' ) {
 
+			echo "\n/**\n * {$snippet->name}\n";
+
 			if ( ! empty( $snippet->description ) ) {
-				printf (
-					'/**
-					  * %1$s
-					  *
-					  * %2$s
-					  */
-
-					  %3$s
-
-					  ',
-					 htmlspecialchars_decode( stripslashes( $snippet->name ) ),
-					 htmlspecialchars_decode( stripslashes( $snippet->description ) ),
-					 htmlspecialchars_decode( stripslashes( $snippet->code ) )
-				);
-			} else {
-				printf (
-				"\n" . '/**' .
-				"\n" . ' * %1$s' .
-				"\n" . 	' * ' .
-				"\n" . 	' */
-				"\n" .
-					  %3$s
-
-					  ',
-					 htmlspecialchars_decode( stripslashes( $snippet->name ) ),
-					 htmlspecialchars_decode( stripslashes( $snippet->description ) ),
-					 htmlspecialchars_decode( stripslashes( $snippet->code ) )
-				);
+				/* Convert description to PHP Doc */
+				$snippet->description = strip_tags( str_replace( "\n", "\n * ", $snippet->description ) );
+				echo " *\n * {$snippet->description}\n";
 			}
+
+			echo " */\n{$snippet->code}\n";
 		}
 	}
 

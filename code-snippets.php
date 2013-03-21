@@ -393,7 +393,7 @@ final class Code_Snippets {
 		}
 
 		/* skip this if we're on the latest version */
-		if ( $this->current_version >= $this->version ) {
+		if ( get_site_option( 'code_snippets_version' ) < $this->version ) {
 
 			/* migrate the recently_network_activated_snippets to the site options */
 			if ( is_multisite() && get_option( 'recently_network_activated_snippets' ) ) {
@@ -401,24 +401,13 @@ final class Code_Snippets {
 				delete_option( 'recently_network_activated_snippets' );
 			}
 
-			/* create (or upgrade) the snippet tables */
-
-			$this->create_table( $wpdb->snippets );
-
-			if ( is_multisite() ) {
-				$this->create_table( $wpdb->ms_snippets );
-			}
-
 			if ( $this->current_version < 1.2 ) {
 				/* The 'Complete Uninstall' option was removed in version 1.2 */
 				delete_option( 'cs_complete_uninstall' );
 			}
 
-			if ( $this->current_version < $this->version ) {
-				/* Update the current version */
-				update_site_option( 'code_snippets_version', $this->version );
-			}
-
+			/* Update the current version */
+			update_site_option( 'code_snippets_version', $this->version );
 		}
 	}
 
@@ -1125,7 +1114,6 @@ final class Code_Snippets {
 	 */
 	public function save_snippet( $snippet, $scope = '' ) {
 		global $wpdb;
-		$wpdb->show_errors = true;
 
 		$snippet = $this->escape_snippet_data( $snippet );
 
@@ -1154,7 +1142,7 @@ final class Code_Snippets {
 		} else {
 
 			if ( $fields ) {
-				$wpdb->query( $wpdb->prepare( "INSERT INTO $table SET $fields" ) );
+				$wpdb->query( "INSERT INTO $table SET $fields" );
 			}
 
 			do_action( 'code_snippets_create_snippet', $snippet, $table );
@@ -1168,7 +1156,7 @@ final class Code_Snippets {
 	 * @since Code Snippets 1.5
 	 * @access public
 	 *
-	 * @uses $this->save_snippet() To add the snippets to the database
+ 	 * @uses $this->save_snippet() To add the snippets to the database
 	 *
 	 * @param file $file The path to the XML file to import
 	 * @param string $scope Import into network-wide table or site-wide table?
