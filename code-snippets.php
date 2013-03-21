@@ -1283,14 +1283,14 @@ final class Code_Snippets {
 
 		wp_register_script(
 			'codemirror',
-			plugins_url( 'assets/lib/codemirror.js', $this->file ),
+			plugins_url( 'assets/codemirror/lib/codemirror.js', $this->file ),
 			false,
 			$codemirror_version
 		);
 
 		wp_register_style(
 			'codemirror',
-			plugins_url( 'assets/lib/codemirror.css', $this->file ),
+			plugins_url( 'assets/codemirror/lib/codemirror.css', $this->file ),
 			false,
 			$codemirror_version
 		);
@@ -1303,7 +1303,7 @@ final class Code_Snippets {
 
 			wp_register_script(
 				"codemirror-mode-$mode",
-				plugins_url( "assets/mode/$mode.js", $this->file ),
+				plugins_url( "assets/codemirror/mode/$mode/$mode.js", $this->file ),
 				array( 'codemirror' ),
 				$codemirror_version
 			);
@@ -1311,13 +1311,18 @@ final class Code_Snippets {
 
 		/* CodeMirror addons */
 
-		$addons = array( 'dialog', 'searchcursor', 'search', 'matchbrackets' );
+		$addons = array(
+			'dialog' => 'dialog',
+			'search' => 'searchcursor',
+			'search' => 'search',
+			'edit'   => 'matchbrackets'
+		);
 
-		foreach ( $addons as $addon ) {
+		foreach ( $addons as $type => $addon ) {
 
 			wp_register_script(
 				"codemirror-addon-$addon",
-				plugins_url( "assets/addon/$addon.js", $this->file ),
+				plugins_url( "assets/codemirror/addon/$type/$addon.js", $this->file ),
 				array( 'codemirror' ),
 				$codemirror_version
 			);
@@ -1325,7 +1330,7 @@ final class Code_Snippets {
 
 		wp_register_style(
 			'codemirror-addon-dialog',
-			plugins_url( 'assets/addon/dialog.css', $this->file ),
+			plugins_url( 'assets/codemirror/addon/dialog/dialog.css', $this->file ),
 			array( 'codemirror' ),
 			$codemirror_version
 		);
@@ -1333,10 +1338,6 @@ final class Code_Snippets {
 		/* Enqueue the registered scripts */
 		wp_enqueue_script( array(
 			'codemirror-addon-matchbrackets',
-			'codemirror-mode-htmlmixed',
-			'codemirror-mode-xml',
-			'codemirror-mode-js',
-			'codemirror-mode-css',
 			'codemirror-mode-clike',
 			'codemirror-mode-php',
 			'codemirror-addon-search',
