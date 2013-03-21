@@ -946,6 +946,7 @@ final class Code_Snippets {
 		$snippet = $this->build_snippet_object( $snippet );
 
 		/* remove the <?php and ?> tags from the snippet */
+		$snippet->code = trim ( $snippet->code );
 		$snippet->code = ltrim( $snippet->code, '<?php' );
 		$snippet->code = ltrim( $snippet->code, '<?' );
 		$snippet->code = rtrim( $snippet->code, '?>' );
