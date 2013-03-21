@@ -361,7 +361,7 @@ final class Code_Snippets {
 	 * @since Code Snippets 1.2
 	 * @access private
 	 *
-	 * @return bool True on successful upgrade, false on failure
+	 * @return void
 	 */
 	function upgrade() {
 		global $wpdb;
@@ -381,11 +381,6 @@ final class Code_Snippets {
 			$this->current_version = get_site_option( 'code_snippets_version', $this->version );
 		}
 
-		/* bail early if we're on the latest version */
-		if ( $this->current_version >= $this->version ) {
-			return false;
-		}
-
 		if ( ! get_site_option( 'code_snippets_version' ) || $this->current_version < 1.5 ) {
 
 			/* This is the first time the plugin has run */
@@ -397,31 +392,34 @@ final class Code_Snippets {
 			}
 		}
 
-		/* migrate the recently_network_activated_snippets to the site options */
-		if ( is_multisite() && get_option( 'recently_network_activated_snippets' ) ) {
-			add_site_option( 'recently_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
-			delete_option( 'recently_network_activated_snippets' );
+		/* skip this if we're on the latest version */
+		if ( $this->current_version >= $this->version ) {
+
+			/* migrate the recently_network_activated_snippets to the site options */
+			if ( is_multisite() && get_option( 'recently_network_activated_snippets' ) ) {
+				add_site_option( 'recently_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
+				delete_option( 'recently_network_activated_snippets' );
+			}
+
+			/* create (or upgrade) the snippet tables */
+
+			$this->create_table( $wpdb->snippets );
+
+			if ( is_multisite() ) {
+				$this->create_table( $wpdb->ms_snippets );
+			}
+
+			if ( $this->current_version < 1.2 ) {
+				/* The 'Complete Uninstall' option was removed in version 1.2 */
+				delete_option( 'cs_complete_uninstall' );
+			}
+
+			if ( $this->current_version < $this->version ) {
+				/* Update the current version */
+				update_site_option( 'code_snippets_version', $this->version );
+			}
+
 		}
-
-		/* create (or upgrade) the snippet tables */
-
-		$this->create_table( $wpdb->snippets );
-
-		if ( is_multisite() ) {
-			$this->create_table( $wpdb->ms_snippets );
-		}
-
-		if ( $this->current_version < 1.2 ) {
-			/* The 'Complete Uninstall' option was removed in version 1.2 */
-			delete_option( 'cs_complete_uninstall' );
-		}
-
-		if ( $this->current_version < $this->version ) {
-			/* Update the current version */
-			update_site_option( 'code_snippets_version', $this->version );
-		}
-
-		return true; // the upgrade was successful
 	}
 
 	/**
