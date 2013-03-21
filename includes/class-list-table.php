@@ -24,7 +24,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$screen = get_current_screen();
 
 		$status = 'all';
-		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], array( 'active', 'inactive', 'recently_activated', 'search' ) ) )
+		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], array( 'active', 'inactive', 'recently_activated' ) ) )
 			$status = $_REQUEST['status'];
 
 		if ( isset( $_REQUEST['s'] ) )
@@ -400,11 +400,15 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$snippets = array(
 			'all' => apply_filters( 'code_snippets_list_table_get_snippets', $code_snippets->get_snippets() ),
-			'search' => array(),
 			'active' => array(),
 			'inactive' => array(),
 			'recently_activated' => array(),
 		);
+
+		// filter snippets based on search query
+		if ( $s ) {
+			$snippets['all'] = array_filter( $snippets[ 'all' ], array( &$this, '_search_callback' ) );
+		}
 
 		if ( $screen->is_network )
 			$recently_activated = get_site_option( 'recently_activated_snippets', array() );
@@ -438,10 +442,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		if ( empty( $snippets[ $status ] ) )
 			$status = 'all';
-
-		if ( $s ) {
-			$snippets[ $status ] = array_filter( $snippets['all'], array( &$this, '_search_callback' ) );
-		}
 
 		$data = $snippets[ $status ];
 
