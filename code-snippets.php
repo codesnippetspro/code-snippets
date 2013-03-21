@@ -169,7 +169,7 @@ final class Code_Snippets {
 
 		/* add the administration menus */
 		add_action( 'admin_menu', array( $this, 'add_admin_menus' ), 5 );
-		add_action( 'network_admin_menu', array( $this, 'add_network_admin_menus' ), 5 );
+		add_action( 'network_admin_menu', array( $this, 'add_admin_menus' ), 5 );
 
 		/* register the importer */
 		add_action( 'admin_init', array( $this, 'load_importer' ) );
@@ -564,95 +564,62 @@ final class Code_Snippets {
 	 *
 	 * @uses add_menu_page() To register a top-level menu
 	 * @uses add_submenu_page() To register a submenu page
-	 * @uses apply_filters() To retrieve the corrent menu slug
+	 * @uses apply_filters() To retrieve the current menu slug
 	 * @uses plugins_url() To retrieve the URL to a resource
 	 * @return void
 	 */
 	function add_admin_menus() {
 
+		/* Use a different screen icon for the MP6 interface */
 		if ( get_user_option( 'admin_color' )  !== 'mp6' )
 			$menu_icon = apply_filters( 'code_snippets_menu_icon', plugins_url( 'images/menu-icon.png', $this->file ) );
 		else
 			$menu_icon = 'div';
 
+		/* Add the top-level menu and relevant subpage */
 		$this->admin_manage = add_menu_page(
 			__('Snippets', 'code-snippets'),
 			__('Snippets', 'code-snippets'),
-			'manage_snippets',
+			is_network_admin() ? 'manage_network_snippets' : 'manage_snippets',
 			$this->admin_manage_slug,
 			array( $this, 'display_admin_manage' ),
 			$menu_icon,
-			67
+			is_network_admin() ? 21 : 67
 		);
 
 		add_submenu_page(
 			$this->admin_manage_slug,
 			__('Snippets', 'code-snippets'),
-			__('Manage Snippets', 'code-snippets'),
-			'manage_snippets',
+			__('Manage', 'code-snippets'),
+			is_network_admin() ? 'manage_network_snippets' : 'manage_snippets',
 			$this->admin_manage_slug,
 			array( $this, 'display_admin_manage')
 		);
 
-		$this->admin_single = add_submenu_page(
-			$this->admin_manage_slug,
-			__('Add New Snippet', 'code-snippets'),
-			__('Add New', 'code-snippets'),
-			'install_snippets',
-			$this->admin_single_slug,
-			array( $this, 'display_admin_single' )
-		);
+		/* Add the Edit/Add New Snippet page */
+		if ( isset( $_REQUEST['page'], $_REQUEST['edit'] ) &&
+		     $this->admin_single_slug === $_REQUEST['page'] ) {
 
-		add_action( "load-$this->admin_manage", array( $this, 'load_admin_manage' ) );
-		add_action( "load-$this->admin_single", array( $this, 'load_admin_single' ) );
-	}
+			$this->admin_single = add_submenu_page(
+				$this->admin_manage_slug,
+				__('Edit Snippet', 'code-snippets'),
+				__('Edit', 'code-snippets'),
+				is_network_admin() ? 'install_network_snippets' : 'install_snippets',
+				$this->admin_single_slug,
+				array( $this, 'display_admin_single' )
+			);
 
-	/**
-	 * Add the network dashboard admin menu and subpages
-	 *
-	 * @since Code Snippets 1.4
-	 * @access private
-	 *
-	 * @uses add_menu_page() To register a top-level menu
-	 * @uses add_submenu_page() To register a submenu page
-	 * @uses apply_filters() To retrieve the corrent menu slug
-	 * @uses plugins_url() To retrieve the URL to a resource
-	 * @return void
-	 */
-	function add_network_admin_menus() {
+		} else {
 
-		if ( get_user_option( 'admin_color' )  !== 'mp6' )
-			$menu_icon = apply_filters( 'code_snippets_menu_icon', plugins_url( 'images/menu-icon.png', $this->file ) );
-		else
-			$menu_icon = 'div';
-
-		$this->admin_manage = add_menu_page(
-			__('Snippets', 'code-snippets'),
-			__('Snippets', 'code-snippets'),
-			'manage_network_snippets',
-			$this->admin_manage_slug,
-			array( $this, 'display_admin_manage' ),
-			$menu_icon,
-			21
-		);
-
-		add_submenu_page(
-			$this->admin_manage_slug,
-			__('Snippets', 'code-snippets'),
-			__('Manage Snippets', 'code-snippets'),
-			'manage_network_snippets',
-			$this->admin_manage_slug,
-			array( $this, 'display_admin_manage' )
-		);
-
-		$this->admin_single = add_submenu_page(
-			$this->admin_manage_slug,
-			__('Add New Snippet', 'code-snippets'),
-			__('Add New', 'code-snippets'),
-			'install_network_snippets',
-			$this->admin_single_slug,
-			array( $this, 'display_admin_single' )
-		);
+			$this->admin_single = add_submenu_page(
+				$this->admin_manage_slug,
+				__('Add New Snippet', 'code-snippets'),
+				__('Add New', 'code-snippets'),
+				is_network_admin() ? 'install_network_snippets' : 'install_snippets',
+				$this->admin_single_slug,
+				array( $this, 'display_admin_single' )
+			);
+		}
 
 		add_action( "load-$this->admin_manage", array( $this, 'load_admin_manage' ) );
 		add_action( "load-$this->admin_single", array( $this, 'load_admin_single' ) );
@@ -667,7 +634,7 @@ final class Code_Snippets {
 	 * @access private
 	 *
 	 * @uses add_submenu_page() To register the menu page
-	 * @uses apply_filters() To retrieve the corrent menu slug
+	 * @uses apply_filters() To retrieve the current menu slug
 	 * @uses add_action() To enqueue scripts and styles
 	 * @return void
 	 */
