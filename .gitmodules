@@ -1,0 +1,3 @@
+[submodule "assets/codemirror"]
+	path = assets/codemirror
+	url = https://github.com/marijnh/CodeMirror.git
