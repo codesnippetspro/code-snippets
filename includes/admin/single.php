@@ -13,17 +13,17 @@ $table = $this->get_table_name();
 $screen = get_current_screen();
 $can_install = current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' );
 
-if ( isset( $_REQUEST['edit'] ) ) {
-	$edit_id = intval( $_REQUEST['edit'] );
-	$snippet = $this->get_snippet( $edit_id );
-} else {
-	$snippet = $this->get_snippet();
-}
+$edit_id = ( isset( $_REQUEST['edit'] ) ? intval( $_REQUEST['edit'] ) : 0 );
+$snippet = $this->get_snippet( $edit_id );
 
 ?>
 
 <?php if ( isset( $_REQUEST['invalid'] ) && $_REQUEST['invalid'] ) : ?>
 	<div id="message" class="error fade"><p><?php _e('Please provide a name for the snippet and its code.', 'code-snippets'); ?></p></div>
+<?php elseif ( isset( $_REQUEST['activated'], $_REQUEST['updated'] ) && $_REQUEST['activated'] && $_REQUEST['updated'] ) : ?>
+	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets'); ?></p></div>
+<?php elseif ( isset( $_REQUEST['activated'], $_REQUEST['added'] ) && $_REQUEST['activated'] && $_REQUEST['added'] ) : ?>
+	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets'); ?></p></div>
 <?php elseif ( isset( $_REQUEST['updated'] ) && $_REQUEST['updated'] ) : ?>
 	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong>.', 'code-snippets'); ?></p></div>
 <?php elseif ( isset( $_REQUEST['added'] ) && $_REQUEST['added'] ) : ?>
@@ -65,7 +65,16 @@ if ( isset( $_REQUEST['edit'] ) ) {
 
 		<?php do_action( 'code_snippets_admin_single', $snippet ); ?>
 
-		<?php submit_button( null, 'primary', 'save_snippet' ); ?>
+		<p class="submit">
+			<?php
+				submit_button( null, 'primary', 'save_snippet', false );
+
+				if ( ! $snippet->active ) {
+					echo '&nbsp;&nbsp;&nbsp;';
+					submit_button( 'Save Changes &amp; Activate', 'secondary', 'save_snippet_activate', false );
+				}
+			?>
+		</p>
 
 	</form>
 </div>

@@ -699,11 +699,11 @@ final class Code_Snippets {
 		$snippet = new stdClass;
 
 		// define an empty snippet object (or one with default values )
-
+		$snippet->id = 0;
 		$snippet->name = '';
 		$snippet->description = '';
 		$snippet->code = '';
-		$snippet->id = 0;
+		$snippet->active = 0;
 		$snippet = apply_filters( 'code_snippets_build_default_snippet', $snippet );
 
 		if ( ! isset( $data ) ) {
@@ -1230,11 +1230,16 @@ final class Code_Snippets {
 
 		$this->create_tables(); // create the snippet tables if they do not exist
 
-		if ( isset( $_REQUEST['save_snippet'] ) ) {
+		if ( isset( $_REQUEST['save_snippet'] ) || isset( $_REQUEST['save_snippet_activate'] ) ) {
 
 			$result = $this->save_snippet( $_POST );
 
-			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'invalid' ) );
+			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'activated', 'invalid' ) );
+
+			if ( isset( $_REQUEST['save_snippet_activate'] ) && $result ) {
+				$this->activate( $result );
+				$_SERVER['REQUEST_URI'] = add_query_arg( 'activated', true );
+			}
 
 			if ( ! $result || $result < 1 ) {
 				wp_redirect( add_query_arg( 'invalid', true ) );
