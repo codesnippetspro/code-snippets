@@ -1,8 +1,8 @@
 # Code Snippets
 
 * __Requires at least:__ WordPress 3.3 or later
-* __Tested up to:__ WordPress 3.5.1
-* __Stable version:__ [1.6.1](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __Tested up to:__ WordPress 3.6-alpha
+* __Stable version:__ [1.7](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
 An easy, clean and simple way to add code snippets to your site.
@@ -57,7 +57,7 @@ Code Snippets will automatically clean up its data when deleted through the Word
 Further documentation available on the [plugin website](http://code-snippets.bungeshea.com/docs/).
 
 ### Do I need to include the `<?php`, `<?` or `?>` tags in my snippet?
-No, just copy all the content inside those tags.
+No, just copy all the content inside those tags. If you accidentally forget (or just like being lazy), the tags will be stripped from the beginning and end of the snippet when you save it. You can, however, use those tags *inside* your snippets to start and end HTML sections.
 
 ### Is there a way to add a snippet but not run it right away?
 Yes. Just add it but do not activate it yet.
@@ -66,7 +66,7 @@ Yes. Just add it but do not activate it yet.
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
 ### Where did the Import menu go after upgrading to version 1.6?
-As the import menu is not accessed neatly as much as the manage or add new menus, it has been moved under the *Tools > Import* menu. To access the import page, visit the *Tools > Import* menu in your WordPress dasboard and click on the **Code Snippets** link.
+As the import menu is not accessed neatly as much as the manage or add new menus, it has been moved under the *Tools > Import* menu. To access the import page, visit the *Tools > Import* menu in your WordPress dashboard and click on the **Code Snippets** link.
 
 ### What do I use to write my snippets?
 The [CodeMirror](http://codemirror.net) source-code editor will add line numbers, syntax highlighting, bracket matching, search, tabulate and other cool features to the code editor.
@@ -92,7 +92,10 @@ Yes! You can individually export a single snippet using the link below the snipp
 Yes. Click the checkboxes next to the snippets you want to export, and then choose **Export to PHP** from the Bulk Actions menu and click Apply. The generated PHP file will contain the exported snippets' code, as well as their name and description in comments.
 
 ### Can I run network-wide snippets on a multisite installation?
-You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard.
+You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard. You can also activate Code Snippets just on the main site, and then individually on other sites of your choice.
+
+### Is there anyway to add categories to snippets?
+Users of Code Snippets version 1.7 and later can install the [Code Snippets Tags](https://github.com/bungeshea/code-snippets-tags) plugin for the ability to add tags to snippets, and then later filter the snippets by tag for easier organization.
 
 ### I need help with Code Snippets
 You can get help with Code Snippets either on the [WordPress Support Forums][support], on [GithHub][issues], or on [WordPress Answers](http://wordpress.stackexchange.com).

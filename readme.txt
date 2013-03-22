@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
-Tested up to: 3.5
-Stable tag: 1.67
+Tested up to: 3.5.1
+Stable tag: 1.7
 License: MIT
 License URI: license.txt
 
@@ -53,7 +53,7 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 Further documentation available on the [plugin website](http://code-snippets.bungeshea.com/docs/).
 
 = Do I need to include the &lt;?php, &lt;? or ?&gt; tags in my snippet? =
-No, just copy all the content inside those tags.
+No, just copy all the content inside those tags. If you accidentally forget (or just like being lazy), the tags will be stripped from the beginning and end of the snippet when you save it.  You can, however, use those tags *inside* your snippets to start and end HTML sections.
 
 = Is there a way to add a snippet but not run it right away? =
 Yes. Just add it but do not activate it yet.
@@ -85,7 +85,10 @@ Yes! You can individually export a single snippet using the link below the snipp
 Yes. Click the checkboxes next to the snippets you want to export, and then choose **Export to PHP** from the Bulk Actions menu and click Apply. The generated PHP file will contain the exported snippets' code, as well as their name and description in comments.
 
 = Can I run network-wide snippets on a multisite installation? =
-You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard.
+You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard. You can also activate Code Snippets just on the main site, and then individually on other sites of your choice.
+
+= Is there anyway to add categories to snippets? =
+Users of Code Snippets version 1.7 and later can install the [Code Snippets Tags](http://wordpress.org/extend/plugins/code-snippets-tags) plugin for the ability to add tags to snippets, and then later filter the snippets by tag for easier organization.
 
 = I need help with Code Snippets =
 You can get help with Code Snippets either on the [WordPress Support Forums](http://wordpress.org/support/plugin/code-snippets/), on [GithHub](https://github.com/bungeshea/code-snippets/issues), or on [WordPress Answers](http://wordpress.stackexchange.com).
@@ -188,6 +191,9 @@ Plugin updates will be posted on the [plugin's homepage](http://code-snippets.bu
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
 
 == Upgrade Notice ==
+
+= 1.7 =
+Many improvments and optimization. Download "Code Snippets Tags" plugin to add tags to snippets
 
 = 1.6 =
 Improvements and optimization with WordPress 3.5

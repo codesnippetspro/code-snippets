@@ -6,9 +6,11 @@
 * Updated CodeMirror to version 3.11
 * Allow plugin to be activated on individual sites on multisite ([#](http://wordpress.org/support/topic/dont-work-at-multisite))
 * Added icon for the new MP6 admin UI ([#](http://wordpress.org/support/topic/icon-disappears-with-mp6))
-* Strip PHP tags from the beginning and end of a snippet in case someone forgets
+* Strip PHP tags from the beginning and end of a snippet on save ([#](http://wordpress.org/support/topic/php-tags))
 * Changed to [MIT license](http://opensource.org/licenses/mit-license.php)
 * Removed HTML, CSS and JavaScript CodeMirror modes that were messing things up
+* Change label in admin menu when editing a snippet
+* Improved admin styling
 * Made everything leaner, faster, and better
 
 ## 1.6.1
