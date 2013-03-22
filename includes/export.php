@@ -32,10 +32,10 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 	if ( 1 === count( $ids ) ) {
 		// If there is only snippet to export, use its name instead of the site name
 		$entry = $code_snippets->get_snippet( $ids );
-		$sitename = sanitize_key( $entry->name );
+		$sitename = sanitize_title_with_dashes( $entry->name );
 	} else {
 		// Otherwise, use the site name as set in Settings > General
-		$sitename = sanitize_key( get_bloginfo( 'name' ) );
+		$sitename = sanitize_title_with_dashes( get_bloginfo( 'name' ) );
 	}
 
 	$filename = apply_filters( 'code_snippets_export_filename', "{$sitename}.code-snippets.{$format}", $format, $sitename );
