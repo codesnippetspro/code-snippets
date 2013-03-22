@@ -6,29 +6,6 @@
  * @subpackage Assets
  */
 
-.snippets .inactive a {
-	color: #579;
-}
-
-.snippets .inactive a:hover,
-#all-snippets-table .snippets .inactive a:hover,
-#search-snippets-table .snippets .inactive a:hover {
-	color: #2ea2cc;
-}
-
-.snippets .delete a {
-	color: #0074a2;
-}
-
-.snippets .delete a:hover {
-	color: #f00;
-	border-bottom-color: #f00;
-}
-
-#wpbody-content .snippets tr {
-	background: #fff;
-}
-
 .snippets .row-actions-visible {
 	color: #ddd;
 }
@@ -37,12 +14,20 @@
 	border-top: none !important;
 }
 
-.snippets .inactive {
-	opacity: 0.6;
+.snippets a.delete:hover,
+#all-snippets-table .snippets a.delete:hover,
+#search-snippets-table .snippets a.delete:hover {
+	color: #f00;
+	border-bottom: 1px solid #f00;
 }
 
-.snippets .inactive:hover{
-	opacity: 1;
+.snippets .column-description p {
+	color: #333;
+}
+
+.snippets .inactive .column-name strong {
+	color: #333;
+	font-weight: 400;
 }
 
 .snippets,
@@ -51,16 +36,48 @@
 	color: #000;
 }
 
-.snippets tbody th.check-column {
-	padding: 10px 0;
+.snippets .inactive a {
+	color: #579;
+}
+
+.snippets tr {
+	background: #fff;
 }
 
 .snippets .inactive td,
 .snippets .inactive th,
 .snippets .active td,
 .snippets .active th {
-	border-bottom: 1px solid #e9e9e9;
-	padding: 7px 9px;
+	border: none;
+	padding: 10px 9px;
+	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
+	box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);;
+}
+
+.snippets tbody th.check-column {
+	padding: 13px 0 0 3px;
+}
+
+.snippets .active td,
+.snippets .active th {
+	background-color: rgba(120,200,230,0.06);
+}
+
+.snippets tr.active + tr.inactive th,
+.snippets tr.active + tr.inactive td {
+	border-top: 1px solid rgba(0,0,0,0.03);
+	-webkit-box-shadow: inset 0px 1px 0 rgba(0,0,0,0.02), inset 0 -1px 0 #e1e1e1;
+	box-shadow: inset 0px 1px 0 rgba(0,0,0,0.02), inset 0 -1px 0 #e1e1e1;
+}
+
+.snippets thead th.check-column,
+.snippets tfoot th.check-column,
+.snippets .inactive th.check-column {
+	padding-left: 5px;
+}
+
+.snippets .active th.check-column {
+	border-left: 2px solid #2ea2cc;
 }
 
 #wpbody-content .snippets  .column-name {
