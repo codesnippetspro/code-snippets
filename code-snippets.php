@@ -1303,7 +1303,7 @@ final class Code_Snippets {
 
 			wp_register_script(
 				"codemirror-mode-$mode",
-				plugins_url( "assets/codemirror/mode/$mode/$mode.js", $this->file ),
+				plugins_url( "assets/codemirror/mode/$mode.js", $this->file ),
 				array( 'codemirror' ),
 				$codemirror_version
 			);
@@ -1311,18 +1311,13 @@ final class Code_Snippets {
 
 		/* CodeMirror addons */
 
-		$addons = array(
-			'dialog' => 'dialog',
-			'search' => 'searchcursor',
-			'search' => 'search',
-			'edit'   => 'matchbrackets'
-		);
+		$addons = array( 'dialog', 'searchcursor', 'search', 'matchbrackets' );
 
-		foreach ( $addons as $type => $addon ) {
+		foreach ( $addons as $addon ) {
 
 			wp_register_script(
 				"codemirror-addon-$addon",
-				plugins_url( "assets/codemirror/addon/$type/$addon.js", $this->file ),
+				plugins_url( "assets/codemirror/addon/$addon.js", $this->file ),
 				array( 'codemirror' ),
 				$codemirror_version
 			);
@@ -1330,7 +1325,7 @@ final class Code_Snippets {
 
 		wp_register_style(
 			'codemirror-addon-dialog',
-			plugins_url( 'assets/codemirror/addon/dialog/dialog.css', $this->file ),
+			plugins_url( 'assets/codemirror/addon/dialog.css', $this->file ),
 			array( 'codemirror' ),
 			$codemirror_version
 		);
