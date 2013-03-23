@@ -1020,8 +1020,10 @@ final class Code_Snippets {
 
 		$xml = simplexml_load_file( $file );
 
-		foreach ( $xml->children() as $child ) {
-			$this->save_snippet( $child, $scope );
+		foreach ( $xml->children() as $snippet ) {
+			/* force manual build of object to strip out unsupported fields
+			   by converting snippet object into array */
+			$this->save_snippet( get_object_vars( $snippet ), $scope );
 		}
 
 		do_action( 'code_snippets_import', $xml, $scope );
