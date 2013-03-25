@@ -33,7 +33,7 @@ $snippet = $this->get_snippet( $edit_id );
 <div class="wrap">
 	<?php screen_icon(); ?>
 	<h2><?php
-		if ( isset( $edit_id ) ) {
+		if ( $edit_id ) {
 			esc_html_e('Edit Snippet', 'code-snippets');
 
 			if ( $can_install )
@@ -47,7 +47,7 @@ $snippet = $this->get_snippet( $edit_id );
 	?></h2>
 
 	<form method="post" action="" style="margin-top: 10px;">
-		<?php if ( isset( $edit_id ) )
+		<?php if ( intval( $snippet->id ) > 0 )
 				printf ( '<input type="hidden" name="snippet_id" value="%d" />', $snippet->id );
 		?>
 		<div id="titlediv">
