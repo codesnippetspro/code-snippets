@@ -174,11 +174,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
     function column_cb( $snippet ) {
         return apply_filters(
 			'code_snippets_list_table_column_cb',
-			sprintf(
-				'<input type="checkbox" name="%1$s[]" value="%2$s" />',
-				/*$1%s*/ $this->_args['singular'],  // Let's simply repurpose the table's singular label ("snippet")
-				/*$2%s*/ $snippet->id               // The value of the checkbox should be the snippet's id
-			),
+			sprintf( '<input type="checkbox" name="ids[]" value="%s" />', $snippet->id ),
 			$snippet
 		);
     }
@@ -265,20 +261,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$screen = get_current_screen();
 
 		if ( 'top' === $which && has_action( 'code_snippets_list_table_filter_controls' ) ) {
-		?>
-			</form>
-			<form method="get" action="">
-				<?php $this->required_form_fields( 'filter_controls' ); ?>
+			?>
 				<div class="alignleft actions">
 				<?php
 					do_action( 'code_snippets_list_table_filter_controls' );
-					submit_button( __( 'Filter' ), 'button', false, false );
+					submit_button( __('Filter', 'code-snippets'), 'button', false, false );
 				?>
 				</div>
-			</form>
-			<form method="post" action="">
-		<?php
-			$this->required_form_fields();
+			<?php
 		}
 
 		echo '<div class="alignleft actions">';
@@ -331,8 +321,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	function process_bulk_actions() {
 		global $code_snippets;
-		if ( ! isset( $_POST[ $this->_args['singular'] ] ) ) return;
-		$ids = $_POST[ $this->_args['singular'] ];
+
+		if ( ! isset( $_POST['ids'] ) ) return;
+		$ids = $_POST['ids'];
 
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'activate', 'deactivate', 'delete', 'activate-multi', 'deactivate-multi', 'delete-multi' ) );
 
