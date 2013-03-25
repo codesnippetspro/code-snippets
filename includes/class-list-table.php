@@ -41,6 +41,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ), 15 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_table_style' ) );
 
+		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'activate', 'activate-multi', 'deactivate', 'deactivate-multi', 'delete', 'delete-multi' ) );
+
 		parent::__construct( array(
 			'singular' => 'snippet',
 			'plural'   => 'snippets',
