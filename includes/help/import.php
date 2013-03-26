@@ -11,7 +11,7 @@ $screen->add_help_tab( array(
 	'id'		=> 'import',
 	'title'		=> __('Importing', 'code-snippets'),
 	'content'	=>
-		'<p>' . __('You can load your snippets from a Code Snippets (.xml) import file using this page.', 'code-snippets') .
+		'<p>' . __('You can load your snippets from a code snippets (.xml) export file using this page.', 'code-snippets') .
 		sprintf( __('Snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href="%s">Manage Snippets</a> page.</p>', 'code-snippets'), $this->admin_manage_url ) . '</p>'
 ) );
 

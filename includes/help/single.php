@@ -24,7 +24,6 @@ $screen->add_help_tab( array(
 	'title'		=> __('Adding Snippets', 'code-snippets'),
 	'content'	=>
 		'<p>' . __('You need to fill out the name and code fields for your snippet to be added. While the description field will add more information about how your snippet works, what is does and where you found it, it is completely optional.', 'code-snippets') . '</p>' .
-		'<p>' . __('Make sure that you don\'t add the <code>&lt;?php</code>, <code>&lt;?</code> or <code>?&gt;</code> the beginning and end of the code. You can however use these tags in the code to stop and start PHP sections', 'code-snippets') . '</p>' .
 		'<p>' . __('Please be sure to check that your snippet is valid PHP code and will not produce errors before adding it through this page. While doing so will not become active straight away, it will help to minimise the chance of a faulty snippet becoming active on your site.', 'code-snippets') . '</p>'
 ) );
 
