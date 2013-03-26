@@ -111,17 +111,17 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 ### Managing existing snippets
 ![Managing existing snippets](screenshot-1.jpg "Managing existing snippets")
 
-### Managing network-wide snippets
-![Managing network-wide snippets](screenshot-2.jpg "Managing network-wide snippets")
-
 ### Adding a new snippet
-![Adding a new snippet](screenshot-3.jpg "Adding a new snippet")
+![Adding a new snippet](screenshot-2.jpg "Adding a new snippet")
 
 ### Editing a snippet
-![Editing a snippet](screenshot-4.jpg "Editing a snippet")
+![Editing a snippet](screenshot-3.jpg "Editing a snippet")
 
 ### Importing snippets from an XML file
-![Importing snippets from an XML file](screenshot-5.jpg "Importing snippets from an XML file")
+![Importing snippets from an XML file](screenshot-4.jpg "Importing snippets from an XML file")
+
+### Managing exiting snippets in the MP6 interface
+![Managing exiting snippets in the MP6 interface](screenshot-4.jpg "Managing exiting snippets in the MP6 interface")
 
   [support]: http://wordpress.org/support/plugin/code-snippets/
   [github]: https://github.com/bungeshea/code-snippets

@@ -102,10 +102,10 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 == Screenshots ==
 
 1. Managing existing snippets
-2. Managing network-wide snippets
-3. Adding a new snippet
-4. Editing a snippet
-5. Importing snippets from an XML file
+2. Adding a new snippet
+3. Editing a snippet
+4. Importing snippets from an XML file
+5. Managing exiting snippets in the MP6 interface
 
 == Changelog ==
 
@@ -114,6 +114,7 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 * Fixed a bug with saving snippets per page option ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippets-per-page-does-not-work#post-3710991))
 * Updated CodeMirror to version 3.11
 * Allow plugin to be activated on individual sites on multisite ([#](http://wordpress.org/support/topic/dont-work-at-multisite))
+* Slimmed down the description visual editor
 * Added icon for the new MP6 admin UI ([#](http://wordpress.org/support/topic/icon-disappears-with-mp6))
 * Strip PHP tags from the beginning and end of a snippet in case someone forgets
 * Changed to [MIT license](http://opensource.org/licenses/mit-license.php)
