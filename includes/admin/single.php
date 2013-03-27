@@ -23,7 +23,7 @@ $snippet = $this->get_snippet( $edit_id );
 <?php elseif ( isset( $_REQUEST['activated'], $_REQUEST['updated'] ) && $_REQUEST['activated'] && $_REQUEST['updated'] ) : ?>
 	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets'); ?></p></div>
 <?php elseif ( isset( $_REQUEST['activated'], $_REQUEST['added'] ) && $_REQUEST['activated'] && $_REQUEST['added'] ) : ?>
-	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets'); ?></p></div>
+	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets'); ?></p></div>
 <?php elseif ( isset( $_REQUEST['updated'] ) && $_REQUEST['updated'] ) : ?>
 	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong>.', 'code-snippets'); ?></p></div>
 <?php elseif ( isset( $_REQUEST['added'] ) && $_REQUEST['added'] ) : ?>
