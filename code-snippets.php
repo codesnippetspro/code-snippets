@@ -103,7 +103,7 @@ final class Code_Snippets {
 
 	/**
 	 * The constructor function for our class
-	 * Hooks our initialize function to the init action
+	 * Hooks our initialize function to the plugins_loaded action
 	 *
 	 * @since Code Snippets 1.0
 	 * @access private
@@ -111,7 +111,15 @@ final class Code_Snippets {
 	 * @return void
 	 */
 	function __construct() {
-		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'plugins_loaded', array( $this, 'init' ) );
+
+		/* execute the snippets once the plugins are loaded */
+		add_action( 'plugins_loaded', array( $this, 'run_snippets' ), 1 );
+
+		/* add backwards-compatibly for the CS_SAFE_MODE constant */
+		if ( defined( 'CS_SAFE_MODE' ) && ! defined( 'CODE_SNIPPETS_SAFE_MODE' ) ) {
+			define( 'CODE_SNIPPETS_SAFE_MODE', CS_SAFE_MODE );
+		}
 	}
 
 	/**
@@ -123,9 +131,26 @@ final class Code_Snippets {
 	 * @return void
 	 */
 	function init() {
+
+		/**
+		 * Call the functions required to load Code Snippets
+		 */
 		$this->setup_vars();  // initialise the variables
 		$this->setup_hooks(); // register the action and filter hooks
 		$this->upgrade();     // check if we need to change some stuff
+
+		/*
+		 * Load up the localization file if we're using WordPress in a different language
+		 * Place it in this plugin's "languages" folder and name it "code-snippets-[value in wp-config].mo"
+		 *
+		 * If you wish to contribute a language file to be included in the Code Snippets package,
+		 * please see create an issue on GitHub: https://github.com/bungeshea/code-snippets/issues
+		 */
+		load_plugin_textdomain( 'code-snippets', false, dirname( $this->basename ) . '/languages/' );
+
+		/**
+		 * Let extention plugins know that it's okay to load
+		 */
 		do_action( 'code_snippets_init' );
 	}
 
@@ -150,8 +175,6 @@ final class Code_Snippets {
 
 		$this->admin_manage_url	 = self_admin_url( 'admin.php?page=' . $this->admin_manage_slug );
 		$this->admin_single_url  = self_admin_url( 'admin.php?page=' . $this->admin_single_slug );
-
-		$this->set_table_vars();
 	}
 
 	/**
@@ -164,9 +187,6 @@ final class Code_Snippets {
 	 */
 	function setup_hooks() {
 
-		/* execute the snippets once the plugins are loaded */
-		add_action( 'plugins_loaded', array( $this, 'run_snippets' ), 1 );
-
 		/* add the administration menus */
 		add_action( 'admin_menu', array( $this, 'add_admin_menus' ), 5 );
 		add_action( 'network_admin_menu', array( $this, 'add_admin_menus' ), 5 );
@@ -174,9 +194,6 @@ final class Code_Snippets {
 		/* register the importer */
 		add_action( 'admin_init', array( $this, 'load_importer' ) );
 		add_action( 'network_admin_menu', array( $this, 'add_import_admin_menu' ) );
-
-		/* load the translations */
-		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 
 		/* add helpful links to the Plugins menu */
 		add_filter( 'plugin_action_links_' . $this->basename, array( $this, 'settings_link' ) );
@@ -213,7 +230,7 @@ final class Code_Snippets {
 		$wpdb->ms_snippets = apply_filters( 'code_snippets_multisite_table', $wpdb->base_prefix . 'ms_snippets' );
 
 		$this->table       = &$wpdb->snippets;
-		$this->ms_snippets = &$wpdb->ms_snippets;
+		$this->ms_table    = &$wpdb->ms_snippets;
 	}
 
 	/**
@@ -366,11 +383,6 @@ final class Code_Snippets {
 	function upgrade() {
 		global $wpdb;
 
-		/* add backwards-compatibly for the CS_SAFE_MODE constant */
-		if ( defined( 'CS_SAFE_MODE' ) && ! defined( 'CODE_SNIPPETS_SAFE_MODE' ) ) {
-			define( 'CODE_SNIPPETS_SAFE_MODE', CS_SAFE_MODE );
-		}
-
 		/* get the current plugin version from the database */
 		if ( get_option( 'cs_db_version' ) ) {
 			$this->current_version = get_option( 'cs_db_version', $this->version );
@@ -409,22 +421,6 @@ final class Code_Snippets {
 			/* Update the current version */
 			update_site_option( 'code_snippets_version', $this->version );
 		}
-	}
-
-	/**
-	 * Load up the localization file if we're using WordPress in a different language
-	 * Place it in this plugin's "languages" folder and name it "code-snippets-[value in wp-config].mo"
-	 *
-	 * If you wish to contribute a language file to be included in the Code Snippets package,
-	 * please see create an issue on GitHub: https://github.com/bungeshea/code-snippets/issues
-	 *
-	 * @since Code Snippets 1.5
-	 * @access private
-	 *
-	 * @return void
-	 */
-	function load_textdomain() {
-		load_plugin_textdomain( 'code-snippets', false, dirname( $this->basename ) . '/languages/' );
 	}
 
 	/**
@@ -1518,6 +1514,10 @@ final class Code_Snippets {
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) return;
 
 		global $wpdb;
+
+		if ( ! isset( $wpdb->table ) )
+			$this->set_table_vars();
+
 		$active_snippets = array();
 
 		// check that the table exists before continuing
