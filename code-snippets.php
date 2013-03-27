@@ -661,7 +661,7 @@ final class Code_Snippets {
 	 */
 	function load_admin_icon_style() {
 
-		if ( get_user_option( 'admin_color' )  === 'mp6' ) {
+		if ( 'mp6' === get_user_option( 'admin_color' )  ) {
 
 			wp_enqueue_style(
 				'icon-snippets',
@@ -1277,7 +1277,10 @@ final class Code_Snippets {
 	 *
 	 * @return void
 	 */
-	function admin_single_enqueue_scripts() {
+	function admin_single_enqueue_scripts( $hook ) {
+
+		if ( $hook !== $this->admin_single )
+			return;
 
 		/* CodeMirror package version */
 		$codemirror_version = '3.11';

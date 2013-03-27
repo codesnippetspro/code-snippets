@@ -60,13 +60,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @return void
 	 */
-	function load_table_style() {
+	function load_table_style( $hook ) {
 		global $code_snippets;
 
-		if ( get_current_screen()->id != $code_snippets->admin_manage )
+		if ( $hook !== $code_snippets->admin_manage )
 			return;
 
-		if ( get_user_option( 'admin_color' )  === 'mp6' ) {
+		if ( 'mp6' === get_user_option( 'admin_color' ) ) {
 
 			wp_enqueue_style(
 				'snippets-table',
