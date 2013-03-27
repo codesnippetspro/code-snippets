@@ -17,7 +17,7 @@ $screen->add_help_tab( array(
 
 $screen->add_help_tab( array(
 	'id'		=> 'export',
-	'title'		=> __('Exporting'),
+	'title'		=> __( 'Exporting', 'code-snippets' ),
 	'content'	=>
 		'<p>' . sprintf( __('You can save your snippets to a Code Snippets (.xml) export file using the <a href="%s">Manage Snippets</a> page.', 'code-snippets'), $this->admin_manage_url ) . '</p>'
 ) );
