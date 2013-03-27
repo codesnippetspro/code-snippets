@@ -71,7 +71,7 @@ $snippet = $this->get_snippet( $edit_id );
 
 				if ( ! $snippet->active ) {
 					echo '&nbsp;&nbsp;&nbsp;';
-					submit_button( 'Save Changes &amp; Activate', 'secondary', 'save_snippet_activate', false );
+					submit_button( __( 'Save Changes &amp; Activate', 'code-snippets' ), 'secondary', 'save_snippet_activate', false );
 				}
 			?>
 		</p>

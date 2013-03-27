@@ -139,12 +139,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		$actions['edit'] = sprintf(
-			'<a href="%s&edit=%s">Edit</a>',
+			'<a href="%s&edit=%s">' . __( 'Edit', 'code-snippets' ) . '</a>',
 			$code_snippets->admin_single_url,
 			$snippet->id
 		);
 		$actions['export'] = sprintf(
-			'<a href="%s">Export</a>',
+			'<a href="%s">' . __( 'Export', 'code-snippets' ) . '</a>',
 			add_query_arg( array(
 				'page' => $_REQUEST['page'],
 				'action' => 'export',
@@ -152,7 +152,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			) )
 		);
 		$actions['delete'] = sprintf(
-			'<a href="%1$s" class="delete" onclick="%2$s">Delete</a>',
+			'<a href="%1$s" class="delete" onclick="%2$s">' . __( 'Delete', 'code-snippets' ) . '</a>',
 			add_query_arg( array(
 				'page' => $_REQUEST['page'],
 				'action' => 'delete',
@@ -541,7 +541,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			echo '<span class="subtitle">' . __('Search results', 'code-snippets');
 
 			if ( ! empty ( $_REQUEST['s'] ) )
-				echo sprintf ( __(' for &#8220;%s&#8221;'), esc_html( $_REQUEST['s'] ) );
+				echo sprintf ( __( ' for &#8220;%s&#8221;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
 
 			echo apply_filters( 'code_snippets_list_table_search_notice', '' );
 			echo '</span>';
