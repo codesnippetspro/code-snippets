@@ -121,7 +121,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 ![Importing snippets from an XML file](screenshot-4.jpg "Importing snippets from an XML file")
 
 ### Managing exiting snippets in the MP6 interface
-![Managing exiting snippets in the MP6 interface](screenshot-4.jpg "Managing exiting snippets in the MP6 interface")
+![Managing exiting snippets in the MP6 interface](screenshot-5.jpg "Managing exiting snippets in the MP6 interface")
 
   [support]: http://wordpress.org/support/plugin/code-snippets/
   [github]: https://github.com/bungeshea/code-snippets
