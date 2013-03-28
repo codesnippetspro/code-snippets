@@ -142,7 +142,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions['edit'] = sprintf(
 			'<a href="%2$s">%1$s</a>',
 			__( 'Edit', 'code-snippets' ),
-			add_query_arg( 'edit', $snippet->id, $code_snippets->admin_single_url ),
+			add_query_arg( 'edit', $snippet->id, $code_snippets->admin_single_url )
 		);
 
 		$actions['export'] = sprintf(
@@ -151,7 +151,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			add_query_arg( array(
 				'action' => 'export',
 				'id' =>	$snippet->id
-			) ),
+			) )
 		);
 
 		$actions['delete'] = sprintf(
