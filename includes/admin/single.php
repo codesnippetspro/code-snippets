@@ -47,8 +47,14 @@ $snippet = $this->get_snippet( $edit_id );
 	?></h2>
 
 	<form method="post" action="" style="margin-top: 10px;">
-		<?php if ( intval( $snippet->id ) > 0 )
+		<?php
+
+			/* Output the hidden fields */
+
+			if ( intval( $snippet->id ) > 0 )
 				printf ( '<input type="hidden" name="snippet_id" value="%d" />', $snippet->id );
+
+			printf ( '<input type="hidden" name="snippet_active" value="%d" />', $snippet->active );
 		?>
 		<div id="titlediv">
 			<div id="titlewrap">
