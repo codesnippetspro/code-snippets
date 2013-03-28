@@ -113,48 +113,51 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	function column_name( $snippet ) {
 		global $code_snippets;
+
+		/* Build row actions */
+
+		$actions = array();
 		$screen = get_current_screen();
-		$actions = array(); // Build row actions
 
 		if ( $snippet->active ) {
 			$actions['deactivate'] = sprintf(
-				'<a href="%1$s">%2$s</a>',
+				'<a href="%2$s">%1$s</a>',
+				$screen->is_network ? __('Network Deactivate', 'code-snippets') : __('Deactivate', 'code-snippets'),
 				add_query_arg( array(
-					'page' => $_REQUEST['page'],
 					'action' => 'deactivate',
 					'id' =>	$snippet->id
-				) ),
-				$screen->is_network ? __('Network Deactivate', 'code-snippets') : __('Deactivate', 'code-snippets')
+				) )
 			);
 		} else {
 			$actions['activate'] = sprintf(
-				'<a href="%1$s">%2$s</a>',
+				'<a href="%2$s">%1$s</a>',
+				$screen->is_network ? __('Network Activate', 'code-snippets') : __('Activate', 'code-snippets'),
 				add_query_arg( array(
-					'page' => $_REQUEST['page'],
 					'action' => 'activate',
 					'id' =>	$snippet->id
-				) ),
-				$screen->is_network ? __('Network Activate', 'code-snippets') : __('Activate', 'code-snippets')
+				) )
 			);
 		}
 
 		$actions['edit'] = sprintf(
-			'<a href="%s&edit=%s">' . __( 'Edit', 'code-snippets' ) . '</a>',
-			$code_snippets->admin_single_url,
-			$snippet->id
+			'<a href="%2$s">%1$s</a>',
+			__( 'Edit', 'code-snippets' ),
+			add_query_arg( 'edit', $snippet->id, $code_snippets->admin_single_url ),
 		);
+
 		$actions['export'] = sprintf(
-			'<a href="%s">' . __( 'Export', 'code-snippets' ) . '</a>',
+			'<a href="%2$s">%1$s</a>',
+			__( 'Export', 'code-snippets' ),
 			add_query_arg( array(
-				'page' => $_REQUEST['page'],
 				'action' => 'export',
 				'id' =>	$snippet->id
-			) )
+			) ),
 		);
+
 		$actions['delete'] = sprintf(
-			'<a href="%1$s" class="delete" onclick="%2$s">' . __( 'Delete', 'code-snippets' ) . '</a>',
+			'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
+			__( 'Delete', 'code-snippets' ),
 			add_query_arg( array(
-				'page' => $_REQUEST['page'],
 				'action' => 'delete',
 				'id' =>	$snippet->id
 			) ),
