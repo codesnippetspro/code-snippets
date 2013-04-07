@@ -3,6 +3,7 @@
 ## 1.7.1
 * Updated PHP Documentation completely
 * Only load admin functions when viewing dashboard
+* Allow or deny site administrators access to snippet admin menus. Set your preference in the **Enable Administration Menus* setting under the *Settings > Network Settings admin menu.
 
 ## 1.7
 * Improved plugin API

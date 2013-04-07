@@ -86,6 +86,9 @@ class Code_Snippets_Admin {
 
 		/* Handle saving the user's screen option preferences */
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
+
+		/* Allow super admins to control site admins access to snippet admin menus */
+		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items') );
 	}
 
 	/**
@@ -95,8 +98,26 @@ class Code_Snippets_Admin {
 	 * @param unknown $value
 	 * @return unknown
 	 */
-	private function set_screen_option( $status, $option, $value ) {
+	function set_screen_option( $status, $option, $value ) {
 		if ( 'snippets_per_page' === $option ) return $value;
+	}
+
+	/**
+	 * Allow super admins to control site admin access to
+	 * snippet admin menus
+	 *
+	 * Adds a checkbox to the *Settings > Network Settings*
+	 * network admin menu
+	 *
+	 * @since 1.7.1
+	 * @access private
+	 *
+	 * @param array $menu_items The current mu menu items
+	 * @return array The modified mu menu items
+	 */
+	function mu_menu_items( $menu_items ) {
+		$menu_items['snippets'] = __('Snippets');
+		return $menu_items;
 	}
 
 	/**

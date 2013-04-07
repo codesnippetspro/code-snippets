@@ -503,6 +503,9 @@ final class Code_Snippets {
 	/**
 	 * Check if the current user can perform some action on snippets or not
 	 *
+	 * If multisite, checks if *Enable Administration Menus: Snippets* is active
+	 * under the *Settings > Network Settings* network admin menu
+	 *
 	 * @uses current_user_can() To check if the current user can perform a task
 	 *
 	 * @param  string $do_what The task to check against.
@@ -510,10 +513,16 @@ final class Code_Snippets {
 	 */
 	public function user_can( $do_what ) {
 
-		if ( is_multisite() )
-			return current_user_can( "{$do_what}_network_snippets" );
-		else
+		if ( is_multisite() ) {
+
+			if ( in_array( 'snippets', get_site_option( 'menu_items' ) ) )
+				return current_user_can( "{$do_what}_snippets" );
+			else
+				return current_user_can( "{$do_what}_network_snippets" );
+
+		} else {
 			return current_user_can( "{$do_what}_snippets" );
+		}
 	}
 
 	/**
