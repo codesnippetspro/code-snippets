@@ -9,8 +9,7 @@
 
 if ( ! class_exists( 'Code_Snippets' ) ) exit;
 
-require_once $this->plugin_dir . 'includes/class-list-table.php';
-
+global $code_snippets;
 $screen = get_current_screen();
 ?>
 <?php if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) : ?>
@@ -34,22 +33,22 @@ $screen = get_current_screen();
 <div class="wrap">
 	<?php screen_icon(); ?>
 	<h2><?php esc_html_e('Snippets', 'code-snippets'); ?>
-	<?php if ( current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' ) ) { ?>
-	<a href="<?php echo $this->admin_single_url; ?>" class="add-new-h2"><?php echo esc_html_x('Add New', 'snippet', 'code-snippets'); ?></a>
+	<?php if ( $code_snippets->user_can( 'install' ) ) { ?>
+	<a href="<?php echo $code_snippets->admin->single_url; ?>" class="add-new-h2"><?php echo esc_html_x('Add New', 'snippet', 'code-snippets'); ?></a>
 <?php }
-	$this->list_table->search_notice(); ?></h2>
+	$code_snippets->list_table->search_notice(); ?></h2>
 
-	<?php $this->list_table->views(); ?>
+	<?php $code_snippets->list_table->views(); ?>
 
 	<form method="get" action="">
 		<?php
-			$this->list_table->required_form_fields( 'search_box' );
-			$this->list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' );
+			$code_snippets->list_table->required_form_fields( 'search_box' );
+			$code_snippets->list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' );
 		?>
 	</form>
 	<form method="post" action="">
-		<?php $this->list_table->required_form_fields(); ?>
-		<?php $this->list_table->display(); ?>
+		<?php $code_snippets->list_table->required_form_fields(); ?>
+		<?php $code_snippets->list_table->display(); ?>
 	</form>
 
 	<?php do_action( 'code_snippets_admin_manage' ); ?>

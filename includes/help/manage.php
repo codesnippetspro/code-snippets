@@ -1,5 +1,16 @@
 <?php
+
+/**
+ * Register and handle the help tabs for the
+ * manage snippets admin page
+ *
+ * @package Code Snippets
+ * @subpackage Help
+ */
+
+global $code_snippets;
 $screen = get_current_screen();
+
 $screen->add_help_tab( array(
 	'id'		=> 'overview',
 	'title'		=> __('Overview', 'code-snippets'),
@@ -19,7 +30,7 @@ $screen->add_help_tab( array(
 	'id'		=> 'uninstall',
 	'title'		=> __('Uninstall', 'code-snippets'),
 	'content'	=>
-		'<p>' . sprintf( __('When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP.', 'code-snippets'), $this->table, $this->plugin_dir ) .
+		'<p>' . sprintf( __('When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP.', 'code-snippets'), $code_snippets->get_table_name(), $code_snippets->plugin_dir ) .
 		'<p>' . __("Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installation, you may want to use the export feature to back up your snippets.", 'code-snippets') . '</p>'
 ) );
 

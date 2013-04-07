@@ -7,17 +7,16 @@
  * and $code_snippets->export_php() methods then
  * directly use those in this file
  *
- * @package    Code Snippets
- * @subpackage Export
+ * @package Code Snippets
+ * @subpackage Main
  */
 
 if ( ! function_exists( 'code_snippets_export' ) ) :
 
 /**
- * Exports seleted snippets to a XML or PHP file.
+ * Exports selected snippets to a XML or PHP file.
  *
- * @package Code Snippets
- * @since Code Snippets 1.3
+ * @since 1.3
  *
  * @param array $ids The IDs of the snippets to export
  * @param string $format The format of the export file

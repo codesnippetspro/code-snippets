@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.1
+* Updated PHP Documentation completely
+* Only load admin functions when viewing dashboard
+
 ## 1.7
 * Improved plugin API
 * Fixed a bug with saving snippets per page option ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippets-per-page-does-not-work#post-3710991))

@@ -9,12 +9,13 @@
 
 if ( ! class_exists( 'Code_Snippets' ) ) exit;
 
-$table = $this->get_table_name();
+global $code_snippets;
+
+$table = $code_snippets->get_table_name();
 $screen = get_current_screen();
-$can_install = current_user_can( $screen->is_network ? 'install_network_snippets' : 'install_snippets' );
 
 $edit_id = ( isset( $_REQUEST['edit'] ) ? intval( $_REQUEST['edit'] ) : 0 );
-$snippet = $this->get_snippet( $edit_id );
+$snippet = $code_snippets->get_snippet( $edit_id );
 
 ?>
 
@@ -36,9 +37,9 @@ $snippet = $this->get_snippet( $edit_id );
 		if ( $edit_id ) {
 			esc_html_e('Edit Snippet', 'code-snippets');
 
-			if ( $can_install )
+			if ( $code_snippets->user_can( 'install' ) )
 				printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
-					$this->admin_single_url,
+					$code_snippets->admin->single_url,
 					esc_html_x('Add New', 'snippet', 'code-snippets')
 				);
 		} else {

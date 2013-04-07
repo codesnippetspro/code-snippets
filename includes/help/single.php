@@ -1,11 +1,22 @@
 <?php
+
+/**
+ * Register and handle the help tabs for the
+ * single snippet admin page
+ *
+ * @package Code Snippets
+ * @subpackage Help
+ */
+
 $screen = get_current_screen();
+
 $screen->add_help_tab( array(
 	'id'		=> 'overview',
 	'title'		=> __('Overview', 'code-snippets'),
 	'content'	=>
 		'<p>' . __('Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can add a new snippet, or edit an existing one.', 'code-snippets') . '</p>',
 ) );
+
 $screen->add_help_tab( array(
 	'id'		=> 'finding',
 	'title'		=> __('Finding Snippets', 'code-snippets'),
@@ -19,6 +30,7 @@ $screen->add_help_tab( array(
 		</ul>', 'code-snippets') .
 		 __('More places to find snippets, as well as a selection of example snippets, can be found in the <a href="http://code-snippets.bungeshea.com/docs/finding-snippets/">plugin documentation</a>', 'code-snippets') . '</p>'
 ) );
+
 $screen->add_help_tab( array(
 	'id'		=> 'adding',
 	'title'		=> __('Adding Snippets', 'code-snippets'),
