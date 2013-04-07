@@ -17,8 +17,8 @@
 .snippets a.delete:hover,
 #all-snippets-table .snippets a.delete:hover,
 #search-snippets-table .snippets a.delete:hover {
-	color: #f00;
 	border-bottom: 1px solid #f00;
+	color: #f00;
 }
 
 .snippets .column-description p {
@@ -48,8 +48,8 @@
 .snippets .inactive th,
 .snippets .active td,
 .snippets .active th {
-	border: none;
 	padding: 10px 9px;
+	border: none;
 	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
 	box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);;
 }

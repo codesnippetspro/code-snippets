@@ -16,19 +16,19 @@ label {
 }
 
 /**
- * Customise the CodeMirror editor
+ * Customize the CodeMirror editor
  * to look pretty and support auto-resizing
  */
 .CodeMirror {
-	height: auto;
 	min-height: 300px;
-	border: 1px solid #eee;
-	-moz-border-radius: 3px; -webkit-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px;
+	height: auto;
+	border: 1px solid #eee; -webkit-border-radius: 3px;
+	-moz-border-radius: 3px; border-radius: 3px; -o-border-radius: 3px;
 }
 
 .CodeMirror-scroll {
-	overflow-y: hidden;
 	overflow-x: auto;
+	overflow-y: hidden;
 }
 
 .CodeMirror-sizer {
@@ -40,11 +40,6 @@ label {
  */
 .admin-color-mp6 .CodeMirror {
 	width: 100%;
-	background-color: #fff;
 	border-color: #dfdfdf;
-}
-
-.admin-color-mp6 .CodeMirror * {
-	/* Override Open Sans font */
-	font-family: monospace !important;
+	background-color: #fff;
 }
