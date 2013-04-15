@@ -125,16 +125,19 @@ final class Code_Snippets {
 	 */
 	function __construct() {
 
-		/* Hook our initialize function to the plugins_loaded action */
-		add_action( 'plugins_loaded', array( $this, 'init' ) );
-
-		/* Execute the snippets once the plugins are loaded */
-		add_action( 'plugins_loaded', array( $this, 'run_snippets' ), 1 );
+		/* Initialize the variables holding the snippet table names */
+		$this->set_table_vars();
 
 		/* Add backwards-compatibly for the CS_SAFE_MODE constant */
 		if ( defined( 'CS_SAFE_MODE' ) && ! defined( 'CODE_SNIPPETS_SAFE_MODE' ) ) {
 			define( 'CODE_SNIPPETS_SAFE_MODE', CS_SAFE_MODE );
 		}
+
+		/* Execute the snippets once the plugins are loaded */
+		add_action( 'plugins_loaded', array( $this, 'run_snippets' ), 1 );
+
+		/* Hook our initialize function to the plugins_loaded action */
+		add_action( 'plugins_loaded', array( $this, 'init' ) );
 	}
 
 	/**
@@ -153,10 +156,6 @@ final class Code_Snippets {
 		/* Initialize core variables */
 		$this->setup_vars();
 
-		/* Register the table name with WordPress */
-		add_action( 'init', array( $this, 'set_table_vars' ), 1 );
-		add_action( 'switch_blog', array( $this, 'set_table_vars' ), 1 );
-
 		/* Check if we need to change some stuff */
 		$this->upgrade();
 
@@ -168,6 +167,11 @@ final class Code_Snippets {
 		 * please see create an issue on GitHub: https://github.com/bungeshea/code-snippets/issues
 		 */
 		load_plugin_textdomain( 'code-snippets', false, dirname( $this->basename ) . '/languages/' );
+
+		/*
+		 * Cleanup the plugin data on uninstall
+		 */
+		register_uninstall_hook( $this->file, array( __CLASS__, 'uninstall' ) );
 
 		/**
 		 * Let extension plugins know that it's okay to load
@@ -183,7 +187,7 @@ final class Code_Snippets {
 	 *
 	 * @return void
 	 */
-	private function setup_vars() {
+	function setup_vars() {
 
 		/* Plugin directory variables */
 		$this->file       = __FILE__;
@@ -209,7 +213,7 @@ final class Code_Snippets {
 	}
 
 	/**
-	 * Initialize the variables holding the table names
+	 * Register the snippet table names with WordPress
 	 *
 	 * @since 1.7
 	 * @access public
@@ -221,11 +225,17 @@ final class Code_Snippets {
 	public function set_table_vars() {
 		global $wpdb;
 
-		$wpdb->snippets    = apply_filters( 'code_snippets_table', $wpdb->prefix . 'snippets' );
-		$wpdb->ms_snippets = apply_filters( 'code_snippets_multisite_table', $wpdb->base_prefix . 'ms_snippets' );
+		/* Register the snippet table names with WordPress */
+		$wpdb->tables[] = 'snippets';
+		$wpdb->ms_global_tables[] = 'ms_snippets';
 
-		$this->table       = &$wpdb->snippets;
-		$this->ms_table    = &$wpdb->ms_snippets;
+		/* Setup initial table variables */
+		$wpdb->snippets = $wpdb->prefix . 'snippets';
+		$wpdb->ms_snippets = $wpdb->base_prefix . 'ms_snippets';
+
+		/* Add a pointer to the old variables */
+		$this->table = &$wpdb->snippets;
+		$this->ms_table = &$wpdb->ms_snippets;
 	}
 
 	/**
@@ -273,7 +283,7 @@ final class Code_Snippets {
 	 * @uses $wpdb->get_var() To test of the table exists
 	 * @uses self::$tables_created To check if we've already done this or not
 	 *
-	 * @param bool $force Force creation/upgrade of tables
+	 * @param bool $force Force table creation/upgrade
 	 *
 	 * @return void
 	 */
@@ -294,9 +304,8 @@ final class Code_Snippets {
 			$table = $wpdb->snippets;
 		}
 		elseif ( is_multisite() ) {
-			global $blogid;
 
-			if ( 1 !== $blogid && ! $table_exists ) {
+			if ( ! is_main_site() && ! $table_exists ) {
 				$table = $wpdb->snippets;
 			} else {
 
@@ -329,7 +338,7 @@ final class Code_Snippets {
 	 * @param string $table_name The name of the table to create
 	 * @return void
 	 */
-	private function create_table( $table_name ) {
+	function create_table( $table_name ) {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		global $wpdb;
@@ -344,18 +353,21 @@ final class Code_Snippets {
 			$charset_collate .= " COLLATE $wpdb->collate";
 		}
 
-		$table_columns = array(
-			'id           bigint(20)  auto_increment',
+		$table_columns = apply_filters( 'code_snippets_database_table_columns', array(
 			'name         tinytext    not null',
 			'description  text',
 			'code         longtext    not null',
-			'active       tinyint(1)  not null default 0',
-		);
+		) );
+
+		$table_columns_sql = implode( ",\n", $table_columns );
 
 		$sql = "CREATE TABLE $table_name (
-			" . apply_filters( 'code_snippets_database_table_columns', join( ',', $table_columns ) )
-		      . " PRIMARY KEY  (id),
+					id bigint(20)  unsigned not null auto_increment,
+					{$table_columns_sql},
+					active tinyint(1)  not null default 0,
+				PRIMARY KEY  (id),
 					KEY id (id)
+
 				) {$charset_collate};";
 
 		dbDelta( apply_filters( 'code_snippets_table_sql', $sql ) );
@@ -371,75 +383,61 @@ final class Code_Snippets {
 	 *
 	 * @return void
 	 */
-	private function upgrade() {
+	function upgrade() {
 		global $wpdb;
 
 		/* get the current plugin version from the database */
 		if ( get_option( 'cs_db_version' ) ) {
-			$this->current_version = get_option( 'cs_db_version', $this->version );
+			$current_version = get_option( 'cs_db_version', $this->version );
 			delete_option( 'cs_db_version' );
-			add_site_option( 'code_snippets_version', $this->current_version );
+			add_option( 'code_snippets_version', $current_version );
 		}
 		else {
-			$this->current_version = get_site_option( 'code_snippets_version', $this->version );
-		}
-
-		if ( ! get_site_option( 'code_snippets_version' ) || $this->current_version < 1.5 ) {
-
-			/* This is the first time the plugin has run */
-
-			$this->add_caps(); // register the capabilities once only
+			$current_version = get_option( 'code_snippets_version' );
+			$previous_version = get_option( 'code_snippets_version', $this->version );
 		}
 
 		/* skip this if we're on the latest version */
-		if ( get_site_option( 'code_snippets_version' ) < $this->version ) {
+		if ( $current_version < $this->version ) {
 
-			/* migrate the recently_network_activated_snippets to the site options */
-			if ( is_multisite() && get_option( 'recently_network_activated_snippets' ) ) {
-				add_site_option( 'recently_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
-				delete_option( 'recently_network_activated_snippets' );
+			/* Register the capabilities once only */
+			if ( $current_version < 1.5 ) {
+				$this->setup_roles( true );
 			}
 
-			if ( $this->current_version < 1.2 ) {
+			if ( $previous_version < 1.2 ) {
 				/* The 'Complete Uninstall' option was removed in version 1.2 */
 				delete_option( 'cs_complete_uninstall' );
 			}
 
 			/* Update the current version */
-			update_site_option( 'code_snippets_version', $this->version );
+			update_option( 'code_snippets_version', $this->version );
 		}
-	}
 
-	/**
-	 * Add the user capabilities
-	 *
-	 * @since 1.5
-	 * @access public
-	 *
-	 * @uses $this->setup_roles() To register the capabilities
-	 */
-	public function add_caps() {
 
-		$this->setup_roles( true );
+			$current_ms_version = get_site_option( 'code_snippets_version' );
 
-		if ( is_multisite() )
-			$this->setup_ms_roles( true );
-	}
+		/* Multisite-only upgrades */
+		if ( is_multisite() && is_main_site() ) {
 
-	/**
-	 * Remove the user capabilities
-	 *
-	 * @since 1.5
-	 * @access public
-	 *
-	 * @uses $this->setup_roles() To register the capabilities
-	 */
-	public function remove_caps() {
+			if ( $current_ms_version < $this->version ) {
 
-		$this->setup_roles( false );
+				if ( is_multisite() && $current_ms_version < 1.5 ) {
+					$this->setup_ms_roles( true );
+				}
 
-		if ( is_multisite() )
-			$this->setup_ms_roles( false );
+				/* migrate the recently_network_activated_snippets to the site options */
+				if ( get_option( 'recently_network_activated_snippets' ) ) {
+					add_site_option( 'recently_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
+					delete_option( 'recently_network_activated_snippets' );
+				}
+
+			}
+
+			if ( is_main_site() )
+				update_site_option( 'code_snippets_version', $this->version );
+		}
+
 	}
 
 	/**
@@ -952,35 +950,89 @@ final class Code_Snippets {
 	 * @uses $wpdb To grab the active snippets from the database
 	 * @uses $this->execute_snippet() To execute a snippet
 	 *
-	 * @return void
+	 * @return bool true on success, false on failure
 	 */
 	public function run_snippets() {
 
-		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) return;
+		/* Bail early if safe mode is active */
+		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE )
+			return false;
 
 		global $wpdb;
 
 		if ( ! isset( $wpdb->snippets, $wpdb->ms_snippets ) )
 			$this->set_table_vars();
 
+		/* Check if the snippets table exists */
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets )
 			$sql = "SELECT code FROM {$wpdb->snippets} WHERE active=1";
 
-
+		/* Check if the multisite snippets table exists */
 		if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets ) {
 			$sql = ( isset( $sql ) ? $sql . "\nUNION ALL\n" : '' );
 			$sql .= "SELECT code FROM {$wpdb->ms_snippets} WHERE active=1;";
 		}
 
-		$active_snippets = $wpdb->get_col( $sql );
+		if ( ! empty( $sql ) ) {
 
-		if ( count( $active_snippets ) ) {
-			foreach( $active_snippets as $snippet ) {
-				// execute the PHP code
-				$this->execute_snippet( htmlspecialchars_decode( stripslashes( $snippet ) ) );
+			/* Grab the active snippets from the database */
+			$active_snippets = $wpdb->get_col( $sql );
+
+			if ( count( $active_snippets ) ) {
+				foreach( $active_snippets as $snippet ) {
+					/* Execute the PHP code */
+					$this->execute_snippet( htmlspecialchars_decode( stripslashes( $snippet ) ) );
+				}
+				return true;
 			}
 		}
+
+		/* If we're made it this far without returning true, assume failure */
+		return false;
 	}
+
+	/**
+	 * Cleans up data created by the Code_Snippets class
+	 *
+	 * @since 1.2
+	 * @access private
+	 *
+	 * @uses $wpdb To remove tables from the database
+	 * @uses $code_snippets->get_table_name() To find out which table to drop
+	 * @uses is_multisite() To check the type of installation
+	 * @uses switch_to_blog() To switch between blogs
+	 * @uses restore_current_blog() To switch between blogs
+	 * @uses delete_option() To remove site options
+	 *
+	 * @return void
+	 */
+	static function uninstall() {
+		global $wpdb, $code_snippets;
+		if ( is_multisite() ) {
+			$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
+			if ( $blog_ids ) {
+				foreach ( $blog_ids as $blog_id ) {
+					switch_to_blog( $blog_id );
+					$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
+					delete_option( 'cs_db_version' );
+					delete_option( 'recently_activated_snippets' );
+					delete_option( 'code_snippets_version' );
+					$code_snippets->setup_roles( false );
+				}
+				restore_current_blog();
+			}
+			$wpdb->query( "DROP TABLE IF EXISTS $wpdb->ms_snippets" );
+			delete_site_option( 'code_snippets_version' );
+			delete_site_option( 'recently_activated_snippets' );
+			$code_snippets->setup_ms_roles( false );
+		} else {
+			$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
+			delete_option( 'code_snippets_version' );
+			delete_option( 'recently_activated_snippets' );
+			$code_snippets->setup_roles( false );
+		}
+	}
+
 }
 
 /**
@@ -995,48 +1047,5 @@ $code_snippets = new Code_Snippets;
 /* set up a pointer in the old variable (for backwards-compatibility) */
 global $cs;
 $cs = &$code_snippets;
-
-register_uninstall_hook( 'Code_Snippets', 'code_snippets_uninstall' );
-
-/**
- * Cleans up data created by the Code_Snippets class
- *
- * @since 1.2
- * @access private
- *
- * @uses $wpdb To remove tables from the database
- * @uses $code_snippets->get_table_name() To find out which table to drop
- * @uses is_multisite() To check the type of installation
- * @uses switch_to_blog() To switch between blogs
- * @uses restore_current_blog() To switch between blogs
- * @uses delete_option() To remove site options
- *
- * @return void
- */
-function code_snippets_uninstall() {
-	global $wpdb, $code_snippets;
-	if ( is_multisite() ) {
-		$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
-		if ( $blog_ids ) {
-			foreach ( $blog_ids as $blog_id ) {
-				switch_to_blog( $blog_id );
-				$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
-				delete_option( 'cs_db_version' );
-				delete_option( 'recently_activated_snippets' );
-				$code_snippets->remove_caps();
-			}
-			restore_current_blog();
-		}
-		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->ms_snippets" );
-		delete_site_option( 'recently_activated_snippets' );
-		$code_snippets->remove_caps();
-	} else {
-		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
-		delete_option( 'recently_activated_snippets' );
-		delete_option( 'cs_db_version' );
-		$code_snippets->remove_caps();
-	}
-	delete_site_option( 'code_snippets_version' );
-}
 
 endif; // class exists check
