@@ -51,7 +51,7 @@ final class Code_Snippets {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var int|string For minor releases this should be an integer, but PHP won't recognize .0 or a second decimal point unless it's a string
+	 * @var string A PHP-standardized version number string
 	 */
 	public $version = '1.7.1';
 
@@ -290,40 +290,51 @@ final class Code_Snippets {
 	public function maybe_create_tables( $force = false ) {
 
 		/* Bail early if we've done this already */
-		if ( ! $force && self::$tables_created ) return;
+		if ( self::$tables_created && ! $force ) return;
 
 		global $wpdb;
 
 		if ( ! isset( $wpdb->snippets, $wpdb->ms_snippets ) )
 			$this->set_table_vars();
 
-		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets;
-		$ms_table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets;
+		$table_exists = $force || $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets;
 
 		if ( ! is_multisite() && ! $table_exists ) {
 			$table = $wpdb->snippets;
 		}
 		elseif ( is_multisite() ) {
+			$ms_table_exists = $force || $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets;
 
-			if ( ! is_main_site() && ! $table_exists ) {
+			if ( ! $ms_table_exists && ! $table_exists )
+				$table = $wpdb->snippets . ',' . $wpdb->ms_snippets;
+			elseif ( ! $table_exists && $ms_table_exists )
 				$table = $wpdb->snippets;
-			} else {
-
-				if ( ! $ms_table_exists && ! $table_exists )
-					$table = $wpdb->snippets . ',' . $wpdb->ms_snippets;
-				elseif ( ! $table_exists && $ms_table_exists )
-					$table = $wpdb->snippets;
-				elseif ( $table_exists && ! $ms_table_exists)
-					$table = $wpdb->ms_snippets;
-			}
+			elseif ( $table_exists && ! $ms_table_exists )
+				$table = $wpdb->ms_snippets;
 		}
 
 		if ( isset( $table ) )
 			$this->create_table( $table );
 
-		do_action( 'code_snippets_maybe_create_tables' );
-
 		self::$tables_created = true;
+	}
+
+	/**
+	 * Create the snippet tables if they do not already exist
+	 *
+	 * @since Code Snippets 1.2
+	 * @deprecated Code Snippets 1.7.1
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function create_tables() {
+		_deprecated_function(
+			'$code_snippets->create_tables()',
+			'Code Snippets 1.7.1',
+			'$code_snippets->maybe_create_tables()'
+		);
+		$this->maybe_create_tables();
 	}
 
 	/**
@@ -386,47 +397,48 @@ final class Code_Snippets {
 	function upgrade() {
 		global $wpdb;
 
-		/* get the current plugin version from the database */
-		if ( get_option( 'cs_db_version' ) ) {
-			$current_version = get_option( 'cs_db_version', $this->version );
+		// get the current plugin version from the database
+
+		$current_version = get_option( 'code_snippets_version' );
+
+		if ( ! $current_version && get_option( 'cs_db_version' ) ) {
+			$current_version = get_option( 'cs_db_version' );
 			delete_option( 'cs_db_version' );
 			add_option( 'code_snippets_version', $current_version );
 		}
-		else {
-			$current_version = get_option( 'code_snippets_version' );
-			$previous_version = get_option( 'code_snippets_version', $this->version );
-		}
+
+		$previous_version = ( $current_version ? $current_version : $this->version );
 
 		/* skip this if we're on the latest version */
-		if ( $current_version < $this->version ) {
+		if ( version_compare( $current_version, $this->version, '<' ) ) {
 
-			/* Register the capabilities once only */
-			if ( $current_version < 1.5 ) {
+			// Register the capabilities once only
+			if ( version_compare( $current_version, '1.5',  '<' ) ) {
 				$this->setup_roles( true );
 			}
 
-			if ( $previous_version < 1.2 ) {
-				/* The 'Complete Uninstall' option was removed in version 1.2 */
+			if ( version_compare( $previous_version, '1.2', '<' ) ) {
+				// The 'Complete Uninstall' option was removed in version 1.2
 				delete_option( 'cs_complete_uninstall' );
 			}
 
-			/* Update the current version */
+			// Update the current version stored in the database
 			update_option( 'code_snippets_version', $this->version );
 		}
 
+		/* Multisite-only upgrades */
+
+		if ( is_multisite() && is_main_site() ) {
 
 			$current_ms_version = get_site_option( 'code_snippets_version' );
 
-		/* Multisite-only upgrades */
-		if ( is_multisite() && is_main_site() ) {
+			if ( version_compare( $current_ms_version, $this->version, '<' ) ) {
 
-			if ( $current_ms_version < $this->version ) {
-
-				if ( is_multisite() && $current_ms_version < 1.5 ) {
+				if ( version_compare( $current_ms_version, '1.5', '<' ) ) {
 					$this->setup_ms_roles( true );
 				}
 
-				/* migrate the recently_network_activated_snippets to the site options */
+				// migrate the recently_network_activated_snippets to the site options
 				if ( get_option( 'recently_network_activated_snippets' ) ) {
 					add_site_option( 'recently_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
 					delete_option( 'recently_network_activated_snippets' );
@@ -434,8 +446,7 @@ final class Code_Snippets {
 
 			}
 
-			if ( is_main_site() )
-				update_site_option( 'code_snippets_version', $this->version );
+			update_site_option( 'code_snippets_version', $this->version );
 		}
 
 	}
