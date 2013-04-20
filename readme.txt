@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
-Tested up to: 3.5.1
-Stable tag: 1.7
+Tested up to: 3.6
+Stable tag: 1.7.1
 License: MIT
 License URI: license.txt
 
@@ -21,6 +21,8 @@ Code Snippets changes that by providing a GUI interface for adding snippets and 
 You can use a graphical interface, similar to the Plugins menu, to manage, activate, deactivate, edit and delete your snippets. Easily organise your snippets by adding a name and description using the visual editor. Code Snippets includes built-in syntax highlighting and other features to help you write your code. Snippets can be exported for transfer to another side, either in XML for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
 
 Although Code Snippets is designed to be easy-to-use and its interface looks, feels and acts as if it was a native part of WordPress, each screen includes a help tab, just in case you get stuck.
+
+An addon-plugin for Code Snippets is available: [Code Snippets Tags](http://wordpress.org/extend/plugins/code-snippets-tags) will allow you to assign tags to your snippets and organize them in the table.
 
 Further information, documentation and updates are available on the [plugin homepage](http://code-snippets.bungeshea.com). You can also contribute to the code at [GitHub](https://github.com/bungeshea/code-snippets).
 
@@ -108,6 +110,15 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 5. Managing exiting snippets in the MP6 interface
 
 == Changelog ==
+
+= 1.7.1 =
+* Fix a bug with snippet being set as deactivated when saved
+* Updated PHP Documentation completely. [[View online](http://bungeshea.github.io/code-snippets/api)]
+* Only load admin functions when viewing dashboard
+* Added German translation thanks to [David Decker](http://deckerweb.de)
+* Allow or deny site administrators access to snippet admin menus. Set your preference in the **Enable Administration Menus* setting under the *Settings > Network Settings* network admin menu.
+* Improve database table creation and upgrade process
+* Optimized to use less database queries
 
 = 1.7 =
 * Improved plugin API

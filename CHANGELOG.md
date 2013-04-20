@@ -1,9 +1,13 @@
 # Changelog
 
 ## 1.7.1
-* Updated PHP Documentation completely
+* Fix a bug with snippet being set as deactivated when saved
+* Updated PHP Documentation completely. [[View online](http://bungeshea.github.io/code-snippets/api)]
 * Only load admin functions when viewing dashboard
-* Allow or deny site administrators access to snippet admin menus. Set your preference in the **Enable Administration Menus* setting under the *Settings > Network Settings admin menu.
+* Added German translation thanks to [David Decker](http://deckerweb.de)
+* Allow or deny site administrators access to snippet admin menus. Set your preference in the **Enable Administration Menus* setting under the *Settings > Network Settings* network admin menu.
+* Improve database table creation and upgrade process
+* Optimized to use less database queries
 
 ## 1.7
 * Improved plugin API
