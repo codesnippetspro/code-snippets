@@ -116,7 +116,7 @@ class Code_Snippets_Admin {
 	 * @return array The modified mu menu items
 	 */
 	function mu_menu_items( $menu_items ) {
-		$menu_items['snippets'] = __('Snippets');
+		$menu_items['snippets'] = __('Snippets', 'code-snippets');
 		return $menu_items;
 	}
 
