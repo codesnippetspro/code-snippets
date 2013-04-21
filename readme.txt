@@ -116,7 +116,7 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 * Updated PHP Documentation completely. [[View online](http://bungeshea.github.io/code-snippets/api)]
 * Only load admin functions when viewing dashboard
 * Added German translation thanks to [David Decker](http://deckerweb.de)
-* Allow or deny site administrators access to snippet admin menus. Set your preference in the **Enable Administration Menus* setting under the *Settings > Network Settings* network admin menu.
+* Allow or deny site administrators access to snippet admin menus. Set your preference in the **Enable Administration Menus** setting under the *Settings > Network Settings* network admin menu.
 * Improve database table creation and upgrade process
 * Optimized to use less database queries
 
@@ -203,6 +203,9 @@ Plugin updates will be posted on the [plugin's homepage](http://code-snippets.bu
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
 
 == Upgrade Notice ==
+
+= 1.7.1 =
+Added German translation thanks to David Decker; bug fixes and improvements
 
 = 1.7 =
 Many improvments and optimization. Download "Code Snippets Tags" plugin to add tags to snippets
