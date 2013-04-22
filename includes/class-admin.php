@@ -380,14 +380,14 @@ class Code_Snippets_Admin {
 
 		wp_register_script(
 			'codemirror',
-			plugins_url( 'assets/codemirror/lib/codemirror.js', $code_snippets->file ),
+			plugins_url( 'vendor/codemirror/lib/codemirror.js', $code_snippets->file ),
 			false,
 			$codemirror_version
 		);
 
 		wp_register_style(
 			'codemirror',
-			plugins_url( 'assets/codemirror/lib/codemirror.css', $code_snippets->file ),
+			plugins_url( 'vendor/codemirror/lib/codemirror.css', $code_snippets->file ),
 			false,
 			$codemirror_version
 		);
@@ -400,7 +400,7 @@ class Code_Snippets_Admin {
 
 			wp_register_script(
 				"codemirror-mode-$mode",
-				plugins_url( "assets/codemirror/mode/$mode.js", $code_snippets->file ),
+				plugins_url( "vendor/codemirror/mode/$mode.js", $code_snippets->file ),
 				array( 'codemirror' ),
 				$codemirror_version
 			);
@@ -414,7 +414,7 @@ class Code_Snippets_Admin {
 
 			wp_register_script(
 				"codemirror-addon-$addon",
-				plugins_url( "assets/codemirror/addon/$addon.js", $code_snippets->file ),
+				plugins_url( "vendor/codemirror/addon/$addon.js", $code_snippets->file ),
 				array( 'codemirror' ),
 				$codemirror_version
 			);
@@ -422,7 +422,7 @@ class Code_Snippets_Admin {
 
 		wp_register_style(
 			'codemirror-addon-dialog',
-			plugins_url( 'assets/codemirror/addon/dialog.css', $code_snippets->file ),
+			plugins_url( 'vendor/codemirror/addon/dialog.css', $code_snippets->file ),
 			array( 'codemirror' ),
 			$codemirror_version
 		);
