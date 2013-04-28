@@ -181,7 +181,7 @@ class Code_Snippets_Admin {
 		$this->manage_page = add_menu_page(
 			__('Snippets', 'code-snippets'),
 			__('Snippets', 'code-snippets'),
-			is_multisite() ? 'manage_network_snippets' : 'manage_snippets',
+			$code_snippets->get_cap( 'manage' ),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu' ),
 			$menu_icon,
@@ -192,7 +192,7 @@ class Code_Snippets_Admin {
 			$this->manage_slug,
 			__('Snippets', 'code-snippets'),
 			__('Manage', 'code-snippets'),
-			$code_snippets->user_can( 'manage' ),
+			$code_snippets->get_cap( 'manage' ),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu')
 		);
@@ -204,7 +204,7 @@ class Code_Snippets_Admin {
 			$this->manage_slug,
 			$editing ? __('Edit Snippet', 'code-snippets') : __('Add New Snippet', 'code-snippets'),
 			$editing ? __('Edit', 'code-snippets') : __('Add New', 'code-snippets'),
-			$code_snippets->user_can( 'install' ),
+			$code_snippets->get_cap( 'install' ),
 			$this->single_slug,
 			array( $this, 'display_single_menu' )
 		);
@@ -236,7 +236,7 @@ class Code_Snippets_Admin {
 			$this->manage_slug,
 			__('Import Snippets', 'code-snippets'),
 			__('Import', 'code-snippets'),
-			$code_snippets->user_can( 'import' ),
+			$code_snippets->get_cap( 'import' ),
 			'import-code-snippets',
 			array( $this, 'display_import_menu' )
 		);
