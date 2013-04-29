@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.1.1
+* Fixed a bug with custom capabilities and admin menus
+
 ## 1.7.1
 * Fix a bug with snippet being set as deactivated when saved
 * Updated PHP Documentation completely. [[View online](http://bungeshea.github.io/code-snippets/api)]

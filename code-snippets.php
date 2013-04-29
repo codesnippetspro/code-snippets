@@ -16,7 +16,7 @@
  * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
- * Version: 1.7.1
+ * Version: 1.7.1.1
  * License: MIT
  * License URI: license.txt
  * Text Domain: code-snippets
@@ -53,7 +53,7 @@ final class Code_Snippets {
 	 * @access public
 	 * @var string A PHP-standardized version number string
 	 */
-	public $version = '1.7.1';
+	public $version = '1.7.1.1';
 
 	/**
 	 * Variables to hold plugin paths
@@ -518,7 +518,7 @@ final class Code_Snippets {
 	 * @param  string $do_what The task to check against.
 	 * @return bool            Whether the current user can perform this task or not
 	 *
-	 * @since  1.7.2 Moved logic to $this->get_cap method
+	 * @since  1.7.1.1 Moved logic to $this->get_cap() method
 	 * @since  1.7.1
 	 * @access public
 	 */
@@ -533,7 +533,7 @@ final class Code_Snippets {
 	 * If multisite, checks if *Enable Administration Menus: Snippets* is active
 	 * under the *Settings > Network Settings* network admin menu
 	 *
-	 * @since  1.7.2
+	 * @since  1.7.1.1
 	 * @access public
 	 */
 	public function get_cap( $do_what ) {

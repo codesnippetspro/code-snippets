@@ -4,7 +4,7 @@ Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.7.1
+Stable tag: 1.7.1.1
 License: MIT
 License URI: license.txt
 
@@ -111,6 +111,9 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 
 == Changelog ==
 
+= 1.7.1.1 =
+* Fix a minor bug with custom capabilities and admin menus
+
 = 1.7.1 =
 * Fix a bug with snippet being set as deactivated when saved
 * Updated PHP Documentation completely. [[View online](http://bungeshea.github.io/code-snippets/api)]
@@ -203,6 +206,9 @@ Plugin updates will be posted on the [plugin's homepage](http://code-snippets.bu
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
 
 == Upgrade Notice ==
+
+= 1.7.1.1 =
+Fixes a minor bug with custom capabilities and admin menus
 
 = 1.7.1 =
 Added German translation thanks to David Decker; bug fixes and improvements
