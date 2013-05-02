@@ -16,7 +16,7 @@
  * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
- * Version: 1.7.1.1
+ * Version: 1.7.1.2
  * License: MIT
  * License URI: license.txt
  * Text Domain: code-snippets
@@ -53,7 +53,7 @@ final class Code_Snippets {
 	 * @access public
 	 * @var string A PHP-standardized version number string
 	 */
-	public $version = '1.7.1.1';
+	public $version = '1.7.1.2';
 
 	/**
 	 * Variables to hold plugin paths
