@@ -1,5 +1,8 @@
 # Changelog
 
+# 1.7.1.2
+* Correct path to admin menu icon. Fixes [#8](https://github.com/bungeshea/code-snippets/issues/8)
+
 ## 1.7.1.1
 * Fixed a bug with custom capabilities and admin menus
 

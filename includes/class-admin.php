@@ -173,7 +173,7 @@ class Code_Snippets_Admin {
 
 		/* Use a different screen icon for the MP6 interface */
 		if ( get_user_option( 'admin_color' )  !== 'mp6' )
-			$menu_icon = apply_filters( 'code_snippets_menu_icon', plugins_url( 'images/menu-icon.png', $code_snippets->file ) );
+			$menu_icon = apply_filters( 'code_snippets_menu_icon', plugins_url( 'assets/menu-icon.png', $code_snippets->file ) );
 		else
 			$menu_icon = 'div';
 
