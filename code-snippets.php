@@ -540,7 +540,7 @@ final class Code_Snippets {
 
 		if ( is_multisite() ) {
 
-			if ( in_array( 'snippets', get_site_option( 'menu_items' ) ) )
+			if ( in_array( 'snippets', get_site_option( 'menu_items', array() ) ) )
 				return "{$do_what}_snippets";
 			else
 				return "{$do_what}_network_snippets";
