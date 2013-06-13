@@ -42,6 +42,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( isset( $_REQUEST['s'] ) )
 			$_SERVER['REQUEST_URI'] = add_query_arg( 's', stripslashes($_REQUEST['s'] ) );
 
+
 		$page = $this->get_pagenum();
 
 		add_screen_option( 'per_page', array(
@@ -50,11 +51,23 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'option' => 'snippets_per_page'
 		) );
 
+		/* Set the table columns hidden in Screen Options by default */
 		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ), 15 );
+
+		/* Load custom stylesheets */
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_table_style' ) );
 
+		/* Strip once-off query args from the URL */
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'activate', 'activate-multi', 'deactivate', 'deactivate-multi', 'delete', 'delete-multi' ) );
 
+		/* Add filters to format the snippet description in the same way the post content is formatted */
+		$filters = array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'capital_P_dangit' );
+
+		foreach ( $filters as $filter ) {
+			add_filter( 'code_snippets_print_snippet_description', $filter );
+		}
+
+		/* Setup the class */
 		parent::__construct( array(
 			'singular' => 'snippet',
 			'plural'   => 'snippets',
@@ -98,28 +111,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Formats the snippet description
-	 * in the same way the post content is formatted
+	 * Define the output of all columns that have no callback function
 	 *
-	 * @since 1.7
-	 * @access public
-	 *
-	 * @param  string $desc The snippet description to format
-	 * @return string       The formatted snippet description
-	 */
-	public function format_description( $desc ) {
-		$desc = wptexturize( $desc );
-		$desc = convert_smilies( $desc );
-		$desc = convert_chars( $desc );
-		$desc = wpautop( $desc );
-		$desc = shortcode_unautop( $desc );
-		$desc = capital_P_dangit( $desc );
-		return $desc;
-	}
-
-	/**
-	 * Define the output of all columns
-	 * that have no callback function
 	 * @param  object $snippet     The snippet object used for the current row
 	 * @param  string $column_name The name of the column being printed
 	 * @return string              The content of the column to output
@@ -131,7 +124,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				return $snippet->id;
 			case 'description':
 				if ( ! empty( $snippet->description ) )
-					return $this->format_description( $snippet->description );
+					return apply_filters( 'code_snippets_print_snippet_description', $snippet->description );
 				else
 					return '&#8212;';
 			default:
@@ -344,14 +337,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$screen = get_current_screen();
 
 		if ( 'top' === $which && has_action( 'code_snippets_list_table_filter_controls' ) ) {
-			?>
-				<div class="alignleft actions">
-				<?php
-					do_action( 'code_snippets_list_table_filter_controls' );
-					submit_button( __('Filter', 'code-snippets'), 'button', false, false );
-				?>
-				</div>
-			<?php
+
+			echo '<div class="alignleft actions">';
+
+			do_action( 'code_snippets_list_table_filter_controls' );
+			submit_button( __('Filter', 'code-snippets'), 'button', false, false );
+
+			echo '</div>';
 		}
 
 		echo '<div class="alignleft actions">';
@@ -368,7 +360,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * Output form fields needed to preserve important
 	 * query vars over form submissions
 	 *
-	 * @param  string $context In what context are the fields being outputted?
+	 * @param string $context In what context are the fields being outputted?
 	 */
 	function required_form_fields( $context = 'main' ) {
 
