@@ -173,7 +173,12 @@ final class Code_Snippets {
 		 */
 		register_uninstall_hook( $this->file, array( __CLASS__, 'uninstall' ) );
 
-		/**
+		/*
+		 * Load the global functions file
+		 */
+		require_once $this->plugin_dir . 'includes/functions.php';
+
+		/*
 		 * Let extension plugins know that it's okay to load
 		 */
 		do_action( 'code_snippets_init' );
