@@ -201,10 +201,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			) )
 		);
 
+		$title = sprintf ( '<strong>%s</strong>',
+			! empty( $snippet->name ) ? stripslashes( $snippet->name ) : __('Untitled', 'code-snippets')
+		);
+
 		// Return the name contents
 		return apply_filters(
 			'code_snippets_list_table_column_name',
-			'<strong>' . stripslashes( $snippet->name ) . '</strong>' . $this->row_actions( $actions, true ),
+			$title . $this->row_actions( $actions, true ),
 			$snippet
 		);
 	}

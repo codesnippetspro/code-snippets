@@ -20,7 +20,7 @@ $snippet = $code_snippets->get_snippet( $edit_id );
 ?>
 
 <?php if ( isset( $_REQUEST['invalid'] ) && $_REQUEST['invalid'] ) : ?>
-	<div id="message" class="error fade"><p><?php _e('Please provide a name for the snippet and its code.', 'code-snippets'); ?></p></div>
+	<div id="message" class="error fade"><p><?php _e('An error occurred when saving the snippet.', 'code-snippets'); ?></p></div>
 <?php elseif ( isset( $_REQUEST['activated'], $_REQUEST['updated'] ) && $_REQUEST['activated'] && $_REQUEST['updated'] ) : ?>
 	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets'); ?></p></div>
 <?php elseif ( isset( $_REQUEST['activated'], $_REQUEST['added'] ) && $_REQUEST['activated'] && $_REQUEST['added'] ) : ?>

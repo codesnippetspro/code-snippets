@@ -837,10 +837,6 @@ final class Code_Snippets {
 		global $wpdb;
 
 		$snippet = $this->escape_snippet_data( $snippet );
-
-		if ( empty( $snippet->name ) or empty( $snippet->code ) )
-			return false;
-
 		$table = $this->get_table_name( $scope );
 
 		$fields = '';
@@ -960,10 +956,15 @@ final class Code_Snippets {
 	 * @return $result The result of the code execution
 	 */
 	public function execute_snippet( $code ) {
+
+		if ( empty( $code ) )
+			return;
+
 		ob_start();
 		$result = eval( $code );
 		$output = ob_get_contents();
 		ob_end_clean();
+
 		do_action( 'code_snippets_execute_snippet', $code );
 		return $result;
 	}
