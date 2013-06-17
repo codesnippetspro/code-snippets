@@ -1,0 +1,39 @@
+#icon-snippets.icon32{
+	background: url('../img/icon32.png') no-repeat scroll transparent;
+}
+
+/* Snippets > Manage Snippets */
+
+.inactive a:hover{
+	color: #d54e21;
+}
+
+a.delete:hover {
+	color: #f00;
+	border-bottom-color: #f00;
+}
+
+a.delete{
+	color: #21759b;
+}
+
+tr{
+	background-color: #fcfcfc;
+}
+
+.inactive,
+.inactive th,
+.inactive td{
+	background-color: #f4f4f4;
+}
+
+.active,
+.active th,
+.active td {
+	color: #000;
+}
+
+.inactive a {
+	color: #557799;
+
+}
