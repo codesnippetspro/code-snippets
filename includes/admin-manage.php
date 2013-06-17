@@ -15,6 +15,7 @@ global $wpdb;
 					<option value='-1' selected='selected'>Bulk Actions</option>
 					<option value='activate'>Activate</option>
 					<option value='deactivate'>Deactivate</option>
+					<option value='export'>Export</option>
 					<option value='delete'>Delete</option>
 				</select>
 				<input type="submit" id="doaction" class="button-secondary" value="Apply"  />
@@ -45,6 +46,7 @@ global $wpdb;
 							<span class='deactivate'><a href="<?php echo $this->admin_manage_url . '&action=deactivate&id=' . $snippet->id; ?>" title="Deactivate this snippet" class="edit">Deactivate</a> | </span>
 						<?php endif; ?>
 						<span class='edit'><a href="<?php echo $this->admin_edit_url . '&action=edit&id=' . $snippet->id; ?>" title="Edit this snippet" class="edit">Edit</a> | </span>
+						<span class='edit'><a href="<?php echo $this->admin_manage_url . '&action=export&id=' . $snippet->id; ?>" title="Export this snippet" class="edit">Export</a> | </span>
 						<span class='delete'><a href="<?php echo $this->admin_manage_url . '&action=delete&id=' . $snippet->id; ?>" title="Delete this snippet" class="delete" onclick="return confirm('Are you sure? This action is non-reversable');">Delete</a></span>
 					</div>
 				</td>
@@ -71,6 +73,7 @@ global $wpdb;
 					<option value='-1' selected='selected'>Bulk Actions</option>
 					<option value='activate'>Activate</option>
 					<option value='deactivate'>Dectivate</option>
+					<option value='export'>Export</option>
 					<option value='delete'>Delete</option>
 				</select>
 				<input type="submit" id="doaction2" class="button-secondary action" value="Apply"  />

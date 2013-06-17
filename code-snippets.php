@@ -1,11 +1,10 @@
 <?php
-
 /*
 	Plugin Name:	Code Snippets
 	Plugin URI:		http://bungeshea.wordpress.com/plugins/code-snippets/
 	Description:	Provides an easy-to-manage GUI interface for adding code snippets to your blog.
 	Author:			Shea Bunge
-	Version:		1.2
+	Version:		1.3
 	Author URI:		http://bungeshea.wordpress.com/
 	License:		GPLv3 or later
 	
@@ -33,16 +32,17 @@ if( !class_exists('Code_Snippets') ) :
 
 class Code_Snippets {
 
-	public $table			= 'snippets';
-	public $version			= '1.2';
+	public $table    = 'snippets';
+	public $version	 = '1.3';
 	
 	public $file;
 	public $plugin_dir;
 	public $plugin_url;
 	public $basename;
 
-	var $admin_manage_url	= 'snippets';
-	var $admin_edit_url		= 'snippet';
+	var $admin_manage_url = 'snippets';
+	var $admin_edit_url   = 'snippet';
+	var $admin_import_url = 'import-snippets';
 
 	public function Code_Snippets() {
 		$this->setup();			// initialise the varables and run the hooks
@@ -54,16 +54,13 @@ class Code_Snippets {
 	function setup() {
 		global $wpdb;
 		$this->file      		=	__FILE__;
-		$this->table			=	$wpdb->prefix . $this->table;
+		$this->table			=	apply_filters( 'cs_table', $wpdb->prefix . $this->table );
 		$this->current_version	=	get_option( 'cs_db_version' );
-
+		
 		$this->basename			=	plugin_basename( $this->file );
 		$this->plugin_dir		=	plugin_dir_path( $this->file );
 		$this->plugin_url		=	plugin_dir_url ( $this->file );
-
-		$this->admin_manage_url	=	admin_url( 'admin.php?page=' . $this->admin_manage_url );
-		$this->admin_edit_url	=	admin_url( 'admin.php?page=' . $this->admin_edit_url );
-
+		
 		add_action( 'admin_menu', array( $this, 'add_admin_menus' ) );
 		add_filter( 'plugin_action_links_' . $this->basename, array( $this, 'settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta' ), 10, 2 );
@@ -87,125 +84,79 @@ class Code_Snippets {
 	}
 	
 	function upgrade() {
-		if( $this->current_version < $this->version ) {
+		if( $this->current_version < 1.2 ) {
 			delete_option( 'cs_complete_uninstall' );
+		}
+		if( $this->current_version < $this->version ) {
 			update_option( 'cs_db_version', $this->version );
 		}
 	}
 	
 	function add_admin_menus() {
-		$this->admin_manage_page = add_menu_page( __('Snippets'), __('Snippets'), 'install_plugins', 'snippets',  array( $this, 'admin_manage_loader' ), $this->plugin_url . 'images/icon16.png', 67 );
-		add_submenu_page('snippets', __('Snippets'), __('Manage Snippets') , 'install_plugins', 'snippets', array( $this, 'admin_manage_loader') );
-		$this->admin_edit_page = add_submenu_page( 'snippets', __('Add New Snippet'), __('Add New'), 'install_plugins', 'snippet', array( $this, 'admin_edit_loader' ) );
+		$this->admin_manage_page = add_menu_page( __('Snippets'), __('Snippets'), 'install_plugins', $this->admin_manage_url,  array( $this, 'admin_manage' ), $this->plugin_url . 'images/icon16.png', 67 );
+		add_submenu_page('snippets', __('Snippets'), __('Manage Snippets') , 'install_plugins', $this->admin_manage_url, array( $this, 'admin_manage_loader') );
+		$this->admin_edit_page = add_submenu_page( 'snippets', __('Add New Snippet'), __('Add New'), 'install_plugins', $this->admin_edit_url, array( $this, 'admin_edit' ) );
+		$this->admin_import_page = add_submenu_page( 'snippets', __('Import Snippets'), __('Import'), 'install_plugins', $this->admin_import_url, array( $this, 'admin_import' ) );
 
+		$this->admin_manage_url	=	admin_url( 'admin.php?page=' . $this->admin_manage_url );
+		$this->admin_edit_url	=	admin_url( 'admin.php?page=' . $this->admin_edit_url );
+		$this->admin_import_url	=	admin_url( 'admin.php?page=' . $this->admin_import_url );
+		
 		add_action( "admin_print_styles-$this->admin_manage_page", array( $this, 'load_stylesheet' ), 5 );
 		add_action( "admin_print_styles-$this->admin_edit_page", array( $this, 'load_stylesheet' ), 5 );
+		add_action( "admin_print_styles-$this->admin_import_page", array( $this, 'load_stylesheet' ), 5 );
 		add_action( "admin_print_scripts-$this->admin_edit_page", array( $this, 'load_editarea' ), 5 );
-		add_action( "load-$this->admin_manage_page", array( $this, 'admin_manage_help' ), 5 );
-		add_action( "load-$this->admin_edit_page", array( $this, 'admin_edit_help' ), 5 );
+		add_action( "load-$this->admin_manage_page", array( $this, 'admin_manage_loader' ), 5 );
+		add_action( "load-$this->admin_edit_page", array( $this, 'admin_edit_loader' ), 5 );
+		add_action( "load-$this->admin_import_page", array( $this, 'admin_import_loader' ), 5 );
 	}
 
 	function load_stylesheet() {
-		wp_enqueue_style('code-snippets-admin-style', plugins_url( 'css/style.css', $this->file), false, $this->version );
+		wp_enqueue_style( 'code-snippets', plugins_url( 'css/style.css', $this->file ), false, $this->version );
 	}
 
 	function load_editarea() {
-		wp_register_script( 'editarea', plugins_url( 'includes/edit_area/edit_area_full.js', $this->file ), array( 'jquery' ), '0.8.2' );
+		wp_register_script( 'editarea', plugins_url( 'includes/edit_area/edit_area_full.js', $this->file ), false, '0.8.2' );
 		wp_enqueue_script( 'editarea' );
 	}
 
-	function admin_manage_help() {
+	function admin_manage_loader() {
 	
-		$screen = get_current_screen();
-		$screen->add_help_tab( array(
-			'id'		=> 'overview',
-			'title'		=> 'Overview',
-			'content'	=>
-				"<p>Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can manage your existing snippets and preform tasks on them such as activating, deactivating, deleting and exporting.</p>"
-		) );
-		$screen->add_help_tab( array(
-			'id'		=> 'compatibility-problems',
-			'title'		=> 'Troubleshooting',
-			'content'	=>
-				"<p>Be sure to check your snippets for errors before you activate them as a faulty snippet could bring your whole blog down. If your site starts doing strange things, deactivate all your snippets and activate them one at a time.</p>" .
-				"<p>If something goes wrong with a snippet and you can&#8217;t use WordPress, you can use a database manager like phpMyAdmin to access the <code>$this->table</code> table in your WordPress database. Locate the offending snippet (if you know which one is the trouble) and change the 1 in the 'active' column into a 0. If this doesn't work try doing this for all snippets.<br/>You can also delete or rename the <code>$this->table</code> table and the table will automaticly be reconstructed so you can re-add snippets one at a time.</p>"
-		) );
+		require_once $this->plugin_dir . 'includes/export.php';
 		
-		$screen->add_help_tab( array(
-			'id'		=> 'uninstall',
-			'title'		=> 'Uninstall',
-			'content'	=>
-				"<p>When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>$this->table</code> table and a few other bits of data stored in the database. If you want to keep this data (ie you are only temporally uninstalling Code Snippets) then remove the <code>".dirname(__FILE__)."</code> folder using FTP." .
-				"<p>Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installaion, you may want to use phpMyAdmin to back up the <code>$this->table</code> table in the database. You can later use phpMyAdmin to import it back.</p>"
-		) );
-
-		$screen->set_help_sidebar(
-			"<p><strong>For more information:</strong></p>" .
-			"<p><a href='http://wordpress.org/extend/plugins/code-snippets' target='_blank'>WordPress Extend</a></p>" .
-			"<p><a href='http://wordpress.org/support/plugin/code-snippets' target='_blank'>Support Forums</a></p>" .
-			"<p><a href='http://bungeshea.wordpress.com/plugins/code-snippets' target='_blank'>SheaPress</a></p>"
-		);
+		if(	isset( $_POST['action'] ) && isset( $_POST['ids'] ) )
+			if( $_POST['action'] == 'export' && is_array( $_POST['ids'] ) )
+				cs_export( $_POST['ids'], $this->table );
+				
+		if(	isset( $_POST['action2'] ) && isset( $_POST['ids'] ) )
+			if( $_POST['action2'] == 'export' && is_array( $_POST['ids'] ) )
+				cs_export( $_POST['ids'], $this->table );
+		
+		if(	isset( $_GET['action'] ) && isset( $_GET['id'] ) )
+			if( $_GET['action'] == 'export' )
+				cs_export( $_GET['id'], $this->table );
+	
+		require_once $this->plugin_dir . 'includes/help/admin-manage-help.php';
 	}
 	
 	function admin_edit_title( $title ) {
 		return str_ireplace( 'Add New Snippet', 'Edit Snippet', $title );
 	}
 	
-	function admin_edit_help() {
+	function admin_edit_loader() {
 	
 		if( isset( $_GET['action'] ) && @$_GET['action'] == 'edit' )
 			add_filter( 'admin_title',  array( $this, 'admin_edit_title' ) );
 	
-		$screen = get_current_screen();
-		$screen->add_help_tab( array(
-			'id'		=> 'overview',
-			'title'		=> 'Overview',
-			'content'	=>
-				"<p>Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can add a new snippet or edit an existing one.</p>"
-		) );
-		$screen->add_help_tab( array(
-			'id'		=> 'finding',
-			'title'		=> 'Finding Snippets',
-			'content'	=>
-				"<p>Here are some links to websites which host a large number of snippets that you can add to your site.
-				<ul>
-					<li><a href='http://wp-snippets.com' title='WordPress Snippets'>WP-Snippets</a></li>
-					<li><a href='http://wpsnipp.com' title='WP Snipp'>WP Snipp</a></li>
-					<li><a href='http://www.catswhocode.com/blog/snippets' title='Cats Who Code Snippet Library'>Cats Who Code</a></li>
-					<li><a href='http://wpmu.org'>WPMU - The WordPress Experts</a></li>
-				</ul>
-				And below is a selection of snippets to get you started:
-				<ul>
-					<li><a title='Track post views using post meta' href='http://wpsnipp.com/index.php/functions-php/track-post-views-without-a-plugin-using-post-meta/' >Track post views using post meta</a></li>
-					<li><a title='Disable Admin Bar' href='http://wp-snippets.com/disable-wp-3-1-admin-bar/'>Disable Admin Bar</a></li>
-					<li><a title='Disable the Visual Editor' href='http://wp-snippets.com/disable-the-visual-editor/'>Disable the Visual Editor</a></li>
-					<li><a title='Change Admin Logo' href='http://wp-snippets.com/change-admin-logo/'>Change Admin Logo</a></li>
-					<li><a title='Display Code in Posts' href='http://wp-snippets.com/code-in-posts/'>Display Code in Posts</a></li>
-					<li><a title='Grab Tweets from Twitter Feed' href='http://www.catswhocode.com/blog/snippets/grab-tweets-from-twitter-feed'>Grab Tweets from Twitter Feed</a></li>
-					<li><a title='Watermark images on the fly' href='http://www.catswhocode.com/blog/snippets/watermark-images-on-the-fly'>Watermark images on the fly</a></li>
-					<li><a title='Display number of Facebook fans in full text' href='http://www.catswhocode.com/blog/snippets/display-number-of-facebook-fans-in-full-text'>Display number of Facebook fans in full text</a></li>
-				</ul>
-				Snippets can be installed through the <a href='$this->admin_edit_url'>Add New Snippet</a> page or by addng them to the <code>$this->table</code> table in the database (Warning: for advanced users only). Once a snippet has been installed, you can activate it here.</p>"
-		) );
-		$screen->add_help_tab( array(
-			'id'		=> 'adding',
-			'title'		=> 'Adding Snippets',
-			'content'	=>
-				"<p>You need to fill out the name and code fields for your snippet to be added. While the description field will add more information about how your snippet works, what is does and where you found it, it is completely optional.</p>" .
-				"<p>Make sure that you don't add the <code>&lt;?php</code>, <code>&lt;?</code> or <code>?&gt;</code> the beginning and end of the code. You can however use these tags in the code to stop and start PHP sections</p>" .
-				"<p>Please be sure to check thst your snippet is valid PHP code and will not produce errors before adding it through this page. While doing so will not become active straght away, it will help to minimise the chance of a faulty snippet becoming active on your site.</p>"
-		) );
-
-		$screen->set_help_sidebar(
-			"<p><strong>For more information:</strong></p>" .
-			"<p><a href='http://wordpress.org/extend/plugins/code-snippets' target='_blank'>WordPress Extend</a></p>" .
-			"<p><a href='http://wordpress.org/support/plugin/code-snippets' target='_blank'>Support Forums</a></p>" .
-			"<p><a href='http://bungeshea.wordpress.com/plugins/code-snippets' target='_blank'>SheaPress</a></p>"
-		);
+	require_once $this->plugin_dir . 'includes/help/admin-edit-help.php';
+	}
+	
+	function admin_import_loader() {
+		require_once $this->plugin_dir . 'includes/help/admin-import-help.php';
 	}
 	
 	function bulk_action( $action, $ids ) {
-		if( !isset( $action ) && !isset( $ids ) && !is_array( $ids ) )
+		if( ! isset( $action ) && ! isset( $ids ) && ! is_array( $ids ) )
 			return false;
 		global $wpdb;
 		$count = 0;
@@ -237,7 +188,7 @@ class Code_Snippets {
 		}
 	}
 	
-	function admin_manage_loader() {
+	function admin_manage() {
 		global $wpdb;
 		
 		$this->bulk_action( @$_POST['action'], @$_POST['ids'] );
@@ -261,7 +212,7 @@ class Code_Snippets {
     require_once $this->plugin_dir . 'includes/admin-manage.php';
 }
 
-	function admin_edit_loader() {
+	function admin_edit() {
 		global $wpdb;
 		if( isset( $_POST['save_snippet'] ) ) {
 			$name			=	mysql_real_escape_string( htmlspecialchars( $_POST['snippet_name' ] ) );
@@ -269,8 +220,8 @@ class Code_Snippets {
 			$code			=	mysql_real_escape_string( htmlspecialchars( $_POST['snippet_code'] ) );
 
 			if( strlen( $name ) && strlen( $code ) ) {
-				if( isset($_POST['edit_id'] ) ) {
-					$wpdb-> query( "update $this->table set name='".$name."',
+				if( isset( $_POST['edit_id'] ) ) {
+					$wpdb->query( "update $this->table set name='".$name."',
 							description='".$description."',
 							code='".$code."'
 							where id=" . intval($_POST["edit_id"]." limit 1"));
@@ -288,6 +239,19 @@ class Code_Snippets {
 		require_once $this->plugin_dir . 'includes/admin-edit.php';
 	}
 
+	function admin_import() {
+		if( file_exists( $_FILES['cs_import_file']['tmp_name'] ) ) {
+			global $wpdb;
+			$xml = simplexml_load_string( file_get_contents( $_FILES['cs_import_file']['tmp_name'] ) );
+			foreach( $xml->children() as $child ) {
+				$wpdb->query( "insert into $this->table (name,description,code) VALUES ('$child->name','$child->description','$child->code')" );
+			}
+			
+			$msg =  'Imported ' . $xml->count() . ' snippets';
+		}
+		require_once( $this->plugin_dir . 'includes/admin-import.php');
+	}	
+	
 	function settings_link( $links ) {
 		array_unshift( $links, '<a href="' . $this->admin_manage_url . '" title="Manage your existing snippets">' . __('Manage') . '</a>' );
 		return $links;
@@ -304,6 +268,7 @@ class Code_Snippets {
 	}
 
 	function run_snippets() {
+		if( defined( 'CS_SAFE_MODE' ) ) if( CS_SAFE_MODE ) return;
 		global $wpdb;
 		// grab the active snippets from the database
 		$active_snippets = $wpdb->get_results( 'select * FROM `' . $this->table . '` WHERE `active` = 1;' );

@@ -4,7 +4,7 @@ Donate link: http://bungeshea.wordpress.com/donate/
 Tags: snippets, code, php
 Requires at least: 3.3
 Tested up to: 3.4.1
-Stable tag: 1.2
+Stable tag: 1.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/copyleft/gpl.html
 
@@ -24,7 +24,7 @@ Further information and screenshots are available on the [plugin homepage](http:
 
 Code Snippets was featured on WPMU: [WordPress Code Snippets: Keep them Organized with this Plugin!](http://wpmu.org/wordpress-code-snippets)
 
-If you have any feedback, issues or suggestions for improvements please start a topic in the [Support Forum](http://wordpress.org/support/plugin/code-snippets) and if you like the plugin please give it a perfect rating at [WordPress.org](http://wordpress.org/extend/plugins/code-snippets) :-)
+If you have any feedback, issues or suggestions for improvements please leave start a topic in the [Support Forum](http://wordpress.org/support/plugin/code-snippets) and if you like the plugin please give it a perfect rating at [WordPress.org](http://wordpress.org/extend/plugins/code-snippets) :-)
 
 You can also contribute to the code at [GitHub](https://github.com/bungeshea/code-snippets).
 
@@ -54,10 +54,13 @@ No, the snippets are added to the WordPress database so are independent of the t
 Yes, when you delete Code Snippets using the 'Plugins' menu in WordPress it will clean up the database table and a few other bits of data. Be careful not to remove Code Snippets using the Plugins menu unless you want this to happen.
 
 = Can I copy any snippets I've created to another WordPress site? =
-The import/export feature is currently in development. You can however, use the export feature of phpMyAdmin to copy the `wp_snippets` table to another WordPress database.
+Yes! You can individualy export a single snippet using the link below the snippet name on the 'Manage Snippets' page or bulk export multiple snippets using the 'Bulk Actions' feature. Snippets can later be imported using the 'Import Snippets' page by uploading the export file.
 
 = Can I run network-wide snippets on a multisite installation? =
 No, this feature is currently not avalible and will be coming in a future release. In the mean time activate Code Snippets individualy on the desired sites.
+
+= I have an idea for a cool feature for Code Snippets! =
+That's great! Let me know by starting (or adding to) a topic in the [Support Forums](http://wordpress.org/support/plugin/code-snippets/).
 
 == Screenshots ==
 
@@ -68,10 +71,15 @@ No, this feature is currently not avalible and will be coming in a future releas
 
 == Changelog ==
 
+= 1.3 =
+* Added export option to 'Manage Snippets' page
+* Added 'Import Snippets' page
+
 = 1.2 =
 * Minor improvements
 * Added code highlighting
-* Removed 'Uninstall Plugin' page. Data will now be cleaned up when plugin is deleted through WordPress admin.
+* Removed 'Uninstall Plugin' page
+* Data will now be cleaned up when plugin is deleted through WordPress admin.
 
 = 1.1 =
 * Fixed a permissions bug with `DISALLOW_FILE_EDIT` being set to true
@@ -82,10 +90,13 @@ No, this feature is currently not avalible and will be coming in a future releas
 
 == Upgrade Notice ==
 
+= 1.3 =
+Added import/export feature
+
 = 1.2 =
-* Minor improvments
-* Added code highlighting
-* Plugin data will now be cleaned up when you delete the plugin.
+Minor improvments | 
+Added code highlighting | 
+Plugin data will now be cleaned up when you delete the plugin.
 
 = 1.1 =
 * Minor bug fixes and improvements on the the 'Edit Snippet' page
