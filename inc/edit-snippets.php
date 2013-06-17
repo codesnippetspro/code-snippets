@@ -1,18 +1,22 @@
-<?php $id = intval( @$_GET['id'] ); ?>
+<?php
+	$edit = isset( $_GET['action'] ) && $_GET['action'] == 'edit';
+	if( $edit )
+		$id = intval( $_GET['id'] );	
+?>
 <div class="wrap">
 	<div id="icon-snippets" class="icon32"><br /></div><h2><?php
-	if( $_GET['action'] == 'edit' ) :
+	if( $edit ) :
 	?>Edit Snippet<a href="<?php echo $this->edit_snippets_url; ?>" class="add-new-h2">Add New</a></h2><?php
 	else:
 	?>Add New Snippet</h2>
 	<?php endif; ?>
-	<?php if ( strlen($msg) ) : ?>
+	<?php if ( strlen( $msg ) ) : ?>
 		<div id="message" class="updated fade"><p><?php echo $msg; ?></p></div>
 	<?php else: ?>
 		<br />
 	<?php endif; ?>
 	<form method="post" action="">
-		<?php if( $_GET['action'] == 'edit' ) : ?>
+		<?php if( $edit ) : ?>
 		<?php $record = $wpdb->get_row( "SELECT * FROM `$this->table_name` WHERE `id` = '$id';" ); ?>
 		<input type="hidden" name="edit_id" value="<?php echo $id;?>" />
 		<?php else: ?>

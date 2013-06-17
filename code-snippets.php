@@ -1,30 +1,30 @@
 <?php
 
-/**
- * Plugin Name:	Code Snippets
- * Plugin URI: http://wordpress.org/extend/plugins/code-snippets
- * Description:	Provides an easy-to-manage GUI interface for adding code snippets to your blog.
- * Author: Shea Bunge
- * Version: 1.0
- * Author URI: http://bungeshea.wordpress.com/plugins/code-snippets/
- * License: GPLv3 or later
- *  
- * Code Snippets - WordPress Plugin
- * Copyright (C) 2012  Shea Bunge
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/*
+	Plugin Name:	Code Snippets
+	Plugin URI:		http://wordpress.org/extend/plugins/code-snippets
+	Description:	Provides an easy-to-manage GUI interface for adding code snippets to your blog.
+	Author:			Shea Bunge
+	Version:		1.1
+	Author URI:		http://bungeshea.wordpress.com/plugins/code-snippets/
+	License:		GPLv3 or later
+	
+	Code Snippets - WordPress Plugin
+    Copyright (C) 2012  Shea Bunge
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 // Exit if accessed directly
 if ( !defined( 'ABSPATH' ) ) exit;
@@ -109,9 +109,9 @@ class code_snippets {
 	}
 	
 	function add_admin_menus() {
-		$this->manage_snippets_page = add_menu_page( 'Snippets', 'Snippets', 'activate_plugins', 'snippets',  array( &$this, 'manage_snippets' ), $this->plugin_url . 'img/icon16.png', 67 );
+		$this->manage_snippets_page = add_menu_page( 'Snippets', 'Snippets', 'install_plugins', 'snippets',  array( &$this, 'manage_snippets' ), $this->plugin_url . 'img/icon16.png', 67 );
 		add_submenu_page('snippets', 'Snippets', 'Manage Snippets' , 'install_plugins', 'snippets', array( &$this, 'manage_snippets') );
-		$this->edit_snippets_page = add_submenu_page( 'snippets', 'Add New Snippet', 'Add New', 'edit_plugins', 'snippet-new', array( &$this, 'edit_snippets' ) );
+		$this->edit_snippets_page = add_submenu_page( 'snippets', 'Add New Snippet', 'Add New', 'install_plugins', 'snippet-new', array( &$this, 'edit_snippets' ) );
 		$this->uninstall_plugin_page = add_submenu_page( 'snippets', 'Uninstall Code Snippets', 'Uninstall', 'install_plugins', 'uninstall-cs', array( &$this, 'uninstall_plugin' ) );
 
 		add_action( 'admin_print_styles-' . $this->manage_snippets_page,	array( $this, 'load_stylesheet' ),	5 );
@@ -156,6 +156,10 @@ class code_snippets {
 	}
 	
 	function edit_snippets_help() {
+	
+		if( isset( $_GET['action'] ) && @$_GET['action'] == 'edit' )
+			add_filter('admin_title', array( &$this, 'edit_snippets_title' ), 10, 2);
+	
 		$screen = get_current_screen();
 		$screen->add_help_tab( array(
 			'id'		=> 'overview',
@@ -318,6 +322,25 @@ class code_snippets {
 			}
 		}
 		require_once( $this->dirname . '/inc/edit-snippets.php');
+	}
+	
+	function edit_snippets_title( $admin_title, $title ) {
+	
+		$title = 'Edit Snippet';
+		
+		if ( is_network_admin() )
+			$admin_title = __( 'Network Admin' );
+		elseif ( is_user_admin() )
+			$admin_title = __( 'Global Dashboard' );
+		else
+			$admin_title = get_bloginfo( 'name' );
+ 	 
+		if ( $admin_title == $title )
+			$admin_title = sprintf( __( '%1$s &#8212; WordPress' ), $title );
+		else
+			$admin_title = sprintf( __( '%1$s &lsaquo; %2$s &#8212; WordPress' ), $title, $admin_title );
+		
+		return $admin_title;
 	}
 	
 	function uninstall_plugin(){
