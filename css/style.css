@@ -1,10 +1,10 @@
-#icon-snippets.icon32{
-	background: url('../img/icon32.png') no-repeat scroll transparent;
+#icon-snippets.icon32 {
+	background: url('../images/icon32.png') no-repeat scroll transparent;
 }
 
 /* Snippets > Manage Snippets */
 
-.inactive a:hover{
+.inactive a:hover {
 	color: #d54e21;
 }
 
@@ -13,17 +13,17 @@ a.delete:hover {
 	border-bottom-color: #f00;
 }
 
-a.delete{
+a.delete {
 	color: #21759b;
 }
 
-tr{
+tr {
 	background-color: #fcfcfc;
 }
 
 .inactive,
 .inactive th,
-.inactive td{
+.inactive td {
 	background-color: #f4f4f4;
 }
 
