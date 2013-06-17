@@ -1,6 +1,5 @@
 <?php
 /**
- * cs_export
  * Exports seleted snippets as a Code Snippets (.xml) export file.
  *
  * @package Code Snippets
