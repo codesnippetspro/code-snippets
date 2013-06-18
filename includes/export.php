@@ -7,8 +7,8 @@
  * and $code_snippets->export_php() methods then
  * directly use those in this file
  *
- * @package Code Snippets
- * @subpackage Main
+ * @package    Code_Snippets
+ * @subpackage Functions
  */
 
 if ( ! function_exists( 'code_snippets_export' ) ) :
@@ -16,10 +16,9 @@ if ( ! function_exists( 'code_snippets_export' ) ) :
 /**
  * Exports selected snippets to a XML or PHP file.
  *
- * @since 1.3
- *
- * @param array $ids The IDs of the snippets to export
- * @param string $format The format of the export file
+ * @since  1.3
+ * @param  array  $ids    The IDs of the snippets to export
+ * @param  string $format The format of the export file
  * @return void
  */
 function code_snippets_export( $ids, $format = 'xml' ) {
@@ -28,11 +27,11 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 	$ids = (array) $ids;
 
 	if ( 1 === count( $ids ) ) {
-		// If there is only snippet to export, use its name instead of the site name
+		/* If there is only snippet to export, use its name instead of the site name */
 		$entry = $code_snippets->get_snippet( $ids );
 		$sitename = strtolower( $entry->name );
 	} else {
-		// Otherwise, use the site name as set in Settings > General
+		/* Otherwise, use the site name as set in Settings > General */
 		$sitename = strtolower( get_bloginfo( 'name' ) );
 	}
 
@@ -63,12 +62,12 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 
 <?php
 
-		// run the generator line through the standard WordPress filter
+		/* Run the generator line through the standard WordPress filter */
 		$gen = '<!-- generator="Code Snippets/' . $code_snippets->version . '" created="' . date('Y-m-d H:i') . '" -->';
 		$type = 'code_snippets_export';
 		echo apply_filters( "get_the_generator_$type", $gen, $type );
 
-		// start the XML section
+		/* Start the XML section */
 		echo "\n<snippets>";
 
 	} elseif ( 'php' === $format ) {
@@ -86,10 +85,10 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 
 	foreach( $ids as $id ) {
 
-		// grab the snippet from the database
+		/* Grab the snippet from the database */
 		$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ), ARRAY_A );
 
-		// remove slashes
+		/* Remove slashes */
 		$snippet = stripslashes_deep( $snippet );
 
 		if ( 'xml' === $format ) {
@@ -98,10 +97,10 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 
 			foreach ( $snippet as $field => $value ) {
 
-				// don't export certain fields
+				/*  Don't export certain fields */
 				if ( in_array( $field, $exclude ) ) continue;
 
-				// output the field and value as indented XML
+				/* Output the field and value as indented XML */
 				if ( $value = apply_filters( "code_snippets_export_$field", $value ) )
 					echo "\n\t\t<$field>$value</$field>";
 			}
@@ -113,7 +112,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 
 			if ( ! empty( $snippet['description'] ) ) {
 
-				// convert description to PHP Doc
+				/* onvert description to PhpDoc */
 				$desc = strip_tags( str_replace( "\n", "\n * ", $snippet['description'] ) );
 
 				echo " *\n * $desc\n";

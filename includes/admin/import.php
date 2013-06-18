@@ -3,11 +3,12 @@
 /**
  * HTML code for the Import Snippets page
  *
- * @package    Code Snippets
+ * @package    Code_Snippets
  * @subpackage Administration
  */
 
-if ( ! class_exists( 'Code_Snippets' ) ) exit;
+if ( ! class_exists( 'Code_Snippets' ) )
+	exit;
 
 global $code_snippets;
 
@@ -19,12 +20,13 @@ if ( isset( $_REQUEST['imported'] ) && 0 !== intval( $_REQUEST['imported'] ) ) {
 
 	printf(
 		_n(
-			'Imported <strong>%d</strong> snippet.',
-			'Imported <strong>%d</strong> snippets.',
+			'Successfully imported <strong>%d</strong> snippet. <a href="%s">Have fun!</a>',
+			'Successfully imported <strong>%d</strong> snippets. <a href="%s">Have fun!</a>',
 			$_REQUEST['imported'],
 			'code-snippets'
 		),
-		$_REQUEST['imported']
+		$_REQUEST['imported'],
+		$code_snippets->admin->manage_url;
 	);
 
 	echo '</p></div>';
@@ -45,17 +47,19 @@ if ( isset( $_REQUEST['imported'] ) && 0 !== intval( $_REQUEST['imported'] ) ) {
 
 		<form enctype="multipart/form-data" id="import-upload-form" method="post" action="" name="code_snippets_import">
 			<p>
-				<label for="upload"><?php _e('Choose a file from your computer:', 'code-snippets' ); ?></label> <?php _e('(Maximum size: 8MB)', 'code-snippets'); ?>
-				<input type="file" id="upload" name="code_snippets_import_file" size="25" accept="text/xml" />
 				<input type="hidden" name="action" value="save" />
 				<input type="hidden" name="max_file_size" value="8388608" />
+
+				<label for="upload"><?php _e('Choose a file from your computer:', 'code-snippets' ); ?></label>
+				<?php _e('(Maximum size: 8MB)', 'code-snippets'); ?>
+				<input type="file" id="upload" name="code_snippets_import_file" size="25" accept="text/xml" />
 			</p>
 
-			<?php do_action( 'code_snippets_admin_import_form' ); ?>
+			<?php
+				do_action( 'code_snippets_admin_import_form' );
+				submit_button( __('Upload file and import', 'code-snippets') );
+			?>
 
-			<p class="submit">
-				<input type="submit" name="submit" id="submit" class="button" value="<?php _e('Upload file and import', 'code-snippets'); ?>" />
-			</p>
 		</form>
 	</div>
 </div>

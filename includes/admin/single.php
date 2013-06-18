@@ -3,7 +3,7 @@
 /**
  * HTML code for the Add New/Edit Snippet page
  *
- * @package    Code Snippets
+ * @package    Code_Snippets
  * @subpackage Administration
  */
 

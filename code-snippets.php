@@ -6,8 +6,12 @@
  * If you're interested in helping to develop Code Snippets, or perhaps
  * contribute to the localization, please see http://code-snippets.bungeshea.com
  *
- * @package Code Snippets
- * @subpackage Main
+ * @package   Code_Snippets
+ * @version   1.7.1.2
+ * @author    Shea Bunge <info@bungeshea.com>
+ * @copyright Copyright (c) 2012-2013, Shea Bunge
+ * @link      http://code-snippets.bungeshea.com
+ * @license   http://opensource.org/licenses/MIT
  */
 
 /*
@@ -23,8 +27,9 @@
  * Domain Path: /languages/
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) )
+	exit;
 
 if ( ! class_exists( 'Code_Snippets' ) ) :
 
@@ -36,9 +41,9 @@ if ( ! class_exists( 'Code_Snippets' ) ) :
  * the methods or variables in this class. Anything you need
  * to access should be publicly available there
  *
- * @since 1.0
- * @package Code Snippets
- * @access private
+ * @since   1.0
+ * @package Code_Snippets
+ * @access  private
  */
 final class Code_Snippets {
 
@@ -49,42 +54,46 @@ final class Code_Snippets {
 	 * This should be set to the 'Plugin Version' value,
 	 * as defined above in the plugin header
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access public
-	 * @var string A PHP-standardized version number string
+	 * @var    string A PHP-standardized version number string
 	 */
 	public $version = '1.7.1.2';
 
 	/**
 	 * Variables to hold plugin paths
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access public
-	 * @var string
+	 * @var    string
 	 */
-	public $file, $basename, $plugin_dir, $plugin_url;
+	public $file, $basename, $plugin_dir, $plugin_url = '';
 
 	/**
 	 * Stores an instance of the list table class
 	 *
-	 * @since 1.5
+	 * @var    object
+	 * @since  1.5
 	 * @access public
-	 * @see Code_Snippets_List_Table
+	 * @see    Code_Snippets_List_Table
 	 */
 	public $list_table;
 
 	/**
 	 * Stores an instance of the administration class
 	 *
-	 * @since Code_Snippets 1.7.1
+	 * @var    object
+	 * @since  Code_Snippets 1.7.1
 	 * @access public
-	 * @see Code_Snippets_Admin
+	 * @see    Code_Snippets_Admin
 	 */
 	public $admin;
 
 	/**
 	 * Used by maybe_create_tables() for bailing early
-	 * @var boolean
+	 *
+	 * @var    boolean
+	 * @access protected
 	 */
 	static $tables_created = false;
 
@@ -95,21 +104,23 @@ final class Code_Snippets {
 	 * $wpdb->ms_snippets, but these are maintained
 	 * as references for backwards-compatibility
 	 *
-	 * @var string
+	 * @var    string
+	 * @access public
 	 */
-	public $table, $ms_table;
+	public $table, $ms_table = '';
 
 	/**
 	 * These are now deprecated in favor of those in
 	 * the Code_Snippets_Admin class, but maintained as
 	 * references so we don't break existing code
 	 *
-	 * @since 1.0
+	 * @since      1.0
 	 * @deprecated Moved to the Code_Snippets_Admin class in 1.7.1
-	 * @access public
-	 * @var string
+	 * @access     public
+	 * @var        string
 	 */
-	public $admin_manage, $admin_single, $admin_import, $admin_manage_url, $admin_single_url, $admin_import_url;
+	public $admin_manage,     $admin_single,     $admin_import,
+	       $admin_manage_url, $admin_single_url, $admin_import_url = '';
 
 	/**
 	 * The constructor function for our class
@@ -118,9 +129,8 @@ final class Code_Snippets {
 	 * so other plugins may not have loaded yet. Only do stuff
 	 * here that really can't wait
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access private
-	 *
 	 * @return void
 	 */
 	function __construct() {
@@ -146,9 +156,8 @@ final class Code_Snippets {
 	 * This method is called *after* other plugins
 	 * have been run
 	 *
-	 * @since 1.7
+	 * @since  1.7
 	 * @access public
-	 *
 	 * @return void
 	 */
 	public function init() {
@@ -168,35 +177,28 @@ final class Code_Snippets {
 		 */
 		load_plugin_textdomain( 'code-snippets', false, dirname( $this->basename ) . '/languages/' );
 
-		/*
-		 * Cleanup the plugin data on uninstall
-		 */
+		/* Cleanup the plugin data on uninstall */
 		register_uninstall_hook( $this->file, array( __CLASS__, 'uninstall' ) );
 
-		/*
-		 * Load the global functions file
-		 */
+		/* Load the global functions file */
 		require_once $this->plugin_dir . 'includes/functions.php';
 
-		/*
-		 * Let extension plugins know that it's okay to load
-		 */
+		/* Let extension plugins know that it's okay to load */
 		do_action( 'code_snippets_init' );
 	}
 
 	/**
 	 * Initialize variables
 	 *
-	 * @since 1.2
+	 * @since  1.2
 	 * @access private
-	 *
 	 * @return void
 	 */
 	function setup_vars() {
 
 		/* Plugin directory variables */
 		$this->file       = __FILE__;
-		$this->basename	  = plugin_basename( $this->file );
+		$this->basename   = plugin_basename( $this->file );
 		$this->plugin_dir = plugin_dir_path( $this->file );
 		$this->plugin_url = plugin_dir_url ( $this->file );
 
@@ -207,7 +209,7 @@ final class Code_Snippets {
 			$this->admin = new Code_Snippets_Admin;
 
 			/* Remap deprecated variables */
-			$this->admin_manage_url	= &$this->admin->manage_url;
+			$this->admin_manage_url = &$this->admin->manage_url;
 			$this->admin_single_url = &$this->admin->single_url;
 			$this->admin_import_url = &$this->admin->import_url;
 
@@ -218,40 +220,47 @@ final class Code_Snippets {
 	}
 
 	/**
+	 * Require a PHP file from the includes directory
+	 * @since  [nextversion]
+	 * @param  string $handle The file handle (filename with no path or extension) to load
+	 * @return void
+	 */
+	public function get_include( $handle ) {
+		require_once $this->plugin_dir . "includes/{$include}.php";
+	}
+
+	/**
 	 * Register the snippet table names with WordPress
 	 *
-	 * @since 1.7
+	 * @since  1.7
 	 * @access public
-	 *
-	 * @uses $wpdb
-	 *
+	 * @uses   $wpdb
 	 * @return void
 	 */
 	public function set_table_vars() {
 		global $wpdb;
 
 		/* Register the snippet table names with WordPress */
-		$wpdb->tables[] = 'snippets';
+		$wpdb->tables[]           = 'snippets';
 		$wpdb->ms_global_tables[] = 'ms_snippets';
 
 		/* Setup initial table variables */
-		$wpdb->snippets = $wpdb->prefix . 'snippets';
-		$wpdb->ms_snippets = $wpdb->base_prefix . 'ms_snippets';
+		$wpdb->snippets           = $wpdb->prefix . 'snippets';
+		$wpdb->ms_snippets        = $wpdb->base_prefix . 'ms_snippets';
 
 		/* Add a pointer to the old variables */
-		$this->table = &$wpdb->snippets;
-		$this->ms_table = &$wpdb->ms_snippets;
+		$this->table              = &$wpdb->snippets;
+		$this->ms_table           = &$wpdb->ms_snippets;
 	}
 
 	/**
 	 * Return the appropriate snippet table name
 	 *
-	 * @since 1.6
+	 * @since  1.6
 	 * @access public
-	 *
 	 * @param string  $scope        Retrieve the multisite table name or the site table name?
-	 * @param bool    $check_screen Query the current screen if no scope passed?
-	 * @return string $table        The snippet table name
+	 * @param boolean $check_screen Query the current screen if no scope passed?
+	 * @return string  $table        The snippet table name
 	 */
 	public function get_table_name( $scope = '', $check_screen = true ) {
 
@@ -281,21 +290,20 @@ final class Code_Snippets {
 	/**
 	 * Create the snippet tables if they do not already exist
 	 *
-	 * @since 1.7.1
+	 * @since  1.7.1
 	 * @access public
 	 *
-	 * @uses $this->create_table() To create a single snippet table
-	 * @uses $wpdb->get_var() To test of the table exists
-	 * @uses self::$tables_created To check if we've already done this or not
-	 *
-	 * @param bool $force Force table creation/upgrade
-	 *
-	 * @return void
+	 * @staticvar boolean $tables_created       Used to check if we've already done this or not
+	 * @uses              $this->create_table() To create a single snippet table
+	 * @uses              $wpdb->get_var()      To test of the table exists
+	 * @param boolean $force Force table creation/upgrade
+	 * @return    void
 	 */
 	public function maybe_create_tables( $force = false ) {
 
 		/* Bail early if we've done this already */
-		if ( self::$tables_created && ! $force ) return;
+		if ( self::$tables_created && ! $force )
+			return;
 
 		global $wpdb;
 
@@ -327,11 +335,10 @@ final class Code_Snippets {
 	/**
 	 * Create the snippet tables if they do not already exist
 	 *
-	 * @since Code Snippets 1.2
+	 * @since      Code Snippets 1.2
 	 * @deprecated Code Snippets 1.7.1
-	 * @access public
-	 *
-	 * @return void
+	 * @access     public
+	 * @return     void
 	 */
 	public function create_tables() {
 		_deprecated_function(
@@ -346,16 +353,16 @@ final class Code_Snippets {
 	 * Create a single snippet table
 	 * if one of the same name does not already exist
 	 *
-	 * @since 1.6
+	 * @since   1.6
 	 * @access private
 	 *
-	 * @uses dbDelta() To add the table to the database
+	 * @uses   dbDelta()          To add the table to the database
 	 *
-	 * @param string $table_name The name of the table to create
+	 * @param string  $table_name The name of the table to create
 	 * @return void
 	 */
 	function create_table( $table_name ) {
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		global $wpdb;
 
@@ -370,10 +377,10 @@ final class Code_Snippets {
 		}
 
 		$table_columns = apply_filters( 'code_snippets_database_table_columns', array(
-			'name         tinytext    not null',
-			'description  text',
-			'code         longtext    not null',
-		) );
+				'name         tinytext    not null',
+				'description  text',
+				'code         longtext    not null',
+			) );
 
 		$table_columns_sql = implode( ",\n", $table_columns );
 
@@ -394,15 +401,14 @@ final class Code_Snippets {
 	/**
 	 * Preform upgrade tasks such as deleting and updating options
 	 *
-	 * @since 1.2
+	 * @since  1.2
 	 * @access private
-	 *
 	 * @return void
 	 */
 	function upgrade() {
 		global $wpdb;
 
-		// get the current plugin version from the database
+		/* Get the current plugin version from the database */
 
 		$current_version = get_option( 'code_snippets_version' );
 
@@ -414,20 +420,20 @@ final class Code_Snippets {
 
 		$previous_version = ( $current_version ? $current_version : $this->version );
 
-		/* skip this if we're on the latest version */
+		/* Skip this if we're on the latest version */
 		if ( version_compare( $current_version, $this->version, '<' ) ) {
 
-			// Register the capabilities once only
+			/* Register the capabilities once only */
 			if ( version_compare( $current_version, '1.5',  '<' ) ) {
 				$this->setup_roles( true );
 			}
 
 			if ( version_compare( $previous_version, '1.2', '<' ) ) {
-				// The 'Complete Uninstall' option was removed in version 1.2
+				/* The 'Complete Uninstall' option was removed in version 1.2 */
 				delete_option( 'cs_complete_uninstall' );
 			}
 
-			// Update the current version stored in the database
+			/* Update the current version stored in the database */
 			update_option( 'code_snippets_version', $this->version );
 		}
 
@@ -443,7 +449,7 @@ final class Code_Snippets {
 					$this->setup_ms_roles( true );
 				}
 
-				// migrate the recently_network_activated_snippets to the site options
+				/* Migrate recently_network_activated_snippets to the site options */
 				if ( get_option( 'recently_network_activated_snippets' ) ) {
 					add_site_option( 'recently_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
 					delete_option( 'recently_network_activated_snippets' );
@@ -459,23 +465,22 @@ final class Code_Snippets {
 	/**
 	 * Register the user roles and capabilities
 	 *
-	 * @since 1.5
+	 * @since  1.5
 	 * @access private
-	 *
-	 * @param bool $install true to add the capabilities, false to remove
+	 * @param boolean $install true to add the capabilities, false to remove
 	 * @return void
 	 */
 	function setup_roles( $install = true ) {
 
 		$this->caps = apply_filters( 'code_snippets_caps', array(
-			'manage_snippets',
-			'install_snippets',
-			'edit_snippets'
-		) );
+				'manage_snippets',
+				'install_snippets',
+				'edit_snippets'
+			) );
 
 		$this->role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
 
-		foreach( $this->caps as $cap ) {
+		foreach ( $this->caps as $cap ) {
 			if ( $install )
 				$this->role->add_cap( $cap );
 			else
@@ -486,26 +491,26 @@ final class Code_Snippets {
 	/**
 	 * Register the multisite user roles and capabilities
 	 *
-	 * @since 1.5
+	 * @since  1.5
 	 * @access private
-	 *
-	 * @param bool $install true to add the capabilities, false to remove
+	 * @param boolean $install true to add the capabilities, false to remove
 	 * @return void
 	 */
 	function setup_ms_roles( $install = true ) {
 
-		if ( ! is_multisite() ) return;
+		if ( ! is_multisite() )
+			return;
 
 		$this->network_caps = apply_filters( 'code_snippets_network_caps', array(
-			'manage_network_snippets',
-			'install_network_snippets',
-			'edit_network_snippets'
-		) );
+				'manage_network_snippets',
+				'install_network_snippets',
+				'edit_network_snippets'
+			) );
 
 		$supers = get_super_admins();
-		foreach( $supers as $admin ) {
+		foreach ( $supers as $admin ) {
 			$user = new WP_User( 0, $admin );
-			foreach( $this->network_caps as $cap ) {
+			foreach ( $this->network_caps as $cap ) {
 				if ( $install )
 					$user->add_cap( $cap );
 				else
@@ -518,12 +523,12 @@ final class Code_Snippets {
 	 * Check if the current user can perform some action on snippets or not
 	 *
 	 * @uses   current_user_can() To check if the current user can perform a task
-	 * @uses   $this->get_cap() To get the required capability
+	 * @uses   $this->get_cap()   To get the required capability
 	 *
-	 * @param  string $do_what The task to check against.
-	 * @return bool            Whether the current user can perform this task or not
+	 * @param string  $do_what The task to check against.
+	 * @return boolean            Whether the current user can perform this task or not
 	 *
-	 * @since  1.7.1.1 Moved logic to $this->get_cap() method
+	 * @since  1.7.1.1            Moved logic to $this->get_cap() method
 	 * @since  1.7.1
 	 * @access public
 	 */
@@ -540,6 +545,8 @@ final class Code_Snippets {
 	 *
 	 * @since  1.7.1.1
 	 * @access public
+	 * @param string  $do_what The action to retrieve the capability for
+	 * @return void
 	 */
 	public function get_cap( $do_what ) {
 
@@ -558,23 +565,23 @@ final class Code_Snippets {
 	/**
 	 * Converts an array of snippet data into a snippet object
 	 *
-	 * @since 1.7
+	 * @since  1.7
 	 * @access public
 	 *
-	 * @param mixed $data The snippet data to convert
-	 * @return object The resulting snippet object
+	 * @param mixed   $data The snippet data to convert
+	 * @return object      The resulting snippet object
 	 */
 	public function build_snippet_object( $data = null ) {
 
 		$snippet = new stdClass;
 
-		// define an empty snippet object (or one with default values )
-		$snippet->id = 0;
-		$snippet->name = '';
+		/* Define an empty snippet object (or one with default values ) */
+		$snippet->id          = 0;
+		$snippet->name        = '';
 		$snippet->description = '';
-		$snippet->code = '';
-		$snippet->active = 0;
-		$snippet = apply_filters( 'code_snippets_build_default_snippet', $snippet );
+		$snippet->code        = '';
+		$snippet->active      = 0;
+		$snippet              = apply_filters( 'code_snippets_build_default_snippet', $snippet );
 
 		if ( ! isset( $data ) ) {
 			return $snippet;
@@ -620,22 +627,22 @@ final class Code_Snippets {
 	/**
 	 * Retrieve a list of snippets from the database
 	 *
-	 * @since 1.7
-	 * @access public
+	 * @since   1.7
+	 * @access  public
 	 *
-	 * @uses $wpdb To query the database for snippets
-	 * @uses $this->get_table_name() To dynamically retrieve the snippet table name
+	 * @uses    $wpdb                   To query the database for snippets
+	 * @uses    $this->get_table_name() To dynamically retrieve the snippet table name
 	 *
-	 * @param string $scope Retrieve multisite-wide or site-wide snippets?
-	 * @return array An array of snippet objects
+	 * @param string  $scope Retrieve multisite-wide or site-wide snippets?
+	 * @return  array                   An array of snippet objects
 	 */
-	 public function get_snippets( $scope = '' ) {
+	public function get_snippets( $scope = '' ) {
 		global $wpdb;
 
-		$table = $this->get_table_name( $scope );
+		$table    = $this->get_table_name( $scope );
 		$snippets = $wpdb->get_results( "SELECT * FROM $table", ARRAY_A );
 
-		foreach( $snippets as $index => $snippet ) {
+		foreach ( $snippets as $index => $snippet ) {
 			$snippets[ $index ] = $this->unescape_snippet_data( $snippet );
 		}
 
@@ -645,27 +652,27 @@ final class Code_Snippets {
 	/**
 	 * Escape snippet data for inserting into the database
 	 *
-	 * @since 1.7
+	 * @since  1.7
 	 * @access public
 	 *
-	 * @param mixed $snippet An object or array containing the data to escape
-	 * @return object The resulting snippet object, with data escaped
+	 * @param mixed   $snippet An object or array containing the data to escape
+	 * @return object         The resulting snippet object, with data escaped
 	 */
 	public function escape_snippet_data( $snippet ) {
 
 		$snippet = $this->build_snippet_object( $snippet );
 
 		/* remove the <?php and ?> tags from the snippet */
-		$snippet->code = trim ( $snippet->code );
-		$snippet->code = ltrim( $snippet->code, '<?php' );
-		$snippet->code = ltrim( $snippet->code, '<?' );
-		$snippet->code = rtrim( $snippet->code, '?>' );
+		$snippet->code        = trim( $snippet->code );
+		$snippet->code        = ltrim( $snippet->code, '<?php' );
+		$snippet->code        = ltrim( $snippet->code, '<?' );
+		$snippet->code        = rtrim( $snippet->code, '?>' );
 
 		/* escape the data */
-		$snippet->name = mysql_real_escape_string( htmlspecialchars( $snippet->name ) );
+		$snippet->name        = mysql_real_escape_string( htmlspecialchars( $snippet->name ) );
 		$snippet->description = mysql_real_escape_string( htmlspecialchars( $snippet->description ) );
-		$snippet->code = mysql_real_escape_string( htmlspecialchars( $snippet->code ) );
-		$snippet->id = intval( $snippet->id );
+		$snippet->code        = mysql_real_escape_string( htmlspecialchars( $snippet->code ) );
+		$snippet->id          = intval( $snippet->id );
 
 		return apply_filters( 'code_snippets_escape_snippet_data', $snippet );
 	}
@@ -674,18 +681,18 @@ final class Code_Snippets {
 	 * Unescape snippet data after retrieval from the database
 	 * ready for use
 	 *
-	 * @since 1.7
+	 * @since  1.7
 	 * @access public
 	 *
-	 * @param mixed $snippet An object or array containing the data to unescape
-	 * @return object The resulting snippet object, with data unescaped
+	 * @param mixed   $snippet An object or array containing the data to unescape
+	 * @return object         The resulting snippet object, with data unescaped
 	 */
 	public function unescape_snippet_data( $snippet ) {
 
 		$snippet = $this->build_snippet_object( $snippet );
 
-		$snippet->name = htmlspecialchars_decode( stripslashes( $snippet->name ) );
-		$snippet->code = htmlspecialchars_decode( stripslashes( $snippet->code ) );
+		$snippet->name        = htmlspecialchars_decode( stripslashes( $snippet->name ) );
+		$snippet->code        = htmlspecialchars_decode( stripslashes( $snippet->code ) );
 		$snippet->description = htmlspecialchars_decode( stripslashes( $snippet->description ) );
 
 		return apply_filters( 'code_snippets_unescape_snippet_data', $snippet );
@@ -696,17 +703,17 @@ final class Code_Snippets {
 	 * Will return empty snippet object if no snippet
 	 * ID is specified
 	 *
-	 * @since 1.7
+	 * @since  1.7
 	 * @access public
 	 *
-	 * @uses $wpdb To query the database for snippets
-	 * @uses $this->get_table_name() To dynamically retrieve the snippet table name
+	 * @uses   $wpdb                   To query the database for snippets
+	 * @uses   $this->get_table_name() To dynamically retrieve the snippet table name
 	 *
-	 * @param  int $id The ID of the snippet to retrieve. 0 to build a new snippet
-	 * @param  string $scope Retrieve a multisite-wide or site-wide snippet?
-	 * @return object A single snippet object
+	 * @param int     $id    The ID of the snippet to retrieve. 0 to build a new snippet
+	 * @param string  $scope Retrieve a multisite-wide or site-wide snippet?
+	 * @return object                  A single snippet object
 	 */
-	 public function get_snippet( $id = 0, $scope = '' ) {
+	public function get_snippet( $id = 0, $scope = '' ) {
 		global $wpdb;
 		$table = $this->get_table_name( $scope );
 
@@ -725,13 +732,13 @@ final class Code_Snippets {
 	/**
 	 * Activates a snippet
 	 *
-	 * @since 1.5
+	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses $wpdb To set the snippets' active status
+	 * @uses   $wpdb         To set the snippets' active status
 	 *
-	 * @param array $ids The ids of the snippets to activate
-	 * @param string $scope Are the snippets multisite-wide or site-wide?
+	 * @param array   $ids   The ids of the snippets to activate
+	 * @param string  $scope Are the snippets multisite-wide or site-wide?
 	 * @return void
 	 */
 	public function activate( $ids, $scope = '' ) {
@@ -741,7 +748,7 @@ final class Code_Snippets {
 
 		$table = $this->get_table_name( $scope );
 
-		foreach( $ids as $id ) {
+		foreach ( $ids as $id ) {
 			$wpdb->update(
 				$table,
 				array( 'active' => '1' ),
@@ -759,13 +766,13 @@ final class Code_Snippets {
 	/**
 	 * Deactivates selected snippets
 	 *
-	 * @since 1.5
+	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses $wpdb To set the snippets' active status
+	 * @uses   $wpdb         To set the snippets' active status
 	 *
-	 * @param array $ids The IDs of the snippets to deactivate
-	 * @param string $scope Are the snippets multisite-wide or site-wide?
+	 * @param array   $ids   The IDs of the snippets to deactivate
+	 * @param string  $scope Are the snippets multisite-wide or site-wide?
 	 * @return void
 	 */
 	public function deactivate( $ids, $scope = '' ) {
@@ -776,7 +783,7 @@ final class Code_Snippets {
 
 		$table = $this->get_table_name( $scope );
 
-		foreach( $ids as $id ) {
+		foreach ( $ids as $id ) {
 			$wpdb->update(
 				$table,
 				array( 'active' => '0' ),
@@ -806,14 +813,14 @@ final class Code_Snippets {
 	/**
 	 * Deletes a snippet from the database
 	 *
-	 * @since 1.5
+	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses $wpdb To access the database
-	 * @uses $this->get_table_name() To dynamically retrieve the name of the snippet table
+	 * @uses   $wpdb                   To access the database
+	 * @uses   $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
-	 * @param int $id The ID of the snippet to delete
-	 * @param string $scope Delete from site-wide or network-wide table?
+	 * @param int     $id    The ID of the snippet to delete
+	 * @param string  $scope Delete from site-wide or network-wide table?
 	 */
 	public function delete_snippet( $id, $scope = '' ) {
 		global $wpdb;
@@ -828,15 +835,15 @@ final class Code_Snippets {
 	/**
 	 * Saves a snippet to the database.
 	 *
-	 * @since 1.5
+	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses $wpdb To update/add the snippet to the database
-	 * @uses $this->get_table_name() To dynamically retrieve the name of the snippet table
+	 * @uses   $wpdb                   To update/add the snippet to the database
+	 * @uses   $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
-	 * @param object $snippet The snippet to add/update to the database
-	 * @param string $scope Save the snippet to the site-wide or network-wide table?
-	 * @return int|bool The ID of the snippet on success, false on failure
+	 * @param object  $snippet The snippet to add/update to the database
+	 * @param string  $scope   Save the snippet to the site-wide or network-wide table?
+	 * @return int|boolean             The ID of the snippet on success, false on failure
 	 */
 	public function save_snippet( $snippet, $scope = '' ) {
 		global $wpdb;
@@ -875,19 +882,19 @@ final class Code_Snippets {
 	/**
 	 * Imports snippets from an XML file
 	 *
-	 * @since 1.5
+	 * @since  1.5
 	 * @access public
 	 *
- 	 * @uses $this->save_snippet() To add the snippets to the database
+	 * @uses   $this->save_snippet() To add the snippets to the database
 	 *
-	 * @param file $file The path to the XML file to import
-	 * @param string $scope Import into network-wide table or site-wide table?
-	 * @return mixed The number of snippets imported on success, false on failure
+	 * @param file    $file  The path to the XML file to import
+	 * @param string  $scope Import into network-wide table or site-wide table?
+	 * @return mixed                 The number of snippets imported on success, false on failure
 	 */
 	public function import( $file, $scope = '' ) {
 
 		if ( ! file_exists( $file ) || ! is_file( $file ) )
-			return false;
+			die( var_dump( $file ) );
 
 		$xml = simplexml_load_file( $file );
 
@@ -905,14 +912,14 @@ final class Code_Snippets {
 	/**
 	 * Exports snippets as an XML file
 	 *
-	 * @since 1.5
+	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses code_snippets_export() To export selected snippets
-	 * @uses $this->get_table_name() To dynamically retrieve the name of the snippet table
+	 * @uses   code_snippets_export()  To export selected snippets
+	 * @uses   $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
-	 * @param array $ids The IDs of the snippets to export
-	 * @param string $scope Is the snippet a network-wide or site-wide snippet?
+	 * @param array   $ids   The IDs of the snippets to export
+	 * @param string  $scope Is the snippet a network-wide or site-wide snippet?
 	 * @return void
 	 */
 	public function export( $ids, $scope = '' ) {
@@ -928,14 +935,14 @@ final class Code_Snippets {
 	/**
 	 * Exports snippets as a PHP file
 	 *
-	 * @since 1.5
+	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses code_snippets_export() To export selected snippets
-	 * @uses $this->get_table_name() To dynamically retrieve the name of the snippet table
+	 * @uses   code_snippets_export()  To export selected snippets
+	 * @uses   $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
-	 * @param array $ids The IDs of the snippets to export
-	 * @param string $scope Is the snippet a network-wide or site-wide snippet?
+	 * @param array   $ids   The IDs of the snippets to export
+	 * @param string  $scope Is the snippet a network-wide or site-wide snippet?
 	 * @return void
 	 */
 	public function export_php( $ids, $scope = '' ) {
@@ -954,11 +961,11 @@ final class Code_Snippets {
 	 * Code must NOT be escaped, as
 	 * it will be executed directly
 	 *
-	 * @since 1.5
+	 * @since  1.5
 	 * @access public
 	 *
-	 * @param string $code The snippet code to execute
-	 * @return $result The result of the code execution
+	 * @param string  $code The snippet code to execute
+	 * @return mixed        The result of the code execution
 	 */
 	public function execute_snippet( $code ) {
 
@@ -977,13 +984,13 @@ final class Code_Snippets {
 	/**
 	 * Run the active snippets
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access public
 	 *
-	 * @uses $wpdb To grab the active snippets from the database
-	 * @uses $this->execute_snippet() To execute a snippet
+	 * @uses   $wpdb                    To grab the active snippets from the database
+	 * @uses   $this->execute_snippet() To execute a snippet
 	 *
-	 * @return bool true on success, false on failure
+	 * @return boolean                  true on success, false on failure
 	 */
 	public function run_snippets() {
 
@@ -1012,7 +1019,7 @@ final class Code_Snippets {
 			$active_snippets = $wpdb->get_col( $sql );
 
 			if ( count( $active_snippets ) ) {
-				foreach( $active_snippets as $snippet ) {
+				foreach ( $active_snippets as $snippet ) {
 					/* Execute the PHP code */
 					$this->execute_snippet( htmlspecialchars_decode( stripslashes( $snippet ) ) );
 				}
@@ -1027,15 +1034,15 @@ final class Code_Snippets {
 	/**
 	 * Cleans up data created by the Code_Snippets class
 	 *
-	 * @since 1.2
+	 * @since  1.2
 	 * @access private
 	 *
-	 * @uses $wpdb To remove tables from the database
-	 * @uses $code_snippets->get_table_name() To find out which table to drop
-	 * @uses is_multisite() To check the type of installation
-	 * @uses switch_to_blog() To switch between blogs
-	 * @uses restore_current_blog() To switch between blogs
-	 * @uses delete_option() To remove site options
+	 * @uses   $wpdb                            To remove tables from the database
+	 * @uses   $code_snippets->get_table_name() To find out which table to drop
+	 * @uses   is_multisite()                   To check the type of installation
+	 * @uses   switch_to_blog()                 To switch between blogs
+	 * @uses   restore_current_blog()           To switch between blogs
+	 * @uses   delete_option()                  To remove site options
 	 *
 	 * @return void
 	 */
@@ -1071,13 +1078,15 @@ final class Code_Snippets {
 /**
  * The global variable in which the Code_Snippets class is stored
  *
- * @since 1.0
+ * @var    object
+ * @since  1.0
  * @access public
+ * @see    Code_Snippets
  */
 global $code_snippets;
 $code_snippets = new Code_Snippets;
 
-/* set up a pointer in the old variable (for backwards-compatibility) */
+/* Set up a pointer in the old variable (for backwards-compatibility) */
 global $cs;
 $cs = &$code_snippets;
 

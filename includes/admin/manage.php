@@ -3,11 +3,12 @@
 /**
  * HTML code for the Manage Snippets page
  *
- * @package    Code Snippets
+ * @package    Code_Snippets
  * @subpackage Administration
  */
 
-if ( ! class_exists( 'Code_Snippets' ) ) exit;
+if ( ! class_exists( 'Code_Snippets' ) )
+	exit;
 
 global $code_snippets;
 $screen = get_current_screen();
@@ -32,11 +33,19 @@ $screen = get_current_screen();
 
 <div class="wrap">
 	<?php screen_icon(); ?>
-	<h2><?php esc_html_e('Snippets', 'code-snippets'); ?>
-	<?php if ( $code_snippets->user_can( 'install' ) ) { ?>
-	<a href="<?php echo $code_snippets->admin->single_url; ?>" class="add-new-h2"><?php echo esc_html_x('Add New', 'snippet', 'code-snippets'); ?></a>
-<?php }
-	$code_snippets->list_table->search_notice(); ?></h2>
+	<h2><?php
+		esc_html_e('Snippets', 'code-snippets');
+
+		if ( $code_snippets->user_can( 'install' ) ) {
+
+			printf ( '<a href="%2$s" class="add-new-h2">%1$s</a>',
+				$code_snippets->admin->single_url,
+				esc_html_x('Add New', 'snippet', 'code-snippets');
+			);
+		}
+
+		$code_snippets->list_table->search_notice();
+	?></h2>
 
 	<?php $code_snippets->list_table->views(); ?>
 
@@ -47,8 +56,10 @@ $screen = get_current_screen();
 		?>
 	</form>
 	<form method="post" action="">
-		<?php $code_snippets->list_table->required_form_fields(); ?>
-		<?php $code_snippets->list_table->display(); ?>
+		<?php
+			$code_snippets->list_table->required_form_fields();
+			$code_snippets->list_table->display();
+		?>
 	</form>
 
 	<?php do_action( 'code_snippets_admin_manage' ); ?>

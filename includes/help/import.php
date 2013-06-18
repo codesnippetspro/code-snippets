@@ -4,32 +4,32 @@
  * Register and handle the help tabs for the
  * import snippets admin page
  *
- * @package Code Snippets
- * @subpackage Help
+ * @package    Code_Snippets
+ * @subpackage Contextual_Help
  */
 
 global $code_snippets;
 $screen = get_current_screen();
 
 $screen->add_help_tab( array(
-	'id'		=> 'overview',
-	'title'		=> __('Overview', 'code-snippets'),
-	'content'	=>
+	'id'      => 'overview',
+	'title'   => __('Overview', 'code-snippets'),
+	'content' =>
 		'<p>' . __('Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can load snippets from a Code Snippets (.xml) import file into the database with your existing snippets.', 'code-snippets') . '</p>'
 ) );
 
 $screen->add_help_tab( array(
-	'id'		=> 'import',
-	'title'		=> __('Importing', 'code-snippets'),
-	'content'	=>
+	'id'      => 'import',
+	'title'   => __('Importing', 'code-snippets'),
+	'content' =>
 		'<p>' . __('You can load your snippets from a code snippets (.xml) export file using this page.', 'code-snippets') .
 		sprintf( __('Snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href="%s">Manage Snippets</a> page.</p>', 'code-snippets'), $code_snippets->admin->manage_url ) . '</p>'
 ) );
 
 $screen->add_help_tab( array(
-	'id'		=> 'export',
-	'title'		=> __( 'Exporting', 'code-snippets' ),
-	'content'	=>
+	'id'      => 'export',
+	'title'   => __( 'Exporting', 'code-snippets' ),
+	'content' =>
 		'<p>' . sprintf( __('You can save your snippets to a Code Snippets (.xml) export file using the <a href="%s">Manage Snippets</a> page.', 'code-snippets'), $code_snippets->admin->manage_url ) . '</p>'
 ) );
 
