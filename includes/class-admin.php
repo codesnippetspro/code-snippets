@@ -13,8 +13,8 @@
  * Don't directly access the methods in this class or attempt to
  * re-initialize it. Instead, use the instance in $code_snippets->admin
  *
- * @since   1.7.1
- * @package Code_Snippets
+ * @since      1.7.1
+ * @package    Code_Snippets
  * @subpackage Administration
  */
 class Code_Snippets_Admin {

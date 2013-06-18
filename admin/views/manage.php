@@ -4,7 +4,7 @@
  * HTML code for the Manage Snippets page
  *
  * @package    Code_Snippets
- * @subpackage Administration
+ * @subpackage Admin_Views
  */
 
 if ( ! class_exists( 'Code_Snippets' ) )
