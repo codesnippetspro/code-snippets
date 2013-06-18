@@ -181,6 +181,7 @@ class Code_Snippets_Admin {
 	 * @return void
 	 */
 	public function get_view( $handle ) {
+		global $code_snippets;
 		require $code_snippets->plugin_dir . "admin/views/{$handle}.php";
 	}
 
@@ -193,6 +194,7 @@ class Code_Snippets_Admin {
 	 * @return void
 	 */
 	public function get_messages( $handle ) {
+		global $code_snippets;
 		require $code_snippets->plugin_dir . "admin/messages/{$handle}.php";
 	}
 
@@ -483,6 +485,15 @@ class Code_Snippets_Admin {
 			plugins_url( 'assets/admin-single.css', $code_snippets->file ),
 			false,
 			$code_snippets->version
+		);
+
+		/* Enqueue custom scripts */
+		wp_enqueue_script(
+			'code-snippets-admin-single',
+			plugins_url( 'assets/admin-single.js', $code_snippets->file ),
+			false,
+			$code_snippets->version,
+			true // Load in footer
 		);
 	}
 
