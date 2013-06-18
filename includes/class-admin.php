@@ -169,7 +169,7 @@ class Code_Snippets_Admin {
 	 */
 	public function load_help_tabs( $handle ) {
 		global $code_snippets;
-		include $code_snippets->plugin_dir . "includes/help/{$handle}.php";
+		include $code_snippets->plugin_dir . "admin/help/{$handle}.php";
 	}
 
 	/**
@@ -181,7 +181,7 @@ class Code_Snippets_Admin {
 	 * @return void
 	 */
 	public function get_view( $handle ) {
-		require $code_snippets->plugin_dir . "includes/admin/{$handle}.php";
+		require $code_snippets->plugin_dir . "admin/views/{$handle}.php";
 	}
 
 	/**
@@ -193,7 +193,7 @@ class Code_Snippets_Admin {
 	 * @return void
 	 */
 	public function get_messages( $handle ) {
-		require $code_snippets->plugin_dir . "includes/messages/{$handle}.php";
+		require $code_snippets->plugin_dir . "admin/messages/{$handle}.php";
 	}
 
 	/**
