@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * Status and error messages for the manage snippets page
+ *
+ * @package    Code_Snippets
+ * @subpackage Admin_Messages
+ */
+
+global $code_snippets;
+
+if ( isset( $_REQUEST['imported'] ) && 0 !== intval( $_REQUEST['imported'] ) ) {
+
+	echo '<div id="message" class="updated fade"><p>';
+
+	printf(
+		_n(
+			'Successfully imported <strong>%d</strong> snippet. <a href="%s">Have fun!</a>',
+			'Successfully imported <strong>%d</strong> snippets. <a href="%s">Have fun!</a>',
+			$_REQUEST['imported'],
+			'code-snippets'
+		),
+		$_REQUEST['imported'],
+		$code_snippets->admin->manage_url;
+	);
+
+	echo '</p></div>';
+}

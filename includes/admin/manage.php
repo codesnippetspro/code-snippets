@@ -12,24 +12,8 @@ if ( ! class_exists( 'Code_Snippets' ) )
 
 global $code_snippets;
 $screen = get_current_screen();
+$code_snippets->admin->get_messages( 'manage' );
 ?>
-<?php if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) : ?>
-	<div class="error"><p><strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="http://code-snippets.bungeshea.com/docs/safe-mode/" target="_blank">Help</a></p></div>
-<?php endif; ?>
-
-<?php if ( isset($_GET['activate']) ) : ?>
-	<div id="message" class="updated"><p><?php _e('Snippet <strong>activated</strong>.', 'code-snippets') ?></p></div>
-<?php elseif (isset($_GET['activate-multi'])) : ?>
-	<div id="message" class="updated"><p><?php _e('Selected snippets <strong>activated</strong>.', 'code-snippets'); ?></p></div>
-<?php elseif ( isset($_GET['deactivate']) ) : ?>
-	<div id="message" class="updated"><p><?php _e('Snippet <strong>deactivated</strong>.', 'code-snippets') ?></p></div>
-<?php elseif (isset($_GET['deactivate-multi'])) : ?>
-	<div id="message" class="updated"><p><?php _e('Selected snippets <strong>deactivated</strong>.', 'code-snippets'); ?></p></div>
-<?php elseif ( isset($_GET['delete']) ) : ?>
-	<div id="message" class="updated"><p><?php _e('Snippet <strong>deleted</strong>.', 'code-snippets') ?></p></div>
-<?php elseif (isset($_GET['delete-multi'])) : ?>
-	<div id="message" class="updated"><p><?php _e('Selected snippets <strong>deleted</strong>.', 'code-snippets'); ?></p></div>
-<?php endif; ?>
 
 <div class="wrap">
 	<?php screen_icon(); ?>

@@ -185,6 +185,18 @@ class Code_Snippets_Admin {
 	}
 
 	/**
+	 * Display the admin status and error messages
+	 *
+	 * @since  [nextversion]
+	 * @access public
+	 * @param  string $handle The file handle (filename with no path or extension) to load
+	 * @return void
+	 */
+	public function get_messages( $handle ) {
+		require $code_snippets->plugin_dir . "includes/messages/{$handle}.php";
+	}
+
+	/**
 	 * Add the dashboard admin menu and subpages
 	 *
 	 * @since  1.0

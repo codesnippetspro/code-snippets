@@ -17,19 +17,9 @@ $screen = get_current_screen();
 $edit_id = ( isset( $_REQUEST['edit'] ) ? intval( $_REQUEST['edit'] ) : 0 );
 $snippet = $code_snippets->get_snippet( $edit_id );
 
-?>
+$code_snippets->admin->get_messages( 'single' );
 
-<?php if ( isset( $_REQUEST['invalid'] ) && $_REQUEST['invalid'] ) : ?>
-	<div id="message" class="error fade"><p><?php _e('An error occurred when saving the snippet.', 'code-snippets'); ?></p></div>
-<?php elseif ( isset( $_REQUEST['activated'], $_REQUEST['updated'] ) && $_REQUEST['activated'] && $_REQUEST['updated'] ) : ?>
-	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets'); ?></p></div>
-<?php elseif ( isset( $_REQUEST['activated'], $_REQUEST['added'] ) && $_REQUEST['activated'] && $_REQUEST['added'] ) : ?>
-	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets'); ?></p></div>
-<?php elseif ( isset( $_REQUEST['updated'] ) && $_REQUEST['updated'] ) : ?>
-	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>updated</strong>.', 'code-snippets'); ?></p></div>
-<?php elseif ( isset( $_REQUEST['added'] ) && $_REQUEST['added'] ) : ?>
-	<div id="message" class="updated fade"><p><?php _e('Snippet <strong>added</strong>.', 'code-snippets'); ?></p></div>
-<?php endif; ?>
+?>
 
 <div class="wrap">
 	<?php screen_icon(); ?>
