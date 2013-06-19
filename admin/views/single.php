@@ -51,7 +51,7 @@ $code_snippets->admin->get_messages( 'single' );
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php _e('Name (short title)', 'code-snippets'); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_html( $snippet->name ); ?>" placeholder="<?php _e('Name (short title)', 'code-snippets'); ?>" required="required" />
+				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_html( $snippet->name ); ?>" placeholder="<?php _e('Name (short title)', 'code-snippets'); ?>" />
 			</div>
 		</div>
 
