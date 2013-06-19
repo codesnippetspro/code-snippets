@@ -7,14 +7,15 @@
  * @subpackage Admin_Views
  */
 
-if ( ! class_exists( 'Code_Snippets' ) ) exit;
+if ( ! class_exists( 'Code_Snippets' ) )
+	exit;
 
 global $code_snippets;
 
-$table = $code_snippets->get_table_name();
-$screen = get_current_screen();
+$table   = $code_snippets->get_table_name();
+$screen  = get_current_screen();
 
-$edit_id = ( isset( $_REQUEST['edit'] ) ? intval( $_REQUEST['edit'] ) : 0 );
+$edit_id = ( isset( $_REQUEST['edit'] ) ? absint( $_REQUEST['edit'] ) : 0 );
 $snippet = $code_snippets->get_snippet( $edit_id );
 
 $code_snippets->admin->get_messages( 'single' );
@@ -42,7 +43,7 @@ $code_snippets->admin->get_messages( 'single' );
 
 			/* Output the hidden fields */
 
-			if ( intval( $snippet->id ) > 0 )
+			if ( 0 !== $snippet->id )
 				printf ( '<input type="hidden" name="snippet_id" value="%d" />', $snippet->id );
 
 			printf ( '<input type="hidden" name="snippet_active" value="%d" />', $snippet->active );

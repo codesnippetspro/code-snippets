@@ -672,7 +672,7 @@ final class Code_Snippets {
 		$snippet->name        = mysql_real_escape_string( htmlspecialchars( $snippet->name ) );
 		$snippet->description = mysql_real_escape_string( htmlspecialchars( $snippet->description ) );
 		$snippet->code        = mysql_real_escape_string( htmlspecialchars( $snippet->code ) );
-		$snippet->id          = intval( $snippet->id );
+		$snippet->id          = absint( $snippet->id );
 
 		return apply_filters( 'code_snippets_escape_snippet_data', $snippet );
 	}
@@ -709,15 +709,16 @@ final class Code_Snippets {
 	 * @uses   $wpdb                   To query the database for snippets
 	 * @uses   $this->get_table_name() To dynamically retrieve the snippet table name
 	 *
-	 * @param int     $id    The ID of the snippet to retrieve. 0 to build a new snippet
-	 * @param string  $scope Retrieve a multisite-wide or site-wide snippet?
+	 * @param  int    $id              The ID of the snippet to retrieve. 0 to build a new snippet
+	 * @param  string $scope           Retrieve a multisite-wide or site-wide snippet?
 	 * @return object                  A single snippet object
 	 */
 	public function get_snippet( $id = 0, $scope = '' ) {
 		global $wpdb;
 		$table = $this->get_table_name( $scope );
+		$id    = absint( $id );
 
-		if ( intval( $id ) > 0 ) {
+		if ( 0 !== $id ) {
 			/* Retrieve the snippet from the database */
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 			/* Unescape the snippet data, ready for use */
@@ -826,8 +827,9 @@ final class Code_Snippets {
 		global $wpdb;
 
 		$table = $this->get_table_name( $scope );
+		$id    = absint( $id );
 
-		$wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE id='%d' LIMIT 1", intval( $id ) ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE id='%d' LIMIT 1", $id ) );
 
 		do_action( 'code_snippets_delete_snippet', $id, $scope );
 	}

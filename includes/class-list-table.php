@@ -86,9 +86,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	function load_table_style( $hook ) {
 		global $code_snippets;
 
+		/* Only load the stylesheet on the manage snippets page */
 		if ( $hook !== $code_snippets->admin->manage_page )
 			return;
 
+		/* Load a different stylesheet if MP6 is active */
 		if ( 'mp6' === get_user_option( 'admin_color' ) ) {
 
 			wp_enqueue_style(
@@ -408,11 +410,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		if ( isset( $_GET['action'], $_GET['id'] ) ) :
 
-			$id = intval( $_GET['id'] );
-
+			$id                     = absint( $_GET['id'] );
+			$action                 = sanitize_key( $_GET['action'] );
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id' ) );
-
-			$action = sanitize_key( $_GET['action'] );
 
 			if ( 'activate' === $action ) {
 				$code_snippets->activate( $id );
@@ -430,7 +430,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				$code_snippets->export_php( $id );
 			}
 
-			if ( 'export' !== $action || 'export-php' !== $action ) {
+			if ( ! in_array( $action, array( 'export', 'export-php' ) ) {
 				wp_redirect( apply_filters(
 					"code_snippets_{$action}_redirect",
 					add_query_arg( $action, true )
@@ -439,7 +439,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		endif;
 
-		if ( ! isset( $_POST['ids'] ) ) return;
+		if ( ! isset( $_POST['ids'] ) )
+			return;
 
 		$ids = $_POST['ids'];
 
@@ -487,7 +488,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	function no_items() {
 		global $code_snippets;
-		printf( __('You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets'), $code_snippets->admin_single_url );
+		printf( __('You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets'), $code_snippets->admin->single_url );
 	}
 
 	/**
@@ -577,10 +578,18 @@ class Code_Snippets_List_Table extends WP_List_Table {
         function usort_reorder( $a, $b ) {
 
 			/* If no sort, default to ID */
-            $orderby = ( ! empty($_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : apply_filters( 'code_snippets_default_orderby', 'id' );
+            $orderby = (
+            	! empty($_REQUEST['orderby'] ) )
+            	? $_REQUEST['orderby']
+            	: apply_filters( 'code_snippets_default_orderby', 'id' )
+            );
 
 			/* If no order, default to ascending */
-            $order = ( ! empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'asc';
+            $order = (
+            	! empty( $_REQUEST['order'] )
+            	? $_REQUEST['order']
+            	: apply_filters( 'code_snippets_default_order', 'asc' )
+            );
 
 			/* Determine sort order */
 			if ( 'id' === $orderby )
@@ -592,7 +601,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
             return ( 'asc' === $order ) ? $result : -$result;
         }
 
-        usort($data, 'usort_reorder');
+        usort( $data, 'usort_reorder' );
 
 
         /*
@@ -604,7 +613,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
         /*
          * Let's check how many items are in our data array.
          */
-        $total_items = count($data);
+        $total_items = count( $data );
 
 
         /*
@@ -685,10 +694,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	function single_row( $snippet ) {
 		static $row_class = '';
 		$row_class = ( $snippet->active ? 'active' : 'inactive' );
-
-		echo '<tr class="' . $row_class . '">';
-		echo $this->single_row_columns( $snippet );
-		echo '</tr>';
+		printf ( '<tr class="%2$s">%1$s</tr>', $this->single_row_columns( $snippet ), $row_class );
 	}
 
-} // end if class
+} // end of class

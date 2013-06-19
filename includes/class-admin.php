@@ -42,9 +42,7 @@ class Code_Snippets_Admin {
 	 * Initializes the variables and
 	 * loads everything needed for the class
 	 *
-	 * @since  1.7.1
-	 * @access public
-	 * @return void
+	 * @since 1.7.1
 	 */
 	function __construct() {
 		global $code_snippets;
@@ -146,6 +144,8 @@ class Code_Snippets_Admin {
 				if ( file_exists( $class_wp_importer ) )
 					require_once $class_wp_importer;
 			}
+
+			/* Register the Code Snippets importer with WordPress */
 
 			register_importer(
 				'code-snippets',
@@ -505,7 +505,7 @@ class Code_Snippets_Admin {
 	 * @uses   $code_snippets->import() To process the import file
 	 * @uses   wp_redirect()            To pass the import results to the page
 	 * @uses   add_query_arg()          To append the results to the current URI
-	 * @uses   $this->load_help_tabs()
+	 * @uses   $this->load_help_tabs()  To load the screen contextual help tabs
 	 *
 	 * @param  string $file             A filesystem path to the import file
 	 * @return void

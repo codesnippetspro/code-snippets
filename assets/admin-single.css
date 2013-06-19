@@ -22,8 +22,11 @@ label {
 .CodeMirror {
 	min-height: 300px;
 	height: auto;
-	border: 1px solid #eee; -webkit-border-radius: 3px;
-	-moz-border-radius: 3px; border-radius: 3px; -o-border-radius: 3px;
+	border: 1px solid #eee;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	-o-border-radius: 3px;
 }
 
 .CodeMirror-scroll {
@@ -35,7 +38,7 @@ label {
 	min-height: 300px !important;
 }
 
-/* Tweak things for the MP6 interface */
+/** Tweak things for the MP6 interface */
 .admin-color-mp6 .CodeMirror {
 	width: 100%;
 	border-color: #dfdfdf;
