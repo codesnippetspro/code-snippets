@@ -221,7 +221,7 @@ final class Code_Snippets {
 
 	/**
 	 * Require a PHP file from the includes directory
-	 * @since  [nextversion]
+	 * @since  1.7.2
 	 * @param  string $handle The file handle (filename with no path or extension) to load
 	 * @return void
 	 */
