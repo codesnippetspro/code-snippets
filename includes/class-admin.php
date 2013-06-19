@@ -578,8 +578,7 @@ class Code_Snippets_Admin {
 		?>
 
 		<label for="snippet_description">
-			<h3><div style="position: absolute;"><?php _e('Description', 'code-snippets');
-			?> <span style="font-weight: normal;"><?php esc_html_e('(Optional)', 'code-snippets'); ?></span></div></h3>
+			<h3><div style="position: absolute;"><?php _e('Description', 'code-snippets'); ?></div></h3>
 		</label>
 
 		<?php
