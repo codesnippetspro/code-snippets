@@ -430,7 +430,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				$code_snippets->export_php( $id );
 			}
 
-			if ( ! in_array( $action, array( 'export', 'export-php' ) ) {
+			if ( ! in_array( $action, array( 'export', 'export-php' ) ) ) {
 				wp_redirect( apply_filters(
 					"code_snippets_{$action}_redirect",
 					add_query_arg( $action, true )
@@ -579,7 +579,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			/* If no sort, default to ID */
             $orderby = (
-            	! empty($_REQUEST['orderby'] ) )
+            	! empty( $_REQUEST['orderby'] )
             	? $_REQUEST['orderby']
             	: apply_filters( 'code_snippets_default_orderby', 'id' )
             );

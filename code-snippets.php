@@ -8,7 +8,7 @@
  *
  * @package   Code_Snippets
  * @version   1.7.1.2
- * @author    Shea Bunge <info@bungeshea.com>
+ * @author    Shea Bunge <http://bungeshea.com/>
  * @copyright Copyright (c) 2012-2013, Shea Bunge
  * @link      http://code-snippets.bungeshea.com
  * @license   http://opensource.org/licenses/MIT
@@ -181,7 +181,7 @@ final class Code_Snippets {
 		register_uninstall_hook( $this->file, array( __CLASS__, 'uninstall' ) );
 
 		/* Load the global functions file */
-		require_once $this->plugin_dir . 'includes/functions.php';
+		$this->get_include( 'functions' );
 
 		/* Let extension plugins know that it's okay to load */
 		do_action( 'code_snippets_init' );
@@ -205,7 +205,7 @@ final class Code_Snippets {
 		if ( is_admin() ) {
 
 			/* Load our administration class */
-			require_once $this->plugin_dir . 'includes/class-admin.php';
+			$this->get_include( 'class-admin' );
 			$this->admin = new Code_Snippets_Admin;
 
 			/* Remap deprecated variables */
@@ -222,11 +222,11 @@ final class Code_Snippets {
 	/**
 	 * Require a PHP file from the includes directory
 	 * @since  1.7.2
-	 * @param  string $handle The file handle (filename with no path or extension) to load
+	 * @param  string $slug The file slug (filename with no path or extension) to load
 	 * @return void
 	 */
-	public function get_include( $handle ) {
-		require_once $this->plugin_dir . "includes/{$include}.php";
+	public function get_include( $slug ) {
+		require_once $this->plugin_dir . "includes/{$slug}.php";
 	}
 
 	/**
@@ -929,7 +929,7 @@ final class Code_Snippets {
 		$table = $this->get_table_name( $scope );
 
 		if ( ! function_exists( 'code_snippets_export' ) )
-			require_once $this->plugin_dir . 'includes/export.php';
+			$this->get_include( 'export' );
 
 		code_snippets_export( $ids, 'xml', $table );
 	}
@@ -952,7 +952,7 @@ final class Code_Snippets {
 		$table = $this->get_table_name( $scope );
 
 		if ( ! function_exists( 'code_snippets_export' ) )
-			require_once $this->plugin_dir . 'includes/export.php';
+			$this->get_include( 'export' );
 
 		code_snippets_export( $ids, 'php', $table );
 	}

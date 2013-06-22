@@ -164,12 +164,12 @@ class Code_Snippets_Admin {
 	 *
 	 * @since  1.7.2
 	 * @access public
-	 * @param  string $handle The file handle (filename with no path or extension) to load
+	 * @param  string $slug The file handle (filename with no path or extension) to load
 	 * @return void
 	 */
-	public function load_help_tabs( $handle ) {
+	public function load_help_tabs( $slug ) {
 		global $code_snippets;
-		include $code_snippets->plugin_dir . "admin/help/{$handle}.php";
+		include $code_snippets->plugin_dir . "admin/help/{$slug}.php";
 	}
 
 	/**
@@ -177,12 +177,12 @@ class Code_Snippets_Admin {
 	 *
 	 * @since  1.7.2
 	 * @access public
-	 * @param  string $handle The file handle (filename with no path or extension) to load
+	 * @param  string $slug The file handle (filename with no path or extension) to load
 	 * @return void
 	 */
-	public function get_view( $handle ) {
+	public function get_view( $slug ) {
 		global $code_snippets;
-		require $code_snippets->plugin_dir . "admin/views/{$handle}.php";
+		require $code_snippets->plugin_dir . "admin/views/{$slug}.php";
 	}
 
 	/**
@@ -190,12 +190,12 @@ class Code_Snippets_Admin {
 	 *
 	 * @since  1.7.2
 	 * @access public
-	 * @param  string $handle The file handle (filename with no path or extension) to load
+	 * @param  string $slug The file handle (filename with no path or extension) to load
 	 * @return void
 	 */
-	public function get_messages( $handle ) {
+	public function get_messages( $slug ) {
 		global $code_snippets;
-		require $code_snippets->plugin_dir . "admin/messages/{$handle}.php";
+		require $code_snippets->plugin_dir . "admin/messages/{$slug}.php";
 	}
 
 	/**
@@ -575,6 +575,7 @@ class Code_Snippets_Admin {
 	 * @return void
 	 */
 	function description_editor_box( $snippet ) {
+
 		?>
 
 		<label for="snippet_description">
