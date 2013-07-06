@@ -896,20 +896,23 @@ final class Code_Snippets {
 	 *
 	 * @uses   $this->save_snippet() To add the snippets to the database
 	 *
-	 * @param file    $file  The path to the XML file to import
-	 * @param string  $scope Import into network-wide table or site-wide table?
-	 * @return mixed                 The number of snippets imported on success, false on failure
+	 * @param  string          $file   The path to the XML file to import
+	 * @param  string          $scope  Import into network-wide table or site-wide table?
+	 * @return integer|boolean         The number of snippets imported on success, false on failure
 	 */
 	public function import( $file, $scope = '' ) {
 
 		if ( ! file_exists( $file ) || ! is_file( $file ) )
-			die( var_dump( $file ) );
+			return false;
 
 		$xml = simplexml_load_file( $file );
 
+		if ( ! is_object( $xml ) || ! method_exists( $xml, 'children' ) )
+			return false;
+
 		foreach ( $xml->children() as $snippet ) {
 			/* force manual build of object to strip out unsupported fields
-			   by converting snippet object into array */
+			   by converting snippet object into an array */
 			$this->save_snippet( get_object_vars( $snippet ), $scope );
 		}
 
