@@ -27,7 +27,7 @@ $code_snippets->admin->get_messages( 'import' );
 
 		<p><?php _e('Choose a Code Snippets (.xml) file to upload, then click Upload file and import.', 'code-snippets'); ?></p>
 
-		<form enctype="multipart/form-data" id="import-upload-form" method="post" action="" name="code_snippets_import">
+		<form enctype="multipart/form-data" method="post" action="" id="import-upload-form" name="code_snippets_import">
 			<p>
 				<input type="hidden" name="action" value="save" />
 				<input type="hidden" name="max_file_size" value="8388608" />

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Status and error messages for the manage snippets page
+ * Status and error messages for the import snippets page
  *
  * @package    Code_Snippets
  * @subpackage Admin_Messages
@@ -21,7 +21,7 @@ if ( isset( $_REQUEST['imported'] ) && 0 !== intval( $_REQUEST['imported'] ) ) {
 			'code-snippets'
 		),
 		$_REQUEST['imported'],
-		$code_snippets->admin->manage_url;
+		$code_snippets->admin->manage_url
 	);
 
 	echo '</p></div>';
