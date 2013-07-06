@@ -317,7 +317,7 @@ class Code_Snippets_Admin {
 		global $code_snippets;
 
 		/* Create the snippet tables if they don't exist */
-		$code_snippets->maybe_create_tables( true );
+		$code_snippets->maybe_create_tables( true, true );
 
 		/* Load the screen help tabs */
 		$this->load_help_tabs( 'manage' );
@@ -343,7 +343,7 @@ class Code_Snippets_Admin {
 		$screen = get_current_screen();
 
 		/* Create the snippet tables if they don't exist */
-		$code_snippets->maybe_create_tables( true );
+		$code_snippets->maybe_create_tables( true, true );
 
 		/* Don't let the user pass if they can't edit (install check is done by WP) */
 		if ( isset( $_REQUEST['edit'] ) && ! $code_snippets->user_can( 'edit' ) )
@@ -514,7 +514,7 @@ class Code_Snippets_Admin {
 		global $code_snippets;
 
 		/* Create the snippet tables if they don't exist */
-		$code_snippets->maybe_create_tables( true );
+		$code_snippets->maybe_create_tables( true, true );
 
 		/* Process import files */
 

@@ -298,13 +298,14 @@ final class Code_Snippets {
 	 *
 	 * @uses              $this->create_table() To create a single snippet table
 	 * @staticvar boolean $tables_created       Used to check if we've already done this or not
-	 * @param     string  $always_create_table  Always create the site-wide table if it doesn't exist
+	 * @param     boolean $redo                 Skip the already-done-this check
+	 * @param     boolean $always_create_table  Always create the site-wide table if it doesn't exist
 	 * @return    void
 	 */
-	public function maybe_create_tables( $always_create_table = false ) {
+	public function maybe_create_tables( $redo = false, $always_create_table = false ) {
 
 		/* Bail early if we've done this already */
-		if ( true === self::$tables_created )
+		if ( ! $redo && true === self::$tables_created )
 			return;
 
 		global $wpdb;
