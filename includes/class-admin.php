@@ -146,7 +146,6 @@ class Code_Snippets_Admin {
 			}
 
 			/* Register the Code Snippets importer with WordPress */
-
 			register_importer(
 				'code-snippets',
 				__('Code Snippets', 'code-snippets'),
@@ -155,7 +154,7 @@ class Code_Snippets_Admin {
 			);
 		}
 
-		$this->import_url = self_admin_url( 'admin.php?import=code-snippets' );
+		$this->import_url  = self_admin_url( 'admin.php?import=code-snippets' );
 		add_action( 'load-importer-code-snippets', array( $this, 'load_import_menu' ) );
 	}
 
@@ -253,9 +252,6 @@ class Code_Snippets_Admin {
 
 		add_action( "load-$this->manage_page", array( $this, 'load_manage_menu' ) );
 		add_action( "load-$this->single_page", array( $this, 'load_single_menu' ) );
-
-		add_action( "load-$this->manage_page", array( $code_snippets, 'maybe_create_tables' ) );
-		add_action( "load-$this->single_page", array( $code_snippets, 'maybe_create_tables' ) );
 	}
 
 	/**
@@ -284,7 +280,6 @@ class Code_Snippets_Admin {
 
 		$this->import_url = self_admin_url( 'admin.php?page=import-code-snippets' );
 		add_action( "load-$this->import_page", array( $this, 'load_import_menu' ) );
-		add_action( "load-$this->import_page", array( $code_snippets, 'maybe_create_tables' ) );
 	}
 
 	/**
@@ -321,6 +316,9 @@ class Code_Snippets_Admin {
 	function load_manage_menu() {
 		global $code_snippets;
 
+		/* Create the snippet tables if they don't exist */
+		$code_snippets->maybe_create_tables( true );
+
 		/* Load the screen help tabs */
 		$this->load_help_tabs( 'manage' );
 
@@ -342,8 +340,10 @@ class Code_Snippets_Admin {
 	 */
 	function load_single_menu() {
 		global $code_snippets;
-
 		$screen = get_current_screen();
+
+		/* Create the snippet tables if they don't exist */
+		$code_snippets->maybe_create_tables( true );
 
 		/* Don't let the user pass if they can't edit (install check is done by WP) */
 		if ( isset( $_REQUEST['edit'] ) && ! $code_snippets->user_can( 'edit' ) )
@@ -512,6 +512,9 @@ class Code_Snippets_Admin {
 	 */
 	function load_import_menu() {
 		global $code_snippets;
+
+		/* Create the snippet tables if they don't exist */
+		$code_snippets->maybe_create_tables( true );
 
 		/* Process import files */
 

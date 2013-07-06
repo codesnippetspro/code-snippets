@@ -7,7 +7,7 @@
  * contribute to the localization, please see http://code-snippets.bungeshea.com
  *
  * @package   Code_Snippets
- * @version   1.7.1.2
+ * @version   1.7.2
  * @author    Shea Bunge <http://bungeshea.com/>
  * @copyright Copyright (c) 2012-2013, Shea Bunge
  * @link      http://code-snippets.bungeshea.com
@@ -20,7 +20,7 @@
  * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
- * Version: 1.7.1.2
+ * Version: 1.7.2
  * License: MIT
  * License URI: license.txt
  * Text Domain: code-snippets
@@ -58,7 +58,7 @@ final class Code_Snippets {
 	 * @access public
 	 * @var    string A PHP-standardized version number string
 	 */
-	public $version = '1.7.1.2';
+	public $version = '1.7.2';
 
 	/**
 	 * Variables to hold plugin paths
@@ -148,6 +148,7 @@ final class Code_Snippets {
 
 		/* Hook our initialize function to the plugins_loaded action */
 		add_action( 'plugins_loaded', array( $this, 'init' ) );
+
 	}
 
 	/**
@@ -258,33 +259,35 @@ final class Code_Snippets {
 	 *
 	 * @since  1.6
 	 * @access public
-	 * @param string  $scope        Retrieve the multisite table name or the site table name?
-	 * @param boolean $check_screen Query the current screen if no scope passed?
-	 * @return string  $table        The snippet table name
+	 * @param  string  $scope        Retrieve the multisite table name or the site table name?
+	 * @param  boolean $check_screen Query the current screen if no scope passed?
+	 * @return string                The snippet table name
 	 */
 	public function get_table_name( $scope = '', $check_screen = true ) {
-
 		global $wpdb;
 
-		$this->maybe_create_tables(); // create the snippet tables if they do not exist
-
+		/* If multisite is not active, always return the site-wide table name */
 		if ( ! is_multisite() ) {
 			$network = false;
 		}
+
+		/* If the scope is 'multisite' or 'network', return the network-wide table name */
 		elseif ( in_array( $scope, array( 'multisite', 'network' ) ) ) {
 			$network = true;
 		}
+
+		/* If no scope is set, query the current screen to see if in network admin */
 		elseif ( empty( $scope ) && $check_screen && function_exists( 'get_current_screen' ) ) {
-			/* if no scope is set, query the current screen to see if in network admin */
 			$network = get_current_screen()->is_network;
 		}
+
+		/* If none of the above conditions match, just use the site-wide table name */
 		else {
 			$network = false;
 		}
 
-		$table = ( $network ? $wpdb->ms_snippets : $wpdb->snippets );
-
-		return $table;
+		/* Retrieve the table name from $wpdb depending on the above conditionals */
+		return ( $network ? $wpdb->ms_snippets : $wpdb->snippets );
 	}
 
 	/**
@@ -293,42 +296,35 @@ final class Code_Snippets {
 	 * @since  1.7.1
 	 * @access public
 	 *
-	 * @staticvar boolean $tables_created       Used to check if we've already done this or not
 	 * @uses              $this->create_table() To create a single snippet table
-	 * @uses              $wpdb->get_var()      To test of the table exists
-	 * @param boolean $force Force table creation/upgrade
+	 * @staticvar boolean $tables_created       Used to check if we've already done this or not
+	 * @param     string  $always_create_table  Always create the site-wide table if it doesn't exist
 	 * @return    void
 	 */
-	public function maybe_create_tables( $force = false ) {
+	public function maybe_create_tables( $always_create_table = false ) {
 
 		/* Bail early if we've done this already */
-		if ( self::$tables_created && ! $force )
+		if ( true === self::$tables_created )
 			return;
 
 		global $wpdb;
 
-		if ( ! isset( $wpdb->snippets, $wpdb->ms_snippets ) )
+		/* Set the table name variables if not yet defined */
+		if ( ! isset( $wpdb->snippets, $wpdb->ms_snippets ) ) {
 			$this->set_table_vars();
-
-		$table_exists = $force || $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets;
-
-		if ( ! is_multisite() && ! $table_exists ) {
-			$table = $wpdb->snippets;
-		}
-		elseif ( is_multisite() ) {
-			$ms_table_exists = $force || $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets;
-
-			if ( ! $ms_table_exists && ! $table_exists )
-				$table = $wpdb->snippets . ',' . $wpdb->ms_snippets;
-			elseif ( ! $table_exists && $ms_table_exists )
-				$table = $wpdb->snippets;
-			elseif ( $table_exists && ! $ms_table_exists )
-				$table = $wpdb->ms_snippets;
 		}
 
-		if ( isset( $table ) )
-			$this->create_table( $table );
+		/* Always create the network-wide snippet table */
+		if ( is_multisite() ) {
+			$this->create_table( $wpdb->ms_snippets );
+		}
 
+		/* Create the site-specific table if we're on the main site */
+		if ( $always_create_table || is_main_site() ) {
+			$this->create_table( $wpdb->snippets );
+		}
+
+		/* Set the flag so we don't have to do this again */
 		self::$tables_created = true;
 	}
 
@@ -353,18 +349,25 @@ final class Code_Snippets {
 	 * Create a single snippet table
 	 * if one of the same name does not already exist
 	 *
-	 * @since   1.6
+	 * @since  1.6
 	 * @access private
 	 *
-	 * @uses   dbDelta()          To add the table to the database
+	 * @uses   dbDelta()               To add the table to the database
 	 *
-	 * @param string  $table_name The name of the table to create
+	 * @param  string  $table_name     The name of the table to create
+	 * @param  boolean $force_creation Skip the table exists check
 	 * @return void
 	 */
-	function create_table( $table_name ) {
+	function create_table( $table_name, $force_creation = false ) {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		global $wpdb;
+
+		if ( $force_creation && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
+			return; // bail if the table already exists or $force_creation is true
+		}
+
+		/* Set the database charset */
 
 		$charset_collate = '';
 
@@ -376,18 +379,22 @@ final class Code_Snippets {
 			$charset_collate .= " COLLATE $wpdb->collate";
 		}
 
-		$table_columns = apply_filters( 'code_snippets_database_table_columns', array(
-				'name         tinytext    not null',
-				'description  text',
-				'code         longtext    not null',
-			) );
+		/* Set the snippet data columns */
 
-		$table_columns_sql = implode( ",\n", $table_columns );
+		$table_columns = apply_filters( 'code_snippets_database_table_columns', array(
+			'name        tinytext not null',
+			'description text',
+			'code        longtext not null',
+		) );
+
+		$table_columns_sql = implode( ",\n", $table_columns ); // convert the array into SQL code
+
+		/* Create the database table */
 
 		$sql = "CREATE TABLE $table_name (
-					id bigint(20)  unsigned not null auto_increment,
+					id     bigint(20)  unsigned not null auto_increment,
 					{$table_columns_sql},
-					active tinyint(1)  not null default 0,
+					active tinyint(1)           not null default 0,
 				PRIMARY KEY  (id),
 					KEY id (id)
 
