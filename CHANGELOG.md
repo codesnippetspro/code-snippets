@@ -4,7 +4,7 @@
 * Allow no snippet name or code to be set
 * Prevented an error on fresh multisite installations
 * Refactored code to use best practices
-* Updated to CodeMirror 3.13
+* Updated to CodeMirror 3.14
 
 ## 1.7.1.2
 * Correct path to admin menu icon. Fixes [#8](https://github.com/bungeshea/code-snippets/issues/8)
