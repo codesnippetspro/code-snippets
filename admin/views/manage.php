@@ -46,6 +46,6 @@ $code_snippets->admin->get_messages( 'manage' );
 		?>
 	</form>
 
-	<?php do_action( 'code_snippets_admin_manage' ); ?>
+	<?php do_action( 'code_snippets/admin/manage' ); ?>
 
 </div>

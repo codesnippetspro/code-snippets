@@ -47,8 +47,8 @@ class Code_Snippets_Admin {
 	function __construct() {
 		global $code_snippets;
 
-		$this->manage_slug = apply_filters( 'code_snippets_admin_manage', 'snippets' );
-		$this->single_slug = apply_filters( 'code_snippets_admin_single', 'snippet' );
+		$this->manage_slug = apply_filters( 'code_snippets/admin/manage_slug', 'snippets' );
+		$this->single_slug = apply_filters( 'code_snippets/admin/single_slug', 'snippet' );
 
 		$this->manage_url  = self_admin_url( 'admin.php?page=' . $this->manage_slug );
 		$this->single_url  = self_admin_url( 'admin.php?page=' . $this->single_slug );
@@ -82,7 +82,7 @@ class Code_Snippets_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_icon_style' ) );
 
 		/* Add the description editor to the Snippets > Add New page */
-		add_action( 'code_snippets_admin_single', array( $this, 'description_editor_box' ), 5 );
+		add_action( 'code_snippets/admin/single', array( $this, 'description_editor_box' ), 5 );
 
 		/* Handle saving the user's screen option preferences */
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
@@ -213,10 +213,13 @@ class Code_Snippets_Admin {
 		global $code_snippets;
 
 		/* Use a different screen icon for the MP6 interface */
-		if ( get_user_option( 'admin_color' )  !== 'mp6' )
-			$menu_icon = apply_filters( 'code_snippets_menu_icon', plugins_url( 'assets/menu-icon.png', $code_snippets->file ) );
-		else
+		if ( get_user_option( 'admin_color' )  !== 'mp6' ) {
+			$menu_icon = apply_filters( 'code_snippets/admin/menu_icon_url',
+				plugins_url( 'assets/menu-icon.png', $code_snippets->file )
+			);
+		} else {
 			$menu_icon = 'div';
+		}
 
 		/* Add the top-level menu and associated subpage */
 		$this->manage_page = add_menu_page(
@@ -592,7 +595,7 @@ class Code_Snippets_Admin {
 		wp_editor(
 			$snippet->description,
 			'description',
-			apply_filters( 'code_snippets_description_editor_settings', array(
+			apply_filters( 'code_snippets/admin/description_editor_settings', array(
 				'textarea_name' => 'snippet_description',
 				'textarea_rows' => 10,
 				'teeny' => true,

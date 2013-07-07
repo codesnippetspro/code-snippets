@@ -38,7 +38,7 @@ $code_snippets->admin->get_messages( 'import' );
 			</p>
 
 			<?php
-				do_action( 'code_snippets_admin_import_form' );
+				do_action( 'code_snippets/admin/import_form' );
 				submit_button( __('Upload file and import', 'code-snippets') );
 			?>
 

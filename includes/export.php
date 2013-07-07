@@ -36,7 +36,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 	}
 
 	$filename = sanitize_file_name( apply_filters(
-		'code_snippets_export_filename',
+		'code_snippets/export/filename',
 		"{$sitename}.code-snippets.{$format}",
 		$format, $sitename
 	) );
@@ -84,12 +84,12 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 
 	}
 
-	do_action( 'code_snippets_export_file_header', $format, $ids, $filename );
+	do_action( 'code_snippets/export/after_header', $format, $ids, $filename );
 
 	/* Loop through the snippets */
 
 	$table   = $code_snippets->get_table_name();
-	$exclude = apply_filters( 'code_snippets_exclude_from_export', array( 'id', 'active' ) );
+	$exclude = apply_filters( 'code_snippets/export/exclude_from_export', array( 'id', 'active' ) );
 
 	foreach ( $ids as $id ) {
 
@@ -110,7 +110,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 					continue;
 
 				/* Output the field and value as indented XML */
-				if ( $value = apply_filters( "code_snippets_export_$field", $value ) )
+				if ( $value = apply_filters( "code_snippets/export/$field", $value ) )
 					echo "\n\t\t<$field>$value</$field>";
 			}
 			echo "\n\t" . '</snippet>';
@@ -131,7 +131,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 		}
 	}
 
-	do_action( 'code_snippets_export_file_snippet', $format, $id, $filename );
+	do_action( 'code_snippets/export/after_snippets', $format, $id, $filename );
 
 	/* Finish off the file */
 
@@ -145,7 +145,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 
 	}
 
-	do_action( 'code_snippets_export_file_footer', $format, $ids, $filename );
+	do_action( 'code_snippets/export/after_footer', $format, $ids, $filename );
 
 	exit;
 }

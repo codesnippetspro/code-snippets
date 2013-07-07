@@ -382,7 +382,7 @@ final class Code_Snippets {
 
 		/* Set the snippet data columns */
 
-		$table_columns = apply_filters( 'code_snippets_database_table_columns', array(
+		$table_columns = apply_filters( 'code_snippets/database_table_columns', array(
 			'name        tinytext not null',
 			'description text',
 			'code        longtext not null',
@@ -401,9 +401,9 @@ final class Code_Snippets {
 
 				) {$charset_collate};";
 
-		dbDelta( apply_filters( 'code_snippets_table_sql', $sql ) );
+		dbDelta( apply_filters( 'code_snippets/table_sql', $sql ) );
 
-		do_action( 'code_snippets_create_table', $table_name );
+		do_action( 'code_snippets/create_table', $table_name );
 	}
 
 	/**
@@ -589,7 +589,7 @@ final class Code_Snippets {
 		$snippet->description = '';
 		$snippet->code        = '';
 		$snippet->active      = 0;
-		$snippet              = apply_filters( 'code_snippets_build_default_snippet', $snippet );
+		$snippet              = apply_filters( 'code_snippets/build_default_snippet', $snippet );
 
 		if ( ! isset( $data ) ) {
 			return $snippet;
@@ -626,7 +626,7 @@ final class Code_Snippets {
 			elseif ( isset( $data['snippet_active'] ) )
 				$snippet->active = $data['snippet_active'];
 
-			return apply_filters( 'code_snippets_build_snippet_object', $snippet, $data );
+			return apply_filters( 'code_snippets/build_snippet_object', $snippet, $data );
 		}
 
 		return $snippet;
@@ -654,7 +654,7 @@ final class Code_Snippets {
 			$snippets[ $index ] = $this->unescape_snippet_data( $snippet );
 		}
 
-		return apply_filters( 'code_snippets_get_snippets', $snippets, $scope );
+		return apply_filters( 'code_snippets/get_snippets', $snippets, $scope );
 	}
 
 	/**
@@ -682,7 +682,7 @@ final class Code_Snippets {
 		$snippet->code        = mysql_real_escape_string( htmlspecialchars( $snippet->code ) );
 		$snippet->id          = absint( $snippet->id );
 
-		return apply_filters( 'code_snippets_escape_snippet_data', $snippet );
+		return apply_filters( 'code_snippets/escape_snippet_data', $snippet );
 	}
 
 	/**
@@ -703,7 +703,7 @@ final class Code_Snippets {
 		$snippet->code        = htmlspecialchars_decode( stripslashes( $snippet->code ) );
 		$snippet->description = htmlspecialchars_decode( stripslashes( $snippet->description ) );
 
-		return apply_filters( 'code_snippets_unescape_snippet_data', $snippet );
+		return apply_filters( 'code_snippets/unescape_snippet_data', $snippet );
 	}
 
 	/**
@@ -735,7 +735,7 @@ final class Code_Snippets {
 			/* Get an empty snippet object */
 			$snippet = $this->build_snippet_object();
 		}
-		return apply_filters( 'code_snippets_get_snippet', $snippet, $id, $scope );
+		return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $scope );
 	}
 
 	/**
@@ -766,10 +766,10 @@ final class Code_Snippets {
 				array( '%d' )
 			);
 
-			do_action( 'code_snippets_activate_snippet', $id, $scope );
+			do_action( 'code_snippets/activate_snippet', $id, $scope );
 		}
 
-		do_action( 'code_snippets_activate', $ids, $scope );
+		do_action( 'code_snippets/activate', $ids, $scope );
 	}
 
 	/**
@@ -802,7 +802,7 @@ final class Code_Snippets {
 			);
 			$recently_active = array( $id => time() ) + (array) $recently_active;
 
-			do_action( 'code_snippets_deactivate_snippet', $id, $scope );
+			do_action( 'code_snippets/deactivate_snippet', $id, $scope );
 		}
 
 		if ( $table === $wpdb->ms_snippets )
@@ -816,7 +816,7 @@ final class Code_Snippets {
 				$recently_active + (array) get_option( 'recently_activated_snippets' )
 			);
 
-		do_action( 'code_snippets_deactivate', $ids, $scope );
+		do_action( 'code_snippets/deactivate', $ids, $scope );
 	}
 
 	/**
@@ -839,7 +839,7 @@ final class Code_Snippets {
 
 		$wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE id='%d' LIMIT 1", $id ) );
 
-		do_action( 'code_snippets_delete_snippet', $id, $scope );
+		do_action( 'code_snippets/delete_snippet', $id, $scope );
 	}
 
 	/**
@@ -875,7 +875,7 @@ final class Code_Snippets {
 				$wpdb->query( $wpdb->prepare( "UPDATE $table SET $fields WHERE id='%d' LIMIT 1", $snippet->id ) );
 			}
 
-			do_action( 'code_snippets_update_snippet', $snippet, $table );
+			do_action( 'code_snippets/update_snippet', $snippet, $table );
 			return $snippet->id;
 
 		} else {
@@ -884,7 +884,7 @@ final class Code_Snippets {
 				$wpdb->query( "INSERT INTO $table SET $fields" );
 			}
 
-			do_action( 'code_snippets_create_snippet', $snippet, $table );
+			do_action( 'code_snippets/create_snippet', $snippet, $table );
 			return $wpdb->insert_id;
 		}
 	}
@@ -917,7 +917,7 @@ final class Code_Snippets {
 			$this->save_snippet( get_object_vars( $snippet ), $scope );
 		}
 
-		do_action( 'code_snippets_import', $xml, $scope );
+		do_action( 'code_snippets/import', $xml, $scope );
 
 		return $xml->count();
 	}
@@ -990,7 +990,7 @@ final class Code_Snippets {
 		$output = ob_get_contents();
 		ob_end_clean();
 
-		do_action( 'code_snippets_execute_snippet', $code );
+		do_action( 'code_snippets/execute_snippet', $code );
 		return $result;
 	}
 

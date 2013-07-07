@@ -64,7 +64,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$filters = array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'capital_P_dangit' );
 
 		foreach ( $filters as $filter ) {
-			add_filter( 'code_snippets_print_snippet_description', $filter );
+			add_filter( 'code_snippets/list_table/print_snippet_description', $filter );
 		}
 
 		/* Setup the class */
@@ -124,11 +124,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				return $snippet->id;
 			case 'description':
 				if ( ! empty( $snippet->description ) )
-					return apply_filters( 'code_snippets_print_snippet_description', $snippet->description );
+					return apply_filters( 'code_snippets/list_table/print_snippet_description', $snippet->description );
 				else
 					return '&#8212;';
 			default:
-				return do_action( "code_snippets_list_table_column_{$column_name}", $snippet );
+				return do_action( "code_snippets/list_table/column_{$column_name}", $snippet );
 		}
 	}
 
@@ -200,7 +200,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Return the name contents */
 		return apply_filters(
-			'code_snippets_list_table_column_name',
+			'code_snippets/list_table/column_name',
 			$title . $this->row_actions( $actions, true ),
 			$snippet
 		);
@@ -213,7 +213,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
     function column_cb( $snippet ) {
         return apply_filters(
-			'code_snippets_list_table_column_cb',
+			'code_snippets/list_table/column_cb',
 			sprintf( '<input type="checkbox" name="ids[]" value="%s" />', $snippet->id ),
 			$snippet
 		);
@@ -230,7 +230,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'id'          => __('ID', 'code-snippets'),
 			'description' => __('Description', 'code-snippets'),
 		);
-		return apply_filters( 'code_snippets_list_table_columns', $columns );
+		return apply_filters( 'code_snippets/list_table/columns', $columns );
 	}
 
 	/**
@@ -242,7 +242,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'id'   => array( 'id', true ),
 			'name' => array( 'name', false ),
 		);
-		return apply_filters( 'code_snippets_list_table_sortable_columns', $sortable_columns );
+		return apply_filters( 'code_snippets/list_table/sortable_columns', $sortable_columns );
 	}
 
 	/**
@@ -270,7 +270,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'delete-selected'     => __('Delete', 'code-snippets'),
 			'export-php-selected' => __('Export to PHP', 'code-snippets'),
 		);
-		return apply_filters( 'code_snippets_bulk_actions', $actions );
+		return apply_filters( 'code_snippets/list_table/bulk_actions', $actions );
 	}
 
 	/**
@@ -283,7 +283,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	function get_table_classes() {
 		$classes = array( 'widefat', $this->_args['plural'] );
-		return apply_filters( 'code_snippets_table_classes', $classes );
+		return apply_filters( 'code_snippets/list_table/table_classes', $classes );
 	}
 
 	/**
@@ -325,7 +325,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		}
 
-		return apply_filters( 'code_snippets_list_table_views', $status_links );
+		return apply_filters( 'code_snippets/list_table/views', $status_links );
 	}
 
 	/**
@@ -341,7 +341,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			echo '<div class="alignleft actions">';
 
-			do_action( 'code_snippets_list_table_filter_controls' );
+			do_action( 'code_snippets/list_table/filter_controls' );
 			submit_button( __('Filter', 'code-snippets'), 'button', false, false );
 
 			echo '</div>';
@@ -352,7 +352,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( 'recently_activated' === $status )
 			submit_button( __('Clear List', 'code-snippets'), 'secondary', 'clear-recent-list', false );
 
-		do_action( 'code_snippets_list_table_actions', $which );
+		do_action( 'code_snippets/list_table/actions', $which );
 
 		echo '</div>';
 	}
@@ -365,7 +365,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	function required_form_fields( $context = 'main' ) {
 
-		$vars = apply_filters( 'code_snippets_list_table_required_form_fields', array( 'page', 's', 'status', 'paged' ), $context );
+		$vars = apply_filters(
+			'code_snippets/list_table/required_form_fields',
+			array( 'page', 's', 'status', 'paged' ),
+			$context
+		);
 
 		if ( 'search_box' === $context ) {
 			/* Remove the 's' var if we're doing this for the search box */
@@ -379,7 +383,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 		}
 
-		do_action( 'code_snippets_list_table_print_required_form_fields', $context );
+		do_action( 'code_snippets/list_table/print_required_form_fields', $context );
 	}
 
 
@@ -392,7 +396,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$action = 'clear-recent-list';
 		else
 			$action = parent::current_action();
-		return apply_filters( 'code_snippets_list_table_current_action', $action );
+		return apply_filters( 'code_snippets/list_table/current_action', $action );
 	}
 
 	/**
@@ -432,7 +436,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			if ( ! in_array( $action, array( 'export', 'export-php' ) ) ) {
 				wp_redirect( apply_filters(
-					"code_snippets_{$action}_redirect",
+					"code_snippets/{$action}_redirect",
 					add_query_arg( $action, true )
 				) );
 			}
@@ -507,7 +511,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$this->process_bulk_actions();
 
 		$snippets = array(
-			'all' => apply_filters( 'code_snippets_list_table_get_snippets', $code_snippets->get_snippets() ),
+			'all' => apply_filters( 'code_snippets/list_table/get_snippets', $code_snippets->get_snippets() ),
 			'active' => array(),
 			'inactive' => array(),
 			'recently_activated' => array(),
@@ -581,14 +585,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
             $orderby = (
             	! empty( $_REQUEST['orderby'] )
             	? $_REQUEST['orderby']
-            	: apply_filters( 'code_snippets_default_orderby', 'id' )
+            	: apply_filters( 'code_snippets/list_table/default_orderby', 'id' )
             );
 
 			/* If no order, default to ascending */
             $order = (
             	! empty( $_REQUEST['order'] )
             	? $_REQUEST['order']
-            	: apply_filters( 'code_snippets_default_order', 'asc' )
+            	: apply_filters( 'code_snippets/list_table/default_order', 'asc' )
             );
 
 			/* Determine sort order */
@@ -670,19 +674,24 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @access public
 	 */
 	public function search_notice() {
-		if ( ! empty( $_REQUEST['s'] ) || apply_filters( 'code_snippets_list_table_search_notice', '' ) ) {
+		if ( ! empty( $_REQUEST['s'] ) || apply_filters( 'code_snippets/list_table/search_notice', '' ) ) {
 
 			echo '<span class="subtitle">' . __('Search results', 'code-snippets');
 
 			if ( ! empty ( $_REQUEST['s'] ) )
 				echo sprintf ( __( ' for &#8220;%s&#8221;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
 
-			echo apply_filters( 'code_snippets_list_table_search_notice', '' );
+			echo apply_filters( 'code_snippets/list_table/search_notice', '' );
 			echo '</span>';
 
 			printf (
 				'&nbsp;<a class="button" href="%s">' . __('Clear Filters', 'code-snippets') . '</a>',
-				remove_query_arg( apply_filters( 'code_snippets_list_table_required_form_fields', array( 's' ), 'clear_filters' ) )
+				remove_query_arg(
+					apply_filters( 'code_snippets/list_table/required_form_fields',
+						array( 's' ),
+						'clear_filters'
+					)
+				)
 			);
 		}
 	}
