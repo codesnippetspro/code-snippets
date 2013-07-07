@@ -677,9 +677,9 @@ final class Code_Snippets {
 		$snippet->code        = rtrim( $snippet->code, '?>' );
 
 		/* escape the data */
-		$snippet->name        = mysql_real_escape_string( htmlspecialchars( $snippet->name ) );
-		$snippet->description = mysql_real_escape_string( htmlspecialchars( $snippet->description ) );
-		$snippet->code        = mysql_real_escape_string( htmlspecialchars( $snippet->code ) );
+		$snippet->name        = esc_sql( htmlspecialchars( $snippet->name ) );
+		$snippet->description = esc_sql( htmlspecialchars( $snippet->description ) );
+		$snippet->code        = esc_sql( htmlspecialchars( $snippet->code ) );
 		$snippet->id          = absint( $snippet->id );
 
 		return apply_filters( 'code_snippets/escape_snippet_data', $snippet );
