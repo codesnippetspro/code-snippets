@@ -18,12 +18,12 @@ $code_snippets->admin->get_messages( 'manage' );
 <div class="wrap">
 	<?php screen_icon(); ?>
 	<h2><?php
-		esc_html_e('Snippets', 'code-snippets');
+		esc_html_e( 'Snippets', 'code-snippets' );
 
 		if ( $code_snippets->user_can( 'install' ) ) {
 
 			printf ( '<a href="%2$s" class="add-new-h2">%1$s</a>',
-				esc_html_x('Add New', 'snippet', 'code-snippets'),
+				esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
 				$code_snippets->admin->single_url
 			);
 		}

@@ -46,7 +46,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$page = $this->get_pagenum();
 
 		add_screen_option( 'per_page', array(
-			'label' => __('Snippets per page', 'code-snippets'),
+			'label' => __( 'Snippets per page', 'code-snippets' ),
 			'default' => 10,
 			'option' => 'snippets_per_page'
 		) );
@@ -148,7 +148,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( $snippet->active ) {
 			$actions['deactivate'] = sprintf(
 				'<a href="%2$s">%1$s</a>',
-				$screen->is_network ? __('Network Deactivate', 'code-snippets') : __('Deactivate', 'code-snippets'),
+				$screen->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
 				add_query_arg( array(
 					'action' => 'deactivate',
 					'id' =>	$snippet->id
@@ -157,7 +157,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		} else {
 			$actions['activate'] = sprintf(
 				'<a href="%2$s">%1$s</a>',
-				$screen->is_network ? __('Network Activate', 'code-snippets') : __('Activate', 'code-snippets'),
+				$screen->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
 				add_query_arg( array(
 					'action' => 'activate',
 					'id' =>	$snippet->id
@@ -190,14 +190,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			esc_js( sprintf(
 				'return confirm("%s");',
 				__("You are about to permanently delete the selected item.
-				'Cancel' to stop, 'OK' to delete.", 'code-snippets')
+				'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
 			) )
 		);
 
 		if ( ! empty( $snippet->name ) )
 			$title = stripslashes( $snippet->name );
 		else
-			$title = sprintf ( __('Untitled–%d', 'code-snippets'), $snippet->id );
+			$title = sprintf ( __( 'Untitled–%d', 'code-snippets' ), $snippet->id );
 
 		/* Return the name contents */
 		return apply_filters(
@@ -227,9 +227,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	function get_columns() {
 		$columns = array(
 			'cb'          => '<input type="checkbox" />',
-			'name'        => __('Name', 'code-snippets'),
-			'id'          => __('ID', 'code-snippets'),
-			'description' => __('Description', 'code-snippets'),
+			'name'        => __( 'Name', 'code-snippets' ),
+			'id'          => __( 'ID', 'code-snippets' ),
+			'description' => __( 'Description', 'code-snippets' ),
 		);
 		return apply_filters( 'code_snippets/list_table/columns', $columns );
 	}
@@ -265,11 +265,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	function get_bulk_actions() {
 		$screen = get_current_screen();
 		$actions = array(
-			'activate-selected'   => $screen->is_network ? __('Network Activate', 'code-snippets') : __('Activate', 'code-snippets'),
-			'deactivate-selected' => $screen->is_network ? __('Network Deactivate', 'code-snippets') : __('Deactivate', 'code-snippets'),
-			'export-selected'     => __('Export', 'code-snippets'),
-			'delete-selected'     => __('Delete', 'code-snippets'),
-			'export-php-selected' => __('Export to PHP', 'code-snippets'),
+			'activate-selected'   => $screen->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
+			'deactivate-selected' => $screen->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
+			'export-selected'     => __( 'Export', 'code-snippets' ),
+			'delete-selected'     => __( 'Delete', 'code-snippets' ),
+			'export-php-selected' => __( 'Export to PHP', 'code-snippets' ),
 		);
 		return apply_filters( 'code_snippets/list_table/bulk_actions', $actions );
 	}
@@ -305,16 +305,16 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			switch ( $type ) {
 				case 'all':
-					$text = _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets');
+					$text = _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' );
 					break;
 				case 'active':
-					$text = _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets');
+					$text = _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' );
 					break;
 				case 'recently_activated':
-					$text = _n( 'Recently Active <span class="count">(%s)</span>', 'Recently Active <span class="count">(%s)</span>', $count, 'code-snippets');
+					$text = _n( 'Recently Active <span class="count">(%s)</span>', 'Recently Active <span class="count">(%s)</span>', $count, 'code-snippets' );
 					break;
 				case 'inactive':
-					$text = _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets');
+					$text = _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' );
 					break;
 			}
 
@@ -343,7 +343,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			echo '<div class="alignleft actions">';
 
 			do_action( 'code_snippets/list_table/filter_controls' );
-			submit_button( __('Filter', 'code-snippets'), 'button', false, false );
+			submit_button( __( 'Filter', 'code-snippets' ), 'button', false, false );
 
 			echo '</div>';
 		}
@@ -351,7 +351,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		echo '<div class="alignleft actions">';
 
 		if ( 'recently_activated' === $status )
-			submit_button( __('Clear List', 'code-snippets'), 'secondary', 'clear-recent-list', false );
+			submit_button( __( 'Clear List', 'code-snippets' ), 'secondary', 'clear-recent-list', false );
 
 		do_action( 'code_snippets/list_table/actions', $which );
 
@@ -493,7 +493,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	function no_items() {
 		global $code_snippets;
-		printf( __('You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets'), $code_snippets->admin->single_url );
+		printf( __( 'You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets' ), $code_snippets->admin->single_url );
 	}
 
 	/**
@@ -677,7 +677,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	public function search_notice() {
 		if ( ! empty( $_REQUEST['s'] ) || apply_filters( 'code_snippets/list_table/search_notice', '' ) ) {
 
-			echo '<span class="subtitle">' . __('Search results', 'code-snippets');
+			echo '<span class="subtitle">' . __( 'Search results', 'code-snippets' );
 
 			if ( ! empty ( $_REQUEST['s'] ) )
 				echo sprintf ( __( ' for &#8220;%s&#8221;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
@@ -686,7 +686,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			echo '</span>';
 
 			printf (
-				'&nbsp;<a class="button" href="%s">' . __('Clear Filters', 'code-snippets') . '</a>',
+				'&nbsp;<a class="button" href="%s">' . __( 'Clear Filters', 'code-snippets' ) . '</a>',
 				remove_query_arg(
 					apply_filters( 'code_snippets/list_table/required_form_fields',
 						array( 's' ),

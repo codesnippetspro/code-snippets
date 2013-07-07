@@ -118,7 +118,7 @@ class Code_Snippets_Admin {
 	 * @return array             The modified mu menu items
 	 */
 	function mu_menu_items( $menu_items ) {
-		$menu_items['snippets'] = __('Snippets', 'code-snippets');
+		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
 		return $menu_items;
 	}
 
@@ -148,8 +148,8 @@ class Code_Snippets_Admin {
 			/* Register the Code Snippets importer with WordPress */
 			register_importer(
 				'code-snippets',
-				__('Code Snippets', 'code-snippets'),
-				__('Import snippets from a Code Snippets export file', 'code-snippets'),
+				__( 'Code Snippets', 'code-snippets' ),
+				__( 'Import snippets from a Code Snippets export file', 'code-snippets' ),
 				array( $this, 'display_import_menu' )
 			);
 		}
@@ -223,8 +223,8 @@ class Code_Snippets_Admin {
 
 		/* Add the top-level menu and associated subpage */
 		$this->manage_page = add_menu_page(
-			__('Snippets', 'code-snippets'),
-			__('Snippets', 'code-snippets'),
+			__( 'Snippets', 'code-snippets' ),
+			__( 'Snippets', 'code-snippets' ),
 			$code_snippets->get_cap( 'manage' ),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu' ),
@@ -234,8 +234,8 @@ class Code_Snippets_Admin {
 
 		add_submenu_page(
 			$this->manage_slug,
-			__('Snippets', 'code-snippets'),
-			__('Manage', 'code-snippets'),
+			__( 'Snippets', 'code-snippets' ),
+			__( 'Manage', 'code-snippets' ),
 			$code_snippets->get_cap( 'manage' ),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu')
@@ -246,8 +246,8 @@ class Code_Snippets_Admin {
 
 		$this->single_page = add_submenu_page(
 			$this->manage_slug,
-			$editing ? __('Edit Snippet', 'code-snippets') : __('Add New Snippet', 'code-snippets'),
-			$editing ? __('Edit', 'code-snippets') : __('Add New', 'code-snippets'),
+			$editing ? __( 'Edit Snippet', 'code-snippets' ) : __( 'Add New Snippet', 'code-snippets' ),
+			$editing ? __( 'Edit', 'code-snippets' ) : __( 'Add New', 'code-snippets' ),
 			$code_snippets->get_cap( 'install' ),
 			$this->single_slug,
 			array( $this, 'display_single_menu' )
@@ -274,8 +274,8 @@ class Code_Snippets_Admin {
 
 		$this->import_page = add_submenu_page(
 			$this->manage_slug,
-			__('Import Snippets', 'code-snippets'),
-			__('Import', 'code-snippets'),
+			__( 'Import Snippets', 'code-snippets' ),
+			__( 'Import', 'code-snippets' ),
 			$code_snippets->get_cap( 'import' ),
 			'import-code-snippets',
 			array( $this, 'display_import_menu' )
@@ -350,7 +350,7 @@ class Code_Snippets_Admin {
 
 		/* Don't let the user pass if they can't edit (install check is done by WP) */
 		if ( isset( $_REQUEST['edit'] ) && ! $code_snippets->user_can( 'edit' ) )
-			wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets') );
+			wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets' ) );
 
 		/* Save the snippet if one has been submitted */
 		if ( isset( $_REQUEST['save_snippet'] ) || isset( $_REQUEST['save_snippet_activate'] ) ) {
@@ -585,7 +585,7 @@ class Code_Snippets_Admin {
 		?>
 
 		<label for="snippet_description">
-			<h3><div style="position: absolute;"><?php _e('Description', 'code-snippets'); ?></div></h3>
+			<h3><div style="position: absolute;"><?php _e( 'Description', 'code-snippets' ); ?></div></h3>
 		</label>
 
 		<?php
@@ -616,8 +616,8 @@ class Code_Snippets_Admin {
 		array_unshift( $links, sprintf(
 			'<a href="%1$s" title="%2$s">%3$s</a>',
 			$this->manage_url,
-			__('Manage your existing snippets', 'code-snippets'),
-			__('Manage', 'code-snippets')
+			__( 'Manage your existing snippets', 'code-snippets' ),
+			__( 'Manage', 'code-snippets' )
 		) );
 		return $links;
 	}
@@ -644,18 +644,18 @@ class Code_Snippets_Admin {
 		return array_merge( $links, array(
 			sprintf( $format,
 				'http://wordpress.org/extend/plugins/code-snippets/',
-				__('Visit the WordPress.org plugin page', 'code-snippets'),
-				__('About', 'code-snippets')
+				__( 'Visit the WordPress.org plugin page', 'code-snippets' ),
+				__( 'About', 'code-snippets' )
 			),
 			sprintf( $format,
 				'http://wordpress.org/support/plugin/code-snippets/',
-				__('Visit the support forums', 'code-snippets'),
-				__('Support', 'code-snippets')
+				__( 'Visit the support forums', 'code-snippets' ),
+				__( 'Support', 'code-snippets' )
 			),
 			sprintf( $format,
 				'http://code-snippets.bungeshea.com/donate/',
-				__("Support this plugin's development", 'code-snippets'),
-				__('Donate', 'code-snippets')
+				__("Support this plugin's development", 'code-snippets' ),
+				__( 'Donate', 'code-snippets' )
 			)
 		) );
 	}

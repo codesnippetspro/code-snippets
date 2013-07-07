@@ -26,15 +26,15 @@ $code_snippets->admin->get_messages( 'single' );
 	<?php screen_icon(); ?>
 	<h2><?php
 		if ( $edit_id ) {
-			esc_html_e('Edit Snippet', 'code-snippets');
+			esc_html_e( 'Edit Snippet', 'code-snippets' );
 
 			if ( $code_snippets->user_can( 'install' ) )
 				printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
 					$code_snippets->admin->single_url,
-					esc_html_x('Add New', 'snippet', 'code-snippets')
+					esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 				);
 		} else {
-			esc_html_e('Add New Snippet', 'code-snippets');
+			esc_html_e( 'Add New Snippet', 'code-snippets' );
 		}
 	?></h2>
 
@@ -50,13 +50,13 @@ $code_snippets->admin->get_messages( 'single' );
 		?>
 		<div id="titlediv">
 			<div id="titlewrap">
-				<label for="title" style="display: none;"><?php _e('Name (short title)', 'code-snippets'); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_html( $snippet->name ); ?>" placeholder="<?php _e('Name (short title)', 'code-snippets'); ?>" />
+				<label for="title" style="display: none;"><?php _e( 'Name (short title)', 'code-snippets' ); ?></label>
+				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_html( $snippet->name ); ?>" placeholder="<?php _e( 'Name (short title)', 'code-snippets' ); ?>" />
 			</div>
 		</div>
 
 		<label for="snippet_code">
-			<h3><?php _e('Code', 'code-snippets'); ?></h3>
+			<h3><?php _e( 'Code', 'code-snippets' ); ?></h3>
 		</label>
 
 		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo $snippet->code; ?></textarea>
