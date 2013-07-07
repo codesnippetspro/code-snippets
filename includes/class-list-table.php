@@ -704,7 +704,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	function single_row( $snippet ) {
 		static $row_class = '';
 		$row_class = ( $snippet->active ? 'active' : 'inactive' );
-		printf ( '<tr class="%2$s">%1$s</tr>', $this->single_row_columns( $snippet ), $row_class );
+		printf ( '<tr class="%s">', $row_class );
+		$this->single_row_columns( $snippet );
+		echo '</tr>';
 	}
 
 } // end of class
