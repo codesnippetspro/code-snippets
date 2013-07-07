@@ -692,8 +692,8 @@ final class Code_Snippets {
 	 * @since  1.7
 	 * @access public
 	 *
-	 * @param mixed   $snippet An object or array containing the data to unescape
-	 * @return object         The resulting snippet object, with data unescaped
+	 * @param  mixed  $snippet An object or array containing the data to unescape
+	 * @return object          The resulting snippet object, with data unescaped
 	 */
 	public function unescape_snippet_data( $snippet ) {
 
@@ -744,10 +744,10 @@ final class Code_Snippets {
 	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses   $wpdb         To set the snippets' active status
+	 * @uses   $wpdb          To set the snippets' active status
 	 *
-	 * @param array   $ids   The ids of the snippets to activate
-	 * @param string  $scope Are the snippets multisite-wide or site-wide?
+	 * @param  array   $ids   The ids of the snippets to activate
+	 * @param  string  $scope Are the snippets multisite-wide or site-wide?
 	 * @return void
 	 */
 	public function activate( $ids, $scope = '' ) {
@@ -778,10 +778,10 @@ final class Code_Snippets {
 	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses   $wpdb         To set the snippets' active status
+	 * @uses   $wpdb          To set the snippets' active status
 	 *
-	 * @param array   $ids   The IDs of the snippets to deactivate
-	 * @param string  $scope Are the snippets multisite-wide or site-wide?
+	 * @param  array   $ids   The IDs of the snippets to deactivate
+	 * @param  string  $scope Are the snippets multisite-wide or site-wide?
 	 * @return void
 	 */
 	public function deactivate( $ids, $scope = '' ) {
@@ -828,8 +828,8 @@ final class Code_Snippets {
 	 * @uses   $wpdb                   To access the database
 	 * @uses   $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
-	 * @param int     $id    The ID of the snippet to delete
-	 * @param string  $scope Delete from site-wide or network-wide table?
+	 * @param  int     $id             The ID of the snippet to delete
+	 * @param  string  $scope          Delete from site-wide or network-wide table?
 	 */
 	public function delete_snippet( $id, $scope = '' ) {
 		global $wpdb;
@@ -851,15 +851,15 @@ final class Code_Snippets {
 	 * @uses   $wpdb                   To update/add the snippet to the database
 	 * @uses   $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
-	 * @param object  $snippet The snippet to add/update to the database
-	 * @param string  $scope   Save the snippet to the site-wide or network-wide table?
+	 * @param  object       $snippet   The snippet to add/update to the database
+	 * @param  string       $scope     Save the snippet to the site-wide or network-wide table?
 	 * @return int|boolean             The ID of the snippet on success, false on failure
 	 */
 	public function save_snippet( $snippet, $scope = '' ) {
 		global $wpdb;
 
 		$snippet = $this->escape_snippet_data( $snippet );
-		$table = $this->get_table_name( $scope );
+		$table   = $this->get_table_name( $scope );
 
 		$fields = '';
 		foreach ( get_object_vars( $snippet ) as $field => $value ) {
