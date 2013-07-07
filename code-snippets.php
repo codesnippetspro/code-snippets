@@ -364,8 +364,8 @@ final class Code_Snippets {
 
 		global $wpdb;
 
-		if ( $force_creation && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
-			return; // bail if the table already exists or $force_creation is true
+		if ( ! $force_creation && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
+			return; // bail if the table already exists
 		}
 
 		/* Set the database charset */
