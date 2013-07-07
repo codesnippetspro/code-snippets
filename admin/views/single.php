@@ -61,7 +61,7 @@ $code_snippets->admin->get_messages( 'single' );
 
 		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo $snippet->code; ?></textarea>
 
-		<?php do_action( 'code_snippet/admin/single', $snippet ); ?>
+		<?php do_action( 'code_snippets/admin/single', $snippet ); ?>
 
 		<p class="submit">
 			<?php
