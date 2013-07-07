@@ -4,7 +4,7 @@ Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.7.1.2
+Stable tag: 1.8
 License: MIT
 License URI: license.txt
 
@@ -111,12 +111,13 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 
 == Changelog ==
 
-= 1.7.2 =
+= 1.8 =
 * Allow no snippet name or code to be set
 * Prevented an error on fresh multisite installations
 * Refactored code to use best practices
 * Improved database table creation method: on a single-site install, the snippets table will always be created. On a multisite install, the network snippets table will always be created; the site-specific table will always be created for the main site; for sub-sites the snippets table will only be created on a visit to a snippets admin page.
 * Updated to CodeMirror 3.14
+* Changes to action and filter hook API
 
 = 1.7.1.2 =
 * Correct path to admin menu icon ([#](http://wordpress.org/support/topic/icon-disappears-with-mp6?replies=6#post-4148319))
@@ -217,8 +218,8 @@ Plugin updates will be posted on the [plugin's homepage](http://code-snippets.bu
 
 == Upgrade Notice ==
 
-= 1.7.2 =
-Setting a snippet name and code are now optional; better table creation method; bug fixes
+= 1.8 =
+Setting a snippet name and code are now optional; better table creation method; changes to API; bug fixes
 
 = 1.7.1.2 =
 Fixes the admin menu icon not loading

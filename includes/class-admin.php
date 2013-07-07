@@ -161,7 +161,7 @@ class Code_Snippets_Admin {
 	/**
 	 * Load contextual help tabs for an admin screen.
 	 *
-	 * @since  1.7.2
+	 * @since  1.8
 	 * @access public
 	 * @param  string $slug The file handle (filename with no path or extension) to load
 	 * @return void
@@ -174,7 +174,7 @@ class Code_Snippets_Admin {
 	/**
 	 * Load an admin view template
 	 *
-	 * @since  1.7.2
+	 * @since  1.8
 	 * @access public
 	 * @param  string $slug The file handle (filename with no path or extension) to load
 	 * @return void
@@ -187,7 +187,7 @@ class Code_Snippets_Admin {
 	/**
 	 * Display the admin status and error messages
 	 *
-	 * @since  1.7.2
+	 * @since  1.8
 	 * @access public
 	 * @param  string $slug The file handle (filename with no path or extension) to load
 	 * @return void
