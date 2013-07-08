@@ -524,11 +524,13 @@ class Code_Snippets_Admin {
 		if ( isset( $_FILES['code_snippets_import_file']['tmp_name'] ) ) {
 
 			/* Import the snippets. The result is the number of snippets that were imported */
-			$imported = $code_snippets->import( $_FILES['code_snippets_import_file']['tmp_name'] );
+			$result = $code_snippets->import( $_FILES['code_snippets_import_file']['tmp_name'] );
 
 			/* Send the amount of imported snippets to the page */
-			if ( $imported ) {
-				wp_redirect( add_query_arg( 'imported', $imported ) );
+			if ( false === $result ) {
+				wp_redirect( add_query_arg( 'error', true ) ) );
+			} else {
+				wp_redirect( add_query_arg( 'imported', $result ) );
 			}
 		}
 

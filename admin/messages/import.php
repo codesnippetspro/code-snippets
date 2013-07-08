@@ -26,3 +26,9 @@ if ( isset( $_REQUEST['imported'] ) && 0 !== intval( $_REQUEST['imported'] ) ) {
 
 	echo '</p></div>';
 }
+elseif ( isset( $_REQUEST['error'] ) && $_REQUEST['error'] ) {
+	printf (
+		'<div id="message" class="error fade"><p>%s</p></div>',
+		__( 'An error occurred when processing the import file.', 'code-snippets' )
+	);
+}
