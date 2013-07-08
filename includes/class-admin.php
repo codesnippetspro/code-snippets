@@ -528,7 +528,7 @@ class Code_Snippets_Admin {
 
 			/* Send the amount of imported snippets to the page */
 			if ( false === $result ) {
-				wp_redirect( add_query_arg( 'error', true ) ) );
+				wp_redirect( add_query_arg( 'error', true ) );
 			} else {
 				wp_redirect( add_query_arg( 'imported', $result ) );
 			}
