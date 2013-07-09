@@ -645,7 +645,7 @@ class Code_Snippets_Admin {
 		/* array_merge appends the links to the end */
 		return array_merge( $links, array(
 			sprintf( $format,
-				'http://wordpress.org/extend/plugins/code-snippets/',
+				'http://wordpress.org/plugins/code-snippets/',
 				__( 'Visit the WordPress.org plugin page', 'code-snippets' ),
 				__( 'About', 'code-snippets' )
 			),

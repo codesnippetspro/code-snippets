@@ -386,8 +386,8 @@ msgstr "Weitere Informationen:"
 #@ code-snippets
 #: includes/help/import.php:27
 #: includes/help/single.php:32
-msgid "<a href=\"http://wordpress.org/extend/plugins/code-snippets\" target=\"_blank\">WordPress Extend</a>"
-msgstr "<a href=\"http://wordpress.org/extend/plugins/code-snippets\" target=\"_blank\">Plugin-Seite bei WordPress.org</a>"
+msgid "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank\">WordPress Extend</a>"
+msgstr "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank\">Plugin-Seite bei WordPress.org</a>"
 
 #@ code-snippets
 #: includes/help/import.php:28
@@ -429,8 +429,8 @@ msgstr "Auch wenn Sie sicher sind, dass Sie das Codeschnipsel-Plugin niemals meh
 
 #@ code-snippets
 #: includes/help/manage.php:28
-msgid "<a href=\"http://wordpress.org/extend/plugins/code-snippets\" target=\"_blank\">WordPress Extend</a></p>"
-msgstr "<a href=\"http://wordpress.org/extend/plugins/code-snippets\" target=\"_blank\">Plugin-Seite bei WordPress.org</a></p>"
+msgid "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank\">WordPress Extend</a></p>"
+msgstr "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank\">Plugin-Seite bei WordPress.org</a></p>"
 
 #@ code-snippets
 #: includes/help/single.php:7

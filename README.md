@@ -21,7 +21,7 @@ You can use a graphical interface, similar to the Plugins menu, to manage, activ
 
 Although Code Snippets is designed to be easy-to-use and its interface looks, feels and acts as if it was a native part of WordPress, each screen includes a help tab, just in case you get stuck.
 
-An addon-plugin for Code Snippets is available: [Code Snippets Tags](http://wordpress.org/extend/plugins/code-snippets-tags) will allow you to assign tags to your snippets and organize them in the table.
+An addon-plugin for Code Snippets is available: [Code Snippets Tags](http://wordpress.org/plugins/code-snippets-tags) will allow you to assign tags to your snippets and organize them in the table.
 
 ## Other Notes
 

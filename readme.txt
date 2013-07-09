@@ -22,7 +22,7 @@ You can use a graphical interface, similar to the Plugins menu, to manage, activ
 
 Although Code Snippets is designed to be easy-to-use and its interface looks, feels and acts as if it was a native part of WordPress, each screen includes a help tab, just in case you get stuck.
 
-An addon-plugin for Code Snippets is available: [Code Snippets Tags](http://wordpress.org/extend/plugins/code-snippets-tags) will allow you to assign tags to your snippets and organize them in the table.
+An addon-plugin for Code Snippets is available: [Code Snippets Tags](http://wordpress.org/plugins/code-snippets-tags) will allow you to assign tags to your snippets and organize them in the table.
 
 Further information, documentation and updates are available on the [plugin homepage](http://code-snippets.bungeshea.com). You can also contribute to the code at [GitHub](https://github.com/bungeshea/code-snippets).
 
@@ -90,7 +90,7 @@ Yes. Click the checkboxes next to the snippets you want to export, and then choo
 You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard. You can also activate Code Snippets just on the main site, and then individually on other sites of your choice.
 
 = Is there anyway to add categories to snippets? =
-Users of Code Snippets version 1.7 and later can install the [Code Snippets Tags](http://wordpress.org/extend/plugins/code-snippets-tags) plugin for the ability to add tags to snippets, and then later filter the snippets by tag for easier organization.
+Users of Code Snippets version 1.7 and later can install the [Code Snippets Tags](http://wordpress.org/plugins/code-snippets-tags) plugin for the ability to add tags to snippets, and then later filter the snippets by tag for easier organization.
 
 = I need help with Code Snippets =
 You can get help with Code Snippets either on the [WordPress Support Forums](http://wordpress.org/support/plugin/code-snippets/), on [GithHub](https://github.com/bungeshea/code-snippets/issues), or on [WordPress Answers](http://wordpress.stackexchange.com).

@@ -41,7 +41,7 @@ $screen->add_help_tab( array(
 
 $screen->set_help_sidebar(
 	'<p><strong>' . __( 'For more information:', 'code-snippets' ) . '</strong></p>' .
-	'<p>' . __( '<a href="http://wordpress.org/extend/plugins/code-snippets" target="_blank">WordPress Extend</a>', 'code-snippets' ) . '</p>' .
+	'<p>' . __( '<a href="http://wordpress.org/plugins/code-snippets" target="_blank">WordPress Extend</a>', 'code-snippets' ) . '</p>' .
 	'<p>' . __( '<a href="http://wordpress.org/support/plugin/code-snippets" target="_blank">Support Forums</a>', 'code-snippets' ) . '</p>' .
 	'<p>' . __( '<a href="http://code-snippets.bungeshea.com/" target="_blank">Project Website</a>', 'code-snippets' ) .  '</p>'
 );
