@@ -431,6 +431,43 @@ final class Code_Snippets {
 		/* Skip this if we're on the latest version */
 		if ( version_compare( $current_version, $this->version, '<' ) ) {
 
+			/* Data in database is unsecapped in 1.8 */
+			if ( version_compare( $current_version, '1.8', '<' ) ) {
+
+				$tables = array();
+
+				if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
+					$tables[] = $wpdb->snippets;
+				}
+
+				if ( is_multisite() && is_main_site() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets ) {
+					$tables[] = $wpdb->ms_snippets;
+				}
+
+				foreach ( $tables as $table ) {
+					$snippets = $wpdb->get_results( "SELECT * FROM $table" );
+
+					foreach ( $snippets as $snippet ) {
+
+						$snippet->name        = esc_sql( htmlspecialchars_decode( stripslashes( $snippet->name ) ) );
+						$snippet->code        = esc_sql( htmlspecialchars_decode( stripslashes( $snippet->code ) ) );
+						$snippet->description = esc_sql( htmlspecialchars_decode( stripslashes( $snippet->description ) ) );
+
+						$wpdb->update( $table,
+							array(
+								'name'        => $snippet->name,
+								'code'        => $snippet->code,
+								'description' => $snippet->description
+							),
+							array( 'id' => $snippet->id ),
+							array( '%s' ),
+							array( '%d' )
+						);
+					}
+				} // end $table foreach
+
+			} // end < 1.8 version check
+
 			/* Register the capabilities once only */
 			if ( version_compare( $current_version, '1.5',  '<' ) ) {
 				$this->setup_roles( true );
@@ -677,10 +714,10 @@ final class Code_Snippets {
 		$snippet->code = rtrim( $snippet->code, '?>' );
 		
 		/* escape the data */
-		$snippet->name        = esc_sql( htmlspecialchars( $snippet->name ) );
-		$snippet->description = esc_sql( htmlspecialchars( $snippet->description ) );
-		$snippet->code        = esc_sql( htmlspecialchars( $snippet->code ) );
-		$snippet->id          = absint( $snippet->id );
+		$snippet->name        = esc_sql( $snippet->name );
+		$snippet->description = esc_sql( $snippet->description );
+		$snippet->code        = esc_sql( $snippet->code );
+		$snippet->id          = absint ( $snippet->id );
 
 		return apply_filters( 'code_snippets/escape_snippet_data', $snippet );
 	}
@@ -699,9 +736,9 @@ final class Code_Snippets {
 
 		$snippet = $this->build_snippet_object( $snippet );
 
-		$snippet->name        = htmlspecialchars_decode( stripslashes( $snippet->name ) );
-		$snippet->code        = htmlspecialchars_decode( stripslashes( $snippet->code ) );
-		$snippet->description = htmlspecialchars_decode( stripslashes( $snippet->description ) );
+		$snippet->name        = stripslashes( $snippet->name );
+		$snippet->code        = stripslashes( $snippet->code );
+		$snippet->description = stripslashes( $snippet->description );
 
 		return apply_filters( 'code_snippets/unescape_snippet_data', $snippet );
 	}
