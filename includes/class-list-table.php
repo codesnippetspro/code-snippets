@@ -124,7 +124,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				return $snippet->id;
 			case 'description':
 				if ( ! empty( $snippet->description ) )
-					return esc_html( apply_filters( 'code_snippets/list_table/print_snippet_description', $snippet->description ) );
+					return apply_filters( 'code_snippets/list_table/print_snippet_description', $snippet->description );
 				else
 					return '&#8212;';
 			default:
@@ -195,7 +195,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		);
 
 		if ( ! empty( $snippet->name ) )
-			$title = esc_html( $snippet->name );
+			$title = $snippet->name;
 		else
 			$title = sprintf ( __( 'Untitled–%d', 'code-snippets' ), $snippet->id );
 

@@ -51,7 +51,7 @@ $code_snippets->admin->get_messages( 'single' );
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php _e( 'Name (short title)', 'code-snippets' ); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_html( $snippet->name ); ?>" placeholder="<?php _e( 'Name (short title)', 'code-snippets' ); ?>" />
+				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo $snippet->name; ?>" placeholder="<?php _e( 'Name (short title)', 'code-snippets' ); ?>" />
 			</div>
 		</div>
 
@@ -59,7 +59,7 @@ $code_snippets->admin->get_messages( 'single' );
 			<h3><?php _e( 'Code', 'code-snippets' ); ?></h3>
 		</label>
 
-		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width:100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
+		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 
 		<?php do_action( 'code_snippets/admin/single', $snippet ); ?>
 
