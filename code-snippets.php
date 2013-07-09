@@ -671,11 +671,11 @@ final class Code_Snippets {
 		$snippet = $this->build_snippet_object( $snippet );
 
 		/* remove the <?php and ?> tags from the snippet */
-		$snippet->code        = trim( $snippet->code );
-		$snippet->code        = ltrim( $snippet->code, '<?php' );
-		$snippet->code        = ltrim( $snippet->code, '<?' );
-		$snippet->code        = rtrim( $snippet->code, '?>' );
-
+		$snippet->code = trim( $snippet->code );
+		$snippet->code = ltrim( $snippet->code, '<?php' );
+		$snippet->code = ltrim( $snippet->code, '<?' );
+		$snippet->code = rtrim( $snippet->code, '?>' );
+		
 		/* escape the data */
 		$snippet->name        = esc_sql( htmlspecialchars( $snippet->name ) );
 		$snippet->description = esc_sql( htmlspecialchars( $snippet->description ) );
@@ -863,9 +863,13 @@ final class Code_Snippets {
 
 		$fields = '';
 		foreach ( get_object_vars( $snippet ) as $field => $value ) {
-			if ( 'id' !== $field ) {
-				$fields .= "{$field}='{$value}',";
-			}
+			if ( 'id' === $field )
+				continue;
+
+			if ( is_array( $value ) )
+				$value = maybe_serialize( $value );
+
+			$fields .= "{$field}='{$value}',";
 		}
 		$fields = rtrim( $fields, ',' );
 
