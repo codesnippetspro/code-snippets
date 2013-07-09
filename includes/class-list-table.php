@@ -197,7 +197,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( ! empty( $snippet->name ) )
 			$title = $snippet->name;
 		else
-			$title = sprintf ( __( 'Untitled–%d', 'code-snippets' ), $snippet->id );
+			$title = sprintf ( __( 'Untitled #%d', 'code-snippets' ), $snippet->id );
 
 		/* Return the name contents */
 		return apply_filters(
