@@ -7,6 +7,8 @@
 * Improved database table creation method: on a single-site install, the snippets table will always be created. On a multisite install, the network snippets table will always be created; the site-specific table will always be created for the main site; for sub-sites the snippets table will only be created on a visit to a snippets admin page.
 * Updated to CodeMirror 3.14
 * Changes to filter and action hook API
+* Added error message handling for import snippets page
+* Don't encode HTML entities in database
 
 ## 1.7.1.2
 * Correct path to admin menu icon. Fixes [#8](https://github.com/bungeshea/code-snippets/issues/8)
