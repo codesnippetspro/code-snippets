@@ -4,7 +4,7 @@ Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.7.1.2
+Stable tag: 1.8
 License: MIT
 License URI: license.txt
 
@@ -18,11 +18,11 @@ A snippet is a small chunk of PHP code that you can use to extend the functional
 Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while.
 Code Snippets changes that by providing a GUI interface for adding snippets and **actually running them on your site** as if they were in your theme's `functions.php` file.
 
-You can use a graphical interface, similar to the Plugins menu, to manage, activate, deactivate, edit and delete your snippets. Easily organise your snippets by adding a name and description using the visual editor. Code Snippets includes built-in syntax highlighting and other features to help you write your code. Snippets can be exported for transfer to another side, either in XML for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
+You can use a graphical interface, similar to the Plugins menu, to manage, activate, deactivate, edit and delete your snippets. Easily organize your snippets by adding a name and description using the visual editor. Code Snippets includes built-in syntax highlighting and other features to help you write your code. Snippets can be exported for transfer to another side, either in XML for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
 
 Although Code Snippets is designed to be easy-to-use and its interface looks, feels and acts as if it was a native part of WordPress, each screen includes a help tab, just in case you get stuck.
 
-An addon-plugin for Code Snippets is available: [Code Snippets Tags](http://wordpress.org/extend/plugins/code-snippets-tags) will allow you to assign tags to your snippets and organize them in the table.
+An addon-plugin for Code Snippets is available: [Code Snippets Tags](http://wordpress.org/plugins/code-snippets-tags) will allow you to assign tags to your snippets and organize them in the table.
 
 Further information, documentation and updates are available on the [plugin homepage](http://code-snippets.bungeshea.com). You can also contribute to the code at [GitHub](https://github.com/bungeshea/code-snippets).
 
@@ -90,7 +90,7 @@ Yes. Click the checkboxes next to the snippets you want to export, and then choo
 You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard. You can also activate Code Snippets just on the main site, and then individually on other sites of your choice.
 
 = Is there anyway to add categories to snippets? =
-Users of Code Snippets version 1.7 and later can install the [Code Snippets Tags](http://wordpress.org/extend/plugins/code-snippets-tags) plugin for the ability to add tags to snippets, and then later filter the snippets by tag for easier organization.
+Users of Code Snippets version 1.7 and later can install the [Code Snippets Tags](http://wordpress.org/plugins/code-snippets-tags) plugin for the ability to add tags to snippets, and then later filter the snippets by tag for easier organization.
 
 = I need help with Code Snippets =
 You can get help with Code Snippets either on the [WordPress Support Forums](http://wordpress.org/support/plugin/code-snippets/), on [GithHub](https://github.com/bungeshea/code-snippets/issues), or on [WordPress Answers](http://wordpress.stackexchange.com).
@@ -110,6 +110,16 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 5. Managing exiting snippets in the MP6 interface
 
 == Changelog ==
+
+= 1.8 =
+* Allow no snippet name or code to be set
+* Prevented an error on fresh multisite installations
+* Refactored code to use best practices
+* Improved database table creation method: on a single-site install, the snippets table will always be created. On a multisite install, the network snippets table will always be created; the site-specific table will always be created for the main site; for sub-sites the snippets table will only be created on a visit to a snippets admin page.
+* Updated to CodeMirror 3.14
+* Changes to action and filter hook API
+* Added error message handling for import snippets page
+* Don't encode HTML entities in database
 
 = 1.7.1.2 =
 * Correct path to admin menu icon ([#](http://wordpress.org/support/topic/icon-disappears-with-mp6?replies=6#post-4148319))
@@ -210,6 +220,9 @@ Plugin updates will be posted on the [plugin's homepage](http://code-snippets.bu
 
 == Upgrade Notice ==
 
+= 1.8 =
+Setting a snippet name and code are now optional; better table creation method; changes to API; bug fixes
+
 = 1.7.1.2 =
 Fixes the admin menu icon not loading
 
@@ -220,7 +233,7 @@ Fixes a minor bug with custom capabilities and admin menus
 Added German translation thanks to David Decker; bug fixes and improvements
 
 = 1.7 =
-Many improvments and optimization. Download "Code Snippets Tags" plugin to add tags to snippets
+Many improvements and optimization. Download "Code Snippets Tags" plugin to add tags to snippets
 
 = 1.6 =
 Improvements and optimization with WordPress 3.5

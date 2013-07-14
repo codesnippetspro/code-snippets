@@ -1,8 +1,10 @@
 # Code Snippets
 
+[![Build Status](https://travis-ci.org/bungeshea/code-snippets.png?branch=develop)](https://travis-ci.org/bungeshea/code-snippets)
+
 * __Requires at least:__ [WordPress 3.3](http://wordpress.org/download/) or later
 * __Tested up to:__ WordPress 3.6
-* __Stable version:__ [1.7.1.2](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __Stable version:__ [1.8](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
 An easy, clean and simple way to add code snippets to your site.
@@ -19,7 +21,7 @@ You can use a graphical interface, similar to the Plugins menu, to manage, activ
 
 Although Code Snippets is designed to be easy-to-use and its interface looks, feels and acts as if it was a native part of WordPress, each screen includes a help tab, just in case you get stuck.
 
-An addon-plugin for Code Snippets is available: [Code Snippets Tags](http://wordpress.org/extend/plugins/code-snippets-tags) will allow you to assign tags to your snippets and organize them in the table.
+An addon-plugin for Code Snippets is available: [Code Snippets Tags](http://wordpress.org/plugins/code-snippets-tags) will allow you to assign tags to your snippets and organize them in the table.
 
 ## Other Notes
 
@@ -111,19 +113,19 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 ## Screenshots
 
 ### Managing existing snippets
-![Managing existing snippets](screenshot-1.jpg "Managing existing snippets")
+![Managing existing snippets](screenshot-1.png "Managing existing snippets")
 
 ### Adding a new snippet
-![Adding a new snippet](screenshot-2.jpg "Adding a new snippet")
+![Adding a new snippet](screenshot-2.png "Adding a new snippet")
 
 ### Editing a snippet
-![Editing a snippet](screenshot-3.jpg "Editing a snippet")
+![Editing a snippet](screenshot-3.png "Editing a snippet")
 
 ### Importing snippets from an XML file
-![Importing snippets from an XML file](screenshot-4.jpg "Importing snippets from an XML file")
+![Importing snippets from an XML file](screenshot-4.png "Importing snippets from an XML file")
 
 ### Managing exiting snippets in the MP6 interface
-![Managing exiting snippets in the MP6 interface](screenshot-5.jpg "Managing exiting snippets in the MP6 interface")
+![Managing exiting snippets in the MP6 interface](screenshot-5.png "Managing exiting snippets in the MP6 interface")
 
   [support]: http://wordpress.org/support/plugin/code-snippets/
   [github]: https://github.com/bungeshea/code-snippets

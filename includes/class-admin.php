@@ -3,7 +3,7 @@
 /**
  * Contains the class for handling the administration interface
  *
- * @package Code Snippets
+ * @package    Code_Snippets
  * @subpackage Administration
  */
 
@@ -13,27 +13,30 @@
  * Don't directly access the methods in this class or attempt to
  * re-initialize it. Instead, use the instance in $code_snippets->admin
  *
- * @since 1.7.1
- * @package Code Snippets
+ * @since      1.7.1
+ * @package    Code_Snippets
+ * @subpackage Administration
  */
 class Code_Snippets_Admin {
 
 	/**
 	 * The full URLs to the admin pages
 	 *
-	 * @since 1.7.1
+	 * @var    string
+	 * @since  1.7.1
 	 * @access public
 	 */
-	public $manage_url, $single_url, $import_url;
+	public $manage_url, $single_url, $import_url = '';
 
 	/**
 	 * The hooks for the admin pages
 	 * Used primarily for enqueueing scripts and styles
 	 *
-	 * @since 1.7.1
+	 * @var    string
+	 * @since  1.7.1
 	 * @access public
 	 */
-	public $manage_page, $single_page, $import_page;
+	public $manage_page, $single_page, $import_page = '';
 
 	/**
 	 * Initializes the variables and
@@ -44,10 +47,8 @@ class Code_Snippets_Admin {
 	function __construct() {
 		global $code_snippets;
 
-		$this->include_dir = trailingslashit( $code_snippets->plugin_dir . 'includes' );
-
-		$this->manage_slug = apply_filters( 'code_snippets_admin_manage', 'snippets' );
-		$this->single_slug = apply_filters( 'code_snippets_admin_single', 'snippet' );
+		$this->manage_slug = apply_filters( 'code_snippets/admin/manage_slug', 'snippets' );
+		$this->single_slug = apply_filters( 'code_snippets/admin/single_slug', 'snippet' );
 
 		$this->manage_url  = self_admin_url( 'admin.php?page=' . $this->manage_slug );
 		$this->single_url  = self_admin_url( 'admin.php?page=' . $this->single_slug );
@@ -58,9 +59,8 @@ class Code_Snippets_Admin {
 	/**
 	 * Register action and filter hooks
 	 *
-	 * @since 1.7.1
+	 * @since  1.7.1
 	 * @access private
-	 *
 	 * @return void
 	 */
 	function setup_hooks() {
@@ -82,7 +82,7 @@ class Code_Snippets_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_icon_style' ) );
 
 		/* Add the description editor to the Snippets > Add New page */
-		add_action( 'code_snippets_admin_single', array( $this, 'description_editor_box' ), 5 );
+		add_action( 'code_snippets/admin/single', array( $this, 'description_editor_box' ), 5 );
 
 		/* Handle saving the user's screen option preferences */
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
@@ -93,13 +93,15 @@ class Code_Snippets_Admin {
 
 	/**
 	 * Handles saving the user's snippets per page preference
-	 * @param unknown $status
-	 * @param string $option
-	 * @param unknown $value
+	 *
+	 * @param  unknown $status
+	 * @param  string  $option
+	 * @param  unknown $value
 	 * @return unknown
 	 */
 	function set_screen_option( $status, $option, $value ) {
-		if ( 'snippets_per_page' === $option ) return $value;
+		if ( 'snippets_per_page' === $option )
+			return $value;
 	}
 
 	/**
@@ -109,14 +111,14 @@ class Code_Snippets_Admin {
 	 * Adds a checkbox to the *Settings > Network Settings*
 	 * network admin menu
 	 *
-	 * @since 1.7.1
+	 * @since  1.7.1
 	 * @access private
 	 *
-	 * @param array $menu_items The current mu menu items
-	 * @return array The modified mu menu items
+	 * @param  array $menu_items The current mu menu items
+	 * @return array             The modified mu menu items
 	 */
 	function mu_menu_items( $menu_items ) {
-		$menu_items['snippets'] = __('Snippets', 'code-snippets');
+		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
 		return $menu_items;
 	}
 
@@ -126,16 +128,15 @@ class Code_Snippets_Admin {
 	 * Add both an importer to the Tools menu
 	 * and an Import Snippets page to the network admin menu
 	 *
-	 * @since 1.6
+	 * @since  1.6
 	 * @access private
-	 *
 	 * @return void
 	 */
 	function load_importer() {
 
 		if ( defined( 'WP_LOAD_IMPORTERS' ) ) {
 
-			// Load Importer API
+			/* Load Importer API */
 			require_once ABSPATH . 'wp-admin/includes/import.php';
 
 			if ( ! class_exists( 'WP_Importer' ) ) {
@@ -144,43 +145,86 @@ class Code_Snippets_Admin {
 					require_once $class_wp_importer;
 			}
 
+			/* Register the Code Snippets importer with WordPress */
 			register_importer(
 				'code-snippets',
-				__('Code Snippets', 'code-snippets'),
-				__('Import snippets from a <strong>Code Snippets</strong> export file', 'code-snippets'),
+				__( 'Code Snippets', 'code-snippets' ),
+				__( 'Import snippets from a Code Snippets export file', 'code-snippets' ),
 				array( $this, 'display_import_menu' )
 			);
 		}
 
-		$this->import_url = self_admin_url( 'admin.php?import=code-snippets' );
+		$this->import_url  = self_admin_url( 'admin.php?import=code-snippets' );
 		add_action( 'load-importer-code-snippets', array( $this, 'load_import_menu' ) );
+	}
+
+	/**
+	 * Load contextual help tabs for an admin screen.
+	 *
+	 * @since  1.8
+	 * @access public
+	 * @param  string $slug The file handle (filename with no path or extension) to load
+	 * @return void
+	 */
+	public function load_help_tabs( $slug ) {
+		global $code_snippets;
+		include $code_snippets->plugin_dir . "admin/help/{$slug}.php";
+	}
+
+	/**
+	 * Load an admin view template
+	 *
+	 * @since  1.8
+	 * @access public
+	 * @param  string $slug The file handle (filename with no path or extension) to load
+	 * @return void
+	 */
+	public function get_view( $slug ) {
+		global $code_snippets;
+		require $code_snippets->plugin_dir . "admin/views/{$slug}.php";
+	}
+
+	/**
+	 * Display the admin status and error messages
+	 *
+	 * @since  1.8
+	 * @access public
+	 * @param  string $slug The file handle (filename with no path or extension) to load
+	 * @return void
+	 */
+	public function get_messages( $slug ) {
+		global $code_snippets;
+		require $code_snippets->plugin_dir . "admin/messages/{$slug}.php";
 	}
 
 	/**
 	 * Add the dashboard admin menu and subpages
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access private
 	 *
-	 * @uses add_menu_page() To register a top-level menu
-	 * @uses add_submenu_page() To register a submenu page
-	 * @uses apply_filters() To retrieve the current menu slug
-	 * @uses plugins_url() To retrieve the URL to a resource
+	 * @uses   add_menu_page()    To register a top-level menu
+	 * @uses   add_submenu_page() To register a submenu page
+	 * @uses   apply_filters()    To retrieve the current menu slug
+	 * @uses   plugins_url()      To retrieve the URL to a resource
 	 * @return void
 	 */
 	function add_admin_menus() {
 		global $code_snippets;
 
 		/* Use a different screen icon for the MP6 interface */
-		if ( get_user_option( 'admin_color' )  !== 'mp6' )
-			$menu_icon = apply_filters( 'code_snippets_menu_icon', plugins_url( 'assets/menu-icon.png', $code_snippets->file ) );
-		else
+		if ( get_user_option( 'admin_color' )  !== 'mp6' ) {
+			$menu_icon = apply_filters( 'code_snippets/admin/menu_icon_url',
+				plugins_url( 'assets/menu-icon.png', $code_snippets->file )
+			);
+		} else {
 			$menu_icon = 'div';
+		}
 
-		/* Add the top-level menu and relevant subpage */
+		/* Add the top-level menu and associated subpage */
 		$this->manage_page = add_menu_page(
-			__('Snippets', 'code-snippets'),
-			__('Snippets', 'code-snippets'),
+			__( 'Snippets', 'code-snippets' ),
+			__( 'Snippets', 'code-snippets' ),
 			$code_snippets->get_cap( 'manage' ),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu' ),
@@ -190,8 +234,8 @@ class Code_Snippets_Admin {
 
 		add_submenu_page(
 			$this->manage_slug,
-			__('Snippets', 'code-snippets'),
-			__('Manage', 'code-snippets'),
+			__( 'Snippets', 'code-snippets' ),
+			__( 'Manage', 'code-snippets' ),
 			$code_snippets->get_cap( 'manage' ),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu')
@@ -202,8 +246,8 @@ class Code_Snippets_Admin {
 
 		$this->single_page = add_submenu_page(
 			$this->manage_slug,
-			$editing ? __('Edit Snippet', 'code-snippets') : __('Add New Snippet', 'code-snippets'),
-			$editing ? __('Edit', 'code-snippets') : __('Add New', 'code-snippets'),
+			$editing ? __( 'Edit Snippet', 'code-snippets' ) : __( 'Add New Snippet', 'code-snippets' ),
+			$editing ? __( 'Edit', 'code-snippets' ) : __( 'Add New', 'code-snippets' ),
 			$code_snippets->get_cap( 'install' ),
 			$this->single_slug,
 			array( $this, 'display_single_menu' )
@@ -211,9 +255,6 @@ class Code_Snippets_Admin {
 
 		add_action( "load-$this->manage_page", array( $this, 'load_manage_menu' ) );
 		add_action( "load-$this->single_page", array( $this, 'load_single_menu' ) );
-
-		add_action( "load-$this->manage_page", array( $code_snippets, 'maybe_create_tables' ) );
-		add_action( "load-$this->single_page", array( $code_snippets, 'maybe_create_tables' ) );
 	}
 
 	/**
@@ -221,12 +262,11 @@ class Code_Snippets_Admin {
 	 * We need to do this as there is no Tools menu in the network
 	 * admin, and so we cannot register an importer
 	 *
-	 * @since 1.6
+	 * @since  1.6
 	 * @access private
-	 *
-	 * @uses add_submenu_page() To register the menu page
-	 * @uses apply_filters() To retrieve the current menu slug
-	 * @uses add_action() To enqueue scripts and styles
+	 * @uses   add_submenu_page() To register the menu page
+	 * @uses   apply_filters()    To retrieve the current menu slug
+	 * @uses   add_action()       To enqueue scripts and styles
 	 * @return void
 	 */
 	function add_import_admin_menu() {
@@ -234,8 +274,8 @@ class Code_Snippets_Admin {
 
 		$this->import_page = add_submenu_page(
 			$this->manage_slug,
-			__('Import Snippets', 'code-snippets'),
-			__('Import', 'code-snippets'),
+			__( 'Import Snippets', 'code-snippets' ),
+			__( 'Import', 'code-snippets' ),
 			$code_snippets->get_cap( 'import' ),
 			'import-code-snippets',
 			array( $this, 'display_import_menu' )
@@ -243,29 +283,28 @@ class Code_Snippets_Admin {
 
 		$this->import_url = self_admin_url( 'admin.php?page=import-code-snippets' );
 		add_action( "load-$this->import_page", array( $this, 'load_import_menu' ) );
-		add_action( "load-$this->import_page", array( $code_snippets, 'maybe_create_tables' ) );
 	}
 
 	/**
 	 * Enqueue the icon stylesheet
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access private
-	 *
-	 * @uses wp_enqueue_style() To add the stylesheet to the queue
-	 *
+	 * @uses   wp_enqueue_style() To add the stylesheet to the queue
+	 * @uses   get_user_option()  To check if MP6 mode is active
+	 * @uses   plugins_url        To retrieve a URL to assets
 	 * @return void
 	 */
 	function load_admin_icon_style() {
 		global $code_snippets;
 
-		$stylesheet = ( 'mp6' === get_user_option( 'admin_color' ) ? 'menu-icon.mp6' : 'screen-icon');
+		$stylesheet = ( 'mp6' === get_user_option( 'admin_color' ) ? 'menu-icon.mp6' : 'screen-icon' );
 
 		wp_enqueue_style(
-				'icon-snippets',
-				plugins_url( "assets/{$stylesheet}.css", $code_snippets->file ),
-				false,
-				$code_snippets->version
+			'icon-snippets',
+			plugins_url( "assets/{$stylesheet}.css", $code_snippets->file ),
+			false,
+			$code_snippets->version
 		);
 	}
 
@@ -273,19 +312,21 @@ class Code_Snippets_Admin {
 	 * Initializes the list table class and loads the help tabs
 	 * for the Manage Snippets page
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access private
-	 *
 	 * @return void
 	 */
 	function load_manage_menu() {
 		global $code_snippets;
 
+		/* Create the snippet tables if they don't exist */
+		$code_snippets->maybe_create_tables( true, true );
+
 		/* Load the screen help tabs */
-		include $this->include_dir . 'help/manage.php';
+		$this->load_help_tabs( 'manage' );
 
 		/* Initialize the snippet table class */
-		require_once $this->include_dir . 'class-list-table.php';
+		$code_snippets->get_include( 'class-list-table' );
 		$code_snippets->list_table = new Code_Snippets_List_Table();
 		$code_snippets->list_table->prepare_items();
 	}
@@ -293,22 +334,23 @@ class Code_Snippets_Admin {
 	/**
 	 * Loads the help tabs for the Edit Snippets page
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access private
-	 *
-	 * @uses $wpdb To save the posted snippet to the database
-	 * @uses wp_redirect To pass the results to the page
-	 *
 	 * @return void
+	 *
+	 * @uses   $wpdb       To save the posted snippet to the database
+	 * @uses   wp_redirect To pass the results to the page
 	 */
 	function load_single_menu() {
 		global $code_snippets;
-
 		$screen = get_current_screen();
+
+		/* Create the snippet tables if they don't exist */
+		$code_snippets->maybe_create_tables( true, true );
 
 		/* Don't let the user pass if they can't edit (install check is done by WP) */
 		if ( isset( $_REQUEST['edit'] ) && ! $code_snippets->user_can( 'edit' ) )
-			wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets') );
+			wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets' ) );
 
 		/* Save the snippet if one has been submitted */
 		if ( isset( $_REQUEST['save_snippet'] ) || isset( $_REQUEST['save_snippet_activate'] ) ) {
@@ -345,7 +387,7 @@ class Code_Snippets_Admin {
 		}
 
 		/* Load the screen help tabs */
-		include $this->include_dir . 'help/single.php';
+		$this->load_help_tabs( 'single' );
 
 		/* Enqueue the code editor and other scripts and styles */
 		add_filter( 'admin_enqueue_scripts', array( $this, 'single_menu_enqueue_scripts' ) );
@@ -354,16 +396,15 @@ class Code_Snippets_Admin {
 	/**
 	 * Registers and loads the code editor's scripts
 	 *
-	 * @since 1.7
+	 * @since  1.7
 	 * @access private
 	 *
-	 * @uses wp_register_script()
-	 * @uses wp_register_style()
-	 * @uses wp_enqueue_script() To add the scripts to the queue
-	 * @uses wp_enqueue_style() To add the stylesheets to the queue
+	 * @uses   wp_register_script()
+	 * @uses   wp_register_style()
+	 * @uses   wp_enqueue_script() To add the scripts to the queue
+	 * @uses   wp_enqueue_style()  To add the stylesheets to the queue
 	 *
-	 * @param string $hook The current page hook, to be compared with the single snippet page hook
-	 *
+	 * @param  string $hook        The current page hook, to be compared with the single snippet page hook
 	 * @return void
 	 */
 	function single_menu_enqueue_scripts( $hook ) {
@@ -374,7 +415,7 @@ class Code_Snippets_Admin {
 			return;
 
 		/* CodeMirror package version */
-		$codemirror_version = '3.11';
+		$codemirror_version = '3.14';
 
 		/* CodeMirror base framework */
 
@@ -448,84 +489,105 @@ class Code_Snippets_Admin {
 			false,
 			$code_snippets->version
 		);
+
+		/* Enqueue custom scripts */
+		wp_enqueue_script(
+			'code-snippets-admin-single',
+			plugins_url( 'assets/admin-single.js', $code_snippets->file ),
+			false,
+			$code_snippets->version,
+			true // Load in footer
+		);
 	}
 
 	/**
 	 * Processes import files and loads the help tabs for the Import Snippets page
 	 *
-	 * @since 1.3
+	 * @since  1.3
 	 *
-	 * @uses $code_snippets->import() To process the import file
-	 * @uses wp_redirect() To pass the import results to the page
-	 * @uses add_query_arg() To append the results to the current URI
+	 * @uses   $code_snippets->import() To process the import file
+	 * @uses   wp_redirect()            To pass the import results to the page
+	 * @uses   add_query_arg()          To append the results to the current URI
+	 * @uses   $this->load_help_tabs()  To load the screen contextual help tabs
 	 *
+	 * @param  string $file             A filesystem path to the import file
 	 * @return void
 	 */
 	function load_import_menu() {
 		global $code_snippets;
 
+		/* Create the snippet tables if they don't exist */
+		$code_snippets->maybe_create_tables( true, true );
+
 		/* Process import files */
+
 		if ( isset( $_FILES['code_snippets_import_file']['tmp_name'] ) ) {
-			$count = $code_snippets->import( $_FILES['code_snippets_import_file']['tmp_name'] );
-			if ( $count ) {
-				wp_redirect( add_query_arg( 'imported', $count ) );
+
+			/* Import the snippets. The result is the number of snippets that were imported */
+			$result = $code_snippets->import( $_FILES['code_snippets_import_file']['tmp_name'] );
+
+			/* Send the amount of imported snippets to the page */
+			if ( false === $result ) {
+				wp_redirect( add_query_arg( 'error', true ) );
+			} else {
+				wp_redirect( add_query_arg( 'imported', $result ) );
 			}
 		}
 
 		/* Load the screen help tabs */
-		require_once $this->include_dir . 'help/import.php';
+		$this->load_help_tabs( 'import' );
 	}
 
 	/**
 	 * Displays the manage snippets page
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access private
-	 *
+	 * @uses   $this->get_view() To load an admin view template
 	 * @return void
 	 */
 	function display_manage_menu() {
-		require_once $this->include_dir . 'admin/manage.php';
+		$this->get_view( 'manage' );
 	}
 
 	/**
 	 * Displays the single snippet page
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access private
-	 *
+	 * @uses   $this->get_view() To load an admin view template
 	 * @return void
 	 */
 	function display_single_menu() {
-		require_once $this->include_dir . 'admin/single.php';
+		$this->get_view( 'single' );
 	}
 
 	/**
 	 * Displays the import snippets page
 	 *
-	 * @since 1.3
+	 * @since  1.3
 	 * @access private
-	 *
+	 * @uses   $this->get_view() To load an admin view template
 	 * @return void
 	 */
 	function display_import_menu() {
-		require_once $this->include_dir . 'admin/import.php';
+		$this->get_view( 'import' );
 	}
 
 	/**
 	 * Add a description editor to the single snippet page
 	 *
-	 * @since 1.7
+	 * @since  1.7
 	 * @access private
-	 *
-	 * @param object $snippet The snippet being used for this page
+	 * @param  object $snippet The snippet being used for this page
+	 * @return void
 	 */
 	function description_editor_box( $snippet ) {
+
 		?>
 
 		<label for="snippet_description">
-			<h3><div style="position: absolute;"><?php _e('Description', 'code-snippets');
-			?> <span style="font-weight: normal;"><?php esc_html_e('(Optional)', 'code-snippets'); ?></span></div></h3>
+			<h3><div style="position: absolute;"><?php _e( 'Description', 'code-snippets' ); ?></div></h3>
 		</label>
 
 		<?php
@@ -535,7 +597,7 @@ class Code_Snippets_Admin {
 		wp_editor(
 			$snippet->description,
 			'description',
-			apply_filters( 'code_snippets_description_editor_settings', array(
+			apply_filters( 'code_snippets/admin/description_editor_settings', array(
 				'textarea_name' => 'snippet_description',
 				'textarea_rows' => 10,
 				'teeny' => true,
@@ -547,18 +609,17 @@ class Code_Snippets_Admin {
 	/**
 	 * Adds a link pointing to the Manage Snippets page
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 * @access private
-	 *
-	 * @param array $links The existing plugin action links
-	 * @return array The modified plugin action links
+	 * @param  array $links The existing plugin action links
+	 * @return array        The modified plugin action links
 	 */
 	function settings_link( $links ) {
 		array_unshift( $links, sprintf(
 			'<a href="%1$s" title="%2$s">%3$s</a>',
 			$this->manage_url,
-			__('Manage your existing snippets', 'code-snippets'),
-			__('Manage', 'code-snippets')
+			__( 'Manage your existing snippets', 'code-snippets' ),
+			__( 'Manage', 'code-snippets' )
 		) );
 		return $links;
 	}
@@ -566,39 +627,39 @@ class Code_Snippets_Admin {
 	/**
 	 * Adds extra links related to the plugin
 	 *
-	 * @since 1.2
+	 * @since  1.2
 	 * @access private
-	 *
-	 * @param array $links The existing plugin info links
-	 * @param string $file The plugin the links are for
-	 * @return array The modified plugin info links
+	 * @param  array  $links The existing plugin info links
+	 * @param  string $file  The plugin the links are for
+	 * @return array         The modified plugin info links
 	 */
 	function plugin_meta( $links, $file ) {
 		global $code_snippets;
 
 		/* We only want to affect the Code Snippets plugin listing */
-		if ( $file !== $code_snippets->basename ) return $links;
+		if ( $file !== $code_snippets->basename )
+			return $links;
 
 		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
 
 		/* array_merge appends the links to the end */
 		return array_merge( $links, array(
 			sprintf( $format,
-				'http://wordpress.org/extend/plugins/code-snippets/',
-				__('Visit the WordPress.org plugin page', 'code-snippets'),
-				__('About', 'code-snippets')
+				'http://wordpress.org/plugins/code-snippets/',
+				__( 'Visit the WordPress.org plugin page', 'code-snippets' ),
+				__( 'About', 'code-snippets' )
 			),
 			sprintf( $format,
 				'http://wordpress.org/support/plugin/code-snippets/',
-				__('Visit the support forums', 'code-snippets'),
-				__('Support', 'code-snippets')
+				__( 'Visit the support forums', 'code-snippets' ),
+				__( 'Support', 'code-snippets' )
 			),
 			sprintf( $format,
 				'http://code-snippets.bungeshea.com/donate/',
-				__("Support this plugin's development", 'code-snippets'),
-				__('Donate', 'code-snippets')
+				__("Support this plugin's development", 'code-snippets' ),
+				__( 'Donate', 'code-snippets' )
 			)
 		) );
 	}
 
-}
+} // end of class

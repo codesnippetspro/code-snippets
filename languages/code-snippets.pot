@@ -274,7 +274,7 @@ msgid "For more information:"
 msgstr ""
 
 #: includes/help/import.php:27 includes/help/single.php:32
-msgid "<a href=\"http://wordpress.org/extend/plugins/code-snippets\" target=\"_blank\">WordPress Extend</a>"
+msgid "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank\">WordPress Extend</a>"
 msgstr ""
 
 #: includes/help/import.php:28 includes/help/manage.php:29
@@ -307,7 +307,7 @@ msgid "Even if you're sure that you don't want to use Code Snippets ever again o
 msgstr ""
 
 #: includes/help/manage.php:28
-msgid "<a href=\"http://wordpress.org/extend/plugins/code-snippets\" target=\"_blank\">WordPress Extend</a></p>"
+msgid "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank\">WordPress Extend</a></p>"
 msgstr ""
 
 #: includes/help/single.php:7
