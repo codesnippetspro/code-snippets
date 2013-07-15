@@ -1,9 +1,8 @@
 Thumbs.db
 Desktop.ini
 .DS_Store
-*.bat
-*.sh
-*.cmd
+build-*.sh
 wiki
 docs
+node_modules
 .idea

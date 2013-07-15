@@ -1,0 +1,21 @@
+{
+  "name": "code-snippets",
+  "title": "Code Snippets",
+  "description": "An easy, clean and simple way to add code snippets to a WordPress-powered site.",
+  "version": "1.8.0",
+  "homepage": "http://code-snippets.bungeshea.com",
+  "author": {
+    "name": "Shea Bunge",
+    "email": "info@bungeshea.com",
+    "url": "http://bungeshea.com"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-imagemin": "~0.1.4",
+    "grunt-contrib-compass": "~0.3.0",
+    "grunt-contrib-watch": "~0.4.4"
+  },
+  "keywords": []
+}
