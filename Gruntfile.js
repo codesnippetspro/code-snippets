@@ -67,15 +67,53 @@ module.exports = function(grunt) {
 					dest: 'assets/images/'
 				}]
 			}
+		},
+
+		clean: {
+			deploy: ['deploy']
+		},
+
+		copy: {
+			deploy: {
+				files: [{
+					expand: true,
+					cwd: './',
+					src: [
+						'*',
+						'includes/**/*',
+						'admin/**/*',
+						'assets/**/*',
+						'vendor/**/*',
+						'languages/**/*',
+
+						'!.travis.yml',
+						'!.gitignore',
+						'!build-*.sh',
+						'!README.md',
+						'!CHANGELOG.md',
+						'!Gruntfile.js',
+						'!package.json',
+						'!phpunit.xml',
+						'!**/Thumbs.db'
+					],
+					dest: 'deploy/',
+					filter: 'isFile'
+				}]
+			}
 		}
 
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-watch');
+
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-compass');
 	grunt.loadNpmTasks('grunt-contrib-imagemin');
 
+	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-copy');
+
 	grunt.registerTask( 'default', ['jshint', 'uglify', 'compass'] );
+	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:deploy'] );
 };
