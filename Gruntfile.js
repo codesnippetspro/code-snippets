@@ -2,7 +2,26 @@ module.exports = function(grunt) {
 	'use strict';
 
 	grunt.initConfig( {
-		pkg: grunt.file.readJSON( 'package.json' ),
+
+		watch: {
+
+			styles: {
+				files: ['assets/scss/**/*.{scss,sass}'],
+				tasks: ['compass'],
+				options: {
+					debounceDelay: 500
+				}
+			},
+
+			scripts: {
+				files: ['assets/js/**/*.js'],
+				tasks: ['jshint'],
+				options: {
+					debounceDelay: 500
+				}
+			}
+
+		},
 
 		jshint: {
 			gruntfile: ['Gruntfile.js'],
@@ -52,6 +71,7 @@ module.exports = function(grunt) {
 
 	});
 
+	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-compass');
