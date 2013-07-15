@@ -94,8 +94,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( 'mp6' === get_user_option( 'admin_color' ) ) {
 
 			wp_enqueue_style(
-				'snippets-table',
-				plugins_url( 'assets/table.mp6.css', $code_snippets->file ),
+				'snippets-table-mp6',
+				plugins_url( 'assets/css/table-mp6.css', $code_snippets->file ),
 				false,
 				$code_snippets->version
 			);
@@ -104,7 +104,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			wp_enqueue_style(
 				'snippets-table',
-				plugins_url( 'assets/table.css', $code_snippets->file ),
+				plugins_url( 'assets/css/table.css', $code_snippets->file ),
 				false,
 				$code_snippets->version
 			);

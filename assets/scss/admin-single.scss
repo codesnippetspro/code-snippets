@@ -1,9 +1,8 @@
 /**
  * Custom styling for the single snippet admin page
- *
- * @package    Code_Snippets
- * @subpackage Assets
  */
+
+@import 'compass/css3';
 
 h3 {
 	/* Provide some decent space between the fields and titles */
@@ -23,10 +22,15 @@ label {
 	min-height: 300px;
 	height: auto;
 	border: 1px solid #eee;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	-o-border-radius: 3px;
+	@include border-radius(3px);
+
+	/* Tweak things for the MP6 interface */
+	.admin-color-mp6 & {
+		width: 100%;
+		border-color: #dfdfdf;
+		background-color: #fff;
+	}
+
 }
 
 .CodeMirror-scroll {
@@ -36,11 +40,4 @@ label {
 
 .CodeMirror-sizer {
 	min-height: 300px !important;
-}
-
-/** Tweak things for the MP6 interface */
-.admin-color-mp6 .CodeMirror {
-	width: 100%;
-	border-color: #dfdfdf;
-	background-color: #fff;
 }

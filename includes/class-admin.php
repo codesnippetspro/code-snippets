@@ -215,7 +215,7 @@ class Code_Snippets_Admin {
 		/* Use a different screen icon for the MP6 interface */
 		if ( get_user_option( 'admin_color' )  !== 'mp6' ) {
 			$menu_icon = apply_filters( 'code_snippets/admin/menu_icon_url',
-				plugins_url( 'assets/menu-icon.png', $code_snippets->file )
+				plugins_url( 'assets/images/menu-icon.png', $code_snippets->file )
 			);
 		} else {
 			$menu_icon = 'div';
@@ -298,11 +298,11 @@ class Code_Snippets_Admin {
 	function load_admin_icon_style() {
 		global $code_snippets;
 
-		$stylesheet = ( 'mp6' === get_user_option( 'admin_color' ) ? 'menu-icon.mp6' : 'screen-icon' );
+		$stylesheet = ( 'mp6' === get_user_option( 'admin_color' ) ? 'menu-icon-mp6' : 'screen-icon' );
 
 		wp_enqueue_style(
 			'icon-snippets',
-			plugins_url( "assets/{$stylesheet}.css", $code_snippets->file ),
+			plugins_url( "assets/css/{$stylesheet}.css", $code_snippets->file ),
 			false,
 			$code_snippets->version
 		);
@@ -468,13 +468,27 @@ class Code_Snippets_Admin {
 			$codemirror_version
 		);
 
-		/* Enqueue the registered scripts */
-		wp_enqueue_script( array(
-			'codemirror-addon-matchbrackets',
-			'codemirror-mode-clike',
-			'codemirror-mode-php',
-			'codemirror-addon-search',
-		) );
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+
+			/* Enqueue the registered scripts */
+			wp_enqueue_script( array(
+				'codemirror-addon-matchbrackets',
+				'codemirror-mode-clike',
+				'codemirror-mode-php',
+				'codemirror-addon-search',
+			) );
+
+		} else {
+
+			/* Load the minified version if SCRIPT_DEBUG is turned off */
+			wp_enqueue_script(
+				'code-snippets-codemirror-min-js',
+				plugins_url( 'vendor/codemirror.min.js', $code_snippets->file ),
+				false,
+				$codemirror_version
+			);
+
+		}
 
 		/* Enqueue the registered stylesheets */
 		wp_enqueue_style( array(
@@ -485,7 +499,7 @@ class Code_Snippets_Admin {
 		/* Enqueue custom styling */
 		wp_enqueue_style(
 			'code-snippets-admin-single',
-			plugins_url( 'assets/admin-single.css', $code_snippets->file ),
+			plugins_url( 'assets/css/admin-single.css', $code_snippets->file ),
 			false,
 			$code_snippets->version
 		);
@@ -493,7 +507,7 @@ class Code_Snippets_Admin {
 		/* Enqueue custom scripts */
 		wp_enqueue_script(
 			'code-snippets-admin-single',
-			plugins_url( 'assets/admin-single.js', $code_snippets->file ),
+			plugins_url( 'assets/js/admin-single.js', $code_snippets->file ),
 			false,
 			$code_snippets->version,
 			true // Load in footer
