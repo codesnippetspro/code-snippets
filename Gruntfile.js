@@ -25,11 +25,26 @@ module.exports = function(grunt) {
 					]
 				}
 			}
+		},
+
+		imagemin: {
+			dist: {
+				options: {
+					optimizationLevel: 7,
+					progressive: true
+				},
+				files: {
+					'assets/menu-icon.png': 'assets/menu-icon.png',
+					'assets/screen-icon.png': 'assets/screen-icon.png'
+				}
+			}
 		}
 
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-imagemin');
+
 	grunt.registerTask( 'default', ['jshint', 'uglify'] );
 };
