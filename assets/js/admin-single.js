@@ -1,8 +1,5 @@
 /**
  * Loads CodeMirror on the snippet editor
- *
- * @package    Code_Snippets
- * @subpackage Assets
  */
 
 var editor = CodeMirror.fromTextArea(document.getElementById("snippet_code"), {
