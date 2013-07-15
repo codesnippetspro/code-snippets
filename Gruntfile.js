@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 
 		jshint: {
 			gruntfile: ['Gruntfile.js'],
-			assets: ['assets/**/*.js']
+			assets: ['assets/js/**/*.js']
 		},
 
 		uglify: {
@@ -27,16 +27,26 @@ module.exports = function(grunt) {
 			}
 		},
 
+		compass: {
+			dist: {
+				options: {
+					config: 'assets/config.rb'
+				}
+			}
+		},
+
 		imagemin: {
 			dist: {
 				options: {
 					optimizationLevel: 7,
 					progressive: true
 				},
-				files: {
-					'assets/menu-icon.png': 'assets/menu-icon.png',
-					'assets/screen-icon.png': 'assets/screen-icon.png'
-				}
+				files: [{
+					expand: true,
+					cwd: 'assets/images/',
+					src: '**/*',
+					dest: 'assets/images/'
+				}]
 			}
 		}
 
@@ -44,7 +54,8 @@ module.exports = function(grunt) {
 
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-compass');
 	grunt.loadNpmTasks('grunt-contrib-imagemin');
 
-	grunt.registerTask( 'default', ['jshint', 'uglify'] );
+	grunt.registerTask( 'default', ['jshint', 'uglify', 'compass'] );
 };
