@@ -1,9 +1,27 @@
+# Windows
 Thumbs.db
 Desktop.ini
+
+# Mac
 .DS_Store
+
+# Build scripts
 build-*.sh
+
+# Other components
 wiki
 docs
-node_modules
-.idea
 deploy
+
+# Grunt
+node_modules
+
+# PhpStorm
+.idea
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Compass
+.sass-cache
