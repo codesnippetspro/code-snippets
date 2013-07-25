@@ -102,10 +102,21 @@ module.exports = function(grunt) {
 					filter: 'isFile'
 				}]
 			}
+		},
+
+		shell: {
+
+			/**
+			 * Requires PhpDocumentor to be installed and in PATH
+			 */
+			phpdoc: {
+				command: 'phpdoc -t docs/api -f code-snippets.php -d admin,includes --title "Code Snippets"'
+			}
 		}
 
 	});
 
 	grunt.registerTask( 'default', ['jshint', 'uglify', 'compass'] );
 	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:deploy'] );
+	grunt.registerTask( 'phpdoc', 'shell:phpdoc' );
 };

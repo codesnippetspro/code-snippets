@@ -18,7 +18,8 @@
     "grunt-contrib-watch": "~0.4.4",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-clean": "~0.4.1",
-    "matchdep": "~0.1.2"
+    "matchdep": "~0.1.2",
+    "grunt-shell": "~0.3.1"
   },
   "keywords": []
 }
