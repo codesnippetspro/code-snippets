@@ -1,0 +1,23 @@
+{
+	"name"       : "bungeshea/code-snippets",
+	"description": "An easy, clean and simple way to add code snippets to a WordPress-powered site.",
+	"keywords"   : ["wordpress","snippets","organization"],
+	"type"       : "wordpress-plugin",
+	"homepage"   : "http://code-snippets.bungeshea.com",
+	"license"    : "MIT",
+	"authors"    : [
+		{
+			"name"    : "Shea Bunge",
+			"email"   : "info@bungeshea.com",
+			"homepage": "http://bungeshea.com"
+		}
+	],
+	"support"    : {
+		"issues": "https://github.com/bungeshea/code-snippets/issues",
+		"source": "https://github.com/bungeshea/code-snippets"
+	},
+	"require"    : {
+		"php": ">=5.2.7",
+		"composer/installers": "~1.0"
+	}
+}
