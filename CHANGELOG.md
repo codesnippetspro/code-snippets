@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.1
+* Compiled all CodeMirror scripts into a single file
+* Use Sass + Compass for CSS
+* Minify CSS
+* Fixed code typo that was breaking export files
+
 ## 1.8
 * Allow no snippet name or code to be set
 * Prevented an error on fresh multisite installations
