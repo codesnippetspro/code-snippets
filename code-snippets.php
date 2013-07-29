@@ -7,7 +7,7 @@
  * contribute to the localization, please see http://code-snippets.bungeshea.com
  *
  * @package   Code_Snippets
- * @version   1.8
+ * @version   1.8.1
  * @author    Shea Bunge <http://bungeshea.com/>
  * @copyright Copyright (c) 2012-2013, Shea Bunge
  * @link      http://code-snippets.bungeshea.com
@@ -20,7 +20,7 @@
  * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
- * Version: 1.8
+ * Version: 1.8.1
  * License: MIT
  * License URI: license.txt
  * Text Domain: code-snippets
@@ -58,7 +58,7 @@ final class Code_Snippets {
 	 * @access public
 	 * @var    string A PHP-standardized version number string
 	 */
-	public $version = '1.8';
+	public $version = '1.8.1';
 
 	/**
 	 * Variables to hold plugin paths
@@ -712,7 +712,7 @@ final class Code_Snippets {
 		$snippet->code = ltrim( $snippet->code, '<?php' );
 		$snippet->code = ltrim( $snippet->code, '<?' );
 		$snippet->code = rtrim( $snippet->code, '?>' );
-		
+
 		/* escape the data */
 		$snippet->name        = esc_sql( $snippet->name );
 		$snippet->description = esc_sql( $snippet->description );

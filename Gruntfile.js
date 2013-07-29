@@ -1,7 +1,9 @@
 module.exports = function(grunt) {
 	'use strict';
 
-	grunt.initConfig( {
+	require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+
+	grunt.initConfig({
 
 		watch: {
 
@@ -67,15 +69,56 @@ module.exports = function(grunt) {
 					dest: 'assets/images/'
 				}]
 			}
+		},
+
+		clean: {
+			deploy: ['deploy']
+		},
+
+		copy: {
+			deploy: {
+				files: [{
+					expand: true,
+					cwd: './',
+					src: [
+						'*',
+						'includes/**/*',
+						'admin/**/*',
+						'assets/**/*',
+						'vendor/**/*',
+						'languages/**/*',
+
+						'!.travis.yml',
+						'!.gitignore',
+						'!README.md',
+						'!CHANGELOG.md',
+						'!Gruntfile.js',
+						'!package.json',
+						'!phpunit.xml',
+						'!**/Thumbs.db',
+						'!composer.json',
+						'!*.sublime-project',
+						'!*.sublime-workspace'
+					],
+					dest: 'deploy/',
+					filter: 'isFile'
+				}]
+			}
+		},
+
+		shell: {
+
+			/**
+			 * Requires PhpDocumentor to be installed and in PATH
+			 */
+			phpdoc: {
+				command: 'phpdoc -t docs/api -f code-snippets.php -d admin,includes --title "Code Snippets"'
+			}
 		}
 
 	});
 
-	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-contrib-compass');
-	grunt.loadNpmTasks('grunt-contrib-imagemin');
-
 	grunt.registerTask( 'default', ['jshint', 'uglify', 'compass'] );
+	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:deploy'] );
+	grunt.registerTask( 'phpdoc', 'shell:phpdoc' );
 };

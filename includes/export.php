@@ -67,7 +67,7 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 <?php
 
 		/* Run the generator line through the standard WordPress filter */
-		$gen  = sprinf (
+		$gen  = sprintf (
 			'<!-- generator="Code Snippets/%s" created="%s" -->',
 			$code_snippets->version,
 			date('Y-m-d H:i')
