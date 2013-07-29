@@ -90,13 +90,15 @@ module.exports = function(grunt) {
 
 						'!.travis.yml',
 						'!.gitignore',
-						'!build-*.sh',
 						'!README.md',
 						'!CHANGELOG.md',
 						'!Gruntfile.js',
 						'!package.json',
 						'!phpunit.xml',
-						'!**/Thumbs.db'
+						'!**/Thumbs.db',
+						'!composer.json',
+						'!*.sublime-project',
+						'!*.sublime-workspace'
 					],
 					dest: 'deploy/',
 					filter: 'isFile'
