@@ -3,6 +3,7 @@
 ## 1.8.1
 * Compiled all CodeMirror scripts into a single file
 * Use Sass + Compass for CSS
+* Use Grunt for build automation
 * Minify CSS
 * Fixed code typo that was breaking export files
 * Updated CodeMirror to 3.15

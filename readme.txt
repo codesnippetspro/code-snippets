@@ -4,7 +4,7 @@ Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.8
+Stable tag: 1.8.1
 License: MIT
 License URI: license.txt
 
@@ -110,6 +110,14 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 5. Managing exiting snippets in the MP6 interface
 
 == Changelog ==
+
+= 1.8.1 =
+* Compiled all CodeMirror scripts into a single file
+* Use Sass + Compass for CSS
+* Use Grunt for build automation
+* Minify CSS
+* Fixed code typo that was breaking export files
+* Updated CodeMirror to 3.15
 
 = 1.8 =
 * Allow no snippet name or code to be set
@@ -219,6 +227,9 @@ Plugin updates will be posted on the [plugin's homepage](http://code-snippets.bu
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
 
 == Upgrade Notice ==
+
+= 1.8.1 =
+Minimize CSS and JS; updated CodeMirror; fixed export files
 
 = 1.8 =
 Setting a snippet name and code are now optional; better table creation method; changes to API; bug fixes
