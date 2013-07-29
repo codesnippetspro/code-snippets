@@ -5,6 +5,7 @@
 * Use Sass + Compass for CSS
 * Minify CSS
 * Fixed code typo that was breaking export files
+* Updated CodeMirror to 3.15
 
 ## 1.8
 * Allow no snippet name or code to be set
