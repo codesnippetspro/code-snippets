@@ -184,6 +184,10 @@ final class Code_Snippets {
 		/* Load the global functions file */
 		$this->get_include( 'functions' );
 
+		/* Add and remove capabilities from Super Admins if their statuses change */
+		add_action( 'grant_super_admin', array( $this, 'add_ms_caps' ) );
+		add_action( 'remove_super_admin', array( $this, 'remove_ms_caps' ) );
+
 		/* Let extension plugins know that it's okay to load */
 		do_action( 'code_snippets_init' );
 	}
@@ -512,16 +516,18 @@ final class Code_Snippets {
 	 *
 	 * @since  1.5
 	 * @access private
-	 * @param boolean $install true to add the capabilities, false to remove
+	 * @param  boolean $install true to add the capabilities, false to remove
 	 * @return void
 	 */
 	function setup_roles( $install = true ) {
 
-		$this->caps = apply_filters( 'code_snippets_caps', array(
+		$this->caps = apply_filters( 'code_snippets_caps',
+			array(
 				'manage_snippets',
 				'install_snippets',
 				'edit_snippets'
-			) );
+			)
+		);
 
 		$this->role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
 
@@ -538,7 +544,7 @@ final class Code_Snippets {
 	 *
 	 * @since  1.5
 	 * @access private
-	 * @param boolean $install true to add the capabilities, false to remove
+	 * @param  boolean $install true to add the capabilities, false to remove
 	 * @return void
 	 */
 	function setup_ms_roles( $install = true ) {
@@ -546,21 +552,62 @@ final class Code_Snippets {
 		if ( ! is_multisite() )
 			return;
 
-		$this->network_caps = apply_filters( 'code_snippets_network_caps', array(
+		$this->network_caps = apply_filters( 'code_snippets_network_caps',
+			array(
 				'manage_network_snippets',
 				'install_network_snippets',
 				'edit_network_snippets'
-			) );
+			)
+		);
 
 		$supers = get_super_admins();
+
 		foreach ( $supers as $admin ) {
 			$user = new WP_User( 0, $admin );
-			foreach ( $this->network_caps as $cap ) {
-				if ( $install )
-					$user->add_cap( $cap );
-				else
-					$user->remove_cap( $cap );
-			}
+
+			if ( $install )
+				$this->grant_ms_caps( $user );
+			else
+				$this->remove_ms_caps( $user );
+		}
+
+	}
+
+	/**
+	 * Add the multisite capabilities to a user
+	 *
+	 * @since  1.8.2
+	 * @param  object|integer $user An instance of the WP_User class or a user ID
+	 * @return void
+	 */
+	function add_ms_caps( $user ) {
+
+		/* If a user ID is passed in, convert it to a WP_User */
+		if ( is_int( $user ) )
+			$user = new WP_User( $user );
+
+		/* Add the capabilities */
+		foreach ( $this->network_caps as $cap ) {
+			$user->add_cap( $cap );
+		}
+	}
+
+	/**
+	 * Remove the multisite capabilities from a user
+	 *
+	 * @since  1.8.2
+	 * @param  object|integer $user An instance of the WP_User class or a user ID
+	 * @return void
+	 */
+	function remove_ms_caps( $user ) {
+
+		/* If a user ID is passed in, convert it to a WP_User */
+		if ( is_int( $user ) )
+			$user = new WP_User( $user );
+
+		/* Remove the capabilities */
+		foreach ( $this->network_caps as $cap ) {
+			$user->remove_cap( $cap );
 		}
 	}
 
