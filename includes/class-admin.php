@@ -435,31 +435,28 @@ class Code_Snippets_Admin {
 
 		/* CodeMirror modes */
 
-		$modes = array( 'php', 'clike' );
+		wp_register_script(
+			"codemirror-mode-clike",
+			plugins_url( "vendor/codemirror/mode/clike.js", $code_snippets->file ),
+			array( 'codemirror' ),
+			$codemirror_version
+		);
 
-		foreach ( $modes as $mode ) {
-
-			wp_register_script(
-				"codemirror-mode-$mode",
-				plugins_url( "vendor/codemirror/mode/$mode.js", $code_snippets->file ),
-				array( 'codemirror' ),
-				$codemirror_version
-			);
-		}
+		wp_register_script(
+			"codemirror-mode-php",
+			plugins_url( "vendor/codemirror/mode/php.js", $code_snippets->file ),
+			array( 'codemirror', 'codemirror-mode-clike' ),
+			$codemirror_version
+		);
 
 		/* CodeMirror addons */
 
-		$addons = array( 'dialog', 'searchcursor', 'search', 'matchbrackets' );
-
-		foreach ( $addons as $addon ) {
-
-			wp_register_script(
-				"codemirror-addon-$addon",
-				plugins_url( "vendor/codemirror/addon/$addon.js", $code_snippets->file ),
-				array( 'codemirror' ),
-				$codemirror_version
-			);
-		}
+		wp_register_script(
+			"codemirror-addon-dialog",
+			plugins_url( "vendor/codemirror/addon/dialog.js", $code_snippets->file ),
+			array( 'codemirror' ),
+			$codemirror_version
+		);
 
 		wp_register_style(
 			'codemirror-addon-dialog',
@@ -468,20 +465,39 @@ class Code_Snippets_Admin {
 			$codemirror_version
 		);
 
-		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+		wp_register_script(
+			"codemirror-addon-searchcursor",
+			plugins_url( "vendor/codemirror/addon/searchcursor.js", $code_snippets->file ),
+			array( 'codemirror' ),
+			$codemirror_version
+		);
+
+		wp_register_script(
+			"codemirror-addon-search",
+			plugins_url( "vendor/codemirror/addon/search.js", $code_snippets->file ),
+			array( 'codemirror', 'codemirror-addon-dialog', 'codemirror-addon-searchcursor' ),
+			$codemirror_version
+		);
+
+		wp_register_script(
+			"codemirror-addon-matchbrackets",
+			plugins_url( "vendor/codemirror/addon/matchbrackets.js", $code_snippets->file ),
+			array( 'codemirror' ),
+			$codemirror_version
+		);
+
+		if ( $debug ) {
 
 			/* Enqueue the registered scripts */
 			wp_enqueue_script( array(
-				'codemirror-addon-matchbrackets',
-				'codemirror-mode-clike',
 				'codemirror-mode-php',
+				'codemirror-addon-matchbrackets',
 				'codemirror-addon-search',
 			) );
 
 		} else {
 
-			/* Load the minified version if SCRIPT_DEBUG is turned off */
-			wp_enqueue_script(
+			wp_register_script(
 				'code-snippets-codemirror-min-js',
 				plugins_url( 'vendor/codemirror.min.js', $code_snippets->file ),
 				false,
@@ -490,27 +506,35 @@ class Code_Snippets_Admin {
 
 		}
 
-		/* Enqueue the registered stylesheets */
-		wp_enqueue_style( array(
-			'codemirror',
-			'codemirror-addon-dialog',
-		) );
+		/* Enqueue stylesheets */
 
-		/* Enqueue custom styling */
 		wp_enqueue_style(
 			'code-snippets-admin-single',
 			plugins_url( 'assets/css/admin-single.css', $code_snippets->file ),
-			false,
+			array( 'codemirror', 'codemirror-addon-dialog' ),
 			$code_snippets->version
 		);
 
-		/* Enqueue custom scripts */
+		/* Enqueue scripts */
+
+		/* Load the minified version of CodeMirror if SCRIPT_DEBUG is turned off */
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'CODEMIRROR_SCRIPT_DEBUG' ) && CODEMIRROR_SCRIPT_DEBUG ) {
+
+			$deps = array(
+				'codemirror-mode-php',
+				'codemirror-addon-matchbrackets',
+				'codemirror-addon-search'
+			);
+
+		} else {
+			$deps = array( 'code-snippets-codemirror-min-js' );
+		}
+
 		wp_enqueue_script(
 			'code-snippets-admin-single',
 			plugins_url( 'assets/js/admin-single.js', $code_snippets->file ),
-			false,
-			$code_snippets->version,
-			true // Load in footer
+			$deps,
+			$code_snippets->version
 		);
 	}
 
