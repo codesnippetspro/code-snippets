@@ -111,6 +111,9 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 
 == Changelog ==
 
+= 1.8.1.1 =
+* Updated MP6 icon implementation
+
 = 1.8.1 =
 * Compiled all CodeMirror scripts into a single file
 * Use Sass + Compass for CSS
@@ -227,6 +230,9 @@ Plugin updates will be posted on the [plugin's homepage](http://code-snippets.bu
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
 
 == Upgrade Notice ==
+
+= 1.8.1.1 =
+Updated MP6 icon implementation
 
 = 1.8.1 =
 Minimize CSS and JS; updated CodeMirror; fixed export files

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.8.1.1
+* Updated MP6 icon implementation
+
 ## 1.8.1
 * Compiled all CodeMirror scripts into a single file
 * Use Sass + Compass for CSS
