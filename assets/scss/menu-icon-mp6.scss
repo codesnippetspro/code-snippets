@@ -2,25 +2,17 @@
  * Use our awesome SVG icon on MP6 admin pages
  */
 
-#toplevel_page_snippets {
+#toplevel_page_snippets div.wp-menu-image {
 
-	.wp-menu-image {
-		background: {
-			image: inline-image( 'menu-icon-mp6.svg' ) !important;
-			position: center center !important;
-			size: 20px 20px !important;
-			repeat: no-repeat;
-		}
+	&:before {
+		display: none;
 	}
 
-	&.wp-has-current-submenu .wp-menu-image,
-	&.wp-has-current-submenu:hover .wp-menu-image {
-		background-image: inline-image( 'menu-icon-mp6-active.svg' ) !important;
+	background: {
+		image: inline-image( 'menu-icon-mp6.svg') !important;
+		position: center center !important;
+		size: 20px 20px;
+		repeat: no-repeat;
 	}
-
-	&:hover .wp-menu-image {
-		background-image: inline-image( 'menu-icon-mp6-hover.svg' ) !important;
-	}
-
+	margin-top: 2px;
 }
-
