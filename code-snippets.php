@@ -754,13 +754,13 @@ final class Code_Snippets {
 
 		$snippet = $this->build_snippet_object( $snippet );
 
-		/* remove the <?php and ?> tags from the snippet */
-		$snippet->code = trim( $snippet->code );
-		$snippet->code = ltrim( $snippet->code, '<?php' );
-		$snippet->code = ltrim( $snippet->code, '<?' );
-		$snippet->code = rtrim( $snippet->code, '?>' );
+		/* Remove <?php and <? from beginning of snippet */
+		$snippet->code = preg_replace( '|^[\s]*<\?(php)?|', '', $snippet->code );
 
-		/* escape the data */
+		/* Remove ?> from end of snippet */
+		$snippet->code = preg_replace( '|\?>[\s]*$|', '', $snippet->code );
+
+		/* Escape the data */
 		$snippet->name        = esc_sql( $snippet->name );
 		$snippet->description = esc_sql( $snippet->description );
 		$snippet->code        = esc_sql( $snippet->code );
