@@ -185,7 +185,7 @@ final class Code_Snippets {
 		$this->get_include( 'functions' );
 
 		/* Add and remove capabilities from Super Admins if their statuses change */
-		add_action( 'grant_super_admin', array( $this, 'add_ms_caps' ) );
+		add_action( 'grant_super_admin', array( $this, 'grant_ms_caps' ) );
 		add_action( 'remove_super_admin', array( $this, 'remove_ms_caps' ) );
 
 		/* Let extension plugins know that it's okay to load */
@@ -580,7 +580,7 @@ final class Code_Snippets {
 	 * @param  object|integer $user An instance of the WP_User class or a user ID
 	 * @return void
 	 */
-	function add_ms_caps( $user ) {
+	function grant_ms_caps( $user ) {
 
 		/* If a user ID is passed in, convert it to a WP_User */
 		if ( is_int( $user ) )
