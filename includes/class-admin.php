@@ -507,7 +507,8 @@ class Code_Snippets_Admin {
 			'code-snippets-admin-single',
 			plugins_url( 'assets/js/admin-single.js', $code_snippets->file ),
 			false,
-			$code_snippets->version
+			$code_snippets->version,
+			true // Load in footer
 		);
 	}
 
