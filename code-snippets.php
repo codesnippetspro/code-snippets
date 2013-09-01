@@ -761,10 +761,11 @@ final class Code_Snippets {
 		$snippet->code = preg_replace( '|\?>[\s]*$|', '', $snippet->code );
 
 		/* Escape the data */
+		$snippet->id          = absint ( $snippet->id );
 		$snippet->name        = esc_sql( $snippet->name );
 		$snippet->description = esc_sql( $snippet->description );
 		$snippet->code        = esc_sql( $snippet->code );
-		$snippet->id          = absint ( $snippet->id );
+		$snippet->code        = str_replace( '%', '%%', $snippet->code );
 
 		return apply_filters( 'code_snippets/escape_snippet_data', $snippet );
 	}
