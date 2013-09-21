@@ -63,6 +63,16 @@ Yes. Just add it but do not activate it yet.
 = How can I insert my snippet into the post text editor? =
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
+= Where did the Import menu go after upgrading to version 1.6? =
+As the import menu is not accessed neatly as much as the manage or add new menus, it has been moved under the *Tools > Import* menu. To access the import page, visit the *Tools > Import* menu in your WordPress dashboard and click on the **Code Snippets** link.
+
+= Help! I just activated a snippet, and my whole site broke! =
+You can try activating 'safe mode'. All snippets will not execute while safe mode is active, allowing you to access your site and deactivate the snippet that is causing the error. To activate safe mode, add the following line to your wp-config.php file, just before the line that reads `/* That's all, stop editing! Happy blogging. */`:
+
+    define('CODE_SNIPPETS_SAFE_MODE', true);
+
+To turn safe mode off, either [comment out](http://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
+
 = What do I use to write my snippets? =
 The [CodeMirror](http://codemirror.net) source-code editor will add line numbers, syntax highlighting, bracket matching, search, tabulate and other cool features to the code editor.
 
