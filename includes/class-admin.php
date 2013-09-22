@@ -353,11 +353,12 @@ class Code_Snippets_Admin {
 			wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets' ) );
 
 		/* Save the snippet if one has been submitted */
-		if ( isset( $_REQUEST['save_snippet'] ) || isset( $_REQUEST['save_snippet_activate'] ) ) {
+		if ( isset( $_REQUEST['save_snippet'] ) || isset( $_REQUEST['save_snippet_toggle_active'] ) ) {
 
-			/* Set the snippet to active if we used the 'Save Changed & Activate' button */
-			if ( isset( $_REQUEST['save_snippet_activate'] ) )
-				$_POST['snippet_active'] = 1;
+			/* Toggle the snippet active status if we used the 'Save Changes & Activate/Deactivate' button */
+			if ( isset( $_REQUEST['save_snippet_toggle_active'] ) ) {
+				$_POST['snippet_active'] = ( $_POST['snippet_active'] ? 0 : 1 );
+			}
 
 			/* Save the snippet to the database */
 			$result = $code_snippets->save_snippet( $_POST );

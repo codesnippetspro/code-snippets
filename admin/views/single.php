@@ -67,10 +67,13 @@ $code_snippets->admin->get_messages( 'single' );
 			<?php
 				submit_button( null, 'primary', 'save_snippet', false );
 
-				if ( ! $snippet->active ) {
-					echo '&nbsp;&nbsp;&nbsp;';
-					submit_button( __( 'Save Changes &amp; Activate', 'code-snippets' ), 'secondary', 'save_snippet_activate', false );
-				}
+				echo '&nbsp;&nbsp;&nbsp;';
+
+				$toggle_button_text = $snippet->active ?
+					__( 'Save Changes &amp; Deactivate', 'code-snippets' ) :
+					__( 'Save Changes &amp; Activate', 'code-snippets' );
+
+				submit_button( $toggle_button_text, 'secondary', 'save_snippet_toggle_active', false );
 			?>
 		</p>
 
