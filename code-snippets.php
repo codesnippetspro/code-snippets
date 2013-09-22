@@ -785,8 +785,9 @@ final class Code_Snippets {
 		$snippet = $this->build_snippet_object( $snippet );
 
 		$snippet->name        = stripslashes( $snippet->name );
-		$snippet->code        = stripslashes( $snippet->code );
 		$snippet->description = stripslashes( $snippet->description );
+		$snippet->code        = stripslashes( $snippet->code );
+		$snippet->code        = str_replace( '%%', '%', $snippet->code );
 
 		return apply_filters( 'code_snippets/unescape_snippet_data', $snippet );
 	}
