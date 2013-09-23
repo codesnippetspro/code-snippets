@@ -675,7 +675,7 @@ final class Code_Snippets {
 
 		}
 
-		return $this->cap;f
+		return $this->cap;
 	}
 
 	/**
