@@ -440,7 +440,15 @@ final class Code_Snippets {
 		/* Skip this if we're on the latest version */
 		if ( version_compare( $current_version, $this->version, '<' ) ) {
 
-			/* Data in database is un escaped in 1.8 */
+			/* Remove capabilities that were deprecated in 1.9 */
+			if ( version_compare( $current_version, '1.9', '<' ) ) {
+				$role = get_role( $this->role );
+
+				$role->remove_cap( 'install_network_snippets' );
+				$role->remove_cap( 'edit_network_snippets' );
+			}
+
+			/* Data in database is unescaped in 1.8 */
 			if ( version_compare( $current_version, '1.8', '<' ) ) {
 
 				$tables = array();
@@ -499,13 +507,30 @@ final class Code_Snippets {
 
 			if ( version_compare( $current_ms_version, $this->version, '<' ) ) {
 
+				/* Remove capabilities that were deprecated in 1.9 */
+				if ( version_compare( $current_version, '1.9', '<' ) ) {
+					$supers = get_super_admins();
+
+					foreach ( $supers as $admin ) {
+						$user = new WP_User( 0, $admin );
+						$user->remove_cap( 'install_network_snippets' );
+						$user->remove_cap( 'edit_network_snippets' );
+					}
+				}
+
+				/* Add custom capabilities introduced in 1.5 */
 				if ( version_compare( $current_ms_version, '1.5', '<' ) ) {
 					$this->setup_ms_roles( true );
 				}
 
 				/* Migrate recently_network_activated_snippets to the site options */
 				if ( get_option( 'recently_network_activated_snippets' ) ) {
-					add_site_option( 'recently_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
+
+					add_site_option(
+						'recently_activated_snippets',
+						get_option( 'recently_network_activated_snippets', array() )
+					);
+
 					delete_option( 'recently_network_activated_snippets' );
 				}
 
@@ -530,7 +555,7 @@ final class Code_Snippets {
 		$role = get_role( $this->role );
 
 		/* Add the capability */
-		$this->role->add_cap( $this->cap );
+		$role->add_cap( $this->cap );
 	}
 
 	/**
@@ -546,7 +571,7 @@ final class Code_Snippets {
 		$role = get_role( $this->role );
 
 		/* Remove the capability */
-		$this->role->remove_cap( $this->cap );
+		$role->remove_cap( $this->cap );
 	}
 
 	/**
@@ -650,7 +675,7 @@ final class Code_Snippets {
 
 		}
 
-		return $this->cap;
+		return $this->cap;f
 	}
 
 	/**
