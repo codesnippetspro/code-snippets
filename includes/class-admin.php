@@ -412,7 +412,7 @@ class Code_Snippets_Admin {
 			return;
 
 		/* CodeMirror package version */
-		$codemirror_version = '3.14';
+		$codemirror_version = '3.17';
 
 		/* CodeMirror base framework */
 
