@@ -1028,7 +1028,9 @@ final class Code_Snippets {
 		foreach ( $xml->children() as $snippet ) {
 			/* force manual build of object to strip out unsupported fields
 			   by converting snippet object into an array */
-			$this->save_snippet( get_object_vars( $snippet ), $scope );
+			$snippet = get_object_vars( $snippet );
+			$snippet = array_map( 'htmlspecialchars_decode', $snippet )
+			$this->save_snippet( $snippet, $scope );
 		}
 
 		do_action( 'code_snippets/import', $xml, $scope );

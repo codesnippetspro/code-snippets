@@ -110,8 +110,10 @@ function code_snippets_export( $ids, $format = 'xml' ) {
 					continue;
 
 				/* Output the field and value as indented XML */
-				if ( $value = apply_filters( "code_snippets/export/$field", $value ) )
+				if ( $value = apply_filters( "code_snippets/export/$field", $value ) ) {
+					$value = htmlspecialchars( $value );
 					echo "\n\t\t<$field>$value</$field>";
+				}
 			}
 			echo "\n\t" . '</snippet>';
 		}
