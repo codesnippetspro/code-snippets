@@ -10,6 +10,7 @@
 * Removed edit and install capabilities (now only uses the manage capability)
 * Fixed HTML breaking in export files ([#](http://wordpress.org/support/topic/import-problem-7))
 * Updated CodeMirror to version 3.18
+* Make the title of each snippet on the manage page a clickable link to edit the snippet ([#](http://wordpress.org/support/topic/deactivate-button-in-edit-snippet-page?replies=9#post-4682757))
 
 ## 1.8.1
 * Compiled all CodeMirror scripts into a single file

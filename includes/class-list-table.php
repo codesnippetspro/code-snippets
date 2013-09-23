@@ -202,7 +202,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/* Return the name contents */
 		return apply_filters(
 			'code_snippets/list_table/column_name',
-			sprintf ( '<strong>%s</strong>', $title ) . $this->row_actions( $actions, true ),
+			sprintf ( '<a href="%2$s"><strong>%1$s</strong></a>', $title,
+				add_query_arg( 'edit', $snippet->id, $code_snippets->admin_single_url )
+			) . $this->row_actions( $actions, true ),
 			$snippet
 		);
 	}
