@@ -91,7 +91,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			return;
 
 		/* Load a different stylesheet if MP6 is active */
-		if ( 'mp6' === get_user_option( 'admin_color' ) ) {
+		if ( defined( 'MP6' ) ) {
 
 			wp_enqueue_style(
 				'snippets-table-mp6',

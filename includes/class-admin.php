@@ -213,7 +213,7 @@ class Code_Snippets_Admin {
 		global $code_snippets;
 
 		/* Use a different screen icon for the MP6 interface */
-		if ( get_user_option( 'admin_color' )  !== 'mp6' ) {
+		if ( ! defined( 'MP6' ) ) {
 			$menu_icon = apply_filters( 'code_snippets/admin/menu_icon_url',
 				plugins_url( 'assets/images/menu-icon.png', $code_snippets->file )
 			);
