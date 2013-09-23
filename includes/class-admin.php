@@ -360,13 +360,13 @@ class Code_Snippets_Admin {
 			$result = $code_snippets->save_snippet( $_POST );
 
 			/* Strip old status query vars from URL */
-			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'activated', 'invalid' ) );
+			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'activated', 'deactivated', 'invalid' ) );
 
 			/* Build the status message and redirect */
 
-			if ( isset( $_REQUEST['save_snippet_activate'] ) && $result ) {
-				/* Snippet was activated */
-				$_SERVER['REQUEST_URI'] = add_query_arg( 'activated', true );
+			if ( isset( $_REQUEST['save_snippet_toggle_activate'] ) && $result ) {
+				/* Snippet was activated or deactivated in addition to saving*/
+				$_SERVER['REQUEST_URI'] = add_query_arg( $_POST['snippet_active'] ? 'deactivated' : 'activated', true );
 			}
 
 			if ( ! $result || $result < 1 ) {
