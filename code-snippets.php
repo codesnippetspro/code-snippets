@@ -185,8 +185,8 @@ final class Code_Snippets {
 		$this->get_include( 'functions' );
 
 		/* Add and remove capabilities from Super Admins if their statuses change */
-		add_action( 'grant_super_admin', array( $this, 'grant_ms_caps' ) );
-		add_action( 'remove_super_admin', array( $this, 'remove_ms_caps' ) );
+		add_action( 'grant_super_admin', array( $this, 'add_ms_cap_to_user' ) );
+		add_action( 'remove_super_admin', array( $this, 'remove_ms_cap_from_user' ) );
 
 		/* Let extension plugins know that it's okay to load */
 		do_action( 'code_snippets_init' );
@@ -206,6 +206,11 @@ final class Code_Snippets {
 		$this->basename   = plugin_basename( $this->file );
 		$this->plugin_dir = plugin_dir_path( $this->file );
 		$this->plugin_url = plugin_dir_url ( $this->file );
+
+		/* Roles and capabilities variables */
+		$this->role        = apply_filters( 'code_snippets_role', 'administrator' );
+		$this->cap         = apply_filters( 'code_snippets_cap', 'manage_snippets' );
+		$this->network_cap = apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
 
 		if ( is_admin() ) {
 
@@ -435,7 +440,7 @@ final class Code_Snippets {
 		/* Skip this if we're on the latest version */
 		if ( version_compare( $current_version, $this->version, '<' ) ) {
 
-			/* Data in database is unsecapped in 1.8 */
+			/* Data in database is un escaped in 1.8 */
 			if ( version_compare( $current_version, '1.8', '<' ) ) {
 
 				$tables = array();
@@ -514,33 +519,38 @@ final class Code_Snippets {
 	/**
 	 * Register the user roles and capabilities
 	 *
+	 * @since  1.9 Removed uninstall functionality into a separate method
 	 * @since  1.5
 	 * @access private
-	 * @param  boolean $install true to add the capabilities, false to remove
 	 * @return void
 	 */
-	function setup_roles( $install = true ) {
+	function add_cap() {
 
-		$this->caps = apply_filters( 'code_snippets_caps',
-			array(
-				'manage_snippets',
-				'install_snippets',
-				'edit_snippets'
-			)
-		);
+		/* Retrieve the role object */
+		$role = get_role( $this->role );
 
-		$this->role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
-
-		foreach ( $this->caps as $cap ) {
-			if ( $install )
-				$this->role->add_cap( $cap );
-			else
-				$this->role->remove_cap( $cap );
-		}
+		/* Add the capability */
+		$this->role->add_cap( $this->cap );
 	}
 
 	/**
-	 * Register the multisite user roles and capabilities
+	 * Deregister the user roles and capabilities
+	 *
+	 * @since  1.9
+	 * @access private
+	 * @return void
+	 */
+	function remove_cap() {
+
+		/* Retrieve the role object */
+		$role = get_role( $this->role );
+
+		/* Remove the capability */
+		$this->role->remove_cap( $this->cap );
+	}
+
+	/**
+	 * Register or deregister the multisite user roles and capabilities
 	 *
 	 * @since  1.5
 	 * @access private
@@ -552,23 +562,15 @@ final class Code_Snippets {
 		if ( ! is_multisite() )
 			return;
 
-		$this->network_caps = apply_filters( 'code_snippets_network_caps',
-			array(
-				'manage_network_snippets',
-				'install_network_snippets',
-				'edit_network_snippets'
-			)
-		);
-
 		$supers = get_super_admins();
 
 		foreach ( $supers as $admin ) {
 			$user = new WP_User( 0, $admin );
 
 			if ( $install )
-				$this->grant_ms_caps( $user );
+				$user->add_cap( $this->network_cap );
 			else
-				$this->remove_ms_caps( $user );
+				$user->remove_cap( $this->network_cap );
 		}
 
 	}
@@ -576,39 +578,33 @@ final class Code_Snippets {
 	/**
 	 * Add the multisite capabilities to a user
 	 *
-	 * @since  1.8.2
-	 * @param  object|integer $user An instance of the WP_User class or a user ID
+	 * @since  1.9
+	 * @param  integer $user_id The ID of the user to add the cap to
 	 * @return void
 	 */
-	function grant_ms_caps( $user ) {
+	function add_ms_cap_to_user( $user_id ) {
 
-		/* If a user ID is passed in, convert it to a WP_User */
-		if ( is_int( $user ) )
-			$user = new WP_User( $user );
+		/* Get the user from the ID */
+		$user = new WP_User( $user_id );
 
-		/* Add the capabilities */
-		foreach ( $this->network_caps as $cap ) {
-			$user->add_cap( $cap );
-		}
+		/* Add the capability */
+		$user->add_cap( $this->network_cap );
 	}
 
 	/**
 	 * Remove the multisite capabilities from a user
 	 *
-	 * @since  1.8.2
-	 * @param  object|integer $user An instance of the WP_User class or a user ID
+	 * @since  1.9
+	 * @param  integer $user_id The ID of the user to remove the cap from
 	 * @return void
 	 */
-	function remove_ms_caps( $user ) {
+	function remove_ms_cap_from_user( $user_id ) {
 
-		/* If a user ID is passed in, convert it to a WP_User */
-		if ( is_int( $user ) )
-			$user = new WP_User( $user );
+		/* Get the user from the ID */
+		$user = new WP_User( $user_id );
 
-		/* Remove the capabilities */
-		foreach ( $this->network_caps as $cap ) {
-			$user->remove_cap( $cap );
-		}
+		/* Remove the capability */
+		$user->remove_cap( $this->network_cap );
 	}
 
 	/**
@@ -617,15 +613,16 @@ final class Code_Snippets {
 	 * @uses   current_user_can() To check if the current user can perform a task
 	 * @uses   $this->get_cap()   To get the required capability
 	 *
-	 * @param string  $do_what The task to check against.
+	 * @param  string $deprecated Deprecated in 1.9
 	 * @return boolean            Whether the current user can perform this task or not
 	 *
+	 * @since  1.9                Removed multiple capability support
 	 * @since  1.7.1.1            Moved logic to $this->get_cap() method
 	 * @since  1.7.1
 	 * @access public
 	 */
-	public function user_can( $do_what ) {
-		return current_user_can( $this->get_cap( $do_what ) );
+	public function user_can( $deprecated = '' ) {
+		return current_user_can( $this->get_cap() );
 	}
 
 	/**
@@ -635,23 +632,25 @@ final class Code_Snippets {
 	 * If multisite, checks if *Enable Administration Menus: Snippets* is active
 	 * under the *Settings > Network Settings* network admin menu
 	 *
+	 * @param  string $deprecated Deprecated in 1.9
+	 * @since  1.9                Removed first parameter
 	 * @since  1.7.1.1
 	 * @access public
-	 * @param string  $do_what The action to retrieve the capability for
 	 * @return void
 	 */
-	public function get_cap( $do_what ) {
+	public function get_cap( $deprecated = '' ) {
 
 		if ( is_multisite() ) {
+			$active_menus = get_site_option( 'menu_items', array() );
 
-			if ( in_array( 'snippets', get_site_option( 'menu_items', array() ) ) )
-				return "{$do_what}_snippets";
-			else
-				return "{$do_what}_network_snippets";
+			/* If multisite is enabled and the snippet menu is not activated,
+			   restrict snippet operations to super admins only */
+			if ( ! in_array( 'snippets', $active_menus ) )
+				return $this->network_cap;
 
-		} else {
-			return "{$do_what}_snippets";
 		}
+
+		return $this->cap;
 	}
 
 	/**
@@ -1160,7 +1159,7 @@ final class Code_Snippets {
 					delete_option( 'cs_db_version' );
 					delete_option( 'recently_activated_snippets' );
 					delete_option( 'code_snippets_version' );
-					$code_snippets->setup_roles( false );
+					$code_snippets->remove_cap();
 				}
 				restore_current_blog();
 			}
@@ -1172,7 +1171,7 @@ final class Code_Snippets {
 			$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
 			delete_option( 'code_snippets_version' );
 			delete_option( 'recently_activated_snippets' );
-			$code_snippets->setup_roles( false );
+			$code_snippets->remove_cap();
 		}
 	}
 
