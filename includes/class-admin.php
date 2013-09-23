@@ -225,7 +225,7 @@ class Code_Snippets_Admin {
 		$this->manage_page = add_menu_page(
 			__( 'Snippets', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' ),
-			$code_snippets->get_cap( 'manage' ),
+			$code_snippets->get_cap(),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu' ),
 			$menu_icon,
@@ -236,7 +236,7 @@ class Code_Snippets_Admin {
 			$this->manage_slug,
 			__( 'Snippets', 'code-snippets' ),
 			__( 'Manage', 'code-snippets' ),
-			$code_snippets->get_cap( 'manage' ),
+			$code_snippets->get_cap(),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu')
 		);
@@ -248,7 +248,7 @@ class Code_Snippets_Admin {
 			$this->manage_slug,
 			$editing ? __( 'Edit Snippet', 'code-snippets' ) : __( 'Add New Snippet', 'code-snippets' ),
 			$editing ? __( 'Edit', 'code-snippets' ) : __( 'Add New', 'code-snippets' ),
-			$code_snippets->get_cap( 'install' ),
+			$code_snippets->get_cap(),
 			$this->single_slug,
 			array( $this, 'display_single_menu' )
 		);
@@ -276,7 +276,7 @@ class Code_Snippets_Admin {
 			$this->manage_slug,
 			__( 'Import Snippets', 'code-snippets' ),
 			__( 'Import', 'code-snippets' ),
-			$code_snippets->get_cap( 'import' ),
+			$code_snippets->get_cap(),
 			'import-code-snippets',
 			array( $this, 'display_import_menu' )
 		);
@@ -347,10 +347,6 @@ class Code_Snippets_Admin {
 
 		/* Create the snippet tables if they don't exist */
 		$code_snippets->maybe_create_tables( true, true );
-
-		/* Don't let the user pass if they can't edit (install check is done by WP) */
-		if ( isset( $_REQUEST['edit'] ) && ! $code_snippets->user_can( 'edit' ) )
-			wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets' ) );
 
 		/* Save the snippet if one has been submitted */
 		if ( isset( $_REQUEST['save_snippet'] ) || isset( $_REQUEST['save_snippet_toggle_active'] ) ) {
