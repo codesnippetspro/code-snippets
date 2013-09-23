@@ -9,6 +9,10 @@
     "email": "info@bungeshea.com",
     "url": "http://bungeshea.com"
   },
+  "repository" : {
+    "type" : "git",
+    "url" : "http://github.com/bungeshea/code-snippets.git"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-uglify": "~0.2.2",
