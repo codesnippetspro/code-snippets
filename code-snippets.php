@@ -1029,7 +1029,7 @@ final class Code_Snippets {
 			/* force manual build of object to strip out unsupported fields
 			   by converting snippet object into an array */
 			$snippet = get_object_vars( $snippet );
-			$snippet = array_map( 'htmlspecialchars_decode', $snippet )
+			$snippet = array_map( 'htmlspecialchars_decode', $snippet );
 			$this->save_snippet( $snippet, $scope );
 		}
 
