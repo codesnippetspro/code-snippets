@@ -487,7 +487,7 @@ final class Code_Snippets {
 
 			/* Register the capabilities once only */
 			if ( version_compare( $current_version, '1.5',  '<' ) ) {
-				$this->setup_roles( true );
+				$this->add_cap();
 			}
 
 			if ( version_compare( $previous_version, '1.2', '<' ) ) {
