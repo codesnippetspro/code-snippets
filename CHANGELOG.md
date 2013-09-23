@@ -1,7 +1,15 @@
 # Changelog
 
-## 1.8.1.1
+## 1.9
+* Add and remove network capabilities as super admins are added and removed
 * Updated MP6 icon implementation
+* Replaced buggy trim `<?php` and `?>` functionality with a much more reliable regex method ([#](http://wordpress.org/support/topic/character-gets-cut))
+* Added French translation thanks to translator [oWEB](http://office-web.net)
+* Fixed snippet failing to save when code contains `%` character, props to [nikan06](http://wordpress.org/support/profile/nikan06) ([#](http://wordpress.org/support/topic/percent-sign-bug))
+* Added 'Save & Deactivate' button to the edit snippet page ([#](http://wordpress.org/support/topic/deactivate-button-in-edit-snippet-page))
+* Removed edit and install capabilities (now only uses the manage capability)
+* Fixed HTML breaking in export files ([#](http://wordpress.org/support/topic/import-problem-7))
+* Updated CodeMirror to version 3.17
 
 ## 1.8.1
 * Compiled all CodeMirror scripts into a single file
