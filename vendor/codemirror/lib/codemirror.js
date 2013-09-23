@@ -1,4 +1,4 @@
-// CodeMirror version 3.17
+// CodeMirror version 3.18
 //
 // CodeMirror is the only global var we claim
 window.CodeMirror = (function() {
@@ -311,7 +311,7 @@ window.CodeMirror = (function() {
       options.gutters = options.gutters.concat(["CodeMirror-linenumbers"]);
     } else if (found > -1 && !options.lineNumbers) {
       options.gutters = options.gutters.slice(0);
-      options.gutters.splice(i, 1);
+      options.gutters.splice(found, 1);
     }
   }
 
@@ -5881,7 +5881,7 @@ window.CodeMirror = (function() {
 
   // THE END
 
-  CodeMirror.version = "3.17.0";
+  CodeMirror.version = "3.18.0";
 
   return CodeMirror;
 })();
