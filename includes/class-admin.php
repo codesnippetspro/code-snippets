@@ -89,6 +89,9 @@ class Code_Snippets_Admin {
 
 		/* Allow super admins to control site admins access to snippet admin menus */
 		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items') );
+
+		/* Add the survey notice on the manage snippets page */
+		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
 	}
 
 	/**
@@ -669,6 +672,20 @@ class Code_Snippets_Admin {
 				__( 'Donate', 'code-snippets' )
 			)
 		) );
+	}
+
+	/**
+	 * Print a notice inviting people to participate in the Code Snippets Survey
+	 *
+	 * @since  1.9
+	 * @return void
+	 */
+	function survey_message() {
+
+		printf ( '<br /><div class="updated"><p>%s&nbsp;&nbsp;<a href="http://code-snippets.bungeshea.com/survey/" class="button secondary" target="_blank">%s</a></p></div>',
+			__( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ),
+			__( 'Take the survey now', 'code-snippets' )
+		);
 	}
 
 } // end of class
