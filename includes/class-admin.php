@@ -351,6 +351,17 @@ class Code_Snippets_Admin {
 		/* Create the snippet tables if they don't exist */
 		$code_snippets->maybe_create_tables( true, true );
 
+		/* Load the screen help tabs */
+		$this->load_help_tabs( 'single' );
+
+		/* Enqueue the code editor and other scripts and styles */
+		add_filter( 'admin_enqueue_scripts', array( $this, 'single_menu_enqueue_scripts' ) );
+
+		/* Make sure the nonce validates before we do any snippet ops */
+		if ( ! wp_verify_nonce( 'save_snippet' ) ) {
+			return;
+		}
+
 		/* Save the snippet if one has been submitted */
 		if ( isset( $_POST['save_snippet'] ) || isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
 
@@ -402,12 +413,6 @@ class Code_Snippets_Admin {
 		elseif ( isset( $_POST['snippet_id'], $_POST['export_snippet'] ) ) {
 			$code_snippets->export( $_POST['snippet_id'] );
 		}
-
-		/* Load the screen help tabs */
-		$this->load_help_tabs( 'single' );
-
-		/* Enqueue the code editor and other scripts and styles */
-		add_filter( 'admin_enqueue_scripts', array( $this, 'single_menu_enqueue_scripts' ) );
 	}
 
 	/**
