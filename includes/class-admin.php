@@ -386,6 +386,17 @@ class Code_Snippets_Admin {
 			}
 		}
 
+		/* Delete the snippet if the button was clicked */
+		elseif ( isset( $_POST['snippet_id'], $_REQUEST['delete_snippet'] ) ) {
+			$code_snippets->delete_snippet( $_POST['snippet_id'] );
+			wp_redirect( add_query_arg( 'delete', true, $this->manage_url ) );
+		}
+
+		/* Export the snippet if the button was clicked */
+		elseif ( isset( $_POST['snippet_id'], $_REQUEST['export_snippet'] ) ) {
+			$code_snippets->export( $_POST['snippet_id'] );
+		}
+
 		/* Load the screen help tabs */
 		$this->load_help_tabs( 'single' );
 

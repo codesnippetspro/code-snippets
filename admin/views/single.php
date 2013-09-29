@@ -65,15 +65,39 @@ $code_snippets->admin->get_messages( 'single' );
 
 		<p class="submit">
 			<?php
+				/* Save Snippet button */
 				submit_button( null, 'primary', 'save_snippet', false );
 
 				echo '&nbsp;&nbsp;&nbsp;';
 
+				/* Save Snippet & (De)activate button */
 				$toggle_button_text = $snippet->active ?
 					__( 'Save Changes &amp; Deactivate', 'code-snippets' ) :
 					__( 'Save Changes &amp; Activate', 'code-snippets' );
 
 				submit_button( $toggle_button_text, 'secondary', 'save_snippet_toggle_active', false );
+
+				if ( 0 !== $snippet->id ) {
+
+					echo '&nbsp;&nbsp;&nbsp;';
+
+					/* Export button */
+					submit_button( __( 'Export', 'code-snippets' ), 'secondary', 'export_snippet', false );
+
+					echo '&nbsp;&nbsp;&nbsp;';
+
+					/* Delete button */
+					$delete_confirm = sprintf (
+						'onclick="%s"',
+						esc_js( sprintf(
+							'return confirm("%s");',
+							__("You are about to permanently delete the selected item.\n'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+						) )
+					);
+
+					submit_button( __( 'Delete', 'code-snippets' ), 'secondary', 'delete_snippet', false, $delete_confirm );
+				}
+
 			?>
 		</p>
 
