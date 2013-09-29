@@ -700,12 +700,14 @@ class Code_Snippets_Admin {
 	function survey_message() {
 		global $current_user;
 
+		$key = 'ignore_code_snippets_survey_message';
+
 		/* Bail now if the user has dismissed the message */
-		if ( get_user_meta( $current_user->ID, 'ignore_code_snippets_survey_message' ) ) {
+		if ( get_user_meta( $current_user->ID, $key ) ) {
 			return;
 		}
-		elseif ( isset( $_GET['ignore_code_snippets_survey_message'] ) ) {
-			add_user_meta( $current_user->ID, 'ignore_code_snippets_survey_message', true, true );
+		elseif ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], $key ) ) {
+			add_user_meta( $current_user->ID, $key, true, true );
 			return;
 		}
 
@@ -721,7 +723,7 @@ class Code_Snippets_Admin {
 			<?php _e( 'Take the survey now', 'code-snippets' ); ?>
 		</a>
 
-		<a href="<?php echo add_query_arg( 'ignore_code_snippets_survey_message', true ); ?>">Dismiss</a>
+		<a href="<?php echo wp_nonce_url( add_query_arg( $key, true ), $key ); ?>">Dismiss</a>
 
 		</p></div>
 
