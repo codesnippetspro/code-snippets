@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 
 			styles: {
 				files: ['assets/scss/**/*.{scss,sass}'],
-				tasks: ['compass', 'autoprefixer'],
+				tasks: ['styles'],
 				options: {
 					debounceDelay: 500
 				}
@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 
 			scripts: {
 				files: ['assets/js/**/*.js'],
-				tasks: ['jshint'],
+				tasks: ['scripts'],
 				options: {
 					debounceDelay: 500
 				}
@@ -127,7 +127,11 @@ module.exports = function(grunt) {
 
 	});
 
-	grunt.registerTask( 'default', ['jshint', 'uglify', 'compass', 'autoprefixer'] );
+	grunt.registerTask( 'styles', ['compass', 'autoprefixer'] );
+	grunt.registerTask( 'scripts', 'jshint' );
+
 	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:deploy'] );
 	grunt.registerTask( 'phpdoc', 'shell:phpdoc' );
+
+	grunt.registerTask( 'default', ['styles', 'scripts', 'uglify'] );
 };
