@@ -599,7 +599,7 @@ class Code_Snippets_Admin {
 		?>
 
 		<label for="snippet_description">
-			<h3><div style="position: absolute;"><?php _e( 'Description', 'code-snippets' ); ?></div></h3>
+			<h3><div><?php _e( 'Description', 'code-snippets' ); ?></div></h3>
 		</label>
 
 		<?php

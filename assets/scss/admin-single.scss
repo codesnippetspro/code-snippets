@@ -14,6 +14,16 @@ label {
 	cursor: auto;
 }
 
+/* Position the description heading on the same level as the editor buttons */
+label[for="snippet_description"] h3 div {
+	position: absolute;
+
+	/* MP6 fails with TeenyMCE editor */
+	.mp6 & {
+		position: initial;
+	}
+}
+
 /**
  * Customize the CodeMirror editor
  * to look pretty and support auto-resizing
@@ -25,7 +35,7 @@ label {
 	@include border-radius(3px);
 
 	/* Tweak things for the MP6 interface */
-	.admin-color-mp6 & {
+	.mp6 & {
 		width: 100%;
 		border-color: #dfdfdf;
 		background-color: #fff;
