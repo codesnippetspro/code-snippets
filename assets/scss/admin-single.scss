@@ -2,8 +2,6 @@
  * Custom styling for the single snippet admin page
  */
 
-@import 'compass/css3';
-
 h3 {
 	/* Provide some decent space between the fields and titles */
 	margin: 1em 0;
@@ -32,7 +30,7 @@ label[for="snippet_description"] h3 div {
 	min-height: 300px;
 	height: auto;
 	border: 1px solid #eee;
-	@include border-radius(3px);
+	border-radius: 3px;
 
 	/* Tweak things for the MP6 interface */
 	.mp6 & {

@@ -18,7 +18,6 @@ label[for="snippet_description"] h3 div {
   min-height: 300px;
   height: auto;
   border: 1px solid #eee;
-  -o-border-radius: 3px;
   border-radius: 3px;
 }
 
