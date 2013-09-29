@@ -698,11 +698,34 @@ class Code_Snippets_Admin {
 	 * @return void
 	 */
 	function survey_message() {
+		global $current_user;
 
-		printf ( '<br /><div class="updated"><p>%s&nbsp;&nbsp;<a href="http://code-snippets.bungeshea.com/survey/" class="button secondary" target="_blank">%s</a></p></div>',
-			__( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ),
-			__( 'Take the survey now', 'code-snippets' )
-		);
+		/* Bail now if the user has dismissed the message */
+		if ( get_user_meta( $current_user->ID, 'ignore_code_snippets_survey_message' ) ) {
+			return;
+		}
+		elseif ( isset( $_GET['ignore_code_snippets_survey_message'] ) ) {
+			add_user_meta( $current_user->ID, 'ignore_code_snippets_survey_message', true, true );
+			return;
+		}
+
+		?>
+
+		<br />
+
+		<div class="updated"><p>
+
+		<?php _e( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ); ?>
+
+		<a href="http://code-snippets.bungeshea.com/survey/" class="button secondary" target="_blank" style="margin: auto .5em;">
+			<?php _e( 'Take the survey now', 'code-snippets' ); ?>
+		</a>
+
+		<a href="<?php echo add_query_arg( 'ignore_code_snippets_survey_message', true ); ?>">Dismiss</a>
+
+		</p></div>
+
+		<?php
 	}
 
 } // end of class
