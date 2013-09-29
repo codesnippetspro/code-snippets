@@ -22,6 +22,11 @@ label[for="snippet_description"] h3 div {
 	}
 }
 
+/* Add spacing in between the action buttons */
+.submit .button {
+	margin-right: .5em;
+}
+
 /**
  * Customize the CodeMirror editor
  * to look pretty and support auto-resizing

@@ -68,8 +68,6 @@ $code_snippets->admin->get_messages( 'single' );
 				/* Save Snippet button */
 				submit_button( null, 'primary', 'save_snippet', false );
 
-				echo '&nbsp;&nbsp;&nbsp;';
-
 				/* Save Snippet & (De)activate button */
 				$toggle_button_text = $snippet->active ?
 					__( 'Save Changes &amp; Deactivate', 'code-snippets' ) :
@@ -79,12 +77,8 @@ $code_snippets->admin->get_messages( 'single' );
 
 				if ( 0 !== $snippet->id ) {
 
-					echo '&nbsp;&nbsp;&nbsp;';
-
 					/* Export button */
 					submit_button( __( 'Export', 'code-snippets' ), 'secondary', 'export_snippet', false );
-
-					echo '&nbsp;&nbsp;&nbsp;';
 
 					/* Delete button */
 					$delete_confirm = sprintf (
