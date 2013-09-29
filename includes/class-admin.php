@@ -367,9 +367,9 @@ class Code_Snippets_Admin {
 
 			/* Build the status message and redirect */
 
-			if ( isset( $_REQUEST['save_snippet_toggle_activate'] ) && $result ) {
+			if ( isset( $_REQUEST['save_snippet_toggle_active'] ) && $result ) {
 				/* Snippet was activated or deactivated in addition to saving*/
-				$_SERVER['REQUEST_URI'] = add_query_arg( $_POST['snippet_active'] ? 'deactivated' : 'activated', true );
+				$_SERVER['REQUEST_URI'] = add_query_arg( $_POST['snippet_active'] ? 'activated' : 'deactivated', true );
 			}
 
 			if ( ! $result || $result < 1 ) {
