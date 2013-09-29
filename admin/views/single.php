@@ -65,31 +65,46 @@ $code_snippets->admin->get_messages( 'single' );
 
 		<p class="submit">
 			<?php
+
 				/* Save Snippet button */
+
 				submit_button( null, 'primary', 'save_snippet', false );
 
-				/* Save Snippet & (De)activate button */
-				$toggle_button_text = $snippet->active ?
-					__( 'Save Changes &amp; Deactivate', 'code-snippets' ) :
-					__( 'Save Changes &amp; Activate', 'code-snippets' );
+				/* Save Snippet & Activate/Deactivate button */
 
-				submit_button( $toggle_button_text, 'secondary', 'save_snippet_toggle_active', false );
+				if ( ! $snippet->active ) {
+					submit_button(
+						__( 'Save Changes &amp; Activate', 'code-snippets' ),
+						'secondary', 'save_snippet_activate', false
+					);
+
+				} else {
+					submit_button(
+						__( 'Save Changes &amp; Deactivate', 'code-snippets' ),
+						'secondary', 'save_snippet_deactivate', false
+					);
+				}
 
 				if ( 0 !== $snippet->id ) {
 
 					/* Export button */
+
 					submit_button( __( 'Export', 'code-snippets' ), 'secondary', 'export_snippet', false );
 
 					/* Delete button */
-					$delete_confirm = sprintf (
-						'onclick="%s"',
-						esc_js( sprintf(
+
+					$confirm_delete_js = esc_js(
+						sprintf (
 							'return confirm("%s");',
-							__("You are about to permanently delete this snippet.\n'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
-						) )
+							__( "You are about to permanently delete this snippet.\n'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+						)
 					);
 
-					submit_button( __( 'Delete', 'code-snippets' ), 'secondary', 'delete_snippet', false, $delete_confirm );
+					submit_button(
+						__( 'Delete', 'code-snippets' ),
+						'secondary', 'delete_snippet', false,
+						sprintf ( 'onclick="%s"', $confirm_delete_js )
+					);
 				}
 
 			?>

@@ -352,11 +352,13 @@ class Code_Snippets_Admin {
 		$code_snippets->maybe_create_tables( true, true );
 
 		/* Save the snippet if one has been submitted */
-		if ( isset( $_REQUEST['save_snippet'] ) || isset( $_REQUEST['save_snippet_toggle_active'] ) ) {
+		if ( isset( $_POST['save_snippet'] ) || isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
 
-			/* Toggle the snippet active status if we used the 'Save Changes & Activate/Deactivate' button */
-			if ( isset( $_REQUEST['save_snippet_toggle_active'] ) ) {
-				$_POST['snippet_active'] = ( $_POST['snippet_active'] ? 0 : 1 );
+			/* Activate or deactivate the snippet before saving if we clicked the button */
+			if ( isset( $_POST['save_snippet_activate'] ) ) {
+				$_POST['snippet_active'] = 1;
+			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
+				$_POST['snippet_active'] = 0;
 			}
 
 			/* Save the snippet to the database */
@@ -367,16 +369,20 @@ class Code_Snippets_Admin {
 
 			/* Build the status message and redirect */
 
-			if ( isset( $_REQUEST['save_snippet_toggle_active'] ) && $result ) {
-				/* Snippet was activated or deactivated in addition to saving*/
-				$_SERVER['REQUEST_URI'] = add_query_arg( $_POST['snippet_active'] ? 'activated' : 'deactivated', true );
+			if ( $result && isset( $_POST['save_snippet_activate'] ) ) {
+				/* Snippet was activated addition to saving*/
+				$_SERVER['REQUEST_URI'] = add_query_arg( 'activated', true );
+			}
+			elseif ( $result && isset( $_POST['save_snippet_deactivate'] ) ) {
+				/* Snippet was deactivated addition to saving*/
+				$_SERVER['REQUEST_URI'] = add_query_arg( 'deactivated', true );
 			}
 
 			if ( ! $result || $result < 1 ) {
 				/* An error occurred */
 				wp_redirect( add_query_arg( 'invalid', true ) );
 			}
-			elseif ( isset( $_REQUEST['snippet_id'] ) ) {
+			elseif ( isset( $_POST['snippet_id'] ) ) {
 				/* Existing snippet was updated */
 				wp_redirect( add_query_arg(	array( 'edit' => $result, 'updated' => true ) ) );
 			}
@@ -387,13 +393,13 @@ class Code_Snippets_Admin {
 		}
 
 		/* Delete the snippet if the button was clicked */
-		elseif ( isset( $_POST['snippet_id'], $_REQUEST['delete_snippet'] ) ) {
+		elseif ( isset( $_POST['snippet_id'], $_POST['delete_snippet'] ) ) {
 			$code_snippets->delete_snippet( $_POST['snippet_id'] );
 			wp_redirect( add_query_arg( 'delete', true, $this->manage_url ) );
 		}
 
 		/* Export the snippet if the button was clicked */
-		elseif ( isset( $_POST['snippet_id'], $_REQUEST['export_snippet'] ) ) {
+		elseif ( isset( $_POST['snippet_id'], $_POST['export_snippet'] ) ) {
 			$code_snippets->export( $_POST['snippet_id'] );
 		}
 
