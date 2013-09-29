@@ -65,6 +65,15 @@ module.exports = function(grunt) {
 			}
 		},
 
+		csso: {
+			dist: {
+				expand: true,
+				flatten: true,
+				src: 'assets/css/*.css',
+				dest: 'assets/css'
+			}
+		},
+
 		imagemin: {
 			dist: {
 				options: {
@@ -127,7 +136,7 @@ module.exports = function(grunt) {
 
 	});
 
-	grunt.registerTask( 'styles', ['compass', 'autoprefixer'] );
+	grunt.registerTask( 'styles', ['compass', 'autoprefixer', 'csso'] );
 	grunt.registerTask( 'scripts', 'jshint' );
 
 	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:deploy'] );
