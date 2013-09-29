@@ -91,7 +91,7 @@ $code_snippets->admin->get_messages( 'single' );
 						'onclick="%s"',
 						esc_js( sprintf(
 							'return confirm("%s");',
-							__("You are about to permanently delete the selected item.\n'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+							__("You are about to permanently delete this snippet.\n'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
 						) )
 					);
 
