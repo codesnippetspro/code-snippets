@@ -358,7 +358,7 @@ class Code_Snippets_Admin {
 		add_filter( 'admin_enqueue_scripts', array( $this, 'single_menu_enqueue_scripts' ) );
 
 		/* Make sure the nonce validates before we do any snippet ops */
-		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'save_snippet' ) ) {
+		if ( check_admin_referrer( 'save_snippet' ) ) {
 			return;
 		}
 
