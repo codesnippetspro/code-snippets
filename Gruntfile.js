@@ -116,7 +116,8 @@ module.exports = function(grunt) {
 						'!**/Thumbs.db',
 						'!composer.json',
 						'!*.sublime-project',
-						'!*.sublime-workspace'
+						'!*.sublime-workspace',
+						'!screenshot-*.{png,jpe?g}'
 					],
 					dest: 'deploy/',
 					filter: 'isFile'
