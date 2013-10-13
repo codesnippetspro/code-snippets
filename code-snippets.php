@@ -944,10 +944,11 @@ final class Code_Snippets {
 	public function delete_snippet( $id, $scope = '' ) {
 		global $wpdb;
 
-		$table = $this->get_table_name( $scope );
-		$id    = absint( $id );
-
-		$wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE id='%d' LIMIT 1", $id ) );
+		$wpdb->delete(
+			$this->get_table_name( $scope ),
+			array( 'id' => $id ),
+			array( '%d' )
+		);
 
 		do_action( 'code_snippets/delete_snippet', $id, $scope );
 	}
