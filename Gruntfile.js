@@ -27,23 +27,13 @@ module.exports = function(grunt) {
 
 		jshint: {
 			gruntfile: ['Gruntfile.js'],
-			assets: ['assets/js/**/*.js']
+			assets: ['assets/js/**/*.dev.js']
 		},
 
 		uglify: {
-
-			/* Compress the CodeMirror scripts into a single file */
-			codemirror: {
+			dist: {
 				files: {
-					'vendor/codemirror.min.js': [
-						'vendor/codemirror/lib/codemirror.js',
-						'vendor/codemirror/mode/clike.js',
-						'vendor/codemirror/mode/php.js',
-						'vendor/codemirror/addon/dialog.js',
-						'vendor/codemirror/addon/searchcursor.js',
-						'vendor/codemirror/addon/search.js',
-						'vendor/codemirror/addon/matchbrackets.js'
-					]
+					'assets/js/admin-single.min.js': ['assets/js/admin-single.js']
 				}
 			}
 		},
@@ -86,6 +76,24 @@ module.exports = function(grunt) {
 					src: '**/*',
 					dest: 'assets/images/'
 				}]
+			}
+		},
+
+		includes: {
+			options: {
+				includePath: 'vendor',
+				includeRegexp: /\/\/\s*import\s+['"]?([^'"]+)['"]?\s*?$/,
+			},
+			scripts: {
+				src: ['assets/js/admin-single.dev.js'],
+				dest: 'assets/js/admin-single.js'
+			},
+			styles: {
+				src: ['assets/css/admin-single.css'],
+				dest: 'assets/css/admin-single.css',
+				options: {
+					includeRegexp: /\/\*\s*import\s+['"]?([^'"]+)['"]?\s*\*\/?$/
+				}
 			}
 		},
 
@@ -137,8 +145,8 @@ module.exports = function(grunt) {
 
 	});
 
-	grunt.registerTask( 'styles', ['compass', 'autoprefixer', 'csso'] );
-	grunt.registerTask( 'scripts', 'jshint' );
+	grunt.registerTask( 'styles', ['compass', 'includes:styles', 'autoprefixer', 'csso'] );
+	grunt.registerTask( 'scripts', ['jshint', 'includes:scripts'] );
 
 	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:deploy'] );
 	grunt.registerTask( 'phpdoc', 'shell:phpdoc' );

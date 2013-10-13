@@ -436,102 +436,28 @@ class Code_Snippets_Admin {
 		if ( $hook !== $this->single_page )
 			return;
 
-		/* CodeMirror package version */
-		$codemirror_version = '3.18';
-
-		/* CodeMirror base framework */
-
-		wp_register_script(
-			'codemirror',
-			plugins_url( 'vendor/codemirror/lib/codemirror.js', $code_snippets->file ),
-			false,
-			$codemirror_version
-		);
-
-		wp_register_style(
-			'codemirror',
-			plugins_url( 'vendor/codemirror/lib/codemirror.css', $code_snippets->file ),
-			false,
-			$codemirror_version
-		);
-
-		/* CodeMirror modes */
-
-		wp_register_script(
-			'codemirror-mode-clike',
-			plugins_url( 'vendor/codemirror/mode/clike.js', $code_snippets->file ),
-			array( 'codemirror' ),
-			$codemirror_version
-		);
-
-		wp_register_script(
-			'codemirror-mode-php',
-			plugins_url( 'vendor/codemirror/mode/php.js', $code_snippets->file ),
-			array( 'codemirror', 'codemirror-mode-clike' ),
-			$codemirror_version
-		);
-
-		/* CodeMirror addons */
-
-		wp_register_script(
-			'codemirror-addon-searchcursor',
-			plugins_url( 'vendor/codemirror/addon/searchcursor.js', $code_snippets->file ),
-			array( 'codemirror' ),
-			$codemirror_version
-		);
-
-		wp_register_script(
-			'codemirror-addon-search',
-			plugins_url( 'vendor/codemirror/addon/search.js', $code_snippets->file ),
-			array( 'codemirror', 'codemirror-addon-searchcursor' ),
-			$codemirror_version
-		);
-
-		wp_register_script(
-			'codemirror-addon-matchbrackets',
-			plugins_url( 'vendor/codemirror/addon/matchbrackets.js', $code_snippets->file ),
-			array( 'codemirror' ),
-			$codemirror_version
-		);
-
 		/* Enqueue stylesheets */
 
 		wp_enqueue_style(
 			'code-snippets-admin-single',
 			plugins_url( 'assets/css/admin-single.css', $code_snippets->file ),
-			array( 'codemirror' ),
+			false,
 			$code_snippets->version
 		);
 
 		/* Enqueue scripts */
 
-		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
-
-			/* Enqueue the registered scripts */
-			wp_enqueue_script( array(
-				'codemirror-addon-matchbrackets',
-				'codemirror-mode-php',
-				'codemirror-addon-search',
-			) );
-
-		} else {
-
-			wp_enqueue_script(
-				'code-snippets-codemirror-min-js',
-				plugins_url( 'vendor/codemirror.min.js', $code_snippets->file ),
-				false,
-				$codemirror_version
-			);
-
-		}
-
 		wp_enqueue_script(
 			'code-snippets-admin-single',
-			plugins_url( 'assets/js/admin-single.js', $code_snippets->file ),
+			plugins_url( 'assets/js/admin-single.min.js', $code_snippets->file ),
 			false,
 			$code_snippets->version,
 			true // Load in footer
 		);
+
+		/* Remove other CodeMirror styles */
+		wp_deregister_style( 'codemirror' );
+		wp_deregister_style( 'wpeditor' );
 	}
 
 	/**
