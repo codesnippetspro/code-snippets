@@ -4,15 +4,24 @@
 
 #toplevel_page_snippets div.wp-menu-image {
 
-	&:before {
-		display: none;
+	/* Use the plugins dashicon as a fallback */
+	.mp6.no-svg &:before {
+		content: '\f106';
 	}
 
-	background: {
-		image: inline-image( 'menu-icon-mp6.svg') !important;
-		position: center center !important;
-		size: 20px 20px;
-		repeat: no-repeat;
+	/* If the browser does support SVG, use our custom icon */
+	.mp6.svg & {
+
+		/* Remove the generic dashicon */
+		&:before {
+			display: none;
+		}
+
+		background: {
+			image: inline-image( 'menu-icon-mp6.svg') !important;
+			position: center center !important;
+			size: 20px 20px;
+			repeat: no-repeat;
+		}
 	}
-	margin-top: 2px;
 }
