@@ -373,7 +373,7 @@ class Code_Snippets_Admin {
 			}
 
 			/* Save the snippet to the database */
-			$result = $code_snippets->save_snippet( $_POST );
+			$result = $code_snippets->save_snippet( stripslashes_deep( $_POST ) );
 
 			/* Strip old status query vars from URL */
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'activated', 'deactivated', 'invalid' ) );

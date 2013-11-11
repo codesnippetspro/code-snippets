@@ -58,7 +58,7 @@ final class Code_Snippets {
 	 * @access public
 	 * @var    string A PHP-standardized version number string
 	 */
-	public $version = '1.9-dev';
+	public $version = '1.9';
 
 	/**
 	 * Variables to hold plugin paths
@@ -448,8 +448,8 @@ final class Code_Snippets {
 				$role->remove_cap( 'edit_network_snippets' );
 			}
 
-			/* Data in database is unescaped in 1.8 */
-			if ( version_compare( $current_version, '1.8', '<' ) ) {
+			/* Data in database is unescaped in 1.8; slashes removed in 1.9 */
+			if ( version_compare( $current_version, '1.9', '<' ) ) {
 
 				$tables = array();
 
@@ -466,9 +466,15 @@ final class Code_Snippets {
 
 					foreach ( $snippets as $snippet ) {
 
-						$snippet->name        = esc_sql( htmlspecialchars_decode( stripslashes( $snippet->name ) ) );
-						$snippet->code        = esc_sql( htmlspecialchars_decode( stripslashes( $snippet->code ) ) );
-						$snippet->description = esc_sql( htmlspecialchars_decode( stripslashes( $snippet->description ) ) );
+						$snippet->name        = stripslashes( $snippet->name );
+						$snippet->code        = stripslashes( $snippet->code );
+						$snippet->description = stripslashes( $snippet->description );
+
+						if ( version_compare( $current_version, '1.8', '<' ) ) {
+							$snippet->name        = htmlspecialchars_decode( $snippet->name );
+							$snippet->code        = htmlspecialchars_decode( $snippet->code );
+							$snippet->description = htmlspecialchars_decode( $snippet->description );
+						}
 
 						$wpdb->update( $table,
 							array(
@@ -785,11 +791,7 @@ final class Code_Snippets {
 		$snippet->code = preg_replace( '|\?>[\s]*$|', '', $snippet->code );
 
 		/* Escape the data */
-		$snippet->id          = absint ( $snippet->id );
-		$snippet->name        = esc_sql( $snippet->name );
-		$snippet->description = esc_sql( $snippet->description );
-		$snippet->code        = esc_sql( $snippet->code );
-		$snippet->code        = str_replace( '%', '%%', $snippet->code );
+		$snippet->id  = absint ( $snippet->id );
 
 		return apply_filters( 'code_snippets/escape_snippet_data', $snippet );
 	}
@@ -805,14 +807,7 @@ final class Code_Snippets {
 	 * @return object          The resulting snippet object, with data unescaped
 	 */
 	public function unescape_snippet_data( $snippet ) {
-
 		$snippet = $this->build_snippet_object( $snippet );
-
-		$snippet->name        = stripslashes( $snippet->name );
-		$snippet->description = stripslashes( $snippet->description );
-		$snippet->code        = stripslashes( $snippet->code );
-		$snippet->code        = str_replace( '%%', '%', $snippet->code );
-
 		return apply_filters( 'code_snippets/unescape_snippet_data', $snippet );
 	}
 
@@ -971,8 +966,8 @@ final class Code_Snippets {
 
 		$snippet = $this->escape_snippet_data( $snippet );
 		$table   = $this->get_table_name( $scope );
+		$data    = array();
 
-		$fields = '';
 		foreach ( get_object_vars( $snippet ) as $field => $value ) {
 			if ( 'id' === $field )
 				continue;
@@ -980,25 +975,18 @@ final class Code_Snippets {
 			if ( is_array( $value ) )
 				$value = maybe_serialize( $value );
 
-			$fields .= "{$field}='{$value}',";
+			$data[ $field ] = $value;
 		}
-		$fields = rtrim( $fields, ',' );
 
 		if ( isset( $snippet->id ) && 0 !== $snippet->id ) {
 
-			if ( $fields ) {
-				$wpdb->query( $wpdb->prepare( "UPDATE $table SET $fields WHERE id='%d' LIMIT 1", $snippet->id ) );
-			}
-
+			$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) );
 			do_action( 'code_snippets/update_snippet', $snippet, $table );
 			return $snippet->id;
 
 		} else {
 
-			if ( $fields ) {
-				$wpdb->query( "INSERT INTO $table SET $fields" );
-			}
-
+			$wpdb->insert( $table, $data, '%s' );
 			do_action( 'code_snippets/create_snippet', $snippet, $table );
 			return $wpdb->insert_id;
 		}
@@ -1148,13 +1136,12 @@ final class Code_Snippets {
 			/* Grab the active snippets from the database */
 			$active_snippets = $wpdb->get_col( $sql );
 
-			if ( count( $active_snippets ) ) {
-				foreach ( $active_snippets as $snippet ) {
-					/* Execute the PHP code */
-					$this->execute_snippet( htmlspecialchars_decode( stripslashes( $snippet ) ) );
-				}
-				return true;
+			foreach ( $active_snippets as $snippet ) {
+				/* Execute the PHP code */
+				$this->execute_snippet( $snippet );
 			}
+
+			return true;
 		}
 
 		/* If we're made it this far without returning true, assume failure */
