@@ -1033,7 +1033,7 @@ final class Code_Snippets {
 	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses   code_snippets_export()  To export selected snippets
+	 * @uses   Code_Snippets_Export  To export selected snippets
 	 * @uses   $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
 	 * @param array   $ids   The IDs of the snippets to export
@@ -1044,10 +1044,11 @@ final class Code_Snippets {
 
 		$table = $this->get_table_name( $scope );
 
-		if ( ! function_exists( 'code_snippets_export' ) )
-			$this->get_include( 'export' );
+		if ( ! class_exists( 'Code_Snippets_Export' ) )
+			$this->get_include( 'class-export' );
 
-		code_snippets_export( $ids, 'xml', $table );
+		$class = new Code_Snippets_Export( $ids, $table );
+		$class->do_export();
 	}
 
 	/**
@@ -1056,8 +1057,8 @@ final class Code_Snippets {
 	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses   code_snippets_export()  To export selected snippets
-	 * @uses   $this->get_table_name() To dynamically retrieve the name of the snippet table
+	 * @uses   Code_Snippets_Export_PHP To export selected snippets
+	 * @uses   $this->get_table_name()  To dynamically retrieve the name of the snippet table
 	 *
 	 * @param array   $ids   The IDs of the snippets to export
 	 * @param string  $scope Is the snippet a network-wide or site-wide snippet?
@@ -1067,10 +1068,15 @@ final class Code_Snippets {
 
 		$table = $this->get_table_name( $scope );
 
-		if ( ! function_exists( 'code_snippets_export' ) )
-			$this->get_include( 'export' );
+		if ( ! class_exists( 'Code_Snippets_Export' ) )
+			$this->get_include( 'class-export' );
 
-		code_snippets_export( $ids, 'php', $table );
+		if ( ! class_exists( 'Code_Snippets_Export_PHP' ) ) {
+			$this->get_include( 'class-export-php' );
+		}
+
+		$class = new Code_Snippets_Export_PHP( $ids, $table );
+		$class->do_export();
 	}
 
 	/**
