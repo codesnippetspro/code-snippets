@@ -102,32 +102,31 @@ module.exports = function(grunt) {
 		},
 
 		copy: {
-			deploy: {
+			plugin: {
 				files: [{
 					expand: true,
 					cwd: './',
 					src: [
-						'*',
+						'code-snippets.php',
+						'readme.txt',
+						'license.txt',
 						'includes/**/*',
 						'admin/**/*',
 						'assets/**/*',
-						'languages/**/*',
-
-						'!.travis.yml',
-						'!.gitignore',
-						'!.gitmodules',
-						'!README.md',
-						'!CHANGELOG.md',
-						'!Gruntfile.js',
-						'!package.json',
-						'!phpunit.xml',
-						'!**/Thumbs.db',
-						'!composer.json',
-						'!*.sublime-project',
-						'!*.sublime-workspace',
-						'!screenshot-*.{png,jpe?g}'
+						'languages/**/*'
 					],
-					dest: 'deploy/',
+					dest: 'deploy/plugin',
+					filter: 'isFile'
+				}]
+			},
+			assets: {
+				files: [{
+					expand: true,
+					cwd: './',
+					src: [
+						'screenshot-*.{png,jpe?g}'
+					],
+					dest: 'deploy/assets',
 					filter: 'isFile'
 				}]
 			}
@@ -148,7 +147,7 @@ module.exports = function(grunt) {
 	grunt.registerTask( 'styles', ['compass', 'includes:styles', 'autoprefixer', 'csso'] );
 	grunt.registerTask( 'scripts', ['jshint', 'includes:scripts'] );
 
-	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:deploy'] );
+	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:plugin', 'copy:assets'] );
 	grunt.registerTask( 'phpdoc', 'shell:phpdoc' );
 
 	grunt.registerTask( 'default', ['styles', 'scripts', 'uglify'] );
