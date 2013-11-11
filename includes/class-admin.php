@@ -92,6 +92,24 @@ class Code_Snippets_Admin {
 
 		/* Add the survey notice on the manage snippets page */
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
+
+		/* Remove incompatible Debug Bar Console CodeMirror version */
+		$this->remove_debug_bar_codemirror();
+	}
+
+	/**
+	 * Remove the old CodeMirror version used by the Debug Bar Console
+	 * plugin that is messing up the snippet editor
+	 * @since 1.9
+	 */
+	function remove_debug_bar_codemirror() {
+		global $pagenow;
+
+		/* Try to discern if we are on the single snippet page as best as we can at this early time */
+		is_admin() && 'admin.php' === $pagenow && isset( $_GET['page' ] ) && 'snippet' === $_GET['page']
+
+		/* Remove the action and stop all Debug Bar Console scripts */
+		&& remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );
 	}
 
 	/**
