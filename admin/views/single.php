@@ -61,16 +61,60 @@ $code_snippets->admin->get_messages( 'single' );
 
 		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 
-		<?php do_action( 'code_snippets/admin/single', $snippet ); ?>
+		<?php
+
+			/* Allow addon plugins (and us!) to add fields and content to this page */
+			do_action( 'code_snippets/admin/single', $snippet );
+
+			/* Add a nonce for security */
+			wp_nonce_field( 'save_snippet' );
+
+		?>
 
 		<p class="submit">
 			<?php
+
+				/* Save Snippet button */
+
 				submit_button( null, 'primary', 'save_snippet', false );
 
+				/* Save Snippet & Activate/Deactivate button */
+
 				if ( ! $snippet->active ) {
-					echo '&nbsp;&nbsp;&nbsp;';
-					submit_button( __( 'Save Changes &amp; Activate', 'code-snippets' ), 'secondary', 'save_snippet_activate', false );
+					submit_button(
+						__( 'Save Changes &amp; Activate', 'code-snippets' ),
+						'secondary', 'save_snippet_activate', false
+					);
+
+				} else {
+					submit_button(
+						__( 'Save Changes &amp; Deactivate', 'code-snippets' ),
+						'secondary', 'save_snippet_deactivate', false
+					);
 				}
+
+				if ( 0 !== $snippet->id ) {
+
+					/* Export button */
+
+					submit_button( __( 'Export', 'code-snippets' ), 'secondary', 'export_snippet', false );
+
+					/* Delete button */
+
+					$confirm_delete_js = esc_js(
+						sprintf (
+							'return confirm("%s");',
+							__( "You are about to permanently delete this snippet.\n'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+						)
+					);
+
+					submit_button(
+						__( 'Delete', 'code-snippets' ),
+						'secondary', 'delete_snippet', false,
+						sprintf ( 'onclick="%s"', $confirm_delete_js )
+					);
+				}
+
 			?>
 		</p>
 

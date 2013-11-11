@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.9
+* Add and remove network capabilities as super admins are added and removed
+* Updated MP6 icon implementation
+* Replaced buggy trim `<?php` and `?>` functionality with a much more reliable regex method ([#](http://wordpress.org/support/topic/character-gets-cut))
+* Added French translation thanks to translator [oWEB](http://office-web.net)
+* Fixed snippet failing to save when code contains `%` character, props to [nikan06](http://wordpress.org/support/profile/nikan06) ([#](http://wordpress.org/support/topic/percent-sign-bug))
+* Added 'Save & Deactivate' button to the edit snippet page ([#](http://wordpress.org/support/topic/deactivate-button-in-edit-snippet-page))
+* Removed edit and install capabilities (now only uses the manage capability)
+* Fixed HTML breaking in export files ([#](http://wordpress.org/support/topic/import-problem-7))
+* Make the title of each snippet on the manage page a clickable link to edit the snippet ([#](http://wordpress.org/support/topic/deactivate-button-in-edit-snippet-page?replies=9#post-4682757))
+* Added nonce to edit snippet page
+* Hide row actions on manage snippet page by default
+* Removed screenshots from plugin
+* Improved CodeMirror implementation
+* Added a fallback MP6 icon
+* Use the proper WordPress database APIs all of the time
+* Rewritten export functionality
+* Fixed incorrect export filename
+* Updated CodeMirror to version 3.19
+* Removed CodeMirror bundled with plugin
+* Updated WordPress.org plugin banner
+* Fixed CodeMirror incompatibility with the WP Editor plugin
+* Fixed CodeMirror incompatibility with the Debug Bar Console plugin
+
 ## 1.8.1
 * Compiled all CodeMirror scripts into a single file
 * Use Sass + Compass for CSS

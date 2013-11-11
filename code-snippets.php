@@ -7,7 +7,7 @@
  * contribute to the localization, please see http://code-snippets.bungeshea.com
  *
  * @package   Code_Snippets
- * @version   1.8.1
+ * @version   1.9
  * @author    Shea Bunge <http://bungeshea.com/>
  * @copyright Copyright (c) 2012-2013, Shea Bunge
  * @link      http://code-snippets.bungeshea.com
@@ -20,7 +20,7 @@
  * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
  * Author: Shea Bunge
  * Author URI: http://bungeshea.com
- * Version: 1.8.1
+ * Version: 1.9
  * License: MIT
  * License URI: license.txt
  * Text Domain: code-snippets
@@ -58,7 +58,7 @@ final class Code_Snippets {
 	 * @access public
 	 * @var    string A PHP-standardized version number string
 	 */
-	public $version = '1.8.1';
+	public $version = '1.9';
 
 	/**
 	 * Variables to hold plugin paths
@@ -184,6 +184,10 @@ final class Code_Snippets {
 		/* Load the global functions file */
 		$this->get_include( 'functions' );
 
+		/* Add and remove capabilities from Super Admins if their statuses change */
+		add_action( 'grant_super_admin', array( $this, 'add_ms_cap_to_user' ) );
+		add_action( 'remove_super_admin', array( $this, 'remove_ms_cap_from_user' ) );
+
 		/* Let extension plugins know that it's okay to load */
 		do_action( 'code_snippets_init' );
 	}
@@ -202,6 +206,11 @@ final class Code_Snippets {
 		$this->basename   = plugin_basename( $this->file );
 		$this->plugin_dir = plugin_dir_path( $this->file );
 		$this->plugin_url = plugin_dir_url ( $this->file );
+
+		/* Roles and capabilities variables */
+		$this->role        = apply_filters( 'code_snippets_role', 'administrator' );
+		$this->cap         = apply_filters( 'code_snippets_cap', 'manage_snippets' );
+		$this->network_cap = apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
 
 		if ( is_admin() ) {
 
@@ -431,8 +440,16 @@ final class Code_Snippets {
 		/* Skip this if we're on the latest version */
 		if ( version_compare( $current_version, $this->version, '<' ) ) {
 
-			/* Data in database is unsecapped in 1.8 */
-			if ( version_compare( $current_version, '1.8', '<' ) ) {
+			/* Remove capabilities that were deprecated in 1.9 */
+			if ( version_compare( $current_version, '1.9', '<' ) ) {
+				$role = get_role( $this->role );
+
+				$role->remove_cap( 'install_network_snippets' );
+				$role->remove_cap( 'edit_network_snippets' );
+			}
+
+			/* Data in database is unescaped in 1.8; slashes removed in 1.9 */
+			if ( version_compare( $current_version, '1.9', '<' ) ) {
 
 				$tables = array();
 
@@ -449,9 +466,15 @@ final class Code_Snippets {
 
 					foreach ( $snippets as $snippet ) {
 
-						$snippet->name        = esc_sql( htmlspecialchars_decode( stripslashes( $snippet->name ) ) );
-						$snippet->code        = esc_sql( htmlspecialchars_decode( stripslashes( $snippet->code ) ) );
-						$snippet->description = esc_sql( htmlspecialchars_decode( stripslashes( $snippet->description ) ) );
+						$snippet->name        = stripslashes( $snippet->name );
+						$snippet->code        = stripslashes( $snippet->code );
+						$snippet->description = stripslashes( $snippet->description );
+
+						if ( version_compare( $current_version, '1.8', '<' ) ) {
+							$snippet->name        = htmlspecialchars_decode( $snippet->name );
+							$snippet->code        = htmlspecialchars_decode( $snippet->code );
+							$snippet->description = htmlspecialchars_decode( $snippet->description );
+						}
 
 						$wpdb->update( $table,
 							array(
@@ -470,7 +493,7 @@ final class Code_Snippets {
 
 			/* Register the capabilities once only */
 			if ( version_compare( $current_version, '1.5',  '<' ) ) {
-				$this->setup_roles( true );
+				$this->add_cap();
 			}
 
 			if ( version_compare( $previous_version, '1.2', '<' ) ) {
@@ -490,13 +513,30 @@ final class Code_Snippets {
 
 			if ( version_compare( $current_ms_version, $this->version, '<' ) ) {
 
+				/* Remove capabilities that were deprecated in 1.9 */
+				if ( version_compare( $current_version, '1.9', '<' ) ) {
+					$supers = get_super_admins();
+
+					foreach ( $supers as $admin ) {
+						$user = new WP_User( 0, $admin );
+						$user->remove_cap( 'install_network_snippets' );
+						$user->remove_cap( 'edit_network_snippets' );
+					}
+				}
+
+				/* Add custom capabilities introduced in 1.5 */
 				if ( version_compare( $current_ms_version, '1.5', '<' ) ) {
 					$this->setup_ms_roles( true );
 				}
 
 				/* Migrate recently_network_activated_snippets to the site options */
 				if ( get_option( 'recently_network_activated_snippets' ) ) {
-					add_site_option( 'recently_activated_snippets', get_option( 'recently_network_activated_snippets', array() ) );
+
+					add_site_option(
+						'recently_activated_snippets',
+						get_option( 'recently_network_activated_snippets', array() )
+					);
+
 					delete_option( 'recently_network_activated_snippets' );
 				}
 
@@ -510,35 +550,42 @@ final class Code_Snippets {
 	/**
 	 * Register the user roles and capabilities
 	 *
+	 * @since  1.9 Removed uninstall functionality into a separate method
 	 * @since  1.5
 	 * @access private
-	 * @param boolean $install true to add the capabilities, false to remove
 	 * @return void
 	 */
-	function setup_roles( $install = true ) {
+	function add_cap() {
 
-		$this->caps = apply_filters( 'code_snippets_caps', array(
-				'manage_snippets',
-				'install_snippets',
-				'edit_snippets'
-			) );
+		/* Retrieve the role object */
+		$role = get_role( $this->role );
 
-		$this->role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
-
-		foreach ( $this->caps as $cap ) {
-			if ( $install )
-				$this->role->add_cap( $cap );
-			else
-				$this->role->remove_cap( $cap );
-		}
+		/* Add the capability */
+		$role->add_cap( $this->cap );
 	}
 
 	/**
-	 * Register the multisite user roles and capabilities
+	 * Deregister the user roles and capabilities
+	 *
+	 * @since  1.9
+	 * @access private
+	 * @return void
+	 */
+	function remove_cap() {
+
+		/* Retrieve the role object */
+		$role = get_role( $this->role );
+
+		/* Remove the capability */
+		$role->remove_cap( $this->cap );
+	}
+
+	/**
+	 * Register or deregister the multisite user roles and capabilities
 	 *
 	 * @since  1.5
 	 * @access private
-	 * @param boolean $install true to add the capabilities, false to remove
+	 * @param  boolean $install true to add the capabilities, false to remove
 	 * @return void
 	 */
 	function setup_ms_roles( $install = true ) {
@@ -546,22 +593,49 @@ final class Code_Snippets {
 		if ( ! is_multisite() )
 			return;
 
-		$this->network_caps = apply_filters( 'code_snippets_network_caps', array(
-				'manage_network_snippets',
-				'install_network_snippets',
-				'edit_network_snippets'
-			) );
-
 		$supers = get_super_admins();
+
 		foreach ( $supers as $admin ) {
 			$user = new WP_User( 0, $admin );
-			foreach ( $this->network_caps as $cap ) {
-				if ( $install )
-					$user->add_cap( $cap );
-				else
-					$user->remove_cap( $cap );
-			}
+
+			if ( $install )
+				$user->add_cap( $this->network_cap );
+			else
+				$user->remove_cap( $this->network_cap );
 		}
+
+	}
+
+	/**
+	 * Add the multisite capabilities to a user
+	 *
+	 * @since  1.9
+	 * @param  integer $user_id The ID of the user to add the cap to
+	 * @return void
+	 */
+	function add_ms_cap_to_user( $user_id ) {
+
+		/* Get the user from the ID */
+		$user = new WP_User( $user_id );
+
+		/* Add the capability */
+		$user->add_cap( $this->network_cap );
+	}
+
+	/**
+	 * Remove the multisite capabilities from a user
+	 *
+	 * @since  1.9
+	 * @param  integer $user_id The ID of the user to remove the cap from
+	 * @return void
+	 */
+	function remove_ms_cap_from_user( $user_id ) {
+
+		/* Get the user from the ID */
+		$user = new WP_User( $user_id );
+
+		/* Remove the capability */
+		$user->remove_cap( $this->network_cap );
 	}
 
 	/**
@@ -570,15 +644,16 @@ final class Code_Snippets {
 	 * @uses   current_user_can() To check if the current user can perform a task
 	 * @uses   $this->get_cap()   To get the required capability
 	 *
-	 * @param string  $do_what The task to check against.
+	 * @param  string $deprecated Deprecated in 1.9
 	 * @return boolean            Whether the current user can perform this task or not
 	 *
+	 * @since  1.9                Removed multiple capability support
 	 * @since  1.7.1.1            Moved logic to $this->get_cap() method
 	 * @since  1.7.1
 	 * @access public
 	 */
-	public function user_can( $do_what ) {
-		return current_user_can( $this->get_cap( $do_what ) );
+	public function user_can( $deprecated = '' ) {
+		return current_user_can( $this->get_cap() );
 	}
 
 	/**
@@ -588,23 +663,25 @@ final class Code_Snippets {
 	 * If multisite, checks if *Enable Administration Menus: Snippets* is active
 	 * under the *Settings > Network Settings* network admin menu
 	 *
+	 * @param  string $deprecated Deprecated in 1.9
+	 * @since  1.9                Removed first parameter
 	 * @since  1.7.1.1
 	 * @access public
-	 * @param string  $do_what The action to retrieve the capability for
 	 * @return void
 	 */
-	public function get_cap( $do_what ) {
+	public function get_cap( $deprecated = '' ) {
 
 		if ( is_multisite() ) {
+			$active_menus = get_site_option( 'menu_items', array() );
 
-			if ( in_array( 'snippets', get_site_option( 'menu_items', array() ) ) )
-				return "{$do_what}_snippets";
-			else
-				return "{$do_what}_network_snippets";
+			/* If multisite is enabled and the snippet menu is not activated,
+			   restrict snippet operations to super admins only */
+			if ( ! in_array( 'snippets', $active_menus ) )
+				return $this->network_cap;
 
-		} else {
-			return "{$do_what}_snippets";
 		}
+
+		return $this->cap;
 	}
 
 	/**
@@ -707,17 +784,14 @@ final class Code_Snippets {
 
 		$snippet = $this->build_snippet_object( $snippet );
 
-		/* remove the <?php and ?> tags from the snippet */
-		$snippet->code = trim( $snippet->code );
-		$snippet->code = ltrim( $snippet->code, '<?php' );
-		$snippet->code = ltrim( $snippet->code, '<?' );
-		$snippet->code = rtrim( $snippet->code, '?>' );
+		/* Remove <?php and <? from beginning of snippet */
+		$snippet->code = preg_replace( '|^[\s]*<\?(php)?|', '', $snippet->code );
 
-		/* escape the data */
-		$snippet->name        = esc_sql( $snippet->name );
-		$snippet->description = esc_sql( $snippet->description );
-		$snippet->code        = esc_sql( $snippet->code );
-		$snippet->id          = absint ( $snippet->id );
+		/* Remove ?> from end of snippet */
+		$snippet->code = preg_replace( '|\?>[\s]*$|', '', $snippet->code );
+
+		/* Escape the data */
+		$snippet->id  = absint ( $snippet->id );
 
 		return apply_filters( 'code_snippets/escape_snippet_data', $snippet );
 	}
@@ -733,13 +807,7 @@ final class Code_Snippets {
 	 * @return object          The resulting snippet object, with data unescaped
 	 */
 	public function unescape_snippet_data( $snippet ) {
-
 		$snippet = $this->build_snippet_object( $snippet );
-
-		$snippet->name        = stripslashes( $snippet->name );
-		$snippet->code        = stripslashes( $snippet->code );
-		$snippet->description = stripslashes( $snippet->description );
-
 		return apply_filters( 'code_snippets/unescape_snippet_data', $snippet );
 	}
 
@@ -871,10 +939,11 @@ final class Code_Snippets {
 	public function delete_snippet( $id, $scope = '' ) {
 		global $wpdb;
 
-		$table = $this->get_table_name( $scope );
-		$id    = absint( $id );
-
-		$wpdb->query( $wpdb->prepare( "DELETE FROM $table WHERE id='%d' LIMIT 1", $id ) );
+		$wpdb->delete(
+			$this->get_table_name( $scope ),
+			array( 'id' => $id ),
+			array( '%d' )
+		);
 
 		do_action( 'code_snippets/delete_snippet', $id, $scope );
 	}
@@ -897,8 +966,8 @@ final class Code_Snippets {
 
 		$snippet = $this->escape_snippet_data( $snippet );
 		$table   = $this->get_table_name( $scope );
+		$data    = array();
 
-		$fields = '';
 		foreach ( get_object_vars( $snippet ) as $field => $value ) {
 			if ( 'id' === $field )
 				continue;
@@ -906,25 +975,18 @@ final class Code_Snippets {
 			if ( is_array( $value ) )
 				$value = maybe_serialize( $value );
 
-			$fields .= "{$field}='{$value}',";
+			$data[ $field ] = $value;
 		}
-		$fields = rtrim( $fields, ',' );
 
 		if ( isset( $snippet->id ) && 0 !== $snippet->id ) {
 
-			if ( $fields ) {
-				$wpdb->query( $wpdb->prepare( "UPDATE $table SET $fields WHERE id='%d' LIMIT 1", $snippet->id ) );
-			}
-
+			$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) );
 			do_action( 'code_snippets/update_snippet', $snippet, $table );
 			return $snippet->id;
 
 		} else {
 
-			if ( $fields ) {
-				$wpdb->query( "INSERT INTO $table SET $fields" );
-			}
-
+			$wpdb->insert( $table, $data, '%s' );
 			do_action( 'code_snippets/create_snippet', $snippet, $table );
 			return $wpdb->insert_id;
 		}
@@ -955,7 +1017,9 @@ final class Code_Snippets {
 		foreach ( $xml->children() as $snippet ) {
 			/* force manual build of object to strip out unsupported fields
 			   by converting snippet object into an array */
-			$this->save_snippet( get_object_vars( $snippet ), $scope );
+			$snippet = get_object_vars( $snippet );
+			$snippet = array_map( 'htmlspecialchars_decode', $snippet );
+			$this->save_snippet( $snippet, $scope );
 		}
 
 		do_action( 'code_snippets/import', $xml, $scope );
@@ -969,7 +1033,7 @@ final class Code_Snippets {
 	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses   code_snippets_export()  To export selected snippets
+	 * @uses   Code_Snippets_Export  To export selected snippets
 	 * @uses   $this->get_table_name() To dynamically retrieve the name of the snippet table
 	 *
 	 * @param array   $ids   The IDs of the snippets to export
@@ -980,10 +1044,11 @@ final class Code_Snippets {
 
 		$table = $this->get_table_name( $scope );
 
-		if ( ! function_exists( 'code_snippets_export' ) )
-			$this->get_include( 'export' );
+		if ( ! class_exists( 'Code_Snippets_Export' ) )
+			$this->get_include( 'class-export' );
 
-		code_snippets_export( $ids, 'xml', $table );
+		$class = new Code_Snippets_Export( $ids, $table );
+		$class->do_export();
 	}
 
 	/**
@@ -992,8 +1057,8 @@ final class Code_Snippets {
 	 * @since  1.5
 	 * @access public
 	 *
-	 * @uses   code_snippets_export()  To export selected snippets
-	 * @uses   $this->get_table_name() To dynamically retrieve the name of the snippet table
+	 * @uses   Code_Snippets_Export_PHP To export selected snippets
+	 * @uses   $this->get_table_name()  To dynamically retrieve the name of the snippet table
 	 *
 	 * @param array   $ids   The IDs of the snippets to export
 	 * @param string  $scope Is the snippet a network-wide or site-wide snippet?
@@ -1003,10 +1068,15 @@ final class Code_Snippets {
 
 		$table = $this->get_table_name( $scope );
 
-		if ( ! function_exists( 'code_snippets_export' ) )
-			$this->get_include( 'export' );
+		if ( ! class_exists( 'Code_Snippets_Export' ) )
+			$this->get_include( 'class-export' );
 
-		code_snippets_export( $ids, 'php', $table );
+		if ( ! class_exists( 'Code_Snippets_Export_PHP' ) ) {
+			$this->get_include( 'class-export-php' );
+		}
+
+		$class = new Code_Snippets_Export_PHP( $ids, $table );
+		$class->do_export();
 	}
 
 	/**
@@ -1072,13 +1142,12 @@ final class Code_Snippets {
 			/* Grab the active snippets from the database */
 			$active_snippets = $wpdb->get_col( $sql );
 
-			if ( count( $active_snippets ) ) {
-				foreach ( $active_snippets as $snippet ) {
-					/* Execute the PHP code */
-					$this->execute_snippet( htmlspecialchars_decode( stripslashes( $snippet ) ) );
-				}
-				return true;
+			foreach ( $active_snippets as $snippet ) {
+				/* Execute the PHP code */
+				$this->execute_snippet( $snippet );
 			}
+
+			return true;
 		}
 
 		/* If we're made it this far without returning true, assume failure */
@@ -1111,7 +1180,7 @@ final class Code_Snippets {
 					delete_option( 'cs_db_version' );
 					delete_option( 'recently_activated_snippets' );
 					delete_option( 'code_snippets_version' );
-					$code_snippets->setup_roles( false );
+					$code_snippets->remove_cap();
 				}
 				restore_current_blog();
 			}
@@ -1123,7 +1192,7 @@ final class Code_Snippets {
 			$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
 			delete_option( 'code_snippets_version' );
 			delete_option( 'recently_activated_snippets' );
-			$code_snippets->setup_roles( false );
+			$code_snippets->remove_cap();
 		}
 	}
 

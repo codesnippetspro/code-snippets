@@ -2,7 +2,7 @@
  * Custom styling for the single snippet admin page
  */
 
-@import 'compass/css3';
+/* import 'codemirror/lib/codemirror.css' */
 
 h3 {
 	/* Provide some decent space between the fields and titles */
@@ -14,6 +14,21 @@ label {
 	cursor: auto;
 }
 
+/* Position the description heading on the same level as the editor buttons */
+label[for="snippet_description"] h3 div {
+	position: absolute;
+
+	/* MP6 fails with TeenyMCE editor */
+	.mp6 & {
+		position: initial;
+	}
+}
+
+/* Add spacing in between the action buttons */
+.submit .button {
+	margin-right: .5em;
+}
+
 /**
  * Customize the CodeMirror editor
  * to look pretty and support auto-resizing
@@ -22,10 +37,10 @@ label {
 	min-height: 300px;
 	height: auto;
 	border: 1px solid #eee;
-	@include border-radius(3px);
+	border-radius: 3px;
 
 	/* Tweak things for the MP6 interface */
-	.admin-color-mp6 & {
+	.mp6 & {
 		width: 100%;
 		border-color: #dfdfdf;
 		background-color: #fff;

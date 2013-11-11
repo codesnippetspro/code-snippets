@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 
 			styles: {
 				files: ['assets/scss/**/*.{scss,sass}'],
-				tasks: ['compass'],
+				tasks: ['styles'],
 				options: {
 					debounceDelay: 500
 				}
@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 
 			scripts: {
 				files: ['assets/js/**/*.js'],
-				tasks: ['jshint'],
+				tasks: ['scripts'],
 				options: {
 					debounceDelay: 500
 				}
@@ -27,23 +27,13 @@ module.exports = function(grunt) {
 
 		jshint: {
 			gruntfile: ['Gruntfile.js'],
-			assets: ['assets/js/**/*.js']
+			assets: ['assets/js/**/*.dev.js']
 		},
 
 		uglify: {
-
-			/* Compress the CodeMirror scripts into a single file */
-			codemirror: {
+			dist: {
 				files: {
-					'vendor/codemirror.min.js': [
-						'vendor/codemirror/lib/codemirror.js',
-						'vendor/codemirror/mode/clike.js',
-						'vendor/codemirror/mode/php.js',
-						'vendor/codemirror/addon/dialog.js',
-						'vendor/codemirror/addon/searchcursor.js',
-						'vendor/codemirror/addon/search.js',
-						'vendor/codemirror/addon/matchbrackets.js'
-					]
+					'assets/js/admin-single.min.js': ['assets/js/admin-single.js']
 				}
 			}
 		},
@@ -53,6 +43,24 @@ module.exports = function(grunt) {
 				options: {
 					config: 'assets/config.rb'
 				}
+			}
+		},
+
+		autoprefixer: {
+			dist: {
+				expand: true,
+				flatten: true,
+				src: 'assets/css/*.css',
+				dest: 'assets/css'
+			}
+		},
+
+		csso: {
+			dist: {
+				expand: true,
+				flatten: true,
+				src: 'assets/css/*.css',
+				dest: 'assets/css'
 			}
 		},
 
@@ -71,36 +79,55 @@ module.exports = function(grunt) {
 			}
 		},
 
+		includes: {
+			options: {
+				includePath: 'vendor',
+				includeRegexp: /\/\/\s*import\s+['"]?([^'"]+)['"]?\s*?$/,
+			},
+			scripts: {
+				src: ['assets/js/admin-single.dev.js'],
+				dest: 'assets/js/admin-single.js'
+			},
+			styles: {
+				src: ['assets/css/admin-single.css'],
+				dest: 'assets/css/admin-single.css',
+				options: {
+					includeRegexp: /\/\*\s*import\s+['"]?([^'"]+)['"]?\s*\*\/?$/
+				}
+			}
+		},
+
 		clean: {
 			deploy: ['deploy']
 		},
 
 		copy: {
-			deploy: {
+			plugin: {
 				files: [{
 					expand: true,
 					cwd: './',
 					src: [
-						'*',
+						'code-snippets.php',
+						'readme.txt',
+						'license.txt',
 						'includes/**/*',
 						'admin/**/*',
 						'assets/**/*',
-						'vendor/**/*',
-						'languages/**/*',
-
-						'!.travis.yml',
-						'!.gitignore',
-						'!README.md',
-						'!CHANGELOG.md',
-						'!Gruntfile.js',
-						'!package.json',
-						'!phpunit.xml',
-						'!**/Thumbs.db',
-						'!composer.json',
-						'!*.sublime-project',
-						'!*.sublime-workspace'
+						'languages/**/*'
 					],
-					dest: 'deploy/',
+					dest: 'deploy/plugin',
+					filter: 'isFile'
+				}]
+			},
+			assets: {
+				files: [{
+					expand: true,
+					cwd: './screenshots',
+					src: [
+						'screenshot-*.{png,jpe?g}',
+						'banner-772x250.{png,jpe?g,pdn,psd}'
+					],
+					dest: 'deploy/assets',
 					filter: 'isFile'
 				}]
 			}
@@ -118,7 +145,11 @@ module.exports = function(grunt) {
 
 	});
 
-	grunt.registerTask( 'default', ['jshint', 'uglify', 'compass'] );
-	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:deploy'] );
+	grunt.registerTask( 'styles', ['compass', 'includes:styles', 'autoprefixer', 'csso'] );
+	grunt.registerTask( 'scripts', ['jshint', 'includes:scripts'] );
+
+	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:plugin', 'copy:assets'] );
 	grunt.registerTask( 'phpdoc', 'shell:phpdoc' );
+
+	grunt.registerTask( 'default', ['styles', 'scripts', 'uglify'] );
 };

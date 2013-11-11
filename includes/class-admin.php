@@ -89,6 +89,27 @@ class Code_Snippets_Admin {
 
 		/* Allow super admins to control site admins access to snippet admin menus */
 		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items') );
+
+		/* Add the survey notice on the manage snippets page */
+		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
+
+		/* Remove incompatible Debug Bar Console CodeMirror version */
+		$this->remove_debug_bar_codemirror();
+	}
+
+	/**
+	 * Remove the old CodeMirror version used by the Debug Bar Console
+	 * plugin that is messing up the snippet editor
+	 * @since 1.9
+	 */
+	function remove_debug_bar_codemirror() {
+		global $pagenow;
+
+		/* Try to discern if we are on the single snippet page as best as we can at this early time */
+		is_admin() && 'admin.php' === $pagenow && isset( $_GET['page' ] ) && 'snippet' === $_GET['page']
+
+		/* Remove the action and stop all Debug Bar Console scripts */
+		&& remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );
 	}
 
 	/**
@@ -213,7 +234,7 @@ class Code_Snippets_Admin {
 		global $code_snippets;
 
 		/* Use a different screen icon for the MP6 interface */
-		if ( get_user_option( 'admin_color' )  !== 'mp6' ) {
+		if ( ! defined( 'MP6' ) ) {
 			$menu_icon = apply_filters( 'code_snippets/admin/menu_icon_url',
 				plugins_url( 'assets/images/menu-icon.png', $code_snippets->file )
 			);
@@ -225,7 +246,7 @@ class Code_Snippets_Admin {
 		$this->manage_page = add_menu_page(
 			__( 'Snippets', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' ),
-			$code_snippets->get_cap( 'manage' ),
+			$code_snippets->get_cap(),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu' ),
 			$menu_icon,
@@ -236,7 +257,7 @@ class Code_Snippets_Admin {
 			$this->manage_slug,
 			__( 'Snippets', 'code-snippets' ),
 			__( 'Manage', 'code-snippets' ),
-			$code_snippets->get_cap( 'manage' ),
+			$code_snippets->get_cap(),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu')
 		);
@@ -248,7 +269,7 @@ class Code_Snippets_Admin {
 			$this->manage_slug,
 			$editing ? __( 'Edit Snippet', 'code-snippets' ) : __( 'Add New Snippet', 'code-snippets' ),
 			$editing ? __( 'Edit', 'code-snippets' ) : __( 'Add New', 'code-snippets' ),
-			$code_snippets->get_cap( 'install' ),
+			$code_snippets->get_cap(),
 			$this->single_slug,
 			array( $this, 'display_single_menu' )
 		);
@@ -276,7 +297,7 @@ class Code_Snippets_Admin {
 			$this->manage_slug,
 			__( 'Import Snippets', 'code-snippets' ),
 			__( 'Import', 'code-snippets' ),
-			$code_snippets->get_cap( 'import' ),
+			$code_snippets->get_cap(),
 			'import-code-snippets',
 			array( $this, 'display_import_menu' )
 		);
@@ -348,35 +369,49 @@ class Code_Snippets_Admin {
 		/* Create the snippet tables if they don't exist */
 		$code_snippets->maybe_create_tables( true, true );
 
-		/* Don't let the user pass if they can't edit (install check is done by WP) */
-		if ( isset( $_REQUEST['edit'] ) && ! $code_snippets->user_can( 'edit' ) )
-			wp_die( __("Sorry, you're not allowed to edit snippets", 'code-snippets' ) );
+		/* Load the screen help tabs */
+		$this->load_help_tabs( 'single' );
+
+		/* Enqueue the code editor and other scripts and styles */
+		add_filter( 'admin_enqueue_scripts', array( $this, 'single_menu_enqueue_scripts' ) );
+
+		/* Make sure the nonce validates before we do any snippet ops */
+		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'save_snippet' ) ) {
+			return;
+		}
 
 		/* Save the snippet if one has been submitted */
-		if ( isset( $_REQUEST['save_snippet'] ) || isset( $_REQUEST['save_snippet_activate'] ) ) {
+		if ( isset( $_POST['save_snippet'] ) || isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
 
-			/* Set the snippet to active if we used the 'Save Changed & Activate' button */
-			if ( isset( $_REQUEST['save_snippet_activate'] ) )
+			/* Activate or deactivate the snippet before saving if we clicked the button */
+			if ( isset( $_POST['save_snippet_activate'] ) ) {
 				$_POST['snippet_active'] = 1;
+			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
+				$_POST['snippet_active'] = 0;
+			}
 
 			/* Save the snippet to the database */
-			$result = $code_snippets->save_snippet( $_POST );
+			$result = $code_snippets->save_snippet( stripslashes_deep( $_POST ) );
 
 			/* Strip old status query vars from URL */
-			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'activated', 'invalid' ) );
+			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'activated', 'deactivated', 'invalid' ) );
 
 			/* Build the status message and redirect */
 
-			if ( isset( $_REQUEST['save_snippet_activate'] ) && $result ) {
-				/* Snippet was activated */
+			if ( $result && isset( $_POST['save_snippet_activate'] ) ) {
+				/* Snippet was activated addition to saving*/
 				$_SERVER['REQUEST_URI'] = add_query_arg( 'activated', true );
+			}
+			elseif ( $result && isset( $_POST['save_snippet_deactivate'] ) ) {
+				/* Snippet was deactivated addition to saving*/
+				$_SERVER['REQUEST_URI'] = add_query_arg( 'deactivated', true );
 			}
 
 			if ( ! $result || $result < 1 ) {
 				/* An error occurred */
 				wp_redirect( add_query_arg( 'invalid', true ) );
 			}
-			elseif ( isset( $_REQUEST['snippet_id'] ) ) {
+			elseif ( isset( $_POST['snippet_id'] ) ) {
 				/* Existing snippet was updated */
 				wp_redirect( add_query_arg(	array( 'edit' => $result, 'updated' => true ) ) );
 			}
@@ -386,11 +421,16 @@ class Code_Snippets_Admin {
 			}
 		}
 
-		/* Load the screen help tabs */
-		$this->load_help_tabs( 'single' );
+		/* Delete the snippet if the button was clicked */
+		elseif ( isset( $_POST['snippet_id'], $_POST['delete_snippet'] ) ) {
+			$code_snippets->delete_snippet( $_POST['snippet_id'] );
+			wp_redirect( add_query_arg( 'delete', true, $this->manage_url ) );
+		}
 
-		/* Enqueue the code editor and other scripts and styles */
-		add_filter( 'admin_enqueue_scripts', array( $this, 'single_menu_enqueue_scripts' ) );
+		/* Export the snippet if the button was clicked */
+		elseif ( isset( $_POST['snippet_id'], $_POST['export_snippet'] ) ) {
+			$code_snippets->export( $_POST['snippet_id'] );
+		}
 	}
 
 	/**
@@ -414,89 +454,8 @@ class Code_Snippets_Admin {
 		if ( $hook !== $this->single_page )
 			return;
 
-		/* CodeMirror package version */
-		$codemirror_version = '3.14';
+		/* Enqueue stylesheets */
 
-		/* CodeMirror base framework */
-
-		wp_register_script(
-			'codemirror',
-			plugins_url( 'vendor/codemirror/lib/codemirror.js', $code_snippets->file ),
-			false,
-			$codemirror_version
-		);
-
-		wp_register_style(
-			'codemirror',
-			plugins_url( 'vendor/codemirror/lib/codemirror.css', $code_snippets->file ),
-			false,
-			$codemirror_version
-		);
-
-		/* CodeMirror modes */
-
-		$modes = array( 'php', 'clike' );
-
-		foreach ( $modes as $mode ) {
-
-			wp_register_script(
-				"codemirror-mode-$mode",
-				plugins_url( "vendor/codemirror/mode/$mode.js", $code_snippets->file ),
-				array( 'codemirror' ),
-				$codemirror_version
-			);
-		}
-
-		/* CodeMirror addons */
-
-		$addons = array( 'dialog', 'searchcursor', 'search', 'matchbrackets' );
-
-		foreach ( $addons as $addon ) {
-
-			wp_register_script(
-				"codemirror-addon-$addon",
-				plugins_url( "vendor/codemirror/addon/$addon.js", $code_snippets->file ),
-				array( 'codemirror' ),
-				$codemirror_version
-			);
-		}
-
-		wp_register_style(
-			'codemirror-addon-dialog',
-			plugins_url( 'vendor/codemirror/addon/dialog.css', $code_snippets->file ),
-			array( 'codemirror' ),
-			$codemirror_version
-		);
-
-		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
-
-			/* Enqueue the registered scripts */
-			wp_enqueue_script( array(
-				'codemirror-addon-matchbrackets',
-				'codemirror-mode-clike',
-				'codemirror-mode-php',
-				'codemirror-addon-search',
-			) );
-
-		} else {
-
-			/* Load the minified version if SCRIPT_DEBUG is turned off */
-			wp_enqueue_script(
-				'code-snippets-codemirror-min-js',
-				plugins_url( 'vendor/codemirror.min.js', $code_snippets->file ),
-				false,
-				$codemirror_version
-			);
-
-		}
-
-		/* Enqueue the registered stylesheets */
-		wp_enqueue_style( array(
-			'codemirror',
-			'codemirror-addon-dialog',
-		) );
-
-		/* Enqueue custom styling */
 		wp_enqueue_style(
 			'code-snippets-admin-single',
 			plugins_url( 'assets/css/admin-single.css', $code_snippets->file ),
@@ -504,14 +463,19 @@ class Code_Snippets_Admin {
 			$code_snippets->version
 		);
 
-		/* Enqueue custom scripts */
+		/* Enqueue scripts */
+
 		wp_enqueue_script(
 			'code-snippets-admin-single',
-			plugins_url( 'assets/js/admin-single.js', $code_snippets->file ),
+			plugins_url( 'assets/js/admin-single.min.js', $code_snippets->file ),
 			false,
 			$code_snippets->version,
 			true // Load in footer
 		);
+
+		/* Remove other CodeMirror styles */
+		wp_deregister_style( 'codemirror' );
+		wp_deregister_style( 'wpeditor' );
 	}
 
 	/**
@@ -601,7 +565,7 @@ class Code_Snippets_Admin {
 		?>
 
 		<label for="snippet_description">
-			<h3><div style="position: absolute;"><?php _e( 'Description', 'code-snippets' ); ?></div></h3>
+			<h3><div><?php _e( 'Description', 'code-snippets' ); ?></div></h3>
 		</label>
 
 		<?php
@@ -674,6 +638,45 @@ class Code_Snippets_Admin {
 				__( 'Donate', 'code-snippets' )
 			)
 		) );
+	}
+
+	/**
+	 * Print a notice inviting people to participate in the Code Snippets Survey
+	 *
+	 * @since  1.9
+	 * @return void
+	 */
+	function survey_message() {
+		global $current_user;
+
+		$key = 'ignore_code_snippets_survey_message';
+
+		/* Bail now if the user has dismissed the message */
+		if ( get_user_meta( $current_user->ID, $key ) ) {
+			return;
+		}
+		elseif ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], $key ) ) {
+			add_user_meta( $current_user->ID, $key, true, true );
+			return;
+		}
+
+		?>
+
+		<br />
+
+		<div class="updated"><p>
+
+		<?php _e( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ); ?>
+
+		<a href="http://code-snippets.bungeshea.com/survey/" class="button secondary" target="_blank" style="margin: auto .5em;">
+			<?php _e( 'Take the survey now', 'code-snippets' ); ?>
+		</a>
+
+		<a href="<?php echo wp_nonce_url( add_query_arg( $key, true ), $key ); ?>">Dismiss</a>
+
+		</p></div>
+
+		<?php
 	}
 
 } // end of class
