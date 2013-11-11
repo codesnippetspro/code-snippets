@@ -4,11 +4,11 @@
 (function() {
 
 	// import 'codemirror/lib/codemirror.js'
-	// import 'codemirror/mode/clike.js'
-	// import 'codemirror/mode/php.js'
-	// import 'codemirror/addon/searchcursor.js'
-	// import 'codemirror/addon/search.js'
-	// import 'codemirror/addon/matchbrackets.js'
+	// import 'codemirror/mode/clike/clike.js'
+	// import 'codemirror/mode/php/php.js'
+	// import 'codemirror/addon/search/searchcursor.js'
+	// import 'codemirror/addon/search/search.js'
+	// import 'codemirror/addon/edit/matchbrackets.js'
 
 	var atts = {
 		lineNumbers: true,

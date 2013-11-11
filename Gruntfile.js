@@ -111,11 +111,11 @@ module.exports = function(grunt) {
 						'includes/**/*',
 						'admin/**/*',
 						'assets/**/*',
-						'vendor/**/*',
 						'languages/**/*',
 
 						'!.travis.yml',
 						'!.gitignore',
+						'!.gitmodules',
 						'!README.md',
 						'!CHANGELOG.md',
 						'!Gruntfile.js',
