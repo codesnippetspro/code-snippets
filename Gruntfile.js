@@ -124,7 +124,8 @@ module.exports = function(grunt) {
 					expand: true,
 					cwd: './screenshots',
 					src: [
-						'screenshot-*.{png,jpe?g}'
+						'screenshot-*.{png,jpe?g}',
+						'banner-772x250.{png,jpe?g,pdn,psd}'
 					],
 					dest: 'deploy/assets',
 					filter: 'isFile'
