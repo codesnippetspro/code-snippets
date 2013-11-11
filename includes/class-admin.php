@@ -456,8 +456,8 @@ class Code_Snippets_Admin {
 		);
 
 		/* Remove other CodeMirror styles */
-		wp_deregister_style( 'codemirror' );
-		wp_deregister_style( 'wpeditor' );
+		// wp_deregister_style( 'codemirror' );
+		// wp_deregister_style( 'wpeditor' );
 	}
 
 	/**
