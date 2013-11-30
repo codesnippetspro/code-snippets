@@ -1,7 +1,7 @@
 # This file is distributed under the same license as the Code Snippets package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2013-11-30 09:39+0900\n"
+"PO-Revision-Date: 2013-11-30 10:13+0900\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -365,6 +365,8 @@ msgid ""
 "this WordPress installation, you may want to use the export feature to back "
 "up your snippets."
 msgstr ""
+"インストールされたスニペットコードをこのWordPressで使用しないとしても、スニ"
+"ペットをエクスポート機能でバックアップして使用することができます。"
 
 #: includes/help/manage.php:28
 msgid ""
@@ -411,6 +413,9 @@ msgid ""
 "While the description field will add more information about how your snippet "
 "works, what is does and where you found it, it is completely optional."
 msgstr ""
+"あなたは、追加するスニペットの名前とコードのフィールドに必要事項を記入する必"
+"要があります。説明フィールドには、あなたのスニペットがどのように機能するかに"
+"ついての詳細情報を記入しますが、これは任意です。"
 
 #: includes/help/single.php:27
 msgid ""
@@ -419,6 +424,9 @@ msgid ""
 "become active straight away, it will help to minimise the chance of a faulty "
 "snippet becoming active on your site."
 msgstr ""
+"このページで追加するスニペットのPHPコードがエラーを起こさないことを確認して下"
+"さい。そうすることですぐに有効になりませんが、障害のあるスニペットは、サイト"
+"上で有効になる可能性を最小限に抑えるのに役立ちます。"
 
 #: code-snippets.php:0
 msgid "http://code-snippets.bungeshea.com"
@@ -510,7 +518,7 @@ msgstr "検索結果"
 
 #: includes/class-list-table.php:544
 msgid " for &#8220;%s&#8221;"
-msgstr ""
+msgstr " for &#8220;%s&#8221;"
 
 #: includes/class-list-table.php:550
 msgid "Clear Filters"
