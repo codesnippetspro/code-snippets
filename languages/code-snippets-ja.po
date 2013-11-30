@@ -1,7 +1,7 @@
 # This file is distributed under the same license as the Code Snippets package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2013-11-30 00:15+0900\n"
+"PO-Revision-Date: 2013-11-30 09:39+0900\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -94,6 +94,8 @@ msgid ""
 "Howdy! Upload your Code Snippets export file and we&#8217;ll import the "
 "snippets to this site."
 msgstr ""
+"こんにちは！あなたのコードスニペットエクスポートファイルをアップロードして、"
+"このサイトにスニペットをインポートします。"
 
 #: includes/admin/import.php:40
 msgid ""
@@ -301,7 +303,7 @@ msgstr ""
 #: includes/help/import.php:26 includes/help/manage.php:27
 #: includes/help/single.php:31
 msgid "For more information:"
-msgstr ""
+msgstr "より多くの情報:"
 
 #: includes/help/import.php:27 includes/help/single.php:32
 msgid ""
@@ -328,6 +330,10 @@ msgid ""
 "your existing snippets and preform tasks on them such as activating, "
 "deactivating, deleting and exporting."
 msgstr ""
+"スニペットはプラグインに似ています。両方ともWordPressの機能を拡張します。スニ"
+"ペットは、より軽量、わずか数行のコードであり、サーバに負荷をかけません。ここ"
+"では、既存のスニペットなどの有効化、停止、削除、エクスポートなど、それらのタ"
+"スクを管理することができます。"
 
 #: includes/help/manage.php:12
 msgid "Safe Mode"
@@ -427,8 +433,8 @@ msgstr ""
 #: includes/admin/import.php:20
 msgid "Imported <strong>%d</strong> snippet."
 msgid_plural "Imported <strong>%d</strong> snippets."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "スニペットを <strong>%d</strong> 件インポートしました。"
+msgstr[1] "スニペットを <strong>%d</strong> 件インポートしました。"
 
 #: includes/help/import.php:29 includes/help/manage.php:30
 #: includes/help/single.php:34
@@ -448,6 +454,12 @@ msgid ""
 "safe mode by removing this line or replacing <strong>true</strong> with "
 "<strong>false</strong>."
 msgstr ""
+"もしもスニペットに何か問題があってWordPressが使えなくなったら、<code>wp-"
+"config.php</code>ファイルに <code>define('CODE_SNIPPETS_SAFE_MODE', true);</"
+"code> と記述することでスニペットの実行を停止します。あなたが問題のスニペット"
+"を無効にした後は、この行を削除するか、<strong>true</strong> を "
+"<strong>false</strong> に置き換えることでセーフモードをオフにすることができま"
+"す。"
 
 #: includes/help/single.php:20
 msgid ""
@@ -455,6 +467,8 @@ msgid ""
 "can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/"
 "finding-snippets/\">plugin documentation</a>"
 msgstr ""
+"スニペットの例は、<a href=\"http://code-snippets.bungeshea.com/docs/finding-"
+"snippets/\">プラグインドキュメント</a> に記載されています。"
 
 #: code-snippets.php:0
 msgid "1.7"
@@ -471,16 +485,20 @@ msgstr "申し訳ありません、スニペット編集の許可がないよう
 #: includes/admin/single.php:24
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
+"スニペットを <strong>更新</strong> し、 <strong>有効化</strong>しました。"
 
 #: includes/admin/single.php:26
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
+"スニペットを <strong>追加</strong> し、 <strong>有効化</strong>しました。"
 
 #: includes/class-list-table.php:163
 msgid ""
 "You are about to permanently delete the selected item.\n"
 "\t\t\t\t'Cancel' to stop, 'OK' to delete."
 msgstr ""
+"あなたは永久に選択した項目を削除しようとしています。\n"
+"\t\t\t\t  削除するには、'OK'を、中止するには 'Cancel'をクリックして下さい。"
 
 #: includes/class-list-table.php:270
 msgid "Filter"
@@ -503,6 +521,8 @@ msgid ""
 "You can load your snippets from a code snippets (.xml) export file using "
 "this page."
 msgstr ""
+"このページでスニペットコードをエクスポートファイル(.xml)から読み込むことがで"
+"きます。"
 
 #: includes/admin/single.php:74
 msgid "Save Changes &amp; Activate"
