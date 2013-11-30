@@ -1,7 +1,7 @@
 # This file is distributed under the same license as the Code Snippets package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2013-11-30 10:13+0900\n"
+"PO-Revision-Date: 2013-11-30 10:44+0900\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -245,7 +245,7 @@ msgstr[1] "有効 <span class=\"count\">(%s)</span>"
 #: includes/class-list-table.php:242
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
-msgstr[0] "最近の有効 <span class=\"count\">(%s)</span>"
+msgstr[0] "最近まで使用 <span class=\"count\">(%s)</span>"
 msgstr[1] "最近の有効 <span class=\"count\">(%s)</span>"
 
 #: includes/class-list-table.php:245
@@ -277,6 +277,10 @@ msgid ""
 "snippets from a Code Snippets (.xml) import file into the database with your "
 "existing snippets."
 msgstr ""
+"スニペットはプラグインに似ています。両方ともWordPressの機能を拡張します。スニ"
+"ペットは、より軽量、わずか数行のコードであり、サーバに負荷をかけません。ここ"
+"であなたが持つスニペットを Code Snippets のインポートファイル(.xml) からデー"
+"タベースに登録できます。"
 
 #: includes/help/import.php:12
 msgid "Importing"
@@ -289,6 +293,10 @@ msgid ""
 "imported snippets are always inactive until activated using the <a href=\"%s"
 "\">Manage Snippets</a> page.</p>"
 msgstr ""
+"スニペットは、既存のスニペットと一緒にデータベースに追加されます。<a href="
+"\"%s\">スニペット管理</a> ページを使用して有効化されるまで、スニペットは、以"
+"前のサイト上でアクティブになっていたかどうかにかかわらず、インポートされたス"
+"ニペットは常に停止状態となります。</p>"
 
 #: includes/help/import.php:20
 msgid "Exporting"
@@ -299,6 +307,8 @@ msgid ""
 "You can save your snippets to a Code Snippets (.xml) export file using the "
 "<a href=\"%s\">Manage Snippets</a> page."
 msgstr ""
+"<a href=\"%s\">スニペット管理</a> ページでスニペットをCode Snippetsエクスポー"
+"トファイル(.xml)に保存することができます。"
 
 #: includes/help/import.php:26 includes/help/manage.php:27
 #: includes/help/single.php:31
@@ -345,6 +355,9 @@ msgid ""
 "faulty snippet could bring your whole blog down. If your site starts doing "
 "strange things, deactivate all your snippets and activate them one at a time."
 msgstr ""
+"サイト全体が障害のあるスニペットで停止しないように、それらを有効化する前にス"
+"ニペットを確認して下さい。サイトが奇妙な動作をした場合は、すべてのスニペット"
+"を無効化し、それらを一度に1をアクティブにします。"
 
 #: includes/help/manage.php:20
 msgid "Uninstall"
@@ -358,6 +371,11 @@ msgid ""
 "uninstalling Code Snippets) then remove the <code>%2$s</code> folder using "
 "FTP."
 msgstr ""
+"あなたがワードプレスでのプラグインメニューからコードスニペットを削除すると"
+"き、<code>%1$s</code>テーブルと、データベースに格納されたデータのいくつかをク"
+"リアします。（例：あなただけの一時的コードスニペットをアンインストールする）"
+"このデータを保持する場合は、FTPを使用して <code>%2$s</code> フォルダを削除し"
+"ます。"
 
 #: includes/help/manage.php:23
 msgid ""
@@ -383,6 +401,9 @@ msgid ""
 "of code, and do not put as much load on your server. Here you can add a new "
 "snippet, or edit an existing one."
 msgstr ""
+"スニペットはプラグインに似ています。両方ともWordPressの機能を拡張します。スニ"
+"ペットは、より軽量、わずか数行のコードであり、サーバに負荷をかけません。ここ"
+"では、新しいスニペットを追加するか、既存のものを編集することができます。"
 
 #: includes/help/single.php:11
 msgid "Finding Snippets"
@@ -402,6 +423,17 @@ msgid ""
 "\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
 "\t\t</ul>"
 msgstr ""
+"ここにあなたのサイトに追加できるスニペットをホストしているWebサイトを挙げま"
+"す。\n"
+"\t\t<ul>\n"
+"\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets\">WP-"
+"Snippets</a></li>\n"
+"\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</a></"
+"li>\n"
+"\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title=\"Cats "
+"Who Code Snippet Library\">Cats Who Code</a></li>\n"
+"\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+"\t\t</ul>"
 
 #: includes/help/single.php:24
 msgid "Adding Snippets"
