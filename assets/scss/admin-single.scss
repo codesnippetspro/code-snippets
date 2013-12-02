@@ -18,8 +18,8 @@ label {
 label[for="snippet_description"] h3 div {
 	position: absolute;
 
-	/* MP6 fails with TeenyMCE editor */
-	.mp6 & {
+	/* MP6/3.8 fails without media buttons editor */
+	.new-ui & {
 		position: initial;
 	}
 }
@@ -39,8 +39,8 @@ label[for="snippet_description"] h3 div {
 	border: 1px solid #eee;
 	border-radius: 3px;
 
-	/* Tweak things for the MP6 interface */
-	.mp6 & {
+	/* Tweak things for the WP 3.8 interface */
+	.new-ui & {
 		width: 100%;
 		border-color: #dfdfdf;
 		background-color: #fff;

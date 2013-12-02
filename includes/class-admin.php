@@ -81,6 +81,9 @@ class Code_Snippets_Admin {
 		/* Add a custom icon to Snippets menu pages */
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_icon_style' ) );
 
+		/* Add a body class for the new admin interface */
+		add_filter( 'admin_body_class', array( $this, 'new_interface_body_class' ) );
+
 		/* Add the description editor to the Snippets > Add New page */
 		add_action( 'code_snippets/admin/single', array( $this, 'description_editor_box' ), 5 );
 
@@ -110,6 +113,42 @@ class Code_Snippets_Admin {
 
 		/* Remove the action and stop all Debug Bar Console scripts */
 		&& remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );
+	}
+
+	/**
+	 * Check if the new MP6/WP 3.8 interface is active
+	 *
+	 * @return boolean
+	 * @since  1.9.1
+	 */
+	function is_new_interface() {
+		return defined( 'MP6' ) || version_compare( $GLOBALS['wp_version'], '3.8-alpha', '>' );
+	}
+
+	/**
+	 * Add a new admin body class for the new admin interface
+	 *
+	 * @since  1.9.1
+	 * @param  string $classes The original body classes
+	 * @return string          The modified body classes
+	 */
+	function new_interface_body_class( $classes ) {
+
+		if ( $this->is_new_interface() ) {
+
+			/* Convert the list of classes into an array */
+			$classes = explode( ' ', $classes );
+
+			/* Add the class if it does not already exist */
+			if ( ! in_array( 'new-ui', $classes ) ) {
+				$classes[] = 'new-ui';
+			}
+
+			/* Convert the array back into a list */
+			$classes = implode( ' ', $classes );
+		}
+
+		return $classes;
 	}
 
 	/**
@@ -233,13 +272,13 @@ class Code_Snippets_Admin {
 	function add_admin_menus() {
 		global $code_snippets;
 
-		/* Use a different screen icon for the MP6 interface */
-		if ( ! defined( 'MP6' ) ) {
+		/* Use a different screen icon for the new admin interface */
+		if ( $this->is_new_interface() ) {
+			$menu_icon = 'div';
+		} else {
 			$menu_icon = apply_filters( 'code_snippets/admin/menu_icon_url',
 				plugins_url( 'assets/images/menu-icon.png', $code_snippets->file )
 			);
-		} else {
-			$menu_icon = 'div';
 		}
 
 		/* Add the top-level menu and associated subpage */
@@ -319,7 +358,7 @@ class Code_Snippets_Admin {
 	function load_admin_icon_style() {
 		global $code_snippets;
 
-		$stylesheet = ( 'mp6' === get_user_option( 'admin_color' ) ? 'menu-icon-mp6' : 'screen-icon' );
+		$stylesheet = $this->is_new_interface() ? 'menu-icon-mp6' : 'screen-icon';
 
 		wp_enqueue_style(
 			'icon-snippets',

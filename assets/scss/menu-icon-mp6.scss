@@ -5,12 +5,12 @@
 #toplevel_page_snippets div.wp-menu-image {
 
 	/* Use the plugins dashicon as a fallback */
-	.mp6.no-svg &:before {
+	.no-svg &:before {
 		content: '\f106';
 	}
 
 	/* If the browser does support SVG, use our custom icon */
-	.mp6.svg & {
+	.svg & {
 
 		/* Remove the generic dashicon */
 		&:before {
@@ -22,6 +22,10 @@
 			position: center center !important;
 			size: 20px 20px;
 			repeat: no-repeat;
+		}
+
+		#adminmenu li:hover & {
+			color: #2ea2cc;
 		}
 	}
 }
