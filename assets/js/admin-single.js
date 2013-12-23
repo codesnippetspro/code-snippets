@@ -12,9 +12,13 @@ window.CodeMirror = (function() {
   // Crude, but necessary to handle a number of hard-to-feature-detect
   // bugs and behavior differences.
   var gecko = /gecko\/\d/i.test(navigator.userAgent);
+  // IE11 currently doesn't count as 'ie', since it has almost none of
+  // the same bugs as earlier versions. Use ie_gt10 to handle
+  // incompatibilities in that version.
   var ie = /MSIE \d/.test(navigator.userAgent);
   var ie_lt8 = ie && (document.documentMode == null || document.documentMode < 8);
   var ie_lt9 = ie && (document.documentMode == null || document.documentMode < 9);
+  var ie_gt10 = /Trident\/([7-9]|\d{2,})\./.test(navigator.userAgent);
   var webkit = /WebKit\//.test(navigator.userAgent);
   var qtwebkit = webkit && /Qt\/\d+\.\d+/.test(navigator.userAgent);
   var chrome = /Chrome\//.test(navigator.userAgent);
@@ -911,7 +915,7 @@ window.CodeMirror = (function() {
     doc.iter(doc.frontier, Math.min(doc.first + doc.size, cm.display.showingTo + 500), function(line) {
       if (doc.frontier >= cm.display.showingFrom) { // Visible
         var oldStyles = line.styles;
-        line.styles = highlightLine(cm, line, state);
+        line.styles = highlightLine(cm, line, state, true);
         var ischange = !oldStyles || oldStyles.length != line.styles.length;
         for (var i = 0; !ischange && i < oldStyles.length; ++i) ischange = oldStyles[i] != line.styles[i];
         if (ischange) {
@@ -920,7 +924,7 @@ window.CodeMirror = (function() {
         }
         line.stateAfter = copyState(doc.mode, state);
       } else {
-        processLine(cm, line, state);
+        processLine(cm, line.text, state);
         line.stateAfter = doc.frontier % 5 == 0 ? copyState(doc.mode, state) : null;
       }
       ++doc.frontier;
@@ -964,7 +968,7 @@ window.CodeMirror = (function() {
     if (!state) state = startState(doc.mode);
     else state = copyState(doc.mode, state);
     doc.iter(pos, n, function(line) {
-      processLine(cm, line, state);
+      processLine(cm, line.text, state);
       var save = pos == n - 1 || pos % 5 == 0 || pos >= display.showingFrom && pos < display.showingTo;
       line.stateAfter = save ? copyState(doc.mode, state) : null;
       ++pos;
@@ -1388,8 +1392,10 @@ window.CodeMirror = (function() {
     }
     if (!updated && op.selectionChanged) updateSelection(cm);
     if (op.updateScrollPos) {
-      display.scroller.scrollTop = display.scrollbarV.scrollTop = doc.scrollTop = newScrollPos.scrollTop;
-      display.scroller.scrollLeft = display.scrollbarH.scrollLeft = doc.scrollLeft = newScrollPos.scrollLeft;
+      var top = Math.max(0, Math.min(display.scroller.scrollHeight - display.scroller.clientHeight, newScrollPos.scrollTop));
+      var left = Math.max(0, Math.min(display.scroller.scrollWidth - display.scroller.clientWidth, newScrollPos.scrollLeft));
+      display.scroller.scrollTop = display.scrollbarV.scrollTop = doc.scrollTop = top;
+      display.scroller.scrollLeft = display.scrollbarH.scrollLeft = doc.scrollLeft = left;
       alignHorizontally(cm);
       if (op.scrollToPos)
         scrollPosIntoView(cm, clipPos(cm.doc, op.scrollToPos.from),
@@ -1908,7 +1914,6 @@ window.CodeMirror = (function() {
           if (cm.state.draggingText) replaceRange(cm.doc, "", curFrom, curTo, "paste");
           cm.replaceSelection(text, null, "paste");
           focusInput(cm);
-          onFocus(cm);
         }
       }
       catch(e){}
@@ -2766,6 +2771,8 @@ window.CodeMirror = (function() {
 
     if (indentString != curSpaceString)
       replaceRange(cm.doc, indentString, Pos(n, 0), Pos(n, curSpaceString.length), "+input");
+    else if (doc.sel.head.line == n && doc.sel.head.ch < curSpaceString.length)
+      setSelection(doc, Pos(n, curSpaceString.length), Pos(n, curSpaceString.length), 1);
     line.stateAfter = null;
   }
 
@@ -2866,7 +2873,7 @@ window.CodeMirror = (function() {
 
   CodeMirror.prototype = {
     constructor: CodeMirror,
-    focus: function(){window.focus(); focusInput(this); onFocus(this); fastPoll(this);},
+    focus: function(){window.focus(); focusInput(this); fastPoll(this);},
 
     setOption: function(option, value) {
       var options = this.options, old = options[option];
@@ -3279,8 +3286,14 @@ window.CodeMirror = (function() {
     clearCaches(cm);
     regChange(cm);
   }, true);
+  option("specialChars", /[\t\u0000-\u0019\u00ad\u200b\u2028\u2029\ufeff]/g, function(cm, val) {
+    cm.options.specialChars = new RegExp(val.source + (val.test("\t") ? "" : "|\t"), "g");
+    cm.refresh();
+  }, true);
+  option("specialCharPlaceholder", defaultSpecialCharPlaceholder, function(cm) {cm.refresh();}, true);
   option("electricChars", true);
   option("rtlMoveVisually", !windows);
+  option("wholeLineUpdateBefore", true);
 
   option("theme", "default", function(cm) {
     themeChanged(cm);
@@ -3313,8 +3326,14 @@ window.CodeMirror = (function() {
   option("resetSelectionOnContextMenu", true);
 
   option("readOnly", false, function(cm, val) {
-    if (val == "nocursor") {onBlur(cm); cm.display.input.blur();}
-    else if (!val) resetInput(cm, true);
+    if (val == "nocursor") {
+      onBlur(cm);
+      cm.display.input.blur();
+      cm.display.disabled = true;
+    } else {
+      cm.display.disabled = false;
+      if (!val) resetInput(cm, true);
+    }
   });
   option("dragDrop", true);
 
@@ -3855,7 +3874,9 @@ window.CodeMirror = (function() {
     if (doc.cm && !doc.cm.curOp) return operation(doc.cm, markText)(doc, from, to, options, type);
 
     var marker = new TextMarker(doc, type);
-    if (type == "range" && !posLess(from, to)) return marker;
+    if (posLess(to, from) || posEq(from, to) && type == "range" &&
+        !(options.inclusiveLeft && options.inclusiveRight))
+      return marker;
     if (options) copyObj(options, marker);
     if (marker.replacedWith) {
       marker.collapsed = true;
@@ -3971,7 +3992,9 @@ window.CodeMirror = (function() {
     if (old) for (var i = 0, nw; i < old.length; ++i) {
       var span = old[i], marker = span.marker;
       var startsBefore = span.from == null || (marker.inclusiveLeft ? span.from <= startCh : span.from < startCh);
-      if (startsBefore || marker.type == "bookmark" && span.from == startCh && (!isInsert || !span.marker.insertLeft)) {
+      if (startsBefore ||
+          (marker.inclusiveLeft && marker.inclusiveRight || marker.type == "bookmark") &&
+          span.from == startCh && (!isInsert || !span.marker.insertLeft)) {
         var endsAfter = span.to == null || (marker.inclusiveRight ? span.to >= startCh : span.to > startCh);
         (nw || (nw = [])).push({from: span.from,
                                 to: endsAfter ? null : span.to,
@@ -4244,6 +4267,7 @@ window.CodeMirror = (function() {
     this.height = estimateHeight ? estimateHeight(this) : 1;
   };
   eventMixin(Line);
+  Line.prototype.lineNo = function() { return lineNo(this); };
 
   function updateLine(line, text, markedSpans, estimateHeight) {
     line.text = text;
@@ -4264,7 +4288,7 @@ window.CodeMirror = (function() {
   // Run the given mode's parser over a line, update the styles
   // array, which contains alternating fragments of text and CSS
   // classes.
-  function runMode(cm, text, mode, state, f) {
+  function runMode(cm, text, mode, state, f, forceToEnd) {
     var flattenSpans = mode.flattenSpans;
     if (flattenSpans == null) flattenSpans = cm.options.flattenSpans;
     var curStart = 0, curStyle = null;
@@ -4273,6 +4297,7 @@ window.CodeMirror = (function() {
     while (!stream.eol()) {
       if (stream.pos > cm.options.maxHighlightLength) {
         flattenSpans = false;
+        if (forceToEnd) processLine(cm, text, state, stream.pos);
         stream.pos = text.length;
         style = null;
       } else {
@@ -4292,12 +4317,14 @@ window.CodeMirror = (function() {
     }
   }
 
-  function highlightLine(cm, line, state) {
+  function highlightLine(cm, line, state, forceToEnd) {
     // A styles array always starts with a number identifying the
     // mode/overlays that it is based on (for easy invalidation).
     var st = [cm.state.modeGen];
     // Compute the base array of styles
-    runMode(cm, line.text, cm.doc.mode, state, function(end, style) {st.push(end, style);});
+    runMode(cm, line.text, cm.doc.mode, state, function(end, style) {
+      st.push(end, style);
+    }, forceToEnd);
 
     // Run overlays, adjust style array.
     for (var o = 0; o < cm.state.overlays.length; ++o) {
@@ -4336,10 +4363,11 @@ window.CodeMirror = (function() {
 
   // Lightweight form of highlight -- proceed over this line and
   // update state, but don't save a style array.
-  function processLine(cm, line, state) {
+  function processLine(cm, text, state, startAt) {
     var mode = cm.doc.mode;
-    var stream = new StringStream(line.text, cm.options.tabSize);
-    if (line.text == "" && mode.blankLine) mode.blankLine(state);
+    var stream = new StringStream(text, cm.options.tabSize);
+    stream.start = stream.pos = startAt || 0;
+    if (text == "" && mode.blankLine) mode.blankLine(state);
     while (!stream.eol() && stream.pos <= cm.options.maxHighlightLength) {
       mode.token(stream, state);
       stream.start = stream.pos;
@@ -4396,7 +4424,7 @@ window.CodeMirror = (function() {
     // Work around problem with the reported dimensions of single-char
     // direction spans on IE (issue #1129). See also the comment in
     // cursorCoords.
-    if (measure && ie && (order = getOrder(line))) {
+    if (measure && (ie || ie_gt10) && (order = getOrder(line))) {
       var l = order.length - 1;
       if (order[l].from == order[l].to) --l;
       var last = order[l], prev = order[l - 1];
@@ -4414,17 +4442,23 @@ window.CodeMirror = (function() {
     return builder;
   }
 
-  var tokenSpecialChars = /[\t\u0000-\u0019\u00ad\u200b\u2028\u2029\uFEFF]/g;
+  function defaultSpecialCharPlaceholder(ch) {
+    var token = elt("span", "\u2022", "cm-invalidchar");
+    token.title = "\\u" + ch.charCodeAt(0).toString(16);
+    return token;
+  }
+
   function buildToken(builder, text, style, startStyle, endStyle, title) {
     if (!text) return;
-    if (!tokenSpecialChars.test(text)) {
+    var special = builder.cm.options.specialChars;
+    if (!special.test(text)) {
       builder.col += text.length;
       var content = document.createTextNode(text);
     } else {
       var content = document.createDocumentFragment(), pos = 0;
       while (true) {
-        tokenSpecialChars.lastIndex = pos;
-        var m = tokenSpecialChars.exec(text);
+        special.lastIndex = pos;
+        var m = special.exec(text);
         var skipped = m ? m.index - pos : text.length - pos;
         if (skipped) {
           content.appendChild(document.createTextNode(text.slice(pos, pos + skipped)));
@@ -4437,8 +4471,7 @@ window.CodeMirror = (function() {
           content.appendChild(elt("span", spaceStr(tabWidth), "cm-tab"));
           builder.col += tabWidth;
         } else {
-          var token = elt("span", "\u2022", "cm-invalidchar");
-          token.title = "\\u" + m[0].charCodeAt(0).toString(16);
+          var token = builder.cm.options.specialCharPlaceholder(m[0]);
           content.appendChild(token);
           builder.col += 1;
         }
@@ -4591,7 +4624,8 @@ window.CodeMirror = (function() {
     var lastText = lst(text), lastSpans = spansFor(text.length - 1), nlines = to.line - from.line;
 
     // First adjust the line structure
-    if (from.ch == 0 && to.ch == 0 && lastText == "") {
+    if (from.ch == 0 && to.ch == 0 && lastText == "" &&
+        (!doc.cm || doc.cm.options.wholeLineUpdateBefore)) {
       // This is a whole-line replace. Treated specially to make
       // sure line objects move the way they are supposed to.
       for (var i = 0, e = text.length - 1, added = []; i < e; ++i)
@@ -5478,7 +5512,7 @@ window.CodeMirror = (function() {
     return true;
   }
 
-  var isExtendingChar = /[\u0300-\u036F\u0483-\u0487\u0488-\u0489\u0591-\u05BD\u05BF\u05C1-\u05C2\u05C4-\u05C5\u05C7\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED\uA66F\uA670-\uA672\uA674-\uA67D\uA69F\udc00-\udfff]/;
+  var isExtendingChar = /[\u0300-\u036F\u0483-\u0487\u0488-\u0489\u0591-\u05BD\u05BF\u05C1-\u05C2\u05C4-\u05C5\u05C7\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7-\u06E8\u06EA-\u06ED\uA66F\u1DC0–\u1DFF\u20D0–\u20FF\uA670-\uA672\uA674-\uA67D\uA69F\udc00-\udfff\uFE20–\uFE2F]/;
 
   // DOM UTILITIES
 
@@ -5907,7 +5941,7 @@ window.CodeMirror = (function() {
 
   // THE END
 
-  CodeMirror.version = "3.19.0";
+  CodeMirror.version = "3.20.0";
 
   return CodeMirror;
 })();
@@ -6696,6 +6730,7 @@ CodeMirror.defineMode("clike", function(config, parserConfig) {
   function findMatchingBracket(cm, where, strict) {
     var state = cm.state.matchBrackets;
     var maxScanLen = (state && state.maxScanLineLength) || 10000;
+    var maxScanLines = (state && state.maxScanLines) || 100;
 
     var cur = where || cm.getCursor(), line = cm.getLineHandle(cur.line), pos = cur.ch - 1;
     var match = (pos >= 0 && matching[line.text.charAt(pos)]) || matching[line.text.charAt(++pos)];
@@ -6720,7 +6755,7 @@ CodeMirror.defineMode("clike", function(config, parserConfig) {
         }
       }
     }
-    for (var i = cur.line, found, e = forward ? Math.min(i + 100, cm.lineCount()) : Math.max(-1, i - 100); i != e; i+=d) {
+    for (var i = cur.line, found, e = forward ? Math.min(i + maxScanLines, cm.lineCount()) : Math.max(-1, i - maxScanLines); i != e; i+=d) {
       if (i == cur.line) found = scan(line, i, pos);
       else found = scan(cm.getLineHandle(i), i);
       if (found) break;

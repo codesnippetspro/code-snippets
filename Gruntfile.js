@@ -38,11 +38,13 @@ module.exports = function(grunt) {
 			}
 		},
 
-		compass: {
-			dist: {
-				options: {
-					config: 'assets/config.rb'
-				}
+		sass: {
+			dist:  {
+				cwd: 'assets/scss',
+				src: '*.scss',
+				dest: 'assets/css',
+				expand: true,
+				ext: '.css'
 			}
 		},
 
@@ -145,7 +147,7 @@ module.exports = function(grunt) {
 
 	});
 
-	grunt.registerTask( 'styles', ['compass', 'includes:styles', 'autoprefixer', 'csso'] );
+	grunt.registerTask( 'styles', ['sass', 'includes:styles', 'autoprefixer', 'csso'] );
 	grunt.registerTask( 'scripts', ['jshint', 'includes:scripts'] );
 
 	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:plugin', 'copy:assets'] );
