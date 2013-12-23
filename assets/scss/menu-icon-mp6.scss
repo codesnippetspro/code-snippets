@@ -13,12 +13,7 @@
 	font-style: normal;
 }
 
-#toplevel_page_snippets div.wp-menu-image {
-	background-repeat: no-repeat;
-	background-size: 32px 32px;
-
-	&:before {
-		font-family: 'code-snippets' !important;
-		content: '\e600';
-	}
+#toplevel_page_snippets div.wp-menu-image:before {
+	font-family: 'code-snippets' !important;
+	content: '\e600';
 }
