@@ -14,16 +14,6 @@ label {
 	cursor: auto;
 }
 
-/* Position the description heading on the same level as the editor buttons */
-label[for="snippet_description"] h3 div {
-	position: absolute;
-
-	/* MP6/3.8 fails without media buttons editor */
-	.new-ui & {
-		position: initial;
-	}
-}
-
 /* Add spacing in between the action buttons */
 .submit .button {
 	margin-right: .5em;
@@ -35,17 +25,11 @@ label[for="snippet_description"] h3 div {
  */
 .CodeMirror {
 	min-height: 300px;
+	width: 100%;
 	height: auto;
-	border: 1px solid #eee;
+	border: 1px solid #dfdfdf;
 	border-radius: 3px;
-
-	/* Tweak things for the WP 3.8 interface */
-	.new-ui & {
-		width: 100%;
-		border-color: #dfdfdf;
-		background-color: #fff;
-	}
-
+	background-color: #fff;;
 }
 
 .CodeMirror-scroll {

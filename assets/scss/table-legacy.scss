@@ -1,0 +1,51 @@
+/**
+ * Custom styling for the snippets table
+ * on the pre-3.8 interface
+ */
+
+.snippets {
+
+	.delete a {
+		color: #21759b;
+	}
+
+	.inactive {
+
+		th, td {
+			background-color: #f4f4f4;
+		}
+
+		a {
+			color: #557799;
+
+			&, #all-snippets-table &, #search-snippets-table & {
+				&:hover {
+					color: #d54e21;
+				}
+			}
+		}
+	}
+
+	.active {
+		th, td {
+			color: #000;
+		}
+	}
+
+	#wpbody-content & {
+
+		tr {
+			background-color: #fcfcfc;
+		}
+
+		.column-name {
+			white-space: nowrap; /* prevents wrapping of snippet title */
+		}
+
+		.manage-column.column-id.sortable {
+			min-width: 44px;
+		}
+
+	}
+
+}
