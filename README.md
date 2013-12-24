@@ -2,8 +2,8 @@
 # Code Snippets [![Build Status](https://travis-ci.org/bungeshea/code-snippets.png?branch=develop)](https://travis-ci.org/bungeshea/code-snippets)
 
 * __Requires at least:__ [WordPress 3.3](http://wordpress.org/download/) or later
-* __Tested up to:__ WordPress 3.7.1
-* __Stable version:__ [1.9](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __Tested up to:__ WordPress 3.8
+* __Stable version:__ [1.9.1](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
 An easy, clean and simple way to add code snippets to your site.
