@@ -7,35 +7,21 @@ module.exports = function(grunt) {
 
 		watch: {
 
-			styles: {
-				files: ['assets/scss/**/*.{scss,sass}'],
-				tasks: ['styles'],
-				options: {
-					debounceDelay: 500
-				}
+			css: {
+				files: ['assets/scss/**/*.scss'],
+				tasks: ['css']
 			},
 
-			scripts: {
+			js: {
 				files: ['assets/js/**/*.js'],
-				tasks: ['scripts'],
-				options: {
-					debounceDelay: 500
-				}
+				tasks: ['js']
 			}
 
 		},
 
 		jshint: {
 			gruntfile: ['Gruntfile.js'],
-			assets: ['assets/js/**/*.dev.js']
-		},
-
-		uglify: {
-			dist: {
-				files: {
-					'assets/js/admin-single.min.js': ['assets/js/admin-single.js']
-				}
-			}
+			assets: ['assets/js/**/*.js']
 		},
 
 		sass: {
@@ -81,24 +67,6 @@ module.exports = function(grunt) {
 			}
 		},
 
-		includes: {
-			options: {
-				includePath: 'vendor',
-				includeRegexp: /\/\/\s*import\s+['"]?([^'"]+)['"]?\s*?$/,
-			},
-			scripts: {
-				src: ['assets/js/admin-single.dev.js'],
-				dest: 'assets/js/admin-single.js'
-			},
-			styles: {
-				src: ['assets/css/admin-single.css'],
-				dest: 'assets/css/admin-single.css',
-				options: {
-					includeRegexp: /\/\*\s*import\s+['"]?([^'"]+)['"]?\s*\*\/?$/
-				}
-			}
-		},
-
 		clean: {
 			deploy: ['deploy']
 		},
@@ -115,7 +83,16 @@ module.exports = function(grunt) {
 						'includes/**/*',
 						'admin/**/*',
 						'assets/**/*',
-						'languages/**/*'
+						'languages/**/*',
+
+						// CodeMirror
+						'vendor/codemirror/lib/codemirror.css',
+						'vendor/codemirror/lib/codemirror.js',
+						'vendor/codemirror/mode/clike/clike.js',
+						'vendor/codemirror/mode/php/php.js',
+						'vendor/codemirror/addon/search/searchcursor.js',
+						'vendor/codemirror/addon/search/search.js',
+						'vendor/codemirror/addon/edit/matchbrackets.js'
 					],
 					dest: 'deploy/plugin',
 					filter: 'isFile'
@@ -147,11 +124,11 @@ module.exports = function(grunt) {
 
 	});
 
-	grunt.registerTask( 'styles', ['sass', 'includes:styles', 'autoprefixer', 'csso'] );
-	grunt.registerTask( 'scripts', ['jshint', 'includes:scripts'] );
+	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
+	grunt.registerTask( 'js', ['jshint'] );
 
 	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:plugin', 'copy:assets'] );
 	grunt.registerTask( 'phpdoc', 'shell:phpdoc' );
 
-	grunt.registerTask( 'default', ['styles', 'scripts', 'uglify'] );
+	grunt.registerTask( 'default', ['css', 'js'] );
 };

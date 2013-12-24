@@ -43,9 +43,9 @@
 
 	.inactive, .active {
 		td, th {
-			box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
 			padding: 10px 9px;
 			border: none;
+			box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
 		}
 	}
 
@@ -63,8 +63,8 @@
 
 	tr.active + tr.inactive th,
 	tr.active + tr.inactive td {
-		box-shadow: inset 0px 1px 0 rgba(0,0,0,0.02), inset 0 -1px 0 #e1e1e1;
 		border-top: 1px solid rgba(0,0,0,0.03);
+		box-shadow: inset 0px 1px 0 rgba(0,0,0,0.02), inset 0 -1px 0 #e1e1e1;
 	}
 
 	&, #all-snippets-table, #search-snippets-table {
