@@ -112,6 +112,16 @@ module.exports = function(grunt) {
 			}
 		},
 
+		wp_deploy: {
+			release: {
+				options: {
+					plugin_slug: 'code-snippets',
+					svn_user: 'bungeshea',
+					build_dir: 'deploy/plugin'
+				},
+			}
+		},
+
 		shell: {
 
 			/**
@@ -131,4 +141,5 @@ module.exports = function(grunt) {
 	grunt.registerTask( 'phpdoc', 'shell:phpdoc' );
 
 	grunt.registerTask( 'default', ['css', 'js'] );
+	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );
 };
