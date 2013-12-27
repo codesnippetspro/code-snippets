@@ -117,7 +117,6 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 2. Adding a new snippet
 3. Editing a snippet
 4. Importing snippets from an XML file
-5. Managing exiting snippets in the MP6 interface
 
 == Changelog ==
 

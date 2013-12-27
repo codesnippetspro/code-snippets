@@ -130,9 +130,6 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 ### Importing snippets from an XML file
 ![Importing snippets from an XML file](screenshots/screenshot-4.png "Importing snippets from an XML file")
 
-### Managing exiting snippets in the MP6 interface
-![Managing exiting snippets in the MP6 interface](screenshots/screenshot-5.png "Managing exiting snippets in the MP6 interface")
-
   [support]: http://wordpress.org/support/plugin/code-snippets/
   [github]: https://github.com/bungeshea/code-snippets
   [homepage]: http://code-snippets.bungeshea.com
