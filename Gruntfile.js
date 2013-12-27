@@ -54,15 +54,19 @@ module.exports = function(grunt) {
 
 		imagemin: {
 			dist: {
-				options: {
-					optimizationLevel: 7,
-					progressive: true
-				},
 				files: [{
 					expand: true,
 					cwd: 'assets/images/',
 					src: '**/*',
 					dest: 'assets/images/'
+				}]
+			},
+			screenshots: {
+				files: [{
+					expand: true,
+					cwd: 'screenshots/',
+					src: '**/*',
+					dest: 'screenshots/'
 				}]
 			}
 		},
