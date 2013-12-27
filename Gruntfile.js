@@ -20,12 +20,15 @@ module.exports = function(grunt) {
 		},
 
 		jshint: {
+			options: {
+				reporter: require('jshint-stylish')
+			},
 			gruntfile: ['Gruntfile.js'],
 			assets: ['assets/js/**/*.js']
 		},
 
 		sass: {
-			dist:  {
+			assets:  {
 				cwd: 'assets/scss',
 				src: '*.scss',
 				dest: 'assets/css',
@@ -35,7 +38,7 @@ module.exports = function(grunt) {
 		},
 
 		autoprefixer: {
-			dist: {
+			assets: {
 				expand: true,
 				flatten: true,
 				src: 'assets/css/*.css',
@@ -44,7 +47,7 @@ module.exports = function(grunt) {
 		},
 
 		csso: {
-			dist: {
+			assets: {
 				expand: true,
 				flatten: true,
 				src: 'assets/css/*.css',
@@ -53,7 +56,7 @@ module.exports = function(grunt) {
 		},
 
 		imagemin: {
-			dist: {
+			assets: {
 				files: [{
 					expand: true,
 					cwd: 'assets/images/',
