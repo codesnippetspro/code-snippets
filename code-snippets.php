@@ -7,7 +7,7 @@
  * contribute to the localization, please see http://code-snippets.bungeshea.com
  *
  * @package   Code_Snippets
- * @version   1.9
+ * @version   1.9.1
  * @author    Shea Bunge <http://bungeshea.com/>
  * @copyright Copyright (c) 2012-2013, Shea Bunge
  * @link      http://code-snippets.bungeshea.com
@@ -15,17 +15,17 @@
  */
 
 /*
- * Plugin Name: Code Snippets
- * Plugin URI: http://code-snippets.bungeshea.com
- * Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
- * Author: Shea Bunge
- * Author URI: http://bungeshea.com
- * Version: 1.9
- * License: MIT
- * License URI: license.txt
- * Text Domain: code-snippets
- * Domain Path: /languages/
- */
+Plugin Name: Code Snippets
+Plugin URI:  http://code-snippets.bungeshea.com
+Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
+Author:      Shea Bunge
+Author URI:  http://bungeshea.com
+Version:     1.9.1
+License:     MIT
+License URI: license.txt
+Text Domain: code-snippets
+Domain Path: /languages/
+*/
 
 /* Exit if accessed directly */
 if ( ! defined( 'ABSPATH' ) )
@@ -58,7 +58,7 @@ final class Code_Snippets {
 	 * @access public
 	 * @var    string A PHP-standardized version number string
 	 */
-	public $version = '1.9';
+	public $version = '1.9.1';
 
 	/**
 	 * Variables to hold plugin paths
