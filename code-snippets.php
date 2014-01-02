@@ -9,7 +9,7 @@
  * @package   Code_Snippets
  * @version   1.9.1
  * @author    Shea Bunge <http://bungeshea.com/>
- * @copyright Copyright (c) 2012-2013, Shea Bunge
+ * @copyright Copyright (c) 2012-2014, Shea Bunge
  * @link      http://code-snippets.bungeshea.com
  * @license   http://opensource.org/licenses/MIT
  */
@@ -679,6 +679,7 @@ final class Code_Snippets {
 			if ( ! empty( $menu_perms['snippets'] ) ) {
 				return $this->cap;
 			} else {
+				/* The snippet menu is not activated, only allow super admins */
 				return $this->network_cap;
 			}
 		}
