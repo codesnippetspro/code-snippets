@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
-Tested up to: 3.7.1
-Stable tag: 1.9
+Tested up to: 3.8
+Stable tag: 1.9.1
 License: MIT
 License URI: license.txt
 
@@ -117,9 +117,15 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 2. Adding a new snippet
 3. Editing a snippet
 4. Importing snippets from an XML file
-5. Managing exiting snippets in the MP6 interface
 
 == Changelog ==
+
+= 1.9.1 =
+* Use an icon font for menu icon instead of embedded SVG
+* Use Sass (libsass) instead of Compass
+* Unminify CodeMirror scripts
+* Fixes for the WP 3.8 interface
+* Fix 'enable snippets menu for site admins' multisite setting
 
 = 1.9 =
 * Add and remove network capabilities as super admins are added and removed
@@ -261,6 +267,9 @@ Plugin updates will be posted on the [plugin's homepage](http://code-snippets.bu
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
 
 == Upgrade Notice ==
+
+= 1.9.1 =
+UI improvements for WordPress 3.8
 
 = 1.8.1 =
 Minimize CSS and JS; updated CodeMirror; fixed export files

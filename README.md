@@ -2,8 +2,8 @@
 # Code Snippets [![Build Status](https://travis-ci.org/bungeshea/code-snippets.png?branch=develop)](https://travis-ci.org/bungeshea/code-snippets)
 
 * __Requires at least:__ [WordPress 3.3](http://wordpress.org/download/) or later
-* __Tested up to:__ WordPress 3.7.1
-* __Stable version:__ [1.9](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __Tested up to:__ WordPress 3.8
+* __Stable version:__ [1.9.1](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
 An easy, clean and simple way to add code snippets to your site.
@@ -129,9 +129,6 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 
 ### Importing snippets from an XML file
 ![Importing snippets from an XML file](screenshots/screenshot-4.png "Importing snippets from an XML file")
-
-### Managing exiting snippets in the MP6 interface
-![Managing exiting snippets in the MP6 interface](screenshots/screenshot-5.png "Managing exiting snippets in the MP6 interface")
 
   [support]: http://wordpress.org/support/plugin/code-snippets/
   [github]: https://github.com/bungeshea/code-snippets

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.1
+* Use an icon font for menu icon instead of embedded SVG
+* Use Sass (libsass) instead of Compass
+* Unminify CodeMirror scripts
+* Fixes for the WP 3.8 interface
+* Fix 'enable snippets menu for site admins' multisite setting
+
 ## 1.9
 * Add and remove network capabilities as super admins are added and removed
 * Updated MP6 icon implementation

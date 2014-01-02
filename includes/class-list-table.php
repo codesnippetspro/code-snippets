@@ -90,25 +90,15 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( $hook !== $code_snippets->admin->manage_page )
 			return;
 
-		/* Load a different stylesheet if MP6 is active */
-		if ( defined( 'MP6' ) ) {
+		/* Load a different stylesheet for the legacy interface */
+		$stylesheet = ( $code_snippets->admin->is_legacy_interface() ? 'table-legacy.css' : 'table.css' );
 
-			wp_enqueue_style(
-				'snippets-table-mp6',
-				plugins_url( 'assets/css/table-mp6.css', $code_snippets->file ),
-				false,
-				$code_snippets->version
-			);
-
-		} else {
-
-			wp_enqueue_style(
-				'snippets-table',
-				plugins_url( 'assets/css/table.css', $code_snippets->file ),
-				false,
-				$code_snippets->version
-			);
-		}
+		wp_enqueue_style(
+			'snippets-table',
+			plugins_url( "assets/css/$stylesheet", $code_snippets->file ),
+			false,
+			$code_snippets->version
+		);
 	}
 
 	/**

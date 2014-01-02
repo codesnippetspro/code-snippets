@@ -113,6 +113,16 @@ class Code_Snippets_Admin {
 	}
 
 	/**
+	 * Check if we are on the pre-3.8 interface
+	 *
+	 * @return boolean
+	 * @since  1.9.1
+	 */
+	function is_legacy_interface() {
+		return !defined( 'MP6' ) && version_compare( $GLOBALS['wp_version'], '3.8-alpha', '<' );
+	}
+
+	/**
 	 * Handles saving the user's snippets per page preference
 	 *
 	 * @param  unknown $status
@@ -233,8 +243,8 @@ class Code_Snippets_Admin {
 	function add_admin_menus() {
 		global $code_snippets;
 
-		/* Use a different screen icon for the MP6 interface */
-		if ( ! defined( 'MP6' ) ) {
+		/* Provide a raster icon for the legacy interface */
+		if ( $this->is_legacy_interface() ) {
 			$menu_icon = apply_filters( 'code_snippets/admin/menu_icon_url',
 				plugins_url( 'assets/images/menu-icon.png', $code_snippets->file )
 			);
@@ -319,7 +329,7 @@ class Code_Snippets_Admin {
 	function load_admin_icon_style() {
 		global $code_snippets;
 
-		$stylesheet = ( 'mp6' === get_user_option( 'admin_color' ) ? 'menu-icon-mp6' : 'screen-icon' );
+		$stylesheet = $this->is_legacy_interface() ? 'screen-icon' : 'menu-icon';
 
 		wp_enqueue_style(
 			'icon-snippets',
@@ -454,7 +464,70 @@ class Code_Snippets_Admin {
 		if ( $hook !== $this->single_page )
 			return;
 
-		/* Enqueue stylesheets */
+		/* Remove other CodeMirror styles */
+		wp_deregister_style( 'codemirror' );
+		wp_deregister_style( 'wpeditor' );
+
+		/* CodeMirror */
+
+		$codemirror_version = '3.20.0';
+		$codemirror_url     = plugins_url( 'vendor/codemirror/', $code_snippets->file );
+
+		wp_enqueue_style(
+			'code-snippets-codemirror',
+			$codemirror_url . 'lib/codemirror.css',
+			false,
+			$codemirror_version
+		);
+
+		wp_enqueue_script(
+			'code-snippets-codemirror',
+			$codemirror_url . 'lib/codemirror.js',
+			false,
+			$codemirror_version
+		);
+
+		/* CodeMirror Modes */
+
+		wp_enqueue_script(
+			'code-snippets-codemirror-mode-clike',
+			$codemirror_url . 'mode/clike/clike.js',
+			array( 'code-snippets-codemirror' ),
+			$codemirror_version
+		);
+
+		wp_enqueue_script(
+			'code-snippets-codemirror-mode-php',
+			$codemirror_url . 'mode/php/php.js',
+			array( 'code-snippets-codemirror', 'code-snippets-codemirror-mode-clike' ),
+			$codemirror_version
+		);
+
+
+		/* CodeMirror Addons */
+
+		wp_enqueue_script(
+			'code-snippets-codemirror-addon-searchcursor',
+			$codemirror_url . 'addon/search/searchcursor.js',
+			array( 'code-snippets-codemirror' ),
+			$codemirror_version
+		);
+
+		wp_enqueue_script(
+			'code-snippets-codemirror-addon-search',
+			$codemirror_url . 'addon/search/search.js',
+			array( 'code-snippets-codemirror', 'code-snippets-codemirror-addon-searchcursor' ),
+			$codemirror_version
+		);
+
+		wp_enqueue_script(
+			'code-snippets-codemirror-addon-matchbrackets',
+			$codemirror_url . 'addon/edit/matchbrackets.js',
+			array( 'code-snippets-codemirror' ),
+			$codemirror_version
+		);
+
+		/* Plugin Assets */
 
 		wp_enqueue_style(
 			'code-snippets-admin-single',
@@ -463,19 +536,13 @@ class Code_Snippets_Admin {
 			$code_snippets->version
 		);
 
-		/* Enqueue scripts */
-
 		wp_enqueue_script(
 			'code-snippets-admin-single',
-			plugins_url( 'assets/js/admin-single.min.js', $code_snippets->file ),
-			false,
+			plugins_url( 'assets/js/admin-single.js', $code_snippets->file ),
+			array( 'code-snippets-codemirror' ),
 			$code_snippets->version,
 			true // Load in footer
 		);
-
-		/* Remove other CodeMirror styles */
-		wp_deregister_style( 'codemirror' );
-		wp_deregister_style( 'wpeditor' );
 	}
 
 	/**

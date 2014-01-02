@@ -1,0 +1,19 @@
+/**
+ * Add the snippets icon to the admin menu
+ */
+
+@font-face {
+	font-family: 'code-snippets';
+	src: url('../font/code-snippets.eot');
+	src: url('../font/code-snippets.eot?#iefix') format('embedded-opentype'),
+		 url('../font/code-snippets.ttf') format('truetype'),
+		 url('../font/code-snippets.woff') format('woff'),
+		 url('../font/code-snippets.svg#code-snippets') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+#toplevel_page_snippets div.wp-menu-image:before {
+	font-family: 'code-snippets' !important;
+	content: '\e600';
+}

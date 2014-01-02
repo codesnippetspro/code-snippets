@@ -75,4 +75,4 @@ class Code_Snippets_Export_PHP extends Code_Snippets_Export {
 	protected function do_footer() {}
 }
 
-endif; // function exists check
+endif; // class exists check
