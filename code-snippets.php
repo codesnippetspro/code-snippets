@@ -672,13 +672,15 @@ final class Code_Snippets {
 	public function get_cap( $deprecated = '' ) {
 
 		if ( is_multisite() ) {
-			$active_menus = get_site_option( 'menu_items', array() );
+			$menu_perms = get_site_option( 'menu_items', array() );
 
 			/* If multisite is enabled and the snippet menu is not activated,
 			   restrict snippet operations to super admins only */
-			if ( ! in_array( 'snippets', $active_menus ) )
+			if ( ! empty( $menu_perms['snippets'] ) ) {
+				return $this->cap;
+			} else {
 				return $this->network_cap;
-
+			}
 		}
 
 		return $this->cap;
