@@ -4,7 +4,7 @@ Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 3.8
-Stable tag: 1.9.1
+Stable tag: 1.9.1.1
 License: MIT
 License URI: license.txt
 
@@ -119,6 +119,9 @@ That's fantastic! Join me on [GitHub](https://github.com/bungeshea/code-snippets
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 1.9.1.1
+* Add capability check to site snippets importer
 
 = 1.9.1 =
 * Use an icon font for menu icon instead of embedded SVG
@@ -267,6 +270,9 @@ Plugin updates will be posted on the [plugin's homepage](http://code-snippets.bu
 * Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
 
 == Upgrade Notice ==
+
+= 1.9.1.1 =
+Add capability check to snippets importer
 
 = 1.9.1 =
 UI improvements for WordPress 3.8

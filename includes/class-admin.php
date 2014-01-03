@@ -164,16 +164,19 @@ class Code_Snippets_Admin {
 	 * @return void
 	 */
 	function load_importer() {
+		global $code_snippets;
 
-		if ( defined( 'WP_LOAD_IMPORTERS' ) ) {
+		/* Only register the importer if the current user can manage snippets */
+		if ( defined( 'WP_LOAD_IMPORTERS' ) && current_user_can( $code_snippets->get_cap() ) ) {
 
 			/* Load Importer API */
 			require_once ABSPATH . 'wp-admin/includes/import.php';
 
 			if ( ! class_exists( 'WP_Importer' ) ) {
 				$class_wp_importer = ABSPATH .  'wp-admin/includes/class-wp-importer.php';
-				if ( file_exists( $class_wp_importer ) )
+				if ( file_exists( $class_wp_importer ) ) {
 					require_once $class_wp_importer;
+				}
 			}
 
 			/* Register the Code Snippets importer with WordPress */
@@ -226,6 +229,22 @@ class Code_Snippets_Admin {
 	public function get_messages( $slug ) {
 		global $code_snippets;
 		require $code_snippets->plugin_dir . "admin/messages/{$slug}.php";
+	}
+
+	/**
+	 * Check if the current user can manage snippets.
+	 * If not, display an error message
+	 *
+	 * @since  1.9.1.1
+	 * @access public
+	 * @return void
+	 */
+	public function check_perms() {
+		global $code_snippets;
+
+		if ( ! current_user_can( $code_snippets->get_cap() ) ) {
+			wp_die( __( 'You are not access this page.', 'code-snippets' ) );
+		}
 	}
 
 	/**
@@ -350,6 +369,9 @@ class Code_Snippets_Admin {
 	function load_manage_menu() {
 		global $code_snippets;
 
+		/* Make sure the user has permission to be here */
+		$this->check_perms();
+
 		/* Create the snippet tables if they don't exist */
 		$code_snippets->maybe_create_tables( true, true );
 
@@ -375,6 +397,9 @@ class Code_Snippets_Admin {
 	function load_single_menu() {
 		global $code_snippets;
 		$screen = get_current_screen();
+
+		/* Make sure the user has permission to be here */
+		$this->check_perms();
 
 		/* Create the snippet tables if they don't exist */
 		$code_snippets->maybe_create_tables( true, true );
@@ -560,6 +585,9 @@ class Code_Snippets_Admin {
 	 */
 	function load_import_menu() {
 		global $code_snippets;
+
+		/* Make sure the user has permission to be here */
+		$this->check_perms();
 
 		/* Create the snippet tables if they don't exist */
 		$code_snippets->maybe_create_tables( true, true );

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.1.1
+* Add capability check to site snippets importer
+
 ## 1.9.1
 * Use an icon font for menu icon instead of embedded SVG
 * Use Sass (libsass) instead of Compass
