@@ -131,8 +131,11 @@ class Code_Snippets_Admin {
 	 * @return unknown
 	 */
 	function set_screen_option( $status, $option, $value ) {
-		if ( 'snippets_per_page' === $option )
+		if ( 'snippets_per_page' === $option ) {
 			return $value;
+		}
+
+		return $status;
 	}
 
 	/**
