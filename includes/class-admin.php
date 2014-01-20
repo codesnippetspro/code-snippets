@@ -498,7 +498,7 @@ class Code_Snippets_Admin {
 
 		/* CodeMirror */
 
-		$codemirror_version = '3.20.0';
+		$codemirror_version = '3.21.0';
 		$codemirror_url     = plugins_url( 'vendor/codemirror/', $code_snippets->file );
 
 		wp_enqueue_style(
