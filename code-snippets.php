@@ -110,19 +110,6 @@ final class Code_Snippets {
 	public $table, $ms_table = '';
 
 	/**
-	 * These are now deprecated in favor of those in
-	 * the Code_Snippets_Admin class, but maintained as
-	 * references so we don't break existing code
-	 *
-	 * @since      1.0
-	 * @deprecated Moved to the Code_Snippets_Admin class in 1.7.1
-	 * @access     public
-	 * @var        string
-	 */
-	public $admin_manage,     $admin_single,     $admin_import,
-	       $admin_manage_url, $admin_single_url, $admin_import_url = '';
-
-	/**
 	 * The constructor function for our class
 	 *
 	 * This method is called just as this plugin is included,
@@ -181,9 +168,6 @@ final class Code_Snippets {
 		/* Cleanup the plugin data on uninstall */
 		register_uninstall_hook( $this->file, array( __CLASS__, 'uninstall' ) );
 
-		/* Load the global functions file */
-		$this->get_include( 'functions' );
-
 		/* Add and remove capabilities from Super Admins if their statuses change */
 		add_action( 'grant_super_admin', array( $this, 'add_ms_cap_to_user' ) );
 		add_action( 'remove_super_admin', array( $this, 'remove_ms_cap_from_user' ) );
@@ -217,15 +201,6 @@ final class Code_Snippets {
 			/* Load our administration class */
 			$this->get_include( 'class-admin' );
 			$this->admin = new Code_Snippets_Admin;
-
-			/* Remap deprecated variables */
-			$this->admin_manage_url = &$this->admin->manage_url;
-			$this->admin_single_url = &$this->admin->single_url;
-			$this->admin_import_url = &$this->admin->import_url;
-
-			$this->admin_manage = &$this->admin->manage_page;
-			$this->admin_single = &$this->admin->single_page;
-			$this->admin_import = &$this->admin->import_page;
 		}
 	}
 
@@ -257,10 +232,6 @@ final class Code_Snippets {
 		/* Setup initial table variables */
 		$wpdb->snippets           = $wpdb->prefix . 'snippets';
 		$wpdb->ms_snippets        = $wpdb->base_prefix . 'ms_snippets';
-
-		/* Add a pointer to the old variables */
-		$this->table              = &$wpdb->snippets;
-		$this->ms_table           = &$wpdb->ms_snippets;
 	}
 
 	/**
@@ -336,23 +307,6 @@ final class Code_Snippets {
 
 		/* Set the flag so we don't have to do this again */
 		self::$tables_created = true;
-	}
-
-	/**
-	 * Create the snippet tables if they do not already exist
-	 *
-	 * @since      Code Snippets 1.2
-	 * @deprecated Code Snippets 1.7.1
-	 * @access     public
-	 * @return     void
-	 */
-	public function create_tables() {
-		_deprecated_function(
-			'$code_snippets->create_tables()',
-			'Code Snippets 1.7.1',
-			'$code_snippets->maybe_create_tables()'
-		);
-		$this->maybe_create_tables();
 	}
 
 	/**
@@ -440,67 +394,6 @@ final class Code_Snippets {
 		/* Skip this if we're on the latest version */
 		if ( version_compare( $current_version, $this->version, '<' ) ) {
 
-			/* Remove capabilities that were deprecated in 1.9 */
-			if ( version_compare( $current_version, '1.9', '<' ) ) {
-				$role = get_role( $this->role );
-
-				$role->remove_cap( 'install_network_snippets' );
-				$role->remove_cap( 'edit_network_snippets' );
-			}
-
-			/* Data in database is unescaped in 1.8; slashes removed in 1.9 */
-			if ( version_compare( $current_version, '1.9', '<' ) ) {
-
-				$tables = array();
-
-				if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
-					$tables[] = $wpdb->snippets;
-				}
-
-				if ( is_multisite() && is_main_site() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets ) {
-					$tables[] = $wpdb->ms_snippets;
-				}
-
-				foreach ( $tables as $table ) {
-					$snippets = $wpdb->get_results( "SELECT * FROM $table" );
-
-					foreach ( $snippets as $snippet ) {
-
-						$snippet->name        = stripslashes( $snippet->name );
-						$snippet->code        = stripslashes( $snippet->code );
-						$snippet->description = stripslashes( $snippet->description );
-
-						if ( version_compare( $current_version, '1.8', '<' ) ) {
-							$snippet->name        = htmlspecialchars_decode( $snippet->name );
-							$snippet->code        = htmlspecialchars_decode( $snippet->code );
-							$snippet->description = htmlspecialchars_decode( $snippet->description );
-						}
-
-						$wpdb->update( $table,
-							array(
-								'name'        => $snippet->name,
-								'code'        => $snippet->code,
-								'description' => $snippet->description
-							),
-							array( 'id' => $snippet->id ),
-							array( '%s' ),
-							array( '%d' )
-						);
-					}
-				} // end $table foreach
-
-			} // end < 1.8 version check
-
-			/* Register the capabilities once only */
-			if ( version_compare( $current_version, '1.5',  '<' ) ) {
-				$this->add_cap();
-			}
-
-			if ( version_compare( $previous_version, '1.2', '<' ) ) {
-				/* The 'Complete Uninstall' option was removed in version 1.2 */
-				delete_option( 'cs_complete_uninstall' );
-			}
-
 			/* Update the current version stored in the database */
 			update_option( 'code_snippets_version', $this->version );
 		}
@@ -513,36 +406,9 @@ final class Code_Snippets {
 
 			if ( version_compare( $current_ms_version, $this->version, '<' ) ) {
 
-				/* Remove capabilities that were deprecated in 1.9 */
-				if ( version_compare( $current_version, '1.9', '<' ) ) {
-					$supers = get_super_admins();
-
-					foreach ( $supers as $admin ) {
-						$user = new WP_User( 0, $admin );
-						$user->remove_cap( 'install_network_snippets' );
-						$user->remove_cap( 'edit_network_snippets' );
-					}
-				}
-
-				/* Add custom capabilities introduced in 1.5 */
-				if ( version_compare( $current_ms_version, '1.5', '<' ) ) {
-					$this->setup_ms_roles( true );
-				}
-
-				/* Migrate recently_network_activated_snippets to the site options */
-				if ( get_option( 'recently_network_activated_snippets' ) ) {
-
-					add_site_option(
-						'recently_activated_snippets',
-						get_option( 'recently_network_activated_snippets', array() )
-					);
-
-					delete_option( 'recently_network_activated_snippets' );
-				}
-
+				update_site_option( 'code_snippets_version', $this->version );
 			}
 
-			update_site_option( 'code_snippets_version', $this->version );
 		}
 
 	}
@@ -639,37 +505,17 @@ final class Code_Snippets {
 	}
 
 	/**
-	 * Check if the current user can perform some action on snippets or not
-	 *
-	 * @uses   current_user_can() To check if the current user can perform a task
-	 * @uses   $this->get_cap()   To get the required capability
-	 *
-	 * @param  string $deprecated Deprecated in 1.9
-	 * @return boolean            Whether the current user can perform this task or not
-	 *
-	 * @since  1.9                Removed multiple capability support
-	 * @since  1.7.1.1            Moved logic to $this->get_cap() method
-	 * @since  1.7.1
-	 * @access public
-	 */
-	public function user_can( $deprecated = '' ) {
-		return current_user_can( $this->get_cap() );
-	}
-
-	/**
 	 * Get the required capability to perform a certain action on snippets.
 	 * Does not check if the user has this capability or not.
 	 *
 	 * If multisite, checks if *Enable Administration Menus: Snippets* is active
 	 * under the *Settings > Network Settings* network admin menu
 	 *
-	 * @param  string $deprecated Deprecated in 1.9
-	 * @since  1.9                Removed first parameter
 	 * @since  1.7.1.1
 	 * @access public
 	 * @return void
 	 */
-	public function get_cap( $deprecated = '' ) {
+	public function get_cap() {
 
 		if ( is_multisite() ) {
 			$menu_perms = get_site_option( 'menu_items', array() );
@@ -1211,9 +1057,5 @@ final class Code_Snippets {
  */
 global $code_snippets;
 $code_snippets = new Code_Snippets;
-
-/* Set up a pointer in the old variable (for backwards-compatibility) */
-global $cs;
-$cs = &$code_snippets;
 
 endif; // class exists check

@@ -8,12 +8,12 @@ module.exports = function(grunt) {
 		watch: {
 
 			css: {
-				files: ['assets/scss/**/*.scss'],
+				files: ['css/**/*.scss'],
 				tasks: ['css']
 			},
 
 			js: {
-				files: ['assets/js/**/*.js'],
+				files: ['js/**/*.js'],
 				tasks: ['js']
 			}
 
@@ -21,46 +21,38 @@ module.exports = function(grunt) {
 
 		jshint: {
 			gruntfile: ['Gruntfile.js'],
-			assets: ['assets/js/**/*.js']
+			dist: ['js/**/*.js']
 		},
 
 		sass: {
-			assets:  {
-				cwd: 'assets/scss',
+			dist: {
+				cwd: 'css',
 				src: '*.scss',
-				dest: 'assets/css',
+				dest: 'css/build',
 				expand: true,
 				ext: '.css'
 			}
 		},
 
 		autoprefixer: {
-			assets: {
+			dist: {
 				expand: true,
 				flatten: true,
-				src: 'assets/css/*.css',
-				dest: 'assets/css'
+				src: 'css/build/*.css',
+				dest: 'css/build'
 			}
 		},
 
 		csso: {
-			assets: {
+			dist: {
 				expand: true,
 				flatten: true,
-				src: 'assets/css/*.css',
-				dest: 'assets/css'
+				src: 'css/build/*.css',
+				dest: 'css/min'
 			}
 		},
 
 		imagemin: {
-			assets: {
-				files: [{
-					expand: true,
-					cwd: 'assets/images/',
-					src: '**/*',
-					dest: 'assets/images/'
-				}]
-			},
 			screenshots: {
 				files: [{
 					expand: true,
@@ -86,7 +78,8 @@ module.exports = function(grunt) {
 						'license.txt',
 						'includes/**/*',
 						'admin/**/*',
-						'assets/**/*',
+						'css/**/*',
+						'js/**/*',
 						'languages/**/*',
 
 						// CodeMirror
@@ -124,16 +117,6 @@ module.exports = function(grunt) {
 					build_dir: 'deploy/plugin'
 				},
 			}
-		},
-
-		shell: {
-
-			/**
-			 * Requires PhpDocumentor to be installed and in PATH
-			 */
-			phpdoc: {
-				command: 'phpdoc -t docs/api -f code-snippets.php -d admin,includes --title "Code Snippets"'
-			}
 		}
 
 	});
@@ -141,9 +124,8 @@ module.exports = function(grunt) {
 	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
 	grunt.registerTask( 'js', ['jshint'] );
 
-	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:plugin', 'copy:assets'] );
-	grunt.registerTask( 'phpdoc', 'shell:phpdoc' );
+	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );
+	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );
 
 	grunt.registerTask( 'default', ['css', 'js'] );
-	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );
 };

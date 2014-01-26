@@ -113,16 +113,6 @@ class Code_Snippets_Admin {
 	}
 
 	/**
-	 * Check if we are on the pre-3.8 interface
-	 *
-	 * @return boolean
-	 * @since  1.9.1
-	 */
-	function is_legacy_interface() {
-		return !defined( 'MP6' ) && version_compare( $GLOBALS['wp_version'], '3.8-alpha', '<' );
-	}
-
-	/**
 	 * Handles saving the user's snippets per page preference
 	 *
 	 * @param  unknown $status
@@ -265,15 +255,6 @@ class Code_Snippets_Admin {
 	function add_admin_menus() {
 		global $code_snippets;
 
-		/* Provide a raster icon for the legacy interface */
-		if ( $this->is_legacy_interface() ) {
-			$menu_icon = apply_filters( 'code_snippets/admin/menu_icon_url',
-				plugins_url( 'assets/images/menu-icon.png', $code_snippets->file )
-			);
-		} else {
-			$menu_icon = 'div';
-		}
-
 		/* Add the top-level menu and associated subpage */
 		$this->manage_page = add_menu_page(
 			__( 'Snippets', 'code-snippets' ),
@@ -281,7 +262,7 @@ class Code_Snippets_Admin {
 			$code_snippets->get_cap(),
 			$this->manage_slug,
 			array( $this, 'display_manage_menu' ),
-			$menu_icon,
+			'div', // icon is added through CSS
 			is_network_admin() ? 21 : 67
 		);
 
@@ -351,11 +332,9 @@ class Code_Snippets_Admin {
 	function load_admin_icon_style() {
 		global $code_snippets;
 
-		$stylesheet = $this->is_legacy_interface() ? 'screen-icon' : 'menu-icon';
-
 		wp_enqueue_style(
-			'icon-snippets',
-			plugins_url( "assets/css/{$stylesheet}.css", $code_snippets->file ),
+			'menu-icon-snippets',
+			plugins_url( 'css/min/menu-icon.css', $code_snippets->file ),
 			false,
 			$code_snippets->version
 		);
@@ -559,14 +538,14 @@ class Code_Snippets_Admin {
 
 		wp_enqueue_style(
 			'code-snippets-admin-single',
-			plugins_url( 'assets/css/admin-single.css', $code_snippets->file ),
+			plugins_url( 'css/min/admin-single.css', $code_snippets->file ),
 			false,
 			$code_snippets->version
 		);
 
 		wp_enqueue_script(
 			'code-snippets-admin-single',
-			plugins_url( 'assets/js/admin-single.js', $code_snippets->file ),
+			plugins_url( 'js/admin-single.js', $code_snippets->file ),
 			array( 'code-snippets-codemirror' ),
 			$code_snippets->version,
 			true // Load in footer
@@ -778,3 +757,19 @@ class Code_Snippets_Admin {
 	}
 
 } // end of class
+
+
+/**
+ * Add submenu page to the snippets main menu.
+ *
+ * @param  string      $page_title The text to be displayed in the title tags of the page when the menu is selected
+ * @param  string      $menu_title The text to be used for the menu
+ * @param  string      $capability The capability required for this menu to be displayed to the user.
+ * @param  string      $menu_slug  The slug name to refer to this menu by (should be unique for this menu)
+ * @param  callback    $function   The function to be called to output the content for this page.
+ * @return string|bool             The resulting page's hook_suffix, or false if the user does not have the capability required.
+ */
+function add_snippets_page( $page_title, $menu_title, $capability, $menu_slug, $function = '' ) {
+	global $code_snippets;
+	return add_submenu_page( $code_snippets->admin->manage_page, $page_title, $menu_title, $capability, $menu_slug, $function );
+}
