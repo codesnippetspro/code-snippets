@@ -117,15 +117,35 @@ module.exports = function(grunt) {
 					build_dir: 'deploy/plugin'
 				},
 			}
+		},
+
+		po2mo: {
+			files: {
+				src: 'languages/*.po',
+				expand: true,
+			},
+		},
+
+		pot: {
+			options:{
+				text_domain: 'code-snippets',
+				dest: 'languages/',
+				keywords: ['__','_e','esc_html__','esc_html_e','esc_attr__', 'esc_attr_e', 'esc_attr_x', 'esc_html_x', 'ngettext', '_n', '_ex', '_nx'],
+			},
+			files: {
+				src: [ 'code-snippets.php', 'includes/**/*.php', 'admin/**/*.php' ],
+				expand: true,
+			}
 		}
 
 	});
 
 	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
 	grunt.registerTask( 'js', ['jshint'] );
+	grunt.registerTask( 'l18n', ['pot', 'newer:po2mo'] );
 
 	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );
 	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );
 
-	grunt.registerTask( 'default', ['css', 'js'] );
+	grunt.registerTask( 'default', ['css', 'js', 'l18n'] );
 };
