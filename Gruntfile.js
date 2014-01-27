@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 
 			js: {
 				files: ['js/**/*.js'],
-				tasks: ['js']
+				tasks: ['newer:jshint']
 			}
 
 		},
@@ -109,6 +109,17 @@ module.exports = function(grunt) {
 			}
 		},
 
+		phpunit: {
+			classes: {
+				dir: 'tests/'
+			},
+			options: {
+				bin: 'vendor/bin/phpunit',
+				bootstrap: 'tests/bootstrap.php',
+				colors: true
+			}
+		},
+
 		wp_deploy: {
 			release: {
 				options: {
@@ -141,8 +152,8 @@ module.exports = function(grunt) {
 	});
 
 	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
-	grunt.registerTask( 'js', ['jshint'] );
 	grunt.registerTask( 'l18n', ['pot', 'newer:po2mo'] );
+	grunt.registerTask( 'test', ['jshint', 'phpunit'] );
 
 	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );
 	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );

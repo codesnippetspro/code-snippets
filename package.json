@@ -21,10 +21,11 @@
     "grunt-pot": "~0.1.1",
     "grunt-sass": "~0.9.0",
     "grunt-wp-deploy": "~0.2.0",
-    "load-grunt-tasks": "~0.2.1"
+    "load-grunt-tasks": "~0.2.1",
+    "grunt-phpunit": "~0.3.2"
   },
   "scripts": {
-    "test": "grunt"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",
