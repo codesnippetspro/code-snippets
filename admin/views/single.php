@@ -28,7 +28,7 @@ $code_snippets->admin->get_messages( 'single' );
 		if ( $edit_id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
 
-			if ( $code_snippets->user_can( 'install' ) )
+			if ( current_user_can( $code_snippets->get_cap( 'install' ) ) )
 				printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
 					$code_snippets->admin->single_url,
 					esc_html_x( 'Add New', 'snippet', 'code-snippets' )
