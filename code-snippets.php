@@ -71,16 +71,6 @@ final class Code_Snippets {
 	public $file, $basename, $plugin_dir, $plugin_url = '';
 
 	/**
-	 * Stores an instance of the list table class
-	 *
-	 * @var    object
-	 * @since  1.5
-	 * @access public
-	 * @see    Code_Snippets_List_Table
-	 */
-	public $list_table;
-
-	/**
 	 * Stores an instance of the administration class
 	 *
 	 * @var    object
@@ -99,18 +89,6 @@ final class Code_Snippets {
 	static $tables_created = false;
 
 	/**
-	 * Stores the snippet table names
-	 *
-	 * It's better to use $wpdb->snippets and
-	 * $wpdb->ms_snippets, but these are maintained
-	 * as references for backwards-compatibility
-	 *
-	 * @var    string
-	 * @access public
-	 */
-	public $table, $ms_table = '';
-
-	/**
 	 * The constructor function for our class
 	 *
 	 * This method is called just as this plugin is included,
@@ -125,11 +103,6 @@ final class Code_Snippets {
 
 		/* Initialize the variables holding the snippet table names */
 		$this->set_table_vars();
-
-		/* Add backwards-compatibly for the CS_SAFE_MODE constant */
-		if ( defined( 'CS_SAFE_MODE' ) && ! defined( 'CODE_SNIPPETS_SAFE_MODE' ) ) {
-			define( 'CODE_SNIPPETS_SAFE_MODE', CS_SAFE_MODE );
-		}
 
 		/* Execute the snippets once the plugins are loaded */
 		add_action( 'plugins_loaded', array( $this, 'run_snippets' ), 1 );
@@ -154,8 +127,11 @@ final class Code_Snippets {
 		/* Initialize core variables */
 		$this->setup_vars();
 
-		/* Check if we need to change some stuff */
-		$this->upgrade();
+		/* Run the upgrade */
+		require_once $this->plugin_dir . 'includes/upgrade.php';
+
+		/* Register uninstall function */
+		require_once $this->plugin_dir . 'includes/upgrade.php';
 
 		/*
 		 * Load up the localization file if we're using WordPress in a different language.
@@ -166,12 +142,9 @@ final class Code_Snippets {
 		 */
 		load_plugin_textdomain( 'code-snippets', false, dirname( $this->basename ) . '/languages/' );
 
-		/* Cleanup the plugin data on uninstall */
-		register_uninstall_hook( $this->file, array( __CLASS__, 'uninstall' ) );
-
 		/* Add and remove capabilities from Super Admins if their statuses change */
-		add_action( 'grant_super_admin', array( $this, 'add_ms_cap_to_user' ) );
-		add_action( 'remove_super_admin', array( $this, 'remove_ms_cap_from_user' ) );
+		add_action( 'grant_super_admin', array( $this, 'grant_network_cap' ) );
+		add_action( 'remove_super_admin', array( $this, 'remove_network_cap' ) );
 
 		/* Let extension plugins know that it's okay to load */
 		do_action( 'code_snippets_init' );
@@ -191,11 +164,6 @@ final class Code_Snippets {
 		$this->basename   = plugin_basename( $this->file );
 		$this->plugin_dir = plugin_dir_path( $this->file );
 		$this->plugin_url = plugin_dir_url ( $this->file );
-
-		/* Roles and capabilities variables */
-		$this->role        = apply_filters( 'code_snippets_role', 'administrator' );
-		$this->cap         = apply_filters( 'code_snippets_cap', 'manage_snippets' );
-		$this->network_cap = apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
 
 		if ( is_admin() ) {
 
@@ -371,116 +339,13 @@ final class Code_Snippets {
 	}
 
 	/**
-	 * Preform upgrade tasks such as deleting and updating options
-	 *
-	 * @since  1.2
-	 * @access private
-	 * @return void
-	 */
-	function upgrade() {
-		global $wpdb;
-
-		/* Get the current plugin version from the database */
-
-		$current_version = get_option( 'code_snippets_version' );
-
-		if ( ! $current_version && get_option( 'cs_db_version' ) ) {
-			$current_version = get_option( 'cs_db_version' );
-			delete_option( 'cs_db_version' );
-			add_option( 'code_snippets_version', $current_version );
-		}
-
-		$previous_version = ( $current_version ? $current_version : $this->version );
-
-		/* Skip this if we're on the latest version */
-		if ( version_compare( $current_version, $this->version, '<' ) ) {
-
-			/* Update the current version stored in the database */
-			update_option( 'code_snippets_version', $this->version );
-		}
-
-		/* Multisite-only upgrades */
-
-		if ( is_multisite() && is_main_site() ) {
-
-			$current_ms_version = get_site_option( 'code_snippets_version' );
-
-			if ( version_compare( $current_ms_version, $this->version, '<' ) ) {
-
-				update_site_option( 'code_snippets_version', $this->version );
-			}
-
-		}
-
-	}
-
-	/**
-	 * Register the user roles and capabilities
-	 *
-	 * @since  1.9 Removed uninstall functionality into a separate method
-	 * @since  1.5
-	 * @access private
-	 * @return void
-	 */
-	function add_cap() {
-
-		/* Retrieve the role object */
-		$role = get_role( $this->role );
-
-		/* Add the capability */
-		$role->add_cap( $this->cap );
-	}
-
-	/**
-	 * Deregister the user roles and capabilities
-	 *
-	 * @since  1.9
-	 * @access private
-	 * @return void
-	 */
-	function remove_cap() {
-
-		/* Retrieve the role object */
-		$role = get_role( $this->role );
-
-		/* Remove the capability */
-		$role->remove_cap( $this->cap );
-	}
-
-	/**
-	 * Register or deregister the multisite user roles and capabilities
-	 *
-	 * @since  1.5
-	 * @access private
-	 * @param  boolean $install true to add the capabilities, false to remove
-	 * @return void
-	 */
-	function setup_ms_roles( $install = true ) {
-
-		if ( ! is_multisite() )
-			return;
-
-		$supers = get_super_admins();
-
-		foreach ( $supers as $admin ) {
-			$user = new WP_User( 0, $admin );
-
-			if ( $install )
-				$user->add_cap( $this->network_cap );
-			else
-				$user->remove_cap( $this->network_cap );
-		}
-
-	}
-
-	/**
 	 * Add the multisite capabilities to a user
 	 *
 	 * @since  1.9
 	 * @param  integer $user_id The ID of the user to add the cap to
 	 * @return void
 	 */
-	function add_ms_cap_to_user( $user_id ) {
+	function grant_network_cap( $user_id ) {
 
 		/* Get the user from the ID */
 		$user = new WP_User( $user_id );
@@ -496,7 +361,7 @@ final class Code_Snippets {
 	 * @param  integer $user_id The ID of the user to remove the cap from
 	 * @return void
 	 */
-	function remove_ms_cap_from_user( $user_id ) {
+	function remove_network_cap( $user_id ) {
 
 		/* Get the user from the ID */
 		$user = new WP_User( $user_id );
@@ -523,15 +388,12 @@ final class Code_Snippets {
 
 			/* If multisite is enabled and the snippet menu is not activated,
 			   restrict snippet operations to super admins only */
-			if ( ! empty( $menu_perms['snippets'] ) ) {
-				return $this->cap;
-			} else {
-				/* The snippet menu is not activated, only allow super admins */
-				return $this->network_cap;
+			if ( empty( $menu_perms['snippets'] ) ) {
+				return apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
 			}
 		}
 
-		return $this->cap;
+		return apply_filters( 'code_snippets_cap', 'manage_snippets' );
 	}
 
 	/**
@@ -1002,48 +864,6 @@ final class Code_Snippets {
 
 		/* If we're made it this far without returning true, assume failure */
 		return false;
-	}
-
-	/**
-	 * Cleans up data created by the Code_Snippets class
-	 *
-	 * @since  1.2
-	 * @access private
-	 *
-	 * @uses   $wpdb                            To remove tables from the database
-	 * @uses   $code_snippets->get_table_name() To find out which table to drop
-	 * @uses   is_multisite()                   To check the type of installation
-	 * @uses   switch_to_blog()                 To switch between blogs
-	 * @uses   restore_current_blog()           To switch between blogs
-	 * @uses   delete_option()                  To remove site options
-	 *
-	 * @return void
-	 */
-	static function uninstall() {
-		global $wpdb, $code_snippets;
-		if ( is_multisite() ) {
-			$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
-			if ( $blog_ids ) {
-				foreach ( $blog_ids as $blog_id ) {
-					switch_to_blog( $blog_id );
-					$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
-					delete_option( 'cs_db_version' );
-					delete_option( 'recently_activated_snippets' );
-					delete_option( 'code_snippets_version' );
-					$code_snippets->remove_cap();
-				}
-				restore_current_blog();
-			}
-			$wpdb->query( "DROP TABLE IF EXISTS $wpdb->ms_snippets" );
-			delete_site_option( 'code_snippets_version' );
-			delete_site_option( 'recently_activated_snippets' );
-			$code_snippets->setup_ms_roles( false );
-		} else {
-			$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
-			delete_option( 'code_snippets_version' );
-			delete_option( 'recently_activated_snippets' );
-			$code_snippets->remove_cap();
-		}
 	}
 
 }
