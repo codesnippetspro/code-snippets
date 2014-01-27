@@ -74,6 +74,7 @@ module.exports = function(grunt) {
 					cwd: './',
 					src: [
 						'code-snippets.php',
+						'uninstall.php',
 						'readme.txt',
 						'license.txt',
 						'includes/**/*',

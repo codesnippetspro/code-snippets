@@ -1,18 +1,25 @@
 <?php
 
+/* Ensure this plugin is actually being uninstalled */
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+    exit();
+}
+
 /**
  * Clean up data created by this plugin for a single site
+ * @since 2.0
  */
 function code_snippets_uninstall_site() {
+	global $wpdb;
 
-	// Remove snippets database table
+	/* Remove snippets database table */
 	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
 
-	// Remove saved options
+	/* Remove saved options */
 	delete_option( 'code_snippets_version' );
 	delete_option( 'recently_activated_snippets' );
 
-	// Deregister capabilities
+	/* Deregister capabilities */
 	$role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
 	$role->remove_cap( apply_filters( 'code_snippets_cap', 'manage_snippets' ) );
 }
@@ -22,12 +29,16 @@ function code_snippets_uninstall_site() {
  * @since 2.0
  */
 function code_snippets_uninstall() {
-	global $wpdb, $code_snippets;
+	global $wpdb;
 
-	// Multisite uninstall
+	$wpdb->snippets = $wpdb->prefix . 'snippets';
+	$wpdb->ms_snippets = $wpdb->prefix . 'ms_snippets';
+
+	/* Multisite uninstall */
+
 	if ( is_multisite() ) {
 
-		// Loop through sites
+		/* Loop through sites */
 		$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
 
 		if ( $blog_ids ) {
@@ -40,14 +51,14 @@ function code_snippets_uninstall() {
 			restore_current_blog();
 		}
 
-		// Remove multisite snippets database table
+		/* Remove multisite snippets database table */
 		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->ms_snippets" );
 
-		// Remove saved options
+		/* Remove saved options */
 		delete_site_option( 'code_snippets_version' );
 		delete_site_option( 'recently_activated_snippets' );
 
-		// Remove multisite capabilities
+		/* Remove multisite capabilities */
 		$network_cap = apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
 		$supers = get_super_admins();
 
@@ -60,6 +71,3 @@ function code_snippets_uninstall() {
 		code_snippets_uninstall_site();
 	}
 }
-
-global $code_snippets;
-register_uninstall_hook( $code_snippets->file, 'code_snippets_uninstall' );

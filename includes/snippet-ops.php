@@ -1,0 +1,448 @@
+<?php
+
+/**
+ * Functions to preform snippet operations
+ *
+ * @package Code_Snippets
+ */
+
+/**
+ * Converts an array of snippet data into a snippet object
+ *
+ * @since 2.0
+ * @param mixed $data The snippet data to convert
+ * @return object The resulting snippet object
+ */
+function build_snippet_object( $data = null ) {
+
+	$snippet = new stdClass;
+
+	/* Define an empty snippet object with default values */
+	$snippet->id          = 0;
+	$snippet->name        = '';
+	$snippet->description = '';
+	$snippet->code        = '';
+	$snippet->active      = 0;
+	$snippet = apply_filters( 'code_snippets/build_default_snippet', $snippet );
+
+	if ( ! isset( $data ) ) {
+		return $snippet;
+	}
+	elseif ( is_object( $data ) ) {
+
+		/* If we already have a snippet object, merge it with the default */
+		return (object) array_merge( (array) $snippet, (array) $data );
+	}
+	elseif ( is_array( $data ) ) {
+
+		foreach ( $data as $field => $value ) {
+
+			/* Remove 'snippet_' prefix */
+			if ( 'snippet_' === substr( $field, 0, 8 ) ) {
+				$field = substr( $field, 8 );
+			}
+
+			/* Check the field is whitelisted */
+			if ( ! isset ( $snippet->$field ) ) {
+				return;
+			}
+
+			/* Update the field */
+			$snippet->$field = $value;
+		}
+
+		return apply_filters( 'code_snippets/build_snippet_object', $snippet, $data );
+	}
+
+	return $snippet;
+}
+
+/**
+ * Retrieve a list of snippets from the database
+ *
+ * @since 2.0
+ *
+ * @uses $wpdb To query the database for snippets
+ * @uses get_snippets_table_name() To dynamically retrieve the snippet table name
+ *
+ * @param boolean $multisite Retrieve multisite-wide or site-wide snippets?
+ * @return array An array of snippet objects
+ */
+function get_snippets( $multisite = false ) {
+	global $wpdb;
+
+	$table    = get_snippets_table_name( $multisite );
+	$snippets = $wpdb->get_results( "SELECT * FROM $table", ARRAY_A );
+
+	foreach ( $snippets as $index => $snippet ) {
+		$snippets[ $index ] = unescape_snippet_data( $snippet );
+	}
+
+	return apply_filters( 'code_snippets/get_snippets', $snippets, $multisite );
+}
+
+/**
+ * Escape snippet data for inserting into the database
+ *
+ * @since 2.0
+ * @param mixed $snippet An object or array containing the data to escape
+ * @return object The resulting snippet object, with data escaped
+ */
+function escape_snippet_data( $snippet ) {
+
+	$snippet = build_snippet_object( $snippet );
+
+	/* Remove <?php and <? from beginning of snippet */
+	$snippet->code = preg_replace( '|^[\s]*<\?(php)?|', '', $snippet->code );
+
+	/* Remove ?> from end of snippet */
+	$snippet->code = preg_replace( '|\?>[\s]*$|', '', $snippet->code );
+
+	/* Escape the data */
+	$snippet->id  = absint( $snippet->id );
+
+	return apply_filters( 'code_snippets/escape_snippet_data', $snippet );
+}
+
+/**
+ * Unescape snippet data after retrieval from the database
+ * ready for use
+ *
+ * @since 2.0
+ * @param mixed $snippet An object or array containing the data to unescape
+ * @return object The resulting snippet object, with data unescaped
+ */
+function unescape_snippet_data( $snippet ) {
+	$snippet = build_snippet_object( $snippet );
+	return apply_filters( 'code_snippets/unescape_snippet_data', $snippet );
+}
+
+/**
+ * Retrieve a single snippets from the database.
+ * Will return empty snippet object if no snippet
+ * ID is specified
+ *
+ * @since 2.0
+ *
+ * @uses $wpdb To query the database for snippets
+ * @uses get_snippets_table_name() To dynamically retrieve the snippet table name
+ *
+ * @param int $id The ID of the snippet to retrieve. 0 to build a new snippet
+ * @param boolean $multisite Retrieve a multisite-wide or site-wide snippet?
+ * @return object A single snippet object
+ */
+function get_snippet( $id = 0, $multisite = false ) {
+	global $wpdb;
+	$table = get_snippets_table_name( $multisite );
+	$id    = absint( $id );
+
+	if ( 0 !== $id ) {
+
+		/* Retrieve the snippet from the database */
+		$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
+
+		/* Unescape the snippet data, ready for use */
+		$snippet = unescape_snippet_data( $snippet );
+
+	} else {
+
+		/* Get an empty snippet object */
+		$snippet = build_snippet_object();
+	}
+	return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
+}
+
+/**
+ * Activates a snippet
+ *
+ * @since 2.0
+ *
+ * @uses $wpdb To set the snippet's active status
+ *
+ * @param array $id The ID of the snippet to activate
+ * @param boolean $multisite Are the snippets multisite-wide or site-wide?
+ */
+function activate_snippet( $id, $multisite = false ) {
+	global $wpdb;
+	$table = get_snippet_table_name( $multisite );
+
+	$wpdb->update(
+		$table,
+		array( 'active' => '1' ),
+		array( 'id' => $id ),
+		array( '%d' ),
+		array( '%d' )
+	);
+
+	do_action( 'code_snippets/activate_snippet', $id, $multisite );
+}
+
+/**
+ * Deactivate a snippet
+ *
+ * @since 2.0
+ *
+ * @uses $wpdb To set the snippets' active status
+ *
+ * @param array $id The ID of the snippet to deactivate
+ * @param boolean $multisite Are the snippets multisite-wide or site-wide?
+ */
+function deactivate_snippet( $id, $multisite = false ) {
+	global $wpdb;
+
+	$ids = (array) $ids;
+	$table = get_snippets_table_name( $multisite );
+
+	/* Set the snippet to active */
+
+	$wpdb->update(
+		$table,
+		array( 'active' => '0' ),
+		array( 'id' => $id ),
+		array( '%d' ),
+		array( '%d' )
+	);
+
+	/* Update the recently active list */
+
+	$recently_active = array( $id => time() );
+
+	if ( $table === $wpdb->ms_snippets ) {
+
+		update_site_option(
+			'recently_activated_snippets',
+			$recently_active + (array) get_site_option( 'recently_activated_snippets' )
+		);
+	} elseif ( $table === $wpdb->snippets ) {
+
+		update_option(
+			'recently_activated_snippets',
+			$recently_active + (array) get_option( 'recently_activated_snippets' )
+		);
+	}
+
+	do_action( 'code_snippets/deactivate_snippet', $id, $multisite );
+}
+
+/**
+ * Deletes a snippet from the database
+ *
+ * @since 2.0
+ * @uses $wpdb To access the database
+ * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
+ *
+ * @param int $id The ID of the snippet to delete
+ * @param string $multisite Delete from site-wide or network-wide table?
+ */
+function delete_snippet( $id, $multisite = false ) {
+	global $wpdb;
+
+	$wpdb->delete(
+		get_snippets_table_name( $multisite ),
+		array( 'id' => $id ),
+		array( '%d' )
+	);
+
+	do_action( 'code_snippets/delete_snippet', $id, $multisite );
+}
+
+/**
+ * Saves a snippet to the database.
+ *
+ * @since 2.0
+ * @uses $wpdb To update/add the snippet to the database
+ * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
+ *
+ * @param object $snippet The snippet to add/update to the database
+ * @param string $multisite Save the snippet to the site-wide or network-wide table?
+ * @return int|boolean The ID of the snippet on success, false on failure
+ */
+function save_snippet( $snippet, $multisite = false ) {
+	global $wpdb;
+
+	$snippet = $this->escape_snippet_data( $snippet );
+	$table   = get_snippets_table_name( $multisite );
+	$data    = array();
+
+	foreach ( get_object_vars( $snippet ) as $field => $value ) {
+		if ( 'id' === $field )
+			continue;
+
+		if ( is_array( $value ) )
+			$value = maybe_serialize( $value );
+
+		$data[ $field ] = $value;
+	}
+
+	if ( isset( $snippet->id ) && 0 !== $snippet->id ) {
+
+		$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) );
+		do_action( 'code_snippets/update_snippet', $snippet, $table );
+		return $snippet->id;
+
+	} else {
+
+		$wpdb->insert( $table, $data, '%s' );
+		do_action( 'code_snippets/create_snippet', $snippet, $table );
+		return $wpdb->insert_id;
+	}
+}
+
+/**
+ * Imports snippets from an XML file
+ *
+ * @since 2.0
+ * @uses $this->save_snippet() To add the snippets to the database
+ *
+ * @param string $file The path to the XML file to import
+ * @param string $multisite Import into network-wide table or site-wide table?
+ * @return integer|boolean The number of snippets imported on success, false on failure
+ */
+function import( $file, $multisite = false ) {
+
+	if ( ! file_exists( $file ) || ! is_file( $file ) ) {
+		return false;
+	}
+
+	$xml = simplexml_load_file( $file );
+
+	if ( ! is_object( $xml ) || ! method_exists( $xml, 'children' ) )
+		return false;
+
+	foreach ( $xml->children() as $snippet ) {
+		/* force manual build of object to strip out unsupported fields
+		   by converting snippet object into an array */
+		$snippet = get_object_vars( $snippet );
+		$snippet = array_map( 'htmlspecialchars_decode', $snippet );
+		$this->save_snippet( $snippet, $multisite );
+	}
+
+	do_action( 'code_snippets/import', $xml, $multisite );
+
+	return $xml->count();
+}
+
+/**
+ * Exports snippets as an XML file
+ *
+ * @since 2.0
+ * @uses Code_Snippets_Export To export selected snippets
+ * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
+ *
+ * @param array $ids The IDs of the snippets to export
+ * @param string $multisite Is the snippet a network-wide or site-wide snippet?
+ */
+function export( $ids, $multisite = false ) {
+
+	$table = get_snippets_table_name( $multisite );
+
+	if ( ! class_exists( 'Code_Snippets_Export' ) ) {
+		$this->get_include( 'class-export' );
+	}
+
+	$class = new Code_Snippets_Export( $ids, $table );
+	$class->do_export();
+}
+
+/**
+ * Exports snippets as a PHP file
+ *
+ * @since 2.0
+ * @uses Code_Snippets_Export_PHP To export selected snippets
+ * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
+ *
+ * @param array $ids The IDs of the snippets to export
+ * @param boolean $multisite Is the snippet a network-wide or site-wide snippet?
+ */
+function export_php( $ids, $multisite = false ) {
+
+	$table = get_snippets_table_name( $multisite );
+
+	if ( ! class_exists( 'Code_Snippets_Export' ) )
+		$this->get_include( 'class-export' );
+
+	if ( ! class_exists( 'Code_Snippets_Export_PHP' ) ) {
+		$this->get_include( 'class-export-php' );
+	}
+
+	$class = new Code_Snippets_Export_PHP( $ids, $table );
+	$class->do_export();
+}
+
+/**
+ * Execute a snippet
+ *
+ * Code must NOT be escaped, as
+ * it will be executed directly
+ *
+ * @since 2.0
+ * @param string $code The snippet code to execute
+ * @return mixed The result of the code execution
+ */
+function execute_snippet( $code ) {
+
+	if ( empty( $code ) ) {
+		return false;
+	}
+
+	ob_start();
+	$result = eval( $code );
+	$output = ob_get_contents();
+	ob_end_clean();
+
+	do_action( 'code_snippets/execute_snippet', $code );
+	return $result;
+}
+
+/**
+ * Run the active snippets
+ *
+ * @since  2.0
+ * @return boolean true on success, false on failure
+ */
+function execute_active_snippets() {
+
+	/* Bail early if safe mode is active */
+	if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
+		return false;
+	}
+
+	global $wpdb;
+
+	if ( ! isset( $wpdb->snippets, $wpdb->ms_snippets ) ) {
+		set_snippet_table_vars();
+	}
+
+	/* Check if the snippets table exists */
+	if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
+		$sql = "SELECT code FROM {$wpdb->snippets} WHERE active=1";
+	}
+
+	/* Check if the multisite snippets table exists */
+	if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets ) {
+		$sql = ( isset( $sql ) ? $sql . "\nUNION ALL\n" : '' );
+		$sql .= "SELECT code FROM {$wpdb->ms_snippets} WHERE active=1;";
+	}
+
+	if ( ! empty( $sql ) ) {
+
+		/* Grab the active snippets from the database */
+		$active_snippets = $wpdb->get_col( $sql );
+
+		foreach ( $active_snippets as $snippet_code ) {
+			/* Execute the PHP code */
+			execute_snippet( $snippet_code );
+		}
+
+		return true;
+	}
+
+	/* If we're made it this far without returning true, assume failure */
+	return false;
+}
+
+/**
+ * Execute the active snippets after plugins have loaded
+ */
+add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
+
