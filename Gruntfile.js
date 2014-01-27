@@ -158,5 +158,5 @@ module.exports = function(grunt) {
 	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );
 	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );
 
-	grunt.registerTask( 'default', ['css', 'js', 'l18n'] );
+	grunt.registerTask( 'default', ['css', 'jshint', 'l18n'] );
 };

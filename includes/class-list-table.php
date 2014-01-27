@@ -54,9 +54,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/* Set the table columns hidden in Screen Options by default */
 		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ), 15 );
 
-		/* Load custom stylesheets */
-		add_action( 'admin_enqueue_scripts', array( $this, 'load_table_style' ) );
-
 		/* Strip once-off query args from the URL */
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'activate', 'activate-multi', 'deactivate', 'deactivate-multi', 'delete', 'delete-multi' ) );
 
@@ -73,29 +70,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'plural'   => 'snippets',
 			'ajax'     => true,
 		) );
-	}
-
-	/**
-	 * Enqueue the table stylesheet
-	 *
-	 * @since  1.6
-	 * @uses   wp_enqueue_style() To add the stylesheet to the queue
-	 * @param  string $hook       The current page hook, to be compared with the manage snippets page hook
-	 * @return void
-	 */
-	function load_table_style( $hook ) {
-		global $code_snippets;
-
-		/* Only load the stylesheet on the manage snippets page */
-		if ( $hook !== $code_snippets->admin->manage_page )
-			return;
-
-		wp_enqueue_style(
-			'snippets-table',
-			plugins_url( 'css/min/table.css', $code_snippets->file ),
-			false,
-			$code_snippets->version
-		);
 	}
 
 	/**

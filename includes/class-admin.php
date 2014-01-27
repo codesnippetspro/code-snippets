@@ -354,6 +354,9 @@ class Code_Snippets_Admin {
 		/* Make sure the user has permission to be here */
 		$this->check_perms();
 
+		/* Load stylesheet for this page */
+		add_action( 'admin_enqueue_scripts', array( $this, 'manage_menu_enqueue_scripts' ) );
+
 		/* Create the snippet tables if they don't exist */
 		$code_snippets->maybe_create_tables( true, true );
 
@@ -549,6 +552,30 @@ class Code_Snippets_Admin {
 			array( 'code-snippets-codemirror' ),
 			$code_snippets->version,
 			true // Load in footer
+		);
+	}
+
+	/**
+	 * Enqueue the manage menu stylesheet
+	 *
+	 * @since  1.6
+	 * @uses   wp_enqueue_style() To add the stylesheet to the queue
+	 * @param  string $hook       The current page hook, to be compared with the manage snippets page hook
+	 * @return void
+	 */
+	function manage_menu_enqueue_scripts( $hook ) {
+		global $code_snippets;
+
+		/* Only load the stylesheet on the manage snippets page */
+		if ( $hook !== $this->admin->manage_page ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'code-snippets-admin-manage',
+			plugins_url( 'css/min/admin-manage.css', $code_snippets->file ),
+			false,
+			$code_snippets->version
 		);
 	}
 
