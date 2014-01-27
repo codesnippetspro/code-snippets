@@ -7,7 +7,7 @@
  * contribute to the localization, please see http://code-snippets.bungeshea.com
  *
  * @package   Code_Snippets
- * @version   1.9.1.1
+ * @version   2.0-dev
  * @author    Shea Bunge <http://bungeshea.com/>
  * @copyright Copyright (c) 2012-2014, Shea Bunge
  * @link      http://code-snippets.bungeshea.com
@@ -20,7 +20,7 @@ Plugin URI:  http://code-snippets.bungeshea.com
 Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
 Author:      Shea Bunge
 Author URI:  http://bungeshea.com
-Version:     1.9.1.1
+Version:     2.0-dev
 License:     MIT
 License URI: license.txt
 Text Domain: code-snippets
@@ -28,8 +28,9 @@ Domain Path: /languages/
 */
 
 /* Exit if accessed directly */
-if ( ! defined( 'ABSPATH' ) )
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
+}
 
 if ( ! class_exists( 'Code_Snippets' ) ) :
 
@@ -58,7 +59,7 @@ final class Code_Snippets {
 	 * @access public
 	 * @var    string A PHP-standardized version number string
 	 */
-	public $version = '1.9.1.1';
+	public $version = '2.0-dev';
 
 	/**
 	 * Variables to hold plugin paths
