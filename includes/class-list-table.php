@@ -155,7 +155,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions['edit'] = sprintf(
 			'<a href="%2$s">%1$s</a>',
 			__( 'Edit', 'code-snippets' ),
-			add_query_arg( 'edit', $snippet->id, $code_snippets->admin_single_url )
+			add_query_arg( 'edit', $snippet->id, $code_snippets->admin->single_url )
 		);
 
 		$actions['export'] = sprintf(
@@ -181,10 +181,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			) )
 		);
 
-		if ( ! empty( $snippet->name ) )
+		if ( ! empty( $snippet->name ) ) {
 			$title = $snippet->name;
-		else
+		} else {
 			$title = sprintf ( __( 'Untitled #%d', 'code-snippets' ), $snippet->id );
+		}
 
 		$row_actions = $this->row_actions( $actions,
 			apply_filters( 'code_snippets/list_table/row_actions_always_visiable', false )
@@ -194,7 +195,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		return apply_filters(
 			'code_snippets/list_table/column_name',
 			sprintf ( '<a href="%2$s"><strong>%1$s</strong></a>', $title,
-				add_query_arg( 'edit', $snippet->id, $code_snippets->admin_single_url )
+				add_query_arg( 'edit', $snippet->id, $code_snippets->admin->single_url )
 			) . $row_actions,
 			$snippet
 		);
