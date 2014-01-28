@@ -7,12 +7,12 @@
  * @subpackage Admin_Views
  */
 
-if ( ! class_exists( 'Code_Snippets' ) )
-	exit;
+/* Bail if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	return;
+}
 
 global $code_snippets;
-$screen = get_current_screen();
-$code_snippets->admin->get_messages( 'manage' );
 ?>
 
 <div class="wrap">
@@ -20,11 +20,11 @@ $code_snippets->admin->get_messages( 'manage' );
 	<h2><?php
 		esc_html_e( 'Snippets', 'code-snippets' );
 
-		if ( current_user_can( $code_snippets->get_cap( 'install' ) ) ) {
+		if ( current_user_can( get_snippets_cap() ) ) {
 
 			printf ( '<a href="%2$s" class="add-new-h2">%1$s</a>',
 				esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-				$code_snippets->admin->single_url
+				self_admin_url( 'admin.php?page=snippet' )
 			);
 		}
 

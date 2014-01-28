@@ -3,8 +3,8 @@
 /**
  * This file handles exporting snippets in PHP format
  *
- * It's better to call the $code_snippets->export_php()
- * method than directly using this class
+ * It's better to call the export_snippets_to_php()
+ * function than directly using this class
  *
  * @since      1.9
  * @package    Code_Snippets

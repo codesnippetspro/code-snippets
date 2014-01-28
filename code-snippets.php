@@ -64,39 +64,24 @@ class Code_Snippets {
 	public $file, $plugin_dir, $plugin_url = '';
 
 	/**
-	 * Initialize this plugin
+	 * The constructor function for our class
+	 *
+	 * This method is called just as this plugin is included,
+	 * so other plugins may not have loaded yet. Only do stuff
+	 * here that really can't wait
+	 *
+	 * @since 1.0
+	 * @access private
 	 */
-	public function __construct() {
+	function __construct() {
 
 		/* Initialize member variables */
 		$this->file = __FILE__;
 		$this->plugin_dir = plugin_dir_path( __FILE__ );
 		$this->plugin_url = plugin_dir_url( __FILE__ );
 
-		/* Include files */
-		$this->includes();
-
-		/* Run the upgrader */
-		code_snippets_upgrade( $this->version );
-
-		/* Load plugin textdomain */
-		$this->load_textdomain();
-
-		/* Call the done action */
-		do_action( 'code_snippets_init' );
-	}
-
-	/**
-	 * Include plugin files
-	 */
-	public function includes() {
-		$version = $this->version;
-
 		/* Database operations functions */
 		require_once $this->plugin_dir . 'includes/db.php';
-
-		/* Upgrade function */
-		require_once $this->plugin_dir . 'includes/upgrade.php';
 
 		/* Capability functions */
 		require_once $this->plugin_dir . 'includes/caps.php';
@@ -104,10 +89,37 @@ class Code_Snippets {
 		/* Snippet operations functions */
 		require_once $this->plugin_dir . 'includes/snippet-ops.php';
 
+		/* Initialize database table variables */
+		set_snippet_table_vars();
+
+		/* Execute the snippets once the plugins are loaded */
+		add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
+
+		/* Hook our initialize function to the plugins_loaded action */
+		add_action( 'plugins_loaded', array( $this, 'init' ) );
+	}
+
+	/**
+	 * Load the plugin completely
+	 *
+	 * This method is called *after* other plugins
+	 * have been run
+	 *
+	 * @since 1.7
+	 */
+	public function init() {
+
+		/* Run the upgrader */
+		require_once $this->plugin_dir . 'includes/upgrade.php';
+
 		/* Administration functions */
-		if ( is_admin() ) {
-			require_once $this->plugin_dir . 'includes/admin.php';
-		}
+		require_once $this->plugin_dir . 'admin/bootstrap.php';
+
+		/* Load plugin textdomain */
+		$this->load_textdomain();
+
+		/* Call the done action */
+		do_action( 'code_snippets_init' );
 	}
 
 	/**
@@ -123,13 +135,11 @@ class Code_Snippets {
 }
 
 /**
- * Initialize the Code_Snippets class
- * @since 2.0
+ * The global variable where the Code_Snippets class is stored
+ * @since 1.0
+ * @var object Instance of Code_Snippets class
+ * @see code_snippets_init()
  */
-function code_snippets_init() {
-	global $code_snippets;
-	$code_snippets = new Code_Snippets;
-	do_action( 'code_snippets_init' );
-}
+global $code_snippets;
+$code_snippets = new Code_Snippets;
 
-add_action( 'plugins_loaded', 'code_snippets_init' );

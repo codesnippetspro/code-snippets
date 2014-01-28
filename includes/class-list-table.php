@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains the class for handling the administration interface
+ * Contains the class for handling the snippets table
  *
  * @package    Code_Snippets
  * @subpackage Administration
@@ -31,18 +31,20 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * Adds hooks, initializes variables, setups class.
 	 */
 	function __construct() {
-		global $status, $page, $code_snippets;
-
+		global $status, $page;
 		$screen = get_current_screen();
 
+		/* Determine the status */
 		$status = 'all';
 		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], array( 'active', 'inactive', 'recently_activated' ) ) )
 			$status = $_REQUEST['status'];
 
-		if ( isset( $_REQUEST['s'] ) )
+		/* Add the search query to the URL */
+		if ( isset( $_REQUEST['s'] ) ) {
 			$_SERVER['REQUEST_URI'] = add_query_arg( 's', stripslashes($_REQUEST['s'] ) );
+		}
 
-
+		/* Add a snippets per page screen option */
 		$page = $this->get_pagenum();
 
 		add_screen_option( 'per_page', array(
@@ -50,6 +52,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'default' => 10,
 			'option' => 'snippets_per_page'
 		) );
+
+		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 
 		/* Set the table columns hidden in Screen Options by default */
 		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ), 15 );
@@ -73,6 +77,22 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Handles saving the user's snippets per page preference
+	 *
+	 * @param  unknown $status
+	 * @param  string  $option
+	 * @param  unknown $value
+	 * @return unknown
+	 */
+	function set_screen_option( $status, $option, $value ) {
+		if ( 'snippets_per_page' === $option ) {
+			return $value;
+		}
+
+		return $status;
+	}
+
+	/**
 	 * Define the output of all columns that have no callback function
 	 * @param  object $snippet     The snippet object used for the current row
 	 * @param  string $column_name The name of the column being printed
@@ -84,10 +104,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			case 'id':
 				return $snippet->id;
 			case 'description':
-				if ( ! empty( $snippet->description ) )
+				if ( ! empty( $snippet->description ) ) {
 					return apply_filters( 'code_snippets/list_table/print_snippet_description', $snippet->description );
-				else
+				} else {
 					return '&#8212;';
+				}
 			default:
 				return do_action( "code_snippets/list_table/column_{$column_name}", $snippet );
 		}
@@ -99,7 +120,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @return string          The content of the column to output
 	 */
 	function column_name( $snippet ) {
-		global $code_snippets;
 
 		/* Build row actions */
 
@@ -129,7 +149,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions['edit'] = sprintf(
 			'<a href="%2$s">%1$s</a>',
 			__( 'Edit', 'code-snippets' ),
-			add_query_arg( 'edit', $snippet->id, $code_snippets->admin->single_url )
+			add_query_arg( 'edit', $snippet->id, self_admin_url( 'admin.php?page=snippet' ) )
 		);
 
 		$actions['export'] = sprintf(
@@ -169,7 +189,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		return apply_filters(
 			'code_snippets/list_table/column_name',
 			sprintf ( '<a href="%2$s"><strong>%1$s</strong></a>', $title,
-				add_query_arg( 'edit', $snippet->id, $code_snippets->admin->single_url )
+				add_query_arg( 'edit', $snippet->id, self_admin_url( 'admin.php?page=snippet' ) )
 			) . $row_actions,
 			$snippet
 		);
@@ -220,10 +240,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @return unknown
 	 */
 	function get_default_hidden_columns( $result ) {
-		if ( ! $result )
+		if ( ! $result ) {
 			return array( 'id' );
-		else
+		} else {
 			return $result;
+		}
 	}
 
 	/**
@@ -268,8 +289,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$status_links = array();
 		foreach ( $totals as $type => $count ) {
 
-			if ( ! $count )
+			if ( ! $count ) {
 				continue;
+			}
 
 			switch ( $type ) {
 				case 'all':
@@ -302,7 +324,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @param string $which Are the actions displayed on the table top or bottom
 	 */
 	function extra_tablenav( $which ) {
-		global $status, $code_snippets;
+		global $status;
 
 		$screen = get_current_screen();
 
@@ -361,46 +383,47 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @return string The action to execute
 	 */
 	function current_action() {
-		if ( isset( $_POST['clear-recent-list'] ) )
+		if ( isset( $_POST['clear-recent-list'] ) ) {
 			$action = 'clear-recent-list';
-		else
+		} else {
 			$action = parent::current_action();
+		}
 		return apply_filters( 'code_snippets/list_table/current_action', $action );
 	}
 
 	/**
 	 * Processes a bulk action
 	 *
-	 * @uses $code_snippets->activate()       To activate snippets
-	 * @uses $code_snippets->deactivate()     To deactivate snippets
-	 * @uses $code_snippets->delete_snippet() To delete snippets
-	 * @uses $code_snippets->export()         To export selected snippets
-	 * @uses wp_redirect()                    To pass the results to the current page
-	 * @uses add_query_arg()                  To append the results to the current URI
+	 * @uses activate_snippet() To activate snippets
+	 * @uses deactivate_snippet() To deactivate snippets
+	 * @uses delete_snippet() To delete snippets
+	 * @uses export_snippet() To export selected snippets
+	 * @uses wp_redirect() To pass the results to the current page
+	 * @uses add_query_arg() To append the results to the current URI
 	 */
 	function process_bulk_actions() {
-		global $code_snippets;
+		$network = get_current_screen()->is_network;
 
 		if ( isset( $_GET['action'], $_GET['id'] ) ) :
 
-			$id                     = absint( $_GET['id'] );
-			$action                 = sanitize_key( $_GET['action'] );
+			$id = absint( $_GET['id'] );
+			$action = sanitize_key( $_GET['action'] );
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id' ) );
 
 			if ( 'activate' === $action ) {
-				$code_snippets->activate( $id );
+				activate_snippet( $id, $network );
 			}
 			elseif ( 'deactivate' === $action ) {
-				$code_snippets->deactivate( $id );
+				deactivate_snippet( $id, $network );
 			}
 			elseif ( 'delete' === $action ) {
-				$code_snippets->delete_snippet( $id );
+				delete_snippet( $id, $network );
 			}
 			elseif ( 'export' === $action ) {
-				$code_snippets->export( $id );
+				export_snippets( $id, $network );
 			}
 			elseif ( 'export-php' === $action ) {
-				$code_snippets->export_php( $id );
+				export_snippets_to_php( $id, $network );
 			}
 
 			if ( ! in_array( $action, array( 'export', 'export-php' ) ) ) {
@@ -412,8 +435,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		endif;
 
-		if ( ! isset( $_POST['ids'] ) )
+		if ( ! isset( $_POST['ids'] ) ) {
 			return;
+		}
 
 		$ids = $_POST['ids'];
 
@@ -422,36 +446,40 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		switch( $this->current_action() ) {
 
 			case 'activate-selected':
-				$code_snippets->activate( $ids );
+				foreach ( $ids as $id ) {
+					activate_snippet( $id, $network );
+				}
 				wp_redirect( add_query_arg( 'activate-multi', true ) );
 				break;
 
 			case 'deactivate-selected':
-				$code_snippets->deactivate( $ids );
+				foreach ( $ids as $id ) {
+					deactivate_snippet( $id, $network );
+				}
 				wp_redirect( add_query_arg( 'deactivate-multi', true ) );
 				break;
 
 			case 'export-selected':
-				$code_snippets->export( $ids );
+				export_snippets( $ids, $network );
 				break;
 
 			case 'export-php-selected':
-				$code_snippets->export_php( $ids );
+				export_snippets_to_php( $ids, $network );
 				break;
 
 			case 'delete-selected':
 				foreach( $ids as $id ) {
-					$code_snippets->delete_snippet( $id );
+					delete_snippet( $id, $network );
 				}
 				wp_redirect( add_query_arg( 'delete-multi', true ) );
 				break;
 
 			case 'clear-recent-list':
-				$screen = get_current_screen();
-				if ( $screen->is_network )
+				if ( $network ) {
 					update_site_option( 'recently_activated_snippets', array() );
-				else
+				} else {
 					update_option( 'recently_activated_snippets', array() );
+				}
 				break;
 		}
 	}
@@ -460,8 +488,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * Message to display if no snippets are found
 	 */
 	function no_items() {
-		global $code_snippets;
-		printf( __( 'You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets' ), $code_snippets->admin->single_url );
+		printf(
+			__( 'You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets' ),
+			self_admin_url( 'admin.php?page=snippet' )
+		);
 	}
 
 	/**
@@ -469,7 +499,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * Should run before any headers are sent.
 	 */
 	function prepare_items() {
-		global $code_snippets, $status, $snippets, $totals, $page, $orderby, $order, $s;
+		global $status, $snippets, $totals, $page, $orderby, $order, $s;
 
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
 
@@ -480,7 +510,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$this->process_bulk_actions();
 
 		$snippets = array(
-			'all' => apply_filters( 'code_snippets/list_table/get_snippets', $code_snippets->get_snippets() ),
+			'all' => apply_filters( 'code_snippets/list_table/get_snippets', get_snippets( $screen->is_network ) ),
 			'active' => array(),
 			'inactive' => array(),
 			'recently_activated' => array(),
@@ -488,23 +518,28 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Filter snippets based on search query */
 		if ( $s ) {
-			$snippets['all'] = array_filter( $snippets[ 'all' ], array( &$this, '_search_callback' ) );
+			$snippets['all'] = array_filter( $snippets['all'], array( &$this, '_search_callback' ) );
 		}
 
-		if ( $screen->is_network )
+		if ( $screen->is_network ) {
 			$recently_activated = get_site_option( 'recently_activated_snippets', array() );
-		else
+		} else {
 			$recently_activated = get_option( 'recently_activated_snippets', array() );
+		}
 
 		$one_week = 7*24*60*60;
-		foreach ( $recently_activated as $key => $time )
-			if ( $time + $one_week < time() )
-				unset( $recently_activated[$key] );
+		foreach ( $recently_activated as $key => $time ) {
 
-		if ( $screen->is_network )
+			if ( $time + $one_week < time() ) {
+				unset( $recently_activated[$key] );
+			}
+		}
+
+		if ( $screen->is_network ) {
 			update_site_option( 'recently_activated_snippets', $recently_activated );
-		else
+		} else {
 			update_option( 'recently_activated_snippets', $recently_activated );
+		}
 
 		foreach ( (array) $snippets['all'] as $snippet ) {
 			/* Filter into individual sections */
@@ -518,11 +553,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		$totals = array();
-		foreach ( $snippets as $type => $list )
+		foreach ( $snippets as $type => $list ) {
 			$totals[ $type ] = count( $list );
+		}
 
-		if ( empty( $snippets[ $status ] ) )
+		if ( empty( $snippets[ $status ] ) ) {
 			$status = 'all';
+		}
 
 		$data = $snippets[ $status ];
 
@@ -565,17 +602,17 @@ class Code_Snippets_List_Table extends WP_List_Table {
             );
 
 			/* Determine sort order */
-			if ( 'id' === $orderby )
+			if ( 'id' === $orderby ) {
 				$result = $a->$orderby - $b->$orderby; // get the result for numerical data
-			else
+			} else {
 				$result = strcmp( $a->$orderby, $b->$orderby ); // get the result for string data
+			}
 
 			/* Send final sort direction to usort */
             return ( 'asc' === $order ) ? $result : -$result;
         }
 
         usort( $data, 'usort_reorder' );
-
 
         /*
          * Let's figure out what page the user is currently
@@ -588,13 +625,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
          */
         $total_items = count( $data );
 
-
         /*
          * The WP_List_Table class does not handle pagination for us, so we need
          * to ensure that the data is trimmed to only the current page.
          */
         $data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
-
 
         /*
          * Now we can add our *sorted* data to the items property, where
@@ -618,18 +653,21 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	function _search_callback( $snippet ) {
 		static $term;
-		if ( is_null( $term ) )
+		if ( is_null( $term ) ) {
 			$term = stripslashes( $_REQUEST['s'] );
+		}
 
 		foreach ( $snippet as $value ) {
 
 			if ( is_string( $value ) ) {
-				if ( false !== stripos( $value, $term ) )
+				if ( false !== stripos( $value, $term ) ) {
 					return true;
+				}
 			}
 			elseif ( is_array( $value ) ) {
-				if ( false !== in_array( $term, $value ) )
+				if ( false !== in_array( $term, $value ) ) {
 					return true;
+				}
 			}
 		}
 

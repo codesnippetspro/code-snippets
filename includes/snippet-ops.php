@@ -43,8 +43,8 @@ function build_snippet_object( $data = null ) {
 			}
 
 			/* Check the field is whitelisted */
-			if ( ! isset ( $snippet->$field ) ) {
-				return;
+			if ( ! isset( $snippet->$field ) ) {
+				continue;
 			}
 
 			/* Update the field */
@@ -164,7 +164,7 @@ function get_snippet( $id = 0, $multisite = false ) {
  */
 function activate_snippet( $id, $multisite = false ) {
 	global $wpdb;
-	$table = get_snippet_table_name( $multisite );
+	$table = get_snippets_table_name( $multisite );
 
 	$wpdb->update(
 		$table,
@@ -260,7 +260,7 @@ function delete_snippet( $id, $multisite = false ) {
 function save_snippet( $snippet, $multisite = false ) {
 	global $wpdb;
 
-	$snippet = $this->escape_snippet_data( $snippet );
+	$snippet = escape_snippet_data( $snippet );
 	$table   = get_snippets_table_name( $multisite );
 	$data    = array();
 
@@ -292,13 +292,13 @@ function save_snippet( $snippet, $multisite = false ) {
  * Imports snippets from an XML file
  *
  * @since 2.0
- * @uses $this->save_snippet() To add the snippets to the database
+ * @uses save_snippet() To add the snippets to the database
  *
  * @param string $file The path to the XML file to import
  * @param string $multisite Import into network-wide table or site-wide table?
  * @return integer|boolean The number of snippets imported on success, false on failure
  */
-function import( $file, $multisite = false ) {
+function import_snippets( $file, $multisite = false ) {
 
 	if ( ! file_exists( $file ) || ! is_file( $file ) ) {
 		return false;
@@ -314,7 +314,7 @@ function import( $file, $multisite = false ) {
 		   by converting snippet object into an array */
 		$snippet = get_object_vars( $snippet );
 		$snippet = array_map( 'htmlspecialchars_decode', $snippet );
-		$this->save_snippet( $snippet, $multisite );
+		save_snippet( $snippet, $multisite );
 	}
 
 	do_action( 'code_snippets/import', $xml, $multisite );
@@ -332,7 +332,7 @@ function import( $file, $multisite = false ) {
  * @param array $ids The IDs of the snippets to export
  * @param string $multisite Is the snippet a network-wide or site-wide snippet?
  */
-function export( $ids, $multisite = false ) {
+function export_snippets( $ids, $multisite = false ) {
 
 	$table = get_snippets_table_name( $multisite );
 
@@ -354,7 +354,7 @@ function export( $ids, $multisite = false ) {
  * @param array $ids The IDs of the snippets to export
  * @param boolean $multisite Is the snippet a network-wide or site-wide snippet?
  */
-function export_php( $ids, $multisite = false ) {
+function export_snippets_to_php( $ids, $multisite = false ) {
 
 	$table = get_snippets_table_name( $multisite );
 
@@ -440,9 +440,3 @@ function execute_active_snippets() {
 	/* If we're made it this far without returning true, assume failure */
 	return false;
 }
-
-/**
- * Execute the active snippets after plugins have loaded
- */
-add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
-

@@ -7,8 +7,6 @@
  * @subpackage Admin_Messages
  */
 
-global $code_snippets;
-
 if ( isset( $_REQUEST['imported'] ) && 0 !== intval( $_REQUEST['imported'] ) ) {
 
 	echo '<div id="message" class="updated fade"><p>';
@@ -21,7 +19,7 @@ if ( isset( $_REQUEST['imported'] ) && 0 !== intval( $_REQUEST['imported'] ) ) {
 			'code-snippets'
 		),
 		$_REQUEST['imported'],
-		$code_snippets->admin->manage_url
+		self_admin_url( 'admin.php?page=snippets' )
 	);
 
 	echo '</p></div>';

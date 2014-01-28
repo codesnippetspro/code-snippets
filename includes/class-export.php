@@ -3,8 +3,8 @@
 /**
  * This file handles exporting snippets in XML format
  *
- * It's better to call the $code_snippets->export_php()
- * method than directly using this class
+ * It's better to call the export_snippets()
+ * function than directly using this class
  *
  * @since      1.9
  * @package    Code_Snippets
@@ -51,11 +51,10 @@ class Code_Snippets_Export {
 	 * @return string
 	 */
 	function get_filename() {
-		global $code_snippets;
 
 		if ( 1 == count( $this->snippet_ids ) ) {
 			/* If there is only snippet to export, use its name instead of the site name */
-			$snippet  = $code_snippets->get_snippet( $this->snippet_ids[0] );
+			$snippet  = get_snippet( $this->snippet_ids[0], $this->table_name );
 			$sitename = strtolower( $snippet->name );
 		} else {
 			/* Otherwise, use the site name as set in Settings > General */
@@ -77,6 +76,7 @@ class Code_Snippets_Export {
 	 */
 	protected function do_header() {
 		global $code_snippets;
+
 		header( 'Content-Type: text/xml; charset=' . get_bloginfo('charset') );
 
 		echo '<?xml version="1.0" encoding="' . get_bloginfo('charset') . "\" ?>\n";

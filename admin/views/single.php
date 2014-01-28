@@ -7,32 +7,30 @@
  * @subpackage Admin_Views
  */
 
-if ( ! class_exists( 'Code_Snippets' ) )
-	exit;
+/* Bail if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	return;
+}
 
 global $code_snippets;
 
-$table   = $code_snippets->get_table_name();
-$screen  = get_current_screen();
-
+$table   = get_snippets_table_name();
 $edit_id = ( isset( $_REQUEST['edit'] ) ? absint( $_REQUEST['edit'] ) : 0 );
-$snippet = $code_snippets->get_snippet( $edit_id );
-
-$code_snippets->admin->get_messages( 'single' );
+$snippet = get_snippet( $edit_id );
 
 ?>
-
 <div class="wrap">
 	<?php screen_icon(); ?>
 	<h2><?php
 		if ( $edit_id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
 
-			if ( current_user_can( $code_snippets->get_cap( 'install' ) ) )
+			if ( current_user_can( get_snippets_cap() ) ) {
 				printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
-					$code_snippets->admin->single_url,
+					self_admin_url( 'admin.php?page=snippet' ),
 					esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 				);
+			}
 		} else {
 			esc_html_e( 'Add New Snippet', 'code-snippets' );
 		}
@@ -43,8 +41,9 @@ $code_snippets->admin->get_messages( 'single' );
 
 			/* Output the hidden fields */
 
-			if ( 0 !== $snippet->id )
+			if ( 0 !== $snippet->id ) {
 				printf ( '<input type="hidden" name="snippet_id" value="%d" />', $snippet->id );
+			}
 
 			printf ( '<input type="hidden" name="snippet_active" value="%d" />', $snippet->active );
 		?>

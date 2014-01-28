@@ -8,8 +8,8 @@
  * @subpackage Contextual_Help
  */
 
-global $code_snippets;
 $screen = get_current_screen();
+$manage_url = self_admin_url( 'admin.php?page=snippets' );
 
 $screen->add_help_tab( array(
 	'id'      => 'overview',
@@ -23,14 +23,14 @@ $screen->add_help_tab( array(
 	'title'   => __( 'Importing', 'code-snippets' ),
 	'content' =>
 		'<p>' . __( 'You can load your snippets from a code snippets (.xml) export file using this page.', 'code-snippets' ) .
-		sprintf( __( 'Snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href="%s">Manage Snippets</a> page.</p>', 'code-snippets' ), $code_snippets->admin->manage_url ) . '</p>'
+		sprintf( __( 'Snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href="%s">Manage Snippets</a> page.</p>', 'code-snippets' ), $manage_url ) . '</p>'
 ) );
 
 $screen->add_help_tab( array(
 	'id'      => 'export',
 	'title'   => __( 'Exporting', 'code-snippets' ),
 	'content' =>
-		'<p>' . sprintf( __( 'You can save your snippets to a Code Snippets (.xml) export file using the <a href="%s">Manage Snippets</a> page.', 'code-snippets' ), $code_snippets->admin->manage_url ) . '</p>'
+		'<p>' . sprintf( __( 'You can save your snippets to a Code Snippets (.xml) export file using the <a href="%s">Manage Snippets</a> page.', 'code-snippets' ), $manage_url ) . '</p>'
 ) );
 
 $screen->set_help_sidebar(

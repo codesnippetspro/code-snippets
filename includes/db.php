@@ -32,6 +32,11 @@ function set_snippet_table_vars() {
 function get_snippets_table_name( $multisite = false ) {
 	global $wpdb;
 
+	/* If the first parameter is a string, assume it is a table name */
+	if ( is_string( $multisite ) ) {
+		return $multisite;
+	}
+
 	/* If multisite is not active, always return the site-wide table name */
 	if ( ! is_multisite() ) {
 		$multisire = false;
@@ -65,12 +70,12 @@ function create_code_snippets_tables( $redo = false, $always_create_table = fals
 
 	/* Always create the network-wide snippet table */
 	if ( is_multisite() ) {
-		$this->create_table( $wpdb->ms_snippets );
+		create_code_snippets_table( $wpdb->ms_snippets );
 	}
 
 	/* Create the site-specific table if we're on the main site */
 	if ( $always_create_table || is_main_site() ) {
-		$this->create_table( $wpdb->snippets );
+		create_code_snippets_table( $wpdb->snippets );
 	}
 
 	/* Set the flag so we don't have to do this again */
@@ -81,14 +86,13 @@ function create_code_snippets_tables( $redo = false, $always_create_table = fals
  * Create a single snippet table
  * if one of the same name does not already exist
  *
- * @since  1.6
+ * @since 1.6
  * @access private
  *
- * @uses   dbDelta()               To add the table to the database
+ * @uses dbDelta() To add the table to the database
  *
- * @param  string  $table_name     The name of the table to create
- * @param  boolean $force_creation Skip the table exists check
- * @return void
+ * @param string $table_name The name of the table to create
+ * @param boolean $force_creation Skip the table exists check
  */
 function create_code_snippets_table( $table_name, $force_creation = false ) {
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
