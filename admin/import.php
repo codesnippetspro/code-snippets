@@ -67,6 +67,25 @@ function code_snippets_add_import_menu() {
 add_action( 'network_admin_menu', 'code_snippets_add_import_menu' );
 
 /**
+ * Add a link to the code snippets importer to the Snippets menu
+ *
+ * @since 2.0
+ * @uses add_submenu_page() To register a sub-menu
+ */
+function code_snippets_add_importer_menu_link() {
+
+	add_submenu_page(
+		code_snippets_get_menu_slug(),
+		__( 'Import Snippets', 'code-snippets' ),
+		__( 'Import', 'code-snippets' ),
+		get_snippets_cap(),
+		'admin.php?import=code-snippets'
+	);
+}
+
+add_action( 'admin_menu', 'code_snippets_add_importer_menu_link' );
+
+/**
  * Displays the import snippets page
  *
  * @since 2.0
