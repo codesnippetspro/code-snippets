@@ -118,3 +118,32 @@ $snippet = get_snippet( $edit_id );
 
 	</form>
 </div>
+
+<?php
+
+$editor_atts = array(
+	'lineNumbers'    => true,
+	'matchBrackets'  => true,
+	'lineWrapping'   => true,
+	'mode'           => 'text/x-php',
+	'indentUnit'     => 4,
+	'indentWithTabs' => true,
+	'enterMode'      => 'keep',
+	'tabMode'        => 'shift'
+);
+
+$editor_atts = apply_filters( 'code_snippets_editor_atts', $editor_atts );
+
+?>
+
+<script>
+/**
+ * Loads CodeMirror on the snippet editor
+ */
+(function() {
+
+	var atts = <?php echo json_encode( $editor_atts ); ?>;
+	var editor = CodeMirror.fromTextArea(document.getElementById("snippet_code"), atts);
+
+})();
+</script>

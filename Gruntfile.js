@@ -10,18 +10,12 @@ module.exports = function(grunt) {
 			css: {
 				files: ['css/**/*.scss'],
 				tasks: ['css']
-			},
-
-			js: {
-				files: ['js/**/*.js'],
-				tasks: ['newer:jshint']
 			}
 
 		},
 
 		jshint: {
 			gruntfile: ['Gruntfile.js'],
-			dist: ['js/**/*.js']
 		},
 
 		sass: {
@@ -80,7 +74,6 @@ module.exports = function(grunt) {
 						'includes/**/*',
 						'admin/**/*',
 						'css/**/*',
-						'js/**/*',
 						'languages/**/*',
 
 						// CodeMirror
@@ -159,5 +152,5 @@ module.exports = function(grunt) {
 	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );
 	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );
 
-	grunt.registerTask( 'default', ['css', 'jshint', 'l18n'] );
+	grunt.registerTask( 'default', ['css', 'l18n'] );
 };

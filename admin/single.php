@@ -287,12 +287,4 @@ function code_snippets_single_menu_assets( $hook ) {
 		false,
 		$code_snippets->version
 	);
-
-	wp_enqueue_script(
-		'code-snippets-admin-single',
-		plugins_url( 'js/admin-single.js', $code_snippets->file ),
-		array( 'code-snippets-codemirror' ),
-		$code_snippets->version,
-		true // Load in footer
-	);
 }
