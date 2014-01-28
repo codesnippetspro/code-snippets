@@ -99,7 +99,7 @@ function code_snippets_load_admin_icon_style() {
 
 	wp_enqueue_style(
 		'menu-icon-snippets',
-		plugins_url( 'css/min/menu-icon.css', $code_snippets->file ),
+		plugins_url( 'styles/min/menu-icon.css', __FILE__ ),
 		false,
 		$code_snippets->version
 	);

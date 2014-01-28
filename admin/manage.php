@@ -91,7 +91,6 @@ function code_snippets_load_manage_menu() {
  * @param string $hook The current page hook, to be compared with the manage snippets page hook
  */
 function code_snippets_manage_menu_assets( $hook ) {
-	global $code_snippets;
 
 	/* Only load the stylesheet on the manage snippets page */
 	if ( $hook !== code_snippets_get_menu_hook() ) {
@@ -100,7 +99,7 @@ function code_snippets_manage_menu_assets( $hook ) {
 
 	wp_enqueue_style(
 		'code-snippets-admin-manage',
-		plugins_url( 'css/min/admin-manage.css', $code_snippets->file ),
+		plugins_url( 'styles/min/admin-manage.css', __FILE__ ),
 		false,
 		$code_snippets->version
 	);

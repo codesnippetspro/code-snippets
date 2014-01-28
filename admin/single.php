@@ -283,7 +283,7 @@ function code_snippets_single_menu_assets( $hook ) {
 
 	wp_enqueue_style(
 		'code-snippets-admin-single',
-		plugins_url( 'css/min/admin-single.css', $code_snippets->file ),
+		plugins_url( 'styles/min/admin-single.css', __FILE__ ),
 		false,
 		$code_snippets->version
 	);

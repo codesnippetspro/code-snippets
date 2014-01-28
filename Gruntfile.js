@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 		watch: {
 
 			css: {
-				files: ['css/**/*.scss'],
+				files: ['admin/styles/**/*.scss'],
 				tasks: ['css']
 			}
 
@@ -19,21 +19,21 @@ module.exports = function(grunt) {
 		},
 
 		sass: {
-			dist: {
-				cwd: 'css',
+			admin: {
+				cwd: 'admin/styles',
 				src: '*.scss',
-				dest: 'css/build',
+				dest: 'admin/styles/build',
 				expand: true,
 				ext: '.css'
 			}
 		},
 
 		autoprefixer: {
-			dist: {
+			admin: {
 				expand: true,
 				flatten: true,
-				src: 'css/build/*.css',
-				dest: 'css/build'
+				src: 'admin/styles/build/*.css',
+				dest: 'admin/styles/build'
 			}
 		},
 
@@ -41,8 +41,8 @@ module.exports = function(grunt) {
 			dist: {
 				expand: true,
 				flatten: true,
-				src: 'css/build/*.css',
-				dest: 'css/min'
+				src: 'admin/styles/build/*.css',
+				dest: 'admin/styles/min'
 			}
 		},
 
@@ -73,7 +73,6 @@ module.exports = function(grunt) {
 						'license.txt',
 						'includes/**/*',
 						'admin/**/*',
-						'css/**/*',
 						'languages/**/*',
 
 						// CodeMirror
