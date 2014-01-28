@@ -12,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-global $code_snippets;
+global $code_snippets, $pagenow;
 
 $table   = get_snippets_table_name();
-$edit_id = ( isset( $_REQUEST['edit'] ) ? absint( $_REQUEST['edit'] ) : 0 );
+$edit_id = code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ? absint( $_REQUEST['id'] ) : 0;
 $snippet = get_snippet( $edit_id );
 
 ?>
@@ -27,7 +27,7 @@ $snippet = get_snippet( $edit_id );
 
 			if ( current_user_can( get_snippets_cap() ) ) {
 				printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
-					self_admin_url( 'admin.php?page=snippet' ),
+					code_snippets_get_menu_slug( 'add' ),
 					esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 				);
 			}
@@ -67,7 +67,6 @@ $snippet = get_snippet( $edit_id );
 
 			/* Add a nonce for security */
 			wp_nonce_field( 'save_snippet' );
-
 		?>
 
 		<p class="submit">

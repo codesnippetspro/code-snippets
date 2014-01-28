@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<p><?php _e( 'Howdy! Upload your Code Snippets export file and we&#8217;ll import the snippets to this site.', 'code-snippets' ); ?></p>
 
-		<p><?php printf( __( 'You will need to go to the <a href="%s">Manage Snippets</a> page to activate the imported snippets.', 'code-snippets' ), self_admin_url( 'admin.php?page=snippets' ) ); ?></p>
+		<p><?php printf( __( 'You will need to go to the <a href="%s">Manage Snippets</a> page to activate the imported snippets.', 'code-snippets' ), code_snippets_get_menu_slug( 'manage' ) ); ?></p>
 
 		<p><?php _e( 'Choose a Code Snippets (.xml) file to upload, then click Upload file and import.', 'code-snippets' ); ?></p>
 

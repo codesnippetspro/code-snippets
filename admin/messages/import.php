@@ -19,7 +19,7 @@ if ( isset( $_REQUEST['imported'] ) && 0 !== intval( $_REQUEST['imported'] ) ) {
 			'code-snippets'
 		),
 		$_REQUEST['imported'],
-		self_admin_url( 'admin.php?page=snippets' )
+		code_snippets_get_menu_slug( 'manage' )
 	);
 
 	echo '</p></div>';

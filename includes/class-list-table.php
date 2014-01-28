@@ -149,7 +149,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions['edit'] = sprintf(
 			'<a href="%2$s">%1$s</a>',
 			__( 'Edit', 'code-snippets' ),
-			add_query_arg( 'edit', $snippet->id, self_admin_url( 'admin.php?page=snippet' ) )
+			get_snippet_edit_url( $snippet->id )
 		);
 
 		$actions['export'] = sprintf(
@@ -189,7 +189,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		return apply_filters(
 			'code_snippets/list_table/column_name',
 			sprintf ( '<a href="%2$s"><strong>%1$s</strong></a>', $title,
-				add_query_arg( 'edit', $snippet->id, self_admin_url( 'admin.php?page=snippet' ) )
+				get_snippet_edit_url( $snippet->id )
 			) . $row_actions,
 			$snippet
 		);
@@ -490,7 +490,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	function no_items() {
 		printf(
 			__( 'You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets' ),
-			self_admin_url( 'admin.php?page=snippet' )
+			code_snippets_get_menu_slug( 'add' )
 		);
 	}
 

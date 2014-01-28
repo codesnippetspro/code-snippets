@@ -8,6 +8,18 @@
  */
 
 /**
+ * Fetch the admin menu slug for a snippets menu
+ * @param integer $id The snippet
+ * @return string The URL to the edit snippet page for that snippet
+ */
+function get_snippet_edit_url( $snippet_id ) {
+	return add_query_arg(
+		'id', absint( $snippet_id ),
+		code_snippets_get_menu_url( 'edit' )
+	);
+}
+
+/**
  * Register the single snippet admin menu
  *
  * @since 2.0
@@ -16,19 +28,33 @@
  */
 function code_snippets_add_single_menu() {
 
-	/* Check if we are currently editing a snippet */
-	$editing = ( isset( $_REQUEST['page'], $_REQUEST['edit'] ) && 'snippet' === $_REQUEST['page'] );
-
-	$hook = add_submenu_page(
-		'snippets',
-		$editing ? __( 'Edit Snippet', 'code-snippets' ) : __( 'Add New Snippet', 'code-snippets' ),
-		$editing ? __( 'Edit', 'code-snippets' ) : __( 'Add New', 'code-snippets' ),
+	/* Add New Snippet menu */
+	$add_hook = add_submenu_page(
+		code_snippets_get_menu_slug(),
+		__( 'Add New Snippet', 'code-snippets' ),
+		__( 'Add New', 'code-snippets' ),
 		get_snippets_cap(),
-		'snippet',
+		code_snippets_get_menu_slug( 'add' ),
 		'code_snippets_render_single_menu'
 	);
 
-	add_action( 'load-' . $hook, 'code_snippets_load_single_menu' );
+	add_action( 'load-' . $add_hook, 'code_snippets_load_single_menu' );
+
+	/* Check if we are currently editing a snippet */
+	if ( isset( $_REQUEST['page'] ) && code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
+
+		$edit_hook = add_submenu_page(
+			code_snippets_get_menu_slug(),
+			__( 'Edit Snippet', 'code-snippets' ),
+			__( 'Edit', 'code-snippets' ),
+			get_snippets_cap(),
+			code_snippets_get_menu_slug( 'edit' ),
+			'code_snippets_render_single_menu'
+		);
+
+		add_action( 'load-' . $edit_hook, 'code_snippets_load_single_menu' );
+	}
+
 }
 
 add_action( 'admin_menu', 'code_snippets_add_single_menu', 5 );
@@ -66,6 +92,14 @@ function code_snippets_load_single_menu() {
 
 	/* Enqueue the code editor and other scripts and styles */
 	add_filter( 'admin_enqueue_scripts', 'code_snippets_single_menu_assets' );
+
+	/* Don't allow visiting the edit snippet page without a valid ID */
+	if ( code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
+		if ( ! isset( $_REQUEST['id'] ) || 0 == $_REQUEST['snippet_id'] ) {
+			wp_redirect( code_snippets_get_menu_url( 'add' ) );
+			exit;
+		}
+	}
 
 	/* Make sure the nonce validates before we do any snippet ops */
 	if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'save_snippet' ) ) {
@@ -105,11 +139,14 @@ function code_snippets_load_single_menu() {
 		}
 		elseif ( isset( $_POST['snippet_id'] ) ) {
 			/* Existing snippet was updated */
-			wp_redirect( add_query_arg(	array( 'edit' => $result, 'updated' => true ) ) );
+			wp_redirect( add_query_arg(	array( 'id' => $result, 'updated' => true ) ) );
 		}
 		else {
 			/* New snippet was added */
-			wp_redirect( add_query_arg( array( 'edit' => $result, 'added' => true ) ) );
+			wp_redirect( add_query_arg(
+				array( 'id' => $result, 'added' => true ),
+				code_snippets_get_menu_slug( 'edit' )
+			) );
 		}
 	}
 
@@ -175,7 +212,7 @@ function code_snippets_single_menu_assets( $hook ) {
 	global $code_snippets;
 
 	/* If we're not on the right admin page, bail early */
-	if ( $hook !== get_plugin_page_hookname( 'snippet', 'snippets' ) ) {
+	if ( $hook !== get_plugin_page_hookname( 'add-snippet', 'snippets' ) && $hook !== get_plugin_page_hookname( 'edit-snippet', 'snippets' ) ) {
 		return;
 	}
 

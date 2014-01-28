@@ -12,6 +12,43 @@ if ( ! is_admin() ) {
 	return;
 }
 
+/**
+ * Fetch the admin menu slug for a snippets menu
+ * @param string $menu The menu to retrieve the slug for
+ * @return string The menu's slug
+ */
+function code_snippets_get_menu_slug( $menu = '' ) {
+
+	if ( in_array( $menu, array( 'single', 'edit' ) ) ) {
+		return 'edit-snippet';
+	} elseif ( in_array( $menu, array( 'add', 'add-new' ) ) ) {
+		return 'add-snippet';
+	} else {
+		return 'snippets';
+	}
+}
+
+/**
+ * Fetch the URL to a snippets admin menu
+ * @param string $menu The menu to retrieve the URL to
+ * @return string The menu's URL
+ */
+function code_snippets_get_menu_url( $menu, $context = 'self' ) {
+	$slug = code_snippets_get_menu_slug( $menu );
+	$url = 'admin.php?page=' . $slug;
+
+	if ( 'network' === $context ) {
+		return network_admin_url( $url );
+	} elseif ( 'admin' === $context ) {
+		return admin_url( $url );
+	} else {
+		return self_admin_url( $url );
+	}
+}
+
+/**
+ * Load functions specific to a single menu
+ */
 require_once plugin_dir_path( __FILE__ ) . 'manage.php';
 require_once plugin_dir_path( __FILE__ ) . 'single.php';
 require_once plugin_dir_path( __FILE__ ) . 'import.php';
@@ -69,7 +106,7 @@ add_action( 'admin_enqueue_scripts', 'code_snippets_load_admin_icon_style' );
 function code_snippets_plugin_settings_link( $links ) {
 	array_unshift( $links, sprintf(
 		'<a href="%1$s" title="%2$s">%3$s</a>',
-		self_admin_url( 'admin.php?page=snippets' ),
+		code_snippets_get_menu_url(),
 		__( 'Manage your existing snippets', 'code-snippets' ),
 		__( 'Manage', 'code-snippets' )
 	) );
