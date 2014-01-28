@@ -490,7 +490,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	function no_items() {
 		printf(
 			__( 'You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets' ),
-			code_snippets_get_menu_slug( 'add' )
+			code_snippets_get_menu_url( 'add' )
 		);
 	}
 

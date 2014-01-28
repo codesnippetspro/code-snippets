@@ -53,7 +53,7 @@ add_action( 'admin_init', 'code_snippets_register_importer' );
 function code_snippets_add_import_menu() {
 
 	$hook = add_submenu_page(
-		'snippets',
+		code_snippets_get_menu_slug(),
 		__( 'Import Snippets', 'code-snippets' ),
 		__( 'Import', 'code-snippets' ),
 		get_snippets_cap(),

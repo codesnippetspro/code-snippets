@@ -22,18 +22,18 @@ function code_snippets_add_manage_menu() {
 		__( 'Snippets', 'code-snippets' ),
 		__( 'Snippets', 'code-snippets' ),
 		get_snippets_cap(),
-		'snippets',
+		code_snippets_get_menu_slug(),
 		'code_snippets_render_manage_menu',
 		'div', // icon is added through CSS
 		is_network_admin() ? 21 : 67
 	);
 
 	add_submenu_page(
-		'snippets',
+		code_snippets_get_menu_slug(),
 		__( 'Snippets', 'code-snippets' ),
 		__( 'Manage', 'code-snippets' ),
 		get_snippets_cap(),
-		'snippets',
+		code_snippets_get_menu_slug(),
 		'code_snippets_render_manage_menu'
 	);
 
@@ -94,7 +94,7 @@ function code_snippets_manage_menu_assets( $hook ) {
 	global $code_snippets;
 
 	/* Only load the stylesheet on the manage snippets page */
-	if ( $hook !== get_plugin_page_hookname( 'snippets', '' ) ) {
+	if ( $hook !== code_snippets_get_menu_hook() ) {
 		return;
 	}
 

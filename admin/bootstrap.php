@@ -18,10 +18,12 @@ if ( ! is_admin() ) {
  * @return string The menu's slug
  */
 function code_snippets_get_menu_slug( $menu = '' ) {
+	$add = array( 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' );
+	$edit = array( 'edit', 'edit-snippet' );
 
-	if ( in_array( $menu, array( 'single', 'edit' ) ) ) {
+	if ( in_array( $menu, $edit ) ) {
 		return 'edit-snippet';
-	} elseif ( in_array( $menu, array( 'add', 'add-new' ) ) ) {
+	} elseif ( in_array( $menu, $add ) ) {
 		return 'add-snippet';
 	} else {
 		return 'snippets';
@@ -44,6 +46,16 @@ function code_snippets_get_menu_url( $menu, $context = 'self' ) {
 	} else {
 		return self_admin_url( $url );
 	}
+}
+
+/**
+ * Fetch the admin menu hook for a snippets menu
+ * @param string $menu The menu to retrieve the hook for
+ * @return string The menu's hook
+ */
+function code_snippets_get_menu_hook( $menu = '' ) {
+	$slug = code_snippets_get_menu_slug( $menu );
+	return get_plugin_page_hookname( $slug, 'snippets' );
 }
 
 /**

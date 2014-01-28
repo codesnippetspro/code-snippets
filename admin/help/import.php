@@ -9,7 +9,7 @@
  */
 
 $screen = get_current_screen();
-$manage_url = code_snippets_get_menu_slug( 'manage' );
+$manage_url = code_snippets_get_menu_url( 'manage' );
 
 $screen->add_help_tab( array(
 	'id'      => 'overview',

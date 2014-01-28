@@ -145,7 +145,7 @@ function code_snippets_load_single_menu() {
 			/* New snippet was added */
 			wp_redirect( add_query_arg(
 				array( 'id' => $result, 'added' => true ),
-				code_snippets_get_menu_slug( 'edit' )
+				code_snippets_get_menu_url( 'edit' )
 			) );
 		}
 	}
@@ -212,7 +212,7 @@ function code_snippets_single_menu_assets( $hook ) {
 	global $code_snippets;
 
 	/* If we're not on the right admin page, bail early */
-	if ( $hook !== get_plugin_page_hookname( 'add-snippet', 'snippets' ) && $hook !== get_plugin_page_hookname( 'edit-snippet', 'snippets' ) ) {
+	if ( $hook !== code_snippets_get_menu_hook( 'add' ) && $hook !== code_snippets_get_menu_hook( 'edit' ) ) {
 		return;
 	}
 
