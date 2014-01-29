@@ -278,6 +278,19 @@ function code_snippets_single_menu_assets( $hook ) {
 		$codemirror_version
 	);
 
+	/* CodeMirror Theme */
+
+	$options = get_option( 'code_snippets_settings' );
+	if ( ! empty( $options['codemirror_theme'] ) && 'default' !== $theme = $options['codemirror_theme'] ) {
+
+		wp_enqueue_style(
+			'code-snippets-codemirror-theme-' . $theme,
+			$codemirror_url . "theme/$theme.css",
+			array( 'code-snippets-codemirror' ),
+			$codemirror_version
+		);
+	}
+
 	/* Plugin Assets */
 
 	wp_enqueue_style(

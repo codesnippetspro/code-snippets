@@ -80,6 +80,7 @@ module.exports = function(grunt) {
 						'vendor/codemirror/lib/codemirror.js',
 						'vendor/codemirror/mode/clike/clike.js',
 						'vendor/codemirror/mode/php/php.js',
+						'vendor/codemirror/theme/*.css',
 						'vendor/codemirror/addon/search/searchcursor.js',
 						'vendor/codemirror/addon/search/search.js',
 						'vendor/codemirror/addon/edit/matchbrackets.js'

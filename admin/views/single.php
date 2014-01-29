@@ -121,6 +121,8 @@ $snippet = get_snippet( $edit_id );
 
 <?php
 
+$options = get_option( 'code_snippets_settings' );
+
 $editor_atts = array(
 	'lineNumbers'    => true,
 	'matchBrackets'  => true,
@@ -129,7 +131,8 @@ $editor_atts = array(
 	'indentUnit'     => 4,
 	'indentWithTabs' => true,
 	'enterMode'      => 'keep',
-	'tabMode'        => 'shift'
+	'tabMode'        => 'shift',
+	'theme'          => ! empty( $options['codemirror_theme'] ) ? $options['codemirror_theme'] : 'default',
 );
 
 $editor_atts = apply_filters( 'code_snippets_editor_atts', $editor_atts );

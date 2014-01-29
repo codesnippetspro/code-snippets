@@ -20,11 +20,14 @@ if ( ! is_admin() ) {
 function code_snippets_get_menu_slug( $menu = '' ) {
 	$add = array( 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' );
 	$edit = array( 'edit', 'edit-snippet' );
+	$settings = array( 'settings', 'snippets-settings' );
 
 	if ( in_array( $menu, $edit ) ) {
 		return 'edit-snippet';
 	} elseif ( in_array( $menu, $add ) ) {
 		return 'add-snippet';
+	} elseif ( in_array( $menu, $settings ) ) {
+		return 'snippets-settings';
 	} else {
 		return 'snippets';
 	}
@@ -64,6 +67,7 @@ function code_snippets_get_menu_hook( $menu = '' ) {
 require_once plugin_dir_path( __FILE__ ) . 'manage.php';
 require_once plugin_dir_path( __FILE__ ) . 'single.php';
 require_once plugin_dir_path( __FILE__ ) . 'import.php';
+require_once plugin_dir_path( __FILE__ ) . 'settings.php';
 
 /**
  * Allow super admins to control site admin access to
