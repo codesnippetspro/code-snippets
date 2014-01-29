@@ -78,19 +78,6 @@ set_snippet_table_vars();
 add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
 
 /**
- * Add a few variables into the $code_snippets global for backwards-compat
- *
- * @todo Remove this whole code block
- * @var object
- */
-global $code_snippets;
-$code_snippets = new stdClass;
-$code_snippets->version = CODE_SNIPPETS_VERSION;
-$code_snippets->file = CODE_SNIPPETS_FILE;
-$code_snippets->plugin_url = plugin_dir_url( CODE_SNIPPETS_FILE );
-$code_snippets->plugin_dir = plugin_dir_path( CODE_SNIPPETS_FILE );
-
-/**
  * Load up the localization file if we're using WordPress in a different language.
  * Place it in this plugin's "languages" folder and name it "code-snippets-[value in wp-config].mo"
  *

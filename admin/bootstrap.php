@@ -95,13 +95,12 @@ add_filter( 'mu_menu_items', 'code_snippets_mu_menu_items' );
  * @uses plugins_url() To retrieve a URL to assets
  */
 function code_snippets_load_admin_icon_style() {
-	global $code_snippets;
 
 	wp_enqueue_style(
 		'menu-icon-snippets',
 		plugins_url( 'styles/min/menu-icon.css', __FILE__ ),
 		false,
-		$code_snippets->version
+		CODE_SNIPPETS_VERSION
 	);
 }
 
@@ -125,8 +124,7 @@ function code_snippets_plugin_settings_link( $links ) {
 	return $links;
 }
 
-global $code_snippets;
-add_filter( 'plugin_action_links_' . plugin_basename( $code_snippets->file ), 'code_snippets_plugin_settings_link' );
+add_filter( 'plugin_action_links_' . plugin_basename( CODE_SNIPPETS_FILE ), 'code_snippets_plugin_settings_link' );
 
 /**
  * Adds extra links related to the plugin
@@ -138,10 +136,9 @@ add_filter( 'plugin_action_links_' . plugin_basename( $code_snippets->file ), 'c
  * @return array         The modified plugin info links
  */
 function code_snippets_plugin_meta( $links, $file ) {
-	global $code_snippets;
 
 	/* We only want to affect the Code Snippets plugin listing */
-	if ( $file !== plugin_basename( $code_snippets->file ) ) {
+	if ( $file !== plugin_basename( CODE_SNIPPETS_FILE ) ) {
 		return $links;
 	}
 

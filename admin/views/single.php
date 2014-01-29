@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-global $code_snippets, $pagenow;
+global $pagenow;
 
 $table   = get_snippets_table_name();
 $edit_id = code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ? absint( $_REQUEST['id'] ) : 0;

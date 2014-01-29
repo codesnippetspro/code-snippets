@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-global $code_snippets;
+global $code_snippets_list_table;
 ?>
 
 <div class="wrap">
@@ -28,21 +28,21 @@ global $code_snippets;
 			);
 		}
 
-		$code_snippets->list_table->search_notice();
+		$code_snippets_list_table->search_notice();
 	?></h2>
 
-	<?php $code_snippets->list_table->views(); ?>
+	<?php $code_snippets_list_table->views(); ?>
 
 	<form method="get" action="">
 		<?php
-			$code_snippets->list_table->required_form_fields( 'search_box' );
-			$code_snippets->list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' );
+			$code_snippets_list_table->required_form_fields( 'search_box' );
+			$code_snippets_list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' );
 		?>
 	</form>
 	<form method="post" action="">
 		<?php
-			$code_snippets->list_table->required_form_fields();
-			$code_snippets->list_table->display();
+			$code_snippets_list_table->required_form_fields();
+			$code_snippets_list_table->display();
 		?>
 	</form>
 

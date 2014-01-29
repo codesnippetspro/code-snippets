@@ -61,7 +61,6 @@ function code_snippets_render_manage_menu() {
  * @access private
  */
 function code_snippets_load_manage_menu() {
-	global $code_snippets;
 
 	/* Make sure the user has permission to be here */
 	if ( ! current_user_can( get_snippets_cap() ) ) {
@@ -78,9 +77,10 @@ function code_snippets_load_manage_menu() {
 	require plugin_dir_path( __FILE__ ) . 'help/manage.php';
 
 	/* Initialize the snippet table class */
-	require_once $code_snippets->plugin_dir . 'includes/class-list-table.php';
-	$code_snippets->list_table = new Code_Snippets_List_Table();
-	$code_snippets->list_table->prepare_items();
+	require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/class-list-table.php';
+	global $code_snippets_list_table;
+	$code_snippets_list_table = new Code_Snippets_List_Table();
+	$code_snippets_list_table->prepare_items();
 }
 
 /**
@@ -101,6 +101,6 @@ function code_snippets_manage_menu_assets( $hook ) {
 		'code-snippets-admin-manage',
 		plugins_url( 'styles/min/admin-manage.css', __FILE__ ),
 		false,
-		$code_snippets->version
+		CODE_SNIPPETS_VERSION
 	);
 }

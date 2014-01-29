@@ -9,7 +9,6 @@
  */
 
 $screen = get_current_screen();
-global $code_snippets;
 
 $screen->add_help_tab( array(
 	'id'      => 'overview',
@@ -30,7 +29,7 @@ $screen->add_help_tab( array(
 	'id'      => 'uninstall',
 	'title'   => __( 'Uninstall', 'code-snippets' ),
 	'content' =>
-		'<p>' . sprintf( __( 'When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP.', 'code-snippets' ), get_snippets_table_name(), $code_snippets->plugin_dir ) .
+		'<p>' . sprintf( __( 'When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP.', 'code-snippets' ), get_snippets_table_name(), dirname( CODE_SNIPPETS_FILE ) ) .
 		'<p>' . __("Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installation, you may want to use the export feature to back up your snippets.", 'code-snippets' ) . '</p>'
 ) );
 

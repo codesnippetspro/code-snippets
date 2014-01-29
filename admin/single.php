@@ -209,7 +209,6 @@ add_action( 'code_snippets/admin/single', 'code_snippets_description_editor_box'
  * @param string $hook The current page hook, to be compared with the single snippet page hook
  */
 function code_snippets_single_menu_assets( $hook ) {
-	global $code_snippets;
 
 	/* If we're not on the right admin page, bail early */
 	if ( $hook !== code_snippets_get_menu_hook( 'add' ) && $hook !== code_snippets_get_menu_hook( 'edit' ) ) {
@@ -223,7 +222,7 @@ function code_snippets_single_menu_assets( $hook ) {
 	/* CodeMirror */
 
 	$codemirror_version = '3.20';
-	$codemirror_url     = plugins_url( 'vendor/codemirror/', $code_snippets->file );
+	$codemirror_url     = plugins_url( 'vendor/codemirror/', CODE_SNIPPETS_FILE );
 
 	wp_enqueue_style(
 		'code-snippets-codemirror',
@@ -285,6 +284,6 @@ function code_snippets_single_menu_assets( $hook ) {
 		'code-snippets-admin-single',
 		plugins_url( 'styles/min/admin-single.css', __FILE__ ),
 		false,
-		$code_snippets->version
+		CODE_SNIPPETS_VERSION
 	);
 }

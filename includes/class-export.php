@@ -75,7 +75,6 @@ class Code_Snippets_Export {
 	 * Set HTTP headers and render the file header
 	 */
 	protected function do_header() {
-		global $code_snippets;
 
 		header( 'Content-Type: text/xml; charset=' . get_bloginfo('charset') );
 
@@ -100,7 +99,7 @@ class Code_Snippets_Export {
 		/* Run the generator line through the standard WordPress filter */
 		$gen  = sprintf (
 			'<!-- generator="Code Snippets/%s" created="%s" -->',
-			$code_snippets->version,
+			CODE_SNIPPETS_VERSION,
 			date('Y-m-d H:i')
 		);
 		$type = 'code_snippets_export';
