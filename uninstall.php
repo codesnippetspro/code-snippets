@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Cleans up data created by this plugin
+ * @package Code_Snippets
+ * @since 2.0
+ */
+
 /* Ensure this plugin is actually being uninstalled */
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit();
@@ -24,50 +30,45 @@ function code_snippets_uninstall_site() {
 	$role->remove_cap( apply_filters( 'code_snippets_cap', 'manage_snippets' ) );
 }
 
-/**
- * Cleans up data created by this plugin
- * @since 2.0
- */
-function code_snippets_uninstall() {
-	global $wpdb;
 
-	$wpdb->snippets = $wpdb->prefix . 'snippets';
-	$wpdb->ms_snippets = $wpdb->prefix . 'ms_snippets';
+global $wpdb;
 
-	/* Multisite uninstall */
+$wpdb->snippets = $wpdb->prefix . 'snippets';
+$wpdb->ms_snippets = $wpdb->prefix . 'ms_snippets';
 
-	if ( is_multisite() ) {
+/* Multisite uninstall */
 
-		/* Loop through sites */
-		$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
+if ( is_multisite() ) {
 
-		if ( $blog_ids ) {
+	/* Loop through sites */
+	$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
 
-			foreach ( $blog_ids as $blog_id ) {
-				switch_to_blog( $blog_id );
-				code_snippets_uninstall_site();
-			}
+	if ( $blog_ids ) {
 
-			restore_current_blog();
+		foreach ( $blog_ids as $blog_id ) {
+			switch_to_blog( $blog_id );
+			code_snippets_uninstall_site();
 		}
 
-		/* Remove multisite snippets database table */
-		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->ms_snippets" );
-
-		/* Remove saved options */
-		delete_site_option( 'code_snippets_version' );
-		delete_site_option( 'recently_activated_snippets' );
-
-		/* Remove multisite capabilities */
-		$network_cap = apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
-		$supers = get_super_admins();
-
-		foreach ( $supers as $admin ) {
-			$user = new WP_User( 0, $admin );
-			$user->remove_cap( $network_cap );
-		}
-
-	} else {
-		code_snippets_uninstall_site();
+		restore_current_blog();
 	}
+
+	/* Remove multisite snippets database table */
+	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->ms_snippets" );
+
+	/* Remove saved options */
+	delete_site_option( 'code_snippets_version' );
+	delete_site_option( 'recently_activated_snippets' );
+
+	/* Remove multisite capabilities */
+	$network_cap = apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
+	$supers = get_super_admins();
+
+	foreach ( $supers as $admin ) {
+		$user = new WP_User( 0, $admin );
+		$user->remove_cap( $network_cap );
+	}
+
+} else {
+	code_snippets_uninstall_site();
 }
