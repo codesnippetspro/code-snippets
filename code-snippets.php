@@ -66,10 +66,10 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/caps.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/snippet-ops.php';
 
 /* Upgrader function */
-require_once $this->plugin_dir . 'includes/upgrade.php';
+require_once plugin_dir_path( __FILE__) . 'includes/upgrade.php';
 
 /* Administration functions */
-require_once $this->plugin_dir . 'admin/bootstrap.php';
+require_once plugin_dir_path( __FILE__) . 'admin/bootstrap.php';
 
 /* Initialize database table variables */
 set_snippet_table_vars();
