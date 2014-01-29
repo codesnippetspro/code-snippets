@@ -280,8 +280,8 @@ function code_snippets_single_menu_assets( $hook ) {
 
 	/* CodeMirror Theme */
 
-	$options = get_option( 'code_snippets_settings' );
-	if ( ! empty( $options['codemirror_theme'] ) && 'default' !== $theme = $options['codemirror_theme'] ) {
+	$theme = get_option( 'code_snippets_settings' )['editor']['theme'];
+	if ( 'default' !== $theme ) {
 
 		wp_enqueue_style(
 			'code-snippets-codemirror-theme-' . $theme,

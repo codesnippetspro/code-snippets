@@ -4,7 +4,7 @@
  * HTML code for the Add New/Edit Snippet page
  *
  * @package    Code_Snippets
- * @subpackage Admin_Views
+ * @subpackage Edit
  */
 
 /* Bail if accessed directly */
@@ -121,18 +121,18 @@ $snippet = get_snippet( $edit_id );
 
 <?php
 
-$options = get_option( 'code_snippets_settings' );
+$options = get_option( 'code_snippets_settings' )['editor'];
 
 $editor_atts = array(
 	'lineNumbers'    => true,
 	'matchBrackets'  => true,
-	'lineWrapping'   => true,
+	'lineWrapping'   => $options['line_wrapping'],
 	'mode'           => 'text/x-php',
 	'indentUnit'     => 4,
-	'indentWithTabs' => true,
+	'indentWithTabs' => $options['indent_with_tabs'],
 	'enterMode'      => 'keep',
 	'tabMode'        => 'shift',
-	'theme'          => ! empty( $options['codemirror_theme'] ) ? $options['codemirror_theme'] : 'default',
+	'theme'          => $options['theme'],
 );
 
 $editor_atts = apply_filters( 'code_snippets_editor_atts', $editor_atts );
