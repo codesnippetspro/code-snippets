@@ -33,113 +33,72 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * A skeleton class containing helpers used throughout the plugin.
- * The real meaty functions are in their own files
+ * The version number for this release of the plugin.
+ * This will later be used for upgrades and enqueueing files
  *
- * @since 2.0 Pulled virtually all methods out of class
- * @since 1.0
+ * This should be set to the 'Plugin Version' value,
+ * as defined above in the plugin header
+ *
+ * @since 2.0
+ * @var string A PHP-standardized version number string
  */
-class Code_Snippets {
-
-	/**
-	 * The version number for this release of the plugin.
-	 * This will later be used for upgrades and enqueueing files
-	 *
-	 * This should be set to the 'Plugin Version' value,
-	 * as defined above in the plugin header
-	 *
-	 * @since 1.0
-	 * @access public
-	 * @var string A PHP-standardized version number string
-	 */
-	public $version = '2.0-dev';
-
-	/**
-	 * Variables to hold plugin paths
-	 *
-	 * @since 1.0
-	 * @access public
-	 * @var string
-	 */
-	public $file, $plugin_dir, $plugin_url = '';
-
-	/**
-	 * The constructor function for our class
-	 *
-	 * This method is called just as this plugin is included,
-	 * so other plugins may not have loaded yet. Only do stuff
-	 * here that really can't wait
-	 *
-	 * @since 1.0
-	 * @access private
-	 */
-	function __construct() {
-
-		/* Initialize member variables */
-		$this->file = __FILE__;
-		$this->plugin_dir = plugin_dir_path( __FILE__ );
-		$this->plugin_url = plugin_dir_url( __FILE__ );
-
-		/* Database operations functions */
-		require_once $this->plugin_dir . 'includes/db.php';
-
-		/* Capability functions */
-		require_once $this->plugin_dir . 'includes/caps.php';
-
-		/* Snippet operations functions */
-		require_once $this->plugin_dir . 'includes/snippet-ops.php';
-
-		/* Initialize database table variables */
-		set_snippet_table_vars();
-
-		/* Execute the snippets once the plugins are loaded */
-		add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
-
-		/* Hook our initialize function to the plugins_loaded action */
-		add_action( 'plugins_loaded', array( $this, 'init' ) );
-	}
-
-	/**
-	 * Load the plugin completely
-	 *
-	 * This method is called *after* other plugins
-	 * have been run
-	 *
-	 * @since 1.7
-	 */
-	public function init() {
-
-		/* Run the upgrader */
-		require_once $this->plugin_dir . 'includes/upgrade.php';
-
-		/* Administration functions */
-		require_once $this->plugin_dir . 'admin/bootstrap.php';
-
-		/* Load plugin textdomain */
-		$this->load_textdomain();
-
-		/* Call the done action */
-		do_action( 'code_snippets_init' );
-	}
-
-	/**
-	 * Load up the localization file if we're using WordPress in a different language.
-	 * Place it in this plugin's "languages" folder and name it "code-snippets-[value in wp-config].mo"
-	 *
-	 * If you wish to contribute a language file to be included in the Code Snippets package,
-	 * please see create an issue on GitHub: https://github.com/bungeshea/code-snippets/issues
-	 */
-	public function load_textdomain() {
-		load_plugin_textdomain( 'code-snippets', false, dirname( basename( __FILE__ ) ) . '/languages/' );
-	}
-}
+define( 'CODE_SNIPPETS_VERSION', '2.0-dev' );
 
 /**
- * The global variable where the Code_Snippets class is stored
- * @since 1.0
- * @var object Instance of Code_Snippets class
- * @see code_snippets_init()
+ * The full path to the main file of this plugin
+ *
+ * This can later be passed to functions such as
+ * plugin_dir_path(), plugins_url() and plugin_basename()
+ * to retrieve information about plugin paths
+ *
+ * @since 2.0
+ * @var string
+  */
+define( 'CODE_SNIPPETS_FILE', __FILE__ );
+
+/* Database operations functions */
+require_once plugin_dir_path( __FILE__ ) . 'includes/db.php';
+
+/* Capability functions */
+require_once plugin_dir_path( __FILE__ ) . 'includes/caps.php';
+
+/* Snippet operations functions */
+require_once plugin_dir_path( __FILE__ ) . 'includes/snippet-ops.php';
+
+/* Upgrader function */
+require_once $this->plugin_dir . 'includes/upgrade.php';
+
+/* Administration functions */
+require_once $this->plugin_dir . 'admin/bootstrap.php';
+
+/* Initialize database table variables */
+set_snippet_table_vars();
+
+/* Execute the snippets once the plugins are loaded */
+add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
+
+/**
+ * Add a few variables into the $code_snippets global for backwards-compat
+ *
+ * @todo Remove this whole code block
+ * @var object
  */
 global $code_snippets;
-$code_snippets = new Code_Snippets;
+$code_snippets = new stdClass;
+$code_snippets->version = CODE_SNIPPETS_VERSION;
+$code_snippets->file = CODE_SNIPPETS_FILE;
+$code_snippets->plugin_url = plugin_dir_url( CODE_SNIPPETS_FILE );
+$code_snippets->plugin_dir = plugin_dir_path( CODE_SNIPPETS_FILE );
 
+/**
+ * Load up the localization file if we're using WordPress in a different language.
+ * Place it in this plugin's "languages" folder and name it "code-snippets-[value in wp-config].mo"
+ *
+ * If you wish to contribute a language file to be included in the Code Snippets package,
+ * please see create an issue on GitHub: https://github.com/bungeshea/code-snippets/issues
+ */
+function code_snippets_load_textdomain() {
+	load_plugin_textdomain( 'code-snippets', false, dirname( basename( __FILE__ ) ) . '/languages/' );
+}
+
+add_action( 'plugins_loaded', 'code_snippets_load_textdomain' );
