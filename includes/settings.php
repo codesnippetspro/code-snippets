@@ -28,15 +28,6 @@ function code_snippets_add_settings_menu() {
 add_action( 'admin_menu', 'code_snippets_add_settings_menu' );
 add_action( 'network_admin_menu', 'code_snippets_add_settings_menu' );
 
-/**
- * Displays the settings menu
- *
- * @since 2.0
- */
-function code_snippets_render_settings_menu() {
-	require plugin_dir_path( __FILE__ ) . 'views/settings.php';
-}
-
 function code_snippets_settings_init() {
 	register_setting( 'code-snippets', 'code_snippets_settings', 'code_snippets_settings_validate' );
 
@@ -67,7 +58,6 @@ function code_snippets_codemirror_theme_select_field() {
 		'default',
 		'3024-day',
 		'3024-night',
-		'ambiance-mobile',
 		'ambiance',
 		'base16-dark',
 		'base16-light',
@@ -113,4 +103,30 @@ function code_snippets_settings_validate( $input ) {
 	);
 
 	return $output;
+}
+
+/**
+ * Displays the settings menu
+ *
+ * @since 2.0
+ */
+function code_snippets_render_settings_menu() {
+	?>
+	<div class="wrap">
+
+		<?php screen_icon(); ?>
+		<h2><?php esc_html_e( 'Settings', 'code-snippets' ); ?></h2>
+
+		<?php settings_errors( 'code-snippets-settings-notices' ); ?>
+
+		<form action="options.php" method="post">
+			<?php settings_fields( 'code-snippets' ); ?>
+			<table class="form-table">
+				<?php do_settings_sections( 'code-snippets' ); ?>
+			</table>
+			<?php submit_button(); ?>
+		</form>
+
+	</div>
+	<?php
 }

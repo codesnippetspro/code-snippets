@@ -3,8 +3,8 @@
 /**
  * HTML code for the Manage Snippets page
  *
- * @package    Code_Snippets
- * @subpackage Admin_Views
+ * @package Code_Snippets
+ * @subpackage Manage
  */
 
 /* Bail if accessed directly */

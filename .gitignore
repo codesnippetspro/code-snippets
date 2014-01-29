@@ -5,8 +5,8 @@ vendor
 
 # Built plugin
 deploy
-admin/styles/build
-admin/styles/min
+css/build
+css/min
 
 # Grunt (via NPM)
 node_modules

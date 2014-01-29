@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 		watch: {
 
 			css: {
-				files: ['admin/styles/**/*.scss'],
+				files: ['css/**/*.scss'],
 				tasks: ['css']
 			}
 
@@ -19,21 +19,21 @@ module.exports = function(grunt) {
 		},
 
 		sass: {
-			admin: {
-				cwd: 'admin/styles',
+			dist: {
+				cwd: 'css',
 				src: '*.scss',
-				dest: 'admin/styles/build',
+				dest: 'css/build',
 				expand: true,
 				ext: '.css'
 			}
 		},
 
 		autoprefixer: {
-			admin: {
+			dist: {
 				expand: true,
 				flatten: true,
-				src: 'admin/styles/build/*.css',
-				dest: 'admin/styles/build'
+				src: 'css/build/*.css',
+				dest: 'css/build'
 			}
 		},
 
@@ -41,8 +41,8 @@ module.exports = function(grunt) {
 			dist: {
 				expand: true,
 				flatten: true,
-				src: 'admin/styles/build/*.css',
-				dest: 'admin/styles/min'
+				src: 'css/build/*.css',
+				dest: 'css/min'
 			}
 		},
 

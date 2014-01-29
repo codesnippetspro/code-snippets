@@ -337,7 +337,7 @@ function export_snippets( $ids, $multisite = false ) {
 	$table = get_snippets_table_name( $multisite );
 
 	if ( ! class_exists( 'Code_Snippets_Export' ) ) {
-		$this->get_include( 'class-export' );
+		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'export/class-export.php';
 	}
 
 	$class = new Code_Snippets_Export( $ids, $table );
@@ -358,11 +358,12 @@ function export_snippets_to_php( $ids, $multisite = false ) {
 
 	$table = get_snippets_table_name( $multisite );
 
-	if ( ! class_exists( 'Code_Snippets_Export' ) )
-		$this->get_include( 'class-export' );
+	if ( ! class_exists( 'Code_Snippets_Export' ) ) {
+		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'export/class-export.php';
+	}
 
 	if ( ! class_exists( 'Code_Snippets_Export_PHP' ) ) {
-		$this->get_include( 'class-export-php' );
+		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'export/class-export-php.php';
 	}
 
 	$class = new Code_Snippets_Export_PHP( $ids, $table );

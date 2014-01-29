@@ -32,7 +32,7 @@ function code_snippets_register_importer() {
 		register_importer(
 			'code-snippets',
 			__( 'Code Snippets', 'code-snippets' ),
-			__( 'Import snippets from a Code Snippets export file', 'code-snippets' ),
+			__( 'Import snippets from a code snippets export file', 'code-snippets' ),
 			'code_snippets_render_import_menu'
 		);
 	}
@@ -91,8 +91,8 @@ add_action( 'admin_menu', 'code_snippets_add_importer_menu_link' );
  * @since 2.0
  */
 function code_snippets_render_import_menu() {
-	require_once plugin_dir_path( __FILE__ ) . 'messages/import.php';
-	require_once plugin_dir_path( __FILE__ ) . 'views/import.php';
+	require_once plugin_dir_path( __FILE__ ) . 'admin-messages.php';
+	require_once plugin_dir_path( __FILE__ ) . 'admin.php';
 }
 
 /**
@@ -130,5 +130,5 @@ function code_snippets_load_import_menu() {
 	}
 
 	/* Load the screen help tabs */
-	require plugin_dir_path( __FILE__ ) . 'help/import.php';
+	require plugin_dir_path( __FILE__ ) . 'admin-help.php';
 }

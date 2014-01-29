@@ -4,8 +4,8 @@
  * Register and handle the help tabs for the
  * manage snippets admin page
  *
- * @package    Code_Snippets
- * @subpackage Contextual_Help
+ * @package Code_Snippets
+ * @subpackage Manage
  */
 
 $screen = get_current_screen();

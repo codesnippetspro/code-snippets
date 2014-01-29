@@ -62,14 +62,6 @@ function code_snippets_get_menu_hook( $menu = '' ) {
 }
 
 /**
- * Load functions specific to a single menu
- */
-require_once plugin_dir_path( __FILE__ ) . 'manage.php';
-require_once plugin_dir_path( __FILE__ ) . 'single.php';
-require_once plugin_dir_path( __FILE__ ) . 'import.php';
-require_once plugin_dir_path( __FILE__ ) . 'settings.php';
-
-/**
  * Allow super admins to control site admin access to
  * snippet admin menus
  *
@@ -102,7 +94,7 @@ function code_snippets_load_admin_icon_style() {
 
 	wp_enqueue_style(
 		'menu-icon-snippets',
-		plugins_url( 'styles/min/menu-icon.css', __FILE__ ),
+		plugins_url( 'css/min/menu-icon.css', CODE_SNIPPETS_FILE ),
 		false,
 		CODE_SNIPPETS_VERSION
 	);

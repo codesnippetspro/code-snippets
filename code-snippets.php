@@ -56,20 +56,42 @@ define( 'CODE_SNIPPETS_VERSION', '2.0-dev' );
   */
 define( 'CODE_SNIPPETS_FILE', __FILE__ );
 
-/* Database operations functions */
-require_once plugin_dir_path( __FILE__ ) . 'includes/db.php';
+/**
+ * Load plugin files
+ */
+foreach ( array(
 
-/* Capability functions */
-require_once plugin_dir_path( __FILE__ ) . 'includes/caps.php';
+	/* Database operations functions */
+	'db.php',
 
-/* Snippet operations functions */
-require_once plugin_dir_path( __FILE__ ) . 'includes/snippet-ops.php';
+	/* Capability functions */
+	'caps.php',
 
-/* Upgrader function */
-require_once plugin_dir_path( __FILE__) . 'includes/upgrade.php';
+	/* Snippet operations functions */
+	'snippet-ops.php',
 
-/* Administration functions */
-require_once plugin_dir_path( __FILE__) . 'admin/bootstrap.php';
+	/* Upgrader function */
+	'upgrade.php',
+
+	/* General Admin functions */
+	'admin.php',
+
+	/* Manage snippets component */
+	'manage/manage.php',
+
+	/* Edit snippet component */
+	'edit/edit.php',
+
+	/* Import snippets component */
+	'import/import.php',
+
+	/* Settings component */
+	'settings.php',
+
+	) as $include ) {
+
+	require_once plugin_dir_path( __FILE__ ) . "includes/$include";
+}
 
 /* Initialize database table variables */
 set_snippet_table_vars();

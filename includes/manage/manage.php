@@ -3,8 +3,8 @@
 /**
  * Functions to handle the manage snippets menu
  *
- * @package    Code_Snippets
- * @subpackage Administration
+ * @package Code_Snippets
+ * @subpackage Manage
  */
 
 /**
@@ -49,8 +49,8 @@ add_action( 'network_admin_menu', 'code_snippets_add_manage_menu', 5 );
  * @since 2.0
  */
 function code_snippets_render_manage_menu() {
-	require plugin_dir_path( __FILE__ ) . 'messages/manage.php';
-	require plugin_dir_path( __FILE__ ) . 'views/manage.php';
+	require plugin_dir_path( __FILE__ ) . 'admin-messages.php';
+	require plugin_dir_path( __FILE__ ) . 'admin.php';
 }
 
 /**
@@ -74,10 +74,10 @@ function code_snippets_load_manage_menu() {
 	create_code_snippets_tables( true, true );
 
 	/* Load the screen help tabs */
-	require plugin_dir_path( __FILE__ ) . 'help/manage.php';
+	require plugin_dir_path( __FILE__ ) . 'admin-help.php';
 
 	/* Initialize the snippet table class */
-	require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/class-list-table.php';
+	require_once plugin_dir_path( __FILE__ ) . 'class-list-table.php';
 	global $code_snippets_list_table;
 	$code_snippets_list_table = new Code_Snippets_List_Table();
 	$code_snippets_list_table->prepare_items();
@@ -98,8 +98,8 @@ function code_snippets_manage_menu_assets( $hook ) {
 	}
 
 	wp_enqueue_style(
-		'code-snippets-admin-manage',
-		plugins_url( 'styles/min/admin-manage.css', __FILE__ ),
+		'code-snippets-manage',
+		plugins_url( 'css/min/manage-snippets.css', CODE_SNIPPETS_FILE ),
 		false,
 		CODE_SNIPPETS_VERSION
 	);

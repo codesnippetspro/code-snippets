@@ -66,8 +66,8 @@ add_action( 'network_admin_menu', 'code_snippets_add_single_menu', 5 );
  * @since 2.0
  */
 function code_snippets_render_single_menu() {
-	require plugin_dir_path( __FILE__ ) . 'messages/single.php';
-	require plugin_dir_path( __FILE__ ) . 'views/single.php';
+	require plugin_dir_path( __FILE__ ) . 'admin-messages.php';
+	require plugin_dir_path( __FILE__ ) . 'admin.php';
 }
 
 /**
@@ -88,14 +88,14 @@ function code_snippets_load_single_menu() {
 	create_code_snippets_tables( true, true );
 
 	/* Load the screen help tabs */
-	require plugin_dir_path( __FILE__ ) . 'help/single.php';
+	require plugin_dir_path( __FILE__ ) . 'admin-help.php';
 
 	/* Enqueue the code editor and other scripts and styles */
 	add_filter( 'admin_enqueue_scripts', 'code_snippets_single_menu_assets' );
 
 	/* Don't allow visiting the edit snippet page without a valid ID */
 	if ( code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
-		if ( ! isset( $_REQUEST['id'] ) || 0 == $_REQUEST['snippet_id'] ) {
+		if ( ! isset( $_REQUEST['id'] ) || 0 == $_REQUEST['id'] ) {
 			wp_redirect( code_snippets_get_menu_url( 'add' ) );
 			exit;
 		}
@@ -294,8 +294,8 @@ function code_snippets_single_menu_assets( $hook ) {
 	/* Plugin Assets */
 
 	wp_enqueue_style(
-		'code-snippets-admin-single',
-		plugins_url( 'styles/min/admin-single.css', __FILE__ ),
+		'code-snippets-edit',
+		plugins_url( 'css/edit-snippet.css', CODE_SNIPPETS_FILE ),
 		false,
 		CODE_SNIPPETS_VERSION
 	);

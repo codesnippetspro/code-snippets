@@ -3,8 +3,8 @@
 /**
  * HTML code for the Import Snippets page
  *
- * @package    Code_Snippets
- * @subpackage Admin_Views
+ * @package Code_Snippets
+ * @subpackage Import
  */
 
 /* Bail if accessed directly */
