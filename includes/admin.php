@@ -38,7 +38,7 @@ function code_snippets_get_menu_slug( $menu = '' ) {
  * @param string $menu The menu to retrieve the URL to
  * @return string The menu's URL
  */
-function code_snippets_get_menu_url( $menu, $context = 'self' ) {
+function code_snippets_get_menu_url( $menu = '', $context = 'self' ) {
 	$slug = code_snippets_get_menu_slug( $menu );
 	$url = 'admin.php?page=' . $slug;
 
