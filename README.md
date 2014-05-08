@@ -2,7 +2,7 @@
 # Code Snippets [![Build Status](https://travis-ci.org/bungeshea/code-snippets.png?branch=develop)](https://travis-ci.org/bungeshea/code-snippets)
 
 * __Requires at least:__ [WordPress 3.3](http://wordpress.org/download/) or later
-* __Tested up to:__ WordPress 3.8
+* __Tested up to:__ WordPress 3.9
 * __Stable version:__ [1.9.1](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
