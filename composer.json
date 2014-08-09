@@ -22,7 +22,7 @@
 	},
 	"require": {
 		"php": ">=5.2.7",
-		"codemirror": "3.22"
+		"codemirror": "4.4"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*"
@@ -32,9 +32,9 @@
 			"type": "package",
 			"package": {
 				"name": "codemirror",
-				"version": "3.22",
+				"version": "4.4",
 				"dist": {
-					"url": "http://codemirror.net/codemirror-3.22.zip",
+					"url": "http://codemirror.net/codemirror-4.4.zip",
 					"type": "zip"
 				}
 			}

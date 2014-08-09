@@ -221,7 +221,7 @@ function code_snippets_single_menu_assets( $hook ) {
 
 	/* CodeMirror */
 
-	$codemirror_version = '3.22';
+	$codemirror_version = '4.4';
 	$codemirror_url     = plugins_url( 'vendor/codemirror/', CODE_SNIPPETS_FILE );
 
 	wp_enqueue_style(
