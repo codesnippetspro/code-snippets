@@ -91,7 +91,7 @@ function code_snippets_load_single_menu() {
 	require plugin_dir_path( __FILE__ ) . 'admin-help.php';
 
 	/* Enqueue the code editor and other scripts and styles */
-	add_filter( 'admin_enqueue_scripts', 'code_snippets_single_menu_assets' );
+	add_filter( 'admin_enqueue_scripts', 'code_snippets_enqueue_codemirror' );
 
 	/* Don't allow visiting the edit snippet page without a valid ID */
 	if ( code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
@@ -208,12 +208,7 @@ add_action( 'code_snippets/admin/single', 'code_snippets_description_editor_box'
  *
  * @param string $hook The current page hook, to be compared with the single snippet page hook
  */
-function code_snippets_single_menu_assets( $hook ) {
-
-	/* If we're not on the right admin page, bail early */
-	if ( $hook !== code_snippets_get_menu_hook( 'add' ) && $hook !== code_snippets_get_menu_hook( 'edit' ) ) {
-		return;
-	}
+function code_snippets_enqueue_codemirror() {
 
 	/* Remove other CodeMirror styles */
 	wp_deregister_style( 'codemirror' );
@@ -278,6 +273,15 @@ function code_snippets_single_menu_assets( $hook ) {
 		$codemirror_version
 	);
 
+	/* Plugin Assets */
+
+	wp_enqueue_style(
+		'code-snippets-edit',
+		plugins_url( 'css/min/edit-snippet.css', CODE_SNIPPETS_FILE ),
+		false,
+		CODE_SNIPPETS_VERSION
+	);
+
 	/* CodeMirror Theme */
 
 	$theme = get_option( 'code_snippets_settings' )['editor']['theme'];
@@ -290,13 +294,4 @@ function code_snippets_single_menu_assets( $hook ) {
 			$codemirror_version
 		);
 	}
-
-	/* Plugin Assets */
-
-	wp_enqueue_style(
-		'code-snippets-edit',
-		plugins_url( 'css/edit-snippet.css', CODE_SNIPPETS_FILE ),
-		false,
-		CODE_SNIPPETS_VERSION
-	);
 }

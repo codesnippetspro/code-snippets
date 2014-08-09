@@ -123,20 +123,6 @@ $snippet = get_snippet( $edit_id );
 
 $options = get_option( 'code_snippets_settings' )['editor'];
 
-$editor_atts = array(
-	'lineNumbers'    => true,
-	'matchBrackets'  => true,
-	'lineWrapping'   => $options['wrap_lines'],
-	'mode'           => 'text/x-php',
-	'indentUnit'     => 4,
-	'indentWithTabs' => $options['indent_with_tabs'],
-	'enterMode'      => 'keep',
-	'tabMode'        => 'shift',
-	'theme'          => $options['theme'],
-);
-
-$editor_atts = apply_filters( 'code_snippets_editor_atts', $editor_atts );
-
 ?>
 
 <script>
@@ -145,8 +131,11 @@ $editor_atts = apply_filters( 'code_snippets_editor_atts', $editor_atts );
  */
 (function() {
 
-	var atts = <?php echo json_encode( $editor_atts ); ?>;
-	var editor = CodeMirror.fromTextArea(document.getElementById("snippet_code"), atts);
+	var atts = <?php
+		$atts = array( 'mode' => 'text/x-php' );
+		echo code_snippets_get_editor_atts( $atts, true );
+	?>;
+	var editor = CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
 
 })();
 </script>

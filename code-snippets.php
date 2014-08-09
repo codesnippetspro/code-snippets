@@ -76,6 +76,9 @@ foreach ( array(
 	/* General Admin functions */
 	'admin.php',
 
+	/* CodeMirror editor functions */
+	'editor.php',
+
 	/* Manage snippets component */
 	'manage/manage.php',
 
@@ -86,7 +89,9 @@ foreach ( array(
 	'import/import.php',
 
 	/* Settings component */
-	'settings.php',
+	'settings/editor-preview.php',
+	'settings/settings.php',
+	'settings/menu.php',
 
 	) as $include ) {
 
