@@ -284,7 +284,9 @@ function code_snippets_enqueue_codemirror() {
 
 	/* CodeMirror Theme */
 
-	$theme = get_option( 'code_snippets_settings' )['editor']['theme'];
+	$settings = get_option( 'code_snippets_settings' );
+	$theme = $settings['editor']['theme'];
+
 	if ( 'default' !== $theme ) {
 
 		wp_enqueue_style(

@@ -119,12 +119,6 @@ $snippet = get_snippet( $edit_id );
 	</form>
 </div>
 
-<?php
-
-$options = get_option( 'code_snippets_settings' )['editor'];
-
-?>
-
 <script>
 /**
  * Loads CodeMirror on the snippet editor

@@ -143,8 +143,12 @@ function code_snippets_settings_validate( $input ) {
  */
 function code_snippets_editor_checkbox_setting( $atts ) {
 	$setting = $atts[0];
-	$saved_value = get_option( 'code_snippets_settings' )['editor'][ $setting ];
-	$default_value = code_snippets_get_default_settings()['editor'][ $setting ];
+
+	$settings = get_option( 'code_snippets_settings' );
+	$saved_value = $settings['editor'][ $setting ];
+
+	$default_settings = code_snippets_get_default_settings();
+	$default_value = $default_settings['editor'][ $setting ];
 
 	printf (
 		'<input type="checkbox" name="code_snippets_settings[editor][%1$s]"%2$s>',
@@ -159,7 +163,8 @@ function code_snippets_editor_checkbox_setting( $atts ) {
  */
 function code_snippets_editor_number_setting( $atts ) {
 	$setting = $atts[0];
-	$saved_value = get_option( 'code_snippets_settings' )['editor'][ $setting ];
+	$settings = get_option( 'code_snippets_settings' );
+	$saved_value = $settings['editor'][ $setting ];
 
 	printf (
 		'<input type="number" name="code_snippets_settings[editor][%1$s]" value="%2$s">',

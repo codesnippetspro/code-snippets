@@ -35,7 +35,8 @@ add_action( 'admin_enqueue_scripts', 'code_snippets_editor_settings_preview_asse
  * Render a theme select field
  */
 function code_snippets_codemirror_theme_select_field() {
-	$saved_value = get_option( 'code_snippets_settings' )['editor']['theme'];
+	$settings = get_option( 'code_snippets_settings' );
+	$saved_value = $settings['editor']['theme'];
 
 	echo '<select name="code_snippets_settings[editor][theme]">';
 
