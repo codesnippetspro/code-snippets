@@ -74,6 +74,7 @@ module.exports = function(grunt) {
 						'includes/**/*',
 						'admin/**/*',
 						'languages/**/*',
+						'css/**/*',
 
 						// CodeMirror
 						'vendor/codemirror/lib/codemirror.css',
