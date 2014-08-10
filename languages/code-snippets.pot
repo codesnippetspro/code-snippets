@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.0.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-09 14:05+1000\n"
+"POT-Creation-Date: 2014-08-10 12:47+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -229,10 +229,6 @@ msgstr ""
 
 #: includes/edit/edit.php:177 includes/manage/class-list-table.php:220
 msgid "Description"
-msgstr ""
-
-#: includes/edit/style.php:13
-msgid "Styles"
 msgstr ""
 
 #: includes/import/admin-help.php:18
@@ -564,4 +560,17 @@ msgstr ""
 
 #: includes/settings/settings.php:105
 msgid "Editor Preview"
+msgstr ""
+
+#: includes/tags.php:15 includes/tags.php:341
+msgid "Tags"
+msgstr ""
+
+#: includes/tags.php:105
+#, php-format
+msgid " in tag &#8220;%s&#8221;"
+msgstr ""
+
+#: includes/tags.php:128
+msgid "Show all tags"
 msgstr ""

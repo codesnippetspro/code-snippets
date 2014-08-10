@@ -121,6 +121,7 @@ function create_code_snippets_table( $table_name, $force_creation = false ) {
 		'name        tinytext not null',
 		'description text',
 		'code        longtext not null',
+		'tags        longtext',
 	) );
 
 	$table_columns_sql = implode( ",\n", $table_columns ); // convert the array into SQL code

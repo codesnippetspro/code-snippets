@@ -70,10 +70,10 @@ foreach ( array(
 	/* Snippet operations functions */
 	'snippet-ops.php',
 
-	/* Upgrader function */
+	/* Upgrade function */
 	'upgrade.php',
 
-	/* General Admin functions */
+	/* General Administration functions */
 	'admin.php',
 
 	/* CodeMirror editor functions */
@@ -87,6 +87,9 @@ foreach ( array(
 
 	/* Import snippets component */
 	'import/import.php',
+
+	/* Tags component */
+	'tags.php',
 
 	/* Settings component */
 	'settings/editor-preview.php',
