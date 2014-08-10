@@ -130,6 +130,10 @@ add_filter( \'admin_footer_text\', \'example_replace_admin_footer_text\' );';
 			$( 'input[name="code_snippets_settings[editor][tab_size]"]' ).change( function () {
 				editor.setOption( 'tabSize', $(this).val() );
 			} );
+
+			$( 'input[name="code_snippets_settings[editor][auto_close_brackets]"]' ).change( function () {
+				editor.setOption( 'autoCloseBrackets', $(this).is(':checked') );
+			} );
 		});
 
 	}(jQuery));
