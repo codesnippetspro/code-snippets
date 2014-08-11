@@ -201,11 +201,33 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @return string          The column content to be printed
 	 */
     function column_cb( $snippet ) {
-        return apply_filters(
-			'code_snippets/list_table/column_cb',
-			sprintf( '<input type="checkbox" name="ids[]" value="%s" />', $snippet->id ),
-			$snippet
-		);
+       return apply_filters(
+				'code_snippets/list_table/column_cb',
+				sprintf( '<input type="checkbox" name="ids[]" value="%s" />', $snippet->id ),
+				$snippet
+			);
+    }
+
+    /**
+    * Output the content of the tags column
+    * This function is used once for each row
+    * @since 2.0
+    * @param object $snippet
+    */
+    function column_tags( $snippet ) {
+
+    	if ( ! empty( $snippet->tags ) ) {
+
+    		foreach ( $snippet->tags as $tag ) {
+    			$out[] = sprintf( '<a href="%s">%s</a>',
+    				add_query_arg( 'tag', esc_attr( $tag ) ),
+    				esc_html( $tag )
+    			);
+    		}
+    		echo join( ', ', $out );
+    	} else {
+    		echo '&#8212;';
+    	}
     }
 
     /**
@@ -218,6 +240,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'name'        => __( 'Name', 'code-snippets' ),
 			'id'          => __( 'ID', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
+			'tags'        => __( 'Tags', 'code-snippets' ),
 		);
 		return apply_filters( 'code_snippets/list_table/columns', $columns );
 	}
@@ -320,22 +343,67 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
+	* Gets the tags of the snippets currently being viewed in the table
+	* @since 2.0
+	*/
+	function get_current_tags() {
+		global $snippets, $status;
+
+		/* If we're not viewing a snippets table, get all used tags instead */
+		if ( ! isset( $snippets, $status ) ) {
+			return get_all_snippet_tags();
+		}
+
+		$tags = array();
+
+		/* Merge all tags into a single array */
+		foreach ( $snippets[ $status ] as $snippet ) {
+			$tags = array_merge( $snippet->tags, $tags );
+		}
+
+		/* Remove duplicate tags */
+		return array_values( array_unique( $tags, SORT_REGULAR ) );
+	}
+
+	/**
 	 * Add filters and extra actions above and below the table
 	 * @param string $which Are the actions displayed on the table top or bottom
 	 */
 	function extra_tablenav( $which ) {
-		global $status;
+		global $status, $wpdb;
 
 		$screen = get_current_screen();
 
-		if ( 'top' === $which && has_action( 'code_snippets_list_table_filter_controls' ) ) {
+		if ( 'top' === $which ) {
 
-			echo '<div class="alignleft actions">';
+			/* Tags dropdown filter */
+			$tags = $this->get_current_tags();
 
-			do_action( 'code_snippets/list_table/filter_controls' );
-			submit_button( __( 'Filter', 'code-snippets' ), 'button', false, false );
+			if ( count( $tags ) ) {
+				$query = isset( $_GET['tag'] ) ? $_GET['tag'] : '';
 
-			echo '</div>';
+				echo '<div class="alignleft actions">';
+				echo '<select name="tag">';
+
+				printf ( "<option %s value=''>%s</option>\n",
+					selected( $query, '', false ),
+					__( 'Show all tags', 'code-snippets' )
+				);
+
+				foreach ( $tags as $tag ) {
+
+					printf( "<option %s value='%s'>%s</option>\n",
+						selected( $query, $tag, false ),
+						esc_attr( $tag ),
+						$tag
+					);
+				}
+
+				echo '</select>';
+
+				submit_button( __( 'Filter', 'code-snippets' ), 'button', false, false );
+				echo '</div>';
+			}
 		}
 
 		echo '<div class="alignleft actions">';
@@ -358,7 +426,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$vars = apply_filters(
 			'code_snippets/list_table/required_form_fields',
-			array( 'page', 's', 'status', 'paged' ),
+			array( 'page', 's', 'status', 'paged', 'tag' ),
 			$context
 		);
 
@@ -516,9 +584,24 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'recently_activated' => array(),
 		);
 
+		/* Filter snippets by tag */
+		if ( isset( $_POST['tag'] ) ) {
+
+			if ( ! empty( $_POST['tag'] ) ) {
+				wp_redirect( add_query_arg( 'tag', $_POST['tag'] ) );
+			}
+			else {
+				wp_redirect( remove_query_arg( 'tag' ) );
+			}
+		}
+
+		if ( ! empty( $_GET['tag'] ) ) {
+			$snippets = array_filter( $snippets, array( $this, '_tags_filter_callback' ) );
+		}
+
 		/* Filter snippets based on search query */
 		if ( $s ) {
-			$snippets['all'] = array_filter( $snippets['all'], array( &$this, '_search_callback' ) );
+			$snippets['all'] = array_filter( $snippets['all'], array( $this, '_search_callback' ) );
 		}
 
 		if ( $screen->is_network ) {
@@ -674,6 +757,22 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		return false;
 	}
 
+
+	/**
+	* Used internally
+	* @ignore
+	*/
+	function _tags_filter_callback( $snippet ) {
+
+		$tags = explode( ',', $_GET['tag'] );
+
+		foreach ( $tags as $tag ) {
+			if ( in_array( $tag, $snippet->tags ) ) {
+				return true;
+			}
+		}
+	}
+
 	/**
 	 * Display a notice showing the current search terms
 	 *
@@ -681,24 +780,23 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @access public
 	 */
 	public function search_notice() {
-		if ( ! empty( $_REQUEST['s'] ) || apply_filters( 'code_snippets/list_table/search_notice', '' ) ) {
+		if ( ! empty( $_REQUEST['s'] ) || ! empty( $_GET['tag'] ) ) {
 
 			echo '<span class="subtitle">' . __( 'Search results', 'code-snippets' );
 
-			if ( ! empty ( $_REQUEST['s'] ) )
+			if ( ! empty ( $_REQUEST['s'] ) ) {
 				echo sprintf ( __( ' for &#8220;%s&#8221;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
+			}
 
-			echo apply_filters( 'code_snippets/list_table/search_notice', '' );
+			if ( ! empty( $_GET['tag'] ) ) {
+				echo sprintf ( __(' in tag &#8220;%s&#8221;', 'code-snippets' ), $_GET['tag'] );
+			}
+
 			echo '</span>';
 
 			printf (
-				'&nbsp;<a class="button" href="%s">' . __( 'Clear Filters', 'code-snippets' ) . '</a>',
-				remove_query_arg(
-					apply_filters( 'code_snippets/list_table/required_form_fields',
-						array( 's' ),
-						'clear_filters'
-					)
-				)
+				'&nbsp;<a class="button clear-filters" href="%s">' . __( 'Clear Filters', 'code-snippets' ) . '</a>',
+				remove_query_arg( array( 's', 'tag' ) )
 			);
 		}
 	}

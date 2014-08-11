@@ -196,6 +196,32 @@ function code_snippets_description_editor_box( $snippet ) {
 add_action( 'code_snippets/admin/single', 'code_snippets_description_editor_box', 5 );
 
 /**
+* Output the interface for editing snippet tags
+* @since 2.0
+* @param object $snippet The snippet currently being edited
+*/
+function code_snippets_tags_editor( $snippet ) {
+?>
+	<label for="snippet_tags" style="cursor: auto;">
+		<h3><?php esc_html_e( 'Tags', 'code-snippets' ); ?></h3>
+	</label>
+
+	<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
+		placeholder="Enter a list of tags; separated by commas" value="<?php echo implode( ', ', $snippet->tags ); ?>" />
+
+	<script type="text/javascript">
+	jQuery('#snippet_tags').tagit({
+		availableTags: ['<?php echo implode( "','", get_all_snippet_tags() ); ?>'],
+		allowSpaces: true,
+		removeConfirmation: true
+	});
+	</script>
+<?php
+}
+
+add_action( 'code_snippets/admin/single', 'code_snippets_tags_editor' );
+
+/**
  * Registers and loads the code editor's assets
  *
  * @since 1.7
@@ -303,4 +329,37 @@ function code_snippets_enqueue_codemirror() {
 			$codemirror_version
 		);
 	}
+
+	/* Tag It UI */
+
+	$tagit_version = '2.0';
+
+	wp_enqueue_script(
+		'code-snippets-tag-it',
+		plugins_url( 'css/vendor/tag-it.min.js', CODE_SNIPPETS_FILE ),
+		array(
+			'jquery-ui-core',
+			'jquery-ui-widget',
+			'jquery-ui-position',
+			'jquery-ui-autocomplete',
+			'jquery-effects-blind',
+			'jquery-effects-highlight',
+		),
+		$tagit_version
+	);
+
+	wp_enqueue_style(
+		'code-snippets-tagit',
+		plugins_url( 'css/vendor/jquery.tagit.css', CODE_SNIPPETS_FILE ),
+		false,
+		$tagit_version
+	);
+
+	wp_enqueue_style(
+		'code-snippets-tagit-zendesk-ui',
+		plugins_url( 'css/vendor/tagit.ui-zendesk.css', CODE_SNIPPETS_FILE ),
+		array( 'code-snippets-tagit' ),
+		$tagit_version
+	);
+
 }

@@ -18,11 +18,12 @@ function build_snippet_object( $data = null ) {
 	$snippet = new stdClass;
 
 	/* Define an empty snippet object with default values */
-	$snippet->id          = 0;
-	$snippet->name        = '';
+	$snippet->id = 0;
+	$snippet->name = '';
 	$snippet->description = '';
-	$snippet->code        = '';
-	$snippet->active      = 0;
+	$snippet->code = '';
+	$snippet->tags = array();
+	$snippet->active = 0;
 	$snippet = apply_filters( 'code_snippets/build_default_snippet', $snippet );
 
 	if ( ! isset( $data ) ) {
@@ -82,6 +83,57 @@ function get_snippets( $multisite = false ) {
 }
 
 /**
+* Gets all of the used tags from the database
+* @since 2.0
+*/
+function get_all_snippet_tags() {
+	global $wpdb;
+
+	/* Grab all tags from the database */
+	$tags = array();
+	$table = get_snippets_table_name();
+	$all_tags = $wpdb->get_col( "SELECT `tags` FROM $table" );
+
+	/* Merge all tags into a single array */
+	foreach ( $all_tags as $snippet_tags ) {
+		$snippet_tags = maybe_unserialize( $snippet_tags );
+		$snippet_tags = code_snippets_tags_build_array( $snippet_tags );
+		$tags = array_merge( $snippet_tags, $tags );
+	}
+
+	/* Remove duplicate tags */
+	return array_values( array_unique( $tags, SORT_REGULAR ) );
+}
+
+/**
+ * Make sure that the tags are a valid array
+ * @since 2.0
+ *
+ * @param mixed $tags The tags to convert into an array
+ * @return array The converted tags
+ */
+function code_snippets_build_tags_array( $tags ) {
+
+	/* If there are no tags set, create a default empty array */
+	if ( empty( $tags ) ) {
+		$tags = array();
+	}
+
+	/* If the tags are set as a string, convert them into an array */
+	elseif ( is_string( $tags ) ) {
+		$tags = str_replace( ', ', ',', $tags );
+		$tags = explode( ',', $tags );
+	}
+
+	/* If we still don't have an array, just convert whatever we do have into one */
+	if ( ! is_array( $tags ) ) {
+		$tags = (array) $tags;
+	}
+
+	return $tags;
+}
+
+/**
  * Escape snippet data for inserting into the database
  *
  * @since 2.0
@@ -99,7 +151,11 @@ function escape_snippet_data( $snippet ) {
 	$snippet->code = preg_replace( '|\?>[\s]*$|', '', $snippet->code );
 
 	/* Escape the data */
-	$snippet->id  = absint( $snippet->id );
+	$snippet->id = absint( $snippet->id );
+
+	/* Store tags as a string, with tags separated by commas */
+	$snippet->tags = code_snippets_build_tags_array( $snippet->tags );
+	$snippet->tags = implode( ', ', $snippet->tags );
 
 	return apply_filters( 'code_snippets/escape_snippet_data', $snippet );
 }
@@ -114,6 +170,10 @@ function escape_snippet_data( $snippet ) {
  */
 function unescape_snippet_data( $snippet ) {
 	$snippet = build_snippet_object( $snippet );
+
+	/* Ensure the tags are a valid array */
+	$snippet->tags = code_snippets_build_tags_array( $snippet->tags );
+
 	return apply_filters( 'code_snippets/unescape_snippet_data', $snippet );
 }
 

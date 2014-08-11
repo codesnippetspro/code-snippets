@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.0.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-10 12:47+1000\n"
+"POT-Creation-Date: 2014-08-11 13:48+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -203,7 +203,7 @@ msgid "Save Changes &amp; Deactivate"
 msgstr ""
 
 #: includes/edit/admin.php:98 includes/manage/class-list-table.php:157
-#: includes/manage/class-list-table.php:259
+#: includes/manage/class-list-table.php:282
 msgid "Export"
 msgstr ""
 
@@ -214,7 +214,7 @@ msgid ""
 msgstr ""
 
 #: includes/edit/admin.php:110 includes/manage/class-list-table.php:166
-#: includes/manage/class-list-table.php:260
+#: includes/manage/class-list-table.php:283
 msgid "Delete"
 msgstr ""
 
@@ -227,8 +227,12 @@ msgstr ""
 msgid "You are not access this page."
 msgstr ""
 
-#: includes/edit/edit.php:177 includes/manage/class-list-table.php:220
+#: includes/edit/edit.php:177 includes/manage/class-list-table.php:242
 msgid "Description"
+msgstr ""
+
+#: includes/edit/edit.php:206 includes/manage/class-list-table.php:243
+msgid "Tags"
 msgstr ""
 
 #: includes/import/admin-help.php:18
@@ -427,22 +431,22 @@ msgid "Snippets per page"
 msgstr ""
 
 #: includes/manage/class-list-table.php:132
-#: includes/manage/class-list-table.php:258
+#: includes/manage/class-list-table.php:281
 msgid "Network Deactivate"
 msgstr ""
 
 #: includes/manage/class-list-table.php:132
-#: includes/manage/class-list-table.php:258
+#: includes/manage/class-list-table.php:281
 msgid "Deactivate"
 msgstr ""
 
 #: includes/manage/class-list-table.php:141
-#: includes/manage/class-list-table.php:257
+#: includes/manage/class-list-table.php:280
 msgid "Network Activate"
 msgstr ""
 
 #: includes/manage/class-list-table.php:141
-#: includes/manage/class-list-table.php:257
+#: includes/manage/class-list-table.php:280
 msgid "Activate"
 msgstr ""
 
@@ -457,63 +461,72 @@ msgstr ""
 msgid "Untitled #%d"
 msgstr ""
 
-#: includes/manage/class-list-table.php:218
+#: includes/manage/class-list-table.php:240
 msgid "Name"
 msgstr ""
 
-#: includes/manage/class-list-table.php:219
+#: includes/manage/class-list-table.php:241
 msgid "ID"
 msgstr ""
 
-#: includes/manage/class-list-table.php:261
+#: includes/manage/class-list-table.php:284
 msgid "Export to PHP"
 msgstr ""
 
-#: includes/manage/class-list-table.php:298
+#: includes/manage/class-list-table.php:321
 #, php-format
 msgid "All <span class=\"count\">(%s)</span>"
 msgstr ""
 
-#: includes/manage/class-list-table.php:301
+#: includes/manage/class-list-table.php:324
 #, php-format
 msgid "Active <span class=\"count\">(%s)</span>"
 msgstr ""
 
-#: includes/manage/class-list-table.php:304
+#: includes/manage/class-list-table.php:327
 #, php-format
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgstr ""
 
-#: includes/manage/class-list-table.php:307
+#: includes/manage/class-list-table.php:330
 #, php-format
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgstr ""
 
-#: includes/manage/class-list-table.php:336
+#: includes/manage/class-list-table.php:390
+msgid "Show all tags"
+msgstr ""
+
+#: includes/manage/class-list-table.php:404
 msgid "Filter"
 msgstr ""
 
-#: includes/manage/class-list-table.php:344
+#: includes/manage/class-list-table.php:412
 msgid "Clear List"
 msgstr ""
 
-#: includes/manage/class-list-table.php:492
+#: includes/manage/class-list-table.php:560
 #, php-format
 msgid ""
 "You do not appear to have any snippets available at this time. <a href=\"%s"
 "\">Add New&rarr;</a>"
 msgstr ""
 
-#: includes/manage/class-list-table.php:686
+#: includes/manage/class-list-table.php:785
 msgid "Search results"
 msgstr ""
 
-#: includes/manage/class-list-table.php:689
+#: includes/manage/class-list-table.php:788
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/manage/class-list-table.php:695
+#: includes/manage/class-list-table.php:792
+#, php-format
+msgid " in tag &#8220;%s&#8221;"
+msgstr ""
+
+#: includes/manage/class-list-table.php:798
 msgid "Clear Filters"
 msgstr ""
 
@@ -526,51 +539,42 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/settings.php:36 includes/settings/settings.php:45
+#: includes/settings.php:36 includes/settings/settings.php:46
 msgid "Code Editor"
 msgstr ""
 
-#: includes/settings.php:43 includes/settings/settings.php:52
+#: includes/settings.php:43 includes/settings/settings.php:53
 msgid "Theme"
 msgstr ""
 
-#: includes/settings.php:51 includes/settings/settings.php:60
+#: includes/settings.php:51 includes/settings/settings.php:61
 msgid "Indent With Tabs"
 msgstr ""
 
-#: includes/settings.php:59 includes/settings/settings.php:87
+#: includes/settings.php:59 includes/settings/settings.php:88
 msgid "Wrap Lines"
 msgstr ""
 
-#: includes/settings.php:134 includes/settings/settings.php:133
+#: includes/settings.php:134 includes/settings/settings.php:144
 msgid "Settings saved."
 msgstr ""
 
-#: includes/settings/settings.php:69
+#: includes/settings/settings.php:70
 msgid "Tab Size"
 msgstr ""
 
-#: includes/settings/settings.php:78
+#: includes/settings/settings.php:79
 msgid "Indent Unit"
 msgstr ""
 
-#: includes/settings/settings.php:96
+#: includes/settings/settings.php:97
 msgid "Line Numbers"
 msgstr ""
 
-#: includes/settings/settings.php:105
+#: includes/settings/settings.php:106
+msgid "Auto Close Brackets"
+msgstr ""
+
+#: includes/settings/settings.php:115
 msgid "Editor Preview"
-msgstr ""
-
-#: includes/tags.php:15 includes/tags.php:341
-msgid "Tags"
-msgstr ""
-
-#: includes/tags.php:105
-#, php-format
-msgid " in tag &#8220;%s&#8221;"
-msgstr ""
-
-#: includes/tags.php:128
-msgid "Show all tags"
 msgstr ""
