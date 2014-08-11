@@ -273,6 +273,13 @@ function code_snippets_enqueue_codemirror() {
 		$codemirror_version
 	);
 
+	wp_enqueue_script(
+		'code-snippets-codemirror-addon-closebrackets',
+		$codemirror_url . 'addon/edit/closebrackets.js',
+		array( 'code-snippets-codemirror' ),
+		$codemirror_version
+	);
+
 	/* Plugin Assets */
 
 	wp_enqueue_style(

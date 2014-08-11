@@ -18,13 +18,18 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 		'tabSize'        => $options['tab_size'],
 		'indentWithTabs' => $options['indent_with_tabs'],
 		'theme'          => $options['theme'],
+		'autoCloseBrackets'	=> $options['auto_close_brackets'],
 	);
 
 	$atts = wp_parse_args( $override_atts, $saved_atts );
 	$atts = apply_filters( 'code_snippets_atts', $atts );
 
 	if ( $json_encode ) {
-		$atts = json_encode( $atts, JSON_UNESCAPED_SLASHES );
+		if (version_compare(phpversion(), '5.4.0', '<')) {
+    		$atts = json_encode( $atts );
+		}else{
+			$atts = json_encode( $atts, JSON_UNESCAPED_SLASHES );	
+		}
 	}
 
 	return $atts;

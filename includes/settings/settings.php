@@ -15,10 +15,11 @@ function code_snippets_get_default_settings() {
 	$settings['editor'] = array(
 		'indent_with_tabs' => true,
 		'theme'            => 'default',
-		'wrap_lines'       => false,
+		'wrap_lines'       => true,
 		'indent_unit'      => 2,
 		'tab_size'         => 4,
 		'line_numbers'     => true,
+		'auto_close_brackets' => true,
 	);
 
 	return $settings;
@@ -101,6 +102,15 @@ function code_snippets_register_settings() {
 	);
 
 	add_settings_field(
+		'code_snippets_editor_auto_close_brackets',
+		__( 'Auto Close Brackets', 'code-snippets' ),
+		'code_snippets_editor_checkbox_setting',
+		'code-snippets',
+		'code-snippets-editor',
+		array( 'auto_close_brackets' )
+	);
+
+	add_settings_field(
 		'code_snippets_editor_preview',
 		__( 'Editor Preview', 'code-snippets' ),
 		'code_snippets_settings_editor_preview',
@@ -125,6 +135,7 @@ function code_snippets_settings_validate( $input ) {
 	$output['editor']['wrap_lines'] = ( 'on' === $input['editor']['wrap_lines'] );
 	$output['editor']['line_numbers'] = ( 'on' === $input['editor']['line_numbers'] );
 	$output['editor']['indent_with_tabs'] = ( 'on' === $input['editor']['indent_with_tabs'] );
+	$output['editor']['auto_close_brackets'] = ( 'on' === $input['editor']['auto_close_brackets'] );
 
 	/* Add an updated message */
 	add_settings_error(
