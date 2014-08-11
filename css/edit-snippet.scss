@@ -43,3 +43,8 @@ label[for="snippet_description"] h3 div {
 .CodeMirror-sizer {
 	min-height: 300px !important;
 }
+
+.CodeMirror-focused .cm-matchhighlight {
+	outline:1px solid green;
+	color:white !important;
+}
