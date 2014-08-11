@@ -147,7 +147,7 @@ module.exports = function(grunt) {
 	});
 
 	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
-	grunt.registerTask( 'l18n', ['pot', 'newer:po2mo'] );
+	grunt.registerTask( 'l18n', ['pot'] );
 	grunt.registerTask( 'test', ['jshint', 'phpunit'] );
 
 	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );

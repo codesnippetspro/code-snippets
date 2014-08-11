@@ -15,7 +15,6 @@
     "grunt-contrib-imagemin": "~0.1.4",
     "grunt-contrib-jshint": "~0.6.4",
     "grunt-contrib-watch": "~0.4.4",
-    "grunt-newer": "~0.6.1",
     "grunt-csso": "~0.5.0",
     "grunt-po2mo": "~0.1.0",
     "grunt-pot": "~0.1.1",
