@@ -97,7 +97,7 @@ function get_all_snippet_tags() {
 	/* Merge all tags into a single array */
 	foreach ( $all_tags as $snippet_tags ) {
 		$snippet_tags = maybe_unserialize( $snippet_tags );
-		$snippet_tags = code_snippets_tags_build_array( $snippet_tags );
+		$snippet_tags = code_snippets_build_tags_array( $snippet_tags );
 		$tags = array_merge( $snippet_tags, $tags );
 	}
 
