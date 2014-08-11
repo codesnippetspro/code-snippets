@@ -88,9 +88,6 @@ foreach ( array(
 	/* Import snippets component */
 	'import/import.php',
 
-	/* Tags component */
-	'tags.php',
-
 	/* Settings component */
 	'settings/editor-preview.php',
 	'settings/settings.php',
