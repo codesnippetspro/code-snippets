@@ -16,12 +16,12 @@
     "grunt-contrib-jshint": "~0.6.4",
     "grunt-contrib-watch": "~0.4.4",
     "grunt-csso": "~0.5.0",
-    "grunt-po2mo": "~0.1.0",
     "grunt-pot": "~0.1.1",
     "grunt-sass": "~0.9.0",
     "grunt-wp-deploy": "^0.4.0",
     "load-grunt-tasks": "^0.4.0",
-    "grunt-phpunit": "~0.3.2"
+    "grunt-phpunit": "~0.3.2",
+    "grunt-potomo": "^0.1.7"
   },
   "scripts": {
     "test": "grunt test"

@@ -125,11 +125,17 @@ module.exports = function(grunt) {
 			}
 		},
 
-		po2mo: {
-			files: {
-				src: 'languages/*.po',
-				expand: true,
-			},
+		potomo: {
+			dist: {
+				files: [{
+					expand: true,
+					cwd: 'languages',
+					src: ['*.po'],
+					dest: 'languages',
+					ext: '.mo',
+					nonull: true
+				 }]
+			}
 		},
 
 		pot: {
@@ -147,7 +153,7 @@ module.exports = function(grunt) {
 	});
 
 	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
-	grunt.registerTask( 'l18n', ['pot'] );
+	grunt.registerTask( 'l18n', ['pot', 'potomo'] );
 	grunt.registerTask( 'test', ['jshint', 'phpunit'] );
 
 	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );
