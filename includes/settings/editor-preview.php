@@ -134,6 +134,10 @@ add_filter( \'admin_footer_text\', \'example_replace_admin_footer_text\' );';
 			$( 'input[name="code_snippets_settings[editor][auto_close_brackets]"]' ).change( function () {
 				editor.setOption( 'autoCloseBrackets', $(this).is(':checked') );
 			} );
+
+			$( 'input[name="code_snippets_settings[editor][highlight_selection_matches]"]' ).change( function () {
+				editor.setOption( 'highlightSelectionMatches', $(this).is(':checked') );
+			} );
 		});
 
 	}(jQuery));

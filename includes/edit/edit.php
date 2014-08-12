@@ -306,6 +306,13 @@ function code_snippets_enqueue_codemirror() {
 		$codemirror_version
 	);
 
+	wp_enqueue_script(
+		'code-snippets-codemirror-addon-match-highlighter',
+		$codemirror_url . 'addon/search/match-highlighter.js',
+		array( 'code-snippets-codemirror', 'code-snippets-codemirror-addon-searchcursor' ),
+		$codemirror_version
+	);
+
 	/* Plugin Assets */
 
 	wp_enqueue_style(

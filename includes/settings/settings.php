@@ -13,13 +13,14 @@ function code_snippets_get_default_settings() {
 	$settings = array();
 
 	$settings['editor'] = array(
-		'indent_with_tabs' => true,
-		'theme'            => 'default',
-		'wrap_lines'       => true,
-		'indent_unit'      => 2,
-		'tab_size'         => 4,
-		'line_numbers'     => true,
-		'auto_close_brackets' => true,
+		'indent_with_tabs'				=> true,
+		'theme'							=> 'default',
+		'wrap_lines'					=> true,
+		'indent_unit'					=> 2,
+		'tab_size'						=> 4,
+		'line_numbers'					=> true,
+		'auto_close_brackets'			=> true,
+		'highlight_selection_matches'	=> true,
 	);
 
 	return $settings;
@@ -111,6 +112,15 @@ function code_snippets_register_settings() {
 	);
 
 	add_settings_field(
+		'code-snippets-codemirror-addon-match-highlighter',
+		__( 'High Light Selection Matches', 'code-snippets' ),
+		'code_snippets_editor_checkbox_setting',
+		'code-snippets',
+		'code-snippets-editor',
+		array( 'highlight_selection_matches' )
+	);
+
+	add_settings_field(
 		'code_snippets_editor_preview',
 		__( 'Editor Preview', 'code-snippets' ),
 		'code_snippets_settings_editor_preview',
@@ -135,7 +145,8 @@ function code_snippets_settings_validate( $input ) {
 	$output['editor']['wrap_lines'] = ( 'on' === $input['editor']['wrap_lines'] );
 	$output['editor']['line_numbers'] = ( 'on' === $input['editor']['line_numbers'] );
 	$output['editor']['indent_with_tabs'] = ( 'on' === $input['editor']['indent_with_tabs'] );
-	$output['editor']['auto_close_brackets'] = ( 'on' === $input['editor']['auto_close_brackets'] );
+	$output['editor']['auto_close_brackets'] = ( 'on' === $input['editor']['auto_close_brackets'] ); 
+	$output['editor']['highlight_selection_matches'] = ( 'on' === $input['editor']['highlight_selection_matches'] ); 
 
 	/* Add an updated message */
 	add_settings_error(
