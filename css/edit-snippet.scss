@@ -13,7 +13,7 @@ label {
 }
 
 /* Position the description heading on the same level as the editor buttons */
-label[for="snippet_description"] h3 div {
+label[for='snippet_description'] h3 div {
 	position: absolute;
 }
 
@@ -24,12 +24,13 @@ label[for="snippet_description"] h3 div {
 
 /**
  * Customize the CodeMirror editor
- * to look pretty and support auto-resizing
+ * to look nice and support auto-resizing
  */
 .CodeMirror {
-	min-height: 300px;
 	width: 100%;
 	height: auto;
+	min-height: 300px;
+
 	border: 1px solid #dfdfdf;
 	border-radius: 3px;
 	background-color: #fff;;
@@ -45,6 +46,6 @@ label[for="snippet_description"] h3 div {
 }
 
 .CodeMirror-focused .cm-matchhighlight {
-	outline:1px solid green;
-	color:white !important;
+	color: white !important;
+	outline: 1px solid green;
 }

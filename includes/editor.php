@@ -11,15 +11,15 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 	$options = $options['editor'];
 
 	$saved_atts = array(
-		'matchBrackets'     		=> true,
-		'lineNumbers'       		=> $options['line_numbers'],
-		'lineWrapping'      		=> $options['wrap_lines'],
-		'indentUnit'        		=> $options['indent_unit'],
-		'tabSize'           		=> $options['tab_size'],
-		'indentWithTabs'    		=> $options['indent_with_tabs'],
-		'theme'             		=> $options['theme'],
-		'autoCloseBrackets' 		=> $options['auto_close_brackets'],
-		'highlightSelectionMatches' => $options['highlight_selection_matches'], 
+		'theme' => $options['theme'],
+		'tabSize' => $options['tab_size'],
+		'indentUnit' => $options['indent_unit'],
+		'lineNumbers' => $options['line_numbers'],
+		'lineWrapping' => $options['wrap_lines'],
+		'matchBrackets' => true,
+		'indentWithTabs' => $options['indent_with_tabs'],
+		'autoCloseBrackets' => $options['auto_close_brackets'],
+		'highlightSelectionMatches' => $options['highlight_selection_matches'],
 	);
 
 	$atts = wp_parse_args( $override_atts, $saved_atts );
