@@ -112,8 +112,8 @@ function code_snippets_register_settings() {
 	);
 
 	add_settings_field(
-		'code-snippets-codemirror-addon-match-highlighter',
-		__( 'High Light Selection Matches', 'code-snippets' ),
+		'code-snippets_editor_highlight_selection_matches',
+		__( 'Highlight Selection Matches', 'code-snippets' ),
 		'code_snippets_editor_checkbox_setting',
 		'code-snippets',
 		'code-snippets-editor',
