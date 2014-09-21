@@ -134,7 +134,7 @@ module.exports = function(grunt) {
 					dest: 'languages',
 					ext: '.mo',
 					nonull: true
-				 }]
+				}]
 			}
 		},
 
