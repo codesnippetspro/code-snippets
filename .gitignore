@@ -1,7 +1,7 @@
 
 # Composer
 composer.lock
-vendor
+/vendor
 
 # Built plugin
 deploy
