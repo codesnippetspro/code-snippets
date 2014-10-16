@@ -343,7 +343,7 @@ function code_snippets_enqueue_codemirror() {
 
 	wp_enqueue_script(
 		'code-snippets-tag-it',
-		plugins_url( 'css/vendor/tag-it.min.js', CODE_SNIPPETS_FILE ),
+		plugins_url( 'js/vendor/tag-it.min.js', CODE_SNIPPETS_FILE ),
 		array(
 			'jquery-ui-core',
 			'jquery-ui-widget',
@@ -357,14 +357,14 @@ function code_snippets_enqueue_codemirror() {
 
 	wp_enqueue_style(
 		'code-snippets-tagit',
-		plugins_url( 'css/vendor/jquery.tagit.css', CODE_SNIPPETS_FILE ),
+		plugins_url( 'js/vendor/jquery.tagit.css', CODE_SNIPPETS_FILE ),
 		false,
 		$tagit_version
 	);
 
 	wp_enqueue_style(
 		'code-snippets-tagit-zendesk-ui',
-		plugins_url( 'css/vendor/tagit.ui-zendesk.css', CODE_SNIPPETS_FILE ),
+		plugins_url( 'js/vendor/tagit.ui-zendesk.css', CODE_SNIPPETS_FILE ),
 		array( 'code-snippets-tagit' ),
 		$tagit_version
 	);
