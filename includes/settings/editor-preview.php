@@ -40,7 +40,7 @@ function code_snippets_codemirror_theme_select_field() {
 
 	echo '<select name="code_snippets_settings[editor][theme]">';
 
-	echo '<option value="default"' + selected( 'default', $saved_value, false ) + '>default</option>';
+	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>default</option>';
 
 	/* Fetch all theme CSS files */
 	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'vendor/codemirror/theme/';
@@ -71,7 +71,7 @@ function code_snippets_codemirror_theme_select_field() {
 function code_snippets_settings_editor_preview() {
 	$example_content = 'function example_replace_admin_footer_text( $footer_text ) {
 
-	if( ! is_network_admin() ) {
+	if ( ! is_network_admin() ) {
 
 		$footer_text = str_replace(
 			__( \'Thank you for creating with <a href="http://wordpress.org/">WordPress</a>.\' ),
@@ -86,7 +86,7 @@ function code_snippets_settings_editor_preview() {
 
 add_filter( \'admin_footer_text\', \'example_replace_admin_footer_text\' );';
 
-	$atts= array(
+	$atts = array(
 		'mode' => 'text/x-php',
 		'value' => $example_content
 	);

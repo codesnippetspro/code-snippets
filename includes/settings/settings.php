@@ -190,6 +190,6 @@ function code_snippets_editor_number_setting( $atts ) {
 
 	printf (
 		'<input type="number" name="code_snippets_settings[editor][%1$s]" value="%2$s">',
-		$setting,	$saved_value
+		$setting, $saved_value
 	);
 }
