@@ -30,6 +30,7 @@ Code Snippets can be used in these different languages thanks to the following t
 * Serbo-Croatian translation [Borisa Djuraskovic from Web Hosting Hub]()
 * Chinese - [Jincheng Shan](http://shanjincheng.com)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
+* Slovak - [Ján Fajčák](http://wp.sk)
 
 ## Other Notes
 

@@ -20,6 +20,7 @@
 * Added Chinese translation thanks to Jincheng Shan
 * Updated CodeMirror library to version 4.6
 * Added Russian translation by Alexander Samsonov
+* Added Slovak translation by [Ján Fajčák] from [WordPress Slovakia](http://wp.sk)
 
 ## 1.9.1.1
 * Add capability check to site snippets importer

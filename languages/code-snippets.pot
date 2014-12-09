@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.0.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-22 18:33+1000\n"
+"POT-Creation-Date: 2014-11-23 18:47+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -530,33 +530,24 @@ msgstr ""
 msgid "Clear Filters"
 msgstr ""
 
-#: includes/settings.php:20 includes/settings/menu.php:15
+#: includes/settings/menu.php:15
 msgid "Snippets Settings"
 msgstr ""
 
-#: includes/settings.php:21 includes/settings.php:151
 #: includes/settings/menu.php:16 includes/settings/menu.php:36
 msgid "Settings"
 msgstr ""
 
-#: includes/settings.php:36 includes/settings/settings.php:47
+#: includes/settings/settings.php:47
 msgid "Code Editor"
 msgstr ""
 
-#: includes/settings.php:43 includes/settings/settings.php:54
+#: includes/settings/settings.php:54
 msgid "Theme"
 msgstr ""
 
-#: includes/settings.php:51 includes/settings/settings.php:62
+#: includes/settings/settings.php:62
 msgid "Indent With Tabs"
-msgstr ""
-
-#: includes/settings.php:59 includes/settings/settings.php:89
-msgid "Wrap Lines"
-msgstr ""
-
-#: includes/settings.php:134 includes/settings/settings.php:155
-msgid "Settings saved."
 msgstr ""
 
 #: includes/settings/settings.php:71
@@ -565,6 +556,10 @@ msgstr ""
 
 #: includes/settings/settings.php:80
 msgid "Indent Unit"
+msgstr ""
+
+#: includes/settings/settings.php:89
+msgid "Wrap Lines"
 msgstr ""
 
 #: includes/settings/settings.php:98
@@ -581,4 +576,8 @@ msgstr ""
 
 #: includes/settings/settings.php:125
 msgid "Editor Preview"
+msgstr ""
+
+#: includes/settings/settings.php:155
+msgid "Settings saved."
 msgstr ""
