@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * This file handles the settings admin menu
+ * @package Code_Snippets
+ */
+
+/**
  * Register the setting sub-menu
  *
  * @since 2.0

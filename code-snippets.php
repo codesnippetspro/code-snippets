@@ -91,7 +91,7 @@ foreach ( array(
 	/* Settings component */
 	'settings/editor-preview.php',
 	'settings/settings.php',
-	'settings/menu.php',
+	'settings/admin.php',
 
 	) as $include ) {
 
