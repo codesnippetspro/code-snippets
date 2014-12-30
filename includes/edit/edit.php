@@ -242,7 +242,7 @@ function code_snippets_enqueue_codemirror() {
 
 	/* CodeMirror */
 
-	$codemirror_version = '4.8';
+	$codemirror_version = '4.10';
 	$codemirror_url     = plugins_url( 'vendor/codemirror/', CODE_SNIPPETS_FILE );
 
 	wp_enqueue_style(
