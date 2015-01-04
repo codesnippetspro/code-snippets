@@ -72,23 +72,34 @@ $snippet = get_snippet( $edit_id );
 		<p class="submit">
 			<?php
 
-				/* Save Snippet button */
+				/* Make the 'Save and Activate' button the default if the setting is enabled */
+				if ( ! $snippet->active && code_snippets_get_setting_value( 'activate_by_default', 'general' ) ) {
 
-				submit_button( null, 'primary', 'save_snippet', false );
-
-				/* Save Snippet & Activate/Deactivate button */
-
-				if ( ! $snippet->active ) {
 					submit_button(
-						__( 'Save Changes &amp; Activate', 'code-snippets' ),
-						'secondary', 'save_snippet_activate', false
+						__( 'Save Changes and Activate', 'code-snippets' ),
+						'primary', 'save_snippet_activate', false
 					);
+
+					submit_button( null, 'secondary', 'save_snippet', false );
 
 				} else {
-					submit_button(
-						__( 'Save Changes &amp; Deactivate', 'code-snippets' ),
-						'secondary', 'save_snippet_deactivate', false
-					);
+
+					/* Save Snippet button */
+					submit_button( null, 'primary', 'save_snippet', false );
+
+					/* Save Snippet and Activate/Deactivate button */
+					if ( ! $snippet->active ) {
+						submit_button(
+							__( 'Save Changes and Activate', 'code-snippets' ),
+							'secondary', 'save_snippet_activate', false
+						);
+
+					} else {
+						submit_button(
+							__( 'Save Changes and Deactivate', 'code-snippets' ),
+							'secondary', 'save_snippet_deactivate', false
+						);
+					}
 				}
 
 				if ( 0 !== $snippet->id ) {

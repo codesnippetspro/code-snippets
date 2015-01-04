@@ -12,6 +12,10 @@
 function code_snippets_get_default_settings() {
 	$settings = array();
 
+	$settings['general'] = array(
+		'activate_by_default' => false,
+	);
+
 	$settings['editor'] = array(
 		'theme' => 'default',
 		'tab_size' => 4,
@@ -27,6 +31,25 @@ function code_snippets_get_default_settings() {
 }
 
 /**
+ * Retrieve the saved setting values
+ * @return array
+ */
+function code_snippets_get_settings() {
+	$saved = get_option( 'code_snippets_settings', array() );
+	$default = code_snippets_get_default_settings();
+	return wp_parse_args( $saved, $default );
+}
+
+/**
+ * Retrieve a value from a saved setting
+ * @return array
+ */
+function code_snippets_get_setting_value( $setting, $group = 'general' ) {
+	$settings = code_snippets_get_settings();
+	return $settings[ $group ][ $setting ];
+}
+
+/**
  * Register settings sections, fields, etc
  */
 function code_snippets_register_settings() {
@@ -39,6 +62,25 @@ function code_snippets_register_settings() {
 
 	/* Register the setting */
 	register_setting( 'code-snippets', 'code_snippets_settings', 'code_snippets_settings_validate' );
+
+	/* General settings section */
+
+	add_settings_section(
+		'code-snippets-general',
+		__( 'General', 'code-snippets' ),
+		'__return_empty_string',
+		'code-snippets'
+	);
+
+	add_settings_field(
+		'code_snippets_activate_by_default',
+		__( 'Activate by Default', 'code-snippets' ),
+		'code_snippets_checkbox_setting_field',
+		'code-snippets',
+		'code-snippets-general',
+		array( 'activate_by_default', 'general',
+		'Make the (de)activate button the default action when saving a snippet' )
+	);
 
 	/* Editor settings section */
 
@@ -60,64 +102,64 @@ function code_snippets_register_settings() {
 	add_settings_field(
 		'code_snippets_indent_with_tabs',
 		__( 'Indent With Tabs', 'code-snippets' ),
-		'code_snippets_editor_checkbox_setting',
+		'code_snippets_checkbox_setting_field',
 		'code-snippets',
 		'code-snippets-editor',
-		array( 'indent_with_tabs' )
+		array( 'indent_with_tabs', 'editor' )
 	);
 
 	add_settings_field(
 		'code_snippets_tab_size',
 		__( 'Tab Size', 'code-snippets' ),
-		'code_snippets_editor_number_setting',
+		'code_snippets_number_setting_field',
 		'code-snippets',
 		'code-snippets-editor',
-		array( 'tab_size' )
+		array( 'tab_size', 'editor' )
 	);
 
 	add_settings_field(
 		'code_snippets_indent_unit',
 		__( 'Indent Unit', 'code-snippets' ),
-		'code_snippets_editor_number_setting',
+		'code_snippets_number_setting_field',
 		'code-snippets',
 		'code-snippets-editor',
-		array( 'indent_unit' )
+		array( 'indent_unit', 'editor' )
 	);
 
 	add_settings_field(
 		'code_snippets_editor_wrap_lines',
 		__( 'Wrap Lines', 'code-snippets' ),
-		'code_snippets_editor_checkbox_setting',
+		'code_snippets_checkbox_setting_field',
 		'code-snippets',
 		'code-snippets-editor',
-		array( 'wrap_lines' )
+		array( 'wrap_lines', 'editor' )
 	);
 
 	add_settings_field(
 		'code_snippets_editor_line_numbers',
 		__( 'Line Numbers', 'code-snippets' ),
-		'code_snippets_editor_checkbox_setting',
+		'code_snippets_checkbox_setting_field',
 		'code-snippets',
 		'code-snippets-editor',
-		array( 'line_numbers' )
+		array( 'line_numbers', 'editor' )
 	);
 
 	add_settings_field(
 		'code_snippets_editor_auto_close_brackets',
 		__( 'Auto Close Brackets', 'code-snippets' ),
-		'code_snippets_editor_checkbox_setting',
+		'code_snippets_checkbox_setting_field',
 		'code-snippets',
 		'code-snippets-editor',
-		array( 'auto_close_brackets' )
+		array( 'auto_close_brackets', 'editor' )
 	);
 
 	add_settings_field(
 		'code-snippets_editor_highlight_selection_matches',
 		__( 'Highlight Selection Matches', 'code-snippets' ),
-		'code_snippets_editor_checkbox_setting',
+		'code_snippets_checkbox_setting_field',
 		'code-snippets',
 		'code-snippets-editor',
-		array( 'highlight_selection_matches' )
+		array( 'highlight_selection_matches', 'editor' )
 	);
 
 	add_settings_field(
@@ -138,15 +180,22 @@ add_action( 'admin_init', 'code_snippets_register_settings' );
  */
 function code_snippets_settings_validate( $input ) {
 
-	/* Validate editor settings */
+	/* Validate settings */
+
+	/* Select boxes */
 	$output['editor']['theme'] = $input['editor']['theme'];
+
+	/* Number select boxes */
 	$output['editor']['tab_size'] = absint( $input['editor']['tab_size'] );
 	$output['editor']['indent_unit'] = absint( $input['editor']['indent_unit'] );
+
+	/* Check boxes */
 	$output['editor']['wrap_lines'] = ( 'on' === $input['editor']['wrap_lines'] );
 	$output['editor']['line_numbers'] = ( 'on' === $input['editor']['line_numbers'] );
 	$output['editor']['indent_with_tabs'] = ( 'on' === $input['editor']['indent_with_tabs'] );
 	$output['editor']['auto_close_brackets'] = ( 'on' === $input['editor']['auto_close_brackets'] );
 	$output['editor']['highlight_selection_matches'] = ( 'on' === $input['editor']['highlight_selection_matches'] );
+	$output['general']['activate_by_default'] = ( 'on' === $input['general']['activate_by_default'] );
 
 	/* Add an updated message */
 	add_settings_error(
@@ -163,33 +212,41 @@ function code_snippets_settings_validate( $input ) {
  * Render a checkbox field for an editor setting
  * @param string $setting The setting ID
  */
-function code_snippets_editor_checkbox_setting( $atts ) {
+function code_snippets_checkbox_setting_field( $atts ) {
 	$setting = $atts[0];
+	$group = $atts[1];
+	$label = isset( $atts[2] ) ? $atts[2] : '';
 
-	$settings = get_option( 'code_snippets_settings' );
-	$saved_value = $settings['editor'][ $setting ];
+	$saved_value = code_snippets_get_setting_value( $setting, $group );
+	$field_name = sprintf ( 'code_snippets_settings[%s][%s]', $group, $setting );
 
-	$default_settings = code_snippets_get_default_settings();
-	$default_value = $default_settings['editor'][ $setting ];
+	if ( $label ) {
+		echo '<label for="' . $field_name . '">';
+	}
 
 	printf (
-		'<input type="checkbox" name="code_snippets_settings[editor][%1$s]"%2$s>',
-		$setting,
-		checked( $saved_value, $default_value, false )
+		'<input type="checkbox" name="%s"%s>',
+		$field_name,
+		checked( $saved_value, true, false )
 	);
+
+	if ( $label ) {
+		echo "\n" . $label . '</label>';
+	}
 }
 
 /**
  * Render a number select field for an editor setting
  * @param string $setting The setting ID
  */
-function code_snippets_editor_number_setting( $atts ) {
+function code_snippets_number_setting_field( $atts ) {
 	$setting = $atts[0];
-	$settings = get_option( 'code_snippets_settings' );
-	$saved_value = $settings['editor'][ $setting ];
+	$group = $atts[1];
+
+	$saved_value = code_snippets_get_setting_value( $setting, $group );
 
 	printf (
-		'<input type="number" name="code_snippets_settings[editor][%1$s]" value="%2$s">',
-		$setting, $saved_value
+		'<input type="number" name="code_snippets_settings[%1$s][%2$s]" value="%3$s">',
+		$group, $setting, $saved_value
 	);
 }

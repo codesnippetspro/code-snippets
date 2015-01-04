@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.0.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-23 18:47+1100\n"
+"POT-Creation-Date: 2015-01-04 12:31+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,26 +194,26 @@ msgstr ""
 msgid "Code"
 msgstr ""
 
-#: includes/edit/admin.php:83
-msgid "Save Changes &amp; Activate"
+#: includes/edit/admin.php:80 includes/edit/admin.php:94
+msgid "Save Changes and Activate"
 msgstr ""
 
-#: includes/edit/admin.php:89
-msgid "Save Changes &amp; Deactivate"
+#: includes/edit/admin.php:100
+msgid "Save Changes and Deactivate"
 msgstr ""
 
-#: includes/edit/admin.php:98 includes/manage/class-list-table.php:157
+#: includes/edit/admin.php:110 includes/manage/class-list-table.php:157
 #: includes/manage/class-list-table.php:282
 msgid "Export"
 msgstr ""
 
-#: includes/edit/admin.php:105
+#: includes/edit/admin.php:117
 msgid ""
 "You are about to permanently delete this snippet.\n"
 "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
-#: includes/edit/admin.php:110 includes/manage/class-list-table.php:166
+#: includes/edit/admin.php:122 includes/manage/class-list-table.php:166
 #: includes/manage/class-list-table.php:283
 msgid "Delete"
 msgstr ""
@@ -530,54 +530,62 @@ msgstr ""
 msgid "Clear Filters"
 msgstr ""
 
-#: includes/settings/menu.php:15
+#: includes/settings/admin.php:20
 msgid "Snippets Settings"
 msgstr ""
 
-#: includes/settings/menu.php:16 includes/settings/menu.php:36
+#: includes/settings/admin.php:21 includes/settings/admin.php:41
 msgid "Settings"
 msgstr ""
 
-#: includes/settings/settings.php:47
-msgid "Code Editor"
+#: includes/settings/settings.php:70
+msgid "General"
 msgstr ""
 
-#: includes/settings/settings.php:54
-msgid "Theme"
-msgstr ""
-
-#: includes/settings/settings.php:62
-msgid "Indent With Tabs"
-msgstr ""
-
-#: includes/settings/settings.php:71
-msgid "Tab Size"
-msgstr ""
-
-#: includes/settings/settings.php:80
-msgid "Indent Unit"
+#: includes/settings/settings.php:77
+msgid "Activate by Default"
 msgstr ""
 
 #: includes/settings/settings.php:89
+msgid "Code Editor"
+msgstr ""
+
+#: includes/settings/settings.php:96
+msgid "Theme"
+msgstr ""
+
+#: includes/settings/settings.php:104
+msgid "Indent With Tabs"
+msgstr ""
+
+#: includes/settings/settings.php:113
+msgid "Tab Size"
+msgstr ""
+
+#: includes/settings/settings.php:122
+msgid "Indent Unit"
+msgstr ""
+
+#: includes/settings/settings.php:131
 msgid "Wrap Lines"
 msgstr ""
 
-#: includes/settings/settings.php:98
+#: includes/settings/settings.php:140
 msgid "Line Numbers"
 msgstr ""
 
-#: includes/settings/settings.php:107
+#: includes/settings/settings.php:149
 msgid "Auto Close Brackets"
 msgstr ""
 
-#: includes/settings/settings.php:116
+#: includes/settings/settings.php:158
 msgid "Highlight Selection Matches"
 msgstr ""
 
-#: includes/settings/settings.php:125
+#: includes/settings/settings.php:167
 msgid "Editor Preview"
 msgstr ""
 
-#: includes/settings/settings.php:155
+#: includes/settings/settings.php:204
 msgid "Settings saved."
 msgstr ""
