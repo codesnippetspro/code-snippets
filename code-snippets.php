@@ -90,6 +90,7 @@ foreach ( array(
 
 	/* Settings component */
 	'settings/editor-preview.php',
+	'settings/settings-fields.php',
 	'settings/settings.php',
 	'settings/admin.php',
 

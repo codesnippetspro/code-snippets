@@ -324,8 +324,7 @@ function code_snippets_enqueue_codemirror() {
 
 	/* CodeMirror Theme */
 
-	$settings = get_option( 'code_snippets_settings' );
-	$theme = $settings['editor']['theme'];
+	$theme = code_snippets_get_setting( 'editor', 'theme' );
 
 	if ( 'default' !== $theme ) {
 

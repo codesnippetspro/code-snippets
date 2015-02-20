@@ -7,7 +7,7 @@
  * @return array|string Array if $json_encode is false, JSON string if it is true
  */
 function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
-	$options = get_option( 'code_snippets_settings' );
+	$options = code_snippets_get_settings();
 	$options = $options['editor'];
 
 	$saved_atts = array(
