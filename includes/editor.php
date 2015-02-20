@@ -7,23 +7,23 @@
  * @return array|string Array if $json_encode is false, JSON string if it is true
  */
 function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
-	$options = code_snippets_get_settings();
-	$options = $options['editor'];
+	$settings = code_snippets_get_settings();
+	$settings = $settings['editor'];
+
+	$fields = code_snippets_get_settings_fields();
+	$fields = $fields['editor'];
 
 	$saved_atts = array(
-		'theme' => $options['theme'],
-		'tabSize' => $options['tab_size'],
-		'indentUnit' => $options['indent_unit'],
-		'lineNumbers' => $options['line_numbers'],
-		'lineWrapping' => $options['wrap_lines'],
 		'matchBrackets' => true,
-		'indentWithTabs' => $options['indent_with_tabs'],
-		'autoCloseBrackets' => $options['auto_close_brackets'],
-		'highlightSelectionMatches' => $options['highlight_selection_matches'],
 	);
 
+	foreach ( $fields as $field ) {
+		$saved_atts[ $field['codemirror'] ] = $settings[ $field['id'] ];
+
+	}
+
 	$atts = wp_parse_args( $override_atts, $saved_atts );
-	$atts = apply_filters( 'code_snippets_atts', $atts );
+	$atts = apply_filters( 'code_snippets_codemirror_atts', $atts );
 
 	if ( $json_encode ) {
 

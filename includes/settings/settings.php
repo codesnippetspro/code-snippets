@@ -80,6 +80,7 @@ function code_snippets_get_settings_fields() {
 			'name' => __( 'Theme', 'code-snippets' ),
 			'type' => 'codemirror_theme_select',
 			'default' => 'default',
+			'codemirror' => 'theme',
 		),
 
 		array(
@@ -88,6 +89,7 @@ function code_snippets_get_settings_fields() {
 			'type' => 'checkbox',
 			'label' => __( 'Use hard tabs (not spaces) for indentation.', 'code-snippets' ),
 			'default' => true,
+			'codemirror' => 'indentWithTabs',
 		),
 
 		array(
@@ -96,6 +98,7 @@ function code_snippets_get_settings_fields() {
 			'type' => 'number',
 			'label' => __( 'The width of a tab character.', 'code-snippets' ),
 			'default' => 4,
+			'codemirror' => 'tabSize',
 		),
 
 		array(
@@ -103,7 +106,8 @@ function code_snippets_get_settings_fields() {
 			'name' => __( 'Indent Unit', 'code-snippets' ),
 			'type' => 'number',
 			'label' => __( 'How many spaces a block should be indented.', 'code-snippets' ),
-			'default' => 2
+			'default' => 2,
+			'codemirror' => 'indentUnit',
 		),
 
 		array(
@@ -112,6 +116,7 @@ function code_snippets_get_settings_fields() {
 			'type' => 'checkbox',
 			'label' => __( 'Whether the editor should scroll or wrap for long lines.', 'code-snippets' ),
 			'default' => true,
+			'codemirror' => 'lineWrapping',
 		),
 
 		array(
@@ -120,6 +125,7 @@ function code_snippets_get_settings_fields() {
 			'type' => 'checkbox',
 			'label' => __( 'Show line numbers to the left of the editor.', 'code-snippets' ),
 			'default' => true,
+			'codemirror' => 'lineNumbers',
 		),
 
 		array(
@@ -128,6 +134,7 @@ function code_snippets_get_settings_fields() {
 			'type' => 'checkbox',
 			'label' => __( 'Auto-close brackets and quotes when typed.', 'code-snippets' ),
 			'default' => true,
+			'codemirror' => 'autoCloseBrackets',
 		),
 
 		array(
@@ -136,6 +143,7 @@ function code_snippets_get_settings_fields() {
 			'label' => __( 'Highlight all instances of a currently selected word.', 'code-snippets' ),
 			'type' => 'checkbox',
 			'default' => true,
+			'codemirror' => 'highlightSelectionMatches',
 		),
 	);
 

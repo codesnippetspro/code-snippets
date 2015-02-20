@@ -97,7 +97,7 @@ add_filter( \'admin_footer_text\', \'example_replace_admin_footer_text\' );';
 
 	<script>
 	(function( $ ) {
-		"use strict";
+		'use strict';
 
 		$(function() {
 
@@ -107,37 +107,55 @@ add_filter( \'admin_footer_text\', \'example_replace_admin_footer_text\' );';
 
 			// Dynamically change editor settings
 
-			$( 'select[name="code_snippets_settings[editor][theme]"]' ).change( function () {
-				editor.setOption( 'theme', $(this).val() );
+			<?php
+
+			$fields = code_snippets_get_settings_fields();
+			$fields = $fields['editor'];
+
+			$types = wp_list_pluck( $fields, 'type', 'id' );
+			$codemirror_atts = wp_list_pluck( $fields, 'codemirror', 'id' );
+
+			foreach ( $codemirror_atts as $setting => $att_name ) {
+
+				switch ( $types[ $setting ] ) {
+
+					case 'codemirror_theme_select':
+						?>
+
+			$( 'select[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
+				editor.setOption( '<?php echo $att_name; ?>', $(this).val() );
 			} );
 
-			$( 'input[name="code_snippets_settings[editor][wrap_lines]"]' ).change( function () {
-				editor.setOption( 'lineWrapping', $(this).is(':checked') );
+						<?php
+						break;
+
+					case 'checkbox':
+						?>
+
+			$( 'input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
+				editor.setOption( '<?php echo $att_name; ?>', $(this).is(':checked') );
 			} );
 
-			$( 'input[name="code_snippets_settings[editor][line_numbers]"]' ).change( function () {
-				editor.setOption( 'lineNumbers', $(this).is(':checked') );
+						<?php
+						break;
+
+
+					case 'number':
+						?>
+
+			$( 'input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
+				editor.setOption( '<?php echo $att_name; ?>', $(this).val() );
 			} );
 
-			$( 'input[name="code_snippets_settings[editor][indent_with_tabs]"]' ).change( function () {
-				editor.setOption( 'indentWithTabs', $(this).is(':checked') );
-			} );
+						<?php
+						break;
 
-			$( 'input[name="code_snippets_settings[editor][indent_unit]"]' ).change( function () {
-				editor.setOption( 'indentUnit', $(this).val() );
-			} );
+				}
 
-			$( 'input[name="code_snippets_settings[editor][tab_size]"]' ).change( function () {
-				editor.setOption( 'tabSize', $(this).val() );
-			} );
+			}
 
-			$( 'input[name="code_snippets_settings[editor][auto_close_brackets]"]' ).change( function () {
-				editor.setOption( 'autoCloseBrackets', $(this).is(':checked') );
-			} );
+		?>
 
-			$( 'input[name="code_snippets_settings[editor][highlight_selection_matches]"]' ).change( function () {
-				editor.setOption( 'highlightSelectionMatches', $(this).is(':checked') );
-			} );
 		});
 
 	}(jQuery));
