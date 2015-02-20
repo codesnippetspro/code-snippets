@@ -73,7 +73,7 @@ $snippet = get_snippet( $edit_id );
 			<?php
 
 				/* Make the 'Save and Activate' button the default if the setting is enabled */
-				if ( ! $snippet->active && code_snippets_get_setting_value( 'activate_by_default', 'general' ) ) {
+				if ( ! $snippet->active && code_snippets_get_setting( 'general', 'activate_by_default' ) ) {
 
 					submit_button(
 						__( 'Save Changes and Activate', 'code-snippets' ),
