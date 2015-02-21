@@ -1,0 +1,610 @@
+# This file is distributed under the same license as the Code Snippets package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Code Snippets\n"
+"POT-Creation-Date: 2014-10-11 15:52+0300\n"
+"PO-Revision-Date: 2014-10-11 16:25+0300\n"
+"Last-Translator: Flector <rlector@gmail.com>\n"
+"Language-Team: Flector <rlector@gmail.com>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 1.6.9\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;_x:1,2c;_n;_nx:4c,1,2;"
+"_nx_noop:4c,1,2;_ex:1,2c;__ngettext_noop:1,2;_n_noop:1,2;_x;esc_html_x;"
+"esc_html_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: admin/help/import.php:16 admin/help/manage.php:16 admin/help/single.php:15
+msgid "Overview"
+msgstr "Обзор"
+
+#: admin/help/import.php:18
+msgid ""
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can load "
+"snippets from a Code Snippets (.xml) import file into the database with your "
+"existing snippets."
+msgstr ""
+"Сниппеты похожи на плагины - и те и другие расширяют функциональность движка "
+"WordPress. Сниппеты зачастую маленькие, состоят лишь из нескольких строк "
+"кода и не вызывают нагрузки на ваш сервер. Здесь вы можете загрузить ваши "
+"сниппеты из файла экспорта плагина (.xml), чтобы добавить их на ваш сайт."
+
+#: admin/help/import.php:23
+msgid "Importing"
+msgstr "Импортирование"
+
+#: admin/help/import.php:25
+msgid ""
+"You can load your snippets from a code snippets (.xml) export file using "
+"this page."
+msgstr "Вы можете загрузить ваши сниппеты из файла экспорта (.xml)."
+
+#: admin/help/import.php:26
+#, php-format
+msgid ""
+"Snippets will be added to the database along with your existing snippets. "
+"Regardless of whether the snippets were active on the previous site, "
+"imported snippets are always inactive until activated using the <a href=\"%s"
+"\">Manage Snippets</a> page.</p>"
+msgstr ""
+"Сниппеты будут добавлены в вашу базу (они не будут работать до тех пор, пока "
+"вы их не активируете на странице <a href=\"%s\">Управление сниппетами</a>)</"
+"p>"
+
+#: admin/help/import.php:31
+msgid "Exporting"
+msgstr "Экспортирование"
+
+#: admin/help/import.php:33
+#, php-format
+msgid ""
+"You can save your snippets to a Code Snippets (.xml) export file using the "
+"<a href=\"%s\">Manage Snippets</a> page."
+msgstr ""
+"Вы можете сохранить ваши сниппеты в файл экспорта (.xml) на странице <a href="
+"\"%s\">Управление сниппетами</a>."
+
+#: admin/help/import.php:37 admin/help/manage.php:38 admin/help/single.php:43
+msgid "For more information:"
+msgstr "Больше информации:"
+
+#: admin/help/import.php:38 admin/help/single.php:44
+msgid ""
+"<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank"
+"\">WordPress Extend</a>"
+msgstr ""
+"<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank"
+"\">Страница плагина</a>"
+
+#: admin/help/import.php:39 admin/help/manage.php:40 admin/help/single.php:45
+msgid ""
+"<a href=\"http://wordpress.org/support/plugin/code-snippets\" target=\"_blank"
+"\">Support Forums</a>"
+msgstr ""
+"<a href=\"http://wordpress.org/support/plugin/code-snippets\" target=\"_blank"
+"\">Форумы поддержки</a>"
+
+#: admin/help/import.php:40 admin/help/manage.php:41 admin/help/single.php:46
+msgid ""
+"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project "
+"Website</a>"
+msgstr ""
+"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Сайт "
+"плагина</a>"
+
+#: admin/help/manage.php:18
+msgid ""
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can manage "
+"your existing snippets and preform tasks on them such as activating, "
+"deactivating, deleting and exporting."
+msgstr ""
+"Сниппеты похожи на плагины - и те и другие расширяют функциональность движка "
+"WordPress. Сниппеты зачастую маленькие, состоят лишь из нескольких строк "
+"кода и не вызывают нагрузки на ваш сервер. Здесь вы можете управлять вашими "
+"сниппетами (добавлять, редактировать, активировать и деактивировать)."
+
+#: admin/help/manage.php:23
+msgid "Safe Mode"
+msgstr "Safe Mode"
+
+#: admin/help/manage.php:25
+msgid ""
+"Be sure to check your snippets for errors before you activate them, as a "
+"faulty snippet could bring your whole blog down. If your site starts doing "
+"strange things, deactivate all your snippets and activate them one at a time."
+msgstr ""
+"Прежде чем активировать сниппеты убедитесь, что они не содержат ошибок. "
+"Некорректные сниппеты могут испортить вам сайт!"
+
+#: admin/help/manage.php:26
+msgid ""
+"If something goes wrong with a snippet and you can't use WordPress, you can "
+"cause all snippets to stop executing by adding "
+"<code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-"
+"config.php</code> file. After you have deactivated the offending snippet, "
+"you can turn off safe mode by removing this line or replacing <strong>true</"
+"strong> with <strong>false</strong>."
+msgstr ""
+"В случае любых проблем со сниппетами плагина вы можете их все "
+"деактивировать, добавив строчку <code>define('CODE_SNIPPETS_SAFE_MODE', "
+"true);</code> в ваш файл конфигурации <code>wp-config.php</code> . После "
+"этого вы сможете деактивировать глючный сниппет, а потом снова включить "
+"плагин, удалив указанную строчку."
+
+#: admin/help/manage.php:31
+msgid "Uninstall"
+msgstr "Удаление"
+
+#: admin/help/manage.php:33
+#, php-format
+msgid ""
+"When you delete Code Snippets through the Plugins menu in WordPress it will "
+"clear up the <code>%1$s</code> table and a few other bits of data stored in "
+"the database. If you want to keep this data (ie: you are only temporally "
+"uninstalling Code Snippets) then remove the <code>%2$s</code> folder using "
+"FTP."
+msgstr ""
+"При удалении плагина через меню \"Плагины\" в админке блога таблица <code>"
+"%1$s</code> в базе данных будет удалена. Если вы хотите сохранить настройки "
+"(сниппеты) плагина, то удаляйте плагин (<code>%2$s</code>) через FTP, а не "
+"через админку. Только в этом случае ваши сниппеты не будут потеряны (но вы, "
+"конечно, можете сделать экспорт сниппетов во внешний .xml файл)."
+
+#: admin/help/manage.php:34
+msgid ""
+"Even if you're sure that you don't want to use Code Snippets ever again on "
+"this WordPress installation, you may want to use the export feature to back "
+"up your snippets."
+msgstr ""
+"Даже если вы уверены, что не будете использовать данный плагин, то все равно "
+"на всякий случай сделайте экспорт всех сниппетов кода."
+
+#: admin/help/manage.php:39
+msgid ""
+"<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank"
+"\">WordPress Extend</a></p>"
+msgstr ""
+"<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank"
+"\">Страница плагина</a></p>"
+
+#: admin/help/single.php:17
+msgid ""
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can add a new "
+"snippet, or edit an existing one."
+msgstr ""
+"Сниппеты похожи на плагины - и те и другие расширяют функциональность движка "
+"WordPress. Сниппеты зачастую маленькие, состоят лишь из нескольких строк "
+"кода и не вызывают нагрузки на ваш сервер.  Здесь вы можете добавить новый "
+"сниппет или отредактировать уже существующий."
+
+#: admin/help/single.php:22
+msgid "Finding Snippets"
+msgstr "Поиск сниппетов"
+
+#: admin/help/single.php:24
+msgid ""
+"Here are some links to websites which host a large number of snippets that "
+"you can add to your site.\n"
+"\t\t<ul>\n"
+"\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets\">WP-"
+"Snippets</a></li>\n"
+"\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</a></"
+"li>\n"
+"\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title=\"Cats "
+"Who Code Snippet Library\">Cats Who Code</a></li>\n"
+"\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+"\t\t</ul>"
+msgstr ""
+"Здесь указаны ссылки на некоторые сайты со сниппетами:\n"
+"\t\t<ul>\n"
+"\t\t\t<li><a href=\"http://www.wphook.ru\" title=\"WPHook.ru\">WPHook.ru</"
+"a></li>\n"
+"\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets\">WP-"
+"Snippets</a></li>\n"
+"\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</a></"
+"li>\n"
+"\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title=\"Cats "
+"Who Code Snippet Library\">Cats Who Code</a></li>\n"
+"\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+"\t\t</ul>"
+
+#: admin/help/single.php:31
+msgid ""
+"More places to find snippets, as well as a selection of example snippets, "
+"can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/"
+"finding-snippets/\">plugin documentation</a>"
+msgstr ""
+"Другие ссылки вы можете найти на <a href=\"http://code-snippets.bungeshea."
+"com/docs/finding-snippets/\">странице плагина</a>"
+
+#: admin/help/single.php:36
+msgid "Adding Snippets"
+msgstr "Добавление сниппетов"
+
+#: admin/help/single.php:38
+msgid ""
+"You need to fill out the name and code fields for your snippet to be added. "
+"While the description field will add more information about how your snippet "
+"works, what is does and where you found it, it is completely optional."
+msgstr "Вы должны заполнить имя и "
+
+#: admin/help/single.php:39
+msgid ""
+"Please be sure to check that your snippet is valid PHP code and will not "
+"produce errors before adding it through this page. While doing so will not "
+"become active straight away, it will help to minimise the chance of a faulty "
+"snippet becoming active on your site."
+msgstr ""
+"Пожалуйста, убедитесь в том, что добавляемый вами сниппет является "
+"корректным PHP кодом, так как иначе могут возникнуть проблемы с "
+"работоспособностью вашего сайта."
+
+#: admin/messages/import.php:18
+#, php-format
+msgid ""
+"Successfully imported <strong>%d</strong> snippet. <a href=\"%s\">Have fun!</"
+"a>"
+msgid_plural ""
+"Successfully imported <strong>%d</strong> snippets. <a href=\"%s\">Have fun!"
+"</a>"
+msgstr[0] ""
+"Удачно импортирован <strong>%d</strong> сниппет. <a href=\"%s\">Удачи!</a>"
+msgstr[1] ""
+"Удачно импортировано <strong>%d</strong> сниппета. <a href=\"%s\">Удачи!</a>"
+msgstr[2] ""
+"Удачно импортировано <strong>%d</strong> сниппетов. <a href=\"%s\">Удачи!</a>"
+
+#: admin/messages/import.php:32
+msgid "An error occurred when processing the import file."
+msgstr "Произошла ошибка при импортировании сниппета."
+
+#: admin/messages/manage.php:14
+msgid ""
+"<strong>Warning:</strong> Safe mode is active and snippets will not execute! "
+"Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-"
+"config.php</code> to turn off safe mode. <a href=\"http://code-snippets."
+"bungeshea.com/docs/safe-mode/\" target=\"_blank\">Help</a>"
+msgstr ""
+"<strong>Внимание:</strong> активирован режим Safe mode и поэтому сниппеты не "
+"будут выполняться! Удалите константу <code>CODE_SNIPPETS_SAFE_MODE</code> из "
+"файла <code>wp-config.php</code>, чтобы выключить режим Safe mode. <a href="
+"\"http://code-snippets.bungeshea.com/docs/safe-mode/\" target=\"_blank"
+"\">Помощь</a>"
+
+#: admin/messages/manage.php:20
+msgid "Snippet <strong>activated</strong>."
+msgstr "Сниппет <strong>активирован</strong>."
+
+#: admin/messages/manage.php:24
+msgid "Selected snippets <strong>activated</strong>."
+msgstr "Выбранные сниппеты <strong>активированы</strong>."
+
+#: admin/messages/manage.php:28
+msgid "Snippet <strong>deactivated</strong>."
+msgstr "Сниппет <strong>деактивирован</strong>."
+
+#: admin/messages/manage.php:32
+msgid "Selected snippets <strong>deactivated</strong>."
+msgstr "Выбранные сниппеты <strong>деактивированы</strong>."
+
+#: admin/messages/manage.php:36
+msgid "Snippet <strong>deleted</strong>."
+msgstr "Сниппет <strong>удален</strong>."
+
+#: admin/messages/manage.php:40
+msgid "Selected snippets <strong>deleted</strong>."
+msgstr "Выбранные сниппеты <strong>удалены</strong>."
+
+#: admin/messages/single.php:14
+msgid "An error occurred when saving the snippet."
+msgstr "Произошла ошибка при сохранении сниппета."
+
+#: admin/messages/single.php:18
+msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
+msgstr "Сниппет <strong>обновлен</strong> и <strong>активирован</strong>."
+
+#: admin/messages/single.php:22
+msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
+msgstr "Сниппет <strong>добавлен</strong> и <strong>активирован</strong>."
+
+#: admin/messages/single.php:26
+msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
+msgstr "Сниппет <strong>обновлен</strong> и <strong>деактивирован</strong>."
+
+#: admin/messages/single.php:30
+msgid "Snippet <strong>updated</strong>."
+msgstr "Сниппет <strong>обновлен</strong>."
+
+#: admin/messages/single.php:34
+msgid "Snippet <strong>added</strong>."
+msgstr "Сниппет <strong>добавлен</strong>."
+
+#: admin/views/import.php:20 includes/class-admin.php:327
+msgid "Import Snippets"
+msgstr "Импортирование сниппетов"
+
+#: admin/views/import.php:24
+msgid ""
+"Howdy! Upload your Code Snippets export file and we&#8217;ll import the "
+"snippets to this site."
+msgstr ""
+"Привет! Загрузите файл экспорта, чтобы импортировать сниппеты на этот сайт."
+
+#: admin/views/import.php:26
+#, php-format
+msgid ""
+"You will need to go to the <a href=\"%s\">Manage Snippets</a> page to "
+"activate the imported snippets."
+msgstr ""
+"Вы должны будете зайти в <a href=\"%s\">Управление сниппетами</a>, чтобы "
+"активировать импортированные сниппеты."
+
+#: admin/views/import.php:28
+msgid ""
+"Choose a Code Snippets (.xml) file to upload, then click Upload file and "
+"import."
+msgstr ""
+"Выберите файл экспорта (.xml), а затем кликните на \"Загрузить файл и "
+"импортировать\"."
+
+#: admin/views/import.php:35
+msgid "Choose a file from your computer:"
+msgstr "Выберите файл на вашем компьютере:"
+
+#: admin/views/import.php:36
+msgid "(Maximum size: 8MB)"
+msgstr "(Максимальный размер: 8MB)"
+
+#: admin/views/import.php:42
+msgid "Upload file and import"
+msgstr "Загрузить файл и импортировать"
+
+#: admin/views/manage.php:21 includes/class-admin.php:152
+#: includes/class-admin.php:276 includes/class-admin.php:277
+#: includes/class-admin.php:287
+msgid "Snippets"
+msgstr "Сниппеты"
+
+#: admin/views/manage.php:26 admin/views/single.php:34
+#: includes/class-admin.php:300
+msgid "Add New"
+msgstr "Добавить новый"
+
+#: admin/views/manage.php:39
+msgid "Search Installed Snippets"
+msgstr "Искать установленные сниппеты"
+
+#: admin/views/single.php:29 includes/class-admin.php:299
+msgid "Edit Snippet"
+msgstr "Редактирование сниппета"
+
+#: admin/views/single.php:37 includes/class-admin.php:299
+msgid "Add New Snippet"
+msgstr "Добавление нового сниппета"
+
+#: admin/views/single.php:53 admin/views/single.php:54
+msgid "Name (short title)"
+msgstr "Имя (короткое название на английском)"
+
+#: admin/views/single.php:59
+msgid "Code"
+msgstr "Код"
+
+#: admin/views/single.php:85
+msgid "Save Changes &amp; Activate"
+msgstr "Сохранить изменения &amp; Активировать"
+
+#: admin/views/single.php:91
+msgid "Save Changes &amp; Deactivate"
+msgstr "Сохранить изменения &amp; Деактивировать"
+
+#: admin/views/single.php:100 includes/class-list-table.php:166
+#: includes/class-list-table.php:265
+msgid "Export"
+msgstr "Экспорт"
+
+#: admin/views/single.php:107 includes/class-list-table.php:182
+msgid "Вы действительно хотите удалить выбранный сниппет?"
+msgstr "Вы действительно хотите удалить выбранный сниппет?"
+
+#: admin/views/single.php:112 includes/class-list-table.php:175
+#: includes/class-list-table.php:266
+msgid "Delete"
+msgstr "Удалить"
+
+#: includes/class-admin.php:185
+msgid "Code Snippets"
+msgstr "Code Snippets"
+
+#: includes/class-admin.php:186
+msgid "Import snippets from a Code Snippets export file"
+msgstr "Импортировать сниппеты из файла экспорта плагина \"Code Snippets\"."
+
+#: includes/class-admin.php:246
+msgid "You are not access this page."
+msgstr "У вас нет доступа к этой странице."
+
+#: includes/class-admin.php:288 includes/class-admin.php:695
+msgid "Manage"
+msgstr "Управление сниппетами"
+
+#: includes/class-admin.php:300 includes/class-list-table.php:160
+msgid "Edit"
+msgstr "Редактировать"
+
+#: includes/class-admin.php:328
+msgid "Import"
+msgstr "Импорт"
+
+#: includes/class-admin.php:663 includes/class-list-table.php:227
+msgid "Description"
+msgstr "Описание"
+
+#: includes/class-admin.php:694
+msgid "Manage your existing snippets"
+msgstr "Управление вашими сниппетами"
+
+#: includes/class-admin.php:722
+msgid "Visit the WordPress.org plugin page"
+msgstr "Посетить страницу плагина на WordPress.org"
+
+#: includes/class-admin.php:723
+msgid "About"
+msgstr "О плагине"
+
+#: includes/class-admin.php:727
+msgid "Visit the support forums"
+msgstr "Посетить форумы поддержки"
+
+#: includes/class-admin.php:728
+msgid "Support"
+msgstr "Поддержка"
+
+#: includes/class-admin.php:732
+msgid "Support this plugin's development"
+msgstr "Поддержите развитие плагина"
+
+#: includes/class-admin.php:733
+msgid "Donate"
+msgstr "Пожертвования"
+
+#: includes/class-admin.php:764
+msgid ""
+"<strong>Have feedback on Code Snippets?</strong> Please take the time to "
+"answer a short survey on how you use this plugin and what you'd like to see "
+"changed or added in the future."
+msgstr ""
+"<strong>У вас есть замечания по работе Code Snippets?</strong> Тогда "
+"пожалуйста заполните анкету на сайте плагина."
+
+#: includes/class-admin.php:767
+msgid "Take the survey now"
+msgstr "Оставить отзыв"
+
+#: includes/class-list-table.php:49
+msgid "Snippets per page"
+msgstr "Сниппетов на страницу"
+
+#: includes/class-list-table.php:141 includes/class-list-table.php:264
+msgid "Network Deactivate"
+msgstr "Деактивировать в сети"
+
+#: includes/class-list-table.php:141 includes/class-list-table.php:264
+msgid "Deactivate"
+msgstr "Деактивировать"
+
+#: includes/class-list-table.php:150 includes/class-list-table.php:263
+msgid "Network Activate"
+msgstr "Активировать в сети"
+
+#: includes/class-list-table.php:150 includes/class-list-table.php:263
+msgid "Activate"
+msgstr "Активировать"
+
+#: includes/class-list-table.php:189
+#, php-format
+msgid "Untitled #%d"
+msgstr "Untitled #%d"
+
+#: includes/class-list-table.php:225
+msgid "Name"
+msgstr "Имя"
+
+#: includes/class-list-table.php:226
+msgid "ID"
+msgstr "ID"
+
+#: includes/class-list-table.php:267
+msgid "Export to PHP"
+msgstr "Экспорт в PHP"
+
+#: includes/class-list-table.php:303
+#, php-format
+msgid "All <span class=\"count\">(%s)</span>"
+msgid_plural "All <span class=\"count\">(%s)</span>"
+msgstr[0] "Все <span class=\"count\">(%s)</span>"
+msgstr[1] "Все <span class=\"count\">(%s)</span>"
+msgstr[2] "Все <span class=\"count\">(%s)</span>"
+
+#: includes/class-list-table.php:306
+#, php-format
+msgid "Active <span class=\"count\">(%s)</span>"
+msgid_plural "Active <span class=\"count\">(%s)</span>"
+msgstr[0] "Активные <span class=\"count\">(%s)</span>"
+msgstr[1] "Активные <span class=\"count\">(%s)</span>"
+msgstr[2] "Активные <span class=\"count\">(%s)</span>"
+
+#: includes/class-list-table.php:309
+#, php-format
+msgid "Recently Active <span class=\"count\">(%s)</span>"
+msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
+msgstr[0] "Недавно активные <span class=\"count\">(%s)</span>"
+msgstr[1] "Недавно активные <span class=\"count\">(%s)</span>"
+msgstr[2] "Недавно активные <span class=\"count\">(%s)</span>"
+
+#: includes/class-list-table.php:312
+#, php-format
+msgid "Inactive <span class=\"count\">(%s)</span>"
+msgid_plural "Inactive <span class=\"count\">(%s)</span>"
+msgstr[0] "Неактивные <span class=\"count\">(%s)</span>"
+msgstr[1] "Неактивные <span class=\"count\">(%s)</span>"
+msgstr[2] "Неактивные <span class=\"count\">(%s)</span>"
+
+#: includes/class-list-table.php:341
+msgid "Filter"
+msgstr "Фильтр"
+
+#: includes/class-list-table.php:349
+msgid "Clear List"
+msgstr "Очистить лист"
+
+#: includes/class-list-table.php:491
+#, php-format
+msgid ""
+"You do not appear to have any snippets available at this time. <a href=\"%s"
+"\">Add New&rarr;</a>"
+msgstr "Нет доступных сниппетов. <a href=\"%s\">Добавить новый&rarr;</a>"
+
+#: includes/class-list-table.php:675
+msgid "Search results"
+msgstr "Результаты поиска"
+
+#: includes/class-list-table.php:678
+#, php-format
+msgid " for &#8220;%s&#8221;"
+msgstr " по запросу &#8220;%s&#8221;"
+
+#: includes/class-list-table.php:684
+msgid "Clear Filters"
+msgstr "Очистить фильтры"
+
+#~ msgid ""
+#~ "You are about to permanently delete the selected item.\n"
+#~ "\t\t\t\t'Cancel' to stop, 'OK' to delete."
+#~ msgstr ""
+#~ "Вы действительно хотите удалить выбранный сниппет?\n"
+#~ "\t\t\t\t"
+
+#~ msgid ""
+#~ "You are about to permanently delete this snippet.\n"
+#~ "'Cancel' to stop, 'OK' to delete."
+#~ msgstr "Вы действительно хотите удалить выбранный сниппет?\n"
+
+#, fuzzy
+#~ msgid "Все <span class=\"count\">(%s)</span>"
+#~ msgid_plural "Все <span class=\"count\">(%s)</span>"
+#~ msgstr[0] "All <span class=\"count\">(%s)</span>"
+#~ msgstr[1] "All <span class=\"count\">(%s)</span>"
+#~ msgstr[2] "All <span class=\"count\">(%s)</span>"

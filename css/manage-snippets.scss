@@ -1,0 +1,84 @@
+/**
+ * Custom styling for the snippets table
+ */
+
+.snippets {
+
+	th, td {
+		color: #000;
+	}
+
+	tr {
+		background: #fff;
+	}
+
+	.row-actions {
+		color: #ddd;
+	}
+
+	.clear-filters {
+		vertical-align: middle;
+	}
+
+	tfoot th {
+		border-top: none !important;
+
+		&.check-column {
+			padding: 13px 0 0 3px;
+		}
+	}
+
+	thead th.check-column,
+	tfoot th.check-column,
+	.inactive th.check-column {
+		padding-left: 5px;
+	}
+
+	.column-description p {
+		color: #333;
+	}
+
+	.inactive {
+
+		a {
+			color: #579;
+		}
+	}
+
+	.inactive, .active {
+		td, th {
+			padding: 10px 9px;
+			border: none;
+			box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
+		}
+	}
+
+	.active {
+
+		td, th {
+			background-color: rgba(120,200,230,0.06);
+		}
+
+		th.check-column {
+			border-left: 2px solid #2ea2cc;
+		}
+
+	}
+
+	tr.active + tr.inactive th,
+	tr.active + tr.inactive td {
+		border-top: 1px solid rgba(0,0,0,0.03);
+		box-shadow: inset 0px 1px 0 rgba(0,0,0,0.02), inset 0 -1px 0 #e1e1e1;
+	}
+
+	&, #all-snippets-table, #search-snippets-table {
+		a.delete:hover {
+			border-bottom: 1px solid #f00;
+			color: #f00;
+		}
+	}
+
+	#wpbody-content & .column-name {
+		white-space: nowrap; /* prevents wrapping of snippet title */
+	}
+}

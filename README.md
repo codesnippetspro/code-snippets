@@ -2,7 +2,7 @@
 # Code Snippets [![Build Status](https://travis-ci.org/bungeshea/code-snippets.png?branch=develop)](https://travis-ci.org/bungeshea/code-snippets)
 
 * __Requires at least:__ [WordPress 3.3](http://wordpress.org/download/) or later
-* __Tested up to:__ WordPress 3.8
+* __Tested up to:__ WordPress 3.0
 * __Stable version:__ [1.9.1.1](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
@@ -20,17 +20,23 @@ You can use a graphical interface, similar to the Plugins menu, to manage, activ
 
 Although Code Snippets is designed to be easy-to-use and its interface looks, feels and acts as if it was a native part of WordPress, each screen includes a help tab, just in case you get stuck.
 
-An addon-plugin for Code Snippets is available: [Code Snippets Tags](http://wordpress.org/plugins/code-snippets-tags) will allow you to assign tags to your snippets and organize them in the table.
+### Translations
+
+Code Snippets can be used in these different languages thanks to the following translators:
+
+* German - [David Decker](http://deckerweb.de)
+* French - [oWEB](http://office-web.net)
+* Japanese - [mt8](http://mt8.biz/)
+* Serbo-Croatian translation [Borisa Djuraskovic from Web Hosting Hub]()
+* Chinese - [Jincheng Shan](http://shanjincheng.com)
+* Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
+* Slovak - [Ján Fajčák](http://wp.sk)
 
 ## Other Notes
 
 Further information, documentation and updates are available on the [plugin homepage](http://code-snippets.bungeshea.com).
 
-[As featured on the WPMU blog](http://wpmu.org/wordpress-code-snippets)
-
 If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum][support]. If you like the plugin, or it is useful to you in any way, please review it on [WordPress.org][review]
-
-Plugin updates will be posted on the [plugin's homepage][homepage] ([RSS](http://code-snippets.bungeshea.com/feed/)).
 
 Snippets are stored in the `wp_snippets` table in the WordPress database (the table name may differ depending on what your table prefix is set to).
 Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
@@ -68,9 +74,6 @@ Yes. Just add it but do not activate it yet.
 ### How can I insert my snippet into the post text editor?
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
-### Where did the Import menu go after upgrading to version 1.6?
-As the import menu is not accessed neatly as much as the manage or add new menus, it has been moved under the *Tools > Import* menu. To access the import page, visit the *Tools > Import* menu in your WordPress dashboard and click on the **Code Snippets** link.
-
 ### Help! I just activated a snippet, and my whole site broke!
 You can try activating 'safe mode'. All snippets will not execute while safe mode is active, allowing you to access your site and deactivate the snippet that is causing the error. To activate safe mode, add the following line to your wp-config.php file, just before the line that reads `/* That's all, stop editing! Happy blogging. */`:
 
@@ -90,10 +93,10 @@ The [CodeMirror](http://codemirror.net) source-code editor will add line numbers
 * __Shift-Ctrl-R / Shift-Cmd-Option-F__ : Replace all
 
 ### Will I lose my snippets if I change the theme or upgrade WordPress?
-No, the snippets are added to the WordPress database so are independent of the theme and unaffected by WordPress upgrades.
+No, the snippets are stored in the WordPress database and are independent of the theme and unaffected by WordPress upgrades.
 
 ### Can the plugin be completely uninstalled?
-Yes, when you delete Code Snippets using the 'Plugins' menu in WordPress it will clean up the database table and a few other bits of data. Be careful not to remove Code Snippets using the Plugins menu unless you want this to happen.
+Yes, when you delete Code Snippets using the 'Plugins' menu in WordPress it will clean up the database table and a few other bits of data. Be careful not to remove Code Snippets by deleting it from the Plugins menu unless you want this to happen.
 
 ### Can I copy any snippets I've created to another WordPress site?
 Yes! You can individually export a single snippet using the link below the snippet name on the 'Manage Snippets' page or bulk export multiple snippets using the 'Bulk Actions' feature. Snippets can later be imported using the 'Import Snippets' page by uploading the export file.
@@ -103,9 +106,6 @@ Yes. Click the checkboxes next to the snippets you want to export, and then choo
 
 ### Can I run network-wide snippets on a multisite installation?
 You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard. You can also activate Code Snippets just on the main site, and then individually on other sites of your choice.
-
-### Is there anyway to add categories to snippets?
-Users of Code Snippets version 1.7 and later can install the [Code Snippets Tags](https://github.com/bungeshea/code-snippets-tags) plugin for the ability to add tags to snippets, and then later filter the snippets by tag for easier organization.
 
 ### I need help with Code Snippets
 You can get help with Code Snippets either on the [WordPress Support Forums][support], on [GithHub][issues], or on [WordPress Answers](http://wordpress.stackexchange.com).

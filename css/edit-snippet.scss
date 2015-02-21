@@ -1,0 +1,51 @@
+/**
+ * Custom styling for the single snippet admin page
+ */
+
+h3 {
+	/* Provide some decent space between the fields and titles */
+	margin: 1em 0;
+}
+
+label {
+	/* What's with the pointer mouse on labels? */
+	cursor: auto;
+}
+
+/* Position the description heading on the same level as the editor buttons */
+label[for='snippet_description'] h3 div {
+	position: absolute;
+}
+
+/* Add spacing in between the action buttons */
+.submit .button {
+	margin-right: .5em;
+}
+
+/**
+ * Customize the CodeMirror editor
+ * to look nice and support auto-resizing
+ */
+.CodeMirror {
+	width: 100%;
+	height: auto;
+	min-height: 300px;
+
+	border: 1px solid #dfdfdf;
+	border-radius: 3px;
+	background-color: #fff;;
+}
+
+.CodeMirror-scroll {
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+.CodeMirror-sizer {
+	min-height: 300px !important;
+}
+
+.CodeMirror-focused .cm-matchhighlight {
+	color: white !important;
+	outline: 1px solid green;
+}
