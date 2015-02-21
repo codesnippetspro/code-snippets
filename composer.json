@@ -34,7 +34,7 @@
 				"name": "codemirror",
 				"version": "5.0",
 				"dist": {
-					"url": "http://codemirror.net/codemirror.zip",
+					"url": "http://codemirror.net/codemirror-5.0.zip",
 					"type": "zip"
 				}
 			}
