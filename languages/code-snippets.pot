@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.0.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-21 15:51+1030\n"
+"POT-Creation-Date: 2015-02-21 18:35+1030\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,52 +17,52 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: includes/admin.php:78 includes/manage/admin.php:21
+#: includes/admin.php:81 includes/manage/admin.php:21
 #: includes/manage/manage.php:22 includes/manage/manage.php:23
 #: includes/manage/manage.php:33
 msgid "Snippets"
 msgstr ""
 
-#: includes/admin.php:117
+#: includes/admin.php:120
 msgid "Manage your existing snippets"
 msgstr ""
 
-#: includes/admin.php:118 includes/manage/manage.php:34
+#: includes/admin.php:121 includes/manage/manage.php:34
 msgid "Manage"
 msgstr ""
 
-#: includes/admin.php:147
+#: includes/admin.php:150
 msgid "Visit the WordPress.org plugin page"
 msgstr ""
 
-#: includes/admin.php:148
+#: includes/admin.php:151
 msgid "About"
 msgstr ""
 
-#: includes/admin.php:152
+#: includes/admin.php:155
 msgid "Visit the support forums"
 msgstr ""
 
-#: includes/admin.php:153
+#: includes/admin.php:156
 msgid "Support"
 msgstr ""
 
-#: includes/admin.php:157
+#: includes/admin.php:160
 msgid "Support this plugin's development"
 msgstr ""
 
-#: includes/admin.php:158
+#: includes/admin.php:161
 msgid "Donate"
 msgstr ""
 
-#: includes/admin.php:191
+#: includes/admin.php:194
 msgid ""
 "<strong>Have feedback on Code Snippets?</strong> Please take the time to "
 "answer a short survey on how you use this plugin and what you'd like to see "
 "changed or added in the future."
 msgstr ""
 
-#: includes/admin.php:194
+#: includes/admin.php:197
 msgid "Take the survey now"
 msgstr ""
 
@@ -222,7 +222,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: includes/edit/edit.php:84 includes/import/import.php:111
+#: includes/edit/edit.php:84 includes/import/import.php:91
 #: includes/manage/manage.php:67
 msgid "You are not access this page."
 msgstr ""
@@ -285,8 +285,7 @@ msgstr ""
 msgid "An error occurred when processing the import file."
 msgstr ""
 
-#: includes/import/admin.php:18 includes/import/import.php:57
-#: includes/import/import.php:79
+#: includes/import/admin.php:18 includes/import/import.php:55
 msgid "Import Snippets"
 msgstr ""
 
@@ -329,7 +328,7 @@ msgstr ""
 msgid "Import snippets from a code snippets export file"
 msgstr ""
 
-#: includes/import/import.php:58 includes/import/import.php:80
+#: includes/import/import.php:56
 msgid "Import"
 msgstr ""
 
