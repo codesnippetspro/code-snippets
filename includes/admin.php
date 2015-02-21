@@ -20,12 +20,15 @@ if ( ! is_admin() ) {
 function code_snippets_get_menu_slug( $menu = '' ) {
 	$add = array( 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' );
 	$edit = array( 'edit', 'edit-snippet' );
+	$import = array( 'import', 'import-snippets' );
 	$settings = array( 'settings', 'snippets-settings' );
 
 	if ( in_array( $menu, $edit ) ) {
 		return 'edit-snippet';
 	} elseif ( in_array( $menu, $add ) ) {
 		return 'add-snippet';
+	} elseif ( in_array( $menu, $import ) ) {
+		return 'import-snippets';
 	} elseif ( in_array( $menu, $settings ) ) {
 		return 'snippets-settings';
 	} else {

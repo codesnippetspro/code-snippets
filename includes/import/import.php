@@ -8,7 +8,7 @@
  */
 
 /**
- * Register the Code Snippets importer
+ * Add the importer to the Tools > Import menu
  *
  * @since 1.6
  * @access private
@@ -43,9 +43,7 @@ function code_snippets_register_importer() {
 add_action( 'admin_init', 'code_snippets_register_importer' );
 
 /**
- * Add an Import Snippets page to the network admin menu.
- * We need to do this as there is no Tools menu in the network
- * admin, and so we cannot register an importer
+ * Add an Import Snippets page to the admin menu.
  *
  * @since 1.6
  * @uses add_submenu_page() To register the menu page
@@ -57,33 +55,15 @@ function code_snippets_add_import_menu() {
 		__( 'Import Snippets', 'code-snippets' ),
 		__( 'Import', 'code-snippets' ),
 		get_snippets_cap(),
-		'import-code-snippets',
+		code_snippets_get_menu_slug( 'import' ),
 		'code_snippets_render_import_menu'
 	);
 
 	add_action( 'load-' . $hook, 'code_snippets_load_import_menu' );
 }
 
+add_action( 'admin_menu', 'code_snippets_add_import_menu' );
 add_action( 'network_admin_menu', 'code_snippets_add_import_menu' );
-
-/**
- * Add a link to the code snippets importer to the Snippets menu
- *
- * @since 2.0
- * @uses add_submenu_page() To register a sub-menu
- */
-function code_snippets_add_importer_menu_link() {
-
-	add_submenu_page(
-		code_snippets_get_menu_slug(),
-		__( 'Import Snippets', 'code-snippets' ),
-		__( 'Import', 'code-snippets' ),
-		get_snippets_cap(),
-		'admin.php?import=code-snippets'
-	);
-}
-
-add_action( 'admin_menu', 'code_snippets_add_importer_menu_link' );
 
 /**
  * Displays the import snippets page
