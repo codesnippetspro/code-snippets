@@ -140,9 +140,6 @@ class Code_Snippets_Export {
 			/* Grab the snippet from the database */
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id ), ARRAY_A );
 
-			/* Remove slashes */
-			$snippet = stripslashes_deep( $snippet );
-
 			/* Output the item */
 			$this->do_item( $snippet );
 		}

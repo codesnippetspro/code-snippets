@@ -377,9 +377,14 @@ function import_snippets( $file, $multisite = false ) {
 
 		/* Build a snippet object by looping through the field names */
 		foreach ( $fields as $field_name ) {
-			$field = $snippet_xml->getElementsByTagName( $field_name );
-			$field = $field->item(0)->nodeValue;
-			$snippet->$field_name = $field;
+
+			/* Fetch the field element from the document */
+			$field = $snippet_xml->getElementsByTagName( $field_name )->item(0);
+
+			/* If the field element exists, add it to the snippet object */
+			if ( isset( $field->nodeValue ) ) {
+				$snippet->$field_name = $field->nodeValue;
+			}
 		}
 
 		/* Save the snippet and increase the counter if successful */
@@ -388,7 +393,7 @@ function import_snippets( $file, $multisite = false ) {
 		}
 	}
 
-	do_action( 'code_snippets/import', $xml, $multisite );
+	do_action( 'code_snippets/import', $dom, $multisite );
 	return $count;
 }
 
