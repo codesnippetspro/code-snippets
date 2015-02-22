@@ -38,15 +38,13 @@ function code_snippets_add_single_menu() {
 		'code_snippets_render_single_menu'
 	);
 
-	add_action( 'load-' . $add_hook, 'code_snippets_load_single_menu' );
-
 	/* Check if we are currently editing a snippet */
 	if ( isset( $_REQUEST['page'] ) && code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
 
 		$edit_hook = add_submenu_page(
 			code_snippets_get_menu_slug(),
 			__( 'Edit Snippet', 'code-snippets' ),
-			__( 'Edit', 'code-snippets' ),
+			__( 'Edit Snippet', 'code-snippets' ),
 			get_snippets_cap(),
 			code_snippets_get_menu_slug( 'edit' ),
 			'code_snippets_render_single_menu'
@@ -55,6 +53,7 @@ function code_snippets_add_single_menu() {
 		add_action( 'load-' . $edit_hook, 'code_snippets_load_single_menu' );
 	}
 
+	add_action( 'load-' . $add_hook, 'code_snippets_load_single_menu' );
 }
 
 add_action( 'admin_menu', 'code_snippets_add_single_menu', 5 );
