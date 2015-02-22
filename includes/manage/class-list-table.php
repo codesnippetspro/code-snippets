@@ -596,7 +596,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		if ( ! empty( $_GET['tag'] ) ) {
-			$snippets = array_filter( $snippets, array( $this, '_tags_filter_callback' ) );
+			$snippets['all'] = array_filter( $snippets['all'], array( $this, '_tags_filter_callback' ) );
 		}
 
 		/* Filter snippets based on search query */
@@ -763,7 +763,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	* @ignore
 	*/
 	function _tags_filter_callback( $snippet ) {
-
 		$tags = explode( ',', $_GET['tag'] );
 
 		foreach ( $tags as $tag ) {
