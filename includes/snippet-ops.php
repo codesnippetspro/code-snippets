@@ -323,11 +323,13 @@ function save_snippet( $snippet, $multisite = false ) {
 	$data    = array();
 
 	foreach ( get_object_vars( $snippet ) as $field => $value ) {
-		if ( 'id' === $field )
+		if ( 'id' === $field ) {
 			continue;
+		}
 
-		if ( is_array( $value ) )
+		if ( is_array( $value ) ) {
 			$value = maybe_serialize( $value );
+		}
 
 		$data[ $field ] = $value;
 	}
@@ -362,22 +364,32 @@ function import_snippets( $file, $multisite = false ) {
 		return false;
 	}
 
-	$xml = simplexml_load_file( $file );
+	$dom = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+	$dom->load( $file );
 
-	if ( ! is_object( $xml ) || ! method_exists( $xml, 'children' ) )
-		return false;
+	$snippets_xml = $dom->getElementsByTagName( 'snippet' );
+	$fields = array( 'name', 'description', 'code', 'tags' );
+	$count = 0;
 
-	foreach ( $xml->children() as $snippet ) {
-		/* force manual build of object to strip out unsupported fields
-		   by converting snippet object into an array */
-		$snippet = get_object_vars( $snippet );
-		$snippet = array_map( 'htmlspecialchars_decode', $snippet );
-		save_snippet( $snippet, $multisite );
+	/* Loop through all snippets */
+	foreach ( $snippets_xml as $snippet_xml ) {
+		$snippet = new stdClass;
+
+		/* Build a snippet object by looping through the field names */
+		foreach ( $fields as $field_name ) {
+			$field = $snippet_xml->getElementsByTagName( $field_name );
+			$field = $field->item(0)->nodeValue;
+			$snippet->$field_name = $field;
+		}
+
+		/* Save the snippet and increase the counter if successful */
+		if ( save_snippet( $snippet, $multisite ) ) {
+			$count += 1;
+		}
 	}
 
 	do_action( 'code_snippets/import', $xml, $multisite );
-
-	return $xml->count();
+	return $count;
 }
 
 /**
@@ -395,7 +407,7 @@ function export_snippets( $ids, $multisite = false ) {
 	$table = get_snippets_table_name( $multisite );
 
 	if ( ! class_exists( 'Code_Snippets_Export' ) ) {
-		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'export/class-export.php';
+		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/export/class-export.php';
 	}
 
 	$class = new Code_Snippets_Export( $ids, $table );
@@ -417,11 +429,11 @@ function export_snippets_to_php( $ids, $multisite = false ) {
 	$table = get_snippets_table_name( $multisite );
 
 	if ( ! class_exists( 'Code_Snippets_Export' ) ) {
-		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'export/class-export.php';
+		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/export/class-export.php';
 	}
 
 	if ( ! class_exists( 'Code_Snippets_Export_PHP' ) ) {
-		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'export/class-export-php.php';
+		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/export/class-export-php.php';
 	}
 
 	$class = new Code_Snippets_Export_PHP( $ids, $table );
