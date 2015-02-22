@@ -249,8 +249,6 @@ function activate_snippet( $id, $multisite = false ) {
  */
 function deactivate_snippet( $id, $multisite = false ) {
 	global $wpdb;
-
-	$ids = (array) $ids;
 	$table = get_snippets_table_name( $multisite );
 
 	/* Set the snippet to active */
