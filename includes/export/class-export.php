@@ -163,6 +163,11 @@ class Code_Snippets_Export {
 				continue;
 			}
 
+			/* Exclude this field if there is no data */
+			if ( empty( $field_value ) ) {
+				continue;
+			}
+
 			/* Create a new element for each field */
 			$field = $this->dom->createElement( $field_name );
 			$field = $item->appendChild( $field );
