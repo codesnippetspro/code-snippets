@@ -406,42 +406,16 @@ function import_snippets( $file, $multisite = false ) {
  *
  * @param array $ids The IDs of the snippets to export
  * @param string $multisite Is the snippet a network-wide or site-wide snippet?
+ * @param string $format Export to xml or php?
  */
-function export_snippets( $ids, $multisite = false ) {
-
+function export_snippets( $ids, $multisite = false, $format = 'xml' ) {
 	$table = get_snippets_table_name( $multisite );
 
 	if ( ! class_exists( 'Code_Snippets_Export' ) ) {
-		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/export/class-export.php';
+		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/class-export.php';
 	}
 
-	$class = new Code_Snippets_Export( $ids, $table );
-	$class->do_export();
-}
-
-/**
- * Exports snippets as a PHP file
- *
- * @since 2.0
- * @uses Code_Snippets_Export_PHP To export selected snippets
- * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
- *
- * @param array $ids The IDs of the snippets to export
- * @param boolean $multisite Is the snippet a network-wide or site-wide snippet?
- */
-function export_snippets_to_php( $ids, $multisite = false ) {
-
-	$table = get_snippets_table_name( $multisite );
-
-	if ( ! class_exists( 'Code_Snippets_Export' ) ) {
-		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/export/class-export.php';
-	}
-
-	if ( ! class_exists( 'Code_Snippets_Export_PHP' ) ) {
-		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/export/class-export-php.php';
-	}
-
-	$class = new Code_Snippets_Export_PHP( $ids, $table );
+	$class = new Code_Snippets_Export( $ids, $table, $format );
 	$class->do_export();
 }
 
@@ -473,7 +447,7 @@ function execute_snippet( $code ) {
 /**
  * Run the active snippets
  *
- * @since  2.0
+ * @since 2.0
  * @return boolean true on success, false on failure
  */
 function execute_active_snippets() {

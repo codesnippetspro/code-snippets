@@ -491,7 +491,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				export_snippets( $id, $network );
 			}
 			elseif ( 'export-php' === $action ) {
-				export_snippets_to_php( $id, $network );
+				export_snippets( $id, $network, 'php');
 			}
 
 			if ( ! in_array( $action, array( 'export', 'export-php' ) ) ) {
@@ -532,7 +532,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				break;
 
 			case 'export-php-selected':
-				export_snippets_to_php( $ids, $network );
+				export_snippets( $ids, $network, 'php');
 				break;
 
 			case 'delete-selected':

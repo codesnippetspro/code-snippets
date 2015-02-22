@@ -36,25 +36,36 @@ class Code_Snippets_Export {
 	protected $table_name = '';
 
 	/**
-	 * The DOM document
+	 * The export file format.
+	 * Either 'xml' or 'php'
+	 * @var object
+	 */
+	public $format;
+
+	/**
+	 * The DOM document.
+	 * Only used in XML exports
 	 * @var object
 	 */
 	public $dom;
 
 	/**
 	 * The DOM document root element
+	 * Only used in XML exports
 	 * @var object
 	 */
 	public $root;
 
 	/**
 	 * Constructor function
-	 * @param array  $ids   The IDs of the snippets to export
+	 * @param array $ids The IDs of the snippets to export
 	 * @param string $table The name of the table to fetch snippets from
+	 * @param  string $format The format of the export file
 	 */
-	function __construct( $ids, $table ) {
+	function __construct( $ids, $table, $format = 'xml' ) {
 		$this->snippet_ids = (array) $ids;
 		$this->table_name = $table;
+		$this->format = 'php' === $format ? 'php' : 'xml';
 		$this->exclude_fields = apply_filters( 'code_snippets/export/exclude_from_export', array( 'id', 'active' ) );
 	}
 
@@ -76,7 +87,7 @@ class Code_Snippets_Export {
 		/* Filter and sanitize the filename */
 		$filename = sanitize_file_name( apply_filters(
 			'code_snippets/export/filename',
-			"{$sitename}.code-snippets.xml",
+			"{$sitename}.code-snippets.{$this->format}",
 			$sitename
 		) );
 
@@ -86,7 +97,7 @@ class Code_Snippets_Export {
 	/**
 	 * Append header comments to the DOM document
 	 */
-	protected function do_header() {
+	protected function do_header_comments() {
 
 		/* Array of translated comment lines */
 		$lines = array(
@@ -124,15 +135,20 @@ class Code_Snippets_Export {
 		$this->dom->appendChild( $gen );
 	}
 
+
+
 	/**
-	 * Render the items
+	 * Process all snippet items
 	 */
 	protected function do_items() {
 		global $wpdb;
 
-		/* Create the root element */
-		$this->root = $this->dom->createElement( 'snippets' );
-		$this->root = $this->dom->appendChild( $this->root );
+		if ( 'xml' === $this->format ) {
+
+			/* Create the root element */
+			$this->root = $this->dom->createElement( 'snippets' );
+			$this->root = $this->dom->appendChild( $this->root );
+		}
 
 		/* Loop through the snippets */
 		foreach ( $this->snippet_ids as $id ) {
@@ -141,12 +157,12 @@ class Code_Snippets_Export {
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id ), ARRAY_A );
 
 			/* Output the item */
-			$this->do_item( $snippet );
+			$this->create_snippet_element( $snippet );
 		}
 	}
 
 	/**
-	 * Append a single snippet item
+	 * Append a single snippet item to the document
 	 * @param array $snippet
 	 */
 	protected function do_item( $snippet ) {
@@ -157,11 +173,6 @@ class Code_Snippets_Export {
 
 			/*  Don't export certain fields */
 			if ( in_array( $field_name, $this->exclude_fields ) ) {
-				continue;
-			}
-
-			/* Exclude this field if there is no data */
-			if ( empty( $field_value ) ) {
 				continue;
 			}
 
@@ -176,30 +187,62 @@ class Code_Snippets_Export {
 	}
 
 	/**
+	 * Format single snippet item as PHP code
+	 * @param array $snippet
+	 */
+	protected function do_item_php( $snippet ) {
+
+			echo "\n/**\n * {$snippet['name']}\n";
+
+			if ( ! empty( $snippet['description'] ) ) {
+
+				/* Convert description to PhpDoc */
+				$desc = strip_tags( str_replace( "\n", "\n * ", $snippet['description'] ) );
+
+				echo " *\n * $desc\n";
+			}
+
+			echo " */\n{$snippet['code']}\n";
+	}
+
+	/**
 	 * Export the snippets
 	 */
 	public function do_export() {
 
-		/* Set the HTTP header */
+		/* Make the page act like a downloadable file instead of being shown in the browser */
 		$filename = $this->get_filename();
 		header( 'Content-Disposition: attachment; filename=' . $filename );
-		header( 'Content-Type: text/xml; charset=' . get_bloginfo('charset') );
 
-		/* Create DOM document and root element */
-		$this->dom = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$this->dom->formatOutput = true;
+		if ( 'xml' === $this->format ) {
 
-		/* Add file header */
-		$this->do_header();
+			/* Set the HTTP content type header */
+			header( 'Content-Type: text/xml; charset=' . get_bloginfo( 'charset' ) );
 
-		/* Append the snippet items */
+			/* Create DOM document and root element */
+			$this->dom = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+			$this->dom->formatOutput = true;
+
+			/* Add file header comments */
+			$this->do_header_comments();
+		}
+
+		elseif ( 'php' === $this->format ) {
+			echo '<?php';
+		}
+
+		/* Process the snippet items */
 		$this->do_items();
 
-		/* Filter DOM document */
-		apply_filters( 'code_snippets/export/dom_document', $this->dom, $this->snippet_ids, $filename );
+		if ( 'xml' === $this->format ) {
 
-		/* Send the document to the browser */
-		echo $this->dom->saveXML();
+			/* Filter DOM document */
+			apply_filters( 'code_snippets/export_dom_document', $this->dom, $this->snippet_ids, $filename );
+
+			/* Send the document to the browser */
+			echo $this->dom->saveXML();
+		}
+
 		exit;
 	}
 }
