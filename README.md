@@ -2,8 +2,8 @@
 # Code Snippets [![Build Status](https://travis-ci.org/bungeshea/code-snippets.png?branch=develop)](https://travis-ci.org/bungeshea/code-snippets)
 
 * __Requires at least:__ [WordPress 3.3](http://wordpress.org/download/) or later
-* __Tested up to:__ WordPress 3.0
-* __Stable version:__ [1.9.1.1](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __Tested up to:__ WordPress 4.1.1
+* __Stable version:__ [2.0](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
 An easy, clean and simple way to add code snippets to your site.
@@ -63,23 +63,23 @@ Code Snippets will automatically clean up its data when deleted through the Word
 
 ## Frequently Asked Questions
 
-Further documentation is available on the [plugin website](http://code-snippets.bungeshea.com/docs/).
-
-### Do I need to include the `<?php`, `<?` or `?>` tags in my snippet?
-No, just copy all the content inside those tags. If you accidentally forget (or just like being lazy), the tags will be stripped from the beginning and end of the snippet when you save it. You can, however, use those tags *inside* your snippets to start and end HTML sections.
-
-### Is there a way to add a snippet but not run it right away?
-Yes. Just add it but do not activate it yet.
+Further documentation is available on the [plugin website](http://code-snippets.bungeshea.com/).
 
 ### How can I insert my snippet into the post text editor?
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
+
+### Do I need to include the `<?php`, `<?` or `?>` tags in my snippet?
+No, just copy all the content inside those tags. If you accidentally forget (or just like being lazy), the tags will be stripped from the beginning and end of the snippet when you save it. You can, however, use those tags *inside* your snippets to start and end HTML sections
 
 ### Help! I just activated a snippet, and my whole site broke!
 You can try activating 'safe mode'. All snippets will not execute while safe mode is active, allowing you to access your site and deactivate the snippet that is causing the error. To activate safe mode, add the following line to your wp-config.php file, just before the line that reads `/* That's all, stop editing! Happy blogging. */`:
 
     define('CODE_SNIPPETS_SAFE_MODE', true);
 
-To turn safe mode off, either [comment out](http://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
+ To turn safe mode off, either [comment out](http://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
+
+### Is there a way to add a snippet but not run it right away?
+Yes. Just add it but do not activate it yet.
 
 ### What do I use to write my snippets?
 The [CodeMirror](http://codemirror.net) source-code editor will add line numbers, syntax highlighting, bracket matching, search, tabulate and other cool features to the code editor.
@@ -106,6 +106,9 @@ Yes. Click the checkboxes next to the snippets you want to export, and then choo
 
 ### Can I run network-wide snippets on a multisite installation?
 You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard. You can also activate Code Snippets just on the main site, and then individually on other sites of your choice.
+
+## Where are the snippets stored in my WordPress database?
+Snippets are stored in the `wp_snippets` table in the WordPress database. The table name may differ depending on what your table prefix is set to.
 
 ### I need help with Code Snippets
 You can get help with Code Snippets either on the [WordPress Support Forums][support], on [GithHub][issues], or on [WordPress Answers](http://wordpress.stackexchange.com).

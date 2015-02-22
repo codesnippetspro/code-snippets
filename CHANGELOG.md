@@ -1,14 +1,23 @@
 # Changelog
 
-# 2.0
-* Major code refactoring
-	* Removed old admin style support
-	* Removed backwards-compatible support
-	* Added braces to single-line conditionals in line with [new coding standards](https://make.wordpress.org/core/2013/11/13/proposed-coding-standards-change-always-require-braces/)
-	* Split up large classes
-	* Replaced uninstall hook with single file method
+## 2.0
+
+**Highlights:**
+
+* Better import/export functionality
+* New settings page with code editor settings
+* Code rewritten for cleaner and more efficient code
+* Lots of new translations
+
+
+
+* Removed old admin style support
+* Removed backwards-compatible support
+* Added braces to single-line conditionals in line with [new coding standards](https://make.wordpress.org/core/2013/11/13/proposed-coding-standards-change-always-require-braces/)
+* Split up large classes into separate functions
+* Improved plugin file structure
+* Replaced uninstall hook with single file method
 * Added link to Code Snippets importer under Snippets admin menu
-* Allowed CodeMirror settings to be filtered
 * Added settings component and admin page
 * Added support for different CodeMirror themes
 * Integrated tags component into main plugin. Current users of the Code Snippets Tags plugin can safely uninstall it.
@@ -21,6 +30,10 @@
 * Updated CodeMirror library to version 4.6
 * Added Russian translation by Alexander Samsonov
 * Added Slovak translation by [Ján Fajčák] from [WordPress Slovakia](http://wp.sk)
+* Added setting to always save and activate snippets by default
+* Updated CodeMirror library to version 5.0
+* Rewritten import/export functionality to use DOMDocument
+* Merged Code_Snippets_Export_PHP class into Code_Snippets_Export class
 
 ## 1.9.1.1
 * Add capability check to site snippets importer
