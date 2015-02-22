@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.0.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-22 22:02+1030\n"
+"POT-Creation-Date: 2015-02-22 22:13+1030\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -173,7 +173,8 @@ msgstr ""
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: includes/edit/admin.php:26 includes/edit/edit.php:48
+#: includes/edit/admin.php:26 includes/edit/edit.php:46
+#: includes/edit/edit.php:47
 msgid "Edit Snippet"
 msgstr ""
 
@@ -218,20 +219,16 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: includes/edit/edit.php:49 includes/manage/class-list-table.php:151
-msgid "Edit"
-msgstr ""
-
-#: includes/edit/edit.php:84 includes/import/import.php:91
+#: includes/edit/edit.php:83 includes/import/import.php:91
 #: includes/manage/manage.php:67
 msgid "You are not access this page."
 msgstr ""
 
-#: includes/edit/edit.php:177 includes/manage/class-list-table.php:242
+#: includes/edit/edit.php:178 includes/manage/class-list-table.php:242
 msgid "Description"
 msgstr ""
 
-#: includes/edit/edit.php:206 includes/manage/class-list-table.php:243
+#: includes/edit/edit.php:207 includes/manage/class-list-table.php:243
 msgid "Tags"
 msgstr ""
 
@@ -495,6 +492,10 @@ msgstr ""
 #: includes/manage/class-list-table.php:141
 #: includes/manage/class-list-table.php:280
 msgid "Activate"
+msgstr ""
+
+#: includes/manage/class-list-table.php:151
+msgid "Edit"
 msgstr ""
 
 #: includes/manage/class-list-table.php:173

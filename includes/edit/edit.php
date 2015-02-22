@@ -121,6 +121,11 @@ function code_snippets_load_single_menu() {
 		/* Strip old status query vars from URL */
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'activated', 'deactivated', 'invalid' ) );
 
+		/* Change the redirect URL to the edit snippet page if a new snippet was successfully added */
+		if ( $result && $result > 1 && ! isset( $_POST['snippet_id'] ) ) {
+			$_SERVER['REQUEST_URI'] = code_snippets_get_menu_url( 'edit' );
+		}
+
 		/* Build the status message and redirect */
 
 		if ( $result && isset( $_POST['save_snippet_activate'] ) ) {
@@ -142,10 +147,7 @@ function code_snippets_load_single_menu() {
 		}
 		else {
 			/* New snippet was added */
-			wp_redirect( add_query_arg(
-				array( 'id' => $result, 'added' => true ),
-				code_snippets_get_menu_url( 'edit' )
-			) );
+			wp_redirect( add_query_arg(	array( 'id' => $result, 'added' => true ) ) );
 		}
 	}
 
