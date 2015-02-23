@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.0.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-23 22:26+1030\n"
+"POT-Creation-Date: 2015-02-23 22:28+1030\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -267,9 +267,8 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: includes/edit/edit.php:83 includes/import/import.php:92
-#: includes/manage/manage.php:67
-msgid "You are not access this page."
+#: includes/edit/edit.php:83 includes/manage/manage.php:67
+msgid "You are not authorized to access this page."
 msgstr ""
 
 #: includes/edit/edit.php:176 includes/manage/class-list-table.php:242
@@ -375,6 +374,10 @@ msgstr ""
 
 #: includes/import/import.php:56
 msgid "Import"
+msgstr ""
+
+#: includes/import/import.php:92
+msgid "You are not access this page."
 msgstr ""
 
 #: includes/manage/admin-help.php:17

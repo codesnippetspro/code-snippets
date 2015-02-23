@@ -433,7 +433,7 @@ msgid "Import snippets from a Code Snippets export file"
 msgstr "Импортировать сниппеты из файла экспорта плагина \"Code Snippets\"."
 
 #: includes/class-admin.php:246
-msgid "You are not access this page."
+msgid "You are not authorized to access this page."
 msgstr "У вас нет доступа к этой странице."
 
 #: includes/class-admin.php:288 includes/class-admin.php:695

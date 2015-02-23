@@ -64,7 +64,7 @@ function code_snippets_load_manage_menu() {
 
 	/* Make sure the user has permission to be here */
 	if ( ! current_user_can( get_snippets_cap() ) ) {
-		wp_die( __( 'You are not access this page.', 'code-snippets' ) );
+		wp_die( __( 'You are not authorized to access this page.', 'code-snippets' ) );
 	}
 
 	/* Load stylesheet for this page */
