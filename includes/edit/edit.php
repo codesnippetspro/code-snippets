@@ -116,7 +116,8 @@ function code_snippets_load_single_menu() {
 		}
 
 		/* Save the snippet to the database */
-		$result = save_snippet( stripslashes_deep( $_POST ) );
+		$network = get_current_screen()->is_network;
+		$result = save_snippet( stripslashes_deep( $_POST ), $network  );
 
 		/* Strip old status query vars from URL */
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'activated', 'deactivated', 'invalid' ) );

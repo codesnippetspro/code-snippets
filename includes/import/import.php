@@ -85,6 +85,7 @@ function code_snippets_render_import_menu() {
  * @uses add_query_arg() To append the results to the current URI
  */
 function code_snippets_load_import_menu() {
+	$network = get_current_screen()->is_network;
 
 	/* Make sure the user has permission to be here */
 	if ( ! current_user_can( get_snippets_cap() ) ) {
@@ -99,7 +100,7 @@ function code_snippets_load_import_menu() {
 	if ( isset( $_FILES['code_snippets_import_file']['tmp_name'] ) ) {
 
 		/* Import the snippets. The result is the number of snippets that were imported */
-		$result = import_snippets( $_FILES['code_snippets_import_file']['tmp_name'] );
+		$result = import_snippets( $_FILES['code_snippets_import_file']['tmp_name'], $network );
 
 		/* Send the amount of imported snippets to the page */
 		if ( false === $result ) {
