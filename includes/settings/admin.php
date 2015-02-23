@@ -26,7 +26,6 @@ function code_snippets_add_settings_menu() {
 }
 
 add_action( 'admin_menu', 'code_snippets_add_settings_menu' );
-add_action( 'network_admin_menu', 'code_snippets_add_settings_menu' );
 
 /**
  * Displays the settings menu
