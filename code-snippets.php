@@ -96,7 +96,7 @@ foreach ( array(
 
 	) as $include ) {
 
-	require_once plugin_dir_path( __FILE__ ) . "includes/$include";
+	require plugin_dir_path( __FILE__ ) . "includes/$include";
 }
 
 /* Initialize database table variables */
