@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.0.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-22 23:45+1030\n"
+"POT-Creation-Date: 2015-02-23 17:50+1030\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -267,16 +267,16 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: includes/edit/edit.php:83 includes/import/import.php:91
+#: includes/edit/edit.php:83 includes/import/import.php:92
 #: includes/manage/manage.php:67
 msgid "You are not access this page."
 msgstr ""
 
-#: includes/edit/edit.php:178 includes/manage/class-list-table.php:242
+#: includes/edit/edit.php:179 includes/manage/class-list-table.php:242
 msgid "Description"
 msgstr ""
 
-#: includes/edit/edit.php:207 includes/manage/class-list-table.php:243
+#: includes/edit/edit.php:208 includes/manage/class-list-table.php:243
 msgid "Tags"
 msgstr ""
 
@@ -582,7 +582,7 @@ msgstr ""
 msgid "Snippets Settings"
 msgstr ""
 
-#: includes/settings/admin.php:21 includes/settings/admin.php:41
+#: includes/settings/admin.php:21 includes/settings/admin.php:40
 msgid "Settings"
 msgstr ""
 

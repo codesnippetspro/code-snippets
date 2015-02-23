@@ -156,8 +156,12 @@ class Code_Snippets_Export {
 			/* Grab the snippet from the database */
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id ), ARRAY_A );
 
-			/* Output the item */
-			$this->do_item( $snippet );
+			/* Process the snippet item */
+			if ( 'php' === $format ) {
+				$this->do_item_php( $snippet );
+			} else {
+				$this->do_item( $snippet );
+			}
 		}
 	}
 

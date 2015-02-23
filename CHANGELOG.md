@@ -33,6 +33,7 @@
 * Updated CodeMirror library to version 5.0
 * Rewritten import/export functionality to use DOMDocument
 * Merged Code_Snippets_Export_PHP class into Code_Snippets_Export class
+* Removed duplicate MySQL primary key indexing
 
 ## 1.9.1.1
 * Add capability check to site snippets importer
