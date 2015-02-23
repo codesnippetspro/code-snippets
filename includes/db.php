@@ -137,9 +137,7 @@ function create_code_snippets_table( $table_name, $force_creation = false ) {
 				id     bigint(20)  unsigned not null auto_increment,
 				{$table_columns_sql},
 				active tinyint(1)           not null default 0,
-			PRIMARY KEY  (id),
-				KEY id (id)
-
+			PRIMARY KEY (id)
 			) {$charset_collate};";
 
 	dbDelta( apply_filters( 'code_snippets/table_sql', $sql ) );
