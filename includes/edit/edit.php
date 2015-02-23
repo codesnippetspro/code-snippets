@@ -116,40 +116,37 @@ function code_snippets_load_single_menu() {
 		}
 
 		/* Save the snippet to the database */
-		$network = get_current_screen()->is_network;
-		$result = save_snippet( stripslashes_deep( $_POST ), $network  );
-
-		/* Strip old status query vars from URL */
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'added', 'updated', 'activated', 'deactivated', 'invalid' ) );
-
-		/* Change the redirect URL to the edit snippet page if a new snippet was successfully added */
-		if ( $result && $result > 1 && ! isset( $_POST['snippet_id'] ) ) {
-			$_SERVER['REQUEST_URI'] = code_snippets_get_menu_url( 'edit' );
-		}
+		$result = save_snippet( stripslashes_deep( $_POST )  );
 
 		/* Build the status message and redirect */
+		$query_args = array();
 
 		if ( $result && isset( $_POST['save_snippet_activate'] ) ) {
 			/* Snippet was activated addition to saving*/
-			$_SERVER['REQUEST_URI'] = add_query_arg( 'activated', true );
+			$query_args['activated'] = true;
 		}
 		elseif ( $result && isset( $_POST['save_snippet_deactivate'] ) ) {
 			/* Snippet was deactivated addition to saving*/
-			$_SERVER['REQUEST_URI'] = add_query_arg( 'deactivated', true );
+			$query_args['deactivated'] = true;
 		}
 
 		if ( ! $result || $result < 1 ) {
 			/* An error occurred */
-			wp_redirect( add_query_arg( 'invalid', true ) );
+			$query_args['invalid'] = true;
 		}
 		elseif ( isset( $_POST['snippet_id'] ) ) {
 			/* Existing snippet was updated */
-			wp_redirect( add_query_arg(	array( 'id' => $result, 'updated' => true ) ) );
+			$query_args['id'] = $result;
+			$query_args['updated'] = true;
 		}
 		else {
 			/* New snippet was added */
-			wp_redirect( add_query_arg(	array( 'id' => $result, 'added' => true ) ) );
+			$query_args['id'] = $result;
+			$query_args['added'] = true;
 		}
+
+		/* Redirect to edit snippet page */
+		wp_redirect( add_query_arg( $query_args, code_snippets_get_menu_url( 'edit' ) ) );
 	}
 
 	/* Delete the snippet if the button was clicked */
