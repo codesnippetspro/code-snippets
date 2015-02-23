@@ -26,14 +26,19 @@ function set_snippet_table_vars() {
  * Return the appropriate snippet table name
  *
  * @since 2.0
- * @param string $multisite Retrieve the multisite table name or the site table name?
+ * @param string|boolean|null $multisite Retrieve the multisite table name or the site table name?
  * @return string The snippet table name
  */
-function get_snippets_table_name( $multisite = false ) {
+function get_snippets_table_name( $multisite = null ) {
 	global $wpdb;
 
+	/* If $multisite is null, try to base it on the current admin page */
+	if ( ! isset( $multisite ) && function_exists( 'get_current_screen' ) ) {
+		$multisite = get_current_screen()->is_network;
+	}
+
 	/* If the first parameter is a string, assume it is a table name */
-	if ( is_string( $multisite ) ) {
+	elseif ( is_string( $multisite ) ) {
 		return $multisite;
 	}
 
