@@ -69,22 +69,13 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 }
 
 function code_snippets_settings_editor_preview() {
-	$example_content = 'function example_replace_admin_footer_text( $footer_text ) {
 
-	if ( ! is_network_admin() ) {
-
-		$footer_text = str_replace(
-			__( \'Thank you for creating with <a href="http://wordpress.org/">WordPress</a>.\' ),
-			sprintf ( __( \'Thank you for visiting <a href="%1$s">%2$s</a>.\' ), get_home_url(), get_bloginfo( \'name\' ) ),
-			$footer_text
-		);
-
-	}
-
-	return $footer_text;
+	$example_content = "
+function example_custom_admin_footer_text( \$text ) {
+	return 'Thank you for visiting <a href=\"' . get_home_url() . '\">' . get_bloginfo( 'name' ) . '</a>.';
 }
 
-add_filter( \'admin_footer_text\', \'example_replace_admin_footer_text\' );';
+add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
 
 	$atts = array(
 		'mode' => 'text/x-php',

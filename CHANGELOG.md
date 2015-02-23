@@ -10,7 +10,6 @@
 * Lots of new translations
 
 
-
 * Removed old admin style support
 * Removed backwards-compatible support
 * Added braces to single-line conditionals in line with [new coding standards](https://make.wordpress.org/core/2013/11/13/proposed-coding-standards-change-always-require-braces/)
