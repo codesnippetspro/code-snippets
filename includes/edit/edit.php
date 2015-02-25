@@ -84,7 +84,7 @@ function code_snippets_load_single_menu() {
 	}
 
 	/* Create the snippet tables if they don't exist */
-	create_code_snippets_tables( true, true );
+	create_code_snippets_tables();
 
 	/* Load the screen help tabs */
 	require plugin_dir_path( __FILE__ ) . 'admin-help.php';

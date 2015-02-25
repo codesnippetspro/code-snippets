@@ -17,6 +17,9 @@ function code_snippets_upgrader() {
 	/* Check if this is the first plugin run */
 	if ( ! $prev_version ) {
 
+		/* Create the snippet tables */
+		create_code_snippets_tables();
+
 		/* Register capabilities */
 		$role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
 		$role->add_cap( apply_filters( 'code_snippets_cap', 'manage_snippets' ) );
@@ -24,6 +27,9 @@ function code_snippets_upgrader() {
 
 	/* Check if we have upgraded from an older version */
 	if ( version_compare( $prev_version, CODE_SNIPPETS_VERSION, '<' ) ) {
+
+		/* Upgrade the database tables */
+		create_code_snippets_tables( true );
 
 		/* Update the plugin version stored in the database */
 		update_option( 'code_snippets_version', CODE_SNIPPETS_VERSION );

@@ -93,7 +93,7 @@ function code_snippets_load_import_menu() {
 	}
 
 	/* Create the snippet tables if they don't exist */
-	create_code_snippets_tables( true, true );
+	create_code_snippets_tables();
 
 	/* Process import files */
 
