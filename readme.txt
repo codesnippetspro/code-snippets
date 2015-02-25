@@ -125,7 +125,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 
 == Changelog ==
 
-## 2.0.1
+= 2.0.1 =
 
 * Fix table creation code not running on upgrade
 * Fix snippets per page option not saving
