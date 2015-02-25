@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1
+
+* Fix table creation code not running on upgrade
+* Fix snippets per page option not saving
+
 ## 2.0
 
 **Highlights:**
