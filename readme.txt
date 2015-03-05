@@ -22,7 +22,7 @@ You can use a graphical interface, similar to the Plugins menu, to manage, activ
 
 Although Code Snippets is designed to be easy-to-use and its interface looks, feels and acts as if it was a native part of WordPress, each screen includes a help tab, just in case you get stuck.
 
-Further information, documentation and updates are available on the [plugin homepage](http://code-snippets.bungeshea.com). You can also contribute to the code at [GitHub](https://github.com/bungeshea/code-snippets).
+Further information, documentation and updates are available on the [plugin homepage](http://code-snippets.bungeshea.com). You can also contribute to the code at [GitHub](https://github.com/sheabunge/code-snippets).
 
 If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](http://wordpress.org/support/plugin/code-snippets). If you like the plugin, or it is useful to you in any way, please review it on [WordPress.org](http://wordpress.org/support/view/plugin-reviews/code-snippets).
 
@@ -114,7 +114,7 @@ You can get help with Code Snippets either on the [WordPress Support Forums][sup
 That's great! Let me know by starting (or adding to) a topic in the [Support Forums][support] or open an issue on [GitHub][issues].
 
 = I want to contribute to and help develop the Code Snippets plugin! =
-That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets), and also be sure to check out the [development page](http://code-snippets.bungeshea.com/development/) on the [project website](http://code-snippets.bungeshea.com).
+That's fantastic! Join me on [GitHub](http://github.com/sheabunge/code-snippets), and also be sure to check out the [development page](http://code-snippets.bungeshea.com/development/) on the [project website](http://code-snippets.bungeshea.com).
 
 == Screenshots ==
 

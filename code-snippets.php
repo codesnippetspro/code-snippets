@@ -110,7 +110,7 @@ add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
  * Place it in this plugin's "languages" folder and name it "code-snippets-[value in wp-config].mo"
  *
  * If you wish to contribute a language file to be included in the Code Snippets package,
- * please see create an issue on GitHub: https://github.com/bungeshea/code-snippets/issues
+ * please see create an issue on GitHub: https://github.com/sheabunge/code-snippets/issues
  */
 function code_snippets_load_textdomain() {
 	load_plugin_textdomain( 'code-snippets', false, dirname( basename( __FILE__ ) ) . '/languages/' );

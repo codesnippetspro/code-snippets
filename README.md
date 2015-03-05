@@ -1,5 +1,5 @@
 ![plugin banner](screenshots/banner-772x250.png)
-# Code Snippets [![Build Status](https://travis-ci.org/bungeshea/code-snippets.png?branch=develop)](https://travis-ci.org/bungeshea/code-snippets)
+# Code Snippets [![Build Status](https://travis-ci.org/sheabunge/code-snippets.png?branch=develop)](https://travis-ci.org/sheabunge/code-snippets)
 
 * __Requires at least:__ [WordPress 3.3](http://wordpress.org/download/) or later
 * __Tested up to:__ WordPress 4.1.1
@@ -117,7 +117,7 @@ You can get help with Code Snippets either on the [WordPress Support Forums][sup
 That's great! Let me know by starting (or adding to) a topic in the [Support Forums][support] or open an issue on [GitHub][issues].
 
 ### I want to contribute to and help develop the Code Snippets plugin!
-That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets), and also be sure to check out the [development page](http://code-snippets.bungeshea.com/development/) on the [project website](http://code-snippets.bungeshea.com).
+That's fantastic! Join me on [GitHub](http://github.com/sheabunge/code-snippets), and also be sure to check out the [development page](http://code-snippets.bungeshea.com/development/) on the [project website](http://code-snippets.bungeshea.com).
 
 ## Screenshots
 
@@ -134,7 +134,7 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 ![Importing snippets from an XML file](screenshots/screenshot-4.png "Importing snippets from an XML file")
 
   [support]: http://wordpress.org/support/plugin/code-snippets/
-  [github]: https://github.com/bungeshea/code-snippets
+  [github]: https://github.com/sheabunge/code-snippets
   [homepage]: http://code-snippets.bungeshea.com
-  [issues]: https://github.com/bungeshea/code-snippets/issues
+  [issues]: https://github.com/sheabunge/code-snippets/issues
   [review]: http://wordpress.org/support/view/plugin-reviews/code-snippets

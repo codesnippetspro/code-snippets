@@ -1,5 +1,5 @@
 {
-	"name": "bungeshea/code-snippets",
+	"name": "sheabunge/code-snippets",
 	"description": "Manage code snippets running on a WordPress-powered site through a graphical interface",
 	"keywords": [
 		"wordpress",
@@ -17,8 +17,8 @@
 		}
 	],
 	"support": {
-		"issues": "https://github.com/bungeshea/code-snippets/issues",
-		"source": "https://github.com/bungeshea/code-snippets"
+		"issues": "https://github.com/sheabunge/code-snippets/issues",
+		"source": "https://github.com/sheabunge/code-snippets"
 	},
 	"require": {
 		"php": ">=5.2.7",
