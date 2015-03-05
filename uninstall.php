@@ -24,6 +24,7 @@ function code_snippets_uninstall_site() {
 	/* Remove saved options */
 	delete_option( 'code_snippets_version' );
 	delete_option( 'recently_activated_snippets' );
+    delete_option( 'code_snippets_settings' );
 
 	/* Deregister capabilities */
 	$role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
