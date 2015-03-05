@@ -17,9 +17,6 @@ function code_snippets_upgrader() {
 	/* Check if this is the first plugin run */
 	if ( ! $prev_version ) {
 
-		/* Create the snippet tables */
-		create_code_snippets_tables();
-
 		/* Register capabilities */
 		$role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
 		$role->add_cap( apply_filters( 'code_snippets_cap', 'manage_snippets' ) );

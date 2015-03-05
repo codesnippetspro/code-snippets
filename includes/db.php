@@ -115,13 +115,12 @@ function create_code_snippets_table( $table_name ) {
 	/* Create the database table */
 
 	$sql = "CREATE TABLE $table_name (
-				id          bigint(20) not null unsigned auto_increment,
+				id          bigint(20) unsigned not null auto_increment primary key,
 				name        tinytext not null,
 				description text,
 				code        longtext not null,
 				tags        longtext,
-				active      tinyint(1) not null default 0,
-			PRIMARY KEY (id)
+				active      tinyint(1) not null default 0
 			) {$charset_collate};";
 
 	dbDelta( $sql );

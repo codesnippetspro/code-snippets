@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.2
+* Fix error in table creation code
+
 ## 2.0.1
 
 * Fix table creation code not running on upgrade
