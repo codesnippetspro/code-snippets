@@ -4,7 +4,7 @@ Donate link: http://code-snippets.bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 4.1.1
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: MIT
 License URI: license.txt
 
@@ -124,6 +124,10 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.0.2 =
+* Fix error in table creation code
+* Remove settings database option when plugin is uninstalled
 
 = 2.0.1 =
 
@@ -308,6 +312,9 @@ That's fantastic! Join me on [GitHub](http://github.com/bungeshea/code-snippets)
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.0.2 =
+Fix snippets not saving
 
 = 2.0 =
 Improved import/export; new settings page; improved core code; more translations

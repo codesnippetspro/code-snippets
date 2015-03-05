@@ -3,7 +3,7 @@
 
 * __Requires at least:__ [WordPress 3.3](http://wordpress.org/download/) or later
 * __Tested up to:__ WordPress 4.1.1
-* __Stable version:__ [2.0.1](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __Stable version:__ [2.0.2](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
 An easy, clean and simple way to add code snippets to your site.
