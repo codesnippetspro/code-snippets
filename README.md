@@ -10,15 +10,15 @@ An easy, clean and simple way to add code snippets to your site.
 
 ## Description
 
-**Code Snippets** is an easy, clean and simple way to add code snippets to your site. No need to edit to your theme's `functions.php` file again!
+Code Snippets is an easy, clean and simple way to add code snippets to your site. It removes the need to add custom snippets to your theme theme's `functions.php` file.
 
-A snippet is a small chunk of PHP code that you can use to extend the functionality of a WordPress-powered website; essentially a mini-plugin with a *lot* less load on your site.
+A snippet is a small chunk of PHP code that you can use to extend the functionality of a WordPress-powered website; essentially a mini-plugin with less load on your site.
 Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while.
-Code Snippets changes that by providing a GUI interface for adding snippets and **actually running them on your site** as if they were in your theme's `functions.php` file.
+Code Snippets changes that by providing a GUI interface for adding snippets and **actually running them on your site** just as if they were in your theme's `functions.php` file.
 
-You can use a graphical interface, similar to the Plugins menu, to manage, activate, deactivate, edit and delete your snippets. Easily organize your snippets by adding a name and description using the visual editor. Code Snippets includes built-in syntax highlighting and other features to help you write your code. Snippets can be exported for transfer to another side, either in XML for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
+Code Snippets provides graphical interface, similar to the Plugins menu, for managing snippets. Snippets can can be activated and deactivated, just like plugins. The snippet editor includes fields for a name, a visual editor-enabled description, tags to allow you to categorize snippets, and a full-featured code editor. Snippets can be exported for transfer to another side, either in XML for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme
 
-Although Code Snippets is designed to be easy-to-use and its interface looks, feels and acts as if it was a native part of WordPress, each screen includes a help tab, just in case you get stuck.
+If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](http://wordpress.org/support/plugin/code-snippets). If you like this plugin, or it is useful to you in any way, please review it on [WordPress.org](http://wordpress.org/support/view/plugin-reviews/code-snippets).
 
 ### Translations
 
@@ -31,15 +31,6 @@ Code Snippets can be used in these different languages thanks to the following t
 * Chinese - [Jincheng Shan](http://shanjincheng.com)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
 * Slovak - [Ján Fajčák](http://wp.sk)
-
-## Other Notes
-
-Further information, documentation and updates are available on the [plugin homepage](http://code-snippets.bungeshea.com).
-
-If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum][support]. If you like the plugin, or it is useful to you in any way, please review it on [WordPress.org][review]
-
-Snippets are stored in the `wp_snippets` table in the WordPress database (the table name may differ depending on what your table prefix is set to).
-Code Snippets will automatically clean up its data when deleted through the WordPress dashboard.
 
 ## Installation
 
@@ -62,8 +53,6 @@ Code Snippets will automatically clean up its data when deleted through the Word
 **Network Activating** Code Snippets through the Network Dashboard will enable a special interface for running snippets across the entire network.
 
 ## Frequently Asked Questions
-
-Further documentation is available on the [plugin website](http://code-snippets.bungeshea.com/).
 
 ### How can I insert my snippet into the post text editor?
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
@@ -107,17 +96,14 @@ Yes. Click the checkboxes next to the snippets you want to export, and then choo
 ### Can I run network-wide snippets on a multisite installation?
 You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard. You can also activate Code Snippets just on the main site, and then individually on other sites of your choice.
 
-## Where are the snippets stored in my WordPress database?
+### Where are the snippets stored in my WordPress database?
 Snippets are stored in the `wp_snippets` table in the WordPress database. The table name may differ depending on what your table prefix is set to.
 
-### I need help with Code Snippets
-You can get help with Code Snippets either on the [WordPress Support Forums][support], on [GithHub][issues], or on [WordPress Answers](http://wordpress.stackexchange.com).
-
-### I have an idea for a cool feature for Code Snippets!
-That's great! Let me know by starting (or adding to) a topic in the [Support Forums][support] or open an issue on [GitHub][issues].
+### I need help with Code Snippets / I have an idea for a new feature for Code Snippets
+You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums][htts://wordpress.org/support/plugin/code-snippets] or on [GithHub](https://github.com/sheabunge/code-snippets)
 
 ### I want to contribute to and help develop the Code Snippets plugin!
-That's fantastic! Join me on [GitHub](http://github.com/sheabunge/code-snippets), and also be sure to check out the [development page](http://code-snippets.bungeshea.com/development/) on the [project website](http://code-snippets.bungeshea.com).
+That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/code-snippets) and send me a pull request.
 
 ## Screenshots
 
@@ -132,9 +118,3 @@ That's fantastic! Join me on [GitHub](http://github.com/sheabunge/code-snippets)
 
 ### Importing snippets from an XML file
 ![Importing snippets from an XML file](screenshots/screenshot-4.png "Importing snippets from an XML file")
-
-  [support]: http://wordpress.org/support/plugin/code-snippets/
-  [github]: https://github.com/sheabunge/code-snippets
-  [homepage]: http://code-snippets.bungeshea.com
-  [issues]: https://github.com/sheabunge/code-snippets/issues
-  [review]: http://wordpress.org/support/view/plugin-reviews/code-snippets
