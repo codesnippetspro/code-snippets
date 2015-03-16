@@ -142,8 +142,6 @@ That's fantastic! Join me on [GitHub](http://github.com/sheabunge/code-snippets)
 * New settings page with code editor settings
 * Code rewritten for cleaner and more efficient code
 * Lots of new translations
-
-
 * Removed old admin style support
 * Removed backwards-compatible support
 * Added braces to single-line conditionals in line with [new coding standards](https://make.wordpress.org/core/2013/11/13/proposed-coding-standards-change-always-require-braces/)
@@ -169,7 +167,7 @@ That's fantastic! Join me on [GitHub](http://github.com/sheabunge/code-snippets)
 * Merged Code_Snippets_Export_PHP class into Code_Snippets_Export class
 * Removed duplicate MySQL primary key indexing
 
-= 1.9.1.1
+= 1.9.1.1 =
 * Add capability check to site snippets importer
 
 = 1.9.1 =
