@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.3
+* Updated German translation by [Joerg Knoerchen](http://www.sensorgrafie.de/)
+
 ## 2.0.2
 * Fix error in table creation code
 * Remove settings database option when plugin is uninstalled

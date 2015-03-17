@@ -4,7 +4,7 @@ Donate link: http://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 4.1.1
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: MIT
 License URI: license.txt
 
@@ -26,13 +26,13 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
-* German - [David Decker](http://deckerweb.de)
-* French - [oWEB](http://office-web.net)
-* Japanese - [mt8](http://mt8.biz/)
-* Serbo-Croatian - [Borisa Djuraskovic from Web Hosting Hub](http://www.webhostinghub.com/)
-* Chinese - [Jincheng Shan](http://shanjincheng.com)
-* Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
+* German - [David Decker](http://deckerweb.de) and [Joerg Knoerchen](http://www.sensorgrafie.de/)
 * Slovak - [Ján Fajčák](http://wp.sk)
+* Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
+* Chinese - [Jincheng Shan](http://shanjincheng.com)
+* Serbo-Croatian - [Borisa Djuraskovic from Web Hosting Hub](http://www.webhostinghub.com/)
+* Japanese - [mt8](http://mt8.biz/)
+* French - [oWEB](http://office-web.net)
 
 == Installation ==
 
@@ -102,7 +102,7 @@ You can run snippets across an entire multisite network by **Network Activating*
 Snippets are stored in the `wp_snippets` table in the WordPress database. The table name may differ depending on what your table prefix is set to.
 
 = I need help with Code Snippets / I have an idea for a new feature for Code Snippets =
-You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums][htts://wordpress.org/support/plugin/code-snippets] or on [GithHub](https://github.com/sheabunge/code-snippets)
+You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums](https://wordpress.org/support/plugin/code-snippets) or on [GitHub](https://github.com/sheabunge/code-snippets)
 
 = I want to contribute to and help develop the Code Snippets plugin! =
 That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/code-snippets) and send me a pull request.
@@ -115,6 +115,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.0.3 =
+* Updated German translation by [Joerg Knoerchen](http://www.sensorgraphy.net/)
 
 = 2.0.2 =
 * Fix error in table creation code

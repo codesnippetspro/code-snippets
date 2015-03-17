@@ -238,7 +238,7 @@ msgstr "Snippet <strong>ajouté</strong> et <strong>activaté</strong>."
 
 #: includes/edit/admin-messages.php:26
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
-msgstr ""
+msgstr "Snippet <strong>mis à jour</strong> et <strong>désactivaté</strong>."
 
 #: includes/edit/admin-messages.php:30
 msgid "Snippet <strong>updated</strong>."
