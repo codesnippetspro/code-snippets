@@ -127,46 +127,47 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 
 = 2.0 =
 
-**Highlights:**
+__Highlights__
 
 * Better import/export functionality
 * New settings page with code editor settings
 * Code rewritten for cleaner and more efficient code
 * Lots of new translations
-* Removed old admin style support
-* Removed backwards-compatible support
-* Added braces to single-line conditionals in line with [new coding standards](https://make.wordpress.org/core/2013/11/13/proposed-coding-standards-change-always-require-braces/)
-* Split up large classes into separate functions
-* Improved plugin file structure
-* Replaced uninstall hook with single file method
+
+__Added__
+
 * Added link to Code Snippets importer under Snippets admin menu
 * Added settings component and admin page
 * Added support for different CodeMirror themes
 * Integrated tags component into main plugin. Current users of the Code Snippets Tags plugin can safely uninstall it.
 * Added Auto Close Brackets CodeMirror addon (props to TronicLabs)
-* Fixed incompatibility errors with PHP 5.2
 * Added Serbo-Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
-* Fixed empty MO translation files
 * Added Highlight Selection Matches CodeMirror addon (props to TronicLabs)
 * Added Chinese translation thanks to Jincheng Shan
-* Updated CodeMirror library to version 4.6
 * Added Russian translation by Alexander Samsonov
-* Added Slovak translation by Ján Fajčák from [WordPress Slovakia](http://wp.sk)
+* Added Slovak translation by [Ján Fajčák] from [WordPress Slovakia](http://wp.sk)
 * Added setting to always save and activate snippets by default
+
+__Changed__
+
+* Added braces to single-line conditionals in line with [new coding standards](https://make.wordpress.org/core/2013/11/13/proposed-coding-standards-change-always-require-braces/)
+* Split up large classes into separate functions
+* Improved plugin file structure
+* Replaced uninstall hook with single file method
 * Updated CodeMirror library to version 5.0
 * Rewritten import/export functionality to use DOMDocument
 * Merged Code_Snippets_Export_PHP class into Code_Snippets_Export class
+
+__Deprecated__
+
+* Removed old admin style support
+* Removed backwards-compatible support
+
+__Fixed__
+
+* Fixed incompatibility errors with PHP 5.2
+* Fixed empty MO translation files
 * Removed duplicate MySQL primary key indexing
-
-= 1.9.1.1 =
-* Add capability check to site snippets importer
-
-= 1.9.1 =
-* Use an icon font for menu icon instead of embedded SVG
-* Use Sass (libsass) instead of Compass
-* Unminify CodeMirror scripts
-* Fixes for the WP 3.8 interface
-* Fix 'enable snippets menu for site admins' multisite setting
 
 = 1.9 =
 * Add and remove network capabilities as super admins are added and removed
