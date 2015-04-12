@@ -241,7 +241,7 @@ function code_snippets_enqueue_codemirror() {
 
 	/* CodeMirror */
 
-	$codemirror_version = '5.0';
+	$codemirror_version = '5.1';
 	$codemirror_url     = plugins_url( 'vendor/codemirror/', CODE_SNIPPETS_FILE );
 
 	wp_enqueue_style(
