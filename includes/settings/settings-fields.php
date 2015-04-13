@@ -38,4 +38,8 @@ function code_snippets_number_field( $atts ) {
 		$atts['id'],
 		code_snippets_get_setting( $atts['section'], $atts['id'] )
 	);
+
+	if ( ! empty( $atts['label'] ) ) {
+		echo " $label";
+	}
 }
