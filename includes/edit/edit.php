@@ -169,7 +169,7 @@ function code_snippets_load_single_menu() {
  * @param object $snippet The snippet being used for this page
  */
 function code_snippets_description_editor_box( $snippet ) {
-
+	$rows = code_snippets_get_setting( 'general', 'description_editor_rows' );
 	?>
 
 	<label for="snippet_description">
@@ -185,7 +185,7 @@ function code_snippets_description_editor_box( $snippet ) {
 		'description',
 		apply_filters( 'code_snippets/admin/description_editor_settings', array(
 			'textarea_name' => 'snippet_description',
-			'textarea_rows' => 10,
+			'textarea_rows' => $rows,
 			'teeny' => true,
 			'media_buttons' => false,
 		) )

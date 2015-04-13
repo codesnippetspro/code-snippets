@@ -70,6 +70,14 @@ function code_snippets_get_settings_fields() {
 			'label' => __( "Make the 'Save and Activate' button the default action when saving a snippet.", 'code-snippets' ),
 			'default' => false,
 		),
+
+		array(
+			'id' => 'description_editor_rows',
+			'name' => 'Description Editor Height',
+			'type' => 'number',
+			'label' => 'rows',
+			'default' => 10,
+		),
 	);
 
 	/* Editor settings section */
@@ -96,7 +104,7 @@ function code_snippets_get_settings_fields() {
 			'id' => 'tab_size',
 			'name' => __( 'Tab Size', 'code-snippets' ),
 			'type' => 'number',
-			'label' => __( 'The width of a tab character.', 'code-snippets' ),
+			'desc' => __( 'The width of a tab character.', 'code-snippets' ),
 			'default' => 4,
 			'codemirror' => 'tabSize',
 		),
@@ -105,7 +113,7 @@ function code_snippets_get_settings_fields() {
 			'id' => 'indent_unit',
 			'name' => __( 'Indent Unit', 'code-snippets' ),
 			'type' => 'number',
-			'label' => __( 'How many spaces a block should be indented.', 'code-snippets' ),
+			'desc' => __( 'How many spaces a block should be indented.', 'code-snippets' ),
 			'default' => 2,
 			'codemirror' => 'indentUnit',
 		),
