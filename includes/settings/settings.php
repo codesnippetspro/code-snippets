@@ -49,7 +49,8 @@ function code_snippets_get_setting( $section, $field ) {
 function code_snippets_get_settings_sections() {
 	$sections = array(
 		'general' => __( 'General', 'code-snippets' ),
-		'editor' => __( 'Editor', 'code-snippets' ),
+		'description_editor' => __( 'Description Editor', 'code-snippets' ),
+		'editor' => __( 'Code Editor', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
@@ -69,18 +70,38 @@ function code_snippets_get_settings_fields() {
 			'type' => 'checkbox',
 			'label' => __( "Make the 'Save and Activate' button the default action when saving a snippet.", 'code-snippets' ),
 			'default' => false,
+		)
+	);
+
+	/* Description Editor settings section */
+	$settings['description_editor'] = array(
+
+		array(
+			'id' => 'rows',
+			'name' => 'Row Height',
+			'type' => 'number',
+			'label' => 'rows',
+			'default' => 5,
 		),
 
 		array(
-			'id' => 'description_editor_rows',
-			'name' => 'Description Editor Height',
-			'type' => 'number',
-			'label' => 'rows',
-			'default' => 10,
+			'id' => 'use_full_mce',
+			'name' => 'Use Full Editor',
+			'type' => 'checkbox',
+			'label' => 'Enable all features of the visual editor',
+			'default' => false,
+		),
+
+		array(
+			'id' => 'media_buttons',
+			'name' => 'Media Buttons',
+			'type' => 'checkbox',
+			'label' => 'Enable the add media buttons',
+			'default' => false,
 		),
 	);
 
-	/* Editor settings section */
+	/* Code Editor settings section */
 
 	$settings['editor'] = array(
 		array(
