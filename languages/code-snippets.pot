@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-17 23:16+1100\n"
+"POT-Creation-Date: 2015-04-26 19:16+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -271,11 +271,11 @@ msgstr ""
 msgid "You are not authorized to access this page."
 msgstr ""
 
-#: includes/edit/edit.php:176 includes/manage/class-list-table.php:224
+#: includes/edit/edit.php:177 includes/manage/class-list-table.php:224
 msgid "Description"
 msgstr ""
 
-#: includes/edit/edit.php:205 includes/manage/class-list-table.php:225
+#: includes/edit/edit.php:206 includes/manage/class-list-table.php:225
 msgid "Tags"
 msgstr ""
 
@@ -594,82 +594,86 @@ msgid "General"
 msgstr ""
 
 #: includes/settings/settings.php:52
-msgid "Editor"
+msgid "Description Editor"
 msgstr ""
 
-#: includes/settings/settings.php:68
+#: includes/settings/settings.php:53
+msgid "Code Editor"
+msgstr ""
+
+#: includes/settings/settings.php:69
 msgid "Activate by Default"
 msgstr ""
 
-#: includes/settings/settings.php:70
+#: includes/settings/settings.php:71
 msgid ""
 "Make the 'Save and Activate' button the default action when saving a snippet."
 msgstr ""
 
-#: includes/settings/settings.php:80
+#: includes/settings/settings.php:109
 msgid "Theme"
 msgstr ""
 
-#: includes/settings/settings.php:88
+#: includes/settings/settings.php:117
 msgid "Indent With Tabs"
 msgstr ""
 
-#: includes/settings/settings.php:90
+#: includes/settings/settings.php:119
 msgid "Use hard tabs (not spaces) for indentation."
 msgstr ""
 
-#: includes/settings/settings.php:97
+#: includes/settings/settings.php:126
 msgid "Tab Size"
 msgstr ""
 
-#: includes/settings/settings.php:99
+#: includes/settings/settings.php:128
 msgid "The width of a tab character."
 msgstr ""
 
-#: includes/settings/settings.php:106
+#: includes/settings/settings.php:135
 msgid "Indent Unit"
 msgstr ""
 
-#: includes/settings/settings.php:108
+#: includes/settings/settings.php:137
 msgid "How many spaces a block should be indented."
 msgstr ""
 
-#: includes/settings/settings.php:115
+#: includes/settings/settings.php:144
 msgid "Wrap Lines"
 msgstr ""
 
-#: includes/settings/settings.php:117
+#: includes/settings/settings.php:146
 msgid "Whether the editor should scroll or wrap for long lines."
 msgstr ""
 
-#: includes/settings/settings.php:124
+#: includes/settings/settings.php:153
 msgid "Line Numbers"
 msgstr ""
 
-#: includes/settings/settings.php:126
+#: includes/settings/settings.php:155
 msgid "Show line numbers to the left of the editor."
 msgstr ""
 
-#: includes/settings/settings.php:133
+#: includes/settings/settings.php:162
 msgid "Auto Close Brackets"
 msgstr ""
 
-#: includes/settings/settings.php:135
+#: includes/settings/settings.php:164
 msgid "Auto-close brackets and quotes when typed."
 msgstr ""
 
-#: includes/settings/settings.php:142
+#: includes/settings/settings.php:171
 msgid "Highlight Selection Matches"
 msgstr ""
 
-#: includes/settings/settings.php:143
+#: includes/settings/settings.php:172
 msgid "Highlight all instances of a currently selected word."
 msgstr ""
 
-#: includes/settings/settings.php:190
+#: includes/settings/settings.php:219
 msgid "Editor Preview"
 msgstr ""
 
-#: includes/settings/settings.php:238
+#: includes/settings/settings.php:267
 msgid "Settings saved."
 msgstr ""
