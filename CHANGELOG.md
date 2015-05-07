@@ -1,5 +1,64 @@
 # Changelog
 
+## 2.0.3
+* Updated German translation by [Joerg Knoerchen](http://www.sensorgrafie.de/)
+
+## 2.0.2
+* Fix error in table creation code
+* Remove settings database option when plugin is uninstalled
+
+## 2.0.1
+
+* Fix table creation code not running on upgrade
+* Fix snippets per page option not saving
+
+## 2.0
+
+### Highlights
+
+* Better import/export functionality
+* New settings page with code editor settings
+* Code rewritten for cleaner and more efficient code
+* Lots of new translations
+
+### Added
+
+* Added link to Code Snippets importer under Snippets admin menu
+* Added settings component and admin page
+* Added support for different CodeMirror themes
+* Integrated tags component into main plugin. Current users of the Code Snippets Tags plugin can safely uninstall it.
+* Added Auto Close Brackets CodeMirror addon (props to TronicLabs)
+* Added Serbo-Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
+* Added Highlight Selection Matches CodeMirror addon (props to TronicLabs)
+* Added Chinese translation thanks to Jincheng Shan
+* Added Russian translation by Alexander Samsonov
+* Added Slovak translation by [Ján Fajčák] from [WordPress Slovakia](http://wp.sk)
+* Added setting to always save and activate snippets by default
+
+### Changed
+
+* Added braces to single-line conditionals in line with [new coding standards](https://make.wordpress.org/core/2013/11/13/proposed-coding-standards-change-always-require-braces/)
+* Split up large classes into separate functions
+* Improved plugin file structure
+* Replaced uninstall hook with single file method
+* Updated CodeMirror library to version 5.0
+* Rewritten import/export functionality to use DOMDocument
+* Merged Code_Snippets_Export_PHP class into Code_Snippets_Export class
+
+### Deprecated
+
+* Removed old admin style support
+* Removed backwards-compatible support
+
+### Fixed
+
+* Fixed incompatibility errors with PHP 5.2
+* Fixed empty MO translation files
+* Removed duplicate MySQL primary key indexing
+
+## 1.9.1.1
+* Add capability check to site snippets importer
+
 ## 1.9.1
 * Use an icon font for menu icon instead of embedded SVG
 * Use Sass (libsass) instead of Compass
@@ -50,7 +109,7 @@
 * Don't encode HTML entities in database
 
 ## 1.7.1.2
-* Correct path to admin menu icon. Fixes [#8](https://github.com/bungeshea/code-snippets/issues/8)
+* Correct path to admin menu icon. Fixes [#8](https://github.com/sheabunge/code-snippets/issues/8)
 
 ## 1.7.1.1
 * Fixed a bug with custom capabilities and admin menus

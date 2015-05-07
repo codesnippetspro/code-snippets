@@ -1,0 +1,502 @@
+# This file is distributed under the same license as the Code Snippets package.
+# Marco <troniclabs.crew@gmail.com>, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: Code Snippets\n"
+"PO-Revision-Date: 2014-08-08 09:26+0200\n"
+"Last-Translator: Marco <troniclabs.crew@gmail.com>\n"
+"Language-Team: Tronic Labs\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+
+#: code-snippets.php:0 code-snippets.php:262
+msgid "Code Snippets"
+msgstr "Code Snippets"
+
+#: code-snippets.php:0
+msgid "An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!"
+msgstr ""
+"Un facile, semplice e pulito modo di aggiungere Snippet, frammenti di codice "
+"al tuo sito. Senza editare il tuo tema e il tuo file functions.php."
+
+#: code-snippets.php:0
+msgid "Shea Bunge"
+msgstr "Shea Bunge"
+
+#: code-snippets.php:0
+msgid "http://bungeshea.com"
+msgstr "http://bungeshea.com"
+
+#: code-snippets.php:577 code-snippets.php:578 code-snippets.php:588
+#: includes/admin/manage.php:36
+msgid "Snippets"
+msgstr "Snippets"
+
+#: code-snippets.php:612 code-snippets.php:1145 includes/admin/single.php:45
+msgid "Add New Snippet"
+msgstr "Aggiungi nuovo Snippet"
+
+#: code-snippets.php:613
+msgid "Add New"
+msgstr "Aggiungi Nuovo"
+
+#: code-snippets.php:641 includes/admin/import.php:34
+msgid "Import Snippets"
+msgstr "Importa Snippet"
+
+#: code-snippets.php:642
+msgid "Import"
+msgstr "Importa"
+
+#: code-snippets.php:601 code-snippets.php:1146 includes/admin/single.php:37
+msgid "Edit Snippet"
+msgstr "Edita Snippet"
+
+#: code-snippets.php:1465
+msgid "Manage your existing snippets"
+msgstr "Gestisci i tuoi snippets esistenti"
+
+#: code-snippets.php:589 code-snippets.php:1466
+msgid "Manage"
+msgstr "Gestisci"
+
+#: code-snippets.php:1486
+msgid "Visit the WordPress.org plugin page"
+msgstr "Visita la pagina del plugin su WordPress.org"
+
+#: code-snippets.php:1487
+msgid "About"
+msgstr "Info"
+
+#: code-snippets.php:1491
+msgid "Visit the support forums"
+msgstr "Visita il forum di supporto"
+
+#: code-snippets.php:1492
+msgid "Support"
+msgstr "Supporto"
+
+#: code-snippets.php:1496
+msgid "Support this plugin's development"
+msgstr "Supporta lo sviluppo di questo plugin"
+
+#: code-snippets.php:1497
+msgid "Donate"
+msgstr "Donazione"
+
+#: includes/admin/import.php:38
+msgid "Howdy! Upload your Code Snippets export file and we&#8217;ll import the snippets to this site."
+msgstr ""
+"Wella! Carica i tuoi Snippets di codice dal file esportato e li importeremo "
+"nel tuo sito. "
+
+#: includes/admin/import.php:40
+msgid "You will need to go to the <a href=\"%s\">Manage Snippets</a> page to activate the imported snippets."
+msgstr ""
+"Dovrai andare nella pagina <a href=\"%s\">Gestisci Snippets</a> per attivare "
+"gli snippets importati."
+
+#: includes/admin/import.php:42
+msgid "Choose a Code Snippets (.xml) file to upload, then click Upload file and import."
+msgstr ""
+"Scegli un file di Codice Snippets (.xml) da caricare, quindi clicca su "
+"Carica file e Importa."
+
+#: includes/admin/import.php:46
+msgid "Choose a file from your computer:"
+msgstr "Scegli un file dal computer:"
+
+#: includes/admin/import.php:46
+msgid "(Maximum size: 8MB)"
+msgstr "(Grandezza massima: 8MB)"
+
+#: includes/admin/import.php:55
+msgid "Upload file and import"
+msgstr "Carica un file e importa"
+
+#: includes/admin/manage.php:21
+msgid "Snippet <strong>activated</strong>."
+msgstr "Snippet <strong>attivato</strong>."
+
+#: includes/admin/manage.php:23
+msgid "Selected snippets <strong>activated</strong>."
+msgstr "Snippet selezionato <strong>attivato</strong>."
+
+#: includes/admin/manage.php:25
+msgid "Snippet <strong>deactivated</strong>."
+msgstr "Snippet <strong>disattivato</strong>."
+
+#: includes/admin/manage.php:27
+msgid "Selected snippets <strong>deactivated</strong>."
+msgstr "Snippet selezionato <strong>disattivato</strong>."
+
+#: includes/admin/manage.php:29
+msgid "Snippet <strong>deleted</strong>."
+msgstr "Snippet <strong>cancellato</strong>."
+
+#: includes/admin/manage.php:31
+msgid "Selected snippets <strong>deleted</strong>."
+msgstr "Snippet selezionato <strong>cancellato</strong>."
+
+#: includes/admin/manage.php:38 includes/admin/single.php:42
+msgctxt "snippet"
+msgid "Add New"
+msgstr "Aggiungi Nuovo"
+
+#: includes/admin/manage.php:47
+msgid "Search Installed Snippets"
+msgstr "Cerca Snippets Installati"
+
+#: includes/admin/single.php:22
+msgid "Please provide a name for the snippet and its code."
+msgstr "Per favore dai un nome allo snippet e al suo codice."
+
+#: includes/admin/single.php:28
+msgid "Snippet <strong>updated</strong>."
+msgstr "Snippet <strong>aggiornato</strong>."
+
+#: includes/admin/single.php:30
+msgid "Snippet <strong>added</strong>."
+msgstr "Snippet <strong>aggiunto</strong>."
+
+#: includes/admin/single.php:55 includes/admin/single.php:56
+msgid "Name (short title)"
+msgstr "Nome (titolo corto)"
+
+#: includes/admin/single.php:61
+msgid "Code"
+msgstr "Codice"
+
+#: code-snippets.php:1433 includes/class-list-table.php:189
+msgid "Description"
+msgstr "Descizione"
+
+#: code-snippets.php:1434
+msgid "(Optional)"
+msgstr "(Opzionale)"
+
+#: includes/class-list-table.php:36
+msgid "Snippets per page"
+msgstr "Snippets per pagina"
+
+#: code-snippets.php:1118 includes/class-list-table.php:127
+#: includes/class-list-table.php:213
+msgid "Network Deactivate"
+msgstr "Network Disattivato"
+
+#: code-snippets.php:1118 includes/class-list-table.php:127
+#: includes/class-list-table.php:213
+msgid "Deactivate"
+msgstr "Disattivato"
+
+#: code-snippets.php:1127 includes/class-list-table.php:137
+#: includes/class-list-table.php:212
+msgid "Network Activate"
+msgstr "Network Attivato"
+
+#: code-snippets.php:1127 includes/class-list-table.php:137
+#: includes/class-list-table.php:212
+msgid "Activate"
+msgstr "Attivato"
+
+#: includes/class-list-table.php:187
+msgid "Name"
+msgstr "Nome"
+
+#: includes/class-list-table.php:188
+msgid "ID"
+msgstr "ID"
+
+#: includes/class-list-table.php:147 includes/class-list-table.php:214
+msgid "Export"
+msgstr "Esporta"
+
+#: includes/class-list-table.php:155 includes/class-list-table.php:215
+msgid "Delete"
+msgstr "Cancella"
+
+#: includes/class-list-table.php:216
+msgid "Export to PHP"
+msgstr "Esporta in PHP"
+
+#: includes/class-list-table.php:236
+msgid "All <span class=\"count\">(%s)</span>"
+msgid_plural "All <span class=\"count\">(%s)</span>"
+msgstr[0] "Tutto <span class=\"count\">(%s)</span>"
+msgstr[1] "Tutti <span class=\"count\">(%s)</span>"
+
+#: includes/class-list-table.php:239
+msgid "Active <span class=\"count\">(%s)</span>"
+msgid_plural "Active <span class=\"count\">(%s)</span>"
+msgstr[0] "Attivo <span class=\"count\">(%s)</span>"
+msgstr[1] "Attivi <span class=\"count\">(%s)</span>"
+
+#: includes/class-list-table.php:242
+msgid "Recently Active <span class=\"count\">(%s)</span>"
+msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
+msgstr[0] "Recentemente Attivo <span class=\"count\">(%s)</span>"
+msgstr[1] "Recentemente Attivi <span class=\"count\">(%s)</span>"
+
+#: includes/class-list-table.php:245
+msgid "Inactive <span class=\"count\">(%s)</span>"
+msgid_plural "Inactive <span class=\"count\">(%s)</span>"
+msgstr[0] "Inattivo <span class=\"count\">(%s)</span>"
+msgstr[1] "Inattivi <span class=\"count\">(%s)</span>"
+
+#: includes/class-list-table.php:279
+msgid "Clear List"
+msgstr "Cancella Lista"
+
+#: includes/class-list-table.php:374
+msgid "You do not appear to have any snippets available at this time. <a href=\"%s\">Add New&rarr;</a>"
+msgstr ""
+"Sembra che tu non abbia nessuno snippets disponibile fino ad ora. <a href=\"%"
+"s\">Aggiungi Nuovo&rarr;</a>"
+
+#: includes/help/import.php:5 includes/help/manage.php:5
+#: includes/help/single.php:5
+msgid "Overview"
+msgstr "Panoramica"
+
+#: includes/help/import.php:7
+msgid "Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can load snippets from a Code Snippets (.xml) import file into the database with your existing snippets."
+msgstr ""
+"Gli Snippets sono simili ai Plugin - tutti e due espandono le funzionalità "
+"di WordPress. Gli Snippets sono più leggeri, giusto poche righe di codice, e "
+"non appesantiscono il server. Qui tu puoi caricare snippet da un file di "
+"codice Snippets (.xml) ed importarli nel database aggiungendoli a gli altri "
+"esistenti."
+
+#: includes/help/import.php:12
+msgid "Importing"
+msgstr "Importando"
+
+#: includes/help/import.php:15
+msgid "Snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href=\"%s\">Manage Snippets</a> page.</p>"
+msgstr ""
+"Gli Snippets saranno aggiunti al database insieme ai quelli esistenti. "
+"Indipendentemente dal fatto che gli snippets erano attivi sul sito "
+"precedente, gli snippets importati sono sempre inattivi finché non vengono "
+"attivati utilizzando la <a href=\"%s\">Gestisci Snippets</a> pagina.</p>"
+
+#: includes/help/import.php:20
+msgid "Exporting"
+msgstr "Esportando"
+
+#: includes/help/import.php:22
+msgid "You can save your snippets to a Code Snippets (.xml) export file using the <a href=\"%s\">Manage Snippets</a> page."
+msgstr ""
+"Tu puoi salvare i tuoi snippets in un file di codice Snippets (.xml) usando "
+"la <a href=\"%s\">Gestisci Snippets</a> pagina."
+
+#: includes/help/import.php:26 includes/help/manage.php:27
+#: includes/help/single.php:31
+msgid "For more information:"
+msgstr "Per maggiori informazioni:"
+
+#: includes/help/import.php:27 includes/help/single.php:32
+msgid "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank\">WordPress Extend</a>"
+msgstr ""
+"<a href=\"http://wordpress.org/plugins/code-snippets\" "
+"target=\"_blank\">WordPress Extend</a>"
+
+#: includes/help/import.php:28 includes/help/manage.php:29
+#: includes/help/single.php:33
+msgid "<a href=\"http://wordpress.org/support/plugin/code-snippets\" target=\"_blank\">Support Forums</a>"
+msgstr ""
+"<a href=\"http://wordpress.org/support/plugin/code-snippets\" "
+"target=\"_blank\">Support Forums</a>"
+
+#: includes/help/manage.php:7
+msgid "Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can manage your existing snippets and preform tasks on them such as activating, deactivating, deleting and exporting."
+msgstr ""
+"Gli Snippets sono simili ai Plugin - tutti e due espandono le funzionalità "
+"di WordPress. Gli Snippets sono più leggeri, giusto poche righe di codice, e "
+"non appesantiscono il server. Qui tu puoi gestire i tuoi snippets, "
+"attivarli, disattivarli, cancellarli ed esportarli."
+
+#: includes/help/manage.php:12
+msgid "Safe Mode"
+msgstr "Modalità Sicura"
+
+#: includes/help/manage.php:14
+msgid "Be sure to check your snippets for errors before you activate them, as a faulty snippet could bring your whole blog down. If your site starts doing strange things, deactivate all your snippets and activate them one at a time."
+msgstr ""
+"Assicuratevi di controllare i vostri snippets da errori prima di attivarli, "
+"uno snippet difettoso potrebbe bloccare tutto il tuo blog. Se il tuo sito "
+"inizia a fare cose strane, disattivare tutti gli snippets e attivarli uno "
+"alla volta."
+
+#: includes/help/manage.php:20
+msgid "Uninstall"
+msgstr "Disinstalla"
+
+#: includes/help/manage.php:22
+msgid "When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP."
+msgstr ""
+"Quando tu disinstalli il Code Snippets dal Plugins menu in WordPress, esso "
+"cancellerà la <code>%1$s</code> tavola e pochi altri  bit di dati "
+"memorizzati nel tuo database. Se tu vuoi mantenere questi dati (es. tu stai "
+"solo temporaneamente disinstallando il Code Snippets) allora rimuovi la "
+"<code>%2$s</code> cartella usando lo FTP."
+
+#: includes/help/manage.php:23
+msgid "Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installation, you may want to use the export feature to back up your snippets."
+msgstr ""
+"Anche se sei sicuro che non vuoi più utilizzare Code Snippets in WordPress, "
+"è possibile utilizzare la funzione di esportazione per il backup degli "
+"snippets."
+
+#: includes/help/manage.php:28
+msgid "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank\">WordPress Extend</a></p>"
+msgstr ""
+"<a href=\"http://wordpress.org/plugins/code-snippets\" "
+"target=\"_blank\">WordPress Extend</a></p>"
+
+#: includes/help/single.php:7
+msgid "Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can add a new snippet, or edit an existing one."
+msgstr ""
+"Gli Snippets sono simili ai Plugin - tutti e due espandono le funzionalità "
+"di WordPress. Gli Snippets sono più leggeri, giusto poche righe di codice, e "
+"non appesantiscono il server. Qui tu puoi aggiungere un nuovo snippet o "
+"modificarne uno esistente."
+
+#: includes/help/single.php:11
+msgid "Finding Snippets"
+msgstr "Cercando Snippets"
+
+#: includes/help/single.php:13
+msgid ""
+"Here are some links to websites which host a large number of snippets that you can add to your site.\n"
+"\t\t<ul>\n"
+"\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets\">WP-Snippets</a></li>\n"
+"\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</a></li>\n"
+"\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title=\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
+"\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+"\t\t</ul>"
+msgstr ""
+"Qui ci sono alcuni link a siti web che ospitano un largo numero di snippets "
+"che puoi aggiungere al tuo sito.\n"
+"\t\t<ul>\n"
+"\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets\">WP-"
+"Snippets</a></li>\n"
+"\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</a></li>\n"
+"\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title=\"Cats Who "
+"Code Snippet Library\">Cats Who Code</a></li>\n"
+"\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>"
+
+#: includes/help/single.php:24
+msgid "Adding Snippets"
+msgstr "Aggiungendo Snippets"
+
+#: includes/help/single.php:26
+msgid "You need to fill out the name and code fields for your snippet to be added. While the description field will add more information about how your snippet works, what is does and where you found it, it is completely optional."
+msgstr ""
+"Devi riempire il campo del nome e il codice per aggiungere lo snippet. "
+"Mentre il campo della descrizione aggiungerà più informazioni riguardo a "
+"come lavora il tuo snippet, cosa fa e dove lo ritroviamo, ed è completamente "
+"opzionale. "
+
+#: includes/help/single.php:27
+msgid "Please be sure to check that your snippet is valid PHP code and will not produce errors before adding it through this page. While doing so will not become active straight away, it will help to minimise the chance of a faulty snippet becoming active on your site."
+msgstr ""
+"Per favore accertati che lo snippet abbia un codice PHP valido e non produca "
+"errori aggiungendolo a questa pagina. Facendo così, e non attivandolo "
+"immediatamente, ci assicureremo di minimizzare le probabilità che uno "
+"snippet difettoso sia attivato nel sito. "
+
+#: code-snippets.php:0
+msgid "http://code-snippets.bungeshea.com"
+msgstr "http://code-snippets.bungeshea.com"
+
+#: code-snippets.php:263
+msgid "Import snippets from a <strong>Code Snippets</strong> export file"
+msgstr "Importa snippets da un file <strong>Code Snippets</strong> esportato"
+
+#: includes/admin/import.php:20
+msgid "Imported <strong>%d</strong> snippet."
+msgid_plural "Imported <strong>%d</strong> snippets."
+msgstr[0] "Importato <strong>%d</strong> snippet."
+msgstr[1] "Importati <strong>%d</strong> snippets."
+
+#: includes/help/import.php:29 includes/help/manage.php:30
+#: includes/help/single.php:34
+msgid "<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project Website</a>"
+msgstr ""
+"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project "
+"Website</a>"
+
+#: includes/help/manage.php:15
+msgid "If something goes wrong with a snippet and you can't use WordPress, you can cause all snippets to stop executing by adding <code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-config.php</code> file. After you have deactivated the offending snippet, you can turn off safe mode by removing this line or replacing <strong>true</strong> with <strong>false</strong>."
+msgstr ""
+"Se qualcosa va storto con uno snippet e non puoi più usare WordPress, puoi "
+"bloccare la esecuzione di tutti gli snippets aggiungendo "
+"<code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> al tuo file <code>wp-"
+"config.php</code>. Dopo aver disattivato lo snippet difettoso, puoi uscire "
+"dalla modalità sicura rimuovendo la linea oppure cambiando "
+"<strong>true</strong> con <strong>false</strong>."
+
+#: includes/help/single.php:20
+msgid "More places to find snippets, as well as a selection of example snippets, can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/finding-snippets/\">plugin documentation</a>"
+msgstr ""
+"Un po' di posti dove cercare snippets, una selezione e alcuni esempi li pui "
+"trovare nella <a href=\"http://code-snippets.bungeshea.com/docs/finding-"
+"snippets/\">documentazione del plugin</a>"
+
+#: code-snippets.php:0
+msgid "1.7"
+msgstr "1.7"
+
+#: code-snippets.php:602 includes/class-list-table.php:142
+msgid "Edit"
+msgstr "Modifica"
+
+#: code-snippets.php:1227
+msgid "Sorry, you're not allowed to edit snippets"
+msgstr "Scusa, tu non sei abilitato a modificare questo snippets"
+
+#: includes/admin/single.php:24
+msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
+msgstr "Snippet <strong>aggiornato</strong> e <strong>attivato</strong>."
+
+#: includes/admin/single.php:26
+msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
+msgstr "Snippet <strong>aggiunto</strong> e <strong>attivato</strong>."
+
+#: includes/class-list-table.php:163
+msgid ""
+"You are about to permanently delete the selected item.\n"
+"\t\t\t\t'Cancel' to stop, 'OK' to delete."
+msgstr ""
+"Tu stai per cancellare in modo permanente questo elemento.\n"
+"\t\t\t\t'Cancella' per fermarti, 'OK' per cancellare."
+
+#: includes/class-list-table.php:270
+msgid "Filter"
+msgstr "Filtro"
+
+#: includes/class-list-table.php:541
+msgid "Search results"
+msgstr "Risultati ricerca"
+
+#: includes/class-list-table.php:544
+msgid " for &#8220;%s&#8221;"
+msgstr " per &#8220;%s&#8221;"
+
+#: includes/class-list-table.php:550
+msgid "Clear Filters"
+msgstr "Cancella Filtri"
+
+#: includes/help/import.php:14
+msgid "You can load your snippets from a code snippets (.xml) export file using this page."
+msgstr ""
+"Tu non puoi caricare i tuoi snippets da un file di codice snippets (.xml) "
+"usando questa pagina."
+
+#: includes/admin/single.php:74
+msgid "Save Changes &amp; Activate"
+msgstr "Salva Cambiamenti e Attivare"

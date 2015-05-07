@@ -1,6 +1,19 @@
-wiki
-docs
-deploy
 
+# Composer
+composer.lock
+/vendor
+
+# Built plugin
+deploy
+css/build
+css/min
+
+# Grunt (via NPM)
 node_modules
+npm-debug.log
+
+# Sass
 .sass-cache
+
+# GitHub Wiki
+wiki

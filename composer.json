@@ -1,23 +1,43 @@
 {
-	"name"       : "bungeshea/code-snippets",
-	"description": "An easy, clean and simple way to add code snippets to a WordPress-powered site.",
-	"keywords"   : ["wordpress","snippets","organization"],
-	"type"       : "wordpress-plugin",
-	"homepage"   : "http://code-snippets.bungeshea.com",
-	"license"    : "MIT",
-	"authors"    : [
+	"name": "sheabunge/code-snippets",
+	"description": "Manage code snippets running on a WordPress-powered site through a graphical interface",
+	"keywords": [
+		"wordpress",
+		"snippets",
+		"organization"
+	],
+	"type": "wordpress-plugin",
+	"homepage": "http://code-snippets.bungeshea.com",
+	"license": "MIT",
+	"authors": [
 		{
-			"name"    : "Shea Bunge",
-			"email"   : "info@bungeshea.com",
+			"name": "Shea Bunge",
+			"email": "info@bungeshea.com",
 			"homepage": "http://bungeshea.com"
 		}
 	],
-	"support"    : {
-		"issues": "https://github.com/bungeshea/code-snippets/issues",
-		"source": "https://github.com/bungeshea/code-snippets"
+	"support": {
+		"issues": "https://github.com/sheabunge/code-snippets/issues",
+		"source": "https://github.com/sheabunge/code-snippets"
 	},
-	"require"    : {
+	"require": {
 		"php": ">=5.2.7",
-		"composer/installers": "~1.0"
-	}
+		"codemirror": "5.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "3.7.*"
+	},
+	"repositories": [
+		{
+			"type": "package",
+			"package": {
+				"name": "codemirror",
+				"version": "5.0",
+				"dist": {
+					"url": "http://codemirror.net/codemirror-5.0.zip",
+					"type": "zip"
+				}
+			}
+		}
+	]
 }

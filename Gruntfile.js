@@ -8,62 +8,45 @@ module.exports = function(grunt) {
 		watch: {
 
 			css: {
-				files: ['assets/scss/**/*.scss'],
+				files: ['css/**/*.scss'],
 				tasks: ['css']
-			},
-
-			js: {
-				files: ['assets/js/**/*.js'],
-				tasks: ['js']
 			}
 
 		},
 
 		jshint: {
-			options: {
-				reporter: require('jshint-stylish')
-			},
 			gruntfile: ['Gruntfile.js'],
-			assets: ['assets/js/**/*.js']
 		},
 
 		sass: {
-			assets:  {
-				cwd: 'assets/scss',
+			dist: {
+				cwd: 'css',
 				src: '*.scss',
-				dest: 'assets/css',
+				dest: 'css/build',
 				expand: true,
 				ext: '.css'
 			}
 		},
 
 		autoprefixer: {
-			assets: {
+			dist: {
 				expand: true,
 				flatten: true,
-				src: 'assets/css/*.css',
-				dest: 'assets/css'
+				src: 'css/build/*.css',
+				dest: 'css/build'
 			}
 		},
 
 		csso: {
-			assets: {
+			dist: {
 				expand: true,
 				flatten: true,
-				src: 'assets/css/*.css',
-				dest: 'assets/css'
+				src: 'css/build/*.css',
+				dest: 'css/min'
 			}
 		},
 
 		imagemin: {
-			assets: {
-				files: [{
-					expand: true,
-					cwd: 'assets/images/',
-					src: '**/*',
-					dest: 'assets/images/'
-				}]
-			},
 			screenshots: {
 				files: [{
 					expand: true,
@@ -85,18 +68,21 @@ module.exports = function(grunt) {
 					cwd: './',
 					src: [
 						'code-snippets.php',
+						'uninstall.php',
 						'readme.txt',
 						'license.txt',
 						'includes/**/*',
 						'admin/**/*',
-						'assets/**/*',
 						'languages/**/*',
+						'css/**/*',
+						'js/**/*',
 
 						// CodeMirror
 						'vendor/codemirror/lib/codemirror.css',
 						'vendor/codemirror/lib/codemirror.js',
 						'vendor/codemirror/mode/clike/clike.js',
 						'vendor/codemirror/mode/php/php.js',
+						'vendor/codemirror/theme/*.css',
 						'vendor/codemirror/addon/search/searchcursor.js',
 						'vendor/codemirror/addon/search/search.js',
 						'vendor/codemirror/addon/edit/matchbrackets.js'
@@ -119,6 +105,17 @@ module.exports = function(grunt) {
 			}
 		},
 
+		phpunit: {
+			classes: {
+				dir: 'tests/'
+			},
+			options: {
+				bin: 'vendor/bin/phpunit',
+				bootstrap: 'tests/bootstrap.php',
+				colors: true
+			}
+		},
+
 		wp_deploy: {
 			release: {
 				options: {
@@ -129,24 +126,39 @@ module.exports = function(grunt) {
 			}
 		},
 
-		shell: {
+		potomo: {
+			dist: {
+				files: [{
+					expand: true,
+					cwd: 'languages',
+					src: ['*.po'],
+					dest: 'languages',
+					ext: '.mo',
+					nonull: true
+				}]
+			}
+		},
 
-			/**
-			 * Requires PhpDocumentor to be installed and in PATH
-			 */
-			phpdoc: {
-				command: 'phpdoc -t docs/api -f code-snippets.php -d admin,includes --title "Code Snippets"'
+		pot: {
+			options:{
+				text_domain: 'code-snippets',
+				dest: 'languages/',
+				keywords: ['__','_e','esc_html__','esc_html_e','esc_attr__', 'esc_attr_e', 'esc_attr_x', 'esc_html_x', 'ngettext', '_n', '_ex', '_nx'],
+			},
+			files: {
+				src: [ 'code-snippets.php', 'includes/**/*.php', 'admin/**/*.php' ],
+				expand: true,
 			}
 		}
 
 	});
 
 	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
-	grunt.registerTask( 'js', ['jshint'] );
+	grunt.registerTask( 'l18n', ['pot', 'potomo'] );
+	grunt.registerTask( 'test', ['jshint', 'phpunit'] );
 
-	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:plugin', 'copy:assets'] );
-	grunt.registerTask( 'phpdoc', 'shell:phpdoc' );
-
-	grunt.registerTask( 'default', ['css', 'js'] );
+	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );
 	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );
+
+	grunt.registerTask( 'default', ['css', 'l18n'] );
 };
