@@ -152,7 +152,7 @@ function code_snippets_load_single_menu() {
 	/* Delete the snippet if the button was clicked */
 	elseif ( isset( $_POST['snippet_id'], $_POST['delete_snippet'] ) ) {
 		delete_snippet( $_POST['snippet_id'] );
-		wp_redirect( add_query_arg( 'delete', true, $this->manage_url ) );
+		wp_redirect( add_query_arg( 'delete', true, code_snippets_get_menu_url( 'manage' ) ) );
 	}
 
 	/* Export the snippet if the button was clicked */
@@ -368,4 +368,6 @@ function code_snippets_enqueue_codemirror() {
 		$tagit_version
 	);
 
+	/* Needed for resizable editor functionality */
+	wp_enqueue_script( 'jquery-ui-resizable' );
 }
