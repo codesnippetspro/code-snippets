@@ -6,6 +6,7 @@
  */
 
 require plugin_dir_path( __FILE__ ) . '/class-settings.php';
+Code_Snippets_Settings::setup();
 
 /**
  * Retrieve the default setting values
@@ -99,7 +100,7 @@ function code_snippets_register_settings() {
 
 	/* Add editor preview as a field */
 	add_settings_field(
-		'code_snippets_' . $field['id'],
+		'code_snippets_editor_preview',
 		__( 'Editor Preview', 'code-snippets' ),
 		'code_snippets_settings_editor_preview',
 		'code-snippets',

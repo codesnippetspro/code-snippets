@@ -9,7 +9,7 @@ class Code_Snippets_Settings {
 	private static $fields = array();
 	private static $defaults = array();
 
-	function setup() {
+	public static function setup() {
 		self::set_fields();
 		self::set_defaults();
 	}
