@@ -122,10 +122,8 @@ module.exports = function(grunt) {
 			},
 			options: {
 				bin: 'vendor/bin/phpcs',
-				standard: 'WordPress',
-				warningSeverity: 0,
-				showSniffCodes: true,
-				verbose: true
+				standard: 'codesniffer.ruleset.xml',
+				showSniffCodes: true
 			}
 		},
 
