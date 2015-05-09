@@ -14,12 +14,12 @@ function set_snippet_table_vars() {
 	global $wpdb;
 
 	/* Register the snippet table names with WordPress */
-	$wpdb->tables[]           = 'snippets';
+	$wpdb->tables[] = 'snippets';
 	$wpdb->ms_global_tables[] = 'ms_snippets';
 
 	/* Setup initial table variables */
-	$wpdb->snippets           = $wpdb->prefix . 'snippets';
-	$wpdb->ms_snippets        = $wpdb->base_prefix . 'ms_snippets';
+	$wpdb->snippets = $wpdb->prefix . 'snippets';
+	$wpdb->ms_snippets = $wpdb->base_prefix . 'ms_snippets';
 }
 
 /**
@@ -120,6 +120,7 @@ function create_code_snippets_table( $table_name ) {
 				description text,
 				code        longtext not null,
 				tags        longtext,
+				scope       tinyint(1) default 0,
 				active      tinyint(1) not null default 0
 			) {$charset_collate};";
 

@@ -61,12 +61,11 @@ $snippet = get_snippet( $edit_id );
 		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 
 		<?php
+		/* Allow addon plugins to add fields and content to this page */
+		do_action( 'code_snippets/admin/single', $snippet );
 
-			/* Allow addon plugins (and us!) to add fields and content to this page */
-			do_action( 'code_snippets/admin/single', $snippet );
-
-			/* Add a nonce for security */
-			wp_nonce_field( 'save_snippet' );
+		/* Add a nonce for security */
+		wp_nonce_field( 'save_snippet' );
 		?>
 
 		<p class="submit">

@@ -170,14 +170,12 @@ function code_snippets_load_single_menu() {
  */
 function code_snippets_description_editor_box( $snippet ) {
 	$settings = code_snippets_get_settings();
-	$settings = $settings['description_editor']
-	?>
+	$settings = $settings['description_editor'];
 
-	<label for="snippet_description">
-		<h3><div><?php _e( 'Description', 'code-snippets' ); ?></div></h3>
-	</label>
-
-	<?php
+	printf(
+		'<label for="snippet_description"><h3><div>%s</div></h3></label>',
+		__( 'Description', 'code-snippets' )
+	);
 
 	remove_editor_styles(); // stop custom theme styling interfering with the editor
 
@@ -194,6 +192,28 @@ function code_snippets_description_editor_box( $snippet ) {
 }
 
 add_action( 'code_snippets/admin/single', 'code_snippets_description_editor_box', 5 );
+
+function code_snippets_snippet_scope_setting( $snippet ) {
+
+	$scopes = array(
+		__( 'Run snippet everywhere', 'code-snippets' ),
+		__( 'Only run in adminstration area', 'code-snippets' ),
+		__( 'Only run on site front-end', 'code-snippets' ),
+	);
+
+	echo '<div class="snippet-scope">';
+	printf( '<label for="snippet_scope"><h3>%s</h3></label>', __( 'Scope', 'code-snippets' ) );
+
+	foreach ( $scopes as $scope => $label ) {
+		printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope);
+		checked( $scope, $snippet->scope );
+		echo "> $label</div>";
+	}
+
+	echo '</div>';
+}
+
+add_action( 'code_snippets/admin/single', 'code_snippets_snippet_scope_setting', 20 );
 
 /**
 * Output the interface for editing snippet tags

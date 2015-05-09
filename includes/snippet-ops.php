@@ -23,6 +23,7 @@ function build_snippet_object( $data = null ) {
 	$snippet->description = '';
 	$snippet->code = '';
 	$snippet->tags = array();
+	$snippet->scope = 0;
 	$snippet->active = 0;
 	$snippet = apply_filters( 'code_snippets/build_default_snippet', $snippet );
 
@@ -472,10 +473,11 @@ function execute_active_snippets() {
 	/* Check if the multisite snippets table exists */
 	if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets ) {
 		$sql = ( isset( $sql ) ? $sql . "\nUNION ALL\n" : '' );
-		$sql .= "SELECT code FROM {$wpdb->ms_snippets} WHERE active=1;";
+		$sql .= "SELECT code FROM {$wpdb->ms_snippets} WHERE active=1";
 	}
 
 	if ( ! empty( $sql ) ) {
+		$sql .= sprintf( ' AND (scope=0 OR scope=%d)', is_admin() ? 1 : 2 );
 
 		/* Grab the active snippets from the database */
 		$active_snippets = $wpdb->get_col( $sql );

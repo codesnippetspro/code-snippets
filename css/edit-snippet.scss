@@ -22,6 +22,11 @@ label[for='snippet_description'] h3 div {
 	margin-right: .5em;
 }
 
+.snippet-scope div {
+	margin-right: 30px;
+	display: inline-block;
+}
+
 /**
  * Customize the CodeMirror editor
  * to look nice and support auto-resizing
