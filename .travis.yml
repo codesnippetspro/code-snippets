@@ -8,7 +8,6 @@ php:
   - "5.5"
   - "5.4"
   - "5.3"
-  - "5.2"
 
 env:
   # Trunk
@@ -78,6 +77,10 @@ before_script:
 # Default is specific to project language.
 # All commands must exit with code 0 on success. Anything else is considered failure.
 script:
+
+  # Search for PHP syntax errors.
+  - find . \( -name '*.php' \) -maxdepth 1 -exec php -lf {} \;
+  - find includes \( -name '*.php' \) -exec php -lf {} \;
 
   # Run Grunt tests
   - grunt test
