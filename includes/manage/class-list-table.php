@@ -568,7 +568,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Filter snippets by tag */
 		if ( isset( $_POST['tag'] ) ) {
-			$location = empty( $_POST['tag'] ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
+			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
 			wp_redirect( esc_url_raw( $location ) );
 		}
 
