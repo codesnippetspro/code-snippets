@@ -16,6 +16,7 @@
     "grunt-contrib-jshint": "^0.6.5",
     "grunt-contrib-watch": "^0.4.4",
     "grunt-csso": "^0.5.3",
+    "grunt-phpcs": "^0.4.0",
     "grunt-phpunit": "~0.3.2",
     "grunt-pot": "^0.1.2",
     "grunt-potomo": "^0.1.7",
