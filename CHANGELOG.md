@@ -5,6 +5,7 @@
 * Added settings for code and description editor height
 * Updated CodeMirror to version 5.2
 * Fixed not escaping the request URL when using query arg functions
+* Improved efficiency of settings component
 
 ## 2.0.3
 * Updated German translation by [Joerg Knoerchen](http://www.sensorgrafie.de/)

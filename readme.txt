@@ -116,6 +116,13 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 
 == Changelog ==
 
+= 2.1.0 =
+* Added additional setting descriptions
+* Added settings for code and description editor height
+* Updated CodeMirror to version 5.2
+* Fixed not escaping the request URL when using query arg functions
+* Improved efficiency of settings component
+
 = 2.0.3 =
 * Updated German translation by [Joerg Knoerchen](http://www.sensorgraphy.net/)
 
@@ -305,6 +312,9 @@ __Fixed__
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.1.0 =
+Minor improvements to settings component; added description editor settings; minor security fixes
 
 = 2.0.2 =
 Fix snippets not saving
