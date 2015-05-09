@@ -1,5 +1,5 @@
 ![plugin banner](screenshots/banner-772x250.png)
-# Code Snippets [![Build Status](https://travis-ci.org/sheabunge/code-snippets.png?branch=develop)](https://travis-ci.org/sheabunge/code-snippets)
+# Code Snippets [![Build Status](https://travis-ci.org/sheabunge/code-snippets.png?branch=master)](https://travis-ci.org/sheabunge/code-snippets)
 
 * __Requires at least:__ [WordPress 3.3](http://wordpress.org/download/) or later
 * __Tested up to:__ WordPress 4.2.2
