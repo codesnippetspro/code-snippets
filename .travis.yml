@@ -16,10 +16,15 @@ env:
   - WP_VERSION=master WP_MULTISITE=0
   - WP_VERSION=master WP_MULTISITE=1
 
-  # WordPress 4.2
+  # WordPress 4.2 (latest stable version)
   # @link https://github.com/WordPress/WordPress/tree/4.2-branch
   - WP_VERSION=4.2 WP_MULTISITE=0
   - WP_VERSION=4.2 WP_MULTISITE=1
+
+  # WordPress 3.3 (minimum stable version)
+  # @link https://github.com/WordPress/WordPress/tree/3.3-branch
+  - WP_VERSION=3.3 WP_MULTISITE=0
+  - WP_VERSION=3.3 WP_MULTISITE=1
 
 # Declare 5.6 beta in test matrix.
 # @link http://docs.travis-ci.com/user/build-configuration/
@@ -51,7 +56,7 @@ before_script:
   - mkdir -p $WP_DEVELOP_DIR
   - git clone --depth=1 --branch="$WP_VERSION" git://develop.git.wordpress.org/ $WP_DEVELOP_DIR
   # Set up theme information.
-  - plugon_slug=$(basename $(pwd))
+  - plugin_slug=$(basename $(pwd))
   - plugin_dir=$WP_DEVELOP_DIR/src/wp-content/plugins/$plugin_slug
   - cd ..
   - mv $plugin_slug $plugin_dir
