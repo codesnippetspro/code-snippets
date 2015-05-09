@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.0.3\n"
+"Project-Id-Version: code-snippets 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-26 19:16+1000\n"
+"POT-Creation-Date: 2015-05-09 16:28+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -563,21 +563,21 @@ msgid ""
 "\">Add New&rarr;</a>"
 msgstr ""
 
-#: includes/manage/class-list-table.php:766
+#: includes/manage/class-list-table.php:761
 msgid "Search results"
 msgstr ""
 
-#: includes/manage/class-list-table.php:769
+#: includes/manage/class-list-table.php:764
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/manage/class-list-table.php:773
+#: includes/manage/class-list-table.php:768
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/manage/class-list-table.php:779
+#: includes/manage/class-list-table.php:774
 msgid "Clear Filters"
 msgstr ""
 
@@ -589,91 +589,91 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/settings/settings.php:51
-msgid "General"
-msgstr ""
-
-#: includes/settings/settings.php:52
-msgid "Description Editor"
-msgstr ""
-
-#: includes/settings/settings.php:53
-msgid "Code Editor"
-msgstr ""
-
-#: includes/settings/settings.php:69
+#: includes/settings/class-settings.php:47
 msgid "Activate by Default"
 msgstr ""
 
-#: includes/settings/settings.php:71
+#: includes/settings/class-settings.php:49
 msgid ""
 "Make the 'Save and Activate' button the default action when saving a snippet."
 msgstr ""
 
-#: includes/settings/settings.php:109
+#: includes/settings/class-settings.php:87
 msgid "Theme"
 msgstr ""
 
-#: includes/settings/settings.php:117
+#: includes/settings/class-settings.php:95
 msgid "Indent With Tabs"
 msgstr ""
 
-#: includes/settings/settings.php:119
+#: includes/settings/class-settings.php:97
 msgid "Use hard tabs (not spaces) for indentation."
 msgstr ""
 
-#: includes/settings/settings.php:126
+#: includes/settings/class-settings.php:104
 msgid "Tab Size"
 msgstr ""
 
-#: includes/settings/settings.php:128
+#: includes/settings/class-settings.php:106
 msgid "The width of a tab character."
 msgstr ""
 
-#: includes/settings/settings.php:135
+#: includes/settings/class-settings.php:113
 msgid "Indent Unit"
 msgstr ""
 
-#: includes/settings/settings.php:137
+#: includes/settings/class-settings.php:115
 msgid "How many spaces a block should be indented."
 msgstr ""
 
-#: includes/settings/settings.php:144
+#: includes/settings/class-settings.php:122
 msgid "Wrap Lines"
 msgstr ""
 
-#: includes/settings/settings.php:146
+#: includes/settings/class-settings.php:124
 msgid "Whether the editor should scroll or wrap for long lines."
 msgstr ""
 
-#: includes/settings/settings.php:153
+#: includes/settings/class-settings.php:131
 msgid "Line Numbers"
 msgstr ""
 
-#: includes/settings/settings.php:155
+#: includes/settings/class-settings.php:133
 msgid "Show line numbers to the left of the editor."
 msgstr ""
 
-#: includes/settings/settings.php:162
+#: includes/settings/class-settings.php:140
 msgid "Auto Close Brackets"
 msgstr ""
 
-#: includes/settings/settings.php:164
+#: includes/settings/class-settings.php:142
 msgid "Auto-close brackets and quotes when typed."
 msgstr ""
 
-#: includes/settings/settings.php:171
+#: includes/settings/class-settings.php:149
 msgid "Highlight Selection Matches"
 msgstr ""
 
-#: includes/settings/settings.php:172
+#: includes/settings/class-settings.php:150
 msgid "Highlight all instances of a currently selected word."
 msgstr ""
 
-#: includes/settings/settings.php:219
+#: includes/settings/settings.php:55
+msgid "General"
+msgstr ""
+
+#: includes/settings/settings.php:56
+msgid "Description Editor"
+msgstr ""
+
+#: includes/settings/settings.php:57
+msgid "Code Editor"
+msgstr ""
+
+#: includes/settings/settings.php:104
 msgid "Editor Preview"
 msgstr ""
 
-#: includes/settings/settings.php:267
+#: includes/settings/settings.php:152
 msgid "Settings saved."
 msgstr ""
