@@ -58,7 +58,7 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 			continue;
 		}
 
-		printf (
+		printf(
 			'<option value="%1$s"%2$s>%1$s</option>',
 			$theme,
 			selected( $theme, $saved_value, false )
@@ -79,7 +79,7 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
 
 	$atts = array(
 		'mode' => 'text/x-php',
-		'value' => $example_content
+		'value' => $example_content,
 	);
 
 	?>
@@ -130,7 +130,6 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
 						<?php
 						break;
 
-
 					case 'number':
 						?>
 
@@ -140,11 +139,8 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
 
 						<?php
 						break;
-
 				}
-
 			}
-
 		?>
 
 		});

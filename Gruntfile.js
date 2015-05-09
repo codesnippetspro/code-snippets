@@ -116,6 +116,17 @@ module.exports = function(grunt) {
 			}
 		},
 
+		phpcs: {
+			application: {
+				src: ['*.php', 'includes/**/*.php']
+			},
+			options: {
+				bin: 'vendor/bin/phpcs',
+				standard: 'codesniffer.ruleset.xml',
+				showSniffCodes: true
+			}
+		},
+
 		wp_deploy: {
 			release: {
 				options: {
@@ -155,7 +166,7 @@ module.exports = function(grunt) {
 
 	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
 	grunt.registerTask( 'l18n', ['pot', 'potomo'] );
-	grunt.registerTask( 'test', ['jshint', 'phpunit'] );
+	grunt.registerTask( 'test', ['jshint', 'phpcs', 'phpunit'] );
 
 	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );
 	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );
