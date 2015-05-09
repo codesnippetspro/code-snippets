@@ -197,7 +197,7 @@ function code_snippets_survey_message() {
 		<?php _e( 'Take the survey now', 'code-snippets' ); ?>
 	</a>
 
-	<a href="<?php echo wp_nonce_url( add_query_arg( $key, true ), $key ); ?>">Dismiss</a>
+	<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( $key, true ), $key ) ); ?>">Dismiss</a>
 
 	</p></div>
 

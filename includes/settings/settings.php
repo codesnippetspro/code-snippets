@@ -5,19 +5,23 @@
  * @package Code_Snippets
  */
 
+require plugin_dir_path( __FILE__ ) . '/class-settings.php';
+Code_Snippets_Settings::setup();
+
 /**
  * Retrieve the default setting values
  * @return array
  */
 function code_snippets_get_default_settings() {
-	$fields = code_snippets_get_settings_fields();
-	$defaults = array();
+	return Code_Snippets_Settings::get_defaults();
+}
 
-	foreach ( $fields as $section_id => $section_fields ) {
-		$defaults[ $section_id ] = wp_list_pluck( $section_fields, 'default', 'id' );
-	}
-
-	return $defaults;
+/**
+ * Retrieve the settings fields
+ * @return array
+ */
+function code_snippets_get_settings_fields() {
+	return Code_Snippets_Settings::get_fields();
 }
 
 /*
@@ -49,111 +53,21 @@ function code_snippets_get_setting( $section, $field ) {
 function code_snippets_get_settings_sections() {
 	$sections = array(
 		'general' => __( 'General', 'code-snippets' ),
-		'editor' => __( 'Editor', 'code-snippets' ),
+		'description_editor' => __( 'Description Editor', 'code-snippets' ),
+		'editor' => __( 'Code Editor', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
 }
 
 /**
- * Retrieve the settings fields
- * @return array
- */
-function code_snippets_get_settings_fields() {
-	$settings = array();
-
-	$settings['general'] = array(
-		array(
-			'id' => 'activate_by_default',
-			'name' =>__( 'Activate by Default', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( "Make the 'Save and Activate' button the default action when saving a snippet.", 'code-snippets' ),
-			'default' => false,
-		),
-	);
-
-	/* Editor settings section */
-
-	$settings['editor'] = array(
-		array(
-			'id' => 'theme',
-			'name' => __( 'Theme', 'code-snippets' ),
-			'type' => 'codemirror_theme_select',
-			'default' => 'default',
-			'codemirror' => 'theme',
-		),
-
-		array(
-			'id' => 'indent_with_tabs',
-			'name' => __( 'Indent With Tabs', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Use hard tabs (not spaces) for indentation.', 'code-snippets' ),
-			'default' => true,
-			'codemirror' => 'indentWithTabs',
-		),
-
-		array(
-			'id' => 'tab_size',
-			'name' => __( 'Tab Size', 'code-snippets' ),
-			'type' => 'number',
-			'label' => __( 'The width of a tab character.', 'code-snippets' ),
-			'default' => 4,
-			'codemirror' => 'tabSize',
-		),
-
-		array(
-			'id' => 'indent_unit',
-			'name' => __( 'Indent Unit', 'code-snippets' ),
-			'type' => 'number',
-			'label' => __( 'How many spaces a block should be indented.', 'code-snippets' ),
-			'default' => 2,
-			'codemirror' => 'indentUnit',
-		),
-
-		array(
-			'id' => 'wrap_lines',
-			'name' => __( 'Wrap Lines', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Whether the editor should scroll or wrap for long lines.', 'code-snippets' ),
-			'default' => true,
-			'codemirror' => 'lineWrapping',
-		),
-
-		array(
-			'id' => 'line_numbers',
-			'name' => __( 'Line Numbers', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Show line numbers to the left of the editor.', 'code-snippets' ),
-			'default' => true,
-			'codemirror' => 'lineNumbers',
-		),
-
-		array(
-			'id' => 'auto_close_brackets',
-			'name' => __( 'Auto Close Brackets', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Auto-close brackets and quotes when typed.', 'code-snippets' ),
-			'default' => true,
-			'codemirror' => 'autoCloseBrackets',
-		),
-
-		array(
-			'id' => 'highlight_selection_matches',
-			'name' => __( 'Highlight Selection Matches', 'code-snippets' ),
-			'label' => __( 'Highlight all instances of a currently selected word.', 'code-snippets' ),
-			'type' => 'checkbox',
-			'default' => true,
-			'codemirror' => 'highlightSelectionMatches',
-		),
-	);
-
-	return apply_filters( 'code_snippets_settings_fields', $settings );
-}
-
-/**
  * Register settings sections, fields, etc
  */
 function code_snippets_register_settings() {
+
+	if ( ! get_option( 'code_snippets_settings', false ) ) {
+		add_option( 'code_snippets_settings', code_snippets_get_default_settings() );
+	}
 
 	/* Register the setting */
 	register_setting( 'code-snippets', 'code_snippets_settings', 'code_snippets_settings_validate' );
@@ -186,7 +100,7 @@ function code_snippets_register_settings() {
 
 	/* Add editor preview as a field */
 	add_settings_field(
-		'code_snippets_' . $field['id'],
+		'code_snippets_editor_preview',
 		__( 'Editor Preview', 'code-snippets' ),
 		'code_snippets_settings_editor_preview',
 		'code-snippets',

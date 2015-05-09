@@ -19,10 +19,16 @@ function code_snippets_checkbox_field( $atts ) {
 		checked( $saved_value, true, false )
 	);
 
+	// Output the checkbox field, optionally with label
 	if ( isset( $atts['label'] ) ) {
 		printf ( '<label for="%s">%s %s</label>', $input_name, $output, $atts['label'] );
 	} else {
 		echo $output;
+	}
+
+	// Add field description if it is set
+	if ( ! empty( $atts['desc'] ) ) {
+		echo '<p class="description">' . $atts['desc'] . '</p>';
 	}
 }
 
@@ -38,4 +44,13 @@ function code_snippets_number_field( $atts ) {
 		$atts['id'],
 		code_snippets_get_setting( $atts['section'], $atts['id'] )
 	);
+
+	if ( ! empty( $atts['label'] ) ) {
+		echo ' ' . $atts['label'];
+	}
+
+	// Add field description if it is set
+	if ( ! empty( $atts['desc'] ) ) {
+		echo '<p class="description">' . $atts['desc'] . '</p>';
+	}
 }

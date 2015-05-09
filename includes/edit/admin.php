@@ -142,5 +142,11 @@ $snippet = get_snippet( $edit_id );
 	?>;
 	var editor = CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
 
+	jQuery('.CodeMirror').resizable({
+		resize: function() {
+			editor.setSize( jQuery(this).width(), jQuery(this).height() );
+		}
+	});
+
 })();
 </script>

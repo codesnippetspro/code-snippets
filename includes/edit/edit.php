@@ -152,7 +152,7 @@ function code_snippets_load_single_menu() {
 	/* Delete the snippet if the button was clicked */
 	elseif ( isset( $_POST['snippet_id'], $_POST['delete_snippet'] ) ) {
 		delete_snippet( $_POST['snippet_id'] );
-		wp_redirect( add_query_arg( 'delete', true, $this->manage_url ) );
+		wp_redirect( add_query_arg( 'delete', true, code_snippets_get_menu_url( 'manage' ) ) );
 	}
 
 	/* Export the snippet if the button was clicked */
@@ -169,7 +169,8 @@ function code_snippets_load_single_menu() {
  * @param object $snippet The snippet being used for this page
  */
 function code_snippets_description_editor_box( $snippet ) {
-
+	$settings = code_snippets_get_settings();
+	$settings = $settings['description_editor']
 	?>
 
 	<label for="snippet_description">
@@ -185,9 +186,9 @@ function code_snippets_description_editor_box( $snippet ) {
 		'description',
 		apply_filters( 'code_snippets/admin/description_editor_settings', array(
 			'textarea_name' => 'snippet_description',
-			'textarea_rows' => 10,
-			'teeny' => true,
-			'media_buttons' => false,
+			'textarea_rows' => $settings['rows'],
+			'teeny' => ! $settings['use_full_mce'],
+			'media_buttons' => $settings['media_buttons'],
 		) )
 	);
 }
@@ -241,7 +242,7 @@ function code_snippets_enqueue_codemirror() {
 
 	/* CodeMirror */
 
-	$codemirror_version = '5.0';
+	$codemirror_version = '5.2';
 	$codemirror_url     = plugins_url( 'vendor/codemirror/', CODE_SNIPPETS_FILE );
 
 	wp_enqueue_style(
@@ -367,4 +368,6 @@ function code_snippets_enqueue_codemirror() {
 		$tagit_version
 	);
 
+	/* Needed for resizable editor functionality */
+	wp_enqueue_script( 'jquery-ui-resizable' );
 }

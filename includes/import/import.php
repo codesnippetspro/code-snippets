@@ -103,11 +103,8 @@ function code_snippets_load_import_menu() {
 		$result = import_snippets( $_FILES['code_snippets_import_file']['tmp_name'], $network );
 
 		/* Send the amount of imported snippets to the page */
-		if ( false === $result ) {
-			wp_redirect( add_query_arg( 'error', true ) );
-		} else {
-			wp_redirect( add_query_arg( 'imported', $result ) );
-		}
+		$query_args = ( false === $result ) ? array( 'error' => true ) : array( 'imported' => $result );
+		wp_redirect( esc_url_raw( $query_args ) );
 	}
 
 	/* Load the screen help tabs */

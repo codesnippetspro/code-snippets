@@ -112,19 +112,19 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$actions['deactivate'] = sprintf(
 				'<a href="%2$s">%1$s</a>',
 				$screen->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
-				add_query_arg( array(
+				esc_url( add_query_arg( array(
 					'action' => 'deactivate',
 					'id' =>	$snippet->id
-				) )
+				) ) )
 			);
 		} else {
 			$actions['activate'] = sprintf(
 				'<a href="%2$s">%1$s</a>',
 				$screen->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
-				add_query_arg( array(
+				esc_url( add_query_arg( array(
 					'action' => 'activate',
 					'id' =>	$snippet->id
-				) )
+				) ) )
 			);
 		}
 
@@ -137,19 +137,19 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions['export'] = sprintf(
 			'<a href="%2$s">%1$s</a>',
 			__( 'Export', 'code-snippets' ),
-			add_query_arg( array(
+			esc_url( add_query_arg( array(
 				'action' => 'export',
 				'id' =>	$snippet->id
-			) )
+			) ) )
 		);
 
 		$actions['delete'] = sprintf(
 			'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
 			__( 'Delete', 'code-snippets' ),
-			add_query_arg( array(
+			esc_url( add_query_arg( array(
 				'action' => 'delete',
 				'id' =>	$snippet->id
-			) ),
+			) ) ),
 			esc_js( sprintf(
 				'return confirm("%s");',
 				__("You are about to permanently delete the selected item.
@@ -202,7 +202,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
     		foreach ( $snippet->tags as $tag ) {
     			$out[] = sprintf( '<a href="%s">%s</a>',
-    				add_query_arg( 'tag', esc_attr( $tag ) ),
+    				esc_url( add_query_arg( 'tag', esc_attr( $tag ) ) ),
     				esc_html( $tag )
     			);
     		}
@@ -314,7 +314,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 
 			$status_links[$type] = sprintf( '<a href="%s"%s>%s</a>',
-				add_query_arg( 'status', $type ),
+				esc_url( add_query_arg( 'status', $type ) ),
 				( $type === $status ) ? ' class="current"' : '',
 				sprintf( $text, number_format_i18n( $count ) )
 			);
@@ -479,7 +479,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			if ( ! in_array( $action, array( 'export', 'export-php' ) ) ) {
 				wp_redirect( apply_filters(
 					"code_snippets/{$action}_redirect",
-					add_query_arg( $action, true )
+					esc_url_raw( add_query_arg( $action, true ) )
 				) );
 			}
 
@@ -499,14 +499,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				foreach ( $ids as $id ) {
 					activate_snippet( $id, $network );
 				}
-				wp_redirect( add_query_arg( 'activate-multi', true ) );
+				wp_redirect( esc_url_raw( add_query_arg( 'activate-multi', true ) ) );
 				break;
 
 			case 'deactivate-selected':
 				foreach ( $ids as $id ) {
 					deactivate_snippet( $id, $network );
 				}
-				wp_redirect( add_query_arg( 'deactivate-multi', true ) );
+				wp_redirect( esc_url_raw( add_query_arg( 'deactivate-multi', true ) ) );
 				break;
 
 			case 'export-selected':
@@ -521,7 +521,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				foreach( $ids as $id ) {
 					delete_snippet( $id, $network );
 				}
-				wp_redirect( add_query_arg( 'delete-multi', true ) );
+				wp_redirect( esc_url_raw( add_query_arg( 'delete-multi', true ) ) );
 				break;
 
 			case 'clear-recent-list':
@@ -568,13 +568,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Filter snippets by tag */
 		if ( isset( $_POST['tag'] ) ) {
-
-			if ( ! empty( $_POST['tag'] ) ) {
-				wp_redirect( add_query_arg( 'tag', $_POST['tag'] ) );
-			}
-			else {
-				wp_redirect( remove_query_arg( 'tag' ) );
-			}
+			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
+			wp_redirect( esc_url_raw( $location ) );
 		}
 
 		if ( ! empty( $_GET['tag'] ) ) {
@@ -777,7 +772,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			printf (
 				'&nbsp;<a class="button clear-filters" href="%s">' . __( 'Clear Filters', 'code-snippets' ) . '</a>',
-				remove_query_arg( array( 's', 'tag' ) )
+				esc_url( remove_query_arg( array( 's', 'tag' ) ) )
 			);
 		}
 	}
