@@ -1,13 +1,8 @@
 <?php
 
-require_once getenv( 'WP_TESTS_DIR' ) . '/includes/functions.php';
-
-function _manually_load_plugin() {
-	require dirname( __FILE__ ) . '/../code-snippets.php';
-}
-tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
-
-require getenv( 'WP_TESTS_DIR' ) . '/includes/bootstrap.php';
+$tests_dir = getenv( 'WP_DEVELOP_DIR' ) . '/tests/phpunit';
+require_once $tests_dir . '/includes/functions.php';
+require $tests_dir . '/includes/bootstrap.php';
 
 class Code_Snippets_TestCase extends WP_UnitTestCase {
 	// Put convenience methods here

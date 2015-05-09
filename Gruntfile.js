@@ -146,7 +146,7 @@ module.exports = function(grunt) {
 				keywords: ['__','_e','esc_html__','esc_html_e','esc_attr__', 'esc_attr_e', 'esc_attr_x', 'esc_html_x', 'ngettext', '_n', '_ex', '_nx'],
 			},
 			files: {
-				src: [ 'code-snippets.php', 'includes/**/*.php', 'admin/**/*.php' ],
+				src: [ 'code-snippets.php', 'includes/**/*.php' ],
 				expand: true,
 			}
 		}
