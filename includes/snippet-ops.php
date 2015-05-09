@@ -28,13 +28,13 @@ function build_snippet_object( $data = null ) {
 
 	if ( ! isset( $data ) ) {
 		return $snippet;
-	}
-	elseif ( is_object( $data ) ) {
+
+	} elseif ( is_object( $data ) ) {
 
 		/* If we already have a snippet object, merge it with the default */
 		return (object) array_merge( (array) $snippet, (array) $data );
-	}
-	elseif ( is_array( $data ) ) {
+
+	} elseif ( is_array( $data ) ) {
 
 		foreach ( $data as $field => $value ) {
 
@@ -380,7 +380,7 @@ function import_snippets( $file, $multisite = null ) {
 		foreach ( $fields as $field_name ) {
 
 			/* Fetch the field element from the document */
-			$field = $snippet_xml->getElementsByTagName( $field_name )->item(0);
+			$field = $snippet_xml->getElementsByTagName( $field_name )->item( 0 );
 
 			/* If the field element exists, add it to the snippet object */
 			if ( isset( $field->nodeValue ) ) {

@@ -53,7 +53,7 @@ define( 'CODE_SNIPPETS_VERSION', '2.1.0' );
  *
  * @since 2.0
  * @var string
-  */
+ */
 define( 'CODE_SNIPPETS_FILE', __FILE__ );
 
 /**

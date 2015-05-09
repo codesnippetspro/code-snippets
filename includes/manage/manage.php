@@ -93,7 +93,7 @@ function code_snippets_load_manage_menu() {
 function code_snippets_manage_menu_assets( $hook ) {
 
 	/* Only load the stylesheet on the manage snippets page */
-	if ( $hook !== code_snippets_get_menu_hook() ) {
+	if ( code_snippets_get_menu_hook() !== $hook ) {
 		return;
 	}
 

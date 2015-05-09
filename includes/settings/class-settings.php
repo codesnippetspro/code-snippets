@@ -44,11 +44,11 @@ class Code_Snippets_Settings {
 		self::$fields['general'] = array(
 			array(
 				'id' => 'activate_by_default',
-				'name' =>__( 'Activate by Default', 'code-snippets' ),
+				'name' => __( 'Activate by Default', 'code-snippets' ),
 				'type' => 'checkbox',
 				'label' => __( "Make the 'Save and Activate' button the default action when saving a snippet.", 'code-snippets' ),
 				'default' => false,
-			)
+			),
 		);
 
 		/* Description Editor settings section */

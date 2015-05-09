@@ -116,7 +116,7 @@ function code_snippets_load_single_menu() {
 		}
 
 		/* Save the snippet to the database */
-		$result = save_snippet( stripslashes_deep( $_POST )  );
+		$result = save_snippet( stripslashes_deep( $_POST ) );
 
 		/* Build the status message and redirect */
 		$query_args = array();
@@ -274,7 +274,6 @@ function code_snippets_enqueue_codemirror() {
 		array( 'code-snippets-codemirror', 'code-snippets-codemirror-mode-clike' ),
 		$codemirror_version
 	);
-
 
 	/* CodeMirror Addons */
 

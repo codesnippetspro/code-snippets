@@ -95,7 +95,6 @@ function code_snippets_register_settings() {
 				array_merge( $field, array( 'section' => $section_id ) )
 			);
 		}
-
 	}
 
 	/* Add editor preview as a field */
@@ -126,22 +125,23 @@ function code_snippets_settings_validate( array $input ) {
 		foreach ( $fields as $field ) {
 			$field_id = $field['id'];
 
-			// Checkbox field
 			if ( 'checkbox' === $field['type'] ) {
+				/* Checkbox field */
 
 				$settings[ $section_id ][ $field_id ] = (
 					isset( $input[ $section_id ][ $field_id ] ) &&
 					'on' === $input[ $section_id ][ $field_id ]
 				);
 
-			// Number field
 			} elseif ( 'number' == $field['type'] ) {
+				/* Number field */
 				$settings[ $section_id ][ $field_id ] = absint( $input[ $section_id ][ $field_id ] );
 
-			// Other fields
 			} else {
+				/* Other fields */
 				$settings[ $section_id ][ $field_id ] = $input[ $section_id ][ $field_id ];
 			}
+			// @codingStandardsIgnoreEnd
 		}
 	}
 

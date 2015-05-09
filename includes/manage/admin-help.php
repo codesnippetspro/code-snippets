@@ -22,7 +22,7 @@ $screen->add_help_tab( array(
 	'title'   => __( 'Safe Mode', 'code-snippets' ),
 	'content' =>
 		'<p>' . __( 'Be sure to check your snippets for errors before you activate them, as a faulty snippet could bring your whole blog down. If your site starts doing strange things, deactivate all your snippets and activate them one at a time.', 'code-snippets' ) . '</p>' .
-		'<p>' . __("If something goes wrong with a snippet and you can't use WordPress, you can cause all snippets to stop executing by adding <code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-config.php</code> file. After you have deactivated the offending snippet, you can turn off safe mode by removing this line or replacing <strong>true</strong> with <strong>false</strong>.", 'code-snippets' ) . '</p>'
+		'<p>' . __( "If something goes wrong with a snippet and you can't use WordPress, you can cause all snippets to stop executing by adding <code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-config.php</code> file. After you have deactivated the offending snippet, you can turn off safe mode by removing this line or replacing <strong>true</strong> with <strong>false</strong>.", 'code-snippets' ) . '</p>'
 ) );
 
 $screen->add_help_tab( array(
@@ -30,7 +30,7 @@ $screen->add_help_tab( array(
 	'title'   => __( 'Uninstall', 'code-snippets' ),
 	'content' =>
 		'<p>' . sprintf( __( 'When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP.', 'code-snippets' ), get_snippets_table_name(), dirname( CODE_SNIPPETS_FILE ) ) .
-		'<p>' . __("Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installation, you may want to use the export feature to back up your snippets.", 'code-snippets' ) . '</p>'
+		'<p>' . __( "Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installation, you may want to use the export feature to back up your snippets.", 'code-snippets' ) . '</p>'
 ) );
 
 $screen->set_help_sidebar(

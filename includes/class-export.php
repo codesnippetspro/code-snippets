@@ -11,8 +11,6 @@
  * @subpackage Export
  */
 
-if ( ! class_exists( 'Code_Snippets_Export' ) ) :
-
 /**
  * Exports selected snippets to a XML or PHP file.
  *
@@ -120,10 +118,10 @@ class Code_Snippets_Export {
 		}
 
 		/* Build a generator line, like the WordPress export files */
-		$gen  = sprintf (
+		$gen = sprintf(
 			'generator="Code Snippets/%s" created="%s"',
 			CODE_SNIPPETS_VERSION,
-			date('Y-m-d H:i')
+			date( 'Y-m-d H:i' )
 		);
 
 		/* Run the generator line through the standard WordPress filter */
@@ -195,18 +193,17 @@ class Code_Snippets_Export {
 	 * @param array $snippet
 	 */
 	protected function do_item_php( $snippet ) {
+		echo "\n/**\n * {$snippet['name']}\n";
 
-			echo "\n/**\n * {$snippet['name']}\n";
+		if ( ! empty( $snippet['description'] ) ) {
 
-			if ( ! empty( $snippet['description'] ) ) {
+			/* Convert description to PhpDoc */
+			$desc = strip_tags( str_replace( "\n", "\n * ", $snippet['description'] ) );
 
-				/* Convert description to PhpDoc */
-				$desc = strip_tags( str_replace( "\n", "\n * ", $snippet['description'] ) );
+			echo " *\n * $desc\n";
+		}
 
-				echo " *\n * $desc\n";
-			}
-
-			echo " */\n{$snippet['code']}\n";
+		echo " */\n{$snippet['code']}\n";
 	}
 
 	/**
@@ -250,5 +247,3 @@ class Code_Snippets_Export {
 		exit;
 	}
 }
-
-endif; // class exists check
