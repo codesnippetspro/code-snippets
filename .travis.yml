@@ -54,7 +54,7 @@ before_script:
   # set up WP install
   - export WP_DEVELOP_DIR=/tmp/wordpress
   - mkdir -p $WP_DEVELOP_DIR
-  - git clone --depth=1 --branch="$WP_VERSION" git://develop.git.wordpress.org $WP_DEVELOP_DIR
+  - git clone --depth=1 --branch="$WP_VERSION" git://develop.git.wordpress.org/ $WP_DEVELOP_DIR/
   # Set up plugin information.
   - plugin_slug=$(basename $(pwd))
   - plugin_dir=$WP_DEVELOP_DIR/src/wp-content/plugins/$plugin_slug
