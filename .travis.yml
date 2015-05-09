@@ -20,11 +20,6 @@ env:
   - WP_VERSION=4.2 WP_MULTISITE=0
   - WP_VERSION=4.2 WP_MULTISITE=1
 
-  # WordPress 3.3 (minimum stable version)
-  # @link https://github.com/WordPress/WordPress/tree/3.3-branch
-  - WP_VERSION=3.3 WP_MULTISITE=0
-  - WP_VERSION=3.3 WP_MULTISITE=1
-
 # Declare 5.6 beta in test matrix.
 # @link http://docs.travis-ci.com/user/build-configuration/
 matrix:
