@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-10 15:31+1000\n"
+"POT-Creation-Date: 2015-05-10 16:42+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,46 +23,46 @@ msgstr ""
 msgid "Snippets"
 msgstr ""
 
-#: includes/admin.php:149
+#: includes/admin.php:152
 msgid "Manage your existing snippets"
 msgstr ""
 
-#: includes/admin.php:150 includes/manage/manage.php:34
+#: includes/admin.php:153 includes/manage/manage.php:34
 msgid "Manage"
 msgstr ""
 
-#: includes/admin.php:179
+#: includes/admin.php:182
 msgid "Visit the WordPress.org plugin page"
 msgstr ""
 
-#: includes/admin.php:180
+#: includes/admin.php:183
 msgid "About"
 msgstr ""
 
-#: includes/admin.php:184
+#: includes/admin.php:187
 msgid "Visit the support forums"
 msgstr ""
 
-#: includes/admin.php:185
+#: includes/admin.php:188
 msgid "Support"
 msgstr ""
 
-#: includes/admin.php:189
+#: includes/admin.php:192
 msgid "Support this plugin's development"
 msgstr ""
 
-#: includes/admin.php:190
+#: includes/admin.php:193
 msgid "Donate"
 msgstr ""
 
-#: includes/admin.php:223
+#: includes/admin.php:226
 msgid ""
 "<strong>Have feedback on Code Snippets?</strong> Please take the time to "
 "answer a short survey on how you use this plugin and what you'd like to see "
 "changed or added in the future."
 msgstr ""
 
-#: includes/admin.php:226
+#: includes/admin.php:229
 msgid "Take the survey now"
 msgstr ""
 
