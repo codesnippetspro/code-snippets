@@ -2,7 +2,7 @@
   "name": "code-snippets",
   "version": "2.2.2",
   "description": "Manage code snippets running on a WordPress-powered site through a graphical interface",
-  "homepage": "http://code-snippets.bungeshea.com",
+  "homepage": "http://bungeshea.com/plugins/code-snippets",
   "main": "Gruntfile.js",
   "directories": {
     "test": "tests"

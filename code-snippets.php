@@ -4,19 +4,19 @@
  * Code Snippets - An easy, clean and simple way to add code snippets to your site.
  *
  * If you're interested in helping to develop Code Snippets, or perhaps
- * contribute to the localization, please see http://code-snippets.bungeshea.com
+ * contribute to the localization, please see https://github.com/sheabunge/code-snippets
  *
  * @package   Code_Snippets
  * @version   2.2.2
  * @author    Shea Bunge <http://bungeshea.com/>
  * @copyright Copyright (c) 2012-2014, Shea Bunge
- * @link      http://code-snippets.bungeshea.com
+ * @link      http://bungeshea.com/plugins/code-snippets/
  * @license   http://opensource.org/licenses/MIT
  */
 
 /*
 Plugin Name: Code Snippets
-Plugin URI:  http://code-snippets.bungeshea.com
+Plugin URI:  http://bungeshea.com/plugins/code-snippets/
 Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
 Author:      Shea Bunge
 Author URI:  http://bungeshea.com

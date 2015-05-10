@@ -461,8 +461,8 @@ msgstr ""
 "上で有効になる可能性を最小限に抑えるのに役立ちます。"
 
 #: code-snippets.php:0
-msgid "http://code-snippets.bungeshea.com"
-msgstr "http://code-snippets.bungeshea.com"
+msgid "http://bungeshea.com/plugins/code-snippets"
+msgstr "http://bungeshea.com/plugins/code-snippets"
 
 #: code-snippets.php:263
 msgid "Import snippets from a <strong>Code Snippets</strong> export file"
@@ -479,10 +479,10 @@ msgstr[1] "スニペットを <strong>%d</strong> 件インポートしました
 #: includes/help/import.php:29 includes/help/manage.php:30
 #: includes/help/single.php:34
 msgid ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project "
+"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Project "
 "Website</a>"
 msgstr ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">プロジェク"
+"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">プロジェク"
 "トサイト</a>"
 
 #: includes/help/manage.php:15
@@ -504,11 +504,11 @@ msgstr ""
 #: includes/help/single.php:20
 msgid ""
 "More places to find snippets, as well as a selection of example snippets, "
-"can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/"
-"finding-snippets/\">plugin documentation</a>"
+"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/wiki/"
+"Finding-snippets\">plugin documentation</a>"
 msgstr ""
-"スニペットの例は、<a href=\"http://code-snippets.bungeshea.com/docs/finding-"
-"snippets/\">プラグインドキュメント</a> に記載されています。"
+"スニペットの例は、<a href=\"https://github.com/sheabunge/code-snippets/wiki/"
+"Finding-snippets\">プラグインドキュメント</a> に記載されています。"
 
 #: code-snippets.php:0
 msgid "1.7"
@@ -537,7 +537,7 @@ msgid ""
 "You are about to permanently delete the selected item.\n"
 "\t\t\t\t'Cancel' to stop, 'OK' to delete."
 msgstr ""
-"あなたは永久に選択した項目を削除しようとしています。\n"
+"あなたは永久に���択した項目を削除しようとしています。\n"
 "\t\t\t\t  削除するには、'OK'を、中止するには 'Cancel'をクリックして下さい。"
 
 #: includes/class-list-table.php:270

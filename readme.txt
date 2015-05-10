@@ -376,9 +376,6 @@ Improvements on the 'Manage Snippets' page and localization
 = 1.4 =
 Better code highlighting and improved multisite support
 
-= 1.3.2 =
-Code Snippets has a new website: http://code-snippets.bungeshea.com/
-
 = 1.3 =
 Added import/export feature
 

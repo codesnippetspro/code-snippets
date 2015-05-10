@@ -161,11 +161,11 @@ msgstr ""
 #: includes/edit/admin-help.php:31
 msgid ""
 "More places to find snippets, as well as a selection of example snippets, "
-"can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/"
-"finding-snippets/\">plugin documentation</a>"
+"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/wiki/"
+"Finding-snippets\">plugin documentation</a>"
 msgstr ""
 "Vous trouverez une collection de Snippets, ou des exemples sur la page de <a "
-"href=\"http://code-snippets.bungeshea.com/docs/finding-snippets/"
+"href=\"https://github.com/sheabunge/code-snippets/wiki/Finding-snippets"
 "\">documentation</a> du plugin. "
 
 #: includes/edit/admin-help.php:36
@@ -218,10 +218,10 @@ msgstr ""
 #: includes/edit/admin-help.php:46 includes/import/admin-help.php:40
 #: includes/manage/admin-help.php:40
 msgid ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project "
+"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Project "
 "Website</a>"
 msgstr ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Site du "
+"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Site du "
 "Projet</a>"
 
 #: includes/edit/admin-messages.php:14
@@ -770,8 +770,8 @@ msgstr ""
 #~ msgid "(Optional)"
 #~ msgstr "(Option)"
 
-#~ msgid "http://code-snippets.bungeshea.com"
-#~ msgstr "http://code-snippets.bungeshea.com"
+#~ msgid "http://bungeshea.com/plugins/code-snippets"
+#~ msgstr "http://bungeshea.com/plugins/code-snippets"
 
 #~ msgid "Import snippets from a <strong>Code Snippets</strong> export file"
 #~ msgstr ""
