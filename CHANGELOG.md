@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.0
+* Introduced CodeSniffer testing on code
+* Fixed description heading disappearing when media buttons enabled
+* Added snippet scope selector
+* Minify all CSS and JS in plugin
+* Made CodeMirror theme names more readable
+
 ## 2.1.0
 * Added additional setting descriptions
 * Added settings for code and description editor height
@@ -16,8 +23,8 @@
 
 ## 2.0.1
 
-* Fix table creation code not running on upgrade
-* Fix snippets per page option not saving
+* Fixed table creation code not running on upgrade
+* Fixed snippets per page option not saving
 
 ## 2.0
 

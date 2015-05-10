@@ -24,7 +24,7 @@ Version:     2.2.0
 License:     MIT
 License URI: license.txt
 Text Domain: code-snippets
-Domain Path: /languages/
+Domain Path: /languages
 */
 
 /* Exit if accessed directly */
@@ -107,13 +107,13 @@ add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
 
 /**
  * Load up the localization file if we're using WordPress in a different language.
- * Place it in this plugin's "languages" folder and name it "code-snippets-[value in wp-config].mo"
+ * Place it in this plugin's "languages" folder and name it "code-snippets-[language_COUNTRY].mo"
  *
  * If you wish to contribute a language file to be included in the Code Snippets package,
  * please see create an issue on GitHub: https://github.com/sheabunge/code-snippets/issues
  */
 function code_snippets_load_textdomain() {
-	load_plugin_textdomain( 'code-snippets', false, dirname( basename( __FILE__ ) ) . '/languages/' );
+	load_plugin_textdomain( 'code-snippets', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 
 add_action( 'plugins_loaded', 'code_snippets_load_textdomain' );
