@@ -31,8 +31,8 @@ function code_snippets_get_settings_fields() {
  */
 function code_snippets_get_settings() {
 	$default = Code_Snippets_Settings::get_defaults();
-	$saved = get_option( 'code_snippets_settings', $default );
-	return array_merge( $default, $saved );
+	$saved = get_option( 'code_snippets_settings', array() );
+	return array_replace_recursive( $default, $saved );
 }
 
 /**
