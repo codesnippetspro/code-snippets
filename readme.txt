@@ -4,7 +4,7 @@ Donate link: http://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 4.2.2
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 License: MIT
 License URI: license.txt
 
@@ -115,6 +115,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.2.2 =
+* Polyfull array_replace_recursive() function for PHP 5.2
 
 = 2.2.1 =
 * Fixed the default values of new setting not being applied
@@ -324,6 +327,9 @@ __Fixed__
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.2.2 =
+Fix error with PHP 5.2 in previous plugin version
 
 = 2.2.1 =
 New snippet scope feature; fixed bug with translations not loading; minified all css and js

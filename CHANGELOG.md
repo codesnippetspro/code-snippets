@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.2
+* Polyfull array_replace_recursive() function for PHP 5.2
+
 ## 2.2.1
 * Fixed the default values of new setting not being applied
 * Fixed missing background of tags input
