@@ -20,7 +20,7 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 
 		wp_enqueue_style(
 			'code-snippets-codemirror-theme-' . $theme,
-			plugins_url( "vendor/codemirror/theme/$theme.css", CODE_SNIPPETS_FILE ),
+			plugins_url( "css/min/cmthemes/$theme.css", CODE_SNIPPETS_FILE ),
 			array( 'code-snippets-codemirror' )
 		);
 	}

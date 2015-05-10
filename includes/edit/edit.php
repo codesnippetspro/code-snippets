@@ -273,7 +273,7 @@ function code_snippets_enqueue_codemirror() {
 
 	wp_enqueue_script(
 		'code-snippets-codemirror',
-		$ur . 'js/min/codemirror.js',
+		$url . 'js/min/codemirror.js',
 		false, $codemirror_version
 	);
 
@@ -307,7 +307,7 @@ function code_snippets_enqueue_codemirror() {
 
 	wp_enqueue_style(
 		'code-snippets-tag-it',
-		$url . 'js/min/tagit.css',
+		$url . 'css/min/tagit.css',
 		false, $tagit_version
 	);
 }
