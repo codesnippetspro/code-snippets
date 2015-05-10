@@ -74,7 +74,7 @@ module.exports = function(grunt) {
 						'vendor/codemirror/addon/search/search.js',
 						'vendor/codemirror/addon/edit/matchbrackets.js'
 					],
-					'js/min/tag-it.js': ['js/vendor/tag-it.min.js']
+					'js/min/tag-it.js': ['js/vendor/tag-it.js']
 				}
 			}
 		},
