@@ -104,7 +104,7 @@ function code_snippets_enqueue_admin_stylesheet( $hook ) {
 	$page = $hooks[ $hook ];
 
 	// add snippet page uses edit stylesheet
-	if ( 'add' === $page ) $page = 'edit';
+	'add' === $page && $page = 'edit';
 
 	wp_enqueue_style(
 		"code-snippets-$page",
