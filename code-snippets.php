@@ -28,8 +28,7 @@ Domain Path: /languages
 */
 
 /* Exit if accessed directly */
-if ( ! defined( 'ABSPATH' ) ) {lcs
-
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -43,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {lcs
  * @since 2.0
  * @var string A PHP-standardized version number string
  */
-define( 'CODE_SNIPPETS_VERSION', '2.2.0' );
+define( 'CODE_SNIPPETS_VERSION', '2.2.0.1' );
 
 /**
  * The full path to the main file of this plugin
