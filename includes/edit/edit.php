@@ -38,6 +38,8 @@ function code_snippets_add_single_menu() {
 		'code_snippets_render_single_menu'
 	);
 
+	add_action( 'load-' . $add_hook, 'code_snippets_load_single_menu' );
+
 	/* Check if we are currently editing a snippet */
 	if ( isset( $_REQUEST['page'] ) && code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
 
@@ -52,8 +54,6 @@ function code_snippets_add_single_menu() {
 
 		add_action( 'load-' . $edit_hook, 'code_snippets_load_single_menu' );
 	}
-
-	add_action( 'load-' . $add_hook, 'code_snippets_load_single_menu' );
 }
 
 add_action( 'admin_menu', 'code_snippets_add_single_menu', 5 );
@@ -337,15 +337,6 @@ function code_snippets_enqueue_codemirror() {
 		$codemirror_version
 	);
 
-	/* Plugin Assets */
-
-	wp_enqueue_style(
-		'code-snippets-edit',
-		plugins_url( 'css/min/edit-snippet.css', CODE_SNIPPETS_FILE ),
-		false,
-		CODE_SNIPPETS_VERSION
-	);
-
 	/* CodeMirror Theme */
 
 	$theme = code_snippets_get_setting( 'editor', 'theme' );
@@ -391,7 +382,4 @@ function code_snippets_enqueue_codemirror() {
 		array( 'code-snippets-tagit' ),
 		$tagit_version
 	);
-
-	/* Needed for resizable editor functionality */
-	wp_enqueue_script( 'jquery-ui-resizable' );
 }

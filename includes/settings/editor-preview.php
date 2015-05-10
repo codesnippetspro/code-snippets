@@ -115,14 +115,14 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
 			} );
 
 						<?php break;
-						case 'checkbox': ?>
+					case 'checkbox': ?>
 
 			$( 'input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
 				editor.setOption( '<?php echo $att_name; ?>', $(this).is(':checked') );
 			} );
 
 						<?php break;
-						case 'number': ?>
+					case 'number': ?>
 
 			$( 'input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
 				editor.setOption( '<?php echo $att_name; ?>', $(this).val() );

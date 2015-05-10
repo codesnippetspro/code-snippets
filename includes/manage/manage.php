@@ -67,9 +67,6 @@ function code_snippets_load_manage_menu() {
 		wp_die( __( 'You are not authorized to access this page.', 'code-snippets' ) );
 	}
 
-	/* Load stylesheet for this page */
-	add_action( 'admin_enqueue_scripts', 'code_snippets_manage_menu_assets' );
-
 	/* Create the snippet tables if they don't exist */
 	create_code_snippets_tables();
 
@@ -81,28 +78,6 @@ function code_snippets_load_manage_menu() {
 	global $code_snippets_list_table;
 	$code_snippets_list_table = new Code_Snippets_List_Table();
 	$code_snippets_list_table->prepare_items();
-}
-
-/**
- * Enqueue the manage menu stylesheet
- *
- * @since 2.0
- * @uses wp_enqueue_style() To add the stylesheet to the queue
- * @param string $hook The current page hook, to be compared with the manage snippets page hook
- */
-function code_snippets_manage_menu_assets( $hook ) {
-
-	/* Only load the stylesheet on the manage snippets page */
-	if ( code_snippets_get_menu_hook() !== $hook ) {
-		return;
-	}
-
-	wp_enqueue_style(
-		'code-snippets-manage',
-		plugins_url( 'css/min/manage-snippets.css', CODE_SNIPPETS_FILE ),
-		false,
-		CODE_SNIPPETS_VERSION
-	);
 }
 
 /**
