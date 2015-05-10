@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.1
+* Fixed the default values of new setting not being applied
+* Fixed missing background of tags input
+
 ## 2.2.0
 * Introduced CodeSniffer testing on code
 * Fixed description heading disappearing when media buttons enabled
