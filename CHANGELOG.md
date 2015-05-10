@@ -4,8 +4,9 @@
 * Introduced CodeSniffer testing on code
 * Fixed description heading disappearing when media buttons enabled
 * Added snippet scope selector
-* Minify all CSS and JS in plugin
+* Minified all CSS and JS in plugin
 * Made CodeMirror theme names more readable
+* Fixed bug causing translations to not be loaded
 
 ## 2.1.0
 * Added additional setting descriptions

@@ -4,7 +4,7 @@ Donate link: http://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 4.2.2
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: MIT
 License URI: license.txt
 
@@ -115,6 +115,14 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.2.0 =
+* Introduced CodeSniffer testing on code
+* Fixed description heading disappearing when media buttons enabled
+* Added snippet scope selector
+* Minified all CSS and JS in plugin
+* Made CodeMirror theme names more readable
+* Fixed bug causing translations to not be loaded
 
 = 2.1.0 =
 * Added additional setting descriptions
@@ -312,6 +320,9 @@ __Fixed__
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.2.0 =
+New snippet scope feature; fixed bug with translations not loading; minified all css and js
 
 = 2.1.0 =
 Minor improvements to settings component; added description editor settings; minor security fixes

@@ -28,7 +28,8 @@ Domain Path: /languages
 */
 
 /* Exit if accessed directly */
-if ( ! defined( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {lcs
+
 	exit;
 }
 
