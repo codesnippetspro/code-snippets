@@ -139,6 +139,7 @@ function code_snippets_settings_validate( array $input ) {
 				default:
 					$settings[ $section_id ][ $field_id ] = $input[ $section_id ][ $field_id ];
 			}
+		}
 	}
 
 	/* Add an updated message */

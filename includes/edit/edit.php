@@ -171,11 +171,12 @@ function code_snippets_load_single_menu() {
 function code_snippets_description_editor_box( $snippet ) {
 	$settings = code_snippets_get_settings();
 	$settings = $settings['description_editor'];
+	$media_buttons = $settings['media_buttons'];
 
-	printf(
-		'<label for="snippet_description"><h3><div>%s</div></h3></label>',
-		__( 'Description', 'code-snippets' )
-	);
+	echo '<label for="snippet_description"><h3>';
+	$heading = __( 'Description', 'code-snippets' );
+	echo $media_buttons ? $heading : "<div>$heading</div>";
+	echo '</h3></label>';
 
 	remove_editor_styles(); // stop custom theme styling interfering with the editor
 
@@ -186,12 +187,12 @@ function code_snippets_description_editor_box( $snippet ) {
 			'textarea_name' => 'snippet_description',
 			'textarea_rows' => $settings['rows'],
 			'teeny' => ! $settings['use_full_mce'],
-			'media_buttons' => $settings['media_buttons'],
+			'media_buttons' => $media_buttons,
 		) )
 	);
 }
 
-add_action( 'code_snippets/admin/single', 'code_snippets_description_editor_box', 5 );
+add_action( 'code_snippets/admin/single', 'code_snippets_description_editor_box', 9 );
 
 function code_snippets_snippet_scope_setting( $snippet ) {
 
@@ -217,7 +218,7 @@ function code_snippets_snippet_scope_setting( $snippet ) {
 	echo '</div>';
 }
 
-add_action( 'code_snippets/admin/single', 'code_snippets_snippet_scope_setting', 20 );
+add_action( 'code_snippets/admin/single', 'code_snippets_snippet_scope_setting', 5 );
 
 /**
 * Output the interface for editing snippet tags
