@@ -25,7 +25,6 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 		);
 	}
 
-	/* Enqueue jQuery */
 	wp_enqueue_script( 'jquery' );
 }
 
@@ -39,7 +38,6 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 	$saved_value = code_snippets_get_setting( $atts['section'], $atts['id'] );
 
 	echo '<select name="code_snippets_settings[editor][theme]">';
-
 	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>default</option>';
 
 	/* Fetch all theme CSS files */
@@ -110,35 +108,27 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
 
 				switch ( $types[ $setting ] ) {
 
-					case 'codemirror_theme_select':
-						?>
+					case 'codemirror_theme_select':	?>
 
 			$( 'select[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
 				editor.setOption( '<?php echo $att_name; ?>', $(this).val() );
 			} );
 
-						<?php
-						break;
-
-					case 'checkbox':
-						?>
+						<?php break;
+						case 'checkbox': ?>
 
 			$( 'input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
 				editor.setOption( '<?php echo $att_name; ?>', $(this).is(':checked') );
 			} );
 
-						<?php
-						break;
-
-					case 'number':
-						?>
+						<?php break;
+						case 'number': ?>
 
 			$( 'input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
 				editor.setOption( '<?php echo $att_name; ?>', $(this).val() );
 			} );
 
-						<?php
-						break;
+						<?php break;
 				}
 			}
 		?>
