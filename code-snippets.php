@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0
  * @var string A PHP-standardized version number string
  */
-define( 'CODE_SNIPPETS_VERSION', '2.2.0.1' );
+define( 'CODE_SNIPPETS_VERSION', '2.2.0' );
 
 /**
  * The full path to the main file of this plugin
