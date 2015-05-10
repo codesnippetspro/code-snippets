@@ -90,7 +90,7 @@ function code_snippets_load_single_menu() {
 	require plugin_dir_path( __FILE__ ) . 'admin-help.php';
 
 	/* Enqueue the code editor and other scripts and styles */
-	add_filter( 'admin_enqueue_scripts', 'code_snippets_enqueue_codemirror' );
+	add_action( 'admin_enqueue_scripts', 'code_snippets_enqueue_codemirror', 9 );
 
 	/* Don't allow visiting the edit snippet page without a valid ID */
 	if ( code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {

@@ -17,6 +17,10 @@ label[for='snippet_description'] h3 div {
 	position: absolute;
 }
 
+ul.tagit {
+	background-color: #fff;
+}
+
 /* Add spacing in between the action buttons */
 .submit .button {
 	margin-right: .5em;
@@ -38,7 +42,7 @@ label[for='snippet_description'] h3 div {
 
 	border: 1px solid #dfdfdf;
 	border-radius: 3px;
-	background-color: #fff;;
+	background-color: #fff;
 }
 
 .CodeMirror-scroll {
