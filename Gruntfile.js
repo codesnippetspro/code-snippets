@@ -43,6 +43,39 @@ module.exports = function(grunt) {
 				flatten: true,
 				src: 'css/build/*.css',
 				dest: 'css/min'
+			},
+			codemirror_themes: {
+				expand: true,
+				flatten: true,
+				src: 'vendor/codemirror/theme/*.css',
+				dest: 'css/min/cmthemes'
+			},
+			vendor: {
+				files: {
+					'css/min/codemirror.css': [
+						'vendor/codemirror/lib/codemirror.css'
+					],
+					'css/min/tagit.css': [
+						'js/vendor/jquery.tagit.css',
+						'js/vendor/tagit.ui-zendesk.css'
+					]
+				}
+			}
+		},
+
+		uglify: {
+			vendor: {
+				files: {
+					'js/min/codemirror.js': [
+						'vendor/codemirror/lib/codemirror.js',
+						'vendor/codemirror/mode/clike/clike.js',
+						'vendor/codemirror/mode/php/php.js',
+						'vendor/codemirror/addon/search/searchcursor.js',
+						'vendor/codemirror/addon/search/search.js',
+						'vendor/codemirror/addon/edit/matchbrackets.js'
+					],
+					'js/min/tag-it.js': ['js/vendor/tag-it.js']
+				}
 			}
 		},
 
@@ -74,18 +107,9 @@ module.exports = function(grunt) {
 						'includes/**/*',
 						'admin/**/*',
 						'languages/**/*',
-						'css/**/*',
-						'js/**/*',
-
-						// CodeMirror
-						'vendor/codemirror/lib/codemirror.css',
-						'vendor/codemirror/lib/codemirror.js',
-						'vendor/codemirror/mode/clike/clike.js',
-						'vendor/codemirror/mode/php/php.js',
-						'vendor/codemirror/theme/*.css',
-						'vendor/codemirror/addon/search/searchcursor.js',
-						'vendor/codemirror/addon/search/search.js',
-						'vendor/codemirror/addon/edit/matchbrackets.js'
+						'css/min/**/*',
+						'css/font/**/*',
+						'js/min/**/*'
 					],
 					dest: 'deploy/plugin',
 					filter: 'isFile'
@@ -113,6 +137,17 @@ module.exports = function(grunt) {
 				bin: 'vendor/bin/phpunit',
 				bootstrap: 'tests/bootstrap.php',
 				colors: true
+			}
+		},
+
+		phpcs: {
+			application: {
+				src: ['*.php', 'includes/**/*.php']
+			},
+			options: {
+				bin: 'vendor/bin/phpcs',
+				standard: 'codesniffer.ruleset.xml',
+				showSniffCodes: true
 			}
 		},
 
@@ -155,10 +190,10 @@ module.exports = function(grunt) {
 
 	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
 	grunt.registerTask( 'l18n', ['pot', 'potomo'] );
-	grunt.registerTask( 'test', ['jshint', 'phpunit'] );
+	grunt.registerTask( 'test', ['jshint', 'phpcs', 'phpunit'] );
 
 	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );
 	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );
 
-	grunt.registerTask( 'default', ['css', 'l18n'] );
+	grunt.registerTask( 'default', ['css', 'uglify', 'l18n'] );
 };

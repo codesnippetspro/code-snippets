@@ -45,6 +45,8 @@ before_script:
   - composer self-update
   - composer install
   - npm install
+  # Register WPCS with PHPCS (doesn't seem to do this automatically)
+  - vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs
 
   # set up WP install
   - export WP_DEVELOP_DIR=/tmp/wordpress
@@ -74,7 +76,7 @@ before_script:
 script:
 
   # Search for PHP syntax errors.
-  - find . \( -name '*.php' \) -maxdepth 1 -exec php -lf {} \;
+  - find . -maxdepth 1 \( -name '*.php' \) -exec php -lf {} \;
   - find includes \( -name '*.php' \) -exec php -lf {} \;
 
   # Run Grunt tests

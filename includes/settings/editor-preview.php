@@ -20,12 +20,11 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 
 		wp_enqueue_style(
 			'code-snippets-codemirror-theme-' . $theme,
-			plugins_url( "vendor/codemirror/theme/$theme.css", CODE_SNIPPETS_FILE ),
+			plugins_url( "css/min/cmthemes/$theme.css", CODE_SNIPPETS_FILE ),
 			array( 'code-snippets-codemirror' )
 		);
 	}
 
-	/* Enqueue jQuery */
 	wp_enqueue_script( 'jquery' );
 }
 
@@ -39,8 +38,7 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 	$saved_value = code_snippets_get_setting( $atts['section'], $atts['id'] );
 
 	echo '<select name="code_snippets_settings[editor][theme]">';
-
-	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>default</option>';
+	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>Default</option>';
 
 	/* Fetch all theme CSS files */
 	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'vendor/codemirror/theme/';
@@ -57,11 +55,11 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 		if ( 'ambiance-mobile' === $theme ) {
 			continue;
 		}
-
-		printf (
-			'<option value="%1$s"%2$s>%1$s</option>',
+		printf(
+			'<option value="%s"%s>%s</option>',
 			$theme,
-			selected( $theme, $saved_value, false )
+			selected( $theme, $saved_value, false ),
+			ucwords( str_replace( '-', ' ', $theme ) )
 		);
 	}
 
@@ -79,7 +77,7 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
 
 	$atts = array(
 		'mode' => 'text/x-php',
-		'value' => $example_content
+		'value' => $example_content,
 	);
 
 	?>
@@ -110,41 +108,29 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
 
 				switch ( $types[ $setting ] ) {
 
-					case 'codemirror_theme_select':
-						?>
+					case 'codemirror_theme_select':	?>
 
 			$( 'select[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
 				editor.setOption( '<?php echo $att_name; ?>', $(this).val() );
 			} );
 
-						<?php
-						break;
-
-					case 'checkbox':
-						?>
+						<?php break;
+					case 'checkbox': ?>
 
 			$( 'input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
 				editor.setOption( '<?php echo $att_name; ?>', $(this).is(':checked') );
 			} );
 
-						<?php
-						break;
-
-
-					case 'number':
-						?>
+						<?php break;
+					case 'number': ?>
 
 			$( 'input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]' ).change( function () {
 				editor.setOption( '<?php echo $att_name; ?>', $(this).val() );
 			} );
 
-						<?php
-						break;
-
+						<?php break;
 				}
-
 			}
-
 		?>
 
 		});

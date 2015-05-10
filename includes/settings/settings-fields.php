@@ -13,7 +13,7 @@ function code_snippets_checkbox_field( $atts ) {
 	$saved_value = code_snippets_get_setting( $atts['section'], $atts['id'] );
 	$input_name = sprintf( 'code_snippets_settings[%s][%s]', $atts['section'], $atts['id'] );
 
-	$output = sprintf (
+	$output = sprintf(
 		'<input type="checkbox" name="%s"%s>',
 		$input_name,
 		checked( $saved_value, true, false )
@@ -21,7 +21,7 @@ function code_snippets_checkbox_field( $atts ) {
 
 	// Output the checkbox field, optionally with label
 	if ( isset( $atts['label'] ) ) {
-		printf ( '<label for="%s">%s %s</label>', $input_name, $output, $atts['label'] );
+		printf( '<label for="%s">%s %s</label>', $input_name, $output, $atts['label'] );
 	} else {
 		echo $output;
 	}
@@ -38,7 +38,7 @@ function code_snippets_checkbox_field( $atts ) {
  */
 function code_snippets_number_field( $atts ) {
 
-	printf (
+	printf(
 		'<input type="number" name="code_snippets_settings[%s][%s]" value="%s">',
 		$atts['section'],
 		$atts['id'],

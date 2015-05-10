@@ -85,6 +85,38 @@ function code_snippets_mu_menu_items( $menu_items ) {
 add_filter( 'mu_menu_items', 'code_snippets_mu_menu_items' );
 
 /**
+ * Enqueue the stylesheet for a snippet menu
+ *
+ * @since 2.2.0
+ * @uses wp_enqueue_style() To add the stylesheet to the queue
+ * @param string $hook The current page hook
+ */
+function code_snippets_enqueue_admin_stylesheet( $hook ) {
+	$pages = array( 'manage', 'add', 'edit', 'settings' );
+	$hooks = array_map( 'code_snippets_get_menu_hook', $pages );
+
+	/* Only load the stylesheet on the right snippets page */
+	if ( ! in_array( $hook, $hooks ) ) {
+		return;
+	}
+
+	$hooks = array_combine( $hooks, $pages );
+	$page = $hooks[ $hook ];
+
+	// add snippet page uses edit stylesheet
+	'add' === $page && $page = 'edit';
+
+	wp_enqueue_style(
+		"code-snippets-$page",
+		plugins_url( "css/min/$page.css", CODE_SNIPPETS_FILE ),
+		false,
+		CODE_SNIPPETS_VERSION
+	);
+}
+
+add_action( 'admin_enqueue_scripts', 'code_snippets_enqueue_admin_stylesheet' );
+
+/**
  * Enqueue the icon stylesheet globally in the admin
  *
  * @since 1.0
@@ -137,7 +169,7 @@ add_filter( 'plugin_action_links_' . plugin_basename( CODE_SNIPPETS_FILE ), 'cod
 function code_snippets_plugin_meta( $links, $file ) {
 
 	/* We only want to affect the Code Snippets plugin listing */
-	if ( $file !== plugin_basename( CODE_SNIPPETS_FILE ) ) {
+	if ( plugin_basename( CODE_SNIPPETS_FILE ) !== $file ) {
 		return $links;
 	}
 
@@ -157,9 +189,9 @@ function code_snippets_plugin_meta( $links, $file ) {
 		),
 		sprintf( $format,
 			'http://code-snippets.bungeshea.com/donate/',
-			__("Support this plugin's development", 'code-snippets' ),
+			__( "Support this plugin's development", 'code-snippets' ),
 			__( 'Donate', 'code-snippets' )
-		)
+		),
 	) );
 }
 
@@ -215,7 +247,7 @@ function code_snippets_remove_debug_bar_codemirror() {
 	global $pagenow;
 
 	/* Try to discern if we are on the single snippet page as best as we can at this early time */
-	is_admin() && 'admin.php' === $pagenow && isset( $_GET['page' ] ) && 'snippet' === $_GET['page']
+	is_admin() && 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'snippet' === $_GET['page']
 
 	/* Remove the action and stop all Debug Bar Console scripts */
 	&& remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );

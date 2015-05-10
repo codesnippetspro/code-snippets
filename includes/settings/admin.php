@@ -35,7 +35,6 @@ add_action( 'admin_menu', 'code_snippets_add_settings_menu' );
 function code_snippets_render_settings_menu() {
 	?>
 	<div class="wrap">
-
 		<?php screen_icon(); ?>
 		<h2><?php esc_html_e( 'Settings', 'code-snippets' ); ?></h2>
 
@@ -48,7 +47,6 @@ function code_snippets_render_settings_menu() {
 			</table>
 			<?php submit_button(); ?>
 		</form>
-
 	</div>
 	<?php
 }

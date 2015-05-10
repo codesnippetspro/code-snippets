@@ -32,7 +32,7 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 			$atts = json_encode( $atts, JSON_UNESCAPED_SLASHES );
 		} else {
 			/* Use a fallback for < 5.4 */
-			$atts = str_replace('\\/', '/', json_encode( $atts ) );
+			$atts = str_replace( '\\/', '/', json_encode( $atts ) );
 		}
 	}
 

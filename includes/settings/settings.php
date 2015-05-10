@@ -30,9 +30,9 @@ function code_snippets_get_settings_fields() {
  * @return array
  */
 function code_snippets_get_settings() {
-	$saved = get_option( 'code_snippets_settings', array() );
-	$default = code_snippets_get_default_settings();
-	return wp_parse_args( $saved, $default );
+	$default = Code_Snippets_Settings::get_defaults();
+	$saved = get_option( 'code_snippets_settings', $default );
+	return array_merge( $default, $saved );
 }
 
 /**
@@ -95,7 +95,6 @@ function code_snippets_register_settings() {
 				array_merge( $field, array( 'section' => $section_id ) )
 			);
 		}
-
 	}
 
 	/* Add editor preview as a field */
@@ -126,21 +125,19 @@ function code_snippets_settings_validate( array $input ) {
 		foreach ( $fields as $field ) {
 			$field_id = $field['id'];
 
-			// Checkbox field
-			if ( 'checkbox' === $field['type'] ) {
+			switch ( $field['type'] ) {
 
-				$settings[ $section_id ][ $field_id ] = (
-					isset( $input[ $section_id ][ $field_id ] ) &&
-					'on' === $input[ $section_id ][ $field_id ]
-				);
+				case 'checkbox':
+					$settings[ $section_id ][ $field_id ] =
+						isset( $input[ $section_id ][ $field_id ] ) && 'on' === $input[ $section_id ][ $field_id ];
+					break;
 
-			// Number field
-			} elseif ( 'number' == $field['type'] ) {
-				$settings[ $section_id ][ $field_id ] = absint( $input[ $section_id ][ $field_id ] );
+				case 'number':
+					$settings[ $section_id ][ $field_id ] = absint( $input[ $section_id ][ $field_id ] );
+					break;
 
-			// Other fields
-			} else {
-				$settings[ $section_id ][ $field_id ] = $input[ $section_id ][ $field_id ];
+				default:
+					$settings[ $section_id ][ $field_id ] = $input[ $section_id ][ $field_id ];
 			}
 		}
 	}

@@ -38,6 +38,8 @@ function code_snippets_add_single_menu() {
 		'code_snippets_render_single_menu'
 	);
 
+	add_action( 'load-' . $add_hook, 'code_snippets_load_single_menu' );
+
 	/* Check if we are currently editing a snippet */
 	if ( isset( $_REQUEST['page'] ) && code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
 
@@ -52,8 +54,6 @@ function code_snippets_add_single_menu() {
 
 		add_action( 'load-' . $edit_hook, 'code_snippets_load_single_menu' );
 	}
-
-	add_action( 'load-' . $add_hook, 'code_snippets_load_single_menu' );
 }
 
 add_action( 'admin_menu', 'code_snippets_add_single_menu', 5 );
@@ -116,7 +116,7 @@ function code_snippets_load_single_menu() {
 		}
 
 		/* Save the snippet to the database */
-		$result = save_snippet( stripslashes_deep( $_POST )  );
+		$result = save_snippet( stripslashes_deep( $_POST ) );
 
 		/* Build the status message and redirect */
 		$query_args = array();
@@ -170,14 +170,13 @@ function code_snippets_load_single_menu() {
  */
 function code_snippets_description_editor_box( $snippet ) {
 	$settings = code_snippets_get_settings();
-	$settings = $settings['description_editor']
-	?>
+	$settings = $settings['description_editor'];
+	$media_buttons = $settings['media_buttons'];
 
-	<label for="snippet_description">
-		<h3><div><?php _e( 'Description', 'code-snippets' ); ?></div></h3>
-	</label>
-
-	<?php
+	echo '<label for="snippet_description"><h3>';
+	$heading = __( 'Description', 'code-snippets' );
+	echo $media_buttons ? $heading : "<div>$heading</div>";
+	echo '</h3></label>';
 
 	remove_editor_styles(); // stop custom theme styling interfering with the editor
 
@@ -188,12 +187,38 @@ function code_snippets_description_editor_box( $snippet ) {
 			'textarea_name' => 'snippet_description',
 			'textarea_rows' => $settings['rows'],
 			'teeny' => ! $settings['use_full_mce'],
-			'media_buttons' => $settings['media_buttons'],
+			'media_buttons' => $media_buttons,
 		) )
 	);
 }
 
-add_action( 'code_snippets/admin/single', 'code_snippets_description_editor_box', 5 );
+add_action( 'code_snippets/admin/single', 'code_snippets_description_editor_box', 9 );
+
+function code_snippets_snippet_scope_setting( $snippet ) {
+
+	if ( ! code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
+		return;
+	}
+
+	$scopes = array(
+		__( 'Run snippet everywhere', 'code-snippets' ),
+		__( 'Only run in adminstration area', 'code-snippets' ),
+		__( 'Only run on site front-end', 'code-snippets' ),
+	);
+
+	echo '<div class="snippet-scope">';
+	printf( '<label for="snippet_scope"><h3>%s</h3></label>', __( 'Scope', 'code-snippets' ) );
+
+	foreach ( $scopes as $scope => $label ) {
+		printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope );
+		checked( $scope, $snippet->scope );
+		echo "> $label</div>";
+	}
+
+	echo '</div>';
+}
+
+add_action( 'code_snippets/admin/single', 'code_snippets_snippet_scope_setting', 5 );
 
 /**
 * Output the interface for editing snippet tags
@@ -227,122 +252,48 @@ add_action( 'code_snippets/admin/single', 'code_snippets_tags_editor' );
  * @since 1.7
  * @access private
  *
- * @uses wp_register_script()
- * @uses wp_register_style()
  * @uses wp_enqueue_script() To add the scripts to the queue
  * @uses wp_enqueue_style() To add the stylesheets to the queue
- *
- * @param string $hook The current page hook, to be compared with the single snippet page hook
  */
 function code_snippets_enqueue_codemirror() {
+	$tagit_version = '2.0';
+	$codemirror_version = '5.2';
+	$url = plugin_dir_url( CODE_SNIPPETS_FILE );
 
 	/* Remove other CodeMirror styles */
 	wp_deregister_style( 'codemirror' );
 	wp_deregister_style( 'wpeditor' );
 
 	/* CodeMirror */
-
-	$codemirror_version = '5.2';
-	$codemirror_url     = plugins_url( 'vendor/codemirror/', CODE_SNIPPETS_FILE );
-
 	wp_enqueue_style(
 		'code-snippets-codemirror',
-		$codemirror_url . 'lib/codemirror.css',
-		false,
-		$codemirror_version
+		$url . 'css/min/codemirror.css',
+		false, $codemirror_version
 	);
 
 	wp_enqueue_script(
 		'code-snippets-codemirror',
-		$codemirror_url . 'lib/codemirror.js',
-		false,
-		$codemirror_version
-	);
-
-	/* CodeMirror Modes */
-
-	wp_enqueue_script(
-		'code-snippets-codemirror-mode-clike',
-		$codemirror_url . 'mode/clike/clike.js',
-		array( 'code-snippets-codemirror' ),
-		$codemirror_version
-	);
-
-	wp_enqueue_script(
-		'code-snippets-codemirror-mode-php',
-		$codemirror_url . 'mode/php/php.js',
-		array( 'code-snippets-codemirror', 'code-snippets-codemirror-mode-clike' ),
-		$codemirror_version
-	);
-
-
-	/* CodeMirror Addons */
-
-	wp_enqueue_script(
-		'code-snippets-codemirror-addon-searchcursor',
-		$codemirror_url . 'addon/search/searchcursor.js',
-		array( 'code-snippets-codemirror' ),
-		$codemirror_version
-	);
-
-	wp_enqueue_script(
-		'code-snippets-codemirror-addon-search',
-		$codemirror_url . 'addon/search/search.js',
-		array( 'code-snippets-codemirror', 'code-snippets-codemirror-addon-searchcursor' ),
-		$codemirror_version
-	);
-
-	wp_enqueue_script(
-		'code-snippets-codemirror-addon-matchbrackets',
-		$codemirror_url . 'addon/edit/matchbrackets.js',
-		array( 'code-snippets-codemirror' ),
-		$codemirror_version
-	);
-
-	wp_enqueue_script(
-		'code-snippets-codemirror-addon-closebrackets',
-		$codemirror_url . 'addon/edit/closebrackets.js',
-		array( 'code-snippets-codemirror' ),
-		$codemirror_version
-	);
-
-	wp_enqueue_script(
-		'code-snippets-codemirror-addon-match-highlighter',
-		$codemirror_url . 'addon/search/match-highlighter.js',
-		array( 'code-snippets-codemirror', 'code-snippets-codemirror-addon-searchcursor' ),
-		$codemirror_version
-	);
-
-	/* Plugin Assets */
-
-	wp_enqueue_style(
-		'code-snippets-edit',
-		plugins_url( 'css/min/edit-snippet.css', CODE_SNIPPETS_FILE ),
-		false,
-		CODE_SNIPPETS_VERSION
+		$url . 'js/min/codemirror.js',
+		false, $codemirror_version
 	);
 
 	/* CodeMirror Theme */
-
 	$theme = code_snippets_get_setting( 'editor', 'theme' );
 
 	if ( 'default' !== $theme ) {
 
 		wp_enqueue_style(
 			'code-snippets-codemirror-theme-' . $theme,
-			$codemirror_url . "theme/$theme.css",
+			$url . "css/min/cmthemes/$theme.css",
 			array( 'code-snippets-codemirror' ),
 			$codemirror_version
 		);
 	}
 
 	/* Tag It UI */
-
-	$tagit_version = '2.0';
-
 	wp_enqueue_script(
 		'code-snippets-tag-it',
-		plugins_url( 'js/vendor/tag-it.min.js', CODE_SNIPPETS_FILE ),
+		$url . 'js/min/tag-it.js',
 		array(
 			'jquery-ui-core',
 			'jquery-ui-widget',
@@ -355,19 +306,8 @@ function code_snippets_enqueue_codemirror() {
 	);
 
 	wp_enqueue_style(
-		'code-snippets-tagit',
-		plugins_url( 'js/vendor/jquery.tagit.css', CODE_SNIPPETS_FILE ),
-		false,
-		$tagit_version
+		'code-snippets-tag-it',
+		$url . 'css/min/tagit.css',
+		false, $tagit_version
 	);
-
-	wp_enqueue_style(
-		'code-snippets-tagit-zendesk-ui',
-		plugins_url( 'js/vendor/tagit.ui-zendesk.css', CODE_SNIPPETS_FILE ),
-		array( 'code-snippets-tagit' ),
-		$tagit_version
-	);
-
-	/* Needed for resizable editor functionality */
-	wp_enqueue_script( 'jquery-ui-resizable' );
 }
