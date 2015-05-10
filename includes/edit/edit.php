@@ -195,6 +195,10 @@ add_action( 'code_snippets/admin/single', 'code_snippets_description_editor_box'
 
 function code_snippets_snippet_scope_setting( $snippet ) {
 
+	if ( ! code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
+		return;
+	}
+
 	$scopes = array(
 		__( 'Run snippet everywhere', 'code-snippets' ),
 		__( 'Only run in adminstration area', 'code-snippets' ),
@@ -205,7 +209,7 @@ function code_snippets_snippet_scope_setting( $snippet ) {
 	printf( '<label for="snippet_scope"><h3>%s</h3></label>', __( 'Scope', 'code-snippets' ) );
 
 	foreach ( $scopes as $scope => $label ) {
-		printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope);
+		printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope );
 		checked( $scope, $snippet->scope );
 		echo "> $label</div>";
 	}

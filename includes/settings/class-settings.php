@@ -49,6 +49,14 @@ class Code_Snippets_Settings {
 				'label' => __( "Make the 'Save and Activate' button the default action when saving a snippet.", 'code-snippets' ),
 				'default' => false,
 			),
+
+			array(
+				'id' => 'snippet_scope_enabled',
+				'name' => __( 'Enable Scope Selector', 'code-snippets' ),
+				'type' => 'checkbox',
+				'label' => __( 'Enable the scope selector when editing a snippet', 'code-snippets' ),
+				'default' => true,
+			),
 		);
 
 		/* Description Editor settings section */
