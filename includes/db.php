@@ -122,7 +122,7 @@ function create_code_snippets_table( $table_name ) {
 				tags        longtext,
 				scope       tinyint(1) default 0,
 				active      tinyint(1) not null default 0,
-				primary key(id)
+				primary key (id)
 			) {$charset_collate};";
 
 	dbDelta( $sql );
