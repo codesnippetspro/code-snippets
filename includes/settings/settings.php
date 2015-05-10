@@ -32,6 +32,44 @@ function code_snippets_get_settings_fields() {
 function code_snippets_get_settings() {
 	$default = Code_Snippets_Settings::get_defaults();
 	$saved = get_option( 'code_snippets_settings', array() );
+
+	/**
+	 * Polyfull array_replace_recursive() function for PHP 5.2
+	 * @link http://php.net/manual/en/function.array-replace-recursive.php#92574
+	 */
+	if ( ! function_exists( 'array_replace_recursive' ) ) {
+		function array_replace_recursive( $array, $array1 ) {
+			function recurse( $array, $array1 ) {
+				foreach ( $array1 as $key => $value ) {
+					// create new key in $array, if it is empty or not an array
+					if ( ! isset( $array[ $key ] ) || ( isset( $array[ $key ] ) && ! is_array( $array[ $key ] ) ) ) {
+						$array[ $key ] = array();
+					}
+					// overwrite the value in the base array
+					if ( is_array( $value ) ) {
+						$value = recurse( $array[ $key ], $value );
+					}
+					$array[ $key ] = $value;
+				}
+				return $array;
+			}
+
+			// handle the arguments, merge one by one
+			$args = func_get_args();
+			$array = $args[0];
+			if ( ! is_array( $array ) ) {
+				return $array;
+			}
+			$count = count( $args );
+			for ( $i = 1; $i < $count; ++$i ) {
+				if ( is_array( $args[ $i ] ) ) {
+					$array = recurse( $array, $args[ $i ] );
+				}
+			}
+			return $array;
+		}
+	}
+
 	return array_replace_recursive( $default, $saved );
 }
 
