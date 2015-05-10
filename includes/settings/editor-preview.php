@@ -38,7 +38,7 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 	$saved_value = code_snippets_get_setting( $atts['section'], $atts['id'] );
 
 	echo '<select name="code_snippets_settings[editor][theme]">';
-	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>default</option>';
+	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>Default</option>';
 
 	/* Fetch all theme CSS files */
 	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'vendor/codemirror/theme/';
@@ -55,11 +55,11 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 		if ( 'ambiance-mobile' === $theme ) {
 			continue;
 		}
-
 		printf(
-			'<option value="%1$s"%2$s>%1$s</option>',
+			'<option value="%s"%s>%s</option>',
 			$theme,
-			selected( $theme, $saved_value, false )
+			selected( $theme, $saved_value, false ),
+			ucwords( str_replace( '-', ' ', $theme ) )
 		);
 	}
 
