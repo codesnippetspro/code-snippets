@@ -76,7 +76,7 @@ before_script:
 script:
 
   # Search for PHP syntax errors.
-  - find . \( -name '*.php' \) -maxdepth 1 -exec php -lf {} \;
+  - find . -maxdepth 1 \( -name '*.php' \) -exec php -lf {} \;
   - find includes \( -name '*.php' \) -exec php -lf {} \;
 
   # Run Grunt tests
