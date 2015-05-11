@@ -121,16 +121,18 @@ function code_snippets_register_settings() {
 	}
 
 	/* Register settings fields */
-	foreach ( code_snippets_get_settings_fields() as $section_id => $fields ) {
-
+	foreach ( Code_Snippets_Settings::get_fields() as $section_id => $fields ) {
 		foreach ( $fields as $field ) {
+			$atts = $field;
+			$atts['section'] = $section_id;
+
 			add_settings_field(
 				'code_snippets_' . $field['id'],
 				$field['name'],
 				"code_snippets_{$field['type']}_field",
 				'code-snippets',
 				'code-snippets-' . $section_id,
-				array_merge( $field, array( 'section' => $section_id ) )
+				$atts
 			);
 		}
 	}

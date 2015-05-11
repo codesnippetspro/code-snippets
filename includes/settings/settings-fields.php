@@ -39,11 +39,21 @@ function code_snippets_checkbox_field( $atts ) {
 function code_snippets_number_field( $atts ) {
 
 	printf(
-		'<input type="number" name="code_snippets_settings[%s][%s]" value="%s">',
+		'<input type="number" name="code_snippets_settings[%s][%s]" value="%s"',
 		$atts['section'],
 		$atts['id'],
 		code_snippets_get_setting( $atts['section'], $atts['id'] )
 	);
+
+	if ( isset( $atts['min'] ) ) {
+		printf( ' min="%d"', $atts['min'] );
+	}
+
+	if ( isset( $atts['max'] ) ) {
+		printf( ' max="%d"', $atts['max'] );
+	}
+
+	echo '>';
 
 	if ( ! empty( $atts['label'] ) ) {
 		echo ' ' . $atts['label'];

@@ -68,6 +68,7 @@ class Code_Snippets_Settings {
 				'type' => 'number',
 				'label' => 'rows',
 				'default' => 5,
+				'min' => 0,
 			),
 
 			array(
@@ -114,6 +115,7 @@ class Code_Snippets_Settings {
 				'desc' => __( 'The width of a tab character.', 'code-snippets' ),
 				'default' => 4,
 				'codemirror' => 'tabSize',
+				'min' => 0,
 			),
 
 			array(
@@ -123,6 +125,7 @@ class Code_Snippets_Settings {
 				'desc' => __( 'How many spaces a block should be indented.', 'code-snippets' ),
 				'default' => 2,
 				'codemirror' => 'indentUnit',
+				'min' => 0,
 			),
 
 			array(
