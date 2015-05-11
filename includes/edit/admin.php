@@ -140,12 +140,5 @@ $snippet = get_snippet( $edit_id );
 		echo code_snippets_get_editor_atts( $atts, true );
 	?>;
 	var editor = CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
-
-	jQuery('.CodeMirror').resizable({
-		resize: function() {
-			editor.setSize( jQuery(this).width(), jQuery(this).height() );
-		}
-	});
-
 })();
 </script>
