@@ -11,7 +11,6 @@ module.exports = function(grunt) {
 				files: ['css/**/*.scss'],
 				tasks: ['css']
 			}
-
 		},
 
 		jshint: {
@@ -44,7 +43,7 @@ module.exports = function(grunt) {
 				src: 'css/build/*.css',
 				dest: 'css/min'
 			},
-			codemirror_themes: {
+			cmthemes: {
 				expand: true,
 				flatten: true,
 				src: 'vendor/codemirror/theme/*.css',
@@ -95,7 +94,7 @@ module.exports = function(grunt) {
 		},
 
 		copy: {
-			plugin: {
+			deploy: {
 				files: [{
 					expand: true,
 					cwd: './',
@@ -105,25 +104,12 @@ module.exports = function(grunt) {
 						'readme.txt',
 						'license.txt',
 						'includes/**/*',
-						'admin/**/*',
 						'languages/**/*',
 						'css/min/**/*',
 						'css/font/**/*',
 						'js/min/**/*'
 					],
-					dest: 'deploy/plugin',
-					filter: 'isFile'
-				}]
-			},
-			assets: {
-				files: [{
-					expand: true,
-					cwd: './screenshots',
-					src: [
-						'screenshot-*.{png,jpe?g}',
-						'banner-772x250.{png,jpe?g,pdn,psd}'
-					],
-					dest: 'deploy/assets',
+					dest: 'deploy',
 					filter: 'isFile'
 				}]
 			}
@@ -156,7 +142,7 @@ module.exports = function(grunt) {
 				options: {
 					plugin_slug: 'code-snippets',
 					svn_user: 'bungeshea',
-					build_dir: 'deploy/plugin'
+					build_dir: 'deploy'
 				},
 			}
 		},
@@ -185,15 +171,12 @@ module.exports = function(grunt) {
 				expand: true,
 			}
 		}
-
 	});
 
 	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
 	grunt.registerTask( 'l18n', ['pot', 'potomo'] );
 	grunt.registerTask( 'test', ['jshint', 'phpcs', 'phpunit'] );
 
-	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:plugin', 'copy:assets'] );
-	grunt.registerTask( 'release', ['default', 'deploy', 'wp_deploy'] );
-
+	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:deploy'] );
 	grunt.registerTask( 'default', ['css', 'uglify', 'l18n'] );
 };
