@@ -575,7 +575,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'recently_activated' => array(),
 			'admin' => array(),
 			'frontend' => array(),
- 		);
+		);
 
 		/* Filter snippets by tag */
 		if ( isset( $_POST['tag'] ) ) {
