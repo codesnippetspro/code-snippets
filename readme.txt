@@ -117,7 +117,11 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 == Changelog ==
 
 = 2.2.2 =
-* Polyfull array_replace_recursive() function for PHP 5.2
+* Polyfilled array_replace_recursive() function for PHP 5.2
+* Updated references to old plugin site
+* Resolved JavaScript error on edit snippet pages
+* Made minor updates to French translation file
+* Added statuses for snippet scopes on manage snippets table
 
 = 2.2.1 =
 * Fixed the default values of new setting not being applied
@@ -329,7 +333,7 @@ __Fixed__
 == Upgrade Notice ==
 
 = 2.2.2 =
-Fix error with PHP 5.2 in previous plugin version
+Fix error with PHP 5.2 added statuses for scopes to manage snippets table
 
 = 2.2.1 =
 New snippet scope feature; fixed bug with translations not loading; minified all css and js
