@@ -161,13 +161,8 @@ msgstr ""
 #: includes/edit/admin-help.php:31
 msgid ""
 "More places to find snippets, as well as a selection of example snippets, "
-<<<<<<< Updated upstream
-"can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/"
-"finding-snippets/\">plugin documentation</a>"
-=======
 "can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
 "wiki/Finding-snippets\">plugin documentation</a>"
->>>>>>> Stashed changes
 msgstr ""
 "Vous trouverez une collection de Snippets, ou des exemples sur la page de <a "
 "href=\"http://code-snippets.bungeshea.com/docs/finding-snippets/"
@@ -223,19 +218,11 @@ msgstr ""
 #: includes/edit/admin-help.php:46 includes/import/admin-help.php:40
 #: includes/manage/admin-help.php:40
 msgid ""
-<<<<<<< Updated upstream
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project "
-"Website</a>"
-msgstr ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Site du "
-"Projet</a>"
-=======
 "<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
 "\">Project Website</a>"
 msgstr ""
 "<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
 "\">Site du Projet</a>"
->>>>>>> Stashed changes
 
 #: includes/edit/admin-messages.php:14
 msgid "An error occurred when saving the snippet."
