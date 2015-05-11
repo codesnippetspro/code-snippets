@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-11 16:51+1000\n"
+"POT-Creation-Date: 2015-05-11 21:05+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -632,63 +632,63 @@ msgstr ""
 msgid "Enable the scope selector when editing a snippet"
 msgstr ""
 
-#: includes/settings/class-settings.php:95
+#: includes/settings/class-settings.php:96
 msgid "Theme"
 msgstr ""
 
-#: includes/settings/class-settings.php:103
+#: includes/settings/class-settings.php:104
 msgid "Indent With Tabs"
 msgstr ""
 
-#: includes/settings/class-settings.php:105
+#: includes/settings/class-settings.php:106
 msgid "Use hard tabs (not spaces) for indentation."
 msgstr ""
 
-#: includes/settings/class-settings.php:112
+#: includes/settings/class-settings.php:113
 msgid "Tab Size"
 msgstr ""
 
-#: includes/settings/class-settings.php:114
+#: includes/settings/class-settings.php:115
 msgid "The width of a tab character."
 msgstr ""
 
-#: includes/settings/class-settings.php:121
+#: includes/settings/class-settings.php:123
 msgid "Indent Unit"
 msgstr ""
 
-#: includes/settings/class-settings.php:123
+#: includes/settings/class-settings.php:125
 msgid "How many spaces a block should be indented."
 msgstr ""
 
-#: includes/settings/class-settings.php:130
+#: includes/settings/class-settings.php:133
 msgid "Wrap Lines"
 msgstr ""
 
-#: includes/settings/class-settings.php:132
+#: includes/settings/class-settings.php:135
 msgid "Whether the editor should scroll or wrap for long lines."
 msgstr ""
 
-#: includes/settings/class-settings.php:139
+#: includes/settings/class-settings.php:142
 msgid "Line Numbers"
 msgstr ""
 
-#: includes/settings/class-settings.php:141
+#: includes/settings/class-settings.php:144
 msgid "Show line numbers to the left of the editor."
 msgstr ""
 
-#: includes/settings/class-settings.php:148
+#: includes/settings/class-settings.php:151
 msgid "Auto Close Brackets"
 msgstr ""
 
-#: includes/settings/class-settings.php:150
+#: includes/settings/class-settings.php:153
 msgid "Auto-close brackets and quotes when typed."
 msgstr ""
 
-#: includes/settings/class-settings.php:157
+#: includes/settings/class-settings.php:160
 msgid "Highlight Selection Matches"
 msgstr ""
 
-#: includes/settings/class-settings.php:158
+#: includes/settings/class-settings.php:161
 msgid "Highlight all instances of a currently selected word."
 msgstr ""
 
@@ -704,10 +704,10 @@ msgstr ""
 msgid "Code Editor"
 msgstr ""
 
-#: includes/settings/settings.php:141
+#: includes/settings/settings.php:143
 msgid "Editor Preview"
 msgstr ""
 
-#: includes/settings/settings.php:187
+#: includes/settings/settings.php:189
 msgid "Settings saved."
 msgstr ""
