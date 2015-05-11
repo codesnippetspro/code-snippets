@@ -36,7 +36,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Determine the status */
 		$status = 'all';
-		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], array( 'active', 'inactive', 'recently_activated' ) ) ) {
+		$statuses = array( 'active', 'inactive', 'recently_activated', 'admin', 'frontend' );
+		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], $statuses ) ) {
 			$status = $_REQUEST['status'];
 		}
 
@@ -312,6 +313,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				case 'inactive':
 					$text = _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' );
 					break;
+				case 'admin':
+					$text = _n( 'Admin <span class="count">(%s)</span>', 'Admin <span class="count">(%s)</span>', $count, 'code-snippets' );
+					break;
+				case 'frontend':
+					$text = _n( 'Front End <span class="count">(%s)</span>', 'Front End <span class="count">(%s)</span>', $count, 'code-snippets' );
+					break;
 			}
 
 			$status_links[ $type ] = sprintf( '<a href="%s"%s>%s</a>',
@@ -566,7 +573,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'active' => array(),
 			'inactive' => array(),
 			'recently_activated' => array(),
-		);
+			'admin' => array(),
+			'frontend' => array(),
+ 		);
 
 		/* Filter snippets by tag */
 		if ( isset( $_POST['tag'] ) ) {
@@ -603,6 +612,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			update_option( 'recently_activated_snippets', $recently_activated );
 		}
 
+		$scopes_enabled = code_snippets_get_setting( 'general', 'snippet_scope_enabled' );
 		foreach ( (array) $snippets['all'] as $snippet ) {
 			/* Filter into individual sections */
 			if ( $snippet->active ) {
@@ -613,6 +623,15 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					$snippets['recently_activated'][] = $snippet;
 				}
 				$snippets['inactive'][] = $snippet;
+			}
+
+			if ( $scopes_enabled ) {
+
+				if ( '1' == $snippet->scope ) {
+					$snippets['admin'][] = $snippet;
+				} elseif ( '2' == $snippet->scope ) {
+					$snippets['frontend'][] = $snippet;
+				}
 			}
 		}
 
@@ -632,9 +651,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		 * by getting the user's setting in the Screen Options
 		 * panel.
 		 */
-		$sort_by	   = $screen->get_option( 'per_page', 'option' );
+		$sort_by = $screen->get_option( 'per_page', 'option' );
 		$screen_option = $screen->get_option( 'per_page', 'option' );
-		$per_page	  = get_user_meta( $user, $screen_option, true );
+		$per_page = get_user_meta( $user, $screen_option, true );
 
 		if ( empty ( $per_page ) || $per_page < 1 ) {
 			$per_page = $screen->get_option( 'per_page', 'default' );
