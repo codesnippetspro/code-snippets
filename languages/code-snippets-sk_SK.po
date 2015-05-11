@@ -97,10 +97,10 @@ msgstr ""
 #: ../admin/help/import.php:40 ../admin/help/manage.php:41
 #: ../admin/help/single.php:46
 msgid ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project "
+"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Project "
 "Website</a>"
 msgstr ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Webová "
+"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Webová "
 "stránka projektu</a>"
 
 #: ../admin/help/manage.php:18
@@ -226,11 +226,11 @@ msgstr ""
 #: ../admin/help/single.php:31
 msgid ""
 "More places to find snippets, as well as a selection of example snippets, "
-"can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/"
-"finding-snippets/\">plugin documentation</a>"
+"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/wiki/"
+"Finding-snippets\">plugin documentation</a>"
 msgstr ""
 "Viac miest, kde nájdete snippety a niekoľko ukážok snippetov nájdete v <a "
-"href=\"http://code-snippets.bungeshea.com/docs/finding-snippets/"
+"href=\"https://github.com/sheabunge/code-snippets/wiki/Finding-snippets"
 "\">dokumentácii modulu</a>"
 
 #: ../admin/help/single.php:36

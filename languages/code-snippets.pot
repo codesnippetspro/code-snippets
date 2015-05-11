@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-11 16:49+1000\n"
+"POT-Creation-Date: 2015-05-11 16:51+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -149,8 +149,8 @@ msgstr ""
 #: includes/edit/admin-help.php:31
 msgid ""
 "More places to find snippets, as well as a selection of example snippets, "
-"can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/"
-"finding-snippets/\">plugin documentation</a>"
+"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
+"wiki/Finding-snippets\">plugin documentation</a>"
 msgstr ""
 
 #: includes/edit/admin-help.php:36
@@ -193,8 +193,8 @@ msgstr ""
 #: includes/edit/admin-help.php:46 includes/import/admin-help.php:40
 #: includes/manage/admin-help.php:40
 msgid ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project "
-"Website</a>"
+"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+"\">Project Website</a>"
 msgstr ""
 
 #: includes/edit/admin-messages.php:14
@@ -457,8 +457,8 @@ msgstr ""
 msgid ""
 "<strong>Warning:</strong> Safe mode is active and snippets will not execute! "
 "Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-"
-"config.php</code> to turn off safe mode. <a href=\"http://code-snippets."
-"bungeshea.com/docs/safe-mode/\" target=\"_blank\">Help</a>"
+"config.php</code> to turn off safe mode. <a href=\"https://github.com/"
+"sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
 msgstr ""
 
 #: includes/manage/admin-messages.php:20

@@ -165,7 +165,7 @@ msgid ""
 "wiki/Finding-snippets\">plugin documentation</a>"
 msgstr ""
 "Vous trouverez une collection de Snippets, ou des exemples sur la page de <a "
-"href=\"http://code-snippets.bungeshea.com/docs/finding-snippets/"
+"href=\"https://github.com/sheabunge/code-snippets/wiki/Finding-snippets"
 "\">documentation</a> du plugin. "
 
 #: includes/edit/admin-help.php:36
@@ -798,8 +798,8 @@ msgstr ""
 #~ msgid "(Optional)"
 #~ msgstr "(Option)"
 
-#~ msgid "http://code-snippets.bungeshea.com"
-#~ msgstr "http://code-snippets.bungeshea.com"
+#~ msgid "http://bungeshea.com/plugins/code-snippets"
+#~ msgstr "http://bungeshea.com/plugins/code-snippets"
 
 #~ msgid "Import snippets from a <strong>Code Snippets</strong> export file"
 #~ msgstr ""

@@ -94,10 +94,10 @@ msgstr ""
 
 #: admin/help/import.php:40 admin/help/manage.php:41 admin/help/single.php:46
 msgid ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project "
+"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Project "
 "Website</a>"
 msgstr ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Сайт "
+"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Сайт "
 "плагина</a>"
 
 #: admin/help/manage.php:18
@@ -223,11 +223,11 @@ msgstr ""
 #: admin/help/single.php:31
 msgid ""
 "More places to find snippets, as well as a selection of example snippets, "
-"can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/"
-"finding-snippets/\">plugin documentation</a>"
+"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/wiki/"
+"Finding-snippets\">plugin documentation</a>"
 msgstr ""
-"Другие ссылки вы можете найти на <a href=\"http://code-snippets.bungeshea."
-"com/docs/finding-snippets/\">странице плагина</a>"
+"Другие ссылки вы можете найти на <a href=\"https://github.com/sheabunge/code-snippets/wiki/"
+"Finding-snippets\">странице плагина</a>"
 
 #: admin/help/single.php:36
 msgid "Adding Snippets"
@@ -280,7 +280,7 @@ msgstr ""
 "<strong>Внимание:</strong> активирован режим Safe mode и поэтому сниппеты не "
 "будут выполняться! Удалите константу <code>CODE_SNIPPETS_SAFE_MODE</code> из "
 "файла <code>wp-config.php</code>, чтобы выключить режим Safe mode. <a href="
-"\"http://code-snippets.bungeshea.com/docs/safe-mode/\" target=\"_blank"
+"\"https://github.com/sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank"
 "\">Помощь</a>"
 
 #: admin/messages/manage.php:20
@@ -470,7 +470,7 @@ msgstr "Посетить форумы поддержки"
 
 #: includes/class-admin.php:728
 msgid "Support"
-msgstr "Поддержка"
+msgstr "Под��ержка"
 
 #: includes/class-admin.php:732
 msgid "Support this plugin's development"

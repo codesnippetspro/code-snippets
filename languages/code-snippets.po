@@ -342,7 +342,7 @@ msgid "Please be sure to check that your snippet is valid PHP code and will not 
 msgstr ""
 
 #: code-snippets.php:0
-msgid "http://code-snippets.bungeshea.com"
+msgid "http://bungeshea.com/plugins/code-snippets"
 msgstr ""
 
 #: code-snippets.php:263
@@ -357,7 +357,7 @@ msgstr[1] ""
 
 #: includes/help/import.php:29 includes/help/manage.php:30
 #: includes/help/single.php:34
-msgid "<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project Website</a>"
+msgid "<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Project Website</a>"
 msgstr ""
 
 #: includes/help/manage.php:15
@@ -365,7 +365,7 @@ msgid "If something goes wrong with a snippet and you can't use WordPress, you c
 msgstr ""
 
 #: includes/help/single.php:20
-msgid "More places to find snippets, as well as a selection of example snippets, can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/finding-snippets/\">plugin documentation</a>"
+msgid "More places to find snippets, as well as a selection of example snippets, can be found in the <a href=\"https://github.com/sheabunge/code-snippets/wiki/Finding-snippets\">plugin documentation</a>"
 msgstr ""
 
 #: code-snippets.php:0

@@ -410,8 +410,8 @@ msgstr ""
 "snippet difettoso sia attivato nel sito. "
 
 #: code-snippets.php:0
-msgid "http://code-snippets.bungeshea.com"
-msgstr "http://code-snippets.bungeshea.com"
+msgid "http://bungeshea.com/plugins/code-snippets"
+msgstr "http://bungeshea.com/plugins/code-snippets"
 
 #: code-snippets.php:263
 msgid "Import snippets from a <strong>Code Snippets</strong> export file"
@@ -425,9 +425,9 @@ msgstr[1] "Importati <strong>%d</strong> snippets."
 
 #: includes/help/import.php:29 includes/help/manage.php:30
 #: includes/help/single.php:34
-msgid "<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project Website</a>"
+msgid "<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Project Website</a>"
 msgstr ""
-"<a href=\"http://code-snippets.bungeshea.com/\" target=\"_blank\">Project "
+"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Project "
 "Website</a>"
 
 #: includes/help/manage.php:15
@@ -441,11 +441,11 @@ msgstr ""
 "<strong>true</strong> con <strong>false</strong>."
 
 #: includes/help/single.php:20
-msgid "More places to find snippets, as well as a selection of example snippets, can be found in the <a href=\"http://code-snippets.bungeshea.com/docs/finding-snippets/\">plugin documentation</a>"
+msgid "More places to find snippets, as well as a selection of example snippets, can be found in the <a href=\"https://github.com/sheabunge/code-snippets/wiki/Finding-snippets\">plugin documentation</a>"
 msgstr ""
 "Un po' di posti dove cercare snippets, una selezione e alcuni esempi li pui "
-"trovare nella <a href=\"http://code-snippets.bungeshea.com/docs/finding-"
-"snippets/\">documentazione del plugin</a>"
+"trovare nella <a href=\"https://github.com/sheabunge/code-snippets/wiki/"
+"Finding0-snippets\">documentazione del plugin</a>"
 
 #: code-snippets.php:0
 msgid "1.7"

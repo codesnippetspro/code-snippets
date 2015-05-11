@@ -11,7 +11,7 @@ $_f = '<div id="message" class="%2$s fade"><p>%1$s</p></div>';
 
 if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) :
 
-	printf( $_f, __( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="http://code-snippets.bungeshea.com/docs/safe-mode/" target="_blank">Help</a>', 'code-snippets' ), 'error' );
+	printf( $_f, __( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' ), 'error' );
 
 endif;
 
