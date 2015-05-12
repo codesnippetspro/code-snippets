@@ -99,15 +99,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
-	* Build the priority selector
-	* @param  object $snippet The snippet object being used for the current row
-	* @return string		  The content of the column to output
-	*/
-	function column_priority( $snippet ) {
-		return sprintf( '<input type="number" value="%1$d" min="-50" max="99">', 10 );
-	}
-
-	/**
 	 * Builds content of the snippet name column
 	 * @param  object $snippet The snippet object being used for the current row
 	 * @return string		  The content of the column to output
@@ -229,12 +220,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'cb' => '<input type="checkbox" />',
-			'name' => __( 'Name', 'code-snippets' ),
-			'id' => __( 'ID', 'code-snippets' ),
+			'cb'		  => '<input type="checkbox" />',
+			'name'		=> __( 'Name', 'code-snippets' ),
+			'id'		  => __( 'ID', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
-			'tags' => __( 'Tags', 'code-snippets' ),
-			'priority' => __( 'Priority', 'code-snippets' ),
+			'tags'		=> __( 'Tags', 'code-snippets' ),
 		);
 		return apply_filters( 'code_snippets/list_table/columns', $columns );
 	}
@@ -247,7 +237,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$sortable_columns = array(
 			'id'   => array( 'id', true ),
 			'name' => array( 'name', false ),
-			'priority' => array( 'priority', true ),
 		);
 		return apply_filters( 'code_snippets/list_table/sortable_columns', $sortable_columns );
 	}
@@ -467,7 +456,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @uses activate_snippet() To activate snippets
 	 * @uses deactivate_snippet() To deactivate snippets
 	 * @uses delete_snippet() To delete snippets
-	 * @uses export_snippets() To export selected snippets
+	 * @uses export_snippet() To export selected snippets
 	 * @uses wp_redirect() To pass the results to the current page
 	 * @uses add_query_arg() To append the results to the current URI
 	 */
