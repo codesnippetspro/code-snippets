@@ -90,6 +90,8 @@ module.exports = function(grunt) {
 		},
 
 		clean: {
+			js: ['js/min'],
+			css: ['css/min'],
 			deploy: ['deploy']
 		},
 
@@ -173,10 +175,11 @@ module.exports = function(grunt) {
 		}
 	});
 
-	grunt.registerTask( 'css', ['sass', 'autoprefixer', 'csso'] );
+	grunt.registerTask( 'css', ['clean:css', 'sass', 'autoprefixer', 'csso'] );
+	grunt.registerTask( 'js', ['clean:js', 'uglify'] );
 	grunt.registerTask( 'l18n', ['pot', 'potomo'] );
 	grunt.registerTask( 'test', ['jshint', 'phpcs', 'phpunit'] );
 
-	grunt.registerTask( 'deploy', ['imagemin', 'clean:deploy', 'copy:deploy'] );
-	grunt.registerTask( 'default', ['css', 'uglify', 'l18n'] );
+	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:deploy'] );
+	grunt.registerTask( 'default', ['css', 'js', 'l18n'] );
 };
