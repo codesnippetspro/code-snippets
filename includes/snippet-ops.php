@@ -375,7 +375,7 @@ function import_snippets( $file, $multisite = null ) {
 	$dom->load( $file );
 
 	$snippets_xml = $dom->getElementsByTagName( 'snippet' );
-	$fields = array( 'name', 'description', 'code', 'tags' );
+	$fields = array( 'name', 'description', 'code', 'tags', 'scope' );
 	$count = 0;
 
 	/* Loop through all snippets */
