@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.3
+* Fixed broken call to `export_snippet()` function
+* Added support for importing and exporting snippet scope
+
 ## 2.2.2
 * Polyfilled array_replace_recursive() function for PHP 5.2
 * Updated references to old plugin site

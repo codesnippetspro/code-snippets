@@ -4,7 +4,7 @@ Donate link: http://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 4.2.2
-Stable tag: 2.2.2
+Stable tag: 2.2.3
 License: MIT
 License URI: license.txt
 
@@ -115,6 +115,10 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.2.3 =
+* Fixed broken call to `export_snippet()` function
+* Added support for importing and exporting snippet scope
 
 = 2.2.2 =
 * Polyfilled array_replace_recursive() function for PHP 5.2
@@ -331,6 +335,9 @@ __Fixed__
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.2.3 =
+Fixed error when exporting; snippet scopes can now be imported
 
 = 2.2.2 =
 Fix error with PHP 5.2 added statuses for scopes to manage snippets table
