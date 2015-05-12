@@ -157,7 +157,7 @@ function code_snippets_load_single_menu() {
 
 	/* Export the snippet if the button was clicked */
 	elseif ( isset( $_POST['snippet_id'], $_POST['export_snippet'] ) ) {
-		export_snippet( $_POST['snippet_id'] );
+		export_snippets( $_POST['snippet_id'] );
 	}
 }
 

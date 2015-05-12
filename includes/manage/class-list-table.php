@@ -456,7 +456,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @uses activate_snippet() To activate snippets
 	 * @uses deactivate_snippet() To deactivate snippets
 	 * @uses delete_snippet() To delete snippets
-	 * @uses export_snippet() To export selected snippets
+	 * @uses export_snippets() To export selected snippets
 	 * @uses wp_redirect() To pass the results to the current page
 	 * @uses add_query_arg() To append the results to the current URI
 	 */
