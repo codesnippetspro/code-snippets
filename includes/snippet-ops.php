@@ -151,8 +151,13 @@ function escape_snippet_data( $snippet ) {
 	/* Remove ?> from end of snippet */
 	$snippet->code = preg_replace( '|\?>[\s]*$|', '', $snippet->code );
 
-	/* Escape the data */
+	/* Ensure the ID is a positive integer */
 	$snippet->id = absint( $snippet->id );
+
+	/* Make sure that the scope is a valid value */
+	if ( ! in_array( $snippet->scope, array( 0, 1, 2 ) ) ) {
+		$snippet->scope = 0;
+	}
 
 	/* Store tags as a string, with tags separated by commas */
 	$snippet->tags = code_snippets_build_tags_array( $snippet->tags );
