@@ -101,7 +101,6 @@ function create_code_snippets_table( $table_name ) {
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 	/* Set the database charset */
-
 	$charset_collate = '';
 
 	if ( ! empty( $wpdb->charset ) ) {
@@ -113,19 +112,17 @@ function create_code_snippets_table( $table_name ) {
 	}
 
 	/* Create the database table */
-
 	$sql = "CREATE TABLE $table_name (
-				id          bigint(20) unsigned not null auto_increment,
-				name        tinytext not null,
-				description text,
-				code        longtext not null,
-				tags        longtext,
-				scope       tinyint(1) default 0,
-				active      tinyint(1) not null default 0,
-				primary key  (id)
-			) {$charset_collate};";
+				id          bigint(20) NOT NULL AUTO_INCREMENT,
+				name        tinytext NOT NULL default '',
+				description text NOT NULL default '',
+				code        longtext NOT NULL default '',
+				tags        longtext NOT NULL default '',
+				scope       tinyint(1) NOT NULL default 0,
+				active      tinyint(1) NOT NULL default 0,
+				PRIMARY KEY  (id)
+			) $charset_collate;";
 
 	dbDelta( $sql );
-
 	do_action( 'code_snippets/create_table', $table_name );
 }
