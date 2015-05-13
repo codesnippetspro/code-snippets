@@ -119,6 +119,8 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 = 2.2.3 =
 * Fixed broken call to `export_snippet()` function
 * Added support for importing and exporting snippet scope
+* Fixed duplicate primary key database error
+* Improved database table structure
 
 = 2.2.2 =
 * Polyfilled array_replace_recursive() function for PHP 5.2
