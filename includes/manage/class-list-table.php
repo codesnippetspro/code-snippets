@@ -801,12 +801,32 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Retrieve the string representation of a snippet scope number
+	 * @since [NEXT_VERSION]
+	 * @param  int $scope the scope number
+	 * @return string the scope name
+	 */
+	private function get_scope_name( $scope ) {
+
+		switch ( intval( $scope ) ) {
+			case 1:
+				return 'admin';
+			case 2:
+				return 'frontend';
+			default:
+			case 0:
+				return 'global';
+		}
+	}
+
+	/**
 	 * Outputs content for a single row of the table
 	 * @param object $snippet The snippet being used for the current row
 	 */
 	function single_row( $snippet ) {
 		static $row_class = '';
 		$row_class = ( $snippet->active ? 'active' : 'inactive' );
+		$row_class .= sprintf( ' %s-scope', $this->get_scope_name( $snippet->scope ) );
 		printf( '<tr class="%s">', $row_class );
 		$this->single_row_columns( $snippet );
 		echo '</tr>';
