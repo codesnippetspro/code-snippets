@@ -31,24 +31,37 @@ function code_snippets_get_settings_fields() {
  * @return array
  */
 function code_snippets_get_settings() {
-	$settings = Code_Snippets_Settings::get_defaults();
-	$saved = get_option( 'code_snippets_settings', array() );
 
-	/* Use the much more efficient array_replace_recursive() for PHP 5.3 and later */
-	if ( function_exists( 'array_replace_recursive' ) ) {
-		return array_replace_recursive( $settings, $saved );
+	/* Check if the settings have been cached */
+	if ( $settings = wp_cache_get( 'code_snippets_settings' ) ) {
+		return $settings;
 	}
 
-	/* Else, do it manually */
-	foreach ( $settings as $section => $fields ) {
-		foreach ( $fields as $field => $value ) {
+	/* Begin with the default settings */
+	$settings = Code_Snippets_Settings::get_defaults();
 
-			if ( isset( $saved[ $section ][ $field ] ) ) {
-				$settings[ $section ][ $field ] = $saved[ $section ][ $field ];
+	/* Retrieve saved settings from the database */
+	$saved = get_option( 'code_snippets_settings', array() );
+
+	/* Replace the default field values with the ones saved in the database */
+	if ( function_exists( 'array_replace_recursive' ) ) {
+
+		/* Use the much more efficient array_replace_recursive() function in PHP 5.3 and later */
+		$settings = array_replace_recursive( $settings, $saved );
+	} else {
+
+		/* Otherwise, do it manually */
+		foreach ( $settings as $section => $fields ) {
+			foreach ( $fields as $field => $value ) {
+
+				if ( isset( $saved[ $section ][ $field ] ) ) {
+					$settings[ $section ][ $field ] = $saved[ $section ][ $field ];
+				}
 			}
 		}
 	}
 
+	wp_cache_set( 'code_snippets_settings', $settings );
 	return $settings;
 }
 
