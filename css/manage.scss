@@ -4,6 +4,28 @@
 
 .snippets {
 
+	%row-icon {
+		font-family: dashicons;
+		font-size: 20px;
+		vertical-align: middle;
+		padding-right: 5px;
+	}
+
+	.global-scope .column-name > a:before {
+		content: "\f319";
+		@extend %row-icon;
+	}
+
+	.admin-scope .column-name > a:before {
+		content: "\f226";
+		@extend %row-icon;
+	}
+
+	.frontend-scope .column-name > a:before {
+		content: "\f100";
+		@extend %row-icon;
+	}
+
 	th, td {
 		color: #000;
 	}
