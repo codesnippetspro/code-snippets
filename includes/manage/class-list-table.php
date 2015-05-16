@@ -663,39 +663,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$this->_column_headers = $this->get_column_info();
 
-		/**
-		 * This checks for sorting input and sorts the data in our array accordingly.
-		 *
-		 * @ignore
-		 */
-		function usort_reorder( $a, $b ) {
-
-			/* If no sort, default to ID */
-			$orderby = (
-				! empty( $_REQUEST['orderby'] )
-				? $_REQUEST['orderby']
-				: apply_filters( 'code_snippets/list_table/default_orderby', 'id' )
-			);
-
-			/* If no order, default to ascending */
-			$order = (
-				! empty( $_REQUEST['order'] )
-				? $_REQUEST['order']
-				: apply_filters( 'code_snippets/list_table/default_order', 'asc' )
-			);
-
-			/* Determine sort order */
-			if ( 'id' === $orderby ) {
-				$result = $a->$orderby - $b->$orderby; // get the result for numerical data
-			} else {
-				$result = strcmp( $a->$orderby, $b->$orderby ); // get the result for string data
-			}
-
-			/* Send final sort direction to usort */
-			return ( 'asc' === $order ) ? $result : -$result;
-		}
-
-		usort( $data, 'usort_reorder' );
+		usort( $data, array( $this, 'usort_reorder_callback' ) );
 
 		/*
 		 * Let's figure out what page the user is currently
@@ -728,6 +696,37 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'per_page'	=> $per_page, // Determine how many items to show on a page
 			'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages
 		) );
+	}
+
+	/**
+	* This checks for sorting input and sorts the data in our array accordingly.
+	* @ignore
+	*/
+	function usort_reorder_callback( $a, $b ) {
+
+		/* If no sort, default to ID */
+		$orderby = (
+			! empty( $_REQUEST['orderby'] )
+			? $_REQUEST['orderby']
+			: apply_filters( 'code_snippets/list_table/default_orderby', 'id' )
+		);
+
+		/* If no order, default to ascending */
+		$order = (
+			! empty( $_REQUEST['order'] )
+			? $_REQUEST['order']
+			: apply_filters( 'code_snippets/list_table/default_order', 'asc' )
+		);
+
+		/* Determine sort order */
+		if ( 'id' === $orderby ) {
+			$result = $a->$orderby - $b->$orderby; // get the result for numerical data
+		} else {
+			$result = strcmp( $a->$orderby, $b->$orderby ); // get the result for string data
+		}
+
+		/* Send final sort direction to usort */
+		return ( 'asc' === $order ) ? $result : -$result;
 	}
 
 	/**
