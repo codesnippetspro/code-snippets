@@ -4,8 +4,8 @@
 
 .column-name > a {
 
-	[class$='-scope'] &:before {
-		padding-right: 5px;
+	%icon-after {
+		padding-left: 7px;
 		width: 20px;
 		height: 20px;
 		font-size: 20px;
@@ -14,16 +14,14 @@
 		vertical-align: top;
 	}
 
-	.global-scope &:before {
-		content: " ";
-	}
-
-	.admin-scope &:before {
+	.admin-scope &:after {
 		content: "\f226";
+		@extend %icon-after;
 	}
 
-	.frontend-scope &:before {
+	.frontend-scope &:after {
 		content: "\f115";
+		@extend %icon-after;
 	}
 }
 
