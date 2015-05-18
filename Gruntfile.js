@@ -166,7 +166,13 @@ module.exports = function(grunt) {
 			options:{
 				text_domain: 'code-snippets',
 				dest: 'languages/',
-				keywords: ['__','_e','esc_html__','esc_html_e','esc_attr__', 'esc_attr_e', 'esc_attr_x', 'esc_html_x', 'ngettext', '_n', '_ex', '_nx'],
+				keywords: [
+					'__:1', '_e:1', '_x:1,2c',
+					'esc_html__:1', 'esc_html_e:1', 'esc_html_x:1,2c',
+					'esc_attr__:1', 'esc_attr_e:1', 'esc_attr_x:1,2c',
+					'_ex:1,2c', '_n:1,2', '_nx:1,2,4c',
+					'_n_noop:1,2', '_nx_noop:1,2,3c'
+				],
 			},
 			files: {
 				src: [ 'code-snippets.php', 'includes/**/*.php' ],
