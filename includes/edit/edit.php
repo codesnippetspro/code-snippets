@@ -232,7 +232,7 @@ function code_snippets_tags_editor( $snippet ) {
 	</label>
 
 	<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
-		placeholder="Enter a list of tags; separated by commas" value="<?php echo implode( ', ', $snippet->tags ); ?>" />
+		placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>" value="<?php echo implode( ', ', $snippet->tags ); ?>" />
 
 	<script type="text/javascript">
 	jQuery('#snippet_tags').tagit({
