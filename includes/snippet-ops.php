@@ -447,7 +447,6 @@ function execute_snippet( $code ) {
 	$output = ob_get_contents();
 	ob_end_clean();
 
-	do_action( 'code_snippets/execute_snippet', $code );
 	return $result;
 }
 
@@ -487,9 +486,12 @@ function execute_active_snippets() {
 		/* Grab the active snippets from the database */
 		$active_snippets = $wpdb->get_col( $sql );
 
-		foreach ( $active_snippets as $snippet_code ) {
-			/* Execute the PHP code */
-			execute_snippet( $snippet_code );
+		foreach ( $active_snippets as $snippet_id => $snippet_code ) {
+
+			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id ) ) {
+				/* Execute the PHP code */
+				execute_snippet( $snippet_code );
+			}
 		}
 
 		return true;
