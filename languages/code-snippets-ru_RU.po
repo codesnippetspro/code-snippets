@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Code Snippets\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-18 09:31+1000\n"
-"PO-Revision-Date: 2015-05-18 09:55+1000\n"
+"POT-Creation-Date: 2015-05-18 09:52+1000\n"
+"PO-Revision-Date: 2015-05-18 11:43+0300\n"
 "Last-Translator: Alexey Chumakov <alex@chumakov.ru>\n"
 "Language-Team: Flector <rlector@gmail.com>\n"
 "Language: ru\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.7.6\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;_x:1,2c;_n;_nx:4c,1,2;"
@@ -271,7 +271,7 @@ msgid "Edit Snippet"
 msgstr "Редактирование сниппета"
 
 #: includes/edit/admin.php:31 includes/edit/edit.php:35
-#: includes/manage/admin.php:26
+#: includes/manage/admin.php:24
 msgid "Add New"
 msgstr "Добавить новый"
 
@@ -575,7 +575,7 @@ msgstr "Сниппет <strong>удален</strong>."
 msgid "Selected snippets <strong>deleted</strong>."
 msgstr "Выбранные сниппеты <strong>удалены</strong>."
 
-#: includes/manage/admin.php:39
+#: includes/manage/admin.php:36
 msgid "Search Installed Snippets"
 msgstr "Искать установленные сниппеты"
 
@@ -707,102 +707,126 @@ msgstr "Параметры сниппетов"
 msgid "Settings"
 msgstr "Настройка"
 
-#: includes/settings/class-settings.php:47
+#: includes/settings/class-settings.php:51
 msgid "Activate by Default"
 msgstr "Включать по умолчанию"
 
-#: includes/settings/class-settings.php:49
+#: includes/settings/class-settings.php:53
 msgid ""
 "Make the 'Save and Activate' button the default action when saving a snippet."
 msgstr ""
 "Сделать кнопку 'Сохранить и активировать' действием по умолчанию при "
-"сохранении сниппета."
+"сохранении сниппета"
 
-#: includes/settings/class-settings.php:55
+#: includes/settings/class-settings.php:59
 msgid "Enable Scope Selector"
 msgstr "Включить селектор области"
 
-#: includes/settings/class-settings.php:57
+#: includes/settings/class-settings.php:61
 msgid "Enable the scope selector when editing a snippet"
 msgstr "Включить селектор области применения при редактировании сниппета"
 
-#: includes/settings/class-settings.php:96
+#: includes/settings/class-settings.php:71
+msgid "Row Height"
+msgstr "Высота строки"
+
+#: includes/settings/class-settings.php:73
+msgid "rows"
+msgstr "строк"
+
+#: includes/settings/class-settings.php:80
+msgid "Use Full Editor"
+msgstr "Использовать расширенный редактор"
+
+#: includes/settings/class-settings.php:82
+msgid "Enable all features of the visual editor"
+msgstr "Включить все функции визуального редактора"
+
+#: includes/settings/class-settings.php:88
+msgid "Media Buttons"
+msgstr "Кнопки медиа"
+
+#: includes/settings/class-settings.php:90
+msgid "Enable the add media buttons"
+msgstr "Включить кнопки добавления медиафайла"
+
+#: includes/settings/class-settings.php:100
 msgid "Theme"
 msgstr "Тема"
 
-#: includes/settings/class-settings.php:104
+#: includes/settings/class-settings.php:108
 msgid "Indent With Tabs"
 msgstr "Сдвигать табуляторами"
 
-#: includes/settings/class-settings.php:106
+#: includes/settings/class-settings.php:110
 msgid "Use hard tabs (not spaces) for indentation."
-msgstr "Использовать жесткие табуляторы (не пробелы) для сдвига."
+msgstr "Использовать жесткие табуляторы (не пробелы) для сдвига"
 
-#: includes/settings/class-settings.php:113
+#: includes/settings/class-settings.php:117
 msgid "Tab Size"
 msgstr "Размер табулятора"
 
-#: includes/settings/class-settings.php:115
+#: includes/settings/class-settings.php:119
 msgid "The width of a tab character."
-msgstr "Ширина символа табуляции."
+msgstr "Ширина символа табуляции"
 
-#: includes/settings/class-settings.php:123
+#: includes/settings/class-settings.php:127
 msgid "Indent Unit"
 msgstr "Сдвинуть блок"
 
-#: includes/settings/class-settings.php:125
+#: includes/settings/class-settings.php:129
 msgid "How many spaces a block should be indented."
-msgstr "На сколько пробелов сдвигать блок."
+msgstr "На сколько пробелов сдвигать блок"
 
-#: includes/settings/class-settings.php:133
+#: includes/settings/class-settings.php:137
 msgid "Wrap Lines"
 msgstr "Переносить строки"
 
-#: includes/settings/class-settings.php:135
+#: includes/settings/class-settings.php:139
 msgid "Whether the editor should scroll or wrap for long lines."
-msgstr "Прокручивать или переносить длинные строки в редакторе."
+msgstr "Прокручивать или переносить длинные строки в редакторе"
 
-#: includes/settings/class-settings.php:142
+#: includes/settings/class-settings.php:146
 msgid "Line Numbers"
 msgstr "Номера строк"
 
-#: includes/settings/class-settings.php:144
+#: includes/settings/class-settings.php:148
 msgid "Show line numbers to the left of the editor."
-msgstr "Показывать номера строк в редакторе слева."
+msgstr "Показывать номера строк в редакторе слева"
 
-#: includes/settings/class-settings.php:151
+#: includes/settings/class-settings.php:155
 msgid "Auto Close Brackets"
 msgstr "Автоматически закрывать скобки"
 
-#: includes/settings/class-settings.php:153
+#: includes/settings/class-settings.php:157
 msgid "Auto-close brackets and quotes when typed."
-msgstr "Автоматически закрывать скобки и кавычки при наборе."
+msgstr "Автоматически закрывать скобки и кавычки при наборе"
 
-#: includes/settings/class-settings.php:160
+#: includes/settings/class-settings.php:164
 msgid "Highlight Selection Matches"
 msgstr "Выделять совпадения"
 
-#: includes/settings/class-settings.php:161
+#: includes/settings/class-settings.php:165
 msgid "Highlight all instances of a currently selected word."
-msgstr "Выделять все вхождения выбранного слова."
+msgstr "Выделять все вхождения выбранного слова"
 
-#: includes/settings/settings.php:85
+#: includes/settings/settings.php:84
 msgid "General"
 msgstr "Основные"
 
-#: includes/settings/settings.php:86
+#: includes/settings/settings.php:85
 msgid "Description Editor"
 msgstr "Редактор описания"
 
-#: includes/settings/settings.php:87
+#: includes/settings/settings.php:86
 msgid "Code Editor"
 msgstr "Редактор кода"
 
-#: includes/settings/settings.php:135
+#: includes/settings/settings.php:134
 msgid "Editor Preview"
 msgstr "Предварительный просмотр в редакторе"
 
-#: includes/settings/settings.php:181
+#: includes/settings/settings.php:180
 msgid "Settings saved."
 msgstr "Параметры сохранены."
 
