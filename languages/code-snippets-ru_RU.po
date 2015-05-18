@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Code Snippets\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-05-18 09:52+1000\n"
-"PO-Revision-Date: 2015-05-18 12:12+0300\n"
+"PO-Revision-Date: 2015-05-18 12:15+0300\n"
 "Last-Translator: Alexey Chumakov <alex@chumakov.ru>\n"
 "Language-Team: Flector <rlector@gmail.com>\n"
 "Language: ru\n"
@@ -701,11 +701,11 @@ msgstr "Очистить фильтры"
 
 #: includes/settings/admin.php:20
 msgid "Snippets Settings"
-msgstr "Параметры сниппетов"
+msgstr "Настройки сниппетов"
 
 #: includes/settings/admin.php:21 includes/settings/admin.php:39
 msgid "Settings"
-msgstr "Параметры"
+msgstr "Настройки"
 
 #: includes/settings/class-settings.php:51
 msgid "Activate by Default"
@@ -828,7 +828,7 @@ msgstr "Предварительный просмотр в редакторе"
 
 #: includes/settings/settings.php:180
 msgid "Settings saved."
-msgstr "Параметры сохранены."
+msgstr "Настройки сохранены."
 
 #~ msgid "Вы действительно хотите удалить выбранный сниппет?"
 #~ msgstr "Вы действительно хотите удалить выбранный сниппет?"
