@@ -77,7 +77,7 @@ class Code_Snippets_Settings {
 
 			array(
 				'id' => 'use_full_mce',
-				'name' => 'Use Full Editor',
+				'name' => __( 'Use Full Editor', 'code-snippets' ),
 				'type' => 'checkbox',
 				'label' => __( 'Enable all features of the visual editor', 'code-snippets' ),
 				'default' => false,
