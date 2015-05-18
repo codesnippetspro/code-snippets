@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Code Snippets\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-05-18 09:52+1000\n"
-"PO-Revision-Date: 2015-05-18 11:43+0300\n"
+"PO-Revision-Date: 2015-05-18 12:12+0300\n"
 "Last-Translator: Alexey Chumakov <alex@chumakov.ru>\n"
 "Language-Team: Flector <rlector@gmail.com>\n"
 "Language: ru\n"
@@ -705,7 +705,7 @@ msgstr "Параметры сниппетов"
 
 #: includes/settings/admin.php:21 includes/settings/admin.php:39
 msgid "Settings"
-msgstr "Настройка"
+msgstr "Параметры"
 
 #: includes/settings/class-settings.php:51
 msgid "Activate by Default"
