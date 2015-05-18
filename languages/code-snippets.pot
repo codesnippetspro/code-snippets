@@ -640,6 +640,10 @@ msgstr ""
 msgid "rows"
 msgstr ""
 
+#: includes/settings/class-settings.php:80
+msgid "Use Full Editor"
+msgstr ""
+
 #: includes/settings/class-settings.php:82
 msgid "Enable all features of the visual editor"
 msgstr ""
