@@ -6,7 +6,6 @@
  */
 
 require plugin_dir_path( __FILE__ ) . '/class-settings.php';
-Code_Snippets_Settings::setup();
 
 /**
  * Retrieve the default setting values

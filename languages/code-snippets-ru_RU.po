@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Code Snippets\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-13 21:16+1000\n"
-"PO-Revision-Date: 2015-05-18 00:38+0300\n"
+"POT-Creation-Date: 2015-05-18 09:31+1000\n"
+"PO-Revision-Date: 2015-05-18 09:55+1000\n"
 "Last-Translator: Alexey Chumakov <alex@chumakov.ru>\n"
 "Language-Team: Flector <rlector@gmail.com>\n"
 "Language: ru\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.7.6\n"
+"X-Generator: Poedit 1.7.5\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;_x:1,2c;_n;_nx:4c,1,2;"
@@ -681,21 +681,21 @@ msgid ""
 "\">Add New&rarr;</a>"
 msgstr "Нет доступных сниппетов. <a href=\"%s\">Добавить новый&rarr;</a>"
 
-#: includes/manage/class-list-table.php:784
+#: includes/manage/class-list-table.php:783
 msgid "Search results"
 msgstr "Результаты поиска"
 
-#: includes/manage/class-list-table.php:787
+#: includes/manage/class-list-table.php:786
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr " по запросу &#8220;%s&#8221;"
 
-#: includes/manage/class-list-table.php:791
+#: includes/manage/class-list-table.php:790
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr " в метке &#8220;%s&#8221;"
 
-#: includes/manage/class-list-table.php:797
+#: includes/manage/class-list-table.php:796
 msgid "Clear Filters"
 msgstr "Очистить фильтры"
 
@@ -786,29 +786,25 @@ msgstr "Выделять совпадения"
 msgid "Highlight all instances of a currently selected word."
 msgstr "Выделять все вхождения выбранного слова."
 
-#: includes/settings/settings.php:93
+#: includes/settings/settings.php:85
 msgid "General"
 msgstr "Основные"
 
-#: includes/settings/settings.php:94
+#: includes/settings/settings.php:86
 msgid "Description Editor"
 msgstr "Редактор описания"
 
-#: includes/settings/settings.php:95
+#: includes/settings/settings.php:87
 msgid "Code Editor"
 msgstr "Редактор кода"
 
-#: includes/settings/settings.php:143
+#: includes/settings/settings.php:135
 msgid "Editor Preview"
 msgstr "Предварительный просмотр в редакторе"
 
-#: includes/settings/settings.php:189
+#: includes/settings/settings.php:181
 msgid "Settings saved."
 msgstr "Параметры сохранены."
-
-#: Plug-in description
-msgid "An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!"
-msgistr "Легкий, ясный и простой способ добавления сниппетов кода на сайт. Больше не потребуется править файл functions.php вашей темы!"
 
 #~ msgid "Вы действительно хотите удалить выбранный сниппет?"
 #~ msgstr "Вы действительно хотите удалить выбранный сниппет?"

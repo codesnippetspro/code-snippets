@@ -9,16 +9,15 @@ class Code_Snippets_Settings {
 	private static $fields = array();
 	private static $defaults = array();
 
-	public static function setup() {
-		self::set_fields();
-		self::set_defaults();
-	}
-
 	/**
 	 * Retrieve the defined fields
 	 * @return array
 	 */
 	public static function get_fields() {
+		if ( empty( self::$fields ) ) {
+			self::set_fields();
+		}
+
 		return self::$fields;
 	}
 
@@ -27,6 +26,10 @@ class Code_Snippets_Settings {
 	 * @return array the default field values, keyed by ID
 	 */
 	public static function get_defaults() {
+		if ( empty( self::$defaults ) ) {
+			self::set_defaults();
+		}
+
 		return self::$defaults;
 	}
 
@@ -34,7 +37,8 @@ class Code_Snippets_Settings {
 	 * Loop through the settings fields and extract the default values
 	 */
 	private static function set_defaults() {
-		foreach ( self::$fields as $section_id => $section_fields ) {
+
+		foreach ( self::get_fields() as $section_id => $section_fields ) {
 			self::$defaults[ $section_id ] = wp_list_pluck( $section_fields, 'default', 'id' );
 		}
 	}
@@ -64,9 +68,9 @@ class Code_Snippets_Settings {
 
 			array(
 				'id' => 'rows',
-				'name' => 'Row Height',
+				'name' => __( 'Row Height', 'code-snippets' ),
 				'type' => 'number',
-				'label' => 'rows',
+				'label' => __( 'rows', 'code-snippets' ),
 				'default' => 5,
 				'min' => 0,
 			),
@@ -75,15 +79,15 @@ class Code_Snippets_Settings {
 				'id' => 'use_full_mce',
 				'name' => 'Use Full Editor',
 				'type' => 'checkbox',
-				'label' => 'Enable all features of the visual editor',
+				'label' => __( 'Enable all features of the visual editor', 'code-snippets' ),
 				'default' => false,
 			),
 
 			array(
 				'id' => 'media_buttons',
-				'name' => 'Media Buttons',
+				'name' => __( 'Media Buttons', 'code-snippets' ),
 				'type' => 'checkbox',
-				'label' => 'Enable the add media buttons',
+				'label' => __( 'Enable the add media buttons', 'code-snippets' ),
 				'default' => false,
 			),
 		);
