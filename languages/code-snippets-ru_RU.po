@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Code Snippets\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-05-18 09:52+1000\n"
-"PO-Revision-Date: 2015-05-18 12:15+0300\n"
+"PO-Revision-Date: 2015-05-18 12:18+0300\n"
 "Last-Translator: Alexey Chumakov <alex@chumakov.ru>\n"
 "Language-Team: Flector <rlector@gmail.com>\n"
 "Language: ru\n"
@@ -772,7 +772,7 @@ msgstr "Ширина символа табуляции"
 
 #: includes/settings/class-settings.php:127
 msgid "Indent Unit"
-msgstr "Сдвинуть блок"
+msgstr "Единица сдвига"
 
 #: includes/settings/class-settings.php:129
 msgid "How many spaces a block should be indented."
