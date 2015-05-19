@@ -365,10 +365,13 @@ function save_snippet( $snippet, $multisite = null ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 
 		if ( isset( $raw_data['snippet_sharing'] ) && 'on' === $raw_data['snippet_sharing'] ) {
+
+			/* Add the snippet ID to the array if it isn't already */
 			if ( ! in_array( $snippet->id, $shared_snippets ) ) {
 				$shared_snippets[] = $snippet->id;
 			}
 		} else {
+			/* Remove the snippet ID from the array */
 			$shared_snippets = array_diff( $shared_snippets, array( $snippet->id ) );
 		}
 		update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
