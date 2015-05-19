@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.2.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-18 20:53+1000\n"
+"POT-Creation-Date: 2015-05-19 12:46+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -298,6 +298,10 @@ msgstr ""
 
 #: includes/edit/edit.php:231 includes/manage/class-list-table.php:227
 msgid "Tags"
+msgstr ""
+
+#: includes/edit/edit.php:235
+msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
 #: includes/import/admin-help.php:18
