@@ -194,32 +194,6 @@ function code_snippets_description_editor_box( $snippet ) {
 
 add_action( 'code_snippets/admin/single', 'code_snippets_description_editor_box', 9 );
 
-function code_snippets_snippet_scope_setting( $snippet ) {
-
-	if ( ! code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
-		return;
-	}
-
-	$scopes = array(
-		__( 'Run snippet everywhere', 'code-snippets' ),
-		__( 'Only run in adminstration area', 'code-snippets' ),
-		__( 'Only run on site front-end', 'code-snippets' ),
-	);
-
-	echo '<div class="snippet-scope">';
-	printf( '<label for="snippet_scope"><h3>%s</h3></label>', __( 'Scope', 'code-snippets' ) );
-
-	foreach ( $scopes as $scope => $label ) {
-		printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope );
-		checked( $scope, $snippet->scope );
-		echo "> $label</div>";
-	}
-
-	echo '</div>';
-}
-
-add_action( 'code_snippets/admin/single', 'code_snippets_snippet_scope_setting', 5 );
-
 /**
 * Output the interface for editing snippet tags
 * @since 2.0
@@ -245,6 +219,60 @@ function code_snippets_tags_editor( $snippet ) {
 }
 
 add_action( 'code_snippets/admin/single', 'code_snippets_tags_editor' );
+
+function code_snippets_snippet_scope_setting( $snippet ) {
+
+	if ( ! code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
+		return;
+	}
+
+	$scopes = array(
+		__( 'Run snippet everywhere', 'code-snippets' ),
+		__( 'Only run in adminstration area', 'code-snippets' ),
+		__( 'Only run on site front-end', 'code-snippets' ),
+	);
+
+	echo '<tr class="snippet-scope">';
+	echo '<th scope="row">' . __( 'Scope', 'code-snippets' ) . '</th><td>';
+
+	foreach ( $scopes as $scope => $label ) {
+		printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope );
+		checked( $scope, $snippet->scope );
+		echo "> $label</div>";
+	}
+
+	echo '</td></tr>';
+}
+
+add_action( 'code_snippets/admin/single/settings', 'code_snippets_snippet_scope_setting' );
+
+/**
+* Output the interface for editing snippet tags
+* @since 2.0
+* @param object $snippet The snippet currently being edited
+*/
+function code_snippets_multisite_sharing_setting( $snippet ) {
+	$screen = get_current_screen();
+
+	if ( ! $screen->is_network ) {
+		return;
+	}
+
+	$shared_snippets = get_site_option( 'shared_code_snippets', array() );
+	?>
+
+	<tr class="snippet-sharing-setting">
+		<th scope="row"><?php _e( 'Sharing', 'code-snippets' ) ?></th>
+		<td><label for="snippet_sharing">
+			<input type="checkbox" name="snippet_sharing"
+			<?php checked( in_array( $snippet->id, $shared_snippets ) ); ?>>
+			<?php _e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
+		</label></td>
+	</tr>
+<?php
+}
+
+add_action( 'code_snippets/admin/single/settings', 'code_snippets_multisite_sharing_setting' );
 
 /**
  * Registers and loads the code editor's assets
