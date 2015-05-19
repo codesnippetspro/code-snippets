@@ -320,15 +320,23 @@ function delete_snippet( $id, $multisite = null ) {
  *
  * @param object $snippet The snippet to add/update to the database
  * @param boolean|null $multisite Save the snippet to the site-wide or network-wide table?
- * @return int|boolean The ID of the snippet on success, false on failure
+ * @return int The ID of the snippet
  */
 function save_snippet( $snippet, $multisite = null ) {
 	global $wpdb;
-
-	$data = array();
+	$screen = get_current_screen();
 	$table = get_snippets_table_name( $multisite );
+
+	/* Used to store the metadata for insertation into the database */
+	$data = array();
+
+	/* Save a copy of the raw snippet data */
+	$raw_data = $snippet;
+
+	/* Standardize and escape the snippet data */
 	$snippet = escape_snippet_data( $snippet );
 
+	/* Loop through the snippet properties and seralize them */
 	foreach ( get_object_vars( $snippet ) as $field => $value ) {
 		if ( 'id' === $field ) {
 			continue;
@@ -341,18 +349,32 @@ function save_snippet( $snippet, $multisite = null ) {
 		$data[ $field ] = $value;
 	}
 
-	if ( isset( $snippet->id ) && 0 !== $snippet->id ) {
-
+	/* Create a new snippet if the ID is not set */
+	if ( ! isset( $snippet->id ) || 0 === $snippet->id ) {
+		$wpdb->insert( $table, $data, '%s' );
+		$snippet->id = $wpdb->insert_id;
+		do_action( 'code_snippets/create_snippet', $snippet, $table );
+	} else {
+		/* Otherwise update the snippet data */
 		$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) );
 		do_action( 'code_snippets/update_snippet', $snippet, $table );
-		return $snippet->id;
-
-	} else {
-
-		$wpdb->insert( $table, $data, '%s' );
-		do_action( 'code_snippets/create_snippet', $snippet, $table );
-		return $wpdb->insert_id;
 	}
+
+	/* Update the shared network snippets if necessary */
+	if ( $screen->is_network ) {
+		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
+
+		if ( isset( $raw_data['snippet_sharing'] ) && 'on' === $raw_data['snippet_sharing'] ) {
+			if ( ! in_array( $snippet->id, $shared_snippets ) ) {
+				$shared_snippets[] = $snippet->id;
+			}
+		} else {
+			$shared_snippets = array_diff( $shared_snippets, array( $snippet->id ) );
+		}
+		update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
+	}
+
+	return $snippet->id;
 }
 
 /**

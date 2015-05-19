@@ -77,6 +77,7 @@ function code_snippets_render_single_menu() {
  * @uses wp_redirect To pass the results to the page
  */
 function code_snippets_load_single_menu() {
+	$screen = get_current_screen();
 
 	/* Make sure the user has permission to be here */
 	if ( ! current_user_can( get_snippets_cap() ) ) {
@@ -88,6 +89,14 @@ function code_snippets_load_single_menu() {
 
 	/* Load the screen help tabs */
 	require plugin_dir_path( __FILE__ ) . 'admin-help.php';
+
+	/* Register action hooks */
+	if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
+		add_action( 'code_snippets/admin/single/settings', 'code_snippets_snippet_scope_setting' );
+	}
+	if ( $screen->is_network ) {
+		add_action( 'code_snippets/admin/single/settings', 'code_snippets_multisite_sharing_setting' );
+	}
 
 	/* Enqueue the code editor and other scripts and styles */
 	add_action( 'admin_enqueue_scripts', 'code_snippets_enqueue_codemirror', 9 );
@@ -222,10 +231,6 @@ add_action( 'code_snippets/admin/single', 'code_snippets_tags_editor' );
 
 function code_snippets_snippet_scope_setting( $snippet ) {
 
-	if ( ! code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
-		return;
-	}
-
 	$scopes = array(
 		__( 'Run snippet everywhere', 'code-snippets' ),
 		__( 'Only run in adminstration area', 'code-snippets' ),
@@ -244,21 +249,13 @@ function code_snippets_snippet_scope_setting( $snippet ) {
 	echo '</td></tr>';
 }
 
-add_action( 'code_snippets/admin/single/settings', 'code_snippets_snippet_scope_setting' );
-
 /**
 * Output the interface for editing snippet tags
 * @since 2.0
 * @param object $snippet The snippet currently being edited
 */
 function code_snippets_multisite_sharing_setting( $snippet ) {
-	$screen = get_current_screen();
-
-	if ( ! $screen->is_network ) {
-		return;
-	}
-
-	$shared_snippets = get_site_option( 'shared_code_snippets', array() );
+	$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 	?>
 
 	<tr class="snippet-sharing-setting">
@@ -269,10 +266,9 @@ function code_snippets_multisite_sharing_setting( $snippet ) {
 			<?php _e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
 		</label></td>
 	</tr>
-<?php
-}
 
-add_action( 'code_snippets/admin/single/settings', 'code_snippets_multisite_sharing_setting' );
+	<?php
+}
 
 /**
  * Registers and loads the code editor's assets
