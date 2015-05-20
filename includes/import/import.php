@@ -103,7 +103,7 @@ function code_snippets_load_import_menu() {
 		$result = import_snippets( $_FILES['code_snippets_import_file']['tmp_name'], $network );
 
 		/* Send the amount of imported snippets to the page */
-		$url = add_query_args( false === $result ? array( 'error' => true ) : array( 'imported' => $result ) );
+		$url = add_query_arg( false === $result ? array( 'error' => true ) : array( 'imported' => $result ) );
 		wp_redirect( esc_url_raw( $url ) );
 	}
 
