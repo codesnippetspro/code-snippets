@@ -21,10 +21,11 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
-	 * Load the admin menu
+	 * Executed when the menu is loaded
 	 */
 	public function load() {
 		parent::load();
+		code_snippets_load_import_help();
 		$this->process_import_file();
 	}
 

@@ -19,11 +19,6 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
-	 * Shortcircuit help tabs function
-	 */
-	function load_help_tabs() {}
-
-	/**
 	 * Render the admin screen
 	 */
 	function render() {

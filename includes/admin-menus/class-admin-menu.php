@@ -53,13 +53,6 @@ abstract class Code_Snippets_Admin_Menu {
 	}
 
 	/**
-	 * Load the screen contextual help tabs
-	 */
-	protected function load_help_tabs() {
-		include $this->includes_dir . "contextual-help/$this->name.php";
-	}
-
-	/**
 	 * Executed when the admin page is loaded
 	 */
 	public function load() {
@@ -70,8 +63,5 @@ abstract class Code_Snippets_Admin_Menu {
 
 		/* Create the snippet tables if they don't exist */
 		create_code_snippets_tables();
-
-		/* Load the screen help tabs */
-		$this->load_help_tabs();
 	}
 }

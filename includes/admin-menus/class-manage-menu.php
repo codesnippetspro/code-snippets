@@ -55,6 +55,9 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	function load() {
 		parent::load();
 
+		/* Load the contextual help tabs */
+		code_snippets_load_manage_help();
+
 		/* Initialize the list table class */
 		require_once $this->includes_dir . 'class-list-table.php';
 		$this->list_table = new Code_Snippets_List_Table();

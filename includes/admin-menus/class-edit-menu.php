@@ -41,6 +41,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	public function load() {
 		parent::load();
 
+		code_snippets_load_edit_help();
+
 		/* Enqueue the code editor and other scripts and styles */
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9 );
 

@@ -77,6 +77,7 @@ foreach ( array(
 	'editor.php',
 
 	/* General Administration functions */
+	'contextual-help.php',
 	'admin.php',
 
 	/* Settings component */

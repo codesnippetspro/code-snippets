@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-20 22:07+1000\n"
+"POT-Creation-Date: 2015-05-20 23:06+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: includes/admin-menus/class-admin-menu.php:68
+#: includes/admin-menus/class-admin-menu.php:61
 msgid "You are not authorized to access this page."
 msgstr ""
 
@@ -35,33 +35,33 @@ msgstr ""
 msgid "Add New Snippet"
 msgstr ""
 
-#: includes/admin-menus/class-edit-menu.php:137
+#: includes/admin-menus/class-edit-menu.php:139
 #: includes/class-list-table.php:226
 msgid "Description"
 msgstr ""
 
-#: includes/admin-menus/class-edit-menu.php:166
+#: includes/admin-menus/class-edit-menu.php:168
 msgid "Run snippet everywhere"
 msgstr ""
 
-#: includes/admin-menus/class-edit-menu.php:167
+#: includes/admin-menus/class-edit-menu.php:169
 msgid "Only run in adminstration area"
 msgstr ""
 
-#: includes/admin-menus/class-edit-menu.php:168
+#: includes/admin-menus/class-edit-menu.php:170
 msgid "Only run on site front-end"
 msgstr ""
 
-#: includes/admin-menus/class-edit-menu.php:172
+#: includes/admin-menus/class-edit-menu.php:174
 msgid "Scope"
 msgstr ""
 
-#: includes/admin-menus/class-edit-menu.php:190
+#: includes/admin-menus/class-edit-menu.php:192
 #: includes/class-list-table.php:227
 msgid "Tags"
 msgstr ""
 
-#: includes/admin-menus/class-edit-menu.php:194
+#: includes/admin-menus/class-edit-menu.php:196
 msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
@@ -73,11 +73,11 @@ msgstr ""
 msgid "Import Snippets"
 msgstr ""
 
-#: includes/admin-menus/class-import-menu.php:68
+#: includes/admin-menus/class-import-menu.php:69
 msgid "Code Snippets"
 msgstr ""
 
-#: includes/admin-menus/class-import-menu.php:69
+#: includes/admin-menus/class-import-menu.php:70
 msgid "Import snippets from a code snippets export file"
 msgstr ""
 
@@ -93,7 +93,7 @@ msgid "Snippets"
 msgstr ""
 
 #: includes/admin-menus/class-settings-menu.php:16
-#: includes/admin-menus/class-settings-menu.php:32
+#: includes/admin-menus/class-settings-menu.php:27
 msgid "Settings"
 msgstr ""
 
@@ -395,129 +395,32 @@ msgstr ""
 msgid "Clear Filters"
 msgstr ""
 
-#: includes/contextual-help/edit.php:15 includes/contextual-help/import.php:16
-#: includes/contextual-help/manage.php:15
-msgid "Overview"
-msgstr ""
-
-#: includes/contextual-help/edit.php:17
-msgid ""
-"Snippets are similar to plugins - they both extend and expand the "
-"functionality of WordPress. Snippets are more light-weight, just a few lines "
-"of code, and do not put as much load on your server. Here you can add a new "
-"snippet, or edit an existing one."
-msgstr ""
-
-#: includes/contextual-help/edit.php:22
-msgid "Finding Snippets"
-msgstr ""
-
-#: includes/contextual-help/edit.php:24
-msgid ""
-"Here are some links to websites which host a large number of snippets that "
-"you can add to your site.\n"
-"\t\t<ul>\n"
-"\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets\">WP-"
-"Snippets</a></li>\n"
-"\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</a></"
-"li>\n"
-"\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title=\"Cats "
-"Who Code Snippet Library\">Cats Who Code</a></li>\n"
-"\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
-"\t\t</ul>"
-msgstr ""
-
-#: includes/contextual-help/edit.php:31
-msgid ""
-"More places to find snippets, as well as a selection of example snippets, "
-"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
-"wiki/Finding-snippets\">plugin documentation</a>"
-msgstr ""
-
-#: includes/contextual-help/edit.php:36
-msgid "Adding Snippets"
-msgstr ""
-
-#: includes/contextual-help/edit.php:38
-msgid ""
-"You need to fill out the name and code fields for your snippet to be added. "
-"While the description field will add more information about how your snippet "
-"works, what is does and where you found it, it is completely optional."
-msgstr ""
-
-#: includes/contextual-help/edit.php:39
-msgid ""
-"Please be sure to check that your snippet is valid PHP code and will not "
-"produce errors before adding it through this page. While doing so will not "
-"become active straight away, it will help to minimise the chance of a faulty "
-"snippet becoming active on your site."
-msgstr ""
-
-#: includes/contextual-help/edit.php:43 includes/contextual-help/import.php:37
-#: includes/contextual-help/manage.php:37
+#: includes/contextual-help.php:15
 msgid "For more information:"
 msgstr ""
 
-#: includes/contextual-help/edit.php:44 includes/contextual-help/import.php:38
-msgid ""
-"<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank"
-"\">WordPress Extend</a>"
+#: includes/contextual-help.php:16
+msgid "About Plugin"
 msgstr ""
 
-#: includes/contextual-help/edit.php:45 includes/contextual-help/import.php:39
-#: includes/contextual-help/manage.php:39
-msgid ""
-"<a href=\"http://wordpress.org/support/plugin/code-snippets\" target=\"_blank"
-"\">Support Forums</a>"
+#: includes/contextual-help.php:17
+msgid "FAQ"
 msgstr ""
 
-#: includes/contextual-help/edit.php:46 includes/contextual-help/import.php:40
-#: includes/contextual-help/manage.php:40
-msgid ""
-"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
-"\">Project Website</a>"
+#: includes/contextual-help.php:18
+msgid "Support Forums"
 msgstr ""
 
-#: includes/contextual-help/import.php:18
-msgid ""
-"Snippets are similar to plugins - they both extend and expand the "
-"functionality of WordPress. Snippets are more light-weight, just a few lines "
-"of code, and do not put as much load on your server. Here you can load "
-"snippets from a Code Snippets (.xml) import file into the database with your "
-"existing snippets."
+#: includes/contextual-help.php:19
+msgid "Plugin Website</a>"
 msgstr ""
 
-#: includes/contextual-help/import.php:23
-msgid "Importing"
+#: includes/contextual-help.php:33 includes/contextual-help.php:64
+#: includes/contextual-help.php:102
+msgid "Overview"
 msgstr ""
 
-#: includes/contextual-help/import.php:25
-msgid ""
-"You can load your snippets from a code snippets (.xml) export file using "
-"this page."
-msgstr ""
-
-#: includes/contextual-help/import.php:26
-#, php-format
-msgid ""
-"Snippets will be added to the database along with your existing snippets. "
-"Regardless of whether the snippets were active on the previous site, "
-"imported snippets are always inactive until activated using the <a href=\"%s"
-"\">Manage Snippets</a> page.</p>"
-msgstr ""
-
-#: includes/contextual-help/import.php:31
-msgid "Exporting"
-msgstr ""
-
-#: includes/contextual-help/import.php:33
-#, php-format
-msgid ""
-"You can save your snippets to a Code Snippets (.xml) export file using the "
-"<a href=\"%s\">Manage Snippets</a> page."
-msgstr ""
-
-#: includes/contextual-help/manage.php:17
+#: includes/contextual-help.php:35
 msgid ""
 "Snippets are similar to plugins - they both extend and expand the "
 "functionality of WordPress. Snippets are more light-weight, just a few lines "
@@ -526,18 +429,18 @@ msgid ""
 "deactivating, deleting and exporting."
 msgstr ""
 
-#: includes/contextual-help/manage.php:22
+#: includes/contextual-help.php:40
 msgid "Safe Mode"
 msgstr ""
 
-#: includes/contextual-help/manage.php:24
+#: includes/contextual-help.php:42
 msgid ""
 "Be sure to check your snippets for errors before you activate them, as a "
 "faulty snippet could bring your whole blog down. If your site starts doing "
 "strange things, deactivate all your snippets and activate them one at a time."
 msgstr ""
 
-#: includes/contextual-help/manage.php:25
+#: includes/contextual-help.php:43
 msgid ""
 "If something goes wrong with a snippet and you can't use WordPress, you can "
 "cause all snippets to stop executing by adding "
@@ -547,11 +450,11 @@ msgid ""
 "strong> with <strong>false</strong>."
 msgstr ""
 
-#: includes/contextual-help/manage.php:30
+#: includes/contextual-help.php:48
 msgid "Uninstall"
 msgstr ""
 
-#: includes/contextual-help/manage.php:32
+#: includes/contextual-help.php:50
 #, php-format
 msgid ""
 "When you delete Code Snippets through the Plugins menu in WordPress it will "
@@ -561,17 +464,103 @@ msgid ""
 "FTP."
 msgstr ""
 
-#: includes/contextual-help/manage.php:33
+#: includes/contextual-help.php:51
 msgid ""
 "Even if you're sure that you don't want to use Code Snippets ever again on "
 "this WordPress installation, you may want to use the export feature to back "
 "up your snippets."
 msgstr ""
 
-#: includes/contextual-help/manage.php:38
+#: includes/contextual-help.php:66
 msgid ""
-"<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank"
-"\">WordPress Extend</a></p>"
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can add a new "
+"snippet, or edit an existing one."
+msgstr ""
+
+#: includes/contextual-help.php:71
+msgid "Finding Snippets"
+msgstr ""
+
+#: includes/contextual-help.php:73
+msgid ""
+"Here are some links to websites which host a large number of snippets that "
+"you can add to your site.\n"
+"\t\t\t<ul>\n"
+"\t\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
+"\">WP-Snippets</a></li>\n"
+"\t\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</a></"
+"li>\n"
+"\t\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
+"\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
+"\t\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+"\t\t\t</ul>"
+msgstr ""
+
+#: includes/contextual-help.php:80
+msgid ""
+"More places to find snippets, as well as a selection of example snippets, "
+"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
+"wiki/Finding-snippets\">plugin documentation</a>"
+msgstr ""
+
+#: includes/contextual-help.php:85
+msgid "Adding Snippets"
+msgstr ""
+
+#: includes/contextual-help.php:87
+msgid ""
+"You need to fill out the name and code fields for your snippet to be added. "
+"While the description field will add more information about how your snippet "
+"works, what is does and where you found it, it is completely optional."
+msgstr ""
+
+#: includes/contextual-help.php:88
+msgid ""
+"Please be sure to check that your snippet is valid PHP code and will not "
+"produce errors before adding it through this page. While doing so will not "
+"become active straight away, it will help to minimise the chance of a faulty "
+"snippet becoming active on your site."
+msgstr ""
+
+#: includes/contextual-help.php:104
+msgid ""
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can load "
+"snippets from a Code Snippets (.xml) import file into the database with your "
+"existing snippets."
+msgstr ""
+
+#: includes/contextual-help.php:109
+msgid "Importing"
+msgstr ""
+
+#: includes/contextual-help.php:111
+msgid ""
+"You can load your snippets from a code snippets (.xml) export file using "
+"this page."
+msgstr ""
+
+#: includes/contextual-help.php:112
+#, php-format
+msgid ""
+"Snippets will be added to the database along with your existing snippets. "
+"Regardless of whether the snippets were active on the previous site, "
+"imported snippets are always inactive until activated using the <a href=\"%s"
+"\">Manage Snippets</a> page.</p>"
+msgstr ""
+
+#: includes/contextual-help.php:117
+msgid "Exporting"
+msgstr ""
+
+#: includes/contextual-help.php:119
+#, php-format
+msgid ""
+"You can save your snippets to a Code Snippets (.xml) export file using the "
+"<a href=\"%s\">Manage Snippets</a> page."
 msgstr ""
 
 #: includes/settings/class-settings.php:51
