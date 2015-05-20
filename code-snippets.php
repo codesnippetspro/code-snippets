@@ -9,7 +9,7 @@
  * @package   Code_Snippets
  * @version   2.3.0
  * @author    Shea Bunge <http://bungeshea.com/>
- * @copyright Copyright (c) 2012-2014, Shea Bunge
+ * @copyright Copyright (c) 2012-2015, Shea Bunge
  * @link      http://bungeshea.com/plugins/code-snippets/
  * @license   http://opensource.org/licenses/MIT
  */
