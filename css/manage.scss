@@ -2,6 +2,27 @@
  * Custom styling for the snippets table
  */
 
+.column-name > a {
+
+	%icon-after {
+		padding-left: 5px;
+		font-family: "dashicons";
+		vertical-align: top;
+	}
+
+	.admin-scope &:after {
+		@extend %icon-after;
+		font-size: 14px;
+		content: "\f111";
+	}
+
+	.frontend-scope &:after {
+		@extend %icon-after;
+		font-size: 16px;
+		content: "\f177";
+	}
+}
+
 .snippets {
 
 	th, td {

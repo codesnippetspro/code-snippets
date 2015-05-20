@@ -20,13 +20,10 @@ global $code_snippets_list_table;
 	<h2><?php
 	esc_html_e( 'Snippets', 'code-snippets' );
 
-	if ( current_user_can( get_snippets_cap() ) ) {
-
-		printf( '<a href="%2$s" class="add-new-h2">%1$s</a>',
-			esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-			code_snippets_get_menu_url( 'add' )
-		);
-	}
+	printf( '<a href="%2$s" class="add-new-h2">%1$s</a>',
+		esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
+		code_snippets_get_menu_url( 'add' )
+	);
 
 	$code_snippets_list_table->search_notice();
 	?></h2>

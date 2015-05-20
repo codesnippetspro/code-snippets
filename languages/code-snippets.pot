@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.2.3\n"
+"Project-Id-Version: code-snippets 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-13 21:16+1000\n"
+"POT-Creation-Date: 2015-05-20 15:56+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: includes/admin.php:81 includes/manage/admin.php:21
 #: includes/manage/manage.php:22 includes/manage/manage.php:23
@@ -226,45 +227,49 @@ msgstr ""
 msgid "Edit Snippet"
 msgstr ""
 
-#: includes/edit/admin.php:31 includes/edit/edit.php:35
-#: includes/manage/admin.php:26
+#: includes/edit/admin.php:29 includes/manage/admin.php:24
+msgctxt "snippet"
 msgid "Add New"
 msgstr ""
 
-#: includes/edit/admin.php:35 includes/edit/edit.php:34
+#: includes/edit/admin.php:32 includes/edit/edit.php:34
 msgid "Add New Snippet"
 msgstr ""
 
-#: includes/edit/admin.php:52 includes/edit/admin.php:53
+#: includes/edit/admin.php:49 includes/edit/admin.php:50
 msgid "Name (short title)"
 msgstr ""
 
-#: includes/edit/admin.php:58
+#: includes/edit/admin.php:55
 msgid "Code"
 msgstr ""
 
-#: includes/edit/admin.php:78 includes/edit/admin.php:92
+#: includes/edit/admin.php:75 includes/edit/admin.php:89
 msgid "Save Changes and Activate"
 msgstr ""
 
-#: includes/edit/admin.php:98
+#: includes/edit/admin.php:95
 msgid "Save Changes and Deactivate"
 msgstr ""
 
-#: includes/edit/admin.php:108 includes/manage/class-list-table.php:141
+#: includes/edit/admin.php:105 includes/manage/class-list-table.php:141
 #: includes/manage/class-list-table.php:266
 msgid "Export"
 msgstr ""
 
-#: includes/edit/admin.php:115
+#: includes/edit/admin.php:112
 msgid ""
 "You are about to permanently delete this snippet.\n"
 "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
-#: includes/edit/admin.php:120 includes/manage/class-list-table.php:150
+#: includes/edit/admin.php:117 includes/manage/class-list-table.php:150
 #: includes/manage/class-list-table.php:267
 msgid "Delete"
+msgstr ""
+
+#: includes/edit/edit.php:35
+msgid "Add New"
 msgstr ""
 
 #: includes/edit/edit.php:83 includes/manage/manage.php:67
@@ -293,6 +298,10 @@ msgstr ""
 
 #: includes/edit/edit.php:231 includes/manage/class-list-table.php:227
 msgid "Tags"
+msgstr ""
+
+#: includes/edit/edit.php:235
+msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
 #: includes/import/admin-help.php:18
@@ -339,7 +348,11 @@ msgstr ""
 msgid ""
 "Successfully imported <strong>%d</strong> snippet. <a href=\"%s\">Have fun!</"
 "a>"
-msgstr ""
+msgid_plural ""
+"Successfully imported <strong>%d</strong> snippets. <a href=\"%s\">Have fun!"
+"</a>"
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/import/admin-messages.php:30
 msgid "An error occurred when processing the import file."
@@ -485,7 +498,7 @@ msgstr ""
 msgid "Selected snippets <strong>deleted</strong>."
 msgstr ""
 
-#: includes/manage/admin.php:39
+#: includes/manage/admin.php:36
 msgid "Search Installed Snippets"
 msgstr ""
 
@@ -543,32 +556,44 @@ msgstr ""
 #: includes/manage/class-list-table.php:305
 #, php-format
 msgid "All <span class=\"count\">(%s)</span>"
-msgstr ""
+msgid_plural "All <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/manage/class-list-table.php:308
 #, php-format
 msgid "Active <span class=\"count\">(%s)</span>"
-msgstr ""
+msgid_plural "Active <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/manage/class-list-table.php:311
 #, php-format
 msgid "Recently Active <span class=\"count\">(%s)</span>"
-msgstr ""
+msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/manage/class-list-table.php:314
 #, php-format
 msgid "Inactive <span class=\"count\">(%s)</span>"
-msgstr ""
+msgid_plural "Inactive <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/manage/class-list-table.php:317
 #, php-format
 msgid "Admin <span class=\"count\">(%s)</span>"
-msgstr ""
+msgid_plural "Admin <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/manage/class-list-table.php:320
 #, php-format
 msgid "Front End <span class=\"count\">(%s)</span>"
-msgstr ""
+msgid_plural "Front End <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/manage/class-list-table.php:380
 msgid "Show all tags"
@@ -589,21 +614,21 @@ msgid ""
 "\">Add New&rarr;</a>"
 msgstr ""
 
-#: includes/manage/class-list-table.php:784
+#: includes/manage/class-list-table.php:783
 msgid "Search results"
 msgstr ""
 
-#: includes/manage/class-list-table.php:787
+#: includes/manage/class-list-table.php:786
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/manage/class-list-table.php:791
+#: includes/manage/class-list-table.php:790
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/manage/class-list-table.php:797
+#: includes/manage/class-list-table.php:796
 msgid "Clear Filters"
 msgstr ""
 
@@ -615,99 +640,123 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/settings/class-settings.php:47
+#: includes/settings/class-settings.php:51
 msgid "Activate by Default"
 msgstr ""
 
-#: includes/settings/class-settings.php:49
+#: includes/settings/class-settings.php:53
 msgid ""
 "Make the 'Save and Activate' button the default action when saving a snippet."
 msgstr ""
 
-#: includes/settings/class-settings.php:55
+#: includes/settings/class-settings.php:59
 msgid "Enable Scope Selector"
 msgstr ""
 
-#: includes/settings/class-settings.php:57
+#: includes/settings/class-settings.php:61
 msgid "Enable the scope selector when editing a snippet"
 msgstr ""
 
-#: includes/settings/class-settings.php:96
+#: includes/settings/class-settings.php:71
+msgid "Row Height"
+msgstr ""
+
+#: includes/settings/class-settings.php:73
+msgid "rows"
+msgstr ""
+
+#: includes/settings/class-settings.php:80
+msgid "Use Full Editor"
+msgstr ""
+
+#: includes/settings/class-settings.php:82
+msgid "Enable all features of the visual editor"
+msgstr ""
+
+#: includes/settings/class-settings.php:88
+msgid "Media Buttons"
+msgstr ""
+
+#: includes/settings/class-settings.php:90
+msgid "Enable the add media buttons"
+msgstr ""
+
+#: includes/settings/class-settings.php:100
 msgid "Theme"
 msgstr ""
 
-#: includes/settings/class-settings.php:104
+#: includes/settings/class-settings.php:108
 msgid "Indent With Tabs"
 msgstr ""
 
-#: includes/settings/class-settings.php:106
+#: includes/settings/class-settings.php:110
 msgid "Use hard tabs (not spaces) for indentation."
 msgstr ""
 
-#: includes/settings/class-settings.php:113
+#: includes/settings/class-settings.php:117
 msgid "Tab Size"
 msgstr ""
 
-#: includes/settings/class-settings.php:115
+#: includes/settings/class-settings.php:119
 msgid "The width of a tab character."
 msgstr ""
 
-#: includes/settings/class-settings.php:123
+#: includes/settings/class-settings.php:127
 msgid "Indent Unit"
 msgstr ""
 
-#: includes/settings/class-settings.php:125
+#: includes/settings/class-settings.php:129
 msgid "How many spaces a block should be indented."
 msgstr ""
 
-#: includes/settings/class-settings.php:133
+#: includes/settings/class-settings.php:137
 msgid "Wrap Lines"
 msgstr ""
 
-#: includes/settings/class-settings.php:135
+#: includes/settings/class-settings.php:139
 msgid "Whether the editor should scroll or wrap for long lines."
 msgstr ""
 
-#: includes/settings/class-settings.php:142
+#: includes/settings/class-settings.php:146
 msgid "Line Numbers"
 msgstr ""
 
-#: includes/settings/class-settings.php:144
+#: includes/settings/class-settings.php:148
 msgid "Show line numbers to the left of the editor."
 msgstr ""
 
-#: includes/settings/class-settings.php:151
+#: includes/settings/class-settings.php:155
 msgid "Auto Close Brackets"
 msgstr ""
 
-#: includes/settings/class-settings.php:153
+#: includes/settings/class-settings.php:157
 msgid "Auto-close brackets and quotes when typed."
 msgstr ""
 
-#: includes/settings/class-settings.php:160
+#: includes/settings/class-settings.php:164
 msgid "Highlight Selection Matches"
 msgstr ""
 
-#: includes/settings/class-settings.php:161
+#: includes/settings/class-settings.php:165
 msgid "Highlight all instances of a currently selected word."
 msgstr ""
 
-#: includes/settings/settings.php:93
+#: includes/settings/settings.php:84
 msgid "General"
 msgstr ""
 
-#: includes/settings/settings.php:94
+#: includes/settings/settings.php:85
 msgid "Description Editor"
 msgstr ""
 
-#: includes/settings/settings.php:95
+#: includes/settings/settings.php:86
 msgid "Code Editor"
 msgstr ""
 
-#: includes/settings/settings.php:143
+#: includes/settings/settings.php:134
 msgid "Editor Preview"
 msgstr ""
 
-#: includes/settings/settings.php:189
+#: includes/settings/settings.php:180
 msgid "Settings saved."
 msgstr ""

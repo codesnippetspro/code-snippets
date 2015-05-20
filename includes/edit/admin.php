@@ -24,13 +24,10 @@ $snippet = get_snippet( $edit_id );
 	<h2><?php
 	if ( $edit_id ) {
 		esc_html_e( 'Edit Snippet', 'code-snippets' );
-
-		if ( current_user_can( get_snippets_cap() ) ) {
-			printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
-				code_snippets_get_menu_url( 'add' ),
-				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
-			);
-		}
+		printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
+			code_snippets_get_menu_url( 'add' ),
+			esc_html_x( 'Add New', 'snippet', 'code-snippets' )
+		);
 	} else {
 		esc_html_e( 'Add New Snippet', 'code-snippets' );
 	}

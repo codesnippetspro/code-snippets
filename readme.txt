@@ -4,7 +4,7 @@ Donate link: http://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.3
 Tested up to: 4.2.2
-Stable tag: 2.2.3
+Stable tag: 2.3.0
 License: MIT
 License URI: license.txt
 
@@ -115,6 +115,15 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.3.0 =
+* Removed nested functions
+* Added icons for admin and front-end snippets to manage table
+* Improved settings retrieval by caching settings
+* Updated Russian translation by [Alexey Chumakov](http://chumakov.ru/)
+* Added filter switch to prevent a snippet from executing ([#25](https://github.com/sheabunge/code-snippets/issues/25))
+* Fixed errors in string translation
+* Fixed bug in import process ([#32](https://github.com/sheabunge/code-snippets/issues/32))
 
 = 2.2.3 =
 * Fixed broken call to `export_snippet()` function
@@ -337,6 +346,9 @@ __Fixed__
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.3.0 =
+Numerious fixes and Russian translation update. Props to @signo and @`achumakov.
 
 = 2.2.3 =
 Fixed error when exporting; snippet scopes can now be imported

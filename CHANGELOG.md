@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.0
+* Removed nested functions
+* Added icons for admin and front-end snippets to manage table
+* Improved settings retrieval by caching settings
+* Updated Russian translation by [Alexey Chumakov](http://chumakov.ru/)
+* Added filter switch to prevent a snippet from executing ([#25](https://github.com/sheabunge/code-snippets/issues/25))
+* Fixed errors in string translation
+* Fixed bug in import process ([#32](https://github.com/sheabunge/code-snippets/issues/32))
+
 ## 2.2.3
 * Fixed broken call to `export_snippet()` function
 * Added support for importing and exporting snippet scope

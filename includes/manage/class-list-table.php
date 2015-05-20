@@ -801,7 +801,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Retrieve the string representation of a snippet scope number
-	 * @since [NEXT_VERSION]
+	 * @since 2.3.0
 	 * @param  int $scope the scope number
 	 * @return string the scope name
 	 */
