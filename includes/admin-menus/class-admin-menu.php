@@ -4,8 +4,6 @@ class Code_Snippets_Admin_Menu {
 
 	public $name, $label, $title;
 
-	protected $includes_dir;
-
 	/**
 	 * Constructor
 	 * @param string $name  The snippet page shortname
@@ -17,12 +15,17 @@ class Code_Snippets_Admin_Menu {
 		$this->label = $label;
 		$this->title = $title;
 
-		$this->includes_dir = dirname( plugin_dir_path( __FILE__ ) ) . '/';
-
 		add_action( 'admin_menu', array( $this, 'register' ) );
 		add_action( 'network_admin_menu', array( $this, 'register' ) );
 	}
 
+	/**
+	 * Add a sub-menu to the Snippets menu
+	 * @uses add_submenu_page() to register a submenu
+	 * @param string $slug  The slug of the menu
+	 * @param string $label The label shown in the admin menu
+	 * @param string $title The page title
+	 */
 	public function add_menu( $slug, $label, $title ) {
 		$hook = add_submenu_page(
 			code_snippets_get_menu_slug(),
@@ -38,7 +41,6 @@ class Code_Snippets_Admin_Menu {
 
 	/**
 	 * Register the admin menu
-	 * @uses add_submenu_page() to register a submenu
 	 */
 	public function register() {
 		$this->add_menu( code_snippets_get_menu_slug( $this->name ), $this->label, $this->title );
@@ -49,7 +51,7 @@ class Code_Snippets_Admin_Menu {
 	 */
 	public function render() {
 		$this->print_messages();
-		include $this->includes_dir . "views/$this->name.php";
+		include dirname( plugin_dir_path( __FILE__ ) ) . "/views/$this->name.php";
 	}
 
 	/**

@@ -19,6 +19,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		add_action( 'code_snippets/admin/single', array( $this, 'render_tags_editor' ) );
 	}
 
+	/**
+	 * Register the admin menu
+	 */
 	public function register() {
 
 		/* Add New Snippet menu */
@@ -60,7 +63,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Save the posted snippet to the database
 	 * @access private
-	 * @uses wp_redirect To pass the results to the page
+	 * @uses wp_redirect() to pass the results to the page
 	 */
 	private function save_posted_snippet() {
 

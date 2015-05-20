@@ -51,7 +51,6 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 		wp_redirect( esc_url_raw( $url ) );
 	}
 
-
 	/**
 	 * Add the importer to the Tools > Import menu
 	 * @access private
