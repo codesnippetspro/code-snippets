@@ -79,9 +79,6 @@ foreach ( array(
 	/* General Administration functions */
 	'admin.php',
 
-	/* Import snippets component */
-	'import.php',
-
 	/* Settings component */
 	'settings/editor-preview.php',
 	'settings/settings-fields.php',

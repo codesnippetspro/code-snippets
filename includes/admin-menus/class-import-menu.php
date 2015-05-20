@@ -16,6 +16,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 			__( 'Import Snippets', 'code-snippets' )
 		);
 
+		add_action( 'admin_init', array( $this, 'register_importer' ) );
 		add_action( 'load-importer-code-snippets', array( $this, 'load' ) );
 	}
 
@@ -47,5 +48,26 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 		/* Send the amount of imported snippets to the page */
 		$url = add_query_arg( false === $result ? array( 'error' => true ) : array( 'imported' => $result ) );
 		wp_redirect( esc_url_raw( $url ) );
+	}
+
+
+	/**
+	 * Add the importer to the Tools > Import menu
+	 * @access private
+	 */
+	function register_importer() {
+
+		/* Only register the importer if the current user can manage snippets */
+		if ( ! defined( 'WP_LOAD_IMPORTERS' ) || ! current_user_can( get_snippets_cap() ) ) {
+			return;
+		}
+
+		/* Register the Code Snippets importer with WordPress */
+		register_importer(
+			'code-snippets',
+			__( 'Code Snippets', 'code-snippets' ),
+			__( 'Import snippets from a code snippets export file', 'code-snippets' ),
+			array( $this, 'render' )
+		);
 	}
 }
