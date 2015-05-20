@@ -324,14 +324,10 @@ function delete_snippet( $id, $multisite = null ) {
  */
 function save_snippet( $snippet, $multisite = null ) {
 	global $wpdb;
-	$screen = get_current_screen();
 	$table = get_snippets_table_name( $multisite );
 
 	/* Used to store the metadata for insertation into the database */
 	$data = array();
-
-	/* Save a copy of the raw snippet data */
-	$raw_data = $snippet;
 
 	/* Standardize and escape the snippet data */
 	$snippet = escape_snippet_data( $snippet );
@@ -358,23 +354,6 @@ function save_snippet( $snippet, $multisite = null ) {
 		/* Otherwise update the snippet data */
 		$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) );
 		do_action( 'code_snippets/update_snippet', $snippet, $table );
-	}
-
-	/* Update the shared network snippets if necessary */
-	if ( $screen->is_network ) {
-		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
-
-		if ( isset( $raw_data['snippet_sharing'] ) && 'on' === $raw_data['snippet_sharing'] ) {
-
-			/* Add the snippet ID to the array if it isn't already */
-			if ( ! in_array( $snippet->id, $shared_snippets ) ) {
-				$shared_snippets[] = $snippet->id;
-			}
-		} else {
-			/* Remove the snippet ID from the array */
-			$shared_snippets = array_diff( $shared_snippets, array( $snippet->id ) );
-		}
-		update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 	}
 
 	return $snippet->id;

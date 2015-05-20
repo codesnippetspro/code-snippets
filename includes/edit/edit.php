@@ -125,32 +125,49 @@ function code_snippets_load_single_menu() {
 		}
 
 		/* Save the snippet to the database */
-		$result = save_snippet( stripslashes_deep( $_POST ) );
+		$snippet_id = save_snippet( stripslashes_deep( $_POST ) );
+
+		/* Update the shared network snippets if necessary */
+		if ( $screen->is_network && $snippet_id && $snippet_id > 0 ) {
+			$shared_snippets = get_site_option( 'shared_network_snippets', array() );
+
+			if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
+
+				/* Add the snippet ID to the array if it isn't already */
+				if ( ! in_array( $snippet_id, $shared_snippets ) ) {
+					$shared_snippets[] = $snippet_id;
+				}
+			} else {
+				/* Remove the snippet ID from the array */
+				$shared_snippets = array_diff( $shared_snippets, array( $$snippet_id ) );
+			}
+			update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
+		}
 
 		/* Build the status message and redirect */
 		$query_args = array();
 
-		if ( $result && isset( $_POST['save_snippet_activate'] ) ) {
+		if ( $snippet_id && isset( $_POST['save_snippet_activate'] ) ) {
 			/* Snippet was activated addition to saving*/
 			$query_args['activated'] = true;
 		}
-		elseif ( $result && isset( $_POST['save_snippet_deactivate'] ) ) {
+		elseif ( $snippet_id && isset( $_POST['save_snippet_deactivate'] ) ) {
 			/* Snippet was deactivated addition to saving*/
 			$query_args['deactivated'] = true;
 		}
 
-		if ( ! $result || $result < 1 ) {
+		if ( ! $snippet_id || $snippet_id < 1 ) {
 			/* An error occurred */
 			$query_args['invalid'] = true;
 		}
 		elseif ( isset( $_POST['snippet_id'] ) ) {
 			/* Existing snippet was updated */
-			$query_args['id'] = $result;
+			$query_args['id'] = $snippet_id;
 			$query_args['updated'] = true;
 		}
 		else {
 			/* New snippet was added */
-			$query_args['id'] = $result;
+			$query_args['id'] = $snippet_id;
 			$query_args['added'] = true;
 		}
 
