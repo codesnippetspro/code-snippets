@@ -29,7 +29,6 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 	function render() {
 		?>
 		<div class="wrap">
-			<?php screen_icon(); ?>
 			<h2><?php esc_html_e( 'Settings', 'code-snippets' ); ?></h2>
 
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>

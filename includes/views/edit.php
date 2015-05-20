@@ -20,7 +20,6 @@ $snippet = get_snippet( $edit_id );
 
 ?>
 <div class="wrap">
-	<?php screen_icon(); ?>
 	<h2><?php
 	if ( $edit_id ) {
 		esc_html_e( 'Edit Snippet', 'code-snippets' );
