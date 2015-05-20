@@ -2,7 +2,7 @@
 Contributors: bungeshea
 Donate link: http://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
-Requires at least: 3.3
+Requires at least: 3.6
 Tested up to: 4.2.2
 Stable tag: 2.3.0
 License: MIT
@@ -346,6 +346,9 @@ __Fixed__
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.3.0 =
+Numerious fixes and Russian translation update. Props to @signo and @`achumakov.
 
 = 2.2.3 =
 Fixed error when exporting; snippet scopes can now be imported

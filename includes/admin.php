@@ -12,6 +12,26 @@ if ( ! is_admin() ) {
 	return;
 }
 
+/* Load admin menu classes */
+$admin_classes = plugin_dir_path( __FILE__ ) . 'admin-menus/';
+require_once $admin_classes . 'class-admin-menu.php';
+
+/* Manage menu */
+require_once $admin_classes . 'class-manage-menu.php';
+new Code_Snippets_Manage_Menu();
+
+/* Edit/add new menu */
+require_once $admin_classes . 'class-edit-menu.php';
+new Code_Snippets_Edit_Menu();
+
+/* Import menu */
+require_once $admin_classes . 'class-import-menu.php';
+new Code_Snippets_Import_Menu();
+
+/* Settings menu */
+require_once $admin_classes . 'class-settings-menu.php';
+new Code_Snippets_Settings_Menu();
+
 /**
  * Fetch the admin menu slug for a snippets menu
  * @param string $menu The menu to retrieve the slug for
@@ -65,6 +85,18 @@ function code_snippets_get_menu_hook( $menu = '' ) {
 }
 
 /**
+ * Fetch the admin menu slug for a snippets menu
+ * @param integer $id The snippet
+ * @return string The URL to the edit snippet page for that snippet
+ */
+function get_snippet_edit_url( $snippet_id ) {
+	return add_query_arg(
+		'id', absint( $snippet_id ),
+		code_snippets_get_menu_url( 'edit' )
+	);
+}
+
+/**
  * Allow super admins to control site admin access to
  * snippet admin menus
  *
@@ -88,12 +120,22 @@ add_filter( 'mu_menu_items', 'code_snippets_mu_menu_items' );
  * Enqueue the stylesheet for a snippet menu
  *
  * @since 2.2.0
- * @uses wp_enqueue_style() To add the stylesheet to the queue
- * @param string $hook The current page hook
+ * @uses wp_enqueue_style() to add the stylesheet to the queue
+ * @uses get_user_option() to check if MP6 mode is active
+ * @uses plugins_url() to retrieve a URL to assets
+ * @param string $hook the current page hook
  */
 function code_snippets_enqueue_admin_stylesheet( $hook ) {
 	$pages = array( 'manage', 'add', 'edit', 'settings' );
 	$hooks = array_map( 'code_snippets_get_menu_hook', $pages );
+
+	/* First, load the menu icon stylesheet */
+	wp_enqueue_style(
+		'menu-icon-snippets',
+		plugins_url( 'css/min/menu-icon.css', CODE_SNIPPETS_FILE ),
+		false,
+		CODE_SNIPPETS_VERSION
+	);
 
 	/* Only load the stylesheet on the right snippets page */
 	if ( ! in_array( $hook, $hooks ) ) {
@@ -115,27 +157,6 @@ function code_snippets_enqueue_admin_stylesheet( $hook ) {
 }
 
 add_action( 'admin_enqueue_scripts', 'code_snippets_enqueue_admin_stylesheet' );
-
-/**
- * Enqueue the icon stylesheet globally in the admin
- *
- * @since 1.0
- * @access private
- * @uses wp_enqueue_style() To add the stylesheet to the queue
- * @uses get_user_option() To check if MP6 mode is active
- * @uses plugins_url() To retrieve a URL to assets
- */
-function code_snippets_load_admin_icon_style() {
-
-	wp_enqueue_style(
-		'menu-icon-snippets',
-		plugins_url( 'css/min/menu-icon.css', CODE_SNIPPETS_FILE ),
-		false,
-		CODE_SNIPPETS_VERSION
-	);
-}
-
-add_action( 'admin_enqueue_scripts', 'code_snippets_load_admin_icon_style' );
 
 /**
  * Adds a link pointing to the Manage Snippets page

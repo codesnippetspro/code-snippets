@@ -5,7 +5,7 @@
  * @package Code_Snippets
  */
 
-require plugin_dir_path( __FILE__ ) . '/class-settings.php';
+require plugin_dir_path( __FILE__ ) . 'class-settings.php';
 
 /**
  * Retrieve the default setting values
@@ -22,7 +22,6 @@ function code_snippets_get_default_settings() {
 function code_snippets_get_settings_fields() {
 	return Code_Snippets_Settings::get_fields();
 }
-
 
 /*
  * Retrieve the setting values from the database.

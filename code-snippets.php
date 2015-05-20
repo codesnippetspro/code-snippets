@@ -9,7 +9,7 @@
  * @package   Code_Snippets
  * @version   2.3.0
  * @author    Shea Bunge <http://bungeshea.com/>
- * @copyright Copyright (c) 2012-2014, Shea Bunge
+ * @copyright Copyright (c) 2012-2015, Shea Bunge
  * @link      http://bungeshea.com/plugins/code-snippets/
  * @license   http://opensource.org/licenses/MIT
  */
@@ -73,26 +73,17 @@ foreach ( array(
 	/* Upgrade function */
 	'upgrade.php',
 
-	/* General Administration functions */
-	'admin.php',
-
 	/* CodeMirror editor functions */
 	'editor.php',
 
-	/* Manage snippets component */
-	'manage/manage.php',
-
-	/* Edit snippet component */
-	'edit/edit.php',
-
-	/* Import snippets component */
-	'import/import.php',
+	/* General Administration functions */
+	'contextual-help.php',
+	'admin.php',
 
 	/* Settings component */
 	'settings/editor-preview.php',
 	'settings/settings-fields.php',
 	'settings/settings.php',
-	'settings/admin.php',
 
 	) as $include ) {
 

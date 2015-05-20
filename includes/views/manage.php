@@ -12,11 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-global $code_snippets_list_table;
 ?>
 
 <div class="wrap">
-	<?php screen_icon(); ?>
 	<h2><?php
 	esc_html_e( 'Snippets', 'code-snippets' );
 
@@ -25,24 +23,23 @@ global $code_snippets_list_table;
 		code_snippets_get_menu_url( 'add' )
 	);
 
-	$code_snippets_list_table->search_notice();
+	$this->list_table->search_notice();
 	?></h2>
 
-	<?php $code_snippets_list_table->views(); ?>
+	<?php $this->list_table->views(); ?>
 
 	<form method="get" action="">
 		<?php
-			$code_snippets_list_table->required_form_fields( 'search_box' );
-			$code_snippets_list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' );
+			$this->list_table->required_form_fields( 'search_box' );
+			$this->list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' );
 		?>
 	</form>
 	<form method="post" action="">
 		<?php
-			$code_snippets_list_table->required_form_fields();
-			$code_snippets_list_table->display();
+			$this->list_table->required_form_fields();
+			$this->list_table->display();
 		?>
 	</form>
 
 	<?php do_action( 'code_snippets/admin/manage' ); ?>
-
 </div>

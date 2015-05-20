@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Code Snippets\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-19 01:03+0300\n"
-"PO-Revision-Date: 2015-05-19 01:15+0300\n"
+"POT-Creation-Date: 2015-05-20 15:56+1000\n"
+"PO-Revision-Date: 2015-05-20 12:15+0300\n"
 "Last-Translator: Alexey Chumakov <alex@chumakov.ru>\n"
 "Language-Team: Flector <rlector@gmail.com>\n"
 "Language: ru\n"
@@ -270,8 +270,8 @@ msgstr "Сниппет <strong>добавлен</strong>."
 msgid "Edit Snippet"
 msgstr "Редактирование сниппета"
 
-#: includes/edit/admin.php:29 includes/edit/edit.php:35
-#: includes/manage/admin.php:24
+#: includes/edit/admin.php:29 includes/manage/admin.php:24
+msgctxt "snippet"
 msgid "Add New"
 msgstr "Добавить новый"
 
@@ -312,6 +312,10 @@ msgstr ""
 #: includes/manage/class-list-table.php:267
 msgid "Delete"
 msgstr "Удалить"
+
+#: includes/edit/edit.php:35
+msgid "Add New"
+msgstr "Добавить новый"
 
 #: includes/edit/edit.php:83 includes/manage/manage.php:67
 msgid "You are not authorized to access this page."

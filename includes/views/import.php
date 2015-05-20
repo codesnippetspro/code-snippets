@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <div class="wrap">
-	<?php screen_icon(); ?>
 	<h2><?php _e( 'Import Snippets', 'code-snippets' ); ?></h2>
 
 	<div class="narrow">

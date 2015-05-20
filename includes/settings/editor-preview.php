@@ -11,7 +11,7 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 	code_snippets_enqueue_codemirror();
 
 	/* Enqueue ALL themes */
-	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'vendor/codemirror/theme/';
+	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/cmthemes/';
 	$themes = glob( $themes_dir . '*.css' );
 
 	foreach ( $themes as $theme ) {
