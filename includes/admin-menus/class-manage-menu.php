@@ -1,20 +1,24 @@
 <?php
 
 /**
- * Functions to handle the manage snippets menu
- *
+ * This class handles the manage snippets menu
+ * @since 2.4.0
  * @package Code_Snippets
- * @subpackage Manage
  */
-
 class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
+	/**
+	 * Holds the list table class
+	 * @var Code_Snippets_List_Table
+	 */
 	public $list_table;
 
+	/**
+	 * Class constructor
+	 */
 	public function __construct() {
 
-		parent::__construct( __FILE__,
-			'manage',
+		parent::__construct( 'manage',
 			__( 'Manage', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' )
 		);
@@ -25,12 +29,13 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Register the top-level 'Snippets' menu and associated 'Manage' subpage
 	 *
-	 * @uses add_menu_page() To register a top-level menu
-	 * @uses add_submenu_page() To register a sub-menu
+	 * @uses add_menu_page() to register a top-level menu
+	 * @uses add_submenu_page() to register a sub-menu
 	 */
 	function register() {
 
-		$this->hook = add_menu_page(
+		/* Register the top-level menu */
+		add_menu_page(
 			__( 'Snippets', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' ),
 			get_snippets_cap(),
@@ -40,27 +45,18 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 			is_network_admin() ? 21 : 67
 		);
 
-		add_submenu_page(
-			code_snippets_get_menu_slug(),
-			__( 'Snippets', 'code-snippets' ),
-			__( 'Manage', 'code-snippets' ),
-			get_snippets_cap(),
-			code_snippets_get_menu_slug(),
-			array( $this, 'render' )
-		);
-
-		add_action( 'load-' . $this->hook, 'code_snippets_load_manage_menu' );
+		/* Register the sub-menu */
+		parent::register();
 	}
 
 	/**
-	 * Initializes the list table class and loads the help tabs
-	 * for the Manage Snippets page
+	 * Executed when the admin page is loaded
 	 */
 	function load() {
 		parent::load();
 
-		/* Initialize the snippet table class */
-		require_once $dir . 'class-list-table.php';
+		/* Initialize the list table class */
+		require_once $this->includes_dir . 'class-list-table.php';
 		$this->list_table = new Code_Snippets_List_Table();
 		$this->list_table->prepare_items();
 	}
@@ -69,7 +65,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	 * Handles saving the user's snippets per page preference
 	 *
 	 * @param  unknown $status
-	 * @param  string  $option
+	 * @param  string  $option The screen option name
 	 * @param  unknown $value
 	 * @return unknown
 	 */

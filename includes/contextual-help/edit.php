@@ -4,7 +4,7 @@
  * Register and handle the help tabs for the
  * single snippet admin page
  *
- * @package    Code_Snippets
+ * @package Code_Snippets
  * @subpackage Contextual_Help
  */
 

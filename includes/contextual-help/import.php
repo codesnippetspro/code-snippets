@@ -5,7 +5,7 @@
  * import snippets admin page
  *
  * @package Code_Snippets
- * @subpackage Import
+ * @subpackage Contextual_Help
  */
 
 $screen = get_current_screen();

@@ -73,27 +73,19 @@ foreach ( array(
 	/* Upgrade function */
 	'upgrade.php',
 
-	/* General Administration functions */
-	'admin.php',
-
 	/* CodeMirror editor functions */
 	'editor.php',
 
-	/* Manage snippets component */
-	'class-admin-menu.php',
-	'manage/manage.php',
-
-	/* Edit snippet component */
-	'edit/edit.php',
+	/* General Administration functions */
+	'admin.php',
 
 	/* Import snippets component */
-	'import/import.php',
+	'import.php',
 
 	/* Settings component */
 	'settings/editor-preview.php',
 	'settings/settings-fields.php',
 	'settings/settings.php',
-	'settings/admin.php',
 
 	) as $include ) {
 

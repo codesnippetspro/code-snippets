@@ -1,26 +1,30 @@
 <?php
 
 /**
- * This file handles the settings admin menu
+ * This class handles the settings admin menu
+ * @since 2.4.0
  * @package Code_Snippets
  */
-
 class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 
-		parent::__construct( 'add',
+		parent::__construct( 'settings',
 			__( 'Settings', 'code-snippets' ),
 			__( 'Snippets Settings', 'code-snippets' )
 		);
 	}
 
+	/**
+	 * Shortcircuit help tabs function
+	 */
 	function load_help_tabs() {}
 
 	/**
-	 * Displays the settings menu
-	 *
-	 * @since 2.0
+	 * Render the admin screen
 	 */
 	function render() {
 		?>

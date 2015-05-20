@@ -3,7 +3,7 @@
 /**
  * Status and error messages for the import snippets page
  *
- * @package    Code_Snippets
+ * @package Code_Snippets
  * @subpackage Admin_Messages
  */
 

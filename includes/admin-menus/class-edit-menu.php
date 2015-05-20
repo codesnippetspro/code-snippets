@@ -1,26 +1,6 @@
 <?php
 
 /**
- * Functions to handle the single snippet menu
- *
- * @package    Code_Snippets
- * @subpackage Administration
- */
-
-
-/**
- * Fetch the admin menu slug for a snippets menu
- * @param integer $id The snippet
- * @return string The URL to the edit snippet page for that snippet
- */
-function get_snippet_edit_url( $snippet_id ) {
-	return add_query_arg(
-		'id', absint( $snippet_id ),
-		code_snippets_get_menu_url( 'edit' )
-	);
-}
-
-/**
  * This class handles the add/edit menu
  */
 class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
@@ -29,37 +9,40 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 * Constructor
 	 */
 	public function __construct() {
-
-		if ( isset( $_REQUEST['page'] ) && code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
-
-			parent::__construct( __FILE__,
-				'edit',
-				__( 'Edit Snippet', 'code-snippets' ),
-				__( 'Edit Snippet', 'code-snippets' )
-			);
-
-		} else {
-			parent::__construct( __FILE__,
-				'add',
-				__( 'Add New', 'code-snippets' ),
-				__( 'Add New Snippet', 'code-snippets' )
-			);
-		}
+		parent::__construct( 'edit',
+			__( 'Edit Snippet', 'code-snippets' ),
+			__( 'Edit Snippet', 'code-snippets' )
+		);
 
 		add_action( 'code_snippets/admin/single', array( $this, 'render_scope_setting' ), 5 );
 		add_action( 'code_snippets/admin/single', array( $this, 'render_description_editor' ), 9 );
 		add_action( 'code_snippets/admin/single', array( $this, 'render_tags_editor' ) );
 	}
 
+	public function register() {
+
+		/* Add New Snippet menu */
+		$this->add_menu(
+			code_snippets_get_menu_slug( 'add' ),
+			__( 'Add New', 'code-snippets' ),
+			__( 'Add New Snippet', 'code-snippets' )
+		);
+
+		/* Add edit menu if we are currently editing a snippet */
+		if ( isset( $_REQUEST['page'] ) && code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
+			parent::register();
+		}
+	}
+
+
 	/**
-	 * Load the menu
-	 * @access private
+	 * Executed when the menu is loaded
 	 */
-	function load() {
+	public function load() {
 		parent::load();
 
 		/* Enqueue the code editor and other scripts and styles */
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_codemirror' ), 9 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9 );
 
 		/* Don't allow visiting the edit snippet page without a valid ID */
 		if ( code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
@@ -222,47 +205,16 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Registers and loads the code editor's assets
-	 *
-	 * @since 1.7
 	 * @access private
-	 *
-	 * @uses wp_enqueue_script() To add the scripts to the queue
-	 * @uses wp_enqueue_style() To add the stylesheets to the queue
+	 * @uses wp_enqueue_style() to add the stylesheets to the queue
+	 * @uses wp_enqueue_script() to add the scripts to the queue
 	 */
-	function enqueue_codemirror() {
+	function enqueue_assets() {
 		$tagit_version = '2.0';
-		$codemirror_version = '5.2';
 		$url = plugin_dir_url( CODE_SNIPPETS_FILE );
 
-		/* Remove other CodeMirror styles */
-		wp_deregister_style( 'codemirror' );
-		wp_deregister_style( 'wpeditor' );
-
-		/* CodeMirror */
-		wp_enqueue_style(
-			'code-snippets-codemirror',
-			$url . 'css/min/codemirror.css',
-			false, $codemirror_version
-		);
-
-		wp_enqueue_script(
-			'code-snippets-codemirror',
-			$url . 'js/min/codemirror.js',
-			false, $codemirror_version
-		);
-
-		/* CodeMirror Theme */
-		$theme = code_snippets_get_setting( 'editor', 'theme' );
-
-		if ( 'default' !== $theme ) {
-
-			wp_enqueue_style(
-				'code-snippets-codemirror-theme-' . $theme,
-				$url . "css/min/cmthemes/$theme.css",
-				array( 'code-snippets-codemirror' ),
-				$codemirror_version
-			);
-		}
+		/* Enqueue CodeMirror */
+		code_snippets_enqueue_codemirror();
 
 		/* Tag It UI */
 		wp_enqueue_script(
@@ -286,5 +238,3 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		);
 	}
 }
-
-new Code_Snippets_Edit_Menu();

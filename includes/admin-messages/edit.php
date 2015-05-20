@@ -3,7 +3,7 @@
 /**
  * Status and error messages for the single snippet page
  *
- * @package    Code_Snippets
+ * @package Code_Snippets
  * @subpackage Admin_Messages
  */
 

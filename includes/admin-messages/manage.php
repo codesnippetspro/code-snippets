@@ -4,7 +4,7 @@
  * Status and error messages for the manage snippets page
  *
  * @package Code_Snippets
- * @subpackage Manage
+ * @subpackage Admin_Messages
  */
 
 $_f = '<div id="message" class="%2$s fade"><p>%1$s</p></div>';
