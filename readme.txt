@@ -347,6 +347,9 @@ __Fixed__
 
 == Upgrade Notice ==
 
+= 2.3.0 =
+Numerious fixes and Russian translation update. Props to @signo and @`achumakov.
+
 = 2.2.3 =
 Fixed error when exporting; snippet scopes can now be imported
 
