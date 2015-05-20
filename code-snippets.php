@@ -80,6 +80,7 @@ foreach ( array(
 	'editor.php',
 
 	/* Manage snippets component */
+	'class-admin-menu.php',
 	'manage/manage.php',
 
 	/* Edit snippet component */

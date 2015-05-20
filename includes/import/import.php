@@ -42,71 +42,51 @@ function code_snippets_register_importer() {
 
 add_action( 'admin_init', 'code_snippets_register_importer' );
 
-/**
- * Add an Import Snippets page to the admin menu.
- *
- * @since 1.6
- * @uses add_submenu_page() To register the menu page
- */
-function code_snippets_add_import_menu() {
+class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 
-	$hook = add_submenu_page(
-		code_snippets_get_menu_slug(),
-		__( 'Import Snippets', 'code-snippets' ),
-		__( 'Import', 'code-snippets' ),
-		get_snippets_cap(),
-		code_snippets_get_menu_slug( 'import' ),
-		'code_snippets_render_import_menu'
-	);
-
-	add_action( 'load-' . $hook, 'code_snippets_load_import_menu' );
-}
-
-add_action( 'admin_menu', 'code_snippets_add_import_menu' );
-add_action( 'network_admin_menu', 'code_snippets_add_import_menu' );
-
-/**
- * Displays the import snippets page
- *
- * @since 2.0
- */
-function code_snippets_render_import_menu() {
-	require_once plugin_dir_path( __FILE__ ) . 'admin-messages.php';
-	require_once plugin_dir_path( __FILE__ ) . 'admin.php';
-}
-
-/**
- * Processes import files and loads the help tabs for the Import Snippets page
- *
- * @since 1.3
- *
- * @uses import_snippets() To process the import file
- * @uses wp_redirect() To pass the import results to the page
- * @uses add_query_arg() To append the results to the current URI
- */
-function code_snippets_load_import_menu() {
-	$network = get_current_screen()->is_network;
-
-	/* Make sure the user has permission to be here */
-	if ( ! current_user_can( get_snippets_cap() ) ) {
-		wp_die( __( 'You are not access this page.', 'code-snippets' ) );
+	function __construct() {
+		parent::__construct( __FILE__,
+			'import',
+			__( 'Import', 'code-snippets' ),
+			__( 'Import Snippets', 'code-snippets' )
+		);
 	}
 
-	/* Create the snippet tables if they don't exist */
-	create_code_snippets_tables();
+	/**
+	 * Processes import files and loads the help tabs for the Import Snippets page
+	 *
+	 * @since 1.3
+	 *
+	 * @uses import_snippets() To process the import file
+	 * @uses wp_redirect() To pass the import results to the page
+	 * @uses add_query_arg() To append the results to the current URI
+	 */
+	function load() {
+		$network = get_current_screen()->is_network;
 
-	/* Process import files */
+		/* Make sure the user has permission to be here */
+		if ( ! current_user_can( get_snippets_cap() ) ) {
+			wp_die( __( 'You are not access this page.', 'code-snippets' ) );
+		}
 
-	if ( isset( $_FILES['code_snippets_import_file']['tmp_name'] ) ) {
+		/* Create the snippet tables if they don't exist */
+		create_code_snippets_tables();
 
-		/* Import the snippets. The result is the number of snippets that were imported */
-		$result = import_snippets( $_FILES['code_snippets_import_file']['tmp_name'], $network );
+		/* Process import files */
 
-		/* Send the amount of imported snippets to the page */
-		$url = add_query_arg( false === $result ? array( 'error' => true ) : array( 'imported' => $result ) );
-		wp_redirect( esc_url_raw( $url ) );
+		if ( isset( $_FILES['code_snippets_import_file']['tmp_name'] ) ) {
+
+			/* Import the snippets. The result is the number of snippets that were imported */
+			$result = import_snippets( $_FILES['code_snippets_import_file']['tmp_name'], $network );
+
+			/* Send the amount of imported snippets to the page */
+			$url = add_query_arg( false === $result ? array( 'error' => true ) : array( 'imported' => $result ) );
+			wp_redirect( esc_url_raw( $url ) );
+		}
+
+		/* Load the screen help tabs */
+		require plugin_dir_path( __FILE__ ) . 'admin-help.php';
 	}
-
-	/* Load the screen help tabs */
-	require plugin_dir_path( __FILE__ ) . 'admin-help.php';
 }
+
+new Code_Snippets_Import_Menu();
