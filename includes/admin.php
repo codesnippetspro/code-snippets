@@ -129,6 +129,14 @@ function code_snippets_enqueue_admin_stylesheet( $hook ) {
 	$pages = array( 'manage', 'add', 'edit', 'settings' );
 	$hooks = array_map( 'code_snippets_get_menu_hook', $pages );
 
+	/* First, load the menu icon stylesheet */
+	wp_enqueue_style(
+		'menu-icon-snippets',
+		plugins_url( 'css/min/menu-icon.css', CODE_SNIPPETS_FILE ),
+		false,
+		CODE_SNIPPETS_VERSION
+	);
+
 	/* Only load the stylesheet on the right snippets page */
 	if ( ! in_array( $hook, $hooks ) ) {
 		return;
@@ -143,14 +151,6 @@ function code_snippets_enqueue_admin_stylesheet( $hook ) {
 	wp_enqueue_style(
 		"code-snippets-$page",
 		plugins_url( "css/min/$page.css", CODE_SNIPPETS_FILE ),
-		false,
-		CODE_SNIPPETS_VERSION
-	);
-
-	/* Also load the menu icon stylesheet */
-	wp_enqueue_style(
-		'menu-icon-snippets',
-		plugins_url( 'css/min/menu-icon.css', CODE_SNIPPETS_FILE ),
 		false,
 		CODE_SNIPPETS_VERSION
 	);
