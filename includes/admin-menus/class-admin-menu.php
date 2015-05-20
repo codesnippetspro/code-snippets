@@ -1,6 +1,6 @@
 <?php
 
-abstract class Code_Snippets_Admin_Menu {
+class Code_Snippets_Admin_Menu {
 
 	public $name, $label, $title;
 
@@ -48,9 +48,14 @@ abstract class Code_Snippets_Admin_Menu {
 	 * Render the menu
 	 */
 	public function render() {
-		include $this->includes_dir . "admin-messages/$this->name.php";
+		$this->print_messages();
 		include $this->includes_dir . "views/$this->name.php";
 	}
+
+	/**
+	 * Print the status and error messages
+	 */
+	protected function print_messages() {}
 
 	/**
 	 * Executed when the admin page is loaded

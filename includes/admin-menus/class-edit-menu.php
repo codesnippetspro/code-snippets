@@ -239,4 +239,23 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			false, $tagit_version
 		);
 	}
+
+	/**
+	 * Print the status and error messages
+	 */
+	protected function print_messages() {
+		if ( isset( $_REQUEST['invalid'] ) && $_REQUEST['invalid'] ) {
+			printf( $format, __( 'An error occurred when saving the snippet.', 'code-snippets' ), 'error' );
+		} elseif ( isset( $_REQUEST['activated'], $_REQUEST['updated'] ) && $_REQUEST['activated'] && $_REQUEST['updated'] ) {
+			printf( $format, __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ), 'updated' );
+		} elseif ( isset( $_REQUEST['activated'], $_REQUEST['added'] ) && $_REQUEST['activated'] && $_REQUEST['added'] ) {
+			printf( $format, __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ), 'updated' );
+		} elseif ( isset( $_REQUEST['deactivated'], $_REQUEST['updated'] ) && $_REQUEST['deactivated'] && $_REQUEST['updated'] ) {
+			printf( $format, __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ), 'updated' );
+		} elseif ( isset( $_REQUEST['updated'] ) && $_REQUEST['updated'] ) {
+			printf( $format, __( 'Snippet <strong>updated</strong>.', 'code-snippets' ), 'updated' );
+		} elseif ( isset( $_REQUEST['added'] ) && $_REQUEST['added'] ) {
+			printf( $format, __( 'Snippet <strong>added</strong>.', 'code-snippets' ), 'updated' );
+		}
+	}
 }

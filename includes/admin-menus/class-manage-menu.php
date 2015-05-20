@@ -65,6 +65,37 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
+	 * Print the status and error messages
+	 */
+	protected function print_messages() {
+		$format = '<div id="message" class="%2$s fade"><p>%1$s</p></div>';
+
+		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
+			printf( $format,
+				__( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' ),
+				'error'
+			);
+			return;
+		}
+
+		$messages = array(
+			'activate' => __( 'Snippet <strong>activated</strong>.',
+			'activate-multi' => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
+			'deactivate' => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
+			'deactivate-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
+			'delete' => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
+			'delete-multi' => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
+		);
+
+		foreach ( $messages as $key => $message ) {
+			if ( isset( $_REQUEST[ $key ] ) && $_REQUEST[ $key ] ) {
+				printf( $format, $message, 'updated' );
+				return;
+			}
+		}
+	}
+
+	/**
 	 * Handles saving the user's snippets per page preference
 	 *
 	 * @param  unknown $status
