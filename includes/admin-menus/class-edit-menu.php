@@ -94,7 +94,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			$snippet_id = save_snippet( stripslashes_deep( $_POST ) );
 
 			/* Update the shared network snippets if necessary */
-			if ( $screen->is_network && $snippet_id && $snippet_id > 0 ) {
+			if ( get_current_screen()->is_network && $snippet_id && $snippet_id > 0 ) {
 				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 
 				if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
