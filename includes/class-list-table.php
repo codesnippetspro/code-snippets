@@ -490,6 +490,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			if ( isset( $result ) ) {
 				wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
+				exit;
 			}
 
 		endif;
@@ -509,14 +510,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					activate_snippet( $id, $network );
 				}
 				wp_redirect( esc_url_raw( add_query_arg( 'result', 'activated-multi' ) ) );
-				break;
+				exit;
 
 			case 'deactivate-selected':
 				foreach ( $ids as $id ) {
 					deactivate_snippet( $id, $network );
 				}
 				wp_redirect( esc_url_raw( add_query_arg( 'result', 'deactivated-multi' ) ) );
-				break;
+				exit;
 
 			case 'export-selected':
 				export_snippets( $ids, $network );
@@ -531,7 +532,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					delete_snippet( $id, $network );
 				}
 				wp_redirect( esc_url_raw( add_query_arg( 'result', 'deleted-multi' ) ) );
-				break;
+				exit;
 
 			case 'clear-recent-list':
 				if ( $network ) {
@@ -581,6 +582,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( isset( $_POST['tag'] ) ) {
 			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
 			wp_redirect( esc_url_raw( $location ) );
+			exit;
 		}
 
 		if ( ! empty( $_GET['tag'] ) ) {
