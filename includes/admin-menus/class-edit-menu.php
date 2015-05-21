@@ -13,10 +13,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			__( 'Edit Snippet', 'code-snippets' ),
 			__( 'Edit Snippet', 'code-snippets' )
 		);
-
-		add_action( 'code_snippets/admin/single', array( $this, 'render_scope_setting' ), 5 );
-		add_action( 'code_snippets/admin/single', array( $this, 'render_description_editor' ), 9 );
-		add_action( 'code_snippets/admin/single', array( $this, 'render_tags_editor' ) );
 	}
 
 	/**
@@ -37,17 +33,11 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 	}
 
-
 	/**
 	 * Executed when the menu is loaded
 	 */
 	public function load() {
 		parent::load();
-
-		code_snippets_load_edit_help();
-
-		/* Enqueue the code editor and other scripts and styles */
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9 );
 
 		/* Don't allow visiting the edit snippet page without a valid ID */
 		if ( code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
@@ -55,6 +45,24 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 				wp_redirect( code_snippets_get_menu_url( 'add' ) );
 				exit;
 			}
+		}
+
+		/* Load the contextual help tabs */
+		code_snippets_load_edit_help();
+
+		/* Enqueue the code editor and other scripts and styles */
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9 );
+
+		/* Register action hooks */
+		add_action( 'code_snippets/admin/single', array( $this, 'render_description_editor' ), 9 );
+		add_action( 'code_snippets/admin/single', array( $this, 'render_tags_editor' ) );
+
+		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
+			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_scope_setting' ) );
+		}
+
+		if ( get_current_screen()->is_network ) {
+			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_multisite_sharing_setting' ) );
 		}
 
 		$this->save_posted_snippet();
@@ -84,6 +92,23 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 			/* Save the snippet to the database */
 			$snippet_id = save_snippet( stripslashes_deep( $_POST ) );
+
+			/* Update the shared network snippets if necessary */
+			if ( get_current_screen()->is_network && $snippet_id && $snippet_id > 0 ) {
+				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
+
+				if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
+
+					/* Add the snippet ID to the array if it isn't already */
+					if ( ! in_array( $snippet_id, $shared_snippets ) ) {
+						$shared_snippets[] = $snippet_id;
+					}
+				} else {
+					/* Remove the snippet ID from the array */
+					$shared_snippets = array_diff( $shared_snippets, array( $snippet_id ) );
+				}
+				update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
+			}
 
 			/* If the saved snippet ID is invalid, display an error message */
 			if ( ! $snippet_id || $snippet_id < 1 ) {
@@ -153,39 +178,11 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
-	 * Render the snippet scope setting
-	 * @param object $snippet the snippet currently being edited
-	 */
-	function render_scope_setting( $snippet ) {
-
-		if ( ! code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
-			return;
-		}
-
-		$scopes = array(
-			__( 'Run snippet everywhere', 'code-snippets' ),
-			__( 'Only run in adminstration area', 'code-snippets' ),
-			__( 'Only run on site front-end', 'code-snippets' ),
-		);
-
-		echo '<div class="snippet-scope">';
-		printf( '<label for="snippet_scope"><h3>%s</h3></label>', __( 'Scope', 'code-snippets' ) );
-
-		foreach ( $scopes as $scope => $label ) {
-			printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope );
-			checked( $scope, $snippet->scope );
-			echo "> $label</div>";
-		}
-
-		echo '</div>';
-	}
-
-	/**
 	* Render the interface for editing snippet tags
 	* @param object $snippet the snippet currently being edited
 	*/
 	function render_tags_editor( $snippet ) {
-	?>
+		?>
 		<label for="snippet_tags" style="cursor: auto;">
 			<h3><?php esc_html_e( 'Tags', 'code-snippets' ); ?></h3>
 		</label>
@@ -200,7 +197,50 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			removeConfirmation: true
 		});
 		</script>
-	<?php
+		<?php
+	}
+
+	/**
+	 * Render the snippet scope setting
+	 * @param object $snippet the snippet currently being edited
+	 */
+	function render_scope_setting( $snippet ) {
+		$scopes = array(
+			__( 'Run snippet everywhere', 'code-snippets' ),
+			__( 'Only run in adminstration area', 'code-snippets' ),
+			__( 'Only run on site front-end', 'code-snippets' ),
+		);
+
+		echo '<tr class="snippet-scope">';
+		echo '<th scope="row">' . __( 'Scope', 'code-snippets' ) . '</th><td>';
+
+		foreach ( $scopes as $scope => $label ) {
+			printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope );
+			checked( $scope, $snippet->scope );
+			echo "> $label</div>";
+		}
+
+		echo '</td></tr>';
+	}
+
+	/**
+	 * Render the setting for shared network snippets
+	 * @param object $snippet The snippet currently being edited
+	 */
+	function render_multisite_sharing_setting( $snippet ) {
+		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
+		?>
+
+		<tr class="snippet-sharing-setting">
+			<th scope="row"><?php _e( 'Sharing', 'code-snippets' ) ?></th>
+			<td><label for="snippet_sharing">
+				<input type="checkbox" name="snippet_sharing"
+				<?php checked( in_array( $snippet->id, $shared_snippets ) ); ?>>
+				<?php _e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
+			</label></td>
+		</tr>
+
+		<?php
 	}
 
 	/**
@@ -256,7 +296,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			echo $this->get_result_message(
 				array(
 					'added' => __( 'Snippet <strong>added</strong>.', 'code-snippets' ),
-					'updated' =>  __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
+					'updated' => __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
 					'added-and-activated' => __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ),
 					'updated-and-activated' => __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ),
 					'updated-and-deactivated' => __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ),
