@@ -54,7 +54,6 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Add the importer to the Tools > Import menu
-	 * @access private
 	 */
 	function register_importer() {
 

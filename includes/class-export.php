@@ -1,23 +1,13 @@
 <?php
 
 /**
- * This file handles exporting snippets in XML format
+ * Exports selected snippets to a XML or PHP file.
  *
  * It's better to call the export_snippets()
  * function than directly using this class
  *
- * @since      1.9
- * @package    Code_Snippets
- * @subpackage Export
- */
-
-/**
- * Exports selected snippets to a XML or PHP file.
- *
- * @since  1.3
- * @param  array  $ids    The IDs of the snippets to export
- * @param  string $format The format of the export file
- * @return void
+ * @since 1.9
+ * @package Code_Snippets
  */
 class Code_Snippets_Export {
 
@@ -56,9 +46,10 @@ class Code_Snippets_Export {
 
 	/**
 	 * Constructor function
-	 * @param array $ids The IDs of the snippets to export
-	 * @param string $table The name of the table to fetch snippets from
-	 * @param  string $format The format of the export file
+	 *
+	 * @param array  $ids    The IDs of the snippets to export
+	 * @param string $table  The name of the table to fetch snippets from
+	 * @param string $format The format of the export file
 	 */
 	public function __construct( $ids, $table, $format = 'xml' ) {
 		$this->snippet_ids = (array) $ids;

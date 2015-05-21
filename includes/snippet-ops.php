@@ -10,8 +10,9 @@
  * Converts an array of snippet data into a snippet object
  *
  * @since 2.0
- * @param mixed $data The snippet data to convert
- * @return object The resulting snippet object
+ *
+ * @param  mixed $data The snippet data to convert
+ * @return object      The resulting snippet object
  */
 function build_snippet_object( $data = null ) {
 
@@ -64,11 +65,11 @@ function build_snippet_object( $data = null ) {
  *
  * @since 2.0
  *
- * @uses $wpdb To query the database for snippets
- * @uses get_snippets_table_name() To dynamically retrieve the snippet table name
+ * @uses $wpdb to query the database for snippets
+ * @uses get_snippets_table_name() to dynamically retrieve the snippet table name
  *
- * @param boolean|null $multisite Retrieve multisite-wide or site-wide snippets?
- * @return array An array of snippet objects
+ * @param  boolean|null $multisite Retrieve multisite-wide or site-wide snippets?
+ * @return array                   An array of snippet objects
  */
 function get_snippets( $multisite = null ) {
 	global $wpdb;
@@ -110,8 +111,8 @@ function get_all_snippet_tags() {
  * Make sure that the tags are a valid array
  * @since 2.0
  *
- * @param mixed $tags The tags to convert into an array
- * @return array The converted tags
+ * @param  mixed $tags The tags to convert into an array
+ * @return array       The converted tags
  */
 function code_snippets_build_tags_array( $tags ) {
 
@@ -138,8 +139,9 @@ function code_snippets_build_tags_array( $tags ) {
  * Escape snippet data for inserting into the database
  *
  * @since 2.0
- * @param mixed $snippet An object or array containing the data to escape
- * @return object The resulting snippet object, with data escaped
+ *
+ * @param  mixed $snippet An object or array containing the data to escape
+ * @return object         The resulting snippet object, with data escaped
  */
 function escape_snippet_data( $snippet ) {
 
@@ -171,8 +173,9 @@ function escape_snippet_data( $snippet ) {
  * ready for use
  *
  * @since 2.0
- * @param mixed $snippet An object or array containing the data to unescape
- * @return object The resulting snippet object, with data unescaped
+ *
+ * @param  mixed $snippet An object or array containing the data to unescape
+ * @return object         The resulting snippet object, with data unescaped
  */
 function unescape_snippet_data( $snippet ) {
 	$snippet = build_snippet_object( $snippet );
@@ -190,12 +193,12 @@ function unescape_snippet_data( $snippet ) {
  *
  * @since 2.0
  *
- * @uses $wpdb To query the database for snippets
- * @uses get_snippets_table_name() To dynamically retrieve the snippet table name
+ * @uses $wpdb to query the database for snippets
+ * @uses get_snippets_table_name() to dynamically retrieve the snippet table name
  *
- * @param int $id The ID of the snippet to retrieve. 0 to build a new snippet
- * @param boolean|null $multisite Retrieve a multisite-wide or site-wide snippet?
- * @return object A single snippet object
+ * @param  int          $id        The ID of the snippet to retrieve. 0 to build a new snippet
+ * @param  boolean|null $multisite Retrieve a multisite-wide or site-wide snippet?
+ * @return object                  A single snippet object
  */
 function get_snippet( $id = 0, $multisite = null ) {
 	global $wpdb;
@@ -224,9 +227,9 @@ function get_snippet( $id = 0, $multisite = null ) {
  *
  * @since 2.0
  *
- * @uses $wpdb To set the snippet's active status
+ * @uses $wpdb to set the snippet's active status
  *
- * @param array $id The ID of the snippet to activate
+ * @param array        $id        The ID of the snippet to activate
  * @param boolean|null $multisite Are the snippets multisite-wide or site-wide?
  */
 function activate_snippet( $id, $multisite = null ) {
@@ -249,9 +252,9 @@ function activate_snippet( $id, $multisite = null ) {
  *
  * @since 2.0
  *
- * @uses $wpdb To set the snippets' active status
+ * @uses $wpdb to set the snippets' active status
  *
- * @param array $id The ID of the snippet to deactivate
+ * @param array        $id        The ID of the snippet to deactivate
  * @param boolean|null $multisite Are the snippets multisite-wide or site-wide?
  */
 function deactivate_snippet( $id, $multisite = null ) {
@@ -293,10 +296,10 @@ function deactivate_snippet( $id, $multisite = null ) {
  * Deletes a snippet from the database
  *
  * @since 2.0
- * @uses $wpdb To access the database
- * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
+ * @uses $wpdb to access the database
+ * @uses get_snippets_table_name() to dynamically retrieve the name of the snippet table
  *
- * @param int $id The ID of the snippet to delete
+ * @param int          $id        The ID of the snippet to delete
  * @param boolean|null $multisite Delete from site-wide or network-wide table?
  */
 function delete_snippet( $id, $multisite = null ) {
@@ -315,12 +318,12 @@ function delete_snippet( $id, $multisite = null ) {
  * Saves a snippet to the database.
  *
  * @since 2.0
- * @uses $wpdb To update/add the snippet to the database
+ * @uses $wpdb to update/add the snippet to the database
  * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
  *
- * @param object $snippet The snippet to add/update to the database
- * @param boolean|null $multisite Save the snippet to the site-wide or network-wide table?
- * @return int The ID of the snippet
+ * @param  object       $snippet   The snippet to add/update to the database
+ * @param  boolean|null $multisite Save the snippet to the site-wide or network-wide table?
+ * @return int                     The ID of the snippet
  */
 function save_snippet( $snippet, $multisite = null ) {
 	global $wpdb;
@@ -363,11 +366,11 @@ function save_snippet( $snippet, $multisite = null ) {
  * Imports snippets from an XML file
  *
  * @since 2.0
- * @uses save_snippet() To add the snippets to the database
+ * @uses save_snippet() to add the snippets to the database
  *
- * @param string $file The path to the XML file to import
- * @param boolean|null $multisite Import into network-wide table or site-wide table?
- * @return integer|boolean The number of snippets imported on success, false on failure
+ * @param  string       $file      The path to the XML file to import
+ * @param  boolean|null $multisite Import into network-wide table or site-wide table?
+ * @return integer|boolean         The number of snippets imported on success, false on failure
  */
 function import_snippets( $file, $multisite = null ) {
 
@@ -412,12 +415,12 @@ function import_snippets( $file, $multisite = null ) {
  * Exports snippets as an XML file
  *
  * @since 2.0
- * @uses Code_Snippets_Export To export selected snippets
- * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
+ * @uses Code_Snippets_Export to export selected snippets
+ * @uses get_snippets_table_name() to dynamically retrieve the name of the snippet table
  *
- * @param array $ids The IDs of the snippets to export
+ * @param array        $ids       The IDs of the snippets to export
  * @param boolean|null $multisite Is the snippet a network-wide or site-wide snippet?
- * @param string $format Export to xml or php?
+ * @param string       $format    Export to xml or php?
  */
 function export_snippets( $ids, $multisite = null, $format = 'xml' ) {
 	$table = get_snippets_table_name( $multisite );
@@ -437,8 +440,9 @@ function export_snippets( $ids, $multisite = null, $format = 'xml' ) {
  * it will be executed directly
  *
  * @since 2.0
- * @param string $code The snippet code to execute
- * @return mixed The result of the code execution
+ *
+ * @param  string $code The snippet code to execute
+ * @return mixed        The result of the code execution
  */
 function execute_snippet( $code ) {
 

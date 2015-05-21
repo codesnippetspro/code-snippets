@@ -4,7 +4,7 @@
  * HTML code for the Import Snippets page
  *
  * @package Code_Snippets
- * @subpackage Import
+ * @subpackage Views
  */
 
 /* Bail if accessed directly */
@@ -38,7 +38,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 				do_action( 'code_snippets/admin/import_form' );
 				submit_button( __( 'Upload file and import', 'code-snippets' ) );
 			?>
-
 		</form>
 	</div>
 </div>

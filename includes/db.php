@@ -2,6 +2,8 @@
 
 /**
  * Functions used to manage the database tables
+ *
+ * @package Code_Snippets
  */
 
 /**
@@ -25,9 +27,9 @@ function set_snippet_table_vars() {
 /**
  * Return the appropriate snippet table name
  *
- * @since 2.0
- * @param string|boolean|null $multisite Retrieve the multisite table name or the site table name?
- * @return string The snippet table name
+ * @since  2.0
+ * @param  string|boolean|null $multisite Retrieve the multisite table name or the site table name?
+ * @return string                         The snippet table name
  */
 function get_snippets_table_name( $multisite = null ) {
 	global $wpdb;
@@ -56,7 +58,7 @@ function get_snippets_table_name( $multisite = null ) {
  * This function will only execute once per page load, except if $redo is true
  *
  * @since 1.7.1
- * @param boolean $redo Skip the already-done-this check
+ * @param boolean $redo    Skip the already-done-this check
  * @param boolean $upgrade Run the table creation code even if the table exists
  */
 function create_code_snippets_tables( $upgrade = false ) {
@@ -91,9 +93,7 @@ function create_code_snippets_tables( $upgrade = false ) {
  * Create a single snippet table
  *
  * @since 1.6
- * @access private
- *
- * @uses dbDelta() To apply the SQL code
+ * @uses dbDelta() to apply the SQL code
  * @param string $table_name The name of the table to create
  */
 function create_code_snippets_table( $table_name ) {

@@ -10,6 +10,10 @@ if ( ! function_exists( 'is_admin' ) || ! is_admin() ) {
 	return;
 }
 
+/**
+ * Load the help sidebar
+ * @param WP_Screen $screen Screen object
+ */
 function code_snippets_load_help_sidebar( $screen ) {
 	$screen->set_help_sidebar(
 		'<p><strong>' . __( 'For more information:', 'code-snippets' ) . '</strong></p>' .
@@ -21,8 +25,7 @@ function code_snippets_load_help_sidebar( $screen ) {
 }
 
 /**
- * Register and handle the help tabs for the
- * manage snippets admin page
+ * Register and handle the help tabs for the manage snippets admin page
  */
 function code_snippets_load_manage_help() {
 	$screen = get_current_screen();

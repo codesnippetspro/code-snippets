@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * This file manages upgrades to the database between plugin versions
+ */
+
 /* Bail on direct access */
 if ( ! defined( 'ABSPATH' ) ) {
 	return;

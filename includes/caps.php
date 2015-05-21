@@ -28,8 +28,8 @@ function get_snippets_cap() {
 /**
  * Add the multisite capabilities to a user
  *
- * @since  2.0
- * @param  integer $user_id The ID of the user to add the cap to
+ * @since 2.0
+ * @param integer $user_id The ID of the user to add the cap to
  */
 function grant_network_snippets_cap( $user_id ) {
 

@@ -1,10 +1,9 @@
 <?php
 
 /**
- * Load the functions for handling the administration interface
+ * General functions specific to the administration interface
  *
- * @package    Code_Snippets
- * @subpackage Administration
+ * @package Code_Snippets
  */
 
 /* Bail if not in admin area */
@@ -12,89 +11,31 @@ if ( ! is_admin() ) {
 	return;
 }
 
-/* Load admin menu classes */
-$admin_classes = plugin_dir_path( __FILE__ ) . 'admin-menus/';
-require_once $admin_classes . 'class-admin-menu.php';
-
-/* Manage menu */
-require_once $admin_classes . 'class-manage-menu.php';
-new Code_Snippets_Manage_Menu();
-
-/* Edit/add new menu */
-require_once $admin_classes . 'class-edit-menu.php';
-new Code_Snippets_Edit_Menu();
-
-/* Import menu */
-require_once $admin_classes . 'class-import-menu.php';
-new Code_Snippets_Import_Menu();
-
-/* Settings menu */
-require_once $admin_classes . 'class-settings-menu.php';
-new Code_Snippets_Settings_Menu();
-
 /**
- * Fetch the admin menu slug for a snippets menu
- * @param string $menu The menu to retrieve the slug for
- * @return string The menu's slug
+ * Load the admin menu classes
  */
-function code_snippets_get_menu_slug( $menu = '' ) {
-	$add = array( 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' );
-	$edit = array( 'edit', 'edit-snippet' );
-	$import = array( 'import', 'import-snippets' );
-	$settings = array( 'settings', 'snippets-settings' );
+function code_snippets_load_admin_classes() {
+	$admin_classes = plugin_dir_path( __FILE__ ) . 'admin-menus/';
+	require_once $admin_classes . 'class-admin-menu.php';
 
-	if ( in_array( $menu, $edit ) ) {
-		return 'edit-snippet';
-	} elseif ( in_array( $menu, $add ) ) {
-		return 'add-snippet';
-	} elseif ( in_array( $menu, $import ) ) {
-		return 'import-snippets';
-	} elseif ( in_array( $menu, $settings ) ) {
-		return 'snippets-settings';
-	} else {
-		return 'snippets';
-	}
+	/* Manage menu */
+	require_once $admin_classes . 'class-manage-menu.php';
+	new Code_Snippets_Manage_Menu();
+
+	/* Edit/add new menu */
+	require_once $admin_classes . 'class-edit-menu.php';
+	new Code_Snippets_Edit_Menu();
+
+	/* Import menu */
+	require_once $admin_classes . 'class-import-menu.php';
+	new Code_Snippets_Import_Menu();
+
+	/* Settings menu */
+	require_once $admin_classes . 'class-settings-menu.php';
+	new Code_Snippets_Settings_Menu();
 }
 
-/**
- * Fetch the URL to a snippets admin menu
- * @param string $menu The menu to retrieve the URL to
- * @return string The menu's URL
- */
-function code_snippets_get_menu_url( $menu = '', $context = 'self' ) {
-	$slug = code_snippets_get_menu_slug( $menu );
-	$url = 'admin.php?page=' . $slug;
-
-	if ( 'network' === $context ) {
-		return network_admin_url( $url );
-	} elseif ( 'admin' === $context ) {
-		return admin_url( $url );
-	} else {
-		return self_admin_url( $url );
-	}
-}
-
-/**
- * Fetch the admin menu hook for a snippets menu
- * @param string $menu The menu to retrieve the hook for
- * @return string The menu's hook
- */
-function code_snippets_get_menu_hook( $menu = '' ) {
-	$slug = code_snippets_get_menu_slug( $menu );
-	return get_plugin_page_hookname( $slug, 'snippets' );
-}
-
-/**
- * Fetch the admin menu slug for a snippets menu
- * @param integer $id The snippet
- * @return string The URL to the edit snippet page for that snippet
- */
-function get_snippet_edit_url( $snippet_id ) {
-	return add_query_arg(
-		'id', absint( $snippet_id ),
-		code_snippets_get_menu_url( 'edit' )
-	);
-}
+code_snippets_load_admin_classes();
 
 /**
  * Allow super admins to control site admin access to
@@ -104,10 +45,9 @@ function get_snippet_edit_url( $snippet_id ) {
  * network admin menu
  *
  * @since 1.7.1
- * @access private
  *
- * @param array $menu_items The current mu menu items
- * @return array The modified mu menu items
+ * @param  array $menu_items The current mu menu items
+ * @return array             The modified mu menu items
  */
 function code_snippets_mu_menu_items( $menu_items ) {
 	$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
@@ -162,9 +102,9 @@ add_action( 'admin_enqueue_scripts', 'code_snippets_enqueue_admin_stylesheet' );
  * Adds a link pointing to the Manage Snippets page
  *
  * @since 2.0
- * @access private
- * @param array $links The existing plugin action links
- * @return array The modified plugin action links
+ *
+ * @param  array $links The existing plugin action links
+ * @return array        The modified plugin action links
  */
 function code_snippets_plugin_settings_link( $links ) {
 	array_unshift( $links, sprintf(
@@ -181,8 +121,8 @@ add_filter( 'plugin_action_links_' . plugin_basename( CODE_SNIPPETS_FILE ), 'cod
 /**
  * Adds extra links related to the plugin
  *
- * @since  2.0
- * @access private
+ * @since 2.0
+
  * @param  array  $links The existing plugin info links
  * @param  string $file  The plugin the links are for
  * @return array         The modified plugin info links
@@ -258,20 +198,3 @@ function code_snippets_survey_message() {
 }
 
 add_action( 'code_snippets/admin/manage', 'code_snippets_survey_message' );
-
-/**
- * Remove the old CodeMirror version used by the Debug Bar Console
- * plugin that is messing up the snippet editor
- * @since 1.9
- */
-function code_snippets_remove_debug_bar_codemirror() {
-	global $pagenow;
-
-	/* Try to discern if we are on the single snippet page as best as we can at this early time */
-	is_admin() && 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'snippet' === $_GET['page']
-
-	/* Remove the action and stop all Debug Bar Console scripts */
-	&& remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );
-}
-
-add_action( 'init', 'code_snippets_remove_debug_bar_codemirror' );

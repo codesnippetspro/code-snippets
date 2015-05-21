@@ -76,6 +76,9 @@ foreach ( array(
 	/* CodeMirror editor functions */
 	'editor.php',
 
+	/* General functions */
+	'functions.php',
+
 	/* General Administration functions */
 	'contextual-help.php',
 	'admin.php',

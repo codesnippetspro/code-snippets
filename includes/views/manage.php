@@ -4,7 +4,7 @@
  * HTML code for the Manage Snippets page
  *
  * @package Code_Snippets
- * @subpackage Manage
+ * @subpackage Views
  */
 
 /* Bail if accessed directly */

@@ -2,6 +2,7 @@
 
 /**
  * This file registers the settings
+ *
  * @package Code_Snippets
  */
 
@@ -23,9 +24,10 @@ function code_snippets_get_settings_fields() {
 	return Code_Snippets_Settings::get_fields();
 }
 
-/*
+/**
  * Retrieve the setting values from the database.
  * If a setting does not exist in the database, the default value will be returned.
+ *
  * @return array
  */
 function code_snippets_get_settings() {
@@ -65,8 +67,9 @@ function code_snippets_get_settings() {
 
 /**
  * Retrieve an individual setting field value
- * @param string $section The ID of the section the setting belongs to
- * @param string $field The ID of the setting field
+ *
+ * @param  string $section The ID of the section the setting belongs to
+ * @param  string $field   The ID of the setting field
  * @return array
  */
 function code_snippets_get_setting( $section, $field ) {
@@ -141,8 +144,9 @@ add_action( 'admin_init', 'code_snippets_register_settings' );
 
 /**
  * Validate the settings
- * @param array $input
- * @return array
+ *
+ * @param  array $input The sent settings
+ * @return array        The validated settings
  */
 function code_snippets_settings_validate( array $input ) {
 	$settings = code_snippets_get_settings();
