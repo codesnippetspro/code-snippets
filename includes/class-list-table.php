@@ -486,10 +486,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 
 			if ( ! in_array( $action, array( 'export', 'export-php' ) ) ) {
-				wp_redirect( apply_filters(
-					"code_snippets/{$action}_redirect",
-					esc_url_raw( add_query_arg( $action, true ) )
-				) );
+				wp_redirect( esc_url_raw( add_query_arg( 'result', $action ) ) );
 			}
 
 		endif;
@@ -500,7 +497,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$ids = $_POST['ids'];
 
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'activate', 'deactivate', 'delete', 'activate-multi', 'deactivate-multi', 'delete-multi' ) );
+		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
 
 		switch ( $this->current_action() ) {
 
@@ -508,14 +505,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				foreach ( $ids as $id ) {
 					activate_snippet( $id, $network );
 				}
-				wp_redirect( esc_url_raw( add_query_arg( 'activate-multi', true ) ) );
+				wp_redirect( esc_url_raw( add_query_arg( 'result', 'activate-multi' ) ) );
 				break;
 
 			case 'deactivate-selected':
 				foreach ( $ids as $id ) {
 					deactivate_snippet( $id, $network );
 				}
-				wp_redirect( esc_url_raw( add_query_arg( 'deactivate-multi', true ) ) );
+				wp_redirect( esc_url_raw( add_query_arg( 'result', 'deactivate-multi' ) ) );
 				break;
 
 			case 'export-selected':
@@ -530,7 +527,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				foreach ( $ids as $id ) {
 					delete_snippet( $id, $network );
 				}
-				wp_redirect( esc_url_raw( add_query_arg( 'delete-multi', true ) ) );
+				wp_redirect( esc_url_raw( add_query_arg( 'result', 'delete-multi' ) ) );
 				break;
 
 			case 'clear-recent-list':
