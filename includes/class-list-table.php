@@ -471,12 +471,15 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			if ( 'activate' === $action ) {
 				activate_snippet( $id, $network );
+				$result = 'activated';
 			}
 			elseif ( 'deactivate' === $action ) {
 				deactivate_snippet( $id, $network );
+				$result = 'deactivated';
 			}
 			elseif ( 'delete' === $action ) {
 				delete_snippet( $id, $network );
+				$result = 'deleted';
 			}
 			elseif ( 'export' === $action ) {
 				export_snippets( $id, $network );
@@ -485,8 +488,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				export_snippets( $id, $network, 'php' );
 			}
 
-			if ( ! in_array( $action, array( 'export', 'export-php' ) ) ) {
-				wp_redirect( esc_url_raw( add_query_arg( 'result', $action ) ) );
+			if ( isset( $result ) ) {
+				wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 			}
 
 		endif;
@@ -505,14 +508,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				foreach ( $ids as $id ) {
 					activate_snippet( $id, $network );
 				}
-				wp_redirect( esc_url_raw( add_query_arg( 'result', 'activate-multi' ) ) );
+				wp_redirect( esc_url_raw( add_query_arg( 'result', 'activated-multi' ) ) );
 				break;
 
 			case 'deactivate-selected':
 				foreach ( $ids as $id ) {
 					deactivate_snippet( $id, $network );
 				}
-				wp_redirect( esc_url_raw( add_query_arg( 'result', 'deactivate-multi' ) ) );
+				wp_redirect( esc_url_raw( add_query_arg( 'result', 'deactivated-multi' ) ) );
 				break;
 
 			case 'export-selected':
@@ -527,7 +530,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				foreach ( $ids as $id ) {
 					delete_snippet( $id, $network );
 				}
-				wp_redirect( esc_url_raw( add_query_arg( 'result', 'delete-multi' ) ) );
+				wp_redirect( esc_url_raw( add_query_arg( 'result', 'deleted-multi' ) ) );
 				break;
 
 			case 'clear-recent-list':

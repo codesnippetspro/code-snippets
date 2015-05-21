@@ -78,12 +78,12 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		echo $this->get_result_message(
 			array(
-				'activate' => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
-				'activate-multi' => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
-				'deactivate' => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
-				'deactivate-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
-				'delete' => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
-				'delete-multi' => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
+				'activated' => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
+				'activated-multi' => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
+				'deactivated' => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
+				'deactivated-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
+				'deleted' => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
+				'deleted-multi' => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
 			)
 		);
 	}
