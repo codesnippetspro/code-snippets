@@ -320,15 +320,19 @@ function delete_snippet( $id, $multisite = null ) {
  *
  * @param object $snippet The snippet to add/update to the database
  * @param boolean|null $multisite Save the snippet to the site-wide or network-wide table?
- * @return int|boolean The ID of the snippet on success, false on failure
+ * @return int The ID of the snippet
  */
 function save_snippet( $snippet, $multisite = null ) {
 	global $wpdb;
-
-	$data = array();
 	$table = get_snippets_table_name( $multisite );
+
+	/* Used to store the metadata for insertation into the database */
+	$data = array();
+
+	/* Standardize and escape the snippet data */
 	$snippet = escape_snippet_data( $snippet );
 
+	/* Loop through the snippet properties and seralize them */
 	foreach ( get_object_vars( $snippet ) as $field => $value ) {
 		if ( 'id' === $field ) {
 			continue;
@@ -341,18 +345,18 @@ function save_snippet( $snippet, $multisite = null ) {
 		$data[ $field ] = $value;
 	}
 
-	if ( isset( $snippet->id ) && 0 !== $snippet->id ) {
-
+	/* Create a new snippet if the ID is not set */
+	if ( ! isset( $snippet->id ) || 0 === $snippet->id ) {
+		$wpdb->insert( $table, $data, '%s' );
+		$snippet->id = $wpdb->insert_id;
+		do_action( 'code_snippets/create_snippet', $snippet, $table );
+	} else {
+		/* Otherwise update the snippet data */
 		$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) );
 		do_action( 'code_snippets/update_snippet', $snippet, $table );
-		return $snippet->id;
-
-	} else {
-
-		$wpdb->insert( $table, $data, '%s' );
-		do_action( 'code_snippets/create_snippet', $snippet, $table );
-		return $wpdb->insert_id;
 	}
+
+	return $snippet->id;
 }
 
 /**
