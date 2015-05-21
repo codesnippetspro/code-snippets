@@ -68,14 +68,12 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	 * Print the status and error messages
 	 */
 	protected function print_messages() {
-		$format = '<div id="message" class="%2$s fade"><p>%1$s</p></div>';
 
+		/* Output a warning if safe mode is active */
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
-			printf( $format,
-				__( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' ),
-				'error'
-			);
-			return;
+			echo '<div id="message" class="error fade"><p>';
+			_e( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' ),
+			echo '</p></div>';
 		}
 
 		$messages = array(
@@ -89,8 +87,10 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		foreach ( $messages as $key => $message ) {
 			if ( isset( $_REQUEST[ $key ] ) && $_REQUEST[ $key ] ) {
-				printf( $format, $message, 'updated' );
-				return;
+				echo '<div id="message" class="updated fade"><p>';
+				echo $message;
+				echo '</p></div>';
+				return; // only print one status message per request
 			}
 		}
 	}
