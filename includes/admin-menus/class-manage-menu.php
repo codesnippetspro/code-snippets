@@ -59,7 +59,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		code_snippets_load_manage_help();
 
 		/* Initialize the list table class */
-		require_once $this->includes_dir . 'class-list-table.php';
+		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/class-list-table.php';
 		$this->list_table = new Code_Snippets_List_Table();
 		$this->list_table->prepare_items();
 	}
@@ -68,31 +68,24 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	 * Print the status and error messages
 	 */
 	protected function print_messages() {
-		$format = '<div id="message" class="%2$s fade"><p>%1$s</p></div>';
 
+		/* Output a warning if safe mode is active */
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
-			printf( $format,
-				__( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' ),
-				'error'
-			);
-			return;
+			echo '<div id="message" class="error fade"><p>';
+			_e( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' );
+			echo '</p></div>';
 		}
 
-		$messages = array(
-			'activate' => __( 'Snippet <strong>activated</strong>.',
-			'activate-multi' => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
-			'deactivate' => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
-			'deactivate-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
-			'delete' => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
-			'delete-multi' => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
+		echo $this->get_result_message(
+			array(
+				'activated' => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
+				'activated-multi' => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
+				'deactivated' => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
+				'deactivated-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
+				'deleted' => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
+				'deleted-multi' => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
+			)
 		);
-
-		foreach ( $messages as $key => $message ) {
-			if ( isset( $_REQUEST[ $key ] ) && $_REQUEST[ $key ] ) {
-				printf( $format, $message, 'updated' );
-				return;
-			}
-		}
 	}
 
 	/**

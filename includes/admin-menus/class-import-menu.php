@@ -49,6 +49,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 		/* Send the amount of imported snippets to the page */
 		$url = add_query_arg( false === $result ? array( 'error' => true ) : array( 'imported' => $result ) );
 		wp_redirect( esc_url_raw( $url ) );
+		exit;
 	}
 
 	/**

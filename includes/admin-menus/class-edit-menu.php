@@ -91,7 +91,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			}
 
 			/* Save the snippet to the database */
-			$result = save_snippet( stripslashes_deep( $_POST ) );
+			$snippet_id = save_snippet( stripslashes_deep( $_POST ) );
 
 			/* Update the shared network snippets if necessary */
 			if ( $screen->is_network && $snippet_id && $snippet_id > 0 ) {
@@ -110,41 +110,36 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 				update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 			}
 
-			/* Build the status message and redirect */
-			$query_args = array();
-
-			if ( $result && isset( $_POST['save_snippet_activate'] ) ) {
-				/* Snippet was activated addition to saving*/
-				$query_args['activated'] = true;
-			}
-			elseif ( $result && isset( $_POST['save_snippet_deactivate'] ) ) {
-				/* Snippet was deactivated addition to saving*/
-				$query_args['deactivated'] = true;
-			}
-
-			if ( ! $result || $result < 1 ) {
+			/* If the saved snippet ID is invalid, display an error message */
+			if ( ! $snippet_id || $snippet_id < 1 ) {
 				/* An error occurred */
-				$query_args['invalid'] = true;
+				wp_redirect( add_query_arg( 'result', 'error', code_snippets_get_menu_url( 'add' ) ) );
+				exit;
 			}
-			elseif ( isset( $_POST['snippet_id'] ) ) {
-				/* Existing snippet was updated */
-				$query_args['id'] = $result;
-				$query_args['updated'] = true;
-			}
-			else {
-				/* New snippet was added */
-				$query_args['id'] = $result;
-				$query_args['added'] = true;
+
+			/* Set the result depending on if the snippet was just added */
+			$result = isset( $_POST['snippet_id'] ) ? 'updated' : 'added';
+
+			/* Append a suffix if the snippet was activated or deactivated */
+			if ( isset( $_POST['save_snippet_activate'] ) ) {
+				$result .= '-and-activated';
+			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
+				$result .= '-and-deactivated';
 			}
 
 			/* Redirect to edit snippet page */
-			wp_redirect( add_query_arg( $query_args, code_snippets_get_menu_url( 'edit' ) ) );
+			wp_redirect( add_query_arg(
+				array( 'id' => $snippet_id, 'result' => $result ),
+				code_snippets_get_menu_url( 'edit' )
+			) );
+			exit;
 		}
 
 		/* Delete the snippet if the button was clicked */
 		elseif ( isset( $_POST['snippet_id'], $_POST['delete_snippet'] ) ) {
 			delete_snippet( $_POST['snippet_id'] );
-			wp_redirect( add_query_arg( 'delete', true, code_snippets_get_menu_url( 'manage' ) ) );
+			wp_redirect( add_query_arg( 'result', 'delete', code_snippets_get_menu_url( 'manage' ) ) );
+			exit;
 		}
 
 		/* Export the snippet if the button was clicked */
@@ -287,18 +282,26 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 * Print the status and error messages
 	 */
 	protected function print_messages() {
-		if ( isset( $_REQUEST['invalid'] ) && $_REQUEST['invalid'] ) {
-			printf( $format, __( 'An error occurred when saving the snippet.', 'code-snippets' ), 'error' );
-		} elseif ( isset( $_REQUEST['activated'], $_REQUEST['updated'] ) && $_REQUEST['activated'] && $_REQUEST['updated'] ) {
-			printf( $format, __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ), 'updated' );
-		} elseif ( isset( $_REQUEST['activated'], $_REQUEST['added'] ) && $_REQUEST['activated'] && $_REQUEST['added'] ) {
-			printf( $format, __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ), 'updated' );
-		} elseif ( isset( $_REQUEST['deactivated'], $_REQUEST['updated'] ) && $_REQUEST['deactivated'] && $_REQUEST['updated'] ) {
-			printf( $format, __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ), 'updated' );
-		} elseif ( isset( $_REQUEST['updated'] ) && $_REQUEST['updated'] ) {
-			printf( $format, __( 'Snippet <strong>updated</strong>.', 'code-snippets' ), 'updated' );
-		} elseif ( isset( $_REQUEST['added'] ) && $_REQUEST['added'] ) {
-			printf( $format, __( 'Snippet <strong>added</strong>.', 'code-snippets' ), 'updated' );
+
+		/* Check if an error exists, and if so, build the message */
+		$error = $this->get_result_message(
+			array( 'error' => __( 'An error occurred when saving the snippet.', 'code-snippets' ) ),
+			'result', 'error'
+		);
+
+		/* Output the error message if it exists, otherwise try to output a result message */
+		if ( $error ) {
+			echo $error;
+		} else {
+			echo $this->get_result_message(
+				array(
+					'added' => __( 'Snippet <strong>added</strong>.', 'code-snippets' ),
+					'updated' =>  __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
+					'added-and-activated' => __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ),
+					'updated-and-activated' => __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ),
+					'updated-and-deactivated' => __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ),
+				)
+			);
 		}
 	}
 }

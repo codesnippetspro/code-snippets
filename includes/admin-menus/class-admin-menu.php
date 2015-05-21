@@ -60,6 +60,28 @@ class Code_Snippets_Admin_Menu {
 	protected function print_messages() {}
 
 	/**
+	 * Retrieve a result message based on a posted status
+	 * @return string|boolean The result message if a valid status was recieved, otherwise false
+	 */
+	protected function get_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
+
+		if ( empty( $_REQUEST[ $request_var ] ) ) {
+			return;
+		}
+
+		$result = $_REQUEST[ $request_var ];
+
+		if ( isset( $messages[ $result ] ) ) {
+			return sprintf(
+				'<div id="message" class="%1$s %2$s fade"><p>%1$s</p></div>',
+				$messages[ $result ], $class
+			);
+		}
+
+		return false;
+	}
+
+	/**
 	 * Executed when the admin page is loaded
 	 */
 	public function load() {
