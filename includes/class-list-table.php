@@ -823,7 +823,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Outputs content for a single row of the table
-	 * 
+	 *
 	 * @param object $snippet The snippet being used for the current row
 	 */
 	function single_row( $snippet ) {
