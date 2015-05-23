@@ -85,9 +85,9 @@ function get_snippets( $multisite = null ) {
 }
 
 /**
-* Gets all of the used tags from the database
-* @since 2.0
-*/
+ * Gets all of the used tags from the database
+ * @since 2.0
+ */
 function get_all_snippet_tags() {
 	global $wpdb;
 
