@@ -15,7 +15,6 @@
  * @return object      The resulting snippet object
  */
 function build_snippet_object( $data = null ) {
-
 	$snippet = new stdClass;
 
 	/* Define an empty snippet object with default values */
@@ -28,36 +27,23 @@ function build_snippet_object( $data = null ) {
 	$snippet->active = 0;
 	$snippet = apply_filters( 'code_snippets/build_default_snippet', $snippet );
 
-	if ( ! isset( $data ) ) {
+	if ( ! $data || is_string( $data ) ) {
 		return $snippet;
-
-	} elseif ( is_object( $data ) ) {
-
-		/* If we already have a snippet object, merge it with the default */
-		return (object) array_merge( (array) $snippet, (array) $data );
-
-	} elseif ( is_array( $data ) ) {
-
-		foreach ( $data as $field => $value ) {
-
-			/* Remove 'snippet_' prefix */
-			if ( 'snippet_' === substr( $field, 0, 8 ) ) {
-				$field = substr( $field, 8 );
-			}
-
-			/* Check the field is whitelisted */
-			if ( ! isset( $snippet->$field ) ) {
-				continue;
-			}
-
-			/* Update the field */
-			$snippet->$field = $value;
-		}
-
-		return apply_filters( 'code_snippets/build_snippet_object', $snippet, $data );
 	}
 
-	return $snippet;
+	/* Loop through the submitted fields */
+	foreach ( (array) $data as $field => $value ) {
+
+		/* Check the field is whitelisted */
+		if ( ! isset( $snippet->$field ) ) {
+			continue;
+		}
+
+		/* Update the field */
+		$snippet->$field = $value;
+	}
+
+	return apply_filters( 'code_snippets/build_snippet_object', $snippet, $data );
 }
 
 /**
@@ -479,32 +465,33 @@ function execute_active_snippets() {
 
 	/* Check if the snippets table exists */
 	if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
-		$sql = "SELECT code FROM {$wpdb->snippets} WHERE active=1";
+		$sql = "SELECT id, code FROM {$wpdb->snippets} WHERE active=1";
 	}
 
 	/* Check if the multisite snippets table exists */
 	if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets ) {
 		$sql = ( isset( $sql ) ? $sql . "\nUNION ALL\n" : '' );
-		$sql .= "SELECT code FROM {$wpdb->ms_snippets} WHERE active=1";
+		$sql .= "SELECT id, code FROM {$wpdb->ms_snippets} WHERE active=1";
 	}
 
-	if ( ! empty( $sql ) ) {
-		$sql .= sprintf( ' AND (scope=0 OR scope=%d)', is_admin() ? 1 : 2 );
+	/* Return false if there is no query */
+	if ( empty( $sql ) ) {
+		return false;
+	}
 
-		/* Grab the active snippets from the database */
-		$active_snippets = $wpdb->get_col( $sql );
+	/* Only select snippets in the current scope */
+	$sql .= sprintf( ' AND (scope=0 OR scope=%d)', is_admin() ? 1 : 2 );
 
-		foreach ( $active_snippets as $snippet_id => $snippet_code ) {
+	/* Grab the snippets from the database */
+	$active_snippets = $wpdb->get_results( $sql, OBJECT_K );
 
-			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id ) ) {
-				/* Execute the PHP code */
-				execute_snippet( $snippet_code );
-			}
+	/* Loop through the returned snippets and execute the PHP code */
+	foreach ( $active_snippets as $snippet_id => $snippet ) {
+
+		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id ) ) {
+			execute_snippet( $snippet->code );
 		}
-
-		return true;
 	}
 
-	/* If we're made it this far without returning true, assume failure */
-	return false;
+	return true;
 }

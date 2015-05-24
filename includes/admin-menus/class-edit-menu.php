@@ -91,8 +91,20 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 				$_POST['snippet_active'] = 0;
 			}
 
+
+			/* Build snippet object from fields with 'snippet_' prefix */
+			$snippet = array();
+			foreach ( $_POST as $field => $value ) {
+				if ( 'snippet_' === substr( $field, 0, 8 ) ) {
+
+					/* Remove 'snippet_' prefix from field name */
+					$field = substr( $field, 8 );
+					$snippet[ $field ] = stripslashes( $value );
+				}
+			}
+
 			/* Save the snippet to the database */
-			$snippet_id = save_snippet( stripslashes_deep( $_POST ) );
+			$snippet_id = save_snippet( $snippet );
 
 			/* Update the shared network snippets if necessary */
 			if ( get_current_screen()->is_network && $snippet_id && $snippet_id > 0 ) {
