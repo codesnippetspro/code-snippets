@@ -286,16 +286,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		global $totals, $status;
 		$status_links = array();
 
-		/* Define the labels for each view */
-		$labels = array(
-			'all' => _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' ),
-			'admin' => _n( 'Admin <span class="count">(%s)</span>', 'Admin <span class="count">(%s)</span>', $count, 'code-snippets' ),
-			'active' => _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
-			'inactive' => _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' ),
-			'frontend' => _n( 'Front End <span class="count">(%s)</span>', 'Front End <span class="count">(%s)</span>', $count, 'code-snippets' ),
-			'recently_activated' => _n( 'Recently Active <span class="count">(%s)</span>', 'Recently Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
-		);
-
 		/* Loop through the view counts */
 		foreach ( $totals as $type => $count ) {
 
@@ -304,19 +294,27 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				continue;
 			}
 
-			/* Construct the view link */
-			$status_links[ $type ] = sprintf( '<a href="%s"%s>%s</a>',
-
-				/* The page URL with the status parameter */
-				esc_url( add_query_arg( 'status', $type ) ),
-
-				/* Add a class if this view is currently being viewed */
-				$type === $status ? ' class="current"' : '',
-
-				/* Add the view count to the label */
-				sprintf( $labels[ $type ], number_format_i18n( $count ) )
+			/* Define the labels for each view */
+			$labels = array(
+				'all' => _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'admin' => _n( 'Admin <span class="count">(%s)</span>', 'Admin <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'active' => _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'inactive' => _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'frontend' => _n( 'Front End <span class="count">(%s)</span>', 'Front End <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'recently_activated' => _n( 'Recently Active <span class="count">(%s)</span>', 'Recently Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
 			);
 
+			/* The page URL with the status parameter */
+			$url = esc_url( add_query_arg( 'status', $type ) );
+
+			/* Add a class if this view is currently being viewed */
+			$class = $type === $status ? ' class="current"' : '';
+
+			/* Add the view count to the label */
+			$text = sprintf( $labels[ $type ], number_format_i18n( $count ) );
+
+			/* Construct the link */
+			$status_links[ $type ] = sprintf( '<a href="%s"%s>%s</a>', $url, $class, $text );
 		}
 
 		/* Filter and return the list of views */
@@ -587,8 +585,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Clear recently activated snippets older than a week */
 		$recently_activated = $screen->is_network ?
-			get_site_option( 'recently_activated_snippets', array() :
-			get_option( 'recently_activated_snippets', array();
+			get_site_option( 'recently_activated_snippets', array() ) :
+			get_option( 'recently_activated_snippets', array() );
 
 		foreach ( $recently_activated as $key => $time ) {
 
