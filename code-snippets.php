@@ -61,6 +61,9 @@ define( 'CODE_SNIPPETS_FILE', __FILE__ );
  */
 foreach ( array(
 
+	/* Snippet class */
+	'class-snippet.php',
+
 	/* Database operations functions */
 	'db.php',
 

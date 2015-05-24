@@ -7,46 +7,6 @@
  */
 
 /**
- * Converts an array of snippet data into a snippet object
- *
- * @since 2.0
- *
- * @param  mixed $data The snippet data to convert
- * @return object      The resulting snippet object
- */
-function build_snippet_object( $data = null ) {
-	$snippet = new stdClass;
-
-	/* Define an empty snippet object with default values */
-	$snippet->id = 0;
-	$snippet->name = '';
-	$snippet->description = '';
-	$snippet->code = '';
-	$snippet->tags = array();
-	$snippet->scope = 0;
-	$snippet->active = 0;
-	$snippet = apply_filters( 'code_snippets/build_default_snippet', $snippet );
-
-	if ( ! $data || is_string( $data ) ) {
-		return $snippet;
-	}
-
-	/* Loop through the submitted fields */
-	foreach ( (array) $data as $field => $value ) {
-
-		/* Check the field is whitelisted */
-		if ( ! isset( $snippet->$field ) ) {
-			continue;
-		}
-
-		/* Update the field */
-		$snippet->$field = $value;
-	}
-
-	return apply_filters( 'code_snippets/build_snippet_object', $snippet, $data );
-}
-
-/**
  * Retrieve a list of snippets from the database
  *
  * @since 2.0
@@ -63,8 +23,9 @@ function get_snippets( $multisite = null ) {
 	$table = get_snippets_table_name( $multisite );
 	$snippets = $wpdb->get_results( "SELECT * FROM $table", ARRAY_A );
 
+	/* Convert snippets to snippet objects */
 	foreach ( $snippets as $index => $snippet ) {
-		$snippets[ $index ] = unescape_snippet_data( $snippet );
+		$snippets[ $index ] = new Snippet( $snippet );
 	}
 
 	return apply_filters( 'code_snippets/get_snippets', $snippets, $multisite );
@@ -122,57 +83,6 @@ function code_snippets_build_tags_array( $tags ) {
 }
 
 /**
- * Escape snippet data for inserting into the database
- *
- * @since 2.0
- *
- * @param  mixed $snippet An object or array containing the data to escape
- * @return object         The resulting snippet object, with data escaped
- */
-function escape_snippet_data( $snippet ) {
-
-	$snippet = build_snippet_object( $snippet );
-
-	/* Remove <?php and <? from beginning of snippet */
-	$snippet->code = preg_replace( '|^[\s]*<\?(php)?|', '', $snippet->code );
-
-	/* Remove ?> from end of snippet */
-	$snippet->code = preg_replace( '|\?>[\s]*$|', '', $snippet->code );
-
-	/* Ensure the ID is a positive integer */
-	$snippet->id = absint( $snippet->id );
-
-	/* Make sure that the scope is a valid value */
-	if ( ! in_array( $snippet->scope, array( 0, 1, 2 ) ) ) {
-		$snippet->scope = 0;
-	}
-
-	/* Store tags as a string, with tags separated by commas */
-	$snippet->tags = code_snippets_build_tags_array( $snippet->tags );
-	$snippet->tags = implode( ', ', $snippet->tags );
-
-	return apply_filters( 'code_snippets/escape_snippet_data', $snippet );
-}
-
-/**
- * Unescape snippet data after retrieval from the database
- * ready for use
- *
- * @since 2.0
- *
- * @param  mixed $snippet An object or array containing the data to unescape
- * @return object         The resulting snippet object, with data unescaped
- */
-function unescape_snippet_data( $snippet ) {
-	$snippet = build_snippet_object( $snippet );
-
-	/* Ensure the tags are a valid array */
-	$snippet->tags = code_snippets_build_tags_array( $snippet->tags );
-
-	return apply_filters( 'code_snippets/unescape_snippet_data', $snippet );
-}
-
-/**
  * Retrieve a single snippets from the database.
  * Will return empty snippet object if no snippet
  * ID is specified
@@ -198,12 +108,12 @@ function get_snippet( $id = 0, $multisite = null ) {
 		$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 
 		/* Unescape the snippet data, ready for use */
-		$snippet = unescape_snippet_data( $snippet );
+		$snippet = new Snippet( $snippet );
 
 	} else {
 
 		/* Get an empty snippet object */
-		$snippet = build_snippet_object();
+		$snippet = new Snippet();
 	}
 	return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
 }
@@ -315,27 +225,18 @@ function save_snippet( $snippet, $multisite = null ) {
 	global $wpdb;
 	$table = get_snippets_table_name( $multisite );
 
-	/* Used to store the metadata for insertation into the database */
-	$data = array();
-
-	/* Standardize and escape the snippet data */
-	$snippet = escape_snippet_data( $snippet );
-
-	/* Loop through the snippet properties and seralize them */
-	foreach ( get_object_vars( $snippet ) as $field => $value ) {
-		if ( 'id' === $field ) {
-			continue;
-		}
-
-		if ( is_array( $value ) ) {
-			$value = maybe_serialize( $value );
-		}
-
-		$data[ $field ] = $value;
+	if ( ! $snippet instanceof Snippet ) {
+		$snippet = new Snippet( $snippet );
 	}
 
+	/* Convert snippet to array */
+	$data = $snippet->get_fields();
+
+	/* Convert tags to string */
+	$data['tags'] = implode( ', ', $data['tags'] );
+
 	/* Create a new snippet if the ID is not set */
-	if ( ! isset( $snippet->id ) || 0 === $snippet->id ) {
+	if ( 0 == $snippet->id ) {
 		$wpdb->insert( $table, $data, '%s' );
 		$snippet->id = $wpdb->insert_id;
 		do_action( 'code_snippets/create_snippet', $snippet, $table );
@@ -373,7 +274,7 @@ function import_snippets( $file, $multisite = null ) {
 
 	/* Loop through all snippets */
 	foreach ( $snippets_xml as $snippet_xml ) {
-		$snippet = new stdClass;
+		$snippet = new Snippet();
 
 		/* Build a snippet object by looping through the field names */
 		foreach ( $fields as $field_name ) {

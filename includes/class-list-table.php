@@ -153,11 +153,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			) )
 		);
 
-		if ( ! empty( $snippet->name ) ) {
-			$title = $snippet->name;
-		} else {
-			$title = sprintf( __( 'Untitled #%d', 'code-snippets' ), $snippet->id );
-		}
+		$title = empty( $snippet->name ) ? sprintf( __( 'Untitled #%d', 'code-snippets' ), $snippet->id ) : $snippet->name;
 
 		$row_actions = $this->row_actions( $actions,
 			apply_filters( 'code_snippets/list_table/row_actions_always_visiable', false )
@@ -687,9 +683,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
-	* This checks for sorting input and sorts the data in our array accordingly.
-	* @ignore
-	*/
+	 * This checks for sorting input and sorts the data in our array accordingly.
+	 * @ignore
+	 */
 	private function usort_reorder_callback( $a, $b ) {
 
 		/* If no sort, default to ID */
