@@ -480,7 +480,7 @@ function execute_active_snippets() {
 	}
 
 	/* Only select snippets in the current scope */
-	$sql .= sprintf( ' AND (scope=0 OR scope=%d)', is_admin() ? 1 : 2 );
+	$sql = $wpdb->prepare( $sql . ' AND (scope=0 OR scope=%d)', is_admin() ? 1 : 2 );
 
 	/* Grab the snippets from the database */
 	$active_snippets = $wpdb->get_results( $sql, OBJECT_K );
@@ -490,6 +490,7 @@ function execute_active_snippets() {
 
 		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id ) ) {
 			execute_snippet( $snippet->code );
+			do_action( 'code_snippets/after_execute_snippet', $snippet_id, $snippet->code );
 		}
 	}
 

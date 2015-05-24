@@ -91,7 +91,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 				$_POST['snippet_active'] = 0;
 			}
 
-
 			/* Build snippet object from fields with 'snippet_' prefix */
 			$snippet = array();
 			foreach ( $_POST as $field => $value ) {
