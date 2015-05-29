@@ -58,7 +58,6 @@ function get_snippets_table_name( $multisite = null ) {
  * This function will only execute once per page load, except if $redo is true
  *
  * @since 1.7.1
- * @param boolean $redo    Skip the already-done-this check
  * @param boolean $upgrade Run the table creation code even if the table exists
  */
 function create_code_snippets_tables( $upgrade = false ) {
@@ -71,20 +70,14 @@ function create_code_snippets_tables( $upgrade = false ) {
 
 	if ( is_multisite() ) {
 
-		/* Check if the network snippets table exists */
-		$ms_table_exists = ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets );
-
 		/* Create the network snippets table if it doesn't exist, or upgrade it */
-		if ( $upgrade || ! $ms_table_exists ) {
+		if ( $upgrade || $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) !== $wpdb->ms_snippets ) {
 			create_code_snippets_table( $wpdb->ms_snippets );
 		}
 	}
 
-	/* Check if the site-specific table exists */
-	$table_exists = ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets );
-
 	/* Create the table if it doesn't exist, or upgrade it */
-	if ( $upgrade || ! $table_exists ) {
+	if ( $upgrade || $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) !== $wpdb->snippets ) {
 		create_code_snippets_table( $wpdb->snippets );
 	}
 }
