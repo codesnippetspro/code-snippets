@@ -45,7 +45,6 @@ function get_all_snippet_tags() {
 
 	/* Merge all tags into a single array */
 	foreach ( $all_tags as $snippet_tags ) {
-		$snippet_tags = maybe_unserialize( $snippet_tags );
 		$snippet_tags = code_snippets_build_tags_array( $snippet_tags );
 		$tags = array_merge( $snippet_tags, $tags );
 	}
@@ -53,7 +52,6 @@ function get_all_snippet_tags() {
 	/* Remove duplicate tags */
 	return array_values( array_unique( $tags, SORT_REGULAR ) );
 }
-
 /**
  * Make sure that the tags are a valid array
  * @since 2.0
@@ -63,23 +61,19 @@ function get_all_snippet_tags() {
  */
 function code_snippets_build_tags_array( $tags ) {
 
-	/* If there are no tags set, create a default empty array */
-	if ( empty( $tags ) ) {
-		$tags = array();
-	}
+		/* If there are no tags set, return an empty array */
+		if ( empty( $tags ) ) {
+			return array();
+		}
 
-	/* If the tags are set as a string, convert them into an array */
-	elseif ( is_string( $tags ) ) {
-		$tags = str_replace( ', ', ',', $tags );
-		$tags = explode( ',', $tags );
-	}
+		/* If the tags are set as a string, convert them into an array */
+		if ( is_string( $tags ) ) {
+			$tags = str_replace( ', ', ',', $tags );
+			$tags = explode( ',', $tags );
+		}
 
-	/* If we still don't have an array, just convert whatever we do have into one */
-	if ( ! is_array( $tags ) ) {
-		$tags = (array) $tags;
-	}
-
-	return $tags;
+		/* If we still don't have an array, just convert whatever we do have into one */
+		return (array) $tags;
 }
 
 /**

@@ -11,7 +11,7 @@ class Snippet {
 		'name' => '',
 		'description' => '',
 		'code' => '',
-		'tags' => array(),
+		'tags' => '',
 		'scope' => 0,
 		'active' => 0,
 	);
@@ -25,22 +25,33 @@ class Snippet {
 	}
 
 	/**
+	 * Set all of the snippet fields from an array or object
+	 * @param array|object $fields List of fields
+	 */
+	public function set_fields( $fields ) {
+
+		/* Only accept arrays or objects */
+		if ( ! $fields || is_string( $fields ) ) {
+			return;
+		}
+
+		/* Convert objects into arrays */
+		if ( is_object( $fields ) ) {
+			$fields = get_object_vars( $fields );
+		}
+
+		/* Loop through the passed fields and set them */
+		foreach ( $fields as $field => $value ) {
+			$this->__set( $field, $value );
+		}
+	}
+
+	/**
 	 * Constructor function
 	 * @param array|object $fields Initial snippet fields
 	 */
 	public function __construct( $fields = null ) {
-
-		/* Set the fields if provided */
-		if ( $fields && ! is_string( $fields ) ) {
-
-			if ( is_object( $fields ) ) {
-				$fields = get_object_vars( $fields );
-			}
-
-			foreach ( $fields as $field => $value ) {
-				$this->__set( $field, $value );
-			}
-		}
+		$this->set_fields( $fields );
 	}
 
 	/**
@@ -49,7 +60,7 @@ class Snippet {
 	 * @return boolean        Whether the field is set
 	 */
 	public function __isset( $field ) {
-		return isset( $this->fields[ $field ] );
+		return isset( $this->fields[ $field ] ) || method_exists( $this, 'get_' . $field );
 	}
 
 	/**
@@ -58,6 +69,10 @@ class Snippet {
 	 * @return mixed         The field value
 	 */
 	public function __get( $field ) {
+		if ( ! isset( $this->fields[ $field ] ) && method_exists( $this, 'get_' . $field ) ) {
+			return call_user_func( array( $this, 'get_' . $field ) );
+		}
+
 		return $this->fields[ $field ];
 	}
 
@@ -116,10 +131,22 @@ class Snippet {
 
 	/**
 	 * Prepare the snippet tags by ensuring they are in the correct format
-	 * @param  string|array $tags
-	 * @return array
+	 * @param  string|array $tags The tags as provided
+	 * @return string             The tags in the correct string format
 	 */
 	private function prepare_tags( $tags ) {
-		return code_snippets_build_tags_array( $tags );
+		if ( is_array( $tags ) ) {
+			return implode( ', ', $tags );
+		}
+
+		return $tags;
+	}
+
+	/**
+	 * Retrieve the tags in array format
+	 * @return array An array of the snippet's tags
+	 */
+	private function get_tags_array() {
+		return code_snippets_build_tags_array( $this->fields['tags'] );
 	}
 }

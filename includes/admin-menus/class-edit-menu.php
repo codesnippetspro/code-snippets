@@ -199,7 +199,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		</label>
 
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
-			placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>" value="<?php echo implode( ', ', $snippet->tags ); ?>" />
+			placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>" value="<?php echo $snippet->tags; ?>" />
 
 		<script type="text/javascript">
 		jQuery('#snippet_tags').tagit({
