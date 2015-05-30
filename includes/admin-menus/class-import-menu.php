@@ -43,11 +43,16 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 			return;
 		}
 
-		/* Import the snippets. The result is the number of snippets that were imported */
+		/* Import the snippets  */
 		$result = import_snippets( $_FILES['code_snippets_import_file']['tmp_name'], $network );
 
 		/* Send the amount of imported snippets to the page */
-		$url = add_query_arg( $result ? array( 'imported' => $result ) : array( 'error' => true ) );
+		$url = add_query_arg(
+			$result ?
+			array( 'imported' => count( $result ) ) :
+			array( 'error' => true )
+		);
+
 		wp_redirect( esc_url_raw( $url ) );
 		exit;
 	}
@@ -75,14 +80,14 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	 * Print the status and error messages
 	 */
 	protected function print_messages() {
-		if ( isset( $_REQUEST['imported'] ) && 0 !== intval( $_REQUEST['imported'] ) ) {
+		if ( isset( $_REQUEST['imported'] ) ) {
 			echo '<div id="message" class="updated fade"><p>';
 
 			printf(
 				_n(
 					'Successfully imported <strong>%d</strong> snippet. <a href="%s">Have fun!</a>',
 					'Successfully imported <strong>%d</strong> snippets. <a href="%s">Have fun!</a>',
-					$_REQUEST['imported'],
+					count( $_REQUEST['imported'] ),
 					'code-snippets'
 				),
 				$_REQUEST['imported'],

@@ -257,7 +257,7 @@ function save_snippet( $snippet, $multisite = null ) {
  *
  * @param  string       $file      The path to the XML file to import
  * @param  boolean|null $multisite Import into network-wide table or site-wide table?
- * @return integer|boolean         The number of snippets imported on success, false on failure
+ * @return array|boolean           An array of imported snippet IDs on success, false on failure
  */
 function import_snippets( $file, $multisite = null ) {
 
@@ -270,7 +270,7 @@ function import_snippets( $file, $multisite = null ) {
 
 	$snippets_xml = $dom->getElementsByTagName( 'snippet' );
 	$fields = array( 'name', 'description', 'code', 'tags', 'scope' );
-	$count = 0;
+	$exported_snippets = array();
 
 	/* Loop through all snippets */
 	foreach ( $snippets_xml as $snippet_xml ) {
@@ -288,14 +288,20 @@ function import_snippets( $file, $multisite = null ) {
 			}
 		}
 
+		/* Get scope from attribute */
+		$scope = $snippet_xml->getAttribute( 'scope' );
+		if ( ! empty( $scope ) ) {
+			$snippet->scope = $scope;
+		}
+
 		/* Save the snippet and increase the counter if successful */
-		if ( save_snippet( $snippet, $multisite ) ) {
-			$count += 1;
+		if ( $snippet_id = save_snippet( $snippet, $multisite ) ) {
+			$exported_snippets[] = $snippet_id;
 		}
 	}
 
 	do_action( 'code_snippets/import', $dom, $multisite );
-	return $count;
+	return $exported_snippets;
 }
 
 /**

@@ -142,6 +142,7 @@ class Code_Snippets_Export {
 
 			/* Grab the snippet from the database */
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id ), ARRAY_A );
+			$snippet = new Snippet( $snippet );
 
 			/* Process the snippet item */
 			if ( 'php' === $this->format ) {
@@ -160,10 +161,15 @@ class Code_Snippets_Export {
 		$item = $this->dom->createElement( 'snippet' );
 		$item = $this->root->appendChild( $item );
 
-		foreach ( $snippet as $field_name => $field_value ) {
+		/* Set the scope attribute */
+		if ( ! in_array( 'scope', $this->exclude_fields ) ) {
+			$item->setAttribute( 'scope', $snippet->scope );
+		}
+
+		foreach ( $snippet->get_fields() as $field_name => $field_value ) {
 
 			/*  Don't export certain fields */
-			if ( in_array( $field_name, $this->exclude_fields ) ) {
+			if ( 'scope' === $field_name || in_array( $field_name, $this->exclude_fields ) ) {
 				continue;
 			}
 
@@ -171,7 +177,7 @@ class Code_Snippets_Export {
 			$field = $this->dom->createElement( $field_name );
 			$field = $item->appendChild( $field );
 
-			/* Add the field's content */
+			/* Add the field content */
 			$value = $this->dom->createTextNode( $field_value );
 			$value = $field->appendChild( $value );
 		}
@@ -182,17 +188,17 @@ class Code_Snippets_Export {
 	 * @param array $snippet
 	 */
 	protected function do_item_php( $snippet ) {
-		echo "\n/**\n * {$snippet['name']}\n";
+		echo "\n/**\n * {$snippet->name}\n";
 
-		if ( ! empty( $snippet['description'] ) ) {
+		if ( ! empty( $snippet->description ) ) {
 
 			/* Convert description to PhpDoc */
-			$desc = strip_tags( str_replace( "\n", "\n * ", $snippet['description'] ) );
+			$desc = strip_tags( str_replace( "\n", "\n * ", $snippet->description ) );
 
 			echo " *\n * $desc\n";
 		}
 
-		echo " */\n{$snippet['code']}\n";
+		echo " */\n{$snippet->code}\n";
 	}
 
 	/**
