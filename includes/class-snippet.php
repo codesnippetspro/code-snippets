@@ -22,7 +22,7 @@ class Snippet {
 	 * @var array
 	 */
 	private $extra = array(
-		'network' => false,
+		'network' => null,
 	);
 
 	/**
@@ -174,6 +174,11 @@ class Snippet {
 	 * @return bool          The filtered field
 	 */
 	private function prepare_network( $network ) {
+
+		if ( null === $network && function_exists( 'get_current_screen' ) && $screen = get_current_screen() ) {
+			return $screen->in_admin( 'network' );
+		}
+
 		return true === $network;
 	}
 
