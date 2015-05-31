@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * A snippet object
+ *
+ * @since [NEXT_VERSION]
+ * @package Code Snippets
+ *
+ * @property int    $id          The database ID
+ * @property string $name        The display name
+ * @property string $description The formatted description
+ * @property string $code        The executable code
+ * @property string $tags        The tags in string list format
+ * @property int    $scope       The scope number
+ * @property int    $active      The active status
+ * @property bool   $network     true if is multisite-wide snippet, false if site-wide
+ *
+ * @property-read array  $tags_array The tags in array format
+ * @property-read string $scope_name The name of the scope
+ */
 class Snippet {
 
 	/**
