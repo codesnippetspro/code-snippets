@@ -63,6 +63,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_scope_setting' ) );
 		}
 
+		if ( get_current_screen()->in_admin( 'network' ) ) {
+			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_multisite_sharing_setting' ) );
+		}
+
 		$this->save_posted_snippet();
 	}
 
@@ -219,8 +223,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			__( 'Only run on site front-end', 'code-snippets' ),
 		);
 
-		echo '<div class="snippet-scope">';
-		printf( '<label for="snippet_scope"><h3>%s</h3></label>', __( 'Scope', 'code-snippets' ) );
+		echo '<tr class="snippet-scope">';
+		echo '<th scope="row">' . __( 'Scope', 'code-snippets' ) . '</th><td>';
 
 		foreach ( $scopes as $scope => $label ) {
 			printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope );
@@ -228,7 +232,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			echo "> $label</div>";
 		}
 
-		echo '</div>';
+		echo '</td></tr>';
 	}
 
 	/**
