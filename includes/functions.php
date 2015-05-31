@@ -7,8 +7,8 @@
 
 /**
  * Fetch the admin menu slug for a snippets menu
- * @param string $menu The menu to retrieve the slug for
- * @return string The menu's slug
+ * @param  string $menu The menu to retrieve the slug for
+ * @return string       The menu's slug
  */
 function code_snippets_get_menu_slug( $menu = '' ) {
 	$add = array( 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' );
@@ -31,8 +31,8 @@ function code_snippets_get_menu_slug( $menu = '' ) {
 
 /**
  * Fetch the URL to a snippets admin menu
- * @param string $menu The menu to retrieve the URL to
- * @return string The menu's URL
+ * @param  string $menu The menu to retrieve the URL to
+ * @return string       The menu's URL
  */
 function code_snippets_get_menu_url( $menu = '', $context = 'self' ) {
 	$slug = code_snippets_get_menu_slug( $menu );
@@ -49,8 +49,8 @@ function code_snippets_get_menu_url( $menu = '', $context = 'self' ) {
 
 /**
  * Fetch the admin menu hook for a snippets menu
- * @param string $menu The menu to retrieve the hook for
- * @return string The menu's hook
+ * @param  string $menu The menu to retrieve the hook for
+ * @return string       The menu's hook
  */
 function code_snippets_get_menu_hook( $menu = '' ) {
 	$slug = code_snippets_get_menu_slug( $menu );
@@ -59,8 +59,8 @@ function code_snippets_get_menu_hook( $menu = '' ) {
 
 /**
  * Fetch the admin menu slug for a snippets menu
- * @param integer $id The snippet
- * @return string The URL to the edit snippet page for that snippet
+ * @param  integer $snippet_id The snippet
+ * @return string              The URL to the edit snippet page for that snippet
  */
 function get_snippet_edit_url( $snippet_id ) {
 	return add_query_arg(

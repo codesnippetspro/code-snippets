@@ -4,7 +4,6 @@
  * Contains the class for handling the snippets table
  *
  * @package	Code_Snippets
- * @subpackage Administration
  */
 
 /* The WP_List_Table base class is not included by default, so we need to load it */
@@ -73,11 +72,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Define the output of all columns that have no callback function
 	 *
-	 * @param  object $snippet	   The snippet object used for the current row
-	 * @param  string $column_name The name of the column being printed
-	 * @return string			   The content of the column to output
+	 * @param  Snippet $snippet	    The snippet used for the current row
+	 * @param  string  $column_name The name of the column being printed
+	 * @return string			    The content of the column to output
 	 */
-	function column_default( $snippet, $column_name ) {
+	function column_default( Snippet $snippet, $column_name ) {
 
 		switch ( $column_name ) {
 			case 'id':
@@ -93,10 +92,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Build the content of the snippet name column
 	 *
-	 * @param  object $snippet The snippet object being used for the current row
-	 * @return string		   The content of the column to output
+	 * @param  Snippet $snippet The snippet being used for the current row
+	 * @return string		    The content of the column to output
 	 */
-	function column_name( $snippet ) {
+	function column_name( Snippet $snippet ) {
 
 		/* Build row actions */
 
@@ -168,10 +167,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Builds the checkbox column content
 	 *
-	 * @param  object $snippet The snippet object being used for the current row
-	 * @return string		   The column content to be printed
+	 * @param  Snippet $snippet The snippet being used for the current row
+	 * @return string		    The column content to be printed
 	 */
-	function column_cb( $snippet ) {
+	function column_cb( Snippet $snippet ) {
 		$out = sprintf( '<input type="checkbox" name="ids[]" value="%s" />', $snippet->id );
 		return apply_filters( 'code_snippets/list_table/column_cb', $out, $snippet );
 	}
@@ -181,9 +180,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * This function is used once for each row
 	 *
 	 * @since 2.0
-	 * @param object $snippet
+	 *
+	 * @param  Snippet $snippet The snippet being used for the current row
+	 * @return string           The column output
 	 */
-	function column_tags( $snippet ) {
+	function column_tags( Snippet $snippet ) {
 
 		/* Return a placeholder if there are no tags */
 		if ( empty( $snippet->tags ) ) {
@@ -235,8 +236,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Define the columns that are hidden by default
 	 *
-	 * @param  unknown $result
-	 * @return unknown
+	 * @param  mixed       $result
+	 * @return mixed|array
 	 */
 	function get_default_hidden_columns( $result ) {
 		return $result ? $result : array( 'id' );
@@ -715,9 +716,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Callback for search function
+	 * @param Snippet $snippet The snippet being filtered
 	 * @ignore
 	 */
-	private function search_callback( $snippet ) {
+	private function search_callback( Snippet $snippet ) {
 		static $term;
 		if ( is_null( $term ) ) {
 			$term = stripslashes( $_REQUEST['s'] );
@@ -742,9 +744,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Callback for filtering snippets by tag
+	 * @param Snippet $snippet The snippet being filtered
 	 * @ignore
 	 */
-	private function tags_filter_callback( $snippet ) {
+	private function tags_filter_callback( Snippet $snippet ) {
 		$tags = explode( ',', $_GET['tag'] );
 
 		foreach ( $tags as $tag ) {
@@ -805,7 +808,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Outputs content for a single row of the table
 	 *
-	 * @param object $snippet The snippet being used for the current row
+	 * @param Snippet $snippet The snippet being used for the current row
 	 */
 	function single_row( $snippet ) {
 		static $row_class = '';

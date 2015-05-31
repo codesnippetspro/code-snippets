@@ -26,21 +26,21 @@ class Code_Snippets_Export {
 	/**
 	 * The export file format.
 	 * Either 'xml' or 'php'
-	 * @var object
+	 * @var string
 	 */
 	protected $format;
 
 	/**
 	 * The DOM document.
 	 * Only used in XML exports
-	 * @var object
+	 * @var DOMDocument
 	 */
 	protected $dom;
 
 	/**
 	 * The DOM document root element
 	 * Only used in XML exports
-	 * @var object
+	 * @var DOMNode
 	 */
 	protected $root;
 
@@ -133,8 +133,8 @@ class Code_Snippets_Export {
 		if ( 'xml' === $this->format ) {
 
 			/* Create the root element */
-			$this->root = $this->dom->createElement( 'snippets' );
-			$this->root = $this->dom->appendChild( $this->root );
+			$root_element = $this->dom->createElement( 'snippets' );
+			$this->root = $this->dom->appendChild( $root_element );
 		}
 
 		/* Loop through the snippets */
@@ -158,8 +158,8 @@ class Code_Snippets_Export {
 	 * @param array $snippet
 	 */
 	protected function do_item( $snippet ) {
-		$item = $this->dom->createElement( 'snippet' );
-		$item = $this->root->appendChild( $item );
+		$item_element = $this->dom->createElement( 'snippet' );
+		$item = $this->root->appendChild( $item_element );
 
 		/* Set the scope attribute */
 		if ( ! in_array( 'scope', $this->exclude_fields ) ) {
@@ -174,8 +174,8 @@ class Code_Snippets_Export {
 			}
 
 			/* Create a new element for each field */
-			$field = $this->dom->createElement( $field_name );
-			$field = $item->appendChild( $field );
+			$field_element = $this->dom->createElement( $field_name );
+			$field = $item->appendChild( $field_element );
 
 			/* Add the field content */
 			$value = $this->dom->createTextNode( $field_value );

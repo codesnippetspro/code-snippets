@@ -88,7 +88,7 @@ function code_snippets_build_tags_array( $tags ) {
  *
  * @param  int          $id        The ID of the snippet to retrieve. 0 to build a new snippet
  * @param  boolean|null $multisite Retrieve a multisite-wide or site-wide snippet?
- * @return object                  A single snippet object
+ * @return Snippet                 A single snippet object
  */
 function get_snippet( $id = 0, $multisite = null ) {
 	global $wpdb;
@@ -119,7 +119,7 @@ function get_snippet( $id = 0, $multisite = null ) {
  *
  * @uses $wpdb to set the snippet's active status
  *
- * @param array        $id        The ID of the snippet to activate
+ * @param integer      $id        The ID of the snippet to activate
  * @param boolean|null $multisite Are the snippets multisite-wide or site-wide?
  */
 function activate_snippet( $id, $multisite = null ) {
@@ -144,7 +144,7 @@ function activate_snippet( $id, $multisite = null ) {
  *
  * @uses $wpdb to set the snippets' active status
  *
- * @param array        $id        The ID of the snippet to deactivate
+ * @param integer      $id        The ID of the snippet to deactivate
  * @param boolean|null $multisite Are the snippets multisite-wide or site-wide?
  */
 function deactivate_snippet( $id, $multisite = null ) {
@@ -211,7 +211,7 @@ function delete_snippet( $id, $multisite = null ) {
  * @uses $wpdb to update/add the snippet to the database
  * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
  *
- * @param  object       $snippet   The snippet to add/update to the database
+ * @param  Snippet      $snippet   The snippet to add/update to the database
  * @param  boolean|null $multisite Save the snippet to the site-wide or network-wide table?
  * @return int                     The ID of the snippet
  */
