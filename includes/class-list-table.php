@@ -101,7 +101,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/* Build row actions */
 
 		$actions = array();
-		$is_network = get_current_screen()->is_network;
+		$is_network = get_current_screen()->in_admin( 'network' );
 		$link_format = '<a href="%2$s">%1$s</a>';
 
 		if ( $snippet->active ) {
@@ -248,7 +248,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @return array An array of menu items with the ID paired to the label
 	 */
 	function get_bulk_actions() {
-		$is_network = get_current_screen()->is_network;
+		$is_network = get_current_screen()->in_admin( 'network' );
 		$actions = array(
 			'activate-selected'   => $is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
 			'deactivate-selected' => $is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
@@ -347,8 +347,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	function extra_tablenav( $which ) {
 		global $status, $wpdb;
 
-		$screen = get_current_screen();
-
 		if ( 'top' === $which ) {
 
 			/* Tags dropdown filter */
@@ -446,7 +444,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @uses add_query_arg() to append the results to the current URI
 	 */
 	function process_bulk_actions() {
-		$network = get_current_screen()->is_network;
+		$network = get_current_screen()->in_admin( 'network' );
 
 		if ( isset( $_GET['action'], $_GET['id'] ) ) {
 
@@ -548,13 +546,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
 
 		$screen = get_current_screen();
+		$is_network = $screen->in_admin( 'network' );
 		$user = get_current_user_id();
 
 		/* First, lets process the bulk actions */
 		$this->process_bulk_actions();
 
 		$snippets = array(
-			'all' => apply_filters( 'code_snippets/list_table/get_snippets', get_snippets( $screen->is_network ) ),
+			'all' => apply_filters( 'code_snippets/list_table/get_snippets', get_snippets( $screen->in_admin( 'network' ) ) ),
 			'active' => array(),
 			'inactive' => array(),
 			'recently_activated' => array(),
@@ -580,7 +579,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		/* Clear recently activated snippets older than a week */
-		$recently_activated = $screen->is_network ?
+		$recently_activated = $is_network ?
 			get_site_option( 'recently_activated_snippets', array() ) :
 			get_option( 'recently_activated_snippets', array() );
 
@@ -591,7 +590,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 		}
 
-		$screen->is_network ?
+		$is_network ?
 			update_site_option( 'recently_activated_snippets', $recently_activated ) :
 			update_option( 'recently_activated_snippets', $recently_activated );
 

@@ -36,7 +36,7 @@ function get_snippets_table_name( $multisite = null ) {
 
 	/* If $multisite is null, try to base it on the current admin page */
 	if ( ! isset( $multisite ) && function_exists( 'get_current_screen' ) ) {
-		$multisite = get_current_screen()->is_network;
+		$multisite = get_current_screen()->in_admin( 'network' );
 	}
 
 	/* If the first parameter is a string, assume it is a table name */
