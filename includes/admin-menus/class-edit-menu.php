@@ -73,6 +73,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Save the posted snippet to the database
 	 * @uses wp_redirect() to pass the results to the page
+	 * @uses save_snippet() to save the snippet to the database
 	 */
 	private function save_posted_snippet() {
 
@@ -83,13 +84,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Save the snippet if one has been submitted */
 		if ( isset( $_POST['save_snippet'] ) || isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
-
-			/* Activate or deactivate the snippet before saving if we clicked the button */
-			if ( isset( $_POST['save_snippet_activate'] ) ) {
-				$_POST['snippet_active'] = 1;
-			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
-				$_POST['snippet_active'] = 0;
-			}
 
 			/* Build snippet object from fields with 'snippet_' prefix */
 			$snippet = new Snippet();
@@ -102,25 +96,15 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 				}
 			}
 
+			/* Activate or deactivate the snippet before saving if we clicked the button */
+			if ( isset( $_POST['save_snippet_activate'] ) ) {
+				$snippet->active = 1;
+			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
+				$snippet->active = 0;
+			}
+
 			/* Save the snippet to the database */
 			$snippet_id = save_snippet( $snippet );
-
-			/* Update the shared network snippets if necessary */
-			if ( get_current_screen()->is_network && $snippet_id && $snippet_id > 0 ) {
-				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
-
-				if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
-
-					/* Add the snippet ID to the array if it isn't already */
-					if ( ! in_array( $snippet_id, $shared_snippets ) ) {
-						$shared_snippets[] = $snippet_id;
-					}
-				} else {
-					/* Remove the snippet ID from the array */
-					$shared_snippets = array_diff( $shared_snippets, array( $$snippet_id ) );
-				}
-				update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
-			}
 
 			/* If the saved snippet ID is invalid, display an error message */
 			if ( ! $snippet_id || $snippet_id < 1 ) {
