@@ -76,7 +76,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @param  string  $column_name The name of the column being printed
 	 * @return string			    The content of the column to output
 	 */
-	protected function column_default( Snippet $snippet, $column_name ) {
+	protected function column_default( $snippet, $column_name ) {
 
 		switch ( $column_name ) {
 			case 'id':
@@ -95,7 +95,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @param  Snippet $snippet The snippet being used for the current row
 	 * @return string		    The content of the column to output
 	 */
-	protected function column_name( Snippet $snippet ) {
+	protected function column_name( $snippet ) {
 		$actions = array();
 		$link_format = '<a href="%2$s">%1$s</a>';
 
@@ -166,7 +166,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @param  Snippet $snippet The snippet being used for the current row
 	 * @return string		    The column content to be printed
 	 */
-	protected function column_cb( Snippet $snippet ) {
+	protected function column_cb( $snippet ) {
 		$out = sprintf( '<input type="checkbox" name="ids[]" value="%s" />', $snippet->id );
 		return apply_filters( 'code_snippets/list_table/column_cb', $out, $snippet );
 	}
@@ -180,7 +180,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @param  Snippet $snippet The snippet being used for the current row
 	 * @return string           The column output
 	 */
-	protected function column_tags( Snippet $snippet ) {
+	protected function column_tags( $snippet ) {
 
 		/* Return a placeholder if there are no tags */
 		if ( empty( $snippet->tags ) ) {
@@ -235,7 +235,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @param  mixed       $result
 	 * @return mixed|array
 	 */
-	protected function get_default_hidden_columns( $result ) {
+	public function get_default_hidden_columns( $result ) {
 		return $result ? $result : array( 'id' );
 	}
 
@@ -722,7 +722,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @param  Snippet $snippet The snippet being filtered
 	 * @return bool             The result of the filter
 	 */
-	private function search_callback( Snippet $snippet ) {
+	private function search_callback( $snippet ) {
 		static $term;
 		if ( is_null( $term ) ) {
 			$term = stripslashes( $_REQUEST['s'] );
@@ -753,7 +753,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @param  Snippet $snippet The snippet being filtered
 	 * @return bool             The result of the filter
 	 */
-	private function tags_filter_callback( Snippet $snippet ) {
+	private function tags_filter_callback( $snippet ) {
 		$tags = explode( ',', $_GET['tag'] );
 
 		foreach ( $tags as $tag ) {
@@ -796,7 +796,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @param Snippet $snippet The snippet being used for the current row
 	 */
-	public function single_row( Snippet $snippet ) {
+	public function single_row( $snippet ) {
 		$row_class = ( $snippet->active ? 'active' : 'inactive' );
 		$row_class .= sprintf( ' %s-scope', $snippet->scope_name );
 
