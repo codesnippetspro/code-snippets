@@ -73,6 +73,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Save the posted snippet to the database
 	 * @uses wp_redirect() to pass the results to the page
+	 * @uses save_snippet() to save the snippet to the database
 	 */
 	private function save_posted_snippet() {
 
@@ -84,22 +85,22 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		/* Save the snippet if one has been submitted */
 		if ( isset( $_POST['save_snippet'] ) || isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
 
-			/* Activate or deactivate the snippet before saving if we clicked the button */
-			if ( isset( $_POST['save_snippet_activate'] ) ) {
-				$_POST['snippet_active'] = 1;
-			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
-				$_POST['snippet_active'] = 0;
-			}
-
 			/* Build snippet object from fields with 'snippet_' prefix */
-			$snippet = array();
+			$snippet = new Snippet();
 			foreach ( $_POST as $field => $value ) {
 				if ( 'snippet_' === substr( $field, 0, 8 ) ) {
 
 					/* Remove 'snippet_' prefix from field name */
 					$field = substr( $field, 8 );
-					$snippet[ $field ] = stripslashes( $value );
+					$snippet->$field = stripslashes( $value );
 				}
+			}
+
+			/* Activate or deactivate the snippet before saving if we clicked the button */
+			if ( isset( $_POST['save_snippet_activate'] ) ) {
+				$snippet->active = 1;
+			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
+				$snippet->active = 0;
 			}
 
 			/* Save the snippet to the database */

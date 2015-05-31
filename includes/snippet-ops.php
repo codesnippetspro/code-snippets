@@ -223,32 +223,29 @@ function delete_snippet( $id, $multisite = null ) {
  * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
  *
  * @param  Snippet   $snippet   The snippet to add/update to the database
- * @param  bool|null $multisite Save the snippet to the site-wide or network-wide table?
  * @return int                  The ID of the snippet
  */
-function save_snippet( $snippet, $multisite = null ) {
+function save_snippet( Snippet $snippet ) {
 	/** @var wpdb $wpdb */
 	global $wpdb;
-	$table = get_snippets_table_name( $multisite );
 
-	if ( ! $snippet instanceof Snippet ) {
-		$snippet = new Snippet( $snippet );
-	}
+	$table = get_snippets_table_name( $snippet->network );
 
 	/* Convert snippet to array */
 	$data = $snippet->get_fields();
 
-	/* Convert tags to string */
-	$data['tags'] = implode( ', ', $data['tags'] );
-
 	/* Create a new snippet if the ID is not set */
 	if ( 0 == $snippet->id ) {
+
 		$wpdb->insert( $table, $data, '%s' );
 		$snippet->id = $wpdb->insert_id;
+
 		do_action( 'code_snippets/create_snippet', $snippet, $table );
 	} else {
+
 		/* Otherwise update the snippet data */
 		$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) );
+
 		do_action( 'code_snippets/update_snippet', $snippet, $table );
 	}
 
@@ -280,8 +277,11 @@ function import_snippets( $file, $multisite = null ) {
 	$exported_snippets = array();
 
 	/* Loop through all snippets */
+
+	/** @var DOMElement $snippet_xml */
 	foreach ( $snippets_xml as $snippet_xml ) {
 		$snippet = new Snippet();
+		$snippet->network = $multisite;
 
 		/* Build a snippet object by looping through the field names */
 		foreach ( $fields as $field_name ) {
@@ -302,7 +302,7 @@ function import_snippets( $file, $multisite = null ) {
 		}
 
 		/* Save the snippet and increase the counter if successful */
-		if ( $snippet_id = save_snippet( $snippet, $multisite ) ) {
+		if ( $snippet_id = save_snippet( $snippet ) ) {
 			$exported_snippets[] = $snippet_id;
 		}
 	}
@@ -352,7 +352,6 @@ function execute_snippet( $code ) {
 
 	ob_start();
 	$result = eval( $code );
-	$output = ob_get_contents();
 	ob_end_clean();
 
 	return $result;
