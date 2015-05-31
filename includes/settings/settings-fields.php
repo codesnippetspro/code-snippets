@@ -1,12 +1,16 @@
 <?php
 
 /**
- * This file handles outputting the settings fields
+ * This file handles rendering the settings fields
+ *
+ * @since 2.0.0
  * @package Code_Snippets
  */
 
 /**
  * Render a checkbox field for a setting
+ *
+ * @since 2.0.0
  * @param array $atts The setting field's attributes
  */
 function code_snippets_checkbox_field( $atts ) {
@@ -34,6 +38,8 @@ function code_snippets_checkbox_field( $atts ) {
 
 /**
  * Render a number select field for an editor setting
+ *
+ * @since 2.0.0
  * @param array $atts The setting field's attributes
  */
 function code_snippets_number_field( $atts ) {

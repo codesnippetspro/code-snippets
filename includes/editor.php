@@ -2,9 +2,10 @@
 
 /**
  * Get the attributes for the code editor
- * @param array $override_atts Pass an array of attributes to override the saved ones
- * @param boolean $json_encode Encode the data as JSON
- * @return array|string Array if $json_encode is false, JSON string if it is true
+ *
+ * @param  array        $override_atts Pass an array of attributes to override the saved ones
+ * @param  bool         $json_encode   Encode the data as JSON
+ * @return array|string                Array if $json_encode is false, JSON string if it is true
  */
 function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 	$settings = code_snippets_get_settings();
@@ -19,7 +20,6 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 
 	foreach ( $fields as $field ) {
 		$saved_atts[ $field['codemirror'] ] = $settings[ $field['id'] ];
-
 	}
 
 	$atts = wp_parse_args( $override_atts, $saved_atts );
@@ -41,6 +41,7 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 
 /**
  * Registers and loads the CodeMirror library
+ *
  * @uses wp_enqueue_style() to add the stylesheets to the queue
  * @uses wp_enqueue_script() to add the scripts to the queue
  */

@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * This file handles the editor preview setting
+ *
+ * @since 2.0
+ * @package Code_Snippets
+ */
+
+/**
+ * Load the CSS and JavaScript for the editor preview field
+ *
+ * @param string $hook The current page hook
+ */
 function code_snippets_editor_settings_preview_assets( $hook ) {
 
 	/* Only load on the settings page */
@@ -66,6 +78,9 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 	echo '</select>';
 }
 
+/**
+ * Render the editor preview setting
+ */
 function code_snippets_settings_editor_preview() {
 
 	$example_content = "

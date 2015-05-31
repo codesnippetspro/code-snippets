@@ -61,6 +61,9 @@ define( 'CODE_SNIPPETS_FILE', __FILE__ );
  */
 foreach ( array(
 
+	/* Snippet class */
+	'class-snippet.php',
+
 	/* Database operations functions */
 	'db.php',
 
@@ -75,6 +78,9 @@ foreach ( array(
 
 	/* CodeMirror editor functions */
 	'editor.php',
+
+	/* General functions */
+	'functions.php',
 
 	/* General Administration functions */
 	'contextual-help.php',

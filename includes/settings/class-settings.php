@@ -43,6 +43,9 @@ class Code_Snippets_Settings {
 		}
 	}
 
+	/**
+	 * Define the settings fields
+	 */
 	private static function set_fields() {
 
 		self::$fields['general'] = array(

@@ -61,7 +61,7 @@ class Code_Snippets_Admin_Menu {
 
 	/**
 	 * Retrieve a result message based on a posted status
-	 * @return string|boolean The result message if a valid status was recieved, otherwise false
+	 * @return string|bool The result message if a valid status was recieved, otherwise false
 	 */
 	protected function get_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
 

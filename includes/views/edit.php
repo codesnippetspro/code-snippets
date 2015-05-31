@@ -3,8 +3,8 @@
 /**
  * HTML code for the Add New/Edit Snippet page
  *
- * @package    Code_Snippets
- * @subpackage Edit
+ * @package Code_Snippets
+ * @subpackage Views
  */
 
 /* Bail if accessed directly */
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $pagenow;
 
-$table   = get_snippets_table_name();
+$table = get_snippets_table_name();
 $edit_id = code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ? absint( $_REQUEST['id'] ) : 0;
 $snippet = get_snippet( $edit_id );
 
@@ -57,7 +57,7 @@ $snippet = get_snippet( $edit_id );
 		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 
 		<?php
-		/* Allow addon plugins to add fields and content to this page */
+		/* Allow plugins to add fields and content to this page */
 		do_action( 'code_snippets/admin/single', $snippet );
 
 		/* Add a nonce for security */

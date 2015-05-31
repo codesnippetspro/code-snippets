@@ -13,6 +13,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			__( 'Edit Snippet', 'code-snippets' ),
 			__( 'Edit Snippet', 'code-snippets' )
 		);
+
+		add_action( 'admin_init', array( $this, 'remove_incompatible_codemirror' ) );
 	}
 
 	/**
@@ -61,7 +63,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_scope_setting' ) );
 		}
 
-		if ( get_current_screen()->is_network ) {
+		if ( get_current_screen()->in_admin( 'network' ) ) {
 			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_multisite_sharing_setting' ) );
 		}
 
@@ -70,7 +72,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Save the posted snippet to the database
-	 * @access private
 	 * @uses wp_redirect() to pass the results to the page
 	 */
 	private function save_posted_snippet() {
@@ -90,8 +91,19 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 				$_POST['snippet_active'] = 0;
 			}
 
+			/* Build snippet object from fields with 'snippet_' prefix */
+			$snippet = array();
+			foreach ( $_POST as $field => $value ) {
+				if ( 'snippet_' === substr( $field, 0, 8 ) ) {
+
+					/* Remove 'snippet_' prefix from field name */
+					$field = substr( $field, 8 );
+					$snippet[ $field ] = stripslashes( $value );
+				}
+			}
+
 			/* Save the snippet to the database */
-			$snippet_id = save_snippet( stripslashes_deep( $_POST ) );
+			$snippet_id = save_snippet( $snippet );
 
 			/* Update the shared network snippets if necessary */
 			if ( get_current_screen()->is_network && $snippet_id && $snippet_id > 0 ) {
@@ -150,7 +162,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Add a description editor to the single snippet page
-	 * @access private
 	 * @param object $snippet The snippet being used for this page
 	 */
 	function render_description_editor( $snippet ) {
@@ -188,7 +199,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		</label>
 
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
-			placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>" value="<?php echo implode( ', ', $snippet->tags ); ?>" />
+			placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>" value="<?php echo $snippet->tags; ?>" />
 
 		<script type="text/javascript">
 		jQuery('#snippet_tags').tagit({
@@ -243,9 +254,36 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		<?php
 	}
 
+	/*
+	 * Print the status and error messages
+	 */
+	protected function print_messages() {
+
+		/* Check if an error exists, and if so, build the message */
+		$error = $this->get_result_message(
+			array( 'error' => __( 'An error occurred when saving the snippet.', 'code-snippets' ) ),
+			'result', 'error'
+		);
+
+		/* Output the error message if it exists, otherwise try to output a result message */
+		if ( $error ) {
+			echo $error;
+		} else {
+			echo $this->get_result_message(
+				array(
+					'added' => __( 'Snippet <strong>added</strong>.', 'code-snippets' ),
+					'updated' => __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
+					'added-and-activated' => __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ),
+					'updated-and-activated' => __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ),
+					'updated-and-deactivated' => __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ),
+				)
+			);
+		}
+	}
+
 	/**
 	 * Registers and loads the code editor's assets
-	 * @access private
+	 *
 	 * @uses wp_enqueue_style() to add the stylesheets to the queue
 	 * @uses wp_enqueue_script() to add the scripts to the queue
 	 */
@@ -279,29 +317,16 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
-	 * Print the status and error messages
+	 * Remove the old CodeMirror version used by the Debug Bar Console plugin
+	 * that is messing up the snippet editor
 	 */
-	protected function print_messages() {
+	function remove_incompatible_codemirror() {
+		global $pagenow;
 
-		/* Check if an error exists, and if so, build the message */
-		$error = $this->get_result_message(
-			array( 'error' => __( 'An error occurred when saving the snippet.', 'code-snippets' ) ),
-			'result', 'error'
-		);
+		/* Try to discern if we are on the single snippet page as best as we can at this early time */
+		is_admin() && 'admin.php' === $pagenow && isset( $_GET['page'] ) && code_snippets_get_menu_slug( 'edit' ) === $_GET['page']
 
-		/* Output the error message if it exists, otherwise try to output a result message */
-		if ( $error ) {
-			echo $error;
-		} else {
-			echo $this->get_result_message(
-				array(
-					'added' => __( 'Snippet <strong>added</strong>.', 'code-snippets' ),
-					'updated' =>  __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
-					'added-and-activated' => __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ),
-					'updated-and-activated' => __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ),
-					'updated-and-deactivated' => __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ),
-				)
-			);
-		}
+		/* Remove the action and stop all Debug Bar Console scripts */
+		&& remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );
 	}
 }
