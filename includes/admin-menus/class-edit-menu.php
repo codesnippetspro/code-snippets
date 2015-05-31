@@ -14,7 +14,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			__( 'Edit Snippet', 'code-snippets' )
 		);
 
-		add_action( 'admin_init', array( $this, 'remove_incompadible_codemirror' ) );
+		add_action( 'admin_init', array( $this, 'remove_incompatible_codemirror' ) );
 	}
 
 	/**
@@ -104,23 +104,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 			/* Save the snippet to the database */
 			$snippet_id = save_snippet( $snippet );
-
-			/* Update the shared network snippets if necessary */
-			if ( get_current_screen()->in_admin( 'network' ) && $snippet_id && $snippet_id > 0 ) {
-				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
-
-				if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
-
-					/* Add the snippet ID to the array if it isn't already */
-					if ( ! in_array( $snippet_id, $shared_snippets ) ) {
-						$shared_snippets[] = $snippet_id;
-					}
-				} else {
-					/* Remove the snippet ID from the array */
-					$shared_snippets = array_diff( $shared_snippets, array( $snippet_id ) );
-				}
-				update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
-			}
 
 			/* If the saved snippet ID is invalid, display an error message */
 			if ( ! $snippet_id || $snippet_id < 1 ) {
@@ -235,26 +218,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
-	 * Render the setting for shared network snippets
-	 * @param object $snippet The snippet currently being edited
-	 */
-	function render_multisite_sharing_setting( $snippet ) {
-		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
-		?>
-
-		<tr class="snippet-sharing-setting">
-			<th scope="row"><?php _e( 'Sharing', 'code-snippets' ) ?></th>
-			<td><label for="snippet_sharing">
-				<input type="checkbox" name="snippet_sharing"
-				<?php checked( in_array( $snippet->id, $shared_snippets ) ); ?>>
-				<?php _e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
-			</label></td>
-		</tr>
-
-		<?php
-	}
-
-	/**
 	 * Print the status and error messages
 	 */
 	protected function print_messages() {
@@ -320,7 +283,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 * Remove the old CodeMirror version used by the Debug Bar Console plugin
 	 * that is messing up the snippet editor
 	 */
-	function remove_incompadible_codemirror() {
+	function remove_incompatible_codemirror() {
 		global $pagenow;
 
 		/* Try to discern if we are on the single snippet page as best as we can at this early time */

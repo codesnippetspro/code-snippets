@@ -108,10 +108,10 @@ function create_code_snippets_table( $table_name ) {
 	/* Create the database table */
 	$sql = "CREATE TABLE $table_name (
 				id          bigint(20) NOT NULL AUTO_INCREMENT,
-				name        tinytext NOT NULL default '',
-				description text NOT NULL default '',
-				code        longtext NOT NULL default '',
-				tags        longtext NOT NULL default '',
+				name        tinytext   NOT NULL default '',
+				description text       NOT NULL default '',
+				code        longtext   NOT NULL default '',
+				tags        longtext   NOT NULL default '',
 				scope       tinyint(1) NOT NULL default 0,
 				active      tinyint(1) NOT NULL default 0,
 				PRIMARY KEY  (id)
