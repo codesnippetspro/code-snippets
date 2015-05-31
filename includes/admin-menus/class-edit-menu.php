@@ -63,6 +63,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_scope_setting' ) );
 		}
 
+		if ( get_current_screen()->in_admin( 'network' ) ) {
+			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_multisite_sharing_setting' ) );
+		}
+
 		$this->save_posted_snippet();
 	}
 
@@ -88,18 +92,35 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			}
 
 			/* Build snippet object from fields with 'snippet_' prefix */
-			$snippet = array();
+			$snippet = new Snippet();
 			foreach ( $_POST as $field => $value ) {
 				if ( 'snippet_' === substr( $field, 0, 8 ) ) {
 
 					/* Remove 'snippet_' prefix from field name */
 					$field = substr( $field, 8 );
-					$snippet[ $field ] = stripslashes( $value );
+					$snippet->$field = stripslashes( $value );
 				}
 			}
 
 			/* Save the snippet to the database */
 			$snippet_id = save_snippet( $snippet );
+
+			/* Update the shared network snippets if necessary */
+			if ( get_current_screen()->is_network && $snippet_id && $snippet_id > 0 ) {
+				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
+
+				if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
+
+					/* Add the snippet ID to the array if it isn't already */
+					if ( ! in_array( $snippet_id, $shared_snippets ) ) {
+						$shared_snippets[] = $snippet_id;
+					}
+				} else {
+					/* Remove the snippet ID from the array */
+					$shared_snippets = array_diff( $shared_snippets, array( $$snippet_id ) );
+				}
+				update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
+			}
 
 			/* If the saved snippet ID is invalid, display an error message */
 			if ( ! $snippet_id || $snippet_id < 1 ) {
@@ -202,8 +223,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			__( 'Only run on site front-end', 'code-snippets' ),
 		);
 
-		echo '<div class="snippet-scope">';
-		printf( '<label for="snippet_scope"><h3>%s</h3></label>', __( 'Scope', 'code-snippets' ) );
+		echo '<tr class="snippet-scope">';
+		echo '<th scope="row">' . __( 'Scope', 'code-snippets' ) . '</th><td>';
 
 		foreach ( $scopes as $scope => $label ) {
 			printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope );
@@ -211,10 +232,30 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			echo "> $label</div>";
 		}
 
-		echo '</div>';
+		echo '</td></tr>';
 	}
 
 	/**
+	 * Render the setting for shared network snippets
+	 * @param object $snippet The snippet currently being edited
+	 */
+	function render_multisite_sharing_setting( $snippet ) {
+		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
+		?>
+
+		<tr class="snippet-sharing-setting">
+			<th scope="row"><?php _e( 'Sharing', 'code-snippets' ) ?></th>
+			<td><label for="snippet_sharing">
+				<input type="checkbox" name="snippet_sharing"
+				<?php checked( in_array( $snippet->id, $shared_snippets ) ); ?>>
+				<?php _e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
+			</label></td>
+		</tr>
+
+		<?php
+	}
+
+	/*
 	 * Print the status and error messages
 	 */
 	protected function print_messages() {
