@@ -63,10 +63,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_scope_setting' ) );
 		}
 
-		if ( get_current_screen()->in_admin( 'network' ) ) {
-			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_multisite_sharing_setting' ) );
-		}
-
 		$this->save_posted_snippet();
 	}
 
@@ -162,9 +158,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Add a description editor to the single snippet page
-	 * @param object $snippet The snippet being used for this page
+	 * @param Snippet $snippet The snippet being used for this page
 	 */
-	function render_description_editor( $snippet ) {
+	function render_description_editor( Snippet $snippet ) {
 		$settings = code_snippets_get_settings();
 		$settings = $settings['description_editor'];
 		$media_buttons = $settings['media_buttons'];
@@ -190,9 +186,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	* Render the interface for editing snippet tags
-	* @param object $snippet the snippet currently being edited
+	* @param Snippet $snippet the snippet currently being edited
 	*/
-	function render_tags_editor( $snippet ) {
+	function render_tags_editor( Snippet $snippet ) {
 		?>
 		<label for="snippet_tags" style="cursor: auto;">
 			<h3><?php esc_html_e( 'Tags', 'code-snippets' ); ?></h3>
@@ -213,17 +209,18 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Render the snippet scope setting
-	 * @param object $snippet the snippet currently being edited
+	 * @param Snippet $snippet the snippet currently being edited
 	 */
-	function render_scope_setting( $snippet ) {
+	function render_scope_setting( Snippet $snippet ) {
+
 		$scopes = array(
 			__( 'Run snippet everywhere', 'code-snippets' ),
 			__( 'Only run in adminstration area', 'code-snippets' ),
 			__( 'Only run on site front-end', 'code-snippets' ),
 		);
 
-		echo '<tr class="snippet-scope">';
-		echo '<th scope="row">' . __( 'Scope', 'code-snippets' ) . '</th><td>';
+		echo '<div class="snippet-scope">';
+		printf( '<label for="snippet_scope"><h3>%s</h3></label>', __( 'Scope', 'code-snippets' ) );
 
 		foreach ( $scopes as $scope => $label ) {
 			printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope );
@@ -231,7 +228,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			echo "> $label</div>";
 		}
 
-		echo '</td></tr>';
+		echo '</div>';
 	}
 
 	/**
