@@ -59,8 +59,8 @@ function code_snippets_get_menu_hook( $menu = '' ) {
 
 /**
  * Fetch the admin menu slug for a snippets menu
- * @param  integer $snippet_id The snippet
- * @return string              The URL to the edit snippet page for that snippet
+ * @param  int    $snippet_id The snippet
+ * @return string             The URL to the edit snippet page for that snippet
  */
 function get_snippet_edit_url( $snippet_id ) {
 	return add_query_arg(

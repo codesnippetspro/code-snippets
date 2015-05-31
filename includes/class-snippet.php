@@ -3,7 +3,8 @@
 class Snippet {
 
 	/**
-	 * Holds the snippet fields. Initialized with default values
+	 * Holds the snippet fields that are saved to the database.
+	 * Initialized with default values
 	 * @var array
 	 */
 	private $fields = array(
@@ -14,6 +15,14 @@ class Snippet {
 		'tags' => '',
 		'scope' => 0,
 		'active' => 0,
+	);
+
+	/**
+	 * Holds extra snippet metadata that is not saved to the database
+	 * @var array
+	 */
+	private $extra = array(
+		'network' => false,
 	);
 
 	/**
@@ -57,10 +66,10 @@ class Snippet {
 	/**
 	 * Check if a field is set
 	 * @param  string  $field The field name
-	 * @return boolean        Whether the field is set
+	 * @return bool           Whether the field is set
 	 */
 	public function __isset( $field ) {
-		return isset( $this->fields[ $field ] ) || method_exists( $this, 'get_' . $field );
+		return isset( $this->fields[ $field ] ) || isset( $this->extra[ $field ] ) || method_exists( $this, 'get_' . $field );
 	}
 
 	/**
@@ -69,12 +78,22 @@ class Snippet {
 	 * @return mixed         The field value
 	 */
 	public function __get( $field ) {
-		if ( ! isset( $this->fields[ $field ] ) && method_exists( $this, 'get_' . $field ) ) {
+
+		if ( isset( $this->fields[ $field ] ) ) {
+			return $this->fields[ $field ];
+		}
+
+		if ( isset( $this->extra[ $field ] ) ) {
+			return $this->extra[ $field ];
+		}
+
+		if ( method_exists( $this, 'get_' . $field ) ) {
 			return call_user_func( array( $this, 'get_' . $field ) );
 		}
 
-		return $this->fields[ $field ];
+		return null;
 	}
+
 
 	/**
 	 * Set a field's value
@@ -83,11 +102,18 @@ class Snippet {
 	 */
 	public function __set( $field, $value ) {
 
+		/* Check if the field value should be filtered */
 		if ( method_exists( $this, 'prepare_' . $field ) ) {
 			$value = call_user_func( array( $this, 'prepare_' . $field ), $value );
 		}
 
-		$this->fields[ $field ] = $value;
+		/* Only save the value to the $fields array if it is already present */
+		if ( isset( $this->fields[ $field ] ) ) {
+			$this->fields[ $field ] = $value;
+		} else {
+			$this->extra[ $field ] = $value;
+		}
+
 	}
 
 	/**
@@ -143,10 +169,36 @@ class Snippet {
 	}
 
 	/**
+	 * If $network is anything other than true, set it to false
+	 * @param  bool $network The provided field
+	 * @return bool          The filtered field
+	 */
+	private function prepare_network( $network ) {
+		return true === $network;
+	}
+
+	/**
 	 * Retrieve the tags in array format
 	 * @return array An array of the snippet's tags
 	 */
 	private function get_tags_array() {
 		return code_snippets_build_tags_array( $this->fields['tags'] );
+	}
+
+	/**
+	 * Retrieve the string representation of the scope
+	 * @return string The name of the scope
+	 */
+	private function get_scope_name() {
+
+		switch ( intval( $this->fields['scope'] ) ) {
+			case 1:
+				return 'admin';
+			case 2:
+				return 'frontend';
+			default:
+			case 0:
+				return 'global';
+		}
 	}
 }

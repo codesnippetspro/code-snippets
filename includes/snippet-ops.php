@@ -14,10 +14,11 @@
  * @uses $wpdb to query the database for snippets
  * @uses get_snippets_table_name() to dynamically retrieve the snippet table name
  *
- * @param  boolean|null $multisite Retrieve multisite-wide or site-wide snippets?
- * @return array                   An array of snippet objects
+ * @param  bool|null $multisite Retrieve multisite-wide or site-wide snippets?
+ * @return array                An array of snippet objects
  */
 function get_snippets( $multisite = null ) {
+	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	$table = get_snippets_table_name( $multisite );
@@ -25,6 +26,7 @@ function get_snippets( $multisite = null ) {
 
 	/* Convert snippets to snippet objects */
 	foreach ( $snippets as $index => $snippet ) {
+		$snippet['network'] = $multisite;
 		$snippets[ $index ] = new Snippet( $snippet );
 	}
 
@@ -36,6 +38,7 @@ function get_snippets( $multisite = null ) {
  * @since 2.0
  */
 function get_all_snippet_tags() {
+	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	/* Grab all tags from the database */
@@ -61,19 +64,19 @@ function get_all_snippet_tags() {
  */
 function code_snippets_build_tags_array( $tags ) {
 
-		/* If there are no tags set, return an empty array */
-		if ( empty( $tags ) ) {
-			return array();
-		}
+	/* If there are no tags set, return an empty array */
+	if ( empty( $tags ) ) {
+		return array();
+	}
 
-		/* If the tags are set as a string, convert them into an array */
-		if ( is_string( $tags ) ) {
-			$tags = str_replace( ', ', ',', $tags );
-			$tags = explode( ',', $tags );
-		}
+	/* If the tags are set as a string, convert them into an array */
+	if ( is_string( $tags ) ) {
+		$tags = str_replace( ', ', ',', $tags );
+		$tags = explode( ',', $tags );
+	}
 
-		/* If we still don't have an array, just convert whatever we do have into one */
-		return (array) $tags;
+	/* If we still don't have an array, just convert whatever we do have into one */
+	return (array) $tags;
 }
 
 /**
@@ -91,6 +94,7 @@ function code_snippets_build_tags_array( $tags ) {
  * @return Snippet                 A single snippet object
  */
 function get_snippet( $id = 0, $multisite = null ) {
+	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	$id = absint( $id );
@@ -109,6 +113,9 @@ function get_snippet( $id = 0, $multisite = null ) {
 		/* Get an empty snippet object */
 		$snippet = new Snippet();
 	}
+
+	$snippet->network = $multisite;
+
 	return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
 }
 
@@ -119,10 +126,11 @@ function get_snippet( $id = 0, $multisite = null ) {
  *
  * @uses $wpdb to set the snippet's active status
  *
- * @param integer      $id        The ID of the snippet to activate
- * @param boolean|null $multisite Are the snippets multisite-wide or site-wide?
+ * @param int       $id        The ID of the snippet to activate
+ * @param bool|null $multisite Are the snippets multisite-wide or site-wide?
  */
 function activate_snippet( $id, $multisite = null ) {
+	/** @var wpdb $wpdb */
 	global $wpdb;
 	$table = get_snippets_table_name( $multisite );
 
@@ -144,10 +152,11 @@ function activate_snippet( $id, $multisite = null ) {
  *
  * @uses $wpdb to set the snippets' active status
  *
- * @param integer      $id        The ID of the snippet to deactivate
- * @param boolean|null $multisite Are the snippets multisite-wide or site-wide?
+ * @param int       $id        The ID of the snippet to deactivate
+ * @param bool|null $multisite Are the snippets multisite-wide or site-wide?
  */
 function deactivate_snippet( $id, $multisite = null ) {
+	/** @var wpdb $wpdb */
 	global $wpdb;
 	$table = get_snippets_table_name( $multisite );
 
@@ -189,10 +198,11 @@ function deactivate_snippet( $id, $multisite = null ) {
  * @uses $wpdb to access the database
  * @uses get_snippets_table_name() to dynamically retrieve the name of the snippet table
  *
- * @param int          $id        The ID of the snippet to delete
- * @param boolean|null $multisite Delete from site-wide or network-wide table?
+ * @param int       $id        The ID of the snippet to delete
+ * @param bool|null $multisite Delete from site-wide or network-wide table?
  */
 function delete_snippet( $id, $multisite = null ) {
+	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	$wpdb->delete(
@@ -208,14 +218,16 @@ function delete_snippet( $id, $multisite = null ) {
  * Saves a snippet to the database.
  *
  * @since 2.0
+ *
  * @uses $wpdb to update/add the snippet to the database
  * @uses get_snippets_table_name() To dynamically retrieve the name of the snippet table
  *
- * @param  Snippet      $snippet   The snippet to add/update to the database
- * @param  boolean|null $multisite Save the snippet to the site-wide or network-wide table?
- * @return int                     The ID of the snippet
+ * @param  Snippet   $snippet   The snippet to add/update to the database
+ * @param  bool|null $multisite Save the snippet to the site-wide or network-wide table?
+ * @return int                  The ID of the snippet
  */
 function save_snippet( $snippet, $multisite = null ) {
+	/** @var wpdb $wpdb */
 	global $wpdb;
 	$table = get_snippets_table_name( $multisite );
 
@@ -247,11 +259,12 @@ function save_snippet( $snippet, $multisite = null ) {
  * Imports snippets from an XML file
  *
  * @since 2.0
+ *
  * @uses save_snippet() to add the snippets to the database
  *
- * @param  string       $file      The path to the XML file to import
- * @param  boolean|null $multisite Import into network-wide table or site-wide table?
- * @return array|boolean           An array of imported snippet IDs on success, false on failure
+ * @param  string     $file      The path to the XML file to import
+ * @param  bool|null  $multisite Import into network-wide table or site-wide table?
+ * @return array|bool            An array of imported snippet IDs on success, false on failure
  */
 function import_snippets( $file, $multisite = null ) {
 
@@ -305,9 +318,9 @@ function import_snippets( $file, $multisite = null ) {
  * @uses Code_Snippets_Export to export selected snippets
  * @uses get_snippets_table_name() to dynamically retrieve the name of the snippet table
  *
- * @param array        $ids       The IDs of the snippets to export
- * @param boolean|null $multisite Is the snippet a network-wide or site-wide snippet?
- * @param string       $format    Export to xml or php?
+ * @param array     $ids       The IDs of the snippets to export
+ * @param bool|null $multisite Is the snippet a network-wide or site-wide snippet?
+ * @param string    $format    Export to xml or php?
  */
 function export_snippets( $ids, $multisite = null, $format = 'xml' ) {
 	$table = get_snippets_table_name( $multisite );
@@ -349,7 +362,8 @@ function execute_snippet( $code ) {
  * Run the active snippets
  *
  * @since 2.0
- * @return boolean true on success, false on failure
+ *
+ * @return bool true on success, false on failure
  */
 function execute_active_snippets() {
 
@@ -358,6 +372,7 @@ function execute_active_snippets() {
 		return false;
 	}
 
+	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	if ( ! isset( $wpdb->snippets, $wpdb->ms_snippets ) ) {

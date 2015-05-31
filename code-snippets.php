@@ -55,6 +55,7 @@ define( 'CODE_SNIPPETS_VERSION', '2.3.0' );
  * @var string
  */
 define( 'CODE_SNIPPETS_FILE', __FILE__ );
+define( 'CODE_SNIPPETS_SAFE_MODE', true );
 
 /**
  * Load plugin files

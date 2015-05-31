@@ -29,7 +29,7 @@ function get_snippets_cap() {
  * Add the multisite capabilities to a user
  *
  * @since 2.0
- * @param integer $user_id The ID of the user to add the cap to
+ * @param int $user_id The ID of the user to add the cap to
  */
 function grant_network_snippets_cap( $user_id ) {
 
@@ -46,7 +46,7 @@ add_action( 'grant_super_admin', 'grant_network_snippets_cap' );
  * Remove the multisite capabilities from a user
  *
  * @since 2.0
- * @param integer $user_id The ID of the user to remove the cap from
+ * @param int $user_id The ID of the user to remove the cap from
  */
 function remove_network_snippets_cap( $user_id ) {
 

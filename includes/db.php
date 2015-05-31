@@ -28,8 +28,8 @@ function set_snippet_table_vars() {
  * Return the appropriate snippet table name
  *
  * @since  2.0
- * @param  string|boolean|null $multisite Retrieve the multisite table name or the site table name?
- * @return string                         The snippet table name
+ * @param  string|bool|null $multisite Retrieve the multisite table name or the site table name?
+ * @return string                      The snippet table name
  */
 function get_snippets_table_name( $multisite = null ) {
 	global $wpdb;
@@ -58,7 +58,8 @@ function get_snippets_table_name( $multisite = null ) {
  * This function will only execute once per page load, except if $redo is true
  *
  * @since 1.7.1
- * @param boolean $upgrade Run the table creation code even if the table exists
+ *
+ * @param bool $upgrade Run the table creation code even if the table exists
  */
 function create_code_snippets_tables( $upgrade = false ) {
 	global $wpdb;
