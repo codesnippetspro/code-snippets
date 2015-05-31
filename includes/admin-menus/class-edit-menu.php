@@ -63,7 +63,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_scope_setting' ) );
 		}
 
-		if ( get_current_screen()->is_network ) {
+		if ( get_current_screen()->in_admin( 'network' ) ) {
 			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_multisite_sharing_setting' ) );
 		}
 
