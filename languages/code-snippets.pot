@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-31 16:22+1000\n"
+"POT-Creation-Date: 2015-06-01 11:39+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,6 +25,76 @@ msgstr ""
 #: includes/admin-menus/class-edit-menu.php:13
 #: includes/admin-menus/class-edit-menu.php:14 includes/views/edit.php:25
 msgid "Edit Snippet"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:28
+msgid "Add New"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:29 includes/views/edit.php:31
+msgid "Add New Snippet"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:174
+#: includes/class-list-table.php:213
+msgid "Description"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:199
+#: includes/class-list-table.php:214
+msgid "Tags"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:203
+msgid "Enter a list of tags; separated by commas"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:222
+msgid "Run snippet everywhere"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:223
+msgid "Only run in adminstration area"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:224
+msgid "Only run on site front-end"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:228
+msgid "Scope"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:248
+msgid "Sharing"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:252
+msgid "Allow this snippet to be activated on individual sites on the network"
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:266
+msgid "An error occurred when saving the snippet."
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:276
+msgid "Snippet <strong>added</strong>."
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:277
+msgid "Snippet <strong>updated</strong>."
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:278
+msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:279
+msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
+msgstr ""
+
+#: includes/admin-menus/class-edit-menu.php:280
+msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
 #: includes/admin-menus/class-import-menu.php:15
@@ -246,14 +316,6 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: includes/class-list-table.php:213
-msgid "Description"
-msgstr ""
-
-#: includes/class-list-table.php:214
-msgid "Tags"
-msgstr ""
-
 #: includes/class-list-table.php:254
 msgid "Export to PHP"
 msgstr ""
@@ -319,21 +381,21 @@ msgid ""
 "\">Add New&rarr;</a>"
 msgstr ""
 
-#: includes/class-list-table.php:774
+#: includes/class-list-table.php:771
 msgid "Search results"
 msgstr ""
 
-#: includes/class-list-table.php:777
+#: includes/class-list-table.php:774
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/class-list-table.php:781
+#: includes/class-list-table.php:778
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/class-list-table.php:789
+#: includes/class-list-table.php:786
 msgid "Clear Filters"
 msgstr ""
 
@@ -629,10 +691,6 @@ msgstr ""
 #: includes/views/edit.php:28 includes/views/manage.php:22
 msgctxt "snippet"
 msgid "Add New"
-msgstr ""
-
-#: includes/views/edit.php:31
-msgid "Add New Snippet"
 msgstr ""
 
 #: includes/views/edit.php:48 includes/views/edit.php:49
