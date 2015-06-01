@@ -364,9 +364,10 @@ function export_snippets( $ids, $multisite = null, $format = 'xml' ) {
  * @since 2.0
  *
  * @param  string $code The snippet code to execute
+ * @param  int    $id   The snippet ID
  * @return mixed        The result of the code execution
  */
-function execute_snippet( $code ) {
+function execute_snippet( $code, $id = 0 ) {
 
 	if ( empty( $code ) ) {
 		return false;
@@ -375,6 +376,10 @@ function execute_snippet( $code ) {
 	ob_start();
 	$result = eval( $code );
 	ob_end_clean();
+
+	if ( $id ) {
+		do_action( 'code_snippets/after_execute_snippet', $id, $code );
+	}
 
 	return $result;
 }
@@ -400,25 +405,45 @@ function execute_active_snippets() {
 		set_snippet_table_vars();
 	}
 
-	/* Check if the snippets table exists */
-	if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
-		$sql = "SELECT id, code FROM {$wpdb->snippets} WHERE active=1";
+	$current_scope = is_admin() ? 1 : 2;
+
+	/* Check if the snippets tables exist */
+	$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets;
+	$ms_table_exists = is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets;
+
+	/* Fetch snippets from site table */
+	if ( $table_exists ) {
+		$sql = $wpdb->prepare( "SELECT id, code FROM {$wpdb->snippets} WHERE active=1 AND (scope=0 OR scope=%d)", $current_scope );
 	}
 
-	/* Check if the multisite snippets table exists */
-	if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets ) {
-		$sql = ( isset( $sql ) ? $sql . "\nUNION ALL\n" : '' );
-		$sql .= "SELECT id, code FROM {$wpdb->ms_snippets} WHERE active=1";
+	/* Fetch snippets from the network table */
+	if ( $ms_table_exists ) {
+
+		if ( ! empty( $sql )) {
+			$sql .= "\nUNION ALL\n";
+		}
+
+		/* Only select snippets in the current scope */
+		$sql .= $wpdb->prepare( "SELECT id, code FROM {$wpdb->ms_snippets} WHERE active=1 AND (scope=0 OR scope=%d)", $current_scope );
+
+		/* Add shared network snippets */
+		if ( $active_shared_ids = get_option( 'active_shared_network_snippets', false ) ) {
+			$sql .= "\nUNION ALL\n";
+			$sql .= $wpdb->prepare(
+				sprintf(
+					 "SELECT id, code FROM {$wpdb->ms_snippets} WHERE id IN (%s)",
+					implode( ',', array_fill( 0, count( $active_shared_ids ), '%d' ) )
+				),
+				$active_shared_ids
+			);
+		}
 	}
 
 	/* Return false if there is no query */
 	if ( empty( $sql ) ) {
 		return false;
 	}
-
-	/* Only select snippets in the current scope */
-	$sql = $wpdb->prepare( $sql . ' AND (scope=0 OR scope=%d)', is_admin() ? 1 : 2 );
-
+	
 	/* Grab the snippets from the database */
 	$active_snippets = $wpdb->get_results( $sql, OBJECT_K );
 
@@ -426,8 +451,7 @@ function execute_active_snippets() {
 	foreach ( $active_snippets as $snippet_id => $snippet ) {
 
 		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id ) ) {
-			execute_snippet( $snippet->code );
-			do_action( 'code_snippets/after_execute_snippet', $snippet_id, $snippet->code );
+			execute_snippet( $snippet->code, $snippet_id );
 		}
 	}
 
