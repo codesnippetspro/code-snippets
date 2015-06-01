@@ -29,7 +29,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * A list of statuses (views)
 	 * @var array
 	 */
-	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated', 'admin', 'frontend' );
+	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
 
 	/**
 	 * The constructor function for our class.
@@ -373,12 +373,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			/* Define the labels for each view */
 			$labels = array(
 				'all' => _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' ),
-				'admin' => _n( 'Admin <span class="count">(%s)</span>', 'Admin <span class="count">(%s)</span>', $count, 'code-snippets' ),
 				'active' => _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
 				'inactive' => _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' ),
-				'frontend' => _n( 'Front End <span class="count">(%s)</span>', 'Front End <span class="count">(%s)</span>', $count, 'code-snippets' ),
 				'recently_activated' => _n( 'Recently Active <span class="count">(%s)</span>', 'Recently Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
-				'shared' => _n( 'Shared on network <span class="count">(%s)</span>', 'Shared on network <span class="count">(%s)</span>', $count, 'code-snippets' ),
 			);
 
 			/* The page URL with the status parameter */
@@ -678,12 +675,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$snippet = new Snippet( $snippet );
 			$snippet->network = true;
 			$snippet->shared = true;
+			$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
 			$snippet->active = in_array( $snippet->id, $active_shared_snippets );
 
 			$shared_snippets[ $index ] = $snippet;
 		}
 
-		$snippets['shared'] = $shared_snippets;
 		$snippets['all'] = array_merge( $snippets['all'], $shared_snippets );
 	}
 
@@ -709,6 +706,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$snippets['all'] = get_snippets( array(), $this->is_network );
 		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', $snippets['all'] );
 
+		/* Fetch shared network snippets */
 		$this->fetch_shared_network_snippets();
 
 		/* Redirect POST'ed tag filter to GET */
@@ -716,6 +714,16 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
 			wp_redirect( esc_url_raw( $location ) );
 			exit;
+		}
+
+		/* Add scope tags */
+		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
+			foreach ( $snippets['all'] as $snippet ) {
+
+				if ( 0 != $snippet->scope ) {
+					$snippet->tags = array_merge( $snippet->tags, array( $snippet->scope_name ) );
+				}
+			}
 		}
 
 		/* Filter snippets by tag */
@@ -750,19 +758,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			if ( $snippet->active ) {
 				$snippets['active'][] = $snippet;
 			} else {
-				// Was the snippet recently activated?
+				$snippets['inactive'][] = $snippet;
+
+				/* Was the snippet recently activated? */
 				if ( isset( $recently_activated[ $snippet->id ] ) ) {
 					$snippets['recently_activated'][] = $snippet;
-				}
-				$snippets['inactive'][] = $snippet;
-			}
-
-			if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
-
-				if ( 1 == $snippet->scope ) {
-					$snippets['admin'][] = $snippet;
-				} elseif ( 2 == $snippet->scope ) {
-					$snippets['frontend'][] = $snippet;
 				}
 			}
 		}
@@ -781,11 +781,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/* Get the current data */
 		$data = $snippets[ $status ];
 
-		/*
-		 * First, lets decide how many records per page to show
-		 * by getting the user's setting in the Screen Options
-		 * panel.
-		 */
+		/* Decide how many records per page to show by
+		   getting the user's setting in the Screen Options panel */
 		$sort_by = $screen->get_option( 'per_page', 'option' );
 		$per_page = get_user_meta( $user, $sort_by, true );
 
@@ -799,32 +796,21 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		usort( $data, array( $this, 'usort_reorder_callback' ) );
 
-		/*
-		 * Let's figure out what page the user is currently
-		 * looking at.
-		 */
+		/* Determine what page the user is currently looking at */
 		$current_page = $this->get_pagenum();
 
-		/*
-		 * Let's check how many items are in our data array.
-		 */
+		/* Check how many items are in the data array */
 		$total_items = count( $data );
 
-		/*
-		 * The WP_List_Table class does not handle pagination for us, so we need
-		 * to ensure that the data is trimmed to only the current page.
-		 */
+		/* The WP_List_Table class does not handle pagination for us, so we need
+		   to ensure that the data is trimmed to only the current page. */
 		$data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
 
-		/*
-		 * Now we can add our *sorted* data to the items property, where
-		 * it can be used by the rest of the class.
-		 */
+		/* Now we can add our *sorted* data to the items property,
+		   where it can be used by the rest of the class. */
 		$this->items = $data;
 
-		/*
-		 * We also have to register our pagination options & calculations.
-		 */
+		/* We register our pagination options and calculations */
 		$this->set_pagination_args( array(
 			'total_items' => $total_items, // Calculate the total number of items
 			'per_page'	=> $per_page, // Determine how many items to show on a page

@@ -202,18 +202,19 @@ class Snippet {
 
 	/**
 	 * Retrieve the string representation of the scope
-	 * @return string The name of the scope
+	 * @param  string $default The name to use for the default scope
+	 * @return string          The name of the scope
 	 */
-	private function get_scope_name() {
+	private function get_scope_name( $default = 'global' ) {
 
 		switch ( intval( $this->fields['scope'] ) ) {
 			case 1:
 				return 'admin';
 			case 2:
-				return 'frontend';
+				return 'front-end';
 			default:
 			case 0:
-				return 'global';
+				return $default;
 		}
 	}
 }
