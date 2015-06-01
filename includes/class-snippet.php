@@ -6,50 +6,35 @@
  * @since [NEXT_VERSION]
  * @package Code Snippets
  *
- * @property int    $id          The database ID
- * @property string $name        The display name
- * @property string $description The formatted description
- * @property string $code        The executable code
- * @property string $tags        The tags in string list format
- * @property int    $scope       The scope number
- * @property int    $active      The active status
- * @property bool   $network     true if is multisite-wide snippet, false if site-wide
+ * @property int    $id      The database ID
+ * @property string $name    The display name
+ * @property string $desc    The formatted description
+ * @property string $code    The executable code
+ * @property array  $tags    An array of the tags
+ * @property int    $scope   The scope number
+ * @property bool   $active  The active status
+ * @property bool   $network true if is multisite-wide snippet, false if site-wide
  *
- * @property-read array  $tags_array The tags in array format
+ * @property-read array  $tags_list The tags in string list format
  * @property-read string $scope_name The name of the scope
  */
 class Snippet {
 
 	/**
-	 * Holds the snippet fields that are saved to the database.
-	 * Initialized with default values
+	 * The snippet metadata fields.
+	 * Initialized with default values.
 	 * @var array
 	 */
 	private $fields = array(
 		'id' => 0,
 		'name' => '',
-		'description' => '',
+		'desc' => '',
 		'code' => '',
-		'tags' => '',
+		'tags' => array(),
 		'scope' => 0,
-		'active' => 0,
-	);
-
-	/**
-	 * Holds extra snippet metadata that is not saved to the database
-	 * @var array
-	 */
-	private $extra = array(
+		'active' => false,
 		'network' => null,
 	);
-
-	/**
-	 * Retrieve the array of snippet fields
-	 * @return array
-	 */
-	public function get_fields() {
-		return $this->fields;
-	}
 
 	/**
 	 * Set all of the snippet fields from an array or object
@@ -87,7 +72,7 @@ class Snippet {
 	 * @return bool           Whether the field is set
 	 */
 	public function __isset( $field ) {
-		return isset( $this->fields[ $field ] ) || isset( $this->extra[ $field ] ) || method_exists( $this, 'get_' . $field );
+		return isset( $this->fields[ $field ] ) || method_exists( $this, 'get_' . $field );
 	}
 
 	/**
@@ -97,19 +82,16 @@ class Snippet {
 	 */
 	public function __get( $field ) {
 
-		if ( isset( $this->fields[ $field ] ) ) {
-			return $this->fields[ $field ];
-		}
-
-		if ( isset( $this->extra[ $field ] ) ) {
-			return $this->extra[ $field ];
+		/* Rename the description field */
+		if ( 'description' === $field ) {
+			$field = 'desc';
 		}
 
 		if ( method_exists( $this, 'get_' . $field ) ) {
 			return call_user_func( array( $this, 'get_' . $field ) );
 		}
 
-		return null;
+		return $this->fields[ $field ];
 	}
 
 
@@ -120,17 +102,17 @@ class Snippet {
 	 */
 	public function __set( $field, $value ) {
 
+		/* Rename the description field */
+		if ( 'description' === $field ) {
+			$field = 'desc';
+		}
+
 		/* Check if the field value should be filtered */
 		if ( method_exists( $this, 'prepare_' . $field ) ) {
 			$value = call_user_func( array( $this, 'prepare_' . $field ), $value );
 		}
 
-		/* Only save the value to the $fields array if it is already present */
-		if ( isset( $this->fields[ $field ] ) ) {
-			$this->fields[ $field ] = $value;
-		} else {
-			$this->extra[ $field ] = $value;
-		}
+		$this->fields[ $field ] = $value;
 
 	}
 
@@ -161,10 +143,11 @@ class Snippet {
 
 	/**
 	 * Prepare the scope by ensuring that it is a valid number
-	 * @param  int $scope
-	 * @return int
+	 * @param  int $scope The field as provided
+	 * @return int        The field in the correct format
 	 */
 	private function prepare_scope( $scope ) {
+		$scope = (int) $scope;
 
 		if ( in_array( $scope, array( 0, 1, 2 ) ) ) {
 			return $scope;
@@ -176,14 +159,23 @@ class Snippet {
 	/**
 	 * Prepare the snippet tags by ensuring they are in the correct format
 	 * @param  string|array $tags The tags as provided
-	 * @return string             The tags in the correct string format
+	 * @return array              The tags as an array
 	 */
 	private function prepare_tags( $tags ) {
-		if ( is_array( $tags ) ) {
-			return implode( ', ', $tags );
+		return code_snippets_build_tags_array( $tags );
+	}
+
+	/**
+	 * Prepare the active field by ensuring it is the correct type
+	 * @param  bool|int $active The field as provided
+	 * @return bool             The field in the correct format
+	 */
+	private function prepare_active( $active ) {
+		if ( is_bool( $active ) ) {
+			return $active;
 		}
 
-		return $tags;
+		return $active ? true : false;
 	}
 
 	/**
@@ -201,11 +193,11 @@ class Snippet {
 	}
 
 	/**
-	 * Retrieve the tags in array format
-	 * @return array An array of the snippet's tags
+	 * Retrieve the tags in list format
+	 * @return string The tags seperated by a comma and a space
 	 */
-	private function get_tags_array() {
-		return code_snippets_build_tags_array( $this->fields['tags'] );
+	private function get_tags_list() {
+		return implode( ', ', $this->fields['tags'] );;
 	}
 
 	/**

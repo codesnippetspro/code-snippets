@@ -183,7 +183,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		</label>
 
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
-			placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>" value="<?php echo $snippet->tags; ?>" />
+			placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>" value="<?php echo $snippet->tags_list; ?>" />
 
 		<script type="text/javascript">
 		jQuery('#snippet_tags').tagit({
@@ -211,7 +211,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		echo '<th scope="row">' . __( 'Scope', 'code-snippets' ) . '</th><td>';
 
 		foreach ( $scopes as $scope => $label ) {
-			printf( '<div><input type="radio" name="snippet_scope" value="%s"', $scope );
+			printf( '<div><input type="radio" name="snippet_scope" value="%d"', $scope );
 			checked( $scope, $snippet->scope );
 			echo "> $label</div>";
 		}

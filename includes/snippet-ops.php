@@ -246,8 +246,15 @@ function save_snippet( Snippet $snippet ) {
 
 	$table = get_snippets_table_name( $snippet->network );
 
-	/* Convert snippet to array */
-	$data = $snippet->get_fields();
+	/* Build array of data to insert */
+	$data = array(
+		'name' => $snippet->name,
+		'description' => $snippet->desc,
+		'code' => $snippet->code,
+		'tags' => $snippet->tags_list,
+		'scope' => $snippet->scope,
+		'active' => intval( $snippet->active ),
+	);
 
 	/* Create a new snippet if the ID is not set */
 	if ( 0 == $snippet->id ) {

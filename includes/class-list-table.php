@@ -190,7 +190,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$out = array();
 
 		/* Loop through the tags and create a link for each one */
-		foreach ( $snippet->tags_array as $tag ) {
+		foreach ( $snippet->tags as $tag ) {
 			$out[] = sprintf( '<a href="%s">%s</a>',
 				esc_url( add_query_arg( 'tag', esc_attr( $tag ) ) ),
 				esc_html( $tag )
@@ -330,7 +330,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Merge all tags into a single array */
 		foreach ( $snippets[ $status ] as $snippet ) {
-			$tags = array_merge( $snippet->tags_array, $tags );
+			$tags = array_merge( $snippet->tags, $tags );
 		}
 
 		/* Remove duplicate tags */
@@ -754,7 +754,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$tags = explode( ',', $_GET['tag'] );
 
 		foreach ( $tags as $tag ) {
-			if ( in_array( $tag, $snippet->tags_array ) ) {
+			if ( in_array( $tag, $snippet->tags ) ) {
 				return true;
 			}
 		}
