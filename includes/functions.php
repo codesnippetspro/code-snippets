@@ -31,8 +31,9 @@ function code_snippets_get_menu_slug( $menu = '' ) {
 
 /**
  * Fetch the URL to a snippets admin menu
- * @param  string $menu The menu to retrieve the URL to
- * @return string       The menu's URL
+ * @param  string $menu    The menu to retrieve the URL to
+ * @param  string $context The URL scheme to use
+ * @return string          The menu's URL
  */
 function code_snippets_get_menu_url( $menu = '', $context = 'self' ) {
 	$slug = code_snippets_get_menu_slug( $menu );
@@ -60,11 +61,12 @@ function code_snippets_get_menu_hook( $menu = '' ) {
 /**
  * Fetch the admin menu slug for a snippets menu
  * @param  int    $snippet_id The snippet
+ * @param  string $context    The URL scheme to use
  * @return string             The URL to the edit snippet page for that snippet
  */
-function get_snippet_edit_url( $snippet_id ) {
+function get_snippet_edit_url( $snippet_id, $context = 'self' ) {
 	return add_query_arg(
 		'id', absint( $snippet_id ),
-		code_snippets_get_menu_url( 'edit' )
+		code_snippets_get_menu_url( 'edit', $context )
 	);
 }
