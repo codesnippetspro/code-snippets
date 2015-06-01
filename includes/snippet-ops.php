@@ -14,15 +14,30 @@
  * @uses $wpdb to query the database for snippets
  * @uses get_snippets_table_name() to dynamically retrieve the snippet table name
  *
+ * @param  array     $ids       The IDs of the snippets to fetch
  * @param  bool|null $multisite Retrieve multisite-wide or site-wide snippets?
- * @return array                An array of snippet objects
+ * @return array                An array of Snippet objects
  */
-function get_snippets( $multisite = null ) {
+function get_snippets( array $ids = array(), $multisite = null ) {
 	/** @var wpdb $wpdb */
 	global $wpdb;
-
 	$table = get_snippets_table_name( $multisite );
-	$snippets = $wpdb->get_results( "SELECT * FROM $table", ARRAY_A );
+	$sql = "SELECT * FROM $table";
+	$ids_count = count( $ids );
+
+	if ( 1 == $ids_count ) {
+		return get_snippet( $ids[0] );
+	}
+
+	if ( $ids_count > 1 ) {
+		$sql .= ' WHERE id IN (';
+		$sql .= implode( ',', array_fill( 0, $ids_count, '%d' ) );
+		$sql .= ')';
+
+		$sql = $wpdb->prepare( $sql, $ids );
+	}
+
+	$snippets = $wpdb->get_results( $sql, ARRAY_A );
 
 	/* Convert snippets to snippet objects */
 	foreach ( $snippets as $index => $snippet ) {

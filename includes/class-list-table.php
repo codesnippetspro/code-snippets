@@ -549,14 +549,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/* First, lets process the bulk actions */
 		$this->process_bulk_actions();
 
-		$snippets = array(
-			'all' => apply_filters( 'code_snippets/list_table/get_snippets', get_snippets( $screen->in_admin( 'network' ) ) ),
-			'active' => array(),
-			'inactive' => array(),
-			'recently_activated' => array(),
-			'admin' => array(),
-			'frontend' => array(),
-		);
+		$statuses = array( 'all', 'active', 'inactive', 'recently_activated', 'admin', 'frontend' );
+		$snippets = array_fill_keys( $statuses, array() );
+
+		$snippets['all'] = get_snippets( array(), $is_network );
+		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', $snippets['all'] );
 
 		/* Redirect POST'ed tag filter to GET */
 		if ( isset( $_POST['tag'] ) ) {
