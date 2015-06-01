@@ -157,6 +157,12 @@ function activate_snippet( $id, $multisite = null ) {
 		array( '%d' )
 	);
 
+	/* Remove snippet from shared network snippet list if it was Network Activated */
+	if ( $table == $wpdb->ms_snippets && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
+		$shared_network_snippets = array_diff( $shared_network_snippets, array( $id ) );
+		update_site_option( 'shared_network_snippets', $shared_network_snippets );
+	}
+
 	do_action( 'code_snippets/activate_snippet', $id, $multisite );
 }
 
@@ -443,7 +449,7 @@ function execute_active_snippets() {
 	if ( empty( $sql ) ) {
 		return false;
 	}
-	
+
 	/* Grab the snippets from the database */
 	$active_snippets = $wpdb->get_results( $sql, OBJECT_K );
 
