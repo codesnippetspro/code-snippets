@@ -106,6 +106,23 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			/* Save the snippet to the database */
 			$snippet_id = save_snippet( $snippet );
 
+			/* Update the shared network snippets if necessary */
+			if ( get_current_screen()->in_admin( 'network' ) && $snippet_id && $snippet_id > 0 ) {
+				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
+
+				if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
+
+					/* Add the snippet ID to the array if it isn't already */
+					if ( ! in_array( $snippet_id, $shared_snippets ) ) {
+						$shared_snippets[] = $snippet_id;
+					}
+				} else {
+					/* Remove the snippet ID from the array */
+					$shared_snippets = array_diff( $shared_snippets, array( $$snippet_id ) );
+				}
+				update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
+			}
+
 			/* If the saved snippet ID is invalid, display an error message */
 			if ( ! $snippet_id || $snippet_id < 1 ) {
 				/* An error occurred */
