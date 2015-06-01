@@ -425,7 +425,7 @@ function execute_active_snippets() {
 	/* Fetch snippets from the network table */
 	if ( $ms_table_exists ) {
 
-		if ( ! empty( $sql )) {
+		if ( ! empty( $sql ) ) {
 			$sql .= "\nUNION ALL\n";
 		}
 
@@ -437,7 +437,7 @@ function execute_active_snippets() {
 			$sql .= "\nUNION ALL\n";
 			$sql .= $wpdb->prepare(
 				sprintf(
-					 "SELECT id, code FROM {$wpdb->ms_snippets} WHERE id IN (%s)",
+					"SELECT id, code FROM {$wpdb->ms_snippets} WHERE id IN (%s)",
 					implode( ',', array_fill( 0, count( $active_shared_ids ), '%d' ) )
 				),
 				$active_shared_ids
