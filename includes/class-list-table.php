@@ -160,6 +160,15 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			) )
 		);
 
+		/* Remove (de)activate link for shared network snippets */
+		if ( $snippet->network ) {
+			$shared_network_snippets = get_site_option( 'shared_network_snippets', array() );
+
+			if ( in_array( $snippet->id, $shared_network_snippets ) ) {
+				unset( $actions['activate'], $actions['deactivate'] );
+			}
+		}
+
 		return $actions;
 	}
 
