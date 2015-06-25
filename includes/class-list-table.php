@@ -786,7 +786,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$sort_by = $screen->get_option( 'per_page', 'option' );
 		$per_page = get_user_meta( $user, $sort_by, true );
 
-		if ( empty ( $per_page ) || $per_page < 1 ) {
+		if ( empty( $per_page ) || $per_page < 1 ) {
 			$per_page = $screen->get_option( 'per_page', 'default' );
 		}
 
@@ -912,7 +912,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			echo '<span class="subtitle">' . __( 'Search results', 'code-snippets' );
 
-			if ( ! empty ( $_REQUEST['s'] ) ) {
+			if ( ! empty( $_REQUEST['s'] ) ) {
 				echo sprintf( __( ' for &#8220;%s&#8221;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
 			}
 
