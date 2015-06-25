@@ -426,7 +426,7 @@ function execute_active_snippets() {
 	if ( $ms_table_exists ) {
 
 		if ( ! empty( $sql ) ) {
-			$sql .= "\nUNION ALL\n";
+			$sql .= ' UNION ALL ';
 		}
 
 		/* Only select snippets in the current scope */
@@ -434,7 +434,7 @@ function execute_active_snippets() {
 
 		/* Add shared network snippets */
 		if ( $active_shared_ids = get_option( 'active_shared_network_snippets', false ) ) {
-			$sql .= "\nUNION ALL\n";
+			$sql .= ' UNION ALL ';
 			$sql .= $wpdb->prepare(
 				sprintf(
 					"SELECT id, code FROM {$wpdb->ms_snippets} WHERE id IN (%s)",
