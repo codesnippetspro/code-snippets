@@ -42,7 +42,7 @@ before_install:
 before_script:
 
   # Run Grunt and Composer
-  - composer self-update
+  # - composer self-update
   - composer install
   - npm install
   # Register WPCS with PHPCS (doesn't seem to do this automatically)
