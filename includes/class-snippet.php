@@ -4,16 +4,17 @@
  * A snippet object
  *
  * @since [NEXT_VERSION]
- * @package Code Snippets
+ * @package Code_Snippets
  *
- * @property int    $id      The database ID
- * @property string $name    The display name
- * @property string $desc    The formatted description
- * @property string $code    The executable code
- * @property array  $tags    An array of the tags
- * @property int    $scope   The scope number
- * @property bool   $active  The active status
- * @property bool   $network true if is multisite-wide snippet, false if site-wide
+ * @property int    $id             The database ID
+ * @property string $name           The display name
+ * @property string $desc           The formatted description
+ * @property string $code           The executable code
+ * @property array  $tags           An array of the tags
+ * @property int    $scope          The scope number
+ * @property bool   $active         The active status
+ * @property bool   $network        true if is multisite-wide snippet, false if site-wide
+ * @property bool   $shared_network Whether the snippet is a shared network snippet
  *
  * @property-read array  $tags_list The tags in string list format
  * @property-read string $scope_name The name of the scope
@@ -34,6 +35,7 @@ class Snippet {
 		'scope' => 0,
 		'active' => false,
 		'network' => null,
+		'shared_network' => null,
 	);
 
 	/**
@@ -216,5 +218,20 @@ class Snippet {
 			case 0:
 				return $default;
 		}
+	}
+
+	private function get_shared_network() {
+
+		if ( isset( $this->fields['shared_network'] ) ) {
+			return $this->fields['shared_network'];
+		}
+
+		if ( ! is_multisite() || ! $this->fields['network'] ) {
+			$this->fields['shared_network'] = false;
+			return false;
+		}
+
+		$shared_network_snippets = get_site_option( 'shared_network_snippets', array() );
+		return in_array( $this->fields['id'], $shared_network_snippets );
 	}
 }

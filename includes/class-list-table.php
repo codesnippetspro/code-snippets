@@ -161,12 +161,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		);
 
 		/* Remove (de)activate link for shared network snippets */
-		if ( $snippet->network ) {
-			$shared_network_snippets = get_site_option( 'shared_network_snippets', array() );
-
-			if ( in_array( $snippet->id, $shared_network_snippets ) ) {
-				unset( $actions['activate'], $actions['deactivate'] );
-			}
+		if ( $snippet->shared_network ) {
+			unset( $actions['activate'], $actions['deactivate'] );
 		}
 
 		return $actions;
@@ -223,7 +219,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	protected function column_name( $snippet ) {
 
-		$action_links = isset( $snippet->shared ) ?
+		$action_links = $snippet->shared_network ?
 			$this->get_shared_network_snippet_action_links( $snippet ) :
 			$this->get_snippet_action_links( $snippet );
 
@@ -239,7 +235,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$title
 		);
 
-		if ( isset( $snippet->shared ) && ! current_user_can( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) ) ) {
+		if ( $snippet->shared_network && ! current_user_can( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) ) ) {
 			$out = sprintf( '<a><strong>%s</strong></a>', $title );
 		}
 
@@ -257,7 +253,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$out = sprintf(
 			'<input type="checkbox" name="%s[]" value="%s" />',
-			isset( $snippet->shared ) ? 'shared_ids' : 'ids',
+			$snippet->shared_network ? 'shared_ids' : 'ids',
 			$snippet->id
 		);
 
@@ -683,9 +679,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		foreach ( $shared_snippets as $index => $snippet ) {
 			$snippet = new Snippet( $snippet );
 			$snippet->network = true;
-			$snippet->shared = true;
+			$snippet->shared_network = true;
 			$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
-			$snippet->active = in_array( $snippet->id, $active_shared_snippets );
+			$snippet->active = false;
 
 			$shared_snippets[ $index ] = $snippet;
 		}
@@ -948,7 +944,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$row_class = ( $snippet->active ? 'active' : 'inactive' );
 		$row_class .= sprintf( ' %s-scope', $snippet->scope_name );
 
-		if ( isset( $snippet->shared ) ) {
+		if ( $snippet->shared_network ) {
 			$row_class .= ' shared-network';
 		}
 

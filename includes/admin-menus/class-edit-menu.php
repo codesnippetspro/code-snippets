@@ -112,6 +112,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 				if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
 
+					// Shared network snippets cannot be network activated
+					$snippet->active = 0;
+
 					/* Add the snippet ID to the array if it isn't already */
 					if ( ! in_array( $snippet_id, $shared_snippets ) ) {
 						$shared_snippets[] = $snippet_id;
