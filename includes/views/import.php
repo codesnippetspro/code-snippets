@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <div class="wrap">
-	<h2><?php _e( 'Import Snippets', 'code-snippets' ); ?></h2>
+	<h1><?php _e( 'Import Snippets', 'code-snippets' ); ?></h1>
 
 	<div class="narrow">
 

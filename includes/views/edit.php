@@ -20,7 +20,7 @@ $snippet = get_snippet( $edit_id );
 
 ?>
 <div class="wrap">
-	<h2><?php
+	<h1s><?php
 	if ( $edit_id ) {
 		esc_html_e( 'Edit Snippet', 'code-snippets' );
 		printf( ' <a href="%1$s" class="add-new-h2">%2$s</a>',
@@ -30,7 +30,7 @@ $snippet = get_snippet( $edit_id );
 	} else {
 		esc_html_e( 'Add New Snippet', 'code-snippets' );
 	}
-	?></h2>
+	?></h1s>
 
 	<form method="post" action="" style="margin-top: 10px;">
 		<?php

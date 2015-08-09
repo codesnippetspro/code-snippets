@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div class="wrap">
-	<h2><?php
+	<h1><?php
 	esc_html_e( 'Snippets', 'code-snippets' );
 
 	printf( '<a href="%2$s" class="add-new-h2">%1$s</a>',
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	);
 
 	$this->list_table->search_notice();
-	?></h2>
+	?></h1>
 
 	<?php $this->list_table->views(); ?>
 
