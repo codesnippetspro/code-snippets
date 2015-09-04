@@ -952,5 +952,4 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$this->single_row_columns( $snippet );
 		echo '</tr>';
 	}
-
 } // end of class

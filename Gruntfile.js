@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 		},
 
 		jshint: {
-			gruntfile: ['Gruntfile.js'],
+			gruntfile: ['Gruntfile.js']
 		},
 
 		sass: {
@@ -172,11 +172,11 @@ module.exports = function(grunt) {
 					'esc_attr__:1', 'esc_attr_e:1', 'esc_attr_x:1,2c',
 					'_ex:1,2c', '_n:1,2', '_nx:1,2,4c',
 					'_n_noop:1,2', '_nx_noop:1,2,3c'
-				],
+				]
 			},
 			files: {
 				src: [ 'code-snippets.php', 'includes/**/*.php' ],
-				expand: true,
+				expand: true
 			}
 		}
 	});
