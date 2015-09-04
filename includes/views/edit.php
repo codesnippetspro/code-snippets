@@ -50,9 +50,9 @@ $snippet = get_snippet( $edit_id );
 			</div>
 		</div>
 
-		<label for="snippet_code">
-			<h3><?php _e( 'Code', 'code-snippets' ); ?></h3>
-		</label>
+		<h3><label for="snippet_code">
+			<?php _e( 'Code', 'code-snippets' ); ?>
+		</label></h3>
 
 		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 
@@ -144,6 +144,6 @@ $snippet = get_snippet( $edit_id );
 		$atts = array( 'mode' => 'text/x-php' );
 		echo code_snippets_get_editor_atts( $atts, true );
 	?>;
-	var editor = CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
+	CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
 })();
 </script>
