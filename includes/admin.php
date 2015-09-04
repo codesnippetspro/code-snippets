@@ -30,9 +30,12 @@ function code_snippets_load_admin_classes() {
 	require_once $admin_classes . 'class-import-menu.php';
 	new Code_Snippets_Import_Menu();
 
-	/* Settings menu */
-	require_once $admin_classes . 'class-settings-menu.php';
-	new Code_Snippets_Settings_Menu();
+	if ( ! is_network_admin() ) {
+
+		/* Settings menu */
+		require_once $admin_classes . 'class-settings-menu.php';
+		new Code_Snippets_Settings_Menu();
+	}
 }
 
 code_snippets_load_admin_classes();

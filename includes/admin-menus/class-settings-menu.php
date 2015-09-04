@@ -18,6 +18,15 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 		);
 	}
 
+	function load() {
+		parent::load();
+
+		if ( is_network_admin() ) {
+			wp_redirect(  );
+			exit;
+		}
+	}
+
 	/**
 	 * Render the admin screen
 	 */
@@ -28,7 +37,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 
-			<form action="options.php" method="post">
+			<form action="<?php admin_url( 'options.php' ); ?>" method="post">
 				<?php settings_fields( 'code-snippets' ); ?>
 				<table class="form-table">
 					<?php do_settings_sections( 'code-snippets' ); ?>
