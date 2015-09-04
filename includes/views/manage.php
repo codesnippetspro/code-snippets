@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<h1><?php
 	esc_html_e( 'Snippets', 'code-snippets' );
 
-	printf( '<a href="%2$s" class="add-new-h2">%1$s</a>',
+	printf( '<a href="%2$s" class="page-title-action add-new-h2">%1$s</a>',
 		esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
 		code_snippets_get_menu_url( 'add' )
 	);
