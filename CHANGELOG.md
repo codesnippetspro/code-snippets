@@ -1,5 +1,19 @@
 # Changelog
 
+### 2.4.0
+* Added ability to share network snippets to individual sites on WordPress multisite
+* Improved code directory and class structure
+* Remove legacy code for pre-3.6 compatibility
+* Improved code for printing admin messages
+* Updated German translation (Joerg Knoerchen)
+* Added `code_snippets/after_execute_snippet` filter
+* Added class for individual snippets
+* Updated `get_snippets()` function to retrieve individual snippets
+* Removed scope statuses and added fixed tags to indicate scope
+* Changed admin page headers to use `<h1>` tags instead of `<h2>` tags
+* Updated CodeMirror to version 5.6
+* Removed snippet settings page from network admin
+
 ## 2.3.0
 * Removed nested functions
 * Added icons for admin and front-end snippets to manage table
