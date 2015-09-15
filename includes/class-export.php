@@ -40,7 +40,7 @@ class Code_Snippets_Export {
 	/**
 	 * The DOM document root element
 	 * Only used in XML exports
-	 * @var DOMNode
+	 * @var DOMElement
 	 */
 	protected $root;
 
@@ -55,7 +55,6 @@ class Code_Snippets_Export {
 		$this->snippet_ids = (array) $ids;
 		$this->table_name = $table;
 		$this->format = 'php' === $format ? 'php' : 'xml';
-		$this->exclude_fields = apply_filters( 'code_snippets/export/exclude_from_export', array( 'id', 'active' ) );
 	}
 
 	/**
@@ -66,21 +65,16 @@ class Code_Snippets_Export {
 
 		if ( 1 == count( $this->snippet_ids ) ) {
 			/* If there is only snippet to export, use its name instead of the site name */
-			$snippet  = get_snippet( $this->snippet_ids[0], $this->table_name );
-			$sitename = strtolower( $snippet->name );
+			$snippet = get_snippet( $this->snippet_ids[0], $this->table_name );
+			$title = strtolower( $snippet->name );
 		} else {
 			/* Otherwise, use the site name as set in Settings > General */
-			$sitename = strtolower( get_bloginfo( 'name' ) );
+			$title = strtolower( get_bloginfo( 'name' ) );
 		}
 
-		/* Filter and sanitize the filename */
-		$filename = sanitize_file_name( apply_filters(
-			'code_snippets/export/filename',
-			"{$sitename}.code-snippets.{$this->format}",
-			$sitename
-		) );
-
-		return $filename;
+		$filename = "{$title}.code-snippets.{$this->format}";
+		$filename = apply_filters( $filename, 'code_snippets/export/filename', $title );
+		return sanitize_file_name( $filename );
 	}
 
 	/**
@@ -155,23 +149,27 @@ class Code_Snippets_Export {
 
 	/**
 	 * Append a single snippet item to the document
-	 * @param array $snippet
+	 * @param Snippet $snippet
 	 */
-	protected function do_item( $snippet ) {
+	protected function do_item( Snippet $snippet ) {
 		$item_element = $this->dom->createElement( 'snippet' );
 		$item = $this->root->appendChild( $item_element );
 
 		/* Set the scope attribute */
-		if ( ! in_array( 'scope', $this->exclude_fields ) ) {
-			$item->setAttribute( 'scope', $snippet->scope );
-		}
+		/** @var $item DOMElement */
+		$item->setAttribute( 'scope', $snippet->scope );
 
-		foreach ( $snippet->get_fields() as $field_name => $field_value ) {
+		/* Fields to include in the export file */
+		$fields = array(
+			'name' => $snippet->name,
+			'desc' => $snippet->desc,
+			'tags' => $snippet->tags_list,
+			'code' => $snippet->code,
+		);
 
-			/*  Don't export certain fields */
-			if ( 'scope' === $field_name || in_array( $field_name, $this->exclude_fields ) ) {
-				continue;
-			}
+		$fields = apply_filters( 'code_snippets/export/xml_fields', $fields, $snippet );
+
+		foreach ( $fields as $field_name => $field_value ) {
 
 			/* Create a new element for each field */
 			$field_element = $this->dom->createElement( $field_name );
@@ -179,21 +177,21 @@ class Code_Snippets_Export {
 
 			/* Add the field content */
 			$value = $this->dom->createTextNode( $field_value );
-			$value = $field->appendChild( $value );
+			$field->appendChild( $value );
 		}
 	}
 
 	/**
 	 * Format single snippet item as PHP code
-	 * @param array $snippet
+	 * @param Snippet $snippet
 	 */
-	protected function do_item_php( $snippet ) {
+	protected function do_item_php( Snippet $snippet ) {
 		echo "\n/**\n * {$snippet->name}\n";
 
-		if ( ! empty( $snippet->description ) ) {
+		if ( ! empty( $snippet->desc ) ) {
 
 			/* Convert description to PhpDoc */
-			$desc = strip_tags( str_replace( "\n", "\n * ", $snippet->description ) );
+			$desc = strip_tags( str_replace( "\n", "\n * ", $snippet->desc ) );
 
 			echo " *\n * $desc\n";
 		}
