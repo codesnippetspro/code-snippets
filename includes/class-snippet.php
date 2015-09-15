@@ -96,7 +96,6 @@ class Snippet {
 		return $this->fields[ $field ];
 	}
 
-
 	/**
 	 * Set a field's value
 	 * @param string $field The field name
@@ -199,7 +198,7 @@ class Snippet {
 	 * @return string The tags seperated by a comma and a space
 	 */
 	private function get_tags_list() {
-		return implode( ', ', $this->fields['tags'] );;
+		return implode( ', ', $this->fields['tags'] );
 	}
 
 	/**
@@ -220,6 +219,10 @@ class Snippet {
 		}
 	}
 
+	/**
+	 * Determine if the snippet is a shared network snippet
+	 * @return bool
+	 */
 	private function get_shared_network() {
 
 		if ( isset( $this->fields['shared_network'] ) ) {
@@ -228,10 +231,11 @@ class Snippet {
 
 		if ( ! is_multisite() || ! $this->fields['network'] ) {
 			$this->fields['shared_network'] = false;
-			return false;
+		} else {
+			$shared_network_snippets = get_site_option( 'shared_network_snippets', array() );
+			$this->fields['shared_network'] = in_array( $this->fields['id'], $shared_network_snippets );
 		}
 
-		$shared_network_snippets = get_site_option( 'shared_network_snippets', array() );
-		return in_array( $this->fields['id'], $shared_network_snippets );
+		return $this->fields['shared_network'];
 	}
 }
