@@ -160,11 +160,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			) )
 		);
 
-		/* Remove (de)activate link for shared network snippets */
-		if ( $snippet->shared_network ) {
-			unset( $actions['activate'], $actions['deactivate'] );
-		}
-
 		return $actions;
 	}
 
@@ -178,35 +173,58 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions = array();
 		$link_format = '<a href="%2$s">%1$s</a>';
 
-		if ( $snippet->active ) {
-			$actions['deactivate'] = sprintf(
-				$link_format,
-				__( 'Deactivate', 'code-snippets' ),
-				esc_url( add_query_arg( array(
-					'action' => 'deactivate-shared',
-					'id' => $snippet->id,
-				) ) )
-			);
+		/* Only add Activate/Deactivate for subsites */
+		if ( ! $this->is_network ) {
 
-		} else {
-			$actions['activate'] = sprintf(
-				$link_format,
-				__( 'Activate', 'code-snippets' ),
-				esc_url( add_query_arg( array(
-					'action' => 'activate-shared',
-					'id' => $snippet->id,
-				) ) )
-			);
+			$action = $snippet->active ? 'deactivate' : 'activate';
+			$label = $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' );
+			$activate_url = add_query_arg( array(
+				'action' => $action . '-shared',
+				'id'     => $snippet->id,
+			) );
+
+			$actions[ $action ] = sprintf( $link_format, $label, esc_url( $activate_url ) );
 		}
 
-		if ( current_user_can( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) ) ) {
-
-			$actions['edit'] = sprintf(
-				$link_format,
-				__( 'Edit', 'code-snippets' ),
-				get_snippet_edit_url( $snippet->id, 'network' )
-			);
+		/* Don't add Edit/Export/Delete actions for if current user can't manage network snippets */
+		if ( ! current_user_can( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) ) ) {
+			return $actions;
 		}
+
+		$actions['edit'] = sprintf(
+			$link_format,
+			__( 'Edit', 'code-snippets' ),
+			get_snippet_edit_url( $snippet->id, 'network' )
+		);
+
+		$actions['export'] = sprintf(
+			$link_format,
+			__( 'Export', 'code-snippets' ),
+			add_query_arg(
+				array(
+					'action' => 'export',
+					'id'     => $snippet->id,
+				),
+				code_snippets_get_menu_url( 'manage', 'network' )
+			)
+		);
+
+		$actions['delete'] = sprintf(
+			'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
+			__( 'Delete', 'code-snippets' ),
+			add_query_arg(
+				array(
+					'action' => 'delete',
+					'id'     => $snippet->id,
+				),
+				code_snippets_get_menu_url( 'manage', 'network' )
+			),
+			esc_js( sprintf(
+				'return confirm("%s");',
+				__( "You are about to permanently delete the selected item.
+					'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+			) )
+		);
 
 		return $actions;
 	}
@@ -237,6 +255,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		if ( $snippet->shared_network && ! current_user_can( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) ) ) {
 			$out = sprintf( '<a><strong>%s</strong></a>', $title );
+		}
+
+		if ( $snippet->shared_network ) {
+			$out .= ' <span class="badge">' . esc_html__( 'Shared on Network', 'code-snippets' ) . '</span>';
 		}
 
 		/* Return the name contents */
@@ -575,11 +597,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 		}
 
-		if ( ! isset( $_POST['ids'] ) ) {
+		if ( ! isset( $_POST['ids'] ) && ! isset( $_POST['shared_ids'] ) ) {
 			return;
 		}
 
-		$ids = $_POST['ids'];
+		$ids = isset( $_POST['ids'] ) ? $_POST['ids'] : array();
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
 
 		switch ( $this->current_action() ) {
@@ -664,29 +686,46 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/** @var wpdb $wpdb */
 		global $snippets, $wpdb;
 
-		if ( ! is_multisite() || $this->is_network || ! $ids = get_site_option( 'shared_network_snippets', false ) ) {
+		if ( ! is_multisite() || ! $ids = get_site_option( 'shared_network_snippets', false ) ) {
 			return;
 		}
 
-		$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
+		if ( $this->is_network ) {
+			$limit = count( $snippets['all'] );
 
-		$sql = sprintf( "SELECT * FROM {$wpdb->ms_snippets} WHERE id IN (%s)",
-			implode( ',', array_fill( 0, count( $ids ), '%d' ) )
-		);
+			/** @var Snippet $snippet */
+			for ( $i = 0; $i < $limit; $i++ ) {
+				$snippet = &$snippets['all'][ $i ];
 
-		$shared_snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
+				if ( in_array( $snippet->id, $ids ) ) {
+					$snippet->shared_network = true;
+					$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
+					$snippet->active = false;
+				}
+			}
 
-		foreach ( $shared_snippets as $index => $snippet ) {
-			$snippet = new Snippet( $snippet );
-			$snippet->network = true;
-			$snippet->shared_network = true;
-			$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
-			$snippet->active = false;
+		} else {
 
-			$shared_snippets[ $index ] = $snippet;
+			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
+
+			$sql = sprintf( "SELECT * FROM {$wpdb->ms_snippets} WHERE id IN (%s)",
+				implode( ',', array_fill( 0, count( $ids ), '%d' ) )
+			);
+
+			$shared_snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
+
+			foreach ( $shared_snippets as $index => $snippet ) {
+				$snippet                 = new Snippet( $snippet );
+				$snippet->network        = true;
+				$snippet->shared_network = true;
+				$snippet->tags           = array_merge( $snippet->tags, array( 'shared on network' ) );
+				$snippet->active         = in_array( $snippet->id, $active_shared_snippets );
+
+				$shared_snippets[ $index ] = $snippet;
+			}
+
+			$snippets['all'] = array_merge( $snippets['all'], $shared_snippets );
 		}
-
-		$snippets['all'] = array_merge( $snippets['all'], $shared_snippets );
 	}
 
 	/**

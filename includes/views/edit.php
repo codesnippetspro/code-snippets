@@ -68,7 +68,12 @@ $snippet = get_snippet( $edit_id );
 			<?php
 
 			/* Make the 'Save and Activate' button the default if the setting is enabled */
-			if ( ! $snippet->active && code_snippets_get_setting( 'general', 'activate_by_default' ) ) {
+
+			if ( $snippet->shared_network && get_current_screen()->in_admin( 'network' ) ) {
+
+				submit_button( null, 'primary', 'save_snippet', false );
+
+			} elseif ( ! $snippet->active && code_snippets_get_setting( 'general', 'activate_by_default' ) ) {
 
 				submit_button(
 					__( 'Save Changes and Activate', 'code-snippets' ),

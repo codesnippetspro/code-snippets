@@ -97,7 +97,11 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			}
 
 			/* Activate or deactivate the snippet before saving if we clicked the button */
-			if ( isset( $_POST['save_snippet_activate'] ) ) {
+
+			// Shared network snippets cannot be network activated
+			if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
+				$snippet->active = 0;
+			} elseif ( isset( $_POST['save_snippet_activate'] ) ) {
 				$snippet->active = 1;
 			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
 				$snippet->active = 0;
@@ -107,23 +111,22 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			$snippet_id = save_snippet( $snippet );
 
 			/* Update the shared network snippets if necessary */
-			if ( get_current_screen()->in_admin( 'network' ) && $snippet_id && $snippet_id > 0 ) {
+			if ( $snippet_id && get_current_screen()->in_admin( 'network' ) ) {
 				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 
 				if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
 
-					// Shared network snippets cannot be network activated
-					$snippet->active = 0;
-
 					/* Add the snippet ID to the array if it isn't already */
 					if ( ! in_array( $snippet_id, $shared_snippets ) ) {
 						$shared_snippets[] = $snippet_id;
+						update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 					}
-				} else {
+
+				} elseif ( in_array( $snippet_id, $shared_snippets ) ) {
 					/* Remove the snippet ID from the array */
 					$shared_snippets = array_diff( $shared_snippets, array( $snippet_id ) );
+					update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 				}
-				update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 			}
 
 			/* If the saved snippet ID is invalid, display an error message */
