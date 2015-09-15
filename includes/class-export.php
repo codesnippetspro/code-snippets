@@ -73,7 +73,7 @@ class Code_Snippets_Export {
 		}
 
 		$filename = "{$title}.code-snippets.{$this->format}";
-		$filename = apply_filters( $filename, 'code_snippets/export/filename', $title );
+		$filename = apply_filters( 'code_snippets/export/filename', $filename, $title );
 		return sanitize_file_name( $filename );
 	}
 
