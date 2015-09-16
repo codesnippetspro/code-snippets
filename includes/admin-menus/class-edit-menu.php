@@ -101,6 +101,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			// Shared network snippets cannot be network activated
 			if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
 				$snippet->active = 0;
+				unset( $_POST['save_snippet_activate'], $_POST['save_snippet_deactivate'] );
 			} elseif ( isset( $_POST['save_snippet_activate'] ) ) {
 				$snippet->active = 1;
 			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
