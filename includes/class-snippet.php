@@ -3,7 +3,7 @@
 /**
  * A snippet object
  *
- * @since [NEXT_VERSION]
+ * @since 2.4.0
  * @package Code_Snippets
  *
  * @property int    $id             The database ID
