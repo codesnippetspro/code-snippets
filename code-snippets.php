@@ -7,7 +7,7 @@
  * contribute to the localization, please see https://github.com/sheabunge/code-snippets
  *
  * @package   Code_Snippets
- * @version   2.3.0
+ * @version   2.4.0
  * @author    Shea Bunge <http://bungeshea.com/>
  * @copyright Copyright (c) 2012-2015, Shea Bunge
  * @link      http://bungeshea.com/plugins/code-snippets/
