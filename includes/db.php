@@ -34,14 +34,14 @@ function set_snippet_table_vars() {
 function get_snippets_table_name( $multisite = null ) {
 	global $wpdb;
 
+	/* If the first parameter is a string, assume it is a table name */
+	if ( is_string( $multisite ) ) {
+		return $multisite;
+	}
+
 	/* If $multisite is null, try to base it on the current admin page */
 	if ( ! isset( $multisite ) && function_exists( 'get_current_screen' ) ) {
 		$multisite = get_current_screen()->in_admin( 'network' );
-	}
-
-	/* If the first parameter is a string, assume it is a table name */
-	elseif ( is_string( $multisite ) ) {
-		return $multisite;
 	}
 
 	/* If multisite is not active, always return the site-wide table name */
@@ -66,7 +66,7 @@ function create_code_snippets_tables( $upgrade = false ) {
 
 	/* Set the table name variables if not yet defined */
 	if ( ! isset( $wpdb->snippets, $wpdb->ms_snippets ) ) {
-		set_snippets_table_vars();
+		set_snippet_table_vars();
 	}
 
 	if ( is_multisite() ) {
