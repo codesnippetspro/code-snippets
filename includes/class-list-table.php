@@ -703,7 +703,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					$snippet->active = false;
 				}
 			}
-
 		} else {
 
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );

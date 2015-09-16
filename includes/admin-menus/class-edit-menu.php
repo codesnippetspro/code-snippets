@@ -122,7 +122,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 						$shared_snippets[] = $snippet_id;
 						update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 					}
-
 				} elseif ( in_array( $snippet_id, $shared_snippets ) ) {
 					/* Remove the snippet ID from the array */
 					$shared_snippets = array_diff( $shared_snippets, array( $snippet_id ) );

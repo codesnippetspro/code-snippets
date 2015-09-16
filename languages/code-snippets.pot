@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-15 18:46+1000\n"
+"POT-Creation-Date: 2015-09-16 13:56+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -373,21 +373,21 @@ msgid ""
 "\">Add New&rarr;</a>"
 msgstr ""
 
-#: includes/class-list-table.php:957
+#: includes/class-list-table.php:956
 msgid "Search results"
 msgstr ""
 
-#: includes/class-list-table.php:960
+#: includes/class-list-table.php:959
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/class-list-table.php:964
+#: includes/class-list-table.php:963
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/class-list-table.php:972
+#: includes/class-list-table.php:971
 msgid "Clear Filters"
 msgstr ""
 
