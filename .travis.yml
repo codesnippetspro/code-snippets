@@ -41,7 +41,7 @@ before_script:
   - mkdir -p $WP_DEVELOP_DIR
   - git clone --depth=1 git://develop.git.wordpress.org/ $WP_DEVELOP_DIR/
 
-  - if ["$WP_VERSION" == "stable"]; then
+  - if [ "$WP_VERSION" == "stable" ]; then
   - git fetch --tags
   - git checkout $(git tag | sort -n | tail -1)
   - else
