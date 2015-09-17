@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.4.1
+* Fixed CodeMirror themes not being detected on settings page [[#](https://wordpress.org/support/topic/updated-to-240-now-i-cant-switch-theme)]
+
 ### 2.4.0
 * Added ability to share network snippets to individual sites on WordPress multisite
 * Improved code directory and class structure

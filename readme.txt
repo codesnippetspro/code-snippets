@@ -4,7 +4,7 @@ Donate link: http://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.3.1
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 License: MIT
 License URI: license.txt
 
@@ -115,6 +115,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.4.1 =
+* Fixed CodeMirror themes not being detected on settings page
 
 = 2.4.0 =
 * Added ability to share network snippets to individual sites on WordPress multisite
@@ -360,6 +363,9 @@ __Fixed__
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.4.1 =
+Fixed CodeMirror themes not being detected on settings page
 
 = 2.4.0 =
 New snippet sharing feature for multisite networks; new Snippet class
