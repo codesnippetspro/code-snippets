@@ -145,7 +145,7 @@ module.exports = function(grunt) {
 					plugin_slug: 'code-snippets',
 					svn_user: 'bungeshea',
 					build_dir: 'deploy'
-				},
+				}
 			}
 		},
 
