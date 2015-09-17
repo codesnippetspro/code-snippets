@@ -93,7 +93,7 @@ foreach ( array(
 
 	) as $include ) {
 
-	require plugin_dir_path( __FILE__ ) . "includes/$include";
+	require plugin_dir_path( __FILE__ ) . "php/$include";
 }
 
 /* Initialize database table variables */

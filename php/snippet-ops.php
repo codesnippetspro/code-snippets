@@ -354,7 +354,7 @@ function export_snippets( $ids, $multisite = null, $format = 'xml' ) {
 	$table = get_snippets_table_name( $multisite );
 
 	if ( ! class_exists( 'Code_Snippets_Export' ) ) {
-		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/class-export.php';
+		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'php/class-export.php';
 	}
 
 	$class = new Code_Snippets_Export( $ids, $table, $format );

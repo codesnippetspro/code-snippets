@@ -59,7 +59,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		code_snippets_load_manage_help();
 
 		/* Initialize the list table class */
-		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'includes/class-list-table.php';
+		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'php/class-list-table.php';
 		$this->list_table = new Code_Snippets_List_Table();
 		$this->list_table->prepare_items();
 	}
