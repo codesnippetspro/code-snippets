@@ -1,6 +1,5 @@
 
 # Composer
-composer.lock
 /vendor
 
 # Built plugin
