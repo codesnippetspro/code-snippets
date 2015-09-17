@@ -105,7 +105,7 @@ module.exports = function(grunt) {
 						'uninstall.php',
 						'readme.txt',
 						'license.txt',
-						'includes/**/*',
+						'php/**/*',
 						'languages/**/*',
 						'css/min/**/*',
 						'css/font/**/*',
@@ -130,7 +130,7 @@ module.exports = function(grunt) {
 
 		phpcs: {
 			application: {
-				src: ['*.php', 'includes/**/*.php']
+				src: ['*.php', 'php/**/*.php']
 			},
 			options: {
 				bin: 'vendor/bin/phpcs',
@@ -175,7 +175,7 @@ module.exports = function(grunt) {
 				]
 			},
 			files: {
-				src: [ 'code-snippets.php', 'includes/**/*.php' ],
+				src: [ 'code-snippets.php', 'php/**/*.php' ],
 				expand: true
 			}
 		}
