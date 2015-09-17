@@ -53,7 +53,7 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>Default</option>';
 
 	/* Fetch all theme CSS files */
-	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'vendor/codemirror/theme/';
+	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/cmthemes/';
 	$themes = glob( $themes_dir . '*.css' );
 
 	/* Print dropdown entry for each theme */
