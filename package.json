@@ -1,6 +1,6 @@
 {
   "name": "code-snippets",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Manage code snippets running on a WordPress-powered site through a graphical interface",
   "homepage": "http://bungeshea.com/plugins/code-snippets",
   "main": "Gruntfile.js",
