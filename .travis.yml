@@ -40,7 +40,7 @@ before_script:
   - export WP_DEVELOP_DIR=/tmp/wordpress
   - mkdir -p $WP_DEVELOP_DIR
   - git clone --depth=1 git://develop.git.wordpress.org/ $WP_DEVELOP_DIR/
-  - if [ "$WP_VERSION" == "stable" ]; then git fetch --tags; git checkout $(git tag | sort -n | tail -1); else git checkout $WP_VERSION; fi
+  - sh -c "if [ '$WP_VERSION' = 'stable' ]; then git fetch --tags; git checkout $(git tag | sort -n | tail -1); else git checkout $WP_VERSION; fi"
 
   # Set up plugin information.
   - plugin_slug=$(basename $(pwd))
