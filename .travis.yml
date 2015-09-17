@@ -7,7 +7,7 @@ language: php
 php:
   - "5.5"
   - "5.4"
-  - "5.3"
+  - "5.6"
 
 env:
   # Trunk
@@ -15,21 +15,10 @@ env:
   - WP_VERSION=master WP_MULTISITE=0
   - WP_VERSION=master WP_MULTISITE=1
 
-  # WordPress 4.2 (latest stable version)
-  # @link https://github.com/WordPress/WordPress/tree/4.2-branch
-  - WP_VERSION=4.2 WP_MULTISITE=0
-  - WP_VERSION=4.2 WP_MULTISITE=1
+  # Latest stable version
+  - WP_VERSION=stable WP_MULTISITE=0
+  - WP_VERSION=stable WP_MULTISITE=1
 
-# Declare 5.6 beta in test matrix.
-# @link http://docs.travis-ci.com/user/build-configuration/
-matrix:
-  include:
-    - php: 5.6
-      env: WP_VERSION=master
-  allow_failures:
-    - php: 5.6
-    - php: 5.2
-  fast_finish: true
 
 # Prepare the system by installing prerequisites and dependencies.
 # Failures in this section will result in build status 'errored'.
@@ -42,7 +31,6 @@ before_install:
 before_script:
 
   # Run Grunt and Composer
-  # - composer self-update
   - composer install
   - npm install
   # Register WPCS with PHPCS (doesn't seem to do this automatically)
@@ -51,7 +39,15 @@ before_script:
   # set up WP install
   - export WP_DEVELOP_DIR=/tmp/wordpress
   - mkdir -p $WP_DEVELOP_DIR
-  - git clone --depth=1 --branch="$WP_VERSION" git://develop.git.wordpress.org/ $WP_DEVELOP_DIR/
+  - git clone --depth=1 git://develop.git.wordpress.org/ $WP_DEVELOP_DIR/
+
+  - if ["$WP_VERSION" == "stable"]; then
+  - git fetch --tags
+  - git checkout $(git tag | sort -n | tail -1)
+  - else
+  - git checkout $WP_VERSION
+  - fi
+
   # Set up plugin information.
   - plugin_slug=$(basename $(pwd))
   - plugin_dir=$WP_DEVELOP_DIR/src/wp-content/plugins/$plugin_slug
@@ -77,7 +73,7 @@ script:
 
   # Search for PHP syntax errors.
   - find . -maxdepth 1 \( -name '*.php' \) -exec php -lf {} \;
-  - find includes \( -name '*.php' \) -exec php -lf {} \;
+  - find php/ \( -name '*.php' \) -exec php -lf {} \;
 
   # Run Grunt tests
   - grunt test
