@@ -383,9 +383,7 @@ function execute_snippet( $code, $id = 0 ) {
 	$result = eval( $code );
 	ob_end_clean();
 
-	if ( $id ) {
-		do_action( 'code_snippets/after_execute_snippet', $id, $code );
-	}
+	do_action( 'code_snippets/after_execute_snippet', $id, $code, $result );
 
 	return $result;
 }
