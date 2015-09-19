@@ -402,6 +402,10 @@ function execute_active_snippets() {
 		return false;
 	}
 
+	if ( isset( $_GET['code_snippets_safe_mode'] ) && $_GET['code_snippets_safe_mode'] ) {
+		return false;
+	}
+
 	/** @var wpdb $wpdb */
 	global $wpdb;
 
