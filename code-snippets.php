@@ -87,8 +87,9 @@ foreach ( array(
 	'admin.php',
 
 	/* Settings component */
-	'settings/editor-preview.php',
 	'settings/settings-fields.php',
+	'settings/editor-preview.php',
+	'settings/render-fields.php',
 	'settings/settings.php',
 
 	) as $include ) {

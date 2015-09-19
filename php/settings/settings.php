@@ -6,24 +6,6 @@
  * @package Code_Snippets
  */
 
-require plugin_dir_path( __FILE__ ) . 'class-settings.php';
-
-/**
- * Retrieve the default setting values
- * @return array
- */
-function code_snippets_get_default_settings() {
-	return Code_Snippets_Settings::get_defaults();
-}
-
-/**
- * Retrieve the settings fields
- * @return array
- */
-function code_snippets_get_settings_fields() {
-	return Code_Snippets_Settings::get_fields();
-}
-
 /**
  * Retrieve the setting values from the database.
  * If a setting does not exist in the database, the default value will be returned.
@@ -38,7 +20,7 @@ function code_snippets_get_settings() {
 	}
 
 	/* Begin with the default settings */
-	$settings = Code_Snippets_Settings::get_defaults();
+	$settings = code_snippets_get_default_settings();
 
 	/* Retrieve saved settings from the database */
 	$saved = get_option( 'code_snippets_settings', array() );
@@ -114,7 +96,7 @@ function code_snippets_register_settings() {
 	}
 
 	/* Register settings fields */
-	foreach ( Code_Snippets_Settings::get_fields() as $section_id => $fields ) {
+	foreach ( code_snippets_get_settings_fields() as $section_id => $fields ) {
 		foreach ( $fields as $field ) {
 			$atts = $field;
 			$atts['section'] = $section_id;
