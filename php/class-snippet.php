@@ -74,6 +74,12 @@ class Snippet {
 	 * @return bool           Whether the field is set
 	 */
 	public function __isset( $field ) {
+
+		/* Rename the description field */
+		if ( 'description' === $field ) {
+			$field = 'desc';
+		}
+
 		return isset( $this->fields[ $field ] ) || method_exists( $this, 'get_' . $field );
 	}
 
