@@ -402,7 +402,7 @@ function execute_active_snippets() {
 		return false;
 	}
 
-	if ( isset( $_GET['code_snippets_safe_mode'] ) && $_GET['code_snippets_safe_mode'] ) {
+	if ( isset( $_GET['code_snippets_safe_mode'] ) && $_GET['code_snippets_safe_mode'] && current_user_can( get_snippets_cap() ) ) {
 		return false;
 	}
 

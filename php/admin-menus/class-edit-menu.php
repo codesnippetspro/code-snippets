@@ -133,7 +133,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 					$shared_snippets = array_diff( $shared_snippets, array( $snippet_id ) );
 					update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 
-					/* Loop through sites */
+					/* Deactivate on all sites */
 					global $wpdb;
 					if ( $sites = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" ) ) {
 
