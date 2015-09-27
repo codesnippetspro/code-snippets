@@ -233,7 +233,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		$scopes = array(
 			__( 'Run snippet everywhere', 'code-snippets' ),
-			__( 'Only run in adminstration area', 'code-snippets' ),
+			__( 'Only run in administration area', 'code-snippets' ),
 			__( 'Only run on site front-end', 'code-snippets' ),
 		);
 
