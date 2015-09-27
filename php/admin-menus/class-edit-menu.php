@@ -53,7 +53,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		code_snippets_load_edit_help();
 
 		/* Enqueue the code editor and other scripts and styles */
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_action( 'admin_enqueue_scripts', 'code_snippets_enqueue_codemirror' );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_tagit' ), 9 );
 
 		/* Register action hooks */
 		if ( code_snippets_get_setting( 'general', 'enable_description' ) ) {
@@ -297,17 +298,11 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
-	 * Registers and loads the code editor's assets
-	 *
-	 * @uses wp_enqueue_style() to add the stylesheets to the queue
-	 * @uses wp_enqueue_script() to add the scripts to the queue
+	 * Enqueue the Tag It library
 	 */
-	function enqueue_assets() {
+	function enqueue_tagit() {
 		$tagit_version = '2.0';
 		$url = plugin_dir_url( CODE_SNIPPETS_FILE );
-
-		/* Enqueue CodeMirror */
-		code_snippets_enqueue_codemirror();
 
 		/* Tag It UI */
 		wp_enqueue_script(
