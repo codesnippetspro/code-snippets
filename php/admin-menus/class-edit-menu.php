@@ -179,23 +179,25 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	function render_description_editor( Snippet $snippet ) {
 		$settings = code_snippets_get_settings();
 		$settings = $settings['description_editor'];
-		$media_buttons = $settings['media_buttons'];
-
-		echo '<label for="snippet_description"><h3>';
 		$heading = __( 'Description', 'code-snippets' );
-		echo $media_buttons ? $heading : "<div>$heading</div>";
-		echo '</h3></label>';
+
+		/* Hack to remove space between heading and editor tabs */
+		if ( ! $settings['media_buttons'] && 'false' !== get_user_option( 'rich_editing' ) ) {
+			$heading = "<div>$heading</div>";
+		}
+
+		echo '<label for="snippet_description"><h3>', $heading, '</h3></label>';
 
 		remove_editor_styles(); // stop custom theme styling interfering with the editor
 
 		wp_editor(
-			$snippet->description,
+			$snippet->desc,
 			'description',
 			apply_filters( 'code_snippets/admin/description_editor_settings', array(
 				'textarea_name' => 'snippet_description',
 				'textarea_rows' => $settings['rows'],
 				'teeny' => ! $settings['use_full_mce'],
-				'media_buttons' => $media_buttons,
+				'media_buttons' => $settings['media_buttons'],
 			) )
 		);
 	}
