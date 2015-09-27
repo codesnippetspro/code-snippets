@@ -53,12 +53,12 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		code_snippets_load_edit_help();
 
 		/* Enqueue the code editor and other scripts and styles */
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
 		/* Register action hooks */
 		if ( code_snippets_get_setting( 'general', 'enable_description' ) ) {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_description_editor' ), 9 );
-		}
+	}
 
 		if ( code_snippets_get_setting( 'general', 'enable_tags' ) ) {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_tags_editor' ) );
