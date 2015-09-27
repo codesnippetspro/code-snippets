@@ -113,15 +113,20 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
 
 			<?php
 
+			/* Retrieve editor settings */
 			$fields = code_snippets_get_settings_fields();
 			$fields = $fields['editor'];
 
-			$types = wp_list_pluck( $fields, 'type', 'id' );
-			$codemirror_atts = wp_list_pluck( $fields, 'codemirror', 'id' );
+			foreach ( $fields as $setting => $field ) {
 
-			foreach ( $codemirror_atts as $setting => $att_name ) {
+				/* Only output settings which have a CodeMirror attribute */
+				if ( empty( $field['codemirror'] ) ) {
+					continue;
+				}
 
-				switch ( $types[ $setting ] ) {
+				$att_name = $field['codemirror'];
+
+				switch ( $field['type'] ) {
 
 					case 'codemirror_theme_select':	?>
 

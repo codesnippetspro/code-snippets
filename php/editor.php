@@ -18,8 +18,8 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 		'matchBrackets' => true,
 	);
 
-	foreach ( $fields as $field ) {
-		$saved_atts[ $field['codemirror'] ] = $settings[ $field['id'] ];
+	foreach ( $fields as $field_id => $field ) {
+		$saved_atts[ $field['codemirror'] ] = $settings[ $field_id ];
 	}
 
 	$atts = wp_parse_args( $override_atts, $saved_atts );

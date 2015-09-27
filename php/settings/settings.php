@@ -97,12 +97,13 @@ function code_snippets_register_settings() {
 
 	/* Register settings fields */
 	foreach ( code_snippets_get_settings_fields() as $section_id => $fields ) {
-		foreach ( $fields as $field ) {
+		foreach ( $fields as $field_id => $field ) {
 			$atts = $field;
+			$atts['id'] = $field_id;
 			$atts['section'] = $section_id;
 
 			add_settings_field(
-				'code_snippets_' . $field['id'],
+				'code_snippets_' . $field_id,
 				$field['name'],
 				"code_snippets_{$field['type']}_field",
 				'code-snippets',
@@ -138,8 +139,7 @@ function code_snippets_settings_validate( array $input ) {
 	foreach ( $settings_fields as $section_id => $fields ) {
 
 		// Loop through fields
-		foreach ( $fields as $field ) {
-			$field_id = $field['id'];
+		foreach ( $fields as $field_id => $field ) {
 
 			switch ( $field['type'] ) {
 
