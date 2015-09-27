@@ -418,6 +418,7 @@ function execute_active_snippets() {
 	/* Check if the snippets tables exist */
 	$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets;
 	$ms_table_exists = is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets;
+	$sql = '';
 
 	/* Fetch snippets from site table */
 	if ( $table_exists ) {

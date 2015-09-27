@@ -132,6 +132,24 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 					/* Remove the snippet ID from the array */
 					$shared_snippets = array_diff( $shared_snippets, array( $snippet_id ) );
 					update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
+
+					/* Loop through sites */
+					global $wpdb;
+					if ( $sites = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" ) ) {
+
+						foreach ( $sites as $site ) {
+							switch_to_blog( $site );
+							$active_shared_snippets = get_option( 'active_shared_network_snippets' );
+
+							if ( is_array( $active_shared_snippets ) ) {
+								$active_shared_snippets = array_diff( $active_shared_snippets, array( $snippet_id ) );
+								update_option( 'active_shared_network_snippets', $active_shared_snippets );
+							}
+						}
+
+						restore_current_blog();
+					}
+
 				}
 			}
 
