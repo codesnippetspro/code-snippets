@@ -1,5 +1,16 @@
 # Changelog
 
+### 2.4.2
+* Added query variable to activate safe mode
+* Fixed settings not saving
+* Fixed snippet descriptions not displaying on manage menu
+* Added settings to disable description and tag editors
+* Fixed: Load CodeMirror after plugin styles to fix error with Zenburn theme
+* Fixed: Hide snippet scope icons when the scope selector is disabled
+* Fixed description heading on edt snippet menu being hidden when visual editor disabled
+* Updated editor preview updating code to use vanilla JavaScript instead of jQuery
+* Fixed: Deactivate a shared network snippet on all subsites when it looses its sharing status
+
 ### 2.4.1
 * Fixed CodeMirror themes not being detected on settings page [[#](https://wordpress.org/support/topic/updated-to-240-now-i-cant-switch-theme)]
 
