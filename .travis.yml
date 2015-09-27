@@ -36,13 +36,17 @@ before_script:
   # Register WPCS with PHPCS (doesn't seem to do this automatically)
   - vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs
 
+  - project_dir=$(pwd)
+  - echo $project_dir
+
   # set up WP install
   - export WP_DEVELOP_DIR=/tmp/wordpress
   - mkdir -p $WP_DEVELOP_DIR
   - git clone --depth=1 git://develop.git.wordpress.org/ $WP_DEVELOP_DIR/
-  - sh -c "if [ '$WP_VERSION' = 'stable' ]; then git fetch --tags; git checkout $(git tag | sort -n | tail -1); else git checkout $WP_VERSION; fi"
+  - if [ '$WP_VERSION' = 'stable' ]; then git fetch --tags; git checkout $(git tag | sort -n | tail -1); else git checkout $WP_VERSION; fi
 
   # Set up plugin information.
+  - cd $project_dir
   - plugin_slug=$(basename $(pwd))
   - plugin_dir=$WP_DEVELOP_DIR/src/wp-content/plugins/$plugin_slug
   - cd ..
