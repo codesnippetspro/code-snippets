@@ -325,7 +325,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'tags'        => __( 'Tags', 'code-snippets' ),
 		);
 
-
 		if ( ! code_snippets_get_setting( 'general', 'enable_description' ) ) {
 			unset( $columns['description'] );
 		}
@@ -990,7 +989,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	public function single_row( $snippet ) {
 		$row_class = ( $snippet->active ? 'active' : 'inactive' );
-
 
 		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
 			$row_class .= sprintf( ' %s-scope', $snippet->scope_name );
