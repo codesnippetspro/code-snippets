@@ -324,6 +324,16 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
 		);
+
+
+		if ( ! code_snippets_get_setting( 'general', 'enable_description' ) ) {
+			unset( $columns['description'] );
+		}
+
+		if ( ! code_snippets_get_setting( 'general', 'enable_tags' ) ) {
+			unset( $columns['tags'] );
+		}
+
 		return apply_filters( 'code_snippets/list_table/columns', $columns );
 	}
 

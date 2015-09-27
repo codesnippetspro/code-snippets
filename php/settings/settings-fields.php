@@ -50,6 +50,24 @@ function code_snippets_get_settings_fields() {
 			'label' => __( 'Enable the scope selector when editing a snippet', 'code-snippets' ),
 			'default' => true,
 		),
+
+
+		array(
+			'id' => 'enable_tags',
+			'name' => __( 'Enable Snippet Tags', 'code-snippets' ),
+			'type' => 'checkbox',
+			'label' => __( 'Show snippet tags on admin pages' ),
+			'default' => true,
+		),
+
+		array(
+			'id' => 'enable_description',
+			'name' => __( 'Enable Snippet Descriptions', 'code-snippets' ),
+			'type' => 'checkbox',
+			'label' => __( 'Show snippet descriptions on admin pages' ),
+			'default' => true,
+		),
+
 	);
 
 	/* Description Editor settings section */
