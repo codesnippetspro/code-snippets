@@ -30,19 +30,20 @@ before_install:
 # Failures in this section will result in build status 'errored'.
 before_script:
 
+  - project_dir=$(pwd)
+  - pwd
+
   # Run Grunt and Composer
   - composer install
   - npm install
   # Register WPCS with PHPCS (doesn't seem to do this automatically)
   - vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs
 
-  - project_dir=$(pwd)
-  - echo $project_dir
-
   # set up WP install
   - export WP_DEVELOP_DIR=/tmp/wordpress
   - mkdir -p $WP_DEVELOP_DIR
   - git clone --depth=1 git://develop.git.wordpress.org/ $WP_DEVELOP_DIR/
+  - cd $WP_DEVELOP_DIR
   - if [ '$WP_VERSION' = 'stable' ]; then git fetch --tags; git checkout $(git tag | sort -n | tail -1); else git checkout $WP_VERSION; fi
 
   # Set up plugin information.
