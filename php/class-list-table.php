@@ -341,7 +341,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @return array The IDs of the columns that can be sorted
 	 */
-	protected function get_sortable_columns() {
+	public function get_sortable_columns() {
 		$sortable_columns = array(
 			'id'   => array( 'id', true ),
 			'name' => array( 'name', false ),
@@ -364,7 +364,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @return array An array of menu items with the ID paired to the label
 	 */
-	protected function get_bulk_actions() {
+	public function get_bulk_actions() {
 		$actions = array(
 			'activate-selected'   => $this->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
 			'deactivate-selected' => $this->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
@@ -382,7 +382,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @return array The classes to include on the table element
 	 */
-	protected function get_table_classes() {
+	public function get_table_classes() {
 		$classes = array( 'widefat', $this->_args['plural'] );
 		return apply_filters( 'code_snippets/list_table/table_classes', $classes );
 	}
@@ -394,7 +394,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @return array A list of the view labels linked to the view
 	 */
-	protected function get_views() {
+	public function get_views() {
 		global $totals, $status;
 		$status_links = array();
 
@@ -458,7 +458,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * Add filters and extra actions above and below the table
 	 * @param string $which Are the actions displayed on the table top or bottom
 	 */
-	protected function extra_tablenav( $which ) {
+	public function extra_tablenav( $which ) {
 		global $status, $wpdb;
 
 		if ( 'top' === $which ) {
