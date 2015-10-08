@@ -357,33 +357,78 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		<?php
 	}
 
-	/*
+	/**
+	 * Retrieve the first error in a snippet's code
+	 *
+	 * @param $snippet_id
+	 *
+	 * @return array|bool
+	 */
+	private function get_snippet_error( $snippet_id ) {
+
+		if ( ! intval( $snippet_id ) ) {
+			return false;
+		}
+
+		$snippet = get_snippet( intval( $snippet_id ) );
+
+		if ( '' === $snippet->code ) {
+			return false;
+		}
+
+		@eval( $snippet->code );
+		$error = error_get_last();
+
+		if ( is_null( $error ) ) {
+			return false;
+		}
+
+		return $error;
+	}
+
+	/**
 	 * Print the status and error messages
 	 */
 	protected function print_messages() {
 
-		/* Check if an error exists, and if so, build the message */
-		$error = $this->get_result_message(
-			array(
-				'save-error' => __( 'An error occurred when saving the snippet.', 'code-snippets' ),
-				'code-error' => __( 'The snippet code contains a parse error and has been deactivated.', 'code-snippets' ),
-			),
-			'result', 'error'
+		if ( ! isset( $_REQUEST['result'] ) ) {
+			return;
+		}
+
+		$result = $_REQUEST['result'];
+
+		if ( 'code-error' === $result ) {
+
+			if ( isset( $_REQUEST['id'] ) && $error = $this->get_snippet_error( $_REQUEST['id'] ) ) {
+
+				printf(
+					'<div id="message" class="error fade"><p>%s</p><p><strong>%s</strong></p></div>',
+					sprintf( __( 'The snippet has been deactivated due to an error on line %d:', 'code-snippets' ), $error['line'] ),
+					$error['message']
+				);
+
+			} else {
+				echo '<div id="message" class="error fade"><p>', __( 'The snippet has been deactivated due to an error in the code.', 'code-snippets' ), '</p></div>';
+			}
+
+			return;
+		}
+
+		if ( 'save-error' === $result ) {
+			echo '<div id="message" class="error fade"><p>', __( 'An error occurred when saving the snippet.', 'code-snippets' ), '</p></div>';
+			return;
+		}
+
+		$messages = array(
+			'added' => __( 'Snippet <strong>added</strong>.', 'code-snippets' ),
+			'updated' => __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
+			'added-and-activated' => __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ),
+			'updated-and-activated' => __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ),
+			'updated-and-deactivated' => __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ),
 		);
 
-		/* Output the error message if it exists, otherwise try to output a result message */
-		if ( $error ) {
-			echo $error;
-		} else {
-			echo $this->get_result_message(
-				array(
-					'added' => __( 'Snippet <strong>added</strong>.', 'code-snippets' ),
-					'updated' => __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
-					'added-and-activated' => __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ),
-					'updated-and-activated' => __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ),
-					'updated-and-deactivated' => __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ),
-				)
-			);
+		if ( isset( $messages[ $result ] ) ) {
+			echo '<div id="message" class="updated fade"><p>', $messages[ $result ], '</p></div>';
 		}
 	}
 
