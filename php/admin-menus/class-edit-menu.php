@@ -73,122 +73,165 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_multisite_sharing_setting' ) );
 		}
 
-		$this->save_posted_snippet();
+		$this->process_actions();
 	}
 
 	/**
-	 * Save the posted snippet to the database
-	 * @uses wp_redirect() to pass the results to the page
-	 * @uses save_snippet() to save the snippet to the database
+	 * Process data sent from the edit page
 	 */
-	private function save_posted_snippet() {
+	private function process_actions() {
 
-		/* Make sure the nonce validates before we do any snippet ops */
+		/* Check for a valid nonce */
 		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'save_snippet' ) ) {
 			return;
 		}
 
-		/* Save the snippet if one has been submitted */
 		if ( isset( $_POST['save_snippet'] ) || isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
+			$this->save_posted_snippet();
+		}
 
-			/* Build snippet object from fields with 'snippet_' prefix */
-			$snippet = new Snippet();
-			foreach ( $_POST as $field => $value ) {
-				if ( 'snippet_' === substr( $field, 0, 8 ) ) {
+		if ( isset( $_POST['snippet_id'] ) ) {
 
-					/* Remove 'snippet_' prefix from field name */
-					$field = substr( $field, 8 );
-					$snippet->$field = stripslashes( $value );
-				}
-			}
-
-			/* Activate or deactivate the snippet before saving if we clicked the button */
-
-			// Shared network snippets cannot be network activated
-			if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
-				$snippet->active = 0;
-				unset( $_POST['save_snippet_activate'], $_POST['save_snippet_deactivate'] );
-			} elseif ( isset( $_POST['save_snippet_activate'] ) ) {
-				$snippet->active = 1;
-			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
-				$snippet->active = 0;
-			}
-
-			/* Save the snippet to the database */
-			$snippet_id = save_snippet( $snippet );
-
-			/* Update the shared network snippets if necessary */
-			if ( $snippet_id && get_current_screen()->in_admin( 'network' ) ) {
-				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
-
-				if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
-
-					/* Add the snippet ID to the array if it isn't already */
-					if ( ! in_array( $snippet_id, $shared_snippets ) ) {
-						$shared_snippets[] = $snippet_id;
-						update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
-					}
-				} elseif ( in_array( $snippet_id, $shared_snippets ) ) {
-					/* Remove the snippet ID from the array */
-					$shared_snippets = array_diff( $shared_snippets, array( $snippet_id ) );
-					update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
-
-					/* Deactivate on all sites */
-					global $wpdb;
-					if ( $sites = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" ) ) {
-
-						foreach ( $sites as $site ) {
-							switch_to_blog( $site );
-							$active_shared_snippets = get_option( 'active_shared_network_snippets' );
-
-							if ( is_array( $active_shared_snippets ) ) {
-								$active_shared_snippets = array_diff( $active_shared_snippets, array( $snippet_id ) );
-								update_option( 'active_shared_network_snippets', $active_shared_snippets );
-							}
-						}
-
-						restore_current_blog();
-					}
-
-				}
-			}
-
-			/* If the saved snippet ID is invalid, display an error message */
-			if ( ! $snippet_id || $snippet_id < 1 ) {
-				/* An error occurred */
-				wp_redirect( add_query_arg( 'result', 'error', code_snippets_get_menu_url( 'add' ) ) );
+			/* Delete the snippet if the button was clicked */
+			if ( isset( $_POST['delete_snippet'] ) ) {
+				delete_snippet( $_POST['snippet_id'] );
+				wp_redirect( add_query_arg( 'result', 'delete', code_snippets_get_menu_url( 'manage' ) ) );
 				exit;
 			}
 
-			/* Set the result depending on if the snippet was just added */
-			$result = isset( $_POST['snippet_id'] ) ? 'updated' : 'added';
+			/* Export the snippet if the button was clicked */
+			if ( isset( $_POST['export_snippet'] ) ) {
+				export_snippets( $_POST['snippet_id'] );
+			}
+		}
+	}
 
-			/* Append a suffix if the snippet was activated or deactivated */
-			if ( isset( $_POST['save_snippet_activate'] ) ) {
-				$result .= '-and-activated';
-			} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
-				$result .= '-and-deactivated';
+	/**
+	 * Remove the sharing status from a network snippet
+	 * @param int $snippet_id
+	 */
+	private function unshare_network_snippet( $snippet_id ) {
+		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
+
+		if ( ! in_array( $snippet_id, $shared_snippets ) ) {
+			return;
+		}
+
+		/* Remove the snippet ID from the array */
+		$shared_snippets = array_diff( $shared_snippets, array( $snippet_id ) );
+		update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
+
+		/* Deactivate on all sites */
+		global $wpdb;
+		if ( $sites = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" ) ) {
+
+			foreach ( $sites as $site ) {
+				switch_to_blog( $site );
+				$active_shared_snippets = get_option( 'active_shared_network_snippets' );
+
+				if ( is_array( $active_shared_snippets ) ) {
+					$active_shared_snippets = array_diff( $active_shared_snippets, array( $snippet_id ) );
+					update_option( 'active_shared_network_snippets', $active_shared_snippets );
+				}
 			}
 
-			/* Redirect to edit snippet page */
+			restore_current_blog();
+		}
+	}
+
+	/**
+	 * Save the posted snippet data to the database and redirect
+	 */
+	private function save_posted_snippet() {
+
+		/* Build snippet object from fields with 'snippet_' prefix */
+		$snippet = new Snippet();
+		foreach ( $_POST as $field => $value ) {
+			if ( 'snippet_' === substr( $field, 0, 8 ) ) {
+
+				/* Remove 'snippet_' prefix from field name */
+				$field = substr( $field, 8 );
+				$snippet->$field = stripslashes( $value );
+			}
+		}
+
+		/* Activate or deactivate the snippet before saving if we clicked the button */
+
+		// Shared network snippets cannot be network activated
+		if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
+			$snippet->active = 0;
+			unset( $_POST['save_snippet_activate'], $_POST['save_snippet_deactivate'] );
+		} elseif ( isset( $_POST['save_snippet_activate'] ) ) {
+			$snippet->active = 1;
+		} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
+			$snippet->active = 0;
+		}
+
+		/* Validate code */
+		if ( ! empty( $snippet->code ) ) {
+
+			ob_start();
+			$result = eval( $snippet->code );
+			ob_end_clean();
+
+
+			if ( false === $result ) {
+				$snippet->active = 0;
+				$code_error = true;
+			}
+		}
+
+		/* Save the snippet to the database */
+		$snippet_id = save_snippet( $snippet );
+
+		/* Update the shared network snippets if necessary */
+		if ( $snippet_id && get_current_screen()->in_admin( 'network' ) ) {
+
+			if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
+				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
+
+				/* Add the snippet ID to the array if it isn't already */
+				if ( ! in_array( $snippet_id, $shared_snippets ) ) {
+					$shared_snippets[] = $snippet_id;
+					update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
+				}
+			} else {
+				$this->unshare_network_snippet( $snippet_id );
+			}
+		}
+
+		/* If the saved snippet ID is invalid, display an error message */
+		if ( ! $snippet_id || $snippet_id < 1 ) {
+			/* An error occurred */
+			wp_redirect( add_query_arg( 'result', 'save-error', code_snippets_get_menu_url( 'add' ) ) );
+			exit;
+		}
+
+		/* Display message if a parse error occurred */
+		if ( isset( $code_error ) && $code_error ) {
 			wp_redirect( add_query_arg(
-				array( 'id' => $snippet_id, 'result' => $result ),
+				array( 'id' => $snippet_id, 'result' => 'code-error' ),
 				code_snippets_get_menu_url( 'edit' )
 			) );
 			exit;
 		}
 
-		/* Delete the snippet if the button was clicked */
-		elseif ( isset( $_POST['snippet_id'], $_POST['delete_snippet'] ) ) {
-			delete_snippet( $_POST['snippet_id'] );
-			wp_redirect( add_query_arg( 'result', 'delete', code_snippets_get_menu_url( 'manage' ) ) );
-			exit;
+		/* Set the result depending on if the snippet was just added */
+		$result = isset( $_POST['snippet_id'] ) ? 'updated' : 'added';
+
+		/* Append a suffix if the snippet was activated or deactivated */
+		if ( isset( $_POST['save_snippet_activate'] ) ) {
+			$result .= '-and-activated';
+		} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
+			$result .= '-and-deactivated';
 		}
 
-		/* Export the snippet if the button was clicked */
-		elseif ( isset( $_POST['snippet_id'], $_POST['export_snippet'] ) ) {
-			export_snippets( $_POST['snippet_id'] );
-		}
+		/* Redirect to edit snippet page */
+		wp_redirect( add_query_arg(
+			array( 'id' => $snippet_id, 'result' => $result ),
+			code_snippets_get_menu_url( 'edit' )
+		) );
+		exit;
 	}
 
 	/**
@@ -295,7 +338,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Check if an error exists, and if so, build the message */
 		$error = $this->get_result_message(
-			array( 'error' => __( 'An error occurred when saving the snippet.', 'code-snippets' ) ),
+			array(
+				'save-error' => __( 'An error occurred when saving the snippet.', 'code-snippets' ),
+				'code-error' => __( 'The snippet code contains a parse error and has been deactivated.', 'code-snippets' ),
+			),
 			'result', 'error'
 		);
 

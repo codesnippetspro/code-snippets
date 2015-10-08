@@ -61,19 +61,24 @@ class Code_Snippets_Admin_Menu {
 
 	/**
 	 * Retrieve a result message based on a posted status
-	 * @return string|bool The result message if a valid status was recieved, otherwise false
+	 *
+	 * @param array  $messages
+	 * @param string $request_var
+	 * @param string $class
+	 *
+	 * @return string|bool The result message if a valid status was received, otherwise false
 	 */
 	protected function get_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
 
 		if ( empty( $_REQUEST[ $request_var ] ) ) {
-			return;
+			return false;
 		}
 
 		$result = $_REQUEST[ $request_var ];
 
 		if ( isset( $messages[ $result ] ) ) {
 			return sprintf(
-				'<div id="message" class="%1$s %2$s fade"><p>%1$s</p></div>',
+				'<div id="message" class="%2$s fade"><p>%1$s</p></div>',
 				$messages[ $result ], $class
 			);
 		}
