@@ -4,7 +4,7 @@ Donate link: http://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.3.2
-Stable tag: 2.4.1
+Stable tag: 2.5.0
 License: MIT
 License URI: license.txt
 
@@ -115,6 +115,10 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.5.0 =
+* Added: Detect parse and fatal errors in code when saving a snippet, and display a user-friendly message
+* Fixed: Updated access of some methods in Code_Snippets_List_Table class to match updated WP_List_Table class
 
 = 2.4.2 =
 * Added query variable to activate safe mode
@@ -374,6 +378,9 @@ __Fixed__
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.5.0 =
+Now detects errors in snippet code when saving
 
 = 2.4.1 =
 Fixed CodeMirror themes not being detected on settings page

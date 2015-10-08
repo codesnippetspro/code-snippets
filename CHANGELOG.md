@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.5.0
+* Added: Detect parse and fatal errors in code when saving a snippet, and display a user-friendly message
+* Fixed: Updated access of some methods in Code_Snippets_List_Table class to match updated WP_List_Table class
+
 ### 2.4.2
 * Added query variable to activate safe mode
 * Fixed settings not saving
