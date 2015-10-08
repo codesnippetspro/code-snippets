@@ -143,7 +143,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		$error = error_get_last();
 
 		$m = '<h2>' . __( "Don't Panic", 'code-snippets' ) . '</h2>';
-		$m .= '<p>' . __( 'The code snippet you are trying to save produced a fatal error:', 'code_snippets' ) . '</p>';
+		$m .= '<p>' . sprintf( __( 'The code snippet you are trying to save produced a fatal error on line %d:', 'code_snippets' ), $error['line'] ) . '</p>';
 		$m .= '<strong>' . $error['message'] . '</strong>';
 		$m .= '<p>' . __( 'The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before.' ) . '</p>';
 		$m .= '<p>' . __( 'Please use the back button in your browser to return to the previous page and try to fix the code error.', 'code-snippets' );
