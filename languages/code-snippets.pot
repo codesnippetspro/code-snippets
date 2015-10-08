@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.4.2\n"
+"Project-Id-Version: code-snippets 2.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-27 23:35+1000\n"
+"POT-Creation-Date: 2015-10-08 19:35+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: php/admin-menus/class-admin-menu.php:90
+#: php/admin-menus/class-admin-menu.php:95
 msgid "You are not authorized to access this page."
 msgstr ""
 
@@ -35,63 +35,100 @@ msgstr ""
 msgid "Add New Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:201 php/class-list-table.php:324
+#: php/admin-menus/class-edit-menu.php:145
+msgid "Don't Panic"
+msgstr ""
+
+#: php/admin-menus/class-edit-menu.php:146
+#, php-format
+msgid ""
+"The code snippet you are trying to save produced a fatal error on line %d:"
+msgstr ""
+
+#: php/admin-menus/class-edit-menu.php:148
+msgid ""
+"The previous version of the snippet is unchanged, and the rest of this site "
+"should be functioning normally as before."
+msgstr ""
+
+#: php/admin-menus/class-edit-menu.php:149
+msgid ""
+"Please use the back button in your browser to return to the previous page "
+"and try to fix the code error."
+msgstr ""
+
+#: php/admin-menus/class-edit-menu.php:150
+msgid ""
+"If you prefer, you can close this page and discard the changes you just "
+"made. No changes will be made to this site."
+msgstr ""
+
+#: php/admin-menus/class-edit-menu.php:270 php/class-list-table.php:324
 msgid "Description"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:231 php/class-list-table.php:325
+#: php/admin-menus/class-edit-menu.php:300 php/class-list-table.php:325
 msgid "Tags"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:235
+#: php/admin-menus/class-edit-menu.php:304
 msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:254
+#: php/admin-menus/class-edit-menu.php:323
 msgid "Run snippet everywhere"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:255
+#: php/admin-menus/class-edit-menu.php:324
 msgid "Only run in administration area"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:256
+#: php/admin-menus/class-edit-menu.php:325
 msgid "Only run on site front-end"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:260
+#: php/admin-menus/class-edit-menu.php:329
 msgid "Scope"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:280
+#: php/admin-menus/class-edit-menu.php:349
 msgid "Sharing"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:284
+#: php/admin-menus/class-edit-menu.php:353
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:298
+#: php/admin-menus/class-edit-menu.php:406
+#, php-format
+msgid "The snippet has been deactivated due to an error on line %d:"
+msgstr ""
+
+#: php/admin-menus/class-edit-menu.php:411
+msgid "The snippet has been deactivated due to an error in the code."
+msgstr ""
+
+#: php/admin-menus/class-edit-menu.php:418
 msgid "An error occurred when saving the snippet."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:308
+#: php/admin-menus/class-edit-menu.php:423
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:309
+#: php/admin-menus/class-edit-menu.php:424
 msgid "Snippet <strong>updated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:310
+#: php/admin-menus/class-edit-menu.php:425
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:311
+#: php/admin-menus/class-edit-menu.php:426
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:312
+#: php/admin-menus/class-edit-menu.php:427
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
