@@ -3,6 +3,9 @@
 # @link http://about.travis-ci.org/docs/user/languages/php/
 language: php
 
+# Use container-based infrastructure
+sudo: false
+
 # Declare versions of PHP to use. Use one decimal max.
 php:
   - "5.5"
@@ -11,7 +14,6 @@ php:
 
 env:
   # Trunk
-  # @link https://github.com/WordPress/WordPress
   - WP_VERSION=master WP_MULTISITE=0
   - WP_VERSION=master WP_MULTISITE=1
 
@@ -41,11 +43,11 @@ before_script:
   - mkdir -p $WP_DEVELOP_DIR
   - git clone --depth=1 git://develop.git.wordpress.org/ $WP_DEVELOP_DIR/
   - cd $WP_DEVELOP_DIR
-  - if [[ $WP_VERSION == 'stable' ]]; then git fetch --tags; export WP_VERSION='$(git tag | sort -n | tail -1)'; fi
+  - if [[ $WP_VERSION == 'stable' ]]; then git fetch --tags; export WP_VERSION=$(git tag | sort -n | tail -1); fi
   - git checkout $WP_VERSION
 
   # Build plugin
-    - cd $PROJECT_DIR
+  - cd $PROJECT_DIR
   - composer install
   - vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs
   - npm install

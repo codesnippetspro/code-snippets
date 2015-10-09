@@ -46,7 +46,7 @@ $snippet = get_snippet( $edit_id );
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php _e( 'Name (short title)', 'code-snippets' ); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo $snippet->name; ?>" placeholder="<?php _e( 'Name (short title)', 'code-snippets' ); ?>" />
+				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>" placeholder="<?php _e( 'Name (short title)', 'code-snippets' ); ?>" />
 			</div>
 		</div>
 
