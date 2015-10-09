@@ -142,6 +142,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	private function code_error_callback( $out ) {
 		$error = error_get_last();
 
+		if ( is_null( $error ) || ! in_array( $error['type'], array( E_ERROR, E_COMPILE_ERROR, E_USER_ERROR ) ) ) {
+			return $out;
+		}
+
 		$m = '<h2>' . __( "Don't Panic", 'code-snippets' ) . '</h2>';
 		$m .= '<p>' . sprintf( __( 'The code snippet you are trying to save produced a fatal error on line %d:', 'code_snippets' ), $error['line'] ) . '</p>';
 		$m .= '<strong>' . $error['message'] . '</strong>';
