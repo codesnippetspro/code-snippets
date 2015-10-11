@@ -169,6 +169,11 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			return false;
 		}
 
+		/* Skip snippets that contain named functions */
+		if ( preg_match( '/(?:function|class)\s+\w+/i', $snippet->code ) ) {
+			return false;
+		}
+
 		ob_start( array( $this, 'code_error_callback' ) );
 		$result = eval( $snippet->code );
 		ob_end_clean();
