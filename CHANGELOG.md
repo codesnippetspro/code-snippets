@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.5.1
+* Fixed: Ensure errors are fatal before catching them during error checking
+* Fixed: Escape the snippet name on the edit page to ensure it displays correctly
+* Fixed: Exclude snippets with named functions from error checking so they do not run twice
+
 ### 2.5.0
 * Added: Detect parse and fatal errors in code when saving a snippet, and display a user-friendly message
 * Fixed: Updated access of some methods in Code_Snippets_List_Table class to match updated WP_List_Table class

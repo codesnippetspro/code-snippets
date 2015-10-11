@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.5.0\n"
+"Project-Id-Version: code-snippets 2.5.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-08 19:35+1100\n"
+"POT-Creation-Date: 2015-10-11 20:33+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,100 +35,100 @@ msgstr ""
 msgid "Add New Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:145
+#: php/admin-menus/class-edit-menu.php:149
 msgid "Don't Panic"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:146
+#: php/admin-menus/class-edit-menu.php:150
 #, php-format
 msgid ""
 "The code snippet you are trying to save produced a fatal error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:148
+#: php/admin-menus/class-edit-menu.php:152
 msgid ""
 "The previous version of the snippet is unchanged, and the rest of this site "
 "should be functioning normally as before."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:149
+#: php/admin-menus/class-edit-menu.php:153
 msgid ""
 "Please use the back button in your browser to return to the previous page "
 "and try to fix the code error."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:150
+#: php/admin-menus/class-edit-menu.php:154
 msgid ""
 "If you prefer, you can close this page and discard the changes you just "
 "made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:270 php/class-list-table.php:324
+#: php/admin-menus/class-edit-menu.php:279 php/class-list-table.php:324
 msgid "Description"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:300 php/class-list-table.php:325
+#: php/admin-menus/class-edit-menu.php:309 php/class-list-table.php:325
 msgid "Tags"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:304
+#: php/admin-menus/class-edit-menu.php:313
 msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:323
+#: php/admin-menus/class-edit-menu.php:332
 msgid "Run snippet everywhere"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:324
+#: php/admin-menus/class-edit-menu.php:333
 msgid "Only run in administration area"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:325
+#: php/admin-menus/class-edit-menu.php:334
 msgid "Only run on site front-end"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:329
+#: php/admin-menus/class-edit-menu.php:338
 msgid "Scope"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:349
+#: php/admin-menus/class-edit-menu.php:358
 msgid "Sharing"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:353
+#: php/admin-menus/class-edit-menu.php:362
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:406
+#: php/admin-menus/class-edit-menu.php:415
 #, php-format
 msgid "The snippet has been deactivated due to an error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:411
+#: php/admin-menus/class-edit-menu.php:420
 msgid "The snippet has been deactivated due to an error in the code."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:418
+#: php/admin-menus/class-edit-menu.php:427
 msgid "An error occurred when saving the snippet."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:423
+#: php/admin-menus/class-edit-menu.php:432
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:424
+#: php/admin-menus/class-edit-menu.php:433
 msgid "Snippet <strong>updated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:425
+#: php/admin-menus/class-edit-menu.php:434
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:426
+#: php/admin-menus/class-edit-menu.php:435
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:427
+#: php/admin-menus/class-edit-menu.php:436
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 

@@ -2,7 +2,7 @@
 
 * __Requires at least:__ [WordPress 3.6](http://wordpress.org/download/) or later
 * __Tested up to:__ WordPress 4.2.2
-* __Stable version:__ [2.5.0](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __Stable version:__ [2.5.1](http://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
 Code Snippets is an easy, clean and simple way to add code snippets to your site. It removes the need to add custom snippets to your theme theme's `functions.php` file.

@@ -4,7 +4,7 @@ Donate link: http://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.3.2
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 License: MIT
 License URI: license.txt
 
@@ -115,6 +115,11 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.5.1 =
+* Fixed: Ensure errors are fatal before catching them during error checking
+* Fixed: Escape the snippet name on the edit page to ensure it displays correctly
+* Fixed: Exclude snippets with named functions from error checking so they do not run twice
 
 = 2.5.0 =
 * Added: Detect parse and fatal errors in code when saving a snippet, and display a user-friendly message
@@ -378,6 +383,9 @@ __Fixed__
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.5.1 =
+Prevent Don't Panic message from being triggered accidentally
 
 = 2.5.0 =
 Now detects errors in snippet code when saving
