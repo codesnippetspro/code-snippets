@@ -62,8 +62,8 @@ before_script:
   - sed -i "s/yourpasswordhere//" wp-tests-config.php
   # Create WordPress database.
   - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
-  # Change into plugin directory.
-  - cd $plugin_dir
+
+  - cd $PROJECT_DIR
 
 # Run test script commands
 # Default is specific to project language.
