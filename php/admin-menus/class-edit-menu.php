@@ -178,7 +178,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		$result = eval( $snippet->code );
 		ob_end_clean();
 
-		return $result === false;
+		return false === $result;
 	}
 
 	/**
@@ -385,7 +385,14 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			return false;
 		}
 
-		@eval( $snippet->code );
+		ob_start();
+		$result = eval( $snippet->code );
+		ob_end_clean();
+
+		if ( false !== $result ) {
+			return false;
+		}
+
 		$error = error_get_last();
 
 		if ( is_null( $error ) ) {
