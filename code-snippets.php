@@ -57,61 +57,52 @@ define( 'CODE_SNIPPETS_VERSION', '2.5.1' );
 define( 'CODE_SNIPPETS_FILE', __FILE__ );
 
 /**
- * Load plugin files
+ * Enable autoloading of plugin classes
+ * @param $class_name
  */
-foreach ( array(
+function code_snippets_autoload( $class_name ) {
 
-	/* Snippet class */
-	'class-snippet.php',
+	/* Only autoload classes from this plugin */
+	if ( 'Snippet' !== $class_name && 'Code_Snippets' !== substr( $class_name, 0, 13 ) ) {
+		return;
+	}
 
-	/* Database operations functions */
-	'db.php',
+	/* Remove namespace from class name */
+	$class_file = str_replace( 'Code_Snippets_', '', $class_name );
 
-	/* Capability functions */
-	'caps.php',
+	/* Convert class name format to file name format */
+	$class_file = strtolower( $class_file );
+	$class_file = str_replace( '_', '-', $class_file );
 
-	/* Snippet operations functions */
-	'snippet-ops.php',
+	$class_path = dirname( __FILE__ ) . '/php/';
 
-	/* Upgrade function */
-	'upgrade.php',
+	if ( 'Menu' === substr( $class_name, -4, 4 ) ) {
+		$class_path .= 'admin-menus/';
+	}
 
-	/* CodeMirror editor functions */
-	'editor.php',
-
-	/* General functions */
-	'functions.php',
-
-	/* General Administration functions */
-	'contextual-help.php',
-	'admin.php',
-
-	/* Settings component */
-	'settings/settings-fields.php',
-	'settings/editor-preview.php',
-	'settings/render-fields.php',
-	'settings/settings.php',
-
-	) as $include ) {
-
-	require plugin_dir_path( __FILE__ ) . "php/$include";
+	/* Load the class */
+	require_once $class_path . "class-{$class_file}.php";
 }
 
-/* Initialize database table variables */
-set_snippet_table_vars();
+spl_autoload_register( 'code_snippets_autoload' );
+
+/**
+ * Retrieve the instance of the main plugin class
+ *
+ * @since [NEXT_VERSION]
+ * @return Code_Snippets
+ */
+function code_snippets() {
+	static $plugin;
+
+	if ( is_null( $plugin ) ) {
+		$plugin = new Code_Snippets( CODE_SNIPPETS_VERSION, __FILE__ );
+	}
+
+	return $plugin;
+}
+
+code_snippets()->load_plugin();
 
 /* Execute the snippets once the plugins are loaded */
 add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
-
-/**
- * Load up the localization file if we're using WordPress in a different language.
- * Place it in this plugin's "languages" folder and name it "code-snippets-[language_COUNTRY].mo"
- *
- * If you wish to contribute a language file to be included in the Code Snippets package,
- * please see create an issue on GitHub: https://github.com/sheabunge/code-snippets/issues
- */
-function code_snippets_load_textdomain() {
-	load_plugin_textdomain( 'code-snippets', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
-
-add_action( 'plugins_loaded', 'code_snippets_load_textdomain' );

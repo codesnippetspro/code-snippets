@@ -409,10 +409,6 @@ function execute_active_snippets() {
 	/** @var wpdb $wpdb */
 	global $wpdb;
 
-	if ( ! isset( $wpdb->snippets, $wpdb->ms_snippets ) ) {
-		set_snippet_table_vars();
-	}
-
 	$current_scope = is_admin() ? 1 : 2;
 
 	/* Check if the snippets tables exist */

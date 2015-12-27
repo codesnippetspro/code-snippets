@@ -25,7 +25,10 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	 */
 	public function load() {
 		parent::load();
-		code_snippets_load_import_help();
+
+		$contextual_help = new Code_Snippets_Contextual_Help( 'import' );
+		$contextual_help->load();
+
 		$this->process_import_file();
 	}
 

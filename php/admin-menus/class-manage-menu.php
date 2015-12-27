@@ -38,8 +38,8 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		add_menu_page(
 			__( 'Snippets', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' ),
-			get_snippets_cap(),
-			code_snippets_get_menu_slug(),
+			code_snippets()->get_cap(),
+			code_snippets()->get_menu_slug(),
 			array( $this, 'render' ),
 			'div', // icon is added through CSS
 			is_network_admin() ? 21 : 67
@@ -56,10 +56,10 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		parent::load();
 
 		/* Load the contextual help tabs */
-		code_snippets_load_manage_help();
+		$contextual_help = new Code_Snippets_Contextual_Help( 'manage' );
+		$contextual_help->load();
 
 		/* Initialize the list table class */
-		require_once plugin_dir_path( CODE_SNIPPETS_FILE ) . 'php/class-list-table.php';
 		$this->list_table = new Code_Snippets_List_Table();
 		$this->list_table->prepare_items();
 	}

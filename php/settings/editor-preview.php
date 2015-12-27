@@ -15,7 +15,7 @@
 function code_snippets_editor_settings_preview_assets( $hook ) {
 
 	/* Only load on the settings page */
-	if ( code_snippets_get_menu_hook( 'settings' ) !== $hook ) {
+	if ( code_snippets()->get_menu_hook( 'settings' ) !== $hook ) {
 		return;
 	}
 

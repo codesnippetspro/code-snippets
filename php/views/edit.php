@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $pagenow;
 
-$table = get_snippets_table_name();
-$edit_id = code_snippets_get_menu_slug( 'edit' ) === $_REQUEST['page'] ? absint( $_REQUEST['id'] ) : 0;
+$table = code_snippets()->db->get_table_name();
+$edit_id = code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ? absint( $_REQUEST['id'] ) : 0;
 $snippet = get_snippet( $edit_id );
 
 ?>

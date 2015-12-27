@@ -30,7 +30,7 @@ function code_snippets_upgrader() {
 	if ( version_compare( $prev_version, CODE_SNIPPETS_VERSION, '<' ) ) {
 
 		/* Upgrade the database tables */
-		create_code_snippets_tables( true );
+		code_snippets()->db->create_tables( true );
 
 		/* Update the plugin version stored in the database */
 		update_option( 'code_snippets_version', CODE_SNIPPETS_VERSION );

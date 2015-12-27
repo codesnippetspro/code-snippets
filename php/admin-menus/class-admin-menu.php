@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Base class for a snippets admin menu
+ */
 class Code_Snippets_Admin_Menu {
 
 	public $name, $label, $title;
@@ -28,10 +31,10 @@ class Code_Snippets_Admin_Menu {
 	 */
 	public function add_menu( $slug, $label, $title ) {
 		$hook = add_submenu_page(
-			code_snippets_get_menu_slug(),
+			code_snippets()->get_menu_slug(),
 			$title,
 			$label,
-			get_snippets_cap(),
+			code_snippets()->get_cap(),
 			$slug,
 			array( $this, 'render' )
 		);
@@ -43,7 +46,7 @@ class Code_Snippets_Admin_Menu {
 	 * Register the admin menu
 	 */
 	public function register() {
-		$this->add_menu( code_snippets_get_menu_slug( $this->name ), $this->label, $this->title );
+		$this->add_menu( code_snippets()->get_menu_slug( $this->name ), $this->label, $this->title );
 	}
 
 	/**
@@ -51,7 +54,7 @@ class Code_Snippets_Admin_Menu {
 	 */
 	public function render() {
 		$this->print_messages();
-		include dirname( plugin_dir_path( __FILE__ ) ) . "/views/$this->name.php";
+		include dirname( dirname( __FILE__ ) ) . "/views/{$this->name}.php";
 	}
 
 	/**
@@ -91,11 +94,11 @@ class Code_Snippets_Admin_Menu {
 	 */
 	public function load() {
 		/* Make sure the user has permission to be here */
-		if ( ! current_user_can( get_snippets_cap() ) ) {
+		if ( ! current_user_can( code_snippets()->get_cap() ) ) {
 			wp_die( __( 'You are not authorized to access this page.', 'code-snippets' ) );
 		}
 
 		/* Create the snippet tables if they don't exist */
-		create_code_snippets_tables();
+		code_snippets()->db->create_tables();
 	}
 }
