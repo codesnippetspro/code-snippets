@@ -22,7 +22,7 @@
 	},
 	"require": {
 		"composer/installers": "~1.0",
-		"codemirror": "5.9"
+		"codemirror": "5.10"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*",
@@ -33,9 +33,9 @@
 			"type": "package",
 			"package": {
 				"name": "codemirror",
-				"version": "5.9",
+				"version": "5.10",
 				"dist": {
-					"url": "http://codemirror.net/codemirror-5.9.zip",
+					"url": "http://codemirror.net/codemirror-5.10.zip",p
 					"type": "zip"
 				}
 			}
