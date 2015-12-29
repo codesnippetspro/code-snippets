@@ -71,6 +71,8 @@ class Code_Snippets {
 		require_once $includes_path . '/settings/editor-preview.php';
 		require_once $includes_path . '/settings/render-fields.php';
 		require_once $includes_path . '/settings/settings.php';
+
+		$this->shortcode = new Code_Snippets_Shortcode();
 	}
 
 	/**
@@ -137,6 +139,16 @@ class Code_Snippets {
 			'id', absint( $snippet_id ),
 			$this->get_menu_url( 'edit', $context )
 		);
+	}
+
+	/**
+	 * Determine whether the current user can perform actions on snippets.
+	 *
+	 * @since [NEXT_VERSION]
+	 * @return boolean Whether the current user has the required capability
+	 */
+	public function current_user_can() {
+		return current_user_can( $this->get_cap() );
 	}
 
 	/**
