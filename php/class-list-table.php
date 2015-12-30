@@ -919,20 +919,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$term = stripslashes( $_REQUEST['s'] );
 		}
 
-		foreach ( $snippet as $value ) {
+		$fields =  array( 'name', 'desc', 'code', 'tags_list' );
 
-			if ( is_string( $value ) ) {
-				if ( false !== stripos( $value, $term ) ) {
-					return true;
-				}
-			}
-			elseif ( is_array( $value ) ) {
-				if ( false !== in_array( $term, $value ) ) {
-					return true;
-				}
+		foreach ( $fields as $field ) {
+			if ( false !== stripos( $snippet->$field, $term ) ) {
+				return true;
 			}
 		}
-
+		
 		return false;
 	}
 
