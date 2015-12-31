@@ -13,7 +13,7 @@
 		{
 			"name": "Shea Bunge",
 			"email": "info@bungeshea.com",
-			"homepage": "http://bungeshea.com"
+			"homepage": "https://bungeshea.com"
 		}
 	],
 	"support": {
@@ -35,7 +35,7 @@
 				"name": "codemirror",
 				"version": "5.10",
 				"dist": {
-					"url": "http://codemirror.net/codemirror-5.10.zip",p
+					"url": "http://codemirror.net/codemirror-5.10.zip",
 					"type": "zip"
 				}
 			}

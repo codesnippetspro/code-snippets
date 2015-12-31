@@ -1,10 +1,10 @@
 === Code Snippets ===
 Contributors: bungeshea
-Donate link: http://bungeshea.com/donate/
+Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.3.2
-Stable tag: 2.5.1
+Tested up to: 4.4
+Stable tag: 2.6.0
 License: MIT
 License URI: license.txt
 
@@ -115,6 +115,13 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.6.0 =
+* Reconfigured plugin to use classloader and converted a lot of functional code into OOP code
+* Updated CodeMirror to version 5.10.0
+* Added `[code_snippets]` shortcode for embedding snippet code in a post
+* Fixed broken snippet search feature [[#](https://wordpress.org/support/topic/search-is-not-working-6)]
+* Added front-end syntax highlighting for shortcode using [PrismJS](http://prismjs.com)
 
 = 2.5.1 =
 * Fixed: Ensure errors are fatal before catching them during error checking

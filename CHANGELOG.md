@@ -1,5 +1,12 @@
 # Changelog
 
+### 2.6.0
+* Reconfigured plugin to use classloader and converted a lot of functional code into OOP code
+* Updated CodeMirror to version 5.10.0
+* Added `[code_snippets]` shortcode for embedding snippet code in a post
+* Fixed broken snippet search feature [[#](https://wordpress.org/support/topic/search-is-not-working-6)]
+* Added front-end syntax highlighting for shortcode using [PrismJS](http://prismjs.com)
+
 ### 2.5.1
 * Fixed: Ensure errors are fatal before catching them during error checking
 * Fixed: Escape the snippet name on the edit page to ensure it displays correctly
