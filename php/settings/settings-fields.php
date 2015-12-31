@@ -65,6 +65,12 @@ function code_snippets_get_settings_fields() {
 			'label' => __( 'Show snippet descriptions on admin pages' ),
 			'default' => true,
 		),
+		'disable_prism' => array(
+			'name' => __( 'Disable shortcode syntax highlighter', 'code-snippets' ),
+			'type' => 'checkbox',
+			'label' => __( 'Disable the syntax highlighting for the [code_snippet] shortcode on the front-end', 'code-snippets' ),
+			'default' => false,
+		),
 	);
 
 	/* Description Editor settings section */

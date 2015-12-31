@@ -9,7 +9,7 @@ class Code_Snippets_Shortcode {
 
 	function enqueue_prism( $posts ) {
 
-		if ( empty( $posts ) ) {
+		if ( empty( $posts ) || code_snippets_get_setting( 'general', 'disable_prism' ) ) {
 			return $posts;
 		}
 
