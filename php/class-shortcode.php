@@ -46,14 +46,24 @@ class Code_Snippets_Shortcode {
 
 	function render_shortcode( $atts ) {
 
-		if ( ! isset( $atts['id'] ) || ! intval( $atts['id'] ) ) {
+		$atts = shortcode_atts(
+			array(
+				'id' => 0,
+				'network' => false,
+			),
+			$atts, 'code_snippet'
+		);
+
+		if ( ! $id = intval( $atts['id'] ) ) {
 			return '';
 		}
 
-		$id = intval( $atts['id'] );
-		$network = isset( $atts['network'] ) && $atts['network'] ? true : false;
-
+		$network = $atts['network'] ? true : false;
 		$snippet = get_snippet( $id, $network );
+
+		if ( ! trim( $snippet->code ) ) {
+			return '';
+		}
 
 		return '<pre><code class="language-php">' . esc_html( $snippet->code ) . '</code></pre>';
 	}
