@@ -3,7 +3,45 @@
 class Code_Snippets_Shortcode {
 
 	function __construct() {
-		add_shortcode( 'snippet', array( $this, 'render_shortcode' ) );
+		add_shortcode( 'code_snippet', array( $this, 'render_shortcode' ) );
+		add_action( 'the_posts', array( $this, 'enqueue_prism' ) );
+	}
+
+	function enqueue_prism( $posts ) {
+
+		if ( empty( $posts ) ) {
+			return $posts;
+		}
+
+		$found = false;
+
+		foreach ( $posts as $post ) {
+
+			if ( false !== stripos( $post->post_content, '[code_snippet' ) ) {
+				$found = true;
+				break;
+			}
+		}
+
+		if ( ! $found ) {
+			return $posts;
+		}
+
+		$plugin = code_snippets();
+
+		wp_enqueue_style(
+			'code-snippets-prism',
+			plugins_url( 'js/vendor/prism.css', $plugin->file ),
+			array(), $plugin->version
+		);
+
+		wp_enqueue_script(
+			'code-snippets-prism',
+			plugins_url( 'js/vendor/prism.js', $plugin->file ),
+			array(), $plugin->version, true
+		);
+
+		return $posts;
 	}
 
 	function render_shortcode( $atts ) {
@@ -19,4 +57,6 @@ class Code_Snippets_Shortcode {
 
 		return '<pre><code class="language-php">' . esc_html( $snippet->code ) . '</code></pre>';
 	}
+
 }
+
