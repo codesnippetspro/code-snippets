@@ -17,22 +17,21 @@ module.exports = function(grunt) {
 			gruntfile: ['Gruntfile.js']
 		},
 
-		sass: {
+		postcss: {
+			options: {
+				map: true,
+				processors: [
+					require('precss')(),
+					require('autoprefixer')()
+
+				]
+			},
 			dist: {
 				cwd: 'css',
 				src: '*.scss',
 				dest: 'css/build',
 				expand: true,
 				ext: '.css'
-			}
-		},
-
-		autoprefixer: {
-			dist: {
-				expand: true,
-				flatten: true,
-				src: 'css/build/*.css',
-				dest: 'css/build'
 			}
 		},
 
@@ -57,7 +56,7 @@ module.exports = function(grunt) {
 					'css/min/tagit.css': [
 						'js/vendor/jquery.tagit.css',
 						'js/vendor/tagit.ui-zendesk.css'
-					]
+					]rm
 				}
 			}
 		},
@@ -181,7 +180,7 @@ module.exports = function(grunt) {
 		}
 	});
 
-	grunt.registerTask( 'css', ['clean:css', 'sass', 'autoprefixer', 'csso'] );
+	grunt.registerTask( 'css', ['clean:css', 'postcss', 'csso'] );
 	grunt.registerTask( 'js', ['clean:js', 'uglify'] );
 	grunt.registerTask( 'l18n', ['pot', 'potomo'] );
 	grunt.registerTask( 'test', ['jshint', 'phpcs', 'phpunit'] );
