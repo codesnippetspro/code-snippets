@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.7.0
+* Updated German translation by [Mario Siegmann](http://web-alltag.de/)
+
 ### 2.6.0
 * Reconfigured plugin to use classloader and converted a lot of functional code into OOP code
 * Updated CodeMirror to version 5.10.0

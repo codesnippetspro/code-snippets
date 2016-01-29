@@ -19,7 +19,7 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
-* German - [David Decker](http://deckerweb.de) and [Joerg Knoerchen](http://www.sensorgrafie.de/)
+* German - [David Decker](http://deckerweb.de), [Joerg Knoerchen](http://www.sensorgrafie.de/) and [Mario Siegmann](http://web-alltag.de/)
 * Slovak - [Ján Fajčák](http://wp.sk)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
 * Chinese - [Jincheng Shan](http://shanjincheng.com)
