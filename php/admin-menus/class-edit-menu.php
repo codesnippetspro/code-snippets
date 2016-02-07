@@ -15,6 +15,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		);
 
 		add_action( 'admin_init', array( $this, 'remove_incompatible_codemirror' ) );
+
+		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
+			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 2 );
+		}
 	}
 
 	/**
@@ -33,6 +37,30 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		if ( isset( $_REQUEST['page'] ) && code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
 			parent::register();
 		}
+	}
+
+	/**
+	 * Prevent the snippet currently being saved from being executed
+	 * so it is not run twice (once normally, once
+	 *
+	 * @param bool $exec    Whether the snippet will be executed
+	 * @param int  $exec_id The ID of the snippet being executed
+	 *
+	 * @return bool Whether the snippet will be executed
+	 */
+	function prevent_exec_on_save( $exec, $exec_id ) {
+
+		if ( ! isset( $_POST['save_snippet'], $_POST['snippet_id'] ) ) {
+			return $exec;
+		}
+
+		$id = intval( $_POST['snippet_id'] );
+
+		if ( $id == $exec_id ) {
+			return false;
+		}
+
+		return $exec;
 	}
 
 	/**
@@ -143,7 +171,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	private function code_error_callback( $out ) {
 		$error = error_get_last();
 
-		if ( is_null( $error ) || ! in_array( $error['type'], array( E_ERROR, E_COMPILE_ERROR, E_USER_ERROR ) ) ) {
+		if ( is_null( $error ) ) {
 			return $out;
 		}
 
@@ -167,11 +195,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	private function validate_code( Snippet $snippet ) {
 
 		if ( empty( $snippet->code ) ) {
-			return false;
-		}
-
-		/* Skip snippets that contain named functions */
-		if ( preg_match( '/(?:function|class)\s+\w+/i', $snippet->code ) ) {
 			return false;
 		}
 
