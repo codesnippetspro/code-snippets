@@ -88,7 +88,9 @@ function example_custom_admin_footer_text( \$text ) {
 	return 'Thank you for visiting <a href=\"' . get_home_url() . '\">' . get_bloginfo( 'name' ) . '</a>.';
 }
 
-add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
+add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );
+
+";
 
 	$atts = array(
 		'mode' => 'text/x-php',
@@ -104,7 +106,10 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );";
 		'use strict';
 
 		// Load CodeMirror
-		var atts = <?php echo code_snippets_get_editor_atts( $atts, true ); ?>;
+		var atts = [];
+		atts = <?php echo code_snippets_get_editor_atts( $atts, true ); ?>;
+		atts['viewportMargin'] = Infinity;
+
 		var editor = CodeMirror(document.getElementById('code_snippets_editor_preview'), atts);
 
 		// Dynamically change editor settings

@@ -54,7 +54,9 @@ $snippet = get_snippet( $edit_id );
 			<?php _e( 'Code', 'code-snippets' ); ?>
 		</label></h3>
 
-		<textarea id="snippet_code" name="snippet_code" rows="20" spellcheck="false" style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
+		<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false" style="font-family: monospace; width: 100%;"><?php
+			echo esc_textarea( $snippet->code );
+			?></textarea>
 
 		<?php
 		/* Allow plugins to add fields and content to this page */
@@ -145,10 +147,13 @@ $snippet = get_snippet( $edit_id );
  */
 (function() {
 
-	var atts = <?php
+	var atts = [];
+	atts = <?php
 		$atts = array( 'mode' => 'text/x-php' );
 		echo code_snippets_get_editor_atts( $atts, true );
 	?>;
+	atts['viewportMargin'] = Infinity;
+
 	CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
 })();
 </script>

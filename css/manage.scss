@@ -2,13 +2,13 @@
  * Custom styling for the snippets table
  */
 
-.column-name > a {
+%icon-after {
+	padding-left: 5px;
+	font-family: "dashicons";
+	vertical-align: top;
+}
 
-	%icon-after {
-		padding-left: 5px;
-		font-family: "dashicons";
-		vertical-align: top;
-	}
+.column-name > a {
 
 	.admin-scope &:after {
 		@extend %icon-after;

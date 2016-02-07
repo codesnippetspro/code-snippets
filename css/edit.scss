@@ -41,17 +41,10 @@ ul.tagit {
  */
 .CodeMirror {
 	width: 100%;
-	height: auto;
-	min-height: 300px;
-
+	height: auto !important;
 	border: 1px solid #dfdfdf;
 	border-radius: 3px;
 	background-color: #fff;
-}
-
-.CodeMirror-scroll {
-	overflow-x: auto;
-	overflow-y: hidden;
 }
 
 .CodeMirror-sizer {

@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 
 			css: {
 				files: ['css/**/*.scss'],
-				tasks: ['css']
+				tasks: ['postcss', 'csso']
 			}
 		},
 
@@ -56,7 +56,7 @@ module.exports = function(grunt) {
 					'css/min/tagit.css': [
 						'js/vendor/jquery.tagit.css',
 						'js/vendor/tagit.ui-zendesk.css'
-					]rm
+					]
 				}
 			}
 		},
