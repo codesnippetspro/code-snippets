@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.4
-Stable tag: 2.6.0
+Tested up to: 4.4.2
+Stable tag: 2.6.1
 License: MIT
 License URI: license.txt
 
@@ -115,6 +115,13 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.6.1 =
+* Updated German translation by [Mario Siegmann](http://web-alltag.de/)
+* Fixed error catching not working correctly
+* Updated error catching to work with snippets including functions and classes
+* Updated CodeMirror to version 5.11
+* Fixed editor autoresizing
 
 = 2.6.0 =
 * Reconfigured plugin to use classloader and converted a lot of functional code into OOP code

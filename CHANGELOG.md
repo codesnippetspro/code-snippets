@@ -1,7 +1,11 @@
 # Changelog
 
-### 2.7.0
+### 2.6.1
 * Updated German translation by [Mario Siegmann](http://web-alltag.de/)
+* Fixed error catching not working correctly
+* Updated error catching to work with snippets including functions and classes
+* Updated CodeMirror to version 5.11
+* Fixed editor autoresizing
 
 ### 2.6.0
 * Reconfigured plugin to use classloader and converted a lot of functional code into OOP code
