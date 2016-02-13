@@ -41,6 +41,7 @@ class Code_Snippets {
 
 		add_action( 'grant_super_admin', array( $this, 'grant_network_cap' ) );
 		add_action( 'remove_super_admin', array( $this, 'remove_network_cap' ) );
+		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 	}
 
 	function load_plugin() {
@@ -205,4 +206,22 @@ class Code_Snippets {
 		/* Remove the capability */
 		$user->remove_cap( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) );
 	}
+
+	/**
+	 * Load up the localization file if we're using WordPress in a different language.
+	 *
+	 * If you wish to contribute a language file to be included in the Code Snippets package,
+	 * please see create an issue on GitHub: https://github.com/sheabunge/code-snippets/issues
+	 */
+	function load_textdomain() {
+		$domain = 'code-snippets';
+		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+
+		// wp-content/languages/code-snippets/code-snippets-[locale].mo
+		load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . "$domain/$domain-$locale.mo" );
+
+		// wp-content/plugins/code-snippets/languages/code-snippets-[locale].mo
+		load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->file ) ) . '/languages' );
+	}
+
 }
