@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8956e2bdeebc0d6e34438e442bf579d9",
-    "content-hash": "d598a4e7dd6d484bd01f13672ed5d03c",
+    "hash": "3181b64e634f351f9b4533edbc299b7b",
+    "content-hash": "53c8ba5b9bc5d41104621460cad53672",
     "packages": [
         {
             "name": "codemirror",
-            "version": "5.11",
+            "version": "5.12",
             "dist": {
                 "type": "zip",
-                "url": "http://codemirror.net/codemirror-5.11.zip",
+                "url": "http://codemirror.net/codemirror-5.12.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -559,16 +559,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.2",
+            "version": "v2.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "34c8a4b51e751e7ea869b8262f883d008a2b81b8"
+                "reference": "2a4ee40acb880c56f29fb1b8886e7ffe94f3b995"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/34c8a4b51e751e7ea869b8262f883d008a2b81b8",
-                "reference": "34c8a4b51e751e7ea869b8262f883d008a2b81b8",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/2a4ee40acb880c56f29fb1b8886e7ffe94f3b995",
+                "reference": "2a4ee40acb880c56f29fb1b8886e7ffe94f3b995",
                 "shasum": ""
             },
             "require": {
@@ -604,7 +604,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-13 10:28:07"
+            "time": "2016-02-23 07:41:20"
         },
         {
             "name": "wp-coding-standards/wpcs",
@@ -612,12 +612,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git",
-                "reference": "b3d4d8eedd8b0b7f4fdf8764df1c8b23ff099334"
+                "reference": "b415094aa5fd24da6eba2295323bcff840902dd3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/b3d4d8eedd8b0b7f4fdf8764df1c8b23ff099334",
-                "reference": "b3d4d8eedd8b0b7f4fdf8764df1c8b23ff099334",
+                "url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/b415094aa5fd24da6eba2295323bcff840902dd3",
+                "reference": "b415094aa5fd24da6eba2295323bcff840902dd3",
                 "shasum": ""
             },
             "require": {
@@ -640,7 +640,7 @@
                 "standards",
                 "wordpress"
             ],
-            "time": "2015-10-02 22:20:22"
+            "time": "2016-02-01 16:14:59"
         }
     ],
     "aliases": [],
