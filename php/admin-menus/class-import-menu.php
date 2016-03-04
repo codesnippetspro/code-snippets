@@ -46,6 +46,8 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 			return;
 		}
 
+		$network = get_current_screen()->in_admin( 'network' );
+
 		/* Import the snippets  */
 		$result = import_snippets( $_FILES['code_snippets_import_file']['tmp_name'], $network );
 
@@ -66,7 +68,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	function register_importer() {
 
 		/* Only register the importer if the current user can manage snippets */
-		if ( ! defined( 'WP_LOAD_IMPORTERS' ) || ! current_user_can( get_snippets_cap() ) ) {
+		if ( ! defined( 'WP_LOAD_IMPORTERS' ) || ! code_snippets()->current_user_can() ) {
 			return;
 		}
 
@@ -94,7 +96,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 					'code-snippets'
 				),
 				$_REQUEST['imported'],
-				code_snippets_get_menu_url( 'manage' )
+				code_snippets()->get_menu_url( 'manage' )
 			);
 
 			echo '</p></div>';
