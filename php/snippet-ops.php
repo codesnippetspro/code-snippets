@@ -301,7 +301,7 @@ function import_snippets( $file, $multisite = null ) {
 	$dom->load( $file );
 
 	$snippets_xml = $dom->getElementsByTagName( 'snippet' );
-	$fields = array( 'name', 'description', 'code', 'tags', 'scope' );
+	$fields = array( 'name', 'description', 'desc', 'code', 'tags', 'scope' );
 	$exported_snippets = array();
 
 	/* Loop through all snippets */
