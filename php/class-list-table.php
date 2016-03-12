@@ -56,7 +56,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		add_screen_option( 'per_page', array(
 			'label' => __( 'Snippets per page', 'code-snippets' ),
-			'default' => 10,
+			'default' => 999,
 			'option' => 'snippets_per_page',
 		) );
 
