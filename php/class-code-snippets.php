@@ -223,5 +223,4 @@ class Code_Snippets {
 		// wp-content/plugins/code-snippets/languages/code-snippets-[locale].mo
 		load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->file ) ) . '/languages' );
 	}
-
 }

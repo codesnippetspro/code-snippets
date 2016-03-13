@@ -67,6 +67,5 @@ class Code_Snippets_Shortcode {
 
 		return '<pre><code class="language-php">' . esc_html( $snippet->code ) . '</code></pre>';
 	}
-
 }
 
