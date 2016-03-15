@@ -402,7 +402,7 @@ function execute_active_snippets() {
 		return false;
 	}
 
-	if ( isset( $_GET['code_snippets_safe_mode'] ) && $_GET['code_snippets_safe_mode'] && current_user_can( get_snippets_cap() ) ) {
+	if ( isset( $_GET['snippets-safe-mode'] ) && $_GET['snippets-safe-mode'] && code_snippets()->current_user_can() ) {
 		return false;
 	}
 
@@ -462,3 +462,25 @@ function execute_active_snippets() {
 
 	return true;
 }
+
+
+if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
+
+	/**
+	 * Inject the safe mode query var into URLs
+	 *
+	 * @param $url
+	 *
+	 * @return string
+	 */
+	function code_snippets_safe_mode_query_var( $url ) {
+		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
+			return add_query_arg( 'snippets-safe-mode', $_REQUEST['snippets-safe-mode'], $url );
+		}
+		return $url;
+	}
+
+	add_filter( 'home_url', 'code_snippets_safe_mode_query_var' );
+	add_filter( 'admin_url', 'code_snippets_safe_mode_query_var' );
+}
+
