@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f1e7c0509263104d84a3b6ac6cfb5c4f",
-    "content-hash": "0253535cf69d4e567403a96092af3138",
+    "hash": "29a6a982c9cb576c27477b9c88fd5165",
+    "content-hash": "e2ef740bc45a1c8313740e292dfa6d46",
     "packages": [
         {
             "name": "codemirror",
-            "version": "5.12",
+            "version": "5.13.0",
             "dist": {
                 "type": "zip",
-                "url": "https://codemirror.net/codemirror-5.12.zip",
+                "url": "https://codemirror.net/codemirror-5.13.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -559,16 +559,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.3",
+            "version": "v2.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "2a4ee40acb880c56f29fb1b8886e7ffe94f3b995"
+                "reference": "584e52cb8f788a887553ba82db6caacb1d6260bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/2a4ee40acb880c56f29fb1b8886e7ffe94f3b995",
-                "reference": "2a4ee40acb880c56f29fb1b8886e7ffe94f3b995",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/584e52cb8f788a887553ba82db6caacb1d6260bb",
+                "reference": "584e52cb8f788a887553ba82db6caacb1d6260bb",
                 "shasum": ""
             },
             "require": {
@@ -604,7 +604,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-23 07:41:20"
+            "time": "2016-03-04 07:54:35"
         },
         {
             "name": "wp-coding-standards/wpcs",
