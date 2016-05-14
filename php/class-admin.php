@@ -187,7 +187,7 @@ class Code_Snippets_Admin {
 					<?php _e( 'Take the survey now', 'code-snippets' ); ?>
 				</a>
 
-				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( $key, true ), $key ) ); ?>">Dismiss</a>
+				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( $key, true ), $key ) ); ?>"><?php _e( 'Dismiss', 'code-snippets' ); ?></a>
 
 			</p></div>
 
