@@ -318,8 +318,8 @@ function import_snippets( $file, $multisite = null ) {
 			$field = $snippet_xml->getElementsByTagName( $field_name )->item( 0 );
 
 			/* If the field element exists, add it to the snippet object */
-			if ( isset( $field->node_value ) ) {
-				$snippet->$field_name = $field->node_value;
+			if ( isset( $field->nodeValue ) ) {
+				$snippet->$field_name = $field->nodeValue;
 			}
 		}
 
