@@ -1,10 +1,18 @@
 # Changelog
 
+### 2.6.2
+* Fixed plugin translations being loaded
+* Increase default snippets per page so that all are usually shown
+* Fixed description field not being imported
+* Updated German translation by [Mario Siegmann](http://web-alltag.de)
+* Fixed issue with CodeMirror rubyblue theme [[#](https://wordpress.org/support/topic/a-problem-with-the-cursor-color-and-the-fix-that-worked-for-me)]
+* Added query var to disable snippet execution. To use, add `?snippets-safe-mode=true` to the URL
+* Updated CodeMirror to version 5.14
+
 ### 2.6.1
-* Updated German translation by [Mario Siegmann](http://web-alltag.de/)
+* Updated German translation by [Mario Siegmann](http://web-alltag.de)
 * Fixed error catching not working correctly
 * Updated error catching to work with snippets including functions and classes
-* Updated CodeMirror to version 5.11
 * Fixed editor autoresizing
 
 ### 2.6.0

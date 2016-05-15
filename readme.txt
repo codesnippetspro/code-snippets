@@ -69,6 +69,8 @@ You can try activating 'safe mode'. All snippets will not execute while safe mod
 
  To turn safe mode off, either [comment out](http://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
 
+ You can also activate safe mode on a per-page basis by appending `?snippets-safe-mode=true` to the URL.
+
 = Is there a way to add a snippet but not run it right away? =
 Yes. Just add it but do not activate it yet.
 
