@@ -7,5 +7,6 @@
 
 		<!-- I like to have a newline after closing brace, sometimes -->
 		<exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" />
+		<exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar" />
 	</rule>
 </ruleset>
