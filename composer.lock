@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6221280c9ff03250ed09eb6eaad90726",
-    "content-hash": "9a02edc0da9d90fb0f18981da2f5da8c",
+    "hash": "ee4972fc32aa3946c40dd267c74d0d33",
+    "content-hash": "94d4881d378283853eba2569f84b1513",
     "packages": [
         {
             "name": "codemirror",
-            "version": "5.16.0",
+            "version": "5.17.0",
             "dist": {
                 "type": "zip",
-                "url": "https://codemirror.net/codemirror-5.16.0.zip",
+                "url": "https://codemirror.net/codemirror-5.17.0.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -489,16 +489,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "2.6.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "fb72ed32f8418db5e7770be1653e62e0d6f5dd3d"
+                "reference": "4edb770cb853def6e60c93abb088ad5ac2010c83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/fb72ed32f8418db5e7770be1653e62e0d6f5dd3d",
-                "reference": "fb72ed32f8418db5e7770be1653e62e0d6f5dd3d",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/4edb770cb853def6e60c93abb088ad5ac2010c83",
+                "reference": "4edb770cb853def6e60c93abb088ad5ac2010c83",
                 "shasum": ""
             },
             "require": {
@@ -563,7 +563,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2016-05-30 22:24:32"
+            "time": "2016-07-13 23:29:13"
         },
         {
             "name": "symfony/yaml",
