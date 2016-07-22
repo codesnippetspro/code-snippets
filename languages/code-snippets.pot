@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.6.1\n"
+"Project-Id-Version: code-snippets 2.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-14 14:19+1000\n"
+"POT-Creation-Date: 2016-07-23 00:50+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -252,6 +252,10 @@ msgstr ""
 
 #: php/class-admin.php:187
 msgid "Take the survey now"
+msgstr ""
+
+#: php/class-admin.php:190
+msgid "Dismiss"
 msgstr ""
 
 #: php/class-contextual-help.php:40
