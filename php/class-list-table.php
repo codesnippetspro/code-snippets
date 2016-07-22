@@ -963,7 +963,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 
 			if ( ! empty( $_GET['tag'] ) ) {
-				echo sprintf( __( ' in tag &#8220;%s&#8221;', 'code-snippets' ), $_GET['tag'] );
+				echo sprintf( __( ' in tag &#8220;%s&#8221;', 'code-snippets' ), esc_html( $_GET['tag'] ) );
 			}
 
 			echo '</span>';
