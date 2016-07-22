@@ -142,9 +142,7 @@ $snippet = get_snippet( $edit_id );
 </div>
 
 <script>
-/**
- * Loads CodeMirror on the snippet editor
- */
+/* Loads CodeMirror on the snippet editor */
 (function() {
 
 	var atts = [];
