@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.4.2
-Stable tag: 2.6.1
+Tested up to: 4.5.3
+Stable tag: 2.7.0
 License: MIT
 License URI: license.txt
 
@@ -117,6 +117,17 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.7.0 =
+* Fixed plugin translations being loaded
+* Increase default snippets per page so that all are usually shown
+* Fixed description field not being imported
+* Updated German translation by [Mario Siegmann](http://web-alltag.de)
+* Fixed issue with CodeMirror rubyblue theme [[#](https://wordpress.org/support/topic/a-problem-with-the-cursor-color-and-the-fix-that-worked-for-me)]
+* Added query var to disable snippet execution. To use, add `?snippets-safe-mode=true` to the URL
+* Fixed snippet fields not importing
+* Updated CodeMirror to version 5.17.0
+* Fixed a minor XSS vulnerability discovered by Burak Kelebek [[#](https://wordpress.org/support/topic/security-vulnerability-20)]
 
 = 2.6.1 =
 * Updated German translation by [Mario Siegmann](http://web-alltag.de/)
@@ -399,6 +410,9 @@ __Fixed__
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.7.0 =
+Fix translation loading and description importing
 
 = 2.5.1 =
 Prevent Don't Panic message from being triggered accidentally

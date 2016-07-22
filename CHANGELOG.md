@@ -1,6 +1,6 @@
 # Changelog
 
-### 2.6.2
+### 2.7.0
 * Fixed plugin translations being loaded
 * Increase default snippets per page so that all are usually shown
 * Fixed description field not being imported
