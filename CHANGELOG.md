@@ -7,8 +7,9 @@
 * Updated German translation by [Mario Siegmann](http://web-alltag.de)
 * Fixed issue with CodeMirror rubyblue theme [[#](https://wordpress.org/support/topic/a-problem-with-the-cursor-color-and-the-fix-that-worked-for-me)]
 * Added query var to disable snippet execution. To use, add `?snippets-safe-mode=true` to the URL
-* Updated CodeMirror to version 5.14
 * Fixed snippet fields not importing
+* Updated CodeMirror to version 5.17.0
+* Fixed a minor XSS vulnerability discovered by Burak Kelebek [[#](https://wordpress.org/support/topic/security-vulnerability-20)]
 
 ### 2.6.1
 * Updated German translation by [Mario Siegmann](http://web-alltag.de)
