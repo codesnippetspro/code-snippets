@@ -79,3 +79,27 @@ function code_snippets_enqueue_codemirror() {
 		);
 	}
 }
+
+/**
+ * Retrieve a list of the available CodeMirror themes
+ * @return array the available themes
+ */
+function code_snippets_get_available_themes() {
+	static $themes = null;
+
+	if ( ! is_null( $themes ) ) {
+		return $themes;
+	}
+
+	$themes = array();
+	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/cmthemes/';
+	$theme_files = glob( $themes_dir . '*.css' );
+
+	foreach ( $theme_files as $i => $theme ) {
+		$theme = str_replace( $themes_dir, '', $theme );
+		$theme = str_replace( '.css', '', $theme );
+		$themes[] = $theme;
+	}
+
+	return $themes;
+}

@@ -152,8 +152,19 @@ function code_snippets_settings_validate( array $input ) {
 					$settings[ $section_id ][ $field_id ] = absint( $input[ $section_id ][ $field_id ] );
 					break;
 
+				case 'codemirror_theme_select':
+					$available_themes = code_snippets_get_available_themes();
+					$selected_theme = $input[ $section_id ][ $field_id ];
+
+					if ( in_array( $selected_theme, $available_themes ) ) {
+						$settings[ $section_id ][ $field_id ] = $selected_theme;
+					}
+
+					break;
+
 				default:
-					$settings[ $section_id ][ $field_id ] = $input[ $section_id ][ $field_id ];
+					break;
+
 			}
 		}
 	}
