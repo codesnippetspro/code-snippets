@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Functions to preform snippet operations
+ * Functions to perform snippet operations
  *
  * @package Code_Snippets
  */
