@@ -312,7 +312,7 @@ msgstr ""
 "target=\"_blank\">Support Forums</a>"
 
 #: includes/help/manage.php:7
-msgid "Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can manage your existing snippets and preform tasks on them such as activating, deactivating, deleting and exporting."
+msgid "Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can manage your existing snippets and perform tasks on them such as activating, deactivating, deleting and exporting."
 msgstr ""
 "Gli Snippets sono simili ai Plugin - tutti e due espandono le funzionalità "
 "di WordPress. Gli Snippets sono più leggeri, giusto poche righe di codice, e "

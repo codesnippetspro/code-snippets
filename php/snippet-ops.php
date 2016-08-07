@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Functions to preform snippet operations
+ * Functions to perform snippet operations
  *
  * @package Code_Snippets
  */
@@ -86,6 +86,7 @@ function code_snippets_build_tags_array( $tags ) {
 
 	/* If the tags are set as a string, convert them into an array */
 	if ( is_string( $tags ) ) {
+		$tags = strip_tags( $tags );
 		$tags = str_replace( ', ', ',', $tags );
 		$tags = explode( ',', $tags );
 	}

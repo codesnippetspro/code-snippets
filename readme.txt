@@ -77,7 +77,7 @@ Yes. Just add it but do not activate it yet.
 = What do I use to write my snippets? =
 The [CodeMirror](http://codemirror.net) source-code editor will add line numbers, syntax highlighting, bracket matching, search, tabulate and other cool features to the code editor.
 
-= Can I preform search and replace commands in the code editor? =
+= Can I perform search and replace commands in the code editor? =
 
 * __Ctrl-F / Cmd-F__ : Start searching
 * __Ctrl-G / Cmd-G__ : Find next

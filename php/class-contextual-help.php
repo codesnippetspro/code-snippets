@@ -53,7 +53,7 @@ class Code_Snippets_Contextual_Help {
 		$this->screen->add_help_tab( array(
 			'id'      => 'overview',
 			'title'   => __( 'Overview', 'code-snippets' ),
-			'content' => '<p>' . __( 'Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can manage your existing snippets and preform tasks on them such as activating, deactivating, deleting and exporting.', 'code-snippets' ) . '</p>',
+			'content' => '<p>' . __( 'Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can manage your existing snippets and perform tasks on them such as activating, deactivating, deleting and exporting.', 'code-snippets' ) . '</p>',
 		) );
 
 		$this->screen->add_help_tab( array(

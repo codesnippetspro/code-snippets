@@ -23,12 +23,9 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 	code_snippets_enqueue_codemirror();
 
 	/* Enqueue ALL themes */
-	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/cmthemes/';
-	$themes = glob( $themes_dir . '*.css' );
+	$themes = code_snippets_get_available_themes();
 
 	foreach ( $themes as $theme ) {
-		$theme = str_replace( $themes_dir, '', $theme );
-		$theme = str_replace( '.css', '', $theme );
 
 		wp_enqueue_style(
 			'code-snippets-codemirror-theme-' . $theme,

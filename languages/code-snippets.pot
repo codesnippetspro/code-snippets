@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-23 00:50+1000\n"
+"POT-Creation-Date: 2016-08-07 23:42+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,68 +67,68 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:333 php/class-list-table.php:325
+#: php/admin-menus/class-edit-menu.php:334 php/class-list-table.php:325
 msgid "Tags"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:337
+#: php/admin-menus/class-edit-menu.php:338
 msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:356
+#: php/admin-menus/class-edit-menu.php:358
 msgid "Run snippet everywhere"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:357
+#: php/admin-menus/class-edit-menu.php:359
 msgid "Only run in administration area"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:358
+#: php/admin-menus/class-edit-menu.php:360
 msgid "Only run on site front-end"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:362
+#: php/admin-menus/class-edit-menu.php:364
 msgid "Scope"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:382
+#: php/admin-menus/class-edit-menu.php:384
 msgid "Sharing"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:386
+#: php/admin-menus/class-edit-menu.php:388
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:446
+#: php/admin-menus/class-edit-menu.php:448
 #, php-format
 msgid "The snippet has been deactivated due to an error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:451
+#: php/admin-menus/class-edit-menu.php:453
 msgid "The snippet has been deactivated due to an error in the code."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:458
+#: php/admin-menus/class-edit-menu.php:460
 msgid "An error occurred when saving the snippet."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:463
+#: php/admin-menus/class-edit-menu.php:465
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:464
+#: php/admin-menus/class-edit-menu.php:466
 msgid "Snippet <strong>updated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:465
+#: php/admin-menus/class-edit-menu.php:467
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:466
+#: php/admin-menus/class-edit-menu.php:468
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:467
+#: php/admin-menus/class-edit-menu.php:469
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
@@ -288,7 +288,7 @@ msgid ""
 "Snippets are similar to plugins - they both extend and expand the "
 "functionality of WordPress. Snippets are more light-weight, just a few lines "
 "of code, and do not put as much load on your server. Here you can manage "
-"your existing snippets and preform tasks on them such as activating, "
+"your existing snippets and perform tasks on them such as activating, "
 "deactivating, deleting and exporting."
 msgstr ""
 
@@ -741,7 +741,7 @@ msgstr ""
 msgid "Editor Preview"
 msgstr ""
 
-#: php/settings/settings.php:165
+#: php/settings/settings.php:176
 msgid "Settings saved."
 msgstr ""
 

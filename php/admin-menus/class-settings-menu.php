@@ -22,7 +22,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 		parent::load();
 
 		if ( is_network_admin() ) {
-			wp_redirect( code_snippets_get_menu_url( 'settings', 'admin' ) );
+			wp_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );
 			exit;
 		}
 	}

@@ -328,17 +328,19 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	* @param Snippet $snippet the snippet currently being edited
 	*/
 	function render_tags_editor( Snippet $snippet ) {
+
 		?>
 		<label for="snippet_tags" style="cursor: auto;">
 			<h3><?php esc_html_e( 'Tags', 'code-snippets' ); ?></h3>
 		</label>
 
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
-			placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>" value="<?php echo $snippet->tags_list; ?>" />
+			placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>"
+			   value="<?php echo esc_attr( $snippet->tags_list ); ?>" />
 
 		<script type="text/javascript">
 		jQuery('#snippet_tags').tagit({
-			availableTags: ['<?php echo implode( "','", get_all_snippet_tags() ); ?>'],
+			availableTags: <?php echo json_encode( get_all_snippet_tags() ); ?>,
 			allowSpaces: true,
 			removeConfirmation: true
 		});
