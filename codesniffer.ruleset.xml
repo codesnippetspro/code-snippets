@@ -7,6 +7,17 @@
 
 		<!-- I like to have a newline after closing brace, sometimes -->
 		<exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" />
+
+		<!-- breaks usage of the DOM API -->
 		<exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar" />
+
+		<!-- allow hooks containing forward slashes -->
+		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
+
+		<!-- I can manage this -->
+		<exclude name="WordPress.WP.I18n.UnorderedPlaceholders" />
+
+		<!-- database table names should be interpolated -->
+		<exclude name="WordPress.WP.PreparedSQL.NotPrepared" />
 	</rule>
 </ruleset>
