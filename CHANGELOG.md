@@ -1,5 +1,8 @@
 # Changelog
 
+### NEXTVERSION
+* Updated CodeMirror to version 5.19.0
+
 ### 2.7.0
 * Fixed plugin translations being loaded
 * Increase default snippets per page so that all are usually shown
