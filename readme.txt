@@ -3,7 +3,7 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.5.3
+Tested up to: 4.7-alpha-38436
 Stable tag: 2.7.0
 License: MIT
 License URI: license.txt
