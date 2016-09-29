@@ -1,7 +1,7 @@
 # Changelog
 
 ### 2.7.1
-* Added Dutch translation
+* Added Dutch translation by Sander Spies
 * Ensured that the editor theme setting is properly validated. Thanks to [Netsparker](https://www.netsparker.com) for reporting.
 * Ensured that snippet tags are properly escaped. Thanks to [Netsparker](https://www.netsparker.com) for reporting.
 * Updated CodeMirror to version 5.19.0

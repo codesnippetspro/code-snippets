@@ -1,8 +1,8 @@
 # Code Snippets [![Build Status](https://travis-ci.org/sheabunge/code-snippets.png?branch=master)](https://travis-ci.org/sheabunge/code-snippets)
 
 * __Requires at least:__ [WordPress 3.6](https://wordpress.org/download/) or later
-* __Tested up to:__ WordPress 4.5.3
-* __Stable version:__ [2.7.0](https://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __Tested up to:__ WordPress 4.7-alpha
+* __Stable version:__ [2.7.1](https://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
 Code Snippets is an easy, clean and simple way to add code snippets to your site. It removes the need to add custom snippets to your theme theme's `functions.php` file.
@@ -19,6 +19,7 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
+* Dutch - [Sander Spies](https://github.com/sander1)
 * German - [David Decker](http://deckerweb.de), [Joerg Knoerchen](http://www.sensorgrafie.de/) and [Mario Siegmann](http://web-alltag.de/)
 * Slovak - [Ján Fajčák](http://wp.sk)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)

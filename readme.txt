@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.7-alpha-38436
-Stable tag: 2.7.0
+Tested up to: 4.7-alpha
+Stable tag: 2.7.1
 License: MIT
 License URI: license.txt
 
@@ -26,6 +26,7 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
+* Dutch - [Sander Spies](https://github.com/sander1)
 * German - [David Decker](http://deckerweb.de), [Joerg Knoerchen](http://www.sensorgrafie.de/) and [Mario Siegmann](http://web-alltag.de/)
 * Slovak - [Ján Fajčák](http://wp.sk)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
