@@ -3,10 +3,10 @@
 /vendor
 
 # Built plugin
-deploy
-css/build
-css/min
-js/min
+/dist
+/css/build
+/css/min
+/js/min
 
 # Grunt (via NPM)
 node_modules

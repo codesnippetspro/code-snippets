@@ -91,11 +91,11 @@ module.exports = function(grunt) {
 		clean: {
 			js: ['js/min'],
 			css: ['css/min'],
-			deploy: ['deploy']
+			dist: ['dist']
 		},
 
 		copy: {
-			deploy: {
+			dist: {
 				files: [{
 					expand: true,
 					cwd: './',
@@ -110,7 +110,7 @@ module.exports = function(grunt) {
 						'css/font/**/*',
 						'js/min/**/*'
 					],
-					dest: 'deploy',
+					dest: 'dist',
 					filter: 'isFile'
 				}]
 			}
@@ -143,7 +143,7 @@ module.exports = function(grunt) {
 				options: {
 					plugin_slug: 'code-snippets',
 					svn_user: 'bungeshea',
-					build_dir: 'deploy'
+					build_dir: 'dist'
 				}
 			}
 		},
@@ -185,6 +185,6 @@ module.exports = function(grunt) {
 	grunt.registerTask( 'l18n', ['pot', 'potomo'] );
 	grunt.registerTask( 'test', ['jshint', 'phpcs', 'phpunit'] );
 
-	grunt.registerTask( 'deploy', ['clean:deploy', 'copy:deploy'] );
+	grunt.registerTask( 'package', ['clean:dist', 'copy:dist'] );
 	grunt.registerTask( 'default', ['css', 'js', 'l18n'] );
 };
