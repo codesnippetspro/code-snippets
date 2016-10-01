@@ -1,17 +1,17 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Code Snippets v2.6.0\n"
+"Project-Id-Version: Code Snippets v2.7.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-10 17:19+0100\n"
-"PO-Revision-Date: 2016-01-10 17:37+0100\n"
-"Last-Translator: Joerg Knoerchen <webmaster@sensorgrafie.de>\n"
+"POT-Creation-Date: 2016-09-30 14:41+0200\n"
+"PO-Revision-Date: 2016-09-30 14:50+0200\n"
+"Last-Translator: Mario Siegmann <mario_siegmann@web.de>\n"
 "Language-Team: Mario Siegmann <mario_siegmann@web.de>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 1.8.9\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
 "_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: php/admin-menus/class-admin-menu.php:95
+#: php/admin-menus/class-admin-menu.php:98
 msgid "You are not authorized to access this page."
 msgstr "Du hast keine Berechtigung diese Seite zu betreten."
 
@@ -30,20 +30,20 @@ msgid "Edit Snippet"
 msgstr "Codeschnipsel bearbeiten"
 
 # @ code-snippets
-#: php/admin-menus/class-edit-menu.php:28
+#: php/admin-menus/class-edit-menu.php:32
 msgid "Add New"
 msgstr "Hinzufügen"
 
 # @ code-snippets
-#: php/admin-menus/class-edit-menu.php:29 php/views/edit.php:31
+#: php/admin-menus/class-edit-menu.php:33 php/views/edit.php:31
 msgid "Add New Snippet"
 msgstr "Neuen Codeschnipsel hinzufügen"
 
-#: php/admin-menus/class-edit-menu.php:149
+#: php/admin-menus/class-edit-menu.php:178
 msgid "Don't Panic"
 msgstr "Keine Panik"
 
-#: php/admin-menus/class-edit-menu.php:150
+#: php/admin-menus/class-edit-menu.php:179
 #, php-format
 msgid ""
 "The code snippet you are trying to save produced a fatal error on line %d:"
@@ -51,7 +51,7 @@ msgstr ""
 "Der Codeschnipsel, den Sie versuchen zu speichern, produziert einen fatalen "
 "Fehler in Zeile %d:"
 
-#: php/admin-menus/class-edit-menu.php:152
+#: php/admin-menus/class-edit-menu.php:181
 msgid ""
 "The previous version of the snippet is unchanged, and the rest of this site "
 "should be functioning normally as before."
@@ -59,7 +59,7 @@ msgstr ""
 "Die vorherige Version dieses Codeschnipsels ist unverändert und der Rest der "
 "Seite sollte normal wie zuvor funktionieren."
 
-#: php/admin-menus/class-edit-menu.php:153
+#: php/admin-menus/class-edit-menu.php:182
 msgid ""
 "Please use the back button in your browser to return to the previous page "
 "and try to fix the code error."
@@ -67,7 +67,7 @@ msgstr ""
 "Bitte nutzen Sie die Zurück-Schaltfläche in Ihrem Browser um zur vorherigen "
 "Seite zurückzukehren und versuchen Sie den Fehler zu korrigieren."
 
-#: php/admin-menus/class-edit-menu.php:154
+#: php/admin-menus/class-edit-menu.php:183
 msgid ""
 "If you prefer, you can close this page and discard the changes you just "
 "made. No changes will be made to this site."
@@ -77,81 +77,81 @@ msgstr ""
 "Website vorgenommen."
 
 # @ code-snippets
-#: php/admin-menus/class-edit-menu.php:279 php/class-list-table.php:324
+#: php/admin-menus/class-edit-menu.php:303 php/class-list-table.php:324
 msgid "Description"
 msgstr "Beschreibung"
 
-#: php/admin-menus/class-edit-menu.php:309 php/class-list-table.php:325
+#: php/admin-menus/class-edit-menu.php:334 php/class-list-table.php:325
 msgid "Tags"
 msgstr "Stichworte"
 
-#: php/admin-menus/class-edit-menu.php:313
+#: php/admin-menus/class-edit-menu.php:338
 msgid "Enter a list of tags; separated by commas"
 msgstr "Schlagwortliste, Komma getrennt"
 
-#: php/admin-menus/class-edit-menu.php:332
+#: php/admin-menus/class-edit-menu.php:358
 msgid "Run snippet everywhere"
 msgstr "Codeschnipsel überall ausführen"
 
-#: php/admin-menus/class-edit-menu.php:333
+#: php/admin-menus/class-edit-menu.php:359
 msgid "Only run in administration area"
 msgstr "Nur im Administrationsbereich ausführen"
 
-#: php/admin-menus/class-edit-menu.php:334
+#: php/admin-menus/class-edit-menu.php:360
 msgid "Only run on site front-end"
 msgstr "Nur auf öffentlicher Seite ausführen"
 
-#: php/admin-menus/class-edit-menu.php:338
+#: php/admin-menus/class-edit-menu.php:364
 msgid "Scope"
 msgstr "Bereich"
 
-#: php/admin-menus/class-edit-menu.php:358
+#: php/admin-menus/class-edit-menu.php:384
 msgid "Sharing"
 msgstr "Teilen"
 
-#: php/admin-menus/class-edit-menu.php:362
+#: php/admin-menus/class-edit-menu.php:388
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 "Diesem Codeschnipsel erlauben, auf individuellen Seiten im Netzwerk "
 "aktiviert zu werden"
 
-#: php/admin-menus/class-edit-menu.php:415
+#: php/admin-menus/class-edit-menu.php:448
 #, php-format
 msgid "The snippet has been deactivated due to an error on line %d:"
 msgstr ""
 "Der Codeschnipsel deaktiviert wurde aufgrund eines Fehlers in Zeile %d:"
 
-#: php/admin-menus/class-edit-menu.php:420
+#: php/admin-menus/class-edit-menu.php:453
 msgid "The snippet has been deactivated due to an error in the code."
 msgstr "Der Codeschnipsel wurde aufgrund eines Fehlers im Code deaktiviert."
 
-#: php/admin-menus/class-edit-menu.php:427
+#: php/admin-menus/class-edit-menu.php:460
 msgid "An error occurred when saving the snippet."
 msgstr "Es trat ein Fehler beim Speichern des Codeschnipsel auf."
 
 # @ code-snippets
-#: php/admin-menus/class-edit-menu.php:432
+#: php/admin-menus/class-edit-menu.php:465
 msgid "Snippet <strong>added</strong>."
 msgstr "Codeschnipsel <strong>hinzugefügt</strong>."
 
 # @ code-snippets
-#: php/admin-menus/class-edit-menu.php:433
+#: php/admin-menus/class-edit-menu.php:466
 msgid "Snippet <strong>updated</strong>."
 msgstr "Codeschnipsel <strong>aktualisiert</strong>."
 
 # @ code-snippets
-#: php/admin-menus/class-edit-menu.php:434
+#: php/admin-menus/class-edit-menu.php:467
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
 "Codeschnipsel <strong>hinzugefügt</strong> und <strong>aktiviert</strong>."
 
 # @ code-snippets
-#: php/admin-menus/class-edit-menu.php:435
+#: php/admin-menus/class-edit-menu.php:468
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
 "Codeschnipsel <strong>aktualisiert</strong> und <strong>aktiviert</strong>."
 
-#: php/admin-menus/class-edit-menu.php:436
+#: php/admin-menus/class-edit-menu.php:469
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 "Codeschnipsel <strong>aktualisiert</strong> und <strong>deaktiviert</strong>."
@@ -167,15 +167,15 @@ msgid "Import Snippets"
 msgstr "Codeschnipsel importieren"
 
 # @ code-snippets
-#: php/admin-menus/class-import-menu.php:73
+#: php/admin-menus/class-import-menu.php:78
 msgid "Code Snippets"
 msgstr "Codeschnipsel"
 
-#: php/admin-menus/class-import-menu.php:74
+#: php/admin-menus/class-import-menu.php:79
 msgid "Import snippets from a code snippets export file"
 msgstr "Importiere Codeschnipsel aus einer Code Snippets Export Datei."
 
-#: php/admin-menus/class-import-menu.php:88
+#: php/admin-menus/class-import-menu.php:93
 #, php-format
 msgid ""
 "Successfully imported <strong>%d</strong> snippet. <a href=\"%s\">Have fun!</"
@@ -190,19 +190,19 @@ msgstr[1] ""
 "Erfolgreicher Import der <strong>%d</strong> Codeschnipsel. <a href=\"%s"
 "\">Viel Spass!</a>"
 
-#: php/admin-menus/class-import-menu.php:101
+#: php/admin-menus/class-import-menu.php:106
 msgid "An error occurred when processing the import file."
 msgstr "Ein Fehler trat bei der Verarbeitung der importierten Datei auf."
 
 # @ code-snippets
-#: php/admin-menus/class-manage-menu.php:22 php/admin.php:117
+#: php/admin-menus/class-manage-menu.php:22 php/class-admin.php:111
 msgid "Manage"
 msgstr "Verwalten"
 
 # @ code-snippets
 #: php/admin-menus/class-manage-menu.php:23
 #: php/admin-menus/class-manage-menu.php:39
-#: php/admin-menus/class-manage-menu.php:40 php/admin.php:56
+#: php/admin-menus/class-manage-menu.php:40 php/class-admin.php:52
 #: php/views/manage.php:19
 msgid "Snippets"
 msgstr "Codeschnipsel"
@@ -251,7 +251,7 @@ msgid "Selected snippets <strong>deleted</strong>."
 msgstr "Ausgewählte Codeschnipsel wurden <strong>gelöscht</strong>."
 
 #: php/admin-menus/class-settings-menu.php:16
-#: php/admin-menus/class-settings-menu.php:36 php/views/edit.php:132
+#: php/admin-menus/class-settings-menu.php:36 php/views/edit.php:134
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -260,41 +260,41 @@ msgid "Snippets Settings"
 msgstr "Codeschnipsel Einstellungen"
 
 # @ code-snippets
-#: php/admin.php:116
+#: php/class-admin.php:110
 msgid "Manage your existing snippets"
 msgstr "Bestehende Codeschnipsel verwalten"
 
 # @ code-snippets
-#: php/admin.php:146
+#: php/class-admin.php:141
 msgid "Visit the WordPress.org plugin page"
 msgstr "Die Plugin-Seite bei WordPress.org aufrufen"
 
 # @ code-snippets
-#: php/admin.php:147
+#: php/class-admin.php:142
 msgid "About"
 msgstr "Über"
 
 # @ code-snippets
-#: php/admin.php:151
+#: php/class-admin.php:146
 msgid "Visit the support forums"
 msgstr "Die Support-Foren aufrufen"
 
 # @ code-snippets
-#: php/admin.php:152
+#: php/class-admin.php:147
 msgid "Support"
 msgstr "Support"
 
 # @ code-snippets
-#: php/admin.php:156
+#: php/class-admin.php:151
 msgid "Support this plugin's development"
 msgstr "Die Entwicklung dieses Plugins unterstützen"
 
 # @ code-snippets
-#: php/admin.php:157
+#: php/class-admin.php:152
 msgid "Donate"
 msgstr "Spenden"
 
-#: php/admin.php:190
+#: php/class-admin.php:183
 msgid ""
 "<strong>Have feedback on Code Snippets?</strong> Please take the time to "
 "answer a short survey on how you use this plugin and what you'd like to see "
@@ -305,9 +305,273 @@ msgstr ""
 "und welche Funktionen sie in Zukunft gerne verändert oder hinzugefügt haben "
 "möchten."
 
-#: php/admin.php:193
+#: php/class-admin.php:187
 msgid "Take the survey now"
 msgstr "An der Umfrage teilnehmen"
+
+#: php/class-admin.php:190
+msgid "Dismiss"
+msgstr "Verwerfen"
+
+# @ code-snippets
+#: php/class-contextual-help.php:40
+msgid "For more information:"
+msgstr "Weitere Informationen:"
+
+#: php/class-contextual-help.php:41
+msgid "About Plugin"
+msgstr "Über das Plugin"
+
+#: php/class-contextual-help.php:42
+msgid "FAQ"
+msgstr "FAQ"
+
+#: php/class-contextual-help.php:43
+msgid "Support Forums"
+msgstr "Support-Foren"
+
+#: php/class-contextual-help.php:44
+msgid "Plugin Website"
+msgstr "Plugin-Webseite"
+
+# @ code-snippets
+#: php/class-contextual-help.php:55 php/class-contextual-help.php:81
+#: php/class-contextual-help.php:114
+msgid "Overview"
+msgstr "Übersicht"
+
+# @ code-snippets
+#: php/class-contextual-help.php:56
+msgid ""
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can manage "
+"your existing snippets and perform tasks on them such as activating, "
+"deactivating, deleting and exporting."
+msgstr ""
+"Codeschnipsel sind ähnlich wie Plugins - beide erweitern bzw. verändern die "
+"Funktionalität. Codeschnipsel sind jedoch weniger komplex und "
+"leichtgewichtiger; nur einige Zeilen Code. Damit fällt auch weniger Last auf "
+"dem Webserver an. Hier können Sie bereits existierende Codeschnipsel "
+"bearbeiten bzw. Aktionen damit ausführen, wie Aktivieren, Deaktivieren, "
+"Löschen sowie Exportieren."
+
+# @ code-snippets
+#: php/class-contextual-help.php:61
+msgid "Safe Mode"
+msgstr "Sicherheitsmodus"
+
+# @ code-snippets
+#: php/class-contextual-help.php:62
+msgid ""
+"Be sure to check your snippets for errors before you activate them, as a "
+"faulty snippet could bring your whole blog down. If your site starts doing "
+"strange things, deactivate all your snippets and activate them one at a time."
+msgstr ""
+"Stellen Sie sicher, dass Sie Ihre Codeschnipsel vor dem Aktivieren "
+"überprüfen. Fehlerhafte Codeschnipsel können Ihre gesamte Webseite zum Crash "
+"bringen. Falls Ihre Webseite eigenartige Dinge vollführt oder komische "
+"Sachen anzeigt, deaktivieren Sie bitte alle Codeschnipsel und aktivieren Sie "
+"diese eins nach dem anderen."
+
+# @ code-snippets
+#: php/class-contextual-help.php:63
+msgid ""
+"If something goes wrong with a snippet and you can't use WordPress, you can "
+"cause all snippets to stop executing by adding "
+"<code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-"
+"config.php</code> file. After you have deactivated the offending snippet, "
+"you can turn off safe mode by removing this line or replacing <strong>true</"
+"strong> with <strong>false</strong>."
+msgstr ""
+"Falls etwas schief läuft und Sie WordPress nicht mehr verwenden können - "
+"sprich: den Admin-Bereich - können Sie alle Codeschnipsel dieses Plugins von "
+"der Ausführung abhalten, indem Sie folgende Konstante "
+"<code>define( 'CODE_SNIPPETS_SAFE_MODE', true );</code> Ihrer WordPress-"
+"Konfigurationsdatei <code>wp-config.php</code> hinzufügen. Nachdem Sie den "
+"fehlerhaften Codeschnipsel gefunden und deaktiviert haben, können Sie den "
+"Sicherheitsmodus in der <code>wp-config.php</code> wieder entfernen bzw. den "
+"Wert der Konstante von <strong>true</strong> auf dann <strong>false</strong> "
+"setzen."
+
+# @ code-snippets
+#: php/class-contextual-help.php:68
+msgid "Uninstall"
+msgstr "Deinstallieren"
+
+# @ code-snippets
+#: php/class-contextual-help.php:69
+#, php-format
+msgid ""
+"When you delete Code Snippets through the Plugins menu in WordPress it will "
+"clear up the <code>%1$s</code> table and a few other bits of data stored in "
+"the database. If you want to keep this data (ie: you are only temporally "
+"uninstalling Code Snippets) then remove the <code>%2$s</code> folder using "
+"FTP."
+msgstr ""
+"Wenn Sie das Codeschnipsel-Plugin <strong>über das Plugins-Menü in WordPress "
+"löschen</strong>, wird es die <code>%1$s</code> Tabelle leeren und einige "
+"anderen Einstellungen in Ihrer Datenbank. Falls Sie diese Daten jedoch "
+"sichern wollen (mit anderen Worten: Sie wollen das Plugin nur temporär "
+"deinstallieren), dann sollten Sie den <code>%2$s</code> Ordner lediglich "
+"<strong>via FTP</strong> entfernen."
+
+# @ code-snippets
+#: php/class-contextual-help.php:70
+msgid ""
+"Even if you're sure that you don't want to use Code Snippets ever again on "
+"this WordPress installation, you may want to use the export feature to back "
+"up your snippets."
+msgstr ""
+"Auch wenn Sie sicher sind, dass Sie das Codeschnipsel-Plugin niemals mehr in "
+"dieser WordPress-Installation verwenden werden, sollten sie vielleicht "
+"dennoch vorher die Export-Funktion verwenden, um Ihre Codeschnipsel zu "
+"sichern."
+
+# @ code-snippets
+#: php/class-contextual-help.php:82
+msgid ""
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can add a new "
+"snippet, or edit an existing one."
+msgstr ""
+"Codeschnipsel sind ähnlich wie Plugins - beide erweitern bzw. verändern die "
+"Funktionalität. Codeschnipsel sind jedoch weniger komplex und "
+"leichtgewichtiger; nur einige Zeilen Code. Damit fällt auch weniger Last auf "
+"dem Webserver an. Hier können Sie einen neuen Codeschnipsel hinzufügen oder "
+"bereits Existierende bearbeiten."
+
+# @ code-snippets
+#: php/class-contextual-help.php:87
+msgid "Finding Snippets"
+msgstr "Codeschnipsel finden"
+
+#: php/class-contextual-help.php:88
+msgid ""
+"Here are some links to websites which host a large number of snippets that "
+"you can add to your site.\n"
+"\t\t\t\t<ul>\n"
+"\t\t\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
+"\">WP-Snippets</a></li>\n"
+"\t\t\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</"
+"a></li>\n"
+"\t\t\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
+"\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
+"\t\t\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+"\t\t\t\t</ul>"
+msgstr ""
+"Hier sind einige Links zu Webseiten, welche eine große Anzahl an "
+"Codeschnipsel zur Verfügung stellen und die verwendet werden können.\n"
+"\t\t\t\t<ul>\n"
+"\t\t\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
+"\">WP-Snippets</a></li>\n"
+"\t\t\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</"
+"a></li>\n"
+"\t\t\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
+"\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
+"\t\t\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+"\t\t\t\t</ul>"
+
+# @ code-snippets
+#: php/class-contextual-help.php:95
+msgid ""
+"More places to find snippets, as well as a selection of example snippets, "
+"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
+"wiki/Finding-snippets\">plugin documentation</a>"
+msgstr ""
+"Weitere Orte, um Codeschnipsel zu finden und ebenso eine Sammlung von "
+"Beispiel-Schnipseln finden Sie in der <a href=\"https://github.com/sheabunge/"
+"code-snippets/wiki/Finding-snippets\">Dokumentation des Plugins</a>."
+
+# @ code-snippets
+#: php/class-contextual-help.php:100
+msgid "Adding Snippets"
+msgstr "Codeschnipsel hinzufügen"
+
+# @ code-snippets
+#: php/class-contextual-help.php:101
+msgid ""
+"You need to fill out the name and code fields for your snippet to be added. "
+"While the description field will add more information about how your snippet "
+"works, what is does and where you found it, it is completely optional."
+msgstr ""
+"Sie müssen die Felder für 'Name' und 'Code' ausfüllen, damit der Schnipsel "
+"hinzugefügt werden kann. Das Beschreibungsfeld ist völlig optional, es wird "
+"jedoch sehr empfohlen. Damit können Sie kurz notieren, was der Code "
+"eigentlich macht und bewahren sich so auf elegante Weise die Übersicht."
+
+# @ code-snippets
+#: php/class-contextual-help.php:102
+msgid ""
+"Please be sure to check that your snippet is valid PHP code and will not "
+"produce errors before adding it through this page. While doing so will not "
+"become active straight away, it will help to minimise the chance of a faulty "
+"snippet becoming active on your site."
+msgstr ""
+"Bitte stellen Sie vor dem Einfügen von Codeschnipseln sicher, dass Ihr "
+"entsprechender Codeschipsel valider PHP-Code ist und keine Fehler "
+"produziert. Somit erhöhen Sie von vornherein die Wahrscheinlichkeit, dass "
+"überhaupt fehlerhafte Codeschnipsel in Ihrer Installation aktiviert werden."
+
+# @ code-snippets
+#: php/class-contextual-help.php:115
+msgid ""
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can load "
+"snippets from a Code Snippets (.xml) import file into the database with your "
+"existing snippets."
+msgstr ""
+"Codeschnipsel sind ähnlich wie Plugins - beide erweitern bzw. verändern die "
+"Funktionalität. Codeschnipsel sind jedoch weniger komplex und "
+"leichtgewichtiger; nur einige Zeilen Code. Damit fällt auch weniger Last auf "
+"dem Webserver an. Hier können Sie Codeschnipsel aus einer Codeschipsel-XML-"
+"Importdatei hinzufügen."
+
+# @ code-snippets
+#: php/class-contextual-help.php:120
+msgid "Importing"
+msgstr "Importieren"
+
+# @ code-snippets
+#: php/class-contextual-help.php:121
+msgid ""
+"You can load your snippets from a code snippets (.xml) export file using "
+"this page."
+msgstr ""
+"Auf dieser Seite können Sie Ihre Codeschnipsel von einer Codeschnipsel-"
+"Exportdatei (<code>.xml</code>) laden."
+
+# @ code-snippets
+#: php/class-contextual-help.php:122
+#, php-format
+msgid ""
+"Snippets will be added to the database along with your existing snippets. "
+"Regardless of whether the snippets were active on the previous site, "
+"imported snippets are always inactive until activated using the <a href=\"%s"
+"\">Manage Snippets</a> page.</p>"
+msgstr ""
+"Codeschnipsel werden der Datenbank hinzugefügt, zusammen mit Ihren bereits "
+"bestehenden Codeschnipseln. Unabhängig davon, ob diese Codeschnipsel auf der "
+"vorherigen Installation aktiv waren, sind importierte Codeschnipsel "
+"standardmäßig immer deaktiviert, solange Sie von Ihnen auf der <a href=\"%s"
+"\">Codeschnispel verwalten-Seite</a> aktiviert werden.</p>"
+
+# @ code-snippets
+#: php/class-contextual-help.php:127
+msgid "Exporting"
+msgstr "Exportieren"
+
+# @ code-snippets
+#: php/class-contextual-help.php:128
+#, php-format
+msgid ""
+"You can save your snippets to a Code Snippets (.xml) export file using the "
+"<a href=\"%s\">Manage Snippets</a> page."
+msgstr ""
+"Sie können Ihre Codeschnipsel auch als Codeschnipsel-XML-Exportdatei "
+"exportieren, über die <a href=\"%s\">Codeschnipsel verwalten-Seite</a>."
 
 #: php/class-export.php:87
 msgid ""
@@ -399,13 +663,13 @@ msgstr "Bearbeiten"
 
 # @ code-snippets
 #: php/class-list-table.php:142 php/class-list-table.php:202
-#: php/class-list-table.php:371 php/views/edit.php:109
+#: php/class-list-table.php:371 php/views/edit.php:111
 msgid "Export"
 msgstr "Exportieren"
 
 # @ code-snippets
 #: php/class-list-table.php:151 php/class-list-table.php:214
-#: php/class-list-table.php:372 php/views/edit.php:121
+#: php/class-list-table.php:372 php/views/edit.php:123
 msgid "Delete"
 msgstr "Löschen"
 
@@ -498,285 +762,25 @@ msgstr ""
 "neuen <a href=\"%s\">hinzufügen &rarr;</a>"
 
 # @ code-snippets
-#: php/class-list-table.php:965
+#: php/class-list-table.php:959
 msgid "Search results"
 msgstr "Suchergebnisse"
 
 # @ code-snippets
-#: php/class-list-table.php:968
+#: php/class-list-table.php:962
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr " für &#8220;%s&#8221;"
 
-#: php/class-list-table.php:972
+#: php/class-list-table.php:966
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr " in Stichwort &#8220;%s&#8221;"
 
 # @ code-snippets
-#: php/class-list-table.php:980
+#: php/class-list-table.php:974
 msgid "Clear Filters"
 msgstr "Filter zurücksetzen"
-
-# @ code-snippets
-#: php/contextual-help.php:19
-msgid "For more information:"
-msgstr "Weitere Informationen:"
-
-#: php/contextual-help.php:20
-msgid "About Plugin"
-msgstr "Über das Plugin"
-
-#: php/contextual-help.php:21
-msgid "FAQ"
-msgstr "FAQ"
-
-#: php/contextual-help.php:22
-msgid "Support Forums"
-msgstr "Support-Foren"
-
-#: php/contextual-help.php:23
-msgid "Plugin Website</a>"
-msgstr "Plugin-Webseite</a>"
-
-# @ code-snippets
-#: php/contextual-help.php:36 php/contextual-help.php:67
-#: php/contextual-help.php:105
-msgid "Overview"
-msgstr "Übersicht"
-
-# @ code-snippets
-#: php/contextual-help.php:38
-msgid ""
-"Snippets are similar to plugins - they both extend and expand the "
-"functionality of WordPress. Snippets are more light-weight, just a few lines "
-"of code, and do not put as much load on your server. Here you can manage "
-"your existing snippets and perform tasks on them such as activating, "
-"deactivating, deleting and exporting."
-msgstr ""
-"Codeschnipsel sind ähnlich wie Plugins - beide erweitern bzw. verändern die "
-"Funktionalität. Codeschnipsel sind jedoch weniger komplex und "
-"leichtgewichtiger; nur einige Zeilen Code. Damit fällt auch weniger Last auf "
-"dem Webserver an. Hier können Sie bereits existierende Codeschnipsel "
-"bearbeiten bzw. Aktionen damit ausführen, wie Aktivieren, Deaktivieren, "
-"Löschen sowie Exportieren."
-
-# @ code-snippets
-#: php/contextual-help.php:43
-msgid "Safe Mode"
-msgstr "Sicherheitsmodus"
-
-# @ code-snippets
-#: php/contextual-help.php:45
-msgid ""
-"Be sure to check your snippets for errors before you activate them, as a "
-"faulty snippet could bring your whole blog down. If your site starts doing "
-"strange things, deactivate all your snippets and activate them one at a time."
-msgstr ""
-"Stellen Sie sicher, dass Sie Ihre Codeschnipsel vor dem Aktivieren "
-"überprüfen. Fehlerhafte Codeschnipsel können Ihre gesamte Webseite zum Crash "
-"bringen. Falls Ihre Webseite eigenartige Dinge vollführt oder komische "
-"Sachen anzeigt, deaktivieren Sie bitte alle Codeschnipsel und aktivieren Sie "
-"diese eins nach dem anderen."
-
-# @ code-snippets
-#: php/contextual-help.php:46
-msgid ""
-"If something goes wrong with a snippet and you can't use WordPress, you can "
-"cause all snippets to stop executing by adding "
-"<code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-"
-"config.php</code> file. After you have deactivated the offending snippet, "
-"you can turn off safe mode by removing this line or replacing <strong>true</"
-"strong> with <strong>false</strong>."
-msgstr ""
-"Falls etwas schief läuft und Sie WordPress nicht mehr verwenden können - "
-"sprich: den Admin-Bereich - können Sie alle Codeschnipsel dieses Plugins von "
-"der Ausführung abhalten, indem Sie folgende Konstante "
-"<code>define( 'CODE_SNIPPETS_SAFE_MODE', true );</code> Ihrer WordPress-"
-"Konfigurationsdatei <code>wp-config.php</code> hinzufügen. Nachdem Sie den "
-"fehlerhaften Codeschnipsel gefunden und deaktiviert haben, können Sie den "
-"Sicherheitsmodus in der <code>wp-config.php</code> wieder entfernen bzw. den "
-"Wert der Konstante von <strong>true</strong> auf dann <strong>false</strong> "
-"setzen."
-
-# @ code-snippets
-#: php/contextual-help.php:51
-msgid "Uninstall"
-msgstr "Deinstallieren"
-
-# @ code-snippets
-#: php/contextual-help.php:53
-#, php-format
-msgid ""
-"When you delete Code Snippets through the Plugins menu in WordPress it will "
-"clear up the <code>%1$s</code> table and a few other bits of data stored in "
-"the database. If you want to keep this data (ie: you are only temporally "
-"uninstalling Code Snippets) then remove the <code>%2$s</code> folder using "
-"FTP."
-msgstr ""
-"Wenn Sie das Codeschnipsel-Plugin <strong>über das Plugins-Menü in WordPress "
-"löschen</strong>, wird es die <code>%1$s</code> Tabelle leeren und einige "
-"anderen Einstellungen in Ihrer Datenbank. Falls Sie diese Daten jedoch "
-"sichern wollen (mit anderen Worten: Sie wollen das Plugin nur temporär "
-"deinstallieren), dann sollten Sie den <code>%2$s</code> Ordner lediglich "
-"<strong>via FTP</strong> entfernen."
-
-# @ code-snippets
-#: php/contextual-help.php:54
-msgid ""
-"Even if you're sure that you don't want to use Code Snippets ever again on "
-"this WordPress installation, you may want to use the export feature to back "
-"up your snippets."
-msgstr ""
-"Auch wenn Sie sicher sind, dass Sie das Codeschnipsel-Plugin niemals mehr in "
-"dieser WordPress-Installation verwenden werden, sollten sie vielleicht "
-"dennoch vorher die Export-Funktion verwenden, um Ihre Codeschnipsel zu "
-"sichern."
-
-# @ code-snippets
-#: php/contextual-help.php:69
-msgid ""
-"Snippets are similar to plugins - they both extend and expand the "
-"functionality of WordPress. Snippets are more light-weight, just a few lines "
-"of code, and do not put as much load on your server. Here you can add a new "
-"snippet, or edit an existing one."
-msgstr ""
-"Codeschnipsel sind ähnlich wie Plugins - beide erweitern bzw. verändern die "
-"Funktionalität. Codeschnipsel sind jedoch weniger komplex und "
-"leichtgewichtiger; nur einige Zeilen Code. Damit fällt auch weniger Last auf "
-"dem Webserver an. Hier können Sie einen neuen Codeschnipsel hinzufügen oder "
-"bereits Existierende bearbeiten."
-
-# @ code-snippets
-#: php/contextual-help.php:74
-msgid "Finding Snippets"
-msgstr "Codeschnipsel finden"
-
-#: php/contextual-help.php:76
-msgid ""
-"Here are some links to websites which host a large number of snippets that "
-"you can add to your site.\n"
-"\t\t\t<ul>\n"
-"\t\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
-"\">WP-Snippets</a></li>\n"
-"\t\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</a></"
-"li>\n"
-"\t\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
-"\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
-"\t\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
-"\t\t\t</ul>"
-msgstr ""
-"Hier sind ein Links zu Webseiten, welche eine Menge an Codeschnipsel "
-"bereitstellen und auf ihrer Webseite verwendet werden können.\n"
-"\t\t\t<ul>\n"
-"\t\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
-"\">WP-Snippets</a></li>\n"
-"\t\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</a></"
-"li>\n"
-"\t\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
-"\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
-"\t\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
-"\t\t\t</ul>"
-
-# @ code-snippets
-#: php/contextual-help.php:83
-msgid ""
-"More places to find snippets, as well as a selection of example snippets, "
-"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
-"wiki/Finding-snippets\">plugin documentation</a>"
-msgstr ""
-"Weitere Orte, um Codeschnipsel zu finden und ebenso eine Sammlung von "
-"Beispiel-Schnipseln finden Sie in der <a href=\"https://github.com/sheabunge/"
-"code-snippets/wiki/Finding-snippets\">Dokumentation des Plugins</a>."
-
-# @ code-snippets
-#: php/contextual-help.php:88
-msgid "Adding Snippets"
-msgstr "Codeschnipsel hinzufügen"
-
-# @ code-snippets
-#: php/contextual-help.php:90
-msgid ""
-"You need to fill out the name and code fields for your snippet to be added. "
-"While the description field will add more information about how your snippet "
-"works, what is does and where you found it, it is completely optional."
-msgstr ""
-"Sie müssen die Felder für 'Name' und 'Code' ausfüllen, damit der Schnipsel "
-"hinzugefügt werden kann. Das Beschreibungsfeld ist völlig optional, es wird "
-"jedoch sehr empfohlen. Damit können Sie kurz notieren, was der Code "
-"eigentlich macht und bewahren sich so auf elegante Weise die Übersicht."
-
-# @ code-snippets
-#: php/contextual-help.php:91
-msgid ""
-"Please be sure to check that your snippet is valid PHP code and will not "
-"produce errors before adding it through this page. While doing so will not "
-"become active straight away, it will help to minimise the chance of a faulty "
-"snippet becoming active on your site."
-msgstr ""
-"Bitte stellen Sie vor dem Einfügen von Codeschnipseln sicher, dass Ihr "
-"entsprechender Codeschipsel valider PHP-Code ist und keine Fehler "
-"produziert. Somit erhöhen Sie von vornherein die Wahrscheinlichkeit, dass "
-"überhaupt fehlerhafte Codeschnipsel in Ihrer Installation aktiviert werden."
-
-# @ code-snippets
-#: php/contextual-help.php:107
-msgid ""
-"Snippets are similar to plugins - they both extend and expand the "
-"functionality of WordPress. Snippets are more light-weight, just a few lines "
-"of code, and do not put as much load on your server. Here you can load "
-"snippets from a Code Snippets (.xml) import file into the database with your "
-"existing snippets."
-msgstr ""
-"Codeschnipsel sind ähnlich wie Plugins - beide erweitern bzw. verändern die "
-"Funktionalität. Codeschnipsel sind jedoch weniger komplex und "
-"leichtgewichtiger; nur einige Zeilen Code. Damit fällt auch weniger Last auf "
-"dem Webserver an. Hier können Sie Codeschnipsel aus einer Codeschipsel-XML-"
-"Importdatei hinzufügen."
-
-# @ code-snippets
-#: php/contextual-help.php:112
-msgid "Importing"
-msgstr "Importieren"
-
-# @ code-snippets
-#: php/contextual-help.php:114
-msgid ""
-"You can load your snippets from a code snippets (.xml) export file using "
-"this page."
-msgstr ""
-"Auf dieser Seite können Sie Ihre Codeschnipsel von einer Codeschnipsel-"
-"Exportdatei (<code>.xml</code>) laden."
-
-# @ code-snippets
-#: php/contextual-help.php:115
-#, php-format
-msgid ""
-"Snippets will be added to the database along with your existing snippets. "
-"Regardless of whether the snippets were active on the previous site, "
-"imported snippets are always inactive until activated using the <a href=\"%s"
-"\">Manage Snippets</a> page.</p>"
-msgstr ""
-"Codeschnipsel werden der Datenbank hinzugefügt, zusammen mit Ihren bereits "
-"bestehenden Codeschnipseln. Unabhängig davon, ob diese Codeschnipsel auf der "
-"vorherigen Installation aktiv waren, sind importierte Codeschnipsel "
-"standardmäßig immer deaktiviert, solange Sie von Ihnen auf der <a href=\"%s"
-"\">Codeschnispel verwalten-Seite</a> aktiviert werden.</p>"
-
-# @ code-snippets
-#: php/contextual-help.php:120
-msgid "Exporting"
-msgstr "Exportieren"
-
-# @ code-snippets
-#: php/contextual-help.php:122
-#, php-format
-msgid ""
-"You can save your snippets to a Code Snippets (.xml) export file using the "
-"<a href=\"%s\">Manage Snippets</a> page."
-msgstr ""
-"Sie können Ihre Codeschnipsel auch als Codeschnipsel-XML-Exportdatei "
-"exportieren, über die <a href=\"%s\">Codeschnipsel verwalten-Seite</a>."
 
 #: php/settings/settings-fields.php:42
 msgid "Activate by Default"
@@ -813,90 +817,102 @@ msgstr "Codeschnipsel-Beschreibungen aktivieren"
 msgid "Show snippet descriptions on admin pages"
 msgstr "Codeschnipsel-Beschreibungen auf den Administrationsseiten anzeigen"
 
-#: php/settings/settings-fields.php:74
+#: php/settings/settings-fields.php:69
+msgid "Disable shortcode syntax highlighter"
+msgstr "Codeschnipsel Syntax-Hervorhebung deaktivieren"
+
+#: php/settings/settings-fields.php:71
+msgid ""
+"Disable the syntax highlighting for the [code_snippet] shortcode on the "
+"front-end"
+msgstr ""
+"Syntax-Hervorhebung den [code_snippet] Shortcode auf der öffentlichen Seite "
+"deaktivieren"
+
+#: php/settings/settings-fields.php:80
 msgid "Row Height"
 msgstr "Zeilenhöhe"
 
-#: php/settings/settings-fields.php:76
+#: php/settings/settings-fields.php:82
 msgid "rows"
 msgstr "Zeilen"
 
-#: php/settings/settings-fields.php:82
+#: php/settings/settings-fields.php:88
 msgid "Use Full Editor"
 msgstr "Benutze den erweiterten Editor"
 
-#: php/settings/settings-fields.php:84
+#: php/settings/settings-fields.php:90
 msgid "Enable all features of the visual editor"
 msgstr "Aktiviere alle Funktionen des visuellen Editors"
 
-#: php/settings/settings-fields.php:89
+#: php/settings/settings-fields.php:95
 msgid "Media Buttons"
 msgstr "Medien Schaltflächen"
 
-#: php/settings/settings-fields.php:91
+#: php/settings/settings-fields.php:97
 msgid "Enable the add media buttons"
 msgstr "Aktiviere die Schaltfläche Medien hinzufügen."
 
-#: php/settings/settings-fields.php:100
+#: php/settings/settings-fields.php:106
 msgid "Theme"
 msgstr "Theme"
 
-#: php/settings/settings-fields.php:107
+#: php/settings/settings-fields.php:113
 msgid "Indent With Tabs"
 msgstr "Tabulatorbreite"
 
-#: php/settings/settings-fields.php:109
+#: php/settings/settings-fields.php:115
 msgid "Use hard tabs (not spaces) for indentation."
 msgstr "Benutze Tabulator anstelle von Leerzeichen."
 
-#: php/settings/settings-fields.php:115
+#: php/settings/settings-fields.php:121
 msgid "Tab Size"
 msgstr "Tabulatorweite"
 
-#: php/settings/settings-fields.php:117
+#: php/settings/settings-fields.php:123
 msgid "The width of a tab character."
 msgstr "Die Länge eines Tabulatorzeichens."
 
-#: php/settings/settings-fields.php:124
+#: php/settings/settings-fields.php:130
 msgid "Indent Unit"
 msgstr "Einheit des Einzugs"
 
-#: php/settings/settings-fields.php:126
+#: php/settings/settings-fields.php:132
 msgid "How many spaces a block should be indented."
 msgstr "Anzahl der Leerzeichen die einem Einzug entsprechen sollen."
 
-#: php/settings/settings-fields.php:133
+#: php/settings/settings-fields.php:139
 msgid "Wrap Lines"
 msgstr "Zeilen umbrechen"
 
-#: php/settings/settings-fields.php:135
+#: php/settings/settings-fields.php:141
 msgid "Whether the editor should scroll or wrap for long lines."
 msgstr ""
 "Legt fest ob der Editor Zeilen umbricht oder bei langen Zeilen scrollen soll."
 
-#: php/settings/settings-fields.php:141
+#: php/settings/settings-fields.php:147
 msgid "Line Numbers"
 msgstr "Zeilennummer"
 
-#: php/settings/settings-fields.php:143
+#: php/settings/settings-fields.php:149
 msgid "Show line numbers to the left of the editor."
 msgstr "Zeigt Zeilennummern auf der linken Seite des Editors."
 
-#: php/settings/settings-fields.php:149
+#: php/settings/settings-fields.php:155
 msgid "Auto Close Brackets"
 msgstr "Klammern automatisch schliessen."
 
-#: php/settings/settings-fields.php:151
+#: php/settings/settings-fields.php:157
 msgid "Auto-close brackets and quotes when typed."
 msgstr ""
 "Vervollständigt und schliesst Klammern und Anführungszeichen während der "
 "Eingabe."
 
-#: php/settings/settings-fields.php:157
+#: php/settings/settings-fields.php:163
 msgid "Highlight Selection Matches"
 msgstr "Auswahlhervorhebung"
 
-#: php/settings/settings-fields.php:158
+#: php/settings/settings-fields.php:164
 msgid "Highlight all instances of a currently selected word."
 msgstr ""
 "Eine Auswahl an anderen Stellen hervorheben an denen die Auswahl ebenfalls "
@@ -918,7 +934,7 @@ msgstr "Quellcode-Editor"
 msgid "Editor Preview"
 msgstr "Editor Vorschau"
 
-#: php/settings/settings.php:165
+#: php/settings/settings.php:176
 msgid "Settings saved."
 msgstr "Einstellungen gespeichert."
 
@@ -938,15 +954,15 @@ msgstr "Name (Kurztitel)"
 msgid "Code"
 msgstr "Code"
 
-#: php/views/edit.php:79 php/views/edit.php:93
+#: php/views/edit.php:81 php/views/edit.php:95
 msgid "Save Changes and Activate"
 msgstr "Speichere Änderungen und Aktiviere"
 
-#: php/views/edit.php:99
+#: php/views/edit.php:101
 msgid "Save Changes and Deactivate"
 msgstr "Speichere Änderungen und Deaktiviere"
 
-#: php/views/edit.php:116
+#: php/views/edit.php:118
 msgid ""
 "You are about to permanently delete this snippet.\n"
 "'Cancel' to stop, 'OK' to delete."
@@ -1001,6 +1017,34 @@ msgstr "Datei hochladen &amp; importieren"
 #: php/views/manage.php:34
 msgid "Search Installed Snippets"
 msgstr "Installierte Codeschnipsel suchen"
+
+#~ msgid "Plugin Website</a>"
+#~ msgstr "Plugin-Webseite</a>"
+
+#~ msgid ""
+#~ "Here are some links to websites which host a large number of snippets "
+#~ "that you can add to your site.\n"
+#~ "\t\t\t<ul>\n"
+#~ "\t\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
+#~ "\">WP-Snippets</a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</"
+#~ "a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
+#~ "\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+#~ "\t\t\t</ul>"
+#~ msgstr ""
+#~ "Hier sind ein Links zu Webseiten, welche eine Menge an Codeschnipsel "
+#~ "bereitstellen und auf ihrer Webseite verwendet werden können.\n"
+#~ "\t\t\t<ul>\n"
+#~ "\t\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
+#~ "\">WP-Snippets</a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</"
+#~ "a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
+#~ "\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+#~ "\t\t\t</ul>"
 
 #~ msgid "http://wordpress.org/plugins/code-snippets"
 #~ msgstr "http://wordpress.org/plugins/code-snippets"
