@@ -50,8 +50,8 @@ before_script:
   - vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs
   - npm install
   - grunt
-  - grunt deploy
-  - mv $PROJECT_DIR/deploy $plugin_dir
+  - grunt package
+  - mv $PROJECT_DIR/dist $plugin_dir
 
   # Set up WordPress configuration.
   - cd $WP_DEVELOP_DIR
