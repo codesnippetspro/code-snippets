@@ -4,7 +4,7 @@ Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.7-alpha
-Stable tag: 2.7.1
+Stable tag: 2.7.2
 License: MIT
 License URI: license.txt
 
@@ -26,8 +26,8 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
+* German - [Mario Siegmann](http://web-alltag.de/), [Joerg Knoerchen](http://www.sensorgrafie.de/), and [David Decker](http://deckerweb.de)
 * Dutch - [Sander Spies](https://github.com/sander1)
-* German - [David Decker](http://deckerweb.de), [Joerg Knoerchen](http://www.sensorgrafie.de/) and [Mario Siegmann](http://web-alltag.de/)
 * Slovak - [Ján Fajčák](http://wp.sk)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
 * Chinese - [Jincheng Shan](http://shanjincheng.com)
@@ -118,6 +118,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.7.2 =
+* Updated German translation by Mario Siegmann
 
 = 2.7.1 =
 * Added Dutch translation by Sander Spies

@@ -1,5 +1,8 @@
 # Changelog
 
+### 2.7.2
+* Updated German translation by [Mario Siegmann](http://web-alltag.de)
+
 ### 2.7.1
 * Added Dutch translation by Sander Spies
 * Ensured that the editor theme setting is properly validated. Thanks to [Netsparker](https://www.netsparker.com) for reporting.
