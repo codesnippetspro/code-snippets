@@ -60,7 +60,7 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 = How can I insert my snippet into the post text editor? =
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
-= Do I need to include the `<?php`, `<?` or `?>` tags in my snippet? =
+= Do I need to include the &lt;?php, &lt;? or ?&gt; tags in my snippet? =
 No, just copy all the content inside those tags. If you accidentally forget (or just like being lazy), the tags will be stripped from the beginning and end of the snippet when you save it. You can, however, use those tags *inside* your snippets to start and end HTML sections
 
 = Help! I just activated a snippet, and my whole site broke! =
@@ -242,14 +242,12 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Fixed snippets per page option not saving
 
 = 2.0 (24 Feb 2015) =
-
-__Highlights__
+* __Highlights:__
 * Better import/export functionality
 * New settings page with code editor settings
 * Code rewritten for cleaner and more efficient code
 * Lots of new translations
-
-__Added__
+* __Added:__
 * Added link to Code Snippets importer under Snippets admin menu
 * Added settings component and admin page
 * Added support for different CodeMirror themes
@@ -261,8 +259,7 @@ __Added__
 * Added Russian translation by Alexander Samsonov
 * Added Slovak translation by [Ján Fajčák] from [WordPress Slovakia](http://wp.sk)
 * Added setting to always save and activate snippets by default
-
-__Changed__
+* __Changed:__
 * Added braces to single-line conditionals in line with [new coding standards](https://make.wordpress.org/core/2013/11/13/proposed-coding-standards-change-always-require-braces/)
 * Split up large classes into separate functions
 * Improved plugin file structure
@@ -270,12 +267,10 @@ __Changed__
 * Updated CodeMirror library to version 5.0
 * Rewritten import/export functionality to use DOMDocument
 * Merged Code_Snippets_Export_PHP class into Code_Snippets_Export class
-
-__Deprecated__
+* __Deprecated:__
 * Removed old admin style support
 * Removed backwards-compatible support
-
-__Fixed__
+* __Fixed:__
 * Fixed incompatibility errors with PHP 5.2
 * Fixed empty MO translation files
 * Removed duplicate MySQL primary key indexing
