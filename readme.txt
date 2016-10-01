@@ -421,6 +421,9 @@ __Fixed__
 
 == Upgrade Notice ==
 
+= 2.7.2 =
+Update to German translation by Mario Siegmann
+
 = 2.7.0 =
 Fix translation loading and description importing
 
