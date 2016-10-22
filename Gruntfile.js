@@ -45,13 +45,13 @@ module.exports = function(grunt) {
 			cmthemes: {
 				expand: true,
 				flatten: true,
-				src: 'vendor/codemirror/theme/*.css',
+				src: 'vendor/codemirror/codemirror/theme/*.css',
 				dest: 'css/min/cmthemes'
 			},
 			vendor: {
 				files: {
 					'css/min/codemirror.css': [
-						'vendor/codemirror/lib/codemirror.css'
+						'vendor/codemirror/codemirror/lib/codemirror.css'
 					],
 					'css/min/tagit.css': [
 						'js/vendor/jquery.tagit.css',
@@ -65,12 +65,12 @@ module.exports = function(grunt) {
 			vendor: {
 				files: {
 					'js/min/codemirror.js': [
-						'vendor/codemirror/lib/codemirror.js',
-						'vendor/codemirror/mode/clike/clike.js',
-						'vendor/codemirror/mode/php/php.js',
-						'vendor/codemirror/addon/search/searchcursor.js',
-						'vendor/codemirror/addon/search/search.js',
-						'vendor/codemirror/addon/edit/matchbrackets.js'
+						'vendor/codemirror/codemirror/lib/codemirror.js',
+						'vendor/codemirror/codemirror/mode/clike/clike.js',
+						'vendor/codemirror/codemirror/mode/php/php.js',
+						'vendor/codemirror/codemirror/addon/search/searchcursor.js',
+						'vendor/codemirror/codemirror/addon/search/search.js',
+						'vendor/codemirror/codemirror/addon/edit/matchbrackets.js'
 					],
 					'js/min/tag-it.js': ['js/vendor/tag-it.js']
 				}

@@ -22,7 +22,7 @@
 	},
 	"require": {
 		"composer/installers": "~1.0",
-		"codemirror": "5.20.0"
+		"codemirror/codemirror": "5.20.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*",
@@ -32,10 +32,10 @@
 		{
 			"type": "package",
 			"package": {
-				"name": "codemirror",
+				"name": "codemirror/codemirror",
 				"version": "5.20.0",
 				"source": {
-					"url": "https://github.com/codemirror/codemirror.git",
+					"url": "https://github.com/codemirror/CodeMirror.git",
 					"type": "git",
 					"reference": "5.20.0"
 				}
