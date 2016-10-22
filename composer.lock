@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6ebfd6756414539718c1e50ed35aa4d1",
-    "content-hash": "04ab37af7754056df6b441b2775f3597",
+    "hash": "5fae039ea72724c9be5467aac5335fd8",
+    "content-hash": "86719a4e0f08f5874a8aa3f4a4a41c3d",
     "packages": [
         {
             "name": "codemirror",
-            "version": "5.19.0",
+            "version": "5.20.0",
             "dist": {
                 "type": "zip",
-                "url": "https://codemirror.net/codemirror-5.19.0.zip",
+                "url": "https://codemirror.net/codemirror-5.20.0.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -572,7 +572,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.11",
+            "version": "v2.8.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
