@@ -4,12 +4,17 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5fae039ea72724c9be5467aac5335fd8",
-    "content-hash": "86719a4e0f08f5874a8aa3f4a4a41c3d",
+    "hash": "5e9e61132306571a9c78322831103ddf",
+    "content-hash": "5aee97107d4349ad8c990f7f9deecd87",
     "packages": [
         {
             "name": "codemirror",
             "version": "5.20.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/codemirror/codemirror.git",
+                "reference": "5.20.0"
+            },
             "dist": {
                 "type": "zip",
                 "url": "https://codemirror.net/codemirror-5.20.0.zip",

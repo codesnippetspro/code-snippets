@@ -34,9 +34,10 @@
 			"package": {
 				"name": "codemirror",
 				"version": "5.20.0",
-				"dist": {
-					"url": "https://codemirror.net/codemirror-5.20.0.zip",
-					"type": "zip"
+				"source": {
+					"url": "https://github.com/codemirror/codemirror.git",
+					"type": "git",
+					"reference": "5.20.0"
 				}
 			}
 		}
