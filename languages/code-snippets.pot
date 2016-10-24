@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-30 00:04+1000\n"
+"POT-Creation-Date: 2016-10-24 20:13+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,6 +28,7 @@ msgid "Edit Snippet"
 msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:32
+msgctxt "menu label"
 msgid "Add New"
 msgstr ""
 
@@ -133,6 +134,7 @@ msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
 #: php/admin-menus/class-import-menu.php:15
+msgctxt "menu label"
 msgid "Import"
 msgstr ""
 
@@ -163,14 +165,19 @@ msgstr[1] ""
 msgid "An error occurred when processing the import file."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:22 php/class-admin.php:111
+#: php/admin-menus/class-manage-menu.php:22
+msgctxt "menu label"
 msgid "Manage"
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:23
-#: php/admin-menus/class-manage-menu.php:39
-#: php/admin-menus/class-manage-menu.php:40 php/class-admin.php:52
+#: php/admin-menus/class-manage-menu.php:39 php/class-admin.php:52
 #: php/views/manage.php:19
+msgid "Snippets"
+msgstr ""
+
+#: php/admin-menus/class-manage-menu.php:40
+msgctxt "top-level menu label"
 msgid "Snippets"
 msgstr ""
 
@@ -207,7 +214,7 @@ msgid "Selected snippets <strong>deleted</strong>."
 msgstr ""
 
 #: php/admin-menus/class-settings-menu.php:16
-#: php/admin-menus/class-settings-menu.php:36 php/views/edit.php:134
+msgctxt "menu label"
 msgid "Settings"
 msgstr ""
 
@@ -215,8 +222,16 @@ msgstr ""
 msgid "Snippets Settings"
 msgstr ""
 
+#: php/admin-menus/class-settings-menu.php:36 php/views/edit.php:134
+msgid "Settings"
+msgstr ""
+
 #: php/class-admin.php:110
 msgid "Manage your existing snippets"
+msgstr ""
+
+#: php/class-admin.php:111
+msgid "Manage"
 msgstr ""
 
 #: php/class-admin.php:141
