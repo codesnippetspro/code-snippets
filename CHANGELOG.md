@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.7.3 (24 Oct 2016)
+* Updated CodeMirror to version 5.10.0
+* Fixed a few strings not being translated
+
 ## 2.7.2 (1 Oct 2016)
 * Updated German translation by [Mario Siegmann](http://web-alltag.de)
 

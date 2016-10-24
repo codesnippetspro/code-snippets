@@ -4,7 +4,7 @@ Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.7-alpha
-Stable tag: 2.7.2
+Stable tag: 2.7.3
 License: MIT
 License URI: license.txt
 
@@ -118,6 +118,10 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.7.3 (24 Oct 2016) =
+* Updated CodeMirror to version 5.10.0
+* Fixed a few strings not being translated
 
 = 2.7.2 (1 Oct 2016) =
 * Updated German translation by [Mario Siegmann](http://web-alltag.de)
