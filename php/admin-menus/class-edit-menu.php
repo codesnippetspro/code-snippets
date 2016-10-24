@@ -29,7 +29,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		/* Add New Snippet menu */
 		$this->add_menu(
 			code_snippets()->get_menu_slug( 'add' ),
-			__( 'Add New', 'code-snippets' ),
+			_x( 'Add New', 'menu label', 'code-snippets' ),
 			__( 'Add New Snippet', 'code-snippets' )
 		);
 

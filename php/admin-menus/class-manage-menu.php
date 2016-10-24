@@ -19,7 +19,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	public function __construct() {
 
 		parent::__construct( 'manage',
-			__( 'Manage', 'code-snippets' ),
+			_x( 'Manage', 'menu label', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' )
 		);
 
@@ -37,7 +37,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		/* Register the top-level menu */
 		add_menu_page(
 			__( 'Snippets', 'code-snippets' ),
-			__( 'Snippets', 'code-snippets' ),
+			_x( 'Snippets', 'top-level menu label', 'code-snippets' ),
 			code_snippets()->get_cap(),
 			code_snippets()->get_menu_slug(),
 			array( $this, 'render' ),

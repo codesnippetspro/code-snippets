@@ -12,7 +12,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	 */
 	function __construct() {
 		parent::__construct( 'import',
-			__( 'Import', 'code-snippets' ),
+			_x( 'Import', 'menu label', 'code-snippets' ),
 			__( 'Import Snippets', 'code-snippets' )
 		);
 

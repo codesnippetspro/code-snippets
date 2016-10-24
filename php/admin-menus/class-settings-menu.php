@@ -13,7 +13,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 	public function __construct() {
 
 		parent::__construct( 'settings',
-			__( 'Settings', 'code-snippets' ),
+			_x( 'Settings', 'menu label', 'code-snippets' ),
 			__( 'Snippets Settings', 'code-snippets' )
 		);
 	}
