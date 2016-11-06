@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Code Snippets\n"
-"PO-Revision-Date: 2014-08-08 09:26+0200\n"
+"PO-Revision-Date: 2016-11-06 09:26+0200\n"
 "Last-Translator: Marco <troniclabs.crew@gmail.com>\n"
 "Language-Team: Tronic Labs\n"
 "Language: it\n"
@@ -186,22 +186,22 @@ msgstr "Snippets per pagina"
 #: code-snippets.php:1118 includes/class-list-table.php:127
 #: includes/class-list-table.php:213
 msgid "Network Deactivate"
-msgstr "Network Disattivato"
+msgstr "Network Disattiva"
 
 #: code-snippets.php:1118 includes/class-list-table.php:127
 #: includes/class-list-table.php:213
 msgid "Deactivate"
-msgstr "Disattivato"
+msgstr "Disattiva"
 
 #: code-snippets.php:1127 includes/class-list-table.php:137
 #: includes/class-list-table.php:212
 msgid "Network Activate"
-msgstr "Network Attivato"
+msgstr "Network Attiva"
 
 #: code-snippets.php:1127 includes/class-list-table.php:137
 #: includes/class-list-table.php:212
 msgid "Activate"
-msgstr "Attivato"
+msgstr "Attiva"
 
 #: includes/class-list-table.php:187
 msgid "Name"
