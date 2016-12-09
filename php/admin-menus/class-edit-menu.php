@@ -26,17 +26,17 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 */
 	public function register() {
 
+		/* Add edit menu if we are currently editing a snippet */
+		if ( isset( $_REQUEST['page'] ) && code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
+			parent::register();
+		}
+
 		/* Add New Snippet menu */
 		$this->add_menu(
 			code_snippets()->get_menu_slug( 'add' ),
 			_x( 'Add New', 'menu label', 'code-snippets' ),
 			__( 'Add New Snippet', 'code-snippets' )
 		);
-
-		/* Add edit menu if we are currently editing a snippet */
-		if ( isset( $_REQUEST['page'] ) && code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
-			parent::register();
-		}
 	}
 
 	/**
