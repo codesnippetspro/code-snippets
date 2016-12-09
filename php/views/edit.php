@@ -32,7 +32,7 @@ $snippet = get_snippet( $edit_id );
 	}
 	?></h1>
 
-	<form method="post" action="" style="margin-top: 10px;">
+	<form method="post" id="snippet-form" action="" style="margin-top: 10px;">
 		<?php
 		/* Output the hidden fields */
 
@@ -115,7 +115,8 @@ $snippet = get_snippet( $edit_id );
 				$confirm_delete_js = esc_js(
 					sprintf(
 						'return confirm("%s");',
-						__( "You are about to permanently delete this snippet.\n'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+						__( 'You are about to permanently delete this snippet.', 'code-snippets' ) . "\n" .
+						__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
 					)
 				);
 
@@ -152,6 +153,13 @@ $snippet = get_snippet( $edit_id );
 	?>;
 	atts['viewportMargin'] = Infinity;
 
-	CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
+	var editor = CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
+
+	editor.setOption('extraKeys', {
+		'Ctrl-Enter': function (cm) {
+			document.getElementById('snippet-form').submit();
+		}
+	});
+
 })();
 </script>
