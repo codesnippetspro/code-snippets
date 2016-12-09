@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.7.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-09 15:47+1100\n"
+"POT-Creation-Date: 2016-12-09 16:05+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -167,12 +167,12 @@ msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:22
 msgctxt "menu label"
-msgid "Manage"
+msgid "All Snippets"
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:23
 #: php/admin-menus/class-manage-menu.php:39 php/class-admin.php:52
-#: php/views/manage.php:19
+#: php/class-admin.php:111 php/views/manage.php:19
 msgid "Snippets"
 msgstr ""
 
@@ -228,10 +228,6 @@ msgstr ""
 
 #: php/class-admin.php:110
 msgid "Manage your existing snippets"
-msgstr ""
-
-#: php/class-admin.php:111
-msgid "Manage"
 msgstr ""
 
 #: php/class-admin.php:141
@@ -427,7 +423,7 @@ msgid ""
 "Snippets will be added to the database along with your existing snippets. "
 "Regardless of whether the snippets were active on the previous site, "
 "imported snippets are always inactive until activated using the <a href=\"%s"
-"\">Manage Snippets</a> page.</p>"
+"\">All Snippets</a> page.</p>"
 msgstr ""
 
 #: php/class-contextual-help.php:127
@@ -481,7 +477,7 @@ msgstr ""
 
 #: php/class-export.php:96
 msgid ""
-"7. You will then have to visit the 'Snippets: Manage' admin menu and "
+"7. You will then have to visit the 'Snippets: All Snippets' admin menu and "
 "activate desired snippets."
 msgstr ""
 
@@ -522,9 +518,11 @@ msgid "Delete"
 msgstr ""
 
 #: php/class-list-table.php:158 php/class-list-table.php:224
-msgid ""
-"You are about to permanently delete the selected item.\n"
-"\t\t\t\t\t'Cancel' to stop, 'OK' to delete."
+msgid "You are about to permanently delete the selected item."
+msgstr ""
+
+#: php/class-list-table.php:159 php/class-list-table.php:225
+msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
 #: php/class-list-table.php:244
@@ -536,7 +534,7 @@ msgstr ""
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:322
+#: php/class-list-table.php:322 php/views/edit.php:48
 msgid "Name"
 msgstr ""
 
@@ -765,8 +763,8 @@ msgctxt "snippet"
 msgid "Add New"
 msgstr ""
 
-#: php/views/edit.php:48 php/views/edit.php:49
-msgid "Name (short title)"
+#: php/views/edit.php:49
+msgid "Enter title here"
 msgstr ""
 
 #: php/views/edit.php:54
@@ -796,8 +794,8 @@ msgstr ""
 #: php/views/import.php:23
 #, php-format
 msgid ""
-"You will need to go to the <a href=\"%s\">Manage Snippets</a> page to "
-"activate the imported snippets."
+"You will need to go to the <a href=\"%s\">All Snippets</a> page to activate "
+"the imported snippets."
 msgstr ""
 
 #: php/views/import.php:25
