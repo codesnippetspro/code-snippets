@@ -93,7 +93,7 @@ class Code_Snippets_Export {
 			__( '4. Click on the "Code Snippets" importer in the list', 'code-snippets' ),
 			__( '5. Upload this file using the form provided on that page.', 'code-snippets' ),
 			__( '6. Code Snippets will then import all of the snippets and associated information contained in this file into your site.', 'code-snippets' ),
-			__( "7. You will then have to visit the 'Snippets: Manage' admin menu and activate desired snippets.", 'code-snippets' ),
+			__( "7. You will then have to visit the 'Snippets: All Snippets' admin menu and activate desired snippets.", 'code-snippets' ),
 		);
 
 		/* Add each line as a comment element */

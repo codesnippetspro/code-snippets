@@ -108,7 +108,7 @@ class Code_Snippets_Admin {
 			'<a href="%1$s" title="%2$s">%3$s</a>',
 			code_snippets()->get_menu_url(),
 			__( 'Manage your existing snippets', 'code-snippets' ),
-			__( 'Manage', 'code-snippets' )
+			__( 'Snippets', 'code-snippets' )
 		) );
 
 		return $links;

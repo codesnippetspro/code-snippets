@@ -119,7 +119,7 @@ class Code_Snippets_Contextual_Help {
 			'id'      => 'import',
 			'title'   => __( 'Importing', 'code-snippets' ),
 			'content' => '<p>' . __( 'You can load your snippets from a code snippets (.xml) export file using this page.', 'code-snippets' ) .
-			sprintf( __( 'Snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href="%s">Manage Snippets</a> page.</p>', 'code-snippets' ), $manage_url ) . '</p>',
+			sprintf( __( 'Snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href="%s">All Snippets</a> page.</p>', 'code-snippets' ), $manage_url ) . '</p>',
 		) );
 
 		$this->screen->add_help_tab( array(
