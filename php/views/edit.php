@@ -24,7 +24,7 @@ $snippet = get_snippet( $edit_id );
 	if ( $edit_id ) {
 		esc_html_e( 'Edit Snippet', 'code-snippets' );
 		printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
-			code_snippets_get_menu_url( 'add' ),
+			code_snippets()->get_menu_url( 'add' ),
 			esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 		);
 	} else {
@@ -45,8 +45,8 @@ $snippet = get_snippet( $edit_id );
 		?>
 		<div id="titlediv">
 			<div id="titlewrap">
-				<label for="title" style="display: none;"><?php _e( 'Name (short title)', 'code-snippets' ); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>" placeholder="<?php _e( 'Name (short title)', 'code-snippets' ); ?>" />
+				<label for="title" style="display: none;"><?php _e( 'Name', 'code-snippets' ); ?></label>
+				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>" placeholder="<?php _e( 'Enter title here', 'code-snippets' ); ?>" />
 			</div>
 		</div>
 
