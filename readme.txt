@@ -78,14 +78,6 @@ Yes. Just add it but do not activate it yet.
 = What do I use to write my snippets? =
 The [CodeMirror](http://codemirror.net) source-code editor will add line numbers, syntax highlighting, bracket matching, search, tabulate and other cool features to the code editor.
 
-= Can I perform search and replace commands in the code editor? =
-
-* __Ctrl-F / Cmd-F__ : Start searching
-* __Ctrl-G / Cmd-G__ : Find next
-* __Shift-Ctrl-G / Shift-Cmd-G__ : Find previous
-* __Shift-Ctrl-F / Cmd-Option-F__ : Replace
-* __Shift-Ctrl-R / Shift-Cmd-Option-F__ : Replace all
-
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database and are independent of the theme and unaffected by WordPress upgrades.
 

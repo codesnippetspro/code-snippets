@@ -70,8 +70,6 @@ module.exports = function(grunt) {
 						codemirror + 'lib/codemirror.js',
 						codemirror + 'mode/clike/clike.js',
 						codemirror + 'mode/php/php.js',
-						codemirror + 'addon/search/searchcursor.js',
-						codemirror + 'addon/search/search.js',
 						codemirror + 'addon/edit/matchbrackets.js'
 					],
 					'js/min/tag-it.js': ['js/vendor/tag-it.js']
