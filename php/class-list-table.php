@@ -155,8 +155,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			) ) ),
 			esc_js( sprintf(
 				'return confirm("%s");',
-				__( "You are about to permanently delete the selected item.
-					'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+				__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
+				__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
 			) )
 		);
 
@@ -221,8 +221,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			),
 			esc_js( sprintf(
 				'return confirm("%s");',
-				__( "You are about to permanently delete the selected item.
-					'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+				__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
+				__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
 			) )
 		);
 
