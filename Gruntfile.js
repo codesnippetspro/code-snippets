@@ -3,6 +3,8 @@ module.exports = function(grunt) {
 
 	require('load-grunt-tasks')(grunt);
 
+	var codemirror = 'node_modules/codemirror/';
+
 	grunt.initConfig({
 
 		watch: {
@@ -45,13 +47,13 @@ module.exports = function(grunt) {
 			cmthemes: {
 				expand: true,
 				flatten: true,
-				src: 'vendor/codemirror/codemirror/theme/*.css',
+				src: codemirror + 'theme/*.css',
 				dest: 'css/min/cmthemes'
 			},
 			vendor: {
 				files: {
 					'css/min/codemirror.css': [
-						'vendor/codemirror/codemirror/lib/codemirror.css'
+						codemirror + 'lib/codemirror.css'
 					],
 					'css/min/tagit.css': [
 						'js/vendor/jquery.tagit.css',
@@ -65,12 +67,12 @@ module.exports = function(grunt) {
 			vendor: {
 				files: {
 					'js/min/codemirror.js': [
-						'vendor/codemirror/codemirror/lib/codemirror.js',
-						'vendor/codemirror/codemirror/mode/clike/clike.js',
-						'vendor/codemirror/codemirror/mode/php/php.js',
-						'vendor/codemirror/codemirror/addon/search/searchcursor.js',
-						'vendor/codemirror/codemirror/addon/search/search.js',
-						'vendor/codemirror/codemirror/addon/edit/matchbrackets.js'
+						codemirror + 'lib/codemirror.js',
+						codemirror + 'mode/clike/clike.js',
+						codemirror + 'mode/php/php.js',
+						codemirror + 'addon/search/searchcursor.js',
+						codemirror + 'addon/search/search.js',
+						codemirror + 'addon/edit/matchbrackets.js'
 					],
 					'js/min/tag-it.js': ['js/vendor/tag-it.js']
 				}

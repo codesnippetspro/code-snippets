@@ -44,5 +44,8 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/sheabunge/code-snippets/issues"
+  },
+  "dependencies": {
+    "codemirror": "^5.20.2"
   }
 }
