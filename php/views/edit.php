@@ -153,13 +153,12 @@ $snippet = get_snippet( $edit_id );
 	?>;
 	atts['viewportMargin'] = Infinity;
 
-	var editor = CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
-
-	editor.setOption('extraKeys', {
+	atts['extraKeys'] = {
 		'Ctrl-Enter': function (cm) {
 			document.getElementById('snippet-form').submit();
-		}
-	});
+		},
+	};
 
+	CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
 })();
 </script>
