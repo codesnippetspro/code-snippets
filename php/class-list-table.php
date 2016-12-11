@@ -134,7 +134,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions['edit'] = sprintf(
 			$link_format,
 			__( 'Edit', 'code-snippets' ),
-			get_snippet_edit_url( $snippet->id )
+			code_snippets()->get_snippet_edit_url( $snippet->id )
 		);
 
 		$actions['export'] = sprintf(
@@ -194,7 +194,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions['edit'] = sprintf(
 			$link_format,
 			__( 'Edit', 'code-snippets' ),
-			get_snippet_edit_url( $snippet->id, 'network' )
+			code_snippets()->get_snippet_edit_url( $snippet->id, 'network' )
 		);
 
 		$actions['export'] = sprintf(
@@ -205,7 +205,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					'action' => 'export',
 					'id'     => $snippet->id,
 				),
-				code_snippets_get_menu_url( 'manage', 'network' )
+				code_snippets()->get_menu_url( 'manage', 'network' )
 			)
 		);
 
@@ -217,7 +217,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					'action' => 'delete',
 					'id'     => $snippet->id,
 				),
-				code_snippets_get_menu_url( 'manage', 'network' )
+				code_snippets()->get_menu_url( 'manage', 'network' )
 			),
 			esc_js( sprintf(
 				'return confirm("%s");',
@@ -249,7 +249,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$out = sprintf(
 			'<a href="%s"><strong>%s</strong></a>',
-			get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ),
+			code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ),
 			$title
 		);
 
@@ -684,7 +684,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	public function no_items() {
 		printf(
 			__( 'You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets' ),
-			code_snippets_get_menu_url( 'add' )
+			code_snippets()->get_menu_url( 'add' )
 		);
 	}
 
