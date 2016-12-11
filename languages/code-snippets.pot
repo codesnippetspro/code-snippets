@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.7.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-09 16:05+1100\n"
+"POT-Creation-Date: 2016-12-11 11:34+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,12 +27,12 @@ msgstr ""
 msgid "Edit Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:32
+#: php/admin-menus/class-edit-menu.php:37
 msgctxt "menu label"
 msgid "Add New"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:33 php/views/edit.php:31
+#: php/admin-menus/class-edit-menu.php:38 php/views/edit.php:31
 msgid "Add New Snippet"
 msgstr ""
 
@@ -222,7 +222,7 @@ msgstr ""
 msgid "Snippets Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:36 php/views/edit.php:134
+#: php/admin-menus/class-settings-menu.php:36 php/views/edit.php:135
 msgid "Settings"
 msgstr ""
 
@@ -513,7 +513,7 @@ msgid "Export"
 msgstr ""
 
 #: php/class-list-table.php:151 php/class-list-table.php:214
-#: php/class-list-table.php:372 php/views/edit.php:123
+#: php/class-list-table.php:372 php/views/edit.php:124
 msgid "Delete"
 msgstr ""
 
@@ -522,6 +522,7 @@ msgid "You are about to permanently delete the selected item."
 msgstr ""
 
 #: php/class-list-table.php:159 php/class-list-table.php:225
+#: php/views/edit.php:119
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
@@ -780,9 +781,7 @@ msgid "Save Changes and Deactivate"
 msgstr ""
 
 #: php/views/edit.php:118
-msgid ""
-"You are about to permanently delete this snippet.\n"
-"'Cancel' to stop, 'OK' to delete."
+msgid "You are about to permanently delete this snippet."
 msgstr ""
 
 #: php/views/import.php:21

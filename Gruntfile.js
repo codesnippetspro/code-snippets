@@ -180,11 +180,11 @@ module.exports = function(grunt) {
 		}
 	});
 
-	grunt.registerTask( 'css', ['clean:css', 'postcss', 'csso'] );
-	grunt.registerTask( 'js', ['clean:js', 'uglify'] );
-	grunt.registerTask( 'l18n', ['pot', 'potomo'] );
-	grunt.registerTask( 'test', ['jshint', 'phpcs', 'phpunit'] );
+	grunt.registerTask('css', ['clean:css', 'postcss', 'csso']);
+	grunt.registerTask('js', ['clean:js', 'uglify']);
+	grunt.registerTask('l18n', ['pot', 'potomo']);
+	grunt.registerTask('test', ['jshint', 'phpcs', 'phpunit']);
 
-	grunt.registerTask( 'package', ['clean:dist', 'copy:dist'] );
-	grunt.registerTask( 'default', ['css', 'js', 'l18n'] );
+	grunt.registerTask('package', ['clean:dist', 'copy:dist']);
+	grunt.registerTask('default', ['css', 'js', 'l18n']);
 };
