@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.8.0 (unreleased)
+## 2.8.0 (14 Dec 2016)
 * Fixed Italian translation errors. Props to @arsenalemusica
 * Renamed 'Manage' admin menu label to 'All Snippets' to keep in line with other admin menu labels
 * Renamed placeholder on snippet name field to 'Enter title here'
