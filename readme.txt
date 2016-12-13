@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.7-alpha
-Stable tag: 2.7.3
+Tested up to: 4.7
+Stable tag: 2.8.0
 License: MIT
 License URI: license.txt
 
@@ -75,9 +75,6 @@ You can try activating 'safe mode'. All snippets will not execute while safe mod
 = Is there a way to add a snippet but not run it right away? =
 Yes. Just add it but do not activate it yet.
 
-= What do I use to write my snippets? =
-The [CodeMirror](http://codemirror.net) source-code editor will add line numbers, syntax highlighting, bracket matching, search, tabulate and other cool features to the code editor.
-
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database and are independent of the theme and unaffected by WordPress upgrades.
 
@@ -110,6 +107,15 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.8.0 (unreleased) =
+* Fixed Italian translation errors. Props to @arsenalemusica
+* Renamed 'Manage' admin menu label to 'All Snippets' to keep in line with other admin menu labels
+* Renamed placeholder on snippet name field to 'Enter title here'
+* Removed CodeMirror search functionality
+* Moved 'Edit Snippet' admin menu above 'Add New' menu
+* Made pressing Ctrl-Enter in the code editor save the snippet
+* Updated CodeMirror to version 5.21.0
 
 = 2.7.3 (24 Oct 2016) =
 * Updated CodeMirror to version 5.10.0
@@ -418,6 +424,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.8.0 =
+Interface tweaks
 
 = 2.7.2 =
 Update to German translation by Mario Siegmann
