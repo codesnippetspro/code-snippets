@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.8.0 (unreleased)
+* Fixed Italian translation errors. Props to @arsenalemusica
+* Renamed 'Manage' admin menu label to 'All Snippets' to keep in line with other admin menu labels
+* Renamed placeholder on snippet name field to 'Enter title here'
+* Removed CodeMirror search functionality
+* Moved 'Edit Snippet' admin menu above 'Add New' menu
+* Made pressing Ctrl-Enter in the code editor save the snippet
+* Updated CodeMirror to version 5.21.0
+
 ## 2.7.3 (24 Oct 2016)
 * Updated CodeMirror to version 5.10.0
 * Fixed a few strings not being translated
