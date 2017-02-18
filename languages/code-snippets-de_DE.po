@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Code Snippets v2.7.1\n"
+"Project-Id-Version: Code Snippets v2.8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-30 14:41+0200\n"
-"PO-Revision-Date: 2016-09-30 14:50+0200\n"
+"POT-Creation-Date: 2017-02-18 15:58+1100\n"
+"PO-Revision-Date: 2017-02-18 16:00+1100\n"
 "Last-Translator: Mario Siegmann <mario_siegmann@web.de>\n"
 "Language-Team: Mario Siegmann <mario_siegmann@web.de>\n"
 "Language: de_DE\n"
@@ -30,12 +30,13 @@ msgid "Edit Snippet"
 msgstr "Codeschnipsel bearbeiten"
 
 # @ code-snippets
-#: php/admin-menus/class-edit-menu.php:32
+#: php/admin-menus/class-edit-menu.php:37
+msgctxt "menu label"
 msgid "Add New"
 msgstr "Hinzufügen"
 
 # @ code-snippets
-#: php/admin-menus/class-edit-menu.php:33 php/views/edit.php:31
+#: php/admin-menus/class-edit-menu.php:38 php/views/edit.php:31
 msgid "Add New Snippet"
 msgstr "Neuen Codeschnipsel hinzufügen"
 
@@ -156,8 +157,8 @@ msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 "Codeschnipsel <strong>aktualisiert</strong> und <strong>deaktiviert</strong>."
 
-# @ code-snippets
 #: php/admin-menus/class-import-menu.php:15
+msgctxt "menu label"
 msgid "Import"
 msgstr "Importieren"
 
@@ -194,16 +195,20 @@ msgstr[1] ""
 msgid "An error occurred when processing the import file."
 msgstr "Ein Fehler trat bei der Verarbeitung der importierten Datei auf."
 
-# @ code-snippets
-#: php/admin-menus/class-manage-menu.php:22 php/class-admin.php:111
-msgid "Manage"
-msgstr "Verwalten"
+#: php/admin-menus/class-manage-menu.php:22
+msgctxt "menu label"
+msgid "All Snippets"
+msgstr "Alle Codeschnipsel"
 
 # @ code-snippets
 #: php/admin-menus/class-manage-menu.php:23
-#: php/admin-menus/class-manage-menu.php:39
-#: php/admin-menus/class-manage-menu.php:40 php/class-admin.php:52
-#: php/views/manage.php:19
+#: php/admin-menus/class-manage-menu.php:39 php/class-admin.php:52
+#: php/class-admin.php:111 php/views/manage.php:19
+msgid "Snippets"
+msgstr "Codeschnipsel"
+
+#: php/admin-menus/class-manage-menu.php:40
+msgctxt "top-level menu label"
 msgid "Snippets"
 msgstr "Codeschnipsel"
 
@@ -251,13 +256,17 @@ msgid "Selected snippets <strong>deleted</strong>."
 msgstr "Ausgewählte Codeschnipsel wurden <strong>gelöscht</strong>."
 
 #: php/admin-menus/class-settings-menu.php:16
-#: php/admin-menus/class-settings-menu.php:36 php/views/edit.php:134
+msgctxt "menu label"
 msgid "Settings"
 msgstr "Einstellungen"
 
 #: php/admin-menus/class-settings-menu.php:17
 msgid "Snippets Settings"
 msgstr "Codeschnipsel Einstellungen"
+
+#: php/admin-menus/class-settings-menu.php:36 php/views/edit.php:135
+msgid "Settings"
+msgstr "Einstellungen"
 
 # @ code-snippets
 #: php/class-admin.php:110
@@ -543,14 +552,13 @@ msgstr ""
 "Auf dieser Seite können Sie Ihre Codeschnipsel von einer Codeschnipsel-"
 "Exportdatei (<code>.xml</code>) laden."
 
-# @ code-snippets
 #: php/class-contextual-help.php:122
 #, php-format
 msgid ""
 "Snippets will be added to the database along with your existing snippets. "
 "Regardless of whether the snippets were active on the previous site, "
 "imported snippets are always inactive until activated using the <a href=\"%s"
-"\">Manage Snippets</a> page.</p>"
+"\">All Snippets</a> page.</p>"
 msgstr ""
 "Codeschnipsel werden der Datenbank hinzugefügt, zusammen mit Ihren bereits "
 "bestehenden Codeschnipseln. Unabhängig davon, ob diese Codeschnipsel auf der "
@@ -623,7 +631,7 @@ msgstr ""
 
 #: php/class-export.php:96
 msgid ""
-"7. You will then have to visit the 'Snippets: Manage' admin menu and "
+"7. You will then have to visit the 'Snippets: All Snippets' admin menu and "
 "activate desired snippets."
 msgstr ""
 "7. Nach dem Import besuche die Seite 'Codeschnipsel: Verwalten' im "
@@ -669,17 +677,18 @@ msgstr "Exportieren"
 
 # @ code-snippets
 #: php/class-list-table.php:151 php/class-list-table.php:214
-#: php/class-list-table.php:372 php/views/edit.php:123
+#: php/class-list-table.php:372 php/views/edit.php:124
 msgid "Delete"
 msgstr "Löschen"
 
 #: php/class-list-table.php:158 php/class-list-table.php:224
-msgid ""
-"You are about to permanently delete the selected item.\n"
-"\t\t\t\t\t'Cancel' to stop, 'OK' to delete."
-msgstr ""
-"Sie sind dabei die ausgewählten Einträge zu löschen.\n"
-"\t\t\t\t\t'Abbrechen zum Stoppen, 'OK' zum Löschen."
+msgid "You are about to permanently delete the selected item."
+msgstr "Du bist dabei diesen Codeschnipsel endgültig zu löschen."
+
+#: php/class-list-table.php:159 php/class-list-table.php:225
+#: php/views/edit.php:119
+msgid "'Cancel' to stop, 'OK' to delete."
+msgstr "'Abbrechen' um zu stoppen, 'OK' um zu löschen."
 
 #: php/class-list-table.php:244
 #, php-format
@@ -691,7 +700,7 @@ msgid "Shared on Network"
 msgstr "Im Netzwerk teilen"
 
 # @ code-snippets
-#: php/class-list-table.php:322
+#: php/class-list-table.php:322 php/views/edit.php:48
 msgid "Name"
 msgstr "Name"
 
@@ -944,10 +953,9 @@ msgctxt "snippet"
 msgid "Add New"
 msgstr "Hinzufügen"
 
-# @ code-snippets
-#: php/views/edit.php:48 php/views/edit.php:49
-msgid "Name (short title)"
-msgstr "Name (Kurztitel)"
+#: php/views/edit.php:49
+msgid "Enter title here"
+msgstr "Titel hier eingeben"
 
 # @ code-snippets
 #: php/views/edit.php:54
@@ -963,12 +971,8 @@ msgid "Save Changes and Deactivate"
 msgstr "Speichere Änderungen und Deaktiviere"
 
 #: php/views/edit.php:118
-msgid ""
-"You are about to permanently delete this snippet.\n"
-"'Cancel' to stop, 'OK' to delete."
-msgstr ""
-"Du bist dabei diesen Codeschnipsel endgültig zu löschen.\n"
-"'Abbrechen' um zu stoppen, 'OK' um zu löschen."
+msgid "You are about to permanently delete this snippet."
+msgstr "Du bist dabei diesen Codeschnipsel endgültig zu löschen."
 
 # @ code-snippets
 #: php/views/import.php:21
@@ -979,12 +983,11 @@ msgstr ""
 "Servus! Laden Sie hier Ihre Codeschnipsel-XML-Exportdatei hoch und wir "
 "werden die Codeschnipsel dieser Installation hinzufügen."
 
-# @ code-snippets
 #: php/views/import.php:23
 #, php-format
 msgid ""
-"You will need to go to the <a href=\"%s\">Manage Snippets</a> page to "
-"activate the imported snippets."
+"You will need to go to the <a href=\"%s\">All Snippets</a> page to activate "
+"the imported snippets."
 msgstr ""
 "Danach müssen Sie zur <a href=\"%s\">Codeschnispel verwalten-Seite</a> gehen "
 "und die importierten Codeschnipsel entsprechend aktivieren."
@@ -1017,6 +1020,61 @@ msgstr "Datei hochladen &amp; importieren"
 #: php/views/manage.php:34
 msgid "Search Installed Snippets"
 msgstr "Installierte Codeschnipsel suchen"
+
+# @ code-snippets
+#~ msgid "Import"
+#~ msgstr "Importieren"
+
+# @ code-snippets
+#~ msgid "Manage"
+#~ msgstr "Verwalten"
+
+# @ code-snippets
+#~ msgid ""
+#~ "Snippets will be added to the database along with your existing snippets. "
+#~ "Regardless of whether the snippets were active on the previous site, "
+#~ "imported snippets are always inactive until activated using the <a href="
+#~ "\"%s\">Manage Snippets</a> page.</p>"
+#~ msgstr ""
+#~ "Codeschnipsel werden der Datenbank hinzugefügt, zusammen mit Ihren "
+#~ "bereits bestehenden Codeschnipseln. Unabhängig davon, ob diese "
+#~ "Codeschnipsel auf der vorherigen Installation aktiv waren, sind "
+#~ "importierte Codeschnipsel standardmäßig immer deaktiviert, solange Sie "
+#~ "von Ihnen auf der <a href=\"%s\">Codeschnispel verwalten-Seite</a> "
+#~ "aktiviert werden.</p>"
+
+#~ msgid ""
+#~ "7. You will then have to visit the 'Snippets: Manage' admin menu and "
+#~ "activate desired snippets."
+#~ msgstr ""
+#~ "7. Nach dem Import besuche die Seite 'Codeschnipsel: Verwalten' im "
+#~ "Administrationsmenü und aktiviere die gewünschten Codeschnipsel."
+
+#~ msgid ""
+#~ "You are about to permanently delete the selected item.\n"
+#~ "\t\t\t\t\t'Cancel' to stop, 'OK' to delete."
+#~ msgstr ""
+#~ "Sie sind dabei die ausgewählten Einträge zu löschen.\n"
+#~ "\t\t\t\t\t'Abbrechen zum Stoppen, 'OK' zum Löschen."
+
+# @ code-snippets
+#~ msgid "Name (short title)"
+#~ msgstr "Name (Kurztitel)"
+
+#~ msgid ""
+#~ "You are about to permanently delete this snippet.\n"
+#~ "'Cancel' to stop, 'OK' to delete."
+#~ msgstr ""
+#~ "Du bist dabei diesen Codeschnipsel endgültig zu löschen.\n"
+#~ "'Abbrechen' um zu stoppen, 'OK' um zu löschen."
+
+# @ code-snippets
+#~ msgid ""
+#~ "You will need to go to the <a href=\"%s\">Manage Snippets</a> page to "
+#~ "activate the imported snippets."
+#~ msgstr ""
+#~ "Danach müssen Sie zur <a href=\"%s\">Codeschnispel verwalten-Seite</a> "
+#~ "gehen und die importierten Codeschnipsel entsprechend aktivieren."
 
 #~ msgid "Plugin Website</a>"
 #~ msgstr "Plugin-Webseite</a>"
