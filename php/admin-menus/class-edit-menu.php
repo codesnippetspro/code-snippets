@@ -13,20 +13,20 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			__( 'Edit Snippet', 'code-snippets' ),
 			__( 'Edit Snippet', 'code-snippets' )
 		);
-    }
+	}
 
 	/**
 	 * Register action and filter hooks
 	 */
 	public function run() {
 		parent::run();
-	    $this->remove_debug_bar_codemirror();
+		$this->remove_debug_bar_codemirror();
 
-	    if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
-		    add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 2 );
-	    }
+		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
+			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 2 );
+		}
 
-    }
+	}
 
 	/**
 	 * Register the admin menu
@@ -518,12 +518,12 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Try to discern if we are on the single snippet page as best as we can at this early time */
 		if ( ! is_admin() || 'admin.php' !== $GLOBALS['pagenow'] ) {
-		    return;
+			return;
 		}
 
 		if ( ! isset( $_GET['page'] ) || code_snippets()->get_menu_slug( 'edit' ) !== $_GET['page'] && code_snippets()->get_menu_slug( 'settings' ) ) {
-		    return;
-        }
+			return;
+		}
 
 		remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );
 	}

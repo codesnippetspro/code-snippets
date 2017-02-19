@@ -14,7 +14,7 @@ class Code_Snippets_Admin {
 		if ( is_admin() ) {
 			$this->run();
 		}
-    }
+	}
 
 	public function load_classes() {
 		$this->menus['manage'] = new Code_Snippets_Manage_Menu();
@@ -26,12 +26,12 @@ class Code_Snippets_Admin {
 		}
 
 		foreach ( $this->menus as $menu ) {
-		    $menu->run();
-        }
+			$menu->run();
+		}
 	}
 
 	public function run() {
-	    add_action( 'init', array( $this, 'load_classes' ), 11 );
+		add_action( 'init', array( $this, 'load_classes' ), 11 );
 
 		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_stylesheet' ) );
