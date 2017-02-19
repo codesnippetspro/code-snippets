@@ -15,7 +15,13 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 			_x( 'Import', 'menu label', 'code-snippets' ),
 			__( 'Import Snippets', 'code-snippets' )
 		);
+	}
 
+	/**
+	 * Register action and filter hooks
+	 */
+	public function run() {
+		parent::run();
 		add_action( 'admin_init', array( $this, 'register_importer' ) );
 		add_action( 'load-importer-code-snippets', array( $this, 'load' ) );
 	}

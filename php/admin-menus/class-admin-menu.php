@@ -17,7 +17,12 @@ class Code_Snippets_Admin_Menu {
 		$this->name = $name;
 		$this->label = $label;
 		$this->title = $title;
+	}
 
+	/**
+	 * Register action and filter hooks
+	 */
+	public function run() {
 		add_action( 'admin_menu', array( $this, 'register' ) );
 		add_action( 'network_admin_menu', array( $this, 'register' ) );
 	}

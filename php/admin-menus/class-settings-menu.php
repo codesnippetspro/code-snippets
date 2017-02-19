@@ -18,6 +18,9 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 		);
 	}
 
+	/**
+	 * Executed when the admin page is loaded
+	 */
 	function load() {
 		parent::load();
 

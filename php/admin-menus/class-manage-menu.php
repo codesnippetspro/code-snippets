@@ -22,7 +22,13 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 			_x( 'All Snippets', 'menu label', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' )
 		);
+	}
 
+	/**
+	 * Register action and filter hooks
+	 */
+	public function run() {
+		parent::run();
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
 	}
 

@@ -41,7 +41,8 @@ class Code_Snippets {
 
 		add_action( 'grant_super_admin', array( $this, 'grant_network_cap' ) );
 		add_action( 'remove_super_admin', array( $this, 'remove_network_cap' ) );
-		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
+
+		add_action( 'init', array( $this, 'load_textdomain' ), 9 );
 	}
 
 	function load_plugin() {

@@ -12,12 +12,11 @@ class Code_Snippets_Admin {
 	function __construct() {
 
 		if ( is_admin() ) {
-			$this->load_classes();
 			$this->run();
 		}
-	}
+    }
 
-	private function load_classes() {
+	public function load_classes() {
 		$this->menus['manage'] = new Code_Snippets_Manage_Menu();
 		$this->menus['edit']   = new Code_Snippets_Edit_Menu();
 		$this->menus['import'] = new Code_Snippets_Import_Menu();
@@ -25,9 +24,15 @@ class Code_Snippets_Admin {
 		if ( ! is_network_admin() ) {
 			$this->menus['settings'] = new Code_Snippets_Settings_Menu();
 		}
+
+		foreach ( $this->menus as $menu ) {
+		    $menu->run();
+        }
 	}
 
-	function run() {
+	public function run() {
+	    add_action( 'init', array( $this, 'load_classes' ), 11 );
+
 		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_stylesheet' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( CODE_SNIPPETS_FILE ), array( $this, 'plugin_settings_link' ) );
