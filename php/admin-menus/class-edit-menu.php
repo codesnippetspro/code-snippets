@@ -514,7 +514,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		    return;
 		}
 
-		if ( ! isset( $_GET['page'] ) || code_snippets()->get_menu_slug( 'edit' ) !== $_GET['page'] ) {
+		if ( ! isset( $_GET['page'] ) || code_snippets()->get_menu_slug( 'edit' ) !== $_GET['page'] && code_snippets()->get_menu_slug( 'settings' ) ) {
 		    return;
         }
 
