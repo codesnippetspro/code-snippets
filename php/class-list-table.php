@@ -488,7 +488,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 				echo '</select>';
 
-				submit_button( __( 'Filter', 'code-snippets' ), 'button', false, false );
+				submit_button( __( 'Filter', 'code-snippets' ), 'button', 'filter_action', false );
 				echo '</div>';
 			}
 		}
