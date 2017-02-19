@@ -14,7 +14,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			__( 'Edit Snippet', 'code-snippets' )
 		);
 
-		add_action( 'admin_init', array( $this, 'remove_incompatible_codemirror' ) );
+		add_action( 'init', array( $this, 'remove_debug_bar_codemirror' ) );
 
 		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 2 );
@@ -507,13 +507,17 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 * Remove the old CodeMirror version used by the Debug Bar Console plugin
 	 * that is messing up the snippet editor
 	 */
-	function remove_incompatible_codemirror() {
-		global $pagenow;
+	function remove_debug_bar_codemirror() {
 
 		/* Try to discern if we are on the single snippet page as best as we can at this early time */
-		is_admin() && 'admin.php' === $pagenow && isset( $_GET['page'] ) && code_snippets()->get_menu_slug( 'edit' ) === $_GET['page']
+		if ( ! is_admin() || 'admin.php' !== $GLOBALS['pagenow'] ) {
+		    return;
+		}
 
-		/* Remove the action and stop all Debug Bar Console scripts */
-		&& remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );
+		if ( ! isset( $_GET['page'] ) || code_snippets()->get_menu_slug( 'edit' ) !== $_GET['page'] ) {
+		    return;
+        }
+
+		remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );
 	}
 }
