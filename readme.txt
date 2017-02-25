@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.7
-Stable tag: 2.8.0
+Tested up to: 4.7.2
+Stable tag: 2.8.1
 License: MIT
 License URI: license.txt
 
@@ -107,6 +107,14 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.8.1 (25 Feb 2017) =
+* Updated German translation
+* Fixed admin menu items not translating
+* Removed possible conflict between Debug Bar Console plugin ([#](https://github.com/sheabunge/code-snippets/issues/52))
+* Corrected editor alignment on RTL sites ([#](https://wordpress.org/support/topic/suggestion-css-fix-for-rtl-sites/))
+* Fixed bulk actions running when Filter button is clicked ([#](https://wordpress.org/support/topic/bug-with-filtering-action-buttons/))
+* Updated CodeMirror to version 5.24.0
 
 = 2.8.0 (14 Dec 2016) =
 * Fixed Italian translation errors. Props to @arsenalemusica

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.8.1 (25 Feb 2017)
+* Updated German translation
+* Fixed admin menu items not translating
+* Removed possible conflict between Debug Bar Console plugin (#52)
+* Corrected editor alignment on RTL sites ([#](https://wordpress.org/support/topic/suggestion-css-fix-for-rtl-sites/))
+* Fixed bulk actions running when Filter button is clicked ([#](https://wordpress.org/support/topic/bug-with-filtering-action-buttons/))
+* Updated CodeMirror to version 5.24.0
+
 ## 2.8.0 (14 Dec 2016)
 * Fixed Italian translation errors. Props to @arsenalemusica
 * Renamed 'Manage' admin menu label to 'All Snippets' to keep in line with other admin menu labels
