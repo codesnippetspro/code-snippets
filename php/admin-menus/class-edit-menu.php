@@ -21,11 +21,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	public function run() {
 		parent::run();
 		$this->remove_debug_bar_codemirror();
-
-		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
-			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 2 );
-		}
-
 	}
 
 	/**
@@ -44,30 +39,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			_x( 'Add New', 'menu label', 'code-snippets' ),
 			__( 'Add New Snippet', 'code-snippets' )
 		);
-	}
-
-	/**
-	 * Prevent the snippet currently being saved from being executed
-	 * so it is not run twice (once normally, once
-	 *
-	 * @param bool $exec    Whether the snippet will be executed
-	 * @param int  $exec_id The ID of the snippet being executed
-	 *
-	 * @return bool Whether the snippet will be executed
-	 */
-	function prevent_exec_on_save( $exec, $exec_id ) {
-
-		if ( ! isset( $_POST['save_snippet'], $_POST['snippet_id'] ) ) {
-			return $exec;
-		}
-
-		$id = intval( $_POST['snippet_id'] );
-
-		if ( $id == $exec_id ) {
-			return false;
-		}
-
-		return $exec;
 	}
 
 	/**

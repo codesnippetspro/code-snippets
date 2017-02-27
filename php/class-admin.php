@@ -38,6 +38,10 @@ class Code_Snippets_Admin {
 		add_filter( 'plugin_action_links_' . plugin_basename( CODE_SNIPPETS_FILE ), array( $this, 'plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
+
+		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
+			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 2 );
+		}
 	}
 
 	/**
@@ -97,6 +101,30 @@ class Code_Snippets_Admin {
 			false,
 			CODE_SNIPPETS_VERSION
 		);
+	}
+
+	/**
+	 * Prevent the snippet currently being saved from being executed
+	 * so it is not run twice (once normally, once
+	 *
+	 * @param bool $exec    Whether the snippet will be executed
+	 * @param int  $exec_id The ID of the snippet being executed
+	 *
+	 * @return bool Whether the snippet will be executed
+	 */
+	function prevent_exec_on_save( $exec, $exec_id ) {
+
+		if ( ! isset( $_POST['save_snippet'], $_POST['snippet_id'] ) ) {
+			return $exec;
+		}
+
+		$id = intval( $_POST['snippet_id'] );
+
+		if ( $id == $exec_id ) {
+			return false;
+		}
+
+		return $exec;
 	}
 
 	/**
