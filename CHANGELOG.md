@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.8.2 (27 Feb 2017)
+* Fix bug introduced in 2.8.1 that broke code verification functionality by executing code twice
+
 ## 2.8.1 (25 Feb 2017)
 * Updated German translation
 * Fixed admin menu items not translating

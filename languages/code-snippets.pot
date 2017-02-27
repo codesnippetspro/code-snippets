@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.8.1\n"
+"Project-Id-Version: code-snippets 2.8.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-25 20:30+1100\n"
+"POT-Creation-Date: 2017-02-27 23:06+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,109 +27,109 @@ msgstr ""
 msgid "Edit Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:44
+#: php/admin-menus/class-edit-menu.php:39
 msgctxt "menu label"
 msgid "Add New"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:45 php/views/edit.php:31
+#: php/admin-menus/class-edit-menu.php:40 php/views/edit.php:31
 msgid "Add New Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:185
+#: php/admin-menus/class-edit-menu.php:156
 msgid "Don't Panic"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:186
+#: php/admin-menus/class-edit-menu.php:157
 #, php-format
 msgid ""
 "The code snippet you are trying to save produced a fatal error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:188
+#: php/admin-menus/class-edit-menu.php:159
 msgid ""
 "The previous version of the snippet is unchanged, and the rest of this site "
 "should be functioning normally as before."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:189
+#: php/admin-menus/class-edit-menu.php:160
 msgid ""
 "Please use the back button in your browser to return to the previous page "
 "and try to fix the code error."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:190
+#: php/admin-menus/class-edit-menu.php:161
 msgid ""
 "If you prefer, you can close this page and discard the changes you just "
 "made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:310 php/class-list-table.php:324
+#: php/admin-menus/class-edit-menu.php:281 php/class-list-table.php:324
 msgid "Description"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:341 php/class-list-table.php:325
+#: php/admin-menus/class-edit-menu.php:312 php/class-list-table.php:325
 msgid "Tags"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:345
+#: php/admin-menus/class-edit-menu.php:316
 msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:365
+#: php/admin-menus/class-edit-menu.php:336
 msgid "Run snippet everywhere"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:366
+#: php/admin-menus/class-edit-menu.php:337
 msgid "Only run in administration area"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:367
+#: php/admin-menus/class-edit-menu.php:338
 msgid "Only run on site front-end"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:371
+#: php/admin-menus/class-edit-menu.php:342
 msgid "Scope"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:391
+#: php/admin-menus/class-edit-menu.php:362
 msgid "Sharing"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:395
+#: php/admin-menus/class-edit-menu.php:366
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:455
+#: php/admin-menus/class-edit-menu.php:426
 #, php-format
 msgid "The snippet has been deactivated due to an error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:460
+#: php/admin-menus/class-edit-menu.php:431
 msgid "The snippet has been deactivated due to an error in the code."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:467
+#: php/admin-menus/class-edit-menu.php:438
 msgid "An error occurred when saving the snippet."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:472
+#: php/admin-menus/class-edit-menu.php:443
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:473
+#: php/admin-menus/class-edit-menu.php:444
 msgid "Snippet <strong>updated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:474
+#: php/admin-menus/class-edit-menu.php:445
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:475
+#: php/admin-menus/class-edit-menu.php:446
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:476
+#: php/admin-menus/class-edit-menu.php:447
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
@@ -171,8 +171,8 @@ msgid "All Snippets"
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:23
-#: php/admin-menus/class-manage-menu.php:45 php/class-admin.php:57
-#: php/class-admin.php:116 php/views/manage.php:19
+#: php/admin-menus/class-manage-menu.php:45 php/class-admin.php:61
+#: php/class-admin.php:144 php/views/manage.php:19
 msgid "Snippets"
 msgstr ""
 
@@ -226,46 +226,46 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: php/class-admin.php:115
+#: php/class-admin.php:143
 msgid "Manage your existing snippets"
 msgstr ""
 
-#: php/class-admin.php:146
+#: php/class-admin.php:174
 msgid "Visit the WordPress.org plugin page"
 msgstr ""
 
-#: php/class-admin.php:147
+#: php/class-admin.php:175
 msgid "About"
 msgstr ""
 
-#: php/class-admin.php:151
+#: php/class-admin.php:179
 msgid "Visit the support forums"
 msgstr ""
 
-#: php/class-admin.php:152
+#: php/class-admin.php:180
 msgid "Support"
 msgstr ""
 
-#: php/class-admin.php:156
+#: php/class-admin.php:184
 msgid "Support this plugin's development"
 msgstr ""
 
-#: php/class-admin.php:157
+#: php/class-admin.php:185
 msgid "Donate"
 msgstr ""
 
-#: php/class-admin.php:188
+#: php/class-admin.php:216
 msgid ""
 "<strong>Have feedback on Code Snippets?</strong> Please take the time to "
 "answer a short survey on how you use this plugin and what you'd like to see "
 "changed or added in the future."
 msgstr ""
 
-#: php/class-admin.php:192
+#: php/class-admin.php:220
 msgid "Take the survey now"
 msgstr ""
 
-#: php/class-admin.php:195
+#: php/class-admin.php:223
 msgid "Dismiss"
 msgstr ""
 

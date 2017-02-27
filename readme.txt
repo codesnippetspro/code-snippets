@@ -4,7 +4,7 @@ Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.7.2
-Stable tag: 2.8.1
+Stable tag: 2.8.2
 License: MIT
 License URI: license.txt
 
@@ -107,6 +107,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.8.2 (27 Feb 2017) =
+* Fix bug introduced in 2.8.1 that broke code verification functionality by executing code twice
 
 = 2.8.1 (25 Feb 2017) =
 * Updated German translation
@@ -432,6 +435,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.8.2 =
+Fixed fatal error preventing activated snippets from saving
 
 = 2.8.0 =
 Interface tweaks
