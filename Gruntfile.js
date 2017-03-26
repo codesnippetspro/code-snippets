@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 
 	require('load-grunt-tasks')(grunt);
 
-	const codemirror = 'node_modules/codemirror/';
+	let codemirror = 'node_modules/codemirror/';
 
 	grunt.initConfig({
 
