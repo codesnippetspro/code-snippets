@@ -1,9 +1,10 @@
+/*global module:false*/
 module.exports = function(grunt) {
 	'use strict';
 
 	require('load-grunt-tasks')(grunt);
 
-	var codemirror = 'node_modules/codemirror/';
+	const codemirror = 'node_modules/codemirror/';
 
 	grunt.initConfig({
 

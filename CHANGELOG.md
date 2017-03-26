@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+* Updated CodeMirror to version 5.25.0
+
 ## 2.8.2 (27 Feb 2017)
 * Fix bug introduced in 2.8.1 that broke code verification functionality by executing code twice
 
