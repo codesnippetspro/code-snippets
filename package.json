@@ -27,7 +27,7 @@
     "url": "https://github.com/sheabunge/code-snippets/issues"
   },
   "dependencies": {
-    "codemirror": "^5.25.0"
+    "codemirror": "^5.25.2"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.7",
