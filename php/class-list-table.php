@@ -111,54 +111,65 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions = array();
 		$link_format = '<a href="%2$s">%1$s</a>';
 
-		if ( $snippet->active ) {
-			$actions['deactivate'] = sprintf(
+		if ( $this->is_network || ! $snippet->network ) {
+
+			if ( $snippet->active ) {
+				$actions['deactivate'] = sprintf(
+					$link_format,
+					$snippet->network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
+					esc_url( add_query_arg( array(
+						'action' => 'deactivate',
+						'id'     => $snippet->id,
+					) ) )
+				);
+			} else {
+				$actions['activate'] = sprintf(
+					$link_format,
+					$snippet->network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
+					esc_url( add_query_arg( array(
+						'action' => 'activate',
+						'id'     => $snippet->id,
+					) ) )
+				);
+			}
+
+			$actions['edit'] = sprintf(
 				$link_format,
-				$snippet->network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
+				__( 'Edit', 'code-snippets' ),
+				code_snippets()->get_snippet_edit_url( $snippet->id )
+			);
+
+			$actions['export'] = sprintf(
+				$link_format,
+				__( 'Export', 'code-snippets' ),
 				esc_url( add_query_arg( array(
-					'action' => 'deactivate',
+					'action' => 'export',
 					'id'     => $snippet->id,
 				) ) )
 			);
+
+			$actions['delete'] = sprintf(
+				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
+				__( 'Delete', 'code-snippets' ),
+				esc_url( add_query_arg( array(
+					'action' => 'delete',
+					'id'     => $snippet->id,
+				) ) ),
+				esc_js( sprintf(
+					'return confirm("%s");',
+					__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
+					__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+				) )
+			);
+
 		} else {
-			$actions['activate'] = sprintf(
-				$link_format,
-				$snippet->network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
-				esc_url( add_query_arg( array(
-					'action' => 'activate',
-					'id'     => $snippet->id,
-				) ) )
-			);
+
+			if ( $snippet->active ) {
+				$actions['network_active'] = __( 'Network Active', 'code-snippets' );
+			} else {
+				$actions['network_only'] = __( 'Network Only', 'code-snippets' );
+			}
 		}
-
-		$actions['edit'] = sprintf(
-			$link_format,
-			__( 'Edit', 'code-snippets' ),
-			code_snippets()->get_snippet_edit_url( $snippet->id )
-		);
-
-		$actions['export'] = sprintf(
-			$link_format,
-			__( 'Export', 'code-snippets' ),
-			esc_url( add_query_arg( array(
-				'action' => 'export',
-				'id'     => $snippet->id,
-			) ) )
-		);
-
-		$actions['delete'] = sprintf(
-			'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
-			__( 'Delete', 'code-snippets' ),
-			esc_url( add_query_arg( array(
-				'action' => 'delete',
-				'id'     => $snippet->id,
-			) ) ),
-			esc_js( sprintf(
-				'return confirm("%s");',
-				__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
-				__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
-			) )
-		);
 
 		return $actions;
 	}
@@ -244,7 +255,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$title = empty( $snippet->name ) ? sprintf( __( 'Untitled #%d', 'code-snippets' ), $snippet->id ) : $snippet->name;
 
 		$row_actions = $this->row_actions( $action_links,
-			apply_filters( 'code_snippets/list_table/row_actions_always_visible', false )
+			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
 		$out = sprintf(
@@ -755,7 +766,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$snippets = array_fill_keys( $this->statuses, array() );
 
 		/* Fetch all snippets */
-		$snippets['all'] = get_snippets( array(), $this->is_network );
+		$snippets['all'] = get_snippets( array(), true );
+
+		if ( ! $this->is_network ) {
+			$snippets['all'] += get_snippets( array(), false );
+		}
+
 		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', $snippets['all'] );
 
 		/* Fetch shared network snippets */
