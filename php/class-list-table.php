@@ -258,7 +258,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
-		$out = sprintf('<strong>%s</strong>', esc_html( $title ) );
+		$out = sprintf( '<strong>%s</strong>', esc_html( $title ) );
 
 		/* Add a link to the snippet if it isn't an unreadable network-only snippet */
 		if ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
