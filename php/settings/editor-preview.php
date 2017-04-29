@@ -123,7 +123,7 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );
 				continue;
 			}
 
-			$att_name = $field['codemirror'];
+			$att_name = addslashes( $field['codemirror'] );
 
 			switch ( $field['type'] ) {
 

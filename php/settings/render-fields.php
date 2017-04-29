@@ -19,13 +19,13 @@ function code_snippets_checkbox_field( $atts ) {
 
 	$output = sprintf(
 		'<input type="checkbox" name="%s"%s>',
-		$input_name,
+		esc_attr( $input_name ),
 		checked( $saved_value, true, false )
 	);
 
 	// Output the checkbox field, optionally with label
 	if ( isset( $atts['label'] ) ) {
-		printf( '<label for="%s">%s %s</label>', $input_name, $output, $atts['label'] );
+		printf( '<label for="%s">%s %s</label>', esc_attr( $input_name ), $output, $atts['label'] );
 	} else {
 		echo $output;
 	}
@@ -46,9 +46,9 @@ function code_snippets_number_field( $atts ) {
 
 	printf(
 		'<input type="number" name="code_snippets_settings[%s][%s]" value="%s"',
-		$atts['section'],
-		$atts['id'],
-		code_snippets_get_setting( $atts['section'], $atts['id'] )
+		esc_attr( $atts['section'] ),
+		esc_attr( $atts['id'] ),
+		esc_attr( code_snippets_get_setting( $atts['section'], $atts['id'] ) )
 	);
 
 	if ( isset( $atts['min'] ) ) {

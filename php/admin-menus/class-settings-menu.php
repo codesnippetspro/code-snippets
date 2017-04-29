@@ -40,7 +40,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 
-			<form action="<?php echo admin_url( 'options.php' ); ?>" method="post">
+			<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
 				<?php
 
 				settings_fields( 'code-snippets' );

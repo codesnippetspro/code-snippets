@@ -536,7 +536,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		foreach ( $vars as $var ) {
 			if ( ! empty( $_REQUEST[ $var ] ) ) {
-				printf( '<input type="hidden" name="%s" value="%s" />', $var, $_REQUEST[ $var ] );
+				printf( '<input type="hidden" name="%s" value="%s" />', esc_attr( $var ), esc_attr( $_REQUEST[ $var ] ) );
 				print "\n";
 			}
 		}
@@ -693,9 +693,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * Message to display if no snippets are found
 	 */
 	public function no_items() {
+		esc_html_e( 'Whoops, it looks like no snippets could be found.', 'code-snippets' );
 		printf(
-			__( 'You do not appear to have any snippets available at this time. <a href="%s">Add New&rarr;</a>', 'code-snippets' ),
-			code_snippets()->get_menu_url( 'add' )
+			' <a href="%s">%s</a>',
+			esc_url( code_snippets()->get_menu_url( 'add' ) ),
+			esc_html__( 'Perhaps you would like to add a new one?', 'code-snippets' )
 		);
 	}
 
