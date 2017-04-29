@@ -154,6 +154,24 @@ class Code_Snippets {
 	}
 
 	/**
+	 * Retrieve the name of the capability required to manage sub-site snippets
+	 *
+	 * @return string
+	 */
+	public function get_cap_name() {
+		return apply_filters( 'code_snippets_cap', 'manage_snippets' );
+	}
+
+	/**
+	 * Retrieve the name of the capability required to manage network snippets
+	 *
+	 * @return string
+	 */
+	public function get_network_cap_name() {
+		return apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
+	}
+
+	/**
 	 * Get the required capability to perform a certain action on snippets.
 	 * Does not check if the user has this capability or not.
 	 *
@@ -171,11 +189,11 @@ class Code_Snippets {
 			/* If multisite is enabled and the snippet menu is not activated,
 			   restrict snippet operations to super admins only */
 			if ( empty( $menu_perms['snippets'] ) ) {
-				return apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
+				return $this->get_network_cap_name();
 			}
 		}
 
-		return apply_filters( 'code_snippets_cap', 'manage_snippets' );
+		return $this->get_cap_name();
 	}
 
 	/**
@@ -190,7 +208,7 @@ class Code_Snippets {
 		$user = new WP_User( $user_id );
 
 		/* Add the capability */
-		$user->add_cap( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) );
+		$user->add_cap( $this->get_network_cap_name() );
 	}
 
 	/**
@@ -205,7 +223,7 @@ class Code_Snippets {
 		$user = new WP_User( $user_id );
 
 		/* Remove the capability */
-		$user->remove_cap( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) );
+		$user->remove_cap( $this->get_network_cap_name() );
 	}
 
 	/**

@@ -23,7 +23,7 @@ function code_snippets_upgrader() {
 
 		/* Register capabilities */
 		$role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
-		$role->add_cap( apply_filters( 'code_snippets_cap', 'manage_snippets' ) );
+		$role->add_cap( code_snippets()->get_cap_name() );
 	}
 
 	/* Check if we have upgraded from an older version */
