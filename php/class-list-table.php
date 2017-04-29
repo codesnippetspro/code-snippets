@@ -116,7 +116,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			if ( $snippet->active ) {
 				$actions['deactivate'] = sprintf(
 					$link_format,
-					$snippet->network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
+					$snippet->network ? esc_html__( 'Network Deactivate', 'code-snippets' ) : esc_html__( 'Deactivate', 'code-snippets' ),
 					esc_url( add_query_arg( array(
 						'action' => 'deactivate',
 						'id'     => $snippet->id,
@@ -125,7 +125,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			} else {
 				$actions['activate'] = sprintf(
 					$link_format,
-					$snippet->network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
+					$snippet->network ? esc_html__( 'Network Activate', 'code-snippets' ) : esc_html__( 'Activate', 'code-snippets' ),
 					esc_url( add_query_arg( array(
 						'action' => 'activate',
 						'id'     => $snippet->id,
@@ -135,13 +135,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			$actions['edit'] = sprintf(
 				$link_format,
-				__( 'Edit', 'code-snippets' ),
+				esc_html__( 'Edit', 'code-snippets' ),
 				code_snippets()->get_snippet_edit_url( $snippet->id )
 			);
 
 			$actions['export'] = sprintf(
 				$link_format,
-				__( 'Export', 'code-snippets' ),
+				esc_html__( 'Export', 'code-snippets' ),
 				esc_url( add_query_arg( array(
 					'action' => 'export',
 					'id'     => $snippet->id,
@@ -150,24 +150,24 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			$actions['delete'] = sprintf(
 				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
-				__( 'Delete', 'code-snippets' ),
+				esc_html__( 'Delete', 'code-snippets' ),
 				esc_url( add_query_arg( array(
 					'action' => 'delete',
 					'id'     => $snippet->id,
 				) ) ),
 				esc_js( sprintf(
 					'return confirm("%s");',
-					__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
-					__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+					esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
+					esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
 				) )
 			);
 
 		} else {
 
 			if ( $snippet->active ) {
-				$actions['network_active'] = __( 'Network Active', 'code-snippets' );
+				$actions['network_active'] = esc_html__( 'Network Active', 'code-snippets' );
 			} else {
-				$actions['network_only'] = __( 'Network Only', 'code-snippets' );
+				$actions['network_only'] = esc_html__( 'Network Only', 'code-snippets' );
 			}
 		}
 
@@ -188,7 +188,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( ! $this->is_network ) {
 
 			$action = $snippet->active ? 'deactivate' : 'activate';
-			$label = $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' );
+			$label = $snippet->active ? esc_html__( 'Deactivate', 'code-snippets' ) : esc_html__( 'Activate', 'code-snippets' );
 			$activate_url = add_query_arg( array(
 				'action' => $action . '-shared',
 				'id'     => $snippet->id,
@@ -204,13 +204,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$actions['edit'] = sprintf(
 			$link_format,
-			__( 'Edit', 'code-snippets' ),
+			esc_html__( 'Edit', 'code-snippets' ),
 			code_snippets()->get_snippet_edit_url( $snippet->id, 'network' )
 		);
 
 		$actions['export'] = sprintf(
 			$link_format,
-			__( 'Export', 'code-snippets' ),
+			esc_html__( 'Export', 'code-snippets' ),
 			add_query_arg(
 				array(
 					'action' => 'export',
@@ -222,7 +222,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$actions['delete'] = sprintf(
 			'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
-			__( 'Delete', 'code-snippets' ),
+			esc_html__( 'Delete', 'code-snippets' ),
 			add_query_arg(
 				array(
 					'action' => 'delete',
@@ -232,8 +232,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			),
 			esc_js( sprintf(
 				'return confirm("%s");',
-				__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
-				__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+				esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
+				esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
 			) )
 		);
 
@@ -258,11 +258,17 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
-		$out = sprintf(
-			'<a href="%s"><strong>%s</strong></a>',
-			code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ),
-			$title
-		);
+		$out = sprintf('<strong>%s</strong>', esc_html( $title ) );
+
+		/* Add a link to the snippet if it isn't an unreadable network-only snippet */
+		if ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
+
+			$out = sprintf(
+				'<a href="%s"><strong>%s</strong></a>',
+				code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ),
+				$title
+			);
+		}
 
 		if ( $snippet->shared_network && ! current_user_can( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) ) ) {
 			$out = sprintf( '<a><strong>%s</strong></a>', $title );
