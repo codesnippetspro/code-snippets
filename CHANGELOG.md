@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.8.4 (29 April 2017)
+* Fixed all snippets being treated as network snippets on non-multisite sites
+
 ## 2.8.3 (29 April 2017)
 * Updated CodeMirror to version 5.25.0
 * Show network active snippets as read-only on multisite subsites

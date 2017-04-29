@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.7.3
-Stable tag: 2.8.3
+Tested up to: 4.7.4
+Stable tag: 2.8.4
 License: MIT
 License URI: license.txt
 
@@ -107,6 +107,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.8.4 (29 April 2017) =
+* Fixed all snippets being treated as network snippets on non-multisite sites
 
 = 2.8.3 (29 April 2017) =
 * Updated CodeMirror to version 5.25.0
@@ -440,6 +443,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.8.4 =
+Fixes error with previous version on non-multisite
 
 = 2.8.3 =
 Fixes potential security exploit; please update immediately
