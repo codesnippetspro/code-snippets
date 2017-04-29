@@ -774,10 +774,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$snippets = array_fill_keys( $this->statuses, array() );
 
 		/* Fetch all snippets */
-		$snippets['all'] = get_snippets( array(), true );
-
-		if ( ! $this->is_network ) {
-			$snippets['all'] += get_snippets( array(), false );
+		if ( is_multisite() && ! $this->is_network ) {
+			$local_snippets = get_snippets( array(), false );
+			$network_snippets = get_snippets( array(), true );
+			$snippets['all'] = array_merge( $local_snippets, $network_snippets );
+		} else {
+			$snippets['all'] = get_snippets( array() );
 		}
 
 		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', $snippets['all'] );

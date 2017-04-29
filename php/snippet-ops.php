@@ -41,7 +41,7 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 
 	/* Convert snippets to snippet objects */
 	foreach ( $snippets as $index => $snippet ) {
-		$snippet['network'] = $multisite;
+		$snippet['network'] = is_multisite() && $multisite;
 		$snippets[ $index ] = new Snippet( $snippet );
 	}
 
