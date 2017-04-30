@@ -266,12 +266,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$out = sprintf(
 				'<a href="%s"><strong>%s</strong></a>',
 				code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ),
-				$title
+				$out
 			);
 		}
 
 		if ( $snippet->shared_network && ! current_user_can( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) ) ) {
-			$out = sprintf( '<a><strong>%s</strong></a>', $title );
+			$out = sprintf( '<a><strong>%s</strong></a>', esc_html( $title ) );
 		}
 
 		if ( $snippet->shared_network ) {
