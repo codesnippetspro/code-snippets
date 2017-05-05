@@ -82,17 +82,25 @@ class Code_Snippets_Contextual_Help {
 			'content' => '<p>' . __( 'Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can add a new snippet, or edit an existing one.', 'code-snippets' ) . '</p>',
 		) );
 
+
+		$snippet_host_links = array(
+			__( 'WP-Snippets', 'code-snippets' )    => __( 'http://wp-snippets.com', 'code-snippets' ),
+			__( 'WP Snipp', 'code-snippets' )       => __( 'http://wpsnipp.com', 'code-snippets' ),
+			__( 'Cats Who Code', 'code-snippets' )  => __( 'http://www.catswhocode.com/blog/snippets', 'code-snippets' ),
+			__( 'WP Function Me', 'code-snippets' ) => __( 'http://www.wpfunction.me', 'code-snippets' ),
+		);
+
+		$snippet_host_list = '';
+		foreach ( $snippet_host_links as $link => $title ) {
+			$snippet_host_list .= sprintf( '<li><a href="%s"></a></li>\n', esc_url( $link ), esc_html( $title ) );
+		}
+
 		$this->screen->add_help_tab( array(
 			'id'      => 'finding',
 			'title'   => __( 'Finding Snippets', 'code-snippets' ),
-			'content' => '<p>' . __( 'Here are some links to websites which host a large number of snippets that you can add to your site.
-				<ul>
-					<li><a href="http://wp-snippets.com" title="WordPress Snippets">WP-Snippets</a></li>
-					<li><a href="http://wpsnipp.com" title="WP Snipp">WP Snipp</a></li>
-					<li><a href="http://www.catswhocode.com/blog/snippets" title="Cats Who Code Snippet Library">Cats Who Code</a></li>
-					<li><a href="http://www.wpfunction.me">WP Function Me</a></li>
-				</ul>', 'code-snippets' ) .
-			__( 'More places to find snippets, as well as a selection of example snippets, can be found in the <a href="https://github.com/sheabunge/code-snippets/wiki/Finding-snippets">plugin documentation</a>', 'code-snippets' ) . '</p>',
+			'content' => '<p>' . __( 'Here are some links to websites which host a large number of snippets that you can add to your site:', 'code-snippets' ) .
+			             '<ul>' . $snippet_host_list . '</ul>' .
+			             __( 'More places to find snippets, as well as a selection of example snippets, can be found in the <a href="https://github.com/sheabunge/code-snippets/wiki/Finding-snippets">plugin documentation</a>', 'code-snippets' ) . '</p>',
 		) );
 
 		$this->screen->add_help_tab( array(

@@ -19,6 +19,7 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
+* Indonesian - [Jordan Silaen from ChameleonJohn.com](https://www.chameleonjohn.com/)
 * German - [Mario Siegmann](http://web-alltag.de/), [Joerg Knoerchen](http://www.sensorgrafie.de/), and [David Decker](http://deckerweb.de)
 * Dutch - [Sander Spies](https://github.com/sander1)
 * Slovak - [Ján Fajčák](http://wp.sk)

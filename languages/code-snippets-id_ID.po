@@ -1,0 +1,1264 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Code Snippets v2.8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-05-05 23:25+1000\n"
+"PO-Revision-Date: 2017-05-05 23:25+1000\n"
+"Last-Translator: Jordan Silaen <jordan.silaen@chameleonjohn.com>\n"
+"Language-Team: ChameleonJohn.com <jordan.silaen@chameleonjohn.com>\n"
+"Language: id_ID\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 2.0.1\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
+"_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: php/admin-menus/class-admin-menu.php:103
+msgid "You are not authorized to access this page."
+msgstr "Kamu tidak diperbolehkan mengakses halaman ini."
+
+# @ code-snippets
+#: php/admin-menus/class-edit-menu.php:13
+#: php/admin-menus/class-edit-menu.php:14 php/views/edit.php:25
+msgid "Edit Snippet"
+msgstr "mengedit cuplikan"
+
+# @ code-snippets
+#: php/admin-menus/class-edit-menu.php:39
+msgctxt "menu label"
+msgid "Add New"
+msgstr "Tambah baru"
+
+# @ code-snippets
+#: php/admin-menus/class-edit-menu.php:40 php/views/edit.php:31
+msgid "Add New Snippet"
+msgstr "Add New Cuplikan"
+
+#: php/admin-menus/class-edit-menu.php:156
+msgid "Don't Panic"
+msgstr "Jangan Panik"
+
+#: php/admin-menus/class-edit-menu.php:157
+#, php-format
+msgid ""
+"The code snippet you are trying to save produced a fatal error on line %d:"
+msgstr ""
+"Potongan kode Anda mencoba untuk menyimpan menghasilkan kesalahan fatal pada "
+"baris %d :"
+
+#: php/admin-menus/class-edit-menu.php:159
+msgid ""
+"The previous version of the snippet is unchanged, and the rest of this site "
+"should be functioning normally as before."
+msgstr ""
+"Versi sebelumnya dari potongan tidak berubah, dan sisanya dari situs ini "
+"harus berfungsi normal seperti sebelumnya."
+
+#: php/admin-menus/class-edit-menu.php:160
+msgid ""
+"Please use the back button in your browser to return to the previous page "
+"and try to fix the code error."
+msgstr ""
+"Gunakan tombol kembali browser Anda untuk kembali ke halaman sebelumnya dan "
+"mencoba untuk memperbaiki kesalahan kode."
+
+#: php/admin-menus/class-edit-menu.php:161
+msgid ""
+"If you prefer, you can close this page and discard the changes you just "
+"made. No changes will be made to this site."
+msgstr ""
+"Jika Anda suka, Anda dapat menutup halaman ini dan membuang perubahan yang "
+"baru saja dibuat. Tidak ada perubahan akan dilakukan untuk situs ini."
+
+# @ code-snippets
+#: php/admin-menus/class-edit-menu.php:281 php/class-list-table.php:341
+msgid "Description"
+msgstr "Deskripsi"
+
+#: php/admin-menus/class-edit-menu.php:312 php/class-list-table.php:342
+msgid "Tags"
+msgstr "Tags"
+
+#: php/admin-menus/class-edit-menu.php:316
+msgid "Enter a list of tags; separated by commas"
+msgstr "Masukkan daftar tag; dipisahkan dengan koma"
+
+#: php/admin-menus/class-edit-menu.php:336
+msgid "Run snippet everywhere"
+msgstr "Jalankan potongan di mana-mana"
+
+#: php/admin-menus/class-edit-menu.php:337
+msgid "Only run in administration area"
+msgstr "Hanya berjalan di daerah administrasi"
+
+#: php/admin-menus/class-edit-menu.php:338
+msgid "Only run on site front-end"
+msgstr "Hanya berjalan di situs front-end"
+
+#: php/admin-menus/class-edit-menu.php:342
+msgid "Scope"
+msgstr "Cakupan"
+
+#: php/admin-menus/class-edit-menu.php:362
+msgid "Sharing"
+msgstr "berbagi"
+
+#: php/admin-menus/class-edit-menu.php:366
+msgid "Allow this snippet to be activated on individual sites on the network"
+msgstr ""
+"Izinkan potongan ini harus diaktifkan pada situs individu pada jaringan"
+
+#: php/admin-menus/class-edit-menu.php:426
+#, php-format
+msgid "The snippet has been deactivated due to an error on line %d:"
+msgstr "Potongan telah dinonaktifkan karena kesalahan pada baris %d :"
+
+#: php/admin-menus/class-edit-menu.php:431
+msgid "The snippet has been deactivated due to an error in the code."
+msgstr "potongan telah dinonaktifkan karena kesalahan dalam kode."
+
+#: php/admin-menus/class-edit-menu.php:438
+msgid "An error occurred when saving the snippet."
+msgstr "Terjadi kesalahan saat menyimpan potongan."
+
+# @ code-snippets
+#: php/admin-menus/class-edit-menu.php:443
+msgid "Snippet <strong>added</strong>."
+msgstr "Cuplikan <strong>menambahkan</strong>."
+
+# @ code-snippets
+#: php/admin-menus/class-edit-menu.php:444
+msgid "Snippet <strong>updated</strong>."
+msgstr "Cuplikan <strong>update</strong>."
+
+# @ code-snippets
+#: php/admin-menus/class-edit-menu.php:445
+msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
+msgstr "Cuplikan <strong>menambahkan</strong> dan <strong>diaktifkan</strong>."
+
+# @ code-snippets
+#: php/admin-menus/class-edit-menu.php:446
+msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
+msgstr "Cuplikan <strong>update</strong> dan <strong>diaktifkan</strong>."
+
+#: php/admin-menus/class-edit-menu.php:447
+msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
+msgstr "Cuplikan <strong>update</strong> dan <strong>dinonaktifkan</strong>."
+
+#: php/admin-menus/class-import-menu.php:15
+msgctxt "menu label"
+msgid "Import"
+msgstr "Impor"
+
+# @ code-snippets
+#: php/admin-menus/class-import-menu.php:16 php/views/import.php:17
+msgid "Import Snippets"
+msgstr "impor Cuplikan"
+
+# @ code-snippets
+#: php/admin-menus/class-import-menu.php:84
+msgid "Code Snippets"
+msgstr "code Snippets"
+
+#: php/admin-menus/class-import-menu.php:85
+msgid "Import snippets from a code snippets export file"
+msgstr "Impor cuplikan dari kode cuplikan file ekspor"
+
+#: php/admin-menus/class-import-menu.php:99
+#, php-format
+msgid ""
+"Successfully imported <strong>%d</strong> snippet. <a href=\"%s\">Have fun!</"
+"a>"
+msgid_plural ""
+"Successfully imported <strong>%d</strong> snippets. <a href=\"%s\">Have fun!"
+"</a>"
+msgstr[0] ""
+"Berhasil diimpor <strong>%d</strong> potongan. <a href=\"%s\">Have fun!</a>"
+msgstr[1] ""
+"Berhasil diimpor <strong>%d</strong> potongan. <a href=\"%s\">Have fun!</a>"
+
+#: php/admin-menus/class-import-menu.php:112
+msgid "An error occurred when processing the import file."
+msgstr "Terjadi kesalahan saat memproses file impor."
+
+#: php/admin-menus/class-manage-menu.php:22
+msgctxt "menu label"
+msgid "All Snippets"
+msgstr "semua Cuplikan"
+
+# @ code-snippets
+#: php/admin-menus/class-manage-menu.php:23
+#: php/admin-menus/class-manage-menu.php:45 php/class-admin.php:61
+#: php/class-admin.php:144 php/views/manage.php:19
+msgid "Snippets"
+msgstr "cuplikan"
+
+#: php/admin-menus/class-manage-menu.php:46
+msgctxt "top-level menu label"
+msgid "Snippets"
+msgstr "cuplikan"
+
+#: php/admin-menus/class-manage-menu.php:81
+msgid ""
+"<strong>Warning:</strong> Safe mode is active and snippets will not execute! "
+"Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-"
+"config.php</code> to turn off safe mode. <a href=\"https://github.com/"
+"sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
+msgstr ""
+"<strong>Peringatan:</strong> Safe mode aktif dan potongan tidak akan "
+"mengeksekusi! Hapus <code>CODE_SNIPPETS_SAFE_MODE</code> konstan dari "
+"<code>wp-config.php</code> untuk mematikan mode aman. <a href=\"https://"
+"github.com/sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\"> "
+"Bantuan</a>"
+
+# @ code-snippets
+#: php/admin-menus/class-manage-menu.php:87
+msgid "Snippet <strong>activated</strong>."
+msgstr "Cuplikan <strong>diaktifkan</strong>."
+
+# @ code-snippets
+#: php/admin-menus/class-manage-menu.php:88
+msgid "Selected snippets <strong>activated</strong>."
+msgstr "potongan yang dipilih <strong>diaktifkan</strong>."
+
+# @ code-snippets
+#: php/admin-menus/class-manage-menu.php:89
+msgid "Snippet <strong>deactivated</strong>."
+msgstr "Cuplikan <strong>dinonaktifkan</strong>."
+
+# @ code-snippets
+#: php/admin-menus/class-manage-menu.php:90
+msgid "Selected snippets <strong>deactivated</strong>."
+msgstr "potongan yang dipilih <strong>dinonaktifkan</strong>."
+
+# @ code-snippets
+#: php/admin-menus/class-manage-menu.php:91
+msgid "Snippet <strong>deleted</strong>."
+msgstr "Cuplikan <strong>dihapus</strong>."
+
+# @ code-snippets
+#: php/admin-menus/class-manage-menu.php:92
+msgid "Selected snippets <strong>deleted</strong>."
+msgstr "potongan yang dipilih <strong>dihapus</strong>."
+
+#: php/admin-menus/class-settings-menu.php:16
+msgctxt "menu label"
+msgid "Settings"
+msgstr "pengaturan"
+
+#: php/admin-menus/class-settings-menu.php:17
+msgid "Snippets Settings"
+msgstr "Pengaturan cuplikan"
+
+#: php/admin-menus/class-settings-menu.php:39 php/views/edit.php:135
+msgid "Settings"
+msgstr "pengaturan"
+
+# @ code-snippets
+#: php/class-admin.php:143
+msgid "Manage your existing snippets"
+msgstr "Mengelola potongan yang ada"
+
+# @ code-snippets
+#: php/class-admin.php:174
+msgid "Visit the WordPress.org plugin page"
+msgstr "Kunjungi laman plugin WordPress.org"
+
+# @ code-snippets
+#: php/class-admin.php:175
+msgid "About"
+msgstr "Tentang"
+
+# @ code-snippets
+#: php/class-admin.php:179
+msgid "Visit the support forums"
+msgstr "Kunjungi forum dukungan"
+
+# @ code-snippets
+#: php/class-admin.php:180
+msgid "Support"
+msgstr "Mendukung"
+
+# @ code-snippets
+#: php/class-admin.php:184
+msgid "Support this plugin's development"
+msgstr "Mendukung pembangunan plugin ini"
+
+# @ code-snippets
+#: php/class-admin.php:185
+msgid "Donate"
+msgstr "Menyumbangkan"
+
+#: php/class-admin.php:216
+msgid ""
+"<strong>Have feedback on Code Snippets?</strong> Please take the time to "
+"answer a short survey on how you use this plugin and what you'd like to see "
+"changed or added in the future."
+msgstr ""
+"<strong>Punya umpan balik pada Code Snippets?</strong> Harap meluangkan "
+"waktu untuk menjawab survei singkat tentang bagaimana Anda menggunakan "
+"plugin ini dan apa yang Anda ingin lihat berubah atau ditambahkan di masa "
+"depan."
+
+#: php/class-admin.php:220
+msgid "Take the survey now"
+msgstr "Ambil survei sekarang"
+
+#: php/class-admin.php:223
+msgid "Dismiss"
+msgstr "Memberhentikan"
+
+# @ code-snippets
+#: php/class-contextual-help.php:40
+msgid "For more information:"
+msgstr "Untuk informasi lebih lanjut:"
+
+#: php/class-contextual-help.php:41
+msgid "About Plugin"
+msgstr "Tentang Plugin"
+
+#: php/class-contextual-help.php:42
+msgid "FAQ"
+msgstr "FAQ"
+
+#: php/class-contextual-help.php:43
+msgid "Support Forums"
+msgstr "Forum Dukungan"
+
+#: php/class-contextual-help.php:44
+msgid "Plugin Website"
+msgstr "Plugin Situs Web"
+
+# @ code-snippets
+#: php/class-contextual-help.php:55 php/class-contextual-help.php:81
+#: php/class-contextual-help.php:122
+msgid "Overview"
+msgstr "Ikhtisar"
+
+# @ code-snippets
+#: php/class-contextual-help.php:56
+msgid ""
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can manage "
+"your existing snippets and perform tasks on them such as activating, "
+"deactivating, deleting and exporting."
+msgstr ""
+"Cuplikan mirip dengan plugin - mereka berdua memperluas dan memperluas "
+"fungsi WordPress. Cuplikan lebih ringan, hanya beberapa baris kode, dan "
+"tidak menempatkan sebanyak beban pada server Anda. Di sini Anda dapat "
+"mengelola potongan yang ada dan melakukan tugas-tugas mereka seperti "
+"mengaktifkan, menonaktifkan, menghapus dan mengekspor."
+
+# @ code-snippets
+#: php/class-contextual-help.php:61
+msgid "Safe Mode"
+msgstr "Mode aman"
+
+# @ code-snippets
+#: php/class-contextual-help.php:62
+msgid ""
+"Be sure to check your snippets for errors before you activate them, as a "
+"faulty snippet could bring your whole blog down. If your site starts doing "
+"strange things, deactivate all your snippets and activate them one at a time."
+msgstr ""
+"Pastikan untuk memeriksa potongan Anda untuk kesalahan sebelum Anda "
+"mengaktifkan mereka, sebagai potongan rusak bisa membawa seluruh blog Anda "
+"ke bawah. Jika situs Anda mulai melakukan hal-hal aneh, menonaktifkan semua "
+"potongan Anda dan mengaktifkan mereka satu per satu."
+
+# @ code-snippets
+#: php/class-contextual-help.php:63
+msgid ""
+"If something goes wrong with a snippet and you can't use WordPress, you can "
+"cause all snippets to stop executing by adding "
+"<code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-"
+"config.php</code> file. After you have deactivated the offending snippet, "
+"you can turn off safe mode by removing this line or replacing <strong>true</"
+"strong> with <strong>false</strong>."
+msgstr ""
+"Jika ada yang salah dengan potongan dan Anda tidak dapat menggunakan "
+"WordPress, Anda dapat menyebabkan semua potongan untuk menghentikan "
+"mengeksekusi dengan menambahkan <code>define ( 'CODE_SNIPPETS_SAFE_MODE', "
+"true);</code> untuk <code>wp-config Anda. php</code> berkas. Setelah Anda "
+"telah dinonaktifkan potongan menyinggung, Anda dapat menonaktifkan mode aman "
+"dengan menghapus baris ini atau mengganti <strong>true</strong> dengan "
+"<strong>palsu</strong>."
+
+# @ code-snippets
+#: php/class-contextual-help.php:68
+msgid "Uninstall"
+msgstr "Uninstall"
+
+# @ code-snippets
+#: php/class-contextual-help.php:69
+#, php-format
+msgid ""
+"When you delete Code Snippets through the Plugins menu in WordPress it will "
+"clear up the <code>%1$s</code> table and a few other bits of data stored in "
+"the database. If you want to keep this data (ie: you are only temporally "
+"uninstalling Code Snippets) then remove the <code>%2$s</code> folder using "
+"FTP."
+msgstr ""
+"Ketika Anda menghapus Code Snippets melalui menu Plugins di WordPress itu "
+"akan menjernihkan <code>%1$s</code> meja dan beberapa potongan lain data "
+"yang disimpan dalam database. Jika Anda ingin menyimpan data ini (yaitu: "
+"Anda hanya temporal menguninstall Code Snippets) kemudian hapus <code>%2$s</"
+"code> folder menggunakan FTP."
+
+# @ code-snippets
+#: php/class-contextual-help.php:70
+msgid ""
+"Even if you're sure that you don't want to use Code Snippets ever again on "
+"this WordPress installation, you may want to use the export feature to back "
+"up your snippets."
+msgstr ""
+"Bahkan jika Anda yakin bahwa Anda tidak ingin menggunakan Code Snippets lagi "
+"pada instalasi WordPress ini, Anda mungkin ingin menggunakan fitur ekspor "
+"untuk mendukung potongan Anda."
+
+# @ code-snippets
+#: php/class-contextual-help.php:82
+msgid ""
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can add a new "
+"snippet, or edit an existing one."
+msgstr ""
+"Cuplikan mirip dengan plugin - mereka berdua memperluas dan memperluas "
+"fungsi WordPress. Cuplikan lebih ringan, hanya beberapa baris kode, dan "
+"tidak menempatkan sebanyak beban pada server Anda. Di sini Anda dapat "
+"menambahkan potongan baru, atau mengedit yang sudah ada."
+
+# @ code-snippets
+#: php/class-contextual-help.php:87
+#, fuzzy
+#| msgid "Snippets"
+msgid "WP-Snippets"
+msgstr "cuplikan"
+
+# @ code-snippets
+#: php/class-contextual-help.php:87
+#, fuzzy
+#| msgid "http://bungeshea.com"
+msgid "http://wp-snippets.com"
+msgstr "http://bungeshea.com/"
+
+# @ code-snippets
+#: php/class-contextual-help.php:88
+#, fuzzy
+#| msgid "Snippets"
+msgid "WP Snipp"
+msgstr "cuplikan"
+
+# @ code-snippets
+#: php/class-contextual-help.php:88
+#, fuzzy
+#| msgid "http://bungeshea.com"
+msgid "http://wpsnipp.com"
+msgstr "http://bungeshea.com/"
+
+#: php/class-contextual-help.php:89
+msgid "Cats Who Code"
+msgstr ""
+
+# @ code-snippets
+#: php/class-contextual-help.php:89
+#, fuzzy
+#| msgid "http://bungeshea.com/plugins/code-snippets"
+msgid "http://www.catswhocode.com/blog/snippets"
+msgstr "http://bungeshea.com/plugins/code-snippets/"
+
+#: php/class-contextual-help.php:90
+msgid "WP Function Me"
+msgstr ""
+
+#: php/class-contextual-help.php:90
+msgid "http://www.wpfunction.me"
+msgstr ""
+
+# @ code-snippets
+#: php/class-contextual-help.php:100
+msgid "Finding Snippets"
+msgstr "temuan Cuplikan"
+
+#: php/class-contextual-help.php:101
+msgid ""
+"Here are some links to websites which host a large number of snippets that "
+"you can add to your site:"
+msgstr ""
+
+# @ code-snippets
+#: php/class-contextual-help.php:103
+msgid ""
+"More places to find snippets, as well as a selection of example snippets, "
+"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
+"wiki/Finding-snippets\">plugin documentation</a>"
+msgstr ""
+"Lebih banyak tempat untuk menemukan potongan, serta pilihan contoh potongan, "
+"dapat ditemukan di <a href=\"https://github.com/sheabunge/code-snippets/wiki/"
+"Finding-snippets\"> dokumentasi plugin</a>"
+
+# @ code-snippets
+#: php/class-contextual-help.php:108
+msgid "Adding Snippets"
+msgstr "menambahkan Cuplikan"
+
+# @ code-snippets
+#: php/class-contextual-help.php:109
+msgid ""
+"You need to fill out the name and code fields for your snippet to be added. "
+"While the description field will add more information about how your snippet "
+"works, what is does and where you found it, it is completely optional."
+msgstr ""
+"Anda perlu mengisi nama dan kode kolom untuk potongan Anda akan ditambahkan. "
+"Sedangkan field deskripsi akan menambahkan informasi lebih lanjut tentang "
+"bagaimana potongan Anda bekerja, apa yang dilakukannya dan di mana Anda "
+"menemukannya, itu benar-benar opsional."
+
+# @ code-snippets
+#: php/class-contextual-help.php:110
+msgid ""
+"Please be sure to check that your snippet is valid PHP code and will not "
+"produce errors before adding it through this page. While doing so will not "
+"become active straight away, it will help to minimise the chance of a faulty "
+"snippet becoming active on your site."
+msgstr ""
+"Pastikan untuk memeriksa bahwa potongan Anda adalah kode PHP yang valid dan "
+"tidak akan menghasilkan kesalahan sebelum menambahkannya melalui halaman "
+"ini. Meskipun demikian tidak akan menjadi aktif langsung, ini akan membantu "
+"untuk meminimalkan kemungkinan potongan rusak menjadi aktif di situs Anda."
+
+# @ code-snippets
+#: php/class-contextual-help.php:123
+msgid ""
+"Snippets are similar to plugins - they both extend and expand the "
+"functionality of WordPress. Snippets are more light-weight, just a few lines "
+"of code, and do not put as much load on your server. Here you can load "
+"snippets from a Code Snippets (.xml) import file into the database with your "
+"existing snippets."
+msgstr ""
+"Cuplikan mirip dengan plugin - mereka berdua memperluas dan memperluas "
+"fungsi WordPress. Cuplikan lebih ringan, hanya beberapa baris kode, dan "
+"tidak menempatkan sebanyak beban pada server Anda. Di sini Anda dapat memuat "
+"potongan dari file impor Code Snippets (xml) ke dalam database dengan "
+"potongan yang ada."
+
+# @ code-snippets
+#: php/class-contextual-help.php:128
+msgid "Importing"
+msgstr "Pengimporan"
+
+# @ code-snippets
+#: php/class-contextual-help.php:129
+msgid ""
+"You can load your snippets from a code snippets (.xml) export file using "
+"this page."
+msgstr ""
+"Anda dapat memuat potongan Anda dari file ekspor potongan kode (xml) "
+"menggunakan halaman ini."
+
+#: php/class-contextual-help.php:130
+#, php-format
+msgid ""
+"Snippets will be added to the database along with your existing snippets. "
+"Regardless of whether the snippets were active on the previous site, "
+"imported snippets are always inactive until activated using the <a href=\"%s"
+"\">All Snippets</a> page.</p>"
+msgstr ""
+"Cuplikan akan ditambahkan ke database bersama dengan potongan yang ada. "
+"Terlepas dari apakah potongan aktif di situs sebelumnya, potongan impor "
+"selalu aktif sampai diaktifkan menggunakan <a href=\"%s\">halaman Semua "
+"Cuplikan</a>.</p>"
+
+# @ code-snippets
+#: php/class-contextual-help.php:135
+msgid "Exporting"
+msgstr "mengekspor"
+
+# @ code-snippets
+#: php/class-contextual-help.php:136
+#, php-format
+msgid ""
+"You can save your snippets to a Code Snippets (.xml) export file using the "
+"<a href=\"%s\">Manage Snippets</a> page."
+msgstr ""
+"Anda dapat menyimpan potongan Anda ke Cuplikan Kode (xml) file ekspor "
+"menggunakan <a href=\"%s\">Mengelola halaman Cuplikan</a>."
+
+#: php/class-export.php:87
+msgid ""
+"This is a code snippets export file generated by the Code Snippets WordPress "
+"plugin."
+msgstr ""
+"Ini adalah kode cuplikan file ekspor yang dihasilkan oleh plugin Code "
+"Snippets WordPress."
+
+#: php/class-export.php:89
+msgid "To import these snippets a WordPress site follow these steps:"
+msgstr "Untuk mengimpor potongan ini situs WordPress ikuti langkah berikut:"
+
+#: php/class-export.php:90
+msgid "1. Log in to that site as an administrator."
+msgstr "1. Masuk ke situs yang sebagai administrator."
+
+#: php/class-export.php:91
+msgid ""
+"2. Install the Code Snippets plugin using the directions provided at the "
+"above link."
+msgstr ""
+"2. Instal plugin Code Snippets menggunakan petunjuk yang disediakan di link "
+"di atas."
+
+#: php/class-export.php:92
+msgid "3. Go to 'Tools: Import' in the WordPress admin panel."
+msgstr "3. Pergi ke 'Tools: Impor' di panel admin WordPress."
+
+#: php/class-export.php:93
+msgid "4. Click on the \"Code Snippets\" importer in the list"
+msgstr "4. Klik pada \"Code Snippets \" importir dalam daftar"
+
+#: php/class-export.php:94
+msgid "5. Upload this file using the form provided on that page."
+msgstr ""
+"5. Upload file ini menggunakan formulir yang disediakan pada halaman "
+"tersebut."
+
+#: php/class-export.php:95
+msgid ""
+"6. Code Snippets will then import all of the snippets and associated "
+"information contained in this file into your site."
+msgstr ""
+"6. Code Snippets kemudian akan mengimpor semua potongan dan informasi "
+"terkait yang terdapat dalam file ini ke situs Anda."
+
+#: php/class-export.php:96
+msgid ""
+"7. You will then have to visit the 'Snippets: All Snippets' admin menu and "
+"activate desired snippets."
+msgstr ""
+"7. Anda kemudian akan harus mengunjungi 'Cuplikan: Semua Cuplikan' menu "
+"admin dan mengaktifkan potongan yang diinginkan."
+
+# @ code-snippets
+#: php/class-list-table.php:58
+msgid "Snippets per page"
+msgstr "Cuplikan per halaman"
+
+# @ code-snippets
+#: php/class-list-table.php:119 php/class-list-table.php:387
+msgid "Network Deactivate"
+msgstr "jaringan Nonaktifkan"
+
+# @ code-snippets
+#: php/class-list-table.php:119 php/class-list-table.php:191
+#: php/class-list-table.php:387
+msgid "Deactivate"
+msgstr "Menonaktifkan"
+
+# @ code-snippets
+#: php/class-list-table.php:128 php/class-list-table.php:386
+msgid "Network Activate"
+msgstr "jaringan Aktifkan"
+
+# @ code-snippets
+#: php/class-list-table.php:128 php/class-list-table.php:191
+#: php/class-list-table.php:386
+msgid "Activate"
+msgstr "Mengaktifkan"
+
+# @ code-snippets
+#: php/class-list-table.php:138 php/class-list-table.php:207
+msgid "Edit"
+msgstr "mengedit"
+
+# @ code-snippets
+#: php/class-list-table.php:144 php/class-list-table.php:213
+#: php/class-list-table.php:388 php/views/edit.php:111
+msgid "Export"
+msgstr "Ekspor"
+
+# @ code-snippets
+#: php/class-list-table.php:153 php/class-list-table.php:225
+#: php/class-list-table.php:389 php/views/edit.php:124
+msgid "Delete"
+msgstr "Menghapus"
+
+#: php/class-list-table.php:160 php/class-list-table.php:235
+msgid "You are about to permanently delete the selected item."
+msgstr "Anda akan menghapus item yang dipilih secara permanen."
+
+#: php/class-list-table.php:161 php/class-list-table.php:236
+#: php/views/edit.php:119
+msgid "'Cancel' to stop, 'OK' to delete."
+msgstr "'Batal' untuk menghentikan, 'OK' untuk menghapus."
+
+# @ code-snippets
+#: php/class-list-table.php:168
+#, fuzzy
+#| msgid "Network Activate"
+msgid "Network Active"
+msgstr "jaringan Aktifkan"
+
+#: php/class-list-table.php:170
+msgid "Network Only"
+msgstr ""
+
+#: php/class-list-table.php:255
+#, php-format
+msgid "Untitled #%d"
+msgstr "Untitled # %d"
+
+#: php/class-list-table.php:278
+msgid "Shared on Network"
+msgstr "Dibagikan di Jaringan"
+
+# @ code-snippets
+#: php/class-list-table.php:339 php/views/edit.php:48
+msgid "Name"
+msgstr "Nama"
+
+# @ code-snippets
+#: php/class-list-table.php:340
+msgid "ID"
+msgstr "ID"
+
+# @ code-snippets
+#: php/class-list-table.php:390
+msgid "Export to PHP"
+msgstr "Ekspor ke PHP"
+
+# @ code-snippets
+#: php/class-list-table.php:428
+#, php-format
+msgid "All <span class=\"count\">(%s)</span>"
+msgid_plural "All <span class=\"count\">(%s)</span>"
+msgstr[0] "Semua <span class=\"menghitung\">(%s)</span>"
+msgstr[1] "Semua <span class=\"menghitung\">(%s)</span>"
+
+# @ code-snippets
+#: php/class-list-table.php:429
+#, php-format
+msgid "Active <span class=\"count\">(%s)</span>"
+msgid_plural "Active <span class=\"count\">(%s)</span>"
+msgstr[0] "Aktif <span class=\"menghitung\">(%s)</span>"
+msgstr[1] "Aktif <span class=\"menghitung\">(%s)</span>"
+
+# @ code-snippets
+#: php/class-list-table.php:430
+#, php-format
+msgid "Inactive <span class=\"count\">(%s)</span>"
+msgid_plural "Inactive <span class=\"count\">(%s)</span>"
+msgstr[0] "Tidak aktif <span class=\"menghitung\">(%s)</span>"
+msgstr[1] "Tidak aktif <span class=\"menghitung\">(%s)</span>"
+
+# @ code-snippets
+#: php/class-list-table.php:431
+#, php-format
+msgid "Recently Active <span class=\"count\">(%s)</span>"
+msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
+msgstr[0] "Baru-baru ini aktif <span class=\"menghitung\">(%s)</span>"
+msgstr[1] "Baru-baru ini aktif <span class=\"menghitung\">(%s)</span>"
+
+#: php/class-list-table.php:494
+msgid "Show all tags"
+msgstr "Tampilkan semua tag"
+
+# @ code-snippets
+#: php/class-list-table.php:508
+msgid "Filter"
+msgstr "Menyaring"
+
+# @ code-snippets
+#: php/class-list-table.php:516
+msgid "Clear List"
+msgstr "Batal Daftar"
+
+#: php/class-list-table.php:702
+msgid "Whoops, it looks like no snippets could be found."
+msgstr ""
+
+#: php/class-list-table.php:706
+msgid "Perhaps you would like to add a new one?"
+msgstr ""
+
+# @ code-snippets
+#: php/class-list-table.php:985
+msgid "Search results"
+msgstr "Hasil Pencarian"
+
+# @ code-snippets
+#: php/class-list-table.php:988
+#, php-format
+msgid " for &#8220;%s&#8221;"
+msgstr "untuk & # 8220; %s & # 8221;"
+
+#: php/class-list-table.php:992
+#, php-format
+msgid " in tag &#8220;%s&#8221;"
+msgstr "di tag & # 8220; %s & # 8221;"
+
+# @ code-snippets
+#: php/class-list-table.php:1000
+msgid "Clear Filters"
+msgstr "jelas Filter"
+
+#: php/settings/settings-fields.php:42
+msgid "Activate by Default"
+msgstr "Aktifkan oleh default"
+
+#: php/settings/settings-fields.php:44
+msgid ""
+"Make the 'Save and Activate' button the default action when saving a snippet."
+msgstr ""
+"Membuat 'Simpan dan Aktifkan' tombol tindakan default saat menyimpan "
+"potongan."
+
+#: php/settings/settings-fields.php:49
+msgid "Enable Scope Selector"
+msgstr "Aktifkan Lingkup Pemilih"
+
+#: php/settings/settings-fields.php:51
+msgid "Enable the scope selector when editing a snippet"
+msgstr "Aktifkan pemilih lingkup saat mengedit potongan"
+
+#: php/settings/settings-fields.php:56
+msgid "Enable Snippet Tags"
+msgstr "Aktifkan Cuplikan Tags"
+
+#: php/settings/settings-fields.php:58
+msgid "Show snippet tags on admin pages"
+msgstr "tag acara snippet pada halaman admin"
+
+#: php/settings/settings-fields.php:63
+msgid "Enable Snippet Descriptions"
+msgstr "Aktifkan Cuplikan Deskripsi"
+
+#: php/settings/settings-fields.php:65
+msgid "Show snippet descriptions on admin pages"
+msgstr "deskripsi acara snippet pada halaman admin"
+
+#: php/settings/settings-fields.php:69
+msgid "Disable shortcode syntax highlighter"
+msgstr "Nonaktifkan shortcode sintaks stabilo"
+
+#: php/settings/settings-fields.php:71
+msgid ""
+"Disable the syntax highlighting for the [code_snippet] shortcode on the "
+"front-end"
+msgstr "Menonaktifkan sintaks untuk [CODE_SNIPPET] shortcode di front-end"
+
+#: php/settings/settings-fields.php:80
+msgid "Row Height"
+msgstr "Tinggi baris"
+
+#: php/settings/settings-fields.php:82
+msgid "rows"
+msgstr "baris"
+
+#: php/settings/settings-fields.php:88
+msgid "Use Full Editor"
+msgstr "Gunakan Full Editor"
+
+#: php/settings/settings-fields.php:90
+msgid "Enable all features of the visual editor"
+msgstr "Memungkinkan semua fitur dari editor visual"
+
+#: php/settings/settings-fields.php:95
+msgid "Media Buttons"
+msgstr "Tombol Media"
+
+#: php/settings/settings-fields.php:97
+msgid "Enable the add media buttons"
+msgstr "Aktifkan tombol media yang add"
+
+#: php/settings/settings-fields.php:106
+msgid "Theme"
+msgstr "Tema"
+
+#: php/settings/settings-fields.php:113
+msgid "Indent With Tabs"
+msgstr "Indent Dengan Tab"
+
+#: php/settings/settings-fields.php:115
+msgid "Use hard tabs (not spaces) for indentation."
+msgstr "Menggunakan tab keras (tidak spasi) untuk lekukan."
+
+#: php/settings/settings-fields.php:121
+msgid "Tab Size"
+msgstr "Ukuran tab"
+
+#: php/settings/settings-fields.php:123
+msgid "The width of a tab character."
+msgstr "Lebar karakter tab."
+
+#: php/settings/settings-fields.php:130
+msgid "Indent Unit"
+msgstr "Satuan indent"
+
+#: php/settings/settings-fields.php:132
+msgid "How many spaces a block should be indented."
+msgstr "Berapa banyak ruang blok harus menjorok."
+
+#: php/settings/settings-fields.php:139
+msgid "Wrap Lines"
+msgstr "wrap Garis"
+
+#: php/settings/settings-fields.php:141
+msgid "Whether the editor should scroll or wrap for long lines."
+msgstr "Apakah editor harus gulir atau bungkus untuk jalur panjang."
+
+#: php/settings/settings-fields.php:147
+msgid "Line Numbers"
+msgstr "Nomor baris"
+
+#: php/settings/settings-fields.php:149
+msgid "Show line numbers to the left of the editor."
+msgstr "Tampilkan nomor baris di sebelah kiri editor."
+
+#: php/settings/settings-fields.php:155
+msgid "Auto Close Brackets"
+msgstr "Auto Tutup Kurung"
+
+#: php/settings/settings-fields.php:157
+msgid "Auto-close brackets and quotes when typed."
+msgstr "Otomatis-tutup kurung dan kutipan ketika mengetik."
+
+#: php/settings/settings-fields.php:163
+msgid "Highlight Selection Matches"
+msgstr "Sorot Seleksi Cocok"
+
+#: php/settings/settings-fields.php:164
+msgid "Highlight all instances of a currently selected word."
+msgstr "Sorot semua contoh kata yang dipilih saat ini."
+
+#: php/settings/settings.php:68
+msgid "General"
+msgstr "Umum"
+
+#: php/settings/settings.php:69
+msgid "Description Editor"
+msgstr "Deskripsi Editor"
+
+#: php/settings/settings.php:70
+msgid "Code Editor"
+msgstr "kode Editor"
+
+#: php/settings/settings.php:119
+msgid "Editor Preview"
+msgstr "Editor Preview"
+
+#: php/settings/settings.php:176
+msgid "Settings saved."
+msgstr "Pengaturan disimpan."
+
+# @ code-snippets
+#: php/views/edit.php:28 php/views/manage.php:22
+msgctxt "snippet"
+msgid "Add New"
+msgstr "Tambah baru"
+
+#: php/views/edit.php:49
+msgid "Enter title here"
+msgstr "Masukkan judul di sini"
+
+# @ code-snippets
+#: php/views/edit.php:54
+msgid "Code"
+msgstr "Kode"
+
+#: php/views/edit.php:81 php/views/edit.php:95
+msgid "Save Changes and Activate"
+msgstr "Simpan Perubahan dan Aktifkan"
+
+#: php/views/edit.php:101
+msgid "Save Changes and Deactivate"
+msgstr "Simpan Perubahan dan Nonaktifkan"
+
+#: php/views/edit.php:118
+msgid "You are about to permanently delete this snippet."
+msgstr "Anda akan menghapus potongan ini secara permanen."
+
+# @ code-snippets
+#: php/views/import.php:21
+msgid ""
+"Howdy! Upload your Code Snippets export file and we&#8217;ll import the "
+"snippets to this site."
+msgstr ""
+"Howdy! Upload Anda file ekspor Code Snippets dan kami & # 8217; akan "
+"mengimpor potongan ke situs ini."
+
+#: php/views/import.php:23
+#, php-format
+msgid ""
+"You will need to go to the <a href=\"%s\">All Snippets</a> page to activate "
+"the imported snippets."
+msgstr ""
+"Anda akan perlu untuk pergi ke <a href=\"%s\">halaman Semua Cuplikan</a> "
+"untuk mengaktifkan potongan diimpor."
+
+# @ code-snippets
+#: php/views/import.php:25
+msgid ""
+"Choose a Code Snippets (.xml) file to upload, then click Upload file and "
+"import."
+msgstr ""
+"Pilih Code Snippets (xml) file yang untuk meng-upload, lalu klik File Upload "
+"dan impor."
+
+# @ code-snippets
+#: php/views/import.php:32
+msgid "Choose a file from your computer:"
+msgstr "Pilih file dari komputer Anda:"
+
+# @ code-snippets
+#: php/views/import.php:33
+msgid "(Maximum size: 8MB)"
+msgstr "(Ukuran maksimum: 8MB)"
+
+# @ code-snippets
+#: php/views/import.php:39
+msgid "Upload file and import"
+msgstr "Upload file dan impor"
+
+# @ code-snippets
+#: php/views/manage.php:34
+msgid "Search Installed Snippets"
+msgstr "Cari Dipasang Cuplikan"
+
+# @ code-snippets
+#~ msgid ""
+#~ "You do not appear to have any snippets available at this time. <a href="
+#~ "\"%s\">Add New&rarr;</a>"
+#~ msgstr ""
+#~ "Anda tidak muncul untuk memiliki potongan yang tersedia saat ini. <a href="
+#~ "\"%s\">Add New & rarr;</a>"
+
+# @ code-snippets
+#~ msgid "Import"
+#~ msgstr "Importieren"
+
+# @ code-snippets
+#~ msgid "Manage"
+#~ msgstr "Verwalten"
+
+# @ code-snippets
+#~ msgid ""
+#~ "Snippets will be added to the database along with your existing snippets. "
+#~ "Regardless of whether the snippets were active on the previous site, "
+#~ "imported snippets are always inactive until activated using the <a href="
+#~ "\"%s\">Manage Snippets</a> page.</p>"
+#~ msgstr ""
+#~ "Codeschnipsel werden der Datenbank hinzugefügt, zusammen mit Ihren "
+#~ "bereits bestehenden Codeschnipseln. Unabhängig davon, ob diese "
+#~ "Codeschnipsel auf der vorherigen Installation aktiv waren, sind "
+#~ "importierte Codeschnipsel standardmäßig immer deaktiviert, solange Sie "
+#~ "von Ihnen auf der <a href=\"%s\">Codeschnispel verwalten-Seite</a> "
+#~ "aktiviert werden.</p>"
+
+#~ msgid ""
+#~ "7. You will then have to visit the 'Snippets: Manage' admin menu and "
+#~ "activate desired snippets."
+#~ msgstr ""
+#~ "7. Nach dem Import besuche die Seite 'Codeschnipsel: Verwalten' im "
+#~ "Administrationsmenü und aktiviere die gewünschten Codeschnipsel."
+
+#~ msgid ""
+#~ "You are about to permanently delete the selected item.\n"
+#~ "\t\t\t\t\t'Cancel' to stop, 'OK' to delete."
+#~ msgstr ""
+#~ "Sie sind dabei die ausgewählten Einträge zu löschen.\n"
+#~ "\t\t\t\t\t'Abbrechen zum Stoppen, 'OK' zum Löschen."
+
+# @ code-snippets
+#~ msgid "Name (short title)"
+#~ msgstr "Name (Kurztitel)"
+
+#~ msgid ""
+#~ "You are about to permanently delete this snippet.\n"
+#~ "'Cancel' to stop, 'OK' to delete."
+#~ msgstr ""
+#~ "Du bist dabei diesen Codeschnipsel endgültig zu löschen.\n"
+#~ "'Abbrechen' um zu stoppen, 'OK' um zu löschen."
+
+# @ code-snippets
+#~ msgid ""
+#~ "You will need to go to the <a href=\"%s\">Manage Snippets</a> page to "
+#~ "activate the imported snippets."
+#~ msgstr ""
+#~ "Danach müssen Sie zur <a href=\"%s\">Codeschnispel verwalten-Seite</a> "
+#~ "gehen und die importierten Codeschnipsel entsprechend aktivieren."
+
+#~ msgid "Plugin Website</a>"
+#~ msgstr "Plugin-Webseite</a>"
+
+#~ msgid ""
+#~ "Here are some links to websites which host a large number of snippets "
+#~ "that you can add to your site.\n"
+#~ "\t\t\t<ul>\n"
+#~ "\t\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
+#~ "\">WP-Snippets</a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</"
+#~ "a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
+#~ "\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+#~ "\t\t\t</ul>"
+#~ msgstr ""
+#~ "Hier sind ein Links zu Webseiten, welche eine Menge an Codeschnipsel "
+#~ "bereitstellen und auf ihrer Webseite verwendet werden können.\n"
+#~ "\t\t\t<ul>\n"
+#~ "\t\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
+#~ "\">WP-Snippets</a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</"
+#~ "a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
+#~ "\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
+#~ "\t\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+#~ "\t\t\t</ul>"
+
+#~ msgid "http://wordpress.org/plugins/code-snippets"
+#~ msgstr "http://wordpress.org/plugins/code-snippets"
+
+# @ code-snippets
+#~ msgid ""
+#~ "Here are some links to websites which host a large number of snippets "
+#~ "that you can add to your site.\n"
+#~ "\t\t<ul>\n"
+#~ "\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
+#~ "\">WP-Snippets</a></li>\n"
+#~ "\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</a></"
+#~ "li>\n"
+#~ "\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
+#~ "\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
+#~ "\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
+#~ "\t\t</ul>"
+#~ msgstr ""
+#~ "Hier sind einige Links zu Webseiten, welche eine große Anzahl von "
+#~ "WordPress-Codeschnipseln anbieten, die Sie vielleicht für Ihre Webseite "
+#~ "verwenden könnten. Bitte seien Sie äußerst vorsichtig mit fremden "
+#~ "Codeschnipseln, überprüfen Sie immer den Anbieter/ Herausgeber. Setzen "
+#~ "Sie nur vertrauenswürdige Quellen ein!\n"
+#~ "\\\t\\\t<ul>\n"
+#~ "\\\t\\\t\\\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress "
+#~ "Snippets\">WP-Snippets</a></li>\n"
+#~ "\\\t\\\t\\\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP "
+#~ "Snipp</a></li>\n"
+#~ "\\\t\\\t\\\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" "
+#~ "title=\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
+#~ "\\\t\\\t\\\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></"
+#~ "li>\n"
+#~ "\\\t\\\t</ul>"
+
+# @ code-snippets
+#~ msgid ""
+#~ "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank"
+#~ "\">WordPress Extend</a>"
+#~ msgstr ""
+#~ "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank"
+#~ "\">Plugin-Seite bei WordPress.org</a>"
+
+# @ code-snippets
+#~ msgid ""
+#~ "<a href=\"http://wordpress.org/support/plugin/code-snippets\" target="
+#~ "\"_blank\">Support Forums</a>"
+#~ msgstr ""
+#~ "<a href=\"http://wordpress.org/support/plugin/code-snippets\" target="
+#~ "\"_blank\">Offizielles Support-Forum (Engl.)</a>"
+
+# @ code-snippets
+#~ msgid ""
+#~ "<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+#~ "\">Project Website</a>"
+#~ msgstr ""
+#~ "<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+#~ "\">Projektwebseite</a>"
+
+#~ msgid "Only run in adminstration area"
+#~ msgstr "Nur im Admin-Bereich ausführen"
+
+#~ msgid "You are not access this page."
+#~ msgstr "Du kannst diese Seite nicht betreten."
+
+# @ code-snippets
+#~ msgid ""
+#~ "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank"
+#~ "\">WordPress Extend</a></p>"
+#~ msgstr ""
+#~ "<a href=\"http://wordpress.org/plugins/code-snippets\" target=\"_blank"
+#~ "\">Plugin-Seite auf WordPress.org</a></p>"
+
+# @ code-snippets
+#~ msgid ""
+#~ "You are about to permanently delete the selected item.\n"
+#~ "\t\t\t\t'Cancel' to stop, 'OK' to delete."
+#~ msgstr ""
+#~ "Sie sind dabei das ausgewählte Element dauerhaft zu löschen.\n"
+#~ "\t\t\t\t'Abbrechen', um das zu stoppen, 'OK', um wirklich zu löschen."
+
+#~ msgid "Admin <span class=\"count\">(%s)</span>"
+#~ msgid_plural "Admin <span class=\"count\">(%s)</span>"
+#~ msgstr[0] "Admin <span class=\"count\">(%s)</span>"
+#~ msgstr[1] "Admin <span class=\"count\">(%s)</span>"
+
+#~ msgid "Front End <span class=\"count\">(%s)</span>"
+#~ msgid_plural "Front End <span class=\"count\">(%s)</span>"
+#~ msgstr[0] "Öffentliche Seite <span class=\"count\">(%s)</span>"
+#~ msgstr[1] "Öffentliche Seiten <span class=\"count\">(%s)</span>"
+
+#~ msgid "Editor"
+#~ msgstr "Editor"
+
+# @ code-snippets
+#~ msgid ""
+#~ "An easy, clean and simple way to add code snippets to your site. No need "
+#~ "to edit to your theme's functions.php file again!"
+#~ msgstr ""
+#~ "Auf einfache, saubere und elegante Weise Codeschnipsel für Ihre Webseite "
+#~ "hinzufügen. Änderungen an der 'functions.php' des Themes sind nicht mehr "
+#~ "notwendig!"
+
+# @ code-snippets
+#~ msgid "Shea Bunge"
+#~ msgstr "Shea Bunge"
+
+# @ code-snippets
+#~ msgid "Please provide a name for the snippet and its code."
+#~ msgstr ""
+#~ "Bitte geben Sie einen Namen für den Codeschnipsel und dessen Code an."
+
+# @ code-snippets
+#~ msgid "(Optional)"
+#~ msgstr "(optional, aber empfohlen für bessere Organisation &amp; Übersicht)"
+
+# @ code-snippets
+#~ msgid "Import snippets from a <strong>Code Snippets</strong> export file"
+#~ msgstr ""
+#~ "Codeschnipsel aus einer <strong>Code Snippets</strong>-Exportdatei "
+#~ "importieren"
+
+# @ code-snippets
+#~ msgid "Imported <strong>%d</strong> snippet."
+#~ msgid_plural "Imported <strong>%d</strong> snippets."
+#~ msgstr[0] " <strong>%d</strong> Codeschnipsel importiert."
+#~ msgstr[1] " <strong>%d</strong> Codeschnipsel importiert."
+
+# @ code-snippets
+#~ msgid "1.7"
+#~ msgstr "1.7"
+
+# @ code-snippets
+#~ msgid "Sorry, you're not allowed to edit snippets"
+#~ msgstr ""
+#~ "Entschuldigung, aber Sie haben keine Berechtigung zum Bearbeiten von "
+#~ "Codeschnipseln."
+
+# @ code-snippets
+#~ msgid "Save Changes &amp; Activate"
+#~ msgstr "Änderungen speichern &amp; Aktivieren"

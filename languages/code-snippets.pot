@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.8.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-29 23:31+1000\n"
+"POT-Creation-Date: 2017-05-05 23:26+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -290,7 +290,7 @@ msgid "Plugin Website"
 msgstr ""
 
 #: php/class-contextual-help.php:55 php/class-contextual-help.php:81
-#: php/class-contextual-help.php:114
+#: php/class-contextual-help.php:122
 msgid "Overview"
 msgstr ""
 
@@ -354,43 +354,66 @@ msgid ""
 msgstr ""
 
 #: php/class-contextual-help.php:87
-msgid "Finding Snippets"
+msgid "WP-Snippets"
+msgstr ""
+
+#: php/class-contextual-help.php:87
+msgid "http://wp-snippets.com"
 msgstr ""
 
 #: php/class-contextual-help.php:88
-msgid ""
-"Here are some links to websites which host a large number of snippets that "
-"you can add to your site.\n"
-"\t\t\t\t<ul>\n"
-"\t\t\t\t\t<li><a href=\"http://wp-snippets.com\" title=\"WordPress Snippets"
-"\">WP-Snippets</a></li>\n"
-"\t\t\t\t\t<li><a href=\"http://wpsnipp.com\" title=\"WP Snipp\">WP Snipp</"
-"a></li>\n"
-"\t\t\t\t\t<li><a href=\"http://www.catswhocode.com/blog/snippets\" title="
-"\"Cats Who Code Snippet Library\">Cats Who Code</a></li>\n"
-"\t\t\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>\n"
-"\t\t\t\t</ul>"
+msgid "WP Snipp"
 msgstr ""
 
-#: php/class-contextual-help.php:95
+#: php/class-contextual-help.php:88
+msgid "http://wpsnipp.com"
+msgstr ""
+
+#: php/class-contextual-help.php:89
+msgid "Cats Who Code"
+msgstr ""
+
+#: php/class-contextual-help.php:89
+msgid "http://www.catswhocode.com/blog/snippets"
+msgstr ""
+
+#: php/class-contextual-help.php:90
+msgid "WP Function Me"
+msgstr ""
+
+#: php/class-contextual-help.php:90
+msgid "http://www.wpfunction.me"
+msgstr ""
+
+#: php/class-contextual-help.php:100
+msgid "Finding Snippets"
+msgstr ""
+
+#: php/class-contextual-help.php:101
+msgid ""
+"Here are some links to websites which host a large number of snippets that "
+"you can add to your site:"
+msgstr ""
+
+#: php/class-contextual-help.php:103
 msgid ""
 "More places to find snippets, as well as a selection of example snippets, "
 "can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
 "wiki/Finding-snippets\">plugin documentation</a>"
 msgstr ""
 
-#: php/class-contextual-help.php:100
+#: php/class-contextual-help.php:108
 msgid "Adding Snippets"
 msgstr ""
 
-#: php/class-contextual-help.php:101
+#: php/class-contextual-help.php:109
 msgid ""
 "You need to fill out the name and code fields for your snippet to be added. "
 "While the description field will add more information about how your snippet "
 "works, what is does and where you found it, it is completely optional."
 msgstr ""
 
-#: php/class-contextual-help.php:102
+#: php/class-contextual-help.php:110
 msgid ""
 "Please be sure to check that your snippet is valid PHP code and will not "
 "produce errors before adding it through this page. While doing so will not "
@@ -398,7 +421,7 @@ msgid ""
 "snippet becoming active on your site."
 msgstr ""
 
-#: php/class-contextual-help.php:115
+#: php/class-contextual-help.php:123
 msgid ""
 "Snippets are similar to plugins - they both extend and expand the "
 "functionality of WordPress. Snippets are more light-weight, just a few lines "
@@ -407,17 +430,17 @@ msgid ""
 "existing snippets."
 msgstr ""
 
-#: php/class-contextual-help.php:120
+#: php/class-contextual-help.php:128
 msgid "Importing"
 msgstr ""
 
-#: php/class-contextual-help.php:121
+#: php/class-contextual-help.php:129
 msgid ""
 "You can load your snippets from a code snippets (.xml) export file using "
 "this page."
 msgstr ""
 
-#: php/class-contextual-help.php:122
+#: php/class-contextual-help.php:130
 #, php-format
 msgid ""
 "Snippets will be added to the database along with your existing snippets. "
@@ -426,11 +449,11 @@ msgid ""
 "\">All Snippets</a> page.</p>"
 msgstr ""
 
-#: php/class-contextual-help.php:127
+#: php/class-contextual-help.php:135
 msgid "Exporting"
 msgstr ""
 
-#: php/class-contextual-help.php:128
+#: php/class-contextual-help.php:136
 #, php-format
 msgid ""
 "You can save your snippets to a Code Snippets (.xml) export file using the "
