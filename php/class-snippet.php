@@ -120,7 +120,7 @@ class Snippet {
 		}
 
 		if ( ! $this->is_allowed_field( $field ) ) {
-			throw new ErrorException('Trying to set invalid property on Snippets class: ' . $field, 0, E_WARNING );
+			throw new ErrorException( 'Trying to set invalid property on Snippets class: ' . $field, 0, E_WARNING );
 		}
 
 		/* Check if the field value should be filtered */

@@ -82,7 +82,6 @@ class Code_Snippets_Contextual_Help {
 			'content' => '<p>' . __( 'Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can add a new snippet, or edit an existing one.', 'code-snippets' ) . '</p>',
 		) );
 
-
 		$snippet_host_links = array(
 			__( 'WP-Snippets', 'code-snippets' )    => __( 'http://wp-snippets.com', 'code-snippets' ),
 			__( 'WP Snipp', 'code-snippets' )       => __( 'http://wpsnipp.com', 'code-snippets' ),
