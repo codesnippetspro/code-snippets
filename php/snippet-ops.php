@@ -269,13 +269,13 @@ function save_snippet( Snippet $snippet ) {
 		$wpdb->insert( $table, $data, '%s' );
 		$snippet->id = $wpdb->insert_id;
 
-		do_action( 'code_snippets/create_snippet', $snippet, $table );
+		do_action( 'code_snippets/create_snippet', $snippet->id, $table );
 	} else {
 
 		/* Otherwise update the snippet data */
 		$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) );
 
-		do_action( 'code_snippets/update_snippet', $snippet, $table );
+		do_action( 'code_snippets/update_snippet', $snippet->id, $table );
 	}
 
 	return $snippet->id;
@@ -284,22 +284,33 @@ function save_snippet( Snippet $snippet ) {
 /**
  * Update a snippet entry given a list of fields
  *
- * @param $snippet_id
- * @param $fields
+ * @param int   $snippet_id The ID of the snippet to update
+ * @param array $fields     An array of fields mapped to their values
+ * @param bool  $network    Whether the snippet is network-wide or site-wide
  */
-function update_snippet_fields( $snippet_id, $fields ) {
+function update_snippet_fields( $snippet_id, $fields, $network = null ) {
 	/** @var wpdb $wpdb */
 	global $wpdb;
+
+	$table = code_snippets()->db->get_table_name( $network );
 
 	/* Build a new snippet object for the validation */
 	$snippet = new Snippet();
 	$snippet->id = $snippet_id;
 
+	/* Validate fields through the snippet class and copy them into a clean array */
+	$clean_fields = array();
+
 	foreach ( $fields as $field => $value ) {
-		$snippet->$field = $value;
+
+		if ( $snippet->set_field( $field, $value ) ) {
+			$clean_fields[ $field ] = $snippet->$field;
+		}
 	}
 
-
+	/* Update the snippet in the database */
+	$wpdb->update( $table, $clean_fields, array( 'id' => $snippet->id ), null, array( '%d' ) );
+	do_action( 'code_snippets/update_snippet', $snippet->id, $table );
 }
 
 /**
