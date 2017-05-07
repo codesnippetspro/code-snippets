@@ -282,6 +282,27 @@ function save_snippet( Snippet $snippet ) {
 }
 
 /**
+ * Update a snippet entry given a list of fields
+ *
+ * @param $snippet_id
+ * @param $fields
+ */
+function update_snippet_fields( $snippet_id, $fields ) {
+	/** @var wpdb $wpdb */
+	global $wpdb;
+
+	/* Build a new snippet object for the validation */
+	$snippet = new Snippet();
+	$snippet->id = $snippet_id;
+
+	foreach ( $fields as $field => $value ) {
+		$snippet->$field = $value;
+	}
+
+
+}
+
+/**
  * Imports snippets from an XML file
  *
  * @since 2.0

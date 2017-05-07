@@ -39,7 +39,9 @@ class Snippet {
 	);
 
 	/**
-	 * Set all of the snippet fields from an array or object
+	 * Set all of the snippet fields from an array or object.
+	 * Invalid fields will be ignored
+	 *
 	 * @param array|object $fields List of fields
 	 */
 	public function set_fields( $fields ) {
@@ -56,7 +58,7 @@ class Snippet {
 
 		/* Loop through the passed fields and set them */
 		foreach ( $fields as $field => $value ) {
-			$this->__set( $field, $value );
+			$this->set_field( $field, $value );
 		}
 	}
 
@@ -103,7 +105,10 @@ class Snippet {
 	}
 
 	/**
-	 * Set a field's value
+	 * Set the value of a field
+	 *
+	 * @throws ErrorException When an invalid $field is undefined for the class
+	 *
 	 * @param string $field The field name
 	 * @param mixed  $value The field value
 	 */
@@ -114,13 +119,54 @@ class Snippet {
 			$field = 'desc';
 		}
 
+		if ( ! $this->is_allowed_field( $field ) ) {
+			throw new ErrorException('Trying to set invalid property on Snippets class', 0, E_WARNING );
+		}
+
 		/* Check if the field value should be filtered */
 		if ( method_exists( $this, 'prepare_' . $field ) ) {
 			$value = call_user_func( array( $this, 'prepare_' . $field ), $value );
 		}
 
 		$this->fields[ $field ] = $value;
+	}
 
+	/**
+	 * Retrieve the list of fields allowed to be written to
+	 *
+	 * @return array
+	 */
+	public function get_allowed_fields() {
+		return array_keys( $this->fields );
+	}
+
+	/**
+	 * Determine whether a field is allowed to be written to
+	 *
+	 * @param string $field The field name
+	 *
+	 * @return bool true if the is allowed, false if invalid
+	 */
+	public function is_allowed_field( $field ) {
+		return isset( $this->fields[ $field ] );
+	}
+
+	/**
+	 * Safely set the value for a field.
+	 * If the field name is invalid, false will be returned instead of an error thrown
+	 *
+	 * @param string $field The field name
+	 * @param mixed  $value The field value
+	 *
+	 * @return bool true if the field was set successfully, false if the field name is invalid
+	 */
+	public function set_field( $field, $value ) {
+		if ( ! $this->is_allowed_field( $field ) ) {
+			return false;
+		}
+
+		$this->__set( $field, $value );
+		return true;
 	}
 
 	/**
