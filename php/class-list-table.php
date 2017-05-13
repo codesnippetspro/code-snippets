@@ -742,11 +742,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$shared_snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
 
 			foreach ( $shared_snippets as $index => $snippet ) {
-				$snippet                 = new Snippet( $snippet );
-				$snippet->network        = true;
+				$snippet = new Snippet( $snippet );
+				$snippet->network = true;
 				$snippet->shared_network = true;
-				$snippet->tags           = array_merge( $snippet->tags, array( 'shared on network' ) );
-				$snippet->active         = in_array( $snippet->id, $active_shared_snippets );
+				$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
+				$snippet->active = in_array( $snippet->id, $active_shared_snippets );
 
 				$shared_snippets[ $index ] = $snippet;
 			}
@@ -775,9 +775,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Fetch all snippets */
 		if ( is_multisite() && ! $this->is_network ) {
-			$local_snippets = get_snippets( array(), false );
 			$network_snippets = get_snippets( array(), true );
+			$network_snippets = array_filter( $network_snippets, array( $this, 'exclude_shared_network_snippets' ) );
+
+			$local_snippets = get_snippets( array(), false );
 			$snippets['all'] = array_merge( $local_snippets, $network_snippets );
+
 		} else {
 			$snippets['all'] = get_snippets( array() );
 		}
@@ -894,6 +897,19 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'per_page'	=> $per_page, // Determine how many items to show on a page
 			'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages
 		) );
+	}
+
+	/**
+	 * Callback for array_filter() to exclude shared network snippets from the
+	 *
+	 * @ignore
+	 *
+	 * @param Snippet $snippet The current snippet item being filtered
+	 *
+	 * @return bool false if the snippet is a shared network snippet
+	 */
+	private function exclude_shared_network_snippets( $snippet ) {
+		return ! $snippet->shared_network;
 	}
 
 	/**
