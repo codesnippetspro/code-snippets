@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.8.4\n"
+"Project-Id-Version: code-snippets 2.8.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-05 23:26+1000\n"
+"POT-Creation-Date: 2017-05-13 16:11+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -290,7 +290,7 @@ msgid "Plugin Website"
 msgstr ""
 
 #: php/class-contextual-help.php:55 php/class-contextual-help.php:81
-#: php/class-contextual-help.php:122
+#: php/class-contextual-help.php:121
 msgid "Overview"
 msgstr ""
 
@@ -353,67 +353,67 @@ msgid ""
 "snippet, or edit an existing one."
 msgstr ""
 
-#: php/class-contextual-help.php:87
+#: php/class-contextual-help.php:86
 msgid "WP-Snippets"
 msgstr ""
 
-#: php/class-contextual-help.php:87
+#: php/class-contextual-help.php:86
 msgid "http://wp-snippets.com"
 msgstr ""
 
-#: php/class-contextual-help.php:88
+#: php/class-contextual-help.php:87
 msgid "WP Snipp"
 msgstr ""
 
-#: php/class-contextual-help.php:88
+#: php/class-contextual-help.php:87
 msgid "http://wpsnipp.com"
 msgstr ""
 
-#: php/class-contextual-help.php:89
+#: php/class-contextual-help.php:88
 msgid "Cats Who Code"
 msgstr ""
 
-#: php/class-contextual-help.php:89
+#: php/class-contextual-help.php:88
 msgid "http://www.catswhocode.com/blog/snippets"
 msgstr ""
 
-#: php/class-contextual-help.php:90
+#: php/class-contextual-help.php:89
 msgid "WP Function Me"
 msgstr ""
 
-#: php/class-contextual-help.php:90
+#: php/class-contextual-help.php:89
 msgid "http://www.wpfunction.me"
 msgstr ""
 
-#: php/class-contextual-help.php:100
+#: php/class-contextual-help.php:99
 msgid "Finding Snippets"
 msgstr ""
 
-#: php/class-contextual-help.php:101
+#: php/class-contextual-help.php:100
 msgid ""
 "Here are some links to websites which host a large number of snippets that "
 "you can add to your site:"
 msgstr ""
 
-#: php/class-contextual-help.php:103
+#: php/class-contextual-help.php:102
 msgid ""
 "More places to find snippets, as well as a selection of example snippets, "
 "can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
 "wiki/Finding-snippets\">plugin documentation</a>"
 msgstr ""
 
-#: php/class-contextual-help.php:108
+#: php/class-contextual-help.php:107
 msgid "Adding Snippets"
 msgstr ""
 
-#: php/class-contextual-help.php:109
+#: php/class-contextual-help.php:108
 msgid ""
 "You need to fill out the name and code fields for your snippet to be added. "
 "While the description field will add more information about how your snippet "
 "works, what is does and where you found it, it is completely optional."
 msgstr ""
 
-#: php/class-contextual-help.php:110
+#: php/class-contextual-help.php:109
 msgid ""
 "Please be sure to check that your snippet is valid PHP code and will not "
 "produce errors before adding it through this page. While doing so will not "
@@ -421,7 +421,7 @@ msgid ""
 "snippet becoming active on your site."
 msgstr ""
 
-#: php/class-contextual-help.php:123
+#: php/class-contextual-help.php:122
 msgid ""
 "Snippets are similar to plugins - they both extend and expand the "
 "functionality of WordPress. Snippets are more light-weight, just a few lines "
@@ -430,17 +430,17 @@ msgid ""
 "existing snippets."
 msgstr ""
 
-#: php/class-contextual-help.php:128
+#: php/class-contextual-help.php:127
 msgid "Importing"
 msgstr ""
 
-#: php/class-contextual-help.php:129
+#: php/class-contextual-help.php:128
 msgid ""
 "You can load your snippets from a code snippets (.xml) export file using "
 "this page."
 msgstr ""
 
-#: php/class-contextual-help.php:130
+#: php/class-contextual-help.php:129
 #, php-format
 msgid ""
 "Snippets will be added to the database along with your existing snippets. "
@@ -449,11 +449,11 @@ msgid ""
 "\">All Snippets</a> page.</p>"
 msgstr ""
 
-#: php/class-contextual-help.php:135
+#: php/class-contextual-help.php:134
 msgid "Exporting"
 msgstr ""
 
-#: php/class-contextual-help.php:136
+#: php/class-contextual-help.php:135
 #, php-format
 msgid ""
 "You can save your snippets to a Code Snippets (.xml) export file using the "
@@ -626,21 +626,21 @@ msgstr ""
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:985
+#: php/class-list-table.php:1000
 msgid "Search results"
 msgstr ""
 
-#: php/class-list-table.php:988
+#: php/class-list-table.php:1003
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:992
+#: php/class-list-table.php:1007
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1000
+#: php/class-list-table.php:1015
 msgid "Clear Filters"
 msgstr ""
 
@@ -677,97 +677,105 @@ msgstr ""
 msgid "Show snippet descriptions on admin pages"
 msgstr ""
 
-#: php/settings/settings-fields.php:69
+#: php/settings/settings-fields.php:70
+msgid "Show Network Snippets"
+msgstr ""
+
+#: php/settings/settings-fields.php:72
+msgid "Show network-wide snippets in the snippets table on subsites"
+msgstr ""
+
+#: php/settings/settings-fields.php:77
 msgid "Disable shortcode syntax highlighter"
 msgstr ""
 
-#: php/settings/settings-fields.php:71
+#: php/settings/settings-fields.php:79
 msgid ""
 "Disable the syntax highlighting for the [code_snippet] shortcode on the "
 "front-end"
 msgstr ""
 
-#: php/settings/settings-fields.php:80
+#: php/settings/settings-fields.php:92
 msgid "Row Height"
 msgstr ""
 
-#: php/settings/settings-fields.php:82
+#: php/settings/settings-fields.php:94
 msgid "rows"
 msgstr ""
 
-#: php/settings/settings-fields.php:88
+#: php/settings/settings-fields.php:100
 msgid "Use Full Editor"
 msgstr ""
 
-#: php/settings/settings-fields.php:90
+#: php/settings/settings-fields.php:102
 msgid "Enable all features of the visual editor"
 msgstr ""
 
-#: php/settings/settings-fields.php:95
+#: php/settings/settings-fields.php:107
 msgid "Media Buttons"
 msgstr ""
 
-#: php/settings/settings-fields.php:97
+#: php/settings/settings-fields.php:109
 msgid "Enable the add media buttons"
 msgstr ""
 
-#: php/settings/settings-fields.php:106
+#: php/settings/settings-fields.php:118
 msgid "Theme"
 msgstr ""
 
-#: php/settings/settings-fields.php:113
+#: php/settings/settings-fields.php:125
 msgid "Indent With Tabs"
 msgstr ""
 
-#: php/settings/settings-fields.php:115
+#: php/settings/settings-fields.php:127
 msgid "Use hard tabs (not spaces) for indentation."
 msgstr ""
 
-#: php/settings/settings-fields.php:121
+#: php/settings/settings-fields.php:133
 msgid "Tab Size"
 msgstr ""
 
-#: php/settings/settings-fields.php:123
+#: php/settings/settings-fields.php:135
 msgid "The width of a tab character."
 msgstr ""
 
-#: php/settings/settings-fields.php:130
+#: php/settings/settings-fields.php:142
 msgid "Indent Unit"
 msgstr ""
 
-#: php/settings/settings-fields.php:132
+#: php/settings/settings-fields.php:144
 msgid "How many spaces a block should be indented."
 msgstr ""
 
-#: php/settings/settings-fields.php:139
+#: php/settings/settings-fields.php:151
 msgid "Wrap Lines"
 msgstr ""
 
-#: php/settings/settings-fields.php:141
+#: php/settings/settings-fields.php:153
 msgid "Whether the editor should scroll or wrap for long lines."
 msgstr ""
 
-#: php/settings/settings-fields.php:147
+#: php/settings/settings-fields.php:159
 msgid "Line Numbers"
 msgstr ""
 
-#: php/settings/settings-fields.php:149
+#: php/settings/settings-fields.php:161
 msgid "Show line numbers to the left of the editor."
 msgstr ""
 
-#: php/settings/settings-fields.php:155
+#: php/settings/settings-fields.php:167
 msgid "Auto Close Brackets"
 msgstr ""
 
-#: php/settings/settings-fields.php:157
+#: php/settings/settings-fields.php:169
 msgid "Auto-close brackets and quotes when typed."
 msgstr ""
 
-#: php/settings/settings-fields.php:163
+#: php/settings/settings-fields.php:175
 msgid "Highlight Selection Matches"
 msgstr ""
 
-#: php/settings/settings-fields.php:164
+#: php/settings/settings-fields.php:176
 msgid "Highlight all instances of a currently selected word."
 msgstr ""
 
