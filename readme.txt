@@ -109,6 +109,13 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 
 == Changelog ==
 
+= 2.8.5 (13 May 2017) =
+* Ensured HTML in snippet titles is escaped in snippets table
+* Added Indonesian translation by Jordan Silaen from ChameleonJohn.com
+* Disallowed undefined fields to be set on the Snippets class
+* Prevented shared network snippets from being included twice in snippets table on multisite
+* Added setting to hide network snippets on subsites
+
 = 2.8.4 (29 April 2017) =
 * Fixed all snippets being treated as network snippets on non-multisite sites
 
@@ -444,6 +451,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.8.5 =
+Prevents snippets from displaying twice in snippets table on multisite
 
 = 2.8.4 =
 Fixes error with previous version on non-multisite
