@@ -65,6 +65,14 @@ function code_snippets_get_settings_fields() {
 			'label' => __( 'Show snippet descriptions on admin pages', 'code-snippets' ),
 			'default' => true,
 		),
+
+		'show_network_snippets' => array(
+			'name' => __( 'Show Network Snippets', 'code-snippets' ),
+			'type' => 'checkbox',
+			'label' => __( 'Show network-wide snippets in the snippets table on subsites', 'code-snippets' ),
+			'default' => true,
+		),
+
 		'disable_prism' => array(
 			'name' => __( 'Disable shortcode syntax highlighter', 'code-snippets' ),
 			'type' => 'checkbox',
@@ -72,6 +80,10 @@ function code_snippets_get_settings_fields() {
 			'default' => false,
 		),
 	);
+
+	if ( ! is_multisite() ) {
+		unset( $fields['general']['show_network_snippets'] );
+	}
 
 	/* Description Editor settings section */
 	$fields['description_editor'] = array(
