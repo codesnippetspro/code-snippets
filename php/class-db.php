@@ -33,6 +33,28 @@ class Code_Snippets_DB {
 	}
 
 	/**
+	 * Validate the multisite parameter of the get_table_name() function
+	 *
+	 * @param bool|null $network
+	 *
+	 * @return bool
+	 */
+	function validate_network_param( $network ) {
+
+		/* If multisite is not active, then the parameter should always be false */
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
+		/* If $multisite is null, try to base it on the current admin page */
+		if ( is_null( $network ) && function_exists( 'get_current_screen' ) ) {
+			$network = get_current_screen()->in_admin( 'network' );
+		}
+
+		return $network;
+	}
+
+	/**
 	 * Return the appropriate snippet table name
 	 *
 	 * @since  2.0
@@ -49,18 +71,10 @@ class Code_Snippets_DB {
 			return $multisite;
 		}
 
-		/* If $multisite is null, try to base it on the current admin page */
-		if ( ! isset( $multisite ) && function_exists( 'get_current_screen' ) ) {
-			$multisite = get_current_screen()->in_admin( 'network' );
-		}
+		/* Validate the multisite parameter */
+		$multisite = $this->validate_network_param( $multisite );
 
-		/* If multisite is not active, always return the site-wide table name */
-		if ( ! is_multisite() ) {
-			$multisite = false;
-		}
-
-		/* Retrieve the table name from $wpdb depending on the above conditionals */
-
+		/* Retrieve the table name from $wpdb depending on the value of $multisite */
 		return ( $multisite ? $wpdb->ms_snippets : $wpdb->snippets );
 	}
 

@@ -21,27 +21,37 @@
 function get_snippets( array $ids = array(), $multisite = null ) {
 	/** @var wpdb $wpdb */
 	global $wpdb;
-	$table = code_snippets()->db->get_table_name( $multisite );
-	$sql = "SELECT * FROM $table";
+
+	$db = code_snippets()->db;
+	$multisite = $db->validate_network_param( $multisite );
+	$table = $db->get_table_name( $multisite );
+
 	$ids_count = count( $ids );
 
+	/* If only one ID has been passed in, defer to the get_snippet() function */
 	if ( 1 == $ids_count ) {
 		return array( get_snippet( $ids[0] ) );
 	}
 
+	/* Build a query containing the specified IDs if there are any */
 	if ( $ids_count > 1 ) {
-		$sql .= ' WHERE id IN (';
-		$sql .= implode( ',', array_fill( 0, $ids_count, '%d' ) );
-		$sql .= ')';
-
+		$sql = sprintf(
+			'SELECT * FROM %s WHERE id IN (%s);',
+			$table,
+			implode( ',', array_fill( 0, $ids_count, '%d' ) )
+		);
 		$sql = $wpdb->prepare( $sql, $ids );
+
+	} else {
+		$sql = "SELECT * FROM $table;";
 	}
 
+	/* Retrieve the results from the database */
 	$snippets = $wpdb->get_results( $sql, ARRAY_A );
 
 	/* Convert snippets to snippet objects */
 	foreach ( $snippets as $index => $snippet ) {
-		$snippet['network'] = is_multisite() && $multisite;
+		$snippet['network'] = $multisite;
 		$snippets[ $index ] = new Snippet( $snippet );
 	}
 
