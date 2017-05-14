@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.6 (14 May 2017)
+* Ensure that get_snippets() function retrieves snippets with the correct 'network' setting. Fixes snippet edit links in network admin.
+* Fix snippet description field alias not mapping correctly
+
 ## 2.8.5 (13 May 2017)
 * Ensured HTML in snippet titles is escaped in snippets table
 * Added Indonesian translation by Jordan Silaen from ChameleonJohn.com 

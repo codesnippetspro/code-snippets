@@ -1,7 +1,7 @@
 # Code Snippets [![Build Status](https://travis-ci.org/sheabunge/code-snippets.png?branch=master)](https://travis-ci.org/sheabunge/code-snippets)
 
 * __Requires at least:__ [WordPress 3.6](https://wordpress.org/download/) or later
-* __Tested up to:__ WordPress 4.7.4
+* __Tested up to:__ WordPress 4.8-beta1
 * __Stable version:__ [2.8.5](https://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 

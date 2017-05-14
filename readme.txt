@@ -3,7 +3,7 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.7.4
+Tested up to: 4.8-beta1
 Stable tag: 2.8.5
 License: MIT
 License URI: license.txt
@@ -108,6 +108,10 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.8.6 (14 May 2017) =
+* Ensure that get_snippets() function retrieves snippets with the correct 'network' setting. Fixes snippet edit links in network admin.
+* Fix snippet description field alias not mapping correctly
 
 = 2.8.5 (13 May 2017) =
 * Ensured HTML in snippet titles is escaped in snippets table
