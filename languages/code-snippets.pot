@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.8.5\n"
+"Project-Id-Version: code-snippets 2.8.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-13 16:11+1000\n"
+"POT-Creation-Date: 2017-05-14 16:20+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,11 +64,11 @@ msgid ""
 "made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:281 php/class-list-table.php:341
+#: php/admin-menus/class-edit-menu.php:281 php/class-list-table.php:337
 msgid "Description"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:312 php/class-list-table.php:342
+#: php/admin-menus/class-edit-menu.php:312 php/class-list-table.php:338
 msgid "Tags"
 msgstr ""
 
@@ -508,139 +508,131 @@ msgstr ""
 msgid "Snippets per page"
 msgstr ""
 
-#: php/class-list-table.php:119 php/class-list-table.php:387
+#: php/class-list-table.php:119 php/class-list-table.php:383
 msgid "Network Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:119 php/class-list-table.php:191
-#: php/class-list-table.php:387
+#: php/class-list-table.php:119 php/class-list-table.php:187
+#: php/class-list-table.php:383
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:128 php/class-list-table.php:386
+#: php/class-list-table.php:128 php/class-list-table.php:382
 msgid "Network Activate"
 msgstr ""
 
-#: php/class-list-table.php:128 php/class-list-table.php:191
-#: php/class-list-table.php:386
+#: php/class-list-table.php:128 php/class-list-table.php:187
+#: php/class-list-table.php:382
 msgid "Activate"
 msgstr ""
 
-#: php/class-list-table.php:138 php/class-list-table.php:207
+#: php/class-list-table.php:138 php/class-list-table.php:203
 msgid "Edit"
 msgstr ""
 
-#: php/class-list-table.php:144 php/class-list-table.php:213
-#: php/class-list-table.php:388 php/views/edit.php:111
+#: php/class-list-table.php:144 php/class-list-table.php:209
+#: php/class-list-table.php:384 php/views/edit.php:111
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:153 php/class-list-table.php:225
-#: php/class-list-table.php:389 php/views/edit.php:124
+#: php/class-list-table.php:153 php/class-list-table.php:221
+#: php/class-list-table.php:385 php/views/edit.php:124
 msgid "Delete"
 msgstr ""
 
-#: php/class-list-table.php:160 php/class-list-table.php:235
+#: php/class-list-table.php:160 php/class-list-table.php:231
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:161 php/class-list-table.php:236
+#: php/class-list-table.php:161 php/class-list-table.php:232
 #: php/views/edit.php:119
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
-#: php/class-list-table.php:168
-msgid "Network Active"
-msgstr ""
-
-#: php/class-list-table.php:170
-msgid "Network Only"
-msgstr ""
-
-#: php/class-list-table.php:255
+#: php/class-list-table.php:251
 #, php-format
 msgid "Untitled #%d"
 msgstr ""
 
-#: php/class-list-table.php:278
+#: php/class-list-table.php:274
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:339 php/views/edit.php:48
+#: php/class-list-table.php:335 php/views/edit.php:48
 msgid "Name"
 msgstr ""
 
-#: php/class-list-table.php:340
+#: php/class-list-table.php:336
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:390
+#: php/class-list-table.php:386
 msgid "Export to PHP"
 msgstr ""
 
-#: php/class-list-table.php:428
+#: php/class-list-table.php:424
 #, php-format
 msgid "All <span class=\"count\">(%s)</span>"
 msgid_plural "All <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:429
+#: php/class-list-table.php:425
 #, php-format
 msgid "Active <span class=\"count\">(%s)</span>"
 msgid_plural "Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:430
+#: php/class-list-table.php:426
 #, php-format
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:431
+#: php/class-list-table.php:427
 #, php-format
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:494
+#: php/class-list-table.php:490
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:508
+#: php/class-list-table.php:504
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:516
+#: php/class-list-table.php:512
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:702
+#: php/class-list-table.php:698
 msgid "Whoops, it looks like no snippets could be found."
 msgstr ""
 
-#: php/class-list-table.php:706
+#: php/class-list-table.php:702
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1000
+#: php/class-list-table.php:996
 msgid "Search results"
 msgstr ""
 
-#: php/class-list-table.php:1003
+#: php/class-list-table.php:999
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1007
+#: php/class-list-table.php:1003
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1015
+#: php/class-list-table.php:1011
 msgid "Clear Filters"
 msgstr ""
 
