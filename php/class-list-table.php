@@ -164,7 +164,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		} else {
 
-
+			if ( $snippet->active ) {
+				$actions['network_active'] = esc_html__( 'Network Active', 'code-snippets' );
+			} else {
+				$actions['network_only'] = esc_html__( 'Network Only', 'code-snippets' );
+			}
 		}
 
 		return $actions;
