@@ -38,6 +38,10 @@ class Snippet {
 		'shared_network' => null,
 	);
 
+	private $field_aliases = array(
+		'description' => 'desc',
+	);
+
 	/**
 	 * Set all of the snippet fields from an array or object.
 	 * Invalid fields will be ignored
@@ -71,17 +75,29 @@ class Snippet {
 	}
 
 	/**
+	 * Internal function for validating the name of a field
+	 *
+	 * @param string $field A field name
+	 *
+	 * @return string The validated field name
+	 */
+	private function validate_field_name( $field ) {
+
+		/* If a field alias is set, remap it to the valid field name */
+		if ( isset( $this->field_aliases[ $field ] ) ) {
+			return $this->field_aliases[ $field ];
+		}
+
+		return $field;
+	}
+
+	/**
 	 * Check if a field is set
 	 * @param  string  $field The field name
 	 * @return bool           Whether the field is set
 	 */
 	public function __isset( $field ) {
-
-		/* Rename the description field */
-		if ( 'description' === $field ) {
-			$field = 'desc';
-		}
-
+		$field = $this->validate_field_name( $field );
 		return isset( $this->fields[ $field ] ) || method_exists( $this, 'get_' . $field );
 	}
 
@@ -91,11 +107,7 @@ class Snippet {
 	 * @return mixed         The field value
 	 */
 	public function __get( $field ) {
-
-		/* Rename the description field */
-		if ( 'description' === $field ) {
-			$field = 'desc';
-		}
+		$field = $this->validate_field_name( $field );
 
 		if ( method_exists( $this, 'get_' . $field ) ) {
 			return call_user_func( array( $this, 'get_' . $field ) );
@@ -113,11 +125,7 @@ class Snippet {
 	 * @param mixed  $value The field value
 	 */
 	public function __set( $field, $value ) {
-
-		/* Rename the description field */
-		if ( 'description' === $field ) {
-			$field = 'desc';
-		}
+		$field = $this->validate_field_name( $field );
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			throw new ErrorException( 'Trying to set invalid property on Snippets class: ' . $field, 0, E_WARNING );
@@ -137,7 +145,7 @@ class Snippet {
 	 * @return array
 	 */
 	public function get_allowed_fields() {
-		return array_keys( $this->fields );
+		return array_keys( $this->fields ) + array_keys( $this->field_aliases );
 	}
 
 	/**
@@ -148,7 +156,7 @@ class Snippet {
 	 * @return bool true if the is allowed, false if invalid
 	 */
 	public function is_allowed_field( $field ) {
-		return array_key_exists( $field, $this->fields );
+		return array_key_exists( $field, $this->fields ) || array_key_exists( $field, $this->field_aliases );
 	}
 
 	/**
