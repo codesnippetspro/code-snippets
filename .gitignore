@@ -3,6 +3,7 @@
 /vendor
 
 # Built plugin
+code-snippets.*.zip
 /dist
 /css/build
 /css/min
