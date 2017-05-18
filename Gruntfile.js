@@ -1,5 +1,5 @@
 /*global module:false*/
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 	'use strict';
 
 	require('load-grunt-tasks')(grunt);
@@ -7,6 +7,8 @@ module.exports = function(grunt) {
 	var codemirror = 'node_modules/codemirror/';
 
 	grunt.initConfig({
+
+		pkg: grunt.file.readJSON('package.json'),
 
 		watch: {
 
@@ -92,7 +94,7 @@ module.exports = function(grunt) {
 		clean: {
 			js: ['js/min'],
 			css: ['css/min'],
-			dist: ['dist']
+			dist: ['dist', 'code-snippets.*.zip']
 		},
 
 		copy: {
@@ -101,19 +103,25 @@ module.exports = function(grunt) {
 					expand: true,
 					cwd: './',
 					src: [
-						'code-snippets.php',
-						'uninstall.php',
-						'readme.txt',
-						'license.txt',
-						'php/**/*',
-						'languages/**/*',
-						'css/min/**/*',
-						'css/font/**/*',
-						'js/min/**/*'
+						'code-snippets.php', 'uninstall.php', 'php/**/*',
+						'readme.txt', 'license.txt', 'languages/**/*',
+						'css/min/**/*', 'css/font/**/*', 'js/min/**/*'
 					],
 					dest: 'dist',
 					filter: 'isFile'
 				}]
+			}
+		},
+
+		compress: {
+			dist: {
+				options: {
+					archive: 'code-snippets.<%= pkg.version %>.zip'
+				},
+				expand: true,
+				cwd: 'dist/',
+				src: ['**/*'],
+				dest: 'code-snippets/'
 			}
 		},
 
@@ -163,7 +171,7 @@ module.exports = function(grunt) {
 		},
 
 		pot: {
-			options:{
+			options: {
 				text_domain: 'code-snippets',
 				dest: 'languages/',
 				keywords: [
@@ -175,7 +183,7 @@ module.exports = function(grunt) {
 				]
 			},
 			files: {
-				src: [ 'code-snippets.php', 'php/**/*.php' ],
+				src: ['code-snippets.php', 'php/**/*.php'],
 				expand: true
 			}
 		}
@@ -186,6 +194,6 @@ module.exports = function(grunt) {
 	grunt.registerTask('l18n', ['pot', 'potomo']);
 	grunt.registerTask('test', ['jshint', 'phpcs', 'phpunit']);
 
-	grunt.registerTask('package', ['clean:dist', 'copy:dist']);
+	grunt.registerTask('package', ['clean:dist', 'copy:dist', 'compress:dist']);
 	grunt.registerTask('default', ['css', 'js', 'l18n']);
 };
