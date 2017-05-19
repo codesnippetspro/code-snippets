@@ -90,8 +90,8 @@ class Code_Snippets_Contextual_Help {
 		);
 
 		$snippet_host_list = '';
-		foreach ( $snippet_host_links as $link => $title ) {
-			$snippet_host_list .= sprintf( '<li><a href="%s"></a></li>\n', esc_url( $link ), esc_html( $title ) );
+		foreach ( $snippet_host_links as $title => $link ) {
+			$snippet_host_list .= sprintf( '<li><a href="%s">%s</a></li>', esc_url( $link ), esc_html( $title ) );
 		}
 
 		$this->screen->add_help_tab( array(
