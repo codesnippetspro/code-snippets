@@ -99,7 +99,7 @@ class Code_Snippets_Contextual_Help {
 			'title'   => __( 'Finding Snippets', 'code-snippets' ),
 			'content' => '<p>' . __( 'Here are some links to websites which host a large number of snippets that you can add to your site:', 'code-snippets' ) .
 			             '<ul>' . $snippet_host_list . '</ul>' .
-			             __( 'More places to find snippets, as well as a selection of example snippets, can be found in the <a href="https://github.com/sheabunge/code-snippets/wiki/Finding-snippets">plugin documentation</a>', 'code-snippets' ) . '</p>',
+			             __( 'More places to find snippets, as well as a selection of example snippets, can be found in the <a href="https://github.com/sheabunge/code-snippets/wiki/Finding-snippets">plugin documentation</a>.', 'code-snippets' ) . '</p>',
 		) );
 
 		$this->screen->add_help_tab( array(
