@@ -106,3 +106,12 @@ code_snippets()->load_plugin();
 
 /* Execute the snippets once the plugins are loaded */
 add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
+
+/**
+ * Load plugin text domain
+ * @since 2.6.1
+ */
+function code_snippets_load_textdomain() {
+	load_plugin_textdomain( 'code-snippets', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
+}
+add_action( 'plugins_loaded', 'code_snippets_load_textdomain' );
