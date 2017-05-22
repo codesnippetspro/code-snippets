@@ -17,3 +17,37 @@
 	font-family: 'code-snippets' !important;
 	content: '\e600';
 }
+
+/* Added By CptCornWault - Visible Snippet Options SCSS
+.snippets .row-actions {
+	left: 0;
+	span {
+		opacity: .3;
+		left: 0;
+		&:first-of-type {
+			left: 0;
+			opacity: .5;
+		}
+	}
+}
+#the-list tr:hover span {
+	opacity: 1;
+}
+*/
+
+/* Added By CptCornWault - Visible Snippet Options CSS*/
+/* This is what the SCSS should compile to - compile untested - please remove this and uncomment the SCSS above after testing its compilation */
+.snippets .row-actions {
+	left: 0px;
+}
+.snippets .row-actions span {
+	opacity: .3;
+	left: 0px;
+}
+.snippets .row-actions span:first-of-type {
+	left: 0px;
+	opacity: .5;
+}
+#the-list tr:hover span {
+	opacity: 1;
+}
