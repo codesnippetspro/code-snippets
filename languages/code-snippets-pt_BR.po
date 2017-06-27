@@ -144,7 +144,7 @@ msgstr "Impote Snippets"
 
 #: php/admin-menus/class-import-menu.php:84
 msgid "Code Snippets"
-msgstr "Trecho de código"
+msgstr "Code Snippets"
 
 #: php/admin-menus/class-import-menu.php:85
 msgid "Import snippets from a code snippets export file"
