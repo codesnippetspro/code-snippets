@@ -190,12 +190,12 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Build snippet object from fields with 'snippet_' prefix */
 		$snippet = new Snippet();
+
 		foreach ( $_POST as $field => $value ) {
 			if ( 'snippet_' === substr( $field, 0, 8 ) ) {
 
-				/* Remove 'snippet_' prefix from field name */
-				$field = substr( $field, 8 );
-				$snippet->$field = stripslashes( $value );
+				/* Remove the 'snippet_' prefix from field name and set it on the object */
+				$snippet->set_field( substr( $field, 8 ), stripslashes( $value ) );
 			}
 		}
 
