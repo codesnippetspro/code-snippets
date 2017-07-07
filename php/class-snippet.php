@@ -128,7 +128,12 @@ class Snippet {
 		$field = $this->validate_field_name( $field );
 
 		if ( ! $this->is_allowed_field( $field ) ) {
-			throw new ErrorException( 'Trying to set invalid property on Snippets class: ' . $field, 0, E_WARNING );
+
+			if ( WP_DEBUG ) {
+				trigger_error( 'Trying to set invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
+			}
+
+			return;
 		}
 
 		/* Check if the field value should be filtered */
