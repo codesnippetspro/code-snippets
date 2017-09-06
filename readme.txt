@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.8-beta1
-Stable tag: 2.8.7
+Tested up to: 4.8.1
+Stable tag: 2.9.0
 License: MIT
 License URI: license.txt
 
@@ -109,6 +109,16 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.9.0 (6 Sep 2017) =
+* Fixed: Prevented invalid properties from being set when saving a snippet
+* Fixed: Use the correct protocol when saving a snippet
+* Improved: Moved code to disable snippet execution into a filter hook
+* Fixed: Active shared snippets not being updated correctly
+* Improved: execute_active_snippets() function updated with improved efficiency
+* Improved: Renamed Snippet class to avoid name collisions with other plugins
+* Improved: Don't hide output when executing a snippet
+* Updated CodeMirror to version 5.28.0
 
 = 2.8.6 (14 May 2017) =
 * Ensure that get_snippets() function retrieves snippets with the correct 'network' setting. Fixes snippet edit links in network admin.

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.9.0 (6 Sep 2017)
+* Fixed: Prevented invalid properties from being set when saving a snippet
+* Fixed: Use the correct protocol when saving a snippet
+* Improved: Moved code to disable snippet execution into a filter hook
+* Fixed: Active shared snippets not being updated correctly
+* Improved: execute_active_snippets() function updated with improved efficiency
+* Improved: Renamed Snippet class to avoid name collisions with other plugins
+* Improved: Don't hide output when executing a snippet
+* Updated CodeMirror to version 5.28.0
+
 ## 2.8.7 (18 May 2017)
 * Added French (Canada) translation by Domonic Desbiens
 * Added fixes for Indonesian translation by @zmni
