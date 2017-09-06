@@ -19,7 +19,7 @@
  * @property-read array  $tags_list The tags in string list format
  * @property-read string $scope_name The name of the scope
  */
-class Snippet {
+class Code_Snippet {
 
 	/**
 	 * The snippet metadata fields.

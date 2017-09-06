@@ -52,7 +52,7 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 	/* Convert snippets to snippet objects */
 	foreach ( $snippets as $index => $snippet ) {
 		$snippet['network'] = $multisite;
-		$snippets[ $index ] = new Snippet( $snippet );
+		$snippets[ $index ] = new Code_Snippet( $snippet );
 	}
 
 	return apply_filters( 'code_snippets/get_snippets', $snippets, $multisite );
@@ -117,7 +117,8 @@ function code_snippets_build_tags_array( $tags ) {
  *
  * @param  int          $id        The ID of the snippet to retrieve. 0 to build a new snippet
  * @param  boolean|null $multisite Retrieve a multisite-wide or site-wide snippet?
- * @return Snippet                 A single snippet object
+ *
+ * @return Code_Snippet                 A single snippet object
  */
 function get_snippet( $id = 0, $multisite = null ) {
 	/** @var wpdb $wpdb */
@@ -132,12 +133,12 @@ function get_snippet( $id = 0, $multisite = null ) {
 		$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
 
 		/* Unescape the snippet data, ready for use */
-		$snippet = new Snippet( $snippet );
+		$snippet = new Code_Snippet( $snippet );
 
 	} else {
 
 		/* Get an empty snippet object */
-		$snippet = new Snippet();
+		$snippet = new Code_Snippet();
 	}
 
 	$snippet->network = $multisite;
@@ -254,10 +255,11 @@ function delete_snippet( $id, $multisite = null ) {
  * @uses $wpdb to update/add the snippet to the database
  * @uses code_snippets()->db->get_table_name() To dynamically retrieve the name of the snippet table
  *
- * @param  Snippet   $snippet   The snippet to add/update to the database
+ * @param  Code_Snippet $snippet   The snippet to add/update to the database
+ *
  * @return int                  The ID of the snippet
  */
-function save_snippet( Snippet $snippet ) {
+function save_snippet( Code_Snippet $snippet ) {
 	/** @var wpdb $wpdb */
 	global $wpdb;
 
@@ -305,7 +307,7 @@ function update_snippet_fields( $snippet_id, $fields, $network = null ) {
 	$table = code_snippets()->db->get_table_name( $network );
 
 	/* Build a new snippet object for the validation */
-	$snippet = new Snippet();
+	$snippet = new Code_Snippet();
 	$snippet->id = $snippet_id;
 
 	/* Validate fields through the snippet class and copy them into a clean array */
@@ -351,7 +353,7 @@ function import_snippets( $file, $multisite = null ) {
 
 	/** @var DOMElement $snippet_xml */
 	foreach ( $snippets_xml as $snippet_xml ) {
-		$snippet = new Snippet();
+		$snippet = new Code_Snippet();
 		$snippet->network = $multisite;
 
 		/* Build a snippet object by looping through the field names */

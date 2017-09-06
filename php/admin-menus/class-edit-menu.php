@@ -166,11 +166,11 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Validate the snippet code before saving to database
 	 *
-	 * @param Snippet $snippet
+	 * @param Code_Snippet $snippet
 	 *
 	 * @return bool true if code produces errors
 	 */
-	private function validate_code( Snippet $snippet ) {
+	private function validate_code( Code_Snippet $snippet ) {
 
 		if ( empty( $snippet->code ) ) {
 			return false;
@@ -191,7 +191,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	private function save_posted_snippet() {
 
 		/* Build snippet object from fields with 'snippet_' prefix */
-		$snippet = new Snippet();
+		$snippet = new Code_Snippet();
 
 		foreach ( $_POST as $field => $value ) {
 			if ( 'snippet_' === substr( $field, 0, 8 ) ) {
@@ -275,9 +275,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Add a description editor to the single snippet page
-	 * @param Snippet $snippet The snippet being used for this page
+	 *
+	 * @param Code_Snippet $snippet The snippet being used for this page
 	 */
-	function render_description_editor( Snippet $snippet ) {
+	function render_description_editor( Code_Snippet $snippet ) {
 		$settings = code_snippets_get_settings();
 		$settings = $settings['description_editor'];
 		$heading = __( 'Description', 'code-snippets' );
@@ -305,9 +306,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	* Render the interface for editing snippet tags
-	* @param Snippet $snippet the snippet currently being edited
+	*
+	* @param Code_Snippet $snippet the snippet currently being edited
 	*/
-	function render_tags_editor( Snippet $snippet ) {
+	function render_tags_editor( Code_Snippet $snippet ) {
 
 		?>
 		<label for="snippet_tags" style="cursor: auto;">
@@ -330,9 +332,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Render the snippet scope setting
-	 * @param Snippet $snippet the snippet currently being edited
+	 *
+	 * @param Code_Snippet $snippet the snippet currently being edited
 	 */
-	function render_scope_setting( Snippet $snippet ) {
+	function render_scope_setting( Code_Snippet $snippet ) {
 
 		$scopes = array(
 			__( 'Run snippet everywhere', 'code-snippets' ),

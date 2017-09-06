@@ -136,7 +136,7 @@ class Code_Snippets_Export {
 
 			/* Grab the snippet from the database */
 			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id ), ARRAY_A );
-			$snippet = new Snippet( $snippet );
+			$snippet = new Code_Snippet( $snippet );
 
 			/* Process the snippet item */
 			if ( 'php' === $this->format ) {
@@ -149,9 +149,10 @@ class Code_Snippets_Export {
 
 	/**
 	 * Append a single snippet item to the document
-	 * @param Snippet $snippet
+	 *
+	 * @param Code_Snippet $snippet
 	 */
-	protected function do_item( Snippet $snippet ) {
+	protected function do_item( Code_Snippet $snippet ) {
 		$item_element = $this->dom->createElement( 'snippet' );
 		$item = $this->root->appendChild( $item_element );
 
@@ -183,9 +184,10 @@ class Code_Snippets_Export {
 
 	/**
 	 * Format single snippet item as PHP code
-	 * @param Snippet $snippet
+	 *
+	 * @param Code_Snippet $snippet
 	 */
-	protected function do_item_php( Snippet $snippet ) {
+	protected function do_item_php( Code_Snippet $snippet ) {
 		echo "\n/**\n * {$snippet->name}\n";
 
 		if ( ! empty( $snippet->desc ) ) {

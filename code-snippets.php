@@ -63,12 +63,16 @@ define( 'CODE_SNIPPETS_FILE', __FILE__ );
 function code_snippets_autoload( $class_name ) {
 
 	/* Only autoload classes from this plugin */
-	if ( 'Snippet' !== $class_name && 'Code_Snippets' !== substr( $class_name, 0, 13 ) ) {
+	if ( 'Code_Snippet' !== $class_name && 'Code_Snippets' !== substr( $class_name, 0, 13 ) ) {
 		return;
 	}
 
 	/* Remove namespace from class name */
 	$class_file = str_replace( 'Code_Snippets_', '', $class_name );
+
+	if ( 'Code_Snippet' === $class_name ) {
+		$class_file = 'Snippet';
+	}
 
 	/* Convert class name format to file name format */
 	$class_file = strtolower( $class_file );
