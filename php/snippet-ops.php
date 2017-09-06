@@ -364,7 +364,7 @@ function import_snippets( $file, $multisite = null ) {
 
 			/* If the field element exists, add it to the snippet object */
 			if ( isset( $field->nodeValue ) ) {
-				$snippet->$field_name = $field->nodeValue;
+				$snippet->set_field( $field_name, $field->nodeValue );
 			}
 		}
 
