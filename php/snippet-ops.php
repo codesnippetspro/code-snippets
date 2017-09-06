@@ -449,37 +449,34 @@ function execute_active_snippets() {
 
 	$current_scope = is_admin() ? 1 : 2;
 
-	/* Check if the snippets tables exist */
-	$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets;
-	$ms_table_exists = is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets;
-	$sql = '';
-
 	/* Fetch snippets from site table */
-	if ( $table_exists ) {
-		$sql = $wpdb->prepare( "SELECT id, code FROM {$wpdb->snippets} WHERE active=1 AND (scope=0 OR scope=%d)", $current_scope );
+	if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
+		$sql = $wpdb->prepare( "SELECT id, code FROM {$wpdb->snippets} WHERE (scope=0 OR scope=%d) AND active=1", $current_scope );
 	}
 
 	/* Fetch snippets from the network table */
-	if ( $ms_table_exists ) {
+	if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->ms_snippets'" ) === $wpdb->ms_snippets ) {
+		$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
 
-		if ( ! empty( $sql ) ) {
-			$sql .= ' UNION ALL ';
+		/* If there are active shared snippets, include them in the query */
+		if ( count( $active_shared_ids ) ) {
+
+			/* Build a list of "%d, %d, %d ..." for every active network shared snippet we have */
+			$active_shared_ids_format = implode( ',', array_fill( 0, count( $active_shared_ids ), '%d' ) );
+
+			/* Include them in the query */
+			$mu_sql = "SELECT id, code FROM {$wpdb->snippets} WHERE (scope=0 OR scope=%d) AND (active=1 OR id IN ($active_shared_ids_format))";
+
+			/* Add the scope number to the IDs array, so that it is the first variable in the query */
+			array_unshift( $active_shared_ids, $current_scope );
+			$mu_sql = $wpdb->prepare( $mu_sql, $active_shared_ids );
+
+		} else {
+			$mu_sql = $wpdb->prepare( "SELECT id, code FROM {$wpdb->ms_snippets} WHERE (scope=0 OR scope=%d) AND active=1", $current_scope );
 		}
 
-		/* Only select snippets in the current scope */
-		$sql .= $wpdb->prepare( "SELECT id, code FROM {$wpdb->ms_snippets} WHERE active=1 AND (scope=0 OR scope=%d)", $current_scope );
-
-		/* Add shared network snippets */
-		if ( $active_shared_ids = get_option( 'active_shared_network_snippets', false ) ) {
-			$sql .= ' UNION ALL ';
-			$sql .= $wpdb->prepare(
-				sprintf(
-					"SELECT id, code FROM {$wpdb->ms_snippets} WHERE id IN (%s)",
-					implode( ',', array_fill( 0, count( $active_shared_ids ), '%d' ) )
-				),
-				$active_shared_ids
-			);
-		}
+		/* Join the two SQL queries together */
+		$sql = ( empty( $sql ) ? '' : $sql . ' UNION ALL ' ) . $mu_sql;
 	}
 
 	/* Return false if there is no query */
