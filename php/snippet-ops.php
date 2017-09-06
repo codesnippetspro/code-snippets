@@ -424,9 +424,7 @@ function execute_snippet( $code, $id = 0 ) {
 		return false;
 	}
 
-	ob_start();
 	$result = eval( $code );
-	ob_end_clean();
 
 	do_action( 'code_snippets/after_execute_snippet', $id, $code, $result );
 
