@@ -440,12 +440,7 @@ function execute_snippet( $code, $id = 0 ) {
  */
 function execute_active_snippets() {
 
-	/* Bail early if safe mode is active */
-	if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
-		return false;
-	}
-
-	if ( isset( $_GET['snippets-safe-mode'] ) && $_GET['snippets-safe-mode'] && code_snippets()->current_user_can() ) {
+	if ( ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
 		return false;
 	}
 
@@ -506,24 +501,4 @@ function execute_active_snippets() {
 	return true;
 }
 
-
-if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
-
-	/**
-	 * Inject the safe mode query var into URLs
-	 *
-	 * @param $url
-	 *
-	 * @return string
-	 */
-	function code_snippets_safe_mode_query_var( $url ) {
-		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
-			return add_query_arg( 'snippets-safe-mode', $_REQUEST['snippets-safe-mode'], $url );
-		}
-		return $url;
-	}
-
-	add_filter( 'home_url', 'code_snippets_safe_mode_query_var' );
-	add_filter( 'admin_url', 'code_snippets_safe_mode_query_var' );
-}
 

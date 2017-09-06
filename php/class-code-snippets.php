@@ -43,6 +43,13 @@ class Code_Snippets {
 		add_action( 'remove_super_admin', array( $this, 'remove_network_cap' ) );
 
 		add_action( 'init', array( $this, 'load_textdomain' ), 9 );
+
+		add_filter( 'code_snippets/execute_snippets', array( $this, 'disable_snippet_execution' ), 5 );
+
+		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
+			add_filter( 'home_url', array( $this, 'add_safe_mode_query_var' ) );
+			add_filter( 'admin_url', array( $this, 'add_safe_mode_query_var' ) );
+		}
 	}
 
 	function load_plugin() {
@@ -75,6 +82,20 @@ class Code_Snippets {
 		require_once $includes_path . '/settings/settings.php';
 
 		$this->shortcode = new Code_Snippets_Shortcode();
+	}
+
+	public function disable_snippet_execution( $execute_snippets ) {
+
+		/* Bail early if safe mode is active */
+		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
+			return false;
+		}
+
+		if ( isset( $_GET['snippets-safe-mode'] ) && $_GET['snippets-safe-mode'] && $this->current_user_can() ) {
+			return false;
+		}
+
+		return $execute_snippets;
 	}
 
 	/**
@@ -241,5 +262,19 @@ class Code_Snippets {
 
 		// wp-content/plugins/code-snippets/languages/code-snippets-[locale].mo
 		load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->file ) ) . '/languages' );
+	}
+
+	/**
+	 * Inject the safe mode query var into URLs
+	 *
+	 * @param string $url A URL
+	 *
+	 * @return string
+	 */
+	function add_safe_mode_query_var( $url ) {
+		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
+			return add_query_arg( 'snippets-safe-mode', $_REQUEST['snippets-safe-mode'], $url );
+		}
+		return $url;
 	}
 }
