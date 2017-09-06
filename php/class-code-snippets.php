@@ -167,7 +167,7 @@ class Code_Snippets {
 	/**
 	 * Determine whether the current user can perform actions on snippets.
 	 *
-	 * @since [NEXT_VERSION]
+	 * @since 2.8.6
 	 * @return boolean Whether the current user has the required capability
 	 */
 	public function current_user_can() {
