@@ -8,7 +8,6 @@
 * Improved: execute_active_snippets() function updated with improved efficiency
 * Improved: Renamed Snippet class to avoid name collisions with other plugins
 * Improved: Don't hide output when executing a snippet
-* Updated CodeMirror to version 5.28.0
 
 ## 2.8.7 (18 May 2017)
 * Added French (Canada) translation by Domonic Desbiens
