@@ -669,7 +669,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				/* Process the shared network snippets */
 				if ( isset( $_POST['shared_ids'] ) && is_multisite() && ! $this->is_network ) {
 					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
-					$active_shared_snippets = ( $active_shared_snippets == '' ) ? array() : $active_shared_snippets;
+					$active_shared_snippets = ( '' === $active_shared_snippets ) ? array() : $active_shared_snippets;
 					$active_shared_snippets = array_diff( $active_shared_snippets, $_POST['shared_ids'] );
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 				}
