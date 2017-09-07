@@ -449,9 +449,11 @@ function execute_active_snippets() {
 
 	$current_scope = is_admin() ? 1 : 2;
 
+	$collate = "COLLATE {$wpdb->collate}";
+
 	/* Fetch snippets from site table */
 	if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
-		$sql = $wpdb->prepare( "SELECT id, code FROM {$wpdb->snippets} WHERE (scope=0 OR scope=%d) AND active=1", $current_scope );
+		$sql = $wpdb->prepare( "SELECT id, code {$collate} FROM {$wpdb->snippets} WHERE (scope=0 OR scope=%d) AND active=1", $current_scope );
 	}
 
 	/* Fetch snippets from the network table */
@@ -465,14 +467,14 @@ function execute_active_snippets() {
 			$active_shared_ids_format = implode( ',', array_fill( 0, count( $active_shared_ids ), '%d' ) );
 
 			/* Include them in the query */
-			$mu_sql = "SELECT id, code FROM {$wpdb->snippets} WHERE (scope=0 OR scope=%d) AND (active=1 OR id IN ($active_shared_ids_format))";
+			$mu_sql = "SELECT id, code {$collate} FROM {$wpdb->snippets} WHERE (scope=0 OR scope=%d) AND (active=1 OR id IN ($active_shared_ids_format))";
 
 			/* Add the scope number to the IDs array, so that it is the first variable in the query */
 			array_unshift( $active_shared_ids, $current_scope );
 			$mu_sql = $wpdb->prepare( $mu_sql, $active_shared_ids );
 
 		} else {
-			$mu_sql = $wpdb->prepare( "SELECT id, code FROM {$wpdb->ms_snippets} WHERE (scope=0 OR scope=%d) AND active=1", $current_scope );
+			$mu_sql = $wpdb->prepare( "SELECT id, code {$collate} FROM {$wpdb->ms_snippets} WHERE (scope=0 OR scope=%d) AND active=1", $current_scope );
 		}
 
 		/* Join the two SQL queries together */
@@ -485,13 +487,14 @@ function execute_active_snippets() {
 	}
 
 	/* Grab the snippets from the database */
-	$active_snippets = $wpdb->get_results( $sql, OBJECT_K );
+	$active_snippets = $wpdb->get_results( $sql, ARRAY_A );
 
 	/* Loop through the returned snippets and execute the PHP code */
 	foreach ( $active_snippets as $snippet_id => $snippet ) {
+		$code = $collate ? $snippet["code $collate"] : $snippet['code'];
 
 		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id ) ) {
-			execute_snippet( $snippet->code, $snippet_id );
+			execute_snippet( $code, $snippet_id );
 		}
 	}
 
