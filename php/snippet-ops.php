@@ -491,7 +491,7 @@ function execute_active_snippets() {
 
 	/* Loop through the returned snippets and execute the PHP code */
 	foreach ( $active_snippets as $snippet_id => $snippet ) {
-		$code = $collate ? $snippet["code $collate"] : $snippet['code'];
+		$code = $collate ? $snippet[ "code $collate" ] : $snippet['code'];
 
 		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id ) ) {
 			execute_snippet( $code, $snippet_id );
