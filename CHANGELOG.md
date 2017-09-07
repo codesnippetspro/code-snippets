@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.9.1 (7 Sep 2017)
+* Fixed: Prevent illegal mix of collations errors when fetching snippets from database tables with different collations [[#](https://wordpress.org/support/topic/issue-on-multisite-with-wpml/)]
+
 ## 2.9.0 (6 Sep 2017)
 * Fixed: Prevented invalid properties from being set when saving a snippet
 * Fixed: Use the correct protocol when saving a snippet
