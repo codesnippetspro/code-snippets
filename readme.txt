@@ -4,7 +4,7 @@ Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.8.1
-Stable tag: 2.9.1
+Stable tag: 2.9.2
 License: MIT
 License URI: license.txt
 
@@ -109,6 +109,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.9.2 (8 Sep 2017) =
+* Fixed: Do not attempt to combine queries for fetching local and multisite snippets
 
 = 2.9.1 (7 Sep 2017) =
 * Fixed: Prevent illegal mix of collations errors when fetching snippets from database tables with different collations [[#](https://wordpress.org/support/topic/issue-on-multisite-with-wpml/)]

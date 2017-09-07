@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.9.2 (8 Sep 2017)
+* Fixed: Do not attempt to combine queries for fetching local and multisite snippets
+
 ## 2.9.1 (7 Sep 2017)
 * Fixed: Prevent illegal mix of collations errors when fetching snippets from database tables with different collations [[#](https://wordpress.org/support/topic/issue-on-multisite-with-wpml/)]
 
