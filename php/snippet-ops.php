@@ -452,7 +452,7 @@ function execute_active_snippets() {
 
 	/* Fetch snippets from site table */
 	if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
-		$queries[] = $wpdb->prepare( "SELECT id, code FROM {$wpdb->snippets} WHERE (scope=0 OR scope=%d) AND active=1", $current_scope );
+		$queries[ $wpdb->snippets ] = $wpdb->prepare( "SELECT id, code FROM {$wpdb->snippets} WHERE (scope=0 OR scope=%d) AND active=1", $current_scope );
 	}
 
 	/* Fetch snippets from the network table */
@@ -470,21 +470,22 @@ function execute_active_snippets() {
 
 			/* Add the scope number to the IDs array, so that it is the first variable in the query */
 			array_unshift( $active_shared_ids, $current_scope );
-			$queries[] = $wpdb->prepare( $sql, $active_shared_ids );
+			$queries[ $wpdb->ms_snippets ] = $wpdb->prepare( $sql, $active_shared_ids );
 
 		} else {
-			$queries[] = $wpdb->prepare( "SELECT id, code  FROM {$wpdb->ms_snippets} WHERE (scope=0 OR scope=%d) AND active=1", $current_scope );
+			$sql = "SELECT id, code  FROM {$wpdb->ms_snippets} WHERE (scope=0 OR scope=%d) AND active=1";
+			$queries[ $wpdb->ms_snippets ] = $wpdb->prepare( $sql, $current_scope );
 		}
 	}
 
-	foreach ( $queries as $query ) {
+	foreach ( $queries as $table_name => $query ) {
 		$active_snippets = $wpdb->get_results( $query, ARRAY_A );
 
 		/* Loop through the returned snippets and execute the PHP code */
 		foreach ( $active_snippets as $snippet_id => $snippet ) {
 			$code = $snippet['code'];
 
-			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id ) ) {
+			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
 				execute_snippet( $code, $snippet_id );
 			}
 		}
