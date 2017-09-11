@@ -40,7 +40,7 @@ class Code_Snippets_Admin {
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
 
 		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
-			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 2 );
+			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
 		}
 	}
 
@@ -112,15 +112,19 @@ class Code_Snippets_Admin {
 	 *
 	 * @return bool Whether the snippet will be executed
 	 */
-	function prevent_exec_on_save( $exec, $exec_id ) {
+	function prevent_exec_on_save( $exec, $exec_id, $table_name ) {
 
 		if ( ! isset( $_POST['save_snippet'], $_POST['snippet_id'] ) ) {
 			return $exec;
 		}
 
+		if ( code_snippets()->db->get_table_name() !== $table_name ) {
+			return $exec;
+		}
+
 		$id = intval( $_POST['snippet_id'] );
 
-		if ( $id == $exec_id ) {
+		if ( $id === $exec_id ) {
 			return false;
 		}
 

@@ -482,7 +482,8 @@ function execute_active_snippets() {
 		$active_snippets = $wpdb->get_results( $query, ARRAY_A );
 
 		/* Loop through the returned snippets and execute the PHP code */
-		foreach ( $active_snippets as $snippet_id => $snippet ) {
+		foreach ( $active_snippets as $snippet ) {
+			$snippet_id = intval( $snippet['id'] );
 			$code = $snippet['code'];
 
 			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
