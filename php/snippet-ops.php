@@ -414,17 +414,27 @@ function export_snippets( $ids, $multisite = null, $format = 'xml' ) {
  *
  * @since 2.0
  *
- * @param  string $code The snippet code to execute
- * @param  int    $id   The snippet ID
+ * @param string $code         The snippet code to execute
+ * @param int    $id           The snippet ID
+ * @param bool   $catch_output Whether to attempt to suppress the output of execution using buffers
+ *
  * @return mixed        The result of the code execution
  */
-function execute_snippet( $code, $id = 0 ) {
+function execute_snippet( $code, $id = 0, $catch_output = true ) {
 
 	if ( empty( $code ) ) {
 		return false;
 	}
 
+	if ( $catch_output ) {
+		ob_start();
+	}
+
 	$result = eval( $code );
+
+	if ( $catch_output ) {
+		ob_end_clean();
+	}
 
 	do_action( 'code_snippets/after_execute_snippet', $id, $code, $result );
 

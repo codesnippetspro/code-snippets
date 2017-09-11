@@ -178,7 +178,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		ob_start( array( $this, 'code_error_callback' ) );
 
-		$result = execute_snippet( $snippet->code, $snippet->id );
+		$result = execute_snippet( $snippet->code, $snippet->id, false );
 
 		ob_end_clean();
 
