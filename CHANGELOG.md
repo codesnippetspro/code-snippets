@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.9.3 (11 Sep 2017)
+* Fixed: Prevent snippets from being executed twice when saving due to invalid ID being passed to allow_execute_snippet filter
+* Fixed: Re-enabled output suppression when executing snippets
+
 ## 2.9.2 (8 Sep 2017)
 * Fixed: Do not attempt to combine queries for fetching local and multisite snippets
 

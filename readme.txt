@@ -4,7 +4,7 @@ Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.8.1
-Stable tag: 2.9.2
+Stable tag: 2.9.3
 License: MIT
 License URI: license.txt
 
@@ -109,6 +109,10 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.9.3 (11 Sep 2017) =
+* Fixed: Prevent snippets from being executed twice when saving due to invalid ID being passed to allow_execute_snippet filter
+* Fixed: Re-enabled output suppression when executing snippets
 
 = 2.9.2 (8 Sep 2017) =
 * Fixed: Do not attempt to combine queries for fetching local and multisite snippets
