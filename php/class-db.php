@@ -135,6 +135,13 @@ class Code_Snippets_DB {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
-		do_action( 'code_snippets/create_table', $table_name );
+
+		$success = empty( $wpdb->last_error );
+
+		if ( $success ) {
+			do_action( 'code_snippets/create_table', $table_name );
+		}
+
+		return $success;
 	}
 }
