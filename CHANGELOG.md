@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.9.4 (19 Sep 2017)
+* Fixed: Prevented PHP error from occurring when saving a snippet
+* Minor improvements to database creation function
+
 ## 2.9.3 (11 Sep 2017)
 * Fixed: Prevent snippets from being executed twice when saving due to invalid ID being passed to allow_execute_snippet filter
 * Fixed: Re-enabled output suppression when executing snippets
