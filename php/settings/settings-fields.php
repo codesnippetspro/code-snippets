@@ -42,7 +42,7 @@ function code_snippets_get_settings_fields() {
 			'name' => __( 'Activate by Default', 'code-snippets' ),
 			'type' => 'checkbox',
 			'label' => __( "Make the 'Save and Activate' button the default action when saving a snippet.", 'code-snippets' ),
-			'default' => false,
+			'default' => true,
 		),
 
 		'snippet_scope_enabled' => array(
