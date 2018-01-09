@@ -107,8 +107,9 @@ class Code_Snippets_Admin {
 	 * Prevent the snippet currently being saved from being executed
 	 * so it is not run twice (once normally, once
 	 *
-	 * @param bool $exec    Whether the snippet will be executed
-	 * @param int  $exec_id The ID of the snippet being executed
+	 * @param bool   $exec       Whether the snippet will be executed
+	 * @param int    $exec_id    The ID of the snippet being executed
+	 * @param string $table_name
 	 *
 	 * @return bool Whether the snippet will be executed
 	 */

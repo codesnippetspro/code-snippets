@@ -156,7 +156,7 @@ $snippet = get_snippet( $edit_id );
 	atts['extraKeys'] = {
 		'Ctrl-Enter': function (cm) {
 			document.getElementById('snippet-form').submit();
-		},
+		}
 	};
 
 	CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);

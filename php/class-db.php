@@ -47,7 +47,7 @@ class Code_Snippets_DB {
 		}
 
 		/* If $multisite is null, try to base it on the current admin page */
-		if ( is_null( $network ) && get_current_screen() ) {
+		if ( is_null( $network ) && function_exists( 'get_current_screen' ) && get_current_screen() ) {
 			$network = get_current_screen()->in_admin( 'network' );
 		}
 
