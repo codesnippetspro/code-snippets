@@ -50,9 +50,9 @@ $snippet = get_snippet( $edit_id );
 			</div>
 		</div>
 
-		<h3><label for="snippet_code">
+		<h2><label for="snippet_code">
 			<?php _e( 'Code', 'code-snippets' ); ?>
-		</label></h3>
+		</label></h2>
 
 		<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false" style="font-family: monospace; width: 100%;"><?php
 			echo esc_textarea( $snippet->code );
@@ -132,7 +132,7 @@ $snippet = get_snippet( $edit_id );
 
 		<?php if ( has_action( 'code_snippets/admin/single/settings' ) ) : ?>
 
-		<h3><?php _e( 'Settings', 'code-snippets' ); ?></h3>
+		<h2><?php _e( 'Settings', 'code-snippets' ); ?></h2>
 		<table class="form-table">
 			<?php do_action( 'code_snippets/admin/single/settings', $snippet ); ?>
 		</table>

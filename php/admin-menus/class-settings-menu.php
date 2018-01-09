@@ -36,7 +36,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 	function render() {
 		?>
 		<div class="wrap">
-			<h2><?php esc_html_e( 'Settings', 'code-snippets' ); ?></h2>
+			<h1><?php esc_html_e( 'Settings', 'code-snippets' ); ?></h1>
 
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 

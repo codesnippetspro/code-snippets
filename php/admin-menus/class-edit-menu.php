@@ -153,7 +153,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			return $out;
 		}
 
-		$m = '<h2>' . __( "Don't Panic", 'code-snippets' ) . '</h2>';
+		$m = '<h3>' . __( "Don't Panic", 'code-snippets' ) . '</h3>';
 		$m .= '<p>' . sprintf( __( 'The code snippet you are trying to save produced a fatal error on line %d:', 'code_snippets' ), $error['line'] ) . '</p>';
 		$m .= '<strong>' . $error['message'] . '</strong>';
 		$m .= '<p>' . __( 'The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before.', 'code-snippets' ) . '</p>';
@@ -290,7 +290,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			$heading = "<div>$heading</div>";
 		}
 
-		echo '<label for="snippet_description"><h3>', $heading, '</h3></label>';
+		echo '<label for="snippet_description"><h2>', $heading, '</h2></label>';
 
 		remove_editor_styles(); // stop custom theme styling interfering with the editor
 
@@ -315,7 +315,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		?>
 		<label for="snippet_tags" style="cursor: auto;">
-			<h3><?php esc_html_e( 'Tags', 'code-snippets' ); ?></h3>
+			<h2><?php esc_html_e( 'Tags', 'code-snippets' ); ?></h2>
 		</label>
 
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
