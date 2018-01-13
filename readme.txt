@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.8.1
-Stable tag: 2.9.4
+Tested up to: 4.9.1
+Stable tag: 2.9.5
 License: MIT
 License URI: license.txt
 
@@ -109,6 +109,12 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.9.5 (13 Jan 2018) =
+* Fixed: Undefined function error when accessing the database on multisite
+* Fixed: Ensured all admin headings are hierarchical for accessibility
+* Made the "Activate By Default" setting enabled by default for new installs
+* Updated CodeMirror to version 5.33
 
 = 2.9.4 (19 Sep 2017) =
 * Fixed: Prevented PHP error from occurring when saving a snippet
@@ -480,6 +486,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.9.5 =
+Fixed issue with saving snippets on multisite
 
 = 2.8.5 =
 Prevents snippets from displaying twice in snippets table on multisite
