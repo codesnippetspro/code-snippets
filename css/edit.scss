@@ -6,9 +6,13 @@
 	width: auto;
 }
 
-h3 {
+h2 {
 	/* Provide some decent space between the fields and titles */
-	margin: 1em 0;
+	margin: 25px 0 15px 0;
+
+	&:first-of-type {
+		margin-top: 20px;
+	}
 }
 
 label {
@@ -30,9 +34,13 @@ ul.tagit {
 	margin-right: .5em;
 }
 
-.snippet-scope div {
-	margin-right: 30px;
-	display: inline-block;
+.snippet-scope {
+	margin-top: 15px;
+
+	label {
+		margin-right: 30px;
+		display: inline-block;
+	}
 }
 
 /**

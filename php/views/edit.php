@@ -129,16 +129,6 @@ $snippet = get_snippet( $edit_id );
 
 			?>
 		</p>
-
-		<?php if ( has_action( 'code_snippets/admin/single/settings' ) ) : ?>
-
-		<h2><?php _e( 'Settings', 'code-snippets' ); ?></h2>
-		<table class="form-table">
-			<?php do_action( 'code_snippets/admin/single/settings', $snippet ); ?>
-		</table>
-
-		<?php endif; ?>
-
 	</form>
 </div>
 

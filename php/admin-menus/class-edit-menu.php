@@ -73,11 +73,11 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
-			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_scope_setting' ) );
+			add_action( 'code_snippets/admin/single', array( $this, 'render_scope_setting' ), 1 );
 		}
 
 		if ( get_current_screen()->in_admin( 'network' ) ) {
-			add_action( 'code_snippets/admin/single/settings', array( $this, 'render_multisite_sharing_setting' ) );
+			add_action( 'code_snippets/admin/single', array( $this, 'render_multisite_sharing_setting' ), 1 );
 		}
 
 		$this->process_actions();
@@ -290,7 +290,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			$heading = "<div>$heading</div>";
 		}
 
-		echo '<label for="snippet_description"><h2>', $heading, '</h2></label>';
+		echo '<h2><label for="snippet_description">', $heading, '</label></h2>';
 
 		remove_editor_styles(); // stop custom theme styling interfering with the editor
 
@@ -314,9 +314,11 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	function render_tags_editor( Code_Snippet $snippet ) {
 
 		?>
-		<label for="snippet_tags" style="cursor: auto;">
-			<h2><?php esc_html_e( 'Tags', 'code-snippets' ); ?></h2>
-		</label>
+		<h2 style="margin: 25px 0 10px;">
+			<label for="snippet_tags" style="cursor: auto;">
+				<?php esc_html_e( 'Tags', 'code-snippets' ); ?>
+			</label>
+		</h2>
 
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
 			placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>"
@@ -345,16 +347,17 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			__( 'Only run on site front-end', 'code-snippets' ),
 		);
 
-		echo '<tr class="snippet-scope">';
-		echo '<th scope="row">' . __( 'Scope', 'code-snippets' ) . '</th><td>';
+		$icons = array( 'site', 'tools', 'appearance' );
+
+		echo '<h2 class="screen-reader-text">' . __( 'Scope', 'code-snippets' ) . '</h2><p class="snippet-scope">';
 
 		foreach ( $scopes as $scope => $label ) {
-			printf( '<div><input type="radio" name="snippet_scope" value="%d"', $scope );
+			printf( '<label><input type="radio" name="snippet_scope" value="%d"', $scope );
 			checked( $scope, $snippet->scope );
-			echo "> $label</div>";
+			printf( '> <span class="dashicons dashicons-admin-%s"></span> %s</label>', $icons[ $scope ], $label );
 		}
 
-		echo '</td></tr>';
+		echo '</p>';
 	}
 
 	/**
@@ -365,14 +368,14 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 		?>
 
-		<tr class="snippet-sharing-setting">
-			<th scope="row"><?php _e( 'Sharing', 'code-snippets' ) ?></th>
-			<td><label for="snippet_sharing">
+		<div class="snippet-sharing-setting">
+			<h2 class="screen-reader-text"><?php _e( 'Sharing Settings', 'code-snippets' ); ?></h2>
+			<label for="snippet_sharing">
 				<input type="checkbox" name="snippet_sharing"
 				<?php checked( in_array( $snippet->id, $shared_snippets ) ); ?>>
 				<?php _e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
-			</label></td>
-		</tr>
+			</label>
+		</div>
 
 		<?php
 	}
