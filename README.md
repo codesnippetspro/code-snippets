@@ -2,7 +2,7 @@
 
 * __Requires at least:__ [WordPress 3.6](https://wordpress.org/download/) or later
 * __Tested up to:__ WordPress 4.9.1
-* __Stable version:__ [2.9.5](https://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __Stable version:__ [2.9.6](https://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
 Code Snippets is an easy, clean and simple way to add code snippets to your site. It removes the need to add custom snippets to your theme theme's `functions.php` file.
@@ -19,6 +19,7 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
+* Brazilian Portuguese – [Bruno Borges](http://brunoborges.info)
 * French (Canada) - [Dominic Desbiens](http://www.dominicdesbiens.com/)
 * Indonesian - [Jordan Silaen from ChameleonJohn.com](https://www.chameleonjohn.com/)
 * German - [Mario Siegmann](http://web-alltag.de/), [Joerg Knoerchen](http://www.sensorgrafie.de/), and [David Decker](http://deckerweb.de)

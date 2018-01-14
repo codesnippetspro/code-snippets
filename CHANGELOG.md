@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.9.6 (14 Jan 2018)
+* Added Brazilian Portuguese translation by [Bruno Borges](http://brunoborges.info)
+* Fixed: Use standard WordPress capabilities instead of custom capabilities to prevent lockouts
+* Fixed: Multisite issue with retrieving active shared snippets from the wrong table causing duplicate snippet execution
+* Moved scope and other settings on single snippet page to below code area
+
 ## 2.9.5 (13 Jan 2018)
 * Fixed: Undefined function error when accessing the database on multisite
 * Fixed: Ensured all admin headings are hierarchical for accessibility

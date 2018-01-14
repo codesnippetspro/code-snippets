@@ -4,7 +4,7 @@ Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.9.1
-Stable tag: 2.9.5
+Stable tag: 2.9.6
 License: MIT
 License URI: license.txt
 
@@ -26,6 +26,7 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
+* Brazilian Portuguese – [Bruno Borges](http://brunoborges.info)
 * French (Canada) - [Dominic Desbiens](http://www.dominicdesbiens.com/)
 * Indonesian - [Jordan Silaen from ChameleonJohn.com](https://www.chameleonjohn.com/)
 * German - [Mario Siegmann](http://web-alltag.de/), [Joerg Knoerchen](http://www.sensorgrafie.de/), and [David Decker](http://deckerweb.de)
@@ -109,6 +110,12 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.9.6 (14 Jan 2018) =
+* Added Brazilian Portuguese translation by [Bruno Borges](http://brunoborges.info)
+* Fixed: Use standard WordPress capabilities instead of custom capabilities to prevent lockouts
+* Fixed: Multisite issue with retrieving active shared snippets from the wrong table causing duplicate snippet execution
+* Moved scope and other settings on single snippet page to below code area
 
 = 2.9.5 (13 Jan 2018) =
 * Fixed: Undefined function error when accessing the database on multisite
