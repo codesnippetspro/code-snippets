@@ -39,9 +39,6 @@ class Code_Snippets {
 		$this->version = $version;
 		$this->file = $file;
 
-		add_action( 'grant_super_admin', array( $this, 'grant_network_cap' ) );
-		add_action( 'remove_super_admin', array( $this, 'remove_network_cap' ) );
-
 		add_action( 'init', array( $this, 'load_textdomain' ), 9 );
 
 		add_filter( 'code_snippets/execute_snippets', array( $this, 'disable_snippet_execution' ), 5 );
@@ -180,7 +177,7 @@ class Code_Snippets {
 	 * @return string
 	 */
 	public function get_cap_name() {
-		return apply_filters( 'code_snippets_cap', 'manage_snippets' );
+		return apply_filters( 'code_snippets_cap', 'manage_options' );
 	}
 
 	/**
@@ -189,7 +186,7 @@ class Code_Snippets {
 	 * @return string
 	 */
 	public function get_network_cap_name() {
-		return apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
+		return apply_filters( 'code_snippets_network_cap', 'manage_network_options' );
 	}
 
 	/**
@@ -215,36 +212,6 @@ class Code_Snippets {
 		}
 
 		return $this->get_cap_name();
-	}
-
-	/**
-	 * Add the multisite capabilities to a user
-	 *
-	 * @since 2.0
-	 * @param int $user_id The ID of the user to add the cap to
-	 */
-	function grant_network_cap( $user_id ) {
-
-		/* Get the user from the ID */
-		$user = new WP_User( $user_id );
-
-		/* Add the capability */
-		$user->add_cap( $this->get_network_cap_name() );
-	}
-
-	/**
-	 * Remove the multisite capabilities from a user
-	 *
-	 * @since 2.0
-	 * @param int $user_id The ID of the user to remove the cap from
-	 */
-	function remove_network_cap( $user_id ) {
-
-		/* Get the user from the ID */
-		$user = new WP_User( $user_id );
-
-		/* Remove the capability */
-		$user->remove_cap( $this->get_network_cap_name() );
 	}
 
 	/**

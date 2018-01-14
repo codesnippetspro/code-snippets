@@ -25,10 +25,6 @@ function code_snippets_uninstall_site() {
 	delete_option( 'code_snippets_version' );
 	delete_option( 'recently_activated_snippets' );
 	delete_option( 'code_snippets_settings' );
-
-	/* Deregister capabilities */
-	$role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
-	$role->remove_cap( apply_filters( 'code_snippets_cap', 'manage_snippets' ) );
 }
 
 
@@ -60,15 +56,6 @@ if ( is_multisite() ) {
 	/* Remove saved options */
 	delete_site_option( 'code_snippets_version' );
 	delete_site_option( 'recently_activated_snippets' );
-
-	/* Remove multisite capabilities */
-	$network_cap = apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
-	$supers = get_super_admins();
-
-	foreach ( $supers as $admin ) {
-		$user = new WP_User( 0, $admin );
-		$user->remove_cap( $network_cap );
-	}
 } else {
 	code_snippets_uninstall_site();
 }
