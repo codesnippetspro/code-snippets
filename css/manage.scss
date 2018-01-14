@@ -10,16 +10,16 @@
 
 .column-name > a {
 
-	.admin-scope &:after {
+	.admin-scope &::after {
 		@extend %icon-after;
 		font-size: 14px;
-		content: "\f111";
+		content: "\f107";
 	}
 
-	.frontend-scope &:after {
+	.front-end-scope &::after {
 		@extend %icon-after;
 		font-size: 16px;
-		content: "\f177";
+		content: "\f100";
 	}
 }
 
