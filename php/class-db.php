@@ -7,6 +7,10 @@
  */
 class Code_Snippets_DB {
 
+	public $table;
+
+	public $ms_table;
+
 	/**
 	 * Class constructor
 	 */
@@ -23,13 +27,16 @@ class Code_Snippets_DB {
 	function set_table_vars() {
 		global $wpdb;
 
+		$this->table = 'snippets';
+		$this->ms_table = 'ms_snippets';
+
 		/* Register the snippet table names with WordPress */
-		$wpdb->tables[]           = 'snippets';
-		$wpdb->ms_global_tables[] = 'ms_snippets';
+		$wpdb->tables[] = $this->table;
+		$wpdb->ms_global_tables[] = $this->ms_table;
 
 		/* Setup initial table variables */
-		$wpdb->snippets    = $wpdb->prefix . 'snippets';
-		$wpdb->ms_snippets = $wpdb->base_prefix . 'ms_snippets';
+		$wpdb->snippets = $this->table = $wpdb->prefix . $this->table;
+		$wpdb->ms_snippets = $this->ms_table = $wpdb->base_prefix . $this->ms_table;
 	}
 
 	/**
