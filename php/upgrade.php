@@ -47,7 +47,6 @@ function code_snippets_upgrader() {
 			/* Update the plugin version stored in the database */
 			update_site_option( 'code_snippets_version', CODE_SNIPPETS_VERSION );
 
-
 			/* Custom capabilities were removed after version 2.9.5 */
 			if ( version_compare( $prev_ms_version, '2.9.5', '<=' ) ) {
 				$network_cap = apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
