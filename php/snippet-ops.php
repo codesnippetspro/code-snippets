@@ -476,7 +476,7 @@ function execute_active_snippets() {
 			$active_shared_ids_format = implode( ',', array_fill( 0, count( $active_shared_ids ), '%d' ) );
 
 			/* Include them in the query */
-			$sql = "SELECT id, code FROM {$wpdb->snippets} WHERE (scope=0 OR scope=%d) AND (active=1 OR id IN ($active_shared_ids_format))";
+			$sql = "SELECT id, code FROM {$wpdb->ms_snippets} WHERE (scope=0 OR scope=%d) AND (active=1 OR id IN ($active_shared_ids_format))";
 
 			/* Add the scope number to the IDs array, so that it is the first variable in the query */
 			array_unshift( $active_shared_ids, $current_scope );
