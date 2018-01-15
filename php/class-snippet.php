@@ -39,7 +39,7 @@ class Code_Snippet {
 		'shared_network' => null,
 	);
 
-	private $field_aliases = array(
+	private static $field_aliases = array(
 		'description' => 'desc',
 	);
 
@@ -92,8 +92,8 @@ class Code_Snippet {
 	private function validate_field_name( $field ) {
 
 		/* If a field alias is set, remap it to the valid field name */
-		if ( isset( $this->field_aliases[ $field ] ) ) {
-			return $this->field_aliases[ $field ];
+		if ( isset( self::$field_aliases[ $field ] ) ) {
+			return self::$field_aliases[ $field ];
 		}
 
 		return $field;
