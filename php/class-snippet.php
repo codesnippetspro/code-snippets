@@ -158,7 +158,7 @@ class Code_Snippet {
 	 * @return array
 	 */
 	public function get_allowed_fields() {
-		return array_keys( $this->fields ) + array_keys( $this->field_aliases );
+		return array_keys( $this->fields ) + array_keys( self::$field_aliases );
 	}
 
 	/**
@@ -169,7 +169,7 @@ class Code_Snippet {
 	 * @return bool true if the is allowed, false if invalid
 	 */
 	public function is_allowed_field( $field ) {
-		return array_key_exists( $field, $this->fields ) || array_key_exists( $field, $this->field_aliases );
+		return array_key_exists( $field, $this->fields ) || array_key_exists( $field, self::$field_aliases );
 	}
 
 	/**
