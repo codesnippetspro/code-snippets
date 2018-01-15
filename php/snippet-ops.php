@@ -394,9 +394,9 @@ function import_snippets( $file, $multisite = null ) {
  *
  * @param array     $ids       The IDs of the snippets to export
  * @param bool|null $multisite Is the snippet a network-wide or site-wide snippet?
- * @param string    $format    Export to xml or php?
+ * @param string    $format    Export to json, xml or php?
  */
-function export_snippets( $ids, $multisite = null, $format = 'xml' ) {
+function export_snippets( $ids, $multisite = null, $format = 'json' ) {
 	$table = code_snippets()->db->get_table_name( $multisite );
 
 	if ( ! class_exists( 'Code_Snippets_Export' ) ) {

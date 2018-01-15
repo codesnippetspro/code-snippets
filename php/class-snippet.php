@@ -46,6 +46,15 @@ class Code_Snippet {
 	private static $scopes = null;
 
 	/**
+	 * Constructor function
+	 * @param array|object $fields Initial snippet fields
+	 */
+	public function __construct( $fields = null ) {
+		$this->get_scopes();
+		$this->set_fields( $fields );
+	}
+
+	/**
 	 * Set all of the snippet fields from an array or object.
 	 * Invalid fields will be ignored
 	 *
@@ -69,13 +78,8 @@ class Code_Snippet {
 		}
 	}
 
-	/**
-	 * Constructor function
-	 * @param array|object $fields Initial snippet fields
-	 */
-	public function __construct( $fields = null ) {
-		$this->get_scopes();
-		$this->set_fields( $fields );
+	public function get_fields() {
+		return $this->fields;
 	}
 
 	/**

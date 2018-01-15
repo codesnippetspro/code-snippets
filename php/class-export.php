@@ -44,6 +44,8 @@ class Code_Snippets_Export {
 	 */
 	protected $root;
 
+	public static $supported_formats = array( 'json', 'xml', 'php' );
+
 	/**
 	 * Constructor function
 	 *
@@ -51,10 +53,10 @@ class Code_Snippets_Export {
 	 * @param string $table  The name of the table to fetch snippets from
 	 * @param string $format The format of the export file
 	 */
-	public function __construct( $ids, $table, $format = 'xml' ) {
+	public function __construct( $ids, $table, $format = 'json' ) {
 		$this->snippet_ids = (array) $ids;
 		$this->table_name = $table;
-		$this->format = 'php' === $format ? 'php' : 'xml';
+		$this->format = in_array( $format, self::$supported_formats ) ? $format : 'json';
 	}
 
 	/**
@@ -118,11 +120,26 @@ class Code_Snippets_Export {
 		$this->dom->appendChild( $gen );
 	}
 
+	protected function get_snippets() {
+		global $wpdb;
+
+		$snippets = array();
+
+		foreach ( $this->snippet_ids as $id ) {
+			/* Grab the snippet from the database */
+			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id ), ARRAY_A );
+			$snippet = new Code_Snippet( $snippet );
+
+			$snippets[] = $snippet;
+		}
+
+		return $snippets;
+	}
+
 	/**
 	 * Process all snippet items
 	 */
 	protected function do_items() {
-		global $wpdb;
 
 		if ( 'xml' === $this->format ) {
 
@@ -132,17 +149,13 @@ class Code_Snippets_Export {
 		}
 
 		/* Loop through the snippets */
-		foreach ( $this->snippet_ids as $id ) {
-
-			/* Grab the snippet from the database */
-			$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id ), ARRAY_A );
-			$snippet = new Code_Snippet( $snippet );
+		foreach ( $this->get_snippets() as $snippet ) {
 
 			/* Process the snippet item */
 			if ( 'php' === $this->format ) {
 				$this->do_item_php( $snippet );
 			} else {
-				$this->do_item( $snippet );
+				$this->do_item_xml( $snippet );
 			}
 		}
 	}
@@ -152,7 +165,7 @@ class Code_Snippets_Export {
 	 *
 	 * @param Code_Snippet $snippet
 	 */
-	protected function do_item( Code_Snippet $snippet ) {
+	protected function do_item_xml( Code_Snippet $snippet ) {
 		$item_element = $this->dom->createElement( 'snippet' );
 		$item = $this->root->appendChild( $item_element );
 
@@ -209,6 +222,43 @@ class Code_Snippets_Export {
 		/* Make the page act like a downloadable file instead of being shown in the browser */
 		$filename = $this->get_filename();
 		header( 'Content-Disposition: attachment; filename=' . $filename );
+
+		if ( 'json' === $this->format ) {
+			global $wpdb;
+
+			/* Set the HTTP content type header */
+			header( 'Content-Type: application/json; charset=' . get_bloginfo( 'charset' ) );
+
+			$snippets = array();
+
+			foreach ( $this->snippet_ids as $id ) {
+				/* Grab the snippet from the database */
+				$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id ), ARRAY_A );
+				$snippet = new Code_Snippet( $snippet );
+
+				$fields = array( 'name', 'desc', 'tags', 'scope', 'code' );
+				$final_snippet = array();
+
+				foreach ( $fields as $field ) {
+					if ( ! empty( $snippet->$field ) ) {
+						$final_snippet[ $field ] = $snippet->$field;
+					}
+				}
+
+				if ( $final_snippet ) {
+					$snippets[] = $final_snippet;
+				}
+			}
+
+			$data = array(
+				'generator' => 'Code Snippets v' . CODE_SNIPPETS_VERSION,
+				'date_created' => date( 'Y-m-d H:i' ),
+				'snippets' => $snippets,
+			);
+
+			echo json_encode( $data, apply_filters( 'code_snippets/export/json_encode_options', 0 ) );
+			exit;
+		}
 
 		if ( 'xml' === $this->format ) {
 
