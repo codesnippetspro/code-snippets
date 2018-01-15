@@ -204,7 +204,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			}
 		}
 
-		if ( isset( $_POST['save_snippet_execute'] ) && 3 !== $snippet->scope ) {
+		if ( isset( $_POST['save_snippet_execute'] ) && 'single-use' !== $snippet->scope ) {
 			unset( $_POST['save_snippet_execute'] );
 			$_POST['save_snippet'] = 'yes';
 		}
@@ -224,7 +224,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		/* Deactivate snippet if code contains errors */
-		if ( $snippet->active && 3 !== $snippet->scope ) {
+		if ( $snippet->active && 'single-use' !== $snippet->scope ) {
 			if ( $code_error = $this->validate_code( $snippet ) ) {
 				$snippet->active = 0;
 			}
@@ -351,12 +351,21 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 */
 	function render_scope_setting( Code_Snippet $snippet ) {
 
+		$icons = Code_Snippet::get_scope_icons();
+
+		$labels = array(
+			'global' => __( 'Run snippet everywhere', 'code-snippets' ),
+			'admin' => __( 'Only run in administration area', 'code-snippets' ),
+			'front-end' => __( 'Only run on site front-end', 'code-snippets' ),
+			'single-use' => __( 'Only run once', 'code-snippets' ),
+		);
+
 		echo '<h2 class="screen-reader-text">' . esc_html__( 'Scope', 'code-snippets' ) . '</h2><p class="snippet-scope">';
 
-		foreach ( Code_Snippet::get_scopes() as $scope => $meta ) {
-			printf( '<label><input type="radio" name="snippet_scope" value="%d"', $scope );
+		foreach ( Code_Snippet::get_all_scopes() as $scope ) {
+			printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
 			checked( $scope, $snippet->scope );
-			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', esc_attr( $meta['icon'] ), esc_html( $meta['desc'] ) );
+			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>',  $icons[ $scope ], esc_html( $labels[ $scope ] ) );
 		}
 
 		echo '</p>';

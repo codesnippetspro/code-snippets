@@ -124,7 +124,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 						'id'     => $snippet->id,
 					) ) )
 				);
-			} elseif ( 3 === $snippet->scope ) {
+			} elseif ( 'single-use' === $snippet->scope ) {
 
 				$actions['run_once'] = sprintf(
 					$link_format,
@@ -275,7 +275,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$out = esc_html( $title );
 
-		if ( 0 !== $snippet->scope ) {
+		if ( 'global' !== $snippet->scope ) {
 			$out .= ' <span class="dashicons dashicons-' . $snippet->scope_icon . '"></span>';
 		}
 
@@ -827,8 +827,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
 			foreach ( $snippets['all'] as $snippet ) {
 
-				if ( 0 != $snippet->scope ) {
-					$snippet->tags = array_merge( $snippet->tags, array( $snippet->scope_name ) );
+				if ( 'global' !== $snippet->scope ) {
+					$snippet->tags = array_merge( $snippet->tags, array( $snippet->scope ) );
 				}
 			}
 		}
@@ -1056,7 +1056,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$row_class = ( $snippet->active ? 'active' : 'inactive' );
 
 		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
-			$row_class .= sprintf( ' %s-scope', $snippet->scope_name );
+			$row_class .= sprintf( ' %s-scope', $snippet->scope );
 		}
 
 		if ( $snippet->shared_network ) {

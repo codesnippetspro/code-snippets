@@ -70,7 +70,7 @@ $snippet = get_snippet( $edit_id );
 
 			/* Make the 'Save and Activate' button the default if the setting is enabled */
 
-			if ( 'single-use' === $snippet->scope_name ) {
+			if ( 'single-use' === $snippet->scope ) {
 
 				submit_button( null, 'primary', 'save_snippet', false );
 

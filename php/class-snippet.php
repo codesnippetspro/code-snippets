@@ -33,7 +33,7 @@ class Code_Snippet {
 		'desc' => '',
 		'code' => '',
 		'tags' => array(),
-		'scope' => 0,
+		'scope' => 'global',
 		'active' => false,
 		'network' => null,
 		'shared_network' => null,
@@ -43,14 +43,11 @@ class Code_Snippet {
 		'description' => 'desc',
 	);
 
-	private static $scopes = null;
-
 	/**
 	 * Constructor function
 	 * @param array|object $fields Initial snippet fields
 	 */
 	public function __construct( $fields = null ) {
-		$this->get_scopes();
 		$this->set_fields( $fields );
 	}
 
@@ -221,10 +218,14 @@ class Code_Snippet {
 	 * @return int        The field in the correct format
 	 */
 	private function prepare_scope( $scope ) {
-		$scope = (int) $scope;
+		$scopes = self::get_all_scopes();
 
-		if ( in_array( $scope, array( 0, 1, 2, 3 ) ) ) {
+		if ( in_array( $scope, $scopes ) ) {
 			return $scope;
+		}
+
+		if ( is_numeric( $scope ) && isset( $scopes[ $scope ] ) ) {
+			return $scopes[ $scope ];
 		}
 
 		return $this->fields['scope'];
@@ -275,35 +276,25 @@ class Code_Snippet {
 		return implode( ', ', $this->fields['tags'] );
 	}
 
-	public static function get_scopes() {
+	/**
+	 * Retrieve a list of all available scopes
+	 * @return array
+	 */
+	public static function get_all_scopes() {
+		return array( 'global', 'admin', 'front-end', 'single-use' );
+	}
 
-		if ( is_null( self::$scopes ) ) {
-
-			self::$scopes = array(
-				0 => array(
-					'name' => 'global',
-					'desc' => __( 'Run snippet everywhere', 'code-snippets' ),
-					'icon' => 'admin-site',
-				),
-				1 => array(
-					'name' => 'admin',
-					'desc' => __( 'Only run in administration area', 'code-snippets' ),
-					'icon' => 'admin-tools',
-				),
-				2 => array(
-					'name' => 'front-end',
-					'desc' => __( 'Only run on site front-end', 'code-snippets' ),
-					'icon' => 'admin-appearance',
-				),
-				3 => array(
-					'name' => 'single-use',
-					'desc' => __( 'Only run once', 'code-snippets' ),
-					'icon' => 'clock',
-				),
-			);
-		}
-
-		return self::$scopes;
+	/**
+	 * Retrieve a list of all scope icons
+	 * @return array
+	 */
+	public static function get_scope_icons() {
+		return array(
+			'global' => 'admin-site',
+			'admin' => 'admin-tools',
+			'front-end' => 'admin-appearance',
+			'single-use' => 'clock',
+		);
 	}
 
 	/**
@@ -311,7 +302,7 @@ class Code_Snippet {
 	 * @return string The name of the scope
 	 */
 	private function get_scope_name() {
-		return self::$scopes[ $this->fields['scope'] ]['name'];
+		return $this->scope;
 	}
 
 	/**
@@ -319,7 +310,8 @@ class Code_Snippet {
 	 * @return string a dashicon name
 	 */
 	private function get_scope_icon() {
-		return self::$scopes[ $this->fields['scope'] ]['icon'];
+        $icons = self::get_scope_icons();
+        return $icons[ $this->scope ];
 	}
 
 	/**

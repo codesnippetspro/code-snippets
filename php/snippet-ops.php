@@ -542,10 +542,10 @@ function execute_active_snippets() {
 	/** @var wpdb $wpdb */
 	global $wpdb;
 
-	$current_scope = is_admin() ? 1 : 2;
+	$current_scope = is_admin() ? 'admin' : 'front-end';
 	$queries = array();
 
-	$sql_format = 'SELECT id, code, scope FROM %s WHERE scope IN (0, 3, %%d) ';
+	$sql_format = "SELECT id, code, scope FROM %s WHERE scope IN ('global', 'single-use', %%s) ";
 
 	/* Fetch snippets from site table */
 	if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
@@ -583,7 +583,7 @@ function execute_active_snippets() {
 			$snippet_id = intval( $snippet['id'] );
 			$code = $snippet['code'];
 
-			if ( 3 === intval( $snippet['scope'] ) ) {
+			if ( 'single-use' === $snippet['scope'] ) {
 				$wpdb->update( $table_name, array( 'active' => '0' ), array( 'id' => $snippet_id ), array( '%d' ), array( '%d' ) );
 			}
 
