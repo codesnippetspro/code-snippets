@@ -70,7 +70,7 @@ function code_snippets_get_settings_fields() {
 			'name' => __( 'Show Network Snippets', 'code-snippets' ),
 			'type' => 'checkbox',
 			'label' => __( 'Show network-wide snippets in the snippets table on subsites', 'code-snippets' ),
-			'default' => true,
+			'default' => false,
 		),
 
 		'disable_prism' => array(
