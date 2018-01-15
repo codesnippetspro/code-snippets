@@ -13,11 +13,10 @@ h2 {
 	&:first-of-type {
 		margin-top: 20px;
 	}
-}
 
-label {
-	/* What's with the pointer mouse on labels? */
-	cursor: auto;
+	label {
+		cursor: auto;
+	}
 }
 
 /* Position the description heading on the same level as the editor buttons */
