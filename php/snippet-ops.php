@@ -332,12 +332,13 @@ function update_snippet_fields( $snippet_id, $fields, $network = null ) {
  *
  * @uses save_snippet() to add the snippets to the database
  *
- * @param string     $file      The path to the file to import
- * @param bool|null  $multisite Import into network-wide table or site-wide table?
+ * @param string     $file       The path to the file to import
+ * @param bool|null  $multisite  Import into network-wide table or site-wide table?
+ * @param string     $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
  *
- * @return array|bool            An array of imported snippet IDs on success, false on failure
+ * @return array|bool An array of imported snippet IDs on success, false on failure
  */
-function import_snippets_json( $file, $multisite = null ) {
+function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' ) {
 
 	if ( ! file_exists( $file ) || ! is_file( $file ) ) {
 		return false;
@@ -348,12 +349,33 @@ function import_snippets_json( $file, $multisite = null ) {
 
 	$imported = array();
 
+	/* Get a list of existing snippet names keyed to their IDs */
+	$existing_snippets = array();
+	if ( 'replace' == $dup_action || 'skip' === $dup_action ) {
+		$all_snippets = get_snippets( array(), $multisite );
+
+		foreach ( $all_snippets as $snippet ) {
+			if ( $snippet->name ) {
+				$existing_snippets[ $snippet->name ] = $snippet->id;
+			}
+		}
+	}
+
 	/* Loop through all snippets */
 
 	/** @var DOMElement $snippet_xml */
 	foreach ( $data['snippets'] as $snippet ) {
 		$snippet = new Code_Snippet( $snippet );
 		$snippet->network = $multisite;
+
+		if ( 'ignore' !== $dup_action && isset( $existing_snippets[ $snippet->name ] ) ) {
+
+			if ( 'replace' === $dup_action ) {
+				$snippet->id = $existing_snippets[ $snippet->name ];
+			} elseif ( 'skip' === $dup_action ) {
+				continue;
+			}
+		}
 
 		/* Save the snippet and increase the counter if successful */
 		if ( $snippet_id = save_snippet( $snippet ) ) {
@@ -372,12 +394,14 @@ function import_snippets_json( $file, $multisite = null ) {
  *
  * @uses save_snippet() to add the snippets to the database
  *
- * @param string     $file      The path to the file to import
- * @param bool|null  $multisite Import into network-wide table or site-wide table?
+ * @param string     $file             The path to the file to import
+ * @param bool|null  $multisite        Import into network-wide table or site-wide table?
+ * @param string     $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
  *
- * @return array|bool            An array of imported snippet IDs on success, false on failure
+ * @return array|bool An array of imported snippet IDs on success, false on failure
  */
-function import_snippets_xml( $file, $multisite = null ) {
+function import_snippets_xml( $file, $multisite = null, $dup_action = 'ignore' ) {
+
 
 	if ( ! file_exists( $file ) || ! is_file( $file ) ) {
 		return false;
@@ -389,6 +413,18 @@ function import_snippets_xml( $file, $multisite = null ) {
 	$snippets_xml = $dom->getElementsByTagName( 'snippet' );
 	$fields = array( 'name', 'description', 'desc', 'code', 'tags', 'scope' );
 	$imported = array();
+
+	/* Get a list of existing snippet names keyed to their IDs */
+	$existing_snippets = array();
+	if ( 'replace' == $dup_action || 'skip' === $dup_action ) {
+		$all_snippets = get_snippets( array(), $multisite );
+
+		foreach ( $all_snippets as $snippet ) {
+			if ( $snippet->name ) {
+				$existing_snippets[ $snippet->name ] = $snippet->id;
+			}
+		}
+	}
 
 	/* Loop through all snippets */
 
@@ -413,6 +449,14 @@ function import_snippets_xml( $file, $multisite = null ) {
 		$scope = $snippet_xml->getAttribute( 'scope' );
 		if ( ! empty( $scope ) ) {
 			$snippet->scope = $scope;
+		}
+
+		if ( 'ignore' !== $dup_action && isset( $existing_snippets[ $snippet->name ] ) ) {
+			if ( 'replace' === $dup_action ) {
+				$snippet->id = $existing_snippets[ $snippet->name ];
+			} elseif ( 'skip' === $dup_action ) {
+				continue;
+			}
 		}
 
 		/* Save the snippet and increase the counter if successful */

@@ -20,7 +20,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<p><?php _e( 'Upload one or more Code Snippets export files and the snippets will be imported.', 'code-snippets' ); ?></p>
 
-		<p><?php printf( __( 'Afterwards, you will need to go to the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ), code_snippets()->get_menu_url( 'manage' ) ); ?></p>
+		<p><?php printf(
+				__( 'Afterwards, you will need to go to the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ),
+				code_snippets()->get_menu_url( 'manage' )
+			); ?></p>
 
 		<p><?php _e( 'Choose one or more Code Snippets (.xml or .json) files to upload, then click "Upload files and import".', 'code-snippets' ); ?></p>
 
@@ -32,6 +35,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<label for="upload"><?php _e( 'Choose a file from your computer:', 'code-snippets' ); ?></label>
 				<?php _e( '(Maximum size: 8MB)', 'code-snippets' ); ?>
 				<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="text/xml,application/json" multiple="multiple">
+			</p>
+
+			<h2>Duplicate Snippets</h2>
+
+			<p class="description">
+				<?php esc_html_e( 'What should happen if an existing snippet is found with an identical name to an imported snippet?', 'code-snippets' ); ?>
+			</p>
+
+			<p>
+				<label>
+					<input type="radio" name="duplicate_action" value="ignore" checked="checked">
+					<?php esc_html_e( 'Ignore any duplicate snippets: import all snippets from the file regardless and leave all existing snippets unchanged.', 'code-snippets' ); ?>
+				</label>
+			</p>
+
+			<p>
+				<label>
+					<input type="radio" name="duplicate_action" value="replace">
+					<?php esc_html_e( 'Replace any existing snippets with a newly imported snippet of the same name.', 'code-snippets' ); ?>
+				</label>
+			</p>
+
+			<p>
+				<label>
+					<input type="radio" name="duplicate_action" value="skip">
+					<?php esc_html_e( 'Do not import any duplicate snippets; leave all existing snippets unchanged.', 'code-snippets' ); ?>
+				</label>
 			</p>
 
 			<?php
