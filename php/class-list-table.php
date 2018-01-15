@@ -264,6 +264,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$out = esc_html( $title );
 
+		if ( 0 !== $snippet->scope ) {
+			$out .= ' <span class="dashicons dashicons-' . $snippet->scope_icon . '"></span>';
+		}
+
 		/* Only bold active snippets */
 		if ( $snippet->active ) {
 			$out = sprintf( '<strong>%s</strong>', $out );

@@ -93,7 +93,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			return;
 		}
 
-		if ( isset( $_POST['save_snippet'] ) || isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
+		if ( isset( $_POST['save_snippet'] ) || isset( $_POST['save_snippet_execute'] ) ||
+		     isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
 			$this->save_posted_snippet();
 		}
 
@@ -203,10 +204,17 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			}
 		}
 
+		if ( isset( $_POST['save_snippet_execute'] ) && 3 !== $snippet->scope ) {
+			unset( $_POST['save_snippet_execute'] );
+			$_POST['save_snippet'] = 'yes';
+		}
+
 		/* Activate or deactivate the snippet before saving if we clicked the button */
 
-		// Shared network snippets cannot be network activated
-		if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
+		if ( isset( $_POST['save_snippet_execute'] ) ) {
+			$snippet->active = 1;
+		} elseif ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
+			// Shared network snippets cannot be network activated
 			$snippet->active = 0;
 			unset( $_POST['save_snippet_activate'], $_POST['save_snippet_deactivate'] );
 		} elseif ( isset( $_POST['save_snippet_activate'] ) ) {
@@ -216,7 +224,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		/* Deactivate snippet if code contains errors */
-		if ( $snippet->active ) {
+		if ( $snippet->active && 3 !== $snippet->scope ) {
 			if ( $code_error = $this->validate_code( $snippet ) ) {
 				$snippet->active = 0;
 			}
@@ -265,6 +273,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			$result .= '-and-activated';
 		} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
 			$result .= '-and-deactivated';
+		} elseif ( isset( $_POST['save_snippet_execute' ] ) ) {
+			$result .= '-and-executed';
 		}
 
 		/* Redirect to edit snippet page */
@@ -341,20 +351,12 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 */
 	function render_scope_setting( Code_Snippet $snippet ) {
 
-		$scopes = array(
-			__( 'Run snippet everywhere', 'code-snippets' ),
-			__( 'Only run in administration area', 'code-snippets' ),
-			__( 'Only run on site front-end', 'code-snippets' ),
-		);
+		echo '<h2 class="screen-reader-text">' . esc_html__( 'Scope', 'code-snippets' ) . '</h2><p class="snippet-scope">';
 
-		$icons = array( 'site', 'tools', 'appearance' );
-
-		echo '<h2 class="screen-reader-text">' . __( 'Scope', 'code-snippets' ) . '</h2><p class="snippet-scope">';
-
-		foreach ( $scopes as $scope => $label ) {
+		foreach ( Code_Snippet::get_scopes() as $scope => $meta ) {
 			printf( '<label><input type="radio" name="snippet_scope" value="%d"', $scope );
 			checked( $scope, $snippet->scope );
-			printf( '> <span class="dashicons dashicons-admin-%s"></span> %s</label>', $icons[ $scope ], $label );
+			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', esc_attr( $meta['icon'] ), esc_html( $meta['desc'] ) );
 		}
 
 		echo '</p>';
@@ -373,7 +375,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			<label for="snippet_sharing">
 				<input type="checkbox" name="snippet_sharing"
 				<?php checked( in_array( $snippet->id, $shared_snippets ) ); ?>>
-				<?php _e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
+				<?php esc_html_e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
 			</label>
 		</div>
 
@@ -453,6 +455,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			'added' => __( 'Snippet <strong>added</strong>.', 'code-snippets' ),
 			'updated' => __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
 			'added-and-activated' => __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ),
+			'updated-and-executed' => __( 'Snippet <strong>added</strong> and <strong>executed</strong>.', 'code-snippets' ),
 			'updated-and-activated' => __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ),
 			'updated-and-deactivated' => __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ),
 		);

@@ -2,24 +2,16 @@
  * Custom styling for the snippets table
  */
 
-%icon-after {
-	padding-left: 5px;
-	font-family: "dashicons";
-	vertical-align: top;
-}
+.column-name {
 
-.column-name > a {
-
-	.admin-scope &::after {
-		@extend %icon-after;
-		font-size: 14px;
-		content: "\f107";
+	.dashicons {
+		font-size: 16px;
+		width: 16px;
+		height: 16px;
 	}
 
-	.front-end-scope &::after {
-		@extend %icon-after;
-		font-size: 16px;
-		content: "\f100";
+	.dashicons-clock {
+		vertical-align: middle;
 	}
 }
 
