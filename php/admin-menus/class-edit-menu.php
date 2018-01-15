@@ -273,7 +273,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			$result .= '-and-activated';
 		} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
 			$result .= '-and-deactivated';
-		} elseif ( isset( $_POST['save_snippet_execute' ] ) ) {
+		} elseif ( isset( $_POST['save_snippet_execute'] ) ) {
 			$result .= '-and-executed';
 		}
 
