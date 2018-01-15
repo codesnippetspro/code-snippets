@@ -262,20 +262,21 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
-		$out = sprintf( '<strong>%s</strong>', esc_html( $title ) );
+		$out = esc_html( $title );
+
+		/* Only bold active snippets */
+		if ( $snippet->active ) {
+			$out = sprintf( '<strong>%s</strong>', $out );
+		}
 
 		/* Add a link to the snippet if it isn't an unreadable network-only snippet */
 		if ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
 
 			$out = sprintf(
-				'<a href="%s"><strong>%s</strong></a>',
+				'<a href="%s">%s</a>',
 				code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ),
 				$out
 			);
-		}
-
-		if ( $snippet->shared_network && ! current_user_can( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) ) ) {
-			$out = sprintf( '<a><strong>%s</strong></a>', esc_html( $title ) );
 		}
 
 		if ( $snippet->shared_network ) {
