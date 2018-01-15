@@ -124,6 +124,17 @@ class Code_Snippets_List_Table extends WP_List_Table {
 						'id'     => $snippet->id,
 					) ) )
 				);
+			} elseif ( 3 === $snippet->scope ) {
+
+				$actions['run_once'] = sprintf(
+					$link_format,
+					esc_html__( 'Run Once', 'code-snippets' ),
+					esc_url( add_query_arg( array(
+						'action' => 'run-once',
+						'id'     => $snippet->id,
+					) ) )
+				);
+
 			} else {
 				$actions['activate'] = sprintf(
 					$link_format,
@@ -596,6 +607,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			if ( 'activate' === $action ) {
 				activate_snippet( $id, $this->is_network );
 				$result = 'activated';
+			}
+			elseif ( 'run-once' === $action ) {
+				activate_snippet( $id, $this->is_network );
+				$result = 'executed';
 			}
 			elseif ( 'deactivate' === $action ) {
 				deactivate_snippet( $id, $this->is_network );

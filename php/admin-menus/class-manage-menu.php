@@ -84,6 +84,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		echo $this->get_result_message(
 			array(
+				'executed' => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
 				'activated' => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
 				'activated-multi' => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
 				'deactivated' => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),

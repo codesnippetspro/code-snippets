@@ -500,7 +500,7 @@ function execute_active_snippets() {
 			$code = $snippet['code'];
 
 			if ( 3 === intval( $snippet['scope'] ) ) {
-				$wpdb->update( $table_name, array( 'active' => '0' ), array( 'id' => $snippet_id ), null, array( '%d' ) );
+				$wpdb->update( $table_name, array( 'active' => '0' ), array( 'id' => $snippet_id ), array( '%d' ), array( '%d' ) );
 			}
 
 			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
