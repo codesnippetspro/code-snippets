@@ -201,7 +201,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		/* Don't add Edit/Export/Delete actions for if current user can't manage network snippets */
-		if ( ! current_user_can( apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' ) ) ) {
+		if ( ! current_user_can( code_snippets()->get_network_cap_name() ) ) {
 			return $actions;
 		}
 
