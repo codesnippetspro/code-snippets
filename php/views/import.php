@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<p><?php printf( __( 'Afterwards, you will need to go to the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ), code_snippets()->get_menu_url( 'manage' ) ); ?></p>
 
-		<p><?php _e( 'Choose one or more Code Snippets (.xml) files to upload, then click Upload files and import.', 'code-snippets' ); ?></p>
+		<p><?php _e( 'Choose one or more Code Snippets (.xml or .json) files to upload, then click "Upload files and import".', 'code-snippets' ); ?></p>
 
 		<form enctype="multipart/form-data" method="post" action="" id="import-upload-form" name="code_snippets_import">
 			<p>
@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<label for="upload"><?php _e( 'Choose a file from your computer:', 'code-snippets' ); ?></label>
 				<?php _e( '(Maximum size: 8MB)', 'code-snippets' ); ?>
-				<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="text/xml" multiple="multiple">
+				<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="text/xml,application/json" multiple="multiple">
 			</p>
 
 			<?php

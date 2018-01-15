@@ -326,18 +326,58 @@ function update_snippet_fields( $snippet_id, $fields, $network = null ) {
 }
 
 /**
+ * Imports snippets from a JSON file
+ *
+ * @since 2.9.7
+ *
+ * @uses save_snippet() to add the snippets to the database
+ *
+ * @param string     $file      The path to the file to import
+ * @param bool|null  $multisite Import into network-wide table or site-wide table?
+ *
+ * @return array|bool            An array of imported snippet IDs on success, false on failure
+ */
+function import_snippets_json( $file, $multisite = null ) {
+
+	if ( ! file_exists( $file ) || ! is_file( $file ) ) {
+		return false;
+	}
+
+	$raw_data = file_get_contents( $file );
+	$data = json_decode( $raw_data, true );
+
+	$imported = array();
+
+	/* Loop through all snippets */
+
+	/** @var DOMElement $snippet_xml */
+	foreach ( $data['snippets'] as $snippet ) {
+		$snippet = new Code_Snippet( $snippet );
+		$snippet->network = $multisite;
+
+		/* Save the snippet and increase the counter if successful */
+		if ( $snippet_id = save_snippet( $snippet ) ) {
+			$imported[] = $snippet_id;
+		}
+	}
+
+	do_action( 'code_snippets/import/json', $file, $multisite );
+	return $imported;
+}
+
+/**
  * Imports snippets from an XML file
  *
  * @since 2.0
  *
  * @uses save_snippet() to add the snippets to the database
  *
- * @param string     $file      The path to the XML file to import
+ * @param string     $file      The path to the file to import
  * @param bool|null  $multisite Import into network-wide table or site-wide table?
  *
  * @return array|bool            An array of imported snippet IDs on success, false on failure
  */
-function import_snippets( $file, $multisite = null ) {
+function import_snippets_xml( $file, $multisite = null ) {
 
 	if ( ! file_exists( $file ) || ! is_file( $file ) ) {
 		return false;
@@ -348,7 +388,7 @@ function import_snippets( $file, $multisite = null ) {
 
 	$snippets_xml = $dom->getElementsByTagName( 'snippet' );
 	$fields = array( 'name', 'description', 'desc', 'code', 'tags', 'scope' );
-	$exported_snippets = array();
+	$imported = array();
 
 	/* Loop through all snippets */
 
@@ -377,16 +417,16 @@ function import_snippets( $file, $multisite = null ) {
 
 		/* Save the snippet and increase the counter if successful */
 		if ( $snippet_id = save_snippet( $snippet ) ) {
-			$exported_snippets[] = $snippet_id;
+			$imported[] = $snippet_id;
 		}
 	}
 
-	do_action( 'code_snippets/import', $dom, $multisite );
-	return $exported_snippets;
+	do_action( 'code_snippets/import/xml', $file, $multisite );
+	return $imported;
 }
 
 /**
- * Exports snippets as an XML file
+ * Exports snippets as an XML, JSON or PHP file
  *
  * @since 2.0
  * @uses Code_Snippets_Export to export selected snippets

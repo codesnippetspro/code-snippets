@@ -57,8 +57,14 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Loop through the uploaded files and import the snippets */
 
-		foreach ( $_FILES['code_snippets_import_files']['tmp_name'] as $import_file ) {
-			$result = import_snippets( $import_file, $network );
+		foreach ( $_FILES['code_snippets_import_files']['tmp_name'] as $i => $import_file ) {
+
+			if ( 'application/json' === $_FILES['code_snippets_import_files']['type'][ $i ] ) {
+				$result = import_snippets_json( $import_file, $network );
+			} else {
+				$result = import_snippets_xml( $import_file, $network );
+			}
+
 			$count += count( $result );
 		}
 
