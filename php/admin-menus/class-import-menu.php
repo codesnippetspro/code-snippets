@@ -35,35 +35,35 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 		$contextual_help = new Code_Snippets_Contextual_Help( 'import' );
 		$contextual_help->load();
 
-		$this->process_import_file();
+		$this->process_import_files();
 	}
 
 	/**
-	 * Process the uploaded import file
+	 * Process the uploaded import files
 	 *
 	 * @uses import_snippets() to process the import file
 	 * @uses wp_redirect() to pass the import results to the page
 	 * @uses add_query_arg() to append the results to the current URI
 	 */
-	private function process_import_file() {
+	private function process_import_files() {
 
 		/* Ensure the import file exists */
-		if ( ! isset( $_FILES['code_snippets_import_file']['tmp_name'] ) ) {
+		if ( ! isset( $_FILES['code_snippets_import_files'] ) || ! count( $_FILES['code_snippets_import_files'] ) ) {
 			return;
 		}
 
+		$count = 0;
 		$network = get_current_screen()->in_admin( 'network' );
 
-		/* Import the snippets  */
-		$result = import_snippets( $_FILES['code_snippets_import_file']['tmp_name'], $network );
+		/* Loop through the uploaded files and import the snippets */
+
+		foreach ( $_FILES['code_snippets_import_files']['tmp_name'] as $import_file ) {
+			$result = import_snippets( $import_file, $network );
+			$count += count( $result );
+		}
 
 		/* Send the amount of imported snippets to the page */
-		$url = add_query_arg(
-			$result ?
-			array( 'imported' => count( $result ) ) :
-			array( 'error' => true )
-		);
-
+		$url = add_query_arg( $count > 0 ? array( 'imported' => $count ) : array( 'error' => true ) );
 		wp_redirect( esc_url_raw( $url ) );
 		exit;
 	}

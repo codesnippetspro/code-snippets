@@ -332,8 +332,9 @@ function update_snippet_fields( $snippet_id, $fields, $network = null ) {
  *
  * @uses save_snippet() to add the snippets to the database
  *
- * @param  string     $file      The path to the XML file to import
- * @param  bool|null  $multisite Import into network-wide table or site-wide table?
+ * @param string     $file      The path to the XML file to import
+ * @param bool|null  $multisite Import into network-wide table or site-wide table?
+ *
  * @return array|bool            An array of imported snippet IDs on success, false on failure
  */
 function import_snippets( $file, $multisite = null ) {

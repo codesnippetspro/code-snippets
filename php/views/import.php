@@ -18,25 +18,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div class="narrow">
 
-		<p><?php _e( 'Howdy! Upload your Code Snippets export file and we&#8217;ll import the snippets to this site.', 'code-snippets' ); ?></p>
+		<p><?php _e( 'Upload one or more Code Snippets export files and the snippets will be imported.', 'code-snippets' ); ?></p>
 
-		<p><?php printf( __( 'You will need to go to the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ), code_snippets_get_menu_url( 'manage' ) ); ?></p>
+		<p><?php printf( __( 'Afterwards, you will need to go to the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ), code_snippets()->get_menu_url( 'manage' ) ); ?></p>
 
-		<p><?php _e( 'Choose a Code Snippets (.xml) file to upload, then click Upload file and import.', 'code-snippets' ); ?></p>
+		<p><?php _e( 'Choose one or more Code Snippets (.xml) files to upload, then click Upload files and import.', 'code-snippets' ); ?></p>
 
 		<form enctype="multipart/form-data" method="post" action="" id="import-upload-form" name="code_snippets_import">
 			<p>
-				<input type="hidden" name="action" value="save" />
-				<input type="hidden" name="max_file_size" value="8388608" />
+				<input type="hidden" name="action" value="save">
+				<input type="hidden" name="max_file_size" value="8388608">
 
 				<label for="upload"><?php _e( 'Choose a file from your computer:', 'code-snippets' ); ?></label>
 				<?php _e( '(Maximum size: 8MB)', 'code-snippets' ); ?>
-				<input type="file" id="upload" name="code_snippets_import_file" size="25" accept="text/xml" />
+				<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="text/xml" multiple="multiple">
 			</p>
 
 			<?php
 				do_action( 'code_snippets/admin/import_form' );
-				submit_button( __( 'Upload file and import', 'code-snippets' ) );
+				submit_button( __( 'Upload files and import', 'code-snippets' ) );
 			?>
 		</form>
 	</div>
