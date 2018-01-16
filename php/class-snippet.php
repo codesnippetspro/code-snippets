@@ -310,8 +310,8 @@ class Code_Snippet {
 	 * @return string a dashicon name
 	 */
 	private function get_scope_icon() {
-        $icons = self::get_scope_icons();
-        return $icons[ $this->scope ];
+		$icons = self::get_scope_icons();
+		return $icons[ $this->scope ];
 	}
 
 	/**

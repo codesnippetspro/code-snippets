@@ -20,7 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<p><?php _e( 'Upload one or more Code Snippets export files and the snippets will be imported.', 'code-snippets' ); ?></p>
 
-		<p><?php printf(
+		<p><?php
+			printf(
 				__( 'Afterwards, you will need to go to the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ),
 				code_snippets()->get_menu_url( 'manage' )
 			); ?></p>

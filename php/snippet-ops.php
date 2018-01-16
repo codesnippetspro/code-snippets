@@ -402,7 +402,6 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
  */
 function import_snippets_xml( $file, $multisite = null, $dup_action = 'ignore' ) {
 
-
 	if ( ! file_exists( $file ) || ! is_file( $file ) ) {
 		return false;
 	}

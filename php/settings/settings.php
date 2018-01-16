@@ -103,7 +103,6 @@ function code_snippets_register_settings() {
 		if ( ! get_site_option( 'code_snippets_settings', false ) ) {
 			add_site_option( 'code_snippets_settings', code_snippets_get_default_settings() );
 		}
-
 	} else {
 
 		if ( ! get_option( 'code_snippets_settings', false ) ) {

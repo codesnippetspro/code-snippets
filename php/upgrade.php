@@ -30,9 +30,9 @@ function code_snippets_upgrader() {
 
 		/* Update the scope column of the database */
 		if ( version_compare( $prev_version, '2.9.7', '<' ) ) {
-			$wpdb->query( "UPDATE {$wpdb->snippets} SET scope = 'global' WHERE scope = 0");
-			$wpdb->query( "UPDATE {$wpdb->snippets} SET scope = 'admin' WHERE scope = 1");
-			$wpdb->query( "UPDATE {$wpdb->snippets} SET scope = 'front-end' WHERE scope = 2");
+			$wpdb->query( "UPDATE {$wpdb->snippets} SET scope = 'global' WHERE scope = 0" );
+			$wpdb->query( "UPDATE {$wpdb->snippets} SET scope = 'admin' WHERE scope = 1" );
+			$wpdb->query( "UPDATE {$wpdb->snippets} SET scope = 'front-end' WHERE scope = 2" );
 		}
 
 		/* Custom capabilities were removed after version 2.9.5 */
@@ -57,9 +57,9 @@ function code_snippets_upgrader() {
 
 			/* Update the scope column of the database */
 			if ( version_compare( $prev_version, '2.9.7', '<' ) ) {
-				$wpdb->query( "UPDATE {$wpdb->ms_snippets} SET scope = 'global' WHERE scope = 0");
-				$wpdb->query( "UPDATE {$wpdb->ms_snippets} SET scope = 'admin' WHERE scope = 1");
-				$wpdb->query( "UPDATE {$wpdb->ms_snippets} SET scope = 'front-end' WHERE scope = 2");
+				$wpdb->query( "UPDATE {$wpdb->ms_snippets} SET scope = 'global' WHERE scope = 0" );
+				$wpdb->query( "UPDATE {$wpdb->ms_snippets} SET scope = 'admin' WHERE scope = 1" );
+				$wpdb->query( "UPDATE {$wpdb->ms_snippets} SET scope = 'front-end' WHERE scope = 2" );
 			}
 
 			/* Custom capabilities were removed after version 2.9.5 */
