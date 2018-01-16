@@ -801,7 +801,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$snippets = array_fill_keys( $this->statuses, array() );
 
 		/* Fetch all snippets */
-		if ( is_multisite() && ! $this->is_network && code_snippets_get_setting( 'general', 'show_network_snippets' ) ) {
+		if ( is_multisite() && ! $this->is_network && current_user_can( code_snippets()->get_network_cap_name() ) &&
+		     code_snippets_get_setting( 'general', 'show_network_snippets' ) ) {
 			$network_snippets = get_snippets( array(), true );
 			$network_snippets = array_filter( $network_snippets, array( $this, 'exclude_shared_network_snippets' ) );
 
