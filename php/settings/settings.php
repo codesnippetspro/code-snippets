@@ -7,6 +7,24 @@
  */
 
 /**
+ * Returns 'true' if plugin settings are unified on a multisite installation
+ * under the Network Admin settings menu
+ *
+ * This option is controlled by the "Enable administration menus" setting on the Network Settings menu
+ *
+ * @return bool
+ */
+function code_snippets_unified_settings() {
+
+	if ( ! is_multisite() ) {
+		return false;
+	}
+
+	$menu_perms = get_site_option( 'menu_items', array() );
+	return empty( $menu_perms['snippets_settings'] );
+}
+
+/**
  * Retrieve the setting values from the database.
  * If a setting does not exist in the database, the default value will be returned.
  *
@@ -23,7 +41,9 @@ function code_snippets_get_settings() {
 	$settings = code_snippets_get_default_settings();
 
 	/* Retrieve saved settings from the database */
-	$saved = get_option( 'code_snippets_settings', array() );
+	$saved = code_snippets_unified_settings() ?
+		get_site_option( 'code_snippets_settings', array() ) :
+		get_option( 'code_snippets_settings', array() );
 
 	/* Replace the default field values with the ones saved in the database */
 	if ( function_exists( 'array_replace_recursive' ) ) {
@@ -78,8 +98,17 @@ function code_snippets_get_settings_sections() {
  */
 function code_snippets_register_settings() {
 
-	if ( ! get_option( 'code_snippets_settings', false ) ) {
-		add_option( 'code_snippets_settings', code_snippets_get_default_settings() );
+	if ( code_snippets_unified_settings() ) {
+
+		if ( ! get_site_option( 'code_snippets_settings', false ) ) {
+			add_site_option( 'code_snippets_settings', code_snippets_get_default_settings() );
+		}
+
+	} else {
+
+		if ( ! get_option( 'code_snippets_settings', false ) ) {
+			add_option( 'code_snippets_settings', code_snippets_get_default_settings() );
+		}
 	}
 
 	/* Register the setting */

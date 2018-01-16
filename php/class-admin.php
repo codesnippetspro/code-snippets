@@ -21,7 +21,7 @@ class Code_Snippets_Admin {
 		$this->menus['edit']   = new Code_Snippets_Edit_Menu();
 		$this->menus['import'] = new Code_Snippets_Import_Menu();
 
-		if ( ! is_network_admin() ) {
+		if ( is_network_admin() === code_snippets_unified_settings() ) {
 			$this->menus['settings'] = new Code_Snippets_Settings_Menu();
 		}
 
@@ -59,6 +59,7 @@ class Code_Snippets_Admin {
 	 */
 	function mu_menu_items( $menu_items ) {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
+		$menu_items['snippets_settings'] = __( 'Snippets &raquo; Settings', 'code-snippets' );
 		return $menu_items;
 	}
 
