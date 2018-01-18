@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.10.0 (18 Jan 2018)
+* Improved: Added support for importing from multiple export files at once
+* Improved: Unbold the titles of inactive snippets for greater visual distinction
+* Added: New scope for single-use snippets
+* Improved: Don't show network snippets on subsites by default, and only to super admins
+* Improved: Export snippets to JSON instead of XML
+* Improved: More options for importing duplicate snippets
+* Improved: Use strings for representing scopes internally instead of numbers
+* Added: Allowed plugin settings to be unified on multisite through Network Settings option
+* Fixed: Issue with incorrectly treating network snippets as site-wide for code validation
+* Improved: Rename 'Export to PHP' to 'Download', and add button to edit snippet page
+
 ## 2.9.6 (14 Jan 2018)
 * Added Brazilian Portuguese translation by [Bruno Borges](http://brunoborges.info)
 * Fixed: Use standard WordPress capabilities instead of custom capabilities to prevent lockouts

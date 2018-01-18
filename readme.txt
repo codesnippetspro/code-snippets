@@ -4,7 +4,7 @@ Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.9.1
-Stable tag: 2.9.6
+Stable tag: 2.10.0
 License: MIT
 License URI: license.txt
 
@@ -110,6 +110,18 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.10.0 (18 Jan 2018) =
+* Improved: Added support for importing from multiple export files at once
+* Improved: Unbold the titles of inactive snippets for greater visual distinction
+* Added: New scope for single-use snippets
+* Improved: Don't show network snippets on subsites by default, and only to super admins
+* Improved: Export snippets to JSON instead of XML
+* Improved: More options for importing duplicate snippets
+* Improved: Use strings for representing scopes internally instead of numbers
+* Added: Allowed plugin settings to be unified on multisite through Network Settings option
+* Fixed: Issue with incorrectly treating network snippets as site-wide for code validation
+* Improved: Rename 'Export to PHP' to 'Download', and add button to edit snippet page
 
 = 2.9.6 (14 Jan 2018) =
 * Added Brazilian Portuguese translation by [Bruno Borges](http://brunoborges.info)
@@ -493,6 +505,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.10.0 =
+Improvements for multisite and new single-use snippet scope
 
 = 2.9.5 =
 Fixed issue with saving snippets on multisite

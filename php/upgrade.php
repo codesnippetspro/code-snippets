@@ -29,7 +29,7 @@ function code_snippets_upgrader() {
 		update_option( 'code_snippets_version', CODE_SNIPPETS_VERSION );
 
 		/* Update the scope column of the database */
-		if ( version_compare( $prev_version, '2.9.7', '<' ) ) {
+		if ( version_compare( $prev_version, '2.10.0', '<' ) ) {
 			$wpdb->query( "UPDATE {$wpdb->snippets} SET scope = 'global' WHERE scope = 0" );
 			$wpdb->query( "UPDATE {$wpdb->snippets} SET scope = 'admin' WHERE scope = 1" );
 			$wpdb->query( "UPDATE {$wpdb->snippets} SET scope = 'front-end' WHERE scope = 2" );
@@ -56,7 +56,7 @@ function code_snippets_upgrader() {
 			update_site_option( 'code_snippets_version', CODE_SNIPPETS_VERSION );
 
 			/* Update the scope column of the database */
-			if ( version_compare( $prev_version, '2.9.7', '<' ) ) {
+			if ( version_compare( $prev_version, '2.10.0', '<' ) ) {
 				$wpdb->query( "UPDATE {$wpdb->ms_snippets} SET scope = 'global' WHERE scope = 0" );
 				$wpdb->query( "UPDATE {$wpdb->ms_snippets} SET scope = 'admin' WHERE scope = 1" );
 				$wpdb->query( "UPDATE {$wpdb->ms_snippets} SET scope = 'front-end' WHERE scope = 2" );

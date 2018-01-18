@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.9.6\n"
+"Project-Id-Version: code-snippets 2.10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-14 22:42+1100\n"
+"POT-Creation-Date: 2018-01-18 16:05+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgid "You are not authorized to access this page."
 msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:13
-#: php/admin-menus/class-edit-menu.php:14 php/views/edit.php:25
+#: php/admin-menus/class-edit-menu.php:14 php/views/edit.php:23
 msgid "Edit Snippet"
 msgstr ""
 
@@ -32,104 +32,112 @@ msgctxt "menu label"
 msgid "Add New"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:40 php/views/edit.php:31
+#: php/admin-menus/class-edit-menu.php:40 php/views/edit.php:29
 msgid "Add New Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:156
+#: php/admin-menus/class-edit-menu.php:162
 msgid "Don't Panic"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:157
+#: php/admin-menus/class-edit-menu.php:163
 #, php-format
 msgid ""
 "The code snippet you are trying to save produced a fatal error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:159
+#: php/admin-menus/class-edit-menu.php:165
 msgid ""
 "The previous version of the snippet is unchanged, and the rest of this site "
 "should be functioning normally as before."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:160
+#: php/admin-menus/class-edit-menu.php:166
 msgid ""
 "Please use the back button in your browser to return to the previous page "
 "and try to fix the code error."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:161
+#: php/admin-menus/class-edit-menu.php:167
 msgid ""
 "If you prefer, you can close this page and discard the changes you just "
 "made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:286 php/class-list-table.php:347
+#: php/admin-menus/class-edit-menu.php:301 php/class-list-table.php:363
 msgid "Description"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:319 php/class-list-table.php:348
+#: php/admin-menus/class-edit-menu.php:334 php/class-list-table.php:364
 msgid "Tags"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:324
+#: php/admin-menus/class-edit-menu.php:339
 msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:345
+#: php/admin-menus/class-edit-menu.php:362
 msgid "Run snippet everywhere"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:346
+#: php/admin-menus/class-edit-menu.php:363
 msgid "Only run in administration area"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:347
+#: php/admin-menus/class-edit-menu.php:364
 msgid "Only run on site front-end"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:352
+#: php/admin-menus/class-edit-menu.php:365
+msgid "Only run once"
+msgstr ""
+
+#: php/admin-menus/class-edit-menu.php:368
 msgid "Scope"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:372
+#: php/admin-menus/class-edit-menu.php:388
 msgid "Sharing Settings"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:376
+#: php/admin-menus/class-edit-menu.php:392
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:436
+#: php/admin-menus/class-edit-menu.php:452
 #, php-format
 msgid "The snippet has been deactivated due to an error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:441
+#: php/admin-menus/class-edit-menu.php:457
 msgid "The snippet has been deactivated due to an error in the code."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:448
+#: php/admin-menus/class-edit-menu.php:464
 msgid "An error occurred when saving the snippet."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:453
+#: php/admin-menus/class-edit-menu.php:469
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:454
+#: php/admin-menus/class-edit-menu.php:470
 msgid "Snippet <strong>updated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:455
+#: php/admin-menus/class-edit-menu.php:471
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:456
+#: php/admin-menus/class-edit-menu.php:472
+msgid "Snippet <strong>added</strong> and <strong>executed</strong>."
+msgstr ""
+
+#: php/admin-menus/class-edit-menu.php:473
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:457
+#: php/admin-menus/class-edit-menu.php:474
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
@@ -142,15 +150,15 @@ msgstr ""
 msgid "Import Snippets"
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:84
+#: php/admin-menus/class-import-menu.php:94
 msgid "Code Snippets"
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:85
+#: php/admin-menus/class-import-menu.php:95
 msgid "Import snippets from a code snippets export file"
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:99
+#: php/admin-menus/class-import-menu.php:111
 #, php-format
 msgid ""
 "Successfully imported <strong>%d</strong> snippet. <a href=\"%s\">Have fun!</"
@@ -161,7 +169,7 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/admin-menus/class-import-menu.php:112
+#: php/admin-menus/class-import-menu.php:123
 msgid "An error occurred when processing the import file."
 msgstr ""
 
@@ -172,7 +180,7 @@ msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:23
 #: php/admin-menus/class-manage-menu.php:45 php/class-admin.php:61
-#: php/class-admin.php:149 php/views/manage.php:19
+#: php/class-admin.php:150 php/views/manage.php:19
 msgid "Snippets"
 msgstr ""
 
@@ -190,26 +198,30 @@ msgid ""
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:87
-msgid "Snippet <strong>activated</strong>."
+msgid "Snippet <strong>executed</strong>."
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:88
-msgid "Selected snippets <strong>activated</strong>."
+msgid "Snippet <strong>activated</strong>."
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:89
-msgid "Snippet <strong>deactivated</strong>."
+msgid "Selected snippets <strong>activated</strong>."
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:90
-msgid "Selected snippets <strong>deactivated</strong>."
+msgid "Snippet <strong>deactivated</strong>."
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:91
-msgid "Snippet <strong>deleted</strong>."
+msgid "Selected snippets <strong>deactivated</strong>."
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:92
+msgid "Snippet <strong>deleted</strong>."
+msgstr ""
+
+#: php/admin-menus/class-manage-menu.php:93
 msgid "Selected snippets <strong>deleted</strong>."
 msgstr ""
 
@@ -222,50 +234,58 @@ msgstr ""
 msgid "Snippets Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:39
+#: php/admin-menus/class-settings-menu.php:46
 msgid "Settings"
 msgstr ""
 
-#: php/class-admin.php:148
+#: php/admin-menus/class-settings-menu.php:81 php/settings/settings.php:204
+msgid "Settings saved."
+msgstr ""
+
+#: php/class-admin.php:62
+msgid "Snippets &raquo; Settings"
+msgstr ""
+
+#: php/class-admin.php:149
 msgid "Manage your existing snippets"
 msgstr ""
 
-#: php/class-admin.php:179
+#: php/class-admin.php:180
 msgid "Visit the WordPress.org plugin page"
 msgstr ""
 
-#: php/class-admin.php:180
+#: php/class-admin.php:181
 msgid "About"
 msgstr ""
 
-#: php/class-admin.php:184
+#: php/class-admin.php:185
 msgid "Visit the support forums"
 msgstr ""
 
-#: php/class-admin.php:185
+#: php/class-admin.php:186
 msgid "Support"
 msgstr ""
 
-#: php/class-admin.php:189
+#: php/class-admin.php:190
 msgid "Support this plugin's development"
 msgstr ""
 
-#: php/class-admin.php:190
+#: php/class-admin.php:191
 msgid "Donate"
 msgstr ""
 
-#: php/class-admin.php:221
+#: php/class-admin.php:222
 msgid ""
 "<strong>Have feedback on Code Snippets?</strong> Please take the time to "
 "answer a short survey on how you use this plugin and what you'd like to see "
 "changed or added in the future."
 msgstr ""
 
-#: php/class-admin.php:225
+#: php/class-admin.php:226
 msgid "Take the survey now"
 msgstr ""
 
-#: php/class-admin.php:228
+#: php/class-admin.php:229
 msgid "Dismiss"
 msgstr ""
 
@@ -460,45 +480,45 @@ msgid ""
 "<a href=\"%s\">Manage Snippets</a> page."
 msgstr ""
 
-#: php/class-export.php:87
+#: php/class-export.php:89
 msgid ""
 "This is a code snippets export file generated by the Code Snippets WordPress "
 "plugin."
 msgstr ""
 
-#: php/class-export.php:89
+#: php/class-export.php:91
 msgid "To import these snippets a WordPress site follow these steps:"
 msgstr ""
 
-#: php/class-export.php:90
+#: php/class-export.php:92
 msgid "1. Log in to that site as an administrator."
 msgstr ""
 
-#: php/class-export.php:91
+#: php/class-export.php:93
 msgid ""
 "2. Install the Code Snippets plugin using the directions provided at the "
 "above link."
 msgstr ""
 
-#: php/class-export.php:92
+#: php/class-export.php:94
 msgid "3. Go to 'Tools: Import' in the WordPress admin panel."
 msgstr ""
 
-#: php/class-export.php:93
+#: php/class-export.php:95
 msgid "4. Click on the \"Code Snippets\" importer in the list"
 msgstr ""
 
-#: php/class-export.php:94
+#: php/class-export.php:96
 msgid "5. Upload this file using the form provided on that page."
 msgstr ""
 
-#: php/class-export.php:95
+#: php/class-export.php:97
 msgid ""
 "6. Code Snippets will then import all of the snippets and associated "
 "information contained in this file into your site."
 msgstr ""
 
-#: php/class-export.php:96
+#: php/class-export.php:98
 msgid ""
 "7. You will then have to visit the 'Snippets: All Snippets' admin menu and "
 "activate desired snippets."
@@ -508,139 +528,143 @@ msgstr ""
 msgid "Snippets per page"
 msgstr ""
 
-#: php/class-list-table.php:121 php/class-list-table.php:393
+#: php/class-list-table.php:121 php/class-list-table.php:409
 msgid "Network Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:121 php/class-list-table.php:194
-#: php/class-list-table.php:393
+#: php/class-list-table.php:121 php/class-list-table.php:205
+#: php/class-list-table.php:409
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:130 php/class-list-table.php:392
+#: php/class-list-table.php:131
+msgid "Run Once"
+msgstr ""
+
+#: php/class-list-table.php:141 php/class-list-table.php:408
 msgid "Network Activate"
 msgstr ""
 
-#: php/class-list-table.php:130 php/class-list-table.php:194
-#: php/class-list-table.php:392
+#: php/class-list-table.php:141 php/class-list-table.php:205
+#: php/class-list-table.php:408
 msgid "Activate"
 msgstr ""
 
-#: php/class-list-table.php:140 php/class-list-table.php:210
+#: php/class-list-table.php:151 php/class-list-table.php:221
 msgid "Edit"
 msgstr ""
 
-#: php/class-list-table.php:146 php/class-list-table.php:216
-#: php/class-list-table.php:394 php/views/edit.php:111
+#: php/class-list-table.php:157 php/class-list-table.php:227
+#: php/class-list-table.php:411 php/views/edit.php:122
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:155 php/class-list-table.php:228
-#: php/class-list-table.php:395 php/views/edit.php:124
+#: php/class-list-table.php:166 php/class-list-table.php:239
+#: php/class-list-table.php:412 php/views/edit.php:135
 msgid "Delete"
 msgstr ""
 
-#: php/class-list-table.php:162 php/class-list-table.php:238
+#: php/class-list-table.php:173 php/class-list-table.php:249
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:163 php/class-list-table.php:239
-#: php/views/edit.php:119
+#: php/class-list-table.php:174 php/class-list-table.php:250
+#: php/views/edit.php:130
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
-#: php/class-list-table.php:170
+#: php/class-list-table.php:181
 msgid "Network Active"
 msgstr ""
 
-#: php/class-list-table.php:172
+#: php/class-list-table.php:183
 msgid "Network Only"
 msgstr ""
 
-#: php/class-list-table.php:259
+#: php/class-list-table.php:270
 #, php-format
 msgid "Untitled #%d"
 msgstr ""
 
-#: php/class-list-table.php:282
+#: php/class-list-table.php:298
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:345 php/views/edit.php:48
+#: php/class-list-table.php:361 php/views/edit.php:46
 msgid "Name"
 msgstr ""
 
-#: php/class-list-table.php:346
+#: php/class-list-table.php:362
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:396
-msgid "Export to PHP"
+#: php/class-list-table.php:410 php/views/edit.php:117
+msgid "Download"
 msgstr ""
 
-#: php/class-list-table.php:434
+#: php/class-list-table.php:450
 #, php-format
 msgid "All <span class=\"count\">(%s)</span>"
 msgid_plural "All <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:435
+#: php/class-list-table.php:451
 #, php-format
 msgid "Active <span class=\"count\">(%s)</span>"
 msgid_plural "Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:436
+#: php/class-list-table.php:452
 #, php-format
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:437
+#: php/class-list-table.php:453
 #, php-format
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:500
+#: php/class-list-table.php:516
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:514
+#: php/class-list-table.php:530
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:522
+#: php/class-list-table.php:538
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:709
+#: php/class-list-table.php:729
 msgid "Whoops, it looks like no snippets could be found."
 msgstr ""
 
-#: php/class-list-table.php:713
+#: php/class-list-table.php:733
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1010
+#: php/class-list-table.php:1031
 msgid "Search results"
 msgstr ""
 
-#: php/class-list-table.php:1013
+#: php/class-list-table.php:1034
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1017
+#: php/class-list-table.php:1038
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1025
+#: php/class-list-table.php:1046
 msgid "Clear Filters"
 msgstr ""
 
@@ -682,7 +706,9 @@ msgid "Show Network Snippets"
 msgstr ""
 
 #: php/settings/settings-fields.php:72
-msgid "Show network-wide snippets in the snippets table on subsites"
+msgid ""
+"Show network-wide snippets in the snippets table on subsites to super "
+"administrators only"
 msgstr ""
 
 #: php/settings/settings-fields.php:77
@@ -779,80 +805,102 @@ msgstr ""
 msgid "Highlight all instances of a currently selected word."
 msgstr ""
 
-#: php/settings/settings.php:68
+#: php/settings/settings.php:88
 msgid "General"
 msgstr ""
 
-#: php/settings/settings.php:69
+#: php/settings/settings.php:89
 msgid "Description Editor"
 msgstr ""
 
-#: php/settings/settings.php:70
+#: php/settings/settings.php:90
 msgid "Code Editor"
 msgstr ""
 
-#: php/settings/settings.php:119
+#: php/settings/settings.php:147
 msgid "Editor Preview"
 msgstr ""
 
-#: php/settings/settings.php:176
-msgid "Settings saved."
-msgstr ""
-
-#: php/views/edit.php:28 php/views/manage.php:22
+#: php/views/edit.php:26 php/views/manage.php:22
 msgctxt "snippet"
 msgid "Add New"
 msgstr ""
 
-#: php/views/edit.php:49
+#: php/views/edit.php:47
 msgid "Enter title here"
 msgstr ""
 
-#: php/views/edit.php:54
+#: php/views/edit.php:52
 msgid "Code"
 msgstr ""
 
-#: php/views/edit.php:81 php/views/edit.php:95
+#: php/views/edit.php:77
+msgid "Save Changes and Execute Once"
+msgstr ""
+
+#: php/views/edit.php:86 php/views/edit.php:100
 msgid "Save Changes and Activate"
 msgstr ""
 
-#: php/views/edit.php:101
+#: php/views/edit.php:106
 msgid "Save Changes and Deactivate"
 msgstr ""
 
-#: php/views/edit.php:118
+#: php/views/edit.php:129
 msgid "You are about to permanently delete this snippet."
 msgstr ""
 
 #: php/views/import.php:21
 msgid ""
-"Howdy! Upload your Code Snippets export file and we&#8217;ll import the "
-"snippets to this site."
-msgstr ""
-
-#: php/views/import.php:23
-#, php-format
-msgid ""
-"You will need to go to the <a href=\"%s\">All Snippets</a> page to activate "
-"the imported snippets."
+"Upload one or more Code Snippets export files and the snippets will be "
+"imported."
 msgstr ""
 
 #: php/views/import.php:25
+#, php-format
 msgid ""
-"Choose a Code Snippets (.xml) file to upload, then click Upload file and "
-"import."
+"Afterwards, you will need to go to the <a href=\"%s\">All Snippets</a> page "
+"to activate the imported snippets."
 msgstr ""
 
-#: php/views/import.php:32
+#: php/views/import.php:29
+msgid ""
+"Choose one or more Code Snippets (.xml or .json) files to upload, then click "
+"\"Upload files and import\"."
+msgstr ""
+
+#: php/views/import.php:36
 msgid "Choose a file from your computer:"
 msgstr ""
 
-#: php/views/import.php:33
+#: php/views/import.php:37
 msgid "(Maximum size: 8MB)"
 msgstr ""
 
-#: php/views/import.php:39
-msgid "Upload file and import"
+#: php/views/import.php:44
+msgid ""
+"What should happen if an existing snippet is found with an identical name to "
+"an imported snippet?"
+msgstr ""
+
+#: php/views/import.php:50
+msgid ""
+"Ignore any duplicate snippets: import all snippets from the file regardless "
+"and leave all existing snippets unchanged."
+msgstr ""
+
+#: php/views/import.php:57
+msgid ""
+"Replace any existing snippets with a newly imported snippet of the same name."
+msgstr ""
+
+#: php/views/import.php:64
+msgid ""
+"Do not import any duplicate snippets; leave all existing snippets unchanged."
+msgstr ""
+
+#: php/views/import.php:70
+msgid "Upload files and import"
 msgstr ""
 
 #: php/views/manage.php:34
