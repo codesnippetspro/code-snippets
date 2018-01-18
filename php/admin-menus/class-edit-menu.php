@@ -109,12 +109,12 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 			/* Export the snippet if the button was clicked */
 			if ( isset( $_POST['export_snippet'] ) ) {
-				export_snippets( $_POST['snippet_id'] );
+				export_snippets( array( $_POST['snippet_id'] ) );
 			}
 
 			/* Download the snippet if the button was clicked */
 			if ( isset( $_POST['download_snippet'] ) ) {
-				export_snippets( $_POST['snippet_id'], null, 'php' );
+				download_snippets( array( $_POST['snippet_id'] ) );
 			}
 		}
 	}

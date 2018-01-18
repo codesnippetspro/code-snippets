@@ -592,7 +592,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @uses activate_snippet() to activate snippets
 	 * @uses deactivate_snippet() to deactivate snippets
 	 * @uses delete_snippet() to delete snippets
-	 * @uses export_snippets() to export selected snippets
 	 * @uses wp_redirect() to pass the results to the current page
 	 * @uses add_query_arg() to append the results to the current URI
 	 */
@@ -637,10 +636,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				$result = 'deleted';
 			}
 			elseif ( 'export' === $action ) {
-				export_snippets( array( $id ), $this->is_network );
+				export_snippets( array( $id ) );
 			}
 			elseif ( 'download' === $action ) {
-				export_snippets( array( $id ), $this->is_network, 'php' );
+				download_snippets( array( $id ) );
 			}
 
 			if ( isset( $result ) ) {
@@ -698,11 +697,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				exit;
 
 			case 'export-selected':
-				export_snippets( $ids, $this->is_network );
+				export_snippets( $ids );
 				break;
 
 			case 'download-selected':
-				export_snippets( $ids, $this->is_network, 'php' );
+				download_snippets( $ids );
 				break;
 
 			case 'delete-selected':

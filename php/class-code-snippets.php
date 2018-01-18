@@ -57,6 +57,7 @@ class Code_Snippets {
 
 		/* Snippet operation functions */
 		require_once $includes_path . '/snippet-ops.php';
+		require_once $includes_path . '/import-export.php';
 
 		/* Upgrade function */
 		require_once $includes_path . '/upgrade.php';
