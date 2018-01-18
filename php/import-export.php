@@ -153,14 +153,14 @@ function import_snippets_xml( $file, $multisite = null, $dup_action = 'ignore' )
  * @param string $format
  * @param array  $ids
  * @param string $table_name
+ * @param string $mime_type
  *
  * @return array
  */
-function code_snippets_prepare_export( $format, $ids, $table_name ) {
+function code_snippets_prepare_export( $format, $ids, $table_name = '', $mime_type = '' ) {
 	global $wpdb;
 
 	/* Fetch the snippets from the database */
-
 	if ( '' === $table_name ) {
 		$table_name = code_snippets()->db->get_table_name();
 	}
@@ -173,7 +173,6 @@ function code_snippets_prepare_export( $format, $ids, $table_name ) {
 	$snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
 
 	/* Build the export filename */
-
 	if ( 1 == count( $ids ) ) {
 		/* If there is only snippet to export, use its name instead of the site name */
 		$first_snippet = new Code_Snippet( $snippets[0] );
@@ -186,10 +185,14 @@ function code_snippets_prepare_export( $format, $ids, $table_name ) {
 	$filename = "{$title}.code-snippets.{$format}";
 	$filename = apply_filters( 'code_snippets/export/filename', $filename, $title );
 
-	/* Set the HTTP header */
-
+	/* Set HTTP headers */
 	header( 'Content-Disposition: attachment; filename=' . sanitize_file_name( $filename ) );
 
+	if ( '' !== $mime_type ) {
+		header( "Content-Type: $mime_type; charset=" . get_bloginfo( 'charset' ) );
+	}
+
+	/* Return the retrieved snippets to build the rest of the export file */
 	return $snippets;
 }
 
@@ -231,7 +234,7 @@ function download_snippets( $ids, $table_name = '' ) {
  * @param string $table_name name of the database table to fetch snippets from
  */
 function export_snippets( $ids, $table_name = '' ) {
-	$raw_snippets = code_snippets_prepare_export( 'json', $ids, $table_name );
+	$raw_snippets = code_snippets_prepare_export( 'json', $ids, $table_name, 'application/json' );
 	$final_snippets = array();
 
 	foreach ( $raw_snippets as $snippet ) {
@@ -256,9 +259,6 @@ function export_snippets( $ids, $table_name = '' ) {
 		'date_created' => date( 'Y-m-d H:i' ),
 		'snippets' => $final_snippets,
 	);
-
-	/* Set the HTTP header */
-	header( 'Content-Type: application/json; charset=' . get_bloginfo( 'charset' ) );
 
 	echo json_encode( $data, apply_filters( 'code_snippets/export/json_encode_options', 0 ) );
 	exit;
