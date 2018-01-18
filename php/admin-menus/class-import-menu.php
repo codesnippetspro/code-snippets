@@ -53,7 +53,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		$count = 0;
-		$network = get_current_screen()->in_admin( 'network' );
+		$network = is_network_admin();
 		$dup_action = isset( $_POST['duplicate_action'] ) ? $_POST['duplicate_action'] : 'ignore';
 
 		/* Loop through the uploaded files and import the snippets */

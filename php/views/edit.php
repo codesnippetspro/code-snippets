@@ -76,7 +76,7 @@ $snippet = get_snippet( $edit_id );
 
 				submit_button( __( 'Save Changes and Execute Once', 'code-snippets' ), 'secondary', 'save_snippet_execute', false );
 
-			} elseif ( $snippet->shared_network && get_current_screen()->in_admin( 'network' ) ) {
+			} elseif ( $snippet->shared_network && is_network_admin() ) {
 
 				submit_button( null, 'primary', 'save_snippet', false );
 

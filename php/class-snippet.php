@@ -261,8 +261,8 @@ class Code_Snippet {
 	 */
 	private function prepare_network( $network ) {
 
-		if ( null === $network && function_exists( 'get_current_screen' ) && $screen = get_current_screen() ) {
-			return $screen->in_admin( 'network' );
+		if ( null === $network && function_exists( 'is_network_admin' ) ) {
+			return is_network_admin();
 		}
 
 		return true === $network;

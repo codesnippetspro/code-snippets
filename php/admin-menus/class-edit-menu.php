@@ -76,7 +76,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_scope_setting' ), 1 );
 		}
 
-		if ( get_current_screen()->in_admin( 'network' ) ) {
+		if ( is_network_admin() ) {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_multisite_sharing_setting' ), 1 );
 		}
 
@@ -234,7 +234,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		$snippet_id = save_snippet( $snippet );
 
 		/* Update the shared network snippets if necessary */
-		if ( $snippet_id && get_current_screen()->in_admin( 'network' ) ) {
+		if ( $snippet_id && is_network_admin() ) {
 
 			if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
 				$shared_snippets = get_site_option( 'shared_network_snippets', array() );

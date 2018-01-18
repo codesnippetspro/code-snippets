@@ -38,7 +38,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	public function __construct() {
 		global $status, $page;
 		$screen = get_current_screen();
-		$this->is_network = $screen->in_admin( 'network' );
+		$this->is_network = is_network_admin();
 
 		/* Determine the status */
 		$status = 'all';
