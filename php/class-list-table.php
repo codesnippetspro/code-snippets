@@ -407,9 +407,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions = array(
 			'activate-selected'   => $this->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
 			'deactivate-selected' => $this->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
-			'export-selected'	  => __( 'Export', 'code-snippets' ),
-			'delete-selected'	  => __( 'Delete', 'code-snippets' ),
-			'export-php-selected' => __( 'Export to PHP', 'code-snippets' ),
+			'export-selected'     => __( 'Export', 'code-snippets' ),
+			'delete-selected'     => __( 'Delete', 'code-snippets' ),
+			'download-selected'   => __( 'Download', 'code-snippets' ),
 		);
 		return apply_filters( 'code_snippets/list_table/bulk_actions', $actions );
 	}
@@ -639,7 +639,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			elseif ( 'export' === $action ) {
 				export_snippets( array( $id ), $this->is_network );
 			}
-			elseif ( 'export-php' === $action ) {
+			elseif ( 'download' === $action ) {
 				export_snippets( array( $id ), $this->is_network, 'php' );
 			}
 
@@ -701,7 +701,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				export_snippets( $ids, $this->is_network );
 				break;
 
-			case 'export-php-selected':
+			case 'download-selected':
 				export_snippets( $ids, $this->is_network, 'php' );
 				break;
 
