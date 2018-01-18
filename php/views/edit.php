@@ -111,15 +111,15 @@ $snippet = get_snippet( $edit_id );
 
 			if ( 0 !== $snippet->id ) {
 
-				/* Export button */
-
-				submit_button( __( 'Export', 'code-snippets' ), 'secondary', 'export_snippet', false );
-
 				/* Download button */
 
 				if ( apply_filters( 'code_snippets/enable_downloads', true ) ) {
 					submit_button( __( 'Download', 'code-snippets' ), 'secondary', 'download_snippet', false );
 				}
+
+				/* Export button */
+
+				submit_button( __( 'Export', 'code-snippets' ), 'secondary', 'export_snippet', false );
 
 				/* Delete button */
 

@@ -274,7 +274,7 @@ class Code_Snippets_Export {
 		}
 
 		elseif ( 'php' === $this->format ) {
-			echo '<?php';
+			echo "<?php\n";
 		}
 
 		/* Process the snippet items */

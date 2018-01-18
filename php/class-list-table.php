@@ -407,9 +407,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions = array(
 			'activate-selected'   => $this->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
 			'deactivate-selected' => $this->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
+			'download-selected'   => __( 'Download', 'code-snippets' ),
 			'export-selected'     => __( 'Export', 'code-snippets' ),
 			'delete-selected'     => __( 'Delete', 'code-snippets' ),
-			'download-selected'   => __( 'Download', 'code-snippets' ),
 		);
 		return apply_filters( 'code_snippets/list_table/bulk_actions', $actions );
 	}
