@@ -165,12 +165,18 @@ function code_snippets_prepare_export( $format, $ids, $table_name = '', $mime_ty
 		$table_name = code_snippets()->db->get_table_name();
 	}
 
-	$sql = sprintf(
-		'SELECT * FROM %s WHERE id IN (%s)', $table_name,
-		implode( ',', array_fill( 0, count( $ids ), '%d' ) )
-	);
+	if ( count( $ids ) ) {
 
-	$snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
+		$sql = sprintf(
+			'SELECT * FROM %s WHERE id IN (%s)', $table_name,
+			implode( ',', array_fill( 0, count( $ids ), '%d' ) )
+		);
+
+		$snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
+
+	} else {
+		$snippets = array();
+	}
 
 	/* Build the export filename */
 	if ( 1 == count( $ids ) ) {
