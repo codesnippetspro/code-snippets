@@ -266,6 +266,6 @@ function export_snippets( $ids, $table_name = '' ) {
 		'snippets' => $final_snippets,
 	);
 
-	echo json_encode( $data, apply_filters( 'code_snippets/export/json_encode_options', 0 ) );
+	echo wp_json_encode( $data, apply_filters( 'code_snippets/export/json_encode_options', 0 ) );
 	exit;
 }
