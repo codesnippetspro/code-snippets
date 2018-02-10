@@ -121,15 +121,21 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 
 			$imported = intval( $_REQUEST['imported'] );
 
-			printf(
-				_n(
-					'Successfully imported <strong>%d</strong> snippet. <a href="%s">Have fun!</a>',
-					'Successfully imported <strong>%d</strong> snippets. <a href="%s">Have fun!</a>',
-					$imported, 'code-snippets'
-				),
-				$imported,
-				code_snippets()->get_menu_url( 'manage' )
-			);
+			if ( 0 === $imported ) {
+				esc_html_e( 'No snippets were imported.', 'code-snippets' );
+
+			} else {
+
+				printf(
+					_n(
+						'Successfully imported <strong>%d</strong> snippet. <a href="%s">Have fun!</a>',
+						'Successfully imported <strong>%d</strong> snippets. <a href="%s">Have fun!</a>',
+						$imported, 'code-snippets'
+					),
+					$imported,
+					code_snippets()->get_menu_url( 'manage' )
+				);
+			}
 
 			echo '</p></div>';
 		}
