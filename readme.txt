@@ -3,8 +3,8 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.9.2
-Stable tag: 2.10.0
+Tested up to: 4.9.4
+Stable tag: 2.10.1
 License: MIT
 License URI: license.txt
 
@@ -110,6 +110,11 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.10.1 (10 Feb 2018) =
+* Fixed: Prevent errors when trying to export no snippets
+* Fixed: Use wp_json_encode() to encode export data
+* Fixed: Check both the file extension and MIME type of uploaded import files
 
 = 2.10.0 (18 Jan 2018) =
 * Improved: Added support for importing from multiple export files at once

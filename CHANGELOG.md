@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.10.1 (10 Feb 2018)
+* Fixed: Prevent errors when trying to export no snippets
+* Fixed: Use wp_json_encode() to encode export data
+* Fixed: Check both the file extension and MIME type of uploaded import files
+
 ## 2.10.0 (18 Jan 2018)
 * Improved: Added support for importing from multiple export files at once
 * Improved: Unbold the titles of inactive snippets for greater visual distinction
