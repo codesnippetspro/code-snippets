@@ -4,6 +4,57 @@
  * This file includes functions for importing and exporting snippets
  */
 
+
+/**
+ *
+ * @access private
+ *
+ * @param        $snippets
+ * @param null   $multisite
+ * @param string $dup_action
+ *
+ * @return array
+ */
+function _code_snippets_save_imported_snippets( $snippets, $multisite = null, $dup_action = 'ignore' ) {
+
+	/* Get a list of existing snippet names keyed to their IDs */
+	$existing_snippets = array();
+	if ( 'replace' == $dup_action || 'skip' === $dup_action ) {
+		$all_snippets = get_snippets( array(), $multisite );
+
+		foreach ( $all_snippets as $snippet ) {
+			if ( $snippet->name ) {
+				$existing_snippets[ $snippet->name ] = $snippet->id;
+			}
+		}
+	}
+
+	/* Save a record of the snippets which were imported */
+	$imported = array();
+
+	/* Loop through the provided snippets */
+	foreach ( $snippets as $snippet ) {
+
+		/* Check if the snippet already exists */
+		if ( 'ignore' !== $dup_action && isset( $existing_snippets[ $snippet->name ] ) ) {
+
+			/* If so, either overwrite the existing ID, or skip this import */
+			if ( 'replace' === $dup_action ) {
+				$snippet->id = $existing_snippets[ $snippet->name ];
+			} elseif ( 'skip' === $dup_action ) {
+				continue;
+			}
+		}
+
+		/* Save the snippet and increase the counter if successful */
+		if ( $snippet_id = save_snippet( $snippet ) ) {
+			$imported[] = $snippet_id;
+		}
+	}
+
+	return $imported;
+}
+
 /**
  * Imports snippets from a JSON file
  *
@@ -25,43 +76,16 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
 
 	$raw_data = file_get_contents( $file );
 	$data = json_decode( $raw_data, true );
+	$snippets = array();
 
-	$imported = array();
-
-	/* Get a list of existing snippet names keyed to their IDs */
-	$existing_snippets = array();
-	if ( 'replace' == $dup_action || 'skip' === $dup_action ) {
-		$all_snippets = get_snippets( array(), $multisite );
-
-		foreach ( $all_snippets as $snippet ) {
-			if ( $snippet->name ) {
-				$existing_snippets[ $snippet->name ] = $snippet->id;
-			}
-		}
-	}
-
-	/* Loop through all snippets */
-
-	/** @var DOMElement $snippet_xml */
+	/* Reformat the data into snippet objects */
 	foreach ( $data['snippets'] as $snippet ) {
 		$snippet = new Code_Snippet( $snippet );
 		$snippet->network = $multisite;
-
-		if ( 'ignore' !== $dup_action && isset( $existing_snippets[ $snippet->name ] ) ) {
-
-			if ( 'replace' === $dup_action ) {
-				$snippet->id = $existing_snippets[ $snippet->name ];
-			} elseif ( 'skip' === $dup_action ) {
-				continue;
-			}
-		}
-
-		/* Save the snippet and increase the counter if successful */
-		if ( $snippet_id = save_snippet( $snippet ) ) {
-			$imported[] = $snippet_id;
-		}
+		$snippets[] = $snippet;
 	}
 
+	$imported = _code_snippets_save_imported_snippets( $snippets, $multisite, $dup_action );
 	do_action( 'code_snippets/import/json', $file, $multisite );
 	return $imported;
 }
@@ -90,19 +114,8 @@ function import_snippets_xml( $file, $multisite = null, $dup_action = 'ignore' )
 
 	$snippets_xml = $dom->getElementsByTagName( 'snippet' );
 	$fields = array( 'name', 'description', 'desc', 'code', 'tags', 'scope' );
-	$imported = array();
 
-	/* Get a list of existing snippet names keyed to their IDs */
-	$existing_snippets = array();
-	if ( 'replace' == $dup_action || 'skip' === $dup_action ) {
-		$all_snippets = get_snippets( array(), $multisite );
-
-		foreach ( $all_snippets as $snippet ) {
-			if ( $snippet->name ) {
-				$existing_snippets[ $snippet->name ] = $snippet->id;
-			}
-		}
-	}
+	$snippets = array();
 
 	/* Loop through all snippets */
 
@@ -129,20 +142,10 @@ function import_snippets_xml( $file, $multisite = null, $dup_action = 'ignore' )
 			$snippet->scope = $scope;
 		}
 
-		if ( 'ignore' !== $dup_action && isset( $existing_snippets[ $snippet->name ] ) ) {
-			if ( 'replace' === $dup_action ) {
-				$snippet->id = $existing_snippets[ $snippet->name ];
-			} elseif ( 'skip' === $dup_action ) {
-				continue;
-			}
-		}
-
-		/* Save the snippet and increase the counter if successful */
-		if ( $snippet_id = save_snippet( $snippet ) ) {
-			$imported[] = $snippet_id;
-		}
+		$snippets[] = $snippet;
 	}
 
+	$imported = _code_snippets_save_imported_snippets( $snippets, $dup_action, $multisite );
 	do_action( 'code_snippets/import/xml', $file, $multisite );
 	return $imported;
 }

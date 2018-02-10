@@ -56,6 +56,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 		$network = is_network_admin();
 		$uploads = $_FILES['code_snippets_import_files'];
 		$dup_action = isset( $_POST['duplicate_action'] ) ? $_POST['duplicate_action'] : 'ignore';
+		$error = false;
 
 		/* Loop through the uploaded files and import the snippets */
 
@@ -69,14 +70,18 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 			} elseif ( 'xml' === $ext || 'text/xml' === $mime_type ) {
 				$result = import_snippets_xml( $import_file, $network, $dup_action );
 			} else {
-				continue;
+				$result = false;
 			}
 
-			$count += count( $result );
+			if ( false === $result || -1 === $result ) {
+				$error = true;
+			} else {
+				$count += count( $result );
+			}
 		}
 
 		/* Send the amount of imported snippets to the page */
-		$url = add_query_arg( $count > 0 ? array( 'imported' => $count ) : array( 'error' => true ) );
+		$url = add_query_arg( $error ? array( 'error' => true ) : array( 'imported' => $count ) );
 		wp_redirect( esc_url_raw( $url ) );
 		exit;
 	}
@@ -104,7 +109,14 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	 * Print the status and error messages
 	 */
 	protected function print_messages() {
-		if ( isset( $_REQUEST['imported'] ) ) {
+
+		if ( isset( $_REQUEST['error'] ) && $_REQUEST['error'] ) {
+			echo '<div id="message" class="error fade"><p>';
+			_e( 'An error occurred when processing the import files.', 'code-snippets' );
+			echo '</p></div>';
+		}
+
+		if ( isset( $_REQUEST['imported'] ) && intval( $_REQUEST['imported'] ) >= 0 ) {
 			echo '<div id="message" class="updated fade"><p>';
 
 			$imported = intval( $_REQUEST['imported'] );
@@ -119,11 +131,6 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 				code_snippets()->get_menu_url( 'manage' )
 			);
 
-			echo '</p></div>';
-
-		} elseif ( isset( $_REQUEST['error'] ) && $_REQUEST['error'] ) {
-			echo '<div id="message" class="error fade"><p>';
-			_e( 'An error occurred when processing the import file.', 'code-snippets' );
 			echo '</p></div>';
 		}
 	}
