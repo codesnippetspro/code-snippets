@@ -11,6 +11,20 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit();
 }
 
+/* Fetch the Complete Uninstall option from the database settings */
+$unified = false;
+if ( is_multisite() ) {
+	$menu_perms = get_site_option( 'menu_items', array() );
+	$unified = empty( $menu_perms['snippets_settings'] );
+}
+
+$settings = $unified ? get_site_option( 'code_snippets_settings' ) : get_option( 'code_snippets_settings' );
+
+/* Short circuit the uninstall cleanup process if the option is not enabled */
+if ( ! isset( $settings['general']['complete_uninstall'] ) || ! $settings['general']['complete_uninstall'] ) {
+	return;
+}
+
 /**
  * Clean up data created by this plugin for a single site
  * @since 2.0

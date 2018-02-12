@@ -74,15 +74,29 @@ function code_snippets_get_settings_fields() {
 		),
 
 		'disable_prism' => array(
-			'name' => __( 'Disable shortcode syntax highlighter', 'code-snippets' ),
+			'name' => __( 'Disable Shortcode Syntax Highlighter', 'code-snippets' ),
 			'type' => 'checkbox',
 			'label' => __( 'Disable the syntax highlighting for the [code_snippet] shortcode on the front-end', 'code-snippets' ),
+			'default' => false,
+		),
+
+		'complete_uninstall' => array(
+			'name' => __( 'Complete Uninstall', 'code-snippets' ),
+			'type' => 'checkbox',
+			'label' => sprintf(
+				__( 'When the plugin is deleted from the <a href="%s">Plugins</a> menu, also delete all snippets and plugin settings.', 'code-snippets' ),
+				self_admin_url( 'plugins.php' )
+			),
 			'default' => false,
 		),
 	);
 
 	if ( ! is_multisite() || ! current_user_can( code_snippets()->get_network_cap_name() ) ) {
 		unset( $fields['general']['show_network_snippets'] );
+	}
+
+	if ( is_multisite() && ! is_main_site() ) {
+		unset( $fields['general']['complete_uninstall'] );
 	}
 
 	/* Description Editor settings section */
