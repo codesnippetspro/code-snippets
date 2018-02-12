@@ -24,6 +24,21 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 	function load() {
 		parent::load();
 
+		if ( isset( $_GET['reset_settings'] ) && $_GET['reset_settings'] ) {
+
+			if ( code_snippets_unified_settings() ) {
+				delete_site_option( 'code_snippets_settings' );
+			} else {
+				delete_option( 'code_snippets_settings' );
+			}
+
+			add_settings_error( 'code-snippets-settings-notices', 'settings_reset', __( 'All settings have been reset to their defaults.' ), 'updated' );
+			set_transient( 'settings_errors', get_settings_errors(), 30 );
+
+			wp_redirect( esc_url_raw( add_query_arg( 'settings-updated', true, remove_query_arg( 'reset_settings' ) ) ) );
+			exit;
+		}
+
 		if ( is_network_admin() ) {
 
 			if ( code_snippets_unified_settings() ) {
@@ -52,9 +67,16 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 				settings_fields( 'code-snippets' );
 				do_settings_sections( 'code-snippets' );
-				submit_button();
 
 				?>
+				<p class="submit" style="max-width: 1020px;">
+					<?php submit_button( null, 'primary', 'submit', false ); ?>
+
+					<a class="button button-secondary" style="float: right;"
+					   href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>">
+						<?php esc_html_e( 'Reset to Default', 'code-snippets' ); ?>
+					</a>
+				</p>
 			</form>
 		</div>
 		<?php
