@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<label for="upload"><?php _e( 'Choose a file from your computer:', 'code-snippets' ); ?></label>
 				<?php _e( '(Maximum size: 8MB)', 'code-snippets' ); ?>
-				<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="application/json,text/xml" multiple="multiple">
+				<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="application/json,.json,text/xml" multiple="multiple">
 			</p>
 
 			<h2>Duplicate Snippets</h2>
