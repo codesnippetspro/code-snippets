@@ -70,7 +70,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$filters = array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'capital_P_dangit' );
 
 		foreach ( $filters as $filter ) {
-			add_filter( 'code_snippets/list_table/print_snippet_description', $filter );
+			add_filter( 'code_snippets/list_table/column_description', $filter );
 		}
 
 		/* Setup the class */
