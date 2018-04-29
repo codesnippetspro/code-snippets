@@ -4,6 +4,7 @@ Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 4.9.4
+Requires PHP: 5.2
 Stable tag: 2.10.1.1
 License: MIT
 License URI: license.txt
