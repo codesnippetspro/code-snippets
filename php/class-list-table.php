@@ -479,18 +479,21 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* If we're not viewing a snippets table, get all used tags instead */
 		if ( ! isset( $snippets, $status ) ) {
-			return get_all_snippet_tags();
+			$tags = get_all_snippet_tags();
+		} else {
+			$tags = array();
+
+			/* Merge all tags into a single array */
+			foreach ( $snippets[ $status ] as $snippet ) {
+				$tags = array_merge( $snippet->tags, $tags );
+			}
+
+			/* Remove duplicate tags */
+			$tags = array_unique( $tags, SORT_REGULAR );
 		}
 
-		$tags = array();
-
-		/* Merge all tags into a single array */
-		foreach ( $snippets[ $status ] as $snippet ) {
-			$tags = array_merge( $snippet->tags, $tags );
-		}
-
-		/* Remove duplicate tags */
-		return array_values( array_unique( $tags, SORT_REGULAR ) );
+		sort( $tags );
+		return $tags;
 	}
 
 	/**
