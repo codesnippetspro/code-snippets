@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-15 21:14+1100\n"
+"POT-Creation-Date: 2018-06-11 01:10+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -598,41 +598,41 @@ msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:516
+#: php/class-list-table.php:519
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:530
+#: php/class-list-table.php:533
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:538
+#: php/class-list-table.php:541
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:728
+#: php/class-list-table.php:731
 msgid "Whoops, it looks like no snippets could be found."
 msgstr ""
 
-#: php/class-list-table.php:732
+#: php/class-list-table.php:735
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1030
+#: php/class-list-table.php:1033
 msgid "Search results"
 msgstr ""
 
-#: php/class-list-table.php:1033
+#: php/class-list-table.php:1036
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1037
+#: php/class-list-table.php:1040
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1045
+#: php/class-list-table.php:1048
 msgid "Clear Filters"
 msgstr ""
 
@@ -854,6 +854,10 @@ msgstr ""
 
 #: php/views/import.php:37
 msgid "(Maximum size: 8MB)"
+msgstr ""
+
+#: php/views/import.php:41
+msgid "Duplicate Snippets"
 msgstr ""
 
 #: php/views/import.php:44
