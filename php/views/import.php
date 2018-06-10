@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="application/json,.json,text/xml" multiple="multiple">
 			</p>
 
-			<h2>Duplicate Snippets</h2>
+			<h2><?php _e( 'Duplicate Snippets', 'code-snippets' ); ?></h2>
 
 			<p class="description">
 				<?php esc_html_e( 'What should happen if an existing snippet is found with an identical name to an imported snippet?', 'code-snippets' ); ?>
