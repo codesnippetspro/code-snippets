@@ -384,6 +384,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$sortable_columns = array(
 			'id'   => array( 'id', true ),
 			'name' => array( 'name', false ),
+			'tags' => array( 'tags_list', true ),
 		);
 		return apply_filters( 'code_snippets/list_table/sortable_columns', $sortable_columns );
 	}
@@ -942,39 +943,61 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Determine the sort ordering for two pieces of data
+	 *
+	 * @ignore
+	 *
+	 * @param string $field  name of the field that the data belongs to
+	 * @param string $a_data
+	 * @param string $b_data
+	 *
+	 * @return int
+	 */
+	private function get_sort_direction( $field, $a_data, $b_data ) {
+
+		// if the data is numeric, then calculate the ordering directly
+		if ( is_numeric( $a_data ) ) {
+			return $a_data - $b_data;
+		}
+
+		// if only one of the data points is empty, then place it before the one which is not
+		if ( '' === $a_data XOR '' === $b_data ) {
+			return '' === $a_data ? 1 : -1;
+		}
+
+		// otherwise, sort using the default string sort order
+		return strcmp( $a_data, $b_data );
+	}
+
+	/**
 	 * Callback for usort() used to sort snippets
 	 *
 	 * @ignore
 	 *
-	 * @param  Code_Snippet $a The first snippet to compare
-	 * @param  Code_Snippet $b The second snippet to compare
+	 * @param Code_Snippet $a The first snippet to compare
+	 * @param Code_Snippet $b The second snippet to compare
 	 *
-	 * @return int        The sort order
+	 * @return int The sort order
 	 */
 	private function usort_reorder_callback( $a, $b ) {
 
-		/* If no sort, default to ID */
+		// sort by ID by default
 		$orderby = (
 			! empty( $_REQUEST['orderby'] )
 			? $_REQUEST['orderby']
 			: apply_filters( 'code_snippets/list_table/default_orderby', 'id' )
 		);
 
-		/* If no order, default to ascending */
+		// sort ascending by default
 		$order = (
 			! empty( $_REQUEST['order'] )
 			? $_REQUEST['order']
 			: apply_filters( 'code_snippets/list_table/default_order', 'asc' )
 		);
 
-		/* Determine sort order */
-		if ( 'id' === $orderby ) {
-			$result = $a->$orderby - $b->$orderby; // get the result for numerical data
-		} else {
-			$result = strcmp( $a->$orderby, $b->$orderby ); // get the result for string data
-		}
+		$result = $this->get_sort_direction( $orderby, $a->$orderby, $b->$orderby );
 
-		/* Send final sort direction to usort */
+		// apply the sort direction to the calculated order
 		return ( 'asc' === $order ) ? $result : -$result;
 	}
 
