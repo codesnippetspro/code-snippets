@@ -961,7 +961,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		// if only one of the data points is empty, then place it before the one which is not
-		if ( '' === $a_data XOR '' === $b_data ) {
+		if ( '' === $a_data xor '' === $b_data ) {
 			return '' === $a_data ? 1 : -1;
 		}
 
