@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.10.1\n"
+"Project-Id-Version: code-snippets 2.10.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-20 15:53+1000\n"
+"POT-Creation-Date: 2018-07-21 19:17+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,11 +64,11 @@ msgid ""
 "made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:301 php/class-list-table.php:363
+#: php/admin-menus/class-edit-menu.php:301 php/class-list-table.php:364
 msgid "Description"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:334 php/class-list-table.php:364
+#: php/admin-menus/class-edit-menu.php:334 php/class-list-table.php:365
 msgid "Tags"
 msgstr ""
 
@@ -496,12 +496,12 @@ msgstr ""
 msgid "Snippets per page"
 msgstr ""
 
-#: php/class-list-table.php:121 php/class-list-table.php:410
+#: php/class-list-table.php:121 php/class-list-table.php:413
 msgid "Network Deactivate"
 msgstr ""
 
 #: php/class-list-table.php:121 php/class-list-table.php:205
-#: php/class-list-table.php:410
+#: php/class-list-table.php:413
 msgid "Deactivate"
 msgstr ""
 
@@ -509,12 +509,12 @@ msgstr ""
 msgid "Run Once"
 msgstr ""
 
-#: php/class-list-table.php:141 php/class-list-table.php:409
+#: php/class-list-table.php:141 php/class-list-table.php:412
 msgid "Network Activate"
 msgstr ""
 
 #: php/class-list-table.php:141 php/class-list-table.php:205
-#: php/class-list-table.php:409
+#: php/class-list-table.php:412
 msgid "Activate"
 msgstr ""
 
@@ -523,12 +523,12 @@ msgid "Edit"
 msgstr ""
 
 #: php/class-list-table.php:157 php/class-list-table.php:227
-#: php/class-list-table.php:412 php/views/edit.php:122
+#: php/class-list-table.php:415 php/views/edit.php:122
 msgid "Export"
 msgstr ""
 
 #: php/class-list-table.php:166 php/class-list-table.php:239
-#: php/class-list-table.php:413 php/views/edit.php:135
+#: php/class-list-table.php:416 php/views/edit.php:135
 msgid "Delete"
 msgstr ""
 
@@ -558,81 +558,81 @@ msgstr ""
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:361 php/views/edit.php:46
+#: php/class-list-table.php:362 php/views/edit.php:46
 msgid "Name"
 msgstr ""
 
-#: php/class-list-table.php:362
+#: php/class-list-table.php:363
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:411 php/views/edit.php:117
+#: php/class-list-table.php:414 php/views/edit.php:117
 msgid "Download"
 msgstr ""
 
-#: php/class-list-table.php:451
+#: php/class-list-table.php:456
 #, php-format
 msgid "All <span class=\"count\">(%s)</span>"
 msgid_plural "All <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:452
+#: php/class-list-table.php:457
 #, php-format
 msgid "Active <span class=\"count\">(%s)</span>"
 msgid_plural "Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:453
+#: php/class-list-table.php:458
 #, php-format
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:454
+#: php/class-list-table.php:459
 #, php-format
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:520
+#: php/class-list-table.php:528
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:534
+#: php/class-list-table.php:542
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:542
+#: php/class-list-table.php:550
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:732
+#: php/class-list-table.php:741
 msgid "Whoops, it looks like no snippets could be found."
 msgstr ""
 
-#: php/class-list-table.php:736
+#: php/class-list-table.php:745
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1056
+#: php/class-list-table.php:1063
 msgid "Search results"
 msgstr ""
 
-#: php/class-list-table.php:1059
+#: php/class-list-table.php:1066
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1063
+#: php/class-list-table.php:1070
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1071
+#: php/class-list-table.php:1078
 msgid "Clear Filters"
 msgstr ""
 
