@@ -1,11 +1,11 @@
 === Code Snippets ===
 Contributors: bungeshea
-Donate link: https://bungeshea.com/donate/
+Donate link: https://bungeshea.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.9.4
+Tested up to: 4.9.8-beta2
 Requires PHP: 5.2
-Stable tag: 2.10.1.1
+Stable tag: 2.10.2
 License: MIT
 License URI: license.txt
 
@@ -112,6 +112,16 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an XML file
 
 == Changelog ==
+
+= 2.10.2 (21 Jul 2018) =
+* Added: Button to reset settings to their default values
+* Improved: Made uninstall cleanup optional through a plugin setting
+* Fixed: Applied formatting filters to snippet descriptions in the table
+* Improved: Ordered tags by name in the filter dropdown menu
+* Fixed: Incorrectly translated strings
+* Added: Belarusian translation by Hrank.com
+* Improved: Enabled sorting snippets table by tags
+* Updated CodeMirror to version 5.39.0
 
 = 2.10.1 (10 Feb 2018) =
 * Fixed: Prevent errors when trying to export no snippets
