@@ -3,7 +3,7 @@
 /**
  * Contains the class for handling the snippets table
  *
- * @package	Code_Snippets
+ * @package    Code_Snippets
  */
 
 /* The WP_List_Table base class is not included by default, so we need to load it */
@@ -55,9 +55,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$page = $this->get_pagenum();
 
 		add_screen_option( 'per_page', array(
-			'label' => __( 'Snippets per page', 'code-snippets' ),
+			'label'   => __( 'Snippets per page', 'code-snippets' ),
 			'default' => 999,
-			'option' => 'snippets_per_page',
+			'option'  => 'snippets_per_page',
 		) );
 
 		/* Set the table columns hidden in Screen Options by default */
@@ -75,8 +75,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Setup the class */
 		parent::__construct( array(
-			'ajax' => true,
-			'plural' => 'snippets',
+			'ajax'     => true,
+			'plural'   => 'snippets',
 			'singular' => 'snippet',
 		) );
 	}
@@ -84,8 +84,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Define the output of all columns that have no callback function
 	 *
-	 * @param  Code_Snippet $snippet     The snippet used for the current row
-	 * @param  string       $column_name The name of the column being printed
+	 * @param Code_Snippet $snippet The snippet used for the current row
+	 * @param string       $column_name The name of the column being printed
 	 *
 	 * @return string The content of the column to output
 	 */
@@ -105,9 +105,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Build a list of action links for individual snippets
 	 *
-	 * @param  Code_Snippet $snippet The current snippet
+	 * @param Code_Snippet $snippet The current snippet
 	 *
-	 * @return array            The action links HTML
+	 * @return array The action links HTML
 	 */
 	private function get_snippet_action_links( Code_Snippet $snippet ) {
 		$actions = array();
@@ -257,9 +257,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Build the content of the snippet name column
 	 *
-	 * @param  Code_Snippet $snippet The snippet being used for the current row
+	 * @param Code_Snippet $snippet The snippet being used for the current row
 	 *
-	 * @return string		    The content of the column to output
+	 * @return string The content of the column to output
 	 */
 	protected function column_name( $snippet ) {
 
@@ -299,15 +299,16 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		/* Return the name contents */
+
 		return apply_filters( 'code_snippets/list_table/column_name', $out, $snippet ) . $row_actions;
 	}
 
 	/**
 	 * Builds the checkbox column content
 	 *
-	 * @param  Code_Snippet $snippet The snippet being used for the current row
+	 * @param Code_Snippet $snippet The snippet being used for the current row
 	 *
-	 * @return string		    The column content to be printed
+	 * @return string The column content to be printed
 	 */
 	protected function column_cb( $snippet ) {
 
@@ -326,9 +327,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @since 2.0
 	 *
-	 * @param  Code_Snippet $snippet The snippet being used for the current row
+	 * @param Code_Snippet $snippet The snippet being used for the current row
 	 *
-	 * @return string           The column output
+	 * @return string The column output
 	 */
 	protected function column_tags( $snippet ) {
 
@@ -386,13 +387,15 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'name' => array( 'name', false ),
 			'tags' => array( 'tags_list', true ),
 		);
+
 		return apply_filters( 'code_snippets/list_table/sortable_columns', $sortable_columns );
 	}
 
 	/**
 	 * Define the columns that are hidden by default
 	 *
-	 * @param  mixed       $result
+	 * @param mixed $result
+	 *
 	 * @return mixed|array
 	 */
 	public function get_default_hidden_columns( $result ) {
@@ -412,6 +415,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'export-selected'     => __( 'Export', 'code-snippets' ),
 			'delete-selected'     => __( 'Delete', 'code-snippets' ),
 		);
+
 		return apply_filters( 'code_snippets/list_table/bulk_actions', $actions );
 	}
 
@@ -424,6 +428,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	public function get_table_classes() {
 		$classes = array( 'widefat', $this->_args['plural'] );
+
 		return apply_filters( 'code_snippets/list_table/table_classes', $classes );
 	}
 
@@ -448,9 +453,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			/* Define the labels for each view */
 			$labels = array(
-				'all' => _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' ),
-				'active' => _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
-				'inactive' => _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'all'                => _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'active'             => _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'inactive'           => _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' ),
 				'recently_activated' => _n( 'Recently Active <span class="count">(%s)</span>', 'Recently Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
 			);
 
@@ -468,6 +473,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		/* Filter and return the list of views */
+
 		return apply_filters( 'code_snippets/list_table/views', $status_links );
 	}
 
@@ -490,15 +496,17 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 
 			/* Remove duplicate tags */
-			$tags = array_unique( $tags, SORT_REGULAR );
+			$tags = array_unique( $tags );
 		}
 
 		sort( $tags );
+
 		return $tags;
 	}
 
 	/**
 	 * Add filters and extra actions above and below the table
+	 *
 	 * @param string $which Are the actions displayed on the table top or bottom
 	 */
 	public function extra_tablenav( $which ) {
@@ -587,6 +595,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		} else {
 			$action = parent::current_action();
 		}
+
 		return apply_filters( 'code_snippets/list_table/current_action', $action );
 	}
 
@@ -610,16 +619,16 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			if ( 'activate' === $action ) {
 				activate_snippet( $id, $this->is_network );
 				$result = 'activated';
-			}
-			elseif ( 'run-once' === $action ) {
+
+			} elseif ( 'run-once' === $action ) {
 				activate_snippet( $id, $this->is_network );
 				$result = 'executed';
-			}
-			elseif ( 'deactivate' === $action ) {
+
+			} elseif ( 'deactivate' === $action ) {
 				deactivate_snippet( $id, $this->is_network );
 				$result = 'deactivated';
-			}
-			elseif ( 'activate-shared' === $action ) {
+
+			} elseif ( 'activate-shared' === $action ) {
 				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
 				if ( ! in_array( $id, $active_shared_snippets ) ) {
@@ -628,21 +637,21 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				}
 
 				$result = 'activated';
-			}
-			elseif ( 'deactivate-shared' === $action ) {
+
+			} elseif ( 'deactivate-shared' === $action ) {
 				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 				update_option( 'active_shared_network_snippets', array_diff( $active_shared_snippets, array( $id ) ) );
 
 				$result = 'deactivated';
-			}
-			elseif ( 'delete' === $action ) {
+
+			} elseif ( 'delete' === $action ) {
 				delete_snippet( $id, $this->is_network );
 				$result = 'deleted';
-			}
-			elseif ( 'export' === $action ) {
+
+			} elseif ( 'export' === $action ) {
 				export_snippets( array( $id ) );
-			}
-			elseif ( 'download' === $action ) {
+
+			} elseif ( 'download' === $action ) {
 				download_snippets( array( $id ) );
 			}
 
@@ -924,7 +933,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/* We register our pagination options and calculations */
 		$this->set_pagination_args( array(
 			'total_items' => $total_items, // Calculate the total number of items
-			'per_page'	=> $per_page, // Determine how many items to show on a page
+			'per_page'    => $per_page, // Determine how many items to show on a page
 			'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages
 		) );
 	}
@@ -947,7 +956,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @ignore
 	 *
-	 * @param string $field  name of the field that the data belongs to
+	 * @param string $field name of the field that the data belongs to
 	 * @param string $a_data
 	 * @param string $b_data
 	 *
@@ -983,14 +992,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		// sort by ID by default
 		$orderby = (
-			! empty( $_REQUEST['orderby'] )
+		! empty( $_REQUEST['orderby'] )
 			? $_REQUEST['orderby']
 			: apply_filters( 'code_snippets/list_table/default_orderby', 'id' )
 		);
 
 		// sort ascending by default
 		$order = (
-			! empty( $_REQUEST['order'] )
+		! empty( $_REQUEST['order'] )
 			? $_REQUEST['order']
 			: apply_filters( 'code_snippets/list_table/default_order', 'asc' )
 		);
@@ -1005,9 +1014,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * Callback for search function
 	 * @ignore
 	 *
-	 * @param  Code_Snippet $snippet The snippet being filtered
+	 * @param Code_Snippet $snippet The snippet being filtered
 	 *
-	 * @return bool             The result of the filter
+	 * @return bool The result of the filter
 	 */
 	private function search_callback( $snippet ) {
 		static $term;
@@ -1028,12 +1037,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Callback for filtering snippets by tag
-	 *
 	 * @ignore
 	 *
-	 * @param  Code_Snippet $snippet The snippet being filtered
+	 * @param Code_Snippet $snippet The snippet being filtered
 	 *
-	 * @return bool             The result of the filter
+	 * @return bool The result of the filter
 	 */
 	private function tags_filter_callback( $snippet ) {
 		$tags = explode( ',', $_GET['tag'] );
@@ -1047,7 +1055,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Display a notice showing the current search terms
-	 *
 	 * @since 1.7
 	 */
 	public function search_notice() {
@@ -1093,4 +1100,5 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$this->single_row_columns( $snippet );
 		echo '</tr>';
 	}
-} // end of class
+
+}
