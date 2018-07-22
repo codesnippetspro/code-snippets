@@ -144,22 +144,38 @@ $snippet = get_snippet( $edit_id );
 </div>
 
 <script>
-/* Loads CodeMirror on the snippet editor */
-(function() {
+	'use strict';
+	/* Loads CodeMirror on the snippet editor */
+	var code_snippet_editor = (function() {
 
-	var atts = [];
-	atts = <?php
-		$atts = array( 'mode' => 'text/x-php' );
-		echo code_snippets_get_editor_atts( $atts, true );
-	?>;
-	atts['viewportMargin'] = Infinity;
+		var atts = [];
+		atts = <?php
+			$atts = array( 'mode' => 'text/x-php' );
+			echo code_snippets_get_editor_atts( $atts, true );
+		?>;
+		atts['viewportMargin'] = Infinity;
 
-	atts['extraKeys'] = {
-		'Ctrl-Enter': function (cm) {
-			document.getElementById('snippet-form').submit();
+		atts['extraKeys'] = {
+			'Ctrl-Enter': function (cm) {
+				document.getElementById('snippet-form').submit();
+			}
+		};
+
+		var editor = CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
+
+		// set the cursor to the previous position
+		var matches = window.location.href.match(/[?&]cursor=(\d+)_(\d+)/);
+		if (matches) {
+			editor.focus();
+			editor.setCursor({line: matches[1], ch: matches[2]});
 		}
-	};
 
-	CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
-})();
+		// send the current cursor position to the next page
+		document.getElementById('snippet-form').addEventListener('submit', function () {
+			var cursor = code_snippet_editor.getCursor();
+			this.insertAdjacentHTML('beforeend', '<input type="hidden" name="snippet_editor_cursor" value="' + cursor.line + '_' + cursor.ch + '">');
+		});
+
+		return editor;
+	})();
 </script>

@@ -285,10 +285,16 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		/* Redirect to edit snippet page */
-		wp_redirect( add_query_arg(
+		$redirect_uri = add_query_arg(
 			array( 'id' => $snippet_id, 'result' => $result ),
 			code_snippets()->get_menu_url( 'edit' )
-		) );
+		);
+
+		if ( isset( $_POST['snippet_editor_cursor'] ) ) {
+			$redirect_uri = add_query_arg( 'cursor', $_POST['snippet_editor_cursor'], $redirect_uri );
+		}
+
+		wp_redirect( esc_url_raw( $redirect_uri ) );
 		exit;
 	}
 
