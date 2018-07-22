@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function code_snippets_upgrader() {
 	global $wpdb;
+	$db = code_snippets()->db;
 
 	/* Get the current plugin version from the database */
 	$prev_version = get_option( 'code_snippets_version' );
@@ -23,7 +24,7 @@ function code_snippets_upgrader() {
 	if ( version_compare( $prev_version, CODE_SNIPPETS_VERSION, '<' ) ) {
 
 		/* Upgrade the database tables */
-		code_snippets()->db->create_tables( true );
+		$db->create_tables( true );
 
 		/* Update the plugin version stored in the database */
 		update_option( 'code_snippets_version', CODE_SNIPPETS_VERSION );
@@ -40,6 +41,10 @@ function code_snippets_upgrader() {
 			$role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
 			$role->remove_cap( apply_filters( 'code_snippets_cap', 'manage_snippets' ) );
 		}
+	}
+
+	if ( false === $prev_version ) {
+		$db->create_sample_content();
 	}
 
 	/* Run multisite-only upgrades */
