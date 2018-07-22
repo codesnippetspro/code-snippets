@@ -351,7 +351,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		jQuery('#snippet_tags').tagit({
 			availableTags: <?php echo wp_json_encode( get_all_snippet_tags() ); ?>,
 			allowSpaces: true,
-			removeConfirmation: true
+			removeConfirmation: true,
+			showAutocompleteOnFocus: true,
 		});
 		</script>
 		<?php

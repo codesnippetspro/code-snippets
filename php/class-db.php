@@ -82,6 +82,7 @@ class Code_Snippets_DB {
 		$multisite = $this->validate_network_param( $multisite );
 
 		/* Retrieve the table name from $wpdb depending on the value of $multisite */
+
 		return ( $multisite ? $wpdb->ms_snippets : $wpdb->snippets );
 	}
 
@@ -122,6 +123,7 @@ class Code_Snippets_DB {
 	 * @uses dbDelta() to apply the SQL code
 	 *
 	 * @param string $table_name The name of the table to create
+	 *
 	 * @return bool whether the table creation was successful
 	 */
 	function create_table( $table_name ) {
@@ -155,6 +157,7 @@ class Code_Snippets_DB {
 
 	/**
 	 * Add sample snippet content to the database
+	 *
 	 * @param bool $network
 	 */
 	public function create_sample_content( $network = false ) {
@@ -172,24 +175,24 @@ class Code_Snippets_DB {
 			),
 
 			array(
-				'name' => __( 'Example CSS snippet', 'code-snippets' ),
-				'code' => sprintf(
-						"\nadd_action( 'wp_head', function () { ?>\n\t<style>\n\n\t\t/* %s */\n\n\t</style>\n<?php } );\n",
-						strip_tags( __( 'write your CSS code here', 'code-snippets' ) )
+				'name'  => __( 'Example CSS snippet', 'code-snippets' ),
+				'code'  => sprintf(
+					"\nadd_action( 'wp_head', function () { ?>\n\t<style>\n\n\t\t/* %s */\n\n\t</style>\n<?php } );\n",
+					strip_tags( __( 'write your CSS code here', 'code-snippets' ) )
 				),
-				'desc' => __( 'This is an example snippet for demonstrating how to add custom CSS code to your website.', 'code-snippets' ),
-				'tags' => array( 'css' ),
+				'desc'  => __( 'This is an example snippet for demonstrating how to add custom CSS code to your website.', 'code-snippets' ),
+				'tags'  => array( 'css' ),
 				'scope' => 'front-end',
 			),
 
 			array(
-				'name' => __( 'Example JavaScript snippet', 'code-snippets' ),
-				'code' => sprintf(
+				'name'  => __( 'Example JavaScript snippet', 'code-snippets' ),
+				'code'  => sprintf(
 					"\nadd_action( 'wp_head', function () { ?>\n\t<script>\n\n\t\t/* %s */\n\n\t</script>\n<?php } );\n",
 					strip_tags( __( 'write your JavaScript code here', 'code-snippets' ) )
 				),
-				'desc' => __( 'This is an example snippet for demonstrating how to add custom JavaScript code to your website.', 'code-snippets' ),
-				'tags' => array( 'javascript' ),
+				'desc'  => __( 'This is an example snippet for demonstrating how to add custom JavaScript code to your website.', 'code-snippets' ),
+				'tags'  => array( 'javascript' ),
 				'scope' => 'front-end',
 			),
 		);
