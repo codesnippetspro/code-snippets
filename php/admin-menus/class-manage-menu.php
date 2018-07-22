@@ -78,7 +78,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		wp_enqueue_script(
 			'code-snippets-manage-js',
-				plugins_url( 'js/min/manage.js', $plugin->file ),
+			plugins_url( 'js/min/manage.js', $plugin->file ),
 			array(), $plugin->version, true
 		);
 	}
@@ -137,8 +137,8 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		$id = intval( $_POST['snippet_id'] );
 		$priority = intval( $_POST['snippet_priority'] );
-		$network = ( $_POST['snippet_network'] === 'true' || $_POST['snippet_network'] === '1' ) ? true :
-			( $_POST['snippet_network'] === 'false' || $_POST['snippet_network'] === '0' ? false : null );
+		$network = ( 'true' === $_POST['snippet_network'] || '1' === $_POST['snippet_network'] ) ? true :
+			( 'false' === $_POST['snippet_network'] || '0' === $_POST['snippet_network'] ? false : null );
 
 		if ( $id <= 0 || ! is_numeric( $_POST['snippet_priority'] ) || is_null( $network ) ) {
 			echo 'Invalid snippet data';
