@@ -21,6 +21,10 @@
 	border: none;
 	box-shadow: none;
 	width: 4em;
+
+	:disabled {
+		color: inherit;
+	}
 }
 
 .snippets .badge {

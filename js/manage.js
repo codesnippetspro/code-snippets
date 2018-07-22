@@ -4,7 +4,7 @@
 	var nonce = document.getElementById('code_snippets_ajax_nonce').value;
 
 	var update_snippet_priority = function () {
-		var column_id = this.parentElement.parentElement.querySelector('.column-id');
+		var column_id = this.parentElement.parentElement.querySelector('.column-id');c
 
 		if (! column_id) {
 			return;
@@ -31,6 +31,7 @@
 
 	for (var i = 0; i < priority_fields.length; i++) {
 		priority_fields[i].addEventListener('input', update_snippet_priority);
+		priority_fields[i].disabled = false;
 	}
 
 })();
