@@ -752,7 +752,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * Message to display if no snippets are found
 	 */
 	public function no_items() {
-		esc_html_e( 'Whoops, it looks like no snippets could be found.', 'code-snippets' );
+		esc_html_e( "It looks like you don't have any snippets.", 'code-snippets' );
 		printf(
 			' <a href="%s">%s</a>',
 			esc_url( code_snippets()->get_menu_url( 'add' ) ),
