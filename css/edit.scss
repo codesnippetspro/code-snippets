@@ -77,6 +77,13 @@ ul.tagit {
 
 .CodeMirror-sizer {
 	min-height: 300px !important;
+
+	&::before {
+		content: "<?php";
+		color: #bbb;
+		display: block;
+		padding-bottom: 6px;
+	}
 }
 
 .CodeMirror-focused .cm-matchhighlight {
