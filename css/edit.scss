@@ -42,6 +42,21 @@ ul.tagit {
 	}
 }
 
+.snippet-priority {
+	float: right;
+
+	label {
+		font-weight: bold;
+		cursor: help;
+		font-size: 1.1em;
+		padding-right: 0.5em;
+	}
+
+	input {
+		width: 4em;
+	}
+}
+
 /**
  * Customize the CodeMirror editor
  * to look nice and support auto-resizing

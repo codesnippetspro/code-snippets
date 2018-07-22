@@ -6,15 +6,16 @@
  * @since 2.4.0
  * @package Code_Snippets
  *
- * @property int    $id             The database ID
- * @property string $name           The display name
- * @property string $desc           The formatted description
- * @property string $code           The executable code
- * @property array  $tags           An array of the tags
- * @property int    $scope          The scope number
- * @property bool   $active         The active status
- * @property bool   $network        true if is multisite-wide snippet, false if site-wide
- * @property bool   $shared_network Whether the snippet is a shared network snippet
+ * @property int         $id             The database ID
+ * @property string      $name           The display name
+ * @property string      $desc           The formatted description
+ * @property string      $code           The executable code
+ * @property array       $tags           An array of the tags
+ * @property int         $scope          The scope number
+ * @property int         $priority       Execution priority
+ * @property bool        $active         The active status
+ * @property bool        $network        true if is multisite-wide snippet, false if site-wide
+ * @property bool        $shared_network Whether the snippet is a shared network snippet
  *
  * @property-read array  $tags_list  The tags in string list format
  * @property-read string $scope_name The name of the scope
@@ -28,14 +29,15 @@ class Code_Snippet {
 	 * @var array
 	 */
 	private $fields = array(
-		'id' => 0,
-		'name' => '',
-		'desc' => '',
-		'code' => '',
-		'tags' => array(),
-		'scope' => 'global',
-		'active' => false,
-		'network' => null,
+		'id'             => 0,
+		'name'           => '',
+		'desc'           => '',
+		'code'           => '',
+		'tags'           => array(),
+		'scope'          => 'global',
+		'active'         => false,
+		'priority'       => 10,
+		'network'        => null,
 		'shared_network' => null,
 	);
 
@@ -45,6 +47,7 @@ class Code_Snippet {
 
 	/**
 	 * Constructor function
+	 *
 	 * @param array|object $fields Initial snippet fields
 	 */
 	public function __construct( $fields = null ) {
@@ -98,18 +101,23 @@ class Code_Snippet {
 
 	/**
 	 * Check if a field is set
-	 * @param  string  $field The field name
-	 * @return bool           Whether the field is set
+	 *
+	 * @param string $field The field name
+	 *
+	 * @return bool Whether the field is set
 	 */
 	public function __isset( $field ) {
 		$field = $this->validate_field_name( $field );
+
 		return isset( $this->fields[ $field ] ) || method_exists( $this, 'get_' . $field );
 	}
 
 	/**
 	 * Retrieve a field's value
-	 * @param  string $field The field name
-	 * @return mixed         The field value
+	 *
+	 * @param string $field The field name
+	 *
+	 * @return mixed The field value
 	 */
 	public function __get( $field ) {
 		$field = $this->validate_field_name( $field );
@@ -123,8 +131,6 @@ class Code_Snippet {
 
 	/**
 	 * Set the value of a field
-	 *
-	 * @throws ErrorException When an invalid $field is undefined for the class
 	 *
 	 * @param string $field The field name
 	 * @param mixed  $value The field value
@@ -184,12 +190,15 @@ class Code_Snippet {
 		}
 
 		$this->__set( $field, $value );
+
 		return true;
 	}
 
 	/**
 	 * Prepare the ID by ensuring it is an absolute integer
-	 * @param  int $id
+	 *
+	 * @param int $id
+	 *
 	 * @return int
 	 */
 	private function prepare_id( $id ) {
@@ -198,7 +207,9 @@ class Code_Snippet {
 
 	/**
 	 * Prepare the code by removing php tags from beginning and end
-	 * @param  string $code
+	 *
+	 * @param string $code
+	 *
 	 * @return string
 	 */
 	private function prepare_code( $code ) {
@@ -214,8 +225,10 @@ class Code_Snippet {
 
 	/**
 	 * Prepare the scope by ensuring that it is a valid number
-	 * @param  int $scope The field as provided
-	 * @return int        The field in the correct format
+	 *
+	 * @param int $scope The field as provided
+	 *
+	 * @return int The field in the correct format
 	 */
 	private function prepare_scope( $scope ) {
 		$scopes = self::get_all_scopes();
@@ -233,8 +246,10 @@ class Code_Snippet {
 
 	/**
 	 * Prepare the snippet tags by ensuring they are in the correct format
-	 * @param  string|array $tags The tags as provided
-	 * @return array              The tags as an array
+	 *
+	 * @param string|array $tags The tags as provided
+	 *
+	 * @return array The tags as an array
 	 */
 	private function prepare_tags( $tags ) {
 		return code_snippets_build_tags_array( $tags );
@@ -242,8 +257,10 @@ class Code_Snippet {
 
 	/**
 	 * Prepare the active field by ensuring it is the correct type
-	 * @param  bool|int $active The field as provided
-	 * @return bool             The field in the correct format
+	 *
+	 * @param bool|int $active The field as provided
+	 *
+	 * @return bool The field in the correct format
 	 */
 	private function prepare_active( $active ) {
 
@@ -255,9 +272,22 @@ class Code_Snippet {
 	}
 
 	/**
+	 * Prepare the priority field by ensuring it is an integer
+	 *
+	 * @param int $priority
+	 *
+	 * @return int
+	 */
+	private function prepare_priority( $priority ) {
+		return intval( $priority );
+	}
+
+	/**
 	 * If $network is anything other than true, set it to false
-	 * @param  bool $network The provided field
-	 * @return bool          The filtered field
+	 *
+	 * @param bool $network The provided field
+	 *
+	 * @return bool The filtered field
 	 */
 	private function prepare_network( $network ) {
 
@@ -290,9 +320,9 @@ class Code_Snippet {
 	 */
 	public static function get_scope_icons() {
 		return array(
-			'global' => 'admin-site',
-			'admin' => 'admin-tools',
-			'front-end' => 'admin-appearance',
+			'global'     => 'admin-site',
+			'admin'      => 'admin-tools',
+			'front-end'  => 'admin-appearance',
 			'single-use' => 'clock',
 		);
 	}
@@ -311,6 +341,7 @@ class Code_Snippet {
 	 */
 	private function get_scope_icon() {
 		$icons = self::get_scope_icons();
+
 		return $icons[ $this->scope ];
 	}
 

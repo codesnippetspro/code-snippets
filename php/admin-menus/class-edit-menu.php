@@ -72,6 +72,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_tags_editor' ) );
 		}
 
+		add_action( 'code_snippets/admin/single', array( $this, 'render_priority_setting' ), 0 );
+
 		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_scope_setting' ), 1 );
 		}
@@ -346,6 +348,22 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			removeConfirmation: true
 		});
 		</script>
+		<?php
+	}
+
+	/**
+	 * Render the snippet priority setting
+	 *
+	 * @param Code_Snippet $snippet the snippet currently being edited
+	 */
+	public function render_priority_setting( Code_Snippet $snippet ) {
+		?>
+		<p class="snippet-priority"
+		   title="<?php esc_attr_e( 'Snippets with a lower priority number will run before those with a higher number.', 'code-snippets' ); ?>">
+			<label for="snippet_priority"><?php esc_html_e( 'Priority', 'code-snippets' ); ?></label>
+
+			<input name="snippet_priority" type="number" id="snippet_priority" value="<?php echo intval( $snippet->priority ); ?>">
+		</p>
 		<?php
 	}
 

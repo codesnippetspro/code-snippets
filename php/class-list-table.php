@@ -352,6 +352,21 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Output the content of the priority column
+	 *
+	 * @param Code_Snippet $snippet
+	 *
+	 * @return string
+	 */
+	protected function column_priority( $snippet ) {
+
+		return sprintf(
+			'<input type="number" name="snippet_%d_priority" value="%d" step="1">',
+			$snippet->id, $snippet->priority
+		);
+	}
+
+	/**
 	 * Define the column headers for the table
 	 *
 	 * @return array The column headers, ID paired with label
@@ -363,6 +378,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'id'          => __( 'ID', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
+			'priority'    => __( 'Priority', 'code-snippets' ),
 		);
 
 		if ( ! code_snippets_get_setting( 'general', 'enable_description' ) ) {
@@ -383,9 +399,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable_columns = array(
-			'id'   => array( 'id', true ),
-			'name' => array( 'name', false ),
-			'tags' => array( 'tags_list', true ),
+			'id'       => array( 'id', true ),
+			'name'     => array( 'name', false ),
+			'tags'     => array( 'tags_list', true ),
+			'priority' => array( 'priority', true ),
 		);
 
 		return apply_filters( 'code_snippets/list_table/sortable_columns', $sortable_columns );
@@ -994,7 +1011,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$orderby = (
 		! empty( $_REQUEST['orderby'] )
 			? $_REQUEST['orderby']
-			: apply_filters( 'code_snippets/list_table/default_orderby', 'id' )
+			: apply_filters( 'code_snippets/list_table/default_orderby', 'priority' )
 		);
 
 		// sort ascending by default
@@ -1005,6 +1022,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		);
 
 		$result = $this->get_sort_direction( $orderby, $a->$orderby, $b->$orderby );
+
+		if ( 0 === $result && 'id' !== $orderby ) {
+			$result = $this->get_sort_direction( 'id', $a->id, $b->id );
+		}
 
 		// apply the sort direction to the calculated order
 		return ( 'asc' === $order ) ? $result : -$result;

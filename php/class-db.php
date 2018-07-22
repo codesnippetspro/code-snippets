@@ -136,6 +136,7 @@ class Code_Snippets_DB {
 				code        longtext    NOT NULL default '',
 				tags        longtext    NOT NULL default '',
 				scope       varchar(15) NOT NULL default 'global',
+				priority    smallint    NOT NULL default 10,
 				active      tinyint(1)  NOT NULL default 0,
 				PRIMARY KEY  (id)
 			) $charset_collate;";

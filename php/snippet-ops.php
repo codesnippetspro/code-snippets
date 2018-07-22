@@ -272,6 +272,7 @@ function save_snippet( Code_Snippet $snippet ) {
 		'code' => $snippet->code,
 		'tags' => $snippet->tags_list,
 		'scope' => $snippet->scope,
+		'priority' => $snippet->priority,
 		'active' => intval( $snippet->active ),
 	);
 
@@ -380,10 +381,11 @@ function execute_active_snippets() {
 	$queries = array();
 
 	$sql_format = "SELECT id, code, scope FROM %s WHERE scope IN ('global', 'single-use', %%s) ";
+	$order = 'ORDER BY priority ASC, id ASC';
 
 	/* Fetch snippets from site table */
 	if ( $wpdb->get_var( "SHOW TABLES LIKE '$wpdb->snippets'" ) === $wpdb->snippets ) {
-		$queries[ $wpdb->snippets ] = $wpdb->prepare( sprintf( $sql_format, $wpdb->snippets ) . 'AND active=1', $current_scope );
+		$queries[ $wpdb->snippets ] = $wpdb->prepare( sprintf( $sql_format, $wpdb->snippets ) . 'AND active=1 ' . $order, $current_scope );
 	}
 
 	/* Fetch snippets from the network table */
@@ -397,14 +399,14 @@ function execute_active_snippets() {
 			$active_shared_ids_format = implode( ',', array_fill( 0, count( $active_shared_ids ), '%d' ) );
 
 			/* Include them in the query */
-			$sql = sprintf( $sql_format, $wpdb->ms_snippets ) . " AND (active=1 OR id IN ($active_shared_ids_format))";
+			$sql = sprintf( $sql_format, $wpdb->ms_snippets ) . " AND (active=1 OR id IN ($active_shared_ids_format)) $order";
 
 			/* Add the scope number to the IDs array, so that it is the first variable in the query */
 			array_unshift( $active_shared_ids, $current_scope );
 			$queries[ $wpdb->ms_snippets ] = $wpdb->prepare( $sql, $active_shared_ids );
 
 		} else {
-			$sql = sprintf( $sql_format, $wpdb->ms_snippets ) . 'AND active=1';
+			$sql = sprintf( $sql_format, $wpdb->ms_snippets ) . 'AND active=1 ' . $order;
 			$queries[ $wpdb->ms_snippets ] = $wpdb->prepare( $sql, $current_scope );
 		}
 	}
