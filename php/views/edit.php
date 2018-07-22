@@ -172,7 +172,7 @@ $snippet = get_snippet( $edit_id );
 
 		// send the current cursor position to the next page
 		document.getElementById('snippet-form').addEventListener('submit', function () {
-			var cursor = code_snippet_editor.getCursor();
+			var cursor = editor.getCursor();
 			this.insertAdjacentHTML('beforeend', '<input type="hidden" name="snippet_editor_cursor" value="' + cursor.line + '_' + cursor.ch + '">');
 		});
 
