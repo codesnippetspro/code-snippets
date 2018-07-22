@@ -176,6 +176,14 @@ $snippet = get_snippet( $edit_id );
 			this.insertAdjacentHTML('beforeend', '<input type="hidden" name="snippet_editor_cursor" value="' + cursor.line + '_' + cursor.ch + '">');
 		});
 
+		// submit snippet  on ctrl/cmd+s
+		document.addEventListener('keydown', function (e) {
+			if ((window.navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) && 's' === e.key) {
+				e.preventDefault();
+				document.getElementById('save_snippet').click();
+			}
+		}, false);
+
 		return editor;
 	})();
 </script>
