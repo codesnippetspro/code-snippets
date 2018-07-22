@@ -22,7 +22,7 @@
 	box-shadow: none;
 	width: 4em;
 
-	:disabled {
+	&:disabled {
 		color: inherit;
 	}
 }
