@@ -5,6 +5,8 @@
  *
  * @package Code_Snippets
  * @subpackage Views
+ *
+ * @var Code_Snippets_Manage_Menu $this
  */
 
 /* Bail if accessed directly */
@@ -20,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	printf( '<a href="%2$s" class="page-title-action add-new-h2">%1$s</a>',
 		esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-		code_snippets_get_menu_url( 'add' )
+		code_snippets()->get_menu_url( 'add' )
 	);
 
 	$this->list_table->search_notice();
@@ -35,6 +37,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 	</form>
 	<form method="post" action="">
+		<input type="hidden" id="code_snippets_ajax_nonce" value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage' ) ); ?>">
+
 		<?php
 			$this->list_table->required_form_fields();
 			$this->list_table->display();

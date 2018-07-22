@@ -30,6 +30,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	public function run() {
 		parent::run();
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
+		add_action( 'wp_ajax_update_code_snippet_priority', array( $this, 'update_priority_ajax_action' ) );
 	}
 
 	/**
@@ -68,6 +69,18 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		/* Initialize the list table class */
 		$this->list_table = new Code_Snippets_List_Table();
 		$this->list_table->prepare_items();
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+	}
+
+	public function enqueue_scripts() {
+		$plugin = code_snippets();
+
+		wp_enqueue_script(
+			'code-snippets-manage-js',
+				plugins_url( 'js/min/manage.js', $plugin->file ),
+			array(), $plugin->version, true
+		);
 	}
 
 	/**
@@ -98,10 +111,10 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Handles saving the user's snippets per page preference
 	 *
-	 * @param  unknown $status
-	 * @param  string  $option The screen option name
-	 * @param  unknown $value
-	 * @return unknown
+	 * @param  mixed  $status
+	 * @param  string $option The screen option name
+	 * @param  mixed  $value
+	 * @return mixed
 	 */
 	function save_screen_option( $status, $option, $value ) {
 		if ( 'snippets_per_page' === $option ) {
@@ -110,4 +123,39 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		return $status;
 	}
+
+	/**
+	 * Handle the AJAX action to update a snippet priority
+	 */
+	public function update_priority_ajax_action() {
+		check_ajax_referer( 'code_snippets_manage' );
+
+		if ( ! isset( $_POST['snippet_id'], $_POST['snippet_priority'], $_POST['snippet_network'] ) ) {
+			echo 'Snippet data not provided';
+			wp_die();
+		}
+
+		$id = intval( $_POST['snippet_id'] );
+		$priority = intval( $_POST['snippet_priority'] );
+		$network = ( $_POST['snippet_network'] === 'true' || $_POST['snippet_network'] === '1' ) ? true :
+			( $_POST['snippet_network'] === 'false' || $_POST['snippet_network'] === '0' ? false : null );
+
+		if ( $id <= 0 || ! is_numeric( $_POST['snippet_priority'] ) || is_null( $network ) ) {
+			echo 'Invalid snippet data';
+			wp_die();
+		}
+
+		global $wpdb;
+
+		$wpdb->update(
+			code_snippets()->db->get_table_name( $network ),
+			array( 'priority' => $priority ),
+			array( 'id' => $id ),
+			array( '%d' ),
+			array( '%d' )
+		);
+
+		wp_die();
+	}
+
 }

@@ -14,7 +14,12 @@ module.exports = function (grunt) {
 
 			css: {
 				files: ['css/**/*.scss'],
-				tasks: ['postcss', 'csso']
+				tasks: ['postcss', 'csso:dist']
+			},
+
+			js: {
+				files: ['js/*.js'],
+				tasks: ['uglify:dist']
 			}
 		},
 
@@ -67,6 +72,11 @@ module.exports = function (grunt) {
 		},
 
 		uglify: {
+			dist: {
+				files: {
+					'js/min/manage.js': ['js/manage.js']
+				}
+			},
 			vendor: {
 				files: {
 					'js/min/codemirror.js': [

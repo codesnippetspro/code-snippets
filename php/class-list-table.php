@@ -360,10 +360,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	protected function column_priority( $snippet ) {
 
-		return sprintf(
-			'<input type="number" name="snippet_%d_priority" value="%d" step="1">',
-			$snippet->id, $snippet->priority
-		);
+		return sprintf( '<input type="number" class="snippet-priority" value="%d" step="1">', $snippet->priority );
 	}
 
 	/**
