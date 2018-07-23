@@ -41,7 +41,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$this->is_network = is_network_admin();
 
 		/* Determine the status */
-		$status = 'all';
+		$status = apply_filters( 'code_snippets/list_table/default_view', 'all' );
 		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], $this->statuses ) ) {
 			$status = $_REQUEST['status'];
 		}
