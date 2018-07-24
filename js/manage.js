@@ -1,3 +1,4 @@
+/* global ajaxurl, pagenow */
 'use strict';
 (function () {
 
@@ -21,7 +22,7 @@
 
 		var request = new XMLHttpRequest();
 		request.open('POST', ajaxurl, true);
-
+		request.send(query_string);
 	};
 
 	for (var i = 0; i < priority_fields.length; i++) {
