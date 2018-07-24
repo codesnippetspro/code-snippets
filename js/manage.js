@@ -22,6 +22,7 @@
 
 		var request = new XMLHttpRequest();
 		request.open('POST', ajaxurl, true);
+		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 		request.send(query_string);
 	};
 
