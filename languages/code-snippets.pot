@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-24 19:38+1000\n"
+"POT-Creation-Date: 2018-07-25 00:10+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,11 +64,11 @@ msgid ""
 "made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:309 php/class-list-table.php:385
+#: php/admin-menus/class-edit-menu.php:309 php/class-list-table.php:330
 msgid "Description"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:342 php/class-list-table.php:386
+#: php/admin-menus/class-edit-menu.php:342 php/class-list-table.php:331
 msgid "Tags"
 msgstr ""
 
@@ -82,7 +82,7 @@ msgid ""
 "number."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:370 php/class-list-table.php:387
+#: php/admin-menus/class-edit-menu.php:370 php/class-list-table.php:332
 msgid "Priority"
 msgstr ""
 
@@ -559,147 +559,140 @@ msgstr ""
 msgid "Snippets per page"
 msgstr ""
 
-#: php/class-list-table.php:121 php/class-list-table.php:436
-msgid "Network Deactivate"
-msgstr ""
-
-#: php/class-list-table.php:121 php/class-list-table.php:214
-#: php/class-list-table.php:436
-msgid "Deactivate"
-msgstr ""
-
-#: php/class-list-table.php:131
-msgid "Run Once"
-msgstr ""
-
-#: php/class-list-table.php:141 php/class-list-table.php:435
-msgid "Network Activate"
-msgstr ""
-
-#: php/class-list-table.php:141 php/class-list-table.php:214
-#: php/class-list-table.php:435
-msgid "Activate"
-msgstr ""
-
-#: php/class-list-table.php:151 php/class-list-table.php:230
-msgid "Edit"
-msgstr ""
-
-#: php/class-list-table.php:157 php/class-list-table.php:437
-msgid "Clone"
-msgstr ""
-
-#: php/class-list-table.php:166 php/class-list-table.php:236
-#: php/class-list-table.php:439 php/views/edit.php:122
-msgid "Export"
-msgstr ""
-
-#: php/class-list-table.php:175 php/class-list-table.php:248
-#: php/class-list-table.php:440 php/views/edit.php:135
-msgid "Delete"
-msgstr ""
-
-#: php/class-list-table.php:182 php/class-list-table.php:258
-msgid "You are about to permanently delete the selected item."
-msgstr ""
-
-#: php/class-list-table.php:183 php/class-list-table.php:259
-#: php/views/edit.php:130
-msgid "'Cancel' to stop, 'OK' to delete."
-msgstr ""
-
-#: php/class-list-table.php:190
+#: php/class-list-table.php:144
 msgid "Network Active"
 msgstr ""
 
-#: php/class-list-table.php:192
+#: php/class-list-table.php:146
 msgid "Network Only"
 msgstr ""
 
-#: php/class-list-table.php:279
+#: php/class-list-table.php:153
+msgid "Edit"
+msgstr ""
+
+#: php/class-list-table.php:154 php/class-list-table.php:382
+msgid "Clone"
+msgstr ""
+
+#: php/class-list-table.php:155 php/class-list-table.php:384
+#: php/views/edit.php:122
+msgid "Export"
+msgstr ""
+
+#: php/class-list-table.php:164 php/class-list-table.php:385
+#: php/views/edit.php:135
+msgid "Delete"
+msgstr ""
+
+#: php/class-list-table.php:168
+msgid "You are about to permanently delete the selected item."
+msgstr ""
+
+#: php/class-list-table.php:169 php/views/edit.php:130
+msgid "'Cancel' to stop, 'OK' to delete."
+msgstr ""
+
+#: php/class-list-table.php:228
 #, php-format
 msgid "Untitled #%d"
 msgstr ""
 
-#: php/class-list-table.php:307
+#: php/class-list-table.php:252
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:383 php/views/edit.php:46
+#: php/class-list-table.php:328 php/views/edit.php:46
 msgid "Name"
 msgstr ""
 
-#: php/class-list-table.php:384
+#: php/class-list-table.php:329
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:438 php/views/edit.php:117
+#: php/class-list-table.php:380
+msgid "Network Activate"
+msgstr ""
+
+#: php/class-list-table.php:380
+msgid "Activate"
+msgstr ""
+
+#: php/class-list-table.php:381
+msgid "Network Deactivate"
+msgstr ""
+
+#: php/class-list-table.php:381
+msgid "Deactivate"
+msgstr ""
+
+#: php/class-list-table.php:383 php/views/edit.php:117
 msgid "Download"
 msgstr ""
 
-#: php/class-list-table.php:480
+#: php/class-list-table.php:425
 #, php-format
 msgid "All <span class=\"count\">(%s)</span>"
 msgid_plural "All <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:481
+#: php/class-list-table.php:426
 #, php-format
 msgid "Active <span class=\"count\">(%s)</span>"
 msgid_plural "Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:482
+#: php/class-list-table.php:427
 #, php-format
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:483
+#: php/class-list-table.php:428
 #, php-format
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:552
+#: php/class-list-table.php:497
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:566
+#: php/class-list-table.php:511
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:574
+#: php/class-list-table.php:519
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:789
+#: php/class-list-table.php:734
 msgid "It looks like you don't have any snippets."
 msgstr ""
 
-#: php/class-list-table.php:793
+#: php/class-list-table.php:738
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1115
+#: php/class-list-table.php:1034
 msgid "Search results"
 msgstr ""
 
-#: php/class-list-table.php:1118
+#: php/class-list-table.php:1037
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1122
+#: php/class-list-table.php:1041
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1130
+#: php/class-list-table.php:1049
 msgid "Clear Filters"
 msgstr ""
 
@@ -737,117 +730,107 @@ msgid "Show snippet descriptions on admin pages"
 msgstr ""
 
 #: php/settings/settings-fields.php:70
-msgid "Show Network Snippets"
-msgstr ""
-
-#: php/settings/settings-fields.php:72
-msgid ""
-"Show network-wide snippets in the snippets table on subsites to super "
-"administrators only"
-msgstr ""
-
-#: php/settings/settings-fields.php:77
 msgid "Disable Shortcode Syntax Highlighter"
 msgstr ""
 
-#: php/settings/settings-fields.php:79
+#: php/settings/settings-fields.php:72
 msgid ""
 "Disable the syntax highlighting for the [code_snippet] shortcode on the "
 "front-end"
 msgstr ""
 
-#: php/settings/settings-fields.php:84
+#: php/settings/settings-fields.php:77
 msgid "Complete Uninstall"
 msgstr ""
 
-#: php/settings/settings-fields.php:87
+#: php/settings/settings-fields.php:80
 #, php-format
 msgid ""
 "When the plugin is deleted from the <a href=\"%s\">Plugins</a> menu, also "
 "delete all snippets and plugin settings."
 msgstr ""
 
-#: php/settings/settings-fields.php:106
+#: php/settings/settings-fields.php:95
 msgid "Row Height"
 msgstr ""
 
-#: php/settings/settings-fields.php:108
+#: php/settings/settings-fields.php:97
 msgid "rows"
 msgstr ""
 
-#: php/settings/settings-fields.php:114
+#: php/settings/settings-fields.php:103
 msgid "Use Full Editor"
 msgstr ""
 
-#: php/settings/settings-fields.php:116
+#: php/settings/settings-fields.php:105
 msgid "Enable all features of the visual editor"
 msgstr ""
 
-#: php/settings/settings-fields.php:121
+#: php/settings/settings-fields.php:110
 msgid "Media Buttons"
 msgstr ""
 
-#: php/settings/settings-fields.php:123
+#: php/settings/settings-fields.php:112
 msgid "Enable the add media buttons"
 msgstr ""
 
-#: php/settings/settings-fields.php:132
+#: php/settings/settings-fields.php:121
 msgid "Theme"
 msgstr ""
 
-#: php/settings/settings-fields.php:139
+#: php/settings/settings-fields.php:128
 msgid "Indent With Tabs"
 msgstr ""
 
-#: php/settings/settings-fields.php:141
+#: php/settings/settings-fields.php:130
 msgid "Use hard tabs (not spaces) for indentation."
 msgstr ""
 
-#: php/settings/settings-fields.php:147
+#: php/settings/settings-fields.php:136
 msgid "Tab Size"
 msgstr ""
 
-#: php/settings/settings-fields.php:149
+#: php/settings/settings-fields.php:138
 msgid "The width of a tab character."
 msgstr ""
 
-#: php/settings/settings-fields.php:156
+#: php/settings/settings-fields.php:145
 msgid "Indent Unit"
 msgstr ""
 
-#: php/settings/settings-fields.php:158
+#: php/settings/settings-fields.php:147
 msgid "How many spaces a block should be indented."
 msgstr ""
 
-#: php/settings/settings-fields.php:165
+#: php/settings/settings-fields.php:154
 msgid "Wrap Lines"
 msgstr ""
 
-#: php/settings/settings-fields.php:167
+#: php/settings/settings-fields.php:156
 msgid "Whether the editor should scroll or wrap for long lines."
 msgstr ""
 
-#: php/settings/settings-fields.php:173
+#: php/settings/settings-fields.php:162
 msgid "Line Numbers"
 msgstr ""
 
-#: php/settings/settings-fields.php:175
+#: php/settings/settings-fields.php:164
 msgid "Show line numbers to the left of the editor."
 msgstr ""
 
-#: php/settings/settings-fields.php:181
+#: php/settings/settings-fields.php:170
 msgid "Auto Close Brackets"
 msgstr ""
 
-#: php/settings/settings-fields.php:183
+#: php/settings/settings-fields.php:172
 msgid "Auto-close brackets and quotes when typed."
 msgstr ""
 
-#: php/settings/settings-fields.php:189
+#: php/settings/settings-fields.php:178
 msgid "Highlight Selection Matches"
 msgstr ""
 
-#: php/settings/settings-fields.php:190
+#: php/settings/settings-fields.php:179
 msgid "Highlight all instances of a currently selected word."
 msgstr ""
 

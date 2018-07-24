@@ -13,6 +13,10 @@
 	.dashicons-clock {
 		vertical-align: middle;
 	}
+
+	.active-snippet & > a {
+		font-weight: 600;
+	}
 }
 
 .column-priority input {
@@ -24,6 +28,47 @@
 
 	&:disabled {
 		color: inherit;
+	}
+}
+
+.snippets .row-actions, .snippets .snippet-name {
+	margin-left: 40px;
+}
+
+.snippets .row-actions {
+	position: relative;
+	left: 0;
+}
+
+.snippet-activation-switch {
+	position: absolute;
+	display: inline-block;
+	margin-top: 5px;
+
+	width: 30px;
+	height: 17px;
+
+	background-color: #ccc;
+	transition: .4s;
+	border-radius: 34px;
+
+	&::before {
+		content: "";
+		height: 13px;
+		width: 13px;
+		display: inline-block;
+		margin: 1.5px 2px;
+		background-color: white;
+		transition: .4s, background-color 1000ms linear;
+		border-radius: 50%;
+	}
+
+	.snippets .active-snippet & {
+		background-color: #2196F3;
+
+		&::before {
+			transform: translateX(100%);
+		}
 	}
 }
 
@@ -73,7 +118,7 @@
 
 	thead th.check-column,
 	tfoot th.check-column,
-	.inactive th.check-column {
+	.inactive-snippet th.check-column {
 		padding-left: 5px;
 	}
 
@@ -81,14 +126,11 @@
 		color: #333;
 	}
 
-	.inactive {
-
-		a {
-			color: #579;
-		}
+	.inactive-snippet a {
+		color: #579;
 	}
 
-	.inactive, .active {
+	.active-snippet, .inactive-snippet {
 		td, th {
 			padding: 10px 9px;
 			border: none;
@@ -96,7 +138,7 @@
 		}
 	}
 
-	.active {
+	.active-snippet {
 
 		td, th {
 			background-color: rgba(120,200,230,0.06);
@@ -108,8 +150,8 @@
 
 	}
 
-	tr.active + tr.inactive th,
-	tr.active + tr.inactive td {
+	tr.active-snippet + tr.inactive-snippet th,
+	tr.active-snippet + tr.inactive-snippet td {
 		border-top: 1px solid rgba(0,0,0,0.03);
 		box-shadow: inset 0px 1px 0 rgba(0,0,0,0.02), inset 0 -1px 0 #e1e1e1;
 	}

@@ -103,6 +103,31 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Retrieve a URL to perform an action on a snippet
+	 *
+	 * @param string       $action
+	 * @param Code_Snippet $snippet
+	 * @param bool         $escape
+	 *
+	 * @return string
+	 */
+	public function get_action_link( $action, $snippet, $escape = true ) {
+
+		// redirect actions to the network dashboard for shared network snippets
+		$network_redirect = $snippet->shared_network && ! $this->is_network;
+
+		// edit links go to a different menu
+		if ( 'edit' === $action ) {
+			return code_snippets()->get_snippet_edit_url( $snippet->id, $network_redirect ? 'network' : 'self' );
+		}
+
+		$query_args = array( 'action' => $action, 'id' => $snippet->id );
+
+		$url = $network_redirect ? add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) : add_query_arg( $query_args );
+		return $escape ? esc_url( $url ) : $url;
+	}
+
+	/**
 	 * Build a list of action links for individual snippets
 	 *
 	 * @param Code_Snippet $snippet The current snippet
@@ -111,156 +136,84 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	private function get_snippet_action_links( Code_Snippet $snippet ) {
 		$actions = array();
-		$link_format = '<a href="%2$s">%1$s</a>';
 
-		if ( $this->is_network || ! $snippet->network ) {
-
-			if ( $snippet->active ) {
-				$actions['deactivate'] = sprintf(
-					$link_format,
-					$snippet->network ? esc_html__( 'Network Deactivate', 'code-snippets' ) : esc_html__( 'Deactivate', 'code-snippets' ),
-					esc_url( add_query_arg( array(
-						'action' => 'deactivate',
-						'id'     => $snippet->id,
-					) ) )
-				);
-			} elseif ( 'single-use' === $snippet->scope ) {
-
-				$actions['run_once'] = sprintf(
-					$link_format,
-					esc_html__( 'Run Once', 'code-snippets' ),
-					esc_url( add_query_arg( array(
-						'action' => 'run-once',
-						'id'     => $snippet->id,
-					) ) )
-				);
-
-			} else {
-				$actions['activate'] = sprintf(
-					$link_format,
-					$snippet->network ? esc_html__( 'Network Activate', 'code-snippets' ) : esc_html__( 'Activate', 'code-snippets' ),
-					esc_url( add_query_arg( array(
-						'action' => 'activate',
-						'id'     => $snippet->id,
-					) ) )
-				);
-			}
-
-			$actions['edit'] = sprintf(
-				$link_format,
-				esc_html__( 'Edit', 'code-snippets' ),
-				code_snippets()->get_snippet_edit_url( $snippet->id )
-			);
-
-			$actions['clone'] = sprintf(
-				$link_format,
-				esc_html__( 'Clone', 'code-snippets' ),
-				esc_url( add_query_arg( array(
-					'action' => 'clone',
-					'id'     => $snippet->id,
-				) ) )
-			);
-
-			$actions['export'] = sprintf(
-				$link_format,
-				esc_html__( 'Export', 'code-snippets' ),
-				esc_url( add_query_arg( array(
-					'action' => 'export',
-					'id'     => $snippet->id,
-				) ) )
-			);
-
-			$actions['delete'] = sprintf(
-				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
-				esc_html__( 'Delete', 'code-snippets' ),
-				esc_url( add_query_arg( array(
-					'action' => 'delete',
-					'id'     => $snippet->id,
-				) ) ),
-				esc_js( sprintf(
-					'return confirm("%s");',
-					esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
-					esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
-				) )
-			);
-
-		} else {
+		if ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) {
+			// display special links if on a subsite and dealing with a network-active snippet
 
 			if ( $snippet->active ) {
 				$actions['network_active'] = esc_html__( 'Network Active', 'code-snippets' );
 			} else {
 				$actions['network_only'] = esc_html__( 'Network Only', 'code-snippets' );
 			}
+
+		} elseif ( ! $snippet->shared_network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
+			// if the snippet is a shared network snippet, only display extra actions if the user has network permissions
+
+			$simple_actions = array(
+				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
+				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
+				'export' => esc_html__( 'Export', 'code-snippets' ),
+			);
+
+			foreach ( $simple_actions as $action => $label ) {
+				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', $this->get_action_link( $action, $snippet ), $label );
+			}
+
+			$actions['delete'] = sprintf(
+				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
+				esc_html__( 'Delete', 'code-snippets' ),
+				$this->get_action_link( 'delete', $snippet ),
+				esc_js( sprintf(
+					'return confirm("%s");',
+					esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
+					esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+				) )
+			);
 		}
 
 		return apply_filters( 'code_snippets/list_table/row_actions', $actions );
 	}
 
 	/**
-	 * Build a list of action links for individual shared network snippets
-	 *
-	 * @param  Code_Snippet $snippet The current snippet
-	 *
-	 * @return array            The action links HTML
+	 * Retrieve the code for a snippet activation switch
+	 * @param Code_Snippet $snippet
+	 * @return string
 	 */
-	private function get_shared_network_snippet_action_links( Code_Snippet $snippet ) {
-		$actions = array();
-		$link_format = '<a href="%2$s">%1$s</a>';
+	protected function get_activation_switch( $snippet ) {
+		$action = $snippet->active ? 'deactivate' : 'activate';
 
-		/* Only add Activate/Deactivate for subsites */
-		if ( ! $this->is_network ) {
-
-			$action = $snippet->active ? 'deactivate' : 'activate';
-			$label = $snippet->active ? esc_html__( 'Deactivate', 'code-snippets' ) : esc_html__( 'Activate', 'code-snippets' );
-			$activate_url = add_query_arg( array(
-				'action' => $action . '-shared',
-				'id'     => $snippet->id,
-			) );
-
-			$actions[ $action ] = sprintf( $link_format, $label, esc_url( $activate_url ) );
+		if ( $this->is_network && $snippet->shared_network || ( ! $this->is_network && $snippet->network && ! $snippet ) ) {
+			return '';
 		}
 
-		/* Don't add Edit/Export/Delete actions for if current user can't manage network snippets */
-		if ( ! current_user_can( code_snippets()->get_network_cap_name() ) ) {
-			return $actions;
+		if ( $snippet->shared_network ) {
+			$action .= 'shared';
 		}
 
-		$actions['edit'] = sprintf(
-			$link_format,
-			esc_html__( 'Edit', 'code-snippets' ),
-			code_snippets()->get_snippet_edit_url( $snippet->id, 'network' )
-		);
+		/*
+		if ( $snippet->active ) {
+			$actions['deactivate'] = sprintf(
+				$link_format,
+				$snippet->network ? esc_html__( 'Network Deactivate', 'code-snippets' ) : esc_html__( 'Deactivate', 'code-snippets' ),
+				$this->get_action_link( 'deactivate', $snippet )
+			);
+		} elseif ( 'single-use' === $snippet->scope ) {
 
-		$actions['export'] = sprintf(
-			$link_format,
-			esc_html__( 'Export', 'code-snippets' ),
-			add_query_arg(
-				array(
-					'action' => 'export',
-					'id'     => $snippet->id,
-				),
-				code_snippets()->get_menu_url( 'manage', 'network' )
-			)
-		);
+			$actions['run_once'] = sprintf( $link_format, esc_html__( 'Run Once', 'code-snippets' ), $this->get_action_link( 'run-once', $snippet ) );
 
-		$actions['delete'] = sprintf(
-			'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
-			esc_html__( 'Delete', 'code-snippets' ),
-			add_query_arg(
-				array(
-					'action' => 'delete',
-					'id'     => $snippet->id,
-				),
-				code_snippets()->get_menu_url( 'manage', 'network' )
-			),
-			esc_js( sprintf(
-				'return confirm("%s");',
-				esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
-				esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
-			) )
-		);
+		} else {
+			$actions['activate'] = sprintf(
+				$link_format,
+				$snippet->network ? esc_html__( 'Network Activate', 'code-snippets' ) : esc_html__( 'Activate', 'code-snippets' ),
+				$this->get_action_link( 'activate', $snippet )
+			);
+		}
+		*/
 
-		return $actions;
+		return sprintf(
+			'<a class="snippet-activation-switch" href="%s"></a> ',
+			$this->get_action_link( $action, $snippet )
+		);
 	}
 
 	/**
@@ -272,13 +225,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	protected function column_name( $snippet ) {
 
-		$action_links = $snippet->shared_network ?
-			$this->get_shared_network_snippet_action_links( $snippet ) :
-			$this->get_snippet_action_links( $snippet );
-
 		$title = empty( $snippet->name ) ? sprintf( __( 'Untitled #%d', 'code-snippets' ), $snippet->id ) : $snippet->name;
 
-		$row_actions = $this->row_actions( $action_links,
+		$row_actions = $this->row_actions(
+			$this->get_snippet_action_links( $snippet ),
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
@@ -288,16 +238,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$out .= ' <span class="dashicons dashicons-' . $snippet->scope_icon . '"></span>';
 		}
 
-		/* Only bold active snippets */
-		if ( $snippet->active ) {
-			$out = sprintf( '<strong>%s</strong>', $out );
-		}
-
 		/* Add a link to the snippet if it isn't an unreadable network-only snippet */
 		if ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
 
 			$out = sprintf(
-				'<a href="%s">%s</a>',
+				'<a href="%s" class="snippet-name">%s</a>',
 				code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ),
 				$out
 			);
@@ -308,8 +253,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		/* Return the name contents */
-
-		return apply_filters( 'code_snippets/list_table/column_name', $out, $snippet ) . $row_actions;
+		return $this->get_activation_switch( $snippet ) .
+		       apply_filters( 'code_snippets/list_table/column_name', $out, $snippet ) . $row_actions;
 	}
 
 	/**
@@ -1112,14 +1057,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @param Code_Snippet $snippet The snippet being used for the current row
 	 */
 	public function single_row( $snippet ) {
-		$row_class = ( $snippet->active ? 'active' : 'inactive' );
+		$row_class = ( $snippet->active ? 'active-snippet' : 'inactive-snippet' );
 
 		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
 			$row_class .= sprintf( ' %s-scope', $snippet->scope );
 		}
 
 		if ( $snippet->shared_network ) {
-			$row_class .= ' shared-network';
+			$row_class .= ' shared-network-snippet';
 		}
 
 		printf( '<tr class="%s">', $row_class );

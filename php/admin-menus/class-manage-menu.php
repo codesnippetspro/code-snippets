@@ -30,7 +30,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	public function run() {
 		parent::run();
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
-		add_action( 'wp_ajax_update_code_snippet_priority', array( $this, 'update_priority_ajax_action' ) );
+		add_action( 'wp_ajax_update_code_snippet', array( $this, 'ajax_callback' ) );
 	}
 
 	/**
@@ -97,15 +97,15 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		echo $this->get_result_message(
 			array(
-				'executed' => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
-				'activated' => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
-				'activated-multi' => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
-				'deactivated' => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
+				'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
+				'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
+				'activated-multi'   => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
+				'deactivated'       => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
 				'deactivated-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
-				'deleted' => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
-				'deleted-multi' => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
-				'cloned' => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
-				'cloned-multi' => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
+				'deleted'           => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
+				'deleted-multi'     => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
+				'cloned'            => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
+				'cloned-multi'      => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
 			)
 		);
 	}
@@ -116,6 +116,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	 * @param  mixed  $status
 	 * @param  string $option The screen option name
 	 * @param  mixed  $value
+	 *
 	 * @return mixed
 	 */
 	function save_screen_option( $status, $option, $value ) {
@@ -127,37 +128,65 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
-	 * Handle the AJAX action to update a snippet priority
+	 * Handle AJAX requests
 	 */
-	public function update_priority_ajax_action() {
+	public function ajax_callback() {
 		check_ajax_referer( 'code_snippets_manage' );
 
-		if ( ! isset( $_POST['snippet_id'], $_POST['snippet_priority'], $_POST['snippet_network'] ) ) {
-			echo 'Snippet data not provided';
-			wp_die();
+		if ( ! isset( $_POST['field'], $_POST['snippet'] ) ) {
+			wp_die( 'Snippet data not provided' );
 		}
 
-		$id = intval( $_POST['snippet_id'] );
-		$priority = intval( $_POST['snippet_priority'] );
-		$network = ( 'true' === $_POST['snippet_network'] || '1' === $_POST['snippet_network'] ) ? true :
-			( 'false' === $_POST['snippet_network'] || '0' === $_POST['snippet_network'] ? false : null );
+		$snippet_data = json_decode( stripslashes( $_POST['snippet'] ), true );
 
-		if ( $id <= 0 || ! is_numeric( $_POST['snippet_priority'] ) || is_null( $network ) ) {
-			echo 'Invalid snippet data';
-			wp_die();
+		$snippet = new Code_Snippet( $snippet_data );
+		$field = $_POST['field'];
+
+
+		if ( 'priority' === $field ) {
+
+			if ( ! isset( $snippet_data['priority'] ) || ! is_numeric( $snippet_data['priority'] ) ) {
+				wp_die( 'missing snippet priority data' );
+			}
+
+			global $wpdb;
+
+			$wpdb->update(
+				code_snippets()->db->get_table_name( $snippet->network ),
+				array( 'priority' => $snippet->priority ),
+				array( 'id' => $snippet->id ),
+				array( '%d' ),
+				array( '%d' )
+			);
+
+		} elseif ( 'active' === $field ) {
+
+			if ( ! isset( $snippet_data['active'] ) ) {
+				wp_die( 'missing snippet active data' );
+			}
+
+			if ( $snippet->shared_network ) {
+				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
+
+				if ( $snippet->active !== in_array( $snippet->id, $active_shared_snippets ) ) {
+
+					$active_shared_snippets = $snippet->active ?
+						array_merge( $active_shared_snippets, array( $snippet->id ) ) :
+						array_diff( $active_shared_snippets, array( $snippet->id ) );
+
+					update_option( 'active_shared_network_snippets', $active_shared_snippets );
+				}
+
+			} else {
+
+				if ( $snippet->active ) {
+					activate_snippet( $snippet->id, $snippet->network );
+				} else {
+					deactivate_snippet( $snippet->id, $snippet->network );
+				}
+			}
 		}
-
-		global $wpdb;
-
-		$wpdb->update(
-			code_snippets()->db->get_table_name( $network ),
-			array( 'priority' => $priority ),
-			array( 'id' => $id ),
-			array( '%d' ),
-			array( '%d' )
-		);
 
 		wp_die();
 	}
-
 }
