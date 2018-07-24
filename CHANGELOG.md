@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.11.0 (24 Jul 2018)
+* Added: Ability to assign a priority to snippets, to determine the order in which they are executed
+* Improvement: The editor cursor position will be preserved when saving a snippet
+* Added: Pressing Ctrl/Cmd + S while writing a snippet will save it
+* Added: Shadow opening PHP tag above the code editor
+* Improved: Updated the message shown when there are no snippets
+* Added: Install sample snippets when the plugin is installed
+* Improved: Show all available tags when selecting the tag field
+* Added: Filter hook for controlling the default list table view
+* Added: Action for cloning snippets
+
 ## 2.10.2 (21 Jul 2018)
 * Added: Button to reset settings to their default values
 * Improved: Made uninstall cleanup optional through a plugin setting
