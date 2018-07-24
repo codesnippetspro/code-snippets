@@ -152,6 +152,15 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				code_snippets()->get_snippet_edit_url( $snippet->id )
 			);
 
+			$actions['clone'] = sprintf(
+				$link_format,
+				esc_html__( 'Clone', 'code-snippets' ),
+				esc_url( add_query_arg( array(
+					'action' => 'clone',
+					'id'     => $snippet->id,
+				) ) )
+			);
+
 			$actions['export'] = sprintf(
 				$link_format,
 				esc_html__( 'Export', 'code-snippets' ),
@@ -184,7 +193,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 		}
 
-		return $actions;
+		return apply_filters( 'code_snippets/list_table/row_actions', $actions );
 	}
 
 	/**
@@ -425,6 +434,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$actions = array(
 			'activate-selected'   => $this->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
 			'deactivate-selected' => $this->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
+			'clone-selected'      => __( 'Clone', 'code-snippets' ),
 			'download-selected'   => __( 'Download', 'code-snippets' ),
 			'export-selected'     => __( 'Export', 'code-snippets' ),
 			'delete-selected'     => __( 'Delete', 'code-snippets' ),
@@ -627,46 +637,60 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( isset( $_GET['action'], $_GET['id'] ) ) {
 
 			$id = absint( $_GET['id'] );
-			$action = sanitize_key( $_GET['action'] );
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id' ) );
 
-			if ( 'activate' === $action ) {
-				activate_snippet( $id, $this->is_network );
-				$result = 'activated';
+			switch ( sanitize_key( $_GET['action'] ) ) {
 
-			} elseif ( 'run-once' === $action ) {
-				activate_snippet( $id, $this->is_network );
-				$result = 'executed';
+				case 'activate':
+					activate_snippet( $id, $this->is_network );
+					$result = 'activated';
+					break;
 
-			} elseif ( 'deactivate' === $action ) {
-				deactivate_snippet( $id, $this->is_network );
-				$result = 'deactivated';
+				case 'run-once':
+					activate_snippet( $id, $this->is_network );
+					$result = 'executed';
+					break;
 
-			} elseif ( 'activate-shared' === $action ) {
-				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
+				case 'deactivate':
+					deactivate_snippet( $id, $this->is_network );
+					$result = 'deactivated';
+					break;
 
-				if ( ! in_array( $id, $active_shared_snippets ) ) {
-					$active_shared_snippets[] = $id;
-					update_option( 'active_shared_network_snippets', $active_shared_snippets );
-				}
+				case 'activate-shared':
+					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
-				$result = 'activated';
+					if ( ! in_array( $id, $active_shared_snippets ) ) {
+						$active_shared_snippets[] = $id;
+						update_option( 'active_shared_network_snippets', $active_shared_snippets );
+					}
 
-			} elseif ( 'deactivate-shared' === $action ) {
-				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
-				update_option( 'active_shared_network_snippets', array_diff( $active_shared_snippets, array( $id ) ) );
+					$result = 'activated';
+					break;
 
-				$result = 'deactivated';
+				case 'deactivate-shared':
+					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
+					update_option( 'active_shared_network_snippets', array_diff( $active_shared_snippets, array( $id ) ) );
 
-			} elseif ( 'delete' === $action ) {
-				delete_snippet( $id, $this->is_network );
-				$result = 'deleted';
+					$result = 'deactivated';
+					break;
 
-			} elseif ( 'export' === $action ) {
-				export_snippets( array( $id ) );
+				case 'clone':
+					$this->clone_snippets( array( $id ) );
+					$result = 'cloned';
+					break;
 
-			} elseif ( 'download' === $action ) {
-				download_snippets( array( $id ) );
+				case 'delete':
+					delete_snippet( $id, $this->is_network );
+					$result = 'deleted';
+					break;
+
+				case 'export':
+					export_snippets( array( $id ) );
+					break;
+
+				case 'download':
+					download_snippets( array( $id ) );
+					break;
 			}
 
 			if ( isset( $result ) ) {
@@ -703,8 +727,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 				}
 
-				wp_redirect( esc_url_raw( add_query_arg( 'result', 'activated-multi' ) ) );
-				exit;
+				$result = 'activated-multi';
+				break;
 
 			case 'deactivate-selected':
 
@@ -720,8 +744,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 				}
 
-				wp_redirect( esc_url_raw( add_query_arg( 'result', 'deactivated-multi' ) ) );
-				exit;
+				$result = 'deactivated-multi';
+				break;
 
 			case 'export-selected':
 				export_snippets( $ids );
@@ -731,12 +755,17 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				download_snippets( $ids );
 				break;
 
+			case 'clone-selected':
+				$this->clone_snippets( $ids );
+				$result = 'cloned-multi';
+				break;
+
 			case 'delete-selected':
 				foreach ( $ids as $id ) {
 					delete_snippet( $id, $this->is_network );
 				}
-				wp_redirect( esc_url_raw( add_query_arg( 'result', 'deleted-multi' ) ) );
-				exit;
+				$result = 'deleted-multi';
+				break;
 
 			case 'clear-recent-list':
 				if ( $this->is_network ) {
@@ -745,6 +774,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					update_option( 'recently_activated_snippets', array() );
 				}
 				break;
+		}
+
+		if ( isset( $result ) ) {
+			wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
+			exit;
 		}
 	}
 
@@ -1119,4 +1153,21 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		echo '</tr>';
 	}
 
+	/**
+	 * Clone a selection of snippets
+	 * @param array $ids
+	 */
+	private function clone_snippets( $ids ) {
+		$snippets = get_snippets( $ids, $this->is_network );
+
+		/** @var Code_Snippet $snippet */
+		foreach ( $snippets as $snippet ) {
+
+			// copy all data from the previous snippet aside from the ID and active status
+			$snippet->id = 0;
+			$snippet->active = false;
+
+			save_snippet( $snippet );
+		}
+	}
 }

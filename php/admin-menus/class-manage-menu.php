@@ -104,6 +104,8 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 				'deactivated-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
 				'deleted' => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
 				'deleted-multi' => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
+				'cloned' => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
+				'cloned-multi' => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
 			)
 		);
 	}
