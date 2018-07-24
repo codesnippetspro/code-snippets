@@ -534,6 +534,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 
 == Upgrade Notice ==
 
+= 2.11.0 =
+Snippet priorities and other small features
+
 = 2.10.0 =
 Improvements for multisite and new single-use snippet scope
 
