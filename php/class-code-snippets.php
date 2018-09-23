@@ -65,7 +65,7 @@ class Code_Snippets {
 		/* CodeMirror editor functions */
 		require_once $includes_path . '/editor.php';
 
-		/* Backwards compatability functions */
+		/* Backwards compatibility functions */
 		require_once $includes_path . '/functions.php';
 
 		/* General Administration functions */
