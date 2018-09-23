@@ -1,3 +1,4 @@
+
 /**
  * Custom styling for the single snippet admin page
  */
@@ -18,6 +19,22 @@ h2 {
 		cursor: auto;
 	}
 }
+
+.inactive-snippet, .active-snippet {
+	#title {
+		border-left-width: 4px;
+	}
+}
+
+.active-snippet #title {
+	border-left-color: #46b450;
+}
+
+
+.inactive-snippet #title {
+	border-left-color: #dc3232;
+}
+
 
 /* Position the description heading on the same level as the editor buttons */
 label[for='snippet_description'] h3 div {

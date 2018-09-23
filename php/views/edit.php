@@ -16,6 +16,14 @@ $table = code_snippets()->db->get_table_name();
 $edit_id = code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ? absint( $_REQUEST['id'] ) : 0;
 $snippet = get_snippet( $edit_id );
 
+$classes = array();
+
+if ( $edit_id ) {
+	$classes[] = ( $snippet->active ? '' : 'in' ) . 'active-snippet';
+} else {
+	$classes[] = 'new-snippet';
+}
+
 ?>
 <div class="wrap">
 	<h1><?php
@@ -30,7 +38,7 @@ $snippet = get_snippet( $edit_id );
 	}
 	?></h1>
 
-	<form method="post" id="snippet-form" action="" style="margin-top: 10px;">
+	<form method="post" id="snippet-form" action="" style="margin-top: 10px;" class="<?php echo implode( ' ', $classes ); ?>">
 		<?php
 		/* Output the hidden fields */
 
