@@ -26,6 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				code_snippets()->get_menu_url( 'manage' )
 			); ?></p>
 
+		<h2><?php _e( 'Upload File', 'code-snippets' ); ?></h2>
+
 		<p><?php _e( 'Choose one or more Code Snippets (.xml or .json) files to upload, then click "Upload files and import".', 'code-snippets' ); ?></p>
 
 		<form enctype="multipart/form-data" method="post" action="" id="import-upload-form" name="code_snippets_import">
@@ -67,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<?php
 				do_action( 'code_snippets/admin/import_form' );
-				submit_button( __( 'Upload files and import', 'code-snippets' ) );
+				submit_button( __( 'Upload files and import', 'code-snippets' ), 'secondary' );
 			?>
 		</form>
 	</div>
