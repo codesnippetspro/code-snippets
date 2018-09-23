@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.12.0 (23 Sep 2018)
+* Fixed: Prevented hidden columns setting from reverting to default
+* Improved: Updated import page to improve usability
+* Improved: Added Import button next to page title on manage page
+* Improved: Added coloured banner indicating whether a snippet is active when editing
+* Update CodeMirror to 5.40.0
+
 ## 2.11.0 (24 Jul 2018)
 * Added: Ability to assign a priority to snippets, to determine the order in which they are executed
 * Improvement: The editor cursor position will be preserved when saving a snippet

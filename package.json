@@ -1,6 +1,6 @@
 {
   "name": "code-snippets",
-  "version": "2.11.0",
+  "version": "2.12.0",
   "description": "Manage code snippets running on a WordPress-powered site through a graphical interface",
   "homepage": "https://wordpress.org/plugins/code-snippets",
   "main": "Gruntfile.js",

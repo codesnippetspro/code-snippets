@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.11.0\n"
+"Project-Id-Version: code-snippets 2.12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-25 00:10+1000\n"
+"POT-Creation-Date: 2018-09-23 23:48+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgid "You are not authorized to access this page."
 msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:13
-#: php/admin-menus/class-edit-menu.php:14 php/views/edit.php:23
+#: php/admin-menus/class-edit-menu.php:14 php/views/edit.php:31
 msgid "Edit Snippet"
 msgstr ""
 
@@ -32,7 +32,7 @@ msgctxt "menu label"
 msgid "Add New"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:40 php/views/edit.php:29
+#: php/admin-menus/class-edit-menu.php:40 php/views/edit.php:37
 msgid "Add New Snippet"
 msgstr ""
 
@@ -64,11 +64,11 @@ msgid ""
 "made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:309 php/class-list-table.php:330
+#: php/admin-menus/class-edit-menu.php:309 php/class-list-table.php:332
 msgid "Description"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:342 php/class-list-table.php:331
+#: php/admin-menus/class-edit-menu.php:342 php/class-list-table.php:333
 msgid "Tags"
 msgstr ""
 
@@ -82,7 +82,7 @@ msgid ""
 "number."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:370 php/class-list-table.php:332
+#: php/admin-menus/class-edit-menu.php:370 php/class-list-table.php:334
 msgid "Priority"
 msgstr ""
 
@@ -156,7 +156,7 @@ msgctxt "menu label"
 msgid "Import"
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:16 php/views/import.php:17
+#: php/admin-menus/class-import-menu.php:16 php/views/import.php:21
 msgid "Import Snippets"
 msgstr ""
 
@@ -559,140 +559,140 @@ msgstr ""
 msgid "Snippets per page"
 msgstr ""
 
-#: php/class-list-table.php:144
+#: php/class-list-table.php:147
 msgid "Network Active"
 msgstr ""
 
-#: php/class-list-table.php:146
+#: php/class-list-table.php:149
 msgid "Network Only"
 msgstr ""
 
-#: php/class-list-table.php:153
+#: php/class-list-table.php:155
 msgid "Edit"
 msgstr ""
 
-#: php/class-list-table.php:154 php/class-list-table.php:382
+#: php/class-list-table.php:156 php/class-list-table.php:373
 msgid "Clone"
 msgstr ""
 
-#: php/class-list-table.php:155 php/class-list-table.php:384
-#: php/views/edit.php:122
+#: php/class-list-table.php:157 php/class-list-table.php:375
+#: php/views/edit.php:130
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:164 php/class-list-table.php:385
-#: php/views/edit.php:135
+#: php/class-list-table.php:166 php/class-list-table.php:376
+#: php/views/edit.php:143
 msgid "Delete"
 msgstr ""
 
-#: php/class-list-table.php:168
+#: php/class-list-table.php:170
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:169 php/views/edit.php:130
+#: php/class-list-table.php:171 php/views/edit.php:138
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
-#: php/class-list-table.php:228
+#: php/class-list-table.php:230
 #, php-format
 msgid "Untitled #%d"
 msgstr ""
 
-#: php/class-list-table.php:252
+#: php/class-list-table.php:254
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:328 php/views/edit.php:46
+#: php/class-list-table.php:330 php/views/edit.php:54
 msgid "Name"
 msgstr ""
 
-#: php/class-list-table.php:329
+#: php/class-list-table.php:331
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:380
+#: php/class-list-table.php:371
 msgid "Network Activate"
 msgstr ""
 
-#: php/class-list-table.php:380
+#: php/class-list-table.php:371
 msgid "Activate"
 msgstr ""
 
-#: php/class-list-table.php:381
+#: php/class-list-table.php:372
 msgid "Network Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:381
+#: php/class-list-table.php:372
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:383 php/views/edit.php:117
+#: php/class-list-table.php:374 php/views/edit.php:125
 msgid "Download"
 msgstr ""
 
-#: php/class-list-table.php:425
+#: php/class-list-table.php:416
 #, php-format
 msgid "All <span class=\"count\">(%s)</span>"
 msgid_plural "All <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:426
+#: php/class-list-table.php:417
 #, php-format
 msgid "Active <span class=\"count\">(%s)</span>"
 msgid_plural "Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:427
+#: php/class-list-table.php:418
 #, php-format
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:428
+#: php/class-list-table.php:419
 #, php-format
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:497
+#: php/class-list-table.php:488
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:511
+#: php/class-list-table.php:502
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:519
+#: php/class-list-table.php:510
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:734
+#: php/class-list-table.php:725
 msgid "It looks like you don't have any snippets."
 msgstr ""
 
-#: php/class-list-table.php:738
+#: php/class-list-table.php:729
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1034
+#: php/class-list-table.php:1025
 msgid "Search results"
 msgstr ""
 
-#: php/class-list-table.php:1037
+#: php/class-list-table.php:1028
 #, php-format
 msgid " for &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1041
+#: php/class-list-table.php:1032
 #, php-format
 msgid " in tag &#8220;%s&#8221;"
 msgstr ""
 
-#: php/class-list-table.php:1049
+#: php/class-list-table.php:1040
 msgid "Clear Filters"
 msgstr ""
 
@@ -850,92 +850,108 @@ msgstr ""
 msgid "Editor Preview"
 msgstr ""
 
-#: php/views/edit.php:26 php/views/manage.php:24
+#: php/views/edit.php:34 php/views/manage.php:24
 msgctxt "snippet"
 msgid "Add New"
 msgstr ""
 
-#: php/views/edit.php:47
+#: php/views/edit.php:55
 msgid "Enter title here"
 msgstr ""
 
-#: php/views/edit.php:52
+#: php/views/edit.php:60
 msgid "Code"
 msgstr ""
 
-#: php/views/edit.php:77
+#: php/views/edit.php:85
 msgid "Save Changes and Execute Once"
 msgstr ""
 
-#: php/views/edit.php:86 php/views/edit.php:100
+#: php/views/edit.php:94 php/views/edit.php:108
 msgid "Save Changes and Activate"
 msgstr ""
 
-#: php/views/edit.php:106
+#: php/views/edit.php:114
 msgid "Save Changes and Deactivate"
 msgstr ""
 
-#: php/views/edit.php:129
+#: php/views/edit.php:137
 msgid "You are about to permanently delete this snippet."
 msgstr ""
 
-#: php/views/import.php:21
+#: php/views/import.php:25
 msgid ""
 "Upload one or more Code Snippets export files and the snippets will be "
 "imported."
 msgstr ""
 
-#: php/views/import.php:25
+#: php/views/import.php:29
 #, php-format
 msgid ""
-"Afterwards, you will need to go to the <a href=\"%s\">All Snippets</a> page "
+"Afterwards, you will need to visit the <a href=\"%s\">All Snippets</a> page "
 "to activate the imported snippets."
 msgstr ""
 
-#: php/views/import.php:29
-msgid ""
-"Choose one or more Code Snippets (.xml or .json) files to upload, then click "
-"\"Upload files and import\"."
-msgstr ""
-
 #: php/views/import.php:36
-msgid "Choose a file from your computer:"
+msgid ""
+"Before you can upload your import file, you will need to fix the following "
+"error:"
 msgstr ""
 
-#: php/views/import.php:37
-msgid "(Maximum size: 8MB)"
-msgstr ""
-
-#: php/views/import.php:41
+#: php/views/import.php:46
 msgid "Duplicate Snippets"
 msgstr ""
 
-#: php/views/import.php:44
+#: php/views/import.php:49
 msgid ""
 "What should happen if an existing snippet is found with an identical name to "
 "an imported snippet?"
 msgstr ""
 
-#: php/views/import.php:50
+#: php/views/import.php:56
 msgid ""
 "Ignore any duplicate snippets: import all snippets from the file regardless "
 "and leave all existing snippets unchanged."
 msgstr ""
 
-#: php/views/import.php:57
+#: php/views/import.php:63
 msgid ""
 "Replace any existing snippets with a newly imported snippet of the same name."
 msgstr ""
 
-#: php/views/import.php:64
+#: php/views/import.php:70
 msgid ""
 "Do not import any duplicate snippets; leave all existing snippets unchanged."
 msgstr ""
 
-#: php/views/import.php:70
+#: php/views/import.php:75
+msgid "Upload Files"
+msgstr ""
+
+#: php/views/import.php:78
+msgid ""
+"Choose one or more Code Snippets (.xml or .json) files to upload, then click "
+"\"Upload files and import\"."
+msgstr ""
+
+#: php/views/import.php:83
+msgid "Choose files from your computer:"
+msgstr ""
+
+#: php/views/import.php:84
+#, php-format
+msgid "(Maximum size: %s)"
+msgstr ""
+
+#: php/views/import.php:93
 msgid "Upload files and import"
 msgstr ""
 
-#: php/views/manage.php:36
+#: php/views/manage.php:29
+msgctxt "snippets"
+msgid "Import"
+msgstr ""
+
+#: php/views/manage.php:41
 msgid "Search Installed Snippets"
 msgstr ""

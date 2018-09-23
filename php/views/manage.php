@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		);
 
 		printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-			esc_html_x( 'Import', 'snippet', 'code-snippets' ),
+			esc_html_x( 'Import', 'snippets', 'code-snippets' ),
 			code_snippets()->get_menu_url( 'import' )
 		);
 
