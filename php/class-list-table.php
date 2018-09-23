@@ -61,7 +61,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		) );
 
 		/* Set the table columns hidden in Screen Options by default */
-		add_filter( "get_user_option_manage{$screen->id}columnshidden", array( $this, 'get_default_hidden_columns' ), 15 );
+		if ( false === get_user_option( "manage{$screen->id}columnshidden" ) ) {
+			$user = wp_get_current_user();
+			update_user_option( $user->ID, "manage{$screen->id}columnshidden", array( 'id' ) );
+		}
 
 		/* Strip the result query arg from the URL */
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
@@ -356,17 +359,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		);
 
 		return apply_filters( 'code_snippets/list_table/sortable_columns', $sortable_columns );
-	}
-
-	/**
-	 * Define the columns that are hidden by default
-	 *
-	 * @param mixed $result
-	 *
-	 * @return mixed|array
-	 */
-	public function get_default_hidden_columns( $result ) {
-		return $result ? $result : array( 'id' );
 	}
 
 	/**
