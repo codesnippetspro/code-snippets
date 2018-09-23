@@ -18,14 +18,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div class="wrap">
 	<h1><?php
-	esc_html_e( 'Snippets', 'code-snippets' );
+		esc_html_e( 'Snippets', 'code-snippets' );
 
-	printf( '<a href="%2$s" class="page-title-action add-new-h2">%1$s</a>',
-		esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-		code_snippets()->get_menu_url( 'add' )
-	);
+		printf( '<a href="%2$s" class="page-title-action add-new-h2">%1$s</a>',
+			esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
+			code_snippets()->get_menu_url( 'add' )
+		);
 
-	$this->list_table->search_notice();
+		printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+			esc_html_x( 'Import', 'snippet', 'code-snippets' ),
+			code_snippets()->get_menu_url( 'import' )
+		);
+
+		$this->list_table->search_notice();
 	?></h1>
 
 	<?php $this->list_table->views(); ?>
