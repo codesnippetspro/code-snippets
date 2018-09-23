@@ -145,7 +145,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			} else {
 				$actions['network_only'] = esc_html__( 'Network Only', 'code-snippets' );
 			}
-
 		} elseif ( ! $snippet->shared_network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
 			// if the snippet is a shared network snippet, only display extra actions if the user has network permissions
 

@@ -142,7 +142,6 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		$snippet = new Code_Snippet( $snippet_data );
 		$field = $_POST['field'];
 
-
 		if ( 'priority' === $field ) {
 
 			if ( ! isset( $snippet_data['priority'] ) || ! is_numeric( $snippet_data['priority'] ) ) {
@@ -168,7 +167,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 			if ( $snippet->shared_network ) {
 				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
-				if ( $snippet->active !== in_array( $snippet->id, $active_shared_snippets ) ) {
+				if ( in_array( $snippet->id, $active_shared_snippets ) !== $snippet->active ) {
 
 					$active_shared_snippets = $snippet->active ?
 						array_merge( $active_shared_snippets, array( $snippet->id ) ) :
@@ -176,7 +175,6 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 				}
-
 			} else {
 
 				if ( $snippet->active ) {
