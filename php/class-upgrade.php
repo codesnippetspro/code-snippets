@@ -101,6 +101,7 @@ class Code_Snippets_Upgrade {
 
 	/**
 	 * Migrate data from the old integer method of storing scopes to the new string method
+	 *
 	 * @param string $table_name
 	 */
 	private function migrate_scope_data( $table_name ) {

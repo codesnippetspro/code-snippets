@@ -27,16 +27,12 @@ class Code_Snippets_DB {
 	function set_table_vars() {
 		global $wpdb;
 
-		$this->table = 'snippets';
-		$this->ms_table = 'ms_snippets';
+		$this->table = $wpdb->prefix . 'snippets';
+		$this->ms_table = $wpdb->base_prefix . 'ms_snippets';
 
 		/* Register the snippet table names with WordPress */
-		$wpdb->tables[] = $this->table;
-		$wpdb->ms_global_tables[] = $this->ms_table;
-
-		/* Setup initial table variables */
-		$wpdb->snippets = $this->table = $wpdb->prefix . $this->table;
-		$wpdb->ms_snippets = $this->ms_table = $wpdb->base_prefix . $this->ms_table;
+		$wpdb->tables[] = $wpdb->snippets = $this->table;
+		$wpdb->ms_global_tables[] = $wpdb->ms_snippets = $this->ms_table;
 	}
 
 	/**

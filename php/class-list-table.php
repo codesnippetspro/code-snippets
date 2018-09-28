@@ -736,6 +736,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	private function fetch_shared_network_snippets() {
 		/** @var wpdb $wpdb */
 		global $snippets, $wpdb;
+		$db = code_snippets()->db;
 
 		if ( ! is_multisite() || ! $ids = get_site_option( 'shared_network_snippets', false ) ) {
 			return;
@@ -758,7 +759,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
-			$sql = sprintf( "SELECT * FROM {$wpdb->ms_snippets} WHERE id IN (%s)",
+			$sql = sprintf( "SELECT * FROM {$db->ms_table} WHERE id IN (%s)",
 				implode( ',', array_fill( 0, count( $ids ), '%d' ) )
 			);
 

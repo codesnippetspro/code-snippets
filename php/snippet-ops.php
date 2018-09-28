@@ -159,7 +159,8 @@ function get_snippet( $id = 0, $multisite = null ) {
 function activate_snippet( $id, $multisite = null ) {
 	/** @var wpdb $wpdb */
 	global $wpdb;
-	$table = code_snippets()->db->get_table_name( $multisite );
+	$db = code_snippets()->db;
+	$table = $db->get_table_name( $multisite );
 
 	$wpdb->update(
 		$table,
@@ -170,7 +171,7 @@ function activate_snippet( $id, $multisite = null ) {
 	);
 
 	/* Remove snippet from shared network snippet list if it was Network Activated */
-	if ( $table == $wpdb->ms_snippets && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
+	if ( $table === $db && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
 		$shared_network_snippets = array_diff( $shared_network_snippets, array( $id ) );
 		update_site_option( 'shared_network_snippets', $shared_network_snippets );
 	}
@@ -408,7 +409,7 @@ function execute_active_snippets() {
 			$queries[ $db->ms_table ] = $wpdb->prepare( $sql, $active_shared_ids );
 
 		} else {
-			$sql = sprintf( $sql_format, $wpdb->ms_snippets ) . 'AND active=1 ' . $order;
+			$sql = sprintf( $sql_format, $db->ms_table ) . 'AND active=1 ' . $order;
 			$queries[ $db->ms_table ] = $wpdb->prepare( $sql, $current_scope );
 		}
 	}
