@@ -161,53 +161,22 @@ class Code_Snippets_DB {
 	}
 
 	/**
-	 * Add sample snippet content to the database
+	 * Occasionally the dbDelta process seems to fail to create new columns on some sites,
+	 * so attempt to create columns which appear to be missing
 	 *
-	 * @param bool $network
+	 * @param string $table_name
 	 */
-	public function create_sample_content( $network = false ) {
+	public function create_missing_columns( $table_name ) {
+		global $wpdb;
 
-		$snippets = array(
-
-			array(
-				'name' => __( 'Example HTML shortcode', 'code-snippets' ),
-				'code' => sprintf(
-					"\nadd_shortcode( 'shortcode_name', function () { ?>\n\n\t<p>%s</p>\n\n<?php } );",
-					strip_tags( __( 'write your HTML shortcode content here', 'code-snippets' ) )
-				),
-				'desc' => __( 'This is an example snippet for demonstrating how to add an HTML shortcode.', 'code-snippets' ),
-				'tags' => array( 'shortcode' ),
-			),
-
-			array(
-				'name'  => __( 'Example CSS snippet', 'code-snippets' ),
-				'code'  => sprintf(
-					"\nadd_action( 'wp_head', function () { ?>\n\t<style>\n\n\t\t/* %s */\n\n\t</style>\n<?php } );\n",
-					strip_tags( __( 'write your CSS code here', 'code-snippets' ) )
-				),
-				'desc'  => __( 'This is an example snippet for demonstrating how to add custom CSS code to your website.', 'code-snippets' ),
-				'tags'  => array( 'css' ),
-				'scope' => 'front-end',
-			),
-
-			array(
-				'name'  => __( 'Example JavaScript snippet', 'code-snippets' ),
-				'code'  => sprintf(
-					"\nadd_action( 'wp_head', function () { ?>\n\t<script>\n\n\t\t/* %s */\n\n\t</script>\n<?php } );\n",
-					strip_tags( __( 'write your JavaScript code here', 'code-snippets' ) )
-				),
-				'desc'  => __( 'This is an example snippet for demonstrating how to add custom JavaScript code to your website.', 'code-snippets' ),
-				'tags'  => array( 'javascript' ),
-				'scope' => 'front-end',
-			),
+		$columns = array(
+			'priority' => 'SMALLINT NOT NULL DEFAULT 10',
 		);
 
-		foreach ( $snippets as $snippet ) {
-			$snippet = new Code_Snippet( $snippet );
-			$snippet->desc .= ' ' . __( 'You can remove it, or edit it to add your own content.', 'code-snippets' );
-			$snippet->network = $network;
-
-			save_snippet( $snippet );
+		foreach ( $columns as $column => $creation_sql ) {
+			if ( $wpdb->get_var( "SHOW COLUMNS FROM {$table_name} LIKE '{$column}';" ) !== $column ) {
+				$wpdb->query( "ALTER TABLE {$table_name} ADD {$column} {$creation_sql};" );
+			}
 		}
 	}
 }
