@@ -33,7 +33,7 @@ function code_snippets_uninstall_site() {
 	global $wpdb;
 
 	/* Remove snippets database table */
-	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->snippets" );
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" );
 
 	/* Remove saved options */
 	delete_option( 'code_snippets_version' );
@@ -44,15 +44,12 @@ function code_snippets_uninstall_site() {
 
 global $wpdb;
 
-$wpdb->snippets = $wpdb->prefix . 'snippets';
-$wpdb->ms_snippets = $wpdb->prefix . 'ms_snippets';
-
 /* Multisite uninstall */
 
 if ( is_multisite() ) {
 
 	/* Loop through sites */
-	$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
+	$blog_ids = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}" );
 
 	if ( $blog_ids ) {
 
@@ -65,7 +62,7 @@ if ( is_multisite() ) {
 	}
 
 	/* Remove multisite snippets database table */
-	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->ms_snippets" );
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ms_snippets" );
 
 	/* Remove saved options */
 	delete_site_option( 'code_snippets_version' );

@@ -59,9 +59,6 @@ class Code_Snippets {
 		require_once $includes_path . '/snippet-ops.php';
 		require_once $includes_path . '/import-export.php';
 
-		/* Upgrade function */
-		require_once $includes_path . '/upgrade.php';
-
 		/* CodeMirror editor functions */
 		require_once $includes_path . '/editor.php';
 
@@ -80,6 +77,9 @@ class Code_Snippets {
 		require_once $includes_path . '/settings/settings.php';
 
 		$this->shortcode = new Code_Snippets_Shortcode();
+
+		$upgrade = new Code_Snippets_Upgrade( $this->db );
+		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 	}
 
 	public function disable_snippet_execution( $execute_snippets ) {

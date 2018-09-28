@@ -104,6 +104,8 @@ class Code_Snippets_Admin_Menu {
 		}
 
 		/* Create the snippet tables if they don't exist */
-		code_snippets()->db->create_tables();
+		$db = code_snippets()->db;
+		$db->create_missing_table( $db->ms_table );
+		$db->create_missing_table( $db->table );
 	}
 }
