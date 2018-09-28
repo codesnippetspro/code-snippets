@@ -27,16 +27,19 @@ if ( $edit_id ) {
 ?>
 <div class="wrap">
 	<h1><?php
-		if ( $edit_id ) {
-			esc_html_e( 'Edit Snippet', 'code-snippets' );
-			printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
-				code_snippets()->get_menu_url( 'add' ),
-				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
-			);
-		} else {
-			esc_html_e( 'Add New Snippet', 'code-snippets' );
-		}
-		?></h1>
+
+	if ( $edit_id ) {
+		esc_html_e( 'Edit Snippet', 'code-snippets' );
+		printf(
+			' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
+			code_snippets()->get_menu_url( 'add' ),
+			esc_html_x( 'Add New', 'snippet', 'code-snippets' )
+		);
+	} else {
+		esc_html_e( 'Add New Snippet', 'code-snippets' );
+	}
+
+	?></h1>
 
 	<form method="post" id="snippet-form" action="" style="margin-top: 10px;" class="<?php echo implode( ' ', $classes ); ?>">
 		<?php
@@ -62,9 +65,7 @@ if ( $edit_id ) {
 			</label>
 		</h2>
 
-		<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false" style="font-family: monospace; width: 100%;"><?php
-			echo esc_textarea( $snippet->code );
-			?></textarea>
+		<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false" style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 
 		<?php
 		/* Allow plugins to add fields and content to this page */

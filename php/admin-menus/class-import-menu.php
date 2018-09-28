@@ -128,8 +128,8 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 
 				printf(
 					_n(
-						'Successfully imported <strong>%d</strong> snippet. <a href="%s">Have fun!</a>',
-						'Successfully imported <strong>%d</strong> snippets. <a href="%s">Have fun!</a>',
+						'Successfully imported <strong>%1$d</strong> snippet. <a href="%2$s">Have fun!</a>',
+						'Successfully imported <strong>%1$d</strong> snippets. <a href="%2$s">Have fun!</a>',
 						$imported, 'code-snippets'
 					),
 					$imported,

@@ -117,7 +117,7 @@ class Code_Snippets_Upgrade {
 	private function migrate_scope_data( $table_name ) {
 		global $wpdb;
 
-		$scopes = array( 0 => 'global', 1 => 'admin', 2 => 'front-end' );
+		$scopes = array( 'global', 'admin', 'front-end' );
 
 		foreach ( $scopes as $scope_number => $scope_name ) {
 			$wpdb->query( sprintf(

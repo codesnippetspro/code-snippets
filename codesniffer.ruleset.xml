@@ -14,10 +14,40 @@
 		<!-- allow hooks containing forward slashes -->
 		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
 
-		<!-- I can manage this -->
+		<!-- I can handle this -->
 		<exclude name="WordPress.WP.I18n.UnorderedPlaceholders" />
+		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
+		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterOpen" />
 
 		<!-- database table names should be interpolated -->
-		<exclude name="WordPress.WP.PreparedSQL.NotPrepared" />
+		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
+
+		<!-- this isn't necessary -->
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterEnd" />
+		<exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
+
+		<!-- usually unnecessary for this sort of project -->
+		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
+
+		<!-- I disagree -->
+		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
+
+		<!-- nah -->
+		<exclude name="Squiz.PHP.DisallowMultipleAssignments.Found" />
+		<exclude name="Squiz.PHP.Eval.Discouraged" />
+		<exclude name="PSR2.ControlStructures.SwitchDeclaration.BodyOnNextLineCASE" />
+
+		<!-- this is a little to restrictive -->
+		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
+
+		<!-- smart tabs! -->
+		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed" />
+		<exclude name="WordPress.WhiteSpace.PrecisionAlignment.Found" />
 	</rule>
 </ruleset>
