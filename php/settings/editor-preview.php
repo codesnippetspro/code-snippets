@@ -90,7 +90,7 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );
 ";
 
 	$atts = array(
-		'mode' => 'text/x-php',
+		'mode'  => 'text/x-php',
 		'value' => $example_content,
 	);
 
@@ -99,24 +99,24 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );
 	<div style="max-width: 800px" id="code_snippets_editor_preview"></div>
 
 	<script>
-	(function () {
-		'use strict';
+		(function () {
+			'use strict';
 
-		// Load CodeMirror
-		var atts = [];
-		atts = <?php echo code_snippets_get_editor_atts( $atts, true ); ?>;
-		atts['viewportMargin'] = Infinity;
+			// Load CodeMirror
+			var atts = [];
+			atts = <?php echo code_snippets_get_editor_atts( $atts, true ); ?>;
+			atts['viewportMargin'] = Infinity;
 
-		var editor = CodeMirror(document.getElementById('code_snippets_editor_preview'), atts);
+			var editor = CodeMirror(document.getElementById('code_snippets_editor_preview'), atts);
 
-		// Dynamically change editor settings
-		<?php
+			// Dynamically change editor settings
+			<?php
 
-		/* Retrieve editor settings */
-		$fields = code_snippets_get_settings_fields();
-		$fields = $fields['editor'];
+			/* Retrieve editor settings */
+			$fields = code_snippets_get_settings_fields();
+			$fields = $fields['editor'];
 
-		foreach ( $fields as $setting => $field ) {
+			foreach ( $fields as $setting => $field ) {
 
 			/* Only output settings which have a CodeMirror attribute */
 			if ( empty( $field['codemirror'] ) ) {
@@ -127,32 +127,32 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );
 
 			switch ( $field['type'] ) {
 
-				case 'codemirror_theme_select':	?>
+			case 'codemirror_theme_select':    ?>
 
-		document.querySelector('select[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
-			editor.setOption('<?php echo $att_name; ?>', this.options[this.selectedIndex].value);
-		};
+			document.querySelector('select[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
+				editor.setOption('<?php echo $att_name; ?>', this.options[this.selectedIndex].value);
+			};
 
-					<?php break;
-				case 'checkbox': ?>
+			<?php break;
+			case 'checkbox': ?>
 
-		document.querySelector('input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
-			editor.setOption('<?php echo $att_name; ?>', this.checked);
-		};
+			document.querySelector('input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
+				editor.setOption('<?php echo $att_name; ?>', this.checked);
+			};
 
-					<?php break;
-				case 'number': ?>
+			<?php break;
+			case 'number': ?>
 
-		document.querySelector('input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
-			editor.setOption( '<?php echo $att_name; ?>', this.value);
-		};
+			document.querySelector('input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
+				editor.setOption('<?php echo $att_name; ?>', this.value);
+			};
 
-					<?php break;
+			<?php break;
 			}
-		}
+			}
 
-		?>
-	}());
+			?>
+		}());
 	</script>
 
 	<?php

@@ -48,7 +48,7 @@ class Code_Snippets_Shortcode {
 
 		$atts = shortcode_atts(
 			array(
-				'id' => 0,
+				'id'      => 0,
 				'network' => false,
 			),
 			$atts, 'code_snippet'

@@ -39,44 +39,44 @@ function code_snippets_get_settings_fields() {
 
 	$fields['general'] = array(
 		'activate_by_default' => array(
-			'name' => __( 'Activate by Default', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( "Make the 'Save and Activate' button the default action when saving a snippet.", 'code-snippets' ),
+			'name'    => __( 'Activate by Default', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => __( "Make the 'Save and Activate' button the default action when saving a snippet.", 'code-snippets' ),
 			'default' => true,
 		),
 
 		'snippet_scope_enabled' => array(
-			'name' => __( 'Enable Scope Selector', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Enable the scope selector when editing a snippet', 'code-snippets' ),
+			'name'    => __( 'Enable Scope Selector', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => __( 'Enable the scope selector when editing a snippet', 'code-snippets' ),
 			'default' => true,
 		),
 
 		'enable_tags' => array(
-			'name' => __( 'Enable Snippet Tags', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Show snippet tags on admin pages', 'code-snippets' ),
+			'name'    => __( 'Enable Snippet Tags', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => __( 'Show snippet tags on admin pages', 'code-snippets' ),
 			'default' => true,
 		),
 
 		'enable_description' => array(
-			'name' => __( 'Enable Snippet Descriptions', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Show snippet descriptions on admin pages', 'code-snippets' ),
+			'name'    => __( 'Enable Snippet Descriptions', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => __( 'Show snippet descriptions on admin pages', 'code-snippets' ),
 			'default' => true,
 		),
 
 		'disable_prism' => array(
-			'name' => __( 'Disable Shortcode Syntax Highlighter', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Disable the syntax highlighting for the [code_snippet] shortcode on the front-end', 'code-snippets' ),
+			'name'    => __( 'Disable Shortcode Syntax Highlighter', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => __( 'Disable the syntax highlighting for the [code_snippet] shortcode on the front-end', 'code-snippets' ),
 			'default' => false,
 		),
 
 		'complete_uninstall' => array(
-			'name' => __( 'Complete Uninstall', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => sprintf(
+			'name'    => __( 'Complete Uninstall', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => sprintf(
 				__( 'When the plugin is deleted from the <a href="%s">Plugins</a> menu, also delete all snippets and plugin settings.', 'code-snippets' ),
 				self_admin_url( 'plugins.php' )
 			),
@@ -92,24 +92,24 @@ function code_snippets_get_settings_fields() {
 	$fields['description_editor'] = array(
 
 		'rows' => array(
-			'name' => __( 'Row Height', 'code-snippets' ),
-			'type' => 'number',
-			'label' => __( 'rows', 'code-snippets' ),
+			'name'    => __( 'Row Height', 'code-snippets' ),
+			'type'    => 'number',
+			'label'   => __( 'rows', 'code-snippets' ),
 			'default' => 5,
-			'min' => 0,
+			'min'     => 0,
 		),
 
 		'use_full_mce' => array(
-			'name' => __( 'Use Full Editor', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Enable all features of the visual editor', 'code-snippets' ),
+			'name'    => __( 'Use Full Editor', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => __( 'Enable all features of the visual editor', 'code-snippets' ),
 			'default' => false,
 		),
 
 		'media_buttons' => array(
-			'name' => __( 'Media Buttons', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Enable the add media buttons', 'code-snippets' ),
+			'name'    => __( 'Media Buttons', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => __( 'Enable the add media buttons', 'code-snippets' ),
 			'default' => false,
 		),
 	);
@@ -118,71 +118,72 @@ function code_snippets_get_settings_fields() {
 
 	$fields['editor'] = array(
 		'theme' => array(
-			'name' => __( 'Theme', 'code-snippets' ),
-			'type' => 'codemirror_theme_select',
-			'default' => 'default',
+			'name'       => __( 'Theme', 'code-snippets' ),
+			'type'       => 'codemirror_theme_select',
+			'default'    => 'default',
 			'codemirror' => 'theme',
 		),
 
 		'indent_with_tabs' => array(
-			'name' => __( 'Indent With Tabs', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Use hard tabs (not spaces) for indentation.', 'code-snippets' ),
-			'default' => true,
+			'name'       => __( 'Indent With Tabs', 'code-snippets' ),
+			'type'       => 'checkbox',
+			'label'      => __( 'Use hard tabs (not spaces) for indentation.', 'code-snippets' ),
+			'default'    => true,
 			'codemirror' => 'indentWithTabs',
 		),
 
 		'tab_size' => array(
-			'name' => __( 'Tab Size', 'code-snippets' ),
-			'type' => 'number',
-			'desc' => __( 'The width of a tab character.', 'code-snippets' ),
-			'default' => 4,
+			'name'       => __( 'Tab Size', 'code-snippets' ),
+			'type'       => 'number',
+			'desc'       => __( 'The width of a tab character.', 'code-snippets' ),
+			'default'    => 4,
 			'codemirror' => 'tabSize',
-			'min' => 0,
+			'min'        => 0,
 		),
 
 		'indent_unit' => array(
-			'name' => __( 'Indent Unit', 'code-snippets' ),
-			'type' => 'number',
-			'desc' => __( 'How many spaces a block should be indented.', 'code-snippets' ),
-			'default' => 2,
+			'name'       => __( 'Indent Unit', 'code-snippets' ),
+			'type'       => 'number',
+			'desc'       => __( 'How many spaces a block should be indented.', 'code-snippets' ),
+			'default'    => 2,
 			'codemirror' => 'indentUnit',
-			'min' => 0,
+			'min'        => 0,
 		),
 
 		'wrap_lines' => array(
-			'name' => __( 'Wrap Lines', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Whether the editor should scroll or wrap for long lines.', 'code-snippets' ),
-			'default' => true,
+			'name'       => __( 'Wrap Lines', 'code-snippets' ),
+			'type'       => 'checkbox',
+			'label'      => __( 'Whether the editor should scroll or wrap for long lines.', 'code-snippets' ),
+			'default'    => true,
 			'codemirror' => 'lineWrapping',
 		),
 
 		'line_numbers' => array(
-			'name' => __( 'Line Numbers', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Show line numbers to the left of the editor.', 'code-snippets' ),
-			'default' => true,
+			'name'       => __( 'Line Numbers', 'code-snippets' ),
+			'type'       => 'checkbox',
+			'label'      => __( 'Show line numbers to the left of the editor.', 'code-snippets' ),
+			'default'    => true,
 			'codemirror' => 'lineNumbers',
 		),
 
 		'auto_close_brackets' => array(
-			'name' => __( 'Auto Close Brackets', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Auto-close brackets and quotes when typed.', 'code-snippets' ),
-			'default' => true,
+			'name'       => __( 'Auto Close Brackets', 'code-snippets' ),
+			'type'       => 'checkbox',
+			'label'      => __( 'Auto-close brackets and quotes when typed.', 'code-snippets' ),
+			'default'    => true,
 			'codemirror' => 'autoCloseBrackets',
 		),
 
 		'highlight_selection_matches' => array(
-			'name' => __( 'Highlight Selection Matches', 'code-snippets' ),
-			'label' => __( 'Highlight all instances of a currently selected word.', 'code-snippets' ),
-			'type' => 'checkbox',
-			'default' => true,
+			'name'       => __( 'Highlight Selection Matches', 'code-snippets' ),
+			'label'      => __( 'Highlight all instances of a currently selected word.', 'code-snippets' ),
+			'type'       => 'checkbox',
+			'default'    => true,
 			'codemirror' => 'highlightSelectionMatches',
 		),
 	);
 
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );
+
 	return $fields;
 }

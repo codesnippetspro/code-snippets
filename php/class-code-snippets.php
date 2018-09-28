@@ -33,7 +33,7 @@ class Code_Snippets {
 	 * Class constructor
 	 *
 	 * @param string $version The current plugin version
-	 * @param string $file    The main plugin file
+	 * @param string $file The main plugin file
 	 */
 	function __construct( $version, $file ) {
 		$this->version = $version;
@@ -98,7 +98,9 @@ class Code_Snippets {
 
 	/**
 	 * Fetch the admin menu slug for a snippets menu
+	 *
 	 * @param  string $menu The menu to retrieve the slug for
+	 *
 	 * @return string       The menu's slug
 	 */
 	public function get_menu_slug( $menu = '' ) {
@@ -122,8 +124,10 @@ class Code_Snippets {
 
 	/**
 	 * Fetch the URL to a snippets admin menu
-	 * @param  string $menu    The menu to retrieve the URL to
+	 *
+	 * @param  string $menu The menu to retrieve the URL to
 	 * @param  string $context The URL scheme to use
+	 *
 	 * @return string          The menu's URL
 	 */
 	public function get_menu_url( $menu = '', $context = 'self' ) {
@@ -141,19 +145,24 @@ class Code_Snippets {
 
 	/**
 	 * Fetch the admin menu hook for a snippets menu
+	 *
 	 * @param  string $menu The menu to retrieve the hook for
+	 *
 	 * @return string       The menu's hook
 	 */
 	public function get_menu_hook( $menu = '' ) {
 		$slug = $this->get_menu_slug( $menu );
+
 		return get_plugin_page_hookname( $slug, 'snippets' );
 	}
 
 	/**
 	 * Fetch the admin menu slug for a snippets menu
-	 * @param  int    $snippet_id The snippet
-	 * @param  string $context    The URL scheme to use
-	 * @return string             The URL to the edit snippet page for that snippet
+	 *
+	 * @param int    $snippet_id The snippet
+	 * @param string $context The URL scheme to use
+	 *
+	 * @return string The URL to the edit snippet page for that snippet
 	 */
 	public function get_snippet_edit_url( $snippet_id, $context = 'self' ) {
 		return add_query_arg(
@@ -240,9 +249,11 @@ class Code_Snippets {
 	 * @return string
 	 */
 	function add_safe_mode_query_var( $url ) {
+
 		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
 			return add_query_arg( 'snippets-safe-mode', $_REQUEST['snippets-safe-mode'], $url );
 		}
+
 		return $url;
 	}
 }

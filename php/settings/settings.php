@@ -21,6 +21,7 @@ function code_snippets_unified_settings() {
 	}
 
 	$menu_perms = get_site_option( 'menu_items', array() );
+
 	return empty( $menu_perms['snippets_settings'] );
 }
 
@@ -64,6 +65,7 @@ function code_snippets_get_settings() {
 	}
 
 	wp_cache_set( 'code_snippets_settings', $settings );
+
 	return $settings;
 }
 
@@ -71,11 +73,13 @@ function code_snippets_get_settings() {
  * Retrieve an individual setting field value
  *
  * @param  string $section The ID of the section the setting belongs to
- * @param  string $field   The ID of the setting field
+ * @param  string $field The ID of the setting field
+ *
  * @return array
  */
 function code_snippets_get_setting( $section, $field ) {
 	$settings = code_snippets_get_settings();
+
 	return $settings[ $section ][ $field ];
 }
 
@@ -85,9 +89,9 @@ function code_snippets_get_setting( $section, $field ) {
  */
 function code_snippets_get_settings_sections() {
 	$sections = array(
-		'general' => __( 'General', 'code-snippets' ),
+		'general'            => __( 'General', 'code-snippets' ),
 		'description_editor' => __( 'Description Editor', 'code-snippets' ),
-		'editor' => __( 'Code Editor', 'code-snippets' ),
+		'editor'             => __( 'Code Editor', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
@@ -157,6 +161,7 @@ add_action( 'admin_init', 'code_snippets_register_settings' );
  * Validate the settings
  *
  * @param  array $input The sent settings
+ *
  * @return array        The validated settings
  */
 function code_snippets_settings_validate( array $input ) {

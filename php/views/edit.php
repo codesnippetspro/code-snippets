@@ -27,16 +27,16 @@ if ( $edit_id ) {
 ?>
 <div class="wrap">
 	<h1><?php
-	if ( $edit_id ) {
-		esc_html_e( 'Edit Snippet', 'code-snippets' );
-		printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
-			code_snippets()->get_menu_url( 'add' ),
-			esc_html_x( 'Add New', 'snippet', 'code-snippets' )
-		);
-	} else {
-		esc_html_e( 'Add New Snippet', 'code-snippets' );
-	}
-	?></h1>
+		if ( $edit_id ) {
+			esc_html_e( 'Edit Snippet', 'code-snippets' );
+			printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
+				code_snippets()->get_menu_url( 'add' ),
+				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
+			);
+		} else {
+			esc_html_e( 'Add New Snippet', 'code-snippets' );
+		}
+		?></h1>
 
 	<form method="post" id="snippet-form" action="" style="margin-top: 10px;" class="<?php echo implode( ' ', $classes ); ?>">
 		<?php
@@ -56,9 +56,11 @@ if ( $edit_id ) {
 			</div>
 		</div>
 
-		<h2><label for="snippet_code">
-			<?php _e( 'Code', 'code-snippets' ); ?>
-		</label></h2>
+		<h2>
+			<label for="snippet_code">
+				<?php _e( 'Code', 'code-snippets' ); ?>
+			</label>
+		</h2>
 
 		<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false" style="font-family: monospace; width: 100%;"><?php
 			echo esc_textarea( $snippet->code );
@@ -154,12 +156,12 @@ if ( $edit_id ) {
 <script>
 	'use strict';
 	/* Loads CodeMirror on the snippet editor */
-	var code_snippet_editor = (function() {
+	var code_snippet_editor = (function () {
 
 		var atts = [];
 		atts = <?php
-			$atts = array( 'mode' => 'text/x-php' );
-			echo code_snippets_get_editor_atts( $atts, true );
+		$atts = array( 'mode' => 'text/x-php' );
+		echo code_snippets_get_editor_atts( $atts, true );
 		?>;
 		atts['viewportMargin'] = Infinity;
 
@@ -175,7 +177,10 @@ if ( $edit_id ) {
 		var matches = window.location.href.match(/[?&]cursor=(\d+)_(\d+)/);
 		if (matches) {
 			editor.focus();
-			editor.setCursor({line: matches[1], ch: matches[2]});
+			editor.setCursor({
+				line: matches[1],
+				ch: matches[2]
+			});
 		}
 
 		// send the current cursor position to the next page

@@ -2,9 +2,12 @@
 
 /**
  * Fetch the admin menu slug for a snippets menu
+ *
  * @deprecated Use code_snippets()->get_menu_slug() instead
- * @param  string $menu The menu to retrieve the slug for
- * @return string       The menu's slug
+ *
+ * @param string $menu The menu to retrieve the slug for
+ *
+ * @return string The menu slug
  */
 function code_snippets_get_menu_slug( $menu = '' ) {
 	return code_snippets()->get_menu_slug( $menu );
@@ -12,12 +15,13 @@ function code_snippets_get_menu_slug( $menu = '' ) {
 
 /**
  * Fetch the URL to a snippets admin menu
+ *
  * @deprecated Use code_snippets()->get_menu_url() instead
  *
- * @param  string $menu    The menu to retrieve the URL to
- * @param  string $context The URL scheme to use
+ * @param string $menu The menu to retrieve the URL to
+ * @param string $context The URL scheme to use
  *
- * @return string The menu's URL
+ * @return string The menu URL
  */
 function code_snippets_get_menu_url( $menu = '', $context = 'self' ) {
 	return code_snippets()->get_menu_url( $menu, $context );
@@ -25,9 +29,12 @@ function code_snippets_get_menu_url( $menu = '', $context = 'self' ) {
 
 /**
  * Fetch the admin menu hook for a snippets menu
+ *
  * @deprecated Use code_snippets()->get_menu_hook() instead
+ *
  * @param string $menu The menu to retrieve the hook for
- * @return string The menu's hook
+ *
+ * @return string The menu hook
  */
 function code_snippets_get_menu_hook( $menu = '' ) {
 	return code_snippets()->get_menu_hook( $menu );
@@ -39,7 +46,7 @@ function code_snippets_get_menu_hook( $menu = '' ) {
  * @deprecated Use code_snippets()->get_snippet_edit_url() instead
  *
  * @param int    $snippet_id The snippet
- * @param string $context    The URL scheme to use
+ * @param string $context The URL scheme to use
  *
  * @return string The URL to the edit snippet page for that snippet
  */
@@ -67,7 +74,9 @@ function get_snippets_cap() {
  *
  * @deprecated Use code_snippets()->db->get_table_name() instead
  * @since 2.0
+ *
  * @param string|bool|null $multisite Retrieve the multisite table name or the site table name?
+ *
  * @return string The snippet table name
  */
 function get_snippets_table_name( $multisite = null ) {

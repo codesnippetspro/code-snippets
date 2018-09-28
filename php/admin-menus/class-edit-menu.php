@@ -123,6 +123,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Remove the sharing status from a network snippet
+	 *
 	 * @param int $snippet_id
 	 */
 	private function unshare_network_snippet( $snippet_id ) {
@@ -323,17 +324,17 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			apply_filters( 'code_snippets/admin/description_editor_settings', array(
 				'textarea_name' => 'snippet_description',
 				'textarea_rows' => $settings['rows'],
-				'teeny' => ! $settings['use_full_mce'],
+				'teeny'         => ! $settings['use_full_mce'],
 				'media_buttons' => $settings['media_buttons'],
 			) )
 		);
 	}
 
 	/**
-	* Render the interface for editing snippet tags
-	*
-	* @param Code_Snippet $snippet the snippet currently being edited
-	*/
+	 * Render the interface for editing snippet tags
+	 *
+	 * @param Code_Snippet $snippet the snippet currently being edited
+	 */
 	function render_tags_editor( Code_Snippet $snippet ) {
 
 		?>
@@ -344,16 +345,16 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		</h2>
 
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
-			placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>"
-			   value="<?php echo esc_attr( $snippet->tags_list ); ?>" />
+		       placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>"
+		       value="<?php echo esc_attr( $snippet->tags_list ); ?>" />
 
 		<script type="text/javascript">
-		jQuery('#snippet_tags').tagit({
-			availableTags: <?php echo wp_json_encode( get_all_snippet_tags() ); ?>,
-			allowSpaces: true,
-			removeConfirmation: true,
-			showAutocompleteOnFocus: true,
-		});
+			jQuery('#snippet_tags').tagit({
+				availableTags: <?php echo wp_json_encode( get_all_snippet_tags() ); ?>,
+				allowSpaces: true,
+				removeConfirmation: true,
+				showAutocompleteOnFocus: true,
+			});
 		</script>
 		<?php
 	}
@@ -384,9 +385,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		$icons = Code_Snippet::get_scope_icons();
 
 		$labels = array(
-			'global' => __( 'Run snippet everywhere', 'code-snippets' ),
-			'admin' => __( 'Only run in administration area', 'code-snippets' ),
-			'front-end' => __( 'Only run on site front-end', 'code-snippets' ),
+			'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
+			'admin'      => __( 'Only run in administration area', 'code-snippets' ),
+			'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
 			'single-use' => __( 'Only run once', 'code-snippets' ),
 		);
 
@@ -395,7 +396,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		foreach ( Code_Snippet::get_all_scopes() as $scope ) {
 			printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
 			checked( $scope, $snippet->scope );
-			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>',  $icons[ $scope ], esc_html( $labels[ $scope ] ) );
+			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $icons[ $scope ], esc_html( $labels[ $scope ] ) );
 		}
 
 		echo '</p>';
@@ -403,6 +404,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 	/**
 	 * Render the setting for shared network snippets
+	 *
 	 * @param object $snippet The snippet currently being edited
 	 */
 	function render_multisite_sharing_setting( $snippet ) {
@@ -413,7 +415,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			<h2 class="screen-reader-text"><?php _e( 'Sharing Settings', 'code-snippets' ); ?></h2>
 			<label for="snippet_sharing">
 				<input type="checkbox" name="snippet_sharing"
-				<?php checked( in_array( $snippet->id, $shared_snippets ) ); ?>>
+					<?php checked( in_array( $snippet->id, $shared_snippets ) ); ?>>
 				<?php esc_html_e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
 			</label>
 		</div>
@@ -487,15 +489,16 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		if ( 'save-error' === $result ) {
 			echo '<div id="message" class="error fade"><p>', __( 'An error occurred when saving the snippet.', 'code-snippets' ), '</p></div>';
+
 			return;
 		}
 
 		$messages = array(
-			'added' => __( 'Snippet <strong>added</strong>.', 'code-snippets' ),
-			'updated' => __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
-			'added-and-activated' => __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ),
-			'updated-and-executed' => __( 'Snippet <strong>added</strong> and <strong>executed</strong>.', 'code-snippets' ),
-			'updated-and-activated' => __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ),
+			'added'                   => __( 'Snippet <strong>added</strong>.', 'code-snippets' ),
+			'updated'                 => __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
+			'added-and-activated'     => __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ),
+			'updated-and-executed'    => __( 'Snippet <strong>added</strong> and <strong>executed</strong>.', 'code-snippets' ),
+			'updated-and-activated'   => __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ),
 			'updated-and-deactivated' => __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ),
 		);
 

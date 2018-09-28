@@ -6,7 +6,6 @@
 
 
 /**
- *
  * @access private
  *
  * @param        $snippets
@@ -62,9 +61,9 @@ function _code_snippets_save_imported_snippets( $snippets, $multisite = null, $d
  *
  * @uses save_snippet() to add the snippets to the database
  *
- * @param string     $file       The path to the file to import
- * @param bool|null  $multisite  Import into network-wide table or site-wide table?
- * @param string     $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
+ * @param string    $file The path to the file to import
+ * @param bool|null $multisite Import into network-wide table or site-wide table?
+ * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
  *
  * @return array|bool An array of imported snippet IDs on success, false on failure
  */
@@ -87,6 +86,7 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
 
 	$imported = _code_snippets_save_imported_snippets( $snippets, $multisite, $dup_action );
 	do_action( 'code_snippets/import/json', $file, $multisite );
+
 	return $imported;
 }
 
@@ -97,9 +97,9 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
  *
  * @uses save_snippet() to add the snippets to the database
  *
- * @param string     $file             The path to the file to import
- * @param bool|null  $multisite        Import into network-wide table or site-wide table?
- * @param string     $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
+ * @param string    $file The path to the file to import
+ * @param bool|null $multisite Import into network-wide table or site-wide table?
+ * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
  *
  * @return array|bool An array of imported snippet IDs on success, false on failure
  */
@@ -147,6 +147,7 @@ function import_snippets_xml( $file, $multisite = null, $dup_action = 'ignore' )
 
 	$imported = _code_snippets_save_imported_snippets( $snippets, $dup_action, $multisite );
 	do_action( 'code_snippets/import/xml', $file, $multisite );
+
 	return $imported;
 }
 
@@ -202,6 +203,7 @@ function code_snippets_prepare_export( $format, $ids, $table_name = '', $mime_ty
 	}
 
 	/* Return the retrieved snippets to build the rest of the export file */
+
 	return $snippets;
 }
 
@@ -239,7 +241,7 @@ function download_snippets( $ids, $table_name = '' ) {
 /**
  * Export snippets in JSON format
  *
- * @param array  $ids        list of snippet IDs to export
+ * @param array  $ids list of snippet IDs to export
  * @param string $table_name name of the database table to fetch snippets from
  */
 function export_snippets( $ids, $table_name = '' ) {
@@ -264,9 +266,9 @@ function export_snippets( $ids, $table_name = '' ) {
 	}
 
 	$data = array(
-		'generator' => 'Code Snippets v' . CODE_SNIPPETS_VERSION,
+		'generator'    => 'Code Snippets v' . CODE_SNIPPETS_VERSION,
 		'date_created' => date( 'Y-m-d H:i' ),
-		'snippets' => $final_snippets,
+		'snippets'     => $final_snippets,
 	);
 
 	echo wp_json_encode( $data, apply_filters( 'code_snippets/export/json_encode_options', 0 ) );

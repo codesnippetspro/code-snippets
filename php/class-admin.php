@@ -18,7 +18,7 @@ class Code_Snippets_Admin {
 
 	public function load_classes() {
 		$this->menus['manage'] = new Code_Snippets_Manage_Menu();
-		$this->menus['edit']   = new Code_Snippets_Edit_Menu();
+		$this->menus['edit'] = new Code_Snippets_Edit_Menu();
 		$this->menus['import'] = new Code_Snippets_Import_Menu();
 
 		if ( is_network_admin() === code_snippets_unified_settings() ) {
@@ -60,6 +60,7 @@ class Code_Snippets_Admin {
 	function mu_menu_items( $menu_items ) {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
 		$menu_items['snippets_settings'] = __( 'Snippets &raquo; Settings', 'code-snippets' );
+
 		return $menu_items;
 	}
 
@@ -91,7 +92,7 @@ class Code_Snippets_Admin {
 		}
 
 		$hooks = array_combine( $hooks, $pages );
-		$page  = $hooks[ $hook ];
+		$page = $hooks[ $hook ];
 
 		// add snippet page uses edit stylesheet
 		'add' === $page && $page = 'edit';
@@ -108,8 +109,8 @@ class Code_Snippets_Admin {
 	 * Prevent the snippet currently being saved from being executed
 	 * so it is not run twice (once normally, once
 	 *
-	 * @param bool   $exec       Whether the snippet will be executed
-	 * @param int    $exec_id    The ID of the snippet being executed
+	 * @param bool   $exec Whether the snippet will be executed
+	 * @param int    $exec_id The ID of the snippet being executed
 	 * @param string $table_name
 	 *
 	 * @return bool Whether the snippet will be executed
@@ -158,7 +159,7 @@ class Code_Snippets_Admin {
 	 *
 	 * @since 2.0
 	 *
-	 * @param  array $links The existing plugin info links
+	 * @param  array  $links The existing plugin info links
 	 * @param  string $file The plugin the links are for
 	 *
 	 * @return array         The modified plugin info links
@@ -215,9 +216,10 @@ class Code_Snippets_Admin {
 
 		?>
 
-		<br/>
+		<br />
 
-		<div class="updated"><p>
+		<div class="updated">
+			<p>
 
 				<?php _e( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ); ?>
 
@@ -228,7 +230,8 @@ class Code_Snippets_Admin {
 
 				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( $key, true ), $key ) ); ?>"><?php esc_html_e( 'Dismiss', 'code-snippets' ); ?></a>
 
-			</p></div>
+			</p>
+		</div>
 
 		<?php
 	}

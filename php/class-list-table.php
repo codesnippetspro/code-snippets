@@ -127,6 +127,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$query_args = array( 'action' => $action, 'id' => $snippet->id );
 
 		$url = $network_redirect ? add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) : add_query_arg( $query_args );
+
 		return $escape ? esc_url( $url ) : $url;
 	}
 
@@ -178,7 +179,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Retrieve the code for a snippet activation switch
+	 *
 	 * @param Code_Snippet $snippet
+	 *
 	 * @return string
 	 */
 	protected function get_activation_switch( $snippet ) {
@@ -255,6 +258,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		/* Return the name contents */
+
 		return $this->get_activation_switch( $snippet ) .
 		       apply_filters( 'code_snippets/list_table/column_name', $out, $snippet ) . $row_actions;
 	}
@@ -1066,6 +1070,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Clone a selection of snippets
+	 *
 	 * @param array $ids
 	 */
 	private function clone_snippets( $ids ) {
