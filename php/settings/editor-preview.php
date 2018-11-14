@@ -118,38 +118,39 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );
 
 			foreach ( $fields as $setting => $field ) {
 
-			/* Only output settings which have a CodeMirror attribute */
-			if ( empty( $field['codemirror'] ) ) {
-				continue;
-			}
+				/* Only output settings which have a CodeMirror attribute */
+				if ( empty( $field['codemirror'] ) ) {
+					continue;
+				}
 
-			$att_name = addslashes( $field['codemirror'] );
+				$att_name = addslashes( $field['codemirror'] );
 
-			switch ( $field['type'] ) {
+				switch ( $field['type'] ) {
 
-			case 'codemirror_theme_select':    ?>
-
+					case 'codemirror_theme_select':
+						?>
 			document.querySelector('select[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
 				editor.setOption('<?php echo $att_name; ?>', this.options[this.selectedIndex].value);
 			};
 
-			<?php break;
-			case 'checkbox': ?>
+					<?php break;
 
+					case 'checkbox':
+						?>
 			document.querySelector('input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
 				editor.setOption('<?php echo $att_name; ?>', this.checked);
 			};
 
-			<?php break;
-			case 'number': ?>
-
+					<?php break;
+					case 'number':
+						?>
 			document.querySelector('input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
 				editor.setOption('<?php echo $att_name; ?>', this.value);
 			};
 
-			<?php break;
-			}
-			}
+					<?php break;
+					}
+				}
 
 			?>
 		}());

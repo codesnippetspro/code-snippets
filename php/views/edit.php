@@ -27,6 +27,7 @@ if ( $edit_id ) {
 ?>
 <div class="wrap">
 	<h1><?php
+
 		if ( $edit_id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
 			printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',

@@ -16,8 +16,39 @@
 
 		<!-- I can manage this -->
 		<exclude name="WordPress.WP.I18n.UnorderedPlaceholders" />
+		<exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
+		<exclude name="Generic.WhiteSpace.ScopeIndent.IncorrectExact" />
+		<exclude name="Squiz.PHP.Eval.Discouraged" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
+		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound" />
+		<exclude name="PSR2.ControlStructures.SwitchDeclaration.BodyOnNextLineCASE" />
+
+		<!-- this is useful for certain templates -->
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterOpen" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterEnd" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 
 		<!-- database table names should be interpolated -->
 		<exclude name="WordPress.WP.PreparedSQL.NotPrepared" />
+
+		<!-- class filenames do not include the namespace prefix -->
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+
+		<!-- this picks up a lot of false positives -->
+		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
+		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />
+
+		<!-- this disallows assignment inside conditional statements -->
+		<exclude name="Squiz.PHP.DisallowMultipleAssignments.Found" />
+
+		<!-- this does not always need to happen -->
+		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
+
+		<!-- what's wrong with smart tabs? -->
+		<exclude name="WordPress.WhiteSpace.PrecisionAlignment.Found" />
+		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed" />
 	</rule>
 </ruleset>

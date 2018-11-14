@@ -25,6 +25,7 @@ $upload_dir = wp_upload_dir();
 
 		<p><?php
 			printf(
+				/* translators: %s: link to snippets admin menu */
 				__( 'Afterwards, you will need to visit the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ),
 				code_snippets()->get_menu_url( 'manage' )
 			); ?></p>
@@ -80,7 +81,11 @@ $upload_dir = wp_upload_dir();
 				<fieldset>
 					<p>
 						<label for="upload"><?php esc_html_e( 'Choose files from your computer:', 'code-snippets' ); ?></label>
-						<?php printf( esc_html__( '(Maximum size: %s)', 'code-snippets' ), size_format( $max_size_bytes ) ); ?>
+						<?php printf(
+							/* translators: %s: size in bytes */
+							esc_html__( '(Maximum size: %s)', 'code-snippets' ),
+							size_format( $max_size_bytes )
+						); ?>
 						<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="application/json,.json,text/xml" multiple="multiple">
 						<input type="hidden" name="action" value="save">
 						<input type="hidden" name="max_file_size" value="<?php echo esc_attr( $max_size_bytes ); ?>">

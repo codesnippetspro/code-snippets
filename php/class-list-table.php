@@ -230,6 +230,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	protected function column_name( $snippet ) {
 
+		/* translators: %d: snippet identifier */
 		$title = empty( $snippet->name ) ? sprintf( __( 'Untitled #%d', 'code-snippets' ), $snippet->id ) : $snippet->name;
 
 		$row_actions = $this->row_actions(
@@ -259,8 +260,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Return the name contents */
 
-		return $this->get_activation_switch( $snippet ) .
-		       apply_filters( 'code_snippets/list_table/column_name', $out, $snippet ) . $row_actions;
+		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
+		return $this->get_activation_switch( $snippet ) . $out . $row_actions;
 	}
 
 	/**
@@ -417,9 +418,17 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			/* Define the labels for each view */
 			$labels = array(
-				'all'                => _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' ),
-				'active'             => _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
-				'inactive'           => _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' ),
+
+				/* translators: %s: total number of snippets */
+				'all' => _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' ),
+
+				/* translators: %s: total number of active snippets */
+				'active' => _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
+
+				/* translators: %s: total number of inactive snippets */
+				'inactive' => _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' ),
+
+				/* translators: %s: total number of recently activated snippets */
 				'recently_activated' => _n( 'Recently Active <span class="count">(%s)</span>', 'Recently Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
 			);
 
@@ -1030,16 +1039,19 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			echo '<span class="subtitle">' . __( 'Search results', 'code-snippets' );
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
-				echo sprintf( __( ' for &#8220;%s&#8221;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
+				/* translators: %s: search query */
+				echo sprintf( __( ' for “%s”', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
 			}
 
 			if ( ! empty( $_GET['tag'] ) ) {
-				echo sprintf( __( ' in tag &#8220;%s&#8221;', 'code-snippets' ), esc_html( $_GET['tag'] ) );
+				/* translators: %s: tag name */
+				echo sprintf( __( ' in tag “%s”', 'code-snippets' ), esc_html( $_GET['tag'] ) );
 			}
 
 			echo '</span>';
 
 			printf(
+				/* translators: 1: link URL, 2: link text */
 				'&nbsp;<a class="button clear-filters" href="%s">%s</a>',
 				esc_url( remove_query_arg( array( 's', 'tag' ) ) ),
 				__( 'Clear Filters', 'code-snippets' )
