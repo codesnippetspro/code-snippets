@@ -20,14 +20,14 @@
   "author": {
     "name": "Shea Bunge",
     "email": "bungeshea@gmail.com",
-    "url": "https://bungeshea.com"
+    "url": "https://sheabunge.com"
   },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/sheabunge/code-snippets/issues"
   },
   "dependencies": {
-    "codemirror": "^5.39.0"
+    "codemirror": "^5.41.0"
   },
   "devDependencies": {
     "autoprefixer": "^9.0.0",

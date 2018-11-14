@@ -1040,12 +1040,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
 				/* translators: %s: search query */
-				echo sprintf( __( ' for “%s”', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
+				echo sprintf( __( ' for &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
 			}
 
 			if ( ! empty( $_GET['tag'] ) ) {
 				/* translators: %s: tag name */
-				echo sprintf( __( ' in tag “%s”', 'code-snippets' ), esc_html( $_GET['tag'] ) );
+				echo sprintf( __( ' in tag &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $_GET['tag'] ) );
 			}
 
 			echo '</span>';
