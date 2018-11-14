@@ -41,7 +41,7 @@ class Code_Snippets_Upgrade {
 		$prev_version = get_option( 'code_snippets_version' );
 
 		/* Do nothing if the plugin has not been updated or installed */
-		if ( version_compare( $prev_version, CODE_SNIPPETS_VERSION, '<' ) ) {
+		if ( ! version_compare( $prev_version, CODE_SNIPPETS_VERSION, '<' ) ) {
 			return;
 		}
 
