@@ -27,9 +27,7 @@ $upload_dir = wp_upload_dir();
 			printf(
 				__( 'Afterwards, you will need to visit the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ),
 				code_snippets()->get_menu_url( 'manage' )
-			);
-
-			?></p>
+			); ?></p>
 
 		<?php if ( ! empty( $upload_dir['error'] ) ) : ?>
 
