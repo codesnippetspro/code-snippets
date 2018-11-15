@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.12.0\n"
+"Project-Id-Version: code-snippets 2.12.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-15 22:11+1100\n"
+"POT-Creation-Date: 2018-11-15 23:41+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -156,7 +156,7 @@ msgctxt "menu label"
 msgid "Import"
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:16 php/views/import.php:20
+#: php/admin-menus/class-import-menu.php:16 php/views/import.php:19
 msgid "Import Snippets"
 msgstr ""
 
@@ -879,71 +879,65 @@ msgstr ""
 msgid "You are about to permanently delete this snippet."
 msgstr ""
 
-#: php/views/import.php:24
+#: php/views/import.php:23
 msgid ""
 "Upload one or more Code Snippets export files and the snippets will be "
 "imported."
 msgstr ""
 
-#: php/views/import.php:29
+#: php/views/import.php:28
 #, php-format
 msgid ""
 "Afterwards, you will need to visit the <a href=\"%s\">All Snippets</a> page "
 "to activate the imported snippets."
 msgstr ""
 
-#: php/views/import.php:36
-msgid ""
-"Before you can upload your import file, you will need to fix the following "
-"error:"
-msgstr ""
-
-#: php/views/import.php:46
+#: php/views/import.php:35
 msgid "Duplicate Snippets"
 msgstr ""
 
-#: php/views/import.php:49
+#: php/views/import.php:38
 msgid ""
 "What should happen if an existing snippet is found with an identical name to "
 "an imported snippet?"
 msgstr ""
 
-#: php/views/import.php:56
+#: php/views/import.php:45
 msgid ""
 "Ignore any duplicate snippets: import all snippets from the file regardless "
 "and leave all existing snippets unchanged."
 msgstr ""
 
-#: php/views/import.php:63
+#: php/views/import.php:52
 msgid ""
 "Replace any existing snippets with a newly imported snippet of the same name."
 msgstr ""
 
-#: php/views/import.php:70
+#: php/views/import.php:59
 msgid ""
 "Do not import any duplicate snippets; leave all existing snippets unchanged."
 msgstr ""
 
-#: php/views/import.php:75
+#: php/views/import.php:64
 msgid "Upload Files"
 msgstr ""
 
-#: php/views/import.php:78
+#: php/views/import.php:67
 msgid ""
 "Choose one or more Code Snippets (.xml or .json) files to upload, then click "
 "\"Upload files and import\"."
 msgstr ""
 
-#: php/views/import.php:83
+#: php/views/import.php:72
 msgid "Choose files from your computer:"
 msgstr ""
 
-#: php/views/import.php:86
+#: php/views/import.php:75
 #, php-format
 msgid "(Maximum size: %s)"
 msgstr ""
 
-#: php/views/import.php:97
+#: php/views/import.php:86
 msgid "Upload files and import"
 msgstr ""
 
