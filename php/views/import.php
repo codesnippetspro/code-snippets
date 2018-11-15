@@ -24,7 +24,7 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 
 		<p><?php
 			printf(
-			/* translators: %s: link to snippets admin menu */
+				/* translators: %s: link to snippets admin menu */
 				__( 'Afterwards, you will need to visit the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ),
 				code_snippets()->get_menu_url( 'manage' )
 			); ?></p>
@@ -71,7 +71,7 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 				<p>
 					<label for="upload"><?php esc_html_e( 'Choose files from your computer:', 'code-snippets' ); ?></label>
 					<?php printf(
-					/* translators: %s: size in bytes */
+						/* translators: %s: size in bytes */
 						esc_html__( '(Maximum size: %s)', 'code-snippets' ),
 						size_format( $max_size_bytes )
 					); ?>
