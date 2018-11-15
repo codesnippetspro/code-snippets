@@ -3,9 +3,9 @@ Contributors: bungeshea
 Donate link: https://bungeshea.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 4.9.8
+Tested up to: 5.0
 Requires PHP: 5.2
-Stable tag: 2.12.0
+Stable tag: 2.12.1
 License: MIT
 License URI: license.txt
 
@@ -19,9 +19,13 @@ A snippet is a small chunk of PHP code that you can use to extend the functional
 Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while.
 Code Snippets changes that by providing a GUI interface for adding snippets and **actually running them on your site** just as if they were in your theme's `functions.php` file.
 
-Code Snippets provides graphical interface, similar to the Plugins menu, for managing snippets. Snippets can can be activated and deactivated, just like plugins. The snippet editor includes fields for a name, a visual editor-enabled description, tags to allow you to categorize snippets, and a full-featured code editor. Snippets can be exported for transfer to another side, either in XML for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme
+Code Snippets provides graphical interface, similar to the Plugins menu, for managing snippets. Snippets can can be activated and deactivated, just like plugins. The snippet editor includes fields for a name, a visual editor-enabled description, tags to allow you to categorize snippets, and a full-featured code editor. Snippets can be exported for transfer to another side, either in JSON for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
 
-If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](http://wordpress.org/support/plugin/code-snippets). If you like this plugin, or it is useful to you in any way, please review it on [WordPress.org](http://wordpress.org/support/view/plugin-reviews/code-snippets). If you'd like to contribute to the plugin's code or translate it into another language, please [fork the plugin on GitHub](https://github.com/sheabunge/code-snippets).
+If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](http://wordpress.org/support/plugin/code-snippets), or [join the community on Facebook](https://facebook.com/groups/codesnippetsplugin).
+
+If you like this plugin, or it is useful to you in some way, please consider reviewing it on [WordPress.org](http://wordpress.org/support/view/plugin-reviews/code-snippets).
+
+If you'd like to contribute to the plugin's code or translate it into another language, you can [fork the plugin on GitHub](https://github.com/sheabunge/code-snippets).
 
 = Translations =
 
@@ -109,9 +113,17 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 1. Managing existing snippets
 2. Adding a new snippet
 3. Editing a snippet
-4. Importing snippets from an XML file
+4. Importing snippets from an export file
 
 == Changelog ==
+
+= 2.12.1 (15 Nov 2018) =
+* Improved: CodeMirror updated to version 5.41.0
+* Improved: Attempt to create database columns that might be missing after a table upgrade
+* Improved: Streamlined upgrade process
+* Fixed: Interface layout on sites using right-to-left languages
+* Improved: Made search box appear at top of page on mobile [[#](https://wordpress.org/support/topic/small-modification-for-mobile-ux/)]
+* Updated screenshots
 
 = 2.12.0 (23 Sep 2018) =
 * Fixed: Prevented hidden columns setting from reverting to default
