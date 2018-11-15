@@ -84,11 +84,6 @@ class Code_Snippets {
 
 	public function disable_snippet_execution( $execute_snippets ) {
 
-		/* Bail early if safe mode is active */
-		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
-			return false;
-		}
-
 		if ( isset( $_GET['snippets-safe-mode'] ) && $_GET['snippets-safe-mode'] && $this->current_user_can() ) {
 			return false;
 		}

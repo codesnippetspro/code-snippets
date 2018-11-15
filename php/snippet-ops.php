@@ -372,7 +372,8 @@ function execute_snippet( $code, $id = 0, $catch_output = true ) {
  */
 function execute_active_snippets() {
 
-	if ( ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
+	/* Bail early if safe mode is active */
+	if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE || ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
 		return false;
 	}
 
