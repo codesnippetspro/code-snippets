@@ -171,3 +171,12 @@
 		white-space: nowrap; /* prevents wrapping of snippet title */
 	}
 }
+
+@media screen and (max-width: 782px) {
+	p.search-box {
+		float: left;
+		position: initial;
+		margin: 0;
+		height: auto;
+	}
+}
