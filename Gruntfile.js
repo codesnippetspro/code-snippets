@@ -71,6 +71,16 @@ module.exports = function (grunt) {
 			}
 		},
 
+		rtlcss: {
+			dist: {
+				expand: true,
+				cwd: 'css/build',
+				dest: 'css/build',
+				ext: '-rtl.css',
+				src: ['manage.css', 'edit.css']
+			}
+		},
+
 		uglify: {
 			dist: {
 				files: {
@@ -103,7 +113,7 @@ module.exports = function (grunt) {
 
 		clean: {
 			js: ['js/min'],
-			css: ['css/min'],
+			css: ['css/build', 'css/min'],
 			dist: ['dist', 'code-snippets.*.zip']
 		},
 
@@ -199,7 +209,7 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask('css', ['clean:css', 'postcss', 'csso']);
+	grunt.registerTask('css', ['clean:css', 'postcss', 'rtlcss', 'csso']);
 	grunt.registerTask('js', ['clean:js', 'uglify']);
 	grunt.registerTask('l18n', ['pot', 'potomo']);
 	grunt.registerTask('test', ['jshint', 'phpcs', 'phpunit']);

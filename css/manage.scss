@@ -44,10 +44,8 @@
 	position: absolute;
 	display: inline-block;
 	margin-top: 5px;
-
 	width: 30px;
 	height: 17px;
-
 	background-color: #ccc;
 	transition: .4s;
 	border-radius: 34px;
@@ -64,7 +62,7 @@
 	}
 
 	.snippets .active-snippet & {
-		background-color: #2196F3;
+		background-color: #2196f3;
 
 		&::before {
 			transform: translateX(100%);
@@ -84,6 +82,12 @@
 	border-radius: 2px;
 	background: #e0e0e0;
 	font-size: smaller;
+	line-height: 1.2;
+
+	/* rtl:ignore */
+	.rtl & {
+		float: left;
+	}
 }
 
 .clear-filters {
@@ -134,14 +138,14 @@
 		td, th {
 			padding: 10px 9px;
 			border: none;
-			box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
+			box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 		}
 	}
 
 	.active-snippet {
 
 		td, th {
-			background-color: rgba(120,200,230,0.06);
+			background-color: rgba(120, 200, 230, 0.06);
 		}
 
 		th.check-column {
@@ -152,8 +156,8 @@
 
 	tr.active-snippet + tr.inactive-snippet th,
 	tr.active-snippet + tr.inactive-snippet td {
-		border-top: 1px solid rgba(0,0,0,0.03);
-		box-shadow: inset 0px 1px 0 rgba(0,0,0,0.02), inset 0 -1px 0 #e1e1e1;
+		border-top: 1px solid rgba(0, 0, 0, 0.03);
+		box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.02), inset 0 -1px 0 #e1e1e1;
 	}
 
 	&, #all-snippets-table, #search-snippets-table {

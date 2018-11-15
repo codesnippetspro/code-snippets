@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: code-snippets 2.12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-15 00:34+1100\n"
+"POT-Creation-Date: 2018-11-15 17:00+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,7 +194,7 @@ msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:23
 #: php/admin-menus/class-manage-menu.php:46 php/class-admin.php:61
-#: php/class-admin.php:151 php/views/manage.php:21
+#: php/class-admin.php:153 php/views/manage.php:21
 msgid "Snippets"
 msgstr ""
 
@@ -276,46 +276,46 @@ msgstr ""
 msgid "Snippets &raquo; Settings"
 msgstr ""
 
-#: php/class-admin.php:150
+#: php/class-admin.php:152
 msgid "Manage your existing snippets"
 msgstr ""
 
-#: php/class-admin.php:181
+#: php/class-admin.php:183
 msgid "Visit the WordPress.org plugin page"
 msgstr ""
 
-#: php/class-admin.php:182
+#: php/class-admin.php:184
 msgid "About"
 msgstr ""
 
-#: php/class-admin.php:186
+#: php/class-admin.php:188
 msgid "Visit the support forums"
 msgstr ""
 
-#: php/class-admin.php:187
+#: php/class-admin.php:189
 msgid "Support"
 msgstr ""
 
-#: php/class-admin.php:191
+#: php/class-admin.php:193
 msgid "Support this plugin's development"
 msgstr ""
 
-#: php/class-admin.php:192
+#: php/class-admin.php:194
 msgid "Donate"
 msgstr ""
 
-#: php/class-admin.php:224
+#: php/class-admin.php:226
 msgid ""
 "<strong>Have feedback on Code Snippets?</strong> Please take the time to "
 "answer a short survey on how you use this plugin and what you'd like to see "
 "changed or added in the future."
 msgstr ""
 
-#: php/class-admin.php:228
+#: php/class-admin.php:230
 msgid "Take the survey now"
 msgstr ""
 
-#: php/class-admin.php:231
+#: php/class-admin.php:233
 msgid "Dismiss"
 msgstr ""
 

@@ -97,9 +97,11 @@ class Code_Snippets_Admin {
 		// add snippet page uses edit stylesheet
 		'add' === $page && $page = 'edit';
 
+		$rtl = is_rtl() && ( 'edit' === $page || 'manage' === $page ) ? '-rtl' : '';
+
 		wp_enqueue_style(
 			"code-snippets-$page",
-			plugins_url( "css/min/$page.css", CODE_SNIPPETS_FILE ),
+			plugins_url( "css/min/{$page}{$rtl}.css", CODE_SNIPPETS_FILE ),
 			false,
 			CODE_SNIPPETS_VERSION
 		);

@@ -74,6 +74,9 @@ ul.tagit {
 	}
 }
 
+
+/*rtl:begin:ignore*/
+
 /**
  * Customize the CodeMirror editor
  * to look nice and support auto-resizing
@@ -115,3 +118,5 @@ See: https://goo.gl/3HDgRm
 .cm-s-rubyblue .CodeMirror-cursor {
 	border-left: 1px solid white !important;
 }
+
+/*rtl:end:ignore*/
