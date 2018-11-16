@@ -1,11 +1,13 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * The main plugin class
  *
  * @package Code_Snippets
  */
-class Code_Snippets {
+class Plugin {
 
 	/**
 	 * The current plugin version
@@ -20,12 +22,12 @@ class Code_Snippets {
 	public $file;
 
 	/**
-	 * @var Code_Snippets_DB
+	 * @var DB
 	 */
 	public $db;
 
 	/**
-	 * @var Code_Snippets_Admin
+	 * @var Admin
 	 */
 	public $admin;
 
@@ -53,7 +55,7 @@ class Code_Snippets {
 		$includes_path = dirname( __FILE__ );
 
 		/* Database operation functions */
-		$this->db = new Code_Snippets_DB();
+		$this->db = new DB();
 
 		/* Snippet operation functions */
 		require_once $includes_path . '/snippet-ops.php';
@@ -67,7 +69,7 @@ class Code_Snippets {
 
 		/* General Administration functions */
 		if ( is_admin() ) {
-			$this->admin = new Code_Snippets_Admin();
+			$this->admin = new Admin();
 		}
 
 		/* Settings component */
@@ -76,9 +78,9 @@ class Code_Snippets {
 		require_once $includes_path . '/settings/render-fields.php';
 		require_once $includes_path . '/settings/settings.php';
 
-		$this->shortcode = new Code_Snippets_Shortcode();
+		$this->shortcode = new Code_Shortcode();
 
-		$upgrade = new Code_Snippets_Upgrade( $this->db );
+		$upgrade = new Upgrade( $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 	}
 

@@ -20,7 +20,7 @@ Plugin URI:  https://github.com/sheabunge/code-snippets
 Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
 Author:      Shea Bunge
 Author URI:  https://bungeshea.com
-Version:     2.12.1
+Version:     3.0.0-dev.1
 License:     MIT
 License URI: license.txt
 Text Domain: code-snippets
@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0
  * @var string A PHP-standardized version number string
  */
-define( 'CODE_SNIPPETS_VERSION', '2.12.1' );
+define( 'CODE_SNIPPETS_VERSION', '3.0.0-dev.1' );
 
 /**
  * The full path to the main file of this plugin
@@ -56,57 +56,22 @@ define( 'CODE_SNIPPETS_VERSION', '2.12.1' );
  */
 define( 'CODE_SNIPPETS_FILE', __FILE__ );
 
-/**
- * Enable autoloading of plugin classes
- * @param $class_name
- */
-function code_snippets_autoload( $class_name ) {
-
-	/* Only autoload classes from this plugin */
-	if ( 'Code_Snippet' !== $class_name && 'Code_Snippets' !== substr( $class_name, 0, 13 ) ) {
-		return;
-	}
-
-	/* Remove namespace from class name */
-	$class_file = str_replace( 'Code_Snippets_', '', $class_name );
-
-	if ( 'Code_Snippet' === $class_name ) {
-		$class_file = 'Snippet';
-	}
-
-	/* Convert class name format to file name format */
-	$class_file = strtolower( $class_file );
-	$class_file = str_replace( '_', '-', $class_file );
-
-	$class_path = dirname( __FILE__ ) . '/php/';
-
-	if ( 'Menu' === substr( $class_name, -4, 4 ) ) {
-		$class_path .= 'admin-menus/';
-	}
-
-	/* Load the class */
-	require_once $class_path . "class-{$class_file}.php";
+if ( version_compare( phpversion(), '5.6', '>=' ) ) {
+	require_once plugin_dir_path( __FILE__ ) . 'php/load.php';
+	return;
 }
 
-spl_autoload_register( 'code_snippets_autoload' );
-
 /**
- * Retrieve the instance of the main plugin class
- *
- * @since 2.6.0
- * @return Code_Snippets
+ * Display a warning message and deactivate the plugin if the user is using an incompatible version of PHP
+ * @since 1.5.0
  */
-function code_snippets() {
-	static $plugin;
+function code_snippets_php_version_notice() {
+	echo '<div class="error fade">',
+	'<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong></p>',
+	'<p>', __( ' Please upgrade your server to the latest version of PHP – contact your web host if you are unsure about how to do this.', 'code-snippets' ), '</p>',
+	'</div>';
 
-	if ( is_null( $plugin ) ) {
-		$plugin = new Code_Snippets( CODE_SNIPPETS_VERSION, __FILE__ );
-	}
-
-	return $plugin;
+	deactivate_plugins( plugin_basename( __FILE__ ) );
 }
 
-code_snippets()->load_plugin();
-
-/* Execute the snippets once the plugins are loaded */
-add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
+add_action( 'admin_notices', 'code_snippets_php_version_notice' );

@@ -1,5 +1,7 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * This file handles the editor preview setting
  *
@@ -12,7 +14,7 @@
  *
  * @param string $hook The current page hook
  */
-function code_snippets_editor_settings_preview_assets( $hook ) {
+function load_editor_settings_preview_assets( $hook ) {
 
 	/* Only load on the settings page */
 	if ( code_snippets()->get_menu_hook( 'settings' ) !== $hook ) {
@@ -29,7 +31,7 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 
 		wp_enqueue_style(
 			'code-snippets-codemirror-theme-' . $theme,
-			plugins_url( "css/min/cmthemes/$theme.css", CODE_SNIPPETS_FILE ),
+			plugins_url( "css/min/cmthemes/$theme.css", PLUGIN_FILE ),
 			array( 'code-snippets-codemirror' )
 		);
 	}
@@ -37,20 +39,20 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 	wp_enqueue_script( 'jquery' );
 }
 
-add_action( 'admin_enqueue_scripts', 'code_snippets_editor_settings_preview_assets' );
+add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\load_editor_settings_preview_assets' );
 
 /**
  * Render a theme select field
  */
 function code_snippets_codemirror_theme_select_field( $atts ) {
 
-	$saved_value = code_snippets_get_setting( $atts['section'], $atts['id'] );
+	$saved_value = get_setting( $atts['section'], $atts['id'] );
 
 	echo '<select name="code_snippets_settings[editor][theme]">';
 	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>Default</option>';
 
 	/* Fetch all theme CSS files */
-	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/cmthemes/';
+	$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'css/min/cmthemes/';
 	$themes = glob( $themes_dir . '*.css' );
 
 	/* Print dropdown entry for each theme */

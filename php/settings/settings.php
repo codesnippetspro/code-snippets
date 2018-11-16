@@ -1,5 +1,7 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * This file registers the settings
  *
@@ -14,7 +16,7 @@
  *
  * @return bool
  */
-function code_snippets_unified_settings() {
+function are_settings_unified() {
 
 	if ( ! is_multisite() ) {
 		return false;
@@ -31,7 +33,7 @@ function code_snippets_unified_settings() {
  *
  * @return array
  */
-function code_snippets_get_settings() {
+function get_settings() {
 
 	/* Check if the settings have been cached */
 	if ( $settings = wp_cache_get( 'code_snippets_settings' ) ) {
@@ -39,10 +41,10 @@ function code_snippets_get_settings() {
 	}
 
 	/* Begin with the default settings */
-	$settings = code_snippets_get_default_settings();
+	$settings = get_default_settings();
 
 	/* Retrieve saved settings from the database */
-	$saved = code_snippets_unified_settings() ?
+	$saved = are_settings_unified() ?
 		get_site_option( 'code_snippets_settings', array() ) :
 		get_option( 'code_snippets_settings', array() );
 
@@ -77,8 +79,8 @@ function code_snippets_get_settings() {
  *
  * @return array
  */
-function code_snippets_get_setting( $section, $field ) {
-	$settings = code_snippets_get_settings();
+function get_setting( $section, $field ) {
+	$settings = get_settings();
 
 	return $settings[ $section ][ $field ];
 }
@@ -87,7 +89,7 @@ function code_snippets_get_setting( $section, $field ) {
  * Retrieve the settings sections
  * @return array
  */
-function code_snippets_get_settings_sections() {
+function get_settings_sections() {
 	$sections = array(
 		'general'            => __( 'General', 'code-snippets' ),
 		'description_editor' => __( 'Description Editor', 'code-snippets' ),
@@ -100,17 +102,17 @@ function code_snippets_get_settings_sections() {
 /**
  * Register settings sections, fields, etc
  */
-function code_snippets_register_settings() {
+function register_plugin_settings() {
 
-	if ( code_snippets_unified_settings() ) {
+	if ( are_settings_unified() ) {
 
 		if ( ! get_site_option( 'code_snippets_settings', false ) ) {
-			add_site_option( 'code_snippets_settings', code_snippets_get_default_settings() );
+			add_site_option( 'code_snippets_settings', get_default_settings() );
 		}
 	} else {
 
 		if ( ! get_option( 'code_snippets_settings', false ) ) {
-			add_option( 'code_snippets_settings', code_snippets_get_default_settings() );
+			add_option( 'code_snippets_settings', get_default_settings() );
 		}
 	}
 
@@ -118,7 +120,7 @@ function code_snippets_register_settings() {
 	register_setting( 'code-snippets', 'code_snippets_settings', 'code_snippets_settings_validate' );
 
 	/* Register settings sections */
-	foreach ( code_snippets_get_settings_sections() as $section_id => $section_name ) {
+	foreach ( get_settings_sections() as $section_id => $section_name ) {
 		add_settings_section(
 			'code-snippets-' . $section_id,
 			$section_name,
@@ -155,7 +157,7 @@ function code_snippets_register_settings() {
 	);
 }
 
-add_action( 'admin_init', 'code_snippets_register_settings' );
+add_action( 'admin_init', __NAMESPACE__ . '\register_plugin_settings' );
 
 /**
  * Validate the settings
@@ -165,7 +167,7 @@ add_action( 'admin_init', 'code_snippets_register_settings' );
  * @return array        The validated settings
  */
 function code_snippets_settings_validate( array $input ) {
-	$settings = code_snippets_get_settings();
+	$settings = get_settings();
 	$settings_fields = code_snippets_get_settings_fields();
 
 	// Don't directly loop through $input as it does not include as deselected checkboxes

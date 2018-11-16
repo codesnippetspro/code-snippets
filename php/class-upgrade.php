@@ -1,22 +1,24 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Manages upgrade tasks such as deleting and updating options
  */
-class Code_Snippets_Upgrade {
+class Upgrade {
 
 	/**
 	 * Instance of database class
-	 * @var Code_Snippets_DB
+	 * @var DB
 	 */
 	private $db;
 
 	/**
 	 * Class constructor
 	 *
-	 * @param Code_Snippets_DB $db Instance of database class
+	 * @param DB $db Instance of database class
 	 */
-	public function __construct( Code_Snippets_DB $db ) {
+	public function __construct( DB $db ) {
 		$this->db = $db;
 	}
 
@@ -41,7 +43,7 @@ class Code_Snippets_Upgrade {
 		$prev_version = get_option( 'code_snippets_version' );
 
 		/* Do nothing if the plugin has not been updated or installed */
-		if ( ! version_compare( $prev_version, CODE_SNIPPETS_VERSION, '<' ) ) {
+		if ( ! version_compare( $prev_version, PLUGIN_VERSION, '<' ) ) {
 			return;
 		}
 
@@ -52,7 +54,7 @@ class Code_Snippets_Upgrade {
 		}
 
 		/* Update the plugin version stored in the database */
-		update_option( 'code_snippets_version', CODE_SNIPPETS_VERSION );
+		update_option( 'code_snippets_version', PLUGIN_VERSION );
 
 		/* Update the scope column of the database */
 		if ( version_compare( $prev_version, '2.10.0', '<' ) ) {
@@ -78,7 +80,7 @@ class Code_Snippets_Upgrade {
 		$prev_version = get_site_option( 'code_snippets_version' );
 
 		/* Do nothing if the plugin has not been updated or installed */
-		if ( ! version_compare( $prev_version, CODE_SNIPPETS_VERSION, '<' ) ) {
+		if ( ! version_compare( $prev_version, PLUGIN_VERSION, '<' ) ) {
 			return;
 		}
 
@@ -91,7 +93,7 @@ class Code_Snippets_Upgrade {
 		}
 
 		/* Update the plugin version stored in the database */
-		update_site_option( 'code_snippets_version', CODE_SNIPPETS_VERSION );
+		update_site_option( 'code_snippets_version', PLUGIN_VERSION );
 
 		/* Update the scope column of the database */
 		if ( version_compare( $prev_version, '2.10.0', '<' ) ) {
@@ -176,7 +178,7 @@ class Code_Snippets_Upgrade {
 		);
 
 		foreach ( $snippets as $snippet ) {
-			$snippet = new Code_Snippet( $snippet );
+			$snippet = new Snippet( $snippet );
 			$snippet->desc .= ' ' . __( 'You can remove it, or edit it to add your own content.', 'code-snippets' );
 			save_snippet( $snippet );
 		}

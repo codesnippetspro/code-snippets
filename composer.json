@@ -20,6 +20,9 @@
 		"issues": "https://github.com/sheabunge/code-snippets/issues",
 		"source": "https://github.com/sheabunge/code-snippets"
 	},
+	"autoload": {
+		"classmap": ["php/"]
+	},
 	"require": {
 		"composer/installers": "~1.0"
 	},

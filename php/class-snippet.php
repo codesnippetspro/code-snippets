@@ -1,5 +1,7 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * A snippet object
  *
@@ -21,7 +23,7 @@
  * @property-read string $scope_name The name of the scope
  * @property-read string $scope_icon The dashicon used to represent the current scope
  */
-class Code_Snippet {
+class Snippet {
 
 	/**
 	 * The snippet metadata fields.

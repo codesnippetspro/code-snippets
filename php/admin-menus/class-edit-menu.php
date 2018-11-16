@@ -1,9 +1,11 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * This class handles the add/edit menu
  */
-class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
+class Edit_Menu extends Admin_Menu {
 
 	/**
 	 * Constructor
@@ -56,25 +58,25 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		/* Load the contextual help tabs */
-		$contextual_help = new Code_Snippets_Contextual_Help( 'edit' );
+		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
 
 		/* Enqueue the code editor and other scripts and styles */
-		add_action( 'admin_enqueue_scripts', 'code_snippets_enqueue_codemirror' );
+		add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\code_snippets_enqueue_codemirror' );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_tagit' ), 9 );
 
 		/* Register action hooks */
-		if ( code_snippets_get_setting( 'general', 'enable_description' ) ) {
+		if ( get_setting( 'general', 'enable_description' ) ) {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_description_editor' ), 9 );
 		}
 
-		if ( code_snippets_get_setting( 'general', 'enable_tags' ) ) {
+		if ( get_setting( 'general', 'enable_tags' ) ) {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_tags_editor' ) );
 		}
 
 		add_action( 'code_snippets/admin/single', array( $this, 'render_priority_setting' ), 0 );
 
-		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
+		if ( get_setting( 'general', 'snippet_scope_enabled' ) ) {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_scope_setting' ), 1 );
 		}
 
@@ -176,11 +178,11 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Validate the snippet code before saving to database
 	 *
-	 * @param Code_Snippet $snippet
+	 * @param Snippet $snippet
 	 *
 	 * @return bool true if code produces errors
 	 */
-	private function validate_code( Code_Snippet $snippet ) {
+	private function validate_code( Snippet $snippet ) {
 
 		if ( empty( $snippet->code ) ) {
 			return false;
@@ -203,7 +205,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	private function save_posted_snippet() {
 
 		/* Build snippet object from fields with 'snippet_' prefix */
-		$snippet = new Code_Snippet();
+		$snippet = new Snippet();
 
 		foreach ( $_POST as $field => $value ) {
 			if ( 'snippet_' === substr( $field, 0, 8 ) ) {
@@ -303,10 +305,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Add a description editor to the single snippet page
 	 *
-	 * @param Code_Snippet $snippet The snippet being used for this page
+	 * @param Snippet $snippet The snippet being used for this page
 	 */
-	function render_description_editor( Code_Snippet $snippet ) {
-		$settings = code_snippets_get_settings();
+	function render_description_editor( Snippet $snippet ) {
+		$settings = get_settings();
 		$settings = $settings['description_editor'];
 		$heading = __( 'Description', 'code-snippets' );
 
@@ -334,9 +336,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Render the interface for editing snippet tags
 	 *
-	 * @param Code_Snippet $snippet the snippet currently being edited
+	 * @param Snippet $snippet the snippet currently being edited
 	 */
-	function render_tags_editor( Code_Snippet $snippet ) {
+	function render_tags_editor( Snippet $snippet ) {
 
 		?>
 		<h2 style="margin: 25px 0 10px;">
@@ -363,9 +365,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Render the snippet priority setting
 	 *
-	 * @param Code_Snippet $snippet the snippet currently being edited
+	 * @param Snippet $snippet the snippet currently being edited
 	 */
-	public function render_priority_setting( Code_Snippet $snippet ) {
+	public function render_priority_setting( Snippet $snippet ) {
 		?>
 		<p class="snippet-priority"
 		   title="<?php esc_attr_e( 'Snippets with a lower priority number will run before those with a higher number.', 'code-snippets' ); ?>">
@@ -379,11 +381,11 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Render the snippet scope setting
 	 *
-	 * @param Code_Snippet $snippet the snippet currently being edited
+	 * @param Snippet $snippet the snippet currently being edited
 	 */
-	function render_scope_setting( Code_Snippet $snippet ) {
+	function render_scope_setting( Snippet $snippet ) {
 
-		$icons = Code_Snippet::get_scope_icons();
+		$icons = Snippet::get_scope_icons();
 
 		$labels = array(
 			'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
@@ -394,7 +396,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		echo '<h2 class="screen-reader-text">' . esc_html__( 'Scope', 'code-snippets' ) . '</h2><p class="snippet-scope">';
 
-		foreach ( Code_Snippet::get_all_scopes() as $scope ) {
+		foreach ( Snippet::get_all_scopes() as $scope ) {
 			printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
 			checked( $scope, $snippet->scope );
 			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $icons[ $scope ], esc_html( $labels[ $scope ] ) );
@@ -514,7 +516,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 */
 	function enqueue_tagit() {
 		$tagit_version = '2.0';
-		$url = plugin_dir_url( CODE_SNIPPETS_FILE );
+		$url = plugin_dir_url( PLUGIN_FILE );
 
 		/* Tag It UI */
 		wp_enqueue_script(

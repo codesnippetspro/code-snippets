@@ -1,5 +1,7 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * HTML code for the Add New/Edit Snippet page
  *
@@ -91,7 +93,7 @@ if ( $edit_id ) {
 
 				submit_button( null, 'primary', 'save_snippet', false );
 
-			} elseif ( ! $snippet->active && code_snippets_get_setting( 'general', 'activate_by_default' ) ) {
+			} elseif ( ! $snippet->active && get_setting( 'general', 'activate_by_default' ) ) {
 
 				submit_button(
 					__( 'Save Changes and Activate', 'code-snippets' ),

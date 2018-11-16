@@ -4,6 +4,7 @@
  * This file includes functions for importing and exporting snippets
  */
 
+namespace Code_Snippets;
 
 /**
  * @access private
@@ -79,7 +80,7 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
 
 	/* Reformat the data into snippet objects */
 	foreach ( $data['snippets'] as $snippet ) {
-		$snippet = new Code_Snippet( $snippet );
+		$snippet = new Snippet( $snippet );
 		$snippet->network = $multisite;
 		$snippets[] = $snippet;
 	}
@@ -121,7 +122,7 @@ function import_snippets_xml( $file, $multisite = null, $dup_action = 'ignore' )
 
 	/** @var DOMElement $snippet_xml */
 	foreach ( $snippets_xml as $snippet_xml ) {
-		$snippet = new Code_Snippet();
+		$snippet = new Snippet();
 		$snippet->network = $multisite;
 
 		/* Build a snippet object by looping through the field names */
@@ -185,7 +186,7 @@ function code_snippets_prepare_export( $format, $ids, $table_name = '', $mime_ty
 	/* Build the export filename */
 	if ( 1 == count( $ids ) ) {
 		/* If there is only snippet to export, use its name instead of the site name */
-		$first_snippet = new Code_Snippet( $snippets[0] );
+		$first_snippet = new Snippet( $snippets[0] );
 		$title = strtolower( $first_snippet->name );
 	} else {
 		/* Otherwise, use the site name as set in Settings > General */
@@ -220,7 +221,7 @@ function download_snippets( $ids, $table_name = '' ) {
 
 	/* Loop through the snippets */
 	foreach ( $snippets as $snippet ) {
-		$snippet = new Code_Snippet( $snippet );
+		$snippet = new Snippet( $snippet );
 
 		echo "\n/**\n * {$snippet->name}\n";
 
@@ -249,7 +250,7 @@ function export_snippets( $ids, $table_name = '' ) {
 	$final_snippets = array();
 
 	foreach ( $raw_snippets as $snippet ) {
-		$snippet = new Code_Snippet( $snippet );
+		$snippet = new Snippet( $snippet );
 
 		$fields = array( 'name', 'desc', 'tags', 'scope', 'code' );
 		$final_snippet = array();
@@ -266,7 +267,7 @@ function export_snippets( $ids, $table_name = '' ) {
 	}
 
 	$data = array(
-		'generator'    => 'Code Snippets v' . CODE_SNIPPETS_VERSION,
+		'generator'    => 'Code Snippets v' . PLUGIN_VERSION,
 		'date_created' => date( 'Y-m-d H:i' ),
 		'snippets'     => $final_snippets,
 	);

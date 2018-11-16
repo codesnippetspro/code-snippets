@@ -1,5 +1,7 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Fetch the admin menu slug for a snippets menu
  *

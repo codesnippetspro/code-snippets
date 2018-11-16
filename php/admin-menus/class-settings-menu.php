@@ -1,11 +1,13 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * This class handles the settings admin menu
  * @since 2.4.0
  * @package Code_Snippets
  */
-class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
+class Settings_Menu extends Admin_Menu {
 
 	/**
 	 * Constructor
@@ -26,7 +28,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 		if ( isset( $_GET['reset_settings'] ) && $_GET['reset_settings'] ) {
 
-			if ( code_snippets_unified_settings() ) {
+			if ( are_settings_unified() ) {
 				delete_site_option( 'code_snippets_settings' );
 			} else {
 				delete_option( 'code_snippets_settings' );
@@ -41,7 +43,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 		if ( is_network_admin() ) {
 
-			if ( code_snippets_unified_settings() ) {
+			if ( are_settings_unified() ) {
 				$this->update_network_options();
 			} else {
 				wp_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );

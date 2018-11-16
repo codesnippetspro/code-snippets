@@ -1,15 +1,23 @@
 <?php
 
+namespace Code_Snippets;
+use WP_Screen;
+
 /**
  * This file holds all of the content for the contextual help screens
  * @package Code_Snippets
  */
-class Code_Snippets_Contextual_Help {
+class Contextual_Help {
 
 	/**
 	 * @var WP_Screen
 	 */
 	public $screen;
+
+	/**
+	 * @var string
+	 */
+	public $screen_name;
 
 	/**
 	 * @param string $screen_name
@@ -69,7 +77,7 @@ class Code_Snippets_Contextual_Help {
 			'title'   => __( 'Uninstall', 'code-snippets' ),
 			'content' =>
 				/* translators: 1: snippets table name, 2: Code Snippets plugin directory */
-				'<p>' . sprintf( __( 'When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP.', 'code-snippets' ), code_snippets()->db->get_table_name(), dirname( CODE_SNIPPETS_FILE ) ) .
+				'<p>' . sprintf( __( 'When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP.', 'code-snippets' ), code_snippets()->db->get_table_name(), dirname( PLUGIN_FILE ) ) .
 				'<p>' . __( "Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installation, you may want to use the export feature to back up your snippets.", 'code-snippets' ) . '</p>',
 		) );
 	}
