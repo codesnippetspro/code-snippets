@@ -61,7 +61,8 @@ module.exports = function (grunt) {
 			vendor: {
 				files: {
 					'css/min/codemirror.css': [
-						codemirror + 'lib/codemirror.css'
+						codemirror + 'lib/codemirror.css',
+						codemirror + 'addon/dialog/dialog.css'
 					],
 					'css/min/tagit.css': [
 						'js/vendor/jquery.tagit.css',
@@ -93,7 +94,10 @@ module.exports = function (grunt) {
 						codemirror + 'lib/codemirror.js',
 						codemirror + 'mode/clike/clike.js',
 						codemirror + 'mode/php/php.js',
-						codemirror + 'addon/edit/matchbrackets.js'
+						codemirror + 'addon/edit/matchbrackets.js',
+						codemirror + 'addon/dialog/dialog.js',
+						codemirror + 'addon/search/searchcursor.js',
+						codemirror + 'addon/search/search.js'
 					],
 					'js/min/tag-it.js': ['js/vendor/tag-it.js']
 				}

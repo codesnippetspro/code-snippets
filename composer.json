@@ -21,6 +21,7 @@
 		"source": "https://github.com/sheabunge/code-snippets"
 	},
 	"require": {
+		"ext-json": "*",
 		"composer/installers": "~1.0"
 	},
 	"require-dev": {
