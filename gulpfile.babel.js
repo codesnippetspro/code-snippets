@@ -211,13 +211,8 @@ gulp.task('phpcs', () => {
 });
 
 gulp.task('phpunit', () => {
-
-	const options = {
-		bootstrap: 'tests/bootstrap.php',
-	};
-
 	gulp.src('phpunit.xml')
-		.pipe(phpunit('vendor/bin/phpunit', options));
+		.pipe(phpunit());
 });
 
 gulp.task('clean', () => {
