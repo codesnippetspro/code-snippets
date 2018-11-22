@@ -34,14 +34,21 @@ class Code_Snippets_Admin {
 		add_action( 'init', array( $this, 'load_classes' ), 11 );
 
 		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_stylesheet' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( CODE_SNIPPETS_FILE ), array( $this, 'plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_stylesheets' ), 10, 1 );
 
 		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
 		}
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function is_compact_menu() {
+		return ! is_network_admin() && apply_filters( 'code_snippets_compact_menu', false );
 	}
 
 	/**
@@ -74,7 +81,13 @@ class Code_Snippets_Admin {
 	 *
 	 * @param string $hook the current page hook
 	 */
-	function enqueue_admin_stylesheet( $hook ) {
+	function enqueue_admin_stylesheets( $hook ) {
+
+		if ( $this->is_compact_menu() ) {
+			$this->enqueue_compact_admin_stylesheets( $hook );
+			return;
+		}
+
 		$pages = array( 'manage', 'add', 'edit', 'settings' );
 		$hooks = array_map( 'code_snippets_get_menu_hook', $pages );
 
@@ -96,6 +109,44 @@ class Code_Snippets_Admin {
 
 		// add snippet page uses edit stylesheet
 		'add' === $page && $page = 'edit';
+
+		$rtl = is_rtl() && ( 'edit' === $page || 'manage' === $page ) ? '-rtl' : '';
+
+		wp_enqueue_style(
+			"code-snippets-$page",
+			plugins_url( "css/min/{$page}{$rtl}.css", CODE_SNIPPETS_FILE ),
+			false,
+			CODE_SNIPPETS_VERSION
+		);
+	}
+
+	/**
+	 * Enqueue the stylesheet for a snippet menu when using the compact layout
+	 *
+	 * @param string $hook the current page hook
+	 */
+	function enqueue_compact_admin_stylesheets( $hook ) {
+
+		if ( get_plugin_page_hookname( 'snippets', 'tools.php' ) !== $hook ) {
+			return;
+		}
+
+		$sub = isset( $_GET['sub'] ) ? $_GET['sub'] : 'snippets';
+
+		$pages = array(
+			'snippets' => 'manage',
+			'add-snippet' => 'edit',
+			'edit-snippet' => 'edit',
+			'import-snippets' => 'import',
+			'snippets-settings' => 'settings',
+		);
+
+		/* Only load the stylesheet on the right snippets page */
+		if ( ! isset( $pages[ $sub ] ) ) {
+			return;
+		}
+
+		$page = $pages[ $sub ];
 
 		$rtl = is_rtl() && ( 'edit' === $page || 'manage' === $page ) ? '-rtl' : '';
 

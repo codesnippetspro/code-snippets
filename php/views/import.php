@@ -16,7 +16,31 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 
 ?>
 <div class="wrap">
-	<h1><?php _e( 'Import Snippets', 'code-snippets' ); ?></h1>
+	<h1><?php _e( 'Import Snippets', 'code-snippets' );
+
+		$admin = code_snippets()->admin;
+
+		if ( $admin->is_compact_menu() ) {
+
+			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+				esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
+				code_snippets()->get_menu_url()
+			);
+
+			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+				esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
+				code_snippets()->get_menu_url( 'add' )
+			);
+
+			if ( isset( $admin->menus['settings'] ) ) {
+				printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+					esc_html_x( 'Settings', 'snippets', 'code-snippets' ),
+					code_snippets()->get_menu_url( 'settings' )
+				);
+			}
+		}
+
+	?></h1>
 
 	<div class="narrow">
 

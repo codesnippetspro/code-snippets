@@ -29,6 +29,13 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	 */
 	public function run() {
 		parent::run();
+
+		if ( code_snippets()->admin->is_compact_menu() ) {
+			add_action( 'admin_menu', array( $this, 'register_compact_menu' ), 2 );
+			add_action( 'network_admin_menu', array( $this, 'register_compact_menu' ), 2 );
+		}
+
+
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
 		add_action( 'wp_ajax_update_code_snippet', array( $this, 'ajax_callback' ) );
 	}
@@ -54,6 +61,43 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Register the sub-menu */
 		parent::register();
+	}
+
+	public function register_compact_menu() {
+
+		if ( ! code_snippets()->admin->is_compact_menu() ) {
+			return;
+		}
+
+		$sub = code_snippets()->get_menu_slug( isset( $_GET['sub'] ) ? $_GET['sub'] : 'snippets' );
+
+		$classmap = array(
+			'snippets' => 'manage',
+			'add-snippet' => 'edit',
+			'edit-snippet' => 'edit',
+			'import-snippets' => 'import',
+			'snippets-settings' => 'settings',
+		);
+
+		if ( isset( $classmap[ $sub ], code_snippets()->admin->menus[ $classmap[ $sub ] ] ) ) {
+			/** @var Code_Snippets_Admin_Menu $class */
+			$class = code_snippets()->admin->menus[ $classmap[ $sub ] ];
+		} else {
+			$class = $this;
+		}
+
+		/* Add a submenu to the Tools menu */
+		$hook = add_submenu_page(
+			'tools.php',
+			__( 'Snippets', 'code-snippets' ),
+			_x( 'Snippets', 'tools submenu label', 'code-snippets' ),
+			code_snippets()->get_cap(),
+			code_snippets()->get_menu_slug(),
+			array( $class, 'render' )
+		);
+
+		add_action( 'load-' . $hook, array( $class, 'load' ) );
+
 	}
 
 	/**

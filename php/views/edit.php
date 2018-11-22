@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $table = code_snippets()->db->get_table_name();
-$edit_id = code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ? absint( $_REQUEST['id'] ) : 0;
+$edit_id = isset( $_REQUEST['id' ] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
 $snippet = get_snippet( $edit_id );
 
 $classes = array();
@@ -37,6 +37,28 @@ if ( $edit_id ) {
 		} else {
 			esc_html_e( 'Add New Snippet', 'code-snippets' );
 		}
+
+		if ( code_snippets()->admin->is_compact_menu() ) {
+
+			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+				esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
+				code_snippets()->get_menu_url()
+			);
+
+			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+				esc_html_x( 'Import', 'snippets', 'code-snippets' ),
+				code_snippets()->get_menu_url( 'import' )
+			);
+
+			if ( isset( $admin->menus['settings'] ) ) {
+
+				printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+					esc_html_x( 'Settings', 'snippets', 'code-snippets' ),
+					code_snippets()->get_menu_url( 'settings' )
+				);
+			}
+		}
+
 		?></h1>
 
 	<form method="post" id="snippet-form" action="" style="margin-top: 10px;" class="<?php echo implode( ' ', $classes ); ?>">

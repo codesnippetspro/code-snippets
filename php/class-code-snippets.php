@@ -30,6 +30,11 @@ class Code_Snippets {
 	public $admin;
 
 	/**
+	 * @var Code_Snippets_Shortcode
+	 */
+	public $shortcode;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $version The current plugin version
@@ -127,7 +132,18 @@ class Code_Snippets {
 	 */
 	public function get_menu_url( $menu = '', $context = 'self' ) {
 		$slug = $this->get_menu_slug( $menu );
-		$url = 'admin.php?page=' . $slug;
+
+		if ( $this->admin->is_compact_menu() && 'network' !== $context ) {
+			$base_slug = $this->get_menu_slug();
+			$url = 'tools.php?page=' . $base_slug;
+
+			if ( $slug !== $base_slug ) {
+				$url .= '&sub=' . $slug;
+			}
+
+		} else {
+			$url = 'admin.php?page=' . $slug;
+		}
 
 		if ( 'network' === $context ) {
 			return network_admin_url( $url );
