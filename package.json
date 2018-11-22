@@ -8,7 +8,10 @@
         "test": "tests"
     },
     "scripts": {
-        "test": "grunt test"
+        "build": "gulp",
+        "watch": "gulp watch",
+        "package": "gulp package",
+        "test": "gulp test"
     },
     "repository": {
         "type": "git",

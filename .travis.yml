@@ -8,9 +8,9 @@ sudo: false
 
 # Declare versions of PHP to use. Use one decimal max.
 php:
-  - "5.5"
-  - "5.4"
-  - "5.6"
+  - '5.5'
+  - '5.4'
+  - '5.6'
 
 env:
   # Trunk
@@ -47,10 +47,9 @@ before_script:
   - plugin_slug=$(basename $PROJECT_DIR)
   - plugin_dir=$WP_DEVELOP_DIR/src/wp-content/plugins/$plugin_slug
   - composer install
-  - vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs
   - npm install
-  - grunt
-  - grunt package
+  - npm run build
+  - npm run package
   - mv $PROJECT_DIR/dist $plugin_dir
 
   # Set up WordPress configuration.
@@ -74,5 +73,5 @@ script:
   - find . -maxdepth 1 \( -name '*.php' \) -exec php -lf {} \;
   - find php/ \( -name '*.php' \) -exec php -lf {} \;
 
-  # Run Grunt tests
-  - grunt test
+  # Run tests
+  - npm run test
