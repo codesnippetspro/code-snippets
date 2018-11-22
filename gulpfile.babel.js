@@ -211,33 +211,14 @@ gulp.task('phpcs', () => {
 });
 
 gulp.task('phpunit', () => {
-	gulp.src('phpunit.xml')
-		.pipe(phpunit());
+	return gulp.src('phpunit.xml')
+		.pipe(phpunit('phpunit'));
 });
 
 gulp.task('clean', () => {
 	return gulp.src([dist_dirs.css, dist_dirs.js], {read: false, allowEmpty: true})
 		.pipe(clean());
 });
-
-gulp.task('package', gulp.series(
-	() =>
-		gulp.src(['dist', pkg.name, `${pkg.name}.*.zip`], {read: false, allowEmpty: true})
-			.pipe(clean()),
-	() =>
-		gulp.src([
-			'code-snippets.php', 'uninstall.php', 'php/**/*',
-			'readme.txt', 'license.txt', 'languages/**/*',
-			'css/min/**/*', 'css/font/**/*', 'js/min/**/*'
-		])
-			.pipe(copy('dist'))
-			.pipe(rename(pkg.name)),
-	() =>
-		gulp.src(pkg.name + '/**/*', {base: '.'})
-			.pipe(archiver(`${pkg.name}.${pkg.version}.zip`))
-			.pipe(gulp.dest('.'))
-));
-
 
 gulp.task('package', gulp.series(
 	() => gulp.src(['dist', pkg.name, `${pkg.name}.*.zip`], {read: false, allowEmpty: true})
@@ -260,8 +241,7 @@ gulp.task('package', gulp.series(
 			done();
 		});
 	}
-))
-;
+));
 
 gulp.task('test', gulp.parallel(['test-js', gulp.series(['phpcs', 'phpunit'])]));
 
