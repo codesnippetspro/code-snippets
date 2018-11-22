@@ -1,29 +1,422 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) 2018 code-snippets
 # This file is distributed under the same license as the code-snippets package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: code-snippets 2.12.1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-20 00:16+1100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Project-Id-Version: code-snippets\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Report-Msgid-Bugs-To: https://github.com/sheabunge/code-snippets/issues\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: code-snippets.php:16, php/admin-menus/class-import-menu.php:102
+msgid "Code Snippets"
+msgstr ""
+
+#: code-snippets.php:17
+msgid "https://github.com/sheabunge/code-snippets"
+msgstr ""
+
+#: code-snippets.php:18
+msgid "An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!"
+msgstr ""
+
+#: code-snippets.php:19
+msgid "Shea Bunge"
+msgstr ""
+
+#: code-snippets.php:20
+msgid "https://bungeshea.com"
+msgstr ""
+
+#: php/class-admin.php:61, php/class-admin.php:153, php/admin-menus/class-manage-menu.php:23, php/admin-menus/class-manage-menu.php:46, php/views/manage.php:21
+msgid "Snippets"
+msgstr ""
+
+#: php/class-admin.php:62
+msgid "Snippets &raquo; Settings"
+msgstr ""
+
+#: php/class-admin.php:152
+msgid "Manage your existing snippets"
+msgstr ""
+
+#: php/class-admin.php:183
+msgid "Visit the WordPress.org plugin page"
+msgstr ""
+
+#: php/class-admin.php:184
+msgid "About"
+msgstr ""
+
+#: php/class-admin.php:188
+msgid "Visit the support forums"
+msgstr ""
+
+#: php/class-admin.php:189
+msgid "Support"
+msgstr ""
+
+#: php/class-admin.php:193
+msgid "Support this plugin's development"
+msgstr ""
+
+#: php/class-admin.php:194
+msgid "Donate"
+msgstr ""
+
+#: php/class-admin.php:226
+msgid "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future."
+msgstr ""
+
+#: php/class-admin.php:230
+msgid "Take the survey now"
+msgstr ""
+
+#: php/class-admin.php:233
+msgid "Dismiss"
+msgstr ""
+
+#: php/class-contextual-help.php:40
+msgid "For more information:"
+msgstr ""
+
+#: php/class-contextual-help.php:41
+msgid "About Plugin"
+msgstr ""
+
+#: php/class-contextual-help.php:42
+msgid "FAQ"
+msgstr ""
+
+#: php/class-contextual-help.php:43
+msgid "Support Forums"
+msgstr ""
+
+#: php/class-contextual-help.php:44
+msgid "Plugin Website"
+msgstr ""
+
+#: php/class-contextual-help.php:55, php/class-contextual-help.php:84, php/class-contextual-help.php:126
+msgid "Overview"
+msgstr ""
+
+#: php/class-contextual-help.php:56
+msgid "Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can manage your existing snippets and perform tasks on them such as activating, deactivating, deleting and exporting."
+msgstr ""
+
+#: php/class-contextual-help.php:61
+msgid "Safe Mode"
+msgstr ""
+
+#: php/class-contextual-help.php:63
+msgid "Be sure to check your snippets for errors before you activate them, as a faulty snippet could bring your whole blog down. If your site starts doing strange things, deactivate all your snippets and activate them one at a time."
+msgstr ""
+
+#: php/class-contextual-help.php:64
+msgid "If something goes wrong with a snippet and you can't use WordPress, you can cause all snippets to stop executing by adding <code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-config.php</code> file. After you have deactivated the offending snippet, you can turn off safe mode by removing this line or replacing <strong>true</strong> with <strong>false</strong>."
+msgstr ""
+
+#: php/class-contextual-help.php:69
+msgid "Uninstall"
+msgstr ""
+
+#. translators: 1: snippets table name, 2: Code Snippets plugin directory
+#: php/class-contextual-help.php:72
+msgid "When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP."
+msgstr ""
+
+#: php/class-contextual-help.php:73
+msgid "Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installation, you may want to use the export feature to back up your snippets."
+msgstr ""
+
+#: php/class-contextual-help.php:85
+msgid "Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can add a new snippet, or edit an existing one."
+msgstr ""
+
+#: php/class-contextual-help.php:89
+msgid "WP-Snippets"
+msgstr ""
+
+#: php/class-contextual-help.php:89
+msgid "http://wp-snippets.com"
+msgstr ""
+
+#: php/class-contextual-help.php:90
+msgid "WP Snipp"
+msgstr ""
+
+#: php/class-contextual-help.php:90
+msgid "http://wpsnipp.com"
+msgstr ""
+
+#: php/class-contextual-help.php:91
+msgid "Cats Who Code"
+msgstr ""
+
+#: php/class-contextual-help.php:91
+msgid "http://www.catswhocode.com/blog/snippets"
+msgstr ""
+
+#: php/class-contextual-help.php:92
+msgid "WP Function Me"
+msgstr ""
+
+#: php/class-contextual-help.php:92
+msgid "http://www.wpfunction.me"
+msgstr ""
+
+#: php/class-contextual-help.php:102
+msgid "Finding Snippets"
+msgstr ""
+
+#: php/class-contextual-help.php:104
+msgid "Here are some links to websites which host a large number of snippets that you can add to your site:"
+msgstr ""
+
+#: php/class-contextual-help.php:106
+msgid "More places to find snippets, as well as a selection of example snippets, can be found in the <a href=\"https://github.com/sheabunge/code-snippets/wiki/Finding-snippets\">plugin documentation</a>."
+msgstr ""
+
+#: php/class-contextual-help.php:111
+msgid "Adding Snippets"
+msgstr ""
+
+#: php/class-contextual-help.php:113
+msgid "You need to fill out the name and code fields for your snippet to be added. While the description field will add more information about how your snippet works, what is does and where you found it, it is completely optional."
+msgstr ""
+
+#: php/class-contextual-help.php:114
+msgid "Please be sure to check that your snippet is valid PHP code and will not produce errors before adding it through this page. While doing so will not become active straight away, it will help to minimise the chance of a faulty snippet becoming active on your site."
+msgstr ""
+
+#: php/class-contextual-help.php:127
+msgid "Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can load snippets from a Code Snippets (.xml) import file into the database with your existing snippets."
+msgstr ""
+
+#: php/class-contextual-help.php:132
+msgid "Importing"
+msgstr ""
+
+#: php/class-contextual-help.php:134
+msgid "You can load your snippets from a code snippets (.xml) export file using this page."
+msgstr ""
+
+#. translators: %s: URL to Snippets admin menu
+#: php/class-contextual-help.php:136
+msgid "Snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href=\"%s\">All Snippets</a> page.</p>"
+msgstr ""
+
+#: php/class-contextual-help.php:141
+msgid "Exporting"
+msgstr ""
+
+#. translators: %s: URL to Import Snippets admin menu
+#: php/class-contextual-help.php:143
+msgid "You can save your snippets to a Code Snippets (.xml) export file using the <a href=\"%s\">Manage Snippets</a> page."
+msgstr ""
+
+#: php/class-list-table.php:58
+msgid "Snippets per page"
+msgstr ""
+
+#: php/class-list-table.php:148
+msgid "Network Active"
+msgstr ""
+
+#: php/class-list-table.php:150
+msgid "Network Only"
+msgstr ""
+
+#: php/class-list-table.php:156
+msgid "Edit"
+msgstr ""
+
+#: php/class-list-table.php:157, php/class-list-table.php:378
+msgid "Clone"
+msgstr ""
+
+#: php/class-list-table.php:158, php/class-list-table.php:380, php/views/edit.php:133
+msgid "Export"
+msgstr ""
+
+#: php/class-list-table.php:167, php/class-list-table.php:381, php/views/edit.php:146
+msgid "Delete"
+msgstr ""
+
+#: php/class-list-table.php:171
+msgid "You are about to permanently delete the selected item."
+msgstr ""
+
+#: php/class-list-table.php:172, php/views/edit.php:141
+msgid "'Cancel' to stop, 'OK' to delete."
+msgstr ""
+
+#. translators: %d: snippet identifier
+#: php/class-list-table.php:234
+msgid "Untitled #%d"
+msgstr ""
+
+#: php/class-list-table.php:258
+msgid "Shared on Network"
+msgstr ""
+
+#: php/class-list-table.php:335, php/views/edit.php:55
+msgid "Name"
+msgstr ""
+
+#: php/class-list-table.php:336
+msgid "ID"
+msgstr ""
+
+#: php/class-list-table.php:337, php/admin-menus/class-edit-menu.php:311
+msgid "Description"
+msgstr ""
+
+#: php/class-list-table.php:338, php/admin-menus/class-edit-menu.php:344
+msgid "Tags"
+msgstr ""
+
+#: php/class-list-table.php:339, php/admin-menus/class-edit-menu.php:372
+msgid "Priority"
+msgstr ""
+
+#: php/class-list-table.php:376
+msgid "Network Activate"
+msgstr ""
+
+#: php/class-list-table.php:376
+msgid "Activate"
+msgstr ""
+
+#: php/class-list-table.php:377
+msgid "Network Deactivate"
+msgstr ""
+
+#: php/class-list-table.php:377
+msgid "Deactivate"
+msgstr ""
+
+#: php/class-list-table.php:379, php/views/edit.php:128
+msgid "Download"
+msgstr ""
+
+#. translators: %s: total number of snippets
+#: php/class-list-table.php:423
+msgid "All <span class=\"count\">(%s)</span>"
+msgid_plural "All <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: total number of active snippets
+#: php/class-list-table.php:426
+msgid "Active <span class=\"count\">(%s)</span>"
+msgid_plural "Active <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: total number of inactive snippets
+#: php/class-list-table.php:429
+msgid "Inactive <span class=\"count\">(%s)</span>"
+msgid_plural "Inactive <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: total number of recently activated snippets
+#: php/class-list-table.php:432
+msgid "Recently Active <span class=\"count\">(%s)</span>"
+msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: php/class-list-table.php:501
+msgid "Show all tags"
+msgstr ""
+
+#: php/class-list-table.php:515
+msgid "Filter"
+msgstr ""
+
+#: php/class-list-table.php:523
+msgid "Clear List"
+msgstr ""
+
+#: php/class-list-table.php:738
+msgid "It looks like you don't have any snippets."
+msgstr ""
+
+#: php/class-list-table.php:742
+msgid "Perhaps you would like to add a new one?"
+msgstr ""
+
+#: php/class-list-table.php:1039
+msgid "Search results"
+msgstr ""
+
+#. translators: %s: search query
+#: php/class-list-table.php:1043
+msgid " for &ldquo;%s&rdquo;"
+msgstr ""
+
+#. translators: %s: tag name
+#: php/class-list-table.php:1048
+msgid " in tag &ldquo;%s&rdquo;"
+msgstr ""
+
+#: php/class-list-table.php:1057
+msgid "Clear Filters"
+msgstr ""
+
+#: php/class-upgrade.php:146
+msgid "Example HTML shortcode"
+msgstr ""
+
+#: php/class-upgrade.php:149
+msgid "write your HTML shortcode content here"
+msgstr ""
+
+#: php/class-upgrade.php:151
+msgid "This is an example snippet for demonstrating how to add an HTML shortcode."
+msgstr ""
+
+#: php/class-upgrade.php:156
+msgid "Example CSS snippet"
+msgstr ""
+
+#: php/class-upgrade.php:159
+msgid "write your CSS code here"
+msgstr ""
+
+#: php/class-upgrade.php:161
+msgid "This is an example snippet for demonstrating how to add custom CSS code to your website."
+msgstr ""
+
+#: php/class-upgrade.php:167
+msgid "Example JavaScript snippet"
+msgstr ""
+
+#: php/class-upgrade.php:170
+msgid "write your JavaScript code here"
+msgstr ""
+
+#: php/class-upgrade.php:172
+msgid "This is an example snippet for demonstrating how to add custom JavaScript code to your website."
+msgstr ""
+
+#: php/class-upgrade.php:180
+msgid "You can remove it, or edit it to add your own content."
+msgstr ""
 
 #: php/admin-menus/class-admin-menu.php:105
 msgid "You are not authorized to access this page."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:13
-#: php/admin-menus/class-edit-menu.php:14 php/views/edit.php:32
+#: php/admin-menus/class-edit-menu.php:13, php/admin-menus/class-edit-menu.php:14, php/views/edit.php:32
 msgid "Edit Snippet"
 msgstr ""
 
@@ -32,7 +425,7 @@ msgctxt "menu label"
 msgid "Add New"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:40 php/views/edit.php:38
+#: php/admin-menus/class-edit-menu.php:40, php/views/edit.php:38
 msgid "Add New Snippet"
 msgstr ""
 
@@ -40,36 +433,21 @@ msgstr ""
 msgid "Don't Panic"
 msgstr ""
 
+#. translators: %d: line where error was produced
 #: php/admin-menus/class-edit-menu.php:167
-#, php-format
-msgid ""
-"The code snippet you are trying to save produced a fatal error on line %d:"
+msgid "The code snippet you are trying to save produced a fatal error on line %d:"
 msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:169
-msgid ""
-"The previous version of the snippet is unchanged, and the rest of this site "
-"should be functioning normally as before."
+msgid "The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before."
 msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:170
-msgid ""
-"Please use the back button in your browser to return to the previous page "
-"and try to fix the code error."
+msgid "Please use the back button in your browser to return to the previous page and try to fix the code error."
 msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:171
-msgid ""
-"If you prefer, you can close this page and discard the changes you just "
-"made. No changes will be made to this site."
-msgstr ""
-
-#: php/admin-menus/class-edit-menu.php:311 php/class-list-table.php:337
-msgid "Description"
-msgstr ""
-
-#: php/admin-menus/class-edit-menu.php:344 php/class-list-table.php:338
-msgid "Tags"
+msgid "If you prefer, you can close this page and discard the changes you just made. No changes will be made to this site."
 msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:349
@@ -77,13 +455,7 @@ msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:371
-msgid ""
-"Snippets with a lower priority number will run before those with a higher "
-"number."
-msgstr ""
-
-#: php/admin-menus/class-edit-menu.php:372 php/class-list-table.php:339
-msgid "Priority"
+msgid "Snippets with a lower priority number will run before those with a higher number."
 msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:389
@@ -114,8 +486,8 @@ msgstr ""
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 
+#. translators: %d: line of file where error originated
 #: php/admin-menus/class-edit-menu.php:481
-#, php-format
 msgid "The snippet has been deactivated due to an error on line %d:"
 msgstr ""
 
@@ -156,12 +528,8 @@ msgctxt "menu label"
 msgid "Import"
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:16 php/views/import.php:19
+#: php/admin-menus/class-import-menu.php:16, php/views/import.php:19
 msgid "Import Snippets"
-msgstr ""
-
-#: php/admin-menus/class-import-menu.php:102
-msgid "Code Snippets"
 msgstr ""
 
 #: php/admin-menus/class-import-menu.php:103
@@ -176,14 +544,10 @@ msgstr ""
 msgid "No snippets were imported."
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:132
-#, php-format
-msgid ""
-"Successfully imported <strong>%1$d</strong> snippet. <a href=\"%2$s\">Have "
-"fun!</a>"
-msgid_plural ""
-"Successfully imported <strong>%1$d</strong> snippets. <a href=\"%2$s\">Have "
-"fun!</a>"
+#. translators: 1: amount of snippets imported, 2: link to Snippets menu
+#: php/admin-menus/class-import-menu.php:131
+msgid "Successfully imported <strong>%1$d</strong> snippet. <a href=\"%2$s\">Have fun!</a>"
+msgid_plural "Successfully imported <strong>%1$d</strong> snippets. <a href=\"%2$s\">Have fun!</a>"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -192,23 +556,13 @@ msgctxt "menu label"
 msgid "All Snippets"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:23
-#: php/admin-menus/class-manage-menu.php:46 php/class-admin.php:61
-#: php/class-admin.php:153 php/views/manage.php:21
-msgid "Snippets"
-msgstr ""
-
 #: php/admin-menus/class-manage-menu.php:47
 msgctxt "top-level menu label"
 msgid "Snippets"
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:94
-msgid ""
-"<strong>Warning:</strong> Safe mode is active and snippets will not execute! "
-"Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-"
-"config.php</code> to turn off safe mode. <a href=\"https://github.com/"
-"sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
+msgid "<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href=\"https://github.com/sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:100
@@ -256,10 +610,6 @@ msgstr ""
 msgid "Snippets Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:35
-msgid "All settings have been reset to their defaults."
-msgstr ""
-
 #: php/admin-menus/class-settings-menu.php:61
 msgid "Settings"
 msgstr ""
@@ -268,441 +618,12 @@ msgstr ""
 msgid "Reset to Default"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:103 php/settings/settings.php:209
-msgid "Settings saved."
-msgstr ""
-
-#: php/class-admin.php:62
-msgid "Snippets &raquo; Settings"
-msgstr ""
-
-#: php/class-admin.php:152
-msgid "Manage your existing snippets"
-msgstr ""
-
-#: php/class-admin.php:183
-msgid "Visit the WordPress.org plugin page"
-msgstr ""
-
-#: php/class-admin.php:184
-msgid "About"
-msgstr ""
-
-#: php/class-admin.php:188
-msgid "Visit the support forums"
-msgstr ""
-
-#: php/class-admin.php:189
-msgid "Support"
-msgstr ""
-
-#: php/class-admin.php:193
-msgid "Support this plugin's development"
-msgstr ""
-
-#: php/class-admin.php:194
-msgid "Donate"
-msgstr ""
-
-#: php/class-admin.php:226
-msgid ""
-"<strong>Have feedback on Code Snippets?</strong> Please take the time to "
-"answer a short survey on how you use this plugin and what you'd like to see "
-"changed or added in the future."
-msgstr ""
-
-#: php/class-admin.php:230
-msgid "Take the survey now"
-msgstr ""
-
-#: php/class-admin.php:233
-msgid "Dismiss"
-msgstr ""
-
-#: php/class-contextual-help.php:40
-msgid "For more information:"
-msgstr ""
-
-#: php/class-contextual-help.php:41
-msgid "About Plugin"
-msgstr ""
-
-#: php/class-contextual-help.php:42
-msgid "FAQ"
-msgstr ""
-
-#: php/class-contextual-help.php:43
-msgid "Support Forums"
-msgstr ""
-
-#: php/class-contextual-help.php:44
-msgid "Plugin Website"
-msgstr ""
-
-#: php/class-contextual-help.php:55 php/class-contextual-help.php:84
-#: php/class-contextual-help.php:126
-msgid "Overview"
-msgstr ""
-
-#: php/class-contextual-help.php:56
-msgid ""
-"Snippets are similar to plugins - they both extend and expand the "
-"functionality of WordPress. Snippets are more light-weight, just a few lines "
-"of code, and do not put as much load on your server. Here you can manage "
-"your existing snippets and perform tasks on them such as activating, "
-"deactivating, deleting and exporting."
-msgstr ""
-
-#: php/class-contextual-help.php:61
-msgid "Safe Mode"
-msgstr ""
-
-#: php/class-contextual-help.php:63
-msgid ""
-"Be sure to check your snippets for errors before you activate them, as a "
-"faulty snippet could bring your whole blog down. If your site starts doing "
-"strange things, deactivate all your snippets and activate them one at a time."
-msgstr ""
-
-#: php/class-contextual-help.php:64
-msgid ""
-"If something goes wrong with a snippet and you can't use WordPress, you can "
-"cause all snippets to stop executing by adding "
-"<code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-"
-"config.php</code> file. After you have deactivated the offending snippet, "
-"you can turn off safe mode by removing this line or replacing <strong>true</"
-"strong> with <strong>false</strong>."
-msgstr ""
-
-#: php/class-contextual-help.php:69
-msgid "Uninstall"
-msgstr ""
-
-#: php/class-contextual-help.php:72
-#, php-format
-msgid ""
-"When you delete Code Snippets through the Plugins menu in WordPress it will "
-"clear up the <code>%1$s</code> table and a few other bits of data stored in "
-"the database. If you want to keep this data (ie: you are only temporally "
-"uninstalling Code Snippets) then remove the <code>%2$s</code> folder using "
-"FTP."
-msgstr ""
-
-#: php/class-contextual-help.php:73
-msgid ""
-"Even if you're sure that you don't want to use Code Snippets ever again on "
-"this WordPress installation, you may want to use the export feature to back "
-"up your snippets."
-msgstr ""
-
-#: php/class-contextual-help.php:85
-msgid ""
-"Snippets are similar to plugins - they both extend and expand the "
-"functionality of WordPress. Snippets are more light-weight, just a few lines "
-"of code, and do not put as much load on your server. Here you can add a new "
-"snippet, or edit an existing one."
-msgstr ""
-
-#: php/class-contextual-help.php:89
-msgid "WP-Snippets"
-msgstr ""
-
-#: php/class-contextual-help.php:89
-msgid "http://wp-snippets.com"
-msgstr ""
-
-#: php/class-contextual-help.php:90
-msgid "WP Snipp"
-msgstr ""
-
-#: php/class-contextual-help.php:90
-msgid "http://wpsnipp.com"
-msgstr ""
-
-#: php/class-contextual-help.php:91
-msgid "Cats Who Code"
-msgstr ""
-
-#: php/class-contextual-help.php:91
-msgid "http://www.catswhocode.com/blog/snippets"
-msgstr ""
-
-#: php/class-contextual-help.php:92
-msgid "WP Function Me"
-msgstr ""
-
-#: php/class-contextual-help.php:92
-msgid "http://www.wpfunction.me"
-msgstr ""
-
-#: php/class-contextual-help.php:102
-msgid "Finding Snippets"
-msgstr ""
-
-#: php/class-contextual-help.php:104
-msgid ""
-"Here are some links to websites which host a large number of snippets that "
-"you can add to your site:"
-msgstr ""
-
-#: php/class-contextual-help.php:106
-msgid ""
-"More places to find snippets, as well as a selection of example snippets, "
-"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
-"wiki/Finding-snippets\">plugin documentation</a>."
-msgstr ""
-
-#: php/class-contextual-help.php:111
-msgid "Adding Snippets"
-msgstr ""
-
-#: php/class-contextual-help.php:113
-msgid ""
-"You need to fill out the name and code fields for your snippet to be added. "
-"While the description field will add more information about how your snippet "
-"works, what is does and where you found it, it is completely optional."
-msgstr ""
-
-#: php/class-contextual-help.php:114
-msgid ""
-"Please be sure to check that your snippet is valid PHP code and will not "
-"produce errors before adding it through this page. While doing so will not "
-"become active straight away, it will help to minimise the chance of a faulty "
-"snippet becoming active on your site."
-msgstr ""
-
-#: php/class-contextual-help.php:127
-msgid ""
-"Snippets are similar to plugins - they both extend and expand the "
-"functionality of WordPress. Snippets are more light-weight, just a few lines "
-"of code, and do not put as much load on your server. Here you can load "
-"snippets from a Code Snippets (.xml) import file into the database with your "
-"existing snippets."
-msgstr ""
-
-#: php/class-contextual-help.php:132
-msgid "Importing"
-msgstr ""
-
-#: php/class-contextual-help.php:134
-msgid ""
-"You can load your snippets from a code snippets (.xml) export file using "
-"this page."
-msgstr ""
-
-#: php/class-contextual-help.php:136
-#, php-format
-msgid ""
-"Snippets will be added to the database along with your existing snippets. "
-"Regardless of whether the snippets were active on the previous site, "
-"imported snippets are always inactive until activated using the <a href=\"%s"
-"\">All Snippets</a> page.</p>"
-msgstr ""
-
-#: php/class-contextual-help.php:141
-msgid "Exporting"
-msgstr ""
-
-#: php/class-contextual-help.php:143
-#, php-format
-msgid ""
-"You can save your snippets to a Code Snippets (.xml) export file using the "
-"<a href=\"%s\">Manage Snippets</a> page."
-msgstr ""
-
-#: php/class-list-table.php:58
-msgid "Snippets per page"
-msgstr ""
-
-#: php/class-list-table.php:148
-msgid "Network Active"
-msgstr ""
-
-#: php/class-list-table.php:150
-msgid "Network Only"
-msgstr ""
-
-#: php/class-list-table.php:156
-msgid "Edit"
-msgstr ""
-
-#: php/class-list-table.php:157 php/class-list-table.php:378
-msgid "Clone"
-msgstr ""
-
-#: php/class-list-table.php:158 php/class-list-table.php:380
-#: php/views/edit.php:133
-msgid "Export"
-msgstr ""
-
-#: php/class-list-table.php:167 php/class-list-table.php:381
-#: php/views/edit.php:146
-msgid "Delete"
-msgstr ""
-
-#: php/class-list-table.php:171
-msgid "You are about to permanently delete the selected item."
-msgstr ""
-
-#: php/class-list-table.php:172 php/views/edit.php:141
-msgid "'Cancel' to stop, 'OK' to delete."
-msgstr ""
-
-#: php/class-list-table.php:234
-#, php-format
-msgid "Untitled #%d"
-msgstr ""
-
-#: php/class-list-table.php:258
-msgid "Shared on Network"
-msgstr ""
-
-#: php/class-list-table.php:335 php/views/edit.php:55
-msgid "Name"
-msgstr ""
-
-#: php/class-list-table.php:336
-msgid "ID"
-msgstr ""
-
-#: php/class-list-table.php:376
-msgid "Network Activate"
-msgstr ""
-
-#: php/class-list-table.php:376
-msgid "Activate"
-msgstr ""
-
-#: php/class-list-table.php:377
-msgid "Network Deactivate"
-msgstr ""
-
-#: php/class-list-table.php:377
-msgid "Deactivate"
-msgstr ""
-
-#: php/class-list-table.php:379 php/views/edit.php:128
-msgid "Download"
-msgstr ""
-
-#: php/class-list-table.php:423
-#, php-format
-msgid "All <span class=\"count\">(%s)</span>"
-msgid_plural "All <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: php/class-list-table.php:426
-#, php-format
-msgid "Active <span class=\"count\">(%s)</span>"
-msgid_plural "Active <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: php/class-list-table.php:429
-#, php-format
-msgid "Inactive <span class=\"count\">(%s)</span>"
-msgid_plural "Inactive <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: php/class-list-table.php:432
-#, php-format
-msgid "Recently Active <span class=\"count\">(%s)</span>"
-msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: php/class-list-table.php:501
-msgid "Show all tags"
-msgstr ""
-
-#: php/class-list-table.php:515
-msgid "Filter"
-msgstr ""
-
-#: php/class-list-table.php:523
-msgid "Clear List"
-msgstr ""
-
-#: php/class-list-table.php:738
-msgid "It looks like you don't have any snippets."
-msgstr ""
-
-#: php/class-list-table.php:742
-msgid "Perhaps you would like to add a new one?"
-msgstr ""
-
-#: php/class-list-table.php:1039
-msgid "Search results"
-msgstr ""
-
-#: php/class-list-table.php:1043
-#, php-format
-msgid " for &ldquo;%s&rdquo;"
-msgstr ""
-
-#: php/class-list-table.php:1048
-#, php-format
-msgid " in tag &ldquo;%s&rdquo;"
-msgstr ""
-
-#: php/class-list-table.php:1057
-msgid "Clear Filters"
-msgstr ""
-
-#: php/class-upgrade.php:146
-msgid "Example HTML shortcode"
-msgstr ""
-
-#: php/class-upgrade.php:149
-msgid "write your HTML shortcode content here"
-msgstr ""
-
-#: php/class-upgrade.php:151
-msgid ""
-"This is an example snippet for demonstrating how to add an HTML shortcode."
-msgstr ""
-
-#: php/class-upgrade.php:156
-msgid "Example CSS snippet"
-msgstr ""
-
-#: php/class-upgrade.php:159
-msgid "write your CSS code here"
-msgstr ""
-
-#: php/class-upgrade.php:161
-msgid ""
-"This is an example snippet for demonstrating how to add custom CSS code to "
-"your website."
-msgstr ""
-
-#: php/class-upgrade.php:167
-msgid "Example JavaScript snippet"
-msgstr ""
-
-#: php/class-upgrade.php:170
-msgid "write your JavaScript code here"
-msgstr ""
-
-#: php/class-upgrade.php:172
-msgid ""
-"This is an example snippet for demonstrating how to add custom JavaScript "
-"code to your website."
-msgstr ""
-
-#: php/class-upgrade.php:180
-msgid "You can remove it, or edit it to add your own content."
-msgstr ""
-
 #: php/settings/settings-fields.php:42
 msgid "Activate by Default"
 msgstr ""
 
 #: php/settings/settings-fields.php:44
-msgid ""
-"Make the 'Save and Activate' button the default action when saving a snippet."
+msgid "Make the 'Save and Activate' button the default action when saving a snippet."
 msgstr ""
 
 #: php/settings/settings-fields.php:49
@@ -734,20 +655,16 @@ msgid "Disable Shortcode Syntax Highlighter"
 msgstr ""
 
 #: php/settings/settings-fields.php:72
-msgid ""
-"Disable the syntax highlighting for the [code_snippet] shortcode on the "
-"front-end"
+msgid "Disable the syntax highlighting for the [code_snippet] shortcode on the front-end"
 msgstr ""
 
 #: php/settings/settings-fields.php:77
 msgid "Complete Uninstall"
 msgstr ""
 
+#. translators: %s: URL for Plugins admin menu
 #: php/settings/settings-fields.php:81
-#, php-format
-msgid ""
-"When the plugin is deleted from the <a href=\"%s\">Plugins</a> menu, also "
-"delete all snippets and plugin settings."
+msgid "When the plugin is deleted from the <a href=\"%s\">Plugins</a> menu, also delete all snippets and plugin settings."
 msgstr ""
 
 #: php/settings/settings-fields.php:96
@@ -850,7 +767,11 @@ msgstr ""
 msgid "Editor Preview"
 msgstr ""
 
-#: php/views/edit.php:35 php/views/manage.php:24
+#: php/settings/settings.php:209
+msgid "Settings saved."
+msgstr ""
+
+#: php/views/edit.php:35, php/views/manage.php:24
 msgctxt "snippet"
 msgid "Add New"
 msgstr ""
@@ -867,7 +788,7 @@ msgstr ""
 msgid "Save Changes and Execute Once"
 msgstr ""
 
-#: php/views/edit.php:97 php/views/edit.php:111
+#: php/views/edit.php:97, php/views/edit.php:111
 msgid "Save Changes and Activate"
 msgstr ""
 
@@ -880,16 +801,12 @@ msgid "You are about to permanently delete this snippet."
 msgstr ""
 
 #: php/views/import.php:23
-msgid ""
-"Upload one or more Code Snippets export files and the snippets will be "
-"imported."
+msgid "Upload one or more Code Snippets export files and the snippets will be imported."
 msgstr ""
 
+#. translators: %s: link to snippets admin menu
 #: php/views/import.php:28
-#, php-format
-msgid ""
-"Afterwards, you will need to visit the <a href=\"%s\">All Snippets</a> page "
-"to activate the imported snippets."
+msgid "Afterwards, you will need to visit the <a href=\"%s\">All Snippets</a> page to activate the imported snippets."
 msgstr ""
 
 #: php/views/import.php:35
@@ -897,25 +814,19 @@ msgid "Duplicate Snippets"
 msgstr ""
 
 #: php/views/import.php:38
-msgid ""
-"What should happen if an existing snippet is found with an identical name to "
-"an imported snippet?"
+msgid "What should happen if an existing snippet is found with an identical name to an imported snippet?"
 msgstr ""
 
 #: php/views/import.php:45
-msgid ""
-"Ignore any duplicate snippets: import all snippets from the file regardless "
-"and leave all existing snippets unchanged."
+msgid "Ignore any duplicate snippets: import all snippets from the file regardless and leave all existing snippets unchanged."
 msgstr ""
 
 #: php/views/import.php:52
-msgid ""
-"Replace any existing snippets with a newly imported snippet of the same name."
+msgid "Replace any existing snippets with a newly imported snippet of the same name."
 msgstr ""
 
 #: php/views/import.php:59
-msgid ""
-"Do not import any duplicate snippets; leave all existing snippets unchanged."
+msgid "Do not import any duplicate snippets; leave all existing snippets unchanged."
 msgstr ""
 
 #: php/views/import.php:64
@@ -923,17 +834,15 @@ msgid "Upload Files"
 msgstr ""
 
 #: php/views/import.php:67
-msgid ""
-"Choose one or more Code Snippets (.xml or .json) files to upload, then click "
-"\"Upload files and import\"."
+msgid "Choose one or more Code Snippets (.xml or .json) files to upload, then click \"Upload files and import\"."
 msgstr ""
 
 #: php/views/import.php:72
 msgid "Choose files from your computer:"
 msgstr ""
 
+#. translators: %s: size in bytes
 #: php/views/import.php:75
-#, php-format
 msgid "(Maximum size: %s)"
 msgstr ""
 
