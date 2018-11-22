@@ -25,14 +25,12 @@ install_wp() {
 
 	if [[ ${WP_VERSION} == 'latest' ]] || [[ ${WP_VERSION} == 'develop' ]]; then
 		export WP_VERSION='master'
-	fi
-
-	if [[ ${WP_VERSION} == 'stable' ]]; then
+	elif [[ ${WP_VERSION} == 'stable' ]]; then
 		git fetch --tags --depth=1 --quiet
 		export WP_VERSION=$(git tag | sort -n | tail -1)
 	fi
 
-	git checkout ${WP_VERSION}
+	git checkout ${WP_VERSION} --quiet
 }
 
 create_db() {

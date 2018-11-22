@@ -43,7 +43,7 @@ before_script:
   - npm run package
 
   # set up WP install
-  - bash tests/install.sh wordpress_test root
+  - bash tests/install.sh $WP_VERSION wordpress_test root
 
 # Run test script commands
 # Default is specific to project language.
