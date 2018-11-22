@@ -533,7 +533,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		wp_enqueue_style(
 			'code-snippets-tag-it',
-			$url . 'css/min/tagit.css',
+			$url . 'css/min/tag-it.css',
 			false, $tagit_version
 		);
 	}
