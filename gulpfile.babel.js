@@ -1,5 +1,6 @@
 'use strict';
 
+import fs from 'fs';
 import gulp from 'gulp';
 import sourcemaps from 'gulp-sourcemaps';
 import flatten from 'gulp-flatten';
@@ -33,13 +34,20 @@ import phpunit from 'gulp-phpunit';
 
 const pkg = require('./package.json');
 
-const src = {
+const src_files = {
 	php: ['code-snippets.php', 'php/**/*.php'],
 	js: ['js/*.js'],
 	css: ['css/*.scss', '!css/_*.scss'],
 };
 
-const codemirror_dir = 'node_modules/codemirror/';
+const src_dirs = {
+	codemirror: 'node_modules/codemirror/',
+};
+
+const dist_dirs = {
+	js: 'js/min/',
+	css: 'css/min/'
+};
 
 gulp.task('css', (done) => {
 
@@ -49,21 +57,21 @@ gulp.task('css', (done) => {
 		cssnano({'preset': ['default', {'discardComments': {'removeAll': true}}]})
 	];
 
-	const dir_css = ['edit', 'manage'];
+	const dir_css = ['edit.css', 'manage.css'];
 
 	return gulp.series(
-		() => gulp.src(src.css)
+		() => gulp.src(src_files.css)
 			.pipe(rename({extname: '.css'}))
 			.pipe(sourcemaps.init())
 			.pipe(postcss(processors))
 			.pipe(sourcemaps.write('.'))
-			.pipe(gulp.dest('css/min')),
-		() => gulp.src(dir_css.map((f) => `css/min/${f}.css`))
+			.pipe(gulp.dest(dist_dirs.css)),
+		() => gulp.src(dir_css.map((f) => dist_dirs.css + f))
 			.pipe(rename({suffix: '-rtl'}))
 			.pipe(sourcemaps.init())
 			.pipe(rtlcss())
 			.pipe(sourcemaps.write('.'))
-			.pipe(gulp.dest('css/min'))
+			.pipe(gulp.dest(dist_dirs.css))
 	)(done);
 });
 
@@ -81,35 +89,45 @@ gulp.task('vendor', gulp.parallel(
 			scripts.push(`addon/${addon}.js`);
 		}
 
-		return gulp.src(scripts.map((file) => codemirror_dir + file))
+		return gulp.src(scripts.map((file) => src_dirs.codemirror + file))
 			.pipe(concat('codemirror.js'))
 			.pipe(uglify())
-			.pipe(gulp.dest('js/min'));
+			.pipe(gulp.dest(dist_dirs.js));
 	},
 
 	// CodeMirror styles
-	() => gulp.src(['lib/codemirror.css', 'addon/dialog/dialog.css'].map((file) => codemirror_dir + file))
+	() => gulp.src(['lib/codemirror.css', 'addon/dialog/dialog.css'].map((file) => src_dirs.codemirror + file))
 		.pipe(concat('codemirror.css'))
 		.pipe(postcss([cssnano()]))
-		.pipe(gulp.dest('css/min')),
+		.pipe(gulp.dest(dist_dirs.css)),
 
 	// CodeMirror themes
 	() => {
-		return gulp.src(codemirror_dir + 'theme/*.css')
+		return gulp.src(src_dirs.codemirror + 'theme/*.css')
 			.pipe(postcss([cssnano()]))
-			.pipe(gulp.dest('css/min/cmthemes'));
+			.pipe(gulp.dest(dist_dirs.css + 'cmthemes'));
 	},
 
 	// Tag-it script
 	() => gulp.src('js/vendor/tag-it.js')
 		.pipe(uglify())
-		.pipe(gulp.dest('js/min')),
+		.pipe(gulp.dest(dist_dirs.js)),
 
 	// Tag-it styles
 	() => gulp.src(['jquery.tagit.css', 'tagit.ui-zendesk.css'].map((file) => 'js/vendor/' + file))
 		.pipe(concat('tag-it.css'))
 		.pipe(postcss([cssnano()]))
-		.pipe(gulp.dest('css/min'))
+		.pipe(gulp.dest(dist_dirs.css)),
+
+	// Prism script
+	() => gulp.src('js/vendor/prism.js')
+		.pipe(uglify())
+		.pipe(gulp.dest(dist_dirs.js)),
+
+	// Prism styles
+	() => gulp.src('js/vendor/prism.css')
+		.pipe(postcss([cssnano()]))
+		.pipe(gulp.dest(dist_dirs.css))
 ));
 
 gulp.task('test-js', () => {
@@ -128,7 +146,7 @@ gulp.task('test-js', () => {
 		}
 	};
 
-	return gulp.src('js/*.js')
+	return gulp.src(src_files.js)
 		.pipe(eslint(options))
 		.pipe(eslint.format())
 		.pipe(eslint.failAfterError())
@@ -162,7 +180,7 @@ gulp.task('images', () => {
 });
 
 gulp.task('makepot', () => {
-	return gulp.src(src.php)
+	return gulp.src(src_files.php)
 		.pipe(makepot({
 			domain: pkg.name,
 			package: pkg.name,
@@ -183,7 +201,7 @@ gulp.task('i18n', gulp.parallel(['makepot', 'gettext']));
 
 
 gulp.task('phpcs', () => {
-	return gulp.src(src.php)
+	return gulp.src(src_files.php)
 		.pipe(phpcs({
 			bin: 'vendor/bin/phpcs',
 			standard: 'codesniffer.ruleset.xml',
@@ -203,7 +221,7 @@ gulp.task('phpunit', () => {
 });
 
 gulp.task('clean', () => {
-	return gulp.src(['css/min', 'js/min'], {read: false, allowEmpty: true})
+	return gulp.src([dist_dirs.css, dist_dirs.js], {read: false, allowEmpty: true})
 		.pipe(clean());
 });
 

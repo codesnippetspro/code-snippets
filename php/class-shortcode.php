@@ -31,13 +31,13 @@ class Code_Snippets_Shortcode {
 
 		wp_enqueue_style(
 			'code-snippets-prism',
-			plugins_url( 'js/vendor/prism.css', $plugin->file ),
+			plugins_url( 'css/min/prism.css', $plugin->file ),
 			array(), $plugin->version
 		);
 
 		wp_enqueue_script(
 			'code-snippets-prism',
-			plugins_url( 'js/vendor/prism.js', $plugin->file ),
+			plugins_url( 'js/min/prism.js', $plugin->file ),
 			array(), $plugin->version, true
 		);
 
