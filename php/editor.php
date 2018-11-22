@@ -48,7 +48,7 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
  * @uses wp_enqueue_script() to add the scripts to the queue
  */
 function code_snippets_enqueue_codemirror() {
-	$codemirror_version = '5.41.0';
+	$codemirror_version = '5.42.0';
 	$url = plugin_dir_url( CODE_SNIPPETS_FILE );
 
 	/* Remove other CodeMirror styles */

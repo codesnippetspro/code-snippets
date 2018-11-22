@@ -30,7 +30,7 @@
         "url": "https://github.com/sheabunge/code-snippets/issues"
     },
     "dependencies": {
-        "codemirror": "^5.41.0"
+        "codemirror": "^5.42.0"
     },
     "devDependencies": {
         "@babel/core": "^7.1.6",
