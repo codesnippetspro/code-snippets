@@ -4,10 +4,10 @@ class Code_Snippets_Shortcode {
 
 	function __construct() {
 		add_shortcode( 'code_snippet', array( $this, 'render_shortcode' ) );
-		add_action( 'the_posts', array( $this, 'enqueue_prism' ) );
+		add_action( 'the_posts', array( $this, 'enqueue_assets' ) );
 	}
 
-	function enqueue_prism( $posts ) {
+	function enqueue_assets( $posts ) {
 
 		if ( empty( $posts ) || code_snippets_get_setting( 'general', 'disable_prism' ) ) {
 			return $posts;
@@ -30,14 +30,14 @@ class Code_Snippets_Shortcode {
 		$plugin = code_snippets();
 
 		wp_enqueue_style(
-			'code-snippets-prism',
-			plugins_url( 'css/min/prism.css', $plugin->file ),
+			'code-snippets-front-end',
+			plugins_url( 'css/min/front-end.css', $plugin->file ),
 			array(), $plugin->version
 		);
 
 		wp_enqueue_script(
-			'code-snippets-prism',
-			plugins_url( 'js/min/prism.js', $plugin->file ),
+			'code-snippets-front-end',
+			plugins_url( 'js/min/front-end.js', $plugin->file ),
 			array(), $plugin->version, true
 		);
 

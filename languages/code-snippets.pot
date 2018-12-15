@@ -34,7 +34,7 @@ msgstr ""
 msgid "https://bungeshea.com"
 msgstr ""
 
-#: php/class-admin.php:68, php/class-admin.php:204, php/admin-menus/class-manage-menu.php:23, php/admin-menus/class-manage-menu.php:53, php/admin-menus/class-manage-menu.php:92, php/views/manage.php:21
+#: php/class-admin.php:68, php/class-admin.php:175, php/admin-menus/class-manage-menu.php:23, php/admin-menus/class-manage-menu.php:53, php/admin-menus/class-manage-menu.php:92, php/views/manage.php:21
 msgid "Snippets"
 msgstr ""
 
@@ -42,43 +42,43 @@ msgstr ""
 msgid "Snippets &raquo; Settings"
 msgstr ""
 
-#: php/class-admin.php:203
+#: php/class-admin.php:174
 msgid "Manage your existing snippets"
 msgstr ""
 
-#: php/class-admin.php:234
+#: php/class-admin.php:205
 msgid "Visit the WordPress.org plugin page"
 msgstr ""
 
-#: php/class-admin.php:235
+#: php/class-admin.php:206
 msgid "About"
 msgstr ""
 
-#: php/class-admin.php:239
+#: php/class-admin.php:210
 msgid "Visit the support forums"
 msgstr ""
 
-#: php/class-admin.php:240
+#: php/class-admin.php:211
 msgid "Support"
 msgstr ""
 
-#: php/class-admin.php:244
+#: php/class-admin.php:215
 msgid "Support this plugin's development"
 msgstr ""
 
-#: php/class-admin.php:245
+#: php/class-admin.php:216
 msgid "Donate"
 msgstr ""
 
-#: php/class-admin.php:277
+#: php/class-admin.php:248
 msgid "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future."
 msgstr ""
 
-#: php/class-admin.php:281
+#: php/class-admin.php:252
 msgid "Take the survey now"
 msgstr ""
 
-#: php/class-admin.php:284
+#: php/class-admin.php:255
 msgid "Dismiss"
 msgstr ""
 
@@ -274,15 +274,15 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:337, php/admin-menus/class-edit-menu.php:311
+#: php/class-list-table.php:337, php/admin-menus/class-edit-menu.php:307
 msgid "Description"
 msgstr ""
 
-#: php/class-list-table.php:338, php/admin-menus/class-edit-menu.php:344
+#: php/class-list-table.php:338, php/admin-menus/class-edit-menu.php:340
 msgid "Tags"
 msgstr ""
 
-#: php/class-list-table.php:339, php/admin-menus/class-edit-menu.php:372
+#: php/class-list-table.php:339, php/admin-menus/class-edit-menu.php:368
 msgid "Priority"
 msgstr ""
 
@@ -429,97 +429,97 @@ msgstr ""
 msgid "Add New Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:165
+#: php/admin-menus/class-edit-menu.php:161
 msgid "Don't Panic"
 msgstr ""
 
 #. translators: %d: line where error was produced
-#: php/admin-menus/class-edit-menu.php:167
+#: php/admin-menus/class-edit-menu.php:163
 msgid "The code snippet you are trying to save produced a fatal error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:169
+#: php/admin-menus/class-edit-menu.php:165
 msgid "The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:170
+#: php/admin-menus/class-edit-menu.php:166
 msgid "Please use the back button in your browser to return to the previous page and try to fix the code error."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:171
+#: php/admin-menus/class-edit-menu.php:167
 msgid "If you prefer, you can close this page and discard the changes you just made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:349
+#: php/admin-menus/class-edit-menu.php:345
 msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:371
+#: php/admin-menus/class-edit-menu.php:367
 msgid "Snippets with a lower priority number will run before those with a higher number."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:389
+#: php/admin-menus/class-edit-menu.php:385
 msgid "Run snippet everywhere"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:390
+#: php/admin-menus/class-edit-menu.php:386
 msgid "Only run in administration area"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:391
+#: php/admin-menus/class-edit-menu.php:387
 msgid "Only run on site front-end"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:392
+#: php/admin-menus/class-edit-menu.php:388
 msgid "Only run once"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:395
+#: php/admin-menus/class-edit-menu.php:391
 msgid "Scope"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:416
+#: php/admin-menus/class-edit-menu.php:412
 msgid "Sharing Settings"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:420
+#: php/admin-menus/class-edit-menu.php:416
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 
 #. translators: %d: line of file where error originated
-#: php/admin-menus/class-edit-menu.php:481
+#: php/admin-menus/class-edit-menu.php:477
 msgid "The snippet has been deactivated due to an error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:486
+#: php/admin-menus/class-edit-menu.php:482
 msgid "The snippet has been deactivated due to an error in the code."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:493
+#: php/admin-menus/class-edit-menu.php:489
 msgid "An error occurred when saving the snippet."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:499
+#: php/admin-menus/class-edit-menu.php:495
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:500
+#: php/admin-menus/class-edit-menu.php:496
 msgid "Snippet <strong>updated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:501
+#: php/admin-menus/class-edit-menu.php:497
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:502
+#: php/admin-menus/class-edit-menu.php:498
 msgid "Snippet <strong>added</strong> and <strong>executed</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:503
+#: php/admin-menus/class-edit-menu.php:499
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:504
+#: php/admin-menus/class-edit-menu.php:500
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
@@ -566,43 +566,43 @@ msgctxt "tools submenu label"
 msgid "Snippets"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:138
+#: php/admin-menus/class-manage-menu.php:146
 msgid "<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href=\"https://github.com/sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:144
+#: php/admin-menus/class-manage-menu.php:152
 msgid "Snippet <strong>executed</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:145
+#: php/admin-menus/class-manage-menu.php:153
 msgid "Snippet <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:146
+#: php/admin-menus/class-manage-menu.php:154
 msgid "Selected snippets <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:147
+#: php/admin-menus/class-manage-menu.php:155
 msgid "Snippet <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:148
+#: php/admin-menus/class-manage-menu.php:156
 msgid "Selected snippets <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:149
+#: php/admin-menus/class-manage-menu.php:157
 msgid "Snippet <strong>deleted</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:150
+#: php/admin-menus/class-manage-menu.php:158
 msgid "Selected snippets <strong>deleted</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:151
+#: php/admin-menus/class-manage-menu.php:159
 msgid "Snippet <strong>cloned</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:152
+#: php/admin-menus/class-manage-menu.php:160
 msgid "Selected snippets <strong>cloned</strong>."
 msgstr ""
 
@@ -615,11 +615,11 @@ msgstr ""
 msgid "Snippets Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:61
+#: php/admin-menus/class-settings-menu.php:74
 msgid "Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:77
+#: php/admin-menus/class-settings-menu.php:90
 msgid "Reset to Default"
 msgstr ""
 

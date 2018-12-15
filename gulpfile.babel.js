@@ -5,10 +5,10 @@ import gulp from 'gulp';
 import sourcemaps from 'gulp-sourcemaps';
 import flatten from 'gulp-flatten';
 import rename from 'gulp-rename';
-import concat from 'gulp-concat';
 
 import clean from 'gulp-clean';
 import copy from 'gulp-copy';
+import change from 'gulp-change';
 import archiver from 'gulp-archiver';
 
 import postcss from 'gulp-postcss';
@@ -39,10 +39,6 @@ const src_files = {
 	php: ['code-snippets.php', 'php/**/*.php'],
 	js: ['js/*.js'],
 	css: ['css/*.scss', '!css/_*.scss'],
-};
-
-const src_dirs = {
-	codemirror: 'node_modules/codemirror/',
 };
 
 const dist_dirs = {
@@ -77,25 +73,6 @@ gulp.task('css', (done) => {
 	)(done);
 });
 
-gulp.task('vendor', gulp.parallel(
-	// CodeMirror themes
-	() => {
-		return gulp.src(src_dirs.codemirror + 'theme/*.css')
-			.pipe(postcss([cssnano()]))
-			.pipe(gulp.dest(dist_dirs.css + 'editor-themes'));
-	},
-
-	// Prism script
-	() => gulp.src('js/vendor/prism.js')
-		.pipe(uglify())
-		.pipe(gulp.dest(dist_dirs.js)),
-
-	// Prism styles
-	() => gulp.src('js/vendor/prism.css')
-		.pipe(postcss([cssnano()]))
-		.pipe(gulp.dest(dist_dirs.css))
-));
-
 gulp.task('test-js', () => {
 
 	const options = {
@@ -118,15 +95,13 @@ gulp.task('test-js', () => {
 		.pipe(eslint.failAfterError())
 });
 
-function bundlejs(file) {
+function bundlejs(file, babel_config) {
 	const b = browserify({
 		debug: true,
 		entries: file
 	});
 
-	b.transform('babelify', {
-		presets: ['@babel/preset-env'], sourceMaps: true
-	});
+	b.transform('babelify', {sourceMaps: true, ...babel_config, presets: ['@babel/preset-env']});
 
 	return b.bundle()
 		.pipe(source(file))
@@ -139,8 +114,12 @@ function bundlejs(file) {
 }
 
 gulp.task('js', gulp.series('test-js', gulp.parallel(
+	() => bundlejs('js/editor.js'),
 	() => bundlejs('js/manage.js'),
-	() => bundlejs('js/editor.js')
+	() => bundlejs('js/edit.js'),
+	() => bundlejs('js/front-end.js', {
+		plugins: [['prismjs', {languages: ['php', 'php-extras'], plugins: ['line-highlight', 'line-numbers']}]]
+	})
 )));
 
 gulp.task('images', () => {
@@ -185,6 +164,12 @@ gulp.task('phpunit', () => {
 		.pipe(phpunit('phpunit'));
 });
 
+gulp.task('vendor', () => {
+	return gulp.src('node_modules/codemirror/theme/*.css')
+		.pipe(postcss([cssnano()]))
+		.pipe(gulp.dest(dist_dirs.css + 'editor-themes'));
+});
+
 gulp.task('clean', () => {
 	return gulp.src([dist_dirs.css, dist_dirs.js], {read: false, allowEmpty: true})
 		.pipe(clean());
@@ -196,10 +181,17 @@ gulp.task('package', gulp.series(
 
 	() => gulp.src([
 		'code-snippets.php', 'uninstall.php', 'php/**/*',
-		'readme.txt', 'license.txt', 'languages/**/*',
-		'css/min/**/*', 'css/font/**/*', 'js/min/**/*'
+		'readme.txt', 'license.txt', 'languages/**/*', 'css/font/**/*',
 	])
 		.pipe(copy(pkg.name)),
+
+	() => gulp.src('css/min/**/*.css')
+		.pipe(change((content) => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
+		.pipe(gulp.dest(pkg.name + '/css/min')),
+
+	() => gulp.src('js/min/**/*.js')
+		.pipe(change((content) => content.replace(/\/\/# sourceMappingURL=[\w.-]+\.map\s+$/, '')))
+		.pipe(gulp.dest(pkg.name + '/js/min')),
 
 	() => gulp.src(pkg.name + '/**/*', {base: '.'})
 		.pipe(archiver(`${pkg.name}.${pkg.version}.zip`))
@@ -215,7 +207,7 @@ gulp.task('package', gulp.series(
 
 gulp.task('test', gulp.parallel(['test-js', gulp.series(['phpcs', 'phpunit'])]));
 
-gulp.task('default', gulp.series('clean', gulp.parallel('css', 'js', 'i18n', 'vendor')));
+gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
 
 gulp.task('watch', gulp.series('default', (done) => {
 	gulp.watch('css/*.scss', gulp.series('css'));

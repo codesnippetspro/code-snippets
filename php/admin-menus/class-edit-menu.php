@@ -59,10 +59,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		$contextual_help = new Code_Snippets_Contextual_Help( 'edit' );
 		$contextual_help->load();
 
-		/* Enqueue the code editor and other scripts and styles */
-		add_action( 'admin_enqueue_scripts', 'code_snippets_enqueue_editor' );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_tagit' ), 9 );
-
 		/* Register action hooks */
 		if ( code_snippets_get_setting( 'general', 'enable_description' ) ) {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_description_editor' ), 9 );
@@ -510,31 +506,34 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
-	 * Enqueue the Tag It library
+	 * Enqueue assets for the edit menu
 	 */
-	function enqueue_tagit() {
-		$tagit_version = '2.0';
-		$url = plugin_dir_url( CODE_SNIPPETS_FILE );
+	public function enqueue_assets() {
+		$plugin = code_snippets();
+		$rtl = is_rtl() ? '-rtl' : '';
 
-		/* Tag It UI */
-		wp_enqueue_script(
-			'code-snippets-tag-it',
-			$url . 'js/min/tag-it.js',
-			array(
-				'jquery-ui-core',
-				'jquery-ui-widget',
-				'jquery-ui-position',
-				'jquery-ui-autocomplete',
-				'jquery-effects-blind',
-				'jquery-effects-highlight',
-			),
-			$tagit_version
-		);
+		code_snippets_enqueue_editor();
 
 		wp_enqueue_style(
-			'code-snippets-tag-it',
-			$url . 'css/min/tag-it.css',
-			false, $tagit_version
+			'code-snippets-edit',
+			plugins_url( "css/min/edit{$rtl}.css", $plugin->file ),
+			array(), $plugin->version
+		);
+
+		/* the tag-it library has a number of jQuery dependencies */
+		$tagit_deps = array(
+			'jquery-ui-core',
+			'jquery-ui-widget',
+			'jquery-ui-position',
+			'jquery-ui-autocomplete',
+			'jquery-effects-blind',
+			'jquery-effects-highlight',
+		);
+
+		wp_enqueue_script(
+			'code-snippets-edit',
+			plugins_url( 'js/min/edit.js', $plugin->file ),
+			$tagit_deps, $plugin->version
 		);
 	}
 

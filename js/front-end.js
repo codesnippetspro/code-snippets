@@ -1,0 +1,2 @@
+
+import Prism from 'prismjs';

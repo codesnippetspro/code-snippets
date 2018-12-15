@@ -83,38 +83,9 @@ class Code_Snippets_Admin {
 	 */
 	function enqueue_admin_stylesheets( $hook ) {
 
-		if ( $this->is_compact_menu() ) {
-			$this->enqueue_compact_admin_stylesheets( $hook );
-			return;
-		}
-
-		$pages = array( 'manage', 'add', 'edit', 'settings' );
-		$hooks = array_map( 'code_snippets_get_menu_hook', $pages );
-
-		/* First, load the menu icon stylesheet */
 		wp_enqueue_style(
 			'menu-icon-snippets',
 			plugins_url( 'css/min/menu-icon.css', CODE_SNIPPETS_FILE ),
-			false,
-			CODE_SNIPPETS_VERSION
-		);
-
-		/* Only load the stylesheet on the right snippets page */
-		if ( ! in_array( $hook, $hooks ) ) {
-			return;
-		}
-
-		$hooks = array_combine( $hooks, $pages );
-		$page = $hooks[ $hook ];
-
-		// add snippet page uses edit stylesheet
-		'add' === $page && $page = 'edit';
-
-		$rtl = is_rtl() && ( 'edit' === $page || 'manage' === $page ) ? '-rtl' : '';
-
-		wp_enqueue_style(
-			"code-snippets-$page",
-			plugins_url( "css/min/{$page}{$rtl}.css", CODE_SNIPPETS_FILE ),
 			false,
 			CODE_SNIPPETS_VERSION
 		);

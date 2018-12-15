@@ -1,4 +1,3 @@
-
 import CodeMirror from 'codemirror/lib/codemirror';
 import 'codemirror/mode/php/php';
 import 'codemirror/addon/edit/matchbrackets';

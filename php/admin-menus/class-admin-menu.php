@@ -111,5 +111,12 @@ class Code_Snippets_Admin_Menu {
 		$db = code_snippets()->db;
 		$db->create_missing_table( $db->ms_table );
 		$db->create_missing_table( $db->table );
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
+
+	/**
+	 * Enqueue scripts and stylesheets for the admin page, if necessary
+	 */
+	public function enqueue_assets() {}
 }

@@ -113,12 +113,20 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		/* Initialize the list table class */
 		$this->list_table = new Code_Snippets_List_Table();
 		$this->list_table->prepare_items();
-
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 
-	public function enqueue_scripts() {
+	/**
+	 * Enqueue scripts and stylesheets for the admin page
+	 */
+	public function enqueue_assets() {
 		$plugin = code_snippets();
+		$rtl = is_rtl() ? '-rtl' : '';
+
+		wp_enqueue_style(
+			'code-snippets-manage',
+			plugins_url( "css/min/manage{$rtl}.css", $plugin->file ),
+			array(), $plugin->version
+		);
 
 		wp_enqueue_script(
 			'code-snippets-manage-js',

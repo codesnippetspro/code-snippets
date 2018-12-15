@@ -21,7 +21,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Executed when the admin page is loaded
 	 */
-	function load() {
+	public function load() {
 		parent::load();
 
 		if ( isset( $_GET['reset_settings'] ) && $_GET['reset_settings'] ) {
@@ -51,9 +51,22 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
+	 * Enqueue the stylesheet for the settings menu
+	 */
+	public function enqueue_assets() {
+		$plugin = code_snippets();
+
+		wp_enqueue_style(
+			'code-snippets-edit',
+			plugins_url( "css/min/settings.css", $plugin->file ),
+			array(), $plugin->version
+		);
+	}
+
+	/**
 	 * Render the admin screen
 	 */
-	function render() {
+	public function render() {
 		$update_url = is_network_admin() ? add_query_arg( 'update_site_option', true ) : admin_url( 'options.php' );
 
 		?>
