@@ -87,7 +87,8 @@ function code_snippets_settings_editor_preview() {
 	$text = "Thank you for visiting $site_name.";
 
 	return $text;
-} );';
+} );
+';
 
 	$atts = array(
 		'mode'  => 'text/x-php',

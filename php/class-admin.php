@@ -37,7 +37,7 @@ class Code_Snippets_Admin {
 		add_filter( 'plugin_action_links_' . plugin_basename( CODE_SNIPPETS_FILE ), array( $this, 'plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ), 10, 1 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ) );
 
 		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
