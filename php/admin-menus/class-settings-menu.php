@@ -58,7 +58,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 		wp_enqueue_style(
 			'code-snippets-edit',
-			plugins_url( "css/min/settings.css", $plugin->file ),
+			plugins_url( 'css/min/settings.css', $plugin->file ),
 			array(), $plugin->version
 		);
 	}
