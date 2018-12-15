@@ -34,51 +34,51 @@ msgstr ""
 msgid "https://bungeshea.com"
 msgstr ""
 
-#: php/class-admin.php:61, php/class-admin.php:153, php/admin-menus/class-manage-menu.php:23, php/admin-menus/class-manage-menu.php:46, php/views/manage.php:21
+#: php/class-admin.php:68, php/class-admin.php:204, php/admin-menus/class-manage-menu.php:23, php/admin-menus/class-manage-menu.php:53, php/admin-menus/class-manage-menu.php:92, php/views/manage.php:21
 msgid "Snippets"
 msgstr ""
 
-#: php/class-admin.php:62
+#: php/class-admin.php:69
 msgid "Snippets &raquo; Settings"
 msgstr ""
 
-#: php/class-admin.php:152
+#: php/class-admin.php:203
 msgid "Manage your existing snippets"
 msgstr ""
 
-#: php/class-admin.php:183
+#: php/class-admin.php:234
 msgid "Visit the WordPress.org plugin page"
 msgstr ""
 
-#: php/class-admin.php:184
+#: php/class-admin.php:235
 msgid "About"
 msgstr ""
 
-#: php/class-admin.php:188
+#: php/class-admin.php:239
 msgid "Visit the support forums"
 msgstr ""
 
-#: php/class-admin.php:189
+#: php/class-admin.php:240
 msgid "Support"
 msgstr ""
 
-#: php/class-admin.php:193
+#: php/class-admin.php:244
 msgid "Support this plugin's development"
 msgstr ""
 
-#: php/class-admin.php:194
+#: php/class-admin.php:245
 msgid "Donate"
 msgstr ""
 
-#: php/class-admin.php:226
+#: php/class-admin.php:277
 msgid "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future."
 msgstr ""
 
-#: php/class-admin.php:230
+#: php/class-admin.php:281
 msgid "Take the survey now"
 msgstr ""
 
-#: php/class-admin.php:233
+#: php/class-admin.php:284
 msgid "Dismiss"
 msgstr ""
 
@@ -241,11 +241,11 @@ msgstr ""
 msgid "Clone"
 msgstr ""
 
-#: php/class-list-table.php:158, php/class-list-table.php:380, php/views/edit.php:133
+#: php/class-list-table.php:158, php/class-list-table.php:380, php/views/edit.php:155
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:167, php/class-list-table.php:381, php/views/edit.php:146
+#: php/class-list-table.php:167, php/class-list-table.php:381, php/views/edit.php:168
 msgid "Delete"
 msgstr ""
 
@@ -253,7 +253,7 @@ msgstr ""
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:172, php/views/edit.php:141
+#: php/class-list-table.php:172, php/views/edit.php:163
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
@@ -266,7 +266,7 @@ msgstr ""
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:335, php/views/edit.php:55
+#: php/class-list-table.php:335, php/views/edit.php:77
 msgid "Name"
 msgstr ""
 
@@ -302,7 +302,7 @@ msgstr ""
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:379, php/views/edit.php:128
+#: php/class-list-table.php:379, php/views/edit.php:150
 msgid "Download"
 msgstr ""
 
@@ -346,29 +346,29 @@ msgstr ""
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:738
+#: php/class-list-table.php:723
 msgid "It looks like you don't have any snippets."
 msgstr ""
 
-#: php/class-list-table.php:742
+#: php/class-list-table.php:727
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1039
+#: php/class-list-table.php:1024
 msgid "Search results"
 msgstr ""
 
 #. translators: %s: search query
-#: php/class-list-table.php:1043
+#: php/class-list-table.php:1028
 msgid " for &ldquo;%s&rdquo;"
 msgstr ""
 
 #. translators: %s: tag name
-#: php/class-list-table.php:1048
+#: php/class-list-table.php:1033
 msgid " in tag &ldquo;%s&rdquo;"
 msgstr ""
 
-#: php/class-list-table.php:1057
+#: php/class-list-table.php:1042
 msgid "Clear Filters"
 msgstr ""
 
@@ -412,7 +412,7 @@ msgstr ""
 msgid "You can remove it, or edit it to add your own content."
 msgstr ""
 
-#: php/admin-menus/class-admin-menu.php:105
+#: php/admin-menus/class-admin-menu.php:107
 msgid "You are not authorized to access this page."
 msgstr ""
 
@@ -556,48 +556,53 @@ msgctxt "menu label"
 msgid "All Snippets"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:47
+#: php/admin-menus/class-manage-menu.php:54
 msgctxt "top-level menu label"
 msgid "Snippets"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:94
+#: php/admin-menus/class-manage-menu.php:93
+msgctxt "tools submenu label"
+msgid "Snippets"
+msgstr ""
+
+#: php/admin-menus/class-manage-menu.php:138
 msgid "<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href=\"https://github.com/sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:100
+#: php/admin-menus/class-manage-menu.php:144
 msgid "Snippet <strong>executed</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:101
+#: php/admin-menus/class-manage-menu.php:145
 msgid "Snippet <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:102
+#: php/admin-menus/class-manage-menu.php:146
 msgid "Selected snippets <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:103
+#: php/admin-menus/class-manage-menu.php:147
 msgid "Snippet <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:104
+#: php/admin-menus/class-manage-menu.php:148
 msgid "Selected snippets <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:105
+#: php/admin-menus/class-manage-menu.php:149
 msgid "Snippet <strong>deleted</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:106
+#: php/admin-menus/class-manage-menu.php:150
 msgid "Selected snippets <strong>deleted</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:107
+#: php/admin-menus/class-manage-menu.php:151
 msgid "Snippet <strong>cloned</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:108
+#: php/admin-menus/class-manage-menu.php:152
 msgid "Selected snippets <strong>cloned</strong>."
 msgstr ""
 
@@ -771,90 +776,100 @@ msgstr ""
 msgid "Settings saved."
 msgstr ""
 
-#: php/views/edit.php:35, php/views/manage.php:24
+#: php/views/edit.php:35, php/views/import.php:31, php/views/manage.php:24
 msgctxt "snippet"
 msgid "Add New"
 msgstr ""
 
-#: php/views/edit.php:56
-msgid "Enter title here"
+#: php/views/edit.php:44, php/views/import.php:26
+msgctxt "snippets"
+msgid "Manage"
 msgstr ""
 
-#: php/views/edit.php:62
-msgid "Code"
-msgstr ""
-
-#: php/views/edit.php:88
-msgid "Save Changes and Execute Once"
-msgstr ""
-
-#: php/views/edit.php:97, php/views/edit.php:111
-msgid "Save Changes and Activate"
-msgstr ""
-
-#: php/views/edit.php:117
-msgid "Save Changes and Deactivate"
-msgstr ""
-
-#: php/views/edit.php:140
-msgid "You are about to permanently delete this snippet."
-msgstr ""
-
-#: php/views/import.php:23
-msgid "Upload one or more Code Snippets export files and the snippets will be imported."
-msgstr ""
-
-#. translators: %s: link to snippets admin menu
-#: php/views/import.php:28
-msgid "Afterwards, you will need to visit the <a href=\"%s\">All Snippets</a> page to activate the imported snippets."
-msgstr ""
-
-#: php/views/import.php:35
-msgid "Duplicate Snippets"
-msgstr ""
-
-#: php/views/import.php:38
-msgid "What should happen if an existing snippet is found with an identical name to an imported snippet?"
-msgstr ""
-
-#: php/views/import.php:45
-msgid "Ignore any duplicate snippets: import all snippets from the file regardless and leave all existing snippets unchanged."
-msgstr ""
-
-#: php/views/import.php:52
-msgid "Replace any existing snippets with a newly imported snippet of the same name."
-msgstr ""
-
-#: php/views/import.php:59
-msgid "Do not import any duplicate snippets; leave all existing snippets unchanged."
-msgstr ""
-
-#: php/views/import.php:64
-msgid "Upload Files"
-msgstr ""
-
-#: php/views/import.php:67
-msgid "Choose one or more Code Snippets (.xml or .json) files to upload, then click \"Upload files and import\"."
-msgstr ""
-
-#: php/views/import.php:72
-msgid "Choose files from your computer:"
-msgstr ""
-
-#. translators: %s: size in bytes
-#: php/views/import.php:75
-msgid "(Maximum size: %s)"
-msgstr ""
-
-#: php/views/import.php:86
-msgid "Upload files and import"
-msgstr ""
-
-#: php/views/manage.php:29
+#: php/views/edit.php:49, php/views/manage.php:29
 msgctxt "snippets"
 msgid "Import"
 msgstr ""
 
-#: php/views/manage.php:41
+#: php/views/edit.php:56, php/views/import.php:37, php/views/manage.php:35
+msgctxt "snippets"
+msgid "Settings"
+msgstr ""
+
+#: php/views/edit.php:78
+msgid "Enter title here"
+msgstr ""
+
+#: php/views/edit.php:84
+msgid "Code"
+msgstr ""
+
+#: php/views/edit.php:110
+msgid "Save Changes and Execute Once"
+msgstr ""
+
+#: php/views/edit.php:119, php/views/edit.php:133
+msgid "Save Changes and Activate"
+msgstr ""
+
+#: php/views/edit.php:139
+msgid "Save Changes and Deactivate"
+msgstr ""
+
+#: php/views/edit.php:162
+msgid "You are about to permanently delete this snippet."
+msgstr ""
+
+#: php/views/import.php:47
+msgid "Upload one or more Code Snippets export files and the snippets will be imported."
+msgstr ""
+
+#. translators: %s: link to snippets admin menu
+#: php/views/import.php:52
+msgid "Afterwards, you will need to visit the <a href=\"%s\">All Snippets</a> page to activate the imported snippets."
+msgstr ""
+
+#: php/views/import.php:59
+msgid "Duplicate Snippets"
+msgstr ""
+
+#: php/views/import.php:62
+msgid "What should happen if an existing snippet is found with an identical name to an imported snippet?"
+msgstr ""
+
+#: php/views/import.php:69
+msgid "Ignore any duplicate snippets: import all snippets from the file regardless and leave all existing snippets unchanged."
+msgstr ""
+
+#: php/views/import.php:76
+msgid "Replace any existing snippets with a newly imported snippet of the same name."
+msgstr ""
+
+#: php/views/import.php:83
+msgid "Do not import any duplicate snippets; leave all existing snippets unchanged."
+msgstr ""
+
+#: php/views/import.php:88
+msgid "Upload Files"
+msgstr ""
+
+#: php/views/import.php:91
+msgid "Choose one or more Code Snippets (.xml or .json) files to upload, then click \"Upload files and import\"."
+msgstr ""
+
+#: php/views/import.php:96
+msgid "Choose files from your computer:"
+msgstr ""
+
+#. translators: %s: size in bytes
+#: php/views/import.php:99
+msgid "(Maximum size: %s)"
+msgstr ""
+
+#: php/views/import.php:110
+msgid "Upload files and import"
+msgstr ""
+
+#: php/views/manage.php:48
 msgid "Search Installed Snippets"
 msgstr ""
