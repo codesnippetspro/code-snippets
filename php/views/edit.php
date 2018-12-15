@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $table = code_snippets()->db->get_table_name();
-$edit_id = isset( $_REQUEST['id' ] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
+$edit_id = isset( $_REQUEST['id'] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
 $snippet = get_snippet( $edit_id );
 
 $classes = array();

@@ -35,7 +35,6 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 			add_action( 'network_admin_menu', array( $this, 'register_compact_menu' ), 2 );
 		}
 
-
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
 		add_action( 'wp_ajax_update_code_snippet', array( $this, 'ajax_callback' ) );
 	}

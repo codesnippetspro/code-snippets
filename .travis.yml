@@ -17,12 +17,12 @@ php:
 
 env:
   # Trunk
-  - WP_VERSION=master WP_MULTISITE=0
-  - WP_VERSION=master WP_MULTISITE=1
+  - WP_VERSION=master WP_MULTISITE=0 WP_DEVELOP_DIR=/tmp/wordpress/
+  - WP_VERSION=master WP_MULTISITE=1 WP_DEVELOP_DIR=/tmp/wordpress/
 
   # Latest stable version
-  - WP_VERSION=stable WP_MULTISITE=0
-  - WP_VERSION=stable WP_MULTISITE=1
+  - WP_VERSION=stable WP_MULTISITE=0 WP_DEVELOP_DIR=/tmp/wordpress/
+  - WP_VERSION=stable WP_MULTISITE=1 WP_DEVELOP_DIR=/tmp/wordpress/
 
 
 # Prepare the system by installing prerequisites and dependencies.

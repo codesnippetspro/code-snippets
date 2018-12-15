@@ -14,7 +14,6 @@ This document is an effort to maintain a list of website and articles which reco
 - [Formidable Forms](https://formidableforms.com/knowledgebase/formidable-hooks/#kb-where-to-put-the-code) 
 - [WooCommerce](https://docs.woocommerce.com/document/customizing-theme-best-practices/)
 - [SkyVerge](https://www.skyverge.com/blog/add-custom-code-to-wordpress/) ([#2](https://www.skyverge.com/blog/how-to-hide-sku-woocommerce-product-pages/))
-- 
 - [Chris Lema](http://chrislema.com/should-i-use-the-genesis-framework/)
 - [WP Tavern](https://wptavern.com/how-to-extend-a-wordpress-plugin-without-losing-your-changes)
 - [Ciudadano 2.0](https://www.ciudadano2cero.com/personalizar-wordpress-shortcodes/)
