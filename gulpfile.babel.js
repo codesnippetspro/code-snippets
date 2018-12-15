@@ -85,17 +85,6 @@ gulp.task('vendor', gulp.parallel(
 			.pipe(gulp.dest(dist_dirs.css + 'editor-themes'));
 	},
 
-	// Tag-it script
-	() => gulp.src('js/vendor/tag-it.js')
-		.pipe(uglify())
-		.pipe(gulp.dest(dist_dirs.js)),
-
-	// Tag-it styles
-	() => gulp.src(['jquery.tagit.css', 'tagit.ui-zendesk.css'].map((file) => 'js/vendor/' + file))
-		.pipe(concat('tag-it.css'))
-		.pipe(postcss([cssnano()]))
-		.pipe(gulp.dest(dist_dirs.css)),
-
 	// Prism script
 	() => gulp.src('js/vendor/prism.js')
 		.pipe(uglify())

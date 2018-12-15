@@ -1,3 +1,5 @@
+import 'tag-it/js/tag-it';
+
 /* global ajaxurl, pagenow */
 'use strict';
 (function () {
