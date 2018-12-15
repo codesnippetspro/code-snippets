@@ -211,15 +211,16 @@ function deactivate_snippet( $id, $multisite = null ) {
 
 	if ( $table === $db->table ) {
 
-		update_site_option(
-			'recently_activated_snippets',
-			$recently_active + (array) get_site_option( 'recently_activated_snippets' )
-		);
-	} elseif ( $table === $db->ms_table ) {
-
 		update_option(
 			'recently_activated_snippets',
-			$recently_active + (array) get_option( 'recently_activated_snippets' )
+			$recently_active + (array) get_option( 'recently_activated_snippets', array() )
+		);
+
+	} elseif ( $table === $db->ms_table ) {
+
+		update_site_option(
+			'recently_activated_snippets',
+			$recently_active + (array) get_site_option( 'recently_activated_snippets', array() )
 		);
 	}
 
