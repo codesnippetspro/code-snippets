@@ -20,7 +20,7 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 	}
 
 	/* Enqueue scripts for the editor preview */
-	code_snippets_enqueue_codemirror();
+	code_snippets_enqueue_editor();
 
 	/* Enqueue ALL themes */
 	$themes = code_snippets_get_available_themes();
@@ -28,9 +28,9 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 	foreach ( $themes as $theme ) {
 
 		wp_enqueue_style(
-			'code-snippets-codemirror-theme-' . $theme,
+			'code-snippets-editor-theme-' . $theme,
 			plugins_url( "css/min/cmthemes/$theme.css", CODE_SNIPPETS_FILE ),
-			array( 'code-snippets-codemirror' )
+			array( 'code-snippets-editor' )
 		);
 	}
 
@@ -107,7 +107,7 @@ add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );
 			atts = <?php echo code_snippets_get_editor_atts( $atts, true ); ?>;
 			atts['viewportMargin'] = Infinity;
 
-			var editor = CodeMirror(document.getElementById('code_snippets_editor_preview'), atts);
+			var editor = snippets_editor(document.getElementById('code_snippets_editor_preview'), atts);
 
 			// Dynamically change editor settings
 			<?php

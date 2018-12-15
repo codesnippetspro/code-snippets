@@ -60,7 +60,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		$contextual_help->load();
 
 		/* Enqueue the code editor and other scripts and styles */
-		add_action( 'admin_enqueue_scripts', 'code_snippets_enqueue_codemirror' );
+		add_action( 'admin_enqueue_scripts', 'code_snippets_enqueue_editor' );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_tagit' ), 9 );
 
 		/* Register action hooks */

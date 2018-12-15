@@ -47,26 +47,17 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
  * @uses wp_enqueue_style() to add the stylesheets to the queue
  * @uses wp_enqueue_script() to add the scripts to the queue
  */
-function code_snippets_enqueue_codemirror() {
-	$codemirror_version = '5.42.0';
+function code_snippets_enqueue_editor() {
 	$url = plugin_dir_url( CODE_SNIPPETS_FILE );
+	$plugin_version = code_snippets()->version;
 
 	/* Remove other CodeMirror styles */
 	wp_deregister_style( 'codemirror' );
 	wp_deregister_style( 'wpeditor' );
 
 	/* CodeMirror */
-	wp_enqueue_style(
-		'code-snippets-codemirror',
-		$url . 'css/min/codemirror.css',
-		false, $codemirror_version
-	);
-
-	wp_enqueue_script(
-		'code-snippets-codemirror',
-		$url . 'js/min/codemirror.js',
-		false, $codemirror_version
-	);
+	wp_enqueue_style( 'code-snippets-editor', $url . 'css/min/editor.css', array(), $plugin_version );
+	wp_enqueue_script( 'code-snippets-editor', $url . 'js/min/editor.js', array(), $plugin_version );
 
 	/* CodeMirror Theme */
 	$theme = code_snippets_get_setting( 'editor', 'theme' );
@@ -74,10 +65,9 @@ function code_snippets_enqueue_codemirror() {
 	if ( 'default' !== $theme ) {
 
 		wp_enqueue_style(
-			'code-snippets-codemirror-theme-' . $theme,
+			'code-snippets-editor-theme-' . $theme,
 			$url . "css/min/cmthemes/$theme.css",
-			array( 'code-snippets-codemirror' ),
-			$codemirror_version
+			array( 'code-snippets-editor' ), $plugin_version
 		);
 	}
 }

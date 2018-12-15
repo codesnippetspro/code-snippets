@@ -16,6 +16,7 @@ import autoprefixer from 'autoprefixer';
 import precss from 'precss';
 import rtlcss from 'gulp-rtlcss';
 import cssnano from 'cssnano';
+import cssimport from 'postcss-import';
 
 import imagemin from 'gulp-imagemin';
 
@@ -52,6 +53,7 @@ const dist_dirs = {
 gulp.task('css', (done) => {
 
 	let processors = [
+		cssimport(),
 		precss(),
 		autoprefixer(),
 		cssnano({'preset': ['default', {'discardComments': {'removeAll': true}}]})
@@ -76,31 +78,6 @@ gulp.task('css', (done) => {
 });
 
 gulp.task('vendor', gulp.parallel(
-	// CodeMirror scripts
-	() => {
-		let scripts = ['lib/codemirror.js'];
-
-		for (let mode of ['clike', 'php']) {
-			scripts.push(`mode/${mode}/${mode}.js`);
-		}
-
-		let codemirror_addons = ['edit/matchbrackets', 'dialog/dialog', 'search/searchcursor', 'search/search'];
-		for (let addon of codemirror_addons) {
-			scripts.push(`addon/${addon}.js`);
-		}
-
-		return gulp.src(scripts.map((file) => src_dirs.codemirror + file))
-			.pipe(concat('codemirror.js'))
-			.pipe(uglify())
-			.pipe(gulp.dest(dist_dirs.js));
-	},
-
-	// CodeMirror styles
-	() => gulp.src(['lib/codemirror.css', 'addon/dialog/dialog.css'].map((file) => src_dirs.codemirror + file))
-		.pipe(concat('codemirror.css'))
-		.pipe(postcss([cssnano()]))
-		.pipe(gulp.dest(dist_dirs.css)),
-
 	// CodeMirror themes
 	() => {
 		return gulp.src(src_dirs.codemirror + 'theme/*.css')
@@ -152,11 +129,10 @@ gulp.task('test-js', () => {
 		.pipe(eslint.failAfterError())
 });
 
-gulp.task('js', gulp.series('test-js', () => {
-
+function bundlejs(file) {
 	const b = browserify({
 		debug: true,
-		entries: 'js/manage.js'
+		entries: file
 	});
 
 	b.transform('babelify', {
@@ -164,14 +140,19 @@ gulp.task('js', gulp.series('test-js', () => {
 	});
 
 	return b.bundle()
-		.pipe(source('js/manage.js'))
+		.pipe(source(file))
 		.pipe(buffer())
 		.pipe(sourcemaps.init())
 		.pipe(uglify())
 		.pipe(sourcemaps.write('.'))
 		.pipe(flatten())
-		.pipe(gulp.dest('js/min'))
-}));
+		.pipe(gulp.dest('js/min'));
+}
+
+gulp.task('js', gulp.series('test-js', gulp.parallel(
+	() => bundlejs('js/manage.js'),
+	() => bundlejs('js/editor.js')
+)));
 
 gulp.task('images', () => {
 	return gulp.src('screenshots/**/*')

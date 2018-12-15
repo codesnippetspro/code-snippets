@@ -194,7 +194,7 @@ if ( $edit_id ) {
 			}
 		};
 
-		var editor = CodeMirror.fromTextArea(document.getElementById('snippet_code'), atts);
+		var editor = window.snippets_editor.fromTextArea(document.getElementById('snippet_code'), atts);
 
 		// set the cursor to the previous position
 		var matches = window.location.href.match(/[?&]cursor=(\d+)_(\d+)/);
