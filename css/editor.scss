@@ -2,3 +2,28 @@
 @import 'codemirror/lib/codemirror';
 @import 'codemirror/addon/dialog/dialog';
 
+.CodeMirror {
+	border: 1px solid #dfdfdf;
+	border-radius: 3px;
+	background-color: #fff;
+}
+
+.CodeMirror-focused .cm-matchhighlight {
+	color: white !important;
+	outline: 1px solid green;
+}
+
+.CodeMirror-sizer::before {
+	content: "<?php";
+	color: #bbb;
+	display: block;
+	padding-bottom: 6px;
+}
+
+/*
+Fix cursor color with rubyblue theme
+See: https://goo.gl/3HDgRm
+*/
+.cm-s-rubyblue .CodeMirror-cursor {
+	border-left: 1px solid white !important;
+}

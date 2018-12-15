@@ -80,14 +80,14 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
  */
 function code_snippets_settings_editor_preview() {
 
-	$example_content = "
-function example_custom_admin_footer_text( \$text ) {
-	return 'Thank you for visiting <a href=\"' . get_home_url() . '\">' . get_bloginfo( 'name' ) . '</a>.';
-}
+	$example_content = 'add_filter( \'admin_footer_text\', function ( $text ) {
 
-add_filter( 'admin_footer_text', 'example_custom_admin_footer_text' );
+	$site_name = get_bloginfo( \'name\' );
 
-";
+	$text = "Thank you for visiting $site_name.";
+
+	return $text;
+} );';
 
 	$atts = array(
 		'mode'  => 'text/x-php',
