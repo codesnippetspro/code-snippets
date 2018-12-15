@@ -20,10 +20,7 @@
 	padding-bottom: 6px;
 }
 
-/*
-Fix cursor color with rubyblue theme
-See: https://goo.gl/3HDgRm
-*/
+/* Fix cursor color with rubyblue theme (see https://goo.gl/3HDgRm */
 .cm-s-rubyblue .CodeMirror-cursor {
 	border-left: 1px solid white !important;
 }
