@@ -557,21 +557,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		do_action( 'code_snippets/list_table/print_required_form_fields', $context );
 	}
 
-
-	/**
-	 * Clear the recently activated snippets list if we've clicked the button
-	 * @return string The action to execute
-	 */
-	public function current_action() {
-		if ( isset( $_POST['clear-recent-list'] ) ) {
-			$action = 'clear-recent-list';
-		} else {
-			$action = parent::current_action();
-		}
-
-		return apply_filters( 'code_snippets/list_table/current_action', $action );
-	}
-
 	/**
 	 * Processes a bulk action
 	 *
@@ -582,6 +567,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @uses add_query_arg() to append the results to the current URI
 	 */
 	public function process_bulk_actions() {
+
+		if ( isset( $_POST['clear-recent-list'] ) ) {
+			if ( $this->is_network ) {
+				update_site_option( 'recently_activated_snippets', array() );
+			} else {
+				update_option( 'recently_activated_snippets', array() );
+			}
+		}
 
 		if ( isset( $_GET['action'], $_GET['id'] ) ) {
 
@@ -714,14 +707,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					delete_snippet( $id, $this->is_network );
 				}
 				$result = 'deleted-multi';
-				break;
-
-			case 'clear-recent-list':
-				if ( $this->is_network ) {
-					update_site_option( 'recently_activated_snippets', array() );
-				} else {
-					update_option( 'recently_activated_snippets', array() );
-				}
 				break;
 		}
 
@@ -865,7 +850,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			} else {
 				$snippets['inactive'][] = $snippet;
 
-				/* Was the snippet recently activated? */
+				/* Was the snippet recently deactivated? */
 				if ( isset( $recently_activated[ $snippet->id ] ) ) {
 					$snippets['recently_activated'][] = $snippet;
 				}
