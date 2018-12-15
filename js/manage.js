@@ -2,16 +2,16 @@
 'use strict';
 (function () {
 
-	var nonce = document.getElementById('code_snippets_ajax_nonce').value;
-	var network_admin = ('-network' === pagenow.substring(pagenow.length - '-network'.length));
+	const nonce = document.getElementById('code_snippets_ajax_nonce').value;
+	const network_admin = ('-network' === pagenow.substring(pagenow.length - '-network'.length));
 
-	var foreach = function (elements, callback) {
-		for (var i = 0; i < elements.length; i++) {
+	function foreach(elements, callback) {
+		for (let i = 0; i < elements.length; i++) {
 			callback(elements[i], i);
 		}
-	};
+	}
 
-	var update_snippet = function (field, row_element, snippet, success_callback) {
+	function update_snippet(field, row_element, snippet, success_callback) {
 		var id_column = row_element.querySelector('.column-id');
 
 		if (! id_column || ! parseInt(id_column.textContent)) {
@@ -38,15 +38,15 @@
 		};
 
 		request.send(query_string);
-	};
+	}
 
 	/* snippet priorities */
 
-	var update_snippet_priority = function () {
+	function update_snippet_priority() {
 		var row = this.parentElement.parentElement;
 		var snippet = {'priority': this.value};
 		update_snippet('priority', row, snippet);
-	};
+	}
 
 	foreach(document.getElementsByClassName('snippet-priority'), function (field, i) {
 		field.addEventListener('input', update_snippet_priority);
@@ -55,13 +55,13 @@
 
 	/* activate/deactivate links */
 
-	var update_view_count = function (view_count, increment) {
+	 function update_view_count(view_count, increment) {
 		var n = parseInt(view_count.textContent.replace(/\((\d+)\)/, '$1') );
 		increment ? n++ : n--;
 		view_count.textContent = '(' + n.toString() + ')';
-	};
+	}
 
-	var toggle_snippet_active = function (e) {
+	function toggle_snippet_active(e) {
 
 		var row = this.parentElement.parentElement; // switch < cell < row
 		var match = row.className.match(/\b(?:in)?active-snippet\b/);
@@ -84,7 +84,7 @@
 			update_view_count(views.querySelector('.active .count'), activating);
 			update_view_count(views.querySelector('.inactive .count'), activating);
 		});
-	};
+	}
 
 	foreach(document.getElementsByClassName('snippet-activation-switch'), function (link, i) {
 		link.addEventListener('click', toggle_snippet_active);
