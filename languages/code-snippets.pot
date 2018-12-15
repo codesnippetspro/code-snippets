@@ -34,7 +34,7 @@ msgstr ""
 msgid "https://bungeshea.com"
 msgstr ""
 
-#: php/class-admin.php:68, php/class-admin.php:175, php/admin-menus/class-manage-menu.php:23, php/admin-menus/class-manage-menu.php:53, php/admin-menus/class-manage-menu.php:92, php/views/manage.php:21
+#: php/class-admin.php:68, php/class-admin.php:129, php/admin-menus/class-manage-menu.php:23, php/admin-menus/class-manage-menu.php:52, php/admin-menus/class-manage-menu.php:91, php/views/manage.php:21
 msgid "Snippets"
 msgstr ""
 
@@ -42,43 +42,43 @@ msgstr ""
 msgid "Snippets &raquo; Settings"
 msgstr ""
 
-#: php/class-admin.php:174
+#: php/class-admin.php:128
 msgid "Manage your existing snippets"
 msgstr ""
 
-#: php/class-admin.php:205
+#: php/class-admin.php:159
 msgid "Visit the WordPress.org plugin page"
 msgstr ""
 
-#: php/class-admin.php:206
+#: php/class-admin.php:160
 msgid "About"
 msgstr ""
 
-#: php/class-admin.php:210
+#: php/class-admin.php:164
 msgid "Visit the support forums"
 msgstr ""
 
-#: php/class-admin.php:211
+#: php/class-admin.php:165
 msgid "Support"
 msgstr ""
 
-#: php/class-admin.php:215
+#: php/class-admin.php:169
 msgid "Support this plugin's development"
 msgstr ""
 
-#: php/class-admin.php:216
+#: php/class-admin.php:170
 msgid "Donate"
 msgstr ""
 
-#: php/class-admin.php:248
+#: php/class-admin.php:202
 msgid "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future."
 msgstr ""
 
-#: php/class-admin.php:252
+#: php/class-admin.php:206
 msgid "Take the survey now"
 msgstr ""
 
-#: php/class-admin.php:255
+#: php/class-admin.php:209
 msgid "Dismiss"
 msgstr ""
 
@@ -556,53 +556,53 @@ msgctxt "menu label"
 msgid "All Snippets"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:54
+#: php/admin-menus/class-manage-menu.php:53
 msgctxt "top-level menu label"
 msgid "Snippets"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:93
+#: php/admin-menus/class-manage-menu.php:92
 msgctxt "tools submenu label"
 msgid "Snippets"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:146
+#: php/admin-menus/class-manage-menu.php:145
 msgid "<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href=\"https://github.com/sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:152
+#: php/admin-menus/class-manage-menu.php:151
 msgid "Snippet <strong>executed</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:153
+#: php/admin-menus/class-manage-menu.php:152
 msgid "Snippet <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:154
+#: php/admin-menus/class-manage-menu.php:153
 msgid "Selected snippets <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:155
+#: php/admin-menus/class-manage-menu.php:154
 msgid "Snippet <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:156
+#: php/admin-menus/class-manage-menu.php:155
 msgid "Selected snippets <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:157
+#: php/admin-menus/class-manage-menu.php:156
 msgid "Snippet <strong>deleted</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:158
+#: php/admin-menus/class-manage-menu.php:157
 msgid "Selected snippets <strong>deleted</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:159
+#: php/admin-menus/class-manage-menu.php:158
 msgid "Snippet <strong>cloned</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:160
+#: php/admin-menus/class-manage-menu.php:159
 msgid "Selected snippets <strong>cloned</strong>."
 msgstr ""
 

@@ -37,7 +37,7 @@ class Code_Snippets_Admin {
 		add_filter( 'plugin_action_links_' . plugin_basename( CODE_SNIPPETS_FILE ), array( $this, 'plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_stylesheets' ), 10, 1 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ), 10, 1 );
 
 		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
@@ -72,60 +72,14 @@ class Code_Snippets_Admin {
 	}
 
 	/**
-	 * Enqueue the stylesheet for a snippet menu
-	 *
-	 * @since 2.2.0
-	 * @uses wp_enqueue_style() to add the stylesheet to the queue
-	 * @uses get_user_option() to check if MP6 mode is active
-	 * @uses plugins_url() to retrieve a URL to assets
-	 *
-	 * @param string $hook the current page hook
+	 * Load the stylesheet for the admin menu icon
 	 */
-	function enqueue_admin_stylesheets( $hook ) {
+	function load_admin_menu_icon() {
 
 		wp_enqueue_style(
 			'menu-icon-snippets',
-			plugins_url( 'css/min/menu-icon.css', CODE_SNIPPETS_FILE ),
-			false,
-			CODE_SNIPPETS_VERSION
-		);
-	}
-
-	/**
-	 * Enqueue the stylesheet for a snippet menu when using the compact layout
-	 *
-	 * @param string $hook the current page hook
-	 */
-	function enqueue_compact_admin_stylesheets( $hook ) {
-
-		if ( get_plugin_page_hookname( 'snippets', 'tools.php' ) !== $hook ) {
-			return;
-		}
-
-		$sub = isset( $_GET['sub'] ) ? $_GET['sub'] : 'snippets';
-
-		$pages = array(
-			'snippets' => 'manage',
-			'add-snippet' => 'edit',
-			'edit-snippet' => 'edit',
-			'import-snippets' => 'import',
-			'snippets-settings' => 'settings',
-		);
-
-		/* Only load the stylesheet on the right snippets page */
-		if ( ! isset( $pages[ $sub ] ) ) {
-			return;
-		}
-
-		$page = $pages[ $sub ];
-
-		$rtl = is_rtl() && ( 'edit' === $page || 'manage' === $page ) ? '-rtl' : '';
-
-		wp_enqueue_style(
-			"code-snippets-$page",
-			plugins_url( "css/min/{$page}{$rtl}.css", CODE_SNIPPETS_FILE ),
-			false,
-			CODE_SNIPPETS_VERSION
+			plugins_url( 'css/min/menu-icon.css', code_snippets()->file ),
+			array(), code_snippets()->version
 		);
 	}
 
