@@ -52,18 +52,14 @@ module.exports = function (grunt) {
 				src: 'css/build/*.css',
 				dest: 'css/min'
 			},
-			cmthemes: {
+			themes: {
 				expand: true,
 				flatten: true,
 				src: codemirror + 'theme/*.css',
-				dest: 'css/min/cmthemes'
+				dest: 'css/min/editor-themes'
 			},
 			vendor: {
 				files: {
-					'css/min/codemirror.css': [
-						codemirror + 'lib/codemirror.css',
-						codemirror + 'addon/dialog/dialog.css'
-					],
 					'css/min/tagit.css': [
 						'js/vendor/jquery.tagit.css',
 						'js/vendor/tagit.ui-zendesk.css'

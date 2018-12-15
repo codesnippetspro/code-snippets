@@ -66,7 +66,7 @@ function code_snippets_enqueue_editor() {
 
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
-			$url . "css/min/cmthemes/$theme.css",
+			$url . "css/min/editor-themes/$theme.css",
 			array( 'code-snippets-editor' ), $plugin_version
 		);
 	}
@@ -84,7 +84,7 @@ function code_snippets_get_available_themes() {
 	}
 
 	$themes = array();
-	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/cmthemes/';
+	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/editor-themes/';
 	$theme_files = glob( $themes_dir . '*.css' );
 
 	foreach ( $theme_files as $i => $theme ) {

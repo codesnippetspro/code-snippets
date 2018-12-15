@@ -29,7 +29,7 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
-			plugins_url( "css/min/cmthemes/$theme.css", CODE_SNIPPETS_FILE ),
+			plugins_url( "css/min/editor-themes/$theme.css", CODE_SNIPPETS_FILE ),
 			array( 'code-snippets-editor' )
 		);
 	}
@@ -50,7 +50,7 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>Default</option>';
 
 	/* Fetch all theme CSS files */
-	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/cmthemes/';
+	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/editor-themes/';
 	$themes = glob( $themes_dir . '*.css' );
 
 	/* Print dropdown entry for each theme */

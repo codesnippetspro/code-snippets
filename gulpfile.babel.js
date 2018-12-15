@@ -82,7 +82,7 @@ gulp.task('vendor', gulp.parallel(
 	() => {
 		return gulp.src(src_dirs.codemirror + 'theme/*.css')
 			.pipe(postcss([cssnano()]))
-			.pipe(gulp.dest(dist_dirs.css + 'cmthemes'));
+			.pipe(gulp.dest(dist_dirs.css + 'editor-themes'));
 	},
 
 	// Tag-it script
