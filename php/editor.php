@@ -18,6 +18,8 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 	$saved_atts = array(
 		'matchBrackets' => true,
 		'extraKeys'     => array( 'Alt-F' => 'findPersistent' ),
+		'gutters'       => array( 'CodeMirror-lint-markers' ),
+		'lint'          => true
 	);
 
 	foreach ( $fields as $field_id => $field ) {
