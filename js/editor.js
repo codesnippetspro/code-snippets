@@ -4,4 +4,4 @@ import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/search/search';
 import './php-lint';
 
-window.snippets_editor = CodeMirror;
+window.Code_Snippets_CodeMirror = CodeMirror;

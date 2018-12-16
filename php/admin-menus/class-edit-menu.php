@@ -288,8 +288,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			code_snippets()->get_menu_url( 'edit' )
 		);
 
-		if ( isset( $_POST['snippet_editor_cursor'] ) ) {
-			$redirect_uri = add_query_arg( 'cursor', $_POST['snippet_editor_cursor'], $redirect_uri );
+		if ( isset( $_POST['snippet_editor_cursor_line'], $_POST['snippet_editor_cursor_ch'] ) &&
+			is_numeric( $_POST['snippet_editor_cursor_line'] ) && is_numeric( $_POST['snippet_editor_cursor_ch'] ) ) {
+			$redirect_uri = add_query_arg( 'cursor_line', intval( $_POST['snippet_editor_cursor_line'] ), $redirect_uri );
+			$redirect_uri = add_query_arg( 'cursor_ch', intval( $_POST['snippet_editor_cursor_ch'] ), $redirect_uri );
 		}
 
 		wp_redirect( esc_url_raw( $redirect_uri ) );
@@ -344,15 +346,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
 		       placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>"
 		       value="<?php echo esc_attr( $snippet->tags_list ); ?>" />
-
-		<script type="text/javascript">
-			jQuery('#snippet_tags').tagit({
-				availableTags: <?php echo wp_json_encode( get_all_snippet_tags() ); ?>,
-				allowSpaces: true,
-				removeConfirmation: true,
-				showAutocompleteOnFocus: true,
-			});
-		</script>
 		<?php
 	}
 
@@ -520,21 +513,31 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			array(), $plugin->version
 		);
 
+		$tags_enabled = code_snippets_get_setting( 'general', 'enable_tags' );
+
 		/* the tag-it library has a number of jQuery dependencies */
 		$tagit_deps = array(
-			'jquery-ui-core',
-			'jquery-ui-widget',
-			'jquery-ui-position',
-			'jquery-ui-autocomplete',
-			'jquery-effects-blind',
-			'jquery-effects-highlight',
+			'jquery', 'jquery-ui-core',
+			'jquery-ui-widget', 'jquery-ui-position', 'jquery-ui-autocomplete',
+			'jquery-effects-blind', 'jquery-effects-highlight',
 		);
 
 		wp_enqueue_script(
-			'code-snippets-edit',
+			'code-snippets-edit-menu',
 			plugins_url( 'js/min/edit.js', $plugin->file ),
-			$tagit_deps, $plugin->version
+			$tags_enabled ? $tagit_deps : array(),
+			$plugin->version, true
 		);
+
+		$atts = code_snippets_get_editor_atts( array(), true );
+		$inline_script = 'var code_snippets_editor_atts = ' . $atts . ';';
+
+		if ( $tags_enabled ) {
+			$snippet_tags = wp_json_encode( get_all_snippet_tags() );
+			$inline_script .= "\n" . 'var code_snippets_all_tags = ' . $snippet_tags . ';';
+		}
+
+		wp_add_inline_script( 'code-snippets-edit-menu', $inline_script, 'before' );
 	}
 
 	/**

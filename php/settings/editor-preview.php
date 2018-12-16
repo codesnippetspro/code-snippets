@@ -90,10 +90,7 @@ function code_snippets_settings_editor_preview() {
 } );
 ';
 
-	$atts = array(
-		'mode'  => 'text/x-php',
-		'value' => $example_content,
-	);
+	$atts = array( 'value' => $example_content );
 
 	?>
 
@@ -103,12 +100,13 @@ function code_snippets_settings_editor_preview() {
 		(function () {
 			'use strict';
 
+			var CodeMirror = window.Code_Snippets_CodeMirror;
+
 			// Load CodeMirror
 			var atts = [];
 			atts = <?php echo code_snippets_get_editor_atts( $atts, true ); ?>;
-			atts['viewportMargin'] = Infinity;
 
-			var editor = snippets_editor(document.getElementById('code_snippets_editor_preview'), atts);
+			var editor = CodeMirror(document.getElementById('code_snippets_editor_preview'), atts);
 
 			// Dynamically change editor settings
 			<?php

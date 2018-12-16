@@ -15,18 +15,20 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 	$fields = code_snippets_get_settings_fields();
 	$fields = $fields['editor'];
 
-	$saved_atts = array(
+	$default_atts = array(
+		'mode' => 'text/x-php',
 		'matchBrackets' => true,
-		'extraKeys'     => array( 'Alt-F' => 'findPersistent' ),
-		'gutters'       => array( 'CodeMirror-lint-markers' ),
-		'lint'          => true
+		'extraKeys' => array( 'Alt-F' => 'findPersistent' ),
+		'gutters' => array( 'CodeMirror-lint-markers' ),
+		'lint' => true,
+		'viewportMargin' => 'Infinity'
 	);
 
 	foreach ( $fields as $field_id => $field ) {
-		$saved_atts[ $field['codemirror'] ] = $settings[ $field_id ];
+		$default_atts[ $field['codemirror'] ] = $settings[ $field_id ];
 	}
 
-	$atts = wp_parse_args( $override_atts, $saved_atts );
+	$atts = wp_parse_args( $override_atts, $default_atts );
 	$atts = apply_filters( 'code_snippets_codemirror_atts', $atts );
 
 	if ( $json_encode ) {
@@ -38,6 +40,8 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 			/* Use a fallback for < 5.4 */
 			$atts = str_replace( '\\/', '/', json_encode( $atts ) );
 		}
+
+		$atts = str_replace( '"Infinity"', 'Infinity', $atts );
 	}
 
 	return $atts;
