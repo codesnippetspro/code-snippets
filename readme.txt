@@ -3,9 +3,9 @@ Contributors: bungeshea
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 5.0
+Tested up to: 5.0.1
 Requires PHP: 5.2
-Stable tag: 2.12.1
+Stable tag: 2.13.0
 License: MIT
 License URI: license.txt
 
@@ -87,18 +87,14 @@ The code editor supports several search and replace commands, accessible through
 - `Shift-Ctrl-F` / `Cmd-Option-F` – Replace text
 - `Shift-Ctrl-R` / `Shift-Cmd-Option-F` – Replace all instances of text
 – `Alt-F` – Persistent search (dialog remains open, `Enter` to find next, `Shift-Enter` to find previous)
-- `Alt-G` – Jump to line
-
-= Is there a way to add a snippet but not run it right away? =
-Yes. Just add it but do not activate it yet.
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
-No, the snippets are stored in the WordPress database and are independent of the theme and unaffected by WordPress upgrades.
+No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.
 
 = Can the plugin be completely uninstalled? =
 If you enable the 'Complete Uninstall' option on the plugin settings page, Code Snippets will clean up all of its data when deleted through the WordPress 'Plugins' menu. This includes all of the stored snippets. If you would like to preserve the snippets, ensure they are exported first.
 
-= Can I copy any snippets I've created to another WordPress site? =
+= Can I copy any snippets I have created to another WordPress site? =
 Yes! You can individually export a single snippet using the link below the snippet name on the 'Manage Snippets' page or bulk export multiple snippets using the 'Bulk Actions' feature. Snippets can later be imported using the 'Import Snippets' page by uploading the export file.
 
 = Can I export my snippets to PHP for a site where I'm not using the Code Snippets plugin? =
@@ -124,6 +120,15 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 2.13.0 (17 Dec 2018) =
+* Added: Search/replace functionality to the snippet editor. [See here for a list of keyboard shortcuts.](https://codemirror.net/demo/search.html) [[#](https://wordpress.org/support/topic/feature-request-codemirror-search-and-replace/)]
+* Updated CodeMirror to version 5.42.0
+* Added: Option to make admin menu more compact
+* Fixed: Problem clearing recently active snippet list
+* Improved: Integration between plugin and the CodeMirror library, to prevent collisions
+* Improved: Added additional styles to editor settings preview
+* Added: PHP linter to code editor
 
 = 2.12.1 (15 Nov 2018) =
 * Improved: CodeMirror updated to version 5.41.0

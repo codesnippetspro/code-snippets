@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.13.0 (17 Dec 2018)
+* Added: Search/replace functionality to the snippet editor. [See here for a list of keyboard shortcuts.](https://codemirror.net/demo/search.html) [[#](https://wordpress.org/support/topic/feature-request-codemirror-search-and-replace/)]
+* Updated CodeMirror to version 5.42.0
+* Added: Option to make admin menu more compact
+* Fixed: Problem clearing recently active snippet list
+* Improved: Integration between plugin and the CodeMirror library, to prevent collisions
+* Improved: Added additional styles to editor settings preview
+* Added: PHP linter to code editor
+
 ## 2.12.1 (15 Nov 2018)
 * Improved: CodeMirror updated to version 5.41.0
 * Improved: Attempt to create database columns that might be missing after a table upgrade
