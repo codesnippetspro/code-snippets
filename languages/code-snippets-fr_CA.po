@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: Plugins - code-snippets - Stable (latest release)\n"
 
 #. Author URI of the plugin/theme
-msgid "https://bungeshea.com"
-msgstr "https://bungeshea.com"
+msgid "https://sheabunge.com"
+msgstr "https://sheabunge.com"
 
 #. Author of the plugin/theme
 msgid "Shea Bunge"

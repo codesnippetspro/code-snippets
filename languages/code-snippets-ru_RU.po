@@ -235,10 +235,10 @@ msgstr ""
 #: includes/edit/admin-help.php:46 includes/import/admin-help.php:40
 #: includes/manage/admin-help.php:40
 msgid ""
-"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+"<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank"
 "\">Project Website</a>"
 msgstr ""
-"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+"<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank"
 "\">Сайт плагина</a>"
 
 #: includes/edit/admin-messages.php:14

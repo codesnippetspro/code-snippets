@@ -155,17 +155,17 @@ class Code_Snippets_Admin {
 
 		return array_merge( $links, array(
 			sprintf( $format,
-				'http://wordpress.org/plugins/code-snippets/',
+				'https://wordpress.org/plugins/code-snippets/',
 				__( 'Visit the WordPress.org plugin page', 'code-snippets' ),
 				__( 'About', 'code-snippets' )
 			),
 			sprintf( $format,
-				'http://wordpress.org/support/plugin/code-snippets/',
+				'https://wordpress.org/support/plugin/code-snippets/',
 				__( 'Visit the support forums', 'code-snippets' ),
 				__( 'Support', 'code-snippets' )
 			),
 			sprintf( $format,
-				'http://bungeshea.com/donate/',
+				'https://sheabunge.com/donate/',
 				__( "Support this plugin's development", 'code-snippets' ),
 				__( 'Donate', 'code-snippets' )
 			),

@@ -41,7 +41,7 @@ class Code_Snippets_Contextual_Help {
 			'<p><a href="https://wordpress.org/plugins/code-snippets">' . __( 'About Plugin', 'code-snippets' ) . '</a></p>' .
 			'<p><a href="https://wordpress.org/plugins/code-snippets/faq">' . __( 'FAQ', 'code-snippets' ) . '</a></p>' .
 			'<p><a href="https://wordpress.org/support/plugin/code-snippets">' . __( 'Support Forums', 'code-snippets' ) . '</a></p>' .
-			'<p><a href="https://bungeshea.com/plugins/code-snippets/">' . __( 'Plugin Website', 'code-snippets' ) . '</a></p>'
+			'<p><a href="https://sheabunge.com/plugins/code-snippets/">' . __( 'Plugin Website', 'code-snippets' ) . '</a></p>'
 		);
 	}
 

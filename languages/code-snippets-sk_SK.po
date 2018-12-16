@@ -97,10 +97,10 @@ msgstr ""
 #: ../admin/help/import.php:40 ../admin/help/manage.php:41
 #: ../admin/help/single.php:46
 msgid ""
-"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Project "
+"<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank\">Project "
 "Website</a>"
 msgstr ""
-"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Webová "
+"<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank\">Webová "
 "stránka projektu</a>"
 
 #: ../admin/help/manage.php:18
@@ -264,12 +264,12 @@ msgid ""
 "<strong>Warning:</strong> Safe mode is active and snippets will not execute! "
 "Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-"
 "config.php</code> to turn off safe mode. <a href=\"http://code-snippets."
-"bungeshea.com/docs/safe-mode/\" target=\"_blank\">Help</a>"
+"sheabunge.com/docs/safe-mode/\" target=\"_blank\">Help</a>"
 msgstr ""
 "<strong>Upozornenie:</strong> Safe mode je aktívny a snippety nebudú "
 "fungovať! Odstráňte konštantu <code>CODE_SNIPPETS_SAFE_MODE</code> z "
 "<code>wp-config.php</code> pre vypnutie safe mode. <a href=\"http://code-"
-"snippets.bungeshea.com/docs/safe-mode/\" target=\"_blank\">Pomoc</a>"
+"snippets.sheabunge.com/docs/safe-mode/\" target=\"_blank\">Pomoc</a>"
 
 #: ../admin/messages/manage.php:20
 msgid "Snippet <strong>activated</strong>."

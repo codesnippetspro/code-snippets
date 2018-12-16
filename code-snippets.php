@@ -7,7 +7,7 @@
  * to the localization, please see https://github.com/sheabunge/code-snippets
  *
  * @package   Code_Snippets
- * @author    Shea Bunge <shea@bungeshea.com>
+ * @author    Shea Bunge <shea@sheabunge.com>
  * @copyright 2012-2018 Shea Bunge
  * @license   MIT http://opensource.org/licenses/MIT
  * @version   2.12.0
@@ -19,7 +19,7 @@ Plugin Name: Code Snippets
 Plugin URI:  https://github.com/sheabunge/code-snippets
 Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
 Author:      Shea Bunge
-Author URI:  https://bungeshea.com
+Author URI:  https://sheabunge.com
 Version:     2.12.1
 License:     MIT
 License URI: license.txt

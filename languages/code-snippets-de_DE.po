@@ -1155,10 +1155,10 @@ msgstr "Installierte Codeschnipsel suchen"
 
 # @ code-snippets
 #~ msgid ""
-#~ "<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+#~ "<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank"
 #~ "\">Project Website</a>"
 #~ msgstr ""
-#~ "<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+#~ "<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank"
 #~ "\">Projektwebseite</a>"
 
 #~ msgid "Only run in adminstration area"
@@ -1210,8 +1210,8 @@ msgstr "Installierte Codeschnipsel suchen"
 #~ msgstr "Shea Bunge"
 
 # @ code-snippets
-#~ msgid "http://bungeshea.com"
-#~ msgstr "http://bungeshea.com/"
+#~ msgid "https://sheabunge.com"
+#~ msgstr "https://sheabunge.com/"
 
 # @ code-snippets
 #~ msgid "Please provide a name for the snippet and its code."
@@ -1223,8 +1223,8 @@ msgstr "Installierte Codeschnipsel suchen"
 #~ msgstr "(optional, aber empfohlen für bessere Organisation &amp; Übersicht)"
 
 # @ code-snippets
-#~ msgid "http://bungeshea.com/plugins/code-snippets"
-#~ msgstr "http://bungeshea.com/plugins/code-snippets/"
+#~ msgid "https://sheabunge.com/plugins/code-snippets"
+#~ msgstr "https://sheabunge.com/plugins/code-snippets/"
 
 # @ code-snippets
 #~ msgid "Import snippets from a <strong>Code Snippets</strong> export file"

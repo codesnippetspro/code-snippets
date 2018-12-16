@@ -1,6 +1,6 @@
 === Code Snippets ===
 Contributors: bungeshea
-Donate link: https://bungeshea.com/donate
+Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 5.0

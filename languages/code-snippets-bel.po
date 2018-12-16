@@ -75,8 +75,8 @@ msgid "Show network-wide snippets in the snippets table on subsites"
 msgstr "Паказваць сеткавыя сніппеты ў табліцы сніпетаў на падсайтах"
 
 #. Author URI of the plugin/theme
-msgid "https://bungeshea.com"
-msgstr "https://bungeshea.com"
+msgid "https://sheabunge.com"
+msgstr "https://sheabunge.com"
 
 #. Author of the plugin/theme
 msgid "Shea Bunge"

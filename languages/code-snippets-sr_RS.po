@@ -29,8 +29,8 @@ msgid "Shea Bunge"
 msgstr "Shea Bunge"
 
 #: code-snippets.php:0
-msgid "http://bungeshea.com"
-msgstr "http://bungeshea.com"
+msgid "https://sheabunge.com"
+msgstr "https://sheabunge.com"
 
 #: code-snippets.php:577 code-snippets.php:578 code-snippets.php:588
 #: includes/admin/manage.php:36
@@ -465,8 +465,8 @@ msgstr ""
 "sajtu aktivira isečak sa greškom.  "
 
 #: code-snippets.php:0
-msgid "http://bungeshea.com/plugins/code-snippets"
-msgstr "http://bungeshea.com/plugins/code-snippets"
+msgid "https://sheabunge.com/plugins/code-snippets"
+msgstr "https://sheabunge.com/plugins/code-snippets"
 
 #: code-snippets.php:263
 msgid "Import snippets from a <strong>Code Snippets</strong> export file"
@@ -481,10 +481,10 @@ msgstr[1] ""
 #: includes/help/import.php:29 includes/help/manage.php:30
 #: includes/help/single.php:34
 msgid ""
-"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Project "
+"<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank\">Project "
 "Website</a>"
 msgstr ""
-"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank\">Project "
+"<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank\">Project "
 "Website</a>"
 
 #: includes/help/manage.php:15

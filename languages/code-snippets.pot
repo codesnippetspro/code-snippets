@@ -31,7 +31,7 @@ msgid "Shea Bunge"
 msgstr ""
 
 #: code-snippets.php:20
-msgid "https://bungeshea.com"
+msgid "https://sheabunge.com"
 msgstr ""
 
 #: php/class-admin.php:68, php/class-admin.php:129, php/admin-menus/class-manage-menu.php:23, php/admin-menus/class-manage-menu.php:52, php/admin-menus/class-manage-menu.php:91, php/views/manage.php:21

@@ -402,9 +402,9 @@ msgstr "Snippets"
 
 #: php/class-contextual-help.php:87
 #, fuzzy
-#| msgid "http://bungeshea.com"
+#| msgid "https://sheabunge.com"
 msgid "http://wp-snippets.com"
-msgstr "http://bungeshea.com"
+msgstr "https://sheabunge.com"
 
 #: php/class-contextual-help.php:88
 #, fuzzy
@@ -414,9 +414,9 @@ msgstr "Snippets"
 
 #: php/class-contextual-help.php:88
 #, fuzzy
-#| msgid "http://bungeshea.com"
+#| msgid "https://sheabunge.com"
 msgid "http://wpsnipp.com"
-msgstr "http://bungeshea.com"
+msgstr "https://sheabunge.com"
 
 #: php/class-contextual-help.php:89
 msgid "Cats Who Code"
@@ -424,9 +424,9 @@ msgstr "Cats Siapa Kode "
 
 #: php/class-contextual-help.php:89
 #, fuzzy
-#| msgid "http://bungeshea.com/plugins/code-snippets"
+#| msgid "https://sheabunge.com/plugins/code-snippets"
 msgid "http://www.catswhocode.com/blog/snippets"
-msgstr "http://bungeshea.com/plugins/code-snippets"
+msgstr "https://sheabunge.com/plugins/code-snippets"
 
 #: php/class-contextual-help.php:90
 msgid "WP Function Me"
@@ -1046,10 +1046,10 @@ msgstr "Cerca Snippets Installati"
 #~ "\t\t\t<li><a href=\"http://www.wpfunction.me\">WP Function Me</a></li>"
 
 #~ msgid ""
-#~ "<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+#~ "<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank"
 #~ "\">Project Website</a>"
 #~ msgstr ""
-#~ "<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+#~ "<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank"
 #~ "\">Project Website</a>"
 
 #~ msgid "1.7"

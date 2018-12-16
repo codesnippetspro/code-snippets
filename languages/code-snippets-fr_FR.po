@@ -5,7 +5,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-05-11 08:58+1000\n"
 "PO-Revision-Date: 2015-05-11 10:08+1000\n"
-"Last-Translator: Shea Bunge <info@bungeshea.com>"
+"Last-Translator: Shea Bunge <shea@sheabunge.com>"
 "Language-Team: oWEB <oweb@office-web.net>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -218,10 +218,10 @@ msgstr ""
 #: includes/edit/admin-help.php:46 includes/import/admin-help.php:40
 #: includes/manage/admin-help.php:40
 msgid ""
-"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+"<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank"
 "\">Project Website</a>"
 msgstr ""
-"<a href=\"http://bungeshea.com/plugins/code-snippets/\" target=\"_blank"
+"<a href=\"https://sheabunge.com/plugins/code-snippets/\" target=\"_blank"
 "\">Site du Projet</a>"
 
 #: includes/edit/admin-messages.php:14
@@ -785,8 +785,8 @@ msgstr ""
 #~ msgid "Shea Bunge"
 #~ msgstr "Shea Bunge"
 
-#~ msgid "http://bungeshea.com"
-#~ msgstr "http://bungeshea.com"
+#~ msgid "https://sheabunge.com"
+#~ msgstr "https://sheabunge.com"
 
 #~ msgctxt "snippet"
 #~ msgid "Add New"
@@ -798,8 +798,8 @@ msgstr ""
 #~ msgid "(Optional)"
 #~ msgstr "(Option)"
 
-#~ msgid "http://bungeshea.com/plugins/code-snippets"
-#~ msgstr "http://bungeshea.com/plugins/code-snippets"
+#~ msgid "https://sheabunge.com/plugins/code-snippets"
+#~ msgstr "https://sheabunge.com/plugins/code-snippets"
 
 #~ msgid "Import snippets from a <strong>Code Snippets</strong> export file"
 #~ msgstr ""
