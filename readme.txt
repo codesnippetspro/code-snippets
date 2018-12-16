@@ -21,9 +21,9 @@ Code Snippets changes that by providing a GUI interface for adding snippets and 
 
 Code Snippets provides graphical interface, similar to the Plugins menu, for managing snippets. Snippets can can be activated and deactivated, just like plugins. The snippet editor includes fields for a name, a visual editor-enabled description, tags to allow you to categorize snippets, and a full-featured code editor. Snippets can be exported for transfer to another side, either in JSON for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
 
-If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](http://wordpress.org/support/plugin/code-snippets), or [join the community on Facebook](https://facebook.com/groups/codesnippetsplugin).
+If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](https://wordpress.org/support/plugin/code-snippets), or [join the community on Facebook](https://facebook.com/groups/codesnippetsplugin).
 
-If you like this plugin, or it is useful to you in some way, please consider reviewing it on [WordPress.org](http://wordpress.org/support/view/plugin-reviews/code-snippets).
+If you like this plugin, or it is useful to you in some way, please consider reviewing it on [WordPress.org](https://wordpress.org/support/view/plugin-reviews/code-snippets).
 
 If you'd like to contribute to the plugin's code or translate it into another language, you can [fork the plugin on GitHub](https://github.com/sheabunge/code-snippets).
 
@@ -69,9 +69,6 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 = How can I insert my snippet into the post text editor? =
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
-= Do I need to include the &lt;?php, &lt;? or ?&gt; tags in my snippet? =
-No, just copy all the content inside those tags. If you accidentally forget (or just like being lazy), the tags will be stripped from the beginning and end of the snippet when you save it. You can, however, use those tags *inside* your snippets to start and end HTML sections
-
 = Help! I just activated a snippet, and my whole site broke! =
 You can try activating 'safe mode'. All snippets will not execute while safe mode is active, allowing you to access your site and deactivate the snippet that is causing the error. To activate safe mode, add the following line to your wp-config.php file, just before the line that reads `/* That's all, stop editing! Happy blogging. */`:
 
@@ -79,7 +76,18 @@ You can try activating 'safe mode'. All snippets will not execute while safe mod
 
  To turn safe mode off, either [comment out](http://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
 
- You can also activate safe mode on a per-page basis by appending `?snippets-safe-mode=true` to the URL.
+You can also activate safe mode on a per-page basis by appending `?snippets-safe-mode=true` to the URL.
+
+= Can I search and replace text inside the code editor? =
+The code editor supports several search and replace commands, accessible through keyboard shortcuts:
+
+- `Ctrl-F` / `Cmd-F` – Begin searching
+- `Ctrl-G` / `Cmd-G` – Find the next instance of the search term
+- `Shift-Ctrl-G` / `Shift-Cmd-G` – Find the previous instance of the search term
+- `Shift-Ctrl-F` / `Cmd-Option-F` – Replace text
+- `Shift-Ctrl-R` / `Shift-Cmd-Option-F` – Replace all instances of text
+– `Alt-F` – Persistent search (dialog remains open, `Enter` to find next, `Shift-Enter` to find previous)
+- `Alt-G` – Jump to line
 
 = Is there a way to add a snippet but not run it right away? =
 Yes. Just add it but do not activate it yet.
@@ -88,7 +96,7 @@ Yes. Just add it but do not activate it yet.
 No, the snippets are stored in the WordPress database and are independent of the theme and unaffected by WordPress upgrades.
 
 = Can the plugin be completely uninstalled? =
-Yes, when you delete Code Snippets using the 'Plugins' menu in WordPress it will clean up the database table and a few other bits of data. Be careful not to remove Code Snippets by deleting it from the Plugins menu unless you want this to happen.
+If you enable the 'Complete Uninstall' option on the plugin settings page, Code Snippets will clean up all of its data when deleted through the WordPress 'Plugins' menu. This includes all of the stored snippets. If you would like to preserve the snippets, ensure they are exported first.
 
 = Can I copy any snippets I've created to another WordPress site? =
 Yes! You can individually export a single snippet using the link below the snippet name on the 'Manage Snippets' page or bulk export multiple snippets using the 'Bulk Actions' feature. Snippets can later be imported using the 'Import Snippets' page by uploading the export file.
