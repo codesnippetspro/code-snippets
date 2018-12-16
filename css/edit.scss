@@ -76,18 +76,10 @@ ul.tagit {
 	}
 }
 
-
-/*rtl:begin:ignore*/
-
-/* Alter the CodeMirror editor to support autoresizing */
-
 .CodeMirror {
 	width: 100%;
-	height: auto !important;
 }
 
 .CodeMirror-sizer {
 	min-height: 300px !important;
 }
-
-/*rtl:end:ignore*/
