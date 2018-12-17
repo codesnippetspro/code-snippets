@@ -9,16 +9,9 @@
 
 /**
  * Load the CSS and JavaScript for the editor preview field
- *
- * @param string $hook The current page hook
  */
-function code_snippets_editor_settings_preview_assets( $hook ) {
+function code_snippets_editor_settings_preview_assets() {
 	$plugin = code_snippets();
-
-	// Only load on the settings page
-	if ( $plugin->get_menu_hook( 'settings' ) !== $hook ) {
-		return;
-	}
 
 	// Enqueue scripts for the editor preview
 	code_snippets_enqueue_editor();
@@ -64,8 +57,6 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 
 	wp_add_inline_script( 'code-snippets-settings-menu', $inline_script, 'before' );
 }
-
-add_action( 'admin_enqueue_scripts', 'code_snippets_editor_settings_preview_assets' );
 
 /**
  * Render a theme select field

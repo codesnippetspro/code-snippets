@@ -28,19 +28,6 @@ function code_snippets_get_menu_url( $menu = '', $context = 'self' ) {
 }
 
 /**
- * Fetch the admin menu hook for a snippets menu
- *
- * @deprecated Use code_snippets()->get_menu_hook() instead
- *
- * @param string $menu The menu to retrieve the hook for
- *
- * @return string The menu hook
- */
-function code_snippets_get_menu_hook( $menu = '' ) {
-	return code_snippets()->get_menu_hook( $menu );
-}
-
-/**
  * Fetch the admin menu slug for a snippets menu
  *
  * @deprecated Use code_snippets()->get_snippet_edit_url() instead

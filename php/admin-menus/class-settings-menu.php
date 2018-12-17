@@ -61,6 +61,8 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 			plugins_url( 'css/min/settings.css', $plugin->file ),
 			array(), $plugin->version
 		);
+
+		code_snippets_editor_settings_preview_assets();
 	}
 
 	/**

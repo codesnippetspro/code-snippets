@@ -155,19 +155,6 @@ class Code_Snippets {
 	}
 
 	/**
-	 * Fetch the admin menu hook for a snippets menu
-	 *
-	 * @param  string $menu The menu to retrieve the hook for
-	 *
-	 * @return string       The menu's hook
-	 */
-	public function get_menu_hook( $menu = '' ) {
-		$slug = $this->get_menu_slug( $menu );
-
-		return get_plugin_page_hookname( $slug, 'snippets' );
-	}
-
-	/**
 	 * Fetch the admin menu slug for a snippets menu
 	 *
 	 * @param int    $snippet_id The snippet
