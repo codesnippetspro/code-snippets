@@ -274,15 +274,15 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:337, php/admin-menus/class-edit-menu.php:307
+#: php/class-list-table.php:337, php/admin-menus/class-edit-menu.php:309
 msgid "Description"
 msgstr ""
 
-#: php/class-list-table.php:338, php/admin-menus/class-edit-menu.php:340
+#: php/class-list-table.php:338, php/admin-menus/class-edit-menu.php:342
 msgid "Tags"
 msgstr ""
 
-#: php/class-list-table.php:339, php/admin-menus/class-edit-menu.php:368
+#: php/class-list-table.php:339, php/admin-menus/class-edit-menu.php:361
 msgid "Priority"
 msgstr ""
 
@@ -450,76 +450,76 @@ msgstr ""
 msgid "If you prefer, you can close this page and discard the changes you just made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:345
+#: php/admin-menus/class-edit-menu.php:347
 msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:367
+#: php/admin-menus/class-edit-menu.php:360
 msgid "Snippets with a lower priority number will run before those with a higher number."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:385
+#: php/admin-menus/class-edit-menu.php:378
 msgid "Run snippet everywhere"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:386
+#: php/admin-menus/class-edit-menu.php:379
 msgid "Only run in administration area"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:387
+#: php/admin-menus/class-edit-menu.php:380
 msgid "Only run on site front-end"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:388
+#: php/admin-menus/class-edit-menu.php:381
 msgid "Only run once"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:391
+#: php/admin-menus/class-edit-menu.php:384
 msgid "Scope"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:412
+#: php/admin-menus/class-edit-menu.php:405
 msgid "Sharing Settings"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:416
+#: php/admin-menus/class-edit-menu.php:409
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 
 #. translators: %d: line of file where error originated
-#: php/admin-menus/class-edit-menu.php:477
+#: php/admin-menus/class-edit-menu.php:470
 msgid "The snippet has been deactivated due to an error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:482
+#: php/admin-menus/class-edit-menu.php:475
 msgid "The snippet has been deactivated due to an error in the code."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:489
+#: php/admin-menus/class-edit-menu.php:482
 msgid "An error occurred when saving the snippet."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:495
+#: php/admin-menus/class-edit-menu.php:488
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:496
+#: php/admin-menus/class-edit-menu.php:489
 msgid "Snippet <strong>updated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:497
+#: php/admin-menus/class-edit-menu.php:490
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:498
+#: php/admin-menus/class-edit-menu.php:491
 msgid "Snippet <strong>added</strong> and <strong>executed</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:499
+#: php/admin-menus/class-edit-menu.php:492
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:500
+#: php/admin-menus/class-edit-menu.php:493
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
