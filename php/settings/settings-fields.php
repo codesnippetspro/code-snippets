@@ -146,7 +146,7 @@ function code_snippets_get_settings_fields() {
 			'name'       => __( 'Indent Unit', 'code-snippets' ),
 			'type'       => 'number',
 			'desc'       => __( 'How many spaces a block should be indented.', 'code-snippets' ),
-			'default'    => 2,
+			'default'    => 4,
 			'codemirror' => 'indentUnit',
 			'min'        => 0,
 		),

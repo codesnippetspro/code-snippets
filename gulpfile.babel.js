@@ -85,7 +85,7 @@ gulp.task('test-js', () => {
 			'quotes': ['error', 'single'],
 			'linebreak-style': ['error', 'unix'],
 			'eqeqeq': ['warn', 'always'],
-			'indent': ['error', 'tab']
+			'indent': ['error', 'tab', {'SwitchCase': 1}]
 		}
 	};
 
@@ -117,6 +117,7 @@ gulp.task('js', gulp.series('test-js', gulp.parallel(
 	() => bundlejs('js/editor.js'),
 	() => bundlejs('js/manage.js'),
 	() => bundlejs('js/edit.js'),
+	() => bundlejs('js/settings.js'),
 	() => bundlejs('js/front-end.js', {
 		plugins: [['prismjs', {languages: ['php', 'php-extras'], plugins: ['line-highlight', 'line-numbers']}]]
 	})

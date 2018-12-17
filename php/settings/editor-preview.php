@@ -13,34 +13,62 @@
  * @param string $hook The current page hook
  */
 function code_snippets_editor_settings_preview_assets( $hook ) {
+	$plugin = code_snippets();
 
-	/* Only load on the settings page */
-	if ( code_snippets()->get_menu_hook( 'settings' ) !== $hook ) {
+	// only load on the settings page
+	if ( $plugin->get_menu_hook( 'settings' ) !== $hook ) {
 		return;
 	}
 
-	/* Enqueue scripts for the editor preview */
+	// enqueue scripts for the editor preview
 	code_snippets_enqueue_editor();
 
-	/* Enqueue ALL themes */
+	// enqueue all editor themes
 	$themes = code_snippets_get_available_themes();
 
 	foreach ( $themes as $theme ) {
 
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
-			plugins_url( "css/min/editor-themes/$theme.css", CODE_SNIPPETS_FILE ),
-			array( 'code-snippets-editor' )
+			plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
+			array( 'code-snippets-editor' ), $plugin->version
 		);
 	}
 
-	wp_enqueue_script( 'jquery' );
+	// enqueue the menu scripts
+	wp_enqueue_script(
+		'code-snippets-settings-menu',
+		plugins_url( 'js/min/settings.js', $plugin->file ),
+		array( 'code-snippets-editor' ), $plugin->version, true
+	);
+
+	$setting_fields = code_snippets_get_settings_fields();
+	$editor_fields = array();
+
+	foreach ( $setting_fields['editor'] as $name => $field ) {
+		if ( empty( $field['codemirror'] ) ) {
+			continue;
+		}
+
+		$editor_fields[] = array(
+			'name' => $name,
+			'type' => $field['type'],
+			'codemirror' => addslashes( $field['codemirror'] ),
+		);
+	}
+
+	$inline_script = 'var code_snippets_editor_atts = ' . code_snippets_get_editor_atts( array(), true ) . ';';
+	$inline_script .= "\n" . 'var code_snippets_editor_settings = ' . json_encode( $editor_fields ) . ';';
+
+	wp_add_inline_script( 'code-snippets-settings-menu', $inline_script, 'before' );
 }
 
 add_action( 'admin_enqueue_scripts', 'code_snippets_editor_settings_preview_assets' );
 
 /**
  * Render a theme select field
+ *
+ * @param array $atts
  */
 function code_snippets_codemirror_theme_select_field( $atts ) {
 
@@ -49,21 +77,14 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 	echo '<select name="code_snippets_settings[editor][theme]">';
 	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>Default</option>';
 
-	/* Fetch all theme CSS files */
-	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/editor-themes/';
-	$themes = glob( $themes_dir . '*.css' );
+	// print a dropdown entry for each theme
+	foreach ( code_snippets_get_available_themes() as $theme ) {
 
-	/* Print dropdown entry for each theme */
-	foreach ( $themes as $theme ) {
-
-		/* Extract theme name from path */
-		$theme = str_replace( $themes_dir, '', $theme );
-		$theme = str_replace( '.css', '', $theme );
-
-		/* Skip mobile themes */
+		// skip mobile themes
 		if ( 'ambiance-mobile' === $theme ) {
 			continue;
 		}
+
 		printf(
 			'<option value="%s"%s>%s</option>',
 			$theme,
@@ -79,81 +100,5 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
  * Render the editor preview setting
  */
 function code_snippets_settings_editor_preview() {
-
-	$example_content = 'add_filter( \'admin_footer_text\', function ( $text ) {
-
-	$site_name = get_bloginfo( \'name\' );
-
-	$text = "Thank you for visiting $site_name.";
-
-	return $text;
-} );
-';
-
-	$atts = array( 'value' => $example_content );
-
-	?>
-
-	<div style="max-width: 800px" id="code_snippets_editor_preview"></div>
-
-	<script>
-		(function () {
-			'use strict';
-
-			var CodeMirror = window.Code_Snippets_CodeMirror;
-
-			// Load CodeMirror
-			var atts = [];
-			atts = <?php echo code_snippets_get_editor_atts( $atts, true ); ?>;
-
-			var editor = CodeMirror(document.getElementById('code_snippets_editor_preview'), atts);
-
-			// Dynamically change editor settings
-			<?php
-
-			/* Retrieve editor settings */
-			$fields = code_snippets_get_settings_fields();
-			$fields = $fields['editor'];
-
-			foreach ( $fields as $setting => $field ) {
-
-				/* Only output settings which have a CodeMirror attribute */
-				if ( empty( $field['codemirror'] ) ) {
-					continue;
-				}
-
-				$att_name = addslashes( $field['codemirror'] );
-
-				switch ( $field['type'] ) {
-
-					case 'codemirror_theme_select':
-						?>
-			document.querySelector('select[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
-				editor.setOption('<?php echo $att_name; ?>', this.options[this.selectedIndex].value);
-			};
-
-					<?php break;
-
-					case 'checkbox':
-						?>
-			document.querySelector('input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
-				editor.setOption('<?php echo $att_name; ?>', this.checked);
-			};
-
-					<?php break;
-					case 'number':
-						?>
-			document.querySelector('input[name="code_snippets_settings[editor][<?php echo $setting; ?>]"]').onchange = function () {
-				editor.setOption('<?php echo $att_name; ?>', this.value);
-			};
-
-					<?php break;
-					}
-				}
-
-			?>
-		}());
-	</script>
-
-	<?php
+	echo '<div id="code_snippets_editor_preview"></div>';
 }
