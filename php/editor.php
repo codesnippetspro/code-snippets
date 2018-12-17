@@ -9,12 +9,8 @@
  * @return array|string Array if $json_encode is false, JSON string if it is true
  */
 function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
-	$settings = code_snippets_get_settings();
-	$settings = $settings['editor'];
 
-	$fields = code_snippets_get_settings_fields();
-	$fields = $fields['editor'];
-
+	// default attributes for the CodeMirror editor
 	$default_atts = array(
 		'mode' => 'text/x-php',
 		'matchBrackets' => true,
@@ -24,23 +20,31 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 		'viewportMargin' => 'Infinity'
 	);
 
-	foreach ( $fields as $field_id => $field ) {
-		$default_atts[ $field['codemirror'] ] = $settings[ $field_id ];
+	// add relevant saved setting values to the default attributes
+	$settings = code_snippets_get_settings();
+	$fields = code_snippets_get_settings_fields();
+
+	foreach ( $fields['editor'] as $field_id => $field ) {
+		// the 'codemirror' setting field specifies the name of the attribute
+		$default_atts[ $field['codemirror'] ] = $settings['editor'][ $field_id ];
 	}
 
-	$atts = wp_parse_args( $override_atts, $default_atts );
+	// merge the default attributes with the ones passed into the function
+	$atts = wp_parse_args( $default_atts, $override_atts );
 	$atts = apply_filters( 'code_snippets_codemirror_atts', $atts );
 
+	// encode the attributes for display if requested
 	if ( $json_encode ) {
 
-		/* JSON_UNESCAPED_SLASHES was added in PHP 5.4 */
+		// JSON_UNESCAPED_SLASHES was added in PHP 5.4
 		if ( version_compare( phpversion(), '5.4.0', '>=' ) ) {
 			$atts = json_encode( $atts, JSON_UNESCAPED_SLASHES );
 		} else {
-			/* Use a fallback for < 5.4 */
+			// Use a fallback for < 5.4
 			$atts = str_replace( '\\/', '/', json_encode( $atts ) );
 		}
 
+		// Infinity is a constant and needs to be unquoted
 		$atts = str_replace( '"Infinity"', 'Infinity', $atts );
 	}
 
@@ -48,7 +52,7 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 }
 
 /**
- * Registers and loads the CodeMirror library
+ * Register and load the CodeMirror library
  *
  * @uses wp_enqueue_style() to add the stylesheets to the queue
  * @uses wp_enqueue_script() to add the scripts to the queue

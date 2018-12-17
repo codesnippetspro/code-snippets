@@ -17,10 +17,7 @@ window.code_snippets_editor = (function (CodeMirror, editor_atts) {
 	let matches = window.location.href.match(/[?&]cursor_line=(\d+)&cursor_ch=(\d+)/);
 	if (matches) {
 		editor.focus();
-		editor.setCursor({
-			line: matches[1],
-			ch: matches[2]
-		});
+		editor.setCursor({line: matches[1], ch: matches[2]});
 	}
 
 	// send the current cursor position to the next page
