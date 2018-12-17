@@ -1,7 +1,6 @@
 /* global ajaxurl, pagenow */
 'use strict';
 (function () {
-
 	const nonce = document.getElementById('code_snippets_ajax_nonce').value;
 	const network_admin = ('-network' === pagenow.substring(pagenow.length - '-network'.length));
 
@@ -40,7 +39,7 @@
 		request.open('POST', ajaxurl, true);
 		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
-		request.onload = function () {
+		request.onload = () => {
 			if (request.status < 200 || request.status >= 400) return;
 			console.log(request.responseText);
 
@@ -63,7 +62,7 @@
 		update_snippet('priority', row, snippet);
 	}
 
-	foreach(document.getElementsByClassName('snippet-priority'), function (field, i) {
+	foreach(document.getElementsByClassName('snippet-priority'), (field, i) => {
 		field.addEventListener('input', update_snippet_priority);
 		field.disabled = false;
 	});
@@ -94,11 +93,9 @@
 		e.preventDefault();
 
 		const activating = 'inactive-snippet' === match[0];
-		const snippet = {
-			'active': activating
-		};
+		const snippet = {'active': activating};
 
-		update_snippet('active', row, snippet, function (request) {
+		update_snippet('active', row, snippet, (request) => {
 
 			row.className = (activating) ?
 				row.className.replace(/\binactive-snippet\b/, 'active-snippet') :
@@ -110,7 +107,7 @@
 		});
 	}
 
-	foreach(document.getElementsByClassName('snippet-activation-switch'), function (link, i) {
+	foreach(document.getElementsByClassName('snippet-activation-switch'), (link, i) => {
 		link.addEventListener('click', toggle_snippet_active);
 	});
 
