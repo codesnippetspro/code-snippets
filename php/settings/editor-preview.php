@@ -15,15 +15,15 @@
 function code_snippets_editor_settings_preview_assets( $hook ) {
 	$plugin = code_snippets();
 
-	// only load on the settings page
+	// Only load on the settings page
 	if ( $plugin->get_menu_hook( 'settings' ) !== $hook ) {
 		return;
 	}
 
-	// enqueue scripts for the editor preview
+	// Enqueue scripts for the editor preview
 	code_snippets_enqueue_editor();
 
-	// enqueue all editor themes
+	// Enqueue all editor themes
 	$themes = code_snippets_get_available_themes();
 
 	foreach ( $themes as $theme ) {
@@ -35,13 +35,14 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 		);
 	}
 
-	// enqueue the menu scripts
+	// Enqueue the menu scripts
 	wp_enqueue_script(
 		'code-snippets-settings-menu',
 		plugins_url( 'js/min/settings.js', $plugin->file ),
 		array( 'code-snippets-editor' ), $plugin->version, true
 	);
 
+	// Extract the CodeMirror-specific editor settings
 	$setting_fields = code_snippets_get_settings_fields();
 	$editor_fields = array();
 
@@ -57,8 +58,9 @@ function code_snippets_editor_settings_preview_assets( $hook ) {
 		);
 	}
 
+	// Pass the saved options to the external JavaScript file
 	$inline_script = 'var code_snippets_editor_atts = ' . code_snippets_get_editor_atts( array(), true ) . ';';
-	$inline_script .= "\n" . 'var code_snippets_editor_settings = ' . json_encode( $editor_fields ) . ';';
+	$inline_script .= "\n" . 'var code_snippets_editor_settings = ' . wp_json_encode( $editor_fields ) . ';';
 
 	wp_add_inline_script( 'code-snippets-settings-menu', $inline_script, 'before' );
 }
