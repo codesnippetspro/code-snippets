@@ -139,7 +139,7 @@ class Code_Snippets_Contextual_Help {
 		$this->screen->add_help_tab( array(
 			'id'      => 'export',
 			'title'   => __( 'Exporting', 'code-snippets' ),
-			/* translators: %s: URL to Import Snippets admin menu */
+			/* translators: %s: URL to Manage Snippets admin menu */
 			'content' => '<p>' . sprintf( __( 'You can save your snippets to a Code Snippets (.xml) export file using the <a href="%s">Manage Snippets</a> page.', 'code-snippets' ), $manage_url ) . '</p>',
 		) );
 	}

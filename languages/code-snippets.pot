@@ -216,7 +216,7 @@ msgstr ""
 msgid "Exporting"
 msgstr ""
 
-#. translators: %s: URL to Import Snippets admin menu
+#. translators: %s: URL to Manage Snippets admin menu
 #: php/class-contextual-help.php:143
 msgid "You can save your snippets to a Code Snippets (.xml) export file using the <a href=\"%s\">Manage Snippets</a> page."
 msgstr ""
