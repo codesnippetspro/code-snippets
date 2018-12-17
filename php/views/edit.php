@@ -38,6 +38,8 @@ if ( $edit_id ) {
 			esc_html_e( 'Add New Snippet', 'code-snippets' );
 		}
 
+		$admin = code_snippets()->admin;
+
 		if ( code_snippets()->admin->is_compact_menu() ) {
 
 			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',

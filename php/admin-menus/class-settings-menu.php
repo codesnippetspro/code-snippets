@@ -71,7 +71,27 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Settings', 'code-snippets' ); ?></h1>
+			<h1><?php esc_html_e( 'Settings', 'code-snippets' );
+
+				if ( code_snippets()->admin->is_compact_menu() ) {
+
+					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+						esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
+						code_snippets()->get_menu_url()
+					);
+
+					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+						esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
+						code_snippets()->get_menu_url( 'add' )
+					);
+
+					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+						esc_html_x( 'Import', 'snippets', 'code-snippets' ),
+						code_snippets()->get_menu_url( 'import' )
+					);
+				}
+
+			?></h1>
 
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 

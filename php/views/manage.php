@@ -30,7 +30,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			code_snippets()->get_menu_url( 'import' )
 		);
 
-		if ( code_snippets()->admin->is_compact_menu() && isset( $admin->menus['settings'] ) ) {
+		$admin = code_snippets()->admin;
+
+		if ( $admin->is_compact_menu() && isset( $admin->menus['settings'] ) ) {
 			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
 				esc_html_x( 'Settings', 'snippets', 'code-snippets' ),
 				code_snippets()->get_menu_url( 'settings' )
