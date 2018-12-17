@@ -129,6 +129,8 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Improved: Integration between plugin and the CodeMirror library, to prevent collisions
 * Improved: Added additional styles to editor settings preview
 * Added: PHP linter to code editor
+* Improved: Use external scripts instead of inline scripts
+* Fixed: Missing functionality for 'Auto Close Brackets' and 'Highlight Selection Matches' settings
 
 = 2.12.1 (15 Nov 2018) =
 * Improved: CodeMirror updated to version 5.41.0
