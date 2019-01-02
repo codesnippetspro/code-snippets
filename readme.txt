@@ -76,7 +76,7 @@ You can try activating 'safe mode'. All snippets will not execute while safe mod
 
  To turn safe mode off, either [comment out](http://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
 
-You can also activate safe mode on a per-page basis by appending `?snippets-safe-mode=true` to the URL.
+You can also activate safe mode on a per-page basis by appending `?snippets-safe-mode=true` to the URL – this will only work if the current user is logged in as an administrator.
 
 = Can I search and replace text inside the code editor? =
 The code editor supports several search and replace commands, accessible through keyboard shortcuts:
@@ -86,7 +86,7 @@ The code editor supports several search and replace commands, accessible through
 - `Shift-Ctrl-G` / `Shift-Cmd-G` – Find the previous instance of the search term
 - `Shift-Ctrl-F` / `Cmd-Option-F` – Replace text
 - `Shift-Ctrl-R` / `Shift-Cmd-Option-F` – Replace all instances of text
-– `Alt-F` – Persistent search (dialog remains open, `Enter` to find next, `Shift-Enter` to find previous)
+- `Alt-F` – Persistent search (dialog remains open, `Enter` to find next, `Shift-Enter` to find previous)
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.
