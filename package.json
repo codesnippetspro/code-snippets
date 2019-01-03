@@ -30,7 +30,7 @@
         "url": "https://github.com/sheabunge/code-snippets/issues"
     },
     "dependencies": {
-        "codemirror": "^5.42.0",
+        "codemirror": "^5.42.2",
         "npm-check-updates": "^2.15.0",
         "php-parser": "^3.0.0-prerelease.7",
         "prismjs": "^1.15.0",
