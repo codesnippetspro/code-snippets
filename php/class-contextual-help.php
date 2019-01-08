@@ -12,6 +12,11 @@ class Code_Snippets_Contextual_Help {
 	public $screen;
 
 	/**
+	 * @var string
+	 */
+	public $screen_name;
+
+	/**
 	 * @param string $screen_name
 	 */
 	function __construct( $screen_name ) {
@@ -40,9 +45,17 @@ class Code_Snippets_Contextual_Help {
 			'<p><strong>' . __( 'For more information:', 'code-snippets' ) . '</strong></p>' .
 			'<p><a href="https://wordpress.org/plugins/code-snippets">' . __( 'About Plugin', 'code-snippets' ) . '</a></p>' .
 			'<p><a href="https://wordpress.org/plugins/code-snippets/faq">' . __( 'FAQ', 'code-snippets' ) . '</a></p>' .
-			'<p><a href="https://wordpress.org/support/plugin/code-snippets">' . __( 'Support Forums', 'code-snippets' ) . '</a></p>' .
-			'<p><a href="https://sheabunge.com/plugins/code-snippets/">' . __( 'Plugin Website', 'code-snippets' ) . '</a></p>'
+			'<p><a href="https://wordpress.org/support/plugin/code-snippets">' . __( 'Support Forum', 'code-snippets' ) . '</a></p>' .
+			'<p><a href="https://sheabunge.com/plugins/code-snippets">' . __( 'Plugin Website', 'code-snippets' ) . '</a></p>'
 		);
+	}
+
+	/**
+	 * Reusable introduction text
+	 * @return string
+	 */
+	private function get_intro_text() {
+		return __( 'Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server.', 'code-snippets' );
 	}
 
 	/**
@@ -53,7 +66,8 @@ class Code_Snippets_Contextual_Help {
 		$this->screen->add_help_tab( array(
 			'id'      => 'overview',
 			'title'   => __( 'Overview', 'code-snippets' ),
-			'content' => '<p>' . __( 'Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can manage your existing snippets and perform tasks on them such as activating, deactivating, deleting and exporting.', 'code-snippets' ) . '</p>',
+			'content' => '<p>' . $this->get_intro_text() .
+			             __( ' Here you can manage your existing snippets and perform tasks on them such as activating, deactivating, deleting and exporting.', 'code-snippets' ) . '</p>',
 		) );
 
 		$this->screen->add_help_tab( array(
@@ -62,15 +76,6 @@ class Code_Snippets_Contextual_Help {
 			'content' =>
 				'<p>' . __( 'Be sure to check your snippets for errors before you activate them, as a faulty snippet could bring your whole blog down. If your site starts doing strange things, deactivate all your snippets and activate them one at a time.', 'code-snippets' ) . '</p>' .
 				'<p>' . __( "If something goes wrong with a snippet and you can't use WordPress, you can cause all snippets to stop executing by adding <code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-config.php</code> file. After you have deactivated the offending snippet, you can turn off safe mode by removing this line or replacing <strong>true</strong> with <strong>false</strong>.", 'code-snippets' ) . '</p>',
-		) );
-
-		$this->screen->add_help_tab( array(
-			'id'      => 'uninstall',
-			'title'   => __( 'Uninstall', 'code-snippets' ),
-			'content' =>
-				/* translators: 1: snippets table name, 2: Code Snippets plugin directory */
-				'<p>' . sprintf( __( 'When you delete Code Snippets through the Plugins menu in WordPress it will clear up the <code>%1$s</code> table and a few other bits of data stored in the database. If you want to keep this data (ie: you are only temporally uninstalling Code Snippets) then remove the <code>%2$s</code> folder using FTP.', 'code-snippets' ), code_snippets()->db->get_table_name(), dirname( CODE_SNIPPETS_FILE ) ) .
-				'<p>' . __( "Even if you're sure that you don't want to use Code Snippets ever again on this WordPress installation, you may want to use the export feature to back up your snippets.", 'code-snippets' ) . '</p>',
 		) );
 	}
 
@@ -82,14 +87,15 @@ class Code_Snippets_Contextual_Help {
 		$this->screen->add_help_tab( array(
 			'id'      => 'overview',
 			'title'   => __( 'Overview', 'code-snippets' ),
-			'content' => '<p>' . __( 'Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can add a new snippet, or edit an existing one.', 'code-snippets' ) . '</p>',
+			'content' => '<p>' . $this->get_intro_text() . __( ' Here you can add a new snippet, or edit an existing one.', 'code-snippets' ) . '</p>',
 		) );
 
 		$snippet_host_links = array(
-			__( 'WP-Snippets', 'code-snippets' )    => __( 'http://wp-snippets.com', 'code-snippets' ),
-			__( 'WP Snipp', 'code-snippets' )       => __( 'http://wpsnipp.com', 'code-snippets' ),
-			__( 'Cats Who Code', 'code-snippets' )  => __( 'http://www.catswhocode.com/blog/snippets', 'code-snippets' ),
-			__( 'WP Function Me', 'code-snippets' ) => __( 'http://www.wpfunction.me', 'code-snippets' ),
+			__( 'WP Function Me', 'code-snippets' ) => __( 'https://www.wpfunction.me', 'code-snippets' ),
+			__( 'CSS-Tricks', 'code-snippets' ) => __( 'https://css-tricks.com/snippets/wordpress/', 'code-snippets' ),
+			__( 'WordPress Stack Exchange', 'code-snippets' ) => __( 'https://wordpress.stackexchange.com/', 'code-snippets' ),
+			__( 'WP Beginner', 'code-snippets' ) => __( 'https://www.wpbeginner.com/category/wp-tutorials/', 'code-snippets' ),
+			__( 'GenerateWP', 'code-snippets' ) => __( 'https://generatewp.com', 'code-snippets' ),
 		);
 
 		$snippet_host_list = '';
@@ -124,23 +130,24 @@ class Code_Snippets_Contextual_Help {
 		$this->screen->add_help_tab( array(
 			'id'      => 'overview',
 			'title'   => __( 'Overview', 'code-snippets' ),
-			'content' => '<p>' . __( 'Snippets are similar to plugins - they both extend and expand the functionality of WordPress. Snippets are more light-weight, just a few lines of code, and do not put as much load on your server. Here you can load snippets from a Code Snippets (.xml) import file into the database with your existing snippets.', 'code-snippets' ) . '</p>',
+			'content' => '<p>' . $this->get_intro_text() .
+			             __( ' Here you can load snippets from a code snippets export file into the database alongside existing snippets.', 'code-snippets' ) . '</p>',
 		) );
 
 		$this->screen->add_help_tab( array(
 			'id'      => 'import',
 			'title'   => __( 'Importing', 'code-snippets' ),
 			'content' =>
-				'<p>' . __( 'You can load your snippets from a code snippets (.xml) export file using this page.', 'code-snippets' ) .
+				'<p>' . __( 'You can load your snippets from a code snippets export file using this page.', 'code-snippets' ) .
 				/* translators: %s: URL to Snippets admin menu */
-				sprintf( __( 'Snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href="%s">All Snippets</a> page.</p>', 'code-snippets' ), $manage_url ) . '</p>',
+				sprintf( __( 'Imported snippets will be added to the database along with your existing snippets. Regardless of whether the snippets were active on the previous site, imported snippets are always inactive until activated using the <a href="%s">Manage Snippets</a> page.', 'code-snippets' ), $manage_url ) . '</p>',
 		) );
 
 		$this->screen->add_help_tab( array(
 			'id'      => 'export',
 			'title'   => __( 'Exporting', 'code-snippets' ),
 			/* translators: %s: URL to Manage Snippets admin menu */
-			'content' => '<p>' . sprintf( __( 'You can save your snippets to a Code Snippets (.xml) export file using the <a href="%s">Manage Snippets</a> page.', 'code-snippets' ), $manage_url ) . '</p>',
+			'content' => '<p>' . sprintf( __( 'You can save your snippets to a code snippets export file using the <a href="%s">Manage Snippets</a> page.', 'code-snippets' ), $manage_url ) . '</p>',
 		) );
 	}
 }
