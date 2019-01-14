@@ -32,7 +32,8 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 				delete_option( 'code_snippets_settings' );
 			}
 
-			add_settings_error( 'code-snippets-settings-notices', 'settings_reset', __( 'All settings have been reset to their defaults.' ), 'updated' );
+			add_settings_error( 'code-snippets-settings-notices', 'settings_reset',
+				__( 'All settings have been reset to their defaults.', 'code-snippets' ), 'updated' );
 			set_transient( 'settings_errors', get_settings_errors(), 30 );
 
 			wp_redirect( esc_url_raw( add_query_arg( 'settings-updated', true, remove_query_arg( 'reset_settings' ) ) ) );
@@ -93,7 +94,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 					);
 				}
 
-			?></h1>
+				?></h1>
 
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 
@@ -135,7 +136,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Add an updated notice */
 		if ( ! count( get_settings_errors() ) ) {
-			add_settings_error( 'general', 'settings_updated', __( 'Settings saved.' ), 'updated' );
+			add_settings_error( 'general', 'settings_updated', __( 'Settings saved.', 'code-snippets' ), 'updated' );
 		}
 		set_transient( 'settings_errors', get_settings_errors(), 30 );
 
