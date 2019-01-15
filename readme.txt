@@ -31,6 +31,7 @@ If you'd like to contribute to the plugin's code or translate it into another la
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
+* French – [momo-fr](http://www.momofr.net/) and Shea Bunge
 * Belarusian - [Hrank.com](https://www.hrank.com)
 * Brazilian Portuguese – [Bruno Borges](http://brunoborges.info)
 * French (Canada) - [Dominic Desbiens](http://www.dominicdesbiens.com/)
@@ -42,7 +43,6 @@ Code Snippets can be used in these different languages thanks to the following t
 * Chinese - [Jincheng Shan](http://shanjincheng.com)
 * Serbo-Croatian - [Borisa Djuraskovic from Web Hosting Hub](http://www.webhostinghub.com/)
 * Japanese - [mt8](http://mt8.biz/)
-* French - [oWEB](http://office-web.net)
 
 == Installation ==
 

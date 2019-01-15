@@ -133,7 +133,7 @@ gulp.task('makepot', () => {
 	return gulp.src(src_files.php)
 		.pipe(makepot({
 			domain: pkg.name,
-			package: pkg.name,
+			package: 'Code Snippets',
 			bugReport: 'https://github.com/sheabunge/code-snippets/issues',
 			metadataFile: 'code-snippets.php',
 		}))

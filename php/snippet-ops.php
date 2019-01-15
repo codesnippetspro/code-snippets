@@ -444,5 +444,3 @@ function execute_active_snippets() {
 
 	return true;
 }
-
-
