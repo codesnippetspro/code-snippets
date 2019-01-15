@@ -18,7 +18,7 @@ msgstr ""
 "esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
@@ -130,9 +130,10 @@ msgid ""
 "functionality of WordPress. Snippets are more light-weight, just a few lines "
 "of code, and do not put as much load on your server."
 msgstr ""
-"Les extraits de code sont similaires aux extensions. Les deux permettent d’étendre les "
-"les fonctionnalités de WordPress. Les extraits de code sont plus légers et permettent, "
-"avec quelques lignes de code, de rendre votre site plus rapide."
+"Les extraits de code sont similaires aux extensions. Les deux permettent "
+"d’étendre les les fonctionnalités de WordPress. Les extraits de code sont "
+"plus légers et permettent, avec quelques lignes de code, de rendre votre "
+"site plus rapide."
 
 #: php/class-contextual-help.php:68, php/class-contextual-help.php:89,
 #: php/class-contextual-help.php:132
@@ -141,8 +142,8 @@ msgstr "Vue d’ensemble"
 
 #: php/class-contextual-help.php:70
 msgid ""
-" Here you can manage your existing snippets and perform tasks on them such as "
-"activating, deactivating, deleting and exporting."
+" Here you can manage your existing snippets and perform tasks on them such "
+"as activating, deactivating, deleting and exporting."
 msgstr ""
 " Sur cette page, vous pouvez gérer vos extraits de code existants et les "
 "activer, les désactiver, les supprimer et les exporter."
@@ -166,10 +167,10 @@ msgstr ""
 msgid ""
 "If something goes wrong with a snippet and you can't use WordPress, you can "
 "cause all snippets to stop executing by adding "
-"<code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-config."
-"php</code> file. After you have deactivated the offending snippet, you can "
-"turn off safe mode by removing this line or replacing <strong>true</strong> "
-"with <strong>false</strong>."
+"<code>define('CODE_SNIPPETS_SAFE_MODE', true);</code> to your <code>wp-"
+"config.php</code> file. After you have deactivated the offending snippet, "
+"you can turn off safe mode by removing this line or replacing <strong>true</"
+"strong> with <strong>false</strong>."
 msgstr ""
 "Si un problème survient suite à l’activation d’un extrait de code et que "
 "votre installation WordPress ne fonctionne plus, vous pouvez stopper "
@@ -184,8 +185,8 @@ msgstr ""
 #: php/class-contextual-help.php:90
 msgid " Here you can add a new snippet, or edit an existing one."
 msgstr ""
-" Sur cette page, vous pouvez ajouter un nouvel extrait de code ou modifier un "
-"extrait existant."
+" Sur cette page, vous pouvez ajouter un nouvel extrait de code ou modifier "
+"un extrait existant."
 
 #: php/class-contextual-help.php:94
 msgid "WP Function Me"
@@ -241,9 +242,9 @@ msgstr ""
 
 #: php/class-contextual-help.php:112
 msgid ""
-"More places to find snippets, as well as a selection of example snippets, can "
-"be found in the <a href=\"https://github.com/sheabunge/code-snippets/wiki/"
-"Finding-snippets\">plugin documentation</a>."
+"More places to find snippets, as well as a selection of example snippets, "
+"can be found in the <a href=\"https://github.com/sheabunge/code-snippets/"
+"wiki/Finding-snippets\">plugin documentation</a>."
 msgstr ""
 "Vous trouverez une collection d’extraits de code et des autres exemples sur "
 "<a href=\"https://github.com/sheabunge/code-snippets/wiki/Finding-snippets"
@@ -259,9 +260,9 @@ msgid ""
 "While the description field will add more information about how your snippet "
 "works, what is does and where you found it, it is completely optional."
 msgstr ""
-"Vous devez remplir les champs titre et code pour ajouter un extrait. Le champ "
-"description permet d’ajouter des informations sur la fonction ajoutée : "
-"utilité, où vous l’avez trouvé. C’est une option de confort."
+"Vous devez remplir les champs titre et code pour ajouter un extrait. Le "
+"champ description permet d’ajouter des informations sur la fonction "
+"ajoutée : utilité, où vous l’avez trouvé. C’est une option de confort."
 
 #: php/class-contextual-help.php:120
 msgid ""
@@ -290,16 +291,16 @@ msgstr "Importation"
 msgid ""
 "You can load your snippets from a code snippets export file using this page."
 msgstr ""
-"Vous pouvez importer des extraits de code à partir d’un fichier d’exportation "
-"sur cette page."
+"Vous pouvez importer des extraits de code à partir d’un fichier "
+"d’exportation sur cette page."
 
 #. translators: %s: URL to Snippets admin menu
 #: php/class-contextual-help.php:143
 msgid ""
-"Importted Snippets will be added to the database along with your existing snippets. "
-"Regardless of whether the snippets were active on the previous site, imported "
-"snippets are always inactive until activated using the <a href=\"%s\">Manage "
-"Snippets</a> page."
+"Imported snippets will be added to the database along with your existing "
+"snippets. Regardless of whether the snippets were active on the previous "
+"site, imported snippets are always inactive until activated using the <a "
+"href=\"%s\">Manage Snippets</a> page."
 msgstr ""
 "Les extraits de code importé seront ajoutés à votre base de données, aux "
 "côtés de ceux déjà existants. Tous les extraits de code importés seront "
@@ -351,7 +352,8 @@ msgstr "Supprimer"
 
 #: php/class-list-table.php:171
 msgid "You are about to permanently delete the selected item."
-msgstr "Vous êtes sur le point de supprimer définitivement l’élément sélectionné."
+msgstr ""
+"Vous êtes sur le point de supprimer définitivement l’élément sélectionné."
 
 #: php/class-list-table.php:172, php/views/edit.php:165
 msgid "'Cancel' to stop, 'OK' to delete."
@@ -484,8 +486,8 @@ msgstr "écrivez votre contenu shortcode HTML ici"
 msgid ""
 "This is an example snippet for demonstrating how to add an HTML shortcode."
 msgstr ""
-"Ceci est un exemple d’extrait de code qui montre comment ajouter un "
-"code court HTML."
+"Ceci est un exemple d’extrait de code qui montre comment ajouter un code "
+"court HTML."
 
 #: php/class-upgrade.php:156
 msgid "Example CSS snippet"
@@ -564,16 +566,16 @@ msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:166
 msgid ""
-"Please use the back button in your browser to return to the previous page and "
-"try to fix the code error."
+"Please use the back button in your browser to return to the previous page "
+"and try to fix the code error."
 msgstr ""
 "Veuillez utiliser le bouton précédent de votre navigateur pour revenir à la "
 "page précédente et essayer de corriger l’erreur de code."
 
 #: php/admin-menus/class-edit-menu.php:167
 msgid ""
-"If you prefer, you can close this page and discard the changes you just made. "
-"No changes will be made to this site."
+"If you prefer, you can close this page and discard the changes you just "
+"made. No changes will be made to this site."
 msgstr ""
 "Si vous préférez, vous pouvez fermer cette page et ignorer les modifications "
 "que vous venez d’apporter. Aucune modification ne sera apportée à ce site."
@@ -632,7 +634,8 @@ msgstr "L'extrait de code a été désactivé en raison d’une erreur dans le c
 
 #: php/admin-menus/class-edit-menu.php:482
 msgid "An error occurred when saving the snippet."
-msgstr "Une erreur s’est produite lors de l’enregistrement de l'extrait de code."
+msgstr ""
+"Une erreur s’est produite lors de l’enregistrement de l'extrait de code."
 
 #: php/admin-menus/class-edit-menu.php:488
 msgid "Snippet <strong>added</strong>."
@@ -673,7 +676,8 @@ msgstr "Importer des extraits de code d'un fichier d’exportation"
 
 #: php/admin-menus/class-import-menu.php:115
 msgid "An error occurred when processing the import files."
-msgstr "Une erreur s’est produite lors du traitement des fichiers d'importation."
+msgstr ""
+"Une erreur s’est produite lors du traitement des fichiers d'importation."
 
 #: php/admin-menus/class-import-menu.php:125
 msgid "No snippets were imported."
@@ -712,9 +716,9 @@ msgstr "Extraits de code"
 #: php/admin-menus/class-manage-menu.php:145
 msgid ""
 "<strong>Warning:</strong> Safe mode is active and snippets will not execute! "
-"Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config."
-"php</code> to turn off safe mode. <a href=\"https://github.com/sheabunge/code-"
-"snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
+"Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-"
+"config.php</code> to turn off safe mode. <a href=\"https://github.com/"
+"sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
 msgstr ""
 "<strong>Avertissement :</strong> Le mode sans échec est activé et les "
 "extraits de code ne s’exécutent pas ! Supprimez la constante "
@@ -767,31 +771,39 @@ msgstr "Réglages"
 msgid "Snippets Settings"
 msgstr "Réglages des extraits"
 
-#: php/admin-menus/class-settings-menu.php:76
+#: php/admin-menus/class-settings-menu.php:36
+msgid "All settings have been reset to their defaults."
+msgstr "Tous les réglages ont été réinitialisés à leurs valeurs par défaut."
+
+#: php/admin-menus/class-settings-menu.php:77
 msgid "Settings"
 msgstr "Réglages"
 
-#: php/admin-menus/class-settings-menu.php:81, php/views/edit.php:46,
+#: php/admin-menus/class-settings-menu.php:82, php/views/edit.php:46,
 #: php/views/import.php:26
 msgctxt "snippets"
 msgid "Manage"
 msgstr "Gérer"
 
-#: php/admin-menus/class-settings-menu.php:86, php/views/edit.php:35,
+#: php/admin-menus/class-settings-menu.php:87, php/views/edit.php:35,
 #: php/views/import.php:31, php/views/manage.php:24
 msgctxt "snippet"
 msgid "Add New"
 msgstr "Nouveau"
 
-#: php/admin-menus/class-settings-menu.php:91, php/views/edit.php:51,
+#: php/admin-menus/class-settings-menu.php:92, php/views/edit.php:51,
 #: php/views/manage.php:29
 msgctxt "snippets"
 msgid "Import"
 msgstr "Importer"
 
-#: php/admin-menus/class-settings-menu.php:112
+#: php/admin-menus/class-settings-menu.php:113
 msgid "Reset to Default"
 msgstr "Réinitialiser aux valeurs par défaut"
+
+#: php/admin-menus/class-settings-menu.php:139, php/settings/settings.php:209
+msgid "Settings saved."
+msgstr "Réglages enregistrés."
 
 #: php/settings/settings-fields.php:42
 msgid "Activate by Default"
@@ -819,8 +831,7 @@ msgstr "Activer des étiquettes des extraits"
 #: php/settings/settings-fields.php:58
 msgid "Show snippet tags on admin pages"
 msgstr ""
-"Afficher les étiquettes des extraits de code sur les pages "
-"d’administration"
+"Afficher les étiquettes des extraits de code sur les pages d’administration"
 
 #: php/settings/settings-fields.php:63
 msgid "Enable Snippet Descriptions"
@@ -829,8 +840,7 @@ msgstr "Activer les descriptions des extraits"
 #: php/settings/settings-fields.php:65
 msgid "Show snippet descriptions on admin pages"
 msgstr ""
-"Afficher les descriptions des extraits de code sur les pages "
-"d’administration"
+"Afficher les descriptions des extraits de code sur les pages d’administration"
 
 #: php/settings/settings-fields.php:70
 msgid "Disable Shortcode Syntax Highlighter"
@@ -838,8 +848,8 @@ msgstr "Désactiver le shortcode de la coloration syntaxique"
 
 #: php/settings/settings-fields.php:72
 msgid ""
-"Disable the syntax highlighting for the [code_snippet] shortcode on the front-"
-"end"
+"Disable the syntax highlighting for the [code_snippet] shortcode on the "
+"front-end"
 msgstr ""
 "Désactiver la coloration syntaxique pour le shortcode [code_snippet] sur le "
 "site en ligne"
@@ -854,8 +864,8 @@ msgid ""
 "When the plugin is deleted from the <a href=\"%s\">Plugins</a> menu, also "
 "delete all snippets and plugin settings."
 msgstr ""
-"Lorsque l’extension est supprimé du menu <a href=\"%s\">Extensions</a>, aussi "
-"supprimer tous les extraits de code et les réglages de l’extension."
+"Lorsque l’extension est supprimé du menu <a href=\"%s\">Extensions</a>, "
+"aussi supprimer tous les extraits de code et les réglages de l’extension."
 
 #: php/settings/settings-fields.php:96
 msgid "Row Height"
@@ -962,10 +972,6 @@ msgstr "Éditeur de code"
 msgid "Editor Preview"
 msgstr "Aperçu de l’éditeur"
 
-#: php/settings/settings.php:209
-msgid "Settings saved."
-msgstr "Réglages enregistrés."
-
 #: php/views/edit.php:58, php/views/import.php:37, php/views/manage.php:37
 msgctxt "snippets"
 msgid "Settings"
@@ -993,15 +999,16 @@ msgstr "Enregistrer et désactiver"
 
 #: php/views/edit.php:164
 msgid "You are about to permanently delete this snippet."
-msgstr "Vous êtes sur le point de supprimer définitivement cet extrait de code."
+msgstr ""
+"Vous êtes sur le point de supprimer définitivement cet extrait de code."
 
 #: php/views/import.php:47
 msgid ""
 "Upload one or more Code Snippets export files and the snippets will be "
 "imported."
 msgstr ""
-"Téléverser un ou plusieurs fichiers d’exportation d’extraits de code et ils seront "
-"importés."
+"Téléverser un ou plusieurs fichiers d’exportation d’extraits de code et ils "
+"seront importés."
 
 #. translators: %s: link to snippets admin menu
 #: php/views/import.php:52
@@ -1009,8 +1016,8 @@ msgid ""
 "Afterwards, you will need to visit the <a href=\"%s\">All Snippets</a> page "
 "to activate the imported snippets."
 msgstr ""
-"Ensuite, vous devrez vous rendre sur la page <a href=\"%s\">tous les extraits "
-"de code</a> pour activer les extraits de code importés."
+"Ensuite, vous devrez vous rendre sur la page <a href=\"%s\">tous les "
+"extraits de code</a> pour activer les extraits de code importés."
 
 #: php/views/import.php:59
 msgid "Duplicate Snippets"
@@ -1029,8 +1036,8 @@ msgid ""
 "Ignore any duplicate snippets: import all snippets from the file regardless "
 "and leave all existing snippets unchanged."
 msgstr ""
-"Ignorer tous les extraits de code en doublons : importez tous les extraits de "
-"code du fichier et laissez tous les extraits existants inchangés."
+"Ignorer tous les extraits de code en doublons : importez tous les extraits "
+"de code du fichier et laissez tous les extraits existants inchangés."
 
 #: php/views/import.php:76
 msgid ""
@@ -1043,8 +1050,8 @@ msgstr ""
 msgid ""
 "Do not import any duplicate snippets; leave all existing snippets unchanged."
 msgstr ""
-"N’importez aucun extrait de code en double. Laissez tous les extraits de code "
-"existants inchangés."
+"N’importez aucun extrait de code en double. Laissez tous les extraits de "
+"code existants inchangés."
 
 #: php/views/import.php:88
 msgid "Upload Files"
@@ -1090,12 +1097,12 @@ msgstr "Chercher dans les extraits installés"
 #~ "Extensions de votre installation WordPress, la table <code>%1$s</code> "
 #~ "contenant les extraits de code sera supprimée de la base de données. Si "
 #~ "vous voulez conserver les données (par exemple : désinstaller "
-#~ "temporairement l’extension de extraits de code) supprimez le dossier <code>"
-#~ "%2$s</code> via votre client FTP."
+#~ "temporairement l’extension de extraits de code) supprimez le dossier "
+#~ "<code>%2$s</code> via votre client FTP."
 
 #~ msgid ""
-#~ "Even if you're sure that you don't want to use Code Snippets ever again on "
-#~ "this WordPress installation, you may want to use the export feature to "
+#~ "Even if you're sure that you don't want to use Code Snippets ever again "
+#~ "on this WordPress installation, you may want to use the export feature to "
 #~ "back up your snippets."
 #~ msgstr ""
 #~ "Même si vous êtes certain de ne plus vouloir utiliser l’extension "
