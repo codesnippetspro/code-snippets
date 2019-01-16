@@ -72,7 +72,7 @@
 }
 
 .clear-filters {
-	vertical-align: baseline;
+	vertical-align: baseline !important;
 }
 
 .snippets .badge {
@@ -89,10 +89,6 @@
 	.rtl & {
 		float: left;
 	}
-}
-
-.clear-filters {
-	vertical-align: bottom;
 }
 
 .snippets {
