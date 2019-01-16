@@ -105,15 +105,15 @@ if ( $edit_id ) {
 
 			/* Make the 'Save and Activate' button the default if the setting is enabled */
 
-			if ( 'single-use' === $snippet->scope ) {
+			if ( $snippet->shared_network && is_network_admin() ) {
+
+				submit_button( null, 'primary', 'save_snippet', false );
+
+			} elseif ( 'single-use' === $snippet->scope ) {
 
 				submit_button( null, 'primary', 'save_snippet', false );
 
 				submit_button( __( 'Save Changes and Execute Once', 'code-snippets' ), 'secondary', 'save_snippet_execute', false );
-
-			} elseif ( $snippet->shared_network && is_network_admin() ) {
-
-				submit_button( null, 'primary', 'save_snippet', false );
 
 			} elseif ( ! $snippet->active && code_snippets_get_setting( 'general', 'activate_by_default' ) ) {
 
