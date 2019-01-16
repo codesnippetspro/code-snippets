@@ -76,6 +76,20 @@ ul.tagit {
 	}
 }
 
+#snippet-keyboard-shortcuts {
+	display: block;
+  float: left;
+  cursor: pointer;
+  margin: -.5em 0 1em 0;
+  font-size: .8em;
+	opacity: .5;
+	transition: opacity 0.5s;
+  	-webkit-transition: opacity 0.5s;
+}
+
+#snippet-keyboard-shortcuts:hover {
+	opacity: 1;
+}
 .CodeMirror {
 	width: 100%;
 }

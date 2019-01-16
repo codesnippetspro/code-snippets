@@ -86,7 +86,17 @@ if ( $edit_id ) {
 				<?php _e( 'Code', 'code-snippets' ); ?>
 			</label>
 		</h2>
-
+		
+	<div id="snippet-keyboard-shortcuts" 
+title="PC
+CTRL-F => Find
+SHIFT-CTRL-F => Find/Replace
+                                      
+MAC
+CMD-F => Find
+SHIFT-CMD-F => Find/Replace
+       "
+>&lt;Shortcuts&gt;</div> 
 		<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false" style="font-family: monospace; width: 100%;"><?php
 			echo esc_textarea( $snippet->code );
 			?></textarea>
