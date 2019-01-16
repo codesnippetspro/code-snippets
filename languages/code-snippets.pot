@@ -415,7 +415,12 @@ msgstr ""
 msgid "You are not authorized to access this page."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:13, php/admin-menus/class-edit-menu.php:14, php/views/edit.php:32
+#: php/admin-menus/class-edit-menu.php:13
+msgctxt "menu label"
+msgid "Edit Snippet"
+msgstr ""
+
+#: php/admin-menus/class-edit-menu.php:14, php/views/edit.php:32
 msgid "Edit Snippet"
 msgstr ""
 
@@ -807,7 +812,7 @@ msgstr ""
 msgid "Code"
 msgstr ""
 
-#: php/views/edit.php:112
+#: php/views/edit.php:116
 msgid "Save Changes and Execute Once"
 msgstr ""
 
