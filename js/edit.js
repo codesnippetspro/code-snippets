@@ -1,6 +1,4 @@
-import 'tag-it/js/tag-it';
-
-/* global code_snippets_editor_atts, code_snippets_all_tags, jQuery */
+/* global code_snippets_editor_atts */
 
 window.code_snippets_editor = (function (CodeMirror, editor_atts) {
 	const snippet_form = document.getElementById('snippet-form');
@@ -29,16 +27,3 @@ window.code_snippets_editor = (function (CodeMirror, editor_atts) {
 
 	return editor;
 })(window.Code_Snippets_CodeMirror, code_snippets_editor_atts);
-
-(function () {
-	const tags_field = jQuery('#snippet_tags');
-
-	if (tags_field) {
-		tags_field.tagit({
-			availableTags: code_snippets_all_tags,
-			allowSpaces: true,
-			removeConfirmation: true,
-			showAutocompleteOnFocus: true,
-		});
-	}
-})();

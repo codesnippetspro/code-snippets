@@ -117,6 +117,7 @@ gulp.task('js', gulp.series('test-js', gulp.parallel(
 	() => bundlejs('js/editor.js'),
 	() => bundlejs('js/manage.js'),
 	() => bundlejs('js/edit.js'),
+	() => bundlejs('js/edit-tags.js'),
 	() => bundlejs('js/settings.js'),
 	() => bundlejs('js/front-end.js', {
 		plugins: [['prismjs', {languages: ['php', 'php-extras'], plugins: ['line-highlight', 'line-numbers']}]]

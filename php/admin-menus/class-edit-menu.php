@@ -513,31 +513,35 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			array(), $plugin->version
 		);
 
-		$tags_enabled = code_snippets_get_setting( 'general', 'enable_tags' );
-
-		/* the tag-it library has a number of jQuery dependencies */
-		$tagit_deps = array(
-			'jquery', 'jquery-ui-core',
-			'jquery-ui-widget', 'jquery-ui-position', 'jquery-ui-autocomplete',
-			'jquery-effects-blind', 'jquery-effects-highlight',
-		);
-
 		wp_enqueue_script(
 			'code-snippets-edit-menu',
 			plugins_url( 'js/min/edit.js', $plugin->file ),
-			$tags_enabled ? $tagit_deps : array(),
-			$plugin->version, true
+			array(), $plugin->version, true
 		);
 
 		$atts = code_snippets_get_editor_atts( array(), true );
 		$inline_script = 'var code_snippets_editor_atts = ' . $atts . ';';
 
-		if ( $tags_enabled ) {
-			$snippet_tags = wp_json_encode( get_all_snippet_tags() );
-			$inline_script .= "\n" . 'var code_snippets_all_tags = ' . $snippet_tags . ';';
-		}
-
 		wp_add_inline_script( 'code-snippets-edit-menu', $inline_script, 'before' );
+
+		if ( code_snippets_get_setting( 'general', 'enable_tags' ) ) {
+
+			wp_enqueue_script(
+				'code-snippets-edit-menu-tags',
+				plugins_url( 'js/min/edit-tags.js', $plugin->file ),
+				array(
+					'jquery', 'jquery-ui-core',
+					'jquery-ui-widget', 'jquery-ui-position', 'jquery-ui-autocomplete',
+					'jquery-effects-blind', 'jquery-effects-highlight',
+				),
+				$plugin->version, true
+			);
+
+			$snippet_tags = wp_json_encode( get_all_snippet_tags() );
+			$inline_script = 'var code_snippets_all_tags = ' . $snippet_tags . ';';
+
+			wp_add_inline_script( 'code-snippets-edit-menu-tags', $inline_script, 'before' );
+		}
 	}
 
 	/**
