@@ -124,58 +124,50 @@ gulp.task('js', gulp.series('test-js', gulp.parallel(
 	})
 )));
 
-gulp.task('images', () => {
-	return gulp.src('screenshots/**/*')
+gulp.task('images', () =>
+	gulp.src('screenshots/**/*')
 		.pipe(imagemin())
-		.pipe(gulp.dest('screenshots'));
-});
+		.pipe(gulp.dest('screenshots')));
 
-gulp.task('makepot', () => {
-	return gulp.src(src_files.php)
+gulp.task('makepot', () =>
+	gulp.src(src_files.php)
 		.pipe(makepot({
 			domain: pkg.name,
 			package: 'Code Snippets',
 			bugReport: 'https://github.com/sheabunge/code-snippets/issues',
 			metadataFile: 'code-snippets.php',
 		}))
-		.pipe(gulp.dest(`languages/${pkg.name}.pot`));
-});
+		.pipe(gulp.dest(`languages/${pkg.name}.pot`)));
 
-gulp.task('gettext', () => {
-	return gulp.src('languages/*.po')
+gulp.task('gettext', () =>
+	gulp.src('languages/*.po')
 		.pipe(gettext())
-		.pipe(gulp.dest('languages'))
-
-});
+		.pipe(gulp.dest('languages')));
 
 gulp.task('i18n', gulp.parallel(['makepot', 'gettext']));
 
 
-gulp.task('phpcs', () => {
-	return gulp.src(src_files.php)
+gulp.task('phpcs', () =>
+	gulp.src(src_files.php)
 		.pipe(phpcs({
 			bin: 'vendor/bin/phpcs',
 			standard: 'codesniffer.ruleset.xml',
 			showSniffCode: true
 		}))
-		.pipe(phpcs.reporter('log'));
-});
+		.pipe(phpcs.reporter('log')));
 
-gulp.task('phpunit', () => {
-	return gulp.src('phpunit.xml')
-		.pipe(phpunit('phpunit'));
-});
+gulp.task('phpunit', () =>
+	gulp.src('phpunit.xml')
+		.pipe(phpunit('phpunit')));
 
-gulp.task('vendor', () => {
-	return gulp.src('node_modules/codemirror/theme/*.css')
+gulp.task('vendor', () =>
+	gulp.src('node_modules/codemirror/theme/*.css')
 		.pipe(postcss([cssnano()]))
-		.pipe(gulp.dest(dist_dirs.css + 'editor-themes'));
-});
+		.pipe(gulp.dest(dist_dirs.css + 'editor-themes')));
 
-gulp.task('clean', () => {
-	return gulp.src([dist_dirs.css, dist_dirs.js], {read: false, allowEmpty: true})
-		.pipe(clean());
-});
+gulp.task('clean', () =>
+	gulp.src([dist_dirs.css, dist_dirs.js], {read: false, allowEmpty: true})
+		.pipe(clean()));
 
 gulp.task('package', gulp.series(
 	() => gulp.src(['dist', pkg.name, `${pkg.name}.*.zip`], {read: false, allowEmpty: true})
@@ -199,12 +191,11 @@ gulp.task('package', gulp.series(
 		.pipe(archiver(`${pkg.name}.${pkg.version}.zip`))
 		.pipe(gulp.dest('.')),
 
-	(done) => {
+	(done) =>
 		fs.rename(pkg.name, 'dist', err => {
 			if (err) throw err;
 			done();
-		});
-	}
+		})
 ));
 
 gulp.task('test', gulp.parallel(['test-js', gulp.series(['phpcs', 'phpunit'])]));
