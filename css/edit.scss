@@ -77,10 +77,14 @@ ul.tagit {
 }
 
 #snippet-keyboard-shortcuts {
-	font-size: 1em;
+	display: block;
+  float: left;
+  cursor: pointer;
+  margin: -.5em 0 1em 0;
+  font-size: .8em;
 	opacity: .5;
-	transition: opacity 0.3s;
-  	-webkit-transition: opacity 0.3s;
+	transition: opacity 0.5s;
+  	-webkit-transition: opacity 0.5s;
 }
 
 #snippet-keyboard-shortcuts:hover {
