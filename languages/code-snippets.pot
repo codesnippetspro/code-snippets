@@ -240,11 +240,11 @@ msgstr ""
 msgid "Clone"
 msgstr ""
 
-#: php/class-list-table.php:158, php/class-list-table.php:380, php/views/edit.php:157
+#: php/class-list-table.php:158, php/class-list-table.php:380, php/views/edit.php:213
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:167, php/class-list-table.php:381, php/views/edit.php:170
+#: php/class-list-table.php:167, php/class-list-table.php:381, php/views/edit.php:226
 msgid "Delete"
 msgstr ""
 
@@ -252,7 +252,7 @@ msgstr ""
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:172, php/views/edit.php:165
+#: php/class-list-table.php:172, php/views/edit.php:221
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
@@ -301,7 +301,7 @@ msgstr ""
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:379, php/views/edit.php:152
+#: php/class-list-table.php:379, php/views/edit.php:208
 msgid "Download"
 msgstr ""
 
@@ -812,19 +812,88 @@ msgstr ""
 msgid "Code"
 msgstr ""
 
-#: php/views/edit.php:116
+#: php/views/edit.php:100
+msgctxt "help tooltip"
+msgid "?"
+msgstr ""
+
+#: php/views/edit.php:105
+msgctxt "keyboard key"
+msgid "Cmd"
+msgstr ""
+
+#: php/views/edit.php:106
+msgctxt "keyboard key"
+msgid "Ctrl"
+msgstr ""
+
+#: php/views/edit.php:107
+msgctxt "keyboard key"
+msgid "Shift"
+msgstr ""
+
+#: php/views/edit.php:108
+msgctxt "keyboard key"
+msgid "Option"
+msgstr ""
+
+#: php/views/edit.php:109
+msgctxt "keyboard key"
+msgid "Alt"
+msgstr ""
+
+#: php/views/edit.php:110
+msgctxt "keyboard key"
+msgid "F"
+msgstr ""
+
+#: php/views/edit.php:111
+msgctxt "keyboard key"
+msgid "G"
+msgstr ""
+
+#: php/views/edit.php:112
+msgctxt "keyboard key"
+msgid "R"
+msgstr ""
+
+#: php/views/edit.php:119
+msgid "Open search"
+msgstr ""
+
+#: php/views/edit.php:124
+msgid "Find next"
+msgstr ""
+
+#: php/views/edit.php:128
+msgid "Find previous"
+msgstr ""
+
+#: php/views/edit.php:132
+msgid "Replace"
+msgstr ""
+
+#: php/views/edit.php:136
+msgid "Replace all"
+msgstr ""
+
+#: php/views/edit.php:142
+msgid "Persistent search"
+msgstr ""
+
+#: php/views/edit.php:172
 msgid "Save Changes and Execute Once"
 msgstr ""
 
-#: php/views/edit.php:121, php/views/edit.php:135
+#: php/views/edit.php:177, php/views/edit.php:191
 msgid "Save Changes and Activate"
 msgstr ""
 
-#: php/views/edit.php:141
+#: php/views/edit.php:197
 msgid "Save Changes and Deactivate"
 msgstr ""
 
-#: php/views/edit.php:164
+#: php/views/edit.php:220
 msgid "You are about to permanently delete this snippet."
 msgstr ""
 

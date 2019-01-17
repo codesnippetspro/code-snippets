@@ -9,6 +9,10 @@ window.code_snippets_editor = (function (CodeMirror, editor_atts) {
 		{'Cmd-Enter': save_snippet_cb, 'Cmd-S': save_snippet_cb} :
 		{'Ctrl-Enter': save_snippet_cb, 'Ctrl-S': save_snippet_cb};
 
+	if (window.navigator.platform.match('Mac')) {
+		document.querySelector('.editor-help-text').className += ' platform-mac';
+	}
+
 	const editor = CodeMirror.fromTextArea(document.getElementById('snippet_code'), editor_atts);
 
 	// set the cursor to the previous position
