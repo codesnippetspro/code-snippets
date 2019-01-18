@@ -117,7 +117,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	public function get_action_link( $action, $snippet, $escape = true ) {
 
 		// redirect actions to the network dashboard for shared network snippets
-		$network_redirect = $snippet->shared_network && ! $this->is_network;
+		$network_redirect = $snippet->shared_network && ! $this->is_network && $action !== 'activate' && $action !== 'activate-shared';
 
 		// edit links go to a different menu
 		if ( 'edit' === $action ) {
@@ -126,7 +126,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$query_args = array( 'action' => $action, 'id' => $snippet->id );
 
-		$url = $network_redirect ? add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) : add_query_arg( $query_args );
+		$url = $network_redirect ?
+			add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) :
+			add_query_arg( $query_args );
 
 		return $escape ? esc_url( $url ) : $url;
 	}
