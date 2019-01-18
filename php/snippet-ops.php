@@ -414,6 +414,7 @@ function execute_active_snippets() {
 			/* Add the scope number to the IDs array, so that it is the first variable in the query */
 			array_unshift( $active_shared_ids, $current_scope );
 			$queries[ $db->ms_table ] = $wpdb->prepare( $sql, $active_shared_ids );
+			array_shift( $active_shared_ids ); // remove it afterwards as we need this variable later
 
 		} else {
 			$sql = sprintf( $sql_format, $db->ms_table ) . 'AND active=1 ' . $order;
@@ -424,20 +425,29 @@ function execute_active_snippets() {
 	foreach ( $queries as $table_name => $query ) {
 		$active_snippets = $wpdb->get_results( $query, 'ARRAY_A' );
 
-		if ( is_array( $active_snippets ) ) {
+		if ( ! is_array( $active_snippets ) ) {
+			continue;
+		}
 
-			/* Loop through the returned snippets and execute the PHP code */
-			foreach ( $active_snippets as $snippet ) {
-				$snippet_id = intval( $snippet['id'] );
-				$code = $snippet['code'];
+		/* Loop through the returned snippets and execute the PHP code */
+		foreach ( $active_snippets as $snippet ) {
+			$snippet_id = intval( $snippet['id'] );
+			$code = $snippet['code'];
 
-				if ( 'single-use' === $snippet['scope'] ) {
+			// if the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens
+			if ( 'single-use' === $snippet['scope'] ) {
+				if ( $table_name === $db->ms_table && isset( $active_shared_ids ) &&
+				     false !== ( $key = array_search( $snippet_id, $active_shared_ids ) ) ) {
+					unset( $active_shared_ids[ $key ] );
+					$active_shared_ids = array_values( $active_shared_ids );
+					update_option( 'active_shared_network_snippets', $active_shared_ids );
+				} else {
 					$wpdb->update( $table_name, array( 'active' => '0' ), array( 'id' => $snippet_id ), array( '%d' ), array( '%d' ) );
 				}
+			}
 
-				if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
-					execute_snippet( $code, $snippet_id );
-				}
+			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
+				execute_snippet( $code, $snippet_id );
 			}
 		}
 	}

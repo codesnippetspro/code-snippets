@@ -117,7 +117,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	public function get_action_link( $action, $snippet, $escape = true ) {
 
 		// redirect actions to the network dashboard for shared network snippets
-		$network_redirect = $snippet->shared_network && ! $this->is_network && $action !== 'activate' && $action !== 'activate-shared';
+		$network_redirect = $snippet->shared_network && ! $this->is_network &&
+		                    ! in_array( $action, array( 'activate', 'activate-shared', 'run-once', 'run-once-shared' ) );
 
 		// edit links go to a different menu
 		if ( 'edit' === $action ) {
