@@ -18,10 +18,12 @@ $snippet = get_snippet( $edit_id );
 
 $classes = array();
 
-if ( $edit_id ) {
-	$classes[] = ( $snippet->active ? '' : 'in' ) . 'active-snippet';
-} else {
+if ( ! $edit_id ) {
 	$classes[] = 'new-snippet';
+} elseif ( 'single-use' === $snippet->scope ) {
+	$classes[] = 'single-use-snippet';
+} else {
+	$classes[] = ( $snippet->active ? '' : 'in' ) . 'active-snippet';
 }
 
 ?>
