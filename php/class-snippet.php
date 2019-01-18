@@ -11,14 +11,13 @@
  * @property string      $desc           The formatted description
  * @property string      $code           The executable code
  * @property array       $tags           An array of the tags
- * @property int         $scope          The scope number
+ * @property string      $scope          The scope name
  * @property int         $priority       Execution priority
  * @property bool        $active         The active status
  * @property bool        $network        true if is multisite-wide snippet, false if site-wide
  * @property bool        $shared_network Whether the snippet is a shared network snippet
  *
  * @property-read array  $tags_list  The tags in string list format
- * @property-read string $scope_name The name of the scope
  * @property-read string $scope_icon The dashicon used to represent the current scope
  */
 class Code_Snippet {
@@ -224,11 +223,11 @@ class Code_Snippet {
 	}
 
 	/**
-	 * Prepare the scope by ensuring that it is a valid number
+	 * Prepare the scope by ensuring that it is a valid choice
 	 *
-	 * @param int $scope The field as provided
+	 * @param int|string $scope The field as provided
 	 *
-	 * @return int The field in the correct format
+	 * @return string The field in the correct format
 	 */
 	private function prepare_scope( $scope ) {
 		$scopes = self::get_all_scopes();
