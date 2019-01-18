@@ -190,20 +190,20 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			return '';
 		}
 
-		$action = ( $snippet->active ? 'deactivate' : 'activate' );
-
-		if ( $snippet->shared_network ) {
-			$action .= '-shared';
-		}
-
 		if ( 'single-use' === $snippet->scope ) {
 			$class = 'snippet-execution-button';
+			$action = 'run-once';
 			$label = esc_html__( 'Run Once', 'code-snippets' );
 		} else {
 			$class = 'snippet-activation-switch';
+			$action = $snippet->active ? 'deactivate' : 'activate';
 			$label = $snippet->network ?
 				( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
 				( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
+		}
+
+		if ( $snippet->shared_network ) {
+			$action .= '-shared';
 		}
 
 		return sprintf(
@@ -550,11 +550,75 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Processes a bulk action
+	 * Perform an action on a single snippet
 	 *
 	 * @uses activate_snippet() to activate snippets
 	 * @uses deactivate_snippet() to deactivate snippets
 	 * @uses delete_snippet() to delete snippets
+	 *
+	 * @param int    $id
+	 * @param string $action
+	 *
+	 * @return bool|string Result of performing action
+	 */
+	private function perform_action( $id, $action ) {
+
+		switch ( $action ) {
+
+			case 'activate':
+				activate_snippet( $id, $this->is_network );
+				return 'activated';
+
+			case 'deactivate':
+				deactivate_snippet( $id, $this->is_network );
+				return 'deactivated';
+
+			case 'run-once':
+				$this->perform_action( $id, 'activate' );
+				return 'executed';
+
+			case 'run-once-shared':
+				$this->perform_action( $id, 'activate-shared' );
+				return 'executed';
+
+			case 'activate-shared':
+				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
+
+				if ( ! in_array( $id, $active_shared_snippets ) ) {
+					$active_shared_snippets[] = $id;
+					update_option( 'active_shared_network_snippets', $active_shared_snippets );
+				}
+
+				return 'activated';
+
+			case 'deactivate-shared':
+				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
+				update_option( 'active_shared_network_snippets', array_diff( $active_shared_snippets, array( $id ) ) );
+				return 'deactivated';
+
+			case 'clone':
+				$this->clone_snippets( array( $id ) );
+				return 'cloned';
+
+			case 'delete':
+				delete_snippet( $id, $this->is_network );
+				return 'deleted';
+
+			case 'export':
+				export_snippets( array( $id ) );
+				break;
+
+			case 'download':
+				download_snippets( array( $id ) );
+				break;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Processes a bulk action
+	 *
 	 * @uses wp_redirect() to pass the results to the current page
 	 * @uses add_query_arg() to append the results to the current URI
 	 */
@@ -573,61 +637,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$id = absint( $_GET['id'] );
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id' ) );
 
-			switch ( sanitize_key( $_GET['action'] ) ) {
+			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ) );
 
-				case 'activate':
-					activate_snippet( $id, $this->is_network );
-					$result = 'activated';
-					break;
-
-				case 'run-once':
-					activate_snippet( $id, $this->is_network );
-					$result = 'executed';
-					break;
-
-				case 'deactivate':
-					deactivate_snippet( $id, $this->is_network );
-					$result = 'deactivated';
-					break;
-
-				case 'activate-shared':
-					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
-
-					if ( ! in_array( $id, $active_shared_snippets ) ) {
-						$active_shared_snippets[] = $id;
-						update_option( 'active_shared_network_snippets', $active_shared_snippets );
-					}
-
-					$result = 'activated';
-					break;
-
-				case 'deactivate-shared':
-					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
-					update_option( 'active_shared_network_snippets', array_diff( $active_shared_snippets, array( $id ) ) );
-
-					$result = 'deactivated';
-					break;
-
-				case 'clone':
-					$this->clone_snippets( array( $id ) );
-					$result = 'cloned';
-					break;
-
-				case 'delete':
-					delete_snippet( $id, $this->is_network );
-					$result = 'deleted';
-					break;
-
-				case 'export':
-					export_snippets( array( $id ) );
-					break;
-
-				case 'download':
-					download_snippets( array( $id ) );
-					break;
-			}
-
-			if ( isset( $result ) ) {
+			if ( $result ) {
 				wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 				exit;
 			}
