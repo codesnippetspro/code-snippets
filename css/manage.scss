@@ -2,6 +2,9 @@
  * Custom styling for the snippets table
  */
 
+$active-color: #2196f3;
+$inactive-color: #ccc;
+
 .column-name {
 
 	.dashicons {
@@ -66,7 +69,7 @@
 	}
 
 	.snippets .active-snippet & {
-		background-color: #2196f3;
+		background-color: $active-color;
 
 		&::before {
 			transform: translateX(100%);
@@ -81,7 +84,7 @@
 	height: 0;
 	border-top: 9px solid transparent;
 	border-bottom: 9px solid transparent;
-	border-left: 10px solid #ccc;
+	border-left: 10px solid $inactive-color;
 	transition: all 0.3s;
 
 	&::before {
@@ -92,14 +95,17 @@
 		bottom: -14px;
 		right: -8px;
 		border-radius: 50%;
-		border: 1.8px solid #ccc;
+		border: 1.8px solid $inactive-color;
 		z-index: 2;
 		transition: all .3s;
 	}
 
 	&:hover, &:focus {
+		border-left-color: #579;
+
 		&::before {
 			transform: scale(1.1);
+			border-color: #579;
 		}
 	}
 }
@@ -181,7 +187,6 @@
 		th.check-column {
 			border-left: 2px solid #2ea2cc;
 		}
-
 	}
 
 	tr.active-snippet + tr.inactive-snippet th,
