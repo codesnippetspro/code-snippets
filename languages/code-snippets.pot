@@ -236,15 +236,15 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: php/class-list-table.php:157, php/class-list-table.php:378
+#: php/class-list-table.php:157, php/class-list-table.php:366
 msgid "Clone"
 msgstr ""
 
-#: php/class-list-table.php:158, php/class-list-table.php:380, php/views/edit.php:213
+#: php/class-list-table.php:158, php/class-list-table.php:368, php/views/edit.php:212
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:167, php/class-list-table.php:381, php/views/edit.php:226
+#: php/class-list-table.php:167, php/class-list-table.php:369, php/views/edit.php:225
 msgid "Delete"
 msgstr ""
 
@@ -252,122 +252,126 @@ msgstr ""
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:172, php/views/edit.php:221
+#: php/class-list-table.php:172, php/views/edit.php:220
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
-#. translators: %d: snippet identifier
-#: php/class-list-table.php:234
-msgid "Untitled #%d"
+#: php/class-list-table.php:197
+msgid "Run Once"
 msgstr ""
 
-#: php/class-list-table.php:258
-msgid "Shared on Network"
-msgstr ""
-
-#: php/class-list-table.php:335, php/views/edit.php:79
-msgid "Name"
-msgstr ""
-
-#: php/class-list-table.php:336
-msgid "ID"
-msgstr ""
-
-#: php/class-list-table.php:337, php/admin-menus/class-edit-menu.php:309
-msgid "Description"
-msgstr ""
-
-#: php/class-list-table.php:338, php/admin-menus/class-edit-menu.php:342
-msgid "Tags"
-msgstr ""
-
-#: php/class-list-table.php:339, php/admin-menus/class-edit-menu.php:361
-msgid "Priority"
-msgstr ""
-
-#: php/class-list-table.php:376
-msgid "Network Activate"
-msgstr ""
-
-#: php/class-list-table.php:376
-msgid "Activate"
-msgstr ""
-
-#: php/class-list-table.php:377
+#: php/class-list-table.php:201, php/class-list-table.php:365
 msgid "Network Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:377
+#: php/class-list-table.php:201, php/class-list-table.php:364
+msgid "Network Activate"
+msgstr ""
+
+#: php/class-list-table.php:202, php/class-list-table.php:365
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:379, php/views/edit.php:208
+#: php/class-list-table.php:202, php/class-list-table.php:364
+msgid "Activate"
+msgstr ""
+
+#. translators: %d: snippet identifier
+#: php/class-list-table.php:221
+msgid "Untitled #%d"
+msgstr ""
+
+#: php/class-list-table.php:245
+msgid "Shared on Network"
+msgstr ""
+
+#: php/class-list-table.php:323, php/views/edit.php:79
+msgid "Name"
+msgstr ""
+
+#: php/class-list-table.php:324
+msgid "ID"
+msgstr ""
+
+#: php/class-list-table.php:325, php/admin-menus/class-edit-menu.php:309
+msgid "Description"
+msgstr ""
+
+#: php/class-list-table.php:326, php/admin-menus/class-edit-menu.php:342
+msgid "Tags"
+msgstr ""
+
+#: php/class-list-table.php:327, php/admin-menus/class-edit-menu.php:361
+msgid "Priority"
+msgstr ""
+
+#: php/class-list-table.php:367, php/views/edit.php:207
 msgid "Download"
 msgstr ""
 
 #. translators: %s: total number of snippets
-#: php/class-list-table.php:423
+#: php/class-list-table.php:411
 msgid "All <span class=\"count\">(%s)</span>"
 msgid_plural "All <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of active snippets
-#: php/class-list-table.php:426
+#: php/class-list-table.php:414
 msgid "Active <span class=\"count\">(%s)</span>"
 msgid_plural "Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of inactive snippets
-#: php/class-list-table.php:429
+#: php/class-list-table.php:417
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of recently activated snippets
-#: php/class-list-table.php:432
+#: php/class-list-table.php:420
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:501
+#: php/class-list-table.php:489
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:515
+#: php/class-list-table.php:503
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:523
+#: php/class-list-table.php:511
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:723
+#: php/class-list-table.php:711
 msgid "It looks like you don't have any snippets."
 msgstr ""
 
-#: php/class-list-table.php:727
+#: php/class-list-table.php:715
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1024
+#: php/class-list-table.php:1012
 msgid "Search results"
 msgstr ""
 
 #. translators: %s: search query
-#: php/class-list-table.php:1028
+#: php/class-list-table.php:1016
 msgid " for &ldquo;%s&rdquo;"
 msgstr ""
 
 #. translators: %s: tag name
-#: php/class-list-table.php:1033
+#: php/class-list-table.php:1021
 msgid " in tag &ldquo;%s&rdquo;"
 msgstr ""
 
-#: php/class-list-table.php:1042
+#: php/class-list-table.php:1030
 msgid "Clear Filters"
 msgstr ""
 
@@ -812,88 +816,88 @@ msgstr ""
 msgid "Code"
 msgstr ""
 
-#: php/views/edit.php:100
+#: php/views/edit.php:99
 msgctxt "help tooltip"
 msgid "?"
 msgstr ""
 
-#: php/views/edit.php:105
+#: php/views/edit.php:104
 msgctxt "keyboard key"
 msgid "Cmd"
 msgstr ""
 
-#: php/views/edit.php:106
+#: php/views/edit.php:105
 msgctxt "keyboard key"
 msgid "Ctrl"
 msgstr ""
 
-#: php/views/edit.php:107
+#: php/views/edit.php:106
 msgctxt "keyboard key"
 msgid "Shift"
 msgstr ""
 
-#: php/views/edit.php:108
+#: php/views/edit.php:107
 msgctxt "keyboard key"
 msgid "Option"
 msgstr ""
 
-#: php/views/edit.php:109
+#: php/views/edit.php:108
 msgctxt "keyboard key"
 msgid "Alt"
 msgstr ""
 
-#: php/views/edit.php:110
+#: php/views/edit.php:109
 msgctxt "keyboard key"
 msgid "F"
 msgstr ""
 
-#: php/views/edit.php:111
+#: php/views/edit.php:110
 msgctxt "keyboard key"
 msgid "G"
 msgstr ""
 
-#: php/views/edit.php:112
+#: php/views/edit.php:111
 msgctxt "keyboard key"
 msgid "R"
 msgstr ""
 
-#: php/views/edit.php:119
-msgid "Open search"
+#: php/views/edit.php:118
+msgid "Begin searching"
 msgstr ""
 
-#: php/views/edit.php:124
+#: php/views/edit.php:123
 msgid "Find next"
 msgstr ""
 
-#: php/views/edit.php:128
+#: php/views/edit.php:127
 msgid "Find previous"
 msgstr ""
 
-#: php/views/edit.php:132
+#: php/views/edit.php:131
 msgid "Replace"
 msgstr ""
 
-#: php/views/edit.php:136
+#: php/views/edit.php:135
 msgid "Replace all"
 msgstr ""
 
-#: php/views/edit.php:142
+#: php/views/edit.php:141
 msgid "Persistent search"
 msgstr ""
 
-#: php/views/edit.php:172
+#: php/views/edit.php:171
 msgid "Save Changes and Execute Once"
 msgstr ""
 
-#: php/views/edit.php:177, php/views/edit.php:191
+#: php/views/edit.php:176, php/views/edit.php:190
 msgid "Save Changes and Activate"
 msgstr ""
 
-#: php/views/edit.php:197
+#: php/views/edit.php:196
 msgid "Save Changes and Deactivate"
 msgstr ""
 
-#: php/views/edit.php:220
+#: php/views/edit.php:219
 msgid "You are about to permanently delete this snippet."
 msgstr ""
 

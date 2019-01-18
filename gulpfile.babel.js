@@ -12,20 +12,20 @@ import change from 'gulp-change';
 import archiver from 'gulp-archiver';
 
 import postcss from 'gulp-postcss';
-import autoprefixer from 'autoprefixer';
 import precss from 'precss';
-import rtlcss from 'gulp-rtlcss';
 import cssnano from 'cssnano';
+import rtlcss from 'gulp-rtlcss';
 import cssimport from 'postcss-import';
+import autoprefixer from 'autoprefixer';
 
 import imagemin from 'gulp-imagemin';
 
-import browserify from 'browserify';
 import babelify from 'babelify';
-import source from 'vinyl-source-stream';
-import buffer from 'vinyl-buffer';
+import browserify from 'browserify';
 import uglify from 'gulp-uglify';
 import eslint from 'gulp-eslint';
+import source from 'vinyl-source-stream';
+import buffer from 'vinyl-buffer';
 
 import makepot from 'gulp-wp-pot';
 import gettext from 'gulp-gettext'
@@ -173,10 +173,7 @@ gulp.task('package', gulp.series(
 	() => gulp.src(['dist', pkg.name, `${pkg.name}.*.zip`], {read: false, allowEmpty: true})
 		.pipe(clean()),
 
-	() => gulp.src([
-		'code-snippets.php', 'uninstall.php', 'php/**/*',
-		'readme.txt', 'license.txt', 'languages/**/*', 'css/font/**/*',
-	])
+	() => gulp.src(['code-snippets.php', 'uninstall.php', 'php/**/*', 'readme.txt', 'license.txt', 'languages/**/*', 'css/font/**/*'])
 		.pipe(copy(pkg.name)),
 
 	() => gulp.src('css/min/**/*.css')

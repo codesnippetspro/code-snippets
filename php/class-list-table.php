@@ -185,39 +185,30 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @return string
 	 */
 	protected function get_activation_switch( $snippet ) {
-		$action = $snippet->active ? 'deactivate' : 'activate';
 
 		if ( $this->is_network && $snippet->shared_network || ( ! $this->is_network && $snippet->network && ! $snippet ) ) {
 			return '';
 		}
 
+		$action = ( $snippet->active ? 'deactivate' : 'activate' );
+
 		if ( $snippet->shared_network ) {
-			$action .= 'shared';
+			$action .= '-shared';
 		}
 
-		/*
-		if ( $snippet->active ) {
-			$actions['deactivate'] = sprintf(
-				$link_format,
-				$snippet->network ? esc_html__( 'Network Deactivate', 'code-snippets' ) : esc_html__( 'Deactivate', 'code-snippets' ),
-				$this->get_action_link( 'deactivate', $snippet )
-			);
-		} elseif ( 'single-use' === $snippet->scope ) {
-
-			$actions['run_once'] = sprintf( $link_format, esc_html__( 'Run Once', 'code-snippets' ), $this->get_action_link( 'run-once', $snippet ) );
-
+		if ( 'single-use' === $snippet->scope ) {
+			$class = 'snippet-execution-button';
+			$label = esc_html__( 'Run Once', 'code-snippets' );
 		} else {
-			$actions['activate'] = sprintf(
-				$link_format,
-				$snippet->network ? esc_html__( 'Network Activate', 'code-snippets' ) : esc_html__( 'Activate', 'code-snippets' ),
-				$this->get_action_link( 'activate', $snippet )
-			);
+			$class = 'snippet-activation-switch';
+			$label = $snippet->network ?
+				( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
+				( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
 		}
-		*/
 
 		return sprintf(
-			'<a class="snippet-activation-switch" href="%s"></a> ',
-			$this->get_action_link( $action, $snippet )
+			'<a class="%s" href="%s" title="%s"></a> ',
+			$class, $this->get_action_link( $action, $snippet ), esc_html( $label )
 		);
 	}
 
@@ -261,6 +252,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/* Return the name contents */
 
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
+
 		return $this->get_activation_switch( $snippet ) . $out . $row_actions;
 	}
 
@@ -420,13 +412,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$labels = array(
 
 				/* translators: %s: total number of snippets */
-				'all' => _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'all'                => _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' ),
 
 				/* translators: %s: total number of active snippets */
-				'active' => _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'active'             => _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
 
 				/* translators: %s: total number of inactive snippets */
-				'inactive' => _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' ),
+				'inactive'           => _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' ),
 
 				/* translators: %s: total number of recently activated snippets */
 				'recently_activated' => _n( 'Recently Active <span class="count">(%s)</span>', 'Recently Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
@@ -483,7 +475,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @param string $which Are the actions displayed on the table top or bottom
 	 */
 	public function extra_tablenav( $which ) {
-		global $status, $wpdb;
+		global $status;
 
 		if ( 'top' === $which ) {
 

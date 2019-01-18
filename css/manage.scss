@@ -1,4 +1,3 @@
-
 /**
  * Custom styling for the snippets table
  */
@@ -41,15 +40,19 @@
 	left: 0;
 }
 
+.snippet-execution-button,
 .snippet-activation-switch {
 	position: absolute;
 	display: inline-block;
+}
+
+.snippet-activation-switch {
 	margin-top: 5px;
 	width: 30px;
 	height: 17px;
-	background-color: #ccc;
 	transition: .4s;
 	border-radius: 34px;
+	background-color: #ccc;
 
 	&::before {
 		content: "";
@@ -67,6 +70,36 @@
 
 		&::before {
 			transform: translateX(100%);
+		}
+	}
+}
+
+.snippet-execution-button {
+	margin-left: 10px;
+	margin-top: 9px;
+	width: 0;
+	height: 0;
+	border-top: 9px solid transparent;
+	border-bottom: 9px solid transparent;
+	border-left: 10px solid #ccc;
+	transition: all 0.3s;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: -14px;
+		left: -21px;
+		bottom: -14px;
+		right: -8px;
+		border-radius: 50%;
+		border: 1.8px solid #ccc;
+		z-index: 2;
+		transition: all .3s;
+	}
+
+	&:hover, &:focus {
+		&::before {
+			transform: scale(1.1);
 		}
 	}
 }

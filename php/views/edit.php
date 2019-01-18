@@ -94,7 +94,6 @@ if ( $edit_id ) {
 
 			<div class="snippet-editor-help">
 
-
 				<div class="editor-help-tooltip cm-s-<?php
 				echo esc_attr( code_snippets_get_setting( 'editor', 'theme' ) ); ?>"><?php
 					echo esc_html_x( '?', 'help tooltip', 'code-snippets' ); ?></div>
