@@ -986,22 +986,45 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @return bool The result of the filter
 	 */
-	private function search_callback( $snippet ) {
-		static $term;
-		if ( is_null( $term ) ) {
-			$term = stripslashes( $_REQUEST['s'] );
+private function search_callback( $snippet ) {
+	static $term;
+	if ( is_null( $term ) ) {
+    		$_REQUEST['s'] = html_entity_decode( $_REQUEST['s'] );
+		$term = stripslashes( $_REQUEST['s'] );
+	}
+
+	$fields = array( 'name', 'desc', 'code', 'tags_list' );
+
+	// test if this is a search for only matching line_no
+	// if $term contains @#:, search just snippet code by line number
+  	$search_code_by_line = false;
+	if (preg_match('/(?P<search_term>\w+)\@\#\:(?P<line_no>\d+)/',$term, $matches)) {
+		$line_no = (int)$matches['line_no'];
+		$search_term = $matches['search_term'];
+    		// error_log('ln='.$line_no);
+    		// error_log('st='.$search_term);
+    		if ( $line_no > 0 && !empty($search_term)) $search_code_by_line = true;
+	}
+
+  	if ( $search_code_by_line ) {  
+		//search just Snippet code for $search_term at $line_no
+		$code_by_line = explode("\n",$snippet->code);
+		if ( isset($code_by_line[$line_no]) && false !== stripos( $code_by_line[$line_no], $search_term ) ) {
+      			// error_log('found one');
+			return true;
+		} else {
+			return false;
 		}
-
-		$fields = array( 'name', 'desc', 'code', 'tags_list' );
-
+	} else {
+		//regular search starts here
 		foreach ( $fields as $field ) {
 			if ( false !== stripos( $snippet->$field, $term ) ) {
 				return true;
 			}
 		}
-
 		return false;
-	}
+	} // line_no search or not
+}
 
 	/**
 	 * Callback for filtering snippets by tag
