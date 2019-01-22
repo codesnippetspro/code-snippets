@@ -29,7 +29,7 @@ Domain Path: /languages
 
 /* Exit if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	return;
 }
 
 /**
@@ -88,7 +88,11 @@ function code_snippets_autoload( $class_name ) {
 	require_once $class_path . "class-{$class_file}.php";
 }
 
-spl_autoload_register( 'code_snippets_autoload' );
+try {
+	spl_autoload_register( 'code_snippets_autoload' );
+} catch ( Exception $e ) {
+	new WP_Error( $e->getCode(), $e->getMessage() );
+}
 
 /**
  * Retrieve the instance of the main plugin class
