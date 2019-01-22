@@ -8,9 +8,9 @@
  *
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@sheabunge.com>
- * @copyright 2012-2018 Shea Bunge
+ * @copyright 2012-2019 Shea Bunge
  * @license   MIT http://opensource.org/licenses/MIT
- * @version   2.13.0
+ * @version   2.13.1
  * @link      https://github.com/sheabunge/code-snippets
  */
 
@@ -20,7 +20,7 @@ Plugin URI:  https://github.com/sheabunge/code-snippets
 Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
 Author:      Shea Bunge
 Author URI:  https://sheabunge.com
-Version:     2.13.0
+Version:     2.13.1
 License:     MIT
 License URI: license.txt
 Text Domain: code-snippets
@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0
  * @var string A PHP-standardized version number string
  */
-define( 'CODE_SNIPPETS_VERSION', '2.13.0' );
+define( 'CODE_SNIPPETS_VERSION', '2.13.1' );
 
 /**
  * The full path to the main file of this plugin

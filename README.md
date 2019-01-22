@@ -22,7 +22,7 @@ If you like this plugin, or it is useful to you in some way, please consider rev
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
-* French – [momo-fr](http://www.momofr.net/) and Shea Bunge
+* French – [momo-fr](http://www.momofr.net/) and [Shea Bunge](https://sheabunge.com)
 * Belarusian - [Hrank.com](https://www.hrank.com)
 * Brazilian Portuguese – [Bruno Borges](http://brunoborges.info)
 * French (Canada) - [Dominic Desbiens](http://www.dominicdesbiens.com/)

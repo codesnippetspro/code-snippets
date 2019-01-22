@@ -31,7 +31,7 @@ If you'd like to contribute to the plugin's code or translate it into another la
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
-* French – [momo-fr](http://www.momofr.net/) and Shea Bunge
+* French – [momo-fr](http://www.momofr.net/) and [Shea Bunge](https://sheabunge.com)
 * Belarusian - [Hrank.com](https://www.hrank.com)
 * Brazilian Portuguese – [Bruno Borges](http://brunoborges.info)
 * French (Canada) - [Dominic Desbiens](http://www.dominicdesbiens.com/)
@@ -120,6 +120,17 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 2.13.1 (22 Jan 2019) =
+* Added: Add menu buttons to settings page for compact menu
+* Updated: French translation updated thanks to momo-fr
+* Fixed: Split code editor and tag editor scripts into their own files to prevent dependency errors
+* Fixed: Handling of single-use shared network snippets
+* Fixed: Minor translation template issues
+* Added: Help tooltop to snippet editor for keyboard shortcuts, thanks to Michael DeWitt
+* Improved: Added button for executing single-use snippets to snippets table
+* Added: Sample snippet for ordering snippets table by name by default
+* Updated CodeMirror to version 5.43.0
 
 = 2.13.0 (17 Dec 2018) =
 * Added: Search/replace functionality to the snippet editor. [See here for a list of keyboard shortcuts.](https://codemirror.net/demo/search.html) [[#](https://wordpress.org/support/topic/feature-request-codemirror-search-and-replace/)]
@@ -567,6 +578,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.13.1 =
+Fixes for single-use snippets and French translation
 
 = 2.11.0 =
 Snippet priorities and other small features
