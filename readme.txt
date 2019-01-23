@@ -31,6 +31,7 @@ If you'd like to contribute to the plugin's code or translate it into another la
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
+* Danish - [Finn Sommer Jensen](https://profiles.wordpress.org/finnsommer/)
 * French – [momo-fr](http://www.momofr.net/) and [Shea Bunge](https://sheabunge.com)
 * Belarusian - [Hrank.com](https://www.hrank.com)
 * Brazilian Portuguese – [Bruno Borges](http://brunoborges.info)
