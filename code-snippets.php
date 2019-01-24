@@ -17,7 +17,7 @@
 /*
 Plugin Name: Code Snippets
 Plugin URI:  https://github.com/sheabunge/code-snippets
-Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
+Description: An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
 Author:      Shea Bunge
 Author URI:  https://sheabunge.com
 Version:     2.13.2
