@@ -104,9 +104,11 @@ class Code_Snippets_DB {
 	public function create_or_upgrade_tables() {
 		if ( is_multisite() ) {
 			$this->create_table( $this->ms_table );
+			$this->create_missing_columns( $this->ms_table );
 		}
 
 		$this->create_table( $this->table );
+		$this->create_missing_columns( $this->table );
 	}
 
 	/**
