@@ -830,7 +830,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Filter snippets based on search query */
 		if ( $s ) {
-			$snippets['all'] = array_filter( $snippets['all'], array( $this, 'search_callback' ) );
+			$snippets['all'] = array_filter( $snippets['all'], array( $this, 'search_by_line_callback' ) );
 		}
 
 		/* Clear recently activated snippets older than a week */
@@ -986,45 +986,49 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @return bool The result of the filter
 	 */
-private function search_callback( $snippet ) {
-	static $term;
-	if ( is_null( $term ) ) {
-    		$_REQUEST['s'] = html_entity_decode( $_REQUEST['s'] );
-		$term = stripslashes( $_REQUEST['s'] );
-	}
+	private function search_callback( $snippet ) {
+		global $s;
 
-	$fields = array( 'name', 'desc', 'code', 'tags_list' );
+		$fields = array( 'name', 'desc', 'code', 'tags_list' );
 
-	// test if this is a search for only matching line_no
-	// if $term contains @#:, search just snippet code by line number
-  	$search_code_by_line = false;
-	if (preg_match('/(?P<search_term>\w+)\@\#\:(?P<line_no>\d+)/',$term, $matches)) {
-		$line_no = (int)$matches['line_no'];
-		$search_term = $matches['search_term'];
-    		// error_log('ln='.$line_no);
-    		// error_log('st='.$search_term);
-    		if ( $line_no > 0 && !empty($search_term)) $search_code_by_line = true;
-	}
-
-  	if ( $search_code_by_line ) {  
-		//search just Snippet code for $search_term at $line_no
-		$code_by_line = explode("\n",$snippet->code);
-		if ( isset($code_by_line[$line_no]) && false !== stripos( $code_by_line[$line_no], $search_term ) ) {
-      			// error_log('found one');
-			return true;
-		} else {
-			return false;
-		}
-	} else {
-		//regular search starts here
 		foreach ( $fields as $field ) {
-			if ( false !== stripos( $snippet->$field, $term ) ) {
+			if ( false !== stripos( $snippet->$field, $s ) ) {
 				return true;
 			}
 		}
 		return false;
-	} // line_no search or not
-}
+	}
+
+	/**
+	 * Callback for search function
+	 * @ignore
+	 *
+	 * @param Code_Snippet $snippet The snippet being filtered
+	 *
+	 * @return bool The result of the filter
+	 */
+	private function search_by_line_callback( $snippet ) {
+		global $s;
+		static $line_num;
+
+		if ( is_null( $line_num ) ) {
+
+			if ( preg_match( '/line:(?P<line>\d+)/', $s, $matches ) ) {
+				$s = trim( str_replace( $matches[0], '', $s ) );
+				$line_num = (int) $matches['line'] - 1;
+			} else {
+				$line_num = -1;
+			}
+		}
+
+		if ( $line_num < 0 ) {
+			return $this->search_callback( $snippet );
+		}
+
+		$code_lines = explode( "\n", $snippet->code );
+
+		return isset( $code_lines[ $line_num ] ) && false !== stripos( $code_lines[ $line_num ], $s );
+	}
 
 	/**
 	 * Callback for filtering snippets by tag
@@ -1042,6 +1046,8 @@ private function search_callback( $snippet ) {
 				return true;
 			}
 		}
+
+		return false;
 	}
 
 	/**
