@@ -9,11 +9,11 @@ Stable tag: 2.13.1
 License: MIT
 License URI: license.txt
 
-An easy, clean and simple way to add code snippets to your site.
+An easy, clean and simple way to run code snippets on your site.
 
 == Description ==
 
-Code Snippets is an easy, clean and simple way to add code snippets to your site. It removes the need to add custom snippets to your theme theme's `functions.php` file.
+Code Snippets is an easy, clean and simple way to run PHP code snippets on your site. It removes the need to add custom snippets to your theme theme's `functions.php` file.
 
 A snippet is a small chunk of PHP code that you can use to extend the functionality of a WordPress-powered website; essentially a mini-plugin with less load on your site.
 Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while.
@@ -121,6 +121,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 2.13.2 (25 Jan 2019) =
+* Removed potentially problematic cursor position saving feature
 
 = 2.13.1 (22 Jan 2019) =
 * Added: Add menu buttons to settings page for compact menu

@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.13.2 (25 Jan 2019)
+* Removed potentially problematic cursor position saving feature
+
 ## 2.13.1 (22 Jan 2019)
 * Added: Add menu buttons to settings page for compact menu
 * Updated: French translation updated thanks to momo-fr
