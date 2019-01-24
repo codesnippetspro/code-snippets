@@ -53,19 +53,22 @@ $inactive-color: #ccc;
 	margin-top: 5px;
 	width: 30px;
 	height: 17px;
-	transition: .4s;
 	border-radius: 34px;
 	background-color: #ccc;
 
 	&::before {
+		transition: all .4s;
 		content: "";
 		height: 13px;
 		width: 13px;
 		display: inline-block;
 		margin: 1.5px 2px;
 		background-color: white;
-		transition: .4s, background-color 1000ms linear;
 		border-radius: 50%;
+	}
+
+	&:hover::before {
+		transform: translateX(40%);
 	}
 
 	.snippets .active-snippet & {
@@ -73,6 +76,10 @@ $inactive-color: #ccc;
 
 		&::before {
 			transform: translateX(100%);
+		}
+
+		&:hover::before {
+			transform: translateX(60%);
 		}
 	}
 }
