@@ -8,19 +8,19 @@
  *
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@sheabunge.com>
- * @copyright 2012-2018 Shea Bunge
+ * @copyright 2012-2019 Shea Bunge
  * @license   MIT http://opensource.org/licenses/MIT
- * @version   2.13.0
+ * @version   2.13.2
  * @link      https://github.com/sheabunge/code-snippets
  */
 
 /*
 Plugin Name: Code Snippets
 Plugin URI:  https://github.com/sheabunge/code-snippets
-Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
+Description: An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
 Author:      Shea Bunge
 Author URI:  https://sheabunge.com
-Version:     2.13.0
+Version:     2.13.2
 License:     MIT
 License URI: license.txt
 Text Domain: code-snippets
@@ -29,7 +29,7 @@ Domain Path: /languages
 
 /* Exit if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	return;
 }
 
 /**
@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0
  * @var string A PHP-standardized version number string
  */
-define( 'CODE_SNIPPETS_VERSION', '2.13.0' );
+define( 'CODE_SNIPPETS_VERSION', '2.13.2' );
 
 /**
  * The full path to the main file of this plugin
@@ -88,7 +88,11 @@ function code_snippets_autoload( $class_name ) {
 	require_once $class_path . "class-{$class_file}.php";
 }
 
-spl_autoload_register( 'code_snippets_autoload' );
+try {
+	spl_autoload_register( 'code_snippets_autoload' );
+} catch ( Exception $e ) {
+	new WP_Error( $e->getCode(), $e->getMessage() );
+}
 
 /**
  * Retrieve the instance of the main plugin class

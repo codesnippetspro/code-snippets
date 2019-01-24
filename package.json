@@ -1,6 +1,6 @@
 {
     "name": "code-snippets",
-    "version": "2.13.0",
+    "version": "2.13.2",
     "description": "Manage code snippets running on a WordPress-powered site through a graphical interface",
     "homepage": "https://wordpress.org/plugins/code-snippets",
     "main": "gulpfile.babel.js",
@@ -30,7 +30,7 @@
         "url": "https://github.com/sheabunge/code-snippets/issues"
     },
     "dependencies": {
-        "codemirror": "^5.42.2",
+        "codemirror": "^5.43.0",
         "php-parser": "^3.0.0-prerelease.8",
         "prismjs": "^1.15.0",
         "tag-it": "^2.0.0"
