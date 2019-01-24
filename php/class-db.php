@@ -104,11 +104,9 @@ class Code_Snippets_DB {
 	public function create_or_upgrade_tables() {
 		if ( is_multisite() ) {
 			$this->create_table( $this->ms_table );
-			$this->create_missing_columns( $this->ms_table );
 		}
 
 		$this->create_table( $this->table );
-		$this->create_missing_columns( $this->table );
 	}
 
 	/**
@@ -163,25 +161,5 @@ class Code_Snippets_DB {
 		}
 
 		return $success;
-	}
-
-	/**
-	 * Occasionally the dbDelta process seems to fail to create new columns on some sites,
-	 * so attempt to create columns which appear to be missing
-	 *
-	 * @param string $table_name
-	 */
-	public function create_missing_columns( $table_name ) {
-		global $wpdb;
-
-		$columns = array(
-			'priority' => 'SMALLINT NOT NULL DEFAULT 10',
-		);
-
-		foreach ( $columns as $column => $creation_sql ) {
-			if ( $wpdb->get_var( "SHOW COLUMNS FROM {$table_name} LIKE '{$column}';" ) !== $column ) {
-				$wpdb->query( "ALTER TABLE {$table_name} ADD {$column} {$creation_sql};" );
-			}
-		}
 	}
 }
