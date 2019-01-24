@@ -102,7 +102,10 @@ class Code_Snippets_DB {
 	 * Create the snippet tables, or upgrade them if they already exist
 	 */
 	public function create_or_upgrade_tables() {
-		$this->create_table( $this->ms_table );
+		if ( is_multisite() ) {
+			$this->create_table( $this->ms_table );
+		}
+
 		$this->create_table( $this->table );
 	}
 
