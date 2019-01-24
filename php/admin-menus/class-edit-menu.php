@@ -288,12 +288,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			code_snippets()->get_menu_url( 'edit' )
 		);
 
-		if ( isset( $_POST['snippet_editor_cursor_line'], $_POST['snippet_editor_cursor_ch'] ) &&
-			is_numeric( $_POST['snippet_editor_cursor_line'] ) && is_numeric( $_POST['snippet_editor_cursor_ch'] ) ) {
-			$redirect_uri = add_query_arg( 'cursor_line', intval( $_POST['snippet_editor_cursor_line'] ), $redirect_uri );
-			$redirect_uri = add_query_arg( 'cursor_ch', intval( $_POST['snippet_editor_cursor_ch'] ), $redirect_uri );
-		}
-
 		wp_redirect( esc_url_raw( $redirect_uri ) );
 		exit;
 	}
