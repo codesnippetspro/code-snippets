@@ -1013,7 +1013,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		if ( is_null( $line_num ) ) {
 
-			if ( preg_match( '/line:(?P<line>\d+)/', $s, $matches ) ) {
+			if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
 				$s = trim( str_replace( $matches[0], '', $s ) );
 				$line_num = (int) $matches['line'] - 1;
 			} else {
@@ -1060,8 +1060,21 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			echo '<span class="subtitle">' . __( 'Search results', 'code-snippets' );
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
-				/* translators: %s: search query */
-				echo sprintf( __( ' for &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
+				$s = $_REQUEST['s'];
+
+				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
+
+					/* translators: %s: search query, %d: line number */
+					echo sprintf(
+						__( ' for &ldquo;%s&rdquo; on line %d', 'code-snippets' ),
+						esc_html( trim( str_replace( $matches[0], '', $s ) ) ),
+						$matches['line']
+					);
+
+				} else {
+					/* translators: %s: search query */
+					echo sprintf( __( ' for &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $s ) );
+				}
 			}
 
 			if ( ! empty( $_GET['tag'] ) ) {
