@@ -5,6 +5,8 @@
  *
  * @package Code_Snippets
  * @subpackage Views
+ *
+ * @var Code_Snippets_Edit_Menu $this
  */
 
 /* Bail if accessed directly */
@@ -83,6 +85,12 @@ if ( ! $edit_id ) {
 			</div>
 		</div>
 
+		<?php if ( apply_filters( 'code_snippets/extra_save_buttons', true ) ) { ?>
+			<p class="submit-inline">
+				<?php $this->render_submit_buttons( $snippet, 'small', false ); ?>
+			</p>
+		<?php } ?>
+
 		<h2>
 			<label for="snippet_code">
 				<?php _e( 'Code', 'code-snippets' ); ?>
@@ -157,80 +165,6 @@ if ( ! $edit_id ) {
 
 		?>
 
-		<p class="submit">
-			<?php
-
-			/* Make the 'Save and Activate' button the default if the setting is enabled */
-
-			if ( $snippet->shared_network && is_network_admin() ) {
-
-				submit_button( null, 'primary', 'save_snippet', false );
-
-			} elseif ( 'single-use' === $snippet->scope ) {
-
-				submit_button( null, 'primary', 'save_snippet', false );
-
-				submit_button( __( 'Save Changes and Execute Once', 'code-snippets' ), 'secondary', 'save_snippet_execute', false );
-
-			} elseif ( ! $snippet->active && code_snippets_get_setting( 'general', 'activate_by_default' ) ) {
-
-				submit_button(
-					__( 'Save Changes and Activate', 'code-snippets' ),
-					'primary', 'save_snippet_activate', false
-				);
-
-				submit_button( null, 'secondary', 'save_snippet', false );
-
-			} else {
-
-				/* Save Snippet button */
-				submit_button( null, 'primary', 'save_snippet', false );
-
-				/* Save Snippet and Activate/Deactivate button */
-				if ( ! $snippet->active ) {
-					submit_button(
-						__( 'Save Changes and Activate', 'code-snippets' ),
-						'secondary', 'save_snippet_activate', false
-					);
-
-				} else {
-					submit_button(
-						__( 'Save Changes and Deactivate', 'code-snippets' ),
-						'secondary', 'save_snippet_deactivate', false
-					);
-				}
-			}
-
-			if ( 0 !== $snippet->id ) {
-
-				/* Download button */
-
-				if ( apply_filters( 'code_snippets/enable_downloads', true ) ) {
-					submit_button( __( 'Download', 'code-snippets' ), 'secondary', 'download_snippet', false );
-				}
-
-				/* Export button */
-
-				submit_button( __( 'Export', 'code-snippets' ), 'secondary', 'export_snippet', false );
-
-				/* Delete button */
-
-				$confirm_delete_js = esc_js(
-					sprintf(
-						'return confirm("%s");',
-						__( 'You are about to permanently delete this snippet.', 'code-snippets' ) . "\n" .
-						__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
-					)
-				);
-
-				submit_button(
-					__( 'Delete', 'code-snippets' ),
-					'secondary', 'delete_snippet', false,
-					sprintf( 'onclick="%s"', $confirm_delete_js )
-				);
-			}
-
-			?>
-		</p>
+		<p class="submit"><?php $this->render_submit_buttons( $snippet ); ?></p>
 	</form>
 </div>

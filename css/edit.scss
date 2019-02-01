@@ -46,8 +46,12 @@ ul.tagit {
 }
 
 /* Add spacing in between the action buttons */
-.submit .button {
-	margin-right: .5em;
+.button + .button {
+	margin-left: .5em;
+}
+
+.submit-inline {
+	float: right;
 }
 
 .snippet-scope {
