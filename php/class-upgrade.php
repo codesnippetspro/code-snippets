@@ -55,10 +55,6 @@ class Code_Snippets_Upgrade {
 
 		$this->db->create_table( $table_name );
 
-		if ( false !== $prev_version ) {
-			$this->db->create_missing_columns( $table_name );
-		}
-
 		/* Update the plugin version stored in the database */
 		update_option( 'code_snippets_version', $this->current_version );
 
@@ -92,11 +88,6 @@ class Code_Snippets_Upgrade {
 
 		/* Always attempt to create or upgrade the database tables */
 		$this->db->create_table( $table_name );
-
-		/* If the plugin has been upgraded, also attempt to create the new columns */
-		if ( false !== $prev_version ) {
-			$this->db->create_missing_columns( $table_name );
-		}
 
 		/* Update the plugin version stored in the database */
 		update_site_option( 'code_snippets_version', $this->current_version );
