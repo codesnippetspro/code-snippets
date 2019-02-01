@@ -8,8 +8,13 @@
 class Code_Snippets {
 
 	/**
-	 * The current plugin version
-	 * @var string
+	 * The version number for this release of the plugin.
+	 * This will later be used for upgrades and enqueuing files
+	 *
+	 * This should be set to the 'Plugin Version' value defined
+	 * in the plugin header.
+	 *
+	 * @var string A PHP-standardized version number string
 	 */
 	public $version;
 
@@ -83,7 +88,7 @@ class Code_Snippets {
 
 		$this->shortcode = new Code_Snippets_Shortcode();
 
-		$upgrade = new Code_Snippets_Upgrade( $this->db );
+		$upgrade = new Code_Snippets_Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 	}
 

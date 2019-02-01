@@ -12,12 +12,20 @@ class Code_Snippets_Upgrade {
 	private $db;
 
 	/**
+	 * The current plugin version number
+	 * @var string
+	 */
+	private $current_version;
+
+	/**
 	 * Class constructor
 	 *
-	 * @param Code_Snippets_DB $db Instance of database class
+	 * @param string           $version Current plugin version
+	 * @param Code_Snippets_DB $db      Instance of database class
 	 */
-	public function __construct( Code_Snippets_DB $db ) {
+	public function __construct( $version, Code_Snippets_DB $db ) {
 		$this->db = $db;
+		$this->current_version = $version;
 	}
 
 	/**
@@ -41,7 +49,7 @@ class Code_Snippets_Upgrade {
 		$prev_version = get_option( 'code_snippets_version' );
 
 		/* Do nothing if the plugin has not been updated or installed */
-		if ( ! version_compare( $prev_version, CODE_SNIPPETS_VERSION, '<' ) ) {
+		if ( ! version_compare( $prev_version, $this->current_version, '<' ) ) {
 			return;
 		}
 
@@ -52,7 +60,7 @@ class Code_Snippets_Upgrade {
 		}
 
 		/* Update the plugin version stored in the database */
-		update_option( 'code_snippets_version', CODE_SNIPPETS_VERSION );
+		update_option( 'code_snippets_version', $this->current_version );
 
 		/* Update the scope column of the database */
 		if ( version_compare( $prev_version, '2.10.0', '<' ) ) {
@@ -78,7 +86,7 @@ class Code_Snippets_Upgrade {
 		$prev_version = get_site_option( 'code_snippets_version' );
 
 		/* Do nothing if the plugin has not been updated or installed */
-		if ( ! version_compare( $prev_version, CODE_SNIPPETS_VERSION, '<' ) ) {
+		if ( ! version_compare( $prev_version, $this->current_version, '<' ) ) {
 			return;
 		}
 
@@ -91,7 +99,7 @@ class Code_Snippets_Upgrade {
 		}
 
 		/* Update the plugin version stored in the database */
-		update_site_option( 'code_snippets_version', CODE_SNIPPETS_VERSION );
+		update_site_option( 'code_snippets_version', $this->current_version );
 
 		/* Update the scope column of the database */
 		if ( version_compare( $prev_version, '2.10.0', '<' ) ) {

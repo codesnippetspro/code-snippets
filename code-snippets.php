@@ -33,18 +33,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * The version number for this release of the plugin.
- * This will later be used for upgrades and enqueuing files
- *
- * This should be set to the 'Plugin Version' value,
- * as defined above in the plugin header
- *
- * @since 2.0
- * @var string A PHP-standardized version number string
- */
-define( 'CODE_SNIPPETS_VERSION', '2.13.2' );
-
-/**
  * The full path to the main file of this plugin
  *
  * This can later be passed to functions such as
@@ -104,7 +92,7 @@ function code_snippets() {
 	static $plugin;
 
 	if ( is_null( $plugin ) ) {
-		$plugin = new Code_Snippets( CODE_SNIPPETS_VERSION, __FILE__ );
+		$plugin = new Code_Snippets( '2.13.2', __FILE__ );
 	}
 
 	return $plugin;
