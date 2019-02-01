@@ -1111,7 +1111,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/** @var Code_Snippet $snippet */
 		foreach ( $snippets as $snippet ) {
-
 			// copy all data from the previous snippet aside from the ID and active status
 			$snippet->id = 0;
 			$snippet->active = false;

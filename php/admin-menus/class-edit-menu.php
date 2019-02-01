@@ -92,7 +92,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		if ( isset( $_POST['save_snippet'] ) || isset( $_POST['save_snippet_execute'] ) ||
-			isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
+		     isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
 			$this->save_posted_snippet();
 		}
 
@@ -554,5 +554,84 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		remove_action( 'debug_bar_enqueue_scripts', 'debug_bar_console_scripts' );
+	}
+
+	/**
+	 * Retrieve a list of submit actions for a given snippet
+	 *
+	 * @param Code_Snippet $snippet
+	 * @param bool         $extra_actions
+	 *
+	 * @return array
+	 */
+	public function get_actions_list( $snippet, $extra_actions = true ) {
+		$actions = array(
+			'save_snippet' => __( 'Save Changes', 'code-snippets' ),
+		);
+
+		if ( 'single-use' === $snippet->scope ) {
+			$actions['save_snippet_execute'] = __( 'Save Changes and Execute Once', 'code-snippets' );
+
+		} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
+
+			if ( $snippet->active ) {
+				$actions['save_snippet_deactivate'] = __( 'Save Changes and Deactivate', 'code-snippets' );
+			} else {
+				$actions['save_snippet_activate'] = __( 'Save Changes and Activate', 'code-snippets' );
+			}
+		}
+
+		// Make the 'Save and Activate' button the default if the setting is enabled
+		if ( ! $snippet->active && 'single-use' !== $snippet->scope &&
+		     code_snippets_get_setting( 'general', 'activate_by_default' ) ) {
+			$actions = array_reverse( $actions );
+		}
+
+		if ( $extra_actions && 0 !== $snippet->id ) {
+
+			if ( apply_filters( 'code_snippets/enable_downloads', true ) ) {
+				$actions['download_snippet'] = __( 'Download', 'code-snippets' );
+			}
+
+			$actions['export_snippet'] = __( 'Export', 'code-snippets' );
+			$actions['delete_snippet'] = __( 'Delete', 'code-snippets' );
+		}
+
+		return $actions;
+	}
+
+	/**
+	 * Render the submit buttons for a code snippet
+	 *
+	 * @param Code_Snippet $snippet
+	 * @param string       $size
+	 * @param bool         $extra_actions
+	 */
+	public function render_submit_buttons( $snippet, $size = '', $extra_actions = true ) {
+
+		$actions = $this->get_actions_list( $snippet, $extra_actions );
+		$type = 'primary';
+		$size = $size ? ' ' . $size : '';
+
+		foreach ( $actions as $action => $label ) {
+			$other = null;
+
+			if ( 'delete_snippet' === $action ) {
+
+				$other = sprintf( 'onclick="%s"', esc_js(
+					sprintf(
+						'return confirm("%s");',
+						__( 'You are about to permanently delete this snippet.', 'code-snippets' ) . "\n" .
+						__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+					)
+				) );
+			}
+
+			submit_button( $label, $type . $size, $action, false, $other );
+
+			if ( 'primary' === $type ) {
+				$type = 'secondary';
+			}
+		}
 	}
 }
