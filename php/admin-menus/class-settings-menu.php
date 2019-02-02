@@ -2,8 +2,6 @@
 
 namespace Code_Snippets;
 
-use function Code_Snippets\Settings\are_settings_unified;
-
 /**
  * This class handles the settings admin menu
  * @since 2.4.0
@@ -30,7 +28,7 @@ class Settings_Menu extends Admin_Menu {
 
 		if ( isset( $_GET['reset_settings'] ) && $_GET['reset_settings'] ) {
 
-			if ( are_settings_unified() ) {
+			if ( Settings\are_settings_unified() ) {
 				delete_site_option( 'code_snippets_settings' );
 			} else {
 				delete_option( 'code_snippets_settings' );
@@ -46,7 +44,7 @@ class Settings_Menu extends Admin_Menu {
 
 		if ( is_network_admin() ) {
 
-			if ( are_settings_unified() ) {
+			if ( Settings\are_settings_unified() ) {
 				$this->update_network_options();
 			} else {
 				wp_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );
@@ -67,7 +65,7 @@ class Settings_Menu extends Admin_Menu {
 			array(), $plugin->version
 		);
 
-		\Code_Snippets\Settings\enqueue_editor_preview_assets();
+		Settings\enqueue_editor_preview_assets();
 	}
 
 	/**

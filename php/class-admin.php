@@ -2,8 +2,6 @@
 
 namespace Code_Snippets;
 
-use function Code_Snippets\Settings\are_settings_unified;
-
 /**
  * Functions specific to the administration interface
  *
@@ -25,7 +23,7 @@ class Admin {
 		$this->menus['edit'] = new Edit_Menu();
 		$this->menus['import'] = new Import_Menu();
 
-		if ( is_network_admin() === are_settings_unified() ) {
+		if ( is_network_admin() === Settings\are_settings_unified() ) {
 			$this->menus['settings'] = new Settings_Menu();
 		}
 
