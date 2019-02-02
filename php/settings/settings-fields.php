@@ -122,7 +122,7 @@ function get_settings_fields() {
 	$fields['editor'] = array(
 		'theme' => array(
 			'name'       => __( 'Theme', 'code-snippets' ),
-			'type'       => 'codemirror_theme_select',
+			'type'       => 'editor_theme_select',
 			'default'    => 'default',
 			'codemirror' => 'theme',
 		),

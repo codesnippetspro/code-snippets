@@ -28,7 +28,7 @@
 
 			let value = (() => {
 				switch (setting.type) {
-					case 'codemirror_theme_select':
+					case 'editor_theme_select':
 						return element.options[element.selectedIndex].value;
 					case 'checkbox':
 						return element.checked;
