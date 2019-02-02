@@ -8,8 +8,7 @@ php:
   - '5.6'
   - '7.0'
   - '7.1'
-  - '7.2'
-  - '7.3'
+  # PHP 7.2 and greater use PHPUnit 7, which is incompatible with the WordPress PHPUnit library
 
 env:
   global:

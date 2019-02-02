@@ -31,7 +31,6 @@
 	},
 	"require-dev": {
 		"wp-coding-standards/wpcs": "dev-master",
-		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
-		"phpunit/phpunit": "<7"
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0"
 	}
 }
