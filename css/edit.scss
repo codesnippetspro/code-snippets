@@ -36,6 +36,10 @@ h2 {
 	border-left-color: #dc3232;
 }
 
+#snippet-form {
+	margin-top: 10px
+}
+
 /* Position the description heading on the same level as the editor buttons */
 label[for='snippet_description'] h3 div {
 	position: absolute;
@@ -152,4 +156,20 @@ ul.tagit {
 
 .CodeMirror-sizer {
 	min-height: 300px !important;
+}
+
+.snippet-scope {
+	display: none;
+}
+
+[data-snippet-type=php] {
+	.php-scopes-list {
+		display: block;
+	}
+}
+
+[data-snippet-type=css] {
+	.css-scopes-list {
+		display: block;
+	}
 }

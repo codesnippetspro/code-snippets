@@ -390,7 +390,7 @@ class Edit_Menu extends Admin_Menu {
 		}
 
 		foreach ( $all_scopes as $type => $scopes ) {
-			echo '<p class="snippet-scope php-scopes-list">';
+			printf( '<p class="snippet-scope %s-scopes-list">', $type );
 
 			foreach ( $scopes as $scope => $label ) {
 				printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );

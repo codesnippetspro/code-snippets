@@ -16,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-$table = code_snippets()->db->get_table_name();
 $edit_id = isset( $_REQUEST['id'] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
 $snippet = get_snippet( $edit_id );
 
@@ -28,6 +27,19 @@ if ( ! $edit_id ) {
 	$classes[] = 'single-use-snippet';
 } else {
 	$classes[] = ( $snippet->active ? '' : 'in' ) . 'active-snippet';
+}
+
+$types = array(
+	'php' => __( 'Functions', 'code-snippets' ),
+	'css' => __( 'Styles', 'code-snippets' ),
+);
+
+if ( 0 === $edit_id && isset( $_GET['type'] ) && $_GET['type'] !== $snippet->type ) {
+	if ( 'php' === $_GET['type'] ) {
+		$snippet->scope = 'global';
+	} elseif ( 'css' === $_GET['type'] ) {
+		$snippet->scope = 'site-css';
+	}
 }
 
 ?>
@@ -69,7 +81,8 @@ if ( ! $edit_id ) {
 
 		?></h1>
 
-	<form method="post" id="snippet-form" action="" style="margin-top: 10px;" class="<?php echo implode( ' ', $classes ); ?>">
+	<form method="post" id="snippet-form" action="" class="<?php echo implode( ' ', $classes ); ?>"
+	      data-snippet-type="<?php echo esc_attr( $snippet->type ); ?>">
 		<?php
 		/* Output the hidden fields */
 
@@ -83,7 +96,8 @@ if ( ! $edit_id ) {
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php _e( 'Name', 'code-snippets' ); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>" placeholder="<?php _e( 'Enter title here', 'code-snippets' ); ?>" />
+				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>"
+				       placeholder="<?php _e( 'Enter title here', 'code-snippets' ); ?>" />
 			</div>
 		</div>
 
@@ -133,12 +147,14 @@ if ( ! $edit_id ) {
 		</h2>
 
 		<?php if ( ! $edit_id ) { ?>
-
-		<h2 class="nav-tab-wrapper">
-			<a class="nav-tab nav-tab-active">Functions</a>
-			<a class="nav-tab">Styles</a>
-		</h2>
-
+			<h2 class="nav-tab-wrapper">
+			<?php foreach ( $types as $type => $label ) { ?>
+				<a class="nav-tab<?php echo $snippet->type == $type ? ' nav-tab-active' : ''; ?>"
+					href="<?php echo esc_url( add_query_arg( 'type', $type ) ) ?>">
+					<?php echo esc_html( $label ); ?>
+				</a>
+			<?php } ?>
+			</h2>
 		<?php } ?>
 
 		<div class="snippet-editor">
