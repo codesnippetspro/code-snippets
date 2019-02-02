@@ -2,7 +2,7 @@
 
 namespace Code_Snippets\Settings;
 
-use function Code_Snippets\get_available_editor_themes;
+use function Code_Snippets\get_editor_themes;
 
 /**
  * This file registers the settings
@@ -142,7 +142,7 @@ function register_plugin_settings() {
 			add_settings_field(
 				'code_snippets_' . $field_id,
 				$field['name'],
-				"code_snippets_{$field['type']}_field",
+				__NAMESPACE__ . "\\render_{$field['type']}_field",
 				'code-snippets',
 				'code-snippets-' . $section_id,
 				$atts
@@ -154,13 +154,13 @@ function register_plugin_settings() {
 	add_settings_field(
 		'code_snippets_editor_preview',
 		__( 'Editor Preview', 'code-snippets' ),
-		'code_snippets_settings_editor_preview',
+		__NAMESPACE__ . '\\render_editor_preview',
 		'code-snippets',
 		'code-snippets-editor'
 	);
 }
 
-add_action( 'admin_init', __NAMESPACE__ . '\register_plugin_settings' );
+add_action( 'admin_init', __NAMESPACE__ . '\\register_plugin_settings' );
 
 /**
  * Validate the settings
@@ -190,8 +190,8 @@ function code_snippets_settings_validate( array $input ) {
 					$settings[ $section_id ][ $field_id ] = absint( $input[ $section_id ][ $field_id ] );
 					break;
 
-				case 'codemirror_theme_select':
-					$available_themes = get_available_editor_themes();
+				case 'editor_theme_select':
+					$available_themes = get_editor_themes();
 					$selected_theme = $input[ $section_id ][ $field_id ];
 
 					if ( in_array( $selected_theme, $available_themes ) ) {

@@ -16,7 +16,7 @@ namespace Code_Snippets\Settings;
  *
  * @param array $atts The setting field's attributes
  */
-function code_snippets_checkbox_field( $atts ) {
+function render_checkbox_field( $atts ) {
 	$saved_value = get_setting( $atts['section'], $atts['id'] );
 	$input_name = sprintf( 'code_snippets_settings[%s][%s]', $atts['section'], $atts['id'] );
 
@@ -46,7 +46,7 @@ function code_snippets_checkbox_field( $atts ) {
  *
  * @param array $atts The setting field's attributes
  */
-function code_snippets_number_field( $atts ) {
+function render_number_field( $atts ) {
 
 	printf(
 		'<input type="number" name="code_snippets_settings[%s][%s]" value="%s"',

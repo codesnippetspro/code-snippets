@@ -85,7 +85,7 @@ function enqueue_code_editor_assets() {
  * Retrieve a list of the available CodeMirror themes
  * @return array the available themes
  */
-function get_available_editor_themes() {
+function get_editor_themes() {
 	static $themes = null;
 
 	if ( ! is_null( $themes ) ) {

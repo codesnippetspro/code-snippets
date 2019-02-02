@@ -3,7 +3,7 @@
 namespace Code_Snippets\Settings;
 
 use function Code_Snippets\enqueue_code_editor_assets;
-use function Code_Snippets\get_available_editor_themes;
+use function Code_Snippets\get_editor_themes;
 use function Code_Snippets\get_code_editor_atts;
 
 /**
@@ -16,14 +16,14 @@ use function Code_Snippets\get_code_editor_atts;
 /**
  * Load the CSS and JavaScript for the editor preview field
  */
-function enqueue_editor_settings_preview_assets() {
+function enqueue_editor_preview_assets() {
 	$plugin = \Code_Snippets\code_snippets();
 
 	// Enqueue scripts for the editor preview
 	enqueue_code_editor_assets();
 
 	// Enqueue all editor themes
-	$themes = get_available_editor_themes();
+	$themes = get_editor_themes();
 
 	foreach ( $themes as $theme ) {
 
@@ -70,7 +70,7 @@ function enqueue_editor_settings_preview_assets() {
  *
  * @param array $atts
  */
-function code_snippets_codemirror_theme_select_field( $atts ) {
+function render_editor_theme_select_field( $atts ) {
 
 	$saved_value = get_setting( $atts['section'], $atts['id'] );
 
@@ -78,7 +78,7 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>Default</option>';
 
 	// print a dropdown entry for each theme
-	foreach ( get_available_editor_themes() as $theme ) {
+	foreach ( get_editor_themes() as $theme ) {
 
 		// skip mobile themes
 		if ( 'ambiance-mobile' === $theme ) {
@@ -99,6 +99,6 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 /**
  * Render the editor preview setting
  */
-function code_snippets_settings_editor_preview() {
+function render_editor_preview() {
 	echo '<div id="code_snippets_editor_preview"></div>';
 }
