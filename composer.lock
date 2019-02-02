@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c011c747425c0be6488cb93841b97886",
+    "content-hash": "5ff49ccba71b9beca90b4ad2e9a2c279",
     "packages": [
         {
             "name": "composer/installers",
@@ -251,12 +251,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git",
-                "reference": "c0877a9d08ff0d31b38b58eed5eb16cac1b21b4b"
+                "reference": "c9eaadaafefce36b3cb7e06eb15305b8c4cae9ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/c0877a9d08ff0d31b38b58eed5eb16cac1b21b4b",
-                "reference": "c0877a9d08ff0d31b38b58eed5eb16cac1b21b4b",
+                "url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/c9eaadaafefce36b3cb7e06eb15305b8c4cae9ce",
+                "reference": "c9eaadaafefce36b3cb7e06eb15305b8c4cae9ce",
                 "shasum": ""
             },
             "require": {
@@ -288,7 +288,7 @@
                 "standards",
                 "wordpress"
             ],
-            "time": "2018-12-30T23:11:56+00:00"
+            "time": "2019-01-16T10:13:16+00:00"
         }
     ],
     "aliases": [],
@@ -299,6 +299,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
+        "php": ">=5.6",
         "ext-json": "*"
     },
     "platform-dev": []
