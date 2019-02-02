@@ -6,16 +6,16 @@
  * @since 2.4.0
  * @package Code_Snippets
  *
- * @property int         $id             The database ID
- * @property string      $name           The display name
- * @property string      $desc           The formatted description
- * @property string      $code           The executable code
- * @property array       $tags           An array of the tags
- * @property string      $scope          The scope name
- * @property int         $priority       Execution priority
- * @property bool        $active         The active status
- * @property bool        $network        true if is multisite-wide snippet, false if site-wide
- * @property bool        $shared_network Whether the snippet is a shared network snippet
+ * @property int    $id             The database ID
+ * @property string $name           The display name
+ * @property string $desc           The formatted description
+ * @property string $code           The executable code
+ * @property array  $tags           An array of the tags
+ * @property string $scope          The scope name
+ * @property int    $priority       Execution priority
+ * @property bool   $active         The active status
+ * @property bool   $network        true if is multisite-wide snippet, false if site-wide
+ * @property bool   $shared_network Whether the snippet is a shared network snippet
  *
  * @property-read array  $tags_list  The tags in string list format
  * @property-read string $scope_icon The dashicon used to represent the current scope
@@ -299,7 +299,7 @@ class Code_Snippet {
 
 	/**
 	 * Retrieve the tags in list format
-	 * @return string The tags seperated by a comma and a space
+	 * @return string The tags separated by a comma and a space
 	 */
 	private function get_tags_list() {
 		return implode( ', ', $this->fields['tags'] );
