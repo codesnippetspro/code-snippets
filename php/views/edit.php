@@ -130,7 +130,17 @@ if ( ! $edit_id ) {
 			</label>
 		</h2>
 
+		<?php if ( ! $edit_id ) { ?>
+
+		<h2 class="nav-tab-wrapper">
+			<a class="nav-tab nav-tab-active">Functions</a>
+			<a class="nav-tab">Styles</a>
+		</h2>
+
+		<?php } ?>
+
 		<div class="snippet-editor">
+
 			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false" style="font-family: monospace; width: 100%;"><?php
 				echo esc_textarea( $snippet->code );
 				?></textarea>

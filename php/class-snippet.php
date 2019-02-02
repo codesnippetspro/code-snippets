@@ -19,6 +19,7 @@
  *
  * @property-read array  $tags_list  The tags in string list format
  * @property-read string $scope_icon The dashicon used to represent the current scope
+ * @property-read string $type       The type of snippet
  */
 class Code_Snippet {
 
@@ -298,6 +299,18 @@ class Code_Snippet {
 	}
 
 	/**
+	 * Determine the type of code this snippet is, based on its scope
+	 * @return string
+	 */
+	private function get_type() {
+		if ( '-css' === substr( $this->scope, -4 ) )  {
+			return 'css';
+		}
+
+		return 'php';
+	}
+
+	/**
 	 * Retrieve the tags in list format
 	 * @return string The tags separated by a comma and a space
 	 */
@@ -310,7 +323,7 @@ class Code_Snippet {
 	 * @return array
 	 */
 	public static function get_all_scopes() {
-		return array( 'global', 'admin', 'front-end', 'single-use' );
+		return array( 'global', 'admin', 'front-end', 'single-use', 'admin-css', 'site-css' );
 	}
 
 	/**
@@ -323,6 +336,8 @@ class Code_Snippet {
 			'admin'      => 'admin-tools',
 			'front-end'  => 'admin-appearance',
 			'single-use' => 'clock',
+			'admin-css'  => 'admin-tools',
+			'site-css'   => 'admin-appearance',
 		);
 	}
 

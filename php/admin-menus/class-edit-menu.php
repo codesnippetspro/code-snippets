@@ -368,22 +368,36 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		$icons = Code_Snippet::get_scope_icons();
 
-		$labels = array(
-			'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
-			'admin'      => __( 'Only run in administration area', 'code-snippets' ),
-			'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
-			'single-use' => __( 'Only run once', 'code-snippets' ),
+		echo '<h2 class="screen-reader-text">' . esc_html__( 'Scope', 'code-snippets' ) . '</h2>';
+
+		$all_scopes = array(
+			'php' => array(
+				'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
+				'admin'      => __( 'Only run in administration area', 'code-snippets' ),
+				'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
+				'single-use' => __( 'Only run once', 'code-snippets' ),
+			),
+			'css' => array(
+				'site-css'  => __( 'Site front-end styles', 'code-snippets' ),
+				'admin-css' => __( 'Administration area styles', 'code-snippets' ),
+			)
 		);
 
-		echo '<h2 class="screen-reader-text">' . esc_html__( 'Scope', 'code-snippets' ) . '</h2><p class="snippet-scope">';
-
-		foreach ( Code_Snippet::get_all_scopes() as $scope ) {
-			printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
-			checked( $scope, $snippet->scope );
-			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $icons[ $scope ], esc_html( $labels[ $scope ] ) );
+		if ( 0 !== $snippet->id ) {
+			$all_scopes = array_intersect_key( $all_scopes, array( $snippet->type => 1 ) );
 		}
 
-		echo '</p>';
+		foreach ( $all_scopes as $type => $scopes ) {
+			echo '<p class="snippet-scope php-scopes-list">';
+
+			foreach ( $scopes as $scope => $label ) {
+				printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
+				checked( $scope, $snippet->scope );
+				printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $icons[ $scope ], esc_html( $label ) );
+			}
+
+			echo '</p>';
+		}
 	}
 
 	/**
