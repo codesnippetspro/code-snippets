@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use function Code_Snippets\Settings\get_setting;
+
 class Code_Shortcode {
 
 	function __construct() {

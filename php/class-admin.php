@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use function Code_Snippets\Settings\are_settings_unified;
+
 /**
  * Functions specific to the administration interface
  *

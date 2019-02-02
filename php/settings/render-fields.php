@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\Settings;
 
 /**
  * This file handles rendering the settings fields

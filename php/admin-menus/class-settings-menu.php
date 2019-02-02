@@ -2,6 +2,9 @@
 
 namespace Code_Snippets;
 
+use function Code_Snippets\Settings\are_settings_unified;
+use function Code_Snippets\Settings\enqueue_editor_settings_preview_assets;
+
 /**
  * This class handles the settings admin menu
  * @since 2.4.0

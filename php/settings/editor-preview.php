@@ -1,6 +1,10 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\Settings;
+
+use function Code_Snippets\enqueue_code_editor_assets;
+use function Code_Snippets\get_available_editor_themes;
+use function Code_Snippets\get_code_editor_atts;
 
 /**
  * This file handles the editor preview setting
@@ -13,7 +17,7 @@ namespace Code_Snippets;
  * Load the CSS and JavaScript for the editor preview field
  */
 function enqueue_editor_settings_preview_assets() {
-	$plugin = code_snippets();
+	$plugin = \Code_Snippets\code_snippets();
 
 	// Enqueue scripts for the editor preview
 	enqueue_code_editor_assets();
@@ -39,7 +43,7 @@ function enqueue_editor_settings_preview_assets() {
 	);
 
 	// Extract the CodeMirror-specific editor settings
-	$setting_fields = code_snippets_get_settings_fields();
+	$setting_fields = get_settings_fields();
 	$editor_fields = array();
 
 	foreach ( $setting_fields['editor'] as $name => $field ) {

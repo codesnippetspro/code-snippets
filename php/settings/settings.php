@@ -1,11 +1,14 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\Settings;
+
+use function Code_Snippets\get_available_editor_themes;
 
 /**
  * This file registers the settings
  *
  * @package Code_Snippets
+ * @subpackage Settings
  */
 
 /**
@@ -33,7 +36,7 @@ function are_settings_unified() {
  *
  * @return array
  */
-function get_settings() {
+function get_settings_values() {
 
 	/* Check if the settings have been cached */
 	if ( $settings = wp_cache_get( 'code_snippets_settings' ) ) {
@@ -80,7 +83,7 @@ function get_settings() {
  * @return array
  */
 function get_setting( $section, $field ) {
-	$settings = get_settings();
+	$settings = get_settings_values();
 
 	return $settings[ $section ][ $field ];
 }
@@ -130,7 +133,7 @@ function register_plugin_settings() {
 	}
 
 	/* Register settings fields */
-	foreach ( code_snippets_get_settings_fields() as $section_id => $fields ) {
+	foreach ( get_settings_fields() as $section_id => $fields ) {
 		foreach ( $fields as $field_id => $field ) {
 			$atts = $field;
 			$atts['id'] = $field_id;
@@ -167,8 +170,8 @@ add_action( 'admin_init', __NAMESPACE__ . '\register_plugin_settings' );
  * @return array        The validated settings
  */
 function code_snippets_settings_validate( array $input ) {
-	$settings = get_settings();
-	$settings_fields = code_snippets_get_settings_fields();
+	$settings = get_settings_values();
+	$settings_fields = get_settings_fields();
 
 	// Don't directly loop through $input as it does not include as deselected checkboxes
 	foreach ( $settings_fields as $section_id => $fields ) {

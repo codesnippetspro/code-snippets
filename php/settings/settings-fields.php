@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\Settings;
 
 /**
  * Retrieve the default setting values
@@ -15,7 +15,7 @@ function get_default_settings() {
 
 	$defaults = array();
 
-	foreach ( code_snippets_get_settings_fields() as $section_id => $fields ) {
+	foreach ( get_settings_fields() as $section_id => $fields ) {
 		$defaults[ $section_id ] = array();
 
 		foreach ( $fields as $field_id => $field_atts ) {
@@ -30,7 +30,7 @@ function get_default_settings() {
  * Retrieve the settings fields
  * @return array
  */
-function code_snippets_get_settings_fields() {
+function get_settings_fields() {
 	static $fields;
 
 	if ( isset( $fields ) ) {

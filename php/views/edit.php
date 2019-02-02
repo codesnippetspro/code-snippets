@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use function Code_Snippets\Settings\get_setting;
+
 /**
  * HTML code for the Add New/Edit Snippet page
  *

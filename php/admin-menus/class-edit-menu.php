@@ -2,6 +2,9 @@
 
 namespace Code_Snippets;
 
+use function Code_Snippets\Settings\get_setting;
+use function Code_Snippets\Settings\get_settings_values;
+
 /**
  * This class handles the add/edit menu
  */
@@ -329,7 +332,7 @@ class Edit_Menu extends Admin_Menu {
 	 * @param Snippet $snippet The snippet being used for this page
 	 */
 	function render_description_editor( Snippet $snippet ) {
-		$settings = get_settings();
+		$settings = get_settings_values();
 		$settings = $settings['description_editor'];
 		$heading = __( 'Description', 'code-snippets' );
 

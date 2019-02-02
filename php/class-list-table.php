@@ -1,6 +1,7 @@
 <?php
 
 namespace Code_Snippets;
+use function Code_Snippets\Settings\get_setting;
 use WP_List_Table;
 
 /**

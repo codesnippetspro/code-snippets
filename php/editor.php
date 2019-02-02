@@ -2,6 +2,10 @@
 
 namespace Code_Snippets;
 
+use function Code_Snippets\Settings\get_setting;
+use function Code_Snippets\Settings\get_settings_values;
+use function Code_Snippets\Settings\get_settings_fields;
+
 /**
  * Get the attributes for the code editor
  *
@@ -24,8 +28,8 @@ function get_code_editor_atts( $type, $override_atts = array(), $json_encode = t
 	);
 
 	// add relevant saved setting values to the default attributes
-	$settings = get_settings();
-	$fields = code_snippets_get_settings_fields();
+	$settings = get_settings_values();
+	$fields = get_settings_fields();
 
 	foreach ( $fields['editor'] as $field_id => $field ) {
 		// the 'codemirror' setting field specifies the name of the attribute
