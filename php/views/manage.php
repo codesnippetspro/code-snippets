@@ -1,12 +1,14 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * HTML code for the Manage Snippets page
  *
  * @package Code_Snippets
  * @subpackage Views
  *
- * @var Code_Snippets_Manage_Menu $this
+ * @var Manage_Menu $this
  */
 
 /* Bail if accessed directly */

@@ -1,10 +1,12 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Retrieve the default setting values
  * @return array
  */
-function code_snippets_get_default_settings() {
+function get_default_settings() {
 	static $defaults;
 
 	if ( isset( $defaults ) ) {

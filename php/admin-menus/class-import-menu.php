@@ -1,11 +1,13 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * This class handles the import admin menu
  * @since 2.4.0
  * @package Code_Snippets
  */
-class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
+class Import_Menu extends Admin_Menu {
 
 	/**
 	 * Class constructor
@@ -32,7 +34,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	public function load() {
 		parent::load();
 
-		$contextual_help = new Code_Snippets_Contextual_Help( 'import' );
+		$contextual_help = new Contextual_Help( 'import' );
 		$contextual_help->load();
 
 		$this->process_import_files();

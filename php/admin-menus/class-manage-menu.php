@@ -1,15 +1,17 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * This class handles the manage snippets menu
  * @since 2.4.0
  * @package Code_Snippets
  */
-class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
+class Manage_Menu extends Admin_Menu {
 
 	/**
 	 * Holds the list table class
-	 * @var Code_Snippets_List_Table
+	 * @var Snippets_List_Table
 	 */
 	public $list_table;
 
@@ -106,11 +108,11 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		parent::load();
 
 		/* Load the contextual help tabs */
-		$contextual_help = new Code_Snippets_Contextual_Help( 'manage' );
+		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
 
 		/* Initialize the list table class */
-		$this->list_table = new Code_Snippets_List_Table();
+		$this->list_table = new Snippets_List_Table();
 		$this->list_table->prepare_items();
 	}
 
@@ -190,7 +192,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		$snippet_data = json_decode( stripslashes( $_POST['snippet'] ), true );
 
-		$snippet = new Code_Snippet( $snippet_data );
+		$snippet = new Snippet( $snippet_data );
 		$field = $_POST['field'];
 
 		if ( 'priority' === $field ) {

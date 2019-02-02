@@ -1,11 +1,13 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Functions specific to the administration interface
  *
  * @package Code_Snippets
  */
-class Code_Snippets_Admin {
+class Admin {
 
 	public $menus = array();
 
@@ -17,12 +19,12 @@ class Code_Snippets_Admin {
 	}
 
 	public function load_classes() {
-		$this->menus['manage'] = new Code_Snippets_Manage_Menu();
-		$this->menus['edit'] = new Code_Snippets_Edit_Menu();
-		$this->menus['import'] = new Code_Snippets_Import_Menu();
+		$this->menus['manage'] = new Manage_Menu();
+		$this->menus['edit'] = new Edit_Menu();
+		$this->menus['import'] = new Import_Menu();
 
-		if ( is_network_admin() === code_snippets_unified_settings() ) {
-			$this->menus['settings'] = new Code_Snippets_Settings_Menu();
+		if ( is_network_admin() === are_settings_unified() ) {
+			$this->menus['settings'] = new Settings_Menu();
 		}
 
 		foreach ( $this->menus as $menu ) {
@@ -34,7 +36,7 @@ class Code_Snippets_Admin {
 		add_action( 'init', array( $this, 'load_classes' ), 11 );
 
 		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items' ) );
-		add_filter( 'plugin_action_links_' . plugin_basename( CODE_SNIPPETS_FILE ), array( $this, 'plugin_settings_link' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( $this, 'plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ) );
@@ -75,7 +77,6 @@ class Code_Snippets_Admin {
 	 * Load the stylesheet for the admin menu icon
 	 */
 	function load_admin_menu_icon() {
-
 		wp_enqueue_style(
 			'menu-icon-snippets',
 			plugins_url( 'css/min/menu-icon.css', code_snippets()->file ),
@@ -145,7 +146,7 @@ class Code_Snippets_Admin {
 	function plugin_meta_links( $links, $file ) {
 
 		/* We only want to affect the Code Snippets plugin listing */
-		if ( plugin_basename( CODE_SNIPPETS_FILE ) !== $file ) {
+		if ( plugin_basename( PLUGIN_FILE ) !== $file ) {
 			return $links;
 		}
 

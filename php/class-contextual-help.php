@@ -1,10 +1,13 @@
 <?php
 
+namespace Code_Snippets;
+use WP_Screen;
+
 /**
  * This file holds all of the content for the contextual help screens
  * @package Code_Snippets
  */
-class Code_Snippets_Contextual_Help {
+class Contextual_Help {
 
 	/**
 	 * @var WP_Screen

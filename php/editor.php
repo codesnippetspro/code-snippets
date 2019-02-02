@@ -1,5 +1,7 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Get the attributes for the code editor
  *
@@ -21,7 +23,7 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 	);
 
 	// add relevant saved setting values to the default attributes
-	$settings = code_snippets_get_settings();
+	$settings = get_settings();
 	$fields = code_snippets_get_settings_fields();
 
 	foreach ( $fields['editor'] as $field_id => $field ) {
@@ -58,7 +60,7 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
  * @uses wp_enqueue_script() to add the scripts to the queue
  */
 function code_snippets_enqueue_editor() {
-	$url = plugin_dir_url( CODE_SNIPPETS_FILE );
+	$url = plugin_dir_url( PLUGIN_FILE );
 	$plugin_version = code_snippets()->version;
 
 	/* Remove other CodeMirror styles */
@@ -70,7 +72,7 @@ function code_snippets_enqueue_editor() {
 	wp_enqueue_script( 'code-snippets-editor', $url . 'js/min/editor.js', array(), $plugin_version );
 
 	/* CodeMirror Theme */
-	$theme = code_snippets_get_setting( 'editor', 'theme' );
+	$theme = get_setting( 'editor', 'theme' );
 
 	if ( 'default' !== $theme ) {
 
@@ -94,7 +96,7 @@ function code_snippets_get_available_themes() {
 	}
 
 	$themes = array();
-	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/editor-themes/';
+	$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'css/min/editor-themes/';
 	$theme_files = glob( $themes_dir . '*.css' );
 
 	foreach ( $theme_files as $i => $theme ) {

@@ -1,6 +1,8 @@
 <?php
 
-class Code_Snippets_Shortcode {
+namespace Code_Snippets;
+
+class Code_Shortcode {
 
 	function __construct() {
 		add_shortcode( 'code_snippet', array( $this, 'render_shortcode' ) );
@@ -9,7 +11,7 @@ class Code_Snippets_Shortcode {
 
 	function enqueue_assets( $posts ) {
 
-		if ( empty( $posts ) || code_snippets_get_setting( 'general', 'disable_prism' ) ) {
+		if ( empty( $posts ) || get_setting( 'general', 'disable_prism' ) ) {
 			return $posts;
 		}
 

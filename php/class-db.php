@@ -1,11 +1,13 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Functions used to manage the database tables
  *
  * @package Code_Snippets
  */
-class Code_Snippets_DB {
+class DB {
 
 	public $table;
 

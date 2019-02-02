@@ -1,12 +1,14 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * HTML code for the Add New/Edit Snippet page
  *
  * @package Code_Snippets
  * @subpackage Views
  *
- * @var Code_Snippets_Edit_Menu $this
+ * @var Edit_Menu $this
  */
 
 /* Bail if accessed directly */
@@ -148,7 +150,7 @@ if ( ! $edit_id ) {
 			<div class="snippet-editor-help">
 
 				<div class="editor-help-tooltip cm-s-<?php
-				echo esc_attr( code_snippets_get_setting( 'editor', 'theme' ) ); ?>"><?php
+				echo esc_attr( get_setting( 'editor', 'theme' ) ); ?>"><?php
 					echo esc_html_x( '?', 'help tooltip', 'code-snippets' ); ?></div>
 
 				<?php

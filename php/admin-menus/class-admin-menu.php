@@ -1,9 +1,11 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Base class for a snippets admin menu
  */
-class Code_Snippets_Admin_Menu {
+class Admin_Menu {
 
 	public $name, $label, $title;
 
@@ -63,13 +65,14 @@ class Code_Snippets_Admin_Menu {
 	 */
 	public function render() {
 		$this->print_messages();
-		include dirname( dirname( __FILE__ ) ) . "/views/{$this->name}.php";
+		include dirname( PLUGIN_FILE ) . "/php/views/{$this->name}.php";
 	}
 
 	/**
 	 * Print the status and error messages
 	 */
-	protected function print_messages() {}
+	protected function print_messages() {
+	}
 
 	/**
 	 * Retrieve a result message based on a posted status

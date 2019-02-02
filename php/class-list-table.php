@@ -1,9 +1,12 @@
 <?php
 
+namespace Code_Snippets;
+use WP_List_Table;
+
 /**
  * Contains the class for handling the snippets table
  *
- * @package    Code_Snippets
+ * @package Code_Snippets
  */
 
 /* The WP_List_Table base class is not included by default, so we need to load it */
@@ -17,7 +20,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * @since 1.5
  * @package Code_Snippets
  */
-class Code_Snippets_List_Table extends WP_List_Table {
+class Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * true if the current screen is in the network admin
@@ -87,8 +90,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Define the output of all columns that have no callback function
 	 *
-	 * @param Code_Snippet $snippet The snippet used for the current row
-	 * @param string       $column_name The name of the column being printed
+	 * @param Snippet $snippet The snippet used for the current row
+	 * @param string  $column_name The name of the column being printed
 	 *
 	 * @return string The content of the column to output
 	 */
@@ -108,9 +111,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Retrieve a URL to perform an action on a snippet
 	 *
-	 * @param string       $action
-	 * @param Code_Snippet $snippet
-	 * @param bool         $escape
+	 * @param string  $action
+	 * @param Snippet $snippet
+	 * @param bool    $escape
 	 *
 	 * @return string
 	 */
@@ -137,11 +140,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Build a list of action links for individual snippets
 	 *
-	 * @param Code_Snippet $snippet The current snippet
+	 * @param Snippet $snippet The current snippet
 	 *
 	 * @return array The action links HTML
 	 */
-	private function get_snippet_action_links( Code_Snippet $snippet ) {
+	private function get_snippet_action_links( Snippet $snippet ) {
 		$actions = array();
 
 		if ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) {
@@ -183,7 +186,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Retrieve the code for a snippet activation switch
 	 *
-	 * @param Code_Snippet $snippet
+	 * @param Snippet $snippet
 	 *
 	 * @return string
 	 */
@@ -218,7 +221,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Build the content of the snippet name column
 	 *
-	 * @param Code_Snippet $snippet The snippet being used for the current row
+	 * @param Snippet $snippet The snippet being used for the current row
 	 *
 	 * @return string The content of the column to output
 	 */
@@ -262,7 +265,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Builds the checkbox column content
 	 *
-	 * @param Code_Snippet $snippet The snippet being used for the current row
+	 * @param Snippet $snippet The snippet being used for the current row
 	 *
 	 * @return string The column content to be printed
 	 */
@@ -283,7 +286,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @since 2.0
 	 *
-	 * @param Code_Snippet $snippet The snippet being used for the current row
+	 * @param Snippet $snippet The snippet being used for the current row
 	 *
 	 * @return string The column output
 	 */
@@ -310,7 +313,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Output the content of the priority column
 	 *
-	 * @param Code_Snippet $snippet
+	 * @param Snippet $snippet
 	 *
 	 * @return string
 	 */
@@ -334,11 +337,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'priority'    => __( 'Priority', 'code-snippets' ),
 		);
 
-		if ( ! code_snippets_get_setting( 'general', 'enable_description' ) ) {
+		if ( ! get_setting( 'general', 'enable_description' ) ) {
 			unset( $columns['description'] );
 		}
 
-		if ( ! code_snippets_get_setting( 'general', 'enable_tags' ) ) {
+		if ( ! get_setting( 'general', 'enable_tags' ) ) {
 			unset( $columns['tags'] );
 		}
 
@@ -756,7 +759,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( $this->is_network ) {
 			$limit = count( $snippets['all'] );
 
-			/** @var Code_Snippet $snippet */
+			/** @var Snippet $snippet */
 			for ( $i = 0; $i < $limit; $i++ ) {
 				$snippet = &$snippets['all'][ $i ];
 
@@ -777,7 +780,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$shared_snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
 
 			foreach ( $shared_snippets as $index => $snippet ) {
-				$snippet = new Code_Snippet( $snippet );
+				$snippet = new Snippet( $snippet );
 				$snippet->network = true;
 				$snippet->shared_network = true;
 				$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
@@ -820,7 +823,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		/* Add scope tags */
-		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
+		if ( get_setting( 'general', 'snippet_scope_enabled' ) ) {
 			foreach ( $snippets['all'] as $snippet ) {
 
 				if ( 'global' !== $snippet->scope ) {
@@ -953,8 +956,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @ignore
 	 *
-	 * @param Code_Snippet $a The first snippet to compare
-	 * @param Code_Snippet $b The second snippet to compare
+	 * @param Snippet $a The first snippet to compare
+	 * @param Snippet $b The second snippet to compare
 	 *
 	 * @return int The sort order
 	 */
@@ -988,7 +991,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * Callback for search function
 	 * @ignore
 	 *
-	 * @param Code_Snippet $snippet The snippet being filtered
+	 * @param Snippet $snippet The snippet being filtered
 	 *
 	 * @return bool The result of the filter
 	 */
@@ -1013,7 +1016,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * Callback for filtering snippets by tag
 	 * @ignore
 	 *
-	 * @param Code_Snippet $snippet The snippet being filtered
+	 * @param Snippet $snippet The snippet being filtered
 	 *
 	 * @return bool The result of the filter
 	 */
@@ -1060,12 +1063,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Outputs content for a single row of the table
 	 *
-	 * @param Code_Snippet $snippet The snippet being used for the current row
+	 * @param Snippet $snippet The snippet being used for the current row
 	 */
 	public function single_row( $snippet ) {
 		$row_class = ( $snippet->active ? 'active-snippet' : 'inactive-snippet' );
 
-		if ( code_snippets_get_setting( 'general', 'snippet_scope_enabled' ) ) {
+		if ( get_setting( 'general', 'snippet_scope_enabled' ) ) {
 			$row_class .= sprintf( ' %s-scope', $snippet->scope );
 		}
 
@@ -1086,7 +1089,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	private function clone_snippets( $ids ) {
 		$snippets = get_snippets( $ids, $this->is_network );
 
-		/** @var Code_Snippet $snippet */
+		/** @var Snippet $snippet */
 		foreach ( $snippets as $snippet ) {
 			// copy all data from the previous snippet aside from the ID and active status
 			$snippet->id = 0;

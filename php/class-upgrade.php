@@ -1,13 +1,17 @@
 <?php
 
+namespace Code_Snippets;
+
+use WP_User;
+
 /**
  * Manages upgrade tasks such as deleting and updating options
  */
-class Code_Snippets_Upgrade {
+class Upgrade {
 
 	/**
 	 * Instance of database class
-	 * @var Code_Snippets_DB
+	 * @var DB
 	 */
 	private $db;
 
@@ -20,10 +24,10 @@ class Code_Snippets_Upgrade {
 	/**
 	 * Class constructor
 	 *
-	 * @param string           $version Current plugin version
-	 * @param Code_Snippets_DB $db      Instance of database class
+	 * @param string $version Current plugin version
+	 * @param DB     $db Instance of database class
 	 */
-	public function __construct( $version, Code_Snippets_DB $db ) {
+	public function __construct( $version, DB $db ) {
 		$this->db = $db;
 		$this->current_version = $version;
 	}
@@ -183,7 +187,7 @@ class Code_Snippets_Upgrade {
 		);
 
 		foreach ( $snippets as $snippet ) {
-			$snippet = new Code_Snippet( $snippet );
+			$snippet = new Snippet( $snippet );
 			$snippet->desc .= ' ' . __( 'You can remove it, or edit it to add your own content.', 'code-snippets' );
 			save_snippet( $snippet );
 		}

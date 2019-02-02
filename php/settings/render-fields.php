@@ -1,5 +1,7 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * This file handles rendering the settings fields
  *
@@ -15,7 +17,7 @@
  * @param array $atts The setting field's attributes
  */
 function code_snippets_checkbox_field( $atts ) {
-	$saved_value = code_snippets_get_setting( $atts['section'], $atts['id'] );
+	$saved_value = get_setting( $atts['section'], $atts['id'] );
 	$input_name = sprintf( 'code_snippets_settings[%s][%s]', $atts['section'], $atts['id'] );
 
 	$output = sprintf(
@@ -50,7 +52,7 @@ function code_snippets_number_field( $atts ) {
 		'<input type="number" name="code_snippets_settings[%s][%s]" value="%s"',
 		esc_attr( $atts['section'] ),
 		esc_attr( $atts['id'] ),
-		esc_attr( code_snippets_get_setting( $atts['section'], $atts['id'] ) )
+		esc_attr( get_setting( $atts['section'], $atts['id'] ) )
 	);
 
 	if ( isset( $atts['min'] ) ) {
