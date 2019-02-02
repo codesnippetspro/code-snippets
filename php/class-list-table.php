@@ -33,7 +33,7 @@ class Snippets_List_Table extends WP_List_Table {
 	 * A list of statuses (views)
 	 * @var array
 	 */
-	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
+	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated', 'php', 'css' );
 
 	/**
 	 * The constructor function for our class.
@@ -416,19 +416,48 @@ class Snippets_List_Table extends WP_List_Table {
 			}
 
 			/* Define the labels for each view */
-			$labels = array(
+			$labels = array();
 
-				/* translators: %s: total number of snippets */
-				'all'                => _n( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'code-snippets' ),
+			/* translators: %s: total number of snippets */
+			$labels['all'] = _n(
+				'All <span class="count">(%s)</span>',
+				'All <span class="count">(%s)</span>',
+				$count, 'code-snippets'
+			);
 
-				/* translators: %s: total number of active snippets */
-				'active'             => _n( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
+			/* translators: %s: total number of active snippets */
+			$labels['active'] = _n(
+				'Active <span class="count">(%s)</span>',
+				'Active <span class="count">(%s)</span>',
+				$count, 'code-snippets'
+			);
 
-				/* translators: %s: total number of inactive snippets */
-				'inactive'           => _n( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $count, 'code-snippets' ),
+			/* translators: %s: total number of inactive snippets */
+			$labels['inactive'] = _n(
+				'Inactive <span class="count">(%s)</span>',
+				'Inactive <span class="count">(%s)</span>',
+				$count, 'code-snippets'
+			);
 
-				/* translators: %s: total number of recently activated snippets */
-				'recently_activated' => _n( 'Recently Active <span class="count">(%s)</span>', 'Recently Active <span class="count">(%s)</span>', $count, 'code-snippets' ),
+			/* translators: %s: total number of functions snippets */
+			$labels['php'] = _n(
+				'Functions <span class="count">(%s)</span>',
+				'Functions <span class="count">(%s)</span>',
+				$count, 'code-snippets'
+			);
+
+			/* translators: %s: total number of inactive snippets */
+			$labels['css'] = _n(
+				'Styles <span class="count">(%s)</span>',
+				'Styles <span class="count">(%s)</span>',
+				$count, 'code-snippets'
+			);
+
+			/* translators: %s: total number of recently activated snippets */
+			$labels['recently_activated'] = _n(
+				'Recently Active <span class="count">(%s)</span>',
+				'Recently Active <span class="count">(%s)</span>',
+				$count, 'code-snippets'
 			);
 
 			/* The page URL with the status parameter */
@@ -859,7 +888,10 @@ class Snippets_List_Table extends WP_List_Table {
 			update_site_option( 'recently_activated_snippets', $recently_activated ) :
 			update_option( 'recently_activated_snippets', $recently_activated );
 
-		/* Filter snippets into individual sections */
+		/**
+		 * Filter snippets into individual sections
+		 * @var Snippet $snippet
+		 */
 		foreach ( $snippets['all'] as $snippet ) {
 
 			if ( $snippet->active ) {
@@ -872,6 +904,8 @@ class Snippets_List_Table extends WP_List_Table {
 					$snippets['recently_activated'][] = $snippet;
 				}
 			}
+
+			$snippets[ $snippet->type ][] = $snippet;
 		}
 
 		/* Count the totals for each section */
@@ -1069,6 +1103,7 @@ class Snippets_List_Table extends WP_List_Table {
 	 */
 	public function single_row( $snippet ) {
 		$row_class = ( $snippet->active ? 'active-snippet' : 'inactive-snippet' );
+		$row_class .= " {$snippet->type}-snippet";
 
 		if ( get_setting( 'general', 'snippet_scope_enabled' ) ) {
 			$row_class .= sprintf( ' %s-scope', $snippet->scope );
