@@ -40,6 +40,10 @@ class Code_Snippet {
 		'shared_network' => null,
 	);
 
+	/**
+	 * List of field aliases
+	 * @var array
+	 */
 	private static $field_aliases = array(
 		'description' => 'desc',
 	);
@@ -77,6 +81,10 @@ class Code_Snippet {
 		}
 	}
 
+	/**
+	 * Retrieve all snippet fields
+	 * @return array
+	 */
 	public function get_fields() {
 		return $this->fields;
 	}
