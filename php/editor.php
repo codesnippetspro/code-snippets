@@ -42,15 +42,7 @@ function get_code_editor_atts( $type, $override_atts = array(), $json_encode = t
 
 	// encode the attributes for display if requested
 	if ( $json_encode ) {
-
-		// JSON_UNESCAPED_SLASHES was added in PHP 5.4
-		if ( version_compare( phpversion(), '5.4.0', '>=' ) ) {
-			$atts = json_encode( $atts, JSON_UNESCAPED_SLASHES );
-		} else {
-			// Use a fallback for < 5.4
-			$atts = str_replace( '\\/', '/', json_encode( $atts ) );
-		}
-
+		$atts = json_encode( $atts, JSON_UNESCAPED_SLASHES );
 		// Infinity is a constant and needs to be unquoted
 		$atts = str_replace( '"Infinity"', 'Infinity', $atts );
 	}
