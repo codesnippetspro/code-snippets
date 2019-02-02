@@ -242,6 +242,8 @@ class Edit_Menu extends Admin_Menu {
 			}
 		}
 
+		$was_active = $snippet->active;
+
 		if ( isset( $_POST['save_snippet_execute'] ) && 'single-use' !== $snippet->scope ) {
 			unset( $_POST['save_snippet_execute'] );
 			$_POST['save_snippet'] = 'yes';
@@ -284,6 +286,20 @@ class Edit_Menu extends Admin_Menu {
 				}
 			} else {
 				$this->unshare_network_snippet( $snippet_id );
+			}
+		}
+
+		/* Bump CSS file version where necessary */
+		$previous_scope = isset( $_POST['current_snippet_scope'] ) ? $_POST['current_snippet_scope'] : '';
+		if ( ( $snippet->active || $was_active ) && 'css' === $snippet->type ) {
+
+			foreach ( array( 'admin', 'site' ) as $scope ) {
+				$scope_name = $scope . '-css';
+
+				if ( $scope_name === $snippet->scope || $scope_name === $previous_scope ) {
+					$opt = "code_snippets_{$scope}_css_rev";
+					update_option( $opt, intval( get_option( $opt, 1 ) ) + 1 );
+				}
 			}
 		}
 

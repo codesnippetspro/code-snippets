@@ -42,10 +42,15 @@ class Plugin {
 	public $shortcode;
 
 	/**
+	 * @var Style_Loader
+	 */
+	public $style_loader;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $version The current plugin version
-	 * @param string $file The main plugin file
+	 * @param string $file    The main plugin file
 	 */
 	function __construct( $version, $file ) {
 		$this->version = $version;
@@ -88,6 +93,7 @@ class Plugin {
 		require_once $includes_path . '/settings/render-fields.php';
 		require_once $includes_path . '/settings/settings.php';
 
+		$this->style_loader = new Style_Loader();
 		$this->shortcode = new Code_Shortcode();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
@@ -132,7 +138,7 @@ class Plugin {
 	/**
 	 * Fetch the URL to a snippets admin menu
 	 *
-	 * @param  string $menu The menu to retrieve the URL to
+	 * @param  string $menu    The menu to retrieve the URL to
 	 * @param  string $context The URL scheme to use
 	 *
 	 * @return string          The menu's URL
@@ -165,7 +171,7 @@ class Plugin {
 	 * Fetch the admin menu slug for a snippets menu
 	 *
 	 * @param int    $snippet_id The snippet
-	 * @param string $context The URL scheme to use
+	 * @param string $context    The URL scheme to use
 	 *
 	 * @return string The URL to the edit snippet page for that snippet
 	 */

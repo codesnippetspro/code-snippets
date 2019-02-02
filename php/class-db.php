@@ -93,7 +93,7 @@ class DB {
 	public static function table_exists( $table_name ) {
 		/** @var \wpdb $wpdb */
 		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name;
+		return $wpdb->get_var( sprintf( "SHOW TABLES LIKE '%s'", $table_name ) ) === $table_name;
 	}
 
 	/**
@@ -175,5 +175,69 @@ class DB {
 		}
 
 		return $success;
+	}
+
+	/**
+	 * @param int    $count
+	 * @param string $placeholder
+	 *
+	 * @return string
+	 */
+	private static function build_format_list( $count, $placeholder = '%s' ) {
+		return implode( ',', array_fill( 0, $count, $placeholder ) );
+	}
+
+	/**
+	 * Generate the SQL for fetching active snippets from the database
+	 *
+	 * @param array|string $scopes List of scopes to retrieve in
+	 *
+	 * @return array List of SQL queries
+	 */
+	public static function fetch_active_snippets( $scopes ) {
+		/** @var \wpdb $wpdb */
+		global $wpdb;
+		$db = code_snippets()->db;
+
+		$queries = array();
+
+		if ( ! is_array( $scopes ) ) {
+			$scopes = array( $scopes );
+		}
+
+		$scopes_format = self::build_format_list( count( $scopes ) );
+		$select = 'SELECT id, code, scope FROM';
+		$where = "WHERE scope IN ($scopes_format)";
+		$order = 'ORDER BY priority ASC, id ASC';
+
+		/* Fetch snippets from site table */
+		if ( DB::table_exists( $db->table ) ) {
+			$queries[ $db->table ] = $wpdb->prepare( "$select {$db->table} $where AND active=1 $order", $scopes );
+		}
+
+		/* Fetch snippets from the network table */
+		if ( is_multisite() && DB::table_exists( $db->ms_table ) ) {
+			$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
+
+			/* If there are active shared snippets, include them in the query */
+			if ( is_array( $active_shared_ids ) && count( $active_shared_ids ) ) {
+				$ids_format = self::build_format_list( count( $active_shared_ids ), '%d' );
+				$sql = "$select $db->ms_table $where AND (active=1 OR id IN ($ids_format)) $order";
+
+				$queries[ $db->ms_table ] = $wpdb->prepare( $sql, array_merge( $scopes, $active_shared_ids ) );
+
+			} else {
+				$queries[ $db->ms_table ] = $wpdb->prepare( "$select $db->ms_table $where AND active=1 $order", $scopes );
+			}
+		}
+
+		$active_snippets = array();
+
+		foreach ( $queries as $table => $query ) {
+			$results = $wpdb->get_results( $query, 'ARRAY_A' );
+			$active_snippets[ $table ] = is_array( $results ) ? $results : array();
+		}
+
+		return $active_snippets;
 	}
 }

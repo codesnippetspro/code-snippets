@@ -84,6 +84,8 @@ $types = array(
 
 		printf( '<input type="hidden" name="snippet_active" value="%d" />', $snippet->active );
 
+		printf( '<input type="hidden" name="current_snippet_scope" value="%s" />', $snippet->scope );
+
 		?>
 		<div id="titlediv">
 			<div id="titlewrap">
