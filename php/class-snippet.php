@@ -313,7 +313,7 @@ class Snippet {
 	 * @return string
 	 */
 	private function get_type() {
-		if ( '-css' === substr( $this->scope, -4 ) )  {
+		if ( '-css' === substr( $this->scope, -4 ) ) {
 			return 'css';
 		}
 

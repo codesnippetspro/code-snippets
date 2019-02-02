@@ -74,7 +74,7 @@ function get_all_snippet_tags() {
 	/* Grab all tags from the database */
 	$tags = array();
 	$table = code_snippets()->db->get_table_name();
-	$all_tags = $wpdb->get_col( "SELECT `tags` FROM $table" );
+	$all_tags = $wpdb->get_col( $wpdb->prepare( 'SELECT tags FROM %s', $table ) );
 
 	/* Merge all tags into a single array */
 	foreach ( $all_tags as $snippet_tags ) {
@@ -139,7 +139,7 @@ function get_snippet( $id = 0, $multisite = null ) {
 	if ( 0 !== $id ) {
 
 		/* Retrieve the snippet from the database */
-		$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
+		$snippet = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %s WHERE id = %d', $table, $id ) );
 
 		/* Unescape the snippet data, ready for use */
 		$snippet = new Snippet( $snippet );
@@ -398,12 +398,12 @@ function execute_active_snippets() {
 	$order = 'ORDER BY priority ASC, id ASC';
 
 	/* Fetch snippets from site table */
-	if ( $wpdb->get_var( "SHOW TABLES LIKE '$db->table'" ) === $db->table ) {
+	if ( DB::table_exists( $db->table ) ) {
 		$queries[ $db->table ] = $wpdb->prepare( sprintf( $sql_format, $db->table ) . 'AND active=1 ' . $order, $current_scope );
 	}
 
 	/* Fetch snippets from the network table */
-	if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$db->ms_table'" ) === $db->ms_table ) {
+	if ( is_multisite() && DB::table_exists( $db->ms_table ) ) {
 		$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
 
 		/* If there are active shared snippets, include them in the query */

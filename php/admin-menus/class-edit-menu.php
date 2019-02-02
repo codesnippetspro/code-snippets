@@ -413,7 +413,7 @@ class Edit_Menu extends Admin_Menu {
 			'css' => array(
 				'site-css'  => __( 'Site front-end styles', 'code-snippets' ),
 				'admin-css' => __( 'Administration area styles', 'code-snippets' ),
-			)
+			),
 		);
 
 		if ( 0 !== $snippet->id ) {

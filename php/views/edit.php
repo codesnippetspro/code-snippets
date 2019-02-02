@@ -7,7 +7,7 @@ use function Code_Snippets\Settings\get_setting;
 /**
  * HTML code for the Add New/Edit Snippet page
  *
- * @package Code_Snippets
+ * @package    Code_Snippets
  * @subpackage Views
  *
  * @var Edit_Menu $this
@@ -140,12 +140,14 @@ $types = array(
 
 		<?php if ( ! $snippet->id ) { ?>
 			<h2 class="nav-tab-wrapper">
-				<?php foreach ( $types as $type => $label ) : if ( $snippet->type == $type ) : ?>
-					<a class="nav-tab nav-tab-active"><?php echo esc_html( $label ); ?></a>
-				<?php else : ?>
-					<a class="nav-tab" href="<?php echo esc_url( add_query_arg( 'type', $type ) ) ?>"><?php
-						echo esc_html( $label ); ?></a>
-				<?php endif; endforeach; ?>
+				<?php foreach ( $types as $type => $label ) {
+					if ( $snippet->type == $type ) { ?>
+						<a class="nav-tab nav-tab-active"><?php echo esc_html( $label ); ?></a>
+					<?php } else { ?>
+						<a class="nav-tab" href="<?php echo esc_url( add_query_arg( 'type', $type ) ); ?>"><?php
+							echo esc_html( $label ); ?></a>
+					<?php }
+				} ?>
 			</h2>
 		<?php } ?>
 

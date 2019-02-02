@@ -31,7 +31,6 @@ function enqueue_editor_preview_assets() {
 			'code-snippets-editor-theme-' . $theme,
 			plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
 			array( 'code-snippets-editor' ), $plugin->version
-
 		);
 	}
 

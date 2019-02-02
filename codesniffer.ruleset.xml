@@ -24,6 +24,7 @@
 		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound" />
 		<exclude name="PSR2.ControlStructures.SwitchDeclaration.BodyOnNextLineCASE" />
 		<exclude name="WordPress.WhiteSpace.ControlStructureSpacing.BlankLineAfterEnd" />
+		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine" />
 
 		<!-- this is useful for certain templates -->
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
@@ -41,6 +42,9 @@
 		<!-- this picks up a lot of false positives -->
 		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
 		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />
+
+		<!-- need to work with XML library -->
+		<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase" />
 
 		<!-- this disallows assignment inside conditional statements -->
 		<exclude name="Squiz.PHP.DisallowMultipleAssignments.Found" />

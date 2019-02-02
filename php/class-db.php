@@ -24,7 +24,7 @@ class DB {
 	 * Register the snippet table names with WordPress
 	 *
 	 * @since 2.0
-	 * @uses $wpdb
+	 * @uses  $wpdb
 	 */
 	function set_table_vars() {
 		global $wpdb;
@@ -84,18 +84,31 @@ class DB {
 	}
 
 	/**
+	 * Determine whether a database table exists
+	 *
+	 * @param string $table_name
+	 *
+	 * @return bool
+	 */
+	public static function table_exists( $table_name ) {
+		/** @var \wpdb $wpdb */
+		global $wpdb;
+		return $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name;
+	}
+
+	/**
 	 * Create the snippet tables if they do not already exist
 	 */
 	public function create_missing_tables() {
 		global $wpdb;
 
 		/* Create the network snippets table if it doesn't exist */
-		if ( is_multisite() && $wpdb->get_var( "SHOW TABLES LIKE '$this->ms_table'" ) !== $this->ms_table ) {
+		if ( is_multisite() && ! self::table_exists( $this->ms_table ) ) {
 			$this->create_table( $this->ms_table );
 		}
 
 		/* Create the table if it doesn't exist */
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$this->table'" ) !== $this->table ) {
+		if ( ! self::table_exists( $this->table ) ) {
 			$this->create_table( $this->table );
 		}
 	}
@@ -117,9 +130,8 @@ class DB {
 	 * @param $table_name
 	 */
 	public static function create_missing_table( $table_name ) {
-		global $wpdb;
 
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name ) {
+		if ( self::table_exists( $table_name ) ) {
 			return;
 		}
 
@@ -130,7 +142,7 @@ class DB {
 	 * Create a single snippet table
 	 *
 	 * @since 1.6
-	 * @uses dbDelta() to apply the SQL code
+	 * @uses  dbDelta() to apply the SQL code
 	 *
 	 * @param string $table_name The name of the table to create
 	 *
