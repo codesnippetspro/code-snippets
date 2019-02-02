@@ -37,7 +37,7 @@ class Plugin {
 	public $admin;
 
 	/**
-	 * @var Code_Snippets_Shortcode
+	 * @var Code_Shortcode
 	 */
 	public $shortcode;
 

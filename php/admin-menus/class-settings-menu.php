@@ -143,8 +143,8 @@ class Settings_Menu extends Admin_Menu {
 		set_transient( 'settings_errors', get_settings_errors(), 30 );
 
 		/* Redirect back to the settings menu */
-		$goback = add_query_arg( 'settings-updated', 'true', remove_query_arg( 'update_site_option', wp_get_referer() ) );
-		wp_redirect( $goback );
+		$redirect = add_query_arg( 'settings-updated', 'true', remove_query_arg( 'update_site_option', wp_get_referer() ) );
+		wp_redirect( esc_url_raw( $redirect ) );
 		exit;
 	}
 }

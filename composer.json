@@ -24,9 +24,10 @@
 		"classmap": ["php/"]
 	},
 	"require": {
+		"composer/installers": "~1.0",
 		"php": ">=5.6",
-		"ext-json": "*",
-		"composer/installers": "~1.0"
+		"ext-dom": "*",
+		"ext-json": "*"
 	},
 	"require-dev": {
 		"wp-coding-standards/wpcs": "dev-master",

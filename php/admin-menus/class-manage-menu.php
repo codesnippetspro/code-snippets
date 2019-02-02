@@ -81,7 +81,7 @@ class Manage_Menu extends Admin_Menu {
 		);
 
 		if ( isset( $classmap[ $sub ], code_snippets()->admin->menus[ $classmap[ $sub ] ] ) ) {
-			/** @var Code_Snippets_Admin_Menu $class */
+			/** @var Admin_Menu $class */
 			$class = code_snippets()->admin->menus[ $classmap[ $sub ] ];
 		} else {
 			$class = $this;

@@ -748,7 +748,7 @@ class Snippets_List_Table extends WP_List_Table {
 	 *
 	 */
 	private function fetch_shared_network_snippets() {
-		/** @var wpdb $wpdb */
+		/** @var \wpdb $wpdb */
 		global $snippets, $wpdb;
 		$db = code_snippets()->db;
 
@@ -929,13 +929,12 @@ class Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @ignore
 	 *
-	 * @param string $field name of the field that the data belongs to
 	 * @param string $a_data
 	 * @param string $b_data
 	 *
 	 * @return int
 	 */
-	private function get_sort_direction( $field, $a_data, $b_data ) {
+	private function get_sort_direction( $a_data, $b_data ) {
 
 		// if the data is numeric, then calculate the ordering directly
 		if ( is_numeric( $a_data ) ) {
@@ -977,10 +976,10 @@ class Snippets_List_Table extends WP_List_Table {
 			: apply_filters( 'code_snippets/list_table/default_order', 'asc' )
 		);
 
-		$result = $this->get_sort_direction( $orderby, $a->$orderby, $b->$orderby );
+		$result = $this->get_sort_direction( $a->$orderby, $b->$orderby );
 
 		if ( 0 === $result && 'id' !== $orderby ) {
-			$result = $this->get_sort_direction( 'id', $a->id, $b->id );
+			$result = $this->get_sort_direction( $a->id, $b->id );
 		}
 
 		// apply the sort direction to the calculated order
@@ -1028,6 +1027,8 @@ class Snippets_List_Table extends WP_List_Table {
 				return true;
 			}
 		}
+
+		return false;
 	}
 
 	/**

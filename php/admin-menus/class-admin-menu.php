@@ -12,7 +12,7 @@ class Admin_Menu {
 	/**
 	 * Constructor
 	 *
-	 * @param string $name The snippet page shortname
+	 * @param string $name The snippet page short name
 	 * @param string $label The label shown in the admin menu
 	 * @param string $title The text used for the page title
 	 */
