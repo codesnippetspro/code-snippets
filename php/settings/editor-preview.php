@@ -12,14 +12,14 @@ namespace Code_Snippets;
 /**
  * Load the CSS and JavaScript for the editor preview field
  */
-function code_snippets_editor_settings_preview_assets() {
+function enqueue_editor_settings_preview_assets() {
 	$plugin = code_snippets();
 
 	// Enqueue scripts for the editor preview
-	code_snippets_enqueue_editor();
+	enqueue_code_editor_assets();
 
 	// Enqueue all editor themes
-	$themes = code_snippets_get_available_themes();
+	$themes = get_available_editor_themes();
 
 	foreach ( $themes as $theme ) {
 
@@ -55,7 +55,7 @@ function code_snippets_editor_settings_preview_assets() {
 	}
 
 	// Pass the saved options to the external JavaScript file
-	$inline_script = 'var code_snippets_editor_atts = ' . code_snippets_get_editor_atts( array(), true ) . ';';
+	$inline_script = 'var code_snippets_editor_atts = ' . get_code_editor_atts( 'php' ) . ';';
 	$inline_script .= "\n" . 'var code_snippets_editor_settings = ' . wp_json_encode( $editor_fields ) . ';';
 
 	wp_add_inline_script( 'code-snippets-settings-menu', $inline_script, 'before' );
@@ -74,7 +74,7 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>Default</option>';
 
 	// print a dropdown entry for each theme
-	foreach ( code_snippets_get_available_themes() as $theme ) {
+	foreach ( get_available_editor_themes() as $theme ) {
 
 		// skip mobile themes
 		if ( 'ambiance-mobile' === $theme ) {

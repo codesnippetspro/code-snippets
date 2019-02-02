@@ -158,17 +158,27 @@ ul.tagit {
 	min-height: 300px !important;
 }
 
+.wrap h2.nav-tab-wrapper {
+	border-bottom: none;
+}
+
 .snippet-scope {
 	display: none;
 }
 
 [data-snippet-type=php] {
+
 	.php-scopes-list {
 		display: block;
+	}
+
+	.CodeMirror-sizer::before {
+		content: '<?php';
 	}
 }
 
 [data-snippet-type=css] {
+
 	.css-scopes-list {
 		display: block;
 	}

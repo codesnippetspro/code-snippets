@@ -5,21 +5,22 @@ namespace Code_Snippets;
 /**
  * Get the attributes for the code editor
  *
- * @param  array $override_atts Pass an array of attributes to override the saved ones
- * @param  bool  $json_encode Encode the data as JSON
+ * @param string $type          Type of code editor – either 'php' or 'css
+ * @param array  $override_atts Pass an array of attributes to override the saved ones
+ * @param bool   $json_encode   Encode the data as JSON
  *
  * @return array|string Array if $json_encode is false, JSON string if it is true
  */
-function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
+function get_code_editor_atts( $type, $override_atts = array(), $json_encode = true ) {
 
 	// default attributes for the CodeMirror editor
 	$default_atts = array(
-		'mode' => 'text/x-php',
-		'matchBrackets' => true,
-		'extraKeys' => array( 'Alt-F' => 'findPersistent' ),
-		'gutters' => array( 'CodeMirror-lint-markers' ),
-		'lint' => true,
-		'viewportMargin' => 'Infinity'
+		'mode'           => 'css' === $type ? 'text/css' : 'text/x-php',
+		'matchBrackets'  => true,
+		'extraKeys'      => array( 'Alt-F' => 'findPersistent' ),
+		'gutters'        => array( 'CodeMirror-lint-markers' ),
+		'lint'           => true,
+		'viewportMargin' => 'Infinity',
 	);
 
 	// add relevant saved setting values to the default attributes
@@ -59,7 +60,7 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
  * @uses wp_enqueue_style() to add the stylesheets to the queue
  * @uses wp_enqueue_script() to add the scripts to the queue
  */
-function code_snippets_enqueue_editor() {
+function enqueue_code_editor_assets() {
 	$url = plugin_dir_url( PLUGIN_FILE );
 	$plugin_version = code_snippets()->version;
 
@@ -88,7 +89,7 @@ function code_snippets_enqueue_editor() {
  * Retrieve a list of the available CodeMirror themes
  * @return array the available themes
  */
-function code_snippets_get_available_themes() {
+function get_available_editor_themes() {
 	static $themes = null;
 
 	if ( ! is_null( $themes ) ) {

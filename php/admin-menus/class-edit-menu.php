@@ -8,6 +8,13 @@ namespace Code_Snippets;
 class Edit_Menu extends Admin_Menu {
 
 	/**
+	 * The snippet object currently being edited
+	 * @var Snippet
+	 * @see Edit_Menu::load_snippet_data()
+	 */
+	protected $snippet = null;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -49,7 +56,7 @@ class Edit_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
-		/* Don't allow visiting the edit snippet page without a valid ID */
+		// Disallow visiting the edit snippet page without a valid ID
 		if ( code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
 			if ( ! isset( $_REQUEST['id'] ) || 0 == $_REQUEST['id'] ) {
 				wp_redirect( code_snippets()->get_menu_url( 'add' ) );
@@ -57,11 +64,12 @@ class Edit_Menu extends Admin_Menu {
 			}
 		}
 
-		/* Load the contextual help tabs */
+		// Load the contextual help tabs
 		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
 
-		/* Register action hooks */
+		// Register action hooks
+
 		if ( get_setting( 'general', 'enable_description' ) ) {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_description_editor' ), 9 );
 		}
@@ -80,7 +88,28 @@ class Edit_Menu extends Admin_Menu {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_multisite_sharing_setting' ), 1 );
 		}
 
+		// Process any submitted actions
 		$this->process_actions();
+
+		// Retrieve the current snippet object
+		$this->load_snippet_data();
+	}
+
+	/**
+	 * Load the data for the snippet currently being edited
+	 */
+	public function load_snippet_data() {
+		$edit_id = isset( $_REQUEST['id'] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
+
+		$snippet = $this->snippet = get_snippet( $edit_id );
+
+		if ( 0 === $edit_id && isset( $_GET['type'] ) && $_GET['type'] !== $snippet->type ) {
+			if ( 'php' === $_GET['type'] ) {
+				$snippet->scope = 'global';
+			} elseif ( 'css' === $_GET['type'] ) {
+				$snippet->scope = 'site-css';
+			}
+		}
 	}
 
 	/**
@@ -515,7 +544,7 @@ class Edit_Menu extends Admin_Menu {
 		$plugin = code_snippets();
 		$rtl = is_rtl() ? '-rtl' : '';
 
-		code_snippets_enqueue_editor();
+		enqueue_code_editor_assets();
 
 		wp_enqueue_style(
 			'code-snippets-edit',
@@ -529,7 +558,7 @@ class Edit_Menu extends Admin_Menu {
 			array(), $plugin->version, true
 		);
 
-		$atts = code_snippets_get_editor_atts( array(), true );
+		$atts = get_code_editor_atts( $this->snippet->type, array(), true );
 		$inline_script = 'var code_snippets_editor_atts = ' . $atts . ';';
 
 		wp_add_inline_script( 'code-snippets-edit-menu', $inline_script, 'before' );

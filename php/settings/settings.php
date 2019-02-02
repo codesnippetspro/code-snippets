@@ -188,7 +188,7 @@ function code_snippets_settings_validate( array $input ) {
 					break;
 
 				case 'codemirror_theme_select':
-					$available_themes = code_snippets_get_available_themes();
+					$available_themes = get_available_editor_themes();
 					$selected_theme = $input[ $section_id ][ $field_id ];
 
 					if ( in_array( $selected_theme, $available_themes ) ) {

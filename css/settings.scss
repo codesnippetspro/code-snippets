@@ -6,3 +6,7 @@
 .CodeMirror {
 	max-width: 800px;
 }
+
+.CodeMirror-sizer::before {
+	content: '<?php';
+}

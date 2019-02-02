@@ -65,7 +65,7 @@ class Settings_Menu extends Admin_Menu {
 			array(), $plugin->version
 		);
 
-		code_snippets_editor_settings_preview_assets();
+		enqueue_editor_settings_preview_assets();
 	}
 
 	/**

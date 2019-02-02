@@ -20,11 +20,12 @@
 	outline: 1px solid green;
 }
 
+/* Add a bit of extra space above the editor */
 .CodeMirror-sizer::before {
-	content: "<?php";
-	color: #bbb;
+	content: '';
 	display: block;
 	padding-bottom: 6px;
+	color: #bbb;
 }
 
 /* Fix cursor color with rubyblue theme (see https://goo.gl/3HDgRm */

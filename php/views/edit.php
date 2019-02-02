@@ -16,12 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-$edit_id = isset( $_REQUEST['id'] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
-$snippet = get_snippet( $edit_id );
-
+$snippet = $this->snippet;
 $classes = array();
 
-if ( ! $edit_id ) {
+if ( ! $snippet->id ) {
 	$classes[] = 'new-snippet';
 } elseif ( 'single-use' === $snippet->scope ) {
 	$classes[] = 'single-use-snippet';
@@ -34,19 +32,11 @@ $types = array(
 	'css' => __( 'Styles', 'code-snippets' ),
 );
 
-if ( 0 === $edit_id && isset( $_GET['type'] ) && $_GET['type'] !== $snippet->type ) {
-	if ( 'php' === $_GET['type'] ) {
-		$snippet->scope = 'global';
-	} elseif ( 'css' === $_GET['type'] ) {
-		$snippet->scope = 'site-css';
-	}
-}
-
 ?>
 <div class="wrap">
 	<h1><?php
 
-		if ( $edit_id ) {
+		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
 			printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
 				code_snippets()->get_menu_url( 'add' ),
@@ -107,13 +97,13 @@ if ( 0 === $edit_id && isset( $_GET['type'] ) && $_GET['type'] !== $snippet->typ
 
 				$actions['save_snippet'] = array(
 					__( 'Save Changes', 'code-snippets' ),
-					__( 'Save Snippet', 'code-snippets' )
+					__( 'Save Snippet', 'code-snippets' ),
 				);
 
 				if ( 'single-use' === $snippet->scope ) {
 					$actions['save_snippet_execute'] = array(
 						__( 'Execute Once', 'code-snippets' ),
-						__( 'Save Snippet and Execute Once', 'code-snippets' )
+						__( 'Save Snippet and Execute Once', 'code-snippets' ),
 					);
 
 				} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
@@ -121,13 +111,13 @@ if ( 0 === $edit_id && isset( $_GET['type'] ) && $_GET['type'] !== $snippet->typ
 					if ( $snippet->active ) {
 						$actions['save_snippet_deactivate'] = array(
 							__( 'Deactivate', 'code-snippets' ),
-							__( 'Save Snippet and Deactivate', 'code-snippets' )
+							__( 'Save Snippet and Deactivate', 'code-snippets' ),
 						);
 
 					} else {
 						$actions['save_snippet_activate'] = array(
 							__( 'Activate', 'code-snippets' ),
-							__( 'Save Snippet and Activate', 'code-snippets' )
+							__( 'Save Snippet and Activate', 'code-snippets' ),
 						);
 					}
 				}
@@ -146,14 +136,14 @@ if ( 0 === $edit_id && isset( $_GET['type'] ) && $_GET['type'] !== $snippet->typ
 			</label>
 		</h2>
 
-		<?php if ( ! $edit_id ) { ?>
+		<?php if ( ! $snippet->id ) { ?>
 			<h2 class="nav-tab-wrapper">
-			<?php foreach ( $types as $type => $label ) { ?>
-				<a class="nav-tab<?php echo $snippet->type == $type ? ' nav-tab-active' : ''; ?>"
-					href="<?php echo esc_url( add_query_arg( 'type', $type ) ) ?>">
-					<?php echo esc_html( $label ); ?>
-				</a>
-			<?php } ?>
+				<?php foreach ( $types as $type => $label ) : if ( $snippet->type == $type ) : ?>
+					<a class="nav-tab nav-tab-active"><?php echo esc_html( $label ); ?></a>
+				<?php else : ?>
+					<a class="nav-tab" href="<?php echo esc_url( add_query_arg( 'type', $type ) ) ?>"><?php
+						echo esc_html( $label ); ?></a>
+				<?php endif; endforeach; ?>
 			</h2>
 		<?php } ?>
 
