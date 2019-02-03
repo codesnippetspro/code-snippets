@@ -34,13 +34,30 @@ $inactive-color: #ccc;
 	}
 }
 
-.snippets .row-actions, .snippets .snippet-name {
-	margin-left: 40px;
-}
+.snippets {
 
-.snippets .row-actions {
-	position: relative;
-	left: 0;
+	th {
+		white-space: nowrap;
+
+		.sorting-indicator {
+			display: inline-block;
+			float: none;
+		}
+	}
+
+	.column-modified {
+		white-space: nowrap;
+	}
+
+	.row-actions,
+	.snippet-name {
+		margin-left: 40px;
+	}
+
+	.row-actions {
+		position: relative;
+		left: 0;
+	}
 }
 
 .snippet-execution-button,

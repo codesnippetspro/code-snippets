@@ -1,6 +1,7 @@
 <?php
 
 namespace Code_Snippets;
+
 use function Code_Snippets\Settings\get_setting;
 use WP_List_Table;
 
@@ -18,7 +19,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * This class handles the table for the manage snippets menu
  *
- * @since 1.5
+ * @since   1.5
  * @package Code_Snippets
  */
 class Snippets_List_Table extends WP_List_Table {
@@ -91,7 +92,7 @@ class Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Define the output of all columns that have no callback function
 	 *
-	 * @param Snippet $snippet The snippet used for the current row
+	 * @param Snippet $snippet     The snippet used for the current row
 	 * @param string  $column_name The name of the column being printed
 	 *
 	 * @return string The content of the column to output
@@ -104,6 +105,11 @@ class Snippets_List_Table extends WP_List_Table {
 			case 'description':
 				return empty( $snippet->desc ) ? '&#8212;' :
 					apply_filters( 'code_snippets/list_table/column_description', $snippet->desc );
+
+			case 'modified':
+				$mod = strtotime( $snippet->modified );
+				return date( 'Y-m-d', $mod ) . '<br>' . date( get_option( 'time_format' ), $mod );
+
 			default:
 				return apply_filters( "code_snippets/list_table/column_{$column_name}", $snippet );
 		}
@@ -335,6 +341,7 @@ class Snippets_List_Table extends WP_List_Table {
 			'id'          => __( 'ID', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
+			'modified'    => __( 'Last Modified', 'code-snippets' ),
 			'priority'    => __( 'Priority', 'code-snippets' ),
 		);
 
@@ -359,6 +366,7 @@ class Snippets_List_Table extends WP_List_Table {
 			'id'       => array( 'id', true ),
 			'name'     => array( 'name', false ),
 			'tags'     => array( 'tags_list', true ),
+			'modified' => array( 'modified', true ),
 			'priority' => array( 'priority', true ),
 		);
 

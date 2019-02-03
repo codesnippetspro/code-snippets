@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use wpdb;
+
 /**
  * Functions used to manage the database tables
  *
@@ -16,7 +18,7 @@ class DB {
 	/**
 	 * Class constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		$this->set_table_vars();
 	}
 
@@ -26,7 +28,7 @@ class DB {
 	 * @since 2.0
 	 * @uses  $wpdb
 	 */
-	function set_table_vars() {
+	public function set_table_vars() {
 		global $wpdb;
 
 		$this->table = $wpdb->prefix . 'snippets';
@@ -44,7 +46,7 @@ class DB {
 	 *
 	 * @return bool
 	 */
-	function validate_network_param( $network ) {
+	public function validate_network_param( $network ) {
 
 		/* If multisite is not active, then the parameter should always be false */
 		if ( ! is_multisite() ) {
@@ -68,7 +70,7 @@ class DB {
 	 *
 	 * @return string The snippet table name
 	 */
-	function get_table_name( $multisite = null ) {
+	public function get_table_name( $multisite = null ) {
 
 		/* If the first parameter is a string, assume it is a table name */
 		if ( is_string( $multisite ) ) {
@@ -91,7 +93,7 @@ class DB {
 	 * @return bool
 	 */
 	public static function table_exists( $table_name ) {
-		/** @var \wpdb $wpdb */
+		/** @var wpdb $wpdb */
 		global $wpdb;
 		return $wpdb->get_var( sprintf( "SHOW TABLES LIKE '%s'", $table_name ) ) === $table_name;
 	}
@@ -100,7 +102,6 @@ class DB {
 	 * Create the snippet tables if they do not already exist
 	 */
 	public function create_missing_tables() {
-		global $wpdb;
 
 		/* Create the network snippets table if it doesn't exist */
 		if ( is_multisite() && ! self::table_exists( $this->ms_table ) ) {
@@ -162,6 +163,7 @@ class DB {
 				scope       VARCHAR(15) NOT NULL DEFAULT 'global',
 				priority    SMALLINT    NOT NULL DEFAULT 10,
 				active      TINYINT(1)  NOT NULL DEFAULT 0,
+				modified    DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 				PRIMARY KEY  (id)
 			) $charset_collate;";
 
@@ -197,7 +199,6 @@ class DB {
 	public static function fetch_active_snippets( $scopes ) {
 		/** @var \wpdb $wpdb */
 		global $wpdb;
-		$db = code_snippets()->db;
 
 		$queries = array();
 
@@ -206,28 +207,28 @@ class DB {
 		}
 
 		$scopes_format = self::build_format_list( count( $scopes ) );
-		$select = 'SELECT id, code, scope FROM';
+		$select = "SELECT $select_list FROM";
 		$where = "WHERE scope IN ($scopes_format)";
 		$order = 'ORDER BY priority ASC, id ASC';
 
 		/* Fetch snippets from site table */
-		if ( DB::table_exists( $db->table ) ) {
-			$queries[ $db->table ] = $wpdb->prepare( "$select {$db->table} $where AND active=1 $order", $scopes );
+		if ( self::table_exists( $this->table ) ) {
+			$queries[ $this->table ] = $wpdb->prepare( "$select {$this->table} $where AND active=1 $order", $scopes );
 		}
 
 		/* Fetch snippets from the network table */
-		if ( is_multisite() && DB::table_exists( $db->ms_table ) ) {
+		if ( is_multisite() && self::table_exists( $this->ms_table ) ) {
 			$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
 
 			/* If there are active shared snippets, include them in the query */
 			if ( is_array( $active_shared_ids ) && count( $active_shared_ids ) ) {
 				$ids_format = self::build_format_list( count( $active_shared_ids ), '%d' );
-				$sql = "$select $db->ms_table $where AND (active=1 OR id IN ($ids_format)) $order";
+				$sql = "$select $this->ms_table $where AND (active=1 OR id IN ($ids_format)) $order";
 
-				$queries[ $db->ms_table ] = $wpdb->prepare( $sql, array_merge( $scopes, $active_shared_ids ) );
+				$queries[ $this->ms_table ] = $wpdb->prepare( $sql, array_merge( $scopes, $active_shared_ids ) );
 
 			} else {
-				$queries[ $db->ms_table ] = $wpdb->prepare( "$select $db->ms_table $where AND active=1 $order", $scopes );
+				$queries[ $this->ms_table ] = $wpdb->prepare( "$select $this->ms_table $where AND active=1 $order", $scopes );
 			}
 		}
 

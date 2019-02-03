@@ -2,7 +2,7 @@
 
 namespace Code_Snippets;
 
-const PLUGIN_VERSION = '3.0.0-dev.1';
+const PLUGIN_VERSION = '3.0.0-dev.3';
 const PLUGIN_FILE = CODE_SNIPPETS_FILE;
 
 require_once dirname( PLUGIN_FILE ) . '/vendor/autoload.php';
