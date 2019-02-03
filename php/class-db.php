@@ -192,12 +192,13 @@ class DB {
 	/**
 	 * Generate the SQL for fetching active snippets from the database
 	 *
-	 * @param array|string $scopes List of scopes to retrieve in
+	 * @param array|string $scopes      List of scopes to retrieve in
+	 * @param string       $select_list List of table columns in SQL format
 	 *
 	 * @return array List of SQL queries
 	 */
-	public static function fetch_active_snippets( $scopes ) {
-		/** @var \wpdb $wpdb */
+	public function fetch_active_snippets( $scopes, $select_list = 'id, code' ) {
+		/** @var wpdb $wpdb */
 		global $wpdb;
 
 		$queries = array();

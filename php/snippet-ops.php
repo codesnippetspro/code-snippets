@@ -390,7 +390,7 @@ function execute_active_snippets() {
 
 	$db = code_snippets()->db;
 	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
-	$data = $db->fetch_active_snippets( $scopes );
+	$data = $db->fetch_active_snippets( $scopes, 'id, code, scope' );
 
 	foreach ( $data as $table_name => $active_snippets ) {
 

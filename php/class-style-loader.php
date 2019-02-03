@@ -28,7 +28,8 @@ class Style_Loader {
 		header( 'Content-Type: text/css', true, 200 );
 		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + 31536000 ) . ' GMT' ); // 1 year
 
-		$active_snippets = code_snippets()->db->fetch_active_snippets( is_admin() ? 'admin-css' : 'site-css' );
+		$current_scope = is_admin() ? 'admin-css' : 'site-css';
+		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope, 'code' );
 
 		foreach ( $active_snippets as $snippets ) {
 			echo implode( "\n\n", array_column( $snippets, 'code' ) );
