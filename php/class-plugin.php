@@ -10,13 +10,8 @@ namespace Code_Snippets;
 class Plugin {
 
 	/**
-	 * The version number for this release of the plugin.
-	 * This will later be used for upgrades and enqueuing files
-	 *
-	 * This should be set to the 'Plugin Version' value defined
-	 * in the plugin header.
-	 *
-	 * @var string A PHP-standardized version number string
+	 * Current plugin version number
+	 * @var string
 	 */
 	public $version;
 
