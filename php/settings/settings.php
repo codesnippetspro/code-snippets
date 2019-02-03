@@ -7,9 +7,48 @@ use function Code_Snippets\get_editor_themes;
 /**
  * This file registers the settings
  *
- * @package Code_Snippets
+ * @package    Code_Snippets
  * @subpackage Settings
  */
+
+/**
+ * @param bool   $network
+ * @param string $option
+ * @param mixed  $value
+ *
+ * @return mixed
+ */
+function add_self_option( $network, $option, $value ) {
+	if ( $network ) {
+		add_site_option( $option, $value );
+	} else {
+		add_option( $option, $value );
+	}
+}
+
+/**
+ * @param bool   $network
+ * @param string $option
+ * @param mixed  $default
+ *
+ * @return mixed
+ */
+function get_self_option( $network, $option, $default = false ) {
+	return $network ? get_site_option( $option, $default ) : get_option( $option, $default );
+}
+
+/**
+ * @param bool   $network
+ * @param string $option
+ * @param mixed  $value
+ */
+function update_self_option( $network, $option, $value ) {
+	if ( $network ) {
+		update_site_option( $option, $value );
+	} else {
+		update_option( $option, $value );
+	}
+}
 
 /**
  * Returns 'true' if plugin settings are unified on a multisite installation
@@ -47,9 +86,7 @@ function get_settings_values() {
 	$settings = get_default_settings();
 
 	/* Retrieve saved settings from the database */
-	$saved = are_settings_unified() ?
-		get_site_option( 'code_snippets_settings', array() ) :
-		get_option( 'code_snippets_settings', array() );
+	$saved = get_self_option( are_settings_unified(), 'code_snippets_settings', array() );
 
 	/* Replace the default field values with the ones saved in the database */
 	if ( function_exists( 'array_replace_recursive' ) ) {
@@ -78,7 +115,7 @@ function get_settings_values() {
  * Retrieve an individual setting field value
  *
  * @param  string $section The ID of the section the setting belongs to
- * @param  string $field The ID of the setting field
+ * @param  string $field   The ID of the setting field
  *
  * @return array
  */

@@ -44,7 +44,12 @@ class Style_Loader {
 		$url = is_admin() ? self_admin_url( '/' ) : home_url( '/' );
 		$url = add_query_arg( 'code-snippets-css', 1, $url );
 		$scope = is_admin() ? 'admin' : 'site';
+
 		$rev = (int) get_option( "code_snippets_{$scope}_css_rev", 1 );
+
+		if ( is_multisite() ) {
+			$rev += (int) get_site_option( "code_snippets_{$scope}_css_rev", 0 );
+		}
 
 		wp_enqueue_style( 'code-snippets-styles', $url, array(), $rev );
 	}

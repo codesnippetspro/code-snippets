@@ -298,7 +298,8 @@ class Edit_Menu extends Admin_Menu {
 
 				if ( $scope_name === $snippet->scope || $scope_name === $previous_scope ) {
 					$opt = "code_snippets_{$scope}_css_rev";
-					update_option( $opt, intval( get_option( $opt, 1 ) ) + 1 );
+					$value = intval( Settings\get_self_option( $opt, 1 ) );
+					Settings\update_self_option( is_network_admin(), $opt, $value + 1 );
 				}
 			}
 		}
