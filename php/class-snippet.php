@@ -16,7 +16,6 @@ namespace Code_Snippets;
  * @property string $scope          The scope name
  * @property int    $priority       Execution priority
  * @property bool   $active         The active status
- * @property string $modified       Timestamp of the last snippet modification
  * @property bool   $network        true if is multisite-wide snippet, false if site-wide
  * @property bool   $shared_network Whether the snippet is a shared network snippet
  *
@@ -40,7 +39,6 @@ class Snippet {
 		'scope'          => 'global',
 		'active'         => false,
 		'priority'       => 10,
-		'modified'       => null,
 		'network'        => null,
 		'shared_network' => null,
 	);

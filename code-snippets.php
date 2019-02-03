@@ -20,7 +20,7 @@ Plugin URI:  https://github.com/sheabunge/code-snippets
 Description: An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
 Author:      Shea Bunge
 Author URI:  https://sheabunge.com
-Version:     3.0.0-dev.3
+Version:     3.0.0-dev.1
 License:     MIT
 License URI: license.txt
 Text Domain: code-snippets
