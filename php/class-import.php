@@ -13,37 +13,61 @@ use DOMElement;
 class Import {
 
 	/**
-	 * Imports snippets from a JSON file
-	 *
-	 * @since 2.9.7
-	 *
-	 * @uses  save_snippet() to add the snippets to the database
+	 * Path to file to import
+	 * @var string
+	 */
+	private $file;
+
+	/**
+	 * Whether snippets should be imported into the network-wide or site-wide table
+	 * @var bool|null
+	 */
+	private $multisite;
+
+	/**
+	 * Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
+	 * @var string
+	 */
+	private $dup_action;
+
+	/**
+	 * Class constructor
 	 *
 	 * @param string    $file       The path to the file to import
 	 * @param bool|null $multisite  Import into network-wide table or site-wide table?
 	 * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
+	 */
+	public function __construct( $file, $multisite = null, $dup_action = 'ignore' ) {
+		$this->file = $file;
+		$this->multisite = $multisite;
+		$this->dup_action = $dup_action;
+	}
+
+	/**
+	 * Imports snippets from a JSON file
 	 *
 	 * @return array|bool An array of imported snippet IDs on success, false on failure
 	 */
-	public static function import_json_file( $file, $multisite = null, $dup_action = 'ignore' ) {
+	public function import_json() {
 
-		if ( ! file_exists( $file ) || ! is_file( $file ) ) {
+		if ( ! file_exists( $this->file ) || ! is_file( $this->file ) ) {
 			return false;
 		}
 
-		$raw_data = file_get_contents( $file );
+		$raw_data = file_get_contents( $this->file );
 		$data = json_decode( $raw_data, true );
 		$snippets = array();
 
 		/* Reformat the data into snippet objects */
 		foreach ( $data['snippets'] as $snippet ) {
 			$snippet = new Snippet( $snippet );
-			$snippet->network = $multisite;
+			$snippet->network = $this->multisite;
 			$snippets[] = $snippet;
 		}
 
-		$imported = self::save_imported_snippets( $snippets, $multisite, $dup_action );
-		do_action( 'code_snippets/import/json', $file, $multisite );
+		$imported = $this->save_snippets( $snippets );
+
+		do_action( 'code_snippets/import/json', $this->file, $this->multisite );
 
 		return $imported;
 	}
@@ -51,24 +75,16 @@ class Import {
 	/**
 	 * Imports snippets from an XML file
 	 *
-	 * @since 2.0
-	 *
-	 * @uses  save_snippet() to add the snippets to the database
-	 *
-	 * @param string    $file       The path to the file to import
-	 * @param bool|null $multisite  Import into network-wide table or site-wide table?
-	 * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
-	 *
 	 * @return array|bool An array of imported snippet IDs on success, false on failure
 	 */
-	public static function import_xml_file( $file, $multisite = null, $dup_action = 'ignore' ) {
+	public function import_xml() {
 
-		if ( ! file_exists( $file ) || ! is_file( $file ) ) {
+		if ( ! file_exists( $this->file ) || ! is_file( $this->file ) ) {
 			return false;
 		}
 
 		$dom = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$dom->load( $file );
+		$dom->load( $this->file );
 
 		$snippets_xml = $dom->getElementsByTagName( 'snippet' );
 		$fields = array( 'name', 'description', 'desc', 'code', 'tags', 'scope' );
@@ -80,7 +96,7 @@ class Import {
 		/** @var DOMElement $snippet_xml */
 		foreach ( $snippets_xml as $snippet_xml ) {
 			$snippet = new Snippet();
-			$snippet->network = $multisite;
+			$snippet->network = $this->multisite;
 
 			/* Build a snippet object by looping through the field names */
 			foreach ( $fields as $field_name ) {
@@ -103,8 +119,8 @@ class Import {
 			$snippets[] = $snippet;
 		}
 
-		$imported = self::save_imported_snippets( $snippets, $dup_action, $multisite );
-		do_action( 'code_snippets/import/xml', $file, $multisite );
+		$imported = $this->save_snippets( $snippets );
+		do_action( 'code_snippets/import/xml', $this->file, $this->multisite );
 
 		return $imported;
 	}
@@ -112,18 +128,16 @@ class Import {
 	/**
 	 * @access private
 	 *
-	 * @param        $snippets
-	 * @param null   $multisite
-	 * @param string $dup_action
+	 * @param $snippets
 	 *
 	 * @return array
 	 */
-	private static function save_imported_snippets( $snippets, $multisite = null, $dup_action = 'ignore' ) {
+	private function save_snippets( $snippets ) {
 
 		/* Get a list of existing snippet names keyed to their IDs */
 		$existing_snippets = array();
-		if ( 'replace' == $dup_action || 'skip' === $dup_action ) {
-			$all_snippets = get_snippets( array(), $multisite );
+		if ( 'replace' == $this->dup_action || 'skip' === $this->dup_action ) {
+			$all_snippets = get_snippets( array(), $this->multisite );
 
 			foreach ( $all_snippets as $snippet ) {
 				if ( $snippet->name ) {
@@ -139,12 +153,12 @@ class Import {
 		foreach ( $snippets as $snippet ) {
 
 			/* Check if the snippet already exists */
-			if ( 'ignore' !== $dup_action && isset( $existing_snippets[ $snippet->name ] ) ) {
+			if ( 'ignore' !== $this->dup_action && isset( $existing_snippets[ $snippet->name ] ) ) {
 
 				/* If so, either overwrite the existing ID, or skip this import */
-				if ( 'replace' === $dup_action ) {
+				if ( 'replace' === $this->dup_action ) {
 					$snippet->id = $existing_snippets[ $snippet->name ];
-				} elseif ( 'skip' === $dup_action ) {
+				} elseif ( 'skip' === $this->dup_action ) {
 					continue;
 				}
 			}

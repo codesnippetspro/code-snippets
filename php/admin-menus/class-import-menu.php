@@ -67,10 +67,12 @@ class Import_Menu extends Admin_Menu {
 			$ext = $ext['extension'];
 			$mime_type = $uploads['type'][ $i ];
 
+			$import = new Import( $import_file, $network, $dup_action );
+
 			if ( 'json' === $ext || 'application/json' === $mime_type ) {
-				$result = Import::import_json_file( $import_file, $network, $dup_action );
+				$result = $import->import_json();
 			} elseif ( 'xml' === $ext || 'text/xml' === $mime_type ) {
-				$result = Import::import_xml_file( $import_file, $network, $dup_action );
+				$result = $import->import_xml();
 			} else {
 				$result = false;
 			}
