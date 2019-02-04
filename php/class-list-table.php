@@ -763,6 +763,13 @@ class Snippets_List_Table extends WP_List_Table {
 		}
 
 		if ( isset( $result ) ) {
+
+			// We have no way of knowing whether CSS snippets were modified or not, so always increment the CSS rev
+			if ( in_array( $result, array( 'activated-multi', 'deactivated-multi', 'deleted-multi' ) ) ) {
+				code_snippets()->style_loader->increment_rev( 'admin', $this->is_network );
+				code_snippets()->style_loader->increment_rev( 'site', $this->is_network );
+			}
+
 			wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 			exit;
 		}
