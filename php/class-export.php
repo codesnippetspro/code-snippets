@@ -179,17 +179,21 @@ class Export {
 				continue;
 			}
 
-			echo "\n/**\n * {$snippet->name}\n";
+			echo "\n/*\n";
+
+			if ( $snippet->name ) {
+				echo $snippet->name, "\n\n";
+			}
 
 			if ( ! empty( $snippet->desc ) ) {
 
 				/* Convert description to PhpDoc */
 				$desc = strip_tags( $snippet->desc );
 
-				echo " *\n * $desc\n";
+				echo $desc, "\n";
 			}
 
-			echo " */\n{$snippet->code}\n";
+			echo "*/\n\n{$snippet->code}\n\n";
 		}
 
 		exit;
