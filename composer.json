@@ -28,7 +28,7 @@
 		"php": ">=5.6",
 		"ext-dom": "*",
 		"ext-json": "*"
-	},
+    },
 	"require-dev": {
 		"wp-coding-standards/wpcs": "dev-master",
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0"

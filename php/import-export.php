@@ -63,10 +63,10 @@ function _code_snippets_save_imported_snippets( $snippets, $multisite = null, $d
  *
  * @since 2.9.7
  *
- * @uses save_snippet() to add the snippets to the database
+ * @uses  save_snippet() to add the snippets to the database
  *
- * @param string    $file The path to the file to import
- * @param bool|null $multisite Import into network-wide table or site-wide table?
+ * @param string    $file       The path to the file to import
+ * @param bool|null $multisite  Import into network-wide table or site-wide table?
  * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
  *
  * @return array|bool An array of imported snippet IDs on success, false on failure
@@ -99,10 +99,10 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
  *
  * @since 2.0
  *
- * @uses save_snippet() to add the snippets to the database
+ * @uses  save_snippet() to add the snippets to the database
  *
- * @param string    $file The path to the file to import
- * @param bool|null $multisite Import into network-wide table or site-wide table?
+ * @param string    $file       The path to the file to import
+ * @param bool|null $multisite  Import into network-wide table or site-wide table?
  * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
  *
  * @return array|bool An array of imported snippet IDs on success, false on failure
@@ -245,7 +245,7 @@ function download_snippets( $ids, $table_name = '' ) {
 /**
  * Export snippets in JSON format
  *
- * @param array  $ids list of snippet IDs to export
+ * @param array  $ids        list of snippet IDs to export
  * @param string $table_name name of the database table to fetch snippets from
  */
 function export_snippets( $ids, $table_name = '' ) {
@@ -255,12 +255,12 @@ function export_snippets( $ids, $table_name = '' ) {
 	foreach ( $raw_snippets as $snippet ) {
 		$snippet = new Snippet( $snippet );
 
-		$fields = array( 'name', 'desc', 'tags', 'scope', 'code' );
+		$fields = array( 'name', 'desc', 'tags', 'scope', 'code', 'priority' );
 		$final_snippet = array();
 
 		foreach ( $fields as $field ) {
 			if ( ! empty( $snippet->$field ) ) {
-				$final_snippet[ $field ] = $snippet->$field;
+				$final_snippet[ $field ] = str_replace( "\r\n", "\n", $snippet->$field );
 			}
 		}
 
