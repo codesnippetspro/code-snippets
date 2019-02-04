@@ -9,8 +9,15 @@ namespace Code_Snippets;
  */
 class Admin {
 
+	/**
+	 * Admin_Menu class instances
+	 * @var array
+	 */
 	public $menus = array();
 
+	/**
+	 * Class constructor
+	 */
 	function __construct() {
 
 		if ( is_admin() ) {
@@ -18,6 +25,9 @@ class Admin {
 		}
 	}
 
+	/**
+	 * Initialise classes
+	 */
 	public function load_classes() {
 		$this->menus['manage'] = new Manage_Menu();
 		$this->menus['edit'] = new Edit_Menu();
@@ -32,6 +42,9 @@ class Admin {
 		}
 	}
 
+	/**
+	 * Register action and filter hooks
+	 */
 	public function run() {
 		add_action( 'init', array( $this, 'load_classes' ), 11 );
 
@@ -47,6 +60,7 @@ class Admin {
 	}
 
 	/**
+	 * Determine whether the menu is full or compact
 	 * @return bool
 	 */
 	public function is_compact_menu() {

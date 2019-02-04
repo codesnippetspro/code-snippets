@@ -22,6 +22,7 @@ namespace Code_Snippets;
  * @property-read array  $tags_list  The tags in string list format
  * @property-read string $scope_icon The dashicon used to represent the current scope
  * @property-read string $type       The type of snippet
+ * @property-read string $lang       The language that the snippet code is written in
  */
 class Snippet {
 
@@ -49,6 +50,7 @@ class Snippet {
 	 */
 	private static $field_aliases = array(
 		'description' => 'desc',
+		'language'    => 'lang',
 	);
 
 	/**
@@ -318,6 +320,14 @@ class Snippet {
 		}
 
 		return 'php';
+	}
+
+	/**
+	 * Determine the language that the snippet code is written in, based on the scope
+	 * @return string
+	 */
+	private function get_lang() {
+		return $this->type;
 	}
 
 	/**

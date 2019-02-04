@@ -2,13 +2,32 @@
 
 namespace Code_Snippets;
 
-class Code_Shortcode {
+/**
+ * Class Code_Shortcode
+ * @package Code_Snippets
+ */
+class Source_Shortcode {
 
+	/**
+	 * Name of the shortcode tag
+	 */
+	const SHORTCODE_TAG = 'code_snippet_source';
+
+	/**
+	 * Class constructor
+	 */
 	function __construct() {
-		add_shortcode( 'code_snippet', array( $this, 'render_shortcode' ) );
+		add_shortcode( self::SHORTCODE_TAG, array( $this, 'render_shortcode' ) );
 		add_action( 'the_posts', array( $this, 'enqueue_assets' ) );
 	}
 
+	/**
+	 * Enqueue the syntax highlighting assets if they are required for the current posts
+	 *
+	 * @param array $posts
+	 *
+	 * @return array
+	 */
 	function enqueue_assets( $posts ) {
 
 		if ( empty( $posts ) || Settings\get_setting( 'general', 'disable_prism' ) ) {
@@ -19,7 +38,7 @@ class Code_Shortcode {
 
 		foreach ( $posts as $post ) {
 
-			if ( false !== stripos( $post->post_content, '[code_snippet' ) ) {
+			if ( false !== stripos( $post->post_content, '[' . self::SHORTCODE_TAG ) ) {
 				$found = true;
 				break;
 			}
@@ -46,14 +65,22 @@ class Code_Shortcode {
 		return $posts;
 	}
 
+	/**
+	 * Render the shortcode content
+	 *
+	 * @param array $atts
+	 *
+	 * @return string
+	 */
 	function render_shortcode( $atts ) {
 
 		$atts = shortcode_atts(
 			array(
-				'id'      => 0,
-				'network' => false,
+				'id'           => 0,
+				'network'      => false,
+				'line_numbers' => false,
 			),
-			$atts, 'code_snippet'
+			$atts, self::SHORTCODE_TAG
 		);
 
 		if ( ! $id = intval( $atts['id'] ) ) {
@@ -67,7 +94,13 @@ class Code_Shortcode {
 			return '';
 		}
 
-		return '<pre><code class="language-php">' . esc_html( $snippet->code ) . '</code></pre>';
+		$class = 'language-' . $snippet->lang;
+
+		if ( $atts['line_numbers'] ) {
+			$class .= ' line-numbers';
+		}
+
+		return sprintf( '<pre><code class="%s">%s</code></pre>', $class, esc_html( $snippet->code ) );
 	}
 }
 
