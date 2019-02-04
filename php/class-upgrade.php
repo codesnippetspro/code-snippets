@@ -144,7 +144,7 @@ class Code_Snippets_Upgrade {
 			array(
 				'name' => __( 'Example HTML shortcode', 'code-snippets' ),
 				'code' => sprintf(
-					"\nadd_shortcode( 'shortcode_name', function () { \n\n\treturn '<p>%s</p>';\n\n<?php } );",
+					"\nadd_shortcode( 'shortcode_name', function () {\n\n\t\$out = '<p>%s</p>';\n\n\treturn \$out;\n} );",
 					strip_tags( __( 'write your HTML shortcode content here', 'code-snippets' ) )
 				),
 				'desc' => __( 'This is an example snippet for demonstrating how to add an HTML shortcode.', 'code-snippets' ),
