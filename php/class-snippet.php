@@ -5,23 +5,23 @@ namespace Code_Snippets;
 /**
  * A snippet object
  *
- * @since 2.4.0
+ * @since   2.4.0
  * @package Code_Snippets
  *
- * @property int    $id             The database ID
- * @property string $name           The display name
- * @property string $desc           The formatted description
- * @property string $code           The executable code
- * @property array  $tags           An array of the tags
- * @property string $scope          The scope name
- * @property int    $priority       Execution priority
- * @property bool   $active         The active status
- * @property bool   $network        true if is multisite-wide snippet, false if site-wide
- * @property bool   $shared_network Whether the snippet is a shared network snippet
+ * @property int         $id             The database ID
+ * @property string      $name           The display name
+ * @property string      $desc           The formatted description
+ * @property string      $code           The executable code
+ * @property array       $tags           An array of the tags
+ * @property string      $scope          The scope name
+ * @property int         $priority       Execution priority
+ * @property bool        $active         The active status
+ * @property bool        $network        true if is multisite-wide snippet, false if site-wide
+ * @property bool        $shared_network Whether the snippet is a shared network snippet
  *
- * @property-read array  $tags_list  The tags in string list format
- * @property-read string $scope_icon The dashicon used to represent the current scope
- * @property-read string $type       The type of snippet
+ * @property-read array  $tags_list      The tags in string list format
+ * @property-read string $scope_icon     The dashicon used to represent the current scope
+ * @property-read string $type           The type of snippet
  */
 class Snippet {
 
@@ -317,6 +317,10 @@ class Snippet {
 			return 'css';
 		}
 
+		if ( '-js' === substr( $this->scope, -3 ) ) {
+			return 'js';
+		}
+
 		return 'php';
 	}
 
@@ -333,7 +337,11 @@ class Snippet {
 	 * @return array
 	 */
 	public static function get_all_scopes() {
-		return array( 'global', 'admin', 'front-end', 'single-use', 'admin-css', 'site-css' );
+		return array(
+			'global', 'admin', 'front-end', 'single-use',
+			'admin-css', 'site-css',
+			'site-head-js', 'site-footer-js',
+		);
 	}
 
 	/**
@@ -342,12 +350,14 @@ class Snippet {
 	 */
 	public static function get_scope_icons() {
 		return array(
-			'global'     => 'admin-site',
-			'admin'      => 'admin-tools',
-			'front-end'  => 'admin-appearance',
-			'single-use' => 'clock',
-			'admin-css'  => 'admin-tools',
-			'site-css'   => 'admin-appearance',
+			'global'         => 'admin-site',
+			'admin'          => 'admin-tools',
+			'front-end'      => 'admin-appearance',
+			'single-use'     => 'clock',
+			'admin-css'      => 'admin-tools',
+			'site-css'       => 'admin-appearance',
+			'site-head-js'   => 'dashicons-arrow-up-alt2',
+			'site-footer-js' => 'dashicons-arrow-down-alt2',
 		);
 	}
 
