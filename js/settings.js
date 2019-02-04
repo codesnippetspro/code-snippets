@@ -3,7 +3,6 @@
 (function (CodeMirror, editor_atts, editor_settings) {
 	'use strict';
 
-	/** @namespace editor_atts.indentWithTabs */
 	let n_tabs = editor_atts.indentWithTabs ? Math.floor(editor_atts.indentUnit / editor_atts.tabSize) : 0;
 	let n_spaces = editor_atts.indentWithTabs ? editor_atts.indentUnit % editor_atts.tabSize : editor_atts.indentUnit;
 
@@ -40,10 +39,8 @@
 			})();
 
 			if (null !== value) {
-
 				editor.setOption(opt, value);
 			}
-
 		});
 	}
 

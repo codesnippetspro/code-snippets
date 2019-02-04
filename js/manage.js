@@ -32,6 +32,7 @@
 		snippet['id'] = parseInt(id_column.textContent);
 		snippet['shared_network'] = !!row_element.className.match(/\bshared-network-snippet\b/);
 		snippet['network'] = snippet['shared_network'] || network_admin;
+		snippet['scope'] = row_element.getAttribute('data-snippet-scope');
 
 		const query_string = 'action=update_code_snippet&_ajax_nonce=' + nonce + '&field=' + field + '&snippet=' + JSON.stringify(snippet);
 

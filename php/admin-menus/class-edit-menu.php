@@ -293,13 +293,9 @@ class Edit_Menu extends Admin_Menu {
 		$previous_scope = isset( $_POST['current_snippet_scope'] ) ? $_POST['current_snippet_scope'] : '';
 		if ( ( $snippet->active || $was_active ) && 'css' === $snippet->type ) {
 
-			foreach ( array( 'admin', 'site' ) as $scope ) {
-				$scope_name = $scope . '-css';
-
-				if ( $scope_name === $snippet->scope || $scope_name === $previous_scope ) {
-					$opt = "code_snippets_{$scope}_css_rev";
-					$value = intval( Settings\get_self_option( $opt, 1 ) );
-					Settings\update_self_option( is_network_admin(), $opt, $value + 1 );
+			foreach ( array( 'admin-css', 'site-css' ) as $scope ) {
+				if ( $scope === $snippet->scope || $scope === $previous_scope ) {
+					code_snippets()->style_loader->increment_rev( $scope, is_network_admin() );
 				}
 			}
 		}

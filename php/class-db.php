@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use wpdb;
+
 /**
  * Functions used to manage the database tables
  *
@@ -195,7 +197,7 @@ class DB {
 	 *
 	 * @return array List of SQL queries
 	 */
-	public function fetch_active_snippets( $scopes, $select_list = 'id, code' ) {
+	public function fetch_active_snippets( $scopes, $select_list = 'id, code, scope' ) {
 		/** @var wpdb $wpdb */
 		global $wpdb;
 		$db = code_snippets()->db;
@@ -207,7 +209,7 @@ class DB {
 		}
 
 		$scopes_format = self::build_format_list( count( $scopes ) );
-		$select = 'SELECT id, code, scope FROM';
+		$select = "SELECT $select_list FROM";
 		$where = "WHERE scope IN ($scopes_format)";
 		$order = 'ORDER BY priority ASC, id ASC';
 

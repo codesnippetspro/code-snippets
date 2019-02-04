@@ -17,6 +17,55 @@ class Style_Loader {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
 	}
 
+	public function increment_rev( $scope, $network ) {
+
+		if ( '-css' === substr( $scope, -4 ) ) {
+			$scope = substr( $scope, 0, strlen( $scope ) - 4 );
+		}
+
+		$opt = "code_snippets_{$scope}_css_rev";
+
+		if ( $network ) {
+			update_site_option( $opt, 1 + (int) get_site_option( $opt, 0 ) );
+		} else {
+			update_option( $opt, 1 + (int) get_option( $opt, 1 ) );
+		}
+	}
+
+	/**
+	 * Retrieve the current CSS revision number
+	 *
+	 * @param string $scope
+	 *
+	 * @return int
+	 */
+	public function get_rev( $scope = '' ) {
+
+		if ( ! $scope ) {
+			$scope = is_admin() ? 'admin' : 'site';
+		} elseif ( '-css' === substr( $scope, -4 ) ) {
+			$scope = substr( $scope, 0, strlen( $scope ) - 4 );
+		}
+
+		$rev = (int) get_option( "code_snippets_{$scope}_css_rev", 1 );
+
+		if ( is_multisite() ) {
+			$rev += (int) get_site_option( "code_snippets_{$scope}_css_rev", 0 );
+		}
+
+		return $rev;
+	}
+
+	/**
+	 * Enqueue the active style snippets for the current page
+	 */
+	public function enqueue_css() {
+		$url = is_admin() ? self_admin_url( '/' ) : home_url( '/' );
+		$url = add_query_arg( 'code-snippets-css', 1, $url );
+
+		wp_enqueue_style( 'code-snippets-' . ( is_admin() ? 'admin' : 'site' ) . '-styles', $url, array(), $this->get_rev() );
+	}
+
 	/**
 	 * Print the active style snippets for the current scope
 	 */
@@ -36,22 +85,5 @@ class Style_Loader {
 		}
 
 		exit;
-	}
-
-	/**
-	 * Enqueue the active style snippets for the current page
-	 */
-	public function enqueue_css() {
-		$url = is_admin() ? self_admin_url( '/' ) : home_url( '/' );
-		$url = add_query_arg( 'code-snippets-css', 1, $url );
-		$scope = is_admin() ? 'admin' : 'site';
-
-		$rev = (int) get_option( "code_snippets_{$scope}_css_rev", 1 );
-
-		if ( is_multisite() ) {
-			$rev += (int) get_site_option( "code_snippets_{$scope}_css_rev", 0 );
-		}
-
-		wp_enqueue_style( 'code-snippets-styles', $url, array(), $rev );
 	}
 }

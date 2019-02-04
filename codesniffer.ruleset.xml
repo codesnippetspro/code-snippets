@@ -42,6 +42,7 @@
 		<!-- this picks up a lot of false positives -->
 		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
 		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />
+		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared" />
 
 		<!-- need to work with XML library -->
 		<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase" />

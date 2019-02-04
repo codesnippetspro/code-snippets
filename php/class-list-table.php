@@ -1,6 +1,7 @@
 <?php
 
 namespace Code_Snippets;
+
 use function Code_Snippets\Settings\get_setting;
 use WP_List_Table;
 
@@ -18,7 +19,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * This class handles the table for the manage snippets menu
  *
- * @since 1.5
+ * @since   1.5
  * @package Code_Snippets
  */
 class Snippets_List_Table extends WP_List_Table {
@@ -91,7 +92,7 @@ class Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Define the output of all columns that have no callback function
 	 *
-	 * @param Snippet $snippet The snippet used for the current row
+	 * @param Snippet $snippet     The snippet used for the current row
 	 * @param string  $column_name The name of the column being printed
 	 *
 	 * @return string The content of the column to output
@@ -129,7 +130,7 @@ class Snippets_List_Table extends WP_List_Table {
 			return code_snippets()->get_snippet_edit_url( $snippet->id, $network_redirect ? 'network' : 'self' );
 		}
 
-		$query_args = array( 'action' => $action, 'id' => $snippet->id );
+		$query_args = array( 'action' => $action, 'id' => $snippet->id, 'scope' => $snippet->scope );
 
 		$url = $network_redirect ?
 			add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) :
@@ -594,10 +595,16 @@ class Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @param int    $id
 	 * @param string $action
+	 * @param string $scope
 	 *
 	 * @return bool|string Result of performing action
 	 */
-	private function perform_action( $id, $action ) {
+	private function perform_action( $id, $action, $scope = '' ) {
+
+		if ( in_array( $action, array( 'activate', 'deactivate', 'activate-shared', 'deactivate-shared', 'delete' ) ) &&
+		     'admin-css' === $scope || 'site-css' === $scope ) {
+			code_snippets()->style_loader->increment_rev( $scope, $this->is_network );
+		}
 
 		switch ( $action ) {
 
@@ -671,9 +678,10 @@ class Snippets_List_Table extends WP_List_Table {
 		if ( isset( $_GET['action'], $_GET['id'] ) ) {
 
 			$id = absint( $_GET['id'] );
-			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id' ) );
+			$scope = isset( $_GET['scope'] ) ? $_GET['scope'] : '';
+			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id', 'scope' ) );
 
-			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ) );
+			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope );
 
 			if ( $result ) {
 				wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
@@ -1088,7 +1096,6 @@ class Snippets_List_Table extends WP_List_Table {
 			echo '</span>';
 
 			printf(
-				/* translators: 1: link URL, 2: link text */
 				'&nbsp;<a class="button clear-filters" href="%s">%s</a>',
 				esc_url( remove_query_arg( array( 's', 'tag' ) ) ),
 				__( 'Clear Filters', 'code-snippets' )
@@ -1113,7 +1120,7 @@ class Snippets_List_Table extends WP_List_Table {
 			$row_class .= ' shared-network-snippet';
 		}
 
-		printf( '<tr class="%s">', $row_class );
+		printf( '<tr class="%s" data-snippet-scope="%s">', $row_class, esc_attr( $snippet->scope ) );
 		$this->single_row_columns( $snippet );
 		echo '</tr>';
 	}

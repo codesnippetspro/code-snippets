@@ -238,6 +238,10 @@ class Manage_Menu extends Admin_Menu {
 			}
 		}
 
+		if ( 'css' === $snippet->type ) {
+			code_snippets()->style_loader->increment_rev( $snippet->scope, $snippet->network && ! $snippet->shared_network );
+		}
+
 		wp_die();
 	}
 }

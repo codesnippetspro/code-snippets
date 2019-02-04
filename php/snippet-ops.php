@@ -74,7 +74,7 @@ function get_all_snippet_tags() {
 	/* Grab all tags from the database */
 	$tags = array();
 	$table = code_snippets()->db->get_table_name();
-	$all_tags = $wpdb->get_col( sprintf('SELECT tags FROM %s', $table ) );
+	$all_tags = $wpdb->get_col( sprintf( 'SELECT tags FROM %s', $table ) );
 
 	/* Merge all tags into a single array */
 	foreach ( $all_tags as $snippet_tags ) {
