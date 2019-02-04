@@ -29,11 +29,6 @@ if ( ! $snippet->id ) {
 	$classes[] = ( $snippet->active ? '' : 'in' ) . 'active-snippet';
 }
 
-$types = array(
-	'php' => __( 'Functions', 'code-snippets' ),
-	'css' => __( 'Styles', 'code-snippets' ),
-);
-
 ?>
 <div class="wrap">
 	<h1><?php
@@ -141,14 +136,24 @@ $types = array(
 		</h2>
 
 		<?php if ( ! $snippet->id ) { ?>
-			<h2 class="nav-tab-wrapper">
-				<?php foreach ( $types as $type => $label ) {
-					if ( $snippet->type == $type ) { ?>
-						<a class="nav-tab nav-tab-active"><?php echo esc_html( $label ); ?></a>
-					<?php } else { ?>
-						<a class="nav-tab" href="<?php echo esc_url( add_query_arg( 'type', $type ) ); ?>"><?php
-							echo esc_html( $label ); ?></a>
-					<?php }
+			<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
+				<?php
+
+				$types = array(
+					'php' => __( 'Functions', 'code-snippets' ),
+					'css' => __( 'Styles', 'code-snippets' ),
+				);
+
+				foreach ( $types as $type => $label ) {
+					if ( $snippet->type == $type ) {
+						printf( '<a class="nav-tab nav-tab-active" data-type="%s">%s</a>', $type, esc_html( $label ) );
+					} else {
+						printf(
+							'<a class="nav-tab" href="%s" data-type="%s">%s</a>',
+							esc_url( add_query_arg( 'type', $type ) ),
+							$type, esc_html( $label )
+						);
+					}
 				} ?>
 			</h2>
 		<?php } ?>
