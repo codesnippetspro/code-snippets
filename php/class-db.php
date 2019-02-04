@@ -102,7 +102,6 @@ class DB {
 	 * Create the snippet tables if they do not already exist
 	 */
 	public function create_missing_tables() {
-		global $wpdb;
 
 		/* Create the network snippets table if it doesn't exist */
 		if ( is_multisite() && ! self::table_exists( $this->ms_table ) ) {

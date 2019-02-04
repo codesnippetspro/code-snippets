@@ -54,10 +54,13 @@ if ( version_compare( phpversion(), '5.6', '>=' ) ) {
  * @since 3.0.0
  */
 function code_snippets_php_version_notice() {
-	echo '<div class="error fade">',
-	'<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong></p>',
-	'<p>', __( ' Please upgrade your server to the latest version of PHP – contact your web host if you are unsure about how to do this.', 'code-snippets' ), '</p>',
-	'</div>';
+	echo '<div class="error fade">';
+
+	echo '<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong></p>';
+
+	echo '<p>', esc_html__( ' Please upgrade your server to the latest version of PHP. You can contact your web host if you are unsure how to do this.', 'code-snippets' ), '</p>';
+
+	echo '</div>';
 
 	deactivate_plugins( plugin_basename( __FILE__ ) );
 }
