@@ -648,11 +648,13 @@ class Snippets_List_Table extends WP_List_Table {
 				return 'deleted';
 
 			case 'export':
-				Export::export_snippets( array( $id ) );
+				$export = new Export( $id );
+				$export->export_snippets();
 				break;
 
 			case 'download':
-				export::download_snippets( array( $id ) );
+				$export = new Export( $id );
+				$export->download_snippets();
 				break;
 		}
 
@@ -738,11 +740,13 @@ class Snippets_List_Table extends WP_List_Table {
 				break;
 
 			case 'export-selected':
-				Export::export_snippets( $ids );
+				$export = new Export( $ids );
+				$export->export_snippets();
 				break;
 
 			case 'download-selected':
-				Export::download_snippets( $ids );
+				$export = new Export( $ids );
+				$export->download_snippets();
 				break;
 
 			case 'clone-selected':

@@ -10,14 +10,28 @@ namespace Code_Snippets;
 class Export {
 
 	/**
-	 * Set up the current page to act like a downloadable file instead of being shown in the browser
-	 *
-	 * @param array  $ids
-	 * @param string $table_name
-	 *
-	 * @return array
+	 * Array of snippet data fetched from the database
+	 * @var array
 	 */
-	private static function fetch_snippets( $ids, $table_name = '' ) {
+	private $snippets_list;
+
+	/**
+	 * Class constructor
+	 *
+	 * @param array|int $ids        List of snippet IDs to export
+	 * @param string    $table_name Name of the database table to fetch snippets from
+	 */
+	public function __construct( $ids, $table_name = '' ) {
+		$this->fetch_snippets( $ids, $table_name );
+	}
+
+	/**
+	 * Fetch the selected snippets from the database
+	 *
+	 * @param array|int $ids
+	 * @param string    $table_name
+	 */
+	private function fetch_snippets( $ids, $table_name ) {
 		global $wpdb;
 
 		/* Fetch the snippets from the database */
@@ -25,33 +39,35 @@ class Export {
 			$table_name = code_snippets()->db->get_table_name();
 		}
 
-		if ( ! count( $ids ) ) {
-			return array();
+		if ( ! is_array( $ids ) ) {
+			$ids = array( $ids );
 		}
 
-		$sql = sprintf(
-			'SELECT * FROM %s WHERE id IN (%s)', $table_name,
-			implode( ',', array_fill( 0, count( $ids ), '%d' ) )
-		);
+		if ( count( $ids ) ) {
+			$sql = sprintf(
+				'SELECT * FROM %s WHERE id IN (%s)', $table_name,
+				implode( ',', array_fill( 0, count( $ids ), '%d' ) )
+			);
 
-		$snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
+			$this->snippets_list = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
 
-		return $snippets;
+		} else {
+			$this->snippets_list = array();
+		}
 	}
 
 	/**
 	 * Set up the current page to act like a downloadable file instead of being shown in the browser
 	 *
-	 * @param array  $snippets
 	 * @param string $format
 	 * @param string $mime_type
 	 */
-	private static function do_headers( $snippets, $format, $mime_type = '' ) {
+	private function do_headers( $format, $mime_type = '' ) {
 
 		/* Build the export filename */
-		if ( 1 == count( $snippets ) ) {
+		if ( 1 == count( $this->snippets_list ) ) {
 			/* If there is only snippet to export, use its name instead of the site name */
-			$first_snippet = new Snippet( $snippets[0] );
+			$first_snippet = new Snippet( $this->snippets_list[0] );
 			$title = strtolower( $first_snippet->name );
 		} else {
 			/* Otherwise, use the site name as set in Settings > General */
@@ -71,15 +87,11 @@ class Export {
 
 	/**
 	 * Export snippets in JSON format
-	 *
-	 * @param array  $ids        list of snippet IDs to export
-	 * @param string $table_name name of the database table to fetch snippets from
 	 */
-	public static function export_snippets( $ids, $table_name = '' ) {
-		$raw_snippets = self::fetch_snippets( $ids, $table_name );
-		$final_snippets = array();
+	public function export_snippets() {
+		$snippets = array();
 
-		foreach ( $raw_snippets as $snippet ) {
+		foreach ( $this->snippets_list as $snippet ) {
 			$snippet = new Snippet( $snippet );
 
 			$fields = array( 'name', 'desc', 'tags', 'scope', 'code', 'priority' );
@@ -92,16 +104,16 @@ class Export {
 			}
 
 			if ( $final_snippet ) {
-				$final_snippets[] = $final_snippet;
+				$snippets[] = $final_snippet;
 			}
 		}
 
-		self::do_headers( $raw_snippets, 'json', 'application/json' );
+		$this->do_headers( 'json', 'application/json' );
 
 		$data = array(
 			'generator'    => 'Code Snippets v' . code_snippets()->version,
 			'date_created' => date( 'Y-m-d H:i' ),
-			'snippets'     => $final_snippets,
+			'snippets'     => $snippets,
 		);
 
 		echo wp_json_encode( $data, apply_filters( 'code_snippets/export/json_encode_options', 0 ) );
@@ -110,35 +122,27 @@ class Export {
 
 	/**
 	 * Export snippets to a downloadable PHP or CSS file
-	 *
-	 * @param $ids
-	 * @param $table_name
 	 */
-	public static function download_snippets( $ids, $table_name = '' ) {
-		$snippets = self::fetch_snippets( $ids, $table_name );
-		$first_snippet = new Snippet( $snippets[0] );
+	public function download_snippets() {
+		$first_snippet = new Snippet( $this->snippets_list[0] );
 
 		if ( 'css' === $first_snippet->type ) {
-			self::build_css_file( $snippets );
+			$this->download_css_snippets();
 		} else {
-			self::build_php_file( $snippets );
+			$this->download_php_snippets();
 		}
-
-		exit;
 	}
 
 	/**
 	 * Generate a downloadable PHP file from a list of snippets
-	 *
-	 * @param $snippets
 	 */
-	private static function build_php_file( $snippets ) {
-		self::do_headers( $snippets, 'php' );
+	public function download_php_snippets() {
+		$this->do_headers( 'php' );
 
 		echo "<?php\n";
 
 		/* Loop through the snippets */
-		foreach ( $snippets as $snippet ) {
+		foreach ( $this->snippets_list as $snippet ) {
 			$snippet = new Snippet( $snippet );
 
 			if ( 'php' !== $snippet->type ) {
@@ -157,18 +161,18 @@ class Export {
 
 			echo " */\n{$snippet->code}\n";
 		}
+
+		exit;
 	}
 
 	/**
 	 * Generate a downloadable CSS file from a list of snippets
-	 *
-	 * @param $snippets
 	 */
-	private static function build_css_file( $snippets ) {
-		self::do_headers( $snippets, 'css', 'text/css' );
+	public function download_css_snippets() {
+		$this->do_headers(  'css', 'text/css' );
 
 		/* Loop through the snippets */
-		foreach ( $snippets as $snippet ) {
+		foreach ( $this->snippets_list as $snippet ) {
 			$snippet = new Snippet( $snippet );
 
 			if ( 'css' !== $snippet->type ) {
@@ -187,5 +191,7 @@ class Export {
 
 			echo " */\n{$snippet->code}\n";
 		}
+
+		exit;
 	}
 }
