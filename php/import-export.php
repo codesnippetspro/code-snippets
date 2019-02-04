@@ -255,7 +255,7 @@ function export_snippets( $ids, $table_name = '' ) {
 
 		foreach ( $fields as $field ) {
 			if ( ! empty( $snippet->$field ) ) {
-				$final_snippet[ $field ] = $snippet->$field;
+				$final_snippet[ $field ] = str_replace( "\r\n", "\n", $snippet->$field );
 			}
 		}
 
