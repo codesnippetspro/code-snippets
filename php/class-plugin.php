@@ -74,9 +74,6 @@ class Plugin {
 		/* CodeMirror editor functions */
 		require_once $includes_path . '/editor.php';
 
-		/* Backwards compatibility functions */
-		require_once $includes_path . '/functions.php';
-
 		/* General Administration functions */
 		if ( is_admin() ) {
 			$this->admin = new Admin();
