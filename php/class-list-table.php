@@ -872,12 +872,9 @@ class Snippets_List_Table extends WP_List_Table {
 		}
 
 		/* Add scope tags */
-		if ( get_setting( 'general', 'snippet_scope_enabled' ) ) {
-			foreach ( $snippets['all'] as $snippet ) {
-
-				if ( 'global' !== $snippet->scope ) {
-					$snippet->tags = array_merge( $snippet->tags, array( $snippet->scope ) );
-				}
+		foreach ( $snippets['all'] as $snippet ) {
+			if ( 'global' !== $snippet->scope ) {
+				$snippet->tags[] = $snippet->scope;
 			}
 		}
 

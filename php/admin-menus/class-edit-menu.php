@@ -82,10 +82,6 @@ class Edit_Menu extends Admin_Menu {
 
 		add_action( 'code_snippets/admin/single', array( $this, 'render_priority_setting' ), 0 );
 
-		if ( get_setting( 'general', 'snippet_scope_enabled' ) ) {
-			add_action( 'code_snippets/admin/single', array( $this, 'render_scope_setting' ), 1 );
-		}
-
 		if ( is_network_admin() ) {
 			add_action( 'code_snippets/admin/single', array( $this, 'render_multisite_sharing_setting' ), 1 );
 		}
@@ -405,47 +401,6 @@ class Edit_Menu extends Admin_Menu {
 			<input name="snippet_priority" type="number" id="snippet_priority" value="<?php echo intval( $snippet->priority ); ?>">
 		</p>
 		<?php
-	}
-
-	/**
-	 * Render the snippet scope setting
-	 *
-	 * @param Snippet $snippet the snippet currently being edited
-	 */
-	function render_scope_setting( Snippet $snippet ) {
-
-		$icons = Snippet::get_scope_icons();
-
-		echo '<h2 class="screen-reader-text">' . esc_html__( 'Scope', 'code-snippets' ) . '</h2>';
-
-		$all_scopes = array(
-			'php' => array(
-				'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
-				'admin'      => __( 'Only run in administration area', 'code-snippets' ),
-				'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
-				'single-use' => __( 'Only run once', 'code-snippets' ),
-			),
-			'css' => array(
-				'site-css'  => __( 'Site front-end styles', 'code-snippets' ),
-				'admin-css' => __( 'Administration area styles', 'code-snippets' ),
-			),
-		);
-
-		if ( 0 !== $snippet->id ) {
-			$all_scopes = array_intersect_key( $all_scopes, array( $snippet->type => 1 ) );
-		}
-
-		foreach ( $all_scopes as $type => $scopes ) {
-			printf( '<p class="snippet-scope %s-scopes-list">', $type );
-
-			foreach ( $scopes as $scope => $label ) {
-				printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
-				checked( $scope, $snippet->scope );
-				printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $icons[ $scope ], esc_html( $label ) );
-			}
-
-			echo '</p>';
-		}
 	}
 
 	/**

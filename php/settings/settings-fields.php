@@ -47,13 +47,6 @@ function get_settings_fields() {
 			'default' => true,
 		),
 
-		'snippet_scope_enabled' => array(
-			'name'    => __( 'Enable Scope Selector', 'code-snippets' ),
-			'type'    => 'checkbox',
-			'label'   => __( 'Enable the scope selector when editing a snippet', 'code-snippets' ),
-			'default' => true,
-		),
-
 		'enable_tags' => array(
 			'name'    => __( 'Enable Snippet Tags', 'code-snippets' ),
 			'type'    => 'checkbox',
