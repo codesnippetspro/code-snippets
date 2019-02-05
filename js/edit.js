@@ -24,14 +24,13 @@ window.code_snippets_editor = (function (CodeMirror, editor_atts) {
 
 	const tabs = tabs_wrapper.querySelectorAll('.nav-tab');
 
+	const modes = {php: 'text/x-php', css: 'text/css'};
+
 	for (let i = 0; i < tabs.length; i++) {
 		tabs[i].addEventListener('click', function (e) {
-			if (this.classList.contains('nav-tab-active')) {
-				 return;
-			}
-
-			e.preventDefault();
+			if (this.classList.contains('nav-tab-active')) return;
 			const type = this.getAttribute('data-type');
+			e.preventDefault();
 
 			// update the form styles to match the new type
 			snippet_form.setAttribute('data-snippet-type', type);
@@ -50,6 +49,7 @@ window.code_snippets_editor = (function (CodeMirror, editor_atts) {
 
 			// clear the editor contents
 			code_snippets_editor.setValue('');
+			if (modes[type]) code_snippets_editor.setOption('mode', modes[type]);
 		})
 	}
 
