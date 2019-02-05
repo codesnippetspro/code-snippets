@@ -58,12 +58,16 @@ class Active_Snippets {
 	public function get_rev( $scope ) {
 		$rev = 0;
 
-		if ( $revisions = get_option( 'code_snippets_assets_rev' ) && isset( $revisions[ $scope ] ) ) {
+		$revisions = get_option( 'code_snippets_assets_rev' );
+		if ( isset( $revisions[ $scope ] ) ) {
 			$rev += intval( $revisions[ $scope ] );
 		}
 
-		if ( is_multisite() && $revisions = get_site_option( 'code_snippets_assets_rev' ) && isset( $revisions[ $scope ] ) ) {
-			$rev += intval( $revisions[ $scope ] );
+		if ( is_multisite() ) {
+			$revisions = get_site_option( 'code_snippets_assets_rev' );
+			if ( isset( $revisions[ $scope ] ) ) {
+				$rev += intval( $revisions[ $scope ] );
+			}
 		}
 
 		return $rev;
@@ -109,6 +113,7 @@ class Active_Snippets {
 
 	/**
 	 * Set the necessary headers to mark this page as an asset
+	 *
 	 * @param string $mime_type
 	 */
 	private static function do_asset_headers( $mime_type ) {

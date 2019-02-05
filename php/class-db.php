@@ -11,8 +11,14 @@ use wpdb;
  */
 class DB {
 
+	/**
+	 * @var string
+	 */
 	public $table;
 
+	/**
+	 * @var string
+	 */
 	public $ms_table;
 
 	/**
