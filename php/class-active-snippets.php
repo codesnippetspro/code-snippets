@@ -107,9 +107,14 @@ class Active_Snippets {
 		}
 	}
 
+	/**
+	 * Set the necessary headers to mark this page as an asset
+	 * @param string $mime_type
+	 */
 	private static function do_asset_headers( $mime_type ) {
+		$expiry = 365 * 24 * 60 * 60; // year in seconds
 		header( 'Content-Type: ' . $mime_type, true, 200 );
-		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + 31536000 ) . ' GMT' ); // 1 year
+		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expiry ) . ' GMT' );
 	}
 
 	/**
@@ -133,14 +138,14 @@ class Active_Snippets {
 	}
 
 	/**
-	 * Print the active style snippets for the current scope
+	 * Respond to requests to print the active JavaScript snippets for a particular scope
 	 */
 	public function print_js() {
 		if ( ! isset( $_GET['code-snippets-js-snippets'] ) || is_admin() ) {
 			return;
 		}
 
-		$this->do_asset_headers( 'application/javascript' );
+		$this->do_asset_headers( 'text/javascript' );
 
 		$current_scope = 'site-' . ( 'footer' === $_GET['code-snippets-js-snippets'] ? 'footer' : 'head' ) . '-js';
 
