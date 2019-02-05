@@ -12,42 +12,42 @@ use function Code_Snippets\get_editor_themes;
  */
 
 /**
- * @param bool   $network
- * @param string $option
- * @param mixed  $value
+ * Add a new option for either the current site or the current network
  *
- * @return mixed
+ * @param bool   $network Whether to add a network-wide option
+ * @param string $option  Name of option to add. Expected to not be SQL-escaped.
+ * @param mixed  $value   Option value, can be anything. Expected to not be SQL-escaped.
+ *
+ * @return bool False if the option was not added. True if the option was added.
  */
 function add_self_option( $network, $option, $value ) {
-	if ( $network ) {
-		add_site_option( $option, $value );
-	} else {
-		add_option( $option, $value );
-	}
+	return $network ? add_site_option( $option, $value ) : add_option( $option, $value );
 }
 
 /**
- * @param bool   $network
- * @param string $option
- * @param mixed  $default
+ * Retrieves an option value based on an option name from either the current site or the current network
  *
- * @return mixed
+ * @param bool   $network Whether to get a network-wide option
+ * @param string $option  Name of option to retrieve. Expected to not be SQL-escaped.
+ * @param mixed  $default Optional value to return if option doesn't exist. Default false.
+ *
+ * @return mixed Value set for the option.
  */
 function get_self_option( $network, $option, $default = false ) {
 	return $network ? get_site_option( $option, $default ) : get_option( $option, $default );
 }
 
 /**
- * @param bool   $network
- * @param string $option
- * @param mixed  $value
+ * Update the value of an option that was already added on the current site or the current network
+ *
+ * @param bool   $network Whether to update a network-wide option
+ * @param string $option  Name of option. Expected to not be SQL-escaped.
+ * @param mixed  $value   Option value. Expected to not be SQL-escaped.
+ *
+ * @return bool False if value was not updated. True if value was updated.
  */
 function update_self_option( $network, $option, $value ) {
-	if ( $network ) {
-		update_site_option( $option, $value );
-	} else {
-		update_option( $option, $value );
-	}
+	return $network ? update_site_option( $option, $value ) : update_option( $option, $value );
 }
 
 /**
