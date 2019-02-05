@@ -651,4 +651,17 @@ class Edit_Menu extends Admin_Menu {
 			}
 		}
 	}
+
+	/**
+	 * @param array   $scopes
+	 */
+	public function print_scopes_list( $scopes ) {
+		$scope_icons = Snippet::get_scope_icons();
+
+		foreach ( $scopes as $scope => $label ) {
+			printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
+			checked( $scope, $this->snippet->scope );
+			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $scope_icons[ $scope ], esc_html( $label ) );
+		}
+	}
 }

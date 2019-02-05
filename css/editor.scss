@@ -21,11 +21,17 @@
 }
 
 /* Add a bit of extra space above the editor */
-.CodeMirror-sizer::before {
-	content: '';
-	display: block;
-	padding-bottom: 6px;
-	color: #bbb;
+.CodeMirror-sizer {
+
+	&::before, &::after {
+		display: block;
+		color: #bbb;
+	}
+
+	&::before {
+		content: '';
+		padding-bottom: 5px;
+	}
 }
 
 /* Fix cursor color with rubyblue theme (see https://goo.gl/3HDgRm */

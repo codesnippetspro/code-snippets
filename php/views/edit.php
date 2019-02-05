@@ -140,8 +140,10 @@ if ( ! $snippet->id ) {
 				<?php
 
 				$types = array(
-					'php' => __( 'Functions', 'code-snippets' ),
-					'css' => __( 'Styles', 'code-snippets' ),
+					'php'  => __( 'Functions', 'code-snippets' ),
+					'html' => __( 'Content', 'code-snippets' ),
+					'css'  => __( 'Styles', 'code-snippets' ),
+					'js'   => __( 'Scripts', 'code-snippets' ),
 				);
 
 				foreach ( $types as $type => $label ) {
@@ -239,38 +241,49 @@ if ( ! $snippet->id ) {
 
 		<h2 class="screen-reader-text"><?php esc_html_e( 'Scope', 'code-snippets' ) ?></h2>
 
-		<?php
+		<?php if ( ! $snippet->id || 'php' === $snippet->type ) { ?>
+			<p class="snippet-scope php-scopes-list">
+				<?php $this->print_scopes_list( array(
+					'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
+					'admin'      => __( 'Only run in administration area', 'code-snippets' ),
+					'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
+					'single-use' => __( 'Only run once', 'code-snippets' ),
+				) ); ?>
+			</p>
+		<?php }
 
-		$scope_icons = Snippet::get_scope_icons();
+		if ( ! $snippet->id || 'css' === $snippet->type ) { ?>
+			<p class="snippet-scope css-scopes-list">
+				<?php $this->print_scopes_list( array(
+					'site-css'  => __( 'Site front-end styles', 'code-snippets' ),
+					'admin-css' => __( 'Administration area styles', 'code-snippets' ),
+				) ); ?>
+			</p>
+		<?php }
 
-		$all_scopes = array(
-			'php' => array(
-				'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
-				'admin'      => __( 'Only run in administration area', 'code-snippets' ),
-				'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
-				'single-use' => __( 'Only run once', 'code-snippets' ),
-			),
-			'css' => array(
-				'site-css'  => __( 'Site front-end styles', 'code-snippets' ),
-				'admin-css' => __( 'Administration area styles', 'code-snippets' ),
-			),
-		);
+		if ( ! $snippet->id || 'js' === $snippet->type ) { ?>
+			<p class="snippet-scope js-scopes-list">
+				<?php $this->print_scopes_list( array(
+					'site-head-js'   => __( 'Load JS in the <head> section', 'code-snippets' ),
+					'site-footer-js' => __( 'Load JS at the end of the <body> section', 'code-snippets' ),
+				) ); ?>
+			</p>
+		<?php }
 
-		if ( 0 !== $snippet->id ) {
-			$all_scopes = array_intersect_key( $all_scopes, array( $snippet->type => 1 ) );
-		}
+		if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
+			<p class="snippet-scope html-scopes-list description">
+				<input type="hidden" name="snippet_scope" value="shortcode">
+				<?php
 
-		foreach ( $all_scopes as $type => $scopes ) {
-			printf( '<p class="snippet-scope %s-scopes-list">', $type );
+				/* translators: %s: snippet shortcode tag */
+				$text = $snippet->id ? __( 'You can use the %s shortcode to insert your content into a post or page.', 'code-snippets' ) : __( 'After saving, you will be able to use the %s shortcode to insert your content into a post or page.', 'code-snippets' );
 
-			foreach ( $scopes as $scope => $label ) {
-				printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
-				checked( $scope, $snippet->scope );
-				printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $scope_icons[ $scope ], esc_html( $label ) );
-			}
+				$shortcode = '<code class="shortcode-tag">[code-snippet' . ( $snippet->id ? ' id=' . $snippet->id : '' ) . ']</code>';
+				printf( esc_html( $text ), $shortcode );
 
-			echo '</p>';
-		}
+				?>
+			</p>
+		<?php }
 
 		/* Allow plugins to add fields and content to this page */
 		do_action( 'code_snippets/admin/single', $snippet );
