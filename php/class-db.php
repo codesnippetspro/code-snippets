@@ -164,6 +164,7 @@ class DB {
 				priority    SMALLINT    NOT NULL DEFAULT 10,
 				active      TINYINT(1)  NOT NULL DEFAULT 0,
 				PRIMARY KEY  (id)
+				KEY scope (scope)
 			) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
