@@ -58,13 +58,19 @@ class Edit_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
+		// Retrieve the current snippet object
+		$this->load_snippet_data();
+
 		// Disallow visiting the edit snippet page without a valid ID
 		if ( code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
-			if ( ! isset( $_REQUEST['id'] ) || 0 == $_REQUEST['id'] ) {
+			if ( ! isset( $_REQUEST['id'] ) || 0 == $this->snippet->id ) {
 				wp_redirect( code_snippets()->get_menu_url( 'add' ) );
 				exit;
 			}
 		}
+
+		// Process any submitted actions
+		$this->process_actions();
 
 		// Load the contextual help tabs
 		$contextual_help = new Contextual_Help( 'edit' );
@@ -85,12 +91,6 @@ class Edit_Menu extends Admin_Menu {
 		if ( is_network_admin() ) {
 			add_action( 'code_snippets_edit_snippet', array( $this, 'render_multisite_sharing_setting' ), 1 );
 		}
-
-		// Process any submitted actions
-		$this->process_actions();
-
-		// Retrieve the current snippet object
-		$this->load_snippet_data();
 	}
 
 	/**
