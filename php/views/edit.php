@@ -266,15 +266,15 @@ if ( ! $snippet->id ) {
 			if ( ! $snippet->id || 'js' === $snippet->type ) { ?>
 				<p class="snippet-scope js-scopes-list">
 					<?php $this->print_scopes_list( array(
-						'site-head-js'   => __( 'Load JS in the <head> section', 'code-snippets' ),
 						'site-footer-js' => __( 'Load JS at the end of the <body> section', 'code-snippets' ),
+						'site-head-js'   => __( 'Load JS in the <head> section', 'code-snippets' ),
 					) ); ?>
 				</p>
 			<?php }
 
 			if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
 				<p class="snippet-scope html-scopes-list">
-					<input type="hidden" name="snippet_scope" value="shortcode"><?php
+					<label><input type="radio" name="snippet_scope" value="shortcode"></label><?php
 
 					/* translators: %s: snippet shortcode tag */
 					$text = $snippet->id ? __( 'You can use the %s shortcode to insert your content into a post or page.', 'code-snippets' ) : __( 'After saving, you will be able to use the %s shortcode to insert your content into a post or page.', 'code-snippets' );
