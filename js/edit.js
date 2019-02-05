@@ -20,6 +20,7 @@ window.code_snippets_editor = (function (CodeMirror, editor_atts) {
 	const tabs_wrapper = document.getElementById('snippet-type-tabs');
 	if (!tabs_wrapper) return;
 
+	const editor = code_snippets_editor;
 	const snippet_form = document.getElementById('snippet-form');
 
 	const tabs = tabs_wrapper.querySelectorAll('.nav-tab');
@@ -53,7 +54,8 @@ window.code_snippets_editor = (function (CodeMirror, editor_atts) {
 			if (scope) scope.checked = true;
 
 			// clear the editor contents
-			code_snippets_editor.setValue('');
+			editor.setValue('');
+			editor.setOption('lint', 'js' !== type);
 			if (modes[type]) code_snippets_editor.setOption('mode', modes[type]);
 		})
 	}

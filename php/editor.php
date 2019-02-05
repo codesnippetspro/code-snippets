@@ -28,7 +28,7 @@ function get_code_editor_atts( $type, $override_atts = [], $json_encode = true )
 		'matchBrackets'  => true,
 		'extraKeys'      => [ 'Alt-F' => 'findPersistent' ],
 		'gutters'        => [ 'CodeMirror-lint-markers' ],
-		'lint'           => true,
+		'lint'           => in_array( $type, [ 'php', 'css', 'html' ] ),
 		'viewportMargin' => 'Infinity',
 	];
 
