@@ -273,14 +273,13 @@ if ( ! $snippet->id ) {
 			<?php }
 
 			if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
-				<p class="snippet-scope html-scopes-list description">
-					<input type="hidden" name="snippet_scope" value="shortcode">
-					<?php
+				<p class="snippet-scope html-scopes-list">
+					<input type="hidden" name="snippet_scope" value="shortcode"><?php
 
 					/* translators: %s: snippet shortcode tag */
 					$text = $snippet->id ? __( 'You can use the %s shortcode to insert your content into a post or page.', 'code-snippets' ) : __( 'After saving, you will be able to use the %s shortcode to insert your content into a post or page.', 'code-snippets' );
 
-					$shortcode = '<code class="shortcode-tag">[code-snippet' . ( $snippet->id ? ' id=' . $snippet->id : '' ) . ']</code>';
+					$shortcode = '<code class="shortcode-tag">[code_snippet' . ( $snippet->id ? ' id=' . $snippet->id : '' ) . ']</code>';
 					printf( esc_html( $text ), $shortcode );
 
 					?>

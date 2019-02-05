@@ -24,7 +24,12 @@ window.code_snippets_editor = (function (CodeMirror, editor_atts) {
 
 	const tabs = tabs_wrapper.querySelectorAll('.nav-tab');
 
-	const modes = {php: 'text/x-php', css: 'text/css'};
+	const modes = {
+		css: 'text/css',
+		js: 'javascript',
+		php: 'text/x-php',
+		html: 'application/x-httpd-php'
+	};
 
 	for (let i = 0; i < tabs.length; i++) {
 		tabs[i].addEventListener('click', function (e) {

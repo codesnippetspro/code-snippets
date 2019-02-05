@@ -3,7 +3,7 @@ Based on work distributed under the BSD 3-Clause License (https://rawgit.com/gla
 */
 
 import Parser from 'php-parser';
-import CodeMirror from 'codemirror/lib/codemirror';
+import CodeMirror from 'codemirror';
 import 'codemirror/addon/lint/lint';
 
 'use strict';

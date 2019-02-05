@@ -13,17 +13,24 @@ use function Code_Snippets\Settings\get_setting;
  *
  * @return array|string Array if $json_encode is false, JSON string if it is true
  */
-function get_code_editor_atts( $type, $override_atts = array(), $json_encode = true ) {
+function get_code_editor_atts( $type, $override_atts = [], $json_encode = true ) {
+
+	$modes = [
+		'css'  => 'text/css',
+		'php'  => 'text/x-php',
+		'js'   => 'javascript',
+		'html' => 'application/x-httpd-php',
+	];
 
 	// default attributes for the CodeMirror editor
-	$default_atts = array(
-		'mode'           => 'css' === $type ? 'text/css' : 'text/x-php',
+	$default_atts = [
+		'mode'           => $modes[ $type ],
 		'matchBrackets'  => true,
-		'extraKeys'      => array( 'Alt-F' => 'findPersistent' ),
-		'gutters'        => array( 'CodeMirror-lint-markers' ),
+		'extraKeys'      => [ 'Alt-F' => 'findPersistent' ],
+		'gutters'        => [ 'CodeMirror-lint-markers' ],
 		'lint'           => true,
 		'viewportMargin' => 'Infinity',
-	);
+	];
 
 	// add relevant saved setting values to the default attributes
 	$settings = Settings\get_settings_values();
@@ -63,8 +70,8 @@ function enqueue_code_editor_assets() {
 	wp_deregister_style( 'wpeditor' );
 
 	/* CodeMirror */
-	wp_enqueue_style( 'code-snippets-editor', $url . 'css/min/editor.css', array(), $plugin_version );
-	wp_enqueue_script( 'code-snippets-editor', $url . 'js/min/editor.js', array(), $plugin_version );
+	wp_enqueue_style( 'code-snippets-editor', $url . 'css/min/editor.css', [], $plugin_version );
+	wp_enqueue_script( 'code-snippets-editor', $url . 'js/min/editor.js', [], $plugin_version );
 
 	/* CodeMirror Theme */
 	$theme = get_setting( 'editor', 'theme' );
@@ -74,7 +81,7 @@ function enqueue_code_editor_assets() {
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
 			$url . "css/min/editor-themes/$theme.css",
-			array( 'code-snippets-editor' ), $plugin_version
+			[ 'code-snippets-editor' ], $plugin_version
 		);
 	}
 }
@@ -90,7 +97,7 @@ function get_editor_themes() {
 		return $themes;
 	}
 
-	$themes = array();
+	$themes = [];
 	$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'css/min/editor-themes/';
 	$theme_files = glob( $themes_dir . '*.css' );
 
