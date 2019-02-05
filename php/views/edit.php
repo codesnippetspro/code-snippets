@@ -25,7 +25,7 @@ if ( ! $snippet->id ) {
 	$classes[] = 'new-snippet';
 } elseif ( 'single-use' === $snippet->scope ) {
 	$classes[] = 'single-use-snippet';
-} else {
+} elseif ( 'html' !== $snippet->type ) {
 	$classes[] = ( $snippet->active ? '' : 'in' ) . 'active-snippet';
 }
 
@@ -99,25 +99,28 @@ if ( ! $snippet->id ) {
 					__( 'Save Snippet', 'code-snippets' ),
 				);
 
-				if ( 'single-use' === $snippet->scope ) {
-					$actions['save_snippet_execute'] = array(
-						__( 'Execute Once', 'code-snippets' ),
-						__( 'Save Snippet and Execute Once', 'code-snippets' ),
-					);
+				if ( 'html' !== $snippet->type ) {
 
-				} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
-
-					if ( $snippet->active ) {
-						$actions['save_snippet_deactivate'] = array(
-							__( 'Deactivate', 'code-snippets' ),
-							__( 'Save Snippet and Deactivate', 'code-snippets' ),
+					if ( 'single-use' === $snippet->scope ) {
+						$actions['save_snippet_execute'] = array(
+							__( 'Execute Once', 'code-snippets' ),
+							__( 'Save Snippet and Execute Once', 'code-snippets' ),
 						);
 
-					} else {
-						$actions['save_snippet_activate'] = array(
-							__( 'Activate', 'code-snippets' ),
-							__( 'Save Snippet and Activate', 'code-snippets' ),
-						);
+					} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
+
+						if ( $snippet->active ) {
+							$actions['save_snippet_deactivate'] = array(
+								__( 'Deactivate', 'code-snippets' ),
+								__( 'Save Snippet and Deactivate', 'code-snippets' ),
+							);
+
+						} else {
+							$actions['save_snippet_activate'] = array(
+								__( 'Activate', 'code-snippets' ),
+								__( 'Save Snippet and Activate', 'code-snippets' ),
+							);
+						}
 					}
 				}
 
@@ -274,7 +277,8 @@ if ( ! $snippet->id ) {
 
 			if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
 				<p class="snippet-scope html-scopes-list">
-					<label><input type="radio" name="snippet_scope" value="shortcode"></label><?php
+					<label><input type="radio" name="snippet_scope" value="shortcode"<?php
+						checked( 'shortcode', $snippet->scope ); ?>></label><?php
 
 					/* translators: %s: snippet shortcode tag */
 					$text = $snippet->id ? __( 'You can use the %s shortcode to insert your content into a post or page.', 'code-snippets' ) : __( 'After saving, you will be able to use the %s shortcode to insert your content into a post or page.', 'code-snippets' );

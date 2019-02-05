@@ -226,24 +226,6 @@ class Snippet {
 	}
 
 	/**
-	 * Prepare the code by removing php tags from beginning and end
-	 *
-	 * @param string $code
-	 *
-	 * @return string
-	 */
-	private function prepare_code( $code ) {
-
-		/* Remove <?php and <? from beginning of snippet */
-		$code = preg_replace( '|^[\s]*<\?(php)?|', '', $code );
-
-		/* Remove ?> from end of snippet */
-		$code = preg_replace( '|\?>[\s]*$|', '', $code );
-
-		return $code;
-	}
-
-	/**
 	 * Prepare the scope by ensuring that it is a valid choice
 	 *
 	 * @param int|string $scope The field as provided

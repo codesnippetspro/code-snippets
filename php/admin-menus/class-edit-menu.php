@@ -261,10 +261,18 @@ class Edit_Menu extends Admin_Menu {
 			$snippet->active = 0;
 		}
 
-		/* Deactivate snippet if code contains errors */
-		if ( 'php' === $snippet->type && $snippet->active && 'single-use' !== $snippet->scope ) {
-			if ( $code_error = $this->validate_code( $snippet ) ) {
-				$snippet->active = 0;
+		if ( 'php' === $snippet->type ) {
+
+			/* Remove <?php and <? from beginning of snippet */
+			$snippet->code = preg_replace( '|^[\s]*<\?(php)?|', '', $snippet->code );
+			/* Remove ?> from end of snippet */
+			$snippet->code = preg_replace( '|\?>[\s]*$|', '', $snippet->code );
+
+			/* Deactivate snippet if code contains errors */
+			if ( $snippet->active && 'single-use' !== $snippet->scope ) {
+				if ( $code_error = $this->validate_code( $snippet ) ) {
+					$snippet->active = 0;
+				}
 			}
 		}
 
@@ -392,6 +400,10 @@ class Edit_Menu extends Admin_Menu {
 	 * @param Snippet $snippet the snippet currently being edited
 	 */
 	public function render_priority_setting( Snippet $snippet ) {
+		if ( 'html' === $snippet->type ) {
+			return;
+		}
+
 		?>
 		<p class="snippet-priority"
 		   title="<?php esc_attr_e( 'Snippets with a lower priority number will run before those with a higher number.', 'code-snippets' ); ?>">
@@ -585,22 +597,25 @@ class Edit_Menu extends Admin_Menu {
 			'save_snippet' => __( 'Save Changes', 'code-snippets' ),
 		);
 
-		if ( 'single-use' === $snippet->scope ) {
-			$actions['save_snippet_execute'] = __( 'Save Changes and Execute Once', 'code-snippets' );
+		if ( 'html' !== $snippet->type ) {
 
-		} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
+			if ( 'single-use' === $snippet->scope ) {
+				$actions['save_snippet_execute'] = __( 'Save Changes and Execute Once', 'code-snippets' );
 
-			if ( $snippet->active ) {
-				$actions['save_snippet_deactivate'] = __( 'Save Changes and Deactivate', 'code-snippets' );
-			} else {
-				$actions['save_snippet_activate'] = __( 'Save Changes and Activate', 'code-snippets' );
+			} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
+
+				if ( $snippet->active ) {
+					$actions['save_snippet_deactivate'] = __( 'Save Changes and Deactivate', 'code-snippets' );
+				} else {
+					$actions['save_snippet_activate'] = __( 'Save Changes and Activate', 'code-snippets' );
+				}
 			}
-		}
 
-		// Make the 'Save and Activate' button the default if the setting is enabled
-		if ( ! $snippet->active && 'single-use' !== $snippet->scope &&
-		     get_setting( 'general', 'activate_by_default' ) ) {
-			$actions = array_reverse( $actions );
+			// Make the 'Save and Activate' button the default if the setting is enabled
+			if ( ! $snippet->active && 'single-use' !== $snippet->scope &&
+			     get_setting( 'general', 'activate_by_default' ) ) {
+				$actions = array_reverse( $actions );
+			}
 		}
 
 		if ( $extra_actions && 0 !== $snippet->id ) {

@@ -32,7 +32,7 @@ class Plugin {
 	public $admin;
 
 	/**
-	 * @var Source_Shortcode
+	 * @var Shortcodes
 	 */
 	public $shortcode;
 
@@ -85,7 +85,7 @@ class Plugin {
 		require_once $includes_path . '/settings/settings.php';
 
 		$this->active_snippets = new Active_Snippets();
-		$this->shortcode = new Source_Shortcode();
+		$this->shortcode = new Shortcodes();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
