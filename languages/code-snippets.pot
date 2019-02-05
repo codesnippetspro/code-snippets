@@ -956,48 +956,48 @@ msgstr ""
 msgid "Persistent search"
 msgstr ""
 
-#: php/views/edit.php:242
+#: php/views/edit.php:244
 msgid "Scope"
 msgstr ""
 
-#: php/views/edit.php:247
+#: php/views/edit.php:249
 msgid "Run snippet everywhere"
 msgstr ""
 
-#: php/views/edit.php:248
+#: php/views/edit.php:250
 msgid "Only run in administration area"
 msgstr ""
 
-#: php/views/edit.php:249
+#: php/views/edit.php:251
 msgid "Only run on site front-end"
 msgstr ""
 
-#: php/views/edit.php:250
+#: php/views/edit.php:252
 msgid "Only run once"
 msgstr ""
 
-#: php/views/edit.php:258
+#: php/views/edit.php:260
 msgid "Site front-end styles"
 msgstr ""
 
-#: php/views/edit.php:259
+#: php/views/edit.php:261
 msgid "Administration area styles"
 msgstr ""
 
-#: php/views/edit.php:267
+#: php/views/edit.php:269
 msgid "Load JS in the <head> section"
 msgstr ""
 
-#: php/views/edit.php:268
+#: php/views/edit.php:270
 msgid "Load JS at the end of the <body> section"
 msgstr ""
 
 #. translators: %s: snippet shortcode tag
-#: php/views/edit.php:279
+#: php/views/edit.php:281
 msgid "You can use the %s shortcode to insert your content into a post or page."
 msgstr ""
 
-#: php/views/edit.php:279
+#: php/views/edit.php:281
 msgid "After saving, you will be able to use the %s shortcode to insert your content into a post or page."
 msgstr ""
 

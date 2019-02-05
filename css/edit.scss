@@ -67,8 +67,12 @@ ul.tagit {
 	}
 }
 
+.below-editor {
+	display: flex;
+	justify-content: space-between;
+}
+
 .snippet-priority {
-	float: right;
 
 	label {
 		font-weight: bold;

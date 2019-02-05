@@ -239,54 +239,64 @@ if ( ! $snippet->id ) {
 			</div>
 		</div>
 
-		<h2 class="screen-reader-text"><?php esc_html_e( 'Scope', 'code-snippets' ) ?></h2>
+		<div class="below-editor">
 
-		<?php if ( ! $snippet->id || 'php' === $snippet->type ) { ?>
-			<p class="snippet-scope php-scopes-list">
-				<?php $this->print_scopes_list( array(
-					'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
-					'admin'      => __( 'Only run in administration area', 'code-snippets' ),
-					'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
-					'single-use' => __( 'Only run once', 'code-snippets' ),
-				) ); ?>
-			</p>
-		<?php }
+			<h2 class="screen-reader-text"><?php esc_html_e( 'Scope', 'code-snippets' ) ?></h2>
 
-		if ( ! $snippet->id || 'css' === $snippet->type ) { ?>
-			<p class="snippet-scope css-scopes-list">
-				<?php $this->print_scopes_list( array(
-					'site-css'  => __( 'Site front-end styles', 'code-snippets' ),
-					'admin-css' => __( 'Administration area styles', 'code-snippets' ),
-				) ); ?>
-			</p>
-		<?php }
+			<?php if ( ! $snippet->id || 'php' === $snippet->type ) { ?>
+				<p class="snippet-scope php-scopes-list">
+					<?php $this->print_scopes_list( array(
+						'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
+						'admin'      => __( 'Only run in administration area', 'code-snippets' ),
+						'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
+						'single-use' => __( 'Only run once', 'code-snippets' ),
+					) ); ?>
+				</p>
+			<?php }
 
-		if ( ! $snippet->id || 'js' === $snippet->type ) { ?>
-			<p class="snippet-scope js-scopes-list">
-				<?php $this->print_scopes_list( array(
-					'site-head-js'   => __( 'Load JS in the <head> section', 'code-snippets' ),
-					'site-footer-js' => __( 'Load JS at the end of the <body> section', 'code-snippets' ),
-				) ); ?>
-			</p>
-		<?php }
+			if ( ! $snippet->id || 'css' === $snippet->type ) { ?>
+				<p class="snippet-scope css-scopes-list">
+					<?php $this->print_scopes_list( array(
+						'site-css'  => __( 'Site front-end styles', 'code-snippets' ),
+						'admin-css' => __( 'Administration area styles', 'code-snippets' ),
+					) ); ?>
+				</p>
+			<?php }
 
-		if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
-			<p class="snippet-scope html-scopes-list description">
-				<input type="hidden" name="snippet_scope" value="shortcode">
-				<?php
+			if ( ! $snippet->id || 'js' === $snippet->type ) { ?>
+				<p class="snippet-scope js-scopes-list">
+					<?php $this->print_scopes_list( array(
+						'site-head-js'   => __( 'Load JS in the <head> section', 'code-snippets' ),
+						'site-footer-js' => __( 'Load JS at the end of the <body> section', 'code-snippets' ),
+					) ); ?>
+				</p>
+			<?php }
 
-				/* translators: %s: snippet shortcode tag */
-				$text = $snippet->id ? __( 'You can use the %s shortcode to insert your content into a post or page.', 'code-snippets' ) : __( 'After saving, you will be able to use the %s shortcode to insert your content into a post or page.', 'code-snippets' );
+			if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
+				<p class="snippet-scope html-scopes-list description">
+					<input type="hidden" name="snippet_scope" value="shortcode">
+					<?php
 
-				$shortcode = '<code class="shortcode-tag">[code-snippet' . ( $snippet->id ? ' id=' . $snippet->id : '' ) . ']</code>';
-				printf( esc_html( $text ), $shortcode );
+					/* translators: %s: snippet shortcode tag */
+					$text = $snippet->id ? __( 'You can use the %s shortcode to insert your content into a post or page.', 'code-snippets' ) : __( 'After saving, you will be able to use the %s shortcode to insert your content into a post or page.', 'code-snippets' );
 
-				?>
-			</p>
-		<?php }
+					$shortcode = '<code class="shortcode-tag">[code-snippet' . ( $snippet->id ? ' id=' . $snippet->id : '' ) . ']</code>';
+					printf( esc_html( $text ), $shortcode );
+
+					?>
+				</p>
+			<?php }
+
+			do_action( 'code_snippets_below_editor', $snippet );
+
+			?>
+
+		</div>
+
+		<?php
 
 		/* Allow plugins to add fields and content to this page */
-		do_action( 'code_snippets/admin/single', $snippet );
+		do_action( 'code_snippets_edit_snippet', $snippet );
 
 		/* Add a nonce for security */
 		wp_nonce_field( 'save_snippet' );

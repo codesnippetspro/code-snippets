@@ -73,17 +73,17 @@ class Edit_Menu extends Admin_Menu {
 		// Register action hooks
 
 		if ( get_setting( 'general', 'enable_description' ) ) {
-			add_action( 'code_snippets/admin/single', array( $this, 'render_description_editor' ), 9 );
+			add_action( 'code_snippets_edit_snippet', array( $this, 'render_description_editor' ), 9 );
 		}
 
 		if ( get_setting( 'general', 'enable_tags' ) ) {
-			add_action( 'code_snippets/admin/single', array( $this, 'render_tags_editor' ) );
+			add_action( 'code_snippets_edit_snippet', array( $this, 'render_tags_editor' ) );
 		}
 
-		add_action( 'code_snippets/admin/single', array( $this, 'render_priority_setting' ), 0 );
+		add_action( 'code_snippets_below_editor', array( $this, 'render_priority_setting' ), 0 );
 
 		if ( is_network_admin() ) {
-			add_action( 'code_snippets/admin/single', array( $this, 'render_multisite_sharing_setting' ), 1 );
+			add_action( 'code_snippets_edit_snippet', array( $this, 'render_multisite_sharing_setting' ), 1 );
 		}
 
 		// Process any submitted actions
