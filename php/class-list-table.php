@@ -34,7 +34,7 @@ class Snippets_List_Table extends WP_List_Table {
 	 * A list of statuses (views)
 	 * @var array
 	 */
-	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated', 'php', 'css' );
+	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated', 'php', 'css', 'js', 'html' );
 
 	/**
 	 * The constructor function for our class.
@@ -447,10 +447,24 @@ class Snippets_List_Table extends WP_List_Table {
 				$count, 'code-snippets'
 			);
 
-			/* translators: %s: total number of inactive snippets */
+			/* translators: %s: total number of content snippets */
+			$labels['html'] = _n(
+				'Content <span class="count">(%s)</span>',
+				'Content <span class="count">(%s)</span>',
+				$count, 'code-snippets'
+			);
+
+			/* translators: %s: total number of css snippets */
 			$labels['css'] = _n(
 				'Styles <span class="count">(%s)</span>',
 				'Styles <span class="count">(%s)</span>',
+				$count, 'code-snippets'
+			);
+
+			/* translators: %s: total number of js snippets */
+			$labels['js'] = _n(
+				'Scripts <span class="count">(%s)</span>',
+				'Scripts <span class="count">(%s)</span>',
 				$count, 'code-snippets'
 			);
 
@@ -874,7 +888,7 @@ class Snippets_List_Table extends WP_List_Table {
 		/** @var Snippet $snippet */
 		foreach ( $snippets['all'] as $snippet ) {
 			if ( 'global' !== $snippet->scope ) {
-				array_push( $snippet->tags, $snippet->scope );
+				$snippet->add_tag( $snippet->scope );
 			}
 		}
 
