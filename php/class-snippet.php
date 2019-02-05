@@ -207,6 +207,14 @@ class Snippet {
 	}
 
 	/**
+	 * Add a new tag
+	 * @param string $tag
+	 */
+	public function add_tag( $tag ) {
+		$this->fields['tags'][] = $tag;
+	}
+
+	/**
 	 * Prepare the ID by ensuring it is an absolute integer
 	 *
 	 * @param int $id
