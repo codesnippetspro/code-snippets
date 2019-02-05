@@ -80,9 +80,8 @@ class DB {
 		/* Validate the multisite parameter */
 		$multisite = $this->validate_network_param( $multisite );
 
-		/* Retrieve the table name from $wpdb depending on the value of $multisite */
-
-		return ( $multisite ? $this->ms_table : $this->table );
+		/* return the correct table name depending on the value of $multisite */
+		return $multisite ? $this->ms_table : $this->table;
 	}
 
 	/**
@@ -163,8 +162,9 @@ class DB {
 				scope       VARCHAR(15) NOT NULL DEFAULT 'global',
 				priority    SMALLINT    NOT NULL DEFAULT 10,
 				active      TINYINT(1)  NOT NULL DEFAULT 0,
-				PRIMARY KEY  (id)
-				KEY scope (scope)
+				PRIMARY KEY  (id),
+				KEY scope (scope),
+				KEY active (active)
 			) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
