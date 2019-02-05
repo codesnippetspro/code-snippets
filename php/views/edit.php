@@ -237,43 +237,51 @@ if ( ! $snippet->id ) {
 			</div>
 		</div>
 
-		<h2 class="screen-reader-text"><?php esc_html_e( 'Scope', 'code-snippets' ) ?></h2>
+		<div class="below-editor">
+			<h2 class="screen-reader-text"><?php esc_html_e( 'Scope', 'code-snippets' ) ?></h2>
+
+			<?php
+
+			$scope_icons = Snippet::get_scope_icons();
+
+			$all_scopes = array(
+				'php' => array(
+					'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
+					'admin'      => __( 'Only run in administration area', 'code-snippets' ),
+					'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
+					'single-use' => __( 'Only run once', 'code-snippets' ),
+				),
+				'css' => array(
+					'site-css'  => __( 'Site front-end styles', 'code-snippets' ),
+					'admin-css' => __( 'Administration area styles', 'code-snippets' ),
+				),
+			);
+
+			if ( 0 !== $snippet->id ) {
+				$all_scopes = array_intersect_key( $all_scopes, array( $snippet->type => 1 ) );
+			}
+
+			foreach ( $all_scopes as $type => $scopes ) {
+				printf( '<p class="snippet-scope %s-scopes-list">', $type );
+
+				foreach ( $scopes as $scope => $label ) {
+					printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
+					checked( $scope, $snippet->scope );
+					printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $scope_icons[ $scope ], esc_html( $label ) );
+				}
+
+				echo '</p>';
+			}
+
+			do_action( 'code_snippets_below_editor', $snippet );
+
+			?>
+		</div>
 
 		<?php
 
-		$scope_icons = Snippet::get_scope_icons();
-
-		$all_scopes = array(
-			'php' => array(
-				'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
-				'admin'      => __( 'Only run in administration area', 'code-snippets' ),
-				'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
-				'single-use' => __( 'Only run once', 'code-snippets' ),
-			),
-			'css' => array(
-				'site-css'  => __( 'Site front-end styles', 'code-snippets' ),
-				'admin-css' => __( 'Administration area styles', 'code-snippets' ),
-			),
-		);
-
-		if ( 0 !== $snippet->id ) {
-			$all_scopes = array_intersect_key( $all_scopes, array( $snippet->type => 1 ) );
-		}
-
-		foreach ( $all_scopes as $type => $scopes ) {
-			printf( '<p class="snippet-scope %s-scopes-list">', $type );
-
-			foreach ( $scopes as $scope => $label ) {
-				printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
-				checked( $scope, $snippet->scope );
-				printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $scope_icons[ $scope ], esc_html( $label ) );
-			}
-
-			echo '</p>';
-		}
-
 		/* Allow plugins to add fields and content to this page */
-		do_action( 'code_snippets/admin/single', $snippet );
+		do_action( 'code_snippets_edit_snippet', $snippet );
 
 		/* Add a nonce for security */
 		wp_nonce_field( 'save_snippet' );
