@@ -602,8 +602,8 @@ class Snippets_List_Table extends WP_List_Table {
 	private function perform_action( $id, $action, $scope = '' ) {
 
 		if ( in_array( $action, array( 'activate', 'deactivate', 'activate-shared', 'deactivate-shared', 'delete' ) ) &&
-		     'admin-css' === $scope || 'site-css' === $scope ) {
-			code_snippets()->style_loader->increment_rev( $scope, $this->is_network );
+		     ( '-js' === substr( $scope, -3 ) || '-css' === substr( $scope, -4 ) ) ) {
+			code_snippets()->active_snippets->increment_rev( $scope, $this->is_network );
 		}
 
 		switch ( $action ) {
@@ -764,10 +764,9 @@ class Snippets_List_Table extends WP_List_Table {
 
 		if ( isset( $result ) ) {
 
-			// We have no way of knowing whether CSS snippets were modified or not, so always increment the CSS rev
+			// We have no way of knowing whether CSS/JS snippets were modified or not, so always increment the asset revisions
 			if ( in_array( $result, array( 'activated-multi', 'deactivated-multi', 'deleted-multi' ) ) ) {
-				code_snippets()->style_loader->increment_rev( 'admin', $this->is_network );
-				code_snippets()->style_loader->increment_rev( 'site', $this->is_network );
+				code_snippets()->active_snippets->increment_rev( 'all', $this->is_network );
 			}
 
 			wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );

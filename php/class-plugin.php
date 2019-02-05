@@ -37,9 +37,9 @@ class Plugin {
 	public $shortcode;
 
 	/**
-	 * @var Style_Loader
+	 * @var Active_Snippets
 	 */
-	public $style_loader;
+	public $active_snippets;
 
 	/**
 	 * Class constructor
@@ -84,7 +84,7 @@ class Plugin {
 		require_once $includes_path . '/settings/render-fields.php';
 		require_once $includes_path . '/settings/settings.php';
 
-		$this->style_loader = new Style_Loader();
+		$this->active_snippets = new Active_Snippets();
 		$this->shortcode = new Source_Shortcode();
 
 		$upgrade = new Upgrade( $this->version, $this->db );

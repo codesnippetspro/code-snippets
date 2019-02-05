@@ -371,33 +371,33 @@ msgstr ""
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:784
+#: php/class-list-table.php:783
 msgid "No snippets were found matching the current search query. Please enter a new query or use the \"Clear Filters\" button above."
 msgstr ""
 
-#: php/class-list-table.php:787
+#: php/class-list-table.php:786
 msgid "It looks like you don't have any snippets."
 msgstr ""
 
-#: php/class-list-table.php:791
+#: php/class-list-table.php:790
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1092
+#: php/class-list-table.php:1091
 msgid "Search results"
 msgstr ""
 
 #. translators: %s: search query
-#: php/class-list-table.php:1096
+#: php/class-list-table.php:1095
 msgid " for &ldquo;%s&rdquo;"
 msgstr ""
 
 #. translators: %s: tag name
-#: php/class-list-table.php:1101
+#: php/class-list-table.php:1100
 msgid " in tag &ldquo;%s&rdquo;"
 msgstr ""
 
-#: php/class-list-table.php:1109
+#: php/class-list-table.php:1108
 msgid "Clear Filters"
 msgstr ""
 

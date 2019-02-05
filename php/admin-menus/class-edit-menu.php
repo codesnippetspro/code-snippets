@@ -289,11 +289,10 @@ class Edit_Menu extends Admin_Menu {
 
 		/* Bump CSS file version where necessary */
 		$previous_scope = isset( $_POST['current_snippet_scope'] ) ? $_POST['current_snippet_scope'] : '';
-		if ( ( $snippet->active || $was_active ) && 'css' === $snippet->type ) {
-
-			foreach ( array( 'admin-css', 'site-css' ) as $scope ) {
+		if ( $snippet->active || $was_active ) {
+			foreach ( array( 'admin-css', 'site-css', 'site-head-js', 'site-footer-js' ) as $scope ) {
 				if ( $scope === $snippet->scope || $scope === $previous_scope ) {
-					code_snippets()->style_loader->increment_rev( $scope, is_network_admin() );
+					code_snippets()->active_snippets->increment_rev( $scope, is_network_admin() );
 				}
 			}
 		}
