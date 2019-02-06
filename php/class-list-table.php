@@ -194,7 +194,8 @@ class Snippets_List_Table extends WP_List_Table {
 	 */
 	protected function get_activation_switch( $snippet ) {
 
-		if ( $this->is_network && $snippet->shared_network || ( ! $this->is_network && $snippet->network && ! $snippet ) ) {
+		if ( 'shortcode' === $snippet->scope || $this->is_network && $snippet->shared_network ||
+		     ( ! $this->is_network && $snippet->network && ! $snippet ) ) {
 			return '';
 		}
 
