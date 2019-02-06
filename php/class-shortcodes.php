@@ -121,12 +121,21 @@ class Shortcodes {
 
 			// remove this shortcode from the list to prevent recursion
 			global $shortcode_tags;
-			$backup = $shortcode_tags[ self::CONTENT_TAG ];
-			unset( $shortcode_tags[ self::CONTENT_TAG ] );
+			if ( isset( $shortcode_tags[ self::CONTENT_TAG ] ) ) {
+				$backup = $shortcode_tags[ self::CONTENT_TAG ];
+				unset( $shortcode_tags[ self::CONTENT_TAG ] );
+			}
 
+			// evaluate shortcodes
+			if ( $atts['format'] ) {
+				$content = shortcode_unautop( $content );
+			}
 			$content = do_shortcode( $content );
 
-			$shortcode_tags[ self::CONTENT_TAG ] = $backup;
+			// add this shortcode back to the list
+			if ( isset( $backup ) ) {
+				$shortcode_tags[ self::CONTENT_TAG ] = $backup;
+			}
 		}
 
 		return $content;
@@ -141,6 +150,8 @@ class Shortcodes {
 	 * @return string
 	 */
 	private function render_snippet_source( Snippet $snippet, $atts = [] ) {
+		$atts = array_merge( [ 'line_numbers' => false ], $atts );
+
 		if ( ! trim( $snippet->code ) ) {
 			return '';
 		}
