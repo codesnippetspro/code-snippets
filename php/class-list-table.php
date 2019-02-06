@@ -34,7 +34,7 @@ class Snippets_List_Table extends WP_List_Table {
 	 * A list of statuses (views)
 	 * @var array
 	 */
-	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated', 'php', 'css', 'js', 'html' );
+	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
 
 	/**
 	 * The constructor function for our class.
@@ -321,7 +321,6 @@ class Snippets_List_Table extends WP_List_Table {
 	 * @return string
 	 */
 	protected function column_priority( $snippet ) {
-
 		return sprintf( '<input type="number" class="snippet-priority" value="%d" step="1" disabled>', $snippet->priority );
 	}
 
@@ -438,34 +437,6 @@ class Snippets_List_Table extends WP_List_Table {
 			$labels['inactive'] = _n(
 				'Inactive <span class="count">(%s)</span>',
 				'Inactive <span class="count">(%s)</span>',
-				$count, 'code-snippets'
-			);
-
-			/* translators: %s: total number of functions snippets */
-			$labels['php'] = _n(
-				'Functions <span class="count">(%s)</span>',
-				'Functions <span class="count">(%s)</span>',
-				$count, 'code-snippets'
-			);
-
-			/* translators: %s: total number of content snippets */
-			$labels['html'] = _n(
-				'Content <span class="count">(%s)</span>',
-				'Content <span class="count">(%s)</span>',
-				$count, 'code-snippets'
-			);
-
-			/* translators: %s: total number of css snippets */
-			$labels['css'] = _n(
-				'Styles <span class="count">(%s)</span>',
-				'Styles <span class="count">(%s)</span>',
-				$count, 'code-snippets'
-			);
-
-			/* translators: %s: total number of js snippets */
-			$labels['js'] = _n(
-				'Scripts <span class="count">(%s)</span>',
-				'Scripts <span class="count">(%s)</span>',
 				$count, 'code-snippets'
 			);
 
@@ -865,6 +836,13 @@ class Snippets_List_Table extends WP_List_Table {
 
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
 
+		/* Redirect POST'ed tag filter to GET */
+		if ( isset( $_POST['tag'] ) ) {
+			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
+			wp_redirect( esc_url_raw( $location ) );
+			exit;
+		}
+
 		$screen = get_current_screen();
 		$user = get_current_user_id();
 
@@ -878,11 +856,11 @@ class Snippets_List_Table extends WP_List_Table {
 		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets( array() ) );
 		$this->fetch_shared_network_snippets();
 
-		/* Redirect POST'ed tag filter to GET */
-		if ( isset( $_POST['tag'] ) ) {
-			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
-			wp_redirect( esc_url_raw( $location ) );
-			exit;
+		/* Filter snippets by type */
+		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
+			$snippets['all'] = array_filter( $snippets['all'], function ( Snippet $snippet ) {
+				return $_GET['type'] === $snippet->type;
+			} );
 		}
 
 		/* Add scope tags */
@@ -935,8 +913,6 @@ class Snippets_List_Table extends WP_List_Table {
 					$snippets['recently_activated'][] = $snippet;
 				}
 			}
-
-			$snippets[ $snippet->type ][] = $snippet;
 		}
 
 		/* Count the totals for each section */
@@ -1132,8 +1108,7 @@ class Snippets_List_Table extends WP_List_Table {
 	 * @param Snippet $snippet The snippet being used for the current row
 	 */
 	public function single_row( $snippet ) {
-		$row_class = ( $snippet->active ? 'active-snippet' : 'inactive-snippet' );
-		$row_class .= " {$snippet->type}-snippet";
+		$row_class = 'snippet ' . ( $snippet->active ? 'active-snippet' : 'inactive-snippet' ) . " {$snippet->type}-snippet";
 
 		if ( get_setting( 'general', 'snippet_scope_enabled' ) ) {
 			$row_class .= sprintf( ' %s-scope', $snippet->scope );

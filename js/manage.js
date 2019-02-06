@@ -111,5 +111,4 @@
 	foreach(document.getElementsByClassName('snippet-activation-switch'), (link, i) => {
 		link.addEventListener('click', toggle_snippet_active);
 	});
-
 })();
