@@ -277,8 +277,8 @@ if ( ! $snippet->id ) {
 
 			if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
 				<div class="snippet-scope html-scopes-list">
-					<input type="radio" name="snippet_scope" value="shortcode"<?php
-					checked( 'shortcode', $snippet->scope ); ?>>
+					<input type="radio" name="snippet_scope" value="content"<?php
+					checked( 'content', $snippet->scope ); ?>>
 
 					<p><?php
 

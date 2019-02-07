@@ -313,7 +313,7 @@ class Snippet {
 			return 'js';
 		}
 
-		if ( 'shortcode' === $this->scope ) {
+		if ( 'content' === $this->scope ) {
 			return 'html';
 		}
 
@@ -343,7 +343,7 @@ class Snippet {
 	public static function get_all_scopes() {
 		return array(
 			'global', 'admin', 'front-end', 'single-use',
-			'shortcode',
+			'content',
 			'admin-css', 'site-css',
 			'site-head-js', 'site-footer-js',
 		);
@@ -359,7 +359,7 @@ class Snippet {
 			'admin'          => 'admin-tools',
 			'front-end'      => 'admin-appearance',
 			'single-use'     => 'clock',
-			'shortcode'      => 'admin-post',
+			'content'        => 'admin-post',
 			'admin-css'      => 'dashboard',
 			'site-css'       => 'admin-customizer',
 			'site-head-js'   => 'media-code',
