@@ -264,32 +264,32 @@ msgstr ""
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
-#: php/class-list-table.php:204
+#: php/class-list-table.php:205
 msgid "Run Once"
 msgstr ""
 
-#: php/class-list-table.php:209, php/class-list-table.php:377
+#: php/class-list-table.php:210, php/class-list-table.php:377
 msgid "Network Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:209, php/class-list-table.php:376
+#: php/class-list-table.php:210, php/class-list-table.php:376
 msgid "Network Activate"
 msgstr ""
 
-#: php/class-list-table.php:210, php/class-list-table.php:377, php/views/edit.php:114
+#: php/class-list-table.php:211, php/class-list-table.php:377, php/views/edit.php:114
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:210, php/class-list-table.php:376, php/views/edit.php:120
+#: php/class-list-table.php:211, php/class-list-table.php:376, php/views/edit.php:120
 msgid "Activate"
 msgstr ""
 
 #. translators: %d: snippet identifier
-#: php/class-list-table.php:233
+#: php/class-list-table.php:234
 msgid "Untitled #%d"
 msgstr ""
 
-#: php/class-list-table.php:257
+#: php/class-list-table.php:258
 msgid "Shared on Network"
 msgstr ""
 
@@ -338,80 +338,52 @@ msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#. translators: %s: total number of functions snippets
-#: php/class-list-table.php:444
-msgid "Functions <span class=\"count\">(%s)</span>"
-msgid_plural "Functions <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#. translators: %s: total number of content snippets
-#: php/class-list-table.php:451
-msgid "Content <span class=\"count\">(%s)</span>"
-msgid_plural "Content <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#. translators: %s: total number of css snippets
-#: php/class-list-table.php:458
-msgid "Styles <span class=\"count\">(%s)</span>"
-msgid_plural "Styles <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#. translators: %s: total number of js snippets
-#: php/class-list-table.php:465
-msgid "Scripts <span class=\"count\">(%s)</span>"
-msgid_plural "Scripts <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
 #. translators: %s: total number of recently activated snippets
-#: php/class-list-table.php:472
+#: php/class-list-table.php:444
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:544
+#: php/class-list-table.php:516
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:558
+#: php/class-list-table.php:530
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:566
+#: php/class-list-table.php:538
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:797
+#: php/class-list-table.php:769
 msgid "No snippets were found matching the current search query. Please enter a new query or use the \"Clear Filters\" button above."
 msgstr ""
 
-#: php/class-list-table.php:800
+#: php/class-list-table.php:772
 msgid "It looks like you don't have any snippets."
 msgstr ""
 
-#: php/class-list-table.php:804
+#: php/class-list-table.php:776
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1106
+#: php/class-list-table.php:1083
 msgid "Search results"
 msgstr ""
 
 #. translators: %s: search query
-#: php/class-list-table.php:1110
+#: php/class-list-table.php:1087
 msgid " for &ldquo;%s&rdquo;"
 msgstr ""
 
 #. translators: %s: tag name
-#: php/class-list-table.php:1115
+#: php/class-list-table.php:1092
 msgid " in tag &ldquo;%s&rdquo;"
 msgstr ""
 
-#: php/class-list-table.php:1123
+#: php/class-list-table.php:1100
 msgid "Clear Filters"
 msgstr ""
 
@@ -876,19 +848,19 @@ msgstr ""
 msgid "Code"
 msgstr ""
 
-#: php/views/edit.php:146
+#: php/views/edit.php:146, php/views/manage.php:59
 msgid "Functions"
 msgstr ""
 
-#: php/views/edit.php:147
+#: php/views/edit.php:147, php/views/manage.php:60
 msgid "Content"
 msgstr ""
 
-#: php/views/edit.php:148
+#: php/views/edit.php:148, php/views/manage.php:61
 msgid "Styles"
 msgstr ""
 
-#: php/views/edit.php:149
+#: php/views/edit.php:149, php/views/manage.php:62
 msgid "Scripts"
 msgstr ""
 
@@ -1007,12 +979,28 @@ msgid "Load JS in the <head> section"
 msgstr ""
 
 #. translators: %s: snippet shortcode tag
-#: php/views/edit.php:284
+#: php/views/edit.php:286
 msgid "You can use the %s shortcode to insert your content into a post or page."
 msgstr ""
 
-#: php/views/edit.php:284
+#: php/views/edit.php:286
 msgid "After saving, you will be able to use the %s shortcode to insert your content into a post or page."
+msgstr ""
+
+#: php/views/edit.php:301
+msgid "Shortcode Options: "
+msgstr ""
+
+#: php/views/edit.php:303
+msgid "Evaluate PHP code"
+msgstr ""
+
+#: php/views/edit.php:305
+msgid "Add paragraphs and formatting"
+msgstr ""
+
+#: php/views/edit.php:307
+msgid "Evaluate additional shortcode tags"
 msgstr ""
 
 #: php/views/import.php:49
@@ -1065,6 +1053,10 @@ msgstr ""
 msgid "Upload files and import"
 msgstr ""
 
-#: php/views/manage.php:52
-msgid "Search Installed Snippets"
+#: php/views/manage.php:50
+msgid "Search Snippets"
+msgstr ""
+
+#: php/views/manage.php:58
+msgid "All Snippets"
 msgstr ""

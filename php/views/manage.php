@@ -62,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			'js'   => __( 'Scripts', 'code-snippets' ),
 		);
 
-		$current_type = isset( $types[ $_GET['type'] ] ) ? $_GET['type'] : 'all';
+		$current_type = isset( $_GET['type'], $types[ $_GET['type'] ] ) ? $_GET['type'] : 'all';
 
 		foreach ( $types as $type => $label ) {
 			if ( $type == $current_type ) {

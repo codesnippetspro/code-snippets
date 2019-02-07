@@ -58,13 +58,14 @@ ul.tagit {
 	float: right;
 }
 
-.snippet-scope {
+p.snippet-scope, .snippet-scope p {
 	margin-top: 15px;
+}
 
-	label {
-		margin-right: 1.5em;
-		display: inline-block;
-	}
+.snippet-scope label,
+.html-shortcode-options strong {
+	display: inline-block;
+	margin-right: 1.5em;
 }
 
 .below-editor {
@@ -241,6 +242,7 @@ ul.tagit {
 	}
 }
 
-.html-scopes-list input, .html-scopes-list label {
+.html-scopes-list input[name=snippet_scope] {
 	display: none;
 }
+
