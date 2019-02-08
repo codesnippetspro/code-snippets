@@ -276,11 +276,11 @@ msgstr ""
 msgid "Network Activate"
 msgstr ""
 
-#: php/class-list-table.php:211, php/class-list-table.php:378, php/views/edit.php:114
+#: php/class-list-table.php:211, php/class-list-table.php:378, php/views/partials/edit-submit-extra.php:36
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:211, php/class-list-table.php:377, php/views/edit.php:120
+#: php/class-list-table.php:211, php/class-list-table.php:377, php/views/partials/edit-submit-extra.php:42
 msgid "Activate"
 msgstr ""
 
@@ -294,7 +294,7 @@ msgstr ""
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:336, php/views/edit.php:87
+#: php/class-list-table.php:336, php/views/edit.php:66
 msgid "Name"
 msgstr ""
 
@@ -436,8 +436,28 @@ msgstr ""
 msgid "You can remove it, or edit it to add your own content."
 msgstr ""
 
-#: php/admin-menus/class-admin-menu.php:110
+#: php/admin-menus/class-admin-menu.php:118
 msgid "You are not authorized to access this page."
+msgstr ""
+
+#: php/admin-menus/class-admin-menu.php:149, php/admin-menus/class-settings-menu.php:88
+msgctxt "snippets"
+msgid "Manage"
+msgstr ""
+
+#: php/admin-menus/class-admin-menu.php:152, php/admin-menus/class-settings-menu.php:93, php/views/edit.php:38
+msgctxt "snippet"
+msgid "Add New"
+msgstr ""
+
+#: php/admin-menus/class-admin-menu.php:155, php/admin-menus/class-settings-menu.php:98
+msgctxt "snippets"
+msgid "Import"
+msgstr ""
+
+#: php/admin-menus/class-admin-menu.php:158
+msgctxt "snippets"
+msgid "Settings"
 msgstr ""
 
 #: php/admin-menus/class-edit-menu.php:24
@@ -445,7 +465,7 @@ msgctxt "menu label"
 msgid "Edit Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:25, php/views/edit.php:37
+#: php/admin-menus/class-edit-menu.php:25, php/views/edit.php:35
 msgid "Edit Snippet"
 msgstr ""
 
@@ -454,7 +474,7 @@ msgctxt "menu label"
 msgid "Add New"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:51, php/views/edit.php:43
+#: php/admin-menus/class-edit-menu.php:51, php/views/edit.php:41
 msgid "Add New Snippet"
 msgstr ""
 
@@ -532,7 +552,7 @@ msgstr ""
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:597, php/views/edit.php:98
+#: php/admin-menus/class-edit-menu.php:597, php/views/partials/edit-submit-extra.php:20
 msgid "Save Changes"
 msgstr ""
 
@@ -557,7 +577,7 @@ msgctxt "menu label"
 msgid "Import"
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:18, php/views/import.php:21
+#: php/admin-menus/class-import-menu.php:18, php/views/import.php:23
 msgid "Import Snippets"
 msgstr ""
 
@@ -650,21 +670,6 @@ msgstr ""
 
 #: php/admin-menus/class-settings-menu.php:83
 msgid "Settings"
-msgstr ""
-
-#: php/admin-menus/class-settings-menu.php:88, php/views/edit.php:51, php/views/import.php:28
-msgctxt "snippets"
-msgid "Manage"
-msgstr ""
-
-#: php/admin-menus/class-settings-menu.php:93, php/views/edit.php:40, php/views/import.php:33, php/views/manage.php:26
-msgctxt "snippet"
-msgid "Add New"
-msgstr ""
-
-#: php/admin-menus/class-settings-menu.php:98, php/views/edit.php:56, php/views/manage.php:31
-msgctxt "snippets"
-msgid "Import"
 msgstr ""
 
 #: php/admin-menus/class-settings-menu.php:119
@@ -828,7 +833,7 @@ msgstr ""
 msgid "Snippet"
 msgstr ""
 
-#: php/strings/mce.php:17, php/views/edit.php:305
+#: php/strings/mce.php:17, php/views/partials/edit-scopes.php:74
 msgid "Evaluate PHP code"
 msgstr ""
 
@@ -852,244 +857,239 @@ msgstr ""
 msgid "Show line numbers"
 msgstr ""
 
-#: php/views/edit.php:63, php/views/import.php:39, php/views/manage.php:39
-msgctxt "snippets"
-msgid "Settings"
-msgstr ""
-
-#: php/views/edit.php:89
+#: php/views/edit.php:68
 msgid "Enter title here"
 msgstr ""
 
-#: php/views/edit.php:99
-msgid "Save Snippet"
-msgstr ""
-
-#: php/views/edit.php:106
-msgid "Execute Once"
-msgstr ""
-
-#: php/views/edit.php:107
-msgid "Save Snippet and Execute Once"
-msgstr ""
-
-#: php/views/edit.php:115
-msgid "Save Snippet and Deactivate"
-msgstr ""
-
-#: php/views/edit.php:121
-msgid "Save Snippet and Activate"
-msgstr ""
-
-#: php/views/edit.php:137
+#: php/views/edit.php:82
 msgid "Code"
 msgstr ""
 
-#: php/views/edit.php:146, php/views/manage.php:59
+#: php/views/edit.php:91, php/views/manage.php:43
 msgid "Functions"
 msgstr ""
 
-#: php/views/edit.php:147, php/views/manage.php:60
+#: php/views/edit.php:92, php/views/manage.php:44
 msgid "Content"
 msgstr ""
 
-#: php/views/edit.php:148, php/views/manage.php:61
+#: php/views/edit.php:93, php/views/manage.php:45
 msgid "Styles"
 msgstr ""
 
-#: php/views/edit.php:149, php/views/manage.php:62
+#: php/views/edit.php:94, php/views/manage.php:46
 msgid "Scripts"
 msgstr ""
 
-#: php/views/edit.php:176
-msgctxt "help tooltip"
-msgid "?"
-msgstr ""
-
-#: php/views/edit.php:181
-msgctxt "keyboard key"
-msgid "Cmd"
-msgstr ""
-
-#: php/views/edit.php:182
-msgctxt "keyboard key"
-msgid "Ctrl"
-msgstr ""
-
-#: php/views/edit.php:183
-msgctxt "keyboard key"
-msgid "Shift"
-msgstr ""
-
-#: php/views/edit.php:184
-msgctxt "keyboard key"
-msgid "Option"
-msgstr ""
-
-#: php/views/edit.php:185
-msgctxt "keyboard key"
-msgid "Alt"
-msgstr ""
-
-#: php/views/edit.php:186
-msgctxt "keyboard key"
-msgid "F"
-msgstr ""
-
-#: php/views/edit.php:187
-msgctxt "keyboard key"
-msgid "G"
-msgstr ""
-
-#: php/views/edit.php:188
-msgctxt "keyboard key"
-msgid "R"
-msgstr ""
-
-#: php/views/edit.php:189
-msgctxt "keyboard key"
-msgid "S"
-msgstr ""
-
-#: php/views/edit.php:197
-msgid "Save changes"
-msgstr ""
-
-#: php/views/edit.php:204
-msgid "Begin searching"
-msgstr ""
-
-#: php/views/edit.php:211
-msgid "Find next"
-msgstr ""
-
-#: php/views/edit.php:217
-msgid "Find previous"
-msgstr ""
-
-#: php/views/edit.php:223
-msgid "Replace"
-msgstr ""
-
-#: php/views/edit.php:229
-msgid "Replace all"
-msgstr ""
-
-#: php/views/edit.php:235
-msgid "Persistent search"
-msgstr ""
-
-#: php/views/edit.php:247
-msgid "Scope"
-msgstr ""
-
-#: php/views/edit.php:252
-msgid "Run snippet everywhere"
-msgstr ""
-
-#: php/views/edit.php:253
-msgid "Only run in administration area"
-msgstr ""
-
-#: php/views/edit.php:254
-msgid "Only run on site front-end"
-msgstr ""
-
-#: php/views/edit.php:255
-msgid "Only run once"
-msgstr ""
-
-#: php/views/edit.php:263
-msgid "Site front-end styles"
-msgstr ""
-
-#: php/views/edit.php:264
-msgid "Administration area styles"
-msgstr ""
-
-#: php/views/edit.php:272
-msgid "Load JS at the end of the <body> section"
-msgstr ""
-
-#: php/views/edit.php:273
-msgid "Load JS in the <head> section"
-msgstr ""
-
-#. translators: %s: snippet shortcode tag
-#: php/views/edit.php:286
-msgid "You can use the %s shortcode to insert your content into a post or page."
-msgstr ""
-
-#: php/views/edit.php:286
-msgid "After saving, you will be able to use the %s shortcode to insert your content into a post or page."
-msgstr ""
-
-#: php/views/edit.php:303
-msgid "Shortcode Options: "
-msgstr ""
-
-#: php/views/edit.php:307
-msgid "Add paragraphs and formatting"
-msgstr ""
-
-#: php/views/edit.php:309
-msgid "Evaluate additional shortcode tags"
-msgstr ""
-
-#: php/views/import.php:49
+#: php/views/import.php:35
 msgid "Upload one or more Code Snippets export files and the snippets will be imported."
 msgstr ""
 
 #. translators: %s: link to snippets admin menu
-#: php/views/import.php:54
+#: php/views/import.php:40
 msgid "Afterwards, you will need to visit the <a href=\"%s\">All Snippets</a> page to activate the imported snippets."
 msgstr ""
 
-#: php/views/import.php:61
+#: php/views/import.php:47
 msgid "Duplicate Snippets"
 msgstr ""
 
-#: php/views/import.php:64
+#: php/views/import.php:50
 msgid "What should happen if an existing snippet is found with an identical name to an imported snippet?"
 msgstr ""
 
-#: php/views/import.php:71
+#: php/views/import.php:57
 msgid "Ignore any duplicate snippets: import all snippets from the file regardless and leave all existing snippets unchanged."
 msgstr ""
 
-#: php/views/import.php:78
+#: php/views/import.php:64
 msgid "Replace any existing snippets with a newly imported snippet of the same name."
 msgstr ""
 
-#: php/views/import.php:85
+#: php/views/import.php:71
 msgid "Do not import any duplicate snippets; leave all existing snippets unchanged."
 msgstr ""
 
-#: php/views/import.php:90
+#: php/views/import.php:76
 msgid "Upload Files"
 msgstr ""
 
-#: php/views/import.php:93
+#: php/views/import.php:79
 msgid "Choose one or more Code Snippets (.xml or .json) files to upload, then click \"Upload files and import\"."
 msgstr ""
 
-#: php/views/import.php:98
+#: php/views/import.php:84
 msgid "Choose files from your computer:"
 msgstr ""
 
 #. translators: %s: size in bytes
-#: php/views/import.php:101
+#: php/views/import.php:87
 msgid "(Maximum size: %s)"
 msgstr ""
 
-#: php/views/import.php:112
+#: php/views/import.php:98
 msgid "Upload files and import"
 msgstr ""
 
-#: php/views/manage.php:50
+#: php/views/manage.php:34
 msgid "Search Snippets"
 msgstr ""
 
-#: php/views/manage.php:58
+#: php/views/manage.php:42
 msgid "All Snippets"
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:16
+msgid "Scope"
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:21
+msgid "Run snippet everywhere"
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:22
+msgid "Only run in administration area"
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:23
+msgid "Only run on site front-end"
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:24
+msgid "Only run once"
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:32
+msgid "Site front-end styles"
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:33
+msgid "Administration area styles"
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:41
+msgid "Load JS at the end of the <body> section"
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:42
+msgid "Load JS in the <head> section"
+msgstr ""
+
+#. translators: %s: snippet shortcode tag
+#: php/views/partials/edit-scopes.php:55
+msgid "You can use the %s shortcode to insert your content into a post or page."
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:55
+msgid "After saving, you will be able to use the %s shortcode to insert your content into a post or page."
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:72
+msgid "Shortcode Options: "
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:77
+msgid "Add paragraphs and formatting"
+msgstr ""
+
+#: php/views/partials/edit-scopes.php:80
+msgid "Evaluate additional shortcode tags"
+msgstr ""
+
+#: php/views/partials/edit-submit-extra.php:21
+msgid "Save Snippet"
+msgstr ""
+
+#: php/views/partials/edit-submit-extra.php:28
+msgid "Execute Once"
+msgstr ""
+
+#: php/views/partials/edit-submit-extra.php:29
+msgid "Save Snippet and Execute Once"
+msgstr ""
+
+#: php/views/partials/edit-submit-extra.php:37
+msgid "Save Snippet and Deactivate"
+msgstr ""
+
+#: php/views/partials/edit-submit-extra.php:43
+msgid "Save Snippet and Activate"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:18
+msgctxt "help tooltip"
+msgid "?"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:23
+msgctxt "keyboard key"
+msgid "Cmd"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:24
+msgctxt "keyboard key"
+msgid "Ctrl"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:25
+msgctxt "keyboard key"
+msgid "Shift"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:26
+msgctxt "keyboard key"
+msgid "Option"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:27
+msgctxt "keyboard key"
+msgid "Alt"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:28
+msgctxt "keyboard key"
+msgid "F"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:29
+msgctxt "keyboard key"
+msgid "G"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:30
+msgctxt "keyboard key"
+msgid "R"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:31
+msgctxt "keyboard key"
+msgid "S"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:39
+msgid "Save changes"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:46
+msgid "Begin searching"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:53
+msgid "Find next"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:59
+msgid "Find previous"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:65
+msgid "Replace"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:71
+msgid "Replace all"
+msgstr ""
+
+#: php/views/partials/editor-shortcuts.php:77
+msgid "Persistent search"
 msgstr ""
