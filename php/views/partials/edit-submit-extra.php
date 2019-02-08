@@ -1,9 +1,15 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * @package    Code_Snippets
  * @subpackage Views
+ *
+ * @var Edit_Menu $this
  */
+
+$snippet = $this->snippet;
 
 ?>
 

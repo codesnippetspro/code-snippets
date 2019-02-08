@@ -1,15 +1,21 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * @package    Code_Snippets
  * @subpackage Views
+ *
+ * @var Edit_Menu $this
  */
+
+$snippet = $this->snippet;
 
 ?>
 
 	<h2 class="screen-reader-text"><?php esc_html_e( 'Scope', 'code-snippets' ) ?></h2>
 
-<?php if ( ! $snippet->id || 'php' === $snippet->type ) { ?>
+	<?php if ( ! $snippet->id || 'php' === $snippet->type ) { ?>
 	<p class="snippet-scope php-scopes-list">
 		<?php $this->print_scopes_list( array(
 			'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
