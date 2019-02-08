@@ -36,8 +36,8 @@ $inactive-color: #ccc;
 
 .snippet-execution-button,
 .snippet-activation-switch {
-	position: absolute;
-	display: inline-block;
+	display: block;
+	position: relative;
 }
 
 .snippet-activation-switch {
@@ -128,8 +128,8 @@ $inactive-color: #ccc;
 		left: 0;
 	}
 
-	.row-actions, .snippet-name {
-		margin-left: 40px;
+	.column-activate {
+		padding-right: 0 !important;
 	}
 
 	.clear-filters {

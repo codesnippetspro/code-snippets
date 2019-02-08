@@ -192,7 +192,7 @@ class Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @return string
 	 */
-	protected function get_activation_switch( $snippet ) {
+	protected function column_activate( $snippet ) {
 
 		if ( 'shortcode' === $snippet->scope || $this->is_network && $snippet->shared_network ||
 		     ( ! $this->is_network && $snippet->network && ! $snippet ) ) {
@@ -262,7 +262,7 @@ class Snippets_List_Table extends WP_List_Table {
 
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
 
-		return $this->get_activation_switch( $snippet ) . $out . $row_actions;
+		return $out . $row_actions;
 	}
 
 	/**
@@ -332,6 +332,7 @@ class Snippets_List_Table extends WP_List_Table {
 	public function get_columns() {
 		$columns = array(
 			'cb'          => '<input type="checkbox">',
+			'activate'    => '',
 			'name'        => __( 'Name', 'code-snippets' ),
 			'id'          => __( 'ID', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
