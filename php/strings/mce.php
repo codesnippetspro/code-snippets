@@ -6,10 +6,14 @@
  * @package Code_Snippets
  */
 
+namespace Code_Snippets;
+
+use _WP_Editors;
+
 $strings = [
 	'insert_content_menu'  => __( 'Content Snippet', 'code-snippets' ),
 	'insert_content_title' => __( 'Insert Content Snippet', 'code-snippets' ),
-	'snippet_id_label'     => __( 'Snippet ID', 'code-snippets' ),
+	'snippet_label'        => __( 'Snippet', 'code-snippets' ),
 	'php_att_label'        => __( 'Evaluate PHP code', 'code-snippets' ),
 	'format_att_label'     => __( 'Apply formatting', 'code-snippets' ),
 	'shortcodes_att_label' => __( 'Evaluate shortcodes', 'code-snippets' ),
@@ -21,5 +25,26 @@ $strings = [
 ];
 
 $strings = array_map( 'esc_js', $strings );
+
+$snippets = get_snippets();
+
+$strings['all_snippets'] = [];
+$strings['content_snippets'] = [];
+
+/** @var Snippet $snippet */
+foreach ( $snippets as $snippet ) {
+
+	/* translators: %d: snippet ID */
+	$name = $snippet->name ? $snippet->name : sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $snippet->id );
+
+	if ( 'content' === $snippet->scope ) {
+		$strings['content_snippets'][] = [ 'text' => $name, 'value' => $snippet->id ];
+	}
+
+	$name .= ' (' . strtoupper( $snippet->type ) . ')';
+	$strings['all_snippets'][] = [ 'text' => $name, 'value' => $snippet->id ];
+
+}
+
 $strings = [ _WP_Editors::$mce_locale => [ 'code_snippets' => $strings ] ];
 $strings = 'tinyMCE.addI18n(' . json_encode( $strings ) . ');';

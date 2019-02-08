@@ -10,10 +10,10 @@
 						title: ed.getLang('code_snippets.insert_content_title'),
 						body: [
 							{
-								type: 'textbox',
+								type: 'listbox',
 								name: 'id',
-								label: ed.getLang('code_snippets.snippet_id_label'),
-								size: 2,
+								label: ed.getLang('code_snippets.snippet_label'),
+								values: ed.getLang('code_snippets.content_snippets'),
 							},
 							{
 								type: 'checkbox',
@@ -58,10 +58,10 @@
 						title: ed.getLang('code_snippets.insert_source_title'),
 						body: [
 							{
-								type: 'textbox',
+								type: 'listbox',
 								name: 'id',
-								label: ed.getLang('code_snippets.snippet_id_label'),
-								size: 2,
+								label: ed.getLang('code_snippets.snippet_label'),
+								values: ed.getLang('code_snippets.all_snippets'),
 							},
 							{
 								type: 'checkbox',
