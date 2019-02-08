@@ -22,24 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<h1><?php
 		esc_html_e( 'Snippets', 'code-snippets' );
 
-		printf( '<a href="%2$s" class="page-title-action add-new-h2">%1$s</a>',
-			esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-			code_snippets()->get_menu_url( 'add' )
-		);
-
-		printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-			esc_html_x( 'Import', 'snippets', 'code-snippets' ),
-			code_snippets()->get_menu_url( 'import' )
-		);
-
 		$admin = code_snippets()->admin;
-
-		if ( $admin->is_compact_menu() && isset( $admin->menus['settings'] ) ) {
-			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-				esc_html_x( 'Settings', 'snippets', 'code-snippets' ),
-				code_snippets()->get_menu_url( 'settings' )
-			);
-		}
+		$this->page_title_actions( $admin->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
 
 		$this->list_table->search_notice();
 		?></h1>

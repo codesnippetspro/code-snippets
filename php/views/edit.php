@@ -2,8 +2,6 @@
 
 namespace Code_Snippets;
 
-use function Code_Snippets\Settings\get_setting;
-
 /**
  * HTML code for the Add New/Edit Snippet page
  *
@@ -35,7 +33,7 @@ if ( ! $snippet->id ) {
 
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
-			printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
+			printf( ' <a href="%s" class="page-title-action add-new-h2">%s</a>',
 				code_snippets()->get_menu_url( 'add' ),
 				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 			);
@@ -43,27 +41,8 @@ if ( ! $snippet->id ) {
 			esc_html_e( 'Add New Snippet', 'code-snippets' );
 		}
 
-		$admin = code_snippets()->admin;
-
 		if ( code_snippets()->admin->is_compact_menu() ) {
-
-			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-				esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
-				code_snippets()->get_menu_url()
-			);
-
-			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-				esc_html_x( 'Import', 'snippets', 'code-snippets' ),
-				code_snippets()->get_menu_url( 'import' )
-			);
-
-			if ( isset( $admin->menus['settings'] ) ) {
-
-				printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-					esc_html_x( 'Settings', 'snippets', 'code-snippets' ),
-					code_snippets()->get_menu_url( 'settings' )
-				);
-			}
+			$this->page_title_actions( [ 'manage', 'import', 'settings' ] );
 		}
 
 		?></h1>
@@ -90,47 +69,13 @@ if ( ! $snippet->id ) {
 			</div>
 		</div>
 
-		<?php if ( apply_filters( 'code_snippets/extra_save_buttons', true ) ) { ?>
-			<p class="submit-inline">
-				<?php
+		<?php
 
-				$actions['save_snippet'] = array(
-					__( 'Save Changes', 'code-snippets' ),
-					__( 'Save Snippet', 'code-snippets' ),
-				);
+		if ( apply_filters( 'code_snippets/extra_save_buttons', true ) ) {
+			$this->render_view( 'partials/edit-submit-extra' );
+		}
 
-				if ( 'html' !== $snippet->type ) {
-
-					if ( 'single-use' === $snippet->scope ) {
-						$actions['save_snippet_execute'] = array(
-							__( 'Execute Once', 'code-snippets' ),
-							__( 'Save Snippet and Execute Once', 'code-snippets' ),
-						);
-
-					} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
-
-						if ( $snippet->active ) {
-							$actions['save_snippet_deactivate'] = array(
-								__( 'Deactivate', 'code-snippets' ),
-								__( 'Save Snippet and Deactivate', 'code-snippets' ),
-							);
-
-						} else {
-							$actions['save_snippet_activate'] = array(
-								__( 'Activate', 'code-snippets' ),
-								__( 'Save Snippet and Activate', 'code-snippets' ),
-							);
-						}
-					}
-				}
-
-				foreach ( $actions as $action => $labels ) {
-					submit_button( $labels[0], 'secondary small', $action, false, array( 'title' => $labels[1] ) );
-				}
-
-				?>
-			</p>
-		<?php } ?>
+		?>
 
 		<h2>
 			<label for="snippet_code">
@@ -169,153 +114,14 @@ if ( ! $snippet->id ) {
 				echo esc_textarea( $snippet->code );
 				?></textarea>
 
-			<div class="snippet-editor-help">
-
-				<div class="editor-help-tooltip cm-s-<?php
-				echo esc_attr( get_setting( 'editor', 'theme' ) ); ?>"><?php
-					echo esc_html_x( '?', 'help tooltip', 'code-snippets' ); ?></div>
-
-				<?php
-
-				$keys = array(
-					'Cmd'    => esc_html_x( 'Cmd', 'keyboard key', 'code-snippets' ),
-					'Ctrl'   => esc_html_x( 'Ctrl', 'keyboard key', 'code-snippets' ),
-					'Shift'  => esc_html_x( 'Shift', 'keyboard key', 'code-snippets' ),
-					'Option' => esc_html_x( 'Option', 'keyboard key', 'code-snippets' ),
-					'Alt'    => esc_html_x( 'Alt', 'keyboard key', 'code-snippets' ),
-					'F'      => esc_html_x( 'F', 'keyboard key', 'code-snippets' ),
-					'G'      => esc_html_x( 'G', 'keyboard key', 'code-snippets' ),
-					'R'      => esc_html_x( 'R', 'keyboard key', 'code-snippets' ),
-					'S'      => esc_html_x( 'S', 'keyboard key', 'code-snippets' ),
-				);
-
-				?>
-
-				<div class="editor-help-text">
-					<table>
-						<tr>
-							<td><?php esc_html_e( 'Save changes', 'code-snippets' ); ?></td>
-							<td>
-								<kbd class="pc-key"><?php echo $keys['Ctrl']; ?></kbd><kbd class="mac-key"><?php
-									echo $keys['Cmd']; ?></kbd>&hyphen;<kbd><?php echo $keys['S']; ?></kbd>
-							</td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Begin searching', 'code-snippets' ); ?></td>
-							<td>
-								<kbd class="pc-key"><?php echo $keys['Ctrl']; ?></kbd><kbd class="mac-key"><?php
-									echo $keys['Cmd']; ?></kbd>&hyphen;<kbd><?php echo $keys['F']; ?></kbd>
-							</td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Find next', 'code-snippets' ); ?></td>
-							<td>
-								<kbd class="pc-key"><?php echo $keys['Ctrl']; ?></kbd><kbd class="mac-key"><?php echo $keys['Cmd']; ?></kbd>&hyphen;<kbd><?php echo $keys['G']; ?></kbd>
-							</td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Find previous', 'code-snippets' ); ?></td>
-							<td>
-								<kbd><?php echo $keys['Shift']; ?></kbd>-<kbd class="pc-key"><?php echo $keys['Ctrl']; ?></kbd><kbd class="mac-key"><?php echo $keys['Cmd']; ?></kbd>&hyphen;<kbd><?php echo $keys['G']; ?></kbd>
-							</td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Replace', 'code-snippets' ); ?></td>
-							<td>
-								<kbd><?php echo $keys['Shift']; ?></kbd>&hyphen;<kbd class="pc-key"><?php echo $keys['Ctrl']; ?></kbd><kbd class="mac-key"><?php echo $keys['Cmd']; ?></kbd>&hyphen;<kbd><?php echo $keys['F']; ?></kbd>
-							</td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Replace all', 'code-snippets' ); ?></td>
-							<td>
-								<kbd><?php echo $keys['Shift']; ?></kbd>&hyphen;<kbd class="pc-key"><?php echo $keys['Ctrl']; ?></kbd><kbd class="mac-key"><?php echo $keys['Cmd']; ?></kbd><span class="mac-key">&hyphen;</span><kbd class="mac-key"><?php echo $keys['Option']; ?></kbd>&hyphen;<kbd><?php echo $keys['R']; ?></kbd>
-							</td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'Persistent search', 'code-snippets' ); ?></td>
-							<td>
-								<kbd><?php echo $keys['Alt']; ?></kbd>&hyphen;<kbd><?php echo $keys['F']; ?></kbd>
-							</td>
-						</tr>
-					</table>
-				</div>
-			</div>
+			<?php $this->render_view( 'partials/editor-shortcuts' ); ?>
 		</div>
 
 		<div class="below-editor">
-
-			<h2 class="screen-reader-text"><?php esc_html_e( 'Scope', 'code-snippets' ) ?></h2>
-
-			<?php if ( ! $snippet->id || 'php' === $snippet->type ) { ?>
-				<p class="snippet-scope php-scopes-list">
-					<?php $this->print_scopes_list( array(
-						'global'     => __( 'Run snippet everywhere', 'code-snippets' ),
-						'admin'      => __( 'Only run in administration area', 'code-snippets' ),
-						'front-end'  => __( 'Only run on site front-end', 'code-snippets' ),
-						'single-use' => __( 'Only run once', 'code-snippets' ),
-					) ); ?>
-				</p>
-			<?php }
-
-			if ( ! $snippet->id || 'css' === $snippet->type ) { ?>
-				<p class="snippet-scope css-scopes-list">
-					<?php $this->print_scopes_list( array(
-						'site-css'  => __( 'Site front-end styles', 'code-snippets' ),
-						'admin-css' => __( 'Administration area styles', 'code-snippets' ),
-					) ); ?>
-				</p>
-			<?php }
-
-			if ( ! $snippet->id || 'js' === $snippet->type ) { ?>
-				<p class="snippet-scope js-scopes-list">
-					<?php $this->print_scopes_list( array(
-						'site-footer-js' => __( 'Load JS at the end of the <body> section', 'code-snippets' ),
-						'site-head-js'   => __( 'Load JS in the <head> section', 'code-snippets' ),
-					) ); ?>
-				</p>
-			<?php }
-
-			if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
-				<div class="snippet-scope html-scopes-list">
-					<input type="radio" name="snippet_scope" value="content"<?php
-					checked( 'content', $snippet->scope ); ?>>
-
-					<p><?php
-
-						/* translators: %s: snippet shortcode tag */
-						$text = $snippet->id ? __( 'You can use the %s shortcode to insert your content into a post or page.', 'code-snippets' ) : __( 'After saving, you will be able to use the %s shortcode to insert your content into a post or page.', 'code-snippets' );
-
-						$shortcode = '<code class="shortcode-tag">[code_snippet' . ( $snippet->id ? ' id=' . $snippet->id : '' );
-
-						if ( $snippet->network ) {
-							$shortcode .= ' network=true';
-						}
-
-						if ( false !== stripos( $snippet->code, '<?' ) ) {
-							$shortcode .= ' php=true';
-						}
-						printf( esc_html( $text ), $shortcode . ']</code>' );
-
-						?></p>
-
-					<?php if ( $snippet->id ) { ?>
-						<p class="html-shortcode-options">
-							<strong><?php esc_html_e( 'Shortcode Options: ', 'code-snippets' ); ?></strong>
-							<label><input type="checkbox" value="php"<?php checked( false !== stripos( $snippet->code, '<?' ) ); ?>><?php
-								esc_html_e( 'Evaluate PHP code', 'code-snippets' ); ?></label>
-							<label><input type="checkbox" value="format"><?php
-								esc_html_e( 'Add paragraphs and formatting', 'code-snippets' ); ?></label>
-							<label><input type="checkbox" value="shortcodes"><?php
-								esc_html_e( 'Evaluate additional shortcode tags', 'code-snippets' ); ?></label>
-						</p>
-					<?php } ?>
-				</div>
-			<?php }
-
+			<?php
+			$this->render_view( 'partials/edit-scopes' );
 			do_action( 'code_snippets_below_editor', $snippet );
-
 			?>
-
 		</div>
 
 		<?php

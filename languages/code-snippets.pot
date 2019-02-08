@@ -285,7 +285,8 @@ msgid "Activate"
 msgstr ""
 
 #. translators: %d: snippet identifier
-#: php/class-list-table.php:234
+#. translators: %d: snippet ID
+#: php/class-list-table.php:234, php/strings/mce.php:38
 msgid "Untitled #%d"
 msgstr ""
 
@@ -815,39 +816,39 @@ msgstr ""
 msgid "Editor Preview"
 msgstr ""
 
-#: php/strings/mce.php:10
+#: php/strings/mce.php:14
 msgid "Content Snippet"
 msgstr ""
 
-#: php/strings/mce.php:11
+#: php/strings/mce.php:15
 msgid "Insert Content Snippet"
 msgstr ""
 
-#: php/strings/mce.php:12
-msgid "Snippet ID"
+#: php/strings/mce.php:16
+msgid "Snippet"
 msgstr ""
 
-#: php/strings/mce.php:13, php/views/edit.php:305
+#: php/strings/mce.php:17, php/views/edit.php:305
 msgid "Evaluate PHP code"
 msgstr ""
 
-#: php/strings/mce.php:14
+#: php/strings/mce.php:18
 msgid "Apply formatting"
 msgstr ""
 
-#: php/strings/mce.php:15
+#: php/strings/mce.php:19
 msgid "Evaluate shortcodes"
 msgstr ""
 
-#: php/strings/mce.php:17
+#: php/strings/mce.php:21
 msgid "Snippet Source Code"
 msgstr ""
 
-#: php/strings/mce.php:18
+#: php/strings/mce.php:22
 msgid "Insert Snippet Source"
 msgstr ""
 
-#: php/strings/mce.php:19
+#: php/strings/mce.php:23
 msgid "Show line numbers"
 msgstr ""
 

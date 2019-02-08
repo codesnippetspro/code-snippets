@@ -12,7 +12,7 @@ class Admin_Menu {
 	/**
 	 * Constructor
 	 *
-	 * @param string $name The snippet page short name
+	 * @param string $name  The snippet page short name
 	 * @param string $label The label shown in the admin menu
 	 * @param string $title The text used for the page title
 	 */
@@ -36,7 +36,7 @@ class Admin_Menu {
 	 * Add a sub-menu to the Snippets menu
 	 * @uses add_submenu_page() to register a submenu
 	 *
-	 * @param string $slug The slug of the menu
+	 * @param string $slug  The slug of the menu
 	 * @param string $label The label shown in the admin menu
 	 * @param string $title The page title
 	 */
@@ -61,18 +61,26 @@ class Admin_Menu {
 	}
 
 	/**
+	 * Render the content of a vew template
+	 *
+	 * @param string $name Name of view template to render
+	 */
+	protected function render_view( $name ) {
+		include dirname( PLUGIN_FILE ) . '/php/views/' . $name . '.php';
+	}
+
+	/**
 	 * Render the menu
 	 */
 	public function render() {
 		$this->print_messages();
-		include dirname( __DIR__ ) . "/views/{$this->name}.php";
+		$this->render_view( $this->name );
 	}
 
 	/**
 	 * Print the status and error messages
 	 */
-	protected function print_messages() {
-	}
+	protected function print_messages() {}
 
 	/**
 	 * Retrieve a result message based on a posted status
@@ -122,4 +130,36 @@ class Admin_Menu {
 	 * Enqueue scripts and stylesheets for the admin page, if necessary
 	 */
 	public function enqueue_assets() {}
+
+	/**
+	 * Render a list of links to other pages in the page title
+	 * @param array $actions
+	 */
+	protected function page_title_actions( $actions ) {
+
+		foreach ( $actions as $action ) {
+			if ( 'settings' === $action && ! isset( code_snippets()->admin->menus['settings'] ) ) {
+				continue;
+			}
+
+			printf( '<a href="%s" class="page-title-action">', code_snippets()->get_menu_url( $action ) );
+
+			switch ( $action ) {
+				case 'manage':
+					echo esc_html_x( 'Manage', 'snippets', 'code-snippets' );
+					break;
+				case 'add':
+					echo esc_html_x( 'Add New', 'snippet', 'code-snippets' );
+					break;
+				case 'import':
+					echo esc_html_x( 'Import', 'snippets', 'code-snippets' );
+					break;
+				case 'settings':
+					echo esc_html_x( 'Settings', 'snippets', 'code-snippets' );
+					break;
+			}
+
+			echo '</a>';
+		}
+	}
 }

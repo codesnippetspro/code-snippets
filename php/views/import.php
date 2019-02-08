@@ -5,8 +5,10 @@ namespace Code_Snippets;
 /**
  * HTML code for the Import Snippets page
  *
- * @package Code_Snippets
+ * @package    Code_Snippets
  * @subpackage Views
+ *
+ * @var Import_Menu $this
  */
 
 /* Bail if accessed directly */
@@ -23,26 +25,10 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 		$admin = code_snippets()->admin;
 
 		if ( $admin->is_compact_menu() ) {
-
-			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-				esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
-				code_snippets()->get_menu_url()
-			);
-
-			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-				esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-				code_snippets()->get_menu_url( 'add' )
-			);
-
-			if ( isset( $admin->menus['settings'] ) ) {
-				printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-					esc_html_x( 'Settings', 'snippets', 'code-snippets' ),
-					code_snippets()->get_menu_url( 'settings' )
-				);
-			}
+			$this->page_title_actions( [ 'manage', 'add', 'settings' ] );
 		}
 
-	?></h1>
+		?></h1>
 
 	<div class="narrow">
 
@@ -50,7 +36,7 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 
 		<p><?php
 			printf(
-				/* translators: %s: link to snippets admin menu */
+			/* translators: %s: link to snippets admin menu */
 				__( 'Afterwards, you will need to visit the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ),
 				code_snippets()->get_menu_url( 'manage' )
 			); ?></p>
@@ -96,11 +82,10 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 			<fieldset>
 				<p>
 					<label for="upload"><?php esc_html_e( 'Choose files from your computer:', 'code-snippets' ); ?></label>
-					<?php printf(
-						/* translators: %s: size in bytes */
-						esc_html__( '(Maximum size: %s)', 'code-snippets' ),
-						size_format( $max_size_bytes )
-					); ?>
+					<?php
+					/* translators: %s: size in bytes */
+					printf( esc_html__( '(Maximum size: %s)', 'code-snippets' ), size_format( $max_size_bytes ) ); ?>
+
 					<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="application/json,.json,text/xml" multiple="multiple">
 					<input type="hidden" name="action" value="save">
 					<input type="hidden" name="max_file_size" value="<?php echo esc_attr( $max_size_bytes ); ?>">
@@ -108,8 +93,10 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 			</fieldset>
 
 			<?php
+
 			do_action( 'code_snippets/admin/import_form' );
 			submit_button( __( 'Upload files and import', 'code-snippets' ) );
+
 			?>
 		</form>
 	</div>
