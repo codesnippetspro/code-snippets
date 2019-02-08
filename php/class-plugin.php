@@ -62,7 +62,7 @@ class Plugin {
 	}
 
 	function load_plugin() {
-		$includes_path = dirname( __FILE__ );
+		$includes_path = __DIR__;
 
 		/* Database operation functions */
 		$this->db = new DB();

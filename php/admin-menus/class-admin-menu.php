@@ -65,7 +65,7 @@ class Admin_Menu {
 	 */
 	public function render() {
 		$this->print_messages();
-		include dirname( PLUGIN_FILE ) . "/php/views/{$this->name}.php";
+		include dirname( __DIR__ ) . "/views/{$this->name}.php";
 	}
 
 	/**

@@ -45,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'CODE_SNIPPETS_FILE', __FILE__ );
 
 if ( version_compare( phpversion(), '5.6', '>=' ) ) {
-	require_once dirname( __FILE__ ) . '/php/load.php';
+	require_once __DIR__ . '/php/load.php';
 	return;
 }
 

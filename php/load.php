@@ -25,7 +25,7 @@ const PLUGIN_VERSION = '3.0.0-dev.3';
 const PLUGIN_FILE = CODE_SNIPPETS_FILE;
 
 /* Load dependencies with Composer */
-require_once dirname( PLUGIN_FILE ) . '/vendor/autoload.php';
+require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
 /**
  * Retrieve the instance of the main plugin class

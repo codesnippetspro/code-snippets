@@ -44,7 +44,7 @@ class Shortcodes {
 
 		/* Add the button to the editor toolbar */
 		add_filter( 'mce_buttons', function ( $buttons ) {
-			array_push( $buttons, 'code_snippets' );
+			$buttons[] = 'code_snippets';
 			return $buttons;
 		} );
 
