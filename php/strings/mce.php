@@ -38,13 +38,15 @@ foreach ( $snippets as $snippet ) {
 	$name = $snippet->name ? $snippet->name : sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $snippet->id );
 
 	if ( 'content' === $snippet->scope ) {
-		$strings['content_snippets'][] = [ 'text' => $name, 'value' => $snippet->id ];
+		$strings['content_snippets'][ $snippet->id ] = $name;
 	}
 
 	$name .= ' (' . strtoupper( $snippet->type ) . ')';
-	$strings['all_snippets'][] = [ 'text' => $name, 'value' => $snippet->id ];
-
+	$strings['all_snippets'][ $snippet->id ] = $name;
 }
+
+sort( $strings['all_snippets'], SORT_STRING | SORT_FLAG_CASE );
+sort( $strings['content_snippets'], SORT_STRING | SORT_FLAG_CASE );
 
 $strings = [ _WP_Editors::$mce_locale => [ 'code_snippets' => $strings ] ];
 $strings = 'tinyMCE.addI18n(' . json_encode( $strings ) . ');';

@@ -2,6 +2,10 @@
 	tinymce.PluginManager.add('code_snippets', editor => {
 		const ed = tinymce.activeEditor;
 
+		function array_as_values(array) {
+			return Object.keys(array).map(key => ({text: array[key], value: key}));
+		}
+
 		let menu = [
 			{
 				text: ed.getLang('code_snippets.insert_content_menu'),
@@ -13,7 +17,7 @@
 								type: 'listbox',
 								name: 'id',
 								label: ed.getLang('code_snippets.snippet_label'),
-								values: ed.getLang('code_snippets.content_snippets'),
+								values: array_as_values(ed.getLang('code_snippets.content_snippets')),
 							},
 							{
 								type: 'checkbox',
@@ -33,7 +37,7 @@
 						],
 						onsubmit: e => {
 							const id = parseInt(e.data.id);
-							if (! id) return;
+							if (!id) return;
 
 							let shortcode = '[code_snippet id=' + id;
 
@@ -61,7 +65,7 @@
 								type: 'listbox',
 								name: 'id',
 								label: ed.getLang('code_snippets.snippet_label'),
-								values: ed.getLang('code_snippets.all_snippets'),
+								values: array_as_values(ed.getLang('code_snippets.all_snippets')),
 							},
 							{
 								type: 'checkbox',
@@ -71,7 +75,7 @@
 						],
 						onsubmit: e => {
 							const id = parseInt(e.data.id);
-							if (! id) return;
+							if (!id) return;
 
 							let shortcode = '[code_snippet_source id=' + id;
 
