@@ -22,9 +22,37 @@ class Shortcodes {
 	 * Class constructor
 	 */
 	public function __construct() {
-		add_shortcode( self::CONTENT_TAG, array( $this, 'render_content_shortcode' ) );
-		add_shortcode( self::SOURCE_TAG, array( $this, 'render_source_shortcode' ) );
-		add_action( 'the_posts', array( $this, 'enqueue_highlighting' ) );
+		add_shortcode( self::CONTENT_TAG, [ $this, 'render_content_shortcode' ] );
+		add_shortcode( self::SOURCE_TAG, [ $this, 'render_source_shortcode' ] );
+		add_action( 'the_posts', [ $this, 'enqueue_highlighting' ] );
+		add_action( 'init', [ $this, 'setup_mce_plugin' ] );
+	}
+
+	/**
+	 * Perform the necessary actions to add a button to the TinyMCE editor
+	 */
+	public function setup_mce_plugin() {
+		if ( ! code_snippets()->current_user_can() ) {
+			return;
+		}
+
+		/* Register the TinyMCE plugin */
+		add_filter( 'mce_external_plugins', function ( $plugins ) {
+			$plugins['code_snippets'] = plugins_url( 'js/min/mce.js', PLUGIN_FILE );
+			return $plugins;
+		} );
+
+		/* Add the button to the editor toolbar */
+		add_filter( 'mce_buttons', function ( $buttons ) {
+			array_push( $buttons, 'code_snippets' );
+			return $buttons;
+		} );
+
+		/* Add the translation strings to the TinyMCE editor */
+		add_filter( 'mce_external_languages', function ( $languages ) {
+			$languages['code_snippets'] = __DIR__ . '/strings/mce.php';
+			return $languages;
+		} );
 	}
 
 	/**
@@ -111,7 +139,7 @@ class Shortcodes {
 		}
 
 		if ( $atts['format'] ) {
-			$functions = array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'capital_P_dangit' );
+			$functions = [ 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'capital_P_dangit' ];
 			foreach ( $functions as $function ) {
 				$content = call_user_func( $function, $content );
 			}
