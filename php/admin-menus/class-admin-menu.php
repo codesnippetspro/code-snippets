@@ -73,7 +73,6 @@ class Admin_Menu {
 	 * Render the menu
 	 */
 	public function render() {
-		$this->print_messages();
 		$this->render_view( $this->name );
 	}
 

@@ -30,6 +30,8 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 
 		?></h1>
 
+	<?php $this->print_messages(); ?>
+
 	<div class="narrow">
 
 		<p><?php _e( 'Upload one or more Code Snippets export files and the snippets will be imported.', 'code-snippets' ); ?></p>

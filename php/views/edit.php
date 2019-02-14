@@ -47,6 +47,8 @@ if ( ! $snippet->id ) {
 
 		?></h1>
 
+	<?php $this->print_messages(); ?>
+
 	<form method="post" id="snippet-form" action="" class="<?php echo implode( ' ', $classes ); ?>"
 	      data-snippet-type="<?php echo esc_attr( $snippet->type ); ?>">
 		<?php

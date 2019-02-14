@@ -28,6 +28,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$this->list_table->search_notice();
 		?></h1>
 
+	<?php $this->print_messages(); ?>
+
 	<form method="get" action="">
 		<?php
 		$this->list_table->required_form_fields( 'search_box' );
