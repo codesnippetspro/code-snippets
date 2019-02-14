@@ -61,11 +61,6 @@
 		<!-- this is a useful feature -->
 		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound" />
 
-		<!-- class files don't need an additional file comment -->
-		<rule ref="Squiz.Commenting.FileComment.Missing">
-			<exclude-pattern>class-*\.php</exclude-pattern>
-		</rule>
-
 		<!-- I don't always agree with these documentation rules -->
 		<exclude name="Generic.Commenting.DocComment.SpacingBeforeTags" />
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
@@ -82,8 +77,12 @@
 		<exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotValidated" />
 		<exclude name="WordPress.Security.ValidatedSanitizedInput.MissingUnslash" />
 		<exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
-		<exclude name="Squiz.Commenting.FileComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
+	</rule>
+
+	<!-- class files don't need an additional file comment -->
+	<rule ref="Squiz.Commenting.FileComment.Missing">
+		<exclude-pattern>class-*\.php$</exclude-pattern>
 	</rule>
 </ruleset>

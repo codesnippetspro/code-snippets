@@ -1,4 +1,9 @@
 <?php
+/**
+ * Initialise and load the plugin under the proper namespace
+ *
+ * @package Code_Snippets
+ */
 
 namespace Code_Snippets;
 

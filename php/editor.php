@@ -1,4 +1,8 @@
 <?php
+/**
+ * Functions for using the built-in code editor library
+ * @package Code_Snippets
+ */
 
 namespace Code_Snippets;
 
