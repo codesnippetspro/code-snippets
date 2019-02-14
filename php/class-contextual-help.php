@@ -12,17 +12,27 @@ use WP_Screen;
 class Contextual_Help {
 
 	/**
+	 * Current screen object
+	 *
+	 * @see get_current_screen()
+	 *
 	 * @var WP_Screen
 	 */
 	public $screen;
 
 	/**
+	 * Name of current screen
+	 *
+	 * @see get_current_screen()
+	 *
 	 * @var string
 	 */
 	public $screen_name;
 
 	/**
-	 * @param string $screen_name Name of current screen. See get_current_screen().
+	 * Class constructor
+	 *
+	 * @param string $screen_name Name of current screen.
 	 */
 	public function __construct( $screen_name ) {
 		$this->screen_name = $screen_name;

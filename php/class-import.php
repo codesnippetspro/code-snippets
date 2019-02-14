@@ -12,6 +12,7 @@ use DOMElement;
  * @since   3.0.0
  *
  * @phpcs:disable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+ * @phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
  */
 class Import {
 

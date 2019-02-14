@@ -24,21 +24,29 @@ class Plugin {
 	public $file;
 
 	/**
+	 * Database class
+	 *
 	 * @var DB
 	 */
 	public $db;
 
 	/**
+	 * Administration area class
+	 *
 	 * @var Admin
 	 */
 	public $admin;
 
 	/**
+	 * Shortcodes class
+	 *
 	 * @var Shortcodes
 	 */
 	public $shortcode;
 
 	/**
+	 * Class for managing active snippets
+	 *
 	 * @var Active_Snippets
 	 */
 	public $active_snippets;

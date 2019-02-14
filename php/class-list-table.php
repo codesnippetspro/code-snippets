@@ -4,6 +4,7 @@ namespace Code_Snippets;
 
 use function Code_Snippets\Settings\get_setting;
 use WP_List_Table;
+use wpdb;
 
 /**
  * Contains the class for handling the snippets table
@@ -783,7 +784,7 @@ class List_Table extends WP_List_Table {
 	 * Fetch all shared network snippets for the current site
 	 */
 	private function fetch_shared_network_snippets() {
-		/** @var \wpdb $wpdb */
+		/** @var wpdb $wpdb */
 		global $snippets, $wpdb;
 		$db = code_snippets()->db;
 

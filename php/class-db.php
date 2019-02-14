@@ -12,11 +12,15 @@ use wpdb;
 class DB {
 
 	/**
+	 * Side-wide table name
+	 *
 	 * @var string
 	 */
 	public $table;
 
 	/**
+	 * Network-wide table name
+	 *
 	 * @var string
 	 */
 	public $ms_table;

@@ -9,9 +9,6 @@
 		<!-- I like to have a newline after closing brace, sometimes -->
 		<exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" />
 
-		<!-- breaks usage of the DOM API -->
-		<exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar" />
-
 		<!-- allow hooks containing forward slashes -->
 		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
 
@@ -44,8 +41,8 @@
 		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />
 		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared" />
 
-		<!-- need to work with XML library -->
-		<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase" />
+		<!-- this does not account for variable type comments -->
+		<exclude name="Generic.Commenting.DocComment.MissingShort" />
 
 		<!-- this disallows assignment inside conditional statements -->
 		<exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
@@ -63,9 +60,6 @@
 
 		<!-- seems unnecessary -->
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
-
-		<!-- This is not always necessary -->
-		<exclude name="Generic.Commenting.DocComment.MissingShort" />
 
 		<!-- todo -->
 		<exclude name="WordPress.Security.NonceVerification.Recommended" />
