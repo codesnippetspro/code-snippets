@@ -12,7 +12,7 @@
         "watch": "gulp watch",
         "package": "gulp package",
         "test": "gulp test",
-        "phpcs": "vendor/bin/phpcs -s code-snippets.php php/"
+        "phpcs": "vendor/bin/phpcs -s *.php php/"
     },
     "repository": {
         "type": "git",

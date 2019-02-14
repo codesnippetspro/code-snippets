@@ -1,14 +1,18 @@
 <?php
-
 /**
  * Cleans up data created by this plugin
+ *
  * @package Code_Snippets
- * @since 2.0
+ * @since   2.0.0
+ *
+ * @phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
  */
+
+namespace Code_Snippets;
 
 /* Ensure this plugin is actually being uninstalled */
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-	exit();
+	return;
 }
 
 /* Fetch the Complete Uninstall option from the database settings */
@@ -27,7 +31,8 @@ if ( ! isset( $settings['general']['complete_uninstall'] ) || ! $settings['gener
 
 /**
  * Clean up data created by this plugin for a single site
- * @since 2.0
+ *
+ * @since 2.0.0
  */
 function code_snippets_uninstall_site() {
 	global $wpdb;
@@ -53,8 +58,8 @@ if ( is_multisite() ) {
 
 	if ( $blog_ids ) {
 
-		foreach ( $blog_ids as $blog_id ) {
-			switch_to_blog( $blog_id );
+		foreach ( $blog_ids as $site_id ) {
+			switch_to_blog( $site_id );
 			code_snippets_uninstall_site();
 		}
 

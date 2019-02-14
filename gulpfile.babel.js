@@ -36,7 +36,7 @@ import phpunit from 'gulp-phpunit';
 const pkg = require('./package.json');
 
 const src_files = {
-	php: ['code-snippets.php', 'php/**/*.php'],
+	php: ['*.php', 'php/**/*.php'],
 	js: ['js/*.js'],
 	css: ['css/*.scss', '!css/_*.scss'],
 };
