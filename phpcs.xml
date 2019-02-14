@@ -39,9 +39,6 @@
 		<!-- database table names should be interpolated -->
 		<exclude name="WordPress.WP.PreparedSQL.NotPrepared" />
 
-		<!-- class filenames do not include the namespace prefix -->
-		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
-
 		<!-- this picks up a lot of false positives -->
 		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
 		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />

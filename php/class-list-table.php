@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * @since   1.5
  * @package Code_Snippets
  */
-class Snippets_List_Table extends WP_List_Table {
+class List_Table extends WP_List_Table {
 
 	/**
 	 * Whether the current screen is in the network admin

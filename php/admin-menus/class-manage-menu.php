@@ -11,7 +11,7 @@ class Manage_Menu extends Admin_Menu {
 
 	/**
 	 * Holds the list table class
-	 * @var Snippets_List_Table
+	 * @var List_Table
 	 */
 	public $list_table;
 
@@ -115,7 +115,7 @@ class Manage_Menu extends Admin_Menu {
 		$contextual_help->load();
 
 		/* Initialize the list table class */
-		$this->list_table = new Snippets_List_Table();
+		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
 	}
 
