@@ -231,7 +231,7 @@ function code_snippets_settings_validate( array $input ) {
 					$available_themes = get_editor_themes();
 					$selected_theme = $input[ $section_id ][ $field_id ];
 
-					if ( in_array( $selected_theme, $available_themes ) ) {
+					if ( in_array( $selected_theme, $available_themes, true ) ) {
 						$settings[ $section_id ][ $field_id ] = $selected_theme;
 					}
 

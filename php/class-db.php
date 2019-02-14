@@ -24,7 +24,7 @@ class DB {
 	/**
 	 * Class constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		$this->set_table_vars();
 	}
 
@@ -34,7 +34,7 @@ class DB {
 	 * @since 2.0
 	 * @uses  $wpdb
 	 */
-	function set_table_vars() {
+	public function set_table_vars() {
 		global $wpdb;
 
 		$this->table = $wpdb->prefix . 'snippets';
@@ -52,7 +52,7 @@ class DB {
 	 *
 	 * @return bool
 	 */
-	function validate_network_param( $network ) {
+	public function validate_network_param( $network ) {
 
 		/* If multisite is not active, then the parameter should always be false */
 		if ( ! is_multisite() ) {
@@ -76,7 +76,7 @@ class DB {
 	 *
 	 * @return string The snippet table name
 	 */
-	function get_table_name( $multisite = null ) {
+	public function get_table_name( $multisite = null ) {
 
 		/* If the first parameter is a string, assume it is a table name */
 		if ( is_string( $multisite ) ) {
@@ -220,12 +220,12 @@ class DB {
 		$order = 'ORDER BY priority ASC, id ASC';
 
 		/* Fetch snippets from site table */
-		if ( DB::table_exists( $db->table ) ) {
+		if ( self::table_exists( $db->table ) ) {
 			$queries[ $db->table ] = $wpdb->prepare( "$select {$db->table} $where AND active=1 $order", $scopes );
 		}
 
 		/* Fetch snippets from the network table */
-		if ( is_multisite() && DB::table_exists( $db->ms_table ) ) {
+		if ( is_multisite() && self::table_exists( $db->ms_table ) ) {
 			$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
 
 			/* If there are active shared snippets, include them in the query */

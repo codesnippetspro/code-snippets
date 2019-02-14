@@ -7,7 +7,23 @@ namespace Code_Snippets;
  */
 class Admin_Menu {
 
-	public $name, $label, $title;
+	/**
+	 * The snippet page short name
+	 * @var string
+	 */
+	public $name;
+
+	/**
+	 * The label shown in the admin menu
+	 * @var string
+	 */
+	public $label;
+
+	/**
+	 * The text used for the page title
+	 * @var string
+	 */
+	public $title;
 
 	/**
 	 * Constructor
@@ -16,7 +32,7 @@ class Admin_Menu {
 	 * @param string $label The label shown in the admin menu
 	 * @param string $title The text used for the page title
 	 */
-	function __construct( $name, $label, $title ) {
+	public function __construct( $name, $label, $title ) {
 		$this->name = $name;
 		$this->label = $label;
 		$this->title = $title;
@@ -36,7 +52,7 @@ class Admin_Menu {
 	 * Add a sub-menu to the Snippets menu
 	 * @uses add_submenu_page() to register a submenu
 	 *
-	 * @param string $slug  The slug of the menu
+	 * @param string $slug The slug of the menu
 	 * @param string $label The label shown in the admin menu
 	 * @param string $title The page title
 	 */
@@ -109,12 +125,27 @@ class Admin_Menu {
 	}
 
 	/**
+	 * Print a result message based on a posted status
+	 *
+	 * @param array  $messages
+	 * @param string $request_var
+	 * @param string $class
+	 */
+	protected function show_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
+		$message = $this->get_result_message( $messages, $request_var, $class );
+
+		if ( $message ) {
+			echo wp_kses_post( $message );
+		}
+	}
+
+	/**
 	 * Executed when the admin page is loaded
 	 */
 	public function load() {
 		/* Make sure the user has permission to be here */
 		if ( ! current_user_can( code_snippets()->get_cap() ) ) {
-			wp_die( __( 'You are not authorized to access this page.', 'code-snippets' ) );
+			wp_die( esc_html__( 'You are not authorized to access this page.', 'code-snippets' ) );
 		}
 
 		/* Create the snippet tables if they don't exist */
@@ -132,6 +163,7 @@ class Admin_Menu {
 
 	/**
 	 * Render a list of links to other pages in the page title
+	 *
 	 * @param array $actions
 	 */
 	protected function page_title_actions( $actions ) {
@@ -141,7 +173,7 @@ class Admin_Menu {
 				continue;
 			}
 
-			printf( '<a href="%s" class="page-title-action">', code_snippets()->get_menu_url( $action ) );
+			printf( '<a href="%s" class="page-title-action">', esc_url( code_snippets()->get_menu_url( $action ) ) );
 
 			switch ( $action ) {
 				case 'manage':

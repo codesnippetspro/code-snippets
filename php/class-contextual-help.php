@@ -1,6 +1,7 @@
 <?php
 
 namespace Code_Snippets;
+
 use WP_Screen;
 
 /**
@@ -22,7 +23,7 @@ class Contextual_Help {
 	/**
 	 * @param string $screen_name
 	 */
-	function __construct( $screen_name ) {
+	public function __construct( $screen_name ) {
 		$this->screen_name = $screen_name;
 	}
 

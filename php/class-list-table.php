@@ -9,6 +9,7 @@ use WP_List_Table;
  * Contains the class for handling the snippets table
  *
  * @package Code_Snippets
+ * @phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
  */
 
 /* The WP_List_Table base class is not included by default, so we need to load it */
@@ -47,7 +48,7 @@ class Snippets_List_Table extends WP_List_Table {
 
 		/* Determine the status */
 		$status = apply_filters( 'code_snippets/list_table/default_view', 'all' );
-		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], $this->statuses ) ) {
+		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], $this->statuses, true ) ) {
 			$status = $_REQUEST['status'];
 		}
 
@@ -123,7 +124,7 @@ class Snippets_List_Table extends WP_List_Table {
 
 		// redirect actions to the network dashboard for shared network snippets
 		$network_redirect = $snippet->shared_network && ! $this->is_network &&
-		                    ! in_array( $action, array( 'activate', 'activate-shared', 'run-once', 'run-once-shared' ) );
+		                    ! in_array( $action, array( 'activate', 'activate-shared', 'run-once', 'run-once-shared' ), true );
 
 		// edit links go to a different menu
 		if ( 'edit' === $action ) {
@@ -514,7 +515,7 @@ class Snippets_List_Table extends WP_List_Table {
 
 				printf( "<option %s value=''>%s</option>\n",
 					selected( $query, '', false ),
-					__( 'Show all tags', 'code-snippets' )
+					esc_html__( 'Show all tags', 'code-snippets' )
 				);
 
 				foreach ( $tags as $tag ) {
@@ -522,7 +523,7 @@ class Snippets_List_Table extends WP_List_Table {
 					printf( "<option %s value='%s'>%s</option>\n",
 						selected( $query, $tag, false ),
 						esc_attr( $tag ),
-						$tag
+						esc_html( $tag )
 					);
 				}
 
@@ -588,7 +589,7 @@ class Snippets_List_Table extends WP_List_Table {
 	 */
 	private function perform_action( $id, $action, $scope = '' ) {
 
-		if ( in_array( $action, array( 'activate', 'deactivate', 'activate-shared', 'deactivate-shared', 'delete' ) ) &&
+		if ( in_array( $action, array( 'activate', 'deactivate', 'activate-shared', 'deactivate-shared', 'delete' ), true ) &&
 		     ( '-js' === substr( $scope, -3 ) || '-css' === substr( $scope, -4 ) ) ) {
 			code_snippets()->active_snippets->increment_rev( $scope, $this->is_network );
 		}
@@ -614,7 +615,7 @@ class Snippets_List_Table extends WP_List_Table {
 			case 'activate-shared':
 				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
-				if ( ! in_array( $id, $active_shared_snippets ) ) {
+				if ( ! in_array( $id, $active_shared_snippets, true ) ) {
 					$active_shared_snippets[] = $id;
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 				}
@@ -698,7 +699,7 @@ class Snippets_List_Table extends WP_List_Table {
 					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
 					foreach ( $_POST['shared_ids'] as $id ) {
-						if ( ! in_array( $id, $active_shared_snippets ) ) {
+						if ( ! in_array( $id, $active_shared_snippets, true ) ) {
 							$active_shared_snippets[] = $id;
 						}
 					}
@@ -752,7 +753,7 @@ class Snippets_List_Table extends WP_List_Table {
 		if ( isset( $result ) ) {
 
 			// We have no way of knowing whether CSS/JS snippets were modified or not, so always increment the asset revisions
-			if ( in_array( $result, array( 'activated-multi', 'deactivated-multi', 'deleted-multi' ) ) ) {
+			if ( in_array( $result, array( 'activated-multi', 'deactivated-multi', 'deleted-multi' ), true ) ) {
 				code_snippets()->active_snippets->increment_rev( 'all', $this->is_network );
 			}
 
@@ -798,7 +799,7 @@ class Snippets_List_Table extends WP_List_Table {
 			for ( $i = 0; $i < $limit; $i++ ) {
 				$snippet = &$snippets['all'][ $i ];
 
-				if ( in_array( $snippet->id, $ids ) ) {
+				if ( in_array( $snippet->id, $ids, true ) ) {
 					$snippet->shared_network = true;
 					$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
 					$snippet->active = false;
@@ -819,7 +820,7 @@ class Snippets_List_Table extends WP_List_Table {
 				$snippet->network = true;
 				$snippet->shared_network = true;
 				$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
-				$snippet->active = in_array( $snippet->id, $active_shared_snippets );
+				$snippet->active = in_array( $snippet->id, $active_shared_snippets, true );
 
 				$shared_snippets[ $index ] = $snippet;
 			}
@@ -1066,7 +1067,7 @@ class Snippets_List_Table extends WP_List_Table {
 		$tags = explode( ',', $_GET['tag'] );
 
 		foreach ( $tags as $tag ) {
-			if ( in_array( $tag, $snippet->tags ) ) {
+			if ( in_array( $tag, $snippet->tags, true ) ) {
 				return true;
 			}
 		}
@@ -1081,16 +1082,16 @@ class Snippets_List_Table extends WP_List_Table {
 	public function search_notice() {
 		if ( ! empty( $_REQUEST['s'] ) || ! empty( $_GET['tag'] ) ) {
 
-			echo '<span class="subtitle">' . __( 'Search results', 'code-snippets' );
+			echo '<span class="subtitle">' . esc_html__( 'Search results', 'code-snippets' );
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
 				/* translators: %s: search query */
-				echo sprintf( __( ' for &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
+				echo sprintf( esc_html__( ' for &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
 			}
 
 			if ( ! empty( $_GET['tag'] ) ) {
 				/* translators: %s: tag name */
-				echo sprintf( __( ' in tag &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $_GET['tag'] ) );
+				echo sprintf( esc_html__( ' in tag &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $_GET['tag'] ) );
 			}
 
 			echo '</span>';
@@ -1098,7 +1099,7 @@ class Snippets_List_Table extends WP_List_Table {
 			printf(
 				'&nbsp;<a class="button clear-filters" href="%s">%s</a>',
 				esc_url( remove_query_arg( array( 's', 'tag' ) ) ),
-				__( 'Clear Filters', 'code-snippets' )
+				esc_html__( 'Clear Filters', 'code-snippets' )
 			);
 		}
 	}
@@ -1119,7 +1120,7 @@ class Snippets_List_Table extends WP_List_Table {
 			$row_class .= ' shared-network-snippet';
 		}
 
-		printf( '<tr class="%s" data-snippet-scope="%s">', $row_class, esc_attr( $snippet->scope ) );
+		printf( '<tr class="%s" data-snippet-scope="%s">', esc_attr( $row_class ), esc_attr( $snippet->scope ) );
 		$this->single_row_columns( $snippet );
 		echo '</tr>';
 	}

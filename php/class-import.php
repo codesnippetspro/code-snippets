@@ -7,8 +7,11 @@ use DOMElement;
 
 /**
  * Handles importing snippets from export files into the site
+ *
  * @package Code_Snippets
  * @since   3.0.0
+ *
+ * @phpcs:disable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
  */
 class Import {
 
@@ -136,7 +139,7 @@ class Import {
 
 		/* Get a list of existing snippet names keyed to their IDs */
 		$existing_snippets = array();
-		if ( 'replace' == $this->dup_action || 'skip' === $this->dup_action ) {
+		if ( 'replace' === $this->dup_action || 'skip' === $this->dup_action ) {
 			$all_snippets = get_snippets( array(), $this->multisite );
 
 			foreach ( $all_snippets as $snippet ) {

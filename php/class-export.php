@@ -65,7 +65,7 @@ class Export {
 	private function do_headers( $format, $mime_type = '' ) {
 
 		/* Build the export filename */
-		if ( 1 == count( $this->snippets_list ) ) {
+		if ( 1 === count( $this->snippets_list ) ) {
 			/* If there is only snippet to export, use its name instead of the site name */
 			$first_snippet = new Snippet( $this->snippets_list[0] );
 			$title = strtolower( $first_snippet->name );
@@ -135,6 +135,7 @@ class Export {
 
 	/**
 	 * Generate a downloadable PHP file from a list of snippets
+	 * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	 */
 	public function download_php_snippets() {
 		$this->do_headers( 'php' );
@@ -154,9 +155,8 @@ class Export {
 			if ( ! empty( $snippet->desc ) ) {
 
 				/* Convert description to PhpDoc */
-				$desc = strip_tags( str_replace( "\n", "\n * ", $snippet->desc ) );
-
-				echo " *\n * $desc\n";
+				$desc = str_replace( "\n", "\n * ", $snippet->desc );
+				echo " *\n * ", wp_strip_all_tags( $desc ), "\n";
 			}
 
 			echo " */\n{$snippet->code}\n";
@@ -167,9 +167,10 @@ class Export {
 
 	/**
 	 * Generate a downloadable CSS file from a list of snippets
+	 * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	 */
 	public function download_css_snippets() {
-		$this->do_headers(  'css', 'text/css' );
+		$this->do_headers( 'css', 'text/css' );
 
 		/* Loop through the snippets */
 		foreach ( $this->snippets_list as $snippet ) {
@@ -182,15 +183,11 @@ class Export {
 			echo "\n/*\n";
 
 			if ( $snippet->name ) {
-				echo $snippet->name, "\n\n";
+				echo wp_strip_all_tags( $snippet->name ), "\n\n";
 			}
 
 			if ( ! empty( $snippet->desc ) ) {
-
-				/* Convert description to PhpDoc */
-				$desc = strip_tags( $snippet->desc );
-
-				echo $desc, "\n";
+				echo wp_strip_all_tags( $snippet->desc ), "\n";
 			}
 
 			echo "*/\n\n{$snippet->code}\n\n";

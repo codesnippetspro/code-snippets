@@ -63,7 +63,7 @@ class Edit_Menu extends Admin_Menu {
 
 		// Disallow visiting the edit snippet page without a valid ID
 		if ( code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
-			if ( ! isset( $_REQUEST['id'] ) || 0 == $this->snippet->id ) {
+			if ( ! isset( $_REQUEST['id'] ) || 0 === $this->snippet->id ) {
 				wp_redirect( code_snippets()->get_menu_url( 'add' ) );
 				exit;
 			}
@@ -156,7 +156,7 @@ class Edit_Menu extends Admin_Menu {
 	private function unshare_network_snippet( $snippet_id ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 
-		if ( ! in_array( $snippet_id, $shared_snippets ) ) {
+		if ( ! in_array( $snippet_id, $shared_snippets, true ) ) {
 			return;
 		}
 
@@ -286,7 +286,7 @@ class Edit_Menu extends Admin_Menu {
 				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 
 				/* Add the snippet ID to the array if it isn't already */
-				if ( ! in_array( $snippet_id, $shared_snippets ) ) {
+				if ( ! in_array( $snippet_id, $shared_snippets, true ) ) {
 					$shared_snippets[] = $snippet_id;
 					update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 				}
@@ -348,17 +348,11 @@ class Edit_Menu extends Admin_Menu {
 	 *
 	 * @param Snippet $snippet The snippet being used for this page
 	 */
-	function render_description_editor( Snippet $snippet ) {
+	public function render_description_editor( Snippet $snippet ) {
 		$settings = Settings\get_settings_values();
 		$settings = $settings['description_editor'];
-		$heading = __( 'Description', 'code-snippets' );
 
-		/* Hack to remove space between heading and editor tabs */
-		if ( ! $settings['media_buttons'] && 'false' !== get_user_option( 'rich_editing' ) ) {
-			$heading = "<div>$heading</div>";
-		}
-
-		echo '<h2><label for="snippet_description">', $heading, '</label></h2>';
+		echo '<h2><label for="snippet_description">', esc_html__( 'Description', 'code-snippets' ), '</label></h2>';
 
 		remove_editor_styles(); // stop custom theme styling interfering with the editor
 
@@ -379,7 +373,7 @@ class Edit_Menu extends Admin_Menu {
 	 *
 	 * @param Snippet $snippet the snippet currently being edited
 	 */
-	function render_tags_editor( Snippet $snippet ) {
+	public function render_tags_editor( Snippet $snippet ) {
 
 		?>
 		<h2 style="margin: 25px 0 10px;">
@@ -419,15 +413,15 @@ class Edit_Menu extends Admin_Menu {
 	 *
 	 * @param object $snippet The snippet currently being edited
 	 */
-	function render_multisite_sharing_setting( $snippet ) {
+	public function render_multisite_sharing_setting( $snippet ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 		?>
 
 		<div class="snippet-sharing-setting">
-			<h2 class="screen-reader-text"><?php _e( 'Sharing Settings', 'code-snippets' ); ?></h2>
+			<h2 class="screen-reader-text"><?php esc_html_e( 'Sharing Settings', 'code-snippets' ); ?></h2>
 			<label for="snippet_sharing">
 				<input type="checkbox" name="snippet_sharing"
-					<?php checked( in_array( $snippet->id, $shared_snippets ) ); ?>>
+					<?php checked( in_array( $snippet->id, $shared_snippets, true ) ); ?>>
 				<?php esc_html_e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
 			</label>
 		</div>
@@ -485,24 +479,28 @@ class Edit_Menu extends Admin_Menu {
 		if ( 'code-error' === $result ) {
 
 			if ( isset( $_REQUEST['id'] ) && $error = $this->get_snippet_error( $_REQUEST['id'] ) ) {
+				/* translators: %d: line of file where error originated */
+				$text = __( 'The snippet has been deactivated due to an error on line %d:', 'code-snippets' );
 
 				printf(
 					'<div id="message" class="error fade"><p>%s</p><p><strong>%s</strong></p></div>',
-					/* translators: %d: line of file where error originated */
-					sprintf( __( 'The snippet has been deactivated due to an error on line %d:', 'code-snippets' ), $error['line'] ),
-					$error['message']
+					sprintf( esc_html( $text ), intval( $error['line'] ) ),
+					wp_kses_post( $error['message'] )
 				);
 
 			} else {
-				echo '<div id="message" class="error fade"><p>', __( 'The snippet has been deactivated due to an error in the code.', 'code-snippets' ), '</p></div>';
+				echo '<div id="message" class="error fade"><p>';
+				esc_html_e( 'The snippet has been deactivated due to an error in the code.', 'code-snippets' );
+				echo '</p></div>';
 			}
 
 			return;
 		}
 
 		if ( 'save-error' === $result ) {
-			echo '<div id="message" class="error fade"><p>', __( 'An error occurred when saving the snippet.', 'code-snippets' ), '</p></div>';
-
+			echo '<div id="message" class="error fade"><p>';
+			esc_html_e( 'An error occurred when saving the snippet.', 'code-snippets' );
+			echo '</p></div>';
 			return;
 		}
 
@@ -516,7 +514,7 @@ class Edit_Menu extends Admin_Menu {
 		);
 
 		if ( isset( $messages[ $result ] ) ) {
-			echo '<div id="message" class="updated fade"><p>', $messages[ $result ], '</p></div>';
+			echo '<div id="message" class="updated fade"><p>', wp_kses( $messages[ $result ], [ 'strong' => [] ] ), '</p></div>';
 		}
 	}
 
@@ -570,7 +568,7 @@ class Edit_Menu extends Admin_Menu {
 	 * Remove the old CodeMirror version used by the Debug Bar Console plugin
 	 * that is messing up the snippet editor
 	 */
-	function remove_debug_bar_codemirror() {
+	public function remove_debug_bar_codemirror() {
 
 		/* Try to discern if we are on the single snippet page as best as we can at this early time */
 		if ( ! is_admin() || 'admin.php' !== $GLOBALS['pagenow'] ) {
@@ -667,15 +665,15 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * @param array   $scopes
+	 * @param array $scopes
 	 */
 	public function print_scopes_list( $scopes ) {
 		$scope_icons = Snippet::get_scope_icons();
 
 		foreach ( $scopes as $scope => $label ) {
-			printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
+			printf( '<label><input type="radio" name="snippet_scope" value="%s"', esc_attr( $scope ) );
 			checked( $scope, $this->snippet->scope );
-			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $scope_icons[ $scope ], esc_html( $label ) );
+			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', esc_attr( $scope_icons[ $scope ] ), esc_html( $label ) );
 		}
 	}
 }

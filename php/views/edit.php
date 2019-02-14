@@ -34,7 +34,7 @@ if ( ! $snippet->id ) {
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
 			printf( ' <a href="%s" class="page-title-action add-new-h2">%s</a>',
-				code_snippets()->get_menu_url( 'add' ),
+				esc_url( code_snippets()->get_menu_url( 'add' ) ),
 				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 			);
 		} else {
@@ -49,25 +49,25 @@ if ( ! $snippet->id ) {
 
 	<?php $this->print_messages(); ?>
 
-	<form method="post" id="snippet-form" action="" class="<?php echo implode( ' ', $classes ); ?>"
+	<form method="post" id="snippet-form" action="" class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"
 	      data-snippet-type="<?php echo esc_attr( $snippet->type ); ?>">
 		<?php
 		/* Output the hidden fields */
 
 		if ( 0 !== $snippet->id ) {
-			printf( '<input type="hidden" name="snippet_id" value="%d" />', $snippet->id );
+			printf( '<input type="hidden" name="snippet_id" value="%d" />', esc_attr( $snippet->id ) );
 		}
 
-		printf( '<input type="hidden" name="snippet_active" value="%d" />', $snippet->active );
+		printf( '<input type="hidden" name="snippet_active" value="%d" />', esc_attr( $snippet->active ) );
 
-		printf( '<input type="hidden" name="current_snippet_scope" value="%s" />', $snippet->scope );
+		printf( '<input type="hidden" name="current_snippet_scope" value="%s" />', esc_attr( $snippet->scope ) );
 
 		?>
 		<div id="titlediv">
 			<div id="titlewrap">
-				<label for="title" style="display: none;"><?php _e( 'Name', 'code-snippets' ); ?></label>
+				<label for="title" style="display: none;"><?php esc_html_e( 'Name', 'code-snippets' ); ?></label>
 				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>"
-				       placeholder="<?php _e( 'Enter title here', 'code-snippets' ); ?>" />
+				       placeholder="<?php esc_attr_e( 'Enter title here', 'code-snippets' ); ?>" />
 			</div>
 		</div>
 
@@ -81,7 +81,7 @@ if ( ! $snippet->id ) {
 
 		<h2>
 			<label for="snippet_code">
-				<?php _e( 'Code', 'code-snippets' ); ?>
+				<?php esc_html_e( 'Code', 'code-snippets' ); ?>
 			</label>
 		</h2>
 
@@ -96,14 +96,14 @@ if ( ! $snippet->id ) {
 					'js'   => __( 'Scripts', 'code-snippets' ),
 				);
 
-				foreach ( $types as $type => $label ) {
-					if ( $snippet->type == $type ) {
-						printf( '<a class="nav-tab nav-tab-active" data-type="%s">%s</a>', $type, esc_html( $label ) );
+				foreach ( $types as $type_name => $label ) {
+					if ( $snippet->type === $type_name ) {
+						printf( '<a class="nav-tab nav-tab-active" data-type="%s">%s</a>', esc_attr( $type_name ), esc_html( $label ) );
 					} else {
 						printf(
 							'<a class="nav-tab" href="%s" data-type="%s">%s</a>',
-							esc_url( add_query_arg( 'type', $type ) ),
-							$type, esc_html( $label )
+							esc_url( add_query_arg( 'type', $type_name ) ),
+							esc_attr( $type_name ), esc_html( $label )
 						);
 					}
 				} ?>

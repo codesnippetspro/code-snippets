@@ -34,7 +34,7 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 	$ids_count = count( $ids );
 
 	/* If only one ID has been passed in, defer to the get_snippet() function */
-	if ( 1 == $ids_count ) {
+	if ( 1 === $ids_count ) {
 		return array( get_snippet( $ids[0] ) );
 	}
 
@@ -104,7 +104,7 @@ function code_snippets_build_tags_array( $tags ) {
 
 	/* If the tags are set as a string, convert them into an array */
 	if ( is_string( $tags ) ) {
-		$tags = strip_tags( $tags );
+		$tags = wp_strip_all_tags( $tags );
 		$tags = str_replace( ', ', ',', $tags );
 		$tags = explode( ',', $tags );
 	}
@@ -289,7 +289,7 @@ function save_snippet( Snippet $snippet ) {
 	);
 
 	/* Create a new snippet if the ID is not set */
-	if ( 0 == $snippet->id ) {
+	if ( 0 === $snippet->id ) {
 
 		$wpdb->insert( $table, $data, '%s' );
 		$snippet->id = $wpdb->insert_id;
@@ -402,7 +402,7 @@ function execute_active_snippets() {
 			// if the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens
 			if ( 'single-use' === $snippet['scope'] ) {
 				if ( $table_name === $db->ms_table && isset( $active_shared_ids ) &&
-				     false !== ( $key = array_search( $snippet_id, $active_shared_ids ) ) ) {
+				     false !== ( $key = array_search( $snippet_id, $active_shared_ids, true ) ) ) {
 					unset( $active_shared_ids[ $key ] );
 					$active_shared_ids = array_values( $active_shared_ids );
 					update_option( 'active_shared_network_snippets', $active_shared_ids );

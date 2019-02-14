@@ -28,7 +28,7 @@ function get_code_editor_atts( $type, $override_atts = [], $json_encode = true )
 		'matchBrackets'  => true,
 		'extraKeys'      => [ 'Alt-F' => 'findPersistent' ],
 		'gutters'        => [ 'CodeMirror-lint-markers' ],
-		'lint'           => in_array( $type, [ 'php', 'css', 'html' ] ),
+		'lint'           => in_array( $type, [ 'php', 'css', 'html' ], true ),
 		'viewportMargin' => 'Infinity',
 	];
 
@@ -47,7 +47,7 @@ function get_code_editor_atts( $type, $override_atts = [], $json_encode = true )
 
 	// encode the attributes for display if requested
 	if ( $json_encode ) {
-		$atts = json_encode( $atts, JSON_UNESCAPED_SLASHES );
+		$atts = wp_json_encode( $atts, JSON_UNESCAPED_SLASHES );
 		// Infinity is a constant and needs to be unquoted
 		$atts = str_replace( '"Infinity"', 'Infinity', $atts );
 	}
@@ -71,7 +71,7 @@ function enqueue_code_editor_assets() {
 
 	/* CodeMirror */
 	wp_enqueue_style( 'code-snippets-editor', $url . 'css/min/editor.css', [], $plugin_version );
-	wp_enqueue_script( 'code-snippets-editor', $url . 'js/min/editor.js', [], $plugin_version );
+	wp_enqueue_script( 'code-snippets-editor', $url . 'js/min/editor.js', [], $plugin_version, false );
 
 	/* CodeMirror Theme */
 	$theme = get_setting( 'editor', 'theme' );

@@ -32,7 +32,7 @@ class Active_Snippets {
 
 		$revisions = Settings\get_self_option( $network, 'code_snippets_assets_rev', array() );
 
-		if ( 'all' == $scope ) {
+		if ( 'all' === $scope ) {
 			foreach ( $revisions as $i => $v ) {
 				$revisions[ $i ]++;
 			}
@@ -136,6 +136,7 @@ class Active_Snippets {
 		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope, 'code' );
 
 		foreach ( $active_snippets as $snippets ) {
+			/** @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped */
 			echo implode( "\n\n", array_column( $snippets, 'code' ) );
 		}
 
@@ -157,6 +158,7 @@ class Active_Snippets {
 		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope, 'code' );
 
 		foreach ( $active_snippets as $snippets ) {
+			/** @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped */
 			echo implode( "\n\n", array_column( $snippets, 'code' ) );
 		}
 

@@ -4,7 +4,7 @@
 	<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
 	<!-- See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/blob/develop/WordPress-Core/ruleset.xml -->
 	<!-- Include the WordPress ruleset, with exclusions. -->
-	<rule ref="WordPress-Core">
+	<rule ref="WordPress-Extra">
 
 		<!-- I like to have a newline after closing brace, sometimes -->
 		<exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" />
@@ -26,6 +26,7 @@
 		<exclude name="PSR2.ControlStructures.SwitchDeclaration.BodyOnNextLineCASE" />
 		<exclude name="WordPress.WhiteSpace.ControlStructureSpacing.BlankLineAfterEnd" />
 		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine" />
+		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_trigger_error" />
 
 		<!-- this is useful for certain templates -->
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
@@ -49,6 +50,7 @@
 		<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase" />
 
 		<!-- this disallows assignment inside conditional statements -->
+		<exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
 		<exclude name="Squiz.PHP.DisallowMultipleAssignments.Found" />
 
 		<!-- this does not always need to happen -->
@@ -57,5 +59,13 @@
 		<!-- what's wrong with smart tabs? -->
 		<exclude name="WordPress.WhiteSpace.PrecisionAlignment.Found" />
 		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed" />
+
+		<!-- this is a useful feature -->
+		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound" />
+
+		<!-- todo -->
+		<exclude name="WordPress.Security.NonceVerification.Recommended" />
+		<exclude name="WordPress.Security.NonceVerification.Missing" />
+		<exclude name="WordPress.Security.SafeRedirect.wp_redirect_wp_redirect" />
 	</rule>
 </ruleset>

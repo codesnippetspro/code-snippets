@@ -18,8 +18,7 @@ class Admin {
 	/**
 	 * Class constructor
 	 */
-	function __construct() {
-
+	public function __construct() {
 		if ( is_admin() ) {
 			$this->run();
 		}
@@ -80,7 +79,7 @@ class Admin {
 	 *
 	 * @return array             The modified mu menu items
 	 */
-	function mu_menu_items( $menu_items ) {
+	public function mu_menu_items( $menu_items ) {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
 		$menu_items['snippets_settings'] = __( 'Snippets &raquo; Settings', 'code-snippets' );
 
@@ -90,7 +89,7 @@ class Admin {
 	/**
 	 * Load the stylesheet for the admin menu icon
 	 */
-	function load_admin_menu_icon() {
+	public function load_admin_menu_icon() {
 		wp_enqueue_style(
 			'menu-icon-snippets',
 			plugins_url( 'css/min/menu-icon.css', code_snippets()->file ),
@@ -108,7 +107,7 @@ class Admin {
 	 *
 	 * @return bool Whether the snippet will be executed
 	 */
-	function prevent_exec_on_save( $exec, $exec_id, $table_name ) {
+	public function prevent_exec_on_save( $exec, $exec_id, $table_name ) {
 
 		if ( ! isset( $_POST['save_snippet'], $_POST['snippet_id'] ) ) {
 			return $exec;
@@ -136,7 +135,7 @@ class Admin {
 	 *
 	 * @return array        The modified plugin action links
 	 */
-	function plugin_settings_link( $links ) {
+	public function plugin_settings_link( $links ) {
 		array_unshift( $links, sprintf(
 			'<a href="%1$s" title="%2$s">%3$s</a>',
 			code_snippets()->get_menu_url(),
@@ -157,7 +156,7 @@ class Admin {
 	 *
 	 * @return array         The modified plugin info links
 	 */
-	function plugin_meta_links( $links, $file ) {
+	public function plugin_meta_links( $links, $file ) {
 
 		/* We only want to affect the Code Snippets plugin listing */
 		if ( plugin_basename( PLUGIN_FILE ) !== $file ) {
@@ -193,7 +192,7 @@ class Admin {
 	 * @since  1.9
 	 * @return void
 	 */
-	function survey_message() {
+	public function survey_message() {
 		global $current_user;
 
 		$key = 'ignore_code_snippets_survey_message';
@@ -214,14 +213,16 @@ class Admin {
 		<div class="updated">
 			<p>
 
-				<?php _e( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ); ?>
+				<?php echo wp_kses( __( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ), [ 'strong' => [] ] ); ?>
 
 				<a href="http://sheabunge.polldaddy.com/s/code-snippets-feedback" class="button secondary"
 				   target="_blank" style="margin: auto .5em;">
-					<?php _e( 'Take the survey now', 'code-snippets' ); ?>
+					<?php esc_html_e( 'Take the survey now', 'code-snippets' ); ?>
 				</a>
 
-				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( $key, true ), $key ) ); ?>"><?php esc_html_e( 'Dismiss', 'code-snippets' ); ?></a>
+				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( $key, true ), $key ) ); ?>">
+					<?php esc_html_e( 'Dismiss', 'code-snippets' ); ?>
+				</a>
 
 			</p>
 		</div>

@@ -50,14 +50,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		$current_type = isset( $_GET['type'], $types[ $_GET['type'] ] ) ? $_GET['type'] : 'all';
 
-		foreach ( $types as $type => $label ) {
-			if ( $type == $current_type ) {
-				printf( '<a class="nav-tab nav-tab-active" data-type="%s">%s</a>', $type, esc_html( $label ) );
+		foreach ( $types as $type_name => $label ) {
+			if ( $type_name === $current_type ) {
+				printf( '<a class="nav-tab nav-tab-active" data-type="%s">%s</a>', esc_attr( $type_name ), esc_html( $label ) );
 			} else {
 				printf(
 					'<a class="nav-tab" href="%s" data-type="%s">%s</a>',
-					esc_url( add_query_arg( 'type', $type ) ),
-					$type, esc_html( $label )
+					esc_url( add_query_arg( 'type', $type_name ) ),
+					esc_attr( $type_name ), esc_html( $label )
 				);
 			}
 		}

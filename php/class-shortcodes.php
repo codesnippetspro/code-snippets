@@ -148,11 +148,7 @@ class Shortcodes {
 		if ( $atts['shortcodes'] ) {
 
 			// remove this shortcode from the list to prevent recursion
-			global $shortcode_tags;
-			if ( isset( $shortcode_tags[ self::CONTENT_TAG ] ) ) {
-				$backup = $shortcode_tags[ self::CONTENT_TAG ];
-				unset( $shortcode_tags[ self::CONTENT_TAG ] );
-			}
+			remove_shortcode( self::CONTENT_TAG );
 
 			// evaluate shortcodes
 			if ( $atts['format'] ) {
@@ -161,9 +157,7 @@ class Shortcodes {
 			$content = do_shortcode( $content );
 
 			// add this shortcode back to the list
-			if ( isset( $backup ) ) {
-				$shortcode_tags[ self::CONTENT_TAG ] = $backup;
-			}
+			add_shortcode( self::CONTENT_TAG, [ $this, 'render_content_shortcode' ] );
 		}
 
 		return $content;

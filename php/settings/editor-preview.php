@@ -86,9 +86,9 @@ function render_editor_theme_select_field( $atts ) {
 
 		printf(
 			'<option value="%s"%s>%s</option>',
-			$theme,
+			esc_attr( $theme ),
 			selected( $theme, $saved_value, false ),
-			ucwords( str_replace( '-', ' ', $theme ) )
+			esc_html( ucwords( str_replace( '-', ' ', $theme ) ) )
 		);
 	}
 

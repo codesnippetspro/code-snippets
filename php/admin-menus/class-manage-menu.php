@@ -47,7 +47,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @uses add_menu_page() to register a top-level menu
 	 * @uses add_submenu_page() to register a sub-menu
 	 */
-	function register() {
+	public function register() {
 
 		/* Register the top-level menu */
 		add_menu_page(
@@ -104,7 +104,7 @@ class Manage_Menu extends Admin_Menu {
 	/**
 	 * Executed when the admin page is loaded
 	 */
-	function load() {
+	public function load() {
 		parent::load();
 
 		/* Load the contextual help tabs */
@@ -144,11 +144,11 @@ class Manage_Menu extends Admin_Menu {
 		/* Output a warning if safe mode is active */
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 			echo '<div id="message" class="error fade"><p>';
-			_e( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' );
+			echo wp_kses_post( __( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' ) );
 			echo '</p></div>';
 		}
 
-		echo $this->get_result_message(
+		$this->show_result_message(
 			array(
 				'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
 				'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
@@ -172,7 +172,7 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @return mixed
 	 */
-	function save_screen_option( $status, $option, $value ) {
+	public function save_screen_option( $status, $option, $value ) {
 		if ( 'snippets_per_page' === $option ) {
 			return $value;
 		}
@@ -220,7 +220,7 @@ class Manage_Menu extends Admin_Menu {
 			if ( $snippet->shared_network ) {
 				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
-				if ( in_array( $snippet->id, $active_shared_snippets ) !== $snippet->active ) {
+				if ( in_array( $snippet->id, $active_shared_snippets, true ) !== $snippet->active ) {
 
 					$active_shared_snippets = $snippet->active ?
 						array_merge( $active_shared_snippets, array( $snippet->id ) ) :

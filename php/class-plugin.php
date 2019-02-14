@@ -47,7 +47,7 @@ class Plugin {
 	 * @param string $version The current plugin version
 	 * @param string $file    The main plugin file
 	 */
-	function __construct( $version, $file ) {
+	public function __construct( $version, $file ) {
 		$this->version = $version;
 		$this->file = $file;
 
@@ -61,7 +61,7 @@ class Plugin {
 		}
 	}
 
-	function load_plugin() {
+	public function load_plugin() {
 		$includes_path = __DIR__;
 
 		/* Database operation functions */
@@ -113,13 +113,13 @@ class Plugin {
 		$import = array( 'import', 'import-snippets' );
 		$settings = array( 'settings', 'snippets-settings' );
 
-		if ( in_array( $menu, $edit ) ) {
+		if ( in_array( $menu, $edit, true ) ) {
 			return 'edit-snippet';
-		} elseif ( in_array( $menu, $add ) ) {
+		} elseif ( in_array( $menu, $add, true ) ) {
 			return 'add-snippet';
-		} elseif ( in_array( $menu, $import ) ) {
+		} elseif ( in_array( $menu, $import, true ) ) {
 			return 'import-snippets';
-		} elseif ( in_array( $menu, $settings ) ) {
+		} elseif ( in_array( $menu, $settings, true ) ) {
 			return 'snippets-settings';
 		} else {
 			return 'snippets';
@@ -232,7 +232,7 @@ class Plugin {
 	 * If you wish to contribute a language file to be included in the Code Snippets package,
 	 * please see create an issue on GitHub: https://github.com/sheabunge/code-snippets/issues
 	 */
-	function load_textdomain() {
+	public function load_textdomain() {
 		$domain = 'code-snippets';
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
@@ -250,7 +250,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	function add_safe_mode_query_var( $url ) {
+	public function add_safe_mode_query_var( $url ) {
 
 		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
 			return add_query_arg( 'snippets-safe-mode', $_REQUEST['snippets-safe-mode'], $url );
