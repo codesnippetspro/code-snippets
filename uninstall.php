@@ -6,6 +6,7 @@
  * @since   2.0.0
  *
  * @phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
+ * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
 
 namespace Code_Snippets;

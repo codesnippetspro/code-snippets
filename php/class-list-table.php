@@ -813,6 +813,7 @@ class List_Table extends WP_List_Table {
 				implode( ',', array_fill( 0, count( $ids ), '%d' ) )
 			);
 
+			/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
 			$shared_snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
 
 			foreach ( $shared_snippets as $index => $snippet ) {

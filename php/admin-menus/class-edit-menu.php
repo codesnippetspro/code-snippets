@@ -152,6 +152,8 @@ class Edit_Menu extends Admin_Menu {
 	 * Remove the sharing status from a network snippet
 	 *
 	 * @param int $snippet_id Snippet ID.
+	 *
+	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	private function unshare_network_snippet( $snippet_id ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );

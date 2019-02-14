@@ -100,6 +100,8 @@ class DB {
 	 * @param string $table_name Name of database table to check.
 	 *
 	 * @return bool Whether the database table exists.
+	 *
+	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	public static function table_exists( $table_name ) {
 		/** @var wpdb $wpdb */
@@ -249,6 +251,7 @@ class DB {
 		$active_snippets = array();
 
 		foreach ( $queries as $table => $query ) {
+			/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
 			$results = $wpdb->get_results( $query, 'ARRAY_A' );
 			$active_snippets[ $table ] = is_array( $results ) ? $results : array();
 		}

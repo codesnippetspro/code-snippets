@@ -68,7 +68,6 @@
 		<exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotSanitized" />
 		<exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotValidated" />
 		<exclude name="WordPress.Security.ValidatedSanitizedInput.MissingUnslash" />
-		<exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
 	</rule>
 
 	<!-- class files don't need an additional file comment -->

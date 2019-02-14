@@ -187,6 +187,8 @@ class Manage_Menu extends Admin_Menu {
 
 	/**
 	 * Handle AJAX requests
+	 *
+	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	public function ajax_callback() {
 		check_ajax_referer( 'code_snippets_manage' );

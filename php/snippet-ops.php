@@ -26,15 +26,18 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 	/** @var wpdb $wpdb */
 	global $wpdb;
 
+	/* If only one ID has been passed in, defer to the get_snippet() function */
+	$ids_count = count( $ids );
+	if ( 1 === $ids_count ) {
+		return array( get_snippet( $ids[0] ) );
+	}
+
 	$db = code_snippets()->db;
 	$multisite = $db->validate_network_param( $multisite );
 	$table = $db->get_table_name( $multisite );
 
-	$ids_count = count( $ids );
-
-	/* If only one ID has been passed in, defer to the get_snippet() function */
-	if ( 1 === $ids_count ) {
-		return array( get_snippet( $ids[0] ) );
+	if ( 0 === $ids_count && $snippets = wp_cache_get( $multisite ? 'all_ms_snippets' : 'all_snippets', 'code_snippets' ) ) {
+		return $snippets;
 	}
 
 	/* Build a query containing the specified IDs if there are any */
@@ -59,7 +62,13 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 		$snippets[ $index ] = new Snippet( $snippet );
 	}
 
-	return apply_filters( 'code_snippets/get_snippets', $snippets, $multisite );
+	$snippets = apply_filters( 'code_snippets/get_snippets', $snippets, $multisite );
+
+	if ( 0 === $ids_count ) {
+		wp_cache_set( $multisite ? 'all_ms_snippets' : 'all_snippets', $snippets, 'code_snippets' );
+	}
+
+	return $snippets;
 }
 
 /**
@@ -70,6 +79,10 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 function get_all_snippet_tags() {
 	/** @var wpdb $wpdb */
 	global $wpdb;
+
+	if ( $tags = wp_cache_get( 'all_snippet_tags', 'code_snippets' ) ) {
+		return $tags;
+	}
 
 	/* Grab all tags from the database */
 	$tags = array();
@@ -83,8 +96,9 @@ function get_all_snippet_tags() {
 	}
 
 	/* Remove duplicate tags */
-
-	return array_values( array_unique( $tags, SORT_REGULAR ) );
+	$tags = array_values( array_unique( $tags, SORT_REGULAR ) );
+	wp_cache_set( 'all_snippet_tags', $tags, 'code_snippets' );
+	return $tags;
 }
 
 /**
@@ -135,7 +149,12 @@ function get_snippet( $id = 0, $multisite = null ) {
 	global $wpdb;
 
 	$id = absint( $id );
+	$multisite = code_snippets()->db->validate_network_param( $multisite );
 	$table = code_snippets()->db->get_table_name( $multisite );
+
+	if ( $snippet = wp_cache_get( $multisite ? 'ms_snippet' : 'snippet', 'code_snippets' ) ) {
+		return $snippet;
+	}
 
 	if ( 0 !== $id ) {
 
@@ -153,7 +172,9 @@ function get_snippet( $id = 0, $multisite = null ) {
 
 	$snippet->network = $multisite;
 
-	return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
+	$snippet = apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
+	wp_cache_set( $multisite ? 'ms_snippet' : 'snippet', $snippet, 'code_snippets' );
+	return $snippet;
 }
 
 /**
@@ -172,6 +193,7 @@ function activate_snippet( $id, $multisite = null ) {
 	$db = code_snippets()->db;
 	$table = $db->get_table_name( $multisite );
 
+	/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
 	$wpdb->update(
 		$table,
 		array( 'active' => '1' ),
@@ -207,6 +229,7 @@ function deactivate_snippet( $id, $multisite = null ) {
 
 	/* Set the snippet to active */
 
+	/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
 	$wpdb->update(
 		$table,
 		array( 'active' => '0' ),
@@ -241,6 +264,7 @@ function deactivate_snippet( $id, $multisite = null ) {
  * Deletes a snippet from the database
  *
  * @since 2.0
+ *
  * @uses  $wpdb to access the database
  * @uses  code_snippets()->db->get_table_name() to dynamically retrieve the name of the snippet table
  *
@@ -251,6 +275,7 @@ function delete_snippet( $id, $multisite = null ) {
 	/** @var wpdb $wpdb */
 	global $wpdb;
 
+	/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
 	$wpdb->delete(
 		code_snippets()->db->get_table_name( $multisite ),
 		array( 'id' => $id ),
@@ -271,6 +296,8 @@ function delete_snippet( $id, $multisite = null ) {
  * @param Snippet $snippet The snippet to add/update to the database.
  *
  * @return int ID of the snippet
+ *
+ * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
 function save_snippet( Snippet $snippet ) {
 	/** @var wpdb $wpdb */
@@ -379,6 +406,8 @@ function execute_snippet( $code, $id = 0, $catch_output = true ) {
  * @since 2.0
  *
  * @return bool true on success, false on failure
+ *
+ * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
 function execute_active_snippets() {
 	global $wpdb;

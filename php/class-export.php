@@ -32,6 +32,8 @@ class Export {
 	 *
 	 * @param array|int $ids        List of snippet IDs to export.
 	 * @param string    $table_name Name of database table to fetch snippets from.
+	 *
+	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	private function fetch_snippets( $ids, $table_name ) {
 		global $wpdb;
