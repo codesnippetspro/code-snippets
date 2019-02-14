@@ -1,7 +1,4 @@
 <?php
-
-namespace Code_Snippets;
-
 /**
  * HTML code for the Import Snippets page
  *
@@ -10,6 +7,8 @@ namespace Code_Snippets;
  *
  * @var Import_Menu $this
  */
+
+namespace Code_Snippets;
 
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {

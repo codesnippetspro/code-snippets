@@ -77,7 +77,6 @@ class Edit_Menu extends Admin_Menu {
 		$contextual_help->load();
 
 		// Register action hooks
-
 		if ( get_setting( 'general', 'enable_description' ) ) {
 			add_action( 'code_snippets_edit_snippet', array( $this, 'render_description_editor' ), 9 );
 		}
@@ -432,9 +431,9 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Retrieve the first error in a snippet's code
 	 *
-	 * @param $snippet_id
+	 * @param int $snippet_id Snippet ID
 	 *
-	 * @return array|bool
+	 * @return array|bool Error if execution failed, otherwise false
 	 */
 	private function get_snippet_error( $snippet_id ) {
 

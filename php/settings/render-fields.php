@@ -1,20 +1,20 @@
 <?php
-
-namespace Code_Snippets\Settings;
-
 /**
  * This file handles rendering the settings fields
  *
  * @since 2.0.0
  * @package Code_Snippets
+ * @subpackage Settings
  */
+
+namespace Code_Snippets\Settings;
 
 /**
  * Render a checkbox field for a setting
  *
  * @since 2.0.0
  *
- * @param array $atts The setting field's attributes
+ * @param array $atts The setting field's attributes.
  */
 function render_checkbox_field( $atts ) {
 	$saved_value = get_setting( $atts['section'], $atts['id'] );
@@ -26,7 +26,7 @@ function render_checkbox_field( $atts ) {
 		checked( $saved_value, true, false )
 	);
 
-	// Output the checkbox field, optionally with label
+	// Output the checkbox field, optionally with label.
 	$kses = [ 'input' => [ 'type' => [], 'name' => [], 'checked' => [] ] ];
 	if ( isset( $atts['label'] ) ) {
 		printf( '<label for="%s">%s %s</label>', esc_attr( $input_name ), wp_kses( $checkbox, $kses ), wp_kses_post( $atts['label'] ) );
@@ -45,7 +45,7 @@ function render_checkbox_field( $atts ) {
  *
  * @since 2.0.0
  *
- * @param array $atts The setting field's attributes
+ * @param array $atts The setting field's attributes.
  */
 function render_number_field( $atts ) {
 
@@ -70,7 +70,7 @@ function render_number_field( $atts ) {
 		echo ' ' . wp_kses_post( $atts['label'] );
 	}
 
-	// Add field description if it is set
+	// Add field description if it is set.
 	if ( ! empty( $atts['desc'] ) ) {
 		echo '<p class="description">', wp_kses_post( $atts['desc'] ), '</p>';
 	}

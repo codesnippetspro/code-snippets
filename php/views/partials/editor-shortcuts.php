@@ -1,13 +1,12 @@
 <?php
-
-namespace Code_Snippets;
-
 /**
  * HTML code for the editor shortcuts tooltip
  *
  * @package    Code_Snippets
  * @subpackage Views
  */
+
+namespace Code_Snippets;
 
 ?>
 
@@ -60,7 +59,7 @@ namespace Code_Snippets;
 				<td><?php esc_html_e( 'Find previous', 'code-snippets' ); ?></td>
 				<td>
 					<kbd><?php echo esc_html( $keys['Shift'] ); ?></kbd>-<kbd class="pc-key"><?php echo esc_html( $keys['Ctrl'] );
-					?></kbd><kbd class="mac-key"><?php echo esc_html( $keys['Cmd'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['G'] ); ?></kbd>
+						?></kbd><kbd class="mac-key"><?php echo esc_html( $keys['Cmd'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['G'] ); ?></kbd>
 				</td>
 			</tr>
 			<tr>
@@ -73,7 +72,7 @@ namespace Code_Snippets;
 				<td><?php esc_html_e( 'Replace all', 'code-snippets' ); ?></td>
 				<td>
 					<kbd><?php echo esc_html( $keys['Shift'] ); ?></kbd>&hyphen;<kbd class="pc-key"><?php echo esc_html( $keys['Ctrl'] );
-					?></kbd><kbd class="mac-key"><?php echo esc_html( $keys['Cmd'] ); ?></kbd><span class="mac-key">&hyphen;</span><kbd class="mac-key"><?php echo esc_html( $keys['Option'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['R'] ); ?></kbd>
+						?></kbd><kbd class="mac-key"><?php echo esc_html( $keys['Cmd'] ); ?></kbd><span class="mac-key">&hyphen;</span><kbd class="mac-key"><?php echo esc_html( $keys['Option'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['R'] ); ?></kbd>
 				</td>
 			</tr>
 			<tr>

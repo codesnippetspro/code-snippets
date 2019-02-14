@@ -133,7 +133,7 @@ class DB {
 	/**
 	 * Create a snippet table if it does not already exist
 	 *
-	 * @param $table_name
+	 * @param string $table_name Name of database table
 	 */
 	public static function create_missing_table( $table_name ) {
 

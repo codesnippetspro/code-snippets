@@ -64,6 +64,9 @@ class Manage_Menu extends Admin_Menu {
 		parent::register();
 	}
 
+	/**
+	 * Add menu pages for the compact menu
+	 */
 	public function register_compact_menu() {
 
 		if ( ! code_snippets()->admin->is_compact_menu() ) {
@@ -166,9 +169,9 @@ class Manage_Menu extends Admin_Menu {
 	/**
 	 * Handles saving the user's snippets per page preference
 	 *
-	 * @param  mixed  $status
+	 * @param  mixed  $status Current screen option status
 	 * @param  string $option The screen option name
-	 * @param  mixed  $value
+	 * @param  mixed  $value  Screen option value
 	 *
 	 * @return mixed
 	 */

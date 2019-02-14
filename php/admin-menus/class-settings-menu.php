@@ -4,6 +4,7 @@ namespace Code_Snippets;
 
 /**
  * This class handles the settings admin menu
+ *
  * @since 2.4.0
  * @package Code_Snippets
  */

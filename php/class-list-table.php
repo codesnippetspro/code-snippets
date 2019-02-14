@@ -26,7 +26,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class Snippets_List_Table extends WP_List_Table {
 
 	/**
-	 * true if the current screen is in the network admin
+	 * Whether the current screen is in the network admin
 	 * @var bool
 	 */
 	public $is_network;
@@ -152,15 +152,14 @@ class Snippets_List_Table extends WP_List_Table {
 
 		if ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) {
 			// display special links if on a subsite and dealing with a network-active snippet
-
 			if ( $snippet->active ) {
 				$actions['network_active'] = esc_html__( 'Network Active', 'code-snippets' );
 			} else {
 				$actions['network_only'] = esc_html__( 'Network Only', 'code-snippets' );
 			}
 		} elseif ( ! $snippet->shared_network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
-			// if the snippet is a shared network snippet, only display extra actions if the user has network permissions
 
+			// if the snippet is a shared network snippet, only display extra actions if the user has network permissions
 			$simple_actions = array(
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
@@ -781,7 +780,7 @@ class Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 *
+	 * Fetch all shared network snippets for the current site
 	 */
 	private function fetch_shared_network_snippets() {
 		/** @var \wpdb $wpdb */
@@ -931,8 +930,7 @@ class Snippets_List_Table extends WP_List_Table {
 		/* Get the current data */
 		$data = $snippets[ $status ];
 
-		/* Decide how many records per page to show by
-		   getting the user's setting in the Screen Options panel */
+		/* Decide how many records per page to show by getting the user's setting in the Screen Options panel */
 		$sort_by = $screen->get_option( 'per_page', 'option' );
 		$per_page = get_user_meta( $user, $sort_by, true );
 
@@ -952,12 +950,10 @@ class Snippets_List_Table extends WP_List_Table {
 		/* Check how many items are in the data array */
 		$total_items = count( $data );
 
-		/* The WP_List_Table class does not handle pagination for us, so we need
-		   to ensure that the data is trimmed to only the current page. */
+		/* The WP_List_Table class does not handle pagination for us, so we need to ensure that the data is trimmed to only the current page. */
 		$data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
 
-		/* Now we can add our *sorted* data to the items property,
-		   where it can be used by the rest of the class. */
+		/* Now we can add our *sorted* data to the items property, where it can be used by the rest of the class. */
 		$this->items = $data;
 
 		/* We register our pagination options and calculations */
@@ -1041,7 +1037,7 @@ class Snippets_List_Table extends WP_List_Table {
 	private function search_callback( $snippet ) {
 		static $term;
 		if ( is_null( $term ) ) {
-			$term = stripslashes( $_REQUEST['s'] );
+			$term = sanitize_text_field( stripslashes( $_REQUEST['s'] ) );
 		}
 
 		$fields = array( 'name', 'desc', 'code', 'tags_list' );
@@ -1064,7 +1060,7 @@ class Snippets_List_Table extends WP_List_Table {
 	 * @return bool The result of the filter
 	 */
 	private function tags_filter_callback( $snippet ) {
-		$tags = explode( ',', $_GET['tag'] );
+		$tags = explode( ',', sanitize_text_field( wp_unslash( $_GET['tag'] ) ) );
 
 		foreach ( $tags as $tag ) {
 			if ( in_array( $tag, $snippet->tags, true ) ) {

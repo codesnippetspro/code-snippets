@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Code Snippets - An easy, clean and simple way to add code snippets to your site.
  *

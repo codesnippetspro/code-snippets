@@ -129,11 +129,13 @@ class Import {
 	}
 
 	/**
+	 * Save imported snippets to the database
+	 *
 	 * @access private
 	 *
-	 * @param $snippets
+	 * @param array $snippets List of snippets to save
 	 *
-	 * @return array
+	 * @return array IDs of imported snippets
 	 */
 	private function save_snippets( $snippets ) {
 

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Functions to perform snippet operations
  *

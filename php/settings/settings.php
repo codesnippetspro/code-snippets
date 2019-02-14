@@ -1,9 +1,4 @@
 <?php
-
-namespace Code_Snippets\Settings;
-
-use function Code_Snippets\get_editor_themes;
-
 /**
  * This file registers the settings
  *
@@ -11,10 +6,14 @@ use function Code_Snippets\get_editor_themes;
  * @subpackage Settings
  */
 
+namespace Code_Snippets\Settings;
+
+use function Code_Snippets\get_editor_themes;
+
 /**
  * Add a new option for either the current site or the current network
  *
- * @param bool   $network Whether to add a network-wide option
+ * @param bool   $network Whether to add a network-wide option.
  * @param string $option  Name of option to add. Expected to not be SQL-escaped.
  * @param mixed  $value   Option value, can be anything. Expected to not be SQL-escaped.
  *
@@ -27,7 +26,7 @@ function add_self_option( $network, $option, $value ) {
 /**
  * Retrieves an option value based on an option name from either the current site or the current network
  *
- * @param bool   $network Whether to get a network-wide option
+ * @param bool   $network Whether to get a network-wide option.
  * @param string $option  Name of option to retrieve. Expected to not be SQL-escaped.
  * @param mixed  $default Optional value to return if option doesn't exist. Default false.
  *
@@ -40,7 +39,7 @@ function get_self_option( $network, $option, $default = false ) {
 /**
  * Update the value of an option that was already added on the current site or the current network
  *
- * @param bool   $network Whether to update a network-wide option
+ * @param bool   $network Whether to update a network-wide option.
  * @param string $option  Name of option. Expected to not be SQL-escaped.
  * @param mixed  $value   Option value. Expected to not be SQL-escaped.
  *
@@ -114,8 +113,8 @@ function get_settings_values() {
 /**
  * Retrieve an individual setting field value
  *
- * @param  string $section The ID of the section the setting belongs to
- * @param  string $field   The ID of the setting field
+ * @param  string $section ID of the section the setting belongs to.
+ * @param  string $field   ID of the setting field.
  *
  * @return array
  */
@@ -127,6 +126,7 @@ function get_setting( $section, $field ) {
 
 /**
  * Retrieve the settings sections
+ *
  * @return array
  */
 function get_settings_sections() {
@@ -202,18 +202,18 @@ add_action( 'admin_init', __NAMESPACE__ . '\\register_plugin_settings' );
 /**
  * Validate the settings
  *
- * @param  array $input The sent settings
+ * @param array $input The received settings.
  *
- * @return array        The validated settings
+ * @return array The validated settings.
  */
 function code_snippets_settings_validate( array $input ) {
 	$settings = get_settings_values();
 	$settings_fields = get_settings_fields();
 
-	// Don't directly loop through $input as it does not include as deselected checkboxes
+	// Don't directly loop through $input as it does not include as deselected checkboxes.
 	foreach ( $settings_fields as $section_id => $fields ) {
 
-		// Loop through fields
+		// Loop through fields.
 		foreach ( $fields as $field_id => $field ) {
 
 			switch ( $field['type'] ) {

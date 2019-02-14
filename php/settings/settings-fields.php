@@ -1,4 +1,10 @@
 <?php
+/**
+ * Manages the settings fields definitions
+ *
+ * @package    Code_Snippets
+ * @subpackage Settings
+ */
 
 namespace Code_Snippets\Settings;
 

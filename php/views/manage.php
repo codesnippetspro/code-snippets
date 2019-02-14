@@ -1,7 +1,4 @@
 <?php
-
-namespace Code_Snippets;
-
 /**
  * HTML code for the Manage Snippets page
  *
@@ -10,6 +7,8 @@ namespace Code_Snippets;
  *
  * @var Manage_Menu $this
  */
+
+namespace Code_Snippets;
 
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -48,7 +47,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			'js'   => __( 'Scripts', 'code-snippets' ),
 		);
 
-		$current_type = isset( $_GET['type'], $types[ $_GET['type'] ] ) ? $_GET['type'] : 'all';
+		$current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : 'all';
+		$current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 
 		foreach ( $types as $type_name => $label ) {
 			if ( $type_name === $current_type ) {
