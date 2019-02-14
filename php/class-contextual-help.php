@@ -21,7 +21,7 @@ class Contextual_Help {
 	public $screen_name;
 
 	/**
-	 * @param string $screen_name
+	 * @param string $screen_name Name of current screen. See get_current_screen().
 	 */
 	public function __construct( $screen_name ) {
 		$this->screen_name = $screen_name;

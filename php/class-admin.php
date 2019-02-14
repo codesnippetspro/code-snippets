@@ -99,13 +99,13 @@ class Admin {
 
 	/**
 	 * Prevent the snippet currently being saved from being executed
-	 * so it is not run twice (once normally, once
+	 * so it is not run twice (once normally, once when validated)
 	 *
-	 * @param bool   $exec Whether the snippet will be executed
-	 * @param int    $exec_id The ID of the snippet being executed
-	 * @param string $table_name
+	 * @param bool   $exec       Whether the snippet will be executed.
+	 * @param int    $exec_id    ID of the snippet being executed.
+	 * @param string $table_name Name of the database table the snippet is stored in.
 	 *
-	 * @return bool Whether the snippet will be executed
+	 * @return bool Whether the snippet will be executed.
 	 */
 	public function prevent_exec_on_save( $exec, $exec_id, $table_name ) {
 

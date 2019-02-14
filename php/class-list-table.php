@@ -114,13 +114,12 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Retrieve a URL to perform an action on a snippet
 	 *
-	 * @param string  $action
-	 * @param Snippet $snippet
-	 * @param bool    $escape
+	 * @param string  $action  Name of action to produce a link for.
+	 * @param Snippet $snippet Snippet object to produce link for.
 	 *
-	 * @return string
+	 * @return string URL to perform action.
 	 */
-	public function get_action_link( $action, $snippet, $escape = true ) {
+	public function get_action_link( $action, $snippet ) {
 
 		// redirect actions to the network dashboard for shared network snippets
 		$network_redirect = $snippet->shared_network && ! $this->is_network &&
@@ -133,11 +132,9 @@ class List_Table extends WP_List_Table {
 
 		$query_args = array( 'action' => $action, 'id' => $snippet->id, 'scope' => $snippet->scope );
 
-		$url = $network_redirect ?
+		return $network_redirect ?
 			add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) :
 			add_query_arg( $query_args );
-
-		return $escape ? esc_url( $url ) : $url;
 	}
 
 	/**
@@ -167,13 +164,13 @@ class List_Table extends WP_List_Table {
 			);
 
 			foreach ( $simple_actions as $action => $label ) {
-				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', $this->get_action_link( $action, $snippet ), $label );
+				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', esc_url( $this->get_action_link( $action, $snippet ) ), $label );
 			}
 
 			$actions['delete'] = sprintf(
 				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
 				esc_html__( 'Delete', 'code-snippets' ),
-				$this->get_action_link( 'delete', $snippet ),
+				esc_url( $this->get_action_link( 'delete', $snippet ) ),
 				esc_js( sprintf(
 					'return confirm("%s");',
 					esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
@@ -188,9 +185,9 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Retrieve the code for a snippet activation switch
 	 *
-	 * @param Snippet $snippet
+	 * @param Snippet $snippet Snippet object.
 	 *
-	 * @return string
+	 * @return string HTML code for activation switch.
 	 */
 	protected function column_activate( $snippet ) {
 
@@ -217,7 +214,7 @@ class List_Table extends WP_List_Table {
 
 		return sprintf(
 			'<a class="%s" href="%s" title="%s"></a> ',
-			$class, $this->get_action_link( $action, $snippet ), esc_html( $label )
+			esc_attr( $class ), esc_url( $this->get_action_link( $action, $snippet ) ), esc_html( $label )
 		);
 	}
 
@@ -316,9 +313,9 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Output the content of the priority column
 	 *
-	 * @param Snippet $snippet
+	 * @param Snippet $snippet Snippet object.
 	 *
-	 * @return string
+	 * @return string HTML code for priority column.
 	 */
 	protected function column_priority( $snippet ) {
 		return sprintf( '<input type="number" class="snippet-priority" value="%d" step="1" disabled>', $snippet->priority );
@@ -580,11 +577,11 @@ class List_Table extends WP_List_Table {
 	 * @uses deactivate_snippet() to deactivate snippets
 	 * @uses delete_snippet() to delete snippets
 	 *
-	 * @param int    $id
-	 * @param string $action
-	 * @param string $scope
+	 * @param int    $id     Snippet ID.
+	 * @param string $action Action to perform.
+	 * @param string $scope  Snippet scope; used for cache busting CSS and JS snippets.
 	 *
-	 * @return bool|string Result of performing action
+	 * @return bool|string Result of performing action.
 	 */
 	private function perform_action( $id, $action, $scope = '' ) {
 
@@ -965,14 +962,14 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Determine the sort ordering for two pieces of data
+	 * Determine the sort ordering for two pieces of data.
 	 *
 	 * @ignore
 	 *
-	 * @param string $a_data
-	 * @param string $b_data
+	 * @param string $a_data First piece of data.
+	 * @param string $b_data Second piece of data.
 	 *
-	 * @return int
+	 * @return int Returns -1 if $a_data is less than $b_data; 0 if they are equal; 1 otherwise
 	 */
 	private function get_sort_direction( $a_data, $b_data ) {
 
@@ -1124,7 +1121,7 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Clone a selection of snippets
 	 *
-	 * @param array $ids
+	 * @param array $ids List of snippet IDs.
 	 */
 	private function clone_snippets( $ids ) {
 		$snippets = get_snippets( $ids, $this->is_network );

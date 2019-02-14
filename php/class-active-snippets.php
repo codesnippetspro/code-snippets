@@ -22,8 +22,8 @@ class Active_Snippets {
 	/**
 	 * Increment the asset revision for a specified scope
 	 *
-	 * @param string $scope
-	 * @param bool   $network
+	 * @param string $scope   Name of snippet scope.
+	 * @param bool   $network Whether to increase for the whole network or the current site.
 	 */
 	public function increment_rev( $scope, $network ) {
 		if ( $network && ! is_multisite() ) {
@@ -51,9 +51,9 @@ class Active_Snippets {
 	/**
 	 * Retrieve the current asset revision number
 	 *
-	 * @param string $scope
+	 * @param string $scope Name of snippet scope.
 	 *
-	 * @return int
+	 * @return int Current asset revision number.
 	 */
 	public function get_rev( $scope ) {
 		$rev = 0;
@@ -114,7 +114,7 @@ class Active_Snippets {
 	/**
 	 * Set the necessary headers to mark this page as an asset
 	 *
-	 * @param string $mime_type
+	 * @param string $mime_type File MIME type used to set Content-Type header.
 	 */
 	private static function do_asset_headers( $mime_type ) {
 		$expiry = 365 * 24 * 60 * 60; // year in seconds

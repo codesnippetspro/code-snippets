@@ -150,7 +150,7 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Remove the sharing status from a network snippet
 	 *
-	 * @param int $snippet_id
+	 * @param int $snippet_id Snippet ID
 	 */
 	private function unshare_network_snippet( $snippet_id ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
@@ -209,7 +209,7 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Validate the snippet code before saving to database
 	 *
-	 * @param Snippet $snippet
+	 * @param Snippet $snippet Snippet object
 	 *
 	 * @return bool true if code produces errors
 	 */
@@ -591,15 +591,13 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Retrieve a list of submit actions for a given snippet
 	 *
-	 * @param Snippet $snippet
-	 * @param bool    $extra_actions
+	 * @param Snippet $snippet       Snippet object
+	 * @param bool    $extra_actions Whether to include additional actions alongside save actions
 	 *
 	 * @return array
 	 */
 	public function get_actions_list( $snippet, $extra_actions = true ) {
-		$actions = array(
-			'save_snippet' => __( 'Save Changes', 'code-snippets' ),
-		);
+		$actions = [ 'save_snippet' => __( 'Save Changes', 'code-snippets' ) ];
 
 		if ( 'html' !== $snippet->type ) {
 
@@ -638,9 +636,9 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Render the submit buttons for a code snippet
 	 *
-	 * @param Snippet $snippet
-	 * @param string  $size
-	 * @param bool    $extra_actions
+	 * @param Snippet $snippet       Snippet object
+	 * @param string  $size          Additional size classes to pass to button
+	 * @param bool    $extra_actions Whether to include additional buttons alongside save buttons
 	 */
 	public function render_submit_buttons( $snippet, $size = '', $extra_actions = true ) {
 
@@ -671,7 +669,9 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * @param array $scopes
+	 * Render a list of scopes as ratio controls
+	 *
+	 * @param array $scopes List of scopes to render, with scope name keyed to label.
 	 */
 	public function print_scopes_list( $scopes ) {
 		$scope_icons = Snippet::get_scope_icons();

@@ -28,8 +28,8 @@ class Export {
 	/**
 	 * Fetch the selected snippets from the database
 	 *
-	 * @param array|int $ids
-	 * @param string    $table_name
+	 * @param array|int $ids        List of snippet IDs to export.
+	 * @param string    $table_name Name of database table to fetch snippets from.
 	 */
 	private function fetch_snippets( $ids, $table_name ) {
 		global $wpdb;
@@ -59,8 +59,8 @@ class Export {
 	/**
 	 * Set up the current page to act like a downloadable file instead of being shown in the browser
 	 *
-	 * @param string $format
-	 * @param string $mime_type
+	 * @param string $format    File format. Used for file extension.
+	 * @param string $mime_type File MIME type. Used for Content-Type header.
 	 */
 	private function do_headers( $format, $mime_type = '' ) {
 

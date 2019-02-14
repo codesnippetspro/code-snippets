@@ -58,9 +58,9 @@ class Shortcodes {
 	/**
 	 * Enqueue the syntax highlighting assets if they are required for the current posts
 	 *
-	 * @param array $posts
+	 * @param array $posts List of currently visible posts.
 	 *
-	 * @return array
+	 * @return array Unchanged list of posts.
 	 */
 	public function enqueue_highlighting( $posts ) {
 
@@ -102,9 +102,9 @@ class Shortcodes {
 	/**
 	 * Render the value of a content shortcode
 	 *
-	 * @param array $atts
+	 * @param array $atts Shortcode attributes.
 	 *
-	 * @return string
+	 * @return string Shortcode content.
 	 */
 	public function render_content_shortcode( $atts ) {
 
@@ -166,10 +166,10 @@ class Shortcodes {
 	/**
 	 * Render the source code of a given snippet
 	 *
-	 * @param Snippet $snippet
-	 * @param array   $atts
+	 * @param Snippet $snippet Snippet object.
+	 * @param array   $atts    Shortcode attributes.
 	 *
-	 * @return string
+	 * @return string Shortcode content.
 	 */
 	private function render_snippet_source( Snippet $snippet, $atts = [] ) {
 		$atts = array_merge( [ 'line_numbers' => false ], $atts );
@@ -193,9 +193,9 @@ class Shortcodes {
 	/**
 	 * Render the value of a source shortcode
 	 *
-	 * @param array $atts
+	 * @param array $atts Shortcode attributes.
 	 *
-	 * @return string
+	 * @return string Shortcode content.
 	 */
 	public function render_source_shortcode( $atts ) {
 

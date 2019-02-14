@@ -100,9 +100,9 @@ class Admin_Menu {
 	/**
 	 * Retrieve a result message based on a posted status
 	 *
-	 * @param array  $messages
-	 * @param string $request_var
-	 * @param string $class
+	 * @param array  $messages    List of possible messages to display.
+	 * @param string $request_var Name of $_REQUEST variable to check.
+	 * @param string $class       Class to use on buttons. Default 'updated'.
 	 *
 	 * @return string|bool The result message if a valid status was received, otherwise false
 	 */
@@ -127,9 +127,9 @@ class Admin_Menu {
 	/**
 	 * Print a result message based on a posted status
 	 *
-	 * @param array  $messages
-	 * @param string $request_var
-	 * @param string $class
+	 * @param array  $messages    List of possible messages to display.
+	 * @param string $request_var Name of $_REQUEST variable to check.
+	 * @param string $class       Class to use on buttons. Default 'updated'.
 	 */
 	protected function show_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
 		$message = $this->get_result_message( $messages, $request_var, $class );
@@ -164,7 +164,7 @@ class Admin_Menu {
 	/**
 	 * Render a list of links to other pages in the page title
 	 *
-	 * @param array $actions
+	 * @param array $actions List of actions to render as links, as array values.
 	 */
 	protected function page_title_actions( $actions ) {
 

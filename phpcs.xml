@@ -77,7 +77,6 @@
 		<exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotValidated" />
 		<exclude name="WordPress.Security.ValidatedSanitizedInput.MissingUnslash" />
 		<exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
-		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 	</rule>
 
 	<!-- class files don't need an additional file comment -->

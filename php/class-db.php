@@ -48,9 +48,9 @@ class DB {
 	/**
 	 * Validate the multisite parameter of the get_table_name() function
 	 *
-	 * @param bool|null $network
+	 * @param bool|null $network Value of multisite parameter – true for multisite, false for single-site.
 	 *
-	 * @return bool
+	 * @return bool Validated value of multisite parameter.
 	 */
 	public function validate_network_param( $network ) {
 
@@ -93,12 +93,12 @@ class DB {
 	/**
 	 * Determine whether a database table exists
 	 *
-	 * @param string $table_name
+	 * @param string $table_name Name of database table to check.
 	 *
-	 * @return bool
+	 * @return bool Whether the database table exists.
 	 */
 	public static function table_exists( $table_name ) {
-		/** @var \wpdb $wpdb */
+		/** @var wpdb $wpdb */
 		global $wpdb;
 		return $wpdb->get_var( sprintf( "SHOW TABLES LIKE '%s'", $table_name ) ) === $table_name;
 	}
@@ -186,10 +186,12 @@ class DB {
 	}
 
 	/**
-	 * @param int    $count
-	 * @param string $placeholder
+	 * Build a list of formatting placeholders for an array of data.
 	 *
-	 * @return string
+	 * @param int    $count       Length of data.
+	 * @param string $placeholder Placeholder to use. Defaults to string placeholder.
+	 *
+	 * @return string List of placeholders, ready for inclusion in query.
 	 */
 	private static function build_format_list( $count, $placeholder = '%s' ) {
 		return implode( ',', array_fill( 0, $count, $placeholder ) );
