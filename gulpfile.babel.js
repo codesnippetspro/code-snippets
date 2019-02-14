@@ -150,11 +150,7 @@ gulp.task('i18n', gulp.parallel(['makepot', 'gettext']));
 
 gulp.task('phpcs', () =>
 	gulp.src(src_files.php)
-		.pipe(phpcs({
-			bin: 'vendor/bin/phpcs',
-			standard: 'codesniffer.ruleset.xml',
-			showSniffCode: true
-		}))
+		.pipe(phpcs({bin: 'vendor/bin/phpcs', showSniffCode: true}))
 		.pipe(phpcs.reporter('log')));
 
 gulp.task('phpunit', () =>
