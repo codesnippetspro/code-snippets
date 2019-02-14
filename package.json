@@ -11,7 +11,8 @@
         "build": "gulp",
         "watch": "gulp watch",
         "package": "gulp package",
-        "test": "gulp test"
+        "test": "gulp test",
+        "phpcs": "vendor/bin/phpcs -s code-snippets.php php/"
     },
     "repository": {
         "type": "git",
