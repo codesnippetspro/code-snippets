@@ -61,6 +61,9 @@ class Plugin {
 		}
 	}
 
+	/**
+	 * Initialise classes and include files
+	 */
 	public function load_plugin() {
 		$includes_path = __DIR__;
 
@@ -91,6 +94,13 @@ class Plugin {
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 	}
 
+	/**
+	 * Disable snippet execution if the necessary query var is set
+	 *
+	 * @param bool $execute_snippets Current filter value.
+	 *
+	 * @return bool New filter value.
+	 */
 	public function disable_snippet_execution( $execute_snippets ) {
 
 		if ( isset( $_GET['snippets-safe-mode'] ) && $_GET['snippets-safe-mode'] && $this->current_user_can() ) {

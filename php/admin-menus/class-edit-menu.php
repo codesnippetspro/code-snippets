@@ -181,6 +181,13 @@ class Edit_Menu extends Admin_Menu {
 		}
 	}
 
+	/**
+	 * Display a custom error message when a code error is encountered
+	 *
+	 * @param string $out Error message content.
+	 *
+	 * @return string New error message.
+	 */
 	private function code_error_callback( $out ) {
 		$error = error_get_last();
 
