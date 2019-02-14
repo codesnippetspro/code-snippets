@@ -12,11 +12,11 @@ use function Code_Snippets\Settings\get_setting;
 /**
  * Get the attributes for the code editor
  *
- * @param string $type          Type of code editor – either 'php' or 'css
- * @param array  $override_atts Pass an array of attributes to override the saved ones
- * @param bool   $json_encode   Encode the data as JSON
+ * @param string $type          Type of code editor – either 'php', 'css', 'js', or 'html'.
+ * @param array  $override_atts Pass an array of attributes to override the saved ones.
+ * @param bool   $json_encode   Encode the data as JSON.
  *
- * @return array|string Array if $json_encode is false, JSON string if it is true
+ * @return array|string Array if $json_encode is false, JSON string if it is true.
  */
 function get_code_editor_atts( $type, $override_atts = [], $json_encode = true ) {
 
@@ -94,7 +94,7 @@ function enqueue_code_editor_assets() {
 /**
  * Retrieve a list of the available CodeMirror themes
  *
- * @return array the available themes
+ * @return array The available themes.
  */
 function get_editor_themes() {
 	static $themes = null;

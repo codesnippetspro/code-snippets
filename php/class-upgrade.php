@@ -26,8 +26,8 @@ class Upgrade {
 	/**
 	 * Class constructor
 	 *
-	 * @param string $version Current plugin version
-	 * @param DB     $db Instance of database class
+	 * @param string $version Current plugin version.
+	 * @param DB     $db      Instance of database class.
 	 */
 	public function __construct( $version, DB $db ) {
 		$this->db = $db;

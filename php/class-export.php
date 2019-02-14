@@ -20,8 +20,8 @@ class Export {
 	/**
 	 * Class constructor
 	 *
-	 * @param array|int $ids        List of snippet IDs to export
-	 * @param string    $table_name Name of the database table to fetch snippets from
+	 * @param array|int $ids        List of snippet IDs to export.
+	 * @param string    $table_name Name of the database table to fetch snippets from.
 	 */
 	public function __construct( $ids, $table_name = '' ) {
 		$this->fetch_snippets( $ids, $table_name );

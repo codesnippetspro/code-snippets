@@ -61,9 +61,8 @@
 		<!-- this is a useful feature -->
 		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound" />
 
-		<!-- I don't always agree with these documentation rules -->
+		<!-- seems unnecessary -->
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
-		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
 
 		<!-- This is not always necessary -->
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />

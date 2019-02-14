@@ -17,10 +17,10 @@ use wpdb;
  * @uses  $wpdb to query the database for snippets
  * @uses  code_snippets()->db->get_table_name() to dynamically retrieve the snippet table name
  *
- * @param  array     $ids       The IDs of the snippets to fetch
- * @param  bool|null $multisite Retrieve multisite-wide or site-wide snippets?
+ * @param  array     $ids       The IDs of the snippets to fetch.
+ * @param  bool|null $multisite Retrieve multisite-wide snippets (true) or site-wide snippets (false).
  *
- * @return array                An array of Snippet objects
+ * @return array An array of Snippet objects.
  */
 function get_snippets( array $ids = array(), $multisite = null ) {
 	/** @var wpdb $wpdb */
@@ -90,11 +90,11 @@ function get_all_snippet_tags() {
 /**
  * Make sure that the tags are a valid array
  *
- * @since 2.0
+ * @since 2.0.0
  *
- * @param  mixed $tags The tags to convert into an array
+ * @param mixed $tags The tags to convert into an array.
  *
- * @return array       The converted tags
+ * @return array The converted tags.
  */
 function code_snippets_build_tags_array( $tags ) {
 
@@ -120,15 +120,15 @@ function code_snippets_build_tags_array( $tags ) {
  * Will return empty snippet object if no snippet
  * ID is specified
  *
- * @since 2.0
+ * @since 2.0.0
  *
- * @uses  $wpdb to query the database for snippets
- * @uses  code_snippets()->db->get_table_name() to dynamically retrieve the snippet table name
+ * @uses $wpdb to query the database for snippets
+ * @uses code_snippets()->db->get_table_name() to dynamically retrieve the snippet table name
  *
- * @param  int          $id        The ID of the snippet to retrieve. 0 to build a new snippet
- * @param  boolean|null $multisite Retrieve a multisite-wide or site-wide snippet?
+ * @param int          $id        The ID of the snippet to retrieve. 0 to build a new snippet.
+ * @param boolean|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
  *
- * @return Snippet                 A single snippet object
+ * @return Snippet A single snippet object
  */
 function get_snippet( $id = 0, $multisite = null ) {
 	/** @var wpdb $wpdb */
@@ -159,12 +159,12 @@ function get_snippet( $id = 0, $multisite = null ) {
 /**
  * Activates a snippet
  *
- * @since 2.0
+ * @since 2.0.0
  *
- * @uses  $wpdb to set the snippet's active status
+ * @uses $wpdb to set the snippet's active status
  *
- * @param int       $id        The ID of the snippet to activate
- * @param bool|null $multisite Are the snippets multisite-wide or site-wide?
+ * @param int       $id        ID of the snippet to activate.
+ * @param bool|null $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
  */
 function activate_snippet( $id, $multisite = null ) {
 	/** @var wpdb $wpdb */
@@ -192,12 +192,12 @@ function activate_snippet( $id, $multisite = null ) {
 /**
  * Deactivate a snippet
  *
- * @since 2.0
+ * @since 2.0.0
  *
- * @uses  $wpdb to set the snippets' active status
+ * @uses $wpdb to set the snippets' active status
  *
- * @param int       $id        The ID of the snippet to deactivate
- * @param bool|null $multisite Are the snippets multisite-wide or site-wide?
+ * @param int       $id        ID of the snippet to deactivate.
+ * @param bool|null $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
  */
 function deactivate_snippet( $id, $multisite = null ) {
 	/** @var wpdb $wpdb */
@@ -244,8 +244,8 @@ function deactivate_snippet( $id, $multisite = null ) {
  * @uses  $wpdb to access the database
  * @uses  code_snippets()->db->get_table_name() to dynamically retrieve the name of the snippet table
  *
- * @param int       $id        The ID of the snippet to delete
- * @param bool|null $multisite Delete from site-wide or network-wide table?
+ * @param int       $id        ID of the snippet to delete.
+ * @param bool|null $multisite Delete from network-wide (true) or site-wide (false) table.
  */
 function delete_snippet( $id, $multisite = null ) {
 	/** @var wpdb $wpdb */
@@ -268,9 +268,9 @@ function delete_snippet( $id, $multisite = null ) {
  * @uses  $wpdb to update/add the snippet to the database
  * @uses  code_snippets()->db->get_table_name() To dynamically retrieve the name of the snippet table
  *
- * @param Snippet $snippet The snippet to add/update to the database
+ * @param Snippet $snippet The snippet to add/update to the database.
  *
- * @return int                  The ID of the snippet
+ * @return int ID of the snippet
  */
 function save_snippet( Snippet $snippet ) {
 	/** @var wpdb $wpdb */
@@ -310,9 +310,9 @@ function save_snippet( Snippet $snippet ) {
 /**
  * Update a snippet entry given a list of fields
  *
- * @param int   $snippet_id The ID of the snippet to update
- * @param array $fields     An array of fields mapped to their values
- * @param bool  $network    Whether the snippet is network-wide or site-wide
+ * @param int   $snippet_id ID of the snippet to update.
+ * @param array $fields     An array of fields mapped to their values.
+ * @param bool  $network    Whether the snippet is network-wide or site-wide.
  */
 function update_snippet_fields( $snippet_id, $fields, $network = null ) {
 	/** @var wpdb $wpdb */
@@ -342,16 +342,15 @@ function update_snippet_fields( $snippet_id, $fields, $network = null ) {
 /**
  * Execute a snippet
  *
- * Code must NOT be escaped, as
- * it will be executed directly
+ * Code must NOT be escaped, as it will be executed directly.
  *
- * @since 2.0
+ * @since 2.0.0
  *
- * @param string $code         The snippet code to execute
- * @param int    $id           The snippet ID
- * @param bool   $catch_output Whether to attempt to suppress the output of execution using buffers
+ * @param string $code         Snippet code to execute.
+ * @param int    $id           Snippet ID.
+ * @param bool   $catch_output Whether to attempt to suppress the output of execution using buffers.
  *
- * @return mixed        The result of the code execution
+ * @return mixed Result of the code execution
  */
 function execute_snippet( $code, $id = 0, $catch_output = true ) {
 

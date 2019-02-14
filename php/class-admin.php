@@ -77,9 +77,9 @@ class Admin {
 	 *
 	 * @since 1.7.1
 	 *
-	 * @param  array $menu_items The current mu menu items
+	 * @param array $menu_items Current mu menu items.
 	 *
-	 * @return array             The modified mu menu items
+	 * @return array Modified mu menu items.
 	 */
 	public function mu_menu_items( $menu_items ) {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
@@ -131,11 +131,11 @@ class Admin {
 	/**
 	 * Adds a link pointing to the Manage Snippets page
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
-	 * @param  array $links The existing plugin action links
+	 * @param array $links Existing plugin action links.
 	 *
-	 * @return array        The modified plugin action links
+	 * @return array Modified plugin action links
 	 */
 	public function plugin_settings_link( $links ) {
 		array_unshift( $links, sprintf(
@@ -151,12 +151,12 @@ class Admin {
 	/**
 	 * Adds extra links related to the plugin
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
-	 * @param  array  $links The existing plugin info links
-	 * @param  string $file The plugin the links are for
+	 * @param array  $links Existing plugin info links.
+	 * @param string $file  The plugin the links are for.
 	 *
-	 * @return array         The modified plugin info links
+	 * @return array The modified plugin info links.
 	 */
 	public function plugin_meta_links( $links, $file ) {
 

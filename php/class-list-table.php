@@ -95,10 +95,10 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Define the output of all columns that have no callback function
 	 *
-	 * @param Snippet $snippet     The snippet used for the current row
-	 * @param string  $column_name The name of the column being printed
+	 * @param Snippet $snippet     The snippet used for the current row.
+	 * @param string  $column_name The name of the column being printed.
 	 *
-	 * @return string The content of the column to output
+	 * @return string The content of the column to output.
 	 */
 	protected function column_default( $snippet, $column_name ) {
 
@@ -142,9 +142,9 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Build a list of action links for individual snippets
 	 *
-	 * @param Snippet $snippet The current snippet
+	 * @param Snippet $snippet The current snippet.
 	 *
-	 * @return array The action links HTML
+	 * @return array The action links HTML.
 	 */
 	private function get_snippet_action_links( Snippet $snippet ) {
 		$actions = array();
@@ -223,9 +223,9 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Build the content of the snippet name column
 	 *
-	 * @param Snippet $snippet The snippet being used for the current row
+	 * @param Snippet $snippet The snippet being used for the current row.
 	 *
-	 * @return string The content of the column to output
+	 * @return string The content of the column to output.
 	 */
 	protected function column_name( $snippet ) {
 
@@ -267,9 +267,9 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Builds the checkbox column content
 	 *
-	 * @param Snippet $snippet The snippet being used for the current row
+	 * @param Snippet $snippet The snippet being used for the current row.
 	 *
-	 * @return string The column content to be printed
+	 * @return string The column content to be printed.
 	 */
 	protected function column_cb( $snippet ) {
 
@@ -288,9 +288,9 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @since 2.0
 	 *
-	 * @param Snippet $snippet The snippet being used for the current row
+	 * @param Snippet $snippet The snippet being used for the current row.
 	 *
-	 * @return string The column output
+	 * @return string The column output.
 	 */
 	protected function column_tags( $snippet ) {
 
@@ -315,9 +315,9 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Output the content of the priority column
 	 *
-	 * @param Snippet $snippet Snippet object.
+	 * @param Snippet $snippet The snippet being used for the current row.
 	 *
-	 * @return string HTML code for priority column.
+	 * @return string The column output.
 	 */
 	protected function column_priority( $snippet ) {
 		return sprintf( '<input type="number" class="snippet-priority" value="%d" step="1" disabled>', $snippet->priority );
@@ -496,7 +496,7 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Add filters and extra actions above and below the table
 	 *
-	 * @param string $which Are the actions displayed on the table top or bottom
+	 * @param string $which Whether the actions are displayed on the table top (true) or bottom (false).
 	 */
 	public function extra_tablenav( $which ) {
 		global $status;
@@ -548,7 +548,7 @@ class List_Table extends WP_List_Table {
 	 * Output form fields needed to preserve important
 	 * query vars over form submissions
 	 *
-	 * @param string $context In what context are the fields being outputted?
+	 * @param string $context The context in which the fields are being outputted.
 	 */
 	public function required_form_fields( $context = 'main' ) {
 
@@ -996,10 +996,10 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @ignore
 	 *
-	 * @param Snippet $a The first snippet to compare
-	 * @param Snippet $b The second snippet to compare
+	 * @param Snippet $a The first snippet to compare.
+	 * @param Snippet $b The second snippet to compare.
 	 *
-	 * @return int The sort order
+	 * @return int The sort order.
 	 */
 	private function usort_reorder_callback( $a, $b ) {
 
@@ -1032,9 +1032,9 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @ignore
 	 *
-	 * @param Snippet $snippet The snippet being filtered
+	 * @param Snippet $snippet The snippet being filtered.
 	 *
-	 * @return bool The result of the filter
+	 * @return bool The result of the filter.
 	 */
 	private function search_callback( $snippet ) {
 		static $term;
@@ -1058,9 +1058,9 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @ignore
 	 *
-	 * @param Snippet $snippet The snippet being filtered
+	 * @param Snippet $snippet The snippet being filtered.
 	 *
-	 * @return bool The result of the filter
+	 * @return bool The result of the filter.
 	 */
 	private function tags_filter_callback( $snippet ) {
 		$tags = explode( ',', sanitize_text_field( wp_unslash( $_GET['tag'] ) ) );
@@ -1107,7 +1107,7 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Outputs content for a single row of the table
 	 *
-	 * @param Snippet $snippet The snippet being used for the current row
+	 * @param Snippet $snippet The snippet being used for the current row.
 	 */
 	public function single_row( $snippet ) {
 		$row_class = 'snippet ' . ( $snippet->active ? 'active-snippet' : 'inactive-snippet' ) . " {$snippet->type}-snippet";

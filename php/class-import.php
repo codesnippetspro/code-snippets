@@ -39,9 +39,9 @@ class Import {
 	/**
 	 * Class constructor
 	 *
-	 * @param string    $file       The path to the file to import
-	 * @param bool|null $multisite  Import into network-wide table or site-wide table?
-	 * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
+	 * @param string    $file       The path to the file to import.
+	 * @param bool|null $multisite  Import into network-wide table (true) or site-wide table (false).
+	 * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'.
 	 */
 	public function __construct( $file, $multisite = null, $dup_action = 'ignore' ) {
 		$this->file = $file;
@@ -50,7 +50,7 @@ class Import {
 	}
 
 	/**
-	 * Imports snippets from a JSON file
+	 * Imports snippets from a JSON filecl
 	 *
 	 * @return array|bool An array of imported snippet IDs on success, false on failure
 	 */
@@ -136,9 +136,9 @@ class Import {
 	 *
 	 * @access private
 	 *
-	 * @param array $snippets List of snippets to save
+	 * @param array $snippets List of snippets to save.
 	 *
-	 * @return array IDs of imported snippets
+	 * @return array IDs of imported snippets.
 	 */
 	private function save_snippets( $snippets ) {
 

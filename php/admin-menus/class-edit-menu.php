@@ -151,7 +151,7 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Remove the sharing status from a network snippet
 	 *
-	 * @param int $snippet_id Snippet ID
+	 * @param int $snippet_id Snippet ID.
 	 */
 	private function unshare_network_snippet( $snippet_id ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
@@ -210,9 +210,9 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Validate the snippet code before saving to database
 	 *
-	 * @param Snippet $snippet Snippet object
+	 * @param Snippet $snippet Snippet object.
 	 *
-	 * @return bool true if code produces errors
+	 * @return bool Whether the code produces errors.
 	 */
 	private function validate_code( Snippet $snippet ) {
 
@@ -353,7 +353,7 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Add a description editor to the single snippet page
 	 *
-	 * @param Snippet $snippet The snippet being used for this page
+	 * @param Snippet $snippet The snippet being used for this page.
 	 */
 	public function render_description_editor( Snippet $snippet ) {
 		$settings = Settings\get_settings_values();
@@ -378,7 +378,7 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Render the interface for editing snippet tags
 	 *
-	 * @param Snippet $snippet the snippet currently being edited
+	 * @param Snippet $snippet The snippet currently being edited.
 	 */
 	public function render_tags_editor( Snippet $snippet ) {
 
@@ -398,7 +398,7 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Render the snippet priority setting
 	 *
-	 * @param Snippet $snippet the snippet currently being edited
+	 * @param Snippet $snippet The snippet currently being edited.
 	 */
 	public function render_priority_setting( Snippet $snippet ) {
 		if ( 'html' === $snippet->type ) {
@@ -418,7 +418,7 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Render the setting for shared network snippets
 	 *
-	 * @param object $snippet The snippet currently being edited
+	 * @param Snippet $snippet The snippet currently being edited.
 	 */
 	public function render_multisite_sharing_setting( $snippet ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
@@ -439,9 +439,9 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Retrieve the first error in a snippet's code
 	 *
-	 * @param int $snippet_id Snippet ID
+	 * @param int $snippet_id Snippet ID.
 	 *
-	 * @return array|bool Error if execution failed, otherwise false
+	 * @return array|bool Error if execution failed, otherwise false.
 	 */
 	private function get_snippet_error( $snippet_id ) {
 
@@ -592,10 +592,10 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Retrieve a list of submit actions for a given snippet
 	 *
-	 * @param Snippet $snippet       Snippet object
-	 * @param bool    $extra_actions Whether to include additional actions alongside save actions
+	 * @param Snippet $snippet       The snippet currently being edited.
+	 * @param bool    $extra_actions Whether to include additional actions alongside save actions.
 	 *
-	 * @return array
+	 * @return array Two-dimensional array with action name keyed to description.
 	 */
 	public function get_actions_list( $snippet, $extra_actions = true ) {
 		$actions = [ 'save_snippet' => __( 'Save Changes', 'code-snippets' ) ];
@@ -637,9 +637,9 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Render the submit buttons for a code snippet
 	 *
-	 * @param Snippet $snippet       Snippet object
-	 * @param string  $size          Additional size classes to pass to button
-	 * @param bool    $extra_actions Whether to include additional buttons alongside save buttons
+	 * @param Snippet $snippet       The snippet currently being edited.
+	 * @param string  $size          Additional size classes to pass to button.
+	 * @param bool    $extra_actions Whether to include additional buttons alongside save buttons.
 	 */
 	public function render_submit_buttons( $snippet, $size = '', $extra_actions = true ) {
 

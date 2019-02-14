@@ -46,8 +46,8 @@ class Plugin {
 	/**
 	 * Class constructor
 	 *
-	 * @param string $version The current plugin version
-	 * @param string $file    The main plugin file
+	 * @param string $version Current plugin version.
+	 * @param string $file    Path to main plugin file.
 	 */
 	public function __construct( $version, $file ) {
 		$this->version = $version;
@@ -115,9 +115,9 @@ class Plugin {
 	/**
 	 * Fetch the admin menu slug for a snippets menu
 	 *
-	 * @param  string $menu The menu to retrieve the slug for
+	 * @param string $menu Name of menu to retrieve the slug for.
 	 *
-	 * @return string       The menu's slug
+	 * @return string The menu's slug.
 	 */
 	public function get_menu_slug( $menu = '' ) {
 		$add = array( 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' );
@@ -141,10 +141,10 @@ class Plugin {
 	/**
 	 * Fetch the URL to a snippets admin menu
 	 *
-	 * @param  string $menu    The menu to retrieve the URL to
-	 * @param  string $context The URL scheme to use
+	 * @param string $menu    Name of menu to retrieve the URL to.
+	 * @param string $context URL scheme to use.
 	 *
-	 * @return string          The menu's URL
+	 * @return string The menu's URL.
 	 */
 	public function get_menu_url( $menu = '', $context = 'self' ) {
 		$slug = $this->get_menu_slug( $menu );
@@ -173,10 +173,10 @@ class Plugin {
 	/**
 	 * Fetch the admin menu slug for a snippets menu
 	 *
-	 * @param int    $snippet_id The snippet
-	 * @param string $context    The URL scheme to use
+	 * @param int    $snippet_id Snippet ID.
+	 * @param string $context    The URL scheme to use.
 	 *
-	 * @return string The URL to the edit snippet page for that snippet
+	 * @return string The URL to the edit snippet page for that snippet.
 	 */
 	public function get_snippet_edit_url( $snippet_id, $context = 'self' ) {
 		return add_query_arg(
@@ -257,9 +257,9 @@ class Plugin {
 	/**
 	 * Inject the safe mode query var into URLs
 	 *
-	 * @param string $url A URL
+	 * @param string $url Original URL.
 	 *
-	 * @return string
+	 * @return string Modified URL.
 	 */
 	public function add_safe_mode_query_var( $url ) {
 

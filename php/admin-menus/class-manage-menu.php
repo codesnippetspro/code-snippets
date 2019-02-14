@@ -171,9 +171,9 @@ class Manage_Menu extends Admin_Menu {
 	/**
 	 * Handles saving the user's snippets per page preference
 	 *
-	 * @param  mixed  $status Current screen option status
-	 * @param  string $option The screen option name
-	 * @param  mixed  $value  Screen option value
+	 * @param  mixed  $status Current screen option status.
+	 * @param  string $option The screen option name.
+	 * @param  mixed  $value  Screen option value.
 	 *
 	 * @return mixed
 	 */

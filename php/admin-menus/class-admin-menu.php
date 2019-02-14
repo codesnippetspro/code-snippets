@@ -31,9 +31,9 @@ class Admin_Menu {
 	/**
 	 * Constructor
 	 *
-	 * @param string $name  The snippet page short name
-	 * @param string $label The label shown in the admin menu
-	 * @param string $title The text used for the page title
+	 * @param string $name  The snippet page short name.
+	 * @param string $label The label shown in the admin menu.
+	 * @param string $title The text used for the page title.
 	 */
 	public function __construct( $name, $label, $title ) {
 		$this->name = $name;
@@ -56,9 +56,9 @@ class Admin_Menu {
 	 *
 	 * @uses add_submenu_page() to register a submenu
 	 *
-	 * @param string $slug The slug of the menu
-	 * @param string $label The label shown in the admin menu
-	 * @param string $title The page title
+	 * @param string $slug  Menu slug.
+	 * @param string $label Label shown in admin menu.
+	 * @param string $title Page title.
 	 */
 	public function add_menu( $slug, $label, $title ) {
 		$hook = add_submenu_page(
@@ -83,7 +83,7 @@ class Admin_Menu {
 	/**
 	 * Render the content of a vew template
 	 *
-	 * @param string $name Name of view template to render
+	 * @param string $name Name of view template to render.
 	 */
 	protected function render_view( $name ) {
 		include dirname( PLUGIN_FILE ) . '/php/views/' . $name . '.php';

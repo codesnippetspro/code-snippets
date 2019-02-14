@@ -72,7 +72,7 @@ class DB {
 	 *
 	 * @since 2.0
 	 *
-	 * @param string|bool|null $multisite Retrieve the multisite table name or the site table name?
+	 * @param string|bool|null $multisite Whether retrieve the multisite table name (true) or the site table name (false).
 	 *
 	 * @return string The snippet table name
 	 */
@@ -133,7 +133,7 @@ class DB {
 	/**
 	 * Create a snippet table if it does not already exist
 	 *
-	 * @param string $table_name Name of database table
+	 * @param string $table_name Name of database table.
 	 */
 	public static function create_missing_table( $table_name ) {
 
@@ -150,9 +150,9 @@ class DB {
 	 * @since 1.6
 	 * @uses  dbDelta() to apply the SQL code
 	 *
-	 * @param string $table_name The name of the table to create
+	 * @param string $table_name The name of the table to create.
 	 *
-	 * @return bool whether the table creation was successful
+	 * @return bool Whether the table creation was successful.
 	 */
 	public static function create_table( $table_name ) {
 		global $wpdb;
@@ -200,8 +200,8 @@ class DB {
 	/**
 	 * Generate the SQL for fetching active snippets from the database
 	 *
-	 * @param array|string $scopes      List of scopes to retrieve in
-	 * @param string       $select_list List of table columns in SQL format
+	 * @param array|string $scopes      List of scopes to retrieve in.
+	 * @param string       $select_list List of table columns in SQL format.
 	 *
 	 * @return array List of SQL queries
 	 */
