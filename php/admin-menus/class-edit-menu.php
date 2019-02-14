@@ -11,6 +11,7 @@ class Edit_Menu extends Admin_Menu {
 
 	/**
 	 * The snippet object currently being edited
+	 *
 	 * @var Snippet
 	 * @see Edit_Menu::load_snippet_data()
 	 */

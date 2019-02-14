@@ -27,12 +27,14 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * Whether the current screen is in the network admin
+	 *
 	 * @var bool
 	 */
 	public $is_network;
 
 	/**
 	 * A list of statuses (views)
+	 *
 	 * @var array
 	 */
 	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
@@ -465,6 +467,7 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * Gets the tags of the snippets currently being viewed in the table
+	 *
 	 * @since 2.0
 	 */
 	public function get_current_tags() {
@@ -897,6 +900,7 @@ class List_Table extends WP_List_Table {
 
 		/**
 		 * Filter snippets into individual sections
+		 *
 		 * @var Snippet $snippet
 		 */
 		foreach ( $snippets['all'] as $snippet ) {
@@ -1025,6 +1029,7 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * Callback for search function
+	 *
 	 * @ignore
 	 *
 	 * @param Snippet $snippet The snippet being filtered
@@ -1050,6 +1055,7 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * Callback for filtering snippets by tag
+	 *
 	 * @ignore
 	 *
 	 * @param Snippet $snippet The snippet being filtered
@@ -1070,6 +1076,7 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * Display a notice showing the current search terms
+	 *
 	 * @since 1.7
 	 */
 	public function search_notice() {

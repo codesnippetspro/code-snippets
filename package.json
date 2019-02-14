@@ -12,7 +12,8 @@
         "watch": "gulp watch",
         "package": "gulp package",
         "test": "gulp test",
-        "phpcs": "vendor/bin/phpcs -s *.php php/"
+        "phpcs": "vendor/bin/phpcs -s *.php php/",
+        "phpcbf": "vendor/bin/phpcbf *.php php/"
     },
     "repository": {
         "type": "git",

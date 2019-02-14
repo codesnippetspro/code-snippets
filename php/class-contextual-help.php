@@ -6,6 +6,7 @@ use WP_Screen;
 
 /**
  * This file holds all of the content for the contextual help screens
+ *
  * @package Code_Snippets
  */
 class Contextual_Help {
@@ -56,6 +57,7 @@ class Contextual_Help {
 
 	/**
 	 * Reusable introduction text
+	 *
 	 * @return string
 	 */
 	private function get_intro_text() {

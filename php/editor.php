@@ -1,6 +1,7 @@
 <?php
 /**
  * Functions for using the built-in code editor library
+ *
  * @package Code_Snippets
  */
 
@@ -92,6 +93,7 @@ function enqueue_code_editor_assets() {
 
 /**
  * Retrieve a list of the available CodeMirror themes
+ *
  * @return array the available themes
  */
 function get_editor_themes() {

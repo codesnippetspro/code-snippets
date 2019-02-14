@@ -11,12 +11,14 @@ class Upgrade {
 
 	/**
 	 * Instance of database class
+	 *
 	 * @var DB
 	 */
 	private $db;
 
 	/**
 	 * The current plugin version number
+	 *
 	 * @var string
 	 */
 	private $current_version;

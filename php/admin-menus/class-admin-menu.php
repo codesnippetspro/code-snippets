@@ -9,18 +9,21 @@ class Admin_Menu {
 
 	/**
 	 * The snippet page short name
+	 *
 	 * @var string
 	 */
 	public $name;
 
 	/**
 	 * The label shown in the admin menu
+	 *
 	 * @var string
 	 */
 	public $label;
 
 	/**
 	 * The text used for the page title
+	 *
 	 * @var string
 	 */
 	public $title;
@@ -50,6 +53,7 @@ class Admin_Menu {
 
 	/**
 	 * Add a sub-menu to the Snippets menu
+	 *
 	 * @uses add_submenu_page() to register a submenu
 	 *
 	 * @param string $slug The slug of the menu

@@ -50,6 +50,7 @@ if ( version_compare( phpversion(), '5.6', '>=' ) ) {
 
 /**
  * Display a warning message and deactivate the plugin if the user is using an incompatible version of PHP
+ *
  * @since 3.0.0
  */
 function code_snippets_php_version_notice() {

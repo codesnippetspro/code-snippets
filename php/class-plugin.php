@@ -11,12 +11,14 @@ class Plugin {
 
 	/**
 	 * Current plugin version number
+	 *
 	 * @var string
 	 */
 	public $version;
 
 	/**
 	 * Filesystem path to the main plugin file
+	 *
 	 * @var string
 	 */
 	public $file;

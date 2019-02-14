@@ -4,6 +4,7 @@ namespace Code_Snippets;
 
 /**
  * This class manages the shortcodes included with the plugin
+ *
  * @package Code_Snippets
  */
 class Shortcodes {

@@ -11,6 +11,7 @@ class Admin {
 
 	/**
 	 * Admin_Menu class instances
+	 *
 	 * @var array
 	 */
 	public $menus = array();
@@ -60,6 +61,7 @@ class Admin {
 
 	/**
 	 * Determine whether the menu is full or compact
+	 *
 	 * @return bool
 	 */
 	public function is_compact_menu() {

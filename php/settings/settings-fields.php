@@ -10,6 +10,7 @@ namespace Code_Snippets\Settings;
 
 /**
  * Retrieve the default setting values
+ *
  * @return array
  */
 function get_default_settings() {
@@ -34,6 +35,7 @@ function get_default_settings() {
 
 /**
  * Retrieve the settings fields
+ *
  * @return array
  */
 function get_settings_fields() {

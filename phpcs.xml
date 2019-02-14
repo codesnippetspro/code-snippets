@@ -62,7 +62,6 @@
 		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound" />
 
 		<!-- I don't always agree with these documentation rules -->
-		<exclude name="Generic.Commenting.DocComment.SpacingBeforeTags" />
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
 		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
 

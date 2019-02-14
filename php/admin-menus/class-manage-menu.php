@@ -4,6 +4,7 @@ namespace Code_Snippets;
 
 /**
  * This class handles the manage snippets menu
+ *
  * @since 2.4.0
  * @package Code_Snippets
  */
@@ -11,6 +12,7 @@ class Manage_Menu extends Admin_Menu {
 
 	/**
 	 * Holds the list table class
+	 *
 	 * @var List_Table
 	 */
 	public $list_table;

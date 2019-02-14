@@ -64,6 +64,7 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 
 /**
  * Gets all of the used tags from the database
+ *
  * @since 2.0
  */
 function get_all_snippet_tags() {
@@ -88,6 +89,7 @@ function get_all_snippet_tags() {
 
 /**
  * Make sure that the tags are a valid array
+ *
  * @since 2.0
  *
  * @param  mixed $tags The tags to convert into an array

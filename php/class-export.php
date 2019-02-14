@@ -4,6 +4,7 @@ namespace Code_Snippets;
 
 /**
  * Handles exporting snippets from the site in various downloadable formats
+ *
  * @package Code_Snippets
  * @since   3.0.0
  */
@@ -11,6 +12,7 @@ class Export {
 
 	/**
 	 * Array of snippet data fetched from the database
+	 *
 	 * @var array
 	 */
 	private $snippets_list;
