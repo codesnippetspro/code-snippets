@@ -50,6 +50,10 @@ function get_code_editor_atts( $type, $override_atts = [], $json_encode = true )
 	$atts = wp_parse_args( $default_atts, $override_atts );
 	$atts = apply_filters( 'code_snippets_codemirror_atts', $atts );
 
+	foreach ( [ 'indentUnit', 'tabSize' ] as $number_att ) {
+		$atts[ $number_att ] = intval( $atts[ $number_att ] );
+	}
+
 	// encode the attributes for display if requested
 	if ( $json_encode ) {
 		$atts = wp_json_encode( $atts, JSON_UNESCAPED_SLASHES );
