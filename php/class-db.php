@@ -7,14 +7,34 @@
  */
 class Code_Snippets_DB {
 
+	/**
+	 * Unprefixed site-wide table name
+	 */
+	const TABLE_NAME = 'snippets';
+
+	/**
+	 * Unprefixed network-wide table name
+	 */
+	const MS_TABLE_NAME = 'ms_snippets';
+
+	/**
+	 * Side-wide table name
+	 *
+	 * @var string
+	 */
 	public $table;
 
+	/**
+	 * Network-wide table name
+	 *
+	 * @var string
+	 */
 	public $ms_table;
 
 	/**
 	 * Class constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		$this->set_table_vars();
 	}
 
@@ -27,12 +47,15 @@ class Code_Snippets_DB {
 	function set_table_vars() {
 		global $wpdb;
 
-		$this->table = $wpdb->prefix . 'snippets';
-		$this->ms_table = $wpdb->base_prefix . 'ms_snippets';
+		$this->table = $wpdb->prefix . self::TABLE_NAME;
+		$this->ms_table = $wpdb->base_prefix . self::MS_TABLE_NAME;
 
 		/* Register the snippet table names with WordPress */
-		$wpdb->tables[] = $wpdb->snippets = $this->table;
-		$wpdb->ms_global_tables[] = $wpdb->ms_snippets = $this->ms_table;
+		$wpdb->snippets = $this->table;
+		$wpdb->ms_snippets = $this->ms_table;
+
+		$wpdb->tables[] = self::TABLE_NAME;
+		$wpdb->ms_global_tables[] = self::MS_TABLE_NAME;
 	}
 
 	/**
