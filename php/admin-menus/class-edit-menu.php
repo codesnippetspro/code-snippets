@@ -21,7 +21,8 @@ class Edit_Menu extends Admin_Menu {
 	 * Constructor
 	 */
 	public function __construct() {
-		parent::__construct( 'edit',
+		parent::__construct(
+			'edit',
 			_x( 'Edit Snippet', 'menu label', 'code-snippets' ),
 			__( 'Edit Snippet', 'code-snippets' )
 		);
@@ -39,10 +40,11 @@ class Edit_Menu extends Admin_Menu {
 	 * Register the admin menu
 	 */
 	public function register() {
+		parent::register();
 
-		/* Add edit menu if we are currently editing a snippet */
-		if ( isset( $_REQUEST['page'] ) && code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
-			parent::register();
+		/* Only preserve the edit menu if we are currently editing a snippet */
+		if ( ! isset( $_REQUEST['page'] ) || $_REQUEST['page'] !== $this->slug ) {
+			remove_submenu_page( $this->base_slug, $this->slug );
 		}
 
 		/* Add New Snippet menu */
@@ -62,12 +64,16 @@ class Edit_Menu extends Admin_Menu {
 		// Retrieve the current snippet object
 		$this->load_snippet_data();
 
+		$screen = get_current_screen();
+		$edit_hook = get_plugin_page_hookname( $this->slug, $this->base_slug );
+		if ( $screen->in_admin( 'network' ) ) {
+			$edit_hook .= '-network';
+		}
+
 		// Disallow visiting the edit snippet page without a valid ID
-		if ( code_snippets()->get_menu_slug( 'edit' ) === $_REQUEST['page'] ) {
-			if ( ! isset( $_REQUEST['id'] ) || 0 === $this->snippet->id ) {
-				wp_redirect( code_snippets()->get_menu_url( 'add' ) );
-				exit;
-			}
+		if ( $screen->base === $edit_hook && ( ! isset( $_REQUEST['id'] ) || 0 === $this->snippet->id ) ) {
+			wp_redirect( code_snippets()->get_menu_url( 'add' ) );
+			exit;
 		}
 
 		// Process any submitted actions

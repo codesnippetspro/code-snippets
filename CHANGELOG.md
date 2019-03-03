@@ -1,5 +1,16 @@
 # Changelog
 
+## develop
+* Added: Hover effect to activation switches.
+* Added: Additional save buttons above snippet editor.
+* Added: List save keyboard shortcuts to the help tooltip.
+* Added: Change "no items found" message when search filters match nothing.
+* Fixed: Calling deprecated code in database upgrade process.
+* Fixed: Include snippet priority in export files.
+* Fixed: Use Unix newlines in code export file.
+* Updated CodeMirror to version 5.44.0.
+* Fixed: Correctly register snippet tables with WordPress to prevent database repair errors [[#](https://wordpress.org/support/topic/database-corrupted-4/)]
+
 ## 2.13.2 (25 Jan 2019)
 * Removed potentially problematic cursor position saving feature
 
