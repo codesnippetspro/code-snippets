@@ -5,6 +5,8 @@
  *
  * @package Code_Snippets
  * @subpackage Views
+ *
+ * @var Code_Snippets_Edit_Menu $this
  */
 
 /* Bail if accessed directly */
@@ -12,13 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-$table = code_snippets()->db->get_table_name();
-$edit_id = isset( $_REQUEST['id'] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
-$snippet = get_snippet( $edit_id );
-
+$snippet = $this->snippet;
 $classes = array();
 
-if ( ! $edit_id ) {
+if ( ! $snippet->id ) {
 	$classes[] = 'new-snippet';
 } elseif ( 'single-use' === $snippet->scope ) {
 	$classes[] = 'single-use-snippet';
@@ -30,7 +29,7 @@ if ( ! $edit_id ) {
 <div class="wrap">
 	<h1><?php
 
-		if ( $edit_id ) {
+		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
 			printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
 				code_snippets()->get_menu_url( 'add' ),

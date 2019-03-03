@@ -5,6 +5,15 @@
  */
 class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
+
+	/**
+	 * The snippet object currently being edited
+	 *
+	 * @var Code_Snippet
+	 * @see Code_Snippets_Edit_Menu::load_snippet_data()
+	 */
+	protected $snippet = null;
+
 	/**
 	 * Constructor
 	 */
@@ -49,6 +58,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	public function load() {
 		parent::load();
 
+		// Retrieve the current snippet object
+		$this->load_snippet_data();
+
 		$screen = get_current_screen();
 		$edit_hook = get_plugin_page_hookname( $this->slug, $this->base_slug );
 		if ( $screen->in_admin( 'network' ) ) {
@@ -56,7 +68,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		/* Don't allow visiting the edit snippet page without a valid ID */
-		if ( $screen->base === $edit_hook && ( ! isset( $_REQUEST['id'] ) || 0 === intval( $_REQUEST['id'] ) ) ) {
+		if ( $screen->base === $edit_hook && ( ! isset( $_REQUEST['id'] ) || 0 === $this->snippet->id ) ) {
 			wp_redirect( code_snippets()->get_menu_url( 'add' ) );
 			exit;
 		}
@@ -85,6 +97,14 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		$this->process_actions();
+	}
+
+	/**
+	 * Load the data for the snippet currently being edited
+	 */
+	public function load_snippet_data() {
+		$edit_id = isset( $_REQUEST['id'] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
+		$this->snippet = get_snippet( $edit_id );
 	}
 
 	/**
