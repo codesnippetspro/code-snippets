@@ -8,6 +8,20 @@ class Code_Snippets_Admin_Menu {
 	public $name, $label, $title;
 
 	/**
+	 * The base slug for the top-level admin menu.
+	 *
+	 * @var string
+	 */
+	protected $base_slug;
+
+	/**
+	 * The slug for this admin menu.
+	 *
+	 * @var string
+	 */
+	public $slug;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $name The snippet page shortname
@@ -18,6 +32,9 @@ class Code_Snippets_Admin_Menu {
 		$this->name = $name;
 		$this->label = $label;
 		$this->title = $title;
+
+		$this->base_slug = code_snippets()->get_menu_slug();
+		$this->slug = code_snippets()->get_menu_slug( $name );
 	}
 
 	/**
