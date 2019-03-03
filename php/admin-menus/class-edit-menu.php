@@ -5,7 +5,6 @@
  */
 class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
-
 	/**
 	 * The snippet object currently being edited
 	 *
