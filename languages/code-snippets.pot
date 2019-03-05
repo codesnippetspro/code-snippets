@@ -240,11 +240,11 @@ msgstr ""
 msgid "Clone"
 msgstr ""
 
-#: php/class-list-table.php:161, php/class-list-table.php:375, php/admin-menus/class-edit-menu.php:602
+#: php/class-list-table.php:161, php/class-list-table.php:375, php/admin-menus/class-edit-menu.php:621
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:170, php/class-list-table.php:376, php/admin-menus/class-edit-menu.php:603
+#: php/class-list-table.php:170, php/class-list-table.php:376, php/admin-menus/class-edit-menu.php:622
 msgid "Delete"
 msgstr ""
 
@@ -252,7 +252,7 @@ msgstr ""
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:175, php/admin-menus/class-edit-menu.php:631
+#: php/class-list-table.php:175, php/admin-menus/class-edit-menu.php:650
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
@@ -268,11 +268,11 @@ msgstr ""
 msgid "Network Activate"
 msgstr ""
 
-#: php/class-list-table.php:205, php/class-list-table.php:372, php/views/edit.php:107
+#: php/class-list-table.php:205, php/class-list-table.php:372, php/views/edit.php:104
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:205, php/class-list-table.php:371, php/views/edit.php:113
+#: php/class-list-table.php:205, php/class-list-table.php:371, php/views/edit.php:110
 msgid "Activate"
 msgstr ""
 
@@ -285,7 +285,7 @@ msgstr ""
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:330, php/views/edit.php:83
+#: php/class-list-table.php:330, php/views/edit.php:80
 msgid "Name"
 msgstr ""
 
@@ -293,19 +293,19 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:332, php/admin-menus/class-edit-menu.php:309
+#: php/class-list-table.php:332, php/admin-menus/class-edit-menu.php:328
 msgid "Description"
 msgstr ""
 
-#: php/class-list-table.php:333, php/admin-menus/class-edit-menu.php:342
+#: php/class-list-table.php:333, php/admin-menus/class-edit-menu.php:361
 msgid "Tags"
 msgstr ""
 
-#: php/class-list-table.php:334, php/admin-menus/class-edit-menu.php:361
+#: php/class-list-table.php:334, php/admin-menus/class-edit-menu.php:380
 msgid "Priority"
 msgstr ""
 
-#: php/class-list-table.php:374, php/admin-menus/class-edit-menu.php:599
+#: php/class-list-table.php:374, php/admin-menus/class-edit-menu.php:618
 msgid "Download"
 msgstr ""
 
@@ -431,135 +431,135 @@ msgstr ""
 msgid "You are not authorized to access this page."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:14
+#: php/admin-menus/class-edit-menu.php:22
 msgctxt "menu label"
 msgid "Edit Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:15, php/views/edit.php:36
+#: php/admin-menus/class-edit-menu.php:23, php/views/edit.php:33
 msgid "Edit Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:41
+#: php/admin-menus/class-edit-menu.php:49
 msgctxt "menu label"
 msgid "Add New"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:42, php/views/edit.php:42
+#: php/admin-menus/class-edit-menu.php:50, php/views/edit.php:39
 msgid "Add New Snippet"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:167
+#: php/admin-menus/class-edit-menu.php:186
 msgid "Don't Panic"
 msgstr ""
 
 #. translators: %d: line where error was produced
-#: php/admin-menus/class-edit-menu.php:169
+#: php/admin-menus/class-edit-menu.php:188
 msgid "The code snippet you are trying to save produced a fatal error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:171
+#: php/admin-menus/class-edit-menu.php:190
 msgid "The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:172
+#: php/admin-menus/class-edit-menu.php:191
 msgid "Please use the back button in your browser to return to the previous page and try to fix the code error."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:173
+#: php/admin-menus/class-edit-menu.php:192
 msgid "If you prefer, you can close this page and discard the changes you just made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:347
+#: php/admin-menus/class-edit-menu.php:366
 msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:360
+#: php/admin-menus/class-edit-menu.php:379
 msgid "Snippets with a lower priority number will run before those with a higher number."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:378
+#: php/admin-menus/class-edit-menu.php:397
 msgid "Run snippet everywhere"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:379
+#: php/admin-menus/class-edit-menu.php:398
 msgid "Only run in administration area"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:380
+#: php/admin-menus/class-edit-menu.php:399
 msgid "Only run on site front-end"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:381
+#: php/admin-menus/class-edit-menu.php:400
 msgid "Only run once"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:384
+#: php/admin-menus/class-edit-menu.php:403
 msgid "Scope"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:405
+#: php/admin-menus/class-edit-menu.php:424
 msgid "Sharing Settings"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:409
+#: php/admin-menus/class-edit-menu.php:428
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 
 #. translators: %d: line of file where error originated
-#: php/admin-menus/class-edit-menu.php:470
+#: php/admin-menus/class-edit-menu.php:489
 msgid "The snippet has been deactivated due to an error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:475
+#: php/admin-menus/class-edit-menu.php:494
 msgid "The snippet has been deactivated due to an error in the code."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:482
+#: php/admin-menus/class-edit-menu.php:501
 msgid "An error occurred when saving the snippet."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:488
+#: php/admin-menus/class-edit-menu.php:507
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:489
+#: php/admin-menus/class-edit-menu.php:508
 msgid "Snippet <strong>updated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:490
+#: php/admin-menus/class-edit-menu.php:509
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:491
+#: php/admin-menus/class-edit-menu.php:510
 msgid "Snippet <strong>added</strong> and <strong>executed</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:492
+#: php/admin-menus/class-edit-menu.php:511
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:493
+#: php/admin-menus/class-edit-menu.php:512
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:575, php/views/edit.php:93
+#: php/admin-menus/class-edit-menu.php:594, php/views/edit.php:90
 msgid "Save Changes"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:579
+#: php/admin-menus/class-edit-menu.php:598
 msgid "Save Changes and Execute Once"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:584
+#: php/admin-menus/class-edit-menu.php:603
 msgid "Save Changes and Deactivate"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:586
+#: php/admin-menus/class-edit-menu.php:605
 msgid "Save Changes and Activate"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:630
+#: php/admin-menus/class-edit-menu.php:649
 msgid "You are about to permanently delete this snippet."
 msgstr ""
 
@@ -663,17 +663,17 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:82, php/views/edit.php:50, php/views/import.php:26
+#: php/admin-menus/class-settings-menu.php:82, php/views/edit.php:47, php/views/import.php:26
 msgctxt "snippets"
 msgid "Manage"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:87, php/views/edit.php:39, php/views/import.php:31, php/views/manage.php:24
+#: php/admin-menus/class-settings-menu.php:87, php/views/edit.php:36, php/views/import.php:31, php/views/manage.php:24
 msgctxt "snippet"
 msgid "Add New"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:92, php/views/edit.php:55, php/views/manage.php:29
+#: php/admin-menus/class-settings-menu.php:92, php/views/edit.php:52, php/views/manage.php:29
 msgctxt "snippets"
 msgid "Import"
 msgstr ""
@@ -835,114 +835,114 @@ msgstr ""
 msgid "Editor Preview"
 msgstr ""
 
-#: php/views/edit.php:62, php/views/import.php:37, php/views/manage.php:37
+#: php/views/edit.php:59, php/views/import.php:37, php/views/manage.php:37
 msgctxt "snippets"
 msgid "Settings"
 msgstr ""
 
-#: php/views/edit.php:84
+#: php/views/edit.php:81
 msgid "Enter title here"
 msgstr ""
 
-#: php/views/edit.php:94
+#: php/views/edit.php:91
 msgid "Save Snippet"
 msgstr ""
 
-#: php/views/edit.php:99
+#: php/views/edit.php:96
 msgid "Execute Once"
 msgstr ""
 
-#: php/views/edit.php:100
+#: php/views/edit.php:97
 msgid "Save Snippet and Execute Once"
 msgstr ""
 
-#: php/views/edit.php:108
+#: php/views/edit.php:105
 msgid "Save Snippet and Deactivate"
 msgstr ""
 
-#: php/views/edit.php:114
+#: php/views/edit.php:111
 msgid "Save Snippet and Activate"
 msgstr ""
 
-#: php/views/edit.php:129
+#: php/views/edit.php:126
 msgid "Code"
 msgstr ""
 
-#: php/views/edit.php:142
+#: php/views/edit.php:139
 msgctxt "help tooltip"
 msgid "?"
 msgstr ""
 
-#: php/views/edit.php:147
+#: php/views/edit.php:144
 msgctxt "keyboard key"
 msgid "Cmd"
 msgstr ""
 
-#: php/views/edit.php:148
+#: php/views/edit.php:145
 msgctxt "keyboard key"
 msgid "Ctrl"
 msgstr ""
 
-#: php/views/edit.php:149
+#: php/views/edit.php:146
 msgctxt "keyboard key"
 msgid "Shift"
 msgstr ""
 
-#: php/views/edit.php:150
+#: php/views/edit.php:147
 msgctxt "keyboard key"
 msgid "Option"
 msgstr ""
 
-#: php/views/edit.php:151
+#: php/views/edit.php:148
 msgctxt "keyboard key"
 msgid "Alt"
 msgstr ""
 
-#: php/views/edit.php:152
+#: php/views/edit.php:149
 msgctxt "keyboard key"
 msgid "F"
 msgstr ""
 
-#: php/views/edit.php:153
+#: php/views/edit.php:150
 msgctxt "keyboard key"
 msgid "G"
 msgstr ""
 
-#: php/views/edit.php:154
+#: php/views/edit.php:151
 msgctxt "keyboard key"
 msgid "R"
 msgstr ""
 
-#: php/views/edit.php:155
+#: php/views/edit.php:152
 msgctxt "keyboard key"
 msgid "S"
 msgstr ""
 
-#: php/views/edit.php:163
+#: php/views/edit.php:160
 msgid "Save changes"
 msgstr ""
 
-#: php/views/edit.php:170
+#: php/views/edit.php:167
 msgid "Begin searching"
 msgstr ""
 
-#: php/views/edit.php:177
+#: php/views/edit.php:174
 msgid "Find next"
 msgstr ""
 
-#: php/views/edit.php:183
+#: php/views/edit.php:180
 msgid "Find previous"
 msgstr ""
 
-#: php/views/edit.php:189
+#: php/views/edit.php:186
 msgid "Replace"
 msgstr ""
 
-#: php/views/edit.php:195
+#: php/views/edit.php:192
 msgid "Replace all"
 msgstr ""
 
-#: php/views/edit.php:201
+#: php/views/edit.php:198
 msgid "Persistent search"
 msgstr ""
 

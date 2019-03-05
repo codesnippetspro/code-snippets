@@ -17,6 +17,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 * Constructor
 	 */
 	public function __construct() {
+
 		parent::__construct(
 			'edit',
 			_x( 'Edit Snippet', 'menu label', 'code-snippets' ),
