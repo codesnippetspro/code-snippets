@@ -40,7 +40,7 @@ class Admin_Menu {
 	 *
 	 * @var string
 	 */
-	public $slug;
+	protected $slug;
 
 	/**
 	 * Constructor
@@ -79,7 +79,7 @@ class Admin_Menu {
 	 */
 	public function add_menu( $slug, $label, $title ) {
 		$hook = add_submenu_page(
-			code_snippets()->get_menu_slug(),
+			$this->base_slug,
 			$title,
 			$label,
 			code_snippets()->get_cap(),
@@ -94,7 +94,7 @@ class Admin_Menu {
 	 * Register the admin menu
 	 */
 	public function register() {
-		$this->add_menu( code_snippets()->get_menu_slug( $this->name ), $this->label, $this->title );
+		$this->add_menu( $this->slug, $this->label, $this->title );
 	}
 
 	/**
