@@ -9,7 +9,7 @@
  * @author    Shea Bunge <shea@sheabunge.com>
  * @copyright 2012-2019 Shea Bunge
  * @license   MIT http://opensource.org/licenses/MIT
- * @version   2.13.2
+ * @version   3.0.0-alpha.1
  * @link      https://github.com/sheabunge/code-snippets
  */
 
@@ -19,7 +19,7 @@ Plugin URI:  https://github.com/sheabunge/code-snippets
 Description: An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
 Author:      Shea Bunge
 Author URI:  https://sheabunge.com
-Version:     3.0.0-dev.1
+Version:     3.0.0-alpha.1
 License:     MIT
 License URI: license.txt
 Text Domain: code-snippets

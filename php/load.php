@@ -16,7 +16,7 @@ namespace Code_Snippets;
  *
  * @var string A PHP-standardized version number string
  */
-const PLUGIN_VERSION = '3.0.0-dev.3';
+const PLUGIN_VERSION = '3.0.0-alpha.1';
 
 /**
  * The full path to the main file of this plugin
