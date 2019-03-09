@@ -10,7 +10,7 @@ namespace Code_Snippets;
 use wpdb;
 
 /**
- * Retrieve a list of snippets from the database
+ * Retrieve a list of snippets from the database.
  *
  * @since 2.0
  *
@@ -72,7 +72,7 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 }
 
 /**
- * Gets all of the used tags from the database
+ * Gets all of the used tags from the database.
  *
  * @since 2.0
  */
@@ -102,7 +102,7 @@ function get_all_snippet_tags() {
 }
 
 /**
- * Make sure that the tags are a valid array
+ * Make sure that the tags are a valid array.
  *
  * @since 2.0.0
  *
@@ -131,13 +131,12 @@ function code_snippets_build_tags_array( $tags ) {
 
 /**
  * Retrieve a single snippets from the database.
- * Will return empty snippet object if no snippet
- * ID is specified
+ * Will return empty snippet object if no snippet ID is specified.
  *
  * @since 2.0.0
  *
- * @uses $wpdb to query the database for snippets
- * @uses code_snippets()->db->get_table_name() to dynamically retrieve the snippet table name
+ * @uses $wpdb to query the database for snippets.
+ * @uses code_snippets()->db->get_table_name() to dynamically retrieve the snippet table name.
  *
  * @param int          $id        The ID of the snippet to retrieve. 0 to build a new snippet.
  * @param boolean|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
@@ -152,7 +151,9 @@ function get_snippet( $id = 0, $multisite = null ) {
 	$multisite = code_snippets()->db->validate_network_param( $multisite );
 	$table = code_snippets()->db->get_table_name( $multisite );
 
-	if ( $snippet = wp_cache_get( $multisite ? 'ms_snippet' : 'snippet', 'code_snippets' ) ) {
+	$cache_key = ( $multisite ? 'ms_' : '' ) . 'snippet_' . $id;
+
+	if ( $snippet = wp_cache_get( $cache_key, 'code_snippets' ) ) {
 		return $snippet;
 	}
 
@@ -173,7 +174,7 @@ function get_snippet( $id = 0, $multisite = null ) {
 	$snippet->network = $multisite;
 
 	$snippet = apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
-	wp_cache_set( $multisite ? 'ms_snippet' : 'snippet', $snippet, 'code_snippets' );
+	wp_cache_set( $cache_key, $snippet, 'code_snippets' );
 	return $snippet;
 }
 

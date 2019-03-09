@@ -9,21 +9,21 @@ namespace Code_Snippets;
 
 /**
  * The version number for this release of the plugin.
- * This will later be used for upgrades and enqueuing files
+ * This will later be used for upgrades and enqueuing files.
  *
  * This should be set to the 'Plugin Version' value defined
  * in the plugin header.
  *
- * @var string A PHP-standardized version number string
+ * @var string A PHP-standardized version number string.
  */
 const PLUGIN_VERSION = '3.0.0-alpha.1';
 
 /**
- * The full path to the main file of this plugin
+ * The full path to the main file of this plugin.
  *
  * This can later be passed to functions such as
  * plugin_dir_path(), plugins_url() and plugin_basename()
- * to retrieve information about plugin paths
+ * to retrieve information about plugin paths.
  *
  * @var string
  */
@@ -33,7 +33,7 @@ const PLUGIN_FILE = CODE_SNIPPETS_FILE;
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
 /**
- * Retrieve the instance of the main plugin class
+ * Retrieve the instance of the main plugin class.
  *
  * @since 2.6.0
  * @return Plugin
