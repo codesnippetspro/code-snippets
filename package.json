@@ -51,6 +51,7 @@
         "gulp-archiver": "^1.0.0",
         "gulp-change": "^1.0.2",
         "gulp-clean": "^0.4.0",
+        "gulp-composer": "^0.4.5",
         "gulp-copy": "^4.0.1",
         "gulp-eslint": "^5.0.0",
         "gulp-flatten": "^0.4.0",

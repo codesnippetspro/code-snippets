@@ -32,8 +32,9 @@ import gettext from 'gulp-gettext'
 
 import phpcs from 'gulp-phpcs';
 import phpunit from 'gulp-phpunit';
+import composer from 'gulp-composer';
 
-const pkg = require('./package.json');
+import pkg from './package.json';
 
 const src_files = {
 	php: ['*.php', 'php/**/*.php'],
@@ -147,7 +148,6 @@ gulp.task('gettext', () =>
 
 gulp.task('i18n', gulp.parallel(['makepot', 'gettext']));
 
-
 gulp.task('phpcs', () =>
 	gulp.src(src_files.php)
 		.pipe(phpcs({bin: 'vendor/bin/phpcs', showSniffCode: true}))
@@ -166,13 +166,29 @@ gulp.task('clean', () =>
 	gulp.src([dist_dirs.css, dist_dirs.js], {read: false, allowEmpty: true})
 		.pipe(clean()));
 
+
+gulp.task('test', gulp.parallel('test-js', gulp.series('phpcs', 'phpunit')));
+
+gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
+
 gulp.task('package', gulp.series(
+	'default',
+
+	// remove files from last run
 	() => gulp.src(['dist', pkg.name, `${pkg.name}.*.zip`], {read: false, allowEmpty: true})
 		.pipe(clean()),
 
-	() => gulp.src(['code-snippets.php', 'uninstall.php', 'php/**/*', 'readme.txt', 'license.txt', 'languages/**/*', 'css/font/**/*'])
+	// remove composer dev dependencies
+	() => composer({'no-dev': true}),
+
+	// copy files into a new directory
+	() => gulp.src([
+		'code-snippets.php', 'uninstall.php', 'php/**/*', 'vendor/**/*',
+		'readme.txt', 'license.txt', 'css/font/**/*', 'languages/**/*'
+	])
 		.pipe(copy(pkg.name)),
 
+	// copy minified scripts and stylesheets, while removing source map references
 	() => gulp.src('css/min/**/*.css')
 		.pipe(change((content) => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
 		.pipe(gulp.dest(pkg.name + '/css/min')),
@@ -181,20 +197,22 @@ gulp.task('package', gulp.series(
 		.pipe(change((content) => content.replace(/\/\/# sourceMappingURL=[\w.-]+\.map\s+$/, '')))
 		.pipe(gulp.dest(pkg.name + '/js/min')),
 
+	// create a zip archive
 	() => gulp.src(pkg.name + '/**/*', {base: '.'})
 		.pipe(archiver(`${pkg.name}.${pkg.version}.zip`))
 		.pipe(gulp.dest('.')),
 
-	(done) =>
+	(done) => {
+		// reinstall dev dependencies
+		composer();
+
+		// rename the distribution directory to its proper name
 		fs.rename(pkg.name, 'dist', err => {
 			if (err) throw err;
 			done();
-		})
+		});
+	}
 ));
-
-gulp.task('test', gulp.parallel('test-js', gulp.series('phpcs', 'phpunit')));
-
-gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
 
 gulp.task('watch', gulp.series('default', (done) => {
 	gulp.watch('css/*.scss', gulp.series('css'));
