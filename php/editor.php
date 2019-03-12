@@ -33,6 +33,11 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 	$atts = wp_parse_args( $default_atts, $override_atts );
 	$atts = apply_filters( 'code_snippets_codemirror_atts', $atts );
 
+	// ensure number values are not formatted as strings
+	foreach ( array( 'indentUnit', 'tabSize' ) as $number_att ) {
+		$atts[ $number_att ] = intval( $atts[ $number_att ] );
+	}
+
 	// encode the attributes for display if requested
 	if ( $json_encode ) {
 
