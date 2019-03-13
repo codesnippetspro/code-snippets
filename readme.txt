@@ -3,9 +3,9 @@ Contributors: bungeshea
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 5.0.1
+Tested up to: 5.1.1
 Requires PHP: 5.2
-Stable tag: 2.13.2
+Stable tag: 2.13.3
 License: MIT
 License URI: license.txt
 
@@ -121,6 +121,18 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 2.13.3 (13 Mar 2019) =
+* Added: Hover effect to activation switches.
+* Added: Additional save buttons above snippet editor.
+* Added: List save keyboard shortcuts to the help tooltip.
+* Added: Change "no items found" message when search filters match nothing.
+* Fixed: Calling deprecated code in database upgrade process.
+* Fixed: Include snippet priority in export files.
+* Fixed: Use Unix newlines in code export file.
+* Updated CodeMirror to version 5.44.0.
+* Fixed: Correctly register snippet tables with WordPress to prevent database repair errors [[#](https://wordpress.org/support/topic/database-corrupted-4/)]
+* Fixed: CodeMirror indentation settings being applied incorrectly
 
 = 2.13.2 (25 Jan 2019) =
 * Removed potentially problematic cursor position saving feature
