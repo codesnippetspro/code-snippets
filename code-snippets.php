@@ -54,13 +54,19 @@ if ( version_compare( phpversion(), '5.6', '>=' ) ) {
  * @since 3.0.0
  */
 function code_snippets_php_version_notice() {
-	echo '<div class="error fade">';
+	echo '<div class="error fade"><p>';
 
-	echo '<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong></p>';
+	echo '<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong><br>';
 
-	echo '<p>', esc_html__( ' Please upgrade your server to the latest version of PHP. You can contact your web host if you are unsure how to do this.', 'code-snippets' ), '</p>';
+	/* translators: %s: Update PHP URL */
+	$text = __( 'Please <a href="%s">upgrade your server to the latest version of PHP</a> to continue using Code Snippets.', 'code-snippets' );
+	$text = sprintf( $text, function_exists( 'wp_get_default_update_php_url' ) ?
+		wp_get_default_update_php_url() :
+		'https://wordpress.org/support/update-php/'
+	);
+	echo wp_kses( $text, [ 'a' => [ 'href' => [] ] ] );
 
-	echo '</div>';
+	echo '</p></div>';
 
 	deactivate_plugins( plugin_basename( __FILE__ ) );
 }
