@@ -881,7 +881,7 @@ class List_Table extends WP_List_Table {
 
 		/* Filter snippets based on search query */
 		if ( $s ) {
-			$snippets['all'] = array_filter( $snippets['all'], array( $this, 'search_callback' ) );
+			$snippets['all'] = array_filter( $snippets['all'], array( $this, 'search_by_line_callback' ) );
 		}
 
 		/* Clear recently activated snippets older than a week */
@@ -1039,20 +1039,47 @@ class List_Table extends WP_List_Table {
 	 * @return bool The result of the filter.
 	 */
 	private function search_callback( $snippet ) {
-		static $term;
-		if ( is_null( $term ) ) {
-			$term = sanitize_text_field( stripslashes( $_REQUEST['s'] ) );
-		}
+		global $s;
 
 		$fields = array( 'name', 'desc', 'code', 'tags_list' );
 
 		foreach ( $fields as $field ) {
-			if ( false !== stripos( $snippet->$field, $term ) ) {
+			if ( false !== stripos( $snippet->$field, $s ) ) {
 				return true;
 			}
 		}
-
 		return false;
+	}
+
+	/**
+	 * Callback for search function
+	 * @ignore
+	 *
+	 * @param Snippet $snippet The snippet being filtered
+	 *
+	 * @return bool The result of the filter
+	 */
+	private function search_by_line_callback( $snippet ) {
+		global $s;
+		static $line_num;
+
+		if ( is_null( $line_num ) ) {
+
+			if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
+				$s = trim( str_replace( $matches[0], '', $s ) );
+				$line_num = (int) $matches['line'] - 1;
+			} else {
+				$line_num = -1;
+			}
+		}
+
+		if ( $line_num < 0 ) {
+			return $this->search_callback( $snippet );
+		}
+
+		$code_lines = explode( "\n", $snippet->code );
+
+		return isset( $code_lines[ $line_num ] ) && false !== stripos( $code_lines[ $line_num ], $s );
 	}
 
 	/**
@@ -1087,8 +1114,21 @@ class List_Table extends WP_List_Table {
 			echo '<span class="subtitle">' . esc_html__( 'Search results', 'code-snippets' );
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
-				/* translators: %s: search query */
-				echo sprintf( esc_html__( ' for &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $_REQUEST['s'] ) );
+
+				$s = $_REQUEST['s'];
+
+				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
+
+					/* translators: %s: search query, %d: line number */
+					echo sprintf( __( ' for &ldquo;%s&rdquo; on line %d', 'code-snippets' ),
+						esc_html( trim( str_replace( $matches[0], '', $s ) ) ),
+						$matches['line']
+					);
+
+				} else {
+					/* translators: %s: search query */
+					echo sprintf( __( ' for &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $s ) );
+				}
 			}
 
 			if ( ! empty( $_GET['tag'] ) ) {

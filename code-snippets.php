@@ -9,7 +9,11 @@
  * @author    Shea Bunge <shea@sheabunge.com>
  * @copyright 2012-2019 Shea Bunge
  * @license   MIT http://opensource.org/licenses/MIT
+<<<<<<< HEAD
  * @version   3.0.0-alpha.1
+=======
+ * @version   2.13.3
+>>>>>>> develop
  * @link      https://github.com/sheabunge/code-snippets
  */
 

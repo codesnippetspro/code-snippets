@@ -382,7 +382,7 @@ function update_snippet_fields( $snippet_id, $fields, $network = null ) {
  */
 function execute_snippet( $code, $id = 0, $catch_output = true ) {
 
-	if ( empty( $code ) ) {
+	if ( empty( $code ) || defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 		return false;
 	}
 
