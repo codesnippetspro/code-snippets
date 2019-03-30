@@ -194,7 +194,7 @@ class List_Table extends WP_List_Table {
 	 */
 	protected function column_activate( $snippet ) {
 
-		if ( 'shortcode' === $snippet->scope || $this->is_network && $snippet->shared_network ||
+		if ( 'content' === $snippet->scope || $this->is_network && $snippet->shared_network ||
 		     ( ! $this->is_network && $snippet->network && ! $snippet ) ) {
 			return '';
 		}

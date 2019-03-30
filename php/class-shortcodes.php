@@ -127,7 +127,7 @@ class Shortcodes {
 		$snippet = get_snippet( $id, $atts['network'] ? true : false );
 
 		// render the source code if this is not a shortcode snippet
-		if ( 'shortcode' !== $snippet->scope ) {
+		if ( 'content' !== $snippet->scope ) {
 			return $snippet->id ? $this->render_snippet_source( $snippet ) : '';
 		}
 
