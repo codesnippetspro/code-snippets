@@ -1152,8 +1152,9 @@ class List_Table extends WP_List_Table {
 	 * @param Snippet $snippet The snippet being used for the current row.
 	 */
 	public function single_row( $snippet ) {
-		$row_class = 'snippet ' . ( $snippet->active ? 'active-snippet' : 'inactive-snippet' );
-		$row_class .= " {$snippet->type}-snippet {$snippet->scope}-scope";
+		$status = $snippet->active || 'content' === $snippet->scope ? 'active' : 'inactive';
+
+		$row_class = "snippet {$status}-snippet {$snippet->type}-snippet {$snippet->scope}-scope";
 
 		if ( $snippet->shared_network ) {
 			$row_class .= ' shared-network-snippet';
