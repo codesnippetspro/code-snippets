@@ -210,8 +210,60 @@ $inactive-color: #ccc;
 	}
 }
 
+$php-inactive: #579;
+$php-background: rgba(120, 200, 230, 0.06);
+
+
+$css-inactive: #b452cd;
+$css-active: #7d26cd;
+$css-background: rgba(85, 26, 139, 0.06);
+$css-highlight: rgba(128, 0, 255);
+
+$html-active: #548b54;
+$html-background: rgba(84, 139, 84, 0.06);
+$html-highlight: $html-active;
+
+$js-inactive: #cd6600;
+$js-active: #d44500;
+$js-background: rgba(205, 102, 0, 0.06);
+$js-highlight: #cd6600;
+
+
+
+.nav-tab span {
+	font-size: 10px;
+	text-transform: uppercase;
+	border: 1px solid;
+	padding: 1px 2px;
+	margin-left: 5px;
+	border-radius: 5px;
+	vertical-align: top;
+}
+
+.nav-tab {
+	&[data-type=php] span {
+		border-color: $active-color;
+		color: $active-color;
+	}
+
+	&[data-type=css] span {
+		border-color: $css-highlight;
+		color: $css-highlight;
+	}
+
+	&[data-type=html] span {
+		border-color: $html-active;
+		color: $html-active;
+	}
+
+	&[data-type=js] span {
+		border-color: $js-highlight;
+		color: $js-highlight;
+	}
+}
+
 .inactive-snippet a {
-	color: #579;
+	color: $php-inactive;
 }
 
 .active-snippet {
@@ -219,7 +271,7 @@ $inactive-color: #ccc;
 	td, th {
 		/* B10DC9 */
 		/* #78c8e6 */
-		background-color: rgba(120, 200, 230, 0.06);
+		background-color: $php-background;
 	}
 
 	th.check-column {
@@ -232,70 +284,70 @@ $inactive-color: #ccc;
 }
 
 .css-snippet.inactive-snippet a {
-	color: #b452cd;
+	color: $css-inactive;
 }
 
 .css-snippet.active-snippet {
 	a {
-		color: #7d26cd
+		color: $css-active;
 	}
 
 	td, th {
-		background-color: rgba(85, 26, 139, 0.06);
+		background-color: $css-background;
 	}
 
 	.snippet-activation-switch {
-		background-color: rgba(128, 0, 255);
+		background-color: $css-highlight;
 	}
 
 	th.check-column {
-		border-left-color: rgba(128, 0, 255);
+		border-left-color: $css-highlight;
 	}
 }
 
 .html-snippet a {
-	color: #548b54;
+	color: $html-active;
 }
 
 .html-snippet.active-snippet {
 
 	th, td {
-		background-color: rgba(84, 139, 84, 0.06);
+		background-color: $html-background;
 	}
 
 	a {
-		color: #548b54;
+		color: $html-active;
 	}
 
 	th.check-column {
-		border-left-color: #548b54;
+		border-left-color: $html-highlight;
 	}
 
 	.snippet-activation-switch {
-		background-color: #548b54;
+		background-color: $html-highlight;
 	}
 }
 
 .js-snippet.inactive-snippet a {
-	color: #cd6600;
+	color: $js-inactive;
 }
 
 .js-snippet.active-snippet {
 
 	th, td {
-		background-color: rgba(205, 102, 0, 0.06);
+		background-color: $js-background;
 	}
 
 	a {
-		color: #d44500;
+		color: $js-active;
 	}
 
 	th.check-column {
-		border-left-color: #cd6600;
+		border-left-color: $js-highlight;
 	}
 
 	.snippet-activation-switch {
-		background-color: #cd6600;
+		background-color: $js-highlight;
 	}
 }
 
