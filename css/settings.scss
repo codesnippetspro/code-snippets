@@ -10,3 +10,11 @@
 .CodeMirror-sizer::before {
 	content: '<?php';
 }
+
+p.submit {
+	max-width: 1020px;
+
+	.button-secondary {
+		float: right;
+	}
+}

@@ -10,6 +10,8 @@ namespace Code_Snippets\Settings;
 
 use function Code_Snippets\get_editor_themes;
 
+const NS = __NAMESPACE__ . '\\';
+
 /**
  * Add a new option for either the current site or the current network
  *
@@ -157,16 +159,13 @@ function register_plugin_settings() {
 	}
 
 	/* Register the setting */
-	register_setting( 'code-snippets', 'code_snippets_settings', 'code_snippets_settings_validate' );
+	register_setting( 'code-snippets', 'code_snippets_settings', array(
+		'sanitize_callback' => NS . 'sanitize_settings'
+	) );
 
 	/* Register settings sections */
 	foreach ( get_settings_sections() as $section_id => $section_name ) {
-		add_settings_section(
-			'code-snippets-' . $section_id,
-			$section_name,
-			'__return_empty_string',
-			'code-snippets'
-		);
+		add_settings_section( $section_id, $section_name, null, 'code-snippets' );
 	}
 
 	/* Register settings fields */
@@ -175,29 +174,18 @@ function register_plugin_settings() {
 			$atts = $field;
 			$atts['id'] = $field_id;
 			$atts['section'] = $section_id;
+			$callback = NS . 'render_' . $field['type'] . '_field';
 
-			add_settings_field(
-				'code_snippets_' . $field_id,
-				$field['name'],
-				__NAMESPACE__ . "\\render_{$field['type']}_field",
-				'code-snippets',
-				'code-snippets-' . $section_id,
-				$atts
-			);
+			add_settings_field( $field_id, $field['name'], $callback, 'code-snippets', $section_id, $atts );
 		}
 	}
 
 	/* Add editor preview as a field */
-	add_settings_field(
-		'code_snippets_editor_preview',
-		__( 'Editor Preview', 'code-snippets' ),
-		__NAMESPACE__ . '\\render_editor_preview',
-		'code-snippets',
-		'code-snippets-editor'
-	);
+	$callback = NS . 'render_editor_preview';
+	add_settings_field( 'editor_preview', __( 'Editor Preview', 'code-snippets' ), $callback, 'code-snippets', 'editor' );
 }
 
-add_action( 'admin_init', __NAMESPACE__ . '\\register_plugin_settings' );
+add_action( 'admin_init', NS . 'register_plugin_settings' );
 
 /**
  * Validate the settings
@@ -206,7 +194,7 @@ add_action( 'admin_init', __NAMESPACE__ . '\\register_plugin_settings' );
  *
  * @return array The validated settings.
  */
-function code_snippets_settings_validate( array $input ) {
+function sanitize_settings( array $input ) {
 	$settings = get_settings_values();
 	$settings_fields = get_settings_fields();
 
@@ -245,12 +233,7 @@ function code_snippets_settings_validate( array $input ) {
 	}
 
 	/* Add an updated message */
-	add_settings_error(
-		'code-snippets-settings-notices',
-		'settings-saved',
-		__( 'Settings saved.', 'code-snippets' ),
-		'updated'
-	);
+	add_settings_error( 'code-snippets-settings-notices', 'settings-saved', __( 'Settings saved.', 'code-snippets' ), 'updated' );
 
 	return $settings;
 }

@@ -678,11 +678,11 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:120
+#: php/admin-menus/class-settings-menu.php:119
 msgid "Reset to Default"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:146, php/settings/settings.php:251
+#: php/admin-menus/class-settings-menu.php:184, php/settings/settings.php:236
 msgid "Settings saved."
 msgstr ""
 
@@ -811,19 +811,19 @@ msgstr ""
 msgid "Highlight all instances of a currently selected word."
 msgstr ""
 
-#: php/settings/settings.php:134
+#: php/settings/settings.php:136
 msgid "General"
 msgstr ""
 
-#: php/settings/settings.php:135
+#: php/settings/settings.php:137
 msgid "Description Editor"
 msgstr ""
 
-#: php/settings/settings.php:136
+#: php/settings/settings.php:138
 msgid "Code Editor"
 msgstr ""
 
-#: php/settings/settings.php:193
+#: php/settings/settings.php:185
 msgid "Editor Preview"
 msgstr ""
 

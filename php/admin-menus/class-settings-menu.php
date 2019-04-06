@@ -109,20 +109,58 @@ class Settings_Menu extends Admin_Menu {
 				<?php
 
 				settings_fields( 'code-snippets' );
-				do_settings_sections( 'code-snippets' );
+				$this->do_settings_tabs();
 
 				?>
-				<p class="submit" style="max-width: 1020px;">
+				<p class="submit">
 					<?php submit_button( null, 'primary', 'submit', false ); ?>
 
-					<a class="button button-secondary" style="float: right;"
-					   href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>">
-						<?php esc_html_e( 'Reset to Default', 'code-snippets' ); ?>
-					</a>
+					<a class="button button-secondary" href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>"><?php
+						esc_html_e( 'Reset to Default', 'code-snippets' ); ?></a>
 				</p>
 			</form>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Output snippet settings in tabs
+	 *
+	 * @param string $page
+	 */
+	protected function do_settings_tabs( $page = 'code-snippets' ) {
+		global $wp_settings_sections;
+
+		if ( ! isset( $wp_settings_sections[ $page ] ) ) {
+			return;
+		}
+
+		$sections = (array) $wp_settings_sections[ $page ];
+		$current = isset( $_REQUEST['section'] ) ? sanitize_text_field( $_REQUEST['section'] ) : 'general';
+
+		echo '<h2 class="nav-tab-wrapper" id="settings-sections-tabs">';
+		foreach ( $sections as $section ) {
+			$format = $section['id'] === $current ?
+				'<a class="nav-tab nav-tab-active" data-section="%1%s">%2$s</a>' :
+				'<a class="nav-tab" href="%3$s" data-section="%1$s">%2$s</a>';
+
+			$section_url = add_query_arg( 'section', $section['id'] );
+			printf( $format, esc_attr( $section['id'] ), esc_html( $section['title'] ), esc_url( $section_url ) );
+		}
+
+		$section = $sections[ $current ];
+
+		if ( $section['title'] ) {
+			echo '<h2>', $section['title'], '</h2>', "\n";
+		}
+
+		if ( $section['callback'] ) {
+			call_user_func( $section['callback'], $section );
+		}
+
+		echo '<table class="form-table">';
+		do_settings_fields( $page, $section['id'] );
+		echo '</table>';
 	}
 
 	/**
