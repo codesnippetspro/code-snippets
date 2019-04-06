@@ -11,6 +11,11 @@ namespace Code_Snippets;
 class Settings_Menu extends Admin_Menu {
 
 	/**
+	 * Settings page name as registered with the Settings API.
+	 */
+	const SETTINGS_PAGE = 'code-snippets';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -74,6 +79,25 @@ class Settings_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Retrieve the name of the settings section currently being viewed.
+	 *
+	 * @param string $default Name of the default tab displayed.
+	 *
+	 * @return string
+	 */
+	public function get_current_section( $default = 'general' ) {
+		global $wp_settings_sections;
+
+		if ( ! isset( $wp_settings_sections[ self::SETTINGS_PAGE ] ) ) {
+			return $default;
+		}
+
+		$sections = (array) $wp_settings_sections[ self::SETTINGS_PAGE ];
+		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( $_REQUEST['section'] ) : $default;
+		return isset( $sections[ $active_tab ] ) ? $active_tab : $default;
+	}
+
+	/**
 	 * Render the admin screen
 	 */
 	public function render() {
@@ -84,18 +108,19 @@ class Settings_Menu extends Admin_Menu {
 			<h1><?php esc_html_e( 'Settings', 'code-snippets' );
 
 				if ( code_snippets()->admin->is_compact_menu() ) {
+					$format = '<a href="%2$s" class="page-title-action">%1$s</a>';
 
-					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+					printf( $format,
 						esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
 						esc_url( code_snippets()->get_menu_url() )
 					);
 
-					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+					printf( $format,
 						esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
 						esc_url( code_snippets()->get_menu_url( 'add' ) )
 					);
 
-					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
+					printf( $format,
 						esc_html_x( 'Import', 'snippets', 'code-snippets' ),
 						esc_url( code_snippets()->get_menu_url( 'import' ) )
 					);
@@ -106,6 +131,7 @@ class Settings_Menu extends Admin_Menu {
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 
 			<form action="<?php echo esc_url( $update_url ); ?>" method="post">
+				<input type="hidden" name="section" value="<?php echo $this->get_current_section(); ?>">
 				<?php
 
 				settings_fields( 'code-snippets' );
@@ -125,42 +151,43 @@ class Settings_Menu extends Admin_Menu {
 
 	/**
 	 * Output snippet settings in tabs
-	 *
-	 * @param string $page
 	 */
-	protected function do_settings_tabs( $page = 'code-snippets' ) {
+	protected function do_settings_tabs() {
 		global $wp_settings_sections;
 
-		if ( ! isset( $wp_settings_sections[ $page ] ) ) {
+		if ( ! isset( $wp_settings_sections[ self::SETTINGS_PAGE ] ) ) {
 			return;
 		}
 
-		$sections = (array) $wp_settings_sections[ $page ];
-		$current = isset( $_REQUEST['section'] ) ? sanitize_text_field( $_REQUEST['section'] ) : 'general';
+		$sections = (array) $wp_settings_sections[ self::SETTINGS_PAGE ];
+		$active_tab = $this->get_current_section();
 
 		echo '<h2 class="nav-tab-wrapper" id="settings-sections-tabs">';
+
 		foreach ( $sections as $section ) {
-			$format = $section['id'] === $current ?
-				'<a class="nav-tab nav-tab-active" data-section="%1%s">%2$s</a>' :
-				'<a class="nav-tab" href="%3$s" data-section="%1$s">%2$s</a>';
-
-			$section_url = add_query_arg( 'section', $section['id'] );
-			printf( $format, esc_attr( $section['id'] ), esc_html( $section['title'] ), esc_url( $section_url ) );
+			printf(
+				'<a class="nav-tab%s" data-section="%s">%s</a>',
+				$active_tab === $section['id'] ? ' nav-tab-active' : '',
+				esc_attr( $section['id'] ), esc_html( $section['title'] )
+			);
 		}
 
-		$section = $sections[ $current ];
+		echo '</h2>';
 
-		if ( $section['title'] ) {
-			echo '<h2>', $section['title'], '</h2>', "\n";
+		foreach ( $sections as $section ) {
+
+			if ( $section['title'] ) {
+				printf( '<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n", $section['id'], $section['title'] );
+			}
+
+			if ( $section['callback'] ) {
+				call_user_func( $section['callback'], $section );
+			}
+
+			printf( '<table class="form-table settings-section %s-settings">', $section['id'] );
+			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
+			echo '</table>';
 		}
-
-		if ( $section['callback'] ) {
-			call_user_func( $section['callback'], $section );
-		}
-
-		echo '<table class="form-table">';
-		do_settings_fields( $page, $section['id'] );
-		echo '</table>';
 	}
 
 	/**

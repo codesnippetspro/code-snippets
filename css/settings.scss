@@ -1,7 +1,4 @@
 
-.form-table th {
-	font-weight: normal;
-}
 
 .CodeMirror {
 	max-width: 800px;
@@ -16,5 +13,47 @@ p.submit {
 
 	.button-secondary {
 		float: right;
+	}
+}
+
+.nav-tab-wrapper {
+	margin-bottom: 1em;
+}
+
+input[type=number] {
+	width: 4em;
+}
+
+body.no-js {
+	.nav-tab-wrapper {
+		display: none;
+	}
+}
+
+body.js {
+
+	.settings-section-title {
+		border: 0;
+		clip: rect(1px, 1px, 1px, 1px);
+		clip-path: inset(50%);
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		padding: 0;
+		position: absolute;
+		width: 1px;
+		word-wrap: normal !important;
+	}
+
+	.settings-section {
+		display: none;
+	}
+
+	.general-settings {
+		display: block;
+	}
+
+	.nav-tab:not(.nav-tab-active) {
+		cursor: pointer;
 	}
 }
