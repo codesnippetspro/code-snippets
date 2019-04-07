@@ -14,32 +14,32 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: code-snippets.php:20, php/admin-menus/class-import-menu.php:107
+#: code-snippets.php:16, php/admin-menus/class-import-menu.php:107
 msgid "Code Snippets"
 msgstr ""
 
-#: code-snippets.php:21
+#: code-snippets.php:17
 msgid "https://github.com/sheabunge/code-snippets"
 msgstr ""
 
-#: code-snippets.php:22
+#: code-snippets.php:18
 msgid "An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!"
 msgstr ""
 
-#: code-snippets.php:23
+#: code-snippets.php:19
 msgid "Shea Bunge"
 msgstr ""
 
-#: code-snippets.php:24
+#: code-snippets.php:20
 msgid "https://sheabunge.com"
 msgstr ""
 
-#: code-snippets.php:63
+#: code-snippets.php:59
 msgid "Code Snippets requires PHP 5.6 or later."
 msgstr ""
 
 #. translators: %s: Update PHP URL
-#: code-snippets.php:66
+#: code-snippets.php:62
 msgid "Please <a href=\"%s\">upgrade your server to the latest version of PHP</a> to continue using Code Snippets."
 msgstr ""
 
