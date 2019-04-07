@@ -46,6 +46,14 @@ $js-highlight: #cd6600;
 	border: none;
 	box-shadow: none;
 	width: 4em;
+	color: #666;
+	text-align: center;
+
+	&:hover {
+		color: #000;
+		background-color: #efefef;
+		border-radius: 6px;
+	}
 
 	&:disabled {
 		color: inherit;
