@@ -1,6 +1,6 @@
 /* global code_snippets_editor_atts, code_snippets_editor_settings */
 
-(function (CodeMirror, editor_atts, editor_settings) {
+(function (init_editor, editor_atts, editor_settings) {
 	'use strict';
 
 	let n_tabs = editor_atts.indentWithTabs ? Math.floor(editor_atts.indentUnit / editor_atts.tabSize) : 0;
@@ -16,7 +16,7 @@
 		'} );\n',
 	].join('\n');
 
-	const editor = CodeMirror(document.getElementById('code_snippets_editor_preview'), editor_atts);
+	const editor = init_editor(document.getElementById('code_snippets_editor_preview'), editor_atts);
 	window.code_snippets_editor_preview = editor;
 
 	for (const setting of editor_settings) {
@@ -44,7 +44,7 @@
 		});
 	}
 
-}(window.Code_Snippets_CodeMirror, code_snippets_editor_atts, code_snippets_editor_settings));
+}(window.init_code_snippet_editor, code_snippets_editor_atts, code_snippets_editor_settings));
 
 (function () {
 	const tabs_wrapper = document.getElementById('settings-sections-tabs');

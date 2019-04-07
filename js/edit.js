@@ -1,6 +1,6 @@
 /* global code_snippets_editor_atts */
 
-window.code_snippets_editor = (function (CodeMirror, editor_atts) {
+window.code_snippets_editor = (function (init_editor, editor_atts) {
 	const save_snippet_cb = (cm) => document.getElementById('save_snippet').click();
 
 	editor_atts['extraKeys'] = window.navigator.platform.match('Mac') ?
@@ -11,9 +11,9 @@ window.code_snippets_editor = (function (CodeMirror, editor_atts) {
 		document.querySelector('.editor-help-text').className += ' platform-mac';
 	}
 
-	return CodeMirror.fromTextArea(document.getElementById('snippet_code'), editor_atts);
+	return init_editor(document.getElementById('snippet_code'), editor_atts);
 
-})(window.Code_Snippets_CodeMirror, code_snippets_editor_atts);
+})(window.init_code_snippet_editor, code_snippets_editor_atts);
 
 
 (function () {

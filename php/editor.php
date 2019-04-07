@@ -31,10 +31,13 @@ function get_code_editor_atts( $type, $override_atts = [], $json_encode = true )
 	$default_atts = [
 		'mode'           => $modes[ $type ],
 		'matchBrackets'  => true,
-		'extraKeys'      => [ 'Alt-F' => 'findPersistent' ],
+		'extraKeys'      => [ 'Alt-F' => 'findPersistent', 'Ctrl-Space' => 'autocomplete' ],
 		'gutters'        => [ 'CodeMirror-lint-markers' ],
 		'lint'           => in_array( $type, [ 'php', 'css', 'html' ], true ),
 		'viewportMargin' => 'Infinity',
+		'csslint'        => array_fill_keys( [
+			'errors', 'box-model', 'display-property-grouping', 'duplicate-properties', 'known-properties', 'outline-none'
+		], true )
 	];
 
 	// add relevant saved setting values to the default attributes

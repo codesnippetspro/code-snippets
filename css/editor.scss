@@ -1,6 +1,7 @@
 @import 'codemirror/lib/codemirror';
 @import 'codemirror/addon/dialog/dialog';
 @import 'codemirror/addon/lint/lint';
+@import 'codemirror/addon/hint/show-hint';
 
 .CodeMirror {
 	border: 1px solid #dfdfdf;
