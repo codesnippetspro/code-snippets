@@ -249,11 +249,11 @@ msgstr ""
 msgid "Clone"
 msgstr ""
 
-#: php/class-list-table.php:166, php/class-list-table.php:381, php/admin-menus/class-edit-menu.php:639
+#: php/class-list-table.php:166, php/class-list-table.php:381, php/admin-menus/class-edit-menu.php:643
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:175, php/class-list-table.php:382, php/admin-menus/class-edit-menu.php:640
+#: php/class-list-table.php:175, php/class-list-table.php:382, php/admin-menus/class-edit-menu.php:644
 msgid "Delete"
 msgstr ""
 
@@ -261,7 +261,7 @@ msgstr ""
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:180, php/admin-menus/class-edit-menu.php:668
+#: php/class-list-table.php:180, php/admin-menus/class-edit-menu.php:672
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
@@ -315,7 +315,7 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
-#: php/class-list-table.php:380, php/admin-menus/class-edit-menu.php:636
+#: php/class-list-table.php:380, php/admin-menus/class-edit-menu.php:640
 msgid "Download"
 msgstr ""
 
@@ -558,23 +558,23 @@ msgstr ""
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:610, php/views/partials/edit-submit-extra.php:21
+#: php/admin-menus/class-edit-menu.php:614, php/views/partials/edit-submit-extra.php:21
 msgid "Save Changes"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:615
+#: php/admin-menus/class-edit-menu.php:619
 msgid "Save Changes and Execute Once"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:620
+#: php/admin-menus/class-edit-menu.php:624
 msgid "Save Changes and Deactivate"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:622
+#: php/admin-menus/class-edit-menu.php:626
 msgid "Save Changes and Activate"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:667
+#: php/admin-menus/class-edit-menu.php:671
 msgid "You are about to permanently delete this snippet."
 msgstr ""
 
@@ -682,7 +682,7 @@ msgstr ""
 msgid "Reset to Default"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:211, php/settings/settings.php:236
+#: php/admin-menus/class-settings-menu.php:212, php/settings/settings.php:236
 msgid "Settings saved."
 msgstr ""
 

@@ -1,3 +1,4 @@
+@import 'editor';
 
 p.submit {
 	max-width: 1020px;
@@ -16,7 +17,7 @@ input[type=number] {
 }
 
 .CodeMirror {
-	max-width: 800px;
+	width: 800px;
 }
 
 .CodeMirror-sizer::before {

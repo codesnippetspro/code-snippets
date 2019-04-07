@@ -10,15 +10,12 @@ namespace Code_Snippets;
 use function Code_Snippets\Settings\get_setting;
 
 /**
- * Get the attributes for the code editor
+ * Register and load the CodeMirror library.
  *
- * @param string $type          Type of code editor – either 'php', 'css', 'js', or 'html'.
- * @param array  $override_atts Pass an array of attributes to override the saved ones.
- * @param bool   $json_encode   Encode the data as JSON.
- *
- * @return array|string Array if $json_encode is false, JSON string if it is true.
+ * @param string $type       Type of code editor – either 'php', 'css', 'js', or 'html'.
+ * @param array  $extra_atts Pass an array of attributes to override the saved ones.
  */
-function get_code_editor_atts( $type, $override_atts = [], $json_encode = true ) {
+function enqueue_code_editor( $type, $extra_atts = [] ) {
 
 	$modes = [
 		'css'  => 'text/css',
@@ -27,30 +24,25 @@ function get_code_editor_atts( $type, $override_atts = [], $json_encode = true )
 		'html' => 'application/x-httpd-php',
 	];
 
-	// default attributes for the CodeMirror editor
 	$default_atts = [
 		'mode'           => $modes[ $type ],
 		'matchBrackets'  => true,
 		'extraKeys'      => [ 'Alt-F' => 'findPersistent', 'Ctrl-Space' => 'autocomplete' ],
 		'gutters'        => [ 'CodeMirror-lint-markers' ],
-		'lint'           => in_array( $type, [ 'php', 'css', 'html' ], true ),
-		'viewportMargin' => 'Infinity',
-		'csslint'        => array_fill_keys( [
-			'errors', 'box-model', 'display-property-grouping', 'duplicate-properties', 'known-properties', 'outline-none'
-		], true )
+		'lint'           => true,
 	];
 
 	// add relevant saved setting values to the default attributes
-	$settings = Settings\get_settings_values();
-	$fields = Settings\get_settings_fields();
+	$plugin_settings = Settings\get_settings_values();
+	$setting_fields = Settings\get_settings_fields();
 
-	foreach ( $fields['editor'] as $field_id => $field ) {
+	foreach ( $setting_fields['editor'] as $field_id => $field ) {
 		// the 'codemirror' setting field specifies the name of the attribute
-		$default_atts[ $field['codemirror'] ] = $settings['editor'][ $field_id ];
+		$default_atts[ $field['codemirror'] ] = $plugin_settings['editor'][ $field_id ];
 	}
 
 	// merge the default attributes with the ones passed into the function
-	$atts = wp_parse_args( $default_atts, $override_atts );
+	$atts = wp_parse_args( $default_atts, $extra_atts );
 	$atts = apply_filters( 'code_snippets_codemirror_atts', $atts );
 
 	// ensure number values are not formatted as strings
@@ -58,43 +50,20 @@ function get_code_editor_atts( $type, $override_atts = [], $json_encode = true )
 		$atts[ $number_att ] = intval( $atts[ $number_att ] );
 	}
 
-	// encode the attributes for display if requested
-	if ( $json_encode ) {
-		$atts = wp_json_encode( $atts, JSON_UNESCAPED_SLASHES );
-		// Infinity is a constant and needs to be unquoted
-		$atts = str_replace( '"Infinity"', 'Infinity', $atts );
-	}
+	wp_enqueue_code_editor( [
+		'type' => $type,
+		'codemirror' => $atts,
+	] );
 
-	return $atts;
-}
-
-/**
- * Register and load the CodeMirror library
- *
- * @uses wp_enqueue_style() to add the stylesheets to the queue
- * @uses wp_enqueue_script() to add the scripts to the queue
- */
-function enqueue_code_editor_assets() {
-	$url = plugin_dir_url( PLUGIN_FILE );
-	$plugin_version = code_snippets()->version;
-
-	/* Remove other CodeMirror styles */
-	wp_deregister_style( 'codemirror' );
-	wp_deregister_style( 'wpeditor' );
-
-	/* CodeMirror */
-	wp_enqueue_style( 'code-snippets-editor', $url . 'css/min/editor.css', [], $plugin_version );
-	wp_enqueue_script( 'code-snippets-editor', $url . 'js/min/editor.js', [], $plugin_version, false );
-
-	/* CodeMirror Theme */
+	// CodeMirror Theme
 	$theme = get_setting( 'editor', 'theme' );
 
 	if ( 'default' !== $theme ) {
 
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
-			$url . "css/min/editor-themes/$theme.css",
-			[ 'code-snippets-editor' ], $plugin_version
+			plugins_url( "css/min/editor-themes/$theme.css", PLUGIN_FILE ),
+			[ 'code-editor' ], code_snippets()->version
 		);
 	}
 }

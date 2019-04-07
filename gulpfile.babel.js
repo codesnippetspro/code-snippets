@@ -15,7 +15,7 @@ import postcss from 'gulp-postcss';
 import precss from 'precss';
 import cssnano from 'cssnano';
 import rtlcss from 'gulp-rtlcss';
-import cssimport from 'postcss-import';
+import cssimport from 'postcss-easy-import';
 import hexrgba from 'postcss-hexrgba';
 import autoprefixer from 'autoprefixer';
 
@@ -39,7 +39,7 @@ import pkg from './package.json';
 
 const src_files = {
 	php: ['*.php', 'php/**/*.php'],
-	js: ['js/*.js'],
+	js: ['js/**/*.js', '!js/min/**/*.js'],
 	css: ['css/*.scss', '!css/_*.scss'],
 };
 
@@ -51,7 +51,7 @@ const dist_dirs = {
 gulp.task('css', (done) => {
 
 	let processors = [
-		cssimport(),
+		cssimport({prefix: '_', extensions: ['.scss', 'css']}),
 		precss(),
 		hexrgba(),
 		autoprefixer(),
@@ -117,11 +117,10 @@ function bundlejs(file, babel_config) {
 }
 
 gulp.task('js', gulp.series('test-js', gulp.parallel(
-	() => bundlejs('js/editor.js'),
 	() => bundlejs('js/manage.js'),
-	() => bundlejs('js/edit.js'),
-	() => bundlejs('js/edit-tags.js'),
-	() => bundlejs('js/settings.js'),
+	() => bundlejs('js/edit/edit.js'),
+	() => bundlejs('js/edit/tags.js'),
+	() => bundlejs('js/settings/settings.js'),
 	() => bundlejs('js/mce.js'),
 	() => bundlejs('js/front-end.js', {
 		plugins: [['prismjs', {languages: ['php', 'php-extras'], plugins: ['line-highlight', 'line-numbers']}]]
@@ -218,6 +217,6 @@ gulp.task('package', gulp.series(
 
 gulp.task('watch', gulp.series('default', (done) => {
 	gulp.watch('css/*.scss', gulp.series('css'));
-	gulp.watch('js/*.js', gulp.series('js'));
+	gulp.watch(['js/**/*.js', '!js/min/**/*'], gulp.series('js'));
 	done();
 }));

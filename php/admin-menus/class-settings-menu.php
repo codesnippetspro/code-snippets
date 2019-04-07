@@ -69,13 +69,13 @@ class Settings_Menu extends Admin_Menu {
 	public function enqueue_assets() {
 		$plugin = code_snippets();
 
+		Settings\enqueue_editor_preview_assets();
+
 		wp_enqueue_style(
 			'code-snippets-edit',
 			plugins_url( 'css/min/settings.css', $plugin->file ),
-			array(), $plugin->version
+			[], $plugin->version
 		);
-
-		Settings\enqueue_editor_preview_assets();
 	}
 
 	/**
