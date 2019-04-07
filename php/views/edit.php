@@ -135,6 +135,21 @@ if ( ! $snippet->id ) {
 
 		?>
 
-		<p class="submit"><?php $this->render_submit_buttons( $snippet ); ?></p>
+		<p class="submit"><?php
+			$this->render_submit_buttons( $snippet );
+
+			if ( 'css' === $snippet->type || 'js' === $snippet->type ) {
+				$asset_url = code_snippets()->active_snippets->get_asset_url( $snippet->scope );
+				$asset_url = add_query_arg( [ 'TB_iframe' => true, 'width' => 600, 'height' => 550 ], $asset_url );
+
+				printf(
+					'<a href="%s" class="button button-secondary thickbox">%s</a>',
+					esc_url( $asset_url ), esc_html__( 'View Full Stylesheet', 'code-snippets' )
+				);
+
+				add_thickbox();
+			}
+
+			?></p>
 	</form>
 </div>

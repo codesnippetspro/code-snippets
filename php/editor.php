@@ -69,7 +69,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 }
 
 /**
- * Retrieve a list of the available CodeMirror themes
+ * Retrieve a list of the available CodeMirror themes.
  *
  * @return array The available themes.
  */

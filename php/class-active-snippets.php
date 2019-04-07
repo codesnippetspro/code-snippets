@@ -75,6 +75,35 @@ class Active_Snippets {
 	}
 
 	/**
+	 * Retrieve the URL to a generated scope asset.
+	 *
+	 * @param string $scope      Name of the scope to retrieve the asset for.
+	 * @param bool   $latest_rev Whether to ensure that the URL is to the latest revision of the asset.
+	 *
+	 * @return string URL to asset.
+	 */
+	public function get_asset_url( $scope, $latest_rev = false ) {
+		$base = 'admin-css' === $scope ? self_admin_url( '/' ) : home_url( '/' );
+
+		if ( '-css' === substr( $scope, -4 ) ) {
+			$url = add_query_arg( 'code-snippets-css', 1, $base );
+
+		} elseif ( '-js' === substr( $scope, -3 ) ) {
+			$key = 'site-head-js' === $scope ? 'head' : 'footer';
+			$url = add_query_arg( 'code-snippets-js-snippets', $key, $base );
+
+		} else {
+			return '';
+		}
+
+		if ( $latest_rev && $rev = $this->get_rev( $scope ) ) {
+			$url = add_query_arg( 'ver', $rev, $url );
+		}
+
+		return $url;
+	}
+
+	/**
 	 * Enqueue the active style snippets for the current page
 	 */
 	public function enqueue_css() {
@@ -84,7 +113,7 @@ class Active_Snippets {
 			return;
 		}
 
-		$url = add_query_arg( 'code-snippets-css', 1, is_admin() ? self_admin_url( '/' ) : home_url( '/' ) );
+		$url = $this->get_asset_url( "$scope-css" );
 		wp_enqueue_style( "code-snippets-{$scope}-styles", $url, array(), $rev );
 	}
 
@@ -96,7 +125,7 @@ class Active_Snippets {
 		if ( $head_rev = $this->get_rev( 'site-head-js' ) ) {
 			wp_enqueue_script(
 				'code-snippets-site-head-js',
-				$url = add_query_arg( 'code-snippets-js-snippets', 'head', home_url( '/' ) ),
+				$this->get_asset_url( 'site-head-js' ),
 				array(), $head_rev, false
 			);
 
@@ -105,10 +134,9 @@ class Active_Snippets {
 		if ( $footer_rev = $this->get_rev( 'site-footer-js' ) ) {
 			wp_enqueue_script(
 				'code-snippets-site-footer-js',
-				$url = add_query_arg( 'code-snippets-js-snippets', 'footer', home_url( '/' ) ),
-				array(), $head_rev, true
+				$this->get_asset_url( 'site-footer-js' ),
+				array(), $footer_rev, true
 			);
-
 		}
 	}
 
