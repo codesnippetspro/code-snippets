@@ -27,6 +27,10 @@ body.no-js {
 	.nav-tab-wrapper {
 		display: none;
 	}
+
+	.settings-section {
+		display: block !important;
+	}
 }
 
 body.js {
@@ -42,14 +46,6 @@ body.js {
 		position: absolute;
 		width: 1px;
 		word-wrap: normal !important;
-	}
-
-	.settings-section {
-		display: none;
-	}
-
-	.general-settings {
-		display: block;
 	}
 
 	.nav-tab:not(.nav-tab-active) {

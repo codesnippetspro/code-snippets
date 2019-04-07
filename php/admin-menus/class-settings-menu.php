@@ -184,7 +184,8 @@ class Settings_Menu extends Admin_Menu {
 				call_user_func( $section['callback'], $section );
 			}
 
-			printf( '<table class="form-table settings-section %s-settings">', $section['id'] );
+			printf( '<table class="form-table settings-section %s-settings" style="display: %s;">',
+				$section['id'], $active_tab === $section['id'] ? 'block' : 'none' );
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table>';
 		}
