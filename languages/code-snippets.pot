@@ -699,7 +699,7 @@ msgid "Enable Snippet Tags"
 msgstr ""
 
 #: php/settings/settings-fields.php:61
-msgid "Show snippet tags on admin pages"
+msgid "Show snippet tags on admin pages."
 msgstr ""
 
 #: php/settings/settings-fields.php:66
@@ -707,7 +707,7 @@ msgid "Enable Snippet Descriptions"
 msgstr ""
 
 #: php/settings/settings-fields.php:68
-msgid "Show snippet descriptions on admin pages"
+msgid "Show snippet descriptions on admin pages."
 msgstr ""
 
 #: php/settings/settings-fields.php:73
@@ -715,7 +715,7 @@ msgid "Disable Shortcode Syntax Highlighter"
 msgstr ""
 
 #: php/settings/settings-fields.php:75
-msgid "Disable the syntax highlighting for the [code_snippet] shortcode on the front-end"
+msgid "Disable the syntax highlighting for the [code_snippet] shortcode on the front-end."
 msgstr ""
 
 #: php/settings/settings-fields.php:80
@@ -740,7 +740,7 @@ msgid "Use Full Editor"
 msgstr ""
 
 #: php/settings/settings-fields.php:109
-msgid "Enable all features of the visual editor"
+msgid "Enable all features of the visual editor."
 msgstr ""
 
 #: php/settings/settings-fields.php:114
@@ -748,7 +748,7 @@ msgid "Media Buttons"
 msgstr ""
 
 #: php/settings/settings-fields.php:116
-msgid "Enable the add media buttons"
+msgid "Enable the add media buttons."
 msgstr ""
 
 #: php/settings/settings-fields.php:125
@@ -885,6 +885,10 @@ msgstr ""
 
 #: php/views/edit.php:95, php/views/manage.php:47
 msgid "Scripts"
+msgstr ""
+
+#: php/views/edit.php:147
+msgid "View Full Stylesheet"
 msgstr ""
 
 #: php/views/import.php:36

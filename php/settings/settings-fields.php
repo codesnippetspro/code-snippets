@@ -58,21 +58,21 @@ function get_settings_fields() {
 		'enable_tags' => array(
 			'name'    => __( 'Enable Snippet Tags', 'code-snippets' ),
 			'type'    => 'checkbox',
-			'label'   => __( 'Show snippet tags on admin pages', 'code-snippets' ),
+			'label'   => __( 'Show snippet tags on admin pages.', 'code-snippets' ),
 			'default' => true,
 		),
 
 		'enable_description' => array(
 			'name'    => __( 'Enable Snippet Descriptions', 'code-snippets' ),
 			'type'    => 'checkbox',
-			'label'   => __( 'Show snippet descriptions on admin pages', 'code-snippets' ),
+			'label'   => __( 'Show snippet descriptions on admin pages.', 'code-snippets' ),
 			'default' => true,
 		),
 
 		'disable_prism' => array(
 			'name'    => __( 'Disable Shortcode Syntax Highlighter', 'code-snippets' ),
 			'type'    => 'checkbox',
-			'label'   => __( 'Disable the syntax highlighting for the [code_snippet] shortcode on the front-end', 'code-snippets' ),
+			'label'   => __( 'Disable the syntax highlighting for the [code_snippet] shortcode on the front-end.', 'code-snippets' ),
 			'default' => false,
 		),
 
@@ -106,14 +106,14 @@ function get_settings_fields() {
 		'use_full_mce' => array(
 			'name'    => __( 'Use Full Editor', 'code-snippets' ),
 			'type'    => 'checkbox',
-			'label'   => __( 'Enable all features of the visual editor', 'code-snippets' ),
+			'label'   => __( 'Enable all features of the visual editor.', 'code-snippets' ),
 			'default' => false,
 		),
 
 		'media_buttons' => array(
 			'name'    => __( 'Media Buttons', 'code-snippets' ),
 			'type'    => 'checkbox',
-			'label'   => __( 'Enable the add media buttons', 'code-snippets' ),
+			'label'   => __( 'Enable the add media buttons.', 'code-snippets' ),
 			'default' => false,
 		),
 	);
