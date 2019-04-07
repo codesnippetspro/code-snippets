@@ -5,6 +5,24 @@
 $active-color: #2196f3;
 $inactive-color: #ccc;
 
+$php-active: #0073aa;
+$php-inactive: #579;
+$php-background: #78c8e6;
+
+$css-inactive: #b452cd;
+$css-active: #7d26cd;
+$css-background: #551a8b;
+$css-highlight: #8000ff;
+
+$html-active: #548b54;
+$html-background: #548b54;
+$html-highlight: $html-active;
+
+$js-inactive: #cd6600;
+$js-active: #d44500;
+$js-background: #cd6600;
+$js-highlight: #cd6600;
+
 .column-name {
 
 	.dashicons {
@@ -210,56 +228,29 @@ $inactive-color: #ccc;
 	}
 }
 
-$php-inactive: #579;
-$php-background: rgba(120, 200, 230, 0.06);
-
-
-$css-inactive: #b452cd;
-$css-active: #7d26cd;
-$css-background: rgba(85, 26, 139, 0.06);
-$css-highlight: rgba(128, 0, 255);
-
-$html-active: #548b54;
-$html-background: rgba(84, 139, 84, 0.06);
-$html-highlight: $html-active;
-
-$js-inactive: #cd6600;
-$js-active: #d44500;
-$js-background: rgba(205, 102, 0, 0.06);
-$js-highlight: #cd6600;
-
-
-
-.nav-tab span {
-	font-size: 10px;
-	text-transform: uppercase;
-	border: 1px solid;
-	padding: 1px 2px;
-	margin-left: 5px;
-	border-radius: 5px;
-	vertical-align: top;
-}
-
 .nav-tab {
-	&[data-type=php] span {
-		border-color: $active-color;
-		color: $active-color;
+
+	span {
+		font-size: 10px;
+		text-transform: uppercase;
+		border: 1px solid;
+		padding: 1px 2px;
+		margin-left: 3px;
+		border-radius: 5px;
+		vertical-align: top;
 	}
 
-	&[data-type=css] span {
-		border-color: $css-highlight;
-		color: $css-highlight;
+	@mixin snippet-type-badge($type, $color) {
+		&[data-type=#{$type}] span {
+			color: $color;
+			border-color: $color;
+		}
 	}
 
-	&[data-type=html] span {
-		border-color: $html-active;
-		color: $html-active;
-	}
-
-	&[data-type=js] span {
-		border-color: $js-highlight;
-		color: $js-highlight;
-	}
+	@include snippet-type-badge(php, $php-active);
+	@include snippet-type-badge(css, $css-highlight);
+	@include snippet-type-badge(js, $js-highlight);
+	@include snippet-type-badge(html, $html-active);
 }
 
 .inactive-snippet a {
@@ -269,9 +260,7 @@ $js-highlight: #cd6600;
 .active-snippet {
 
 	td, th {
-		/* B10DC9 */
-		/* #78c8e6 */
-		background-color: $php-background;
+		background-color: rgba($php-background, 0.06);
 	}
 
 	th.check-column {
@@ -283,73 +272,33 @@ $js-highlight: #cd6600;
 	}
 }
 
-.css-snippet.inactive-snippet a {
-	color: $css-inactive;
-}
-
-.css-snippet.active-snippet {
-	a {
-		color: $css-active;
+@mixin snippet-type-colors($type, $active, $inactive, $background, $highlight) {
+	.#{$type}-snippet a {
+		color: $inactive;
 	}
 
-	td, th {
-		background-color: $css-background;
-	}
+	.#{$type}-snippet.active-snippet {
+		a {
+			color: $active;
+		}
 
-	.snippet-activation-switch {
-		background-color: $css-highlight;
-	}
+		td, th {
+			background-color: rgba($background, 0.06);
+		}
 
-	th.check-column {
-		border-left-color: $css-highlight;
-	}
-}
+		.snippet-activation-switch {
+			background-color: $highlight;
+		}
 
-.html-snippet a {
-	color: $html-active;
-}
-
-.html-snippet.active-snippet {
-
-	th, td {
-		background-color: $html-background;
-	}
-
-	a {
-		color: $html-active;
-	}
-
-	th.check-column {
-		border-left-color: $html-highlight;
-	}
-
-	.snippet-activation-switch {
-		background-color: $html-highlight;
+		th.check-column {
+			border-left-color: $highlight;
+		}
 	}
 }
 
-.js-snippet.inactive-snippet a {
-	color: $js-inactive;
-}
-
-.js-snippet.active-snippet {
-
-	th, td {
-		background-color: $js-background;
-	}
-
-	a {
-		color: $js-active;
-	}
-
-	th.check-column {
-		border-left-color: $js-highlight;
-	}
-
-	.snippet-activation-switch {
-		background-color: $js-highlight;
-	}
-}
+@include snippet-type-colors(css, $css-active, $css-inactive, $css-background, $css-highlight);
+@include snippet-type-colors(html, $html-active, $html-active, $html-background, $html-highlight);
+@include snippet-type-colors(js, $js-active, $js-inactive, $js-background, $js-highlight);
 
 @media screen and (max-width: 782px) {
 	p.search-box {

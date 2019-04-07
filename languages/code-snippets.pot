@@ -446,17 +446,17 @@ msgstr ""
 msgid "You are not authorized to access this page."
 msgstr ""
 
-#: php/admin-menus/class-admin-menu.php:201, php/admin-menus/class-settings-menu.php:89
+#: php/admin-menus/class-admin-menu.php:201, php/admin-menus/class-settings-menu.php:114
 msgctxt "snippets"
 msgid "Manage"
 msgstr ""
 
-#: php/admin-menus/class-admin-menu.php:204, php/admin-menus/class-settings-menu.php:94, php/views/edit.php:37
+#: php/admin-menus/class-admin-menu.php:204, php/admin-menus/class-settings-menu.php:119, php/views/edit.php:37
 msgctxt "snippet"
 msgid "Add New"
 msgstr ""
 
-#: php/admin-menus/class-admin-menu.php:207, php/admin-menus/class-settings-menu.php:99
+#: php/admin-menus/class-admin-menu.php:207, php/admin-menus/class-settings-menu.php:124
 msgctxt "snippets"
 msgid "Import"
 msgstr ""
@@ -661,28 +661,28 @@ msgstr ""
 msgid "Selected snippets <strong>cloned</strong>."
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:19
+#: php/admin-menus/class-settings-menu.php:24
 msgctxt "menu label"
 msgid "Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:20
+#: php/admin-menus/class-settings-menu.php:25
 msgid "Snippets Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:40
+#: php/admin-menus/class-settings-menu.php:45
 msgid "All settings have been reset to their defaults."
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:84
+#: php/admin-menus/class-settings-menu.php:108
 msgid "Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:119
+#: php/admin-menus/class-settings-menu.php:145
 msgid "Reset to Default"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:184, php/settings/settings.php:236
+#: php/admin-menus/class-settings-menu.php:211, php/settings/settings.php:236
 msgid "Settings saved."
 msgstr ""
 

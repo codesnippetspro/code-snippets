@@ -68,7 +68,7 @@
 
 		let new_referer = http_referer.value.replace(/([&?]section=)[^&]+/, '$1' + section);
 		if (new_referer === http_referer.value) {
-			new_referer += '?section=' + section;
+			new_referer += '&section=' + section;
 		}
 		http_referer.value = new_referer;
 	};

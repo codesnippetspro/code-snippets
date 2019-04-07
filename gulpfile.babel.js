@@ -16,6 +16,7 @@ import precss from 'precss';
 import cssnano from 'cssnano';
 import rtlcss from 'gulp-rtlcss';
 import cssimport from 'postcss-import';
+import hexrgba from 'postcss-hexrgba';
 import autoprefixer from 'autoprefixer';
 
 import imagemin from 'gulp-imagemin';
@@ -52,6 +53,7 @@ gulp.task('css', (done) => {
 	let processors = [
 		cssimport(),
 		precss(),
+		hexrgba(),
 		autoprefixer(),
 		cssnano({'preset': ['default', {'discardComments': {'removeAll': true}}]})
 	];
@@ -62,7 +64,7 @@ gulp.task('css', (done) => {
 		() => gulp.src(src_files.css)
 			.pipe(rename({extname: '.css'}))
 			.pipe(sourcemaps.init())
-			.pipe(postcss(processors))
+			.pipe(postcss(processors, {syntax: require('postcss-scss')}))
 			.pipe(sourcemaps.write('.'))
 			.pipe(gulp.dest(dist_dirs.css)),
 		() => gulp.src(dir_css.map((f) => dist_dirs.css + f))

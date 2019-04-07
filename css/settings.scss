@@ -1,13 +1,4 @@
 
-
-.CodeMirror {
-	max-width: 800px;
-}
-
-.CodeMirror-sizer::before {
-	content: '<?php';
-}
-
 p.submit {
 	max-width: 1020px;
 
@@ -22,6 +13,14 @@ p.submit {
 
 input[type=number] {
 	width: 4em;
+}
+
+.CodeMirror {
+	max-width: 800px;
+}
+
+.CodeMirror-sizer::before {
+	content: '<?php';
 }
 
 body.no-js {
