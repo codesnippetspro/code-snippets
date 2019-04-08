@@ -24,6 +24,10 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 		'html' => 'application/x-httpd-php',
 	];
 
+	if ( ! isset( $modes[ $type ] ) ) {
+		$type = 'php';
+	}
+
 	$default_atts = [
 		'mode'           => $modes[ $type ],
 		'matchBrackets'  => true,
@@ -51,7 +55,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 	}
 
 	wp_enqueue_code_editor( [
-		'type' => $type,
+		'type' => $modes[ $type ],
 		'codemirror' => $atts,
 	] );
 
