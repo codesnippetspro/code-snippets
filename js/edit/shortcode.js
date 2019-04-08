@@ -14,7 +14,7 @@
 		let shortcode = '[code_snippet';
 
 		if (snippet_id) {
-			shortcode += 'id=' + snippet_id;
+			shortcode += ' id=' + snippet_id;
 		}
 
 		if (network_admin) {
