@@ -10,6 +10,19 @@
 namespace Code_Snippets\Settings;
 
 /**
+ * Render the description for a settings field if it is provided.
+ *
+ * @since 3.0.0
+ *
+ * @param array $atts List of attributes passed to the setting.
+ */
+function render_field_description( $atts ) {
+	if ( ! empty( $atts['desc'] ) ) {
+		echo '<p class="description">', wp_kses_post( $atts['desc'] ), '</p>';
+	}
+}
+
+/**
  * Render a checkbox field for a setting
  *
  * @since 2.0.0
@@ -34,9 +47,7 @@ function render_checkbox_field( $atts ) {
 	}
 
 	// Add field description if it is set
-	if ( ! empty( $atts['desc'] ) ) {
-		echo '<p class="description">' . wp_kses_post( $atts['desc'] ) . '</p>';
-	}
+	render_field_description( $atts );
 }
 
 /**
@@ -68,16 +79,13 @@ function render_number_field( $atts ) {
 		echo ' ' . wp_kses_post( $atts['label'] );
 	}
 
-	// Add field description if it is set.
-	if ( ! empty( $atts['desc'] ) ) {
-		echo '<p class="description">', wp_kses_post( $atts['desc'] ), '</p>';
-	}
+	render_field_description( $atts );
 }
 
 /**
  * Render a number select field for an editor setting
  *
- * @since 2.0.0
+ * @since 3.0.0
  *
  * @param array $atts The setting field's attributes.
  */
@@ -91,8 +99,5 @@ function render_select_field( $atts ) {
 
 	echo '</select>';
 
-	// Add field description if it is set.
-	if ( ! empty( $atts['desc'] ) ) {
-		echo '<p class="description">', wp_kses_post( $atts['desc'] ), '</p>';
-	}
+	render_field_description( $atts );
 }
