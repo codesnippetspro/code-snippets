@@ -46,7 +46,6 @@ class List_Table extends WP_List_Table {
 	 */
 	public function __construct() {
 		global $status, $page;
-		$screen = get_current_screen();
 		$this->is_network = is_network_admin();
 
 		/* Determine the status */
@@ -70,10 +69,7 @@ class List_Table extends WP_List_Table {
 		) );
 
 		/* Set the table columns hidden in Screen Options by default */
-		if ( false === get_user_option( "manage{$screen->id}columnshidden" ) ) {
-			$user = wp_get_current_user();
-			update_user_option( $user->ID, "manage{$screen->id}columnshidden", array( 'id' ) );
-		}
+		$this->set_hidden_columns();
 
 		/* Strip the result query arg from the URL */
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
@@ -94,6 +90,22 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Set the table columns hidden in the Screen Options by default
+	 */
+	protected function set_hidden_columns() {
+		$screen = get_current_screen();
+		$opt = "manage{$screen->id}columnshidden";
+
+		$hidden_columns = get_user_option( $opt );
+
+		if ( false === $hidden_columns ) {
+			$user = wp_get_current_user();
+			$hidden_columns = [ 'id', 'type' ];
+			update_user_option( $user->ID, $opt, $hidden_columns );
+		}
+	}
+
+	/**
 	 * Define the output of all columns that have no callback function
 	 *
 	 * @param Snippet $snippet     The snippet used for the current row.
@@ -106,9 +118,15 @@ class List_Table extends WP_List_Table {
 		switch ( $column_name ) {
 			case 'id':
 				return $snippet->id;
+
 			case 'description':
 				return empty( $snippet->desc ) ? '&#8212;' :
 					apply_filters( 'code_snippets/list_table/column_description', $snippet->desc );
+
+			case 'type':
+				$type = $snippet->type;
+				return sprintf( '<span class="snippet-type-badge" data-type="%s">%s</span>', esc_attr( $type ), esc_html( $type ) );
+
 			default:
 				return apply_filters( "code_snippets/list_table/column_{$column_name}", $snippet );
 		}
@@ -216,7 +234,7 @@ class List_Table extends WP_List_Table {
 		}
 
 		return sprintf(
-			'<a class="%s" href="%s" title="%s"></a> ',
+			'<a class="%s" href="%s" title="%s">&nbsp;</a> ',
 			esc_attr( $class ), esc_url( $this->get_action_link( $action, $snippet ) ), esc_html( $label )
 		);
 	}
@@ -275,7 +293,7 @@ class List_Table extends WP_List_Table {
 	protected function column_cb( $snippet ) {
 
 		$out = sprintf(
-			'<input type="checkbox" name="%s[]" value="%s" />',
+			'<input type="checkbox" name="%s[]" value="%s">',
 			$snippet->shared_network ? 'shared_ids' : 'ids',
 			$snippet->id
 		);
@@ -337,8 +355,13 @@ class List_Table extends WP_List_Table {
 			'id'          => __( 'ID', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
+			'type'        => __( 'Type', 'code-snippets' ),
 			'priority'    => __( 'Priority', 'code-snippets' ),
 		);
+
+		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
+			unset( $columns['type'] );
+		}
 
 		if ( ! get_setting( 'general', 'enable_description' ) ) {
 			unset( $columns['description'] );
@@ -358,10 +381,11 @@ class List_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable_columns = array(
-			'id'       => array( 'id', true ),
-			'name'     => array( 'name', false ),
-			'tags'     => array( 'tags_list', true ),
-			'priority' => array( 'priority', true ),
+			'id'       => [ 'id', true ],
+			'name'     => [ 'name', false ],
+			'tags'     => [ 'tags_list', true ],
+			'type'     => [ 'type', true ],
+			'priority' => [ 'priority' ],
 		);
 
 		return apply_filters( 'code_snippets/list_table/sortable_columns', $sortable_columns );
