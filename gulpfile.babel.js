@@ -12,7 +12,7 @@ import change from 'gulp-change';
 import archiver from 'gulp-archiver';
 
 import postcss from 'gulp-postcss';
-import precss from 'precss';
+import sass from 'gulp-sass';
 import cssnano from 'cssnano';
 import rtlcss from 'gulp-rtlcss';
 import cssimport from 'postcss-easy-import';
@@ -51,8 +51,7 @@ const dist_dirs = {
 gulp.task('css', (done) => {
 
 	let processors = [
-		cssimport({prefix: '_', extensions: ['.scss', 'css']}),
-		precss(),
+		cssimport({prefix: '_', extensions: ['.scss', '.css']}),
 		hexrgba(),
 		autoprefixer(),
 		cssnano({'preset': ['default', {'discardComments': {'removeAll': true}}]})
@@ -62,9 +61,9 @@ gulp.task('css', (done) => {
 
 	return gulp.series(
 		() => gulp.src(src_files.css)
-			.pipe(rename({extname: '.css'}))
 			.pipe(sourcemaps.init())
-			.pipe(postcss(processors, {syntax: require('postcss-scss')}))
+			.pipe(sass().on('error', sass.logError))
+			.pipe(postcss(processors))
 			.pipe(sourcemaps.write('.'))
 			.pipe(gulp.dest(dist_dirs.css)),
 		() => gulp.src(dir_css.map((f) => dist_dirs.css + f))
