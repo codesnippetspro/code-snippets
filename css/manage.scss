@@ -5,7 +5,7 @@
 $active-color: #2196f3;
 $inactive-color: #ccc;
 
-@import 'type-colors';
+@import 'type-badges';
 
 .column-name {
 
@@ -227,8 +227,8 @@ $inactive-color: #ccc;
 	}
 }
 
-.inactive-snippet a {
-	color: $php-inactive;
+.inactive-snippet {
+	@include link-colors($php-inactive);
 }
 
 .active-snippet {
@@ -247,14 +247,12 @@ $inactive-color: #ccc;
 }
 
 @mixin snippet-type-colors($type, $active, $inactive, $background, $highlight) {
-	.#{$type}-snippet a {
-		color: $inactive;
+	.#{$type}-snippet {
+		@include link-colors($inactive);
 	}
 
 	.#{$type}-snippet.active-snippet {
-		a {
-			color: $active;
-		}
+		@include link-colors($active);
 
 		td, th {
 			background-color: rgba($background, 0.06);

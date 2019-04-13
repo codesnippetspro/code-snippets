@@ -299,24 +299,24 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: php/class-list-table.php:351
-msgid "ID"
-msgstr ""
-
-#: php/class-list-table.php:352, php/admin-menus/class-edit-menu.php:371
+#: php/class-list-table.php:351, php/admin-menus/class-edit-menu.php:371
 msgid "Description"
 msgstr ""
 
-#: php/class-list-table.php:353, php/admin-menus/class-edit-menu.php:397
+#: php/class-list-table.php:352, php/admin-menus/class-edit-menu.php:397
 msgid "Tags"
 msgstr ""
 
-#: php/class-list-table.php:354
+#: php/class-list-table.php:353
 msgid "Type"
 msgstr ""
 
-#: php/class-list-table.php:355, php/admin-menus/class-edit-menu.php:420
+#: php/class-list-table.php:354, php/admin-menus/class-edit-menu.php:420
 msgid "Priority"
+msgstr ""
+
+#: php/class-list-table.php:355
+msgid "ID"
 msgstr ""
 
 #: php/class-list-table.php:400, php/admin-menus/class-edit-menu.php:640
