@@ -75,8 +75,7 @@ class List_Table extends WP_List_Table {
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
 
 		/* Add filters to format the snippet description in the same way the post content is formatted */
-		$filters = array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'capital_P_dangit' );
-
+		$filters = [ 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'capital_P_dangit', 'wp_kses_post' ];
 		foreach ( $filters as $filter ) {
 			add_filter( 'code_snippets/list_table/column_description', $filter );
 		}
@@ -120,7 +119,7 @@ class List_Table extends WP_List_Table {
 				return $snippet->id;
 
 			case 'description':
-				return empty( $snippet->desc ) ? '&#8212;' :
+				return empty( $snippet->desc ) ? '' :
 					apply_filters( 'code_snippets/list_table/column_description', $snippet->desc );
 
 			case 'type':
@@ -315,13 +314,7 @@ class List_Table extends WP_List_Table {
 	 * @return string The column output.
 	 */
 	protected function column_tags( $snippet ) {
-
-		/* Return a placeholder if there are no tags */
-		if ( empty( $snippet->tags ) ) {
-			return '&#8212;';
-		}
-
-		$out = array();
+		$out = [];
 
 		/* Loop through the tags and create a link for each one */
 		foreach ( $snippet->tags as $tag ) {
