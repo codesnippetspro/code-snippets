@@ -146,6 +146,11 @@ $inactive-color: #ccc;
 		list-style: disc;
 	}
 
+	th.sortable a, th.sorted a {
+		display: flex;
+		flex-direction: row;
+	}
+
 	.row-actions {
 		color: #ddd;
 		position: relative;
@@ -176,10 +181,6 @@ $inactive-color: #ccc;
 
 	.column-description p {
 		color: #333;
-	}
-
-	.column-type {
-		text-align: center;
 	}
 
 	.active-snippet, .inactive-snippet {
