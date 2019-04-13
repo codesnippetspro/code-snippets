@@ -1080,11 +1080,12 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * Callback for search function
+	 *
 	 * @ignore
 	 *
-	 * @param Snippet $snippet The snippet being filtered
+	 * @param Snippet $snippet The snippet being filtered.
 	 *
-	 * @return bool The result of the filter
+	 * @return bool The result of the filter.
 	 */
 	private function search_by_line_callback( $snippet ) {
 		global $s;
@@ -1146,21 +1147,20 @@ class List_Table extends WP_List_Table {
 
 				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
 
-					/* translators: %s: search query, %d: line number */
-					echo sprintf( __( ' for &ldquo;%s&rdquo; on line %d', 'code-snippets' ),
-						esc_html( trim( str_replace( $matches[0], '', $s ) ) ),
-						$matches['line']
-					);
+					/* translators: 1: search query, 2: line number */
+					echo esc_html( sprintf( __( ' for &ldquo;%1$s&rdquo; on line %2$d', 'code-snippets' ),
+						trim( str_replace( $matches[0], '', $s ) ), $matches['line']
+					) );
 
 				} else {
 					/* translators: %s: search query */
-					echo sprintf( __( ' for &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $s ) );
+					echo esc_html( sprintf( __( ' for &ldquo;%s&rdquo;', 'code-snippets' ), $s ) );
 				}
 			}
 
 			if ( ! empty( $_GET['tag'] ) ) {
 				/* translators: %s: tag name */
-				echo sprintf( esc_html__( ' in tag &ldquo;%s&rdquo;', 'code-snippets' ), esc_html( $_GET['tag'] ) );
+				echo esc_html( sprintf( __( ' in tag &ldquo;%s&rdquo;', 'code-snippets' ), sanitize_text_field( $_GET['tag'] ) ) );
 			}
 
 			echo '</span>';

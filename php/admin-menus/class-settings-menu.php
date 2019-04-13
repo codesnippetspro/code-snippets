@@ -108,22 +108,17 @@ class Settings_Menu extends Admin_Menu {
 			<h1><?php esc_html_e( 'Settings', 'code-snippets' );
 
 				if ( code_snippets()->admin->is_compact_menu() ) {
-					$format = '<a href="%2$s" class="page-title-action">%1$s</a>';
+					$actions = [
+						_x( 'Manage', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url(),
+						_x( 'Add New', 'snippet', 'code-snippets' ) => code_snippets()->get_menu_url( 'add' ),
+						_X( 'Import', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url( 'import' ),
+					];
 
-					printf( $format,
-						esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
-						esc_url( code_snippets()->get_menu_url() )
-					);
-
-					printf( $format,
-						esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-						esc_url( code_snippets()->get_menu_url( 'add' ) )
-					);
-
-					printf( $format,
-						esc_html_x( 'Import', 'snippets', 'code-snippets' ),
-						esc_url( code_snippets()->get_menu_url( 'import' ) )
-					);
+					foreach ( $actions as $label => $url ) {
+						printf( '<a href="%s" class="page-title-action">%s</a>',
+							esc_url( $url ), esc_html( $label )
+						);
+					}
 				}
 
 				?></h1>
@@ -131,7 +126,7 @@ class Settings_Menu extends Admin_Menu {
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 
 			<form action="<?php echo esc_url( $update_url ); ?>" method="post">
-				<input type="hidden" name="section" value="<?php echo $this->get_current_section(); ?>">
+				<input type="hidden" name="section" value="<?php echo esc_attr( $this->get_current_section() ); ?>">
 				<?php
 
 				settings_fields( 'code-snippets' );
@@ -167,7 +162,7 @@ class Settings_Menu extends Admin_Menu {
 		foreach ( $sections as $section ) {
 			printf(
 				'<a class="nav-tab%s" data-section="%s">%s</a>',
-				$active_tab === $section['id'] ? ' nav-tab-active' : '',
+				( $active_tab === $section['id'] ) ? ' nav-tab-active' : '',
 				esc_attr( $section['id'] ), esc_html( $section['title'] )
 			);
 		}
@@ -177,15 +172,20 @@ class Settings_Menu extends Admin_Menu {
 		foreach ( $sections as $section ) {
 
 			if ( $section['title'] ) {
-				printf( '<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n", $section['id'], $section['title'] );
+				printf( '<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n",
+					esc_attr( $section['id'] ), esc_html( $section['title'] )
+				);
 			}
 
 			if ( $section['callback'] ) {
 				call_user_func( $section['callback'], $section );
 			}
 
-			printf( '<table class="form-table settings-section %s-settings" style="display: %s;">',
-				$section['id'], $active_tab === $section['id'] ? 'block' : 'none' );
+			printf(
+				'<table class="form-table settings-section %s-settings" style="display: %s;">',
+				esc_attr( $section['id'] ), $active_tab === $section['id'] ? 'block' : 'none'
+			);
+
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table>';
 		}

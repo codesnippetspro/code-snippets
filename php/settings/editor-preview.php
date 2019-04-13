@@ -104,7 +104,7 @@ function render_editor_preview() {
 	$n_tabs = $settings['indent_with_tabs'] ? floor( $indent_unit / $tab_size ) : 0;
 	$n_spaces = $settings['indent_with_tabs'] ? $indent_unit % $tab_size : $indent_unit;
 
-	$indent = str_repeat("\t", $n_tabs ) . str_repeat( ' ', $n_spaces );
+	$indent = str_repeat( "\t", $n_tabs ) . str_repeat( ' ', $n_spaces );
 
 	$code = "add_filter( 'admin_footer_text', function ( \$text ) {\n\n" .
 	       $indent . "\$site_name = get_bloginfo( 'name' );\n\n" .

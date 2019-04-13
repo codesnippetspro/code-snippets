@@ -83,8 +83,7 @@ if ( ! $snippet->id ) {
 				<?php esc_html_e( 'Code', 'code-snippets' );
 
 				if ( $snippet->id ) {
-					$type = $snippet->type;
-					printf( ' <span class="snippet-type-badge" data-type="%s">%s</span>', esc_attr( $type ), esc_html( $type ) );
+					printf( ' <span class="snippet-type-badge" data-type="%s">%s</span>', esc_attr( $snippet->type ), esc_html( $snippet->type ) );
 				}
 
 				?>

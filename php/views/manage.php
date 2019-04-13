@@ -51,17 +51,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 
 		foreach ( $types as $type_name => $label ) {
-			$badge = ( 'all' === $type_name ? '' : ' <span>' . esc_html( $type_name  ) . '</span>' );
 
 			if ( $type_name === $current_type ) {
-				printf( '<a class="nav-tab nav-tab-active" data-type="%s">%s</a>', esc_attr( $type_name ), esc_html( $label ) . $badge );
+				printf( '<a class="nav-tab nav-tab-active" data-type="%s">', esc_attr( $type_name ) );
+
 			} else {
-				printf(
-					'<a class="nav-tab" href="%s" data-type="%s">%s</a>',
-					esc_url( add_query_arg( 'type', $type_name ) ),
-					esc_attr( $type_name ),
-					esc_html( $label ) . $badge
+				printf( '<a class="nav-tab" href="%s" data-type="%s">%s</a>',
+					esc_url( add_query_arg( 'type', $type_name ) ), esc_attr( $type_name )
 				);
+			}
+
+			echo esc_html( $label );
+			if ( 'all' !== $type_name ) {
+				echo ' <span>', esc_html( $type_name ), '</span>';
 			}
 		}
 

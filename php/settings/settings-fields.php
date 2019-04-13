@@ -47,6 +47,9 @@ function get_settings_fields() {
 
 	$fields = [];
 
+	/* translators: %s: URL for Plugins admin menu */
+	$complete_uninstall_label = __( 'When the plugin is deleted from the <a href="%s">Plugins</a> menu, also delete all snippets and plugin settings.', 'code-snippets' );
+
 	$fields['general'] = [
 		'activate_by_default' => [
 			'name'    => __( 'Activate by Default', 'code-snippets' ),
@@ -79,11 +82,7 @@ function get_settings_fields() {
 		'complete_uninstall' => [
 			'name'    => __( 'Complete Uninstall', 'code-snippets' ),
 			'type'    => 'checkbox',
-			'label'   => sprintf(
-			/* translators: %s: URL for Plugins admin menu */
-				__( 'When the plugin is deleted from the <a href="%s">Plugins</a> menu, also delete all snippets and plugin settings.', 'code-snippets' ),
-				self_admin_url( 'plugins.php' )
-			),
+			'label'   => sprintf( $complete_uninstall_label, self_admin_url( 'plugins.php' ) ),
 			'default' => false,
 		],
 	];
