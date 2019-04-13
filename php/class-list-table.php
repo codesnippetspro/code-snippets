@@ -125,7 +125,10 @@ class List_Table extends WP_List_Table {
 
 			case 'type':
 				$type = $snippet->type;
-				return sprintf( '<span class="snippet-type-badge" data-type="%s">%s</span>', esc_attr( $type ), esc_html( $type ) );
+				return sprintf(
+					'<a class="snippet-type-badge" href="%s" data-type="%s">%s</a>',
+					esc_url( add_query_arg( 'type', $type ) ), esc_attr( $type ), esc_html( $type )
+				);
 
 			default:
 				return apply_filters( "code_snippets/list_table/column_{$column_name}", $snippet );

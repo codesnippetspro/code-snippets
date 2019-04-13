@@ -1,0 +1,40 @@
+
+$php-active: #0073aa;
+$php-inactive: #579;
+$php-background: #78c8e6;
+
+$css-inactive: #b452cd;
+$css-active: #7d26cd;
+$css-background: #551a8b;
+$css-highlight: #8000ff;
+
+$html-active: #548b54;
+$html-background: #548b54;
+$html-highlight: $html-active;
+
+$js-inactive: #cd6600;
+$js-active: #d44500;
+$js-background: #cd6600;
+$js-highlight: #cd6600;
+
+.nav-tab span, .snippet-type-badge {
+	font-size: 10px;
+	text-transform: uppercase;
+	border: 1px solid;
+	padding: 1px 2px;
+	border-radius: 5px;
+}
+
+.nav-tab span {
+	vertical-align: top;
+	margin-left: 3px;
+}
+
+$badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-active);
+
+@each $type, $color in $badges {
+	.nav-tab[data-type=#{$type}] span, .snippet-type-badge[data-type=#{$type}] {
+		color: $color;
+		border-color: $color;
+	}
+}

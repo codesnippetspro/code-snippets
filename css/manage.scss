@@ -5,23 +5,7 @@
 $active-color: #2196f3;
 $inactive-color: #ccc;
 
-$php-active: #0073aa;
-$php-inactive: #579;
-$php-background: #78c8e6;
-
-$css-inactive: #b452cd;
-$css-active: #7d26cd;
-$css-background: #551a8b;
-$css-highlight: #8000ff;
-
-$html-active: #548b54;
-$html-background: #548b54;
-$html-highlight: $html-active;
-
-$js-inactive: #cd6600;
-$js-active: #d44500;
-$js-background: #cd6600;
-$js-highlight: #cd6600;
+@import 'type-colors';
 
 .column-name {
 
@@ -194,6 +178,10 @@ $js-highlight: #cd6600;
 		color: #333;
 	}
 
+	.column-type {
+		text-align: center;
+	}
+
 	.active-snippet, .inactive-snippet {
 		td, th {
 			padding: 10px 9px;
@@ -234,31 +222,6 @@ $js-highlight: #cd6600;
 	#wpbody-content & .column-name {
 		white-space: nowrap; /* prevents wrapping of snippet title */
 	}
-}
-
-.nav-tab {
-
-	span {
-		font-size: 10px;
-		text-transform: uppercase;
-		border: 1px solid;
-		padding: 1px 2px;
-		margin-left: 3px;
-		border-radius: 5px;
-		vertical-align: top;
-	}
-
-	@mixin snippet-type-badge($type, $color) {
-		&[data-type=#{$type}] span {
-			color: $color;
-			border-color: $color;
-		}
-	}
-
-	@include snippet-type-badge(php, $php-active);
-	@include snippet-type-badge(css, $css-highlight);
-	@include snippet-type-badge(js, $js-highlight);
-	@include snippet-type-badge(html, $html-active);
 }
 
 .inactive-snippet a {
