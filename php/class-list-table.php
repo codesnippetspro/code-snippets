@@ -346,13 +346,13 @@ class List_Table extends WP_List_Table {
 	public function get_columns() {
 		$columns = array(
 			'cb'          => '<input type="checkbox">',
-			'activate'    => '',
+			'activate'    => '&nbsp;',
 			'name'        => __( 'Name', 'code-snippets' ),
-			'id'          => __( 'ID', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
 			'type'        => __( 'Type', 'code-snippets' ),
 			'priority'    => __( 'Priority', 'code-snippets' ),
+			'id'          => __( 'ID', 'code-snippets' ),
 		);
 
 		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
