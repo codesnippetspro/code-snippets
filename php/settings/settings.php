@@ -160,7 +160,7 @@ function register_plugin_settings() {
 
 	/* Register the setting */
 	register_setting( 'code-snippets', 'code_snippets_settings', array(
-		'sanitize_callback' => NS . 'sanitize_settings'
+		'sanitize_callback' => NS . 'sanitize_settings',
 	) );
 
 	/* Register settings sections */
@@ -174,8 +174,10 @@ function register_plugin_settings() {
 			$atts = $field;
 			$atts['id'] = $field_id;
 			$atts['section'] = $section_id;
-			$callback = NS . 'render_' . $field['type'] . '_field';
 
+			$atts['input_name'] = sprintf( 'code_snippets_settings[%s][%s]', $section_id, $field_id );
+
+			$callback = NS . 'render_' . $field['type'] . '_field';
 			add_settings_field( $field_id, $field['name'], $callback, 'code-snippets', $section_id, $atts );
 		}
 	}
