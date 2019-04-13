@@ -147,9 +147,20 @@ if ( ! $snippet->id ) {
 				$asset_url = code_snippets()->active_snippets->get_asset_url( $snippet->scope );
 				$asset_url = add_query_arg( [ 'TB_iframe' => true, 'width' => 600, 'height' => 550 ], $asset_url );
 
+				$scope_names = [
+					'site-css'  => __( 'Full stylesheet loaded on the site front-end:', 'code-snippets' ),
+					'admin-css' => __( 'Full stylesheet loaded in the administration area:', 'code-snippets' ),
+					'site-head-js' => __( 'All JavaScript code loaded in the site &amp;lt;head&amp;gt; area:', 'code-snippets' ),
+					'site-footer-js' => __( 'All JavaScript code loaded just before the closing &amp;lt;/body&amp;gt; tag:', 'code-snippets' ),
+				];
+
 				printf(
-					'<a href="%s" class="button button-secondary thickbox">%s</a>',
-					esc_url( $asset_url ), esc_html__( 'View Full Stylesheet', 'code-snippets' )
+					'<a href="%s" class="button button-secondary thickbox" name="%s">%s</a>',
+					esc_url( $asset_url ),
+					esc_attr( isset( $scope_names[ $snippet->scope ] ) ? $scope_names[ $snippet->scope ] : $snippet->scope ),
+					'css' === $snippet->type ?
+						esc_html__( 'View Full Stylesheet', 'code-snippets' ) :
+						esc_html__( 'View Full Script', 'code-snippets' )
 				);
 
 				add_thickbox();
