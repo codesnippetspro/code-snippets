@@ -56,15 +56,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 				printf( '<a class="nav-tab nav-tab-active" data-type="%s">', esc_attr( $type_name ) );
 
 			} else {
-				printf( '<a class="nav-tab" href="%s" data-type="%s">%s</a>',
+				printf( '<a class="nav-tab" href="%s" data-type="%s">',
 					esc_url( add_query_arg( 'type', $type_name ) ), esc_attr( $type_name )
 				);
 			}
 
-			echo esc_html( $label );
-			if ( 'all' !== $type_name ) {
-				echo ' <span>', esc_html( $type_name ), '</span>';
-			}
+			echo esc_html( $label ), 'all' === $type_name ? '' : ' <span>' . esc_html( $type_name ) . '</span>', '</a>';
 		}
 
 		?>
