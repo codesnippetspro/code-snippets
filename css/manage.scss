@@ -33,9 +33,10 @@ $inactive-color: #ccc;
 	color: #666;
 	text-align: center;
 
-	&:hover {
+	&:hover, &:focus, &:active {
 		color: #000;
-		background-color: #efefef;
+		background-color: #f5f5f5;
+		background-color: rgba(0, 0, 0, 0.1);
 		border-radius: 6px;
 	}
 
@@ -197,7 +198,8 @@ $inactive-color: #ccc;
 		text-decoration: none;
 		border: medium none;
 		border-radius: 2px;
-		background: #e0e0e0;
+		background-color: #e0e0e0;
+		background-color: rgba(0, 0, 0, 0.08);
 		font-size: smaller;
 		line-height: 1.2;
 
