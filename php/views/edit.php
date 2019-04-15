@@ -148,10 +148,10 @@ if ( ! $snippet->id ) {
 				$asset_url = add_query_arg( [ 'TB_iframe' => true, 'width' => 600, 'height' => 550 ], $asset_url );
 
 				$scope_names = [
-					'site-css'  => __( 'Full stylesheet loaded on the site front-end:', 'code-snippets' ),
-					'admin-css' => __( 'Full stylesheet loaded in the administration area:', 'code-snippets' ),
-					'site-head-js' => __( 'All JavaScript code loaded in the site &amp;lt;head&amp;gt; area:', 'code-snippets' ),
-					'site-footer-js' => __( 'All JavaScript code loaded just before the closing &amp;lt;/body&amp;gt; tag:', 'code-snippets' ),
+					'site-css'       => __( 'Site front-end stylesheet', 'code-snippets' ),
+					'admin-css'      => __( 'Administration area stylesheet', 'code-snippets' ),
+					'site-head-js'   => __( 'JavaScript loaded in the site &amp;lt;head&amp;gt; section', 'code-snippets' ),
+					'site-footer-js' => __( 'JavaScript loaded just before the closing &amp;lt;/body&amp;gt; tag', 'code-snippets' ),
 				];
 
 				printf(
