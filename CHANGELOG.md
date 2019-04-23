@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.XX.X (unreleased)
+* Updated CodeMirror to version 5.46.0.
+
 ## 2.13.3 (13 Mar 2019)
 * Added: Hover effect to activation switches.
 * Added: Additional save buttons above snippet editor.
