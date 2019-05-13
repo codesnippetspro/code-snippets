@@ -35,6 +35,8 @@
 * Added: Snippet type badges to Edit and Add New Snippet pages.
 * Added: Setting to control whether the current line of the code editor is highlighted.
 
+## 2.XX.X (unreleased)
+* Updated CodeMirror to version 5.46.0.
 
 ## 2.13.3 (13 Mar 2019)
 * Added: Hover effect to activation switches.

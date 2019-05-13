@@ -900,19 +900,19 @@ msgid "Scripts"
 msgstr ""
 
 #: php/views/edit.php:151
-msgid "Full stylesheet loaded on the site front-end:"
+msgid "Site front-end stylesheet"
 msgstr ""
 
 #: php/views/edit.php:152
-msgid "Full stylesheet loaded in the administration area:"
+msgid "Administration area stylesheet"
 msgstr ""
 
 #: php/views/edit.php:153
-msgid "All JavaScript code loaded in the site &amp;lt;head&amp;gt; area:"
+msgid "JavaScript loaded in the site &amp;lt;head&amp;gt; section"
 msgstr ""
 
 #: php/views/edit.php:154
-msgid "All JavaScript code loaded just before the closing &amp;lt;/body&amp;gt; tag:"
+msgid "JavaScript loaded just before the closing &amp;lt;/body&amp;gt; tag"
 msgstr ""
 
 #: php/views/edit.php:162
