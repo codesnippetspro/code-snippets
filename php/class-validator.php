@@ -5,7 +5,7 @@
  *
  * @package Code_Snippets
  */
-class Code_Snippets_Code_Parser {
+class Code_Snippets_Validator {
 
 	/**
 	 * @var string
@@ -31,11 +31,12 @@ class Code_Snippets_Code_Parser {
 	 */
 	private $length;
 
-	private $class_names = array();
-
-	private $function_names = array();
-
-	private $errors = array();
+	/**
+	 * Array to keep track of the various function, class and interface identifiers which have been defined.
+	 *
+	 * @var array
+	 */
+	private $defined_identifiers = array();
 
 	/**
 	 * Class constructor.
@@ -75,7 +76,7 @@ class Code_Snippets_Code_Parser {
 	 * @return bool Whether the pointer was advanced.
 	 */
 	private function next() {
-		if ( $this->end()) {
+		if ( $this->end() ) {
 			return false;
 		}
 
@@ -83,10 +84,34 @@ class Code_Snippets_Code_Parser {
 		return true;
 	}
 
-	/**
-	 * Parse the provided tokens.
-	 */
-	public function parse() {
+	private function check_duplicate_identifier( $type, $identifier ) {
+
+		if ( ! isset( $this->defined_identifiers[ $type ] ) ) {
+			switch ( $type ) {
+				case T_FUNCTION:
+					$defined_functions = get_defined_functions();
+					$this->defined_identifiers[ T_FUNCTION ] = array_merge( $defined_functions['internal'], $defined_functions['user'] );
+					break;
+
+				case T_CLASS:
+					$this->defined_identifiers[ T_CLASS ] = get_declared_classes();
+					break;
+
+				case T_INTERFACE:
+					$this->defined_identifiers[ T_INTERFACE ] = get_declared_interfaces();
+					break;
+
+				default:
+					return false;
+			}
+		}
+
+		$duplicate = in_array( $identifier, $this->defined_identifiers[ $type ], true );
+		array_unshift( $this->defined_identifiers[ $type ], $identifier );
+		return $duplicate;
+	}
+
+	public function validate() {
 
 		while ( ! $this->end() ) {
 			$token = $this->peek();
@@ -111,21 +136,42 @@ class Code_Snippets_Code_Parser {
 
 			// if we've eaten all of the tokens without discovering a name, then there must be a syntax error, so return appropriately
 			if ( $this->end() ) {
-				$this->errors[] = T_CLASS === $structure_type ?
-					__( 'Snippet contains an incomplete class', 'code-snippets' ) :
-					__( 'Snippet contains an incomplete function', 'code-snippets' );
-				return false;
+				return array(
+					'message' => __( 'Parse error: syntax error, unexpected end of snippet.', 'code-snippets' ),
+					'line'    => $token[2],
+				);
 			}
 
-			// add the discovered class or function name to an appropriate array
-			if ( T_CLASS === $structure_type ) {
-				$this->class_names[] = $token[1];
-			} elseif ( T_FUNCTION === $structure_type ) {
-				$this->function_names[] = $token[1];
+			// check whether the name has already been defined
+			if ( $this->check_duplicate_identifier( $structure_type, $token[1] ) ) {
+				switch ( $structure_type ) {
+					case T_FUNCTION:
+						/* translators: %s: PHP function name */
+						$message = __( 'Cannot redeclare function %s.', 'code-snippets' );
+						break;
+					case T_CLASS:
+						/* translators: %s: PHP class name */
+						$message = __( 'Cannot redeclare class %s.', 'code-snippets' );
+						break;
+					case T_INTERFACE:
+						/* translators: %s: PHP interface name */
+						$message = __( 'Cannot redeclare interface %s.', 'code-snippets' );
+						break;
+					default:
+						/* translators: %s: PHP identifier name*/
+						$message = __( 'Cannot redeclare %s.', 'code-snippets' );
+				}
+
+				return array(
+					'message' => sprintf( $message, $token[1] ),
+					'line'    => $token[2],
+				);
 			}
 
 			// if we have entered into a class, eat tokens until we find the closing brace
-			if ( T_CLASS !== $structure_type ) continue;
+			if ( T_CLASS !== $structure_type ) {
+				continue;
+			}
 
 			// find the opening brace for the class
 			while ( ! $this->end() && '{' !== $token ) {
@@ -149,38 +195,13 @@ class Code_Snippets_Code_Parser {
 
 			// if we did not make it out of the class, then there's a problem
 			if ( $depth > 0 ) {
-				$this->errors[] = __( 'Snippet contains a syntax error', 'code-snippets' );
-				return false;
+				return array(
+					'message' => __( 'Parse error: syntax error, unexpected end of snippet', 'code-snippets' ),
+					'line'    => $token[2],
+				);
 			}
 		}
 
-		return true;
-	}
-
-	/**
-	 * Retrieve a list of functions defined in the code.
-	 *
-	 * @return array
-	 */
-	public function get_defined_functions() {
-		return $this->function_names;
-	}
-
-	/**
-	 * Retrieve a list of classes declared in the code.
-	 *
-	 * @return array
-	 */
-	public function get_declared_classes() {
-		return $this->class_names;
-	}
-
-	/**
-	 * Retrieve the errors encountered when parsing.
-	 *
-	 * @return array
-	 */
-	public function get_parse_errors() {
-		return $this->errors;
+		return false;
 	}
 }

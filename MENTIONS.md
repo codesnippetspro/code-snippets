@@ -22,4 +22,6 @@ This document is an effort to maintain a list of website and articles which reco
 - [perun.net](https://www.perun.net/2012/12/05/wordpress-funktionen-aus-dem-admin-bereich-verwalten/)
 - [Kinsta](https://kinsta.com/knowledgebase/add-code-wordpress-header-footer/)
 - [Amethyst Website Design](https://amethystwebsitedesign.com/how-to-use-shortcodes-in-your-wordpress-website-sidebar/)
-
+- [Charitable Donation Plugin](https://www.wpcharitable.com/documentation/3-ways-to-add-code-customizations-to-your-site/)
+- [Hostenko](https://hostenko.com/wpcafe/plugins/code-snippets-add-custom-code-in-wordpress/)
+- [Iconic](https://iconicwp.com/blog/redirect-users-woocommerce-login-registration/)

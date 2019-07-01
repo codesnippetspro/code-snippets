@@ -196,73 +196,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	}
 
 	/**
-	 * Format a list of tokens for display.
-	 *
-	 * @param array $list
-	 *
-	 * @return string
-	 */
-	private function format_list( $list ) {
-		$final = array_pop( $list );
-		if ( empty( $list ) ) {
-			return '<code>' . $final . '</code>';
-		}
-
-		$str = '<code>' . join( '</code>' . _x( ', ', 'list separator', 'code-snippets' ) . '<code>', $list ) . '</code>';
-		/* translators: 1: first list item, 2: second list item */
-		return sprintf( __( '%1$s and %1$s', 'code-snippets' ), $str, '<code>' . $final . '</code>' );
-	}
-
-	/**
-	 * Validate snippet code without executing it.
-	 *
-	 * @param Code_Snippet $snippet Snippet to validate.
-	 *
-	 * @return string An error message if an error was detected, an empty string if no errors were detected.
-	 */
-	private function dry_validate_code( Code_Snippet $snippet ) {
-		$parser = new Code_Snippets_Code_Parser( $snippet->code );
-		$parser->parse();
-
-		if ( $parse_errors = $parser->get_parse_errors() ) {
-			return $parse_errors[0];
-		}
-
-		if ( $snippet_functions = $parser->get_defined_functions() ) {
-			// ensure that the snippet only defines unique functions within its own code
-			if ( count( $snippet_functions ) !== count( array_flip( $snippet_functions ) ) ) {
-				return __( 'Snippet contains duplicate function declarations', 'code-snippets' );
-			}
-
-			$defined_functions = get_defined_functions();
-			$defined_functions = array_merge( $defined_functions['internal'], $defined_functions['user'] );
-			$duplicate_functions = array_intersect( $defined_functions, $snippet_functions );
-
-			if ( count( $duplicate_functions ) ) {
-				/* translators: %s: PHP function name */
-				$text = _n( 'Cannot redefine the %s function.', 'Cannot redefine the %s functions', count( $duplicate_functions ), 'code-snippets' );
-				return sprintf( $text, $this->format_list( $duplicate_functions ) );
-			}
-		}
-
-		if ( $snippet_classes = $parser->get_declared_classes() ) {
-			// ensure that the snippet only defines unique functions within its own code
-			if ( count( $snippet_classes ) !== count( array_flip( $snippet_classes ) ) ) {
-				return __( 'Snippet contains duplicate class declarations.', 'code-snippets' );
-			}
-
-			$duplicate_classes = array_intersect( get_declared_classes(), $snippet_classes );
-			if ( count( $duplicate_classes ) ) {
-				/* translators: %s: PHP function name */
-				$text = _n( 'Cannot redefine the %s class.', 'Cannot redefine the %s classes', count( $duplicate_classes ), 'code-snippets' );
-				return sprintf( $text, $this->format_list( $duplicate_classes ) );
-			}
-		}
-
-		return '';
-	}
-
-	/**
 	 * Validate the snippet code before saving to database
 	 *
 	 * @param Code_Snippet $snippet
@@ -323,8 +256,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Deactivate snippet if code contains errors */
 		if ( $snippet->active && 'single-use' !== $snippet->scope ) {
-			$code_error = $this->dry_validate_code( $snippet );
+			$validator = new Code_Snippets_Validator( $snippet->code );
+			$code_error = $validator->validate();
 
+			var_dump($code_error);
 			if ( ! $code_error ) {
 				$code_error = $this->test_code( $snippet );
 			}
@@ -525,7 +460,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			return false;
 		}
 
-		if ( $error = $this->dry_validate_code( $snippet ) ) {
+		$validator = new Code_Snippets_Validator( $snippet->code );
+
+		if ( $error = $validator->validate() ) {
 			return $error;
 		}
 
@@ -561,22 +498,12 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 			if ( isset( $_REQUEST['id'] ) && $error = $this->get_snippet_error( $_REQUEST['id'] ) ) {
 
-				if ( is_array( $error ) ) {
-
-					printf(
-						'<div id="message" class="error fade"><p>%s</p><p><strong>%s</strong></p></div>',
-						/* translators: %d: line of file where error originated */
-						sprintf( __( 'The snippet has been deactivated due to an error on line %d:', 'code-snippets' ), $error['line'] ),
-						$error['message']
-					);
-				} else {
-
-					printf(
-						'<div id="message" class="error fade"><p>%s</p><p><strong>%s</strong></p></div>',
-						/* translators: %d: line of file where error originated */
-						__( 'The snippet has been deactivated due to an error in its code:', 'code-snippets' ), $error
-					);
-				}
+				printf(
+					'<div id="message" class="error fade"><p>%s</p><p><strong>%s</strong></p></div>',
+					/* translators: %d: line of file where error originated */
+					sprintf( __( 'The snippet has been deactivated due to an error on line %d:', 'code-snippets' ), $error['line'] ),
+					$error['message']
+				);
 
 			} else {
 				echo '<div id="message" class="error fade"><p>', __( 'The snippet has been deactivated due to an error in the code.', 'code-snippets' ), '</p></div>';
