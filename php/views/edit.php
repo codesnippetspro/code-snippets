@@ -88,13 +88,13 @@ if ( ! $snippet->id ) {
 
 				$actions['save_snippet'] = array(
 					__( 'Save Changes', 'code-snippets' ),
-					__( 'Save Snippet', 'code-snippets' )
+					__( 'Save Snippet', 'code-snippets' ),
 				);
 
 				if ( 'single-use' === $snippet->scope ) {
 					$actions['save_snippet_execute'] = array(
 						__( 'Execute Once', 'code-snippets' ),
-						__( 'Save Snippet and Execute Once', 'code-snippets' )
+						__( 'Save Snippet and Execute Once', 'code-snippets' ),
 					);
 
 				} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
@@ -102,13 +102,13 @@ if ( ! $snippet->id ) {
 					if ( $snippet->active ) {
 						$actions['save_snippet_deactivate'] = array(
 							__( 'Deactivate', 'code-snippets' ),
-							__( 'Save Snippet and Deactivate', 'code-snippets' )
+							__( 'Save Snippet and Deactivate', 'code-snippets' ),
 						);
 
 					} else {
 						$actions['save_snippet_activate'] = array(
 							__( 'Activate', 'code-snippets' ),
-							__( 'Save Snippet and Activate', 'code-snippets' )
+							__( 'Save Snippet and Activate', 'code-snippets' ),
 						);
 					}
 				}

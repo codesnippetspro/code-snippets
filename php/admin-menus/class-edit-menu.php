@@ -259,7 +259,6 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			$validator = new Code_Snippets_Validator( $snippet->code );
 			$code_error = $validator->validate();
 
-			var_dump($code_error);
 			if ( ! $code_error ) {
 				$code_error = $this->test_code( $snippet );
 			}

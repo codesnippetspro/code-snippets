@@ -101,6 +101,8 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
  * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
  *
  * @return array|bool An array of imported snippet IDs on success, false on failure
+ *
+ * @phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
  */
 function import_snippets_xml( $file, $multisite = null, $dup_action = 'ignore' ) {
 

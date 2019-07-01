@@ -129,7 +129,7 @@ class Code_Snippets_Validator {
 			$structure_type = $token[0];
 
 			// continue eating tokens until we find the name of the class or function
-			while ( ! $this->end() && $token[0] !== T_STRING ) {
+			while ( ! $this->end() && T_STRING !== $token[0] ) {
 				$token = $this->peek();
 				$this->next();
 			}

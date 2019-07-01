@@ -1070,9 +1070,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
 
-					/* translators: %s: search query, %d: line number */
-					echo sprintf(
-						__( ' for &ldquo;%s&rdquo; on line %d', 'code-snippets' ),
+					/* translators: 1: search query, 2: line number */
+					echo sprintf( __( ' for &ldquo;%1$s&rdquo; on line %2$d', 'code-snippets' ),
 						esc_html( trim( str_replace( $matches[0], '', $s ) ) ),
 						$matches['line']
 					);
