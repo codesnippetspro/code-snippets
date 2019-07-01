@@ -3,6 +3,9 @@
 # @link http://about.travis-ci.org/docs/user/languages/php/
 language: php
 
+# can only compile older versions of PHP on trusty
+dist: trusty
+
 # Declare versions of PHP to use. Use one decimal max.
 php:
   - '5.4'
