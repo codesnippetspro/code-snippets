@@ -129,7 +129,7 @@ class Code_Snippets_Validator {
 			$structure_type = $token[0];
 
 			// continue eating tokens until we find the name of the class or function
-			while ( ! $this->end() && T_STRING !== $token[0] ) {
+			while ( ! $this->end() && T_STRING !== $token[0] && ( T_FUNCTION !== $structure_type || '(' !== $token ) ) {
 				$token = $this->peek();
 				$this->next();
 			}
@@ -140,6 +140,11 @@ class Code_Snippets_Validator {
 					'message' => __( 'Parse error: syntax error, unexpected end of snippet.', 'code-snippets' ),
 					'line'    => $token[2],
 				);
+			}
+
+			// if the function is anonymous, with no name, then no need to check
+			if ( T_FUNCTION === $structure_type && '(' === $token ) {
+				continue;
 			}
 
 			// check whether the name has already been defined
