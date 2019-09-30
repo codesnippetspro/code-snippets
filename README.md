@@ -1,7 +1,7 @@
 # Code Snippets [![Build Status](https://travis-ci.org/sheabunge/code-snippets.png?branch=master)](https://travis-ci.org/sheabunge/code-snippets)
 
 * __Requires at least:__ [WordPress 3.6](https://wordpress.org/download/) or later
-* __Tested up to:__ WordPress 5.1.1
+* __Tested up to:__ WordPress 5.2.2
 * __Stable version:__ [2.13.3](https://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
@@ -33,5 +33,5 @@ Code Snippets can be used in these different languages thanks to the following t
 * Slovak - [Ján Fajčák](http://wp.sk)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
 * Chinese - [Jincheng Shan](http://shanjincheng.com)
-* Serbo-Croatian - [Borisa Djuraskovic from Web Hosting Hub](http://www.webhostinghub.com/)
+* Croatian - [Borisa Djuraskovic from Web Hosting Hub](http://www.webhostinghub.com/)
 * Japanese - [mt8](http://mt8.biz/)
