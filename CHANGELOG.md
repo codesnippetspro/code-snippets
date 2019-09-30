@@ -297,7 +297,7 @@
 * Added support for different CodeMirror themes
 * Integrated tags component into main plugin. Current users of the Code Snippets Tags plugin can safely uninstall it.
 * Added Auto Close Brackets CodeMirror addon (props to TronicLabs)
-* Added Serbo-Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
+* Added Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
 * Added Highlight Selection Matches CodeMirror addon (props to TronicLabs)
 * Added Chinese translation thanks to Jincheng Shan
 * Added Russian translation by Alexander Samsonov
