@@ -3,7 +3,7 @@ Contributors: bungeshea
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 5.1.1
+Tested up to: 5.2.2
 Requires PHP: 5.2
 Stable tag: 2.13.3
 License: MIT
@@ -42,7 +42,7 @@ Code Snippets can be used in these different languages thanks to the following t
 * Slovak - [Ján Fajčák](http://wp.sk)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
 * Chinese - [Jincheng Shan](http://shanjincheng.com)
-* Serbo-Croatian - [Borisa Djuraskovic from Web Hosting Hub](http://www.webhostinghub.com/)
+* Croatian - [Borisa Djuraskovic from Web Hosting Hub](http://www.webhostinghub.com/)
 * Japanese - [mt8](http://mt8.biz/)
 
 == Installation ==
@@ -425,7 +425,7 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Added support for different CodeMirror themes
 * Integrated tags component into main plugin. Current users of the Code Snippets Tags plugin can safely uninstall it.
 * Added Auto Close Brackets CodeMirror addon (props to TronicLabs)
-* Added Serbo-Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
+* Added Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
 * Added Highlight Selection Matches CodeMirror addon (props to TronicLabs)
 * Added Chinese translation thanks to Jincheng Shan
 * Added Russian translation by Alexander Samsonov
