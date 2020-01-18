@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Code Snippets
+# Copyright (C) 2020 Code Snippets
 # This file is distributed under the same license as the Code Snippets package.
 msgid ""
 msgstr ""
@@ -27,11 +27,11 @@ msgid "An easy, clean and simple way to run code snippets on your site. No need 
 msgstr ""
 
 #: code-snippets.php:19
-msgid "Shea Bunge"
+msgid "Code Snippets Pro"
 msgstr ""
 
 #: code-snippets.php:20
-msgid "https://sheabunge.com"
+msgid "https://codesnippets.pro"
 msgstr ""
 
 #: php/class-admin.php:68, php/class-admin.php:129, php/admin-menus/class-manage-menu.php:23, php/admin-menus/class-manage-menu.php:52, php/admin-menus/class-manage-menu.php:91, php/views/manage.php:21
