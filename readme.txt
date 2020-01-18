@@ -3,7 +3,7 @@ Contributors: bungeshea
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 5.2.2
+Tested up to: 5.3.2
 Requires PHP: 5.2
 Stable tag: 2.13.3
 License: MIT
@@ -13,7 +13,7 @@ An easy, clean and simple way to run code snippets on your site.
 
 == Description ==
 
-Code Snippets is an easy, clean and simple way to run PHP code snippets on your site. It removes the need to add custom snippets to your theme theme's `functions.php` file.
+Code Snippets is an easy, clean and simple way to run PHP code snippets on your site. It removes the need to add custom snippets to your theme's `functions.php` file.
 
 A snippet is a small chunk of PHP code that you can use to extend the functionality of a WordPress-powered website; essentially a mini-plugin with less load on your site.
 Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while.
