@@ -7,7 +7,7 @@
  *
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@sheabunge.com>
- * @copyright 2012-2019 Shea Bunge
+ * @copyright 2012-2020 Shea Bunge
  * @license   MIT http://opensource.org/licenses/MIT
  * @version   2.13.3
  * @link      https://github.com/sheabunge/code-snippets

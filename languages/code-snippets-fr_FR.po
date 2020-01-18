@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Code Snippets
+# Copyright (C) 2020 Code Snippets
 # This file is distributed under the same license as the Code Snippets package.
 msgid ""
 msgstr ""
