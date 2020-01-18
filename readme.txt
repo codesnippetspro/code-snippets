@@ -3,7 +3,7 @@ Contributors: bungeshea
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 5.2.2
+Tested up to: 5.3.2
 Requires PHP: 5.2
 Stable tag: 2.13.3
 License: MIT
