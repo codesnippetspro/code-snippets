@@ -26,6 +26,7 @@
 		<exclude name="PSR2.ControlStructures.SwitchDeclaration.BodyOnNextLineCASE" />
 		<exclude name="WordPress.WhiteSpace.ControlStructureSpacing.BlankLineAfterEnd" />
 		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine" />
+		<exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
 
 		<!-- this is useful for certain templates -->
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />

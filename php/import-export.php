@@ -17,7 +17,7 @@ function _code_snippets_save_imported_snippets( $snippets, $multisite = null, $d
 
 	/* Get a list of existing snippet names keyed to their IDs */
 	$existing_snippets = array();
-	if ( 'replace' == $dup_action || 'skip' === $dup_action ) {
+	if ( 'replace' === $dup_action || 'skip' === $dup_action ) {
 		$all_snippets = get_snippets( array(), $multisite );
 
 		foreach ( $all_snippets as $snippet ) {
@@ -45,7 +45,8 @@ function _code_snippets_save_imported_snippets( $snippets, $multisite = null, $d
 		}
 
 		/* Save the snippet and increase the counter if successful */
-		if ( $snippet_id = save_snippet( $snippet ) ) {
+		$snippet_id = save_snippet( $snippet );
+		if ( $snippet_id ) {
 			$imported[] = $snippet_id;
 		}
 	}
@@ -53,7 +54,7 @@ function _code_snippets_save_imported_snippets( $snippets, $multisite = null, $d
 	return $imported;
 }
 
-/**
+/**f
  * Imports snippets from a JSON file
  *
  * @since 2.9.7
@@ -184,7 +185,7 @@ function code_snippets_prepare_export( $format, $ids, $table_name = '', $mime_ty
 	}
 
 	/* Build the export filename */
-	if ( 1 == count( $ids ) ) {
+	if ( 1 === count( $ids ) ) {
 		/* If there is only snippet to export, use its name instead of the site name */
 		$first_snippet = new Code_Snippet( $snippets[0] );
 		$title = strtolower( $first_snippet->name );

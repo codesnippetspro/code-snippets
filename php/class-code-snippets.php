@@ -114,13 +114,13 @@ class Code_Snippets {
 		$import = array( 'import', 'import-snippets' );
 		$settings = array( 'settings', 'snippets-settings' );
 
-		if ( in_array( $menu, $edit ) ) {
+		if ( in_array( $menu, $edit, true ) ) {
 			return 'edit-snippet';
-		} elseif ( in_array( $menu, $add ) ) {
+		} elseif ( in_array( $menu, $add, true ) ) {
 			return 'add-snippet';
-		} elseif ( in_array( $menu, $import ) ) {
+		} elseif ( in_array( $menu, $import, true ) ) {
 			return 'import-snippets';
-		} elseif ( in_array( $menu, $settings ) ) {
+		} elseif ( in_array( $menu, $settings, true ) ) {
 			return 'snippets-settings';
 		} else {
 			return 'snippets';

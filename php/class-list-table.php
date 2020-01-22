@@ -42,7 +42,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Determine the status */
 		$status = apply_filters( 'code_snippets/list_table/default_view', 'all' );
-		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], $this->statuses ) ) {
+		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], $this->statuses, true ) ) {
 			$status = $_REQUEST['status'];
 		}
 
@@ -117,8 +117,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	public function get_action_link( $action, $snippet, $escape = true ) {
 
 		// redirect actions to the network dashboard for shared network snippets
-		$network_redirect = $snippet->shared_network && ! $this->is_network &&
-		                    ! in_array( $action, array( 'activate', 'activate-shared', 'run-once', 'run-once-shared' ) );
+		$local_actions = array( 'activate', 'activate-shared', 'run-once', 'run-once-shared' );
+		$network_redirect = $snippet->shared_network && ! $this->is_network && ! in_array( $action, $local_actions, true );
 
 		// edit links go to a different menu
 		if ( 'edit' === $action ) {
@@ -587,7 +587,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			case 'activate-shared':
 				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
-				if ( ! in_array( $id, $active_shared_snippets ) ) {
+				if ( ! in_array( $id, $active_shared_snippets, true ) ) {
 					$active_shared_snippets[] = $id;
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 				}
@@ -668,7 +668,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
 					foreach ( $_POST['shared_ids'] as $id ) {
-						if ( ! in_array( $id, $active_shared_snippets ) ) {
+						if ( ! in_array( $id, $active_shared_snippets, true ) ) {
 							$active_shared_snippets[] = $id;
 						}
 					}
@@ -760,7 +760,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			for ( $i = 0; $i < $limit; $i++ ) {
 				$snippet = &$snippets['all'][ $i ];
 
-				if ( in_array( $snippet->id, $ids ) ) {
+				if ( in_array( $snippet->id, $ids, true ) ) {
 					$snippet->shared_network = true;
 					$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
 					$snippet->active = false;
@@ -781,7 +781,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				$snippet->network = true;
 				$snippet->shared_network = true;
 				$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
-				$snippet->active = in_array( $snippet->id, $active_shared_snippets );
+				$snippet->active = in_array( $snippet->id, $active_shared_snippets, true );
 
 				$shared_snippets[ $index ] = $snippet;
 			}
@@ -1048,7 +1048,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$tags = explode( ',', $_GET['tag'] );
 
 		foreach ( $tags as $tag ) {
-			if ( in_array( $tag, $snippet->tags ) ) {
+			if ( in_array( $tag, $snippet->tags, true ) ) {
 				return true;
 			}
 		}

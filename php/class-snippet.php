@@ -240,7 +240,7 @@ class Code_Snippet {
 	private function prepare_scope( $scope ) {
 		$scopes = self::get_all_scopes();
 
-		if ( in_array( $scope, $scopes ) ) {
+		if ( in_array( $scope, $scopes, true ) ) {
 			return $scope;
 		}
 
@@ -366,7 +366,7 @@ class Code_Snippet {
 			$this->fields['shared_network'] = false;
 		} else {
 			$shared_network_snippets = get_site_option( 'shared_network_snippets', array() );
-			$this->fields['shared_network'] = in_array( $this->fields['id'], $shared_network_snippets );
+			$this->fields['shared_network'] = in_array( $this->fields['id'], $shared_network_snippets, true );
 		}
 
 		return $this->fields['shared_network'];

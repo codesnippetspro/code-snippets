@@ -30,7 +30,7 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 	$ids_count = count( $ids );
 
 	/* If only one ID has been passed in, defer to the get_snippet() function */
-	if ( 1 == $ids_count ) {
+	if ( 1 === $ids_count ) {
 		return array( get_snippet( $ids[0] ) );
 	}
 
@@ -437,7 +437,7 @@ function execute_active_snippets() {
 			// if the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens
 			if ( 'single-use' === $snippet['scope'] ) {
 				if ( $table_name === $db->ms_table && isset( $active_shared_ids ) &&
-				     false !== ( $key = array_search( $snippet_id, $active_shared_ids ) ) ) {
+				     false !== ( $key = array_search( $snippet_id, $active_shared_ids, true ) ) ) {
 					unset( $active_shared_ids[ $key ] );
 					$active_shared_ids = array_values( $active_shared_ids );
 					update_option( 'active_shared_network_snippets', $active_shared_ids );

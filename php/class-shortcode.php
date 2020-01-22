@@ -54,7 +54,8 @@ class Code_Snippets_Shortcode {
 			$atts, 'code_snippet'
 		);
 
-		if ( ! $id = intval( $atts['id'] ) ) {
+		$id = intval( $atts['id'] );
+		if ( ! $id ) {
 			return '';
 		}
 

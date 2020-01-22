@@ -151,7 +151,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	private function unshare_network_snippet( $snippet_id ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 
-		if ( ! in_array( $snippet_id, $shared_snippets ) ) {
+		if ( ! in_array( $snippet_id, $shared_snippets, true ) ) {
 			return;
 		}
 
