@@ -6,7 +6,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-05-05 23:16+1000\n"
 "PO-Revision-Date: 2017-05-05 23:16+1000\n"
-"Last-Translator: Marco <troniclabs.crew@gmail.com>\n"
+"Last-Translator: Marco <troniclabs.crew@gmail.com> Francesco <francesco@360fun.net>\n"
 "Language-Team: Tronic Labs\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #: php/admin-menus/class-admin-menu.php:103
 msgid "You are not authorized to access this page."
-msgstr ""
+msgstr "Non sei autorizzato ad accedere a questa pagina."
 
 #: php/admin-menus/class-edit-menu.php:13
 #: php/admin-menus/class-edit-menu.php:14 php/views/edit.php:25
@@ -37,80 +37,87 @@ msgstr "Aggiungi nuovo Snippet"
 
 #: php/admin-menus/class-edit-menu.php:156
 msgid "Don't Panic"
-msgstr ""
+msgstr "Non Spaventarti"
 
 #: php/admin-menus/class-edit-menu.php:157
 #, php-format
 msgid ""
 "The code snippet you are trying to save produced a fatal error on line %d:"
 msgstr ""
+"Lo snippet che si sta tentando di salvare ha generato un errore irreversibile alla riga %d:"
 
 #: php/admin-menus/class-edit-menu.php:159
 msgid ""
 "The previous version of the snippet is unchanged, and the rest of this site "
 "should be functioning normally as before."
 msgstr ""
+"La versione precedente dello snippet è invariata, e il resto del sito"
+"dovrebbe funzionare normalmente."
 
 #: php/admin-menus/class-edit-menu.php:160
 msgid ""
 "Please use the back button in your browser to return to the previous page "
 "and try to fix the code error."
 msgstr ""
+"Si prega di utilizzare il pulsante Indietro nel browser per tornare alla pagina precedente "
+"e provare a correggere l'errore."
 
 #: php/admin-menus/class-edit-menu.php:161
 msgid ""
 "If you prefer, you can close this page and discard the changes you just "
 "made. No changes will be made to this site."
 msgstr ""
+"Se preferisci, puoi chiudere questa pagina e scartare le modifiche che hai appena"
+"fatto. Non verranno apportate modifiche al sito."
 
 #: php/admin-menus/class-edit-menu.php:281 php/class-list-table.php:341
 msgid "Description"
-msgstr "Descizione"
+msgstr "Descrizione"
 
 #: php/admin-menus/class-edit-menu.php:312 php/class-list-table.php:342
 msgid "Tags"
-msgstr ""
+msgstr "Tags"
 
 #: php/admin-menus/class-edit-menu.php:316
 msgid "Enter a list of tags; separated by commas"
-msgstr ""
+msgstr "Immettere l'elenco dei tag; separati da virgole"
 
 #: php/admin-menus/class-edit-menu.php:336
 msgid "Run snippet everywhere"
-msgstr ""
+msgstr "Esegui lo snippet ovunque"
 
 #: php/admin-menus/class-edit-menu.php:337
 msgid "Only run in administration area"
-msgstr ""
+msgstr "Attivo solo nell'area admin"
 
 #: php/admin-menus/class-edit-menu.php:338
 msgid "Only run on site front-end"
-msgstr ""
+msgstr "Attivo solo nell'area pubblica"
 
 #: php/admin-menus/class-edit-menu.php:342
 msgid "Scope"
-msgstr ""
+msgstr "Scopo"
 
 #: php/admin-menus/class-edit-menu.php:362
 msgid "Sharing"
-msgstr ""
+msgstr "Condivisione"
 
 #: php/admin-menus/class-edit-menu.php:366
 msgid "Allow this snippet to be activated on individual sites on the network"
-msgstr ""
+msgstr "Consenti l'attivazione di questo snippet su singoli siti della rete"
 
 #: php/admin-menus/class-edit-menu.php:426
 #, php-format
 msgid "The snippet has been deactivated due to an error on line %d:"
-msgstr ""
+msgstr "Lo snippet è stato disattivato a causa di un errore nella riga %d:"
 
 #: php/admin-menus/class-edit-menu.php:431
 msgid "The snippet has been deactivated due to an error in the code."
-msgstr ""
+msgstr "Lo snippet è stato disattivato a causa di un errore nel codice."
 
 #: php/admin-menus/class-edit-menu.php:438
 msgid "An error occurred when saving the snippet."
-msgstr ""
+msgstr "Si è verificato un errore durante il salvataggio dello snippet."
 
 #: php/admin-menus/class-edit-menu.php:443
 msgid "Snippet <strong>added</strong>."
@@ -170,14 +177,14 @@ msgstr[1] "Importati <strong>%d</strong> snippets."
 
 #: php/admin-menus/class-import-menu.php:112
 msgid "An error occurred when processing the import file."
-msgstr ""
+msgstr "Si è verificato un errore durante l'importazione del file."
 
 #: php/admin-menus/class-manage-menu.php:22
 #, fuzzy
 #| msgid "Snippets"
 msgctxt "menu label"
 msgid "All Snippets"
-msgstr "Snippets"
+msgstr "Tutti gli Snippet"
 
 #: php/admin-menus/class-manage-menu.php:23
 #: php/admin-menus/class-manage-menu.php:45 php/class-admin.php:61
@@ -199,6 +206,10 @@ msgid ""
 "config.php</code> to turn off safe mode. <a href=\"https://github.com/"
 "sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
 msgstr ""
+"<strong>Attenzione:</strong> La modalità provvisoria è attiva e i frammenti non verranno eseguiti! "
+"Rimuovi <code>CODE_SNIPPETS_SAFE_MODE</code> da <code>wp-"
+"config.php</code> per disattivare la modalità provvisoria. <a href=\"https://github.com/"
+"sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Aiuto</a>"
 
 #: php/admin-menus/class-manage-menu.php:87
 msgid "Snippet <strong>activated</strong>."
@@ -227,17 +238,17 @@ msgstr "Snippet selezionato <strong>cancellato</strong>."
 #: php/admin-menus/class-settings-menu.php:16
 msgctxt "menu label"
 msgid "Settings"
-msgstr ""
+msgstr "Configurazione"
 
 #: php/admin-menus/class-settings-menu.php:17
 #, fuzzy
 #| msgid "Snippets per page"
 msgid "Snippets Settings"
-msgstr "Snippets per pagina"
+msgstr "Snippet per pagina"
 
 #: php/admin-menus/class-settings-menu.php:39 php/views/edit.php:135
 msgid "Settings"
-msgstr ""
+msgstr "Configurazione"
 
 #: php/class-admin.php:143
 msgid "Manage your existing snippets"
@@ -273,14 +284,17 @@ msgid ""
 "answer a short survey on how you use this plugin and what you'd like to see "
 "changed or added in the future."
 msgstr ""
+"<strong>Hai suggerimenti per Code Snippets?</strong> Ti preghiamo di "
+"rispondere ad un breve sondaggio su come utilizzi questo plugin e cosa vorresti vedere"
+"cambiato o aggiunto in futuro."
 
 #: php/class-admin.php:220
 msgid "Take the survey now"
-msgstr ""
+msgstr "Partecipa subito al sondaggio"
 
 #: php/class-admin.php:223
 msgid "Dismiss"
-msgstr ""
+msgstr "Ignora"
 
 #: php/class-contextual-help.php:40
 msgid "For more information:"
@@ -288,11 +302,11 @@ msgstr "Per maggiori informazioni:"
 
 #: php/class-contextual-help.php:41
 msgid "About Plugin"
-msgstr ""
+msgstr "Info Plugin"
 
 #: php/class-contextual-help.php:42
 msgid "FAQ"
-msgstr ""
+msgstr "FAQ"
 
 #: php/class-contextual-help.php:43
 #, fuzzy
@@ -302,7 +316,7 @@ msgstr "Supporto"
 
 #: php/class-contextual-help.php:44
 msgid "Plugin Website"
-msgstr ""
+msgstr "Sito Web Plugin"
 
 #: php/class-contextual-help.php:55 php/class-contextual-help.php:81
 #: php/class-contextual-help.php:122
@@ -445,8 +459,8 @@ msgid ""
 "Here are some links to websites which host a large number of snippets that "
 "you can add to your site:"
 msgstr ""
-"Berikut adalah beberapa link ke situs-situs yang tuan rumah sejumlah besar "
-"potongan yang dapat Anda tambahkan ke situs Anda:"
+"Qui ci sono alcuni link a siti web che ospitano un gran numero di snippet che "
+"puoi aggiungere al tuo sito:"
 
 #: php/class-contextual-help.php:103
 msgid ""
@@ -547,38 +561,43 @@ msgid ""
 "This is a code snippets export file generated by the Code Snippets WordPress "
 "plugin."
 msgstr ""
+"Questo è un file di esportazione di snippet generato dal plugin Code Snippets "
+"per WordPress."
 
 #: php/class-export.php:89
 msgid "To import these snippets a WordPress site follow these steps:"
-msgstr ""
+msgstr "Per importare questi snippet in un sito WordPress segui questi passaggi:"
 
 #: php/class-export.php:90
 msgid "1. Log in to that site as an administrator."
-msgstr ""
+msgstr "1. Accedere a tale sito come amministratore."
 
 #: php/class-export.php:91
 msgid ""
 "2. Install the Code Snippets plugin using the directions provided at the "
 "above link."
-msgstr ""
+msgstr "2. Installa il plug-in Code Snippets utilizzando le indicazioni fornite nel "
+"link sopra."
 
 #: php/class-export.php:92
 msgid "3. Go to 'Tools: Import' in the WordPress admin panel."
-msgstr ""
+msgstr "3. Vai a 'Strumenti: Importa' nel pannello di amministrazione di WordPress."
 
 #: php/class-export.php:93
 msgid "4. Click on the \"Code Snippets\" importer in the list"
-msgstr ""
+msgstr "4. Fare clic su Importa nelle opzioni di \"Code Snippets\""
 
 #: php/class-export.php:94
 msgid "5. Upload this file using the form provided on that page."
-msgstr ""
+msgstr "5. Caricare il file utilizzando il modulo fornito nella pagina."
 
 #: php/class-export.php:95
 msgid ""
 "6. Code Snippets will then import all of the snippets and associated "
 "information contained in this file into your site."
 msgstr ""
+"6. Code Snippets importerà tutti gli snippet e associerà"
+"le informazioni contenute all'interno del file nel sito."
 
 #: php/class-export.php:96
 #, fuzzy
@@ -641,7 +660,7 @@ msgstr ""
 #: php/class-list-table.php:161 php/class-list-table.php:236
 #: php/views/edit.php:119
 msgid "'Cancel' to stop, 'OK' to delete."
-msgstr ""
+msgstr "'Cancella' per fermare, 'OK' per eliminare."
 
 #: php/class-list-table.php:168
 #, fuzzy
@@ -651,16 +670,16 @@ msgstr "Network Attiva"
 
 #: php/class-list-table.php:170
 msgid "Network Only"
-msgstr ""
+msgstr "Solo Rete"
 
 #: php/class-list-table.php:255
 #, php-format
 msgid "Untitled #%d"
-msgstr ""
+msgstr "Senza Titolo #%d"
 
 #: php/class-list-table.php:278
 msgid "Shared on Network"
-msgstr ""
+msgstr "Condiviso in Rete"
 
 #: php/class-list-table.php:339 php/views/edit.php:48
 msgid "Name"
@@ -704,7 +723,7 @@ msgstr[1] "Recentemente Attivi <span class=\"count\">(%s)</span>"
 
 #: php/class-list-table.php:494
 msgid "Show all tags"
-msgstr ""
+msgstr "Mostra tutti i tag"
 
 #: php/class-list-table.php:508
 msgid "Filter"
@@ -716,11 +735,11 @@ msgstr "Cancella Lista"
 
 #: php/class-list-table.php:702
 msgid "Whoops, it looks like no snippets could be found."
-msgstr ""
+msgstr "Whoops, sembra che non si trovino gli snippet."
 
 #: php/class-list-table.php:706
 msgid "Perhaps you would like to add a new one?"
-msgstr ""
+msgstr "Forse si desidera aggiungerne uno nuovo?"
 
 #: php/class-list-table.php:985
 msgid "Search results"
@@ -743,154 +762,157 @@ msgstr "Cancella Filtri"
 
 #: php/settings/settings-fields.php:42
 msgid "Activate by Default"
-msgstr ""
+msgstr "Attivo di Default"
 
 #: php/settings/settings-fields.php:44
 msgid ""
 "Make the 'Save and Activate' button the default action when saving a snippet."
 msgstr ""
+"Imposta il pulsante 'Salva e Attiva' come azione predefinita quando salvi uno snippet."
 
 #: php/settings/settings-fields.php:49
 msgid "Enable Scope Selector"
-msgstr ""
+msgstr "Abilita Selettore di Scopo"
 
 #: php/settings/settings-fields.php:51
 msgid "Enable the scope selector when editing a snippet"
-msgstr ""
+msgstr "Abilitare il selettore di scopo durante la modifica di uno snippet"
 
 #: php/settings/settings-fields.php:56
 #, fuzzy
 #| msgid "Code Snippets"
 msgid "Enable Snippet Tags"
-msgstr "Code Snippets"
+msgstr "Abilita Snippet Tags"
 
 #: php/settings/settings-fields.php:58
 msgid "Show snippet tags on admin pages"
-msgstr ""
+msgstr "Mostra i tag degli snippet nelle pagine di amministrazione"
 
 #: php/settings/settings-fields.php:63
 msgid "Enable Snippet Descriptions"
-msgstr ""
+msgstr "Abilita Descrizione Snippet"
 
 #: php/settings/settings-fields.php:65
 msgid "Show snippet descriptions on admin pages"
-msgstr ""
+msgstr "Mostra le descrizioni nelle pagine di amministrazione"
 
 #: php/settings/settings-fields.php:69
 msgid "Disable shortcode syntax highlighter"
-msgstr ""
+msgstr "Disattivare l'evidenziatore di shortcode"
 
 #: php/settings/settings-fields.php:71
 msgid ""
 "Disable the syntax highlighting for the [code_snippet] shortcode on the "
 "front-end"
 msgstr ""
+"Disattivare l'evidenziazione per lo shortcode [code_snippet] sul "
+"front-end"
 
 #: php/settings/settings-fields.php:80
 msgid "Row Height"
-msgstr ""
+msgstr "Altezza Riga"
 
 #: php/settings/settings-fields.php:82
 msgid "rows"
-msgstr ""
+msgstr "right"
 
 #: php/settings/settings-fields.php:88
 msgid "Use Full Editor"
-msgstr ""
+msgstr "Usa Editor Completo"
 
 #: php/settings/settings-fields.php:90
 msgid "Enable all features of the visual editor"
-msgstr ""
+msgstr "Abilitare tutte le funzionalità dell'editor visivo"
 
 #: php/settings/settings-fields.php:95
 msgid "Media Buttons"
-msgstr ""
+msgstr "Bottoni Media"
 
 #: php/settings/settings-fields.php:97
 msgid "Enable the add media buttons"
-msgstr ""
+msgstr "Attiva i pulsanti media"
 
 #: php/settings/settings-fields.php:106
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: php/settings/settings-fields.php:113
 msgid "Indent With Tabs"
-msgstr ""
+msgstr "Rientro con tabulazioni"
 
 #: php/settings/settings-fields.php:115
 msgid "Use hard tabs (not spaces) for indentation."
-msgstr ""
+msgstr "Utilizzare tabulazioni rigide (non spazi) per il rientro."
 
 #: php/settings/settings-fields.php:121
 msgid "Tab Size"
-msgstr ""
+msgstr "Grandezza tabulazioni"
 
 #: php/settings/settings-fields.php:123
 msgid "The width of a tab character."
-msgstr ""
+msgstr "Larghezza di una tabulazione."
 
 #: php/settings/settings-fields.php:130
 msgid "Indent Unit"
-msgstr ""
+msgstr "Unità del Rientro"
 
 #: php/settings/settings-fields.php:132
 msgid "How many spaces a block should be indented."
-msgstr ""
+msgstr "Quanti spazi indentare un blocco."
 
 #: php/settings/settings-fields.php:139
 msgid "Wrap Lines"
-msgstr ""
+msgstr "Linee a capo"
 
 #: php/settings/settings-fields.php:141
 msgid "Whether the editor should scroll or wrap for long lines."
-msgstr ""
+msgstr "Se l'editor deve scorrere o andare a capo per right lunghe."
 
 #: php/settings/settings-fields.php:147
 msgid "Line Numbers"
-msgstr ""
+msgstr "Numeri di riga"
 
 #: php/settings/settings-fields.php:149
 msgid "Show line numbers to the left of the editor."
-msgstr ""
+msgstr "Mostra i numeri di riga a sinistra dell'editor."
 
 #: php/settings/settings-fields.php:155
 msgid "Auto Close Brackets"
-msgstr ""
+msgstr "Chiusura Automatica Parentesi"
 
 #: php/settings/settings-fields.php:157
 msgid "Auto-close brackets and quotes when typed."
-msgstr ""
+msgstr "Chiusura automatica di parentesi e virgolette durante la scrittura."
 
 #: php/settings/settings-fields.php:163
 msgid "Highlight Selection Matches"
-msgstr ""
+msgstr "Evidenziare Istanze Selezionate"
 
 #: php/settings/settings-fields.php:164
 msgid "Highlight all instances of a currently selected word."
-msgstr ""
+msgstr "Evidenziare tutte le istanze di una parola attualmente selezionata."
 
 #: php/settings/settings.php:68
 msgid "General"
-msgstr ""
+msgstr "Generale"
 
 #: php/settings/settings.php:69
 #, fuzzy
 #| msgid "Description"
 msgid "Description Editor"
-msgstr "Descizione"
+msgstr "Descrizione Editor"
 
 #: php/settings/settings.php:70
 msgid "Code Editor"
-msgstr ""
+msgstr "Editor Codice"
 
 #: php/settings/settings.php:119
 msgid "Editor Preview"
-msgstr ""
+msgstr "Anteprima Editor"
 
 #: php/settings/settings.php:176
 msgid "Settings saved."
-msgstr ""
+msgstr "Configurazione salvata."
 
 #: php/views/edit.php:28 php/views/manage.php:22
 msgctxt "snippet"
@@ -899,7 +921,7 @@ msgstr "Aggiungi Nuovo"
 
 #: php/views/edit.php:49
 msgid "Enter title here"
-msgstr ""
+msgstr "Inserisci il titolo qui"
 
 #: php/views/edit.php:54
 msgid "Code"
