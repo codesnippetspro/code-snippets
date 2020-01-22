@@ -26,6 +26,7 @@
 		"ext-json": "*"
     },
 	"require-dev": {
-		"wp-coding-standards/wpcs": "dev-master"
+		"wp-coding-standards/wpcs": "dev-master",
+		"phpunit/phpunit": "7.*"
 	}
 }
