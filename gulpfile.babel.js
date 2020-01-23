@@ -154,7 +154,7 @@ gulp.task('phpcs', () =>
 
 gulp.task('phpunit', () =>
 	gulp.src('phpunit.xml')
-		.pipe(phpunit('phpunit')));
+		.pipe(phpunit('vendor/bin/phpunit')));
 
 gulp.task('vendor', () =>
 	gulp.src('node_modules/codemirror/theme/*.css')
