@@ -14,7 +14,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * This class handles the table for the manage snippets menu
  *
- * @since 1.5
+ * @since   1.5
  * @package Code_Snippets
  */
 class Code_Snippets_List_Table extends WP_List_Table {
@@ -87,7 +87,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Define the output of all columns that have no callback function
 	 *
-	 * @param Code_Snippet $snippet The snippet used for the current row
+	 * @param Code_Snippet $snippet     The snippet used for the current row
 	 * @param string       $column_name The name of the column being printed
 	 *
 	 * @return string The content of the column to output
@@ -200,7 +200,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		} else {
 			$class = 'snippet-activation-switch';
 			$action = $snippet->active ? 'deactivate' : 'activate';
-			$label = $snippet->network ?
+			$label = $snippet->network && ! $snippet->shared_network ?
 				( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
 				( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
 		}
