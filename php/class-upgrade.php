@@ -154,7 +154,7 @@ class Code_Snippets_Upgrade {
 			array(
 				'name'  => __( 'Example CSS snippet', 'code-snippets' ),
 				'code'  => sprintf(
-					"\nadd_action( 'wp_head', function () { ?>\n\t<style>\n\n\t\t/* %s */\n\n\t</style>\n<?php } );\n",
+					"\nadd_action( 'wp_head', function () { ?>\n<style>\n\n\t/* %s */\n\n</style>\n<?php } );\n",
 					strip_tags( __( 'write your CSS code here', 'code-snippets' ) )
 				),
 				'desc'  => __( 'This is an example snippet for demonstrating how to add custom CSS code to your website.', 'code-snippets' ),
@@ -165,7 +165,7 @@ class Code_Snippets_Upgrade {
 			array(
 				'name'  => __( 'Example JavaScript snippet', 'code-snippets' ),
 				'code'  => sprintf(
-					"\nadd_action( 'wp_head', function () { ?>\n\t<script>\n\n\t\t/* %s */\n\n\t</script>\n<?php } );\n",
+					"\nadd_action( 'wp_head', function () { ?>\n<script>\n\n\t/* %s */\n\n</script>\n<?php } );\n",
 					strip_tags( __( 'write your JavaScript code here', 'code-snippets' ) )
 				),
 				'desc'  => __( 'This is an example snippet for demonstrating how to add custom JavaScript code to your website.', 'code-snippets' ),
@@ -184,7 +184,9 @@ class Code_Snippets_Upgrade {
 
 		foreach ( $snippets as $snippet ) {
 			$snippet = new Code_Snippet( $snippet );
-			$snippet->desc .= ' ' . __( 'You can remove it, or edit it to add your own content.', 'code-snippets' );
+			if ( ! in_array( 'code-snippets-plugin', $snippet->tags ) ) {
+				$snippet->desc .= "\n\n" . __( 'You can remove it, or edit it to add your own content.', 'code-snippets' );
+			}
 			save_snippet( $snippet );
 		}
 	}
