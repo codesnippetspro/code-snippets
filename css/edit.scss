@@ -157,3 +157,8 @@ ul.tagit {
 .CodeMirror-sizer {
 	min-height: 300px !important;
 }
+
+ul.tagit {
+	display: flex;
+	align-items: center;
+}
