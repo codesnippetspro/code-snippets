@@ -27,6 +27,6 @@
     },
 	"require-dev": {
 		"wp-coding-standards/wpcs": "dev-master",
-		"phpunit/phpunit": "5.*||<8.0"
+		"phpunit/phpunit": "<8.0"
 	}
 }
