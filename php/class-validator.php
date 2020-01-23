@@ -1,7 +1,7 @@
 <?php
 
 /**
- * The main plugin class
+ * Validates code prior to execution.
  *
  * @package Code_Snippets
  */
@@ -84,6 +84,14 @@ class Code_Snippets_Validator {
 		return true;
 	}
 
+	/**
+	 * Check whether a particular identifier has been used previously.
+	 *
+	 * @param string $type       Which type of identifier this is. Supports T_FUNCTION, T_CLASS and T_INTERFACE.
+	 * @param string $identifier The name of the identifier itself.
+	 *
+	 * @return bool true if the identifier is not unique.
+	 */
 	private function check_duplicate_identifier( $type, $identifier ) {
 
 		if ( ! isset( $this->defined_identifiers[ $type ] ) ) {
@@ -111,6 +119,10 @@ class Code_Snippets_Validator {
 		return $duplicate;
 	}
 
+	/**
+	 * Validate the given PHP code and return the result.
+	 * @return array|bool Array containing message if an error was encountered, false if validation was successful.
+	 */
 	public function validate() {
 
 		while ( ! $this->end() ) {

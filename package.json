@@ -1,6 +1,6 @@
 {
     "name": "code-snippets",
-    "version": "2.13.3",
+    "version": "2.13.4",
     "description": "Manage code snippets running on a WordPress-powered site through a graphical interface",
     "homepage": "https://wordpress.org/plugins/code-snippets",
     "main": "gulpfile.babel.js",

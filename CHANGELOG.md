@@ -1,7 +1,14 @@
 # Changelog
 
-## 2.XX.X (unreleased)
-* Updated CodeMirror to version 5.46.0.
+## 2.13.4 (24 Jan 2020)
+* Updated CodeMirror to version 5.50.2.
+* Added: Basic error checking for duplicate functions and classes.
+* Updated Italian translations to fix display issues – thanks to [Francesco Marino](https://360fun.net).
+* Fixed: Ordering snippets in the table by name will now be case-insensitive.
+* Added: Additonal API options for retrieving snippets.
+* Fixed: Code editor will now properly highlight embedded HTML, CSS and JavaScript code.
+* Changed the indicator color for inactive snippets from red to grey.
+* Fixed a bug preventing the editor theme from being set to default.
 
 ## 2.13.3 (13 Mar 2019)
 * Added: Hover effect to activation switches.
