@@ -3,24 +3,33 @@
 /**
  * A snippet object
  *
- * @since 2.4.0
+ * @since   2.4.0
  * @package Code_Snippets
  *
- * @property int    $id             The database ID
- * @property string $name           The display name
- * @property string $desc           The formatted description
- * @property string $code           The executable code
- * @property array  $tags           An array of the tags
- * @property string $scope          The scope name
- * @property int    $priority       Execution priority
- * @property bool   $active         The active status
- * @property bool   $network        true if is multisite-wide snippet, false if site-wide
- * @property bool   $shared_network Whether the snippet is a shared network snippet
+ * @property int         $id             The database ID
+ * @property string      $name           The display name
+ * @property string      $desc           The formatted description
+ * @property string      $code           The executable code
+ * @property array       $tags           An array of the tags
+ * @property string      $scope          The scope name
+ * @property int         $priority       Execution priority
+ * @property bool        $active         The active status
+ * @property bool        $network        true if is multisite-wide snippet, false if site-wide
+ * @property bool        $shared_network Whether the snippet is a shared network snippet
+ * @property DateTime    $created        The date and time when the snippet was first saved in the database.
+ * @property DateTime    $modified       The date and time when the snippet data was most recently saved to the database.
  *
- * @property-read array  $tags_list  The tags in string list format
- * @property-read string $scope_icon The dashicon used to represent the current scope
+ * @property-read array  $tags_list      The tags in string list format
+ * @property-read string $scope_icon     The dashicon used to represent the current scope
+ * @property-read string $created_raw    The date and time when the snippet was first saved in the database in raw format.
+ * @property-read string $modified_raw   The date and time when the snippet was most recently saved to the database in raw format.
  */
 class Code_Snippet {
+
+	/**
+	 * MySQL datetime format (YYYY-MM-DD hh:mm:ss)
+	 */
+	const DATE_FORMAT = 'Y-m-d H:i:s';
 
 	/**
 	 * The snippet metadata fields.
@@ -38,6 +47,8 @@ class Code_Snippet {
 		'priority'       => 10,
 		'network'        => null,
 		'shared_network' => null,
+		'created'        => null,
+		'modified'       => null,
 	);
 
 	/**
@@ -303,6 +314,84 @@ class Code_Snippet {
 		}
 
 		return true === $network;
+	}
+
+	/**
+	 * Retrieve the site's timezone. This is only necessary while < WP 3.5 is supported, as
+	 * it can be replaced with the wp_timezone() function.
+	 *
+	 * @return DateTimeZone
+	 */
+	private function get_timezone() {
+		if ( function_exists( 'wp_timezone' ) ) {
+			return wp_timezone();
+		}
+
+		$timezone_string = get_option( 'timezone_string' );
+		if ( $timezone_string ) {
+			return new DateTimeZone( $timezone_string );
+		}
+
+		$offset = (float) get_option( 'gmt_offset' );
+		$hours = (int) $offset;
+		$minutes = ( $offset - $hours );
+
+		$sign = ( $offset < 0 ) ? '-' : '+';
+		$abs_hour = abs( $hours );
+		$abs_mins = abs( $minutes * 60 );
+		$timezone = sprintf( '%s%02d:%02d', $sign, $abs_hour, $abs_mins );
+
+		return new DateTimeZone( $timezone );
+	}
+
+	/**
+	 * Prepare a date and time field by ensuring it is in the correct format.
+	 *
+	 * @param DateTime|string $datetime
+	 * @param string          $field_name
+	 *
+	 * @return DateTime
+	 */
+	private function prepare_datetime( $datetime, $field_name ) {
+
+		/* If the supplied datetime is already in the correct format, then we're done here */
+		if ( $datetime instanceof DateTime ) {
+			return $datetime;
+		}
+
+		/* If the supplied datetime is a string, assume it is in MySQL format */
+		if ( is_string( $datetime ) ) {
+			$datetime_object = DateTime::createFromFormat( self::DATE_FORMAT, $datetime, $this->get_timezone() );
+			if ( $datetime_object ) {
+				$this->fields[ $field_name . '_raw' ] = $datetime;
+			}
+			return $datetime_object;
+		}
+
+		/* Otherwise, discard the supplied value */
+		return null;
+	}
+
+	/**
+	 * Prepare the created field by ensuring it is in the correct format.
+	 *
+	 * @param DateTime|string $created
+	 *
+	 * @return DateTime
+	 */
+	private function prepare_created( $created ) {
+		return $this->prepare_datetime( $created, 'created' );
+	}
+
+	/**
+	 * Prepare the modified field by ensuring it is in the correct format.
+	 *
+	 * @param DateTime|string $modified
+	 *
+	 * @return DateTime
+	 */
+	private function prepare_modified( $modified ) {
+		return $this->prepare_datetime( $modified, 'modified' );
 	}
 
 	/**

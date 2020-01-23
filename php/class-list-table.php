@@ -260,7 +260,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Builds the checkbox column content
+	 * Handles the checkbox column output.
 	 *
 	 * @param Code_Snippet $snippet The snippet being used for the current row
 	 *
@@ -278,20 +278,19 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Output the content of the tags column
-	 * This function is used once for each row
-	 *
-	 * @since 2.0
+	 * Handles the tags column output.
 	 *
 	 * @param Code_Snippet $snippet The snippet being used for the current row
 	 *
 	 * @return string The column output
+	 * @since 2.0
+	 *
 	 */
 	protected function column_tags( $snippet ) {
 
-		/* Return a placeholder if there are no tags */
+		/* Return now if there are no tags */
 		if ( empty( $snippet->tags ) ) {
-			return '&#8212;';
+			return '';
 		}
 
 		$out = array();
@@ -308,7 +307,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Output the content of the priority column
+	 * Handles the priority column output.
 	 *
 	 * @param Code_Snippet $snippet
 	 *
@@ -317,6 +316,36 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	protected function column_priority( $snippet ) {
 
 		return sprintf( '<input type="number" class="snippet-priority" value="%d" step="1" disabled>', $snippet->priority );
+	}
+
+	/**
+	 * Handles the post date column output.
+	 *
+	 * @param Code_Snippet $snippet The current code snippet object.
+	 *
+	 * @return string
+	 *
+	 * @since 2.14.0
+	 */
+	public function column_date( $snippet ) {
+
+		if ( ! $snippet->created && ! $snippet->modified ) {
+			return '–';
+		}
+
+		$time = max( $snippet->modified, $snippet->created );
+
+		$time_diff = time() - $time->format( 'U' );
+
+		if ( $time && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
+			/* translators: %s: Human-readable time difference. */
+			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $time->format( 'U' ) ) );
+		} else {
+			$human_time = $time->format( __( 'Y/m/d', 'code-snippets' ) );
+		}
+
+		$status = $time === $snippet->created ? __( 'Created', 'code-snippets' ) : __( 'Last Modified', 'code-snippets' );
+		return $status . sprintf( '<br><span title="%s">%s</span>', $time->format( Code_Snippet::DATE_FORMAT ), $human_time );
 	}
 
 	/**
@@ -331,6 +360,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'id'          => __( 'ID', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
+			'date'        => __( 'Date', 'code-snippets' ),
 			'priority'    => __( 'Priority', 'code-snippets' ),
 		);
 
@@ -346,15 +376,22 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Define the columns that can be sorted
+	 * Define the columns that can be sorted. The format is:
+	 * 'internal-name' => 'orderby'
+	 * or
+	 * 'internal-name' => array( 'orderby', true )
+	 *
+	 * The second format will make the initial sorting order be descending.
 	 *
 	 * @return array The IDs of the columns that can be sorted
 	 */
 	public function get_sortable_columns() {
+
 		$sortable_columns = array(
 			'id'       => array( 'id', true ),
-			'name'     => array( 'name', false ),
+			'name'     => 'name',
 			'tags'     => array( 'tags_list', true ),
+			'date'     => array( 'modified', true ),
 			'priority' => array( 'priority', true ),
 		);
 
@@ -555,14 +592,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Perform an action on a single snippet
 	 *
-	 * @uses activate_snippet() to activate snippets
-	 * @uses deactivate_snippet() to deactivate snippets
-	 * @uses delete_snippet() to delete snippets
-	 *
 	 * @param int    $id
 	 * @param string $action
 	 *
 	 * @return bool|string Result of performing action
+	 * @uses activate_snippet() to activate snippets
+	 * @uses deactivate_snippet() to deactivate snippets
+	 * @uses delete_snippet() to delete snippets
+	 *
 	 */
 	private function perform_action( $id, $action ) {
 
@@ -924,13 +961,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Determine the sort ordering for two pieces of data
 	 *
-	 * @ignore
-	 *
 	 * @param string $field name of the field that the data belongs to
 	 * @param string $a_data
 	 * @param string $b_data
 	 *
 	 * @return int
+	 * @ignore
 	 */
 	private function get_sort_direction( $field, $a_data, $b_data ) {
 
@@ -944,19 +980,23 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			return '' === $a_data ? 1 : -1;
 		}
 
-		// otherwise, sort using the default string sort order
-		return strcasecmp( $a_data, $b_data );
+		// sort using the default string sort order if possible
+		if ( is_string( $a_data ) ) {
+			return strcasecmp( $a_data, $b_data );
+		}
+
+		// otherwise, use basic comparison operators
+		return $a_data === $b_data ? 0 : ( $a_data < $b_data ? -1 : 1 );
 	}
 
 	/**
 	 * Callback for usort() used to sort snippets
 	 *
-	 * @ignore
-	 *
 	 * @param Code_Snippet $a The first snippet to compare
 	 * @param Code_Snippet $b The second snippet to compare
 	 *
 	 * @return int The sort order
+	 * @ignore
 	 */
 	private function usort_reorder_callback( $a, $b ) {
 
@@ -986,11 +1026,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Callback for search function
-	 * @ignore
 	 *
 	 * @param Code_Snippet $snippet The snippet being filtered
 	 *
 	 * @return bool The result of the filter
+	 * @ignore
 	 */
 	private function search_callback( $snippet ) {
 		global $s;
@@ -1007,11 +1047,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Callback for search function
-	 * @ignore
 	 *
 	 * @param Code_Snippet $snippet The snippet being filtered
 	 *
 	 * @return bool The result of the filter
+	 * @ignore
 	 */
 	private function search_by_line_callback( $snippet ) {
 		global $s;
@@ -1038,11 +1078,11 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 	/**
 	 * Callback for filtering snippets by tag
-	 * @ignore
 	 *
 	 * @param Code_Snippet $snippet The snippet being filtered
 	 *
 	 * @return bool The result of the filter
+	 * @ignore
 	 */
 	private function tags_filter_callback( $snippet ) {
 		$tags = explode( ',', $_GET['tag'] );
@@ -1089,9 +1129,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 			echo '</span>';
 
-			printf(
-				/* translators: 1: link URL, 2: link text */
-				'&nbsp;<a class="button clear-filters" href="%s">%s</a>',
+			/* translators: 1: link URL, 2: link text */
+			printf( '&nbsp;<a class="button clear-filters" href="%s">%s</a>',
 				esc_url( remove_query_arg( array( 's', 'tag' ) ) ),
 				__( 'Clear Filters', 'code-snippets' )
 			);
