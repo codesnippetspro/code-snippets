@@ -42,7 +42,7 @@ class Code_Snippets_DB {
 	 * Register the snippet table names with WordPress
 	 *
 	 * @since 2.0
-	 * @uses $wpdb
+	 * @uses  $wpdb
 	 */
 	function set_table_vars() {
 		global $wpdb;
@@ -83,11 +83,11 @@ class Code_Snippets_DB {
 	/**
 	 * Return the appropriate snippet table name
 	 *
-	 * @since 2.0
-	 *
 	 * @param string|bool|null $multisite Retrieve the multisite table name or the site table name?
 	 *
 	 * @return string The snippet table name
+	 * @since 2.0
+	 *
 	 */
 	function get_table_name( $multisite = null ) {
 
@@ -150,12 +150,11 @@ class Code_Snippets_DB {
 	/**
 	 * Create a single snippet table
 	 *
-	 * @since 1.6
-	 * @uses dbDelta() to apply the SQL code
-	 *
 	 * @param string $table_name The name of the table to create
 	 *
 	 * @return bool whether the table creation was successful
+	 * @since 1.6
+	 * @uses  dbDelta() to apply the SQL code
 	 */
 	public static function create_table( $table_name ) {
 		global $wpdb;
@@ -171,6 +170,8 @@ class Code_Snippets_DB {
 				scope       VARCHAR(15) NOT NULL DEFAULT 'global',
 				priority    SMALLINT    NOT NULL DEFAULT 10,
 				active      TINYINT(1)  NOT NULL DEFAULT 0,
+				created     DATETIME    NOT NULL DEFAULT current_timestamp(),
+				modified    DATETIME    NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
 				PRIMARY KEY  (id)
 			) $charset_collate;";
 
