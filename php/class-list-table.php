@@ -390,7 +390,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$sortable_columns = array(
 			'id'       => array( 'id', true ),
 			'name'     => 'name',
-			'tags'     => array( 'tags_list', true ),
 			'date'     => array( 'modified', true ),
 			'priority' => array( 'priority', true ),
 		);
