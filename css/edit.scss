@@ -33,6 +33,10 @@ h2 {
 }
 
 .inactive-snippet #title {
+	border-left-color: #bbb;
+}
+
+.erroneous-snippet #title {
 	border-left-color: #dc3232;
 }
 
