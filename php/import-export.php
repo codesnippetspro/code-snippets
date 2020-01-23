@@ -270,7 +270,7 @@ function export_snippets( $ids, $table_name = '' ) {
 
 	$data = array(
 		'generator'    => 'Code Snippets v' . code_snippets()->version,
-		'date_created' => date( 'Y-m-d H:i' ),
+		'date_created' => gmdate( 'Y-m-d H:i' ),
 		'snippets'     => $final_snippets,
 	);
 
