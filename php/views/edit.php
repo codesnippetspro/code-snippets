@@ -114,7 +114,7 @@ if ( ! $snippet->id ) {
 				}
 
 				foreach ( $actions as $action => $labels ) {
-					submit_button( $labels[0], 'secondary small', $action, false, array( 'title' => $labels[1] ) );
+					submit_button( $labels[0], 'secondary small', $action, false, array( 'title' => $labels[1], 'id' => $labels[1] . '_extra' ) );
 				}
 
 				?>
