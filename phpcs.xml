@@ -27,6 +27,7 @@
 		<exclude name="WordPress.WhiteSpace.ControlStructureSpacing.BlankLineAfterEnd" />
 		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine" />
 		<exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
+		<exclude name="Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure" />
 
 		<!-- this is useful for certain templates -->
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
