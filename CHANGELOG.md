@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.13.4 (24 Jan 2020)
+## 2.14.0 (24 Jan 2020)
 * Updated CodeMirror to version 5.50.2.
 * Added: Basic error checking for duplicate functions and classes.
 * Updated Italian translations to fix display issues – thanks to [Francesco Marino](https://360fun.net).

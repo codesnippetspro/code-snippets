@@ -5,7 +5,7 @@ Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
 Tested up to: 5.3.2
 Requires PHP: 5.2
-Stable tag: 2.13.4
+Stable tag: 2.14.0-dev
 License: MIT
 License URI: license.txt
 
