@@ -98,7 +98,7 @@ function code_snippets_get_available_themes() {
 		return $themes;
 	}
 
-	$themes = array();
+	$themes = array( 'default' );
 	$themes_dir = plugin_dir_path( CODE_SNIPPETS_FILE ) . 'css/min/editor-themes/';
 	$theme_files = glob( $themes_dir . '*.css' );
 

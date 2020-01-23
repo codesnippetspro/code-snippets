@@ -40,7 +40,6 @@
 			})();
 
 			if (null !== value) {
-
 				editor.setOption(opt, value);
 			}
 

@@ -20,12 +20,13 @@ function code_snippets_editor_settings_preview_assets() {
 	$themes = code_snippets_get_available_themes();
 
 	foreach ( $themes as $theme ) {
-
-		wp_enqueue_style(
-			'code-snippets-editor-theme-' . $theme,
-			plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
-			array( 'code-snippets-editor' ), $plugin->version
-		);
+		if ( 'default' !== $theme ) {
+			wp_enqueue_style(
+				'code-snippets-editor-theme-' . $theme,
+				plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
+				array( 'code-snippets-editor' ), $plugin->version
+			);
+		}
 	}
 
 	// Enqueue the menu scripts
@@ -68,7 +69,6 @@ function code_snippets_codemirror_theme_select_field( $atts ) {
 	$saved_value = code_snippets_get_setting( $atts['section'], $atts['id'] );
 
 	echo '<select name="code_snippets_settings[editor][theme]">';
-	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>Default</option>';
 
 	// print a dropdown entry for each theme
 	foreach ( code_snippets_get_available_themes() as $theme ) {
