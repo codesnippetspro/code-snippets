@@ -945,7 +945,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		// otherwise, sort using the default string sort order
-		return strcmp( $a_data, $b_data );
+		return strcasecmp( $a_data, $b_data );
 	}
 
 	/**
