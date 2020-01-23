@@ -278,7 +278,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 
 				/* Add the snippet ID to the array if it isn't already */
-				if ( ! in_array( $snippet_id, $shared_snippets ) ) {
+				if ( ! in_array( $snippet_id, $shared_snippets, true ) ) {
 					$shared_snippets[] = $snippet_id;
 					update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 				}
@@ -432,7 +432,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			<h2 class="screen-reader-text"><?php _e( 'Sharing Settings', 'code-snippets' ); ?></h2>
 			<label for="snippet_sharing">
 				<input type="checkbox" name="snippet_sharing"
-					<?php checked( in_array( $snippet->id, $shared_snippets ) ); ?>>
+					<?php checked( in_array( $snippet->id, $shared_snippets, true ) ); ?>>
 				<?php esc_html_e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
 			</label>
 		</div>

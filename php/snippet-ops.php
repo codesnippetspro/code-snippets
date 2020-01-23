@@ -285,7 +285,7 @@ function save_snippet( Code_Snippet $snippet ) {
 	);
 
 	/* Create a new snippet if the ID is not set */
-	if ( 0 == $snippet->id ) {
+	if ( 0 === $snippet->id ) {
 
 		$wpdb->insert( $table, $data, '%s' );
 		$snippet->id = $wpdb->insert_id;

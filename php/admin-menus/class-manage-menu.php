@@ -218,7 +218,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 			if ( $snippet->shared_network ) {
 				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
-				if ( in_array( $snippet->id, $active_shared_snippets ) !== $snippet->active ) {
+				if ( in_array( $snippet->id, $active_shared_snippets, true ) !== $snippet->active ) {
 
 					$active_shared_snippets = $snippet->active ?
 						array_merge( $active_shared_snippets, array( $snippet->id ) ) :
