@@ -697,10 +697,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		switch ( $this->current_action() ) {
 
 			case 'activate-selected':
-
-				foreach ( $ids as $id ) {
-					activate_snippet( $id, $this->is_network );
-				}
+				activate_snippets( $ids );
 
 				/* Process the shared network snippets */
 				if ( isset( $_POST['shared_ids'] ) && is_multisite() && ! $this->is_network ) {

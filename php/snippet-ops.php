@@ -219,6 +219,64 @@ function activate_snippet( $id, $multisite = null ) {
 }
 
 /**
+ * Activates multiple snippet.
+ *
+ * @param array     $ids       The IDs of the snippets to activate.
+ * @param bool|null $multisite Are the snippets multisite-wide or site-wide?
+ *
+ * @return array The IDs of the snippets which were successfully activated.
+ *
+ * @since 2.0
+ * @uses  $wpdb to set the snippet's active status
+ */
+function activate_snippets( array $ids, $multisite = null ) {
+	/** @var wpdb $wpdb */
+	global $wpdb;
+	$db = code_snippets()->db;
+	$table = $db->get_table_name( $multisite );
+
+	/* Build a SQL query containing all the provided snippet IDs */
+	$ids_format = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+	$sql = sprintf( 'SELECT id, code FROM %s WHERE id IN (%s);', $table, $ids_format );
+	$rows = $wpdb->get_results( $wpdb->prepare( $sql, $ids ) );
+
+	if ( ! $rows ) {
+		return array();
+	}
+
+	/* Loop through each snippet code and validate individually */
+	$valid_ids = array();
+
+	foreach ( $rows as $row ) {
+		$validator = new Code_Snippets_Validator( $row->code );
+		$code_error = $validator->validate();
+
+		if ( ! $code_error ) {
+			$valid_ids[] = $row->id;
+		}
+	}
+
+	/* If there are no valid snippets, then we're done */
+	if ( ! $valid_ids ) {
+		return $valid_ids;
+	}
+
+	/* Build a SQL query containing all the valid snippet IDs and activate the valid snippets */
+	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
+	$sql = sprintf( 'UPDATE %s SET active = 1 WHERE id IN (%s);', $table, $ids_format );
+	$wpdb->query( $wpdb->prepare( $sql, $valid_ids ) );
+
+	/* Remove snippet from shared network snippet list if it was Network Activated */
+	if ( $table === $db->ms_table && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
+		$shared_network_snippets = array_diff( $shared_network_snippets, $valid_ids );
+		update_site_option( 'shared_network_snippets', $shared_network_snippets );
+	}
+
+	do_action( 'code_snippets/activate_snippets', $valid_ids, $multisite );
+	return $valid_ids;
+}
+
+/**
  * Deactivate a snippet
  *
  * @param int       $id        The ID of the snippet to deactivate
