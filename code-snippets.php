@@ -14,8 +14,8 @@
  */
 
 /*
-Plugin Name: Code Snippets
-Plugin URI:  https://github.com/sheabunge/code-snippets
+Plugin Name: Code Snippets Pro
+Plugin URI:  https://codesnippets.pro
 Description: An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
 Author:      Code Snippets Pro
 Author URI:  https://codesnippets.pro
@@ -42,6 +42,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var string
  */
 define( 'CODE_SNIPPETS_FILE', __FILE__ );
+
+
+/**
+ * This is used to determine which version of Code Snippets
+ * is running. And no, changing this to 'true' won't enable
+ * all of the pro features.
+ *
+ * @since 3.0.0
+ * @var bool
+ */
+define( 'CODE_SNIPPETS_PRO', true );
 
 if ( version_compare( phpversion(), '5.6', '>=' ) ) {
 	require_once __DIR__ . '/php/load.php';
