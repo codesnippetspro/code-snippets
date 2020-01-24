@@ -5,10 +5,12 @@
 * Added: Basic error checking for duplicate functions and classes.
 * Updated Italian translations to fix display issues – thanks to [Francesco Marino](https://360fun.net).
 * Fixed: Ordering snippets in the table by name will now be case-insensitive.
-* Added: Additonal API options for retrieving snippets.
+* Added: Additional API options for retrieving snippets.
 * Fixed: Code editor will now properly highlight embedded HTML, CSS and JavaScript code.
 * Changed the indicator color for inactive snippets from red to grey.
 * Fixed a bug preventing the editor theme from being set to default.
+* Added: All snippets have an associated creation and last modification date.
+* Added: Basic error checking when activating snippets.
 
 ## 2.13.3 (13 Mar 2019)
 * Added: Hover effect to activation switches.
