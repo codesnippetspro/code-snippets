@@ -6,7 +6,7 @@
  * to the localization, please see https://github.com/sheabunge/code-snippets
  *
  * @package   Code_Snippets
- * @author    Shea Bunge <shea@sheabunge.com>
+ * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2020 Shea Bunge
  * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
  * @version   3.0.0-alpha.2
@@ -20,7 +20,7 @@ Description: An easy, clean and simple way to run code snippets on your site. No
 Author:      Code Snippets Pro
 Author URI:  https://codesnippets.pro
 Version:     3.0.0-alpha.2
-License:     GPLv2 or later
+License:     GPL-2.0-or-later
 License URI: license.txt
 Text Domain: code-snippets
 Domain Path: /languages

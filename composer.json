@@ -8,11 +8,11 @@
 	],
 	"type": "wordpress-plugin",
 	"homepage": "https://wordpress.org/plugins/code-snippets",
-	"license": "MIT",
+	"license": "GPL-2.0-or-later",
 	"authors": [
 		{
 			"name": "Shea Bunge",
-			"email": "shea@sheabunge.com",
+			"email": "shea@codesnippets.pro",
 			"homepage": "https://sheabunge.com"
 		}
 	],
