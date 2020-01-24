@@ -1,6 +1,6 @@
 <?php
 /**
- * For some reason, WordPress requires that TinyMCE translations be hosted in an external file. So that's what this is
+ * For some reason, WordPress requires that TinyMCE translations be hosted in an external file. So that's what this is.
  *
  * @package Code_Snippets
  */
