@@ -1,5 +1,9 @@
 <?php
 
+namespace Code_Snippets;
+
+use DOMElement;
+
 /**
  * This file includes functions for importing and exporting snippets
  */
@@ -79,7 +83,7 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
 
 	/* Reformat the data into snippet objects */
 	foreach ( $data['snippets'] as $snippet ) {
-		$snippet = new Code_Snippet( $snippet );
+		$snippet = new Snippet( $snippet );
 		$snippet->network = $multisite;
 		$snippets[] = $snippet;
 	}
@@ -122,7 +126,7 @@ function import_snippets_xml( $file, $multisite = null, $dup_action = 'ignore' )
 
 	/** @var DOMElement $snippet_xml */
 	foreach ( $snippets_xml as $snippet_xml ) {
-		$snippet = new Code_Snippet();
+		$snippet = new Snippet();
 		$snippet->network = $multisite;
 
 		/* Build a snippet object by looping through the field names */
@@ -252,7 +256,7 @@ function export_snippets( $ids, $table_name = '' ) {
 	$final_snippets = array();
 
 	foreach ( $raw_snippets as $snippet ) {
-		$snippet = new Code_Snippet( $snippet );
+		$snippet = new Snippet( $snippet );
 
 		$fields = array( 'name', 'desc', 'tags', 'scope', 'code', 'priority' );
 		$final_snippet = array();

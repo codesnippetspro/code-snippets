@@ -12,10 +12,11 @@ import change from 'gulp-change';
 import archiver from 'gulp-archiver';
 
 import postcss from 'gulp-postcss';
-import precss from 'precss';
+import sass from 'gulp-sass';
 import cssnano from 'cssnano';
 import rtlcss from 'gulp-rtlcss';
-import cssimport from 'postcss-import';
+import cssimport from 'postcss-easy-import';
+import hexrgba from 'postcss-hexrgba';
 import autoprefixer from 'autoprefixer';
 
 import imagemin from 'gulp-imagemin';
@@ -32,12 +33,13 @@ import gettext from 'gulp-gettext'
 
 import phpcs from 'gulp-phpcs';
 import phpunit from 'gulp-phpunit';
+import composer from 'gulp-composer';
 
-const pkg = require('./package.json');
+import pkg from './package.json';
 
 const src_files = {
-	php: ['code-snippets.php', 'php/**/*.php'],
-	js: ['js/*.js'],
+	php: ['*.php', 'php/**/*.php'],
+	js: ['js/**/*.js', '!js/min/**/*.js'],
 	css: ['css/*.scss', '!css/_*.scss'],
 };
 
@@ -49,8 +51,8 @@ const dist_dirs = {
 gulp.task('css', (done) => {
 
 	let processors = [
-		cssimport(),
-		precss(),
+		cssimport({prefix: '_', extensions: ['.scss', '.css']}),
+		hexrgba(),
 		autoprefixer(),
 		cssnano({'preset': ['default', {'discardComments': {'removeAll': true}}]})
 	];
@@ -59,8 +61,8 @@ gulp.task('css', (done) => {
 
 	return gulp.series(
 		() => gulp.src(src_files.css)
-			.pipe(rename({extname: '.css'}))
 			.pipe(sourcemaps.init())
+			.pipe(sass().on('error', sass.logError))
 			.pipe(postcss(processors))
 			.pipe(sourcemaps.write('.'))
 			.pipe(gulp.dest(dist_dirs.css)),
@@ -114,11 +116,11 @@ function bundlejs(file, babel_config) {
 }
 
 gulp.task('js', gulp.series('test-js', gulp.parallel(
-	() => bundlejs('js/editor.js'),
 	() => bundlejs('js/manage.js'),
-	() => bundlejs('js/edit.js'),
-	() => bundlejs('js/edit-tags.js'),
-	() => bundlejs('js/settings.js'),
+	() => bundlejs('js/edit/edit.js'),
+	() => bundlejs('js/edit/tags.js'),
+	() => bundlejs('js/settings/settings.js'),
+	() => bundlejs('js/mce.js'),
 	() => bundlejs('js/front-end.js', {
 		plugins: [['prismjs', {languages: ['php', 'php-extras'], plugins: ['line-highlight', 'line-numbers']}]]
 	})
@@ -146,7 +148,6 @@ gulp.task('gettext', () =>
 
 gulp.task('i18n', gulp.parallel(['makepot', 'gettext']));
 
-
 gulp.task('phpcs', () =>
 	gulp.src(src_files.php)
 		.pipe(phpcs({bin: 'vendor/bin/phpcs', showSniffCode: true}))
@@ -165,13 +166,29 @@ gulp.task('clean', () =>
 	gulp.src([dist_dirs.css, dist_dirs.js], {read: false, allowEmpty: true})
 		.pipe(clean()));
 
+
+gulp.task('test', gulp.parallel('test-js', gulp.series('phpcs', 'phpunit')));
+
+gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
+
 gulp.task('package', gulp.series(
+	'default',
+
+	// remove files from last run
 	() => gulp.src(['dist', pkg.name, `${pkg.name}.*.zip`], {read: false, allowEmpty: true})
 		.pipe(clean()),
 
-	() => gulp.src(['code-snippets.php', 'uninstall.php', 'php/**/*', 'readme.txt', 'license.txt', 'languages/**/*', 'css/font/**/*'])
+	// remove composer dev dependencies
+	() => composer({'no-dev': true}),
+
+	// copy files into a new directory
+	() => gulp.src([
+		'code-snippets.php', 'uninstall.php', 'php/**/*', 'vendor/**/*',
+		'readme.txt', 'license.txt', 'css/font/**/*', 'languages/**/*'
+	])
 		.pipe(copy(pkg.name)),
 
+	// copy minified scripts and stylesheets, while removing source map references
 	() => gulp.src('css/min/**/*.css')
 		.pipe(change((content) => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
 		.pipe(gulp.dest(pkg.name + '/css/min')),
@@ -180,23 +197,25 @@ gulp.task('package', gulp.series(
 		.pipe(change((content) => content.replace(/\/\/# sourceMappingURL=[\w.-]+\.map\s+$/, '')))
 		.pipe(gulp.dest(pkg.name + '/js/min')),
 
+	// create a zip archive
 	() => gulp.src(pkg.name + '/**/*', {base: '.'})
 		.pipe(archiver(`${pkg.name}.${pkg.version}.zip`))
 		.pipe(gulp.dest('.')),
 
-	(done) =>
+	(done) => {
+		// reinstall dev dependencies
+		composer();
+
+		// rename the distribution directory to its proper name
 		fs.rename(pkg.name, 'dist', err => {
 			if (err) throw err;
 			done();
-		})
+		});
+	}
 ));
-
-gulp.task('test', gulp.parallel('test-js', gulp.series('phpcs', 'phpunit')));
-
-gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
 
 gulp.task('watch', gulp.series('default', (done) => {
 	gulp.watch('css/*.scss', gulp.series('css'));
-	gulp.watch('js/*.js', gulp.series('js'));
+	gulp.watch(['js/**/*.js', '!js/min/**/*'], gulp.series('js'));
 	done();
 }));

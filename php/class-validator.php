@@ -1,11 +1,13 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Validates code prior to execution.
  *
  * @package Code_Snippets
  */
-class Code_Snippets_Validator {
+class Validator {
 
 	/**
 	 * @var string

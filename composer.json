@@ -12,7 +12,7 @@
 	"authors": [
 		{
 			"name": "Shea Bunge",
-			"email": "bungeshea@gmail.com",
+			"email": "shea@sheabunge.com",
 			"homepage": "https://sheabunge.com"
 		}
 	],
@@ -20,8 +20,12 @@
 		"issues": "https://github.com/sheabunge/code-snippets/issues",
 		"source": "https://github.com/sheabunge/code-snippets"
 	},
+	"autoload": {
+		"classmap": ["php/"]
+	},
 	"require": {
 		"composer/installers": "~1.0",
+		"php": ">=5.6",
 		"ext-dom": "*",
 		"ext-json": "*"
     },

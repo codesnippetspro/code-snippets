@@ -1,25 +1,40 @@
 <?php
 
+namespace Code_Snippets;
+
+use WP_Screen;
+
 /**
  * This file holds all of the content for the contextual help screens
+ *
  * @package Code_Snippets
  */
-class Code_Snippets_Contextual_Help {
+class Contextual_Help {
 
 	/**
+	 * Current screen object
+	 *
+	 * @see get_current_screen()
+	 *
 	 * @var WP_Screen
 	 */
 	public $screen;
 
 	/**
+	 * Name of current screen
+	 *
+	 * @see get_current_screen()
+	 *
 	 * @var string
 	 */
 	public $screen_name;
 
 	/**
-	 * @param string $screen_name
+	 * Class constructor
+	 *
+	 * @param string $screen_name Name of current screen.
 	 */
-	function __construct( $screen_name ) {
+	public function __construct( $screen_name ) {
 		$this->screen_name = $screen_name;
 	}
 
@@ -52,6 +67,7 @@ class Code_Snippets_Contextual_Help {
 
 	/**
 	 * Reusable introduction text
+	 *
 	 * @return string
 	 */
 	private function get_intro_text() {

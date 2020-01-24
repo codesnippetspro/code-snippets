@@ -1,28 +1,40 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Functions specific to the administration interface
  *
  * @package Code_Snippets
  */
-class Code_Snippets_Admin {
+class Admin {
 
+	/**
+	 * Admin_Menu class instances
+	 *
+	 * @var array
+	 */
 	public $menus = array();
 
-	function __construct() {
-
+	/**
+	 * Class constructor
+	 */
+	public function __construct() {
 		if ( is_admin() ) {
 			$this->run();
 		}
 	}
 
+	/**
+	 * Initialise classes
+	 */
 	public function load_classes() {
-		$this->menus['manage'] = new Code_Snippets_Manage_Menu();
-		$this->menus['edit'] = new Code_Snippets_Edit_Menu();
-		$this->menus['import'] = new Code_Snippets_Import_Menu();
+		$this->menus['manage'] = new Manage_Menu();
+		$this->menus['edit'] = new Edit_Menu();
+		$this->menus['import'] = new Import_Menu();
 
-		if ( is_network_admin() === code_snippets_unified_settings() ) {
-			$this->menus['settings'] = new Code_Snippets_Settings_Menu();
+		if ( is_network_admin() === Settings\are_settings_unified() ) {
+			$this->menus['settings'] = new Settings_Menu();
 		}
 
 		foreach ( $this->menus as $menu ) {
@@ -30,11 +42,14 @@ class Code_Snippets_Admin {
 		}
 	}
 
+	/**
+	 * Register action and filter hooks
+	 */
 	public function run() {
 		add_action( 'init', array( $this, 'load_classes' ), 11 );
 
 		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items' ) );
-		add_filter( 'plugin_action_links_' . plugin_basename( CODE_SNIPPETS_FILE ), array( $this, 'plugin_settings_link' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( $this, 'plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ) );
@@ -45,6 +60,8 @@ class Code_Snippets_Admin {
 	}
 
 	/**
+	 * Determine whether the menu is full or compact
+	 *
 	 * @return bool
 	 */
 	public function is_compact_menu() {
@@ -60,11 +77,11 @@ class Code_Snippets_Admin {
 	 *
 	 * @since 1.7.1
 	 *
-	 * @param  array $menu_items The current mu menu items
+	 * @param array $menu_items Current mu menu items.
 	 *
-	 * @return array             The modified mu menu items
+	 * @return array Modified mu menu items.
 	 */
-	function mu_menu_items( $menu_items ) {
+	public function mu_menu_items( $menu_items ) {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
 		$menu_items['snippets_settings'] = __( 'Snippets &raquo; Settings', 'code-snippets' );
 
@@ -74,8 +91,7 @@ class Code_Snippets_Admin {
 	/**
 	 * Load the stylesheet for the admin menu icon
 	 */
-	function load_admin_menu_icon() {
-
+	public function load_admin_menu_icon() {
 		wp_enqueue_style(
 			'menu-icon-snippets',
 			plugins_url( 'css/min/menu-icon.css', code_snippets()->file ),
@@ -85,15 +101,15 @@ class Code_Snippets_Admin {
 
 	/**
 	 * Prevent the snippet currently being saved from being executed
-	 * so it is not run twice (once normally, once
+	 * so it is not run twice (once normally, once when validated)
 	 *
-	 * @param bool   $exec Whether the snippet will be executed
-	 * @param int    $exec_id The ID of the snippet being executed
-	 * @param string $table_name
+	 * @param bool   $exec       Whether the snippet will be executed.
+	 * @param int    $exec_id    ID of the snippet being executed.
+	 * @param string $table_name Name of the database table the snippet is stored in.
 	 *
-	 * @return bool Whether the snippet will be executed
+	 * @return bool Whether the snippet will be executed.
 	 */
-	function prevent_exec_on_save( $exec, $exec_id, $table_name ) {
+	public function prevent_exec_on_save( $exec, $exec_id, $table_name ) {
 
 		if ( ! isset( $_POST['save_snippet'], $_POST['snippet_id'] ) ) {
 			return $exec;
@@ -115,13 +131,13 @@ class Code_Snippets_Admin {
 	/**
 	 * Adds a link pointing to the Manage Snippets page
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
-	 * @param  array $links The existing plugin action links
+	 * @param array $links Existing plugin action links.
 	 *
-	 * @return array        The modified plugin action links
+	 * @return array Modified plugin action links
 	 */
-	function plugin_settings_link( $links ) {
+	public function plugin_settings_link( $links ) {
 		array_unshift( $links, sprintf(
 			'<a href="%1$s" title="%2$s">%3$s</a>',
 			code_snippets()->get_menu_url(),
@@ -135,17 +151,17 @@ class Code_Snippets_Admin {
 	/**
 	 * Adds extra links related to the plugin
 	 *
-	 * @since 2.0
+	 * @since 2.0.0
 	 *
-	 * @param  array  $links The existing plugin info links
-	 * @param  string $file The plugin the links are for
+	 * @param array  $links Existing plugin info links.
+	 * @param string $file  The plugin the links are for.
 	 *
-	 * @return array         The modified plugin info links
+	 * @return array The modified plugin info links.
 	 */
-	function plugin_meta_links( $links, $file ) {
+	public function plugin_meta_links( $links, $file ) {
 
 		/* We only want to affect the Code Snippets plugin listing */
-		if ( plugin_basename( CODE_SNIPPETS_FILE ) !== $file ) {
+		if ( plugin_basename( PLUGIN_FILE ) !== $file ) {
 			return $links;
 		}
 
@@ -178,7 +194,7 @@ class Code_Snippets_Admin {
 	 * @since  1.9
 	 * @return void
 	 */
-	function survey_message() {
+	public function survey_message() {
 		global $current_user;
 
 		$key = 'ignore_code_snippets_survey_message';
@@ -199,14 +215,16 @@ class Code_Snippets_Admin {
 		<div class="updated">
 			<p>
 
-				<?php _e( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ); ?>
+				<?php echo wp_kses( __( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ), [ 'strong' => [] ] ); ?>
 
 				<a href="http://sheabunge.polldaddy.com/s/code-snippets-feedback" class="button secondary"
 				   target="_blank" style="margin: auto .5em;">
-					<?php _e( 'Take the survey now', 'code-snippets' ); ?>
+					<?php esc_html_e( 'Take the survey now', 'code-snippets' ); ?>
 				</a>
 
-				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( $key, true ), $key ) ); ?>"><?php esc_html_e( 'Dismiss', 'code-snippets' ); ?></a>
+				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( $key, true ), $key ) ); ?>">
+					<?php esc_html_e( 'Dismiss', 'code-snippets' ); ?>
+				</a>
 
 			</p>
 		</div>

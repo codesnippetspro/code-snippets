@@ -1,5 +1,42 @@
 # Changelog
 
+## 3.0.0 (unreleased)
+
+Lines marked with **\[PRO\]** indicate that you may need Code Snippets Pro to fully enjoy these features.
+
+### Alpha 1 (5 Mar 2019)
+* Added: Notice reminding users to upgrade unsupported PHP versions.
+* Improved: Updated plugin code to use namespaces, preventing name collisions with other plugins.
+* Added: Support for adding Style, Content, and Script snippets, and associated functionality. **\[PRO\]**
+* Removed: Deprecated functions and compatibility code for unsupported PHP versions.
+* Added: Support for exporting and downloading CSS and JavaScript snippets.  **\[PRO\]**
+* Added: Support for highlighting CSS code on the front-end.  **\[PRO\]**
+* Removed: Option to disable snippet scopes.
+* Added: Editor syntax highlighting for CSS, JavaScript and HTML snippets.  **\[PRO\]**
+* Improved: Added key for the 'active' and 'scope' database table columns to speed up queries.
+* Improved: Redirect from edit menu if not editing a valid snippet.
+* Improved: Introduced different colours for snippet types. **\[PRO\]**
+* Added: Visual settings to add attributes to shortcodes.
+* Improved: Moved activation switch into its own table column.
+* Added: Shortcode buttons to the post and page content editors.
+* Improved: Updated code documentation according to WordPress standards.
+
+### Alpha 2 (8 Apr 2019)
+* Improved: Link to WordPress documentation in the upgrade PHP notice.
+* Improved: Rename 'shortcode' scope to 'content'.
+* Improved: Make content snippets to appear to be permanently active.
+* Improved: Added snippet type labels to the tabs on the Snippets page.
+* Improved: Split settings page into tabs.
+* Improved: Use the version of CodeMirror included with WordPress where possible to inherit the additional built-in features.
+* Added: Button to preview full file when editing CSS or JavaScript snippets. **\[PRO\]**
+* Improved: Added hover effect to priority settings in the snippets table to show that they are editable.
+* Improved: Added full stops to settings labels.
+
+### Alpha 3 (unreleased)
+* Added: Snippet type column to the snippets table.
+* Added: Snippet type badges to Edit and Add New Snippet pages.
+* Added: Setting to control whether the current line of the code editor is highlighted.
+
 ## 2.14.0 (24 Jan 2020)
 * Updated CodeMirror to version 5.50.2.
 * Added: Basic error checking for duplicate functions and classes.

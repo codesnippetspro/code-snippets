@@ -1,13 +1,14 @@
 <?php
-
 /**
  * HTML code for the Manage Snippets page
  *
- * @package Code_Snippets
+ * @package    Code_Snippets
  * @subpackage Views
  *
- * @var Code_Snippets_Manage_Menu $this
+ * @var Manage_Menu $this
  */
+
+namespace Code_Snippets;
 
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,38 +21,56 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<h1><?php
 		esc_html_e( 'Snippets', 'code-snippets' );
 
-		printf( '<a href="%2$s" class="page-title-action add-new-h2">%1$s</a>',
-			esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-			code_snippets()->get_menu_url( 'add' )
-		);
-
-		printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-			esc_html_x( 'Import', 'snippets', 'code-snippets' ),
-			code_snippets()->get_menu_url( 'import' )
-		);
-
 		$admin = code_snippets()->admin;
-
-		if ( $admin->is_compact_menu() && isset( $admin->menus['settings'] ) ) {
-			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
-				esc_html_x( 'Settings', 'snippets', 'code-snippets' ),
-				code_snippets()->get_menu_url( 'settings' )
-			);
-		}
+		$this->page_title_actions( $admin->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
 
 		$this->list_table->search_notice();
 		?></h1>
 
-	<?php $this->list_table->views(); ?>
+	<?php $this->print_messages(); ?>
 
 	<form method="get" action="">
 		<?php
 		$this->list_table->required_form_fields( 'search_box' );
-		$this->list_table->search_box( __( 'Search Installed Snippets', 'code-snippets' ), 'search_id' );
+		$this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
 		?>
 	</form>
+
+	<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
+		<?php
+
+		$types = array(
+			'all'  => __( 'All Snippets', 'code-snippets' ),
+			'php'  => __( 'Functions', 'code-snippets' ),
+			'html' => __( 'Content', 'code-snippets' ),
+			'css'  => __( 'Styles', 'code-snippets' ),
+			'js'   => __( 'Scripts', 'code-snippets' ),
+		);
+
+		$current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : 'all';
+		$current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
+
+		foreach ( $types as $type_name => $label ) {
+
+			if ( $type_name === $current_type ) {
+				printf( '<a class="nav-tab nav-tab-active" data-type="%s">', esc_attr( $type_name ) );
+
+			} else {
+				printf( '<a class="nav-tab" href="%s" data-type="%s">',
+					esc_url( add_query_arg( 'type', $type_name ) ), esc_attr( $type_name )
+				);
+			}
+
+			echo esc_html( $label ), 'all' === $type_name ? '' : ' <span>' . esc_html( $type_name ) . '</span>', '</a>';
+		}
+
+		?>
+	</h2>
+
+	<?php $this->list_table->views(); ?>
+
 	<form method="post" action="">
-		<input type="hidden" id="code_snippets_ajax_nonce" value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage' ) ); ?>">
+		<input type="hidden" id="code_snippets_ajax_nonce" value="<?= esc_attr( wp_create_nonce( 'code_snippets_manage' ) ); ?>">
 
 		<?php
 		$this->list_table->required_form_fields();

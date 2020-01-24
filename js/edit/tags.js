@@ -9,14 +9,14 @@ import 'tag-it/js/tag-it';
 
 	try {
 		jQuery(tags_field).tagit({
-			availableTags: code_snippets_all_tags,
+			availableTags: window.code_snippets_all_tags,
 			allowSpaces: true,
 			removeConfirmation: true,
 			showAutocompleteOnFocus: true,
 		});
 
 	} catch (e) {
-		console.log('Could not initialise snippet tag field')
+		console.log('Could not initialise snippet tag field.')
 	}
 
 })();

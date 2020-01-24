@@ -1,6 +1,3 @@
-@import 'codemirror/lib/codemirror';
-@import 'codemirror/addon/dialog/dialog';
-@import 'codemirror/addon/lint/lint';
 
 .CodeMirror {
 	border: 1px solid #dfdfdf;
@@ -20,11 +17,18 @@
 	outline: 1px solid green;
 }
 
-.CodeMirror-sizer::before {
-	content: "<?php";
-	color: #bbb;
-	display: block;
-	padding-bottom: 6px;
+/* Add a bit of extra space above the editor */
+.CodeMirror-sizer {
+
+	&::before, &::after {
+		display: block;
+		color: #bbb;
+	}
+
+	&::before {
+		content: '';
+		padding-bottom: 5px;
+	}
 }
 
 /* Fix cursor color with rubyblue theme (see https://goo.gl/3HDgRm */
