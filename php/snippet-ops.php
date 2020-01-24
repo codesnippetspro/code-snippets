@@ -184,6 +184,8 @@ function get_snippet( $id = 0, $multisite = null ) {
  * @param int       $id        The ID of the snippet to activate
  * @param bool|null $multisite Are the snippets multisite-wide or site-wide?
  *
+ * @return int
+ *
  * @since 2.0
  * @uses  $wpdb to set the snippet's active status
  */
@@ -193,13 +195,18 @@ function activate_snippet( $id, $multisite = null ) {
 	$db = code_snippets()->db;
 	$table = $db->get_table_name( $multisite );
 
-	$wpdb->update(
-		$table,
-		array( 'active' => '1' ),
-		array( 'id' => $id ),
-		array( '%d' ),
-		array( '%d' )
-	);
+	/* Retrieve the snippet code from the database for validation before activating */
+	$row = $wpdb->get_row( $wpdb->prepare( "SELECT code FROM $table WHERE id = %d;", $id ) );
+	if ( ! $row ) {
+		return false;
+	}
+
+	$validator = new Code_Snippets_Validator( $row->code );
+	if ( $validator->validate() ) {
+		return false;
+	}
+
+	$wpdb->update( $table, array( 'active' => '1' ), array( 'id' => $id ), array( '%d' ), array( '%d' ) );
 
 	/* Remove snippet from shared network snippet list if it was Network Activated */
 	if ( $table === $db && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
@@ -208,6 +215,7 @@ function activate_snippet( $id, $multisite = null ) {
 	}
 
 	do_action( 'code_snippets/activate_snippet', $id, $multisite );
+	return true;
 }
 
 /**

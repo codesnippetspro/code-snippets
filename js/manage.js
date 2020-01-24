@@ -3,6 +3,7 @@
 (function () {
 	const nonce = document.getElementById('code_snippets_ajax_nonce').value;
 	const network_admin = ('-network' === pagenow.substring(pagenow.length - '-network'.length));
+	const strings = window.code_snippets_manage_i18n;
 
 	/**
 	 * Utility function to loop through a DOM list
@@ -25,7 +26,7 @@
 	function update_snippet(field, row_element, snippet, success_callback) {
 		const id_column = row_element.querySelector('.column-id');
 
-		if (! id_column || ! parseInt(id_column.textContent)) {
+		if (!id_column || !parseInt(id_column.textContent)) {
 			return;
 		}
 
@@ -44,7 +45,7 @@
 			console.log(request.responseText);
 
 			if (success_callback !== undefined) {
-				success_callback(request);
+				success_callback(JSON.parse(request.responseText));
 			}
 		};
 
@@ -75,7 +76,7 @@
 	 * @param {boolean}     increment
 	 */
 	function update_view_count(view_count, increment) {
-		let n = parseInt(view_count.textContent.replace(/\((\d+)\)/, '$1') );
+		let n = parseInt(view_count.textContent.replace(/\((\d+)\)/, '$1'));
 		increment ? n++ : n--;
 		view_count.textContent = '(' + n.toString() + ')';
 	}
@@ -88,22 +89,30 @@
 
 		const row = this.parentElement.parentElement; // switch < cell < row
 		const match = row.className.match(/\b(?:in)?active-snippet\b/);
-		if (! match) return;
+		if (!match) return;
 
 		e.preventDefault();
 
 		const activating = 'inactive-snippet' === match[0];
 		const snippet = {'active': activating};
 
-		update_snippet('active', row, snippet, (request) => {
+		update_snippet('active', row, snippet, (response) => {
+			const button = row.querySelector('.snippet-activation-switch');
 
-			row.className = (activating) ?
-				row.className.replace(/\binactive-snippet\b/, 'active-snippet') :
-				row.className.replace(/\bactive-snippet\b/, 'inactive-snippet');
+			if (response.success) {
+				row.className = (activating) ?
+					row.className.replace(/\binactive-snippet\b/, 'active-snippet') :
+					row.className.replace(/\bactive-snippet\b/, 'inactive-snippet');
 
-			const views = document.querySelector('.subsubsub');
-			update_view_count(views.querySelector('.active .count'), activating);
-			update_view_count(views.querySelector('.inactive .count'), activating);
+				const views = document.querySelector('.subsubsub');
+				update_view_count(views.querySelector('.active .count'), activating);
+				update_view_count(views.querySelector('.inactive .count'), activating);
+
+				button.title = activating ? strings['deactivate'] : strings['activate'];
+			} else {
+				row.className += ' erroneous-snippet';
+				button.title = strings['activation_error'];
+			}
 		});
 	}
 

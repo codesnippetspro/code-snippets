@@ -83,6 +83,15 @@ $inactive-color: #ccc;
 			transform: translateX(60%);
 		}
 	}
+
+	.snippets .erroneous-snippet &::before {
+		content: '!';
+		transform: translateX(50%);
+		text-align: center;
+		font-weight: bold;
+		line-height: 1;
+		color: #bbb;
+	}
 }
 
 .snippet-execution-button {
