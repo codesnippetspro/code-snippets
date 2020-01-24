@@ -24,10 +24,10 @@
     ],
     "author": {
         "name": "Shea Bunge",
-        "email": "shea@sheabunge.com",
+        "email": "shea@codesnippets.pro",
         "url": "https://sheabunge.com"
     },
-    "license": "MIT",
+    "license": "GPL-2.0-or-later",
     "bugs": {
         "url": "https://github.com/sheabunge/code-snippets/issues"
     },
