@@ -3,7 +3,7 @@
 /**
  * HTML code for the Add New/Edit Snippet page
  *
- * @package Code_Snippets
+ * @package    Code_Snippets
  * @subpackage Views
  *
  * @var Code_Snippets_Edit_Menu $this
@@ -114,7 +114,8 @@ if ( ! $snippet->id ) {
 				}
 
 				foreach ( $actions as $action => $labels ) {
-					submit_button( $labels[0], 'secondary small', $action, false, array( 'title' => $labels[1], 'id' => $labels[1] . '_extra' ) );
+					$other_attributes = array( 'title' => $labels[1], 'id' => $action . '_extra' );
+					submit_button( $labels[0], 'secondary small', $action, false, $other_attributes );
 				}
 
 				?>
