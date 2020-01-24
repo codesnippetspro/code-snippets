@@ -3,9 +3,9 @@ Contributors: bungeshea
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, functions, code, php, css, js, javascript, html, network, multisite
 Requires at least: 3.6
-Tested up to: 5.1.1
+Tested up to: 5.3.2
 Requires PHP: 5.2
-Stable tag: 2.13.3
+Stable tag: 2.14.0-dev
 License: MIT
 License URI: license.txt
 
@@ -13,7 +13,7 @@ An easy, clean and simple way to run code snippets on your site.
 
 == Description ==
 
-Code Snippets is an easy, clean and simple way to run PHP code snippets on your site. It removes the need to add custom snippets to your theme theme's `functions.php` file.
+Code Snippets is an easy, clean and simple way to run PHP code snippets on your site. It removes the need to add custom snippets to your theme's `functions.php` file.
 
 A snippet is a small chunk of PHP code that you can use to extend the functionality of a WordPress-powered website; essentially a mini-plugin with less load on your site.
 Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while.
@@ -42,7 +42,7 @@ Code Snippets can be used in these different languages thanks to the following t
 * Slovak - [Ján Fajčák](http://wp.sk)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
 * Chinese - [Jincheng Shan](http://shanjincheng.com)
-* Serbo-Croatian - [Borisa Djuraskovic from Web Hosting Hub](http://www.webhostinghub.com/)
+* Croatian - [Borisa Djuraskovic from Web Hosting Hub](http://www.webhostinghub.com/)
 * Japanese - [mt8](http://mt8.biz/)
 
 == Installation ==
@@ -425,7 +425,7 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Added support for different CodeMirror themes
 * Integrated tags component into main plugin. Current users of the Code Snippets Tags plugin can safely uninstall it.
 * Added Auto Close Brackets CodeMirror addon (props to TronicLabs)
-* Added Serbo-Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
+* Added Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
 * Added Highlight Selection Matches CodeMirror addon (props to TronicLabs)
 * Added Chinese translation thanks to Jincheng Shan
 * Added Russian translation by Alexander Samsonov

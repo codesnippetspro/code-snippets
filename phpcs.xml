@@ -23,8 +23,10 @@
 		<exclude name="PSR2.ControlStructures.SwitchDeclaration.BodyOnNextLineCASE" />
 		<exclude name="WordPress.WhiteSpace.ControlStructureSpacing.BlankLineAfterEnd" />
 		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine" />
-		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_trigger_error" />
-		<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
+		<exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
+		<exclude name="Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure" />
+		<!--<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_trigger_error" />-->
+		<!--<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />-->
 
 		<!-- this is useful for certain templates -->
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
@@ -38,6 +40,7 @@
 
 		<!-- this picks up a lot of false positives -->
 		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
+		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared" />
 		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />
 		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared" />
 

@@ -19,7 +19,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 
 	$modes = [
 		'css'  => 'text/css',
-		'php'  => 'text/x-php',
+		'php'  => 'php-snippet',
 		'js'   => 'javascript',
 		'html' => 'application/x-httpd-php',
 	];
@@ -34,11 +34,12 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 		'extraKeys'      => [ 'Alt-F' => 'findPersistent', 'Ctrl-Space' => 'autocomplete' ],
 		'gutters'        => [ 'CodeMirror-lint-markers' ],
 		'lint'           => true,
+		'viewportMargin' => 'Infinity',
 	];
 
 	// add relevant saved setting values to the default attributes
 	$plugin_settings = Settings\get_settings_values();
-	$setting_fields = Settings\get_settings_fields();
+	$setting_fields = get_settings_fields();
 
 	foreach ( $setting_fields['editor'] as $field_id => $field ) {
 		// the 'codemirror' setting field specifies the name of the attribute
@@ -55,7 +56,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 	}
 
 	wp_enqueue_code_editor( [
-		'type' => $modes[ $type ],
+		'type'       => $modes[ $type ],
 		'codemirror' => $atts,
 	] );
 
@@ -84,8 +85,9 @@ function get_editor_themes() {
 		return $themes;
 	}
 
-	$themes = [];
+	$themes = array( 'default' );
 	$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'css/min/editor-themes/';
+
 	$theme_files = glob( $themes_dir . '*.css' );
 
 	foreach ( $theme_files as $i => $theme ) {

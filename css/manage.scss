@@ -64,7 +64,7 @@ $inactive-color: #ccc;
 		height: 13px;
 		width: 13px;
 		display: inline-block;
-		margin: 1.5px 2px;
+		margin: 2px;
 		background-color: white;
 		border-radius: 50%;
 	}
@@ -83,6 +83,15 @@ $inactive-color: #ccc;
 		&:hover::before {
 			transform: translateX(60%);
 		}
+	}
+
+	.snippets .erroneous-snippet &::before {
+		content: '!';
+		transform: translateX(50%);
+		text-align: center;
+		font-weight: bold;
+		line-height: 1;
+		color: #bbb;
 	}
 }
 
@@ -125,22 +134,12 @@ $inactive-color: #ccc;
 
 .snippets {
 
-	th, td {
-		color: #000;
-	}
-
 	tr {
 		background: #fff;
 	}
 
 	ol, ul {
-		margin: 0 0 1.5em 0.5em;
-		padding: 0;
-	}
-
-	ol {
-		margin-left: 1.5em;
-		padding-left: 1.5em;
+		margin: 0 0 1.5em 1.5em;
 	}
 
 	ul {
@@ -180,8 +179,8 @@ $inactive-color: #ccc;
 		padding-left: 5px;
 	}
 
-	.column-description p {
-		color: #333;
+	td.column-description {
+		max-width: 700px;
 	}
 
 	.active-snippet, .inactive-snippet {

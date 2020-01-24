@@ -2,7 +2,7 @@
 /**
  * This file handles the editor preview setting
  *
- * @since 2.0
+ * @since   2.0.0
  * @package Code_Snippets
  */
 
@@ -24,11 +24,13 @@ function enqueue_editor_preview_assets() {
 
 	foreach ( $themes as $theme ) {
 
-		wp_enqueue_style(
-			'code-snippets-editor-theme-' . $theme,
-			plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
-			[ 'code-editor' ], $plugin->version
-		);
+		if ( 'default' !== $theme ) {
+			wp_enqueue_style(
+				'code-snippets-editor-theme-' . $theme,
+				plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
+				array( 'code-editor' ), $plugin->version
+			);
+		}
 	}
 
 	// Enqueue the menu scripts.
@@ -48,8 +50,8 @@ function enqueue_editor_preview_assets() {
 		}
 
 		$editor_fields[] = array(
-			'name' => $name,
-			'type' => $field['type'],
+			'name'       => $name,
+			'type'       => $field['type'],
 			'codemirror' => addslashes( $field['codemirror'] ),
 		);
 	}
@@ -70,7 +72,6 @@ function render_editor_theme_select_field( $atts ) {
 	$saved_value = get_setting( $atts['section'], $atts['id'] );
 
 	echo '<select name="code_snippets_settings[editor][theme]">';
-	echo '<option value="default"' . selected( 'default', $saved_value, false ) . '>Default</option>';
 
 	// print a dropdown entry for each theme
 	foreach ( get_editor_themes() as $theme ) {
@@ -107,10 +108,10 @@ function render_editor_preview() {
 	$indent = str_repeat( "\t", $n_tabs ) . str_repeat( ' ', $n_spaces );
 
 	$code = "add_filter( 'admin_footer_text', function ( \$text ) {\n\n" .
-	       $indent . "\$site_name = get_bloginfo( 'name' );\n\n" .
-	       $indent . '$text = "Thank you for visiting $site_name.";' . "\n" .
-	       $indent . 'return $text;' . "\n" .
-	       "} );\n";
+	        $indent . "\$site_name = get_bloginfo( 'name' );\n\n" .
+	        $indent . '$text = "Thank you for visiting $site_name.";' . "\n" .
+	        $indent . 'return $text;' . "\n" .
+	        "} );\n";
 
 	echo '<textarea id="code_snippets_editor_preview">', esc_textarea( $code ), '</textarea>';
 }

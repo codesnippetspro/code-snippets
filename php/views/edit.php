@@ -70,20 +70,16 @@ if ( ! $snippet->id ) {
 			</div>
 		</div>
 
-		<?php
-
-		if ( apply_filters( 'code_snippets/extra_save_buttons', true ) ) {
-			$this->render_view( 'partials/edit-submit-extra' );
-		}
-
-		?>
-
 		<h2>
 			<label for="snippet_code">
 				<?php esc_html_e( 'Code', 'code-snippets' );
 
 				if ( $snippet->id ) {
 					printf( ' <span class="snippet-type-badge" data-type="%s">%s</span>', esc_attr( $snippet->type ), esc_html( $snippet->type ) );
+				}
+
+				if ( apply_filters( 'code_snippets/extra_save_buttons', true ) ) {
+					$this->render_view( 'partials/edit-submit-extra' );
 				}
 
 				?>

@@ -87,11 +87,11 @@ class DB {
 	/**
 	 * Return the appropriate snippet table name
 	 *
-	 * @since 2.0
-	 *
 	 * @param string|bool|null $multisite Whether retrieve the multisite table name (true) or the site table name (false).
 	 *
 	 * @return string The snippet table name
+	 * @since 2.0
+	 *
 	 */
 	public function get_table_name( $multisite = null ) {
 
@@ -166,12 +166,11 @@ class DB {
 	/**
 	 * Create a single snippet table
 	 *
+	 * @param string $table_name The name of the table to create
+	 *
+	 * @return bool Whether the table creation was successful
 	 * @since 1.6
 	 * @uses  dbDelta() to apply the SQL code
-	 *
-	 * @param string $table_name The name of the table to create.
-	 *
-	 * @return bool Whether the table creation was successful.
 	 */
 	public static function create_table( $table_name ) {
 		global $wpdb;
@@ -187,6 +186,8 @@ class DB {
 				scope       VARCHAR(15) NOT NULL DEFAULT 'global',
 				priority    SMALLINT    NOT NULL DEFAULT 10,
 				active      TINYINT(1)  NOT NULL DEFAULT 0,
+				created     DATETIME    NOT NULL DEFAULT current_timestamp(),
+				modified    DATETIME    NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
 				PRIMARY KEY  (id),
 				KEY scope (scope),
 				KEY active (active)

@@ -1,4 +1,7 @@
 <?php
+
+namespace Code_Snippets;
+
 /**
  * HTML code for extra submit buttons on the Edit menu
  *
@@ -7,8 +10,6 @@
  *
  * @var Edit_Menu $this
  */
-
-namespace Code_Snippets;
 
 $snippet = $this->snippet;
 
@@ -48,7 +49,7 @@ $snippet = $this->snippet;
 	}
 
 	foreach ( $actions as $action_name => $labels ) {
-		submit_button( $labels[0], 'secondary small', $action_name, false, array( 'title' => $labels[1] ) );
+		submit_button( $labels[0], 'secondary small', $action_name, false, array( 'title' => $labels[1], 'id' => $labels[0] . '_extra' ) );
 	}
 
 	?>

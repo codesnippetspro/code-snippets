@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Code Snippets
+# Copyright (C) 2020 Code Snippets
 # This file is distributed under the same license as the Code Snippets package.
 msgid ""
 msgstr ""
@@ -27,11 +27,11 @@ msgid "An easy, clean and simple way to run code snippets on your site. No need 
 msgstr ""
 
 #: code-snippets.php:19
-msgid "Shea Bunge"
+msgid "Code Snippets Pro"
 msgstr ""
 
 #: code-snippets.php:20
-msgid "https://sheabunge.com"
+msgid "https://codesnippets.pro"
 msgstr ""
 
 #: code-snippets.php:59
@@ -245,15 +245,15 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: php/class-list-table.php:185, php/class-list-table.php:399
+#: php/class-list-table.php:185, php/class-list-table.php:442
 msgid "Clone"
 msgstr ""
 
-#: php/class-list-table.php:186, php/class-list-table.php:401, php/admin-menus/class-edit-menu.php:643
+#: php/class-list-table.php:186, php/class-list-table.php:444, php/admin-menus/class-edit-menu.php:656
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:195, php/class-list-table.php:402, php/admin-menus/class-edit-menu.php:644
+#: php/class-list-table.php:195, php/class-list-table.php:445, php/admin-menus/class-edit-menu.php:657
 msgid "Delete"
 msgstr ""
 
@@ -261,7 +261,7 @@ msgstr ""
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:200, php/admin-menus/class-edit-menu.php:672
+#: php/class-list-table.php:200, php/admin-menus/class-edit-menu.php:685
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
@@ -269,19 +269,19 @@ msgstr ""
 msgid "Run Once"
 msgstr ""
 
-#: php/class-list-table.php:230, php/class-list-table.php:398
+#: php/class-list-table.php:230, php/class-list-table.php:441
 msgid "Network Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:230, php/class-list-table.php:397
+#: php/class-list-table.php:230, php/class-list-table.php:440
 msgid "Network Activate"
 msgstr ""
 
-#: php/class-list-table.php:231, php/class-list-table.php:398, php/views/partials/edit-submit-extra.php:37
+#: php/class-list-table.php:231, php/class-list-table.php:441, php/admin-menus/class-manage-menu.php:148, php/views/partials/edit-submit-extra.php:38
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:231, php/class-list-table.php:397, php/views/partials/edit-submit-extra.php:43
+#: php/class-list-table.php:231, php/class-list-table.php:440, php/admin-menus/class-manage-menu.php:147, php/views/partials/edit-submit-extra.php:44
 msgid "Activate"
 msgstr ""
 
@@ -295,106 +295,133 @@ msgstr ""
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:350, php/views/edit.php:67
+#. translators: 1: date format, 2: time format
+#: php/class-list-table.php:363
+msgctxt "date and time format"
+msgid "%1$s \a\t %2$s"
+msgstr ""
+
+#. translators: %s: Human-readable time difference.
+#: php/class-list-table.php:368
+msgid "%s ago"
+msgstr ""
+
+#: php/class-list-table.php:370
+msgid "Y/m/d"
+msgstr ""
+
+#: php/class-list-table.php:373
+msgid "Created"
+msgstr ""
+
+#: php/class-list-table.php:373
+msgid "Last Modified"
+msgstr ""
+
+#: php/class-list-table.php:386, php/views/edit.php:67
 msgid "Name"
 msgstr ""
 
-#: php/class-list-table.php:351, php/admin-menus/class-edit-menu.php:371
+#: php/class-list-table.php:387, php/admin-menus/class-edit-menu.php:378
 msgid "Description"
 msgstr ""
 
-#: php/class-list-table.php:352, php/admin-menus/class-edit-menu.php:397
+#: php/class-list-table.php:388, php/admin-menus/class-edit-menu.php:404
 msgid "Tags"
 msgstr ""
 
-#: php/class-list-table.php:353
+#: php/class-list-table.php:389
 msgid "Type"
 msgstr ""
 
-#: php/class-list-table.php:354, php/admin-menus/class-edit-menu.php:420
+#: php/class-list-table.php:390
+msgid "Date"
+msgstr ""
+
+#: php/class-list-table.php:391, php/admin-menus/class-edit-menu.php:427
 msgid "Priority"
 msgstr ""
 
-#: php/class-list-table.php:355
+#: php/class-list-table.php:392
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:400, php/admin-menus/class-edit-menu.php:640
+#: php/class-list-table.php:443, php/admin-menus/class-edit-menu.php:653
 msgid "Download"
 msgstr ""
 
 #. translators: %s: total number of snippets
-#: php/class-list-table.php:444
+#: php/class-list-table.php:487
 msgid "All <span class=\"count\">(%s)</span>"
 msgid_plural "All <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of active snippets
-#: php/class-list-table.php:451
+#: php/class-list-table.php:494
 msgid "Active <span class=\"count\">(%s)</span>"
 msgid_plural "Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of inactive snippets
-#: php/class-list-table.php:458
+#: php/class-list-table.php:501
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of recently activated snippets
-#: php/class-list-table.php:465
+#: php/class-list-table.php:508
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:538
+#: php/class-list-table.php:581
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:552
+#: php/class-list-table.php:595
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:560
+#: php/class-list-table.php:603
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:791
+#: php/class-list-table.php:830
 msgid "No snippets were found matching the current search query. Please enter a new query or use the \"Clear Filters\" button above."
 msgstr ""
 
-#: php/class-list-table.php:794
+#: php/class-list-table.php:833
 msgid "It looks like you don't have any snippets."
 msgstr ""
 
-#: php/class-list-table.php:798
+#: php/class-list-table.php:837
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1135
+#: php/class-list-table.php:1175
 msgid "Search results"
 msgstr ""
 
 #. translators: 1: search query, 2: line number
-#: php/class-list-table.php:1144
+#: php/class-list-table.php:1184
 msgid " for &ldquo;%1$s&rdquo; on line %2$d"
 msgstr ""
 
 #. translators: %s: search query
-#: php/class-list-table.php:1150
+#: php/class-list-table.php:1191
 msgid " for &ldquo;%s&rdquo;"
 msgstr ""
 
 #. translators: %s: tag name
-#: php/class-list-table.php:1156
+#: php/class-list-table.php:1197
 msgid " in tag &ldquo;%s&rdquo;"
 msgstr ""
 
-#: php/class-list-table.php:1164
+#: php/class-list-table.php:1205
 msgid "Clear Filters"
 msgstr ""
 
@@ -442,20 +469,48 @@ msgstr ""
 msgid "Order snippets by name by default in the snippets table."
 msgstr ""
 
-#: php/class-upgrade.php:195
+#: php/class-upgrade.php:196
 msgid "You can remove it, or edit it to add your own content."
+msgstr ""
+
+#: php/class-validator.php:154
+msgid "Parse error: syntax error, unexpected end of snippet."
+msgstr ""
+
+#. translators: %s: PHP function name
+#: php/class-validator.php:169
+msgid "Cannot redeclare function %s."
+msgstr ""
+
+#. translators: %s: PHP class name
+#: php/class-validator.php:173
+msgid "Cannot redeclare class %s."
+msgstr ""
+
+#. translators: %s: PHP interface name
+#: php/class-validator.php:177
+msgid "Cannot redeclare interface %s."
+msgstr ""
+
+#. translators: %s: PHP identifier name
+#: php/class-validator.php:181
+msgid "Cannot redeclare %s."
+msgstr ""
+
+#: php/class-validator.php:218
+msgid "Parse error: syntax error, unexpected end of snippet"
 msgstr ""
 
 #: php/admin-menus/class-admin-menu.php:169
 msgid "You are not authorized to access this page."
 msgstr ""
 
-#: php/admin-menus/class-admin-menu.php:201, php/admin-menus/class-settings-menu.php:112
+#: php/admin-menus/class-admin-menu.php:201, php/admin-menus/class-settings-menu.php:113
 msgctxt "snippets"
 msgid "Manage"
 msgstr ""
 
-#: php/admin-menus/class-admin-menu.php:204, php/admin-menus/class-settings-menu.php:113, php/views/edit.php:37
+#: php/admin-menus/class-admin-menu.php:204, php/admin-menus/class-settings-menu.php:114, php/views/edit.php:37
 msgctxt "snippet"
 msgid "Add New"
 msgstr ""
@@ -509,76 +564,76 @@ msgstr ""
 msgid "If you prefer, you can close this page and discard the changes you just made. No changes will be made to this site."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:402
+#: php/admin-menus/class-edit-menu.php:409
 msgid "Enter a list of tags; separated by commas"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:419
+#: php/admin-menus/class-edit-menu.php:426
 msgid "Snippets with a lower priority number will run before those with a higher number."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:437
+#: php/admin-menus/class-edit-menu.php:444
 msgid "Sharing Settings"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:441
+#: php/admin-menus/class-edit-menu.php:448
 msgid "Allow this snippet to be activated on individual sites on the network"
 msgstr ""
 
 #. translators: %d: line of file where error originated
-#: php/admin-menus/class-edit-menu.php:499
+#: php/admin-menus/class-edit-menu.php:512
 msgid "The snippet has been deactivated due to an error on line %d:"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:509
+#: php/admin-menus/class-edit-menu.php:522
 msgid "The snippet has been deactivated due to an error in the code."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:518
+#: php/admin-menus/class-edit-menu.php:531
 msgid "An error occurred when saving the snippet."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:524
+#: php/admin-menus/class-edit-menu.php:537
 msgid "Snippet <strong>added</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:525
+#: php/admin-menus/class-edit-menu.php:538
 msgid "Snippet <strong>updated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:526
+#: php/admin-menus/class-edit-menu.php:539
 msgid "Snippet <strong>added</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:527
+#: php/admin-menus/class-edit-menu.php:540
 msgid "Snippet <strong>added</strong> and <strong>executed</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:528
+#: php/admin-menus/class-edit-menu.php:541
 msgid "Snippet <strong>updated</strong> and <strong>activated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:529
+#: php/admin-menus/class-edit-menu.php:542
 msgid "Snippet <strong>updated</strong> and <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:614, php/views/partials/edit-submit-extra.php:21
+#: php/admin-menus/class-edit-menu.php:627, php/views/partials/edit-submit-extra.php:22
 msgid "Save Changes"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:619
+#: php/admin-menus/class-edit-menu.php:632
 msgid "Save Changes and Execute Once"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:624
+#: php/admin-menus/class-edit-menu.php:637
 msgid "Save Changes and Deactivate"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:626
+#: php/admin-menus/class-edit-menu.php:639
 msgid "Save Changes and Activate"
 msgstr ""
 
-#: php/admin-menus/class-edit-menu.php:671
+#: php/admin-menus/class-edit-menu.php:684
 msgid "You are about to permanently delete this snippet."
 msgstr ""
 
@@ -625,43 +680,47 @@ msgctxt "tools submenu label"
 msgid "Snippets"
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:152
-msgid "<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href=\"https://github.com/sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
-msgstr ""
-
-#: php/admin-menus/class-manage-menu.php:158
-msgid "Snippet <strong>executed</strong>."
-msgstr ""
-
-#: php/admin-menus/class-manage-menu.php:159
-msgid "Snippet <strong>activated</strong>."
-msgstr ""
-
-#: php/admin-menus/class-manage-menu.php:160
-msgid "Selected snippets <strong>activated</strong>."
-msgstr ""
-
-#: php/admin-menus/class-manage-menu.php:161
-msgid "Snippet <strong>deactivated</strong>."
+#: php/admin-menus/class-manage-menu.php:149
+msgid "An error occurred when attempting to activate"
 msgstr ""
 
 #: php/admin-menus/class-manage-menu.php:162
+msgid "<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href=\"https://github.com/sheabunge/code-snippets/wiki/Safe-Mode\" target=\"_blank\">Help</a>"
+msgstr ""
+
+#: php/admin-menus/class-manage-menu.php:168
+msgid "Snippet <strong>executed</strong>."
+msgstr ""
+
+#: php/admin-menus/class-manage-menu.php:169
+msgid "Snippet <strong>activated</strong>."
+msgstr ""
+
+#: php/admin-menus/class-manage-menu.php:170
+msgid "Selected snippets <strong>activated</strong>."
+msgstr ""
+
+#: php/admin-menus/class-manage-menu.php:171
+msgid "Snippet <strong>deactivated</strong>."
+msgstr ""
+
+#: php/admin-menus/class-manage-menu.php:172
 msgid "Selected snippets <strong>deactivated</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:163
+#: php/admin-menus/class-manage-menu.php:173
 msgid "Snippet <strong>deleted</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:164
+#: php/admin-menus/class-manage-menu.php:174
 msgid "Selected snippets <strong>deleted</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:165
+#: php/admin-menus/class-manage-menu.php:175
 msgid "Snippet <strong>cloned</strong>."
 msgstr ""
 
-#: php/admin-menus/class-manage-menu.php:166
+#: php/admin-menus/class-manage-menu.php:176
 msgid "Selected snippets <strong>cloned</strong>."
 msgstr ""
 
@@ -674,19 +733,19 @@ msgstr ""
 msgid "Snippets Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:45
+#: php/admin-menus/class-settings-menu.php:46
 msgid "All settings have been reset to their defaults."
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:108
+#: php/admin-menus/class-settings-menu.php:109
 msgid "Settings"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:140
+#: php/admin-menus/class-settings-menu.php:141
 msgid "Reset to Default"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:212, php/settings/settings.php:238
+#: php/admin-menus/class-settings-menu.php:213, php/settings/settings.php:238
 msgid "Settings saved."
 msgstr ""
 
@@ -879,47 +938,47 @@ msgstr ""
 msgid "Enter title here"
 msgstr ""
 
-#: php/views/edit.php:83
+#: php/views/edit.php:75
 msgid "Code"
 msgstr ""
 
-#: php/views/edit.php:98, php/views/manage.php:44
+#: php/views/edit.php:94, php/views/manage.php:44
 msgid "Functions"
 msgstr ""
 
-#: php/views/edit.php:99, php/views/manage.php:45
+#: php/views/edit.php:95, php/views/manage.php:45
 msgid "Content"
 msgstr ""
 
-#: php/views/edit.php:100, php/views/manage.php:46
+#: php/views/edit.php:96, php/views/manage.php:46
 msgid "Styles"
 msgstr ""
 
-#: php/views/edit.php:101, php/views/manage.php:47
+#: php/views/edit.php:97, php/views/manage.php:47
 msgid "Scripts"
 msgstr ""
 
-#: php/views/edit.php:151
+#: php/views/edit.php:147
 msgid "Site front-end stylesheet"
 msgstr ""
 
-#: php/views/edit.php:152
+#: php/views/edit.php:148
 msgid "Administration area stylesheet"
 msgstr ""
 
-#: php/views/edit.php:153
+#: php/views/edit.php:149
 msgid "JavaScript loaded in the site &amp;lt;head&amp;gt; section"
 msgstr ""
 
-#: php/views/edit.php:154
+#: php/views/edit.php:150
 msgid "JavaScript loaded just before the closing &amp;lt;/body&amp;gt; tag"
 msgstr ""
 
-#: php/views/edit.php:162
+#: php/views/edit.php:158
 msgid "View Full Stylesheet"
 msgstr ""
 
-#: php/views/edit.php:163
+#: php/views/edit.php:159
 msgid "View Full Script"
 msgstr ""
 
@@ -1038,23 +1097,23 @@ msgstr ""
 msgid "Evaluate additional shortcode tags"
 msgstr ""
 
-#: php/views/partials/edit-submit-extra.php:22
+#: php/views/partials/edit-submit-extra.php:23
 msgid "Save Snippet"
 msgstr ""
 
-#: php/views/partials/edit-submit-extra.php:29
+#: php/views/partials/edit-submit-extra.php:30
 msgid "Execute Once"
 msgstr ""
 
-#: php/views/partials/edit-submit-extra.php:30
+#: php/views/partials/edit-submit-extra.php:31
 msgid "Save Snippet and Execute Once"
 msgstr ""
 
-#: php/views/partials/edit-submit-extra.php:38
+#: php/views/partials/edit-submit-extra.php:39
 msgid "Save Snippet and Deactivate"
 msgstr ""
 
-#: php/views/partials/edit-submit-extra.php:44
+#: php/views/partials/edit-submit-extra.php:45
 msgid "Save Snippet and Activate"
 msgstr ""
 

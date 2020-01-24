@@ -7,8 +7,8 @@
  *
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@sheabunge.com>
- * @copyright 2012-2019 Shea Bunge
- * @license   MIT http://opensource.org/licenses/MIT
+ * @copyright 2012-2020 Shea Bunge
+ * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
  * @version   3.0.0-alpha.2
  * @link      https://github.com/sheabunge/code-snippets
  */
@@ -17,10 +17,10 @@
 Plugin Name: Code Snippets
 Plugin URI:  https://github.com/sheabunge/code-snippets
 Description: An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
-Author:      Shea Bunge
-Author URI:  https://sheabunge.com
+Author:      Code Snippets Pro
+Author URI:  https://codesnippets.pro
 Version:     3.0.0-alpha.2
-License:     MIT
+License:     GPLv2 or later
 License URI: license.txt
 Text Domain: code-snippets
 Domain Path: /languages

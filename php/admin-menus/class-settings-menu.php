@@ -41,7 +41,8 @@ class Settings_Menu extends Admin_Menu {
 			}
 
 			add_settings_error(
-				'code-snippets-settings-notices', 'settings_reset',
+				'code-snippets-settings-notices',
+				'settings_reset',
 				__( 'All settings have been reset to their defaults.', 'code-snippets' ),
 				'updated'
 			);

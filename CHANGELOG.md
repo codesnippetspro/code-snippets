@@ -35,8 +35,17 @@
 * Added: Snippet type badges to Edit and Add New Snippet pages.
 * Added: Setting to control whether the current line of the code editor is highlighted.
 
-## 2.XX.X (unreleased)
-* Updated CodeMirror to version 5.46.0.
+## 2.14.0 (24 Jan 2020)
+* Updated CodeMirror to version 5.50.2.
+* Added: Basic error checking for duplicate functions and classes.
+* Updated Italian translations to fix display issues – thanks to [Francesco Marino](https://360fun.net).
+* Fixed: Ordering snippets in the table by name will now be case-insensitive.
+* Added: Additional API options for retrieving snippets.
+* Fixed: Code editor will now properly highlight embedded HTML, CSS and JavaScript code.
+* Changed the indicator color for inactive snippets from red to grey.
+* Fixed a bug preventing the editor theme from being set to default.
+* Added: All snippets have an associated creation and last modification date.
+* Added: Basic error checking when activating snippets.
 
 ## 2.13.3 (13 Mar 2019)
 * Added: Hover effect to activation switches.
@@ -347,7 +356,7 @@
 * Added support for different CodeMirror themes
 * Integrated tags component into main plugin. Current users of the Code Snippets Tags plugin can safely uninstall it.
 * Added Auto Close Brackets CodeMirror addon (props to TronicLabs)
-* Added Serbo-Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
+* Added Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
 * Added Highlight Selection Matches CodeMirror addon (props to TronicLabs)
 * Added Chinese translation thanks to Jincheng Shan
 * Added Russian translation by Alexander Samsonov

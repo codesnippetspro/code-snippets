@@ -223,7 +223,7 @@ class Edit_Menu extends Admin_Menu {
 	 *
 	 * @return bool Whether the code produces errors.
 	 */
-	private function validate_code( Snippet $snippet ) {
+	private function test_code( Snippet $snippet ) {
 
 		if ( empty( $snippet->code ) || 'php' !== $snippet->type ) {
 			return false;
@@ -286,7 +286,14 @@ class Edit_Menu extends Admin_Menu {
 
 			/* Deactivate snippet if code contains errors */
 			if ( $snippet->active && 'single-use' !== $snippet->scope ) {
-				if ( $code_error = $this->validate_code( $snippet ) ) {
+				$validator = new Validator( $snippet->code );
+				$code_error = $validator->validate();
+
+				if ( ! $code_error ) {
+					$code_error = $this->test_code( $snippet );
+				}
+
+				if ( $code_error ) {
 					$snippet->active = 0;
 				}
 			}
@@ -462,6 +469,12 @@ class Edit_Menu extends Admin_Menu {
 
 		if ( '' === $snippet->code ) {
 			return false;
+		}
+
+		$validator = new Validator( $snippet->code );
+
+		if ( $error = $validator->validate() ) {
+			return $error;
 		}
 
 		ob_start();
