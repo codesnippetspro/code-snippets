@@ -184,7 +184,7 @@ gulp.task('package', gulp.series(
 	// copy files into a new directory
 	() => gulp.src([
 		'code-snippets.php', 'uninstall.php', 'php/**/*', 'vendor/**/*',
-		'readme.txt', 'license.txt', 'css/font/**/*', 'languages/**/*'
+		'license.txt', 'css/font/**/*', 'languages/**/*'
 	])
 		.pipe(copy(pkg.name)),
 
