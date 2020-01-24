@@ -48,8 +48,9 @@ $snippet = $this->snippet;
 		}
 	}
 
-	foreach ( $actions as $action_name => $labels ) {
-		submit_button( $labels[0], 'secondary small', $action_name, false, array( 'title' => $labels[1], 'id' => $labels[0] . '_extra' ) );
+	foreach ( $actions as $action => $labels ) {
+		$other_attributes = array( 'title' => $labels[1], 'id' => $action . '_extra' );
+		submit_button( $labels[0], 'secondary small', $action, false, $other_attributes );
 	}
 
 	?>
