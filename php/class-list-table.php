@@ -333,19 +333,22 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			return '–';
 		}
 
-		$time = max( $snippet->modified, $snippet->created );
+		$datetime = max( $snippet->modified, $snippet->created );
+		$time_diff = time() - $datetime->format( 'U' );
 
-		$time_diff = time() - $time->format( 'U' );
+		/* translators: 1: date format, 2: time format */
+		$date_format =  _x( '%1$s \a\t %2$s', 'date and time format', 'code-snippets' );
+		$date_format = sprintf( $date_format, get_option( 'date_format' ), get_option( 'time_format' ) );
 
-		if ( $time && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
+		if ( $time_diff > 0 && $time_diff < YEAR_IN_SECONDS ) {
 			/* translators: %s: Human-readable time difference. */
-			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $time->format( 'U' ) ) );
+			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $datetime->format( 'U' ) ) );
 		} else {
-			$human_time = $time->format( __( 'Y/m/d', 'code-snippets' ) );
+			$human_time = $datetime->format( __( 'Y/m/d', 'code-snippets' ) );
 		}
 
-		$status = $time === $snippet->created ? __( 'Created', 'code-snippets' ) : __( 'Last Modified', 'code-snippets' );
-		return $status . sprintf( '<br><span title="%s">%s</span>', $time->format( Code_Snippet::DATE_FORMAT ), $human_time );
+		$status = $datetime === $snippet->created ? __( 'Created', 'code-snippets' ) : __( 'Last Modified', 'code-snippets' );
+		return $status . sprintf( '<br><span title="%s">%s</span>', $datetime->format( $date_format ), $human_time );
 	}
 
 	/**
