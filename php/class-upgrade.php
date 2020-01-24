@@ -145,7 +145,7 @@ class Code_Snippets_Upgrade {
 				'name' => __( 'Example HTML shortcode', 'code-snippets' ),
 				'code' => sprintf(
 					"\nadd_shortcode( 'shortcode_name', function () {\n\n\t\$out = '<p>%s</p>';\n\n\treturn \$out;\n} );",
-					strip_tags( __( 'write your HTML shortcode content here', 'code-snippets' ) )
+					wp_strip_all_tags( __( 'write your HTML shortcode content here', 'code-snippets' ) )
 				),
 				'desc' => __( 'This is an example snippet for demonstrating how to add an HTML shortcode.', 'code-snippets' ),
 				'tags' => array( 'shortcode' ),
@@ -155,7 +155,7 @@ class Code_Snippets_Upgrade {
 				'name'  => __( 'Example CSS snippet', 'code-snippets' ),
 				'code'  => sprintf(
 					"\nadd_action( 'wp_head', function () { ?>\n<style>\n\n\t/* %s */\n\n</style>\n<?php } );\n",
-					strip_tags( __( 'write your CSS code here', 'code-snippets' ) )
+					wp_strip_all_tags( __( 'write your CSS code here', 'code-snippets' ) )
 				),
 				'desc'  => __( 'This is an example snippet for demonstrating how to add custom CSS code to your website.', 'code-snippets' ),
 				'tags'  => array( 'css' ),
@@ -166,7 +166,7 @@ class Code_Snippets_Upgrade {
 				'name'  => __( 'Example JavaScript snippet', 'code-snippets' ),
 				'code'  => sprintf(
 					"\nadd_action( 'wp_head', function () { ?>\n<script>\n\n\t/* %s */\n\n</script>\n<?php } );\n",
-					strip_tags( __( 'write your JavaScript code here', 'code-snippets' ) )
+					wp_strip_all_tags( __( 'write your JavaScript code here', 'code-snippets' ) )
 				),
 				'desc'  => __( 'This is an example snippet for demonstrating how to add custom JavaScript code to your website.', 'code-snippets' ),
 				'tags'  => array( 'javascript' ),
