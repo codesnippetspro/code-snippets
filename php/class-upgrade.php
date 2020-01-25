@@ -180,6 +180,14 @@ class Code_Snippets_Upgrade {
 				'tags'  => array( 'code-snippets-plugin' ),
 				'scope' => 'admin',
 			),
+
+			array(
+				'name'  => __( 'Order snippets by date', 'code-snippets' ),
+				'code'  => "\nadd_filter( 'code_snippets/list_table/default_orderby', function () {\n\treturn 'date';\n} );\n",
+				'desc'  => __( 'Order snippets by last modification date by default in the snippets table.', 'code-snippets' ),
+				'tags'  => array( 'code-snippets-plugin' ),
+				'scope' => 'admin',
+			),
 		);
 
 		foreach ( $snippets as $snippet ) {
