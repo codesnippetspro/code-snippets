@@ -269,7 +269,7 @@ function activate_snippets( array $ids, $multisite = null ) {
 
 	/* Build a SQL query containing all the valid snippet IDs and activate the valid snippets */
 	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
-	$sql = sprintf( 'UPDATE %s SET active = 1 AND modified = %%s WHERE id IN (%s);', $table, $ids_format );
+	$sql = sprintf( 'UPDATE %s SET active = 1, modified = %%s WHERE id IN (%s);', $table, $ids_format );
 
 	array_unshift( $valid_ids, Code_Snippet::current_date() );
 	$wpdb->query( $wpdb->prepare( $sql, $valid_ids ) );
