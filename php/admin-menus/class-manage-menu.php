@@ -78,11 +78,11 @@ class Manage_Menu extends Admin_Menu {
 		$sub = code_snippets()->get_menu_slug( isset( $_GET['sub'] ) ? $_GET['sub'] : 'snippets' );
 
 		$classmap = array(
-			'snippets'          => 'manage',
-			'add-snippet'       => 'edit',
-			'edit-snippet'      => 'edit',
-			'import-snippets'   => 'import',
-			'snippets-settings' => 'settings',
+			'snippets'             => 'manage',
+			'add-snippet'          => 'edit',
+			'edit-snippet'         => 'edit',
+			'import-code-snippets' => 'import',
+			'snippets-settings'    => 'settings',
 		);
 
 		if ( isset( $classmap[ $sub ], code_snippets()->admin->menus[ $classmap[ $sub ] ] ) ) {
@@ -201,7 +201,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	public function ajax_callback() {
-		check_ajax_referer( 'code_snippets_manage' );
+		check_ajax_referer( 'code_snippets_manage_ajax' );
 
 		if ( ! isset( $_POST['field'], $_POST['snippet'] ) ) {
 			wp_send_json_error( array(

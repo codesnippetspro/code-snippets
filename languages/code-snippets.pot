@@ -14,12 +14,12 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: code-snippets.php:16, php/admin-menus/class-import-menu.php:107
+#: code-snippets.php:16, php/admin-menus/class-import-menu.php:109
 msgid "Code Snippets"
 msgstr ""
 
-#: code-snippets.php:17
-msgid "https://github.com/sheabunge/code-snippets"
+#: code-snippets.php:17, code-snippets.php:20
+msgid "https://codesnippets.pro"
 msgstr ""
 
 #: code-snippets.php:18
@@ -28,10 +28,6 @@ msgstr ""
 
 #: code-snippets.php:19
 msgid "Code Snippets Pro"
-msgstr ""
-
-#: code-snippets.php:20
-msgid "https://codesnippets.pro"
 msgstr ""
 
 #: code-snippets.php:59
@@ -233,195 +229,195 @@ msgstr ""
 msgid "Snippets per page"
 msgstr ""
 
-#: php/class-list-table.php:176
+#: php/class-list-table.php:179
 msgid "Network Active"
 msgstr ""
 
-#: php/class-list-table.php:178
+#: php/class-list-table.php:181
 msgid "Network Only"
 msgstr ""
 
-#: php/class-list-table.php:184
+#: php/class-list-table.php:187
 msgid "Edit"
 msgstr ""
 
-#: php/class-list-table.php:185, php/class-list-table.php:442
+#: php/class-list-table.php:188, php/class-list-table.php:445
 msgid "Clone"
 msgstr ""
 
-#: php/class-list-table.php:186, php/class-list-table.php:444, php/admin-menus/class-edit-menu.php:646
+#: php/class-list-table.php:189, php/class-list-table.php:447, php/admin-menus/class-edit-menu.php:646
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:195, php/class-list-table.php:445, php/admin-menus/class-edit-menu.php:647
+#: php/class-list-table.php:198, php/class-list-table.php:448, php/admin-menus/class-edit-menu.php:647
 msgid "Delete"
 msgstr ""
 
-#: php/class-list-table.php:199
+#: php/class-list-table.php:202
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:200, php/admin-menus/class-edit-menu.php:675
+#: php/class-list-table.php:203, php/admin-menus/class-edit-menu.php:675
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
-#: php/class-list-table.php:225
+#: php/class-list-table.php:228
 msgid "Run Once"
 msgstr ""
 
-#: php/class-list-table.php:230, php/class-list-table.php:441
+#: php/class-list-table.php:233, php/class-list-table.php:444
 msgid "Network Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:230, php/class-list-table.php:440
+#: php/class-list-table.php:233, php/class-list-table.php:443
 msgid "Network Activate"
 msgstr ""
 
-#: php/class-list-table.php:231, php/class-list-table.php:441, php/admin-menus/class-manage-menu.php:148, php/views/partials/edit-submit-extra.php:38
+#: php/class-list-table.php:234, php/class-list-table.php:444, php/admin-menus/class-manage-menu.php:148, php/views/partials/edit-submit-extra.php:38
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:231, php/class-list-table.php:440, php/admin-menus/class-manage-menu.php:147, php/views/partials/edit-submit-extra.php:44
+#: php/class-list-table.php:234, php/class-list-table.php:443, php/admin-menus/class-manage-menu.php:147, php/views/partials/edit-submit-extra.php:44
 msgid "Activate"
 msgstr ""
 
 #. translators: %d: snippet identifier
 #. translators: %d: snippet ID
-#: php/class-list-table.php:254, php/strings/mce.php:37
+#: php/class-list-table.php:257, php/strings/mce.php:37
 msgid "Untitled #%d"
 msgstr ""
 
-#: php/class-list-table.php:278
+#: php/class-list-table.php:281
 msgid "Shared on Network"
 msgstr ""
 
 #. translators: 1: date format, 2: time format
-#: php/class-list-table.php:363
+#: php/class-list-table.php:366
 msgctxt "date and time format"
 msgid "%1$s \a\t %2$s"
 msgstr ""
 
 #. translators: %s: Human-readable time difference.
-#: php/class-list-table.php:368
+#: php/class-list-table.php:371
 msgid "%s ago"
 msgstr ""
 
-#: php/class-list-table.php:370
+#: php/class-list-table.php:373
 msgid "Y/m/d"
 msgstr ""
 
-#: php/class-list-table.php:373
+#: php/class-list-table.php:376
 msgid "Created"
 msgstr ""
 
-#: php/class-list-table.php:373
+#: php/class-list-table.php:376
 msgid "Last Modified"
 msgstr ""
 
-#: php/class-list-table.php:386, php/views/edit.php:67
+#: php/class-list-table.php:389, php/views/edit.php:67
 msgid "Name"
 msgstr ""
 
-#: php/class-list-table.php:387, php/admin-menus/class-edit-menu.php:368
+#: php/class-list-table.php:390, php/admin-menus/class-edit-menu.php:368
 msgid "Description"
 msgstr ""
 
-#: php/class-list-table.php:388, php/admin-menus/class-edit-menu.php:394
+#: php/class-list-table.php:391, php/admin-menus/class-edit-menu.php:394
 msgid "Tags"
 msgstr ""
 
-#: php/class-list-table.php:389
+#: php/class-list-table.php:392
 msgid "Type"
 msgstr ""
 
-#: php/class-list-table.php:390
+#: php/class-list-table.php:393
 msgid "Date"
 msgstr ""
 
-#: php/class-list-table.php:391, php/admin-menus/class-edit-menu.php:417
+#: php/class-list-table.php:394, php/admin-menus/class-edit-menu.php:417
 msgid "Priority"
 msgstr ""
 
-#: php/class-list-table.php:392
+#: php/class-list-table.php:395
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:443, php/admin-menus/class-edit-menu.php:643
+#: php/class-list-table.php:446, php/admin-menus/class-edit-menu.php:643
 msgid "Download"
 msgstr ""
 
 #. translators: %s: total number of snippets
-#: php/class-list-table.php:487
+#: php/class-list-table.php:490
 msgid "All <span class=\"count\">(%s)</span>"
 msgid_plural "All <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of active snippets
-#: php/class-list-table.php:494
+#: php/class-list-table.php:497
 msgid "Active <span class=\"count\">(%s)</span>"
 msgid_plural "Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of inactive snippets
-#: php/class-list-table.php:501
+#: php/class-list-table.php:504
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of recently activated snippets
-#: php/class-list-table.php:508
+#: php/class-list-table.php:511
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:581
+#: php/class-list-table.php:584
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:595
+#: php/class-list-table.php:598
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:603
+#: php/class-list-table.php:606
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:819
+#: php/class-list-table.php:836
 msgid "No snippets were found matching the current search query. Please enter a new query or use the \"Clear Filters\" button above."
 msgstr ""
 
-#: php/class-list-table.php:822
+#: php/class-list-table.php:839
 msgid "It looks like you don't have any snippets."
 msgstr ""
 
-#: php/class-list-table.php:826
+#: php/class-list-table.php:843
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:1164
+#: php/class-list-table.php:1181
 msgid "Search results"
 msgstr ""
 
 #. translators: 1: search query, 2: line number
-#: php/class-list-table.php:1173
+#: php/class-list-table.php:1190
 msgid " for &ldquo;%1$s&rdquo; on line %2$d"
 msgstr ""
 
 #. translators: %s: search query
-#: php/class-list-table.php:1180
+#: php/class-list-table.php:1197
 msgid " for &ldquo;%s&rdquo;"
 msgstr ""
 
 #. translators: %s: tag name
-#: php/class-list-table.php:1186
+#: php/class-list-table.php:1203
 msgid " in tag &ldquo;%s&rdquo;"
 msgstr ""
 
-#: php/class-list-table.php:1194
+#: php/class-list-table.php:1211
 msgid "Clear Filters"
 msgstr ""
 
@@ -646,20 +642,20 @@ msgstr ""
 msgid "Import Snippets"
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:108
+#: php/admin-menus/class-import-menu.php:110
 msgid "Import snippets from a code snippets export file"
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:120
+#: php/admin-menus/class-import-menu.php:122
 msgid "An error occurred when processing the import files."
 msgstr ""
 
-#: php/admin-menus/class-import-menu.php:130
+#: php/admin-menus/class-import-menu.php:132
 msgid "No snippets were imported."
 msgstr ""
 
 #. translators: 1: amount of snippets imported, 2: link to Snippets menu
-#: php/admin-menus/class-import-menu.php:136
+#: php/admin-menus/class-import-menu.php:138
 msgid "Successfully imported <strong>%1$d</strong> snippet. <a href=\"%2$s\">Have fun!</a>"
 msgid_plural "Successfully imported <strong>%1$d</strong> snippets. <a href=\"%2$s\">Have fun!</a>"
 msgstr[0] ""
@@ -959,44 +955,44 @@ msgstr ""
 msgid "Afterwards, you will need to visit the <a href=\"%s\">All Snippets</a> page to activate the imported snippets."
 msgstr ""
 
-#: php/views/import.php:49
+#: php/views/import.php:50
 msgid "Duplicate Snippets"
 msgstr ""
 
-#: php/views/import.php:52
+#: php/views/import.php:53
 msgid "What should happen if an existing snippet is found with an identical name to an imported snippet?"
 msgstr ""
 
-#: php/views/import.php:59
+#: php/views/import.php:60
 msgid "Ignore any duplicate snippets: import all snippets from the file regardless and leave all existing snippets unchanged."
 msgstr ""
 
-#: php/views/import.php:66
+#: php/views/import.php:67
 msgid "Replace any existing snippets with a newly imported snippet of the same name."
 msgstr ""
 
-#: php/views/import.php:73
+#: php/views/import.php:74
 msgid "Do not import any duplicate snippets; leave all existing snippets unchanged."
 msgstr ""
 
-#: php/views/import.php:78
+#: php/views/import.php:79
 msgid "Upload Files"
 msgstr ""
 
-#: php/views/import.php:81
+#: php/views/import.php:82
 msgid "Choose one or more Code Snippets (.xml or .json) files to upload, then click \"Upload files and import\"."
 msgstr ""
 
-#: php/views/import.php:86
+#: php/views/import.php:87
 msgid "Choose files from your computer:"
 msgstr ""
 
 #. translators: %s: size in bytes
-#: php/views/import.php:89
+#: php/views/import.php:90
 msgid "(Maximum size: %s)"
 msgstr ""
 
-#: php/views/import.php:100
+#: php/views/import.php:101
 msgid "Upload files and import"
 msgstr ""
 
