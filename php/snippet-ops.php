@@ -371,7 +371,7 @@ function save_snippet( Code_Snippet $snippet ) {
 	$table = code_snippets()->db->get_table_name( $snippet->network );
 
 	/* Update the last modification date and the creation date if necessary */
-	$snippet->update_times();
+	$snippet->update_modified();
 
 	/* Build array of data to insert */
 	$data = array(
@@ -382,7 +382,6 @@ function save_snippet( Code_Snippet $snippet ) {
 		'scope'       => $snippet->scope,
 		'priority'    => $snippet->priority,
 		'active'      => intval( $snippet->active ),
-		'created'     => $snippet->created,
 		'modified'    => $snippet->modified,
 	);
 

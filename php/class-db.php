@@ -170,7 +170,6 @@ class Code_Snippets_DB {
 				scope       VARCHAR(15) NOT NULL DEFAULT 'global',
 				priority    SMALLINT    NOT NULL DEFAULT 10,
 				active      TINYINT(1)  NOT NULL DEFAULT 0,
-				created     DATETIME    NOT NULL DEFAULT '0000-00-00 00:00:00',
 				modified    DATETIME    NOT NULL DEFAULT '0000-00-00 00:00:00',
 				PRIMARY KEY  (id)
 			) $charset_collate;";

@@ -339,26 +339,25 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	public function column_date( $snippet ) {
 
-		if ( ! $snippet->created && ! $snippet->modified ) {
+		if ( ! $snippet->modified ) {
 			return '';
 		}
 
-		$timestamp = max( $snippet->modified_timestamp, $snippet->created_timestamp );
-		$time_diff = time() - $timestamp;
+		$time_diff = time() - $snippet->modified_timestamp;
+
+		if ( $time_diff >= 0 && $time_diff < YEAR_IN_SECONDS ) {
+			/* translators: %s: Human-readable time difference. */
+			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $snippet->modified_timestamp ) );
+		} else {
+			$human_time = date( __( 'Y/m/d', 'code-snippets' ), $snippet->modified_timestamp );
+		}
 
 		/* translators: 1: date format, 2: time format */
 		$date_format = _x( '%1$s \a\t %2$s', 'date and time format', 'code-snippets' );
 		$date_format = sprintf( $date_format, get_option( 'date_format' ), get_option( 'time_format' ) );
+		$formatted_time = date( $date_format, $snippet->modified_timestamp );
 
-		if ( $time_diff >= 0 && $time_diff < YEAR_IN_SECONDS ) {
-			/* translators: %s: Human-readable time difference. */
-			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $timestamp ) );
-		} else {
-			$human_time = date( __( 'Y/m/d', 'code-snippets' ), $timestamp );
-		}
-
-		$status = $timestamp === $snippet->created_timestamp ? __( 'Created', 'code-snippets' ) : __( 'Last Modified', 'code-snippets' );
-		return $status . sprintf( '<br><span title="%s">%s</span>', date( $date_format, $timestamp ), $human_time );
+		return sprintf( '<span title="%s">%s</span>', $formatted_time, $human_time );
 	}
 
 	/**
@@ -373,7 +372,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'id'          => __( 'ID', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
-			'date'        => __( 'Date', 'code-snippets' ),
+			'date'        => __( 'Last Modified', 'code-snippets' ),
 			'priority'    => __( 'Priority', 'code-snippets' ),
 		);
 

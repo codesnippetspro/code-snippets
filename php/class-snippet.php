@@ -16,12 +16,10 @@
  * @property bool        $active             The active status
  * @property bool        $network            true if is multisite-wide snippet, false if site-wide
  * @property bool        $shared_network     Whether the snippet is a shared network snippet
- * @property string      $created            The date and time when the snippet was first saved in the database.
  * @property string      $modified           The date and time when the snippet data was most recently saved to the database.
  *
  * @property-read array  $tags_list          The tags in string list format
  * @property-read string $scope_icon         The dashicon used to represent the current scope
- * @property-read int    $created_timestamp  The creation date in Unix timestamp format.
  * @property-read int    $modified_timestamp The last modification date in Unix timestamp format.
  */
 class Code_Snippet {
@@ -30,6 +28,11 @@ class Code_Snippet {
 	 * MySQL datetime format (YYYY-MM-DD hh:mm:ss)
 	 */
 	const DATE_FORMAT = 'Y-m-d H:i:s';
+
+	/**
+	 * Default value used for a datetime variable.
+	 */
+	const DEFAULT_DATE = '0000-00-00 00:00:00';
 
 	/**
 	 * The snippet metadata fields.
@@ -317,27 +320,27 @@ class Code_Snippet {
 	}
 
 	/**
-	 * Prepare a date and time field by ensuring it is in the correct format.
+	 * Prepare the modification field by ensuring it is in the correct format.
 	 *
-	 * @param DateTime|string $datetime
+	 * @param DateTime|string $modified
 	 *
 	 * @return string
 	 */
-	private function prepare_datetime( $datetime ) {
+	private function prepare_modified( $modified ) {
 
 		/* if the supplied value is a DateTime object, convert it to string representation */
-		if ( $datetime instanceof DateTime ) {
-			return $datetime->format( self::DATE_FORMAT );
+		if ( $modified instanceof DateTime ) {
+			return $modified->format( self::DATE_FORMAT );
 		}
 
 		/* if the supplied value is probably a timestamp, attempt to convert it to a string */
-		if ( is_numeric( $datetime ) ) {
-			return date( self::DATE_FORMAT, $datetime );
+		if ( is_numeric( $modified ) ) {
+			return date( self::DATE_FORMAT, $modified );
 		}
 
-		/* if the supplied value is a string, assume it is correct */
-		if ( is_string( $datetime ) ) {
-			return $datetime;
+		/* if the supplied value is a string, check it is not just the default value */
+		if ( is_string( $modified ) && self::DEFAULT_DATE !== $modified ) {
+			return $modified;
 		}
 
 		/* otherwise, discard the supplied value */
@@ -345,36 +348,10 @@ class Code_Snippet {
 	}
 
 	/**
-	 * Prepare the created field by ensuring it is in the correct format.
-	 *
-	 * @param DateTime|string $created
-	 *
-	 * @return string
+	 * Update the last modification date to the current time.
 	 */
-	private function prepare_created( $created ) {
-		return $this->prepare_datetime( $created );
-	}
-
-	/**
-	 * Prepare the modified field by ensuring it is in the correct format.
-	 *
-	 * @param DateTime|string $modified
-	 *
-	 * @return string
-	 */
-	private function prepare_modified( $modified ) {
-		return $this->prepare_datetime( $modified );
-	}
-
-	/**
-	 * Update the creation and last modification times to the current time.
-	 */
-	public function update_times() {
+	public function update_modified() {
 		$this->modified = date( Code_Snippet::DATE_FORMAT );
-
-		if ( ! $this->created ) {
-			$this->created = $this->modified;
-		}
 	}
 
 	/**
@@ -445,32 +422,12 @@ class Code_Snippet {
 	}
 
 	/**
-	 * Convert a date string in MySQL format to a timestamp value.
-	 *
-	 * @param string $date_string
-	 *
-	 * @return int
-	 */
-	private static function date_to_timestamp( $date_string ) {
-		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $date_string );
-		return $datetime ? $datetime->getTimestamp() : 0;
-	}
-
-	/**
-	 * Retrieve the snippet creation date as a timestamp.
-	 *
-	 * @return int Timestamp value.
-	 */
-	private function get_created_timestamp() {
-		return $this->date_to_timestamp( $this->created );
-	}
-
-	/**
 	 * Retrieve the snippet modification date as a timestamp.
 	 *
 	 * @return int Timestamp value.
 	 */
 	private function get_modified_timestamp() {
-		return $this->date_to_timestamp( $this->modified );
+		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified );
+		return $datetime ? $datetime->getTimestamp() : 0;
 	}
 }
