@@ -108,9 +108,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	/**
 	 * Retrieve a URL to perform an action on a snippet
 	 *
-	 * @param string       $action
-	 * @param Code_Snippet $snippet
-	 * @param bool         $escape
+	 * @param string       $action  Name of action to perform.
+	 * @param Code_Snippet $snippet Snippet object.
+	 * @param bool         $escape  Whether to escape the generated URL for output.
 	 *
 	 * @return string
 	 */
@@ -130,6 +130,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$url = $network_redirect ?
 			add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) :
 			add_query_arg( $query_args );
+
+		// add a nonce to the URL for security purposes
+		$url = wp_nonce_url( $url, 'code_snippets_manage_snippet_' . $snippet->id );
 
 		return $escape ? esc_url( $url ) : $url;
 	}
@@ -337,7 +340,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$time_diff = time() - $datetime->format( 'U' );
 
 		/* translators: 1: date format, 2: time format */
-		$date_format =  _x( '%1$s \a\t %2$s', 'date and time format', 'code-snippets' );
+		$date_format = _x( '%1$s \a\t %2$s', 'date and time format', 'code-snippets' );
 		$date_format = sprintf( $date_format, get_option( 'date_format' ), get_option( 'time_format' ) );
 
 		if ( $time_diff > 0 && $time_diff < YEAR_IN_SECONDS ) {
@@ -666,6 +669,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	public function process_bulk_actions() {
 
+		/* Clear the recent snippets list if requested to do so */
 		if ( isset( $_POST['clear-recent-list'] ) ) {
 			if ( $this->is_network ) {
 				update_site_option( 'recently_activated_snippets', array() );
@@ -674,11 +678,19 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 		}
 
+		/* Check if there are any single snippet actions to perform */
 		if ( isset( $_GET['action'], $_GET['id'] ) ) {
-
 			$id = absint( $_GET['id'] );
-			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id' ) );
 
+			/* Verify they were sent from a trusted source */
+			$nonce_action = 'code_snippets_manage_snippet_' . $id;
+			if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], $nonce_action ) ) {
+				wp_nonce_ays( $nonce_action );
+			}
+
+			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id', '_wpnonce' ) );
+
+			/* If so, then perform the requested action and inform the user of the result */
 			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ) );
 
 			if ( $result ) {
@@ -687,6 +699,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			}
 		}
 
+		/* Only continue from this point if there are bulk actions to process */
 		if ( ! isset( $_POST['ids'] ) && ! isset( $_POST['shared_ids'] ) ) {
 			return;
 		}
