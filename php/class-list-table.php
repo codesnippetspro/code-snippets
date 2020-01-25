@@ -98,10 +98,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			case 'id':
 				return $snippet->id;
 			case 'description':
-				return empty( $snippet->desc ) ? '&#8212;' :
-					apply_filters( 'code_snippets/list_table/column_description', $snippet->desc );
+				return apply_filters( 'code_snippets/list_table/column_description', $snippet->desc );
 			default:
-				return apply_filters( "code_snippets/list_table/column_{$column_name}", $snippet );
+				return apply_filters( "code_snippets/list_table/column_{$column_name}", '&#8212;', $snippet );
 		}
 	}
 
@@ -333,7 +332,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	public function column_date( $snippet ) {
 
 		if ( ! $snippet->modified ) {
-			return '';
+			return '&#8212;';
 		}
 
 		$time_diff = time() - $snippet->modified_timestamp;
@@ -365,7 +364,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'id'          => __( 'ID', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
-			'date'        => __( 'Last Modified', 'code-snippets' ),
+			'date'        => __( 'Modified', 'code-snippets' ),
 			'priority'    => __( 'Priority', 'code-snippets' ),
 		);
 
