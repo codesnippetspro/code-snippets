@@ -662,15 +662,17 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Processes a bulk action
+	 * Processes actions requested by the user.
 	 *
 	 * @uses wp_redirect() to pass the results to the current page
 	 * @uses add_query_arg() to append the results to the current URI
 	 */
-	public function process_bulk_actions() {
+	public function process_requested_actions() {
 
 		/* Clear the recent snippets list if requested to do so */
 		if ( isset( $_POST['clear-recent-list'] ) ) {
+			check_admin_referer( 'bulk-' . $this->_args['plural'] );
+
 			if ( $this->is_network ) {
 				update_site_option( 'recently_activated_snippets', array() );
 			} else {
@@ -703,6 +705,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		if ( ! isset( $_POST['ids'] ) && ! isset( $_POST['shared_ids'] ) ) {
 			return;
 		}
+
+		check_admin_referer( 'bulk-' . $this->_args['plural'] );
 
 		$ids = isset( $_POST['ids'] ) ? $_POST['ids'] : array();
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
@@ -851,8 +855,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$screen = get_current_screen();
 		$user = get_current_user_id();
 
-		/* First, lets process the bulk actions */
-		$this->process_bulk_actions();
+		/* First, lets process the submitted actions */
+		$this->process_requested_actions();
 
 		/* Initialize the $snippets array */
 		$snippets = array_fill_keys( $this->statuses, array() );
