@@ -55,6 +55,7 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 
 
 		<form enctype="multipart/form-data" id="import-upload-form" method="post" class="wp-upload-form" name="code_snippets_import">
+			<?php wp_nonce_field( 'import_code_snippets_file' ); ?>
 
 			<h2><?php _e( 'Duplicate Snippets', 'code-snippets' ); ?></h2>
 

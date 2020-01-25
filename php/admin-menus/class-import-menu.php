@@ -52,6 +52,8 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 			return;
 		}
 
+		check_admin_referer( 'import_code_snippets_file' );
+
 		$count = 0;
 		$network = is_network_admin();
 		$uploads = $_FILES['code_snippets_import_files'];
