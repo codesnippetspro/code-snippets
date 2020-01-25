@@ -192,7 +192,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	 * Handle AJAX requests
 	 */
 	public function ajax_callback() {
-		check_ajax_referer( 'code_snippets_manage' );
+		check_ajax_referer( 'code_snippets_manage_ajax' );
 
 		if ( ! isset( $_POST['field'], $_POST['snippet'] ) ) {
 			wp_send_json_error( array(

@@ -3,7 +3,7 @@
 /**
  * HTML code for the Manage Snippets page
  *
- * @package Code_Snippets
+ * @package    Code_Snippets
  * @subpackage Views
  *
  * @var Code_Snippets_Manage_Menu $this
@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 	</form>
 	<form method="post" action="">
-		<input type="hidden" id="code_snippets_ajax_nonce" value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage' ) ); ?>">
+		<input type="hidden" id="code_snippets_ajax_nonce" value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 
 		<?php
 		$this->list_table->required_form_fields();
