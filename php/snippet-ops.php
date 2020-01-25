@@ -208,7 +208,7 @@ function activate_snippet( $id, $multisite = null ) {
 
 	$wpdb->update(
 		$table,
-		array( 'active' => '1', 'modified' => date( Code_Snippet::DATE_FORMAT ) ),
+		array( 'active' => '1', 'modified' => Code_Snippet::current_date() ),
 		array( 'id' => $id ),
 		array( '%d', '%s' ),
 		array( '%d' )
@@ -271,7 +271,7 @@ function activate_snippets( array $ids, $multisite = null ) {
 	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
 	$sql = sprintf( 'UPDATE %s SET active = 1 AND modified = %%s WHERE id IN (%s);', $table, $ids_format );
 
-	array_unshift( $valid_ids, date( Code_Snippet::DATE_FORMAT ) );
+	array_unshift( $valid_ids, Code_Snippet::current_date() );
 	$wpdb->query( $wpdb->prepare( $sql, $valid_ids ) );
 	array_shift( $valid_ids );
 
@@ -305,7 +305,7 @@ function deactivate_snippet( $id, $multisite = null ) {
 
 	$wpdb->update(
 		$table,
-		array( 'active' => '0', 'modified' => date( Code_Snippet::DATE_FORMAT ) ),
+		array( 'active' => '0', 'modified' => Code_Snippet::current_date() ),
 		array( 'id' => $id ),
 		array( '%d', '%s' ),
 		array( '%d' )

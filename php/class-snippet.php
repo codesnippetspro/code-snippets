@@ -336,7 +336,7 @@ class Code_Snippet {
 
 		/* if the supplied value is probably a timestamp, attempt to convert it to a string */
 		if ( is_numeric( $modified ) ) {
-			return date( self::DATE_FORMAT, $modified );
+			return gmdate( self::DATE_FORMAT, $modified );
 		}
 
 		/* if the supplied value is a string, check it is not just the default value */
@@ -349,10 +349,17 @@ class Code_Snippet {
 	}
 
 	/**
+	 * Retrieve the current date and time in MySQL format.
+	 */
+	public static function current_date() {
+		return gmdate( Code_Snippet::DATE_FORMAT );
+	}
+
+	/**
 	 * Update the last modification date to the current time.
 	 */
 	public function update_modified() {
-		$this->modified = date( Code_Snippet::DATE_FORMAT );
+		$this->modified = self::current_date();
 	}
 
 	/**
@@ -428,7 +435,7 @@ class Code_Snippet {
 	 * @return int Timestamp value.
 	 */
 	private function get_modified_timestamp() {
-		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified );
+		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
 		return $datetime ? $datetime->getTimestamp() : 0;
 	}
 
@@ -457,7 +464,7 @@ class Code_Snippet {
 			$timezone = new DateTimeZone( $timezone );
 		}
 
-		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified );
+		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
 		$datetime->setTimezone( $timezone );
 		return $datetime;
 	}
