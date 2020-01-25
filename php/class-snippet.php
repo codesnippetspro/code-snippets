@@ -349,17 +349,10 @@ class Code_Snippet {
 	}
 
 	/**
-	 * Retrieve the current date and time in MySQL format.
-	 */
-	public static function current_date() {
-		return gmdate( Code_Snippet::DATE_FORMAT );
-	}
-
-	/**
-	 * Update the last modification date to the current time.
+	 * Update the last modification date to the current date and time.
 	 */
 	public function update_modified() {
-		$this->modified = self::current_date();
+		$this->modified = gmdate( Code_Snippet::DATE_FORMAT );
 	}
 
 	/**

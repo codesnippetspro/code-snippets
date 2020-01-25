@@ -206,13 +206,7 @@ function activate_snippet( $id, $multisite = null ) {
 		return false;
 	}
 
-	$wpdb->update(
-		$table,
-		array( 'active' => '1', 'modified' => Code_Snippet::current_date() ),
-		array( 'id' => $id ),
-		array( '%d', '%s' ),
-		array( '%d' )
-	);
+	$wpdb->update( $table, array( 'active' => '1' ), array( 'id' => $id ), array( '%d' ), array( '%d' ) );
 
 	/* Remove snippet from shared network snippet list if it was Network Activated */
 	if ( $table === $db->ms_table && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
@@ -269,11 +263,8 @@ function activate_snippets( array $ids, $multisite = null ) {
 
 	/* Build a SQL query containing all the valid snippet IDs and activate the valid snippets */
 	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
-	$sql = sprintf( 'UPDATE %s SET active = 1, modified = %%s WHERE id IN (%s);', $table, $ids_format );
-
-	array_unshift( $valid_ids, Code_Snippet::current_date() );
+	$sql = sprintf( 'UPDATE %s SET active = 1 WHERE id IN (%s);', $table, $ids_format );
 	$wpdb->query( $wpdb->prepare( $sql, $valid_ids ) );
-	array_shift( $valid_ids );
 
 	/* Remove snippet from shared network snippet list if it was Network Activated */
 	if ( $table === $db->ms_table && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
@@ -303,13 +294,7 @@ function deactivate_snippet( $id, $multisite = null ) {
 
 	/* Set the snippet to active */
 
-	$wpdb->update(
-		$table,
-		array( 'active' => '0', 'modified' => Code_Snippet::current_date() ),
-		array( 'id' => $id ),
-		array( '%d', '%s' ),
-		array( '%d' )
-	);
+	$wpdb->update( $table, array( 'active' => '0' ), array( 'id' => $id ), array( '%d' ), array( '%d' ) );
 
 	/* Update the recently active list */
 
