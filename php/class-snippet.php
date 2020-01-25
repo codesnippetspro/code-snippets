@@ -6,21 +6,22 @@
  * @since   2.4.0
  * @package Code_Snippets
  *
- * @property int         $id                 The database ID
- * @property string      $name               The display name
- * @property string      $desc               The formatted description
- * @property string      $code               The executable code
- * @property array       $tags               An array of the tags
- * @property string      $scope              The scope name
- * @property int         $priority           Execution priority
- * @property bool        $active             The active status
- * @property bool        $network            true if is multisite-wide snippet, false if site-wide
- * @property bool        $shared_network     Whether the snippet is a shared network snippet
- * @property string      $modified           The date and time when the snippet data was most recently saved to the database.
+ * @property int           $id                 The database ID
+ * @property string        $name               The display name
+ * @property string        $desc               The formatted description
+ * @property string        $code               The executable code
+ * @property array         $tags               An array of the tags
+ * @property string        $scope              The scope name
+ * @property int           $priority           Execution priority
+ * @property bool          $active             The active status
+ * @property bool          $network            true if is multisite-wide snippet, false if site-wide
+ * @property bool          $shared_network     Whether the snippet is a shared network snippet
+ * @property string        $modified           The date and time when the snippet data was most recently saved to the database.
  *
- * @property-read array  $tags_list          The tags in string list format
- * @property-read string $scope_icon         The dashicon used to represent the current scope
- * @property-read int    $modified_timestamp The last modification date in Unix timestamp format.
+ * @property-read array    $tags_list          The tags in string list format
+ * @property-read string   $scope_icon         The dashicon used to represent the current scope
+ * @property-read int      $modified_timestamp The last modification date in Unix timestamp format.
+ * @property-read DateTime $modified_local     The last modification date in the local timezone.
  */
 class Code_Snippet {
 
@@ -429,5 +430,35 @@ class Code_Snippet {
 	private function get_modified_timestamp() {
 		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified );
 		return $datetime ? $datetime->getTimestamp() : 0;
+	}
+
+	/**
+	 * Retrieve the modification time in the local timezone.
+	 *
+	 * @return DateTime
+	 */
+	private function get_modified_local() {
+
+		if ( function_exists( 'wp_timezone' ) ) {
+			$timezone = wp_timezone();
+		} else {
+			$timezone = get_option( 'timezone_string' );
+
+			/* calculate the timezone manually if it is not available */
+			if ( ! $timezone ) {
+				$offset = (float) get_option( 'gmt_offset' );
+				$hours = (int) $offset;
+				$minutes = ( $offset - $hours ) * 60;
+
+				$sign = ( $offset < 0 ) ? '-' : '+';
+				$timezone = sprintf( '%s%02d:%02d', $sign, abs( $hours ), abs( $minutes ) );
+			}
+
+			$timezone = new DateTimeZone( $timezone );
+		}
+
+		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified );
+		$datetime->setTimezone( $timezone );
+		return $datetime;
 	}
 }

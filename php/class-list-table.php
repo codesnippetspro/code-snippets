@@ -32,13 +32,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
 
 	/**
-	 * Stores the current time according to the database server.
-	 *
-	 * @var DateTime
-	 */
-	public $current_datetime = null;
-
-	/**
 	 * The constructor function for our class.
 	 * Adds hooks, initializes variables, setups class.
 	 */
@@ -344,20 +337,20 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		$time_diff = time() - $snippet->modified_timestamp;
+		$local_time = $snippet->modified_local;
 
 		if ( $time_diff >= 0 && $time_diff < YEAR_IN_SECONDS ) {
 			/* translators: %s: Human-readable time difference. */
 			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $snippet->modified_timestamp ) );
 		} else {
-			$human_time = date( __( 'Y/m/d', 'code-snippets' ), $snippet->modified_timestamp );
+			$human_time = $local_time->format( __( 'Y/m/d', 'code-snippets' ) );
 		}
 
 		/* translators: 1: date format, 2: time format */
 		$date_format = _x( '%1$s \a\t %2$s', 'date and time format', 'code-snippets' );
 		$date_format = sprintf( $date_format, get_option( 'date_format' ), get_option( 'time_format' ) );
-		$formatted_time = date( $date_format, $snippet->modified_timestamp );
 
-		return sprintf( '<span title="%s">%s</span>', $formatted_time, $human_time );
+		return sprintf( '<span title="%s">%s</span>', $local_time->format( $date_format ), $human_time );
 	}
 
 	/**
