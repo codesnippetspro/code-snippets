@@ -32,6 +32,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
 
 	/**
+	 * Stores the current time according to the database server.
+	 *
+	 * @var DateTime
+	 */
+	public $current_datetime = null;
+
+	/**
 	 * The constructor function for our class.
 	 * Adds hooks, initializes variables, setups class.
 	 */
@@ -333,19 +340,21 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	public function column_date( $snippet ) {
 
 		if ( ! $snippet->created && ! $snippet->modified ) {
-			return '–';
+			return '';
 		}
 
 		$datetime = max( $snippet->modified, $snippet->created );
-		$time_diff = time() - $datetime->format( 'U' );
+		$now = $this->current_datetime ? $this->current_datetime->format( 'U' ) : time();
+
+		$time_diff = $now - $datetime->format( 'U' );
 
 		/* translators: 1: date format, 2: time format */
 		$date_format = _x( '%1$s \a\t %2$s', 'date and time format', 'code-snippets' );
 		$date_format = sprintf( $date_format, get_option( 'date_format' ), get_option( 'time_format' ) );
 
-		if ( $time_diff > 0 && $time_diff < YEAR_IN_SECONDS ) {
+		if ( $time_diff >= 0 && $time_diff < YEAR_IN_SECONDS ) {
 			/* translators: %s: Human-readable time difference. */
-			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $datetime->format( 'U' ) ) );
+			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $datetime->format( 'U' ), $now ) );
 		} else {
 			$human_time = $datetime->format( __( 'Y/m/d', 'code-snippets' ) );
 		}
@@ -844,6 +853,24 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Fetch the current time from the database
+	 *
+	 * @return DateTime The current time from the database.
+	 */
+	public function fetch_db_time() {
+		global $wpdb;
+
+		$result = $wpdb->get_row( 'SELECT CURRENT_TIMESTAMP();', ARRAY_N );
+		$datetime = DateTime::createFromFormat( Code_Snippet::DATE_FORMAT, $result[0] );
+
+		if ( false !== $datetime ) {
+			return $datetime;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Prepares the items to later display in the table.
 	 * Should run before any headers are sent.
 	 */
@@ -854,6 +881,8 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		$screen = get_current_screen();
 		$user = get_current_user_id();
+
+		$this->current_datetime = $this->fetch_db_time();
 
 		/* First, lets process the submitted actions */
 		$this->process_requested_actions();

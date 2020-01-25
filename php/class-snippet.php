@@ -317,34 +317,6 @@ class Code_Snippet {
 	}
 
 	/**
-	 * Retrieve the site's timezone. This is only necessary while < WP 3.5 is supported, as
-	 * it can be replaced with the wp_timezone() function.
-	 *
-	 * @return DateTimeZone
-	 */
-	private function get_timezone() {
-		if ( function_exists( 'wp_timezone' ) ) {
-			return wp_timezone();
-		}
-
-		$timezone_string = get_option( 'timezone_string' );
-		if ( $timezone_string ) {
-			return new DateTimeZone( $timezone_string );
-		}
-
-		$offset = (float) get_option( 'gmt_offset' );
-		$hours = (int) $offset;
-		$minutes = ( $offset - $hours );
-
-		$sign = ( $offset < 0 ) ? '-' : '+';
-		$abs_hour = abs( $hours );
-		$abs_mins = abs( $minutes * 60 );
-		$timezone = sprintf( '%s%02d:%02d', $sign, $abs_hour, $abs_mins );
-
-		return new DateTimeZone( $timezone );
-	}
-
-	/**
 	 * Prepare a date and time field by ensuring it is in the correct format.
 	 *
 	 * @param DateTime|string $datetime
@@ -361,7 +333,7 @@ class Code_Snippet {
 
 		/* If the supplied datetime is a string, assume it is in MySQL format */
 		if ( is_string( $datetime ) ) {
-			$datetime_object = DateTime::createFromFormat( self::DATE_FORMAT, $datetime, $this->get_timezone() );
+			$datetime_object = DateTime::createFromFormat( self::DATE_FORMAT, $datetime );
 			if ( $datetime_object ) {
 				$this->fields[ $field_name . '_raw' ] = $datetime;
 			}
