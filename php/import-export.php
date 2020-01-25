@@ -7,7 +7,7 @@
 /**
  * @access private
  *
- * @param        $snippets
+ * @param array  $snippets
  * @param null   $multisite
  * @param string $dup_action
  *
@@ -31,6 +31,7 @@ function _code_snippets_save_imported_snippets( $snippets, $multisite = null, $d
 	$imported = array();
 
 	/* Loop through the provided snippets */
+	/** @var Code_Snippet $snippet */
 	foreach ( $snippets as $snippet ) {
 
 		/* Check if the snippet already exists */
@@ -43,6 +44,9 @@ function _code_snippets_save_imported_snippets( $snippets, $multisite = null, $d
 				continue;
 			}
 		}
+
+		/* Ensure that imported snippets are inactive */
+		$snippet->active = 0;
 
 		/* Save the snippet and increase the counter if successful */
 		$snippet_id = save_snippet( $snippet );
