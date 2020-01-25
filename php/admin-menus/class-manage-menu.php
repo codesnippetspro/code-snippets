@@ -71,11 +71,11 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		$sub = code_snippets()->get_menu_slug( isset( $_GET['sub'] ) ? $_GET['sub'] : 'snippets' );
 
 		$classmap = array(
-			'snippets'          => 'manage',
-			'add-snippet'       => 'edit',
-			'edit-snippet'      => 'edit',
-			'import-snippets'   => 'import',
-			'snippets-settings' => 'settings',
+			'snippets'             => 'manage',
+			'add-snippet'          => 'edit',
+			'edit-snippet'         => 'edit',
+			'import-code-snippets' => 'import',
+			'snippets-settings'    => 'settings',
 		);
 
 		if ( isset( $classmap[ $sub ], code_snippets()->admin->menus[ $classmap[ $sub ] ] ) ) {

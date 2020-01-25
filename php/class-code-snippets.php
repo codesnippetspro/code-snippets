@@ -111,7 +111,7 @@ class Code_Snippets {
 	public function get_menu_slug( $menu = '' ) {
 		$add = array( 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' );
 		$edit = array( 'edit', 'edit-snippet' );
-		$import = array( 'import', 'import-snippets' );
+		$import = array( 'import', 'import-snippets', 'import-code-snippets' );
 		$settings = array( 'settings', 'snippets-settings' );
 
 		if ( in_array( $menu, $edit, true ) ) {
@@ -119,7 +119,7 @@ class Code_Snippets {
 		} elseif ( in_array( $menu, $add, true ) ) {
 			return 'add-snippet';
 		} elseif ( in_array( $menu, $import, true ) ) {
-			return 'import-snippets';
+			return 'import-code-snippets';
 		} elseif ( in_array( $menu, $settings, true ) ) {
 			return 'snippets-settings';
 		} else {
