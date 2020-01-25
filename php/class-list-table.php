@@ -155,9 +155,12 @@ class List_Table extends WP_List_Table {
 
 		$query_args = array( 'action' => $action, 'id' => $snippet->id, 'scope' => $snippet->scope );
 
-		return $network_redirect ?
+		$url = $network_redirect ?
 			add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) :
 			add_query_arg( $query_args );
+
+		// add a nonce to the URL for security purposes
+		return wp_nonce_url( $url, 'code_snippets_manage_snippet_' . $snippet->id );
 	}
 
 	/**
@@ -712,14 +715,17 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Processes a bulk action
+	 * Processes actions requested by the user.
 	 *
 	 * @uses wp_redirect() to pass the results to the current page
 	 * @uses add_query_arg() to append the results to the current URI
 	 */
-	public function process_bulk_actions() {
+	public function process_requested_actions() {
 
+		/* Clear the recent snippets list if requested to do so */
 		if ( isset( $_POST['clear-recent-list'] ) ) {
+			check_admin_referer( 'bulk-' . $this->_args['plural'] );
+
 			if ( $this->is_network ) {
 				update_site_option( 'recently_activated_snippets', array() );
 			} else {
@@ -727,12 +733,20 @@ class List_Table extends WP_List_Table {
 			}
 		}
 
+		/* Check if there are any single snippet actions to perform */
 		if ( isset( $_GET['action'], $_GET['id'] ) ) {
-
 			$id = absint( $_GET['id'] );
 			$scope = isset( $_GET['scope'] ) ? $_GET['scope'] : '';
-			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id', 'scope' ) );
 
+			/* Verify they were sent from a trusted source */
+			$nonce_action = 'code_snippets_manage_snippet_' . $id;
+			if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], $nonce_action ) ) {
+				wp_nonce_ays( $nonce_action );
+			}
+
+			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id', 'scope', '_wpnonce' ) );
+
+			/* If so, then perform the requested action and inform the user of the result */
 			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope );
 
 			if ( $result ) {
@@ -741,9 +755,12 @@ class List_Table extends WP_List_Table {
 			}
 		}
 
+		/* Only continue from this point if there are bulk actions to process */
 		if ( ! isset( $_POST['ids'] ) && ! isset( $_POST['shared_ids'] ) ) {
 			return;
 		}
+
+		check_admin_referer( 'bulk-' . $this->_args['plural'] );
 
 		$ids = isset( $_POST['ids'] ) ? $_POST['ids'] : array();
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
@@ -908,8 +925,8 @@ class List_Table extends WP_List_Table {
 		$screen = get_current_screen();
 		$user = get_current_user_id();
 
-		/* First, lets process the bulk actions */
-		$this->process_bulk_actions();
+		/* First, lets process the submitted actions */
+		$this->process_requested_actions();
 
 		/* Initialize the $snippets array */
 		$snippets = array_fill_keys( $this->statuses, array() );

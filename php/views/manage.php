@@ -70,7 +70,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php $this->list_table->views(); ?>
 
 	<form method="post" action="">
-		<input type="hidden" id="code_snippets_ajax_nonce" value="<?= esc_attr( wp_create_nonce( 'code_snippets_manage' ) ); ?>">
+		<input type="hidden" id="code_snippets_ajax_nonce" value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 
 		<?php
 		$this->list_table->required_form_fields();
