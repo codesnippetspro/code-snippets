@@ -6,23 +6,23 @@
  * @since   2.4.0
  * @package Code_Snippets
  *
- * @property int         $id             The database ID
- * @property string      $name           The display name
- * @property string      $desc           The formatted description
- * @property string      $code           The executable code
- * @property array       $tags           An array of the tags
- * @property string      $scope          The scope name
- * @property int         $priority       Execution priority
- * @property bool        $active         The active status
- * @property bool        $network        true if is multisite-wide snippet, false if site-wide
- * @property bool        $shared_network Whether the snippet is a shared network snippet
- * @property DateTime    $created        The date and time when the snippet was first saved in the database.
- * @property DateTime    $modified       The date and time when the snippet data was most recently saved to the database.
+ * @property int         $id                 The database ID
+ * @property string      $name               The display name
+ * @property string      $desc               The formatted description
+ * @property string      $code               The executable code
+ * @property array       $tags               An array of the tags
+ * @property string      $scope              The scope name
+ * @property int         $priority           Execution priority
+ * @property bool        $active             The active status
+ * @property bool        $network            true if is multisite-wide snippet, false if site-wide
+ * @property bool        $shared_network     Whether the snippet is a shared network snippet
+ * @property string      $created            The date and time when the snippet was first saved in the database.
+ * @property string      $modified           The date and time when the snippet data was most recently saved to the database.
  *
- * @property-read array  $tags_list      The tags in string list format
- * @property-read string $scope_icon     The dashicon used to represent the current scope
- * @property-read string $created_raw    The date and time when the snippet was first saved in the database in raw format.
- * @property-read string $modified_raw   The date and time when the snippet was most recently saved to the database in raw format.
+ * @property-read array  $tags_list          The tags in string list format
+ * @property-read string $scope_icon         The dashicon used to represent the current scope
+ * @property-read int    $created_timestamp  The creation date in Unix timestamp format.
+ * @property-read int    $modified_timestamp The last modification date in Unix timestamp format.
  */
 class Code_Snippet {
 
@@ -320,27 +320,27 @@ class Code_Snippet {
 	 * Prepare a date and time field by ensuring it is in the correct format.
 	 *
 	 * @param DateTime|string $datetime
-	 * @param string          $field_name
 	 *
-	 * @return DateTime
+	 * @return string
 	 */
-	private function prepare_datetime( $datetime, $field_name ) {
+	private function prepare_datetime( $datetime ) {
 
-		/* If the supplied datetime is already in the correct format, then we're done here */
+		/* if the supplied value is a DateTime object, convert it to string representation */
 		if ( $datetime instanceof DateTime ) {
+			return $datetime->format( self::DATE_FORMAT );
+		}
+
+		/* if the supplied value is probably a timestamp, attempt to convert it to a string */
+		if ( is_numeric( $datetime ) ) {
+			return date( self::DATE_FORMAT, $datetime );
+		}
+
+		/* if the supplied value is a string, assume it is correct */
+		if ( is_string( $datetime ) ) {
 			return $datetime;
 		}
 
-		/* If the supplied datetime is a string, assume it is in MySQL format */
-		if ( is_string( $datetime ) ) {
-			$datetime_object = DateTime::createFromFormat( self::DATE_FORMAT, $datetime );
-			if ( $datetime_object ) {
-				$this->fields[ $field_name . '_raw' ] = $datetime;
-			}
-			return $datetime_object;
-		}
-
-		/* Otherwise, discard the supplied value */
+		/* otherwise, discard the supplied value */
 		return null;
 	}
 
@@ -349,10 +349,10 @@ class Code_Snippet {
 	 *
 	 * @param DateTime|string $created
 	 *
-	 * @return DateTime
+	 * @return string
 	 */
 	private function prepare_created( $created ) {
-		return $this->prepare_datetime( $created, 'created' );
+		return $this->prepare_datetime( $created );
 	}
 
 	/**
@@ -360,10 +360,21 @@ class Code_Snippet {
 	 *
 	 * @param DateTime|string $modified
 	 *
-	 * @return DateTime
+	 * @return string
 	 */
 	private function prepare_modified( $modified ) {
-		return $this->prepare_datetime( $modified, 'modified' );
+		return $this->prepare_datetime( $modified );
+	}
+
+	/**
+	 * Update the creation and last modification times to the current time.
+	 */
+	public function update_times() {
+		$this->modified = date( Code_Snippet::DATE_FORMAT );
+
+		if ( ! $this->created ) {
+			$this->created = $this->modified;
+		}
 	}
 
 	/**
@@ -431,5 +442,35 @@ class Code_Snippet {
 		}
 
 		return $this->fields['shared_network'];
+	}
+
+	/**
+	 * Convert a date string in MySQL format to a timestamp value.
+	 *
+	 * @param string $date_string
+	 *
+	 * @return int
+	 */
+	private static function date_to_timestamp( $date_string ) {
+		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $date_string );
+		return $datetime ? $datetime->getTimestamp() : 0;
+	}
+
+	/**
+	 * Retrieve the snippet creation date as a timestamp.
+	 *
+	 * @return int Timestamp value.
+	 */
+	private function get_created_timestamp() {
+		return $this->date_to_timestamp( $this->created );
+	}
+
+	/**
+	 * Retrieve the snippet modification date as a timestamp.
+	 *
+	 * @return int Timestamp value.
+	 */
+	private function get_modified_timestamp() {
+		return $this->date_to_timestamp( $this->modified );
 	}
 }

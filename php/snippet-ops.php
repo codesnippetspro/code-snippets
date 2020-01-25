@@ -12,13 +12,13 @@
  * @param array     $ids         The IDs of the snippets to fetch
  * @param bool|null $multisite   Retrieve multisite-wide or site-wide snippets?
  *
- * @param array $args {
- *     Optional. Arguments to specify which sorts of snippets to retrieve.
+ * @param array     $args        {
+ *                               Optional. Arguments to specify which sorts of snippets to retrieve.
  *
- *     @type bool   $active_only Whether to only fetch active snippets. Default false (will fetch both active and inactive snippets).
- *     @type int    $limit       Limit the number of retrieved snippets. Default 0, which will not impose a limit on the results.
- *     @type string $orderby     Sort the retrieved snippets by a particular field. Example fields include 'id', 'priority', and 'name'.
- *     @type string $order       Designates ascending or descending order of snippets. Default 'DESC'. Accepts 'ASC', 'DESC'.
+ * @type bool       $active_only Whether to only fetch active snippets. Default false (will fetch both active and inactive snippets).
+ * @type int        $limit       Limit the number of retrieved snippets. Default 0, which will not impose a limit on the results.
+ * @type string     $orderby     Sort the retrieved snippets by a particular field. Example fields include 'id', 'priority', and 'name'.
+ * @type string     $order       Designates ascending or descending order of snippets. Default 'DESC'. Accepts 'ASC', 'DESC'.
  * }
  *
  * @return array An array of Snippet objects.
@@ -206,10 +206,16 @@ function activate_snippet( $id, $multisite = null ) {
 		return false;
 	}
 
-	$wpdb->update( $table, array( 'active' => '1' ), array( 'id' => $id ), array( '%d' ), array( '%d' ) );
+	$wpdb->update(
+		$table,
+		array( 'active' => '1', 'modified' => date( Code_Snippet::DATE_FORMAT ) ),
+		array( 'id' => $id ),
+		array( '%d', '%s' ),
+		array( '%d' )
+	);
 
 	/* Remove snippet from shared network snippet list if it was Network Activated */
-	if ( $table === $db && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
+	if ( $table === $db->ms_table && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
 		$shared_network_snippets = array_diff( $shared_network_snippets, array( $id ) );
 		update_site_option( 'shared_network_snippets', $shared_network_snippets );
 	}
@@ -263,8 +269,11 @@ function activate_snippets( array $ids, $multisite = null ) {
 
 	/* Build a SQL query containing all the valid snippet IDs and activate the valid snippets */
 	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
-	$sql = sprintf( 'UPDATE %s SET active = 1 WHERE id IN (%s);', $table, $ids_format );
+	$sql = sprintf( 'UPDATE %s SET active = 1 AND modified = %%s WHERE id IN (%s);', $table, $ids_format );
+
+	array_unshift( $valid_ids, date( Code_Snippet::DATE_FORMAT ) );
 	$wpdb->query( $wpdb->prepare( $sql, $valid_ids ) );
+	array_shift( $valid_ids );
 
 	/* Remove snippet from shared network snippet list if it was Network Activated */
 	if ( $table === $db->ms_table && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
@@ -296,9 +305,9 @@ function deactivate_snippet( $id, $multisite = null ) {
 
 	$wpdb->update(
 		$table,
-		array( 'active' => '0' ),
+		array( 'active' => '0', 'modified' => date( Code_Snippet::DATE_FORMAT ) ),
 		array( 'id' => $id ),
-		array( '%d' ),
+		array( '%d', '%s' ),
 		array( '%d' )
 	);
 
@@ -361,6 +370,9 @@ function save_snippet( Code_Snippet $snippet ) {
 
 	$table = code_snippets()->db->get_table_name( $snippet->network );
 
+	/* Update the last modification date and the creation date if necessary */
+	$snippet->update_times();
+
 	/* Build array of data to insert */
 	$data = array(
 		'name'        => $snippet->name,
@@ -370,11 +382,12 @@ function save_snippet( Code_Snippet $snippet ) {
 		'scope'       => $snippet->scope,
 		'priority'    => $snippet->priority,
 		'active'      => intval( $snippet->active ),
+		'created'     => $snippet->created,
+		'modified'    => $snippet->modified,
 	);
 
 	/* Create a new snippet if the ID is not set */
 	if ( 0 === $snippet->id ) {
-
 		$wpdb->insert( $table, $data, '%s' );
 		$snippet->id = $wpdb->insert_id;
 
