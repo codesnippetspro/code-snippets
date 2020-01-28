@@ -5,7 +5,7 @@ Tags: code-snippets, snippets, functions, code, php, html, network, multisite
 Requires at least: 3.6
 Tested up to: 5.3.2
 Requires PHP: 5.2
-Stable tag: 2.14.0-dev
+Stable tag: 2.14.0
 License: MIT
 License URI: license.txt
 
@@ -121,6 +121,21 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 2.14.0 (26 Jan 2020) =
+* Updated CodeMirror to version 5.50.2.
+* Added: Basic error checking for duplicate functions and classes.
+* Updated Italian translations to fix display issues – thanks to [Francesco Marino](https://360fun.net).
+* Fixed: Ordering snippets in the table by name will now be case-insensitive.
+* Added: Additional API options for retrieving snippets.
+* Fixed: Code editor will now properly highlight embedded HTML, CSS and JavaScript code.
+* Changed the indicator color for inactive snippets from red to grey.
+* Fixed a bug preventing the editor theme from being set to default.
+* Added: Store the time and date when each snippet was last modified.
+* Added: Basic error checking when activating snippets.
+* Fixed: Ensure that imported snippets are always inactive.
+* Fixed: Check the referer on the import menu to prevent CSRF attacks. Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfence.com/blog/author/wfchloe/) for reporting.
+* Fixed: Ensure that individual snippet action links use proper verification.
 
 = 2.13.3 (13 Mar 2019) =
 * Added: Hover effect to activation switches.
@@ -594,6 +609,9 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Stable version released.
 
 == Upgrade Notice ==
+
+= 2.14.0 =
+Security update, last modified dates, and other improvements
 
 = 2.13.1 =
 Fixes for single-use snippets and French translation

@@ -8,8 +8,13 @@
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2020 Shea Bunge
+<<<<<<< HEAD
  * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
  * @version   3.0.0-alpha.2
+=======
+ * @license   MIT http://opensource.org/licenses/MIT
+ * @version   2.14.0
+>>>>>>> develop
  * @link      https://github.com/sheabunge/code-snippets
  */
 

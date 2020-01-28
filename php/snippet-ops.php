@@ -15,13 +15,13 @@ use wpdb;
  * @param array     $ids       The IDs of the snippets to fetch
  * @param bool|null $multisite Retrieve multisite-wide snippets (true) or site-wide snippets (false).
  *
- * @param array $args {
- *     Optional. Arguments to specify which sorts of snippets to retrieve.
+ * @param array     $args        {
+ *                               Optional. Arguments to specify which sorts of snippets to retrieve.
  *
- *     @type bool   $active_only Whether to only fetch active snippets. Default false (will fetch both active and inactive snippets).
- *     @type int    $limit       Limit the number of retrieved snippets. Default 0, which will not impose a limit on the results.
- *     @type string $orderby     Sort the retrieved snippets by a particular field. Example fields include 'id', 'priority', and 'name'.
- *     @type string $order       Designates ascending or descending order of snippets. Default 'DESC'. Accepts 'ASC', 'DESC'.
+ * @type bool       $active_only Whether to only fetch active snippets. Default false (will fetch both active and inactive snippets).
+ * @type int        $limit       Limit the number of retrieved snippets. Default 0, which will not impose a limit on the results.
+ * @type string     $orderby     Sort the retrieved snippets by a particular field. Example fields include 'id', 'priority', and 'name'.
+ * @type string     $order       Designates ascending or descending order of snippets. Default 'DESC'. Accepts 'ASC', 'DESC'.
  * }
  *
  * @return array An array of Snippet objects.
@@ -242,7 +242,7 @@ function activate_snippet( $id, $multisite = null ) {
 	$wpdb->update( $table, array( 'active' => '1' ), array( 'id' => $id ), array( '%d' ), array( '%d' ) );
 
 	/* Remove snippet from shared network snippet list if it was Network Activated */
-	if ( $table === $db && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
+	if ( $table === $db->ms_table && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
 		$shared_network_snippets = array_diff( $shared_network_snippets, array( $id ) );
 		update_site_option( 'shared_network_snippets', $shared_network_snippets );
 	}
@@ -393,6 +393,9 @@ function save_snippet( Snippet $snippet ) {
 
 	$table = code_snippets()->db->get_table_name( $snippet->network );
 
+	/* Update the last modification date and the creation date if necessary */
+	$snippet->update_modified();
+
 	/* Build array of data to insert */
 	$data = array(
 		'name'        => $snippet->name,
@@ -402,11 +405,11 @@ function save_snippet( Snippet $snippet ) {
 		'scope'       => $snippet->scope,
 		'priority'    => $snippet->priority,
 		'active'      => intval( $snippet->active ),
+		'modified'    => $snippet->modified,
 	);
 
 	/* Create a new snippet if the ID is not set */
 	if ( 0 === $snippet->id ) {
-
 		$wpdb->insert( $table, $data, '%s' );
 		$snippet->id = $wpdb->insert_id;
 

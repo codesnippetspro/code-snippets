@@ -186,8 +186,7 @@ class DB {
 				scope       VARCHAR(15) NOT NULL DEFAULT 'global',
 				priority    SMALLINT    NOT NULL DEFAULT 10,
 				active      TINYINT(1)  NOT NULL DEFAULT 0,
-				created     DATETIME    NOT NULL DEFAULT current_timestamp(),
-				modified    DATETIME    NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+				modified    DATETIME    NOT NULL DEFAULT '0000-00-00 00:00:00',
 				PRIMARY KEY  (id),
 				KEY scope (scope),
 				KEY active (active)

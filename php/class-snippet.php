@@ -11,25 +11,24 @@ use DateTimeZone;
  * @since   2.4.0
  * @package Code_Snippets
  *
- * @property int         $id             The database ID
- * @property string      $name           The display name
- * @property string      $desc           The formatted description
- * @property string      $code           The executable code
- * @property array       $tags           An array of the tags
- * @property string      $scope          The scope name
- * @property int         $priority       Execution priority
- * @property bool        $active         The active status
- * @property bool        $network        true if is multisite-wide snippet, false if site-wide
- * @property bool        $shared_network Whether the snippet is a shared network snippet
- * @property DateTime    $created        The date and time when the snippet was first saved in the database.
- * @property DateTime    $modified       The date and time when the snippet data was most recently saved to the database.
+ * @property int           $id                 The database ID
+ * @property string        $name               The display name
+ * @property string        $desc               The formatted description
+ * @property string        $code               The executable code
+ * @property array         $tags               An array of the tags
+ * @property string        $scope              The scope name
+ * @property int           $priority           Execution priority
+ * @property bool          $active             The active status
+ * @property bool          $network            true if is multisite-wide snippet, false if site-wide
+ * @property bool          $shared_network     Whether the snippet is a shared network snippet
+ * @property string        $modified           The date and time when the snippet data was most recently saved to the database.
  *
- * @property-read array  $tags_list      The tags in string list format
- * @property-read string $scope_icon     The dashicon used to represent the current scope
- * @property-read string $type           The type of snippet
- * @property-read string $lang           The language that the snippet code is written in
- * @property-read string $created_raw    The date and time when the snippet was first saved in the database in raw format.
- * @property-read string $modified_raw   The date and time when the snippet was most recently saved to the database in raw format.
+ * @property-read array    $tags_list          The tags in string list format
+ * @property-read string   $scope_icon         The dashicon used to represent the current scope
+ * @property-read string   $type               The type of snippet
+ * @property-read string   $lang               The language that the snippet code is written in
+ * @property-read int      $modified_timestamp The last modification date in Unix timestamp format.
+ * @property-read DateTime $modified_local     The last modification date in the local timezone.
  */
 class Snippet {
 
@@ -37,6 +36,11 @@ class Snippet {
 	 * MySQL datetime format (YYYY-MM-DD hh:mm:ss)
 	 */
 	const DATE_FORMAT = 'Y-m-d H:i:s';
+
+	/**
+	 * Default value used for a datetime variable.
+	 */
+	const DEFAULT_DATE = '0000-00-00 00:00:00';
 
 	/**
 	 * The snippet metadata fields.
@@ -55,7 +59,6 @@ class Snippet {
 		'priority'       => 10,
 		'network'        => null,
 		'shared_network' => null,
-		'created'        => null,
 		'modified'       => null,
 	);
 
@@ -349,81 +352,38 @@ class Snippet {
 	}
 
 	/**
-	 * Retrieve the site's timezone. This is only necessary while < WP 3.5 is supported, as
-	 * it can be replaced with the wp_timezone() function.
+	 * Prepare the modification field by ensuring it is in the correct format.
 	 *
-	 * @return DateTimeZone
+	 * @param DateTime|string $modified
+	 *
+	 * @return string
 	 */
-	private function get_timezone() {
-		if ( function_exists( 'wp_timezone' ) ) {
-			return wp_timezone();
+	private function prepare_modified( $modified ) {
+
+		/* if the supplied value is a DateTime object, convert it to string representation */
+		if ( $modified instanceof DateTime ) {
+			return $modified->format( self::DATE_FORMAT );
 		}
 
-		$timezone_string = get_option( 'timezone_string' );
-		if ( $timezone_string ) {
-			return new DateTimeZone( $timezone_string );
+		/* if the supplied value is probably a timestamp, attempt to convert it to a string */
+		if ( is_numeric( $modified ) ) {
+			return gmdate( self::DATE_FORMAT, $modified );
 		}
 
-		$offset = (float) get_option( 'gmt_offset' );
-		$hours = (int) $offset;
-		$minutes = ( $offset - $hours );
-
-		$sign = ( $offset < 0 ) ? '-' : '+';
-		$abs_hour = abs( $hours );
-		$abs_mins = abs( $minutes * 60 );
-		$timezone = sprintf( '%s%02d:%02d', $sign, $abs_hour, $abs_mins );
-
-		return new DateTimeZone( $timezone );
-	}
-
-	/**
-	 * Prepare a date and time field by ensuring it is in the correct format.
-	 *
-	 * @param DateTime|string $datetime
-	 * @param string          $field_name
-	 *
-	 * @return DateTime
-	 */
-	private function prepare_datetime( $datetime, $field_name ) {
-
-		/* If the supplied datetime is already in the correct format, then we're done here */
-		if ( $datetime instanceof DateTime ) {
-			return $datetime;
+		/* if the supplied value is a string, check it is not just the default value */
+		if ( is_string( $modified ) && self::DEFAULT_DATE !== $modified ) {
+			return $modified;
 		}
 
-		/* If the supplied datetime is a string, assume it is in MySQL format */
-		if ( is_string( $datetime ) ) {
-			$datetime_object = DateTime::createFromFormat( self::DATE_FORMAT, $datetime, $this->get_timezone() );
-			if ( $datetime_object ) {
-				$this->fields[ $field_name . '_raw' ] = $datetime;
-			}
-			return $datetime_object;
-		}
-
-		/* Otherwise, discard the supplied value */
+		/* otherwise, discard the supplied value */
 		return null;
 	}
 
 	/**
-	 * Prepare the created field by ensuring it is in the correct format.
-	 *
-	 * @param DateTime|string $created
-	 *
-	 * @return DateTime
+	 * Update the last modification date to the current date and time.
 	 */
-	private function prepare_created( $created ) {
-		return $this->prepare_datetime( $created, 'created' );
-	}
-
-	/**
-	 * Prepare the modified field by ensuring it is in the correct format.
-	 *
-	 * @param DateTime|string $modified
-	 *
-	 * @return DateTime
-	 */
-	private function prepare_modified( $modified ) {
-		return $this->prepare_datetime( $modified, 'modified' );
+	public function update_modified() {
+		$this->modified = gmdate( self::DATE_FORMAT );
 	}
 
 	/**
@@ -507,5 +467,45 @@ class Snippet {
 		}
 
 		return $this->fields['shared_network'];
+	}
+
+	/**
+	 * Retrieve the snippet modification date as a timestamp.
+	 *
+	 * @return int Timestamp value.
+	 */
+	private function get_modified_timestamp() {
+		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
+		return $datetime ? $datetime->getTimestamp() : 0;
+	}
+
+	/**
+	 * Retrieve the modification time in the local timezone.
+	 *
+	 * @return DateTime
+	 */
+	private function get_modified_local() {
+
+		if ( function_exists( 'wp_timezone' ) ) {
+			$timezone = wp_timezone();
+		} else {
+			$timezone = get_option( 'timezone_string' );
+
+			/* calculate the timezone manually if it is not available */
+			if ( ! $timezone ) {
+				$offset = (float) get_option( 'gmt_offset' );
+				$hours = (int) $offset;
+				$minutes = ( $offset - $hours ) * 60;
+
+				$sign = ( $offset < 0 ) ? '-' : '+';
+				$timezone = sprintf( '%s%02d:%02d', $sign, abs( $hours ), abs( $minutes ) );
+			}
+
+			$timezone = new DateTimeZone( $timezone );
+		}
+
+		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
+		$datetime->setTimezone( $timezone );
+		return $datetime;
 	}
 }
