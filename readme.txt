@@ -1,5 +1,5 @@
 === Code Snippets ===
-Contributors: bungeshea
+Contributors: bungeshea, ver3
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
@@ -67,17 +67,22 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 
 == Frequently Asked Questions ==
 
-= How can I insert my snippet into the post text editor? =
+= How do insert snippets into the post text editor? =
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
-= Help! I just activated a snippet, and my whole site broke! =
-You can try activating 'safe mode'. All snippets will not execute while safe mode is active, allowing you to access your site and deactivate the snippet that is causing the error. To activate safe mode, add the following line to your wp-config.php file, just before the line that reads `/* That's all, stop editing! Happy blogging. */`:
+= How do I recover my site  snippet crashes ? (method one) =
+You can try activating 'safe mode'. All snippets will not execute while safe mode is active, allowing you to access your site and deactivate the snippet that is causing the error.
+
+To activate safe mode, add the following line to your wp-config.php file, just before the line that reads `/* That's all, stop editing! Happy blogging. */`:
 
     define('CODE_SNIPPETS_SAFE_MODE', true);
 
  To turn safe mode off, either [comment out](http://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
 
-You can also activate safe mode on a per-page basis by appending `?snippets-safe-mode=true` to the URL – this will only work if the current user is logged in as an administrator.
+= What do I do if a snippet crashes my site? (method two) =
+You can enable safe mode on a per-page basis  by appending `&snippets-safe-mode=true` to the URL – this will only work if the current user is logged in as an administrator.
+
+While safe mode is active, all snippets will not execute, allowing you to login to your site and deactivate any snippets that are causing issues.
 
 = Can I search and replace text inside the code editor? =
 The code editor supports several search and replace commands, accessible through keyboard shortcuts:
