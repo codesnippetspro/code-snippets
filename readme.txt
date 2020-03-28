@@ -1,5 +1,5 @@
 === Code Snippets ===
-Contributors: bungeshea
+Contributors: bungeshea, ver3
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, functions, code, php, html, network, multisite
 Requires at least: 3.6
@@ -67,17 +67,38 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 
 == Frequently Asked Questions ==
 
-= How can I insert my snippet into the post text editor? =
+= How do insert snippets into the post text editor? =
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
-= Help! I just activated a snippet, and my whole site broke! =
-You can try activating 'safe mode'. All snippets will not execute while safe mode is active, allowing you to access your site and deactivate the snippet that is causing the error. To activate safe mode, add the following line to your wp-config.php file, just before the line that reads `/* That's all, stop editing! Happy blogging. */`:
+= How can I recover my site if it is crashed by a buggy snippet? (method one) =
+You can try activating 'safe mode'. All snippets will not execute while safe mode is active, allowing you to access your site and deactivate the snippet that is causing the error.
+
+To activate safe mode, add the following line to your wp-config.php file, just before the line that reads `/* That's all, stop editing! Happy blogging. */`:
 
     define('CODE_SNIPPETS_SAFE_MODE', true);
 
  To turn safe mode off, either [comment out](http://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
 
-You can also activate safe mode on a per-page basis by appending `?snippets-safe-mode=true` to the URL – this will only work if the current user is logged in as an administrator.
+= How can I recover my site if it is crashed by a buggy snippet? (method two) =
+You can enable safe mode on a per-page basis by appending `&snippets-safe-mode=1` to end of the current page's URL. While safe mode is active, all snippets will not execute, allowing you to login to your site and deactivate any snippets that are causing issues.
+
+For example, to see the WordPress admin area in safe mode, you would change the URL from this:
+
+	https://yoursiteurl.com/wp-admin/admin.php?page=snippets
+
+… to this:
+
+	https://yoursiteurl.com/wp-admin/admin.php?page=snippets&snippets-safe-mode=1
+
+Or, for another example, if you were viewing a page on the front-end of your site, you could change a URL like this:
+
+	https://yoursiteurl.com/about-us/
+
+… to this:
+
+	https://yoursiteurl.com/about-us/?snippets-safe-mode=1
+
+This will only work if the current user is logged in as an administrator – other visitors will see your site as normal.
 
 = Can I search and replace text inside the code editor? =
 The code editor supports several search and replace commands, accessible through keyboard shortcuts:
@@ -95,7 +116,7 @@ No, the snippets are stored in the WordPress database, independent of the theme 
 = Can the plugin be completely uninstalled? =
 If you enable the 'Complete Uninstall' option on the plugin settings page, Code Snippets will clean up all of its data when deleted through the WordPress 'Plugins' menu. This includes all of the stored snippets. If you would like to preserve the snippets, ensure they are exported first.
 
-= Can I copy any snippets I have created to another WordPress site? =
+= Can I copy snippets that I have created to another WordPress site? =
 Yes! You can individually export a single snippet using the link below the snippet name on the 'Manage Snippets' page or bulk export multiple snippets using the 'Bulk Actions' feature. Snippets can later be imported using the 'Import Snippets' page by uploading the export file.
 
 = Can I export my snippets to PHP for a site where I'm not using the Code Snippets plugin? =
@@ -107,11 +128,11 @@ You can run snippets across an entire multisite network by **Network Activating*
 = Where are the snippets stored in my WordPress database? =
 Snippets are stored in the `wp_snippets` table in the WordPress database. The table name may differ depending on what your table prefix is set to.
 
-= I need help with Code Snippets / I have an idea for a new feature for Code Snippets =
+= Where can I go for help or suggest new features? =
 You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums](https://wordpress.org/support/plugin/code-snippets) or on [GitHub](https://github.com/sheabunge/code-snippets)
 
-= I want to contribute to and help develop the Code Snippets plugin! =
-That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/code-snippets) and send me a pull request.
+= How can I help contribute to the development of the Code Snippets plugin? =
+The best way to do this is to fork the [repository on GitHub](http://github.com/sheabunge/code-snippets) and send me a pull request.
 
 == Screenshots ==
 
