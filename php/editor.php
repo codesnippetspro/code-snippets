@@ -39,7 +39,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 
 	// add relevant saved setting values to the default attributes
 	$plugin_settings = Settings\get_settings_values();
-	$setting_fields = get_settings_fields();
+	$setting_fields = Settings\get_settings_fields();
 
 	foreach ( $setting_fields['editor'] as $field_id => $field ) {
 		// the 'codemirror' setting field specifies the name of the attribute
