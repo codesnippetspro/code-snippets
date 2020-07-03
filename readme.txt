@@ -3,7 +3,7 @@ Contributors: bungeshea, ver3
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
 Requires at least: 3.6
-Tested up to: 5.3.2
+Tested up to: 5.4.1
 Requires PHP: 5.2
 Stable tag: 2.14.0
 License: MIT
@@ -67,7 +67,7 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 
 == Frequently Asked Questions ==
 
-= How do insert snippets into the post text editor? =
+= How do I insert snippets into the post text editor? =
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
 = How can I recover my site if it is crashed by a buggy snippet? (method one) =
@@ -132,7 +132,7 @@ Snippets are stored in the `wp_snippets` table in the WordPress database. The ta
 You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums](https://wordpress.org/support/plugin/code-snippets) or on [GitHub](https://github.com/sheabunge/code-snippets)
 
 = How can I help contribute to the development of the Code Snippets plugin? =
-The best way to do this is to fork the [repository on GitHub](http://github.com/sheabunge/code-snippets) and send me a pull request.
+The best way to do this is to fork the [repository on GitHub](https://github.com/sheabunge/code-snippets) and send a pull request.
 
 == Screenshots ==
 
