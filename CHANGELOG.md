@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.14.1 (unrelesed)
+* Added Czech translation by [Lukáš Tesař](https://github.com/atomicf4ll).
+
 ## 2.14.0 (26 Jan 2020)
 * Updated CodeMirror to version 5.50.2.
 * Added: Basic error checking for duplicate functions and classes.
