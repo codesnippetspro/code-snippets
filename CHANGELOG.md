@@ -192,7 +192,7 @@
 * Fixed a few strings not being translated
 
 ## 2.7.2 (1 Oct 2016)
-* Updated German translation by [Mario Siegmann](http://web-alltag.de)
+* Updated German translation by [Mario Siegmann](https://web-alltag.de)
 
 ## 2.7.1 (30 Sep 2016)
 * Added Dutch translation by Sander Spies
@@ -204,7 +204,7 @@
 * Fixed plugin translations being loaded
 * Increase default snippets per page so that all are usually shown
 * Fixed description field not being imported
-* Updated German translation by [Mario Siegmann](http://web-alltag.de)
+* Updated German translation by [Mario Siegmann](https://web-alltag.de)
 * Fixed issue with CodeMirror rubyblue theme [[#](https://wordpress.org/support/topic/a-problem-with-the-cursor-color-and-the-fix-that-worked-for-me)]
 * Added query var to disable snippet execution. To use, add `?snippets-safe-mode=true` to the URL
 * Fixed snippet fields not importing
@@ -212,7 +212,7 @@
 * Fixed a minor XSS vulnerability discovered by Burak Kelebek [[#](https://wordpress.org/support/topic/security-vulnerability-20)]
 
 ## 2.6.1 (10 Feb 2016)
-* Updated German translation by [Mario Siegmann](http://web-alltag.de)
+* Updated German translation by [Mario Siegmann](https://web-alltag.de)
 * Fixed error catching not working correctly
 * Updated error catching to work with snippets including functions and classes
 * Fixed editor autoresizing
@@ -222,7 +222,7 @@
 * Updated CodeMirror to version 5.10.0
 * Added `[code_snippets]` shortcode for embedding snippet code in a post
 * Fixed broken snippet search feature [[#](https://wordpress.org/support/topic/search-is-not-working-6)]
-* Added front-end syntax highlighting for shortcode using [PrismJS](http://prismjs.com)
+* Added front-end syntax highlighting for shortcode using [PrismJS](https://prismjs.com)
 
 ## 2.5.1 (11 Oct 2016)
 * Fixed: Ensure errors are fatal before catching them during error checking
@@ -303,7 +303,7 @@
 * Improved efficiency of settings component
 
 ## 2.0.3 (17 Mar 2015)
-* Updated German translation by [Joerg Knoerchen](http://www.sensorgrafie.de/)
+* Updated German translation by [Joerg Knoerchen](https://www.sensorgrafie.de/)
 
 ## 2.0.2 (05 Mar 2015)
 * Fix error in table creation code
@@ -327,11 +327,11 @@
 * Added support for different CodeMirror themes
 * Integrated tags component into main plugin. Current users of the Code Snippets Tags plugin can safely uninstall it.
 * Added Auto Close Brackets CodeMirror addon (props to TronicLabs)
-* Added Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](http://www.webhostinghub.com)
+* Added Croatian translation by Borisa Djuraskovic from [Web Hosting Hub](https://www.webhostinghub.com)
 * Added Highlight Selection Matches CodeMirror addon (props to TronicLabs)
 * Added Chinese translation thanks to Jincheng Shan
 * Added Russian translation by Alexander Samsonov
-* Added Slovak translation by [Ján Fajčák] from [WordPress Slovakia](http://wp.sk)
+* Added Slovak translation by [Ján Fajčák] from [WordPress Slovakia](https://wp.sk)
 * Added setting to always save and activate snippets by default
 
 ### Changed
@@ -365,13 +365,13 @@
 ## 1.9 (11 Nov 2013)
 * Add and remove network capabilities as super admins are added and removed
 * Updated MP6 icon implementation
-* Replaced buggy trim `<?php` and `?>` functionality with a much more reliable regex method ([#](http://wordpress.org/support/topic/character-gets-cut))
+* Replaced buggy trim `<?php` and `?>` functionality with a much more reliable regex method ([#](https://wordpress.org/support/topic/character-gets-cut))
 * Added French translation thanks to translator [oWEB](http://office-web.net)
-* Fixed snippet failing to save when code contains `%` character, props to [nikan06](http://wordpress.org/support/profile/nikan06) ([#](http://wordpress.org/support/topic/percent-sign-bug))
-* Added 'Save & Deactivate' button to the edit snippet page ([#](http://wordpress.org/support/topic/deactivate-button-in-edit-snippet-page))
+* Fixed snippet failing to save when code contains `%` character, props to [nikan06](https://wordpress.org/support/profile/nikan06) ([#](https://wordpress.org/support/topic/percent-sign-bug))
+* Added 'Save & Deactivate' button to the edit snippet page ([#](https://wordpress.org/support/topic/deactivate-button-in-edit-snippet-page))
 * Removed edit and install capabilities (now only uses the manage capability)
-* Fixed HTML breaking in export files ([#](http://wordpress.org/support/topic/import-problem-7))
-* Make the title of each snippet on the manage page a clickable link to edit the snippet ([#](http://wordpress.org/support/topic/deactivate-button-in-edit-snippet-page?replies=9#post-4682757))
+* Fixed HTML breaking in export files ([#](https://wordpress.org/support/topic/import-problem-7))
+* Make the title of each snippet on the manage page a clickable link to edit the snippet ([#](https://wordpress.org/support/topic/deactivate-button-in-edit-snippet-page?replies=9#post-4682757))
 * Added nonce to edit snippet page
 * Hide row actions on manage snippet page by default
 * Removed screenshots from plugin
@@ -414,30 +414,30 @@
 
 ## 1.7.1 (22 April 2013)
 * Fix a bug with snippet being set as deactivated when saved
-* Updated PHP Documentation completely. [[View online](http://bungeshea.github.io/code-snippets/api)]
+* Updated PHP Documentation completely. [[View online](https://bungeshea.github.io/code-snippets/api)]
 * Only load admin functions when viewing dashboard
-* Added German translation thanks to [David Decker](http://deckerweb.de)
+* Added German translation thanks to [David Decker](https://deckerweb.de)
 * Allow or deny site administrators access to snippet admin menus. Set your preference in the **Enable Administration Menus** setting under the *Settings > Network Settings* network admin menu.
 * Improve database table creation and upgrade process
 * Optimized to use less database queries
 
 ## 1.7 (26 Mar 2013)
 * Improved plugin API
-* Fixed a bug with saving snippets per page option ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippets-per-page-does-not-work#post-3710991))
+* Fixed a bug with saving snippets per page option ([#](https://wordpress.org/support/topic/plugin-code-snippets-snippets-per-page-does-not-work#post-3710991))
 * Updated CodeMirror to version 3.11
-* Allow plugin to be activated on individual sites on multisite ([#](http://wordpress.org/support/topic/dont-work-at-multisite))
+* Allow plugin to be activated on individual sites on multisite ([#](https://wordpress.org/support/topic/dont-work-at-multisite))
 * Slimmed down the description visual editor
-* Added icon for the new MP6 admin UI ([#](http://wordpress.org/support/topic/icon-disappears-with-mp6))
-* Strip PHP tags from the beginning and end of a snippet on save ([#](http://wordpress.org/support/topic/php-tags))
-* Changed to [MIT license](http://opensource.org/licenses/mit-license.php)
+* Added icon for the new MP6 admin UI ([#](https://wordpress.org/support/topic/icon-disappears-with-mp6))
+* Strip PHP tags from the beginning and end of a snippet on save ([#](https://wordpress.org/support/topic/php-tags))
+* Changed to [MIT license](https://opensource.org/licenses/mit-license.php)
 * Removed HTML, CSS and JavaScript CodeMirror modes that were messing things up
 * Change label in admin menu when editing a snippet
 * Improved admin styling
 * Made everything leaner, faster, and better
 
 ## 1.6.1 (29 Dec 2012)
-* Fixed a bug with permissions not being applied on install ([#](http://wordpress.org/support/topic/permissions-problem-after-install))
-* Fixed a bug in the uninstall method ([#](http://wordpress.org/support/topic/bug-in-delete-script))
+* Fixed a bug with permissions not being applied on install ([#](https://wordpress.org/support/topic/permissions-problem-after-install))
+* Fixed a bug in the uninstall method ([#](https://wordpress.org/support/topic/bug-in-delete-script))
 
 ## 1.6 (22 Dec 2012)
 * Updated code editor to use CodeMirror 3
@@ -460,17 +460,17 @@
 	* Added search capability to 'Manage Snippets' page
 	* Added views to easily filter activated, deactivated and recently activated snippets
 	* Added ID column to 'Manage Snippets' page
-	* Added sortable name and ID column on 'Manage Snippets' page ([#](http://wordpress.org/support/topic/plugin-code-snippets-suggestion-sort-by-snippet-name))
+	* Added sortable name and ID column on 'Manage Snippets' page ([#](https://wordpress.org/support/topic/plugin-code-snippets-suggestion-sort-by-snippet-name))
 * Added custom capabilities
 * Improved API
-* Added 'Export to PHP' feature ([#](http://wordpress.org/support/topic/plugin-code-snippets-suggestion-bulk-export-to-php))
-* Lengthened snippet name field to 64 characters ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippet-title-limited-to-36-characters))
+* Added 'Export to PHP' feature ([#](https://wordpress.org/support/topic/plugin-code-snippets-suggestion-bulk-export-to-php))
+* Lengthened snippet name field to 64 characters ([#](https://wordpress.org/support/topic/plugin-code-snippets-snippet-title-limited-to-36-characters))
 * Added i18n
 
 ## 1.4 (20 Aug 2012)
 * Added interface to Network Dashboard
 * Updated uninstall to support multisite
-* Replaced EditArea with [CodeMirror](http://codemirror.net)
+* Replaced EditArea with [CodeMirror](https://codemirror.net)
 * Small improvements
 
 ## 1.3.2 (17 Aug 2012)
@@ -491,9 +491,9 @@
 * Data will now be cleaned up when plugin is deleted through WordPress admin
 
 ## 1.1 (24 June 2012)
-* Fixed a permissions bug with `DISALLOW_FILE_EDIT` being set to true ([#](http://wordpress.org/support/topic/plugin-code-snippets-cant-add-new))
+* Fixed a permissions bug with `DISALLOW_FILE_EDIT` being set to true ([#](https://wordpress.org/support/topic/plugin-code-snippets-cant-add-new))
 * Fixed a bug with the page title reading 'Add New Snippet' on the 'Edit Snippets' page
-* Fixed a bug not allowing the plugin to be Network Activated ([#](http://wordpress.org/support/topic/plugin-code-snippets-network-activate-does-not-create-snippets-tables))
+* Fixed a bug not allowing the plugin to be Network Activated ([#](https://wordpress.org/support/topic/plugin-code-snippets-network-activate-does-not-create-snippets-tables))
 
 ## 1.0 (13 June 2012)
 * Stable version released.

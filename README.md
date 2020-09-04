@@ -1,7 +1,7 @@
 # Code Snippets [![Build Status](https://api.travis-ci.org/sheabunge/code-snippets.svg?branch=develop)](https://travis-ci.org/sheabunge/code-snippets)
 
 * __Requires at least:__ [WordPress 3.6](https://wordpress.org/download/) or later
-* __Tested up to:__ WordPress 5.4.1
+* __Tested up to:__ WordPress 5.5.0
 * __Stable version:__ [2.14.0](https://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [MIT](license.txt)
 
@@ -24,16 +24,16 @@ Code Snippets can be used in these different languages thanks to the following t
 
 * Czech  – [Lukáš Tesař](mailto:lukastesar03@gmail.com)
 * Danish - [Finn Sommer Jensen](https://profiles.wordpress.org/finnsommer/)
-* French – [momo-fr](http://www.momofr.net/) and [Shea Bunge](https://sheabunge.com)
+* French – [momo-fr](https://www.momofr.net/) and [Shea Bunge](https://sheabunge.com)
 * Belarusian - [Hrank.com](https://www.hrank.com)
 * Brazilian Portuguese – [Bruno Borges](http://brunoborges.info)
-* French (Canada) - [Dominic Desbiens](http://www.dominicdesbiens.com/)
+* French (Canada) - [Dominic Desbiens](https://www.dominicdesbiens.com/)
 * Indonesian - [Jordan Silaen from ChameleonJohn.com](https://www.chameleonjohn.com/)
-* German - [Mario Siegmann](http://web-alltag.de/), [Joerg Knoerchen](http://www.sensorgrafie.de/), and [David Decker](http://deckerweb.de)
+* German - [Mario Siegmann](https://web-alltag.de/), [Joerg Knoerchen](https://www.sensorgrafie.de/), and [David Decker](https://deckerweb.de)
 * Dutch - [Sander Spies](https://github.com/sander1)
-* Slovak - [Ján Fajčák](http://wp.sk)
+* Slovak - [Ján Fajčák](https://wp.sk)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
 * Chinese - [Jincheng Shan](http://shanjincheng.com)
-* Croatian - [Borisa Djuraskovic from Web Hosting Hub](http://www.webhostinghub.com/)
-* Japanese - [mt8](http://mt8.biz/)
+* Croatian - [Borisa Djuraskovic from Web Hosting Hub](https://www.webhostinghub.com/)
+* Japanese - [mt8](https://mt8.biz/)
 * Italian – [Francesco Marino](https://360fun.net)
