@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use MatthiasMullie\Minify;
+
 /**
  * Class for loading active style snippets
  *
@@ -152,6 +154,44 @@ class Active_Snippets {
 	}
 
 	/**
+	 * Fetch and print the active snippets for a given type and the current scope.
+	 *
+	 * @param string $type Must be either 'css' or 'js'.
+	 */
+	private function print_code( $type ) {
+		if ( 'js' !== $type && 'css' !== $type ) {
+			return;
+		}
+
+		if ( 'css' === $type ) {
+			$this->do_asset_headers( 'text/css' );
+			$current_scope = is_admin() ? 'admin-css' : 'site-css';
+		} else {
+			$this->do_asset_headers( 'text/javascript' );
+			$current_scope = 'site-' . ( 'footer' === $_GET['code-snippets-js-snippets'] ? 'footer' : 'head' ) . '-js';
+		}
+
+		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope, 'code' );
+
+		// concatenate all fetched code together into a single string
+		$code = '';
+		foreach ( $active_snippets as $snippets ) {
+			/** @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped */
+			$code .= implode( "\n\n", array_column( $snippets, 'code' ) );
+		}
+
+		// minify the prepared code if the setting has been set
+		if ( Settings\get_setting( 'general', 'minify_css_js' ) ) {
+			$minifier = 'css' === $type ? new Minify\CSS( $code ) : new Minify\JS( $code );
+			$code = $minifier->minify();
+		}
+
+		// output the code and exit
+		echo $code;
+		exit;
+	}
+
+	/**
 	 * Print the active style snippets for the current scope
 	 */
 	public function print_css() {
@@ -159,38 +199,17 @@ class Active_Snippets {
 			return;
 		}
 
-		$this->do_asset_headers( 'text/css' );
-
-		$current_scope = is_admin() ? 'admin-css' : 'site-css';
-		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope, 'code' );
-
-		foreach ( $active_snippets as $snippets ) {
-			/** @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped */
-			echo implode( "\n\n", array_column( $snippets, 'code' ) );
-		}
-
-		exit;
+		$this->print_code( 'css' );
 	}
 
 	/**
-	 * Respond to requests to print the active JavaScript snippets for a particular scope
+	 * Respond to requests to print the active JavaScript snippets for a particular scope.
 	 */
 	public function print_js() {
 		if ( ! isset( $_GET['code-snippets-js-snippets'] ) || is_admin() ) {
 			return;
 		}
 
-		$this->do_asset_headers( 'text/javascript' );
-
-		$current_scope = 'site-' . ( 'footer' === $_GET['code-snippets-js-snippets'] ? 'footer' : 'head' ) . '-js';
-
-		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope, 'code' );
-
-		foreach ( $active_snippets as $snippets ) {
-			/** @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped */
-			echo implode( "\n\n", array_column( $snippets, 'code' ) );
-		}
-
-		exit;
+		$this->print_code( 'js' );
 	}
 }
