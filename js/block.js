@@ -14,20 +14,12 @@
 			html: false,
 		},
 
-		edit: function (props) {
-			return el(
-				'select',
-				{className: props.className},
-				'Hello World, step 1 (from the editor).'
-			);
+		edit: () => {
+			return <div> Hello in Editor. </div>;
 		},
 
-		save: function () {
-			return el(
-				'p',
-				{},
-				'Hello World, step 1 (from the front-end).'
-			);
+		save: () => {
+			return <div> Hello in Save.</div>;
 		},
 	});
 

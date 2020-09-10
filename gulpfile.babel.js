@@ -80,7 +80,8 @@ gulp.task('test-js', () => {
 	const options = {
 		parserOptions: {
 			ecmaVersion: 6,
-			sourceType: 'module'
+			sourceType: 'module',
+			ecmaFeatures: {jsx: true}
 		},
 		extends: 'eslint:recommended',
 		rules: {
