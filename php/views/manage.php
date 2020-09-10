@@ -73,6 +73,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<input type="hidden" id="code_snippets_ajax_nonce" value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 
 		<?php
+
+		/** @var Manage_Menu $this */
 		$this->list_table->required_form_fields();
 		$this->list_table->display();
 		?>

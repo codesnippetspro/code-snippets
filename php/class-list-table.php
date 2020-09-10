@@ -903,7 +903,7 @@ class List_Table extends WP_List_Table {
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
 
 		/* Redirect POST'ed tag filter to GET */
-		if ( isset( $_POST['tag'] ) ) {
+		if ( isset( $_POST['filter_action'] ) ) {
 			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
 			wp_redirect( esc_url_raw( $location ) );
 			exit;
