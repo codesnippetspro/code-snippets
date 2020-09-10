@@ -1,5 +1,5 @@
 'use strict';
-import '../php-lint';
+import '../editor-lib';
 
 window.code_snippets_editor = (codeEditor => {
 	const save_snippet_cb = (cm) => document.getElementById('save_snippet').click();

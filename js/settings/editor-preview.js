@@ -1,5 +1,5 @@
 /* global code_snippets_editor_settings */
-import '../php-lint';
+import '../editor-lib';
 
 (function (codeEditor, editor_settings) {
 	'use strict';

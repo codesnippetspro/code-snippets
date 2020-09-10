@@ -32,7 +32,7 @@
         "url": "https://github.com/sheabunge/code-snippets/issues"
     },
     "dependencies": {
-        "codemirror": "^5.57.0",
+        "codemirror": "~5.29.0",
         "php-parser": "^3.0.1",
         "prismjs": "^1.21.0",
         "tag-it": "^2.0.0"

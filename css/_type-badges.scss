@@ -13,6 +13,10 @@
 	margin-left: 3px;
 }
 
+.nav-tab span {
+	vertical-align: text-bottom;
+}
+
 $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-active);
 
 @each $type, $color in $badges {
