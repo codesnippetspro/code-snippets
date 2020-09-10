@@ -94,6 +94,10 @@ msgstr "Attivo solo nell'area admin"
 msgid "Only run on site front-end"
 msgstr "Attivo solo nell'area pubblica"
 
+#: php/admin-menus/class-edit-menu.php:339
+msgid "Only run once"
+msgstr "Esegui solo una volta"
+
 #: php/admin-menus/class-edit-menu.php:342
 msgid "Scope"
 msgstr "Scopo"

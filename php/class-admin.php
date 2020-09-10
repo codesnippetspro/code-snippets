@@ -212,7 +212,7 @@ class Admin {
 
 		<br />
 
-		<div class="updated">
+		<div class="updated code-snippets-survey-message">
 			<p>
 
 				<?php echo wp_kses( __( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ), [ 'strong' => [] ] ); ?>

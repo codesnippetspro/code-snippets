@@ -388,6 +388,7 @@ class List_Table extends WP_List_Table {
 			'type'        => __( 'Type', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
+			'type'        => __( 'Type', 'code-snippets' ),
 			'date'        => __( 'Modified', 'code-snippets' ),
 			'priority'    => __( 'Priority', 'code-snippets' ),
 			'id'          => __( 'ID', 'code-snippets' ),
@@ -914,7 +915,7 @@ class List_Table extends WP_List_Table {
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
 
 		/* Redirect POST'ed tag filter to GET */
-		if ( isset( $_POST['tag'] ) ) {
+		if ( isset( $_POST['filter_action'] ) ) {
 			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
 			wp_redirect( esc_url_raw( $location ) );
 			exit;
@@ -1254,6 +1255,9 @@ class List_Table extends WP_List_Table {
 			// copy all data from the previous snippet aside from the ID and active status
 			$snippet->id = 0;
 			$snippet->active = false;
+
+			/* translators: %s: snippet title */
+			$snippet->name = sprintf( __( '%s [CLONE]', 'code-snippets' ), $snippet->name );
 
 			save_snippet( $snippet );
 		}
