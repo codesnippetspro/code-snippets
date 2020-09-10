@@ -391,6 +391,11 @@ msgstr ""
 msgid "Clear Filters"
 msgstr ""
 
+#. translators: %s: snippet title
+#: php/class-list-table.php:1248
+msgid "%s [CLONE]"
+msgstr ""
+
 #: php/class-upgrade.php:157
 msgid "You can remove it, or edit it to add your own content."
 msgstr ""
