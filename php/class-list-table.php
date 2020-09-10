@@ -1244,6 +1244,9 @@ class List_Table extends WP_List_Table {
 			$snippet->id = 0;
 			$snippet->active = false;
 
+			/* translators: %s: snippet title */
+			$snippet->name = sprintf( __( '%s [CLONE]', 'code-snippets' ), $snippet->name );
+
 			save_snippet( $snippet );
 		}
 	}
