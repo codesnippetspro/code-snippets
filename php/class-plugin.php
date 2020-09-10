@@ -52,6 +52,12 @@ class Plugin {
 	public $active_snippets;
 
 	/**
+	 * Class for handling the Gutenberg block..
+	 * @var Block_Editor
+	 */
+	public $block_editor;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $version Current plugin version.
@@ -99,6 +105,7 @@ class Plugin {
 
 		$this->active_snippets = new Active_Snippets();
 		$this->shortcode = new Shortcodes();
+		$this->block_editor = new Block_Editor();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
@@ -196,8 +203,8 @@ class Plugin {
 	/**
 	 * Determine whether the current user can perform actions on snippets.
 	 *
-	 * @since 2.8.6
 	 * @return boolean Whether the current user has the required capability
+	 * @since 2.8.6
 	 */
 	public function current_user_can() {
 		return current_user_can( $this->get_cap() );
@@ -228,8 +235,8 @@ class Plugin {
 	 * If multisite, checks if *Enable Administration Menus: Snippets* is active
 	 * under the *Settings > Network Settings* network admin menu
 	 *
-	 * @since 2.0
 	 * @return string The capability required to manage snippets
+	 * @since 2.0
 	 */
 	public function get_cap() {
 
