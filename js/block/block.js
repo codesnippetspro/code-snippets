@@ -1,11 +1,12 @@
 import './store';
 
 (function (wp) {
-	const {__} = wp.i18n;
+	const {__, _x} = wp.i18n;
 	const {registerBlockType} = wp.blocks;
 	const {withSelect} = wp.data;
 	const {PanelBody, ToggleControl, SelectControl, Placeholder} = wp.components;
-	const {InspectorControls, BlockIcon} = wp.blockEditor;
+	const {InspectorControls} = wp.blockEditor;
+	const {serverSideRender: ServerSideRender} = wp;
 
 	registerBlockType('code-snippets/content', {
 		title: __('Content Snippet', 'code-snippet'),
@@ -34,6 +35,11 @@ import './store';
 				label: __('Select a snippet to display', 'code-snippets'),
 				disabled: true,
 			}];
+
+			const renderBlock = () =>
+				<ServerSideRender
+					block="code-snippets/content"
+					attributes={attributes} />;
 
 			for (let i = 0; i < snippets.length; i++) {
 				const snippet = snippets[i];
@@ -66,6 +72,7 @@ import './store';
 					</InspectorControls>
 				}
 
+				{attributes.snippet_id === 0 &&
 				<Placeholder className='code-snippets-content-block' icon='shortcode' label={__('Content Snippet', 'code-snippets')}>
 					<form>
 						<SelectControl
@@ -77,6 +84,7 @@ import './store';
 							onChange={val => setAttributes({snippet_id: val})} />
 					</form>
 				</Placeholder>
+				|| renderBlock()}
 			</div>
 		}),
 
