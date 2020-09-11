@@ -2,6 +2,20 @@
  * The following styles get applied inside the editor only.
  */
 
-.wp-block-code-snippets-content {
+.code-snippets-content-block {
 
+	&.components-placeholder {
+		min-height: auto;
+		margin: 0 1em;
+	}
+
+	.components-select-control__input {
+		width: 100%;
+		display: block;
+	}
+}
+
+.code-snippets-large-select {
+	width: 100%;
+	margin-top: 1em;
 }

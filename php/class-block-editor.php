@@ -2,12 +2,26 @@
 
 namespace Code_Snippets;
 
+/**
+ * Handles integration with the Gutenberg block editor.
+ *
+ * @package Code_Snippets
+ */
 class Block_Editor {
 
+	/**
+	 * Class constructor.
+	 */
 	public function __construct() {
-		add_action( 'init', array( $this, 'init' ) );
+
+		if ( function_exists( 'register_block_type' ) ) {
+			add_action( 'init', array( $this, 'init' ) );
+		}
 	}
 
+	/**
+	 * Initialise the editor blocks.
+	 */
 	public function init() {
 		$version = code_snippets()->version;
 		$file = code_snippets()->file;
@@ -15,7 +29,8 @@ class Block_Editor {
 		wp_register_script(
 			'code-snippets-content-block-editor',
 			plugins_url( 'js/min/block.js', $file ),
-			array( 'wp-blocks', 'wp-block-editor', 'wp-i18n', 'wp-components' ), $version
+			array( 'wp-blocks', 'wp-block-editor', 'wp-i18n', 'wp-components', 'wp-data', 'wp-element' ),
+			$version
 		);
 		wp_set_script_translations( 'code-snippets-content-block-editor', 'code-snippets' );
 
@@ -25,16 +40,9 @@ class Block_Editor {
 			array(), $version
 		);
 
-		wp_register_style(
-			'code-snippets-content-block',
-			plugins_url( 'css/min/block-style.css', $file ),
-			array(), $version
-		);
-
 		register_block_type( 'code-snippets/content', array(
 			'editor_script'   => 'code-snippets-content-block-editor',
 			'editor_style'    => 'code-snippets-content-block-editor',
-			'style'           => 'code-snippets-content-block',
 			'render_callback' => array( $this, 'render_content' ),
 		) );
 	}
@@ -58,7 +66,7 @@ class Block_Editor {
 		) );
 
 		if ( ! $id = intval( $atts['snippet_id'] ) ) {
-			return '<pre>' . print_r( $atts, true ) . '</pre>';
+			return '';
 		}
 
 		$snippet = get_snippet( $id, $atts['network'] ? true : false );

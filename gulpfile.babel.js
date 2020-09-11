@@ -79,7 +79,7 @@ gulp.task('test-js', () => {
 
 	const options = {
 		parserOptions: {
-			ecmaVersion: 6,
+			ecmaVersion: 9,
 			sourceType: 'module',
 			ecmaFeatures: {jsx: true}
 		},
@@ -122,7 +122,7 @@ gulp.task('js', gulp.series('test-js', gulp.parallel(
 	() => bundlejs('js/edit/tags.js'),
 	() => bundlejs('js/settings/settings.js'),
 	() => bundlejs('js/mce.js'),
-	() => bundlejs('js/block.js'),
+	() => bundlejs('js/block/block.js'),
 	() => bundlejs('js/front-end.js', {
 		plugins: [['prismjs', {languages: ['php', 'php-extras'], plugins: ['line-highlight', 'line-numbers']}]]
 	})

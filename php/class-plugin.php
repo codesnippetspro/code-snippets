@@ -58,6 +58,13 @@ class Plugin {
 	public $block_editor;
 
 	/**
+	 * Class for providing REST API endpoints for snippet data.
+	 *
+	 * @var REST_API
+	 */
+	protected $rest_api;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $version Current plugin version.
@@ -103,6 +110,7 @@ class Plugin {
 		require_once $includes_path . '/settings/render-fields.php';
 		require_once $includes_path . '/settings/settings.php';
 
+		$this->rest_api = new REST_API();
 		$this->active_snippets = new Active_Snippets();
 		$this->shortcode = new Shortcodes();
 		$this->block_editor = new Block_Editor();

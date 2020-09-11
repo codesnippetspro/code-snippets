@@ -1,9 +1,11 @@
-(function (wp) {
+import './store';
 
-	const {__, _x} = wp.i18n;
+(function (wp) {
+	const {__} = wp.i18n;
 	const {registerBlockType} = wp.blocks;
-	const {Toolbar, Button, Tooltip, PanelBody, PanelRow, ToggleControl, TextControl} = wp.components;
-	const {BlockControls, InspectorControls} = wp.blockEditor;
+	const {withSelect} = wp.data;
+	const {PanelBody, ToggleControl, SelectControl, Placeholder} = wp.components;
+	const {InspectorControls, BlockIcon} = wp.blockEditor;
 
 	registerBlockType('code-snippets/content', {
 		title: __('Content Snippet', 'code-snippet'),
@@ -23,10 +25,28 @@
 			shortcodes: {type: 'boolean', default: false}
 		},
 
-		edit: ({attributes, setAttributes}) => {
+		edit: withSelect(select => ({snippets: select('code-snippets/snippets-data').receiveSnippetsData()}))
+		(({attributes, setAttributes, snippets}) => {
 			const toggleAttribute = (attribute) => setAttributes({[attribute]: !attributes[attribute]});
 
-			return <div className="wp-block-code-snippets-content components-placeholder">
+			let options = [{
+				value: 0,
+				label: __('Select a snippet to display', 'code-snippets'),
+				disabled: true,
+			}];
+
+			for (let i = 0; i < snippets.length; i++) {
+				const snippet = snippets[i];
+
+				if ('html' === snippet['type']) {
+					options.push({
+						value: snippet['id'],
+						label: snippet['name'],
+						disabled: false
+					});
+				}
+			}
+			return <div>
 				{
 					<InspectorControls>
 						<PanelBody title={__('Processing Options', 'code-snippets')}>
@@ -45,16 +65,23 @@
 						</PanelBody>
 					</InspectorControls>
 				}
-				<TextControl
-					type='number'
-					label={__('Snippet ID', 'code-snippets')}
-					value={attributes.snippet_id === 0 ? '' : attributes.snippet_id}
-					onChange={(val) => setAttributes({snippet_id: val})}
-				/>
-			</div>;
-		}
-	});
 
+				<Placeholder className='code-snippets-content-block' icon='shortcode' label={__('Content Snippet', 'code-snippets')}>
+					<form>
+						<SelectControl
+							className='code-snippets-large-select'
+							label={__('Select snippet:')}
+							hideLabelFromVision={true}
+							options={options}
+							value={attributes.snippet_id}
+							onChange={val => setAttributes({snippet_id: val})} />
+					</form>
+				</Placeholder>
+			</div>
+		}),
+
+		save: () => null,
+	});
 }(window.wp));
 
 
