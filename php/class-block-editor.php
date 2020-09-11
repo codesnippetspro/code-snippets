@@ -15,7 +15,7 @@ class Block_Editor {
 		wp_register_script(
 			'code-snippets-content-block-editor',
 			plugins_url( 'js/min/block.js', $file ),
-			array( 'wp-blocks', 'wp-element', 'wp-i18n', 'wp-components' ), $version
+			array( 'wp-blocks', 'wp-block-editor', 'wp-i18n', 'wp-components' ), $version
 		);
 		wp_set_script_translations( 'code-snippets-content-block-editor', 'code-snippets' );
 
@@ -42,15 +42,15 @@ class Block_Editor {
 	/**
 	 * Render the output of a content snippet block
 	 *
-	 * @param array  $atts    Block attributes.
-	 * @param string $content Block content (should be empty).
+	 * @param array  $atts          Block attributes.
+	 * @param string $block_content Block content (should be empty).
 	 *
 	 * @return string Block output.
 	 */
-	public function render_content( $atts, $content ) {
+	public function render_content( $atts, $block_content ) {
 
 		$atts = wp_parse_args( $atts, array(
-			'id'         => 0,
+			'snippet_id' => 0,
 			'network'    => false,
 			'php'        => false,
 			'format'     => false,
@@ -58,7 +58,7 @@ class Block_Editor {
 		) );
 
 		if ( ! $id = intval( $atts['snippet_id'] ) ) {
-			return '';
+			return '<pre>' . print_r( $atts, true ) . '</pre>';
 		}
 
 		$snippet = get_snippet( $id, $atts['network'] ? true : false );
