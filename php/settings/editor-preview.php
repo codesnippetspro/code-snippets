@@ -63,33 +63,24 @@ function enqueue_editor_preview_assets() {
 }
 
 /**
- * Render a theme select field
+ * Retrieve the list of code editor themes.
  *
- * @param array $atts Field attributes.
+ * @return array List of editor themes.
  */
-function render_editor_theme_select_field( $atts ) {
+function get_editor_theme_list() {
+	$themes = [];
 
-	$saved_value = get_setting( $atts['section'], $atts['id'] );
-
-	echo '<select name="code_snippets_settings[editor][theme]">';
-
-	// print a dropdown entry for each theme
 	foreach ( get_editor_themes() as $theme ) {
 
 		// skip mobile themes
-		if ( 'ambiance-mobile' === $theme ) {
+		if ( '-mobile' === substr( $theme, -7 ) ) {
 			continue;
 		}
 
-		printf(
-			'<option value="%s"%s>%s</option>',
-			esc_attr( $theme ),
-			selected( $theme, $saved_value, false ),
-			esc_html( ucwords( str_replace( '-', ' ', $theme ) ) )
-		);
+		$themes[ $theme ] = ucwords( str_replace( '-', ' ', $theme ) );
 	}
 
-	echo '</select>';
+	return $themes;
 }
 
 /**

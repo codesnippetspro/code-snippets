@@ -115,8 +115,8 @@ function get_settings_values() {
 /**
  * Retrieve an individual setting field value
  *
- * @param  string $section ID of the section the setting belongs to.
- * @param  string $field   ID of the setting field.
+ * @param string $section ID of the section the setting belongs to.
+ * @param string $field   ID of the setting field.
  *
  * @return array
  */
@@ -171,14 +171,8 @@ function register_plugin_settings() {
 	/* Register settings fields */
 	foreach ( get_settings_fields() as $section_id => $fields ) {
 		foreach ( $fields as $field_id => $field ) {
-			$atts = $field;
-			$atts['id'] = $field_id;
-			$atts['section'] = $section_id;
-
-			$atts['input_name'] = sprintf( 'code_snippets_settings[%s][%s]', $section_id, $field_id );
-
-			$callback = NS . 'render_' . $field['type'] . '_field';
-			add_settings_field( $field_id, $field['name'], $callback, 'code-snippets', $section_id, $atts );
+			$field_object = new Setting_Field( $section_id, $field_id, $field );
+			add_settings_field( $field_id, $field['name'], [ $field_object, 'render' ], 'code-snippets', $section_id );
 		}
 	}
 
