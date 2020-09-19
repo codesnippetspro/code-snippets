@@ -57,7 +57,7 @@ import './store';
 					<InspectorControls>
 						<PanelBody title={__('Processing Options', 'code-snippets')}>
 							<ToggleControl
-								label={__('Evaluate PHP code', 'code-snippets')}
+								label={__('Run PHP code', 'code-snippets')}
 								checked={attributes.php}
 								onChange={() => toggleAttribute('php')} />
 							<ToggleControl
@@ -65,7 +65,7 @@ import './store';
 								checked={attributes.format}
 								onChange={() => toggleAttribute('format')} />
 							<ToggleControl
-								label={__('Evaluate shortcode tags', 'code-snippets')}
+								label={__('Enable embedded shortcodes', 'code-snippets')}
 								checked={attributes.shortcodes}
 								onChange={() => toggleAttribute('shortcodes')} />
 						</PanelBody>
