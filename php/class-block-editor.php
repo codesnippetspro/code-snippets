@@ -29,7 +29,7 @@ class Block_Editor {
 		wp_register_script(
 			'code-snippets-content-block-editor',
 			plugins_url( 'js/min/block.js', $file ),
-			array( 'wp-blocks', 'wp-block-editor', 'wp-i18n', 'wp-components', 'wp-data', 'wp-element' ),
+			array( 'wp-blocks', 'wp-block-editor', 'wp-i18n', 'wp-components', 'wp-data', 'wp-element', 'wp-api-fetch', 'wp-server-side-render' ),
 			$version
 		);
 		wp_set_script_translations( 'code-snippets-content-block-editor', 'code-snippets' );

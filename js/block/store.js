@@ -1,5 +1,4 @@
 (function (wp) {
-	const {apiFetch} = wp;
 	const {registerStore} = wp.data;
 
 	const actions = {
@@ -24,7 +23,7 @@
 			}
 			return state;
 		},
-		actions: actions,
+		actions,
 		selectors: {
 			receiveSnippetsData(state) {
 				const {snippetsData} = state;
@@ -33,7 +32,7 @@
 		},
 		controls: {
 			RECEIVE_SNIPPETS_DATA(action) {
-				return apiFetch({path: action.path});
+				return wp.apiFetch({path: action.path});
 			},
 		},
 		resolvers: {
