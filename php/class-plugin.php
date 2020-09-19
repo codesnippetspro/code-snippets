@@ -107,7 +107,6 @@ class Plugin {
 		/* Settings component */
 		require_once $includes_path . '/settings/settings-fields.php';
 		require_once $includes_path . '/settings/editor-preview.php';
-		require_once $includes_path . '/settings/render-fields.php';
 		require_once $includes_path . '/settings/settings.php';
 
 		$this->rest_api = new REST_API();
