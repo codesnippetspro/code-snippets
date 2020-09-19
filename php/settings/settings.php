@@ -118,7 +118,7 @@ function get_settings_values() {
  * @param  string $section ID of the section the setting belongs to.
  * @param  string $field   ID of the setting field.
  *
- * @return array
+ * @return mixed
  */
 function get_setting( $section, $field ) {
 	$settings = get_settings_values();

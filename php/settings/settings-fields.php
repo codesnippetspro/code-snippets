@@ -79,11 +79,15 @@ function get_settings_fields() {
 			'default' => false,
 		],
 
-		'minify_css_js' => [
-			'name' => __( 'Minify CSS and JavaScript Snippets', 'code-snippets' ),
-			'type' => 'checkbox',
-			'label' => __( 'Minify CSS and JavaScript snippets by removing whitespace and optimising code to reduce load times.', 'code-snippets' ),
-			'default' => true,
+		'minify_output' => [
+			'name'    => __( 'Minify Snippet Output', 'code-snippets' ),
+			'type'    => 'checkboxes',
+			'options' => [
+				'css' => __( 'Styles (CSS)', 'code-snippets' ),
+				'js'  => __( 'Scripts (JS)', 'code-snippets' ),
+			],
+			'desc'    => __( 'Minify snippet output by removing whitespace and optimising code to reduce load times.', 'code-snippets' ),
+			'default' => array( 'css', 'js' ),
 		],
 
 		'complete_uninstall' => [

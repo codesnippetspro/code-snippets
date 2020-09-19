@@ -181,7 +181,8 @@ class Active_Snippets {
 		}
 
 		// minify the prepared code if the setting has been set
-		if ( Settings\get_setting( 'general', 'minify_css_js' ) ) {
+		$setting = Settings\get_setting( 'general', 'minify_output' );
+		if ( is_array( $setting ) && in_array( $type, $setting ) ) {
 			$minifier = 'css' === $type ? new Minify\CSS( $code ) : new Minify\JS( $code );
 			$code = $minifier->minify();
 		}
