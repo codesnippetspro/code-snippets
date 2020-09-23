@@ -3,7 +3,6 @@
 import fs from 'fs';
 import gulp from 'gulp';
 import sourcemaps from 'gulp-sourcemaps';
-import flatten from 'gulp-flatten';
 import rename from 'gulp-rename';
 
 import clean from 'gulp-clean';
@@ -21,12 +20,9 @@ import autoprefixer from 'autoprefixer';
 
 import imagemin from 'gulp-imagemin';
 
-import babelify from 'babelify';
-import browserify from 'browserify';
+import webpack from 'webpack-stream';
 import uglify from 'gulp-uglify';
 import eslint from 'gulp-eslint';
-import source from 'vinyl-source-stream';
-import buffer from 'vinyl-buffer';
 
 import makepot from 'gulp-wp-pot';
 import gettext from 'gulp-gettext'
@@ -98,35 +94,14 @@ gulp.task('test-js', () => {
 		.pipe(eslint.failAfterError())
 });
 
-function bundlejs(file, babel_config) {
-	const b = browserify({
-		debug: true,
-		entries: file
-	});
 
-	b.transform('babelify', {sourceMaps: true, ...babel_config, presets: ['@babel/preset-env']});
-
-	return b.bundle()
-		.pipe(source(file))
-		.pipe(buffer())
+gulp.task('js', gulp.series('test-js', () =>
+	gulp.src(src_files.js)
+		.pipe(webpack(require('./webpack.config.js')))
 		.pipe(sourcemaps.init())
 		.pipe(uglify())
 		.pipe(sourcemaps.write('.'))
-		.pipe(flatten())
-		.pipe(gulp.dest('js/min'));
-}
-
-gulp.task('js', gulp.series('test-js', gulp.parallel(
-	() => bundlejs('js/manage.js'),
-	() => bundlejs('js/edit/edit.js'),
-	() => bundlejs('js/edit/tags.js'),
-	() => bundlejs('js/settings/settings.js'),
-	() => bundlejs('js/mce.js'),
-	() => bundlejs('js/block/block.js'),
-	() => bundlejs('js/front-end.js', {
-		plugins: [['prismjs', {languages: ['php', 'php-extras'], plugins: ['line-highlight', 'line-numbers']}]]
-	})
-)));
+		.pipe(gulp.dest('js/min'))));
 
 gulp.task('images', () =>
 	gulp.src('screenshots/**/*')

@@ -35,6 +35,7 @@
         "codemirror": "~5.29.0",
         "php-parser": "^3.0.1",
         "prismjs": "^1.21.0",
+        "react-select": "^3.1.0",
         "tag-it": "^2.0.0"
     },
     "devDependencies": {
@@ -43,9 +44,8 @@
         "@babel/preset-react": "^7.10.4",
         "@babel/register": "^7.11.5",
         "autoprefixer": "^9.8.6",
+        "babel-loader": "^8.1.0",
         "babel-plugin-prismjs": "^2.0.1",
-        "babelify": "^10.0.0",
-        "browserify": "^16.5.2",
         "csslint": "^1.0.5",
         "cssnano": "^4.1.10",
         "gulp": "^4.0.2",
@@ -55,7 +55,6 @@
         "gulp-composer": "^0.4.5",
         "gulp-copy": "^4.0.1",
         "gulp-eslint": "^6.0.0",
-        "gulp-flatten": "^0.4.0",
         "gulp-gettext": "^0.3.0",
         "gulp-imagemin": "^7.1.0",
         "gulp-phpcs": "^3.1.0",
@@ -72,8 +71,7 @@
         "postcss-easy-import": "^3.0.0",
         "postcss-hexrgba": "^2.0.1",
         "postcss-import": "^12.0.1",
-        "vinyl-buffer": "^1.0.1",
-        "vinyl-source-stream": "^2.0.0"
+        "webpack-stream": "^6.1.0"
     },
     "babel": {
         "presets": [

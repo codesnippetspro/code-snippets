@@ -1,10 +1,11 @@
 import './store';
+import Select from 'react-select';
 
-(function (wp) {
+(function (wp, $) {
 	const {__, _x} = wp.i18n;
 	const {registerBlockType} = wp.blocks;
 	const {withSelect} = wp.data;
-	const {PanelBody, ToggleControl, SelectControl, Placeholder} = wp.components;
+	const {PanelBody, ToggleControl, Placeholder} = wp.components;
 	const {InspectorControls} = wp.blockEditor;
 	const {serverSideRender: ServerSideRender} = wp;
 
@@ -30,25 +31,19 @@ import './store';
 		(({attributes, setAttributes, snippets}) => {
 			const toggleAttribute = (attribute) => setAttributes({[attribute]: !attributes[attribute]});
 
-			let options = [{
-				value: 0,
-				label: __('Select a snippet to display', 'code-snippets'),
-				disabled: true,
-			}];
-
 			const renderBlock = () =>
 				<ServerSideRender
 					block="code-snippets/content"
 					attributes={attributes} />;
 
+			let options = [];
 			for (let i = 0; i < snippets.length; i++) {
 				const snippet = snippets[i];
 
 				if ('html' === snippet['type']) {
 					options.push({
 						value: snippet['id'],
-						label: snippet['name'],
-						disabled: false
+						label: snippet['name']
 					});
 				}
 			}
@@ -75,13 +70,12 @@ import './store';
 				{attributes.snippet_id === 0 &&
 				<Placeholder className='code-snippets-content-block' icon='shortcode' label={__('Content Snippet', 'code-snippets')}>
 					<form>
-						<SelectControl
+						<Select
+							name='snippet-select'
 							className='code-snippets-large-select'
-							label={__('Select snippet:')}
-							hideLabelFromVision={true}
 							options={options}
 							value={attributes.snippet_id}
-							onChange={val => setAttributes({snippet_id: val})} />
+							onChange={option => setAttributes({snippet_id: option.value})} />
 					</form>
 				</Placeholder>
 				|| renderBlock()}
@@ -90,6 +84,6 @@ import './store';
 
 		save: () => null,
 	});
-}(window.wp));
+}(window.wp, window.jQuery));
 
 
