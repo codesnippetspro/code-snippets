@@ -1,7 +1,7 @@
 import './store';
 import Select from 'react-select';
 
-(function (wp, $) {
+(function (wp) {
 	const {__, _x} = wp.i18n;
 	const {registerBlockType} = wp.blocks;
 	const {withSelect} = wp.data;
@@ -12,7 +12,7 @@ import Select from 'react-select';
 	registerBlockType('code-snippets/content', {
 		title: __('Content Snippet', 'code-snippet'),
 		description: __('Include a content code snippet in the post.', 'code-snippet'),
-		category: 'widgets',
+		category: 'code-snippets',
 		icon: 'shortcode',
 		supports: {
 			html: false,
@@ -75,6 +75,7 @@ import Select from 'react-select';
 							className='code-snippets-large-select'
 							options={options}
 							value={attributes.snippet_id}
+							placeholder={__('Select a snippet to insert…', 'code-snippets')}
 							onChange={option => setAttributes({snippet_id: option.value})} />
 					</form>
 				</Placeholder>
@@ -84,6 +85,6 @@ import Select from 'react-select';
 
 		save: () => null,
 	});
-}(window.wp, window.jQuery));
+}(window.wp));
 
 

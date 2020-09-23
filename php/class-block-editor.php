@@ -14,9 +14,12 @@ class Block_Editor {
 	 */
 	public function __construct() {
 
-		if ( function_exists( 'register_block_type' ) ) {
-			add_action( 'init', array( $this, 'init' ) );
+		if ( ! function_exists( 'register_block_type' ) ) {
+			return;
 		}
+
+		add_action( 'init', array( $this, 'init' ) );
+		add_filter( 'block_categories', array( $this, 'block_categories' ) );
 	}
 
 	/**
@@ -55,6 +58,34 @@ class Block_Editor {
 				'shortcodes' => [ 'type' => 'boolean', 'default' => false ],
 			),
 		) );
+	}
+
+	/**
+	 * Register a new block category for this plugin.
+	 *
+	 * @param array $categories Block categories.
+	 *
+	 * @return array Modified block categories.
+	 */
+	public function block_categories( $categories ) {
+		$position = -1;
+
+		foreach ( $categories as $index => $category ) {
+			if ( 'widgets' === $category['slug'] ) {
+				$position = $index;
+				break;
+			}
+		}
+
+		$category = array(
+			'slug'  => 'code-snippets',
+			'title' => __( 'Code Snippets', 'code-snippets' ),
+			'icon'  => null,
+		);
+
+		array_splice( $categories, $position, 0, array( $category ) );
+
+		return $categories;
 	}
 
 	/**
