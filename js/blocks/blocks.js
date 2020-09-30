@@ -16,26 +16,6 @@ import Select from 'react-select';
 	const fetchSnippets = () =>
 		withSelect(select => ({snippets: select('code-snippets/snippets-data').receiveSnippetsData()}));
 
-	/**
-	 * Create a list of Select options from an array of snippets.
-	 * @param {[Object]} snippets
-	 * @param {String} type
-	 * @returns {[Object]}
-	 */
-	const buildOptions = (snippets, type) => {
-		let options = [];
-
-		for (let i = 0; i < snippets.length; i++) {
-			if ('' === type || type === snippets[i]['type']) {
-				options.push({
-					value: snippets[i]['id'],
-					label: snippets[i]['name']
-				});
-			}
-		}
-		return options;
-	};
-
 	registerBlockType('code-snippets/content', {
 		title: __('Content Snippet', 'code-snippet'),
 		description: __('Include a content code snippet in the post.', 'code-snippet'),
@@ -56,6 +36,12 @@ import Select from 'react-select';
 				<ServerSideRender
 					block="code-snippets/content"
 					attributes={attributes} />;
+
+			let options = [];
+			for (let i = 0; i < snippets.length; i++) {
+				if ('html' !== snippets[i]['type']) continue;
+				options.push({value: snippets[i]['id'], label: snippets[i]['name']});
+			}
 
 			return <div>
 				{
@@ -83,7 +69,7 @@ import Select from 'react-select';
 						<Select
 							name='snippet-select'
 							className='code-snippets-large-select'
-							options={buildOptions(snippets, 'html')}
+							options={options}
 							value={attributes.snippet_id}
 							placeholder={__('Select a snippet to insert…', 'code-snippets')}
 							onChange={option => setAttributes({snippet_id: option.value})} />
@@ -105,15 +91,46 @@ import Select from 'react-select';
 			snippet_id: {type: 'integer', default: 0},
 			network: {type: 'boolean', default: false},
 		},
-		edit: fetchSnippets()(({attributes, setAttributes, snippets}) =>
-			<div>
+		edit: fetchSnippets()(({attributes, setAttributes, snippets}) => {
+
+			const buildOptions = () => {
+				let categories = {
+					php: {label: __('Functions (PHP)', 'code-snippets'), options: []},
+					html: {label: __('Content (Mixed)', 'code-snippets'), options: []},
+					css: {label: __('Styles (CSS)', 'code-snippets'), options: []},
+					js: {label: __('Scripts (JS)', 'code-snippets'), options: []}
+				};
+
+				// sort the snippets into the appropriate categories
+				for (let i = 0; i < snippets.length; i++) {
+					if (categories.hasOwnProperty(snippets[i]['type'])) {
+						categories[snippets[i]['type']]['options'].push({
+							value: snippets[i]['id'],
+							label: snippets[i]['name']
+						});
+					}
+				}
+
+				// convert the object into an array for use with the select library
+				let options = [];
+				for (let category in categories) {
+					if (categories.hasOwnProperty(category)) {
+						options.push(categories[category]);
+					}
+				}
+
+				return options;
+			};
+
+			return <div>
 				{attributes.snippet_id === 0 &&
-				<Placeholder className='code-snippets-source-block' icon='shortcode' label={__('Snippet Source Code', 'code-snippets')}>
+				<Placeholder className='code-snippets-source-block' icon='shortcode'
+				             label={__('Snippet Source Code', 'code-snippets')}>
 					<form>
 						<Select
 							name='snippet-select'
 							className='code-snippets-large-select'
-							options={buildOptions(snippets, '')}
+							options={buildOptions()}
 							value={attributes.snippet_id}
 							placeholder={__('Select a snippet to display…', 'code-snippets')}
 							onChange={option => setAttributes({snippet_id: option.value})} />
@@ -123,8 +140,8 @@ import Select from 'react-select';
 				<ServerSideRender
 					block="code-snippets/source"
 					attributes={attributes} />}
-			</div>
-		),
+			</div>;
+		}),
 		save: () => null,
 	});
 
