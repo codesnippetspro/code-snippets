@@ -20,6 +20,11 @@ class Shortcodes {
 	const CONTENT_TAG = 'code_snippet';
 
 	/**
+	 * Handle to use for front-end scripts and styles.
+	 */
+	const ASSET_HANDLE = 'code-snippets-front-end';
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
@@ -71,36 +76,39 @@ class Shortcodes {
 		}
 
 		// loop through all the posts, checking for instances where the source tag is used
-		$found = false;
 		foreach ( $posts as $post ) {
-			if ( false !== stripos( $post->post_content, '[' . self::SOURCE_TAG ) ||
-			     function_exists( 'has_block' ) && has_block( 'code-snippets/source', $post ) ) {
-				$found = true;
-				break;
+			if ( false === stripos( $post->post_content, '[' . self::SOURCE_TAG ) &&
+			     ! ( function_exists( 'has_block' ) && has_block( 'code-snippets/source', $post ) ) ) {
+				continue;
 			}
+
+			// register the syntax highlighter assets and exit from the loop once a match is discovered
+			$this->register_prism_assets();
+			wp_enqueue_style( self::ASSET_HANDLE );
+			wp_enqueue_script( self::ASSET_HANDLE );
+			break;
 		}
 
-		// exit now if there are no matching posts
-		if ( ! $found ) {
-			return $posts;
-		}
+		return $posts;
+	}
 
-		// otherwise, enqueue the highlighter assets
+	/**
+	 * Enqueue the styles and scripts for the Prism syntax highlighter.
+	 */
+	public function register_prism_assets() {
 		$plugin = code_snippets();
 
-		wp_enqueue_style(
-			'code-snippets-front-end',
+		wp_register_style(
+			self::ASSET_HANDLE,
 			plugins_url( 'css/min/front-end.css', $plugin->file ),
 			array(), $plugin->version
 		);
 
 		wp_enqueue_script(
-			'code-snippets-front-end',
+			self::ASSET_HANDLE,
 			plugins_url( 'js/min/front-end.js', $plugin->file ),
 			array(), $plugin->version, true
 		);
-
-		return $posts;
 	}
 
 	/**

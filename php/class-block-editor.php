@@ -28,13 +28,19 @@ class Block_Editor {
 		$version = code_snippets()->version;
 		$file = code_snippets()->file;
 
+		$prism_dep = [];
+		if ( ! Settings\get_setting( 'general', 'disable_prism' ) ) {
+			code_snippets()->shortcode->register_prism_assets();
+			$prism_dep = [ Shortcodes::ASSET_HANDLE ];
+		}
+
 		wp_register_script(
 			'code-snippets-block-editor',
 			plugins_url( 'js/min/blocks.js', $file ),
 			[
 				'wp-blocks', 'wp-block-editor', 'wp-i18n', 'wp-components', 'wp-data', 'wp-element',
 				'wp-api-fetch', 'wp-server-side-render', 'react-dom',
-			],
+			] + $prism_dep,
 			$version
 		);
 		wp_set_script_translations( 'code-snippets-content-block-editor', 'code-snippets' );
@@ -42,7 +48,7 @@ class Block_Editor {
 		wp_register_style(
 			'code-snippets-block-editor',
 			plugins_url( 'css/min/block-editor.css', $file ),
-			array(), $version
+			$prism_dep, $version
 		);
 
 		register_block_type( 'code-snippets/content', array(
