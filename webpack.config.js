@@ -8,7 +8,7 @@ module.exports = {
 		'tags': './js/edit/tags.js',
 		'settings': './js/settings/settings.js',
 		'mce': './js/mce.js',
-		'block': './js/block/block.js',
+		'blocks': './js/blocks/blocks.js',
 		'front-end': './js/front-end.js',
 	},
 	output: {

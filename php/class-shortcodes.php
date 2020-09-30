@@ -101,6 +101,19 @@ class Shortcodes {
 	}
 
 	/**
+	 * Print a message to the user if the snippet ID attribute is invalid.
+	 *
+	 * @param int $id Snippet ID
+	 *
+	 * @return string Warning message.
+	 */
+	private function invalid_id_warning( $id ) {
+		/* translators: %d: snippet ID */
+		$text = esc_html__( 'Could not load snippet with an invalid ID: %d.', 'code-snippets' );
+		return current_user_can( 'edit_posts' ) ? sprintf( $text, intval( $id ) ) : '';
+	}
+
+	/**
 	 * Render the value of a content shortcode
 	 *
 	 * @param array $atts Shortcode attributes.
@@ -112,6 +125,7 @@ class Shortcodes {
 		$atts = shortcode_atts(
 			array(
 				'id'         => 0,
+				'snippet_id' => 0,
 				'network'    => false,
 				'php'        => false,
 				'format'     => false,
@@ -120,8 +134,9 @@ class Shortcodes {
 			$atts, self::CONTENT_TAG
 		);
 
-		if ( ! $id = intval( $atts['id'] ) ) {
-			return '';
+		$id = intval( $atts['snippet_id'] );
+		if ( ! $id && ! $id = intval( $atts['id'] ) ) {
+			return $this->invalid_id_warning( $id );
 		}
 
 		$snippet = get_snippet( $id, $atts['network'] ? true : false );
@@ -147,15 +162,11 @@ class Shortcodes {
 		}
 
 		if ( $atts['shortcodes'] ) {
-
 			// remove this shortcode from the list to prevent recursion
 			remove_shortcode( self::CONTENT_TAG );
 
 			// evaluate shortcodes
-			if ( $atts['format'] ) {
-				$content = shortcode_unautop( $content );
-			}
-			$content = do_shortcode( $content );
+			$content = do_shortcode( $atts['format'] ? shortcode_unautop( $content ) : $content );
 
 			// add this shortcode back to the list
 			add_shortcode( self::CONTENT_TAG, [ $this, 'render_content_shortcode' ] );
@@ -203,14 +214,16 @@ class Shortcodes {
 		$atts = shortcode_atts(
 			array(
 				'id'           => 0,
+				'snippet_id'   => 0,
 				'network'      => false,
 				'line_numbers' => false,
 			),
 			$atts, self::SOURCE_TAG
 		);
 
-		if ( ! $id = intval( $atts['id'] ) ) {
-			return '';
+		$id = intval( $atts['snippet_id'] );
+		if ( ! $id && ! $id = intval( $atts['id'] ) ) {
+			return $this->invalid_id_warning( $id );
 		}
 
 		$snippet = get_snippet( $id, $atts['network'] ? true : false );
