@@ -65,24 +65,27 @@ class Shortcodes {
 	 */
 	public function enqueue_highlighting( $posts ) {
 
+		// exit early if there are no posts to check or if the highlighter has been disabled
 		if ( empty( $posts ) || Settings\get_setting( 'general', 'disable_prism' ) ) {
 			return $posts;
 		}
 
+		// loop through all the posts, checking for instances where the source tag is used
 		$found = false;
-
 		foreach ( $posts as $post ) {
-
-			if ( false !== stripos( $post->post_content, '[' . self::SOURCE_TAG ) ) {
+			if ( false !== stripos( $post->post_content, '[' . self::SOURCE_TAG ) ||
+			     function_exists( 'has_block' ) && has_block( 'code-snippets/source', $post ) ) {
 				$found = true;
 				break;
 			}
 		}
 
+		// exit now if there are no matching posts
 		if ( ! $found ) {
 			return $posts;
 		}
 
+		// otherwise, enqueue the highlighter assets
 		$plugin = code_snippets();
 
 		wp_enqueue_style(
