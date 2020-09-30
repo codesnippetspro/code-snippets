@@ -49,7 +49,8 @@ if ( ! $snippet->id ) {
 	<?php $this->print_messages(); ?>
 
 	<form method="post" id="snippet-form" action="" class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"
-	      data-snippet-type="<?php echo esc_attr( $snippet->type ); ?>">
+	      data-snippet-type="<?php echo esc_attr( $snippet->type ); ?>"
+	      data-submit-warning="<?php esc_attr_e( 'This snippet has no code or title. Continue?', 'code-snippets' ); ?>">
 		<?php
 		/* Output the hidden fields */
 
