@@ -7,17 +7,17 @@ namespace Code_Snippets;
  *
  * @package Code_Snippets
  */
-class Shortcodes {
+class Frontend {
 
 	/**
 	 * Name of the shortcode tag for rendering the code source
 	 */
-	const SOURCE_TAG = 'code_snippet_source';
+	const SOURCE_SHORTCODE = 'code_snippet_source';
 
 	/**
 	 * Name of the shortcode tag for rendering content snippets
 	 */
-	const CONTENT_TAG = 'code_snippet';
+	const CONTENT_SHORTCODE = 'code_snippet';
 
 	/**
 	 * Handle to use for front-end scripts and styles.
@@ -28,8 +28,8 @@ class Shortcodes {
 	 * Class constructor
 	 */
 	public function __construct() {
-		add_shortcode( self::CONTENT_TAG, [ $this, 'render_content_shortcode' ] );
-		add_shortcode( self::SOURCE_TAG, [ $this, 'render_source_shortcode' ] );
+		add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
+		add_shortcode( self::SOURCE_SHORTCODE, [ $this, 'render_source_shortcode' ] );
 		add_action( 'the_posts', [ $this, 'enqueue_highlighting' ] );
 		add_action( 'init', [ $this, 'setup_mce_plugin' ] );
 	}
@@ -56,7 +56,7 @@ class Shortcodes {
 
 		/* Add the translation strings to the TinyMCE editor */
 		add_filter( 'mce_external_languages', function ( $languages ) {
-			$languages['code_snippets'] = __DIR__ . '/strings/mce.php';
+			$languages['code_snippets'] = __DIR__ . 'mce-strings.php';
 			return $languages;
 		} );
 	}
@@ -77,7 +77,8 @@ class Shortcodes {
 
 		// loop through all the posts, checking for instances where the source tag is used
 		foreach ( $posts as $post ) {
-			if ( false === stripos( $post->post_content, '[' . self::SOURCE_TAG ) &&
+
+			if ( false === stripos( $post->post_content, '[' . self::SOURCE_SHORTCODE ) &&
 			     ! ( function_exists( 'has_block' ) && has_block( 'code-snippets/source', $post ) ) ) {
 				continue;
 			}
@@ -142,7 +143,7 @@ class Shortcodes {
 				'format'     => false,
 				'shortcodes' => false,
 			),
-			$atts, self::CONTENT_TAG
+			$atts, self::CONTENT_SHORTCODE
 		);
 
 		$id = intval( $atts['snippet_id'] );
@@ -174,13 +175,13 @@ class Shortcodes {
 
 		if ( $atts['shortcodes'] ) {
 			// remove this shortcode from the list to prevent recursion
-			remove_shortcode( self::CONTENT_TAG );
+			remove_shortcode( self::CONTENT_SHORTCODE );
 
 			// evaluate shortcodes
 			$content = do_shortcode( $atts['format'] ? shortcode_unautop( $content ) : $content );
 
 			// add this shortcode back to the list
-			add_shortcode( self::CONTENT_TAG, [ $this, 'render_content_shortcode' ] );
+			add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
 		}
 
 		return $content;
@@ -229,7 +230,7 @@ class Shortcodes {
 				'network'      => false,
 				'line_numbers' => false,
 			),
-			$atts, self::SOURCE_TAG
+			$atts, self::SOURCE_SHORTCODE
 		);
 
 		$id = intval( $atts['snippet_id'] );

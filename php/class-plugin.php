@@ -38,11 +38,11 @@ class Plugin {
 	public $admin;
 
 	/**
-	 * Shortcodes class
+	 * Front-end functionality class
 	 *
-	 * @var Shortcodes
+	 * @var Frontend
 	 */
-	public $shortcode;
+	public $frontend;
 
 	/**
 	 * Class for managing active snippets
@@ -117,7 +117,7 @@ class Plugin {
 
 		$this->rest_api = new REST_API();
 		$this->active_snippets = new Active_Snippets();
-		$this->shortcode = new Shortcodes();
+		$this->frontend = new Frontend();
 		$this->block_editor = new Block_Editor();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
