@@ -9,7 +9,7 @@ module.exports = {
 		'settings': './js/settings/settings.js',
 		'mce': './js/mce.js',
 		'blocks': './js/blocks/blocks.js',
-		'front-end': './js/front-end.js',
+		'prism': './js/prism.js',
 		'elementor': './js/elementor.js'
 	},
 	output: {

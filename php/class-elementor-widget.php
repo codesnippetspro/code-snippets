@@ -62,7 +62,7 @@ class Elementor_Source_Widget extends Elementor_Widget {
 			wp_register_script(
 				'code-snippets-elementor',
 				plugins_url( 'js/min/elementor.js', code_snippets()->file ),
-				[ 'elementor-frontend', Shortcodes::ASSET_HANDLE ],
+				[ 'elementor-frontend', Shortcodes::PRISM_HANDLE ],
 				code_snippets()->version, true
 			);
 		}
@@ -81,7 +81,7 @@ class Elementor_Source_Widget extends Elementor_Widget {
 	 * @return array
 	 */
 	public function get_style_depends() {
-		return $this->prism_enabled ? [ Shortcodes::ASSET_HANDLE ] : [];
+		return $this->prism_enabled ? [ Shortcodes::PRISM_HANDLE ] : [];
 	}
 
 	/**

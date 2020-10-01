@@ -22,7 +22,7 @@ class Shortcodes {
 	/**
 	 * Handle to use for front-end scripts and styles.
 	 */
-	const ASSET_HANDLE = 'code-snippets-front-end';
+	const PRISM_HANDLE = 'code-snippets-prism';
 
 	/**
 	 * Class constructor
@@ -84,8 +84,8 @@ class Shortcodes {
 
 			// register the syntax highlighter assets and exit from the loop once a match is discovered
 			$this->register_prism_assets();
-			wp_enqueue_style( self::ASSET_HANDLE );
-			wp_enqueue_script( self::ASSET_HANDLE );
+			wp_enqueue_style( self::PRISM_HANDLE );
+			wp_enqueue_script( self::PRISM_HANDLE );
 			break;
 		}
 
@@ -99,14 +99,14 @@ class Shortcodes {
 		$plugin = code_snippets();
 
 		wp_register_style(
-			self::ASSET_HANDLE,
-			plugins_url( 'css/min/front-end.css', $plugin->file ),
+			self::PRISM_HANDLE,
+			plugins_url( 'css/min/prism.css', $plugin->file ),
 			array(), $plugin->version
 		);
 
 		wp_enqueue_script(
-			self::ASSET_HANDLE,
-			plugins_url( 'js/min/front-end.js', $plugin->file ),
+			self::PRISM_HANDLE,
+			plugins_url( 'js/min/prism.js', $plugin->file ),
 			array(), $plugin->version, true
 		);
 	}

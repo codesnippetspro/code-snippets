@@ -31,7 +31,7 @@ class Block_Editor {
 		$prism_dep = [];
 		if ( ! Settings\get_setting( 'general', 'disable_prism' ) ) {
 			code_snippets()->shortcode->register_prism_assets();
-			$prism_dep = [ Shortcodes::ASSET_HANDLE ];
+			$prism_dep = [ Shortcodes::PRISM_HANDLE ];
 		}
 
 		wp_register_script(
