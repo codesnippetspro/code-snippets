@@ -160,12 +160,33 @@ class Elementor_Content_Widget extends Elementor_Widget {
 
 		$this->add_control( 'snippet_id', [
 			'label'       => __( 'Snippet', 'code-snippets' ),
-			'type'        => 'select2',
+			'type'        => Controls_Manager::SELECT2,
 			'options'     => $this->build_snippet_options(),
 			'default'     => 0,
 			'show_label'  => false,
 			'label_block' => true,
 		] );
+
+		$this->end_controls_section();
+
+		$this->start_controls_section( 'display_options', [
+			'label' => __( 'Processing Options', 'code-snippets' ),
+			'tab'   => Controls_Manager::TAB_CONTENT,
+		] );
+
+		$switchers = [
+			'php' => __( 'Run PHP code', 'code-snippets' ),
+			'format' => __('Add paragraphs and formatting', 'code-snippets'),
+			'shortcodes' => __('Enable embedded shortcodes', 'code-snippets'),
+		];
+
+		foreach ( $switchers as $control_id => $control_label ) {
+			$this->add_control( $control_id, [
+				'label'       => $control_label,
+				'type'        => Controls_Manager::SWITCHER,
+				'default'     => false,
+			] );
+		}
 
 		$this->end_controls_section();
 	}
