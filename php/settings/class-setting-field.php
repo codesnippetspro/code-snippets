@@ -160,7 +160,7 @@ class Setting_Field {
 	 */
 	function render_checkboxes_field() {
 		$saved_value = $this->get_saved_value();
-		$saved_value = is_array( $saved_value ) ? $saved_value : $this->default;
+		$saved_value = is_array( $saved_value ) ? $saved_value : [];
 
 		echo '<fieldset>';
 		printf( '<legend class="screen-reader-text"><span>%s</span></legend>', esc_html( $this->name ) );

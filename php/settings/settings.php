@@ -88,20 +88,9 @@ function get_settings_values() {
 	$saved = get_self_option( are_settings_unified(), 'code_snippets_settings', array() );
 
 	/* Replace the default field values with the ones saved in the database */
-	if ( function_exists( 'array_replace_recursive' ) ) {
-
-		/* Use the much more efficient array_replace_recursive() function in PHP 5.3 and later */
-		$settings = array_replace_recursive( $settings, $saved );
-	} else {
-
-		/* Otherwise, do it manually */
-		foreach ( $settings as $section => $fields ) {
-			foreach ( $fields as $field => $value ) {
-
-				if ( isset( $saved[ $section ][ $field ] ) ) {
-					$settings[ $section ][ $field ] = $saved[ $section ][ $field ];
-				}
-			}
+	foreach ( $settings as $section => $fields ) {
+		if ( isset( $saved[ $section ] ) ) {
+			$settings[ $section ] = array_replace( $settings[ $section ], $saved[ $section ] );
 		}
 	}
 
@@ -233,6 +222,7 @@ function sanitize_setting_value( $field, $input_value ) {
 					}
 				}
 			}
+
 			return $results;
 
 		case 'text':
