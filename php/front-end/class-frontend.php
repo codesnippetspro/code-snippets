@@ -25,13 +25,29 @@ class Frontend {
 	const PRISM_HANDLE = 'code-snippets-prism';
 
 	/**
+	 * Class for managing integration with the Elementor plugin.
+	 * @var Elementor
+	 */
+	protected $elementor;
+
+	/**
+	 * Class for handling the Gutenberg block..
+	 * @var Block_Editor
+	 */
+	public $block_editor;
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
-		add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
-		add_shortcode( self::SOURCE_SHORTCODE, [ $this, 'render_source_shortcode' ] );
+		$this->elementor = new Elementor();
+		$this->block_editor = new Block_Editor();
+
 		add_action( 'the_posts', [ $this, 'enqueue_highlighting' ] );
 		add_action( 'init', [ $this, 'setup_mce_plugin' ] );
+
+		add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
+		add_shortcode( self::SOURCE_SHORTCODE, [ $this, 'render_source_shortcode' ] );
 	}
 
 	/**

@@ -57,12 +57,12 @@ class Elementor_Source_Widget extends Elementor_Widget {
 
 		if ( ! Settings\get_setting( 'general', 'disable_prism' ) ) {
 			$this->prism_enabled = true;
-			Shortcodes::register_prism_assets();
+			Frontend::register_prism_assets();
 
 			wp_register_script(
 				'code-snippets-elementor',
 				plugins_url( 'js/min/elementor.js', code_snippets()->file ),
-				[ 'elementor-frontend', Shortcodes::PRISM_HANDLE ],
+				[ 'elementor-frontend', Frontend::PRISM_HANDLE ],
 				code_snippets()->version, true
 			);
 		}
@@ -81,7 +81,7 @@ class Elementor_Source_Widget extends Elementor_Widget {
 	 * @return array
 	 */
 	public function get_style_depends() {
-		return $this->prism_enabled ? [ Shortcodes::PRISM_HANDLE ] : [];
+		return $this->prism_enabled ? [ Frontend::PRISM_HANDLE ] : [];
 	}
 
 	/**
@@ -150,7 +150,7 @@ class Elementor_Source_Widget extends Elementor_Widget {
 		if ( ! isset( $settings['snippet_id'] ) || 0 === intval( $settings['snippet_id'] ) ) {
 			echo '<p>', esc_html__( 'Select a snippet to display', 'code-snippets' ), '</p>';
 		} else {
-			echo code_snippets()->shortcode->render_source_shortcode( $settings );
+			echo code_snippets()->frontend->render_source_shortcode( $settings );
 		}
 	}
 }
@@ -247,7 +247,7 @@ class Elementor_Content_Widget extends Elementor_Widget {
 		if ( ! isset( $settings['snippet_id'] ) || 0 === intval( $settings['snippet_id'] ) ) {
 			echo '<p>', esc_html__( 'Select a snippet to show', 'code-snippets' ), '</p>';
 		} else {
-			echo code_snippets()->shortcode->render_content_shortcode( $settings );
+			echo code_snippets()->frontend->render_content_shortcode( $settings );
 		}
 	}
 }

@@ -52,23 +52,11 @@ class Plugin {
 	public $active_snippets;
 
 	/**
-	 * Class for handling the Gutenberg block..
-	 * @var Block_Editor
-	 */
-	public $block_editor;
-
-	/**
 	 * Class for providing REST API endpoints for snippet data.
 	 *
 	 * @var REST_API
 	 */
 	protected $rest_api;
-
-	/**
-	 * Class for managing integration with the Elementor plugin.
-	 * @var Elementor
-	 */
-	protected $elementor;
 
 	/**
 	 * Class constructor
@@ -118,13 +106,9 @@ class Plugin {
 		$this->rest_api = new REST_API();
 		$this->active_snippets = new Active_Snippets();
 		$this->frontend = new Frontend();
-		$this->block_editor = new Block_Editor();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
-
-		/* Other integrations */
-		$this->elementor = new Elementor();
 	}
 
 	/**

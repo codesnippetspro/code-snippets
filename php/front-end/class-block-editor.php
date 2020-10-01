@@ -30,8 +30,8 @@ class Block_Editor {
 
 		$prism_dep = [];
 		if ( ! Settings\get_setting( 'general', 'disable_prism' ) ) {
-			code_snippets()->shortcode->register_prism_assets();
-			$prism_dep = [ Shortcodes::PRISM_HANDLE ];
+			code_snippets()->frontend->register_prism_assets();
+			$prism_dep = [ Frontend::PRISM_HANDLE ];
 		}
 
 		wp_register_script(
@@ -111,7 +111,7 @@ class Block_Editor {
 	 * @return string Block output.
 	 */
 	public function render_content( $attributes ) {
-		return code_snippets()->shortcode->render_content_shortcode( $attributes );
+		return code_snippets()->frontend->render_content_shortcode( $attributes );
 	}
 
 	/**
@@ -122,6 +122,6 @@ class Block_Editor {
 	 * @return string Block output.
 	 */
 	public function render_source( $attributes ) {
-		return code_snippets()->shortcode->render_source_shortcode( $attributes );
+		return code_snippets()->frontend->render_source_shortcode( $attributes );
 	}
 }
