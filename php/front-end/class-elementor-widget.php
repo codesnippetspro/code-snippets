@@ -107,10 +107,18 @@ class Elementor_Source_Widget extends Elementor_Widget {
 		$snippets = get_snippets();
 		$options = [];
 
+		$labels = [
+			'php'  => __( 'Functions (PHP)', 'code-snippets' ),
+			'html' => __( 'Content (Mixed)', 'code-snippets' ),
+			'css'  => __( 'Styles (CSS)', 'code-snippets' ),
+			'js'   => __( 'Scripts (JS)', 'code-snippets' ),
+		];
+
 		/** @var Snippet $snippet */
 		foreach ( $snippets as $snippet ) {
-			if ( ! isset( $options[ $snippet->full_type_desc ] ) ) {
-				$options[ $snippet->full_type_desc ] = [];
+			$group = $labels[ $snippet->type ];
+			if ( ! isset( $options[ $group ] ) ) {
+				$options[ $group ] = [];
 			}
 
 			$options[ $snippet->full_type_desc ][ $snippet->id ] = $snippet->name;

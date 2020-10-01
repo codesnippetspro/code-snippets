@@ -30,7 +30,6 @@ use DateTimeZone;
  * @property-read int      $modified_timestamp      The last modification date in Unix timestamp format.
  * @property-read DateTime $modified_local          The last modification date in the local timezone.
  * @property-read string   $type_desc               Human-readable description of the snippet type.
- * @property-read string   $full_type_desc          Full Human-readable description of the snippet type.
  */
 class Snippet {
 
@@ -342,17 +341,6 @@ class Snippet {
 		}
 
 		return 'php';
-	}
-
-	private function get_full_type_desc() {
-		$labels = [
-			'php'  => __( 'Functions (PHP)', 'code-snippets' ),
-			'html' => __( 'Content (Mixed)', 'code-snippets' ),
-			'css'  => __( 'Styles (CSS)', 'code-snippets' ),
-			'js'   => __( 'Scripts (JS)', 'code-snippets' ),
-		];
-
-		return isset( $labels[ $this->type ] ) ? $labels[ $this->type ] : strtoupper( $this->type );
 	}
 
 	private function get_type_desc() {
