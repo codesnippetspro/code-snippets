@@ -15,7 +15,7 @@ import '../php-lint';
 
 			let value = (() => {
 				switch (setting.type) {
-					case 'editor_theme_select':
+					case 'select':
 						return element.options[element.selectedIndex].value;
 					case 'checkbox':
 						return element.checked;
