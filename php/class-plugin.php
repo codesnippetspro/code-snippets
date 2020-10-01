@@ -59,6 +59,13 @@ class Plugin {
 	protected $rest_api;
 
 	/**
+	 * Handles licensing and plugin updates.
+	 *
+	 * @var Licensing
+	 */
+	public $licensing;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $version Current plugin version.
@@ -109,6 +116,7 @@ class Plugin {
 
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
+		$this->licensing = new Licensing();
 	}
 
 	/**

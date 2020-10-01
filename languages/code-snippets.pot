@@ -14,8 +14,8 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: code-snippets.php:16, php/admin-menus/class-import-menu.php:109
-msgid "Code Snippets"
+#: code-snippets.php:16, code-snippets.php:19, php/class-licensing.php:57
+msgid "Code Snippets Pro"
 msgstr ""
 
 #: code-snippets.php:17, code-snippets.php:20
@@ -26,16 +26,12 @@ msgstr ""
 msgid "An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!"
 msgstr ""
 
-#: code-snippets.php:19
-msgid "Code Snippets Pro"
-msgstr ""
-
-#: code-snippets.php:59
+#: code-snippets.php:70
 msgid "Code Snippets requires PHP 5.6 or later."
 msgstr ""
 
 #. translators: %s: Update PHP URL
-#: code-snippets.php:62
+#: code-snippets.php:73
 msgid "Please <a href=\"%s\">upgrade your server to the latest version of PHP</a> to continue using Code Snippets."
 msgstr ""
 
@@ -205,6 +201,51 @@ msgstr ""
 msgid "You can save your snippets to a code snippets export file using the <a href=\"%s\">Manage Snippets</a> page."
 msgstr ""
 
+#: php/class-licensing.php:79
+msgid "You will need to provide a valid key before activating the license."
+msgstr ""
+
+#: php/class-licensing.php:87
+msgid "active"
+msgstr ""
+
+#: php/class-licensing.php:93
+msgid "Deactivate License"
+msgstr ""
+
+#: php/class-licensing.php:93
+msgid "Activate License"
+msgstr ""
+
+#. translators: %s: expiry date
+#: php/class-licensing.php:129
+msgid "Your license key expired on %s."
+msgstr ""
+
+#: php/class-licensing.php:135
+msgid "Your license key has been disabled."
+msgstr ""
+
+#: php/class-licensing.php:140
+msgid "Invalid license."
+msgstr ""
+
+#: php/class-licensing.php:144
+msgid "Your license is not active for this URL."
+msgstr ""
+
+#: php/class-licensing.php:147
+msgid "Your license key has reached its activation limit."
+msgstr ""
+
+#: php/class-licensing.php:150
+msgid "An error occurred activating the license."
+msgstr ""
+
+#: php/class-licensing.php:192
+msgid "An error occurred, please try again."
+msgstr ""
+
 #: php/class-list-table.php:66
 msgid "Snippets per page"
 msgstr ""
@@ -213,15 +254,15 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: php/class-list-table.php:187, php/class-list-table.php:443
+#: php/class-list-table.php:187, php/class-list-table.php:444
 msgid "Clone"
 msgstr ""
 
-#: php/class-list-table.php:188, php/class-list-table.php:445, php/admin-menus/class-edit-menu.php:646
+#: php/class-list-table.php:188, php/class-list-table.php:446, php/admin-menus/class-edit-menu.php:656
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:197, php/class-list-table.php:446, php/admin-menus/class-edit-menu.php:647
+#: php/class-list-table.php:197, php/class-list-table.php:447, php/admin-menus/class-edit-menu.php:657
 msgid "Delete"
 msgstr ""
 
@@ -229,7 +270,7 @@ msgstr ""
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:202, php/admin-menus/class-edit-menu.php:675
+#: php/class-list-table.php:202, php/admin-menus/class-edit-menu.php:685
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
@@ -241,19 +282,19 @@ msgstr ""
 msgid "Network Active"
 msgstr ""
 
-#: php/class-list-table.php:232, php/class-list-table.php:442
+#: php/class-list-table.php:232, php/class-list-table.php:443
 msgid "Network Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:232, php/class-list-table.php:441
+#: php/class-list-table.php:232, php/class-list-table.php:442
 msgid "Network Activate"
 msgstr ""
 
-#: php/class-list-table.php:233, php/class-list-table.php:442, php/admin-menus/class-manage-menu.php:148, php/views/partials/edit-submit-extra.php:38
+#: php/class-list-table.php:233, php/class-list-table.php:443, php/admin-menus/class-manage-menu.php:148, php/views/partials/edit-submit-extra.php:38
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:233, php/class-list-table.php:441, php/admin-menus/class-manage-menu.php:147, php/views/partials/edit-submit-extra.php:44
+#: php/class-list-table.php:233, php/class-list-table.php:442, php/admin-menus/class-manage-menu.php:147, php/views/partials/edit-submit-extra.php:44
 msgid "Activate"
 msgstr ""
 

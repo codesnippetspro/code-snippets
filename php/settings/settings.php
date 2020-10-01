@@ -152,6 +152,7 @@ function get_settings_sections() {
 		'general'            => __( 'General', 'code-snippets' ),
 		'description_editor' => __( 'Description Editor', 'code-snippets' ),
 		'editor'             => __( 'Code Editor', 'code-snippets' ),
+		'license'            => __( 'License', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
@@ -252,23 +253,26 @@ function sanitize_setting_value( $field, $input_value ) {
  */
 function sanitize_settings( array $input ) {
 	$settings = get_settings_values();
-	$settings_fields = get_settings_fields();
 
 	// don't directly loop through $input as it does not include as deselected checkboxes.
-	foreach ( $settings_fields as $section_id => $fields ) {
+	foreach ( get_settings_fields() as $section_id => $fields ) {
 		foreach ( $fields as $field_id => $field ) {
 
 			// fetch the corresponding input value from the posted data.
-			$input_value = isset( $settings[ $section_id ][ $field_id ] ) ? $settings[ $section_id ][ $field_id ] : null;
+			$input_value = isset( $input[ $section_id ][ $field_id ] ) ? $input[ $section_id ][ $field_id ] : null;
 
 			// attempt to sanitize the setting value
 			$sanitized_value = sanitize_setting_value( $field, $input_value );
 
-			// save the
 			if ( ! is_null( $sanitized_value ) ) {
 				$settings[ $section_id ][ $field_id ] = $sanitized_value;
 			}
 		}
+	}
+
+	// if the license key was altered, reset the license status
+	if ( $input['license']['key'] !== $settings['license']['key'] ) {
+		unset( $settings['license']['status'] );
 	}
 
 	/* Add an updated message */
