@@ -193,11 +193,55 @@ function register_plugin_settings() {
 	}
 
 	/* Add editor preview as a field */
-	$callback = NS . 'render_editor_preview';
-	add_settings_field( 'editor_preview', __( 'Editor Preview', 'code-snippets' ), $callback, 'code-snippets', 'editor' );
+	add_settings_field(
+		'editor_preview',
+		__( 'Editor Preview', 'code-snippets' ),
+		NS . 'render_editor_preview',
+		'code-snippets', 'editor'
+	);
 }
 
 add_action( 'admin_init', NS . 'register_plugin_settings' );
+
+/**
+ * Sanitize a single setting value.
+ *
+ * @param array $field       Setting field information.
+ * @param mixed $input_value User input setting value, or null if missing.
+ *
+ * @return mixed Sanitized setting value, or null if unset.
+ */
+function sanitize_setting_value( $field, $input_value ) {
+	switch ( $field['type'] ) {
+
+		case 'checkbox':
+			return 'on' === $input_value;
+
+		case 'number':
+			return absint( $input_value );
+
+		case 'select':
+			return in_array( $input_value, $field['options'], true ) ? $input_value : null;
+
+		case 'checkboxes':
+			$results = [];
+
+			if ( ! empty( $input_value ) ) {
+				foreach ( $field['options'] as $option_id => $option_label ) {
+					if ( isset( $input_value[ $option_id ] ) && 'on' === $input_value[ $option_id ] ) {
+						$results[] = $option_id;
+					}
+				}
+			}
+			return $results;
+
+		case 'text':
+			return trim( sanitize_text_field( $input_value ) );
+
+		default:
+			return null;
+	}
+}
 
 /**
  * Validate the settings
@@ -210,36 +254,19 @@ function sanitize_settings( array $input ) {
 	$settings = get_settings_values();
 	$settings_fields = get_settings_fields();
 
-	// Don't directly loop through $input as it does not include as deselected checkboxes.
+	// don't directly loop through $input as it does not include as deselected checkboxes.
 	foreach ( $settings_fields as $section_id => $fields ) {
-
-		// Loop through fields.
 		foreach ( $fields as $field_id => $field ) {
 
-			switch ( $field['type'] ) {
+			// fetch the corresponding input value from the posted data.
+			$input_value = isset( $settings[ $section_id ][ $field_id ] ) ? $settings[ $section_id ][ $field_id ] : null;
 
-				case 'checkbox':
-					$settings[ $section_id ][ $field_id ] =
-						isset( $input[ $section_id ][ $field_id ] ) && 'on' === $input[ $section_id ][ $field_id ];
-					break;
+			// attempt to sanitize the setting value
+			$sanitized_value = sanitize_setting_value( $field, $input_value );
 
-				case 'number':
-					$settings[ $section_id ][ $field_id ] = absint( $input[ $section_id ][ $field_id ] );
-					break;
-
-				case 'editor_theme_select':
-					$available_themes = get_editor_themes();
-					$selected_theme = $input[ $section_id ][ $field_id ];
-
-					if ( in_array( $selected_theme, $available_themes, true ) ) {
-						$settings[ $section_id ][ $field_id ] = $selected_theme;
-					}
-
-					break;
-
-				default:
-					break;
-
+			// save the
+			if ( ! is_null( $sanitized_value ) ) {
+				$settings[ $section_id ][ $field_id ] = $sanitized_value;
 			}
 		}
 	}
