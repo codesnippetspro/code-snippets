@@ -125,6 +125,24 @@ function get_setting( $section, $field ) {
 }
 
 /**
+ * Update a single setting to a new value.
+ *
+ * @param string $section   ID of the section the setting belongs to.
+ * @param string $field     ID of the setting field.
+ * @param mixed  $new_value Setting value. Expected to not be SQL-escaped.
+ *
+ * @return bool False if value was not updated. True if value was updated.
+ */
+function update_setting( $section, $field, $new_value ) {
+	$settings = get_settings_values();
+
+	$settings[ $section ][ $field ] = $new_value;
+
+	wp_cache_set( 'code_snippets_settings', $settings );
+	return update_self_option( are_settings_unified(), 'code_snippets_settings', $settings );
+}
+
+/**
  * Retrieve the settings sections
  *
  * @return array
