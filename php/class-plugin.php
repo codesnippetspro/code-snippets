@@ -38,11 +38,11 @@ class Plugin {
 	public $admin;
 
 	/**
-	 * Shortcodes class
+	 * Front-end functionality class
 	 *
-	 * @var Shortcodes
+	 * @var Frontend
 	 */
-	public $shortcode;
+	public $frontend;
 
 	/**
 	 * Class constructor
@@ -89,7 +89,7 @@ class Plugin {
 		require_once $includes_path . '/settings/editor-preview.php';
 		require_once $includes_path . '/settings/settings.php';
 
-		$this->shortcode = new Shortcodes();
+		$this->frontend = new Frontend();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
