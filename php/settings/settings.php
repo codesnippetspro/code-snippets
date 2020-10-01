@@ -242,10 +242,10 @@ function sanitize_setting_value( $field, $input_value ) {
  */
 function sanitize_settings( array $input ) {
 	$settings = get_settings_values();
-	$settings_fields = get_settings_fields();
+	$updated = false;
 
 	// don't directly loop through $input as it does not include as deselected checkboxes.
-	foreach ( $settings_fields as $section_id => $fields ) {
+	foreach ( get_settings_fields() as $section_id => $fields ) {
 		foreach ( $fields as $field_id => $field ) {
 
 			// fetch the corresponding input value from the posted data.
@@ -254,15 +254,20 @@ function sanitize_settings( array $input ) {
 			// attempt to sanitize the setting value
 			$sanitized_value = sanitize_setting_value( $field, $input_value );
 
-			// save the
-			if ( ! is_null( $sanitized_value ) ) {
+			if ( ! is_null( $sanitized_value ) && $settings[ $section_id ][ $field_id ] !== $sanitized_value ) {
 				$settings[ $section_id ][ $field_id ] = $sanitized_value;
+				$updated = true;
 			}
 		}
 	}
 
 	/* Add an updated message */
-	add_settings_error( 'code-snippets-settings-notices', 'settings-saved', __( 'Settings saved.', 'code-snippets' ), 'updated' );
+	if ( $updated ) {
+		add_settings_error(
+			'code-snippets-settings-notices',
+			'settings-saved', __( 'Settings saved.', 'code-snippets' ), 'updated'
+		);
+	}
 
 	return $settings;
 }
