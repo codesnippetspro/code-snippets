@@ -8,8 +8,6 @@
 
 namespace Code_Snippets\Settings;
 
-use function Code_Snippets\get_editor_themes;
-
 const NS = __NAMESPACE__ . '\\';
 
 /**
