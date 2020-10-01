@@ -86,14 +86,14 @@ class Shortcodes {
 		$plugin = code_snippets();
 
 		wp_enqueue_style(
-			'code-snippets-front-end',
-			plugins_url( 'css/min/front-end.css', $plugin->file ),
+			'code-snippets-prism',
+			plugins_url( 'css/min/prism.css', $plugin->file ),
 			array(), $plugin->version
 		);
 
 		wp_enqueue_script(
-			'code-snippets-front-end',
-			plugins_url( 'js/min/front-end.js', $plugin->file ),
+			'code-snippets-prism',
+			plugins_url( 'js/min/prism.js', $plugin->file ),
 			array(), $plugin->version, true
 		);
 

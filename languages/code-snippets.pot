@@ -285,7 +285,7 @@ msgctxt "date and time format"
 msgid "%1$s \a\t %2$s"
 msgstr ""
 
-#: php/class-list-table.php:387, php/views/edit.php:67
+#: php/class-list-table.php:387, php/views/edit.php:68
 msgid "Name"
 msgstr ""
 
@@ -723,7 +723,7 @@ msgstr ""
 msgid "Reset to Default"
 msgstr ""
 
-#: php/admin-menus/class-settings-menu.php:213, php/settings/settings.php:238
+#: php/admin-menus/class-settings-menu.php:213, php/settings/settings.php:232
 msgid "Settings saved."
 msgstr ""
 
@@ -796,67 +796,67 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: php/settings/settings-fields.php:131
+#: php/settings/settings-fields.php:132
 msgid "Indent With Tabs"
 msgstr ""
 
-#: php/settings/settings-fields.php:133
+#: php/settings/settings-fields.php:134
 msgid "Use hard tabs (not spaces) for indentation."
 msgstr ""
 
-#: php/settings/settings-fields.php:139
+#: php/settings/settings-fields.php:140
 msgid "Tab Size"
 msgstr ""
 
-#: php/settings/settings-fields.php:141
+#: php/settings/settings-fields.php:142
 msgid "The width of a tab character."
 msgstr ""
 
-#: php/settings/settings-fields.php:148
+#: php/settings/settings-fields.php:149
 msgid "Indent Unit"
 msgstr ""
 
-#: php/settings/settings-fields.php:150
+#: php/settings/settings-fields.php:151
 msgid "How many spaces a block should be indented."
 msgstr ""
 
-#: php/settings/settings-fields.php:157
+#: php/settings/settings-fields.php:158
 msgid "Wrap Lines"
 msgstr ""
 
-#: php/settings/settings-fields.php:159
+#: php/settings/settings-fields.php:160
 msgid "Whether the editor should scroll or wrap for long lines."
 msgstr ""
 
-#: php/settings/settings-fields.php:165
+#: php/settings/settings-fields.php:166
 msgid "Line Numbers"
 msgstr ""
 
-#: php/settings/settings-fields.php:167
+#: php/settings/settings-fields.php:168
 msgid "Show line numbers to the left of the editor."
 msgstr ""
 
-#: php/settings/settings-fields.php:173
+#: php/settings/settings-fields.php:174
 msgid "Auto Close Brackets"
 msgstr ""
 
-#: php/settings/settings-fields.php:175
+#: php/settings/settings-fields.php:176
 msgid "Auto-close brackets and quotes when typed."
 msgstr ""
 
-#: php/settings/settings-fields.php:181
+#: php/settings/settings-fields.php:182
 msgid "Highlight Selection Matches"
 msgstr ""
 
-#: php/settings/settings-fields.php:182
+#: php/settings/settings-fields.php:183
 msgid "Highlight all instances of a currently selected word."
 msgstr ""
 
-#: php/settings/settings-fields.php:189
+#: php/settings/settings-fields.php:190
 msgid "Highlight Active Line"
 msgstr ""
 
-#: php/settings/settings-fields.php:190
+#: php/settings/settings-fields.php:191
 msgid "Highlight the line that is currently being edited."
 msgstr ""
 
@@ -872,7 +872,7 @@ msgstr ""
 msgid "Code Editor"
 msgstr ""
 
-#: php/settings/settings.php:187
+#: php/settings/settings.php:181
 msgid "Editor Preview"
 msgstr ""
 
@@ -912,19 +912,23 @@ msgstr ""
 msgid "Show line numbers"
 msgstr ""
 
-#: php/views/edit.php:69
+#: php/views/edit.php:53
+msgid "This snippet has no code or title. Continue?"
+msgstr ""
+
+#: php/views/edit.php:70
 msgid "Enter title here"
 msgstr ""
 
-#: php/views/edit.php:75
+#: php/views/edit.php:76
 msgid "Code"
 msgstr ""
 
-#: php/views/edit.php:94, php/views/manage.php:44
+#: php/views/edit.php:95, php/views/manage.php:44
 msgid "Functions"
 msgstr ""
 
-#: php/views/edit.php:95, php/views/manage.php:45
+#: php/views/edit.php:96, php/views/manage.php:45
 msgid "Content"
 msgstr ""
 
