@@ -241,11 +241,11 @@ p.snippet-scope, .snippet-scope p {
 	}
 
 	.CodeMirror-sizer::before {
-		content: '<!-- begin shortcode content -->';
+		content: '<!-- begin content -->';
 	}
 
 	.CodeMirror-sizer::after {
-		content: '<!-- end shortcode content -->';
+		content: '<!-- end content -->';
 	}
 }
 

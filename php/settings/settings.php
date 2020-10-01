@@ -88,20 +88,9 @@ function get_settings_values() {
 	$saved = get_self_option( are_settings_unified(), 'code_snippets_settings', array() );
 
 	/* Replace the default field values with the ones saved in the database */
-	if ( function_exists( 'array_replace_recursive' ) ) {
-
-		/* Use the much more efficient array_replace_recursive() function in PHP 5.3 and later */
-		$settings = array_replace_recursive( $settings, $saved );
-	} else {
-
-		/* Otherwise, do it manually */
-		foreach ( $settings as $section => $fields ) {
-			foreach ( $fields as $field => $value ) {
-
-				if ( isset( $saved[ $section ][ $field ] ) ) {
-					$settings[ $section ][ $field ] = $saved[ $section ][ $field ];
-				}
-			}
+	foreach ( $settings as $section => $fields ) {
+		if ( isset( $saved[ $section ] ) ) {
+			$settings[ $section ] = array_replace( $settings[ $section ], $saved[ $section ] );
 		}
 	}
 
@@ -234,6 +223,7 @@ function sanitize_setting_value( $field, $input_value ) {
 					}
 				}
 			}
+
 			return $results;
 
 		case 'text':
@@ -253,6 +243,7 @@ function sanitize_setting_value( $field, $input_value ) {
  */
 function sanitize_settings( array $input ) {
 	$settings = get_settings_values();
+	$updated = false;
 
 	// don't directly loop through $input as it does not include as deselected checkboxes.
 	foreach ( get_settings_fields() as $section_id => $fields ) {
@@ -264,8 +255,9 @@ function sanitize_settings( array $input ) {
 			// attempt to sanitize the setting value
 			$sanitized_value = sanitize_setting_value( $field, $input_value );
 
-			if ( ! is_null( $sanitized_value ) ) {
+			if ( ! is_null( $sanitized_value ) && $settings[ $section_id ][ $field_id ] !== $sanitized_value ) {
 				$settings[ $section_id ][ $field_id ] = $sanitized_value;
+				$updated = true;
 			}
 		}
 	}
@@ -276,7 +268,12 @@ function sanitize_settings( array $input ) {
 	}
 
 	/* Add an updated message */
-	add_settings_error( 'code-snippets-settings-notices', 'settings-saved', __( 'Settings saved.', 'code-snippets' ), 'updated' );
+	if ( $updated ) {
+		add_settings_error(
+			'code-snippets-settings-notices',
+			'settings-saved', __( 'Settings saved.', 'code-snippets' ), 'updated'
+		);
+	}
 
 	return $settings;
 }
