@@ -10,6 +10,7 @@ module.exports = {
 		'mce': './js/mce.js',
 		'blocks': './js/blocks/blocks.js',
 		'front-end': './js/front-end.js',
+		'elementor': './js/elementor.js'
 	},
 	output: {
 		path: path.resolve(__dirname),

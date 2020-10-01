@@ -95,7 +95,7 @@ class Shortcodes {
 	/**
 	 * Enqueue the styles and scripts for the Prism syntax highlighter.
 	 */
-	public function register_prism_assets() {
+	public static function register_prism_assets() {
 		$plugin = code_snippets();
 
 		wp_register_style(
