@@ -65,6 +65,12 @@ class Plugin {
 	protected $rest_api;
 
 	/**
+	 * Class for managing integration with the Elementor plugin.
+	 * @var Elementor
+	 */
+	protected $elementor;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $version Current plugin version.
@@ -116,6 +122,9 @@ class Plugin {
 
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
+
+		/* Other integrations */
+		$this->elementor = new Elementor();
 	}
 
 	/**
