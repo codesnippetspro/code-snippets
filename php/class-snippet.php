@@ -11,24 +11,25 @@ use DateTimeZone;
  * @since   2.4.0
  * @package Code_Snippets
  *
- * @property int           $id                 The database ID
- * @property string        $name               The display name
- * @property string        $desc               The formatted description
- * @property string        $code               The executable code
- * @property array         $tags               An array of the tags
- * @property string        $scope              The scope name
- * @property int           $priority           Execution priority
- * @property bool          $active             The active status
- * @property bool          $network            true if is multisite-wide snippet, false if site-wide
- * @property bool          $shared_network     Whether the snippet is a shared network snippet
- * @property string        $modified           The date and time when the snippet data was most recently saved to the database.
+ * @property int           $id                      The database ID
+ * @property string        $name                    The display name
+ * @property string        $desc                    The formatted description
+ * @property string        $code                    The executable code
+ * @property array         $tags                    An array of the tags
+ * @property string        $scope                   The scope name
+ * @property int           $priority                Execution priority
+ * @property bool          $active                  The active status
+ * @property bool          $network                 true if is multisite-wide snippet, false if site-wide
+ * @property bool          $shared_network          Whether the snippet is a shared network snippet
+ * @property string        $modified                The date and time when the snippet data was most recently saved to the database.
  *
- * @property-read array    $tags_list          The tags in string list format
- * @property-read string   $scope_icon         The dashicon used to represent the current scope
- * @property-read string   $type               The type of snippet
- * @property-read string   $lang               The language that the snippet code is written in
- * @property-read int      $modified_timestamp The last modification date in Unix timestamp format.
- * @property-read DateTime $modified_local     The last modification date in the local timezone.
+ * @property-read array    $tags_list               The tags in string list format,
+ * @property-read string   $scope_icon              The dashicon used to represent the current scope.
+ * @property-read string   $type                    The type of snippet.
+ * @property-read string   $lang                    The language that the snippet code is written in.
+ * @property-read int      $modified_timestamp      The last modification date in Unix timestamp format.
+ * @property-read DateTime $modified_local          The last modification date in the local timezone.
+ * @property-read string   $type_desc               Human-readable description of the snippet type.
  */
 class Snippet {
 
@@ -340,6 +341,17 @@ class Snippet {
 		}
 
 		return 'php';
+	}
+
+	private function get_type_desc() {
+		$labels = [
+			'php'  => __( 'Functions', 'code-snippets' ),
+			'html' => __( 'Content', 'code-snippets' ),
+			'css'  => __( 'Styles', 'code-snippets' ),
+			'js'   => __( 'Scripts', 'code-snippets' ),
+		];
+
+		return isset( $labels[ $this->type ] ) ? $labels[ $this->type ] : strtoupper( $this->type );
 	}
 
 	/**
