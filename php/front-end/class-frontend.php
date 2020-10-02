@@ -20,13 +20,19 @@ class Frontend {
 	const CONTENT_SHORTCODE = 'code_snippet';
 
 	/**
+	 * Handle to use for front-end scripts and styles.
+	 */
+	const PRISM_HANDLE = 'code-snippets-prism';
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
-		add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
-		add_shortcode( self::SOURCE_SHORTCODE, [ $this, 'render_source_shortcode' ] );
 		add_action( 'the_posts', [ $this, 'enqueue_highlighting' ] );
 		add_action( 'init', [ $this, 'setup_mce_plugin' ] );
+
+		add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
+		add_shortcode( self::SOURCE_SHORTCODE, [ $this, 'render_source_shortcode' ] );
 	}
 
 	/**
@@ -65,39 +71,59 @@ class Frontend {
 	 */
 	public function enqueue_highlighting( $posts ) {
 
+		// exit early if there are no posts to check or if the highlighter has been disabled
 		if ( empty( $posts ) || Settings\get_setting( 'general', 'disable_prism' ) ) {
 			return $posts;
 		}
 
-		$found = false;
-
+		// loop through all the posts, checking for instances where the source tag is used
 		foreach ( $posts as $post ) {
 
-			if ( false !== stripos( $post->post_content, '[' . self::SOURCE_SHORTCODE ) ) {
-				$found = true;
-				break;
+			if ( false === stripos( $post->post_content, '[' . self::SOURCE_SHORTCODE ) &&
+			     ! ( function_exists( 'has_block' ) && has_block( 'code-snippets/source', $post ) ) ) {
+				continue;
 			}
+
+			// register the syntax highlighter assets and exit from the loop once a match is discovered
+			$this->register_prism_assets();
+			wp_enqueue_style( self::PRISM_HANDLE );
+			wp_enqueue_script( self::PRISM_HANDLE );
+			break;
 		}
 
-		if ( ! $found ) {
-			return $posts;
-		}
+		return $posts;
+	}
 
+	/**
+	 * Enqueue the styles and scripts for the Prism syntax highlighter.
+	 */
+	public static function register_prism_assets() {
 		$plugin = code_snippets();
 
-		wp_enqueue_style(
-			'code-snippets-prism',
+		wp_register_style(
+			self::PRISM_HANDLE,
 			plugins_url( 'css/min/prism.css', $plugin->file ),
 			array(), $plugin->version
 		);
 
 		wp_enqueue_script(
-			'code-snippets-prism',
+			self::PRISM_HANDLE,
 			plugins_url( 'js/min/prism.js', $plugin->file ),
 			array(), $plugin->version, true
 		);
+	}
 
-		return $posts;
+	/**
+	 * Print a message to the user if the snippet ID attribute is invalid.
+	 *
+	 * @param int $id Snippet ID
+	 *
+	 * @return string Warning message.
+	 */
+	private function invalid_id_warning( $id ) {
+		/* translators: %d: snippet ID */
+		$text = esc_html__( 'Could not load snippet with an invalid ID: %d.', 'code-snippets' );
+		return current_user_can( 'edit_posts' ) ? sprintf( $text, intval( $id ) ) : '';
 	}
 
 	/**
@@ -112,6 +138,7 @@ class Frontend {
 		$atts = shortcode_atts(
 			array(
 				'id'         => 0,
+				'snippet_id' => 0,
 				'network'    => false,
 				'php'        => false,
 				'format'     => false,
@@ -120,8 +147,9 @@ class Frontend {
 			$atts, self::CONTENT_SHORTCODE
 		);
 
-		if ( ! $id = intval( $atts['id'] ) ) {
-			return '';
+		$id = intval( $atts['snippet_id'] );
+		if ( ! $id && ! $id = intval( $atts['id'] ) ) {
+			return $this->invalid_id_warning( $id );
 		}
 
 		$snippet = get_snippet( $id, $atts['network'] ? true : false );
@@ -147,15 +175,11 @@ class Frontend {
 		}
 
 		if ( $atts['shortcodes'] ) {
-
 			// remove this shortcode from the list to prevent recursion
 			remove_shortcode( self::CONTENT_SHORTCODE );
 
 			// evaluate shortcodes
-			if ( $atts['format'] ) {
-				$content = shortcode_unautop( $content );
-			}
-			$content = do_shortcode( $content );
+			$content = do_shortcode( $atts['format'] ? shortcode_unautop( $content ) : $content );
 
 			// add this shortcode back to the list
 			add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
@@ -203,14 +227,16 @@ class Frontend {
 		$atts = shortcode_atts(
 			array(
 				'id'           => 0,
+				'snippet_id'   => 0,
 				'network'      => false,
 				'line_numbers' => false,
 			),
 			$atts, self::SOURCE_SHORTCODE
 		);
 
-		if ( ! $id = intval( $atts['id'] ) ) {
-			return '';
+		$id = intval( $atts['snippet_id'] );
+		if ( ! $id && ! $id = intval( $atts['id'] ) ) {
+			return $this->invalid_id_warning( $id );
 		}
 
 		$snippet = get_snippet( $id, $atts['network'] ? true : false );
