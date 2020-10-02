@@ -99,7 +99,7 @@ class List_Table extends WP_List_Table {
 
 		if ( false === $hidden_columns ) {
 			$user = wp_get_current_user();
-			$hidden_columns = [ 'id', 'type' ];
+			$hidden_columns = [ 'id' ];
 			update_user_option( $user->ID, $opt, $hidden_columns );
 		}
 	}
@@ -385,6 +385,7 @@ class List_Table extends WP_List_Table {
 			'cb'          => '<input type="checkbox">',
 			'activate'    => '&nbsp;',
 			'name'        => __( 'Name', 'code-snippets' ),
+			'type'        => __( 'Type', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
 			'type'        => __( 'Type', 'code-snippets' ),
