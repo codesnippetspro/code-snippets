@@ -45,6 +45,13 @@ class Plugin {
 	public $frontend;
 
 	/**
+	 * Class for managing active snippets
+	 *
+	 * @var Active_Snippets
+	 */
+	public $active_snippets;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $version Current plugin version.
@@ -89,6 +96,8 @@ class Plugin {
 		require_once $includes_path . '/settings/editor-preview.php';
 		require_once $includes_path . '/settings/settings.php';
 
+		$this->rest_api = new REST_API();
+		$this->active_snippets = new Active_Snippets();
 		$this->frontend = new Frontend();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
@@ -187,8 +196,8 @@ class Plugin {
 	/**
 	 * Determine whether the current user can perform actions on snippets.
 	 *
-	 * @since 2.8.6
 	 * @return boolean Whether the current user has the required capability
+	 * @since 2.8.6
 	 */
 	public function current_user_can() {
 		return current_user_can( $this->get_cap() );
@@ -219,8 +228,8 @@ class Plugin {
 	 * If multisite, checks if *Enable Administration Menus: Snippets* is active
 	 * under the *Settings > Network Settings* network admin menu
 	 *
-	 * @since 2.0
 	 * @return string The capability required to manage snippets
+	 * @since 2.0
 	 */
 	public function get_cap() {
 
