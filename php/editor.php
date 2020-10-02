@@ -29,12 +29,11 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 	}
 
 	$default_atts = [
-		'mode'           => $modes[ $type ],
-		'matchBrackets'  => true,
-		'extraKeys'      => [ 'Alt-F' => 'findPersistent', 'Ctrl-Space' => 'autocomplete' ],
-		'gutters'        => [ 'CodeMirror-lint-markers' ],
-		'lint'           => true,
-		'viewportMargin' => 'Infinity',
+		'mode'          => $modes[ $type ],
+		'matchBrackets' => true,
+		'extraKeys'     => [ 'Alt-F' => 'findPersistent', 'Ctrl-Space' => 'autocomplete' ],
+		'gutters'       => [ 'CodeMirror-lint-markers' ],
+		'lint'          => true,
 	];
 
 	// add relevant saved setting values to the default attributes
