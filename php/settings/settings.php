@@ -105,7 +105,7 @@ function get_settings_values() {
  * @param string $section ID of the section the setting belongs to.
  * @param string $field   ID of the setting field.
  *
- * @return array
+ * @return mixed
  */
 function get_setting( $section, $field ) {
 	$settings = get_settings_values();
@@ -249,7 +249,7 @@ function sanitize_settings( array $input ) {
 		foreach ( $fields as $field_id => $field ) {
 
 			// fetch the corresponding input value from the posted data.
-			$input_value = isset( $settings[ $section_id ][ $field_id ] ) ? $settings[ $section_id ][ $field_id ] : null;
+			$input_value = isset( $input[ $section_id ][ $field_id ] ) ? $input[ $section_id ][ $field_id ] : null;
 
 			// attempt to sanitize the setting value
 			$sanitized_value = sanitize_setting_value( $field, $input_value );
