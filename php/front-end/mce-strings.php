@@ -13,9 +13,9 @@ $strings = [
 	'insert_content_menu'  => __( 'Content Snippet', 'code-snippets' ),
 	'insert_content_title' => __( 'Insert Content Snippet', 'code-snippets' ),
 	'snippet_label'        => __( 'Snippet', 'code-snippets' ),
-	'php_att_label'        => __( 'Evaluate PHP code', 'code-snippets' ),
+	'php_att_label'        => __( 'Run PHP code', 'code-snippets' ),
 	'format_att_label'     => __( 'Apply formatting', 'code-snippets' ),
-	'shortcodes_att_label' => __( 'Evaluate shortcodes', 'code-snippets' ),
+	'shortcodes_att_label' => __( 'Enable shortcodes', 'code-snippets' ),
 
 	'insert_source_menu'      => __( 'Snippet Source Code', 'code-snippets' ),
 	'insert_source_title'     => __( 'Insert Snippet Source', 'code-snippets' ),
