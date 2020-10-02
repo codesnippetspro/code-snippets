@@ -8,9 +8,9 @@ module.exports = {
 		'tags': './js/edit/tags.js',
 		'settings': './js/settings/settings.js',
 		'mce': './js/mce.js',
-		'blocks': './js/blocks/blocks.js',
 		'prism': './js/prism.js',
-		'elementor': './js/elementor.js'
+		'blocks': './js/blocks/blocks.js',
+		'elementor': './js/elementor.js',
 	},
 	output: {
 		path: path.resolve(__dirname),
