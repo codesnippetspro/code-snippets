@@ -211,7 +211,7 @@ class Upgrade {
 		$snippets = array();
 
 		foreach ( $snippets_data as $sample_name => $snippet_data ) {
-			$snippets[ $sample_name ] = new Code_Snippet( $snippet_data );
+			$snippets[ $sample_name ] = new Snippet( $snippet_data );
 		}
 
 		return $snippets;

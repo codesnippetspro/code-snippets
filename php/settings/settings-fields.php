@@ -8,8 +8,6 @@
 
 namespace Code_Snippets\Settings;
 
-use function Code_Snippets\code_snippets;
-
 /**
  * Retrieve the default setting values
  *
@@ -72,6 +70,20 @@ function get_settings_fields() {
 			'type'    => 'checkbox',
 			'label'   => __( 'Show snippet descriptions on admin pages.', 'code-snippets' ),
 			'default' => true,
+		],
+
+		'list_order' => [
+			'name'    => __( 'Snippets List Order', 'code-snippets' ),
+			'type'    => 'select',
+			'desc'    => __( 'Default way to order snippets on the All Snippets admin menu.', 'code-snippets' ),
+			'options' => [
+				'priority-asc'  => __( 'Priority', 'code-snippets' ),
+				'name-asc'      => __( 'Name (A-Z)', 'code-snippets' ),
+				'name-desc'     => __( 'Name (Z-A)', 'code-snippets' ),
+				'modified-desc' => __( 'Modified (latest first)', 'code-snippets' ),
+				'modified-asc'  => __( 'Modified (oldest first)', 'code-snippets' ),
+			],
+			'default' => 'priority',
 		],
 
 		'disable_prism' => [
