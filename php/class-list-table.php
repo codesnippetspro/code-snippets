@@ -41,6 +41,20 @@ class List_Table extends WP_List_Table {
 	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
 
 	/**
+	 * Column name to use when ordering the snippets list.
+	 *
+	 * @var string
+	 */
+	protected $order_by;
+
+	/**
+	 * Direction to use when ordering thhe snippets list. Either 'asc' or 'desc'.
+	 *
+	 * @var string
+	 */
+	protected $order_dir;
+
+	/**
 	 * The constructor function for our class.
 	 * Adds hooks, initializes variables, setups class.
 	 */
@@ -388,7 +402,6 @@ class List_Table extends WP_List_Table {
 			'type'        => __( 'Type', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
-			'type'        => __( 'Type', 'code-snippets' ),
 			'date'        => __( 'Modified', 'code-snippets' ),
 			'priority'    => __( 'Priority', 'code-snippets' ),
 			'id'          => __( 'ID', 'code-snippets' ),
@@ -1020,6 +1033,7 @@ class List_Table extends WP_List_Table {
 
 		$this->_column_headers = $this->get_column_info();
 
+		$this->set_order_vars();
 		usort( $data, array( $this, 'usort_reorder_callback' ) );
 
 		/* Determine what page the user is currently looking at */
@@ -1045,7 +1059,6 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Determine the sort ordering for two pieces of data.
 	 *
-	 * @param string $field  name of the field that the data belongs to
 	 * @param string $a_data First piece of data.
 	 * @param string $b_data Second piece of data.
 	 *
@@ -1074,6 +1087,36 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Set the $order_by and $order_dir class variables.
+	 */
+	private function set_order_vars() {
+		$order = Settings\get_setting( 'general', 'list_order' );
+
+		// set the order by based on the query variable, if set.
+		if ( ! empty( $_REQUEST['orderby'] ) ) {
+			$this->order_by = $_REQUEST['orderby'];
+		} else {
+			// otherwise, fetch the order from the setting, ensuring it is valid.
+			$valid_fields = [ 'id', 'name', 'type', 'modified', 'priority' ];
+			$order_parts = explode( '-', $order, 2 );
+
+			$this->order_by = in_array( $order_parts[0], $valid_fields ) ? $order_parts[0] :
+				apply_filters( 'code_snippets/list_table/default_orderby', 'priority' );
+		}
+
+		// set the order dir based on the query variable, if set.
+		if ( ! empty( $_REQUEST['order'] ) ) {
+			$this->order_dir = $_REQUEST['order'];
+		} else if ( '-desc' === substr( $order, -5 ) ) {
+			$this->order_dir = 'desc';
+		} else if ( '-asc' === substr( $order, -4 ) ) {
+			$this->order_dir = 'asc';
+		} else {
+			$this->order_dir = apply_filters( 'code_snippets/list_table/default_order', 'asc' );
+		}
+	}
+
+	/**
 	 * Callback for usort() used to sort snippets
 	 *
 	 * @param Snippet $a The first snippet to compare.
@@ -1083,21 +1126,7 @@ class List_Table extends WP_List_Table {
 	 * @ignore
 	 */
 	private function usort_reorder_callback( $a, $b ) {
-
-		// sort by ID by default
-		$orderby = (
-		! empty( $_REQUEST['orderby'] )
-			? $_REQUEST['orderby']
-			: apply_filters( 'code_snippets/list_table/default_orderby', 'priority' )
-		);
-
-		// sort ascending by default
-		$order = (
-		! empty( $_REQUEST['order'] )
-			? $_REQUEST['order']
-			: apply_filters( 'code_snippets/list_table/default_order', 'asc' )
-		);
-
+		$orderby = $this->order_by;
 		$result = $this->get_sort_direction( $a->$orderby, $b->$orderby );
 
 		if ( 0 === $result && 'id' !== $orderby ) {
@@ -1105,7 +1134,7 @@ class List_Table extends WP_List_Table {
 		}
 
 		// apply the sort direction to the calculated order
-		return ( 'asc' === $order ) ? $result : -$result;
+		return ( 'asc' === $this->order_dir ) ? $result : -$result;
 	}
 
 	/**

@@ -211,7 +211,7 @@ function sanitize_setting_value( $field, $input_value ) {
 			return absint( $input_value );
 
 		case 'select':
-			return in_array( $input_value, $field['options'], true ) ? $input_value : null;
+			return in_array( $input_value, array_keys( $field['options'] ), false ) ? $input_value : null;
 
 		case 'checkboxes':
 			$results = [];
