@@ -44,7 +44,7 @@ const dist_dirs = {
 	css: 'css/min/'
 };
 
-const text_domain = pkg.name;
+const text_domain = 'code-snippets';
 
 gulp.task('css', (done) => {
 

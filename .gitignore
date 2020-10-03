@@ -4,6 +4,7 @@
 
 # generated files
 code-snippets.*.zip
+code-snippets-pro.*.zip
 /dist
 /css/min
 /js/min
