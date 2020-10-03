@@ -26,9 +26,15 @@ Text Domain: code-snippets
 Domain Path: /languages
 */
 
-/* Exit if accessed directly */
+// exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
+}
+
+// if another version of code snippets is already active then deactivate it and reload
+if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
+	deactivate_plugins( plugin_basename( CODE_SNIPPETS_FILE ), true, true );
+	wp_redirect( esc_url_raw( $_SERVER['REQUEST_URI'] ) );
 }
 
 /**
@@ -42,7 +48,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var string
  */
 define( 'CODE_SNIPPETS_FILE', __FILE__ );
-
 
 /**
  * This is used to determine which version of Code Snippets
