@@ -3,6 +3,8 @@
 namespace Code_Snippets;
 
 // Exit if accessed directly
+use stdClass;
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**

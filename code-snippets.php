@@ -31,10 +31,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-// if another version of code snippets is already active then deactivate it and reload
+// if another version of code snippets is already active then deactivate it
 if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
-	deactivate_plugins( plugin_basename( CODE_SNIPPETS_FILE ), true, true );
-	wp_redirect( esc_url_raw( $_SERVER['REQUEST_URI'] ) );
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	deactivate_plugins( array( 'code-snippets/code-snippets.php' ), true );
+	return;
 }
 
 /**
@@ -64,27 +65,30 @@ if ( version_compare( phpversion(), '5.6', '>=' ) ) {
 	return;
 }
 
-/**
- * Display a warning message and deactivate the plugin if the user is using an incompatible version of PHP
- *
- * @since 3.0.0
- */
-function code_snippets_php_version_notice() {
-	echo '<div class="error fade"><p>';
+if ( ! function_exists( 'code_snippets_php_version_notice' ) ) {
 
-	echo '<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong><br>';
+	/**
+	 * Display a warning message and deactivate the plugin if the user is using an incompatible version of PHP
+	 *
+	 * @since 3.0.0
+	 */
+	function code_snippets_php_version_notice() {
+		echo '<div class="error fade"><p>';
 
-	/* translators: %s: Update PHP URL */
-	$text = __( 'Please <a href="%s">upgrade your server to the latest version of PHP</a> to continue using Code Snippets.', 'code-snippets' );
-	$text = sprintf( $text, function_exists( 'wp_get_default_update_php_url' ) ?
-		wp_get_default_update_php_url() :
-		'https://wordpress.org/support/update-php/'
-	);
-	echo wp_kses( $text, [ 'a' => [ 'href' => [] ] ] );
+		echo '<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong><br>';
 
-	echo '</p></div>';
+		/* translators: %s: Update PHP URL */
+		$text = __( 'Please <a href="%s">upgrade your server to the latest version of PHP</a> to continue using Code Snippets.', 'code-snippets' );
+		$text = sprintf( $text, function_exists( 'wp_get_default_update_php_url' ) ?
+			wp_get_default_update_php_url() :
+			'https://wordpress.org/support/update-php/'
+		);
+		echo wp_kses( $text, [ 'a' => [ 'href' => [] ] ] );
 
-	deactivate_plugins( plugin_basename( __FILE__ ) );
+		echo '</p></div>';
+
+		deactivate_plugins( plugin_basename( __FILE__ ) );
+	}
+
+	add_action( 'admin_notices', 'code_snippets_php_version_notice' );
 }
-
-add_action( 'admin_notices', 'code_snippets_php_version_notice' );
