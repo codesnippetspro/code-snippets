@@ -44,6 +44,8 @@ const dist_dirs = {
 	css: 'css/min/'
 };
 
+const text_domain = pkg.name;
+
 gulp.task('css', (done) => {
 
 	let processors = [
@@ -110,12 +112,12 @@ gulp.task('images', () =>
 gulp.task('makepot', () =>
 	gulp.src(src_files.php)
 		.pipe(makepot({
-			domain: pkg.name,
+			domain: text_domain,
 			package: 'Code Snippets',
 			bugReport: 'https://github.com/sheabunge/code-snippets/issues',
 			metadataFile: 'code-snippets.php',
 		}))
-		.pipe(gulp.dest(`languages/${pkg.name}.pot`)));
+		.pipe(gulp.dest(`languages/${text_domain}.pot`)));
 
 gulp.task('gettext', () =>
 	gulp.src('languages/*.po')
@@ -127,7 +129,7 @@ gulp.task('i18n', gulp.parallel(['makepot', 'gettext']));
 gulp.task('phpcs', () =>
 	gulp.src(src_files.php)
 		.pipe(phpcs({bin: 'vendor/bin/phpcs', showSniffCode: true}))
-		.pipe(phpcs.reporter('log')));
+		.pipe(phpcs.reporter('log', {})));
 
 gulp.task('phpunit', () =>
 	gulp.src('phpunit.xml')
