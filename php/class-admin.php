@@ -189,11 +189,6 @@ class Admin {
 				__( 'Find out how to get support with Code Snippets', 'code-snippets' ),
 				__( 'Support', 'code-snippets' )
 			),
-			sprintf( '<a href="%1$s" title="%2$s" style="color: #d46f4d;">%3$s</a>',
-				'https://codesnippets.pro/',
-				__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
-				__( 'Upgrade to Pro', 'code-snippets' )
-			),
 		) );
 	}
 
