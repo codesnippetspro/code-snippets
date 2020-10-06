@@ -75,11 +75,11 @@ class Admin {
 	 * Adds a checkbox to the *Settings > Network Settings*
 	 * network admin menu
 	 *
-	 * @since 1.7.1
-	 *
 	 * @param array $menu_items Current mu menu items.
 	 *
 	 * @return array Modified mu menu items.
+	 * @since 1.7.1
+	 *
 	 */
 	public function mu_menu_items( $menu_items ) {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
@@ -131,15 +131,24 @@ class Admin {
 	/**
 	 * Adds a link pointing to the Manage Snippets page
 	 *
-	 * @since 2.0.0
-	 *
 	 * @param array $links Existing plugin action links.
 	 *
 	 * @return array Modified plugin action links
+	 * @since 2.0.0
+	 *
 	 */
 	public function plugin_settings_link( $links ) {
+		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
+
 		array_unshift( $links, sprintf(
-			'<a href="%1$s" title="%2$s">%3$s</a>',
+			$format,
+			code_snippets()->get_menu_url( 'settings' ),
+			__( 'Change plugin settings', 'code-snippets' ),
+			__( 'Settings', 'code-snippets' )
+		) );
+
+		array_unshift( $links, sprintf(
+			$format,
 			code_snippets()->get_menu_url(),
 			__( 'Manage your existing snippets', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' )
@@ -151,12 +160,12 @@ class Admin {
 	/**
 	 * Adds extra links related to the plugin
 	 *
-	 * @since 2.0.0
-	 *
 	 * @param array  $links Existing plugin info links.
 	 * @param string $file  The plugin the links are for.
 	 *
 	 * @return array The modified plugin info links.
+	 * @since 2.0.0
+	 *
 	 */
 	public function plugin_meta_links( $links, $file ) {
 
@@ -165,25 +174,25 @@ class Admin {
 			return $links;
 		}
 
-		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
+		$format = '<a href="%1$s" title="%2$s" target="_blank">%3$s</a>';
 
 		/* array_merge appends the links to the end */
 
 		return array_merge( $links, array(
 			sprintf( $format,
-				'https://wordpress.org/plugins/code-snippets/',
-				__( 'Visit the WordPress.org plugin page', 'code-snippets' ),
+				'https://codesnippets.pro/about/',
+				__( 'Find out more about Code Snippets', 'code-snippets' ),
 				__( 'About', 'code-snippets' )
 			),
 			sprintf( $format,
-				'https://wordpress.org/support/plugin/code-snippets/',
-				__( 'Visit the support forums', 'code-snippets' ),
+				'https://codesnippets.pro/support/',
+				__( 'Find out how to get support with Code Snippets', 'code-snippets' ),
 				__( 'Support', 'code-snippets' )
 			),
-			sprintf( $format,
-				'https://sheabunge.com/donate/',
-				__( "Support this plugin's development", 'code-snippets' ),
-				__( 'Donate', 'code-snippets' )
+			sprintf( '<a href="%1$s" title="%2$s" style="color: #d46f4d;">%3$s</a>',
+				'https://codesnippets.pro/',
+				__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
+				__( 'Upgrade to Pro', 'code-snippets' )
 			),
 		) );
 	}
@@ -191,8 +200,8 @@ class Admin {
 	/**
 	 * Print a notice inviting people to participate in the Code Snippets Survey
 	 *
-	 * @since  1.9
 	 * @return void
+	 * @since  1.9
 	 */
 	public function survey_message() {
 		global $current_user;
