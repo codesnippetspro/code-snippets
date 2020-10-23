@@ -35,6 +35,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	deactivate_plugins( array( 'code-snippets/code-snippets.php' ), true );
+
+	if ( ! function_exists( 'code_snippets_deactivated_old_version_notice' ) ) {
+		function code_snippets_deactivated_old_version_notice() {
+			echo '<div class="error fade"><p>',
+			esc_html__( 'You can now safely remove the free version of Code Snippets.', 'code-snippets' ),
+			'</p></div>';
+		}
+	}
+
+	add_action( 'admin_notices', 'code_snippets_deactivated_old_version_notice', 11 );
 	return;
 }
 
