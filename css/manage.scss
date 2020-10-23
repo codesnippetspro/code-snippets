@@ -275,7 +275,20 @@ $inactive-color: #ccc;
 	p.search-box {
 		float: left;
 		position: initial;
-		margin: 0;
+		margin: 1em 0 0 0;
 		height: auto;
 	}
+}
+
+.wrap h2.nav-tab-wrapper {
+	margin-bottom: 10px;
+}
+
+.subsubsub {
+	margin: 0;
+}
+
+.wp-list-table .is-expanded td.column-activate.activate {
+	/* fix for mobile layout */
+	display: table-cell !important;
 }

@@ -29,13 +29,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<?php $this->print_messages(); ?>
 
-	<form method="get" action="">
-		<?php
-		$this->list_table->required_form_fields( 'search_box' );
-		$this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
-		?>
-	</form>
-
 	<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
 		<?php
 
@@ -68,6 +61,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</h2>
 
 	<?php $this->list_table->views(); ?>
+
+	<form method="get" action="">
+		<?php
+		$this->list_table->required_form_fields( 'search_box' );
+		$this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
+		?>
+	</form>
 
 	<form method="post" action="">
 		<input type="hidden" id="code_snippets_ajax_nonce" value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">

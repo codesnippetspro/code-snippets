@@ -119,6 +119,14 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Set the 'name' column as the primary column.
+	 * @return string
+	 */
+	protected function get_default_primary_column_name() {
+		return 'name';
+	}
+
+	/**
 	 * Define the output of all columns that have no callback function
 	 *
 	 * @param Snippet $snippet     The snippet used for the current row.
