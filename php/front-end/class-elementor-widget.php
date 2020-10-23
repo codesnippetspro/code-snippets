@@ -121,7 +121,7 @@ class Elementor_Source_Widget extends Elementor_Widget {
 				$options[ $group ] = [];
 			}
 
-			$options[ $snippet->full_type_desc ][ $snippet->id ] = $snippet->name;
+			$options[ $group ][ $snippet->id ] = $snippet->name;
 		}
 
 		return $options;
