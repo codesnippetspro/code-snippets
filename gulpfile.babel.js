@@ -164,7 +164,7 @@ gulp.task('package', gulp.series(
 		'code-snippets.php', 'uninstall.php', 'php/**/*', 'vendor/**/*',
 		'readme.txt', 'license.txt', 'css/font/**/*', 'languages/**/*'
 	])
-		.pipe(copy(pkg.name)),
+		.pipe(copy(pkg.name, {})),
 
 	// copy minified scripts and stylesheets, while removing source map references
 	() => gulp.src('css/min/**/*.css')
