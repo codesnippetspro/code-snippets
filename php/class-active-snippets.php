@@ -15,8 +15,29 @@ class Active_Snippets {
 	 * Class constructor
 	 */
 	public function __construct() {
-		add_action( 'init', array( $this, 'print_js' ) );
-		add_action( 'init', array( $this, 'print_css' ) );
+		add_action( 'init', array( $this, 'init' ) );
+	}
+
+	/**
+	 * Initialise class functions.
+	 */
+	public function init() {
+		if ( ! code_snippets()->licensing->was_licensed() ) {
+			return;
+		}
+
+		// respond to requests to print out the active CSS snippets/
+		if ( isset( $_GET['code-snippets-css'] ) ) {
+			$this->print_code( 'css' );
+			exit;
+		}
+
+		// respond to requests to print the active JavaScript snippets.
+		if ( isset( $_GET['code-snippets-js-snippets'] ) && ! is_admin() ) {
+			$this->print_code( 'js' );
+			exit;
+		}
+
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
@@ -190,27 +211,5 @@ class Active_Snippets {
 		// output the code and exit
 		echo $code;
 		exit;
-	}
-
-	/**
-	 * Print the active style snippets for the current scope
-	 */
-	public function print_css() {
-		if ( ! isset( $_GET['code-snippets-css'] ) ) {
-			return;
-		}
-
-		$this->print_code( 'css' );
-	}
-
-	/**
-	 * Respond to requests to print the active JavaScript snippets for a particular scope.
-	 */
-	public function print_js() {
-		if ( ! isset( $_GET['code-snippets-js-snippets'] ) || is_admin() ) {
-			return;
-		}
-
-		$this->print_code( 'js' );
 	}
 }

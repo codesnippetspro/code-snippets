@@ -36,11 +36,18 @@ class Licensing {
 	private $license_key = null;
 
 	/**
+	 * Current license status.
+	 * @var string
+	 */
+	private $license_status = null;
+
+	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
 		add_action( 'admin_init', [ $this, 'init' ], 1 );
 		add_action( 'admin_init', [ $this, 'handle_form_submit' ] );
+		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'update_status' ] );
 	}
 
 	/**
@@ -52,7 +59,7 @@ class Licensing {
 		// setup the updater
 		$this->edd_updater = new EDD_SL_Plugin_Updater( self::EDD_STORE_URL, $plugin->file, [
 			'version'   => $plugin->version,
-			'license'   => $this->get_license_key(),
+			'license'   => $this->get_key(),
 			'item_name' => self::EDD_ITEM_NAME,
 			'author'    => __( 'Code Snippets Pro', 'code-snippets' ),
 			'beta'      => false,
@@ -63,7 +70,7 @@ class Licensing {
 	 * Retrieve the current saved license key
 	 * @return string
 	 */
-	public function get_license_key() {
+	public function get_key() {
 		if ( is_null( $this->license_key ) ) {
 			$this->license_key = trim( get_setting( 'license', 'key' ) );
 		}
@@ -72,10 +79,50 @@ class Licensing {
 	}
 
 	/**
+	 * Retrieve the current license status.
+	 *
+	 * @return string
+	 */
+	public function get_status() {
+		if ( is_null( $this->license_status ) ) {
+			$this->license_status = get_setting( 'license', 'status' );
+		}
+
+		return $this->license_status;
+	}
+
+	/**
+	 * Determine whether this site has (or had) a valid license.
+	 *
+	 * @return bool
+	 */
+	public function was_licensed() {
+		return in_array( $this->get_status(), [ 'valid', 'expired', 'disabled', 'inactive' ] );
+	}
+
+	/**
+	 * Query the server for the current license status.
+	 */
+	public function update_status() {
+		$response = $this->do_remote_request( 'check_license' );
+
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return;
+		}
+
+		// fetch the license data from the request
+		$license_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+		if ( isset( $license_data->license ) ) {
+			update_setting( 'license', 'status', $license_data->license );
+		}
+	}
+
+	/**
 	 * Render the license status settings field.
 	 */
 	public function render_license_status() {
-		if ( ! $this->get_license_key() ) {
+		if ( ! $this->get_key() ) {
 			esc_html_e( 'You will need to provide a valid key before activating the license.', 'code-snippets' );
 			return;
 		}
@@ -107,7 +154,7 @@ class Licensing {
 	private function do_remote_request( $action ) {
 		$api_params = array(
 			'edd_action' => $action,
-			'license'    => $this->get_license_key(),
+			'license'    => $this->get_key(),
 			'item_name'  => urlencode( self::EDD_ITEM_NAME ),
 			'url'        => home_url(),
 		);
