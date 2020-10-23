@@ -81,7 +81,8 @@ $descriptions = array(
 		/* translators: %s: snippet type name */
 		$learn_more_text = sprintf( __( 'Learn more about %s &rarr;', 'code-snippets' ), $type_names[ $current_type ] );
 
-		printf( ' <a href="%s">%s</a></p>', esc_url( 'https://code-snippets.pro/' ), esc_html( $learn_more_text ) );
+		printf( ' <a href="%s" target="_blank">%s</a></p>',
+			esc_url( 'https://code-snippets.pro/' ), esc_html( $learn_more_text ) );
 	}
 	?>
 
