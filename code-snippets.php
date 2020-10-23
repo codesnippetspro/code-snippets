@@ -93,7 +93,8 @@ if ( ! function_exists( 'code_snippets_php_version_notice' ) ) {
 			wp_get_default_update_php_url() :
 			'https://wordpress.org/support/update-php/'
 		);
-		echo wp_kses( $text, [ 'a' => [ 'href' => [] ] ] );
+
+		echo wp_kses( $text, array( 'a' => array( 'href' => array() ) ) );
 
 		echo '</p></div>';
 
