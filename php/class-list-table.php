@@ -397,7 +397,7 @@ class List_Table extends WP_List_Table {
 	public function get_columns() {
 		$columns = array(
 			'cb'          => '<input type="checkbox">',
-			'activate'    => '&nbsp;',
+			'activate'    => '',
 			'name'        => __( 'Name', 'code-snippets' ),
 			'type'        => __( 'Type', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
