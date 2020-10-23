@@ -68,11 +68,7 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 
 == Frequently Asked Questions ==
 
-<<<<<<< HEAD
-= How do insert snippets into the post text editor? =
-=======
 = How do I insert snippets into the post text editor? =
->>>>>>> v3
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
 = How can I recover my site if it is crashed by a buggy snippet? (method one) =
@@ -95,7 +91,6 @@ For example, to see the WordPress admin area in safe mode, you would change the 
 
 	https://yoursiteurl.com/wp-admin/admin.php?page=snippets&snippets-safe-mode=1
 
-<<<<<<< HEAD
 = How can I recover my site if it is crashed by a buggy snippet? (method two) =
 You can enable safe mode on a per-page basis by appending `&snippets-safe-mode=1` to end of the current page's URL. While safe mode is active, all snippets will not execute, allowing you to login to your site and deactivate any snippets that are causing issues.
 
@@ -107,8 +102,6 @@ For example, to see the WordPress admin area in safe mode, you would change the 
 
 	https://yoursiteurl.com/wp-admin/admin.php?page=snippets&snippets-safe-mode=1
 
-=======
->>>>>>> v3
 Or, for another example, if you were viewing a page on the front-end of your site, you could change a URL like this:
 
 	https://yoursiteurl.com/about-us/
