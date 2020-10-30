@@ -280,15 +280,17 @@ $inactive-color: #ccc;
 	}
 }
 
-.wrap h2.nav-tab-wrapper {
-	margin-bottom: 10px;
-}
-
-.subsubsub {
-	margin: 0;
-}
-
 .wp-list-table .is-expanded td.column-activate.activate {
 	/* fix for mobile layout */
 	display: table-cell !important;
+}
+
+.nav-tab-wrapper + .subsubsub, p.search-box {
+	margin: 10px 0 0 0;
+}
+
+.snippet-type-description {
+	border-bottom: 1px solid #ccc;
+	margin: 0;
+	padding: 1em 0;
 }

@@ -1,4 +1,7 @@
 <?php
+
+namespace Code_Snippets;
+
 /**
  * HTML code for the Add New/Edit Snippet page
  *
@@ -7,8 +10,6 @@
  *
  * @var Edit_Menu $this
  */
-
-namespace Code_Snippets;
 
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -49,8 +50,7 @@ if ( ! $snippet->id ) {
 	<?php $this->print_messages(); ?>
 
 	<form method="post" id="snippet-form" action="" class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"
-	      data-snippet-type="<?php echo esc_attr( $snippet->type ); ?>"
-	      data-submit-warning="<?php esc_attr_e( 'This snippet has no code or title. Continue?', 'code-snippets' ); ?>">
+	      data-snippet-type="<?php echo esc_attr( $snippet->type ); ?>">
 		<?php
 		/* Output the hidden fields */
 
