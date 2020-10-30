@@ -558,6 +558,12 @@ class Edit_Menu extends Admin_Menu {
 			[ 'code-editor' ], $plugin->version, true
 		);
 
+		wp_localize_script( 'code-snippets-edit-menu', 'code_snippets_edit_i18n', [
+			'missing_title_code' => esc_attr__( 'This snippet has no code or title. Continue?', 'code-snippets' ),
+			'missing_title'      => esc_attr__( 'This snippet has no title. Continue?', 'code-snippets' ),
+			'missing_code'       => esc_attr__( 'This snippet has no snippet code. Continue?', 'code-snippets' ),
+		] );
+
 		$this->enqueue_tag_assets();
 	}
 
