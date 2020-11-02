@@ -852,14 +852,20 @@ class List_Table extends WP_List_Table {
 	 */
 	public function no_items() {
 
-		if ( isset( $GLOBALS['s'] ) || isset( $_GET['tag'] ) ) {
+		if ( ! empty( $GLOBALS['s'] ) || ! empty( $_GET['tag'] ) ) {
 			esc_html_e( 'No snippets were found matching the current search query. Please enter a new query or use the "Clear Filters" button above.', 'code-snippets' );
 
 		} else {
-			esc_html_e( "It looks like you don't have any snippets.", 'code-snippets' );
-			printf(
-				' <a href="%s">%s</a>',
-				esc_url( code_snippets()->get_menu_url( 'add' ) ),
+			$add_url = code_snippets()->get_menu_url( 'add' );
+
+			if ( empty( $_GET['type'] ) ) {
+				esc_html_e( "It looks like you don't have any snippets.", 'code-snippets' );
+			} else {
+				esc_html_e( "It looks like you don't have any snippets of this type.", 'code-snippets' );
+				$add_url = add_query_arg( 'type', sanitize_text_field( $_GET['type'] ), $add_url );
+			}
+
+			printf( ' <a href="%s">%s</a>', esc_url( $add_url ),
 				esc_html__( 'Perhaps you would like to add a new one?', 'code-snippets' )
 			);
 		}
