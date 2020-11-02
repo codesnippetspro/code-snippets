@@ -238,8 +238,7 @@ class List_Table extends WP_List_Table {
 	 */
 	protected function column_activate( $snippet ) {
 
-		if ( 'content' === $snippet->scope || $this->is_network && $snippet->shared_network ||
-		     ( ! $this->is_network && $snippet->network && ! $snippet ) ) {
+		if ( $this->is_network && $snippet->shared_network || ( ! $this->is_network && $snippet->network && ! $snippet ) ) {
 			return '';
 		}
 
@@ -1261,7 +1260,7 @@ class List_Table extends WP_List_Table {
 	 * @param Snippet $snippet The snippet being used for the current row.
 	 */
 	public function single_row( $snippet ) {
-		$status = $snippet->active || 'content' === $snippet->scope ? 'active' : 'inactive';
+		$status = $snippet->active ? 'active' : 'inactive';
 
 		$row_class = "snippet {$status}-snippet {$snippet->type}-snippet {$snippet->scope}-scope";
 
