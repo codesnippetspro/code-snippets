@@ -20,9 +20,9 @@ import './shortcode';
 				(missing_code ? strings['missing_title_code'] : strings['missing_title']) :
 				(missing_code ? strings['missing_code'] : '');
 
-			if (message && !confirm(message)) {
+			if (event['submitter']['id'].startsWith('save_snippet') && message && !confirm(message)) {
 				event.preventDefault();
 			}
 		});
 	});
-}(window.code_snippets_edit_i18n));
+}(window['code_snippets_edit_i18n']));
