@@ -72,10 +72,10 @@ $descriptions = array(
 		echo '<p class="snippet-type-description">', esc_html( $descriptions[ $current_type ] );
 
 		$type_names = [
-			'php' => __( 'function snippets', 'code-snippets' ),
+			'php'  => __( 'function snippets', 'code-snippets' ),
 			'html' => __( 'content snippets', 'code-snippets' ),
-			'css' => __( 'style snippets', 'code-snippets' ),
-			'js' => __( 'javascript snippets', 'code-snippets' ),
+			'css'  => __( 'style snippets', 'code-snippets' ),
+			'js'   => __( 'javascript snippets', 'code-snippets' ),
 		];
 
 		/* translators: %s: snippet type name */

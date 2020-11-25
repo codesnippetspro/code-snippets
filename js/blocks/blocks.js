@@ -5,8 +5,8 @@ import Select from 'react-select';
 	const {__, _x} = wp.i18n;
 	const {registerBlockType} = wp.blocks;
 	const {withSelect} = wp.data;
-	const {PanelBody, ToggleControl, Placeholder} = wp.components;
-	const {InspectorControls} = wp.blockEditor;
+	const {PanelBody, ToggleControl, Placeholder, MenuItem} = wp.components;
+	const {InspectorControls, BlockControls} = wp.blockEditor;
 	const {serverSideRender: ServerSideRender} = wp;
 
 	/**
@@ -15,6 +15,12 @@ import Select from 'react-select';
 	 */
 	const fetchSnippets = () =>
 		withSelect(select => ({snippets: select('code-snippets/snippets-data').receiveSnippetsData()}));
+
+	const resetButton = (callback) => (
+		<BlockControls>
+			<MenuItem icon="image-rotate" title={__('Choose a different snippet', 'code-snippets')} onClick={callback} />
+		</BlockControls>
+	);
 
 	registerBlockType('code-snippets/content', {
 		title: __('Content Snippet', 'code-snippet'),
@@ -62,7 +68,7 @@ import Select from 'react-select';
 						</PanelBody>
 					</InspectorControls>
 				}
-
+				{resetButton(() => setAttributes({snippet_id: 0}))}
 				{attributes.snippet_id === 0 &&
 				<Placeholder className='code-snippets-content-block' icon='shortcode' label={__('Content Snippet', 'code-snippets')}>
 					<form>
@@ -123,6 +129,8 @@ import Select from 'react-select';
 			};
 
 			return <div>
+				{resetButton(() => setAttributes({snippet_id: 0}))}
+
 				{attributes.snippet_id === 0 &&
 				<Placeholder className='code-snippets-source-block' icon='shortcode'
 				             label={__('Snippet Source Code', 'code-snippets')}>
