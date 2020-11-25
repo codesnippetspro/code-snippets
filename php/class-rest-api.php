@@ -62,9 +62,10 @@ class REST_API {
 		/** @var Snippet $snippet */
 		foreach ( $snippets as $snippet ) {
 			$data[] = [
-				'id'    => $snippet->id,
-				'name' => $snippet->name,
-				'type'  => $snippet->type,
+				'id'     => $snippet->id,
+				'name'   => $snippet->name,
+				'type'   => $snippet->type,
+				'active' => $snippet->active,
 			];
 		}
 
