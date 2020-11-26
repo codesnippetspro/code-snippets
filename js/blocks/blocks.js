@@ -45,7 +45,7 @@ import Select from 'react-select';
 
 			let options = [];
 			for (let i = 0; i < snippets.length; i++) {
-				if ('html' !== snippets[i]['type']) continue;
+				if ('html' !== snippets[i]['type'] || !snippets[i]['active']) continue;
 				options.push({value: snippets[i]['id'], label: snippets[i]['name']});
 			}
 
