@@ -47,11 +47,15 @@ if ( ! $snippet->id || 'js' === $snippet->type ) { ?>
 
 if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
 	<div class="snippet-scope html-scopes-list">
-		<input type="radio" name="snippet_scope" value="content"<?php
-		checked( 'content', $snippet->scope ); ?>>
-
 		<p><?php
+			$this->print_scopes_list( array(
+				'content'        => __( 'Only display when inserted into a post or page.', 'code-snippets' ),
+				'head-content'   => __( 'Display in site <head> section.', 'code-snippets' ),
+				'footer-content' => __( 'Display at the end of the <body> section, in the footer.', 'code-snippets' ),
+			) );
+			?></p>
 
+		<?php if ( ! $snippet->id || 'content' === $snippet->scope ) {
 			/* translators: %s: snippet shortcode tag */
 			$text = $snippet->id ? __( 'You can use the %s shortcode to insert your content into a post or page.', 'code-snippets' ) : __( 'After saving, you will be able to use the %s shortcode to insert your content into a post or page.', 'code-snippets' );
 
@@ -60,23 +64,25 @@ if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
 			if ( false !== stripos( $snippet->code, '<?' ) ) {
 				$shortcode_atts .= ' php=true';
 			}
-			printf( esc_html( $text ), '<code class="shortcode-tag">[code_snippet' . esc_html( $shortcode_atts ) . ']</code>' );
 
-			?></p>
+			printf( '<p>' . esc_html( $text ) . '</p>',
+				'<code class="shortcode-tag">[code_snippet' . esc_html( $shortcode_atts ) . ']</code>'
+			);
 
-		<?php if ( $snippet->id ) { ?>
-			<p class="html-shortcode-options">
-				<strong><?php esc_html_e( 'Shortcode Options: ', 'code-snippets' ); ?></strong>
-				<label><input type="checkbox" value="php"<?php checked( false !== stripos( $snippet->code, '<?' ) ); ?>><?php
-					esc_html_e( 'Evaluate PHP code', 'code-snippets' ); ?>
-				</label>
-				<label><input type="checkbox" value="format"><?php
-					esc_html_e( 'Add paragraphs and formatting', 'code-snippets' ); ?>
-				</label>
-				<label><input type="checkbox" value="shortcodes"><?php
-					esc_html_e( 'Evaluate additional shortcode tags', 'code-snippets' ); ?>
-				</label>
-			</p>
-		<?php } ?>
+			if ( $snippet->id ) { ?>
+				<p class="html-shortcode-options">
+					<strong><?php esc_html_e( 'Shortcode Options: ', 'code-snippets' ); ?></strong>
+					<label><input type="checkbox" value="php"<?php checked( false !== stripos( $snippet->code, '<?' ) ); ?>><?php
+						esc_html_e( 'Evaluate PHP code', 'code-snippets' ); ?>
+					</label>
+					<label><input type="checkbox" value="format"><?php
+						esc_html_e( 'Add paragraphs and formatting', 'code-snippets' ); ?>
+					</label>
+					<label><input type="checkbox" value="shortcodes"><?php
+						esc_html_e( 'Evaluate additional shortcode tags', 'code-snippets' ); ?>
+					</label>
+				</p>
+			<?php }
+		} ?>
 	</div>
 <?php }
