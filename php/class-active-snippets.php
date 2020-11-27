@@ -5,11 +5,13 @@ namespace Code_Snippets;
 use MatthiasMullie\Minify;
 
 /**
- * Class for loading active style snippets
+ * Class for loading active snippets of various types.
  *
  * @package Code_Snippets
  */
 class Active_Snippets {
+
+	private $content_snippets = [];
 
 	/**
 	 * Class constructor
@@ -22,25 +24,29 @@ class Active_Snippets {
 	 * Initialise class functions.
 	 */
 	public function init() {
-		if ( ! code_snippets()->licensing->was_licensed() ) {
-			return;
-		}
+		$db = code_snippets()->db;
+		$this->content_snippets = $db->fetch_active_snippets( [ 'head-content', 'footer-content' ], 'code, scope' );
 
-		// respond to requests to print out the active CSS snippets/
-		if ( isset( $_GET['code-snippets-css'] ) ) {
-			$this->print_code( 'css' );
-			exit;
-		}
+		add_action( 'wp_head', [ $this, 'load_head_content' ] );
+		add_action( 'wp_footer', [ $this, 'load_footer_content' ] );
 
-		// respond to requests to print the active JavaScript snippets.
-		if ( isset( $_GET['code-snippets-js-snippets'] ) && ! is_admin() ) {
-			$this->print_code( 'js' );
-			exit;
-		}
+		if ( code_snippets()->licensing->was_licensed() ) {
+			// respond to requests to print out the active CSS snippets.
+			if ( isset( $_GET['code-snippets-css'] ) ) {
+				$this->print_code( 'css' );
+				exit;
+			}
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
+			// respond to requests to print the active JavaScript snippets.
+			if ( isset( $_GET['code-snippets-js-snippets'] ) && ! is_admin() ) {
+				$this->print_code( 'js' );
+				exit;
+			}
+
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
+		}
 	}
 
 	/**
@@ -211,5 +217,35 @@ class Active_Snippets {
 		// output the code and exit
 		echo $code;
 		exit;
+	}
+
+	/**
+	 * Print snippet code fetched from the database from a certain scope.
+	 *
+	 * @param array  $snippets_list List of data fetched.
+	 * @param string $scope         Name of scope to print.
+	 */
+	private function print_content_snippets( $snippets_list, $scope ) {
+		foreach ( $snippets_list as $snippets ) {
+			foreach ( $snippets as $snippet ) {
+				if ( $scope === $snippet['scope'] ) {
+					echo "\n", $snippet['code'], "\n";
+				}
+			}
+		}
+	}
+
+	/**
+	 * Print head content snippets.
+	 */
+	public function load_head_content() {
+		$this->print_content_snippets( $this->content_snippets, 'head-content' );
+	}
+
+	/**
+	 * Print footer content snippets.
+	 */
+	public function load_footer_content() {
+		$this->print_content_snippets( $this->content_snippets, 'footer-content' );
 	}
 }

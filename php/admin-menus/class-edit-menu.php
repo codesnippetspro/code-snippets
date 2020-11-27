@@ -632,25 +632,22 @@ class Edit_Menu extends Admin_Menu {
 	public function get_actions_list( $snippet, $extra_actions = true ) {
 		$actions = [ 'save_snippet' => __( 'Save Changes', 'code-snippets' ) ];
 
-		if ( 'html' !== $snippet->type ) {
+		if ( 'single-use' === $snippet->scope ) {
+			$actions['save_snippet_execute'] = __( 'Save Changes and Execute Once', 'code-snippets' );
 
-			if ( 'single-use' === $snippet->scope ) {
-				$actions['save_snippet_execute'] = __( 'Save Changes and Execute Once', 'code-snippets' );
+		} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
 
-			} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
-
-				if ( $snippet->active ) {
-					$actions['save_snippet_deactivate'] = __( 'Save Changes and Deactivate', 'code-snippets' );
-				} else {
-					$actions['save_snippet_activate'] = __( 'Save Changes and Activate', 'code-snippets' );
-				}
+			if ( $snippet->active ) {
+				$actions['save_snippet_deactivate'] = __( 'Save Changes and Deactivate', 'code-snippets' );
+			} else {
+				$actions['save_snippet_activate'] = __( 'Save Changes and Activate', 'code-snippets' );
 			}
+		}
 
-			// Make the 'Save and Activate' button the default if the setting is enabled
-			if ( ! $snippet->active && 'single-use' !== $snippet->scope &&
-			     get_setting( 'general', 'activate_by_default' ) ) {
-				$actions = array_reverse( $actions );
-			}
+		// Make the 'Save and Activate' button the default if the setting is enabled
+		if ( ! $snippet->active && 'single-use' !== $snippet->scope &&
+		     get_setting( 'general', 'activate_by_default' ) ) {
+			$actions = array_reverse( $actions );
 		}
 
 		if ( $extra_actions && 0 !== $snippet->id ) {

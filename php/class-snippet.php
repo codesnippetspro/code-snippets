@@ -336,7 +336,7 @@ class Snippet {
 			return 'js';
 		}
 
-		if ( 'content' === $this->scope ) {
+		if ( 'content' === substr( $this->scope, -7 ) ) {
 			return 'html';
 		}
 
@@ -415,7 +415,7 @@ class Snippet {
 	public static function get_all_scopes() {
 		return array(
 			'global', 'admin', 'front-end', 'single-use',
-			'content',
+			'content', 'head-content', 'footer-content',
 			'admin-css', 'site-css',
 			'site-head-js', 'site-footer-js',
 		);
