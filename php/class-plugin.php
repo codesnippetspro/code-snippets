@@ -52,6 +52,13 @@ class Plugin {
 	public $active_snippets;
 
 	/**
+	 * Class for providing REST API endpoints for snippet data.
+	 *
+	 * @var REST_API
+	 */
+	protected $rest_api;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $version Current plugin version.
