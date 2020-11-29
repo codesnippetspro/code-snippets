@@ -66,6 +66,7 @@ class Plugin {
 	public $licensing;
 
 	/**
+	 *
 	 * Class constructor
 	 *
 	 * @param string $version Current plugin version.

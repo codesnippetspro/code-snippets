@@ -174,6 +174,11 @@ class Frontend {
 			return $snippet->id ? $this->render_snippet_source( $snippet ) : '';
 		}
 
+		// if the snippet is inactive, render nothing.
+		if ( ! $snippet->active ) {
+			return '';
+		}
+
 		$content = $snippet->code;
 
 		if ( $atts['php'] ) {
