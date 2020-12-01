@@ -38,7 +38,7 @@
 
 			// clear the editor contents
 			editor.setValue('');
-			editor.setOption('lint', 'js' !== type);
+			editor.setOption('lint', 'php' === type || 'css' === type);
 			if (modes[type]) editor.setOption('mode', modes[type]);
 		})
 	}
