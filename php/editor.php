@@ -33,7 +33,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 		'matchBrackets' => true,
 		'extraKeys'     => [ 'Alt-F' => 'findPersistent', 'Ctrl-Space' => 'autocomplete' ],
 		'gutters'       => [ 'CodeMirror-lint-markers' ],
-		'lint'          => true,
+		'lint'          => 'css' === $type || 'php' === $type,
 	];
 
 	// add relevant saved setting values to the default attributes
