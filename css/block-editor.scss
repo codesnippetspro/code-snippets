@@ -6,3 +6,13 @@
 	width: 100%;
 	margin-top: 1em;
 }
+
+.code-snippets-content-block {
+	.dashicons {
+		font-family: auto;
+
+		&::before {
+			font-family: dashicons;
+		}
+	}
+}
