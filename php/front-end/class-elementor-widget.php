@@ -255,6 +255,7 @@ class Elementor_Content_Widget extends Elementor_Widget {
 		if ( ! isset( $settings['snippet_id'] ) || 0 === intval( $settings['snippet_id'] ) ) {
 			echo '<p>', esc_html__( 'Select a snippet to show', 'code-snippets' ), '</p>';
 		} else {
+			$settings['debug'] = true;
 			echo code_snippets()->frontend->render_content_shortcode( $settings );
 		}
 	}
