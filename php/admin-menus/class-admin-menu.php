@@ -62,7 +62,7 @@ class Admin_Menu {
 	 * Register action and filter hooks
 	 */
 	public function run() {
-		if ( ! code_snippets()->admin->is_compact_menu() ) {
+		if ( ! code_snippets()->is_compact_menu() ) {
 			add_action( 'admin_menu', array( $this, 'register' ) );
 			add_action( 'network_admin_menu', array( $this, 'register' ) );
 		}

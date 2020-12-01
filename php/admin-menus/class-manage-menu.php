@@ -34,7 +34,7 @@ class Manage_Menu extends Admin_Menu {
 	public function run() {
 		parent::run();
 
-		if ( code_snippets()->admin->is_compact_menu() ) {
+		if ( code_snippets()->is_compact_menu() ) {
 			add_action( 'admin_menu', array( $this, 'register_compact_menu' ), 2 );
 			add_action( 'network_admin_menu', array( $this, 'register_compact_menu' ), 2 );
 		}
@@ -71,7 +71,7 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function register_compact_menu() {
 
-		if ( ! code_snippets()->admin->is_compact_menu() ) {
+		if ( ! code_snippets()->is_compact_menu() ) {
 			return;
 		}
 

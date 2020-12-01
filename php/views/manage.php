@@ -39,8 +39,7 @@ $descriptions = array(
 	<h1><?php
 		esc_html_e( 'Snippets', 'code-snippets' );
 
-		$admin = code_snippets()->admin;
-		$this->page_title_actions( $admin->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
+		$this->page_title_actions( code_snippets()->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
 
 		$this->list_table->search_notice();
 		?></h1>

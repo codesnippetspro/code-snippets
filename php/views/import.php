@@ -21,9 +21,7 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 <div class="wrap">
 	<h1><?php esc_html_e( 'Import Snippets', 'code-snippets' );
 
-		$admin = code_snippets()->admin;
-
-		if ( $admin->is_compact_menu() ) {
+		if ( code_snippets()->is_compact_menu() ) {
 			$this->page_title_actions( [ 'manage', 'add', 'settings' ] );
 		}
 

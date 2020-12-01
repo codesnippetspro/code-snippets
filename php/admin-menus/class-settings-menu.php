@@ -108,7 +108,7 @@ class Settings_Menu extends Admin_Menu {
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Settings', 'code-snippets' );
 
-				if ( code_snippets()->admin->is_compact_menu() ) {
+				if ( code_snippets()->is_compact_menu() ) {
 					$actions = [
 						_x( 'Manage', 'snippets', 'code-snippets' ) => code_snippets()->get_menu_url(),
 						_x( 'Add New', 'snippet', 'code-snippets' ) => code_snippets()->get_menu_url( 'add' ),

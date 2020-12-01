@@ -60,15 +60,6 @@ class Admin {
 	}
 
 	/**
-	 * Determine whether the menu is full or compact
-	 *
-	 * @return bool
-	 */
-	public function is_compact_menu() {
-		return ! is_network_admin() && apply_filters( 'code_snippets_compact_menu', false );
-	}
-
-	/**
 	 * Allow super admins to control site admin access to
 	 * snippet admin menus
 	 *
