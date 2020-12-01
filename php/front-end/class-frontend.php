@@ -170,7 +170,7 @@ class Frontend {
 			$text = __( '<strong>%1$s</strong> is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
 
 			$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
-			return wp_kses( sprintf( $text, $snippet->name, $edit_url ), [ 'strong' => [], 'a' => [ 'href' ] ] );
+			return wp_kses( sprintf( $text, $snippet->name, $edit_url ), [ 'strong' => [], 'a' => [ 'href' => [] ] ] );
 		}
 
 		$content = $snippet->code;
