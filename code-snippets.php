@@ -9,7 +9,7 @@
  * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2020 Shea Bunge
  * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
- * @version   3.0.0-alpha.4
+ * @version   3.0.0-alpha.5
  * @link      https://github.com/sheabunge/code-snippets
  */
 
@@ -19,7 +19,7 @@ Plugin URI:  https://codesnippets.pro
 Description: An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
 Author:      Code Snippets Pro
 Author URI:  https://codesnippets.pro
-Version:     3.0.0-alpha.4
+Version:     3.0.0-alpha.5
 License:     GPL-2.0-or-later
 License URI: license.txt
 Text Domain: code-snippets
