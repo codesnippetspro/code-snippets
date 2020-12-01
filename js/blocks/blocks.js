@@ -33,15 +33,21 @@ import Select from 'react-select';
 			network: {type: 'boolean', default: false},
 			php: {type: 'boolean', default: false},
 			format: {type: 'boolean', default: false},
-			shortcodes: {type: 'boolean', default: false}
+			shortcodes: {type: 'boolean', default: false},
+			debug: {type: 'boolean', default: false}
 		},
 		edit: fetchSnippets()(({attributes, setAttributes, snippets}) => {
 			const toggleAttribute = (attribute) => setAttributes({[attribute]: !attributes[attribute]});
 
+			const addDebugAttribute = (attributes) => {
+				attributes['debug'] = true;
+				return attributes;
+			};
+
 			const renderBlock = () =>
 				<ServerSideRender
 					block="code-snippets/content"
-					attributes={attributes} />;
+					attributes={addDebugAttribute(attributes)} />;
 
 			let options = [];
 			for (let i = 0; i < snippets.length; i++) {

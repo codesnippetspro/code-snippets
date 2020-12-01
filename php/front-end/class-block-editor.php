@@ -61,6 +61,7 @@ class Block_Editor {
 				'php'        => [ 'type' => 'boolean', 'default' => false ],
 				'format'     => [ 'type' => 'boolean', 'default' => false ],
 				'shortcodes' => [ 'type' => 'boolean', 'default' => false ],
+				'debug'      => [ 'type' => 'boolean', 'default' => false ],
 			),
 		) );
 
