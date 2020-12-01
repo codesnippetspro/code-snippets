@@ -41,7 +41,7 @@ if ( ! $snippet->id ) {
 			esc_html_e( 'Add New Snippet', 'code-snippets' );
 		}
 
-		if ( code_snippets()->admin->is_compact_menu() ) {
+		if ( code_snippets()->is_compact_menu() ) {
 			$this->page_title_actions( [ 'manage', 'import', 'settings' ] );
 		}
 

@@ -162,7 +162,7 @@ class Frontend {
 
 		// if the snippet is inactive, either display a message or render nothing.
 		if ( ! $snippet->active ) {
-			if ( false && ! $atts['debug'] ) {
+			if ( ! $atts['debug'] ) {
 				return '';
 			}
 

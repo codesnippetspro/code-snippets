@@ -128,6 +128,15 @@ class Plugin {
 	}
 
 	/**
+	 * Determine whether the menu is full or compact
+	 *
+	 * @return bool
+	 */
+	public function is_compact_menu() {
+		return ! is_network_admin() && apply_filters( 'code_snippets_compact_menu', false );
+	}
+
+	/**
 	 * Fetch the admin menu slug for a snippets menu
 	 *
 	 * @param string $menu Name of menu to retrieve the slug for.
@@ -164,7 +173,7 @@ class Plugin {
 	public function get_menu_url( $menu = '', $context = 'self' ) {
 		$slug = $this->get_menu_slug( $menu );
 
-		if ( $this->admin->is_compact_menu() && 'network' !== $context ) {
+		if ( $this->is_compact_menu() && 'network' !== $context ) {
 			$base_slug = $this->get_menu_slug();
 			$url = 'tools.php?page=' . $base_slug;
 
