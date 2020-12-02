@@ -164,7 +164,8 @@ class Code_Snippets_Validator {
 			$structure_type = $token[0];
 
 			// continue eating tokens until we find the name of the class or function
-			while ( ! $this->end() && T_STRING !== $token[0] && ( T_FUNCTION !== $structure_type || '(' !== $token ) ) {
+			while ( ! $this->end() && T_STRING !== $token[0] &&
+			        ( T_FUNCTION !== $structure_type || '(' !== $token ) && ( T_CLASS !== $structure_type || '{' !== $token ) ) {
 				$token = $this->peek();
 				$this->next();
 			}
@@ -177,35 +178,34 @@ class Code_Snippets_Validator {
 				);
 			}
 
-			// if the function is anonymous, with no name, then no need to check
-			if ( T_FUNCTION === $structure_type && '(' === $token ) {
-				continue;
-			}
+			// if the function or class is anonymous, with no name, then no need to check
+			if ( ! ( T_FUNCTION === $structure_type && '(' === $token ) && ! ( T_CLASS === $structure_type && '{' === $token ) ) {
 
-			// check whether the name has already been defined
-			if ( $this->check_duplicate_identifier( $structure_type, $token[1] ) ) {
-				switch ( $structure_type ) {
-					case T_FUNCTION:
-						/* translators: %s: PHP function name */
-						$message = __( 'Cannot redeclare function %s.', 'code-snippets' );
-						break;
-					case T_CLASS:
-						/* translators: %s: PHP class name */
-						$message = __( 'Cannot redeclare class %s.', 'code-snippets' );
-						break;
-					case T_INTERFACE:
-						/* translators: %s: PHP interface name */
-						$message = __( 'Cannot redeclare interface %s.', 'code-snippets' );
-						break;
-					default:
-						/* translators: %s: PHP identifier name*/
-						$message = __( 'Cannot redeclare %s.', 'code-snippets' );
+				// check whether the name has already been defined
+				if ( $this->check_duplicate_identifier( $structure_type, $token[1] ) ) {
+					switch ( $structure_type ) {
+						case T_FUNCTION:
+							/* translators: %s: PHP function name */
+							$message = __( 'Cannot redeclare function %s.', 'code-snippets' );
+							break;
+						case T_CLASS:
+							/* translators: %s: PHP class name */
+							$message = __( 'Cannot redeclare class %s.', 'code-snippets' );
+							break;
+						case T_INTERFACE:
+							/* translators: %s: PHP interface name */
+							$message = __( 'Cannot redeclare interface %s.', 'code-snippets' );
+							break;
+						default:
+							/* translators: %s: PHP identifier name*/
+							$message = __( 'Cannot redeclare %s.', 'code-snippets' );
+					}
+
+					return array(
+						'message' => sprintf( $message, $token[1] ),
+						'line'    => $token[2],
+					);
 				}
-
-				return array(
-					'message' => sprintf( $message, $token[1] ),
-					'line'    => $token[2],
-				);
 			}
 
 			// if we have entered into a class, eat tokens until we find the closing brace
