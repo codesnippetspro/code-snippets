@@ -39,6 +39,13 @@ class Code_Snippets_Validator {
 	private $defined_identifiers = array();
 
 	/**
+	 * Exclude certain tokens from being checked.
+	 *
+	 * @var array
+	 */
+	private $exceptions = array();
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param string $code Snippet code for parsing.
@@ -116,7 +123,7 @@ class Code_Snippets_Validator {
 
 		$duplicate = in_array( $identifier, $this->defined_identifiers[ $type ], true );
 		array_unshift( $this->defined_identifiers[ $type ], $identifier );
-		return $duplicate;
+		return $duplicate && ! ( isset( $this->exceptions[ $type ] ) && in_array( $identifier, $this->exceptions[ $type ] ) );
 	}
 
 	/**
@@ -130,6 +137,22 @@ class Code_Snippets_Validator {
 			$this->next();
 
 			if ( ! is_array( $token ) ) {
+				continue;
+			}
+
+			// if this is a function or class exists check, then allow this function or class to be defined
+			if ( T_STRING === $token[0] && 'function_exists' === $token[1] || 'class_exists' === $token[1] ) {
+				$type = 'function_exists' === $token[1] ? T_FUNCTION : T_CLASS;
+
+				// eat tokens until we find the function or class name
+				while ( ! $this->end() && T_CONSTANT_ENCAPSED_STRING !== $token[0] ) {
+					$token = $this->peek();
+					$this->next();
+				}
+
+				// add the identifier to the list of exceptions
+				$this->exceptions[ $type ] = isset( $this->exceptions[ $type ] ) ? $this->exceptions[ $type ] : array();
+				$this->exceptions[ $type ][] = trim( $token[1], '\'"' );
 				continue;
 			}
 
