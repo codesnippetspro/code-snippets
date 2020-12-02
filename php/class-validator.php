@@ -41,6 +41,13 @@ class Validator {
 	private $defined_identifiers = array();
 
 	/**
+	 * Exclude certain tokens from being checked.
+	 *
+	 * @var array
+	 */
+	private $exceptions = array();
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param string $code Snippet code for parsing.
@@ -118,7 +125,7 @@ class Validator {
 
 		$duplicate = in_array( $identifier, $this->defined_identifiers[ $type ], true );
 		array_unshift( $this->defined_identifiers[ $type ], $identifier );
-		return $duplicate;
+		return $duplicate && ! ( isset( $this->exceptions[ $type ] ) && in_array( $identifier, $this->exceptions[ $type ] ) );
 	}
 
 	/**
@@ -135,6 +142,22 @@ class Validator {
 				continue;
 			}
 
+			// if this is a function or class exists check, then allow this function or class to be defined
+			if ( T_STRING === $token[0] && 'function_exists' === $token[1] || 'class_exists' === $token[1] ) {
+				$type = 'function_exists' === $token[1] ? T_FUNCTION : T_CLASS;
+
+				// eat tokens until we find the function or class name
+				while ( ! $this->end() && T_CONSTANT_ENCAPSED_STRING !== $token[0] ) {
+					$token = $this->peek();
+					$this->next();
+				}
+
+				// add the identifier to the list of exceptions
+				$this->exceptions[ $type ] = isset( $this->exceptions[ $type ] ) ? $this->exceptions[ $type ] : array();
+				$this->exceptions[ $type ][] = trim( $token[1], '\'"' );
+				continue;
+			}
+
 			// only look for class and function declaration tokens
 			if ( T_CLASS !== $token[0] && T_FUNCTION !== $token[0] ) {
 				continue;
@@ -143,7 +166,8 @@ class Validator {
 			$structure_type = $token[0];
 
 			// continue eating tokens until we find the name of the class or function
-			while ( ! $this->end() && T_STRING !== $token[0] && ( T_FUNCTION !== $structure_type || '(' !== $token ) ) {
+			while ( ! $this->end() && T_STRING !== $token[0] &&
+			        ( T_FUNCTION !== $structure_type || '(' !== $token ) && ( T_CLASS !== $structure_type || '{' !== $token ) ) {
 				$token = $this->peek();
 				$this->next();
 			}
@@ -156,35 +180,34 @@ class Validator {
 				);
 			}
 
-			// if the function is anonymous, with no name, then no need to check
-			if ( T_FUNCTION === $structure_type && '(' === $token ) {
-				continue;
-			}
+			// if the function or class is anonymous, with no name, then no need to check
+			if ( ! ( T_FUNCTION === $structure_type && '(' === $token ) && ! ( T_CLASS === $structure_type && '{' === $token ) ) {
 
-			// check whether the name has already been defined
-			if ( $this->check_duplicate_identifier( $structure_type, $token[1] ) ) {
-				switch ( $structure_type ) {
-					case T_FUNCTION:
-						/* translators: %s: PHP function name */
-						$message = __( 'Cannot redeclare function %s.', 'code-snippets' );
-						break;
-					case T_CLASS:
-						/* translators: %s: PHP class name */
-						$message = __( 'Cannot redeclare class %s.', 'code-snippets' );
-						break;
-					case T_INTERFACE:
-						/* translators: %s: PHP interface name */
-						$message = __( 'Cannot redeclare interface %s.', 'code-snippets' );
-						break;
-					default:
-						/* translators: %s: PHP identifier name*/
-						$message = __( 'Cannot redeclare %s.', 'code-snippets' );
+				// check whether the name has already been defined
+				if ( $this->check_duplicate_identifier( $structure_type, $token[1] ) ) {
+					switch ( $structure_type ) {
+						case T_FUNCTION:
+							/* translators: %s: PHP function name */
+							$message = __( 'Cannot redeclare function %s.', 'code-snippets' );
+							break;
+						case T_CLASS:
+							/* translators: %s: PHP class name */
+							$message = __( 'Cannot redeclare class %s.', 'code-snippets' );
+							break;
+						case T_INTERFACE:
+							/* translators: %s: PHP interface name */
+							$message = __( 'Cannot redeclare interface %s.', 'code-snippets' );
+							break;
+						default:
+							/* translators: %s: PHP identifier name*/
+							$message = __( 'Cannot redeclare %s.', 'code-snippets' );
+					}
+
+					return array(
+						'message' => sprintf( $message, $token[1] ),
+						'line'    => $token[2],
+					);
 				}
-
-				return array(
-					'message' => sprintf( $message, $token[1] ),
-					'line'    => $token[2],
-				);
 			}
 
 			// if we have entered into a class, eat tokens until we find the closing brace
