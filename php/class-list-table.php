@@ -60,11 +60,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'option'  => 'snippets_per_page',
 		) );
 
-		/* Set the table columns hidden in Screen Options by default */
-		if ( false === get_user_option( "manage{$screen->id}columnshidden" ) ) {
-			$user = wp_get_current_user();
-			update_user_option( $user->ID, "manage{$screen->id}columnshidden", array( 'id' ) );
-		}
+		add_filter( 'default_hidden_columns', array( $this, 'default_hidden_columns' ) );
 
 		/* Strip the result query arg from the URL */
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
@@ -82,6 +78,25 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			'plural'   => 'snippets',
 			'singular' => 'snippet',
 		) );
+	}
+
+	/**
+	 * Ensure certain columns are hidden by default for this screen.
+	 *
+	 * @param array $hidden
+	 *
+	 * @return array
+	 */
+	protected function default_hidden_columns( $hidden ) {
+		return [ 'id' ];
+	}
+
+	/**
+	 * Set the 'name' column as the primary column.
+	 * @return string
+	 */
+	protected function get_default_primary_column_name() {
+		return 'name';
 	}
 
 	/**
@@ -935,13 +950,12 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/* Get the current data */
 		$data = $snippets[ $status ];
 
-		/* Decide how many records per page to show by
-		   getting the user's setting in the Screen Options panel */
-		$sort_by = $screen->get_option( 'per_page', 'option' );
+		/* Decide how many records per page to show by getting the user's setting in the Screen Options panel */
+		$sort_by = $this->screen->get_option( 'per_page', 'option' );
 		$per_page = get_user_meta( $user, $sort_by, true );
 
 		if ( empty( $per_page ) || $per_page < 1 ) {
-			$per_page = $screen->get_option( 'per_page', 'default' );
+			$per_page = $this->screen->get_option( 'per_page', 'default' );
 		}
 
 		$per_page = (int) $per_page;
