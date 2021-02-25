@@ -9,8 +9,8 @@ import 'tag-it/js/tag-it';
 
 	try {
 		jQuery(tags_field).tagit({
-			availableTags: code_snippets_all_tags,
-			allowSpaces: true,
+			availableTags: code_snippets_tags.options.availableTags,
+			allowSpaces: code_snippets_tags.options.allowSpaces,
 			removeConfirmation: true,
 			showAutocompleteOnFocus: true,
 		});

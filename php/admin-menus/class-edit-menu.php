@@ -571,9 +571,17 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			);
 
 			$snippet_tags = wp_json_encode( get_all_snippet_tags() );
-			$inline_script = 'var code_snippets_all_tags = ' . $snippet_tags . ';';
 
-			wp_add_inline_script( 'code-snippets-edit-menu-tags', $inline_script, 'before' );
+			wp_localize_script(
+				'code-snippets-edit-menu-tags',
+				'code_snippets_tags',
+				array(
+					'options' => apply_filters( 'code_snippets/tag_it_options', array(
+						'availableTags' => get_all_snippet_tags(),
+						'allowSpaces'   => true,
+					) ),
+				)
+			);
 		}
 	}
 
