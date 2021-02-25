@@ -75,12 +75,16 @@ if ( ! $snippet->id ) {
 		printf( '<input type="hidden" name="snippet_active" value="%d" />', $snippet->active );
 
 		?>
+		<?php do_action( 'code_snippets/admin/before_title_input', $snippet ); ?>
+
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php _e( 'Name', 'code-snippets' ); ?></label>
 				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>" placeholder="<?php _e( 'Enter title here', 'code-snippets' ); ?>" />
 			</div>
 		</div>
+
+		<?php do_action( 'code_snippets/admin/after_title_input', $snippet ); ?>
 
 		<?php if ( apply_filters( 'code_snippets/extra_save_buttons', true ) ) { ?>
 			<p class="submit-inline"><?php $this->render_submit_buttons( $snippet, '', false ); ?></p>

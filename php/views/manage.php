@@ -42,6 +42,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$this->list_table->search_notice();
 		?></h1>
 
+	<?php do_action( 'code_snippets/admin/manage/before_list_table' ); ?>
+
 	<?php $this->list_table->views(); ?>
 
 	<form method="get" action="">
