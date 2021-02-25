@@ -83,43 +83,7 @@ if ( ! $snippet->id ) {
 		</div>
 
 		<?php if ( apply_filters( 'code_snippets/extra_save_buttons', true ) ) { ?>
-			<p class="submit-inline">
-				<?php
-
-				$actions['save_snippet'] = array(
-					__( 'Save Changes', 'code-snippets' ),
-					__( 'Save Snippet', 'code-snippets' ),
-				);
-
-				if ( 'single-use' === $snippet->scope ) {
-					$actions['save_snippet_execute'] = array(
-						__( 'Execute Once', 'code-snippets' ),
-						__( 'Save Snippet and Execute Once', 'code-snippets' ),
-					);
-
-				} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
-
-					if ( $snippet->active ) {
-						$actions['save_snippet_deactivate'] = array(
-							__( 'Deactivate', 'code-snippets' ),
-							__( 'Save Snippet and Deactivate', 'code-snippets' ),
-						);
-
-					} else {
-						$actions['save_snippet_activate'] = array(
-							__( 'Activate', 'code-snippets' ),
-							__( 'Save Snippet and Activate', 'code-snippets' ),
-						);
-					}
-				}
-
-				foreach ( $actions as $action => $labels ) {
-					$other_attributes = array( 'title' => $labels[1], 'id' => $action . '_extra' );
-					submit_button( $labels[0], 'secondary small', $action, false, $other_attributes );
-				}
-
-				?>
-			</p>
+			<p class="submit-inline"><?php $this->render_submit_buttons( $snippet, '', false ); ?></p>
 		<?php } ?>
 
 		<h2>
