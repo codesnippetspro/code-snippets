@@ -636,7 +636,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			$actions['delete_snippet'] = __( 'Delete', 'code-snippets' );
 		}
 
-		return $actions;
+		return apply_filters( 'code_snippets/admin/submit_actions', $actions, $snippet, $extra_actions );
 	}
 
 	/**
