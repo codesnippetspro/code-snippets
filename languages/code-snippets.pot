@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Code Snippets
+# Copyright (C) 2021 Code Snippets
 # This file is distributed under the same license as the Code Snippets package.
 msgid ""
 msgstr ""
@@ -131,7 +131,15 @@ msgid " Here you can add a new snippet, or edit an existing one."
 msgstr ""
 
 #: php/class-contextual-help.php:94
+msgid "WP Function Me"
+msgstr ""
+
+#: php/class-contextual-help.php:94
 msgid "https://www.wpfunction.me"
+msgstr ""
+
+#: php/class-contextual-help.php:95
+msgid "CSS-Tricks"
 msgstr ""
 
 #: php/class-contextual-help.php:95
@@ -139,11 +147,23 @@ msgid "https://css-tricks.com/snippets/wordpress/"
 msgstr ""
 
 #: php/class-contextual-help.php:96
+msgid "WordPress Stack Exchange"
+msgstr ""
+
+#: php/class-contextual-help.php:96
 msgid "https://wordpress.stackexchange.com/"
 msgstr ""
 
 #: php/class-contextual-help.php:97
+msgid "WP Beginner"
+msgstr ""
+
+#: php/class-contextual-help.php:97
 msgid "https://www.wpbeginner.com/category/wp-tutorials/"
+msgstr ""
+
+#: php/class-contextual-help.php:98
+msgid "GenerateWP"
 msgstr ""
 
 #: php/class-contextual-help.php:98
@@ -204,180 +224,180 @@ msgstr ""
 msgid "Snippets per page"
 msgstr ""
 
-#: php/class-list-table.php:161
+#: php/class-list-table.php:176
 msgid "Edit"
 msgstr ""
 
-#: php/class-list-table.php:162, php/class-list-table.php:413
+#: php/class-list-table.php:177, php/class-list-table.php:428
 msgid "Clone"
 msgstr ""
 
-#: php/class-list-table.php:163, php/class-list-table.php:415, php/admin-menus/class-edit-menu.php:635
+#: php/class-list-table.php:178, php/class-list-table.php:430, php/admin-menus/class-edit-menu.php:635
 msgid "Export"
 msgstr ""
 
-#: php/class-list-table.php:172, php/class-list-table.php:416, php/admin-menus/class-edit-menu.php:636
+#: php/class-list-table.php:187, php/class-list-table.php:431, php/admin-menus/class-edit-menu.php:636
 msgid "Delete"
 msgstr ""
 
-#: php/class-list-table.php:176
+#: php/class-list-table.php:191
 msgid "You are about to permanently delete the selected item."
 msgstr ""
 
-#: php/class-list-table.php:177, php/admin-menus/class-edit-menu.php:664
+#: php/class-list-table.php:192, php/admin-menus/class-edit-menu.php:664
 msgid "'Cancel' to stop, 'OK' to delete."
 msgstr ""
 
-#: php/class-list-table.php:155
+#: php/class-list-table.php:170
 msgid "Network Only"
 msgstr ""
 
-#: php/class-list-table.php:153
+#: php/class-list-table.php:168
 msgid "Network Active"
 msgstr ""
 
-#: php/class-list-table.php:206, php/class-list-table.php:412
+#: php/class-list-table.php:221, php/class-list-table.php:427
 msgid "Network Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:206, php/class-list-table.php:411
+#: php/class-list-table.php:221, php/class-list-table.php:426
 msgid "Network Activate"
 msgstr ""
 
-#: php/class-list-table.php:207, php/class-list-table.php:412, php/admin-menus/class-manage-menu.php:141, php/views/edit.php:104
+#: php/class-list-table.php:222, php/class-list-table.php:427, php/admin-menus/class-manage-menu.php:141, php/views/edit.php:104
 msgid "Deactivate"
 msgstr ""
 
-#: php/class-list-table.php:207, php/class-list-table.php:411, php/admin-menus/class-manage-menu.php:140, php/views/edit.php:110
+#: php/class-list-table.php:222, php/class-list-table.php:426, php/admin-menus/class-manage-menu.php:140, php/views/edit.php:110
 msgid "Activate"
 msgstr ""
 
-#: php/class-list-table.php:201
+#: php/class-list-table.php:216
 msgid "Run Once"
 msgstr ""
 
 #. translators: %d: snippet identifier
-#: php/class-list-table.php:230
+#: php/class-list-table.php:245
 msgid "Untitled #%d"
 msgstr ""
 
-#: php/class-list-table.php:254
+#: php/class-list-table.php:269
 msgid "Shared on Network"
 msgstr ""
 
-#: php/class-list-table.php:345
+#: php/class-list-table.php:360
 msgid "Y/m/d"
 msgstr ""
 
-#: php/class-list-table.php:343
+#: php/class-list-table.php:358
 msgid "%s ago"
 msgstr ""
 
 #. translators: 1: date format, 2: time format
-#: php/class-list-table.php:349
+#: php/class-list-table.php:364
 msgctxt "date and time format"
 msgid "%1$s \a\t %2$s"
 msgstr ""
 
-#: php/class-list-table.php:363, php/views/edit.php:80
+#: php/class-list-table.php:378, php/views/edit.php:80
 msgid "Name"
 msgstr ""
 
-#: php/class-list-table.php:364
+#: php/class-list-table.php:379
 msgid "ID"
 msgstr ""
 
-#: php/class-list-table.php:365, php/admin-menus/class-edit-menu.php:336
+#: php/class-list-table.php:380, php/admin-menus/class-edit-menu.php:336
 msgid "Description"
 msgstr ""
 
-#: php/class-list-table.php:366, php/admin-menus/class-edit-menu.php:369
+#: php/class-list-table.php:381, php/admin-menus/class-edit-menu.php:369
 msgid "Tags"
 msgstr ""
 
-#: php/class-list-table.php:367
+#: php/class-list-table.php:382
 msgid "Modified"
 msgstr ""
 
-#: php/class-list-table.php:368, php/admin-menus/class-edit-menu.php:388
+#: php/class-list-table.php:383, php/admin-menus/class-edit-menu.php:388
 msgid "Priority"
 msgstr ""
 
-#: php/class-list-table.php:414, php/admin-menus/class-edit-menu.php:632
+#: php/class-list-table.php:429, php/admin-menus/class-edit-menu.php:632
 msgid "Download"
 msgstr ""
 
 #. translators: %s: total number of snippets
-#: php/class-list-table.php:458
+#: php/class-list-table.php:473
 msgid "All <span class=\"count\">(%s)</span>"
 msgid_plural "All <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of active snippets
-#: php/class-list-table.php:461
+#: php/class-list-table.php:476
 msgid "Active <span class=\"count\">(%s)</span>"
 msgid_plural "Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of inactive snippets
-#: php/class-list-table.php:464
+#: php/class-list-table.php:479
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: total number of recently activated snippets
-#: php/class-list-table.php:467
+#: php/class-list-table.php:482
 msgid "Recently Active <span class=\"count\">(%s)</span>"
 msgid_plural "Recently Active <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: php/class-list-table.php:536
+#: php/class-list-table.php:551
 msgid "Show all tags"
 msgstr ""
 
-#: php/class-list-table.php:550
+#: php/class-list-table.php:565
 msgid "Filter"
 msgstr ""
 
-#: php/class-list-table.php:558
+#: php/class-list-table.php:573
 msgid "Clear List"
 msgstr ""
 
-#: php/class-list-table.php:786
+#: php/class-list-table.php:801
 msgid "It looks like you don't have any snippets."
 msgstr ""
 
-#: php/class-list-table.php:790
+#: php/class-list-table.php:805
 msgid "Perhaps you would like to add a new one?"
 msgstr ""
 
-#: php/class-list-table.php:783
+#: php/class-list-table.php:798
 msgid "No snippets were found matching the current search query. Please enter a new query or use the \"Clear Filters\" button above."
 msgstr ""
 
-#: php/class-list-table.php:1120
+#: php/class-list-table.php:1134
 msgid "Search results"
 msgstr ""
 
 #. translators: %s: search query
-#: php/class-list-table.php:1135
+#: php/class-list-table.php:1149
 msgid " for &ldquo;%s&rdquo;"
 msgstr ""
 
-#: php/class-list-table.php:1128
+#: php/class-list-table.php:1142
 msgid " for &ldquo;%1$s&rdquo; on line %2$d"
 msgstr ""
 
 #. translators: %s: tag name
-#: php/class-list-table.php:1141
+#: php/class-list-table.php:1155
 msgid " in tag &ldquo;%s&rdquo;"
 msgstr ""
 
-#: php/class-list-table.php:1149
+#: php/class-list-table.php:1163
 msgid "Clear Filters"
 msgstr ""
 
@@ -437,31 +457,31 @@ msgstr ""
 msgid "Order snippets by last modification date by default in the snippets table."
 msgstr ""
 
-#: php/class-validator.php:152
+#: php/class-validator.php:176
 msgid "Parse error: syntax error, unexpected end of snippet."
 msgstr ""
 
 #. translators: %s: PHP function name
-#: php/class-validator.php:167
+#: php/class-validator.php:189
 msgid "Cannot redeclare function %s."
 msgstr ""
 
 #. translators: %s: PHP class name
-#: php/class-validator.php:171
+#: php/class-validator.php:193
 msgid "Cannot redeclare class %s."
 msgstr ""
 
 #. translators: %s: PHP interface name
-#: php/class-validator.php:175
+#: php/class-validator.php:197
 msgid "Cannot redeclare interface %s."
 msgstr ""
 
 #. translators: %s: PHP identifier name
-#: php/class-validator.php:179
+#: php/class-validator.php:201
 msgid "Cannot redeclare %s."
 msgstr ""
 
-#: php/class-validator.php:216
+#: php/class-validator.php:239
 msgid "Parse error: syntax error, unexpected end of snippet"
 msgstr ""
 
