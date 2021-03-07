@@ -22,7 +22,7 @@ import imagemin from 'gulp-imagemin';
 
 import babelify from 'babelify';
 import browserify from 'browserify';
-import uglify from 'gulp-uglify';
+import terser from 'gulp-terser';
 import eslint from 'gulp-eslint';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
@@ -107,7 +107,7 @@ function bundlejs(file, babel_config) {
 		.pipe(source(file))
 		.pipe(buffer())
 		.pipe(sourcemaps.init())
-		.pipe(uglify())
+		.pipe(terser())
 		.pipe(sourcemaps.write('.'))
 		.pipe(flatten())
 		.pipe(gulp.dest('js/min'));
