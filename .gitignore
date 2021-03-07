@@ -8,6 +8,7 @@ code-snippets-pro.*.zip
 /dist
 /css/min
 /js/min
+languages/code-snippets.pot
 
 # Grunt (via NPM)
 node_modules
