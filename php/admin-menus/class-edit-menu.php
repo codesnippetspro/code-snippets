@@ -562,12 +562,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			wp_enqueue_script(
 				'code-snippets-edit-menu-tags',
 				plugins_url( 'js/min/edit-tags.js', $plugin->file ),
-				array(
-					'jquery', 'jquery-ui-core',
-					'jquery-ui-widget', 'jquery-ui-position', 'jquery-ui-autocomplete',
-					'jquery-effects-blind', 'jquery-effects-highlight',
-				),
-				$plugin->version, true
+				[], $plugin->version, true
 			);
 
 			$snippet_tags = wp_json_encode( get_all_snippet_tags() );
