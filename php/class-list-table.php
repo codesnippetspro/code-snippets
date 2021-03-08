@@ -37,7 +37,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	public function __construct() {
 		global $status, $page;
-		$screen = get_current_screen();
 		$this->is_network = is_network_admin();
 
 		/* Determine the status */
@@ -87,8 +86,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function default_hidden_columns( $hidden ) {
-		return [ 'id' ];
+	public function default_hidden_columns( $hidden ) {
+		$hidden[] = 'id';
+		return $hidden;
 	}
 
 	/**
@@ -864,8 +864,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		global $status, $snippets, $totals, $s;
 
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
-
-		$screen = get_current_screen();
 		$user = get_current_user_id();
 
 		/* First, lets process the submitted actions */
