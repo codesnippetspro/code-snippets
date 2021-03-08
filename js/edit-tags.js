@@ -9,8 +9,8 @@ import tagger from '@jcubic/tagger';
 		tagger(tags_field, {
 			allow_spaces: true,
 			allow_duplicates: false,
-			add_on_blur: true,
 			completion: {list: code_snippets_all_tags},
+			link: name => false
 		});
 	}
 })();
