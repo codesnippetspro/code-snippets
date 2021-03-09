@@ -72,7 +72,7 @@ if ( ! $snippet->id ) {
 			printf( '<input type="hidden" name="snippet_id" value="%d">', $snippet->id );
 		}
 
-		printf( '<input type="hidden" name="snippet_active" value="%d"::>', $snippet->active );
+		printf( '<input type="hidden" name="snippet_active" value="%d">', $snippet->active );
 
 		do_action( 'code_snippets/admin/before_title_input', $snippet );
 		?>
