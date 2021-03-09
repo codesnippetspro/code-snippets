@@ -37,6 +37,8 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 		'limit'       => 0,
 		'orderby'     => '',
 		'order'       => 'desc',
+		'search'      => '',
+		'searchby'    => array( 'name', 'description', 'code', 'tags' ),
 	) );
 
 	$db = code_snippets()->db;
@@ -50,40 +52,57 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 		return array( get_snippet( $ids[0] ) );
 	}
 
-	$where = $order = $limit = '';
+	$sql = "SELECT * FROM $table WHERE 1=1";
+	$sql_params = array();
+
+	/* Build a query for specific search terms */
+	if ( ! empty( $args['search'] ) && ! empty( $args['searchby'] ) ) {
+		$search = [];
+		foreach ( $args['searchby'] as $column ) {
+			$search[] = "{$column} LIKE %s";
+			$sql_params[] = sprintf( '%%%s%%', $wpdb->esc_like( $args['search'] ) );
+		}
+		$sql .= sprintf( " AND ( %s )", implode( ' OR ', $search ) );
+	}
 
 	/* Build a query containing the specified IDs if there are any */
 	if ( $ids_count > 1 ) {
-		$where = $wpdb->prepare( sprintf(
-			' AND id IN (%s)',
-			implode( ',', array_fill( 0, $ids_count, '%d' ) )
-		), $ids );
+		$sql       .= sprintf( " AND id IN (%s)", implode( ',', array_fill( 0, $ids_count, '%d' ) ) );
+		$sql_params = array_merge( $sql_params, array_values( $ids ) );
 	}
 
 	/* Restrict the active status of retrieved snippets if requested */
 	if ( $args['active_only'] ) {
-		$where = ' AND active=1';
+		$sql .= ' AND active=1';
 	}
 
 	/* Apply custom ordering if requested */
 	if ( $args['orderby'] ) {
 		$order_dir = 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
-		$order = $wpdb->prepare( ' ORDER BY %s %s', $args['orderby'], $order_dir );
+		$sql .= " ORDER BY %s {$order_dir}";
+		$sql_params[] = $args['orderby'];
 	}
 
 	/* Limit the number of retrieved snippets if requested */
 	if ( intval( $args['limit'] ) > 0 ) {
-		$limit = sprintf( ' LIMIT %d', intval( $args['limit'] ) );
+		$sql .= " LIMIT %d";
+		$sql_params[] = intval( $args['limit'] );
 	}
 
 	/* Retrieve the results from the database */
-	$sql = "SELECT * FROM $table WHERE 1=1 $where $order $limit;";
+	if ( ! empty( $sql_params ) ) {
+		$sql = $wpdb->prepare( $sql, $sql_params );
+	}
 	$snippets = $wpdb->get_results( $sql, ARRAY_A );
 
-	/* Convert snippets to snippet objects */
-	foreach ( $snippets as $index => $snippet ) {
-		$snippet['network'] = $multisite;
-		$snippets[ $index ] = new Code_Snippet( $snippet );
+	if ( $snippets ) {
+		/* Convert snippets to snippet objects */
+		foreach ( $snippets as $index => $snippet ) {
+			$snippet['network'] = $multisite;
+			$snippets[ $index ] = new Code_Snippet( $snippet );
+		}
+	} else {
+		$snippets = array();
 	}
 
 	return apply_filters( 'code_snippets/get_snippets', $snippets, $multisite );
