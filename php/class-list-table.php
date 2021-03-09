@@ -864,7 +864,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		global $status, $snippets, $totals, $s;
 
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
-		$user = get_current_user_id();
 
 		/* First, lets process the submitted actions */
 		$this->process_requested_actions();
@@ -950,15 +949,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		/* Decide how many records per page to show by getting the user's setting in the Screen Options panel */
 		$sort_by = $this->screen->get_option( 'per_page', 'option' );
-		$per_page = get_user_meta( $user, $sort_by, true );
+		$per_page = get_user_meta( get_current_user_id(), $sort_by, true );
 
 		if ( empty( $per_page ) || $per_page < 1 ) {
 			$per_page = $this->screen->get_option( 'per_page', 'default' );
 		}
 
 		$per_page = (int) $per_page;
-
-		$this->_column_headers = $this->get_column_info();
 
 		usort( $data, array( $this, 'usort_reorder_callback' ) );
 

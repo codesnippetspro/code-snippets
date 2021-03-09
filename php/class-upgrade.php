@@ -48,17 +48,34 @@ class Code_Snippets_Upgrade {
 		$table_name = $this->db->table;
 		$prev_version = get_option( 'code_snippets_version' );
 
-		/* Do nothing if the plugin has not been updated or installed */
+		/* Do nothing if the plugin has not just been updated or installed */
 		if ( ! version_compare( $prev_version, $this->current_version, '<' ) ) {
 			return;
 		}
 
-		$sample_snippets = $this->get_sample_content();
+		/* Update the plugin version stored in the database */
+		$updated = update_option( 'code_snippets_version', $this->current_version );
 
+		if ( ! $updated ) {
+			return; // bail if the data was not successfully saved to prevent this process from repeating
+		}
+
+		$sample_snippets = $this->get_sample_content();
 		$this->db->create_table( $table_name );
 
-		/* Update the plugin version stored in the database */
-		update_option( 'code_snippets_version', $this->current_version );
+		/* Remove outdated user meta */
+		if ( version_compare( $prev_version, '2.14.1', '<' ) ) {
+			global $wpdb;
+
+			$prefix = $wpdb->get_blog_prefix();
+			$menu_slug = code_snippets()->get_menu_slug();
+			$option_name = "{$prefix}managetoplevel_page_{$menu_slug}columnshidden";
+
+			// loop through each user ID and remove all matching user meta
+			foreach ( get_users( [ 'fields' => 'ID' ] ) as $user_id ) {
+				delete_metadata( 'user', $user_id, $option_name, '', true );
+			}
+		}
 
 		/* Update the scope column of the database */
 		if ( version_compare( $prev_version, '2.10.0', '<' ) ) {
