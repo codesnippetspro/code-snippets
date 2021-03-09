@@ -8,6 +8,7 @@
 * Fixed: Replaced the outdated tag-it library with [tagger](https://github.com/jcubic/tagger) for powering the snippet tags editor.
 * Added: Code direction setting for RTL users.
 * Updated CodeMirror to version 5.59.4.
+* Added: Additional action hooks and search API thanks to [@Spreeuw](https://github.com/Spreeuw).
 
 ## 2.14.0 (26 Jan 2020)
 * Updated CodeMirror to version 5.50.2.
