@@ -69,76 +69,26 @@ if ( ! $snippet->id ) {
 		/* Output the hidden fields */
 
 		if ( 0 !== $snippet->id ) {
-			printf( '<input type="hidden" name="snippet_id" value="%d" />', $snippet->id );
+			printf( '<input type="hidden" name="snippet_id" value="%d">', $snippet->id );
 		}
 
-		printf( '<input type="hidden" name="snippet_active" value="%d" />', $snippet->active );
+		printf( '<input type="hidden" name="snippet_active" value="%d"::>', $snippet->active );
 
+		do_action( 'code_snippets/admin/before_title_input', $snippet );
 		?>
+
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php _e( 'Name', 'code-snippets' ); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>" placeholder="<?php _e( 'Enter title here', 'code-snippets' ); ?>" />
+				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>" placeholder="<?php _e( 'Enter title here', 'code-snippets' ); ?>">
 			</div>
 		</div>
 
-		<?php if ( apply_filters( 'code_snippets/extra_save_buttons', true ) ) { ?>
-			<p class="submit-inline">
-				<?php
+		<?php do_action( 'code_snippets/admin/after_title_input', $snippet ); ?>
 
-				$actions['save_snippet'] = array(
-					__( 'Save Changes', 'code-snippets' ),
-					__( 'Save Snippet', 'code-snippets' ),
-				);
+		<p class="submit-inline"><?php do_action( 'code_snippets/admin/code_editor_toolbar', $snippet ); ?></p>
 
-				if ( 'single-use' === $snippet->scope ) {
-					$actions['save_snippet_execute'] = array(
-						__( 'Execute Once', 'code-snippets' ),
-						__( 'Save Snippet and Execute Once', 'code-snippets' ),
-					);
-
-				} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
-
-					if ( $snippet->active ) {
-						$actions['save_snippet_deactivate'] = array(
-							__( 'Deactivate', 'code-snippets' ),
-							__( 'Save Snippet and Deactivate', 'code-snippets' ),
-						);
-
-					} else {
-						$actions['save_snippet_activate'] = array(
-							__( 'Activate', 'code-snippets' ),
-							__( 'Save Snippet and Activate', 'code-snippets' ),
-						);
-					}
-				}
-
-				foreach ( $actions as $action => $labels ) {
-					$other_attributes = array( 'title' => $labels[1], 'id' => $action . '_extra' );
-					submit_button( $labels[0], 'secondary small', $action, false, $other_attributes );
-				}
-
-				if ( apply_filters( 'code_snippets/enable_code_direction', is_rtl() ) ) {
-					?>
-					<label class="screen-reader-text" for="snippet-code-direction">
-						<?php esc_html_e( 'Code Direction', 'code-snippets' ); ?>
-					</label>
-					<select id="snippet-code-direction">
-						<option value="ltr"><?php esc_html_e( 'LTR', 'code-snippets' ); ?></option>
-						<option value="rtl"><?php esc_html_e( 'RTL', 'code-snippets' ); ?></option>
-					</select>
-					<?php
-				}
-
-				?>
-			</p>
-		<?php } ?>
-
-		<h2>
-			<label for="snippet_code">
-				<?php _e( 'Code', 'code-snippets' ); ?>
-			</label>
-		</h2>
+		<h2><label for="snippet_code"><?php _e( 'Code', 'code-snippets' ); ?></label></h2>
 
 		<div class="snippet-editor">
 			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false" style="font-family: monospace; width: 100%;"><?php
