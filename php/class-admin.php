@@ -201,9 +201,9 @@ class Code_Snippets_Admin {
 
 				<?php _e( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ); ?>
 
-				<a href="http://sheabunge.polldaddy.com/s/code-snippets-feedback" class="button secondary"
+				<a href="https://codesnippets.pro/survey/" class="button secondary"
 				   target="_blank" style="margin: auto .5em;">
-					<?php _e( 'Take the survey now', 'code-snippets' ); ?>
+					<?php esc_html_e( 'Take the survey now', 'code-snippets' ); ?>
 				</a>
 
 				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( $key, true ), $key ) ); ?>"><?php esc_html_e( 'Dismiss', 'code-snippets' ); ?></a>
