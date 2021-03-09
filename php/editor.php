@@ -17,6 +17,7 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 		'extraKeys' => array( 'Alt-F' => 'findPersistent' ),
 		'gutters' => array( 'CodeMirror-lint-markers' ),
 		'lint' => true,
+		'direction' => 'ltr',
 		'viewportMargin' => 'Infinity',
 	);
 

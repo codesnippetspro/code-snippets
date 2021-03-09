@@ -118,6 +118,18 @@ if ( ! $snippet->id ) {
 					submit_button( $labels[0], 'secondary small', $action, false, $other_attributes );
 				}
 
+				if ( apply_filters( 'code_snippets/enable_code_direction', is_rtl() ) ) {
+					?>
+					<label class="screen-reader-text" for="snippet-code-direction">
+						<?php esc_html_e( 'Code Direction', 'code-snippets' ); ?>
+					</label>
+					<select id="snippet-code-direction">
+						<option value="ltr"><?php esc_html_e( 'LTR', 'code-snippets' ); ?></option>
+						<option value="rtl"><?php esc_html_e( 'RTL', 'code-snippets' ); ?></option>
+					</select>
+					<?php
+				}
+
 				?>
 			</p>
 		<?php } ?>

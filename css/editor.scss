@@ -1,6 +1,11 @@
+
+/*rtl:begin:ignore*/
+
 @import 'codemirror/lib/codemirror';
 @import 'codemirror/addon/dialog/dialog';
 @import 'codemirror/addon/lint/lint';
+
+/*rtl:end:ignore*/
 
 .CodeMirror {
 	border: 1px solid #dfdfdf;
@@ -11,8 +16,6 @@
 
 .CodeMirror-code {
 	outline: none;
-	direction: ltr;
-	text-align: left;
 }
 
 .CodeMirror-focused .cm-matchhighlight {
