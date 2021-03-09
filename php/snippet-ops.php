@@ -59,18 +59,19 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 
 	/* Build a query for specific search terms */
 	if ( ! empty( $args['search'] ) && ! empty( $args['searchby'] ) ) {
-		$search = [];
+		$search = array();
 		foreach ( $args['searchby'] as $column ) {
-			if ( ! in_array( $column, $searchable_columns ) ) continue;
-			$search[] = "{$column} LIKE %s";
-			$sql_params[] = sprintf( '%%%s%%', $wpdb->esc_like( $args['search'] ) );
+			if ( in_array( $column, $searchable_columns, true ) ) {
+				$search[] = "{$column} LIKE %s";
+				$sql_params[] = sprintf( '%%%s%%', $wpdb->esc_like( $args['search'] ) );
+			}
 		}
-		$sql .= sprintf( " AND ( %s )", implode( ' OR ', $search ) );
+		$sql .= sprintf( ' AND ( %s )', implode( ' OR ', $search ) );
 	}
 
 	/* Build a query containing the specified IDs if there are any */
 	if ( $ids_count > 1 ) {
-		$sql       .= sprintf( " AND id IN (%s)", implode( ',', array_fill( 0, $ids_count, '%d' ) ) );
+		$sql       .= sprintf( ' AND id IN (%s)', implode( ',', array_fill( 0, $ids_count, '%d' ) ) );
 		$sql_params = array_merge( $sql_params, array_values( $ids ) );
 	}
 
@@ -88,7 +89,7 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 
 	/* Limit the number of retrieved snippets if requested */
 	if ( intval( $args['limit'] ) > 0 ) {
-		$sql .= " LIMIT %d";
+		$sql .= ' LIMIT %d';
 		$sql_params[] = intval( $args['limit'] );
 	}
 

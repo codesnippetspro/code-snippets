@@ -624,7 +624,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			wp_enqueue_script(
 				'code-snippets-edit-menu-tags',
 				plugins_url( 'js/min/edit-tags.js', $plugin->file ),
-				[], $plugin->version, true
+				array(), $plugin->version, true
 			);
 
 			$options = apply_filters( 'code_snippets/tag_editor_options', array(

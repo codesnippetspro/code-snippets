@@ -123,7 +123,7 @@ class Code_Snippets_Validator {
 
 		$duplicate = in_array( $identifier, $this->defined_identifiers[ $type ], true );
 		array_unshift( $this->defined_identifiers[ $type ], $identifier );
-		return $duplicate && ! ( isset( $this->exceptions[ $type ] ) && in_array( $identifier, $this->exceptions[ $type ] ) );
+		return $duplicate && ! ( isset( $this->exceptions[ $type ] ) && in_array( $identifier, $this->exceptions[ $type ], true ) );
 	}
 
 	/**

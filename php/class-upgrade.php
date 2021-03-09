@@ -72,7 +72,7 @@ class Code_Snippets_Upgrade {
 			$option_name = "{$prefix}managetoplevel_page_{$menu_slug}columnshidden";
 
 			// loop through each user ID and remove all matching user meta
-			foreach ( get_users( [ 'fields' => 'ID' ] ) as $user_id ) {
+			foreach ( get_users( array( 'fields' => 'ID' ) ) as $user_id ) {
 				delete_metadata( 'user', $user_id, $option_name, '', true );
 			}
 		}
