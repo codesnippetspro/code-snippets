@@ -32,13 +32,15 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 	/** @var wpdb $wpdb */
 	global $wpdb;
 
+	$searchable_columns = array( 'name', 'description', 'code', 'tags' );
+
 	$args = wp_parse_args( $args, array(
 		'active_only' => false,
 		'limit'       => 0,
 		'orderby'     => '',
 		'order'       => 'desc',
 		'search'      => '',
-		'searchby'    => array( 'name', 'description', 'code', 'tags' ),
+		'searchby'    => $searchable_columns,
 	) );
 
 	$db = code_snippets()->db;
@@ -59,6 +61,7 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 	if ( ! empty( $args['search'] ) && ! empty( $args['searchby'] ) ) {
 		$search = [];
 		foreach ( $args['searchby'] as $column ) {
+			if ( ! in_array( $column, $searchable_columns ) ) continue;
 			$search[] = "{$column} LIKE %s";
 			$sql_params[] = sprintf( '%%%s%%', $wpdb->esc_like( $args['search'] ) );
 		}
