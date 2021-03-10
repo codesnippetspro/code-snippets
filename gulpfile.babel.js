@@ -191,7 +191,7 @@ gulp.task('package', gulp.series(
 		})
 ));
 
-gulp.task('test', gulp.parallel('test-js', gulp.series('phpcs', 'phpunit')));
+gulp.task('test', gulp.parallel('test-js', 'phpcs'));
 
 gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
 
