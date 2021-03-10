@@ -11,6 +11,9 @@ php:
 services:
   - mysql
 
+node_js:
+  - node
+
 env:
   global:
     - WP_DEVELOP_DIR=/tmp/wordpress/
