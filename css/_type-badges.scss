@@ -1,0 +1,27 @@
+@import 'base';
+
+.nav-tab span, .snippet-type-badge {
+	font-size: 10px;
+	text-transform: uppercase;
+	border: 1px solid;
+	padding: 1px 2px;
+	border-radius: 5px;
+}
+
+.nav-tab span, h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
+	/* rtl:ignore */
+	margin-left: 3px;
+}
+
+.nav-tab span {
+	vertical-align: middle;
+}
+
+$badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-active);
+
+@each $type, $color in $badges {
+	.nav-tab[data-type=#{$type}] span, .snippet-type-badge[data-type=#{$type}] {
+		color: $color;
+		border-color: currentColor;
+	}
+}

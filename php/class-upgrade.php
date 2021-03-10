@@ -1,18 +1,24 @@
 <?php
 
+namespace Code_Snippets;
+
+use WP_User;
+
 /**
  * Manages upgrade tasks such as deleting and updating options
  */
-class Code_Snippets_Upgrade {
+class Upgrade {
 
 	/**
 	 * Instance of database class
-	 * @var Code_Snippets_DB
+	 *
+	 * @var DB
 	 */
 	private $db;
 
 	/**
 	 * The current plugin version number
+	 *
 	 * @var string
 	 */
 	private $current_version;
@@ -20,10 +26,10 @@ class Code_Snippets_Upgrade {
 	/**
 	 * Class constructor
 	 *
-	 * @param string           $version Current plugin version
-	 * @param Code_Snippets_DB $db      Instance of database class
+	 * @param string $version Current plugin version.
+	 * @param DB     $db      Instance of database class.
 	 */
-	public function __construct( $version, Code_Snippets_DB $db ) {
+	public function __construct( $version, DB $db ) {
 		$this->db = $db;
 		$this->current_version = $version;
 	}
@@ -138,7 +144,9 @@ class Code_Snippets_Upgrade {
 	/**
 	 * Migrate data from the old integer method of storing scopes to the new string method
 	 *
-	 * @param string $table_name
+	 * @param string $table_name Name of database table.
+	 *
+	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	private function migrate_scope_data( $table_name ) {
 		global $wpdb;
@@ -220,7 +228,7 @@ class Code_Snippets_Upgrade {
 		$snippets = array();
 
 		foreach ( $snippets_data as $sample_name => $snippet_data ) {
-			$snippets[ $sample_name ] = new Code_Snippet( $snippet_data );
+			$snippets[ $sample_name ] = new Snippet( $snippet_data );
 		}
 
 		return $snippets;

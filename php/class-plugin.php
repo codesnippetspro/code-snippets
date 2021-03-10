@@ -1,51 +1,70 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * The main plugin class
  *
  * @package Code_Snippets
  */
-class Code_Snippets {
+class Plugin {
 
 	/**
-	 * The version number for this release of the plugin.
-	 * This will later be used for upgrades and enqueuing files
+	 * Current plugin version number
 	 *
-	 * This should be set to the 'Plugin Version' value defined
-	 * in the plugin header.
-	 *
-	 * @var string A PHP-standardized version number string
+	 * @var string
 	 */
 	public $version;
 
 	/**
 	 * Filesystem path to the main plugin file
+	 *
 	 * @var string
 	 */
 	public $file;
 
 	/**
-	 * @var Code_Snippets_DB
+	 * Database class
+	 *
+	 * @var DB
 	 */
 	public $db;
 
 	/**
-	 * @var Code_Snippets_Admin
+	 * Administration area class
+	 *
+	 * @var Admin
 	 */
 	public $admin;
 
 	/**
-	 * @var Code_Snippets_Shortcode
+	 * Front-end functionality class
+	 *
+	 * @var Frontend
 	 */
-	public $shortcode;
+	public $frontend;
+
+	/**
+	 * Class for managing active snippets
+	 *
+	 * @var Active_Snippets
+	 */
+	public $active_snippets;
+
+	/**
+	 * Class for providing REST API endpoints for snippet data.
+	 *
+	 * @var REST_API
+	 */
+	protected $rest_api;
 
 	/**
 	 * Class constructor
 	 *
-	 * @param string $version The current plugin version
-	 * @param string $file The main plugin file
+	 * @param string $version Current plugin version.
+	 * @param string $file    Path to main plugin file.
 	 */
-	function __construct( $version, $file ) {
+	public function __construct( $version, $file ) {
 		$this->version = $version;
 		$this->file = $file;
 
@@ -59,39 +78,46 @@ class Code_Snippets {
 		}
 	}
 
-	function load_plugin() {
-		$includes_path = dirname( __FILE__ );
+	/**
+	 * Initialise classes and include files
+	 */
+	public function load_plugin() {
+		$includes_path = __DIR__;
 
 		/* Database operation functions */
-		$this->db = new Code_Snippets_DB();
+		$this->db = new DB();
 
 		/* Snippet operation functions */
 		require_once $includes_path . '/snippet-ops.php';
-		require_once $includes_path . '/import-export.php';
 
 		/* CodeMirror editor functions */
 		require_once $includes_path . '/editor.php';
 
-		/* Backwards compatibility functions */
-		require_once $includes_path . '/functions.php';
-
 		/* General Administration functions */
 		if ( is_admin() ) {
-			$this->admin = new Code_Snippets_Admin();
+			$this->admin = new Admin();
 		}
 
 		/* Settings component */
 		require_once $includes_path . '/settings/settings-fields.php';
 		require_once $includes_path . '/settings/editor-preview.php';
-		require_once $includes_path . '/settings/render-fields.php';
 		require_once $includes_path . '/settings/settings.php';
 
-		$this->shortcode = new Code_Snippets_Shortcode();
+		$this->rest_api = new REST_API();
+		$this->active_snippets = new Active_Snippets();
+		$this->frontend = new Frontend();
 
-		$upgrade = new Code_Snippets_Upgrade( $this->version, $this->db );
+		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 	}
 
+	/**
+	 * Disable snippet execution if the necessary query var is set
+	 *
+	 * @param bool $execute_snippets Current filter value.
+	 *
+	 * @return bool New filter value.
+	 */
 	public function disable_snippet_execution( $execute_snippets ) {
 
 		if ( isset( $_GET['snippets-safe-mode'] ) && $_GET['snippets-safe-mode'] && $this->current_user_can() ) {
@@ -102,11 +128,20 @@ class Code_Snippets {
 	}
 
 	/**
+	 * Determine whether the menu is full or compact
+	 *
+	 * @return bool
+	 */
+	public function is_compact_menu() {
+		return ! is_network_admin() && apply_filters( 'code_snippets_compact_menu', false );
+	}
+
+	/**
 	 * Fetch the admin menu slug for a snippets menu
 	 *
-	 * @param  string $menu The menu to retrieve the slug for
+	 * @param string $menu Name of menu to retrieve the slug for.
 	 *
-	 * @return string       The menu's slug
+	 * @return string The menu's slug.
 	 */
 	public function get_menu_slug( $menu = '' ) {
 		$add = array( 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' );
@@ -130,15 +165,15 @@ class Code_Snippets {
 	/**
 	 * Fetch the URL to a snippets admin menu
 	 *
-	 * @param  string $menu The menu to retrieve the URL to
-	 * @param  string $context The URL scheme to use
+	 * @param string $menu    Name of menu to retrieve the URL to.
+	 * @param string $context URL scheme to use.
 	 *
-	 * @return string          The menu's URL
+	 * @return string The menu's URL.
 	 */
 	public function get_menu_url( $menu = '', $context = 'self' ) {
 		$slug = $this->get_menu_slug( $menu );
 
-		if ( $this->admin->is_compact_menu() && 'network' !== $context ) {
+		if ( $this->is_compact_menu() && 'network' !== $context ) {
 			$base_slug = $this->get_menu_slug();
 			$url = 'tools.php?page=' . $base_slug;
 
@@ -162,10 +197,10 @@ class Code_Snippets {
 	/**
 	 * Fetch the admin menu slug for a snippets menu
 	 *
-	 * @param int    $snippet_id The snippet
-	 * @param string $context The URL scheme to use
+	 * @param int    $snippet_id Snippet ID.
+	 * @param string $context    The URL scheme to use.
 	 *
-	 * @return string The URL to the edit snippet page for that snippet
+	 * @return string The URL to the edit snippet page for that snippet.
 	 */
 	public function get_snippet_edit_url( $snippet_id, $context = 'self' ) {
 		return add_query_arg(
@@ -177,8 +212,8 @@ class Code_Snippets {
 	/**
 	 * Determine whether the current user can perform actions on snippets.
 	 *
-	 * @since 2.8.6
 	 * @return boolean Whether the current user has the required capability
+	 * @since 2.8.6
 	 */
 	public function current_user_can() {
 		return current_user_can( $this->get_cap() );
@@ -209,16 +244,15 @@ class Code_Snippets {
 	 * If multisite, checks if *Enable Administration Menus: Snippets* is active
 	 * under the *Settings > Network Settings* network admin menu
 	 *
-	 * @since 2.0
 	 * @return string The capability required to manage snippets
+	 * @since 2.0
 	 */
 	public function get_cap() {
 
 		if ( is_multisite() ) {
 			$menu_perms = get_site_option( 'menu_items', array() );
 
-			/* If multisite is enabled and the snippet menu is not activated,
-			   restrict snippet operations to super admins only */
+			/* If multisite is enabled and the snippet menu is not activated, restrict snippet operations to super admins only */
 			if ( empty( $menu_perms['snippets'] ) ) {
 				return $this->get_network_cap_name();
 			}
@@ -233,7 +267,7 @@ class Code_Snippets {
 	 * If you wish to contribute a language file to be included in the Code Snippets package,
 	 * please see create an issue on GitHub: https://github.com/sheabunge/code-snippets/issues
 	 */
-	function load_textdomain() {
+	public function load_textdomain() {
 		$domain = 'code-snippets';
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
@@ -247,11 +281,11 @@ class Code_Snippets {
 	/**
 	 * Inject the safe mode query var into URLs
 	 *
-	 * @param string $url A URL
+	 * @param string $url Original URL.
 	 *
-	 * @return string
+	 * @return string Modified URL.
 	 */
-	function add_safe_mode_query_var( $url ) {
+	public function add_safe_mode_query_var( $url ) {
 
 		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
 			return add_query_arg( 'snippets-safe-mode', $_REQUEST['snippets-safe-mode'], $url );

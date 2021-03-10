@@ -1,16 +1,19 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * This class handles the import admin menu
+ *
  * @since 2.4.0
  * @package Code_Snippets
  */
-class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
+class Import_Menu extends Admin_Menu {
 
 	/**
 	 * Class constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct( 'import',
 			_x( 'Import', 'menu label', 'code-snippets' ),
 			__( 'Import Snippets', 'code-snippets' )
@@ -32,7 +35,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	public function load() {
 		parent::load();
 
-		$contextual_help = new Code_Snippets_Contextual_Help( 'import' );
+		$contextual_help = new Contextual_Help( 'import' );
 		$contextual_help->load();
 
 		$this->process_import_files();
@@ -67,10 +70,12 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 			$ext = $ext['extension'];
 			$mime_type = $uploads['type'][ $i ];
 
+			$import = new Import( $import_file, $network, $dup_action );
+
 			if ( 'json' === $ext || 'application/json' === $mime_type ) {
-				$result = import_snippets_json( $import_file, $network, $dup_action );
+				$result = $import->import_json();
 			} elseif ( 'xml' === $ext || 'text/xml' === $mime_type ) {
-				$result = import_snippets_xml( $import_file, $network, $dup_action );
+				$result = $import->import_xml();
 			} else {
 				$result = false;
 			}
@@ -91,7 +96,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Add the importer to the Tools > Import menu
 	 */
-	function register_importer() {
+	public function register_importer() {
 
 		/* Only register the importer if the current user can manage snippets */
 		if ( ! defined( 'WP_LOAD_IMPORTERS' ) || ! code_snippets()->current_user_can() ) {
@@ -114,7 +119,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 
 		if ( isset( $_REQUEST['error'] ) && $_REQUEST['error'] ) {
 			echo '<div id="message" class="error fade"><p>';
-			_e( 'An error occurred when processing the import files.', 'code-snippets' );
+			esc_html_e( 'An error occurred when processing the import files.', 'code-snippets' );
 			echo '</p></div>';
 		}
 
@@ -130,13 +135,13 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 
 				printf(
 					/* translators: 1: amount of snippets imported, 2: link to Snippets menu */
-					_n(
+					wp_kses_post( _n(
 						'Successfully imported <strong>%1$d</strong> snippet. <a href="%2$s">Have fun!</a>',
 						'Successfully imported <strong>%1$d</strong> snippets. <a href="%2$s">Have fun!</a>',
 						$imported, 'code-snippets'
-					),
-					$imported,
-					code_snippets()->get_menu_url( 'manage' )
+					) ),
+					intval( $imported ),
+					esc_url( code_snippets()->get_menu_url( 'manage' ) )
 				);
 			}
 

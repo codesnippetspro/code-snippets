@@ -2,13 +2,13 @@
 # Composer
 /vendor
 
-# Built plugin
+# generated files
 code-snippets.*.zip
 code-snippets-pro.*.zip
 /dist
 /css/min
 /js/min
-languages/code-snippets.pot
+/languages/code-snippets.pot
 
 # Grunt (via NPM)
 node_modules
@@ -16,6 +16,3 @@ npm-debug.log
 
 # Sass
 .sass-cache
-
-# GitHub Wiki
-wiki

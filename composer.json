@@ -8,11 +8,11 @@
 	],
 	"type": "wordpress-plugin",
 	"homepage": "https://wordpress.org/plugins/code-snippets",
-	"license": "MIT",
+	"license": "GPL-2.0-or-later",
 	"authors": [
 		{
 			"name": "Shea Bunge",
-			"email": "bungeshea@gmail.com",
+			"email": "shea@codesnippets.pro",
 			"homepage": "https://sheabunge.com"
 		}
 	],
@@ -20,11 +20,15 @@
 		"issues": "https://github.com/sheabunge/code-snippets/issues",
 		"source": "https://github.com/sheabunge/code-snippets"
 	},
+	"autoload": {
+		"classmap": ["php/"]
+	},
 	"require": {
 		"composer/installers": "~1.0",
+		"php": ">=5.6",
 		"ext-dom": "*",
 		"ext-json": "*"
-    },
+	},
 	"require-dev": {
 		"wp-coding-standards/wpcs": "dev-master"
 	}

@@ -1,13 +1,16 @@
 /* global code_snippets_editor_atts, code_snippets_editor_settings */
 
-(function (CodeMirror, editor_atts, editor_settings) {
+window.addEventListener('DOMContentLoaded', () => {
 	'use strict';
+	const CodeMirror = window.Code_Snippets_CodeMirror;
+	const editor_atts = code_snippets_editor_atts;
+	const editor_settings = code_snippets_editor_settings;
 
 	/** @namespace editor_atts.indentWithTabs */
-	let n_tabs = editor_atts.indentWithTabs ? Math.floor(editor_atts.indentUnit / editor_atts.tabSize) : 0;
-	let n_spaces = editor_atts.indentWithTabs ? editor_atts.indentUnit % editor_atts.tabSize : editor_atts.indentUnit;
+	const n_tabs = editor_atts.indentWithTabs ? Math.floor(editor_atts.indentUnit / editor_atts.tabSize) : 0;
+	const n_spaces = editor_atts.indentWithTabs ? editor_atts.indentUnit % editor_atts.tabSize : editor_atts.indentUnit;
 
-	let indent = '\t'.repeat(n_tabs) + ' '.repeat(n_spaces);
+	const indent = '\t'.repeat(n_tabs) + ' '.repeat(n_spaces);
 
 	editor_atts['value'] = [
 		'add_filter( \'admin_footer_text\', function ( $text ) {\n',
@@ -28,7 +31,7 @@
 
 			let value = (() => {
 				switch (setting.type) {
-					case 'codemirror_theme_select':
+					case 'select':
 						return element.options[element.selectedIndex].value;
 					case 'checkbox':
 						return element.checked;
@@ -45,5 +48,4 @@
 
 		});
 	}
-
-}(window.Code_Snippets_CodeMirror, code_snippets_editor_atts, code_snippets_editor_settings));
+});

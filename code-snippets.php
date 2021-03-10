@@ -6,21 +6,21 @@
  * to the localization, please see https://github.com/sheabunge/code-snippets
  *
  * @package   Code_Snippets
- * @author    Shea Bunge <shea@sheabunge.com>
+ * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2021 Shea Bunge
- * @license   MIT http://opensource.org/licenses/MIT
- * @version   2.14.1
+ * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
+ * @version   3.0.0-alpha.5
  * @link      https://github.com/sheabunge/code-snippets
  */
 
 /*
 Plugin Name: Code Snippets
-Plugin URI:  https://github.com/sheabunge/code-snippets
+Plugin URI:  https://codesnippets.pro
 Description: An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
 Author:      Code Snippets Pro
 Author URI:  https://codesnippets.pro
-Version:     2.14.1
-License:     MIT
+Version:     3.0.0-alpha.5
+License:     GPL-2.0-or-later
 License URI: license.txt
 Text Domain: code-snippets
 Domain Path: /languages
@@ -43,61 +43,35 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 define( 'CODE_SNIPPETS_FILE', __FILE__ );
 
-/**
- * Enable autoloading of plugin classes
- * @param $class_name
- */
-function code_snippets_autoload( $class_name ) {
-
-	/* Only autoload classes from this plugin */
-	if ( 'Code_Snippet' !== $class_name && 'Code_Snippets' !== substr( $class_name, 0, 13 ) ) {
-		return;
-	}
-
-	/* Remove namespace from class name */
-	$class_file = str_replace( 'Code_Snippets_', '', $class_name );
-
-	if ( 'Code_Snippet' === $class_name ) {
-		$class_file = 'Snippet';
-	}
-
-	/* Convert class name format to file name format */
-	$class_file = strtolower( $class_file );
-	$class_file = str_replace( '_', '-', $class_file );
-
-	$class_path = dirname( __FILE__ ) . '/php/';
-
-	if ( 'Menu' === substr( $class_name, -4, 4 ) ) {
-		$class_path .= 'admin-menus/';
-	}
-
-	/* Load the class */
-	require_once $class_path . "class-{$class_file}.php";
+if ( version_compare( phpversion(), '5.6', '>=' ) ) {
+	require_once __DIR__ . '/php/load.php';
+	return;
 }
 
-try {
-	spl_autoload_register( 'code_snippets_autoload' );
-} catch ( Exception $e ) {
-	new WP_Error( $e->getCode(), $e->getMessage() );
-}
+if ( ! function_exists( 'code_snippets_php_version_notice' ) ) {
 
-/**
- * Retrieve the instance of the main plugin class
- *
- * @since 2.6.0
- * @return Code_Snippets
- */
-function code_snippets() {
-	static $plugin;
+	/**
+	 * Display a warning message and deactivate the plugin if the user is using an incompatible version of PHP
+	 *
+	 * @since 3.0.0
+	 */
+	function code_snippets_php_version_notice() {
+		echo '<div class="error fade"><p>';
 
-	if ( is_null( $plugin ) ) {
-		$plugin = new Code_Snippets( '2.14.1', __FILE__ );
+		echo '<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong><br>';
+
+		/* translators: %s: Update PHP URL */
+		$text = __( 'Please <a href="%s">upgrade your server to the latest version of PHP</a> to continue using Code Snippets.', 'code-snippets' );
+		$text = sprintf( $text, function_exists( 'wp_get_default_update_php_url' ) ?
+			wp_get_default_update_php_url() :
+			'https://wordpress.org/support/update-php/'
+		);
+		echo wp_kses( $text, array( 'a' => array( 'href' => array() ) ) );
+
+		echo '</p></div>';
+
+		deactivate_plugins( plugin_basename( __FILE__ ) );
 	}
 
-	return $plugin;
+	add_action( 'admin_notices', 'code_snippets_php_version_notice' );
 }
-
-code_snippets()->load_plugin();
-
-/* Execute the snippets once the plugins are loaded */
-add_action( 'plugins_loaded', 'execute_active_snippets', 1 );

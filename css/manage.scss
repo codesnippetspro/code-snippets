@@ -5,12 +5,15 @@
 $active-color: #2196f3;
 $inactive-color: #ccc;
 
+@import 'type-badges';
+
 .column-name {
 
 	.dashicons {
 		font-size: 16px;
 		width: 16px;
 		height: 16px;
+		vertical-align: middle;
 	}
 
 	.dashicons-clock {
@@ -28,26 +31,25 @@ $inactive-color: #ccc;
 	border: none;
 	box-shadow: none;
 	width: 4em;
+	color: #666;
 	text-align: center;
+
+	&:hover, &:focus, &:active {
+		color: #000;
+		background-color: #f5f5f5;
+		background-color: rgba(0, 0, 0, 0.1);
+		border-radius: 6px;
+	}
 
 	&:disabled {
 		color: inherit;
 	}
 }
 
-.snippets .row-actions, .snippets .snippet-name {
-	margin-left: 40px;
-}
-
-.snippets .row-actions {
-	position: relative;
-	left: 0;
-}
-
 .snippet-execution-button,
 .snippet-activation-switch {
-	position: absolute;
-	display: inline-block;
+	display: block;
+	position: relative;
 }
 
 .snippet-activation-switch {
@@ -131,22 +133,6 @@ $inactive-color: #ccc;
 	vertical-align: baseline !important;
 }
 
-.snippets .badge {
-	margin-left: 4px;
-	padding: 3px 6px;
-	text-decoration: none;
-	border: medium none;
-	border-radius: 2px;
-	background: #e0e0e0;
-	font-size: smaller;
-	line-height: 1.2;
-
-	/* rtl:ignore */
-	.rtl & {
-		float: left;
-	}
-}
-
 .snippets {
 
 	tr {
@@ -161,8 +147,19 @@ $inactive-color: #ccc;
 		list-style: disc;
 	}
 
+	th.sortable a, th.sorted a {
+		display: flex;
+		flex-direction: row;
+	}
+
 	.row-actions {
 		color: #ddd;
+		position: relative;
+		left: 0;
+	}
+
+	.column-activate {
+		padding-right: 0 !important;
 	}
 
 	.clear-filters {
@@ -187,10 +184,6 @@ $inactive-color: #ccc;
 		max-width: 700px;
 	}
 
-	.inactive-snippet a {
-		color: #579;
-	}
-
 	.active-snippet, .inactive-snippet {
 		td, th {
 			padding: 10px 9px;
@@ -199,14 +192,20 @@ $inactive-color: #ccc;
 		}
 	}
 
-	.active-snippet {
+	.badge {
+		margin-left: 4px;
+		padding: 3px 6px;
+		text-decoration: none;
+		border: medium none;
+		border-radius: 2px;
+		background-color: #e0e0e0;
+		background-color: rgba(0, 0, 0, 0.08);
+		font-size: smaller;
+		line-height: 1.2;
 
-		td, th {
-			background-color: rgba(120, 200, 230, 0.06);
-		}
-
-		th.check-column {
-			border-left: 2px solid #2ea2cc;
+		/* rtl:ignore */
+		.rtl & {
+			float: left;
 		}
 	}
 
@@ -228,11 +227,71 @@ $inactive-color: #ccc;
 	}
 }
 
+.inactive-snippet {
+	@include link-colors($php-inactive);
+}
+
+.active-snippet {
+
+	td, th {
+		background-color: rgba($php-background, 0.06);
+	}
+
+	th.check-column {
+		border-left: 2px solid #2ea2cc;
+	}
+
+	.snippet-activation-switch {
+		background-color: $active-color;
+	}
+}
+
+@mixin snippet-type-colors($type, $active, $inactive, $background, $highlight) {
+	.#{$type}-snippet {
+		@include link-colors($inactive);
+	}
+
+	.#{$type}-snippet.active-snippet {
+		@include link-colors($active);
+
+		td, th {
+			background-color: rgba($background, 0.06);
+		}
+
+		.snippet-activation-switch {
+			background-color: $highlight;
+		}
+
+		th.check-column {
+			border-left-color: $highlight;
+		}
+	}
+}
+
+@include snippet-type-colors(css, $css-active, $css-inactive, $css-background, $css-highlight);
+@include snippet-type-colors(html, $html-active, $html-active, $html-background, $html-highlight);
+@include snippet-type-colors(js, $js-active, $js-inactive, $js-background, $js-highlight);
+
 @media screen and (max-width: 782px) {
 	p.search-box {
 		float: left;
 		position: initial;
-		margin: 0;
+		margin: 1em 0 0 0;
 		height: auto;
 	}
+}
+
+.wp-list-table .is-expanded td.column-activate.activate {
+	/* fix for mobile layout */
+	display: table-cell !important;
+}
+
+.nav-tab-wrapper + .subsubsub, p.search-box {
+	margin: 10px 0 0 0;
+}
+
+.snippet-type-description {
+	border-bottom: 1px solid #ccc;
+	margin: 0;
+	padding: 1em 0;
 }
