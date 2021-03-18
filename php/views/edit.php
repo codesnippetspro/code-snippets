@@ -55,14 +55,16 @@ if ( ! $snippet->id ) {
 		/* Output the hidden fields */
 
 		if ( 0 !== $snippet->id ) {
-			printf( '<input type="hidden" name="snippet_id" value="%d" />', esc_attr( $snippet->id ) );
+			printf( '<input type="hidden" name="snippet_id" value="%d">', esc_attr( $snippet->id ) );
 		}
 
-		printf( '<input type="hidden" name="snippet_active" value="%d" />', esc_attr( $snippet->active ) );
+		printf( '<input type="hidden" name="snippet_active" value="%d">', esc_attr( $snippet->active ) );
 
-		printf( '<input type="hidden" name="current_snippet_scope" value="%s" />', esc_attr( $snippet->scope ) );
+		printf( '<input type="hidden" name="current_snippet_scope" value="%s">', esc_attr( $snippet->scope ) );
 
+		do_action( 'code_snippets/admin/before_title_input', $snippet );
 		?>
+
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php esc_html_e( 'Name', 'code-snippets' ); ?></label>
@@ -71,16 +73,16 @@ if ( ! $snippet->id ) {
 			</div>
 		</div>
 
+		<?php do_action( 'code_snippets/admin/after_title_input', $snippet ); ?>
+
+		<p class="submit-inline"><?php do_action( 'code_snippets/admin/code_editor_toolbar', $snippet ); ?></p>
+
 		<h2>
 			<label for="snippet_code">
 				<?php esc_html_e( 'Code', 'code-snippets' );
 
 				if ( $snippet->id ) {
 					printf( ' <span class="snippet-type-badge" data-type="%s">%s</span>', esc_attr( $snippet->type ), esc_html( $snippet->type ) );
-				}
-
-				if ( apply_filters( 'code_snippets/extra_save_buttons', true ) ) {
-					$this->render_view( 'partials/edit-submit-extra' );
 				}
 
 				?>

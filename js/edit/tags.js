@@ -1,22 +1,16 @@
-import 'tag-it/js/tag-it';
+import tagger from '@jcubic/tagger';
 
-/* global code_snippets_all_tags, jQuery */
+/* global code_snippets_tags */
 
 (function () {
 	const tags_field = document.getElementById('snippet_tags');
 
-	if (!tags_field) return;
-
-	try {
-		jQuery(tags_field).tagit({
-			availableTags: window.code_snippets_all_tags,
-			allowSpaces: true,
-			removeConfirmation: true,
-			showAutocompleteOnFocus: true,
+	if (tags_field) {
+		tagger(tags_field, {
+			completion: {list: code_snippets_tags.available_tags},
+			allow_spaces: code_snippets_tags.allow_spaces,
+			allow_duplicates: false,
+			link: name => false
 		});
-
-	} catch (e) {
-		console.log('Could not initialise snippet tag field.')
 	}
-
 })();

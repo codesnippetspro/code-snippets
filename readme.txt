@@ -3,9 +3,9 @@ Contributors: bungeshea, ver3
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, functions, code, php, html, network, multisite
 Requires at least: 3.6
-Tested up to: 5.6.0
+Tested up to: 5.7.0
 Requires PHP: 5.2
-Stable tag: 2.14.0
+Stable tag: 2.14.1
 License: MIT
 License URI: license.txt
 
@@ -154,6 +154,16 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 2.14.1 (10 Mar 2021) =
+* Added: Czech translation by [Lukáš Tesař](https://github.com/atomicf4ll).
+* Fixed: Code validator now supports `function_exists` and `class_exists` checks.
+* Fixed: Code validator now supports anonymous functions.
+* Fixed: Issue with saving the hidden columns setting.
+* Fixed: Replaced the outdated tag-it library with [tagger](https://github.com/jcubic/tagger) for powering the snippet tags editor.
+* Added: Code direction setting for RTL users.
+* Updated CodeMirror to version 5.59.4.
+* Added: Additional action hooks and search API thanks to [@Spreeuw](https://github.com/Spreeuw).
 
 = 2.14.0 (26 Jan 2020) =
 * Updated CodeMirror to version 5.50.2.

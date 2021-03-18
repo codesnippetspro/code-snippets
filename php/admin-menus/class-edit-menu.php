@@ -98,6 +98,16 @@ class Edit_Menu extends Admin_Menu {
 		if ( is_network_admin() ) {
 			add_action( 'code_snippets_edit_snippet', array( $this, 'render_multisite_sharing_setting' ), 1 );
 		}
+
+		if ( apply_filters( 'code_snippets/extra_save_buttons', true ) ) {
+			add_action( 'code_snippets/admin/code_editor_toolbar', array( $this, 'render_extra_submit_buttons' ) );
+		}
+
+		if ( apply_filters( 'code_snippets/enable_code_direction', is_rtl() ) ) {
+			add_action( 'code_snippets/admin/code_editor_toolbar', array( $this, 'render_direction_setting' ), 11, 0 );
+		}
+
+		$this->process_actions();
 	}
 
 	/**
@@ -453,6 +463,64 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Render additional save buttons above the snippet editor.
+	 *
+	 * @param Snippet $snippet Snippet currently being edited.
+	 */
+	public function render_extra_submit_buttons( Snippet $snippet ) {
+
+		$actions['save_snippet'] = array(
+			__( 'Save Changes', 'code-snippets' ),
+			__( 'Save Snippet', 'code-snippets' ),
+		);
+
+		if ( 'html' !== $snippet->type ) {
+
+			if ( 'single-use' === $snippet->scope ) {
+				$actions['save_snippet_execute'] = array(
+					__( 'Execute Once', 'code-snippets' ),
+					__( 'Save Snippet and Execute Once', 'code-snippets' ),
+				);
+
+			} elseif ( ! $snippet->shared_network || ! is_network_admin() ) {
+
+				if ( $snippet->active ) {
+					$actions['save_snippet_deactivate'] = array(
+						__( 'Deactivate', 'code-snippets' ),
+						__( 'Save Snippet and Deactivate', 'code-snippets' ),
+					);
+
+				} else {
+					$actions['save_snippet_activate'] = array(
+						__( 'Activate', 'code-snippets' ),
+						__( 'Save Snippet and Activate', 'code-snippets' ),
+					);
+				}
+			}
+		}
+
+		foreach ( $actions as $action => $labels ) {
+			$other_attributes = array( 'title' => $labels[1], 'id' => $action . '_extra' );
+			submit_button( $labels[0], 'secondary small', $action, false, $other_attributes );
+		}
+	}
+
+	/**
+	 * Render a control for changing the code editor text direction
+	 */
+	public function render_direction_setting() {
+		?>
+		<label class="screen-reader-text" for="snippet-code-direction">
+			<?php esc_html_e( 'Code Direction', 'code-snippets' ); ?>
+		</label>
+		<select id="snippet-code-direction">
+			<option value="ltr"><?php esc_html_e( 'LTR', 'code-snippets' ); ?></option>
+			<option value="rtl"><?php esc_html_e( 'RTL', 'code-snippets' ); ?></option>
+		</select>
+		<?php
+	}
+
+	/**
 	 * Retrieve the first error in a snippet's code
 	 *
 	 * @param int $snippet_id Snippet ID.
@@ -589,16 +657,15 @@ class Edit_Menu extends Admin_Menu {
 		wp_enqueue_script(
 			'code-snippets-edit-menu-tags',
 			plugins_url( 'js/min/tags.js', code_snippets()->file ),
-			[
-				'jquery', 'jquery-ui-core',
-				'jquery-ui-widget', 'jquery-ui-position', 'jquery-ui-autocomplete',
-				'jquery-effects-blind', 'jquery-effects-highlight',
-			],
-			code_snippets()->version, true
+			[], code_snippets()->version, true
 		);
 
-		$snippet_tags = wp_json_encode( get_all_snippet_tags() );
-		$inline_script = 'var code_snippets_all_tags = ' . $snippet_tags . ';';
+		$options = apply_filters( 'code_snippets/tag_editor_options', array(
+			'allow_spaces'   => true,
+			'available_tags' => get_all_snippet_tags(),
+		) );
+
+		$inline_script = 'var code_snippets_tags = ' . json_encode( $options ) . ';';
 
 		wp_add_inline_script( 'code-snippets-edit-menu-tags', $inline_script, 'before' );
 	}
@@ -660,7 +727,7 @@ class Edit_Menu extends Admin_Menu {
 			$actions['delete_snippet'] = __( 'Delete', 'code-snippets' );
 		}
 
-		return $actions;
+		return apply_filters( 'code_snippets/admin/submit_actions', $actions, $snippet, $extra_actions );
 	}
 
 	/**

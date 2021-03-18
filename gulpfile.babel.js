@@ -21,7 +21,7 @@ import autoprefixer from 'autoprefixer';
 import imagemin from 'gulp-imagemin';
 
 import webpack from 'webpack-stream';
-import uglify from 'gulp-uglify';
+import terser from 'gulp-terser';
 import eslint from 'gulp-eslint';
 
 import makepot from 'gulp-wp-pot';
@@ -101,7 +101,7 @@ gulp.task('js', gulp.series('test-js', () =>
 	gulp.src(src_files.js)
 		.pipe(webpack(require('./webpack.config.js')))
 		.pipe(sourcemaps.init())
-		.pipe(uglify())
+		.pipe(terser())
 		.pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('js/min'))));
 
@@ -192,6 +192,10 @@ gulp.task('package', gulp.series(
 		});
 	}
 ));
+
+gulp.task('test', gulp.parallel('test-js', 'phpcs'));
+
+gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
 
 gulp.task('watch', gulp.series('default', (done) => {
 	gulp.watch('css/*.scss', gulp.series('css'));

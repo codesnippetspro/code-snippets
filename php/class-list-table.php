@@ -82,8 +82,7 @@ class List_Table extends WP_List_Table {
 			'option'  => 'snippets_per_page',
 		) );
 
-		/* Set the table columns hidden in Screen Options by default */
-		$this->set_hidden_columns();
+		add_filter( 'default_hidden_columns', array( $this, 'default_hidden_columns' ) );
 
 		/* Strip the result query arg from the URL */
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
@@ -103,19 +102,15 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Set the table columns hidden in the Screen Options by default
+	 * Set the 'id' column as hidden by default.
+	 *
+	 * @param array $hidden
+	 *
+	 * @return array
 	 */
-	protected function set_hidden_columns() {
-		$screen = get_current_screen();
-		$opt = "manage{$screen->id}columnshidden";
-
-		$hidden_columns = get_user_option( $opt );
-
-		if ( false === $hidden_columns ) {
-			$user = wp_get_current_user();
-			$hidden_columns = [ 'id' ];
-			update_user_option( $user->ID, $opt, $hidden_columns );
-		}
+	public function default_hidden_columns( $hidden ) {
+		$hidden[] = 'id';
+		return $hidden;
 	}
 
 	/**
@@ -947,9 +942,6 @@ class List_Table extends WP_List_Table {
 			exit;
 		}
 
-		$screen = get_current_screen();
-		$user = get_current_user_id();
-
 		/* First, lets process the submitted actions */
 		$this->process_requested_actions();
 
@@ -1035,16 +1027,14 @@ class List_Table extends WP_List_Table {
 		$data = $snippets[ $status ];
 
 		/* Decide how many records per page to show by getting the user's setting in the Screen Options panel */
-		$sort_by = $screen->get_option( 'per_page', 'option' );
-		$per_page = get_user_meta( $user, $sort_by, true );
+		$sort_by = $this->screen->get_option( 'per_page', 'option' );
+		$per_page = get_user_meta( get_current_user_id(), $sort_by, true );
 
 		if ( empty( $per_page ) || $per_page < 1 ) {
-			$per_page = $screen->get_option( 'per_page', 'default' );
+			$per_page = $this->screen->get_option( 'per_page', 'default' );
 		}
 
 		$per_page = (int) $per_page;
-
-		$this->_column_headers = $this->get_column_info();
 
 		$this->set_order_vars();
 		usort( $data, array( $this, 'usort_reorder_callback' ) );

@@ -85,7 +85,10 @@ $descriptions = array(
 	}
 	?>
 
-	<?php $this->list_table->views(); ?>
+	<?php
+	do_action( 'code_snippets/admin/manage/before_list_table' );
+	$this->list_table->views();
+	?>
 
 	<form method="get" action="">
 		<?php

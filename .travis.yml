@@ -7,6 +7,8 @@ php:
   - '7.2'
   - '7.3'
   - '7.4'
+  - '8.0'
+  - nightly
 
 services:
   - mysql
@@ -27,6 +29,7 @@ env:
 # Prepare the system by installing prerequisites and dependencies.
 # Failures in this section will result in build status 'errored'.
 before_install:
+  - nvm install node
   - composer self-update
   - npm install -g gulp
 

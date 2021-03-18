@@ -17,3 +17,14 @@ window.code_snippets_editor = (codeEditor => {
 
 	return codeEditor.initialize(document.getElementById('snippet_code'), atts);
 })(window.wp.codeEditor);
+
+
+(function () {
+	const dir_control = document.getElementById('snippet-code-direction');
+	if (!dir_control) return;
+
+	dir_control.addEventListener('change', () => {
+		window.code_snippets_editor.setOption('direction', 'rtl' === dir_control.value ? 'rtl' : 'ltr');
+	});
+
+})();

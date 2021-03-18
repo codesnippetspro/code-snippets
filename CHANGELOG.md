@@ -37,8 +37,15 @@ Lines marked with **\[PRO\]** indicate that you may need Code Snippets Pro to fu
 * Added: Snippet type badges to Edit and Add New Snippet pages.
 * Added: Setting to control whether the current line of the code editor is highlighted.
 
-## 2.14.1 (unrelesed)
-* Added Czech translation by [Lukáš Tesař](https://github.com/atomicf4ll).
+## 2.14.1 (10 Mar 2021)
+* Added: Czech translation by [Lukáš Tesař](https://github.com/atomicf4ll).
+* Fixed: Code validator now supports `function_exists` and `class_exists` checks.
+* Fixed: Code validator now supports anonymous functions.
+* Fixed: Issue with saving the hidden columns setting.
+* Fixed: Replaced the outdated tag-it library with [tagger](https://github.com/jcubic/tagger) for powering the snippet tags editor.
+* Added: Code direction setting for RTL users.
+* Updated CodeMirror to version 5.59.4.
+* Added: Additional action hooks and search API thanks to [@Spreeuw](https://github.com/Spreeuw).
 
 ## 2.14.0 (26 Jan 2020)
 * Updated CodeMirror to version 5.50.2.

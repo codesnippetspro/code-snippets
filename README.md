@@ -1,8 +1,8 @@
 # Code Snippets Pro [![Build Status](https://api.travis-ci.org/sheabunge/code-snippets.svg?branch=develop)](https://travis-ci.org/sheabunge/code-snippets)
 
 * __Requires at least:__ [WordPress 3.6](https://wordpress.org/download/) or later
-* __Tested up to:__ WordPress 5.6.0
-* __Stable version:__ [2.14.0](https://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
+* __Tested up to:__ WordPress 5.7.0
+* __Stable version:__ [2.14.1](https://downloads.wordpress.org/plugin/code-snippets.latest-stable.zip)
 * __License:__ [GPL 2.0 or later](license.txt)
 
 Code Snippets is an easy, clean and simple way to run code snippets on your site. It removes the need to add custom snippets to your theme's `functions.php` file.
