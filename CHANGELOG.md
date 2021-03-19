@@ -2,21 +2,11 @@
 
 ## 3.0.0 (unreleased)
 
+### Added
 * Added: HTML content snippets for displaying as shortcodes or including in the page head or footer area.
 * Added: Notice reminding users to upgrade unsupported PHP versions.
-* Improved: Updated plugin code to use namespaces, preventing name collisions with other plugins.
-* Removed: Deprecated functions and compatibility code for unsupported PHP versions.
-* Removed: Option to disable snippet scopes.
-* Improved: Added key for the 'active' and 'scope' database table columns to speed up queries.
-* Improved: Redirect from edit menu if not editing a valid snippet.
 * Added: Visual settings to add attributes to shortcodes.
-* Improved: Moved activation switch into its own table column.
 * Added: Shortcode buttons to the post and page content editors.
-* Improved: Updated code documentation according to WordPress standards.
-* Improved: Added snippet type labels to the tabs on the Snippets page.
-* Improved: Split settings page into tabs.
-* Improved: Use the version of CodeMirror included with WordPress where possible to inherit the additional built-in features.
-* Improved: Added hover effect to priority settings in the snippets table to show that they are editable.
 * Added: Basic REST API endpoints.
 * Added: Snippet type column to the snippets table.
 * Added: Snippet type badges to Edit and Add New Snippet pages.
@@ -25,8 +15,22 @@
 * Added: Display a warning when saving a snippet with missing title or code.
 * Added: Add suffix to title of cloned snippets.
 
-### Pro Only
+### Changed
+* Improved: Updated plugin code to use namespaces, preventing name collisions with other plugins.
+* Improved: Added key for the 'active' and 'scope' database table columns to speed up queries.
+* Improved: Redirect from edit menu if not editing a valid snippet.
+* Improved: Moved activation switch into its own table column.
+* Improved: Updated code documentation according to WordPress standards.
+* Improved: Added snippet type labels to the tabs on the Snippets page.
+* Improved: Split settings page into tabs.
+* Improved: Use the version of CodeMirror included with WordPress where possible to inherit the additional built-in features.
+* Improved: Added hover effect to priority settings in the snippets table to show that they are editable.
 
+### Deprecated
+* Removed: Deprecated functions and compatibility code for unsupported PHP versions.
+* Removed: Option to disable snippet scopes.
+
+### New in Pro
 * Added: CSS style snippets for the site front-end and admin area.
 * Added: JavaScript snippets for the site head and body area on the front-end.
 * Added: Browser cache versioning for CSS and JavaScript snippets.
