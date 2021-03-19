@@ -166,12 +166,8 @@ $inactive-color: #ccc;
 		vertical-align: middle;
 	}
 
-	tfoot th {
-		border-top: none !important;
-
-		&.check-column {
-			padding: 13px 0 0 3px;
-		}
+	tfoot th.check-column {
+		padding: 13px 0 0 3px;
 	}
 
 	thead th.check-column,

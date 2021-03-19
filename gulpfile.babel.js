@@ -195,7 +195,7 @@ gulp.task('package', gulp.series(
 
 gulp.task('test', gulp.parallel('test-js', 'phpcs'));
 
-gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
+gulp.task('default', gulp.series('clean', gulp.parallel('css', 'js', 'i18n')));
 
 gulp.task('watch', gulp.series('default', (done) => {
 	gulp.watch('css/*.scss', gulp.series('css'));
