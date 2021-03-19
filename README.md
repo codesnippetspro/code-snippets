@@ -22,6 +22,7 @@ If you like this plugin, or it is useful to you in some way, please consider rev
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
+* Spanish - [Ibidem Group](https://www.ibidemgroup.com)
 * Czech  – [Lukáš Tesař](mailto:lukastesar03@gmail.com)
 * Danish - [Finn Sommer Jensen](https://profiles.wordpress.org/finnsommer/)
 * French – [momo-fr](https://www.momofr.net/) and [Shea Bunge](https://sheabunge.com)
