@@ -71,11 +71,12 @@ class Admin_Menu {
 	/**
 	 * Add a sub-menu to the Snippets menu
 	 *
-	 * @uses add_submenu_page() to register a submenu
-	 *
 	 * @param string $slug  Menu slug.
 	 * @param string $label Label shown in admin menu.
 	 * @param string $title Page title.
+	 *
+	 * @uses add_submenu_page() to register a submenu
+	 *
 	 */
 	public function add_menu( $slug, $label, $title ) {
 		$hook = add_submenu_page(
@@ -116,7 +117,8 @@ class Admin_Menu {
 	/**
 	 * Print the status and error messages
 	 */
-	protected function print_messages() {}
+	protected function print_messages() {
+	}
 
 	/**
 	 * Retrieve a result message based on a posted status
@@ -171,7 +173,10 @@ class Admin_Menu {
 
 		/* Create the snippet tables if they don't exist */
 		$db = code_snippets()->db;
-		$db->create_missing_table( $db->ms_table );
+
+		if ( is_multisite() ) {
+			$db->create_missing_table( $db->ms_table );
+		}
 		$db->create_missing_table( $db->table );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
@@ -180,7 +185,8 @@ class Admin_Menu {
 	/**
 	 * Enqueue scripts and stylesheets for the admin page, if necessary
 	 */
-	public function enqueue_assets() {}
+	public function enqueue_assets() {
+	}
 
 	/**
 	 * Render a list of links to other pages in the page title
