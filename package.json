@@ -66,12 +66,12 @@
         "gulp-uglify": "^3.0.2",
         "gulp-wp-pot": "^2.5.0",
         "gulp-zip": "^5.0.2",
-        "node-sass": "^5.0.0",
         "postcss": "^8.2.7",
         "postcss-easy-import": "^3.0.0",
         "postcss-hexrgba": "^2.0.1",
         "postcss-import": "^14.0.0",
         "precss": "^4.0.0",
+        "sass": "^1.32.8",
         "vinyl-buffer": "^1.0.1",
         "vinyl-source-stream": "^2.0.0",
         "webpack-stream": "^6.1.1"
