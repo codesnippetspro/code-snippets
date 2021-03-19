@@ -11,7 +11,6 @@
 * Added: Snippet type column to the snippets table.
 * Added: Snippet type badges to Edit and Add New Snippet pages.
 * Added: Setting to control whether the current line of the code editor is highlighted.
-* Fixed: Snippets table layout on smaller screens.
 * Added: Display a warning when saving a snippet with missing title or code.
 * Added: Add suffix to title of cloned snippets.
 
@@ -25,6 +24,7 @@
 * Improved: Split settings page into tabs.
 * Improved: Use the version of CodeMirror included with WordPress where possible to inherit the additional built-in features.
 * Improved: Added hover effect to priority settings in the snippets table to show that they are editable.
+* Fixed: Snippets table layout on smaller screens.
 
 ### Deprecated
 * Removed: Deprecated functions and compatibility code for unsupported PHP versions.
