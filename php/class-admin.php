@@ -53,6 +53,7 @@ class Admin {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ) );
+		add_action( 'admin_notices', array( $this, 'license_warning_notice' ) );
 
 		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
@@ -181,6 +182,38 @@ class Admin {
 				__( 'Support', 'code-snippets' )
 			),
 		) );
+	}
+
+	/**
+	 * Add a warning message to admin pages while there is not a valid license.
+	 */
+	public function license_warning_notice() {
+		$status = code_snippets()->licensing->get_status();
+
+		// only display a message if the license is not valid
+		if ( 'valid' === $status ) {
+			return;
+		}
+
+		$settings_url = code_snippets()->get_menu_url( 'settings' );
+
+		echo '<div class="notice notice-warning is-dismissible code-snippets-license-warning"><p>';
+
+		if ( 'expired' === $status ) {
+			esc_html_e( 'It looks like your Code Snippets Pro license has expired. ', 'code-snippets' );
+		} else {
+			esc_html_e( 'It looks like this site is missing a valid Code Snippets Pro license. ', 'code-snippets' );
+		}
+
+		esc_html_e( 'Pro features will not function until a valid license key is added. ', 'code-snippets' );
+
+		printf(
+			'<a href="%s" class="button button-secondary button-small">%s</a>',
+			esc_url( add_query_arg( 'section', 'license', $settings_url ) ),
+			esc_html__( 'Fix Now', 'code-snippets' )
+		);
+
+		echo '</p></div>';
 	}
 
 	/**

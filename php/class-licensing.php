@@ -92,6 +92,15 @@ class Licensing {
 	}
 
 	/**
+	 * Determine whether this site currently has a valid license.
+	 *
+	 * @return bool
+	 */
+	public function is_licensed() {
+		return 'valid' === $this->get_status();
+	}
+
+	/**
 	 * Determine whether this site has (or had) a valid license.
 	 *
 	 * @return bool
