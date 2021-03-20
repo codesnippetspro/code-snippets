@@ -56,18 +56,30 @@ if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
 			?></p>
 
 		<?php if ( ! $snippet->id || 'content' === $snippet->scope ) {
-			/* translators: %s: snippet shortcode tag */
-			$text = $snippet->id ? __( 'You can use the %s shortcode to insert your content into a post or page.', 'code-snippets' ) : __( 'After saving, you will be able to use the %s shortcode to insert your content into a post or page.', 'code-snippets' );
+			$block_editor = has_action( 'enqueue_block_assets' );
+			$elementor = defined( 'ELEMENTOR_VERSION' );
 
-			$shortcode_atts = ( $snippet->id ? ' id=' . $snippet->id : '' ) . ( $snippet->network ? ' network=true' : '' );
+			echo '<p>';
+			if ( $elementor && $block_editor ) {
+				esc_html_e( 'You can use the Code Snippets editor blocks or Elementor widgets to insert the snippet content into a post or page.', 'code-snippets' );
+			} else if ( $elementor ) {
+				esc_html_e( 'You can use the Code Snippets Elementor widgets to insert the snippet content into a post or page.', 'code-snippets' );
+			} else if ( $block_editor ) {
+				esc_html_e( 'You can use the Code Snippets editor blocks to insert the snippet content into a post or page.', 'code-snippets' );
+			} else {
+				/* translators: %s: snippet shortcode tag */
+				esc_html_e( 'You can use the %s shortcode to insert the snippet content into a post or page.', 'code-snippets' );
 
-			if ( false !== stripos( $snippet->code, '<?' ) ) {
-				$shortcode_atts .= ' php=true';
+				$shortcode_atts =
+					( $snippet->id ? ' id=' . $snippet->id : '' ) .
+					( $snippet->network ? ' network=true' : '' ) .
+					( false !== stripos( $snippet->code, '<?' ) ? ' php=true' : '' );
 			}
+			echo '</p>';
 
-			printf( '<p>' . esc_html( $text ) . '</p>',
-				'<code class="shortcode-tag">[code_snippet' . esc_html( $shortcode_atts ) . ']</code>'
-			);
+			if ( isset( $shortcode_atts ) ) {
+				echo '<code class="shortcode-tag">[code_snippet', esc_html( $shortcode_atts ), ']</code>';
+			}
 
 			if ( $snippet->id ) { ?>
 				<p class="html-shortcode-options">
