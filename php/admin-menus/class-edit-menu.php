@@ -18,6 +18,13 @@ class Edit_Menu extends Admin_Menu {
 	protected $snippet = null;
 
 	/**
+	 * Whether the edit screen should be read-only or editable.
+	 *
+	 * @var bool
+	 */
+	protected $read_only = false;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -117,6 +124,7 @@ class Edit_Menu extends Admin_Menu {
 		$edit_id = isset( $_REQUEST['id'] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
 
 		$snippet = $this->snippet = get_snippet( $edit_id );
+		$this->read_only = $snippet->is_pro && ! code_snippets()->licensing->is_licensed();
 
 		if ( 0 === $edit_id && isset( $_GET['type'] ) && $_GET['type'] !== $snippet->type ) {
 			if ( 'php' === $_GET['type'] ) {

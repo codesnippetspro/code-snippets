@@ -10,6 +10,7 @@
 
 namespace Code_Snippets;
 
+/** @var Snippet $snippet */
 $snippet = $this->snippet;
 
 ?>

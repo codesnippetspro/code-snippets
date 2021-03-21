@@ -27,6 +27,8 @@ if ( ! $snippet->id ) {
 	$classes[] = ( $snippet->active ? '' : 'in' ) . 'active-snippet';
 }
 
+$licensed = code_snippets()->licensing->is_licensed();
+
 ?>
 <div class="wrap">
 	<h1><?php
@@ -100,6 +102,10 @@ if ( ! $snippet->id ) {
 					'js'   => __( 'Scripts', 'code-snippets' ),
 				);
 
+				if ( ! $licensed ) {
+					unset( $types['css'], $types['js'] );
+				}
+
 				foreach ( $types as $type_name => $label ) {
 
 					if ( $snippet->type === $type_name ) {
@@ -142,7 +148,7 @@ if ( ! $snippet->id ) {
 		<p class="submit"><?php
 			$this->render_submit_buttons( $snippet );
 
-			if ( 'css' === $snippet->type || 'js' === $snippet->type ) {
+			if ( $licensed && ( 'css' === $snippet->type || 'js' === $snippet->type ) ) {
 				$asset_url = code_snippets()->active_snippets->get_asset_url( $snippet->scope );
 				$asset_url = add_query_arg( [ 'TB_iframe' => true, 'width' => 600, 'height' => 550 ], $asset_url );
 
