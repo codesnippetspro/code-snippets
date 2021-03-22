@@ -132,7 +132,7 @@ class Licensing {
 	 */
 	public function render_license_status() {
 		if ( ! $this->get_key() ) {
-			esc_html_e( 'You will need to provide a valid key before activating the license.', 'code-snippets' );
+			esc_html_e( 'Enter a license key in the box above and click Save Changes to activate the license.', 'code-snippets' );
 			return;
 		}
 
