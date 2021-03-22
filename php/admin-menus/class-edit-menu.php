@@ -444,7 +444,8 @@ class Edit_Menu extends Admin_Menu {
 		   title="<?php esc_attr_e( 'Snippets with a lower priority number will run before those with a higher number.', 'code-snippets' ); ?>">
 			<label for="snippet_priority"><?php esc_html_e( 'Priority', 'code-snippets' ); ?></label>
 
-			<input name="snippet_priority" type="number" id="snippet_priority" value="<?php echo intval( $snippet->priority ); ?>">
+			<input name="snippet_priority" type="number" id="snippet_priority"
+			       value="<?php echo intval( $snippet->priority ); ?>"<?php disabled( $this->read_only ); ?>>
 		</p>
 		<?php
 	}
@@ -630,7 +631,12 @@ class Edit_Menu extends Admin_Menu {
 		$plugin = code_snippets();
 		$rtl = is_rtl() ? '-rtl' : '';
 
-		enqueue_code_editor( $this->snippet->type );
+		$editor_atts = [];
+		if ( ! $plugin->licensing->is_licensed() && $this->snippet->is_pro ) {
+			$editor_atts['readOnly'] = true;
+		}
+
+		enqueue_code_editor( $this->snippet->type, $editor_atts );
 
 		wp_enqueue_style(
 			'code-snippets-edit',
@@ -705,6 +711,7 @@ class Edit_Menu extends Admin_Menu {
 	 * @return array Two-dimensional array with action name keyed to description.
 	 */
 	public function get_actions_list( $snippet, $extra_actions = true ) {
+
 		$actions = [ 'save_snippet' => __( 'Save Changes', 'code-snippets' ) ];
 
 		if ( 'single-use' === $snippet->scope ) {
@@ -733,6 +740,15 @@ class Edit_Menu extends Admin_Menu {
 
 			$actions['export_snippet'] = __( 'Export', 'code-snippets' );
 			$actions['delete_snippet'] = __( 'Delete', 'code-snippets' );
+		}
+
+		if ( $snippet->is_pro && ! code_snippets()->licensing->is_licensed() ) {
+			unset( $actions['save_snippet'], $actions['save_snippet_activate'],
+				$actions['download_snippet'], $actions['export_snippet'] );
+
+			if ( isset( $actions['save_snippet_deactivate'] ) ) {
+				$actions['save_snippet_deactivate'] = __( 'Deactivate', 'code-snippets' );
+			}
 		}
 
 		return apply_filters( 'code_snippets/admin/submit_actions', $actions, $snippet, $extra_actions );
@@ -784,6 +800,7 @@ class Edit_Menu extends Admin_Menu {
 		foreach ( $scopes as $scope => $label ) {
 			printf( '<label><input type="radio" name="snippet_scope" value="%s"', esc_attr( $scope ) );
 			checked( $scope, $this->snippet->scope );
+			disabled( $this->read_only );
 			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', esc_attr( $scope_icons[ $scope ] ), esc_html( $label ) );
 		}
 	}

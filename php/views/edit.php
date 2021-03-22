@@ -30,7 +30,7 @@ if ( ! $snippet->id ) {
 $licensed = code_snippets()->licensing->is_licensed();
 
 ?>
-<div class="wrap">
+<div class="wrap<?php echo $this->read_only ? ' read-only-snippet' : '' ?>">
 	<h1><?php
 
 		if ( $snippet->id ) {
@@ -70,8 +70,9 @@ $licensed = code_snippets()->licensing->is_licensed();
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php esc_html_e( 'Name', 'code-snippets' ); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>"
-				       placeholder="<?php esc_attr_e( 'Enter title here', 'code-snippets' ); ?>" />
+				<input id="title" type="text" autocomplete="off" name="snippet_name"<?php disabled( $this->read_only ); ?>
+				       value="<?php echo esc_attr( $snippet->name ); ?>"
+				       placeholder="<?php esc_attr_e( 'Enter title here', 'code-snippets' ); ?>">
 			</div>
 		</div>
 
