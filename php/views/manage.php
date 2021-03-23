@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
+$licensed = code_snippets()->licensing->is_licensed();
+
 $types = array(
 	'all'  => __( 'All Snippets', 'code-snippets' ),
 	'php'  => __( 'Functions', 'code-snippets' ),
@@ -22,6 +24,10 @@ $types = array(
 	'css'  => __( 'Styles', 'code-snippets' ),
 	'js'   => __( 'Scripts', 'code-snippets' ),
 );
+
+if ( ! $licensed ) {
+	unset( $types['css'], $types['js'] );
+}
 
 $current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : 'all';
 $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
@@ -61,6 +67,13 @@ $descriptions = array(
 			}
 
 			echo esc_html( $label ), 'all' === $type_name ? '' : ' <span>' . esc_html( $type_name ) . '</span>', '</a>';
+		}
+
+		if ( ! $licensed ) {
+			echo
+			'<a class="button button-large nav-tab-button go-pro-button" href="https://codesnippets.pro" target="_blank">',
+			wp_kses( __( 'Go <span>Pro</span>', 'code-snippets' ), [ 'span' => [] ] ),
+			'</a>';
 		}
 
 		?>
