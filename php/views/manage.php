@@ -60,11 +60,8 @@ $descriptions = array(
 		}
 
 		?>
-		<a class="button button-large nav-tab-button" href="https://codesnippets.pro" target="_blank"><?php
-			esc_html_e( 'Go Pro', 'code-snippets' );
-			$badge_format = '<span class="snippet-type-badge" data-type="%s">%s</span>';
-			printf( $badge_format, 'css', esc_html__( 'css', 'code-snippets' ) );
-			printf( $badge_format, 'js', esc_html__( 'js', 'code-snippets' ) );
+		<a class="button button-large nav-tab-button go-pro-button" href="https://codesnippets.pro" target="_blank"><?php
+			echo wp_kses( __( 'Go <span>Pro</span>', 'code-snippets' ), [ 'span' => [] ] );
 			?></a>
 	</h2>
 

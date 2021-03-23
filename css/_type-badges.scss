@@ -1,6 +1,6 @@
 @import 'base';
 
-.nav-tab span, .snippet-type-badge {
+.nav-tab span, .snippet-type-badge, .go-pro-button span {
 	font-size: 10px;
 	text-transform: uppercase;
 	border: 1px solid;
@@ -8,7 +8,7 @@
 	border-radius: 5px;
 }
 
-.nav-tab span, .button .snippet-type-badge,
+.nav-tab span, .button .snippet-type-badge, .go-pro-button span
 h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
 	/* rtl:ignore */
 	margin-left: 3px;
@@ -25,4 +25,9 @@ $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-
 		color: $color;
 		border-color: currentColor;
 	}
+}
+
+.go-pro-button span {
+	color: #ce0000;
+	border-color: #ce0000;
 }
