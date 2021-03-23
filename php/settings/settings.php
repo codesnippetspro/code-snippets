@@ -169,7 +169,13 @@ function register_plugin_settings() {
 	) );
 
 	/* Register settings sections */
-	foreach ( get_settings_sections() as $section_id => $section_name ) {
+	$sections = get_settings_sections();
+
+	if ( ! get_setting( 'general', 'enable_description' ) ) {
+		unset( $sections['description_editor'] );
+	}
+
+	foreach ( $sections as $section_id => $section_name ) {
 		add_settings_section( $section_id, $section_name, null, 'code-snippets' );
 	}
 
