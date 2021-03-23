@@ -34,7 +34,7 @@ if ( ! $snippet->id ) {
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
 			printf( ' <a href="%s" class="page-title-action add-new-h2">%s</a>',
-				esc_url( code_snippets()->get_menu_url( 'add' ) ),
+				esc_url( add_query_arg( 'type', $snippet->type, code_snippets()->get_menu_url( 'add' ) ) ),
 				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 			);
 		} else {
