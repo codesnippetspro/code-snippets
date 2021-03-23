@@ -210,7 +210,7 @@ class Admin {
 		printf(
 			'<a href="%s" class="button button-secondary button-small">%s</a>',
 			esc_url( add_query_arg( 'section', 'license', $settings_url ) ),
-			esc_html__( 'Fix Now', 'code-snippets' )
+			esc_html__( 'Add License', 'code-snippets' )
 		);
 
 		echo '</p></div>';
