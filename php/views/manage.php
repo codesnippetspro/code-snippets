@@ -19,8 +19,6 @@ $types = array(
 	'all'  => __( 'All Snippets', 'code-snippets' ),
 	'php'  => __( 'Functions', 'code-snippets' ),
 	'html' => __( 'Content', 'code-snippets' ),
-	'css'  => __( 'Styles', 'code-snippets' ),
-	'js'   => __( 'Scripts', 'code-snippets' ),
 );
 
 $current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : 'all';
@@ -29,8 +27,6 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 $descriptions = array(
 	'php'  => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
 	'html' => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
-	'css'  => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
-	'js'   => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
 );
 
 ?>
@@ -64,6 +60,12 @@ $descriptions = array(
 		}
 
 		?>
+		<a class="button button-large nav-tab-button" href="https://codesnippets.pro" target="_blank"><?php
+			esc_html_e( 'Go Pro', 'code-snippets' );
+			$badge_format = '<span class="snippet-type-badge" data-type="%s">%s</span>';
+			printf( $badge_format, 'css', esc_html__( 'css', 'code-snippets' ) );
+			printf( $badge_format, 'js', esc_html__( 'js', 'code-snippets' ) );
+			?></a>
 	</h2>
 
 	<?php
@@ -71,10 +73,10 @@ $descriptions = array(
 		echo '<p class="snippet-type-description">', esc_html( $descriptions[ $current_type ] );
 
 		$type_names = [
-			'php' => __( 'function snippets', 'code-snippets' ),
+			'php'  => __( 'function snippets', 'code-snippets' ),
 			'html' => __( 'content snippets', 'code-snippets' ),
-			'css' => __( 'style snippets', 'code-snippets' ),
-			'js' => __( 'javascript snippets', 'code-snippets' ),
+			'css'  => __( 'style snippets', 'code-snippets' ),
+			'js'   => __( 'javascript snippets', 'code-snippets' ),
 		];
 
 		/* translators: %s: snippet type name */

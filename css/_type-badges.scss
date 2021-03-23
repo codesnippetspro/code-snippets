@@ -8,7 +8,8 @@
 	border-radius: 5px;
 }
 
-.nav-tab span, h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
+.nav-tab span, .button .snippet-type-badge,
+h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
 	/* rtl:ignore */
 	margin-left: 3px;
 }

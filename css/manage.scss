@@ -7,6 +7,14 @@ $inactive-color: #ccc;
 
 @import 'type-badges';
 
+.wp-core-ui .button.nav-tab-button {
+	margin-left: 0.5em;
+	color: #50575e;
+	float: left;
+	border: 1px solid #c3c4c7;
+	background: #dcdcde;
+}
+
 .column-name {
 
 	.dashicons {
