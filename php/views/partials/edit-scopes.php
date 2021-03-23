@@ -1,4 +1,7 @@
 <?php
+
+namespace Code_Snippets;
+
 /**
  * HTML code for the snippet scope selector
  *
@@ -7,8 +10,6 @@
  *
  * @var Edit_Menu $this
  */
-
-namespace Code_Snippets;
 
 /** @var Snippet $snippet */
 $snippet = $this->snippet;
@@ -49,16 +50,20 @@ if ( ! $snippet->id || 'js' === $snippet->type ) { ?>
 if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
 	<div class="snippet-scope html-scopes-list">
 		<p><?php
-			$this->print_scopes_list( array(
-				'content'        => __( 'Only display when inserted into a post or page.', 'code-snippets' ),
+
+			$pro_scopes = code_snippets()->licensing->is_licensed() ? array(
 				'head-content'   => __( 'Display in site <head> section.', 'code-snippets' ),
 				'footer-content' => __( 'Display at the end of the <body> section, in the footer.', 'code-snippets' ),
-			) );
+			) : array();
+
+			$this->print_scopes_list( array_merge( array(
+				'content' => __( 'Only display when inserted into a post or page.', 'code-snippets' ),
+			), $pro_scopes ) );
 			?></p>
 
 		<?php if ( ! $snippet->id || 'content' === $snippet->scope ) {
 			$block_editor = has_action( 'enqueue_block_assets' );
-			$elementor = defined( 'ELEMENTOR_VERSION' );
+			$elementor    = defined( 'ELEMENTOR_VERSION' );
 
 			echo '<p>';
 			if ( $elementor && $block_editor ) {
