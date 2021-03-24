@@ -293,4 +293,32 @@ class Plugin {
 
 		return $url;
 	}
+
+	/**
+	 * Retrieve a list of available snippet types and their labels.
+	 *
+	 * @return array
+	 */
+	public function get_types() {
+		return array(
+			'php'  => __( 'Functions', 'code-snippets' ),
+			'html' => __( 'Content', 'code-snippets' ),
+		);
+	}
+
+	/**
+	 * Retrieve the description for a particular snippet type.
+	 *
+	 * @param string $type Snippet type name.
+	 *
+	 * @return string
+	 */
+	public function get_type_description( $type ) {
+		$descriptions = array(
+			'php'  => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
+			'html' => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
+		);
+
+		return isset( $descriptions[ $type ] ) ? $descriptions[ $type ] : '';
+	}
 }

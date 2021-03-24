@@ -93,12 +93,7 @@ if ( ! $snippet->id ) {
 			<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
 				<?php
 
-				$types = array(
-					'php'  => __( 'Functions', 'code-snippets' ),
-					'html' => __( 'Content', 'code-snippets' ),
-				);
-
-				foreach ( $types as $type_name => $label ) {
+				foreach ( code_snippets()->get_types() as $type_name => $label ) {
 
 					if ( $snippet->type === $type_name ) {
 						echo '<a class="nav-tab nav-tab-active"';

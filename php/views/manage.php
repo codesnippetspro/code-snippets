@@ -15,19 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-$types = array(
-	'all'  => __( 'All Snippets', 'code-snippets' ),
-	'php'  => __( 'Functions', 'code-snippets' ),
-	'html' => __( 'Content', 'code-snippets' ),
-);
+$types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], code_snippets()->get_types() );
 
 $current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : 'all';
 $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
-
-$descriptions = array(
-	'php'  => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
-	'html' => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
-);
 
 ?>
 
@@ -66,8 +57,8 @@ $descriptions = array(
 	</h2>
 
 	<?php
-	if ( isset( $descriptions[ $current_type ] ) ) {
-		echo '<p class="snippet-type-description">', esc_html( $descriptions[ $current_type ] );
+	if ( $desc = code_snippets()->get_type_description( $current_type ) ) {
+		echo '<p class="snippet-type-description">', esc_html( $desc );
 
 		$type_names = [
 			'php'  => __( 'function snippets', 'code-snippets' ),
