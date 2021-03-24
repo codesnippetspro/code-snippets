@@ -35,11 +35,12 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 		'gutters'       => [ 'CodeMirror-lint-markers' ],
 		'lint'          => 'css' === $type || 'php' === $type,
 		'direction'     => 'ltr',
+		'colorpicker'   => [ 'mode' => 'edit' ],
 	];
 
 	// add relevant saved setting values to the default attributes
 	$plugin_settings = Settings\get_settings_values();
-	$setting_fields = Settings\get_settings_fields();
+	$setting_fields  = Settings\get_settings_fields();
 
 	foreach ( $setting_fields['editor'] as $field_id => $field ) {
 		// the 'codemirror' setting field specifies the name of the attribute
@@ -85,14 +86,14 @@ function get_editor_themes() {
 		return $themes;
 	}
 
-	$themes = array( 'default' );
+	$themes     = array( 'default' );
 	$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'css/min/editor-themes/';
 
 	$theme_files = glob( $themes_dir . '*.css' );
 
 	foreach ( $theme_files as $i => $theme ) {
-		$theme = str_replace( $themes_dir, '', $theme );
-		$theme = str_replace( '.css', '', $theme );
+		$theme    = str_replace( $themes_dir, '', $theme );
+		$theme    = str_replace( '.css', '', $theme );
 		$themes[] = $theme;
 	}
 

@@ -302,4 +302,42 @@ class Plugin {
 
 		return $url;
 	}
+
+	/**
+	 * Retrieve a list of available snippet types and their labels.
+	 *
+	 * @return array
+	 */
+	public function get_types() {
+		$types = array(
+			'php'  => __( 'Functions', 'code-snippets' ),
+			'html' => __( 'Content', 'code-snippets' ),
+			'css'  => __( 'Styles', 'code-snippets' ),
+			'js'   => __( 'Scripts', 'code-snippets' ),
+		);
+
+		if ( ! $this->licensing->is_licensed() ) {
+			unset( $types['css'], $types['js'] );
+		}
+
+		return $types;
+	}
+
+	/**
+	 * Retrieve the description for a particular snippet type.
+	 *
+	 * @param string $type Snippet type name.
+	 *
+	 * @return string
+	 */
+	public function get_type_description( $type ) {
+		$descriptions = array(
+			'php'  => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
+			'html' => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
+			'css'  => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
+			'js'   => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
+		);
+
+		return isset( $descriptions[ $type ] ) ? $descriptions[ $type ] : '';
+	}
 }

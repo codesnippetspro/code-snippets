@@ -36,7 +36,7 @@ $licensed = code_snippets()->licensing->is_licensed();
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
 			printf( ' <a href="%s" class="page-title-action add-new-h2">%s</a>',
-				esc_url( code_snippets()->get_menu_url( 'add' ) ),
+				esc_url( add_query_arg( 'type', $snippet->type, code_snippets()->get_menu_url( 'add' ) ) ),
 				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 			);
 		} else {
@@ -96,18 +96,7 @@ $licensed = code_snippets()->licensing->is_licensed();
 			<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
 				<?php
 
-				$types = array(
-					'php'  => __( 'Functions', 'code-snippets' ),
-					'html' => __( 'Content', 'code-snippets' ),
-					'css'  => __( 'Styles', 'code-snippets' ),
-					'js'   => __( 'Scripts', 'code-snippets' ),
-				);
-
-				if ( ! $licensed ) {
-					unset( $types['css'], $types['js'] );
-				}
-
-				foreach ( $types as $type_name => $label ) {
+				foreach ( code_snippets()->get_types() as $type_name => $label ) {
 
 					if ( $snippet->type === $type_name ) {
 						echo '<a class="nav-tab nav-tab-active"';
