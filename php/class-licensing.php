@@ -232,15 +232,20 @@ class Licensing {
 			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
 			$message = '';
 
-			// clear the license status if it was deactivated
-			if ( $activating ) {
-				if ( false === $license_data->success ) {
-					$message = $this->translate_license_error( $license_data );
-				} else {
-					update_setting( 'license', 'status', $license_data->license );
+			if ( $license_data ) {
+
+				// clear the license status if it was deactivated
+				if ( $activating ) {
+					if ( false === $license_data->success ) {
+						$message = $this->translate_license_error( $license_data );
+					} else {
+						update_setting( 'license', 'status', $license_data->license );
+					}
+				} else if ( 'deactivated' === $license_data->license ) {
+					update_setting( 'license', 'status', false );
 				}
-			} else if ( 'deactivated' === $license_data->license ) {
-				update_setting( 'license', 'status', false );
+			} else {
+				$message = __( 'An error occurred, please try again.', 'code-snippets' );
 			}
 
 		} else {
