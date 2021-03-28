@@ -150,7 +150,7 @@ gulp.task('test', gulp.parallel('test-js', gulp.series('phpcs', 'phpunit')));
 gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
 
 gulp.task('package', gulp.series(
-	'default',
+	'default', 'vendor',
 
 	// remove files from last run
 	() => gulp.src(['dist', pkg.name, `${pkg.name}.*.zip`], {read: false, allowEmpty: true})
