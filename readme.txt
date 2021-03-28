@@ -1,11 +1,11 @@
 === Code Snippets ===
 Contributors: bungeshea, ver3
-Donate link: https://sheabunge.com/donate
-Tags: code-snippets, snippets, functions, code, php, html, network, multisite
+Donate link: https://codesnippets.pro
+Tags: code-snippets, snippets, functions, code, php, html, css, javascript, network, multisite
 Requires at least: 3.6
 Tested up to: 5.7.0
-Requires PHP: 5.2
-Stable tag: 2.14.1
+Requires PHP: 5.6
+Stable tag: 3.0.0-beta.1
 License: MIT
 License URI: license.txt
 
@@ -144,6 +144,54 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.0.0 (unreleased) =
+
+__Added__
+* Added: HTML content snippets for displaying as shortcodes or including in the page head or footer area.
+* Added: Notice reminding users to upgrade unsupported PHP versions.
+* Added: Visual settings to add attributes to shortcodes.
+* Added: Shortcode buttons to the post and page content editors.
+* Added: Basic REST API endpoints.
+* Added: Snippet type column to the snippets table.
+* Added: Snippet type badges to Edit and Add New Snippet pages.
+* Added: Setting to control whether the current line of the code editor is highlighted.
+* Added: Display a warning when saving a snippet with missing title or code.
+* Added: Add suffix to title of cloned snippets.
+
+__Changed__
+* Improved: Updated plugin code to use namespaces, preventing name collisions with other plugins.
+* Improved: Added key for the 'active' and 'scope' database table columns to speed up queries.
+* Improved: Redirect from edit menu if not editing a valid snippet.
+* Improved: Moved activation switch into its own table column.
+* Improved: Updated code documentation according to WordPress standards.
+* Improved: Added snippet type labels to the tabs on the Snippets page.
+* Improved: Split settings page into tabs.
+* Improved: Use the version of CodeMirror included with WordPress where possible to inherit the additional built-in features.
+* Improved: Added hover effect to priority settings in the snippets table to show that they are editable.
+* Fixed: Snippets table layout on smaller screens.
+
+__Deprecated__
+* Removed: Deprecated functions and compatibility code for unsupported PHP versions.
+* Removed: Option to disable snippet scopes.
+
+__New in Pro__
+* Added: CSS style snippets for the site front-end and admin area.
+* Added: JavaScript snippets for the site head and body area on the front-end.
+* Added: Browser cache versioning for CSS and JavaScript snippets.
+* Added: Support for exporting and downloading CSS and JavaScript snippets.
+* Added: Support for highlighting code on the front-end.
+* Added: Editor syntax highlighting for CSS, JavaScript and HTML snippets.
+* Added: Button to preview full file when editing CSS or JavaScript snippets.
+* Added: Option to minify CSS and JavaScript snippets.
+* Added: Gutenberg editor block for displaying content snippets.
+* Added: Gutenberg editor block for displaying snippet source code.
+* Added: Elementor widget for displaying content snippets.
+* Added: Elementor widget for displaying snippet source code.
+
+= 2.14.2 (unreleased) =
+* Prevent network snippets table from being created on single-site installs.
+* Added Spanish translation by [Ibidem Group](https://www.ibidemgroup.com).
 
 = 2.14.1 (10 Mar 2021) =
 * Added: Czech translation by [Lukáš Tesař](https://github.com/atomicf4ll).
