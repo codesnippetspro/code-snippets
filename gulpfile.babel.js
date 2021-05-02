@@ -162,7 +162,7 @@ gulp.task('package', gulp.series(
 
 	// copy files into a new directory
 	() => gulp.src([
-		'code-snippets.php', 'uninstall.php', 'php/**/*', 'vendor/**/*',
+		'code-snippets.php', 'uninstall.php', 'readme.txt', 'php/**/*', 'vendor/**/*',
 		'license.txt', 'css/font/**/*', 'languages/**/*'
 	])
 		.pipe(copy(pkg.name, {})),
