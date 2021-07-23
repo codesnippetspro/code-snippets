@@ -3,7 +3,7 @@ Contributors: bungeshea, ver3
 Donate link: https://codesnippets.pro
 Tags: code-snippets, snippets, functions, code, php, html, css, javascript, network, multisite
 Requires at least: 3.6
-Tested up to: 5.7.0
+Tested up to: 5.7.1
 Requires PHP: 5.6
 Stable tag: 3.0.0-beta.1
 License: MIT
