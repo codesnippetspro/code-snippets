@@ -11,7 +11,6 @@ import change from 'gulp-change';
 import archiver from 'gulp-archiver';
 
 import postcss from 'gulp-postcss';
-import sass from 'gulp-sass';
 import cssnano from 'cssnano';
 import rtlcss from 'gulp-rtlcss';
 import cssimport from 'postcss-easy-import';
@@ -32,6 +31,8 @@ import phpunit from 'gulp-phpunit';
 import composer from 'gulp-composer';
 
 import pkg from './package.json';
+
+const sass = require('gulp-sass')(require('sass'));
 
 const src_files = {
 	php: ['*.php', 'php/**/*.php'],
