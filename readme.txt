@@ -3,7 +3,7 @@ Contributors: bungeshea, ver3
 Donate link: https://codesnippets.pro
 Tags: code-snippets, snippets, functions, code, php, html, css, javascript, network, multisite
 Requires at least: 3.6
-Tested up to: 5.7.1
+Tested up to: 5.8
 Requires PHP: 5.6
 Stable tag: 3.0.0-beta.1
 License: MIT
@@ -31,21 +31,31 @@ If you'd like to contribute to the plugin's code or translate it into another la
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
-* Spanish - [Ibidem Group](https://www.ibidemgroup.com)
-* Czech  – [Lukáš Tesař](mailto:lukastesar03@gmail.com)
-* Danish - [Finn Sommer Jensen](https://profiles.wordpress.org/finnsommer/)
-* French – [momo-fr](https://www.momofr.net/) and [Shea Bunge](https://sheabunge.com)
-* Belarusian - [Hrank.com](https://www.hrank.com)
+* Belarusian – [Hrank.com](https://www.hrank.com)
 * Brazilian Portuguese – [Bruno Borges](http://brunoborges.info)
-* French (Canada) - [Dominic Desbiens](https://www.dominicdesbiens.com/)
-* Indonesian - [Jordan Silaen from ChameleonJohn.com](https://www.chameleonjohn.com/)
-* German - [Mario Siegmann](https://web-alltag.de/), [Joerg Knoerchen](https://www.sensorgrafie.de/), and [David Decker](https://deckerweb.de)
-* Dutch - [Sander Spies](https://github.com/sander1)
-* Slovak - [Ján Fajčák](https://wp.sk)
-* Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
-* Chinese - [Jincheng Shan](http://shanjincheng.com)
-* Croatian - [Borisa Djuraskovic from Web Hosting Hub](https://www.webhostinghub.com/)
-* Japanese - [mt8](https://mt8.biz/)
+* Chinese – [Jincheng Shan](http://shanjincheng.com) and [诗语](https://profiles.wordpress.org/f2010525/)
+* Chinese (Taiwan) – [Alex Lion](https://www.alexclassroom.com/) and [Chun-Chih Cheng](https://profiles.wordpress.org/alex1114/)
+* Croatian – [Borisa Djuraskovic from Web Hosting Hub](https://www.webhostinghub.com/)
+* Czech  – [Lukáš Tesař](mailto:lukastesar03@gmail.com) and [Jakub Humpolec](https://profiles.wordpress.org/jumphy/)
+* Danish – [Finn Sommer Jensen](https://profiles.wordpress.org/finnsommer/)
+* Dutch – [Sander Spies](https://github.com/sander1), [Peter Smits](https://psmits.com) and [mother.of.code.a11n](https://profiles.wordpress.org/imazed/)
+* English (New Zealand) and English (UK) – [webaware](https://profiles.wordpress.org/webaware/)
+* English (South Africa) – [webaware](https://profiles.wordpress.org/webaware/) and [Ian Barnes](https://profiles.wordpress.org/ianbarnes/)
+* French – [momo-fr](https://www.momofr.net/) and [Shea Bunge](https://sheabunge.com)
+* French (Canada) – [Dominic Desbiens](https://www.dominicdesbiens.com/)
+* German – [Mario Siegmann](https://web-alltag.de/), [Joerg Knoerchen](https://www.sensorgrafie.de/), [David Decker](https://deckerweb.de) and [Andreas](https://profiles.wordpress.org/perryzelda/)
+* Greek – [Konstantinos Megas](https://profiles.wordpress.org/nextdoorpanda/)
+* Indonesian – [Jordan Silaen from ChameleonJohn.com](https://www.chameleonjohn.com/)
+* Italian – [Luisa Ravelli](https://profiles.wordpress.org/darkavenger/) and [ElectricFeet](https://profiles.wordpress.org/electricfeet/)
+* Japanese – [mt8](https://mt8.biz/), [Takakazu Nagaya](https://profiles.wordpress.org/tanagaya/), [Naoko Takano](https://naoko.blog/) and [melvas](https://profiles.wordpress.org/melvas/)
+* Persian – [Mohammad Novintanon](http://mnovintan.ir/)
+* Russian – [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html), [Yui](https://profiles.wordpress.org/fierevere/), [Denis Yanchevskiy](https://denisco.pro/) and [krioteh](https://profiles.wordpress.org/krioteh/)
+* Slovak – [Ján Fajčák](https://wp.sk)
+* Spanish (Colombia) and Spanish (Ecuador) – [Javier Esteban](https://javieresteban.org/)
+* Spanish (Spain) – [Ibidem Group](https://www.ibidemgroup.com), [Javier Esteban](https://javieresteban.org/), [Fernando Tellado](https://ayudawp.com/) and [Juanma Aranda](https://juanmaaranda.com/)
+* Spanish (Venezuela) – [Yordan Soares](https://yordansoar.es/)
+* Swedish – [Argentum](https://profiles.wordpress.org/argentum/), [Fredrik](https://profiles.wordpress.org/elbogen/) and [Tor-Bjorn Fjellner](https://profiles.wordpress.org/tobifjellner/)
+* Vietnamese – [Tuan Phan](https://profiles.wordpress.org/khunglong/)
 
 == Installation ==
 
