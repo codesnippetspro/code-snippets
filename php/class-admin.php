@@ -195,8 +195,6 @@ class Admin {
 			return;
 		}
 
-		$settings_url = code_snippets()->get_menu_url( 'settings' );
-
 		echo '<div class="notice notice-warning is-dismissible code-snippets-license-warning"><p>';
 
 		if ( 'expired' === $status ) {
@@ -207,11 +205,15 @@ class Admin {
 
 		esc_html_e( 'Pro features will not function until a valid license key is added. ', 'code-snippets' );
 
-		printf(
-			'<a href="%s" class="button button-secondary button-small">%s</a>',
-			esc_url( add_query_arg( 'section', 'license', $settings_url ) ),
-			esc_html__( 'Add License', 'code-snippets' )
-		);
+		if ( current_user_can( code_snippets()->get_network_cap_name() ) ) {
+			$settings_url = code_snippets()->get_menu_url( 'settings', 'network' );
+
+			printf(
+				'<a href="%s" class="button button-secondary button-small">%s</a>',
+				esc_url( add_query_arg( 'section', 'license', $settings_url ) ),
+				esc_html__( 'Add License', 'code-snippets' )
+			);
+		}
 
 		echo '</p></div>';
 	}
