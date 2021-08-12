@@ -88,6 +88,7 @@ class Code_Snippets_Validator {
 		}
 
 		$this->current++;
+
 		return true;
 	}
 
@@ -123,6 +124,7 @@ class Code_Snippets_Validator {
 
 		$duplicate = in_array( $identifier, $this->defined_identifiers[ $type ], true );
 		array_unshift( $this->defined_identifiers[ $type ], $identifier );
+
 		return $duplicate && ! ( isset( $this->exceptions[ $type ] ) && in_array( $identifier, $this->exceptions[ $type ], true ) );
 	}
 
@@ -154,6 +156,17 @@ class Code_Snippets_Validator {
 				$this->exceptions[ $type ] = isset( $this->exceptions[ $type ] ) ? $this->exceptions[ $type ] : array();
 				$this->exceptions[ $type ][] = trim( $token[1], '\'"' );
 				continue;
+			}
+
+			// if we have a double colon, followed by a class, then consume it before the next section
+			if ( T_DOUBLE_COLON === $token[0] ) {
+				$token = $this->peek();
+				$this->next();
+
+				if ( T_CLASS === $token[0] ) {
+					$this->next();
+					$token = $this->peek();
+				}
 			}
 
 			// only look for class and function declaration tokens
