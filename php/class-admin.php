@@ -54,6 +54,7 @@ class Admin {
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ) );
 		add_action( 'admin_notices', array( $this, 'license_warning_notice' ) );
+		add_action( 'network_admin_notices', array( $this, 'license_warning_notice' ) );
 
 		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
