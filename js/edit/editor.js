@@ -1,5 +1,6 @@
 'use strict';
 import '../editor-lib';
+import 'codemirror-colorpicker';
 
 window.code_snippets_editor = (codeEditor => {
 	const save_snippet_cb = (cm) => document.getElementById('save_snippet').click();
