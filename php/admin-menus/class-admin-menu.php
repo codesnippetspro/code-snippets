@@ -200,7 +200,13 @@ class Admin_Menu {
 				continue;
 			}
 
-			printf( '<a href="%s" class="page-title-action">', esc_url( code_snippets()->get_menu_url( $action ) ) );
+			$url = code_snippets()->get_menu_url( $action );
+
+			if ( isset( $_GET['type'] ) && in_array( $_GET['type'], Snippet::get_types() ) ) {
+				$url = add_query_arg( 'type', $_GET['type'], $url );
+			}
+
+			printf( '<a href="%s" class="page-title-action">', esc_url( $url ) );
 
 			switch ( $action ) {
 				case 'manage':
