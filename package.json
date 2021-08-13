@@ -32,7 +32,7 @@
     "dependencies": {
         "@jcubic/tagger": "^0.4.0",
         "codemirror": "^5.61.1",
-        "php-parser": "^3.0.3",
+        "php-parser": "github:glayzzle/php-parser#php8",
         "prismjs": "^1.23.0",
         "tag-it": "^2.0.0"
     },
