@@ -27,7 +27,7 @@ If you like this plugin, or it is useful to you in some way, please consider rev
 
 If you'd like to contribute to the plugin's code or translate it into another language, you can [fork the plugin on GitHub](https://github.com/sheabunge/code-snippets).
 
-= Translations =
+== Translations ==
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
