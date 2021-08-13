@@ -2,12 +2,10 @@
 Contributors: bungeshea, ver3
 Donate link: https://codesnippets.pro
 Tags: code-snippets, snippets, functions, code, php, html, css, javascript, network, multisite
-Requires at least: 3.6
-Tested up to: 5.8
-Requires PHP: 5.6
-Stable tag: 3.0.0-beta.1
 License: MIT
 License URI: license.txt
+Stable tag: 3.0.0-beta.1
+Tested up to: 5.8
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -27,7 +25,7 @@ If you like this plugin, or it is useful to you in some way, please consider rev
 
 If you'd like to contribute to the plugin's code or translate it into another language, you can [fork the plugin on GitHub](https://github.com/sheabunge/code-snippets).
 
-= Translations =
+== Translations ==
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
@@ -44,7 +42,7 @@ Code Snippets can be used in these different languages thanks to the following t
 * French – [momo-fr](https://www.momofr.net/) and [Shea Bunge](https://sheabunge.com)
 * French (Canada) – [Dominic Desbiens](https://www.dominicdesbiens.com/)
 * German – [Mario Siegmann](https://web-alltag.de/), [Joerg Knoerchen](https://www.sensorgrafie.de/), [David Decker](https://deckerweb.de) and [Andreas](https://profiles.wordpress.org/perryzelda/)
-* Greek – [Konstantinos Megas](https://profiles.wordpress.org/nextdoorpanda/)
+* Greek – [Konstantinos Megas](https://profiles.wordpress.org/nextdoorpanda/) and [Toni Bishop from Jrop](https://www.jrop.com/)
 * Indonesian – [Jordan Silaen from ChameleonJohn.com](https://www.chameleonjohn.com/)
 * Italian – [Luisa Ravelli](https://profiles.wordpress.org/darkavenger/) and [ElectricFeet](https://profiles.wordpress.org/electricfeet/)
 * Japanese – [mt8](https://mt8.biz/), [Takakazu Nagaya](https://profiles.wordpress.org/tanagaya/), [Naoko Takano](https://naoko.blog/) and [melvas](https://profiles.wordpress.org/melvas/)
@@ -55,6 +53,7 @@ Code Snippets can be used in these different languages thanks to the following t
 * Spanish (Spain) – [Ibidem Group](https://www.ibidemgroup.com), [Javier Esteban](https://javieresteban.org/), [Fernando Tellado](https://ayudawp.com/) and [Juanma Aranda](https://juanmaaranda.com/)
 * Spanish (Venezuela) – [Yordan Soares](https://yordansoar.es/)
 * Swedish – [Argentum](https://profiles.wordpress.org/argentum/), [Fredrik](https://profiles.wordpress.org/elbogen/) and [Tor-Bjorn Fjellner](https://profiles.wordpress.org/tobifjellner/)
+* Urdu – [Samuel Badree](https://mobilemall.pk/)
 * Vietnamese – [Tuan Phan](https://profiles.wordpress.org/khunglong/)
 
 == Installation ==
@@ -79,48 +78,16 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 
 == Frequently Asked Questions ==
 
+A full list of our Frequently Asked Questions can be found at [help.codesnippets.pro](https://help.codesnippets.pro/collection/3-faq).
+
 = How do I insert snippets into the post text editor? =
-Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
+Code Snippets v2 is designed to be used with PHP Function Snippets, which are not intended to be inserted as content, but instead persistently on your site as if they were part of a plugin or your theme's functions.php file.
 
-= How can I recover my site if it is crashed by a buggy snippet? (method one) =
-You can try activating 'safe mode'. All snippets will not execute while safe mode is active, allowing you to access your site and deactivate the snippet that is causing the error.
+Code Snippets v3 will bring a new type of snippet, Content Snippets, which are designed to be included in the content of a post or page. Stay tuned for the release!
 
-To activate safe mode, add the following line to your wp-config.php file, just before the line that reads `/* That's all, stop editing! Happy blogging. */`:
+= How can I recover my site if it is crashed by a buggy snippet? =
 
-    define('CODE_SNIPPETS_SAFE_MODE', true);
-
- To turn safe mode off, either [comment out](https://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
-
-= How can I recover my site if it is crashed by a buggy snippet? (method two) =
-You can enable safe mode on a per-page basis by appending `&snippets-safe-mode=1` to end of the current page's URL. While safe mode is active, all snippets will not execute, allowing you to login to your site and deactivate any snippets that are causing issues.
-
-For example, to see the WordPress admin area in safe mode, you would change the URL from this:
-
-	https://yoursiteurl.com/wp-admin/admin.php?page=snippets
-
-… to this:
-
-	https://yoursiteurl.com/wp-admin/admin.php?page=snippets&snippets-safe-mode=1
-
-Or, for another example, if you were viewing a page on the front-end of your site, you could change a URL like this:
-
-	https://yoursiteurl.com/about-us/
-
-… to this:
-
-	https://yoursiteurl.com/about-us/?snippets-safe-mode=1
-
-This will only work if the current user is logged in as an administrator – other visitors will see your site as normal.
-
-= Can I search and replace text inside the code editor? =
-The code editor supports several search and replace commands, accessible through keyboard shortcuts:
-
-- `Ctrl-F` / `Cmd-F` – Begin searching
-- `Ctrl-G` / `Cmd-G` – Find the next instance of the search term
-- `Shift-Ctrl-G` / `Shift-Cmd-G` – Find the previous instance of the search term
-- `Shift-Ctrl-F` / `Cmd-Option-F` – Replace text
-- `Shift-Ctrl-R` / `Shift-Cmd-Option-F` – Replace all instances of text
-- `Alt-F` – Persistent search (dialog remains open, `Enter` to find next, `Shift-Enter` to find previous)
+You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: https://help.codesnippets.pro/article/12-safe-mode.
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.
