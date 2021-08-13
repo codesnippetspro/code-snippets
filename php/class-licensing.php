@@ -20,7 +20,7 @@ class Licensing {
 	/**
 	 * The download name for the product in Easy Digital Downloads.
 	 */
-	const EDD_ITEM_NAME = 'Code Snippets Pro Beta';
+	const EDD_ITEM_NAME = 'Code Snippets Pro';
 
 	/**
 	 * EDD plugin updater class.
