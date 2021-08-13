@@ -2,7 +2,8 @@
 Based on work distributed under the BSD 3-Clause License (https://rawgit.com/glayzzle/codemirror-linter/master/LICENSE)
 */
 
-import Parser from 'php-parser';
+import Parser from 'php-parser/src/index';
+
 
 (function (CodeMirror) {
 	'use strict';
@@ -20,7 +21,8 @@ import Parser from 'php-parser';
 		lint() {
 			const parser = new Parser({
 				parser: {
-					suppressErrors: true
+					suppressErrors: true,
+					version: 800
 				},
 				ast: {
 					withPositions: true

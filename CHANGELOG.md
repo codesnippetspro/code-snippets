@@ -46,7 +46,10 @@
 
 ## 2.14.2 (unreleased)
 * Prevent network snippets table from being created on single-site installs.
-* Added Spanish translation by [Ibidem Group](https://www.ibidemgroup.com).
+* Added translations:
+	- Spanish by [Ibidem Group](https://www.ibidemgroup.com)
+	- Urdu by [Samuel Badree](https://mobilemall.pk/)
+	- Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
 
 ## 2.14.1 (10 Mar 2021)
 * Added: Czech translation by [Lukáš Tesař](https://github.com/atomicf4ll).

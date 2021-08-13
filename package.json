@@ -34,7 +34,7 @@
     "dependencies": {
         "@jcubic/tagger": "^0.4.0",
         "codemirror": "^5.62.2",
-        "php-parser": "^3.0.3",
+        "php-parser": "github:glayzzle/php-parser#php8",
         "prismjs": "^1.24.1",
         "react-select": "^3.1.1"
     },
