@@ -17,15 +17,15 @@
 Plugin Name: Code Snippets
 Plugin URI:  https://github.com/sheabunge/code-snippets
 Description: An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
-Author:      Code Snippets Pro
-Author URI:  https://codesnippets.pro
-Version:     2.14.1
-License:     MIT
-License URI: license.txt
-Text Domain: code-snippets
-Domain Path: /languages
+Author:       Code Snippets Pro
+Author URI:   https://codesnippets.pro
+Version:      2.14.1
+License:      MIT
+License URI:  license.txt
+Text Domain:  code-snippets
+Domain Path:  /languages
+Requires PHP: 5.2
 Requires at least: 3.6
-Tested up to: 5.8
 */
 
 /* Exit if accessed directly */

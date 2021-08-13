@@ -2,10 +2,10 @@
 Contributors: bungeshea, ver3
 Donate link: https://sheabunge.com/donate
 Tags: code-snippets, snippets, code, php, network, multisite
-Requires PHP: 5.2
-Stable tag: 2.14.1
 License: MIT
 License URI: license.txt
+Stable tag: 2.14.1
+Tested up to: 5.8
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -78,48 +78,16 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 
 == Frequently Asked Questions ==
 
+A full list of our Frequently Asked Questions can be found at [help.codesnippets.pro](https://help.codesnippets.pro/collection/3-faq).
+
 = How do I insert snippets into the post text editor? =
-Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
+Code Snippets v2 is designed to be used with PHP Function Snippets, which are not intended to be inserted as content, but instead persistently on your site as if they were part of a plugin or your theme's functions.php file.
 
-= How can I recover my site if it is crashed by a buggy snippet? (method one) =
-You can try activating 'safe mode'. All snippets will not execute while safe mode is active, allowing you to access your site and deactivate the snippet that is causing the error.
+Code Snippets v3 will bring a new type of snippet, Content Snippets, which are designed to be included in the content of a post or page. Stay tuned for the release!
 
-To activate safe mode, add the following line to your wp-config.php file, just before the line that reads `/* That's all, stop editing! Happy blogging. */`:
+= How can I recover my site if it is crashed by a buggy snippet? =
 
-    define('CODE_SNIPPETS_SAFE_MODE', true);
-
- To turn safe mode off, either [comment out](https://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
-
-= How can I recover my site if it is crashed by a buggy snippet? (method two) =
-You can enable safe mode on a per-page basis by appending `&snippets-safe-mode=1` to end of the current page's URL. While safe mode is active, all snippets will not execute, allowing you to login to your site and deactivate any snippets that are causing issues.
-
-For example, to see the WordPress admin area in safe mode, you would change the URL from this:
-
-	https://yoursiteurl.com/wp-admin/admin.php?page=snippets
-
-… to this:
-
-	https://yoursiteurl.com/wp-admin/admin.php?page=snippets&snippets-safe-mode=1
-
-Or, for another example, if you were viewing a page on the front-end of your site, you could change a URL like this:
-
-	https://yoursiteurl.com/about-us/
-
-… to this:
-
-	https://yoursiteurl.com/about-us/?snippets-safe-mode=1
-
-This will only work if the current user is logged in as an administrator – other visitors will see your site as normal.
-
-= Can I search and replace text inside the code editor? =
-The code editor supports several search and replace commands, accessible through keyboard shortcuts:
-
-- `Ctrl-F` / `Cmd-F` – Begin searching
-- `Ctrl-G` / `Cmd-G` – Find the next instance of the search term
-- `Shift-Ctrl-G` / `Shift-Cmd-G` – Find the previous instance of the search term
-- `Shift-Ctrl-F` / `Cmd-Option-F` – Replace text
-- `Shift-Ctrl-R` / `Shift-Cmd-Option-F` – Replace all instances of text
-- `Alt-F` – Persistent search (dialog remains open, `Enter` to find next, `Shift-Enter` to find previous)
+You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: https://help.codesnippets.pro/article/12-safe-mode.
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.
