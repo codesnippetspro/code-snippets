@@ -24,6 +24,8 @@ License:     MIT
 License URI: license.txt
 Text Domain: code-snippets
 Domain Path: /languages
+Requires at least: 3.6
+Tested up to: 5.8
 */
 
 /* Exit if accessed directly */
