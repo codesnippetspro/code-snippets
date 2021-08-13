@@ -14,6 +14,9 @@ module.exports = {
 		path: path.resolve(__dirname),
 		filename: '[name].js',
 	},
+	externals: {
+		'codemirror': 'wp.CodeMirror'
+	},
 	module: {
 		rules: [{
 			test: /\.js$/,
