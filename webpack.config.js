@@ -19,6 +19,7 @@ module.exports = {
 	externals: {
 		'react': 'React',
 		'react-dom': 'ReactDOM',
+		'codemirror': 'wp.CodeMirror'
 	},
 	module: {
 		rules: [{
