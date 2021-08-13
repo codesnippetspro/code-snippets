@@ -5,18 +5,20 @@
  * If you're interested in helping to develop Code Snippets, or perhaps contribute
  * to the localization, please see https://github.com/sheabunge/code-snippets
  *
- * @package   Code_Snippets
- * @author    Shea Bunge <shea@codesnippets.pro>
- * @copyright 2012-2021 Shea Bunge
- * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
- * @version   3.0.0-beta.1
- * @link      https://github.com/sheabunge/code-snippets
+ * @package      Code_Snippets
+ * @author       Shea Bunge <shea@codesnippets.pro>
+ * @copyright    2012-2021 Shea Bunge
+ * @license      GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
+ * @version      3.0.0-beta.1
+ * @link         https://github.com/sheabunge/code-snippets
+ *
+ * @noinspection PhpDefineCanBeReplacedWithConstInspection
  */
 
 /*
-Plugin Name: Code Snippets Pro
-Plugin URI:  https://codesnippets.pro
-Description: An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
+Author:       Code Snippets Pro
+Author URI:   https://codesnippets.pro
+Description:  An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
 Author:       Code Snippets Pro
 Author URI:   https://codesnippets.pro
 Version:      3.0.0-beta.1
@@ -74,6 +76,7 @@ define( 'CODE_SNIPPETS_PRO', true );
 
 if ( version_compare( phpversion(), '5.6', '>=' ) ) {
 	require_once __DIR__ . '/php/load.php';
+
 	return;
 }
 

@@ -131,6 +131,10 @@ class Edit_Menu extends Admin_Menu {
 				$snippet->scope = 'global';
 			} elseif ( 'css' === $_GET['type'] ) {
 				$snippet->scope = 'site-css';
+			} elseif ( 'html' === $_GET['type'] ) {
+				$snippet->scope = 'content';
+			} elseif ( 'js' === $_GET['type'] ) {
+				$snippet->scope = 'site-head-js';
 			}
 		}
 	}

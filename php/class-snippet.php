@@ -195,7 +195,7 @@ class Snippet {
 	 * @return array Single-dimensional array of field names.
 	 */
 	public function get_allowed_fields() {
-		return array_keys( $this->fields ) + array_keys( self::$field_aliases );
+		return array_keys( $this->fields )+array_keys( self::$field_aliases );
 	}
 
 	/**
@@ -344,6 +344,15 @@ class Snippet {
 		return 'php';
 	}
 
+	/**
+	 * Retrieve a list of all valid types.
+	 *
+	 * @return string[]
+	 */
+	public static function get_types() {
+		return [ 'php', 'html', 'css', 'js' ];
+	}
+
 	private function get_type_desc() {
 		$labels = [
 			'php'  => __( 'Functions', 'code-snippets' ),
@@ -389,6 +398,7 @@ class Snippet {
 		}
 
 		/* otherwise, discard the supplied value */
+
 		return null;
 	}
 
@@ -491,6 +501,7 @@ class Snippet {
 	 */
 	private function get_modified_timestamp() {
 		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
+
 		return $datetime ? $datetime->getTimestamp() : 0;
 	}
 
@@ -510,7 +521,7 @@ class Snippet {
 			if ( ! $timezone ) {
 				$offset = (float) get_option( 'gmt_offset' );
 				$hours = (int) $offset;
-				$minutes = ( $offset - $hours ) * 60;
+				$minutes = ( $offset-$hours ) * 60;
 
 				$sign = ( $offset < 0 ) ? '-' : '+';
 				$timezone = sprintf( '%s%02d:%02d', $sign, abs( $hours ), abs( $minutes ) );
@@ -521,6 +532,7 @@ class Snippet {
 
 		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
 		$datetime->setTimezone( $timezone );
+
 		return $datetime;
 	}
 
