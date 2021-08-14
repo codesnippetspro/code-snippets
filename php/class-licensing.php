@@ -134,7 +134,7 @@ class Licensing {
 	 * @return bool True if the value was saved, false otherwise.
 	 */
 	public function save_data() {
-		return update_option( self::OPTION_NAME, $this->data );
+		return update_site_option( self::OPTION_NAME, $this->data );
 	}
 
 	/**
@@ -144,7 +144,7 @@ class Licensing {
 		$plugin = code_snippets();
 
 		// fetch the license information from the database
-		$stored_data = get_option( self::OPTION_NAME );
+		$stored_data = get_site_option( self::OPTION_NAME );
 		$this->set_data( $stored_data );
 
 		// set up the updater
@@ -220,7 +220,7 @@ class Licensing {
 
 		if ( $data ) {
 			$this->set_data( $data );
-			update_option( self::OPTION_NAME, $this->data );
+			$this->save_data();
 		}
 	}
 
