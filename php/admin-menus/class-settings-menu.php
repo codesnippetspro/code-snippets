@@ -5,7 +5,7 @@ namespace Code_Snippets;
 /**
  * This class handles the settings admin menu
  *
- * @since 2.4.0
+ * @since   2.4.0
  * @package Code_Snippets
  */
 class Settings_Menu extends Admin_Menu {
@@ -80,6 +80,21 @@ class Settings_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Retrieve the list of settings sections.
+	 *
+	 * @return array
+	 */
+	private function get_sections() {
+		global $wp_settings_sections;
+
+		if ( ! isset( $wp_settings_sections[ self::SETTINGS_PAGE ] ) ) {
+			return array();
+		}
+
+		return (array) $wp_settings_sections[ self::SETTINGS_PAGE ];
+	}
+
+	/**
 	 * Retrieve the name of the settings section currently being viewed.
 	 *
 	 * @param string $default Name of the default tab displayed.
@@ -87,13 +102,12 @@ class Settings_Menu extends Admin_Menu {
 	 * @return string
 	 */
 	public function get_current_section( $default = 'general' ) {
-		global $wp_settings_sections;
+		$sections = $this->get_sections();
 
-		if ( ! isset( $wp_settings_sections[ self::SETTINGS_PAGE ] ) ) {
+		if ( ! $sections ) {
 			return $default;
 		}
 
-		$sections = (array) $wp_settings_sections[ self::SETTINGS_PAGE ];
 		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( $_REQUEST['section'] ) : $default;
 		return isset( $sections[ $active_tab ] ) ? $active_tab : $default;
 	}
@@ -103,9 +117,10 @@ class Settings_Menu extends Admin_Menu {
 	 */
 	public function render() {
 		$update_url = is_network_admin() ? add_query_arg( 'update_site_option', true ) : admin_url( 'options.php' );
+		$current_section = $this->get_current_section();
 
 		?>
-		<div class="wrap">
+		<div class="wrap" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
 			<h1><?php esc_html_e( 'Settings', 'code-snippets' );
 
 				if ( code_snippets()->is_compact_menu() ) {
@@ -127,7 +142,7 @@ class Settings_Menu extends Admin_Menu {
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 
 			<form action="<?php echo esc_url( $update_url ); ?>" method="post">
-				<input type="hidden" name="section" value="<?php echo esc_attr( $this->get_current_section() ); ?>">
+				<input type="hidden" name="section" value="<?php echo esc_attr( $current_section ); ?>">
 				<?php
 
 				settings_fields( 'code-snippets' );
@@ -137,7 +152,8 @@ class Settings_Menu extends Admin_Menu {
 				<p class="submit">
 					<?php submit_button( null, 'primary', 'submit', false ); ?>
 
-					<a class="button button-secondary" href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>"><?php
+					<a class="button button-secondary"
+					   href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>"><?php
 						esc_html_e( 'Reset to Default', 'code-snippets' ); ?></a>
 				</p>
 			</form>
@@ -149,13 +165,7 @@ class Settings_Menu extends Admin_Menu {
 	 * Output snippet settings in tabs
 	 */
 	protected function do_settings_tabs() {
-		global $wp_settings_sections;
-
-		if ( ! isset( $wp_settings_sections[ self::SETTINGS_PAGE ] ) ) {
-			return;
-		}
-
-		$sections = (array) $wp_settings_sections[ self::SETTINGS_PAGE ];
+		$sections = $this->get_sections();
 		$active_tab = $this->get_current_section();
 
 		echo '<h2 class="nav-tab-wrapper" id="settings-sections-tabs">';
@@ -182,10 +192,7 @@ class Settings_Menu extends Admin_Menu {
 				call_user_func( $section['callback'], $section );
 			}
 
-			printf(
-				'<table class="form-table settings-section %s-settings" style="display: %s;">',
-				esc_attr( $section['id'] ), $active_tab === $section['id'] ? 'block' : 'none'
-			);
+			printf( '<table class="form-table settings-section %s-settings">', esc_attr( $section['id'] ) );
 
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table>';
