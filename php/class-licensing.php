@@ -26,9 +26,9 @@ class Licensing {
 	const EDD_STORE_URL = 'https://codesnippets.pro';
 
 	/**
-	 * The download name for the product in Easy Digital Downloads.
+	 * The download ID for the product in Easy Digital Downloads.
 	 */
-	const EDD_ITEM_NAME = 'Code Snippets Pro';
+	const EDD_ITEM_ID = 406;
 
 	/**
 	 * Option name for storing license data.
@@ -136,11 +136,11 @@ class Licensing {
 		// set up the updater
 		if ( $this->key ) {
 			new EDD_SL_Plugin_Updater( self::EDD_STORE_URL, $plugin->file, [
-				'version'   => $plugin->version,
-				'license'   => $this->key,
-				'item_name' => self::EDD_ITEM_NAME,
-				'author'    => __( 'Code Snippets Pro', 'code-snippets' ),
-				'beta'      => false,
+				'version' => $plugin->version,
+				'license' => $this->key,
+				'item_id' => self::EDD_ITEM_ID,
+				'author'  => __( 'Code Snippets Pro', 'code-snippets' ),
+				'beta'    => false,
 			] );
 		}
 	}
@@ -175,7 +175,7 @@ class Licensing {
 		$api_params = array(
 			'edd_action' => $action,
 			'license'    => $this->key,
-			'item_name'  => urlencode( self::EDD_ITEM_NAME ),
+			'item_id'    => urlencode( self::EDD_ITEM_ID ),
 			'url'        => home_url(),
 		);
 

@@ -65,8 +65,11 @@ $tiers = [
 				?></td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Product Name', 'code-snippets' ); ?></th>
-			<td><?php echo esc_html( Licensing::EDD_ITEM_NAME ); ?></td>
+			<th scope="row"><?php esc_html_e( 'License Owner', 'code-snippets' ); ?></th>
+			<td><?php
+				/* translators: 1: customer name, 2: customer email */
+				echo esc_html( sprintf( __( '%s <%s>', 'code-snippets' ),
+					$license->customer_name, $license->customer_email ) ); ?></td>
 		</tr>
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Type', 'code-snippets' ); ?></th>
@@ -125,7 +128,12 @@ $tiers = [
 		<tfoot>
 		<tr>
 			<td>
-				<a href="https://codesnippets.pro/buy-pro" class="button button-secondary" target="_blank">
+				<a href="<?php
+				echo esc_url( add_query_arg( [
+					'edd_license_key' => $license->key,
+					'download_id'     => Licensing::EDD_ITEM_ID,
+				], 'https://codesnippets.pro/checkout/' ) );
+				?>" class="button button-secondary" target="_blank">
 					<?php esc_html_e( 'Renew Now', 'code-snippets' ); ?></a>
 			</td>
 			<td><?php
