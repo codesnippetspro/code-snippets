@@ -3,12 +3,20 @@
 namespace Code_Snippets;
 
 use WP_Error;
-use function Code_Snippets\Settings\get_setting;
-use function Code_Snippets\Settings\update_setting;
 
 /**
  * Handles license activation and automatic updates.
  * @package Code_Snippets
+ * @property      string $key              License key
+ * @property-read string $license          License status.
+ * @property-read int    $license_limit    Number of times this license can be activated.
+ * @property-read int    $site_count       Number of sites this license is active on.
+ * @property-read int    $activations_left Number of times this license can again be activated.
+ * @property-read string expires           License expiry date and time.
+ * @property-read string $customer_name    Name of license holder.
+ * @property-read string $customer_email   Email address of license holder.
+ * @property-read int    $price_id         ID of pricing plan the license belongs to.
+ * @property-read string $error            Error encountered when contacting the server, if applicable.
  */
 class Licensing {
 
@@ -23,31 +31,96 @@ class Licensing {
 	const EDD_ITEM_NAME = 'Code Snippets Pro';
 
 	/**
-	 * EDD plugin updater class.
-	 *
-	 * @var EDD_SL_Plugin_Updater
+	 * Option name for storing license data.
 	 */
-	private $edd_updater;
+	const OPTION_NAME = 'code_snippets_license';
 
 	/**
-	 * Current license key
-	 * @var string
+	 * Current license information, including key and status.
+	 * @var array
 	 */
-	private $license_key = null;
-
-	/**
-	 * Current license status.
-	 * @var string
-	 */
-	private $license_status = null;
+	private $data;
 
 	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
+
+		$this->data = array_fill_keys( [
+			'key',
+			'license',
+			'license_limit',
+			'site_count',
+			'activations_left',
+			'expires',
+			'customer_name',
+			'customer_email',
+			'price_id',
+			'error',
+		], null );
+
 		add_action( 'admin_init', [ $this, 'init' ], 1 );
-		add_action( 'admin_init', [ $this, 'handle_form_submit' ] );
 		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'update_status' ] );
+	}
+
+	/**
+	 * Retrieve a piece of license information.
+	 *
+	 * @param string $prop Information to retrieve
+	 *
+	 * @return mixed
+	 */
+	public function __get( $prop ) {
+		return $this->data[ $prop ];
+	}
+
+	/**
+	 * Set the license key.
+	 *
+	 * @param string $prop  Property name. Must be 'key'.
+	 * @param string $value New license key.
+	 *
+	 */
+	public function __set( $prop, $value ) {
+		if ( 'key' !== $prop ) {
+			trigger_error( 'Cannot override license property' . $prop, E_USER_ERROR );
+		}
+
+		$this->data['key'] = $value;
+	}
+
+	/**
+	 * Update the license data with new values.
+	 *
+	 * @param array|object $data List of new values.
+	 */
+	protected function set_data( $data ) {
+
+		// if the data is an object, convert it into an array.
+		if ( is_object( $data ) ) {
+			$data = get_object_vars( $data );
+		}
+
+		// if the data is not valid, then stop now.
+		if ( ! $data || ! is_array( $data ) ) {
+			return;
+		}
+
+		// loop through possible properties, updating with new values.
+		foreach ( array_keys( $this->data ) as $prop ) {
+			if ( isset( $data[ $prop ] ) ) {
+				$this->data[ $prop ] = $data[ $prop ];
+			}
+		}
+	}
+
+	/**
+	 * Retrieve all license data.
+	 *
+	 * @return array
+	 */
+	public function get_data() {
+		return $this->data;
 	}
 
 	/**
@@ -56,40 +129,22 @@ class Licensing {
 	public function init() {
 		$plugin = code_snippets();
 
-		// setup the updater
-		$this->edd_updater = new EDD_SL_Plugin_Updater( self::EDD_STORE_URL, $plugin->file, [
-			'version'   => $plugin->version,
-			'license'   => $this->get_key(),
-			'item_name' => self::EDD_ITEM_NAME,
-			'author'    => __( 'Code Snippets Pro', 'code-snippets' ),
-			'beta'      => false,
-		] );
-	}
+		// fetch the license information from the database
+		$stored_data = get_option( self::OPTION_NAME );
+		$this->set_data( $stored_data );
 
-	/**
-	 * Retrieve the current saved license key
-	 * @return string
-	 */
-	public function get_key() {
-		if ( is_null( $this->license_key ) ) {
-			$this->license_key = trim( get_setting( 'license', 'key' ) );
+		// set up the updater
+		if ( $this->key ) {
+			new EDD_SL_Plugin_Updater( self::EDD_STORE_URL, $plugin->file, [
+				'version'   => $plugin->version,
+				'license'   => $this->key,
+				'item_name' => self::EDD_ITEM_NAME,
+				'author'    => __( 'Code Snippets Pro', 'code-snippets' ),
+				'beta'      => false,
+			] );
 		}
-
-		return $this->license_key;
 	}
 
-	/**
-	 * Retrieve the current license status.
-	 *
-	 * @return string
-	 */
-	public function get_status() {
-		if ( is_null( $this->license_status ) ) {
-			$this->license_status = get_setting( 'license', 'status' );
-		}
-
-		return $this->license_status;
-	}
 
 	/**
 	 * Determine whether this site currently has a valid license.
@@ -97,7 +152,7 @@ class Licensing {
 	 * @return bool
 	 */
 	public function is_licensed() {
-		return 'valid' === $this->get_status();
+		return 'valid' === $this->license;
 	}
 
 	/**
@@ -106,51 +161,7 @@ class Licensing {
 	 * @return bool
 	 */
 	public function was_licensed() {
-		return in_array( $this->get_status(), [ 'valid', 'expired', 'disabled', 'inactive' ] );
-	}
-
-	/**
-	 * Query the server for the current license status.
-	 */
-	public function update_status() {
-		$response = $this->do_remote_request( 'check_license' );
-
-		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			return;
-		}
-
-		// fetch the license data from the request
-		$license_data = json_decode( wp_remote_retrieve_body( $response ) );
-
-		if ( isset( $license_data->license ) ) {
-			update_setting( 'license', 'status', $license_data->license );
-		}
-	}
-
-	/**
-	 * Render the license status settings field.
-	 */
-	public function render_license_status() {
-		if ( ! $this->get_key() ) {
-			esc_html_e( 'Enter a license key in the box above and click Save Changes to activate the license.', 'code-snippets' );
-			return;
-		}
-
-		$status = Settings\get_setting( 'license', 'status' );
-		$valid = 'valid' === $status;
-
-		if ( $valid ) {
-			echo '<span class="license-active-status">', esc_html__( 'active', 'code-snippets' ), '</span>';
-		}
-
-		wp_nonce_field( 'code_snippets_pro_license', 'code_snippets_pro_license_nonce' );
-
-		submit_button(
-			$valid ? __( 'Deactivate License', 'code-snippets' ) : __( 'Activate License', 'code-snippets' ),
-			'secondary',
-			'code_snippets_pro_license_' . ( $valid ? 'deactivate' : 'activate' ),
-			false
-		);
+		return in_array( $this->license, [ 'valid', 'expired', 'disabled', 'inactive' ] );
 	}
 
 	/**
@@ -163,7 +174,7 @@ class Licensing {
 	private function do_remote_request( $action ) {
 		$api_params = array(
 			'edd_action' => $action,
-			'license'    => $this->get_key(),
+			'license'    => $this->key,
 			'item_name'  => urlencode( self::EDD_ITEM_NAME ),
 			'url'        => home_url(),
 		);
@@ -172,18 +183,74 @@ class Licensing {
 	}
 
 	/**
-	 * Translate a request error code into an error message.
+	 * Extract license data from a request
 	 *
-	 * @param Object $license_data
+	 * @param array|WP_Error $response Retrieved response data.
+	 *
+	 * @return object|false Extracted data on success, false on failure.
+	 */
+	protected static function retrieve_request_data( $response ) {
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return false;
+		}
+
+		return json_decode( wp_remote_retrieve_body( $response ) );
+	}
+
+	/**
+	 * Attempt to activate the current license key.
+	 *
+	 * @return string Error message if failure, empty sting on success.
+	 */
+	public function activate_license() {
+		$response = $this->do_remote_request( 'activate_license' );
+		$data = self::retrieve_request_data( $response );
+
+		if ( ! $data || false === $data->success ) {
+			return $this->translate_activation_error();
+		} else if ( is_wp_error( $response ) ) {
+			return $response->get_error_message();
+		}
+		$this->set_data( $data );
+		if ( ! update_option( self::OPTION_NAME, $this->data ) ) {
+			return __( 'An error occurred, please try again.', 'code-snippets' );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Query the server for the current license status.
+	 */
+	public function update_status() {
+		$response = $this->do_remote_request( 'check_license' );
+		$data = self::retrieve_request_data( $response );
+
+		if ( $data ) {
+			$this->set_data( $data );
+			update_option( self::OPTION_NAME, $this->data );
+		}
+	}
+
+	public function remove_license() {
+		$response = $this->do_remote_request( 'deactivate_license' );
+		$data = self::retrieve_request_data( $response );
+		var_dump( $data, $response );
+		$this->set_data( $data );
+		update_option( self::OPTION_NAME, $this->data );
+	}
+
+	/**
+	 * Translate a request error code into an error message.
 	 *
 	 * @return string
 	 */
-	public function translate_license_error( $license_data ) {
-		switch ( $license_data->error ) {
+	public function translate_activation_error() {
+		switch ( $this->error ) {
 			case 'expired':
 				/* translators: %s: expiry date */
 				return sprintf( __( 'Your license key expired on %s.', 'code-snippets' ),
-					date_i18n( get_option( 'date_format' ), strtotime( $license_data->expires, current_time( 'timestamp' ) ) )
+					date_i18n( get_option( 'date_format' ), strtotime( $this->expires, current_time( 'timestamp' ) ) )
 				);
 
 			case 'disabled':
@@ -205,58 +272,5 @@ class Licensing {
 			default:
 				return __( 'An error occurred activating the license.', 'code-snippets' );
 		}
-	}
-
-	/**
-	 * Handle requests to activate or deactivate the license.
-	 */
-	public function handle_form_submit() {
-
-		// only continue if we are activating or deactivating the license
-		if ( ! isset( $_POST['code_snippets_pro_license_activate'] ) && ! isset( $_POST['code_snippets_pro_license_deactivate'] ) ) {
-			return;
-		}
-
-		if ( ! check_admin_referer( 'code_snippets_pro_license', 'code_snippets_pro_license_nonce' ) ) {
-			return;
-		}
-
-		// send the request to the license server
-		$activating = isset( $_POST['code_snippets_pro_license_activate'] );
-		$response = $this->do_remote_request( $activating ? 'activate_license' : 'deactivate_license' );
-
-		// check whether the request succeeded
-		if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
-
-			// fetch the license data from the request
-			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
-			$message = '';
-
-			if ( $license_data ) {
-
-				// clear the license status if it was deactivated
-				if ( $activating ) {
-					if ( false === $license_data->success ) {
-						$message = $this->translate_license_error( $license_data );
-					} else {
-						update_setting( 'license', 'status', $license_data->license );
-					}
-				} else if ( 'deactivated' === $license_data->license ) {
-					update_setting( 'license', 'status', false );
-				}
-			} else {
-				$message = __( 'An error occurred, please try again.', 'code-snippets' );
-			}
-
-		} else {
-			$message = is_wp_error( $response ) ? $response->get_error_message() :
-				__( 'An error occurred, please try again.', 'code-snippets' );
-		}
-
-		if ( ! empty( $message ) ) {
-			add_settings_error( 'code-snippets-settings-notices', 'activation_error', $message );
-		}
-
-		set_transient( 'settings_errors', get_settings_errors(), 30 );
 	}
 }

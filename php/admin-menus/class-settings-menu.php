@@ -91,7 +91,10 @@ class Settings_Menu extends Admin_Menu {
 			return array();
 		}
 
-		return (array) $wp_settings_sections[ self::SETTINGS_PAGE ];
+		$sections = (array) $wp_settings_sections[ self::SETTINGS_PAGE ];
+
+		$sections['license'] = [ 'id' => 'license', 'title' => __( 'License', 'code-snippets' ) ];
+		return $sections;
 	}
 
 	/**
@@ -156,6 +159,8 @@ class Settings_Menu extends Admin_Menu {
 					   href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>"><?php
 						esc_html_e( 'Reset to Default', 'code-snippets' ); ?></a>
 				</p>
+
+				<?php $this->render_view( 'partials/license-settings' ); ?>
 			</form>
 		</div>
 		<?php
@@ -181,6 +186,9 @@ class Settings_Menu extends Admin_Menu {
 		echo '</h2>';
 
 		foreach ( $sections as $section ) {
+			if ( 'license' === $section['id'] ) {
+				continue;
+			}
 
 			if ( $section['title'] ) {
 				printf( '<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n",
@@ -193,7 +201,6 @@ class Settings_Menu extends Admin_Menu {
 			}
 
 			printf( '<table class="form-table settings-section %s-settings">', esc_attr( $section['id'] ) );
-
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table>';
 		}
@@ -202,24 +209,42 @@ class Settings_Menu extends Admin_Menu {
 	/**
 	 * Fill in for the Settings API in the Network Admin
 	 */
-	public function update_network_options() {
+	public
+	function update_network_options() {
 
-		/* Ensure the settings have been saved */
-		if ( ! isset( $_GET['update_site_option'], $_POST['code_snippets_settings'] ) || ! $_GET['update_site_option'] ) {
+		// Ensure that the form was submitted.
+		if ( ! isset( $_GET['update_site_option'] ) || ! $_GET['update_site_option'] ) {
 			return;
 		}
 
 		check_admin_referer( 'code-snippets-options' );
 
-		/* Retrieve the saved options and save them to the database */
-		$value = wp_unslash( $_POST['code_snippets_settings'] );
-		update_site_option( 'code_snippets_settings', $value );
+		// If the 'Activate License' button was clicked, then handle it.
+		if ( isset( $_POST['code_snippets_activate_license'], $_POST['code_snippets_license_key'] ) ) {
+			$licensing = code_snippets()->licensing;
+			$licensing->key = $_POST['code_snippets_license_key'];
 
-		/* Add an updated notice */
-		if ( ! count( get_settings_errors() ) ) {
-			add_settings_error( 'general', 'settings_updated', __( 'Settings saved.', 'code-snippets' ), 'updated' );
+			$message = $licensing->activate_license();
+
+			if ( ! empty( $message ) ) {
+				add_settings_error( 'code-snippets-settings-notices', 'activation_error', $message );
+			}
 		}
-		set_transient( 'settings_errors', get_settings_errors(), 30 );
+
+		// Retrieve the submitted options and save them to the database.
+		if ( isset( $_POST['code_snippets_settings'] ) ) {
+			$value = wp_unslash( $_POST['code_snippets_settings'] );
+			update_site_option( 'code_snippets_settings', $value );
+
+			/* Add an updated notice */
+			if ( ! count( get_settings_errors() ) ) {
+				add_settings_error( 'general', 'settings_updated', __( 'Settings saved.', 'code-snippets' ), 'updated' );
+			}
+		}
+
+		if ( get_settings_errors() ) {
+			set_transient( 'settings_errors', get_settings_errors(), 30 );
+		}
 
 		/* Redirect back to the settings menu */
 		$redirect = add_query_arg( 'settings-updated', 'true', remove_query_arg( 'update_site_option', wp_get_referer() ) );

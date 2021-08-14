@@ -68,9 +68,25 @@ body.js {
 	}
 }
 
-.license-active-status {
-	color: #2ecc40;
+.license-status {
 	display: inline-block;
 	padding-right: 2em;
 	line-height: 2;
+}
+
+.license-status-valid {
+	color: #2ecc40;
+}
+
+.wrap[data-active-tab=license] .submit {
+	display: none;
+}
+
+#code_snippets_remove_license {
+	color: #b32d2e;
+	border-color: #b32d2e;
+}
+
+#code_snippets_license_key {
+	font-family: Consolas, Monaco, monospace;
 }

@@ -268,11 +268,6 @@ function sanitize_settings( array $input ) {
 		}
 	}
 
-	// if the license key was altered, reset the license status
-	if ( $input['license']['key'] !== $settings['license']['key'] ) {
-		unset( $settings['license']['status'] );
-	}
-
 	/* Add an updated message */
 	if ( $updated ) {
 		add_settings_error(

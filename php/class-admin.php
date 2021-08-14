@@ -189,7 +189,7 @@ class Admin {
 	 * Add a warning message to admin pages while there is not a valid license.
 	 */
 	public function license_warning_notice() {
-		$status = code_snippets()->licensing->get_status();
+		$status = code_snippets()->licensing->license;
 
 		// only display a message if the license is not valid
 		if ( 'valid' === $status ) {

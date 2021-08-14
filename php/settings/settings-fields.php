@@ -222,21 +222,6 @@ function get_settings_fields() {
 		],
 	];
 
-	$fields['license'] = [
-		'key' => [
-			'name'    => __( 'License Key', 'code-snippets' ),
-			'type'    => 'text',
-			'default' => '',
-		],
-
-		'status' => [
-			'name'     => __( 'License Status', 'code-snippets' ),
-			'type'     => 'callback',
-			'callback' => [ code_snippets()->licensing, 'render_license_status' ],
-			'default' => false,
-		],
-	];
-
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );
 
 	return $fields;
