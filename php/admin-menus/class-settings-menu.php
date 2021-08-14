@@ -209,8 +209,7 @@ class Settings_Menu extends Admin_Menu {
 	/**
 	 * Fill in for the Settings API in the Network Admin
 	 */
-	public
-	function update_network_options() {
+	public function update_network_options() {
 
 		// Ensure that the form was submitted.
 		if ( ! isset( $_GET['update_site_option'] ) || ! $_GET['update_site_option'] ) {
@@ -225,6 +224,16 @@ class Settings_Menu extends Admin_Menu {
 			$licensing->key = $_POST['code_snippets_license_key'];
 
 			$message = $licensing->activate_license();
+
+			if ( ! empty( $message ) ) {
+				add_settings_error( 'code-snippets-settings-notices', 'activation_error', $message );
+			}
+		}
+
+		// Also handle the 'Remove License' button.
+		if ( isset( $_POST['code_snippets_remove_license'] ) ) {
+			$licensing = code_snippets()->licensing;
+			$message = $licensing->remove_license();
 
 			if ( ! empty( $message ) ) {
 				add_settings_error( 'code-snippets-settings-notices', 'activation_error', $message );

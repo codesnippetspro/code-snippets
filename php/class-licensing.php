@@ -45,7 +45,15 @@ class Licensing {
 	 * Class constructor.
 	 */
 	public function __construct() {
+		$this->reset_data();
+		add_action( 'admin_init', [ $this, 'init' ], 1 );
+		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'update_status' ] );
+	}
 
+	/**
+	 * Re-initialise the data array, clearing all existing data.
+	 */
+	private function reset_data() {
 		$this->data = array_fill_keys( [
 			'key',
 			'license',
@@ -58,9 +66,6 @@ class Licensing {
 			'price_id',
 			'error',
 		], null );
-
-		add_action( 'admin_init', [ $this, 'init' ], 1 );
-		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'update_status' ] );
 	}
 
 	/**
@@ -121,6 +126,15 @@ class Licensing {
 	 */
 	public function get_data() {
 		return $this->data;
+	}
+
+	/**
+	 * Save the current license data to the database.
+	 *
+	 * @return bool True if the value was saved, false otherwise.
+	 */
+	public function save_data() {
+		return update_option( self::OPTION_NAME, $this->data );
 	}
 
 	/**
@@ -198,6 +212,19 @@ class Licensing {
 	}
 
 	/**
+	 * Query the server for the current license status.
+	 */
+	public function update_status() {
+		$response = $this->do_remote_request( 'check_license' );
+		$data = self::retrieve_request_data( $response );
+
+		if ( $data ) {
+			$this->set_data( $data );
+			update_option( self::OPTION_NAME, $this->data );
+		}
+	}
+
+	/**
 	 * Attempt to activate the current license key.
 	 *
 	 * @return string Error message if failure, empty sting on success.
@@ -211,33 +238,29 @@ class Licensing {
 		} else if ( is_wp_error( $response ) ) {
 			return $response->get_error_message();
 		}
-		$this->set_data( $data );
-		if ( ! update_option( self::OPTION_NAME, $this->data ) ) {
-			return __( 'An error occurred, please try again.', 'code-snippets' );
-		}
 
-		return '';
+		$this->set_data( $data );
+		return $this->save_data() ? '' : __( 'An error occurred, please try again.', 'code-snippets' );
 	}
 
 	/**
-	 * Query the server for the current license status.
+	 * Deactivate the current license and clear the stored data
+	 *
+	 * @return string Error message if failure, empty sting on success.
 	 */
-	public function update_status() {
-		$response = $this->do_remote_request( 'check_license' );
-		$data = self::retrieve_request_data( $response );
-
-		if ( $data ) {
-			$this->set_data( $data );
-			update_option( self::OPTION_NAME, $this->data );
-		}
-	}
-
 	public function remove_license() {
 		$response = $this->do_remote_request( 'deactivate_license' );
 		$data = self::retrieve_request_data( $response );
-		var_dump( $data, $response );
-		$this->set_data( $data );
-		update_option( self::OPTION_NAME, $this->data );
+
+		if ( $data && 'deactivated' === $data->license ) {
+			$this->reset_data();
+
+			if ( $this->save_data() ) {
+				return '';
+			}
+		}
+
+		return __( 'An error occurred, please try again.', 'code-snippets' );
 	}
 
 	/**
