@@ -32,6 +32,17 @@ class Settings_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
+		// Redirect the user if they are attempting to renew their license.
+		if ( isset( $_GET['code_snippets_renew_license'] ) && code_snippets()->licensing->key ) {
+			check_admin_referer( 'code_snippets_renew_license' );
+
+			wp_redirect( esc_url_raw( add_query_arg( [
+				'edd_license_key' => code_snippets()->licensing->key,
+				'download_id'     => Licensing::EDD_ITEM_ID,
+			], 'https://codesnippets.pro/checkout/' ) ) );
+			exit;
+		}
+
 		if ( isset( $_GET['reset_settings'] ) && $_GET['reset_settings'] ) {
 
 			if ( Settings\are_settings_unified() ) {

@@ -123,10 +123,8 @@ $tiers = [
 		<tr>
 			<td>
 				<a href="<?php
-				echo esc_url( add_query_arg( [
-					'edd_license_key' => $license->key,
-					'download_id'     => Licensing::EDD_ITEM_ID,
-				], 'https://codesnippets.pro/checkout/' ) );
+				$url = add_query_arg( 'code_snippets_renew_license', true );
+				echo esc_url( wp_nonce_url( $url, 'code_snippets_renew_license' ) );
 				?>" class="button button-secondary" target="_blank">
 					<?php esc_html_e( 'Renew Now', 'code-snippets' ); ?></a>
 			</td>
