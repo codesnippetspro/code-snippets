@@ -1,5 +1,7 @@
 @import 'editor';
 
+$sections: general, description_editor, editor, license;
+
 p.submit {
 	max-width: 1020px;
 
@@ -53,5 +55,15 @@ body.js {
 
 	.nav-tab:not(.nav-tab-active) {
 		cursor: pointer;
+	}
+
+	.settings-section {
+		display: none;
+	}
+
+	@each $section in $sections {
+		.wrap[data-active-tab=#{$section}] .#{$section}-settings {
+			display: block;
+		}
 	}
 }
