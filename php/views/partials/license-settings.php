@@ -3,6 +3,16 @@
 namespace Code_Snippets;
 
 $license = code_snippets()->licensing;
+$license->update_status();
+
+$tiers = [
+	__( 'Personal', 'code-snippets' ),
+	__( 'Freelancer', 'code-snippets' ),
+	__( 'Agency', 'code-snippets' ),
+	__( 'Founder', 'code-snippets' ),
+	__( 'Founder Personal Plus', 'code-snippets' ),
+	__( 'Pillar', 'code-snippets' ),
+];
 
 ?>
 <h2 id="license-settings" class="settings-section-title">
@@ -60,10 +70,25 @@ $license = code_snippets()->licensing;
 		</tr>
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Type', 'code-snippets' ); ?></th>
-			<td><?php echo esc_html( sprintf(
-					_n( '%d activation left', '%d activations left', $license->activations_left, 'code-snippets' ),
-					$license->activations_left
-				) ); ?></td>
+			<td><?php
+
+				if ( isset( $tiers[ $license->price_id - 1 ] ) ) {
+
+					/* translators: %s: tier name, %d: number of activations */
+					$text = sprintf( _n( '%s tier, %d activation left', '%s tier, %d activations left',
+						$license->activations_left ),
+						$tiers[ $license->price_id - 1 ], $license->activations_left
+					);
+
+				} else {
+					/* translators: %d: number of activations */
+					$text = sprintf( _n( '%d activation left', '%d activations left',
+						$license->activations_left, 'code-snippets' ),
+						$license->activations_left
+					);
+				}
+
+				echo esc_html( $text ); ?></td>
 		</tr>
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Status', 'code-snippets' ); ?></th>
@@ -85,12 +110,15 @@ $license = code_snippets()->licensing;
 		</tr>
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Expiration Date', 'code-snippets' ); ?></th>
-			<td>
-				<time datetime="<?php echo esc_attr( $license->expires ); ?>"><?php
+			<td><?php
+				if ( 'lifetime' === $license->expires ) {
+					esc_html_e( 'Lifetime', 'code-snippets' );
+				} else {
 					echo date_i18n(
 						get_option( 'date_format' ),
 						strtotime( $license->expires, current_time( 'timestamp' )
-						) ); ?></time>
+						) );
+				} ?>
 			</td>
 		</tr>
 		</tbody>
