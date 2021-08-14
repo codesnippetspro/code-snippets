@@ -72,10 +72,15 @@ body.js {
 	display: inline-block;
 	padding-right: 2em;
 	line-height: 2;
+	color: #aaa;
 }
 
 .license-status-valid {
 	color: #2ecc40;
+}
+
+.license-status-expired {
+	color: #dc3232;
 }
 
 .wrap[data-active-tab=license] .submit {

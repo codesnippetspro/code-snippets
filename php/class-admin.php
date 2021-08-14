@@ -190,21 +190,30 @@ class Admin {
 	 */
 	public function license_warning_notice() {
 		$status = code_snippets()->licensing->license;
+		$expiry = strtotime( code_snippets()->licensing->expires );
 
-		// only display a message if the license is not valid
-		if ( 'valid' === $status ) {
+		// only display a message if the license is not valid and not close to expiring.
+		if ( 'valid' === $status && ( ! $expiry || ! ( time() + DAY_IN_SECONDS * 14 > $expiry ) ) ) {
 			return;
 		}
 
 		echo '<div class="notice notice-warning is-dismissible code-snippets-license-warning"><p>';
+		$button = esc_html__( 'Update License', 'code-snippets' );
 
-		if ( 'expired' === $status ) {
-			esc_html_e( 'It looks like your Code Snippets Pro license has expired. ', 'code-snippets' );
+		if ( 'valid' === $status ) {
+			$days_left = round( ( $expiry - time() ) / DAY_IN_SECONDS );
+			/* translators: %d: number of days */
+			$text = _n( 'Your Code Snippets Pro license will expire in %d day. ', 'Your Code Snippets Pro license will expire in %d days. ', $days_left, 'code-snippets' );
+			echo esc_html( sprintf( $text, $days_left ) );
+
+		} else if ( 'expired' === $status ) {
+			esc_html_e( 'Your Code Snippets Pro license has expired. ', 'code-snippets' );
 		} else {
-			esc_html_e( 'It looks like this site is missing a valid Code Snippets Pro license. ', 'code-snippets' );
+			esc_html_e( 'This site is missing a valid Code Snippets Pro license. ', 'code-snippets' );
+			$button = esc_html__( 'Add License', 'code-snippets' );
 		}
 
-		esc_html_e( 'Pro features will not function until a valid license key is added. ', 'code-snippets' );
+		esc_html_e( 'Pro features will not function without an active license key. ', 'code-snippets' );
 
 		if ( current_user_can( code_snippets()->get_network_cap_name() ) ) {
 			$settings_url = code_snippets()->get_menu_url( 'settings', 'network' );
@@ -212,7 +221,7 @@ class Admin {
 			printf(
 				'<a href="%s" class="button button-secondary button-small">%s</a>',
 				esc_url( add_query_arg( 'section', 'license', $settings_url ) ),
-				esc_html__( 'Add License', 'code-snippets' )
+				$button
 			);
 		}
 
