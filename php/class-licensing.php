@@ -7,16 +7,16 @@ use WP_Error;
 /**
  * Handles license activation and automatic updates.
  * @package Code_Snippets
- * @property      string $key              License key
- * @property-read string $license          License status.
- * @property-read int    $license_limit    Number of times this license can be activated.
- * @property-read int    $site_count       Number of sites this license is active on.
- * @property-read int    $activations_left Number of times this license can again be activated.
- * @property-read string expires           License expiry date and time.
- * @property-read string $customer_name    Name of license holder.
- * @property-read string $customer_email   Email address of license holder.
- * @property-read int    $price_id         ID of pricing plan the license belongs to.
- * @property-read string $error            Error encountered when contacting the server, if applicable.
+ * @property      string     $key              License key
+ * @property-read string     $license          License status.
+ * @property-read int        $license_limit    Number of times this license can be activated.
+ * @property-read int        $site_count       Number of sites this license is active on.
+ * @property-read int|string $activations_left Number of times this license can again be activated.
+ * @property-read string     expires           License expiry date and time.
+ * @property-read string     $customer_name    Name of license holder.
+ * @property-read string     $customer_email   Email address of license holder.
+ * @property-read int        $price_id         ID of pricing plan the license belongs to.
+ * @property-read string     $error            Error encountered when contacting the server, if applicable.
  */
 class Licensing {
 

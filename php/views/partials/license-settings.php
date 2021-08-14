@@ -74,24 +74,18 @@ $tiers = [
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Type', 'code-snippets' ); ?></th>
 			<td><?php
+				$tier = $tiers[ isset( $tiers[ $license->price_id - 1 ] ) ? $license->price_id - 1 : 0 ];
 
-				if ( isset( $tiers[ $license->price_id - 1 ] ) ) {
-
-					/* translators: %s: tier name, %d: number of activations */
-					$text = sprintf( _n( '%s tier, %d activation left', '%s tier, %d activations left',
-						$license->activations_left ),
-						$tiers[ $license->price_id - 1 ], $license->activations_left
-					);
-
+				if ( ! is_numeric( $license->activations_left ) ) {
+					/* translators: 1: tier name, 2: remaining activations */
+					$text = __( '%1$s tier; %2$s activations left', 'code-snippets' );
 				} else {
-					/* translators: %d: number of activations */
-					$text = sprintf( _n( '%d activation left', '%d activations left',
-						$license->activations_left, 'code-snippets' ),
-						$license->activations_left
-					);
+					/* translators: 1: tier name, 2: remaining activations */
+					$text = _n( '%1$s tier; %2$s activation left', '%1$s tier, %2$s activations left',
+						$license->activations_left );
 				}
 
-				echo esc_html( $text ); ?></td>
+				echo esc_html( sprintf( $text, $tier, $license->activations_left ) ); ?></td>
 		</tr>
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Status', 'code-snippets' ); ?></th>
