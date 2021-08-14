@@ -189,6 +189,7 @@ class Admin {
 	 * Add a warning message to admin pages while there is not a valid license.
 	 */
 	public function license_warning_notice() {
+		$dismiss_key = 'dismiss_code_snippets_license_notice';
 		$status = code_snippets()->licensing->license;
 		$expiry = strtotime( code_snippets()->licensing->expires );
 
@@ -197,9 +198,24 @@ class Admin {
 			return;
 		}
 
+		// if the notice has been dismissed, then stop here.
+		$dismissed = get_transient( $dismiss_key );
+		if ( ! $dismissed || $dismissed === $status ) {
+			return;
+		}
+
+		// check if we have just dismissed a notice.
+		if ( isset( $_GET[ $dismiss_key ] ) ) {
+			check_admin_referer( $dismiss_key );
+			set_transient( $dismiss_key, $status, MONTH_IN_SECONDS );
+			return;
+		}
+
+		// output the notice.
 		echo '<div class="notice notice-warning is-dismissible code-snippets-license-warning"><p>';
 		$button = esc_html__( 'Update License', 'code-snippets' );
 
+		// if the license is valid, then show an 'expiring soon' warning.
 		if ( 'valid' === $status ) {
 			$days_left = round( ( $expiry - time() ) / DAY_IN_SECONDS );
 			/* translators: %d: number of days */
@@ -215,6 +231,7 @@ class Admin {
 
 		esc_html_e( 'Pro features will not function without an active license key. ', 'code-snippets' );
 
+		// show a button to go to license settings if the current user has access.
 		if ( current_user_can( code_snippets()->get_network_cap_name() ) ) {
 			$settings_url = code_snippets()->get_menu_url( 'settings', 'network' );
 
@@ -225,7 +242,12 @@ class Admin {
 			);
 		}
 
-		echo '</p></div>';
+		printf(
+			'<a class="notice-dismiss" href="%s" style="text-decoration: none;">' .
+			'<span class="screen-reader-text">%s</span></a></p></div>',
+			esc_url( wp_nonce_url( add_query_arg( $dismiss_key, true ), $dismiss_key ) ),
+			esc_html__( 'Dismiss', 'code-snippets' )
+		);
 	}
 
 	/**
