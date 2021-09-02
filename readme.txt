@@ -39,7 +39,7 @@ Code Snippets can be used in these different languages thanks to the following t
 * Dutch – [Sander Spies](https://github.com/sander1), [Peter Smits](https://psmits.com) and [mother.of.code.a11n](https://profiles.wordpress.org/imazed/)
 * English (New Zealand) and English (UK) – [webaware](https://profiles.wordpress.org/webaware/)
 * English (South Africa) – [webaware](https://profiles.wordpress.org/webaware/) and [Ian Barnes](https://profiles.wordpress.org/ianbarnes/)
-* French – [momo-fr](https://www.momofr.net/) and [Shea Bunge](https://sheabunge.com)
+* French – [momo-fr](https://www.momofr.net/), [Didier Demory](https://www.wptrads.com/), [Cyrille Sanson](https://100son.net/) and [Shea Bunge](https://sheabunge.com)
 * French (Canada) – [Dominic Desbiens](https://www.dominicdesbiens.com/)
 * German – [Mario Siegmann](https://web-alltag.de/), [Joerg Knoerchen](https://www.sensorgrafie.de/), [David Decker](https://deckerweb.de) and [Andreas](https://profiles.wordpress.org/perryzelda/)
 * Greek – [Konstantinos Megas](https://profiles.wordpress.org/nextdoorpanda/) and [Toni Bishop from Jrop](https://www.jrop.com/)
