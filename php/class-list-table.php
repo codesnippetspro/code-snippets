@@ -124,29 +124,32 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Define the output of all columns that have no callback function
 	 *
-	 * @param Snippet $snippet     The snippet used for the current row.
+	 * @param Snippet $item        The snippet used for the current row.
 	 * @param string  $column_name The name of the column being printed.
 	 *
 	 * @return string The content of the column to output.
 	 */
-	protected function column_default( $snippet, $column_name ) {
+	protected function column_default( $item, $column_name ) {
 
 		switch ( $column_name ) {
 			case 'id':
-				return $snippet->id;
+				return $item->id;
 
 			case 'description':
-				return apply_filters( 'code_snippets/list_table/column_description', $snippet->desc );
+				return apply_filters( 'code_snippets/list_table/column_description', $item->desc );
 
 			case 'type':
-				$type = $snippet->type;
+				$type = $item->type;
 				return sprintf(
 					'<a class="snippet-type-badge" href="%s" data-type="%s">%s</a>',
 					esc_url( add_query_arg( 'type', $type ) ), esc_attr( $type ), esc_html( $type )
 				);
 
+			case 'modified':
+				return $item->modified ? $item->format_modified( true ) : '&#8212;';
+
 			default:
-				return apply_filters( "code_snippets/list_table/column_{$column_name}", '&#8212;', $snippet );
+				return apply_filters( "code_snippets/list_table/column_{$column_name}", '&#8212;', $item );
 		}
 	}
 
@@ -357,38 +360,6 @@ class List_Table extends WP_List_Table {
 	 */
 	protected function column_priority( $snippet ) {
 		return sprintf( '<input type="number" class="snippet-priority" value="%d" step="1" disabled>', $snippet->priority );
-	}
-
-	/**
-	 * Handles the post date column output.
-	 *
-	 * @param Snippet $snippet The current code snippet object.
-	 *
-	 * @return string
-	 *
-	 * @since 2.14.0
-	 */
-	public function column_date( $snippet ) {
-
-		if ( ! $snippet->modified ) {
-			return '&#8212;';
-		}
-
-		$time_diff = time() - $snippet->modified_timestamp;
-		$local_time = $snippet->modified_local;
-
-		if ( $time_diff >= 0 && $time_diff < YEAR_IN_SECONDS ) {
-			/* translators: %s: Human-readable time difference. */
-			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $snippet->modified_timestamp ) );
-		} else {
-			$human_time = $local_time->format( __( 'Y/m/d', 'code-snippets' ) );
-		}
-
-		/* translators: 1: date format, 2: time format */
-		$date_format = _x( '%1$s \a\t %2$s', 'date and time format', 'code-snippets' );
-		$date_format = sprintf( $date_format, get_option( 'date_format' ), get_option( 'time_format' ) );
-
-		return sprintf( '<span title="%s">%s</span>', $local_time->format( $date_format ), $human_time );
 	}
 
 	/**
@@ -881,7 +852,7 @@ class List_Table extends WP_List_Table {
 			$limit = count( $snippets['all'] );
 
 			/** @var Snippet $snippet */
-			for ( $i = 0; $i < $limit; $i++ ) {
+			for ( $i = 0; $i < $limit; $i ++ ) {
 				$snippet = &$snippets['all'][ $i ];
 
 				if ( in_array( $snippet->id, $ids, true ) ) {

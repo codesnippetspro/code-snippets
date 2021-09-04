@@ -23,8 +23,9 @@ use DateTimeZone;
  * @property bool          $shared_network          Whether the snippet is a shared network snippet
  * @property string        $modified                The date and time when the snippet data was most recently saved to the database.
  *
- * @property-read array    $tags_list               The tags in string list format,
+ * @property-read array    $tags_list               The tags in string list format.
  * @property-read string   $scope_icon              The dashicon used to represent the current scope.
+ * @property-read string   $scope_name              Human-readable description of the snippet type.
  * @property-read string   $type                    The type of snippet.
  * @property-read string   $lang                    The language that the snippet code is written in.
  * @property-read int      $modified_timestamp      The last modification date in Unix timestamp format.
@@ -292,7 +293,7 @@ class Snippet {
 			return $active;
 		}
 
-		return $active ? true : false;
+		return (bool) $active;
 	}
 
 	/**
@@ -414,7 +415,7 @@ class Snippet {
 	 * @return string The tags separated by a comma and a space.
 	 */
 	private function get_tags_list() {
-		return implode( ', ', $this->fields['tags'] );
+		return implode( ', ', $this->tags );
 	}
 
 	/**
@@ -458,7 +459,32 @@ class Snippet {
 	 * @return string The name of the scope.
 	 */
 	private function get_scope_name() {
-		return $this->scope;
+		switch ( $this->scope ) {
+			case 'global':
+				return __( 'Global function', 'code-snippets' );
+			case 'admin':
+				return __( 'Admin function', 'code-snippets' );
+			case 'front-end':
+				return __( 'Front-end function', 'code-snippets' );
+			case 'single-use':
+				return __( 'Single-use function', 'code-snippets' );
+			case 'content':
+				return __( 'Content', 'code-snippets' );
+			case 'head-content':
+				return __( 'Head content', 'code-snippets' );
+			case 'footer-content':
+				return __( 'Footer content', 'code-snippets' );
+			case 'admin-css':
+				return __( 'Admin styles', 'code-snippets' );
+			case 'site-css':
+				return __( 'Front-end styles', 'code-snippets' );
+			case 'site-head-js':
+				return __( 'Head styles', 'code-snippets' );
+			case 'site-footer-js':
+				return __( 'Footer styles', 'code-snippets' );
+		}
+
+		return '';
 	}
 
 	/**
@@ -533,5 +559,39 @@ class Snippet {
 		$datetime->setTimezone( $timezone );
 
 		return $datetime;
+	}
+
+	/**
+	 * Retrieve the last modified time, nicely formatted for readability.
+	 *
+	 * @param boolean $include_html Whether to include HTML in the output.
+	 *
+	 * @return string
+	 */
+	public function format_modified( $include_html = true ) {
+		if ( ! $this->modified ) {
+			return '';
+		}
+
+		$timestamp = $this->modified_timestamp;
+		$time_diff = time() - $timestamp;
+		$local_time = $this->modified_local;
+
+		if ( $time_diff >= 0 && $time_diff < YEAR_IN_SECONDS ) {
+			/* translators: %s: Human-readable time difference. */
+			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $timestamp ) );
+		} else {
+			$human_time = $local_time->format( __( 'Y/m/d', 'code-snippets' ) );
+		}
+
+		if ( ! $include_html ) {
+			return $human_time;
+		}
+
+		/* translators: 1: date format, 2: time format */
+		$date_format = _x( '%1$s \a\t %2$s', 'date and time format', 'code-snippets' );
+		$date_format = sprintf( $date_format, get_option( 'date_format' ), get_option( 'time_format' ) );
+
+		return sprintf( '<span title="%s">%s</span>', $local_time->format( $date_format ), $human_time );
 	}
 }

@@ -51,6 +51,7 @@ class Admin {
 		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( $this, 'plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
+		add_filter( 'debug_information', array( $this, 'debug_information' ) );
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ) );
 
@@ -186,6 +187,74 @@ class Admin {
 				__( 'Upgrade to Pro', 'code-snippets' )
 			),
 		) );
+	}
+
+	/**
+	 * Add Code Snippets information to Site Health information.
+	 *
+	 * @param array $info The Site Health information.
+	 *
+	 * @return array The updated Site Health information.
+	 * @author sc0ttkclark
+	 *
+	 */
+	public function debug_information( $info ) {
+		$fields = array();
+		$list_table = new List_Table();
+
+		// fetch all active snippets.
+		$args = array( 'active_only' => true, 'limit' => 100 );
+		$snippet_objects = get_snippets( array(), null, $args );
+
+		// build the debug information from snippet data.
+		foreach ( $snippet_objects as $snippet ) {
+			$values = [ $snippet->scope_name ];
+			$debug = [];
+
+			if ( $snippet->name ) {
+				$debug[] = 'name: ' . $snippet->name;
+			}
+
+			$debug[] = 'scope: ' . $snippet->scope;
+
+			if ( $snippet->modified ) {
+				/* translators: %s: formatted last modified date */
+				$values[] = sprintf( __( 'Last modified %s', 'code-snippets' ), $snippet->format_modified( false ) );
+				$debug[] = 'modified: ' . $snippet->modified;
+			}
+
+			if ( $snippet->tags ) {
+				$values[] = $snippet->tags_list;
+				$debug[] = 'tags: [' . $snippet->tags_list . ']';
+			}
+
+			$fields[ 'snippet-' . $snippet->id ] = [
+				'label' => empty( $snippet->name ) ? sprintf( __( 'Untitled #%d', 'code-snippets' ), $snippet->id ) : $snippet->name,
+				'value' => implode( "\n | ", $values ),
+				'debug' => implode( ', ', $debug ),
+			];
+		}
+
+		$snippets_info = array(
+			'label'      => __( 'Active Snippets', 'code-snippets' ),
+			'show_count' => true,
+			'fields'     => $fields,
+		);
+
+		// attempt to insert the new section right after the Inactive Plugins section.
+		$index = array_search( 'wp-plugins-inactive', array_keys( $info ), true );
+
+		if ( false === $index ) {
+			$info['code-snippets'] = $snippets_info;
+		} else {
+			$info = array_merge(
+				array_slice( $info, 0, $index + 1 ),
+				[ 'code-snippets' => $snippets_info ],
+				array_slice( $info, $index + 1 )
+			);
+		}
+
+		return $info;
 	}
 
 	/**
