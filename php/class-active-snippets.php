@@ -153,7 +153,7 @@ class Active_Snippets {
 
 		if ( $head_rev = $this->get_rev( 'site-head-js' ) ) {
 			wp_enqueue_script(
-				'code-snippets-site-head-js',
+				'code-snippets-site-head',
 				$this->get_asset_url( 'site-head-js' ),
 				array(), $head_rev, false
 			);
@@ -162,7 +162,7 @@ class Active_Snippets {
 
 		if ( $footer_rev = $this->get_rev( 'site-footer-js' ) ) {
 			wp_enqueue_script(
-				'code-snippets-site-footer-js',
+				'code-snippets-site-footer',
 				$this->get_asset_url( 'site-footer-js' ),
 				array(), $footer_rev, true
 			);
