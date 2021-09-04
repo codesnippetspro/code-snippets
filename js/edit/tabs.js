@@ -37,7 +37,6 @@
 			if (scope) scope.checked = true;
 
 			// clear the editor contents
-			editor.setValue('');
 			editor.setOption('lint', 'php' === type || 'css' === type);
 			if (modes[type]) editor.setOption('mode', modes[type]);
 		})
