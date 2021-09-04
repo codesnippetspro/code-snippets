@@ -66,7 +66,7 @@ class Export {
 	 * @param string $format    File format. Used for file extension.
 	 * @param string $mime_type File MIME type. Used for Content-Type header.
 	 */
-	private function do_headers( $format, $mime_type = '' ) {
+	private function do_headers( $format, $mime_type = 'text/plain' ) {
 
 		/* Build the export filename */
 		if ( 1 === count( $this->snippets_list ) ) {
@@ -83,10 +83,7 @@ class Export {
 
 		/* Set HTTP headers */
 		header( 'Content-Disposition: attachment; filename=' . sanitize_file_name( $filename ) );
-
-		if ( '' !== $mime_type ) {
-			header( "Content-Type: $mime_type; charset=" . get_bloginfo( 'charset' ) );
-		}
+		header( "Content-Type: $mime_type; charset=" . get_bloginfo( 'charset' ) );
 	}
 
 	/**
@@ -163,7 +160,7 @@ class Export {
 				echo " *\n * ", wp_strip_all_tags( $desc ), "\n";
 			}
 
-			echo " */\n{$snippet->code}\n";
+			echo " */\n\n{$snippet->code}\n";
 		}
 
 		exit;
