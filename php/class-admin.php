@@ -209,15 +209,29 @@ class Admin {
 		// build the debug information from snippet data.
 		foreach ( $snippet_objects as $snippet ) {
 			$values = [ $snippet->scope_name ];
+			$debug = [];
+
+			if ( $snippet->name ) {
+				$debug[] = 'name: ' . $snippet->name;
+			}
+
+			$debug[] = 'scope: ' . $snippet->scope;
 
 			if ( $snippet->modified ) {
 				/* translators: %s: formatted last modified date */
 				$values[] = sprintf( __( 'Last modified %s', 'code-snippets' ), $snippet->format_modified( false ) );
+				$debug[] = 'modified: ' . $snippet->modified;
+			}
+
+			if ( $snippet->tags ) {
+				$values[] = $snippet->tags_list;
+				$debug[] = 'tags: [' . $snippet->tags_list . ']';
 			}
 
 			$fields[ 'snippet-' . $snippet->id ] = [
 				'label' => empty( $snippet->name ) ? sprintf( __( 'Untitled #%d', 'code-snippets' ), $snippet->id ) : $snippet->name,
 				'value' => implode( "\n | ", $values ),
+				'debug' => implode( ', ', $debug ),
 			];
 		}
 

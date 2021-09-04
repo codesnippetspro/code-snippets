@@ -293,7 +293,7 @@ class Snippet {
 			return $active;
 		}
 
-		return $active ? true : false;
+		return (bool) $active;
 	}
 
 	/**
@@ -405,7 +405,7 @@ class Snippet {
 	 * @return string The tags separated by a comma and a space.
 	 */
 	private function get_tags_list() {
-		return implode( ', ', $this->fields['tags'] );
+		return implode( ', ', $this->tags );
 	}
 
 	/**
