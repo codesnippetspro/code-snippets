@@ -17,13 +17,6 @@ class Admin {
 	public $menus = array();
 
 	/**
-	 * The Site Health class instance.
-	 * 
-	 * @var Site_Health
-	 */
-	public $site_health;
-
-	/**
 	 * Class constructor
 	 */
 	public function __construct() {
@@ -58,16 +51,13 @@ class Admin {
 		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( $this, 'plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
+		add_filter( 'debug_information', array( $this, 'debug_information' ) );
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ) );
 
 		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
 		}
-
-		// Add Site Health integration.
-		$this->site_health = new Site_Health();
-		$this->site_health->hook();
 	}
 
 	/**
@@ -197,6 +187,54 @@ class Admin {
 				__( 'Upgrade to Pro', 'code-snippets' )
 			),
 		) );
+	}
+
+	/**
+	 * Get the list of active code snippets.
+	 *
+	 * @return array List of active code snippets.
+	 */
+	private function get_active_code_snippets() {
+		$active_code_snippets = array();
+
+		$args = array(
+			'active_only' => true,
+			'limit'       => 100,
+		);
+
+		$snippets = get_snippets( array(), null, $args );
+
+		foreach ( $snippets as $snippet ) {
+			$active_code_snippets[] = $snippet->name . ' (' . trim( $snippet->scope . ': ' . $snippet->tags_list, ': ' ) . ')';
+		}
+
+		return $active_code_snippets;
+	}
+
+	/**
+	 * Add Code Snippets information to Site Health information.
+	 *
+	 * @author sc0ttkclark
+	 *
+	 * @param array $info The Site Health information.
+	 *
+	 * @return array The updated Site Health information.
+	 */
+	public function debug_information( $info ) {
+		$info['code-snippets'] = array(
+			'label'       => 'Code Snippets',
+			// @todo Plugin Author to replace this description.
+			'description' => 'You can put your description here',
+			'fields'      => array(
+				'code-snippets-active' => array(
+					'label' => 'Active Code Snippets',
+					// Split by | because line breaks don't get shown in the Dashboard UI (but they show on debug copy).
+					'value' => implode( " | \n", $this->get_active_code_snippets() ),
+				),
+			),
+		);
+
+		return $info;
 	}
 
 	/**
