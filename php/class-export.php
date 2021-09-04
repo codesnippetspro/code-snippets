@@ -130,8 +130,8 @@ class Export {
 	public function download_snippets() {
 		$first_snippet = new Snippet( $this->snippets_list[0] );
 
-		if ( 'css' === $first_snippet->type ) {
-			$this->download_css_snippets();
+		if ( 'css' === $first_snippet->type || 'js' === $first_snippet->type ) {
+			$this->download_css_js_snippets( $first_snippet->type );
 		} else {
 			$this->download_php_snippets();
 		}
@@ -142,7 +142,7 @@ class Export {
 	 * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	 */
 	public function download_php_snippets() {
-		$this->do_headers( 'php' );
+		$this->do_headers( 'php', 'text/php' );
 
 		echo "<?php\n";
 
@@ -170,17 +170,21 @@ class Export {
 	}
 
 	/**
-	 * Generate a downloadable CSS file from a list of snippets
+	 * Generate a downloadable CSS or JavaScript file from a list of snippets
 	 * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	 */
-	public function download_css_snippets() {
-		$this->do_headers( 'css', 'text/css' );
+	public function download_css_js_snippets() {
+		$first_snippet = new Snippet( $this->snippets_list[0] );
+		$type = $first_snippet->type;
+		$mime_type = 'css' === $type ? 'text/css' : 'text/javascript';
+
+		$this->do_headers( $type, $mime_type );
 
 		/* Loop through the snippets */
 		foreach ( $this->snippets_list as $snippet ) {
 			$snippet = new Snippet( $snippet );
 
-			if ( 'css' !== $snippet->type ) {
+			if ( $snippet->type !== $type ) {
 				continue;
 			}
 
