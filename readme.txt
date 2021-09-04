@@ -1,7 +1,7 @@
 === Code Snippets ===
 Contributors: bungeshea, ver3
 Donate link: https://sheabunge.com/donate
-Tags: code-snippets, snippets, code, php, network, multisite
+Tags: snippets, functions, code, php, multisite
 License: MIT
 License URI: license.txt
 Stable tag: 2.14.1
@@ -11,13 +11,13 @@ An easy, clean and simple way to run code snippets on your site.
 
 == Description ==
 
-Code Snippets is an easy, clean and simple way to run PHP code snippets on your site. It removes the need to add custom snippets to your theme's `functions.php` file.
+Code Snippets is an easy, clean and simple way to run code snippets on your site. It removes the need to add custom snippets to your theme's `functions.php` file.
 
 A snippet is a small chunk of PHP code that you can use to extend the functionality of a WordPress-powered website; essentially a mini-plugin with less load on your site.
 Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while.
 Code Snippets changes that by providing a GUI interface for adding snippets and **actually running them on your site** just as if they were in your theme's `functions.php` file.
 
-Code Snippets provides graphical interface, similar to the Plugins menu, for managing snippets. Snippets can can be activated and deactivated, just like plugins. The snippet editor includes fields for a name, a visual editor-enabled description, tags to allow you to categorize snippets, and a full-featured code editor. Snippets can be exported for transfer to another side, either in JSON for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
+Code Snippets provides graphical interface, similar to the Plugins menu, for managing snippets. Snippets can be activated and deactivated, just like plugins. The snippet editor includes fields for a name, a visual editor-enabled description, tags to allow you to categorize snippets, and a full-featured code editor. Snippets can be exported for transfer to another site, either in JSON for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
 
 If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](https://wordpress.org/support/plugin/code-snippets), or [join the community on Facebook](https://facebook.com/groups/codesnippetsplugin).
 
