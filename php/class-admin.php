@@ -199,27 +199,46 @@ class Admin {
 	 *
 	 */
 	public function debug_information( $info ) {
-		$snippets = array();
+		$fields = array();
+		$list_table = new List_Table();
 
+		// fetch all active snippets.
 		$args = array( 'active_only' => true, 'limit' => 100 );
 		$snippet_objects = get_snippets( array(), null, $args );
 
+		// build the debug information from snippet data.
 		foreach ( $snippet_objects as $snippet ) {
-			$snippets[] = $snippet->name . ' (' . trim( $snippet->scope . ': ' . $snippet->tags_list, ': ' ) . ')';
+			$values = [ $snippet->scope_name ];
+
+			if ( $snippet->modified ) {
+				/* translators: %s: formatted last modified date */
+				$values[] = sprintf( __( 'Last modified %s', 'code-snippets' ), $snippet->format_modified( false ) );
+			}
+
+			$fields[ 'snippet-' . $snippet->id ] = [
+				'label' => empty( $snippet->name ) ? sprintf( __( 'Untitled #%d', 'code-snippets' ), $snippet->id ) : $snippet->name,
+				'value' => implode( "\n | ", $values ),
+			];
 		}
 
-		$info['code-snippets'] = array(
-			'label'       => 'Code Snippets',
-			// @todo Plugin Author to replace this description.
-			'description' => 'You can put your description here',
-			'fields'      => array(
-				'code-snippets-active' => array(
-					'label' => 'Active Code Snippets',
-					// Split by | because line breaks don't get shown in the Dashboard UI (but they show on debug copy).
-					'value' => implode( " | \n", $snippets ),
-				),
-			),
+		$snippets_info = array(
+			'label'      => __( 'Active Snippets', 'code-snippets' ),
+			'show_count' => true,
+			'fields'     => $fields,
 		);
+
+		// attempt to insert the new section right after the Inactive Plugins section.
+		$index = array_search( 'wp-plugins-inactive', array_keys( $info ), true );
+
+		if ( false === $index ) {
+			$info['code-snippets'] = $snippets_info;
+		} else {
+			$info = array_merge(
+				array_slice( $info, 0, $index + 1 ),
+				[ 'code-snippets' => $snippets_info ],
+				array_slice( $info, $index + 1 )
+			);
+		}
 
 		return $info;
 	}
