@@ -76,7 +76,7 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		$learn_more_text = sprintf( __( 'Learn more about %s &rarr;', 'code-snippets' ), $type_names[ $current_type ] );
 
 		printf( ' <a href="%s" target="_blank">%s</a></p>',
-			esc_url( 'https://code-snippets.pro/' ), esc_html( $learn_more_text ) );
+			esc_url( "https://codesnippets.pro/learn-$current_type/" ), esc_html( $learn_more_text ) );
 	}
 	?>
 

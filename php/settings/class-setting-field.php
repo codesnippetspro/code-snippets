@@ -134,8 +134,7 @@ class Setting_Field {
 		$kses = [ 'input' => [ 'type' => [], 'name' => [], 'checked' => [] ] ];
 		if ( $label ) {
 			printf(
-				'<label for="%s">%s %s</label>',
-				esc_attr( $input_name ),
+				'<label>%s %s</label>',
 				wp_kses( $checkbox, $kses ),
 				wp_kses_post( $label )
 			);
