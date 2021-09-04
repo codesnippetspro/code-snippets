@@ -17,6 +17,13 @@ class Admin {
 	public $menus = array();
 
 	/**
+	 * The Site Health class instance.
+	 * 
+	 * @var Site_Health
+	 */
+	public $site_health;
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
@@ -57,6 +64,10 @@ class Admin {
 		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
 		}
+
+		// Add Site Health integration.
+		$this->site_health = new Site_Health();
+		$this->site_health->hook();
 	}
 
 	/**
