@@ -190,37 +190,24 @@ class Admin {
 	}
 
 	/**
-	 * Get the list of active code snippets.
-	 *
-	 * @return array List of active code snippets.
-	 */
-	private function get_active_code_snippets() {
-		$active_code_snippets = array();
-
-		$args = array(
-			'active_only' => true,
-			'limit'       => 100,
-		);
-
-		$snippets = get_snippets( array(), null, $args );
-
-		foreach ( $snippets as $snippet ) {
-			$active_code_snippets[] = $snippet->name . ' (' . trim( $snippet->scope . ': ' . $snippet->tags_list, ': ' ) . ')';
-		}
-
-		return $active_code_snippets;
-	}
-
-	/**
 	 * Add Code Snippets information to Site Health information.
-	 *
-	 * @author sc0ttkclark
 	 *
 	 * @param array $info The Site Health information.
 	 *
 	 * @return array The updated Site Health information.
+	 * @author sc0ttkclark
+	 *
 	 */
 	public function debug_information( $info ) {
+		$snippets = array();
+
+		$args = array( 'active_only' => true, 'limit' => 100 );
+		$snippet_objects = get_snippets( array(), null, $args );
+
+		foreach ( $snippet_objects as $snippet ) {
+			$snippets[] = $snippet->name . ' (' . trim( $snippet->scope . ': ' . $snippet->tags_list, ': ' ) . ')';
+		}
+
 		$info['code-snippets'] = array(
 			'label'       => 'Code Snippets',
 			// @todo Plugin Author to replace this description.
@@ -229,7 +216,7 @@ class Admin {
 				'code-snippets-active' => array(
 					'label' => 'Active Code Snippets',
 					// Split by | because line breaks don't get shown in the Dashboard UI (but they show on debug copy).
-					'value' => implode( " | \n", $this->get_active_code_snippets() ),
+					'value' => implode( " | \n", $snippets ),
 				),
 			),
 		);
