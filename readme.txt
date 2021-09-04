@@ -1,8 +1,7 @@
 === Code Snippets ===
 Contributors: bungeshea, ver3
 Donate link: https://sheabunge.com/donate
-Tags: code-snippets, snippets, functions, code, php, html, network, multisite
->>>>>>> master
+Tags: snippets, functions, code, php, multisite
 License: MIT
 License URI: license.txt
 Stable tag: 2.14.1
