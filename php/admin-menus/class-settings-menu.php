@@ -27,6 +27,15 @@ class Settings_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Register action and filter hooks
+	 */
+	public function run() {
+		parent::run();
+
+		add_action( 'admin_init', array( $this, 'handle_license_changes' ) );
+	}
+
+	/**
 	 * Executed when the admin page is loaded
 	 */
 	public function load() {
@@ -72,6 +81,49 @@ class Settings_Menu extends Admin_Menu {
 				wp_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );
 				exit;
 			}
+		}
+	}
+
+	/**
+	 * Handle requests to activate or remove the current license.
+	 */
+	public function handle_license_changes() {
+
+		// if the relevant fields are not set, then bail now.
+		if ( ! isset( $_POST['code_snippets_activate_license'] ) && ! isset( $_POST['code_snippets_remove_license'] ) ) {
+			return;
+		}
+
+		// ensure that the previous page was submitted correctly.
+		check_admin_referer( 'code-snippets-options' );
+
+		$action = $message = '';
+
+		// if the remove license button was clicked, then handle it.
+		if ( isset( $_POST['code_snippets_remove_license'] ) ) {
+			$licensing = code_snippets()->licensing;
+			$message = $licensing->remove_license();
+			$action = 'removed';
+
+		} else if ( isset( $_POST['code_snippets_activate_license'], $_POST['code_snippets_license_key'] ) ) {
+			$licensing = code_snippets()->licensing;
+			$licensing->key = $_POST['code_snippets_license_key'];
+
+			$message = $licensing->activate_license();
+			$action = 'activated';
+		}
+
+		if ( $action ) {
+			$type = empty( $message ) ? 'success' : 'error';
+
+			add_settings_error(
+				'code-snippets-settings-notices',
+				'license_' . $type,
+				empty( $message ) ? __( 'License updated successfully', 'code-snippets' ) : $message,
+				$type
+			);
+
+			set_transient( 'settings_errors', get_settings_errors(), 30 );
 		}
 	}
 
@@ -223,33 +275,14 @@ class Settings_Menu extends Admin_Menu {
 	public function update_network_options() {
 
 		// Ensure that the form was submitted.
-		if ( ! isset( $_GET['update_site_option'] ) || ! $_GET['update_site_option'] ) {
+		if ( ( ! isset( $_GET['update_site_option'] ) || ! $_GET['update_site_option'] ) ) {
 			return;
 		}
 
 		check_admin_referer( 'code-snippets-options' );
 
-		// If the 'Activate License' button was clicked, then handle it.
-		if ( isset( $_POST['code_snippets_activate_license'], $_POST['code_snippets_license_key'] ) ) {
-			$licensing = code_snippets()->licensing;
-			$licensing->key = $_POST['code_snippets_license_key'];
-
-			$message = $licensing->activate_license();
-
-			if ( ! empty( $message ) ) {
-				add_settings_error( 'code-snippets-settings-notices', 'activation_error', $message );
-			}
-		}
-
-		// Also handle the 'Remove License' button.
-		if ( isset( $_POST['code_snippets_remove_license'] ) ) {
-			$licensing = code_snippets()->licensing;
-			$message = $licensing->remove_license();
-
-			if ( ! empty( $message ) ) {
-				add_settings_error( 'code-snippets-settings-notices', 'activation_error', $message );
-			}
-		}
+		// Handle any license changes first.
+		$this->handle_license_changes();
 
 		// Retrieve the submitted options and save them to the database.
 		if ( isset( $_POST['code_snippets_settings'] ) ) {
