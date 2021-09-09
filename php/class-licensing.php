@@ -46,7 +46,8 @@ class Licensing {
 	 */
 	public function __construct() {
 		$this->reset_data();
-		add_action( 'admin_init', [ $this, 'init' ], 1 );
+		add_action( 'init', [ $this, 'load_data' ], 1 );
+		add_action( 'admin_init', [ $this, 'init_updater' ], 1 );
 		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'update_status' ] );
 	}
 
@@ -66,6 +67,14 @@ class Licensing {
 			'price_id',
 			'error',
 		], null );
+	}
+
+	/**
+	 * Fetch the license information from the database.
+	 */
+	public function load_data() {
+		$stored_data = get_site_option( self::OPTION_NAME );
+		$this->set_data( $stored_data );
 	}
 
 	/**
@@ -140,12 +149,8 @@ class Licensing {
 	/**
 	 * Initialise the plugin updater.
 	 */
-	public function init() {
+	public function init_updater() {
 		$plugin = code_snippets();
-
-		// fetch the license information from the database
-		$stored_data = get_site_option( self::OPTION_NAME );
-		$this->set_data( $stored_data );
 
 		// set up the updater
 		if ( $this->key ) {
