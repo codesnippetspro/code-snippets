@@ -24,7 +24,7 @@ $tiers = [
 
 		$text = __( 'In order to use all of the features of Code Snippets Pro, you need a valid license key. If you do not have one, you can purchase a subscription at <a href="https://codesnippets.pro/buy-pro/" target="_blank">codesnippets.pro/buy-pro</a>.', 'code-snippets' );
 
-		echo '<p>', wp_kses( $text, [ 'a' => [ 'href' => true, 'target' => true ] ] ), '</p>';
+		echo '<tr><td colspan="2">', wp_kses( $text, [ 'a' => [ 'href' => true, 'target' => true ] ] ), '</td></tr>';
 
 		?>
 		<tbody>
