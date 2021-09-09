@@ -4,7 +4,7 @@ Donate link: https://sheabunge.com/donate
 Tags: snippets, functions, code, php, multisite
 License: MIT
 License URI: license.txt
-Stable tag: 2.14.1
+Stable tag: 2.14.2
 Tested up to: 5.8
 
 An easy, clean and simple way to run code snippets on your site.
@@ -121,6 +121,17 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 2.14.2 (9 Sep 2021) =
+* Fixed: Prevent network snippets table from being created on single-site installs.
+* Added translations:
+    - Spanish by [Ibidem Group](https://www.ibidemgroup.com)
+    - Urdu by [Samuel Badree](https://mobilemall.pk/)
+    - Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
+* Added: Support for `:class` syntax to the code validator.
+* Added: PHP8 support to the code linter.
+* Added: Color picker feature to the code editor.
+* Added: Failsafe to prevent multiple versions of Code Snippets from running simultaneously.
 
 = 2.14.1 (10 Mar 2021) =
 * Added: Czech translation by [Lukáš Tesař](https://github.com/atomicf4ll).
@@ -240,6 +251,9 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 **[The full changelog is available on GitHub](https://github.com/sheabunge/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
+
+= 2.14.2 =
+New color picker and code validator improvements.
 
 = 2.14.0 =
 Security update, last modified dates, and other improvements
