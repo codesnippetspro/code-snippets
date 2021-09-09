@@ -49,6 +49,7 @@ if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
 	}
 
 	add_action( 'admin_notices', 'code_snippets_deactivated_old_version_notice', 11 );
+	return;
 }
 
 /**
