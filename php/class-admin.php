@@ -200,8 +200,7 @@ class Admin {
 		}
 
 		// if the notice has been dismissed, then stop here.
-		$dismissed = get_transient( $dismiss_key );
-		if ( ! $dismissed || $dismissed === $status ) {
+		if ( get_transient( $dismiss_key ) === $status ) {
 			return;
 		}
 
@@ -233,7 +232,7 @@ class Admin {
 		esc_html_e( 'Pro features will not function without an active license key. ', 'code-snippets' );
 
 		// show a button to go to license settings if the current user has access.
-		if ( current_user_can( code_snippets()->get_network_cap_name() ) ) {
+		if ( current_user_can( is_multisite() ? code_snippets()->get_network_cap_name() : code_snippets()->get_cap_name() ) ) {
 			$settings_url = code_snippets()->get_menu_url( 'settings', 'network' );
 
 			printf(
