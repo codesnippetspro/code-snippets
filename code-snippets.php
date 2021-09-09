@@ -35,6 +35,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
+/* If a version of code snippets has already been loaded, then deactivate this plugin. */
+if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	deactivate_plugins( array( 'code-snippets/code-snippets.php' ), true );
+	return;
+}
+
 /**
  * The full path to the main file of this plugin
  *
