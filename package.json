@@ -79,6 +79,7 @@
         "sass": "^1.39.0",
         "vinyl-buffer": "^1.0.1",
         "vinyl-source-stream": "^2.0.0",
+        "webpack": "^5.52.0",
         "webpack-stream": "^7.0.0"
     },
     "babel": {

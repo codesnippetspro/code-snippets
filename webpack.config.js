@@ -1,7 +1,8 @@
 import path from 'path';
+import webpack from 'webpack';
 
 module.exports = {
-	mode: 'development',
+	mode: 'production',
 	entry: {
 		'manage': './js/manage.js',
 		'edit': './js/edit/edit.js',
@@ -19,7 +20,7 @@ module.exports = {
 	externals: {
 		'react': 'React',
 		'react-dom': 'ReactDOM',
-		'codemirror': 'wp.CodeMirror'
+		'codemirror': 'wp.CodeMirror',
 	},
 	module: {
 		rules: [{
@@ -38,5 +39,10 @@ module.exports = {
 				},
 			}
 		}]
-	}
+	},
+	plugins: [
+		new webpack.DefinePlugin({
+			'process.arch': JSON.stringify('x64'),
+		})
+	]
 };
