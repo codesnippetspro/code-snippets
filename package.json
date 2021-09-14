@@ -39,7 +39,7 @@
     },
     "devDependencies": {
         "@babel/core": "^7.15.5",
-        "@babel/preset-env": "^7.15.4",
+        "@babel/preset-env": "^7.15.6",
         "@babel/register": "^7.15.3",
         "autoprefixer": "^10.3.4",
         "babel-plugin-prismjs": "^2.1.0",
