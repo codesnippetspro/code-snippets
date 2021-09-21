@@ -49,9 +49,7 @@ if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
 	<div class="snippet-scope html-scopes-list">
 		<p><?php
 			$this->print_scopes_list( array(
-				'content'        => __( 'Only display when inserted into a post or page.', 'code-snippets' ),
-				'head-content'   => __( 'Display in site &lt;head&gt; section.', 'code-snippets' ),
-				'footer-content' => __( 'Display at the end of the &lt;body&gt; section, in the footer.', 'code-snippets' ),
+				'content' => __( 'Only display when inserted into a post or page.', 'code-snippets' ),
 			) );
 			?></p>
 
