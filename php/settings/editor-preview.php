@@ -8,6 +8,7 @@
 
 namespace Code_Snippets\Settings;
 
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\enqueue_code_editor;
 use function Code_Snippets\get_editor_themes;
 
@@ -15,7 +16,7 @@ use function Code_Snippets\get_editor_themes;
  * Load the CSS and JavaScript for the editor preview field
  */
 function enqueue_editor_preview_assets() {
-	$plugin = \Code_Snippets\code_snippets();
+	$plugin = code_snippets();
 
 	enqueue_code_editor( 'php' );
 

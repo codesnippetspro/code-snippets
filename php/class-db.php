@@ -117,7 +117,6 @@ class DB {
 	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	public static function table_exists( $table_name ) {
-		/** @var wpdb $wpdb */
 		global $wpdb;
 		return $wpdb->get_var( sprintf( "SHOW TABLES LIKE '%s'", $table_name ) ) === $table_name;
 	}
@@ -225,7 +224,6 @@ class DB {
 	 * @return array List of SQL queries
 	 */
 	public function fetch_active_snippets( $scopes, $select_list = 'id, code, scope' ) {
-		/** @var wpdb $wpdb */
 		global $wpdb;
 		$db = code_snippets()->db;
 
@@ -242,7 +240,7 @@ class DB {
 
 		/* Fetch snippets from site table */
 		if ( self::table_exists( $db->table ) ) {
-			$queries[ $db->table ] = $wpdb->prepare( "$select {$db->table} $where AND active=1 $order", $scopes );
+			$queries[ $db->table ] = $wpdb->prepare( "$select $db->table $where AND active=1 $order", $scopes );
 		}
 
 		/* Fetch snippets from the network table */

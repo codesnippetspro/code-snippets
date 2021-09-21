@@ -117,8 +117,7 @@ class Admin_Menu {
 	/**
 	 * Print the status and error messages
 	 */
-	protected function print_messages() {
-	}
+	protected function print_messages() {}
 
 	/**
 	 * Retrieve a result message based on a posted status

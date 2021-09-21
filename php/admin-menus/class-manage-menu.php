@@ -130,7 +130,7 @@ class Manage_Menu extends Admin_Menu {
 
 		wp_enqueue_style(
 			'code-snippets-manage',
-			plugins_url( "css/min/manage{$rtl}.css", $plugin->file ),
+			plugins_url( "css/min/manage$rtl.css", $plugin->file ),
 			array(), $plugin->version
 		);
 

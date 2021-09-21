@@ -449,7 +449,7 @@ class Edit_Menu extends Admin_Menu {
 			<label for="snippet_priority"><?php esc_html_e( 'Priority', 'code-snippets' ); ?></label>
 
 			<input name="snippet_priority" type="number" id="snippet_priority"
-			       value="<?php echo intval( $snippet->priority ); ?>"<?php disabled( $this->read_only ); ?>>
+			       value="<?php echo esc_attr( $snippet->priority ); ?>"<?php disabled( $this->read_only ); ?>>
 		</p>
 		<?php
 	}
@@ -644,7 +644,7 @@ class Edit_Menu extends Admin_Menu {
 
 		wp_enqueue_style(
 			'code-snippets-edit',
-			plugins_url( "css/min/edit{$rtl}.css", $plugin->file ),
+			plugins_url( "css/min/edit$rtl.css", $plugin->file ),
 			[ 'code-editor' ], $plugin->version
 		);
 

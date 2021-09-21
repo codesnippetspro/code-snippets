@@ -146,10 +146,10 @@ class List_Table extends WP_List_Table {
 				);
 
 			case 'modified':
-				return $item->modified ? $item->format_modified( true ) : '&#8212;';
+				return $item->modified ? $item->format_modified() : '&#8212;';
 
 			default:
-				return apply_filters( "code_snippets/list_table/column_{$column_name}", '&#8212;', $item );
+				return apply_filters( "code_snippets/list_table/column_$column_name", '&#8212;', $item );
 		}
 	}
 
@@ -309,19 +309,19 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Handles the checkbox column output.
 	 *
-	 * @param Snippet $snippet The snippet being used for the current row.
+	 * @param Snippet $item The snippet being used for the current row.
 	 *
 	 * @return string The column content to be printed.
 	 */
-	protected function column_cb( $snippet ) {
+	protected function column_cb( $item ) {
 
 		$out = sprintf(
 			'<input type="checkbox" name="%s[]" value="%s">',
-			$snippet->shared_network ? 'shared_ids' : 'ids',
-			$snippet->id
+			$item->shared_network ? 'shared_ids' : 'ids',
+			$item->id
 		);
 
-		return apply_filters( 'code_snippets/list_table/column_cb', $out, $snippet );
+		return apply_filters( 'code_snippets/list_table/column_cb', $out, $item );
 	}
 
 	/**
@@ -851,7 +851,6 @@ class List_Table extends WP_List_Table {
 	 * Fetch all shared network snippets for the current site
 	 */
 	private function fetch_shared_network_snippets() {
-		/** @var wpdb $wpdb */
 		global $snippets, $wpdb;
 		$db = code_snippets()->db;
 
@@ -876,7 +875,7 @@ class List_Table extends WP_List_Table {
 
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
-			$sql = sprintf( "SELECT * FROM {$db->ms_table} WHERE id IN (%s)",
+			$sql = sprintf( "SELECT * FROM $db->ms_table WHERE id IN (%s)",
 				implode( ',', array_fill( 0, count( $ids ), '%d' ) )
 			);
 
@@ -1234,7 +1233,7 @@ class List_Table extends WP_List_Table {
 	public function single_row( $snippet ) {
 		$status = $snippet->active ? 'active' : 'inactive';
 
-		$row_class = "snippet {$status}-snippet {$snippet->type}-snippet {$snippet->scope}-scope";
+		$row_class = "snippet $status-snippet $snippet->type-snippet $snippet->scope-scope";
 
 		if ( $snippet->shared_network ) {
 			$row_class .= ' shared-network-snippet';
