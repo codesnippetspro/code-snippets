@@ -39,8 +39,8 @@ if ( ! $snippet->id || 'css' === $snippet->type ) { ?>
 if ( ! $snippet->id || 'js' === $snippet->type ) { ?>
 	<p class="snippet-scope js-scopes-list"><?php
 		$this->print_scopes_list( array(
-			'site-footer-js' => __( 'Load JS at the end of the <body> section', 'code-snippets' ),
-			'site-head-js'   => __( 'Load JS in the <head> section', 'code-snippets' ),
+			'site-footer-js' => __( 'Load JS at the end of the &lt;body&gt; section', 'code-snippets' ),
+			'site-head-js'   => __( 'Load JS in the &lt;head&gt; section', 'code-snippets' ),
 		) );
 		?></p>
 <?php }
@@ -50,8 +50,8 @@ if ( ! $snippet->id || 'html' === $snippet->type ) { ?>
 		<p><?php
 			$this->print_scopes_list( array(
 				'content'        => __( 'Only display when inserted into a post or page.', 'code-snippets' ),
-				'head-content'   => __( 'Display in site <head> section.', 'code-snippets' ),
-				'footer-content' => __( 'Display at the end of the <body> section, in the footer.', 'code-snippets' ),
+				'head-content'   => __( 'Display in site &lt;head&gt; section.', 'code-snippets' ),
+				'footer-content' => __( 'Display at the end of the &lt;body&gt; section, in the footer.', 'code-snippets' ),
 			) );
 			?></p>
 

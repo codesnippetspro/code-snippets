@@ -80,7 +80,7 @@ class Import_Menu extends Admin_Menu {
 				$result = false;
 			}
 
-			if ( false === $result || -1 === $result ) {
+			if ( false === $result ) {
 				$error = true;
 			} else {
 				$count += count( $result );
@@ -140,7 +140,7 @@ class Import_Menu extends Admin_Menu {
 						'Successfully imported <strong>%1$d</strong> snippets. <a href="%2$s">Have fun!</a>',
 						$imported, 'code-snippets'
 					) ),
-					intval( $imported ),
+					$imported,
 					esc_url( code_snippets()->get_menu_url( 'manage' ) )
 				);
 			}

@@ -81,17 +81,11 @@ class Validator {
 	 * Move the pointer to the next token, if there is one
 	 *
 	 * If the first argument is provided, only move the pointer if the tokens match
-	 *
-	 * @return bool Whether the pointer was advanced.
 	 */
 	private function next() {
-		if ( $this->end() ) {
-			return false;
+		if ( !$this->end() ) {
+			$this->current++;
 		}
-
-		$this->current++;
-
-		return true;
 	}
 
 	/**

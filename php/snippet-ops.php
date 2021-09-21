@@ -32,7 +32,6 @@ use wpdb;
  * @since 2.0
  */
 function get_snippets( array $ids = array(), $multisite = null, array $args = array() ) {
-	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	/* If only one ID has been passed in, defer to the get_snippet() function */
@@ -68,7 +67,7 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 		$search = array();
 		foreach ( $args['searchby'] as $column ) {
 			if ( in_array( $column, $searchable_columns, true ) ) {
-				$search[] = "{$column} LIKE %s";
+				$search[] = "$column LIKE %s";
 				$sql_params[] = sprintf( '%%%s%%', $wpdb->esc_like( $args['search'] ) );
 			}
 		}
@@ -89,7 +88,7 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 	/* Apply custom ordering if requested */
 	if ( $args['orderby'] ) {
 		$order_dir = 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
-		$sql .= " ORDER BY %s {$order_dir}";
+		$sql .= " ORDER BY %s $order_dir";
 		$sql_params[] = $args['orderby'];
 	}
 
@@ -130,7 +129,6 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
  * @since 2.0
  */
 function get_all_snippet_tags() {
-	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	if ( $tags = wp_cache_get( 'all_snippet_tags', 'code_snippets' ) ) {
@@ -193,7 +191,6 @@ function code_snippets_build_tags_array( $tags ) {
  * @since 2.0.0
  */
 function get_snippet( $id = 0, $multisite = null ) {
-	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	$id = absint( $id );
@@ -233,11 +230,10 @@ function get_snippet( $id = 0, $multisite = null ) {
  * @param int       $id        ID of the snippet to activate.
  * @param bool|null $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
  *
- * @return int
+ * @return boolean
  * @since 2.0.0
  */
 function activate_snippet( $id, $multisite = null ) {
-	/** @var wpdb $wpdb */
 	global $wpdb;
 	$db = code_snippets()->db;
 	$table = $db->get_table_name( $multisite );
@@ -285,7 +281,6 @@ function activate_snippet( $id, $multisite = null ) {
  * @since 2.0.0
  */
 function activate_snippets( array $ids, $multisite = null ) {
-	/** @var wpdb $wpdb */
 	global $wpdb;
 	$db = code_snippets()->db;
 	$table = $db->get_table_name( $multisite );
@@ -341,7 +336,6 @@ function activate_snippets( array $ids, $multisite = null ) {
  * @since 2.0.0
  */
 function deactivate_snippet( $id, $multisite = null ) {
-	/** @var wpdb $wpdb */
 	global $wpdb;
 	$db = code_snippets()->db;
 	$table = $db->get_table_name( $multisite );
@@ -387,7 +381,6 @@ function deactivate_snippet( $id, $multisite = null ) {
  * @since 2.0.0
  */
 function delete_snippet( $id, $multisite = null ) {
-	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
@@ -411,7 +404,6 @@ function delete_snippet( $id, $multisite = null ) {
  * @since 2.0.0
  */
 function save_snippet( Snippet $snippet ) {
-	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	$table = code_snippets()->db->get_table_name( $snippet->network );
@@ -456,7 +448,6 @@ function save_snippet( Snippet $snippet ) {
  * @param bool|null $network    Delete from network-wide (true) or site-wide (false) table.
  */
 function update_snippet_fields( $snippet_id, $fields, $network = null ) {
-	/** @var wpdb $wpdb */
 	global $wpdb;
 
 	$table = code_snippets()->db->get_table_name( $network );

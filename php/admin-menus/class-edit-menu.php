@@ -430,7 +430,7 @@ class Edit_Menu extends Admin_Menu {
 		   title="<?php esc_attr_e( 'Snippets with a lower priority number will run before those with a higher number.', 'code-snippets' ); ?>">
 			<label for="snippet_priority"><?php esc_html_e( 'Priority', 'code-snippets' ); ?></label>
 
-			<input name="snippet_priority" type="number" id="snippet_priority" value="<?php echo intval( $snippet->priority ); ?>">
+			<input name="snippet_priority" type="number" id="snippet_priority" value="<?php echo esc_attr( $snippet->priority ); ?>">
 		</p>
 		<?php
 	}
@@ -620,7 +620,7 @@ class Edit_Menu extends Admin_Menu {
 
 		wp_enqueue_style(
 			'code-snippets-edit',
-			plugins_url( "css/min/edit{$rtl}.css", $plugin->file ),
+			plugins_url( "css/min/edit$rtl.css", $plugin->file ),
 			[ 'code-editor' ], $plugin->version
 		);
 

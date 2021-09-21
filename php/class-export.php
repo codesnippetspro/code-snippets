@@ -78,7 +78,7 @@ class Export {
 			$title = strtolower( get_bloginfo( 'name' ) );
 		}
 
-		$filename = "{$title}.code-snippets.{$format}";
+		$filename = "$title.code-snippets.$format";
 		$filename = apply_filters( 'code_snippets/export/filename', $filename, $title );
 
 		/* Set HTTP headers */
@@ -147,7 +147,7 @@ class Export {
 				continue;
 			}
 
-			echo "\n/**\n * {$snippet->name}\n";
+			echo "\n/**\n * $snippet->name\n";
 
 			if ( ! empty( $snippet->desc ) ) {
 
@@ -156,7 +156,7 @@ class Export {
 				echo " *\n * ", wp_strip_all_tags( $desc ), "\n";
 			}
 
-			echo " */\n\n{$snippet->code}\n";
+			echo " */\n\n$snippet->code\n";
 		}
 
 		exit;

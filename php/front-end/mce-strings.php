@@ -34,7 +34,7 @@ $strings['content_snippets'] = [];
 foreach ( $snippets as $snippet ) {
 
 	/* translators: %d: snippet ID */
-	$name = $snippet->name ? $snippet->name : sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $snippet->id );
+	$name = $snippet->name ?: sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $snippet->id );
 
 	if ( 'content' === $snippet->scope ) {
 		$strings['content_snippets'][ $snippet->id ] = $name;

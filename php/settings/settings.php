@@ -90,7 +90,7 @@ function get_settings_values() {
 	/* Replace the default field values with the ones saved in the database */
 	foreach ( $settings as $section => $fields ) {
 		if ( isset( $saved[ $section ] ) ) {
-			$settings[ $section ] = array_replace( $settings[ $section ], $saved[ $section ] );
+			$settings[ $section ] = array_replace( $fields, $saved[ $section ] );
 		}
 	}
 

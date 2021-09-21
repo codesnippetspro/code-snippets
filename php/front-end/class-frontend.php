@@ -153,7 +153,7 @@ class Frontend {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = get_snippet( $id, $atts['network'] ? true : false );
+		$snippet = get_snippet( $id, (bool) $atts['network'] );
 
 		// render the source code if this is not a shortcode snippet
 		if ( 'content' !== $snippet->scope ) {
@@ -253,7 +253,7 @@ class Frontend {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = get_snippet( $id, $atts['network'] ? true : false );
+		$snippet = get_snippet( $id, (bool) $atts['network'] );
 
 		return $this->render_snippet_source( $snippet, $atts );
 	}
