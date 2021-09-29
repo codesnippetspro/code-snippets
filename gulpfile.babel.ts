@@ -27,7 +27,6 @@ import makepot from 'gulp-wp-pot';
 import gettext from 'gulp-gettext';
 
 import phpcs from 'gulp-phpcs';
-import phpunit from 'gulp-phpunit';
 import composer from 'gulp-composer';
 
 import sass from 'gulp-sass';
@@ -114,10 +113,6 @@ gulp.task('phpcs', () =>
 		.pipe(phpcs({bin: 'vendor/bin/phpcs', showSniffCode: true}))
 		.pipe(phpcs.reporter('log', {})));
 
-gulp.task('phpunit', () =>
-	gulp.src('phpunit.xml')
-		.pipe(phpunit('vendor/bin/phpunit')));
-
 gulp.task('vendor', () =>
 	gulp.src('node_modules/codemirror/theme/*.css')
 		.pipe(postcss([cssnano()]))
@@ -128,7 +123,7 @@ gulp.task('clean', () =>
 		.pipe(clean()));
 
 
-gulp.task('test', gulp.parallel('test-js', gulp.series('phpcs', 'phpunit')));
+gulp.task('test', gulp.parallel('test-js', 'phpcs'));
 
 gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
 
