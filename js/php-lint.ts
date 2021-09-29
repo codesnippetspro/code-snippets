@@ -2,7 +2,7 @@
 Based on work distributed under the BSD 3-Clause License (https://rawgit.com/glayzzle/codemirror-linter/master/LICENSE)
 */
 
-import Parser, {Node, ParserError} from 'php-parser';
+import Parser, {Location} from 'php-parser';
 import './globals';
 import {Position} from 'codemirror';
 
@@ -13,9 +13,10 @@ import {Position} from 'codemirror';
 
 	class Linter {
 		private readonly code: string;
-		private readonly annotations: Annotation[];
 		private function_names: Set<string>;
 		private class_names: Set<string>;
+
+		public readonly annotations: Annotation[];
 
 		constructor(code: string) {
 			this.code = code;
@@ -49,7 +50,7 @@ import {Position} from 'codemirror';
 				this.visit(ast);
 
 			} catch (error) {
-				this.annotate(error.message, error);
+				console.log(error);
 			}
 		}
 
@@ -96,38 +97,26 @@ import {Position} from 'codemirror';
 		}
 
 		/**
-		 * Fetch all recorded annotations.
-		 */
-		getAnnotations() {
-			return this.annotations;
-		}
-
-		/**
 		 * Create a lint annotation.
 		 * @param message
-		 * @param position
+		 * @param location
 		 * @param severity
 		 */
-		annotate(message: string, position: any, severity = 'error') {
-			let start, end;
+		annotate(message: string, location: Location, severity: string = 'error') {
 
-			if (position.lineNumber && position.columnNumber) {
-				start = CodeMirror.Pos(position.lineNumber - 1, position.columnNumber - 1);
-				end = CodeMirror.Pos(position.lineNumber - 1, position.columnNumber);
-
-			} else if (position.start && position.end) {
-				if (position.end.offset < position.start.offset) {
-					end = CodeMirror.Pos(position.start.line - 1, position.start.column);
-					start = CodeMirror.Pos(position.end.line - 1, position.end.column);
-				} else {
-					start = CodeMirror.Pos(position.start.line - 1, position.start.column);
-					end = CodeMirror.Pos(position.end.line - 1, position.end.column);
-				}
+			if (!location.start || !location.end) {
+				return;
 			}
 
-			if (start && end) {
-				this.annotations.push({message: message, severity: severity, from: start, to: end});
-			}
+			let [start, end] = location.end.offset < location.start.offset ?
+				[location.end, location.start] : [location.start, location.end];
+
+			this.annotations.push({
+				message: message,
+				severity: severity,
+				from: CodeMirror.Pos(start.line as number - 1, start.column as number),
+				to: CodeMirror.Pos(end.line as number - 1, end.column as number)
+			});
 		}
 	}
 
@@ -135,7 +124,7 @@ import {Position} from 'codemirror';
 		const linter = new Linter(text);
 		linter.lint();
 
-		return linter.getAnnotations();
+		return linter.annotations;
 	});
 
 })(window.wp.CodeMirror);
