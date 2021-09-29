@@ -1,4 +1,3 @@
-'use strict';
 import '../editor-lib';
 
 window.code_snippets_editor = (codeEditor => {
@@ -15,11 +14,11 @@ window.code_snippets_editor = (codeEditor => {
 		document.querySelector('.editor-help-text').className += ' platform-mac';
 	}
 
-	return codeEditor.initialize(document.getElementById('snippet_code'), atts);
+	return codeEditor.initialize(document.getElementById('snippet_code'), {codemirror: atts});
 })(window.wp.codeEditor);
 
 
-(function () {
+(() => {
 	const dir_control = document.getElementById('snippet-code-direction') as HTMLSelectElement;
 	if (!dir_control) return;
 

@@ -1,46 +1,47 @@
 import '../globals';
 
-(function () {
-	'use strict';
-
+(() => {
 	const page = document.querySelector('.wrap');
 	const tabs_wrapper = document.getElementById('settings-sections-tabs');
 	const tabs = tabs_wrapper.querySelectorAll('.nav-tab');
 	const http_referer = document.querySelector('input[name=_wp_http_referer]') as HTMLInputElement;
 
-	/**
-	 * Respond to a user selecting a new settings tab.
-	 * @param tab
-	 */
-	const select_tab = (tab: Element) => {
-		// swap the active tab class from the previously active tab to the current one.
+	const selectTab = (tab: Element, section: string) => {
+		// Swap the active tab class from the previously active tab to the current one.
 		const active_tab = tabs_wrapper.querySelector('.nav-tab-active');
 		if (active_tab) active_tab.classList.remove('nav-tab-active');
 		tab.classList.add('nav-tab-active');
 
-		// update the current active tab attribute so that only the active tab is displayed.
-		const section = tab.getAttribute('data-section');
+		// Update the current active tab attribute so that only the active tab is displayed.
 		page.setAttribute('data-active-tab', section);
+	};
 
-		// refresh the editor preview if we're viewing the editor section.
+	// Refresh the editor preview if we're viewing the editor section.
+	const refreshEditorPreview = (section: string) => {
 		if ('editor' === section) {
 			const editor = window.code_snippets_editor_preview;
 			if (editor && editor.codemirror) editor.codemirror.refresh();
 		}
+	};
 
-		// update the http referer value so that any redirections lead back to this tab.
-		let new_referer = http_referer.value.replace(/([&?]section=)[^&]+/, '$1' + section);
+	// Update the http referer value so that any redirections lead back to this tab.
+	const updateHttpReferer = (section: string) => {
+		let new_referer = http_referer.value.replace(/(?<base>[&?]section=)[^&]+/, `$base${section}`);
 		if (new_referer === http_referer.value) {
-			new_referer += '&section=' + section;
+			new_referer += `&section=${section}`;
 		}
 		http_referer.value = new_referer;
 	};
 
-	// loop through all tabs and add a click event listener.
-	for (let i = 0; i < tabs.length; i++) {
-		tabs[i].addEventListener('click', (e) => {
-			e.preventDefault();
-			select_tab(tabs[i]);
+	// Loop through all tabs and add a click event listener.
+	for (const tab of tabs) {
+		tab.addEventListener('click', event => {
+			event.preventDefault();
+			const section = tab.getAttribute('data-section');
+
+			selectTab(tab, section);
+			refreshEditorPreview(section);
+			updateHttpReferer(section);
 		});
 	}
 })();

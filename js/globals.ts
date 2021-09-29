@@ -9,7 +9,11 @@ export type EditorOption = {
 export type CodeEditorInstance = {
 	codemirror: CodeMirror.Editor
 	settings: Record<string, unknown>
-}
+};
+
+export type CodeEditorSettings = {
+	codemirror: CodeMirror.EditorConfiguration
+};
 
 declare global {
 	interface Window {
@@ -23,9 +27,11 @@ declare global {
 		wp: {
 			CodeMirror: typeof CodeMirror,
 			codeEditor: {
-				initialize: (textarea: Element, options?: CodeMirror.EditorConfiguration) => CodeEditorInstance
+				initialize: (textarea: Element, options?: CodeEditorSettings) => CodeEditorInstance
 			}
 		};
+		pagenow: string,
+		ajaxurl: string,
 		code_snippets_edit_i18n: Record<string, string>;
 		code_snippets_manage_i18n: Record<string, string>;
 	}

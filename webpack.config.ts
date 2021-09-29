@@ -4,24 +4,25 @@ import * as webpack from 'webpack';
 const config: webpack.Configuration = {
 	mode: 'production',
 	entry: {
-		'manage': './js/manage.ts',
-		'edit': './js/edit/edit.ts',
-		'tags': './js/edit/tags.ts',
-		'settings': './js/settings/settings.ts',
-		'mce': './js/mce.ts',
-		'prism': './js/prism.ts',
+		manage: './js/manage.ts',
+		edit: './js/edit/edit.ts',
+		tags: './js/edit/tags.ts',
+		settings: './js/settings/settings.ts',
+		mce: './js/mce.ts',
+		prism: './js/prism.ts',
 	},
 	output: {
 		path: path.resolve(__dirname),
 		filename: '[name].js',
 	},
 	externals: {
-		'codemirror': 'wp.CodeMirror'
+		codemirror: 'wp.CodeMirror'
 	},
 	resolve: {
 		extensions: ['.ts', '.js', '.json'],
 		alias: {
-			'php-parser': path.resolve(__dirname, 'node_modules/php-parser/src/index.js')
+			'php-parser': path.resolve(__dirname, 'node_modules/php-parser/src/index.js'),
+			'tinymce': false
 		}
 	},
 	module: {
@@ -33,17 +34,17 @@ const config: webpack.Configuration = {
 				options: {
 					plugins: [
 						['prismjs', {
-							'languages': ['php', 'php-extras'],
-							'plugins': ['line-highlight', 'line-numbers'],
+							languages: ['php', 'php-extras'],
+							plugins: ['line-highlight', 'line-numbers'],
 						}]
 					]
-				},
+				}
 			}
 		}]
 	},
 	plugins: [
 		new webpack.DefinePlugin({
-			'process.arch': JSON.stringify('x64'),
+			'process.arch': JSON.stringify('x64')
 		})
 	]
 };

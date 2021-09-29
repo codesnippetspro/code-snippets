@@ -7,7 +7,6 @@ type ModeSpecOptions = {
 }
 
 (CodeMirror => {
-	'use strict';
 
 	/** Define a new mode which starts the phpmixed mode in php mode instead of html mode */
 	CodeMirror.defineMode('php-snippet', (config: EditorConfiguration) =>

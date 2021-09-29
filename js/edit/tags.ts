@@ -1,7 +1,7 @@
 import tagger from '@jcubic/tagger';
 import '../globals';
 
-(function (tags) {
+(tags => {
 	const tags_field = document.getElementById('snippet_tags');
 	if (!tags_field) return;
 

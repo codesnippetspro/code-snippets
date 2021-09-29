@@ -1,8 +1,8 @@
 import '../globals';
 
-(function (editor) {
-	'use strict';
+type SnippetType = 'css' | 'js' | 'php' | 'html'
 
+(editor => {
 	const tabs_wrapper = document.getElementById('snippet-type-tabs');
 	if (!tabs_wrapper) return;
 
@@ -15,34 +15,39 @@ import '../globals';
 		js: 'javascript',
 		php: 'text/x-php',
 		html: 'application/x-httpd-php'
-	} as Record<string, string>;
+	} as Record<SnippetType, string>;
 
-	for (let i = 0; i < tabs.length; i++) {
-		tabs[i].addEventListener('click', function (e) {
-			if (this.classList.contains('nav-tab-active')) return;
-			const type = this.getAttribute('data-type');
-			e.preventDefault();
+	const selectScope = (type: SnippetType) => {
+		const scope = snippet_form.querySelector(`.${type}-scopes-list input:first-child`) as HTMLInputElement;
+		if (scope) scope.checked = true;
 
-			// update the form styles to match the new type
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		editor.setOption('lint', 'php' === type || 'css' === type);
+		if (type in modes) editor.setOption('mode', modes[type]);
+	};
+
+	const switchTab = (tab: Element) => {
+		const prev_active = tabs_wrapper.querySelector('.nav-tab-active');
+		prev_active.setAttribute('href', '#');
+		prev_active.classList.remove('nav-tab-active');
+
+		tab.classList.add('nav-tab-active');
+		tab.removeAttribute('href');
+	};
+
+	for (const tab of tabs) {
+		tab.addEventListener('click', event => {
+			if (tab.classList.contains('nav-tab-active')) return;
+			const type = tab.getAttribute('data-type') as SnippetType;
+			event.preventDefault();
+
+			// Update the form styles to match the new type.
 			snippet_form.setAttribute('data-snippet-type', type);
 
-			// switch the active nav tab
-			const prev_active = tabs_wrapper.querySelector('.nav-tab-active');
-			prev_active.setAttribute('href', '#');
-			prev_active.classList.remove('nav-tab-active');
-
-			this.classList.add('nav-tab-active');
-			this.removeAttribute('href');
-
-			// select the appropriate scope
-			const scope = snippet_form.querySelector(`.${type}-scopes-list input:first-child`) as HTMLInputElement;
-			if (scope) scope.checked = true;
-
-			// clear the editor contents
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			editor.setOption('lint', 'php' === type || 'css' === type);
-			if (modes[type]) editor.setOption('mode', modes[type]);
+			// Switch the active tab and change the snippet scope.
+			switchTab(tab);
+			selectScope(type);
 		});
 	}
 
