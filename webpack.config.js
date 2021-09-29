@@ -8,7 +8,7 @@ module.exports = {
 		'tags': './js/edit/tags.js',
 		'settings': './js/settings/settings.js',
 		'mce': './js/mce.js',
-		'prism': './js/prism.js',
+		'prism': './js/prism.ts',
 	},
 	output: {
 		path: path.resolve(__dirname),
@@ -19,12 +19,11 @@ module.exports = {
 	},
 	module: {
 		rules: [{
-			test: /\.js$/,
+			test: /\.[jt]sx?$/,
 			exclude: /node_modules/,
 			use: {
 				loader: 'babel-loader',
 				options: {
-					presets: ['@babel/preset-env'],
 					plugins: [
 						['prismjs', {
 							'languages': ['php', 'php-extras'],
