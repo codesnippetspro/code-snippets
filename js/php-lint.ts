@@ -2,15 +2,22 @@
 Based on work distributed under the BSD 3-Clause License (https://rawgit.com/glayzzle/codemirror-linter/master/LICENSE)
 */
 
-import Parser from 'php-parser/src/index';
-
+import Parser, {Node, ParserError} from 'php-parser';
+import './globals';
+import {Position} from 'codemirror';
 
 (function (CodeMirror) {
 	'use strict';
 
-	class Linter {
+	type Annotation = { message: string, severity: string, from: Position, to: Position };
 
-		constructor(code) {
+	class Linter {
+		private readonly code: string;
+		private readonly annotations: Annotation[];
+		private function_names: Set<string>;
+		private class_names: Set<string>;
+
+		constructor(code: string) {
 			this.code = code;
 			this.annotations = [];
 
@@ -22,6 +29,7 @@ import Parser from 'php-parser/src/index';
 			const parser = new Parser({
 				parser: {
 					suppressErrors: true,
+					// @ts-ignore types file has not been updated to support this
 					version: 800
 				},
 				ast: {
@@ -34,7 +42,7 @@ import Parser from 'php-parser/src/index';
 
 				if (ast.errors && ast.errors.length > 0) {
 					for (let i = 0; i < ast.errors.length; i++) {
-						this.annotate(ast.errors[i].message, ast.errors[i].loc);
+						this.annotate(ast.errors[i].message as string, ast.errors[i].loc);
 					}
 				}
 
@@ -49,7 +57,7 @@ import Parser from 'php-parser/src/index';
 		 * Visit nodes recursively
 		 * @param node
 		 */
-		visit(node) {
+		visit(node: any) {
 
 			if (node.hasOwnProperty('kind')) {
 				this.validate(node);
@@ -67,7 +75,7 @@ import Parser from 'php-parser/src/index';
 		 * Perform additional validations on nodes
 		 * @param node
 		 */
-		validate(node) {
+		validate(node: any) {
 
 			if (('function' === node.kind || 'class' === node.kind) && node.hasOwnProperty('name') && 'identifier' === node.name.kind) {
 
@@ -88,12 +96,19 @@ import Parser from 'php-parser/src/index';
 		}
 
 		/**
-		 * Add a new lint annotation
-		 * @param {string} message
-		 * @param {Location|SyntaxError} position
-		 * @param {string} [severity]
+		 * Fetch all recorded annotations.
 		 */
-		annotate(message, position, severity) {
+		getAnnotations() {
+			return this.annotations;
+		}
+
+		/**
+		 * Create a lint annotation.
+		 * @param message
+		 * @param position
+		 * @param severity
+		 */
+		annotate(message: string, position: any, severity = 'error') {
 			let start, end;
 
 			if (position.lineNumber && position.columnNumber) {
@@ -111,17 +126,16 @@ import Parser from 'php-parser/src/index';
 			}
 
 			if (start && end) {
-				severity = severity ? severity : 'error';
 				this.annotations.push({message: message, severity: severity, from: start, to: end});
 			}
 		}
 	}
 
-	CodeMirror.registerHelper('lint', 'php', function (text, options) {
+	CodeMirror.registerHelper('lint', 'php', (text: string) => {
 		const linter = new Linter(text);
 		linter.lint();
 
-		return linter.annotations;
+		return linter.getAnnotations();
 	});
 
-})(wp.CodeMirror);
+})(window.wp.CodeMirror);

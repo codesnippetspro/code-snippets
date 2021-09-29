@@ -1,4 +1,5 @@
 import path from 'path';
+import webpack from 'webpack';
 
 module.exports = {
 	mode: 'development',
@@ -18,7 +19,10 @@ module.exports = {
 		'codemirror': 'wp.CodeMirror'
 	},
 	resolve: {
-		extensions: ['.ts', '.js', '.json']
+		extensions: ['.ts', '.js', '.json'],
+		alias: {
+			'php-parser': path.resolve(__dirname, 'node_modules/php-parser/src/index.js')
+		}
 	},
 	module: {
 		rules: [{
@@ -36,5 +40,10 @@ module.exports = {
 				},
 			}
 		}]
-	}
+	},
+	plugins: [
+		new webpack.DefinePlugin({
+			'process.arch': JSON.stringify('x64'),
+		})
+	]
 };
