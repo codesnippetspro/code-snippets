@@ -45,6 +45,7 @@ import {Position} from 'codemirror';
 			const parser = new Parser({
 				parser: {
 					suppressErrors: true,
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					// @ts-ignore types file has not been updated to support this
 					version: 800
 				},
@@ -77,12 +78,11 @@ import {Position} from 'codemirror';
 		 */
 		visit(node: Node) {
 
-			if (node.hasOwnProperty('kind')) {
+			if (node.kind) {
 				this.validate(node);
 			}
 
-			if (node.hasOwnProperty('children')) {
-
+			if ('children' in node) {
 				for (const child of (node as Block).children) {
 					this.visit(child);
 				}
@@ -94,12 +94,12 @@ import {Position} from 'codemirror';
 		 * @param node
 		 */
 		validate(node: Node) {
-			if (!node.hasOwnProperty('name') || !(node as Declaration).name.hasOwnProperty('name') ||
-				'identifier' !== ((node as Declaration).name as Identifier).kind) {
+			const decl = node as Declaration;
+			const ident = decl.name as Identifier;
+
+			if (!('name' in decl && 'name' in ident) || 'identifier' !== ident.kind) {
 				return;
 			}
-
-			const ident = (node as Declaration).name as Identifier;
 
 			if ('function' === node.kind) {
 				if (this.function_names.has(ident.name)) {
@@ -123,7 +123,7 @@ import {Position} from 'codemirror';
 		 * @param location
 		 * @param severity
 		 */
-		annotate(message: string, location: Location, severity: string = 'error') {
+		annotate(message: string, location: Location, severity = 'error') {
 			if (!location.start || !location.end) return;
 
 			const [start, end] = location.end.offset < location.start.offset ?

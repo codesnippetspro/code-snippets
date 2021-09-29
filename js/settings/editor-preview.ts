@@ -1,4 +1,3 @@
-/* global code_snippets_editor_settings */
 import '../editor-lib';
 import {EditorOption} from '../globals';
 
@@ -14,7 +13,7 @@ import {EditorOption} from '../globals';
 		element.addEventListener('change', () => {
 			const opt = setting['codemirror'];
 
-			let value = (() => {
+			const value = (() => {
 				switch (setting.type) {
 					case 'select':
 						return (element as HTMLSelectElement).options[(element as HTMLSelectElement).selectedIndex].value;

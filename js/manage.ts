@@ -1,8 +1,8 @@
-/* global ajaxurl, pagenow */
 'use strict';
+import './globals'
 
-declare var pagenow: string;
-declare var ajaxurl: string;
+declare const pagenow: string;
+declare const ajaxurl: string;
 
 type Snippet = {
 	id: number
@@ -16,13 +16,13 @@ type Snippet = {
 
 type WPJSONResponse = {
 	success: boolean
-	data?: any
+	data?: unknown
 }
 
 (function () {
 	const nonce = (document.getElementById('code_snippets_ajax_nonce') as HTMLInputElement).value;
 	const network_admin = ('-network' === pagenow.substring(pagenow.length - '-network'.length));
-	const strings = (window as any).code_snippets_manage_i18n;
+	const strings = window.code_snippets_manage_i18n;
 
 	/**
 	 * Utility function to loop through a DOM list

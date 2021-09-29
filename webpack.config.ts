@@ -1,8 +1,8 @@
-import path from 'path';
-import webpack from 'webpack';
+import * as path from 'path';
+import * as webpack from 'webpack';
 
-module.exports = {
-	mode: 'development',
+const config: webpack.Configuration = {
+	mode: 'production',
 	entry: {
 		'manage': './js/manage.ts',
 		'edit': './js/edit/edit.ts',
@@ -47,3 +47,5 @@ module.exports = {
 		})
 	]
 };
+
+export default config;

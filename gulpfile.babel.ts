@@ -1,6 +1,6 @@
 'use strict';
 
-import fs from 'fs';
+import * as fs from 'fs';
 import gulp from 'gulp';
 import sourcemaps from 'gulp-sourcemaps';
 import rename from 'gulp-rename';
@@ -24,20 +24,23 @@ import terser from 'gulp-terser';
 import eslint from 'gulp-eslint';
 
 import makepot from 'gulp-wp-pot';
-import gettext from 'gulp-gettext'
+import gettext from 'gulp-gettext';
 
 import phpcs from 'gulp-phpcs';
 import phpunit from 'gulp-phpunit';
 import composer from 'gulp-composer';
 
-import pkg from './package.json';
+import sass from 'gulp-sass';
+import libsass from 'sass';
 
-const sass = require('gulp-sass')(require('sass'));
+import * as pkg from './package.json';
+import webpackConfig from './webpack.config';
 
 const src_files = {
 	php: ['*.php', 'php/**/*.php'],
-	js: ['js/**/*.js', '!js/min/**/*.js'],
+	js: ['js/**/*.ts', 'js/**/*.tsx', 'js/**/*.js', '!js/min/**/*'],
 	css: ['css/*.scss', '!css/_*.scss'],
+	dir_css: ['edit.css', 'manage.css'],
 };
 
 const dist_dirs = {
@@ -47,59 +50,38 @@ const dist_dirs = {
 
 const text_domain = pkg.name;
 
-gulp.task('css', (done) => {
+const postcss_processors = [
+	cssimport({prefix: '_', extensions: ['.scss', '.css']}),
+	hexrgba(),
+	autoprefixer(),
+	cssnano({'preset': ['default', {'discardComments': {'removeAll': true}}]})
+];
 
-	let processors = [
-		cssimport({prefix: '_', extensions: ['.scss', '.css']}),
-		hexrgba(),
-		autoprefixer(),
-		cssnano({'preset': ['default', {'discardComments': {'removeAll': true}}]})
-	];
-
-	const dir_css = ['edit.css', 'manage.css'];
-
-	return gulp.series(
+gulp.task('css', (done) =>
+	gulp.series(
 		() => gulp.src(src_files.css)
 			.pipe(sourcemaps.init())
-			.pipe(sass().on('error', sass.logError))
-			.pipe(postcss(processors))
+			.pipe(sass(libsass)().on('error', sass(libsass).logError))
+			.pipe(postcss(postcss_processors))
 			.pipe(sourcemaps.write('.'))
 			.pipe(gulp.dest(dist_dirs.css)),
-		() => gulp.src(dir_css.map((f) => dist_dirs.css + f))
+		() => gulp.src(src_files.dir_css.map((f) => dist_dirs.css + f))
 			.pipe(rename({suffix: '-rtl'}))
 			.pipe(sourcemaps.init())
 			.pipe(rtlcss())
 			.pipe(sourcemaps.write('.'))
 			.pipe(gulp.dest(dist_dirs.css))
-	)(done);
-});
+	)(done));
 
-gulp.task('test-js', () => {
-
-	const options = {
-		parserOptions: {
-			ecmaVersion: 9,
-			sourceType: 'module'
-		},
-		extends: 'eslint:recommended',
-		rules: {
-			'quotes': ['error', 'single'],
-			'linebreak-style': ['error', 'unix'],
-			'eqeqeq': ['warn', 'always'],
-			'indent': ['error', 'tab', {'SwitchCase': 1}]
-		}
-	};
-
-	return gulp.src(src_files.js)
-		.pipe(eslint(options))
+gulp.task('test-js', () =>
+	gulp.src(src_files.js)
+		.pipe(eslint())
 		.pipe(eslint.format())
-		.pipe(eslint.failAfterError())
-});
-
+		.pipe(eslint.failAfterError()));
 
 gulp.task('js', gulp.series('test-js', () =>
 	gulp.src(src_files.js)
-		.pipe(webpack(require('./webpack.config.js')))
+		.pipe(webpack(webpackConfig))
 		.pipe(sourcemaps.init())
 		.pipe(terser())
 		.pipe(sourcemaps.write('.'))

@@ -3,12 +3,12 @@ import * as CodeMirror from 'codemirror';
 export type EditorOption = {
 	name: string
 	type: 'checkbox' | 'number' | 'select'
-	codemirror: any
+	codemirror: keyof CodeMirror.EditorConfiguration
 };
 
 export type CodeEditorInstance = {
 	codemirror: CodeMirror.Editor
-	settings: object
+	settings: Record<string, unknown>
 }
 
 declare global {
@@ -21,9 +21,12 @@ declare global {
 			available_tags: string[]
 		};
 		wp: {
-			codeEditor: any
-			CodeMirror: typeof CodeMirror
+			CodeMirror: typeof CodeMirror,
+			codeEditor: {
+				initialize: (textarea: Element, options?: CodeMirror.EditorConfiguration) => CodeEditorInstance
+			}
 		};
 		code_snippets_edit_i18n: Record<string, string>;
+		code_snippets_manage_i18n: Record<string, string>;
 	}
 }

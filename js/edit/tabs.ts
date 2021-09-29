@@ -35,10 +35,11 @@ import '../globals';
 			this.removeAttribute('href');
 
 			// select the appropriate scope
-			let scope = snippet_form.querySelector(`.${type}-scopes-list input:first-child`) as HTMLInputElement;
+			const scope = snippet_form.querySelector(`.${type}-scopes-list input:first-child`) as HTMLInputElement;
 			if (scope) scope.checked = true;
 
 			// clear the editor contents
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			editor.setOption('lint', 'php' === type || 'css' === type);
 			if (modes[type]) editor.setOption('mode', modes[type]);
