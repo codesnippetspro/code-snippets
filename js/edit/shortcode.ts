@@ -7,8 +7,8 @@
 	const options = options_wrap.getElementsByTagName('input');
 	const network_admin = -1 !== document.body.className.indexOf('network-admin');
 
-	let snippet_id = document.querySelector('input[name=snippet_id]');
-	snippet_id = snippet_id ? parseInt(snippet_id.value) : 0;
+	const snippet_id_input = document.querySelector('input[name=snippet_id]') as HTMLInputElement;
+	const snippet_id = snippet_id_input ? parseInt(snippet_id_input.value) : 0;
 
 	const update_shortcode = () => {
 		let shortcode = '[code_snippet';

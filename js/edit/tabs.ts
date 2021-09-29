@@ -1,3 +1,5 @@
+import '../globals';
+
 (function (editor) {
 	'use strict';
 
@@ -13,7 +15,7 @@
 		js: 'javascript',
 		php: 'text/x-php',
 		html: 'application/x-httpd-php'
-	};
+	} as Record<string, string>;
 
 	for (let i = 0; i < tabs.length; i++) {
 		tabs[i].addEventListener('click', function (e) {
@@ -33,13 +35,14 @@
 			this.removeAttribute('href');
 
 			// select the appropriate scope
-			let scope = snippet_form.querySelector(`.${type}-scopes-list input:first-child`);
+			let scope = snippet_form.querySelector(`.${type}-scopes-list input:first-child`) as HTMLInputElement;
 			if (scope) scope.checked = true;
 
 			// clear the editor contents
+			// @ts-ignore
 			editor.setOption('lint', 'php' === type || 'css' === type);
 			if (modes[type]) editor.setOption('mode', modes[type]);
-		})
+		});
 	}
 
 })(window.code_snippets_editor.codemirror);

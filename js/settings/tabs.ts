@@ -1,16 +1,18 @@
+import '../globals';
+
 (function () {
 	'use strict';
 
 	const page = document.querySelector('.wrap');
 	const tabs_wrapper = document.getElementById('settings-sections-tabs');
 	const tabs = tabs_wrapper.querySelectorAll('.nav-tab');
-	const http_referer = document.querySelector('input[name=_wp_http_referer]');
+	const http_referer = document.querySelector('input[name=_wp_http_referer]') as HTMLInputElement;
 
 	/**
 	 * Respond to a user selecting a new settings tab.
-	 * @param {Element} tab
+	 * @param tab
 	 */
-	const select_tab = (tab) => {
+	const select_tab = (tab: Element) => {
 		// swap the active tab class from the previously active tab to the current one.
 		const active_tab = tabs_wrapper.querySelector('.nav-tab-active');
 		if (active_tab) active_tab.classList.remove('nav-tab-active');

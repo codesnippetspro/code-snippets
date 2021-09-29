@@ -1,9 +1,23 @@
+declare var tinymce: any;
+
+type SourceShortcodeOps = {
+	id: string
+	line_numbers: boolean
+};
+
+type ContentShortcodeOps = {
+	id: string
+	php: boolean
+	format: boolean
+	shortcodes: boolean
+};
+
 (function () {
-	tinymce.PluginManager.add('code_snippets', editor => {
+	tinymce.PluginManager.add('code_snippets', (editor: any) => {
 		const ed = tinymce.activeEditor;
 
-		function array_as_values(array) {
-			return Object.keys(array).map(key => ({text: array[key], value: key}));
+		function array_as_values(array: string[]) {
+			return Object.keys(array).map(key => ({text: array[Number(key)], value: key}));
 		}
 
 		let menu = [
@@ -35,15 +49,14 @@
 								label: ed.getLang('code_snippets.shortcodes_att_label'),
 							}
 						],
-						onsubmit: e => {
+						onsubmit: (e: { data: ContentShortcodeOps }) => {
 							const id = parseInt(e.data.id);
 							if (!id) return;
 
 							let shortcode = '[code_snippet id=' + id;
 
-							for (const opt of Object.keys(e.data)) {
+							for (const [opt, val] of Object.entries(e.data)) {
 								if ('id' === opt) continue;
-								let val = e.data[opt];
 
 								if (val) {
 									shortcode += ` ${opt}=${val}`;
@@ -73,7 +86,7 @@
 								label: ed.getLang('code_snippets.show_line_numbers_label'),
 							}
 						],
-						onsubmit: e => {
+						onsubmit: (e: { data: SourceShortcodeOps }) => {
 							const id = parseInt(e.data.id);
 							if (!id) return;
 

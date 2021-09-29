@@ -3,11 +3,11 @@ import path from 'path';
 module.exports = {
 	mode: 'development',
 	entry: {
-		'manage': './js/manage.js',
-		'edit': './js/edit/edit.js',
-		'tags': './js/edit/tags.js',
-		'settings': './js/settings/settings.js',
-		'mce': './js/mce.js',
+		'manage': './js/manage.ts',
+		'edit': './js/edit/edit.ts',
+		'tags': './js/edit/tags.ts',
+		'settings': './js/settings/settings.ts',
+		'mce': './js/mce.ts',
 		'prism': './js/prism.ts',
 	},
 	output: {
@@ -16,6 +16,9 @@ module.exports = {
 	},
 	externals: {
 		'codemirror': 'wp.CodeMirror'
+	},
+	resolve: {
+		extensions: ['.ts', '.js', '.json']
 	},
 	module: {
 		rules: [{

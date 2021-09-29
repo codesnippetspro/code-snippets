@@ -1,7 +1,8 @@
 /* global code_snippets_editor_settings */
 import '../editor-lib';
+import {EditorOption} from '../globals';
 
-(function (codeEditor, editor_settings) {
+(function (codeEditor, editor_settings: EditorOption[]) {
 	'use strict';
 
 	window.code_snippets_editor_preview = codeEditor.initialize(document.getElementById('code_snippets_editor_preview'));
@@ -16,11 +17,11 @@ import '../editor-lib';
 			let value = (() => {
 				switch (setting.type) {
 					case 'select':
-						return element.options[element.selectedIndex].value;
+						return (element as HTMLSelectElement).options[(element as HTMLSelectElement).selectedIndex].value;
 					case 'checkbox':
-						return element.checked;
+						return (element as HTMLInputElement).checked;
 					case 'number':
-						return parseInt(element.value);
+						return parseInt((element as HTMLInputElement).value);
 					default:
 						return null;
 				}
@@ -32,4 +33,4 @@ import '../editor-lib';
 		});
 	}
 
-}(wp.codeEditor, code_snippets_editor_settings));
+}(window.wp.codeEditor, window.code_snippets_editor_settings));

@@ -1,16 +1,35 @@
 /* global ajaxurl, pagenow */
 'use strict';
+
+declare var pagenow: string;
+declare var ajaxurl: string;
+
+type Snippet = {
+	id: number
+	name: string
+	scope: string
+	active: boolean
+	network: boolean
+	shared_network: boolean
+	priority: number
+};
+
+type WPJSONResponse = {
+	success: boolean
+	data?: any
+}
+
 (function () {
-	const nonce = document.getElementById('code_snippets_ajax_nonce').value;
+	const nonce = (document.getElementById('code_snippets_ajax_nonce') as HTMLInputElement).value;
 	const network_admin = ('-network' === pagenow.substring(pagenow.length - '-network'.length));
-	const strings = window.code_snippets_manage_i18n;
+	const strings = (window as any).code_snippets_manage_i18n;
 
 	/**
 	 * Utility function to loop through a DOM list
-	 * @param {HTMLCollectionBase} elements
-	 * @param {function} callback
+	 * @param elements
+	 * @param callback
 	 */
-	function foreach(elements, callback) {
+	function foreach(elements: HTMLCollectionBase, callback: (element: Element, index: number) => void) {
 		for (let i = 0; i < elements.length; i++) {
 			callback(elements[i], i);
 		}
@@ -18,12 +37,12 @@
 
 	/**
 	 * Update the data of a given snippet using AJAX
-	 * @param {string}   field
-	 * @param {Element}  row_element
-	 * @param {object}   snippet
-	 * @param {function} [success_callback]
+	 * @param field
+	 * @param row_element
+	 * @param snippet
+	 * @param success_callback
 	 */
-	function update_snippet(field, row_element, snippet, success_callback) {
+	function update_snippet(field: string, row_element: Element, snippet: Snippet, success_callback?: (response: WPJSONResponse) => void) {
 		const id_column = row_element.querySelector('.column-id');
 
 		if (!id_column || !parseInt(id_column.textContent)) {
@@ -60,11 +79,11 @@
 	 */
 	function update_snippet_priority() {
 		const row = this.parentElement.parentElement;
-		const snippet = {'priority': this.value};
+		const snippet = {'priority': this.value} as Snippet;
 		update_snippet('priority', row, snippet);
 	}
 
-	foreach(document.getElementsByClassName('snippet-priority'), (field, i) => {
+	foreach(document.getElementsByClassName('snippet-priority'), (field: HTMLInputElement) => {
 		field.addEventListener('input', update_snippet_priority);
 		field.disabled = false;
 	});
@@ -73,10 +92,10 @@
 
 	/**
 	 * Update the snippet count of a specific view
-	 * @param {HTMLElement} view_count
-	 * @param {boolean}     increment
+	 * @param view_count
+	 * @param increment
 	 */
-	function update_view_count(view_count, increment) {
+	function update_view_count(view_count: HTMLElement, increment: boolean) {
 		let n = parseInt(view_count.textContent.replace(/\((\d+)\)/, '$1'));
 		increment ? n++ : n--;
 		view_count.textContent = '(' + n.toString() + ')';
@@ -84,9 +103,9 @@
 
 	/**
 	 * Activate an inactive snippet, or deactivate an active snippet
-	 * @param {Event} e
+	 * @param e
 	 */
-	function toggle_snippet_active(e) {
+	function toggle_snippet_active(e: Event) {
 
 		const row = this.parentElement.parentElement; // switch < cell < row
 		const match = row.className.match(/\b(?:in)?active-snippet\b/);
@@ -95,7 +114,7 @@
 		e.preventDefault();
 
 		const activating = 'inactive-snippet' === match[0];
-		const snippet = {'active': activating};
+		const snippet = {'active': activating} as Snippet;
 
 		update_snippet('active', row, snippet, (response) => {
 			const button = row.querySelector('.snippet-activation-switch');
@@ -117,7 +136,7 @@
 		});
 	}
 
-	foreach(document.getElementsByClassName('snippet-activation-switch'), (link, i) => {
+	foreach(document.getElementsByClassName('snippet-activation-switch'), (link) => {
 		link.addEventListener('click', toggle_snippet_active);
 	});
 })();

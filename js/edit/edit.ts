@@ -7,11 +7,11 @@ import './shortcode';
 	document.addEventListener('DOMContentLoaded', () => {
 		const form = document.getElementById('snippet-form');
 		const editor = window.code_snippets_editor.codemirror;
-		const snippet_name = document.querySelector('input[name=snippet_name]');
+		const snippet_name = document.querySelector('input[name=snippet_name]') as HTMLInputElement;
 
 		if (!form || !editor || !snippet_name) return;
 
-		form.addEventListener('submit', (event) => {
+		form.addEventListener('submit', (event: SubmitEvent) => {
 			let message = '';
 			const missing_title = '' === snippet_name.value.trim();
 			const missing_code = '' === editor.getValue().trim();
@@ -20,9 +20,9 @@ import './shortcode';
 				(missing_code ? strings['missing_title_code'] : strings['missing_title']) :
 				(missing_code ? strings['missing_code'] : '');
 
-			if (event['submitter']['id'].startsWith('save_snippet') && message && !confirm(message)) {
+			if (event.submitter.id.startsWith('save_snippet') && message && !confirm(message)) {
 				event.preventDefault();
 			}
 		});
 	});
-}(window['code_snippets_edit_i18n']));
+}(window.code_snippets_edit_i18n));
