@@ -50,7 +50,7 @@
 								}
 							}
 
-							editor.insertContent(shortcode + ']');
+							editor.insertContent(shortcode + ']\n');
 						}
 					});
 				}

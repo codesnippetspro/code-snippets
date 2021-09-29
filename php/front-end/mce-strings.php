@@ -43,8 +43,8 @@ foreach ( $snippets as $snippet ) {
 	);;
 }
 
-sort( $strings['all_snippets'], SORT_STRING | SORT_FLAG_CASE );
-sort( $strings['content_snippets'], SORT_STRING | SORT_FLAG_CASE );
+asort( $strings['all_snippets'], SORT_STRING | SORT_FLAG_CASE );
+asort( $strings['content_snippets'], SORT_STRING | SORT_FLAG_CASE );
 
 $strings = [ _WP_Editors::$mce_locale => [ 'code_snippets' => $strings ] ];
 $strings = 'tinyMCE.addI18n(' . wp_json_encode( $strings ) . ');';

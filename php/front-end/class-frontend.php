@@ -57,7 +57,7 @@ class Frontend {
 
 		/* Add the translation strings to the TinyMCE editor */
 		add_filter( 'mce_external_languages', function ( $languages ) {
-			$languages['code_snippets'] = __DIR__ . 'mce-strings.php';
+			$languages['code_snippets'] = __DIR__ . '/mce-strings.php';
 			return $languages;
 		} );
 	}
