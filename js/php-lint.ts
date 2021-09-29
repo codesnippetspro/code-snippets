@@ -2,7 +2,7 @@
 Based on work distributed under the BSD 3-Clause License (https://rawgit.com/glayzzle/codemirror-linter/master/LICENSE)
 */
 
-import Parser, {Location} from 'php-parser';
+import Parser, {Block, Location, Node} from 'php-parser';
 import './globals';
 import {Position} from 'codemirror';
 
@@ -11,6 +11,14 @@ import {Position} from 'codemirror';
 
 	type Annotation = { message: string, severity: string, from: Position, to: Position };
 
+	interface Identifier extends Node {
+		name: string;
+	}
+
+	interface Declaration extends Node {
+		name: Identifier | string;
+	}
+
 	class Linter {
 		private readonly code: string;
 		private function_names: Set<string>;
@@ -18,6 +26,10 @@ import {Position} from 'codemirror';
 
 		public readonly annotations: Annotation[];
 
+		/**
+		 * Constructor.
+		 * @param code
+		 */
 		constructor(code: string) {
 			this.code = code;
 			this.annotations = [];
@@ -26,6 +38,9 @@ import {Position} from 'codemirror';
 			this.class_names = new Set();
 		}
 
+		/**
+		 * Lint the provided code.
+		 */
 		lint() {
 			const parser = new Parser({
 				parser: {
@@ -39,14 +54,16 @@ import {Position} from 'codemirror';
 			});
 
 			try {
-				let ast = parser.parseEval(this.code);
+				const ast = parser.parseEval(this.code);
 
+				// process any errors caught by the parser.
 				if (ast.errors && ast.errors.length > 0) {
 					for (let i = 0; i < ast.errors.length; i++) {
 						this.annotate(ast.errors[i].message as string, ast.errors[i].loc);
 					}
 				}
 
+				// visit each node to perform additional checks.
 				this.visit(ast);
 
 			} catch (error) {
@@ -55,10 +72,10 @@ import {Position} from 'codemirror';
 		}
 
 		/**
-		 * Visit nodes recursively
+		 * Visit nodes recursively.
 		 * @param node
 		 */
-		visit(node: any) {
+		visit(node: Node) {
 
 			if (node.hasOwnProperty('kind')) {
 				this.validate(node);
@@ -66,32 +83,36 @@ import {Position} from 'codemirror';
 
 			if (node.hasOwnProperty('children')) {
 
-				for (const child of node.children) {
+				for (const child of (node as Block).children) {
 					this.visit(child);
 				}
 			}
 		}
 
 		/**
-		 * Perform additional validations on nodes
+		 * Perform additional validations on nodes.
 		 * @param node
 		 */
-		validate(node: any) {
+		validate(node: Node) {
+			if (!node.hasOwnProperty('name') || !(node as Declaration).name.hasOwnProperty('name') ||
+				'identifier' !== ((node as Declaration).name as Identifier).kind) {
+				return;
+			}
 
-			if (('function' === node.kind || 'class' === node.kind) && node.hasOwnProperty('name') && 'identifier' === node.name.kind) {
+			const ident = (node as Declaration).name as Identifier;
 
-				if ('function' === node.kind) {
-					if (this.function_names.has(node.name.name)) {
-						this.annotate(`Cannot redeclare function ${node.name.name}()`, node.name.loc);
-					} else {
-						this.function_names.add(node.name.name);
-					}
-				} else if ('class' === node.kind) {
-					if (this.class_names.has(node.name.name)) {
-						this.annotate(`Cannot redeclare class ${node.name.name}`, node.name.loc);
-					} else {
-						this.class_names.add(node.name.name);
-					}
+			if ('function' === node.kind) {
+				if (this.function_names.has(ident.name)) {
+					this.annotate(`Cannot redeclare function ${ident.name}()`, ident.loc);
+				} else {
+					this.function_names.add(ident.name);
+				}
+
+			} else if ('class' === node.kind) {
+				if (this.class_names.has(ident.name)) {
+					this.annotate(`Cannot redeclare class ${ident.name}`, ident.loc);
+				} else {
+					this.class_names.add(ident.name);
 				}
 			}
 		}
@@ -103,12 +124,9 @@ import {Position} from 'codemirror';
 		 * @param severity
 		 */
 		annotate(message: string, location: Location, severity: string = 'error') {
+			if (!location.start || !location.end) return;
 
-			if (!location.start || !location.end) {
-				return;
-			}
-
-			let [start, end] = location.end.offset < location.start.offset ?
+			const [start, end] = location.end.offset < location.start.offset ?
 				[location.end, location.start] : [location.start, location.end];
 
 			this.annotations.push({
