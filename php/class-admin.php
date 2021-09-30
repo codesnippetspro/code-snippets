@@ -261,7 +261,6 @@ class Admin {
 	 */
 	public function debug_information( $info ) {
 		$fields = array();
-		$list_table = new List_Table();
 
 		// fetch all active snippets.
 		$args = array( 'active_only' => true, 'limit' => 100 );
@@ -290,7 +289,7 @@ class Admin {
 			}
 
 			$fields[ 'snippet-' . $snippet->id ] = [
-				'label' => empty( $snippet->name ) ? sprintf( __( 'Untitled #%d', 'code-snippets' ), $snippet->id ) : $snippet->name,
+				'label' => $snippet->display_name,
 				'value' => implode( "\n | ", $values ),
 				'debug' => implode( ', ', $debug ),
 			];

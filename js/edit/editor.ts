@@ -1,9 +1,8 @@
-'use strict';
 import '../editor-lib';
 import 'codemirror-colorpicker';
 
 window.code_snippets_editor = (codeEditor => {
-	const save_snippet_cb = (cm) => document.getElementById('save_snippet').click();
+	const save_snippet_cb = () => document.getElementById('save_snippet').click();
 
 	const atts = {
 		viewportMargin: Infinity,
@@ -16,16 +15,16 @@ window.code_snippets_editor = (codeEditor => {
 		document.querySelector('.editor-help-text').className += ' platform-mac';
 	}
 
-	return codeEditor.initialize(document.getElementById('snippet_code'), atts);
+	return codeEditor.initialize(document.getElementById('snippet_code'), {codemirror: atts});
 })(window.wp.codeEditor);
 
 
-(function () {
-	const dir_control = document.getElementById('snippet-code-direction');
+(() => {
+	const dir_control = document.getElementById('snippet-code-direction') as HTMLSelectElement;
 	if (!dir_control) return;
 
 	dir_control.addEventListener('change', () => {
-		window.code_snippets_editor.setOption('direction', 'rtl' === dir_control.value ? 'rtl' : 'ltr');
+		window.code_snippets_editor.codemirror.setOption('direction', 'rtl' === dir_control.value ? 'rtl' : 'ltr');
 	});
 
 })();

@@ -271,15 +271,12 @@ class List_Table extends WP_List_Table {
 	 */
 	protected function column_name( $snippet ) {
 
-		/* translators: %d: snippet identifier */
-		$title = empty( $snippet->name ) ? sprintf( __( 'Untitled #%d', 'code-snippets' ), $snippet->id ) : $snippet->name;
-
 		$row_actions = $this->row_actions(
 			$this->get_snippet_action_links( $snippet ),
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
-		$out = esc_html( $title );
+		$out = esc_html( $snippet->display_name );
 
 		if ( 'global' !== $snippet->scope ) {
 			$out .= ' <span class="dashicons dashicons-' . $snippet->scope_icon . '"></span>';

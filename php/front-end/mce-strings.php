@@ -20,7 +20,6 @@ $strings = [
 	'insert_source_menu'      => __( 'Snippet Source Code', 'code-snippets' ),
 	'insert_source_title'     => __( 'Insert Snippet Source', 'code-snippets' ),
 	'show_line_numbers_label' => __( 'Show line numbers', 'code-snippets' ),
-
 ];
 
 $strings = array_map( 'esc_js', $strings );
@@ -33,19 +32,19 @@ $strings['content_snippets'] = [];
 /** @var Snippet $snippet */
 foreach ( $snippets as $snippet ) {
 
-	/* translators: %d: snippet ID */
-	$name = $snippet->name ?: sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $snippet->id );
-
 	if ( 'content' === $snippet->scope ) {
-		$strings['content_snippets'][ $snippet->id ] = $name;
+		$strings['content_snippets'][ $snippet->id ] = $snippet->display_name;
 	}
 
-	$name .= ' (' . strtoupper( $snippet->type ) . ')';
-	$strings['all_snippets'][ $snippet->id ] = $name;
+	$strings['all_snippets'][ $snippet->id ] = sprintf(
+		'%s (%s)',
+		$snippet->display_name,
+		strtoupper( $snippet->type )
+	);;
 }
 
-sort( $strings['all_snippets'], SORT_STRING | SORT_FLAG_CASE );
-sort( $strings['content_snippets'], SORT_STRING | SORT_FLAG_CASE );
+asort( $strings['all_snippets'], SORT_STRING | SORT_FLAG_CASE );
+asort( $strings['content_snippets'], SORT_STRING | SORT_FLAG_CASE );
 
 $strings = [ _WP_Editors::$mce_locale => [ 'code_snippets' => $strings ] ];
 $strings = 'tinyMCE.addI18n(' . wp_json_encode( $strings ) . ');';

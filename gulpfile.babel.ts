@@ -1,6 +1,4 @@
-'use strict';
-
-import fs from 'fs';
+import * as fs from 'fs';
 import gulp from 'gulp';
 import sourcemaps from 'gulp-sourcemaps';
 import rename from 'gulp-rename';
@@ -24,20 +22,22 @@ import terser from 'gulp-terser';
 import eslint from 'gulp-eslint';
 
 import makepot from 'gulp-wp-pot';
-import gettext from 'gulp-gettext'
+import gettext from 'gulp-gettext';
 
 import phpcs from 'gulp-phpcs';
-import phpunit from 'gulp-phpunit';
 import composer from 'gulp-composer';
 
-import pkg from './package.json';
+import sass from 'gulp-sass';
+import libsass from 'sass';
 
-const sass = require('gulp-sass')(require('sass'));
+import * as pkg from './package.json';
+import webpackConfig from './webpack.config';
 
 const src_files = {
 	php: ['*.php', 'php/**/*.php'],
-	js: ['js/**/*.js', '!js/min/**/*.js'],
+	js: ['js/**/*.ts', 'js/**/*.tsx', 'js/**/*.js', '!js/min/**/*'],
 	css: ['css/*.scss', '!css/_*.scss'],
+	dir_css: ['edit.css', 'manage.css'],
 };
 
 const dist_dirs = {
@@ -47,60 +47,38 @@ const dist_dirs = {
 
 const text_domain = 'code-snippets';
 
-gulp.task('css', (done) => {
+const postcss_processors = [
+	cssimport({prefix: '_', extensions: ['.scss', '.css']}),
+	hexrgba(),
+	autoprefixer(),
+	cssnano({preset: ['default', {discardComments: {removeAll: true}}]})
+];
 
-	let processors = [
-		cssimport({prefix: '_', extensions: ['.scss', '.css']}),
-		hexrgba(),
-		autoprefixer(),
-		cssnano({'preset': ['default', {'discardComments': {'removeAll': true}}]})
-	];
-
-	const dir_css = ['edit.css', 'manage.css'];
-
-	return gulp.series(
+gulp.task('css', done =>
+	gulp.series(
 		() => gulp.src(src_files.css)
 			.pipe(sourcemaps.init())
-			.pipe(sass().on('error', sass.logError))
-			.pipe(postcss(processors))
+			.pipe(sass(libsass)().on('error', sass(libsass).logError))
+			.pipe(postcss(postcss_processors))
 			.pipe(sourcemaps.write('.'))
 			.pipe(gulp.dest(dist_dirs.css)),
-		() => gulp.src(dir_css.map((f) => dist_dirs.css + f))
+		() => gulp.src(src_files.dir_css.map(file => dist_dirs.css + file))
 			.pipe(rename({suffix: '-rtl'}))
 			.pipe(sourcemaps.init())
 			.pipe(rtlcss())
 			.pipe(sourcemaps.write('.'))
 			.pipe(gulp.dest(dist_dirs.css))
-	)(done);
-});
+	)(done));
 
-gulp.task('test-js', () => {
-
-	const options = {
-		parserOptions: {
-			ecmaVersion: 9,
-			sourceType: 'module',
-			ecmaFeatures: {jsx: true}
-		},
-		extends: 'eslint:recommended',
-		rules: {
-			'quotes': ['error', 'single'],
-			'linebreak-style': ['error', 'unix'],
-			'eqeqeq': ['warn', 'always'],
-			'indent': ['error', 'tab', {'SwitchCase': 1}]
-		}
-	};
-
-	return gulp.src(src_files.js)
-		.pipe(eslint(options))
-		.pipe(eslint.format())
-		.pipe(eslint.failAfterError())
-});
-
-
-gulp.task('js', gulp.series('test-js', () =>
+gulp.task('jslint', () =>
 	gulp.src(src_files.js)
-		.pipe(webpack(require('./webpack.config.js')))
+		.pipe(eslint())
+		.pipe(eslint.format())
+		.pipe(eslint.failAfterError()));
+
+gulp.task('js', gulp.series('jslint', () =>
+	gulp.src(src_files.js)
+		.pipe(webpack(webpackConfig))
 		.pipe(sourcemaps.init())
 		.pipe(terser())
 		.pipe(sourcemaps.write('.'))
@@ -133,60 +111,57 @@ gulp.task('phpcs', () =>
 		.pipe(phpcs({bin: 'vendor/bin/phpcs', showSniffCode: true}))
 		.pipe(phpcs.reporter('log', {})));
 
-gulp.task('phpunit', () =>
-	gulp.src('phpunit.xml')
-		.pipe(phpunit('vendor/bin/phpunit')));
-
 gulp.task('vendor', () =>
 	gulp.src('node_modules/codemirror/theme/*.css')
 		.pipe(postcss([cssnano()]))
-		.pipe(gulp.dest(dist_dirs.css + 'editor-themes')));
+		.pipe(gulp.dest(`${dist_dirs.css}editor-themes`)));
 
 gulp.task('clean', () =>
 	gulp.src([dist_dirs.css, dist_dirs.js], {read: false, allowEmpty: true})
 		.pipe(clean()));
 
 
-gulp.task('test', gulp.parallel('test-js', gulp.series('phpcs', 'phpunit')));
+gulp.task('test', gulp.parallel('jslint', 'phpcs'));
 
 gulp.task('default', gulp.series('clean', gulp.parallel('vendor', 'css', 'js', 'i18n')));
 
 gulp.task('package', gulp.series(
-	'default', 'vendor',
+	'default',
+	'vendor',
 
-	// remove files from last run
+	// Remove files from last run
 	() => gulp.src(['dist', pkg.name, `${pkg.name}.*.zip`], {read: false, allowEmpty: true})
 		.pipe(clean()),
 
-	// remove composer dev dependencies
+	// Remove composer dev dependencies
 	() => composer({'no-dev': true}),
 
-	// copy files into a new directory
+	// Copy files into a new directory
 	() => gulp.src([
 		'code-snippets.php', 'uninstall.php', 'readme.txt', 'php/**/*', 'vendor/**/*',
 		'license.txt', 'css/font/**/*', 'languages/**/*'
 	])
 		.pipe(copy(pkg.name, {})),
 
-	// copy minified scripts and stylesheets, while removing source map references
+	// Copy minified scripts and stylesheets, while removing source map references
 	() => gulp.src('css/min/**/*.css')
-		.pipe(change((content) => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
-		.pipe(gulp.dest(pkg.name + '/css/min')),
+		.pipe(change(content => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
+		.pipe(gulp.dest(`${pkg.name}/css/min`)),
 
 	() => gulp.src('js/min/**/*.js')
-		.pipe(change((content) => content.replace(/\/\/# sourceMappingURL=[\w.-]+\.map\s+$/, '')))
-		.pipe(gulp.dest(pkg.name + '/js/min')),
+		.pipe(change(content => content.replace(/\/\/# sourceMappingURL=[\w.-]+\.map\s+$/, '')))
+		.pipe(gulp.dest(`${pkg.name}/js/min`)),
 
-	// create a zip archive
-	() => gulp.src(pkg.name + '/**/*', {base: '.'})
+	// Create a zip archive
+	() => gulp.src(`${pkg.name}/**/*`, {base: '.'})
 		.pipe(archiver(`${pkg.name}.${pkg.version}.zip`))
 		.pipe(gulp.dest('.')),
 
-	(done) => {
-		// reinstall dev dependencies
+	done => {
+		// Reinstall dev dependencies
 		composer();
 
-		// rename the distribution directory to its proper name
+		// Rename the distribution directory to its proper name
 		fs.rename(pkg.name, 'dist', err => {
 			if (err) throw err;
 			done();
@@ -194,11 +169,11 @@ gulp.task('package', gulp.series(
 	}
 ));
 
-gulp.task('test', gulp.parallel('test-js', 'phpcs'));
+gulp.task('test', gulp.parallel('jslint', 'phpcs'));
 
 gulp.task('default', gulp.series('clean', gulp.parallel('css', 'js', 'i18n')));
 
-gulp.task('watch', gulp.series('default', (done) => {
+gulp.task('watch', gulp.series('default', done => {
 	gulp.watch('css/*.scss', gulp.series('css'));
 	gulp.watch(['js/**/*.js', '!js/min/**/*'], gulp.series('js'));
 	done();

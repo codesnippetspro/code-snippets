@@ -6,23 +6,24 @@ use DateTime;
 use DateTimeZone;
 
 /**
- * A snippet object
+ * A snippet object.
  *
  * @since   2.4.0
  * @package Code_Snippets
  *
- * @property int           $id                      The database ID
- * @property string        $name                    The display name
- * @property string        $desc                    The formatted description
- * @property string        $code                    The executable code
- * @property array         $tags                    An array of the tags
- * @property string        $scope                   The scope name
- * @property int           $priority                Execution priority
- * @property bool          $active                  The active status
- * @property bool          $network                 true if is multisite-wide snippet, false if site-wide
- * @property bool          $shared_network          Whether the snippet is a shared network snippet
+ * @property int           $id                      The database ID.
+ * @property string        $name                    The snippet title.
+ * @property string        $desc                    The formatted description.
+ * @property string        $code                    The executable code.
+ * @property array         $tags                    An array of the tags.
+ * @property string        $scope                   The scope name.
+ * @property int           $priority                Execution priority.
+ * @property bool          $active                  The active status.
+ * @property bool          $network                 true if is multisite-wide snippet, false if site-wide.
+ * @property bool          $shared_network          Whether the snippet is a shared network snippet.
  * @property string        $modified                The date and time when the snippet data was most recently saved to the database.
  *
+ * @property-read string   $display_name            The snippet name if it exists or a placeholder if it does not.
  * @property-read array    $tags_list               The tags in string list format.
  * @property-read string   $scope_icon              The dashicon used to represent the current scope.
  * @property-read string   $scope_name              Human-readable description of the snippet type.
@@ -36,7 +37,7 @@ use DateTimeZone;
 class Snippet {
 
 	/**
-	 * MySQL datetime format (YYYY-MM-DD hh:mm:ss)
+	 * MySQL datetime format (YYYY-MM-DD hh:mm:ss).
 	 */
 	const DATE_FORMAT = 'Y-m-d H:i:s';
 
@@ -196,7 +197,7 @@ class Snippet {
 	 * @return array Single-dimensional array of field names.
 	 */
 	public function get_allowed_fields() {
-		return array_keys( $this->fields )+array_keys( self::$field_aliases );
+		return array_keys( $this->fields ) + array_keys( self::$field_aliases );
 	}
 
 	/**
@@ -411,6 +412,16 @@ class Snippet {
 	}
 
 	/**
+	 * Retrieve the snippet title if set or a placeholder title if not.
+	 *
+	 * @return string
+	 */
+	private function get_display_name() {
+		/* translators: %d: snippet ID */
+		return empty( $this->name ) ? sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $this->id ) : $this->name;
+	}
+
+	/**
 	 * Retrieve the tags in list format
 	 *
 	 * @return string The tags separated by a comma and a space.
@@ -547,7 +558,7 @@ class Snippet {
 			if ( ! $timezone ) {
 				$offset = (float) get_option( 'gmt_offset' );
 				$hours = (int) $offset;
-				$minutes = ( $offset-$hours ) * 60;
+				$minutes = ( $offset - $hours ) * 60;
 
 				$sign = ( $offset < 0 ) ? '-' : '+';
 				$timezone = sprintf( '%s%02d:%02d', $sign, abs( $hours ), abs( $minutes ) );
