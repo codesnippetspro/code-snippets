@@ -17,7 +17,8 @@ module.exports = {
 		'eslint:recommended',
 		'plugin:@typescript-eslint/recommended',
 		'plugin:import/recommended',
-		'plugin:import/typescript'
+		'plugin:import/typescript',
+		'plugin:@wordpress/eslint-plugin/recommended'
 	],
 	settings: {
 		'import/core-modules': ['tinymce']
@@ -50,6 +51,7 @@ module.exports = {
 		'max-lines-per-function': ['error', {skipBlankLines: true, skipComments: true}],
 		'prefer-named-capture-group': 'error',
 		'func-style': ['error', 'expression'],
+		'no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
 
 		'no-ternary': 'off',
 		'no-nested-ternary': 'off',

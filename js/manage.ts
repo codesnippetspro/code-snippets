@@ -1,14 +1,4 @@
-import './globals';
-
-type Snippet = {
-	id?: number
-	name?: string
-	scope?: string
-	active?: boolean
-	network?: boolean
-	shared_network?: boolean
-	priority?: number
-};
+import {Snippet} from './globals';
 
 type SuccessCallback = (response: {success: boolean, data?: unknown}) => void;
 
