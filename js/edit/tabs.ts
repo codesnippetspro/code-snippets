@@ -1,6 +1,4 @@
-import '../globals';
-
-type SnippetType = 'css' | 'js' | 'php' | 'html'
+import {SnippetType} from '../globals';
 
 (editor => {
 	const tabs_wrapper = document.getElementById('snippet-type-tabs');

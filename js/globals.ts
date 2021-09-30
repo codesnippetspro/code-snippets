@@ -22,6 +22,25 @@ export type WordPressUtils = {
 	}
 };
 
+export type ElementorFrontend = {
+	hooks: {
+		addAction: (action: string, callback: (...unknown) => void, priority?: number, context?: unknown) => void
+	}
+};
+
+export type SnippetType = 'css' | 'js' | 'php' | 'html';
+
+export type Snippet = {
+	id?: number
+	name?: string
+	scope?: string
+	active?: boolean
+	network?: boolean
+	shared_network?: boolean
+	priority?: number
+	type?: SnippetType
+};
+
 declare global {
 	interface Window {
 		code_snippets_tags: { allow_spaces: boolean, available_tags: string[] };
@@ -31,8 +50,10 @@ declare global {
 		code_snippets_edit_i18n: Record<string, string>;
 		code_snippets_manage_i18n: Record<string, string>;
 
-		wp: WordPressUtils;
 		pagenow: string;
 		ajaxurl: string;
+		wp: WordPressUtils;
+		jQuery: typeof jQuery;
+		elementorFrontend: ElementorFrontend;
 	}
 }
