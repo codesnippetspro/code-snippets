@@ -36,8 +36,7 @@
         "codemirror": "^5.62.3",
         "codemirror-colorpicker": "^1.9.72",
         "php-parser": "github:glayzzle/php-parser#php8",
-        "prismjs": "^1.24.1",
-        "tag-it": "^2.0.0"
+        "prismjs": "^1.24.1"
     },
     "devDependencies": {
         "@babel/core": "^7.15.5",
@@ -76,7 +75,6 @@
         "gulp-sourcemaps": "^3.0.0",
         "gulp-terser": "^2.0.1",
         "gulp-tslint": "^8.1.4",
-        "gulp-uglify": "^3.0.2",
         "gulp-wp-pot": "^2.5.0",
         "gulp-zip": "^5.1.0",
         "postcss": "^8.3.6",

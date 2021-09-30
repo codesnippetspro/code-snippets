@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import * as tinymce from 'tinymce';
 
 type SourceShortcodeOps = {
