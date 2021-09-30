@@ -19,6 +19,9 @@ module.exports = {
 		'plugin:import/recommended',
 		'plugin:import/typescript'
 	],
+	settings: {
+		'import/core-modules': ['tinymce']
+	},
 	rules: {
 		'quotes': ['error', 'single'],
 		'linebreak-style': ['error', 'unix'],
