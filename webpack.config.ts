@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as webpack from 'webpack';
+import DependencyExtractionWebpackPlugin from '@wordpress/dependency-extraction-webpack-plugin';
 
 const config: webpack.Configuration = {
 	mode: 'production',
@@ -45,7 +46,8 @@ const config: webpack.Configuration = {
 	plugins: [
 		new webpack.DefinePlugin({
 			'process.arch': JSON.stringify('x64')
-		})
+		}),
+		new DependencyExtractionWebpackPlugin({injectPolyfill: true}),
 	]
 };
 
