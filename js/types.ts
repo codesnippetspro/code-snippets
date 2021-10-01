@@ -21,6 +21,12 @@ export interface WordPressUtils {
 	};
 }
 
+export interface ElementorFrontend {
+	hooks: {
+		addAction: (action: string, callback: (...unknown) => void, priority?: number, context?: unknown) => void
+	}
+}
+
 export type SnippetType = 'css' | 'js' | 'php' | 'html';
 
 export interface Snippet {
@@ -39,6 +45,7 @@ declare global {
 		pagenow: string;
 		ajaxurl: string;
 		wp: WordPressUtils;
+		elementorFrontend: ElementorFrontend,
 		code_snippets_tags: { allow_spaces: boolean, available_tags: string[] };
 		code_snippets_editor: CodeEditorInstance;
 		code_snippets_editor_preview: CodeEditorInstance;
