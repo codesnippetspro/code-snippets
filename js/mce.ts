@@ -1,16 +1,16 @@
 import * as tinymce from 'tinymce';
 
-type SourceShortcodeOps = {
-	id: string
-	line_numbers: boolean
-};
+interface SourceShortcodeOps {
+	id: string;
+	line_numbers: boolean;
+}
 
-type ContentShortcodeOps = {
-	id: string
-	php: boolean
-	format: boolean
-	shortcodes: boolean
-};
+interface ContentShortcodeOps {
+	id: string;
+	php: boolean;
+	format: boolean;
+	shortcodes: boolean;
+}
 
 interface Editor extends tinymce.Editor {
 	getLang: (s: string) => string | Record<string, string>;

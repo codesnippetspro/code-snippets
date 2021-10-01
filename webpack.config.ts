@@ -1,6 +1,5 @@
 import * as path from 'path';
 import * as webpack from 'webpack';
-import DependencyExtractionWebpackPlugin from '@wordpress/dependency-extraction-webpack-plugin';
 
 const config: webpack.Configuration = {
 	mode: 'production',
@@ -16,14 +15,15 @@ const config: webpack.Configuration = {
 		path: path.resolve(__dirname),
 		filename: '[name].js',
 	},
+	externalsType: 'window',
 	externals: {
-		codemirror: 'wp.CodeMirror'
+		codemirror: 'wp.CodeMirror',
+		tinymce: 'tinymce',
 	},
 	resolve: {
 		extensions: ['.ts', '.js', '.json'],
 		alias: {
-			'php-parser': path.resolve(__dirname, 'node_modules/php-parser/src/index.js'),
-			'tinymce': false
+			'php-parser': path.resolve(__dirname, 'node_modules/php-parser/src/index.js')
 		}
 	},
 	module: {
@@ -46,8 +46,7 @@ const config: webpack.Configuration = {
 	plugins: [
 		new webpack.DefinePlugin({
 			'process.arch': JSON.stringify('x64')
-		}),
-		new DependencyExtractionWebpackPlugin({injectPolyfill: true}),
+		})
 	]
 };
 
