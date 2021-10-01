@@ -3,12 +3,9 @@
  */
 
 import Parser, {Block, Location, Node} from 'php-parser';
-import './globals';
-import {Position} from 'codemirror';
+import * as CodeMirror from 'codemirror';
 
-const {CodeMirror} = window.wp;
-
-type Annotation = { message: string, severity: string, from: Position, to: Position };
+type Annotation = { message: string, severity: string, from: CodeMirror.Position, to: CodeMirror.Position };
 
 interface Identifier extends Node {
 	name: string;
@@ -142,8 +139,8 @@ class Linter {
 		this.annotations.push({
 			message,
 			severity,
-			from: new CodeMirror.Pos(start.line as number - 1, start.column as number),
-			to: new CodeMirror.Pos(end.line as number - 1, end.column as number)
+			from: CodeMirror.Pos(start.line as number - 1, start.column as number),
+			to: CodeMirror.Pos(end.line as number - 1, end.column as number)
 		});
 	}
 }

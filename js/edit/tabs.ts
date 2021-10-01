@@ -1,4 +1,4 @@
-import {SnippetType} from '../globals';
+import {SnippetType} from '../types';
 
 (editor => {
 	const tabs_wrapper = document.getElementById('snippet-type-tabs');

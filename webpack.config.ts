@@ -17,17 +17,18 @@ const config: webpack.Configuration = {
 		path: path.resolve(__dirname),
 		filename: '[name].js',
 	},
+	externalsType: 'window',
 	externals: {
 		'react': 'React',
 		'react-dom': 'ReactDOM',
-		'codemirror': 'wp.CodeMirror'
+		'codemirror': 'wp.CodeMirror',
+		'tinymce': 'tinymce',
+		'jquery': 'jQuery'
 	},
 	resolve: {
 		extensions: ['.ts', '.tsx', '.js', '.json'],
 		alias: {
-			'php-parser': path.resolve(__dirname, 'node_modules/php-parser/src/index.js'),
-			'tinymce': false,
-			'jQuery': false
+			'php-parser': path.resolve(__dirname, 'node_modules/php-parser/src/index.js')
 		}
 	},
 	module: {

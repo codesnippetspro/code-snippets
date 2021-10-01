@@ -1,7 +1,7 @@
 import '../editor-lib';
 import 'codemirror-colorpicker';
 
-window.code_snippets_editor = (codeEditor => {
+window.code_snippets_editor = (({codeEditor}) => {
 	const save_snippet_cb = () => document.getElementById('save_snippet').click();
 
 	const atts = {
@@ -16,15 +16,14 @@ window.code_snippets_editor = (codeEditor => {
 	}
 
 	return codeEditor.initialize(document.getElementById('snippet_code'), {codemirror: atts});
-})(window.wp.codeEditor);
+})(window.wp);
 
 
-(() => {
-	const dir_control = document.getElementById('snippet-code-direction') as HTMLSelectElement;
-	if (!dir_control) return;
+const dir_control = document.getElementById('snippet-code-direction') as HTMLSelectElement;
 
+if (dir_control) {
 	dir_control.addEventListener('change', () => {
 		window.code_snippets_editor.codemirror.setOption('direction', 'rtl' === dir_control.value ? 'rtl' : 'ltr');
 	});
+}
 
-})();
