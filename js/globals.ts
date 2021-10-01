@@ -1,37 +1,31 @@
 import * as CodeMirror from 'codemirror';
 
-export type EditorOption = {
+export interface EditorOption {
 	name: string
 	type: 'checkbox' | 'number' | 'select'
 	codemirror: keyof CodeMirror.EditorConfiguration
-};
+}
 
-export type CodeEditorInstance = {
+export interface CodeEditorInstance {
 	codemirror: CodeMirror.Editor
 	settings: Record<string, unknown>
-};
+}
 
-export type CodeEditorSettings = {
+export interface CodeEditorSettings {
 	codemirror: CodeMirror.EditorConfiguration
-};
+}
 
-export type WordPressUtils = {
+export interface WordPressUtils {
 	CodeMirror: typeof CodeMirror,
 	codeEditor: {
 		initialize: (textarea: Element, options?: CodeEditorSettings) => CodeEditorInstance
 	}
-};
-
-export type ElementorFrontend = {
-	hooks: {
-		addAction: (action: string, callback: (...unknown) => void, priority?: number, context?: unknown) => void
-	}
-};
+}
 
 export type SnippetType = 'css' | 'js' | 'php' | 'html';
 
-export type Snippet = {
-	id?: number
+export interface Snippet {
+	id?: number;
 	name?: string
 	scope?: string
 	active?: boolean
@@ -39,7 +33,7 @@ export type Snippet = {
 	shared_network?: boolean
 	priority?: number
 	type?: SnippetType
-};
+}
 
 declare global {
 	interface Window {
@@ -53,7 +47,5 @@ declare global {
 		pagenow: string;
 		ajaxurl: string;
 		wp: WordPressUtils;
-		jQuery: typeof jQuery;
-		elementorFrontend: ElementorFrontend;
 	}
 }
