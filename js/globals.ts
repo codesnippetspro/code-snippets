@@ -1,4 +1,5 @@
 import * as CodeMirror from 'codemirror';
+import * as jQuery from 'jquery';
 
 export type EditorOption = {
 	name: string
