@@ -32,7 +32,7 @@ const config: webpack.Configuration = {
 		'tinymce': 'tinymce',
 		'codemirror': ['wp', 'CodeMirror'],
 		...Object.fromEntries(
-			['i18n', 'blocks', 'block-editor', 'components', 'data', 'server-side-render']
+			['api-fetch', 'block-editor', 'blocks', 'components', 'data', 'i18n', 'server-side-render']
 				.map(p => [
 					`@wordpress/${p}`,
 					['wp', p.replace(/-(?<letter>[a-z])/g, (_, letter) => letter.toUpperCase())]
