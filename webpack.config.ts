@@ -1,16 +1,21 @@
 import * as path from 'path';
 import * as webpack from 'webpack';
 
+const entries = [
+	'./manage.ts',
+	'edit/edit',
+	'edit/tags',
+	'settings/settings',
+	'mce',
+	'prism'
+];
+
 const config: webpack.Configuration = {
 	mode: 'production',
-	entry: {
-		manage: './js/manage.ts',
-		edit: './js/edit/edit.ts',
-		tags: './js/edit/tags.ts',
-		settings: './js/settings/settings.ts',
-		mce: './js/mce.ts',
-		prism: './js/prism.ts',
-	},
+	entry: Object.fromEntries(entries.map(entry => [
+		entry.replace(/.+\/(?<file>\w+)$/, '$file'),
+		`./js/${entry}.ts`
+	])),
 	output: {
 		path: path.resolve(__dirname),
 		filename: '[name].js',
