@@ -32,7 +32,7 @@
         "url": "https://github.com/sheabunge/code-snippets/issues"
     },
     "dependencies": {
-        "@jcubic/tagger": "^0.4.0",
+        "@jcubic/tagger": "^0.4.1",
         "codemirror": "^5.63.1",
         "codemirror-colorpicker": "^1.9.72",
         "php-parser": "github:glayzzle/php-parser#php8",
