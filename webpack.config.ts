@@ -24,7 +24,7 @@ const config: webpack.Configuration = {
 	},
 	externalsType: 'window',
 	externals: {
-		codemirror: 'wp.CodeMirror',
+		codemirror: ['wp', 'CodeMirror'],
 		tinymce: 'tinymce',
 	},
 	resolve: {
