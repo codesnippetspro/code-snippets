@@ -16,6 +16,7 @@ use function Code_Snippets\Settings\get_setting;
  * @param array  $extra_atts Pass an array of attributes to override the saved ones.
  */
 function enqueue_code_editor( $type, $extra_atts = [] ) {
+	$plugin = code_snippets();
 
 	$modes = [
 		'css'  => 'text/css',
@@ -40,7 +41,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 
 	// add relevant saved setting values to the default attributes
 	$plugin_settings = Settings\get_settings_values();
-	$setting_fields  = Settings\get_settings_fields();
+	$setting_fields = Settings\get_settings_fields();
 
 	foreach ( $setting_fields['editor'] as $field_id => $field ) {
 		// the 'codemirror' setting field specifies the name of the attribute
@@ -61,6 +62,12 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 		'codemirror' => $atts,
 	] );
 
+	wp_enqueue_script(
+		'code-snippets-code-editor',
+		plugins_url( 'js/min/editor.js', $plugin->file ),
+		[ 'code-editor' ], $plugin->version, true
+	);
+
 	// CodeMirror Theme
 	$theme = get_setting( 'editor', 'theme' );
 
@@ -68,8 +75,8 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
-			plugins_url( "css/min/editor-themes/$theme.css", PLUGIN_FILE ),
-			[ 'code-editor' ], code_snippets()->version
+			plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
+			[ 'code-editor' ], $plugin->version
 		);
 	}
 }
@@ -77,23 +84,25 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 /**
  * Retrieve a list of the available CodeMirror themes.
  *
+ * @param boolean $include_default Whether to include the default theme on the list.
+ *
  * @return array The available themes.
  */
-function get_editor_themes() {
+function get_editor_themes( $include_default = true ) {
 	static $themes = null;
 
 	if ( ! is_null( $themes ) ) {
 		return $themes;
 	}
 
-	$themes     = array( 'default' );
+	$themes = $include_default ? array( 'default' ) : array();
 	$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'css/min/editor-themes/';
 
 	$theme_files = glob( $themes_dir . '*.css' );
 
 	foreach ( $theme_files as $theme ) {
-		$theme    = str_replace( $themes_dir, '', $theme );
-		$theme    = str_replace( '.css', '', $theme );
+		$theme = str_replace( $themes_dir, '', $theme );
+		$theme = str_replace( '.css', '', $theme );
 		$themes[] = $theme;
 	}
 

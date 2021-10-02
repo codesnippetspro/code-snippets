@@ -5,13 +5,20 @@ const config: webpack.Configuration = {
 	mode: 'production',
 	entry: {
 		manage: './js/manage.ts',
-		edit: './js/edit/edit.ts',
+		edit: {
+			import: './js/edit/edit.ts',
+			dependOn: 'editor'
+		},
 		tags: './js/edit/tags.ts',
-		settings: './js/settings/settings.ts',
+		settings: {
+			import: './js/settings/settings.ts',
+			dependOn: 'editor'
+		},
 		mce: './js/mce.ts',
 		prism: './js/prism.ts',
 		blocks: './js/blocks/blocks.tsx',
 		elementor: './js/elementor.ts',
+		editor: './js/editor-lib.ts'
 	},
 	output: {
 		path: path.resolve(__dirname),
@@ -23,12 +30,12 @@ const config: webpack.Configuration = {
 		'react-dom': 'ReactDOM',
 		'jquery': 'jQuery',
 		'tinymce': 'tinymce',
-		'codemirror': 'wp.CodeMirror',
+		'codemirror': ['wp', 'CodeMirror'],
 		...Object.fromEntries(
 			['i18n', 'blocks', 'block-editor', 'components', 'data', 'server-side-render']
 				.map(p => [
 					`@wordpress/${p}`,
-					`wp.${p.replace(/-(?<letter>[a-z])/g, (_, letter) => letter.toUpperCase())}`
+					['wp', p.replace(/-(?<letter>[a-z])/g, (_, letter) => letter.toUpperCase())]
 				])
 		)
 	},
