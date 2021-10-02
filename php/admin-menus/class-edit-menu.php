@@ -619,13 +619,13 @@ class Edit_Menu extends Admin_Menu {
 		wp_enqueue_style(
 			'code-snippets-edit',
 			plugins_url( "css/min/edit$rtl.css", $plugin->file ),
-			[ 'code-editor' ], $plugin->version
+			[ 'code-snippets-code-editor' ], $plugin->version
 		);
 
 		wp_enqueue_script(
 			'code-snippets-edit-menu',
 			plugins_url( 'js/min/edit.js', $plugin->file ),
-			[ 'code-editor' ], $plugin->version, true
+			[ 'code-snippets-code-editor' ], $plugin->version, true
 		);
 
 		wp_localize_script( 'code-snippets-edit-menu', 'code_snippets_edit_i18n', [

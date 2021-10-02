@@ -21,24 +21,21 @@ function enqueue_editor_preview_assets() {
 	enqueue_code_editor( 'php' );
 
 	// Enqueue all editor themes.
-	$themes = get_editor_themes();
+	$themes = get_editor_themes( false );
 
 	foreach ( $themes as $theme ) {
-
-		if ( 'default' !== $theme ) {
-			wp_enqueue_style(
-				'code-snippets-editor-theme-' . $theme,
-				plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
-				array( 'code-editor' ), $plugin->version
-			);
-		}
+		wp_enqueue_style(
+			'code-snippets-editor-theme-' . $theme,
+			plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
+			[ 'code-snippets-code-editor' ], $plugin->version
+		);
 	}
 
 	// Enqueue the menu scripts.
 	wp_enqueue_script(
 		'code-snippets-settings-menu',
 		plugins_url( 'js/min/settings.js', $plugin->file ),
-		[ 'code-editor' ], $plugin->version, true
+		[ 'code-snippets-code-editor' ], $plugin->version, true
 	);
 
 	// Extract the CodeMirror-specific editor settings.

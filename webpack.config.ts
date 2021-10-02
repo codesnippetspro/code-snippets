@@ -5,11 +5,18 @@ const config: webpack.Configuration = {
 	mode: 'production',
 	entry: {
 		manage: './js/manage.ts',
-		edit: './js/edit/edit.ts',
+		edit: {
+			import: './js/edit/edit.ts',
+			dependOn: 'editor'
+		},
 		tags: './js/edit/tags.ts',
-		settings: './js/settings/settings.ts',
+		settings: {
+			import: './js/settings/settings.ts',
+			dependOn: 'editor'
+		},
 		mce: './js/mce.ts',
 		prism: './js/prism.ts',
+		editor: './js/editor-lib.ts'
 	},
 	output: {
 		path: path.resolve(__dirname),
