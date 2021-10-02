@@ -21,7 +21,7 @@ const PLUGIN_VERSION = '3.0.0-beta.1';
 /**
  * The full path to the main file of this plugin.
  *
- * This can later be passed to functions such as
+ * This can later be used with functions such as
  * plugin_dir_path(), plugins_url() and plugin_basename()
  * to retrieve information about plugin paths.
  *

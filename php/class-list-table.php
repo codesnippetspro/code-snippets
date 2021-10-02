@@ -4,7 +4,6 @@ namespace Code_Snippets;
 
 use function Code_Snippets\Settings\get_setting;
 use WP_List_Table;
-use wpdb;
 
 /**
  * Contains the class for handling the snippets table
@@ -48,7 +47,7 @@ class List_Table extends WP_List_Table {
 	protected $order_by;
 
 	/**
-	 * Direction to use when ordering thhe snippets list. Either 'asc' or 'desc'.
+	 * Direction to use when ordering the snippets list. Either 'asc' or 'desc'.
 	 *
 	 * @var string
 	 */
@@ -93,7 +92,7 @@ class List_Table extends WP_List_Table {
 			add_filter( 'code_snippets/list_table/column_description', $filter );
 		}
 
-		/* Setup the class */
+		/* Set up the class */
 		parent::__construct( array(
 			'ajax'     => true,
 			'plural'   => 'snippets',
@@ -232,7 +231,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @param Snippet $snippet Snippet object.
 	 *
-	 * @return string HTML code for activation switch.
+	 * @return string Output for activation switch.
 	 */
 	protected function column_activate( $snippet ) {
 
@@ -545,7 +544,7 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Add filters and extra actions above and below the table
 	 *
-	 * @param string $which Whether the actions are displayed on the table top (true) or bottom (false).
+	 * @param string $which Whether the actions are displayed on the before (true) or after (false) the table.
 	 */
 	public function extra_tablenav( $which ) {
 		global $status;
@@ -902,7 +901,7 @@ class List_Table extends WP_List_Table {
 
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
 
-		/* Redirect POST'ed tag filter to GET */
+		/* Redirect tag filter from POST to GET */
 		if ( isset( $_POST['filter_action'] ) ) {
 			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
 			wp_redirect( esc_url_raw( $location ) );
@@ -1225,19 +1224,19 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Outputs content for a single row of the table
 	 *
-	 * @param Snippet $snippet The snippet being used for the current row.
+	 * @param Snippet $item The snippet being used for the current row.
 	 */
-	public function single_row( $snippet ) {
-		$status = $snippet->active ? 'active' : 'inactive';
+	public function single_row( $item ) {
+		$status = $item->active ? 'active' : 'inactive';
 
-		$row_class = "snippet $status-snippet $snippet->type-snippet $snippet->scope-scope";
+		$row_class = "snippet $status-snippet $item->type-snippet $item->scope-scope";
 
-		if ( $snippet->shared_network ) {
+		if ( $item->shared_network ) {
 			$row_class .= ' shared-network-snippet';
 		}
 
-		printf( '<tr class="%s" data-snippet-scope="%s">', esc_attr( $row_class ), esc_attr( $snippet->scope ) );
-		$this->single_row_columns( $snippet );
+		printf( '<tr class="%s" data-snippet-scope="%s">', esc_attr( $row_class ), esc_attr( $item->scope ) );
+		$this->single_row_columns( $item );
 		echo '</tr>';
 	}
 

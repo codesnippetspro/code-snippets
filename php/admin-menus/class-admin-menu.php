@@ -3,9 +3,9 @@
 namespace Code_Snippets;
 
 /**
- * Base class for a snippets admin menu
+ * Base class for a plugin admin menu.
  */
-class Admin_Menu {
+abstract class Admin_Menu {
 
 	/**
 	 * The snippet page short name
@@ -117,7 +117,7 @@ class Admin_Menu {
 	/**
 	 * Print the status and error messages
 	 */
-	protected function print_messages() {}
+	abstract protected function print_messages();
 
 	/**
 	 * Retrieve a result message based on a posted status
@@ -184,8 +184,7 @@ class Admin_Menu {
 	/**
 	 * Enqueue scripts and stylesheets for the admin page, if necessary
 	 */
-	public function enqueue_assets() {
-	}
+	public abstract function enqueue_assets();
 
 	/**
 	 * Render a list of links to other pages in the page title

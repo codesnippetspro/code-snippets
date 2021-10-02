@@ -6,7 +6,7 @@ import {BlockControls, InspectorControls} from '@wordpress/block-editor';
 import {MenuItem, PanelBody, Placeholder, ToggleControl} from '@wordpress/components';
 import {withSelect} from '@wordpress/data';
 import ServerSideRender from '@wordpress/server-side-render';
-import {Snippet} from '../globals';
+import {Snippet} from '../types';
 import './store';
 
 /**
@@ -141,6 +141,3 @@ registerBlockType('code-snippets/source', {
 		</div>),
 	save: () => null,
 });
-
-
-

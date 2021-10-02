@@ -15,8 +15,6 @@ import cssimport from 'postcss-easy-import';
 import hexrgba from 'postcss-hexrgba';
 import autoprefixer from 'autoprefixer';
 
-import imagemin from 'gulp-imagemin';
-
 import webpack from 'webpack-stream';
 import terser from 'gulp-terser';
 import eslint from 'gulp-eslint';
@@ -83,11 +81,6 @@ gulp.task('js', gulp.series('jslint', () =>
 		.pipe(terser())
 		.pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('js/min'))));
-
-gulp.task('images', () =>
-	gulp.src('screenshots/**/*')
-		.pipe(imagemin())
-		.pipe(gulp.dest('screenshots')));
 
 gulp.task('makepot', () =>
 	gulp.src(src_files.php)

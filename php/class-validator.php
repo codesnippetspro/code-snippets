@@ -179,7 +179,7 @@ class Validator {
 				$this->next();
 			}
 
-			// if we've eaten all of the tokens without discovering a name, then there must be a syntax error, so return appropriately
+			// if we've eaten all the tokens without discovering a name, then there must be a syntax error, so return appropriately
 			if ( $this->end() ) {
 				return array(
 					'message' => __( 'Parse error: syntax error, unexpected end of snippet.', 'code-snippets' ),

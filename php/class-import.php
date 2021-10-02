@@ -51,7 +51,7 @@ class Import {
 	}
 
 	/**
-	 * Imports snippets from a JSON filecl
+	 * Imports snippets from a JSON file.
 	 *
 	 * @return array|bool An array of imported snippet IDs on success, false on failure
 	 */

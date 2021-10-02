@@ -278,8 +278,6 @@ class Edit_Menu extends Admin_Menu {
 			}
 		}
 
-		$was_active = $snippet->active;
-
 		if ( isset( $_POST['save_snippet_execute'] ) && 'single-use' !== $snippet->scope ) {
 			unset( $_POST['save_snippet_execute'] );
 			$_POST['save_snippet'] = 'yes';
@@ -290,7 +288,7 @@ class Edit_Menu extends Admin_Menu {
 		if ( isset( $_POST['save_snippet_execute'] ) ) {
 			$snippet->active = 1;
 		} elseif ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
-			// Shared network snippets cannot be network activated
+			// Shared network snippets cannot be network-activated
 			$snippet->active = 0;
 			unset( $_POST['save_snippet_activate'], $_POST['save_snippet_deactivate'] );
 		} elseif ( isset( $_POST['save_snippet_activate'] ) ) {
@@ -694,7 +692,7 @@ class Edit_Menu extends Admin_Menu {
 	 */
 	public function remove_debug_bar_codemirror() {
 
-		/* Try to discern if we are on the single snippet page as best as we can at this early time */
+		/* Try to discern if we are on the single snippet page as good as we can at this early time */
 		if ( ! is_admin() || 'admin.php' !== $GLOBALS['pagenow'] ) {
 			return;
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
- * HTML code for the Manage Snippets page
+ * HTML for the Manage Snippets page.
  *
  * @package    Code_Snippets
  * @subpackage Views

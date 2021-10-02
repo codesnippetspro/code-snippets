@@ -95,7 +95,7 @@ class Admin {
 
 	/**
 	 * Prevent the snippet currently being saved from being executed
-	 * so it is not run twice (once normally, once when validated)
+	 * so that it is not run twice (once normally, once when validated)
 	 *
 	 * @param bool   $exec       Whether the snippet will be executed.
 	 * @param int    $exec_id    ID of the snippet being executed.

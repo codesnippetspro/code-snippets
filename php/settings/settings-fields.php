@@ -222,6 +222,7 @@ function get_settings_fields() {
 		],
 	];
 
+	/** @noinspection PhpUnnecessaryLocalVariableInspection */
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );
 
 	return $fields;
