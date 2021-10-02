@@ -2,8 +2,6 @@
 
 namespace Code_Snippets;
 
-use wpdb;
-
 /**
  * Functions used to manage the database tables
  *
@@ -46,7 +44,6 @@ class DB {
 	 * Register the snippet table names with WordPress
 	 *
 	 * @since 2.0
-	 * @uses  $wpdb
 	 */
 	public function set_table_vars() {
 		global $wpdb;

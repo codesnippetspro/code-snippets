@@ -5,7 +5,7 @@ namespace Code_Snippets;
 use WP_Screen;
 
 /**
- * This file holds all of the content for the contextual help screens
+ * This file holds all the content for the contextual help screens.
  *
  * @package Code_Snippets
  */

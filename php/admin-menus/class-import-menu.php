@@ -148,4 +148,8 @@ class Import_Menu extends Admin_Menu {
 			echo '</p></div>';
 		}
 	}
+
+	public function enqueue_assets() {
+		// none required.
+	}
 }

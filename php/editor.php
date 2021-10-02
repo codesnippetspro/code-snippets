@@ -91,7 +91,7 @@ function get_editor_themes() {
 
 	$theme_files = glob( $themes_dir . '*.css' );
 
-	foreach ( $theme_files as $i => $theme ) {
+	foreach ( $theme_files as $theme ) {
 		$theme    = str_replace( $themes_dir, '', $theme );
 		$theme    = str_replace( '.css', '', $theme );
 		$themes[] = $theme;

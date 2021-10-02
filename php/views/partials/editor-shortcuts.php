@@ -1,6 +1,6 @@
 <?php
 /**
- * HTML code for the editor shortcuts tooltip
+ * HTML for the editor shortcuts tooltip.
  *
  * @package    Code_Snippets
  * @subpackage Views
@@ -84,4 +84,3 @@ namespace Code_Snippets;
 		</table>
 	</div>
 </div>
-

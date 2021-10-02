@@ -226,4 +226,8 @@ class Settings_Menu extends Admin_Menu {
 		wp_redirect( esc_url_raw( $redirect ) );
 		exit;
 	}
+
+	protected function print_messages() {
+		// none required.
+	}
 }

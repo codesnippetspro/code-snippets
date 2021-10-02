@@ -1,6 +1,6 @@
 <?php
 /**
- * HTML code for the Import Snippets page
+ * HTML for the Import Snippets page.
  *
  * @package    Code_Snippets
  * @subpackage Views

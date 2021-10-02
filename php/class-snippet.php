@@ -85,7 +85,7 @@ class Snippet {
 	}
 
 	/**
-	 * Set all of the snippet fields from an array or object
+	 * Set all the snippet fields from an array or object.
 	 * Invalid fields will be ignored.
 	 *
 	 * @param array|object $fields List of fields.

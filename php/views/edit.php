@@ -3,7 +3,7 @@
 namespace Code_Snippets;
 
 /**
- * HTML code for the Add New/Edit Snippet page
+ * HTML for the Add New/Edit Snippet page.
  *
  * @package    Code_Snippets
  * @subpackage Views

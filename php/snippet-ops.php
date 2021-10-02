@@ -7,8 +7,6 @@
 
 namespace Code_Snippets;
 
-use wpdb;
-
 /**
  * Retrieve a list of snippets from the database.
  *
@@ -124,7 +122,7 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 }
 
 /**
- * Gets all of the used tags from the database.
+ * Gets all used tags from the database.
  *
  * @since 2.0
  */
@@ -285,7 +283,7 @@ function activate_snippets( array $ids, $multisite = null ) {
 	$db = code_snippets()->db;
 	$table = $db->get_table_name( $multisite );
 
-	/* Build a SQL query containing all the provided snippet IDs */
+	/* Build SQL query containing all the provided snippet IDs */
 	$ids_format = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 	$sql = sprintf( 'SELECT id, code FROM %s WHERE id IN (%s);', $table, $ids_format );
 	$rows = $wpdb->get_results( $wpdb->prepare( $sql, $ids ) );
@@ -311,7 +309,7 @@ function activate_snippets( array $ids, $multisite = null ) {
 		return $valid_ids;
 	}
 
-	/* Build a SQL query containing all the valid snippet IDs and activate the valid snippets */
+	/* Build SQL query containing all the valid snippet IDs and activate the valid snippets */
 	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
 	$sql = sprintf( 'UPDATE %s SET active = 1 WHERE id IN (%s);', $table, $ids_format );
 	$wpdb->query( $wpdb->prepare( $sql, $valid_ids ) );
@@ -431,7 +429,7 @@ function save_snippet( Snippet $snippet ) {
 		do_action( 'code_snippets/create_snippet', $snippet->id, $table );
 	} else {
 
-		/* Otherwise update the snippet data */
+		/* Otherwise, update the snippet data */
 		$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) );
 
 		do_action( 'code_snippets/update_snippet', $snippet->id, $table );
@@ -522,6 +520,7 @@ function execute_active_snippets() {
 
 	$db = code_snippets()->db;
 	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
+	/** @noinspection PhpRedundantOptionalArgumentInspection */
 	$data = $db->fetch_active_snippets( $scopes, 'id, code, scope' );
 
 	foreach ( $data as $table_name => $active_snippets ) {

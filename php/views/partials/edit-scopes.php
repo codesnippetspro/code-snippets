@@ -1,6 +1,6 @@
 <?php
 /**
- * HTML code for the snippet scope selector
+ * HTML for the snippet scope selector.
  *
  * @package    Code_Snippets
  * @subpackage Views

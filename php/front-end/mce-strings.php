@@ -40,11 +40,12 @@ foreach ( $snippets as $snippet ) {
 		'%s (%s)',
 		$snippet->display_name,
 		strtoupper( $snippet->type )
-	);;
+	);
 }
 
 asort( $strings['all_snippets'], SORT_STRING | SORT_FLAG_CASE );
 asort( $strings['content_snippets'], SORT_STRING | SORT_FLAG_CASE );
 
 $strings = [ _WP_Editors::$mce_locale => [ 'code_snippets' => $strings ] ];
+/** @noinspection PhpUnusedLocalVariableInspection */
 $strings = 'tinyMCE.addI18n(' . wp_json_encode( $strings ) . ');';
