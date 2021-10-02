@@ -21,9 +21,16 @@ const config: webpack.Configuration = {
 	externals: {
 		'react': 'React',
 		'react-dom': 'ReactDOM',
-		'codemirror': 'wp.CodeMirror',
+		'jquery': 'jQuery',
 		'tinymce': 'tinymce',
-		'jquery': 'jQuery'
+		'codemirror': 'wp.CodeMirror',
+		...Object.fromEntries(
+			['i18n', 'blocks', 'block-editor', 'components', 'data', 'server-side-render']
+				.map(p => [
+					`@wordpress/${p}`,
+					`wp.${p.replace(/-(?<letter>[a-z])/g, (_, letter) => letter.toUpperCase())}`
+				])
+		)
 	},
 	resolve: {
 		extensions: ['.ts', '.tsx', '.js', '.json'],
