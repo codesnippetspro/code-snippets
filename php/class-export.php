@@ -122,7 +122,7 @@ class Export {
 	}
 
 	/**
-	 * Export snippets to a downloadable PHP or CSS file
+	 * Export snippets to a downloadable .php, .html, .js or .css file.
 	 */
 	public function download_snippets() {
 		$first_snippet = new Snippet( $this->snippets_list[0] );
@@ -168,11 +168,12 @@ class Export {
 
 	/**
 	 * Generate a downloadable CSS or JavaScript file from a list of snippets
+	 *
 	 * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+	 *
+	 * @param string $type Snippet type. Supports 'css' or 'js'.
 	 */
-	public function download_css_js_snippets() {
-		$first_snippet = new Snippet( $this->snippets_list[0] );
-		$type = $first_snippet->type;
+	public function download_css_js_snippets( $type ) {
 		$mime_type = 'css' === $type ? 'text/css' : 'text/javascript';
 
 		$this->do_headers( $type, $mime_type );
