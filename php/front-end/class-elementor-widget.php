@@ -27,7 +27,7 @@ abstract class Elementor_Widget extends Widget_Base {
 	 * @return string
 	 */
 	public function get_icon() {
-		return 'fa fa-code';
+		return 'fas fa-cut';
 	}
 }
 
@@ -183,6 +183,14 @@ class Elementor_Content_Widget extends Elementor_Widget {
 	 */
 	public function get_title() {
 		return __( 'Content Snippet', 'code-snippets' );
+	}
+
+	/**
+	 * Return the widget icon.
+	 * @return string
+	 */
+	public function get_icon() {
+		return 'eicon-shortcode';
 	}
 
 	/**
