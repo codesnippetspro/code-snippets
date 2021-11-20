@@ -31,7 +31,7 @@ class Active_Snippets {
 		add_action( 'wp_footer', [ $this, 'load_footer_content' ] );
 
 		if ( code_snippets()->licensing->was_licensed() ) {
-			// respond to requests to print out the active CSS snippets.
+			// respond to a request to print out the active CSS snippets.
 			if ( isset( $_GET['code-snippets-css'] ) ) {
 				$this->print_code( 'css' );
 				exit;

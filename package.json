@@ -40,7 +40,7 @@
         "@wordpress/data": "^6.1.0",
         "@wordpress/i18n": "^4.2.2",
         "@wordpress/server-side-render": "^3.0.2",
-        "codemirror": "^5.62.3",
+        "codemirror": "^5.63.1",
         "codemirror-colorpicker": "^1.9.72",
         "php-parser": "github:glayzzle/php-parser#php8",
         "prismjs": "^1.25.0",

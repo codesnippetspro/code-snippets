@@ -122,7 +122,7 @@ class Export {
 	}
 
 	/**
-	 * Export snippets to a downloadable .php, .html, .js or .css file.
+	 * Export snippets to a downloadable file.
 	 */
 	public function download_snippets() {
 		$first_snippet = new Snippet( $this->snippets_list[0] );
@@ -140,27 +140,35 @@ class Export {
 	 */
 	public function download_php_snippets() {
 		$this->do_headers( 'php', 'text/php' );
-
-		echo "<?php\n";
+		$last_type = '';
 
 		/* Loop through the snippets */
 		foreach ( $this->snippets_list as $snippet ) {
 			$snippet = new Snippet( $snippet );
 
-			if ( 'php' !== $snippet->type ) {
+			if ( 'php' !== $snippet->type && 'html' !== $snippet->type ) {
 				continue;
 			}
 
-			echo "\n/**\n * $snippet->name\n";
+			if ( 'html' === $last_type ) {
+				echo "\n?>\n";
+			}
+
+			if ( ! $last_type || 'html' === $last_type ) {
+				echo "<?php\n";
+			}
+
+			echo "\n/**\n * $snippet->display_name\n";
 
 			if ( ! empty( $snippet->desc ) ) {
-
 				/* Convert description to PhpDoc */
 				$desc = str_replace( "\n", "\n * ", $snippet->desc );
 				echo " *\n * ", wp_strip_all_tags( $desc ), "\n";
 			}
 
-			echo " */\n\n$snippet->code\n";
+			printf(" */\n\n%s\n%s\n", 'html' === $snippet->type ? '?>' : '', trim( $snippet->code ) );
+
+			$last_type = $snippet->type;
 		}
 
 		exit;
