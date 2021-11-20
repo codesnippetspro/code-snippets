@@ -216,14 +216,17 @@ class Admin {
 		$button = esc_html__( 'Update License', 'code-snippets' );
 
 		// if the license is valid, then show an 'expiring soon' warning.
-		if ( 'valid' === $status ) {
+		if ( 'valid' === $status || 'expired' === $status ) {
 			$days_left = round( ( $expiry - time() ) / DAY_IN_SECONDS );
-			/* translators: %d: number of days */
-			$text = _n( 'Your Code Snippets Pro license will expire in %d day. ', 'Your Code Snippets Pro license will expire in %d days. ', $days_left, 'code-snippets' );
-			echo esc_html( sprintf( $text, $days_left ) );
 
-		} else if ( 'expired' === $status ) {
-			esc_html_e( 'Your Code Snippets Pro license has expired. ', 'code-snippets' );
+			if ( 'valid' === $status && $days_left > 0 ) {
+				/* translators: %d: number of days */
+				$text = _n( 'Your Code Snippets Pro license will expire in %d day. ', 'Your Code Snippets Pro license will expire in %d days. ', $days_left, 'code-snippets' );
+				echo esc_html( sprintf( $text, $days_left ) );
+			} else {
+				esc_html_e( 'Your Code Snippets Pro license has expired. ', 'code-snippets' );
+			}
+
 		} else {
 			esc_html_e( 'This site is missing a valid Code Snippets Pro license. ', 'code-snippets' );
 			$button = esc_html__( 'Add License', 'code-snippets' );
