@@ -37,7 +37,7 @@ class Active_Snippets {
 				exit;
 			}
 
-			// respond to requests to print the active JavaScript snippets.
+			// respond to a request to print the active JavaScript snippets.
 			if ( isset( $_GET['code-snippets-js-snippets'] ) && ! is_admin() ) {
 				$this->print_code( 'js' );
 				exit;

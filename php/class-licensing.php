@@ -232,40 +232,42 @@ class Licensing {
 	/**
 	 * Attempt to activate the current license key.
 	 *
-	 * @return string Error message if failure, empty sting on success.
+	 * @return string[] Result code and error message.
 	 */
 	public function activate_license() {
 		$response = $this->do_remote_request( 'activate_license' );
 		$data = self::retrieve_request_data( $response );
 
 		if ( ! $data || false === $data->success ) {
-			return $this->translate_activation_error();
-		} else if ( is_wp_error( $response ) ) {
-			return $response->get_error_message();
+			return [ 'error', $this->translate_activation_error() ];
+		} elseif ( is_wp_error( $response ) ) {
+			return [ 'error', $response->get_error_message() ];
 		}
 
 		$this->set_data( $data );
-		return $this->save_data() ? '' : __( 'An error occurred, please try again.', 'code-snippets' );
+		return $this->save_data() ?
+			[ 'success', __( 'License activated successfully', 'code-snippets' ) ] :
+			[ 'error', __( 'An error occurred, please try again.', 'code-snippets' ) ];
 	}
 
 	/**
 	 * Deactivate the current license and clear the stored data
 	 *
-	 * @return string Error message if failure, empty sting on success.
+	 * @return string[] Error message if failure, empty sting on success.
 	 */
 	public function remove_license() {
 		$response = $this->do_remote_request( 'deactivate_license' );
 		$data = self::retrieve_request_data( $response );
 
-		if ( $data && 'deactivated' === $data->license ) {
-			$this->reset_data();
+		$this->reset_data();
 
-			if ( $this->save_data() ) {
-				return '';
-			}
+		if ( $this->save_data() ) {
+			return $data && 'deactivated' === $data->license ?
+				[ 'warning', __( 'License removed successfully, but the deactivation process failed.', 'code-snippets' ) ] :
+				[ 'success', __( 'License deactivated and removed successfully.', 'code-snippets' ) ];
 		}
 
-		return __( 'An error occurred, please try again.', 'code-snippets' );
+		return [ 'error', 'An error occurred updating the license status.' ];
 	}
 
 	/**

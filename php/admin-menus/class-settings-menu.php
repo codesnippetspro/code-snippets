@@ -97,30 +97,26 @@ class Settings_Menu extends Admin_Menu {
 		// ensure that the previous page was submitted correctly.
 		check_admin_referer( 'code-snippets-options' );
 
-		$action = $message = '';
+		$result = $message = null;
 
 		// if the remove license button was clicked, then handle it.
 		if ( isset( $_POST['code_snippets_remove_license'] ) ) {
 			$licensing = code_snippets()->licensing;
-			$message = $licensing->remove_license();
-			$action = 'removed';
+			list( $result, $message ) = $licensing->remove_license();
 
-		} else if ( isset( $_POST['code_snippets_activate_license'], $_POST['code_snippets_license_key'] ) ) {
+		} elseif ( isset( $_POST['code_snippets_activate_license'], $_POST['code_snippets_license_key'] ) ) {
 			$licensing = code_snippets()->licensing;
 			$licensing->key = $_POST['code_snippets_license_key'];
 
-			$message = $licensing->activate_license();
-			$action = 'activated';
+			list( $result, $message ) = $licensing->activate_license();
 		}
 
-		if ( $action ) {
-			$type = empty( $message ) ? 'success' : 'error';
-
+		if ( $result && $message ) {
 			add_settings_error(
 				'code-snippets-settings-notices',
-				'license_' . $type,
-				empty( $message ) ? __( 'License updated successfully', 'code-snippets' ) : $message,
-				$type
+				'license_' . $result,
+				$message,
+				$result
 			);
 
 			set_transient( 'settings_errors', get_settings_errors(), 30 );
