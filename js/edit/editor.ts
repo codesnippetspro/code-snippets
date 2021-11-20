@@ -3,10 +3,12 @@ import '../editor-lib';
 window.code_snippets_editor = (({codeEditor}) => {
 	const editor = codeEditor.initialize(document.getElementById('snippet_code'));
 
+	const extraKeys = editor.codemirror.getOption('extraKeys');
 	const controlKey = window.navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl';
 	const save_snippet_cb = () => document.getElementById('save_snippet').click();
 
 	editor.codemirror.setOption('extraKeys', {
+		...'object' === typeof extraKeys ? extraKeys : {},
 		[`${controlKey}-S`]: save_snippet_cb,
 		[`${controlKey}-Enter`]: save_snippet_cb,
 	});
