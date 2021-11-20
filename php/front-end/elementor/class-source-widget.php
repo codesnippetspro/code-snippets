@@ -112,12 +112,18 @@ class Elementor_Source_Widget extends Elementor_Widget {
 		] );
 
 		$this->add_control( 'snippet_id', [
-			'label'       => __( 'Snippet', 'code-snippets' ),
+			'label'       => esc_html__( 'Snippet', 'code-snippets' ),
 			'type'        => 'code-snippets-select2',
 			'options'     => $this->build_snippet_options(),
 			'default'     => 0,
 			'show_label'  => false,
 			'label_block' => true,
+		] );
+
+		$this->add_control( 'line_numbers', [
+			'label'        => esc_html__( 'Line Numbers', 'code-snippets' ),
+			'type'         => Controls_Manager::SWITCHER,
+			'default'      => false,
 		] );
 
 		$this->end_controls_section();
