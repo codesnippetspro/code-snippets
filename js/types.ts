@@ -12,12 +12,20 @@ export interface CodeEditorInstance {
 }
 
 export interface CodeEditorSettings {
-	codemirror: EditorConfiguration;
+	codemirror: EditorConfiguration
+	csslint: Record<string, unknown>
+	htmlhint: Record<string, unknown>
+	jshint: Record<string, unknown>
+	onTabNext: () => void
+	onTabPrevious: () => void
+	onChangeLintingErrors: () => void
+	onUpdateErrorNotice: () => void
 }
 
 export interface WordPressUtils {
 	codeEditor: {
-		initialize: (textarea: Element, options?: CodeEditorSettings) => CodeEditorInstance
+		initialize: (textarea: Element, options?: Partial<CodeEditorSettings>) => CodeEditorInstance,
+		defaultSettings: CodeEditorSettings
 	};
 }
 

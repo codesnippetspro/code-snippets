@@ -4,6 +4,7 @@ window.code_snippets_editor = (({codeEditor}) => {
 	const save_snippet_cb = () => document.getElementById('save_snippet').click();
 
 	const atts = {
+		...codeEditor.defaultSettings.codemirror,
 		viewportMargin: Infinity,
 		extraKeys: window.navigator.platform.match('Mac') ?
 			{'Cmd-Enter': save_snippet_cb, 'Cmd-S': save_snippet_cb} :
