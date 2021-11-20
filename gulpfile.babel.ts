@@ -164,10 +164,10 @@ gulp.task('package', gulp.series(
 
 gulp.task('test', gulp.parallel('jslint', 'phpcs'));
 
-gulp.task('default', gulp.series('clean', gulp.parallel('css', 'js', 'i18n')));
+gulp.task('default', gulp.series('clean', gulp.parallel('css', 'js', 'i18n', 'vendor')));
 
 gulp.task('watch', gulp.series('default', done => {
-	gulp.watch('css/*.scss', gulp.series('css'));
-	gulp.watch(['js/**/*.js', '!js/min/**/*'], gulp.series('js'));
+	gulp.watch('css/**/*.scss', gulp.series('css'));
+	gulp.watch(src_files.js, gulp.series('js'));
 	done();
 }));

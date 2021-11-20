@@ -1,4 +1,3 @@
-
 const page = document.querySelector('.wrap');
 const tabs_wrapper = document.getElementById('settings-sections-tabs');
 const tabs = tabs_wrapper.querySelectorAll('.nav-tab');
