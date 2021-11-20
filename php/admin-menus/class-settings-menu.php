@@ -132,7 +132,7 @@ class Settings_Menu extends Admin_Menu {
 		Settings\enqueue_editor_preview_assets();
 
 		wp_enqueue_style(
-			'code-snippets-edit',
+			'code-snippets-settings',
 			plugins_url( 'css/min/settings.css', $plugin->file ),
 			[], $plugin->version
 		);

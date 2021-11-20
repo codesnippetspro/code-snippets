@@ -2,22 +2,22 @@ import '../editor-lib';
 import 'codemirror-colorpicker';
 
 window.code_snippets_editor = (({codeEditor}) => {
+	const editor = codeEditor.initialize(document.getElementById('snippet_code'));
+
+	const controlKey = window.navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl';
 	const save_snippet_cb = () => document.getElementById('save_snippet').click();
 
-	const atts = {
-		viewportMargin: Infinity,
-		extraKeys: window.navigator.platform.match('Mac') ?
-			{'Cmd-Enter': save_snippet_cb, 'Cmd-S': save_snippet_cb} :
-			{'Ctrl-Enter': save_snippet_cb, 'Ctrl-S': save_snippet_cb}
-	};
+	editor.codemirror.setOption('extraKeys', {
+		[`${controlKey}-S`]: save_snippet_cb,
+		[`${controlKey}-Enter`]: save_snippet_cb,
+	});
 
-	if (window.navigator.platform.match('Mac')) {
-		document.querySelector('.editor-help-text').className += ' platform-mac';
-	}
-
-	return codeEditor.initialize(document.getElementById('snippet_code'), {codemirror: atts});
+	return editor;
 })(window.wp);
 
+if (window.navigator.platform.match('Mac')) {
+	document.querySelector('.editor-help-text').className += ' platform-mac';
+}
 
 const dir_control = document.getElementById('snippet-code-direction') as HTMLSelectElement;
 
@@ -26,4 +26,3 @@ if (dir_control) {
 		window.code_snippets_editor.codemirror.setOption('direction', 'rtl' === dir_control.value ? 'rtl' : 'ltr');
 	});
 }
-

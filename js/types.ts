@@ -8,16 +8,24 @@ export interface EditorOption {
 
 export interface CodeEditorInstance {
 	codemirror: Editor;
-	settings: Record<string, unknown>;
+	settings: CodeEditorSettings;
 }
 
 export interface CodeEditorSettings {
 	codemirror: EditorConfiguration;
+	csslint: Record<string, unknown>;
+	htmlhint: Record<string, unknown>;
+	jshint: Record<string, unknown>;
+	onTabNext: () => void;
+	onTabPrevious: () => void;
+	onChangeLintingErrors: () => void;
+	onUpdateErrorNotice: () => void;
 }
 
 export interface WordPressUtils {
 	codeEditor: {
-		initialize: (textarea: Element, options?: CodeEditorSettings) => CodeEditorInstance
+		initialize: (textarea: Element, options?: Partial<CodeEditorSettings>) => CodeEditorInstance;
+		defaultSettings: CodeEditorSettings;
 	};
 }
 
@@ -30,14 +38,14 @@ export interface ElementorFrontend {
 export type SnippetType = 'css' | 'js' | 'php' | 'html';
 
 export interface Snippet {
-	id?: number;
-	name?: string;
-	scope?: string;
-	active?: boolean;
-	network?: boolean;
-	shared_network?: boolean;
-	priority?: number;
-	type?: SnippetType;
+	id: number;
+	name: string;
+	scope: string;
+	active: boolean;
+	network: boolean;
+	shared_network: boolean;
+	priority: number;
+	type: SnippetType;
 }
 
 declare global {

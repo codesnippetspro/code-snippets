@@ -1,6 +1,6 @@
 import {Snippet} from './types';
 
-type SuccessCallback = (response: {success: boolean, data?: unknown}) => void;
+type SuccessCallback = (response: { success: boolean, data?: unknown }) => void;
 
 const nonce_input = document.getElementById('code_snippets_ajax_nonce') as HTMLInputElement;
 const nonce = nonce_input.value;
@@ -34,7 +34,7 @@ const send_snippet_request = (query: string, success_callback?: SuccessCallback)
  * @param snippet
  * @param success_callback
  */
-const update_snippet = (field: string, row_element: Element, snippet: Snippet, success_callback?: SuccessCallback) => {
+const update_snippet = (field: string, row_element: Element, snippet: Partial<Snippet>, success_callback?: SuccessCallback) => {
 	const id_column = row_element.querySelector('.column-id');
 
 	if (!id_column || !parseInt(id_column.textContent, 10)) {
@@ -57,7 +57,7 @@ const update_snippet = (field: string, row_element: Element, snippet: Snippet, s
  */
 const update_snippet_priority = (element: HTMLInputElement) => {
 	const row = element.parentElement.parentElement;
-	const snippet: Snippet = {priority: parseFloat(element.value)};
+	const snippet: Partial<Snippet> = {priority: parseFloat(element.value)};
 	update_snippet('priority', row, snippet);
 };
 
@@ -94,7 +94,7 @@ const toggle_snippet_active = (link: HTMLAnchorElement, event: Event) => {
 	event.preventDefault();
 
 	const activating = 'inactive-snippet' === match[0];
-	const snippet = {active: activating} as Snippet;
+	const snippet: Partial<Snippet> = {active: activating};
 
 	update_snippet('active', row, snippet, response => {
 		const button = row.querySelector('.snippet-activation-switch') as HTMLAnchorElement;
