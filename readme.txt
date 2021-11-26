@@ -44,7 +44,7 @@ Code Snippets can be used in these different languages thanks to the following t
 * German – [Mario Siegmann](https://web-alltag.de/), [Joerg Knoerchen](https://www.sensorgrafie.de/), [David Decker](https://deckerweb.de) and [Andreas](https://profiles.wordpress.org/perryzelda/)
 * Greek – [Konstantinos Megas](https://profiles.wordpress.org/nextdoorpanda/) and [Toni Bishop from Jrop](https://www.jrop.com/)
 * Indonesian – [Jordan Silaen from ChameleonJohn.com](https://www.chameleonjohn.com/)
-* Italian – [Luisa Ravelli](https://profiles.wordpress.org/darkavenger/) and [ElectricFeet](https://profiles.wordpress.org/electricfeet/)
+* Italian – [Usman Wagan](https://coupontoaster.com/), [Luisa Ravelli](https://profiles.wordpress.org/darkavenger/) and [ElectricFeet](https://profiles.wordpress.org/electricfeet/)
 * Japanese – [mt8](https://mt8.biz/), [Takakazu Nagaya](https://profiles.wordpress.org/tanagaya/), [Naoko Takano](https://naoko.blog/) and [melvas](https://profiles.wordpress.org/melvas/)
 * Persian – [Mohammad Novintanon](http://mnovintan.ir/)
 * Russian – [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html), [Yui](https://profiles.wordpress.org/fierevere/), [Denis Yanchevskiy](https://denisco.pro/) and [krioteh](https://profiles.wordpress.org/krioteh/)
