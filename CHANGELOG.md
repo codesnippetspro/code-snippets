@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.14.3 (10 Dec 2021)
+* Fixed: Potential security issue outputting snippets-safe-mode query variable value as-is. Thanks to Krzysztof Zając for reporting.
+
 ## 2.14.2 (9 Sep 2021)
 * Fixed: Prevent network snippets table from being created on single-site installs.
 * Added translations:

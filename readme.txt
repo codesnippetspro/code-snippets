@@ -4,8 +4,8 @@ Donate link: https://sheabunge.com/donate
 Tags: snippets, functions, code, php, multisite
 License: MIT
 License URI: license.txt
-Stable tag: 2.14.2
-Tested up to: 5.8.1
+Stable tag: 2.14.3
+Tested up to: 5.8.2
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -121,6 +121,9 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 2.14.3 (10 Dec 2021) =
+* Fixed: Potential security issue outputting snippets-safe-mode query variable value as-is. Thanks to Krzysztof Zając for reporting.
 
 = 2.14.2 (9 Sep 2021) =
 * Fixed: Prevent network snippets table from being created on single-site installs.
