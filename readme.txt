@@ -4,8 +4,13 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
+<<<<<<< HEAD
 Stable tag: 3.0.0-beta.1
 Tested up to: 5.8
+=======
+Stable tag: 2.14.3
+Tested up to: 5.8.2
+>>>>>>> master
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -166,9 +171,19 @@ __New in Pro__
 * Added: Elementor widget for displaying content snippets.
 * Added: Elementor widget for displaying snippet source code.
 
-= 2.14.2 (unreleased) =
-* Prevent network snippets table from being created on single-site installs.
-* Added Spanish translation by [Ibidem Group](https://www.ibidemgroup.com).
+= 2.14.3 (10 Dec 2021) =
+* Fixed: Potential security issue outputting snippets-safe-mode query variable value as-is. Thanks to Krzysztof Zając for reporting.
+
+= 2.14.2 (9 Sep 2021) =
+* Fixed: Prevent network snippets table from being created on single-site installs.
+* Added translations:
+    - Spanish by [Ibidem Group](https://www.ibidemgroup.com)
+    - Urdu by [Samuel Badree](https://mobilemall.pk/)
+    - Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
+* Added: Support for `:class` syntax to the code validator.
+* Added: PHP8 support to the code linter.
+* Added: Color picker feature to the code editor.
+* Added: Failsafe to prevent multiple versions of Code Snippets from running simultaneously.
 
 = 2.14.1 (10 Mar 2021) =
 * Added: Czech translation by [Lukáš Tesař](https://github.com/atomicf4ll).
@@ -288,6 +303,9 @@ __New in Pro__
 **[The full changelog is available on GitHub](https://github.com/sheabunge/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
+
+= 2.14.2 =
+New color picker and code validator improvements.
 
 = 2.14.0 =
 Security update, last modified dates, and other improvements
