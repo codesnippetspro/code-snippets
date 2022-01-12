@@ -1,37 +1,34 @@
 'use strict';
 
+import autoprefixer from 'autoprefixer';
+import babelify from 'babelify';
+import browserify from 'browserify';
+import cssnano from 'cssnano';
 import fs from 'fs';
 import gulp from 'gulp';
-import sourcemaps from 'gulp-sourcemaps';
-import flatten from 'gulp-flatten';
-import rename from 'gulp-rename';
+import archiver from 'gulp-archiver';
+import change from 'gulp-change';
 
 import clean from 'gulp-clean';
 import copy from 'gulp-copy';
-import change from 'gulp-change';
-import archiver from 'gulp-archiver';
-
-import postcss from 'gulp-postcss';
-import precss from 'precss';
-import cssnano from 'cssnano';
-import rtlcss from 'gulp-rtlcss';
-import cssimport from 'postcss-import';
-import autoprefixer from 'autoprefixer';
-
-import imagemin from 'gulp-imagemin';
-
-import babelify from 'babelify';
-import browserify from 'browserify';
-import terser from 'gulp-terser';
 import eslint from 'gulp-eslint';
-import source from 'vinyl-source-stream';
-import buffer from 'vinyl-buffer';
-
-import makepot from 'gulp-wp-pot';
-import gettext from 'gulp-gettext'
+import flatten from 'gulp-flatten';
+import gettext from 'gulp-gettext';
 
 import phpcs from 'gulp-phpcs';
 import phpunit from 'gulp-phpunit';
+
+import postcss from 'gulp-postcss';
+import rename from 'gulp-rename';
+import rtlcss from 'gulp-rtlcss';
+import sourcemaps from 'gulp-sourcemaps';
+import terser from 'gulp-terser';
+
+import makepot from 'gulp-wp-pot';
+import cssimport from 'postcss-import';
+import precss from 'precss';
+import buffer from 'vinyl-buffer';
+import source from 'vinyl-source-stream';
 
 const pkg = require('./package.json');
 
@@ -92,7 +89,7 @@ gulp.task('test-js', () => {
 	return gulp.src(src_files.js)
 		.pipe(eslint(options))
 		.pipe(eslint.format())
-		.pipe(eslint.failAfterError())
+		.pipe(eslint.failAfterError());
 });
 
 function bundlejs(file, babel_config) {
@@ -123,11 +120,6 @@ gulp.task('js', gulp.series('test-js', gulp.parallel(
 		plugins: [['prismjs', {languages: ['php', 'php-extras'], plugins: ['line-highlight', 'line-numbers']}]]
 	})
 )));
-
-gulp.task('images', () =>
-	gulp.src('screenshots/**/*')
-		.pipe(imagemin())
-		.pipe(gulp.dest('screenshots')));
 
 gulp.task('makepot', () =>
 	gulp.src(src_files.php)
