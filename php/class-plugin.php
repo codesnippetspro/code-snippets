@@ -129,7 +129,7 @@ class Plugin {
 	 */
 	public function disable_snippet_execution( $execute_snippets ) {
 
-		if ( isset( $_GET['snippets-safe-mode'] ) && $_GET['snippets-safe-mode'] && $this->current_user_can() ) {
+		if ( isset( $_REQUEST['snippets-safe-mode'] ) && $_REQUEST['snippets-safe-mode'] && $this->current_user_can() ) {
 			return false;
 		}
 
@@ -297,7 +297,7 @@ class Plugin {
 	public function add_safe_mode_query_var( $url ) {
 
 		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
-			return add_query_arg( 'snippets-safe-mode', $_REQUEST['snippets-safe-mode'], $url );
+			return add_query_arg( 'snippets-safe-mode', (bool) $_REQUEST['snippets-safe-mode'], $url );
 		}
 
 		return $url;

@@ -44,12 +44,19 @@
 * Added: Elementor widget for displaying content snippets.
 * Added: Elementor widget for displaying snippet source code.
 
-## 2.14.2 (unreleased)
-* Prevent network snippets table from being created on single-site installs.
+## 2.14.3 (10 Dec 2021)
+* Fixed: Potential security issue outputting snippets-safe-mode query variable value as-is. Thanks to Krzysztof Zając for reporting.
+
+## 2.14.2 (9 Sep 2021)
+* Fixed: Prevent network snippets table from being created on single-site installs.
 * Added translations:
-	- Spanish by [Ibidem Group](https://www.ibidemgroup.com)
-	- Urdu by [Samuel Badree](https://mobilemall.pk/)
-	- Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
+    - Spanish by [Ibidem Group](https://www.ibidemgroup.com)
+    - Urdu by [Samuel Badree](https://mobilemall.pk/)
+    - Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
+* Added: Support for `:class` syntax to the code validator.
+* Added: PHP8 support to the code linter.
+* Added: Color picker feature to the code editor.
+* Added: Failsafe to prevent multiple versions of Code Snippets from running simultaneously.
 
 ## 2.14.1 (10 Mar 2021)
 * Added: Czech translation by [Lukáš Tesař](https://github.com/atomicf4ll).

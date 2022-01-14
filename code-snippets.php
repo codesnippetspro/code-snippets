@@ -11,8 +11,6 @@
  * @license      GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
  * @version      3.0.0-beta.1
  * @link         https://github.com/sheabunge/code-snippets
- *
- * @noinspection PhpDefineCanBeReplacedWithConstInspection
  */
 
 /*
