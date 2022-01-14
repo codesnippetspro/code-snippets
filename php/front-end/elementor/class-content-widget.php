@@ -4,9 +4,16 @@ namespace Code_Snippets;
 
 use Elementor\Control_Select2;
 use Elementor\Controls_Manager;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Group_Control_Text_Shadow;
+use Elementor\Group_Control_Typography;
 
 /**
  * Widget for embedding a content snippet.
+ *
+ * Parts of this class are derivative work of the code from Elementor,
+ * and as such are (C) 2016-2021 Elementor Ltd and licensed under GPLv2 or later.
  *
  * @package Code_Snippets
  */
@@ -92,6 +99,55 @@ class Elementor_Content_Widget extends Elementor_Widget {
 				'default' => false,
 			] );
 		}
+
+		$this->end_controls_section();
+
+		$this->start_controls_section( 'snippet_style', [
+			'label' => esc_html__( 'Snippet', 'code-snippets' ),
+			'tab'   => Controls_Manager::TAB_STYLE,
+		] );
+
+		$this->add_responsive_control( 'snippet_text_align', [
+			'label'     => esc_html__( 'Alignment', 'code-snippets' ),
+			'type'      => Controls_Manager::CHOOSE,
+			'options'   => [
+				'left'    => [
+					'title' => esc_html__( 'Left', 'code-snippets' ),
+					'icon'  => 'eicon-text-align-left',
+				],
+				'center'  => [
+					'title' => esc_html__( 'Center', 'code-snippets' ),
+					'icon'  => 'eicon-text-align-center',
+				],
+				'right'   => [
+					'title' => esc_html__( 'Right', 'code-snippets' ),
+					'icon'  => 'eicon-text-align-right',
+				],
+				'justify' => [
+					'title' => esc_html__( 'Justified', 'code-snippets' ),
+					'icon'  => 'eicon-text-align-justify',
+				],
+			],
+			'selectors' => [ '{{WRAPPER}}' => 'text-align: {{VALUE}};' ],
+		] );
+
+		$this->add_control( 'snippet_text_color', [
+			'label'     => esc_html__( 'Text Color', 'code-snippets' ),
+			'type'      => Controls_Manager::COLOR,
+			'global'    => [ 'default' => Global_Colors::COLOR_PRIMARY, ],
+			'selectors' => [ '{{WRAPPER}}' => 'color: {{VALUE}};', ],
+		] );
+
+		$this->add_group_control( Group_Control_Typography::get_type(), [
+			'name'     => 'typography',
+			'global'   => [ 'default' => Global_Typography::TYPOGRAPHY_PRIMARY ],
+			'selector' => '{{WRAPPER}}',
+		] );
+
+		$this->add_group_control( Group_Control_Text_Shadow::get_type(), [
+			'name'     => 'text_shadow',
+			'selector' => '{{WRAPPER}}',
+		] );
 
 		$this->end_controls_section();
 	}

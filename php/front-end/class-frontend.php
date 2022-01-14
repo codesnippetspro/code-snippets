@@ -151,7 +151,7 @@ class Frontend {
 	public function render_content_shortcode( $atts ) {
 
 		$atts = shortcode_atts(
-			array(
+			[
 				'id'         => 0,
 				'snippet_id' => 0,
 				'network'    => false,
@@ -159,7 +159,7 @@ class Frontend {
 				'format'     => false,
 				'shortcodes' => false,
 				'debug'      => false,
-			),
+			],
 			$atts, self::CONTENT_SHORTCODE
 		);
 
@@ -242,7 +242,7 @@ class Frontend {
 
 		return sprintf(
 			'<pre data-line="%s"><code class="%s">%s</code></pre>',
-			empty( $atts['highlight_lines'] ) ? '' : esc_attr( $atts['highlight_lines'] ),
+			esc_attr( $atts['highlight_lines'] ),
 			$class,
 			esc_html( $snippet->code )
 		);
@@ -258,13 +258,13 @@ class Frontend {
 	public function render_source_shortcode( $atts ) {
 
 		$atts = shortcode_atts(
-			array(
+			[
 				'id'              => 0,
 				'snippet_id'      => 0,
 				'network'         => false,
 				'line_numbers'    => false,
 				'highlight_lines' => '',
-			),
+			],
 			$atts, self::SOURCE_SHORTCODE
 		);
 
