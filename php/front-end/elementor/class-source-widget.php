@@ -129,6 +129,15 @@ class Elementor_Source_Widget extends Elementor_Widget {
 			'default' => false,
 		] );
 
+		$this->add_control( 'word_wrap', [
+			'label'        => esc_html__( 'Word Wrap', 'code-snippets' ),
+			'type'         => Controls_Manager::SWITCHER,
+			'label_on'     => esc_html__( 'On', 'code-snippets' ),
+			'label_off'    => esc_html__( 'Off', 'code-snippets' ),
+			'return_value' => 'word-wrap',
+			'default'      => '',
+		] );
+
 		$this->add_responsive_control( 'height', [
 			'label'      => esc_html__( 'Height', 'code-snippets' ),
 			'type'       => Controls_Manager::SLIDER,
@@ -164,7 +173,8 @@ class Elementor_Source_Widget extends Elementor_Widget {
 		if ( ! isset( $settings['snippet_id'] ) || 0 === intval( $settings['snippet_id'] ) ) {
 			echo '<p>', esc_html__( 'Select a snippet to display', 'code-snippets' ), '</p>';
 		} else {
-			echo code_snippets()->frontend->render_source_shortcode( $settings );
+			$classname = esc_attr( $settings['word_wrap'] );
+			printf( '<div class="%s">%s</div>', $classname, code_snippets()->frontend->render_source_shortcode( $settings ) );
 		}
 	}
 }
