@@ -65,6 +65,7 @@
         "babel-loader": "^8.2.3",
         "babel-plugin-prismjs": "^2.1.0",
         "cssnano": "^5.0.15",
+        "eslint": "^8.6.0",
         "eslint-plugin-import": "^2.25.4",
         "gulp": "^4.0.2",
         "gulp-archiver": "^1.0.0",
