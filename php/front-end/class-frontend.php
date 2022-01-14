@@ -226,16 +226,18 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	private function render_snippet_source( Snippet $snippet, $atts = [] ) {
-		$atts = array_merge( [ 'line_numbers' => false ], $atts );
-
 		if ( ! trim( $snippet->code ) ) {
 			return '';
 		}
 
 		$class = 'language-' . $snippet->type;
 
-		if ( $atts['line_numbers'] ) {
-			$class .= ' line-numbers';
+		$toggles = [ 'line_numbers' ];
+
+		foreach ( $toggles as $toggle ) {
+			if ( isset( $atts[ $toggle ] ) && $atts[ $toggle ] ) {
+				$class .= ' ' . str_replace( '_', '-', $toggle );
+			}
 		}
 
 		return sprintf(

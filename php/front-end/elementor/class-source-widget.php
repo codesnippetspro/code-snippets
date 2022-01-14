@@ -103,6 +103,9 @@ class Elementor_Source_Widget extends Elementor_Widget {
 
 	/**
 	 * Register settings controls.
+	 *
+	 * Parts of this function derivative work of the code from Elementor, and as such are
+	 * (C) 2016-2021 Elementor Ltd and licensed under GPLv2 or later.
 	 */
 	protected function _register_controls() {
 
@@ -121,9 +124,32 @@ class Elementor_Source_Widget extends Elementor_Widget {
 		] );
 
 		$this->add_control( 'line_numbers', [
-			'label'        => esc_html__( 'Line Numbers', 'code-snippets' ),
-			'type'         => Controls_Manager::SWITCHER,
-			'default'      => false,
+			'label'   => esc_html__( 'Line Numbers', 'code-snippets' ),
+			'type'    => Controls_Manager::SWITCHER,
+			'default' => false,
+		] );
+
+		$this->add_responsive_control( 'height', [
+			'label'      => esc_html__( 'Height', 'code-snippets' ),
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'vh', 'em' ],
+			'range'      => [
+				'px' => [ 'min' => 115, 'max' => 1000 ],
+				'em' => [ 'min' => 6, 'max' => 50 ],
+			],
+			'selectors'  => [ '{{WRAPPER}} pre' => 'height: {{SIZE}}{{UNIT}};' ],
+		] );
+
+		$this->add_responsive_control( 'font_size', [
+			'label'      => esc_html__( 'Font Size', 'code-snippets' ),
+			'type'       => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'em', 'rem', 'vw' ],
+			'range'      => [
+				'px' => [ 'min' => 1, 'max' => 200 ],
+				'vw' => [ 'min' => 0.1, 'max' => 10, 'step' => 0.1 ],
+			],
+			'responsive' => true,
+			'selectors'  => [ '{{WRAPPER}} pre, {{WRAPPER}} code, {{WRAPPER}} .line-numbers .line-numbers-rows' => 'font-size: {{SIZE}}{{UNIT}};' ],
 		] );
 
 		$this->end_controls_section();
