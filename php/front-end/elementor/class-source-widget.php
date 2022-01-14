@@ -8,6 +8,9 @@ use Exception;
 /**
  * Widget for embedding the source code of a snippet.
  *
+ * Parts of this class are derivative work of the code from Elementor,
+ * and as such are (C) 2016-2021 Elementor Ltd and licensed under GPLv2 or later.
+ *
  * @package Code_Snippets
  */
 class Elementor_Source_Widget extends Elementor_Widget {
@@ -103,9 +106,6 @@ class Elementor_Source_Widget extends Elementor_Widget {
 
 	/**
 	 * Register settings controls.
-	 *
-	 * Parts of this function derivative work of the code from Elementor, and as such are
-	 * (C) 2016-2021 Elementor Ltd and licensed under GPLv2 or later.
 	 */
 	protected function _register_controls() {
 
@@ -129,6 +129,13 @@ class Elementor_Source_Widget extends Elementor_Widget {
 			'default' => false,
 		] );
 
+		$this->add_control( 'highlight_lines', [
+			'label'       => esc_html__( 'Highlight Lines', 'code-snippets' ),
+			'type'        => Controls_Manager::TEXT,
+			'default'     => '',
+			'placeholder' => '1, 3-6',
+		] );
+
 		$this->add_control( 'word_wrap', [
 			'label'        => esc_html__( 'Word Wrap', 'code-snippets' ),
 			'type'         => Controls_Manager::SWITCHER,
@@ -147,6 +154,7 @@ class Elementor_Source_Widget extends Elementor_Widget {
 				'em' => [ 'min' => 6, 'max' => 50 ],
 			],
 			'selectors'  => [ '{{WRAPPER}} pre' => 'height: {{SIZE}}{{UNIT}};' ],
+			'separator'  => 'before',
 		] );
 
 		$this->add_responsive_control( 'font_size', [
