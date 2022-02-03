@@ -5,7 +5,7 @@ Tags: snippets, functions, code, php, multisite
 License: MIT
 License URI: license.txt
 Stable tag: 2.14.3
-Tested up to: 5.8.2
+Tested up to: 5.9
 
 An easy, clean and simple way to run code snippets on your site.
 
