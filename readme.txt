@@ -115,10 +115,7 @@ Or, for another example, if you were viewing a page on the front-end of your sit
 Code Snippets v2 is designed to be used with PHP Function Snippets, which are not intended to be inserted as content, but instead persistently on your site as if they were part of a plugin or your theme's functions.php file.
 >>>>>>> v3
 
-Code Snippets v3 will bring a new type of snippet, Content Snippets, which are designed to be included in the content of a post or page. Stay tuned for the release!
-
 = How can I recover my site if it is crashed by a buggy snippet? =
-
 You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: https://help.codesnippets.pro/article/12-safe-mode.
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
