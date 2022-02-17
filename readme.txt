@@ -80,10 +80,38 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 
 A full list of our Frequently Asked Questions can be found at [help.codesnippets.pro](https://help.codesnippets.pro/collection/3-faq).
 
+= How can I recover my site if it is crashed by a buggy snippet? (method two) =
+You can enable safe mode on a per-page basis by appending `&snippets-safe-mode=1` to end of the current page's URL. While safe mode is active, all snippets will not execute, allowing you to login to your site and deactivate any snippets that are causing issues.
+
+For example, to see the WordPress admin area in safe mode, you would change the URL from this:
+
+	https://yoursiteurl.com/wp-admin/admin.php?page=snippets
+
+… to this:
+
+	https://yoursiteurl.com/wp-admin/admin.php?page=snippets&snippets-safe-mode=1
+
+= How can I recover my site if it is crashed by a buggy snippet? (method two) =
+You can enable safe mode on a per-page basis by appending `&snippets-safe-mode=1` to end of the current page's URL. While safe mode is active, all snippets will not execute, allowing you to login to your site and deactivate any snippets that are causing issues.
+
+For example, to see the WordPress admin area in safe mode, you would change the URL from this:
+
+	https://yoursiteurl.com/wp-admin/admin.php?page=snippets
+
+… to this:
+
+	https://yoursiteurl.com/wp-admin/admin.php?page=snippets&snippets-safe-mode=1
+
+Or, for another example, if you were viewing a page on the front-end of your site, you could change a URL like this:
+
+	https://yoursiteurl.com/about-us/
+
+… to this:
+
+	https://yoursiteurl.com/about-us/?snippets-safe-mode=1
+
 = How do I insert snippets into the post text editor? =
 Code Snippets v2 is designed to be used with PHP Function Snippets, which are not intended to be inserted as content, but instead persistently on your site as if they were part of a plugin or your theme's functions.php file.
-
-Code Snippets v3 will bring a new type of snippet, Content Snippets, which are designed to be included in the content of a post or page. Stay tuned for the release!
 
 = How can I recover my site if it is crashed by a buggy snippet? =
 
