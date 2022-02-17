@@ -80,41 +80,10 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 
 A full list of our Frequently Asked Questions can be found at [help.codesnippets.pro](https://help.codesnippets.pro/collection/3-faq).
 
-= How can I recover my site if it is crashed by a buggy snippet? (method two) =
-You can enable safe mode on a per-page basis by appending `&snippets-safe-mode=1` to end of the current page's URL. While safe mode is active, all snippets will not execute, allowing you to login to your site and deactivate any snippets that are causing issues.
-
-For example, to see the WordPress admin area in safe mode, you would change the URL from this:
-
-	https://yoursiteurl.com/wp-admin/admin.php?page=snippets
-
-… to this:
-
-	https://yoursiteurl.com/wp-admin/admin.php?page=snippets&snippets-safe-mode=1
-
-= How can I recover my site if it is crashed by a buggy snippet? (method two) =
-You can enable safe mode on a per-page basis by appending `&snippets-safe-mode=1` to end of the current page's URL. While safe mode is active, all snippets will not execute, allowing you to login to your site and deactivate any snippets that are causing issues.
-
-For example, to see the WordPress admin area in safe mode, you would change the URL from this:
-
-	https://yoursiteurl.com/wp-admin/admin.php?page=snippets
-
-… to this:
-
-	https://yoursiteurl.com/wp-admin/admin.php?page=snippets&snippets-safe-mode=1
-
-Or, for another example, if you were viewing a page on the front-end of your site, you could change a URL like this:
-
-	https://yoursiteurl.com/about-us/
-
-… to this:
-
-	https://yoursiteurl.com/about-us/?snippets-safe-mode=1
-
 = How do I insert snippets into the post text editor? =
 Code Snippets v2 is designed to be used with PHP Function Snippets, which are not intended to be inserted as content, but instead persistently on your site as if they were part of a plugin or your theme's functions.php file.
 
 = How can I recover my site if it is crashed by a buggy snippet? =
-
 You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: https://help.codesnippets.pro/article/12-safe-mode.
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
