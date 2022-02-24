@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1a855e1b66894920b900896ee14830a3",
+    "content-hash": "7557568104b995fe62884cb2cb970154",
     "packages": [
         {
             "name": "composer/installers",
@@ -156,6 +156,43 @@
                 }
             ],
             "time": "2021-09-13T08:19:44+00:00"
+        },
+        {
+            "name": "dplugins/snippets-guru",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dplugins/snippets-guru.git",
+                "reference": "2a9495e65bf4799b6bc6a00b7696586d197439eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dplugins/snippets-guru/zipball/2a9495e65bf4799b6bc6a00b7696586d197439eb",
+                "reference": "2a9495e65bf4799b6bc6a00b7696586d197439eb",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dplugins\\SnippetsGuru\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "dplugins",
+                    "email": "mail@snippets.guru"
+                }
+            ],
+            "description": "The cloud features for Code Snippets and Script Organizer plugin",
+            "homepage": "https://github.com/dplugins/snippets-guru",
+            "support": {
+                "source": "https://github.com/dplugins/snippets-guru/tree/v1.0.0"
+            },
+            "time": "2022-02-24T14:50:09+00:00"
         }
     ],
     "packages-dev": [
@@ -280,5 +317,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }

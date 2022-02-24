@@ -118,7 +118,12 @@ class Manage_Menu extends Admin_Menu {
 
 		/* Initialize the list table class */
 		$this->list_table = new List_Table();
-		$this->list_table->prepare_items();
+		
+		if (isset( $_GET['type'] ) && 'cloud' === $_GET['type']) {
+			$this->list_table->prepare_cloud_items();
+		} else {
+			$this->list_table->prepare_items();
+		}
 	}
 
 	/**

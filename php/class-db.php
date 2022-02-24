@@ -174,15 +174,17 @@ class DB {
 
 		/* Create the database table */
 		$sql = "CREATE TABLE $table_name (
-				id          BIGINT(20)  NOT NULL AUTO_INCREMENT,
-				name        TINYTEXT    NOT NULL DEFAULT '',
-				description TEXT        NOT NULL DEFAULT '',
-				code        LONGTEXT    NOT NULL DEFAULT '',
-				tags        LONGTEXT    NOT NULL DEFAULT '',
-				scope       VARCHAR(15) NOT NULL DEFAULT 'global',
-				priority    SMALLINT    NOT NULL DEFAULT 10,
-				active      TINYINT(1)  NOT NULL DEFAULT 0,
-				modified    DATETIME    NOT NULL DEFAULT '0000-00-00 00:00:00',
+				id            BIGINT(20)  NOT NULL AUTO_INCREMENT,
+				name          TINYTEXT    NOT NULL DEFAULT '',
+				description   TEXT        NOT NULL DEFAULT '',
+				code          LONGTEXT    NOT NULL DEFAULT '',
+				tags          LONGTEXT    NOT NULL DEFAULT '',
+				scope         VARCHAR(15) NOT NULL DEFAULT 'global',
+				priority      SMALLINT    NOT NULL DEFAULT 10,
+				active        TINYINT(1)  NOT NULL DEFAULT 0,
+				modified      DATETIME    NOT NULL DEFAULT '0000-00-00 00:00:00',
+				cloud_uuid    VARCHAR(73) NOT NULL DEFAULT '',
+				cloud_config  LONGTEXT    NOT NULL DEFAULT '',
 				PRIMARY KEY  (id),
 				KEY scope (scope),
 				KEY active (active)

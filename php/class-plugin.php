@@ -300,10 +300,12 @@ class Plugin {
 	 * @return array
 	 */
 	public function get_types() {
-		return array(
+		$types = array(
 			'php'  => __( 'Functions', 'code-snippets' ),
 			'html' => __( 'Content', 'code-snippets' ),
 		);
+
+		return apply_filters( 'code_snippets/plugins/types', $types );
 	}
 
 	/**
@@ -318,6 +320,8 @@ class Plugin {
 			'php'  => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
 			'html' => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
 		);
+
+		$descriptions = apply_filters('code_snippets/plugins/type_descriptions', $descriptions);
 
 		return isset( $descriptions[ $type ] ) ? $descriptions[ $type ] : '';
 	}

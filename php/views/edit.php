@@ -89,7 +89,7 @@ if ( ! $snippet->id ) {
 			</label>
 		</h2>
 
-		<?php if ( ! $snippet->id ) { ?>
+		<?php if ( ! $snippet->id && ! isset( $_REQUEST['preview'] ) ) { ?>
 			<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
 				<?php
 
