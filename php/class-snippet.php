@@ -623,11 +623,13 @@ class Snippet {
 		}
 
 		if (is_array($configs)) {
+			$field = $this->fields['cloud_config'];
+
 			foreach ($configs as $key => $value) {
-				$this->fields['cloud_config'][$key] = $value;
+				$field[$key] = $value;
 			}
 
-			return $this->fields['cloud_config'];
+			return $field;
 		}
 	}
 }
