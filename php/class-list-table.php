@@ -1091,11 +1091,11 @@ class List_Table extends WP_List_Table {
 			$args['isPublic'] = $isPublic;
 		}
 
-		$resp = wp_cache_get( 'cloud_results_' . wp_hash( serialize( $args ) ), 'code_snippets' );
+		$resp = get_transient( 'code_snippets_cloud_results_' . wp_hash( serialize( $args ) ) );
 
 		if (!$resp) {
 			$resp = ApiSnippet::getInstance()->gets($args);
-			wp_cache_set( 'cloud_results_' . wp_hash( serialize( $args ) ), $resp, 'code_snippets', 10 );
+			set_transient( 'code_snippets_cloud_results_' . wp_hash( serialize( $args ) ), $resp, 10 );
 		}
 
 		$resources = [];
@@ -1103,11 +1103,11 @@ class List_Table extends WP_List_Table {
 		foreach ($resp->{'hydra:member'} as $v) {
 			$cloud_uuid = sprintf('%s:%s', $v->uuid, $v->blobs[0]->uuid);
 
-			$local_snippet = wp_cache_get( "cloud_local_pair_{$cloud_uuid}", 'code_snippets' );
+			$local_snippet = get_transient( "code_snippets_cloud_local_pair_{$cloud_uuid}" );
 
 			if (!$local_snippet) {
 				$local_snippet = get_snippet_by($cloud_uuid, 'cloud_uuid');
-				wp_cache_set("cloud_local_pair_{$cloud_uuid}", $local_snippet, 'code_snippets', 30 );
+				set_transient("code_snippets_cloud_local_pair_{$cloud_uuid}", $local_snippet, 10 );
 			}
 
 			$resources[] = new Snippet([
