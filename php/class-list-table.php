@@ -1094,7 +1094,7 @@ class List_Table extends WP_List_Table {
 		$resp = wp_cache_get( 'cloud_results_' . wp_hash( serialize( $args ) ), 'code_snippets' );
 
 		if (!$resp) {
-			$resp = ApiSnippet::getInstance()->list($args);
+			$resp = ApiSnippet::getInstance()->gets($args);
 			wp_cache_set( 'cloud_results_' . wp_hash( serialize( $args ) ), $resp, 'code_snippets', 10 );
 		}
 
@@ -1386,6 +1386,8 @@ class List_Table extends WP_List_Table {
 
 			/* translators: %s: snippet title */
 			$snippet->name = sprintf( __( '%s [CLONE]', 'code-snippets' ), $snippet->name );
+
+			$snippet = apply_filters('code_snippets/list_table/cloned_snippet', $snippet);
 
 			save_snippet( $snippet );
 		}
