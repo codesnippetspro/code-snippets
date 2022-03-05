@@ -1094,7 +1094,7 @@ class List_Table extends WP_List_Table {
 		$resp = get_transient( 'code_snippets_cloud_results_' . wp_hash( serialize( $args ) ) );
 
 		if (!$resp) {
-			$resp = ApiSnippet::getInstance()->gets($args);
+			$resp = ApiSnippet::instance()->gets($args);
 			set_transient( 'code_snippets_cloud_results_' . wp_hash( serialize( $args ) ), $resp, 10 );
 		}
 

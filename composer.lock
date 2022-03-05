@@ -159,16 +159,16 @@
         },
         {
             "name": "dplugins/snippets-guru",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dplugins/snippets-guru.git",
-                "reference": "9973ba466d75c589c0e2a5633969e855baf7d36c"
+                "reference": "1b033eb9f6e62360167949fcbdceb9ac66c002a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dplugins/snippets-guru/zipball/9973ba466d75c589c0e2a5633969e855baf7d36c",
-                "reference": "9973ba466d75c589c0e2a5633969e855baf7d36c",
+                "url": "https://api.github.com/repos/dplugins/snippets-guru/zipball/1b033eb9f6e62360167949fcbdceb9ac66c002a6",
+                "reference": "1b033eb9f6e62360167949fcbdceb9ac66c002a6",
                 "shasum": ""
             },
             "type": "library",
@@ -190,9 +190,9 @@
             "description": "The cloud features for Code Snippets and Script Organizer plugin",
             "homepage": "https://github.com/dplugins/snippets-guru",
             "support": {
-                "source": "https://github.com/dplugins/snippets-guru/tree/v1.0.1"
+                "source": "https://github.com/dplugins/snippets-guru/tree/v1.0.2"
             },
-            "time": "2022-02-25T13:56:01+00:00"
+            "time": "2022-03-05T15:51:10+00:00"
         }
     ],
     "packages-dev": [
