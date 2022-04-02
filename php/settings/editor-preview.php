@@ -88,6 +88,8 @@ function render_editor_preview() {
 	$settings = get_settings_values();
 	$settings = $settings['editor'];
 
+	$settings['foldOptions'] = array( 'widget' => '...' );
+
 	$indent_unit = absint( $settings['indent_unit'] );
 	$tab_size = absint( $settings['tab_size'] );
 
@@ -97,10 +99,10 @@ function render_editor_preview() {
 	$indent = str_repeat( "\t", $n_tabs ) . str_repeat( ' ', $n_spaces );
 
 	$code = "add_filter( 'admin_footer_text', function ( \$text ) {\n\n" .
-	        $indent . "\$site_name = get_bloginfo( 'name' );\n\n" .
-	        $indent . '$text = "Thank you for visiting $site_name.";' . "\n" .
-	        $indent . 'return $text;' . "\n" .
-	        "} );\n";
+			$indent . "\$site_name = get_bloginfo( 'name' );\n\n" .
+			$indent . '$text = "Thank you for visiting $site_name.";' . "\n" .
+			$indent . 'return $text;' . "\n" .
+			"} );\n";
 
 	echo '<textarea id="code_snippets_editor_preview">', esc_textarea( $code ), '</textarea>';
 }

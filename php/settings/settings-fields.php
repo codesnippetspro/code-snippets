@@ -176,6 +176,14 @@ function get_settings_fields() {
 			'codemirror' => 'lineWrapping',
 		],
 
+		'code_folding' => [
+			'name'       => __( 'Code Folding', 'code-snippets' ),
+			'type'       => 'checkbox',
+			'label'      => __( 'Allow folding functions or other blocks into a single line.', 'code-snippets' ),
+			'default'    => true,
+			'codemirror' => 'foldGutter',
+		],
+		
 		'line_numbers' => [
 			'name'       => __( 'Line Numbers', 'code-snippets' ),
 			'type'       => 'checkbox',

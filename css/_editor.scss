@@ -102,3 +102,10 @@
 .CodeMirror .CodeMirror-linenumber {
 	color: #666;
 }
+
+.CodeMirror-foldmarker {
+	color: inherit;
+	margin-left: .25em;
+	margin-right: .25em;
+	font-weight: bold;
+}

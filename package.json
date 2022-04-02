@@ -32,6 +32,7 @@
         "url": "https://github.com/sheabunge/code-snippets/issues"
     },
     "dependencies": {
+        "@codemirror/fold": "^0.19.3",
         "@jcubic/tagger": "^0.4.1",
         "codemirror": "^5.65.0",
         "codemirror-colorpicker": "^1.9.80",

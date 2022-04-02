@@ -32,11 +32,15 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 	$default_atts = [
 		'mode'          => $modes[ $type ],
 		'matchBrackets' => true,
-		'extraKeys'     => [ 'Alt-F' => 'findPersistent', 'Ctrl-Space' => 'autocomplete' ],
-		'gutters'       => [ 'CodeMirror-lint-markers' ],
+		'extraKeys'     => [ 
+							'Alt-F' => 'findPersistent',
+							'Ctrl-Space' => 'autocomplete',
+						],
+		'gutters'       => [ 'CodeMirror-lint-markers', 'CodeMirror-foldgutter'],
 		'lint'          => 'css' === $type || 'php' === $type,
 		'direction'     => 'ltr',
 		'colorpicker'   => [ 'mode' => 'edit' ],
+		'foldOptions' 	=> [ 'widget' => '...' ],
 	];
 
 	// add relevant saved setting values to the default attributes
