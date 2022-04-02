@@ -35,6 +35,9 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 		'extraKeys'     => [ 
 							'Alt-F' => 'findPersistent',
 							'Ctrl-Space' => 'autocomplete',
+							'Ctrl-/' => 'toggleComment',
+							'Alt-Up' => 'swapLineUp',
+							'Alt-Down' => 'swapLineDown',
 						],
 		'gutters'       => [ 'CodeMirror-lint-markers', 'CodeMirror-foldgutter'],
 		'lint'          => 'css' === $type || 'php' === $type,
