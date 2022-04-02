@@ -31,6 +31,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 
 	$default_atts = [
 		'mode'          => $modes[ $type ],
+		'inputStyle'    => 'textarea',
 		'matchBrackets' => true,
 		'extraKeys'     => [ 
 							'Alt-F' => 'findPersistent',

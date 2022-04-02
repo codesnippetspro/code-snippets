@@ -215,6 +215,20 @@ function get_settings_fields() {
 			'default'    => true,
 			'codemirror' => 'styleActiveLine',
 		],
+		'keymap' => [
+			'name'       => __( 'Keymap', 'code-snippets' ),
+			'type'       => 'select',
+			'desc'       => __( 'The keymap to use in the editor.', 'code-snippets' ),
+			'default'    => 'default',
+			'options'    => [
+				'default' => __( 'Default', 'code-snippets' ),
+				'vim'     => __( 'Vim', 'code-snippets' ),
+				'emacs'   => __( 'Emacs', 'code-snippets' ),
+				'sublime' => __( 'Sublime Text', 'code-snippets' ),
+			],
+			'codemirror' => 'keyMap',
+		],
+
 	];
 
 	/** @noinspection PhpUnnecessaryLocalVariableInspection */
