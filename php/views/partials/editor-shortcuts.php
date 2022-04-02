@@ -24,10 +24,13 @@ namespace Code_Snippets;
 		'Shift'  => _x( 'Shift', 'keyboard key', 'code-snippets' ),
 		'Option' => _x( 'Option', 'keyboard key', 'code-snippets' ),
 		'Alt'    => _x( 'Alt', 'keyboard key', 'code-snippets' ),
+		'Up'	 => _x( 'Up', 'keyboard key', 'code-snippets' ),
+		'Down'   => _x( 'Down', 'keyboard key', 'code-snippets' ),
 		'F'      => _x( 'F', 'keyboard key', 'code-snippets' ),
 		'G'      => _x( 'G', 'keyboard key', 'code-snippets' ),
 		'R'      => _x( 'R', 'keyboard key', 'code-snippets' ),
 		'S'      => _x( 'S', 'keyboard key', 'code-snippets' ),
+		'/'      => _x( '/', 'keyboard key', 'code-snippets' ),
 	);
 
 	?>
@@ -79,6 +82,27 @@ namespace Code_Snippets;
 				<td><?php esc_html_e( 'Persistent search', 'code-snippets' ); ?></td>
 				<td>
 					<kbd><?php echo esc_html( $keys['Alt'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['F'] ); ?></kbd>
+				</td>
+			</tr>
+			<tr>
+				<td><?php esc_html_e( 'Toggle Comment', 'code-snippets' ); ?></td>
+				<td>
+					<kbd class="pc-key"><?php echo esc_html( $keys['Ctrl'] ); ?></kbd><kbd class="mac-key"><?php
+						echo esc_html( $keys['Cmd'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['/'] ); ?></kbd>
+				</td>
+			</tr>
+			<tr>
+				<td><?php esc_html_e( 'Swap Line Up', 'code-snippets' ); ?></td>
+				<td>
+					<kbd class="pc-key"><?php echo esc_html( $keys['Alt'] ); ?></kbd><kbd class="mac-key"><?php
+						echo esc_html( $keys['Option'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['Up'] ); ?></kbd>
+				</td>
+			</tr>
+			<tr>
+				<td><?php esc_html_e( 'Swap Line Down', 'code-snippets' ); ?></td>
+				<td>
+					<kbd class="pc-key"><?php echo esc_html( $keys['Alt'] ); ?></kbd><kbd class="mac-key"><?php
+						echo esc_html( $keys['Option'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['Down'] ); ?></kbd>
 				</td>
 			</tr>
 		</table>
