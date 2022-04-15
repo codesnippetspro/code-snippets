@@ -87,7 +87,7 @@ Code Snippets v3 will bring a new type of snippet, Content Snippets, which are d
 
 = How can I recover my site if it is crashed by a buggy snippet? =
 
-You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: https://help.codesnippets.pro/article/12-safe-mode.
+You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: <https://help.codesnippets.pro/article/12-safe-mode>.
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.
