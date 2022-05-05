@@ -76,11 +76,7 @@ function code_snippets_get_settings_fields() {
 		'complete_uninstall' => array(
 			'name'    => __( 'Complete Uninstall', 'code-snippets' ),
 			'type'    => 'checkbox',
-			'label'   => sprintf(
-				/* translators: %s: URL for Plugins admin menu */
-				__( 'When the plugin is deleted from the <a href="%s">Plugins</a> menu, also delete all snippets and plugin settings.', 'code-snippets' ),
-				self_admin_url( 'plugins.php' )
-			),
+			'label'   => __( 'When the plugin is deleted from the Plugins menu, also delete all snippets and plugin settings.', 'code-snippets' ),
 			'default' => false,
 		),
 	);

@@ -341,14 +341,13 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	function render_description_editor( Code_Snippet $snippet ) {
 		$settings = code_snippets_get_settings();
 		$settings = $settings['description_editor'];
-		$heading = __( 'Description', 'code-snippets' );
 
 		/* Hack to remove space between heading and editor tabs */
-		if ( ! $settings['media_buttons'] && 'false' !== get_user_option( 'rich_editing' ) ) {
-			$heading = "<div>$heading</div>";
-		}
+		$inline_heading = ! $settings['media_buttons'] && 'false' !== get_user_option( 'rich_editing' );
 
-		echo '<h2><label for="snippet_description">', $heading, '</label></h2>';
+		echo '<h2><label for="snippet_description">', $inline_heading ? '<div>' : '';
+		esc_html_e( 'Description', 'code-snippets' );
+		echo $inline_heading ? '</div>' : '', '</label></h2>';
 
 		remove_editor_styles(); // stop custom theme styling interfering with the editor
 
