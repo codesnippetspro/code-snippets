@@ -73,7 +73,7 @@ class Code_Snippet {
 	}
 
 	/**
-	 * Set all of the snippet fields from an array or object.
+	 * Set all snippet fields from an array or object.
 	 * Invalid fields will be ignored
 	 *
 	 * @param array|object $fields List of fields
@@ -149,8 +149,12 @@ class Code_Snippet {
 			return call_user_func( array( $this, 'get_' . $field ) );
 		}
 
-		if ( ! isset( $this->fields[ $field ] ) ) {
-			throw new Exception( sprintf( 'Snippet field %s does not exist', esc_html( $field ) ) );
+		if ( ! $this->is_allowed_field( $field ) ) {
+			if ( WP_DEBUG ) {
+				trigger_error( 'Trying to access invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
+			}
+
+			return null;
 		}
 
 		return $this->fields[ $field ];
@@ -166,7 +170,6 @@ class Code_Snippet {
 		$field = $this->validate_field_name( $field );
 
 		if ( ! $this->is_allowed_field( $field ) ) {
-
 			if ( WP_DEBUG ) {
 				trigger_error( 'Trying to set invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
 			}
