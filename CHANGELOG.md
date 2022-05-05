@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.14.4 (5 May 2022)
+* Fixed: Prevent array key errors when loading the snippet table with unknown order values.
+
 ## 2.14.3 (10 Dec 2021)
 * Fixed: Potential security issue outputting snippets-safe-mode query variable value as-is. Thanks to Krzysztof Zając for reporting.
 
