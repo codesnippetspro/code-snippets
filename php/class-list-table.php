@@ -1023,19 +1023,17 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 */
 	private function usort_reorder_callback( $a, $b ) {
 
-		// sort by ID by default
-		$orderby = (
-		! empty( $_REQUEST['orderby'] )
-			? $_REQUEST['orderby']
-			: apply_filters( 'code_snippets/list_table/default_orderby', 'priority' )
-		);
+		// sort by priority by default
+		$orderby = isset( $_REQUEST['orderby'] ) ? $_REQUEST['orderby'] : '';
+		if ( ! isset( $a->$orderby, $b->$orderby ) ) {
+			$orderby = apply_filters( 'code_snippets/list_table/default_orderby', 'priority' );
+		}
 
 		// sort ascending by default
-		$order = (
-		! empty( $_REQUEST['order'] )
-			? $_REQUEST['order']
-			: apply_filters( 'code_snippets/list_table/default_order', 'asc' )
-		);
+		$order = isset( $_REQUEST['order'] ) ? strtolower( $_REQUEST['order'] ) : '';
+		if ( $order !== 'asc' && $order !== 'desc' ) {
+			$order = apply_filters( 'code_snippets/list_table/default_order', 'asc' );
+		}
 
 		$result = $this->get_sort_direction( $orderby, $a->$orderby, $b->$orderby );
 

@@ -140,12 +140,17 @@ class Code_Snippet {
 	 * @param string $field The field name
 	 *
 	 * @return mixed The field value
+	 * @throws Exception if the field name does not exist.
 	 */
 	public function __get( $field ) {
 		$field = $this->validate_field_name( $field );
 
 		if ( method_exists( $this, 'get_' . $field ) ) {
 			return call_user_func( array( $this, 'get_' . $field ) );
+		}
+
+		if ( ! isset( $this->fields[ $field ] ) ) {
+			throw new Exception( sprintf( 'Snippet field %s does not exist', esc_html( $field ) ) );
 		}
 
 		return $this->fields[ $field ];
