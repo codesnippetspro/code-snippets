@@ -27,7 +27,8 @@ function enqueue_editor_preview_assets() {
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
 			plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
-			[ 'code-editor' ], $plugin->version
+			[ 'code-editor' ],
+			$plugin->version
 		);
 	}
 
@@ -35,7 +36,9 @@ function enqueue_editor_preview_assets() {
 	wp_enqueue_script(
 		'code-snippets-settings-menu',
 		plugins_url( 'js/min/settings.js', $plugin->file ),
-		[ 'code-snippets-code-editor' ], $plugin->version, true
+		[ 'code-snippets-code-editor' ],
+		$plugin->version,
+		true
 	);
 
 	// Extract the CodeMirror-specific editor settings.

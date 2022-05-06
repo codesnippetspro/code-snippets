@@ -61,8 +61,8 @@ class Plugin {
 	/**
 	 * Class constructor
 	 *
-	 * @param string $version Current plugin version.
-	 * @param string $file    Path to main plugin file.
+	 * =     * @param string $version Current plugin version.
+	 * @param string $file Path to main plugin file.
 	 */
 	public function __construct( $version, $file ) {
 		$this->version = $version;
@@ -137,7 +137,7 @@ class Plugin {
 	}
 
 	/**
-	 * Fetch the admin menu slug for a snippets menu
+	 * Fetch the admin menu slug for a snippets menu.
 	 *
 	 * @param string $menu Name of menu to retrieve the slug for.
 	 *
@@ -163,7 +163,7 @@ class Plugin {
 	}
 
 	/**
-	 * Fetch the URL to a snippets admin menu
+	 * Fetch the URL to a snippets admin menu.
 	 *
 	 * @param string $menu    Name of menu to retrieve the URL to.
 	 * @param string $context URL scheme to use.
@@ -180,7 +180,6 @@ class Plugin {
 			if ( $slug !== $base_slug ) {
 				$url .= '&sub=' . $slug;
 			}
-
 		} else {
 			$url = 'admin.php?page=' . $slug;
 		}
@@ -198,13 +197,14 @@ class Plugin {
 	 * Fetch the admin menu slug for a snippets menu
 	 *
 	 * @param int    $snippet_id Snippet ID.
-	 * @param string $context    The URL scheme to use.
+	 * @param string $context    URL scheme to use.
 	 *
 	 * @return string The URL to the edit snippet page for that snippet.
 	 */
 	public function get_snippet_edit_url( $snippet_id, $context = 'self' ) {
 		return add_query_arg(
-			'id', absint( $snippet_id ),
+			'id',
+			absint( $snippet_id ),
 			$this->get_menu_url( 'edit', $context )
 		);
 	}

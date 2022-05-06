@@ -75,7 +75,8 @@ class Settings_Menu extends Admin_Menu {
 		wp_enqueue_style(
 			'code-snippets-settings',
 			plugins_url( 'css/min/settings.css', $plugin->file ),
-			[], $plugin->version
+			[],
+			$plugin->version
 		);
 	}
 
@@ -121,7 +122,9 @@ class Settings_Menu extends Admin_Menu {
 
 		?>
 		<div class="wrap" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
-			<h1><?php esc_html_e( 'Settings', 'code-snippets' );
+			<h1>
+				<?php
+				esc_html_e( 'Settings', 'code-snippets' );
 
 				if ( code_snippets()->is_compact_menu() ) {
 					$actions = [
@@ -137,7 +140,8 @@ class Settings_Menu extends Admin_Menu {
 					}
 				}
 
-				?></h1>
+				?>
+			</h1>
 
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 
@@ -212,7 +216,7 @@ class Settings_Menu extends Admin_Menu {
 		check_admin_referer( 'code-snippets-options' );
 
 		/* Retrieve the saved options and save them to the database */
-		$value = wp_unslash( $_POST['code_snippets_settings'] );
+		$value = map_deep( wp_unslash( $_POST['code_snippets_settings'] ), 'sanitize_key' );
 		update_site_option( 'code_snippets_settings', $value );
 
 		/* Add an updated notice */

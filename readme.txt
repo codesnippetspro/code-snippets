@@ -5,7 +5,7 @@ Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
 Stable tag: 3.0.0-rc.1
-Tested up to: 5.9
+Tested up to: 5.9.3
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -84,7 +84,7 @@ A full list of our Frequently Asked Questions can be found at [help.codesnippets
 Code Snippets v2 is designed to be used with PHP Function Snippets, which are not intended to be inserted as content, but instead persistently on your site as if they were part of a plugin or your theme's functions.php file.
 
 = How can I recover my site if it is crashed by a buggy snippet? =
-You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: https://help.codesnippets.pro/article/12-safe-mode.
+You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: <https://help.codesnippets.pro/article/12-safe-mode>.
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.
@@ -162,6 +162,9 @@ __New in Pro__
 * Added: Gutenberg editor block for displaying snippet source code.
 * Added: Elementor widget for displaying content snippets.
 * Added: Elementor widget for displaying snippet source code.
+
+= 2.14.4 (5 May 2022) =
+* Fixed: Prevent array key errors when loading the snippet table with unknown order values.
 
 = 2.14.3 (10 Dec 2021) =
 * Fixed: Potential security issue outputting snippets-safe-mode query variable value as-is. Thanks to Krzysztof Zając for reporting.

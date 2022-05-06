@@ -75,7 +75,8 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
 			plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
-			[ 'code-editor' ], $plugin->version
+			[ 'code-editor' ],
+			$plugin->version
 		);
 	}
 }

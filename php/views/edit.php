@@ -29,7 +29,8 @@ if ( ! $snippet->id ) {
 
 ?>
 <div class="wrap">
-	<h1><?php
+	<h1>
+		<?php
 
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
@@ -45,7 +46,8 @@ if ( ! $snippet->id ) {
 			$this->page_title_actions( [ 'manage', 'import', 'settings' ] );
 		}
 
-		?></h1>
+		?>
+	</h1>
 
 	<?php $this->print_messages(); ?>
 
@@ -68,8 +70,9 @@ if ( ! $snippet->id ) {
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php esc_html_e( 'Name', 'code-snippets' ); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name" value="<?php echo esc_attr( $snippet->name ); ?>"
-				       placeholder="<?php esc_attr_e( 'Enter title here', 'code-snippets' ); ?>" />
+				<input id="title" type="text" autocomplete="off" name="snippet_name"
+				       value="<?php echo esc_attr( $snippet->name ); ?>"
+				       placeholder="<?php esc_attr_e( 'Enter title here', 'code-snippets' ); ?>"/>
 			</div>
 		</div>
 
@@ -108,9 +111,8 @@ if ( ! $snippet->id ) {
 
 		<div class="snippet-editor">
 
-			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false" style="font-family: monospace; width: 100%;"><?php
-				echo esc_textarea( $snippet->code );
-				?></textarea>
+			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false"
+			          style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 
 			<?php $this->render_view( 'partials/editor-shortcuts' ); ?>
 		</div>

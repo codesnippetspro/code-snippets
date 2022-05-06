@@ -70,6 +70,8 @@ class Admin {
 	 * @param array $menu_items Current mu menu items.
 	 *
 	 * @return array Modified mu menu items.
+	 * @return array             The modified mu menu items
+	 *
 	 * @since 1.7.1
 	 *
 	 */
@@ -87,7 +89,8 @@ class Admin {
 		wp_enqueue_style(
 			'menu-icon-snippets',
 			plugins_url( 'css/min/menu-icon.css', code_snippets()->file ),
-			array(), code_snippets()->version
+			array(),
+			code_snippets()->version
 		);
 	}
 
@@ -132,19 +135,25 @@ class Admin {
 	public function plugin_settings_link( $links ) {
 		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
 
-		array_unshift( $links, sprintf(
-			$format,
-			code_snippets()->get_menu_url( 'settings' ),
-			__( 'Change plugin settings', 'code-snippets' ),
-			__( 'Settings', 'code-snippets' )
-		) );
+		array_unshift(
+			$links,
+			sprintf(
+				$format,
+				code_snippets()->get_menu_url( 'settings' ),
+				__( 'Change plugin settings', 'code-snippets' ),
+				__( 'Settings', 'code-snippets' )
+			)
+		);
 
-		array_unshift( $links, sprintf(
-			$format,
-			code_snippets()->get_menu_url(),
-			__( 'Manage your existing snippets', 'code-snippets' ),
-			__( 'Snippets', 'code-snippets' )
-		) );
+		array_unshift(
+			$links,
+			sprintf(
+				$format,
+				code_snippets()->get_menu_url(),
+				__( 'Manage your existing snippets', 'code-snippets' ),
+				__( 'Snippets', 'code-snippets' )
+			)
+		);
 
 		return $links;
 	}
@@ -170,23 +179,26 @@ class Admin {
 
 		/* array_merge appends the links to the end */
 
-		return array_merge( $links, array(
-			sprintf( $format,
-				'https://codesnippets.pro/about/',
-				__( 'Find out more about Code Snippets', 'code-snippets' ),
-				__( 'About', 'code-snippets' )
-			),
-			sprintf( $format,
-				'https://codesnippets.pro/support/',
-				__( 'Find out how to get support with Code Snippets', 'code-snippets' ),
-				__( 'Support', 'code-snippets' )
-			),
-			sprintf( '<a href="%1$s" title="%2$s" style="color: #d46f4d;">%3$s</a>',
-				'https://codesnippets.pro/',
-				__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
-				__( 'Upgrade to Pro', 'code-snippets' )
-			),
-		) );
+		return array_merge(
+			$links,
+			array(
+				sprintf( $format,
+					'https://codesnippets.pro/about/',
+					__( 'Find out more about Code Snippets', 'code-snippets' ),
+					__( 'About', 'code-snippets' )
+				),
+				sprintf( $format,
+					'https://codesnippets.pro/support/',
+					__( 'Find out how to get support with Code Snippets', 'code-snippets' ),
+					__( 'Support', 'code-snippets' )
+				),
+				sprintf( '<a href="%1$s" title="%2$s" style="color: #d46f4d;">%3$s</a>',
+					'https://codesnippets.pro/',
+					__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
+					__( 'Upgrade to Pro', 'code-snippets' )
+				),
+			)
+		);
 	}
 
 	/**
@@ -278,7 +290,7 @@ class Admin {
 
 		?>
 
-		<br />
+		<br/>
 
 		<div class="updated code-snippets-survey-message">
 			<p>

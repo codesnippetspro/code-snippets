@@ -77,7 +77,8 @@ function are_settings_unified() {
 function get_settings_values() {
 
 	/* Check if the settings have been cached */
-	if ( $settings = wp_cache_get( 'code_snippets_settings' ) ) {
+	$settings = wp_cache_get( 'code_snippets_settings' );
+	if ( $settings ) {
 		return $settings;
 	}
 
