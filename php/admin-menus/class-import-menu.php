@@ -2,7 +2,7 @@
 
 /**
  * This class handles the import admin menu
- * @since 2.4.0
+ * @since   2.4.0
  * @package Code_Snippets
  */
 class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
@@ -137,7 +137,8 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 					_n(
 						'Successfully imported <strong>%1$d</strong> snippet. <a href="%2$s">Have fun!</a>',
 						'Successfully imported <strong>%1$d</strong> snippets. <a href="%2$s">Have fun!</a>',
-						$imported, 'code-snippets'
+						$imported,
+						'code-snippets'
 					),
 					$imported,
 					code_snippets()->get_menu_url( 'manage' )

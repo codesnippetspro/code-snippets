@@ -34,7 +34,8 @@ function code_snippets_unified_settings() {
 function code_snippets_get_settings() {
 
 	/* Check if the settings have been cached */
-	if ( $settings = wp_cache_get( 'code_snippets_settings' ) ) {
+	$settings = wp_cache_get( 'code_snippets_settings' );
+	if ( $settings ) {
 		return $settings;
 	}
 
@@ -75,7 +76,7 @@ function code_snippets_get_settings() {
  * @param  string $section The ID of the section the setting belongs to
  * @param  string $field The ID of the setting field
  *
- * @return array
+ * @return mixed
  */
 function code_snippets_get_setting( $section, $field ) {
 	$settings = code_snippets_get_settings();

@@ -53,11 +53,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/* Add a snippets per page screen option */
 		$page = $this->get_pagenum();
 
-		add_screen_option( 'per_page', array(
-			'label'   => __( 'Snippets per page', 'code-snippets' ),
-			'default' => 999,
-			'option'  => 'snippets_per_page',
-		) );
+		add_screen_option(
+			'per_page',
+			array(
+				'label'   => __( 'Snippets per page', 'code-snippets' ),
+				'default' => 999,
+				'option'  => 'snippets_per_page',
+			)
+		);
 
 		add_filter( 'default_hidden_columns', array( $this, 'default_hidden_columns' ) );
 
@@ -72,11 +75,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		}
 
 		/* Setup the class */
-		parent::__construct( array(
-			'ajax'     => true,
-			'plural'   => 'snippets',
-			'singular' => 'snippet',
-		) );
+		parent::__construct(
+			array(
+				'ajax'     => true,
+				'plural'   => 'snippets',
+				'singular' => 'snippet',
+			)
+		);
 	}
 
 	/**
@@ -139,7 +144,10 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			return code_snippets()->get_snippet_edit_url( $snippet->id, $network_redirect ? 'network' : 'self' );
 		}
 
-		$query_args = array( 'action' => $action, 'id' => $snippet->id );
+		$query_args = array(
+			'action' => $action,
+			'id'     => $snippet->id,
+		);
 
 		$url = $network_redirect ?
 			add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) :
@@ -186,11 +194,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
 				esc_html__( 'Delete', 'code-snippets' ),
 				$this->get_action_link( 'delete', $snippet ),
-				esc_js( sprintf(
-					'return confirm("%s");',
-					esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
-					esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
-				) )
+				esc_js(
+					sprintf(
+						'return confirm("%s");',
+						esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
+						esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+					)
+				)
 			);
 		}
 
@@ -228,7 +238,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		return sprintf(
 			'<a class="%s" href="%s" title="%s"></a> ',
-			$class, $this->get_action_link( $action, $snippet ), esc_html( $label )
+			$class,
+			$this->get_action_link( $action, $snippet ),
+			esc_html( $label )
 		);
 	}
 
@@ -746,7 +758,6 @@ class Code_Snippets_List_Table extends WP_List_Table {
 				break;
 
 			case 'deactivate-selected':
-
 				foreach ( $ids as $id ) {
 					deactivate_snippet( $id, $this->is_network );
 				}
@@ -814,8 +825,9 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		/** @var wpdb $wpdb */
 		global $snippets, $wpdb;
 		$db = code_snippets()->db;
+		$ids = get_site_option( 'shared_network_snippets', false );
 
-		if ( ! is_multisite() || ! $ids = get_site_option( 'shared_network_snippets', false ) ) {
+		if ( ! is_multisite() || ! $ids ) {
 			return;
 		}
 
@@ -837,11 +849,14 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 			$active_shared_snippet_format = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
-			$shared_snippets = $wpdb->get_results( $wpdb->prepare( "
+			$shared_snippets = $wpdb->get_results(
+				$wpdb->prepare( "
 				SELECT * FROM $db->ms_table
 				WHERE id IN ($active_shared_snippet_format)",
-				$ids
-			), ARRAY_A );
+					$ids
+				),
+				ARRAY_A
+			);
 
 			foreach ( $shared_snippets as $index => $snippet ) {
 				$snippet = new Code_Snippet( $snippet );
@@ -975,11 +990,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		$this->items = $data;
 
 		/* We register our pagination options and calculations */
-		$this->set_pagination_args( array(
-			'total_items' => $total_items, // Calculate the total number of items
-			'per_page'    => $per_page, // Determine how many items to show on a page
-			'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages
-		) );
+		$this->set_pagination_args(
+			array(
+				'total_items' => $total_items, // Calculate the total number of items
+				'per_page'    => $per_page, // Determine how many items to show on a page
+				'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages
+			)
+		);
 	}
 
 	/**

@@ -3,7 +3,7 @@
 /**
  * HTML code for the Import Snippets page
  *
- * @package Code_Snippets
+ * @package    Code_Snippets
  * @subpackage Views
  */
 
@@ -16,8 +16,10 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 
 ?>
 <div class="wrap">
-	<h1><?php _e( 'Import Snippets', 'code-snippets' );
+	<h1>
+		<?php
 
+		_e( 'Import Snippets', 'code-snippets' );
 		$admin = code_snippets()->admin;
 
 		if ( $admin->is_compact_menu() ) {
@@ -40,7 +42,8 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 			}
 		}
 
-	?></h1>
+		?>
+	</h1>
 
 	<div class="narrow">
 
@@ -48,13 +51,14 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 
 		<p><?php
 			printf(
-				/* translators: %s: link to snippets admin menu */
+			/* translators: %s: link to snippets admin menu */
 				__( 'Afterwards, you will need to visit the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' ),
 				code_snippets()->get_menu_url( 'manage' )
 			); ?></p>
 
 
-		<form enctype="multipart/form-data" id="import-upload-form" method="post" class="wp-upload-form" name="code_snippets_import">
+		<form enctype="multipart/form-data" id="import-upload-form" method="post" class="wp-upload-form"
+		      name="code_snippets_import">
 			<?php wp_nonce_field( 'import_code_snippets_file' ); ?>
 
 			<h2><?php _e( 'Duplicate Snippets', 'code-snippets' ); ?></h2>
@@ -96,11 +100,12 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 				<p>
 					<label for="upload"><?php esc_html_e( 'Choose files from your computer:', 'code-snippets' ); ?></label>
 					<?php printf(
-						/* translators: %s: size in bytes */
+					/* translators: %s: size in bytes */
 						esc_html__( '(Maximum size: %s)', 'code-snippets' ),
 						size_format( $max_size_bytes )
 					); ?>
-					<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="application/json,.json,text/xml" multiple="multiple">
+					<input type="file" id="upload" name="code_snippets_import_files[]" size="25"
+					       accept="application/json,.json,text/xml" multiple="multiple">
 					<input type="hidden" name="action" value="save">
 					<input type="hidden" name="max_file_size" value="<?php echo esc_attr( $max_size_bytes ); ?>">
 				</p>

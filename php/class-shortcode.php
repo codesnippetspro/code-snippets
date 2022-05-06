@@ -32,13 +32,16 @@ class Code_Snippets_Shortcode {
 		wp_enqueue_style(
 			'code-snippets-front-end',
 			plugins_url( 'css/min/front-end.css', $plugin->file ),
-			array(), $plugin->version
+			array(),
+			$plugin->version
 		);
 
 		wp_enqueue_script(
 			'code-snippets-front-end',
 			plugins_url( 'js/min/front-end.js', $plugin->file ),
-			array(), $plugin->version, true
+			array(),
+			$plugin->version,
+			true
 		);
 
 		return $posts;
@@ -51,7 +54,8 @@ class Code_Snippets_Shortcode {
 				'id'      => 0,
 				'network' => false,
 			),
-			$atts, 'code_snippet'
+			$atts,
+			'code_snippet'
 		);
 
 		$id = intval( $atts['id'] );

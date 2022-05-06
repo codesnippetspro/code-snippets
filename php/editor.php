@@ -83,7 +83,8 @@ function code_snippets_enqueue_editor() {
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
 			$url . "css/min/editor-themes/$theme.css",
-			array( 'code-snippets-editor' ), $plugin_version
+			array( 'code-snippets-editor' ),
+			$plugin_version
 		);
 	}
 }

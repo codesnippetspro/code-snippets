@@ -15,19 +15,8 @@
 		<!-- allow hooks containing forward slashes -->
 		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
 
-		<!-- I can manage this -->
-		<exclude name="WordPress.WP.I18n.UnorderedPlaceholders" />
-		<exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
-		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
-		<exclude name="Generic.WhiteSpace.ScopeIndent.IncorrectExact" />
+		<!-- necessary for core plugin function -->
 		<exclude name="Squiz.PHP.Eval.Discouraged" />
-		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
-		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound" />
-		<exclude name="PSR2.ControlStructures.SwitchDeclaration.BodyOnNextLineCASE" />
-		<exclude name="WordPress.WhiteSpace.ControlStructureSpacing.BlankLineAfterEnd" />
-		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine" />
-		<exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
-		<exclude name="Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure" />
 
 		<!-- this is useful for certain templates -->
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
@@ -51,6 +40,7 @@
 
 		<!-- this does not always need to happen -->
 		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
+		<exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
 
 		<!-- what's wrong with smart tabs? -->
 		<exclude name="WordPress.WhiteSpace.PrecisionAlignment.Found" />

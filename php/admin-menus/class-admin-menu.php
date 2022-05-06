@@ -111,7 +111,8 @@ class Code_Snippets_Admin_Menu {
 		if ( isset( $messages[ $result ] ) ) {
 			return sprintf(
 				'<div id="message" class="%2$s fade"><p>%1$s</p></div>',
-				$messages[ $result ], $class
+				$messages[ $result ],
+				$class
 			);
 		}
 

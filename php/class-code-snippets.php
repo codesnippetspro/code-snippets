@@ -43,7 +43,7 @@ class Code_Snippets {
 	 * Class constructor
 	 *
 	 * @param string $version The current plugin version
-	 * @param string $file The main plugin file
+	 * @param string $file    The main plugin file
 	 */
 	function __construct( $version, $file ) {
 		$this->version = $version;
@@ -104,7 +104,7 @@ class Code_Snippets {
 	/**
 	 * Fetch the admin menu slug for a snippets menu
 	 *
-	 * @param  string $menu The menu to retrieve the slug for
+	 * @param string $menu The menu to retrieve the slug for
 	 *
 	 * @return string       The menu's slug
 	 */
@@ -130,8 +130,8 @@ class Code_Snippets {
 	/**
 	 * Fetch the URL to a snippets admin menu
 	 *
-	 * @param  string $menu The menu to retrieve the URL to
-	 * @param  string $context The URL scheme to use
+	 * @param string $menu    The menu to retrieve the URL to
+	 * @param string $context The URL scheme to use
 	 *
 	 * @return string          The menu's URL
 	 */
@@ -145,7 +145,6 @@ class Code_Snippets {
 			if ( $slug !== $base_slug ) {
 				$url .= '&sub=' . $slug;
 			}
-
 		} else {
 			$url = 'admin.php?page=' . $slug;
 		}
@@ -163,13 +162,14 @@ class Code_Snippets {
 	 * Fetch the admin menu slug for a snippets menu
 	 *
 	 * @param int    $snippet_id The snippet
-	 * @param string $context The URL scheme to use
+	 * @param string $context    The URL scheme to use
 	 *
 	 * @return string The URL to the edit snippet page for that snippet
 	 */
 	public function get_snippet_edit_url( $snippet_id, $context = 'self' ) {
 		return add_query_arg(
-			'id', absint( $snippet_id ),
+			'id',
+			absint( $snippet_id ),
 			$this->get_menu_url( 'edit', $context )
 		);
 	}
@@ -177,8 +177,8 @@ class Code_Snippets {
 	/**
 	 * Determine whether the current user can perform actions on snippets.
 	 *
-	 * @since 2.8.6
 	 * @return boolean Whether the current user has the required capability
+	 * @since 2.8.6
 	 */
 	public function current_user_can() {
 		return current_user_can( $this->get_cap() );
@@ -209,8 +209,8 @@ class Code_Snippets {
 	 * If multisite, checks if *Enable Administration Menus: Snippets* is active
 	 * under the *Settings > Network Settings* network admin menu
 	 *
-	 * @since 2.0
 	 * @return string The capability required to manage snippets
+	 * @since 2.0
 	 */
 	public function get_cap() {
 

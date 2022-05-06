@@ -58,11 +58,11 @@ class Code_Snippets_Admin {
 	 * Adds a checkbox to the *Settings > Network Settings*
 	 * network admin menu
 	 *
-	 * @since 1.7.1
-	 *
-	 * @param  array $menu_items The current mu menu items
+	 * @param array $menu_items The current mu menu items
 	 *
 	 * @return array             The modified mu menu items
+	 * @since 1.7.1
+	 *
 	 */
 	function mu_menu_items( $menu_items ) {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
@@ -79,7 +79,8 @@ class Code_Snippets_Admin {
 		wp_enqueue_style(
 			'menu-icon-snippets',
 			plugins_url( 'css/min/menu-icon.css', code_snippets()->file ),
-			array(), code_snippets()->version
+			array(),
+			code_snippets()->version
 		);
 	}
 
@@ -87,7 +88,7 @@ class Code_Snippets_Admin {
 	 * Prevent the snippet currently being saved from being executed
 	 * so it is not run twice (once normally, once
 	 *
-	 * @param bool   $exec Whether the snippet will be executed
+	 * @param bool   $exec    Whether the snippet will be executed
 	 * @param int    $exec_id The ID of the snippet being executed
 	 * @param string $table_name
 	 *
@@ -115,19 +116,22 @@ class Code_Snippets_Admin {
 	/**
 	 * Adds a link pointing to the Manage Snippets page
 	 *
-	 * @since 2.0
-	 *
-	 * @param  array $links The existing plugin action links
+	 * @param array $links The existing plugin action links
 	 *
 	 * @return array        The modified plugin action links
+	 * @since 2.0
+	 *
 	 */
 	function plugin_settings_link( $links ) {
-		array_unshift( $links, sprintf(
-			'<a href="%1$s" title="%2$s">%3$s</a>',
-			code_snippets()->get_menu_url(),
-			__( 'Manage your existing snippets', 'code-snippets' ),
-			__( 'Snippets', 'code-snippets' )
-		) );
+		array_unshift(
+			$links,
+			sprintf(
+				'<a href="%1$s" title="%2$s">%3$s</a>',
+				code_snippets()->get_menu_url(),
+				__( 'Manage your existing snippets', 'code-snippets' ),
+				__( 'Snippets', 'code-snippets' )
+			)
+		);
 
 		return $links;
 	}
@@ -135,12 +139,12 @@ class Code_Snippets_Admin {
 	/**
 	 * Adds extra links related to the plugin
 	 *
-	 * @since 2.0
-	 *
-	 * @param  array  $links The existing plugin info links
-	 * @param  string $file The plugin the links are for
+	 * @param array  $links The existing plugin info links
+	 * @param string $file  The plugin the links are for
 	 *
 	 * @return array         The modified plugin info links
+	 * @since 2.0
+	 *
 	 */
 	function plugin_meta_links( $links, $file ) {
 
@@ -153,30 +157,33 @@ class Code_Snippets_Admin {
 
 		/* array_merge appends the links to the end */
 
-		return array_merge( $links, array(
-			sprintf( $format,
-				'https://wordpress.org/plugins/code-snippets/',
-				__( 'Visit the WordPress.org plugin page', 'code-snippets' ),
-				__( 'About', 'code-snippets' )
-			),
-			sprintf( $format,
-				'https://wordpress.org/support/plugin/code-snippets/',
-				__( 'Visit the support forums', 'code-snippets' ),
-				__( 'Support', 'code-snippets' )
-			),
-			sprintf( $format,
-				'https://sheabunge.com/donate/',
-				__( "Support this plugin's development", 'code-snippets' ),
-				__( 'Donate', 'code-snippets' )
-			),
-		) );
+		return array_merge(
+			$links,
+			array(
+				sprintf( $format,
+					'https://wordpress.org/plugins/code-snippets/',
+					__( 'Visit the WordPress.org plugin page', 'code-snippets' ),
+					__( 'About', 'code-snippets' )
+				),
+				sprintf( $format,
+					'https://wordpress.org/support/plugin/code-snippets/',
+					__( 'Visit the support forums', 'code-snippets' ),
+					__( 'Support', 'code-snippets' )
+				),
+				sprintf( $format,
+					'https://sheabunge.com/donate/',
+					__( "Support this plugin's development", 'code-snippets' ),
+					__( 'Donate', 'code-snippets' )
+				),
+			)
+		);
 	}
 
 	/**
 	 * Print a notice inviting people to participate in the Code Snippets Survey
 	 *
-	 * @since  1.9
 	 * @return void
+	 * @since  1.9
 	 */
 	function survey_message() {
 		global $current_user;
@@ -194,7 +201,7 @@ class Code_Snippets_Admin {
 
 		?>
 
-		<br />
+		<br/>
 
 		<div class="updated code-snippets-survey-message">
 			<p>

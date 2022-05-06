@@ -27,7 +27,8 @@ if ( ! $snippet->id ) {
 
 ?>
 <div class="wrap">
-	<h1><?php
+	<h1>
+		<?php
 
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
@@ -62,7 +63,8 @@ if ( ! $snippet->id ) {
 			}
 		}
 
-		?></h1>
+		?>
+	</h1>
 
 	<form method="post" id="snippet-form" action="" style="margin-top: 10px;"
 	      class="<?php echo implode( ' ', $classes ); ?>">

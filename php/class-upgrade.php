@@ -94,7 +94,6 @@ class Code_Snippets_Upgrade {
 				foreach ( $sample_snippets as $sample_snippet ) {
 					save_snippet( $sample_snippet );
 				}
-
 			}
 		} elseif ( version_compare( $prev_version, '2.14.0', '<' ) ) {
 			save_snippet( $sample_snippets['orderby_date'] );
@@ -150,10 +149,13 @@ class Code_Snippets_Upgrade {
 		);
 
 		foreach ( $scopes as $scope_number => $scope_name ) {
-			$wpdb->query( $wpdb->prepare(
-				"UPDATE $table_name SET scope = %s WHERE scope = %d",
-				$scope_name, $scope_number
-			) );
+			$wpdb->query(
+				$wpdb->prepare(
+					"UPDATE $table_name SET scope = %s WHERE scope = %d",
+					$scope_name,
+					$scope_number
+				)
+			);
 		}
 	}
 

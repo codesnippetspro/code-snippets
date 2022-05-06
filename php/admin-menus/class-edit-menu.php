@@ -170,8 +170,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Deactivate on all sites */
 		global $wpdb;
-		if ( $sites = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" ) ) {
-
+		$sites = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
+		if ( $sites ) {
 			foreach ( $sites as $site ) {
 				switch_to_blog( $site );
 				$active_shared_snippets = get_option( 'active_shared_network_snippets' );
@@ -305,10 +305,15 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Display message if a parse error occurred */
 		if ( isset( $code_error ) && $code_error ) {
-			wp_redirect( add_query_arg(
-				array( 'id' => $snippet_id, 'result' => 'code-error' ),
-				code_snippets()->get_menu_url( 'edit' )
-			) );
+			wp_redirect(
+				add_query_arg(
+					array(
+						'id'     => $snippet_id,
+						'result' => 'code-error',
+					),
+					code_snippets()->get_menu_url( 'edit' )
+				)
+			);
 			exit;
 		}
 
@@ -326,7 +331,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		/* Redirect to edit snippet page */
 		$redirect_uri = add_query_arg(
-			array( 'id' => $snippet_id, 'result' => $result ),
+			array(
+				'id'     => $snippet_id,
+				'result' => $result,
+			),
 			code_snippets()->get_menu_url( 'edit' )
 		);
 
@@ -355,12 +363,14 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		wp_editor(
 			$snippet->desc,
 			'description',
-			apply_filters( 'code_snippets/admin/description_editor_settings', array(
-				'textarea_name' => 'snippet_description',
-				'textarea_rows' => $settings['rows'],
-				'teeny'         => ! $settings['use_full_mce'],
-				'media_buttons' => $settings['media_buttons'],
-			) )
+			apply_filters( 'code_snippets/admin/description_editor_settings',
+				array(
+					'textarea_name' => 'snippet_description',
+					'textarea_rows' => $settings['rows'],
+					'teeny'         => ! $settings['use_full_mce'],
+					'media_buttons' => $settings['media_buttons'],
+				)
+			)
 		);
 	}
 
@@ -483,7 +493,10 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		foreach ( $actions as $action => $labels ) {
-			$other_attributes = array( 'title' => $labels[1], 'id' => $action . '_extra' );
+			$other_attributes = array(
+				'title' => $labels[1],
+				'id'    => $action . '_extra',
+			);
 			submit_button( $labels[0], 'secondary small', $action, false, $other_attributes );
 		}
 	}
@@ -523,8 +536,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		$validator = new Code_Snippets_Validator( $snippet->code );
+		$error = $validator->validate();
 
-		if ( $error = $validator->validate() ) {
+		if ( $error ) {
 			return $error;
 		}
 
@@ -557,9 +571,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		$result = sanitize_key( $_REQUEST['result'] );
 
 		if ( 'code-error' === $result ) {
+			$error = isset( $_REQUEST['id'] ) ? $this->get_snippet_error( $_REQUEST['id'] ) : false;
 
-			if ( isset( $_REQUEST['id'] ) && $error = $this->get_snippet_error( $_REQUEST['id'] ) ) {
-
+			if ( $error ) {
 				printf(
 					'<div id="message" class="error fade"><p>%s</p><p><strong>%s</strong></p></div>',
 					/* translators: %d: line of file where error originated */
@@ -606,13 +620,16 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		wp_enqueue_style(
 			'code-snippets-edit',
 			plugins_url( "css/min/edit{$rtl}.css", $plugin->file ),
-			array(), $plugin->version
+			array(),
+			$plugin->version
 		);
 
 		wp_enqueue_script(
 			'code-snippets-edit-menu',
 			plugins_url( 'js/min/edit.js', $plugin->file ),
-			array(), $plugin->version, true
+			array(),
+			$plugin->version,
+			true
 		);
 
 		$atts = code_snippets_get_editor_atts( array(), true );
@@ -625,13 +642,17 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			wp_enqueue_script(
 				'code-snippets-edit-menu-tags',
 				plugins_url( 'js/min/edit-tags.js', $plugin->file ),
-				array(), $plugin->version, true
+				array(),
+				$plugin->version,
+				true
 			);
 
-			$options = apply_filters( 'code_snippets/tag_editor_options', array(
-				'allow_spaces'   => true,
-				'available_tags' => get_all_snippet_tags(),
-			) );
+			$options = apply_filters( 'code_snippets/tag_editor_options',
+				array(
+					'allow_spaces'   => true,
+					'available_tags' => get_all_snippet_tags(),
+				)
+			);
 
 			$inline_script = 'var code_snippets_tags = ' . json_encode( $options ) . ';';
 			wp_add_inline_script( 'code-snippets-edit-menu-tags', $inline_script, 'before' );
@@ -717,14 +738,16 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			$other = null;
 
 			if ( 'delete_snippet' === $action ) {
-
-				$other = sprintf( 'onclick="%s"', esc_js(
-					sprintf(
-						'return confirm("%s");',
-						__( 'You are about to permanently delete this snippet.', 'code-snippets' ) . "\n" .
-						__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+				$other = sprintf(
+					'onclick="%s"',
+					esc_js(
+						sprintf(
+							'return confirm("%s");',
+							__( 'You are about to permanently delete this snippet.', 'code-snippets' ) . "\n" .
+							__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+						)
 					)
-				) );
+				);
 			}
 
 			submit_button( $label, $type . $size, $action, false, $other );
@@ -739,7 +762,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 * Render a keyboard shortcut as HTML.
 	 *
 	 * @param array|string $modifiers Modifier keys. Can be 'Cmd', 'Ctrl', 'Shift', 'Option', 'Alt'.
-	 * @param string $key Keyboard key.
+	 * @param string       $key       Keyboard key.
 	 *
 	 * @return void
 	 */

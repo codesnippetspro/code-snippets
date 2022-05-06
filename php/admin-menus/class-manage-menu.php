@@ -124,13 +124,16 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		wp_enqueue_style(
 			'code-snippets-manage',
 			plugins_url( "css/min/manage$rtl.css", $plugin->file ),
-			array(), $plugin->version
+			array(),
+			$plugin->version
 		);
 
 		wp_enqueue_script(
 			'code-snippets-manage-js',
 			plugins_url( 'js/min/manage.js', $plugin->file ),
-			array(), $plugin->version, true
+			array(),
+			$plugin->version,
+			true
 		);
 
 		wp_localize_script(
@@ -195,10 +198,12 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		check_ajax_referer( 'code_snippets_manage_ajax' );
 
 		if ( ! isset( $_POST['field'], $_POST['snippet'] ) ) {
-			wp_send_json_error( array(
-				'type'    => 'param_error',
-				'message' => 'incomplete request',
-			) );
+			wp_send_json_error(
+				array(
+					'type'    => 'param_error',
+					'message' => 'incomplete request',
+				)
+			);
 		}
 
 		$snippet_data = map_deep( json_decode( stripslashes( $_POST['snippet'] ), true ), 'sanitize_text_field' );
@@ -209,10 +214,12 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		if ( 'priority' === $field ) {
 
 			if ( ! isset( $snippet_data['priority'] ) || ! is_numeric( $snippet_data['priority'] ) ) {
-				wp_send_json_error( array(
-					'type'    => 'param_error',
-					'message' => 'missing snippet priority data',
-				) );
+				wp_send_json_error(
+					array(
+						'type'    => 'param_error',
+						'message' => 'missing snippet priority data',
+					)
+				);
 			}
 
 			global $wpdb;
@@ -228,10 +235,12 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		} elseif ( 'active' === $field ) {
 
 			if ( ! isset( $snippet_data['active'] ) ) {
-				wp_send_json_error( array(
-					'type'    => 'param_error',
-					'message' => 'missing snippet active data',
-				) );
+				wp_send_json_error(
+					array(
+						'type'    => 'param_error',
+						'message' => 'missing snippet active data',
+					)
+				);
 			}
 
 			if ( $snippet->shared_network ) {
@@ -250,10 +259,12 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 				if ( $snippet->active ) {
 					$result = activate_snippet( $snippet->id, $snippet->network );
 					if ( ! $result ) {
-						wp_send_json_error( array(
-							'type'    => 'action_error',
-							'message' => 'error activating snippet',
-						) );
+						wp_send_json_error(
+							array(
+								'type'    => 'action_error',
+								'message' => 'error activating snippet',
+							)
+						);
 					}
 				} else {
 					deactivate_snippet( $snippet->id, $snippet->network );

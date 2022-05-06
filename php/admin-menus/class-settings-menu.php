@@ -2,7 +2,7 @@
 
 /**
  * This class handles the settings admin menu
- * @since 2.4.0
+ * @since   2.4.0
  * @package Code_Snippets
  */
 class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
@@ -65,7 +65,8 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 		wp_enqueue_style(
 			'code-snippets-edit',
 			plugins_url( 'css/min/settings.css', $plugin->file ),
-			array(), $plugin->version
+			array(),
+			$plugin->version
 		);
 
 		code_snippets_editor_settings_preview_assets();
@@ -79,7 +80,8 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Settings', 'code-snippets' );
+			<h1>
+				<?php esc_html_e( 'Settings', 'code-snippets' );
 
 				if ( code_snippets()->admin->is_compact_menu() ) {
 
@@ -99,7 +101,8 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 					);
 				}
 
-				?></h1>
+				?>
+			</h1>
 
 			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
 
