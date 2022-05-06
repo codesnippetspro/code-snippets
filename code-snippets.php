@@ -87,7 +87,6 @@ if ( ! function_exists( 'code_snippets_php_version_notice' ) ) {
 	 */
 	function code_snippets_php_version_notice() {
 		echo '<div class="error fade"><p>';
-
 		echo '<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong><br>';
 
 		/* translators: %s: Update PHP URL */
@@ -98,7 +97,6 @@ if ( ! function_exists( 'code_snippets_php_version_notice' ) ) {
 		);
 
 		echo wp_kses( $text, array( 'a' => array( 'href' => array() ) ) );
-
 		echo '</p></div>';
 
 		deactivate_plugins( plugin_basename( __FILE__ ) );

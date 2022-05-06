@@ -4,8 +4,7 @@ namespace Code_Snippets;
 
 /**
  * This class handles the import admin menu
- *
- * @since 2.4.0
+ * @since   2.4.0
  * @package Code_Snippets
  */
 class Import_Menu extends Admin_Menu {
@@ -59,16 +58,20 @@ class Import_Menu extends Admin_Menu {
 
 		$count = 0;
 		$network = is_network_admin();
-		$uploads = $_FILES['code_snippets_import_files'];
-		$dup_action = isset( $_POST['duplicate_action'] ) ? $_POST['duplicate_action'] : 'ignore';
 		$error = false;
+
+		$upload_files = array_map( 'sanitize_file_name', $_FILES['code_snippets_import_files']['tmp_name'] );
+		$upload_filenames = array_map( 'sanitize_file_name', $_FILES['code_snippets_import_files']['name'] );
+		$upload_mime_types = array_map( 'sanitize_mime_type', $_FILES['code_snippets_import_files']['type'] );
+
+		$dup_action = isset( $_POST['duplicate_action'] ) ? sanitize_key( $_POST['duplicate_action'] ) : 'ignore';
 
 		/* Loop through the uploaded files and import the snippets */
 
-		foreach ( $uploads['tmp_name'] as $i => $import_file ) {
-			$ext = pathinfo( $uploads['name'][ $i ] );
+		foreach ( $upload_files as $i => $import_file ) {
+			$ext = pathinfo( $upload_filenames[ $i ] );
 			$ext = $ext['extension'];
-			$mime_type = $uploads['type'][ $i ];
+			$mime_type = $upload_mime_types[ $i ];
 
 			$import = new Import( $import_file, $network, $dup_action );
 
@@ -132,17 +135,15 @@ class Import_Menu extends Admin_Menu {
 				esc_html_e( 'No snippets were imported.', 'code-snippets' );
 
 			} else {
-
-				printf(
-					/* translators: 1: amount of snippets imported, 2: link to Snippets menu */
-					wp_kses_post( _n(
-						'Successfully imported <strong>%1$d</strong> snippet. <a href="%2$s">Have fun!</a>',
-						'Successfully imported <strong>%1$d</strong> snippets. <a href="%2$s">Have fun!</a>',
-						$imported, 'code-snippets'
-					) ),
+				/* translators: 1: amount of snippets imported, 2: link to Snippets menu */
+				$text = _n(
+					'Successfully imported <strong>%1$d</strong> snippet. <a href="%2$s">Have fun!</a>',
+					'Successfully imported <strong>%1$d</strong> snippets. <a href="%2$s">Have fun!</a>',
 					$imported,
-					esc_url( code_snippets()->get_menu_url( 'manage' ) )
+					'code-snippets'
 				);
+
+				printf( wp_kses_post( $text ), $imported, esc_url( code_snippets()->get_menu_url( 'manage' ) ) );
 			}
 
 			echo '</p></div>';

@@ -31,7 +31,8 @@ $licensed = code_snippets()->licensing->is_licensed();
 
 ?>
 <div class="wrap<?php echo $this->read_only ? ' read-only-snippet' : '' ?>">
-	<h1><?php
+	<h1>
+		<?php
 
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
@@ -47,7 +48,8 @@ $licensed = code_snippets()->licensing->is_licensed();
 			$this->page_title_actions( [ 'manage', 'import', 'settings' ] );
 		}
 
-		?></h1>
+		?>
+	</h1>
 
 	<?php $this->print_messages(); ?>
 
@@ -70,7 +72,8 @@ $licensed = code_snippets()->licensing->is_licensed();
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label for="title" style="display: none;"><?php esc_html_e( 'Name', 'code-snippets' ); ?></label>
-				<input id="title" type="text" autocomplete="off" name="snippet_name"<?php disabled( $this->read_only ); ?>
+				<input id="title" type="text" autocomplete="off"
+				       name="snippet_name"<?php disabled( $this->read_only ); ?>
 				       value="<?php echo esc_attr( $snippet->name ); ?>"
 				       placeholder="<?php esc_attr_e( 'Enter title here', 'code-snippets' ); ?>">
 			</div>
@@ -111,9 +114,8 @@ $licensed = code_snippets()->licensing->is_licensed();
 
 		<div class="snippet-editor">
 
-			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false" style="font-family: monospace; width: 100%;"><?php
-				echo esc_textarea( $snippet->code );
-				?></textarea>
+			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false"
+			          style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 
 			<?php $this->render_view( 'partials/editor-shortcuts' ); ?>
 		</div>

@@ -24,7 +24,7 @@ use DateTimeZone;
  * @property string        $modified                The date and time when the snippet data was most recently saved to the database.
  *
  * @property-read string   $display_name            The snippet name if it exists or a placeholder if it does not.
- * @property-read array    $tags_list               The tags in string list format.
+ * @property-read string   $tags_list               The tags in string list format.
  * @property-read string   $scope_icon              The dashicon used to represent the current scope.
  * @property-read string   $scope_name              Human-readable description of the snippet type.
  * @property-read string   $type                    The type of snippet.
@@ -86,7 +86,7 @@ class Snippet {
 	}
 
 	/**
-	 * Set all the snippet fields from an array or object.
+	 * Set all snippet fields from an array or object.
 	 * Invalid fields will be ignored.
 	 *
 	 * @param array|object $fields List of fields.
@@ -153,13 +153,21 @@ class Snippet {
 	 *
 	 * @param string $field The field name.
 	 *
-	 * @return mixed The field value.
+	 * @return mixed The field value
 	 */
 	public function __get( $field ) {
 		$field = $this->validate_field_name( $field );
 
 		if ( method_exists( $this, 'get_' . $field ) ) {
 			return call_user_func( array( $this, 'get_' . $field ) );
+		}
+
+		if ( ! $this->is_allowed_field( $field ) ) {
+			if ( WP_DEBUG ) {
+				trigger_error( 'Trying to access invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
+			}
+
+			return null;
 		}
 
 		return $this->fields[ $field ];
@@ -175,7 +183,6 @@ class Snippet {
 		$field = $this->validate_field_name( $field );
 
 		if ( ! $this->is_allowed_field( $field ) ) {
-
 			if ( WP_DEBUG ) {
 				trigger_error( 'Trying to set invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
 			}

@@ -40,14 +40,17 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 
 	$searchable_columns = array( 'name', 'description', 'code', 'tags' );
 
-	$args = wp_parse_args( $args, array(
-		'active_only' => false,
-		'limit'       => 0,
-		'orderby'     => '',
-		'order'       => 'desc',
-		'search'      => '',
-		'searchby'    => $searchable_columns,
-	) );
+	$args = wp_parse_args(
+		$args,
+		array(
+			'active_only' => false,
+			'limit'       => 0,
+			'orderby'     => '',
+			'order'       => 'desc',
+			'search'      => '',
+			'searchby'    => $searchable_columns,
+		)
+	);
 
 	$db = code_snippets()->db;
 	$multisite = $db->validate_network_param( $multisite );
@@ -74,7 +77,7 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 
 	/* Build a query containing the specified IDs if there are any */
 	if ( $ids_count > 1 ) {
-		$sql       .= sprintf( ' AND id IN (%s)', implode( ',', array_fill( 0, $ids_count, '%d' ) ) );
+		$sql .= sprintf( ' AND id IN (%s)', implode( ',', array_fill( 0, $ids_count, '%d' ) ) );
 		$sql_params = array_merge( $sql_params, array_values( $ids ) );
 	}
 
@@ -259,9 +262,12 @@ function activate_snippet( $id, $multisite = null ) {
 	$wpdb->update( $table, array( 'active' => '1' ), array( 'id' => $id ), array( '%d' ), array( '%d' ) );
 
 	/* Remove snippet from shared network snippet list if it was Network Activated */
-	if ( $table === $db->ms_table && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
-		$shared_network_snippets = array_diff( $shared_network_snippets, array( $id ) );
-		update_site_option( 'shared_network_snippets', $shared_network_snippets );
+	if ( $table === $db->ms_table ) {
+		$shared_network_snippets = get_site_option( 'shared_network_snippets' );
+		if ( $shared_network_snippets ) {
+			$shared_network_snippets = array_diff( $shared_network_snippets, array( $id ) );
+			update_site_option( 'shared_network_snippets', $shared_network_snippets );
+		}
 	}
 
 	do_action( 'code_snippets/activate_snippet', $id, $multisite );
@@ -285,8 +291,7 @@ function activate_snippets( array $ids, $multisite = null ) {
 
 	/* Build SQL query containing all the provided snippet IDs */
 	$ids_format = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
-	$sql = sprintf( 'SELECT id, code FROM %s WHERE id IN (%s);', $table, $ids_format );
-	$rows = $wpdb->get_results( $wpdb->prepare( $sql, $ids ) );
+	$rows = $wpdb->get_results( $wpdb->prepare( "SELECT id, code FROM $table WHERE id IN ($ids_format)", $ids ) );
 
 	if ( ! $rows ) {
 		return array();
@@ -311,13 +316,15 @@ function activate_snippets( array $ids, $multisite = null ) {
 
 	/* Build SQL query containing all the valid snippet IDs and activate the valid snippets */
 	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
-	$sql = sprintf( 'UPDATE %s SET active = 1 WHERE id IN (%s);', $table, $ids_format );
-	$wpdb->query( $wpdb->prepare( $sql, $valid_ids ) );
+	$wpdb->query( $wpdb->prepare( "UPDATE $table SET active = 1 WHERE id IN ($ids_format)", $valid_ids ) );
 
 	/* Remove snippet from shared network snippet list if it was Network Activated */
-	if ( $table === $db->ms_table && $shared_network_snippets = get_site_option( 'shared_network_snippets', false ) ) {
-		$shared_network_snippets = array_diff( $shared_network_snippets, $valid_ids );
-		update_site_option( 'shared_network_snippets', $shared_network_snippets );
+	if ( $table === $db->ms_table ) {
+		$shared_network_snippets = get_site_option( 'shared_network_snippets' );
+		if ( $shared_network_snippets ) {
+			$shared_network_snippets = array_diff( $shared_network_snippets, $valid_ids );
+			update_site_option( 'shared_network_snippets', $shared_network_snippets );
+		}
 	}
 
 	do_action( 'code_snippets/activate_snippets', $valid_ids, $multisite );
@@ -532,9 +539,8 @@ function execute_active_snippets() {
 
 			// if the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens
 			if ( 'single-use' === $snippet['scope'] ) {
-				if ( $table_name === $db->ms_table && isset( $active_shared_ids ) &&
-				     false !== ( $key = array_search( $snippet_id, $active_shared_ids, true ) ) ) {
-					unset( $active_shared_ids[ $key ] );
+				if ( $table_name === $db->ms_table && isset( $active_shared_ids ) && in_array( $snippet_id, $active_shared_ids, true ) ) {
+					unset( $active_shared_ids[ array_search( $snippet_id, $active_shared_ids, true ) ] );
 					$active_shared_ids = array_values( $active_shared_ids );
 					update_option( 'active_shared_network_snippets', $active_shared_ids );
 				} else {
