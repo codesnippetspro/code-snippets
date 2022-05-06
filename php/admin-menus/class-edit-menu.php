@@ -734,4 +734,47 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			}
 		}
 	}
+
+	/**
+	 * Render a keyboard shortcut as HTML.
+	 *
+	 * @param array|string $modifiers Modifier keys. Can be 'Cmd', 'Ctrl', 'Shift', 'Option', 'Alt'.
+	 * @param string $key Keyboard key.
+	 *
+	 * @return void
+	 */
+	protected function render_keyboard_shortcut( $modifiers, $key ) {
+		static $keys = null;
+
+		if ( is_null( $keys ) ) {
+			$keys = array(
+				'Cmd'    => _x( 'Cmd', 'keyboard key', 'code-snippets' ),
+				'Ctrl'   => _x( 'Ctrl', 'keyboard key', 'code-snippets' ),
+				'Shift'  => _x( 'Shift', 'keyboard key', 'code-snippets' ),
+				'Option' => _x( 'Option', 'keyboard key', 'code-snippets' ),
+				'Alt'    => _x( 'Alt', 'keyboard key', 'code-snippets' ),
+				'F'      => _x( 'F', 'keyboard key', 'code-snippets' ),
+				'G'      => _x( 'G', 'keyboard key', 'code-snippets' ),
+				'R'      => _x( 'R', 'keyboard key', 'code-snippets' ),
+				'S'      => _x( 'S', 'keyboard key', 'code-snippets' ),
+			);
+		}
+
+		if ( ! is_array( $modifiers ) ) {
+			$modifiers = array( $modifiers );
+		}
+
+		foreach ( $modifiers as $modifier ) {
+			if ( 'Ctrl' === $modifier || 'Cmd' === $modifier ) {
+				echo '<kbd class="pc-key">', esc_html( $keys['Ctrl'] ), '</kbd>';
+				echo '<kbd class="mac-key">', esc_html( $keys['Cmd'] ), '</kbd>&hyphen;';
+			} elseif ( 'Option' === $modifier ) {
+				echo '<span class="mac-key"><kbd class="mac-key">', esc_html( $keys['Option'] ), '</kbd>&hyphen;</span>';
+			} else {
+				echo '<kbd>', esc_html( $keys[ $modifier ] ), '</kbd>&hyphen;';
+			}
+		}
+
+		echo '<kbd>', esc_html( $keys[ $key ] ), '</kbd>';
+	}
 }
