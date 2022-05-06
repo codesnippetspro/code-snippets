@@ -541,7 +541,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			$tags = $this->get_current_tags();
 
 			if ( count( $tags ) ) {
-				$query = isset( $_GET['tag'] ) ? $_GET['tag'] : '';
+				$query = isset( $_GET['tag'] ) ? sanitize_text_field( $_GET['tag'] ) : '';
 
 				echo '<div class="alignleft actions">';
 				echo '<select name="tag">';
@@ -1024,13 +1024,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	private function usort_reorder_callback( $a, $b ) {
 
 		// sort by priority by default
-		$orderby = isset( $_REQUEST['orderby'] ) ? $_REQUEST['orderby'] : '';
+		$orderby = isset( $_REQUEST['orderby'] ) ? sanitize_key( $_REQUEST['orderby'] ) : '';
 		if ( ! isset( $a->$orderby, $b->$orderby ) ) {
 			$orderby = apply_filters( 'code_snippets/list_table/default_orderby', 'priority' );
 		}
 
 		// sort ascending by default
-		$order = isset( $_REQUEST['order'] ) ? strtolower( $_REQUEST['order'] ) : '';
+		$order = isset( $_REQUEST['order'] ) ? strtolower( sanitize_key( $_REQUEST['order'] ) ) : '';
 		if ( $order !== 'asc' && $order !== 'desc' ) {
 			$order = apply_filters( 'code_snippets/list_table/default_order', 'asc' );
 		}
@@ -1106,7 +1106,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @ignore
 	 */
 	private function tags_filter_callback( $snippet ) {
-		$tags = explode( ',', $_GET['tag'] );
+		$tags = explode( ',', array_map( 'sanitize_text_field', $_GET['tag'] ) );
 
 		foreach ( $tags as $tag ) {
 			if ( in_array( $tag, $snippet->tags, true ) ) {
@@ -1127,7 +1127,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 			echo '<span class="subtitle">' . __( 'Search results', 'code-snippets' );
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
-				$s = $_REQUEST['s'];
+				$s = sanitize_text_field( $_REQUEST['s'] );
 
 				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
 

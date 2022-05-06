@@ -68,7 +68,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 			return;
 		}
 
-		$sub = code_snippets()->get_menu_slug( isset( $_GET['sub'] ) ? $_GET['sub'] : 'snippets' );
+		$sub = code_snippets()->get_menu_slug( isset( $_GET['sub'] ) ? sanitize_key( $_GET['sub'] ) : 'snippets' );
 
 		$classmap = array(
 			'snippets'             => 'manage',
@@ -123,7 +123,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 
 		wp_enqueue_style(
 			'code-snippets-manage',
-			plugins_url( "css/min/manage{$rtl}.css", $plugin->file ),
+			plugins_url( "css/min/manage$rtl.css", $plugin->file ),
 			array(), $plugin->version
 		);
 
@@ -201,10 +201,10 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 			) );
 		}
 
-		$snippet_data = json_decode( stripslashes( $_POST['snippet'] ), true );
+		$snippet_data = map_deep( json_decode( stripslashes( $_POST['snippet'] ), true ), 'sanitize_text_field' );
 
 		$snippet = new Code_Snippet( $snippet_data );
-		$field = $_POST['field'];
+		$field = sanitize_key( $_POST['field'] );
 
 		if ( 'priority' === $field ) {
 

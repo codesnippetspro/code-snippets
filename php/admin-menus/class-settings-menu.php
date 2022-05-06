@@ -136,7 +136,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 		check_admin_referer( 'code-snippets-options' );
 
 		/* Retrieve the saved options and save them to the database */
-		$value = wp_unslash( $_POST['code_snippets_settings'] );
+		$value = map_deep( wp_unslash( $_POST['code_snippets_settings'] ), 'sanitize_key' );
 		update_site_option( 'code_snippets_settings', $value );
 
 		/* Add an updated notice */

@@ -131,22 +131,23 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		}
 
 		if ( isset( $_POST['snippet_id'] ) ) {
+			$snippet_id = intval( $_POST['snippet_id'] );
 
 			/* Delete the snippet if the button was clicked */
 			if ( isset( $_POST['delete_snippet'] ) ) {
-				delete_snippet( $_POST['snippet_id'] );
+				delete_snippet( $snippet_id );
 				wp_redirect( add_query_arg( 'result', 'delete', code_snippets()->get_menu_url( 'manage' ) ) );
 				exit;
 			}
 
 			/* Export the snippet if the button was clicked */
 			if ( isset( $_POST['export_snippet'] ) ) {
-				export_snippets( array( $_POST['snippet_id'] ) );
+				export_snippets( array( $snippet_id ) );
 			}
 
 			/* Download the snippet if the button was clicked */
 			if ( isset( $_POST['download_snippet'] ) ) {
-				download_snippets( array( $_POST['snippet_id'] ) );
+				download_snippets( array( $snippet_id ) );
 			}
 		}
 	}
@@ -379,7 +380,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
 		       placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>"
-		       value="<?php echo esc_attr( $snippet->tags_list ); ?>" />
+		       value="<?php echo esc_attr( $snippet->tags_list ); ?>"/>
 		<?php
 	}
 
@@ -394,7 +395,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		   title="<?php esc_attr_e( 'Snippets with a lower priority number will run before those with a higher number.', 'code-snippets' ); ?>">
 			<label for="snippet_priority"><?php esc_html_e( 'Priority', 'code-snippets' ); ?></label>
 
-			<input name="snippet_priority" type="number" id="snippet_priority" value="<?php echo intval( $snippet->priority ); ?>">
+			<input name="snippet_priority" type="number" id="snippet_priority"
+			       value="<?php echo intval( $snippet->priority ); ?>">
 		</p>
 		<?php
 	}
@@ -552,7 +554,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			return;
 		}
 
-		$result = $_REQUEST['result'];
+		$result = sanitize_key( $_REQUEST['result'] );
 
 		if ( 'code-error' === $result ) {
 
@@ -588,7 +590,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		);
 
 		if ( isset( $messages[ $result ] ) ) {
-			echo '<div id="message" class="updated fade"><p>', $messages[ $result ], '</p></div>';
+			echo '<div id="message" class="updated fade"><p>', wp_kses( $messages[ $result ], array( 'strong' => array() ) ), '</p></div>';
 		}
 	}
 

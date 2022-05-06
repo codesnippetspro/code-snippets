@@ -56,16 +56,20 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 
 		$count = 0;
 		$network = is_network_admin();
-		$uploads = $_FILES['code_snippets_import_files'];
-		$dup_action = isset( $_POST['duplicate_action'] ) ? $_POST['duplicate_action'] : 'ignore';
 		$error = false;
+
+		$upload_files = array_map( 'sanitize_file_name', $_FILES['code_snippets_import_files']['tmp_name'] );
+		$upload_filenames = array_map( 'sanitize_file_name', $_FILES['code_snippets_import_files']['name'] );
+		$upload_mime_types = array_map( 'sanitize_mime_type', $_FILES['code_snippets_import_files']['type'] );
+
+		$dup_action = isset( $_POST['duplicate_action'] ) ? sanitize_key( $_POST['duplicate_action'] ) : 'ignore';
 
 		/* Loop through the uploaded files and import the snippets */
 
-		foreach ( $uploads['tmp_name'] as $i => $import_file ) {
-			$ext = pathinfo( $uploads['name'][ $i ] );
+		foreach ( $upload_files as $i => $import_file ) {
+			$ext = pathinfo( $upload_filenames[ $i ] );
 			$ext = $ext['extension'];
-			$mime_type = $uploads['type'][ $i ];
+			$mime_type = $upload_mime_types[ $i ];
 
 			if ( 'json' === $ext || 'application/json' === $mime_type ) {
 				$result = import_snippets_json( $import_file, $network, $dup_action );
