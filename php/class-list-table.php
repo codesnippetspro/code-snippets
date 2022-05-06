@@ -835,12 +835,13 @@ class Code_Snippets_List_Table extends WP_List_Table {
 		} else {
 
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
+			$active_shared_snippet_format = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
-			$sql = sprintf( "SELECT * FROM {$db->ms_table} WHERE id IN (%s)",
-				implode( ',', array_fill( 0, count( $ids ), '%d' ) )
-			);
-
-			$shared_snippets = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
+			$shared_snippets = $wpdb->get_results( $wpdb->prepare( "
+				SELECT * FROM $db->ms_table
+				WHERE id IN ($active_shared_snippet_format)",
+				$ids
+			), ARRAY_A );
 
 			foreach ( $shared_snippets as $index => $snippet ) {
 				$snippet = new Code_Snippet( $snippet );
@@ -1031,7 +1032,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 
 		// sort ascending by default
 		$order = isset( $_REQUEST['order'] ) ? strtolower( sanitize_key( $_REQUEST['order'] ) ) : '';
-		if ( $order !== 'asc' && $order !== 'desc' ) {
+		if ( 'asc' !== $order && 'desc' !== $order ) {
 			$order = apply_filters( 'code_snippets/list_table/default_order', 'asc' );
 		}
 

@@ -37,15 +37,14 @@
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 
 		<!-- database table names should be interpolated -->
-		<exclude name="WordPress.WP.PreparedSQL.NotPrepared" />
+		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared" />
+
+		<!-- codesniffer does not seem to understand more complex queries -->
+		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />
+		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
 
 		<!-- class filenames do not include the namespace prefix -->
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
-
-		<!-- this picks up a lot of false positives -->
-		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
-		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared" />
-		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />
 
 		<!-- this disallows assignment inside conditional statements -->
 		<exclude name="Squiz.PHP.DisallowMultipleAssignments.Found" />

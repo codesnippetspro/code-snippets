@@ -150,9 +150,9 @@ class Code_Snippets_Upgrade {
 		);
 
 		foreach ( $scopes as $scope_number => $scope_name ) {
-			$wpdb->query( sprintf(
-				"UPDATE %s SET scope = '%s' WHERE scope = %d",
-				$table_name, $scope_name, $scope_number
+			$wpdb->query( $wpdb->prepare(
+				"UPDATE $table_name SET scope = %s WHERE scope = %d",
+				$scope_name, $scope_number
 			) );
 		}
 	}

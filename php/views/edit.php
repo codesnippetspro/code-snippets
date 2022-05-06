@@ -95,9 +95,7 @@ if ( ! $snippet->id ) {
 
 		<div class="snippet-editor">
 			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false"
-			          style="font-family: monospace; width: 100%;"><?php
-				echo esc_textarea( $snippet->code );
-				?></textarea>
+			          style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 
 			<div class="snippet-editor-help">
 
@@ -126,15 +124,15 @@ if ( ! $snippet->id ) {
 						<tr>
 							<td><?php esc_html_e( 'Save changes', 'code-snippets' ); ?></td>
 							<td>
-								<kbd class="pc-key"><?php echo esc_html( $keys['Ctrl'] ); ?></kbd><kbd class="mac-key"><?php
-									echo esc_html( $keys['Cmd'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['S'] ); ?></kbd>
+								<kbd class="pc-key"><?php echo esc_html( $keys['Ctrl'] ); ?></kbd><kbd
+										class="mac-key"><?php echo esc_html( $keys['Cmd'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['S'] ); ?></kbd>
 							</td>
 						</tr>
 						<tr>
 							<td><?php esc_html_e( 'Begin searching', 'code-snippets' ); ?></td>
 							<td>
-								<kbd class="pc-key"><?php echo esc_html( $keys['Ctrl'] ); ?></kbd><kbd class="mac-key"><?php
-									echo esc_html( $keys['Cmd'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['F'] ); ?></kbd>
+								<kbd class="pc-key"><?php echo esc_html( $keys['Ctrl'] ); ?></kbd><kbd
+										class="mac-key"><?php echo esc_html( $keys['Cmd'] ); ?></kbd>&hyphen;<kbd><?php echo esc_html( $keys['F'] ); ?></kbd>
 							</td>
 						</tr>
 						<tr>
