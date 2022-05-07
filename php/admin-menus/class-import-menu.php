@@ -10,7 +10,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Class constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct( 'import',
 			_x( 'Import', 'menu label', 'code-snippets' ),
 			__( 'Import Snippets', 'code-snippets' )
@@ -95,7 +95,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Add the importer to the Tools > Import menu
 	 */
-	function register_importer() {
+	public function register_importer() {
 
 		/* Only register the importer if the current user can manage snippets */
 		if ( ! defined( 'WP_LOAD_IMPORTERS' ) || ! code_snippets()->current_user_can() ) {
@@ -118,7 +118,7 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 
 		if ( isset( $_REQUEST['error'] ) && $_REQUEST['error'] ) {
 			echo '<div id="message" class="error fade"><p>';
-			_e( 'An error occurred when processing the import files.', 'code-snippets' );
+			esc_html_e( 'An error occurred when processing the import files.', 'code-snippets' );
 			echo '</p></div>';
 		}
 
@@ -131,18 +131,15 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 				esc_html_e( 'No snippets were imported.', 'code-snippets' );
 
 			} else {
-
-				printf(
-					/* translators: 1: amount of snippets imported, 2: link to Snippets menu */
-					_n(
-						'Successfully imported <strong>%1$d</strong> snippet. <a href="%2$s">Have fun!</a>',
-						'Successfully imported <strong>%1$d</strong> snippets. <a href="%2$s">Have fun!</a>',
-						$imported,
-						'code-snippets'
-					),
+				/* translators: 1: amount of snippets imported, 2: link to Snippets menu */
+				$text = _n(
+					'Successfully imported <strong>%1$d</strong> snippet. <a href="%2$s">Have fun!</a>',
+					'Successfully imported <strong>%1$d</strong> snippets. <a href="%2$s">Have fun!</a>',
 					$imported,
-					code_snippets()->get_menu_url( 'manage' )
+					'code-snippets'
 				);
+
+				printf( wp_kses_post( $text ), esc_html( $imported ), esc_url( code_snippets()->get_menu_url( 'manage' ) ) );
 			}
 
 			echo '</p></div>';

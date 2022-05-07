@@ -5,7 +5,11 @@
  */
 class Code_Snippets_Admin_Menu {
 
-	public $name, $label, $title;
+	public $name;
+
+	public $label;
+
+	public $title;
 
 	/**
 	 * The base slug for the top-level admin menu.
@@ -98,22 +102,24 @@ class Code_Snippets_Admin_Menu {
 	 * @param string $request_var
 	 * @param string $class
 	 *
-	 * @return string|bool The result message if a valid status was received, otherwise false
+	 * @return bool Whether a result message was printed.
 	 */
-	protected function get_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
+	protected function print_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
 
 		if ( empty( $_REQUEST[ $request_var ] ) ) {
 			return false;
 		}
 
-		$result = $_REQUEST[ $request_var ];
+		$result = sanitize_key( $_REQUEST[ $request_var ] );
 
 		if ( isset( $messages[ $result ] ) ) {
-			return sprintf(
+			printf(
 				'<div id="message" class="%2$s fade"><p>%1$s</p></div>',
-				$messages[ $result ],
-				$class
+				wp_kses_post( $messages[ $result ] ),
+				esc_attr( $class )
 			);
+
+			return true;
 		}
 
 		return false;
@@ -125,7 +131,7 @@ class Code_Snippets_Admin_Menu {
 	public function load() {
 		/* Make sure the user has permission to be here */
 		if ( ! current_user_can( code_snippets()->get_cap() ) ) {
-			wp_die( __( 'You are not authorized to access this page.', 'code-snippets' ) );
+			wp_die( esc_html__( 'You are not authorized to access this page.', 'code-snippets' ) );
 		}
 
 		/* Create the snippet tables if they don't exist */

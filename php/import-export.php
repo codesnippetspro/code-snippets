@@ -77,6 +77,7 @@ function import_snippets_json( $file, $multisite = null, $dup_action = 'ignore' 
 		return false;
 	}
 
+	/** @phpcs:disable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents */
 	$raw_data = file_get_contents( $file );
 	$data = json_decode( $raw_data, true );
 	$snippets = array();
@@ -211,6 +212,8 @@ function code_snippets_prepare_export( $format, $ids, $table_name = '', $mime_ty
  *
  * @param $ids
  * @param $table_name
+ *
+ * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
  */
 function download_snippets( $ids, $table_name = '' ) {
 	$snippets = code_snippets_prepare_export( 'php', $ids, $table_name );
@@ -226,7 +229,7 @@ function download_snippets( $ids, $table_name = '' ) {
 		if ( ! empty( $snippet->desc ) ) {
 
 			/* Convert description to PhpDoc */
-			$desc = strip_tags( str_replace( "\n", "\n * ", $snippet->desc ) );
+			$desc = wp_strip_all_tags( str_replace( "\n", "\n * ", $snippet->desc ) );
 
 			echo " *\n * $desc\n";
 		}

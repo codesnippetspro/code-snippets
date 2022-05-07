@@ -9,7 +9,7 @@ class Code_Snippets_Admin {
 
 	public $menus = array();
 
-	function __construct() {
+	public function __construct() {
 
 		if ( is_admin() ) {
 			$this->run();
@@ -64,7 +64,7 @@ class Code_Snippets_Admin {
 	 * @since 1.7.1
 	 *
 	 */
-	function mu_menu_items( $menu_items ) {
+	public function mu_menu_items( $menu_items ) {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
 		$menu_items['snippets_settings'] = __( 'Snippets &raquo; Settings', 'code-snippets' );
 
@@ -74,7 +74,7 @@ class Code_Snippets_Admin {
 	/**
 	 * Load the stylesheet for the admin menu icon
 	 */
-	function load_admin_menu_icon() {
+	public function load_admin_menu_icon() {
 
 		wp_enqueue_style(
 			'menu-icon-snippets',
@@ -94,7 +94,7 @@ class Code_Snippets_Admin {
 	 *
 	 * @return bool Whether the snippet will be executed
 	 */
-	function prevent_exec_on_save( $exec, $exec_id, $table_name ) {
+	public function prevent_exec_on_save( $exec, $exec_id, $table_name ) {
 
 		if ( ! isset( $_POST['save_snippet'], $_POST['snippet_id'] ) ) {
 			return $exec;
@@ -122,14 +122,14 @@ class Code_Snippets_Admin {
 	 * @since 2.0
 	 *
 	 */
-	function plugin_settings_link( $links ) {
+	public function plugin_settings_link( $links ) {
 		array_unshift(
 			$links,
 			sprintf(
 				'<a href="%1$s" title="%2$s">%3$s</a>',
-				code_snippets()->get_menu_url(),
-				__( 'Manage your existing snippets', 'code-snippets' ),
-				__( 'Snippets', 'code-snippets' )
+				esc_url( code_snippets()->get_menu_url() ),
+				esc_attr__( 'Manage your existing snippets', 'code-snippets' ),
+				esc_html__( 'Snippets', 'code-snippets' )
 			)
 		);
 
@@ -146,7 +146,7 @@ class Code_Snippets_Admin {
 	 * @since 2.0
 	 *
 	 */
-	function plugin_meta_links( $links, $file ) {
+	public function plugin_meta_links( $links, $file ) {
 
 		/* We only want to affect the Code Snippets plugin listing */
 		if ( plugin_basename( CODE_SNIPPETS_FILE ) !== $file ) {
@@ -162,18 +162,18 @@ class Code_Snippets_Admin {
 			array(
 				sprintf( $format,
 					'https://wordpress.org/plugins/code-snippets/',
-					__( 'Visit the WordPress.org plugin page', 'code-snippets' ),
-					__( 'About', 'code-snippets' )
+					esc_attr__( 'Visit the WordPress.org plugin page', 'code-snippets' ),
+					esc_html__( 'About', 'code-snippets' )
 				),
 				sprintf( $format,
 					'https://wordpress.org/support/plugin/code-snippets/',
-					__( 'Visit the support forums', 'code-snippets' ),
-					__( 'Support', 'code-snippets' )
+					esc_attr__( 'Visit the support forums', 'code-snippets' ),
+					esc_html__( 'Support', 'code-snippets' )
 				),
 				sprintf( $format,
 					'https://sheabunge.com/donate/',
-					__( "Support this plugin's development", 'code-snippets' ),
-					__( 'Donate', 'code-snippets' )
+					esc_attr__( "Support this plugin's development", 'code-snippets' ),
+					esc_html__( 'Donate', 'code-snippets' )
 				),
 			)
 		);
@@ -185,7 +185,7 @@ class Code_Snippets_Admin {
 	 * @return void
 	 * @since  1.9
 	 */
-	function survey_message() {
+	public function survey_message() {
 		global $current_user;
 
 		$key = 'ignore_code_snippets_survey_message';
@@ -206,7 +206,11 @@ class Code_Snippets_Admin {
 		<div class="updated code-snippets-survey-message">
 			<p>
 
-				<?php _e( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ); ?>
+				<?php echo wp_kses(
+					__( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ),
+					array( 'strong' => array() )
+				);
+				?>
 
 				<a href="https://codesnippets.pro/survey/" class="button secondary"
 				   target="_blank" style="margin: auto .5em;">

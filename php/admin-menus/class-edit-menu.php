@@ -193,13 +193,13 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			return $out;
 		}
 
-		$m = '<h3>' . __( "Don't Panic", 'code-snippets' ) . '</h3>';
+		$m = '<h3>' . esc_html__( "Don't Panic", 'code-snippets' ) . '</h3>';
 		/* translators: %d: line where error was produced */
-		$m .= '<p>' . sprintf( __( 'The code snippet you are trying to save produced a fatal error on line %d:', 'code-snippets' ), $error['line'] ) . '</p>';
-		$m .= '<strong>' . $error['message'] . '</strong>';
-		$m .= '<p>' . __( 'The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before.', 'code-snippets' ) . '</p>';
-		$m .= '<p>' . __( 'Please use the back button in your browser to return to the previous page and try to fix the code error.', 'code-snippets' );
-		$m .= ' ' . __( 'If you prefer, you can close this page and discard the changes you just made. No changes will be made to this site.', 'code-snippets' ) . '</p>';
+		$m .= '<p>' . sprintf( esc_html__( 'The code snippet you are trying to save produced a fatal error on line %d:', 'code-snippets' ), intval( $error['line'] ) ) . '</p>';
+		$m .= '<strong>' . esc_html( $error['message'] ) . '</strong>';
+		$m .= '<p>' . esc_html__( 'The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before.', 'code-snippets' ) . '</p>';
+		$m .= '<p>' . esc_html__( 'Please use the back button in your browser to return to the previous page and try to fix the code error.', 'code-snippets' );
+		$m .= ' ' . esc_html__( 'If you prefer, you can close this page and discard the changes you just made. No changes will be made to this site.', 'code-snippets' ) . '</p>';
 
 		return $m;
 	}
@@ -347,7 +347,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 *
 	 * @param Code_Snippet $snippet The snippet being used for this page
 	 */
-	function render_description_editor( Code_Snippet $snippet ) {
+	public function render_description_editor( Code_Snippet $snippet ) {
 		$settings = code_snippets_get_settings();
 		$settings = $settings['description_editor'];
 
@@ -379,7 +379,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 *
 	 * @param Code_Snippet $snippet the snippet currently being edited
 	 */
-	function render_tags_editor( Code_Snippet $snippet ) {
+	public function render_tags_editor( Code_Snippet $snippet ) {
 
 		?>
 		<h2 style="margin: 25px 0 10px;">
@@ -406,7 +406,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 			<label for="snippet_priority"><?php esc_html_e( 'Priority', 'code-snippets' ); ?></label>
 
 			<input name="snippet_priority" type="number" id="snippet_priority"
-			       value="<?php echo intval( $snippet->priority ); ?>">
+			       value="<?php echo esc_attr( $snippet->priority ); ?>">
 		</p>
 		<?php
 	}
@@ -416,7 +416,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 *
 	 * @param Code_Snippet $snippet the snippet currently being edited
 	 */
-	function render_scope_setting( Code_Snippet $snippet ) {
+	public function render_scope_setting( Code_Snippet $snippet ) {
 
 		$icons = Code_Snippet::get_scope_icons();
 
@@ -430,9 +430,9 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		echo '<h2 class="screen-reader-text">' . esc_html__( 'Scope', 'code-snippets' ) . '</h2><p class="snippet-scope">';
 
 		foreach ( Code_Snippet::get_all_scopes() as $scope ) {
-			printf( '<label><input type="radio" name="snippet_scope" value="%s"', $scope );
+			printf( '<label><input type="radio" name="snippet_scope" value="%s"', esc_attr( $scope ) );
 			checked( $scope, $snippet->scope );
-			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', $icons[ $scope ], esc_html( $labels[ $scope ] ) );
+			printf( '> <span class="dashicons dashicons-%s"></span> %s</label>', esc_attr( $icons[ $scope ] ), esc_html( $labels[ $scope ] ) );
 		}
 
 		echo '</p>';
@@ -443,12 +443,12 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 *
 	 * @param object $snippet The snippet currently being edited
 	 */
-	function render_multisite_sharing_setting( $snippet ) {
+	public function render_multisite_sharing_setting( $snippet ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 		?>
 
 		<div class="snippet-sharing-setting">
-			<h2 class="screen-reader-text"><?php _e( 'Sharing Settings', 'code-snippets' ); ?></h2>
+			<h2 class="screen-reader-text"><?php esc_html_e( 'Sharing Settings', 'code-snippets' ); ?></h2>
 			<label for="snippet_sharing">
 				<input type="checkbox" name="snippet_sharing"
 					<?php checked( in_array( $snippet->id, $shared_snippets, true ) ); ?>>
@@ -571,25 +571,25 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 		$result = sanitize_key( $_REQUEST['result'] );
 
 		if ( 'code-error' === $result ) {
-			$error = isset( $_REQUEST['id'] ) ? $this->get_snippet_error( $_REQUEST['id'] ) : false;
+			$error = isset( $_REQUEST['id'] ) ? $this->get_snippet_error( intval( $_REQUEST['id'] ) ) : false;
 
 			if ( $error ) {
 				printf(
 					'<div id="message" class="error fade"><p>%s</p><p><strong>%s</strong></p></div>',
 					/* translators: %d: line of file where error originated */
-					sprintf( __( 'The snippet has been deactivated due to an error on line %d:', 'code-snippets' ), $error['line'] ),
-					$error['message']
+					sprintf( esc_html__( 'The snippet has been deactivated due to an error on line %d:', 'code-snippets' ), intval( $error['line'] ) ),
+					esc_html( $error['message'] )
 				);
 
 			} else {
-				echo '<div id="message" class="error fade"><p>', __( 'The snippet has been deactivated due to an error in the code.', 'code-snippets' ), '</p></div>';
+				echo '<div id="message" class="error fade"><p>', esc_html__( 'The snippet has been deactivated due to an error in the code.', 'code-snippets' ), '</p></div>';
 			}
 
 			return;
 		}
 
 		if ( 'save-error' === $result ) {
-			echo '<div id="message" class="error fade"><p>', __( 'An error occurred when saving the snippet.', 'code-snippets' ), '</p></div>';
+			echo '<div id="message" class="error fade"><p>', esc_html__( 'An error occurred when saving the snippet.', 'code-snippets' ), '</p></div>';
 
 			return;
 		}
@@ -654,7 +654,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 				)
 			);
 
-			$inline_script = 'var code_snippets_tags = ' . json_encode( $options ) . ';';
+			$inline_script = 'var code_snippets_tags = ' . wp_json_encode( $options ) . ';';
 			wp_add_inline_script( 'code-snippets-edit-menu-tags', $inline_script, 'before' );
 		}
 	}
@@ -663,7 +663,7 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 	 * Remove the old CodeMirror version used by the Debug Bar Console plugin
 	 * that is messing up the snippet editor
 	 */
-	function remove_debug_bar_codemirror() {
+	public function remove_debug_bar_codemirror() {
 
 		/* Try to discern if we are on the single snippet page as best as we can at this early time */
 		if ( ! is_admin() || 'admin.php' !== $GLOBALS['pagenow'] ) {
@@ -743,8 +743,8 @@ class Code_Snippets_Edit_Menu extends Code_Snippets_Admin_Menu {
 					esc_js(
 						sprintf(
 							'return confirm("%s");',
-							__( 'You are about to permanently delete this snippet.', 'code-snippets' ) . "\n" .
-							__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+							esc_html__( 'You are about to permanently delete this snippet.', 'code-snippets' ) . "\n" .
+							esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
 						)
 					)
 				);

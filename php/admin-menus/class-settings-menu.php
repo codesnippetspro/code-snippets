@@ -87,17 +87,17 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 
 					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
 						esc_html_x( 'Manage', 'snippets', 'code-snippets' ),
-						code_snippets()->get_menu_url()
+						esc_url( code_snippets()->get_menu_url() )
 					);
 
 					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
 						esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-						code_snippets()->get_menu_url( 'add' )
+						esc_url( code_snippets()->get_menu_url( 'add' ) )
 					);
 
 					printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
 						esc_html_x( 'Import', 'snippets', 'code-snippets' ),
-						code_snippets()->get_menu_url( 'import' )
+						esc_url( code_snippets()->get_menu_url( 'import' ) )
 					);
 				}
 
@@ -129,7 +129,7 @@ class Code_Snippets_Settings_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Fill in for the Settings API in the Network Admin
 	 */
-	function update_network_options() {
+	public function update_network_options() {
 
 		/* Ensure the settings have been saved */
 		if ( ! isset( $_GET['update_site_option'], $_POST['code_snippets_settings'] ) || ! $_GET['update_site_option'] ) {

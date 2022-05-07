@@ -22,12 +22,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		printf( '<a href="%2$s" class="page-title-action add-new-h2">%1$s</a>',
 			esc_html_x( 'Add New', 'snippet', 'code-snippets' ),
-			code_snippets()->get_menu_url( 'add' )
+			esc_url( code_snippets()->get_menu_url( 'add' ) )
 		);
 
 		printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
 			esc_html_x( 'Import', 'snippets', 'code-snippets' ),
-			code_snippets()->get_menu_url( 'import' )
+			esc_url( code_snippets()->get_menu_url( 'import' ) )
 		);
 
 		$admin = code_snippets()->admin;
@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		if ( $admin->is_compact_menu() && isset( $admin->menus['settings'] ) ) {
 			printf( '<a href="%2$s" class="page-title-action">%1$s</a>',
 				esc_html_x( 'Settings', 'snippets', 'code-snippets' ),
-				code_snippets()->get_menu_url( 'settings' )
+				esc_url( code_snippets()->get_menu_url( 'settings' ) )
 			);
 		}
 

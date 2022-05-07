@@ -44,10 +44,10 @@ function code_snippets_get_editor_atts( $override_atts, $json_encode ) {
 
 		// JSON_UNESCAPED_SLASHES was added in PHP 5.4
 		if ( version_compare( phpversion(), '5.4.0', '>=' ) ) {
-			$atts = json_encode( $atts, JSON_UNESCAPED_SLASHES );
+			$atts = wp_json_encode( $atts, JSON_UNESCAPED_SLASHES );
 		} else {
 			// Use a fallback for < 5.4
-			$atts = str_replace( '\\/', '/', json_encode( $atts ) );
+			$atts = str_replace( '\\/', '/', wp_json_encode( $atts ) );
 		}
 
 		// Infinity is a constant and needs to be unquoted
@@ -73,7 +73,7 @@ function code_snippets_enqueue_editor() {
 
 	/* CodeMirror */
 	wp_enqueue_style( 'code-snippets-editor', $url . 'css/min/editor.css', array(), $plugin_version );
-	wp_enqueue_script( 'code-snippets-editor', $url . 'js/min/editor.js', array(), $plugin_version );
+	wp_enqueue_script( 'code-snippets-editor', $url . 'js/min/editor.js', array(), $plugin_version, false );
 
 	/* CodeMirror Theme */
 	$theme = code_snippets_get_setting( 'editor', 'theme' );

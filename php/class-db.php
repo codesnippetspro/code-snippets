@@ -44,7 +44,7 @@ class Code_Snippets_DB {
 	 * @since 2.0
 	 * @uses  $wpdb
 	 */
-	function set_table_vars() {
+	public function set_table_vars() {
 		global $wpdb;
 
 		$this->table = $wpdb->prefix . self::TABLE_NAME;
@@ -65,7 +65,7 @@ class Code_Snippets_DB {
 	 *
 	 * @return bool
 	 */
-	function validate_network_param( $network ) {
+	public function validate_network_param( $network ) {
 
 		/* If multisite is not active, then the parameter should always be false */
 		if ( ! is_multisite() ) {
@@ -89,7 +89,7 @@ class Code_Snippets_DB {
 	 * @since 2.0
 	 *
 	 */
-	function get_table_name( $multisite = null ) {
+	public function get_table_name( $multisite = null ) {
 
 		/* If the first parameter is a string, assume it is a table name */
 		if ( is_string( $multisite ) ) {

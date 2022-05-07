@@ -140,7 +140,6 @@ class Code_Snippet {
 	 * @param string $field The field name
 	 *
 	 * @return mixed The field value
-	 * @throws Exception if the field name does not exist.
 	 */
 	public function __get( $field ) {
 		$field = $this->validate_field_name( $field );
@@ -151,6 +150,7 @@ class Code_Snippet {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
+				/** @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error */
 				trigger_error( 'Trying to access invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
 			}
 
@@ -171,6 +171,7 @@ class Code_Snippet {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
+				/** @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error */
 				trigger_error( 'Trying to set invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
 			}
 
@@ -360,7 +361,7 @@ class Code_Snippet {
 	 * Update the last modification date to the current date and time.
 	 */
 	public function update_modified() {
-		$this->modified = gmdate( Code_Snippet::DATE_FORMAT );
+		$this->modified = gmdate( self::DATE_FORMAT );
 	}
 
 	/**

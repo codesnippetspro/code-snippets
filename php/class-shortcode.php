@@ -2,12 +2,12 @@
 
 class Code_Snippets_Shortcode {
 
-	function __construct() {
+	public function __construct() {
 		add_shortcode( 'code_snippet', array( $this, 'render_shortcode' ) );
 		add_action( 'the_posts', array( $this, 'enqueue_assets' ) );
 	}
 
-	function enqueue_assets( $posts ) {
+	public function enqueue_assets( $posts ) {
 
 		if ( empty( $posts ) || code_snippets_get_setting( 'general', 'disable_prism' ) ) {
 			return $posts;
@@ -47,7 +47,7 @@ class Code_Snippets_Shortcode {
 		return $posts;
 	}
 
-	function render_shortcode( $atts ) {
+	public function render_shortcode( $atts ) {
 
 		$atts = shortcode_atts(
 			array(

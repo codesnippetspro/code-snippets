@@ -45,7 +45,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	 * @uses add_menu_page() to register a top-level menu
 	 * @uses add_submenu_page() to register a sub-menu
 	 */
-	function register() {
+	public function register() {
 
 		/* Register the top-level menu */
 		add_menu_page(
@@ -102,7 +102,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	/**
 	 * Executed when the admin page is loaded
 	 */
-	function load() {
+	public function load() {
 		parent::load();
 
 		/* Load the contextual help tabs */
@@ -155,11 +155,13 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 		/* Output a warning if safe mode is active */
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 			echo '<div id="message" class="error fade"><p>';
-			_e( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' );
+			echo wp_kses_post(
+				__( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://github.com/sheabunge/code-snippets/wiki/Safe-Mode" target="_blank">Help</a>', 'code-snippets' ),
+			);
 			echo '</p></div>';
 		}
 
-		echo $this->get_result_message(
+		$this->print_result_message(
 			array(
 				'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
 				'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
@@ -183,7 +185,7 @@ class Code_Snippets_Manage_Menu extends Code_Snippets_Admin_Menu {
 	 *
 	 * @return mixed
 	 */
-	function save_screen_option( $status, $option, $value ) {
+	public function save_screen_option( $status, $option, $value ) {
 		if ( 'snippets_per_page' === $option ) {
 			return $value;
 		}

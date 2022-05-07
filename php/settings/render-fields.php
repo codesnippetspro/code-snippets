@@ -55,11 +55,11 @@ function code_snippets_number_field( $atts ) {
 	);
 
 	if ( isset( $atts['min'] ) ) {
-		printf( ' min="%d"', $atts['min'] );
+		printf( ' min="%d"', esc_attr( $atts['min'] ) );
 	}
 
 	if ( isset( $atts['max'] ) ) {
-		printf( ' max="%d"', $atts['max'] );
+		printf( ' max="%d"', esc_attr( $atts['max'] ) );
 	}
 
 	echo '>';
