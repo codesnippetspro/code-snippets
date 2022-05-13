@@ -58,8 +58,8 @@ class Code_Snippets_Import_Menu extends Code_Snippets_Admin_Menu {
 		$network = is_network_admin();
 		$error = false;
 
-		$upload_files = array_map( 'sanitize_file_name', $_FILES['code_snippets_import_files']['tmp_name'] );
-		$upload_filenames = array_map( 'sanitize_file_name', $_FILES['code_snippets_import_files']['name'] );
+		$upload_files = array_map( 'sanitize_text_field', $_FILES['code_snippets_import_files']['tmp_name'] );
+		$upload_filenames = array_map( 'sanitize_text_field', $_FILES['code_snippets_import_files']['name'] );
 		$upload_mime_types = array_map( 'sanitize_mime_type', $_FILES['code_snippets_import_files']['type'] );
 
 		$dup_action = isset( $_POST['duplicate_action'] ) ? sanitize_key( $_POST['duplicate_action'] ) : 'ignore';
