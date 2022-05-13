@@ -1128,7 +1128,7 @@ class Code_Snippets_List_Table extends WP_List_Table {
 	 * @ignore
 	 */
 	private function tags_filter_callback( $snippet ) {
-		$tags = explode( ',', array_map( 'sanitize_text_field', $_GET['tag'] ) );
+		$tags = explode( ',', sanitize_text_field( $_GET['tag'] ) );
 
 		foreach ( $tags as $tag ) {
 			if ( in_array( $tag, $snippet->tags, true ) ) {
