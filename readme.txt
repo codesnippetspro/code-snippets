@@ -119,7 +119,6 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 
 == Changelog ==
 
-<<<<<<< HEAD
 = 3.0.0 (unreleased) =
 
 __Added__
