@@ -74,7 +74,7 @@ for (const field of document.getElementsByClassName('snippet-priority') as HTMLC
  * @param increment
  */
 const update_view_count = (view_count: HTMLElement, increment: boolean) => {
-	let count = parseInt(view_count.textContent.replace(/\((?<count>\d+)\)/, '$count'), 10);
+	let count = parseInt(view_count.textContent.replace(/\((?<count>\d+)\)/, '$1'), 10);
 	count += increment ? 1 : -1;
 	view_count.textContent = `(${count.toString()})`;
 };
