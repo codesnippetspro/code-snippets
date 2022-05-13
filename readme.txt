@@ -119,6 +119,7 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 
 == Changelog ==
 
+<<<<<<< HEAD
 = 3.0.0 (unreleased) =
 
 __Added__
@@ -162,6 +163,11 @@ __New in Pro__
 * Added: Gutenberg editor block for displaying snippet source code.
 * Added: Elementor widget for displaying content snippets.
 * Added: Elementor widget for displaying snippet source code.
+=======
+= 2.14.6 (13 May 2022) =
+* Fixed: Issue with processing uploaded import files.
+* Fixed: Issue with processing tag filters.
+>>>>>>> master
 
 = 2.14.5 (10 May 2022) =
 * Fixed: Incompatibility issue with older versions of PHP.
