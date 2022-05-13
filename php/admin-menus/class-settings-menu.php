@@ -32,7 +32,7 @@ class Settings_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
-		if ( isset( $_GET['reset_settings'] ) && $_GET['reset_settings'] ) {
+		if ( ! empty( $_GET['reset_settings'] ) ) {
 
 			if ( Settings\are_settings_unified() ) {
 				delete_site_option( 'code_snippets_settings' );
@@ -109,7 +109,7 @@ class Settings_Menu extends Admin_Menu {
 			return $default;
 		}
 
-		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( $_REQUEST['section'] ) : $default;
+		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $default;
 		return isset( $sections[ $active_tab ] ) ? $active_tab : $default;
 	}
 
@@ -134,8 +134,10 @@ class Settings_Menu extends Admin_Menu {
 					];
 
 					foreach ( $actions as $label => $url ) {
-						printf( '<a href="%s" class="page-title-action">%s</a>',
-							esc_url( $url ), esc_html( $label )
+						printf(
+							'<a href="%s" class="page-title-action">%s</a>',
+							esc_url( $url ),
+							esc_html( $label )
 						);
 					}
 				}
@@ -176,8 +178,9 @@ class Settings_Menu extends Admin_Menu {
 		foreach ( $sections as $section ) {
 			printf(
 				'<a class="nav-tab%s" data-section="%s">%s</a>',
-				( $active_tab === $section['id'] ) ? ' nav-tab-active' : '',
-				esc_attr( $section['id'] ), esc_html( $section['title'] )
+				esc_attr( $active_tab ) === $section['id'] ? ' nav-tab-active' : '',
+				esc_attr( $section['id'] ),
+				esc_html( $section['title'] )
 			);
 		}
 
@@ -186,8 +189,10 @@ class Settings_Menu extends Admin_Menu {
 		foreach ( $sections as $section ) {
 
 			if ( $section['title'] ) {
-				printf( '<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n",
-					esc_attr( $section['id'] ), esc_html( $section['title'] )
+				printf(
+					'<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n",
+					esc_attr( $section['id'] ),
+					esc_html( $section['title'] )
 				);
 			}
 
@@ -208,7 +213,7 @@ class Settings_Menu extends Admin_Menu {
 	public function update_network_options() {
 
 		/* Ensure the settings have been saved */
-		if ( ! isset( $_GET['update_site_option'], $_POST['code_snippets_settings'] ) || ! $_GET['update_site_option'] ) {
+		if ( empty( $_GET['update_site_option'] ) || empty( $_POST['code_snippets_settings'] ) ) {
 			return;
 		}
 
@@ -230,6 +235,11 @@ class Settings_Menu extends Admin_Menu {
 		exit;
 	}
 
+	/**
+	 * Empty implementation for print_messages.
+	 *
+	 * @return void
+	 */
 	protected function print_messages() {
 		// none required.
 	}

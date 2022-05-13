@@ -10,8 +10,8 @@ namespace Code_Snippets;
 /**
  * Retrieve a list of snippets from the database.
  *
- * @param array     $ids       The IDs of the snippets to fetch
- * @param bool|null $multisite Retrieve multisite-wide snippets (true) or site-wide snippets (false).
+ * @param array     $ids         The IDs of the snippets to fetch.
+ * @param bool|null $multisite   Retrieve multisite-wide snippets (true) or site-wide snippets (false).
  *
  * @param array     $args        {
  *                               Optional. Arguments to specify which sorts of snippets to retrieve.
@@ -56,8 +56,11 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 	$multisite = $db->validate_network_param( $multisite );
 	$table = $db->get_table_name( $multisite );
 
-	if ( 0 === $ids_count && $snippets = wp_cache_get( $multisite ? 'all_ms_snippets' : 'all_snippets', 'code_snippets' ) ) {
-		return $snippets;
+	if ( 0 === $ids_count ) {
+		$snippets = wp_cache_get( $multisite ? 'all_ms_snippets' : 'all_snippets', 'code_snippets' );
+		if ( $snippets ) {
+			return $snippets;
+		}
 	}
 
 	$sql = "SELECT * FROM $table WHERE 1=1";
@@ -132,7 +135,8 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 function get_all_snippet_tags() {
 	global $wpdb;
 
-	if ( $tags = wp_cache_get( 'all_snippet_tags', 'code_snippets' ) ) {
+	$tags = wp_cache_get( 'all_snippet_tags', 'code_snippets' );
+	if ( $tags ) {
 		return $tags;
 	}
 
@@ -199,8 +203,9 @@ function get_snippet( $id = 0, $multisite = null ) {
 	$table = code_snippets()->db->get_table_name( $multisite );
 
 	$cache_key = ( $multisite ? 'ms_' : '' ) . 'snippet_' . $id;
+	$snippet = wp_cache_get( $cache_key, 'code_snippets' );
 
-	if ( $snippet = wp_cache_get( $cache_key, 'code_snippets' ) ) {
+	if ( $snippet ) {
 		return $snippet;
 	}
 
@@ -239,7 +244,7 @@ function activate_snippet( $id, $multisite = null ) {
 	$db = code_snippets()->db;
 	$table = $db->get_table_name( $multisite );
 
-	/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	$wpdb->update(
 		$table,
 		array( 'active' => '1' ),
@@ -347,7 +352,7 @@ function deactivate_snippet( $id, $multisite = null ) {
 
 	/* Set the snippet to active */
 
-	/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	$wpdb->update(
 		$table,
 		array( 'active' => '0' ),
@@ -383,12 +388,13 @@ function deactivate_snippet( $id, $multisite = null ) {
  *
  * @param int       $id        ID of the snippet to delete.
  * @param bool|null $multisite Delete from network-wide (true) or site-wide (false) table.
+ *
  * @since 2.0.0
  */
 function delete_snippet( $id, $multisite = null ) {
 	global $wpdb;
 
-	/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	$wpdb->delete(
 		code_snippets()->db->get_table_name( $multisite ),
 		array( 'id' => $id ),
@@ -405,8 +411,9 @@ function delete_snippet( $id, $multisite = null ) {
  *
  * @return int ID of the snippet
  *
- * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  * @since 2.0.0
+ *
+ * phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
 function save_snippet( Snippet $snippet ) {
 	global $wpdb;
@@ -514,8 +521,9 @@ function execute_snippet( $code, $id = 0, $catch_output = true ) {
  *
  * @return bool true on success, false on failure
  *
- * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  * @since 2.0.0
+ *
+ * phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
 function execute_active_snippets() {
 	global $wpdb;
@@ -527,7 +535,7 @@ function execute_active_snippets() {
 
 	$db = code_snippets()->db;
 	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
-	/** @noinspection PhpRedundantOptionalArgumentInspection */
+	/** Manually specify select list. @noinspection PhpRedundantOptionalArgumentInspection */
 	$data = $db->fetch_active_snippets( $scopes, 'id, code, scope' );
 
 	foreach ( $data as $table_name => $active_snippets ) {

@@ -10,11 +10,15 @@ namespace Code_Snippets;
 class Validator {
 
 	/**
+	 * Code to validate.
+	 *
 	 * @var string
 	 */
 	private $code;
 
 	/**
+	 * List of tokens.
+	 *
 	 * @var array
 	 */
 	private $tokens;
@@ -78,12 +82,12 @@ class Validator {
 	}
 
 	/**
-	 * Move the pointer to the next token, if there is one
+	 * Move the pointer to the next token, if there is one.
 	 *
-	 * If the first argument is provided, only move the pointer if the tokens match
+	 * If the first argument is provided, only move the pointer if the tokens match.
 	 */
 	private function next() {
-		if ( !$this->end() ) {
+		if ( ! $this->end() ) {
 			$this->current++;
 		}
 	}
@@ -126,6 +130,7 @@ class Validator {
 
 	/**
 	 * Validate the given PHP code and return the result.
+	 *
 	 * @return array|bool Array containing message if an error was encountered, false if validation was successful.
 	 */
 	public function validate() {

@@ -165,9 +165,11 @@ function register_plugin_settings() {
 	}
 
 	/* Register the setting */
-	register_setting( 'code-snippets', 'code_snippets_settings', array(
-		'sanitize_callback' => NS . 'sanitize_settings',
-	) );
+	register_setting(
+		'code-snippets',
+		'code_snippets_settings',
+		array( 'sanitize_callback' => NS . 'sanitize_settings' )
+	);
 
 	/* Register settings sections */
 	$sections = get_settings_sections();
@@ -193,7 +195,8 @@ function register_plugin_settings() {
 		'editor_preview',
 		__( 'Editor Preview', 'code-snippets' ),
 		NS . 'render_editor_preview',
-		'code-snippets', 'editor'
+		'code-snippets',
+		'editor'
 	);
 }
 
@@ -217,6 +220,7 @@ function sanitize_setting_value( $field, $input_value ) {
 			return absint( $input_value );
 
 		case 'select':
+			// phpcs:ignore WordPress.PHP.StrictInArray.FoundNonStrictFalse
 			return in_array( $input_value, array_keys( $field['options'] ), false ) ? $input_value : null;
 
 		case 'checkboxes':
@@ -272,7 +276,9 @@ function sanitize_settings( array $input ) {
 	if ( $updated ) {
 		add_settings_error(
 			'code-snippets-settings-notices',
-			'settings-saved', __( 'Settings saved.', 'code-snippets' ), 'updated'
+			'settings-saved',
+			__( 'Settings saved.', 'code-snippets' ),
+			'updated'
 		);
 	}
 

@@ -3,7 +3,8 @@
 namespace Code_Snippets;
 
 /**
- * This class handles the import admin menu
+ * This class handles the import admin menu.
+ *
  * @since   2.4.0
  * @package Code_Snippets
  */
@@ -50,7 +51,11 @@ class Import_Menu extends Admin_Menu {
 	private function process_import_files() {
 
 		/* Ensure the import file exists */
-		if ( ! isset( $_FILES['code_snippets_import_files'] ) || ! count( $_FILES['code_snippets_import_files'] ) ) {
+		if ( ! isset(
+			$_FILES['code_snippets_import_files']['name'],
+			$_FILES['code_snippets_import_files']['type'],
+			$_FILES['code_snippets_import_files']['tmp_name']
+		) ) {
 			return;
 		}
 
@@ -60,9 +65,9 @@ class Import_Menu extends Admin_Menu {
 		$network = is_network_admin();
 		$error = false;
 
-		$upload_files = array_map( 'sanitize_text_field', $_FILES['code_snippets_import_files']['tmp_name'] );
-		$upload_filenames = array_map( 'sanitize_text_field', $_FILES['code_snippets_import_files']['name'] );
-		$upload_mime_types = array_map( 'sanitize_mime_type', $_FILES['code_snippets_import_files']['type'] );
+		$upload_files = array_map( 'sanitize_text_field', wp_unslash( $_FILES['code_snippets_import_files']['tmp_name'] ) );
+		$upload_filenames = array_map( 'sanitize_text_field', wp_unslash( $_FILES['code_snippets_import_files']['name'] ) );
+		$upload_mime_types = array_map( 'sanitize_mime_type', wp_unslash( $_FILES['code_snippets_import_files']['type'] ) );
 
 		$dup_action = isset( $_POST['duplicate_action'] ) ? sanitize_key( $_POST['duplicate_action'] ) : 'ignore';
 
@@ -120,13 +125,13 @@ class Import_Menu extends Admin_Menu {
 	 */
 	protected function print_messages() {
 
-		if ( isset( $_REQUEST['error'] ) && $_REQUEST['error'] ) {
+		if ( ! empty( $_REQUEST['error'] ) ) {
 			echo '<div id="message" class="error fade"><p>';
 			esc_html_e( 'An error occurred when processing the import files.', 'code-snippets' );
 			echo '</p></div>';
 		}
 
-		if ( isset( $_REQUEST['imported'] ) && intval( $_REQUEST['imported'] ) >= 0 ) {
+		if ( ! empty( $_REQUEST['imported'] ) && intval( $_REQUEST['imported'] ) >= 0 ) {
 			echo '<div id="message" class="updated fade"><p>';
 
 			$imported = intval( $_REQUEST['imported'] );
@@ -150,6 +155,11 @@ class Import_Menu extends Admin_Menu {
 		}
 	}
 
+	/**
+	 * Empty implementation for enqueue_assets.
+	 *
+	 * @return void
+	 */
 	public function enqueue_assets() {
 		// none required.
 	}

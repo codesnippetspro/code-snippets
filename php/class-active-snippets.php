@@ -9,10 +9,15 @@ namespace Code_Snippets;
  */
 class Active_Snippets {
 
+	/**
+	 * List of content snippets.
+	 *
+	 * @var array
+	 */
 	private $content_snippets = [];
 
 	/**
-	 * Class constructor
+	 * Class constructor.
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
@@ -39,6 +44,7 @@ class Active_Snippets {
 		foreach ( $snippets_list as $snippets ) {
 			foreach ( $snippets as $snippet ) {
 				if ( $scope === $snippet['scope'] ) {
+					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo "\n", $snippet['code'], "\n";
 				}
 			}

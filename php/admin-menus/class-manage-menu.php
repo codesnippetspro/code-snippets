@@ -86,7 +86,7 @@ class Manage_Menu extends Admin_Menu {
 		);
 
 		if ( isset( $classmap[ $sub ], code_snippets()->admin->menus[ $classmap[ $sub ] ] ) ) {
-			/** @var Admin_Menu $class */
+			/** Menu class @var Admin_Menu $class */
 			$class = code_snippets()->admin->menus[ $classmap[ $sub ] ];
 		} else {
 			$class = $this;
@@ -215,7 +215,8 @@ class Manage_Menu extends Admin_Menu {
 			);
 		}
 
-		$snippet_data = map_deep( json_decode( stripslashes( $_POST['snippet'] ), true ), 'sanitize_text_field' );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$snippet_data = array_map( 'sanitize_text_field', json_decode( wp_unslash( $_POST['snippet'] ), true ) );
 
 		$snippet = new Snippet( $snippet_data );
 		$field = sanitize_key( $_POST['field'] );

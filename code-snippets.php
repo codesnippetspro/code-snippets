@@ -39,10 +39,13 @@ if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
 	deactivate_plugins( array( 'code-snippets/code-snippets.php' ), true );
 
 	if ( ! function_exists( 'code_snippets_deactivated_old_version_notice' ) ) {
+		/**
+		 * Display a message informing the user that this plugin has been deactivated.
+		 */
 		function code_snippets_deactivated_old_version_notice() {
-			echo '<div class="error fade"><p>',
-			esc_html__( 'Another version of Code Snippets appears to be installed. Deactivating this version.', 'code-snippets' ),
-			'</p></div>';
+			echo '<div class="error fade"><p>';
+			esc_html_e( 'Another version of Code Snippets appears to be installed. Deactivating this version.', 'code-snippets' );
+			echo '</p></div>';
 		}
 	}
 
@@ -79,13 +82,14 @@ if ( ! function_exists( 'code_snippets_php_version_notice' ) ) {
 		echo '<div class="error fade"><p>';
 		echo '<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong><br>';
 
+		$update_url = function_exists( 'wp_get_default_update_php_url' ) ?
+			wp_get_default_update_php_url() :
+			'https://wordpress.org/support/update-php/';
+
 		/* translators: %s: Update PHP URL */
 		$text = __( 'Please <a href="%s">upgrade your server to the latest version of PHP</a> to continue using Code Snippets.', 'code-snippets' );
-		$text = sprintf( $text, function_exists( 'wp_get_default_update_php_url' ) ?
-			wp_get_default_update_php_url() :
-			'https://wordpress.org/support/update-php/'
-		);
-		echo wp_kses( $text, array( 'a' => array( 'href' => array() ) ) );
+
+		echo wp_kses( sprintf( $text, $update_url ), array( 'a' => array( 'href' => array() ) ) );
 		echo '</p></div>';
 
 		deactivate_plugins( plugin_basename( __FILE__ ) );

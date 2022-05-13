@@ -80,9 +80,6 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 
 A full list of our Frequently Asked Questions can be found at [help.codesnippets.pro](https://help.codesnippets.pro/collection/3-faq).
 
-= How do I insert snippets into the post text editor? =
-Code Snippets v2 is designed to be used with PHP Function Snippets, which are not intended to be inserted as content, but instead persistently on your site as if they were part of a plugin or your theme's functions.php file.
-
 = How can I recover my site if it is crashed by a buggy snippet? =
 You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: <https://help.codesnippets.pro/article/12-safe-mode>.
 
@@ -90,7 +87,7 @@ You can recover your site by enabling the Code Snippets safe mode feature. Instr
 No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.
 
 = Can the plugin be completely uninstalled? =
-If you enable the 'Complete Uninstall' option on the plugin settings page, Code Snippets will clean up all of its data when deleted through the WordPress 'Plugins' menu. This includes all of the stored snippets. If you would like to preserve the snippets, ensure they are exported first.
+If you enable the 'Complete Uninstall' option on the plugin settings page, Code Snippets will clean up all of its data when deleted through the WordPress 'Plugins' menu. This includes all stored snippets. If you would like to preserve the snippets, ensure they are exported first.
 
 = Can I copy snippets that I have created to another WordPress site? =
 Yes! You can individually export a single snippet using the link below the snippet name on the 'Manage Snippets' page or bulk export multiple snippets using the 'Bulk Actions' feature. Snippets can later be imported using the 'Import Snippets' page by uploading the export file.

@@ -44,22 +44,31 @@ class Frontend {
 		}
 
 		/* Register the TinyMCE plugin */
-		add_filter( 'mce_external_plugins', function ( $plugins ) {
-			$plugins['code_snippets'] = plugins_url( 'js/min/mce.js', PLUGIN_FILE );
-			return $plugins;
-		} );
+		add_filter(
+			'mce_external_plugins',
+			function ( $plugins ) {
+				$plugins['code_snippets'] = plugins_url( 'js/min/mce.js', PLUGIN_FILE );
+				return $plugins;
+			}
+		);
 
 		/* Add the button to the editor toolbar */
-		add_filter( 'mce_buttons', function ( $buttons ) {
-			$buttons[] = 'code_snippets';
-			return $buttons;
-		} );
+		add_filter(
+			'mce_buttons',
+			function ( $buttons ) {
+				$buttons[] = 'code_snippets';
+				return $buttons;
+			}
+		);
 
 		/* Add the translation strings to the TinyMCE editor */
-		add_filter( 'mce_external_languages', function ( $languages ) {
-			$languages['code_snippets'] = __DIR__ . '/mce-strings.php';
-			return $languages;
-		} );
+		add_filter(
+			'mce_external_languages',
+			function ( $languages ) {
+				$languages['code_snippets'] = __DIR__ . '/mce-strings.php';
+				return $languages;
+			}
+		);
 	}
 
 	/**
@@ -103,20 +112,23 @@ class Frontend {
 		wp_register_style(
 			self::PRISM_HANDLE,
 			plugins_url( 'css/min/prism.css', $plugin->file ),
-			array(), $plugin->version
+			array(),
+			$plugin->version
 		);
 
 		wp_enqueue_script(
 			self::PRISM_HANDLE,
 			plugins_url( 'js/min/prism.js', $plugin->file ),
-			array(), $plugin->version, true
+			array(),
+			$plugin->version,
+			true
 		);
 	}
 
 	/**
 	 * Print a message to the user if the snippet ID attribute is invalid.
 	 *
-	 * @param int $id Snippet ID
+	 * @param int $id Snippet ID.
 	 *
 	 * @return string Warning message.
 	 */
@@ -134,7 +146,6 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	public function render_content_shortcode( $atts ) {
-
 		$atts = shortcode_atts(
 			array(
 				'id'         => 0,
@@ -145,11 +156,12 @@ class Frontend {
 				'shortcodes' => false,
 				'debug'      => false,
 			),
-			$atts, self::CONTENT_SHORTCODE
+			$atts,
+			self::CONTENT_SHORTCODE
 		);
 
-		$id = intval( $atts['snippet_id'] );
-		if ( ! $id && ! $id = intval( $atts['id'] ) ) {
+		$id = intval( $atts['snippet_id'] ) ?: intval( $atts['id'] );
+		if ( ! $id ) {
 			return $this->invalid_id_warning( $id );
 		}
 
@@ -170,7 +182,15 @@ class Frontend {
 			$text = __( '<strong>%1$s</strong> is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
 
 			$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
-			return wp_kses( sprintf( $text, $snippet->name, $edit_url ), [ 'strong' => [], 'a' => [ 'href' => [] ] ] );
+			return wp_kses(
+				sprintf( $text, $snippet->name, $edit_url ),
+				[
+					'strong' => [],
+					'a'      => [
+						'href' => [],
+					],
+				]
+			);
 		}
 
 		$content = $snippet->code;
@@ -225,7 +245,8 @@ class Frontend {
 
 		return sprintf(
 			'<pre><code class="%s">%s</code></pre>',
-			$class, esc_html( $snippet->code )
+			$class,
+			esc_html( $snippet->code )
 		);
 	}
 
@@ -245,11 +266,12 @@ class Frontend {
 				'network'      => false,
 				'line_numbers' => false,
 			),
-			$atts, self::SOURCE_SHORTCODE
+			$atts,
+			self::SOURCE_SHORTCODE
 		);
 
-		$id = intval( $atts['snippet_id'] );
-		if ( ! $id && ! $id = intval( $atts['id'] ) ) {
+		$id = intval( $atts['snippet_id'] ) ?: intval( $atts['id'] );
+		if ( ! $id ) {
 			return $this->invalid_id_warning( $id );
 		}
 

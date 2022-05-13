@@ -32,7 +32,10 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 	$default_atts = [
 		'mode'          => $modes[ $type ],
 		'matchBrackets' => true,
-		'extraKeys'     => [ 'Alt-F' => 'findPersistent', 'Ctrl-Space' => 'autocomplete' ],
+		'extraKeys'     => [
+			'Alt-F'      => 'findPersistent',
+			'Ctrl-Space' => 'autocomplete',
+		],
 		'gutters'       => [ 'CodeMirror-lint-markers' ],
 		'lint'          => 'css' === $type || 'php' === $type,
 		'direction'     => 'ltr',
@@ -57,15 +60,19 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 		$atts[ $number_att ] = intval( $atts[ $number_att ] );
 	}
 
-	wp_enqueue_code_editor( [
-		'type'       => $modes[ $type ],
-		'codemirror' => $atts,
-	] );
+	wp_enqueue_code_editor(
+		[
+			'type'       => $modes[ $type ],
+			'codemirror' => $atts,
+		]
+	);
 
 	wp_enqueue_script(
 		'code-snippets-code-editor',
 		plugins_url( 'js/min/editor.js', $plugin->file ),
-		[ 'code-editor' ], $plugin->version, true
+		[ 'code-editor' ],
+		$plugin->version,
+		true
 	);
 
 	// CodeMirror Theme

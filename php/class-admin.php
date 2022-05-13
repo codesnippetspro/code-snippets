@@ -55,7 +55,7 @@ class Admin {
 		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ) );
 
-		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
+		if ( ! empty( $_POST['save_snippet'] ) ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
 		}
 	}
@@ -69,11 +69,9 @@ class Admin {
 	 *
 	 * @param array $menu_items Current mu menu items.
 	 *
-	 * @return array Modified mu menu items.
-	 * @return array             The modified mu menu items
+	 * @return array The modified mu menu items
 	 *
 	 * @since 1.7.1
-	 *
 	 */
 	public function mu_menu_items( $menu_items ) {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
@@ -130,7 +128,6 @@ class Admin {
 	 *
 	 * @return array Modified plugin action links
 	 * @since 2.0.0
-	 *
 	 */
 	public function plugin_settings_link( $links ) {
 		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
@@ -166,7 +163,6 @@ class Admin {
 	 *
 	 * @return array The modified plugin info links.
 	 * @since 2.0.0
-	 *
 	 */
 	public function plugin_meta_links( $links, $file ) {
 
@@ -211,13 +207,15 @@ class Admin {
 	 *
 	 * @return array The updated Site Health information.
 	 * @author sc0ttkclark
-	 *
 	 */
 	public function debug_information( $info ) {
 		$fields = array();
 
 		// fetch all active snippets.
-		$args = array( 'active_only' => true, 'limit' => 100 );
+		$args = array(
+			'active_only' => true,
+			'limit'       => 100,
+		);
 		$snippet_objects = get_snippets( array(), null, $args );
 
 		// build the debug information from snippet data.
@@ -285,7 +283,7 @@ class Admin {
 		/* Bail now if the user has dismissed the message */
 		if ( get_user_meta( $current_user->ID, $key ) ) {
 			return;
-		} elseif ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], $key ) ) {
+		} elseif ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $key ) ) {
 			add_user_meta( $current_user->ID, $key, true, true );
 
 			return;

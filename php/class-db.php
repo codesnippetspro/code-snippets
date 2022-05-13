@@ -88,7 +88,6 @@ class DB {
 	 *
 	 * @return string The snippet table name
 	 * @since 2.0
-	 *
 	 */
 	public function get_table_name( $multisite = null ) {
 
@@ -105,7 +104,7 @@ class DB {
 	}
 
 	/**
-	 * Determine whether a database table exists
+	 * Determine whether a database table exists.
 	 *
 	 * @param string $table_name Name of database table to check.
 	 *
@@ -160,11 +159,11 @@ class DB {
 	}
 
 	/**
-	 * Create a single snippet table
+	 * Create a single snippet table.
 	 *
-	 * @param string $table_name The name of the table to create
+	 * @param string $table_name The name of the table to create.
 	 *
-	 * @return bool Whether the table creation was successful
+	 * @return bool Whether the table creation was successful.
 	 * @since 1.6
 	 * @uses  dbDelta() to apply the SQL code
 	 */
@@ -259,7 +258,7 @@ class DB {
 		$active_snippets = array();
 
 		foreach ( $queries as $table => $query ) {
-			/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 			$results = $wpdb->get_results( $query, 'ARRAY_A' );
 			$active_snippets[ $table ] = is_array( $results ) ? $results : array();
 		}

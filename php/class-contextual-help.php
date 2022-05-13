@@ -94,8 +94,8 @@ class Contextual_Help {
 							},
 							is_array( $paragraphs ) ? $paragraphs : [ $paragraphs ]
 						)
-					),
-			),
+					)
+				),
 			)
 		);
 	}

@@ -49,7 +49,8 @@ class Export {
 
 		if ( count( $ids ) ) {
 			$sql = sprintf(
-				'SELECT * FROM %s WHERE id IN (%s)', $table_name,
+				'SELECT * FROM %s WHERE id IN (%s)',
+				$table_name,
 				implode( ',', array_fill( 0, count( $ids ), '%d' ) )
 			);
 
@@ -113,7 +114,7 @@ class Export {
 
 		$data = array(
 			'generator'    => 'Code Snippets v' . code_snippets()->version,
-			'date_created' => date( 'Y-m-d H:i' ),
+			'date_created' => gmdate( 'Y-m-d H:i' ),
 			'snippets'     => $snippets,
 		);
 
@@ -162,7 +163,7 @@ class Export {
 				echo " *\n * ", wp_strip_all_tags( $desc ), "\n";
 			}
 
-			printf(" */\n\n%s\n%s\n", 'html' === $snippet->type ? '?>' : '', trim( $snippet->code ) );
+			printf( " */\n\n%s\n%s\n", 'html' === $snippet->type ? '?>' : '', trim( $snippet->code ) );
 
 			$last_type = $snippet->type;
 		}

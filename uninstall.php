@@ -4,9 +4,6 @@
  *
  * @package Code_Snippets
  * @since   2.0.0
- *
- * @phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
- * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
 
 namespace Code_Snippets;
@@ -16,43 +13,48 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	return;
 }
 
-/* Fetch the Complete Uninstall option from the database settings */
-$unified = false;
-if ( is_multisite() ) {
-	$menu_perms = get_site_option( 'menu_items', array() );
-	$unified = empty( $menu_perms['snippets_settings'] );
-}
+/**
+ * Determine whether the option for allowing a complete uninstallation is enabled.
+ *
+ * @return boolean
+ */
+function complete_uninstall_enabled() {
+	$unified = false;
 
-$settings = $unified ? get_site_option( 'code_snippets_settings' ) : get_option( 'code_snippets_settings' );
+	if ( is_multisite() ) {
+		$menu_perms = get_site_option( 'menu_items', array() );
+		$unified = empty( $menu_perms['snippets_settings'] );
+	}
 
-/* Short circuit the uninstall cleanup process if the option is not enabled */
-if ( ! isset( $settings['general']['complete_uninstall'] ) || ! $settings['general']['complete_uninstall'] ) {
-	return;
+	$settings = $unified ? get_site_option( 'code_snippets_settings' ) : get_option( 'code_snippets_settings' );
+
+	return isset( $settings['general']['complete_uninstall'] ) && $settings['general']['complete_uninstall'];
 }
 
 /**
  * Clean up data created by this plugin for a single site
  *
- * @since 2.0.0
+ * @phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
+ * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
-function code_snippets_uninstall_site() {
+function uninstall_current_site() {
 	global $wpdb;
 
-	/* Remove snippets database table */
 	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" );
 
-	/* Remove saved options */
 	delete_option( 'code_snippets_version' );
 	delete_option( 'recently_activated_snippets' );
 	delete_option( 'code_snippets_settings' );
 }
 
-
-global $wpdb;
-
-/* Multisite uninstall */
-
-if ( is_multisite() ) {
+/**
+ * Clean up data created by this plugin on multisite.
+ *
+ * @phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
+ * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+ */
+function uninstall_multisite() {
+	global $wpdb;
 
 	/* Loop through sites */
 	$blog_ids = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}" );
@@ -61,7 +63,7 @@ if ( is_multisite() ) {
 
 		foreach ( $blog_ids as $site_id ) {
 			switch_to_blog( $site_id );
-			code_snippets_uninstall_site();
+			uninstall_current_site();
 		}
 
 		restore_current_blog();
@@ -73,6 +75,13 @@ if ( is_multisite() ) {
 	/* Remove saved options */
 	delete_site_option( 'code_snippets_version' );
 	delete_site_option( 'recently_activated_snippets' );
-} else {
-	code_snippets_uninstall_site();
+}
+
+if ( complete_uninstall_enabled() ) {
+
+	if ( is_multisite() ) {
+		uninstall_multisite();
+	} else {
+		uninstall_current_site();
+	}
 }

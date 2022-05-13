@@ -9,7 +9,8 @@ use WP_List_Table;
  * Contains the class for handling the snippets table
  *
  * @package Code_Snippets
- * @phpcs   :disable WordPress.WP.GlobalVariablesOverride.Prohibited
+ *
+ * phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
  */
 
 /* The WP_List_Table base class is not included by default, so we need to load it */
@@ -71,7 +72,7 @@ class List_Table extends WP_List_Table {
 
 		/* Add the search query to the URL */
 		if ( isset( $_REQUEST['s'] ) ) {
-			$_SERVER['REQUEST_URI'] = add_query_arg( 's', sanitize_text_field( stripslashes( $_REQUEST['s'] ) ) );
+			$_SERVER['REQUEST_URI'] = add_query_arg( 's', sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) );
 		}
 
 		/* Add a snippets per page screen option */
@@ -110,7 +111,7 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Set the 'id' column as hidden by default.
 	 *
-	 * @param array $hidden
+	 * @param array $hidden List of hidden columns.
 	 *
 	 * @return array
 	 */
@@ -121,6 +122,7 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * Set the 'name' column as the primary column.
+	 *
 	 * @return string
 	 */
 	protected function get_default_primary_column_name() {
@@ -148,7 +150,9 @@ class List_Table extends WP_List_Table {
 				$type = $item->type;
 				return sprintf(
 					'<a class="snippet-type-badge" href="%s" data-type="%s">%s</a>',
-					esc_url( add_query_arg( 'type', $type ) ), esc_attr( $type ), esc_html( $type )
+					esc_url( add_query_arg( 'type', $type ) ),
+					esc_attr( $type ),
+					esc_html( $type )
 				);
 
 			case 'modified':
@@ -180,8 +184,8 @@ class List_Table extends WP_List_Table {
 
 		$query_args = array(
 			'action' => $action,
-			'id' => $snippet->id,
-			'scope' => $snippet->scope
+			'id'     => $snippet->id,
+			'scope'  => $snippet->scope,
 		);
 
 		$url = $network_redirect ?
@@ -228,10 +232,10 @@ class List_Table extends WP_List_Table {
 				esc_url( $this->get_action_link( 'delete', $snippet ) ),
 				esc_js(
 					sprintf(
-					'return confirm("%s");',
-					esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
-					esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
-				)
+						'return confirm("%s");',
+						esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
+						esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+					)
 				)
 			);
 		}
@@ -485,28 +489,32 @@ class List_Table extends WP_List_Table {
 			$labels['all'] = _n(
 				'All <span class="count">(%s)</span>',
 				'All <span class="count">(%s)</span>',
-				$count, 'code-snippets'
+				$count,
+				'code-snippets'
 			);
 
 			/* translators: %s: total number of active snippets */
 			$labels['active'] = _n(
 				'Active <span class="count">(%s)</span>',
 				'Active <span class="count">(%s)</span>',
-				$count, 'code-snippets'
+				$count,
+				'code-snippets'
 			);
 
 			/* translators: %s: total number of inactive snippets */
 			$labels['inactive'] = _n(
 				'Inactive <span class="count">(%s)</span>',
 				'Inactive <span class="count">(%s)</span>',
-				$count, 'code-snippets'
+				$count,
+				'code-snippets'
 			);
 
 			/* translators: %s: total number of recently activated snippets */
 			$labels['recently_activated'] = _n(
 				'Recently Active <span class="count">(%s)</span>',
 				'Recently Active <span class="count">(%s)</span>',
-				$count, 'code-snippets'
+				$count,
+				'code-snippets'
 			);
 
 			/* The page URL with the status parameter */
@@ -569,7 +577,7 @@ class List_Table extends WP_List_Table {
 			$tags = $this->get_current_tags();
 
 			if ( count( $tags ) ) {
-				$query = isset( $_GET['tag'] ) ? sanitize_text_field( $_GET['tag'] ) : '';
+				$query = isset( $_GET['tag'] ) ? sanitize_text_field( wp_unslash( $_GET['tag'] ) ) : '';
 
 				echo '<div class="alignleft actions">';
 				echo '<select name="tag">';
@@ -581,7 +589,8 @@ class List_Table extends WP_List_Table {
 
 				foreach ( $tags as $tag ) {
 
-					printf( "<option %s value='%s'>%s</option>\n",
+					printf(
+						"<option %s value='%s'>%s</option>\n",
 						selected( $query, $tag, false ),
 						esc_attr( $tag ),
 						esc_html( $tag )
@@ -627,7 +636,8 @@ class List_Table extends WP_List_Table {
 
 		foreach ( $vars as $var ) {
 			if ( ! empty( $_REQUEST[ $var ] ) ) {
-				printf( '<input type="hidden" name="%s" value="%s" />', esc_attr( $var ), esc_attr( $_REQUEST[ $var ] ) );
+				$value = sanitize_text_field( wp_unslash( $_REQUEST[ $var ] ) );
+				printf( '<input type="hidden" name="%s" value="%s" />', esc_attr( $var ), esc_attr( $value ) );
 				print "\n";
 			}
 		}
@@ -726,11 +736,11 @@ class List_Table extends WP_List_Table {
 		/* Check if there are any single snippet actions to perform */
 		if ( isset( $_GET['action'], $_GET['id'] ) ) {
 			$id = absint( $_GET['id'] );
-			$scope = isset( $_GET['scope'] ) ? $_GET['scope'] : '';
+			$scope = isset( $_GET['scope'] ) ? sanitize_key( wp_unslash( $_GET['scope'] ) ) : '';
 
 			/* Verify they were sent from a trusted source */
 			$nonce_action = 'code_snippets_manage_snippet_' . $id;
-			if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], $nonce_action ) ) {
+			if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_wpnonce'] ) ), $nonce_action ) ) {
 				wp_nonce_ays( $nonce_action );
 			}
 
@@ -836,10 +846,12 @@ class List_Table extends WP_List_Table {
 				esc_html_e( "It looks like you don't have any snippets.", 'code-snippets' );
 			} else {
 				esc_html_e( "It looks like you don't have any snippets of this type.", 'code-snippets' );
-				$add_url = add_query_arg( 'type', sanitize_text_field( $_GET['type'] ), $add_url );
+				$add_url = add_query_arg( 'type', sanitize_key( wp_unslash( $_GET['type'] ) ), $add_url );
 			}
 
-			printf( ' <a href="%s">%s</a>', esc_url( $add_url ),
+			printf(
+				' <a href="%s">%s</a>',
+				esc_url( $add_url ),
 				esc_html__( 'Perhaps you would like to add a new one?', 'code-snippets' )
 			);
 		}
@@ -860,8 +872,8 @@ class List_Table extends WP_List_Table {
 		if ( $this->is_network ) {
 			$limit = count( $snippets['all'] );
 
-			/** @var Snippet $snippet */
-			for ( $i = 0; $i < $limit; $i ++ ) {
+			for ( $i = 0; $i < $limit; $i++ ) {
+				/** Snippet @var Snippet $snippet */
 				$snippet = &$snippets['all'][ $i ];
 
 				if ( in_array( $snippet->id, $ids, true ) ) {
@@ -871,12 +883,10 @@ class List_Table extends WP_List_Table {
 				}
 			}
 		} else {
-
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 			$active_shared_snippet_format = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
-
-			/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
+			/* phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
 			$shared_snippets = $wpdb->get_results(
 				$wpdb->prepare( "
 					SELECT * FROM $db->ms_table
@@ -913,7 +923,9 @@ class List_Table extends WP_List_Table {
 
 		/* Redirect tag filter from POST to GET */
 		if ( isset( $_POST['filter_action'] ) ) {
-			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
+			$location = empty( $_POST['tag'] ) ?
+				remove_query_arg( 'tag' ) :
+				add_query_arg( 'tag', sanitize_text_field( wp_unslash( $_POST['tag'] ) ) );
 			wp_redirect( esc_url_raw( $location ) );
 			exit;
 		}
@@ -930,13 +942,16 @@ class List_Table extends WP_List_Table {
 
 		/* Filter snippets by type */
 		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
-			$snippets['all'] = array_filter( $snippets['all'], function ( Snippet $snippet ) {
-				return $_GET['type'] === $snippet->type;
-			} );
+			$snippets['all'] = array_filter(
+				$snippets['all'],
+				function ( Snippet $snippet ) {
+					return $_GET['type'] === $snippet->type;
+				}
+			);
 		}
 
 		/* Add scope tags */
-		/** @var Snippet $snippet */
+		/** Snippet @var Snippet $snippet */
 		foreach ( $snippets['all'] as $snippet ) {
 			if ( 'global' !== $snippet->scope ) {
 				$snippet->add_tag( $snippet->scope );
@@ -1075,22 +1090,22 @@ class List_Table extends WP_List_Table {
 
 		// set the order by based on the query variable, if set.
 		if ( ! empty( $_REQUEST['orderby'] ) ) {
-			$this->order_by = $_REQUEST['orderby'];
+			$this->order_by = sanitize_key( wp_unslash( $_REQUEST['orderby'] ) );
 		} else {
 			// otherwise, fetch the order from the setting, ensuring it is valid.
 			$valid_fields = [ 'id', 'name', 'type', 'modified', 'priority' ];
 			$order_parts = explode( '-', $order, 2 );
 
-			$this->order_by = in_array( $order_parts[0], $valid_fields ) ? $order_parts[0] :
+			$this->order_by = in_array( $order_parts[0], $valid_fields, true ) ? $order_parts[0] :
 				apply_filters( 'code_snippets/list_table/default_orderby', 'priority' );
 		}
 
 		// set the order dir based on the query variable, if set.
 		if ( ! empty( $_REQUEST['order'] ) ) {
-			$this->order_dir = $_REQUEST['order'];
-		} else if ( '-desc' === substr( $order, -5 ) ) {
+			$this->order_dir = sanitize_key( wp_unslash( $_REQUEST['order'] ) );
+		} elseif ( '-desc' === substr( $order, -5 ) ) {
 			$this->order_dir = 'desc';
-		} else if ( '-asc' === substr( $order, -4 ) ) {
+		} elseif ( '-asc' === substr( $order, -4 ) ) {
 			$this->order_dir = 'asc';
 		} else {
 			$this->order_dir = apply_filters( 'code_snippets/list_table/default_order', 'asc' );
@@ -1171,15 +1186,17 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Callback for filtering snippets by tag
+	 * Callback for filtering snippets by tag.
 	 *
 	 * @param Snippet $snippet The snippet being filtered.
 	 *
-	 * @return bool The result of the filter
+	 * @return bool The result of the filter.
 	 * @ignore
 	 */
 	private function tags_filter_callback( $snippet ) {
-		$tags = explode( ',', sanitize_text_field( wp_unslash( $_GET['tag'] ) ) );
+		$tags = isset( $_GET['tag'] ) ?
+			explode( ',', sanitize_text_field( wp_unslash( $_GET['tag'] ) ) ) :
+			array();
 
 		foreach ( $tags as $tag ) {
 			if ( in_array( $tag, $snippet->tags, true ) ) {
@@ -1201,7 +1218,7 @@ class List_Table extends WP_List_Table {
 			echo '<span class="subtitle">' . esc_html__( 'Search results', 'code-snippets' );
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
-				$s = $_REQUEST['s'];
+				$s = sanitize_text_field( wp_unslash( $_REQUEST['s'] ) );
 
 				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
 
@@ -1218,8 +1235,9 @@ class List_Table extends WP_List_Table {
 			}
 
 			if ( ! empty( $_GET['tag'] ) ) {
+				$tag = sanitize_text_field( wp_unslash( $_GET['tag'] ) );
 				/* translators: %s: tag name */
-				echo esc_html( sprintf( __( ' in tag &ldquo;%s&rdquo;', 'code-snippets' ), sanitize_text_field( $_GET['tag'] ) ) );
+				echo esc_html( sprintf( __( ' in tag &ldquo;%s&rdquo;', 'code-snippets' ), $tag ) );
 			}
 
 			echo '</span>';
@@ -1259,7 +1277,7 @@ class List_Table extends WP_List_Table {
 	private function clone_snippets( $ids ) {
 		$snippets = get_snippets( $ids, $this->is_network );
 
-		/** @var Snippet $snippet */
+		/** Snippet @var Snippet $snippet */
 		foreach ( $snippets as $snippet ) {
 			// copy all data from the previous snippet aside from the ID and active status
 			$snippet->id = 0;

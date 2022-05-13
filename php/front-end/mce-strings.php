@@ -29,7 +29,7 @@ $snippets = get_snippets();
 $strings['all_snippets'] = [];
 $strings['content_snippets'] = [];
 
-/** @var Snippet $snippet */
+/** Snippet @var Snippet $snippet */
 foreach ( $snippets as $snippet ) {
 
 	if ( 'content' === $snippet->scope ) {
@@ -47,5 +47,5 @@ asort( $strings['all_snippets'], SORT_STRING | SORT_FLAG_CASE );
 asort( $strings['content_snippets'], SORT_STRING | SORT_FLAG_CASE );
 
 $strings = [ _WP_Editors::$mce_locale => [ 'code_snippets' => $strings ] ];
-/** @noinspection PhpUnusedLocalVariableInspection */
+/** $strings is used by outer file. @noinspection PhpUnusedLocalVariableInspection */
 $strings = 'tinyMCE.addI18n(' . wp_json_encode( $strings ) . ');';

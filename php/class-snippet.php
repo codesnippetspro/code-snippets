@@ -163,7 +163,7 @@ class Snippet {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
-				/** @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error */
+				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
 				trigger_error( 'Trying to access invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
 			}
 
@@ -184,7 +184,7 @@ class Snippet {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
-				/** @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error */
+				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
 				trigger_error( 'Trying to set invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
 			}
 
@@ -363,6 +363,11 @@ class Snippet {
 		return [ 'php', 'html', 'css', 'js' ];
 	}
 
+	/**
+	 * Retrieve description of snippet type.
+	 *
+	 * @return string
+	 */
 	private function get_type_desc() {
 		$labels = [
 			'php'  => __( 'Functions', 'code-snippets' ),
@@ -386,7 +391,7 @@ class Snippet {
 	/**
 	 * Prepare the modification field by ensuring it is in the correct format.
 	 *
-	 * @param DateTime|string $modified
+	 * @param DateTime|string $modified Snippet modification date.
 	 *
 	 * @return string
 	 */
@@ -442,6 +447,8 @@ class Snippet {
 	 * Retrieve a list of all available scopes
 	 *
 	 * @return array Single-dimensional array of scope names.
+	 *
+	 * @phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine
 	 */
 	public static function get_all_scopes() {
 		return array(

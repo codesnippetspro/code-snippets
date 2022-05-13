@@ -76,7 +76,6 @@ abstract class Admin_Menu {
 	 * @param string $title Page title.
 	 *
 	 * @uses add_submenu_page() to register a submenu
-	 *
 	 */
 	public function add_menu( $slug, $label, $title ) {
 		$hook = add_submenu_page(
@@ -187,7 +186,7 @@ abstract class Admin_Menu {
 	/**
 	 * Enqueue scripts and stylesheets for the admin page, if necessary
 	 */
-	public abstract function enqueue_assets();
+	abstract public function enqueue_assets();
 
 	/**
 	 * Render a list of links to other pages in the page title
@@ -203,8 +202,8 @@ abstract class Admin_Menu {
 
 			$url = code_snippets()->get_menu_url( $action );
 
-			if ( isset( $_GET['type'] ) && in_array( $_GET['type'], Snippet::get_types() ) ) {
-				$url = add_query_arg( 'type', $_GET['type'], $url );
+			if ( isset( $_GET['type'] ) && in_array( $_GET['type'], Snippet::get_types(), true ) ) {
+				$url = add_query_arg( 'type', sanitize_key( wp_unslash( $_GET['type'] ) ), $url );
 			}
 
 			printf( '<a href="%s" class="page-title-action">', esc_url( $url ) );

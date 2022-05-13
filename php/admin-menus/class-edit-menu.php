@@ -116,7 +116,8 @@ class Edit_Menu extends Admin_Menu {
 	public function load_snippet_data() {
 		$edit_id = isset( $_REQUEST['id'] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
 
-		$snippet = $this->snippet = get_snippet( $edit_id );
+		$this->snippet = get_snippet( $edit_id );
+		$snippet = $this->snippet;
 
 		if ( 0 === $edit_id && isset( $_GET['type'] ) && $_GET['type'] !== $snippet->type ) {
 			if ( 'php' === $_GET['type'] ) {
@@ -137,7 +138,7 @@ class Edit_Menu extends Admin_Menu {
 	private function process_actions() {
 
 		/* Check for a valid nonce */
-		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'save_snippet' ) ) {
+		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'save_snippet' ) ) {
 			return;
 		}
 
@@ -387,7 +388,6 @@ class Edit_Menu extends Admin_Menu {
 		$settings = $settings['description_editor'];
 
 		echo '<h2><label for="snippet_description">', esc_html__( 'Description', 'code-snippets' ), '</label></h2>';
-
 
 		remove_editor_styles(); // stop custom theme styling interfering with the editor
 
@@ -650,11 +650,15 @@ class Edit_Menu extends Admin_Menu {
 			true
 		);
 
-		wp_localize_script( 'code-snippets-edit-menu', 'code_snippets_edit_i18n', [
-			'missing_title_code' => esc_attr__( 'This snippet has no code or title. Continue?', 'code-snippets' ),
-			'missing_title'      => esc_attr__( 'This snippet has no title. Continue?', 'code-snippets' ),
-			'missing_code'       => esc_attr__( 'This snippet has no snippet code. Continue?', 'code-snippets' ),
-		] );
+		wp_localize_script(
+			'code-snippets-edit-menu',
+			'code_snippets_edit_i18n',
+			[
+				'missing_title_code' => esc_attr__( 'This snippet has no code or title. Continue?', 'code-snippets' ),
+				'missing_title'      => esc_attr__( 'This snippet has no title. Continue?', 'code-snippets' ),
+				'missing_code'       => esc_attr__( 'This snippet has no snippet code. Continue?', 'code-snippets' ),
+			]
+		);
 
 		$this->enqueue_tag_assets();
 	}
@@ -675,7 +679,6 @@ class Edit_Menu extends Admin_Menu {
 			code_snippets()->version,
 			true
 		);
-
 
 		$options = apply_filters( 'code_snippets/tag_editor_options',
 			array(
