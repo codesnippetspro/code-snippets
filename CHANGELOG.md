@@ -44,6 +44,9 @@
 * Added: Elementor widget for displaying content snippets.
 * Added: Elementor widget for displaying snippet source code.
 
+## 2.14.5 (10 May 2022)
+* Fixed: Incompatibility issue with older versions of PHP.
+
 ## 2.14.4 (5 May 2022)
 * Fixed: Prevent array key errors when loading the snippet table with unknown order values.
 

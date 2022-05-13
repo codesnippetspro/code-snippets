@@ -54,9 +54,6 @@
 		<exclude name="WordPress.Security.NonceVerification.Recommended" />
 		<exclude name="WordPress.Security.NonceVerification.Missing" />
 		<exclude name="WordPress.Security.SafeRedirect.wp_redirect_wp_redirect" />
-		<exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotSanitized" />
-		<exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotValidated" />
-		<exclude name="WordPress.Security.ValidatedSanitizedInput.MissingUnslash" />
 	</rule>
 
 	<!-- class files don't need an additional file comment -->

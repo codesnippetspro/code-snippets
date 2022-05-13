@@ -139,9 +139,9 @@ class Admin {
 			$links,
 			sprintf(
 				$format,
-				code_snippets()->get_menu_url( 'settings' ),
-				__( 'Change plugin settings', 'code-snippets' ),
-				__( 'Settings', 'code-snippets' )
+				esc_url( code_snippets()->get_menu_url( 'settings' ) ),
+				esc_html__( 'Change plugin settings', 'code-snippets' ),
+				esc_html__( 'Settings', 'code-snippets' )
 			)
 		);
 
@@ -149,9 +149,9 @@ class Admin {
 			$links,
 			sprintf(
 				$format,
-				code_snippets()->get_menu_url(),
-				__( 'Manage your existing snippets', 'code-snippets' ),
-				__( 'Snippets', 'code-snippets' )
+				esc_url( code_snippets()->get_menu_url() ),
+				esc_html__( 'Manage your existing snippets', 'code-snippets' ),
+				esc_html__( 'Snippets', 'code-snippets' )
 			)
 		);
 
@@ -182,20 +182,23 @@ class Admin {
 		return array_merge(
 			$links,
 			array(
-				sprintf( $format,
+				sprintf(
+					$format,
 					'https://codesnippets.pro/about/',
-					__( 'Find out more about Code Snippets', 'code-snippets' ),
-					__( 'About', 'code-snippets' )
+					esc_attr__( 'Find out more about Code Snippets', 'code-snippets' ),
+					esc_html__( 'About', 'code-snippets' )
 				),
-				sprintf( $format,
+				sprintf(
+					$format,
 					'https://codesnippets.pro/support/',
-					__( 'Find out how to get support with Code Snippets', 'code-snippets' ),
-					__( 'Support', 'code-snippets' )
+					esc_attr__( 'Find out how to get support with Code Snippets', 'code-snippets' ),
+					esc_html__( 'Support', 'code-snippets' )
 				),
-				sprintf( '<a href="%1$s" title="%2$s" style="color: #d46f4d;">%3$s</a>',
+				sprintf(
+					'<a href="%1$s" title="%2$s" style="color: #d46f4d;">%3$s</a>',
 					'https://codesnippets.pro/',
-					__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
-					__( 'Upgrade to Pro', 'code-snippets' )
+					esc_attr__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
+					esc_html__( 'Upgrade to Pro', 'code-snippets' )
 				),
 			)
 		);
@@ -294,8 +297,11 @@ class Admin {
 
 		<div class="updated code-snippets-survey-message">
 			<p>
-
-				<?php echo wp_kses( __( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ), [ 'strong' => [] ] ); ?>
+				<?php echo wp_kses(
+					__( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ),
+					array( 'strong' => array() )
+				);
+				?>
 
 				<a href="https://codesnippets.pro/survey/" class="button secondary"
 				   target="_blank" style="margin: auto .5em;">
@@ -308,7 +314,6 @@ class Admin {
 
 			</p>
 		</div>
-
 		<?php
 	}
 }

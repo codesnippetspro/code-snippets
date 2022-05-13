@@ -34,7 +34,7 @@ if ( ! $snippet->id ) {
 
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
-			printf( ' <a href="%s" class="page-title-action add-new-h2">%s</a>',
+			printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
 				esc_url( add_query_arg( 'type', $snippet->type, code_snippets()->get_menu_url( 'add' ) ) ),
 				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 			);
@@ -72,7 +72,7 @@ if ( ! $snippet->id ) {
 				<label for="title" style="display: none;"><?php esc_html_e( 'Name', 'code-snippets' ); ?></label>
 				<input id="title" type="text" autocomplete="off" name="snippet_name"
 				       value="<?php echo esc_attr( $snippet->name ); ?>"
-				       placeholder="<?php esc_attr_e( 'Enter title here', 'code-snippets' ); ?>"/>
+				       placeholder="<?php esc_attr_e( 'Enter title here', 'code-snippets' ); ?>">
 			</div>
 		</div>
 
@@ -110,7 +110,6 @@ if ( ! $snippet->id ) {
 		<?php } ?>
 
 		<div class="snippet-editor">
-
 			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false"
 			          style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 

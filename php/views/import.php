@@ -91,7 +91,6 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 					<?php
 					/* translators: %s: size in bytes */
 					printf( esc_html__( '(Maximum size: %s)', 'code-snippets' ), esc_html( size_format( $max_size_bytes ) ) ); ?>
-
 					<input type="file" id="upload" name="code_snippets_import_files[]" size="25"
 					       accept="application/json,.json,text/xml" multiple="multiple">
 					<input type="hidden" name="action" value="save">

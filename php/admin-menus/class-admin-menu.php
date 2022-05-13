@@ -126,22 +126,24 @@ abstract class Admin_Menu {
 	 * @param string $request_var Name of $_REQUEST variable to check.
 	 * @param string $class       Class to use on buttons. Default 'updated'.
 	 *
-	 * @return string|bool The result message if a valid status was received, otherwise false
+	 * @return bool Whether a result message was printed.
 	 */
-	protected function get_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
+	protected function print_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
 
 		if ( empty( $_REQUEST[ $request_var ] ) ) {
 			return false;
 		}
 
-		$result = $_REQUEST[ $request_var ];
+		$result = sanitize_key( $_REQUEST[ $request_var ] );
 
 		if ( isset( $messages[ $result ] ) ) {
-			return sprintf(
+			printf(
 				'<div id="message" class="%2$s fade"><p>%1$s</p></div>',
-				$messages[ $result ],
-				$class
+				wp_kses_post( $messages[ $result ] ),
+				esc_attr( $class )
 			);
+
+			return true;
 		}
 
 		return false;

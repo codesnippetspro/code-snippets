@@ -163,6 +163,7 @@ class Snippet {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
+				/** @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error */
 				trigger_error( 'Trying to access invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
 			}
 
@@ -183,6 +184,7 @@ class Snippet {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
+				/** @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error */
 				trigger_error( 'Trying to set invalid property on Snippets class: ' . esc_html( $field ), E_WARNING );
 			}
 

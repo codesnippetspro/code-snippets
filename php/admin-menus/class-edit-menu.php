@@ -220,13 +220,13 @@ class Edit_Menu extends Admin_Menu {
 			return $out;
 		}
 
-		$m = '<h3>' . __( "Don't Panic", 'code-snippets' ) . '</h3>';
+		$m = '<h3>' . esc_html__( "Don't Panic", 'code-snippets' ) . '</h3>';
 		/* translators: %d: line where error was produced */
-		$m .= '<p>' . sprintf( __( 'The code snippet you are trying to save produced a fatal error on line %d:', 'code-snippets' ), $error['line'] ) . '</p>';
-		$m .= '<strong>' . $error['message'] . '</strong>';
-		$m .= '<p>' . __( 'The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before.', 'code-snippets' ) . '</p>';
-		$m .= '<p>' . __( 'Please use the back button in your browser to return to the previous page and try to fix the code error.', 'code-snippets' );
-		$m .= ' ' . __( 'If you prefer, you can close this page and discard the changes you just made. No changes will be made to this site.', 'code-snippets' ) . '</p>';
+		$m .= '<p>' . sprintf( esc_html__( 'The code snippet you are trying to save produced a fatal error on line %d:', 'code-snippets' ), intval( $error['line'] ) ) . '</p>';
+		$m .= '<strong>' . esc_html( $error['message'] ) . '</strong>';
+		$m .= '<p>' . esc_html__( 'The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before.', 'code-snippets' ) . '</p>';
+		$m .= '<p>' . esc_html__( 'Please use the back button in your browser to return to the previous page and try to fix the code error.', 'code-snippets' );
+		$m .= ' ' . esc_html__( 'If you prefer, you can close this page and discard the changes you just made. No changes will be made to this site.', 'code-snippets' ) . '</p>';
 
 		return $m;
 	}
@@ -583,7 +583,7 @@ class Edit_Menu extends Admin_Menu {
 		$result = sanitize_key( $_REQUEST['result'] );
 
 		if ( 'code-error' === $result ) {
-			$error = isset( $_REQUEST['id'] ) ? $this->get_snippet_error( $_REQUEST['id'] ) : false;
+			$error = isset( $_REQUEST['id'] ) ? $this->get_snippet_error( intval( $_REQUEST['id'] ) ) : false;
 
 			if ( $error ) {
 				/* translators: %d: line of file where error originated */
@@ -684,7 +684,7 @@ class Edit_Menu extends Admin_Menu {
 			)
 		);
 
-		$inline_script = 'var code_snippets_tags = ' . json_encode( $options ) . ';';
+		$inline_script = 'var code_snippets_tags = ' . wp_json_encode( $options ) . ';';
 
 		wp_add_inline_script( 'code-snippets-edit-menu-tags', $inline_script, 'before' );
 	}
@@ -771,8 +771,8 @@ class Edit_Menu extends Admin_Menu {
 					esc_js(
 						sprintf(
 							'return confirm("%s");',
-							__( 'You are about to permanently delete this snippet.', 'code-snippets' ) . "\n" .
-							__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+							esc_html__( 'You are about to permanently delete this snippet.', 'code-snippets' ) . "\n" .
+							esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
 						)
 					)
 				);

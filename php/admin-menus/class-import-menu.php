@@ -143,7 +143,7 @@ class Import_Menu extends Admin_Menu {
 					'code-snippets'
 				);
 
-				printf( wp_kses_post( $text ), $imported, esc_url( code_snippets()->get_menu_url( 'manage' ) ) );
+				printf( wp_kses_post( $text ), esc_html( $imported ), esc_url( code_snippets()->get_menu_url( 'manage' ) ) );
 			}
 
 			echo '</p></div>';

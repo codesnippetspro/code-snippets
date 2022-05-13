@@ -56,6 +56,8 @@ class List_Table extends WP_List_Table {
 	/**
 	 * The constructor function for our class.
 	 * Adds hooks, initializes variables, setups class.
+	 *
+	 * @phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
 	 */
 	public function __construct() {
 		global $status, $page;
@@ -63,13 +65,13 @@ class List_Table extends WP_List_Table {
 
 		/* Determine the status */
 		$status = apply_filters( 'code_snippets/list_table/default_view', 'all' );
-		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], $this->statuses, true ) ) {
-			$status = $_REQUEST['status'];
+		if ( isset( $_REQUEST['status'] ) && in_array( sanitize_key( $_REQUEST['status'] ), $this->statuses, true ) ) {
+			$status = sanitize_key( $_REQUEST['status'] );
 		}
 
 		/* Add the search query to the URL */
 		if ( isset( $_REQUEST['s'] ) ) {
-			$_SERVER['REQUEST_URI'] = add_query_arg( 's', stripslashes( $_REQUEST['s'] ) );
+			$_SERVER['REQUEST_URI'] = add_query_arg( 's', sanitize_text_field( stripslashes( $_REQUEST['s'] ) ) );
 		}
 
 		/* Add a snippets per page screen option */
@@ -270,7 +272,7 @@ class List_Table extends WP_List_Table {
 			'<a class="%s" href="%s" title="%s">&nbsp;</a> ',
 			esc_attr( $class ),
 			esc_url( $this->get_action_link( $action, $snippet ) ),
-			esc_html( $label )
+			esc_attr( $label )
 		);
 	}
 
@@ -282,7 +284,6 @@ class List_Table extends WP_List_Table {
 	 * @return string The content of the column to output.
 	 */
 	protected function column_name( $snippet ) {
-
 		$row_actions = $this->row_actions(
 			$this->get_snippet_action_links( $snippet ),
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
@@ -299,7 +300,7 @@ class List_Table extends WP_List_Table {
 
 			$out = sprintf(
 				'<a href="%s" class="snippet-name">%s</a>',
-				code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ),
+				esc_attr( code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ) ),
 				$out
 			);
 		}
@@ -327,7 +328,7 @@ class List_Table extends WP_List_Table {
 		$out = sprintf(
 			'<input type="checkbox" name="%s[]" value="%s">',
 			$item->shared_network ? 'shared_ids' : 'ids',
-			$item->id
+			intval( $item->id )
 		);
 
 		return apply_filters( 'code_snippets/list_table/column_cb', $out, $item );
@@ -751,7 +752,7 @@ class List_Table extends WP_List_Table {
 
 		check_admin_referer( 'bulk-' . $this->_args['plural'] );
 
-		$ids = isset( $_POST['ids'] ) ? $_POST['ids'] : array();
+		$ids = isset( $_POST['ids'] ) ? array_map( 'intval', $_POST['ids'] ) : array();
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
 
 		switch ( $this->current_action() ) {
@@ -763,7 +764,7 @@ class List_Table extends WP_List_Table {
 				if ( isset( $_POST['shared_ids'] ) && is_multisite() && ! $this->is_network ) {
 					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
-					foreach ( $_POST['shared_ids'] as $id ) {
+					foreach ( array_map( 'intval', $_POST['shared_ids'] ) as $id ) {
 						if ( ! in_array( $id, $active_shared_snippets, true ) ) {
 							$active_shared_snippets[] = $id;
 						}
@@ -784,7 +785,7 @@ class List_Table extends WP_List_Table {
 				if ( isset( $_POST['shared_ids'] ) && is_multisite() && ! $this->is_network ) {
 					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 					$active_shared_snippets = ( '' === $active_shared_snippets ) ? array() : $active_shared_snippets;
-					$active_shared_snippets = array_diff( $active_shared_snippets, $_POST['shared_ids'] );
+					$active_shared_snippets = array_diff( $active_shared_snippets, array_map( 'intval', $_POST['shared_ids'] ) );
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 				}
 
@@ -902,6 +903,8 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Prepares the items to later display in the table.
 	 * Should run before any headers are sent.
+	 *
+	 * @phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	 */
 	public function prepare_items() {
 		global $status, $snippets, $totals, $s;
@@ -1203,7 +1206,7 @@ class List_Table extends WP_List_Table {
 				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
 
 					/* translators: 1: search query, 2: line number */
-					echo sprintf( __( ' for &ldquo;%1$s&rdquo; on line %2$d', 'code-snippets' ),
+					echo sprintf( esc_html__( ' for &ldquo;%1$s&rdquo; on line %2$d', 'code-snippets' ),
 						esc_html( trim( str_replace( $matches[0], '', $s ) ) ),
 						intval( $matches['line'] )
 					);

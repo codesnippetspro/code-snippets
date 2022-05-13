@@ -5,7 +5,7 @@ Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
 Stable tag: 3.0.0-rc.1
-Tested up to: 5.9.3
+Tested up to: 6.0
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -119,6 +119,7 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 
 == Changelog ==
 
+<<<<<<< HEAD
 = 3.0.0 (unreleased) =
 
 __Added__
@@ -162,6 +163,9 @@ __New in Pro__
 * Added: Gutenberg editor block for displaying snippet source code.
 * Added: Elementor widget for displaying content snippets.
 * Added: Elementor widget for displaying snippet source code.
+
+= 2.14.5 (10 May 2022) =
+* Fixed: Incompatibility issue with older versions of PHP.
 
 = 2.14.4 (5 May 2022) =
 * Fixed: Prevent array key errors when loading the snippet table with unknown order values.

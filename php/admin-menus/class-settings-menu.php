@@ -139,7 +139,6 @@ class Settings_Menu extends Admin_Menu {
 						);
 					}
 				}
-
 				?>
 			</h1>
 
