@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.14.6 (13 May 2022)
+* Fixed: Issue with processing uploaded import files.
+* Fixed: Issue with processing tag filters.
+
 ## 2.14.5 (10 May 2022)
 * Fixed: Incompatibility issue with older versions of PHP.
 
