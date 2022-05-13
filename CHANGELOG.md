@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.0 (unreleased)
+## 3.0.0 (14 May 2022)
 
 ### Added
 * Added: HTML content snippets for displaying as shortcodes or including in the page head or footer area.
