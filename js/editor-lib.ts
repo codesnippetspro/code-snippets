@@ -1,4 +1,4 @@
-import {defineMode, getMode, EditorConfiguration, ModeSpec} from 'codemirror';
+import { defineMode, getMode, EditorConfiguration, ModeSpec } from 'codemirror';
 import './php-lint';
 
 type ModeSpecOptions = {

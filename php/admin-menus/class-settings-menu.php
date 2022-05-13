@@ -54,7 +54,6 @@ class Settings_Menu extends Admin_Menu {
 		}
 
 		if ( is_network_admin() ) {
-
 			if ( Settings\are_settings_unified() ) {
 				$this->update_network_options();
 			} else {

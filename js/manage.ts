@@ -1,4 +1,4 @@
-import {Snippet} from './types';
+import { Snippet } from './types';
 
 type SuccessCallback = (response: { success: boolean, data?: unknown }) => void;
 

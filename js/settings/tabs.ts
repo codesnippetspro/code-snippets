@@ -23,7 +23,7 @@ const refreshEditorPreview = (section: string) => {
 
 // Update the http referer value so that any redirections lead back to this tab.
 const updateHttpReferer = (section: string) => {
-	let new_referer = http_referer.value.replace(/(?<base>[&?]section=)[^&]+/, `$base${section}`);
+	let new_referer = http_referer.value.replace(/(?<base>[&?]section=)[^&]+/, `$1${section}`);
 	if (new_referer === http_referer.value) {
 		new_referer += `&section=${section}`;
 	}
