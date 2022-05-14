@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 Tested up to: 6.0
 
 An easy, clean and simple way to run code snippets on your site.
@@ -115,6 +115,9 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.0.1 (14 May 2022) =
+* Fixed: Incompatibility issue with earlier versions of PHP.
 
 = 3.0.0 (14 May 2022) =
 
@@ -272,33 +275,6 @@ __New in Pro__
 * Added: Filter hook for controlling the default list table view
 * Added: Action for cloning snippets
 
-= 2.10.2 (21 Jul 2018) =
-* Added: Button to reset settings to their default values
-* Improved: Made uninstall cleanup optional through a plugin setting
-* Fixed: Applied formatting filters to snippet descriptions in the table
-* Improved: Ordered tags by name in the filter dropdown menu
-* Fixed: Incorrectly translated strings
-* Added: Belarusian translation by Hrank.com
-* Improved: Enabled sorting snippets table by tags
-* Updated CodeMirror to version 5.39.0
-
-= 2.10.1 (10 Feb 2018) =
-* Fixed: Prevent errors when trying to export no snippets
-* Fixed: Use wp_json_encode() to encode export data
-* Fixed: Check both the file extension and MIME type of uploaded import files
-
-= 2.10.0 (18 Jan 2018) =
-* Improved: Added support for importing from multiple export files at once
-* Improved: Unbold the titles of inactive snippets for greater visual distinction
-* Added: New scope for single-use snippets
-* Improved: Don't show network snippets on subsites by default, and only to super admins
-* Improved: Export snippets to JSON instead of XML
-* Improved: More options for importing duplicate snippets
-* Improved: Use strings for representing scopes internally instead of numbers
-* Added: Allowed plugin settings to be unified on multisite through Network Settings option
-* Fixed: Issue with incorrectly treating network snippets as site-wide for code validation
-* Improved: Rename 'Export to PHP' to 'Download', and add button to edit snippet page
-
 **[The full changelog is available on GitHub](https://github.com/sheabunge/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
@@ -311,9 +287,3 @@ Security update, last modified dates, and other improvements
 
 = 2.13.1 =
 Fixes for single-use snippets and French translation
-
-= 2.11.0 =
-Snippet priorities and other small features
-
-= 2.10.0 =
-Improvements for multisite and new single-use snippet scope

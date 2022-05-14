@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.0.1 (14 May 2022)
+* Fixed: Incompatibility issue with earlier versions of PHP.
+
 ## 3.0.0 (14 May 2022)
 
 ### Added
