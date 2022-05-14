@@ -1,8 +1,10 @@
+const length = 140;
+
 module.exports = {
 	parser: '@typescript-eslint/parser',
 	plugins: [
 		'@typescript-eslint',
-		`import`
+		'import'
 	],
 	parserOptions: {
 		ecmaVersion: 9,
@@ -28,7 +30,7 @@ module.exports = {
 		'linebreak-style': ['error', 'unix'],
 		'eqeqeq': ['error', 'always'],
 		'indent': ['error', 'tab', {SwitchCase: 1}],
-		'max-len': ['warn', 140],
+		'max-len': ['warn', length],
 		'array-bracket-newline': ['error', 'consistent'],
 		'function-call-argument-newline': ['error', 'consistent'],
 		'comma-dangle': ['error', 'only-multiline'],
@@ -58,7 +60,7 @@ module.exports = {
 		'padded-blocks': 'off',
 		'implicit-arrow-linebreak': 'off',
 
-		// potentially revisit these later
+		// Potentially revisit these later
 		'curly': ['error', 'multi-line'],
 		'no-alert': 'off',
 		'camelcase': 'off',
