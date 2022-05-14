@@ -122,6 +122,7 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 = 3.0.0 (14 May 2022) =
 
 __Added__
+
 * Added: HTML content snippets for displaying as shortcodes or including in the page head or footer area.
 * Added: Notice reminding users to upgrade unsupported PHP versions.
 * Added: Visual settings to add attributes to shortcodes.
@@ -134,6 +135,7 @@ __Added__
 * Added: Add suffix to title of cloned snippets.
 
 __Changed__
+
 * Improved: Updated plugin code to use namespaces, preventing name collisions with other plugins.
 * Improved: Added key for the 'active' and 'scope' database table columns to speed up queries.
 * Improved: Redirect from edit menu if not editing a valid snippet.
@@ -146,10 +148,12 @@ __Changed__
 * Fixed: Snippets table layout on smaller screens.
 
 __Deprecated__
+
 * Removed: Deprecated functions and compatibility code for unsupported PHP versions.
 * Removed: Option to disable snippet scopes.
 
 __New in Pro__
+
 * Added: CSS style snippets for the site front-end and admin area.
 * Added: JavaScript snippets for the site head and body area on the front-end.
 * Added: Browser cache versioning for CSS and JavaScript snippets.
