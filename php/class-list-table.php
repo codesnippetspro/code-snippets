@@ -683,6 +683,7 @@ class List_Table extends WP_List_Table {
 				if ( ! in_array( $id, $active_shared_snippets, true ) ) {
 					$active_shared_snippets[] = $id;
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
+					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
 
 				return 'activated';
@@ -690,6 +691,7 @@ class List_Table extends WP_List_Table {
 			case 'deactivate-shared':
 				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 				update_option( 'active_shared_network_snippets', array_diff( $active_shared_snippets, array( $id ) ) );
+				clean_active_snippets_cache( code_snippets()->db->ms_table );
 				return 'deactivated';
 
 			case 'clone':
@@ -781,6 +783,7 @@ class List_Table extends WP_List_Table {
 					}
 
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
+					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
 
 				$result = 'activated-multi';
@@ -797,6 +800,7 @@ class List_Table extends WP_List_Table {
 					$active_shared_snippets = ( '' === $active_shared_snippets ) ? array() : $active_shared_snippets;
 					$active_shared_snippets = array_diff( $active_shared_snippets, array_map( 'intval', $_POST['shared_ids'] ) );
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
+					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
 
 				$result = 'deactivated-multi';

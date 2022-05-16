@@ -221,7 +221,7 @@ class DB {
 	private static function fetch_active_snippets_from_table( $table_name, array $scopes, array $additional_ids = array() ) {
 		global $wpdb;
 
-		$cache_key = sprintf( 'active_snippets_%s_%s', sanitize_key( '_' . join( $scopes ) ), $table_name );
+		$cache_key = sprintf( 'active_snippets_%s_%s', sanitize_key( join( '_', $scopes ) ), $table_name );
 		$cached_snippets = wp_cache_get( $cache_key, CACHE_GROUP );
 
 		if ( is_array( $cached_snippets ) ) {

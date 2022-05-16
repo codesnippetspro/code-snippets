@@ -24,6 +24,26 @@ function get_snippets_cache_key( $table_name, $snippet_id = 0 ) {
 }
 
 /**
+ * Clean the cache where active snippets are stored.
+ *
+ * @param string      $table_name Snippets table name.
+ * @param array|false $scopes     List of scopes. Optional. If not provided, will flush the cache for all scopes.
+ *
+ * @return void
+ */
+function clean_active_snippets_cache( $table_name, $scopes = false ) {
+	$scope_groups = $scopes ? [ $scopes ] : [
+		[ 'head-content', 'footer-content' ],
+		[ 'global', 'single-use', 'front-end' ],
+		[ 'global', 'single-use', 'admin' ],
+	];
+
+	foreach ( $scope_groups as $scopes ) {
+		wp_cache_delete( sprintf( 'active_snippets_%s_%s', sanitize_key( join( '_', $scopes ) ), $table_name ), CACHE_GROUP );
+	}
+}
+
+/**
  * Flush the cache for a given snippet. Will also clear the 'all snippets' cache for the given context.
  *
  * @param string  $table_name Snippets table name.
@@ -32,28 +52,30 @@ function get_snippets_cache_key( $table_name, $snippet_id = 0 ) {
  * @return void
  */
 function clean_snippet_cache( $table_name, $snippet_id = 0 ) {
-	wp_cache_delete( "all_snippet_tags_$table_name" );
-	wp_cache_delete( get_snippets_cache_key( $table_name ) );
+	wp_cache_delete( "all_snippet_tags_$table_name", CACHE_GROUP );
+	wp_cache_delete( get_snippets_cache_key( $table_name ), CACHE_GROUP );
 
 	if ( $snippet_id ) {
-		wp_cache_delete( get_snippets_cache_key( $table_name, $snippet_id ) );
+		wp_cache_delete( get_snippets_cache_key( $table_name, $snippet_id ), CACHE_GROUP );
 	}
+
+	clean_active_snippets_cache( $table_name );
 }
 
 /**
  * Retrieve a list of snippets from the database.
  * Read operation.
  *
- * @param array     $ids         The IDs of the snippets to fetch.
- * @param bool|null $multisite   Retrieve multisite-wide snippets (true) or site-wide snippets (false).
+ * @param array            $ids         The IDs of the snippets to fetch.
+ * @param bool|null|string $multisite   Retrieve multisite-wide snippets (true) or site-wide snippets (false).
  *
- * @param array     $args        {
- *                               Optional. Arguments to specify which sorts of snippets to retrieve.
+ * @param array            $args        {
+ *                                      Optional. Arguments to specify which sorts of snippets to retrieve.
  *
- * @type bool       $active_only Whether to only fetch active snippets. Default false (will fetch both active and inactive snippets).
- * @type int        $limit       Limit the number of retrieved snippets. Default 0, which will not impose a limit on the results.
- * @type string     $orderby     Sort the retrieved snippets by a particular field. Example fields include 'id', 'priority', and 'name'.
- * @type string     $order       Designates ascending or descending order of snippets. Default 'DESC'. Accepts 'ASC', 'DESC'.
+ * @type bool              $active_only Whether to only fetch active snippets. Default false (will fetch both active and inactive snippets).
+ * @type int               $limit       Limit the number of retrieved snippets. Default 0, which will not impose a limit on the results.
+ * @type string            $orderby     Sort the retrieved snippets by a particular field. Example fields include 'id', 'priority', and 'name'.
+ * @type string            $order       Designates ascending or descending order of snippets. Default 'DESC'. Accepts 'ASC', 'DESC'.
  * }
  *
  * @return array An array of Snippet objects.
@@ -66,7 +88,7 @@ function clean_snippet_cache( $table_name, $snippet_id = 0 ) {
 function get_snippets( array $ids = array(), $multisite = null, array $args = array() ) {
 	global $wpdb;
 
-	/* If only one ID has been passed in, defer to the get_snippet() function */
+	// If only one ID has been passed in, defer to the get_snippet() function.
 	$ids_count = count( $ids );
 	if ( 1 === $ids_count ) {
 		return array( get_snippet( $ids[0] ) );
@@ -91,6 +113,7 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 	$table = $db->get_table_name( $multisite );
 	$cache_key = get_snippets_cache_key( $table );
 
+	// Ideally, we could cache queries that specify the individual IDs.
 	if ( 0 === $ids_count ) {
 		$snippets = wp_cache_get( $cache_key, CACHE_GROUP );
 		if ( $snippets ) {
@@ -101,7 +124,7 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 	$sql = "SELECT * FROM $table WHERE 1=1";
 	$sql_params = array();
 
-	/* Build a query for specific search terms */
+	// Build a query for specific search terms.
 	if ( ! empty( $args['search'] ) && ! empty( $args['searchby'] ) ) {
 		$search = array();
 		foreach ( $args['searchby'] as $column ) {
@@ -113,38 +136,38 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 		$sql .= sprintf( ' AND ( %s )', implode( ' OR ', $search ) );
 	}
 
-	/* Build a query containing the specified IDs if there are any */
+	// Build a query containing the specified IDs if there are any.
 	if ( $ids_count > 1 ) {
 		$sql .= sprintf( ' AND id IN (%s)', implode( ',', array_fill( 0, $ids_count, '%d' ) ) );
 		$sql_params = array_merge( $sql_params, array_values( $ids ) );
 	}
 
-	/* Restrict the active status of retrieved snippets if requested */
+	// Restrict the active status of retrieved snippets if requested.
 	if ( $args['active_only'] ) {
 		$sql .= ' AND active=1';
 	}
 
-	/* Apply custom ordering if requested */
+	// Apply custom ordering if requested.
 	if ( $args['orderby'] ) {
 		$order_dir = 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
 		$sql .= " ORDER BY %s $order_dir";
 		$sql_params[] = $args['orderby'];
 	}
 
-	/* Limit the number of retrieved snippets if requested */
+	// Limit the number of retrieved snippets if requested.
 	if ( intval( $args['limit'] ) > 0 ) {
 		$sql .= ' LIMIT %d';
 		$sql_params[] = intval( $args['limit'] );
 	}
 
-	/* Retrieve the results from the database */
+	// Retrieve the results from the database.
 	if ( ! empty( $sql_params ) ) {
 		$sql = $wpdb->prepare( $sql, $sql_params );
 	}
 	$snippets = $wpdb->get_results( $sql, ARRAY_A );
 
 	if ( $snippets ) {
-		/* Convert snippets to snippet objects */
+		// Convert snippets to snippet objects.
 		foreach ( $snippets as $index => $snippet ) {
 			$snippet['network'] = $multisite;
 			$snippets[ $index ] = new Snippet( $snippet );
@@ -331,31 +354,27 @@ function activate_snippet( $id, $multisite = null ) {
 function activate_snippets( array $ids, $multisite = null ) {
 	global $wpdb;
 	$db = code_snippets()->db;
+	$multisite = DB::validate_network_param( $multisite );
 	$table = $db->get_table_name( $multisite );
+	$snippets = get_snippets( $ids, $multisite );
 
-	/* Build SQL query containing all the provided snippet IDs */
-	$ids_format = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
-
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
-	$rows = $wpdb->get_results( $wpdb->prepare( "SELECT id, code FROM $table WHERE id IN ($ids_format)", $ids ) );
-
-	if ( ! $rows ) {
+	if ( ! $snippets ) {
 		return array();
 	}
 
-	/* Loop through each snippet code and validate individually */
+	// Loop through each snippet code and validate individually
 	$valid_ids = array();
 
-	foreach ( $rows as $row ) {
-		$validator = new Validator( $row->code );
+	foreach ( $snippets as $snippet ) {
+		$validator = new Validator( $snippet->code );
 		$code_error = $validator->validate();
 
 		if ( ! $code_error ) {
-			$valid_ids[] = $row->id;
+			$valid_ids[] = $snippet->id;
 		}
 	}
 
-	/* If there are no valid snippets, then we're done */
+	// If there are no valid snippets, then we're done.
 	if ( ! $valid_ids ) {
 		return $valid_ids;
 	}
@@ -367,9 +386,11 @@ function activate_snippets( array $ids, $multisite = null ) {
 	/* Remove snippet from shared network snippet list if it was Network Activated */
 	if ( $table === $db->ms_table ) {
 		$shared_network_snippets = get_site_option( 'shared_network_snippets' );
+
 		if ( $shared_network_snippets ) {
 			$shared_network_snippets = array_diff( $shared_network_snippets, $valid_ids );
 			update_site_option( 'shared_network_snippets', $shared_network_snippets );
+			clean_active_snippets_cache( $db->ms_table );
 		}
 	}
 
@@ -568,37 +589,38 @@ function execute_snippet( $code, $id = 0, $catch_output = true ) {
  * Run the active snippets.
  * Read-write-execute operation.
  *
- * @return bool true on success, false on failure
+ * @return bool true on success, false on failure.
  *
  * @since 2.0.0
- *
- * phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
 function execute_active_snippets() {
 	global $wpdb;
 
-	/* Bail early if safe mode is active */
+	// Bail early if safe mode is active.
 	if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE || ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
 		return false;
 	}
 
 	$db = code_snippets()->db;
 	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
-	$data = $db->fetch_active_snippets( $scopes, 'id, code, scope' );
+	$data = $db->fetch_active_snippets( $scopes );
 
 	foreach ( $data as $table_name => $active_snippets ) {
 
-		/* Loop through the returned snippets and execute the PHP code */
+		// Loop through the returned snippets and execute the PHP code.
 		foreach ( $active_snippets as $snippet ) {
 			$snippet_id = intval( $snippet['id'] );
 			$code = $snippet['code'];
 
-			// if the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens
+			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
 			if ( 'single-use' === $snippet['scope'] ) {
-				if ( $table_name === $db->ms_table && isset( $active_shared_ids ) && in_array( $snippet_id, $active_shared_ids, true ) ) {
+				$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
+
+				if ( $table_name === $db->ms_table && is_array( $active_shared_ids ) && in_array( $snippet_id, $active_shared_ids, true ) ) {
 					unset( $active_shared_ids[ array_search( $snippet_id, $active_shared_ids, true ) ] );
 					$active_shared_ids = array_values( $active_shared_ids );
 					update_option( 'active_shared_network_snippets', $active_shared_ids );
+					clean_active_snippets_cache( $table_name );
 				} else {
 					$wpdb->update( $table_name, array( 'active' => '0' ), array( 'id' => $snippet_id ), array( '%d' ), array( '%d' ) );
 					clean_snippet_cache( $table_name, $snippet_id );

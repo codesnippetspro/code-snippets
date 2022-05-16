@@ -198,6 +198,8 @@ class Edit_Menu extends Admin_Menu {
 				$active_shared_snippets = array_diff( $active_shared_snippets, array( $snippet_id ) );
 				update_option( 'active_shared_network_snippets', $active_shared_snippets );
 			}
+
+			clean_active_snippets_cache( code_snippets()->db->ms_table );
 		}
 
 		restore_current_blog();
