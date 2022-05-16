@@ -32,13 +32,9 @@ class Export {
 	 *
 	 * @param array|int $ids        List of snippet IDs to export.
 	 * @param string    $table_name Name of database table to fetch snippets from.
-	 *
-	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	private function fetch_snippets( $ids, $table_name ) {
-		global $wpdb;
 
-		/* Fetch the snippets from the database */
 		if ( '' === $table_name ) {
 			$table_name = code_snippets()->db->get_table_name();
 		}
@@ -47,18 +43,7 @@ class Export {
 			$ids = array( $ids );
 		}
 
-		if ( count( $ids ) ) {
-			$sql = sprintf(
-				'SELECT * FROM %s WHERE id IN (%s)',
-				$table_name,
-				implode( ',', array_fill( 0, count( $ids ), '%d' ) )
-			);
-
-			$this->snippets_list = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
-
-		} else {
-			$this->snippets_list = array();
-		}
+		$this->snippets_list = count( $ids ) ? get_snippets( $ids, $table_name ) : array();
 	}
 
 	/**

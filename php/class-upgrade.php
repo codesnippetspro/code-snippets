@@ -145,8 +145,6 @@ class Upgrade {
 	 * Migrate data from the old integer method of storing scopes to the new string method
 	 *
 	 * @param string $table_name Name of database table.
-	 *
-	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	private function migrate_scope_data( $table_name ) {
 		global $wpdb;
@@ -164,7 +162,7 @@ class Upgrade {
 					$scope_name,
 					$scope_number
 				)
-			);
+			); // cache ok, will flush at end of process.
 		}
 	}
 
