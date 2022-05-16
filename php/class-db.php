@@ -66,7 +66,7 @@ class DB {
 	 *
 	 * @return bool Validated value of multisite parameter.
 	 */
-	public function validate_network_param( $network ) {
+	public static function validate_network_param( $network ) {
 
 		/* If multisite is not active, then the parameter should always be false */
 		if ( ! is_multisite() ) {
@@ -212,14 +212,14 @@ class DB {
 	}
 
 	/**
-	 * Generate the SQL for fetching active snippets from the database
+	 * Generate the SQL for fetching active snippets from the database.
 	 *
 	 * @param array|string $scopes      List of scopes to retrieve in.
 	 * @param string       $select_list List of table columns in SQL format.
 	 *
-	 * @return array List of SQL queries
+	 * @return array List of SQL queries.
 	 */
-	public function fetch_active_snippets( $scopes, $select_list = 'id, code, scope' ) {
+	public function fetch_active_snippets( $scopes, $select_list ) {
 		global $wpdb;
 		$db = code_snippets()->db;
 

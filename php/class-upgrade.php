@@ -101,6 +101,8 @@ class Upgrade {
 				}
 			}
 		}
+
+		clean_snippet_cache( false );
 	}
 
 	/**
@@ -135,6 +137,8 @@ class Upgrade {
 				$user->remove_cap( $network_cap );
 			}
 		}
+
+		clean_snippet_cache( true );
 	}
 
 	/**

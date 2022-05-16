@@ -282,6 +282,7 @@ class Manage_Menu extends Admin_Menu {
 			}
 		}
 
+		clean_snippet_cache( $snippet->network, $snippet->id );
 		wp_send_json_success();
 	}
 }

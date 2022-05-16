@@ -65,4 +65,12 @@
 			<property name="maxColumn" value="300" />
 		</properties>
 	</rule>
+
+	<rule ref="WordPress.DB.DirectDatabaseQuery">
+		<properties>
+			<property name="customCacheDeleteFunctions" type="array">
+				<element value="clean_snippet_cache" />
+			</property>
+		</properties>
+	</rule>
 </ruleset>
