@@ -13,33 +13,31 @@ const ALL_TAGS_CACHE = 'all_snippet_tags';
 /**
  * Retrieve the cache key for either a set of snippets or an individual snippet.
  *
- * @param boolean $multisite  Whether to retrieve the cache key for multisite-wide or site-wide snippets.
+ * @param string  $table_name Snippets table name.
  * @param integer $snippet_id Snippet ID. Optional. If not provided, will return the cache key for all snippets.
  *
  * @return string
  */
-function get_snippets_cache_key( $multisite, $snippet_id = 0 ) {
+function get_snippets_cache_key( $table_name, $snippet_id = 0 ) {
 	return $snippet_id ?
-		sprintf( '%ssnippet_%d', $multisite ? 'ms_' : '', $snippet_id ) :
-		( $multisite ? 'all_ms_snippets' : 'all_snippets' );
+		sprintf( 'snippet_%d_%s', $snippet_id, $table_name ) :
+		'all_snippets_' . $table_name;
 }
 
 /**
  * Flush the cache for a given snippet. Will also clear the 'all snippets' cache for the given context.
  *
- * @param boolean|null $multisite  Whether to flush the cache key for multisite-wide or site-wide snippets.
- * @param integer      $snippet_id Snippet ID. Optional. If not provided, will only flush the cache for all snippets.
+ * @param string  $table_name Snippets table name.
+ * @param integer $snippet_id Snippet ID. Optional. If not provided, will only flush the cache for all snippets.
  *
  * @return void
  */
-function clean_snippet_cache( $multisite = null, $snippet_id = 0 ) {
-	$multisite = DB::validate_network_param( $multisite );
-
+function clean_snippet_cache( $table_name, $snippet_id = 0 ) {
 	wp_cache_delete( ALL_TAGS_CACHE );
-	wp_cache_delete( get_snippets_cache_key( $multisite ) );
+	wp_cache_delete( get_snippets_cache_key( $table_name ) );
 
 	if ( $snippet_id ) {
-		wp_cache_delete( get_snippets_cache_key( $multisite, $snippet_id ) );
+		wp_cache_delete( get_snippets_cache_key( $table_name, $snippet_id ) );
 	}
 }
 
@@ -91,8 +89,8 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
 
 	$db = code_snippets()->db;
 	$multisite = $db->validate_network_param( $multisite );
-	$cache_key = get_snippets_cache_key( $multisite );
 	$table = $db->get_table_name( $multisite );
+	$cache_key = get_snippets_cache_key( $table );
 
 	if ( 0 === $ids_count ) {
 		$snippets = wp_cache_get( $cache_key, CACHE_GROUP );
@@ -241,7 +239,7 @@ function get_snippet( $id = 0, $multisite = null ) {
 	$multisite = DB::validate_network_param( $multisite );
 	$table = code_snippets()->db->get_table_name( $multisite );
 
-	$cache_key = get_snippets_cache_key( $multisite, $id );
+	$cache_key = get_snippets_cache_key( $table, $id );
 	$snippet = wp_cache_get( $cache_key, CACHE_GROUP );
 
 	if ( $snippet ) {
@@ -315,7 +313,7 @@ function activate_snippet( $id, $multisite = null ) {
 	}
 
 	do_action( 'code_snippets/activate_snippet', $id, $multisite );
-	clean_snippet_cache( $multisite, $id );
+	clean_snippet_cache( $table, $id );
 	return true;
 }
 
@@ -376,7 +374,7 @@ function activate_snippets( array $ids, $multisite = null ) {
 	}
 
 	do_action( 'code_snippets/activate_snippets', $valid_ids, $multisite );
-	clean_snippet_cache( $multisite ); // cache clear
+	clean_snippet_cache( $table );
 	return $valid_ids;
 }
 
@@ -395,8 +393,7 @@ function deactivate_snippet( $id, $multisite = null ) {
 	$db = code_snippets()->db;
 	$table = $db->get_table_name( $multisite );
 
-	/* Set the snippet to active */
-
+	/* Set the snippet to active. */
 	$wpdb->update(
 		$table,
 		array( 'active' => '0' ),
@@ -405,7 +402,7 @@ function deactivate_snippet( $id, $multisite = null ) {
 		array( '%d' )
 	);
 
-	/* Update the recently active list */
+	/* Update the recently active list. */
 	$recently_active = array( $id => time() );
 
 	if ( $table === $db->table ) {
@@ -423,7 +420,7 @@ function deactivate_snippet( $id, $multisite = null ) {
 	}
 
 	do_action( 'code_snippets/deactivate_snippet', $id, $multisite );
-	clean_snippet_cache( $multisite, $id );
+	clean_snippet_cache( $table, $id );
 }
 
 /**
@@ -437,15 +434,16 @@ function deactivate_snippet( $id, $multisite = null ) {
  */
 function delete_snippet( $id, $multisite = null ) {
 	global $wpdb;
+	$table = code_snippets()->db->get_table_name( $multisite );
 
 	$wpdb->delete(
-		code_snippets()->db->get_table_name( $multisite ),
+		$table,
 		array( 'id' => $id ),
 		array( '%d' )
 	);
 
 	do_action( 'code_snippets/delete_snippet', $id, $multisite );
-	clean_snippet_cache( $multisite, $id );
+	clean_snippet_cache( $table, $id );
 }
 
 /**
@@ -494,7 +492,7 @@ function save_snippet( Snippet $snippet ) {
 		do_action( 'code_snippets/update_snippet', $snippet->id, $table );
 	}
 
-	clean_snippet_cache( $snippet->network, $snippet->id );
+	clean_snippet_cache( $table, $snippet->id );
 	return $snippet->id;
 }
 
@@ -529,7 +527,7 @@ function update_snippet_fields( $snippet_id, $fields, $network = null ) {
 	$wpdb->update( $table, $clean_fields, array( 'id' => $snippet->id ), null, array( '%d' ) );
 
 	do_action( 'code_snippets/update_snippet', $snippet->id, $table );
-	clean_snippet_cache( $network, $snippet->id );
+	clean_snippet_cache( $table, $snippet->id );
 }
 
 /**
@@ -603,7 +601,7 @@ function execute_active_snippets() {
 					update_option( 'active_shared_network_snippets', $active_shared_ids );
 				} else {
 					$wpdb->update( $table_name, array( 'active' => '0' ), array( 'id' => $snippet_id ), array( '%d' ), array( '%d' ) );
-					clean_snippet_cache( $table_name === $db->ms_table, $snippet_id );
+					clean_snippet_cache( $table_name, $snippet_id );
 				}
 			}
 

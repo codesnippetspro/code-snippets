@@ -35,12 +35,11 @@ function complete_uninstall_enabled() {
  * Clean up data created by this plugin for a single site
  *
  * @phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
- * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
 function uninstall_current_site() {
 	global $wpdb;
 
-	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" );
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" ); // cache ok
 
 	delete_option( 'code_snippets_version' );
 	delete_option( 'recently_activated_snippets' );
@@ -51,23 +50,19 @@ function uninstall_current_site() {
  * Clean up data created by this plugin on multisite.
  *
  * @phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
- * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
 function uninstall_multisite() {
 	global $wpdb;
 
 	/* Loop through sites */
-	$blog_ids = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}" );
+	$blog_ids = get_sites( [ 'fields' => 'ids' ] );
 
-	if ( $blog_ids ) {
-
-		foreach ( $blog_ids as $site_id ) {
-			switch_to_blog( $site_id );
-			uninstall_current_site();
-		}
-
-		restore_current_blog();
+	foreach ( $blog_ids as $site_id ) {
+		switch_to_blog( $site_id );
+		uninstall_current_site();
 	}
+
+	restore_current_blog();
 
 	/* Remove multisite snippets database table */
 	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ms_snippets" );

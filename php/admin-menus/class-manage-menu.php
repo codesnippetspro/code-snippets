@@ -199,9 +199,27 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Handle AJAX requests
+	 * Update the priority value for a snippet.
 	 *
-	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+	 * @return void
+	 */
+	private function update_snippet_priority( Snippet $snippet ) {
+		global $wpdb;
+		$table = code_snippets()->db->get_table_name( $snippet->network );
+
+		$wpdb->update(
+			$table,
+			array( 'priority' => $snippet->priority ),
+			array( 'id' => $snippet->id ),
+			array( '%d' ),
+			array( '%d' )
+		);
+
+		clean_snippet_cache( $table, $snippet->id );
+	}
+
+	/**
+	 * Handle AJAX requests
 	 */
 	public function ajax_callback() {
 		check_ajax_referer( 'code_snippets_manage_ajax' );
@@ -232,15 +250,7 @@ class Manage_Menu extends Admin_Menu {
 				);
 			}
 
-			global $wpdb;
-
-			$wpdb->update(
-				code_snippets()->db->get_table_name( $snippet->network ),
-				array( 'priority' => $snippet->priority ),
-				array( 'id' => $snippet->id ),
-				array( '%d' ),
-				array( '%d' )
-			);
+			$this->update_snippet_priority( $snippet );
 
 		} elseif ( 'active' === $field ) {
 
@@ -282,7 +292,6 @@ class Manage_Menu extends Admin_Menu {
 			}
 		}
 
-		clean_snippet_cache( $snippet->network, $snippet->id );
 		wp_send_json_success();
 	}
 }
