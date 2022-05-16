@@ -216,13 +216,13 @@ class DB {
 	 * @param array  $scopes         List of scopes to include in query.
 	 * @param array  $additional_ids List of any additional inactive snippets to include in query.
 	 *
-	 * @return array|false|object|\stdClass[]
+	 * @return array|false List of active snippets, if any could be retrieved.
 	 */
-	private static function fetch_active_snippets_from_table( $table_name, $scopes, $additional_ids = array() ) {
+	private static function fetch_active_snippets_from_table( $table_name, array $scopes, array $additional_ids = array() ) {
 		global $wpdb;
 
 		$cache_key = sprintf( 'active_snippets_%s_%s', sanitize_key( '_' . join( $scopes ) ), $table_name );
-		$cached_snippets = wp_cache_get( $cache_key );
+		$cached_snippets = wp_cache_get( $cache_key, CACHE_GROUP );
 
 		if ( is_array( $cached_snippets ) ) {
 			return $cached_snippets;
@@ -233,22 +233,27 @@ class DB {
 		}
 
 		$scopes_format = self::build_format_list( count( $scopes ) );
-		$select = "SELECT id, code, scope FROM";
-		$where = "WHERE scope IN ($scopes_format)";
-		$order = 'ORDER BY priority ASC, id ASC';
+		$query_args = $scopes;
+		$extra_where = '';
 
 		if ( is_array( $additional_ids ) && count( $additional_ids ) ) {
-			$ids_format = self::build_format_list( count( $additional_ids ), '%d' );
+			$query_args = array_merge( $query_args, $additional_ids );
 
-			$query = $wpdb->prepare(
-				"$select $table_name $where AND (active=1 OR id IN ($ids_format)) $order",
-				array_merge( $scopes, $additional_ids )
-			);
-		} else {
-			$query = $wpdb->prepare( "$select $table_name $where AND active=1 $order", $scopes );
+			$ids_format = self::build_format_list( count( $additional_ids ), '%d' );
+			$extra_where = "OR id IN ($ids_format)";
 		}
 
-		$snippets = $wpdb->get_results( $query, 'ARRAY_A' );
+		$snippets = $wpdb->get_results(
+			$wpdb->prepare(
+				"
+				SELECT id, code, scope
+				FROM $table_name
+				WHERE scope IN ($scopes_format) AND (active=1 $extra_where)
+				ORDER BY priority, id",
+				$query_args
+			),
+			'ARRAY_A'
+		);
 
 		if ( is_array( $snippets ) ) {
 			wp_cache_set( $cache_key, $snippets, CACHE_GROUP );

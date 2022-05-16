@@ -8,7 +8,7 @@
 
 namespace Code_Snippets;
 
-/* Ensure this plugin is actually being uninstalled */
+// Ensure this plugin is actually being uninstalled.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	return;
 }
@@ -33,12 +33,11 @@ function complete_uninstall_enabled() {
 
 /**
  * Clean up data created by this plugin for a single site
- *
- * @phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
  */
 function uninstall_current_site() {
 	global $wpdb;
 
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
 	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" ); // cache ok
 
 	delete_option( 'code_snippets_version' );
@@ -48,13 +47,11 @@ function uninstall_current_site() {
 
 /**
  * Clean up data created by this plugin on multisite.
- *
- * @phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
  */
 function uninstall_multisite() {
 	global $wpdb;
 
-	/* Loop through sites */
+	// Loop through sites.
 	$blog_ids = get_sites( [ 'fields' => 'ids' ] );
 
 	foreach ( $blog_ids as $site_id ) {
@@ -64,10 +61,10 @@ function uninstall_multisite() {
 
 	restore_current_blog();
 
-	/* Remove multisite snippets database table */
-	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ms_snippets" );
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ms_snippets" ); // cache ok
 
-	/* Remove saved options */
+	// Remove saved options.
 	delete_site_option( 'code_snippets_version' );
 	delete_site_option( 'recently_activated_snippets' );
 }
