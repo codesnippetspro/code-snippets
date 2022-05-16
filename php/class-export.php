@@ -79,8 +79,6 @@ class Export {
 		$snippets = array();
 
 		foreach ( $this->snippets_list as $snippet ) {
-			$snippet = new Snippet( $snippet );
-
 			$fields = array( 'name', 'desc', 'tags', 'scope', 'code', 'priority' );
 			$final_snippet = array();
 
