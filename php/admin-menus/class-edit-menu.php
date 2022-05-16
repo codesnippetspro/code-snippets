@@ -175,8 +175,6 @@ class Edit_Menu extends Admin_Menu {
 	 * Remove the sharing status from a network snippet
 	 *
 	 * @param int $snippet_id Snippet ID.
-	 *
-	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	private function unshare_network_snippet( $snippet_id ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
@@ -190,21 +188,19 @@ class Edit_Menu extends Admin_Menu {
 		update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 
 		/* Deactivate on all sites */
-		global $wpdb;
-		$sites = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
-		if ( $sites ) {
-			foreach ( $sites as $site ) {
-				switch_to_blog( $site );
-				$active_shared_snippets = get_option( 'active_shared_network_snippets' );
+		$sites = get_sites( [ 'fields' => 'ids' ] );
 
-				if ( is_array( $active_shared_snippets ) ) {
-					$active_shared_snippets = array_diff( $active_shared_snippets, array( $snippet_id ) );
-					update_option( 'active_shared_network_snippets', $active_shared_snippets );
-				}
+		foreach ( $sites as $site ) {
+			switch_to_blog( $site );
+			$active_shared_snippets = get_option( 'active_shared_network_snippets' );
+
+			if ( is_array( $active_shared_snippets ) ) {
+				$active_shared_snippets = array_diff( $active_shared_snippets, array( $snippet_id ) );
+				update_option( 'active_shared_network_snippets', $active_shared_snippets );
 			}
-
-			restore_current_blog();
 		}
+
+		restore_current_blog();
 	}
 
 	/**
