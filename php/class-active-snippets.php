@@ -28,7 +28,7 @@ class Active_Snippets {
 	 */
 	public function init() {
 		$db = code_snippets()->db;
-		$this->content_snippets = $db->fetch_active_snippets( [ 'head-content', 'footer-content' ], 'code, scope' );
+		$this->content_snippets = $db->fetch_active_snippets( [ 'head-content', 'footer-content' ] );
 
 		add_action( 'wp_head', [ $this, 'load_head_content' ] );
 		add_action( 'wp_footer', [ $this, 'load_footer_content' ] );

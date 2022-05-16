@@ -201,6 +201,8 @@ class Manage_Menu extends Admin_Menu {
 	/**
 	 * Update the priority value for a snippet.
 	 *
+	 * @param Snippet $snippet Snippet to update.
+	 *
 	 * @return void
 	 */
 	private function update_snippet_priority( Snippet $snippet ) {
