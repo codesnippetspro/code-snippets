@@ -888,26 +888,14 @@ class List_Table extends WP_List_Table {
 			}
 		} else {
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
-			$active_shared_snippet_format = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
-			/* phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
-			$shared_snippets = $wpdb->get_results(
-				$wpdb->prepare( "
-					SELECT * FROM $db->ms_table
-					WHERE id IN ($active_shared_snippet_format)",
-					$ids
-				),
-				ARRAY_A
-			);
+			$shared_snippets = is_array( $active_shared_snippets ) && count( $active_shared_snippets ) ?
+				get_snippets( $active_shared_snippets, true ) : array();
 
-			foreach ( $shared_snippets as $index => $snippet ) {
-				$snippet = new Snippet( $snippet );
-				$snippet->network = true;
+			foreach ( $shared_snippets as $snippet ) {
 				$snippet->shared_network = true;
 				$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
 				$snippet->active = in_array( $snippet->id, $active_shared_snippets, true );
-
-				$shared_snippets[ $index ] = $snippet;
 			}
 
 			$snippets['all'] = array_merge( $snippets['all'], $shared_snippets );
