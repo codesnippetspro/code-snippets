@@ -71,20 +71,20 @@ class Edit_Menu extends Admin_Menu {
 			$edit_hook .= '-network';
 		}
 
-		// Disallow visiting the edit snippet page without a valid ID
-		if ( $screen->base === $edit_hook && ( ! isset( $_REQUEST['id'] ) || 0 === $this->snippet->id ) ) {
-			wp_redirect( code_snippets()->get_menu_url( 'add' ) );
+		// Disallow visiting the edit snippet page without a valid ID.
+		if ( $screen->base === $edit_hook && ( empty( $_REQUEST['id'] ) || 0 === $this->snippet->id || null === $this->snippet->id ) ) {
+			wp_safe_redirect( code_snippets()->get_menu_url( 'add' ) );
 			exit;
 		}
 
-		// Process any submitted actions
+		// Process any submitted actions.
 		$this->process_actions();
 
-		// Load the contextual help tabs
+		// Load the contextual help tabs.
 		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
 
-		// Register action hooks
+		// Register action hooks.
 		if ( get_setting( 'general', 'enable_description' ) ) {
 			add_action( 'code_snippets_edit_snippet', array( $this, 'render_description_editor' ), 9 );
 		}
@@ -153,7 +153,7 @@ class Edit_Menu extends Admin_Menu {
 			/* Delete the snippet if the button was clicked */
 			if ( isset( $_POST['delete_snippet'] ) ) {
 				delete_snippet( $snippet_id );
-				wp_redirect( add_query_arg( 'result', 'delete', code_snippets()->get_menu_url( 'manage' ) ) );
+				wp_safe_redirect( add_query_arg( 'result', 'delete', code_snippets()->get_menu_url( 'manage' ) ) );
 				exit;
 			}
 
@@ -333,13 +333,13 @@ class Edit_Menu extends Admin_Menu {
 		/* If the saved snippet ID is invalid, display an error message */
 		if ( ! $snippet_id || $snippet_id < 1 ) {
 			/* An error occurred */
-			wp_redirect( add_query_arg( 'result', 'save-error', code_snippets()->get_menu_url( 'add' ) ) );
+			wp_safe_redirect( add_query_arg( 'result', 'save-error', code_snippets()->get_menu_url( 'add' ) ) );
 			exit;
 		}
 
 		/* Display message if a parse error occurred */
 		if ( isset( $code_error ) && $code_error ) {
-			wp_redirect(
+			wp_safe_redirect(
 				add_query_arg(
 					array(
 						'id'     => $snippet_id,
@@ -372,7 +372,7 @@ class Edit_Menu extends Admin_Menu {
 			code_snippets()->get_menu_url( 'edit' )
 		);
 
-		wp_redirect( esc_url_raw( $redirect_uri ) );
+		wp_safe_redirect( esc_url_raw( $redirect_uri ) );
 		exit;
 	}
 
@@ -392,7 +392,8 @@ class Edit_Menu extends Admin_Menu {
 		wp_editor(
 			$snippet->desc,
 			'description',
-			apply_filters( 'code_snippets/admin/description_editor_settings',
+			apply_filters(
+				'code_snippets/admin/description_editor_settings',
 				array(
 					'textarea_name' => 'snippet_description',
 					'textarea_rows' => $settings['rows'],
@@ -678,7 +679,8 @@ class Edit_Menu extends Admin_Menu {
 			true
 		);
 
-		$options = apply_filters( 'code_snippets/tag_editor_options',
+		$options = apply_filters(
+			'code_snippets/tag_editor_options',
 			array(
 				'allow_spaces'   => true,
 				'available_tags' => get_all_snippet_tags(),

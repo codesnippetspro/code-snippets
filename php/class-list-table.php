@@ -356,7 +356,8 @@ class List_Table extends WP_List_Table {
 
 		/* Loop through the tags and create a link for each one */
 		foreach ( $snippet->tags as $tag ) {
-			$out[] = sprintf( '<a href="%s">%s</a>',
+			$out[] = sprintf(
+				'<a href="%s">%s</a>',
 				esc_url( add_query_arg( 'tag', esc_attr( $tag ) ) ),
 				esc_html( $tag )
 			);
@@ -582,7 +583,8 @@ class List_Table extends WP_List_Table {
 				echo '<div class="alignleft actions">';
 				echo '<select name="tag">';
 
-				printf( "<option %s value=''>%s</option>\n",
+				printf(
+					"<option %s value=''>%s</option>\n",
 					selected( $query, '', false ),
 					esc_html__( 'Show all tags', 'code-snippets' )
 				);
@@ -718,9 +720,6 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * Processes actions requested by the user.
-	 *
-	 * @uses wp_redirect() to pass the results to the current page
-	 * @uses add_query_arg() to append the results to the current URI
 	 */
 	public function process_requested_actions() {
 
@@ -752,7 +751,7 @@ class List_Table extends WP_List_Table {
 			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope );
 
 			if ( $result ) {
-				wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
+				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 				exit;
 			}
 		}
@@ -830,7 +829,7 @@ class List_Table extends WP_List_Table {
 		}
 
 		if ( isset( $result ) ) {
-			wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 			exit;
 		}
 	}
@@ -918,7 +917,7 @@ class List_Table extends WP_List_Table {
 			$location = empty( $_POST['tag'] ) ?
 				remove_query_arg( 'tag' ) :
 				add_query_arg( 'tag', sanitize_text_field( wp_unslash( $_POST['tag'] ) ) );
-			wp_redirect( esc_url_raw( $location ) );
+			wp_safe_redirect( esc_url_raw( $location ) );
 			exit;
 		}
 
@@ -1215,7 +1214,9 @@ class List_Table extends WP_List_Table {
 				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
 
 					/* translators: 1: search query, 2: line number */
-					echo sprintf( esc_html__( ' for &ldquo;%1$s&rdquo; on line %2$d', 'code-snippets' ),
+					$text = __( ' for &ldquo;%1$s&rdquo; on line %2$d', 'code-snippets' );
+					printf(
+						esc_html( $text ),
 						esc_html( trim( str_replace( $matches[0], '', $s ) ) ),
 						intval( $matches['line'] )
 					);
@@ -1235,7 +1236,8 @@ class List_Table extends WP_List_Table {
 			echo '</span>';
 
 			/* translators: 1: link URL, 2: link text */
-			printf( '&nbsp;<a class="button clear-filters" href="%s">%s</a>',
+			printf(
+				'&nbsp;<a class="button clear-filters" href="%s">%s</a>',
 				esc_url( remove_query_arg( array( 's', 'tag' ) ) ),
 				esc_html__( 'Clear Filters', 'code-snippets' )
 			);

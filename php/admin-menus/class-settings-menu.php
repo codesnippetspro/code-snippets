@@ -20,7 +20,8 @@ class Settings_Menu extends Admin_Menu {
 	 */
 	public function __construct() {
 
-		parent::__construct( 'settings',
+		parent::__construct(
+			'settings',
 			_x( 'Settings', 'menu label', 'code-snippets' ),
 			__( 'Snippets Settings', 'code-snippets' )
 		);
@@ -49,7 +50,7 @@ class Settings_Menu extends Admin_Menu {
 
 			set_transient( 'settings_errors', get_settings_errors(), 30 );
 
-			wp_redirect( esc_url_raw( add_query_arg( 'settings-updated', true, remove_query_arg( 'reset_settings' ) ) ) );
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'settings-updated', true, remove_query_arg( 'reset_settings' ) ) ) );
 			exit;
 		}
 
@@ -57,7 +58,7 @@ class Settings_Menu extends Admin_Menu {
 			if ( Settings\are_settings_unified() ) {
 				$this->update_network_options();
 			} else {
-				wp_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );
+				wp_safe_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );
 				exit;
 			}
 		}
@@ -230,7 +231,7 @@ class Settings_Menu extends Admin_Menu {
 
 		/* Redirect back to the settings menu */
 		$redirect = add_query_arg( 'settings-updated', 'true', remove_query_arg( 'update_site_option', wp_get_referer() ) );
-		wp_redirect( esc_url_raw( $redirect ) );
+		wp_safe_redirect( esc_url_raw( $redirect ) );
 		exit;
 	}
 

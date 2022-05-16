@@ -84,24 +84,24 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 
 	$db = code_snippets()->db;
 	$multisite = $db->validate_network_param( $multisite );
-	$table = $db->get_table_name( $multisite );
-	$cache_key = get_snippets_cache_key( $table );
+	$table_name = $db->get_table_name( $multisite );
+	$cache_key = get_snippets_cache_key( $table_name );
 
 	$snippets = wp_cache_get( $cache_key, CACHE_GROUP );
 
 	// Fetch all snippets from the database if none are cached.
 	if ( ! $snippets ) {
-		$snippets = $wpdb->get_results( "SELECT * FROM $table", ARRAY_A );
+		$results = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A );
 
-		if ( $snippets ) {
-			// Convert snippets to snippet objects.
-			foreach ( $snippets as $index => $snippet ) {
-				$snippet['network'] = $multisite;
-				$snippets[ $index ] = new Snippet( $snippet );
-			}
-		} else {
-			$snippets = array();
-		}
+		$snippets = $results ?
+			array_map(
+				function ( $snippet ) use ( $multisite ) {
+					$snippet['network'] = $multisite;
+					return new Snippet( $snippet );
+				},
+				$results
+			) :
+			array();
 
 		$snippets = apply_filters( 'code_snippets/get_snippets', $snippets, $multisite );
 
@@ -203,7 +203,7 @@ function get_snippet( $id = 0, $multisite = null ) {
 	$cache_key = get_snippets_cache_key( $table, $id );
 	$snippet = wp_cache_get( $cache_key, CACHE_GROUP );
 
-	if ( $snippet ) {
+	if ( $snippet && $snippet->id === $id ) {
 		return $snippet;
 	}
 

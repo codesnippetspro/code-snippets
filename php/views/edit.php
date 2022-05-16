@@ -33,7 +33,8 @@ if ( ! $snippet->id ) {
 
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
-			printf( ' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
+			printf(
+				' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
 				esc_url( add_query_arg( 'type', $snippet->type, code_snippets()->get_menu_url( 'add' ) ) ),
 				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 			);
@@ -81,7 +82,8 @@ if ( ! $snippet->id ) {
 
 		<h2>
 			<label for="snippet_code">
-				<?php esc_html_e( 'Code', 'code-snippets' );
+				<?php
+				esc_html_e( 'Code', 'code-snippets' );
 
 				if ( $snippet->id ) {
 					printf( ' <span class="snippet-type-badge" data-type="%s">%s</span>', esc_attr( $snippet->type ), esc_html( $snippet->type ) );

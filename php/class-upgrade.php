@@ -175,30 +175,26 @@ class Upgrade {
 		$tag = "\n\n" . esc_html__( 'This is a sample snippet. Feel free to use it, edit it, or remove it.', 'code-snippets' );
 
 		$snippets_data = array(
-
-			'lowercase_filenames' => array(
+			array(
 				'name' => esc_html__( 'Make upload filenames lowercase', 'code-snippets' ),
 				'code' => "add_filter( 'sanitize_file_name', 'mb_strtolower' );",
 				'desc' => esc_html__( 'Makes sure that image and file uploads have lowercase filenames.', 'code-snippets' ) . $tag,
 				'tags' => array( 'sample', 'media' ),
 			),
-
-			'disable_admin_bar' => array(
+			array(
 				'name'  => esc_html__( 'Disable admin bar', 'code-snippets' ),
 				'code'  => "add_action( 'wp', function () {\n\tif ( ! current_user_can( 'manage_options' ) ) {\n\t\tshow_admin_bar( false );\n\t}\n} );",
 				'desc'  => esc_html__( 'Turns off the WordPress admin bar for everyone except administrators.', 'code-snippets' ) . $tag,
 				'tags'  => array( 'sample', 'admin-bar' ),
 				'scope' => 'front-end',
 			),
-
-			'allow_smilies' => array(
+			array(
 				'name' => esc_html__( 'Allow smilies', 'code-snippets' ),
 				'code' => "add_filter( 'widget_text', 'convert_smilies' );\nadd_filter( 'the_title', 'convert_smilies' );\nadd_filter( 'wp_title', 'convert_smilies' );\nadd_filter( 'get_bloginfo', 'convert_smilies' );",
 				'desc' => esc_html__( 'Allows smiley conversion in obscure places.', 'code-snippets' ) . $tag,
 				'tags' => array( 'sample' ),
 			),
-
-			'current_year' => array(
+			array(
 				'name'  => esc_html__( 'Current year', 'code-snippets' ),
 				'code'  => "<?php echo date( 'Y' ); ?>",
 				'desc'  => esc_html__( 'Shortcode for inserting the current year into a post or page..', 'code-snippets' ) . $tag,

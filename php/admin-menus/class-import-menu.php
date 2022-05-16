@@ -14,7 +14,8 @@ class Import_Menu extends Admin_Menu {
 	 * Class constructor
 	 */
 	public function __construct() {
-		parent::__construct( 'import',
+		parent::__construct(
+			'import',
 			_x( 'Import', 'menu label', 'code-snippets' ),
 			__( 'Import Snippets', 'code-snippets' )
 		);
@@ -43,10 +44,6 @@ class Import_Menu extends Admin_Menu {
 
 	/**
 	 * Process the uploaded import files
-	 *
-	 * @uses import_snippets() to process the import file
-	 * @uses wp_redirect() to pass the import results to the page
-	 * @uses add_query_arg() to append the results to the current URI
 	 */
 	private function process_import_files() {
 
@@ -97,7 +94,7 @@ class Import_Menu extends Admin_Menu {
 
 		/* Send the amount of imported snippets to the page */
 		$url = add_query_arg( $error ? array( 'error' => true ) : array( 'imported' => $count ) );
-		wp_redirect( esc_url_raw( $url ) );
+		wp_safe_redirect( esc_url_raw( $url ) );
 		exit;
 	}
 

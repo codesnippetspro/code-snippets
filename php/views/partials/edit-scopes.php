@@ -80,7 +80,8 @@ if ( ! $snippet->id || 'html' === $snippet->type ) {
 				$shortcode_atts .= ' php=true';
 			}
 
-			printf( '<p>' . esc_html( $text ) . '</p>',
+			printf(
+				'<p>' . esc_html( $text ) . '</p>',
 				'<code class="shortcode-tag">[code_snippet' . esc_html( $shortcode_atts ) . ']</code>'
 			);
 
@@ -101,7 +102,10 @@ if ( ! $snippet->id || 'html' === $snippet->type ) {
 						<?php esc_html_e( 'Evaluate additional shortcode tags', 'code-snippets' ); ?>
 					</label>
 				</p>
-			<?php }
-		} ?>
+				<?php
+			}
+		}
+		?>
 	</div>
-<?php }
+	<?php
+}

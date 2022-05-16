@@ -22,7 +22,8 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function __construct() {
 
-		parent::__construct( 'manage',
+		parent::__construct(
+			'manage',
 			_x( 'All Snippets', 'menu label', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' )
 		);

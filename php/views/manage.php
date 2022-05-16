@@ -43,7 +43,8 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 			if ( $type_name === $current_type ) {
 				printf( '<a class="nav-tab nav-tab-active" data-type="%s">', esc_attr( $type_name ) );
 			} else {
-				printf( '<a class="nav-tab" href="%s" data-type="%s">',
+				printf(
+					'<a class="nav-tab" href="%s" data-type="%s">',
 					esc_url( add_query_arg( 'type', $type_name ) ),
 					esc_attr( $type_name )
 				);
