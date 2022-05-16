@@ -8,7 +8,6 @@
 namespace Code_Snippets;
 
 const CACHE_GROUP = 'code_snippets';
-const ALL_TAGS_CACHE = 'all_snippet_tags';
 
 /**
  * Retrieve the cache key for either a set of snippets or an individual snippet.
@@ -33,7 +32,7 @@ function get_snippets_cache_key( $table_name, $snippet_id = 0 ) {
  * @return void
  */
 function clean_snippet_cache( $table_name, $snippet_id = 0 ) {
-	wp_cache_delete( ALL_TAGS_CACHE );
+	wp_cache_delete( "all_snippet_tags_$table_name" );
 	wp_cache_delete( get_snippets_cache_key( $table_name ) );
 
 	if ( $snippet_id ) {
@@ -171,16 +170,17 @@ function get_snippets( array $ids = array(), $multisite = null, array $args = ar
  */
 function get_all_snippet_tags() {
 	global $wpdb;
+	$table_name = code_snippets()->db->get_table_name();
+	$cache_key = "all_snippet_tags_$table_name";
 
-	$tags = wp_cache_get( ALL_TAGS_CACHE, CACHE_GROUP );
+	$tags = wp_cache_get( $cache_key, CACHE_GROUP );
 	if ( $tags ) {
 		return $tags;
 	}
 
 	/* Grab all tags from the database. */
 	$tags = array();
-	$table = code_snippets()->db->get_table_name();
-	$all_tags = $wpdb->get_col( sprintf( 'SELECT tags FROM %s', $table ) );
+	$all_tags = $wpdb->get_col( sprintf( 'SELECT tags FROM %s', $table_name ) );
 
 	/* Merge all tags into a single array. */
 	foreach ( $all_tags as $snippet_tags ) {
@@ -190,7 +190,7 @@ function get_all_snippet_tags() {
 
 	/* Remove duplicate tags. */
 	$tags = array_values( array_unique( $tags, SORT_REGULAR ) );
-	wp_cache_set( ALL_TAGS_CACHE, $tags, CACHE_GROUP );
+	wp_cache_set( $cache_key, $tags, CACHE_GROUP );
 	return $tags;
 }
 
