@@ -93,7 +93,7 @@ class List_Table extends WP_List_Table {
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
 
 		/* Add filters to format the snippet description in the same way the post content is formatted */
-		$filters = [ 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'capital_P_dangit', 'wp_kses_post' ];
+		$filters = [ 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'capital_P_dangit', [ $this, 'wp_kses_desc' ] ];
 		foreach ( $filters as $filter ) {
 			add_filter( 'code_snippets/list_table/column_description', $filter );
 		}
@@ -106,6 +106,26 @@ class List_Table extends WP_List_Table {
 				'singular' => 'snippet',
 			)
 		);
+	}
+
+	/**
+	 * Apply a more permissive version of wp_kses_post() to the snippet description.
+	 *
+	 * @param string $data Description content to filter.
+	 *
+	 * @return string Filtered description content with allowed HTML tags and attributes intact.
+	 */
+	public function wp_kses_desc( $data ) {
+		$safe_style_filter = function ( $styles ) {
+			$styles[] = 'display';
+			return $styles;
+		};
+
+		add_filter( 'safe_style_css', $safe_style_filter );
+		$data = wp_kses_post( $data );
+		remove_filter( 'safe_style_css', $safe_style_filter );
+
+		return $data;
 	}
 
 	/**
