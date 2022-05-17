@@ -10,15 +10,12 @@ namespace Code_Snippets;
 /**
  * Retrieve the cache key for either a set of snippets or an individual snippet.
  *
- * @param string  $table_name Snippets table name.
- * @param integer $snippet_id Snippet ID. Optional. If not provided, will return the cache key for all snippets.
+ * @param string $table_name Snippets table name.
  *
  * @return string
  */
-function get_snippets_cache_key( $table_name, $snippet_id = 0 ) {
-	return $snippet_id ?
-		sprintf( 'snippet_%d_%s', $snippet_id, $table_name ) :
-		'all_snippets_' . $table_name;
+function get_snippets_cache_key( $table_name ) {
+	return "all_snippets_$table_name";
 }
 
 /**
@@ -44,19 +41,13 @@ function clean_active_snippets_cache( $table_name, $scopes = false ) {
 /**
  * Flush the cache for a given snippet. Will also clear the 'all snippets' cache for the given context.
  *
- * @param string  $table_name Snippets table name.
- * @param integer $snippet_id Snippet ID. Optional. If not provided, will only flush the cache for all snippets.
+ * @param string $table_name Snippets table name.
  *
  * @return void
  */
-function clean_snippet_cache( $table_name, $snippet_id = 0 ) {
+function clean_snippet_cache( $table_name ) {
 	wp_cache_delete( "all_snippet_tags_$table_name", CACHE_GROUP );
 	wp_cache_delete( get_snippets_cache_key( $table_name ), CACHE_GROUP );
-
-	if ( $snippet_id ) {
-		wp_cache_delete( get_snippets_cache_key( $table_name, $snippet_id ), CACHE_GROUP );
-	}
-
 	clean_active_snippets_cache( $table_name );
 }
 
@@ -196,34 +187,31 @@ function get_snippet( $id = 0, $multisite = null ) {
 
 	$id = absint( $id );
 	$multisite = DB::validate_network_param( $multisite );
-	$table = code_snippets()->db->get_table_name( $multisite );
+	$table_name = code_snippets()->db->get_table_name( $multisite );
 
-	$cache_key = get_snippets_cache_key( $table, $id );
-	$snippet = wp_cache_get( $cache_key, CACHE_GROUP );
-
-	if ( $snippet && $snippet->id === $id ) {
-		return $snippet;
-	}
-
-	if ( 0 !== $id ) {
-
-		/* Retrieve the snippet from the database. */
-		$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
-
-		/* Unescape the snippet data, ready for use. */
-		$snippet = new Snippet( $snippet );
+	if ( 0 === $id ) {
+		// If an invalid ID is provided, then return an empty snippet object.
+		$snippet = new Snippet();
 
 	} else {
+		$cached_snippets = wp_cache_get( get_snippets_cache_key( $table_name ), CACHE_GROUP );
 
-		/* Get an empty snippet object. */
-		$snippet = new Snippet();
+		// Attempt to fetch snippet from the cached list, if it exists.
+		if ( is_array( $cached_snippets ) ) {
+			foreach ( $cached_snippets as $snippet ) {
+				if ( $snippet->id === $id ) {
+					return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
+				}
+			}
+		}
+
+		// Otherwise, retrieve the snippet from the database.
+		$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) ); // cache pass
+		$snippet = new Snippet( $snippet );
 	}
 
 	$snippet->network = $multisite;
-
-	$snippet = apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
-	wp_cache_set( $cache_key, $snippet, CACHE_GROUP );
-	return $snippet;
+	return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
 }
 
 /**
