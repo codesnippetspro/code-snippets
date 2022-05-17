@@ -218,7 +218,7 @@ class Manage_Menu extends Admin_Menu {
 			array( '%d' )
 		);
 
-		clean_snippet_cache( $table, $snippet->id );
+		clean_snippets_cache( $table, $snippet->id );
 	}
 
 	/**

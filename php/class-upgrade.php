@@ -102,7 +102,7 @@ class Upgrade {
 			}
 		}
 
-		clean_snippet_cache( $table_name );
+		clean_snippets_cache( $table_name );
 	}
 
 	/**
@@ -138,7 +138,7 @@ class Upgrade {
 			}
 		}
 
-		clean_snippet_cache( $table_name );
+		clean_snippets_cache( $table_name );
 	}
 
 	/**

@@ -65,7 +65,7 @@
 	<rule ref="WordPress.DB.DirectDatabaseQuery">
 		<properties>
 			<property name="customCacheDeleteFunctions" type="array">
-				<element value="clean_snippet_cache" />
+				<element value="clean_snippets_cache" />
 				<element value="clean_active_snippets_cache" />
 			</property>
 		</properties>
