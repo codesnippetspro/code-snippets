@@ -10,6 +10,8 @@ namespace Code_Snippets\Settings;
 
 const NS = __NAMESPACE__ . '\\';
 
+const CACHE_KEY = 'code_snippets_settings';
+
 /**
  * Add a new option for either the current site or the current network
  *
@@ -58,7 +60,6 @@ function update_self_option( $network, $option, $value ) {
  * @return bool
  */
 function are_settings_unified() {
-
 	if ( ! is_multisite() ) {
 		return false;
 	}
@@ -76,8 +77,8 @@ function are_settings_unified() {
  */
 function get_settings_values() {
 
-	/* Check if the settings have been cached */
-	$settings = wp_cache_get( 'code_snippets_settings' );
+	// Check if the settings have been cached.
+	$settings = wp_cache_get( CACHE_KEY );
 	if ( $settings ) {
 		return $settings;
 	}
@@ -95,7 +96,7 @@ function get_settings_values() {
 		}
 	}
 
-	wp_cache_set( 'code_snippets_settings', $settings );
+	wp_cache_set( CACHE_KEY, $settings );
 
 	return $settings;
 }
@@ -128,7 +129,7 @@ function update_setting( $section, $field, $new_value ) {
 
 	$settings[ $section ][ $field ] = $new_value;
 
-	wp_cache_set( 'code_snippets_settings', $settings );
+	wp_cache_set( CACHE_KEY, $settings );
 	return update_self_option( are_settings_unified(), 'code_snippets_settings', $settings );
 }
 
@@ -271,6 +272,8 @@ function sanitize_settings( array $input ) {
 			}
 		}
 	}
+
+	wp_cache_delete( CACHE_KEY );
 
 	/* Add an updated message */
 	if ( $updated ) {
