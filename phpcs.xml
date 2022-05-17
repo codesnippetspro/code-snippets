@@ -18,13 +18,6 @@
 		<!-- database table names should be interpolated -->
 		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared" />
 
-		<!-- codesniffer does not seem to understand more complex queries -->
-		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />
-		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
-
-		<!-- class filenames do not include the namespace prefix -->
-		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
-
 		<!-- handle this through editor autoformatting -->
 		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
 		<exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />

@@ -117,7 +117,7 @@ function get_all_snippet_tags() {
 
 	// Grab all tags from the database.
 	$tags = array();
-	$all_tags = $wpdb->get_col( sprintf( 'SELECT tags FROM %s', $table_name ) ); // db call ok.
+	$all_tags = $wpdb->get_col( "SELECT tags FROM $table_name" ); // db call ok.
 
 	// Merge all tags into a single array.
 	foreach ( $all_tags as $snippet_tags ) {
@@ -290,6 +290,7 @@ function activate_snippets( array $ids, $multisite = null ) {
 
 	// Build a SQL query containing all IDs, as wpdb::update does not support OR conditionals.
 	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
+	// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	$wpdb->query( $wpdb->prepare( "UPDATE $table_name SET active = 1 WHERE id IN ($ids_format)", $valid_ids ) ); // db call ok.
 
 	// Remove any snippets from shared network snippet list if they were Network Activated.

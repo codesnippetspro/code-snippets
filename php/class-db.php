@@ -112,7 +112,7 @@ class DB {
 	 */
 	public static function table_exists( $table_name ) {
 		global $wpdb;
-		return $wpdb->get_var( sprintf( "SHOW TABLES LIKE '%s'", $table_name ) ) === $table_name; // cache pass, db call ok.
+		return $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name; // cache pass, db call ok.
 	}
 
 	/**
@@ -217,6 +217,8 @@ class DB {
 	 * @param array  $active_only Whether to only fetch active snippets from the table.
 	 *
 	 * @return array|false List of active snippets, if any could be retrieved.
+	 *
+	 * @phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	 */
 	private static function fetch_snippets_from_table( $table_name, array $scopes, $active_only = true ) {
 		global $wpdb;
