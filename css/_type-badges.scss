@@ -1,6 +1,6 @@
 @import 'base';
 
-.nav-tab span, .snippet-type-badge, .go-pro-button span {
+.nav-tab .badge, .snippet-type-badge, .go-pro-button .badge {
 	font-size: 10px;
 	text-transform: uppercase;
 	border: 1px solid;
@@ -8,7 +8,7 @@
 	border-radius: 5px;
 }
 
-.nav-tab span, .button .snippet-type-badge, .go-pro-button span
+.nav-tab .badge, .button .snippet-type-badge, .go-pro-button .badge,
 h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
 	/* rtl:ignore */
 	margin-left: 3px;
@@ -21,13 +21,18 @@ h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
 $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-active);
 
 @each $type, $color in $badges {
-	.nav-tab[data-type=#{$type}] span, .snippet-type-badge[data-type=#{$type}] {
+	.nav-tab[data-type=#{$type}] .badge, .snippet-type-badge[data-type=#{$type}] {
 		color: $color;
 		border-color: currentColor;
 	}
 }
 
-.go-pro-button span {
+.nav-tab .dashicons-external {
+	font-size: 15px;
+	color: #666;
+}
+
+.go-pro-button .badge {
 	color: #ce0000;
 	border-color: #ce0000;
 }
