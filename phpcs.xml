@@ -38,9 +38,6 @@
 		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound" />
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
 
-		<!-- direct queries are necessary for using custom tables -->
-		<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
-
 		<!-- todo -->
 		<exclude name="WordPress.Security.NonceVerification.Recommended" />
 		<exclude name="WordPress.Security.NonceVerification.Missing" />

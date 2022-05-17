@@ -162,7 +162,7 @@ class Upgrade {
 					$scope_name,
 					$scope_number
 				)
-			); // cache ok, will flush at end of process.
+			); // cache ok, will flush at end of process; db call ok.
 		}
 	}
 

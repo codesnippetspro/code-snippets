@@ -112,7 +112,7 @@ class DB {
 	 */
 	public static function table_exists( $table_name ) {
 		global $wpdb;
-		return $wpdb->get_var( sprintf( "SHOW TABLES LIKE '%s'", $table_name ) ) === $table_name; // cache pass.
+		return $wpdb->get_var( sprintf( "SHOW TABLES LIKE '%s'", $table_name ) ) === $table_name; // cache pass, db call ok.
 	}
 
 	/**
@@ -245,7 +245,7 @@ class DB {
 				$scopes
 			),
 			'ARRAY_A'
-		);
+		); // db call ok.
 
 		// Cache the full list of snippets.
 		if ( is_array( $snippets ) ) {
