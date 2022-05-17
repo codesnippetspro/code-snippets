@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.0 (17 May 2022)
+* Fixed: Caching inconsistencies preventing snippets and settings from refreshing on sites with persistent object caching.
+* Improved: Simplified database queries.
+* Added: More comprehensive cache coverage, including for active snippets.
+* Added: Icon to 'Go Pro' button indicating it opens an external tab.
+* Improved: Allow display styles in snippet descriptions.
+
 ## 3.0.1 (14 May 2022)
 * Fixed: Incompatibility issue with earlier versions of PHP.
 
