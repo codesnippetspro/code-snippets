@@ -887,9 +887,7 @@ class List_Table extends WP_List_Table {
 			}
 		} else {
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
-
-			$shared_snippets = is_array( $active_shared_snippets ) && count( $active_shared_snippets ) ?
-				get_snippets( $active_shared_snippets, true ) : array();
+			$shared_snippets = get_snippets( $ids, true );
 
 			foreach ( $shared_snippets as $snippet ) {
 				$snippet->shared_network = true;

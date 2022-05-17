@@ -68,6 +68,8 @@ class Plugin {
 		$this->version = $version;
 		$this->file = $file;
 
+		wp_cache_add_global_groups( CACHE_GROUP );
+
 		add_action( 'init', array( $this, 'load_textdomain' ), 9 );
 
 		add_filter( 'code_snippets/execute_snippets', array( $this, 'disable_snippet_execution' ), 5 );

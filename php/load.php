@@ -29,6 +29,13 @@ const PLUGIN_VERSION = '3.0.1';
  */
 const PLUGIN_FILE = CODE_SNIPPETS_FILE;
 
+/**
+ * Name of the group used for caching data.
+ *
+ * @var string
+ */
+const CACHE_GROUP = 'code_snippets';
+
 /* Load dependencies with Composer */
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 

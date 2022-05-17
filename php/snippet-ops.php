@@ -7,8 +7,6 @@
 
 namespace Code_Snippets;
 
-const CACHE_GROUP = 'code_snippets';
-
 /**
  * Retrieve the cache key for either a set of snippets or an individual snippet.
  *
@@ -79,7 +77,7 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 	// If only one ID has been passed in, defer to the get_snippet() function.
 	$ids_count = count( $ids );
 	if ( 1 === $ids_count ) {
-		return array( get_snippet( $ids[0] ) );
+		return array( get_snippet( $ids[0], $multisite ) );
 	}
 
 	$db = code_snippets()->db;
