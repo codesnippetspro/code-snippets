@@ -155,7 +155,7 @@ class List_Table extends WP_List_Table {
 					esc_html( $type )
 				);
 
-			case 'modified':
+			case 'date':
 				return $item->modified ? $item->format_modified() : '&#8212;';
 
 			default:
