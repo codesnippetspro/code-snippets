@@ -63,7 +63,7 @@ class Upgrade {
 		$updated = update_option( 'code_snippets_version', $this->current_version );
 
 		if ( ! $updated ) {
-			return; // bail if the data was not successfully saved to prevent this process from repeating
+			return; // Bail if the data was not successfully saved to prevent this process from repeating.
 		}
 
 		$sample_snippets = $this->get_sample_content();
@@ -77,7 +77,7 @@ class Upgrade {
 			$menu_slug = code_snippets()->get_menu_slug();
 			$option_name = "{$prefix}managetoplevel_page_{$menu_slug}columnshidden";
 
-			// loop through each user ID and remove all matching user meta
+			// Loop through each user ID and remove all matching user meta.
 			foreach ( get_users( array( 'fields' => 'ID' ) ) as $user_id ) {
 				delete_metadata( 'user', $user_id, $option_name, '', true );
 			}

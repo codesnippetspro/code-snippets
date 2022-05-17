@@ -38,7 +38,7 @@ function uninstall_current_site() {
 	global $wpdb;
 
 	// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
-	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" ); // cache ok
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" ); // cache ok.
 
 	delete_option( 'code_snippets_version' );
 	delete_option( 'recently_activated_snippets' );
@@ -62,7 +62,7 @@ function uninstall_multisite() {
 	restore_current_blog();
 
 	// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
-	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ms_snippets" ); // cache ok
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ms_snippets" ); // cache ok.
 
 	// Remove saved options.
 	delete_site_option( 'code_snippets_version' );

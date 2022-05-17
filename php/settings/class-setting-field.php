@@ -101,7 +101,7 @@ class Setting_Field {
 		if ( method_exists( $this, $method_name ) ) {
 			call_user_func( array( $this, $method_name ) );
 		} else {
-			// error message, not necessary to translate
+			// Error message, not necessary to translate.
 			printf( 'Cannot render a %s field.', esc_html( $this->type ) );
 			return;
 		}

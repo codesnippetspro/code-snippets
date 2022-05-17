@@ -42,20 +42,20 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 		'colorpicker'   => [ 'mode' => 'edit' ],
 	];
 
-	// add relevant saved setting values to the default attributes
+	// Add relevant saved setting values to the default attributes.
 	$plugin_settings = Settings\get_settings_values();
 	$setting_fields = Settings\get_settings_fields();
 
 	foreach ( $setting_fields['editor'] as $field_id => $field ) {
-		// the 'codemirror' setting field specifies the name of the attribute
+		// The 'codemirror' setting field specifies the name of the attribute.
 		$default_atts[ $field['codemirror'] ] = $plugin_settings['editor'][ $field_id ];
 	}
 
-	// merge the default attributes with the ones passed into the function
+	// Merge the default attributes with the ones passed into the function.
 	$atts = wp_parse_args( $default_atts, $extra_atts );
 	$atts = apply_filters( 'code_snippets_codemirror_atts', $atts );
 
-	// ensure number values are not formatted as strings
+	// Ensure number values are not formatted as strings.
 	foreach ( [ 'indentUnit', 'tabSize' ] as $number_att ) {
 		$atts[ $number_att ] = intval( $atts[ $number_att ] );
 	}
@@ -75,7 +75,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 		true
 	);
 
-	// CodeMirror Theme
+	// CodeMirror Theme.
 	$theme = get_setting( 'editor', 'theme' );
 
 	if ( 'default' !== $theme ) {

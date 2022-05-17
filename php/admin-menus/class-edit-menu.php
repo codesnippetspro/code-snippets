@@ -62,7 +62,7 @@ class Edit_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
-		// Retrieve the current snippet object
+		// Retrieve the current snippet object.
 		$this->load_snippet_data();
 
 		$screen = get_current_screen();
@@ -280,7 +280,7 @@ class Edit_Menu extends Admin_Menu {
 		if ( isset( $_POST['save_snippet_execute'] ) ) {
 			$snippet->active = 1;
 		} elseif ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
-			// Shared network snippets cannot be network-activated
+			// Shared network snippets cannot be network-activated.
 			$snippet->active = 0;
 			unset( $_POST['save_snippet_activate'], $_POST['save_snippet_deactivate'] );
 		} elseif ( isset( $_POST['save_snippet_activate'] ) ) {
@@ -387,7 +387,7 @@ class Edit_Menu extends Admin_Menu {
 
 		echo '<h2><label for="snippet_description">', esc_html__( 'Description', 'code-snippets' ), '</label></h2>';
 
-		remove_editor_styles(); // stop custom theme styling interfering with the editor
+		remove_editor_styles(); // Stop custom theme styling interfering with the editor.
 
 		wp_editor(
 			$snippet->desc,
@@ -733,7 +733,7 @@ class Edit_Menu extends Admin_Menu {
 			}
 		}
 
-		// Make the 'Save and Activate' button the default if the setting is enabled
+		// Make the 'Save and Activate' button the default if the setting is enabled.
 		if ( ! $snippet->active && 'single-use' !== $snippet->scope &&
 		     get_setting( 'general', 'activate_by_default' ) ) {
 			$actions = array_reverse( $actions );

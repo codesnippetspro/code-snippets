@@ -256,14 +256,14 @@ function sanitize_settings( array $input ) {
 	$settings = get_settings_values();
 	$updated = false;
 
-	// don't directly loop through $input as it does not include as deselected checkboxes.
+	// Don't directly loop through $input as it does not include as deselected checkboxes.
 	foreach ( get_settings_fields() as $section_id => $fields ) {
 		foreach ( $fields as $field_id => $field ) {
 
-			// fetch the corresponding input value from the posted data.
+			// Fetch the corresponding input value from the posted data.
 			$input_value = isset( $input[ $section_id ][ $field_id ] ) ? $input[ $section_id ][ $field_id ] : null;
 
-			// attempt to sanitize the setting value
+			// Attempt to sanitize the setting value.
 			$sanitized_value = sanitize_setting_value( $field, $input_value );
 
 			if ( ! is_null( $sanitized_value ) && $settings[ $section_id ][ $field_id ] !== $sanitized_value ) {
@@ -275,7 +275,7 @@ function sanitize_settings( array $input ) {
 
 	wp_cache_delete( CACHE_KEY );
 
-	/* Add an updated message */
+	// Add an updated message.
 	if ( $updated ) {
 		add_settings_error(
 			'code-snippets-settings-notices',

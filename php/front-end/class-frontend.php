@@ -80,12 +80,12 @@ class Frontend {
 	 */
 	public function enqueue_highlighting( $posts ) {
 
-		// exit early if there are no posts to check or if the highlighter has been disabled
+		// Exit early if there are no posts to check or if the highlighter has been disabled.
 		if ( empty( $posts ) || Settings\get_setting( 'general', 'disable_prism' ) ) {
 			return $posts;
 		}
 
-		// loop through all the posts, checking for instances where the source tag is used
+		// Loop through all the posts, checking for instances where the source tag is used.
 		foreach ( $posts as $post ) {
 
 			if ( false === stripos( $post->post_content, '[' . self::SOURCE_SHORTCODE ) &&
@@ -93,7 +93,7 @@ class Frontend {
 				continue;
 			}
 
-			// register the syntax highlighter assets and exit from the loop once a match is discovered
+			// Register the syntax highlighter assets and exit from the loop once a match is discovered.
 			$this->register_prism_assets();
 			wp_enqueue_style( self::PRISM_HANDLE );
 			wp_enqueue_script( self::PRISM_HANDLE );
@@ -167,12 +167,12 @@ class Frontend {
 
 		$snippet = get_snippet( $id, (bool) $atts['network'] );
 
-		// render the source code if this is not a shortcode snippet
+		// Render the source code if this is not a shortcode snippet.
 		if ( 'content' !== $snippet->scope ) {
 			return $snippet->id ? $this->render_snippet_source( $snippet ) : '';
 		}
 
-		// if the snippet is inactive, either display a message or render nothing.
+		// If the snippet is inactive, either display a message or render nothing.
 		if ( ! $snippet->active ) {
 			if ( ! $atts['debug'] ) {
 				return '';
@@ -209,13 +209,13 @@ class Frontend {
 		}
 
 		if ( $atts['shortcodes'] ) {
-			// remove this shortcode from the list to prevent recursion
+			// Remove this shortcode from the list to prevent recursion.
 			remove_shortcode( self::CONTENT_SHORTCODE );
 
-			// evaluate shortcodes
+			// Evaluate shortcodes.
 			$content = do_shortcode( $atts['format'] ? shortcode_unautop( $content ) : $content );
 
-			// add this shortcode back to the list
+			// Add this shortcode back to the list.
 			add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
 		}
 

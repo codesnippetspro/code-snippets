@@ -46,24 +46,21 @@ class Manage_Menu extends Admin_Menu {
 
 	/**
 	 * Register the top-level 'Snippets' menu and associated 'Manage' subpage
-	 *
-	 * @uses add_menu_page() to register a top-level menu
-	 * @uses add_submenu_page() to register a sub-menu
 	 */
 	public function register() {
 
-		/* Register the top-level menu */
+		// Register the top-level menu.
 		add_menu_page(
 			__( 'Snippets', 'code-snippets' ),
 			_x( 'Snippets', 'top-level menu label', 'code-snippets' ),
 			code_snippets()->get_cap(),
 			code_snippets()->get_menu_slug(),
 			array( $this, 'render' ),
-			'div', // icon is added through CSS
+			'div', // Icon is added through CSS.
 			is_network_admin() ? 21 : 67
 		);
 
-		/* Register the sub-menu */
+		// Register the sub-menu.
 		parent::register();
 	}
 
@@ -218,7 +215,7 @@ class Manage_Menu extends Admin_Menu {
 			array( '%d' )
 		);
 
-		clean_snippets_cache( $table, $snippet->id );
+		clean_snippets_cache( $table );
 	}
 
 	/**

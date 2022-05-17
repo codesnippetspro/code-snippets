@@ -173,11 +173,11 @@ class List_Table extends WP_List_Table {
 	 */
 	public function get_action_link( $action, $snippet ) {
 
-		// redirect actions to the network dashboard for shared network snippets
+		// Redirect actions to the network dashboard for shared network snippets.
 		$local_actions = array( 'activate', 'activate-shared', 'run-once', 'run-once-shared' );
 		$network_redirect = $snippet->shared_network && ! $this->is_network && ! in_array( $action, $local_actions, true );
 
-		// edit links go to a different menu
+		// Edit links go to a different menu.
 		if ( 'edit' === $action ) {
 			return code_snippets()->get_snippet_edit_url( $snippet->id, $network_redirect ? 'network' : 'self' );
 		}
@@ -192,7 +192,7 @@ class List_Table extends WP_List_Table {
 			add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) :
 			add_query_arg( $query_args );
 
-		// add a nonce to the URL for security purposes
+		// Add a nonce to the URL for security purposes.
 		return wp_nonce_url( $url, 'code_snippets_manage_snippet_' . $snippet->id );
 	}
 
@@ -207,7 +207,7 @@ class List_Table extends WP_List_Table {
 		$actions = array();
 
 		if ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) {
-			// display special links if on a subsite and dealing with a network-active snippet
+			// Display special links if on a subsite and dealing with a network-active snippet.
 			if ( $snippet->active ) {
 				$actions['network_active'] = esc_html__( 'Network Active', 'code-snippets' );
 			} else {
@@ -215,7 +215,7 @@ class List_Table extends WP_List_Table {
 			}
 		} elseif ( ! $snippet->shared_network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
 
-			// if the snippet is a shared network snippet, only display extra actions if the user has network permissions
+			// If the snippet is a shared network snippet, only display extra actions if the user has network permissions.
 			$simple_actions = array(
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
@@ -1034,9 +1034,9 @@ class List_Table extends WP_List_Table {
 		/* We register our pagination options and calculations */
 		$this->set_pagination_args(
 			array(
-				'total_items' => $total_items, // Calculate the total number of items
-				'per_page'    => $per_page, // Determine how many items to show on a page
-				'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages
+				'total_items' => $total_items, // Calculate the total number of items.
+				'per_page'    => $per_page, // Determine how many items to show on a page.
+				'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages.
 			)
 		);
 	}
@@ -1052,22 +1052,22 @@ class List_Table extends WP_List_Table {
 	 */
 	private function get_sort_direction( $a_data, $b_data ) {
 
-		// if the data is numeric, then calculate the ordering directly
+		// If the data is numeric, then calculate the ordering directly.
 		if ( is_numeric( $a_data ) ) {
 			return $a_data - $b_data;
 		}
 
-		// if only one of the data points is empty, then place it before the one which is not
+		// If only one of the data points is empty, then place it before the one which is not.
 		if ( '' === $a_data xor '' === $b_data ) {
 			return '' === $a_data ? 1 : -1;
 		}
 
-		// sort using the default string sort order if possible
+		// Sort using the default string sort order if possible.
 		if ( is_string( $a_data ) ) {
 			return strcasecmp( $a_data, $b_data );
 		}
 
-		// otherwise, use basic comparison operators
+		// Otherwise, use basic comparison operators.
 		return $a_data === $b_data ? 0 : ( $a_data < $b_data ? -1 : 1 );
 	}
 
@@ -1118,7 +1118,7 @@ class List_Table extends WP_List_Table {
 			$result = $this->get_sort_direction( $a->id, $b->id );
 		}
 
-		// apply the sort direction to the calculated order
+		// Apply the sort direction to the calculated order.
 		return ( 'asc' === $this->order_dir ) ? $result : -$result;
 	}
 
@@ -1271,7 +1271,7 @@ class List_Table extends WP_List_Table {
 
 		/** Snippet @var Snippet $snippet */
 		foreach ( $snippets as $snippet ) {
-			// copy all data from the previous snippet aside from the ID and active status
+			// Copy all data from the previous snippet aside from the ID and active status.
 			$snippet->id = 0;
 			$snippet->active = false;
 

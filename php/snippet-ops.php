@@ -193,7 +193,7 @@ function get_snippet( $id = 0, $multisite = null ) {
 		}
 
 		// Otherwise, retrieve the snippet from the database.
-		$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) ); // cache pass
+		$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) ); // cache pass.
 		$snippet = new Snippet( $snippet );
 	}
 
@@ -225,7 +225,7 @@ function activate_snippet( $id, $multisite = null ) {
 	);
 
 	/* Retrieve the snippet code from the database for validation before activating */
-	$row = $wpdb->get_row( $wpdb->prepare( "SELECT code FROM $table WHERE id = %d;", $id ) ); // cache pass
+	$row = $wpdb->get_row( $wpdb->prepare( "SELECT code FROM $table WHERE id = %d;", $id ) ); // cache pass.
 	if ( ! $row ) {
 		return false;
 	}
@@ -247,7 +247,7 @@ function activate_snippet( $id, $multisite = null ) {
 	}
 
 	do_action( 'code_snippets/activate_snippet', $id, $multisite );
-	clean_snippets_cache( $table, $id );
+	clean_snippets_cache( $table );
 	return true;
 }
 
@@ -273,7 +273,7 @@ function activate_snippets( array $ids, $multisite = null ) {
 		return array();
 	}
 
-	// Loop through each snippet code and validate individually
+	// Loop through each snippet code and validate individually.
 	$valid_ids = array();
 
 	foreach ( $snippets as $snippet ) {
@@ -352,7 +352,7 @@ function deactivate_snippet( $id, $multisite = null ) {
 	}
 
 	do_action( 'code_snippets/deactivate_snippet', $id, $multisite );
-	clean_snippets_cache( $table, $id );
+	clean_snippets_cache( $table );
 }
 
 /**
@@ -375,7 +375,7 @@ function delete_snippet( $id, $multisite = null ) {
 	);
 
 	do_action( 'code_snippets/delete_snippet', $id, $multisite );
-	clean_snippets_cache( $table, $id );
+	clean_snippets_cache( $table );
 }
 
 /**
@@ -422,7 +422,7 @@ function save_snippet( Snippet $snippet ) {
 		do_action( 'code_snippets/update_snippet', $snippet->id, $table );
 	}
 
-	clean_snippets_cache( $table, $snippet->id );
+	clean_snippets_cache( $table );
 	return $snippet->id;
 }
 
@@ -457,7 +457,7 @@ function update_snippet_fields( $snippet_id, $fields, $network = null ) {
 	$wpdb->update( $table, $clean_fields, array( 'id' => $snippet->id ), null, array( '%d' ) );
 
 	do_action( 'code_snippets/update_snippet', $snippet->id, $table );
-	clean_snippets_cache( $table, $snippet->id );
+	clean_snippets_cache( $table );
 }
 
 /**
@@ -532,7 +532,7 @@ function execute_active_snippets() {
 					clean_active_snippets_cache( $table_name );
 				} else {
 					$wpdb->update( $table_name, array( 'active' => '0' ), array( 'id' => $snippet_id ), array( '%d' ), array( '%d' ) );
-					clean_snippets_cache( $table_name, $snippet_id );
+					clean_snippets_cache( $table_name );
 				}
 			}
 

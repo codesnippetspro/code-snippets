@@ -73,7 +73,7 @@ function get_editor_theme_list() {
 
 	foreach ( get_editor_themes() as $theme ) {
 
-		// skip mobile themes
+		// Skip mobile themes.
 		if ( '-mobile' === substr( $theme, -7 ) ) {
 			continue;
 		}
