@@ -90,7 +90,7 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 	$snippets = wp_cache_get( $cache_key, CACHE_GROUP );
 
 	// Fetch all snippets from the database if none are cached.
-	if ( ! $snippets ) {
+	if ( ! is_array( $snippets ) ) {
 		$results = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A );
 
 		$snippets = $results ?
