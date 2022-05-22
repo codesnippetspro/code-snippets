@@ -105,7 +105,7 @@ if ( ! $snippet->id ) {
 						printf( '<a class="nav-tab" href="%s"', esc_url( add_query_arg( 'type', $type_name ) ) );
 					}
 
-					printf( ' data-type="%s">%s <span>%s</span></a>', esc_attr( $type_name ), esc_html( $label ), esc_html( $type_name ) );
+					printf( ' data-type="%s">%s <span class="badge">%s</span></a>', esc_attr( $type_name ), esc_html( $label ), esc_html( $type_name ) );
 				} ?>
 			</h2>
 		<?php } ?>
