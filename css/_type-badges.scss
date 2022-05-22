@@ -27,9 +27,10 @@ $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-
 	}
 }
 
-.nav-tab .dashicons-external {
+.nav-tab-button .dashicons-external {
 	font-size: 15px;
 	color: #666;
+	vertical-align: middle;
 }
 
 .go-pro-button .badge {
