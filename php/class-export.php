@@ -120,23 +120,16 @@ class Export {
 	 */
 	public function download_php_snippets() {
 		$this->do_headers( 'php', 'text/php' );
-		$last_type = '';
+		echo "<?php\n";
 
 		/** Loop through the snippets
 		 * @var Snippet $snippet
 		 */
 		foreach ( $this->snippets_list as $snippet ) {
+			$code = trim( $snippet->code );
 
-			if ( 'php' !== $snippet->type && 'html' !== $snippet->type ) {
+			if ( 'php' !== $snippet->type && 'html' !== $snippet->type || ! $code ) {
 				continue;
-			}
-
-			if ( 'html' === $last_type ) {
-				echo "\n?>\n";
-			}
-
-			if ( ! $last_type || 'html' === $last_type ) {
-				echo "<?php\n";
 			}
 
 			echo "\n/**\n * $snippet->display_name\n";
@@ -147,9 +140,19 @@ class Export {
 				echo " *\n * ", wp_strip_all_tags( $desc ), "\n";
 			}
 
-			printf( " */\n\n%s\n%s\n", 'html' === $snippet->type ? '?>' : '', trim( $snippet->code ) );
+			echo " */\n";
 
-			$last_type = $snippet->type;
+			if ( 'content' === $snippet->scope ) {
+				$shortcode_tag = apply_filters( 'code_snippets_export_shortcode_tag', "code_snippets_export_$snippet->id", $snippet );
+
+				$code = sprintf(
+					"add_shortcode( '%s', function () {\n\tob_start();\n\t?>\n\n\t%s\n\n\t<?php\n\treturn ob_get_clean();\n} );",
+					$shortcode_tag,
+					str_replace( "\n", "\n\t", $code )
+				);
+			}
+
+			echo $code, "\n";
 		}
 
 		exit;
