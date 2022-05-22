@@ -16,7 +16,7 @@ namespace Code_Snippets;
  *
  * @var string A PHP-standardized version number string.
  */
-const PLUGIN_VERSION = '3.0.0-rc.1';
+const PLUGIN_VERSION = '3.1.0';
 
 /**
  * The full path to the main file of this plugin.
@@ -28,6 +28,13 @@ const PLUGIN_VERSION = '3.0.0-rc.1';
  * @var string
  */
 const PLUGIN_FILE = CODE_SNIPPETS_FILE;
+
+/**
+ * Name of the group used for caching data.
+ *
+ * @var string
+ */
+const CACHE_GROUP = 'code_snippets';
 
 /* Load dependencies with Composer */
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';

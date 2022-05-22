@@ -94,8 +94,8 @@ class Contextual_Help {
 							},
 							is_array( $paragraphs ) ? $paragraphs : [ $paragraphs ]
 						)
-					),
-			),
+					)
+				),
 			)
 		);
 	}
@@ -118,7 +118,7 @@ class Contextual_Help {
 			'overview',
 			__( 'Overview', 'code-snippets' ),
 			$this->get_intro_text() .
-			__( 'Here you can manage your existing snippets and perform tasks on them such as activating, deactivating, deleting and exporting.', 'code-snippets' ),
+			__( 'Here you can manage your existing snippets and perform tasks on them such as activating, deactivating, deleting and exporting.', 'code-snippets' )
 		);
 
 		$this->add_help_tab(

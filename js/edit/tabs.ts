@@ -1,4 +1,5 @@
-import {SnippetType} from '../types';
+import { SnippetType } from '../types';
+import { EditorConfiguration } from 'codemirror';
 
 (editor => {
 	const tabs_wrapper = document.getElementById('snippet-type-tabs');
@@ -8,20 +9,18 @@ import {SnippetType} from '../types';
 
 	const tabs = tabs_wrapper.querySelectorAll('.nav-tab');
 
-	const modes = {
+	const modes: Record<SnippetType, string> = {
 		css: 'text/css',
 		js: 'javascript',
 		php: 'text/x-php',
 		html: 'application/x-httpd-php'
-	} as Record<SnippetType, string>;
+	};
 
 	const selectScope = (type: SnippetType) => {
 		const scope = snippet_form.querySelector(`.${type}-scopes-list input:first-child`) as HTMLInputElement;
 		if (scope) scope.checked = true;
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		editor.setOption('lint', 'php' === type || 'css' === type);
+		editor.setOption('lint' as keyof EditorConfiguration, 'php' === type || 'css' === type);
 		if (type in modes) editor.setOption('mode', modes[type]);
 	};
 

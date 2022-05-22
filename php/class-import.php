@@ -11,8 +11,8 @@ use DOMElement;
  * @package Code_Snippets
  * @since   3.0.0
  *
- * @phpcs:disable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
- * @phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+ * phpcs:disable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+ * phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
  */
 class Import {
 
@@ -98,9 +98,11 @@ class Import {
 
 		$snippets = array();
 
-		/* Loop through all snippets */
-
-		/** @var DOMElement $snippet_xml */
+		/**
+		 * Loop through all snippets
+		 *
+		 * @var DOMElement $snippet_xml
+		 */
 		foreach ( $snippets_xml as $snippet_xml ) {
 			$snippet = new Snippet();
 			$snippet->network = $this->multisite;
@@ -173,7 +175,9 @@ class Import {
 			}
 
 			/* Save the snippet and increase the counter if successful */
-			if ( $snippet_id = save_snippet( $snippet ) ) {
+			$snippet_id = save_snippet( $snippet );
+
+			if ( $snippet_id ) {
 				$imported[] = $snippet_id;
 			}
 		}

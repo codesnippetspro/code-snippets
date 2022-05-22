@@ -20,7 +20,8 @@ class Settings_Menu extends Admin_Menu {
 	 */
 	public function __construct() {
 
-		parent::__construct( 'settings',
+		parent::__construct(
+			'settings',
 			_x( 'Settings', 'menu label', 'code-snippets' ),
 			__( 'Snippets Settings', 'code-snippets' )
 		);
@@ -52,7 +53,7 @@ class Settings_Menu extends Admin_Menu {
 			exit;
 		}
 
-		if ( isset( $_GET['reset_settings'] ) && $_GET['reset_settings'] ) {
+		if ( ! empty( $_GET['reset_settings'] ) ) {
 
 			if ( Settings\are_settings_unified() ) {
 				delete_site_option( 'code_snippets_settings' );
@@ -69,16 +70,15 @@ class Settings_Menu extends Admin_Menu {
 
 			set_transient( 'settings_errors', get_settings_errors(), 30 );
 
-			wp_redirect( esc_url_raw( add_query_arg( 'settings-updated', true, remove_query_arg( 'reset_settings' ) ) ) );
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'settings-updated', true, remove_query_arg( 'reset_settings' ) ) ) );
 			exit;
 		}
 
 		if ( is_network_admin() ) {
-
 			if ( Settings\are_settings_unified() ) {
 				$this->update_network_options();
 			} else {
-				wp_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );
+				wp_safe_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );
 				exit;
 			}
 		}
@@ -171,7 +171,7 @@ class Settings_Menu extends Admin_Menu {
 			return $default;
 		}
 
-		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( $_REQUEST['section'] ) : $default;
+		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $default;
 		return isset( $sections[ $active_tab ] ) ? $active_tab : $default;
 	}
 
@@ -196,12 +196,13 @@ class Settings_Menu extends Admin_Menu {
 					];
 
 					foreach ( $actions as $label => $url ) {
-						printf( '<a href="%s" class="page-title-action">%s</a>',
-							esc_url( $url ), esc_html( $label )
+						printf(
+							'<a href="%s" class="page-title-action">%s</a>',
+							esc_url( $url ),
+							esc_html( $label )
 						);
 					}
 				}
-
 				?>
 			</h1>
 
@@ -241,8 +242,9 @@ class Settings_Menu extends Admin_Menu {
 		foreach ( $sections as $section ) {
 			printf(
 				'<a class="nav-tab%s" data-section="%s">%s</a>',
-				( $active_tab === $section['id'] ) ? ' nav-tab-active' : '',
-				esc_attr( $section['id'] ), esc_html( $section['title'] )
+				esc_attr( $active_tab ) === $section['id'] ? ' nav-tab-active' : '',
+				esc_attr( $section['id'] ),
+				esc_html( $section['title'] )
 			);
 		}
 
@@ -254,8 +256,10 @@ class Settings_Menu extends Admin_Menu {
 			}
 
 			if ( $section['title'] ) {
-				printf( '<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n",
-					esc_attr( $section['id'] ), esc_html( $section['title'] )
+				printf(
+					'<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n",
+					esc_attr( $section['id'] ),
+					esc_html( $section['title'] )
 				);
 			}
 
@@ -274,8 +278,8 @@ class Settings_Menu extends Admin_Menu {
 	 */
 	public function update_network_options() {
 
-		// Ensure that the form was submitted.
-		if ( ( ! isset( $_GET['update_site_option'] ) || ! $_GET['update_site_option'] ) ) {
+		// Ensure the settings have been saved.
+		if ( empty( $_GET['update_site_option'] ) ) {
 			return;
 		}
 
@@ -288,6 +292,7 @@ class Settings_Menu extends Admin_Menu {
 		if ( isset( $_POST['code_snippets_settings'] ) ) {
 			$value = map_deep( wp_unslash( $_POST['code_snippets_settings'] ), 'sanitize_key' );
 			update_site_option( 'code_snippets_settings', $value );
+			wp_cache_delete( Settings\CACHE_KEY );
 
 			// Add an updated notice
 			if ( ! count( get_settings_errors() ) ) {
@@ -299,12 +304,17 @@ class Settings_Menu extends Admin_Menu {
 			set_transient( 'settings_errors', get_settings_errors(), 30 );
 		}
 
-		/* Redirect back to the settings menu */
+		// Redirect back to the settings menu.
 		$redirect = add_query_arg( 'settings-updated', 'true', remove_query_arg( 'update_site_option', wp_get_referer() ) );
-		wp_redirect( esc_url_raw( $redirect ) );
+		wp_safe_redirect( esc_url_raw( $redirect ) );
 		exit;
 	}
 
+	/**
+	 * Empty implementation for print_messages.
+	 *
+	 * @return void
+	 */
 	protected function print_messages() {
 		// none required.
 	}

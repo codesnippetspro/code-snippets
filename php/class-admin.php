@@ -57,7 +57,7 @@ class Admin {
 		add_action( 'admin_notices', array( $this, 'license_warning_notice' ) );
 		add_action( 'network_admin_notices', array( $this, 'license_warning_notice' ) );
 
-		if ( isset( $_POST['save_snippet'] ) && $_POST['save_snippet'] ) {
+		if ( ! empty( $_POST['save_snippet'] ) ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
 		}
 	}
@@ -71,11 +71,9 @@ class Admin {
 	 *
 	 * @param array $menu_items Current mu menu items.
 	 *
-	 * @return array Modified mu menu items.
-	 * @return array             The modified mu menu items
+	 * @return array The modified mu menu items
 	 *
 	 * @since 1.7.1
-	 *
 	 */
 	public function mu_menu_items( $menu_items ) {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
@@ -132,7 +130,6 @@ class Admin {
 	 *
 	 * @return array Modified plugin action links
 	 * @since 2.0.0
-	 *
 	 */
 	public function plugin_settings_link( $links ) {
 		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
@@ -141,9 +138,9 @@ class Admin {
 			$links,
 			sprintf(
 				$format,
-				code_snippets()->get_menu_url( 'settings' ),
-				__( 'Change plugin settings', 'code-snippets' ),
-				__( 'Settings', 'code-snippets' )
+				esc_url( code_snippets()->get_menu_url( 'settings' ) ),
+				esc_html__( 'Change plugin settings', 'code-snippets' ),
+				esc_html__( 'Settings', 'code-snippets' )
 			)
 		);
 
@@ -151,9 +148,9 @@ class Admin {
 			$links,
 			sprintf(
 				$format,
-				code_snippets()->get_menu_url(),
-				__( 'Manage your existing snippets', 'code-snippets' ),
-				__( 'Snippets', 'code-snippets' )
+				esc_url( code_snippets()->get_menu_url() ),
+				esc_html__( 'Manage your existing snippets', 'code-snippets' ),
+				esc_html__( 'Snippets', 'code-snippets' )
 			)
 		);
 
@@ -168,7 +165,6 @@ class Admin {
 	 *
 	 * @return array The modified plugin info links.
 	 * @since 2.0.0
-	 *
 	 */
 	public function plugin_meta_links( $links, $file ) {
 
@@ -184,15 +180,17 @@ class Admin {
 		return array_merge(
 			$links,
 			array(
-				sprintf( $format,
+				sprintf(
+					$format,
 					'https://codesnippets.pro/about/',
-					__( 'Find out more about Code Snippets', 'code-snippets' ),
-					__( 'About', 'code-snippets' )
+					esc_attr__( 'Find out more about Code Snippets', 'code-snippets' ),
+					esc_html__( 'About', 'code-snippets' )
 				),
-				sprintf( $format,
+				sprintf(
+					$format,
 					'https://codesnippets.pro/support/',
-					__( 'Find out how to get support with Code Snippets', 'code-snippets' ),
-					__( 'Support', 'code-snippets' )
+					esc_attr__( 'Find out how to get support with Code Snippets', 'code-snippets' ),
+					esc_html__( 'Support', 'code-snippets' )
 				),
 			)
 		);
@@ -272,13 +270,15 @@ class Admin {
 	 *
 	 * @return array The updated Site Health information.
 	 * @author sc0ttkclark
-	 *
 	 */
 	public function debug_information( $info ) {
 		$fields = array();
 
 		// fetch all active snippets.
-		$args = array( 'active_only' => true, 'limit' => 100 );
+		$args = array(
+			'active_only' => true,
+			'limit'       => 100,
+		);
 		$snippet_objects = get_snippets( array(), null, $args );
 
 		// build the debug information from snippet data.
@@ -346,7 +346,7 @@ class Admin {
 		/* Bail now if the user has dismissed the message */
 		if ( get_user_meta( $current_user->ID, $key ) ) {
 			return;
-		} elseif ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], $key ) ) {
+		} elseif ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $key ) ) {
 			add_user_meta( $current_user->ID, $key, true, true );
 
 			return;
@@ -358,8 +358,12 @@ class Admin {
 
 		<div class="updated code-snippets-survey-message">
 			<p>
-
-				<?php echo wp_kses( __( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ), [ 'strong' => [] ] ); ?>
+				<?php
+				echo wp_kses(
+					__( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ),
+					array( 'strong' => array() )
+				);
+				?>
 
 				<a href="https://codesnippets.pro/survey/" class="button secondary"
 				   target="_blank" style="margin: auto .5em;">
@@ -372,7 +376,6 @@ class Admin {
 
 			</p>
 		</div>
-
 		<?php
 	}
 }

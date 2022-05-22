@@ -1,6 +1,16 @@
 # Changelog
 
-## 3.0.0 (unreleased)
+## 3.1.0 (17 May 2022)
+* Fixed: Caching inconsistencies preventing snippets and settings from refreshing on sites with persistent object caching.
+* Improved: Simplified database queries.
+* Added: More comprehensive cache coverage, including for active snippets.
+* Added: Icon to 'Go Pro' button indicating it opens an external tab.
+* Improved: Allow display styles in snippet descriptions.
+
+## 3.0.1 (14 May 2022)
+* Fixed: Incompatibility issue with earlier versions of PHP.
+
+## 3.0.0 (14 May 2022)
 
 ### Added
 * Added: HTML content snippets for displaying as shortcodes or including in the page head or footer area.
@@ -43,6 +53,13 @@
 * Added: Gutenberg editor block for displaying snippet source code.
 * Added: Elementor widget for displaying content snippets.
 * Added: Elementor widget for displaying snippet source code.
+
+## 2.14.6 (13 May 2022)
+* Fixed: Issue with processing uploaded import files.
+* Fixed: Issue with processing tag filters.
+
+## 2.14.5 (10 May 2022)
+* Fixed: Incompatibility issue with older versions of PHP.
 
 ## 2.14.4 (5 May 2022)
 * Fixed: Prevent array key errors when loading the snippet table with unknown order values.

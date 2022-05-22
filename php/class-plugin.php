@@ -69,12 +69,14 @@ class Plugin {
 	 *
 	 * Class constructor
 	 *
-	 * =     * @param string $version Current plugin version.
-	 * @param string $file Path to main plugin file.
+	 * @param string $version Current plugin version.
+	 * @param string $file    Path to main plugin file.
 	 */
 	public function __construct( $version, $file ) {
 		$this->version = $version;
 		$this->file = $file;
+
+		wp_cache_add_global_groups( CACHE_GROUP );
 
 		add_action( 'init', array( $this, 'load_textdomain' ), 9 );
 
@@ -128,12 +130,7 @@ class Plugin {
 	 * @return bool New filter value.
 	 */
 	public function disable_snippet_execution( $execute_snippets ) {
-
-		if ( isset( $_REQUEST['snippets-safe-mode'] ) && $_REQUEST['snippets-safe-mode'] && $this->current_user_can() ) {
-			return false;
-		}
-
-		return $execute_snippets;
+		return ! empty( $_REQUEST['snippets-safe-mode'] ) && $this->current_user_can() ? false : $execute_snippets;
 	}
 
 	/**
@@ -280,10 +277,10 @@ class Plugin {
 		$domain = 'code-snippets';
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
-		// wp-content/languages/code-snippets/code-snippets-[locale].mo
+		// wp-content/languages/code-snippets/code-snippets-[locale].mo.
 		load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . "$domain/$domain-$locale.mo" );
 
-		// wp-content/plugins/code-snippets/languages/code-snippets-[locale].mo
+		// wp-content/plugins/code-snippets/languages/code-snippets-[locale].mo.
 		load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->file ) ) . '/languages' );
 	}
 

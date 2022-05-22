@@ -63,7 +63,7 @@ class Upgrade {
 		$updated = update_option( 'code_snippets_version', $this->current_version );
 
 		if ( ! $updated ) {
-			return; // bail if the data was not successfully saved to prevent this process from repeating
+			return; // Bail if the data was not successfully saved to prevent this process from repeating.
 		}
 
 		$sample_snippets = $this->get_sample_content();
@@ -77,7 +77,7 @@ class Upgrade {
 			$menu_slug = code_snippets()->get_menu_slug();
 			$option_name = "{$prefix}managetoplevel_page_{$menu_slug}columnshidden";
 
-			// loop through each user ID and remove all matching user meta
+			// Loop through each user ID and remove all matching user meta.
 			foreach ( get_users( array( 'fields' => 'ID' ) ) as $user_id ) {
 				delete_metadata( 'user', $user_id, $option_name, '', true );
 			}
@@ -96,14 +96,13 @@ class Upgrade {
 
 		if ( false === $prev_version ) {
 			if ( apply_filters( 'code_snippets/create_sample_content', true ) ) {
-
 				foreach ( $sample_snippets as $sample_snippet ) {
 					save_snippet( $sample_snippet );
 				}
 			}
-		} elseif ( version_compare( $prev_version, '2.14.0', '<' ) ) {
-			save_snippet( $sample_snippets['orderby_date'] );
 		}
+
+		clean_snippets_cache( $table_name );
 	}
 
 	/**
@@ -138,14 +137,14 @@ class Upgrade {
 				$user->remove_cap( $network_cap );
 			}
 		}
+
+		clean_snippets_cache( $table_name );
 	}
 
 	/**
 	 * Migrate data from the old integer method of storing scopes to the new string method
 	 *
 	 * @param string $table_name Name of database table.
-	 *
-	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	private function migrate_scope_data( $table_name ) {
 		global $wpdb;
@@ -163,7 +162,7 @@ class Upgrade {
 					$scope_name,
 					$scope_number
 				)
-			);
+			); // cache ok, will flush at end of process; db call ok.
 		}
 	}
 
@@ -173,25 +172,34 @@ class Upgrade {
 	 * @return array List of Snippet objects.
 	 */
 	private function get_sample_content() {
-		$tag = "\n\n" . esc_html__( 'You can remove it, or edit it to add your own content.', 'code-snippets' );
+		$tag = "\n\n" . esc_html__( 'This is a sample snippet. Feel free to use it, edit it, or remove it.', 'code-snippets' );
 
 		$snippets_data = array(
-
-			'orderby_name' => array(
-				'name'  => esc_html__( 'Order snippets by name', 'code-snippets' ),
-				'code'  => "\nadd_filter( 'code_snippets/list_table/default_orderby', function () {\n\treturn 'name';\n} );\n",
-				'desc'  => esc_html__( 'Order snippets by name by default in the snippets table.', 'code-snippets' ),
-				'tags'  => array( 'code-snippets-plugin' ),
-				'scope' => 'admin',
+			array(
+				'name' => esc_html__( 'Make upload filenames lowercase', 'code-snippets' ),
+				'code' => "add_filter( 'sanitize_file_name', 'mb_strtolower' );",
+				'desc' => esc_html__( 'Makes sure that image and file uploads have lowercase filenames.', 'code-snippets' ) . $tag,
+				'tags' => array( 'sample', 'media' ),
 			),
-
-			'orderby_date' => array(
-				'name'  => esc_html__( 'Order snippets by date', 'code-snippets' ),
-				'code'  => "\nadd_filter( 'code_snippets/list_table/default_orderby', function () {\n\treturn 'modified';\n} );\n" .
-				           "\nadd_filter( 'code_snippets/list_table/default_order', function () {\n\treturn 'desc';\n} );\n",
-				'desc'  => esc_html__( 'Order snippets by last modification date by default in the snippets table.', 'code-snippets' ),
-				'tags'  => array( 'code-snippets-plugin' ),
-				'scope' => 'admin',
+			array(
+				'name'  => esc_html__( 'Disable admin bar', 'code-snippets' ),
+				'code'  => "add_action( 'wp', function () {\n\tif ( ! current_user_can( 'manage_options' ) ) {\n\t\tshow_admin_bar( false );\n\t}\n} );",
+				'desc'  => esc_html__( 'Turns off the WordPress admin bar for everyone except administrators.', 'code-snippets' ) . $tag,
+				'tags'  => array( 'sample', 'admin-bar' ),
+				'scope' => 'front-end',
+			),
+			array(
+				'name' => esc_html__( 'Allow smilies', 'code-snippets' ),
+				'code' => "add_filter( 'widget_text', 'convert_smilies' );\nadd_filter( 'the_title', 'convert_smilies' );\nadd_filter( 'wp_title', 'convert_smilies' );\nadd_filter( 'get_bloginfo', 'convert_smilies' );",
+				'desc' => esc_html__( 'Allows smiley conversion in obscure places.', 'code-snippets' ) . $tag,
+				'tags' => array( 'sample' ),
+			),
+			array(
+				'name'  => esc_html__( 'Current year', 'code-snippets' ),
+				'code'  => "<?php echo date( 'Y' ); ?>",
+				'desc'  => esc_html__( 'Shortcode for inserting the current year into a post or page..', 'code-snippets' ) . $tag,
+				'tags'  => array( 'sample', 'dates' ),
+				'scope' => 'content',
 			),
 		);
 

@@ -66,7 +66,7 @@ class DB {
 	 *
 	 * @return bool Validated value of multisite parameter.
 	 */
-	public function validate_network_param( $network ) {
+	public static function validate_network_param( $network ) {
 
 		/* If multisite is not active, then the parameter should always be false */
 		if ( ! is_multisite() ) {
@@ -88,7 +88,6 @@ class DB {
 	 *
 	 * @return string The snippet table name
 	 * @since 2.0
-	 *
 	 */
 	public function get_table_name( $multisite = null ) {
 
@@ -105,17 +104,15 @@ class DB {
 	}
 
 	/**
-	 * Determine whether a database table exists
+	 * Determine whether a database table exists.
 	 *
 	 * @param string $table_name Name of database table to check.
 	 *
 	 * @return bool Whether the database table exists.
-	 *
-	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	public static function table_exists( $table_name ) {
 		global $wpdb;
-		return $wpdb->get_var( sprintf( "SHOW TABLES LIKE '%s'", $table_name ) ) === $table_name;
+		return $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name; // cache pass, db call ok.
 	}
 
 	/**
@@ -160,11 +157,11 @@ class DB {
 	}
 
 	/**
-	 * Create a single snippet table
+	 * Create a single snippet table.
 	 *
-	 * @param string $table_name The name of the table to create
+	 * @param string $table_name The name of the table to create.
 	 *
-	 * @return bool Whether the table creation was successful
+	 * @return bool Whether the table creation was successful.
 	 * @since 1.6
 	 * @uses  dbDelta() to apply the SQL code
 	 */
@@ -213,55 +210,88 @@ class DB {
 	}
 
 	/**
-	 * Generate the SQL for fetching active snippets from the database
+	 * Fetch a list of active snippets from a database table.
 	 *
-	 * @param array|string $scopes      List of scopes to retrieve in.
-	 * @param string       $select_list List of table columns in SQL format.
+	 * @param string $table_name  Name of table to fetch snippets from.
+	 * @param array  $scopes      List of scopes to include in query.
+	 * @param array  $active_only Whether to only fetch active snippets from the table.
 	 *
-	 * @return array List of SQL queries
+	 * @return array|false List of active snippets, if any could be retrieved.
+	 *
+	 * @phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	 */
-	public function fetch_active_snippets( $scopes, $select_list = 'id, code, scope' ) {
+	private static function fetch_snippets_from_table( $table_name, array $scopes, $active_only = true ) {
 		global $wpdb;
-		$db = code_snippets()->db;
 
-		$queries = array();
+		$cache_key = sprintf( 'active_snippets_%s_%s', sanitize_key( join( '_', $scopes ) ), $table_name );
+		$cached_snippets = wp_cache_get( $cache_key, CACHE_GROUP );
 
+		if ( is_array( $cached_snippets ) ) {
+			return $cached_snippets;
+		}
+
+		if ( ! self::table_exists( $table_name ) ) {
+			return false;
+		}
+
+		$scopes_format = self::build_format_list( count( $scopes ) );
+		$extra_where = $active_only ? 'AND active=1' : '';
+
+		$snippets = $wpdb->get_results(
+			$wpdb->prepare(
+				"
+				SELECT id, code, scope, active
+				FROM $table_name
+				WHERE scope IN ($scopes_format) $extra_where
+				ORDER BY priority, id",
+				$scopes
+			),
+			'ARRAY_A'
+		); // db call ok.
+
+		// Cache the full list of snippets.
+		if ( is_array( $snippets ) ) {
+			wp_cache_set( $cache_key, $snippets, CACHE_GROUP );
+			return $snippets;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Generate the SQL for fetching active snippets from the database.
+	 *
+	 * @param array|string $scopes List of scopes to retrieve in.
+	 *
+	 * @return array List of active snippets, indexed by table.
+	 */
+	public function fetch_active_snippets( $scopes ) {
+		$active_snippets = array();
+
+		// Ensure that the list of scopes is an array.
 		if ( ! is_array( $scopes ) ) {
 			$scopes = array( $scopes );
 		}
 
-		$scopes_format = self::build_format_list( count( $scopes ) );
-		$select = "SELECT $select_list FROM";
-		$where = "WHERE scope IN ($scopes_format)";
-		$order = 'ORDER BY priority ASC, id ASC';
-
-		/* Fetch snippets from site table */
-		if ( self::table_exists( $db->table ) ) {
-			$queries[ $db->table ] = $wpdb->prepare( "$select $db->table $where AND active=1 $order", $scopes );
+		// Fetch the active snippets for the current site, if there are any.
+		$snippets = $this->fetch_snippets_from_table( $this->table, $scopes );
+		if ( $snippets ) {
+			$active_snippets[ $this->table ] = $snippets;
 		}
 
-		/* Fetch snippets from the network table */
-		if ( is_multisite() && self::table_exists( $db->ms_table ) ) {
-			$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
+		// If multisite is enabled, fetch all snippets from the network table, and filter down to only active snippets.
+		if ( is_multisite() ) {
+			$active_shared_ids = (array) get_option( 'active_shared_network_snippets', array() );
+			$ms_snippets = $this->fetch_snippets_from_table( $this->ms_table, $scopes, false );
 
-			/* If there are active shared snippets, include them in the query */
-			if ( is_array( $active_shared_ids ) && count( $active_shared_ids ) ) {
-				$ids_format = self::build_format_list( count( $active_shared_ids ), '%d' );
-				$sql = "$select $db->ms_table $where AND (active=1 OR id IN ($ids_format)) $order";
-
-				$queries[ $db->ms_table ] = $wpdb->prepare( $sql, array_merge( $scopes, $active_shared_ids ) );
-
-			} else {
-				$queries[ $db->ms_table ] = $wpdb->prepare( "$select $db->ms_table $where AND active=1 $order", $scopes );
+			if ( $ms_snippets ) {
+				$active_snippets[ $this->ms_table ] = array_filter(
+					$ms_snippets,
+					function ( $snippet ) use ( $active_shared_ids ) {
+						return $snippet['active'] || in_array( intval( $snippet['id'] ), $active_shared_ids, true );
+					}
+				);
 			}
-		}
-
-		$active_snippets = array();
-
-		foreach ( $queries as $table => $query ) {
-			/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
-			$results = $wpdb->get_results( $query, 'ARRAY_A' );
-			$active_snippets[ $table ] = is_array( $results ) ? $results : array();
 		}
 
 		return $active_snippets;

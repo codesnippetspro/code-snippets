@@ -1,7 +1,4 @@
 <?php
-
-namespace Code_Snippets;
-
 /**
  * HTML for the Add New/Edit Snippet page.
  *
@@ -10,6 +7,8 @@ namespace Code_Snippets;
  *
  * @var Edit_Menu $this
  */
+
+namespace Code_Snippets;
 
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,7 +35,8 @@ $licensed = code_snippets()->licensing->is_licensed();
 
 		if ( $snippet->id ) {
 			esc_html_e( 'Edit Snippet', 'code-snippets' );
-			printf( ' <a href="%s" class="page-title-action add-new-h2">%s</a>',
+			printf(
+				' <a href="%1$s" class="page-title-action add-new-h2">%2$s</a>',
 				esc_url( add_query_arg( 'type', $snippet->type, code_snippets()->get_menu_url( 'add' ) ) ),
 				esc_html_x( 'Add New', 'snippet', 'code-snippets' )
 			);
@@ -85,7 +85,8 @@ $licensed = code_snippets()->licensing->is_licensed();
 
 		<h2>
 			<label for="snippet_code">
-				<?php esc_html_e( 'Code', 'code-snippets' );
+				<?php
+				esc_html_e( 'Code', 'code-snippets' );
 
 				if ( $snippet->id ) {
 					printf( ' <span class="snippet-type-badge" data-type="%s">%s</span>', esc_attr( $snippet->type ), esc_html( $snippet->type ) );
@@ -107,13 +108,12 @@ $licensed = code_snippets()->licensing->is_licensed();
 						printf( '<a class="nav-tab" href="%s"', esc_url( add_query_arg( 'type', $type_name ) ) );
 					}
 
-					printf( ' data-type="%s">%s <span>%s</span></a>', esc_attr( $type_name ), esc_html( $label ), esc_html( $type_name ) );
+					printf( ' data-type="%s">%s <span class="badge">%s</span></a>', esc_attr( $type_name ), esc_html( $label ), esc_html( $type_name ) );
 				} ?>
 			</h2>
 		<?php } ?>
 
 		<div class="snippet-editor">
-
 			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false"
 			          style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $snippet->code ); ?></textarea>
 

@@ -9,7 +9,8 @@ use WP_List_Table;
  * Contains the class for handling the snippets table
  *
  * @package Code_Snippets
- * @phpcs   :disable WordPress.WP.GlobalVariablesOverride.Prohibited
+ *
+ * phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
  */
 
 /* The WP_List_Table base class is not included by default, so we need to load it */
@@ -56,6 +57,8 @@ class List_Table extends WP_List_Table {
 	/**
 	 * The constructor function for our class.
 	 * Adds hooks, initializes variables, setups class.
+	 *
+	 * @phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
 	 */
 	public function __construct() {
 		global $status, $page;
@@ -63,13 +66,13 @@ class List_Table extends WP_List_Table {
 
 		/* Determine the status */
 		$status = apply_filters( 'code_snippets/list_table/default_view', 'all' );
-		if ( isset( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], $this->statuses, true ) ) {
-			$status = $_REQUEST['status'];
+		if ( isset( $_REQUEST['status'] ) && in_array( sanitize_key( $_REQUEST['status'] ), $this->statuses, true ) ) {
+			$status = sanitize_key( $_REQUEST['status'] );
 		}
 
 		/* Add the search query to the URL */
 		if ( isset( $_REQUEST['s'] ) ) {
-			$_SERVER['REQUEST_URI'] = add_query_arg( 's', stripslashes( $_REQUEST['s'] ) );
+			$_SERVER['REQUEST_URI'] = add_query_arg( 's', sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) );
 		}
 
 		/* Add a snippets per page screen option */
@@ -90,7 +93,7 @@ class List_Table extends WP_List_Table {
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
 
 		/* Add filters to format the snippet description in the same way the post content is formatted */
-		$filters = [ 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'capital_P_dangit', 'wp_kses_post' ];
+		$filters = [ 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'capital_P_dangit', [ $this, 'wp_kses_desc' ] ];
 		foreach ( $filters as $filter ) {
 			add_filter( 'code_snippets/list_table/column_description', $filter );
 		}
@@ -106,9 +109,29 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Apply a more permissive version of wp_kses_post() to the snippet description.
+	 *
+	 * @param string $data Description content to filter.
+	 *
+	 * @return string Filtered description content with allowed HTML tags and attributes intact.
+	 */
+	public function wp_kses_desc( $data ) {
+		$safe_style_filter = function ( $styles ) {
+			$styles[] = 'display';
+			return $styles;
+		};
+
+		add_filter( 'safe_style_css', $safe_style_filter );
+		$data = wp_kses_post( $data );
+		remove_filter( 'safe_style_css', $safe_style_filter );
+
+		return $data;
+	}
+
+	/**
 	 * Set the 'id' column as hidden by default.
 	 *
-	 * @param array $hidden
+	 * @param array $hidden List of hidden columns.
 	 *
 	 * @return array
 	 */
@@ -119,6 +142,7 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * Set the 'name' column as the primary column.
+	 *
 	 * @return string
 	 */
 	protected function get_default_primary_column_name() {
@@ -146,10 +170,12 @@ class List_Table extends WP_List_Table {
 				$type = $item->type;
 				return sprintf(
 					'<a class="snippet-type-badge" href="%s" data-type="%s">%s</a>',
-					esc_url( add_query_arg( 'type', $type ) ), esc_attr( $type ), esc_html( $type )
+					esc_url( add_query_arg( 'type', $type ) ),
+					esc_attr( $type ),
+					esc_html( $type )
 				);
 
-			case 'modified':
+			case 'date':
 				return $item->modified ? $item->format_modified() : '&#8212;';
 
 			default:
@@ -167,26 +193,26 @@ class List_Table extends WP_List_Table {
 	 */
 	public function get_action_link( $action, $snippet ) {
 
-		// redirect actions to the network dashboard for shared network snippets
+		// Redirect actions to the network dashboard for shared network snippets.
 		$local_actions = array( 'activate', 'activate-shared', 'run-once', 'run-once-shared' );
 		$network_redirect = $snippet->shared_network && ! $this->is_network && ! in_array( $action, $local_actions, true );
 
-		// edit links go to a different menu
+		// Edit links go to a different menu.
 		if ( 'edit' === $action ) {
 			return code_snippets()->get_snippet_edit_url( $snippet->id, $network_redirect ? 'network' : 'self' );
 		}
 
 		$query_args = array(
 			'action' => $action,
-			'id' => $snippet->id,
-			'scope' => $snippet->scope
+			'id'     => $snippet->id,
+			'scope'  => $snippet->scope,
 		);
 
 		$url = $network_redirect ?
 			add_query_arg( $query_args, code_snippets()->get_menu_url( 'manage', 'network' ) ) :
 			add_query_arg( $query_args );
 
-		// add a nonce to the URL for security purposes
+		// Add a nonce to the URL for security purposes.
 		return wp_nonce_url( $url, 'code_snippets_manage_snippet_' . $snippet->id );
 	}
 
@@ -201,7 +227,7 @@ class List_Table extends WP_List_Table {
 		$actions = array();
 
 		if ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) {
-			// display special links if on a subsite and dealing with a network-active snippet
+			// Display special links if on a subsite and dealing with a network-active snippet.
 			if ( $snippet->active ) {
 				$actions['network_active'] = esc_html__( 'Network Active', 'code-snippets' );
 			} else {
@@ -209,7 +235,7 @@ class List_Table extends WP_List_Table {
 			}
 		} elseif ( ! $snippet->shared_network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
 
-			// if the snippet is a shared network snippet, only display extra actions if the user has network permissions
+			// If the snippet is a shared network snippet, only display extra actions if the user has network permissions.
 			$simple_actions = array(
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
@@ -226,10 +252,10 @@ class List_Table extends WP_List_Table {
 				esc_url( $this->get_action_link( 'delete', $snippet ) ),
 				esc_js(
 					sprintf(
-					'return confirm("%s");',
-					esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
-					esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
-				)
+						'return confirm("%s");',
+						esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
+						esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+					)
 				)
 			);
 		}
@@ -270,7 +296,7 @@ class List_Table extends WP_List_Table {
 			'<a class="%s" href="%s" title="%s">&nbsp;</a> ',
 			esc_attr( $class ),
 			esc_url( $this->get_action_link( $action, $snippet ) ),
-			esc_html( $label )
+			esc_attr( $label )
 		);
 	}
 
@@ -282,7 +308,6 @@ class List_Table extends WP_List_Table {
 	 * @return string The content of the column to output.
 	 */
 	protected function column_name( $snippet ) {
-
 		$row_actions = $this->row_actions(
 			$this->get_snippet_action_links( $snippet ),
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
@@ -299,7 +324,7 @@ class List_Table extends WP_List_Table {
 
 			$out = sprintf(
 				'<a href="%s" class="snippet-name">%s</a>',
-				code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ),
+				esc_attr( code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ) ),
 				$out
 			);
 		}
@@ -327,7 +352,7 @@ class List_Table extends WP_List_Table {
 		$out = sprintf(
 			'<input type="checkbox" name="%s[]" value="%s">',
 			$item->shared_network ? 'shared_ids' : 'ids',
-			$item->id
+			intval( $item->id )
 		);
 
 		return apply_filters( 'code_snippets/list_table/column_cb', $out, $item );
@@ -351,7 +376,8 @@ class List_Table extends WP_List_Table {
 
 		/* Loop through the tags and create a link for each one */
 		foreach ( $snippet->tags as $tag ) {
-			$out[] = sprintf( '<a href="%s">%s</a>',
+			$out[] = sprintf(
+				'<a href="%s">%s</a>',
 				esc_url( add_query_arg( 'tag', esc_attr( $tag ) ) ),
 				esc_html( $tag )
 			);
@@ -484,28 +510,32 @@ class List_Table extends WP_List_Table {
 			$labels['all'] = _n(
 				'All <span class="count">(%s)</span>',
 				'All <span class="count">(%s)</span>',
-				$count, 'code-snippets'
+				$count,
+				'code-snippets'
 			);
 
 			/* translators: %s: total number of active snippets */
 			$labels['active'] = _n(
 				'Active <span class="count">(%s)</span>',
 				'Active <span class="count">(%s)</span>',
-				$count, 'code-snippets'
+				$count,
+				'code-snippets'
 			);
 
 			/* translators: %s: total number of inactive snippets */
 			$labels['inactive'] = _n(
 				'Inactive <span class="count">(%s)</span>',
 				'Inactive <span class="count">(%s)</span>',
-				$count, 'code-snippets'
+				$count,
+				'code-snippets'
 			);
 
 			/* translators: %s: total number of recently activated snippets */
 			$labels['recently_activated'] = _n(
 				'Recently Active <span class="count">(%s)</span>',
 				'Recently Active <span class="count">(%s)</span>',
-				$count, 'code-snippets'
+				$count,
+				'code-snippets'
 			);
 
 			/* The page URL with the status parameter */
@@ -568,19 +598,21 @@ class List_Table extends WP_List_Table {
 			$tags = $this->get_current_tags();
 
 			if ( count( $tags ) ) {
-				$query = isset( $_GET['tag'] ) ? sanitize_text_field( $_GET['tag'] ) : '';
+				$query = isset( $_GET['tag'] ) ? sanitize_text_field( wp_unslash( $_GET['tag'] ) ) : '';
 
 				echo '<div class="alignleft actions">';
 				echo '<select name="tag">';
 
-				printf( "<option %s value=''>%s</option>\n",
+				printf(
+					"<option %s value=''>%s</option>\n",
 					selected( $query, '', false ),
 					esc_html__( 'Show all tags', 'code-snippets' )
 				);
 
 				foreach ( $tags as $tag ) {
 
-					printf( "<option %s value='%s'>%s</option>\n",
+					printf(
+						"<option %s value='%s'>%s</option>\n",
 						selected( $query, $tag, false ),
 						esc_attr( $tag ),
 						esc_html( $tag )
@@ -626,7 +658,8 @@ class List_Table extends WP_List_Table {
 
 		foreach ( $vars as $var ) {
 			if ( ! empty( $_REQUEST[ $var ] ) ) {
-				printf( '<input type="hidden" name="%s" value="%s" />', esc_attr( $var ), esc_attr( $_REQUEST[ $var ] ) );
+				$value = sanitize_text_field( wp_unslash( $_REQUEST[ $var ] ) );
+				printf( '<input type="hidden" name="%s" value="%s" />', esc_attr( $var ), esc_attr( $value ) );
 				print "\n";
 			}
 		}
@@ -677,6 +710,7 @@ class List_Table extends WP_List_Table {
 				if ( ! in_array( $id, $active_shared_snippets, true ) ) {
 					$active_shared_snippets[] = $id;
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
+					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
 
 				return 'activated';
@@ -684,6 +718,7 @@ class List_Table extends WP_List_Table {
 			case 'deactivate-shared':
 				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 				update_option( 'active_shared_network_snippets', array_diff( $active_shared_snippets, array( $id ) ) );
+				clean_active_snippets_cache( code_snippets()->db->ms_table );
 				return 'deactivated';
 
 			case 'clone':
@@ -710,9 +745,6 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * Processes actions requested by the user.
-	 *
-	 * @uses wp_redirect() to pass the results to the current page
-	 * @uses add_query_arg() to append the results to the current URI
 	 */
 	public function process_requested_actions() {
 
@@ -730,11 +762,11 @@ class List_Table extends WP_List_Table {
 		/* Check if there are any single snippet actions to perform */
 		if ( isset( $_GET['action'], $_GET['id'] ) ) {
 			$id = absint( $_GET['id'] );
-			$scope = isset( $_GET['scope'] ) ? $_GET['scope'] : '';
+			$scope = isset( $_GET['scope'] ) ? sanitize_key( wp_unslash( $_GET['scope'] ) ) : '';
 
 			/* Verify they were sent from a trusted source */
 			$nonce_action = 'code_snippets_manage_snippet_' . $id;
-			if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], $nonce_action ) ) {
+			if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_wpnonce'] ) ), $nonce_action ) ) {
 				wp_nonce_ays( $nonce_action );
 			}
 
@@ -744,7 +776,7 @@ class List_Table extends WP_List_Table {
 			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope );
 
 			if ( $result ) {
-				wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
+				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 				exit;
 			}
 		}
@@ -756,7 +788,7 @@ class List_Table extends WP_List_Table {
 
 		check_admin_referer( 'bulk-' . $this->_args['plural'] );
 
-		$ids = isset( $_POST['ids'] ) ? $_POST['ids'] : array();
+		$ids = isset( $_POST['ids'] ) ? array_map( 'intval', $_POST['ids'] ) : array();
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
 
 		switch ( $this->current_action() ) {
@@ -768,13 +800,14 @@ class List_Table extends WP_List_Table {
 				if ( isset( $_POST['shared_ids'] ) && is_multisite() && ! $this->is_network ) {
 					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
-					foreach ( $_POST['shared_ids'] as $id ) {
+					foreach ( array_map( 'intval', $_POST['shared_ids'] ) as $id ) {
 						if ( ! in_array( $id, $active_shared_snippets, true ) ) {
 							$active_shared_snippets[] = $id;
 						}
 					}
 
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
+					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
 
 				$result = 'activated-multi';
@@ -789,8 +822,9 @@ class List_Table extends WP_List_Table {
 				if ( isset( $_POST['shared_ids'] ) && is_multisite() && ! $this->is_network ) {
 					$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 					$active_shared_snippets = ( '' === $active_shared_snippets ) ? array() : $active_shared_snippets;
-					$active_shared_snippets = array_diff( $active_shared_snippets, $_POST['shared_ids'] );
+					$active_shared_snippets = array_diff( $active_shared_snippets, array_map( 'intval', $_POST['shared_ids'] ) );
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
+					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
 
 				$result = 'deactivated-multi';
@@ -826,7 +860,7 @@ class List_Table extends WP_List_Table {
 				code_snippets()->active_snippets->increment_rev( 'all', $this->is_network );
 			}
 
-			wp_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 			exit;
 		}
 	}
@@ -846,10 +880,12 @@ class List_Table extends WP_List_Table {
 				esc_html_e( "It looks like you don't have any snippets.", 'code-snippets' );
 			} else {
 				esc_html_e( "It looks like you don't have any snippets of this type.", 'code-snippets' );
-				$add_url = add_query_arg( 'type', sanitize_text_field( $_GET['type'] ), $add_url );
+				$add_url = add_query_arg( 'type', sanitize_key( wp_unslash( $_GET['type'] ) ), $add_url );
 			}
 
-			printf( ' <a href="%s">%s</a>', esc_url( $add_url ),
+			printf(
+				' <a href="%s">%s</a>',
+				esc_url( $add_url ),
 				esc_html__( 'Perhaps you would like to add a new one?', 'code-snippets' )
 			);
 		}
@@ -870,8 +906,8 @@ class List_Table extends WP_List_Table {
 		if ( $this->is_network ) {
 			$limit = count( $snippets['all'] );
 
-			/** @var Snippet $snippet */
-			for ( $i = 0; $i < $limit; $i ++ ) {
+			for ( $i = 0; $i < $limit; $i++ ) {
+				/** Snippet @var Snippet $snippet */
 				$snippet = &$snippets['all'][ $i ];
 
 				if ( in_array( $snippet->id, $ids, true ) ) {
@@ -881,29 +917,13 @@ class List_Table extends WP_List_Table {
 				}
 			}
 		} else {
-
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
-			$active_shared_snippet_format = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+			$shared_snippets = get_snippets( $ids, true );
 
-
-			/** @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching */
-			$shared_snippets = $wpdb->get_results(
-				$wpdb->prepare( "
-					SELECT * FROM $db->ms_table
-					WHERE id IN ($active_shared_snippet_format)",
-					$ids
-				),
-				ARRAY_A
-			);
-
-			foreach ( $shared_snippets as $index => $snippet ) {
-				$snippet = new Snippet( $snippet );
-				$snippet->network = true;
+			foreach ( $shared_snippets as $snippet ) {
 				$snippet->shared_network = true;
 				$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
 				$snippet->active = in_array( $snippet->id, $active_shared_snippets, true );
-
-				$shared_snippets[ $index ] = $snippet;
 			}
 
 			$snippets['all'] = array_merge( $snippets['all'], $shared_snippets );
@@ -913,6 +933,8 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Prepares the items to later display in the table.
 	 * Should run before any headers are sent.
+	 *
+	 * @phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	 */
 	public function prepare_items() {
 		global $status, $snippets, $totals, $s;
@@ -921,8 +943,10 @@ class List_Table extends WP_List_Table {
 
 		/* Redirect tag filter from POST to GET */
 		if ( isset( $_POST['filter_action'] ) ) {
-			$location = empty( $_POST['tag'] ) ? remove_query_arg( 'tag' ) : add_query_arg( 'tag', $_POST['tag'] );
-			wp_redirect( esc_url_raw( $location ) );
+			$location = empty( $_POST['tag'] ) ?
+				remove_query_arg( 'tag' ) :
+				add_query_arg( 'tag', sanitize_text_field( wp_unslash( $_POST['tag'] ) ) );
+			wp_safe_redirect( esc_url_raw( $location ) );
 			exit;
 		}
 
@@ -938,13 +962,16 @@ class List_Table extends WP_List_Table {
 
 		/* Filter snippets by type */
 		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
-			$snippets['all'] = array_filter( $snippets['all'], function ( Snippet $snippet ) {
-				return $_GET['type'] === $snippet->type;
-			} );
+			$snippets['all'] = array_filter(
+				$snippets['all'],
+				function ( Snippet $snippet ) {
+					return $_GET['type'] === $snippet->type;
+				}
+			);
 		}
 
 		/* Add scope tags */
-		/** @var Snippet $snippet */
+		/** Snippet @var Snippet $snippet */
 		foreach ( $snippets['all'] as $snippet ) {
 			if ( 'global' !== $snippet->scope ) {
 				$snippet->add_tag( $snippet->scope );
@@ -1038,9 +1065,9 @@ class List_Table extends WP_List_Table {
 		/* We register our pagination options and calculations */
 		$this->set_pagination_args(
 			array(
-				'total_items' => $total_items, // Calculate the total number of items
-				'per_page'    => $per_page, // Determine how many items to show on a page
-				'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages
+				'total_items' => $total_items, // Calculate the total number of items.
+				'per_page'    => $per_page, // Determine how many items to show on a page.
+				'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages.
 			)
 		);
 	}
@@ -1056,22 +1083,22 @@ class List_Table extends WP_List_Table {
 	 */
 	private function get_sort_direction( $a_data, $b_data ) {
 
-		// if the data is numeric, then calculate the ordering directly
+		// If the data is numeric, then calculate the ordering directly.
 		if ( is_numeric( $a_data ) ) {
 			return $a_data - $b_data;
 		}
 
-		// if only one of the data points is empty, then place it before the one which is not
+		// If only one of the data points is empty, then place it before the one which is not.
 		if ( '' === $a_data xor '' === $b_data ) {
 			return '' === $a_data ? 1 : -1;
 		}
 
-		// sort using the default string sort order if possible
+		// Sort using the default string sort order if possible.
 		if ( is_string( $a_data ) ) {
 			return strcasecmp( $a_data, $b_data );
 		}
 
-		// otherwise, use basic comparison operators
+		// Otherwise, use basic comparison operators.
 		return $a_data === $b_data ? 0 : ( $a_data < $b_data ? -1 : 1 );
 	}
 
@@ -1083,22 +1110,22 @@ class List_Table extends WP_List_Table {
 
 		// set the order by based on the query variable, if set.
 		if ( ! empty( $_REQUEST['orderby'] ) ) {
-			$this->order_by = $_REQUEST['orderby'];
+			$this->order_by = sanitize_key( wp_unslash( $_REQUEST['orderby'] ) );
 		} else {
 			// otherwise, fetch the order from the setting, ensuring it is valid.
 			$valid_fields = [ 'id', 'name', 'type', 'modified', 'priority' ];
 			$order_parts = explode( '-', $order, 2 );
 
-			$this->order_by = in_array( $order_parts[0], $valid_fields ) ? $order_parts[0] :
+			$this->order_by = in_array( $order_parts[0], $valid_fields, true ) ? $order_parts[0] :
 				apply_filters( 'code_snippets/list_table/default_orderby', 'priority' );
 		}
 
 		// set the order dir based on the query variable, if set.
 		if ( ! empty( $_REQUEST['order'] ) ) {
-			$this->order_dir = $_REQUEST['order'];
-		} else if ( '-desc' === substr( $order, -5 ) ) {
+			$this->order_dir = sanitize_key( wp_unslash( $_REQUEST['order'] ) );
+		} elseif ( '-desc' === substr( $order, -5 ) ) {
 			$this->order_dir = 'desc';
-		} else if ( '-asc' === substr( $order, -4 ) ) {
+		} elseif ( '-asc' === substr( $order, -4 ) ) {
 			$this->order_dir = 'asc';
 		} else {
 			$this->order_dir = apply_filters( 'code_snippets/list_table/default_order', 'asc' );
@@ -1122,7 +1149,7 @@ class List_Table extends WP_List_Table {
 			$result = $this->get_sort_direction( $a->id, $b->id );
 		}
 
-		// apply the sort direction to the calculated order
+		// Apply the sort direction to the calculated order.
 		return ( 'asc' === $this->order_dir ) ? $result : -$result;
 	}
 
@@ -1179,15 +1206,17 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Callback for filtering snippets by tag
+	 * Callback for filtering snippets by tag.
 	 *
 	 * @param Snippet $snippet The snippet being filtered.
 	 *
-	 * @return bool The result of the filter
+	 * @return bool The result of the filter.
 	 * @ignore
 	 */
 	private function tags_filter_callback( $snippet ) {
-		$tags = explode( ',', sanitize_text_field( wp_unslash( $_GET['tag'] ) ) );
+		$tags = isset( $_GET['tag'] ) ?
+			explode( ',', sanitize_text_field( wp_unslash( $_GET['tag'] ) ) ) :
+			array();
 
 		foreach ( $tags as $tag ) {
 			if ( in_array( $tag, $snippet->tags, true ) ) {
@@ -1209,12 +1238,14 @@ class List_Table extends WP_List_Table {
 			echo '<span class="subtitle">' . esc_html__( 'Search results', 'code-snippets' );
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
-				$s = $_REQUEST['s'];
+				$s = sanitize_text_field( wp_unslash( $_REQUEST['s'] ) );
 
 				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
 
 					/* translators: 1: search query, 2: line number */
-					echo sprintf( __( ' for &ldquo;%1$s&rdquo; on line %2$d', 'code-snippets' ),
+					$text = __( ' for &ldquo;%1$s&rdquo; on line %2$d', 'code-snippets' );
+					printf(
+						esc_html( $text ),
 						esc_html( trim( str_replace( $matches[0], '', $s ) ) ),
 						intval( $matches['line'] )
 					);
@@ -1226,14 +1257,16 @@ class List_Table extends WP_List_Table {
 			}
 
 			if ( ! empty( $_GET['tag'] ) ) {
+				$tag = sanitize_text_field( wp_unslash( $_GET['tag'] ) );
 				/* translators: %s: tag name */
-				echo esc_html( sprintf( __( ' in tag &ldquo;%s&rdquo;', 'code-snippets' ), sanitize_text_field( $_GET['tag'] ) ) );
+				echo esc_html( sprintf( __( ' in tag &ldquo;%s&rdquo;', 'code-snippets' ), $tag ) );
 			}
 
 			echo '</span>';
 
 			/* translators: 1: link URL, 2: link text */
-			printf( '&nbsp;<a class="button clear-filters" href="%s">%s</a>',
+			printf(
+				'&nbsp;<a class="button clear-filters" href="%s">%s</a>',
 				esc_url( remove_query_arg( array( 's', 'tag' ) ) ),
 				esc_html__( 'Clear Filters', 'code-snippets' )
 			);
@@ -1267,9 +1300,9 @@ class List_Table extends WP_List_Table {
 	private function clone_snippets( $ids ) {
 		$snippets = get_snippets( $ids, $this->is_network );
 
-		/** @var Snippet $snippet */
+		/** Snippet @var Snippet $snippet */
 		foreach ( $snippets as $snippet ) {
-			// copy all data from the previous snippet aside from the ID and active status
+			// Copy all data from the previous snippet aside from the ID and active status.
 			$snippet->id = 0;
 			$snippet->active = false;
 

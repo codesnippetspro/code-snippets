@@ -32,13 +32,9 @@ class Export {
 	 *
 	 * @param array|int $ids        List of snippet IDs to export.
 	 * @param string    $table_name Name of database table to fetch snippets from.
-	 *
-	 * @phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 	 */
 	private function fetch_snippets( $ids, $table_name ) {
-		global $wpdb;
 
-		/* Fetch the snippets from the database */
 		if ( '' === $table_name ) {
 			$table_name = code_snippets()->db->get_table_name();
 		}
@@ -47,17 +43,7 @@ class Export {
 			$ids = array( $ids );
 		}
 
-		if ( count( $ids ) ) {
-			$sql = sprintf(
-				'SELECT * FROM %s WHERE id IN (%s)', $table_name,
-				implode( ',', array_fill( 0, count( $ids ), '%d' ) )
-			);
-
-			$this->snippets_list = $wpdb->get_results( $wpdb->prepare( $sql, $ids ), ARRAY_A );
-
-		} else {
-			$this->snippets_list = array();
-		}
+		$this->snippets_list = count( $ids ) ? get_snippets( $ids, $table_name ) : array();
 	}
 
 	/**
@@ -93,8 +79,6 @@ class Export {
 		$snippets = array();
 
 		foreach ( $this->snippets_list as $snippet ) {
-			$snippet = new Snippet( $snippet );
-
 			$fields = array( 'name', 'desc', 'tags', 'scope', 'code', 'priority' );
 			$final_snippet = array();
 
@@ -113,7 +97,7 @@ class Export {
 
 		$data = array(
 			'generator'    => 'Code Snippets v' . code_snippets()->version,
-			'date_created' => date( 'Y-m-d H:i' ),
+			'date_created' => gmdate( 'Y-m-d H:i' ),
 			'snippets'     => $snippets,
 		);
 
@@ -140,22 +124,16 @@ class Export {
 	 */
 	public function download_php_snippets() {
 		$this->do_headers( 'php', 'text/php' );
-		$last_type = '';
+		echo "<?php\n";
 
-		/* Loop through the snippets */
+		/** Loop through the snippets
+		 * @var Snippet $snippet
+		 */
 		foreach ( $this->snippets_list as $snippet ) {
-			$snippet = new Snippet( $snippet );
+			$code = trim( $snippet->code );
 
-			if ( 'php' !== $snippet->type && 'html' !== $snippet->type ) {
+			if ( 'php' !== $snippet->type && 'html' !== $snippet->type || ! $code ) {
 				continue;
-			}
-
-			if ( 'html' === $last_type ) {
-				echo "\n?>\n";
-			}
-
-			if ( ! $last_type || 'html' === $last_type ) {
-				echo "<?php\n";
 			}
 
 			echo "\n/**\n * $snippet->display_name\n";
@@ -166,9 +144,19 @@ class Export {
 				echo " *\n * ", wp_strip_all_tags( $desc ), "\n";
 			}
 
-			printf(" */\n\n%s\n%s\n", 'html' === $snippet->type ? '?>' : '', trim( $snippet->code ) );
+			echo " */\n";
 
-			$last_type = $snippet->type;
+			if ( 'content' === $snippet->scope ) {
+				$shortcode_tag = apply_filters( 'code_snippets_export_shortcode_tag', "code_snippets_export_$snippet->id", $snippet );
+
+				$code = sprintf(
+					"add_shortcode( '%s', function () {\n\tob_start();\n\t?>\n\n\t%s\n\n\t<?php\n\treturn ob_get_clean();\n} );",
+					$shortcode_tag,
+					str_replace( "\n", "\n\t", $code )
+				);
+			}
+
+			echo $code, "\n";
 		}
 
 		exit;

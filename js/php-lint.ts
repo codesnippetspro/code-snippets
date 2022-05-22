@@ -2,7 +2,7 @@
  * Based on work distributed under the BSD 3-Clause License (https://rawgit.com/glayzzle/codemirror-linter/master/LICENSE)
  */
 
-import Parser, {Block, Location, Node} from 'php-parser';
+import Parser, { Block, Location, Node } from 'php-parser';
 import * as CodeMirror from 'codemirror';
 
 type Annotation = { message: string, severity: string, from: CodeMirror.Position, to: CodeMirror.Position };

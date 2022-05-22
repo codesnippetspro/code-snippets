@@ -5,26 +5,26 @@
  * If you're interested in helping to develop Code Snippets, or perhaps contribute
  * to the localization, please see https://github.com/sheabunge/code-snippets
  *
- * @package      Code_Snippets
- * @author       Shea Bunge <shea@codesnippets.pro>
- * @copyright    2012-2021 Shea Bunge
- * @license      GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
- * @version      3.0.0-rc.1
- * @link         https://github.com/sheabunge/code-snippets
+ * @package   Code_Snippets
+ * @author    Shea Bunge <shea@codesnippets.pro>
+ * @copyright 2012-2022 Shea Bunge
+ * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
+ * @version   3.1.0
+ * @link      https://github.com/sheabunge/code-snippets
  */
 
 /*
 Plugin Name:  Code Snippets Pro
-Author URI:   https://codesnippets.pro
-Plugin URI:   An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
+Plugin URI:   https://codesnippets.pro
+Description:  An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
 Author:       Code Snippets Pro
 Author URI:   https://codesnippets.pro
-Version:      3.0.0-rc.1
+Version:      3.1.0
 License:      GPL-2.0-or-later
 License URI:  license.txt
 Text Domain:  code-snippets
 Domain Path:  /languages
-Requires PHP: 5.2
+Requires PHP: 5.6
 Requires at least: 3.6
 */
 
@@ -39,10 +39,13 @@ if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
 	deactivate_plugins( array( 'code-snippets/code-snippets.php' ), true );
 
 	if ( ! function_exists( 'code_snippets_deactivated_old_version_notice' ) ) {
+		/**
+		 * Display a message informing the user that this plugin has been deactivated.
+		 */
 		function code_snippets_deactivated_old_version_notice() {
-			echo '<div class="error fade"><p>',
-			esc_html__( 'You can now safely remove the free version of Code Snippets.', 'code-snippets' ),
-			'</p></div>';
+			echo '<div class="error fade"><p>';
+			esc_html__( 'You can now safely remove the free version of Code Snippets.', 'code-snippets' );
+			echo '</p></div>';
 		}
 	}
 
@@ -89,14 +92,14 @@ if ( ! function_exists( 'code_snippets_php_version_notice' ) ) {
 		echo '<div class="error fade"><p>';
 		echo '<p><strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong><br>';
 
+		$update_url = function_exists( 'wp_get_default_update_php_url' ) ?
+			wp_get_default_update_php_url() :
+			'https://wordpress.org/support/update-php/';
+
 		/* translators: %s: Update PHP URL */
 		$text = __( 'Please <a href="%s">upgrade your server to the latest version of PHP</a> to continue using Code Snippets.', 'code-snippets' );
-		$text = sprintf( $text, function_exists( 'wp_get_default_update_php_url' ) ?
-			wp_get_default_update_php_url() :
-			'https://wordpress.org/support/update-php/'
-		);
 
-		echo wp_kses( $text, array( 'a' => array( 'href' => array() ) ) );
+		echo wp_kses( sprintf( $text, $update_url ), array( 'a' => array( 'href' => array() ) ) );
 		echo '</p></div>';
 
 		deactivate_plugins( plugin_basename( __FILE__ ) );

@@ -24,13 +24,15 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 ?>
 
 <div class="wrap">
-	<h1><?php
+	<h1>
+		<?php
 		esc_html_e( 'Snippets', 'code-snippets' );
 
 		$this->page_title_actions( code_snippets()->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
 
 		$this->list_table->search_notice();
-		?></h1>
+		?>
+	</h1>
 
 	<?php $this->print_messages(); ?>
 
@@ -41,14 +43,15 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 
 			if ( $type_name === $current_type ) {
 				printf( '<a class="nav-tab nav-tab-active" data-type="%s">', esc_attr( $type_name ) );
-
 			} else {
-				printf( '<a class="nav-tab" href="%s" data-type="%s">',
-					esc_url( add_query_arg( 'type', $type_name ) ), esc_attr( $type_name )
+				printf(
+					'<a class="nav-tab" href="%s" data-type="%s">',
+					esc_url( add_query_arg( 'type', $type_name ) ),
+					esc_attr( $type_name )
 				);
 			}
 
-			echo esc_html( $label ), 'all' === $type_name ? '' : ' <span>' . esc_html( $type_name ) . '</span>', '</a>';
+			echo esc_html( $label ), 'all' === $type_name ? '' : ' <span class="badge">' . esc_html( $type_name ) . '</span>', '</a>';
 		}
 
 		if ( ! $licensed ) {
@@ -62,7 +65,8 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 	</h2>
 
 	<?php
-	if ( $desc = code_snippets()->get_type_description( $current_type ) ) {
+	$desc = code_snippets()->get_type_description( $current_type );
+	if ( $desc ) {
 		echo '<p class="snippet-type-description">', esc_html( $desc );
 
 		$type_names = [
@@ -75,8 +79,11 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		/* translators: %s: snippet type name */
 		$learn_more_text = sprintf( __( 'Learn more about %s &rarr;', 'code-snippets' ), $type_names[ $current_type ] );
 
-		printf( ' <a href="%s" target="_blank">%s</a></p>',
-			esc_url( "https://codesnippets.pro/learn-$current_type/" ), esc_html( $learn_more_text ) );
+		printf(
+			' <a href="%s" target="_blank">%s</a></p>',
+			esc_url( "https://codesnippets.pro/learn-$current_type/" ),
+			esc_html( $learn_more_text )
+		);
 	}
 	?>
 
@@ -93,11 +100,10 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 	</form>
 
 	<form method="post" action="">
-		<input type="hidden" id="code_snippets_ajax_nonce" value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
+		<input type="hidden" id="code_snippets_ajax_nonce"
+		       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 
 		<?php
-
-		/** @var Manage_Menu $this */
 		$this->list_table->required_form_fields();
 		$this->list_table->display();
 		?>

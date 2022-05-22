@@ -42,6 +42,8 @@ class Setting_Field {
 	private $section;
 
 	/**
+	 * List of possible arguments.
+	 *
 	 * @var array
 	 */
 	private $args = array(
@@ -55,8 +57,8 @@ class Setting_Field {
 	/**
 	 * Class constructor.
 	 *
-	 * @param string $field_id   Setting field identifier;
 	 * @param string $section_id Settings section identifier.
+	 * @param string $field_id   Setting field identifier.
 	 * @param array  $args       The setting field attributes.
 	 */
 	public function __construct( $section_id, $field_id, array $args ) {
@@ -68,9 +70,9 @@ class Setting_Field {
 	/**
 	 * Retrieve a single setting attribute.
 	 *
-	 * @param string $argument
+	 * @param string $argument Attribute name.
 	 *
-	 * @return mixed
+	 * @return mixed Attribute value.
 	 */
 	public function __get( $argument ) {
 
@@ -83,6 +85,7 @@ class Setting_Field {
 
 	/**
 	 * Retrieve the saved value for this setting.
+	 *
 	 * @return mixed
 	 */
 	private function get_saved_value() {
@@ -98,7 +101,7 @@ class Setting_Field {
 		if ( method_exists( $this, $method_name ) ) {
 			call_user_func( array( $this, $method_name ) );
 		} else {
-			// error message, not necessary to translate
+			// Error message, not necessary to translate.
 			printf( 'Cannot render a %s field.', esc_html( $this->type ) );
 			return;
 		}
@@ -118,9 +121,9 @@ class Setting_Field {
 	/**
 	 * Render a single checkbox field.
 	 *
-	 * @param string  $input_name
-	 * @param string  $label
-	 * @param boolean $checked Whether the checkbox should be checked.
+	 * @param string  $input_name Input name.
+	 * @param string  $label      Input label.
+	 * @param boolean $checked    Whether the checkbox should be checked.
 	 */
 	private static function render_checkbox( $input_name, $label, $checked ) {
 
@@ -130,8 +133,14 @@ class Setting_Field {
 			checked( $checked, true, false )
 		);
 
-		// Output the checkbox field, optionally with label.
-		$kses = [ 'input' => [ 'type' => [], 'name' => [], 'checked' => [] ] ];
+		$kses = [
+			'input' => [
+				'type'    => [],
+				'name'    => [],
+				'checked' => [],
+			],
+		];
+
 		if ( $label ) {
 			printf(
 				'<label>%s %s</label>',
@@ -148,7 +157,7 @@ class Setting_Field {
 	 *
 	 * @since 2.0.0
 	 */
-	function render_checkbox_field() {
+	public function render_checkbox_field() {
 		$this->render_checkbox( $this->input_name, $this->label, $this->get_saved_value() );
 	}
 
@@ -157,7 +166,7 @@ class Setting_Field {
 	 *
 	 * @since 2.0.0
 	 */
-	function render_checkboxes_field() {
+	public function render_checkboxes_field() {
 		$saved_value = $this->get_saved_value();
 		$saved_value = is_array( $saved_value ) ? $saved_value : [];
 
@@ -165,7 +174,7 @@ class Setting_Field {
 		printf( '<legend class="screen-reader-text"><span>%s</span></legend>', esc_html( $this->name ) );
 
 		foreach ( $this->options as $option => $label ) {
-			$this->render_checkbox( $this->input_name . "[$option]", $label, in_array( $option, $saved_value ) );
+			$this->render_checkbox( $this->input_name . "[$option]", $label, in_array( $option, $saved_value, true ) );
 			echo '<br>';
 		}
 

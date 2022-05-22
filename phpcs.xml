@@ -1,66 +1,62 @@
 <?xml version="1.0"?>
 <ruleset name="Code-Snippets">
-	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
+	<config name="testVersion" value="5.6-" />
 	<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
 	<!-- See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/blob/develop/WordPress/ruleset.xml -->
 	<!-- Include the WordPress ruleset, with exclusions. -->
 	<rule ref="WordPress">
-
-		<!-- I like to have a newline after closing brace, sometimes -->
-		<exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" />
-
 		<!-- allow hooks containing forward slashes -->
 		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
 
 		<!-- necessary for core plugin function -->
 		<exclude name="Squiz.PHP.Eval.Discouraged" />
 
-		<!-- this is useful for certain templates -->
+		<!-- allow embedding PHP within HTML attribute values -->
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
-		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterOpen" />
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
-		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterEnd" />
-		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 
 		<!-- database table names should be interpolated -->
 		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared" />
 
-		<!-- codesniffer does not seem to understand more complex queries -->
-		<exclude name="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare" />
-		<exclude name="WordPress.DB.PreparedSQL.NotPrepared" />
-
-		<!-- class filenames do not include the namespace prefix -->
-		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
-
-		<!-- this disallows assignment inside conditional statements -->
-		<exclude name="WordPress.CodeAnalysis.AssignmentInCondition.Found" />
-		<exclude name="Squiz.PHP.DisallowMultipleAssignments.Found" />
-
-		<!-- this does not always need to happen -->
+		<!-- handle this through editor autoformatting -->
 		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
 		<exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning" />
 
-		<!-- what's wrong with smart tabs? -->
+		<!-- allow smart tabs -->
 		<exclude name="WordPress.WhiteSpace.PrecisionAlignment.Found" />
 		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed" />
 
-		<!-- this is a useful feature -->
+		<!-- allow modern PHP syntax -->
+		<exclude name="WordPress.PHP.DisallowShortTernary.Found" />
 		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound" />
-
-		<!-- seems unnecessary -->
-		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
 
 		<!-- todo -->
 		<exclude name="WordPress.Security.NonceVerification.Recommended" />
 		<exclude name="WordPress.Security.NonceVerification.Missing" />
-		<exclude name="WordPress.Security.SafeRedirect.wp_redirect_wp_redirect" />
-		<exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotSanitized" />
-		<exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotValidated" />
-		<exclude name="WordPress.Security.ValidatedSanitizedInput.MissingUnslash" />
+	</rule>
+
+	<rule ref="PHPCompatibilityWP">
+		<include-pattern>*\.php$</include-pattern>
 	</rule>
 
 	<!-- class files don't need an additional file comment -->
 	<rule ref="Squiz.Commenting.FileComment.Missing">
 		<exclude-pattern>class-*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.Arrays.MultipleStatementAlignment">
+		<properties>
+			<property name="maxColumn" value="300" />
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.DB.DirectDatabaseQuery">
+		<properties>
+			<property name="customCacheDeleteFunctions" type="array">
+				<element value="clean_snippets_cache" />
+				<element value="clean_active_snippets_cache" />
+			</property>
+		</properties>
 	</rule>
 </ruleset>

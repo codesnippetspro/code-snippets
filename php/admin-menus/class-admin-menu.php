@@ -76,7 +76,6 @@ abstract class Admin_Menu {
 	 * @param string $title Page title.
 	 *
 	 * @uses add_submenu_page() to register a submenu
-	 *
 	 */
 	public function add_menu( $slug, $label, $title ) {
 		$hook = add_submenu_page(
@@ -126,22 +125,24 @@ abstract class Admin_Menu {
 	 * @param string $request_var Name of $_REQUEST variable to check.
 	 * @param string $class       Class to use on buttons. Default 'updated'.
 	 *
-	 * @return string|bool The result message if a valid status was received, otherwise false
+	 * @return bool Whether a result message was printed.
 	 */
-	protected function get_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
+	protected function print_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
 
 		if ( empty( $_REQUEST[ $request_var ] ) ) {
 			return false;
 		}
 
-		$result = $_REQUEST[ $request_var ];
+		$result = sanitize_key( $_REQUEST[ $request_var ] );
 
 		if ( isset( $messages[ $result ] ) ) {
-			return sprintf(
+			printf(
 				'<div id="message" class="%2$s fade"><p>%1$s</p></div>',
-				$messages[ $result ],
-				$class
+				wp_kses_post( $messages[ $result ] ),
+				esc_attr( $class )
 			);
+
+			return true;
 		}
 
 		return false;
@@ -185,7 +186,7 @@ abstract class Admin_Menu {
 	/**
 	 * Enqueue scripts and stylesheets for the admin page, if necessary
 	 */
-	public abstract function enqueue_assets();
+	abstract public function enqueue_assets();
 
 	/**
 	 * Render a list of links to other pages in the page title
@@ -201,8 +202,8 @@ abstract class Admin_Menu {
 
 			$url = code_snippets()->get_menu_url( $action );
 
-			if ( isset( $_GET['type'] ) && in_array( $_GET['type'], Snippet::get_types() ) ) {
-				$url = add_query_arg( 'type', $_GET['type'], $url );
+			if ( isset( $_GET['type'] ) && in_array( $_GET['type'], Snippet::get_types(), true ) ) {
+				$url = add_query_arg( 'type', sanitize_key( wp_unslash( $_GET['type'] ) ), $url );
 			}
 
 			printf( '<a href="%s" class="page-title-action">', esc_url( $url ) );
