@@ -122,9 +122,10 @@ class Export {
 		$this->do_headers( 'php', 'text/php' );
 		$last_type = '';
 
-		/* Loop through the snippets */
+		/** Loop through the snippets
+		 * @var Snippet $snippet
+		 */
 		foreach ( $this->snippets_list as $snippet ) {
-			$snippet = new Snippet( $snippet );
 
 			if ( 'php' !== $snippet->type && 'html' !== $snippet->type ) {
 				continue;
