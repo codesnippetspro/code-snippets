@@ -57,8 +57,7 @@ class Export {
 		/* Build the export filename */
 		if ( 1 === count( $this->snippets_list ) ) {
 			/* If there is only snippet to export, use its name instead of the site name */
-			$first_snippet = new Snippet( $this->snippets_list[0] );
-			$title = strtolower( $first_snippet->name );
+			$title = strtolower( $this->snippets_list[0]->name );
 		} else {
 			/* Otherwise, use the site name as set in Settings > General */
 			$title = strtolower( get_bloginfo( 'name' ) );
