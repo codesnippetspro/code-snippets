@@ -64,11 +64,11 @@ class Export {
 		}
 
 		$filename = "$title.code-snippets.$format";
-		$filename = apply_filters( 'code_snippets/export/filename', $filename, $title );
+		$filename = apply_filters( 'code_snippets/export/filename', $filename, $title, $this->snippets_list );
 
 		/* Set HTTP headers */
 		header( 'Content-Disposition: attachment; filename=' . sanitize_file_name( $filename ) );
-		header( "Content-Type: $mime_type; charset=" . get_bloginfo( 'charset' ) );
+		header( sprintf( "Content-Type: %s; charset=%s", sanitize_mime_type( $mime_type ), get_bloginfo( 'charset' ) ) );
 	}
 
 	/**
