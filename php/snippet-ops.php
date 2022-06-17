@@ -71,9 +71,9 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 
 		$snippets = $results ?
 			array_map(
-				function ( $snippet ) use ( $multisite ) {
-					$snippet['network'] = $multisite;
-					return new Snippet( $snippet );
+				function ( $snippet_data ) use ( $multisite ) {
+					$snippet_data['network'] = $multisite;
+					return new Snippet( $snippet_data );
 				},
 				$results
 			) :
@@ -193,8 +193,8 @@ function get_snippet( $id = 0, $multisite = null ) {
 		}
 
 		// Otherwise, retrieve the snippet from the database.
-		$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) ); // cache pass, db call ok.
-		$snippet = new Snippet( $snippet );
+		$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) ); // cache pass, db call ok.
+		$snippet = new Snippet( $snippet_data );
 	}
 
 	$snippet->network = $multisite;

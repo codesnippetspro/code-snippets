@@ -66,8 +66,8 @@ class Import {
 		$snippets = array();
 
 		/* Reformat the data into snippet objects */
-		foreach ( $data['snippets'] as $snippet ) {
-			$snippet = new Snippet( $snippet );
+		foreach ( $data['snippets'] as $snippet_data ) {
+			$snippet = new Snippet( $snippet_data );
 			$snippet->network = $this->multisite;
 			$snippets[] = $snippet;
 		}

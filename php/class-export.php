@@ -57,19 +57,18 @@ class Export {
 		/* Build the export filename */
 		if ( 1 === count( $this->snippets_list ) ) {
 			/* If there is only snippet to export, use its name instead of the site name */
-			$first_snippet = new Snippet( $this->snippets_list[0] );
-			$title = strtolower( $first_snippet->name );
+			$title = strtolower( $this->snippets_list[0]->name );
 		} else {
 			/* Otherwise, use the site name as set in Settings > General */
 			$title = strtolower( get_bloginfo( 'name' ) );
 		}
 
 		$filename = "$title.code-snippets.$format";
-		$filename = apply_filters( 'code_snippets/export/filename', $filename, $title );
+		$filename = apply_filters( 'code_snippets/export/filename', $filename, $title, $this->snippets_list );
 
 		/* Set HTTP headers */
 		header( 'Content-Disposition: attachment; filename=' . sanitize_file_name( $filename ) );
-		header( "Content-Type: $mime_type; charset=" . get_bloginfo( 'charset' ) );
+		header( sprintf( "Content-Type: %s; charset=%s", sanitize_mime_type( $mime_type ), get_bloginfo( 'charset' ) ) );
 	}
 
 	/**

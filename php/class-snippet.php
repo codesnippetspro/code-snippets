@@ -82,6 +82,12 @@ class Snippet {
 	 * @param array|object $fields Initial snippet fields.
 	 */
 	public function __construct( $fields = null ) {
+
+		// If we've accidentally passed a snippet object, then fetch its fields before constructing the new object.
+		if ( is_object( $fields ) && method_exists( $fields, 'get_fields' ) ) {
+			$fields = $fields->get_fields();
+		}
+
 		$this->set_fields( $fields );
 	}
 
