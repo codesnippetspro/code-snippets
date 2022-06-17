@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 Tested up to: 6.0
 
 An easy, clean and simple way to run code snippets on your site.
@@ -115,6 +115,11 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.1.1 (13 Jun 2022) =
+* Fixed: Download snippets feature not including snippet content.
+* Fixed: Alignment of 'opens externally' dashicon.
+* Improved: Added additional parameters to `code_snippets/export/filename` filter.
 
 = 3.1.0 (17 May 2022) =
 * Fixed: Caching inconsistencies preventing snippets and settings from refreshing on sites with persistent object caching.
@@ -289,6 +294,9 @@ __New in Pro__
 **[The full changelog is available on GitHub](https://github.com/sheabunge/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
+
+= 3.1.1 =
+Fixed download snippets feature.
 
 = 3.1.0 =
 Comprehensive persistent object caching support.

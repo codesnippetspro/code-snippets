@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.1 (13 Jun 2022)
+* Fixed: Download snippets feature not including snippet content.
+* Fixed: Alignment of 'opens externally' dashicon.
+* Improved: Added additional parameters to `code_snippets/export/filename` filter.
+
 ## 3.1.0 (17 May 2022)
 * Fixed: Caching inconsistencies preventing snippets and settings from refreshing on sites with persistent object caching.
 * Improved: Simplified database queries.
