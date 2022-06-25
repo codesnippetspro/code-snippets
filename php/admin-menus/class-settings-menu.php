@@ -28,30 +28,10 @@ class Settings_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Register action and filter hooks
-	 */
-	public function run() {
-		parent::run();
-
-		add_action( 'admin_init', array( $this, 'handle_license_changes' ) );
-	}
-
-	/**
 	 * Executed when the admin page is loaded
 	 */
 	public function load() {
 		parent::load();
-
-		// Redirect the user if they are attempting to renew their license.
-		if ( isset( $_GET['code_snippets_renew_license'] ) && code_snippets()->licensing->key ) {
-			check_admin_referer( 'code_snippets_renew_license' );
-
-			wp_redirect( esc_url_raw( add_query_arg( [
-				'edd_license_key' => code_snippets()->licensing->key,
-				'download_id'     => Licensing::EDD_ITEM_ID,
-			], 'https://codesnippets.pro/checkout/' ) ) );
-			exit;
-		}
 
 		if ( ! empty( $_GET['reset_settings'] ) ) {
 
@@ -85,45 +65,6 @@ class Settings_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Handle requests to activate or remove the current license.
-	 */
-	public function handle_license_changes() {
-
-		// if the relevant fields are not set, then bail now.
-		if ( ! isset( $_POST['code_snippets_activate_license'] ) && ! isset( $_POST['code_snippets_remove_license'] ) ) {
-			return;
-		}
-
-		// ensure that the previous page was submitted correctly.
-		check_admin_referer( 'code-snippets-options' );
-
-		$result = $message = null;
-
-		// if the remove license button was clicked, then handle it.
-		if ( isset( $_POST['code_snippets_remove_license'] ) ) {
-			$licensing = code_snippets()->licensing;
-			list( $result, $message ) = $licensing->remove_license();
-
-		} elseif ( isset( $_POST['code_snippets_activate_license'], $_POST['code_snippets_license_key'] ) ) {
-			$licensing = code_snippets()->licensing;
-			$licensing->key = $_POST['code_snippets_license_key'];
-
-			list( $result, $message ) = $licensing->activate_license();
-		}
-
-		if ( $result && $message ) {
-			add_settings_error(
-				'code-snippets-settings-notices',
-				'license_' . $result,
-				$message,
-				$result
-			);
-
-			set_transient( 'settings_errors', get_settings_errors(), 30 );
-		}
-	}
-
-	/**
 	 * Enqueue the stylesheet for the settings menu
 	 */
 	public function enqueue_assets() {
@@ -151,10 +92,7 @@ class Settings_Menu extends Admin_Menu {
 			return array();
 		}
 
-		$sections = (array) $wp_settings_sections[ self::SETTINGS_PAGE ];
-
-		$sections['license'] = [ 'id' => 'license', 'title' => __( 'License', 'code-snippets' ) ];
-		return $sections;
+		return (array) $wp_settings_sections[ self::SETTINGS_PAGE ];
 	}
 
 	/**
@@ -223,8 +161,6 @@ class Settings_Menu extends Admin_Menu {
 					   href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>"><?php
 						esc_html_e( 'Reset to Default', 'code-snippets' ); ?></a>
 				</p>
-
-				<?php $this->render_view( 'partials/license-settings' ); ?>
 			</form>
 		</div>
 		<?php
@@ -284,9 +220,6 @@ class Settings_Menu extends Admin_Menu {
 		}
 
 		check_admin_referer( 'code-snippets-options' );
-
-		// Handle any license changes first.
-		$this->handle_license_changes();
 
 		// Retrieve the submitted options and save them to the database.
 		if ( isset( $_POST['code_snippets_settings'] ) ) {
