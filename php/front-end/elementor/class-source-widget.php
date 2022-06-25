@@ -1,9 +1,14 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\Elementor;
 
+use Code_Snippets\Frontend;
+use Code_Snippets\Snippet;
 use Elementor\Controls_Manager;
 use Exception;
+use function Code_Snippets\code_snippets;
+use function Code_Snippets\get_snippets;
+use function Code_Snippets\Settings\get_setting;
 
 /**
  * Widget for embedding the source code of a snippet.
@@ -13,10 +18,11 @@ use Exception;
  *
  * @package Code_Snippets
  */
-class Elementor_Source_Widget extends Elementor_Widget {
+class Source_Widget extends Widget {
 
 	/**
 	 * Whether the Prism source code highlighter is enabled.
+	 *
 	 * @var bool
 	 */
 	private $prism_enabled = false;
@@ -32,7 +38,7 @@ class Elementor_Source_Widget extends Elementor_Widget {
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
-		if ( ! Settings\get_setting( 'general', 'disable_prism' ) ) {
+		if ( ! get_setting( 'general', 'disable_prism' ) ) {
 			$this->prism_enabled = true;
 			Frontend::register_prism_assets();
 
@@ -40,13 +46,15 @@ class Elementor_Source_Widget extends Elementor_Widget {
 				'code-snippets-elementor',
 				plugins_url( 'js/min/elementor.js', code_snippets()->file ),
 				[ 'elementor-frontend', Frontend::PRISM_HANDLE ],
-				code_snippets()->version, true
+				code_snippets()->version,
+				true
 			);
 		}
 	}
 
 	/**
 	 * Retrieve the list of widget script dependencies.
+	 *
 	 * @return array
 	 */
 	public function get_script_depends() {
@@ -55,6 +63,7 @@ class Elementor_Source_Widget extends Elementor_Widget {
 
 	/**
 	 * Retrieve the list of widget style dependencies.
+	 *
 	 * @return array
 	 */
 	public function get_style_depends() {
@@ -70,6 +79,7 @@ class Elementor_Source_Widget extends Elementor_Widget {
 
 	/**
 	 * Return the widget title.
+	 *
 	 * @return string
 	 */
 	public function get_title() {
@@ -78,6 +88,7 @@ class Elementor_Source_Widget extends Elementor_Widget {
 
 	/**
 	 * Build a list of snippets for the drop-down menu.
+	 *
 	 * @return array
 	 */
 	protected function build_snippet_options() {
@@ -91,7 +102,11 @@ class Elementor_Source_Widget extends Elementor_Widget {
 			'js'   => __( 'Scripts (JS)', 'code-snippets' ),
 		];
 
-		/** @var Snippet $snippet */
+		/**
+		 * Snippet object.
+		 *
+		 * @var Snippet $snippet
+		 */
 		foreach ( $snippets as $snippet ) {
 			$group = $labels[ $snippet->type ];
 			if ( ! isset( $options[ $group ] ) ) {
@@ -106,68 +121,104 @@ class Elementor_Source_Widget extends Elementor_Widget {
 
 	/**
 	 * Register settings controls.
+	 *
+	 * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
 	 */
 	protected function _register_controls() {
 
-		$this->start_controls_section( 'snippet', [
-			'label' => __( 'Snippet', 'code-snippets' ),
-			'tab'   => Controls_Manager::TAB_CONTENT,
-		] );
+		$this->start_controls_section(
+			'snippet',
+			array(
+				'label' => __( 'Snippet', 'code-snippets' ),
+				'tab'   => Controls_Manager::TAB_CONTENT,
+			)
+		);
 
-		$this->add_control( 'snippet_id', [
-			'label'       => esc_html__( 'Snippet', 'code-snippets' ),
-			'type'        => 'code-snippets-select2',
-			'options'     => $this->build_snippet_options(),
-			'default'     => 0,
-			'show_label'  => false,
-			'label_block' => true,
-		] );
+		$this->add_control(
+			'snippet_id',
+			array(
+				'label'       => esc_html__( 'Snippet', 'code-snippets' ),
+				'type'        => 'code-snippets-select2',
+				'options'     => $this->build_snippet_options(),
+				'default'     => 0,
+				'show_label'  => false,
+				'label_block' => true,
+			)
+		);
 
-		$this->add_control( 'line_numbers', [
-			'label'   => esc_html__( 'Line Numbers', 'code-snippets' ),
-			'type'    => Controls_Manager::SWITCHER,
-			'default' => false,
-		] );
+		$this->add_control(
+			'line_numbers',
+			array(
+				'label'   => esc_html__( 'Line Numbers', 'code-snippets' ),
+				'type'    => Controls_Manager::SWITCHER,
+				'default' => false,
+			)
+		);
 
-		$this->add_control( 'highlight_lines', [
-			'label'       => esc_html__( 'Highlight Lines', 'code-snippets' ),
-			'type'        => Controls_Manager::TEXT,
-			'default'     => '',
-			'placeholder' => '1, 3-6',
-		] );
+		$this->add_control(
+			'highlight_lines',
+			array(
+				'label'       => esc_html__( 'Highlight Lines', 'code-snippets' ),
+				'type'        => Controls_Manager::TEXT,
+				'default'     => '',
+				'placeholder' => '1, 3-6',
+			)
+		);
 
-		$this->add_control( 'word_wrap', [
-			'label'        => esc_html__( 'Word Wrap', 'code-snippets' ),
-			'type'         => Controls_Manager::SWITCHER,
-			'label_on'     => esc_html__( 'On', 'code-snippets' ),
-			'label_off'    => esc_html__( 'Off', 'code-snippets' ),
-			'return_value' => 'word-wrap',
-			'default'      => '',
-		] );
+		$this->add_control(
+			'word_wrap',
+			array(
+				'label'        => esc_html__( 'Word Wrap', 'code-snippets' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'On', 'code-snippets' ),
+				'label_off'    => esc_html__( 'Off', 'code-snippets' ),
+				'return_value' => 'word-wrap',
+				'default'      => '',
+			)
+		);
 
-		$this->add_responsive_control( 'height', [
-			'label'      => esc_html__( 'Height', 'code-snippets' ),
-			'type'       => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', 'vh', 'em' ],
-			'range'      => [
-				'px' => [ 'min' => 115, 'max' => 1000 ],
-				'em' => [ 'min' => 6, 'max' => 50 ],
-			],
-			'selectors'  => [ '{{WRAPPER}} pre' => 'height: {{SIZE}}{{UNIT}};' ],
-			'separator'  => 'before',
-		] );
+		$this->add_responsive_control(
+			'height',
+			array(
+				'label'      => esc_html__( 'Height', 'code-snippets' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'vh', 'em' ],
+				'range'      => array(
+					'px' => [
+						'min' => 115,
+						'max' => 1000,
+					],
+					'em' => [
+						'min' => 6,
+						'max' => 50,
+					],
+				),
+				'selectors'  => [ '{{WRAPPER}} pre' => 'height: {{SIZE}}{{UNIT}};' ],
+				'separator'  => 'before',
+			)
+		);
 
-		$this->add_responsive_control( 'font_size', [
-			'label'      => esc_html__( 'Font Size', 'code-snippets' ),
-			'type'       => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', 'em', 'rem', 'vw' ],
-			'range'      => [
-				'px' => [ 'min' => 1, 'max' => 200 ],
-				'vw' => [ 'min' => 0.1, 'max' => 10, 'step' => 0.1 ],
-			],
-			'responsive' => true,
-			'selectors'  => [ '{{WRAPPER}} pre, {{WRAPPER}} code, {{WRAPPER}} .line-numbers .line-numbers-rows' => 'font-size: {{SIZE}}{{UNIT}};' ],
-		] );
+		$this->add_responsive_control(
+			'font_size',
+			array(
+				'label'      => esc_html__( 'Font Size', 'code-snippets' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'vw' ],
+				'range'      => array(
+					'px' => [
+						'min' => 1,
+						'max' => 200,
+					],
+					'vw' => [
+						'min'  => 0.1,
+						'max'  => 10,
+						'step' => 0.1,
+					],
+				),
+				'responsive' => true,
+				'selectors'  => [ '{{WRAPPER}} pre, {{WRAPPER}} code, {{WRAPPER}} .line-numbers .line-numbers-rows' => 'font-size: {{SIZE}}{{UNIT}};' ],
+			)
+		);
 
 		$this->end_controls_section();
 	}
@@ -181,8 +232,12 @@ class Elementor_Source_Widget extends Elementor_Widget {
 		if ( ! isset( $settings['snippet_id'] ) || 0 === intval( $settings['snippet_id'] ) ) {
 			echo '<p>', esc_html__( 'Select a snippet to display', 'code-snippets' ), '</p>';
 		} else {
-			$classname = esc_attr( $settings['word_wrap'] );
-			printf( '<div class="%s">%s</div>', $classname, code_snippets()->frontend->render_source_shortcode( $settings ) );
+			printf(
+				'<div class="%s">%s</div>',
+				esc_attr( $settings['word_wrap'] ),
+				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+				code_snippets()->frontend->render_source_shortcode( $settings )
+			);
 		}
 	}
 }

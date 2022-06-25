@@ -1,8 +1,9 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\Elementor;
 
 use Elementor\Elements_Manager;
+use Elementor\Plugin as Elementor_Plugin;
 
 /**
  * Handles integration with the Elementor website builder plugin.
@@ -23,7 +24,7 @@ class Elementor {
 	/**
 	 * Add a new widget category for this plugin.
 	 *
-	 * @param Elements_Manager $elements_manager
+	 * @param Elements_Manager $elements_manager Elements manager.
 	 */
 	public function add_widget_category( $elements_manager ) {
 
@@ -35,17 +36,24 @@ class Elementor {
 
 	/**
 	 * Register new widget types with Elementor.
+	 *
+	 * @return void
 	 */
 	public function init_widgets() {
-		$widgets_manager = \Elementor\Plugin::instance()->widgets_manager;
+		$widgets_manager = Elementor_Plugin::instance()->widgets_manager;
 
-		$widgets_manager->register_widget_type( new Elementor_Content_Widget() );
-		$widgets_manager->register_widget_type( new Elementor_Source_Widget() );
+		$widgets_manager->register_widget_type( new Content_Widget() );
+		$widgets_manager->register_widget_type( new Source_Widget() );
 	}
 
+	/**
+	 * Initialize widget controls.
+	 *
+	 * @return void
+	 */
 	public function init_controls() {
-		$controls_manager = \Elementor\Plugin::instance()->controls_manager;
+		$controls_manager = Elementor_Plugin::instance()->controls_manager;
 
-		$controls_manager->register_control( 'code-snippets-select2', new Elementor_Select2_Control() );
+		$controls_manager->register_control( 'code-snippets-select', new Control_Select() );
 	}
 }

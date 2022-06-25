@@ -28,12 +28,12 @@ Requires PHP: 5.6
 Requires at least: 3.6
 */
 
-// exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-// if another version of code snippets is already active then deactivate it
+// If another version of code snippets is already active then deactivate it.
 if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	deactivate_plugins( array( 'code-snippets/code-snippets.php' ), true );

@@ -855,7 +855,7 @@ class List_Table extends WP_List_Table {
 
 		if ( isset( $result ) ) {
 
-			// We have no way of knowing whether CSS/JS snippets were modified or not, so always increment the asset revisions
+			// We have no way of knowing whether CSS/JS snippets were modified or not, so always increment the asset revisions.
 			if ( in_array( $result, array( 'activated-multi', 'deactivated-multi', 'deleted-multi' ), true ) ) {
 				code_snippets()->active_snippets->increment_rev( 'all', $this->is_network );
 			}

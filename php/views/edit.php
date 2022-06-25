@@ -29,7 +29,7 @@ if ( ! $snippet->id ) {
 $licensed = code_snippets()->licensing->is_licensed();
 
 ?>
-<div class="wrap<?php echo $this->read_only ? ' read-only-snippet' : '' ?>">
+<div class="wrap<?php echo $this->read_only ? ' read-only-snippet' : ''; ?>">
 	<h1>
 		<?php
 
@@ -137,12 +137,19 @@ $licensed = code_snippets()->licensing->is_licensed();
 
 		?>
 
-		<p class="submit"><?php
+		<p class="submit">
+			<?php
 			$this->render_submit_buttons( $snippet );
 
 			if ( $licensed && ( 'css' === $snippet->type || 'js' === $snippet->type ) ) {
-				$asset_url = code_snippets()->active_snippets->get_asset_url( $snippet->scope );
-				$asset_url = add_query_arg( [ 'TB_iframe' => true, 'width' => 600, 'height' => 550 ], $asset_url );
+				$asset_url = add_query_arg(
+					array(
+						'TB_iframe' => true,
+						'width'     => 600,
+						'height'    => 550,
+					),
+					code_snippets()->active_snippets->get_asset_url( $snippet->scope )
+				);
 
 				$scope_names = [
 					'site-css'       => __( 'Site front-end stylesheet', 'code-snippets' ),
@@ -154,15 +161,18 @@ $licensed = code_snippets()->licensing->is_licensed();
 				printf(
 					'<a href="%s" class="button button-secondary thickbox" name="%s">%s</a>',
 					esc_url( $asset_url ),
-					esc_attr( isset( $scope_names[ $snippet->scope ] ) ? $scope_names[ $snippet->scope ] : $snippet->scope ),
-					'css' === $snippet->type ?
-						esc_html__( 'View Full Stylesheet', 'code-snippets' ) :
-						esc_html__( 'View Full Script', 'code-snippets' )
+					isset( $scope_names[ $snippet->scope ] ) ? esc_attr( $scope_names[ $snippet->scope ] ) : esc_attr( $snippet->scope ),
+					esc_html(
+						'css' === $snippet->type ?
+							__( 'View Full Stylesheet', 'code-snippets' ) :
+							__( 'View Full Script', 'code-snippets' )
+					)
 				);
 
 				add_thickbox();
 			}
 
-			?></p>
+			?>
+		</p>
 	</form>
 </div>

@@ -1,7 +1,4 @@
 <?php
-
-namespace Code_Snippets;
-
 /**
  * HTML for the snippet scope selector.
  *
@@ -11,7 +8,13 @@ namespace Code_Snippets;
  * @var Edit_Menu $this
  */
 
-/** @var Snippet $snippet */
+namespace Code_Snippets;
+
+/**
+ * Snippet object.
+ *
+ * @var Snippet $snippet
+ */
 $snippet = $this->snippet;
 
 echo '<h2 class="screen-reader-text">', esc_html__( 'Scope', 'code-snippets' ), '</h2>';
@@ -88,9 +91,9 @@ if ( ! $snippet->id || 'html' === $snippet->type ) {
 			echo '<p>';
 			if ( $elementor && $block_editor ) {
 				esc_html_e( 'You can use the Code Snippets editor blocks or Elementor widgets to insert the snippet content into a post or page.', 'code-snippets' );
-			} else if ( $elementor ) {
+			} elseif ( $elementor ) {
 				esc_html_e( 'You can use the Code Snippets Elementor widgets to insert the snippet content into a post or page.', 'code-snippets' );
-			} else if ( $block_editor ) {
+			} elseif ( $block_editor ) {
 				esc_html_e( 'You can use the Code Snippets editor blocks to insert the snippet content into a post or page.', 'code-snippets' );
 			} else {
 				/* translators: %s: snippet shortcode tag */

@@ -37,43 +37,83 @@ class Block_Editor {
 		wp_register_script(
 			'code-snippets-block-editor',
 			plugins_url( 'js/min/blocks.js', $file ),
-			[
-				'wp-blocks', 'wp-block-editor', 'wp-i18n', 'wp-components', 'wp-data', 'wp-element',
-				'wp-api-fetch', 'wp-server-side-render', 'react-dom',
-			] + $prism_dep,
-			$version
+			array(
+				'wp-blocks',
+				'wp-block-editor',
+				'wp-i18n',
+				'wp-components',
+				'wp-data',
+				'wp-element',
+				'wp-api-fetch',
+				'wp-server-side-render',
+				'react-dom',
+			) + $prism_dep,
+			$version,
+			false
 		);
 		wp_set_script_translations( 'code-snippets-content-block-editor', 'code-snippets' );
 
 		wp_register_style(
 			'code-snippets-block-editor',
 			plugins_url( 'css/min/block-editor.css', $file ),
-			$prism_dep, $version
+			$prism_dep,
+			$version,
+			false
 		);
 
-		register_block_type( 'code-snippets/content', array(
-			'editor_script'   => 'code-snippets-block-editor',
-			'editor_style'    => 'code-snippets-block-editor',
-			'render_callback' => array( $this, 'render_content' ),
-			'attributes'      => array(
-				'snippet_id' => [ 'type' => 'integer', 'default' => 0 ],
-				'network'    => [ 'type' => 'boolean', 'default' => false ],
-				'php'        => [ 'type' => 'boolean', 'default' => false ],
-				'format'     => [ 'type' => 'boolean', 'default' => false ],
-				'shortcodes' => [ 'type' => 'boolean', 'default' => false ],
-				'debug'      => [ 'type' => 'boolean', 'default' => false ],
-			),
-		) );
+		register_block_type(
+			'code-snippets/content',
+			array(
+				'editor_script'   => 'code-snippets-block-editor',
+				'editor_style'    => 'code-snippets-block-editor',
+				'render_callback' => array( $this, 'render_content' ),
+				'attributes'      => array(
+					'snippet_id' => [
+						'type'    => 'integer',
+						'default' => 0,
+					],
+					'network'    => [
+						'type'    => 'boolean',
+						'default' => false,
+					],
+					'php'        => [
+						'type'    => 'boolean',
+						'default' => false,
+					],
+					'format'     => [
+						'type'    => 'boolean',
+						'default' => false,
+					],
+					'shortcodes' => [
+						'type'    => 'boolean',
+						'default' => false,
+					],
+					'debug'      => [
+						'type'    => 'boolean',
+						'default' => false,
+					],
+				),
+			)
+		);
 
-		register_block_type( 'code-snippets/source', array(
-			'editor_script'   => 'code-snippets-block-editor',
-			'editor_style'    => 'code-snippets-block-editor',
-			'render_callback' => array( $this, 'render_source' ),
-			'attributes'      => array(
-				'snippet_id' => [ 'type' => 'integer', 'default' => 0 ],
-				'network'    => [ 'type' => 'boolean', 'default' => false ],
-			),
-		) );
+		register_block_type(
+			'code-snippets/source',
+			array(
+				'editor_script'   => 'code-snippets-block-editor',
+				'editor_style'    => 'code-snippets-block-editor',
+				'render_callback' => array( $this, 'render_source' ),
+				'attributes'      => array(
+					'snippet_id' => [
+						'type'    => 'integer',
+						'default' => 0,
+					],
+					'network'    => [
+						'type'    => 'boolean',
+						'default' => false,
+					],
+				),
+			)
+		);
 	}
 
 	/**

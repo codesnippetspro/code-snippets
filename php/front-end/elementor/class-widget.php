@@ -1,17 +1,19 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\Elementor;
 
 use Elementor\Widget_Base;
 
 /**
  * Base class for building Elementor widgets.
+ *
  * @package Code_Snippets
  */
-abstract class Elementor_Widget extends Widget_Base {
+abstract class Widget extends Widget_Base {
 
 	/**
 	 * Return the section this widget belongs to.
+	 *
 	 * @return array
 	 */
 	public function get_categories() {

@@ -71,7 +71,6 @@ class Active_Snippets {
 			foreach ( $revisions as $i => $v ) {
 				$revisions[ $i ]++;
 			}
-
 		} else {
 			if ( ! isset( $revisions[ $scope ] ) ) {
 				$revisions[ $scope ] = 0;
@@ -130,8 +129,9 @@ class Active_Snippets {
 			return '';
 		}
 
-		if ( $latest_rev && $rev = $this->get_rev( $scope ) ) {
-			$url = add_query_arg( 'ver', $rev, $url );
+		if ( $latest_rev ) {
+			$rev = $this->get_rev( $scope );
+			$url = $rev ? add_query_arg( 'ver', $rev, $url ) : $url;
 		}
 
 		return $url;
@@ -142,8 +142,9 @@ class Active_Snippets {
 	 */
 	public function enqueue_css() {
 		$scope = is_admin() ? 'admin' : 'site';
+		$rev = $this->get_rev( "$scope-css" );
 
-		if ( ! $rev = $this->get_rev( "$scope-css" ) ) {
+		if ( ! $rev ) {
 			return;
 		}
 
@@ -155,21 +156,26 @@ class Active_Snippets {
 	 * Enqueue the active javascript snippets for the current page
 	 */
 	public function enqueue_js() {
+		$head_rev = $this->get_rev( 'site-head-js' );
+		$footer_rev = $this->get_rev( 'site-footer-js' );
 
-		if ( $head_rev = $this->get_rev( 'site-head-js' ) ) {
+		if ( $head_rev ) {
 			wp_enqueue_script(
 				'code-snippets-site-head',
 				$this->get_asset_url( 'site-head-js' ),
-				array(), $head_rev, false
+				array(),
+				$head_rev,
+				false
 			);
-
 		}
 
-		if ( $footer_rev = $this->get_rev( 'site-footer-js' ) ) {
+		if ( $footer_rev ) {
 			wp_enqueue_script(
 				'code-snippets-site-footer',
 				$this->get_asset_url( 'site-footer-js' ),
-				array(), $footer_rev, true
+				array(),
+				$footer_rev,
+				true
 			);
 		}
 	}
@@ -180,9 +186,9 @@ class Active_Snippets {
 	 * @param string $mime_type File MIME type used to set Content-Type header.
 	 */
 	private static function do_asset_headers( $mime_type ) {
-		$expiry = 365 * 24 * 60 * 60; // year in seconds
+		$expiry = 365 * 24 * 60 * 60; // year in seconds.
 		header( 'Content-Type: ' . $mime_type, true, 200 );
-		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expiry ) . ' GMT' );
+		header( sprintf( 'Expires: %s GMT', gmdate( 'D, d M Y H:i:s', time() + $expiry ) ) );
 	}
 
 	/**
@@ -200,26 +206,27 @@ class Active_Snippets {
 			$current_scope = is_admin() ? 'admin-css' : 'site-css';
 		} else {
 			$this->do_asset_headers( 'text/javascript' );
-			$current_scope = 'site-' . ( 'footer' === $_GET['code-snippets-js-snippets'] ? 'footer' : 'head' ) . '-js';
+			$current_scope = isset( $_GET['code-snippets-js-snippets'] ) && 'footer' === $_GET['code-snippets-js-snippets'] ? 'footer' : 'head';
+			$current_scope = "site-$current_scope-js";
 		}
 
 		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope, 'code' );
 
-		// concatenate all fetched code together into a single string
+		// Concatenate all fetched code together into a single string.
 		$code = '';
 		foreach ( $active_snippets as $snippets ) {
-			/** @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped */
+			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 			$code .= implode( "\n\n", array_column( $snippets, 'code' ) );
 		}
 
-		// minify the prepared code if the setting has been set
+		// Minify the prepared code if the setting has been set.
 		$setting = Settings\get_setting( 'general', 'minify_output' );
-		if ( is_array( $setting ) && in_array( $type, $setting ) ) {
+		if ( is_array( $setting ) && in_array( $type, $setting, true ) ) {
 			$minifier = 'css' === $type ? new Minify\CSS( $code ) : new Minify\JS( $code );
 			$code = $minifier->minify();
 		}
 
-		// output the code and exit
+		// Output the code and exit.
 		echo $code;
 		exit;
 	}

@@ -26,12 +26,14 @@ class Frontend {
 
 	/**
 	 * Class for managing integration with the Elementor plugin.
+	 *
 	 * @var Elementor
 	 */
 	protected $elementor;
 
 	/**
-	 * Class for handling the Gutenberg block..
+	 * Class for handling the Gutenberg block.
+	 *
 	 * @var Block_Editor
 	 */
 	public $block_editor;

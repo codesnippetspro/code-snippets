@@ -228,7 +228,7 @@ class Settings_Menu extends Admin_Menu {
 			update_site_option( 'code_snippets_settings', $value );
 			wp_cache_delete( Settings\CACHE_KEY );
 
-			// Add an updated notice
+			// Add an updated notice.
 			if ( ! count( get_settings_errors() ) ) {
 				add_settings_error( 'general', 'settings_updated', __( 'Settings saved.', 'code-snippets' ), 'updated' );
 			}

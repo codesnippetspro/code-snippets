@@ -340,7 +340,7 @@ class Edit_Menu extends Admin_Menu {
 		}
 
 		/* Bump CSS file version where necessary */
-		$previous_scope = isset( $_POST['current_snippet_scope'] ) ? $_POST['current_snippet_scope'] : '';
+		$previous_scope = isset( $_POST['current_snippet_scope'] ) ? sanitize_text_field( wp_unslash( $_POST['current_snippet_scope'] ) ) : '';
 		if ( $snippet->active || $was_active ) {
 			foreach ( array( 'admin-css', 'site-css', 'site-head-js', 'site-footer-js' ) as $scope ) {
 				if ( $scope === $snippet->scope || $scope === $previous_scope ) {
@@ -439,7 +439,7 @@ class Edit_Menu extends Admin_Menu {
 
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
 		       placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>"
-		       value="<?php echo esc_attr( $snippet->tags_list ); ?>"/>
+		       value="<?php echo esc_attr( $snippet->tags_list ); ?>" />
 		<?php
 	}
 
@@ -775,8 +775,12 @@ class Edit_Menu extends Admin_Menu {
 		}
 
 		if ( $snippet->is_pro && ! code_snippets()->licensing->is_licensed() ) {
-			unset( $actions['save_snippet'], $actions['save_snippet_activate'],
-				$actions['download_snippet'], $actions['export_snippet'] );
+			unset(
+				$actions['save_snippet'],
+				$actions['save_snippet_activate'],
+				$actions['download_snippet'],
+				$actions['export_snippet']
+			);
 
 			if ( isset( $actions['save_snippet_deactivate'] ) ) {
 				$actions['save_snippet_deactivate'] = __( 'Deactivate', 'code-snippets' );

@@ -6,6 +6,11 @@ use Freemius;
 use Freemius_Exception;
 use function fs_dynamic_init;
 
+/**
+ * Handles interfacing with the Freemius SDK and API.
+ *
+ * @package Code_Snippets
+ */
 class Licensing {
 
 	/**
@@ -28,7 +33,7 @@ class Licensing {
 	/**
 	 * Class constructor.
 	 *
-	 * @throws Freemius_Exception
+	 * @throws Freemius_Exception Freemius fails to initialise.
 	 */
 	public function __construct() {
 		$plugin = code_snippets();
@@ -63,48 +68,66 @@ class Licensing {
 		);
 
 		do_action( 'freemius_loaded' );
-		$this->add_filters();
 		$this->override_strings();
 	}
 
+	/**
+	 * Create the necessary constant to enable multisite support within the Freemius SDK.
+	 *
+	 * @return void
+	 */
 	private function enable_multisite_support() {
-		$constant_name = sprintf( "WP_FS__PRODUCT_%d_MULTISITE", self::PRODUCT_ID );
+		$constant_name = sprintf( 'WP_FS__PRODUCT_%d_MULTISITE', self::PRODUCT_ID );
 
 		if ( ! defined( $constant_name ) ) {
 			define( $constant_name, true );
 		}
 	}
 
+	/**
+	 * Determine whether the current site has an active license.
+	 *
+	 * @return bool
+	 */
 	public function is_licensed() {
 		return $this->sdk->can_use_premium_code();
 	}
 
+	/**
+	 * Determine whether the current site has any license, including an expired license.
+	 *
+	 * @return bool
+	 */
 	public function was_licensed() {
 		return $this->sdk->has_any_license();
 	}
 
-	public function add_filters() {
-		$this->sdk->add_filter( 'connect_message_on_update', [ $this, 'connect_message_on_update' ], 10, 6 );
-	}
-
+	/**
+	 * Override default strings used by Freemius to better integrate it with the rest of the plugin.
+	 *
+	 * @return void
+	 */
 	public function override_strings() {
 		$this->sdk->override_i18n(
 			array(
-				'yee-haw' => __( 'Success', 'code-snippets' ),
+				'yee-haw'  => __( 'Success', 'code-snippets' ),
+				'oops'     => __( 'Notice', 'code-snippets' ),
+				'woot'     => __( 'Success', 'code-snippets' ),
+				'right-on' => __( 'Thanks', 'code-snippets' ),
+				'ok'       => __( 'Okay', 'code-snippets' ),
 			)
 		);
-	}
 
-	function connect_message_on_update( $message, $user_first_name, $product_title, $user_login, $site_link, $freemius_link ) {
-		$text = __( 'Please help us improve Code Snippets! If you opt-in, some data about your usage of Code Snippets will be sent to %5$s. If you skip this, that\'s okay, Code Snippets will still work just fine.', 'code-snippets' );
-
-		return sprintf(
-			$text,
-			"<strong>$product_title</strong>",
-			"<strong>$user_login</strong>",
-			$site_link,
-			$freemius_link
+		$this->sdk->add_filter(
+			'connect_message_on_update',
+			function ( $message, $user_first_name, $product_title, $user_login, $site_link, $freemius_link ) {
+				/* translators: 1: site url, 2: Freemius link */
+				$text = __( 'Please help us improve Code Snippets! If you opt-in, some data about your usage of %1$s will be sent to %2$s. If you skip this, that\'s okay, Code Snippets will still work just fine.', 'code-snippets' );
+				return sprintf( $text, $site_link, $freemius_link );
+			},
+			10,
+			6
 		);
-	}
 
+	}
 }
