@@ -177,9 +177,10 @@ class Settings_Menu extends Admin_Menu {
 
 		foreach ( $sections as $section ) {
 			printf(
-				'<a class="nav-tab%s" data-section="%s">%s</a>',
+				'<a class="nav-tab%s" data-section="%s" href="%s">%s</a>',
 				esc_attr( $active_tab ) === $section['id'] ? ' nav-tab-active' : '',
 				esc_attr( $section['id'] ),
+				esc_url( add_query_arg( 'section', $section['id'] ) ),
 				esc_html( $section['title'] )
 			);
 		}
