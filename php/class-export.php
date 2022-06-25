@@ -68,7 +68,7 @@ class Export {
 
 		/* Set HTTP headers */
 		header( 'Content-Disposition: attachment; filename=' . sanitize_file_name( $filename ) );
-		header( sprintf( "Content-Type: %s; charset=%s", sanitize_mime_type( $mime_type ), get_bloginfo( 'charset' ) ) );
+		header( sprintf( 'Content-Type: %s; charset=%s', sanitize_mime_type( $mime_type ), get_bloginfo( 'charset' ) ) );
 	}
 
 	/**
@@ -122,6 +122,7 @@ class Export {
 		echo "<?php\n";
 
 		/** Loop through the snippets
+		 *
 		 * @var Snippet $snippet
 		 */
 		foreach ( $this->snippets_list as $snippet ) {
