@@ -191,6 +191,12 @@ class Admin {
 					esc_html__( 'Support', 'code-snippets' )
 				),
 				sprintf(
+					$format,
+					'www.facebook.com/groups/codesnippetsplugin/',
+					esc_attr__( 'Join our community on Facebook', 'code-snippets' ),
+					esc_html__( 'FB Community', 'code-snippets' )
+				),
+				sprintf(
 					'<a href="%1$s" title="%2$s" style="color: #d46f4d;">%3$s</a>',
 					'https://codesnippets.pro/',
 					esc_attr__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
