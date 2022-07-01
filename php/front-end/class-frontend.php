@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Elementor\Elementor;
+
 /**
  * This class manages the shortcodes included with the plugin
  *
