@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Cleans up data created by this plugin
  *
@@ -7,7 +6,7 @@
  * @since   2.0.0
  */
 
-namespace Code_Snippets;
+namespace Code_Snippets\Uninstall;
 
 // Ensure this plugin is actually being uninstalled.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {

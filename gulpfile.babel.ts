@@ -76,7 +76,7 @@ export const js: TaskFunction = series(jslint, () =>
 		.pipe(sourcemaps.write('.'))
 		.pipe(dest('js/min')))
 
-export const i18n = parallel([
+export const i18n: TaskFunction = parallel([
 	() => src(src_files.php)
 		.pipe(makepot({
 			domain: text_domain,
