@@ -61,6 +61,7 @@ class Licensing {
 					'slug'        => $plugin->get_menu_slug(),
 					'contact'     => false,
 					'support'     => false,
+					'pricing'     => false,
 					'affiliation' => false,
 					'network'     => true,
 				),
@@ -111,6 +112,20 @@ class Licensing {
 	 */
 	public function register_hooks() {
 		$this->sdk->add_action( 'after_uninstall', [ $this, 'uninstall_hook' ] );
+		$this->sdk->add_filter( 'is_submenu_visible', [ $this, 'is_submenu_visible' ], 10, 2 );
+
+	}
+
+	/**
+	 * Control whether a Freemius submenu is visible.
+	 *
+	 * @param bool   $is_visible Whether the submenu is visible.
+	 * @param string $submenu_id Submenu ID.
+	 *
+	 * @return bool
+	 */
+	public function is_submenu_visible( $is_visible, $submenu_id ) {
+		return 'account' === $submenu_id ? $is_visible : false;
 	}
 
 	/**
