@@ -1,4 +1,4 @@
-import { SnippetType, window } from '../types';
+import { SnippetType } from '../types';
 import { EditorConfiguration } from 'codemirror';
 
 (editor => {

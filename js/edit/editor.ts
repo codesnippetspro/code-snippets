@@ -1,6 +1,5 @@
-import '../editor-lib';
 import 'codemirror-colorpicker';
-import { window } from '../types'
+import '../editor-lib';
 
 window.code_snippets_editor = (({ codeEditor }) => {
 	const textarea = document.getElementById('snippet_code');

@@ -1,5 +1,5 @@
 import '../editor-lib';
-import { EditorOption, window } from '../types';
+import { EditorOption } from '../types';
 
 const { codeEditor } = window.wp;
 const editor_settings: EditorOption[] = window.code_snippets_editor_settings;

@@ -1,5 +1,3 @@
-import { window } from '../types'
-
 const page = document.querySelector('.wrap');
 const tabs_wrapper = document.getElementById('settings-sections-tabs');
 const http_referer = document.querySelector('input[name=_wp_http_referer]') as HTMLInputElement;
