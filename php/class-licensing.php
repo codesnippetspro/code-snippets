@@ -144,7 +144,7 @@ class Licensing {
 	 */
 	public function uninstall_hook() {
 		require_once __DIR__ . '/uninstall.php';
-		uninstall_plugin();
+		Uninstall\uninstall_plugin();
 	}
 
 	/**

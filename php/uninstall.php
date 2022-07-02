@@ -5,7 +5,7 @@
  * @package Code_Snippets
  */
 
-namespace Code_Snippets;
+namespace Code_Snippets\Uninstall;
 
 /**
  * Determine whether the option for allowing a complete uninstallation is enabled.

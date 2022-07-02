@@ -294,18 +294,3 @@ __New in Pro__
 **[The full changelog is available on GitHub](https://github.com/sheabunge/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
-
-= 3.1.1 =
-Fixed download snippets feature.
-
-= 3.1.0 =
-Comprehensive persistent object caching support.
-
-= 2.14.2 =
-New color picker and code validator improvements.
-
-= 2.14.0 =
-Security update, last modified dates, and other improvements.
-
-= 2.13.1 =
-Fixes for single-use snippets and French translation.
