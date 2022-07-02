@@ -1,4 +1,5 @@
 import * as tinymce from 'tinymce';
+import { Editor } from 'tinymce';
 
 interface SourceShortcodeOps {
 	id: string;
@@ -12,7 +13,7 @@ interface ContentShortcodeOps {
 	shortcodes: boolean;
 }
 
-interface Editor extends tinymce.Editor {
+interface WordPressEditor extends Editor {
 	getLang: (s: string) => string | Record<string, string>;
 }
 
@@ -22,22 +23,22 @@ const convertToValues = (array: Record<string, string>) =>
 		value: key
 	}));
 
-const insertContentMenu = (editor: Editor, ed: Editor) => ({
-	text: ed.getLang('code_snippets.insert_source_menu'),
+const insertContentMenu = (editor: Editor, activeEditor: WordPressEditor) => ({
+	text: activeEditor.getLang('code_snippets.insert_source_menu'),
 	onclick: () => {
 		editor.windowManager.open({
-			title: ed.getLang('code_snippets.insert_source_title'),
+			title: activeEditor.getLang('code_snippets.insert_source_title'),
 			body: [
 				{
 					type: 'listbox',
 					name: 'id',
-					label: ed.getLang('code_snippets.snippet_label'),
-					values: convertToValues(ed.getLang('code_snippets.all_snippets') as Record<string, string>),
+					label: activeEditor.getLang('code_snippets.snippet_label'),
+					values: convertToValues(activeEditor.getLang('code_snippets.all_snippets') as Record<string, string>),
 				},
 				{
 					type: 'checkbox',
 					name: 'line_numbers',
-					label: ed.getLang('code_snippets.show_line_numbers_label'),
+					label: activeEditor.getLang('code_snippets.show_line_numbers_label'),
 				}
 			],
 			onsubmit: (event: { data: SourceShortcodeOps }) => {
@@ -56,7 +57,7 @@ const insertContentMenu = (editor: Editor, ed: Editor) => ({
 	}
 });
 
-const insertSourceMenu = (editor: Editor, ed: Editor) => ({
+const insertSourceMenu = (editor: Editor, ed: WordPressEditor) => ({
 	text: ed.getLang('code_snippets.insert_content_menu'),
 	onclick: () => {
 		editor.windowManager.open({
@@ -102,12 +103,12 @@ const insertSourceMenu = (editor: Editor, ed: Editor) => ({
 	}
 });
 
-tinymce.PluginManager.add('code_snippets', (editor: Editor) => {
-	const ed = tinymce.activeEditor as Editor;
+tinymce.PluginManager.add('code_snippets', editor => {
+	const activeEditor = tinymce.activeEditor as WordPressEditor;
 
 	editor.addButton('code_snippets', {
 		icon: 'code',
-		menu: [insertContentMenu(editor, ed), insertSourceMenu(editor, ed)],
+		menu: [insertContentMenu(editor, activeEditor), insertSourceMenu(editor, activeEditor)],
 		type: 'menubutton'
 	});
 });

@@ -1,29 +1,35 @@
 import '../editor-lib';
+import { window } from '../types'
 
 window.code_snippets_editor = (({ codeEditor }) => {
-	const editor = codeEditor.initialize(document.getElementById('snippet_code'));
+	const textarea = document.getElementById('snippet_code');
+	if (!textarea) {
+		console.error('Could not initialise CodeMirror on textarea.', textarea)
+		return
+	}
+	const editor = codeEditor.initialize(textarea);
 
 	const extraKeys = editor.codemirror.getOption('extraKeys');
 	const controlKey = window.navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl';
-	const save_snippet_cb = () => document.getElementById('save_snippet').click();
+	const saveSnippet = () => document.getElementById('save_snippet')?.click();
 
 	editor.codemirror.setOption('extraKeys', {
 		...'object' === typeof extraKeys ? extraKeys : {},
-		[`${controlKey}-S`]: save_snippet_cb,
-		[`${controlKey}-Enter`]: save_snippet_cb,
+		[`${controlKey}-S`]: saveSnippet,
+		[`${controlKey}-Enter`]: saveSnippet,
 	});
 
 	return editor;
 })(window.wp);
 
 if (window.navigator.platform.match('Mac')) {
-	document.querySelector('.editor-help-text').className += ' platform-mac';
+	const helpText = document.querySelector('.editor-help-text')
+	if (helpText) {
+		helpText.className += ' platform-mac';
+	}
 }
 
-const dir_control = document.getElementById('snippet-code-direction') as HTMLSelectElement;
-
-if (dir_control) {
-	dir_control.addEventListener('change', () => {
-		window.code_snippets_editor.codemirror.setOption('direction', 'rtl' === dir_control.value ? 'rtl' : 'ltr');
-	});
-}
+const directionControl = document.getElementById('snippet-code-direction') as HTMLSelectElement | null;
+directionControl?.addEventListener('change', () => {
+	window.code_snippets_editor?.codemirror.setOption('direction', 'rtl' === directionControl.value ? 'rtl' : 'ltr');
+});

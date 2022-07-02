@@ -1,7 +1,16 @@
 {
   "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "downlevelIteration": true,
-  }
+    "downlevelIteration": true
+  },
+  "include": [
+    "js/**"
+  ],
+  "exclude": [
+    "js/min/**",
+    "node_modules"
+  ]
 }
