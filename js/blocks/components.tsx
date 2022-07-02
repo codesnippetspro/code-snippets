@@ -16,23 +16,19 @@ export interface SnippetSelectGroup {
 
 export interface SnippetSelectProps {
 	options: OptionsOrGroups<SnippetSelectOption, SnippetSelectGroup>
-	attributes: {
-		snippet_id: number
-	}
-	setAttributes: (attributes: SnippetSelectProps['attributes']) => void
+	value?: SnippetSelectOption
+	setAttributes: (attributes: { snippet_id: number }) => void
 }
 
-const getSelectOption = (optionOrGroup: SnippetSelectOption | SnippetSelectGroup): SnippetSelectOption =>
-	'options' in optionOrGroup ? getSelectOption(optionOrGroup) : optionOrGroup
-
-export const SnippetSelect: React.FC<SnippetSelectProps> = ({ options, attributes, setAttributes }) =>
+export const SnippetSelect: React.FC<SnippetSelectProps> = ({ options, value, setAttributes }) =>
 	<Select
 		name="snippet-select"
 		className="code-snippets-large-select"
 		options={options}
-		value={options.find(option => getSelectOption(option).value === attributes.snippet_id)}
+		value={value}
+		onChange={option => setAttributes({ snippet_id: option && 'value' in option ? option.value : 0 })}
 		placeholder={__('Select a snippet to insert…', 'code-snippets')}
-		onChange={option => setAttributes({ snippet_id: option ? getSelectOption(option).value : 0 })} />
+	/>
 
 
 export interface ResetButtonProps {

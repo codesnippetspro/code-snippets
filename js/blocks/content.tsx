@@ -73,7 +73,11 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 					<Placeholder className="code-snippets-content-block" icon="shortcode"
 					             label={__('Content Snippet', 'code-snippets')}>
 						<form>
-							<SnippetSelect options={options} attributes={attributes} setAttributes={setAttributes} />
+							<SnippetSelect
+								options={options}
+								value={options.find(option => option.value === attributes.snippet_id)}
+								setAttributes={setAttributes}
+							/>
 						</form>
 					</Placeholder> :
 					<ServerSideRender block="code-snippets/content" attributes={{ debug: true, ...attributes }} />}

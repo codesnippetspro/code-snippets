@@ -45,6 +45,7 @@ export const SourceBlock: BlockConfiguration<BlockAttributes> = {
 	edit: ({ attributes, setAttributes }) => {
 		const snippets = selectSnippetsData()
 		const options = buildOptions(snippets)
+		const initialValue = snippets.find(snippet => snippet.id === attributes.snippet_id)
 
 		return (
 			<>
@@ -56,8 +57,9 @@ export const SourceBlock: BlockConfiguration<BlockAttributes> = {
 						<form>
 							<SnippetSelect
 								options={options}
-								attributes={attributes}
-								setAttributes={setAttributes} />
+								value={initialValue ? { value: initialValue.id, label: initialValue.name } : undefined}
+								setAttributes={setAttributes}
+							/>
 						</form>
 					</Placeholder> :
 					<ServerSideRender block="code-snippets/source" attributes={attributes} />}
