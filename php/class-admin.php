@@ -186,13 +186,13 @@ class Admin {
 				),
 				sprintf(
 					$format,
-					'https://codesnippets.pro/support/',
+					'https://help.codesnippets.pro/',
 					esc_attr__( 'Find out how to get support with Code Snippets', 'code-snippets' ),
 					esc_html__( 'Support', 'code-snippets' )
 				),
 				sprintf(
 					$format,
-					'www.facebook.com/groups/codesnippetsplugin/',
+					'https://www.facebook.com/groups/codesnippetsplugin/',
 					esc_attr__( 'Join our community on Facebook', 'code-snippets' ),
 					esc_html__( 'FB Community', 'code-snippets' )
 				),
