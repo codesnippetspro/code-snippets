@@ -1,6 +1,6 @@
 import '../editor-lib';
 
-window.code_snippets_editor = (({codeEditor}) => {
+window.code_snippets_editor = (({ codeEditor }) => {
 	const editor = codeEditor.initialize(document.getElementById('snippet_code'));
 
 	const extraKeys = editor.codemirror.getOption('extraKeys');

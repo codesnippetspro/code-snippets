@@ -57,7 +57,7 @@ const update_snippet = (field: string, row_element: Element, snippet: Partial<Sn
  */
 const update_snippet_priority = (element: HTMLInputElement) => {
 	const row = element.parentElement.parentElement;
-	const snippet: Partial<Snippet> = {priority: parseFloat(element.value)};
+	const snippet: Partial<Snippet> = { priority: parseFloat(element.value) };
 	update_snippet('priority', row, snippet);
 };
 
@@ -94,7 +94,7 @@ const toggle_snippet_active = (link: HTMLAnchorElement, event: Event) => {
 	event.preventDefault();
 
 	const activating = 'inactive-snippet' === match[0];
-	const snippet: Partial<Snippet> = {active: activating};
+	const snippet: Partial<Snippet> = { active: activating };
 
 	update_snippet('active', row, snippet, response => {
 		const button = row.querySelector('.snippet-activation-switch') as HTMLAnchorElement;
