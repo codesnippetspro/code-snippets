@@ -2,12 +2,13 @@ import React from 'react';
 import { Options } from 'react-select';
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, Placeholder, ToggleControl } from '@wordpress/components';
+import { PanelBody, ToggleControl } from '@wordpress/components';
 import { BlockConfiguration } from '@wordpress/blocks';
-import ServerSideRender from '@wordpress/server-side-render';
-import { ResetButton, SnippetSelect, SnippetSelectOption } from './components';
+import { SnippetSelectOption, SnippetSelector } from './components';
 import { SnippetData } from '../types';
 import { selectSnippetsData } from './store';
+
+export const CONTENT_BLOCK = 'code-snippets/content'
 
 const buildOptions = (snippets: SnippetData[]): Options<SnippetSelectOption> =>
 	snippets
@@ -67,20 +68,15 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 					</PanelBody>
 				</InspectorControls>}
 
-				<ResetButton onClick={() => setAttributes({ snippet_id: 0 })} />
-
-				{0 === attributes.snippet_id ?
-					<Placeholder className="code-snippets-content-block" icon="shortcode"
-					             label={__('Content Snippet', 'code-snippets')}>
-						<form>
-							<SnippetSelect
-								options={options}
-								value={options.find(option => option.value === attributes.snippet_id)}
-								setAttributes={setAttributes}
-							/>
-						</form>
-					</Placeholder> :
-					<ServerSideRender block="code-snippets/content" attributes={{ debug: true, ...attributes }} />}
+				<SnippetSelector
+					block={CONTENT_BLOCK}
+					label={__('Content Snippet', 'code-snippets')}
+					className="code-snippets-content-block"
+					icon="shortcode"
+					options={options}
+					attributes={{ debug: true, ...attributes }}
+					setAttributes={setAttributes}
+				/>
 			</>
 		)
 	},

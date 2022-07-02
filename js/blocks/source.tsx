@@ -1,11 +1,11 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { Placeholder } from '@wordpress/components';
 import { BlockConfiguration } from '@wordpress/blocks';
-import ServerSideRender from '@wordpress/server-side-render';
 import { SnippetData } from '../types';
-import { ResetButton, SnippetSelect, SnippetSelectGroup } from './components';
+import { SnippetSelectGroup, SnippetSelector } from './components';
 import { selectSnippetsData } from './store';
+
+export const SOURCE_BLOCK = 'code-snippets/source'
 
 const buildOptions = (snippets: SnippetData[]): SnippetSelectGroup[] => {
 	const categories: Record<string, SnippetSelectGroup> = {
@@ -27,12 +27,12 @@ const buildOptions = (snippets: SnippetData[]): SnippetSelectGroup[] => {
 	return Object.values(categories);
 };
 
-interface BlockAttributes {
+interface SourceBlockAttributes {
 	snippet_id: number,
 	network: boolean
 }
 
-export const SourceBlock: BlockConfiguration<BlockAttributes> = {
+export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 	title: __('Snippet Source Code', 'code-snippet'),
 	description: __('Display the source code of a snippet in the post.', 'code-snippet'),
 	category: 'code-snippets',
@@ -45,26 +45,18 @@ export const SourceBlock: BlockConfiguration<BlockAttributes> = {
 	edit: ({ attributes, setAttributes }) => {
 		const snippets = selectSnippetsData()
 		const options = buildOptions(snippets)
-		const initialValue = snippets.find(snippet => snippet.id === attributes.snippet_id)
 
 		return (
-			<>
-				<ResetButton onClick={() => setAttributes({ snippet_id: 0 })} />
-
-				{0 === attributes.snippet_id ?
-					<Placeholder className="code-snippets-source-block" icon="shortcode"
-					             label={__('Snippet Source Code', 'code-snippets')}>
-						<form>
-							<SnippetSelect
-								options={options}
-								value={initialValue ? { value: initialValue.id, label: initialValue.name } : undefined}
-								setAttributes={setAttributes}
-							/>
-						</form>
-					</Placeholder> :
-					<ServerSideRender block="code-snippets/source" attributes={attributes} />}
-			</>
-		);
+			<SnippetSelector
+				block={SOURCE_BLOCK}
+				icon="shortcode"
+				label={__('Snippet Source Code', 'code-snippets')}
+				className="code-snippets-source-block"
+				options={options}
+				attributes={attributes}
+				setAttributes={setAttributes}
+			/>
+		)
 	},
 	save: () => null,
 };
