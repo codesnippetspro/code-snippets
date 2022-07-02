@@ -30,7 +30,7 @@ class Block_Editor {
 
 		$prism_dep = [];
 		if ( ! Settings\get_setting( 'general', 'disable_prism' ) ) {
-			code_snippets()->frontend->register_prism_assets();
+			Frontend::register_prism_assets();
 			$prism_dep = [ Frontend::PRISM_HANDLE ];
 		}
 
@@ -103,13 +103,17 @@ class Block_Editor {
 				'editor_style'    => 'code-snippets-block-editor',
 				'render_callback' => array( $this, 'render_source' ),
 				'attributes'      => array(
-					'snippet_id' => [
+					'snippet_id'   => [
 						'type'    => 'integer',
 						'default' => 0,
 					],
-					'network'    => [
+					'network'      => [
 						'type'    => 'boolean',
 						'default' => false,
+					],
+					'line_numbers' => [
+						'type'    => 'boolean',
+						'default' => true,
 					],
 				),
 			)

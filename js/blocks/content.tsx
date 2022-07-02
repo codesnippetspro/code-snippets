@@ -51,7 +51,7 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 
 		return (
 			<>
-				{<InspectorControls>
+				<InspectorControls>
 					<PanelBody title={__('Processing Options', 'code-snippets')}>
 						<ToggleControl
 							label={__('Run PHP code', 'code-snippets')}
@@ -66,7 +66,7 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 							checked={attributes.shortcodes}
 							onChange={() => toggleAttribute('shortcodes')} />
 					</PanelBody>
-				</InspectorControls>}
+				</InspectorControls>
 
 				<SnippetSelector
 					block={CONTENT_BLOCK}

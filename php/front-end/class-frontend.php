@@ -135,7 +135,7 @@ class Frontend {
 			$plugin->version
 		);
 
-		wp_enqueue_script(
+		wp_register_script(
 			self::PRISM_HANDLE,
 			plugins_url( 'js/min/prism.js', $plugin->file ),
 			array(),

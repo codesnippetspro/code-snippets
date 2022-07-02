@@ -4,6 +4,8 @@ import { BlockConfiguration } from '@wordpress/blocks';
 import { SnippetData } from '../types';
 import { SnippetSelectGroup, SnippetSelector } from './components';
 import { selectSnippetsData } from './store';
+import { PanelBody, ToggleControl } from '@wordpress/components';
+import { InspectorControls } from '@wordpress/block-editor';
 
 export const SOURCE_BLOCK = 'code-snippets/source'
 
@@ -28,8 +30,9 @@ const buildOptions = (snippets: SnippetData[]): SnippetSelectGroup[] => {
 };
 
 interface SourceBlockAttributes {
-	snippet_id: number,
+	snippet_id: number
 	network: boolean
+	line_numbers: boolean
 }
 
 export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
@@ -41,21 +44,33 @@ export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 	attributes: {
 		snippet_id: { type: 'number', default: 0 },
 		network: { type: 'boolean', default: false },
+		line_numbers: { type: 'boolean', default: true }
 	},
 	edit: ({ attributes, setAttributes }) => {
 		const snippets = selectSnippetsData()
 		const options = buildOptions(snippets)
 
 		return (
-			<SnippetSelector
-				block={SOURCE_BLOCK}
-				icon="shortcode"
-				label={__('Snippet Source Code', 'code-snippets')}
-				className="code-snippets-source-block"
-				options={options}
-				attributes={attributes}
-				setAttributes={setAttributes}
-			/>
+			<>
+				<InspectorControls>
+					<PanelBody title={__('Options', 'code-snippets')}>
+						<ToggleControl
+							label={__('Show line numbers', 'code-snippets')}
+							checked={attributes.line_numbers}
+							onChange={() => setAttributes({ ...attributes, line_numbers: !attributes.line_numbers })} />
+					</PanelBody>
+				</InspectorControls>
+
+				<SnippetSelector
+					block={SOURCE_BLOCK}
+					icon="shortcode"
+					label={__('Snippet Source Code', 'code-snippets')}
+					className="code-snippets-source-block"
+					options={options}
+					attributes={attributes}
+					setAttributes={setAttributes}
+				/>
+			</>
 		)
 	},
 	save: () => null,
