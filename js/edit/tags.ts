@@ -1,5 +1,4 @@
 import tagger from '@jcubic/tagger';
-import { window } from '../types'
 
 (tags => {
 	const tags_field = document.getElementById('snippet_tags');

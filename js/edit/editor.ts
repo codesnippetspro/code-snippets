@@ -1,5 +1,4 @@
 import '../editor-lib';
-import { window } from '../types'
 
 window.code_snippets_editor = (({ codeEditor }) => {
 	const textarea = document.getElementById('snippet_code');

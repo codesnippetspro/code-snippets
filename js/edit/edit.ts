@@ -1,7 +1,6 @@
 import './editor';
 import './tabs';
 import './shortcode';
-import { window } from '../types';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const form = document.getElementById('snippet-form');
