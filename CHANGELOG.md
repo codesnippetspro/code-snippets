@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.1.2 (3 July 2022)
+* Improvements to block editor scripts. (PRO)
+
 ## 3.1.1 (13 Jun 2022)
 * Fixed: Download snippets feature not including snippet content.
 * Fixed: Alignment of 'opens externally' dashicon.
