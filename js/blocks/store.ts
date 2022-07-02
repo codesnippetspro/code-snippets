@@ -1,5 +1,8 @@
-import { registerStore } from '@wordpress/data';
+import { registerStore, select, StoreConfig } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
+import { SnippetData } from '../types';
+
+export const STORE_KEY = 'code-snippets/snippets-data'
 
 const TYPES = {
 	SET: 'SET_SNIPPETS_DATA',
@@ -11,7 +14,11 @@ const DEFAULT_STATE = {
 	loading: true,
 }
 
-const actions = {
+interface Store {
+	snippetsData: SnippetData[]
+}
+
+const actions: StoreConfig<Store>['actions'] = {
 	setSnippetsData: snippetsData => ({
 		type: TYPES.SET,
 		snippetsData,
@@ -20,9 +27,9 @@ const actions = {
 		type: TYPES.RECEIVE,
 		path,
 	}),
-};
+}
 
-registerStore('code-snippets/snippets-data', {
+const config: StoreConfig<Store> = {
 	reducer: (state = DEFAULT_STATE, action) => {
 		if (TYPES.SET === action.type) {
 			const { snippetsData } = action
@@ -39,8 +46,15 @@ registerStore('code-snippets/snippets-data', {
 	},
 	resolvers: {
 		receiveSnippetsData: function * () {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
 			const snippetsData = yield actions.receiveSnippetsData('/code-snippets/v1/snippets-info/');
 			return actions.setSnippetsData(snippetsData);
 		},
 	},
-});
+}
+
+registerStore(STORE_KEY, config);
+
+export const selectSnippetsData = (): SnippetData[] =>
+	select(STORE_KEY).receiveSnippetsData()

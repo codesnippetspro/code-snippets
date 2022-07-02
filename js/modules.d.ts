@@ -1,3 +1,18 @@
+declare module '@wordpress/server-side-render' {
+	interface Props {
+		attributes: Record<string, unknown>
+		block: string
+		className?: string
+		httpMethod?: 'GET' | 'POST'
+		urlQueryArgs?: Record<string, unknown>
+		EmptyResponsePlaceholder?: React.FC<Props>
+		ErrorResponsePlaceholder?: React.FC<Props>
+		LoadingResponsePlaceholder?: React.FC<Props>
+	}
+	const ServerSideRender: React.FC<Props>
+	export default ServerSideRender
+}
+
 declare module 'gulp-archiver' {
 	import { ThroughStream } from 'through';
 	import { ArchiverOptions } from 'archiver';
