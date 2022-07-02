@@ -68,6 +68,8 @@ class Licensing {
 		);
 
 		do_action( 'freemius_loaded' );
+
+		$this->register_hooks();
 		$this->override_strings();
 	}
 
@@ -100,6 +102,25 @@ class Licensing {
 	 */
 	public function was_licensed() {
 		return $this->sdk->has_any_license();
+	}
+
+	/**
+	 * Register hooks with Freemius.
+	 *
+	 * @return void
+	 */
+	public function register_hooks() {
+		$this->sdk->add_action( 'after_uninstall', [ $this, 'uninstall_hook' ] );
+	}
+
+	/**
+	 * Clean up data when the plugin is uninstalled.
+	 *
+	 * @return void
+	 */
+	public function uninstall_hook() {
+		require_once __DIR__ . '/uninstall.php';
+		uninstall_plugin();
 	}
 
 	/**
