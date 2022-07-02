@@ -1,4 +1,4 @@
-import {registerStore} from '@wordpress/data';
+import { registerStore } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 
 const actions = {
@@ -17,22 +17,22 @@ const actions = {
 };
 
 registerStore('code-snippets/snippets-data', {
-	reducer(state = {snippetsData: {}}, action) {
+	reducer(state = { snippetsData: {} }, action) {
 		if ('SET_SNIPPETS_DATA' === action.type) {
-			return {...state, snippetsData: action.snippetsData};
+			return { ...state, snippetsData: action.snippetsData };
 		}
 		return state;
 	},
 	actions,
 	selectors: {
 		receiveSnippetsData(state) {
-			const {snippetsData} = state;
+			const { snippetsData } = state;
 			return snippetsData;
 		},
 	},
 	controls: {
 		RECEIVE_SNIPPETS_DATA(action) {
-			return apiFetch({path: action.path});
+			return apiFetch({ path: action.path });
 		},
 	},
 	resolvers: {
