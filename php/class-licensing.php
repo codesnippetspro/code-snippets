@@ -113,7 +113,16 @@ class Licensing {
 	public function register_hooks() {
 		$this->sdk->add_action( 'after_uninstall', [ $this, 'uninstall_hook' ] );
 		$this->sdk->add_filter( 'is_submenu_visible', [ $this, 'is_submenu_visible' ], 10, 2 );
+		$this->sdk->add_filter( 'plugin_icon', [ $this, 'plugin_icon' ] );
+	}
 
+	/**
+	 * Get the URL to the plugin icon.
+	 *
+	 * @return string
+	 */
+	public function plugin_icon() {
+		return dirname( CODE_SNIPPETS_FILE ) . '/css/font/icon.svg';
 	}
 
 	/**
