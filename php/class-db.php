@@ -172,10 +172,10 @@ class DB {
 		/* Create the database table */
 		$sql = "CREATE TABLE $table_name (
 				id          BIGINT(20)  NOT NULL AUTO_INCREMENT,
-				name        TINYTEXT    NOT NULL DEFAULT '',
-				description TEXT        NOT NULL DEFAULT '',
-				code        LONGTEXT    NOT NULL DEFAULT '',
-				tags        LONGTEXT    NOT NULL DEFAULT '',
+				name        TINYTEXT    NOT NULL,
+				description TEXT        NOT NULL,
+				code        LONGTEXT    NOT NULL,
+				tags        LONGTEXT    NOT NULL,
 				scope       VARCHAR(15) NOT NULL DEFAULT 'global',
 				priority    SMALLINT    NOT NULL DEFAULT 10,
 				active      TINYINT(1)  NOT NULL DEFAULT 0,

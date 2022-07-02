@@ -14,8 +14,9 @@ h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
 	margin-left: 3px;
 }
 
-.nav-tab span {
-	vertical-align: text-bottom;
+.nav-tab span,
+.nav-tab .badge {
+	vertical-align: middle;
 }
 
 $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-active);
@@ -36,4 +37,5 @@ $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-
 .go-pro-button .badge {
 	color: #ce0000;
 	border-color: #ce0000;
+	margin-left: 1px;
 }
