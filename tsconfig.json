@@ -1,8 +1,20 @@
 {
   "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
     "resolveJsonModule": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
     "jsx": "react"
-  }
+  },
+  "include": [
+    "js",
+    ".eslintrc.js",
+    "gulpfile.babel.ts"
+  ],
+  "exclude": [
+    "js/min",
+    "node_modules"
+  ]
 }

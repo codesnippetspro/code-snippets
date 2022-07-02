@@ -8,7 +8,9 @@ module.exports = {
 	],
 	parserOptions: {
 		ecmaVersion: 9,
-		sourceType: 'module'
+		sourceType: 'module',
+		tsconfigRootDir: __dirname,
+		project: ['./tsconfig.json']
 	},
 	env: {
 		browser: true,
