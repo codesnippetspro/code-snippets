@@ -3,14 +3,17 @@
     "strict": true,
     "noImplicitAny": true,
     "resolveJsonModule": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true
   },
   "include": [
-    "js/**"
+    "js",
+    ".eslintrc.js",
+    "gulpfile.babel.ts"
   ],
   "exclude": [
-    "js/min/**",
+    "js/min",
     "node_modules"
   ]
 }

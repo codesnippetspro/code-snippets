@@ -1,7 +1,7 @@
 import * as path from 'path';
-import * as webpack from 'webpack';
+import { DefinePlugin, Configuration } from 'webpack';
 
-const config: webpack.Configuration = {
+export const config: Configuration = {
 	mode: 'production',
 	entry: {
 		manage: './js/manage.ts',
@@ -51,7 +51,7 @@ const config: webpack.Configuration = {
 		}]
 	},
 	plugins: [
-		new webpack.DefinePlugin({
+		new DefinePlugin({
 			'process.arch': JSON.stringify('x64')
 		})
 	]
