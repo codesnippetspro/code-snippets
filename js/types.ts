@@ -48,6 +48,13 @@ export interface Snippet {
 	type: SnippetType;
 }
 
+export interface SnippetData {
+	id: number
+	name: string
+	type: SnippetType
+	active: boolean
+}
+
 declare global {
 	interface Window {
 		pagenow: string;

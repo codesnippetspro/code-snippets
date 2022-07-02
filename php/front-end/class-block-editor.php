@@ -18,7 +18,7 @@ class Block_Editor {
 		}
 
 		add_action( 'init', array( $this, 'init' ) );
-		add_filter( 'block_categories', array( $this, 'block_categories' ) );
+		add_filter( 'block_categories_all', array( $this, 'block_categories' ) );
 	}
 
 	/**

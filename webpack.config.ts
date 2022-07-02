@@ -16,7 +16,7 @@ const config: webpack.Configuration = {
 		},
 		mce: './js/mce.ts',
 		prism: './js/prism.ts',
-		blocks: './js/blocks/blocks.tsx',
+		blocks: './js/blocks/blocks.ts',
 		elementor: './js/elementor.ts',
 		editor: './js/editor-lib.ts'
 	},

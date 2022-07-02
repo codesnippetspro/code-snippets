@@ -188,7 +188,7 @@ class Frontend {
 
 		// Render the source code if this is not a shortcode snippet.
 		if ( 'content' !== $snippet->scope ) {
-			return $snippet->id ? $this->render_snippet_source( $snippet ) : '';
+			return $snippet->id ? $this->render_snippet_source( $snippet ) : $this->invalid_id_warning( $snippet->id );
 		}
 
 		// If the snippet is inactive, either display a message or render nothing.
@@ -250,12 +250,7 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	private function render_snippet_source( Snippet $snippet, $atts = [] ) {
-		if ( ! trim( $snippet->code ) ) {
-			return '';
-		}
-
 		$class = 'language-' . $snippet->type;
-
 		$toggles = [ 'line_numbers' ];
 
 		foreach ( $toggles as $toggle ) {
@@ -264,11 +259,14 @@ class Frontend {
 			}
 		}
 
-		return sprintf(
-			'<pre data-line="%s"><code class="%s">%s</code></pre>',
-			esc_attr( $atts['highlight_lines'] ),
-			$class,
-			esc_html( $snippet->code )
+		return print_r(
+			sprintf(
+				'<pre data-line="%s"><code class="%s">%s</code></pre>',
+				esc_attr( $atts['highlight_lines'] ),
+				$class,
+				esc_html( $snippet->code )
+			),
+			true
 		);
 	}
 
@@ -280,7 +278,6 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	public function render_source_shortcode( $atts ) {
-
 		$atts = shortcode_atts(
 			[
 				'id'              => 0,

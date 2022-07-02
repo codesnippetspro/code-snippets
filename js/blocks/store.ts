@@ -1,42 +1,44 @@
 import { registerStore } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 
+const TYPES = {
+	SET: 'SET_SNIPPETS_DATA',
+	RECEIVE: 'RECEIVE_SNIPPETS_DATA'
+}
+
+const DEFAULT_STATE = {
+	snippetsData: [],
+	loading: true,
+}
+
 const actions = {
-	setSnippetsData(snippetsData) {
-		return {
-			type: 'SET_SNIPPETS_DATA',
-			snippetsData,
-		};
-	},
-	receiveSnippetsData(path) {
-		return {
-			type: 'RECEIVE_SNIPPETS_DATA',
-			path,
-		};
-	},
+	setSnippetsData: snippetsData => ({
+		type: TYPES.SET,
+		snippetsData,
+	}),
+	receiveSnippetsData: path => ({
+		type: TYPES.RECEIVE,
+		path,
+	}),
 };
 
 registerStore('code-snippets/snippets-data', {
-	reducer(state = { snippetsData: {} }, action) {
-		if ('SET_SNIPPETS_DATA' === action.type) {
-			return { ...state, snippetsData: action.snippetsData };
+	reducer: (state = DEFAULT_STATE, action) => {
+		if (TYPES.SET === action.type) {
+			const { snippetsData } = action
+			return { ...state, snippetsData, loading: false };
 		}
 		return state;
 	},
 	actions,
 	selectors: {
-		receiveSnippetsData(state) {
-			const { snippetsData } = state;
-			return snippetsData;
-		},
+		receiveSnippetsData: ({ snippetsData }) => snippetsData,
 	},
 	controls: {
-		RECEIVE_SNIPPETS_DATA(action) {
-			return apiFetch({ path: action.path });
-		},
+		[TYPES.RECEIVE]: action => apiFetch({ path: action.path }),
 	},
 	resolvers: {
-		* receiveSnippetsData() {
+		receiveSnippetsData: function * () {
 			const snippetsData = yield actions.receiveSnippetsData('/code-snippets/v1/snippets-info/');
 			return actions.setSnippetsData(snippetsData);
 		},
