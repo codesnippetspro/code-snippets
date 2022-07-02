@@ -1,10 +1,14 @@
 /**
- * The following styles get applied inside the editor only.
+ * The following styles get applied inside the block editor only.
  */
 
 .code-snippets-large-select {
 	width: 100%;
 	margin-top: 1em;
+
+	input[type="text"]:focus {
+		box-shadow: none;
+	}
 }
 
 .code-snippets-content-block {
