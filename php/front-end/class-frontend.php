@@ -116,7 +116,7 @@ class Frontend {
 			$plugin->version
 		);
 
-		wp_enqueue_script(
+		wp_register_script(
 			self::PRISM_HANDLE,
 			plugins_url( 'js/min/prism.js', $plugin->file ),
 			array(),
@@ -232,21 +232,25 @@ class Frontend {
 	 */
 	private function render_snippet_source( Snippet $snippet, $atts = [] ) {
 		$atts = array_merge( [ 'line_numbers' => false ], $atts );
+		$language = 'css' === $snippet->type ? 'css' : ( 'js' === $snippet->type ? 'js' : 'php' );
 
-		if ( ! trim( $snippet->code ) ) {
-			return '';
-		}
+		$class = "language-$language" . ( $atts['line_numbers'] ? ' line-numbers' : '' );
 
-		$class = 'language-' . $snippet->type;
+		$html_attributes = apply_filters( 'code_snippets/prism_attributes', [ 'class' => $class ], $snippet, $atts );
 
-		if ( $atts['line_numbers'] ) {
-			$class .= ' line-numbers';
-		}
+		array_walk(
+			$html_attributes,
+			function ( $value, $key ) {
+				return sprintf( '%s="%s"', sanitize_key( $key ), esc_attr( $value ) );
+			}
+		);
+
+		$code = 'php' === $snippet->type ? "<?php\n\n$snippet->code" : $snippet->code;
 
 		return sprintf(
-			'<pre><code class="%s">%s</code></pre>',
-			$class,
-			esc_html( $snippet->code )
+			'<pre><code%s>%s</code></pre>',
+			esc_html( implode( ' ', $html_attributes ) ),
+			esc_html( $code )
 		);
 	}
 
@@ -280,4 +284,3 @@ class Frontend {
 		return $this->render_snippet_source( $snippet, $atts );
 	}
 }
-
