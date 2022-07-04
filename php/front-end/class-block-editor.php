@@ -69,6 +69,9 @@ class Block_Editor {
 				'editor_script'   => $handle,
 				'editor_style'    => $handle,
 				'render_callback' => array( $this, 'render_content' ),
+				'supports'        => array(
+					'className' => true,
+				),
 				'attributes'      => array(
 					'snippet_id' => [
 						'type'    => 'integer',
@@ -104,6 +107,11 @@ class Block_Editor {
 				'editor_script'   => $handle,
 				'editor_style'    => $handle,
 				'render_callback' => array( $this, 'render_source' ),
+				'supports'        => array(
+					'className'       => true,
+					'customClassName' => true,
+					'color'           => true,
+				),
 				'attributes'      => array(
 					'snippet_id'   => [
 						'type'    => 'integer',
@@ -124,6 +132,36 @@ class Block_Editor {
 				),
 			)
 		);
+
+		$prism_themes = [
+			'dark'           => __( 'Dark', 'code-snippets' ),
+			'funky'          => __( 'Funky', 'code-snippets' ),
+			'okaidia'        => __( 'Okaidia', 'code-snippets' ),
+			'twilight'       => __( 'Twilight', 'code-snippets' ),
+			'coy'            => __( 'Coy', 'code-snippets' ),
+			'solarizedlight' => __( 'Solarized Light', 'code-snippets' ),
+			'tomorrow'       => __( 'Tomorrow Night', 'code-snippets' ),
+		];
+
+		foreach ( $prism_themes as $theme => $label ) {
+			$style_handle = "code-snippets-prism-theme-$theme";
+
+			wp_register_style(
+				$style_handle,
+				plugins_url( "css/min/prism-themes/prism-$theme.css", $file ),
+				[ Frontend::PRISM_HANDLE ],
+				$version
+			);
+
+			register_block_style(
+				'code-snippets/source',
+				[
+					'name'         => "prism-$theme",
+					'label'        => $label,
+					'style_handle' => $style_handle,
+				]
+			);
+		}
 	}
 
 	/**
@@ -162,7 +200,11 @@ class Block_Editor {
 	 * @return string Block output.
 	 */
 	public function render_content( $attributes ) {
-		return code_snippets()->frontend->render_content_shortcode( $attributes );
+		return sprintf(
+			"<div %s>%s</div>",
+			get_block_wrapper_attributes(),
+			code_snippets()->frontend->render_content_shortcode( $attributes )
+		);
 	}
 
 	/**
@@ -173,6 +215,10 @@ class Block_Editor {
 	 * @return string Block output.
 	 */
 	public function render_source( $attributes ) {
-		return code_snippets()->frontend->render_source_shortcode( $attributes );
+		return sprintf(
+			"<div %s>%s</div>",
+			get_block_wrapper_attributes(),
+			code_snippets()->frontend->render_source_shortcode( $attributes )
+		);
 	}
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { BlockControls } from '@wordpress/block-editor';
+import { BlockControls, useBlockProps } from '@wordpress/block-editor';
 import { Placeholder, ToolbarGroup, ToolbarButton, Icon } from '@wordpress/components';
 import { undo } from '@wordpress/icons'
 import Select, { OptionsOrGroups } from 'react-select';
@@ -26,7 +26,15 @@ export interface SnippetSelectorProps {
 	setAttributes: (attributes: SnippetSelectorProps['attributes']) => void
 }
 
-export const SnippetSelector: React.FC<SnippetSelectorProps> = ({ block, icon, label, className, attributes, setAttributes, options }) =>
+export const SnippetSelector: React.FC<SnippetSelectorProps> = ({
+	block,
+	label,
+	className,
+	icon,
+	options,
+	attributes,
+	setAttributes
+}) =>
 	<>
 		<BlockControls>
 			<ToolbarGroup>

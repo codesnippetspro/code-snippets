@@ -1,12 +1,13 @@
 import React from 'react';
 import { Options } from 'react-select';
 import { __ } from '@wordpress/i18n';
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { BlockConfiguration } from '@wordpress/blocks';
 import { SnippetSelectOption, SnippetSelector } from './components';
 import { SnippetData } from '../types';
-import { selectSnippetsData } from './store';
+import { STORE_KEY } from './store';
+import { useSelect } from '@wordpress/data';
 
 export const CONTENT_BLOCK = 'code-snippets/content'
 
@@ -27,6 +28,7 @@ interface ContentBlockAttributes {
 	format?: boolean
 	shortcodes?: boolean
 	debug?: boolean
+	className: string
 }
 
 export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
@@ -41,30 +43,30 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 		php: { type: 'boolean', default: false },
 		format: { type: 'boolean', default: false },
 		shortcodes: { type: 'boolean', default: false },
-		debug: { type: 'boolean', default: false }
+		debug: { type: 'boolean', default: false },
+		className: { type: 'string' }
 	},
 	edit: ({ setAttributes, attributes }) => {
-		const snippets = selectSnippetsData()
-		const options = buildOptions(snippets)
-
-		const toggleAttribute = (att: keyof typeof attributes) => setAttributes({ [att]: !attributes[att] });
+		const blockProps = useBlockProps()
+		const options = useSelect(select =>
+			buildOptions(select(STORE_KEY).receiveSnippetsData()), []);
 
 		return (
-			<>
+			<div {...blockProps}>
 				<InspectorControls>
 					<PanelBody title={__('Processing Options', 'code-snippets')}>
 						<ToggleControl
 							label={__('Run PHP code', 'code-snippets')}
 							checked={attributes.php}
-							onChange={() => toggleAttribute('php')} />
+							onChange={isChecked => setAttributes({...attributes, php: isChecked})} />
 						<ToggleControl
 							label={__('Add paragraphs and formatting', 'code-snippets')}
 							checked={attributes.format}
-							onChange={() => toggleAttribute('format')} />
+							onChange={isChecked => setAttributes({...attributes, format: isChecked})} />
 						<ToggleControl
 							label={__('Enable embedded shortcodes', 'code-snippets')}
 							checked={attributes.shortcodes}
-							onChange={() => toggleAttribute('shortcodes')} />
+							onChange={isChecked => setAttributes({...attributes, shortcodes: isChecked})} />
 					</PanelBody>
 				</InspectorControls>
 
@@ -77,7 +79,7 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 					attributes={{ debug: true, ...attributes }}
 					setAttributes={setAttributes}
 				/>
-			</>
+			</div>
 		)
 	},
 	save: () => null,

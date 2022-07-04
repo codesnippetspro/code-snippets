@@ -9,6 +9,7 @@ declare module '@wordpress/server-side-render' {
 		ErrorResponsePlaceholder?: React.FC<Props>
 		LoadingResponsePlaceholder?: React.FC<Props>
 	}
+
 	const ServerSideRender: React.FC<Props>
 	export default ServerSideRender
 }
@@ -17,6 +18,13 @@ declare module 'gulp-archiver' {
 	import { ThroughStream } from 'through';
 	import { ArchiverOptions } from 'archiver';
 	export default function (file: string, opts?: ArchiverOptions): ThroughStream
+}
+
+declare module 'gulp-flatmap' {
+	import { ThroughStream } from 'through';
+	import { Readable, Stream } from 'stream';
+	import Vinyl from 'vinyl';
+	export default function (func: (readStream: Readable, data: Vinyl) => Stream): ThroughStream
 }
 
 declare module 'gulp-rtlcss' {
@@ -30,6 +38,17 @@ declare module 'postcss-easy-import' {
 	export default function (opts: {
 		prefix: string | boolean
 		extensions: string | string[]
+	}): Plugin
+}
+
+declare module 'postcss-prefix-selector' {
+	import { Plugin } from 'postcss';
+	export default function (options: {
+		prefix: string
+		exclude?: string
+		transform?: (prefix: string, selector: string, prefixedSelector: string, filePath: string, rule: string) => string
+		ignoreFiles?: string[]
+		includeFiles?: string[]
 	}): Plugin
 }
 

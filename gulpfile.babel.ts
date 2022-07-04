@@ -1,5 +1,6 @@
 import { src, dest, series, parallel, watch as watchFiles, TaskFunction } from 'gulp';
 import * as fs from 'fs';
+import * as path from 'path';
 import del from 'del';
 import * as sourcemaps from 'gulp-sourcemaps';
 import rename from 'gulp-rename';
@@ -21,7 +22,8 @@ import makepot from 'gulp-wp-pot';
 import gettext from 'gulp-gettext';
 import codesniffer from 'gulp-phpcs';
 import composer from 'gulp-composer';
-
+import flatmap from 'gulp-flatmap';
+import prefixSelector from 'postcss-prefix-selector';
 import * as pkg from './package.json';
 import { config as webpackConfig } from './webpack.config';
 
@@ -95,13 +97,23 @@ export const phpcs: TaskFunction = () =>
 		.pipe(codesniffer({ bin: 'vendor/bin/phpcs', showSniffCode: true }))
 		.pipe(codesniffer.reporter('log'))
 
+const prismJS: TaskFunction = () =>
+	src(['node_modules/prismjs/themes/prism-*.css', '!node_modules/prismjs/themes/prism-*.min.css'])
+		.pipe(flatmap((stream, file) =>
+			stream.pipe(postcss([
+				prefixSelector({
+					prefix: `.is-style-${path.parse(file.path).name}`
+				}),
+				cssnano()
+			]))
+		))
+		.pipe(dest(`${dist_dirs.css}prism-themes`))
+
 export const vendor: TaskFunction = parallel(
 	() => src('node_modules/codemirror/theme/*.css')
 		.pipe(postcss([cssnano()]))
 		.pipe(dest(`${dist_dirs.css}editor-themes`)),
-	() => src('node_modules/prismjs/themes/prism-*.css')
-		.pipe(postcss([cssnano()]))
-		.pipe(dest(`${dist_dirs.css}prism-themes`))
+	prismJS
 )
 
 export const clean: TaskFunction = () =>
