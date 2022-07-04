@@ -55,7 +55,7 @@ class Licensing {
 				'has_addons'          => false,
 				'has_paid_plans'      => true,
 				'is_org_compliant'    => true,
-				'has_affiliation'     => 'customers',
+				'has_affiliation'     => 'selected',
 				'secret_key'          => defined( 'CODE_SNIPPETS_SECRET_KEY' ) ? CODE_SNIPPETS_SECRET_KEY : null,
 				'menu'                => array(
 					'slug'        => $plugin->get_menu_slug(),
