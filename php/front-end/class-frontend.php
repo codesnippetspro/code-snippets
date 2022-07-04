@@ -240,16 +240,16 @@ class Frontend {
 
 		array_walk(
 			$html_attributes,
-			function ( $value, $key ) {
-				return sprintf( '%s="%s"', sanitize_key( $key ), esc_attr( $value ) );
+			function ( &$value, $key ) {
+				$value = sprintf( '%s="%s"', sanitize_key( $key ), esc_attr( $value ) );
 			}
 		);
 
 		$code = 'php' === $snippet->type ? "<?php\n\n$snippet->code" : $snippet->code;
 
 		return sprintf(
-			'<pre><code%s>%s</code></pre>',
-			esc_html( implode( ' ', $html_attributes ) ),
+			'<pre><code %s>%s</code></pre>',
+			implode( ' ', $html_attributes ),
 			esc_html( $code )
 		);
 	}
