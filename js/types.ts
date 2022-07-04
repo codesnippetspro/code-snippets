@@ -1,4 +1,5 @@
 import { Editor, EditorConfiguration } from 'codemirror';
+import * as Prism from 'prismjs';
 
 export interface EditorOption {
 	name: string;
@@ -51,8 +52,9 @@ export interface Snippet {
 export interface SnippetData {
 	id: number
 	name: string
-	type: SnippetType
+	code: string
 	active: boolean
+	type: SnippetType
 }
 
 declare global {
@@ -67,5 +69,6 @@ declare global {
 		code_snippets_editor_settings: EditorOption[];
 		code_snippets_edit_i18n: Record<string, string>;
 		code_snippets_manage_i18n: Record<string, string>;
+		code_snippets_prism?: typeof Prism;
 	}
 }

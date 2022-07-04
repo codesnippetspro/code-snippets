@@ -66,6 +66,7 @@ class REST_API {
 				'name'   => $snippet->display_name,
 				'type'   => $snippet->type,
 				'active' => $snippet->active,
+				'code'   => $snippet->code,
 			];
 		}
 

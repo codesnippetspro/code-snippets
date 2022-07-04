@@ -32,7 +32,7 @@ export const config: Configuration = {
 		'tinymce': 'tinymce',
 		'codemirror': ['wp', 'CodeMirror'],
 		...Object.fromEntries(
-			['api-fetch', 'block-editor', 'blocks', 'components', 'data', 'i18n', 'server-side-render']
+			['api-fetch', 'block-editor', 'blocks', 'components', 'data', 'i18n', 'server-side-render', 'icons']
 				.map(p => [
 					`@wordpress/${p}`,
 					['wp', p.replace(/-(?<letter>[a-z])/g, (_, letter) => letter.toUpperCase())]

@@ -6,8 +6,7 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { shortcode } from '@wordpress/icons';
 import { SnippetData } from '../types';
 import { SnippetSelectGroup, SnippetSelector } from './components';
-import { STORE_KEY } from './store';
-import { useSelect } from '@wordpress/data';
+import { useSnippetData } from './store';
 
 export const SOURCE_BLOCK = 'code-snippets/source'
 
@@ -38,6 +37,24 @@ interface SourceBlockAttributes {
 	className: string
 }
 
+const renderSnippetSource = (snippet: SnippetData, { line_numbers, className }: SourceBlockAttributes) => {
+	const language = 'css' === snippet.type ? 'css' : 'js' === snippet.type ? 'js' : 'php';
+	const classNames = [
+		`language-${language}`,
+		...line_numbers ? ['line-numbers'] : []
+	];
+
+	return (
+		<div className={className}>
+			<pre>
+				<code className={classNames.join(' ')}>
+					{'php' === snippet.type ? `<?php\n\n${snippet.code}` : snippet.code}
+				</code>
+			</pre>
+		</div>
+	);
+}
+
 export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 	title: __('Snippet Source Code', 'code-snippet'),
 	description: __('Display the source code of a snippet in the post.', 'code-snippet'),
@@ -51,15 +68,15 @@ export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 		className: { type: 'string' }
 	},
 	edit: ({ attributes, setAttributes }) => {
-		const blockProps = useBlockProps()
-		const options = useSelect(select =>
-			buildOptions(select(STORE_KEY).receiveSnippetsData()), []);
+		const blockProps = useBlockProps();
+		const snippets = useSnippetData();
+		const snippet = 0 !== attributes.snippet_id ? snippets.find(snippet => snippet.id === attributes.snippet_id) : undefined;
 
 		useEffect(() => {
-			if (window.Prism) {
-				window.Prism.highlightAll();
+			if (window.code_snippets_prism) {
+				window.code_snippets_prism.highlightAll();
 			}
-		});
+		}, [window.code_snippets_prism, attributes]);
 
 		return (
 			<div {...blockProps}>
@@ -73,13 +90,13 @@ export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 				</InspectorControls>
 
 				<SnippetSelector
-					block={SOURCE_BLOCK}
 					icon={shortcode}
 					label={__('Snippet Source Code', 'code-snippets')}
 					className="code-snippets-source-block"
-					options={options}
+					options={buildOptions(snippets)}
 					attributes={attributes}
 					setAttributes={setAttributes}
+					renderContent={() => snippet ? renderSnippetSource(snippet, attributes) : <></>}
 				/>
 			</div>
 		)

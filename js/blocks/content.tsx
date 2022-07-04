@@ -6,8 +6,8 @@ import { PanelBody, ToggleControl } from '@wordpress/components';
 import { BlockConfiguration } from '@wordpress/blocks';
 import { SnippetSelectOption, SnippetSelector } from './components';
 import { SnippetData } from '../types';
-import { STORE_KEY } from './store';
-import { useSelect } from '@wordpress/data';
+import { useSnippetData } from './store';
+import ServerSideRender from '@wordpress/server-side-render';
 
 export const CONTENT_BLOCK = 'code-snippets/content'
 
@@ -48,8 +48,7 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 	},
 	edit: ({ setAttributes, attributes }) => {
 		const blockProps = useBlockProps()
-		const options = useSelect(select =>
-			buildOptions(select(STORE_KEY).receiveSnippetsData()), []);
+		const snippets = useSnippetData();
 
 		return (
 			<div {...blockProps}>
@@ -58,26 +57,27 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 						<ToggleControl
 							label={__('Run PHP code', 'code-snippets')}
 							checked={attributes.php}
-							onChange={isChecked => setAttributes({...attributes, php: isChecked})} />
+							onChange={isChecked => setAttributes({ ...attributes, php: isChecked })} />
 						<ToggleControl
 							label={__('Add paragraphs and formatting', 'code-snippets')}
 							checked={attributes.format}
-							onChange={isChecked => setAttributes({...attributes, format: isChecked})} />
+							onChange={isChecked => setAttributes({ ...attributes, format: isChecked })} />
 						<ToggleControl
 							label={__('Enable embedded shortcodes', 'code-snippets')}
 							checked={attributes.shortcodes}
-							onChange={isChecked => setAttributes({...attributes, shortcodes: isChecked})} />
+							onChange={isChecked => setAttributes({ ...attributes, shortcodes: isChecked })} />
 					</PanelBody>
 				</InspectorControls>
 
 				<SnippetSelector
-					block={CONTENT_BLOCK}
 					label={__('Content Snippet', 'code-snippets')}
 					className="code-snippets-content-block"
 					icon="shortcode"
-					options={options}
-					attributes={{ debug: true, ...attributes }}
+					options={buildOptions(snippets)}
+					attributes={attributes}
 					setAttributes={setAttributes}
+					renderContent={() =>
+						<ServerSideRender block={CONTENT_BLOCK} attributes={{ ...attributes, debug: true }} />}
 				/>
 			</div>
 		)

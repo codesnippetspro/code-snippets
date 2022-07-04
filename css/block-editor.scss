@@ -11,25 +11,10 @@
 	}
 }
 
-.code-snippets-content-block {
-	.dashicons {
-		font-family: auto;
-
-		&::before {
-			font-family: dashicons;
-		}
-	}
-}
-
+.code-snippets-content-block,
 .code-snippets-source-block {
-	.dashicon {
-		font-size: inherit;
-		padding-right: 0.5em;
+	.components-placeholder__label svg {
 		width: 24px;
 		height: 24px;
 	}
-}
-
-.components-menu-item__button, .components-menu-item__button.components-button {
-	height: 100%;
 }

@@ -1,4 +1,4 @@
-import { createReduxStore, register, select, StoreConfig } from '@wordpress/data';
+import { createReduxStore, register, StoreConfig, useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 import { SnippetData } from '../types';
 
@@ -56,3 +56,6 @@ const config: StoreConfig<Store> = {
 
 const store = createReduxStore(STORE_KEY, config);
 register(store);
+
+export const useSnippetData = () =>
+	useSelect<SnippetData[]>(select => select(STORE_KEY).receiveSnippetsData(), [])

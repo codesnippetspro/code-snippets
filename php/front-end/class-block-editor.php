@@ -38,17 +38,20 @@ class Block_Editor {
 		wp_register_script(
 			$handle,
 			plugins_url( 'js/min/blocks.js', $file ),
-			array(
-				'wp-blocks',
-				'wp-block-editor',
-				'wp-i18n',
-				'wp-components',
-				'wp-data',
-				'wp-element',
-				'wp-api-fetch',
-				'wp-server-side-render',
-				'react-dom',
-			) + $prism_dep,
+			array_merge(
+				$prism_dep,
+				array(
+					'wp-blocks',
+					'wp-block-editor',
+					'wp-i18n',
+					'wp-components',
+					'wp-data',
+					'wp-element',
+					'wp-api-fetch',
+					'wp-server-side-render',
+					'react-dom',
+				)
+			),
 			$version,
 			false
 		);

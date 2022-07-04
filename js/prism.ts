@@ -17,3 +17,5 @@ document.addEventListener('readystatechange', () => {
 		Prism.highlightAll();
 	}
 });
+
+window.code_snippets_prism = Prism;
