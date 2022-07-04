@@ -250,23 +250,26 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	private function render_snippet_source( Snippet $snippet, $atts = [] ) {
-		$class = 'language-' . $snippet->type;
-		$toggles = [ 'line_numbers' ];
+		$atts = array_merge( [ 'line_numbers' => false ], $atts );
+		$language = 'css' === $snippet->type ? 'css' : ( 'js' === $snippet->type ? 'js' : 'php' );
 
-		foreach ( $toggles as $toggle ) {
-			if ( isset( $atts[ $toggle ] ) && $atts[ $toggle ] ) {
-				$class .= ' ' . str_replace( '_', '-', $toggle );
+		$class = "language-$language" . ( $atts['line_numbers'] ? ' line-numbers' : '' );
+
+		$html_attributes = apply_filters( 'code_snippets/prism_attributes', [ 'class' => $class ], $snippet, $atts );
+
+		array_walk(
+			$html_attributes,
+			function ( $value, $key ) {
+				return sprintf( '%s="%s"', sanitize_key( $key ), esc_attr( $value ) );
 			}
-		}
+		);
 
-		return print_r(
-			sprintf(
-				'<pre data-line="%s"><code class="%s">%s</code></pre>',
-				esc_attr( $atts['highlight_lines'] ),
-				$class,
-				esc_html( $snippet->code )
-			),
-			true
+		$code = 'php' === $snippet->type ? "<?php\n\n$snippet->code" : $snippet->code;
+
+		return sprintf(
+			'<pre><code%s>%s</code></pre>',
+			esc_html( implode( ' ', $html_attributes ) ),
+			esc_html( $code )
 		);
 	}
 
