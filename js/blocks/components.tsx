@@ -1,7 +1,8 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { BlockControls } from '@wordpress/block-editor';
-import { MenuItem, Placeholder, Dashicon } from '@wordpress/components';
+import { Placeholder, ToolbarGroup, ToolbarButton, Icon } from '@wordpress/components';
+import { undo } from '@wordpress/icons'
 import Select, { OptionsOrGroups } from 'react-select';
 import ServerSideRender from '@wordpress/server-side-render';
 
@@ -19,7 +20,7 @@ export interface SnippetSelectorProps {
 	block: string
 	label: string
 	className: string
-	icon: Dashicon.Icon
+	icon: Icon.IconType<unknown>
 	options: OptionsOrGroups<SnippetSelectOption, SnippetSelectGroup>
 	attributes: { snippet_id: number }
 	setAttributes: (attributes: SnippetSelectorProps['attributes']) => void
@@ -28,11 +29,13 @@ export interface SnippetSelectorProps {
 export const SnippetSelector: React.FC<SnippetSelectorProps> = ({ block, icon, label, className, attributes, setAttributes, options }) =>
 	<>
 		<BlockControls>
-			<MenuItem
-				icon="image-rotate"
-				title={__('Choose a different snippet', 'code-snippets')}
-				onClick={() => setAttributes({ snippet_id: 0 })}
-			/>
+			<ToolbarGroup>
+				<ToolbarButton
+					icon={undo}
+					label={__('Choose a different snippet', 'code-snippets')}
+					onClick={() => setAttributes({ snippet_id: 0 })}
+				/>
+			</ToolbarGroup>
 		</BlockControls>
 
 		{0 === attributes.snippet_id ?

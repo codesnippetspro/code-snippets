@@ -95,10 +95,14 @@ export const phpcs: TaskFunction = () =>
 		.pipe(codesniffer({ bin: 'vendor/bin/phpcs', showSniffCode: true }))
 		.pipe(codesniffer.reporter('log'))
 
-export const vendor: TaskFunction = () =>
-	src('node_modules/codemirror/theme/*.css')
+export const vendor: TaskFunction = parallel(
+	() => src('node_modules/codemirror/theme/*.css')
 		.pipe(postcss([cssnano()]))
-		.pipe(dest(`${dist_dirs.css}editor-themes`))
+		.pipe(dest(`${dist_dirs.css}editor-themes`)),
+	() => src('node_modules/prismjs/themes/prism-*.css')
+		.pipe(postcss([cssnano()]))
+		.pipe(dest(`${dist_dirs.css}prism-themes`))
+)
 
 export const clean: TaskFunction = () =>
 	del([dist_dirs.css, dist_dirs.js])

@@ -27,6 +27,7 @@ class Block_Editor {
 	public function init() {
 		$version = code_snippets()->version;
 		$file = code_snippets()->file;
+		$handle = 'code-snippets-block-editor';
 
 		$prism_dep = [];
 		if ( ! Settings\get_setting( 'general', 'disable_prism' ) ) {
@@ -35,7 +36,7 @@ class Block_Editor {
 		}
 
 		wp_register_script(
-			'code-snippets-block-editor',
+			$handle,
 			plugins_url( 'js/min/blocks.js', $file ),
 			array(
 				'wp-blocks',
@@ -51,10 +52,11 @@ class Block_Editor {
 			$version,
 			false
 		);
-		wp_set_script_translations( 'code-snippets-content-block-editor', 'code-snippets' );
+
+		wp_set_script_translations( $handle, 'code-snippets' );
 
 		wp_register_style(
-			'code-snippets-block-editor',
+			$handle,
 			plugins_url( 'css/min/block-editor.css', $file ),
 			$prism_dep,
 			$version,
@@ -64,8 +66,8 @@ class Block_Editor {
 		register_block_type(
 			'code-snippets/content',
 			array(
-				'editor_script'   => 'code-snippets-block-editor',
-				'editor_style'    => 'code-snippets-block-editor',
+				'editor_script'   => $handle,
+				'editor_style'    => $handle,
 				'render_callback' => array( $this, 'render_content' ),
 				'attributes'      => array(
 					'snippet_id' => [
@@ -99,8 +101,8 @@ class Block_Editor {
 		register_block_type(
 			'code-snippets/source',
 			array(
-				'editor_script'   => 'code-snippets-block-editor',
-				'editor_style'    => 'code-snippets-block-editor',
+				'editor_script'   => $handle,
+				'editor_style'    => $handle,
 				'render_callback' => array( $this, 'render_source' ),
 				'attributes'      => array(
 					'snippet_id'   => [
@@ -114,6 +116,10 @@ class Block_Editor {
 					'line_numbers' => [
 						'type'    => 'boolean',
 						'default' => true,
+					],
+					'theme'        => [
+						'type'    => 'string',
+						'default' => 'default',
 					],
 				),
 			)
