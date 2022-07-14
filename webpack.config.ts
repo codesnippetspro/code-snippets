@@ -24,11 +24,21 @@ export const config: Configuration = {
 	},
 	externalsType: 'window',
 	externals: {
-		codemirror: ['wp', 'CodeMirror'],
-		tinymce: 'tinymce',
+		'react': 'React',
+		'react-dom': 'ReactDOM',
+		'jquery': 'jQuery',
+		'tinymce': 'tinymce',
+		'codemirror': ['wp', 'CodeMirror'],
+		...Object.fromEntries(
+			['api-fetch', 'block-editor', 'blocks', 'components', 'data', 'i18n', 'server-side-render', 'icons']
+				.map(p => [
+					`@wordpress/${p}`,
+					['wp', p.replace(/-(?<letter>[a-z])/g, (_, letter) => letter.toUpperCase())]
+				])
+		)
 	},
 	resolve: {
-		extensions: ['.ts', '.js', '.json'],
+		extensions: ['.ts', '.tsx', '.js', '.json'],
 		alias: {
 			'php-parser': path.resolve(__dirname, 'node_modules/php-parser/src/index.js')
 		}
@@ -40,6 +50,7 @@ export const config: Configuration = {
 			use: {
 				loader: 'babel-loader',
 				options: {
+					presets: ['@babel/preset-env'],
 					plugins: [
 						['prismjs', {
 							languages: ['php', 'php-extras'],
