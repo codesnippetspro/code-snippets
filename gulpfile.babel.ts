@@ -6,11 +6,9 @@ import rename from 'gulp-rename';
 import copy from 'gulp-copy';
 import change from 'gulp-change';
 import postcss from 'gulp-postcss';
-import terser from 'gulp-terser';
 import sass from 'gulp-sass';
 import libsass from 'sass';
 import cssnano from 'cssnano';
-import webpack from 'webpack-stream';
 import autoprefixer from 'autoprefixer';
 import zip from 'gulp-zip';
 import rtlcss from 'gulp-rtlcss';
@@ -21,6 +19,7 @@ import makepot from 'gulp-wp-pot';
 import gettext from 'gulp-gettext';
 import codesniffer from 'gulp-phpcs';
 import composer from 'gulp-composer';
+import { webpack } from 'webpack';
 
 import * as pkg from './package.json';
 import { config as webpackConfig } from './webpack.config';
@@ -68,13 +67,13 @@ export const jslint: TaskFunction = () =>
 		.pipe(eslint.format())
 		.pipe(eslint.failAfterError())
 
-export const js: TaskFunction = series(jslint, () =>
-	src(src_files.js)
-		.pipe(webpack(webpackConfig))
-		.pipe(sourcemaps.init())
-		.pipe(terser())
-		.pipe(sourcemaps.write('.'))
-		.pipe(dest('js/min')))
+export const js: TaskFunction = series(jslint, done => {
+	webpack({
+		...webpackConfig,
+		mode: 'development',
+		devtool: 'eval'
+	}, done)
+})
 
 export const i18n: TaskFunction = parallel([
 	() => src(src_files.php)
@@ -120,21 +119,29 @@ export const bundle: TaskFunction = series(
 	// Remove composer dev dependencies
 	() => composer('install', { 'no-dev': true }),
 
+	// Run Webpack in production mode
+	done => {
+		webpack({ ...webpackConfig, mode: 'production' }, done)
+	},
+
 	// Copy files into a new directory
 	() => src([
-		'code-snippets.php', 'uninstall.php', 'php/**/*', 'vendor/**/*',
-		'readme.txt', 'license.txt', 'css/font/**/*', 'languages/**/*'
+		'code-snippets.php',
+		'uninstall.php',
+		'readme.txt',
+		'license.txt',
+		'vendor/**/*',
+		'php/**/*',
+		'js/min/**/*',
+		'css/font/**/*',
+		'languages/**/*'
 	])
 		.pipe(copy(pkg.name)),
 
-	// Copy minified scripts and stylesheets, while removing source map references
+	// Copy minified stylesheets, while removing source map references
 	() => src('css/min/**/*.css')
 		.pipe(change(content => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
 		.pipe(dest(`${pkg.name}/css/min`)),
-
-	() => src('js/min/**/*.js')
-		.pipe(change(content => content.replace(/\/\/# sourceMappingURL=[\w.-]+\.map\s+$/, '')))
-		.pipe(dest(`${pkg.name}/js/min`)),
 
 	// Create a zip archive
 	() => src(`${pkg.name}/**/*`, { base: '.' })
