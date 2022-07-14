@@ -12,7 +12,7 @@ import libsass from 'sass';
 import cssnano from 'cssnano';
 import webpack from 'webpack-stream';
 import autoprefixer from 'autoprefixer';
-import archiver from 'gulp-archiver';
+import zip from 'gulp-zip';
 import rtlcss from 'gulp-rtlcss';
 import cssimport from 'postcss-easy-import';
 import hexrgba from 'postcss-hexrgba';
@@ -138,7 +138,7 @@ export const bundle: TaskFunction = series(
 
 	// Create a zip archive
 	() => src(`${pkg.name}/**/*`, { base: '.' })
-		.pipe(archiver(`${pkg.name}.${pkg.version}.zip`))
+		.pipe(zip(`${pkg.name}.${pkg.version}.zip`))
 		.pipe(dest('.')),
 
 	done => {

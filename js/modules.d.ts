@@ -1,9 +1,3 @@
-declare module 'gulp-archiver' {
-	import { ThroughStream } from 'through';
-	import { ArchiverOptions } from 'archiver';
-	export default function (file: string, opts?: ArchiverOptions): ThroughStream
-}
-
 declare module 'gulp-rtlcss' {
 	import { ThroughStream } from 'through';
 	import { ConfigOptions } from 'rtlcss';
