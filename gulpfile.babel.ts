@@ -109,23 +109,18 @@ export const build = series(clean, parallel(vendor, css, js, i18n))
 
 export default build
 
-export const bundle: TaskFunction = series(
-	build,
-	vendor,
+export const bundle: TaskFunction = (() => {
+	const cleanupBefore: TaskFunction = () =>
+		del(['dist', pkg.name, `${pkg.name}.*.zip`])
 
-	// Remove files from last run
-	() => del(['dist', pkg.name, `${pkg.name}.*.zip`]),
+	const composerProduction: TaskFunction = () =>
+		composer('install', { 'no-dev': true })
 
-	// Remove composer dev dependencies
-	() => composer('install', { 'no-dev': true }),
-
-	// Run Webpack in production mode
-	done => {
+	const webpackProduction: TaskFunction = done => {
 		webpack({ ...webpackConfig, mode: 'production' }, done)
-	},
+	}
 
-	// Copy files into a new directory
-	() => src([
+	const copyFiles: TaskFunction = () => src([
 		'code-snippets.php',
 		'uninstall.php',
 		'readme.txt',
@@ -135,33 +130,39 @@ export const bundle: TaskFunction = series(
 		'js/min/**/*',
 		'css/font/**/*',
 		'languages/**/*'
-	])
-		.pipe(copy(pkg.name)),
+	]).pipe(copy(pkg.name));
 
-	// Copy minified stylesheets, while removing source map references
-	() => src('css/min/**/*.css')
+	const copyStylesheets: TaskFunction = () => src('css/min/**/*.css')
 		.pipe(change(content => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
-		.pipe(dest(`${pkg.name}/css/min`)),
+		.pipe(dest(`${pkg.name}/css/min`))
 
-	// Create a zip archive
-	() => src(`${pkg.name}/**/*`, { base: '.' })
+	const archive: TaskFunction = () => src(`${pkg.name}/**/*`, { base: '.' })
 		.pipe(zip(`${pkg.name}.${pkg.version}.zip`))
-		.pipe(dest('.')),
+		.pipe(dest('.'))
 
-	done => {
+	const cleanupAfter: TaskFunction = done => {
 		// Reinstall dev dependencies
-		composer();
+		composer()
 
 		// Rename the distribution directory to its proper name
 		fs.rename(pkg.name, 'dist', error => {
-			if (error) throw error;
-			done();
+			if (error) throw error
+			done()
 		});
 	}
-)
+
+	return series(
+		build,
+		cleanupBefore,
+		parallel(composerProduction, webpackProduction),
+		parallel(copyFiles, copyStylesheets),
+		archive,
+		cleanupAfter
+	)
+})()
 
 export const watch: TaskFunction = series(build, done => {
-	watchFiles(src_files.all_css, css);
-	watchFiles(src_files.js, js);
-	done();
+	watchFiles(src_files.all_css, css)
+	watchFiles(src_files.js, js)
+	done()
 })
