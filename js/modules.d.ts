@@ -1,32 +1,3 @@
-declare module '@wordpress/server-side-render' {
-	interface Props {
-		attributes: Record<string, unknown>
-		block: string
-		className?: string
-		httpMethod?: 'GET' | 'POST'
-		urlQueryArgs?: Record<string, unknown>
-		EmptyResponsePlaceholder?: React.FC<Props>
-		ErrorResponsePlaceholder?: React.FC<Props>
-		LoadingResponsePlaceholder?: React.FC<Props>
-	}
-
-	const ServerSideRender: React.FC<Props>
-	export default ServerSideRender
-}
-
-declare module 'gulp-archiver' {
-	import { ThroughStream } from 'through';
-	import { ArchiverOptions } from 'archiver';
-	export default function (file: string, opts?: ArchiverOptions): ThroughStream
-}
-
-declare module 'gulp-flatmap' {
-	import { ThroughStream } from 'through';
-	import { Readable, Stream } from 'stream';
-	import Vinyl from 'vinyl';
-	export default function (func: (readStream: Readable, data: Vinyl) => Stream): ThroughStream
-}
-
 declare module 'gulp-rtlcss' {
 	import { ThroughStream } from 'through';
 	import { ConfigOptions } from 'rtlcss';
@@ -133,4 +104,27 @@ declare module 'gulp-composer' {
 		'ansi'?: boolean
 		'working-dir'?: string
 	} & Record<string, unknown>): Transform
+}
+
+declare module 'gulp-flatmap' {
+	import { ThroughStream } from 'through';
+	import { Readable, Stream } from 'stream';
+	import Vinyl from 'vinyl';
+	export default function (func: (readStream: Readable, data: Vinyl) => Stream): ThroughStream
+}
+
+declare module '@wordpress/server-side-render' {
+	interface Props {
+		attributes: Record<string, unknown>
+		block: string
+		className?: string
+		httpMethod?: 'GET' | 'POST'
+		urlQueryArgs?: Record<string, unknown>
+		EmptyResponsePlaceholder?: React.FC<Props>
+		ErrorResponsePlaceholder?: React.FC<Props>
+		LoadingResponsePlaceholder?: React.FC<Props>
+	}
+
+	const ServerSideRender: React.FC<Props>
+	export default ServerSideRender
 }

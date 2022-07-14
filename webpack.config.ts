@@ -2,7 +2,6 @@ import * as path from 'path';
 import { DefinePlugin, Configuration } from 'webpack';
 
 export const config: Configuration = {
-	mode: 'production',
 	entry: {
 		manage: './js/manage.ts',
 		edit: {
@@ -21,7 +20,7 @@ export const config: Configuration = {
 		editor: './js/editor-lib.ts'
 	},
 	output: {
-		path: path.resolve(__dirname),
+		path: path.join(path.resolve(__dirname), 'js/min'),
 		filename: '[name].js',
 	},
 	externalsType: 'window',

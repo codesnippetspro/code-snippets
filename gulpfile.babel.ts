@@ -7,13 +7,11 @@ import rename from 'gulp-rename';
 import copy from 'gulp-copy';
 import change from 'gulp-change';
 import postcss from 'gulp-postcss';
-import terser from 'gulp-terser';
 import sass from 'gulp-sass';
 import libsass from 'sass';
 import cssnano from 'cssnano';
-import webpack from 'webpack-stream';
 import autoprefixer from 'autoprefixer';
-import archiver from 'gulp-archiver';
+import zip from 'gulp-zip';
 import rtlcss from 'gulp-rtlcss';
 import cssimport from 'postcss-easy-import';
 import hexrgba from 'postcss-hexrgba';
@@ -24,6 +22,7 @@ import codesniffer from 'gulp-phpcs';
 import composer from 'gulp-composer';
 import flatmap from 'gulp-flatmap';
 import prefixSelector from 'postcss-prefix-selector';
+import { webpack } from 'webpack';
 import * as pkg from './package.json';
 import { config as webpackConfig } from './webpack.config';
 
@@ -70,13 +69,13 @@ export const jslint: TaskFunction = () =>
 		.pipe(eslint.format())
 		.pipe(eslint.failAfterError())
 
-export const js: TaskFunction = series(jslint, () =>
-	src(src_files.js)
-		.pipe(webpack(webpackConfig))
-		.pipe(sourcemaps.init())
-		.pipe(terser())
-		.pipe(sourcemaps.write('.'))
-		.pipe(dest('js/min')))
+export const js: TaskFunction = series(jslint, done => {
+	webpack({
+		...webpackConfig,
+		mode: 'development',
+		devtool: 'eval'
+	}, done)
+})
 
 export const i18n: TaskFunction = parallel([
 	() => src(src_files.php)
@@ -126,51 +125,59 @@ export const build = series(clean, parallel(vendor, css, js, i18n))
 
 export default build
 
-export const bundle: TaskFunction = series(
-	build,
-	vendor,
+export const bundle: TaskFunction = (() => {
+	const cleanupBefore: TaskFunction = () =>
+		del(['dist', pkg.name, `${pkg.name}.*.zip`])
 
-	// Remove files from last run
-	() => del(['dist', pkg.name, `${pkg.name}.*.zip`]),
+	const composerProduction: TaskFunction = () =>
+		composer('install', { 'no-dev': true })
 
-	// Remove composer dev dependencies
-	() => composer('install', { 'no-dev': true }),
+	const webpackProduction: TaskFunction = done => {
+		webpack({ ...webpackConfig, mode: 'production' }, done)
+	}
 
-	// Copy files into a new directory
-	() => src([
-		'code-snippets.php', 'php/**/*', 'vendor/**/*',
-		'readme.txt', 'license.txt', 'css/font/**/*', 'languages/**/*'
-	])
-		.pipe(copy(pkg.name)),
+	const copyFiles: TaskFunction = () => src([
+		'code-snippets.php',
+		'readme.txt',
+		'license.txt',
+		'vendor/**/*',
+		'php/**/*',
+		'js/min/**/*',
+		'css/font/**/*',
+		'languages/**/*'
+	]).pipe(copy(pkg.name));
 
-	// Copy minified scripts and stylesheets, while removing source map references
-	() => src('css/min/**/*.css')
+	const copyStylesheets: TaskFunction = () => src('css/min/**/*.css')
 		.pipe(change(content => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
-		.pipe(dest(`${pkg.name}/css/min`)),
+		.pipe(dest(`${pkg.name}/css/min`))
 
-	() => src('js/min/**/*.js')
-		.pipe(change(content => content.replace(/\/\/# sourceMappingURL=[\w.-]+\.map\s+$/, '')))
-		.pipe(dest(`${pkg.name}/js/min`)),
+	const archive: TaskFunction = () => src(`${pkg.name}/**/*`, { base: '.' })
+		.pipe(zip(`${pkg.name}.${pkg.version}.zip`))
+		.pipe(dest('.'))
 
-	// Create a zip archive
-	() => src(`${pkg.name}/**/*`, { base: '.' })
-		.pipe(archiver(`${pkg.name}.${pkg.version}.zip`))
-		.pipe(dest('.')),
-
-	done => {
+	const cleanupAfter: TaskFunction = done => {
 		// Reinstall dev dependencies
-		composer();
+		composer()
 
 		// Rename the distribution directory to its proper name
 		fs.rename(pkg.name, 'dist', error => {
-			if (error) throw error;
-			done();
+			if (error) throw error
+			done()
 		});
 	}
-)
+
+	return series(
+		build,
+		cleanupBefore,
+		parallel(composerProduction, webpackProduction),
+		parallel(copyFiles, copyStylesheets),
+		archive,
+		cleanupAfter
+	)
+})()
 
 export const watch: TaskFunction = series(build, done => {
-	watchFiles(src_files.all_css, css);
-	watchFiles(src_files.js, js);
-	done();
+	watchFiles(src_files.all_css, css)
+	watchFiles(src_files.js, js)
+	done()
 })
