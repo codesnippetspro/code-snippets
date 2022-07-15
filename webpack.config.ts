@@ -30,13 +30,6 @@ export const config: Configuration = {
 		'jquery': 'jQuery',
 		'tinymce': 'tinymce',
 		'codemirror': ['wp', 'CodeMirror'],
-		...Object.fromEntries(
-			['api-fetch', 'block-editor', 'blocks', 'components', 'data', 'i18n', 'server-side-render', 'icons']
-				.map(p => [
-					`@wordpress/${p}`,
-					['wp', p.replace(/-(?<letter>[a-z])/g, (_, letter) => letter.toUpperCase())]
-				])
-		)
 	},
 	resolve: {
 		extensions: ['.ts', '.tsx', '.js', '.json'],
@@ -51,7 +44,10 @@ export const config: Configuration = {
 			use: {
 				loader: 'babel-loader',
 				options: {
-					presets: ['@babel/preset-env'],
+					presets: [
+						'@babel/preset-env',
+						'@wordpress/babel-preset-default'
+					],
 					plugins: [
 						['prismjs', {
 							languages: ['php', 'php-extras'],
