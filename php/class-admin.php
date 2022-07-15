@@ -52,8 +52,8 @@ class Admin {
 		add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( $this, 'plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_filter( 'debug_information', array( $this, 'debug_information' ) );
-		add_action( 'code_snippets/admin/manage', array( $this, 'survey_message' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ) );
+		add_action( 'code_snippets/admin/manage', array( $this, 'print_notices' ) );
 
 		if ( ! empty( $_POST['save_snippet'] ) ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
@@ -269,50 +269,41 @@ class Admin {
 		return $info;
 	}
 
-	/**
-	 * Print a notice inviting people to participate in the Code Snippets Survey
-	 *
-	 * @return void
-	 * @since  1.9
-	 */
-	public function survey_message() {
+	public function print_notices() {
 		global $current_user;
 
 		$key = 'ignore_code_snippets_survey_message';
+		$dismissed = get_user_meta( $current_user->ID, $key, false );
 
-		/* Bail now if the user has dismissed the message */
-		if ( get_user_meta( $current_user->ID, $key ) ) {
-			return;
-		} elseif ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $key ) ) {
-			add_user_meta( $current_user->ID, $key, true, true );
-
+		if ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $key ) ) {
+			add_user_meta( $current_user->ID, $key, sanitize_text_field( $_GET[ $key ] ), true );
 			return;
 		}
 
-		?>
+		if ( ! in_array( 'survey', $dismissed, true ) && ! in_array( true, $dismissed, true ) ) {
+			$notice = 'survey';
+			$action_url = 'https://codesnippets.pro/survey/';
+			$action_label = __( 'Take the survey now', 'code-snippets' );
+			$text = __( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' );
+		} else {
+			return;
+		}
 
-		<br />
+		printf( '<div class="notice notice-info code-snippets-notice code-snippets-%s-notice is-dismissible"><p>', esc_attr( sanitize_key( $notice ) ) );
+		echo wp_kses( $text, [ 'strong' => [] ] );
 
-		<div class="updated code-snippets-survey-message">
-			<p>
-				<?php
-				echo wp_kses(
-					__( "<strong>Have feedback on Code Snippets?</strong> Please take the time to answer a short survey on how you use this plugin and what you'd like to see changed or added in the future.", 'code-snippets' ),
-					array( 'strong' => array() )
-				);
-				?>
+		printf(
+			'<a href="%s" class="button secondary" target="_blank" style="margin: auto .5em;">%s</a>',
+			esc_url( $action_url ),
+			esc_html( $action_label )
+		);
 
-				<a href="https://codesnippets.pro/survey/" class="button secondary"
-				   target="_blank" style="margin: auto .5em;">
-					<?php esc_html_e( 'Take the survey now', 'code-snippets' ); ?>
-				</a>
+		printf(
+			'<a href="%s" class="notice-dismiss"><span class="screen-reader-text">%s</span></a>',
+			esc_url( wp_nonce_url( add_query_arg( $key, $notice ), $key ) ),
+			esc_attr__( 'Dismiss', 'code-snippets' )
+		);
 
-				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( $key, true ), $key ) ); ?>">
-					<?php esc_html_e( 'Dismiss', 'code-snippets' ); ?>
-				</a>
-
-			</p>
-		</div>
-		<?php
+		echo '</p></div>';
 	}
 }

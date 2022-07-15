@@ -1,13 +1,10 @@
-import { Snippet } from './types'
+import { Snippet } from '../types'
 
-type SuccessCallback = (response: { success: boolean, data?: unknown }) => void
+export type SuccessCallback = (response: { success: boolean, data?: unknown }) => void
 
-const nonce_input = document.getElementById('code_snippets_ajax_nonce') as HTMLInputElement
-const nonce = nonce_input.value
 const network_admin = '-network' === window.pagenow.substring(window.pagenow.length - '-network'.length)
-const strings = window.code_snippets_manage_i18n
 
-const send_snippet_request = (query: string, success_callback?: SuccessCallback) => {
+const sendSnippetRequest = (query: string, onSuccess?: SuccessCallback) => {
 	const request = new XMLHttpRequest()
 	request.open('POST', window.ajaxurl, true)
 	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded charset=UTF-8')
@@ -19,9 +16,7 @@ const send_snippet_request = (query: string, success_callback?: SuccessCallback)
 		// eslint-disable-next-line no-console
 		console.log(request.responseText)
 
-		if (success_callback) {
-			success_callback(JSON.parse(request.responseText))
-		}
+		onSuccess?.(JSON.parse(request.responseText))
 	}
 
 	request.send(query)
@@ -34,57 +29,48 @@ const send_snippet_request = (query: string, success_callback?: SuccessCallback)
  * @param snippet
  * @param success_callback
  */
-const update_snippet = (field: string, row_element: Element, snippet: Partial<Snippet>, success_callback?: SuccessCallback) => {
-	const id_column = row_element.querySelector('.column-id')
+const updateSnippet = (field: string, row_element: Element, snippet: Partial<Snippet>, success_callback?: SuccessCallback) => {
+	const { value: nonce } = document.getElementById('code_snippets_ajax_nonce') as HTMLInputElement
+	const columnId = row_element.querySelector('.column-id')
 
-	if (!id_column?.textContent || !parseInt(id_column.textContent, 10)) {
+	if (!columnId?.textContent || !parseInt(columnId.textContent, 10)) {
 		return
 	}
 
-	snippet.id = parseInt(id_column.textContent, 10)
+	snippet.id = parseInt(columnId.textContent, 10)
 	snippet.shared_network = Boolean(row_element.className.match(/\bshared-network-snippet\b/))
 	snippet.network = snippet.shared_network || network_admin
 	snippet.scope = row_element.getAttribute('data-snippet-scope') ?? snippet.scope
 
-	const query_string = `action=update_code_snippet&_ajax_nonce=${nonce}&field=${field}&snippet=${JSON.stringify(snippet)}`
-	send_snippet_request(query_string, success_callback)
+	const queryString = `action=update_code_snippet&_ajax_nonce=${nonce}&field=${field}&snippet=${JSON.stringify(snippet)}`
+	sendSnippetRequest(queryString, success_callback)
 }
-
-/* Snippet priorities */
 
 /**
  * Update the priority of a snippet
  */
-const update_snippet_priority = (element: HTMLInputElement) => {
+export const updateSnippetPriority = (element: HTMLInputElement) => {
 	const row = element.parentElement?.parentElement
 	const snippet: Partial<Snippet> = { priority: parseFloat(element.value) }
 	if (row) {
-		update_snippet('priority', row, snippet)
+		updateSnippet('priority', row, snippet)
 	} else {
 		console.error('Could not update snippet information.', snippet, row)
 	}
-
 }
-
-for (const field of document.getElementsByClassName('snippet-priority') as HTMLCollectionOf<HTMLInputElement>) {
-	field.addEventListener('input', () => update_snippet_priority(field))
-	field.disabled = false
-}
-
-/* Activate/deactivate links */
 
 /**
  * Update the snippet count of a specific view
- * @param view_count
+ * @param element
  * @param increment
  */
-const update_view_count = (view_count: HTMLElement, increment: boolean) => {
-	if (view_count?.textContent) {
-		let count = parseInt(view_count.textContent.replace(/\((?<count>\d+)\)/, '$1'), 10)
+const updateViewCount = (element: HTMLElement, increment: boolean) => {
+	if (element?.textContent) {
+		let count = parseInt(element.textContent.replace(/\((?<count>\d+)\)/, '$1'), 10)
 		count += increment ? 1 : -1
-		view_count.textContent = `(${count.toString()})`
+		element.textContent = `(${count.toString()})`
 	} else {
-		console.error('Could not update view count.', view_count)
+		console.error('Could not update view count.', element)
 	}
 }
 
@@ -93,7 +79,9 @@ const update_view_count = (view_count: HTMLElement, increment: boolean) => {
  * @param link
  * @param event
  */
-const toggle_snippet_active = (link: HTMLAnchorElement, event: Event) => {
+export const toggleSnippetActive = (link: HTMLAnchorElement, event: Event) => {
+	const strings = window.code_snippets_manage_i18n
+
 	const row = link?.parentElement?.parentElement // Switch < cell < row
 	if (!row) {
 		console.error('Could not toggle snippet active status.', row)
@@ -108,7 +96,7 @@ const toggle_snippet_active = (link: HTMLAnchorElement, event: Event) => {
 	const activating = 'inactive-snippet' === match[0]
 	const snippet: Partial<Snippet> = { active: activating }
 
-	update_snippet('active', row, snippet, response => {
+	updateSnippet('active', row, snippet, response => {
 		const button = row.querySelector('.snippet-activation-switch') as HTMLAnchorElement
 
 		if (response.success) {
@@ -120,8 +108,8 @@ const toggle_snippet_active = (link: HTMLAnchorElement, event: Event) => {
 			const activeCount = views?.querySelector<HTMLElement>('.active .count')
 			const inactiveCount = views?.querySelector<HTMLElement>('.inactive .count')
 
-			activeCount ? update_view_count(activeCount, activating) : null
-			inactiveCount ? update_view_count(inactiveCount, activating) : null
+			activeCount ? updateViewCount(activeCount, activating) : null
+			inactiveCount ? updateViewCount(inactiveCount, activating) : null
 
 			button.title = activating ? strings.deactivate : strings.activate
 		} else {
@@ -129,8 +117,4 @@ const toggle_snippet_active = (link: HTMLAnchorElement, event: Event) => {
 			button.title = strings.activation_error
 		}
 	})
-}
-
-for (const link of document.getElementsByClassName('snippet-activation-switch')) {
-	link.addEventListener('click', event => toggle_snippet_active(link as HTMLAnchorElement, event))
 }

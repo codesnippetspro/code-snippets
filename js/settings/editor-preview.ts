@@ -2,7 +2,7 @@ import '../editor-lib'
 import { EditorOption } from '../types'
 
 const { codeEditor } = window.wp
-const editor_settings: EditorOption[] = window.code_snippets_editor_settings
+const editorSettings: EditorOption[] = window.code_snippets_editor_settings
 
 const editor = (() => {
 	const textarea = document.getElementById('code_snippets_editor_preview')
@@ -17,7 +17,7 @@ const parseSelect = (select: HTMLSelectElement) => select.options[select.selecte
 const parseCheckbox = (checkbox: HTMLInputElement) => checkbox.checked
 const parseNumber = (input: HTMLInputElement) => parseInt(input.value, 10)
 
-for (const setting of editor_settings) {
+for (const setting of editorSettings) {
 	const element = document.querySelector(`[name="code_snippets_settings[editor][${setting.name}]"]`)
 
 	element?.addEventListener('change', () => {

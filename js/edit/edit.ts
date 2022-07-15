@@ -8,7 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	const strings = window.code_snippets_edit_i18n
 	const snippetName = document.querySelector('input[name=snippet_name]') as HTMLInputElement
 
-	if (!form || !editor || !snippetName) return
+	if (!form || !editor || !snippetName) {
+		return
+	}
 
 	form.addEventListener('submit', (event: SubmitEvent) => {
 		const missing_title = '' === snippetName.value.trim()

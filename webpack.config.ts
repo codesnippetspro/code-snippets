@@ -3,7 +3,7 @@ import { DefinePlugin, Configuration } from 'webpack'
 
 export const config: Configuration = {
 	entry: {
-		manage: './js/manage.ts',
+		manage: './js/manage/manage.ts',
 		edit: {
 			import: './js/edit/edit.ts',
 			dependOn: 'editor'
