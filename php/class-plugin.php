@@ -70,8 +70,6 @@ class Plugin {
 
 		wp_cache_add_global_groups( CACHE_GROUP );
 
-		add_action( 'init', array( $this, 'load_textdomain' ), 9 );
-
 		add_filter( 'code_snippets/execute_snippets', array( $this, 'disable_snippet_execution' ), 5 );
 
 		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
@@ -256,23 +254,6 @@ class Plugin {
 		}
 
 		return $this->get_cap_name();
-	}
-
-	/**
-	 * Load up the localization file if we're using WordPress in a different language.
-	 *
-	 * If you wish to contribute a language file to be included in the Code Snippets package,
-	 * please see create an issue on GitHub: https://github.com/sheabunge/code-snippets/issues
-	 */
-	public function load_textdomain() {
-		$domain = 'code-snippets';
-		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
-
-		// wp-content/languages/code-snippets/code-snippets-[locale].mo.
-		load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . "$domain/$domain-$locale.mo" );
-
-		// wp-content/plugins/code-snippets/languages/code-snippets-[locale].mo.
-		load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->file ) ) . '/languages' );
 	}
 
 	/**
