@@ -18,7 +18,10 @@ class Block_Editor {
 		}
 
 		add_action( 'init', array( $this, 'init' ) );
-		add_filter( 'block_categories_all', array( $this, 'block_categories' ) );
+		add_filter(
+			class_exists( 'WP_Block_Editor_Context' ) ? 'block_categories_all' : 'block_categories',
+			array( $this, 'block_categories' )
+		);
 	}
 
 	/**
@@ -190,7 +193,11 @@ class Block_Editor {
 			'icon'  => null,
 		);
 
-		array_splice( $categories, $position, 0, array( $category ) );
+		if ( $position === -1 ) {
+			$categories[] = $category;
+		} else {
+			array_splice( $categories, $position, 0, array( $category ) );
+		}
 
 		return $categories;
 	}

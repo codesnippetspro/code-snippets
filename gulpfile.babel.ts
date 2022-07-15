@@ -81,7 +81,7 @@ const transformJs: TaskFunction = done => {
 	webpack({
 		...webpackConfig,
 		mode: 'development',
-		devtool: 'eval'
+		devtool: 'eval-cheap-source-map'
 	}, done)
 }
 
