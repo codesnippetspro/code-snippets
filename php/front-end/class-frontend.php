@@ -60,15 +60,25 @@ class Frontend {
 	 * @return array
 	 */
 	public static function get_prism_themes() {
-		return array(
-			'dark'           => __( 'Dark', 'code-snippets' ),
-			'funky'          => __( 'Funky', 'code-snippets' ),
-			'okaidia'        => __( 'Okaidia', 'code-snippets' ),
-			'twilight'       => __( 'Twilight', 'code-snippets' ),
-			'coy'            => __( 'Coy', 'code-snippets' ),
-			'solarizedlight' => __( 'Solarized Light', 'code-snippets' ),
-			'tomorrow'       => __( 'Tomorrow Night', 'code-snippets' ),
-		);
+		static $themes = null;
+
+		if ( ! is_null( $themes ) ) {
+			return $themes;
+		}
+
+		$themes = array();
+		$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'css/min/prism-themes/';
+		$theme_files = glob( $themes_dir . '*.css' );
+
+		foreach ( $theme_files as $theme ) {
+			$theme = str_replace( $themes_dir, '', $theme );
+			$theme = str_replace( '.css', '', $theme );
+			$theme = str_replace( 'prism-', '', $theme );
+
+			$themes[ $theme ] = implode( ' ', array_map( 'ucfirst', explode( '-', $theme ) ) );
+		}
+
+		return $themes;
 	}
 
 	/**

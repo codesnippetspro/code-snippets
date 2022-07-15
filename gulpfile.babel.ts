@@ -110,7 +110,12 @@ export const phpcs: TaskFunction = () =>
 		.pipe(codesniffer.reporter('log'))
 
 const copyPrismThemes: TaskFunction = () =>
-	src(['node_modules/prismjs/themes/prism-*.css', '!node_modules/prismjs/themes/prism-*.min.css'])
+	src([
+		'node_modules/prismjs/themes/prism-*.css',
+		'node_modules/prism-themes/themes/prism-*.css',
+		'!node_modules/prismjs/themes/prism-*.min.css',
+		'!node_modules/prism-themes/themes/prism-*.min.css',
+	])
 		.pipe(flatmap((stream, file) =>
 			stream.pipe(postcss([
 				prefixSelector({
