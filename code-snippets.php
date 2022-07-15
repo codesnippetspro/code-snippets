@@ -23,7 +23,6 @@ Version:      3.1.2.1
 License:      GPL-2.0-or-later
 License URI:  license.txt
 Text Domain:  code-snippets
-Domain Path:  /languages
 Requires PHP: 5.6
 Requires at least: 3.6
 */
