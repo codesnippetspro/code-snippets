@@ -1,27 +1,27 @@
-import * as tinymce from 'tinymce';
-import { Editor } from 'tinymce';
+import * as tinymce from 'tinymce'
+import { Editor } from 'tinymce'
 
 interface SourceShortcodeOps {
-	id: string;
-	line_numbers: boolean;
+	id: string
+	line_numbers: boolean
 }
 
 interface ContentShortcodeOps {
-	id: string;
-	php: boolean;
-	format: boolean;
-	shortcodes: boolean;
+	id: string
+	php: boolean
+	format: boolean
+	shortcodes: boolean
 }
 
 interface WordPressEditor extends Editor {
-	getLang: (s: string) => string | Record<string, string>;
+	getLang: (s: string) => string | Record<string, string>
 }
 
 const convertToValues = (array: Record<string, string>) =>
 	Object.keys(array).map(key => ({
 		text: array[Number(key)],
 		value: key
-	}));
+	}))
 
 const insertContentMenu = (editor: Editor, activeEditor: WordPressEditor) => ({
 	text: activeEditor.getLang('code_snippets.insert_source_menu'),
@@ -42,20 +42,20 @@ const insertContentMenu = (editor: Editor, activeEditor: WordPressEditor) => ({
 				}
 			],
 			onsubmit: (event: { data: SourceShortcodeOps }) => {
-				const id = parseInt(event.data.id, 10);
-				if (!id) return;
+				const id = parseInt(event.data.id, 10)
+				if (!id) return
 
-				let atts = '';
+				let atts = ''
 
 				if (event.data.line_numbers) {
-					atts += ' line_numbers=true';
+					atts += ' line_numbers=true'
 				}
 
-				editor.insertContent(`[code_snippet_source id=${id}${atts}]`);
+				editor.insertContent(`[code_snippet_source id=${id}${atts}]`)
 			}
-		}, {});
+		}, {})
 	}
-});
+})
 
 const insertSourceMenu = (editor: Editor, ed: WordPressEditor) => ({
 	text: ed.getLang('code_snippets.insert_content_menu'),
@@ -86,29 +86,29 @@ const insertSourceMenu = (editor: Editor, ed: WordPressEditor) => ({
 				}
 			],
 			onsubmit: (event: { data: ContentShortcodeOps }) => {
-				const id = parseInt(event.data.id, 10);
-				if (!id) return;
+				const id = parseInt(event.data.id, 10)
+				if (!id) return
 
-				let atts = '';
+				let atts = ''
 
 				for (const [opt, val] of Object.entries(event.data)) {
 					if ('id' !== opt && val) {
-						atts += ` ${opt}=${val}`;
+						atts += ` ${opt}=${val}`
 					}
 				}
 
-				editor.insertContent(`[code_snippet id=${id}${atts}]`);
+				editor.insertContent(`[code_snippet id=${id}${atts}]`)
 			}
-		}, {});
+		}, {})
 	}
-});
+})
 
 tinymce.PluginManager.add('code_snippets', editor => {
-	const activeEditor = tinymce.activeEditor as WordPressEditor;
+	const activeEditor = tinymce.activeEditor as WordPressEditor
 
 	editor.addButton('code_snippets', {
 		icon: 'code',
 		menu: [insertContentMenu(editor, activeEditor), insertSourceMenu(editor, activeEditor)],
 		type: 'menubutton'
-	});
-});
+	})
+})

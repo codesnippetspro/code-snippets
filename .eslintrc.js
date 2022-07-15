@@ -1,4 +1,4 @@
-const length = 140;
+const length = 140
 
 module.exports = {
 	parser: '@typescript-eslint/parser',
@@ -56,6 +56,7 @@ module.exports = {
 		'prefer-named-capture-group': 'error',
 		'func-style': ['error', 'expression'],
 		'no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
+		'semi': ['error', 'never'],
 
 		'no-ternary': 'off',
 		'no-nested-ternary': 'off',
@@ -73,4 +74,4 @@ module.exports = {
 		'array-element-newline': 'off',
 		'space-before-function-paren': 'off'
 	},
-};
+}

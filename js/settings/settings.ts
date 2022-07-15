@@ -1,2 +1,2 @@
-import './tabs';
-import './editor-preview';
+import './tabs'
+import './editor-preview'

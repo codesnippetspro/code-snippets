@@ -1,8 +1,8 @@
-import tagger from '@jcubic/tagger';
+import tagger from '@jcubic/tagger'
 
 (tags => {
-	const tags_field = document.getElementById('snippet_tags');
-	if (!tags_field) return;
+	const tags_field = document.getElementById('snippet_tags')
+	if (!tags_field) return
 
 	tagger(tags_field, {
 		completion: {
@@ -13,6 +13,6 @@ import tagger from '@jcubic/tagger';
 		allow_spaces: tags.allow_spaces,
 		allow_duplicates: false,
 		link: () => false
-	});
+	})
 
-})(window.code_snippets_tags);
+})(window.code_snippets_tags)

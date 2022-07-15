@@ -1,31 +1,31 @@
-import { Snippet } from './types';
+import { Snippet } from './types'
 
-type SuccessCallback = (response: { success: boolean, data?: unknown }) => void;
+type SuccessCallback = (response: { success: boolean, data?: unknown }) => void
 
-const nonce_input = document.getElementById('code_snippets_ajax_nonce') as HTMLInputElement;
-const nonce = nonce_input.value;
-const network_admin = '-network' === window.pagenow.substring(window.pagenow.length - '-network'.length);
-const strings = window.code_snippets_manage_i18n;
+const nonce_input = document.getElementById('code_snippets_ajax_nonce') as HTMLInputElement
+const nonce = nonce_input.value
+const network_admin = '-network' === window.pagenow.substring(window.pagenow.length - '-network'.length)
+const strings = window.code_snippets_manage_i18n
 
 const send_snippet_request = (query: string, success_callback?: SuccessCallback) => {
-	const request = new XMLHttpRequest();
-	request.open('POST', window.ajaxurl, true);
-	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+	const request = new XMLHttpRequest()
+	request.open('POST', window.ajaxurl, true)
+	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded charset=UTF-8')
 
 	request.onload = () => {
-		const success = 200;
-		const errorStart = 400;
-		if (success > request.status || errorStart <= request.status) return;
+		const success = 200
+		const errorStart = 400
+		if (success > request.status || errorStart <= request.status) return
 		// eslint-disable-next-line no-console
-		console.log(request.responseText);
+		console.log(request.responseText)
 
 		if (success_callback) {
-			success_callback(JSON.parse(request.responseText));
+			success_callback(JSON.parse(request.responseText))
 		}
-	};
+	}
 
-	request.send(query);
-};
+	request.send(query)
+}
 
 /**
  * Update the data of a given snippet using AJAX
@@ -35,20 +35,20 @@ const send_snippet_request = (query: string, success_callback?: SuccessCallback)
  * @param success_callback
  */
 const update_snippet = (field: string, row_element: Element, snippet: Partial<Snippet>, success_callback?: SuccessCallback) => {
-	const id_column = row_element.querySelector('.column-id');
+	const id_column = row_element.querySelector('.column-id')
 
 	if (!id_column?.textContent || !parseInt(id_column.textContent, 10)) {
-		return;
+		return
 	}
 
-	snippet.id = parseInt(id_column.textContent, 10);
-	snippet.shared_network = Boolean(row_element.className.match(/\bshared-network-snippet\b/));
-	snippet.network = snippet.shared_network || network_admin;
-	snippet.scope = row_element.getAttribute('data-snippet-scope') ?? snippet.scope;
+	snippet.id = parseInt(id_column.textContent, 10)
+	snippet.shared_network = Boolean(row_element.className.match(/\bshared-network-snippet\b/))
+	snippet.network = snippet.shared_network || network_admin
+	snippet.scope = row_element.getAttribute('data-snippet-scope') ?? snippet.scope
 
-	const query_string = `action=update_code_snippet&_ajax_nonce=${nonce}&field=${field}&snippet=${JSON.stringify(snippet)}`;
-	send_snippet_request(query_string, success_callback);
-};
+	const query_string = `action=update_code_snippet&_ajax_nonce=${nonce}&field=${field}&snippet=${JSON.stringify(snippet)}`
+	send_snippet_request(query_string, success_callback)
+}
 
 /* Snippet priorities */
 
@@ -56,19 +56,19 @@ const update_snippet = (field: string, row_element: Element, snippet: Partial<Sn
  * Update the priority of a snippet
  */
 const update_snippet_priority = (element: HTMLInputElement) => {
-	const row = element.parentElement?.parentElement;
-	const snippet: Partial<Snippet> = { priority: parseFloat(element.value) };
+	const row = element.parentElement?.parentElement
+	const snippet: Partial<Snippet> = { priority: parseFloat(element.value) }
 	if (row) {
-		update_snippet('priority', row, snippet);
+		update_snippet('priority', row, snippet)
 	} else {
 		console.error('Could not update snippet information.', snippet, row)
 	}
 
-};
+}
 
 for (const field of document.getElementsByClassName('snippet-priority') as HTMLCollectionOf<HTMLInputElement>) {
-	field.addEventListener('input', () => update_snippet_priority(field));
-	field.disabled = false;
+	field.addEventListener('input', () => update_snippet_priority(field))
+	field.disabled = false
 }
 
 /* Activate/deactivate links */
@@ -80,13 +80,13 @@ for (const field of document.getElementsByClassName('snippet-priority') as HTMLC
  */
 const update_view_count = (view_count: HTMLElement, increment: boolean) => {
 	if (view_count?.textContent) {
-		let count = parseInt(view_count.textContent.replace(/\((?<count>\d+)\)/, '$1'), 10);
-		count += increment ? 1 : -1;
-		view_count.textContent = `(${count.toString()})`;
+		let count = parseInt(view_count.textContent.replace(/\((?<count>\d+)\)/, '$1'), 10)
+		count += increment ? 1 : -1
+		view_count.textContent = `(${count.toString()})`
 	} else {
-		console.error('Could not update view count.', view_count);
+		console.error('Could not update view count.', view_count)
 	}
-};
+}
 
 /**
  * Activate an inactive snippet, or deactivate an active snippet
@@ -94,43 +94,43 @@ const update_view_count = (view_count: HTMLElement, increment: boolean) => {
  * @param event
  */
 const toggle_snippet_active = (link: HTMLAnchorElement, event: Event) => {
-	const row = link?.parentElement?.parentElement; // Switch < cell < row
+	const row = link?.parentElement?.parentElement // Switch < cell < row
 	if (!row) {
 		console.error('Could not toggle snippet active status.', row)
-		return;
+		return
 	}
 
-	const match = row.className.match(/\b(?:in)?active-snippet\b/);
-	if (!match) return;
+	const match = row.className.match(/\b(?:in)?active-snippet\b/)
+	if (!match) return
 
-	event.preventDefault();
+	event.preventDefault()
 
-	const activating = 'inactive-snippet' === match[0];
-	const snippet: Partial<Snippet> = { active: activating };
+	const activating = 'inactive-snippet' === match[0]
+	const snippet: Partial<Snippet> = { active: activating }
 
 	update_snippet('active', row, snippet, response => {
-		const button = row.querySelector('.snippet-activation-switch') as HTMLAnchorElement;
+		const button = row.querySelector('.snippet-activation-switch') as HTMLAnchorElement
 
 		if (response.success) {
 			row.className = activating ?
 				row.className.replace(/\binactive-snippet\b/, 'active-snippet') :
-				row.className.replace(/\bactive-snippet\b/, 'inactive-snippet');
+				row.className.replace(/\bactive-snippet\b/, 'inactive-snippet')
 
-			const views = document.querySelector('.subsubsub');
-			const activeCount = views?.querySelector<HTMLElement>('.active .count');
-			const inactiveCount = views?.querySelector<HTMLElement>('.inactive .count');
+			const views = document.querySelector('.subsubsub')
+			const activeCount = views?.querySelector<HTMLElement>('.active .count')
+			const inactiveCount = views?.querySelector<HTMLElement>('.inactive .count')
 
-			activeCount ? update_view_count(activeCount, activating) : null;
-			inactiveCount ? update_view_count(inactiveCount, activating) : null;
+			activeCount ? update_view_count(activeCount, activating) : null
+			inactiveCount ? update_view_count(inactiveCount, activating) : null
 
-			button.title = activating ? strings.deactivate : strings.activate;
+			button.title = activating ? strings.deactivate : strings.activate
 		} else {
-			row.className += ' erroneous-snippet';
-			button.title = strings.activation_error;
+			row.className += ' erroneous-snippet'
+			button.title = strings.activation_error
 		}
-	});
-};
+	})
+}
 
 for (const link of document.getElementsByClassName('snippet-activation-switch')) {
-	link.addEventListener('click', event => toggle_snippet_active(link as HTMLAnchorElement, event));
+	link.addEventListener('click', event => toggle_snippet_active(link as HTMLAnchorElement, event))
 }

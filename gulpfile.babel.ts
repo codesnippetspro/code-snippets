@@ -1,75 +1,83 @@
-import { src, dest, series, parallel, watch as watchFiles, TaskFunction } from 'gulp';
-import * as fs from 'fs';
-import * as path from 'path';
-import del from 'del';
-import * as sourcemaps from 'gulp-sourcemaps';
-import rename from 'gulp-rename';
-import copy from 'gulp-copy';
-import change from 'gulp-change';
-import postcss from 'gulp-postcss';
-import sass from 'gulp-sass';
-import libsass from 'sass';
-import cssnano from 'cssnano';
-import autoprefixer from 'autoprefixer';
-import zip from 'gulp-zip';
-import rtlcss from 'gulp-rtlcss';
-import cssimport from 'postcss-easy-import';
-import hexrgba from 'postcss-hexrgba';
-import eslint from 'gulp-eslint';
-import makepot from 'gulp-wp-pot';
-import gettext from 'gulp-gettext';
-import codesniffer from 'gulp-phpcs';
-import composer from 'gulp-composer';
-import flatmap from 'gulp-flatmap';
-import prefixSelector from 'postcss-prefix-selector';
-import { webpack } from 'webpack';
-import * as pkg from './package.json';
-import { config as webpackConfig } from './webpack.config';
+import { src, dest, series, parallel, watch as watchFiles, TaskFunction } from 'gulp'
+import { webpack } from 'webpack'
+import * as path from 'path'
+import * as fs from 'fs'
+import del from 'del'
+import * as sourcemaps from 'gulp-sourcemaps'
+import rename from 'gulp-rename'
+import copy from 'gulp-copy'
+import change from 'gulp-change'
+import postcss from 'gulp-postcss'
+import sass from 'gulp-sass'
+import libsass from 'sass'
+import cssnano from 'cssnano'
+import autoprefixer from 'autoprefixer'
+import zip from 'gulp-zip'
+import rtlcss from 'gulp-rtlcss'
+import cssimport from 'postcss-easy-import'
+import hexrgba from 'postcss-hexrgba'
+import eslint from 'gulp-eslint'
+import makepot from 'gulp-wp-pot'
+import gettext from 'gulp-gettext'
+import codesniffer from 'gulp-phpcs'
+import composer from 'gulp-composer'
+import flatmap from 'gulp-flatmap'
+import prefixSelector from 'postcss-prefix-selector'
+import * as pkg from './package.json'
+import { config as webpackConfig } from './webpack.config'
 
-const src_files = {
+const SRC_FILES = {
 	php: ['*.php', 'php/**/*.php'],
 	js: ['js/**/*.ts', 'js/**/*.tsx', 'js/**/*.js', '!js/min/**/*'],
-	css: ['css/*.scss', '!css/_*.scss'],
-	all_css: ['css/**/*.scss'],
-	dir_css: ['edit.css', 'manage.css'],
-};
+	css: {
+		all: ['css/**/*.scss'],
+		source: ['css/*.scss', '!css/_*.scss'],
+		directional: ['edit.css', 'manage.css'],
+	},
+}
 
-const dist_dirs = {
+const DEST_DIRS = {
 	js: 'js/min/',
 	css: 'css/min/'
-};
+}
 
-const text_domain = 'code-snippets';
+const TEXT_DOMAIN = 'code-snippets'
 
-const postcss_processors = [
-	cssimport({ prefix: '_', extensions: ['.scss', '.css'] }),
-	hexrgba(),
-	autoprefixer(),
-	cssnano({ preset: ['default', { discardComments: { removeAll: true } }] })
-];
-
-export const css: TaskFunction = done => series(
-	() => src(src_files.css)
+const transformCss = () =>
+	src(SRC_FILES.css.source)
 		.pipe(sourcemaps.init())
 		.pipe(sass(libsass)().on('error', sass(libsass).logError))
-		.pipe(postcss(postcss_processors))
+		.pipe(postcss([
+			cssimport({
+				prefix: '_',
+				extensions: ['.scss', '.css']
+			}),
+			hexrgba(),
+			autoprefixer(),
+			cssnano({
+				preset: ['default', { discardComments: { removeAll: true } }]
+			})
+		]))
 		.pipe(sourcemaps.write('.'))
-		.pipe(dest(dist_dirs.css)),
-	() => src(src_files.dir_css.map(file => dist_dirs.css + file))
+		.pipe(dest(DEST_DIRS.css))
+
+const createRtlCss: TaskFunction = () =>
+	src(SRC_FILES.css.directional.map(file => DEST_DIRS.css + file))
 		.pipe(rename({ suffix: '-rtl' }))
 		.pipe(sourcemaps.init())
 		.pipe(rtlcss())
 		.pipe(sourcemaps.write('.'))
-		.pipe(dest(dist_dirs.css))
-)(done)
+		.pipe(dest(DEST_DIRS.css))
 
-export const jslint: TaskFunction = () =>
-	src(src_files.js)
+export const css: TaskFunction = series(transformCss, createRtlCss)
+
+export const jsLint: TaskFunction = () =>
+	src(SRC_FILES.js)
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(eslint.failAfterError())
 
-export const js: TaskFunction = series(jslint, done => {
+export const js: TaskFunction = series(jsLint, done => {
 	webpack({
 		...webpackConfig,
 		mode: 'development',
@@ -77,22 +85,25 @@ export const js: TaskFunction = series(jslint, done => {
 	}, done)
 })
 
-export const i18n: TaskFunction = parallel([
-	() => src(src_files.php)
+const createPotFile: TaskFunction = () =>
+	src(SRC_FILES.php)
 		.pipe(makepot({
-			domain: text_domain,
+			domain: TEXT_DOMAIN,
 			package: 'Code Snippets',
 			bugReport: 'https://github.com/sheabunge/code-snippets/issues',
 			metadataFile: 'code-snippets.php',
 		}))
-		.pipe(dest(`languages/${text_domain}.pot`)),
-	() => src('languages/*.po')
+		.pipe(dest(`languages/${TEXT_DOMAIN}.pot`))
+
+const createPoFiles: TaskFunction = () =>
+	src('languages/*.po')
 		.pipe(gettext())
 		.pipe(dest('languages'))
-])
+
+export const i18n: TaskFunction = parallel(createPotFile, createPoFiles)
 
 export const phpcs: TaskFunction = () =>
-	src(src_files.php)
+	src(SRC_FILES.php)
 		.pipe(codesniffer({ bin: 'vendor/bin/phpcs', showSniffCode: true }))
 		.pipe(codesniffer.reporter('log'))
 
@@ -106,20 +117,19 @@ const prismJS: TaskFunction = () =>
 				cssnano()
 			]))
 		))
-		.pipe(dest(`${dist_dirs.css}prism-themes`))
+		.pipe(dest(`${DEST_DIRS.css}prism-themes`))
 
 export const vendor: TaskFunction = parallel(
 	() => src('node_modules/codemirror/theme/*.css')
 		.pipe(postcss([cssnano()]))
-		.pipe(dest(`${dist_dirs.css}editor-themes`)),
+		.pipe(dest(`${DEST_DIRS.css}editor-themes`)),
 	prismJS
 )
 
 export const clean: TaskFunction = () =>
-	del([dist_dirs.css, dist_dirs.js])
+	del([DEST_DIRS.css, DEST_DIRS.js])
 
-
-export const test = parallel(jslint, phpcs)
+export const test = parallel(jsLint, phpcs)
 
 export const build = series(clean, parallel(vendor, css, js, i18n))
 
@@ -145,7 +155,7 @@ export const bundle: TaskFunction = (() => {
 		'js/min/**/*',
 		'css/font/**/*',
 		'languages/**/*'
-	]).pipe(copy(pkg.name));
+	]).pipe(copy(pkg.name))
 
 	const copyStylesheets: TaskFunction = () => src('css/min/**/*.css')
 		.pipe(change(content => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
@@ -163,7 +173,7 @@ export const bundle: TaskFunction = (() => {
 		fs.rename(pkg.name, 'dist', error => {
 			if (error) throw error
 			done()
-		});
+		})
 	}
 
 	return series(
@@ -177,7 +187,7 @@ export const bundle: TaskFunction = (() => {
 })()
 
 export const watch: TaskFunction = series(build, done => {
-	watchFiles(src_files.all_css, css)
-	watchFiles(src_files.js, js)
+	watchFiles(SRC_FILES.css.all, css)
+	watchFiles(SRC_FILES.js, js)
 	done()
 })
