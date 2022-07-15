@@ -2,38 +2,38 @@
  * Based on work distributed under the BSD 3-Clause License (https://rawgit.com/glayzzle/codemirror-linter/master/LICENSE)
  */
 
-import Parser, { Block, Location, Node } from 'php-parser';
-import * as CodeMirror from 'codemirror';
+import Parser, { Block, Location, Node } from 'php-parser'
+import * as CodeMirror from 'codemirror'
 
-type Annotation = { message: string, severity: string, from: CodeMirror.Position, to: CodeMirror.Position };
+type Annotation = { message: string, severity: string, from: CodeMirror.Position, to: CodeMirror.Position }
 
 interface Identifier extends Node {
-	name: string;
+	name: string
 }
 
 interface Declaration extends Node {
-	name: Identifier | string;
+	name: Identifier | string
 }
 
 class Linter {
-	private readonly code: string;
+	private readonly code: string
 
-	private readonly function_names: Set<string>;
+	private readonly function_names: Set<string>
 
-	private readonly class_names: Set<string>;
+	private readonly class_names: Set<string>
 
-	public readonly annotations: Annotation[];
+	public readonly annotations: Annotation[]
 
 	/**
 	 * Constructor.
 	 * @param code
 	 */
 	constructor(code: string) {
-		this.code = code;
-		this.annotations = [];
+		this.code = code
+		this.annotations = []
 
-		this.function_names = new Set();
-		this.class_names = new Set();
+		this.function_names = new Set()
+		this.class_names = new Set()
 	}
 
 	/**
@@ -50,24 +50,24 @@ class Linter {
 			ast: {
 				withPositions: true
 			}
-		});
+		})
 
 		try {
-			const ast = parser.parseEval(this.code);
+			const ast = parser.parseEval(this.code)
 
 			// Process any errors caught by the parser.
 			if (ast.errors && 0 < ast.errors.length) {
 				for (const error of ast.errors) {
-					this.annotate(error.message as string, error.loc);
+					this.annotate(error.message as string, error.loc)
 				}
 			}
 
 			// Visit each node to perform additional checks.
-			this.visit(ast);
+			this.visit(ast)
 
 		} catch (error) {
 			// eslint-disable-next-line no-console
-			console.error(error);
+			console.error(error)
 		}
 	}
 
@@ -78,13 +78,13 @@ class Linter {
 	visit(node: Node) {
 
 		if (node.kind) {
-			this.validate(node);
+			this.validate(node)
 		}
 
 		if ('children' in node) {
-			const block = node as Block;
+			const block = node as Block
 			for (const child of block.children) {
-				this.visit(child);
+				this.visit(child)
 			}
 		}
 	}
@@ -97,9 +97,9 @@ class Linter {
 	 */
 	checkDuplicateIdentifier(identifier: Identifier, registry: Set<string>, label: string) {
 		if (registry.has(identifier.name)) {
-			this.annotate(`Cannot redeclare ${label} ${identifier.name}()`, identifier.loc);
+			this.annotate(`Cannot redeclare ${label} ${identifier.name}()`, identifier.loc)
 		} else {
-			registry.add(identifier.name);
+			registry.add(identifier.name)
 		}
 	}
 
@@ -108,18 +108,18 @@ class Linter {
 	 * @param node
 	 */
 	validate(node: Node) {
-		const decl = node as Declaration;
-		const ident = decl.name as Identifier;
+		const decl = node as Declaration
+		const ident = decl.name as Identifier
 
 		if (!('name' in decl && 'name' in ident) || 'identifier' !== ident.kind) {
-			return;
+			return
 		}
 
 		if ('function' === node.kind) {
-			this.checkDuplicateIdentifier(ident, this.function_names, 'function');
+			this.checkDuplicateIdentifier(ident, this.function_names, 'function')
 
 		} else if ('class' === node.kind) {
-			this.checkDuplicateIdentifier(ident, this.class_names, 'class');
+			this.checkDuplicateIdentifier(ident, this.class_names, 'class')
 		}
 	}
 
@@ -130,24 +130,24 @@ class Linter {
 	 * @param severity
 	 */
 	annotate(message: string, location: Location, severity = 'error') {
-		if (!location.start || !location.end) return;
+		if (!location.start || !location.end) return
 
 		const [start, end] = location.end.offset < location.start.offset ?
 			[location.end, location.start] :
-			[location.start, location.end];
+			[location.start, location.end]
 
 		this.annotations.push({
 			message,
 			severity,
 			from: CodeMirror.Pos(start.line as number - 1, start.column as number),
 			to: CodeMirror.Pos(end.line as number - 1, end.column as number)
-		});
+		})
 	}
 }
 
 CodeMirror.registerHelper('lint', 'php', (text: string) => {
-	const linter = new Linter(text);
-	linter.lint();
+	const linter = new Linter(text)
+	linter.lint()
 
-	return linter.annotations;
-});
+	return linter.annotations
+})

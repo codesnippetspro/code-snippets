@@ -1,5 +1,5 @@
-import { defineMode, getMode, EditorConfiguration, ModeSpec } from 'codemirror';
-import './php-lint';
+import { defineMode, getMode, EditorConfiguration, ModeSpec } from 'codemirror'
+import './php-lint'
 
 type ModeSpecOptions = {
 	startOpen: boolean
@@ -7,8 +7,8 @@ type ModeSpecOptions = {
 
 /** Define a new mode which starts the phpmixed mode in php mode instead of html mode */
 defineMode('php-snippet', (config: EditorConfiguration) =>
-	getMode(config, {
+	getMode(config, <ModeSpec<ModeSpecOptions>> {
 		name: 'application/x-httpd-php',
 		startOpen: true
-	} as ModeSpec<ModeSpecOptions>)
-);
+	})
+)

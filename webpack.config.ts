@@ -1,5 +1,5 @@
-import * as path from 'path';
-import { DefinePlugin, Configuration } from 'webpack';
+import * as path from 'path'
+import { DefinePlugin, Configuration } from 'webpack'
 
 export const config: Configuration = {
 	entry: {
@@ -65,6 +65,6 @@ export const config: Configuration = {
 			'process.arch': JSON.stringify('x64')
 		})
 	]
-};
+}
 
-export default config;
+export default config

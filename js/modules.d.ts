@@ -1,11 +1,11 @@
 declare module 'gulp-rtlcss' {
-	import { ThroughStream } from 'through';
-	import { ConfigOptions } from 'rtlcss';
+	import { ThroughStream } from 'through'
+	import { ConfigOptions } from 'rtlcss'
 	export default function (config?: ConfigOptions): ThroughStream
 }
 
 declare module 'postcss-easy-import' {
-	import { Plugin } from 'postcss';
+	import { Plugin } from 'postcss'
 	export default function (opts: {
 		prefix: string | boolean
 		extensions: string | string[]
@@ -13,12 +13,12 @@ declare module 'postcss-easy-import' {
 }
 
 declare module 'postcss-hexrgba' {
-	import { Plugin } from 'postcss';
+	import { Plugin } from 'postcss'
 	export default function (): Plugin
 }
 
 declare module 'gulp-eslint' {
-	import { Transform } from 'stream';
+	import { Transform } from 'stream'
 	export default gulpEslint
 
 	const gulpEslint: {
@@ -30,7 +30,7 @@ declare module 'gulp-eslint' {
 }
 
 declare module 'gulp-wp-pot' {
-	import { Transform } from 'stream';
+	import { Transform } from 'stream'
 	export default function (options?: {
 		bugReport?: string
 		commentKeyword?: string
@@ -55,12 +55,12 @@ declare module 'gulp-wp-pot' {
 }
 
 declare module 'gulp-gettext' {
-	import { Transform } from 'stream';
+	import { Transform } from 'stream'
 	export default function (): Transform
 }
 
 declare module 'gulp-phpcs' {
-	import { Transform } from 'stream';
+	import { Transform } from 'stream'
 	const phpcs: {
 		(options?: {
 			bin?: string
@@ -85,7 +85,7 @@ declare module 'gulp-phpcs' {
 }
 
 declare module 'gulp-composer' {
-	import { Transform } from 'stream';
+	import { Transform } from 'stream'
 	export default function (cmd?: string, opts?: {
 		'bin'?: string
 		'self-install'?: boolean

@@ -1,27 +1,27 @@
-import { src, dest, series, parallel, watch as watchFiles, TaskFunction } from 'gulp';
-import { webpack } from 'webpack';
-import * as fs from 'fs';
-import del from 'del';
-import * as sourcemaps from 'gulp-sourcemaps';
-import rename from 'gulp-rename';
-import copy from 'gulp-copy';
-import change from 'gulp-change';
-import postcss from 'gulp-postcss';
-import sass from 'gulp-sass';
-import libsass from 'sass';
-import cssnano from 'cssnano';
-import autoprefixer from 'autoprefixer';
-import zip from 'gulp-zip';
-import rtlcss from 'gulp-rtlcss';
-import cssimport from 'postcss-easy-import';
-import hexrgba from 'postcss-hexrgba';
-import eslint from 'gulp-eslint';
-import makepot from 'gulp-wp-pot';
-import gettext from 'gulp-gettext';
-import codesniffer from 'gulp-phpcs';
-import composer from 'gulp-composer';
-import * as pkg from './package.json';
-import { config as webpackConfig } from './webpack.config';
+import { src, dest, series, parallel, watch as watchFiles, TaskFunction } from 'gulp'
+import { webpack } from 'webpack'
+import * as fs from 'fs'
+import del from 'del'
+import * as sourcemaps from 'gulp-sourcemaps'
+import rename from 'gulp-rename'
+import copy from 'gulp-copy'
+import change from 'gulp-change'
+import postcss from 'gulp-postcss'
+import sass from 'gulp-sass'
+import libsass from 'sass'
+import cssnano from 'cssnano'
+import autoprefixer from 'autoprefixer'
+import zip from 'gulp-zip'
+import rtlcss from 'gulp-rtlcss'
+import cssimport from 'postcss-easy-import'
+import hexrgba from 'postcss-hexrgba'
+import eslint from 'gulp-eslint'
+import makepot from 'gulp-wp-pot'
+import gettext from 'gulp-gettext'
+import codesniffer from 'gulp-phpcs'
+import composer from 'gulp-composer'
+import * as pkg from './package.json'
+import { config as webpackConfig } from './webpack.config'
 
 const SRC_FILES = {
 	php: ['*.php', 'php/**/*.php'],
@@ -31,14 +31,14 @@ const SRC_FILES = {
 		source: ['css/*.scss', '!css/_*.scss'],
 		directional: ['edit.css', 'manage.css'],
 	},
-};
+}
 
 const DEST_DIRS = {
 	js: 'js/min/',
 	css: 'css/min/'
-};
+}
 
-const TEXT_DOMAIN = pkg.name;
+const TEXT_DOMAIN = 'code-snippets'
 
 const transformCss = () =>
 	src(SRC_FILES.css.source)
@@ -56,7 +56,7 @@ const transformCss = () =>
 			})
 		]))
 		.pipe(sourcemaps.write('.'))
-		.pipe(dest(DEST_DIRS.css));
+		.pipe(dest(DEST_DIRS.css))
 
 const createRtlCss: TaskFunction = () =>
 	src(SRC_FILES.css.directional.map(file => DEST_DIRS.css + file))
@@ -139,7 +139,7 @@ export const bundle: TaskFunction = (() => {
 		'js/min/**/*',
 		'css/font/**/*',
 		'languages/**/*'
-	]).pipe(copy(pkg.name));
+	]).pipe(copy(pkg.name))
 
 	const copyStylesheets: TaskFunction = () => src('css/min/**/*.css')
 		.pipe(change(content => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
@@ -157,7 +157,7 @@ export const bundle: TaskFunction = (() => {
 		fs.rename(pkg.name, 'dist', error => {
 			if (error) throw error
 			done()
-		});
+		})
 	}
 
 	return series(
