@@ -44,6 +44,10 @@ const renderSnippetSource = (snippet: SnippetData, { line_numbers, className }: 
 		...line_numbers ? ['line-numbers'] : []
 	]
 
+	useEffect(() => {
+		window.code_snippets_prism?.highlightAll()
+	}, [snippet.type, snippet.code, line_numbers, className])
+
 	return (
 		<div className={className}>
 			<pre>
@@ -71,12 +75,6 @@ export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 		const blockProps = useBlockProps()
 		const snippets = useSnippetData()
 		const snippet = 0 !== attributes.snippet_id ? snippets.find(snippet => snippet.id === attributes.snippet_id) : undefined
-
-		useEffect(() => {
-			if (window.code_snippets_prism) {
-				window.code_snippets_prism.highlightAll()
-			}
-		}, [window.code_snippets_prism, attributes])
 
 		return (
 			<div {...blockProps}>
