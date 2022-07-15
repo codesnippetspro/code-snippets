@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import { Editor, EditorConfiguration } from 'codemirror'
 import * as Prism from 'prismjs'
-=======
-import { Editor, EditorConfiguration } from 'codemirror'
->>>>>>> develop
 
 export interface EditorOption {
 	name: string
@@ -34,7 +30,6 @@ export interface WordPressUtils {
 	}
 }
 
-<<<<<<< HEAD
 export interface ElementorFrontend {
 	hooks: {
 		addAction: (action: string, callback: (...args: unknown[]) => void, priority?: number, context?: unknown) => void
@@ -42,9 +37,6 @@ export interface ElementorFrontend {
 }
 
 export type SnippetType = 'css' | 'js' | 'php' | 'html'
-=======
-export type SnippetType = 'css' | 'js' | 'php' | 'html'
->>>>>>> develop
 
 export interface Snippet {
 	id: number

@@ -1,9 +1,9 @@
-import React, { ReactElement } from 'react';
-import { __ } from '@wordpress/i18n';
-import { BlockControls } from '@wordpress/block-editor';
-import { Placeholder, ToolbarGroup, ToolbarButton, Icon } from '@wordpress/components';
+import React, { ReactElement } from 'react'
+import { __ } from '@wordpress/i18n'
+import { BlockControls } from '@wordpress/block-editor'
+import { Placeholder, ToolbarGroup, ToolbarButton, Icon } from '@wordpress/components'
 import { undo } from '@wordpress/icons'
-import Select, { OptionsOrGroups } from 'react-select';
+import Select, { OptionsOrGroups } from 'react-select'
 
 export interface SnippetSelectOption {
 	value: number

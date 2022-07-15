@@ -16,6 +16,6 @@ document.addEventListener('readystatechange', () => {
 	if ('complete' === document.readyState) {
 		Prism.highlightAll()
 	}
-});
+})
 
 window.code_snippets_prism = Prism

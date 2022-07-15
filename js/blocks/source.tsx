@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { __ } from '@wordpress/i18n';
-import { PanelBody, ToggleControl } from '@wordpress/components';
-import { BlockConfiguration } from '@wordpress/blocks';
-import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { shortcode } from '@wordpress/icons';
-import { SnippetData } from '../types';
-import { SnippetSelectGroup, SnippetSelector } from './components';
-import { useSnippetData } from './store';
+import React, { useEffect } from 'react'
+import { __ } from '@wordpress/i18n'
+import { PanelBody, ToggleControl } from '@wordpress/components'
+import { BlockConfiguration } from '@wordpress/blocks'
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
+import { shortcode } from '@wordpress/icons'
+import { SnippetData } from '../types'
+import { SnippetSelectGroup, SnippetSelector } from './components'
+import { useSnippetData } from './store'
 
 export const SOURCE_BLOCK = 'code-snippets/source'
 
@@ -16,19 +16,19 @@ const buildOptions = (snippets: SnippetData[]): SnippetSelectGroup[] => {
 		html: { label: __('Content (Mixed)', 'code-snippets'), options: [] },
 		css: { label: __('Styles (CSS)', 'code-snippets'), options: [] },
 		js: { label: __('Scripts (JS)', 'code-snippets'), options: [] }
-	};
+	}
 
 	for (const snippet of snippets) {
 		if (snippet.type in categories) {
 			categories[snippet.type].options.push({
 				value: snippet.id,
 				label: snippet.name
-			});
+			})
 		}
 	}
 
-	return Object.values(categories);
-};
+	return Object.values(categories)
+}
 
 interface SourceBlockAttributes {
 	snippet_id: number
@@ -38,11 +38,11 @@ interface SourceBlockAttributes {
 }
 
 const renderSnippetSource = (snippet: SnippetData, { line_numbers, className }: SourceBlockAttributes) => {
-	const language = 'css' === snippet.type ? 'css' : 'js' === snippet.type ? 'js' : 'php';
+	const language = 'css' === snippet.type ? 'css' : 'js' === snippet.type ? 'js' : 'php'
 	const classNames = [
 		`language-${language}`,
 		...line_numbers ? ['line-numbers'] : []
-	];
+	]
 
 	return (
 		<div className={className}>
@@ -52,7 +52,7 @@ const renderSnippetSource = (snippet: SnippetData, { line_numbers, className }: 
 				</code>
 			</pre>
 		</div>
-	);
+	)
 }
 
 export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
@@ -68,15 +68,15 @@ export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 		className: { type: 'string' }
 	},
 	edit: ({ attributes, setAttributes }) => {
-		const blockProps = useBlockProps();
-		const snippets = useSnippetData();
-		const snippet = 0 !== attributes.snippet_id ? snippets.find(snippet => snippet.id === attributes.snippet_id) : undefined;
+		const blockProps = useBlockProps()
+		const snippets = useSnippetData()
+		const snippet = 0 !== attributes.snippet_id ? snippets.find(snippet => snippet.id === attributes.snippet_id) : undefined
 
 		useEffect(() => {
 			if (window.code_snippets_prism) {
-				window.code_snippets_prism.highlightAll();
+				window.code_snippets_prism.highlightAll()
 			}
-		}, [window.code_snippets_prism, attributes]);
+		}, [window.code_snippets_prism, attributes])
 
 		return (
 			<div {...blockProps}>
@@ -102,4 +102,4 @@ export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 		)
 	},
 	save: () => null,
-};
+}

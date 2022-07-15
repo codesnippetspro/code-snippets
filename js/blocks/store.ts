@@ -1,6 +1,6 @@
-import { createReduxStore, register, StoreConfig, useSelect } from '@wordpress/data';
-import apiFetch from '@wordpress/api-fetch';
-import { SnippetData } from '../types';
+import { createReduxStore, register, StoreConfig, useSelect } from '@wordpress/data'
+import apiFetch from '@wordpress/api-fetch'
+import { SnippetData } from '../types'
 
 export const STORE_KEY = 'code-snippets/snippets-data'
 
@@ -33,9 +33,9 @@ const config: StoreConfig<Store> = {
 	reducer: (state = DEFAULT_STATE, action) => {
 		if (TYPES.SET === action.type) {
 			const { snippetsData } = action
-			return { ...state, snippetsData, loading: false };
+			return { ...state, snippetsData, loading: false }
 		}
-		return state;
+		return state
 	},
 	actions,
 	selectors: {
@@ -48,14 +48,14 @@ const config: StoreConfig<Store> = {
 		receiveSnippetsData: function * () {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const snippetsData = yield actions.receiveSnippetsData('/code-snippets/v1/snippets-info/');
-			return actions.setSnippetsData(snippetsData);
+			const snippetsData = yield actions.receiveSnippetsData('/code-snippets/v1/snippets-info/')
+			return actions.setSnippetsData(snippetsData)
 		},
 	},
 }
 
-const store = createReduxStore(STORE_KEY, config);
-register(store);
+const store = createReduxStore(STORE_KEY, config)
+register(store)
 
 export const useSnippetData = () =>
 	useSelect<SnippetData[]>(select => select(STORE_KEY).receiveSnippetsData(), [])

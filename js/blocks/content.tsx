@@ -1,13 +1,13 @@
-import React from 'react';
-import { Options } from 'react-select';
-import { __ } from '@wordpress/i18n';
-import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { PanelBody, ToggleControl } from '@wordpress/components';
-import { BlockConfiguration } from '@wordpress/blocks';
-import { SnippetSelectOption, SnippetSelector } from './components';
-import { SnippetData } from '../types';
-import { useSnippetData } from './store';
-import ServerSideRender from '@wordpress/server-side-render';
+import React from 'react'
+import { Options } from 'react-select'
+import { __ } from '@wordpress/i18n'
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
+import { PanelBody, ToggleControl } from '@wordpress/components'
+import { BlockConfiguration } from '@wordpress/blocks'
+import { SnippetSelectOption, SnippetSelector } from './components'
+import { SnippetData } from '../types'
+import { useSnippetData } from './store'
+import ServerSideRender from '@wordpress/server-side-render'
 
 export const CONTENT_BLOCK = 'code-snippets/content'
 
@@ -48,7 +48,7 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 	},
 	edit: ({ setAttributes, attributes }) => {
 		const blockProps = useBlockProps()
-		const snippets = useSnippetData();
+		const snippets = useSnippetData()
 
 		return (
 			<div {...blockProps}>

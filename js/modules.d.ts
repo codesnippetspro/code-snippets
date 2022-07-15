@@ -13,7 +13,7 @@ declare module 'postcss-easy-import' {
 }
 
 declare module 'postcss-prefix-selector' {
-	import { Plugin } from 'postcss';
+	import { Plugin } from 'postcss'
 	export default function (options: {
 		prefix: string
 		exclude?: string
@@ -107,9 +107,9 @@ declare module 'gulp-composer' {
 }
 
 declare module 'gulp-flatmap' {
-	import { ThroughStream } from 'through';
-	import { Readable, Stream } from 'stream';
-	import Vinyl from 'vinyl';
+	import { ThroughStream } from 'through'
+	import { Readable, Stream } from 'stream'
+	import Vinyl from 'vinyl'
 	export default function (func: (readStream: Readable, data: Vinyl) => Stream): ThroughStream
 }
 
