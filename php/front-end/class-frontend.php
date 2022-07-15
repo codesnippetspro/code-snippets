@@ -36,6 +36,23 @@ class Frontend {
 	}
 
 	/**
+	 * Retrieve a list of PrismJS themes.
+	 *
+	 * @return array
+	 */
+	public static function get_prism_themes() {
+		return array(
+			'dark'           => __( 'Dark', 'code-snippets' ),
+			'funky'          => __( 'Funky', 'code-snippets' ),
+			'okaidia'        => __( 'Okaidia', 'code-snippets' ),
+			'twilight'       => __( 'Twilight', 'code-snippets' ),
+			'coy'            => __( 'Coy', 'code-snippets' ),
+			'solarizedlight' => __( 'Solarized Light', 'code-snippets' ),
+			'tomorrow'       => __( 'Tomorrow Night', 'code-snippets' ),
+		);
+	}
+
+	/**
 	 * Perform the necessary actions to add a button to the TinyMCE editor
 	 */
 	public function setup_mce_plugin() {

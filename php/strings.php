@@ -16,17 +16,6 @@ __( 'Okay', 'code-snippets' );
 __( 'Minify Snippet Output', 'code-snippets' );
 __( 'Minify snippet output by removing whitespace and optimising code to reduce load times.', 'code-snippets' );
 
-# class-block-editor.php
-array(
-	'dark'           => __( 'Dark', 'code-snippets' ),
-	'funky'          => __( 'Funky', 'code-snippets' ),
-	'okaidia'        => __( 'Okaidia', 'code-snippets' ),
-	'twilight'       => __( 'Twilight', 'code-snippets' ),
-	'coy'            => __( 'Coy', 'code-snippets' ),
-	'solarizedlight' => __( 'Solarized Light', 'code-snippets' ),
-	'tomorrow'       => __( 'Tomorrow Night', 'code-snippets' ),
-);
-
 # edit.php
 __( 'View Full Stylesheet', 'code-snippets' );
 __( 'View Full Script', 'code-snippets' );
