@@ -295,6 +295,8 @@ class Plugin {
 		$descriptions = array(
 			'php'  => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
 			'html' => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
+			'css'  => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
+			'js'   => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
 		);
 
 		return isset( $descriptions[ $type ] ) ? $descriptions[ $type ] : '';
