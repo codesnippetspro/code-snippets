@@ -89,7 +89,11 @@ $licensed = code_snippets()->licensing->is_licensed();
 				esc_html_e( 'Code', 'code-snippets' );
 
 				if ( $snippet->id ) {
-					printf( ' <span class="snippet-type-badge" data-type="%s">%s</span>', esc_attr( $snippet->type ), esc_html( $snippet->type ) );
+					printf(
+						' <span class="snippet-type-badge" data-type="%s">%s</span>',
+						esc_attr( $snippet->type ),
+						esc_html( $snippet->type )
+					);
 				}
 
 				?>
@@ -100,15 +104,25 @@ $licensed = code_snippets()->licensing->is_licensed();
 			<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
 				<?php
 
-				foreach ( code_snippets()->get_types() as $type_name => $label ) {
+				foreach ( Plugin::get_types() as $type_name => $label ) {
 
 					if ( $snippet->type === $type_name ) {
 						echo '<a class="nav-tab nav-tab-active"';
+					} elseif ( ! code_snippets()->licensing->is_licensed() && Plugin::is_pro_type( $type_name ) ) {
+						printf(
+							'<a class="nav-tab nav-tab-inactive" title="%s"',
+							esc_attr__( 'Upgrade to Code Snippets Pro to use this type.', 'code-snippets' )
+						);
 					} else {
 						printf( '<a class="nav-tab" href="%s"', esc_url( add_query_arg( 'type', $type_name ) ) );
 					}
 
-					printf( ' data-type="%s">%s <span class="badge">%s</span></a>', esc_attr( $type_name ), esc_html( $label ), esc_html( $type_name ) );
+					printf(
+						' data-type="%s">%s <span class="badge">%s</span></a>',
+						esc_attr( $type_name ),
+						esc_html( $label ),
+						esc_html( $type_name )
+					);
 				} ?>
 			</h2>
 		<?php } ?>
