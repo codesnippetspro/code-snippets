@@ -18,6 +18,8 @@ class Block_Editor {
 		}
 
 		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'load_editor_assets' ) );
+
 		add_filter(
 			class_exists( 'WP_Block_Editor_Context' ) ? 'block_categories_all' : 'block_categories',
 			array( $this, 'block_categories' )
@@ -64,7 +66,7 @@ class Block_Editor {
 		wp_register_style(
 			$handle,
 			plugins_url( 'css/min/block-editor.css', $file ),
-			$prism_dep,
+			array(),
 			$version,
 			false
 		);
@@ -139,35 +141,24 @@ class Block_Editor {
 			)
 		);
 
-		$prism_themes = [
-			'dark'           => __( 'Dark', 'code-snippets' ),
-			'funky'          => __( 'Funky', 'code-snippets' ),
-			'okaidia'        => __( 'Okaidia', 'code-snippets' ),
-			'twilight'       => __( 'Twilight', 'code-snippets' ),
-			'coy'            => __( 'Coy', 'code-snippets' ),
-			'solarizedlight' => __( 'Solarized Light', 'code-snippets' ),
-			'tomorrow'       => __( 'Tomorrow Night', 'code-snippets' ),
-		];
-
-		foreach ( $prism_themes as $theme => $label ) {
-			$style_handle = "code-snippets-prism-theme-$theme";
-
-			wp_register_style(
-				$style_handle,
-				plugins_url( "css/min/prism-themes/prism-$theme.css", $file ),
-				[ Frontend::PRISM_HANDLE ],
-				$version
-			);
-
-			register_block_style(
-				'code-snippets/source',
-				[
-					'name'         => "prism-$theme",
-					'label'        => $label,
-					'style_handle' => $style_handle,
-				]
-			);
+		foreach ( Frontend::get_prism_themes() as $theme => $label ) {
+			register_block_style( 'code-snippets/source', [ 'name' => "prism-$theme", 'label' => $label ] );
 		}
+	}
+
+	/**
+	 * Load additional assets only in the block editor.
+	 *
+	 * @return void
+	 */
+	public function load_editor_assets() {
+		Frontend::register_prism_assets();
+
+		foreach ( Frontend::get_prism_themes() as $theme => $label ) {
+			wp_enqueue_style( Frontend::get_prism_theme_style_handle( $theme ) );
+		}
+
+		wp_enqueue_style( Frontend::PRISM_HANDLE );
 	}
 
 	/**

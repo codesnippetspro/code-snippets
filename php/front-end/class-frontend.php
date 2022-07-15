@@ -55,6 +55,34 @@ class Frontend {
 	}
 
 	/**
+	 * Retrieve a list of PrismJS themes.
+	 *
+	 * @return array
+	 */
+	public static function get_prism_themes() {
+		return array(
+			'dark'           => __( 'Dark', 'code-snippets' ),
+			'funky'          => __( 'Funky', 'code-snippets' ),
+			'okaidia'        => __( 'Okaidia', 'code-snippets' ),
+			'twilight'       => __( 'Twilight', 'code-snippets' ),
+			'coy'            => __( 'Coy', 'code-snippets' ),
+			'solarizedlight' => __( 'Solarized Light', 'code-snippets' ),
+			'tomorrow'       => __( 'Tomorrow Night', 'code-snippets' ),
+		);
+	}
+
+	/**
+	 * Retrieve the style handle for a PrismJS theme.
+	 *
+	 * @param string $theme
+	 *
+	 * @return string
+	 */
+	public static function get_prism_theme_style_handle( $theme ) {
+		return "code-snippets-prism-theme-$theme";
+	}
+
+	/**
 	 * Perform the necessary actions to add a button to the TinyMCE editor
 	 */
 	public function setup_mce_plugin() {
@@ -114,6 +142,13 @@ class Frontend {
 
 			// Register the syntax highlighter assets and exit from the loop once a match is discovered.
 			$this->register_prism_assets();
+
+			foreach ( self::get_prism_themes() as $theme => $label ) {
+				if ( strpos( $post->post_content, "is-style-prism-$theme" ) ) {
+					wp_enqueue_style( self::get_prism_theme_style_handle( $theme ) );
+				}
+			}
+
 			wp_enqueue_style( self::PRISM_HANDLE );
 			wp_enqueue_script( self::PRISM_HANDLE );
 			break;
@@ -128,19 +163,28 @@ class Frontend {
 	public static function register_prism_assets() {
 		$plugin = code_snippets();
 
-		wp_register_style(
-			self::PRISM_HANDLE,
-			plugins_url( 'css/min/prism.css', $plugin->file ),
-			array(),
-			$plugin->version
-		);
-
 		wp_register_script(
 			self::PRISM_HANDLE,
 			plugins_url( 'js/min/prism.js', $plugin->file ),
 			array(),
 			$plugin->version,
 			true
+		);
+
+		foreach ( self::get_prism_themes() as $theme => $label ) {
+			wp_register_style(
+				self::get_prism_theme_style_handle( $theme ),
+				plugins_url( "css/min/prism-themes/prism-$theme.css", $plugin->file ),
+				array(),
+				$plugin->version
+			);
+		}
+
+		wp_register_style(
+			self::PRISM_HANDLE,
+			plugins_url( 'css/min/prism.css', $plugin->file ),
+			array(),
+			$plugin->version
 		);
 	}
 
