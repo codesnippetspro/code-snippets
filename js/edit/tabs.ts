@@ -17,16 +17,20 @@ import { EditorConfiguration } from 'codemirror'
 
 	const selectScope = (type: SnippetType) => {
 		const scope = snippetForm?.querySelector(`.${type}-scopes-list input:first-child`) as HTMLInputElement
-		if (scope) scope.checked = true
+		if (scope) {
+			scope.checked = true
+		}
 
 		editor?.setOption('lint' as keyof EditorConfiguration, 'php' === type || 'css' === type)
-		if (type in modes) editor?.setOption('mode', modes[type])
+		if (type in modes) {
+			editor?.setOption('mode', modes[type])
+		}
 	}
 
 	const switchTab = (tab: Element) => {
-		const prev_active = tabsContainer.querySelector('.nav-tab-active')
-		prev_active?.setAttribute('href', '#')
-		prev_active?.classList.remove('nav-tab-active')
+		const prevActive = tabsContainer.querySelector('.nav-tab-active')
+		prevActive?.setAttribute('href', '#')
+		prevActive?.classList.remove('nav-tab-active')
 
 		tab.classList.add('nav-tab-active')
 		tab.removeAttribute('href')

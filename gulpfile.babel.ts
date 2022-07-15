@@ -68,19 +68,21 @@ const createRtlCss: TaskFunction = () =>
 
 export const css: TaskFunction = series(transformCss, createRtlCss)
 
-export const jsLint: TaskFunction = () =>
+export const lintJs: TaskFunction = () =>
 	src(SRC_FILES.js)
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(eslint.failAfterError())
 
-export const js: TaskFunction = series(jsLint, done => {
+const transformJs: TaskFunction = done => {
 	webpack({
 		...webpackConfig,
 		mode: 'development',
 		devtool: 'eval'
 	}, done)
-})
+}
+
+export const js: TaskFunction = series(lintJs, transformJs)
 
 const createPotFile: TaskFunction = () =>
 	src(SRC_FILES.php)
@@ -114,7 +116,7 @@ export const vendor: TaskFunction = copyCodeMirrorThemes
 export const clean: TaskFunction = () =>
 	del([DEST_DIRS.css, DEST_DIRS.js])
 
-export const test = parallel(jsLint, phpcs)
+export const test = parallel(lintJs, phpcs)
 
 export const build = series(clean, parallel(vendor, css, js))
 
