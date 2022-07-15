@@ -107,7 +107,7 @@ export const phpcs: TaskFunction = () =>
 		.pipe(codesniffer({ bin: 'vendor/bin/phpcs', showSniffCode: true }))
 		.pipe(codesniffer.reporter('log'))
 
-const prismJS: TaskFunction = () =>
+const copyPrismThemes: TaskFunction = () =>
 	src(['node_modules/prismjs/themes/prism-*.css', '!node_modules/prismjs/themes/prism-*.min.css'])
 		.pipe(flatmap((stream, file) =>
 			stream.pipe(postcss([
@@ -119,19 +119,19 @@ const prismJS: TaskFunction = () =>
 		))
 		.pipe(dest(`${DEST_DIRS.css}prism-themes`))
 
-export const vendor: TaskFunction = parallel(
-	() => src('node_modules/codemirror/theme/*.css')
+const copyCodeMirrorThemes: TaskFunction = () =>
+	src('node_modules/codemirror/theme/*.css')
 		.pipe(postcss([cssnano()]))
-		.pipe(dest(`${DEST_DIRS.css}editor-themes`)),
-	prismJS
-)
+		.pipe(dest(`${DEST_DIRS.css}editor-themes`))
+
+export const vendor: TaskFunction = parallel(copyCodeMirrorThemes, copyPrismThemes)
 
 export const clean: TaskFunction = () =>
 	del([DEST_DIRS.css, DEST_DIRS.js])
 
 export const test = parallel(jsLint, phpcs)
 
-export const build = series(clean, parallel(vendor, css, js, i18n))
+export const build = series(clean, parallel(vendor, css, js))
 
 export default build
 
