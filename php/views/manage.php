@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-$types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], code_snippets()->get_types() );
+$types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin::get_types() );
 
 $current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : 'all';
 $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
@@ -42,7 +42,15 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 
 			if ( $type_name === $current_type ) {
 				printf( '<a class="nav-tab nav-tab-active" data-type="%s">', esc_attr( $type_name ) );
-			} else {
+
+			} elseif ( Plugin::is_pro_type( $type_name ) ) {
+				printf(
+					'<a class="nav-tab nav-tab-inactive" data-type="%s" title="%s">',
+					esc_attr( $type_name ),
+					esc_attr__( 'Upgrade to Code Snippets Pro to use this type.', 'code-snippets' )
+				);
+
+			}  else {
 				printf(
 					'<a class="nav-tab" href="%s" data-type="%s">',
 					esc_url( add_query_arg( 'type', $type_name ) ),

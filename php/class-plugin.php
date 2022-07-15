@@ -277,11 +277,24 @@ class Plugin {
 	 *
 	 * @return array
 	 */
-	public function get_types() {
+	public static function get_types() {
 		return array(
 			'php'  => __( 'Functions', 'code-snippets' ),
 			'html' => __( 'Content', 'code-snippets' ),
+			'css'  => __( 'Styles', 'code-snippets' ),
+			'js'   => __( 'Scripts', 'code-snippets' ),
 		);
+	}
+
+	/**
+	 * Determine whether a snippet type is Pro-only.
+	 *
+	 * @param string $type Snippet type name.
+	 *
+	 * @return bool
+	 */
+	public static function is_pro_type( $type ) {
+		return 'css' === $type || 'js' === $type;
 	}
 
 	/**

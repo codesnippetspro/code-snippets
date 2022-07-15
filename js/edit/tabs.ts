@@ -38,7 +38,7 @@ import { EditorConfiguration } from 'codemirror'
 
 	for (const tab of tabs) {
 		tab.addEventListener('click', event => {
-			if (tab.classList.contains('nav-tab-active')) return
+			if (tab.classList.contains('nav-tab-active') || tab.classList.contains('nav-tab-inactive')) return
 			const type = tab.getAttribute('data-type') as SnippetType
 			event.preventDefault()
 
