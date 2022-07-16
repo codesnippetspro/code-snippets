@@ -9,7 +9,7 @@
 namespace Code_Snippets\Uninstall;
 
 // Ensure this plugin is actually being uninstalled.
-if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) || defined( 'CODE_SNIPPETS_PRO' ) && CODE_SNIPPETS_PRO ) {
 	return;
 }
 
