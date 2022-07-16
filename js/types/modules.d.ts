@@ -58,14 +58,3 @@ declare module 'gulp-phpcs' {
 	}
 	export default phpcs
 }
-
-declare module 'gulp-composer' {
-	import { Transform } from 'stream'
-	export default function (cmd?: string, opts?: {
-		'bin'?: string
-		'self-install'?: boolean
-		'async'?: boolean
-		'ansi'?: boolean
-		'working-dir'?: string
-	} & Record<string, unknown>): Transform
-}

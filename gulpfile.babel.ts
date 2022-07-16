@@ -1,7 +1,8 @@
 import { src, dest, series, parallel, watch as watchFiles, TaskFunction } from 'gulp'
-import { webpack } from 'webpack'
 import * as path from 'path'
+import { exec } from 'child_process'
 import { promises as fs } from 'fs'
+import { webpack } from 'webpack'
 import del from 'del'
 import * as sourcemaps from 'gulp-sourcemaps'
 import rename from 'gulp-rename'
@@ -16,7 +17,6 @@ import cssimport from 'postcss-easy-import'
 import hexrgba from 'postcss-hexrgba'
 import eslint from 'gulp-eslint'
 import codesniffer from 'gulp-phpcs'
-import composer from 'gulp-composer'
 import removeSourceMaps from 'gulp-remove-sourcemaps'
 import * as pkg from './package.json'
 import { config as webpackConfig } from './webpack.config'
@@ -115,8 +115,17 @@ export const bundle: TaskFunction = (() => {
 	const cleanupBefore: TaskFunction = () =>
 		del(['build', pkg.name, `${pkg.name}.*.zip`])
 
-	const composerProduction: TaskFunction = () =>
-		composer('install', { 'no-dev': true })
+	const composerProduction: TaskFunction = done =>
+		exec('composer install --no-dev', error => {
+			if (error) throw error
+			done()
+		})
+
+	const composer: TaskFunction = done =>
+		exec('composer install', error => {
+			if (error) throw error
+			done()
+		})
 
 	const webpackProduction: TaskFunction = done => {
 		webpack({ ...webpackConfig, mode: 'production' }, done)
@@ -132,21 +141,15 @@ export const bundle: TaskFunction = (() => {
 			.pipe(zip(`${pkg.name}.${pkg.version}.zip`))
 			.pipe(dest('.'))
 
-	const cleanupAfter: TaskFunction = done => {
-		// Reinstall dev dependencies
-		composer()
-
-		// Rename the distribution directory to its proper name
+	const cleanupAfter: TaskFunction = done =>
 		fs.rename(pkg.name, 'build').then(() => done())
-	}
 
 	return series(
-		build,
-		cleanupBefore,
+		parallel(build, cleanupBefore),
 		parallel(composerProduction, webpackProduction),
 		copyFiles,
 		archive,
-		cleanupAfter
+		parallel(composer, cleanupAfter)
 	)
 })()
 
