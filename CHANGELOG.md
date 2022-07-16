@@ -10,6 +10,7 @@
 * Added: Admin notice announcing release of Code Snippets Pro.
 * Fixed: Inconsistencies with translations between different plugin versions.
 * Fixed: Issue with Content Snippet shortcode information not displaying.
+* Added: Button for copying shortcode text to clipboard.
 
 ## 3.1.2 (3 July 2022)
 * Updated external links and branding for Code Snippets Pro.

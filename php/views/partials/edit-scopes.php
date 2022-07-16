@@ -12,7 +12,6 @@ namespace Code_Snippets;
 
 $snippet = $this->snippet;
 
-
 echo '<h2 class="screen-reader-text">', esc_html__( 'Scope', 'code-snippets' ), '</h2>';
 
 if ( ! $snippet->id || 'php' === $snippet->type ) {
@@ -71,18 +70,24 @@ if ( ! $snippet->id || 'html' === $snippet->type ) {
 
 		<?php
 		if ( ! $snippet->id || 'content' === $snippet->scope ) {
-			/* translators: %s: snippet shortcode tag */
-			$text = $snippet->id ? __( 'You can use the %s shortcode to insert your content into a post or page.', 'code-snippets' ) : __( 'After saving, you will be able to use the %s shortcode to insert your content into a post or page.', 'code-snippets' );
 
-			$shortcode_atts = ( $snippet->id ? ' id=' . $snippet->id : '' ) . ( $snippet->network ? ' network=true' : '' );
+			echo '<p>';
+			esc_html_e( 'There are multiple options for inserting this snippet into a post, page or other content. You can copy the below shortcode, or use the Classic Editor button, Block Editor block (Pro) or Elementor widget (Pro).', 'code-snippets' );
+			echo '</p>';
 
-			if ( false !== stripos( $snippet->code, '<?' ) ) {
-				$shortcode_atts .= ' php=true';
-			}
+			$shortcode_atts =
+				( $snippet->id ? ' id=' . $snippet->id : '' ) .
+				( $snippet->network ? ' network=true' : '' ) .
+				( false !== stripos( $snippet->code, '<?' ) ? ' php=true' : '' );
+
+			$shortcode_tag = "[code_snippet$shortcode_atts]";
+
+			echo '<code class="shortcode-tag">', esc_html( $shortcode_tag ), '</code>';
 
 			printf(
-				'<p>' . esc_html( $text ) . '</p>',
-				'<code class="shortcode-tag">[code_snippet' . esc_html( $shortcode_atts ) . ']</code>'
+				'<a class="code-snippets-copy-text dashicons dashicons-clipboard" title="%s" data-text="%s" href="#"></a>',
+				esc_attr__( 'Copy shortcode to clipboard', 'code-snippets' ),
+				esc_attr( $shortcode_tag )
 			);
 
 			if ( $snippet->id ) { ?>

@@ -1,4 +1,4 @@
-@import '@jcubic/tagger/tagger.css';
+@import '../node_modules/@jcubic/tagger/tagger.css';
 @import 'editor';
 
 @import 'type-badges';
@@ -93,70 +93,6 @@ p.snippet-scope, .snippet-scope p {
 	position: relative;
 }
 
-.editor-help-tooltip {
-	cursor: help;
-	padding: 0.3em 0.3em 0;
-	display: inline-block;
-	font-size: 10px;
-	background: transparent !important;
-}
-
-.snippet-editor-help {
-	position: absolute;
-	right: 5px;
-	top: 5px;
-
-	&:hover .editor-help-text {
-		visibility: visible;
-		opacity: 1;
-	}
-}
-
-.editor-help-text {
-	visibility: hidden;
-	background-color: #555;
-	color: #fff;
-	padding: 5px;
-	border-radius: 6px;
-	position: absolute;
-	z-index: 99;
-	top: 125%;
-	right: 0;
-	margin-right: -10px;
-	opacity: 0;
-	transition: opacity 0.3s;
-	white-space: nowrap;
-	font-size: small;
-
-	&::after {
-		content: "";
-		position: absolute;
-		bottom: 100%;
-		right: 0;
-		margin-right: 10px;
-		border: 5px solid transparent;
-		border-bottom-color: #555;
-	}
-
-	td:first-child {
-		padding-right: 0.5em;
-	}
-
-	.mac-key {
-		display: none;
-	}
-
-	&.platform-mac {
-		.mac-key {
-			display: inline;
-		}
-
-		.pc-key {
-			display: none;
-		}
-	}
-}
-
 .CodeMirror {
 	width: 100%;
 }
@@ -165,114 +101,10 @@ p.snippet-scope, .snippet-scope p {
 	border-bottom: none;
 }
 
-.snippet-scope {
-	display: none;
-
-	.description {
-		display: block;
-	}
+.code-snippets-copy-text {
+	color: inherit;
 }
 
-.CodeMirror-sizer {
-	min-height: 300px !important;
-	box-sizing: border-box;
-	padding-bottom: 1.5em !important;
-
-	&::after {
-		position: absolute;
-		bottom: 0;
-	}
-}
-
-[data-snippet-type=php] {
-
-	.php-scopes-list {
-		display: block;
-	}
-
-	.CodeMirror-sizer {
-		padding-bottom: 0 !important;
-	}
-
-	.CodeMirror-sizer::before {
-		content: '<?php';
-	}
-}
-
-[data-snippet-type=css] {
-
-	.css-scopes-list {
-		display: block;
-	}
-
-	.CodeMirror-sizer::before {
-		content: '<style>';
-	}
-
-	.CodeMirror-sizer::after {
-		content: '</style>';
-	}
-}
-
-[data-snippet-type=js] {
-
-	.js-scopes-list {
-		display: block;
-	}
-
-	.CodeMirror-sizer::before {
-		content: '<script>';
-	}
-
-	.CodeMirror-sizer::after {
-		content: '</script>';
-	}
-}
-
-[data-snippet-type=html] {
-
-	.html-scopes-list {
-		display: block;
-	}
-
-	.CodeMirror-sizer::before {
-		content: '<!-- begin content -->';
-	}
-
-	.CodeMirror-sizer::after {
-		content: '<!-- end content -->';
-	}
-}
-
-/* snippet tags */
-
-.tagger {
-	border: 0;
-
-	ul {
-		border: 1px solid #dfdfdf;
-		border-radius: 3px;
-		background-color: #fff;
-	}
-}
-
-.tagger-new ul,
-.tagger > ul > li:not(.tagger-new) > a,
-.tagger li:not(.tagger-new) > span {
-	border-radius: 6px;
-	border: 1px solid #cad8f3;
-	background-color: #dee7f8;
-
-	&:hover {
-		background-color: #bbcef1;
-		border-color: #6d95e0;
-	}
-}
-
-.tagger-new ul,
-.tagger > ul > li:not(.tagger-new) {
-	a, a:visited {
-		color: #555;
-		font-size: 1.1em;
-	}
-}
+@import 'edit/tooltips';
+@import 'edit/types';
+@import 'edit/tags';

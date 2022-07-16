@@ -1,6 +1,7 @@
 import './editor'
 import './tabs'
 import './shortcode'
+import './clipboard'
 
 document.addEventListener('DOMContentLoaded', () => {
 	const form = document.getElementById('snippet-form')
