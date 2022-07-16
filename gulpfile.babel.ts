@@ -113,7 +113,7 @@ const copyPrismThemes: TaskFunction = () =>
 				cssnano()
 			]))
 		))
-		.pipe(dest(path.join(DEST_DIR, 'prism-themes')))
+		.pipe(dest(`${DEST_DIR}/prism-themes`))
 
 const copyCodeMirrorThemes: TaskFunction = () =>
 	src('node_modules/codemirror/theme/*.css')
