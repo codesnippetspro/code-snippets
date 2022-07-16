@@ -80,7 +80,7 @@ function get_settings_fields() {
 				'modified-desc' => __( 'Modified (latest first)', 'code-snippets' ),
 				'modified-asc'  => __( 'Modified (oldest first)', 'code-snippets' ),
 			],
-			'default' => 'priority',
+			'default' => 'priority-asc',
 		],
 
 		'disable_prism' => [

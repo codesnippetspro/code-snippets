@@ -306,6 +306,18 @@ class Frontend {
 	}
 
 	/**
+	 * Converts a value and key into an HTML attribute pair.
+	 *
+	 * @param string $value Attribute value.
+	 * @param string $key   Attribute name.
+	 *
+	 * @return void
+	 */
+	private static function create_attribute_pair( &$value, $key ) {
+		$value = sprintf( '%s="%s"', sanitize_key( $key ), esc_attr( $value ) );
+	}
+
+	/**
 	 * Render the source code of a given snippet
 	 *
 	 * @param Snippet $snippet Snippet object.
@@ -314,25 +326,40 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	private function render_snippet_source( Snippet $snippet, $atts = [] ) {
-		$atts = array_merge( [ 'line_numbers' => false ], $atts );
+		$atts = array_merge(
+			array(
+				'line_numbers'    => false,
+				'highlight_lines' => '',
+			),
+			$atts
+		);
+
 		$language = 'css' === $snippet->type ? 'css' : ( 'js' === $snippet->type ? 'js' : 'php' );
 
-		$class = "language-$language" . ( $atts['line_numbers'] ? ' line-numbers' : '' );
+		$pre_attributes = array( 'id' => "code-snippet-source-$snippet->id" );
+		$code_attributes = array( 'class' => "language-$language" );
 
-		$html_attributes = apply_filters( 'code_snippets/prism_attributes', [ 'class' => $class ], $snippet, $atts );
+		if ( $atts['line_numbers'] ) {
+			$code_attributes['class'] .= ' line-numbers';
+			$pre_attributes['class'] = 'linkable-line-numbers';
+		}
 
-		array_walk(
-			$html_attributes,
-			function ( &$value, $key ) {
-				$value = sprintf( '%s="%s"', sanitize_key( $key ), esc_attr( $value ) );
-			}
-		);
+		if ( $atts['highlight_lines'] ) {
+			$pre_attributes['data-line'] = $atts['highlight_lines'];
+		}
+
+		$pre_attributes = apply_filters( 'code_snippets/prism_pre_attributes', $pre_attributes, $snippet, $atts );
+		$code_attributes = apply_filters( 'code_snippets/prism_code_attributes', $code_attributes, $snippet, $atts );
+
+		array_walk( $code_attributes, array( $this, 'create_attribute_pair' ) );
+		array_walk( $pre_attributes, array( $this, 'create_attribute_pair' ) );
 
 		$code = 'php' === $snippet->type ? "<?php\n\n$snippet->code" : $snippet->code;
 
 		return sprintf(
-			'<pre><code %s>%s</code></pre>',
-			implode( ' ', $html_attributes ),
+			'<pre %s><code %s>%s</code></pre>',
+			implode( ' ', $pre_attributes ),
+			implode( ' ', $code_attributes ),
 			esc_html( $code )
 		);
 	}
@@ -346,13 +373,13 @@ class Frontend {
 	 */
 	public function render_source_shortcode( $atts ) {
 		$atts = shortcode_atts(
-			[
+			array(
 				'id'              => 0,
 				'snippet_id'      => 0,
 				'network'         => false,
 				'line_numbers'    => false,
 				'highlight_lines' => '',
-			],
+			),
 			$atts,
 			self::SOURCE_SHORTCODE
 		);

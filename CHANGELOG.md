@@ -12,6 +12,7 @@
 * Fixed: Issue with Content Snippet shortcode information not displaying.
 * Added: Button for copying shortcode text to clipboard.
 * Improved: Include Code Snippets CSS and JS source code in distributed package.
+* Improved: Don't delete data from plugin if deleting Code Snippets Free while Code Snippets Pro is active.
 
 ## 3.1.2 (3 July 2022)
 * Updated external links and branding for Code Snippets Pro.
