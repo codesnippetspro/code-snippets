@@ -97,32 +97,19 @@ if ( ! $snippet->id ) {
 			</label>
 		</h2>
 
-		<?php if ( ! $snippet->id ) { ?>
-			<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
-				<?php
+		<?php
 
-				foreach ( Plugin::get_types() as $type_name => $label ) {
+		if ( ! $snippet->id ) {
+			echo '<h2 class="nav-tab-wrapper" id="snippet-type-tabs">';
 
-					if ( $snippet->type === $type_name ) {
-						echo '<a class="nav-tab nav-tab-active"';
-					} elseif ( Plugin::is_pro_type( $type_name ) ) {
-						printf(
-							'<a class="nav-tab nav-tab-inactive" title="%s" href="https://codesnippets.pro/pricing/" target="_blank',
-							esc_attr__( 'Available in Code Snippets Pro (external link)', 'code-snippets' )
-						);
-					} else {
-						printf( '<a class="nav-tab" href="%s"', esc_url( add_query_arg( 'type', $type_name ) ) );
-					}
+			foreach ( Plugin::get_types() as $type_name => $label ) {
+				Admin::render_snippet_type_tab( $type_name, $label, $snippet->type );
+			}
 
-					printf(
-						' data-type="%s">%s <span class="badge">%s</span></a>',
-						esc_attr( $type_name ),
-						esc_html( $label ),
-						esc_html( $type_name )
-					);
-				} ?>
-			</h2>
-		<?php } ?>
+			echo '</h2>';
+		}
+
+		?>
 
 		<div class="snippet-editor">
 			<textarea id="snippet_code" name="snippet_code" rows="200" spellcheck="false"
