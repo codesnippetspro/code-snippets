@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.2.0 (unreleased)
+* Fixed: Remove default value from SQL columns to improve compatibility with certain versions of MySQL.
+* Fixed: Delay loading snippets in Gutenberg editor blocks. (PRO)
+* Added: Option to show and hide line numbers in Gutenberg source code editor block. (PRO)
+* Added: Support for highlighting HTML, CSS, JS and embedded code in the front-end PrismJS code highlighter.
+* Added: Additional features to front-end PrismJS code highlighter, including automatic links and a copy button.
+* Added: Support for multiple code styles in the source code Gutenberg editor block. (PRO)
+* Added: Admin notice announcing release of Code Snippets Pro.
+* Fixed: Inconsistencies with translations between different plugin versions.
+* Fixed: Issue with Content Snippet shortcode information not displaying.
+
+## 3.1.2 (3 July 2022)
+* Updated external links and branding for Code Snippets Pro.
+* Improved: Add link URLs to settings pages, as an alternative to in-page navigation.
+* Fixed: Various fixes to block editor scripts. (PRO)
+* Fixed: Improved visual style of Gutenberg editor blocks. (PRO)
+
 ## 3.1.1 (13 Jun 2022)
 * Fixed: Download snippets feature not including snippet content.
 * Fixed: Alignment of 'opens externally' dashicon.
@@ -75,9 +92,9 @@
 ## 2.14.2 (9 Sep 2021)
 * Fixed: Prevent network snippets table from being created on single-site installs.
 * Added translations:
-    - Spanish by [Ibidem Group](https://www.ibidemgroup.com)
-    - Urdu by [Samuel Badree](https://mobilemall.pk/)
-    - Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
+	- Spanish by [Ibidem Group](https://www.ibidemgroup.com)
+	- Urdu by [Samuel Badree](https://mobilemall.pk/)
+	- Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
 * Added: Support for `:class` syntax to the code validator.
 * Added: PHP8 support to the code linter.
 * Added: Color picker feature to the code editor.
@@ -118,7 +135,7 @@
 * Fixed: Use Unix newlines in code export file.
 * Updated CodeMirror to version 5.44.0.
 * Fixed: Correctly register snippet tables with WordPress to prevent database repair errors. [[#](https://wordpress.org/support/topic/database-corrupted-4/)]
-* Fixed: CodeMirror indentation settings being applied incorrectly. 
+* Fixed: CodeMirror indentation settings being applied incorrectly.
 
 ## 2.13.2 (25 Jan 2019)
 * Removed potentially problematic cursor position saving feature.
