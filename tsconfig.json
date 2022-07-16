@@ -13,7 +13,6 @@
     "gulpfile.babel.ts"
   ],
   "exclude": [
-    "js/min",
     "node_modules"
   ]
 }

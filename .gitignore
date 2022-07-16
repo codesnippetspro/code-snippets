@@ -6,8 +6,7 @@
 code-snippets.*.zip
 code-snippets-pro.*.zip
 /dist
-/css/min
-/js/min
+/build
 
 # Grunt (via NPM)
 node_modules

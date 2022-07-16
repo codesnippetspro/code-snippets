@@ -47,7 +47,7 @@ class Frontend {
 		add_filter(
 			'mce_external_plugins',
 			function ( $plugins ) {
-				$plugins['code_snippets'] = plugins_url( 'js/min/mce.js', PLUGIN_FILE );
+				$plugins['code_snippets'] = plugins_url( 'dist/mce.js', PLUGIN_FILE );
 				return $plugins;
 			}
 		);
@@ -111,14 +111,14 @@ class Frontend {
 
 		wp_register_style(
 			self::PRISM_HANDLE,
-			plugins_url( 'css/min/prism.css', $plugin->file ),
+			plugins_url( 'dist/prism.css', $plugin->file ),
 			array(),
 			$plugin->version
 		);
 
 		wp_register_script(
 			self::PRISM_HANDLE,
-			plugins_url( 'js/min/prism.js', $plugin->file ),
+			plugins_url( 'dist/prism.js', $plugin->file ),
 			array(),
 			$plugin->version,
 			true
