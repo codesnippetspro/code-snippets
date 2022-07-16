@@ -4,8 +4,8 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.1.2.1
-Tested up to: 6.0
+Stable tag: 3.1.2
+Tested up to: 6.0.1
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -13,17 +13,29 @@ An easy, clean and simple way to run code snippets on your site.
 
 Code Snippets is an easy, clean and simple way to run code snippets on your site. It removes the need to add custom snippets to your theme's `functions.php` file.
 
+[**Code Snippets Pro** is now available, with full CSS, JavaScript, Gutenberg and Elementor support.](https://codesnippets.pro/pricing/)
+
 A snippet is a small chunk of PHP code that you can use to extend the functionality of a WordPress-powered website; essentially a mini-plugin with less load on your site.
+
 Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while.
+
 Code Snippets changes that by providing a GUI interface for adding snippets and **actually running them on your site** just as if they were in your theme's `functions.php` file.
 
-Code Snippets provides graphical interface, similar to the Plugins menu, for managing snippets. Snippets can be activated and deactivated, just like plugins. The snippet editor includes fields for a name, a visual editor-enabled description, tags to allow you to categorize snippets, and a full-featured code editor. Snippets can be exported for transfer to another site, either in JSON for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
+**Quick overview of Code Snippets by Imran Siddiq**
 
-If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](https://wordpress.org/support/plugin/code-snippets), or [join the community on Facebook](https://facebook.com/groups/codesnippetsplugin).
+https://youtu.be/EMjIWjcYONk
+
+Code Snippets provides graphical interface, similar to the Plugins menu, for managing snippets. Snippets can be activated and deactivated, just like plugins.
+
+The snippet editor includes fields for a name, a visual editor-enabled description, tags to allow you to categorize snippets, and a full-featured code editor. Snippets can be exported for transfer to another site, either in JSON for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
+
+**Comprehensive Code Snippets tutorial with practical examples by Ferdy Korpershoek**
+
+https://youtu.be/29jD2BcBX5w
+
+If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](https://wordpress.org/support/plugin/code-snippets), [join the community on Facebook](https://facebook.com/groups/codesnippetsplugin), or [check us out on GitHub](https://github.com/sheabunge/code-snippets).
 
 If you like this plugin, or it is useful to you in some way, please consider reviewing it on [WordPress.org](https://wordpress.org/support/view/plugin-reviews/code-snippets).
-
-If you'd like to contribute to the plugin's code or translate it into another language, you can [fork the plugin on GitHub](https://github.com/sheabunge/code-snippets).
 
 == Translations ==
 
@@ -294,3 +306,6 @@ __New in Pro__
 **[The full changelog is available on GitHub](https://github.com/sheabunge/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
+
+= 3.2.0 =
+Code Snippets Pro is here! Plus syntax highlighter improvements in this version.
