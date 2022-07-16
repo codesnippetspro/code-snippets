@@ -12,11 +12,11 @@ __( 'Notice', 'code-snippets' );
 __( 'Thanks', 'code-snippets' );
 __( 'Okay', 'code-snippets' );
 
-# settings-fields.php
+// settings-fields.php.
 __( 'Minify Snippet Output', 'code-snippets' );
 __( 'Minify snippet output by removing whitespace and optimising code to reduce load times.', 'code-snippets' );
 
-# edit.php
+// edit.php.
 __( 'View Full Stylesheet', 'code-snippets' );
 __( 'View Full Script', 'code-snippets' );
 
@@ -27,7 +27,7 @@ array(
 	'site-footer-js' => __( 'JavaScript loaded just before the closing &amp;lt;/body&amp;gt; tag', 'code-snippets' ),
 );
 
-# edit-scopes.php
+// edit-scopes.php.
 array(
 	'head-content'   => __( 'Display in site &lt;head&gt; section.', 'code-snippets' ),
 	'footer-content' => __( 'Display at the end of the &lt;body&gt; section, in the footer.', 'code-snippets' ),
@@ -35,7 +35,7 @@ array(
 	'admin-css'      => __( 'Administration area styles', 'code-snippets' ),
 );
 
-# class-content-widget.php
+// class-content-widget.php.
 __( 'Processing Options', 'code-snippets' );
 __( 'Alignment', 'code-snippets' );
 __( 'Left', 'code-snippets' );
@@ -45,7 +45,7 @@ __( 'Justified', 'code-snippets' );
 __( 'Text Color', 'code-snippets' );
 __( 'Select a snippet to show', 'code-snippets' );
 
-# class-source-widget.php
+// class-source-widget.php.
 __( 'Code Snippet Source', 'code-snippets' );
 __( 'Functions (PHP)', 'code-snippets' );
 __( 'Content (Mixed)', 'code-snippets' );

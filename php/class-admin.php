@@ -275,6 +275,11 @@ class Admin {
 		return $info;
 	}
 
+	/**
+	 * Print any admin notices that have not been dismissed.
+	 *
+	 * @return void
+	 */
 	public function print_notices() {
 		global $current_user;
 
@@ -282,7 +287,7 @@ class Admin {
 		$dismissed = get_user_meta( $current_user->ID, $key, false );
 
 		if ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $key ) ) {
-			add_user_meta( $current_user->ID, $key, sanitize_text_field( $_GET[ $key ] ), true );
+			add_user_meta( $current_user->ID, $key, sanitize_key( wp_unslash( $_GET[ $key ] ) ), true );
 			return;
 		}
 
