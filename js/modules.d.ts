@@ -29,36 +29,6 @@ declare module 'gulp-eslint' {
 	}
 }
 
-declare module 'gulp-wp-pot' {
-	import { Transform } from 'stream'
-	export default function (options?: {
-		bugReport?: string
-		commentKeyword?: string
-		domain?: string
-		destFile?: string
-		headers?: boolean | Record<string, string>
-		getTextFunctions?: Record<string, string>
-		includePOTCreationDate?: boolean
-		lastTranslator?: string
-		metadataFile?: string
-		noFilePaths?: boolean
-		package?: string
-		parser?: 'php' | 'js'
-		parserOptions?: Record<string, unknown>
-		relativeTo?: string
-		src?: string | string[]
-		globOpts?: Record<string, unknown>
-		team?: string
-		writeFile?: boolean
-		ignoreTemplateNameHeader?: boolean
-	}): Transform
-}
-
-declare module 'gulp-gettext' {
-	import { Transform } from 'stream'
-	export default function (): Transform
-}
-
 declare module 'gulp-phpcs' {
 	import { Transform } from 'stream'
 	const phpcs: {
