@@ -4,7 +4,7 @@ import { PanelBody, ToggleControl } from '@wordpress/components'
 import { BlockConfiguration } from '@wordpress/blocks'
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { shortcode } from '@wordpress/icons'
-import { SnippetData } from '../types'
+import { SnippetData } from '../types/types'
 import { SnippetSelectGroup, SnippetSelector } from './components'
 import { useSnippetData } from './store'
 

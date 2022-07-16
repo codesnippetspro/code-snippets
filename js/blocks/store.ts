@@ -1,6 +1,6 @@
 import { createReduxStore, register, StoreConfig, useSelect } from '@wordpress/data'
 import apiFetch from '@wordpress/api-fetch'
-import { SnippetData } from '../types'
+import { SnippetData } from '../types/types'
 
 export const STORE_KEY = 'code-snippets/snippets-data'
 
