@@ -1,26 +1,29 @@
 import * as path from 'path'
 import { DefinePlugin, Configuration } from 'webpack'
 
+const SOURCE_DIR = './js'
+const DEST_DIR = './dist'
+
 export const config: Configuration = {
 	entry: {
-		manage: './js/manage/manage.ts',
+		manage: `${SOURCE_DIR}/manage.ts`,
 		edit: {
-			import: './js/edit/edit.ts',
+			import: `${SOURCE_DIR}/edit.ts`,
 			dependOn: 'editor'
 		},
-		tags: './js/edit/tags.ts',
+		tags: `${SOURCE_DIR}/edit-tags.ts`,
 		settings: {
-			import: './js/settings/settings.ts',
+			import: `${SOURCE_DIR}/settings.ts`,
 			dependOn: 'editor'
 		},
-		mce: './js/mce.ts',
-		prism: './js/prism.ts',
-		blocks: './js/blocks/blocks.ts',
-		elementor: './js/elementor.ts',
-		editor: './js/editor-lib.ts'
+		mce: `${SOURCE_DIR}/mce.ts`,
+		prism: `${SOURCE_DIR}/prism.ts`,
+		blocks:`${SOURCE_DIR}/blocks/blocks.ts`,
+		elementor: `${SOURCE_DIR}/elementor.ts`,
+		editor: `${SOURCE_DIR}/editor.ts`,
 	},
 	output: {
-		path: path.join(path.resolve(__dirname), 'js/min'),
+		path: path.join(path.resolve(__dirname), DEST_DIR),
 		filename: '[name].js',
 	},
 	externalsType: 'window',

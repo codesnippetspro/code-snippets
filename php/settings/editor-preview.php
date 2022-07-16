@@ -26,7 +26,7 @@ function enqueue_editor_preview_assets() {
 	foreach ( $themes as $theme ) {
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
-			plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
+			plugins_url( "dist/editor-themes/$theme.css", $plugin->file ),
 			[ 'code-editor' ],
 			$plugin->version
 		);
@@ -35,7 +35,7 @@ function enqueue_editor_preview_assets() {
 	// Enqueue the menu scripts.
 	wp_enqueue_script(
 		'code-snippets-settings-menu',
-		plugins_url( 'js/min/settings.js', $plugin->file ),
+		plugins_url( 'dist/settings.js', $plugin->file ),
 		[ 'code-snippets-code-editor' ],
 		$plugin->version,
 		true

@@ -85,30 +85,24 @@ if ( ! $snippet->id || 'html' === $snippet->type ) {
 
 		<?php
 		if ( ! $snippet->id || 'content' === $snippet->scope ) {
-			$block_editor = has_action( 'enqueue_block_assets' );
-			$elementor = defined( 'ELEMENTOR_VERSION' );
-
 			echo '<p>';
-			if ( $elementor && $block_editor ) {
-				esc_html_e( 'You can use the Code Snippets editor blocks or Elementor widgets to insert the snippet content into a post or page.', 'code-snippets' );
-			} elseif ( $elementor ) {
-				esc_html_e( 'You can use the Code Snippets Elementor widgets to insert the snippet content into a post or page.', 'code-snippets' );
-			} elseif ( $block_editor ) {
-				esc_html_e( 'You can use the Code Snippets editor blocks to insert the snippet content into a post or page.', 'code-snippets' );
-			} else {
-				/* translators: %s: snippet shortcode tag */
-				esc_html_e( 'You can use the %s shortcode to insert the snippet content into a post or page.', 'code-snippets' );
-
-				$shortcode_atts =
-					( $snippet->id ? ' id=' . $snippet->id : '' ) .
-					( $snippet->network ? ' network=true' : '' ) .
-					( false !== stripos( $snippet->code, '<?' ) ? ' php=true' : '' );
-			}
+			esc_html_e( 'There are multiple options for inserting this snippet into a post, page or other content. You can copy the below shortcode, or use the Classic Editor button, Block Editor block (Pro) or Elementor widget (Pro).', 'code-snippets' );
 			echo '</p>';
 
-			if ( isset( $shortcode_atts ) ) {
-				echo '<code class="shortcode-tag">[code_snippet', esc_html( $shortcode_atts ), ']</code>';
-			}
+			$shortcode_atts =
+				( $snippet->id ? ' id=' . $snippet->id : '' ) .
+				( $snippet->network ? ' network=true' : '' ) .
+				( false !== stripos( $snippet->code, '<?' ) ? ' php=true' : '' );
+
+			$shortcode_tag = "[code_snippet$shortcode_atts]";
+
+			echo '<code class="shortcode-tag">', esc_html( $shortcode_tag ), '</code>';
+
+			printf(
+				'<a class="code-snippets-copy-text dashicons dashicons-clipboard" title="%s" data-text="%s" href="#"></a>',
+				esc_attr__( 'Copy shortcode to clipboard', 'code-snippets' ),
+				esc_attr( $shortcode_tag )
+			);
 
 			if ( $snippet->id ) { ?>
 				<p class="html-shortcode-options">

@@ -86,7 +86,7 @@ class Admin {
 	public function load_admin_menu_icon() {
 		wp_enqueue_style(
 			'menu-icon-snippets',
-			plugins_url( 'css/min/menu-icon.css', code_snippets()->file ),
+			plugins_url( 'dist/menu-icon.css', code_snippets()->file ),
 			array(),
 			code_snippets()->version
 		);

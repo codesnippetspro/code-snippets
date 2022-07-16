@@ -69,7 +69,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 
 	wp_enqueue_script(
 		'code-snippets-code-editor',
-		plugins_url( 'js/min/editor.js', $plugin->file ),
+		plugins_url( 'dist/editor.js', $plugin->file ),
 		[ 'code-editor' ],
 		$plugin->version,
 		true
@@ -81,7 +81,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 	if ( 'default' !== $theme ) {
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
-			plugins_url( "css/min/editor-themes/$theme.css", $plugin->file ),
+			plugins_url( "dist/editor-themes/$theme.css", $plugin->file ),
 			[ 'code-editor' ],
 			$plugin->version
 		);
@@ -103,7 +103,7 @@ function get_editor_themes( $include_default = true ) {
 	}
 
 	$themes = $include_default ? array( 'default' ) : array();
-	$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'css/min/editor-themes/';
+	$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'dist/editor-themes/';
 
 	$theme_files = glob( $themes_dir . '*.css' );
 

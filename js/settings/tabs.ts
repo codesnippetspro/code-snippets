@@ -29,17 +29,19 @@ const updateHttpReferer = (section: string) => {
 	http_referer.value = new_referer
 }
 
-// Loop through all tabs and add a click event listener.
-const tabs = tabs_wrapper?.querySelectorAll('.nav-tab') ?? []
-for (const tab of tabs) {
-	tab.addEventListener('click', event => {
-		event.preventDefault()
-		const section = tab.getAttribute('data-section')
+export const handleSettingsTabs = () => {
+	const tabs = tabs_wrapper?.querySelectorAll('.nav-tab') ?? []
 
-		if (section) {
-			selectTab(tab, section)
-			refreshEditorPreview(section)
-			updateHttpReferer(section)
-		}
-	})
+	for (const tab of tabs) {
+		tab.addEventListener('click', event => {
+			event.preventDefault()
+			const section = tab.getAttribute('data-section')
+
+			if (section) {
+				selectTab(tab, section)
+				refreshEditorPreview(section)
+				updateHttpReferer(section)
+			}
+		})
+	}
 }

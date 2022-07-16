@@ -17,7 +17,6 @@ module.exports = {
 		node: true,
 		es6: true
 	},
-	ignorePatterns: ['js/min/**/*'],
 	extends: [
 		'eslint:recommended',
 		'plugin:@typescript-eslint/recommended',

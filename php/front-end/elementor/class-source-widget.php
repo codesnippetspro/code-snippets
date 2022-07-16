@@ -44,7 +44,7 @@ class Source_Widget extends Widget {
 
 			wp_register_script(
 				'code-snippets-elementor',
-				plugins_url( 'js/min/elementor.js', code_snippets()->file ),
+				plugins_url( 'dist/elementor.js', code_snippets()->file ),
 				[ 'elementor-frontend', Frontend::PRISM_HANDLE ],
 				code_snippets()->version,
 				true

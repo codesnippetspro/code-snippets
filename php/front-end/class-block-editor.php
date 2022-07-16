@@ -42,7 +42,7 @@ class Block_Editor {
 
 		wp_register_script(
 			$handle,
-			plugins_url( 'js/min/blocks.js', $file ),
+			plugins_url( 'dist/blocks.js', $file ),
 			array_merge(
 				$prism_dep,
 				array(
@@ -65,7 +65,7 @@ class Block_Editor {
 
 		wp_register_style(
 			$handle,
-			plugins_url( 'css/min/block-editor.css', $file ),
+			plugins_url( 'dist/block-editor.css', $file ),
 			array(),
 			$version,
 			false

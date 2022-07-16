@@ -67,7 +67,7 @@ class Frontend {
 		}
 
 		$themes = array();
-		$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'css/min/prism-themes/';
+		$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'dist/prism-themes/';
 		$theme_files = glob( $themes_dir . '*.css' );
 
 		foreach ( $theme_files as $theme ) {
@@ -114,7 +114,7 @@ class Frontend {
 		add_filter(
 			'mce_external_plugins',
 			function ( $plugins ) {
-				$plugins['code_snippets'] = plugins_url( 'js/min/mce.js', PLUGIN_FILE );
+				$plugins['code_snippets'] = plugins_url( 'dist/mce.js', PLUGIN_FILE );
 				return $plugins;
 			}
 		);
@@ -185,7 +185,7 @@ class Frontend {
 
 		wp_register_script(
 			self::PRISM_HANDLE,
-			plugins_url( 'js/min/prism.js', $plugin->file ),
+			plugins_url( 'dist/prism.js', $plugin->file ),
 			array(),
 			$plugin->version,
 			true
@@ -194,7 +194,7 @@ class Frontend {
 		foreach ( self::get_prism_themes() as $theme => $label ) {
 			wp_register_style(
 				self::get_prism_theme_style_handle( $theme ),
-				plugins_url( "css/min/prism-themes/prism-$theme.css", $plugin->file ),
+				plugins_url( "dist/prism-themes/prism-$theme.css", $plugin->file ),
 				array(),
 				$plugin->version
 			);
@@ -202,7 +202,7 @@ class Frontend {
 
 		wp_register_style(
 			self::PRISM_HANDLE,
-			plugins_url( 'css/min/prism.css', $plugin->file ),
+			plugins_url( 'dist/prism.css', $plugin->file ),
 			array(),
 			$plugin->version
 		);

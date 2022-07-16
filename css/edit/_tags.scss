@@ -1,0 +1,31 @@
+
+.tagger {
+	border: 0;
+
+	ul {
+		border: 1px solid #dfdfdf;
+		border-radius: 3px;
+		background-color: #fff;
+	}
+}
+
+.tagger-new ul,
+.tagger > ul > li:not(.tagger-new) > a,
+.tagger li:not(.tagger-new) > span {
+	border-radius: 6px;
+	border: 1px solid #cad8f3;
+	background-color: #dee7f8;
+
+	&:hover {
+		background-color: #bbcef1;
+		border-color: #6d95e0;
+	}
+}
+
+.tagger-new ul,
+.tagger > ul > li:not(.tagger-new) {
+	a, a:visited {
+		color: #555;
+		font-size: 1.1em;
+	}
+}

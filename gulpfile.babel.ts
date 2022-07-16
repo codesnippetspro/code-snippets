@@ -1,12 +1,11 @@
 import { src, dest, series, parallel, watch as watchFiles, TaskFunction } from 'gulp'
-import { webpack } from 'webpack'
 import * as path from 'path'
-import * as fs from 'fs'
+import { exec } from 'child_process'
+import { promises as fs } from 'fs'
+import { webpack } from 'webpack'
 import del from 'del'
 import * as sourcemaps from 'gulp-sourcemaps'
 import rename from 'gulp-rename'
-import copy from 'gulp-copy'
-import change from 'gulp-change'
 import postcss from 'gulp-postcss'
 import sass from 'gulp-sass'
 import libsass from 'sass'
@@ -18,26 +17,37 @@ import cssimport from 'postcss-easy-import'
 import hexrgba from 'postcss-hexrgba'
 import eslint from 'gulp-eslint'
 import codesniffer from 'gulp-phpcs'
-import composer from 'gulp-composer'
 import flatmap from 'gulp-flatmap'
 import prefixSelector from 'postcss-prefix-selector'
+import removeSourceMaps from 'gulp-remove-sourcemaps'
 import * as pkg from './package.json'
 import { config as webpackConfig } from './webpack.config'
 
 const SRC_FILES = {
 	php: ['*.php', 'php/**/*.php'],
-	js: ['js/**/*.ts', 'js/**/*.tsx', 'js/**/*.js', '!js/min/**/*'],
+	js: ['js/**/*.ts', 'js/**/*.tsx', 'js/**/*.js', 'js/**/*.jsx'],
 	css: {
 		all: ['css/**/*.scss'],
-		source: ['css/*.scss', '!css/_*.scss'],
+		source: ['css/*.scss', '!css/**/_*.scss'],
 		directional: ['edit.css', 'manage.css'],
 	},
 }
 
-const DEST_DIRS = {
-	js: 'js/min/',
-	css: 'css/min/'
-}
+const DEST_DIR = 'dist/'
+
+const BUNDLE_FILES = [
+	'assets/**/*',
+	'css/**/*',
+	'js/**/*',
+	'dist/**/*',
+	'!dist/**/*.map',
+	'php/**/*',
+	'vendor/**/*',
+	'code-snippets.php',
+	'uninstall.php',
+	'readme.txt',
+	'license.txt',
+]
 
 const transformCss = () =>
 	src(SRC_FILES.css.source)
@@ -55,15 +65,15 @@ const transformCss = () =>
 			})
 		]))
 		.pipe(sourcemaps.write('.'))
-		.pipe(dest(DEST_DIRS.css))
+		.pipe(dest(DEST_DIR))
 
 const createRtlCss: TaskFunction = () =>
-	src(SRC_FILES.css.directional.map(file => DEST_DIRS.css + file))
+	src(SRC_FILES.css.directional.map(file => path.join(DEST_DIR, file)))
 		.pipe(rename({ suffix: '-rtl' }))
 		.pipe(sourcemaps.init())
 		.pipe(rtlcss())
 		.pipe(sourcemaps.write('.'))
-		.pipe(dest(DEST_DIRS.css))
+		.pipe(dest(DEST_DIR))
 
 export const css: TaskFunction = series(transformCss, createRtlCss)
 
@@ -103,17 +113,16 @@ const copyPrismThemes: TaskFunction = () =>
 				cssnano()
 			]))
 		))
-		.pipe(dest(`${DEST_DIRS.css}prism-themes`))
+		.pipe(dest(path.join(DEST_DIR, 'prism-themes')))
 
 const copyCodeMirrorThemes: TaskFunction = () =>
 	src('node_modules/codemirror/theme/*.css')
 		.pipe(postcss([cssnano()]))
-		.pipe(dest(`${DEST_DIRS.css}editor-themes`))
+		.pipe(dest(`${DEST_DIR}/editor-themes`))
 
 export const vendor: TaskFunction = parallel(copyCodeMirrorThemes, copyPrismThemes)
 
-export const clean: TaskFunction = () =>
-	del([DEST_DIRS.css, DEST_DIRS.js])
+export const clean: TaskFunction = () => del(DEST_DIR)
 
 export const test = parallel(lintJs, phpcs)
 
@@ -123,52 +132,43 @@ export default build
 
 export const bundle: TaskFunction = (() => {
 	const cleanupBefore: TaskFunction = () =>
-		del(['dist', pkg.name, `${pkg.name}.*.zip`])
+		del(['build', pkg.name, `${pkg.name}.*.zip`])
 
-	const composerProduction: TaskFunction = () =>
-		composer('install', { 'no-dev': true })
+	const composerProduction: TaskFunction = done =>
+		exec('composer install --no-dev', error => {
+			if (error) throw error
+			done()
+		})
+
+	const composer: TaskFunction = done =>
+		exec('composer install', error => {
+			if (error) throw error
+			done()
+		})
 
 	const webpackProduction: TaskFunction = done => {
 		webpack({ ...webpackConfig, mode: 'production' }, done)
 	}
 
-	const copyFiles: TaskFunction = () => src([
-		'code-snippets.php',
-		'readme.txt',
-		'license.txt',
-		'vendor/**/*',
-		'php/**/*',
-		'js/min/**/*',
-		'css/font/**/*',
-		'languages/**/*'
-	]).pipe(copy(pkg.name))
+	const copyFiles: TaskFunction = () =>
+		src(BUNDLE_FILES, { base: '.' })
+			.pipe(removeSourceMaps())
+			.pipe(dest(pkg.name))
 
-	const copyStylesheets: TaskFunction = () => src('css/min/**/*.css')
-		.pipe(change(content => content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
-		.pipe(dest(`${pkg.name}/css/min`))
+	const archive: TaskFunction = () =>
+		src(`${pkg.name}/**/*`, { base: '.' })
+			.pipe(zip(`${pkg.name}.${pkg.version}.zip`))
+			.pipe(dest('.'))
 
-	const archive: TaskFunction = () => src(`${pkg.name}/**/*`, { base: '.' })
-		.pipe(zip(`${pkg.name}.${pkg.version}.zip`))
-		.pipe(dest('.'))
-
-	const cleanupAfter: TaskFunction = done => {
-		// Reinstall dev dependencies
-		composer()
-
-		// Rename the distribution directory to its proper name
-		fs.rename(pkg.name, 'dist', error => {
-			if (error) throw error
-			done()
-		})
-	}
+	const cleanupAfter: TaskFunction = done =>
+		fs.rename(pkg.name, 'build').then(() => done())
 
 	return series(
-		build,
-		cleanupBefore,
+		parallel(build, cleanupBefore),
 		parallel(composerProduction, webpackProduction),
-		parallel(copyFiles, copyStylesheets),
+		copyFiles,
 		archive,
-		cleanupAfter
+		parallel(composer, cleanupAfter)
 	)
 })()
 
