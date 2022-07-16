@@ -1,12 +1,12 @@
 declare module 'gulp-rtlcss' {
-	import { ThroughStream } from 'through'
+	import { Transform } from 'stream'
 	import { ConfigOptions } from 'rtlcss'
-	export default function (config?: ConfigOptions): ThroughStream
+	export default function (config?: ConfigOptions): Transform
 }
 
 declare module 'gulp-remove-sourcemaps' {
-	import { ThroughStream } from 'through'
-	export default function (): ThroughStream
+	import { Transform } from 'stream'
+	export default function (): Transform
 }
 
 declare module 'postcss-easy-import' {
