@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { __ } from '@wordpress/i18n'
-import { PanelBody, ToggleControl } from '@wordpress/components'
+import { PanelBody, TextControl, ToggleControl } from '@wordpress/components'
 import { BlockConfiguration } from '@wordpress/blocks'
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { shortcode } from '@wordpress/icons'
@@ -34,24 +34,29 @@ interface SourceBlockAttributes {
 	snippet_id: number
 	network: boolean
 	line_numbers: boolean
+	highlight_lines: string
 	className: string
 }
 
-const renderSnippetSource = (snippet: SnippetData, { line_numbers, className }: SourceBlockAttributes) => {
+const renderSnippetSource = (snippet: SnippetData, { className, line_numbers, highlight_lines }: SourceBlockAttributes) => {
 	const language = 'css' === snippet.type ? 'css' : 'js' === snippet.type ? 'js' : 'php'
-	const classNames = [
+	const codeClassNames = [
 		`language-${language}`,
 		...line_numbers ? ['line-numbers'] : []
 	]
 
 	useEffect(() => {
 		window.code_snippets_prism?.highlightAll()
-	}, [snippet.type, snippet.code, line_numbers, className])
+	}, [snippet.type, snippet.code, line_numbers, highlight_lines, className])
 
 	return (
 		<div className={className}>
-			<pre>
-				<code className={classNames.join(' ')}>
+			<pre
+				id={`code-snippets-source-${snippet.id}`}
+				className={line_numbers ? 'linkable-line-numbers' : ''}
+				data-line={highlight_lines}
+			>
+				<code className={codeClassNames.join(' ')}>
 					{'php' === snippet.type ? `<?php\n\n${snippet.code}` : snippet.code}
 				</code>
 			</pre>
@@ -69,6 +74,7 @@ export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 		snippet_id: { type: 'number', default: 0 },
 		network: { type: 'boolean', default: false },
 		line_numbers: { type: 'boolean', default: true },
+		highlight_lines: { type: 'string', default: '' },
 		className: { type: 'string' }
 	},
 	edit: ({ attributes, setAttributes }) => {
@@ -84,6 +90,10 @@ export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 							label={__('Show line numbers', 'code-snippets')}
 							checked={attributes.line_numbers}
 							onChange={isChecked => setAttributes({ ...attributes, line_numbers: isChecked })} />
+						<TextControl
+							label={__('Highlight lines', 'code-snippets')}
+							value={attributes.highlight_lines}
+							onChange={value => setAttributes({ ...attributes, highlight_lines: value })} />
 					</PanelBody>
 				</InspectorControls>
 
