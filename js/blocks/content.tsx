@@ -5,7 +5,7 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { PanelBody, ToggleControl } from '@wordpress/components'
 import { BlockConfiguration } from '@wordpress/blocks'
 import { SnippetSelectOption, SnippetSelector } from './components'
-import { SnippetData } from '../types/types'
+import { SnippetData } from '../types/snippet'
 import { useSnippetData } from './store'
 import ServerSideRender from '@wordpress/server-side-render'
 
