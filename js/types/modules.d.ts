@@ -4,6 +4,11 @@ declare module 'gulp-rtlcss' {
 	export default function (config?: ConfigOptions): ThroughStream
 }
 
+declare module 'gulp-remove-sourcemaps' {
+	import { ThroughStream } from 'through'
+	export default function (): ThroughStream
+}
+
 declare module 'postcss-easy-import' {
 	import { Plugin } from 'postcss'
 	export default function (opts: {

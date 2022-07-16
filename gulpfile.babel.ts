@@ -1,12 +1,10 @@
 import { src, dest, series, parallel, watch as watchFiles, TaskFunction } from 'gulp'
 import { webpack } from 'webpack'
 import * as path from 'path'
-import * as fs from 'fs'
+import { promises as fs } from 'fs'
 import del from 'del'
 import * as sourcemaps from 'gulp-sourcemaps'
 import rename from 'gulp-rename'
-import copy from 'gulp-copy'
-import change from 'gulp-change'
 import postcss from 'gulp-postcss'
 import sass from 'gulp-sass'
 import libsass from 'sass'
@@ -19,6 +17,7 @@ import hexrgba from 'postcss-hexrgba'
 import eslint from 'gulp-eslint'
 import codesniffer from 'gulp-phpcs'
 import composer from 'gulp-composer'
+import removeSourceMaps from 'gulp-remove-sourcemaps'
 import * as pkg from './package.json'
 import { config as webpackConfig } from './webpack.config'
 
@@ -33,6 +32,20 @@ const SRC_FILES = {
 }
 
 const DEST_DIR = 'dist/'
+
+const BUNDLE_FILES = [
+	'assets/**/*',
+	'css/**/*',
+	'js/**/*',
+	'dist/**/*',
+	'!dist/**/*.map',
+	'php/**/*',
+	'vendor/**/*',
+	'code-snippets.php',
+	'uninstall.php',
+	'readme.txt',
+	'license.txt',
+]
 
 const transformCss = () =>
 	src(SRC_FILES.css.source)
@@ -109,25 +122,10 @@ export const bundle: TaskFunction = (() => {
 		webpack({ ...webpackConfig, mode: 'production' }, done)
 	}
 
-	const copyFiles: TaskFunction = () => src([
-		'assets/**/*',
-		'css/**/*',
-		'js/**/*',
-		'dist/**/*',
-		'!dist/**/*.map',
-		'php/**/*',
-		'vendor/**/*',
-		'code-snippets.php',
-		'uninstall.php',
-		'readme.txt',
-		'license.txt',
-	]).pipe(copy(pkg.name))
-
-	const removeSourceMaps: TaskFunction = () =>
-		src(`${pkg.name}/dist/**/*.css`)
-			.pipe(change(content =>
-				content.replace(/\/\*# sourceMappingURL=[\w.-]+\.map \*\/\s+$/, '')))
-			.pipe(dest(`${pkg.name}/dist`))
+	const copyFiles: TaskFunction = () =>
+		src(BUNDLE_FILES, { base: '.' })
+			.pipe(removeSourceMaps())
+			.pipe(dest(pkg.name))
 
 	const archive: TaskFunction = () =>
 		src(`${pkg.name}/**/*`, { base: '.' })
@@ -139,17 +137,14 @@ export const bundle: TaskFunction = (() => {
 		composer()
 
 		// Rename the distribution directory to its proper name
-		fs.rename(pkg.name, 'build', error => {
-			if (error) throw error
-			done()
-		})
+		fs.rename(pkg.name, 'build').then(() => done())
 	}
 
 	return series(
 		build,
 		cleanupBefore,
 		parallel(composerProduction, webpackProduction),
-		parallel(copyFiles, removeSourceMaps),
+		copyFiles,
 		archive,
 		cleanupAfter
 	)
