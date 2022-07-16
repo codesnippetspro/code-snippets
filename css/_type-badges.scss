@@ -27,8 +27,8 @@ $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-
 		border-color: currentColor;
 	}
 
-	.nav-tab-inactive[data-type=#{$type}] {
-		color: lighten($color, 90%);
+	.nav-tab-inactive[data-type=#{$type}]:hover .badge {
+		color: $color;
 	}
 }
 
@@ -42,11 +42,14 @@ $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-
 	background: #f6f7f7;
 	border-color: #f6f7f7;
 	text-shadow: 0 1px 0 #fff;
-	cursor: not-allowed;
 	float: right;
 
 	&, .badge {
 		color: #a7aaad;
+	}
+
+	&:hover {
+		color: #50575e;
 	}
 }
 
