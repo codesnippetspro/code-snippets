@@ -75,7 +75,17 @@ class Frontend {
 			$theme = str_replace( '.css', '', $theme );
 			$theme = str_replace( 'prism-', '', $theme );
 
-			$themes[ $theme ] = implode( ' ', array_map( 'ucfirst', explode( '-', $theme ) ) );
+			$label = str_replace( '.', '-', $theme );
+			$label = array_map(
+				function ( $word ) {
+					return strlen( $word ) < 3 ?
+						'of' === $word ? $word : strtoupper( $word ) :
+						ucfirst( $word );
+				},
+				explode( '-', $label )
+			);
+
+			$themes[ $theme ] = implode( ' ', $label );
 		}
 
 		return $themes;
