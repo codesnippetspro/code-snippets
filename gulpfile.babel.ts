@@ -17,8 +17,6 @@ import rtlcss from 'gulp-rtlcss'
 import cssimport from 'postcss-easy-import'
 import hexrgba from 'postcss-hexrgba'
 import eslint from 'gulp-eslint'
-import makepot from 'gulp-wp-pot'
-import gettext from 'gulp-gettext'
 import codesniffer from 'gulp-phpcs'
 import composer from 'gulp-composer'
 import flatmap from 'gulp-flatmap'
@@ -40,8 +38,6 @@ const DEST_DIRS = {
 	js: 'js/min/',
 	css: 'css/min/'
 }
-
-const TEXT_DOMAIN = 'code-snippets'
 
 const transformCss = () =>
 	src(SRC_FILES.css.source)
@@ -86,23 +82,6 @@ const transformJs: TaskFunction = done => {
 }
 
 export const js: TaskFunction = series(lintJs, transformJs)
-
-const createPotFile: TaskFunction = () =>
-	src(SRC_FILES.php)
-		.pipe(makepot({
-			domain: TEXT_DOMAIN,
-			package: 'Code Snippets',
-			bugReport: 'https://github.com/sheabunge/code-snippets/issues',
-			metadataFile: 'code-snippets.php',
-		}))
-		.pipe(dest(`languages/${TEXT_DOMAIN}.pot`))
-
-const createPoFiles: TaskFunction = () =>
-	src('languages/*.po')
-		.pipe(gettext())
-		.pipe(dest('languages'))
-
-export const i18n: TaskFunction = parallel(createPotFile, createPoFiles)
 
 export const phpcs: TaskFunction = () =>
 	src(SRC_FILES.php)
