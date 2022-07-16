@@ -85,20 +85,22 @@ class Frontend {
 			return $posts;
 		}
 
-		// Loop through all the posts, checking for instances where the source tag is used.
-		foreach ( $posts as $post ) {
+		// Concatenate all provided content together, so we can check it all in one go.
+		$content = implode( ' ', wp_list_pluck( $posts, 'post_content' ) );
 
-			if ( false === stripos( $post->post_content, '[' . self::SOURCE_SHORTCODE ) &&
-			     ! ( function_exists( 'has_block' ) && has_block( 'code-snippets/source', $post ) ) ) {
-				continue;
-			}
+		// Bail now if the provided post don't contain the source shortcode or block editor block.
+		if ( false === stripos( $content, '[' . self::SOURCE_SHORTCODE ) &&
+		     false === strpos( $content, '<!-- wp:code-snippets/source ' ) ) {
+			return $posts;
+		}
 
-			// Register the syntax highlighter assets and exit from the loop once a match is discovered.
-			$this->register_prism_assets();
+		// Load Prism assets on the appropriate hook.
+		$this->register_prism_assets();
+
+		add_action( 'wp_enqueue_scripts', function () {
 			wp_enqueue_style( self::PRISM_HANDLE );
 			wp_enqueue_script( self::PRISM_HANDLE );
-			break;
-		}
+		}, 100 );
 
 		return $posts;
 	}
@@ -253,12 +255,18 @@ class Frontend {
 
 		$language = 'css' === $snippet->type ? 'css' : ( 'js' === $snippet->type ? 'js' : 'php' );
 
-		$pre_attributes = array( 'id' => "code-snippet-source-$snippet->id" );
-		$code_attributes = array( 'class' => "language-$language" );
+		$pre_attributes = array(
+			'id'    => "code-snippet-source-$snippet->id",
+			'class' => 'code-snippet-source',
+		);
+
+		$code_attributes = array(
+			'class' => "language-$language",
+		);
 
 		if ( $atts['line_numbers'] ) {
 			$code_attributes['class'] .= ' line-numbers';
-			$pre_attributes['class'] = 'linkable-line-numbers';
+			$pre_attributes['class'] .= ' linkable-line-numbers';
 		}
 
 		if ( $atts['highlight_lines'] ) {
