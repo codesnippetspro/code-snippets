@@ -45,9 +45,9 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 
 			} elseif ( Plugin::is_pro_type( $type_name ) ) {
 				printf(
-					'<a class="nav-tab nav-tab-inactive" data-type="%s" title="%s">',
+					'<a class="nav-tab nav-tab-inactive" data-type="%s" title="%s" href="https://codesnippets.pro/pricing/" target="_blank">',
 					esc_attr( $type_name ),
-					esc_attr__( 'Upgrade to Code Snippets Pro to use this type.', 'code-snippets' )
+					esc_attr__( 'Available in Code Snippets Pro (external link)', 'code-snippets' )
 				);
 
 			}  else {
@@ -62,7 +62,7 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		}
 
 		?>
-		<a class="button button-large nav-tab-button go-pro-button" href="https://codesnippets.pro" target="_blank"
+		<a class="button button-large nav-tab-button go-pro-button" href="https://codesnippets.pro/pricing/" target="_blank"
 		   title="Find more about Pro (opens in external tab)">
 			<?php echo wp_kses( __( 'Upgrade to <span class="badge">Pro</span>', 'code-snippets' ), [ 'span' => [ 'class' => 'badge' ] ] ); ?>
 			<span class="dashicons dashicons-external"></span>

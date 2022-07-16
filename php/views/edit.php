@@ -107,8 +107,8 @@ if ( ! $snippet->id ) {
 						echo '<a class="nav-tab nav-tab-active"';
 					} elseif ( Plugin::is_pro_type( $type_name ) ) {
 						printf(
-							'<a class="nav-tab nav-tab-inactive" title="%s"',
-							esc_attr__( 'Upgrade to Code Snippets Pro to use this type.', 'code-snippets' )
+							'<a class="nav-tab nav-tab-inactive" title="%s" href="https://codesnippets.pro/pricing/" target="_blank',
+							esc_attr__( 'Available in Code Snippets Pro (external link)', 'code-snippets' )
 						);
 					} else {
 						printf( '<a class="nav-tab" href="%s"', esc_url( add_query_arg( 'type', $type_name ) ) );
