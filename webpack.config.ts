@@ -15,7 +15,7 @@ export const config: Configuration = {
 		},
 		mce: './js/mce.ts',
 		prism: './js/prism.ts',
-		editor: './js/editor-lib.ts'
+		editor: './js/editor.ts'
 	},
 	output: {
 		path: path.join(path.resolve(__dirname), 'js/min'),

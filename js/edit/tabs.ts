@@ -1,40 +1,46 @@
-import { SnippetType } from '../types'
+import { SnippetType } from '../types/types'
 import { EditorConfiguration } from 'codemirror'
 
-(editor => {
+const EDITOR_MODES: Record<SnippetType, string> = {
+	css: 'text/css',
+	js: 'javascript',
+	php: 'text/x-php',
+	html: 'application/x-httpd-php'
+}
+
+const selectScope = (type: SnippetType, snippetForm: HTMLElement | null) => {
+	const editor = window.code_snippets_editor?.codemirror
+	const scope = snippetForm?.querySelector<HTMLInputElement>(`.${type}-scopes-list input:first-child`)
+
+	if (scope) {
+		scope.checked = true
+	}
+
+	editor?.setOption('lint' as keyof EditorConfiguration, 'php' === type || 'css' === type)
+	if (type in EDITOR_MODES) {
+		editor?.setOption('mode', EDITOR_MODES[type])
+	}
+}
+
+const switchTab = (tabsContainer: HTMLElement, tab: Element) => {
+	const prevActive = tabsContainer.querySelector('.nav-tab-active')
+	prevActive?.setAttribute('href', '#')
+	prevActive?.classList.remove('nav-tab-active')
+
+	tab.classList.add('nav-tab-active')
+	tab.removeAttribute('href')
+}
+
+
+export const handleSnippetTypeTabs = () => {
 	const tabsContainer = document.getElementById('snippet-type-tabs')
-	if (!tabsContainer) return
+
+	if (!tabsContainer) {
+		return
+	}
 
 	const snippetForm = document.getElementById('snippet-form')
 	const tabs = tabsContainer.querySelectorAll('.nav-tab')
-
-	const modes: Record<SnippetType, string> = {
-		css: 'text/css',
-		js: 'javascript',
-		php: 'text/x-php',
-		html: 'application/x-httpd-php'
-	}
-
-	const selectScope = (type: SnippetType) => {
-		const scope = snippetForm?.querySelector(`.${type}-scopes-list input:first-child`) as HTMLInputElement
-		if (scope) {
-			scope.checked = true
-		}
-
-		editor?.setOption('lint' as keyof EditorConfiguration, 'php' === type || 'css' === type)
-		if (type in modes) {
-			editor?.setOption('mode', modes[type])
-		}
-	}
-
-	const switchTab = (tab: Element) => {
-		const prevActive = tabsContainer.querySelector('.nav-tab-active')
-		prevActive?.setAttribute('href', '#')
-		prevActive?.classList.remove('nav-tab-active')
-
-		tab.classList.add('nav-tab-active')
-		tab.removeAttribute('href')
-	}
 
 	for (const tab of tabs) {
 		tab.addEventListener('click', event => {
@@ -46,9 +52,9 @@ import { EditorConfiguration } from 'codemirror'
 			snippetForm?.setAttribute('data-snippet-type', type)
 
 			// Switch the active tab and change the snippet scope.
-			switchTab(tab)
-			selectScope(type)
+			switchTab(tabsContainer, tab)
+			selectScope(type, snippetForm)
 		})
 	}
 
-})(window.code_snippets_editor?.codemirror)
+}

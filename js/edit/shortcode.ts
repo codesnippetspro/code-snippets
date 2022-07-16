@@ -31,11 +31,13 @@ const updateShortcode = (options: HTMLCollectionOf<HTMLInputElement>) => {
 	}
 }
 
-const optionsContainer = document.querySelector('.html-shortcode-options')
-if (optionsContainer) {
-	const options = optionsContainer.getElementsByTagName('input')
+export const handleContentShortcodeOptions = () => {
+	const optionsContainer = document.querySelector('.html-shortcode-options')
+	const options = optionsContainer?.getElementsByTagName('input')
 
-	for (const option of options) {
-		option.addEventListener('change', () => updateShortcode(options))
+	if (options) {
+		for (const option of options) {
+			option.addEventListener('change', () => updateShortcode(options))
+		}
 	}
 }

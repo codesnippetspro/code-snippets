@@ -1,9 +1,4 @@
-import './editor'
-import './tabs'
-import './shortcode'
-import './clipboard'
-
-document.addEventListener('DOMContentLoaded', () => {
+export const handleFormSubmitValidation = () => {
 	const form = document.getElementById('snippet-form')
 	const editor = window.code_snippets_editor?.codemirror
 	const strings = window.code_snippets_edit_i18n
@@ -25,4 +20,4 @@ document.addEventListener('DOMContentLoaded', () => {
 			event.preventDefault()
 		}
 	})
-})
+}

@@ -1,10 +1,14 @@
 import tagger from '@jcubic/tagger'
 
-(tags => {
-	const tags_field = document.getElementById('snippet_tags')
-	if (!tags_field) return
+export const loadSnippetTagEditor = () => {
+	const tags = window.code_snippets_tags
+	const tagsField = document.getElementById('snippet_tags')
 
-	tagger(tags_field, {
+	if (!tagsField) {
+		return
+	}
+
+	tagger(tagsField, {
 		completion: {
 			list: tags.available_tags,
 			delay: 400,
@@ -14,5 +18,4 @@ import tagger from '@jcubic/tagger'
 		allow_duplicates: false,
 		link: () => false
 	})
-
-})(window.code_snippets_tags)
+}
