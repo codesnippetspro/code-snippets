@@ -1,4 +1,4 @@
-import { Snippet } from '../types/types'
+import { Snippet } from '../types/snippet'
 import { updateSnippet } from './requests'
 
 /**

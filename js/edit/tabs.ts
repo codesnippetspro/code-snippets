@@ -1,4 +1,4 @@
-import { SnippetType } from '../types/types'
+import { SnippetType } from '../types/snippet'
 import { EditorConfiguration } from 'codemirror'
 
 const EDITOR_MODES: Record<SnippetType, string> = {
