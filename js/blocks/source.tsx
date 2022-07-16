@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { __ } from '@wordpress/i18n'
-import { PanelBody, TextControl, ToggleControl } from '@wordpress/components'
+import { PanelBody, Spinner, TextControl, ToggleControl } from '@wordpress/components'
 import { BlockConfiguration } from '@wordpress/blocks'
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { shortcode } from '@wordpress/icons'
@@ -104,7 +104,7 @@ export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 					options={buildOptions(snippets)}
 					attributes={attributes}
 					setAttributes={setAttributes}
-					renderContent={() => snippet ? renderSnippetSource(snippet, attributes) : <></>}
+					renderContent={() => snippet ? renderSnippetSource(snippet, attributes) : <Spinner />}
 				/>
 			</div>
 		)
