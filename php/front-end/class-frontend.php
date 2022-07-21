@@ -97,10 +97,14 @@ class Frontend {
 		// Load Prism assets on the appropriate hook.
 		$this->register_prism_assets();
 
-		add_action( 'wp_enqueue_scripts', function () {
-			wp_enqueue_style( self::PRISM_HANDLE );
-			wp_enqueue_script( self::PRISM_HANDLE );
-		}, 100 );
+		add_action(
+			'wp_enqueue_scripts',
+			function () {
+				wp_enqueue_style( self::PRISM_HANDLE );
+				wp_enqueue_script( self::PRISM_HANDLE );
+			},
+			100
+		);
 
 		return $posts;
 	}
