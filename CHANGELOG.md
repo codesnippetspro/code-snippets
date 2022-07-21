@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.2.0 (unreleased)
+## 3.2.0 (22 July 2022)
 * Fixed: Remove default value from SQL columns to improve compatibility with certain versions of MySQL.
 * Fixed: Delay loading snippets in Gutenberg editor blocks. (PRO)
 * Added: Option to show and hide line numbers in Gutenberg source code editor block. (PRO)
@@ -13,6 +13,9 @@
 * Added: Button for copying shortcode text to clipboard.
 * Improved: Include Code Snippets CSS and JS source code in distributed package.
 * Improved: Don't delete data from plugin if deleting Code Snippets Free while Code Snippets Pro is active.
+* Improved: Streamlined user interface and experience in Gutenberg editor blocks. (PRO)
+* Added: Option to choose from 44 different themes for the Prism code highlighter in the source editor block and Elementor widget. (PRO)
+* Improved: Compatibility of Elementor widgets with the latest version of Elementor. (PRO)
 
 ## 3.1.2 (3 July 2022)
 * Updated external links and branding for Code Snippets Pro.
