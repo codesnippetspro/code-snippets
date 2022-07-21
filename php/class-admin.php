@@ -52,7 +52,6 @@ class Admin {
 		add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( $this, 'plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_filter( 'debug_information', array( $this, 'debug_information' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_menu_icon' ) );
 		add_action( 'code_snippets/admin/manage', array( $this, 'print_notices' ) );
 
 		if ( ! empty( $_POST['save_snippet'] ) ) {
@@ -78,18 +77,6 @@ class Admin {
 		$menu_items['snippets_settings'] = __( 'Snippets &raquo; Settings', 'code-snippets' );
 
 		return $menu_items;
-	}
-
-	/**
-	 * Load the stylesheet for the admin menu icon
-	 */
-	public function load_admin_menu_icon() {
-		wp_enqueue_style(
-			'menu-icon-snippets',
-			plugins_url( 'dist/menu-icon.css', code_snippets()->file ),
-			array(),
-			code_snippets()->version
-		);
 	}
 
 	/**
