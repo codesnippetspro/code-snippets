@@ -20,12 +20,7 @@ use function Code_Snippets\Settings\get_setting;
  */
 class Source_Widget extends Widget {
 
-	/**
-	 * Whether the Prism source code highlighter is enabled.
-	 *
-	 * @var bool
-	 */
-	private $prism_enabled = false;
+	private $snippets;
 
 	/**
 	 * Class constructor.
@@ -37,37 +32,56 @@ class Source_Widget extends Widget {
 	 */
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
+		$this->load_prism_dependencies( $data );
 
-		if ( ! get_setting( 'general', 'disable_prism' ) ) {
-			$this->prism_enabled = true;
-			Frontend::register_prism_assets();
+		$this->snippets = get_snippets();
+	}
 
-			wp_register_script(
-				'code-snippets-elementor',
-				plugins_url( 'dist/elementor.js', code_snippets()->file ),
-				[ 'elementor-frontend', Frontend::PRISM_HANDLE ],
-				code_snippets()->version,
-				true
-			);
+	/**
+	 * Load necessary dependencies for the PrismJS library.
+	 *
+	 * @param array $data Widget data.
+	 *
+	 * @return void
+	 */
+	private function load_prism_dependencies( $data ) {
+		if ( get_setting( 'general', 'disable_prism' ) ) {
+			return;
 		}
+
+		Frontend::register_prism_assets();
+		$handle = 'code-snippets-elementor';
+
+		wp_register_script(
+			$handle,
+			plugins_url( 'dist/elementor.js', code_snippets()->file ),
+			[ 'elementor-frontend', Frontend::PRISM_HANDLE ],
+			code_snippets()->version,
+			true
+		);
+
+		$this->add_script_depends( $handle );
+
+		if ( ! empty( $data['settings']['theme'] ) && 'default' !== $data['settings']['theme'] ) {
+			$this->add_style_depends( Frontend::get_prism_theme_style_handle( $data['settings']['theme'] ) );
+		}
+
+		$this->add_style_depends( Frontend::PRISM_HANDLE );
+
+		add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'enqueue_all_prism_themes' ) );
 	}
 
 	/**
-	 * Retrieve the list of widget script dependencies.
+	 * Enqueue all available Prism themes.
 	 *
-	 * @return array
+	 * @return void
 	 */
-	public function get_script_depends() {
-		return $this->prism_enabled ? [ 'code-snippets-elementor' ] : [];
-	}
+	public function enqueue_all_prism_themes() {
+		foreach ( Frontend::get_prism_themes() as $theme => $label ) {
+			wp_enqueue_style( Frontend::get_prism_theme_style_handle( $theme ) );
+		}
 
-	/**
-	 * Retrieve the list of widget style dependencies.
-	 *
-	 * @return array
-	 */
-	public function get_style_depends() {
-		return $this->prism_enabled ? [ Frontend::PRISM_HANDLE ] : [];
+		wp_enqueue_style( Frontend::PRISM_HANDLE );
 	}
 
 	/**
@@ -92,7 +106,6 @@ class Source_Widget extends Widget {
 	 * @return array
 	 */
 	protected function build_snippet_options() {
-		$snippets = get_snippets();
 		$options = [];
 
 		$labels = [
@@ -107,13 +120,13 @@ class Source_Widget extends Widget {
 		 *
 		 * @var Snippet $snippet
 		 */
-		foreach ( $snippets as $snippet ) {
+		foreach ( $this->snippets as $snippet ) {
 			$group = $labels[ $snippet->type ];
 			if ( ! isset( $options[ $group ] ) ) {
 				$options[ $group ] = [];
 			}
 
-			$options[ $group ][ $snippet->id ] = $snippet->name;
+			$options[ $group ][ $snippet->id ] = $snippet->display_name;
 		}
 
 		return $options;
@@ -175,6 +188,21 @@ class Source_Widget extends Widget {
 			)
 		);
 
+		$this->add_control(
+			'theme',
+			array(
+				'label'              => esc_html__( 'Theme', 'code-snippets' ),
+				'type'               => Controls_Manager::SELECT,
+				'default'            => 'default',
+				'options'            => array_merge(
+					[ 'default' => __( 'Default', 'code-snippets' ) ],
+					Frontend::get_prism_themes()
+				),
+				'separator'          => 'before',
+				'frontend_available' => true,
+			)
+		);
+
 		$this->add_responsive_control(
 			'height',
 			array(
@@ -229,13 +257,15 @@ class Source_Widget extends Widget {
 
 		if ( ! isset( $settings['snippet_id'] ) || 0 === intval( $settings['snippet_id'] ) ) {
 			echo '<p>', esc_html__( 'Select a snippet to display', 'code-snippets' ), '</p>';
-		} else {
-			printf(
-				'<div class="%s">%s</div>',
-				esc_attr( $settings['word_wrap'] ),
-				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-				code_snippets()->frontend->render_source_shortcode( $settings )
-			);
+			return;
 		}
+
+		printf(
+			'<div class="%s%s">%s</div>',
+			esc_attr( $settings['word_wrap'] ),
+			esc_attr( 'default' === $settings['theme'] ? '' : " is-style-prism-${settings['theme']}" ),
+			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+			code_snippets()->frontend->render_source_shortcode( $settings )
+		);
 	}
 }
