@@ -44,7 +44,6 @@ const BUNDLE_FILES = [
 	'php/**/*',
 	'vendor/**/*',
 	'code-snippets.php',
-	'uninstall.php',
 	'readme.txt',
 	'license.txt',
 ]
