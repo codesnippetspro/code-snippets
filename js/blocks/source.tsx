@@ -93,6 +93,7 @@ export const SourceBlock: BlockConfiguration<SourceBlockAttributes> = {
 						<TextControl
 							label={__('Highlight lines', 'code-snippets')}
 							value={attributes.highlight_lines}
+							placeholder="1, 3-6"
 							onChange={value => setAttributes({ ...attributes, highlight_lines: value })} />
 					</PanelBody>
 				</InspectorControls>
