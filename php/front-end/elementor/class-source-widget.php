@@ -20,6 +20,11 @@ use function Code_Snippets\Settings\get_setting;
  */
 class Source_Widget extends Widget {
 
+	/**
+	 * List of snippets to populate the widget.
+	 *
+	 * @var Snippet[]
+	 */
 	private $snippets;
 
 	/**
@@ -263,7 +268,7 @@ class Source_Widget extends Widget {
 		printf(
 			'<div class="%s%s">%s</div>',
 			esc_attr( $settings['word_wrap'] ),
-			esc_attr( 'default' === $settings['theme'] ? '' : " is-style-prism-${settings['theme']}" ),
+			'default' === $settings['theme'] ? '' : esc_attr( " is-style-prism-${settings['theme']}" ),
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 			code_snippets()->frontend->render_source_shortcode( $settings )
 		);

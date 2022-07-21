@@ -94,7 +94,7 @@ class Frontend {
 	/**
 	 * Retrieve the style handle for a PrismJS theme.
 	 *
-	 * @param string $theme
+	 * @param string $theme Theme name.
 	 *
 	 * @return string
 	 */

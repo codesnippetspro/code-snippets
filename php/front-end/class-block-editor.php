@@ -142,7 +142,13 @@ class Block_Editor {
 		);
 
 		foreach ( Frontend::get_prism_themes() as $theme => $label ) {
-			register_block_style( 'code-snippets/source', [ 'name' => "prism-$theme", 'label' => $label ] );
+			register_block_style(
+				'code-snippets/source',
+				array(
+					'name'  => "prism-$theme",
+					'label' => $label,
+				)
+			);
 		}
 	}
 
@@ -184,7 +190,7 @@ class Block_Editor {
 			'icon'  => null,
 		);
 
-		if ( $position === -1 ) {
+		if ( -1 === $position ) {
 			$categories[] = $category;
 		} else {
 			array_splice( $categories, $position, 0, array( $category ) );
@@ -202,7 +208,7 @@ class Block_Editor {
 	 */
 	public function render_content( $attributes ) {
 		return sprintf(
-			"<div %s>%s</div>",
+			'<div %s>%s</div>',
 			get_block_wrapper_attributes(),
 			code_snippets()->frontend->render_content_shortcode( $attributes )
 		);
@@ -217,7 +223,7 @@ class Block_Editor {
 	 */
 	public function render_source( $attributes ) {
 		return sprintf(
-			"<div %s>%s</div>",
+			'<div %s>%s</div>',
 			get_block_wrapper_attributes(),
 			code_snippets()->frontend->render_source_shortcode( $attributes )
 		);
