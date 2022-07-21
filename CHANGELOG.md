@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.2.0 (22 July 22)
+## 3.2.0 (22 July 2022)
 * Fixed: Remove default value from SQL columns to improve compatibility with certain versions of MySQL.
 * Fixed: Delay loading snippets in Gutenberg editor blocks. (PRO)
 * Added: Option to show and hide line numbers in Gutenberg source code editor block. (PRO)
