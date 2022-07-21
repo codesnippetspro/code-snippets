@@ -164,16 +164,20 @@ class Frontend {
 		// Load Prism assets on the appropriate hook.
 		$this->register_prism_assets();
 
-		add_action( 'wp_enqueue_scripts', function () use ( $content ) {
-			foreach ( self::get_prism_themes() as $theme => $label ) {
-				if ( strpos( $content, "is-style-prism-$theme" ) ) {
-					wp_enqueue_style( self::get_prism_theme_style_handle( $theme ) );
+		add_action(
+			'wp_enqueue_scripts',
+			function () use ( $content ) {
+				foreach ( self::get_prism_themes() as $theme => $label ) {
+					if ( strpos( $content, "is-style-prism-$theme" ) ) {
+						wp_enqueue_style( self::get_prism_theme_style_handle( $theme ) );
+					}
 				}
-			}
 
-			wp_enqueue_style( self::PRISM_HANDLE );
-			wp_enqueue_script( self::PRISM_HANDLE );
-		}, 100 );
+				wp_enqueue_style( self::PRISM_HANDLE );
+				wp_enqueue_script( self::PRISM_HANDLE );
+			},
+			100
+		);
 
 		return $posts;
 	}
