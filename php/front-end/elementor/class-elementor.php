@@ -16,8 +16,8 @@ class Elementor {
 	 * Class constructor.
 	 */
 	public function __construct() {
+		add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
 		add_action( 'elementor/elements/categories_registered', [ $this, 'add_widget_category' ] );
-		add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_widgets' ] );
 		add_action( 'elementor/controls/controls_registered', [ $this, 'init_controls' ] );
 	}
 
@@ -42,8 +42,8 @@ class Elementor {
 	public function init_widgets() {
 		$widgets_manager = Elementor_Plugin::instance()->widgets_manager;
 
-		$widgets_manager->register_widget_type( new Content_Widget() );
-		$widgets_manager->register_widget_type( new Source_Widget() );
+		$widgets_manager->register( new Content_Widget() );
+		$widgets_manager->register( new Source_Widget() );
 	}
 
 	/**
@@ -54,6 +54,6 @@ class Elementor {
 	public function init_controls() {
 		$controls_manager = Elementor_Plugin::instance()->controls_manager;
 
-		$controls_manager->register_control( 'code-snippets-select', new Control_Select() );
+		$controls_manager->register( new Control_Select() );
 	}
 }

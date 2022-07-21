@@ -73,10 +73,8 @@ class Content_Widget extends Widget {
 
 	/**
 	 * Register settings controls.
-	 *
-	 * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 
 		$this->start_controls_section(
 			'snippet',

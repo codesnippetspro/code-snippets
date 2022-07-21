@@ -11,13 +11,15 @@ use Elementor\Control_Select2;
  */
 class Control_Select extends Control_Select2 {
 
+	const CONTROL_TYPE = 'code-snippets-select';
+
 	/**
 	 * Retrieve the control type.
 	 *
 	 * @return string Control type.
 	 */
 	public function get_type() {
-		return 'code-snippets-select';
+		return self::CONTROL_TYPE;
 	}
 
 	/**

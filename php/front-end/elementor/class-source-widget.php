@@ -121,10 +121,8 @@ class Source_Widget extends Widget {
 
 	/**
 	 * Register settings controls.
-	 *
-	 * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 
 		$this->start_controls_section(
 			'snippet',
@@ -138,7 +136,7 @@ class Source_Widget extends Widget {
 			'snippet_id',
 			array(
 				'label'       => esc_html__( 'Snippet', 'code-snippets' ),
-				'type'        => 'code-snippets-select2',
+				'type'        => Control_Select::CONTROL_TYPE,
 				'options'     => $this->build_snippet_options(),
 				'default'     => 0,
 				'show_label'  => false,

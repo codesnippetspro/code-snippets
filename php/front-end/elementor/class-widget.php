@@ -21,11 +21,11 @@ abstract class Widget extends Widget_Base {
 	}
 
 	/**
-	 * Return the widget icon class.
+	 * Return the widget icon.
 	 *
 	 * @return string
 	 */
 	public function get_icon() {
-		return 'fas fa-cut';
+		return 'eicon-code';
 	}
 }
