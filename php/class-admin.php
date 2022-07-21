@@ -268,11 +268,11 @@ class Admin {
 		$dismissed = get_user_meta( $current_user->ID, $key, false );
 
 		if ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $key ) ) {
-			add_user_meta( $current_user->ID, $key, sanitize_key( wp_unslash( $_GET[ $key ] ) ), true );
+			add_user_meta( $current_user->ID, $key, sanitize_key( wp_unslash( $_GET[ $key ] ) ), false );
 			return;
 		}
 
-		if ( ! in_array( 'survey', $dismissed, true ) && ! in_array( true, $dismissed, true ) ) {
+		if ( ! in_array( 'survey', $dismissed, true ) && ! in_array( 'true', $dismissed, true ) ) {
 			$notice = 'survey';
 			$action_url = 'https://codesnippets.pro/survey/';
 			$action_label = __( 'Take the survey now', 'code-snippets' );
