@@ -144,6 +144,7 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 * Improved: Streamlined user interface and experience in Gutenberg editor blocks. (PRO)
 * Added: Option to choose from 44 different themes for the Prism code highlighter in the source editor block and Elementor widget. (PRO)
 * Improved: Compatibility of Elementor widgets with the latest version of Elementor. (PRO)
+* Improved: Replace icon font menu icon with embedded SVG icon.
 
 = 3.1.2 (3 July 2022) =
 * Updated external links and branding for Code Snippets Pro.
