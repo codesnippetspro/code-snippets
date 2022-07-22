@@ -22,6 +22,8 @@ use DateTimeZone;
  * @property bool          $network                 true if is multisite-wide snippet, false if site-wide.
  * @property bool          $shared_network          Whether the snippet is a shared network snippet.
  * @property string        $modified                The date and time when the snippet data was most recently saved to the database.
+ * @property string        $cloud_uuid				The UUID of the snippet in the cloud.
+ * @property array	       $cloud_config			The configuration of the cloud for the snippet.
  *
  * @property-read string   $display_name            The snippet name if it exists or a placeholder if it does not.
  * @property-read string   $tags_list               The tags in string list format.
@@ -63,6 +65,8 @@ class Snippet {
 		'network'        => null,
 		'shared_network' => null,
 		'modified'       => null,
+		'cloud_uuid'	 => '',
+		'cloud_config'	 => array(),
 	);
 
 	/**
@@ -626,5 +630,28 @@ class Snippet {
 		$date_format = sprintf( $date_format, get_option( 'date_format' ), get_option( 'time_format' ) );
 
 		return sprintf( '<span title="%s">%s</span>', $local_time->format( $date_format ), $human_time );
+	}
+
+	/**
+	 * Prepare the cloud_config field by ensuring it is in the correct format.
+	 *
+	 * @param array|string $configs
+	 *
+	 * @return array
+	 */
+	private function prepare_cloud_config( $configs ) {
+		if (is_string($configs)) {
+			return unserialize($configs);
+		}
+
+		if (is_array($configs)) {
+			$field = $this->fields['cloud_config'];
+
+			foreach ($configs as $key => $value) {
+				$field[$key] = $value;
+			}
+
+			return $field;
+		}
 	}
 }

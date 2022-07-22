@@ -72,9 +72,9 @@ class Edit_Menu extends Admin_Menu {
 		}
 
 		// Disallow visiting the edit snippet page without a valid ID.
-		if ( $screen->base === $edit_hook && ( empty( $_REQUEST['id'] ) || 0 === $this->snippet->id || null === $this->snippet->id ) ) {
+		if ( $screen->base === $edit_hook && ( empty( $_REQUEST['id'] ) || 0 === $this->snippet->id || null === $this->snippet->id ) &&
+		     ! isset( $_REQUEST['preview'] ) ) {
 			wp_safe_redirect( code_snippets()->get_menu_url( 'add' ) );
-			exit;
 		}
 
 		// Process any submitted actions.
@@ -130,6 +130,8 @@ class Edit_Menu extends Admin_Menu {
 				$snippet->scope = 'site-head-js';
 			}
 		}
+
+		$this->snippet = apply_filters( 'code_snippets/admin/load_snippet_data', $snippet );
 	}
 
 	/**
@@ -168,6 +170,9 @@ class Edit_Menu extends Admin_Menu {
 				$export = new Export( $snippet_id );
 				$export->download_snippets();
 			}
+
+			/** Hook for 3rd-party to register the handler of their own actions */
+			do_action( 'code_snippets/admin/process_actions', $_POST['snippet_id'] );
 		}
 	}
 
@@ -269,6 +274,8 @@ class Edit_Menu extends Admin_Menu {
 				$snippet->set_field( substr( $field, 8 ), stripslashes( $value ) );
 			}
 		}
+
+		$snippet = apply_filters('code_snippets/save/post_set_fields', $snippet);
 
 		if ( isset( $_POST['save_snippet_execute'] ) && 'single-use' !== $snippet->scope ) {
 			unset( $_POST['save_snippet_execute'] );

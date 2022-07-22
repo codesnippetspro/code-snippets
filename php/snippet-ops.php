@@ -7,6 +7,8 @@
 
 namespace Code_Snippets;
 
+use wpdb;
+
 /**
  * Clean the cache where active snippets are stored.
  *
@@ -411,13 +413,13 @@ function save_snippet( Snippet $snippet ) {
 		$wpdb->insert( $table, $data, '%s' ); // db call ok.
 		$snippet->id = $wpdb->insert_id;
 
-		do_action( 'code_snippets/create_snippet', $snippet->id, $table );
+		do_action( 'code_snippets/create_snippet', $snippet, $table );
 	} else {
 
 		// Otherwise, update the snippet data.
 		$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) ); // db call ok.
 
-		do_action( 'code_snippets/update_snippet', $snippet->id, $table );
+		do_action( 'code_snippets/update_snippet', $snippet, $table );
 	}
 
 	clean_snippets_cache( $table );
@@ -547,4 +549,50 @@ function execute_active_snippets() {
 	}
 
 	return true;
+}
+
+/**
+ * Retrieve a single snippets from the database.
+ * Will return empty snippet object if no snippet ID is specified.
+ *
+ * @param mixed        $value     The column value of the snippet to retrieve.
+ * @param string       $column    The column name of the snippet to retrieve.
+ * @param boolean|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
+ *
+ * @return Snippet|false A single snippet object.
+ */
+function get_snippet_by( $value, $column, $multisite = null ) {
+	global $wpdb;
+
+	$multisite = code_snippets()->db->validate_network_param( $multisite );
+	$table = code_snippets()->db->get_table_name( $multisite );
+
+	$cache_key = ( $multisite ? 'ms_' : '' ) . 'snippet_by_' . wp_hash( serialize( [ $value, $column ] ) );
+
+	if ( $snippet = wp_cache_get( $cache_key, CACHE_GROUP ) ) {
+		return $snippet;
+	}
+
+	$val_format = '%s';
+
+	if ( is_int( $value ) || is_bool( $value ) ) {
+		$val_format = '%d';
+	} elseif ( is_float( $value ) ) {
+		$val_format = '%f';
+	}
+
+	/* Retrieve the snippet from the database */
+	$snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE {$column} = {$val_format}", $value ) );
+
+	if ( ! $snippet ) {
+		return false;
+	}
+
+	/* Unescape the snippet data, ready for use */
+	$snippet = new Snippet( $snippet );
+	$snippet->network = $multisite;
+
+	$snippet = apply_filters( 'code_snippets/get_snippet_by', $snippet, $value, $column, $multisite );
+	wp_cache_set( $cache_key, $snippet, CACHE_GROUP, 30 );
+	return $snippet;
 }

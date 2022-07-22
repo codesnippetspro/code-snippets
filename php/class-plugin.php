@@ -278,11 +278,14 @@ class Plugin {
 	 * @return array
 	 */
 	public static function get_types() {
-		return array(
-			'php'  => __( 'Functions', 'code-snippets' ),
-			'html' => __( 'Content', 'code-snippets' ),
-			'css'  => __( 'Styles', 'code-snippets' ),
-			'js'   => __( 'Scripts', 'code-snippets' ),
+		return apply_filters(
+			'code_snippets_types',
+			array(
+				'php'  => __( 'Functions', 'code-snippets' ),
+				'html' => __( 'Content', 'code-snippets' ),
+				'css'  => __( 'Styles', 'code-snippets' ),
+				'js'   => __( 'Scripts', 'code-snippets' ),
+			)
 		);
 	}
 
@@ -311,6 +314,8 @@ class Plugin {
 			'css'  => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
 			'js'   => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
 		);
+
+		$descriptions = apply_filters( 'code_snippets/plugins/type_descriptions', $descriptions );
 
 		return isset( $descriptions[ $type ] ) ? $descriptions[ $type ] : '';
 	}

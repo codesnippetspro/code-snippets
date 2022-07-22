@@ -62,6 +62,8 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 			'js'   => __( 'javascript snippets', 'code-snippets' ),
 		];
 
+		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
+
 		/* translators: %s: snippet type name */
 		$learn_more_text = sprintf( __( 'Learn more about %s &rarr;', 'code-snippets' ), $type_names[ $current_type ] );
 

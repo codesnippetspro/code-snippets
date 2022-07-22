@@ -7,6 +7,8 @@
 
 namespace Code_Snippets;
 
+use Dplugins\SnippetsGuru\Guru;
+
 /**
  * The version number for this release of the plugin.
  * This will later be used for upgrades and enqueuing files.
@@ -59,3 +61,15 @@ code_snippets()->load_plugin();
 
 /* Execute the snippets once the plugins are loaded */
 add_action( 'plugins_loaded', __NAMESPACE__ . '\execute_active_snippets', 1 );
+
+/** 
+ * Retrieve the instance of the  Snippets Guru main class.
+ * 
+ * @return Guru
+ */
+function snippets_guru()
+{
+	return Guru::instance();
+}
+
+snippets_guru()->integrate();

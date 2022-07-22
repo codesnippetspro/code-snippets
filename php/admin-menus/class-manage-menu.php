@@ -119,7 +119,12 @@ class Manage_Menu extends Admin_Menu {
 
 		/* Initialize the list table class */
 		$this->list_table = new List_Table();
-		$this->list_table->prepare_items();
+
+		if ( isset( $_GET['type'] ) && 'cloud' === $_GET['type'] ) {
+			$this->list_table->prepare_cloud_items();
+		} else {
+			$this->list_table->prepare_items();
+		}
 	}
 
 	/**
@@ -168,16 +173,18 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		$this->print_result_message(
-			array(
-				'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
-				'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
-				'activated-multi'   => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
-				'deactivated'       => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
-				'deactivated-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
-				'deleted'           => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
-				'deleted-multi'     => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
-				'cloned'            => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
-				'cloned-multi'      => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
+			apply_filters( 'code_snippets/manage/result_messages',
+				array(
+					'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
+					'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
+					'activated-multi'   => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
+					'deactivated'       => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
+					'deactivated-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
+					'deleted'           => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
+					'deleted-multi'     => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
+					'cloned'            => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
+					'cloned-multi'      => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
+				)
 			)
 		);
 	}

@@ -3,6 +3,8 @@
 namespace Code_Snippets;
 
 use function Code_Snippets\Settings\get_setting;
+
+use Dplugins\SnippetsGuru\Api\Snippet as ApiSnippet;
 use WP_List_Table;
 
 /**
@@ -38,7 +40,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var array
 	 */
-	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
+	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated', 'cloud_public' );
 
 	/**
 	 * Column name to use when ordering the snippets list.
@@ -260,7 +262,7 @@ class List_Table extends WP_List_Table {
 			);
 		}
 
-		return apply_filters( 'code_snippets/list_table/row_actions', $actions );
+		return apply_filters( 'code_snippets/list_table/row_actions', $actions, $snippet );
 	}
 
 	/**
@@ -538,6 +540,13 @@ class List_Table extends WP_List_Table {
 				'code-snippets'
 			);
 
+			/* translators: %s: total number of public cloud snippets */
+			$labels['cloud_public'] = _n(
+				'Public <span class="count">(%s)</span>',
+				'Public <span class="count">(%s)</span>',
+				$count, 'code-snippets'
+			);
+
 			/* The page URL with the status parameter */
 			$url = esc_url( add_query_arg( 'status', $type ) );
 
@@ -647,7 +656,7 @@ class List_Table extends WP_List_Table {
 
 		$vars = apply_filters(
 			'code_snippets/list_table/required_form_fields',
-			array( 'page', 's', 'status', 'paged', 'tag' ),
+			array( 'page', 's', 'status', 'paged', 'tag', 'type' ),
 			$context
 		);
 
@@ -851,6 +860,29 @@ class List_Table extends WP_List_Table {
 		if ( isset( $result ) ) {
 			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 			exit;
+		}
+	}
+	
+	/**
+	 * Processes actions requested by the user for cloud type.
+	 *
+	 * @uses wp_redirect() to pass the results to the current page
+	 * @uses add_query_arg() to append the results to the current URI
+	 */
+	public function process_requested_cloud_actions() {
+		/* Check if there are any single snippet actions to perform */
+		if ( isset( $_GET['action'], $_GET['cloud_uuid'] ) ) {
+			$id = isset( $_GET['cloud_uuid'] ) ? $_GET['cloud_uuid'] : '';
+
+			/* Verify they were sent from a trusted source */
+			$nonce_action = 'code_snippets_manage_snippet_' . $id;
+			if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], $nonce_action ) ) {
+				wp_nonce_ays( $nonce_action );
+			}
+
+			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'cloud_uuid', '_wpnonce', 'link' ) );
+
+			do_action('code_snippets_process_cloud_action');
 		}
 	}
 
@@ -1059,6 +1091,115 @@ class List_Table extends WP_List_Table {
 				'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages.
 			)
 		);
+	}
+
+	public function prepare_cloud_items() {
+		global $status, $snippets, $totals, $s;
+
+		wp_reset_vars( array( 'orderby', 'order', 's' ) );
+
+		/* Redirect tag filter from POST to GET */
+		if ( isset( $_POST['filter_action'] ) ) {
+			$location = remove_query_arg( 'tag' );
+			wp_redirect( esc_url_raw( $location ) );
+			exit;
+		}
+
+		/* First, lets process the submitted actions */
+		$this->process_requested_cloud_actions();
+
+		$args['namespace'] = 'code-snippets';
+
+		/* Filter snippets based on search query */
+		if ( $s ) {
+			$args['name'] = $s;
+		}
+
+		/* Determine what page the user is currently looking at */
+		$args['page'] = $this->get_pagenum();
+
+		/* Decide how many records per page to show by getting the user's setting in the Screen Options panel */
+		$sort_by = $this->screen->get_option( 'per_page', 'option' );
+		if ( empty( $per_page ) || $per_page < 1 ) {
+			$per_page = $this->screen->get_option( 'per_page', 'default' );
+		}
+
+		$per_page = get_user_meta( get_current_user_id(), $sort_by, true );
+
+		if ( empty( $per_page ) || $per_page < 1 ) {
+			$per_page = $this->screen->get_option( 'per_page', 'default' );
+		}
+
+		$args['itemsPerPage'] = (int) $per_page; 
+
+		$isPublic = $status === 'cloud_public' ? true : false;
+
+		if ( $isPublic ) {
+			$args['isPublic'] = $isPublic;
+		}
+
+		$resp = get_transient( 'code_snippets_cloud_results_' . wp_hash( serialize( $args ) ) );
+
+		if (!$resp) {
+			$resp = ApiSnippet::instance()->gets($args);
+			set_transient( 'code_snippets_cloud_results_' . wp_hash( serialize( $args ) ), $resp, 10 );
+		}
+
+		$resources = [];
+
+		foreach ($resp->{'hydra:member'} as $v) {
+			$cloud_uuid = sprintf('%s:%s', $v->uuid, $v->blobs[0]->uuid);
+
+			$local_snippet = get_transient( "code_snippets_cloud_local_pair_{$cloud_uuid}" );
+
+			if (!$local_snippet) {
+				$local_snippet = get_snippet_by($cloud_uuid, 'cloud_uuid');
+				set_transient("code_snippets_cloud_local_pair_{$cloud_uuid}", $local_snippet, 10 );
+			}
+
+			$resources[] = new Snippet([
+				'id'             => $local_snippet ? $local_snippet->id : null,
+				'name'           => $v->name,
+				'desc'           => $v->description,
+				'code'           => $v->blobs[0]->excerpt,
+				'tags'           => $v->meta->tags,
+				'scope'          => $v->meta->scope,
+				'active'         => false,
+				'priority'       => $v->meta->priority,
+				'network'        => null,
+				'shared_network' => null,
+				'modified'       => null,
+				'cloud_uuid'	 => $cloud_uuid,
+				'cloud_config'	 => [
+					'push_change'=> false,
+					'is_public'	 => $v->isPublic,
+					'owned'	 	 => property_exists($v, 'person'),
+				],
+			]);
+		}
+
+		/* Get the current data */
+		$data = apply_filters( 'code_snippets/list_table/get_snippets', $resources );
+
+		$snippets[ $status ] = $data;
+
+		$total_items = $resp->{'hydra:totalItems'};
+		
+		/* Count the totals for each section */
+		$totals = [];
+
+		$totals['all'] = $total_items;
+		$totals['cloud_public'] = $isPublic ? $total_items : -1;
+
+		/* Now we can add our data to the items property, where it can be used by the rest of the class. */
+		$this->items = $data;
+
+		/* We register our pagination options and calculations */
+		$this->set_pagination_args( array(
+			'total_items' => $total_items, // Calculate the total number of items
+			'per_page'    => $per_page, // Determine how many items to show on a page
+			'total_pages' => ceil( $total_items / $per_page ), // Calculate the total number of pages
+		) );
 	}
 
 	/**
@@ -1297,6 +1438,8 @@ class List_Table extends WP_List_Table {
 
 			/* translators: %s: snippet title */
 			$snippet->name = sprintf( __( '%s [CLONE]', 'code-snippets' ), $snippet->name );
+
+			$snippet = apply_filters('code_snippets/list_table/cloned_snippet', $snippet);
 
 			save_snippet( $snippet );
 		}
