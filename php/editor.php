@@ -31,17 +31,21 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 
 	$default_atts = [
 		'mode'          => $modes[ $type ],
+		'inputStyle'    => 'textarea',
 		'matchBrackets' => true,
 		'extraKeys'     => [
 			'Alt-F'      => 'findPersistent',
 			'Ctrl-Space' => 'autocomplete',
 			'Ctrl-/'     => 'toggleComment',
 			'Cmd-/'      => 'toggleComment',
+			'Alt-Up'     => 'swapLineUp',
+			'Alt-Down'   => 'swapLineDown',
 		],
-		'gutters'       => [ 'CodeMirror-lint-markers' ],
+		'gutters'       => [ 'CodeMirror-lint-markers', 'CodeMirror-foldgutter' ],
 		'lint'          => 'css' === $type || 'php' === $type,
 		'direction'     => 'ltr',
 		'colorpicker'   => [ 'mode' => 'edit' ],
+		'foldOptions'   => [ 'widget' => '...' ],
 	];
 
 	// Add relevant saved setting values to the default attributes.

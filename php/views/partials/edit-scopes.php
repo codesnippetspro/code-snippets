@@ -1,4 +1,7 @@
 <?php
+
+namespace Code_Snippets;
+
 /**
  * HTML for the snippet scope selector.
  *
@@ -7,8 +10,6 @@
  *
  * @var Edit_Menu $this
  */
-
-namespace Code_Snippets;
 
 $snippet = $this->snippet;
 

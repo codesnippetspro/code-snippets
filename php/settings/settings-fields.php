@@ -173,6 +173,14 @@ function get_settings_fields() {
 			'codemirror' => 'lineWrapping',
 		],
 
+		'code_folding' => [
+			'name'       => __( 'Code Folding', 'code-snippets' ),
+			'type'       => 'checkbox',
+			'label'      => __( 'Allow folding functions or other blocks into a single line.', 'code-snippets' ),
+			'default'    => true,
+			'codemirror' => 'foldGutter',
+		],
+
 		'line_numbers' => [
 			'name'       => __( 'Line Numbers', 'code-snippets' ),
 			'type'       => 'checkbox',
@@ -204,6 +212,20 @@ function get_settings_fields() {
 			'default'    => true,
 			'codemirror' => 'styleActiveLine',
 		],
+		'keymap'                => [
+			'name'       => __( 'Keymap', 'code-snippets' ),
+			'type'       => 'select',
+			'desc'       => __( 'The keymap to use in the editor.', 'code-snippets' ),
+			'default'    => 'default',
+			'options'    => [
+				'default' => __( 'Default', 'code-snippets' ),
+				'vim'     => __( 'Vim', 'code-snippets' ),
+				'emacs'   => __( 'Emacs', 'code-snippets' ),
+				'sublime' => __( 'Sublime Text', 'code-snippets' ),
+			],
+			'codemirror' => 'keyMap',
+		],
+
 	];
 
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );

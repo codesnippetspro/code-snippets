@@ -829,10 +829,13 @@ class Edit_Menu extends Admin_Menu {
 				'Shift'  => _x( 'Shift', 'keyboard key', 'code-snippets' ),
 				'Option' => _x( 'Option', 'keyboard key', 'code-snippets' ),
 				'Alt'    => _x( 'Alt', 'keyboard key', 'code-snippets' ),
+				'Up'     => _x( 'Up', 'keyboard key', 'code-snippets' ),
+				'Down'   => _x( 'Down', 'keyboard key', 'code-snippets' ),
 				'F'      => _x( 'F', 'keyboard key', 'code-snippets' ),
 				'G'      => _x( 'G', 'keyboard key', 'code-snippets' ),
 				'R'      => _x( 'R', 'keyboard key', 'code-snippets' ),
 				'S'      => _x( 'S', 'keyboard key', 'code-snippets' ),
+				'/'      => _x( '/', 'keyboard key', 'code-snippets' ),
 			);
 		}
 
