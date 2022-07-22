@@ -240,6 +240,11 @@ function sanitize_setting_value( $field, $input_value ) {
 		case 'text':
 			return trim( sanitize_text_field( $input_value ) );
 
+		case 'callback':
+			return array_key_exists( 'sanitize_callback', $field ) && is_callable( $field['sanitize_callback'] ) ?
+				call_user_func( $field['sanitize_callback'], $input_value ) :
+				null;
+
 		default:
 			return null;
 	}

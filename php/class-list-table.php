@@ -260,7 +260,7 @@ class List_Table extends WP_List_Table {
 			);
 		}
 
-		return apply_filters( 'code_snippets/list_table/row_actions', $actions );
+		return apply_filters( 'code_snippets/list_table/row_actions', $actions, $snippet );
 	}
 
 	/**
@@ -1297,6 +1297,7 @@ class List_Table extends WP_List_Table {
 
 			/* translators: %s: snippet title */
 			$snippet->name = sprintf( __( '%s [CLONE]', 'code-snippets' ), $snippet->name );
+			$snippet = apply_filters( 'code_snippets/list_table/clone_snippet', $snippet );
 
 			save_snippet( $snippet );
 		}

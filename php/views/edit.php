@@ -99,7 +99,7 @@ if ( ! $snippet->id ) {
 
 		<?php
 
-		if ( ! $snippet->id ) {
+		if ( ! $snippet->id && ! isset( $_REQUEST['preview'] ) ) {
 			echo '<h2 class="nav-tab-wrapper" id="snippet-type-tabs">';
 
 			foreach ( Plugin::get_types() as $type_name => $label ) {
