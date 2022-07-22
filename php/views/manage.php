@@ -4,11 +4,11 @@
  *
  * @package    Code_Snippets
  * @subpackage Views
- *
- * @var Manage_Menu $this
  */
 
 namespace Code_Snippets;
+
+/* @var Manage_Menu $this */
 
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {

@@ -1,15 +1,14 @@
 <?php
-
-namespace Code_Snippets;
-
 /**
  * HTML for the snippet scope selector.
  *
  * @package    Code_Snippets
  * @subpackage Views
- *
- * @var Edit_Menu $this
  */
+
+namespace Code_Snippets;
+
+/* @var Edit_Menu $this */
 
 $snippet = $this->snippet;
 

@@ -87,7 +87,7 @@ class Manage_Menu extends Admin_Menu {
 		);
 
 		if ( isset( $classmap[ $sub ], code_snippets()->admin->menus[ $classmap[ $sub ] ] ) ) {
-			/** Menu class @var Admin_Menu $class */
+			/* @var Admin_Menu $class */
 			$class = code_snippets()->admin->menus[ $classmap[ $sub ] ];
 		} else {
 			$class = $this;
@@ -168,7 +168,8 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		$this->print_result_message(
-			apply_filters( 'code_snippets/manage/result_messages',
+			apply_filters(
+				'code_snippets/manage/result_messages',
 				array(
 					'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
 					'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
