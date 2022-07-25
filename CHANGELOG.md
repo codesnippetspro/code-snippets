@@ -1,5 +1,13 @@
 # Changelog
 
+## NEXT_VERSION (UNRELEASED)
+* Fixed: Issue making survey reminder notice not dismissible.
+* Added: `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
+* Added: Additional hooks to various snippet actions, thanks to contributions made by [ancient-spirit](https://github.com/ancient-spirit).
+* Added: Fold markers, additional keyboard shortcuts and keymap options to snippet editor,
+thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
+* Improved: Remove duplicate tables exist query. ([#](https://wordpress.org/support/topic/duplicate-queries-21))
+
 ## 3.2.0 (22 July 2022)
 * Fixed: Remove default value from SQL columns to improve compatibility with certain versions of MySQL.
 * Fixed: Delay loading snippets in Gutenberg editor blocks. (PRO)
@@ -129,7 +137,8 @@
 * Added: Store the time and date when each snippet was last modified.
 * Added: Basic error checking when activating snippets.
 * Fixed: Ensure that imported snippets are always inactive.
-* Fixed: Check the referer on the import menu to prevent CSRF attacks. Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfence.com/blog/author/wfchloe/) for reporting.
+* Fixed: Check the referer on the import menu to prevent CSRF attacks.
+Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfence.com/blog/author/wfchloe/) for reporting.
 * Fixed: Ensure that individual snippet action links use proper verification.
 
 ## 2.13.3 (13 Mar 2019)
@@ -141,7 +150,8 @@
 * Fixed: Include snippet priority in export files.
 * Fixed: Use Unix newlines in code export file.
 * Updated CodeMirror to version 5.44.0.
-* Fixed: Correctly register snippet tables with WordPress to prevent database repair errors. [[#](https://wordpress.org/support/topic/database-corrupted-4/)]
+* Fixed: Correctly register snippet tables with WordPress to prevent database repair errors.
+[[#](https://wordpress.org/support/topic/database-corrupted-4/)]
 * Fixed: CodeMirror indentation settings being applied incorrectly.
 
 ## 2.13.2 (25 Jan 2019)
@@ -247,7 +257,8 @@
 * Fixed: Do not attempt to combine queries for fetching local and multisite snippets.
 
 ## 2.9.1 (7 Sep 2017)
-* Fixed: Prevent illegal mix of collations errors when fetching snippets from database tables with different collations [[#](https://wordpress.org/support/topic/issue-on-multisite-with-wpml/)]
+* Fixed: Prevent illegal mix of collations errors when fetching snippets from database tables with different collations.
+[[#](https://wordpress.org/support/topic/issue-on-multisite-with-wpml/)]
 
 ## 2.9.0 (6 Sep 2017)
 * Fixed: Prevented invalid properties from being set when saving a snippet.
