@@ -106,22 +106,32 @@ class Content_Widget extends Widget {
 			)
 		);
 
-		$switchers = [
-			'php'        => __( 'Run PHP code', 'code-snippets' ),
-			'format'     => __( 'Add paragraphs and formatting', 'code-snippets' ),
-			'shortcodes' => __( 'Enable embedded shortcodes', 'code-snippets' ),
-		];
+		$this->add_control(
+			'php',
+			array(
+				'label'   => __( 'Run PHP code', 'code-snippets' ),
+				'type'    => Controls_Manager::SWITCHER,
+				'default' => false,
+			)
+		);
 
-		foreach ( $switchers as $control_id => $control_label ) {
-			$this->add_control(
-				$control_id,
-				array(
-					'label'   => $control_label,
-					'type'    => Controls_Manager::SWITCHER,
-					'default' => false,
-				)
-			);
-		}
+		$this->add_control(
+			'format',
+			array(
+				'label'   => __( 'Add paragraphs and formatting', 'code-snippets' ),
+				'type'    => Controls_Manager::SWITCHER,
+				'default' => true,
+			)
+		);
+
+		$this->add_control(
+			'shortcodes',
+			array(
+				'label'   => __( 'Enable embedded shortcodes', 'code-snippets' ),
+				'type'    => Controls_Manager::SWITCHER,
+				'default' => false,
+			)
+		);
 
 		$this->end_controls_section();
 

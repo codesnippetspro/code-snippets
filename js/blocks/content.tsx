@@ -41,7 +41,7 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 		snippet_id: { type: 'number', default: 0 },
 		network: { type: 'boolean', default: false },
 		php: { type: 'boolean', default: false },
-		format: { type: 'boolean', default: false },
+		format: { type: 'boolean', default: true },
 		shortcodes: { type: 'boolean', default: false },
 		debug: { type: 'boolean', default: false },
 		className: { type: 'string' }
