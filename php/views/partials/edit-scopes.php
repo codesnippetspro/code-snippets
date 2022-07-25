@@ -99,7 +99,7 @@ if ( ! $snippet->id || 'html' === $snippet->type ) {
 						<?php esc_html_e( 'Evaluate PHP code', 'code-snippets' ); ?>
 					</label>
 					<label>
-						<input type="checkbox" value="format">
+						<input type="checkbox" value="format" checked="checked">
 						<?php esc_html_e( 'Add paragraphs and formatting', 'code-snippets' ); ?>
 					</label>
 					<label>
