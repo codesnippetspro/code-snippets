@@ -125,10 +125,7 @@ class Export {
 		$this->do_headers( 'php', 'text/php' );
 		echo "<?php\n";
 
-		/** Loop through the snippets
-		 *
-		 * @var Snippet $snippet
-		 */
+		/* @var Snippet $snippet */
 		foreach ( $this->snippets_list as $snippet ) {
 			$code = trim( $snippet->code );
 

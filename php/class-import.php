@@ -98,11 +98,7 @@ class Import {
 
 		$snippets = array();
 
-		/**
-		 * Loop through all snippets
-		 *
-		 * @var DOMElement $snippet_xml
-		 */
+		/* @var DOMElement $snippet_xml */
 		foreach ( $snippets_xml as $snippet_xml ) {
 			$snippet = new Snippet();
 			$snippet->network = $this->multisite;

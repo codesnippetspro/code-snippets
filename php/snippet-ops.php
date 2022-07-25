@@ -7,6 +7,8 @@
 
 namespace Code_Snippets;
 
+use wpdb;
+
 /**
  * Clean the cache where active snippets are stored.
  *
@@ -411,13 +413,13 @@ function save_snippet( Snippet $snippet ) {
 		$wpdb->insert( $table, $data, '%s' ); // db call ok.
 		$snippet->id = $wpdb->insert_id;
 
-		do_action( 'code_snippets/create_snippet', $snippet->id, $table );
+		do_action( 'code_snippets/create_snippet', $snippet, $table );
 	} else {
 
 		// Otherwise, update the snippet data.
 		$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) ); // db call ok.
 
-		do_action( 'code_snippets/update_snippet', $snippet->id, $table );
+		do_action( 'code_snippets/update_snippet', $snippet, $table );
 	}
 
 	clean_snippets_cache( $table );

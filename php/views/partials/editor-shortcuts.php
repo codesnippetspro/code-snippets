@@ -8,6 +8,8 @@
 
 namespace Code_Snippets;
 
+/* @var Edit_Menu $this */
+
 ?>
 
 <div class="snippet-editor-help">
@@ -45,6 +47,18 @@ namespace Code_Snippets;
 			<tr>
 				<td><?php esc_html_e( 'Persistent search', 'code-snippets' ); ?></td>
 				<td><?php $this->render_keyboard_shortcut( 'Alt', 'F' ); ?></td>
+			</tr>
+			<tr>
+				<td><?php esc_html_e( 'Toggle Comment', 'code-snippets' ); ?></td>
+				<td><?php $this->render_keyboard_shortcut( 'Cmd', '/' ); ?></td>
+			</tr>
+			<tr>
+				<td><?php esc_html_e( 'Swap Line Up', 'code-snippets' ); ?></td>
+				<td><?php $this->render_keyboard_shortcut( 'Option', 'Up' ); ?></td>
+			</tr>
+			<tr>
+				<td><?php esc_html_e( 'Swap Line Down', 'code-snippets' ); ?></td>
+				<td><?php $this->render_keyboard_shortcut( 'Option', 'Down' ); ?></td>
 			</tr>
 		</table>
 	</div>

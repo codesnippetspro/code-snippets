@@ -4,17 +4,13 @@
  *
  * @package    Code_Snippets
  * @subpackage Views
- *
- * @var Edit_Menu $this
  */
 
 namespace Code_Snippets;
 
-/**
- * Snippet object.
- *
- * @var Snippet $snippet
- */
+/* @var Edit_Menu $this */
+
+/* @var Snippet $snippet */
 $snippet = $this->snippet;
 
 echo '<h2 class="screen-reader-text">', esc_html__( 'Scope', 'code-snippets' ), '</h2>';

@@ -4,11 +4,11 @@
  *
  * @package    Code_Snippets
  * @subpackage Views
- *
- * @var Manage_Menu $this
  */
 
 namespace Code_Snippets;
+
+/* @var Manage_Menu $this */
 
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -66,6 +66,8 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 			'css'  => __( 'style snippets', 'code-snippets' ),
 			'js'   => __( 'javascript snippets', 'code-snippets' ),
 		];
+
+		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
 
 		/* translators: %s: snippet type name */
 		$learn_more_text = sprintf( __( 'Learn more about %s &rarr;', 'code-snippets' ), $type_names[ $current_type ] );

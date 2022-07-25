@@ -12,16 +12,17 @@ namespace Code_Snippets\Settings;
 /**
  * Represents a single setting field
  *
- * @property-read string   $desc     Field description.
- * @property-read string   $label    Field label.
- * @property-read string   $type     Field type.
- * @property-read string   $name     Setting name.
+ * @property-read string   $desc               Field description.
+ * @property-read string   $label              Field label.
+ * @property-read string   $type               Field type.
+ * @property-read string   $name               Setting name.
  *
- * @property-read int      $min      Minimum value (for numerical inputs).
- * @property-read int      $max      Maximum value(for numerical inputs).
- * @property-read array    $options  List of options for a select or checkboxes field.
- * @property-read callable $callback Custom function to use when rendering a callback field.
- * @property-read mixed    $default  Default setting value.
+ * @property-read int      $min                Minimum value (for numerical inputs).
+ * @property-read int      $max                Maximum value(for numerical inputs).
+ * @property-read array    $options            List of options for a select or checkboxes field.
+ * @property-read callable $render_callback    Custom function to use when rendering a callback field.
+ * @property-read callable $sanitize_callback  Custom function to use when sanitize the setting value.
+ * @property-read mixed    $default            Default setting value.
  *
  * @property-read string   $input_name
  */
@@ -115,7 +116,7 @@ class Setting_Field {
 	 * Render a callback field.
 	 */
 	public function render_callback_field() {
-		call_user_func( $this->callback );
+		call_user_func( $this->render_callback );
 	}
 
 	/**
