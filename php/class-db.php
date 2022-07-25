@@ -106,13 +106,20 @@ class DB {
 	/**
 	 * Determine whether a database table exists.
 	 *
-	 * @param string $table_name Name of database table to check.
+	 * @param string  $table_name Name of database table to check.
+	 * @param boolean $refresh    Rerun the query, instead of using a cached value.
 	 *
 	 * @return bool Whether the database table exists.
 	 */
-	public static function table_exists( $table_name ) {
+	public static function table_exists( $table_name, $refresh = false ) {
 		global $wpdb;
-		return $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name; // cache pass, db call ok.
+		static $checked = array();
+
+		if ( $refresh || ! isset( $checked[ $table_name ] ) ) {
+			$checked[ $table_name ] = $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name; // cache pass, db call ok.
+		}
+
+		return $checked[ $table_name ];
 	}
 
 	/**
