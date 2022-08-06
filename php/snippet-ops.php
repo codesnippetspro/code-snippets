@@ -423,14 +423,20 @@ function save_snippet( Snippet $snippet ) {
 
 	// Create a new snippet if the ID is not set.
 	if ( 0 === $snippet->id ) {
-		$wpdb->insert( $table, $data, '%s' ); // db call ok.
-		$snippet->id = $wpdb->insert_id;
+		$result = $wpdb->insert( $table, $data, '%s' ); // db call ok.
+		if ( false === $result ) {
+			return 0;
+		}
 
+		$snippet->id = $wpdb->insert_id;
 		do_action( 'code_snippets/create_snippet', $snippet, $table );
 	} else {
 
 		// Otherwise, update the snippet data.
-		$wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) ); // db call ok.
+		$result = $wpdb->update( $table, $data, array( 'id' => $snippet->id ), null, array( '%d' ) ); // db call ok.
+		if ( false === $result ) {
+			return 0;
+		}
 
 		do_action( 'code_snippets/update_snippet', $snippet, $table );
 	}
