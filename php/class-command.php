@@ -427,4 +427,80 @@ class Command extends WP_CLI_Command {
 		$formatter = $this->get_formatter( $assoc_args );
 		$formatter->display_item( $this->build_snippet_info( $snippet ) );
 	}
+
+	/**
+	 * Saves code snippets to an export file.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [<id>...]
+	 * : Identifiers of one or more snippets to include in the export file. Defaults to all snippets.
+	 *
+	 * [--network]
+	 * : Exports network-wide snippets instead of a side-wide snippets.
+	 *
+	 * [--dir=<dirname>]
+	 * : Full path to directory where WXR export files should be stored. Defaults to current working directory.
+	 *
+	 * [--filename_format=<format>]
+	 * : Use a custom format for export filenames. Defaults to '{site|snippet}.code-snippets.{date}.json'.
+	 *
+	 * [--stdout]
+	 * : Output the whole XML using standard output (incompatible with --dir=)
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Delete snippet
+	 *     $ wp snippet delete 77
+	 *     Success: Deleted 1 of 1 snippets.
+	 *
+	 * @param array $ids        Indexed array of positional arguments.
+	 * @param array $assoc_args Associative array of associative arguments.
+	 *
+	 * @throws ExitException
+	 */
+	public function export( $ids, $assoc_args ) {
+		$table_name = code_snippets()->db->get_table_name( isset( $assoc_args['network'] ) ? $assoc_args['network'] : false );
+		$export = new Export( $ids, $table_name );
+		$data = $export->export_snippets_json();
+
+		$assoc_args = wp_parse_args(
+			array(
+				'stdOut'          => false,
+				'dir'             => '',
+				'filename_format' => '',
+			),
+			$assoc_args
+		);
+
+		if ( $assoc_args['stdout'] && ( $assoc_args['dir'] || $assoc_args['filename_format'] ) ) {
+			WP_CLI::error( '--stdout and --dir cannot be used together.' );
+		}
+
+		if ( $assoc_args['stdout'] ) {
+			$filename = 'php://output';
+		} else {
+			$path = $assoc_args['dir'] ? untrailingslashit( $assoc_args['dir'] ) : getcwd();
+
+			if ( ! is_dir( $path ) ) {
+				WP_CLI::error( sprintf( "The directory '%s' does not exist.", $path ) );
+			} elseif ( ! is_writable( $path ) ) {
+				WP_CLI::error( sprintf( "The directory '%s' is not writable.", $path ) );
+			}
+
+			$filename = $path . DIRECTORY_SEPARATOR . ( $assoc_args['filename_format'] ?: $export->build_filename( 'json' ) );
+		}
+
+		$handle = fopen( $filename, 'w' );
+		if ( ! $handle ) {
+			WP_CLI::error( "Cannot open '{$filename}' for writing." );
+		}
+
+		fwrite( $handle, $data );
+		fclose( $handle );
+
+		if ( ! $assoc_args['stdout'] ) {
+			WP_CLI::success( "Exported snippets to '{$filename}'." );
+		}
+	}
 }
