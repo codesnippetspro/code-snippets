@@ -102,7 +102,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 function get_editor_themes() {
 	static $themes = null;
 
-	if ( is_null( $themes ) ) {
+	if ( ! is_null( $themes ) ) {
 		return $themes;
 	}
 
