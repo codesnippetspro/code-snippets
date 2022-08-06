@@ -15,7 +15,7 @@ class Export {
 	 *
 	 * @var array
 	 */
-	private $snippets_list;
+	protected $snippets_list;
 
 	/**
 	 * Class constructor
@@ -34,7 +34,6 @@ class Export {
 	 * @param string    $table_name Name of database table to fetch snippets from.
 	 */
 	private function fetch_snippets( $ids, $table_name ) {
-
 		if ( '' === $table_name ) {
 			$table_name = code_snippets()->db->get_table_name();
 		}
@@ -43,18 +42,17 @@ class Export {
 			$ids = array( $ids );
 		}
 
-		$this->snippets_list = count( $ids ) ? get_snippets( $ids, $table_name ) : array();
+		$this->snippets_list = get_snippets( $ids, $table_name );
 	}
 
 	/**
-	 * Set up the current page to act like a downloadable file instead of being shown in the browser
+	 * Build the export filename.
 	 *
-	 * @param string $format    File format. Used for file extension.
-	 * @param string $mime_type File MIME type. Used for Content-Type header.
+	 * @param string $format File format. Used for file extension.
+	 *
+	 * @return string
 	 */
-	private function do_headers( $format, $mime_type = 'text/plain' ) {
-
-		/* Build the export filename */
+	public function build_filename( $format ) {
 		if ( 1 === count( $this->snippets_list ) ) {
 			/* If there is only snippet to export, use its name instead of the site name */
 			$title = strtolower( $this->snippets_list[0]->name );
@@ -64,17 +62,15 @@ class Export {
 		}
 
 		$filename = "$title.code-snippets.$format";
-		$filename = apply_filters( 'code_snippets/export/filename', $filename, $title, $this->snippets_list );
-
-		/* Set HTTP headers */
-		header( 'Content-Disposition: attachment; filename=' . sanitize_file_name( $filename ) );
-		header( sprintf( 'Content-Type: %s; charset=%s', sanitize_mime_type( $mime_type ), get_bloginfo( 'charset' ) ) );
+		return apply_filters( 'code_snippets/export/filename', $filename, $title, $this->snippets_list );
 	}
 
 	/**
-	 * Export snippets in JSON format
+	 * Bundle snippets together into JSON format.
+	 *
+	 * @return string Snippets as JSON object.
 	 */
-	public function export_snippets() {
+	public function export_snippets_json() {
 		$snippets = array();
 
 		foreach ( $this->snippets_list as $snippet ) {
@@ -92,19 +88,17 @@ class Export {
 			}
 		}
 
-		$this->do_headers( 'json', 'application/json' );
-
 		$data = array(
 			'generator'    => 'Code Snippets v' . code_snippets()->version,
 			'date_created' => gmdate( 'Y-m-d H:i' ),
 			'snippets'     => $snippets,
 		);
 
-		echo wp_json_encode( $data, apply_filters( 'code_snippets/export/json_encode_options', 0 ) );
-		exit;
+		return wp_json_encode( $data, apply_filters( 'code_snippets/export/json_encode_options', 0 ) );
 	}
 
 	/**
+<<<<<<< Updated upstream:php/class-export.php
 	 * Export snippets to a downloadable file.
 	 *
 	 * The Pro version of this function can download snippets to .css and .js files.
@@ -120,6 +114,12 @@ class Export {
 	public function download_php_snippets() {
 		$this->do_headers( 'php', 'text/php' );
 		echo "<?php\n";
+=======
+	 * Bundle a snippets into a PHP file.
+	 */
+	public function export_snippets_php() {
+		$result = "<?php\n";
+>>>>>>> Stashed changes:php/export/class-export.php
 
 		/* @var Snippet $snippet */
 		foreach ( $this->snippets_list as $snippet ) {
@@ -129,15 +129,15 @@ class Export {
 				continue;
 			}
 
-			echo "\n/**\n * $snippet->display_name\n";
+			$result .= "\n/**\n * $snippet->display_name\n";
 
 			if ( ! empty( $snippet->desc ) ) {
 				/* Convert description to PhpDoc */
-				$desc = str_replace( "\n", "\n * ", $snippet->desc );
-				echo " *\n * ", wp_strip_all_tags( $desc ), "\n";
+				$desc = wp_strip_all_tags( str_replace( "\n", "\n * ", $snippet->desc ) );
+				$result .= " *\n * $desc\n";
 			}
 
-			echo " */\n";
+			$result .= " */\n";
 
 			if ( 'content' === $snippet->scope ) {
 				$shortcode_tag = apply_filters( 'code_snippets_export_shortcode_tag', "code_snippets_export_$snippet->id", $snippet );
@@ -149,9 +149,54 @@ class Export {
 				);
 			}
 
-			echo $code, "\n";
+			$result .= "$code\n";
 		}
 
-		exit;
+		return $result;
 	}
+<<<<<<< Updated upstream:php/class-export.php
+=======
+
+	/**
+	 * Generate a downloadable CSS or JavaScript file from a list of snippets
+	 *
+	 * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+	 *
+	 * @param string $type Snippet type. Supports 'css' or 'js'.
+	 */
+	public function export_snippets_code( $type = null ) {
+		$result = '';
+
+		if ( ! $type ) {
+			$type = $this->snippets_list[0]->type;
+		}
+
+		if ( 'php' === $type || 'html' === $type ) {
+			return $this->export_snippets_php();
+		}
+
+		/* Loop through the snippets */
+		foreach ( $this->snippets_list as $snippet ) {
+			$snippet = new Snippet( $snippet );
+
+			if ( $snippet->type !== $type ) {
+				continue;
+			}
+
+			$result .= "\n/*\n";
+
+			if ( $snippet->name ) {
+				$result .= wp_strip_all_tags( $snippet->name ) . "\n\n";
+			}
+
+			if ( ! empty( $snippet->desc ) ) {
+				$result .= wp_strip_all_tags( $snippet->desc ) . "\n";
+			}
+
+			$result .= "*/\n\n{$snippet->code}\n\n";
+		}
+
+		return $result;
+	}
+>>>>>>> Stashed changes:php/export/class-export.php
 }
