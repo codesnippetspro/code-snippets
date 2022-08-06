@@ -725,13 +725,13 @@ class List_Table extends WP_List_Table {
 				return 'deleted';
 
 			case 'export':
-				$export = new Export( $id );
-				$export->export_snippets();
+				$export = new Export_HTTP( $id );
+				$export->download_snippets_json();
 				break;
 
 			case 'download':
-				$export = new Export( $id );
-				$export->download_snippets();
+				$export = new Export_HTTP( $id );
+				$export->download_snippets_code();
 				break;
 		}
 
@@ -826,13 +826,13 @@ class List_Table extends WP_List_Table {
 				break;
 
 			case 'export-selected':
-				$export = new Export( $ids );
-				$export->export_snippets();
+				$export = new Export_HTTP( $ids );
+				$export->download_snippets_json();
 				break;
 
 			case 'download-selected':
-				$export = new Export( $ids );
-				$export->download_snippets();
+				$export = new Export_HTTP( $ids );
+				$export->download_snippets_code();
 				break;
 
 			case 'clone-selected':

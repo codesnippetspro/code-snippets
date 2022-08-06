@@ -162,14 +162,14 @@ class Edit_Menu extends Admin_Menu {
 
 			/* Export the snippet if the button was clicked */
 			if ( isset( $_POST['export_snippet'] ) ) {
-				$export = new Export( $snippet_id );
-				$export->export_snippets();
+				$export = new Export_HTTP( $snippet_id );
+				$export->download_snippets_json();
 			}
 
 			/* Download the snippet if the button was clicked */
 			if ( isset( $_POST['download_snippet'] ) ) {
-				$export = new Export( $snippet_id );
-				$export->download_snippets();
+				$export = new Export_HTTP( $snippet_id );
+				$export->download_snippets_code();
 			}
 
 			do_action( 'code_snippets/admin/process_actions', $snippet_id );
