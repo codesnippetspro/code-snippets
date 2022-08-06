@@ -114,6 +114,7 @@ class Plugin {
 		$this->rest_api = new REST_API();
 		$this->active_snippets = new Active_Snippets();
 		$this->frontend = new Frontend();
+		Command::register();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
