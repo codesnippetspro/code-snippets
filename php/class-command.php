@@ -352,4 +352,79 @@ class Command extends WP_CLI_Command {
 			count( $args ) - count( $successes )
 		);
 	}
+
+	/**
+	 * Creates or updates a snippet.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--id=<number>]
+	 * : Identifier of snippet to update.
+	 *
+	 * [--name=<string>]
+	 * : Snippet title. Optional.
+	 *
+	 * [--desc=<string>]
+	 * : Snippet description. Optional.
+	 *
+	 * [--code=<string>]
+	 * : Snippet code. Optional.
+	 *
+	 *  [--tags=<array>]
+	 * : Snippet tags. Optional.
+	 *
+	 * [--scope=<scope>]
+	 * : Snippet scope.
+	 * ---
+	 * default: global
+	 * options:
+	 *   - global
+	 *   - admin
+	 *   - front-end
+	 *   - single-use
+	 *   - content
+	 *   - head-content
+	 *   - footer-content
+	 *   - admin-css
+	 *   - site-css
+	 *   - site-head-js
+	 *   - site-footer-js
+	 * ---
+	 *
+	 * [--priority=<number>]
+	 * : Snippet priority. Defaults to 10.
+	 *
+	 * [--network]
+	 * : Create a network-wide snippets instead of a side-wide snippet.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     TODO
+	 *
+	 * @param array $args       Indexed array of positional arguments.
+	 * @param array $assoc_args Associative array of associative arguments.
+	 *
+	 * @alias add
+	 * @throws ExitException
+	 */
+	public function update( $args, $assoc_args ) {
+		$snippet_id = isset( $assoc_args['id'] ) ? intval( $assoc_args['id'] ) : 0;
+		$snippet = 0 === $snippet_id ? new Snippet() :
+			get_snippet( $snippet_id, isset( $assoc_args['network'] ) ? $assoc_args['network'] : null );
+
+		foreach ( $assoc_args as $field => $value ) {
+			$snippet->set_field( $field, $value );
+		}
+
+		$result_id = save_snippet( $snippet );
+		if ( 0 === $result_id ) {
+			WP_CLI::error( 'Could not save snippet data.' );
+		}
+
+		WP_CLI::success( 0 === $snippet_id ? 'Snippet created.' : 'Snippet updated.' );
+
+		$assoc_args['fields'] = array( 'id', 'name', 'type', 'description', 'code', 'tags', 'scope', 'priority', 'status' );
+		$formatter = $this->get_formatter( $assoc_args );
+		$formatter->display_item( $this->build_snippet_info( $snippet ) );
+	}
 }
