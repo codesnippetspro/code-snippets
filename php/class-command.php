@@ -310,8 +310,46 @@ class Command extends WP_CLI_Command {
 			'snippet',
 			$assoc_args['network'] ? 'network deactivate' : 'deactivate',
 			count( $args ),
-			count( $deactivated ),
-			count( $args ) - count( $deactivated )
+			count( $successes ),
+			count( $args ) - count( $successes )
+		);
+	}
+
+	/**
+	 * Deletes one or more snippets.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <id>...
+	 * : Identifiers of one or more snippets to delete.
+	 *
+	 * [--network]
+	 * : Deletes network-wide snippets instead of a side-wide snippets.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Delete snippet
+	 *     $ wp snippet delete 77
+	 *     Success: Deleted 1 of 1 snippets.
+	 *
+	 * @param array $args       Indexed array of positional arguments.
+	 * @param array $assoc_args Associative array of associative arguments.
+	 */
+	public function delete( $args, $assoc_args ) {
+		$successes = [];
+
+		foreach ( $args as $id ) {
+			if ( delete_snippet( $id, $assoc_args['network'] ) ) {
+				$successes[] = $id;
+			}
+		}
+
+		report_batch_operation_results(
+			'snippet',
+			'delete',
+			count( $args ),
+			count( $successes ),
+			count( $args ) - count( $successes )
 		);
 	}
 }

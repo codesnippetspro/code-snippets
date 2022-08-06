@@ -376,20 +376,26 @@ function deactivate_snippet( $id, $multisite = null ) {
  * @param int       $id        ID of the snippet to delete.
  * @param bool|null $multisite Delete from network-wide (true) or site-wide (false) table.
  *
+ * @return bool Whether the snippet was deleted successfully.
+ *
  * @since 2.0.0
  */
 function delete_snippet( $id, $multisite = null ) {
 	global $wpdb;
 	$table = code_snippets()->db->get_table_name( $multisite );
 
-	$wpdb->delete(
+	$result = $wpdb->delete(
 		$table,
 		array( 'id' => $id ),
 		array( '%d' )
 	); // db call ok.
 
-	do_action( 'code_snippets/delete_snippet', $id, $multisite );
-	clean_snippets_cache( $table );
+	if ( $result ) {
+		do_action( 'code_snippets/delete_snippet', $id, $multisite );
+		clean_snippets_cache( $table );
+	}
+
+	return $result;
 }
 
 /**
