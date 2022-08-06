@@ -285,11 +285,11 @@ class Manage_Menu extends Admin_Menu {
 
 				if ( $snippet->active ) {
 					$result = activate_snippet( $snippet->id, $snippet->network );
-					if ( ! $result ) {
+					if ( is_string( $result ) ) {
 						wp_send_json_error(
 							array(
 								'type'    => 'action_error',
-								'message' => 'error activating snippet',
+								'message' => $result,
 							)
 						);
 					}

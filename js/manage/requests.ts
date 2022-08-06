@@ -15,7 +15,7 @@ const sendSnippetRequest = (query: string, onSuccess?: SuccessCallback) => {
 		const errorStart = 400
 		if (success > request.status || errorStart <= request.status) return
 		// eslint-disable-next-line no-console
-		console.log(request.responseText)
+		console.info(request.responseText)
 
 		onSuccess?.(JSON.parse(request.responseText))
 	}
@@ -26,23 +26,23 @@ const sendSnippetRequest = (query: string, onSuccess?: SuccessCallback) => {
 /**
  * Update the data of a given snippet using AJAX
  * @param field
- * @param row_element
+ * @param row
  * @param snippet
- * @param success_callback
+ * @param successCallback
  */
-export const updateSnippet = (field: string, row_element: Element, snippet: Partial<Snippet>, success_callback?: SuccessCallback) => {
-	const { value: nonce } = document.getElementById('code_snippets_ajax_nonce') as HTMLInputElement
-	const columnId = row_element.querySelector('.column-id')
+export const updateSnippet = (field: keyof Snippet, row: Element, snippet: Partial<Snippet>, successCallback?: SuccessCallback) => {
+	const nonce = document.getElementById('code_snippets_ajax_nonce') as HTMLInputElement | null
+	const columnId = row.querySelector('.column-id')
 
-	if (!columnId?.textContent || !parseInt(columnId.textContent, 10)) {
+	if (!nonce || !columnId?.textContent || !parseInt(columnId.textContent, 10)) {
 		return
 	}
 
 	snippet.id = parseInt(columnId.textContent, 10)
-	snippet.shared_network = Boolean(row_element.className.match(/\bshared-network-snippet\b/))
+	snippet.shared_network = Boolean(row.className.match(/\bshared-network-snippet\b/))
 	snippet.network = snippet.shared_network || isNetworkAdmin()
-	snippet.scope = row_element.getAttribute('data-snippet-scope') ?? snippet.scope
+	snippet.scope = row.getAttribute('data-snippet-scope') ?? snippet.scope
 
-	const queryString = `action=update_code_snippet&_ajax_nonce=${nonce}&field=${field}&snippet=${JSON.stringify(snippet)}`
-	sendSnippetRequest(queryString, success_callback)
+	const queryString = `action=update_code_snippet&_ajax_nonce=${nonce.value}&field=${field}&snippet=${JSON.stringify(snippet)}`
+	sendSnippetRequest(queryString, successCallback)
 }

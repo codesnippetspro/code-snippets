@@ -1,7 +1,7 @@
 const updateShortcode = (options: HTMLCollectionOf<HTMLInputElement>) => {
 	const isNetworkAdmin = -1 !== document.body.className.indexOf('network-admin')
 
-	const snippetIdInput = document.querySelector('input[name=snippet_id]') as HTMLInputElement
+	const snippetIdInput = document.querySelector<HTMLInputElement>('input[name=snippet_id]')
 	const snippetId = snippetIdInput ? parseInt(snippetIdInput.value, 10) : 0
 
 	let shortcode = '[code_snippet'
@@ -32,8 +32,7 @@ const updateShortcode = (options: HTMLCollectionOf<HTMLInputElement>) => {
 }
 
 export const handleContentShortcodeOptions = () => {
-	const optionsContainer = document.querySelector('.html-shortcode-options')
-	const options = optionsContainer?.getElementsByTagName('input')
+	const options = document.querySelector('.html-shortcode-options')?.getElementsByTagName('input')
 
 	if (options) {
 		for (const option of options) {
