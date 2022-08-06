@@ -90,6 +90,7 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 
 	// If a list of IDs are provided, narrow down the snippets list.
 	if ( $ids_count > 0 ) {
+		$ids = array_map( 'intval', $ids );
 		return array_filter(
 			$snippets,
 			function ( Snippet $snippet ) use ( $ids ) {
@@ -210,7 +211,7 @@ function get_snippet( $id = 0, $multisite = null ) {
  * @param int       $id        ID of the snippet to activate.
  * @param bool|null $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
  *
- * @return boolean
+ * @return Snippet|string Snippet object on success, error message on failure.
  * @since 2.0.0
  */
 function activate_snippet( $id, $multisite = null ) {
@@ -219,23 +220,28 @@ function activate_snippet( $id, $multisite = null ) {
 	$table_name = $db->get_table_name( $multisite );
 
 	// Retrieve the snippet code from the database for validation before activating.
-	$snippet = get_snippet( $id );
-	if ( ! $snippet ) {
-		return false;
+	$snippet = get_snippet( $id, $multisite );
+	if ( ! $snippet || 0 === $snippet->id ) {
+		/* translators: %d: snippet ID */
+		return sprintf( __( 'Could not locate snippet with ID %d.', 'code-snippets' ), $id );
 	}
 
 	$validator = new Validator( $snippet->code );
 	if ( $validator->validate() ) {
-		return false;
+		return __( 'Could not activate snippet: code did not pass validation.', 'code-snippets' );
 	}
 
-	$wpdb->update(
+	$result = $wpdb->update(
 		$table_name,
 		array( 'active' => '1' ),
 		array( 'id' => $id ),
 		array( '%d' ),
 		array( '%d' )
 	); // db call ok.
+
+	if ( ! $result ) {
+		return __( 'Could not activate snippet.', 'code-snippets' );
+	}
 
 	/* Remove snippet from shared network snippet list if it was Network Activated */
 	if ( $table_name === $db->ms_table ) {
@@ -248,7 +254,7 @@ function activate_snippet( $id, $multisite = null ) {
 
 	do_action( 'code_snippets/activate_snippet', $id, $multisite );
 	clean_snippets_cache( $table_name );
-	return true;
+	return $snippet;
 }
 
 /**
@@ -318,6 +324,8 @@ function activate_snippets( array $ids, $multisite = null ) {
  * @param int       $id        ID of the snippet to deactivate.
  * @param bool|null $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
  *
+ * @return bool Whether the deactivation was successful.
+ *
  * @uses  $wpdb to set the snippets' active status.
  * @since 2.0.0
  */
@@ -327,13 +335,17 @@ function deactivate_snippet( $id, $multisite = null ) {
 	$table = $db->get_table_name( $multisite );
 
 	// Set the snippet to active.
-	$wpdb->update(
+	$result = $wpdb->update(
 		$table,
 		array( 'active' => '0' ),
 		array( 'id' => $id ),
 		array( '%d' ),
 		array( '%d' )
 	); // db call ok.
+
+	if ( ! $result ) {
+		return false;
+	}
 
 	// Update the recently active list.
 	$recently_active = array( $id => time() );
@@ -354,6 +366,7 @@ function deactivate_snippet( $id, $multisite = null ) {
 
 	do_action( 'code_snippets/deactivate_snippet', $id, $multisite );
 	clean_snippets_cache( $table );
+	return true;
 }
 
 /**
