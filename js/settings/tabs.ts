@@ -10,10 +10,7 @@ const selectTab = (tabsWrapper: Element, tab: Element, section: string) => {
 // Refresh the editor preview if we're viewing the editor section.
 const refreshEditorPreview = (section: string) => {
 	if ('editor' === section) {
-		const editor = window.code_snippets_editor_preview
-		if (editor && editor.codemirror) {
-			editor.codemirror.refresh()
-		}
+		window.code_snippets_editor_preview?.codemirror.refresh()
 	}
 }
 

@@ -9,12 +9,12 @@ export const handleFormSubmitValidation = () => {
 	}
 
 	form.addEventListener('submit', (event: SubmitEvent) => {
-		const missing_title = '' === snippetName.value.trim()
-		const missing_code = '' === editor.getValue().trim()
+		const missingTitle = '' === snippetName.value.trim()
+		const missingCode = '' === editor.getValue().trim()
 
-		const message = missing_title ?
-			missing_code ? strings.missing_title_code : strings.missing_title :
-			missing_code ? strings.missing_code : ''
+		const message = missingTitle ?
+			missingCode ? strings.missing_title_code : strings.missing_title :
+			missingCode ? strings.missing_code : ''
 
 		if (event?.submitter?.id.startsWith('save_snippet') && message && !confirm(message)) {
 			event.preventDefault()

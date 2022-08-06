@@ -10,7 +10,7 @@ const updateViewCount = (element: HTMLElement, increment: boolean) => {
 	if (element?.textContent) {
 		let count = parseInt(element.textContent.replace(/\((?<count>\d+)\)/, '$1'), 10)
 		count += increment ? 1 : -1
-		element.textContent = `(${count.toString()})`
+		element.textContent = `(${count})`
 	} else {
 		console.error('Could not update view count.', element)
 	}
