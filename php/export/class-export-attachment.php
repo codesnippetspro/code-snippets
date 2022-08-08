@@ -7,7 +7,7 @@ namespace Code_Snippets;
  *
  * @package Code_Snippets
  */
-class Export_HTTP extends Export {
+class Export_Attachment extends Export {
 
 	/**
 	 * Set up the current page to act like a downloadable file instead of being shown in the browser
