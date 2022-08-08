@@ -170,13 +170,13 @@ class Edit_Menu extends Admin_Menu {
 
 			/* Export the snippet if the button was clicked */
 			if ( isset( $_POST['export_snippet'] ) ) {
-				$export = new Export_HTTP( $snippet_id );
+				$export = new Export_Attachment( $snippet_id );
 				$export->download_snippets_json();
 			}
 
 			/* Download the snippet if the button was clicked */
 			if ( isset( $_POST['download_snippet'] ) ) {
-				$export = new Export_HTTP( $snippet_id );
+				$export = new Export_Attachment( $snippet_id );
 				$export->download_snippets_code();
 			}
 
