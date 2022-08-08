@@ -25,6 +25,7 @@ class Export_HTTP extends Export {
 	 */
 	public function download_snippets_json() {
 		$this->do_headers( 'json', 'application/json' );
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $this->export_snippets_json();
 		exit;
 	}
@@ -42,6 +43,7 @@ class Export_HTTP extends Export {
 		$type = isset( $mime_types[ $this->snippets_list[0]->type ] ) ? $this->snippets_list[0]->type : 'php';
 		$this->do_headers( $type, $mime_types[ $type ] );
 
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ( 'php' === $type || 'html' === $type ) ?
 			$this->export_snippets_php() :
 			$this->export_snippets_code( $type );

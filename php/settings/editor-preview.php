@@ -70,7 +70,7 @@ function enqueue_editor_preview_assets() {
  */
 function get_editor_theme_list() {
 	$themes = [
-		'default' => __( 'Default', 'code-snippets' )
+		'default' => __( 'Default', 'code-snippets' ),
 	];
 
 	foreach ( get_editor_themes() as $theme ) {
