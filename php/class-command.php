@@ -57,7 +57,8 @@ class Command extends WP_CLI_Command {
 			try {
 				WP_CLI::add_command( 'snippet', self::class );
 			} catch ( Exception $e ) {
-				trigger_error( $e );
+				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
+				trigger_error( esc_html( $e ) );
 			}
 		}
 	}
@@ -65,7 +66,7 @@ class Command extends WP_CLI_Command {
 	/**
 	 * Retrieve data formatter for snippets.
 	 *
-	 * @param array $assoc_args
+	 * @param array $assoc_args Associative array of associative arguments passed to command.
 	 *
 	 * @return Formatter
 	 */
@@ -95,6 +96,18 @@ class Command extends WP_CLI_Command {
 			'status'      => $status,
 			'modified'    => $snippet->modified,
 		];
+	}
+
+	/**
+	 * Parse the network argument from those passed to a command.
+	 *
+	 * @param array $assoc_args Associative array of associative arguments.
+	 * @param bool  $default    Value to return if argument is not present. Defaults to 'false'.
+	 *
+	 * @return bool Value of the argument if present, otherwise the default.
+	 */
+	protected function parse_network_arg( $assoc_args, $default = false ) {
+		return isset( $assoc_args['network'] ) ? $assoc_args['network'] : $default;
 	}
 
 	/**
@@ -164,10 +177,10 @@ class Command extends WP_CLI_Command {
 	 * @param array $assoc_args Associative array of associative arguments.
 	 *
 	 * @subcommand list
-	 * @throws ExitException
+	 * @throws ExitException If no snippets available to list.
 	 */
 	public function list_snippets( $args, $assoc_args ) {
-		$snippets = get_snippets( $args, $assoc_args['network'] );
+		$snippets = get_snippets( $args, $this->parse_network_arg( $assoc_args ) );
 		$items = [];
 
 		if ( ! is_array( $snippets ) ) {
@@ -232,9 +245,12 @@ class Command extends WP_CLI_Command {
 	 *     # Get a snippet in JSON format
 	 *     $ wp snippet get 42 --format=json --fields=id,name,status
 	 *     {"id":42,"name":"Snippet name","status":"inactive"}
+	 *
+	 * @param array $args       Indexed array of positional arguments.
+	 * @param array $assoc_args Associative array of associative arguments.
 	 */
 	public function get( $args, $assoc_args ) {
-		$snippet = get_snippet( $args[0], $assoc_args['network'] );
+		$snippet = get_snippet( intval( $args[0] ), $this->parse_network_arg( $assoc_args ) );
 		$snippet_info = (object) $this->build_snippet_info( $snippet );
 
 		if ( empty( $assoc_args['fields'] ) ) {
@@ -254,7 +270,7 @@ class Command extends WP_CLI_Command {
 	 * : Identifiers of one or more snippets to activate.
 	 *
 	 * [--network]
-	 * : Activate a network-wide snippet instead of a side-wide snippet.
+	 * : Activates network-wide snippets instead of side-wide snippets.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -266,11 +282,12 @@ class Command extends WP_CLI_Command {
 	 * @param array $assoc_args Associative array of associative arguments.
 	 */
 	public function activate( $args, $assoc_args ) {
-		$activated = activate_snippets( $args, $assoc_args['network'] );
+		$network = $this->parse_network_arg( 'network' );
+		$activated = activate_snippets( $args, $network );
 
 		report_batch_operation_results(
 			'snippet',
-			$assoc_args['network'] ? 'network activate' : 'activate',
+			$network ? 'network activate' : 'activate',
 			count( $args ),
 			count( $activated ),
 			count( $args ) - count( $activated )
@@ -286,7 +303,7 @@ class Command extends WP_CLI_Command {
 	 * : Identifiers of one or more snippets to deactivate.
 	 *
 	 * [--network]
-	 * : Deactivates network-wide snippets instead of a side-wide snippets.
+	 * : Deactivates network-wide snippets instead of side-wide snippets.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -298,17 +315,18 @@ class Command extends WP_CLI_Command {
 	 * @param array $assoc_args Associative array of associative arguments.
 	 */
 	public function deactivate( $args, $assoc_args ) {
+		$network = $this->parse_network_arg( 'network' );
 		$successes = [];
 
 		foreach ( $args as $id ) {
-			if ( deactivate_snippet( $id, $assoc_args['network'] ) ) {
+			if ( deactivate_snippet( intval( $id ), $network ) ) {
 				$successes[] = $id;
 			}
 		}
 
 		report_batch_operation_results(
 			'snippet',
-			$assoc_args['network'] ? 'network deactivate' : 'deactivate',
+			$network ? 'network deactivate' : 'deactivate',
 			count( $args ),
 			count( $successes ),
 			count( $args ) - count( $successes )
@@ -324,7 +342,7 @@ class Command extends WP_CLI_Command {
 	 * : Identifiers of one or more snippets to delete.
 	 *
 	 * [--network]
-	 * : Deletes network-wide snippets instead of a side-wide snippets.
+	 * : Deletes network-wide snippets instead of side-wide snippets.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -336,10 +354,11 @@ class Command extends WP_CLI_Command {
 	 * @param array $assoc_args Associative array of associative arguments.
 	 */
 	public function delete( $args, $assoc_args ) {
+		$network = $this->parse_network_arg( 'network' );
 		$successes = [];
 
 		foreach ( $args as $id ) {
-			if ( delete_snippet( $id, $assoc_args['network'] ) ) {
+			if ( delete_snippet( intval( $id ), $network ) ) {
 				$successes[] = $id;
 			}
 		}
@@ -395,22 +414,18 @@ class Command extends WP_CLI_Command {
 	 * : Snippet priority. Defaults to 10.
 	 *
 	 * [--network]
-	 * : Create a network-wide snippets instead of a side-wide snippet.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     TODO
+	 * : Create a network-wide snippet instead of a side-wide snippet.
 	 *
 	 * @param array $args       Indexed array of positional arguments.
 	 * @param array $assoc_args Associative array of associative arguments.
 	 *
 	 * @alias add
-	 * @throws ExitException
+	 * @throws ExitException If issue encountered saving snippet data.
 	 */
 	public function update( $args, $assoc_args ) {
 		$snippet_id = isset( $assoc_args['id'] ) ? intval( $assoc_args['id'] ) : 0;
 		$snippet = 0 === $snippet_id ? new Snippet() :
-			get_snippet( $snippet_id, isset( $assoc_args['network'] ) ? $assoc_args['network'] : null );
+			get_snippet( $snippet_id, $this->parse_network_arg( $assoc_args ) );
 
 		foreach ( $assoc_args as $field => $value ) {
 			$snippet->set_field( $field, $value );
@@ -437,7 +452,7 @@ class Command extends WP_CLI_Command {
 	 * : Identifiers of one or more snippets to include in the export file. Defaults to all snippets.
 	 *
 	 * [--network]
-	 * : Exports network-wide snippets instead of a side-wide snippets.
+	 * : Exports network-wide snippets instead of side-wide snippets.
 	 *
 	 * [--dir=<dirname>]
 	 * : Full path to directory where WXR export files should be stored. Defaults to current working directory.
@@ -448,30 +463,24 @@ class Command extends WP_CLI_Command {
 	 * [--stdout]
 	 * : Output the whole XML using standard output (incompatible with --dir=)
 	 *
-	 * ## EXAMPLES
-	 *
-	 *     # Delete snippet
-	 *     $ wp snippet delete 77
-	 *     Success: Deleted 1 of 1 snippets.
-	 *
 	 * @param array $ids        Indexed array of positional arguments.
 	 * @param array $assoc_args Associative array of associative arguments.
 	 *
-	 * @throws ExitException
+	 * @throws ExitException If invalid arguments provided or error encountered writing to export file.
 	 */
 	public function export( $ids, $assoc_args ) {
-		$table_name = code_snippets()->db->get_table_name( isset( $assoc_args['network'] ) ? $assoc_args['network'] : false );
-		$export = new Export( $ids, $table_name );
-		$data = $export->export_snippets_json();
-
 		$assoc_args = wp_parse_args(
+			$assoc_args,
 			array(
+				'network'         => false,
 				'stdOut'          => false,
 				'dir'             => '',
 				'filename_format' => '',
-			),
-			$assoc_args
+			)
 		);
+
+		$export = new Export( $ids, code_snippets()->db->get_table_name( $assoc_args['network'] ) );
+		$data = $export->export_snippets_json();
 
 		if ( $assoc_args['stdout'] && ( $assoc_args['dir'] || $assoc_args['filename_format'] ) ) {
 			WP_CLI::error( '--stdout and --dir cannot be used together.' );
@@ -480,7 +489,7 @@ class Command extends WP_CLI_Command {
 		if ( $assoc_args['stdout'] ) {
 			$filename = 'php://output';
 		} else {
-			$path = $assoc_args['dir'] ? untrailingslashit( $assoc_args['dir'] ) : getcwd();
+			$path = realpath( $assoc_args['dir'] ? untrailingslashit( $assoc_args['dir'] ) : getcwd() );
 
 			if ( ! is_dir( $path ) ) {
 				WP_CLI::error( sprintf( "The directory '%s' does not exist.", $path ) );
@@ -488,19 +497,94 @@ class Command extends WP_CLI_Command {
 				WP_CLI::error( sprintf( "The directory '%s' is not writable.", $path ) );
 			}
 
-			$filename = $path . DIRECTORY_SEPARATOR . ( $assoc_args['filename_format'] ?: $export->build_filename( 'json' ) );
+			$filename = $path . DIRECTORY_SEPARATOR .
+			            sanitize_file_name( $assoc_args['filename_format'] ?: $export->build_filename( 'json' ) );
 		}
 
+		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fopen
 		$handle = fopen( $filename, 'w' );
 		if ( ! $handle ) {
 			WP_CLI::error( "Cannot open '{$filename}' for writing." );
 		}
 
+		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fwrite
 		fwrite( $handle, $data );
+		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fclose
 		fclose( $handle );
 
 		if ( ! $assoc_args['stdout'] ) {
 			WP_CLI::success( "Exported snippets to '{$filename}'." );
+		}
+	}
+
+	/**
+	 * Imports content from a given Code Snippets export file.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <file>...
+	 * : Path to one or more valid .code-snippets.json files for importing. Directories are also accepted.
+	 *
+	 * [--network]
+	 * : Import into the network-wide snippets table instead of the side-wide table.
+	 *
+	 * [--dup-action=<action>]
+	 * : How duplicate snippets should be handled.
+	 * ---
+	 * default: ignore
+	 * options:
+	 *   - skip
+	 *   - ignore
+	 *   - replace
+	 * ---
+	 *
+	 * @param array $args       Indexed array of positional arguments.
+	 * @param array $assoc_args Associative array of associative arguments.
+	 */
+	public function import( $args, $assoc_args ) {
+		$assoc_args = wp_parse_args(
+			$assoc_args,
+			array(
+				'network'    => false,
+				'dup_action' => 'ignore',
+			)
+		);
+
+		$files = array();
+		foreach ( $args as $file ) {
+			if ( is_dir( $file ) ) {
+				$dir_files = glob( trailingslashit( $file ) . '*.code-snippets.json' );
+				if ( ! empty( $dir_files ) ) {
+					$files = array_merge( $files, $dir_files );
+				}
+			} else {
+				if ( file_exists( $file ) ) {
+					$files[] = $file;
+				}
+			}
+		}
+
+		foreach ( $files as $file ) {
+			if ( ! is_readable( $file ) ) {
+				WP_CLI::warning( "Cannot read '$file' file." );
+				continue;
+			}
+
+			$import = new Import( $file, $assoc_args['network'], $assoc_args['dup_action'] );
+			$result = $import->import_json();
+
+			if ( false === $result ) {
+				WP_CLI::warning( "Failed to import from '$file' file." );
+			} else {
+				WP_CLI::success(
+					sprintf(
+						"Imported %d %s from '%s' file.",
+						count( $result ),
+						1 === count( $result ) ? 'snippet' : 'snippets',
+						$file
+					)
+				);
+			}
 		}
 	}
 }
