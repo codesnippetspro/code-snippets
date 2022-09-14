@@ -117,12 +117,12 @@ class Licensing {
 	}
 
 	/**
-	 * Get the URL to the plugin icon.
+	 * Get the relative path to the plugin icon.
 	 *
 	 * @return string
 	 */
 	public function plugin_icon() {
-		return dirname( CODE_SNIPPETS_FILE ) . '/css/font/icon.svg';
+		return dirname( CODE_SNIPPETS_FILE ) . '/assets/icon.svg';
 	}
 
 	/**
