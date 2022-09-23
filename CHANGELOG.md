@@ -1,13 +1,15 @@
 # Changelog
 
-## NEXT_VERSION (UNRELEASED)
+## 3.2.1 (UNRELEASED)
 * Fixed: Issue making survey reminder notice not dismissible.
 * Added: `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
 * Added: Additional hooks to various snippet actions, thanks to contributions made by [ancient-spirit](https://github.com/ancient-spirit).
 * Added: Fold markers, additional keyboard shortcuts and keymap options to snippet editor,
 thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
-* Improved: Remove duplicate tables exist query. ([#](https://wordpress.org/support/topic/duplicate-queries-21)).
-* Improved: Enable 'add paragraphs and formatting' option by default for newly inserted content snippets.
+* Improved: Removed duplicate tables exist query. ([#](https://wordpress.org/support/topic/duplicate-queries-21)).
+* Improved: Enabled 'add paragraphs and formatting' option by default for newly inserted content snippets.
+* Added: WP-CLI commands for retrieving, activating, deactivating, deleting, creating, updating, exporting and importing snippets.
+* Fixed: Path to iron visible when updating the pro plugin.
 
 ## 3.2.0 (22 July 2022)
 * Fixed: Remove default value from SQL columns to improve compatibility with certain versions of MySQL.
