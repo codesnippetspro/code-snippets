@@ -268,5 +268,5 @@ __New in Pro__
 
 == Upgrade Notice ==
 
-= 3.2.0 =
-Code Snippets Pro is here! Improvements to front-end syntax highlighter in this version.
+= 3.2.1 =
+WP-CLI features in Code Snippets Pro: manage your snippets from the command line.
