@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.2.1 (UNRELEASED)
+## 3.2.1 (05 Oct 2022)
 * Fixed: Issue making survey reminder notice not dismissible.
 * Added: `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
 * Added: Additional hooks to various snippet actions, thanks to contributions made by [ancient-spirit](https://github.com/ancient-spirit).

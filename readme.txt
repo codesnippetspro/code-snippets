@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.2.0
+Stable tag: 3.2.1
 Tested up to: 6.0.1
 
 An easy, clean and simple way to run code snippets on your site.
@@ -127,6 +127,17 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.2.1 (05 Oct 2022) =
+* Fixed: Issue making survey reminder notice not dismissible.
+* Added: `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
+* Added: Additional hooks to various snippet actions, thanks to contributions made by [ancient-spirit](https://github.com/ancient-spirit).
+* Added: Fold markers, additional keyboard shortcuts and keymap options to snippet editor,
+thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
+* Improved: Removed duplicate tables exist query. ([#](https://wordpress.org/support/topic/duplicate-queries-21)).
+* Improved: Enabled 'add paragraphs and formatting' option by default for newly inserted content snippets.
+* Added: WP-CLI commands for retrieving, activating, deactivating, deleting, creating, updating, exporting and importing snippets.
+* Fixed: Path to iron visible when updating the pro plugin.
 
 = 3.2.0 (22 July 2022) =
 * Fixed: Remove default value from SQL columns to improve compatibility with certain versions of MySQL.
