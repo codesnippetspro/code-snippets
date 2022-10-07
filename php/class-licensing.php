@@ -174,5 +174,6 @@ class Licensing {
 			6
 		);
 
+        $this->sdk->add_filter( 'show_affiliate_program_notice', '__return_false' );
 	}
 }
