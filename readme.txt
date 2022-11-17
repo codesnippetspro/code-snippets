@@ -4,8 +4,8 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.2.1
-Tested up to: 6.0.1
+Stable tag: 3.2.2
+Tested up to: 6.1.1
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -127,6 +127,9 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.2.2 (17 Nov 2022) =
+* Fixed: Plugin lacking a valid header error on activation.
 
 = 3.2.1 (05 Oct 2022) =
 * Fixed: Issue making survey reminder notice not dismissible.
@@ -279,5 +282,5 @@ __New in Pro__
 
 == Upgrade Notice ==
 
-= 3.2.1 =
-WP-CLI features in Code Snippets Pro: manage your snippets from the command line.
+= 3.2.2 =
+Tested with WordPress 6.1.1.
