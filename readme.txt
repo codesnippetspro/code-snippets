@@ -33,7 +33,7 @@ The snippet editor includes fields for a name, a visual editor-enabled descripti
 
 https://youtu.be/29jD2BcBX5w
 
-If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](https://wordpress.org/support/plugin/code-snippets), [join the community on Facebook](https://facebook.com/groups/codesnippetsplugin), or [check us out on GitHub](https://github.com/sheabunge/code-snippets).
+If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](https://wordpress.org/support/plugin/code-snippets), [join the community on Facebook](https://facebook.com/groups/codesnippetsplugin), or [check us out on GitHub](https://github.com/codesnippetspro/code-snippets).
 
 If you like this plugin, or it is useful to you in some way, please consider reviewing it on [WordPress.org](https://wordpress.org/support/view/plugin-reviews/code-snippets).
 
@@ -114,10 +114,10 @@ You can run snippets across an entire multisite network by **Network Activating*
 Snippets are stored in the `wp_snippets` table in the WordPress database. The table name may differ depending on what your table prefix is set to.
 
 = Where can I go for help or suggest new features? =
-You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums](https://wordpress.org/support/plugin/code-snippets) or on [GitHub](https://github.com/sheabunge/code-snippets)
+You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums](https://wordpress.org/support/plugin/code-snippets) or on [GitHub](https://github.com/codesnippetspro/code-snippets)
 
 = How can I help contribute to the development of the Code Snippets plugin? =
-The best way to do this is to fork the [repository on GitHub](https://github.com/sheabunge/code-snippets) and send a pull request.
+The best way to do this is to fork the [repository on GitHub](https://github.com/codesnippetspro/code-snippets) and send a pull request.
 
 == Screenshots ==
 
@@ -278,7 +278,7 @@ __New in Pro__
 * Fixed: Check the referer on the import menu to prevent CSRF attacks. Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfence.com/blog/author/wfchloe/) for reporting.
 * Fixed: Ensure that individual snippet action links use proper verification.
 
-**[The full changelog is available on GitHub](https://github.com/sheabunge/code-snippets/blob/master/CHANGELOG.md)**
+**[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
 

@@ -394,9 +394,9 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 * Added icons for admin and front-end snippets to manage table.
 * Improved settings retrieval by caching settings.
 * Updated Russian translation by [Alexey Chumakov](http://chumakov.ru/).
-* Added filter switch to prevent a snippet from executing. ([#25](https://github.com/sheabunge/code-snippets/issues/25))
+* Added filter switch to prevent a snippet from executing. ([#25](https://github.com/codesnippetspro/code-snippets/issues/25))
 * Fixed errors in string translation.
-* Fixed bug in import process. ([#32](https://github.com/sheabunge/code-snippets/issues/32))
+* Fixed bug in import process. ([#32](https://github.com/codesnippetspro/code-snippets/issues/32))
 
 ## 2.2.3 (13 May 2015)
 * Fixed broken call to `export_snippet()` function.
@@ -535,7 +535,7 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 * Don't encode HTML entities in database.
 
 ## 1.7.1.2 (3 May 2013)
-* Correct path to admin menu icon. Fixes [#8](https://github.com/sheabunge/code-snippets/issues/8)
+* Correct path to admin menu icon. Fixes [#8](https://github.com/codesnippetspro/code-snippets/issues/8)
 
 ## 1.7.1.1 (29 April 2013)
 * Fixed a bug with custom capabilities and admin menus.

@@ -3,14 +3,14 @@
  * Code Snippets - An easy, clean and simple way to add code snippets to your site.
  *
  * If you're interested in helping to develop Code Snippets, or perhaps contribute
- * to the localization, please see https://github.com/sheabunge/code-snippets
+ * to the localization, please see https://github.com/codesnippetspro/code-snippets
  *
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2022 Shea Bunge
  * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
  * @version   3.2.2
- * @link      https://github.com/sheabunge/code-snippets
+ * @link      https://github.com/codesnippetspro/code-snippets
  */
 
 /*
