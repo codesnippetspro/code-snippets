@@ -1,4 +1,4 @@
-# Code Snippets [![Build Status](https://travis-ci.org/sheabunge/code-snippets.svg?branch=master)](https://travis-ci.org/sheabunge/code-snippets)
+# Code Snippets
 
 WordPress plugin for managing executable code snippets through a graphical interface.
 
