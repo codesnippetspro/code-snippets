@@ -94,7 +94,8 @@ class Edit_Menu extends Admin_Menu {
 			add_action( 'code_snippets_edit_snippet', array( $this, 'render_tags_editor' ) );
 		}
 
-		add_action( 'code_snippets_below_editor', array( $this, 'render_priority_setting' ), 0 );
+		add_action( 'code_snippets_below_editor', array( $this, 'render_scope_setting' ), 5, 0 );
+		add_action( 'code_snippets_below_editor', array( $this, 'render_priority_setting' ), 11 );
 
 		if ( is_network_admin() ) {
 			add_action( 'code_snippets_edit_snippet', array( $this, 'render_multisite_sharing_setting' ), 1 );
@@ -452,23 +453,45 @@ class Edit_Menu extends Admin_Menu {
 		<?php
 	}
 
+	public function render_scope_setting() {
+		$this->render_view( 'partials/edit-scopes' );
+	}
+
+	/**
+	 * Render snippet scope options.
+	 *
+	 * @return void
+	 */
+	public function render_scope_options() {
+		$this->render_view( 'partials/edit-scopes' );
+	}
+
+	/**
+	 * Render the conditional scopes controls.
+	 *
+	 * @return void
+	 */
+	public function render_conditional_setting() {
+		$this->render_view( 'partials/edit-conditionals' );
+	}
+
 	/**
 	 * Render the setting for shared network snippets
 	 *
 	 * @param Snippet $snippet The snippet currently being edited.
 	 */
-	public function render_multisite_sharing_setting( $snippet ) {
+	public function render_multisite_sharing_setting( Snippet $snippet ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 		?>
 
-		<div class="snippet-sharing-setting">
-			<h2 class="screen-reader-text"><?php esc_html_e( 'Sharing Settings', 'code-snippets' ); ?></h2>
+		<h2 class="screen-reader-text"><?php esc_html_e( 'Sharing Settings', 'code-snippets' ); ?></h2>
+		<p class="snippet-sharing-setting">
 			<label for="snippet_sharing">
 				<input type="checkbox" name="snippet_sharing"
 					<?php checked( in_array( $snippet->id, $shared_snippets, true ) ); ?>>
 				<?php esc_html_e( 'Allow this snippet to be activated on individual sites on the network', 'code-snippets' ); ?>
 			</label>
-		</div>
+		</p>
 
 		<?php
 	}

@@ -70,13 +70,14 @@ p.snippet-scope, .snippet-scope p {
 	margin-right: 1.5em;
 }
 
-.below-editor {
+.below-snippet-editor {
 	display: flex;
+	flex-flow: row wrap;
 	justify-content: space-between;
+	padding-top: 1px;
 }
 
 .snippet-priority {
-
 	label {
 		font-weight: bold;
 		cursor: help;
