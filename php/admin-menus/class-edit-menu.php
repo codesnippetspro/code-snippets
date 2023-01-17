@@ -427,7 +427,7 @@ class Edit_Menu extends Admin_Menu {
 
 		<input type="text" id="snippet_tags" name="snippet_tags" style="width: 100%;"
 		       placeholder="<?php esc_html_e( 'Enter a list of tags; separated by commas', 'code-snippets' ); ?>"
-		       value="<?php echo esc_attr( $snippet->tags_list ); ?>" />
+		       value="<?php echo esc_attr( $snippet->tags_list ); ?>"/>
 		<?php
 	}
 
@@ -829,13 +829,20 @@ class Edit_Menu extends Admin_Menu {
 				'Shift'  => _x( 'Shift', 'keyboard key', 'code-snippets' ),
 				'Option' => _x( 'Option', 'keyboard key', 'code-snippets' ),
 				'Alt'    => _x( 'Alt', 'keyboard key', 'code-snippets' ),
+				'Tab'    => _x( 'Tab', 'keyboard key', 'code-snippets' ),
 				'Up'     => _x( 'Up', 'keyboard key', 'code-snippets' ),
 				'Down'   => _x( 'Down', 'keyboard key', 'code-snippets' ),
+				'A'      => _x( 'A', 'keyboard key', 'code-snippets' ),
+				'D'      => _x( 'D', 'keyboard key', 'code-snippets' ),
 				'F'      => _x( 'F', 'keyboard key', 'code-snippets' ),
 				'G'      => _x( 'G', 'keyboard key', 'code-snippets' ),
 				'R'      => _x( 'R', 'keyboard key', 'code-snippets' ),
 				'S'      => _x( 'S', 'keyboard key', 'code-snippets' ),
+				'Y'      => _x( 'Y', 'keyboard key', 'code-snippets' ),
+				'Z'      => _x( 'Z', 'keyboard key', 'code-snippets' ),
 				'/'      => _x( '/', 'keyboard key', 'code-snippets' ),
+				'['      => _x( ']', 'keyboard key', 'code-snippets' ),
+				']'      => _x( ']', 'keyboard key', 'code-snippets' ),
 			);
 		}
 

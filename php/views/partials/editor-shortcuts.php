@@ -25,34 +25,6 @@ namespace Code_Snippets;
 				<td><?php $this->render_keyboard_shortcut( 'Cmd', 'S' ); ?></td>
 			</tr>
 			<tr>
-				<td><?php esc_html_e( 'Select all', 'code-snippets' ); ?></td>
-				<td><?php $this->render_keyboard_shortcut( 'Cmd', 'A' ); ?></td>
-			</tr>
-			<tr>
-				<td><?php esc_html_e( 'Undo last change', 'code-snippets' ); ?></td>
-				<td><?php $this->render_keyboard_shortcut( 'Cmd', 'Z' ); ?></td>
-			</tr>
-			<tr>
-				<td><?php esc_html_e( 'Redo last undone change', 'code-snippets' ); ?></td>
-				<td><?php $this->render_keyboard_shortcut( 'Cmd', 'Y' ); ?></td>
-			</tr>
-			<tr>
-				<td><?php esc_html_e( 'Delete current line', 'code-snippets' ); ?></td>
-				<td><?php $this->render_keyboard_shortcut( 'Cmd', 'D' ); ?></td>
-			</tr>
-			<tr>
-				<td><?php esc_html_e( 'Indent current line', 'code-snippets' ); ?></td>
-				<td><?php $this->render_keyboard_shortcut( 'Cmd', ']' ); ?></td>
-			</tr>
-			<tr>
-				<td><?php esc_html_e( 'Dedent current line', 'code-snippets' ); ?></td>
-				<td><?php $this->render_keyboard_shortcut( 'Cmd', '[' ); ?></td>
-			</tr>
-			<tr>
-				<td><?php esc_html_e( 'Auto-indent the current line or selection', 'code-snippets' ); ?></td>
-				<td><?php $this->render_keyboard_shortcut( 'Shift', 'Tab' ); ?></td>
-			</tr>
-			<tr>
 				<td><?php esc_html_e( 'Begin searching', 'code-snippets' ); ?></td>
 				<td><?php $this->render_keyboard_shortcut( 'Cmd', 'F' ); ?></td>
 			</tr>
@@ -77,15 +49,15 @@ namespace Code_Snippets;
 				<td><?php $this->render_keyboard_shortcut( 'Alt', 'F' ); ?></td>
 			</tr>
 			<tr>
-				<td><?php esc_html_e( 'Toggle comment', 'code-snippets' ); ?></td>
+				<td><?php esc_html_e( 'Toggle Comment', 'code-snippets' ); ?></td>
 				<td><?php $this->render_keyboard_shortcut( 'Cmd', '/' ); ?></td>
 			</tr>
 			<tr>
-				<td><?php esc_html_e( 'Swap line up', 'code-snippets' ); ?></td>
+				<td><?php esc_html_e( 'Swap Line Up', 'code-snippets' ); ?></td>
 				<td><?php $this->render_keyboard_shortcut( 'Option', 'Up' ); ?></td>
 			</tr>
 			<tr>
-				<td><?php esc_html_e( 'Swap line down', 'code-snippets' ); ?></td>
+				<td><?php esc_html_e( 'Swap Line Down', 'code-snippets' ); ?></td>
 				<td><?php $this->render_keyboard_shortcut( 'Option', 'Down' ); ?></td>
 			</tr>
 		</table>
