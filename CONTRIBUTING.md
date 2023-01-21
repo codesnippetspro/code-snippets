@@ -54,7 +54,7 @@ the following command:
 
 If you are actively editing the included TypeScript or SCSS sources and wish to see your changes reflected more quickly
 than running the entire build script, there is an alternative command available that will monitor the source files
-for changes and run only the necessary tasks when changes are detected. This can be begun by running the following 
+for changes and run only the necessary tasks when changes are detected. This can be begun by running the following
 command:
 
     gulp watch
@@ -76,3 +76,33 @@ can be copied directly into a Subversion repository or similar for distribution.
 Additionally, a `code-snippets.x.x.x.zip` file will also be generated, where `x.x.x` is the plugin version number,
 containing all files in the `build/` directory nested in a `code-snippets/` folder, as is expected by WordPress. This
 zip file is suitable for direct uploading through the WordPress plugin installer.
+
+## Switching between Free and Pro
+
+While developing both Code Snippets and Code Snippets Pro, it is convenient to have both versions together in the same
+repository, to allow easy switching and merging between the `develop` and `pro` branches.
+
+Due to the need for the free version of Code Snippets to be publicly available while the Pro version is only accessible
+to the Code Snippets Team, these branches are divided into separate repositories, with the `develop` and `master`
+branches stored at <https://github.com/codesnippetspro/code-snippets>, and the `pro` branch at
+<https://github.com/codesnippetspro/pro>.
+
+Despite this fragmentation, it is recommended to not store the code in separate repositories, but to instead add these
+as separate remotes in the same repository. To achieve this, first clone a version of Code Snippets to your local
+machine:
+
+    git clone git@github.com:codesnippetspro/code-snippets.git
+    cd code-snippets
+
+This will download a copy of the Code Snippets repository, and set the `origin` to be `codesnippetspro/code-snippets`.
+
+Next, add the pro repository as a separate remote. The name here is not important, just as long as it is different
+enough to reduce confusion:
+
+    git remote add pro git@github.com:codesnippetspro/pro.git
+    git fetch
+
+Once this is achieved, you should be able to switch between versions with `git checkout develop` and `git checkout pro`.
+When creating feature branches, ensure that they are based off the correct branch `develop` or `pro`, and that they
+are pushed to the correct remote. It is especially important to avoid pushing any branches based on `pro` to the public
+repository.
