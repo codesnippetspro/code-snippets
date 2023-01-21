@@ -80,12 +80,12 @@ zip file is suitable for direct uploading through the WordPress plugin installer
 ## Switching between Free and Pro
 
 While developing both Code Snippets and Code Snippets Pro, it is convenient to have both versions together in the same
-repository, to allow easy switching and merging between the `develop` and `pro` branches.
+repository to allow easy switching and merging between the `develop` and `pro` branches.
 
 Due to the need for the free version of Code Snippets to be publicly available while the Pro version is only accessible
 to the Code Snippets Team, these branches are divided into separate repositories, with the `develop` and `master`
-branches stored at <https://github.com/codesnippetspro/code-snippets>, and the `pro` branch at
-<https://github.com/codesnippetspro/pro>.
+branches stored at [codesnippetspro/code-snippets](https://github.com/codesnippetspro/code-snippets), and the `pro`
+branch at [codesnippetspro/pro](https://github.com/codesnippetspro/pro).
 
 Despite this fragmentation, it is recommended to not store the code in separate repositories, but to instead add these
 as separate remotes in the same repository. To achieve this, first clone a version of Code Snippets to your local
@@ -103,6 +103,7 @@ enough to reduce confusion:
     git fetch
 
 Once this is achieved, you should be able to switch between versions with `git checkout develop` and `git checkout pro`.
+
 When creating feature branches, ensure that they are based off the correct branch `develop` or `pro`, and that they
 are pushed to the correct remote. It is especially important to avoid pushing any branches based on `pro` to the public
 repository.
