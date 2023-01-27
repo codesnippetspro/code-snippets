@@ -92,16 +92,20 @@ class Active_Snippets {
 	public function get_rev( $scope ) {
 		$rev = 0;
 
-		$revisions = get_option( 'code_snippets_assets_rev' );
-		if ( isset( $revisions[ $scope ] ) ) {
-			$rev += intval( $revisions[ $scope ] );
+		$active_snippets_for_current_scope = code_snippets()->db->fetch_active_snippets( $scope );
+
+		if ( empty( $active_snippets_for_current_scope ) ) {
+			return false;
 		}
+
+		$revisions = get_option( 'code_snippets_assets_rev' );
 
 		if ( is_multisite() ) {
 			$revisions = get_site_option( 'code_snippets_assets_rev' );
-			if ( isset( $revisions[ $scope ] ) ) {
-				$rev += intval( $revisions[ $scope ] );
-			}
+		}
+
+		if ( isset( $revisions[ $scope ] ) ) {
+			$rev += intval( $revisions[ $scope ] );
 		}
 
 		return $rev;
