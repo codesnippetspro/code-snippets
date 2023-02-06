@@ -5,6 +5,11 @@ const selectTab = (tabsWrapper: Element, tab: Element, section: string) => {
 
 	// Update the current active tab attribute so that only the active tab is displayed.
 	tabsWrapper.closest('.wrap')?.setAttribute('data-active-tab', section)
+
+	//Hide all cloud messages - this is a bit of a hack, but it works make better **TODO**
+	document.querySelectorAll('.cloud-message')?.forEach(element => {
+		element.classList.add('hidden')
+	})
 }
 
 // Refresh the editor preview if we're viewing the editor section.
@@ -24,6 +29,47 @@ const updateHttpReferer = (section: string) => {
 
 	const newReferer = httpReferer.value.replace(/(?<base>[&?]section=)[^&]+/, `$1${section}`)
 	httpReferer.value = newReferer + (newReferer === httpReferer.value ? `&section=${section}` : '')
+}
+
+//Verify API Token by seding a HTTP Request to the API and checking the response
+const verifyToken = () => {
+	const verifyTokenButton = document.getElementById('verify_token')
+	verifyTokenButton?.addEventListener('click', event => {
+		//Hide all messages
+		document.querySelectorAll('.cloud-message')?.forEach(element => {
+			element.classList.add('hidden')
+		})
+		event.preventDefault()
+		//Get the token value
+		const tokenInput = document.getElementById('cloud_token') as HTMLInputElement
+		const tokenValue = tokenInput.value
+		console.log(tokenValue)
+		//Send a HTTP Request to the API - update this to verify URL **TODO**
+		cs(tokenValue).then(response => {
+			if(response?.ok) {
+				document.querySelector('.cloud-success')?.classList.remove('hidden')
+				const hiddenInput = document.getElementById('cloud_token_verified') as HTMLInputElement
+				hiddenInput.value = 'true'
+			} 
+		})
+	})
+}
+
+const cs  = async function cloudAPIVerify(tokenValue: string) {
+	try {
+		const response = await fetch('https://codesnippets.cloud/api/v1/private/publicsnippets', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${tokenValue}`,
+			},
+		})
+		if (!response.ok) throw await response.json()
+		return response
+	} catch (e) {
+		console.log(e)
+		document.querySelector('.cloud-error')?.classList.remove('hidden')
+	}
 }
 
 export const handleSettingsTabs = () => {
@@ -47,4 +93,6 @@ export const handleSettingsTabs = () => {
 			}
 		})
 	}
+
+	verifyToken()
 }

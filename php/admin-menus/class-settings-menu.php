@@ -152,13 +152,12 @@ class Settings_Menu extends Admin_Menu {
 
 				settings_fields( 'code-snippets' );
 				$this->do_settings_tabs();
-
 				?>
 				<p class="submit">
 					<?php submit_button( null, 'primary', 'submit', false ); ?>
 
 					<a class="button button-secondary"
-					   href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>"><?php
+					href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>"><?php
 						esc_html_e( 'Reset to Default', 'code-snippets' ); ?></a>
 				</p>
 			</form>
@@ -207,7 +206,13 @@ class Settings_Menu extends Admin_Menu {
 			printf( '<table class="form-table settings-section %s-settings">', esc_attr( $section['id'] ) );
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table>';
+	
+			if('cloud' == $section['id']){
+				echo'<p class="hidden error-message cloud-message cloud-error">Invalid token, Please try again or Generate a new token from your Code Snippets Cloud account</p>';
+				echo'<p class="hidden success-message cloud-message cloud-success">Token verified successfully</p>';
+			}
 		}
+
 	}
 
 	/**

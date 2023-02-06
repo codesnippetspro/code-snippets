@@ -239,6 +239,29 @@ function get_settings_fields() {
 
 	];
 
+	/* Cloud Sync Settings */
+	$fields['cloud'] = [
+
+		'cloud_token' => [
+			'name'    		=> __( 'Cloud API Token', 'code-snippets' ),
+			'element_id'	=> 'cloud_token',
+			'type'    		=> 'text',
+			'default' 		=> null,
+		],
+		'verify_button' => [
+			'name'    => __( 'Verify Cloud API Key', 'code-snippets' ),
+			'type'    => 'button',
+		],
+		'token_verified' => [
+			'name'    		=> null,
+			'element_id'	=> 'cloud_token_verified',
+			'type'    		=> 'hidden',
+			'default' 		=> 'false',
+		],
+
+
+	];
+
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );
 
 	return $fields;

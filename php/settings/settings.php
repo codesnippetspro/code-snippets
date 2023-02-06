@@ -143,6 +143,7 @@ function get_settings_sections() {
 		'general'            => __( 'General', 'code-snippets' ),
 		'description_editor' => __( 'Description Editor', 'code-snippets' ),
 		'editor'             => __( 'Code Editor', 'code-snippets' ),
+		'cloud'             => __( 'Cloud Sync', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );

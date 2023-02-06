@@ -1,6 +1,6 @@
 @import 'editor';
 
-$sections: general, description_editor, editor, license;
+$sections: general, description_editor, editor, license, cloud;
 
 p.submit {
 	max-width: 1020px;
@@ -94,4 +94,9 @@ body.js {
 
 #code_snippets_license_key {
 	font-family: Consolas, Monaco, monospace;
+}
+
+#cloud_token {
+	max-width: 450px;
+    width: 90vw;
 }

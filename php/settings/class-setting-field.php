@@ -188,9 +188,11 @@ class Setting_Field {
 	private function render_text_field() {
 
 		printf(
-			'<input type="text" name="%s" value="%s" class="regular-text">',
+			'<input id="%s" type="text" name="%s" value="%s" class="regular-text %s">',
+			esc_attr( $this->element_id ),
 			esc_attr( $this->input_name ),
-			esc_attr( $this->get_saved_value() )
+			esc_attr( $this->get_saved_value() ),
+			esc_attr( $this->element_id ),
 		);
 
 		if ( $this->label ) {
@@ -245,5 +247,29 @@ class Setting_Field {
 		}
 
 		echo '</select>';
+	}
+
+	/**
+	 * Render a button to verify cloud api 
+	 *
+	 * @since 3.0.0
+	 */
+	private function render_button_field() {
+
+		echo '<button class="button button-secondary" type="button" id="verify_token">Verify Now</button>';
+	}
+
+	/**
+	 * Render a hidden input field for an editor setting.
+	 */
+	private function render_hidden_field() {
+
+		printf(
+			'<input id="%s" type="hidden" name="%s" value="%s" class="%s">',
+			esc_attr( $this->element_id ),
+			esc_attr( $this->input_name ),
+			esc_attr( $this->get_saved_value() ? $this->get_saved_value() : $this->default ),
+			esc_attr( $this->element_id ),
+		);
 	}
 }

@@ -163,6 +163,9 @@ class List_Table extends WP_List_Table {
 			case 'id':
 				return $item->id;
 
+			case 'name':
+				return print_r( $item, true ) ;
+
 			case 'description':
 				return apply_filters( 'code_snippets/list_table/column_description', $item->desc );
 
@@ -968,6 +971,7 @@ class List_Table extends WP_List_Table {
 					return $_GET['type'] === $snippet->type;
 				}
 			);
+			
 		}
 
 		/* Add scope tags */
@@ -1061,6 +1065,8 @@ class List_Table extends WP_List_Table {
 
 		/* Now we can add our *sorted* data to the items property, where it can be used by the rest of the class. */
 		$this->items = $data;
+		//wp_die( print_r( $this->items ) );
+
 
 		/* We register our pagination options and calculations */
 		$this->set_pagination_args(

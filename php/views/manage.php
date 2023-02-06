@@ -61,10 +61,11 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		echo '<p class="snippet-type-description">', esc_html( $desc );
 
 		$type_names = [
-			'php'  => __( 'function snippets', 'code-snippets' ),
-			'html' => __( 'content snippets', 'code-snippets' ),
-			'css'  => __( 'style snippets', 'code-snippets' ),
-			'js'   => __( 'javascript snippets', 'code-snippets' ),
+			'php'  	=> __( 'function snippets', 'code-snippets' ),
+			'html' 	=> __( 'content snippets', 'code-snippets' ),
+			'css'  	=> __( 'style snippets', 'code-snippets' ),
+			'js'   	=> __( 'javascript snippets', 'code-snippets' ),
+			'cloud' => __( 'cloud snippets', 'code-snippets',  ),
 		];
 
 		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
@@ -72,9 +73,15 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		/* translators: %s: snippet type name */
 		$learn_more_text = sprintf( __( 'Learn more about %s &rarr;', 'code-snippets' ), $type_names[ $current_type ] );
 
+		if('cloud' == $current_type){
+			$learn_url = CS_Cloud::CLOUD_URL;
+		}else{
+			$learn_url = "https://codesnippets.pro/learn-$current_type/";
+		}
+				
 		printf(
 			' <a href="%s" target="_blank">%s</a></p>',
-			esc_url( "https://codesnippets.pro/learn-$current_type/" ),
+			esc_url( $learn_url ),
 			esc_html( $learn_more_text )
 		);
 	}
@@ -83,6 +90,12 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 	<?php
 	do_action( 'code_snippets/admin/manage/before_list_table' );
 	$this->list_table->views();
+
+	//** Clean this if statement up **
+	if('cloud' == $current_type){
+		$cloud = new CS_Cloud;
+		$cloud->init();
+	}else{
 	?>
 
 	<form method="get" action="">
@@ -94,13 +107,14 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 
 	<form method="post" action="">
 		<input type="hidden" id="code_snippets_ajax_nonce"
-		       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
-
+			value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 		<?php
 		$this->list_table->required_form_fields();
 		$this->list_table->display();
 		?>
 	</form>
 
+	<?php }	?>
+	
 	<?php do_action( 'code_snippets/admin/manage' ); ?>
 </div>
