@@ -225,7 +225,7 @@ class Frontend {
 			add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
 		}
 
-		return $content;
+		return trim($content);
 	}
 
 	/**
