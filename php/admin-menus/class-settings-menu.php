@@ -203,13 +203,23 @@ class Settings_Menu extends Admin_Menu {
 				call_user_func( $section['callback'], $section );
 			}
 
+			if('cloud' == $section['id']){
+				echo'<p id="cloud_guide" class="hidden cloud-guide">Please make sure to click verify token to connect to the cloud and if successful then click on save settings.</p>';
+			}
+
 			printf( '<table class="form-table settings-section %s-settings">', esc_attr( $section['id'] ) );
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table>';
 	
 			if('cloud' == $section['id']){
-				echo'<p class="hidden error-message cloud-message cloud-error">Invalid token, Please try again or Generate a new token from your Code Snippets Cloud account</p>';
-				echo'<p class="hidden success-message cloud-message cloud-success">Token verified successfully</p>';
+				// This doesnt work if switch between tabs....
+				$settings = get_option('code_snippets_settings');
+				$tokenVerified = $settings['cloud']['token_verified'];
+				if(!empty($tokenVerified) && $tokenVerified == 'true'){
+					echo'<p id="cloud_sync_status" class="cloud-message cloud-success hidden">Status: Cloud Sync Connected</p>';
+				}
+				echo'<p class="hidden cloud-message cloud-error">Invalid token, Please try again or Generate a new token from your Code Snippets Cloud account</p>';
+				echo'<p class="hidden cloud-message cloud-success">Token verified successfully</p>';
 			}
 		}
 

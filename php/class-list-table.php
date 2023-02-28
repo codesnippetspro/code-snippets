@@ -136,7 +136,8 @@ class List_Table extends WP_List_Table {
 	 * @return array
 	 */
 	public function default_hidden_columns( $hidden ) {
-		$hidden[] = 'id';
+		//$hidden[] = 'id';
+		array_push($hidden, 'id', 'code', 'cloud_id', 'revision');
 		return $hidden;
 	}
 
@@ -243,10 +244,29 @@ class List_Table extends WP_List_Table {
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
 				'export' => esc_html__( 'Export', 'code-snippets' ),
+				'cloud' => esc_html__( 'Sync to Cloud', 'code-snippets' ),
 			);
 
+			
 			foreach ( $simple_actions as $action => $label ) {
 				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', esc_url( $this->get_action_link( $action, $snippet ) ), $label );
+			}
+			
+			$sync_status = $this->is_snippet_synced($snippet);
+			if($sync_status['synced']){		
+				if($sync_status['update']){
+					$actions[ 'cloud' ] = sprintf( '<a href="%s">%s</a>', 
+					esc_url( $this->get_action_link( 'update', $snippet ) ),
+					'Update Available' );
+				}else{
+					$actions[ 'cloud' ] = sprintf( '<a>%s</a>', 'Synced' );
+				}
+			}
+			if($sync_status['refresh']){
+					$actions[ 'cloud' ] = sprintf( '<a href="%s">%s</a>', 
+					esc_url( '/wp-admin/admin.php?page=snippets&type=cloud' ),
+					'Refresh Sync' );
+				
 			}
 
 			$actions['delete'] = sprintf(
@@ -316,11 +336,17 @@ class List_Table extends WP_List_Table {
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
+		$sync_status = $this->is_snippet_synced($snippet);
+		if( $sync_status['synced'] ){
+			echo ' <span class="dashicons dashicons-cloud cloud-synced"></span>';
+		}
+
 		$out = esc_html( $snippet->display_name );
 
 		if ( 'global' !== $snippet->scope ) {
 			$out .= ' <span class="dashicons dashicons-' . $snippet->scope_icon . '"></span>';
 		}
+
 
 		/* Add a link to the snippet if it isn't an unreadable network-only snippet */
 		if ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
@@ -469,6 +495,7 @@ class List_Table extends WP_List_Table {
 			'download-selected'   => __( 'Download', 'code-snippets' ),
 			'export-selected'     => __( 'Export', 'code-snippets' ),
 			'delete-selected'     => __( 'Delete', 'code-snippets' ),
+			'sync-selected'       => __( 'Cloud Sync', 'code-snippets' ),
 		);
 
 		return apply_filters( 'code_snippets/list_table/bulk_actions', $actions );
@@ -741,6 +768,9 @@ class List_Table extends WP_List_Table {
 				$export = new Export_Attachment( $id );
 				$export->download_snippets_code();
 				break;
+			case 'cloud':
+				$this->sync_to_cloud( array( $id ) );
+				return 'synced';
 		}
 
 		return false;
@@ -892,6 +922,7 @@ class List_Table extends WP_List_Table {
 				esc_html__( 'Perhaps you would like to add a new one?', 'code-snippets' )
 			);
 		}
+
 	}
 
 	/**
@@ -1319,4 +1350,42 @@ class List_Table extends WP_List_Table {
 			save_snippet( $snippet );
 		}
 	}
+
+	/**
+	 * Check if snippet is synced to cloud
+	 *
+	 * @param Snippet $snippet - snippet object.
+	 */
+	public function is_snippet_synced( $snippet ) {
+		$local_to_cloud_map = get_transient( 'cs_local_to_cloud_map' );
+		//check if transient is empty
+		if ( empty( $local_to_cloud_map ) ) {
+			return array( 'refresh' =>  true ) ;
+		}
+
+		//loop over items in array and see if snippet id exists in looped array items
+		if ( is_array( $local_to_cloud_map ) ) {
+			foreach ( $local_to_cloud_map as $key => $value ) {
+				if ( $value['cloud_id'] == $snippet->cloud_id ) {
+					//wp_die(var_dump($value['update_available']));
+					if($value['update_available'] === 'true'){
+						return array( 'synced' =>  true, 'update' => true);
+					}
+					return array( 'synced' =>  true, 'update' => false);
+				}
+			}
+		}
+		return false;
+	}	
+
+	/**
+	 * Sync snippets to cloud
+	 *
+	 * @param array $ids List of snippet IDs.
+	 */
+	private function sync_to_cloud( $ids ) {
+		$snippets = get_snippets( $ids, $this->is_network );
+		CS_Cloud::store_snippets_to_cloud( $snippets );
+	}
+	
 }

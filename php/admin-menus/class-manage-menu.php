@@ -18,6 +18,27 @@ class Manage_Menu extends Admin_Menu {
 	public $list_table;
 
 	/**
+	 * Holds the cloud list table class for user codevault
+	 *
+	 * @var Cloud_List_Table
+	 */
+	public $cloud_list_table;
+
+	/**
+	 * Holds the cloud list table class for search results
+	 *
+	 * @var Cloud_List_Table
+	 */
+	public $cloud_search_list_table;
+
+	/**
+	 * Holds the cloud  class
+	 *
+	 * @var CS_Cloud
+	 */
+	public $cloud;
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
@@ -116,10 +137,24 @@ class Manage_Menu extends Admin_Menu {
 		/* Load the contextual help tabs */
 		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
+		
+		/* Initialize the cloud class */
+		$this->cloud = new CS_Cloud();
+
+		/* Initialize the codevault cloud list table class */
+		$this->cloud_list_table = new Cloud_List_Table($this->cloud->cloud_snippets);
+		$this->cloud_list_table->prepare_items();
+
+		/* Initialize the search cloud list table class */
+		$this->cloud_search_list_table = new Cloud_List_Table(array());
+		$this->cloud_search_list_table->prepare_items();
 
 		/* Initialize the list table class */
 		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
+
+
+		
 	}
 
 	/**
@@ -180,6 +215,7 @@ class Manage_Menu extends Admin_Menu {
 					'deleted-multi'     => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
 					'cloned'            => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
 					'cloned-multi'      => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
+					'cloud-key-error'   => __( 'There is a problem with your Code Snippets Cloud Key.', 'code-snippets' ),
 				)
 			)
 		);

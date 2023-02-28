@@ -48,16 +48,18 @@ function clean_snippets_cache( $table_name ) {
  *
  * @param array            $ids       The IDs of the snippets to fetch.
  * @param bool|null|string $multisite Retrieve multisite-wide snippets (true) or site-wide snippets (false).
+ * @param array            $cloud_ids       The Cloud IDs of the snippets to fetch.
  *
  * @return array List of Snippet objects.
  *
  * @since 2.0
  */
-function get_snippets( array $ids = array(), $multisite = null ) {
+function get_snippets( array $ids = array(), $multisite = null, array $cloud_ids = array() ) {
 	global $wpdb;
 
 	// If only one ID has been passed in, defer to the get_snippet() function.
 	$ids_count = count( $ids );
+	$cloud_ids_count = count( $cloud_ids );
 	if ( 1 === $ids_count ) {
 		return array( get_snippet( $ids[0], $multisite ) );
 	}
@@ -95,6 +97,16 @@ function get_snippets( array $ids = array(), $multisite = null ) {
 			$snippets,
 			function ( Snippet $snippet ) use ( $ids ) {
 				return in_array( $snippet->id, $ids, true );
+			}
+		);
+	}
+
+	// If a list of Cloud IDs are provided, narrow down the snippets list.
+	if ( $cloud_ids_count > 0 ) {
+		return array_filter(
+			$snippets,
+			function ( Snippet $snippet ) use ( $cloud_ids ) {
+				return in_array( $snippet->cloud_id, $cloud_ids, true );
 			}
 		);
 	}
@@ -393,6 +405,7 @@ function delete_snippet( $id, $multisite = null ) {
 	if ( $result ) {
 		do_action( 'code_snippets/delete_snippet', $id, $multisite );
 		clean_snippets_cache( $table );
+		CS_Cloud::delete_snippet_from_transient_data( $id );
 	}
 
 	return $result;
@@ -415,6 +428,9 @@ function save_snippet( Snippet $snippet ) {
 	// Update the last modification date if necessary.
 	$snippet->update_modified();
 
+	// Increment the revision number
+	$snippet->increment_revision();
+
 	// Build array of data to insert.
 	$data = array(
 		'name'        => $snippet->name,
@@ -422,9 +438,11 @@ function save_snippet( Snippet $snippet ) {
 		'code'        => $snippet->code,
 		'tags'        => $snippet->tags_list,
 		'scope'       => $snippet->scope,
-		'priority'    => $snippet->priority,
+		'priority'    => $snippet->priority ? $snippet->priority : 10,
 		'active'      => intval( $snippet->active ),
 		'modified'    => $snippet->modified,
+		'revision'    => $snippet->revision,
+		'cloud_id'    => $snippet->cloud_id ? $snippet->cloud_id : null,
 	);
 
 	// Create a new snippet if the ID is not set.

@@ -239,12 +239,14 @@ function sanitize_setting_value( $field, $input_value ) {
 			return $results;
 
 		case 'text':
+		case 'hidden':
 			return trim( sanitize_text_field( $input_value ) );
 
 		case 'callback':
 			return array_key_exists( 'sanitize_callback', $field ) && is_callable( $field['sanitize_callback'] ) ?
 				call_user_func( $field['sanitize_callback'], $input_value ) :
 				null;
+		
 
 		default:
 			return null;
@@ -264,8 +266,9 @@ function sanitize_settings( array $input ) {
 
 	// Don't directly loop through $input as it does not include as deselected checkboxes.
 	foreach ( get_settings_fields() as $section_id => $fields ) {
-		foreach ( $fields as $field_id => $field ) {
 
+		foreach ( $fields as $field_id => $field ) {
+						
 			// Fetch the corresponding input value from the posted data.
 			$input_value = isset( $input[ $section_id ][ $field_id ] ) ? $input[ $section_id ][ $field_id ] : null;
 

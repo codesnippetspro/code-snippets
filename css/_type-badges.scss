@@ -23,7 +23,7 @@ $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-
 
 @each $type, $color in $badges {
 	.nav-tab[data-type=#{$type}] .badge, .snippet-type-badge[data-type=#{$type}] {
-		color: $color;
+		color: $color !important;
 		border-color: currentColor;
 	}
 

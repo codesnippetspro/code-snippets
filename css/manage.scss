@@ -308,3 +308,45 @@ $inactive-color: #ccc;
 .code-snippets-notice a.notice-dismiss {
 	text-decoration: none;
 }
+
+.thickbox-code-viewer{
+	min-height: 250px;
+	background-color: hsl(0,0%,96.5%);
+	padding: 20px;
+	border-radius: 10px;
+}
+
+.cloud-synced {
+    margin-right: 3px;
+    margin-bottom: 2px;
+    color: #00bcd4;
+}
+
+.cloud-table > tbody > tr  {
+	height: 80px;
+}
+.cloud-table tbody .active-snippet .column-name>a {
+	font-weight: 400;
+}
+
+.updated.column-updated span {
+	text-decoration: dotted underline;
+}
+
+.column-download a {
+    border: 1px solid;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 5px;
+    display: block;
+    text-align: center;
+}
+
+.cloud-snippet-downloaded {
+    background: transparent;
+    color: #616161 !important;
+}
+
+.cloud_search{
+	width: 35%;
+}

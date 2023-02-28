@@ -91,11 +91,22 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 	do_action( 'code_snippets/admin/manage/before_list_table' );
 	$this->list_table->views();
 
-	//** Clean this if statement up **
+
 	if('cloud' == $current_type){
-		$cloud = new CS_Cloud;
-		$cloud->init();
-	}else{
+	?>
+		<h2>Cloud Search</h2>
+		</p>Search the Code Snippets Cloud for snippets that you can import into your site.</p>
+		<form method="post" action="">
+			<input type="hidden" id="code_snippets_ajax_nonce"
+			value=" <?php esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ) ?> ">
+			<input type="text" name="cloud_search" class="cloud_search" value="" placeholder="e.g. Remove Unused Javascript...">
+			<input type="submit" name="submit" id="search-submit" class="button" value="Search Cloud">
+		
+	<?php
+		$this->cloud_search_list_table->display();
+
+		echo '</form><h2>My Codevault</h2>';
+	}
 	?>
 
 	<form method="get" action="">
@@ -109,12 +120,14 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		<input type="hidden" id="code_snippets_ajax_nonce"
 			value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 		<?php
-		$this->list_table->required_form_fields();
-		$this->list_table->display();
+		if('cloud' == $current_type){
+			$this->cloud_list_table->display();
+		}else{
+			$this->list_table->required_form_fields();
+			$this->list_table->display();
+		}
 		?>
 	</form>
-
-	<?php }	?>
 	
 	<?php do_action( 'code_snippets/admin/manage' ); ?>
 </div>

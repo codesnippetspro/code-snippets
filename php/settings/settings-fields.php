@@ -258,6 +258,12 @@ function get_settings_fields() {
 			'type'    		=> 'hidden',
 			'default' 		=> 'false',
 		],
+		'local_token' => [
+			'name'    		=>  null,
+			'element_id'	=> 'local_token',
+			'type'    		=> 'hidden',
+			'default' 		=>  null,
+		],
 
 
 	];
