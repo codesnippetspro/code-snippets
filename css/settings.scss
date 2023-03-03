@@ -118,6 +118,11 @@ body.js {
 	color: #e8f5e9;
 }
 
-.cloud-settings tbody tr:nth-child(n+3) {
+.refresh-success {
+    background: #2271b1;
+    color: #ffeb3b;
+}
+
+.cloud-settings tbody tr:nth-child(n+4) {
     display: none;
 }

@@ -256,7 +256,11 @@ class Setting_Field {
 	 */
 	private function render_button_field() {
 
-		echo '<button class="button button-secondary" type="button" id="verify_token">Verify Now</button>';
+        printf(
+            '<button class="button button-secondary" type="button" id="%s">%s</button>',
+            esc_html( $this->button_id ),
+            esc_html( $this->button_label )
+        );
 	}
 
 	/**

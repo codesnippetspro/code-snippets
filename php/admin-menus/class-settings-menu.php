@@ -210,13 +210,15 @@ class Settings_Menu extends Admin_Menu {
 			printf( '<table class="form-table settings-section %s-settings">', esc_attr( $section['id'] ) );
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table>';
-	
+			
 			if('cloud' == $section['id']){
-				// This doesnt work if switch between tabs....
 				$settings = get_option('code_snippets_settings');
 				$tokenVerified = $settings['cloud']['token_verified'];
 				if(!empty($tokenVerified) && $tokenVerified == 'true'){
 					echo'<p id="cloud_sync_status" class="cloud-message cloud-success hidden">Status: Cloud Sync Connected</p>';
+				}
+				if(empty($tokenVerified) || $tokenVerified == 'false'){
+					echo'<p id="cloud_sync_status" class="cloud-message cloud-error hidden">Status: Cloud Sync Not Connected</p>';
 				}
 				echo'<p class="hidden cloud-message cloud-error">Invalid token, Please try again or Generate a new token from your Code Snippets Cloud account</p>';
 				echo'<p class="hidden cloud-message cloud-success">Token verified successfully</p>';

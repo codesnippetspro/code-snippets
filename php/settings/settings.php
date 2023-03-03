@@ -127,7 +127,7 @@ function get_setting( $section, $field ) {
 function update_setting( $section, $field, $new_value ) {
 	$settings = get_settings_values();
 
-	$settings[ $section ][ $field ] = $new_value;
+	$settings[ $section ][ $field ] = $new_value;	
 
 	wp_cache_set( CACHE_KEY, $settings );
 	return update_self_option( are_settings_unified(), 'code_snippets_settings', $settings );

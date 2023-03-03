@@ -249,9 +249,17 @@ function get_settings_fields() {
 			'default' 		=> null,
 		],
 		'verify_button' => [
-			'name'    => __( 'Verify Cloud API Key', 'code-snippets' ),
-			'type'    => 'button',
+			'name'          => __( '*Verify Token Before Saving', 'code-snippets' ),
+			'type'          => 'button',
+            'button_id'     => 'verify_token',
+            'button_label'  =>  'Verify Now',
 		],
+        'refresh_data' => [
+            'name'          => __( 'Refresh Synced Data', 'code-snippets' ),
+            'type'          => 'button',
+            'button_id'     => 'refresh_data',
+            'button_label'  =>  'Refresh',
+        ],
 		'token_verified' => [
 			'name'    		=> null,
 			'element_id'	=> 'cloud_token_verified',

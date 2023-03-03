@@ -50,11 +50,25 @@ class CS_Cloud {
     private $cloud_key_is_verified = false;
 
     /**
-     * Cloud Snippets Object
+     * Cloud Snippets Object 
      * 
      * @var array
      */
     public $cloud_snippets;
+
+    /**
+     * Codevault Snippets Object
+     * 
+     * @var array
+     */
+    public $codevault_snippets;
+
+    /**
+     * Local to Cloud Snippets Map Object
+     * 
+     * @var array
+     */
+    public $local_to_cloud_map;
 
 
     /**
@@ -63,10 +77,12 @@ class CS_Cloud {
     public function __construct() {
         $this->cloud_key  = get_setting( 'cloud' , 'cloud_token');
         $this->cloud_key_is_verified  = get_setting( 'cloud' , 'token_verified');
-        $this->cloud_snippets = get_transient('cs_cloud_snippets');
+        $this->codevault_snippets = get_transient('cs_codevault_snippets');
+        $this->local_to_cloud_map = get_transient('cs_local_to_cloud_map');
         $this->init();
 
-        return $this->cloud_snippets;
+        //wp_die( var_dump( get_snippets( array()) ) );
+        return $this->codevault_snippets;
     }
     
     /**
@@ -78,17 +94,16 @@ class CS_Cloud {
     public function init() {
         //Enqueue Prism Files
         $this->enqueue_all_prism_themes();
-        //Check if cloud api key is set and valid - if not then display error notice
-        if(!$this->is_cloud_key_valid()){
-            return $this->display_cloud_key_notice();
+        //If no codevault snippets transient object then grab from api and store as transient
+        if( empty($this->codevault_snippets) ){
+            $this->codevault_snippets = $this->get_codevault_snippets();
+            set_transient( 'cs_codevault_snippets', $this->codevault_snippets, ( DAY_IN_SECONDS * self::DAYS_TO_STORE_CS ) );
         }
-        //Check if any cloud snippets already stored as a transient
-        if( empty($this->cloud_snippets) ){
-            //If no cloud snippet transient object then grab cloud snippets from api and store as transient
-            $this->cloud_snippets = $this->get_cloud_snippets();
-            set_transient( 'cs_cloud_snippets', $this->cloud_snippets, ( DAY_IN_SECONDS * self::DAYS_TO_STORE_CS ) );
-            $this->check_snippets_for_cloud_updates($this->cloud_snippets);
+        //If no local to cloud map transient object then generate this map and store as transient
+        if( empty($this->local_to_cloud_map) ){
+            $this->local_to_cloud_map = $this->generate_local_to_cloud_map();
         }
+        $this->process_refresh_synced_data_request();
     }
 
     /**
@@ -96,14 +111,13 @@ class CS_Cloud {
      *
      * @return bool
      */
-    public function is_cloud_key_valid(){    
+    public function is_cloud_connection_available(){    
         if($this->cloud_key == ''){
             return false;
         }
         if($this->cloud_key_is_verified == 'false'){
             return false;
         }
-
         return true;
     }
 
@@ -124,7 +138,7 @@ class CS_Cloud {
      *
      * @return array|bool
      */
-    public function get_cloud_snippets(){
+    public function get_codevault_snippets(){
         $url = self::CLOUD_API_URL . 'private/allsnippets';
         $cloud_api_key  = get_setting( 'cloud' , 'cloud_token');
         $args = array(
@@ -140,60 +154,63 @@ class CS_Cloud {
         }
         $body = wp_remote_retrieve_body( $response );
         $snippets = json_decode( $body, true );
-        //wp_die( print_r ($snippets['data']) );
-        return  $snippets['data'];
+        return  $snippets['snippets'];
     }
 
+    
     /**
-     * Check local snippets for cloud updates
-     *
-     * @param object $cloud_snippets json data
+     * Create Local to Cloud Map to keep track of local snippets
+     * that have been synced to the cloud
+     * 
      * @return void
      */
-    public function check_snippets_for_cloud_updates($cloud_snippets){
-        $cloud_id_rev_array = []; //e.g. cloud_id => revision -> [163_1 => 2 ]
-        $cloud_ids = [];
+    public function generate_local_to_cloud_map(){
+        $snippet_revision_array = []; //e.g. cloud_id => revision -> [163_1 => 2 ]
         $local_to_cloud_map  = []; //e.g. local_id, cloud_id, downloaded, update_available
-        //string to array
-        //$cloud_snippets = json_decode($cloud_snippets_transient, false);
+        $codevault_snippet_ids = [];
 
-        foreach ($cloud_snippets as $cloud_snippet) {
-            //Get cloud revision and id and store in array
-            $cloud_id_rev_array[$cloud_snippet['cloud_id']] = $cloud_snippet['revision'];
-            $cloud_ids[] = $cloud_snippet['cloud_id'];            
+        //wp_die(var_dump($this->codevault_snippets));
+        foreach ($this->codevault_snippets as $codevault_snippet) {
+            //Get snippet revision and id and store in array
+            $snippet_revision_array[$codevault_snippet['cloud_id']] = $codevault_snippet['revision'];  
+            $codevault_snippet_ids[] = $codevault_snippet['cloud_id'];         
         }
 
-        //Get local snippets that based on cloud ids from codevault
-        $local_snippets = get_snippets( array(), true, $cloud_ids );
-
-        //wp_die(var_dump($local_snippets));
-
-        //If there are local snippets that have been downloaded then check if they need updating
-        if(count($local_snippets) > 0) {
-            foreach ($local_snippets as $local_snippet) {
+        //Get all local snippets stored in db
+        $local_snippets = get_snippets( array() );
+        //Loop through local snippets
+        foreach ($local_snippets as $local_snippet) {
+            //check if cloud id is null and if so skip this item
+            if($local_snippet->cloud_id == NULL){
+                continue;
+            }
+            //Check if snippet is a synced codevault snippet
+            if( in_array($local_snippet->cloud_id, $codevault_snippet_ids) ){
+                $in_codevault = true;
                 //Check if local revision is less than cloud revision
-                if( intval($local_snippet->revision) < intval($cloud_id_rev_array[$local_snippet->cloud_id]) ){
-                    //add to cloud items to show update array
-                    $local_to_cloud_map[] = [
-                        'local_id' => $local_snippet->id,
-                        'cloud_id' => $local_snippet->cloud_id,
-                        'downloaded' => 'true',
-                        'update_available' => 'true'
-                    ];
+                if( intval($local_snippet->revision) < intval($snippet_revision_array[$local_snippet->cloud_id]) ){ 
+                    $update_available = true;
                 }else{
-                    //add to cloud items to show download array
-                    $local_to_cloud_map[] = [
-                        'local_id' => $local_snippet->id,
-                        'cloud_id' => $local_snippet->cloud_id,
-                        'downloaded' => 'true',
-                        'update_available' => 'false'
-                    ];
+                    $update_available = false;
+                }
+            }else{
+                $cloud_snippet_revision = $this->get_cloud_snippet_revision($local_snippet->cloud_id);
+                $in_codevault = false;
+                if( intval($local_snippet->revision) < intval($cloud_snippet_revision) ){   
+                    $update_available = true;
+                }else{
+                    $update_available = true;
                 }
             }
+
+            $local_to_cloud_map[] = [
+                'local_id' => $local_snippet->id,
+                'cloud_id' => $local_snippet->cloud_id,
+                'in_codevault' => $in_codevault,
+                'update_available' => $update_available,
+            ];
         }
-
         set_transient( 'cs_local_to_cloud_map', $local_to_cloud_map, ( DAY_IN_SECONDS * self::DAYS_TO_STORE_CS ) );
-
     }
 
     /**
@@ -210,6 +227,45 @@ class CS_Cloud {
         
 		wp_enqueue_style( Frontend::PRISM_HANDLE );
         wp_enqueue_script( Frontend::PRISM_HANDLE );
+	}
+
+    /**
+	 * Process a request to refresh all synced data.
+	 *
+	 * @return void
+	 */
+    public function process_refresh_synced_data_request() {
+        $refreshed = false;
+        if( isset( $_GET['refresh'] ) &&  $_GET['refresh'] == 'true' ){
+            $refreshed = $this->refresh_synced_data();
+        }
+        if ( $refreshed ) {
+            return [
+                'success' => true,
+                'message' => __( 'Synced data refreshed successfully', 'code-snippets' ),
+            ];
+        }
+    }
+
+    /**
+	 * Refresh all transient data.
+	 *
+	 * @return void
+	 */
+	public function refresh_synced_data() {
+        //Delete local to cloud map transient
+        delete_transient( 'cs_local_to_cloud_map' );
+        //Delete cloud snippets transient
+        delete_transient( 'cs_codevault_snippets' );
+        
+        //Get cloud snippets and store in transient
+        $this->codevault_snippets = $this->get_codevault_snippets();
+        set_transient( 'cs_codevault_snippets', $this->codevault_snippets, ( DAY_IN_SECONDS * self::DAYS_TO_STORE_CS ) );
+
+        //Get local to cloud map and store in transient
+        $this->local_to_cloud_map = $this->generate_local_to_cloud_map();
+
+        return true;
 	}
 
     /** Static Methods **/
@@ -253,15 +309,15 @@ class CS_Cloud {
 			$local_to_cloud_map[] = array(
 				'local_id' 		=> $snippet->id,
 				'cloud_id' 		=> $cloud_snippet['cloud_id'],
-				'downloaded'	=> 'true',
-				'update_available' => 'false',
+				'in_codevault'	=> true,
+				'update_available' => false,
 			);
 			set_transient( 'cs_local_to_cloud_map', $local_to_cloud_map, ( DAY_IN_SECONDS * self::DAYS_TO_STORE_CS ) );
 
-            //Update cloud snippet transient
-            delete_transient( 'cs_cloud_snippets' );
-            $cloud_snippets = self::get_cloud_snippets();
-            set_transient( 'cs_cloud_snippets', $cloud_snippets, ( DAY_IN_SECONDS * self::DAYS_TO_STORE_CS ) );
+            //Update codevault snippet transient
+            delete_transient( 'cs_codevault_snippets' );
+            $cloud_snippets = self::get_codevault_snippets();
+            set_transient( 'cs_codevault_snippets', $cloud_snippets, ( DAY_IN_SECONDS * self::DAYS_TO_STORE_CS ) );
 
 		}	
     }
@@ -305,4 +361,49 @@ class CS_Cloud {
         //return cloud snippets
         return $cloud_snippets;
     }
+
+    /**
+     * Get Single Cloud Snippets -> Static Function
+     * 
+     * @param String $cloud_id
+     *
+     * @return Object $cloud_snippets
+     */
+    public static function get_single_cloud_snippet($cloud_id){
+        //construct api endpoint request url
+        $api_url = self::CLOUD_API_URL . 'public/getsnippet/' . $cloud_id;
+        $site_token = get_setting('cloud' , 'local_token');
+        //Get site host name
+        $site_host = parse_url( get_site_url(), PHP_URL_HOST );
+        //Send GET request to request url with search query
+        $response = wp_remote_get( $api_url . '?site_host=' . $site_host . '&site_token=' . $site_token);
+        //get response body
+        $body = wp_remote_retrieve_body( $response );
+        //decode json response
+        $cloud_snippet = json_decode( $body, true );
+        //return cloud snippets
+        return $cloud_snippet;
+    }
+
+    /**
+     * Get Single Cloud Snippets Revsion -> Static Function
+     * 
+     * @param String $cloud_id
+     *
+     * @return String $revision
+     */
+    public static function get_cloud_snippet_revision($cloud_id){
+        //construct api endpoint request url
+        $api_url = self::CLOUD_API_URL . 'public/getsnippetrevision/' . $cloud_id;
+        //Send GET request to request url with search query
+        $response = wp_remote_get( $api_url );
+        //get response body
+        $body = wp_remote_retrieve_body( $response );
+        //decode json response
+        $cloud_snippet_revision = json_decode( $body, true );
+        //return cloud snippets revision number
+        return $cloud_snippet_revision['snippet_revision'];
+    }
+
+   
 }

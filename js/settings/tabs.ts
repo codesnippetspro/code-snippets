@@ -111,6 +111,7 @@ export const handleSettingsTabs = () => {
 				refreshEditorPreview(section)
 				updateHttpReferer(section)
 				showCloudGuide(section)
+				refreshCloudSyncData()
 			}
 		})
 	}
@@ -125,4 +126,25 @@ export const generateTokenForCloud = (baseToken: string) => {
 		result += baseToken.charAt(Math.floor(Math.random() * charactersLength))
 	}
 	return result
+}
+
+// Refresh the cloud sync data
+const refreshCloudSyncData = () => {
+	const refreshBtn = document.getElementById('refresh_data')
+	refreshBtn?.addEventListener('click', event => { 
+		event.preventDefault()
+		fetch('/wp-admin/admin.php?page=snippets&type=cloud&refresh=true', {}).then(response => {
+			if(response.ok) {
+				console.log(response.body)
+				const sync_text = document.getElementById('cloud_sync_status')
+				//Create new element p tag
+				const newSyncText = document.createElement('p')
+				newSyncText.innerHTML = 'Cloud Data Successfully Refreshed'
+				newSyncText.classList.add('cloud-message', 'refresh-success')
+				//Insert new element before the sync_text element
+				sync_text?.parentNode?.insertBefore(newSyncText, sync_text)
+			}
+		})
+	})
+
 }

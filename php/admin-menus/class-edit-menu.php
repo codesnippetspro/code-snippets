@@ -330,6 +330,9 @@ class Edit_Menu extends Admin_Menu {
 		/* Save the snippet to the database */
 		$snippet_id = save_snippet( $snippet );
 
+		//Update the snippet on the cloud if it is a cloud snippet
+		wp_die(var_dump($snippet));
+
 		/* Update the shared network snippets if necessary */
 		if ( $snippet_id && is_network_admin() ) {
 

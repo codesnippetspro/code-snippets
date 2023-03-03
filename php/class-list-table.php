@@ -244,7 +244,7 @@ class List_Table extends WP_List_Table {
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
 				'export' => esc_html__( 'Export', 'code-snippets' ),
-				'cloud' => esc_html__( 'Sync to Cloud', 'code-snippets' ),
+				'cloud' => esc_html__( 'Sync to My Cloud', 'code-snippets' ),
 			);
 
 			
@@ -768,6 +768,7 @@ class List_Table extends WP_List_Table {
 				$export = new Export_Attachment( $id );
 				$export->download_snippets_code();
 				break;
+				
 			case 'cloud':
 				$this->sync_to_cloud( array( $id ) );
 				return 'synced';
@@ -1362,16 +1363,22 @@ class List_Table extends WP_List_Table {
 		if ( empty( $local_to_cloud_map ) ) {
 			return array( 'refresh' =>  true ) ;
 		}
-
 		//loop over items in array and see if snippet id exists in looped array items
 		if ( is_array( $local_to_cloud_map ) ) {
 			foreach ( $local_to_cloud_map as $key => $value ) {
-				if ( $value['cloud_id'] == $snippet->cloud_id ) {
-					//wp_die(var_dump($value['update_available']));
-					if($value['update_available'] === 'true'){
-						return array( 'synced' =>  true, 'update' => true);
-					}
-					return array( 'synced' =>  true, 'update' => false);
+				if ( $value['cloud_id'] == $snippet->cloud_id ) {	
+					$synced = false;
+					$update = false;
+
+					if($value['in_codevault'] === true){
+                        $synced = true;
+					};
+
+					if($value['update_available'] === true){
+						$update = true;
+					};
+
+					return array( 'synced' =>  $synced, 'update' => $update);
 				}
 			}
 		}

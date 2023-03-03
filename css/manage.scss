@@ -329,6 +329,12 @@ $inactive-color: #ccc;
 	font-weight: 400;
 }
 
+.cloud-table td .no-results{
+	margin-top: 15px;
+    color: #e32121;
+    text-align: center;
+}
+
 .updated.column-updated span {
 	text-decoration: dotted underline;
 }
@@ -350,3 +356,4 @@ $inactive-color: #ccc;
 .cloud_search{
 	width: 35%;
 }
+

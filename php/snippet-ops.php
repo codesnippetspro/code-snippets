@@ -59,7 +59,6 @@ function get_snippets( array $ids = array(), $multisite = null, array $cloud_ids
 
 	// If only one ID has been passed in, defer to the get_snippet() function.
 	$ids_count = count( $ids );
-	$cloud_ids_count = count( $cloud_ids );
 	if ( 1 === $ids_count ) {
 		return array( get_snippet( $ids[0], $multisite ) );
 	}

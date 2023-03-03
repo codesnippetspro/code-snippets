@@ -140,22 +140,62 @@ class Manage_Menu extends Admin_Menu {
 		
 		/* Initialize the cloud class */
 		$this->cloud = new CS_Cloud();
-
-		/* Initialize the codevault cloud list table class */
-		$this->cloud_list_table = new Cloud_List_Table($this->cloud->cloud_snippets);
-		$this->cloud_list_table->prepare_items();
-
-		/* Initialize the search cloud list table class */
-		$this->cloud_search_list_table = new Cloud_List_Table(array());
-		$this->cloud_search_list_table->prepare_items();
+		$this->run_cloud_statup_checks();
 
 		/* Initialize the list table class */
 		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
-
-
-		
 	}
+
+	/**
+     * Run startup checks for cloud connection or redirect to cloud connection page
+     */
+	private function run_cloud_statup_checks(){
+		//only run checks if URL Query args are type=cloud
+		if(!isset($_GET['type']) || $_GET['type'] != 'cloud'){
+			return;
+		}
+		//Check if cloud connection is available 
+		if(!$this->cloud->is_cloud_connection_available()){
+			//If not redirect to cloud connection page
+			wp_redirect( admin_url( 'admin.php?page=snippets-settings&section=cloud' ) );
+			exit;
+		}
+		//If so then instantiate the list table classes
+		/* Initialize the codevault cloud list table class */
+		$this->cloud_list_table = new Cloud_List_Table($this->cloud->codevault_snippets);
+		$this->cloud_list_table->prepare_items();
+
+		/* Initialize the search cloud list table class */
+        $this->cloud_search_list_table = $this->show_cloud_search_table();
+        $this->cloud_search_list_table->prepare_items();
+	}
+
+    /**
+     * Instantiate Cloud Search Table after fetching search results
+     */
+    private function show_cloud_search_table(){
+        $snippets = array();
+        if ( isset( $_POST['cloud_search'] ) ) {
+            //Set the search term in the GET request
+            $search = sanitize_text_field( $_POST['cloud_search'] );
+            //Send search request to cloud server api search endpoint
+            $search_results = CS_Cloud::search_cloud_snippets($search, $page);
+			$total_search_snippets = $search_results['total_snippets'];
+			$total_pages_results = 	$search_results['total_pages'];
+            //Actions if search results found
+            if($search_results['success']){
+                //Total number of search result pages returned from cloud server -starts from 0
+                $snippets = $search_results['snippets'];
+                $no_results = false;
+            }else{
+                $snippets = array();
+                $no_results = true;
+            }
+        }
+
+        return new Cloud_Search_List_Table( $snippets, $no_results, $total_search_snippets, $total_pages_results );
+    }
 
 	/**
 	 * Enqueue scripts and stylesheets for the admin page
