@@ -66,7 +66,7 @@ function enqueue_editor_preview_assets() {
 /**
  * Retrieve the list of code editor themes.
  *
- * @return array List of editor themes.
+ * @return array<string, string> List of editor themes.
  */
 function get_editor_theme_list() {
 	$themes = [

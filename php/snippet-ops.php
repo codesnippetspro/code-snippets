@@ -7,13 +7,11 @@
 
 namespace Code_Snippets;
 
-use wpdb;
-
 /**
  * Clean the cache where active snippets are stored.
  *
- * @param string      $table_name Snippets table name.
- * @param array|false $scopes     List of scopes. Optional. If not provided, will flush the cache for all scopes.
+ * @param string              $table_name Snippets table name.
+ * @param array<string>|false $scopes     List of scopes. Optional. If not provided, will flush the cache for all scopes.
  *
  * @return void
  */
@@ -46,10 +44,10 @@ function clean_snippets_cache( $table_name ) {
  * Retrieve a list of snippets from the database.
  * Read operation.
  *
- * @param array            $ids       The IDs of the snippets to fetch.
+ * @param array<string>    $ids       The IDs of the snippets to fetch.
  * @param bool|null|string $multisite Retrieve multisite-wide snippets (true) or site-wide snippets (false).
  *
- * @return array List of Snippet objects.
+ * @return array<Snippet> List of Snippet objects.
  *
  * @since 2.0
  */
@@ -139,7 +137,7 @@ function get_all_snippet_tags() {
  *
  * @param mixed $tags The tags to convert into an array.
  *
- * @return array The converted tags.
+ * @return array<string> The converted tags.
  *
  * @since 2.0.0
  */
@@ -261,10 +259,10 @@ function activate_snippet( $id, $multisite = null ) {
  * Activates multiple snippets.
  * Write operation.
  *
- * @param array     $ids       The IDs of the snippets to activate.
- * @param bool|null $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
+ * @param array<int> $ids       The IDs of the snippets to activate.
+ * @param bool|null  $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
  *
- * @return array The IDs of the snippets which were successfully activated.
+ * @return array<int> The IDs of the snippets which were successfully activated.
  *
  * @since 2.0.0
  */
@@ -410,7 +408,7 @@ function save_snippet( Snippet $snippet ) {
 	// Update the last modification date if necessary.
 	$snippet->update_modified();
 
-	// Build array of data to insert.
+	// Build the list of data to insert.
 	$data = array(
 		'name'        => $snippet->name,
 		'description' => $snippet->desc,
@@ -450,9 +448,9 @@ function save_snippet( Snippet $snippet ) {
  * Update a snippet entry given a list of fields.
  * Write operation.
  *
- * @param int       $snippet_id ID of the snippet to update.
- * @param array     $fields     An array of fields mapped to their values.
- * @param bool|null $network    Update in network-wide (true) or site-wide (false) table.
+ * @param int                  $snippet_id ID of the snippet to update.
+ * @param array<string, mixed> $fields     An array of fields mapped to their values.
+ * @param bool|null            $network    Update in network-wide (true) or site-wide (false) table.
  */
 function update_snippet_fields( $snippet_id, $fields, $network = null ) {
 	global $wpdb;

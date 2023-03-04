@@ -169,7 +169,7 @@ class Upgrade {
 	/**
 	 * Build a collection of sample snippets for new users to try out.
 	 *
-	 * @return array List of Snippet objects.
+	 * @return array<string, Snippet> List of Snippet objects.
 	 */
 	private function get_sample_content() {
 		$tag = "\n\n" . esc_html__( 'This is a sample snippet. Feel free to use it, edit it, or remove it.', 'code-snippets' );

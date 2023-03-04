@@ -36,7 +36,7 @@ class List_Table extends WP_List_Table {
 	/**
 	 * A list of statuses (views)
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
 
@@ -56,7 +56,7 @@ class List_Table extends WP_List_Table {
 
 	/**
 	 * The constructor function for our class.
-	 * Adds hooks, initializes variables, setups class.
+	 * Registers hooks, initializes variables, setups class.
 	 *
 	 * @phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
 	 */
@@ -131,9 +131,9 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Set the 'id' column as hidden by default.
 	 *
-	 * @param array $hidden List of hidden columns.
+	 * @param array<string> $hidden List of hidden columns.
 	 *
-	 * @return array
+	 * @return array<string> Modified list of hidden columns.
 	 */
 	public function default_hidden_columns( $hidden ) {
 		$hidden[] = 'id';
@@ -221,7 +221,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @param Snippet $snippet The current snippet.
 	 *
-	 * @return array The action links HTML.
+	 * @return array<string, string> The action links HTML.
 	 */
 	private function get_snippet_action_links( Snippet $snippet ) {
 		$actions = array();
@@ -352,7 +352,7 @@ class List_Table extends WP_List_Table {
 		$out = sprintf(
 			'<input type="checkbox" name="%s[]" value="%s">',
 			$item->shared_network ? 'shared_ids' : 'ids',
-			intval( $item->id )
+			$item->id
 		);
 
 		return apply_filters( 'code_snippets/list_table/column_cb', $out, $item );
@@ -400,7 +400,7 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Define the column headers for the table
 	 *
-	 * @return array The column headers, ID paired with label
+	 * @return array<string, string> The column headers, ID paired with label
 	 */
 	public function get_columns() {
 		$columns = array(
@@ -438,7 +438,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * The second format will make the initial sorting order be descending.
 	 *
-	 * @return array The IDs of the columns that can be sorted
+	 * @return array<string, string|array<string|bool>> The IDs of the columns that can be sorted
 	 */
 	public function get_sortable_columns() {
 
@@ -456,7 +456,7 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Define the bulk actions to include in the drop-down menus
 	 *
-	 * @return array An array of menu items with the ID paired to the label
+	 * @return array<string, string> An array of menu items with the ID paired to the label
 	 */
 	public function get_bulk_actions() {
 		$actions = array(
@@ -476,7 +476,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * We override this in order to add 'snippets' as a class for custom styling
 	 *
-	 * @return array The classes to include on the table element
+	 * @return array<string> The classes to include on the table element
 	 */
 	public function get_table_classes() {
 		$classes = array( 'widefat', $this->_args['plural'] );
@@ -489,7 +489,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * Example: active, inactive, recently active
 	 *
-	 * @return array A list of the view labels linked to the view
+	 * @return array<string, string> A list of the view labels linked to the view
 	 */
 	public function get_views() {
 		global $totals, $status;
@@ -590,6 +590,11 @@ class List_Table extends WP_List_Table {
 	 * @param string $which Whether the actions are displayed on the before (true) or after (false) the table.
 	 */
 	public function extra_tablenav( $which ) {
+		/**
+		 * Status global.
+		 *
+		 * @var string $status
+		 */
 		global $status;
 
 		if ( 'top' === $which ) {
@@ -884,9 +889,8 @@ class List_Table extends WP_List_Table {
 	 * Fetch all shared network snippets for the current site
 	 */
 	private function fetch_shared_network_snippets() {
-		global $snippets, $wpdb;
-		$db = code_snippets()->db;
-		$ids = get_site_option( 'shared_network_snippets', false );
+		global $snippets;
+		$ids = get_site_option( 'shared_network_snippets' );
 
 		if ( ! is_multisite() || ! $ids ) {
 			return;
@@ -946,7 +950,7 @@ class List_Table extends WP_List_Table {
 		$snippets = array_fill_keys( $this->statuses, array() );
 
 		/* Fetch all snippets */
-		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets( array() ) );
+		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets() );
 		$this->fetch_shared_network_snippets();
 
 		/* Filter snippets by type */
@@ -1048,7 +1052,7 @@ class List_Table extends WP_List_Table {
 		/* The WP_List_Table class does not handle pagination for us, so we need to ensure that the data is trimmed to only the current page. */
 		$data = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
 
-		/* Now we can add our *sorted* data to the items property, where it can be used by the rest of the class. */
+		/* Now we can add our *sorted* data to the 'items' property, where it can be used by the rest of the class. */
 		$this->items = $data;
 
 		/* We register our pagination options and calculations */
@@ -1284,12 +1288,11 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Clone a selection of snippets
 	 *
-	 * @param array $ids List of snippet IDs.
+	 * @param array<string> $ids List of snippet IDs.
 	 */
 	private function clone_snippets( $ids ) {
 		$snippets = get_snippets( $ids, $this->is_network );
 
-		/** Snippet @var Snippet $snippet */
 		foreach ( $snippets as $snippet ) {
 			// Copy all data from the previous snippet aside from the ID and active status.
 			$snippet->id = 0;

@@ -86,12 +86,8 @@ class Manage_Menu extends Admin_Menu {
 			'snippets-settings'    => 'settings',
 		);
 
-		if ( isset( $classmap[ $sub ], code_snippets()->admin->menus[ $classmap[ $sub ] ] ) ) {
-			/* @var Admin_Menu $class */
-			$class = code_snippets()->admin->menus[ $classmap[ $sub ] ];
-		} else {
-			$class = $this;
-		}
+		$menus = code_snippets()->admin->menus;
+		$class = isset( $classmap[ $sub ], $menus[ $classmap[ $sub ] ] ) ? $menus[ $classmap[ $sub ] ] : $this;
 
 		/* Add a submenu to the Tools menu */
 		$hook = add_submenu_page(

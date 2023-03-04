@@ -453,26 +453,13 @@ class Edit_Menu extends Admin_Menu {
 		<?php
 	}
 
+	/**
+	 * Render the snippet scope options.
+	 *
+	 * @return void
+	 */
 	public function render_scope_setting() {
 		$this->render_view( 'partials/edit-scopes' );
-	}
-
-	/**
-	 * Render snippet scope options.
-	 *
-	 * @return void
-	 */
-	public function render_scope_options() {
-		$this->render_view( 'partials/edit-scopes' );
-	}
-
-	/**
-	 * Render the conditional scopes controls.
-	 *
-	 * @return void
-	 */
-	public function render_conditional_setting() {
-		$this->render_view( 'partials/edit-conditionals' );
 	}
 
 	/**
@@ -562,7 +549,7 @@ class Edit_Menu extends Admin_Menu {
 	 *
 	 * @param int $snippet_id Snippet ID.
 	 *
-	 * @return array|bool Error if execution failed, otherwise false.
+	 * @return array<string, mixed>|bool Error if execution failed, otherwise false.
 	 */
 	private function get_snippet_error( $snippet_id ) {
 
@@ -743,10 +730,10 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Retrieve a list of submit actions for a given snippet
 	 *
-	 * @param Snippet $snippet       The snippet currently being edited.
+	 * @param Snippet $snippet       Snippet currently being edited.
 	 * @param bool    $extra_actions Whether to include additional actions alongside save actions.
 	 *
-	 * @return array Two-dimensional array with action name keyed to description.
+	 * @return array<string, string> Action name keyed to description.
 	 */
 	public function get_actions_list( $snippet, $extra_actions = true ) {
 		$actions = [ 'save_snippet' => __( 'Save Changes', 'code-snippets' ) ];
@@ -822,7 +809,7 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Render a list of scopes as ratio controls
 	 *
-	 * @param array $scopes List of scopes to render, with scope name keyed to label.
+	 * @param array<string, string> $scopes List of scopes to render, with scope name keyed to label.
 	 */
 	public function print_scopes_list( $scopes ) {
 		$scope_icons = Snippet::get_scope_icons();

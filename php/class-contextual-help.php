@@ -74,9 +74,9 @@ class Contextual_Help {
 	/**
 	 * Add a help tab to the current screen.
 	 *
-	 * @param string       $id         Screen ID.
-	 * @param string       $title      Screen title.
-	 * @param string|array $paragraphs List of paragraphs to display as content.
+	 * @param string               $id         Screen ID.
+	 * @param string               $title      Screen title.
+	 * @param string|array<string> $paragraphs List of paragraphs to display as content.
 	 *
 	 * @return void
 	 */

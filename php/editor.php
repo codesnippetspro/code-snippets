@@ -12,8 +12,8 @@ use function Code_Snippets\Settings\get_setting;
 /**
  * Register and load the CodeMirror library.
  *
- * @param string $type       Type of code editor – either 'php', 'css', 'js', or 'html'.
- * @param array  $extra_atts Pass an array of attributes to override the saved ones.
+ * @param string               $type       Type of code editor – either 'php', 'css', 'js', or 'html'.
+ * @param array<string, mixed> $extra_atts Pass a list of attributes to override the saved ones.
  */
 function enqueue_code_editor( $type, $extra_atts = [] ) {
 	$plugin = code_snippets();
@@ -97,7 +97,7 @@ function enqueue_code_editor( $type, $extra_atts = [] ) {
 /**
  * Retrieve a list of the available CodeMirror themes.
  *
- * @return array The available themes.
+ * @return array<string> The available themes.
  */
 function get_editor_themes() {
 	static $themes = null;

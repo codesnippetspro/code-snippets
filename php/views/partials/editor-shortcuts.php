@@ -108,7 +108,8 @@ $shortcuts = [
 			<?php foreach ( $shortcuts as $shortcut ) { ?>
 				<tr>
 					<td><?php echo esc_html( $shortcut['label'] ); ?></td>
-					<td><?php
+					<td>
+						<?php
 
 						foreach ( (array) $shortcut['mod'] as $modifier ) {
 							if ( 'Ctrl' === $modifier || 'Cmd' === $modifier ) {
@@ -122,7 +123,8 @@ $shortcuts = [
 						}
 
 						echo '<kbd>', esc_html( $keys[ $shortcut['key'] ] ), '</kbd>';
-						?></td>
+						?>
+					</td>
 				</tr>
 			<?php } ?>
 		</table>

@@ -3,6 +3,8 @@
  * For some reason, WordPress requires that TinyMCE translations be hosted in an external file. So that's what this is.
  *
  * @package Code_Snippets
+ *
+ * @var array<string, string|mixed> $strings
  */
 
 namespace Code_Snippets;
@@ -29,9 +31,7 @@ $snippets = get_snippets();
 $strings['all_snippets'] = [];
 $strings['content_snippets'] = [];
 
-/** Snippet @var Snippet $snippet */
 foreach ( $snippets as $snippet ) {
-
 	if ( 'content' === $snippet->scope ) {
 		$strings['content_snippets'][ $snippet->id ] = $snippet->display_name;
 	}

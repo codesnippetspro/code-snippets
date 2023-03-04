@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use WP_Post;
+
 /**
  * This class manages the shortcodes included with the plugin
  *
@@ -76,9 +78,9 @@ class Frontend {
 	/**
 	 * Enqueue the syntax highlighting assets if they are required for the current posts
 	 *
-	 * @param array $posts List of currently visible posts.
+	 * @param array<WP_Post> $posts List of currently visible posts.
 	 *
-	 * @return array Unchanged list of posts.
+	 * @return array<WP_Post> Unchanged list of posts.
 	 */
 	public function enqueue_highlighting( $posts ) {
 
@@ -149,7 +151,7 @@ class Frontend {
 	/**
 	 * Render the value of a content shortcode
 	 *
-	 * @param array $atts Shortcode attributes.
+	 * @param array<string, mixed> $atts Shortcode attributes.
 	 *
 	 * @return string Shortcode content.
 	 */
@@ -192,7 +194,12 @@ class Frontend {
 			$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
 			return wp_kses(
 				sprintf( $text, $snippet->name, $edit_url ),
-				[ 'strong' => [], 'a' => [ 'href' => [] ] ]
+				[
+					'strong' => [],
+					'a'      => [
+						'href' => [],
+					],
+				]
 			);
 		}
 
@@ -240,8 +247,8 @@ class Frontend {
 	/**
 	 * Render the source code of a given snippet
 	 *
-	 * @param Snippet $snippet Snippet object.
-	 * @param array   $atts    Shortcode attributes.
+	 * @param Snippet              $snippet Snippet object.
+	 * @param array<string, mixed> $atts    Shortcode attributes.
 	 *
 	 * @return string Shortcode content.
 	 */
@@ -295,7 +302,7 @@ class Frontend {
 	/**
 	 * Render the value of a source shortcode
 	 *
-	 * @param array $atts Shortcode attributes.
+	 * @param array<string, mixed> $atts Shortcode attributes.
 	 *
 	 * @return string Shortcode content.
 	 */
