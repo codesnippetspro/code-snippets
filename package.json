@@ -8,9 +8,9 @@
         "test": "tests"
     },
     "scripts": {
-        "build": "gulp",
+        "build": "gulp build",
         "watch": "gulp watch",
-        "package": "gulp package",
+        "bundle": "gulp bundle",
         "test": "gulp test",
         "phpcs": "vendor/bin/phpcs -s *.php php/",
         "phpcbf": "vendor/bin/phpcbf *.php php/"
