@@ -73,7 +73,7 @@ function are_settings_unified() {
  * Retrieve the setting values from the database.
  * If a setting does not exist in the database, the default value will be returned.
  *
- * @return array
+ * @return array<string, array<string, mixed>>
  */
 function get_settings_values() {
 
@@ -136,7 +136,7 @@ function update_setting( $section, $field, $new_value ) {
 /**
  * Retrieve the settings sections
  *
- * @return array
+ * @return array<string, string> Settings sections.
  */
 function get_settings_sections() {
 	$sections = array(
@@ -155,14 +155,11 @@ function register_plugin_settings() {
 
 	if ( are_settings_unified() ) {
 
-		if ( ! get_site_option( 'code_snippets_settings', false ) ) {
+		if ( ! get_site_option( 'code_snippets_settings' ) ) {
 			add_site_option( 'code_snippets_settings', get_default_settings() );
 		}
-	} else {
-
-		if ( ! get_option( 'code_snippets_settings', false ) ) {
-			add_option( 'code_snippets_settings', get_default_settings() );
-		}
+	} elseif ( ! get_option( 'code_snippets_settings' ) ) {
+		add_option( 'code_snippets_settings', get_default_settings() );
 	}
 
 	/* Register the setting */
@@ -180,7 +177,7 @@ function register_plugin_settings() {
 	}
 
 	foreach ( $sections as $section_id => $section_name ) {
-		add_settings_section( $section_id, $section_name, null, 'code-snippets' );
+		add_settings_section( $section_id, $section_name, '__return_empty_string', 'code-snippets' );
 	}
 
 	/* Register settings fields */
@@ -206,8 +203,8 @@ add_action( 'admin_init', NS . 'register_plugin_settings' );
 /**
  * Sanitize a single setting value.
  *
- * @param array $field       Setting field information.
- * @param mixed $input_value User input setting value, or null if missing.
+ * @param array<string, mixed> $field       Setting field information.
+ * @param mixed                $input_value User input setting value, or null if missing.
  *
  * @return mixed Sanitized setting value, or null if unset.
  */
@@ -221,8 +218,8 @@ function sanitize_setting_value( $field, $input_value ) {
 			return absint( $input_value );
 
 		case 'select':
-			// phpcs:ignore WordPress.PHP.StrictInArray.FoundNonStrictFalse
-			return in_array( $input_value, array_keys( $field['options'] ), false ) ? $input_value : null;
+			// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+			return in_array( $input_value, array_keys( $field['options'] ) ) ? $input_value : null;
 
 		case 'checkboxes':
 			$results = [];
@@ -253,9 +250,9 @@ function sanitize_setting_value( $field, $input_value ) {
 /**
  * Validate the settings
  *
- * @param array $input The received settings.
+ * @param array<string, array<string, mixed>> $input The received settings.
  *
- * @return array The validated settings.
+ * @return array<string, array<string, mixed>> The validated settings.
  */
 function sanitize_settings( array $input ) {
 	$settings = get_settings_values();

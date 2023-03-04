@@ -19,7 +19,7 @@ class Validator {
 	/**
 	 * List of tokens.
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	private $tokens;
 
@@ -40,14 +40,14 @@ class Validator {
 	/**
 	 * Array to keep track of the various function, class and interface identifiers which have been defined.
 	 *
-	 * @var array
+	 * @var array<string, string[]>
 	 */
 	private $defined_identifiers = array();
 
 	/**
 	 * Exclude certain tokens from being checked.
 	 *
-	 * @var array
+	 * @var array<string, string[]>
 	 */
 	private $exceptions = array();
 
@@ -75,7 +75,7 @@ class Validator {
 	/**
 	 * Retrieve the next token without moving the pointer
 	 *
-	 * @return string|array|null The current token if the list has not been expended, null otherwise.
+	 * @return string|array<string|int>|null The current token if the list has not been expended, null otherwise.
 	 */
 	private function peek() {
 		return $this->end() ? null : $this->tokens[ $this->current ];
@@ -131,7 +131,7 @@ class Validator {
 	/**
 	 * Validate the given PHP code and return the result.
 	 *
-	 * @return array|bool Array containing message if an error was encountered, false if validation was successful.
+	 * @return array<string, mixed>|false Array containing message if an error was encountered, false if validation was successful.
 	 */
 	public function validate() {
 
@@ -175,6 +175,11 @@ class Validator {
 				continue;
 			}
 
+			/**
+			 * Ensure the type of $token is inferred correctly.
+			 *
+			 * @var string|array<string|int> $token
+			 */
 			$structure_type = $token[0];
 
 			// Continue eating tokens until we find the name of the class or function.

@@ -53,7 +53,7 @@ class Import {
 	/**
 	 * Imports snippets from a JSON file.
 	 *
-	 * @return array|bool An array of imported snippet IDs on success, false on failure
+	 * @return array<int>|bool An array of imported snippet IDs on success, false on failure
 	 */
 	public function import_json() {
 
@@ -75,14 +75,13 @@ class Import {
 		$imported = $this->save_snippets( $snippets );
 
 		do_action( 'code_snippets/import/json', $this->file, $this->multisite );
-
 		return $imported;
 	}
 
 	/**
 	 * Imports snippets from an XML file
 	 *
-	 * @return array|bool An array of imported snippet IDs on success, false on failure
+	 * @return array<int>|bool An array of imported snippet IDs on success, false on failure
 	 */
 	public function import_xml() {
 
@@ -131,18 +130,13 @@ class Import {
 	}
 
 	/**
-	 * Save imported snippets to the database
+	 * Fetch a list of existing snippets for checking duplicates.
 	 *
-	 * @access private
-	 *
-	 * @param array $snippets List of snippets to save.
-	 *
-	 * @return array IDs of imported snippets.
+	 * @return array<string, int>
 	 */
-	private function save_snippets( $snippets ) {
-
-		/* Get a list of existing snippet names keyed to their IDs */
+	private function fetch_existing_snippets() {
 		$existing_snippets = array();
+
 		if ( 'replace' === $this->dup_action || 'skip' === $this->dup_action ) {
 			$all_snippets = get_snippets( array(), $this->multisite );
 
@@ -153,10 +147,22 @@ class Import {
 			}
 		}
 
-		/* Save a record of the snippets which were imported */
+		return $existing_snippets;
+	}
+
+	/**
+	 * Save imported snippets to the database
+	 *
+	 * @access private
+	 *
+	 * @param array<Snippet> $snippets List of snippets to save.
+	 *
+	 * @return array<int> IDs of imported snippets.
+	 */
+	private function save_snippets( $snippets ) {
+		$existing_snippets = $this->fetch_existing_snippets();
 		$imported = array();
 
-		/* Loop through the provided snippets */
 		foreach ( $snippets as $snippet ) {
 
 			/* Check if the snippet already exists */

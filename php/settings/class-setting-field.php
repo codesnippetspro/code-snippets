@@ -12,19 +12,19 @@ namespace Code_Snippets\Settings;
 /**
  * Represents a single setting field
  *
- * @property-read string   $desc               Field description.
- * @property-read string   $label              Field label.
- * @property-read string   $type               Field type.
- * @property-read string   $name               Setting name.
+ * @property-read string                $desc               Field description.
+ * @property-read string                $label              Field label.
+ * @property-read string                $type               Field type.
+ * @property-read string                $name               Setting name.
  *
- * @property-read int      $min                Minimum value (for numerical inputs).
- * @property-read int      $max                Maximum value(for numerical inputs).
- * @property-read array    $options            List of options for a select or checkboxes field.
- * @property-read callable $render_callback    Custom function to use when rendering a callback field.
- * @property-read callable $sanitize_callback  Custom function to use when sanitize the setting value.
- * @property-read mixed    $default            Default setting value.
+ * @property-read int                   $min                Minimum value (for numerical inputs).
+ * @property-read int                   $max                Maximum value(for numerical inputs).
+ * @property-read array<string, string> $options            List of options for a select or checkboxes field.
+ * @property-read callable              $render_callback    Custom function to use when rendering a callback field.
+ * @property-read callable              $sanitize_callback  Custom function to use when sanitize the setting value.
+ * @property-read mixed                 $default            Default setting value.
  *
- * @property-read string   $input_name
+ * @property-read string                $input_name         Value of `name` HTML attribute on an input element.
  */
 class Setting_Field {
 
@@ -45,7 +45,7 @@ class Setting_Field {
 	/**
 	 * List of possible arguments.
 	 *
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	private $args = array(
 		'desc'    => '',
@@ -58,9 +58,9 @@ class Setting_Field {
 	/**
 	 * Class constructor.
 	 *
-	 * @param string $section_id Settings section identifier.
-	 * @param string $field_id   Setting field identifier.
-	 * @param array  $args       The setting field attributes.
+	 * @param string               $section_id Settings section identifier.
+	 * @param string               $field_id   Setting field identifier.
+	 * @param array<string, mixed> $args       The setting field attributes.
 	 */
 	public function __construct( $section_id, $field_id, array $args ) {
 		$this->field_id = $field_id;

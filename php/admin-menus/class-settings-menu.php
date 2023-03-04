@@ -83,7 +83,7 @@ class Settings_Menu extends Admin_Menu {
 	/**
 	 * Retrieve the list of settings sections.
 	 *
-	 * @return array
+	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_sections() {
 		global $wp_settings_sections;

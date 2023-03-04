@@ -15,7 +15,7 @@ use DateTimeZone;
  * @property string        $name                    The snippet title.
  * @property string        $desc                    The formatted description.
  * @property string        $code                    The executable code.
- * @property array         $tags                    An array of the tags.
+ * @property array<string> $tags                    An array of the tags.
  * @property string        $scope                   The scope name.
  * @property int           $priority                Execution priority.
  * @property bool          $active                  The active status.
@@ -50,7 +50,7 @@ class Snippet {
 	 * The snippet metadata fields.
 	 * Initialized with default values.
 	 *
-	 * @var array Two-dimensional array of field names keyed to current values.
+	 * @var array<string, mixed> Field names keyed to current values.
 	 */
 	private $fields = array(
 		'id'             => 0,
@@ -69,7 +69,7 @@ class Snippet {
 	/**
 	 * List of field aliases
 	 *
-	 * @var array Two-dimensional array of field alias names keyed to actual field names.
+	 * @var array<string, string> Field alias names keyed to actual field names.
 	 */
 	private static $field_aliases = array(
 		'description' => 'desc',
@@ -79,7 +79,7 @@ class Snippet {
 	/**
 	 * Constructor function
 	 *
-	 * @param array|object $fields Initial snippet fields.
+	 * @param array<string, mixed>|object $fields Initial snippet fields.
 	 */
 	public function __construct( $fields = null ) {
 
@@ -95,7 +95,7 @@ class Snippet {
 	 * Set all snippet fields from an array or object.
 	 * Invalid fields will be ignored.
 	 *
-	 * @param array|object $fields List of fields.
+	 * @param array<string, mixed>|object $fields List of fields.
 	 */
 	public function set_fields( $fields ) {
 
@@ -118,7 +118,7 @@ class Snippet {
 	/**
 	 * Retrieve all snippet fields
 	 *
-	 * @return array Two-dimensional array of field names keyed to current values
+	 * @return array<string, mixed> Field names keyed to current values.
 	 */
 	public function get_fields() {
 		return $this->fields;
@@ -209,7 +209,7 @@ class Snippet {
 	/**
 	 * Retrieve the list of fields allowed to be written to
 	 *
-	 * @return array Single-dimensional array of field names.
+	 * @return array<string> List of field names.
 	 */
 	public function get_allowed_fields() {
 		return array_keys( $this->fields ) + array_keys( self::$field_aliases );
@@ -289,9 +289,9 @@ class Snippet {
 	/**
 	 * Prepare the snippet tags by ensuring they are in the correct format
 	 *
-	 * @param string|array $tags The field as provided.
+	 * @param string|array<string> $tags The field as provided.
 	 *
-	 * @return array The field in the correct format.
+	 * @return array<string> The field in the correct format.
 	 */
 	private function prepare_tags( $tags ) {
 		return code_snippets_build_tags_array( $tags );
@@ -453,7 +453,7 @@ class Snippet {
 	/**
 	 * Retrieve a list of all available scopes
 	 *
-	 * @return array Single-dimensional array of scope names.
+	 * @return array<string> List of scope names.
 	 *
 	 * @phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine
 	 */
@@ -469,7 +469,7 @@ class Snippet {
 	/**
 	 * Retrieve a list of all scope icons
 	 *
-	 * @return array Two-dimensional array with scope name keyed to the class name of a dashicon.
+	 * @return array<string, string> Scope name keyed to the class name of a dashicon.
 	 */
 	public static function get_scope_icons() {
 		return array(
