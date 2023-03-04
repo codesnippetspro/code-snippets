@@ -93,26 +93,35 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 
 
 	if('cloud' == $current_type){
-	?>
+		?>
 		<h2>Cloud Search</h2>
 		</p>Search the Code Snippets Cloud for snippets that you can import into your site.</p>
 		<form method="post" action="">
 			<input type="hidden" id="code_snippets_ajax_nonce"
-			value=" <?php esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ) ?> ">
-			<input type="text" name="cloud_search" class="cloud_search" value="" placeholder="e.g. Remove Unused Javascript...">
+			value=" <?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ) ?> ">
+			<input type="text" name="s" class="cloud_search" 
+					value="<?php  echo esc_html( sanitize_text_field( $_REQUEST['s'] ) ) ?>" 
+					placeholder="e.g. Remove Unused Javascript...">
 			<input type="submit" name="submit" id="search-submit" class="button" value="Search Cloud">
 		
-	<?php
-		$this->cloud_search_list_table->display();
+		<?php
+			List_Table::required_form_fields( 'search_box' );
+			$this->cloud_search_list_table->display();
+		?>
+		</form>
 
-		echo '</form><h2>My Codevault</h2>';
-	}
-	?>
+		<h2>My Codevault</h2>
+
+	<?php } ?>
 
 	<form method="get" action="">
 		<?php
-		$this->list_table->required_form_fields( 'search_box' );
-		$this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
+		List_Table::required_form_fields( 'search_box' );
+		if('cloud' == $current_type){
+			$this->cloud_list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'cloud_search_id' );
+		}else{
+			$this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
+		}
 		?>
 	</form>
 
@@ -120,10 +129,10 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		<input type="hidden" id="code_snippets_ajax_nonce"
 			value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 		<?php
+			List_Table::required_form_fields();
 		if('cloud' == $current_type){
 			$this->cloud_list_table->display();
 		}else{
-			$this->list_table->required_form_fields();
 			$this->list_table->display();
 		}
 		?>

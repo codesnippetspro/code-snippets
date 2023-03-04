@@ -105,7 +105,12 @@ $licensed = code_snippets()->licensing->is_licensed();
 		if ( ! $snippet->id && ! isset( $_REQUEST['preview'] ) ) {
 			echo '<h2 class="nav-tab-wrapper" id="snippet-type-tabs">';
 
-			foreach ( Plugin::get_types() as $type_name => $label ) {
+			$snippet_types = Plugin::get_types();
+			//filter array to remove 'cloud' from snippet types array
+			$snippet_types = array_filter($snippet_types, function($type) {
+				return $type !== 'Cloud';
+			});
+			foreach ( $snippet_types as $type_name => $label ) {
 				Admin::render_snippet_type_tab( $type_name, $label, $snippet->type );
 			}
 

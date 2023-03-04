@@ -38,6 +38,13 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
     public $total_pages_results;
 
     /**
+     * Total number of search results
+     *
+     * @var int
+     */
+    public $total_search_results;
+
+    /**
      * Curent page number of search results
      *
      * @var int
@@ -57,10 +64,10 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
      *
      * @phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
      */
-    public function __construct($cloud_snippets, $no_results, $total_search_snippets, $total_pages_results ) {
+    public function __construct($cloud_snippets, $no_results, $total_search_results, $total_pages_results ) {
         $this->no_results = $no_results;
         $this->cloud_snippets = $cloud_snippets;
-        $this->$total_search_snippets = $total_search_snippets;
+        $this->total_search_results = $total_search_results;
         $this->total_pages_results = $total_pages_results;
         parent::__construct($this->cloud_snippets);
     }
@@ -73,25 +80,36 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
         esc_html_e( 'Please enter a search term to start searching code snippets in the cloud.', 'code-snippets' );
     }
 
+
     /**
-	 * Prapare the items for the table.
+	 * Process pagination request
+	 *
+	 * @return array
+	 */
+    public function prepare_pagniation() {
+        return $this->set_pagination_args( array(
+            'total_items' => $this->total_search_results,
+            'total_pages' => $this->total_pages_results,
+            'per_page'    => Cloud_List_Table::SNIPPETS_PER_PAGE,
+        ) );
+    }
+
+    /**
+	 * Process any actions that have been submitted
 	 *
 	 * @return void
 	 */
-    public function prepare_items() {
-        parent::prepare_items();
-        $this->set_pagination_args( array(
-            'total_items' => $this->total_search_snippets,
-            'total_pages' => $this->total_pages_results,
-            'per_page'    => $this->per_page,
-        ) );
-        
-        //Get the paged number fro URL query params 
-        if(isset($_GET['paged'])){
-            $this->current_page = intval( $_GET['paged'] );
-            //Get the search term ....???
+	public function process_actions() {
+        parent::process_actions();
+		//Check for pagination request
+        if( isset($_REQUEST['paged']) && isset($_REQUEST['s']) ){
+            $this->current_page = intval( sanitize_text_field($_REQUEST['paged']) );
+            $search = sanitize_text_field( $_REQUEST['s'] );
+            $search_results = CS_Cloud::search_cloud_snippets($search, $this->current_page);
+            $this->items = $search_results['snippets'];
         }
 	}
+
 
     /**
      * Define the output of the 'download' column
@@ -101,16 +119,19 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
      * @return string The content of the column to output.
      */
     protected function column_download( $item ) {
+        $lang = strtolower( $this->get_type_from_scope($item['scope'] ) );
+		if($lang == 'js'){ $lang = 'javascript'; }
         $downloaded = $this->is_downloaded($item['cloud_id']);
         if($downloaded['in_local_site']){
             if( $downloaded['update_available'] ){
                 return sprintf('<a class="cloud-snippet-download" href="?page=%s&type=cloud&action=%s&snippet=%s&source=%s">Update Available</a>
-                    <a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s>Preview</a>', 
+                    <a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s data-lang=%s>Preview</a>', 
                     esc_attr( $_REQUEST['page'] ), 
-                    'udpate', 
+                    'update', 
                     esc_attr( $item['cloud_id'] ),
-                    esc_attr( 'codevault' ),
+                    esc_attr( 'search' ),
                     esc_attr( $item['cloud_id'] ),
+                    esc_attr( $lang ),
                 );			
             }
             return sprintf('<a href="%s" class="cloud-snippet-downloaded">View</a>',
@@ -118,12 +139,13 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
         }
 
         return sprintf('<a class="cloud-snippet-download" href="?page=%s&type=cloud&action=%s&snippet=%s&source=%s">Download</a>
-				<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s>Preview</a>',
+				<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s data-lang=%s>Preview</a>',
             esc_attr( $_REQUEST['page'] ),
             'download',
             esc_attr( $item['id'] ),
             esc_attr( 'search' ),
             esc_attr( $item['cloud_id'] ),
+            esc_attr( $lang ),
 		);
     }
 

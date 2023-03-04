@@ -171,14 +171,20 @@ class Manage_Menu extends Admin_Menu {
         $this->cloud_search_list_table->prepare_items();
 	}
 
+	public static function get_cloud_search_query()
+	{
+		return isset($_REQUEST['s']) ? sanitize_text_field($_REQUEST['s']) : NULL;
+	}
+
     /**
      * Instantiate Cloud Search Table after fetching search results
      */
     private function show_cloud_search_table(){
+		global $page;
         $snippets = array();
-        if ( isset( $_POST['cloud_search'] ) ) {
-            //Set the search term in the GET request
-            $search = sanitize_text_field( $_POST['cloud_search'] );
+		$search = self::get_cloud_search_query();
+
+        if ( !is_null($search) ) {
             //Send search request to cloud server api search endpoint
             $search_results = CS_Cloud::search_cloud_snippets($search, $page);
 			$total_search_snippets = $search_results['total_snippets'];
@@ -189,7 +195,7 @@ class Manage_Menu extends Admin_Menu {
                 $snippets = $search_results['snippets'];
                 $no_results = false;
             }else{
-                $snippets = array();
+				//If no search results found
                 $no_results = true;
             }
         }

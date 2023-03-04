@@ -255,13 +255,15 @@ class List_Table extends WP_List_Table {
 			$sync_status = $this->is_snippet_synced($snippet);
 			if($sync_status['synced']){		
 				if($sync_status['update']){
-					$actions[ 'cloud' ] = sprintf( '<a href="%s">%s</a>', 
-					esc_url( $this->get_action_link( 'update', $snippet ) ),
+					$actions[ 'cloud' ] = sprintf( '<a href="%s#snippet-%s">%s</a>', 
+					esc_url( '/wp-admin/admin.php?page=snippets&type=cloud' ),
+					esc_attr( $snippet->cloud_id ),
 					'Update Available' );
 				}else{
 					$actions[ 'cloud' ] = sprintf( '<a>%s</a>', 'Synced' );
 				}
-			}
+			}//Handle updates to snippets from cloud search in an else statement here
+			
 			if($sync_status['refresh']){
 					$actions[ 'cloud' ] = sprintf( '<a href="%s">%s</a>', 
 					esc_url( '/wp-admin/admin.php?page=snippets&type=cloud' ),
@@ -673,7 +675,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @param string $context The context in which the fields are being outputted.
 	 */
-	public function required_form_fields( $context = 'main' ) {
+	public static function required_form_fields( $context = 'main' ) {
 
 		$vars = apply_filters(
 			'code_snippets/list_table/required_form_fields',
@@ -768,7 +770,7 @@ class List_Table extends WP_List_Table {
 				$export = new Export_Attachment( $id );
 				$export->download_snippets_code();
 				break;
-				
+
 			case 'cloud':
 				$this->sync_to_cloud( array( $id ) );
 				return 'synced';
@@ -807,7 +809,7 @@ class List_Table extends WP_List_Table {
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id', 'scope', '_wpnonce' ) );
 
 			/* If so, then perform the requested action and inform the user of the result */
-			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope );
+			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope);
 
 			if ( $result ) {
 				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
@@ -1364,24 +1366,24 @@ class List_Table extends WP_List_Table {
 			return array( 'refresh' =>  true ) ;
 		}
 		//loop over items in array and see if snippet id exists in looped array items
-		if ( is_array( $local_to_cloud_map ) ) {
-			foreach ( $local_to_cloud_map as $key => $value ) {
-				if ( $value['cloud_id'] == $snippet->cloud_id ) {	
-					$synced = false;
-					$update = false;
+		
+		foreach ( $local_to_cloud_map as $key => $value ) {
+			if ( $value['cloud_id'] == $snippet->cloud_id ) {	
+				$synced = false;
+				$update = false;
 
-					if($value['in_codevault'] === true){
-                        $synced = true;
-					};
+				if($value['in_codevault'] === true){
+					$synced = true;
+				};
 
-					if($value['update_available'] === true){
-						$update = true;
-					};
+				if($value['update_available'] === true){
+					$update = true;
+				};
 
-					return array( 'synced' =>  $synced, 'update' => $update);
-				}
+				return array( 'synced' =>  $synced, 'update' => $update, );
 			}
 		}
+		//if not return false	
 		return false;
 	}	
 

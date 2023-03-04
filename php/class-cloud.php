@@ -199,7 +199,7 @@ class CS_Cloud {
                 if( intval($local_snippet->revision) < intval($cloud_snippet_revision) ){   
                     $update_available = true;
                 }else{
-                    $update_available = true;
+                    $update_available = false;
                 }
             }
 
@@ -405,5 +405,97 @@ class CS_Cloud {
         return $cloud_snippet_revision['snippet_revision'];
     }
 
+    /**
+	 * Download a snippet from the cloud TODO: ***MOVE TO CLOUD CLASS**
+	 *
+	 * @param string $cloud_id The Cloud ID of the snippet to download
+	 * @param string $source The source table of the snippet - codevault or search
+	 * @param string $action The action to be performed - download or update
+	 *
+	 * @return bool|string True if the snippet was downloaded successfully, or an error message
+	 */
+
+	public static function download_or_update_snippet( $cloud_id , $source, $action) {
+        //Check source and get the snippet to be downloaded
+        if('codevault' == $source) {
+            //Get Snippets currently store in transient object
+            $codevault_snippets = get_transient('cs_codevault_snippets');
+            //Filter the cloud snippet array to get the snippet that is to be saved to the database
+            $snippet_to_store = array_filter($codevault_snippets, function ($var) use ($cloud_id) {
+                return ($var['cloud_id'] == $cloud_id);
+            });
+			$in_codevault = true;
+        }
+        if('search' == $source) {
+            //Get snippet from cloud using id
+            $snippet_to_store = CS_Cloud::get_single_cloud_snippet($cloud_id);
+			$in_codevault = false;
+        }
+		$local_to_cloud_map = get_transient('cs_local_to_cloud_map');
+		//Check if action was download or update
+		if('download' == $action){
+			//Create a new snippet object
+			$snippet = new Snippet();
+			//Set the fields of the snippet object
+			$snippet->set_fields( reset($snippet_to_store) );
+			//Set the snippet id to 0 to ensure that the snippet is saved as a new snippet
+			$snippet->id = 0;
+			$snippet->active = 0;
+			///Save the snippet to the database 
+			$new_snippet_id = save_snippet( $snippet );
+
+			//Add the snippet to the local to cloud map
+			$local_to_cloud_map[] = array(
+				'local_id' => $new_snippet_id,
+				'cloud_id' => $cloud_id,
+				'in_codevault' => $in_codevault,
+				'update_available' => false,
+			);
+			set_transient('cs_local_to_cloud_map', $local_to_cloud_map);
+
+			return [
+				'success' => true,
+				'action' => 'Downloaded',
+			];
+		}
+
+		if('update' == $action){
+			$local_snippet = get_snippet_by_cloud_id( sanitize_key( $cloud_id ) );
+			$updated_snippet_data = reset($snippet_to_store);
+			//Set fields to update: Just update the code, revision number and deactive the snippet by default
+			$fields = [
+				'code' => $updated_snippet_data['code'],
+				'active' =>  false,
+				'revision' => $updated_snippet_data['revision'],
+			];
+			$update = update_snippet_fields( $local_snippet->id, $fields );				
+			$snippet_id = $local_snippet->id;
+			//Update the local to cloud map
+			$local_to_cloud_map = array_map(function($local_to_cloud_map_item) use ($snippet_id){
+				if($local_to_cloud_map_item['local_id'] == $snippet_id){
+					$local_to_cloud_map_item['update_available'] = false;
+				}
+				return $local_to_cloud_map_item;
+			}, $local_to_cloud_map);
+			//update the transient object
+			set_transient('cs_local_to_cloud_map', $local_to_cloud_map);
+			//Update the snippet in the cs codevault transient object
+			$codevault_snippets = get_transient('cs_codevault_snippets');
+			$codevault_snippets = array_map(function($codevault_snippet) use ($snippet_id, $updated_snippet_data){
+				if($codevault_snippet['id'] == $snippet_id){
+					$codevault_snippet['code'] = $updated_snippet_data['code'];
+					$codevault_snippet['revision'] = $updated_snippet_data['revision'];
+				}
+				return $codevault_snippet;
+			}, $codevault_snippets);
+			//update the transient object
+			set_transient('cs_codevault_snippets', $codevault_snippets);
+
+			return [
+			'success' => true,
+			'action' => 'Updated',
+			];
+		}		
+	}
    
 }

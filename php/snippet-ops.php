@@ -216,6 +216,33 @@ function get_snippet( $id = 0, $multisite = null ) {
 }
 
 /**
+ * Retrieve a single snippets from the database from its Cloud ID.
+ * Will return false-bool if no Cloud ID is specified.
+ * Read operation.
+ *
+ * @param string       $id        The Cloud ID of the snippet to retrieve
+ *
+ * @return Snippet|Bool A single snippet object or false if no snippet found.
+ * @since 3.3.dev-1
+ */
+function get_snippet_by_cloud_id( $id, $multisite = NULL ) {
+	global $wpdb;
+
+	$multisite = DB::validate_network_param( $multisite );
+	$table_name = code_snippets()->db->get_table_name( $multisite );
+
+	// Search for the snippet from the database.
+	$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE cloud_id = %d", $id ) );
+	if( is_null($snippet_data) ) {
+		return false;
+	}
+
+	$snippet = new Snippet( $snippet_data );
+	
+	return $snippet;
+}
+
+/**
  * Activates a snippet.
  * Write operation.
  *

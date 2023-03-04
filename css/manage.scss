@@ -316,6 +316,11 @@ $inactive-color: #ccc;
 	border-radius: 10px;
 }
 
+#snippet-code-thickbox{
+	display: block;
+	width: 100%;
+}
+
 .cloud-synced {
     margin-right: 3px;
     margin-bottom: 2px;
@@ -325,8 +330,10 @@ $inactive-color: #ccc;
 .cloud-table > tbody > tr  {
 	height: 80px;
 }
-.cloud-table tbody .active-snippet .column-name>a {
+.cloud-table tbody .active-snippet .column-name {
 	font-weight: 400;
+	max-width: 400px;
+	white-space: normal !important;
 }
 
 .cloud-table td .no-results{
@@ -357,3 +364,6 @@ $inactive-color: #ccc;
 	width: 35%;
 }
 
+.snippet-type-badge {
+    white-space: nowrap;
+}
