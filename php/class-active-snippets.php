@@ -110,12 +110,12 @@ class Active_Snippets {
 			return false;
 		}
 
-		$revisions = is_multisite() ?
-			get_site_option( 'code_snippets_assets_rev' ) :
-			get_option( 'code_snippets_assets_rev' );
+		$revisions = get_option( 'code_snippets_assets_rev' );
+		$rev += isset( $revisions[ $scope ] ) ? intval( $revisions[ $scope ] ) : 0;
 
-		if ( isset( $revisions[ $scope ] ) ) {
-			$rev += intval( $revisions[ $scope ] );
+		if ( is_multisite() ) {
+			$ms_revisions = get_site_option( 'code_snippets_assets_rev' );
+			$rev += isset( $ms_revisions[ $scope ] ) ? intval( $ms_revisions[ $scope ] ) : 0;
 		}
 
 		return $rev;
