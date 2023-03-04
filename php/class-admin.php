@@ -198,17 +198,14 @@ class Admin {
 	public function debug_information( $info ) {
 		$fields = array();
 
-		// fetch all active snippets.
-		$args = array(
-			'active_only' => true,
-			'limit'       => 100,
-		);
-		$snippet_objects = get_snippets( array(), null, $args );
-
 		// build the debug information from snippet data.
-		foreach ( $snippet_objects as $snippet ) {
+		foreach ( get_snippets() as $snippet ) {
 			$values = [ $snippet->scope_name ];
 			$debug = [];
+
+			if ( ! $snippet->active ) {
+				continue;
+			}
 
 			if ( $snippet->name ) {
 				$debug[] = 'name: ' . $snippet->name;
