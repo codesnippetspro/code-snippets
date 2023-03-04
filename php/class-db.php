@@ -270,7 +270,7 @@ class DB {
 	 *
 	 * @param array|string $scopes List of scopes to retrieve in.
 	 *
-	 * @return array List of active snippets, indexed by table.
+	 * @return array[][] List of active snippets, indexed by table.
 	 */
 	public function fetch_active_snippets( $scopes ) {
 		$active_snippets = array();
