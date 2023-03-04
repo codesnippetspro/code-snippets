@@ -33,6 +33,8 @@ class Frontend {
 
 		add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
 		add_shortcode( self::SOURCE_SHORTCODE, [ $this, 'render_source_shortcode' ] );
+
+		add_filter( 'code_snippets/render_content_shortcode', 'trim' );
 	}
 
 	/**
@@ -190,12 +192,7 @@ class Frontend {
 			$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
 			return wp_kses(
 				sprintf( $text, $snippet->name, $edit_url ),
-				[
-					'strong' => [],
-					'a'      => [
-						'href' => [],
-					],
-				]
+				[ 'strong' => [], 'a' => [ 'href' => [] ] ]
 			);
 		}
 
@@ -225,7 +222,7 @@ class Frontend {
 			add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
 		}
 
-		return $content;
+		return apply_filters( 'code_snippets/content_shortcode', $content, $snippet, $atts );
 	}
 
 	/**
@@ -285,12 +282,14 @@ class Frontend {
 
 		$code = 'php' === $snippet->type ? "<?php\n\n$snippet->code" : $snippet->code;
 
-		return sprintf(
+		$output = sprintf(
 			'<pre %s><code %s>%s</code></pre>',
 			implode( ' ', $pre_attributes ),
 			implode( ' ', $code_attributes ),
 			esc_html( $code )
 		);
+
+		return apply_filters( 'code_snippets/render_source_shortcode', $output, $snippet, $atts );
 	}
 
 	/**
