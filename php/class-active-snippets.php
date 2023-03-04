@@ -52,6 +52,22 @@ class Active_Snippets {
 	}
 
 	/**
+	 * Fetch active snippets for a given scope, and cache the data in this class.
+	 *
+	 * @param string|string[] $scope Snippet scope.
+	 *
+	 * @return array[][]
+	 */
+	protected function fetch_active_snippets( $scope ) {
+
+		if ( ! isset( $this->active_snippets[ $scope ] ) ) {
+			$this->active_snippets[ $scope ] = code_snippets()->db->fetch_active_snippets( $scope );
+		}
+
+		return $this->active_snippets[ $scope ];
+	}
+
+	/**
 	 * Increment the asset revision for a specified scope
 	 *
 	 * @param string $scope   Name of snippet scope.
@@ -87,14 +103,10 @@ class Active_Snippets {
 	 * @return int Current asset revision number.
 	 */
 	public function get_rev( $scope ) {
-		static $active_snippets_per_scope = array();
 		$rev = 0;
+		$scope_snippets = $this->fetch_active_snippets( $scope );
 
-		if ( ! isset( $active_snippets_per_scope[ $scope ] ) ) {
-			$active_snippets_per_scope[ $scope ] = code_snippets()->db->fetch_active_snippets( $scope );
-		}
-
-		if ( empty( $active_snippets_per_scope[ $scope ] ) ) {
+		if ( empty( $scope_snippets[ $scope ] ) ) {
 			return false;
 		}
 
@@ -231,22 +243,6 @@ class Active_Snippets {
 		// Output the code and exit.
 		echo $code;
 		exit;
-	}
-
-	/**
-	 * Fetch active snippets for a given scope, and cache the data in this class.
-	 *
-	 * @param string|string[] $scope Snippet scope.
-	 *
-	 * @return array[][]
-	 */
-	protected function fetch_active_snippets( $scope ) {
-
-		if ( ! isset( $this->active_snippets[ $scope ] ) ) {
-			$this->active_snippets[ $scope ] = code_snippets()->db->fetch_active_snippets( $scope );
-		}
-
-		return $this->active_snippets[ $scope ];
 	}
 
 	/**
