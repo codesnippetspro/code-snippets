@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.3.0 (UNRELEASED)
+* Improved: Added additional editor shortcuts to list in tooltip.
+* Added: Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
+* Added: Ability to filter shortcode output. Thanks to contributions from [Jack Szwergold](https://github.com/JackSzwergold).
+
 ## 3.2.1 (05 Oct 2022)
 * Fixed: Issue making survey reminder notice not dismissible.
 * Added: `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
