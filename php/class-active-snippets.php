@@ -90,19 +90,20 @@ class Active_Snippets {
 	 * @return int Current asset revision number.
 	 */
 	public function get_rev( $scope ) {
+		static $active_snippets_per_scope = array();
 		$rev = 0;
 
-		$active_snippets_for_current_scope = code_snippets()->db->fetch_active_snippets( $scope );
+		if ( ! isset( $active_snippets_per_scope[ $scope ] ) ) {
+			$active_snippets_per_scope[ $scope ] = code_snippets()->db->fetch_active_snippets( $scope );
+		}
 
-		if ( empty( $active_snippets_for_current_scope ) ) {
+		if ( empty( $active_snippets_per_scope[ $scope ] ) ) {
 			return false;
 		}
 
-		$revisions = get_option( 'code_snippets_assets_rev' );
-
-		if ( is_multisite() ) {
-			$revisions = get_site_option( 'code_snippets_assets_rev' );
-		}
+		$revisions = is_multisite() ?
+			get_site_option( 'code_snippets_assets_rev' ) :
+			get_option( 'code_snippets_assets_rev' );
 
 		if ( isset( $revisions[ $scope ] ) ) {
 			$rev += intval( $revisions[ $scope ] );
@@ -214,7 +215,7 @@ class Active_Snippets {
 			$current_scope = "site-$current_scope-js";
 		}
 
-		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope, 'code' );
+		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope );
 
 		// Concatenate all fetched code together into a single string.
 		$code = '';
