@@ -12,11 +12,11 @@ use MatthiasMullie\Minify;
 class Active_Snippets {
 
 	/**
-	 * List of content snippets.
+	 * Cached list of active snippets.
 	 *
-	 * @var array
+	 * @var Snippet[]
 	 */
-	private $content_snippets = [];
+	private $active_snippets = [];
 
 	/**
 	 * Class constructor.
@@ -29,9 +29,6 @@ class Active_Snippets {
 	 * Initialise class functions.
 	 */
 	public function init() {
-		$db = code_snippets()->db;
-		$this->content_snippets = $db->fetch_active_snippets( [ 'head-content', 'footer-content' ] );
-
 		add_action( 'wp_head', [ $this, 'load_head_content' ] );
 		add_action( 'wp_footer', [ $this, 'load_footer_content' ] );
 
@@ -237,12 +234,29 @@ class Active_Snippets {
 	}
 
 	/**
+	 * Fetch active snippets for a given scope, and cache the data in this class.
+	 *
+	 * @param string|string[] $scope Snippet scope.
+	 *
+	 * @return array[][]
+	 */
+	protected function fetch_active_snippets( $scope ) {
+
+		if ( ! isset( $this->active_snippets[ $scope ] ) ) {
+			$this->active_snippets[ $scope ] = code_snippets()->db->fetch_active_snippets( $scope );
+		}
+
+		return $this->active_snippets[ $scope ];
+	}
+
+	/**
 	 * Print snippet code fetched from the database from a certain scope.
 	 *
-	 * @param array  $snippets_list List of data fetched.
-	 * @param string $scope         Name of scope to print.
+	 * @param string $scope Name of scope to print.
 	 */
-	private function print_content_snippets( $snippets_list, $scope ) {
+	private function print_content_snippets( $scope ) {
+		$snippets_list = $this->fetch_active_snippets( [ 'head-content', 'footer-content' ] );
+
 		foreach ( $snippets_list as $snippets ) {
 			foreach ( $snippets as $snippet ) {
 				if ( $scope === $snippet['scope'] ) {
@@ -257,13 +271,13 @@ class Active_Snippets {
 	 * Print head content snippets.
 	 */
 	public function load_head_content() {
-		$this->print_content_snippets( $this->content_snippets, 'head-content' );
+		$this->print_content_snippets( 'head-content' );
 	}
 
 	/**
 	 * Print footer content snippets.
 	 */
 	public function load_footer_content() {
-		$this->print_content_snippets( $this->content_snippets, 'footer-content' );
+		$this->print_content_snippets( 'footer-content' );
 	}
 }
