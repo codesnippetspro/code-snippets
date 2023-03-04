@@ -1,16 +1,18 @@
-
 # Composer
-/vendor
+/vendor/
 
 # generated files
-code-snippets.*.zip
-code-snippets-pro.*.zip
-/dist
-/build
+/code-snippets.*.zip
+/code-snippets-pro.*.zip
+/dist/
+/build/
 
-# Grunt (via NPM)
-node_modules
+# Node
+node_modules/
 npm-debug.log
+.sass-cache/
 
-# Sass
-.sass-cache
+# Local files (ideally, should be in a global .gitignore)
+.idea/
+Thumbs.db
+.DS_Store

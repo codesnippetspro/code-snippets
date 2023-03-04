@@ -60,7 +60,7 @@ class Manage_Menu extends Admin_Menu {
 			code_snippets()->get_menu_slug(),
 			array( $this, 'render' ),
 			"data:image/svg+xml;base64,$encoded_icon",
-			is_network_admin() ? 21 : 67
+			apply_filters( 'code_snippets/admin/menu_position', is_network_admin() ? 21 : 67 )
 		);
 
 		// Register the sub-menu.

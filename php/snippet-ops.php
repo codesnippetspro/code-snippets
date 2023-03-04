@@ -298,6 +298,7 @@ function activate_snippets( array $ids, $multisite = null ) {
 
 	// Build a SQL query containing all IDs, as wpdb::update does not support OR conditionals.
 	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
+
 	// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	$wpdb->query( $wpdb->prepare( "UPDATE $table_name SET active = 1 WHERE id IN ($ids_format)", $valid_ids ) ); // db call ok.
 
