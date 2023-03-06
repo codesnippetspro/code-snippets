@@ -323,6 +323,54 @@ class CS_Cloud {
     }
 
     /**
+     * Update Snippet in the Cloud - Static Function
+     *
+     * @param array of Snippets to update
+     *
+     */
+    public static function update_snippet_in_cloud($snippets_to_update){
+    //wp_die(var_dump($snippets_to_update) );
+        $cloud_api_key  = get_setting( 'cloud' , 'cloud_token');
+		/** Snippet @var Snippet $snippet */
+		foreach ( $snippets_to_update as $snippet ) {
+            $cloud_id = explode( '_', $snippet->cloud_id );
+			//send post request to cs store api with snippet data
+			$cs_update_response = wp_remote_post( self::CLOUD_API_URL . 'private/updatesnippet', array(
+				'method' => 'POST',
+				'headers' => array(
+					'Authorization' => 'Bearer ' . $cloud_api_key,
+				),
+				'body' => array(
+					'name'      => $snippet->name,
+					'desc'      => $snippet->desc,
+					'code'      => $snippet->code,
+					'revision'  => $snippet->revision,
+                    'cloud_id'  => $cloud_id[0],
+                    'local_id'  => $snippet->id,
+				),
+			));		
+			//get response body
+			$body = wp_remote_retrieve_body( $cs_update_response );
+			//decode json response
+			$updated = json_decode( $body, true );
+            //Check if success in  response is true or false
+            if( $updated['success'] == true ){
+                //Update codevault snippet transient
+                delete_transient( 'cs_codevault_snippets' );
+                $cloud_snippets = self::get_codevault_snippets();
+                set_transient( 'cs_codevault_snippets', $cloud_snippets, ( DAY_IN_SECONDS * self::DAYS_TO_STORE_CS ) );
+                //Update local to cloud map transient
+                $local_to_cloud_map = get_transient( 'cs_local_to_cloud_map' );
+                //find the key of the snippet in the map using the local id from response 
+                $key = array_search( $updated['local_id'], array_column( $local_to_cloud_map, 'local_id' ) );
+                //update the revision in the map
+                $local_to_cloud_map[$key]['update_available'] = false;
+                set_transient( 'cs_local_to_cloud_map', $local_to_cloud_map, ( DAY_IN_SECONDS * self::DAYS_TO_STORE_CS ) );
+            }
+		}	
+    }
+
+    /**
      * Delete Snippet from Local-Cloud Map -> Static Function
      *
      * @param Snippet $snippet id - local snippet id
@@ -428,7 +476,7 @@ class CS_Cloud {
         }
         if('search' == $source) {
             //Get snippet from cloud using id
-            $snippet_to_store = CS_Cloud::get_single_cloud_snippet($cloud_id);
+            $snippet_to_store = reset( CS_Cloud::get_single_cloud_snippet($cloud_id) );
 			$in_codevault = false;
         }
 		$local_to_cloud_map = get_transient('cs_local_to_cloud_map');
@@ -437,7 +485,7 @@ class CS_Cloud {
 			//Create a new snippet object
 			$snippet = new Snippet();
 			//Set the fields of the snippet object
-			$snippet->set_fields( reset($snippet_to_store) );
+			$snippet->set_fields( $snippet_to_store );
 			//Set the snippet id to 0 to ensure that the snippet is saved as a new snippet
 			$snippet->id = 0;
 			$snippet->active = 0;
@@ -447,7 +495,7 @@ class CS_Cloud {
 			//Add the snippet to the local to cloud map
 			$local_to_cloud_map[] = array(
 				'local_id' => $new_snippet_id,
-				'cloud_id' => $cloud_id,
+				'cloud_id' => $snippet_to_store['cloud_id'],
 				'in_codevault' => $in_codevault,
 				'update_available' => false,
 			);

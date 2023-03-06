@@ -66,6 +66,8 @@ $licensed = code_snippets()->licensing->is_licensed();
 
 		printf( '<input type="hidden" name="current_snippet_scope" value="%s">', esc_attr( $snippet->scope ) );
 
+		printf( '<input type="hidden" name="snippet_cloud_id" value="%s">', esc_attr( $snippet->cloud_id ) );
+
 		do_action( 'code_snippets/admin/before_title_input', $snippet );
 		?>
 

@@ -271,19 +271,18 @@ class Edit_Menu extends Admin_Menu {
 	 * Save the posted snippet data to the database and redirect
 	 */
 	private function save_posted_snippet() {
-
 		/* Build snippet object from fields with 'snippet_' prefix */
 		$snippet = new Snippet();
-
 		foreach ( $_POST as $field => $value ) {
 			if ( 'snippet_' === substr( $field, 0, 8 ) ) {
-
+				
 				/* Remove the 'snippet_' prefix from field name and set it on the object */
 				$snippet->set_field( substr( $field, 8 ), stripslashes( $value ) );
 			}
 		}
-
+		
 		$snippet = apply_filters( 'code_snippets/save/post_set_fields', $snippet );
+
 
 		if ( isset( $_POST['save_snippet_execute'] ) && 'single-use' !== $snippet->scope ) {
 			unset( $_POST['save_snippet_execute'] );
@@ -330,8 +329,22 @@ class Edit_Menu extends Admin_Menu {
 		/* Save the snippet to the database */
 		$snippet_id = save_snippet( $snippet );
 
-		//Update the snippet on the cloud if it is a cloud snippet
-		wp_die(var_dump($snippet));
+		//**-Cloud Update
+		//Check if snippet is being edited
+		if ( isset( $_POST['snippet_id'] ) ){
+			$first_snippet = reset($snippet);
+			//Check if snippet is has a cloud id
+			if( !is_null($first_snippet['cloud_id']) ){
+				//Check if snippet is owned by the current user
+				$is_owner= substr($first_snippet['cloud_id'], -1);
+				//If snippet is owned by the current user then send to cloud for update
+				if (1 == intval($is_owner)){
+					$snippets_to_update[] = $snippet;
+					//Update the snippet on the cloud - cloud will also verify ownership
+					CS_Cloud::update_snippet_in_cloud($snippets_to_update);
+				}
+			}
+		}
 
 		/* Update the shared network snippets if necessary */
 		if ( $snippet_id && is_network_admin() ) {
