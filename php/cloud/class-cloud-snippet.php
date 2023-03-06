@@ -31,19 +31,22 @@ class Cloud_Snippet extends Data_Item {
 	 * @param array<string, mixed>|object $initial_data Initial snippet data.
 	 */
 	public function __construct( $initial_data = null ) {
-		parent::__construct( [
-			'id'          => 0,
-			'name'        => '',
-			'description' => '',
-			'code'        => '',
-			'tags'        => [],
-			'scope'       => '',
-			'status'      => '',
-			'created'     => '',
-			'updated'     => '',
-			'revision'    => 0,
-			'cloud_id'    => '',
-		], $initial_data );
+		parent::__construct(
+			[
+				'id'          => 0,
+				'name'        => '',
+				'description' => '',
+				'code'        => '',
+				'tags'        => [],
+				'scope'       => '',
+				'status'      => '',
+				'created'     => '',
+				'updated'     => '',
+				'revision'    => 0,
+				'cloud_id'    => '',
+			],
+			$initial_data
+		);
 	}
 
 	/**

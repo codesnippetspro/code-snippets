@@ -127,7 +127,7 @@ function get_setting( $section, $field ) {
 function update_setting( $section, $field, $new_value ) {
 	$settings = get_settings_values();
 
-	$settings[ $section ][ $field ] = $new_value;	
+	$settings[ $section ][ $field ] = $new_value;
 
 	wp_cache_set( CACHE_KEY, $settings );
 	return update_self_option( are_settings_unified(), 'code_snippets_settings', $settings );
@@ -143,7 +143,7 @@ function get_settings_sections() {
 		'general'            => __( 'General', 'code-snippets' ),
 		'description_editor' => __( 'Description Editor', 'code-snippets' ),
 		'editor'             => __( 'Code Editor', 'code-snippets' ),
-		'cloud'             => __( 'Cloud Sync', 'code-snippets' ),
+		'cloud'              => __( 'Cloud Sync', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
@@ -243,7 +243,6 @@ function sanitize_setting_value( $field, $input_value ) {
 			return array_key_exists( 'sanitize_callback', $field ) && is_callable( $field['sanitize_callback'] ) ?
 				call_user_func( $field['sanitize_callback'], $input_value ) :
 				null;
-		
 
 		default:
 			return null;
@@ -265,7 +264,7 @@ function sanitize_settings( array $input ) {
 	foreach ( get_settings_fields() as $section_id => $fields ) {
 
 		foreach ( $fields as $field_id => $field ) {
-						
+
 			// Fetch the corresponding input value from the posted data.
 			$input_value = isset( $input[ $section_id ][ $field_id ] ) ? $input[ $section_id ][ $field_id ] : null;
 

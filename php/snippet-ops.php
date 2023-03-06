@@ -207,9 +207,11 @@ function get_snippet( $id = 0, $multisite = null ) {
  *
  * Read operation.
  *
- * @param string $cloud_id The Cloud ID of the snippet to retrieve
+ * @param string       $cloud_id  The Cloud ID of the snippet to retrieve.
+ * @param boolean|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
  *
- * @return Snippet|null A single snippet object or null if no snippet found.
+ * @return Snippet|null A single snippet object or null if no snippet was found.
+ *
  * @since 3.4.0
  */
 function get_snippet_by_cloud_id( $cloud_id, $multisite = null ) {
@@ -218,10 +220,22 @@ function get_snippet_by_cloud_id( $cloud_id, $multisite = null ) {
 	$multisite = DB::validate_network_param( $multisite );
 	$table_name = code_snippets()->db->get_table_name( $multisite );
 
-	// Search for the snippet from the database.
-	$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE cloud_id = %d", $cloud_id ) );
+	$cached_snippets = wp_cache_get( "all_snippets_$table_name", CACHE_GROUP );
 
-	return is_null( $snippet_data ) ? null : new Snippet( $snippet_data );
+	// Attempt to fetch snippet from the cached list, if it exists.
+	if ( is_array( $cached_snippets ) ) {
+		foreach ( $cached_snippets as $snippet ) {
+			if ( $snippet->cloud_id === $cloud_id ) {
+				return apply_filters( 'code_snippets/get_snippet_by_cloud_id', $snippet, $cloud_id, $multisite );
+			}
+		}
+	}
+
+	// Otherwise, search for the snippet from the database.
+	$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE cloud_id = %s", $cloud_id ) ); // cache pass, db call ok.
+	$snippet = $snippet_data ? new Snippet( $snippet_data ) : null;
+
+	return apply_filters( 'code_snippets/get_snippet_by_cloud_id', $snippet, $cloud_id, $multisite );
 }
 
 /**
@@ -437,7 +451,7 @@ function save_snippet( Snippet $snippet ) {
 	// Update the last modification date if necessary.
 	$snippet->update_modified();
 
-	// Increment the revision number
+	// Increment the revision number.
 	$snippet->increment_revision();
 
 	// Build array of data to insert.

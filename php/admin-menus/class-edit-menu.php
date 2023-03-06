@@ -5,12 +5,12 @@ namespace Code_Snippets;
 use function Code_Snippets\Settings\get_setting;
 
 /**
- * This class handles the add/edit menu
+ * This class handles the add/edit menu.
  */
 class Edit_Menu extends Admin_Menu {
 
 	/**
-	 * The snippet object currently being edited
+	 * The snippet object currently being edited.
 	 *
 	 * @var Snippet
 	 * @see Edit_Menu::load_snippet_data()
@@ -20,15 +20,16 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Whether the edit screen should be read-only or editable.
 	 *
-	 * @var bool
+	 * @var boolean
 	 */
 	protected $read_only = false;
 
 	/**
-	 * Constructor
+	 * Constructor.
+	 *
+	 * @return void
 	 */
 	public function __construct() {
-
 		parent::__construct(
 			'edit',
 			_x( 'Edit Snippet', 'menu label', 'code-snippets' ),
@@ -37,7 +38,9 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Register action and filter hooks
+	 * Register action and filter hooks.
+	 *
+	 * @return void
 	 */
 	public function run() {
 		parent::run();
@@ -45,17 +48,19 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Register the admin menu
+	 * Register the admin menu.
+	 *
+	 * @return void
 	 */
 	public function register() {
 		parent::register();
 
-		/* Only preserve the edit menu if we are currently editing a snippet */
+		// Only preserve the edit menu if we are currently editing a snippet.
 		if ( ! isset( $_REQUEST['page'] ) || $_REQUEST['page'] !== $this->slug ) {
 			remove_submenu_page( $this->base_slug, $this->slug );
 		}
 
-		/* Add New Snippet menu */
+		// Add New Snippet menu.
 		$this->add_menu(
 			code_snippets()->get_menu_slug( 'add' ),
 			_x( 'Add New', 'menu label', 'code-snippets' ),
@@ -64,7 +69,9 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Executed when the menu is loaded
+	 * Executed when the menu is loaded.
+	 *
+	 * @return void
 	 */
 	public function load() {
 		parent::load();
@@ -120,7 +127,9 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Load the data for the snippet currently being edited
+	 * Load the data for the snippet currently being edited.
+	 *
+	 * @return void
 	 */
 	public function load_snippet_data() {
 		$edit_id = isset( $_REQUEST['id'] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
@@ -145,11 +154,13 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Process data sent from the edit page
+	 * Process data sent from the edit page.
+	 *
+	 * @return void
 	 */
 	private function process_actions() {
 
-		/* Check for a valid nonce */
+		// Check for a valid nonce.
 		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'save_snippet' ) ) {
 			return;
 		}
@@ -162,20 +173,20 @@ class Edit_Menu extends Admin_Menu {
 		if ( isset( $_POST['snippet_id'] ) ) {
 			$snippet_id = intval( $_POST['snippet_id'] );
 
-			/* Delete the snippet if the button was clicked */
+			// Delete the snippet if the button was clicked.
 			if ( isset( $_POST['delete_snippet'] ) ) {
 				delete_snippet( $snippet_id );
 				wp_safe_redirect( add_query_arg( 'result', 'delete', code_snippets()->get_menu_url( 'manage' ) ) );
 				exit;
 			}
 
-			/* Export the snippet if the button was clicked */
+			// Export the snippet if the button was clicked.
 			if ( isset( $_POST['export_snippet'] ) ) {
 				$export = new Export_Attachment( $snippet_id );
 				$export->download_snippets_json();
 			}
 
-			/* Download the snippet if the button was clicked */
+			// Download the snippet if the button was clicked.
 			if ( isset( $_POST['download_snippet'] ) ) {
 				$export = new Export_Attachment( $snippet_id );
 				$export->download_snippets_code();
@@ -186,9 +197,11 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Remove the sharing status from a network snippet
+	 * Remove the sharing status from a network snippet.
 	 *
-	 * @param int $snippet_id Snippet ID.
+	 * @param integer $snippet_id Snippet ID.
+	 *
+	 * @return void
 	 */
 	private function unshare_network_snippet( $snippet_id ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
@@ -197,11 +210,11 @@ class Edit_Menu extends Admin_Menu {
 			return;
 		}
 
-		/* Remove the snippet ID from the array */
+		// Remove the snippet ID from the array.
 		$shared_snippets = array_diff( $shared_snippets, array( $snippet_id ) );
 		update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
 
-		/* Deactivate on all sites */
+		// Deactivate on all sites.
 		$sites = get_sites( [ 'fields' => 'ids' ] );
 
 		foreach ( $sites as $site ) {
@@ -220,7 +233,7 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Display a custom error message when a code error is encountered
+	 * Display a custom error message when a code error is encountered.
 	 *
 	 * @param string $out Error message content.
 	 *
@@ -234,7 +247,7 @@ class Edit_Menu extends Admin_Menu {
 		}
 
 		$m = '<h3>' . esc_html__( "Don't Panic", 'code-snippets' ) . '</h3>';
-		/* translators: %d: line where error was produced */
+		// translators: %d: line where error was produced.
 		$m .= '<p>' . sprintf( esc_html__( 'The code snippet you are trying to save produced a fatal error on line %d:', 'code-snippets' ), intval( $error['line'] ) ) . '</p>';
 		$m .= '<strong>' . esc_html( $error['message'] ) . '</strong>';
 		$m .= '<p>' . esc_html__( 'The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before.', 'code-snippets' ) . '</p>';
@@ -245,7 +258,7 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Validate the snippet code before saving to database
+	 * Validate the snippet code before saving to database.
 	 *
 	 * @param Snippet $snippet Snippet object.
 	 *
@@ -269,28 +282,29 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Save the posted snippet data to the database and redirect
+	 * Save the posted snippet data to the database and redirect.
+	 *
+	 * @return void
 	 */
 	private function save_posted_snippet() {
-		/* Build snippet object from fields with 'snippet_' prefix */
+		// Build snippet object from fields with 'snippet_' prefix.
 		$snippet = new Snippet();
 		foreach ( $_POST as $field => $value ) {
 			if ( 'snippet_' === substr( $field, 0, 8 ) ) {
-				
-				/* Remove the 'snippet_' prefix from field name and set it on the object */
+
+				// Remove the 'snippet_' prefix from field name and set it on the object.
 				$snippet->set_field( substr( $field, 8 ), stripslashes( $value ) );
 			}
 		}
-		
-		$snippet = apply_filters( 'code_snippets/save/post_set_fields', $snippet );
 
+		do_action( 'code_snippets/save/post_set_fields', $snippet );
 
 		if ( isset( $_POST['save_snippet_execute'] ) && 'single-use' !== $snippet->scope ) {
 			unset( $_POST['save_snippet_execute'] );
 			$_POST['save_snippet'] = 'yes';
 		}
 
-		/* Activate or deactivate the snippet before saving if we clicked the button */
+		// Activate or deactivate the snippet before saving if we clicked the button.
 		$was_active = $snippet->active;
 
 		if ( isset( $_POST['save_snippet_execute'] ) ) {
@@ -307,12 +321,12 @@ class Edit_Menu extends Admin_Menu {
 
 		if ( 'php' === $snippet->type ) {
 
-			/* Remove <?php and <? from beginning of snippet */
+			// Remove tags from beginning of snippet.
 			$snippet->code = preg_replace( '|^\s*<\?(php)?|', '', $snippet->code );
-			/* Remove ?> from end of snippet */
+			// Remove tag from end of snippet.
 			$snippet->code = preg_replace( '|\?>\s*$|', '', $snippet->code );
 
-			/* Deactivate snippet if code contains errors */
+			// Deactivate snippet if code contains errors.
 			if ( $snippet->active && 'single-use' !== $snippet->scope ) {
 				$validator = new Validator( $snippet->code );
 				$code_error = $validator->validate();
@@ -327,33 +341,33 @@ class Edit_Menu extends Admin_Menu {
 			}
 		}
 
-		/* Save the snippet to the database */
+		// Save the snippet to the database.
 		$snippet_id = save_snippet( $snippet );
 
-		//**-Cloud Update
-		//Check if snippet is being edited
-		if ( isset( $_POST['snippet_id'] ) ){
-			$first_snippet = reset($snippet);
-			//Check if snippet is has a cloud id
-			if( !is_null($first_snippet['cloud_id']) ){
-				//Check if snippet is owned by the current user
-				$is_owner= substr($first_snippet['cloud_id'], -1);
-				//If snippet is owned by the current user then send to cloud for update
-				if (1 == intval($is_owner)){
+		// Check if snippet is being edited.
+		if ( isset( $_POST['snippet_id'] ) ) {
+
+			// Check if snippet is has a cloud id.
+			if ( $snippet->cloud_id ) {
+				// Check if snippet is owned by the current user.
+				$is_owner = substr( $snippet->cloud_id, -1 );
+
+				// If snippet is owned by the current user then send to cloud for update.
+				if ( 1 === intval( $is_owner ) ) {
 					$snippets_to_update[] = $snippet;
-					//Update the snippet on the cloud - cloud will also verify ownership
-					CS_Cloud::update_snippet_in_cloud($snippets_to_update);
+					// Update the snippet om the cloud - cloud will also verify ownership.
+					code_snippets()->cloud_api->update_snippets_in_cloud( $snippets_to_update );
 				}
 			}
 		}
 
-		/* Update the shared network snippets if necessary */
+		// Update the shared network snippets if necessary.
 		if ( $snippet_id && is_network_admin() ) {
 
 			if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
 				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 
-				/* Add the snippet ID to the array if it isn't already */
+				// Add the snippet ID to the array if it isn't already.
 				if ( ! in_array( $snippet_id, $shared_snippets, true ) ) {
 					$shared_snippets[] = $snippet_id;
 					update_site_option( 'shared_network_snippets', array_values( $shared_snippets ) );
@@ -363,7 +377,7 @@ class Edit_Menu extends Admin_Menu {
 			}
 		}
 
-		/* Bump CSS file version where necessary */
+		// Bump CSS file version where necessary.
 		$previous_scope = isset( $_POST['current_snippet_scope'] ) ? sanitize_text_field( wp_unslash( $_POST['current_snippet_scope'] ) ) : '';
 		if ( $snippet->active || $was_active ) {
 			foreach ( array( 'admin-css', 'site-css', 'site-head-js', 'site-footer-js' ) as $scope ) {
@@ -373,14 +387,14 @@ class Edit_Menu extends Admin_Menu {
 			}
 		}
 
-		/* If the saved snippet ID is invalid, display an error message */
+		// If the saved snippet ID is invalid, display an error message.
 		if ( ! $snippet_id || $snippet_id < 1 ) {
-			/* An error occurred */
+			// An error occurred.
 			wp_safe_redirect( add_query_arg( 'result', 'save-error', code_snippets()->get_menu_url( 'add' ) ) );
 			exit;
 		}
 
-		/* Display message if a parse error occurred */
+		// Display message if a parse error occurred.
 		if ( isset( $code_error ) && $code_error ) {
 			wp_safe_redirect(
 				add_query_arg(
@@ -394,10 +408,10 @@ class Edit_Menu extends Admin_Menu {
 			exit;
 		}
 
-		/* Set the result depending on if the snippet was just added */
+		// Set the result depending on if the snippet was just added.
 		$result = isset( $_POST['snippet_id'] ) ? 'updated' : 'added';
 
-		/* Append a suffix if the snippet was activated or deactivated */
+		// Append a suffix if the snippet was activated or deactivated.
 		if ( isset( $_POST['save_snippet_activate'] ) ) {
 			$result .= '-and-activated';
 		} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
@@ -406,7 +420,7 @@ class Edit_Menu extends Admin_Menu {
 			$result .= '-and-executed';
 		}
 
-		/* Redirect to edit snippet page */
+		// Redirect to edit snippet page.
 		$redirect_uri = add_query_arg(
 			array(
 				'id'     => $snippet_id,
@@ -423,6 +437,8 @@ class Edit_Menu extends Admin_Menu {
 	 * Add a description editor to the single snippet page
 	 *
 	 * @param Snippet $snippet The snippet being used for this page.
+	 *
+	 * @return void
 	 */
 	public function render_description_editor( Snippet $snippet ) {
 		$settings = Settings\get_settings_values();
@@ -451,6 +467,8 @@ class Edit_Menu extends Admin_Menu {
 	 * Render the interface for editing snippet tags
 	 *
 	 * @param Snippet $snippet The snippet currently being edited.
+	 *
+	 * @return void
 	 */
 	public function render_tags_editor( Snippet $snippet ) {
 
@@ -471,6 +489,8 @@ class Edit_Menu extends Admin_Menu {
 	 * Render the snippet priority setting
 	 *
 	 * @param Snippet $snippet The snippet currently being edited.
+	 *
+	 * @return void
 	 */
 	public function render_priority_setting( Snippet $snippet ) {
 		if ( 'html' === $snippet->type ) {
@@ -501,6 +521,8 @@ class Edit_Menu extends Admin_Menu {
 	 * Render the setting for shared network snippets
 	 *
 	 * @param Snippet $snippet The snippet currently being edited.
+	 *
+	 * @return void
 	 */
 	public function render_multisite_sharing_setting( Snippet $snippet ) {
 		$shared_snippets = get_site_option( 'shared_network_snippets', array() );
@@ -522,6 +544,8 @@ class Edit_Menu extends Admin_Menu {
 	 * Render additional save buttons above the snippet editor.
 	 *
 	 * @param Snippet $snippet Snippet currently being edited.
+	 *
+	 * @return void
 	 */
 	public function render_extra_submit_buttons( Snippet $snippet ) {
 
@@ -566,6 +590,8 @@ class Edit_Menu extends Admin_Menu {
 
 	/**
 	 * Render a control for changing the code editor text direction
+	 *
+	 * @return void
 	 */
 	public function render_direction_setting() {
 		?>
@@ -624,6 +650,8 @@ class Edit_Menu extends Admin_Menu {
 
 	/**
 	 * Print the status and error messages
+	 *
+	 * @return void
 	 */
 	protected function print_messages() {
 
@@ -637,7 +665,7 @@ class Edit_Menu extends Admin_Menu {
 			$error = isset( $_REQUEST['id'] ) ? $this->get_snippet_error( intval( $_REQUEST['id'] ) ) : false;
 
 			if ( $error ) {
-				/* translators: %d: line of file where error originated */
+				// translators: %d: line of file where error originated.
 				$text = __( 'The snippet has been deactivated due to an error on line %d:', 'code-snippets' );
 
 				printf(
@@ -679,6 +707,8 @@ class Edit_Menu extends Admin_Menu {
 
 	/**
 	 * Enqueue assets for the edit menu
+	 *
+	 * @return void
 	 */
 	public function enqueue_assets() {
 		$plugin = code_snippets();
@@ -721,6 +751,8 @@ class Edit_Menu extends Admin_Menu {
 
 	/**
 	 * Enqueue the necessary assets for the tag editor
+	 *
+	 * @return void
 	 */
 	protected function enqueue_tag_assets() {
 
@@ -752,10 +784,12 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Remove the old CodeMirror version used by the Debug Bar Console plugin
 	 * that is messing up the snippet editor
+	 *
+	 * @return void
 	 */
 	public function remove_debug_bar_codemirror() {
 
-		/* Try to discern if we are on the single snippet page as good as we can at this early time */
+		// Try to discern if we are on the single snippet page as good as we can at this early time.
 		if ( ! is_admin() || 'admin.php' !== $GLOBALS['pagenow'] ) {
 			return;
 		}
@@ -829,6 +863,8 @@ class Edit_Menu extends Admin_Menu {
 	 * @param Snippet $snippet       The snippet currently being edited.
 	 * @param string  $size          Additional size classes to pass to button.
 	 * @param bool    $extra_actions Whether to include additional buttons alongside save buttons.
+	 *
+	 * @return void
 	 */
 	public function render_submit_buttons( $snippet, $size = '', $extra_actions = true ) {
 
@@ -864,6 +900,8 @@ class Edit_Menu extends Admin_Menu {
 	 * Render a list of scopes as ratio controls
 	 *
 	 * @param array<string, string> $scopes List of scopes to render, with scope name keyed to label.
+	 *
+	 * @return void
 	 */
 	public function print_scopes_list( $scopes ) {
 		$scope_icons = Snippet::get_scope_icons();

@@ -152,7 +152,7 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	protected function get_current_type() {
 		$types = Plugin::get_types();
-		$current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : 'all';
+		$current_type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'all';
 		return isset( $types[ $current_type ] ) ? $current_type : 'all';
 	}
 
@@ -162,10 +162,9 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function display_cloud_key_notice() {
-		$message = sprintf(
-			__( 'Please enter a valid Cloud API Token in the <a href="%s">Cloud Settings</a> to enable Cloud Sync.', 'code-snippets' ),
-			esc_url( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings ' ) ) )
-		);
+		// translators: %s: cloud settings page.
+		$message = __( 'Please enter a valid Cloud API Token in the <a href="%s">Cloud Settings</a> to enable Cloud Sync.', 'code-snippets' );
+		$message = sprintf( $message, esc_url( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings ' ) ) ) );
 
 		printf(
 			'<div class="notice notice-error is-dismissible"><p>%s</p></div>',
@@ -177,12 +176,12 @@ class Manage_Menu extends Admin_Menu {
 	 * Run startup checks for cloud connection or redirect to cloud connection page
 	 */
 	private function load_cloud() {
-		if ( isset( $_REQUEST['refresh_cloud'] ) && $_REQUEST['refresh_cloud'] ) {
+		if ( ! empty( $_REQUEST['refresh_cloud'] ) ) {
 			$this->cloud_api->refresh_synced_data();
 			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', 'cloud-refreshed' ) ) );
 		}
 
-		if ( ! isset( $_REQUEST['type'] ) || 'cloud' !== $_REQUEST['type'] ) {
+		if ( ! isset( $_REQUEST['type'] ) || 'cloud' !== $this->get_current_type() ) {
 			return;
 		}
 

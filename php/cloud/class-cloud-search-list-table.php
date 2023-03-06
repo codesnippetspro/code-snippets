@@ -51,7 +51,7 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 		}
 
 		// If we have a search query, then send a search request to cloud server API search endpoint.
-		$search_query = sanitize_text_field( $_REQUEST['cloud_search'] );
+		$search_query = sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) );
 		return $this->cloud_api->fetch_search_results( $search_query, $this->get_pagenum() - 1 );
 	}
 
@@ -85,17 +85,12 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 			$this->screen->render_screen_reader_content( 'heading_pagination' );
 		}
 
-		$output = '<span class="displaying-num">' . sprintf(
-			/* translators: %s: Number of items. */
-				_n( '%s item', '%s items', $total_items, 'code-snippets' ),
-				number_format_i18n( $total_items )
-			) . '</span>';
+		/* translators: %s: Number of items. */
+		$num = sprintf( _n( '%s item', '%s items', $total_items, 'code-snippets' ), number_format_i18n( $total_items ) );
+		$output = '<span class="displaying-num">' . $num . '</span>';
 
 		$current = $this->get_pagenum();
-		$removable_query_args = wp_removable_query_args();
-
-		$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
-		$current_url = remove_query_arg( $removable_query_args, $current_url );
+		$current_url = remove_query_arg( wp_removable_query_args() );
 
 		$page_links = array();
 
@@ -107,11 +102,12 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 		$disable_prev = false;
 		$disable_next = false;
 
-		if ( 1 == $current ) {
+		if ( 1 === $current ) {
 			$disable_first = true;
 			$disable_prev = true;
 		}
-		if ( $total_pages == $current ) {
+
+		if ( $total_pages === $current ) {
 			$disable_last = true;
 			$disable_next = true;
 		}
@@ -150,12 +146,10 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 			);
 		}
 		$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
-		$page_links[] = $total_pages_before . sprintf(
-			/* translators: 1: Current page, 2: Total pages. */
-				_x( '%1$s of %2$s', 'paging', 'code-snippets' ),
-				$html_current_page,
-				$html_total_pages
-			) . $total_pages_after;
+
+		/* translators: 1: Current page, 2: Total pages. */
+		$current_html = _x( '%1$s of %2$s', 'paging', 'code-snippets' );
+		$page_links[] = $total_pages_before . sprintf( $current_html, $html_current_page, $html_total_pages ) . $total_pages_after;
 
 		if ( $disable_next ) {
 			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&rsaquo;</span>';
@@ -188,51 +182,6 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 		$page_class = $total_pages ? ( $total_pages < 2 ? ' one-page' : '' ) : ' no-pages';
 
 		$this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
-		echo $this->_pagination;
-	}
-
-	/**
-	 * Define the output of the 'download' column
-	 *
-	 * @param Cloud_Snippet $item The snippet used for the current row.
-	 *
-	 * @return string The content of the column to output.
-	 */
-	protected function column_download( $item ) {
-		$lang = $this->get_type_from_scope( $item->scope );
-		$link = $this->get_cloud_map_link( $item->cloud_id );
-
-		if ( $link && ! $link->update_available ) {
-			return sprintf(
-				'<a href="%s" class="cloud-snippet-downloaded">%s</a>',
-				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
-				esc_html__( 'View', 'code-snippets' )
-			);
-		}
-
-		$update_available = $link && $link->update_available;
-
-		$download_url = add_query_arg( [
-			'action'  => $update_available ? 'update' : 'download',
-			'snippet' => $item->cloud_id,
-			'source'  => 'search',
-		] );
-
-		$download_link = sprintf(
-			'<a class="cloud-snippet-download" href="%s">%s</a>',
-			esc_url( $download_url ),
-			$update_available ?
-				esc_html__( 'Update Available', 'code-snippets' ) :
-				esc_html__( 'Download', 'code-snippets' )
-		);
-
-		$thickbox_link = sprintf(
-			'<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet="%s" data-lang="%s">%s</a>',
-			esc_attr( $item->cloud_id ),
-			esc_attr( $lang ),
-			esc_html__( 'Preview', 'code-snippets' )
-		);
-
-		return $download_link . $thickbox_link;
+		echo wp_kses_post( $this->_pagination );
 	}
 }

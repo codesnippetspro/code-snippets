@@ -17,6 +17,11 @@ use Data_Item;
  */
 class Cloud_Snippets extends Data_Item {
 
+	/**
+	 * Class constructor.
+	 *
+	 * @param array<string, Cloud_Snippet[]|integer> $initial_data Initial data.
+	 */
 	public function __construct( $initial_data = null ) {
 		parent::__construct(
 			[

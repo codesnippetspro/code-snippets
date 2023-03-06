@@ -25,6 +25,7 @@ namespace Code_Snippets\Settings;
  * @property-read mixed                 $default            Default setting value.
  *
  * @property-read string                $input_name         Value of `name` HTML attribute on an input element.
+ * @property-read string                $element_id
  */
 class Setting_Field {
 
@@ -186,13 +187,12 @@ class Setting_Field {
 	 * Render a basic text field for an editor setting.
 	 */
 	private function render_text_field() {
-
 		printf(
 			'<input id="%s" type="text" name="%s" value="%s" class="regular-text %s">',
 			esc_attr( $this->element_id ),
 			esc_attr( $this->input_name ),
 			esc_attr( $this->get_saved_value() ),
-			esc_attr( $this->element_id ),
+			esc_attr( $this->element_id )
 		);
 
 		if ( $this->label ) {
@@ -250,30 +250,30 @@ class Setting_Field {
 	}
 
 	/**
-	 * Render a button to verify cloud api 
+	 * Render a button to verify cloud api
 	 *
 	 * @since 3.0.0
 	 */
 	private function render_button_field() {
-
-        printf(
-            '<button class="button button-secondary" type="button" id="%s">%s</button>',
-            esc_html( $this->button_id ),
-            esc_html( $this->button_label )
-        );
+		printf(
+			'<button class="button button-secondary" type="button" id="%s">%s</button>',
+			esc_html( $this->button_id ),
+			esc_html( $this->button_label )
+		);
 	}
 
 	/**
 	 * Render a hidden input field for an editor setting.
 	 */
 	private function render_hidden_field() {
+		$value = $this->get_saved_value() ? $this->get_saved_value() : $this->default;
 
 		printf(
 			'<input id="%s" type="hidden" name="%s" value="%s" class="%s">',
 			esc_attr( $this->element_id ),
 			esc_attr( $this->input_name ),
-			esc_attr( $this->get_saved_value() ? $this->get_saved_value() : $this->default ),
-			esc_attr( $this->element_id ),
+			esc_attr( $value ),
+			esc_attr( $this->element_id )
 		);
 	}
 }

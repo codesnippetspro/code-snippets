@@ -69,7 +69,7 @@ $current_type = $this->get_current_type();
 			'html'  => __( 'content snippets', 'code-snippets' ),
 			'css'   => __( 'style snippets', 'code-snippets' ),
 			'js'    => __( 'javascript snippets', 'code-snippets' ),
-			'cloud' => __( 'cloud snippets', 'code-snippets',  ),
+			'cloud' => __( 'cloud snippets', 'code-snippets' ),
 		];
 
 		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
@@ -77,7 +77,7 @@ $current_type = $this->get_current_type();
 		/* translators: %s: snippet type name */
 		$learn_more_text = sprintf( __( 'Learn more about %s &rarr;', 'code-snippets' ), $type_names[ $current_type ] );
 
-		$learn_url = 'cloud' == $current_type ?
+		$learn_url = 'cloud' === $current_type ?
 			Cloud_API::CLOUD_URL :
 			"https://codesnippets.pro/learn-$current_type/";
 
@@ -94,6 +94,8 @@ $current_type = $this->get_current_type();
 	$this->list_table->views();
 
 	if ( 'cloud' === $current_type ) {
+		$search_query = isset( $_REQUEST['cloud_search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) ) : '';
+
 		?>
 		<h2>Cloud Search</h2>
 		<p>Search the Code Snippets Cloud for snippets that you can import into your site.</p>
@@ -105,7 +107,7 @@ $current_type = $this->get_current_type();
 			</label>
 
 			<input type="text" id="cloud_search" name="cloud_search" class="cloud_search"
-			       value="<?php echo isset( $_REQUEST['cloud_search'] ) ? esc_html( sanitize_text_field( $_REQUEST['cloud_search'] ) ) : '' ?>"
+			       value="<?php echo esc_html( $search_query ); ?>"
 			       placeholder="<?php esc_html_e( 'e.g. Remove unused JavaScript…', 'code-snippets' ); ?>">
 
 			<input type="submit" name="submit" id="cloud-search-submit" class="button"
@@ -115,7 +117,7 @@ $current_type = $this->get_current_type();
 
 		<form method="post" action="">
 			<input type="hidden" id="code_snippets_ajax_nonce"
-			       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ) ?>">
+			       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 			<?php
 
 			List_Table::required_form_fields();
@@ -131,7 +133,8 @@ $current_type = $this->get_current_type();
 	<form method="get" action="">
 		<?php
 		List_Table::required_form_fields( 'search_box' );
-		if ( 'cloud' == $current_type ) {
+
+		if ( 'cloud' === $current_type ) {
 			$this->cloud_list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'cloud_search_id' );
 		} else {
 			$this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
@@ -145,7 +148,7 @@ $current_type = $this->get_current_type();
 		<?php
 		List_Table::required_form_fields();
 
-		if ( 'cloud' == $current_type ) {
+		if ( 'cloud' === $current_type ) {
 			$this->cloud_list_table->display();
 		} else {
 			$this->list_table->display();

@@ -90,7 +90,7 @@ class Cloud_API {
 		$this->refresh_synced_data();
 		$this->cloud_key = get_setting( 'cloud', 'cloud_token' );
 		$token_verified = get_setting( 'cloud', 'token_verified' );
-		$this->cloud_key_is_verified = $token_verified && $token_verified !== 'false';
+		$this->cloud_key_is_verified = $token_verified && 'false' !== $token_verified;
 	}
 
 	/**
@@ -114,7 +114,7 @@ class Cloud_API {
 		// Otherwise, regenerate the local-to-cloud-map.
 		$this->local_to_cloud_map = [];
 
-		// Create a list of snippet revisions in the format `cloud_id` => `revision`, e.g. [163_1 => 2]
+		// Create a list of snippet revisions in the format `cloud_id` => `revision`, e.g. [163_1 => 2].
 		$cloud_snippet_revisions = [];
 		$codevault_snippets = $this->get_codevault_snippets();
 
@@ -326,7 +326,7 @@ class Cloud_API {
 	/**
 	 * Update the already-existing remote data for a series of snippets.
 	 *
-	 * @param Snippet[] $snippets_to_update List of snippets to update
+	 * @param Snippet[] $snippets_to_update List of snippets to update.
 	 *
 	 * @return void
 	 */
@@ -398,20 +398,17 @@ class Cloud_API {
 	 * @return Cloud_Snippet Retrieved snippet.
 	 */
 	public static function get_single_cloud_snippet( $cloud_id ) {
-		$api_url = self::CLOUD_API_URL . sprintf( 'public/getsnippet/%s', $cloud_id );
+		$response = wp_remote_get(
+			add_query_arg(
+				[
+					'site_host'  => wp_parse_url( get_site_url(), PHP_URL_HOST ),
+					'site_token' => get_setting( 'cloud', 'local_token' ),
+				],
+				self::CLOUD_API_URL . sprintf( 'public/getsnippet/%s', $cloud_id )
+			)
+		);
 
-		$site_token = get_setting( 'cloud', 'local_token' );
-		$site_host = parse_url( get_site_url(), PHP_URL_HOST );
-
-		$response = wp_remote_get( add_query_arg( [
-			'site_host'  => $site_host,
-			'site_token' => $site_token,
-		], $api_url ) );
-
-
-		$body = wp_remote_retrieve_body( $response );
-		$cloud_snippet = json_decode( $body, true );
-
+		$cloud_snippet = self::unpack_request_json( $response );
 		return new Cloud_Snippet( $cloud_snippet );
 	}
 
@@ -450,19 +447,25 @@ class Cloud_API {
 			$snippets = $this->get_codevault_snippets();
 
 			// Filter the cloud snippet array to get the snippet that is to be saved to the database.
-			$snippet_to_store = array_filter( $snippets->snippets, function ( $snippet ) use ( $cloud_id ) {
-				return $snippet->cloud_id === $cloud_id;
-			} );
+			$snippet_to_store = array_filter(
+				$snippets->snippets,
+				function ( $snippet ) use ( $cloud_id ) {
+					return $snippet->cloud_id === $cloud_id;
+				}
+			);
 
 			$in_codevault = true;
 
-		} elseif ( 'search' == $source ) {
+		} elseif ( 'search' === $source ) {
 			$snippet_to_store = $this->get_single_cloud_snippet( $cloud_id );
 			$in_codevault = false;
 
 		} else {
 			// No snippet to download; return now.
-			return [ 'success' => false, 'error' => 'Invalid source.' ];
+			return [
+				'success' => false,
+				'error'   => 'Invalid source.',
+			];
 		}
 
 		// Check if action was download or update.
@@ -484,7 +487,10 @@ class Cloud_API {
 
 			$this->add_map_link( $link );
 
-			return [ 'success' => true, 'action' => 'Downloaded' ];
+			return [
+				'success' => true,
+				'action'  => 'Downloaded',
+			];
 
 		} elseif ( 'update' === $action ) {
 			$local_snippet = get_snippet_by_cloud_id( sanitize_key( $cloud_id ) );
@@ -523,12 +529,17 @@ class Cloud_API {
 				DAY_IN_SECONDS * self::DAYS_TO_STORE_CS
 			);
 
-
-			return [ 'success' => true, 'action' => 'Updated' ];
+			return [
+				'success' => true,
+				'action'  => 'Updated',
+			];
 
 		} else {
 			// No action to perform.
-			return [ 'success' => false, 'error' => 'Invalid action.' ];
+			return [
+				'success' => false,
+				'error'   => 'Invalid action.',
+			];
 		}
 	}
 

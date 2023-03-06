@@ -21,6 +21,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * This class handles the table for the manage cloud snippets menu
  *
+ * @package Code_Snippets
  */
 class Cloud_List_Table extends WP_List_Table {
 
@@ -42,11 +43,13 @@ class Cloud_List_Table extends WP_List_Table {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		parent::__construct( array(
-			'singular' => 'cloud-snippet',
-			'plural'   => 'cloud-snippets',
-			'ajax'     => false,
-		) );
+		parent::__construct(
+			[
+				'singular' => 'cloud-snippet',
+				'plural'   => 'cloud-snippets',
+				'ajax'     => false,
+			]
+		);
 
 		$this->cloud_api = code_snippets()->cloud_api;
 
@@ -135,11 +138,13 @@ class Cloud_List_Table extends WP_List_Table {
 		$this->cloud_snippets = $this->fetch_snippets();
 		$this->items = $this->cloud_snippets->snippets;
 
-		$this->set_pagination_args( array(
-			'per_page'    => count( $this->cloud_snippets->snippets ),
-			'total_items' => $this->cloud_snippets->total_snippets,
-			'total_pages' => $this->cloud_snippets->total_pages,
-		) );
+		$this->set_pagination_args(
+			[
+				'per_page'    => count( $this->cloud_snippets->snippets ),
+				'total_items' => $this->cloud_snippets->total_snippets,
+				'total_pages' => $this->cloud_snippets->total_pages,
+			]
+		);
 	}
 
 	/**
@@ -165,7 +170,7 @@ class Cloud_List_Table extends WP_List_Table {
 			exit;
 		}
 
-		//***TODO: Add code to action bulk download of snippets ****//
+		// TODO: Add code to action bulk download of snippets.
 	}
 
 	/**
@@ -251,9 +256,9 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Translate a snippet scope to a type.
 	 *
-	 * @param string $scope The scope of the snippet
+	 * @param string $scope The scope of the snippet.
 	 *
-	 * @return string The type of the snippet
+	 * @return string The type of the snippet.
 	 */
 	protected function get_type_from_scope( $scope ) {
 		switch ( $scope ) {
@@ -273,9 +278,9 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Translate a snippet status to a style class.
 	 *
-	 * @param string $status The scope of the snippet
+	 * @param string $status The scope of the snippet.
 	 *
-	 * @return string The style to be used for the stats badge
+	 * @return string The style to be used for the stats badge.
 	 */
 	public function get_style_from_status( $status ) {
 		switch ( $status ) {
@@ -320,40 +325,43 @@ class Cloud_List_Table extends WP_List_Table {
 		$lang = $this->get_type_from_scope( $item->scope );
 		$link = $this->get_cloud_map_link( $item->cloud_id );
 
-		if ( 'js' === $lang ) {
-			$lang = 'javascript';
+		if ( $link && ! $link->update_available ) {
+			return sprintf(
+				'<a href="%s" class="cloud-snippet-downloaded">%s</a>',
+				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
+				esc_html__( 'View', 'code-snippets' )
+			);
 		}
 
-		if ( 'html' === $lang ) {
-			$lang = 'mixed';
-		}
+		$update_available = $link && $link->update_available;
 
-		if ( $link ) {
-			if ( $link->update_available ) {
-				return sprintf( '<a class="cloud-snippet-download" href="?page=%s&type=cloud&action=%s&snippet=%s&source=%s">Update Snippet</a>
-					<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s data-lang=%s>Preview Update</a>',
-					esc_attr( $_REQUEST['page'] ),
-					'update',
-					esc_attr( $item->cloud_id ),
-					esc_attr( 'codevault' ),
-					esc_attr( $item->cloud_id ),
-					esc_attr( $lang )
-				);
-			}
-			return sprintf( '<a href="%s" class="cloud-snippet-downloaded">View</a>',
-				esc_url( '/wp-admin/admin.php?page=edit-snippet&id=' . $link['local_id'] ) );
-		}
-
-
-		return sprintf( '<a class="cloud-snippet-download" href="?page=%s&type=cloud&action=%s&snippet=%s&source=%s">Download</a>
-				<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s data-lang=%s>Preview</a>',
-			esc_attr( $_REQUEST['page'] ),
-			'download',
-			esc_attr( $item->cloud_id ),
-			esc_attr( 'codevault' ),
-			esc_attr( $item->cloud_id ),
-			esc_attr( $lang )
+		$download_url = add_query_arg(
+			[
+				'action'  => $update_available ? 'update' : 'download',
+				'snippet' => $item->cloud_id,
+				'source'  => 'search',
+			]
 		);
+
+		$download_link = sprintf(
+			'<a class="cloud-snippet-download" href="%s">%s</a>',
+			esc_url( $download_url ),
+			$update_available ?
+				esc_html__( 'Update Available', 'code-snippets' ) :
+				esc_html__( 'Download', 'code-snippets' )
+		);
+
+		$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
+
+		$thickbox_link = sprintf(
+			'<a href="%s" class="cloud-snippet-preview thickbox" data-snippet="%s" data-lang="%s">%s</a>',
+			esc_url( $thickbox_url ),
+			esc_attr( $item->cloud_id ),
+			esc_attr( $lang ),
+			esc_html__( 'Preview', 'code-snippets' )
+		);
+
+		return $download_link . $thickbox_link;
 	}
 
 	/**
@@ -393,7 +401,8 @@ class Cloud_List_Table extends WP_List_Table {
 		$status = $link ? 'inactive' : 'active';
 		$row_class = "snippet $status-snippet $style-snippet";
 
-		printf( '<tr id="snippet-%s" class="%s" data-snippet-scope="%s">',
+		printf(
+			'<tr id="snippet-%s" class="%s" data-snippet-scope="%s">',
 			esc_attr( $item->cloud_id ),
 			esc_attr( $row_class ),
 			esc_attr( $item->scope )
@@ -422,8 +431,8 @@ class Cloud_List_Table extends WP_List_Table {
 		add_thickbox();
 		?>
 		<div id="show-code-preview" style="display: none;">
-			<p id="snippet-name-thickbox"></p>
-			<p><?php esc_html_e( 'Snippet Code:', 'code-snippets' ); ?></p>
+			<h3 id="snippet-name-thickbox"></h3>
+			<h4><?php esc_html_e( 'Snippet Code:', 'code-snippets' ); ?></h4>
 			<pre class="thickbox-code-viewer">
 				<code id="snippet-code-thickbox" class=""></code>
 			</pre>

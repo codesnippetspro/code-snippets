@@ -1090,8 +1090,6 @@ class List_Table extends WP_List_Table {
 
 		/* Now we can add our *sorted* data to the 'items' property, where it can be used by the rest of the class. */
 		$this->items = $data;
-		//wp_die( print_r( $this->items ) );
-
 
 		/* We register our pagination options and calculations */
 		$this->set_pagination_args(
@@ -1352,7 +1350,7 @@ class List_Table extends WP_List_Table {
 	 * @return Cloud_Link|null
 	 */
 	public function get_cloud_link( $snippet ) {
-		// Loop over items in array and see if snippet id exists in looped array items
+		// Loop over items in array and see if snippet id exists in looped array items.
 		foreach ( code_snippets()->cloud_api->get_local_to_cloud_map() as $link ) {
 			if ( $link->cloud_id === $snippet->cloud_id ) {
 				return $link;

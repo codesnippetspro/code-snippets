@@ -157,7 +157,7 @@ class Settings_Menu extends Admin_Menu {
 					<?php submit_button( null, 'primary', 'submit', false ); ?>
 
 					<a class="button button-secondary"
-					href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>"><?php
+					   href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>"><?php
 						esc_html_e( 'Reset to Default', 'code-snippets' ); ?></a>
 				</p>
 			</form>
@@ -203,25 +203,32 @@ class Settings_Menu extends Admin_Menu {
 				call_user_func( $section['callback'], $section );
 			}
 
-			if('cloud' == $section['id']){
-				echo'<p id="cloud_guide" class="hidden cloud-guide">Please make sure to click verify token to connect to the cloud and if successful then click on save settings.</p>';
+			if ( 'cloud' === $section['id'] ) {
+				echo '<p id="cloud_guide" class="hidden cloud-guide">';
+				esc_html_e( 'Please make sure to click verify token to connect to the cloud and if successful then click on save settings.', 'code-snippets' );
+				echo '</p>';
 			}
 
 			printf( '<table class="form-table settings-section %s-settings">', esc_attr( $section['id'] ) );
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table>';
-			
-			if('cloud' == $section['id']){
-				$settings = get_option('code_snippets_settings');
-				$tokenVerified = $settings['cloud']['token_verified'];
-				if(!empty($tokenVerified) && $tokenVerified == 'true'){
-					echo'<p id="cloud_sync_status" class="cloud-message cloud-success hidden">Status: Cloud Sync Connected</p>';
+
+			if ( 'cloud' === $section['id'] ) {
+				$settings = get_option( 'code_snippets_settings' );
+				$is_token_verified = $settings['cloud']['token_verified'];
+
+				if ( $is_token_verified && 'false' !== $is_token_verified ) {
+					echo '<p id="cloud_sync_status" class="cloud-message cloud-success hidden">';
+					esc_html_e( 'Status: Cloud Sync Connected', 'code-snippets' );
+				} else {
+					echo '<p id="cloud_sync_status" class="cloud-message cloud-error hidden">';
+					esc_html_e( 'Status: Cloud Sync Not Connected', 'code-snippets' );
 				}
-				if(empty($tokenVerified) || $tokenVerified == 'false'){
-					echo'<p id="cloud_sync_status" class="cloud-message cloud-error hidden">Status: Cloud Sync Not Connected</p>';
-				}
-				echo'<p class="hidden cloud-message cloud-error">Invalid token, Please try again or Generate a new token from your Code Snippets Cloud account</p>';
-				echo'<p class="hidden cloud-message cloud-success">Token verified successfully</p>';
+
+				echo '</p>';
+
+				echo '<p class="hidden cloud-message cloud-error">', esc_html__( 'Invalid token, Please try again or Generate a new token from your Code Snippets Cloud account.', 'code-snippets' ), '</p>';
+				echo '<p class="hidden cloud-message cloud-success">', esc_html__( 'Token verified successfully', 'code-snippets' ), '</p>';
 			}
 		}
 
