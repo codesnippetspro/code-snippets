@@ -121,9 +121,9 @@ abstract class Admin_Menu {
 	/**
 	 * Retrieve a result message based on a posted status
 	 *
-	 * @param array  $messages    List of possible messages to display.
-	 * @param string $request_var Name of $_REQUEST variable to check.
-	 * @param string $class       Class to use on buttons. Default 'updated'.
+	 * @param array<string, string> $messages    List of possible messages to display.
+	 * @param string                $request_var Name of $_REQUEST variable to check.
+	 * @param string                $class       Class to use on buttons. Default 'updated'.
 	 *
 	 * @return bool Whether a result message was printed.
 	 */
@@ -146,21 +146,6 @@ abstract class Admin_Menu {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Print a result message based on a posted status
-	 *
-	 * @param array  $messages    List of possible messages to display.
-	 * @param string $request_var Name of $_REQUEST variable to check.
-	 * @param string $class       Class to use on buttons. Default 'updated'.
-	 */
-	protected function show_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
-		$message = $this->get_result_message( $messages, $request_var, $class );
-
-		if ( $message ) {
-			echo wp_kses_post( $message );
-		}
 	}
 
 	/**
@@ -191,7 +176,7 @@ abstract class Admin_Menu {
 	/**
 	 * Render a list of links to other pages in the page title
 	 *
-	 * @param array $actions List of actions to render as links, as array values.
+	 * @param array<string> $actions List of actions to render as links, as array values.
 	 */
 	protected function page_title_actions( $actions ) {
 

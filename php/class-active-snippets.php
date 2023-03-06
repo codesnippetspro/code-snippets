@@ -12,11 +12,11 @@ use MatthiasMullie\Minify;
 class Active_Snippets {
 
 	/**
-	 * List of content snippets.
+	 * Cached list of active snippets.
 	 *
-	 * @var array
+	 * @var Snippet[]
 	 */
-	private $content_snippets = [];
+	private $active_snippets = [];
 
 	/**
 	 * Class constructor.
@@ -29,9 +29,6 @@ class Active_Snippets {
 	 * Initialise class functions.
 	 */
 	public function init() {
-		$db = code_snippets()->db;
-		$this->content_snippets = $db->fetch_active_snippets( [ 'head-content', 'footer-content' ] );
-
 		add_action( 'wp_head', [ $this, 'load_head_content' ] );
 		add_action( 'wp_footer', [ $this, 'load_footer_content' ] );
 
@@ -52,6 +49,22 @@ class Active_Snippets {
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
 		}
+	}
+
+	/**
+	 * Fetch active snippets for a given scope, and cache the data in this class.
+	 *
+	 * @param string|string[] $scope Snippet scope.
+	 *
+	 * @return array[][]
+	 */
+	protected function fetch_active_snippets( $scope ) {
+
+		if ( ! isset( $this->active_snippets[ $scope ] ) ) {
+			$this->active_snippets[ $scope ] = code_snippets()->db->fetch_active_snippets( $scope );
+		}
+
+		return $this->active_snippets[ $scope ];
 	}
 
 	/**
@@ -91,17 +104,18 @@ class Active_Snippets {
 	 */
 	public function get_rev( $scope ) {
 		$rev = 0;
+		$scope_snippets = $this->fetch_active_snippets( $scope );
 
-		$revisions = get_option( 'code_snippets_assets_rev' );
-		if ( isset( $revisions[ $scope ] ) ) {
-			$rev += intval( $revisions[ $scope ] );
+		if ( empty( $scope_snippets[ $scope ] ) ) {
+			return false;
 		}
 
+		$revisions = get_option( 'code_snippets_assets_rev' );
+		$rev += isset( $revisions[ $scope ] ) ? intval( $revisions[ $scope ] ) : 0;
+
 		if ( is_multisite() ) {
-			$revisions = get_site_option( 'code_snippets_assets_rev' );
-			if ( isset( $revisions[ $scope ] ) ) {
-				$rev += intval( $revisions[ $scope ] );
-			}
+			$ms_revisions = get_site_option( 'code_snippets_assets_rev' );
+			$rev += isset( $ms_revisions[ $scope ] ) ? intval( $ms_revisions[ $scope ] ) : 0;
 		}
 
 		return $rev;
@@ -210,7 +224,7 @@ class Active_Snippets {
 			$current_scope = "site-$current_scope-js";
 		}
 
-		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope, 'code' );
+		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope );
 
 		// Concatenate all fetched code together into a single string.
 		$code = '';
@@ -234,10 +248,11 @@ class Active_Snippets {
 	/**
 	 * Print snippet code fetched from the database from a certain scope.
 	 *
-	 * @param array  $snippets_list List of data fetched.
-	 * @param string $scope         Name of scope to print.
+	 * @param string $scope Name of scope to print.
 	 */
-	private function print_content_snippets( $snippets_list, $scope ) {
+	private function print_content_snippets( $scope ) {
+		$snippets_list = $this->fetch_active_snippets( [ 'head-content', 'footer-content' ] );
+
 		foreach ( $snippets_list as $snippets ) {
 			foreach ( $snippets as $snippet ) {
 				if ( $scope === $snippet['scope'] ) {
@@ -252,13 +267,13 @@ class Active_Snippets {
 	 * Print head content snippets.
 	 */
 	public function load_head_content() {
-		$this->print_content_snippets( $this->content_snippets, 'head-content' );
+		$this->print_content_snippets( 'head-content' );
 	}
 
 	/**
 	 * Print footer content snippets.
 	 */
 	public function load_footer_content() {
-		$this->print_content_snippets( $this->content_snippets, 'footer-content' );
+		$this->print_content_snippets( 'footer-content' );
 	}
 }

@@ -13,15 +13,15 @@ class Export {
 	/**
 	 * Array of snippet data fetched from the database
 	 *
-	 * @var array
+	 * @var Snippet[]
 	 */
 	protected $snippets_list;
 
 	/**
 	 * Class constructor
 	 *
-	 * @param array|int $ids        List of snippet IDs to export.
-	 * @param string    $table_name Name of the database table to fetch snippets from.
+	 * @param array<int>|int $ids        List of snippet IDs to export.
+	 * @param string         $table_name Name of the database table to fetch snippets from.
 	 */
 	public function __construct( $ids, $table_name = '' ) {
 		$this->fetch_snippets( $ids, $table_name );
@@ -30,8 +30,8 @@ class Export {
 	/**
 	 * Fetch the selected snippets from the database
 	 *
-	 * @param array|int $ids        List of snippet IDs to export.
-	 * @param string    $table_name Name of database table to fetch snippets from.
+	 * @param array<int>|int $ids        List of snippet IDs to export.
+	 * @param string         $table_name Name of database table to fetch snippets from.
 	 */
 	private function fetch_snippets( $ids, $table_name ) {
 		if ( '' === $table_name ) {
@@ -103,7 +103,6 @@ class Export {
 	public function export_snippets_php() {
 		$result = "<?php\n";
 
-		/* @var Snippet $snippet */
 		foreach ( $this->snippets_list as $snippet ) {
 			$code = trim( $snippet->code );
 
@@ -173,7 +172,7 @@ class Export {
 				$result .= wp_strip_all_tags( $snippet->desc ) . "\n";
 			}
 
-			$result .= "*/\n\n{$snippet->code}\n\n";
+			$result .= "*/\n\n$snippet->code\n\n";
 		}
 
 		return $result;

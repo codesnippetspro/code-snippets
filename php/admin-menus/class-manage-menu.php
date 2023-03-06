@@ -81,7 +81,7 @@ class Manage_Menu extends Admin_Menu {
 			code_snippets()->get_menu_slug(),
 			array( $this, 'render' ),
 			"data:image/svg+xml;base64,$encoded_icon",
-			is_network_admin() ? 21 : 67
+			apply_filters( 'code_snippets/admin/menu_position', is_network_admin() ? 21 : 67 )
 		);
 
 		// Register the sub-menu.
@@ -107,12 +107,8 @@ class Manage_Menu extends Admin_Menu {
 			'snippets-settings'    => 'settings',
 		);
 
-		if ( isset( $classmap[ $sub ], code_snippets()->admin->menus[ $classmap[ $sub ] ] ) ) {
-			/* @var Admin_Menu $class */
-			$class = code_snippets()->admin->menus[ $classmap[ $sub ] ];
-		} else {
-			$class = $this;
-		}
+		$menus = code_snippets()->admin->menus;
+		$class = isset( $classmap[ $sub ], $menus[ $classmap[ $sub ] ] ) ? $menus[ $classmap[ $sub ] ] : $this;
 
 		/* Add a submenu to the Tools menu */
 		$hook = add_submenu_page(

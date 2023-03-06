@@ -145,7 +145,7 @@ class Plugin {
 	}
 
 	/**
-	 * Fetch the admin menu slug for a snippets menu.
+	 * Fetch the admin menu slug for a menu.
 	 *
 	 * @param string $menu Name of menu to retrieve the slug for.
 	 *
@@ -288,7 +288,7 @@ class Plugin {
 	/**
 	 * Retrieve a list of available snippet types and their labels.
 	 *
-	 * @return array
+	 * @return array<string, string> Snippet types.
 	 */
 	public static function get_types() {
 		return apply_filters(

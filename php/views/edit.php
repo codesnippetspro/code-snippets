@@ -128,11 +128,8 @@ $licensed = code_snippets()->licensing->is_licensed();
 			<?php $this->render_view( 'partials/editor-shortcuts' ); ?>
 		</div>
 
-		<div class="below-editor">
-			<?php
-			$this->render_view( 'partials/edit-scopes' );
-			do_action( 'code_snippets_below_editor', $snippet );
-			?>
+		<div class="below-snippet-editor">
+			<?php do_action( 'code_snippets_below_editor', $snippet ); ?>
 		</div>
 
 		<?php

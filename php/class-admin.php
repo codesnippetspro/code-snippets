@@ -12,7 +12,7 @@ class Admin {
 	/**
 	 * Admin_Menu class instances
 	 *
-	 * @var array
+	 * @var array<string, Admin_Menu>
 	 */
 	public $menus = array();
 
@@ -66,9 +66,9 @@ class Admin {
 	 * Adds a checkbox to the *Settings > Network Settings*
 	 * network admin menu
 	 *
-	 * @param array $menu_items Current mu menu items.
+	 * @param array<string, string> $menu_items Current mu menu items.
 	 *
-	 * @return array The modified mu menu items
+	 * @return array<string, string> The modified mu menu items
 	 *
 	 * @since 1.7.1
 	 */
@@ -111,9 +111,9 @@ class Admin {
 	/**
 	 * Adds a link pointing to the Manage Snippets page
 	 *
-	 * @param array $links Existing plugin action links.
+	 * @param array<string> $links Existing plugin action links.
 	 *
-	 * @return array Modified plugin action links
+	 * @return array<string> Modified plugin action links
 	 * @since 2.0.0
 	 */
 	public function plugin_settings_link( $links ) {
@@ -145,10 +145,10 @@ class Admin {
 	/**
 	 * Adds extra links related to the plugin
 	 *
-	 * @param array  $links Existing plugin info links.
-	 * @param string $file  The plugin the links are for.
+	 * @param array<string> $links Existing plugin info links.
+	 * @param string        $file  The plugin the links are for.
 	 *
-	 * @return array The modified plugin info links.
+	 * @return array<string> The modified plugin info links.
 	 * @since 2.0.0
 	 */
 	public function plugin_meta_links( $links, $file ) {
@@ -190,25 +190,22 @@ class Admin {
 	/**
 	 * Add Code Snippets information to Site Health information.
 	 *
-	 * @param array $info The Site Health information.
+	 * @param array<string, array<string, mixed>> $info Current Site Health information.
 	 *
-	 * @return array The updated Site Health information.
+	 * @return array<string, array<string, mixed>> Updated Site Health information.
 	 * @author sc0ttkclark
 	 */
 	public function debug_information( $info ) {
 		$fields = array();
 
-		// fetch all active snippets.
-		$args = array(
-			'active_only' => true,
-			'limit'       => 100,
-		);
-		$snippet_objects = get_snippets( array(), null, $args );
-
 		// build the debug information from snippet data.
-		foreach ( $snippet_objects as $snippet ) {
+		foreach ( get_snippets() as $snippet ) {
 			$values = [ $snippet->scope_name ];
 			$debug = [];
+
+			if ( ! $snippet->active ) {
+				continue;
+			}
 
 			if ( $snippet->name ) {
 				$debug[] = 'name: ' . $snippet->name;
@@ -265,10 +262,10 @@ class Admin {
 		global $current_user;
 
 		$key = 'ignore_code_snippets_survey_message';
-		$dismissed = get_user_meta( $current_user->ID, $key, false );
+		$dismissed = get_user_meta( $current_user->ID, $key );
 
 		if ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $key ) ) {
-			add_user_meta( $current_user->ID, $key, sanitize_key( wp_unslash( $_GET[ $key ] ) ), false );
+			add_user_meta( $current_user->ID, $key, sanitize_key( wp_unslash( $_GET[ $key ] ) ) );
 			return;
 		}
 

@@ -34,6 +34,7 @@ const SRC_FILES = {
 }
 
 const DEST_DIR = 'dist/'
+const BUNDLE_DIR = 'bundle/'
 
 const BUNDLE_FILES = [
 	'assets/**/*',
@@ -131,7 +132,7 @@ export default build
 
 export const bundle: TaskFunction = (() => {
 	const cleanupBefore: TaskFunction = () =>
-		del(['build', pkg.name, `${pkg.name}.*.zip`])
+		del([BUNDLE_DIR, pkg.name, `${pkg.name}.*.zip`])
 
 	const composerProduction: TaskFunction = done =>
 		exec('composer install --no-dev', error => {
@@ -160,7 +161,7 @@ export const bundle: TaskFunction = (() => {
 			.pipe(dest('.'))
 
 	const cleanupAfter: TaskFunction = done =>
-		fs.rename(pkg.name, 'build').then(() => done())
+		fs.rename(pkg.name, BUNDLE_DIR).then(() => done())
 
 	return series(
 		parallel(build, cleanupBefore),

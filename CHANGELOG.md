@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.3.0 (UNRELEASED)
+* Fixed: Do not enqueue CSS or JS snippet file if no snippets exist. (PRO)
+* Improved: Added additional editor shortcuts to list in tooltip.
+* Added: Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
+* Added: Ability to filter shortcode output. Thanks to contributions from [Jack Szwergold](https://github.com/JackSzwergold).
+* Fixed: Bug causing all snippets to show in site health information instead of those active.
+
 ## 3.2.1 (05 Oct 2022)
 * Fixed: Issue making survey reminder notice not dismissible.
 * Added: `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
