@@ -309,8 +309,9 @@ class Cloud_List_Table extends WP_List_Table {
 			case 'Public':
 				return 'js';
 			case 'Private':
-            case 'Unverified':
 				return 'css';
+			case 'Unverified':
+				return 'unverified';
 			default:
 				return 'php';
 		}
@@ -345,6 +346,7 @@ class Cloud_List_Table extends WP_List_Table {
 	protected function column_download( $item ) {	
 		$lang = strtolower( $this->get_type_from_scope($item['scope'] ) );
 		if($lang == 'js'){ $lang = 'javascript'; }
+		if($lang == 'html'){ $lang = 'markup'; }
 		$downloaded = $this->is_downloaded($item['cloud_id']);
 		if( $downloaded['is_downloaded'] ){
 			if( $downloaded['update_available'] ){

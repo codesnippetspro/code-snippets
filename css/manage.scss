@@ -280,6 +280,7 @@ $inactive-color: #ccc;
 @include snippet-type-colors(css, $css-active, $css-inactive, $css-background, $css-highlight);
 @include snippet-type-colors(html, $html-active, $html-active, $html-background, $html-highlight);
 @include snippet-type-colors(js, $js-active, $js-inactive, $js-background, $js-highlight);
+@include snippet-type-colors(unverified, $unverified-active, $unverified-inactive, $unverified-background, $unverified-highlight);
 
 @media screen and (max-width: 782px) {
 	p.search-box {

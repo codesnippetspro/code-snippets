@@ -112,6 +112,7 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
     protected function column_download( $item ) {
         $lang = strtolower( $this->get_type_from_scope($item['scope'] ) );
 		if($lang == 'js'){ $lang = 'javascript'; }
+		if($lang == 'html'){ $lang = 'markup'; }
         $downloaded = $this->is_downloaded($item['cloud_id']);
         if($downloaded['in_local_site']){
             if( $downloaded['update_available'] ){

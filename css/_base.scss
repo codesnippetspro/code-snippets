@@ -17,6 +17,11 @@ $js-active: #d44500;
 $js-background: #cd6600;
 $js-highlight: #cd6600;
 
+$unverified-inactive: #e91e63;
+$unverified-active: #d81b60;
+$unverified-background: #e91e63;
+$unverified-highlight: #e91e63;
+
 
 @mixin link-colors($color, $lightness: 15%) {
 	a {

@@ -1,7 +1,11 @@
 import Prism from 'prismjs'
+import 'prismjs/components/prism-clike'
+import 'prismjs/components/prism-javascript'
 import 'prismjs/components/prism-css'
 import 'prismjs/components/prism-php'
 import 'prismjs/components/prism-markup'
+import 'prismjs/plugins/keep-markup/prism-keep-markup'
+import 'prismjs/plugins/normalize-whitespace/prism-normalize-whitespace'
 
 //Handle clicks on snippet preview button 
 export const handleShowCloudPreview = () => {
@@ -26,6 +30,7 @@ export const handleShowCloudPreview = () => {
 			snippetCodeModalTag.classList.remove(...snippetCodeModalTag.classList)
 			snippetCodeModalTag.classList.add(`language-${snippetLanguage}`)
 			snippetCodeModalTag.innerHTML = snippetCode
+			if('markup' === snippetLanguage) { snippetCodeModalTag.innerHTML = `<xmp>${snippetCode}</xmp>` }
 			Prism.highlightElement(snippetCodeModalTag)
 		})
 	})
