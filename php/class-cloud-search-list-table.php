@@ -45,13 +45,6 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
     public $total_search_results;
 
     /**
-     * Curent page number of search results
-     *
-     * @var int
-     */
-    public $current_page;
-
-    /**
      * Items for the cloud list table
      *
      * @var array
@@ -80,17 +73,16 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
         esc_html_e( 'Please enter a search term to start searching code snippets in the cloud.', 'code-snippets' );
     }
 
-
     /**
 	 * Process pagination request
 	 *
 	 * @return array
 	 */
     public function prepare_pagniation() {
-        return $this->set_pagination_args( array(
+        $this->set_pagination_args( array(
+            'per_page'    => Cloud_List_Table::SNIPPETS_PER_PAGE,
             'total_items' => $this->total_search_results,
             'total_pages' => $this->total_pages_results,
-            'per_page'    => Cloud_List_Table::SNIPPETS_PER_PAGE,
         ) );
     }
 
@@ -103,7 +95,6 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
         parent::process_actions();
 		//Check for pagination request
         if( isset($_REQUEST['paged']) && isset($_REQUEST['s']) ){
-            $this->current_page = intval( sanitize_text_field($_REQUEST['paged']) );
             $search = sanitize_text_field( $_REQUEST['s'] );
             $search_results = CS_Cloud::search_cloud_snippets($search, $this->current_page);
             $this->items = $search_results['snippets'];

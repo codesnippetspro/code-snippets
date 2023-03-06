@@ -54,7 +54,7 @@ function clean_snippets_cache( $table_name ) {
  *
  * @since 2.0
  */
-function get_snippets( array $ids = array(), $multisite = null, array $cloud_ids = array() ) {
+function get_snippets( array $ids = array(), $multisite = null ) {
 	global $wpdb;
 
 	// If only one ID has been passed in, defer to the get_snippet() function.
@@ -96,16 +96,6 @@ function get_snippets( array $ids = array(), $multisite = null, array $cloud_ids
 			$snippets,
 			function ( Snippet $snippet ) use ( $ids ) {
 				return in_array( $snippet->id, $ids, true );
-			}
-		);
-	}
-
-	// If a list of Cloud IDs are provided, narrow down the snippets list.
-	if ( $cloud_ids_count > 0 ) {
-		return array_filter(
-			$snippets,
-			function ( Snippet $snippet ) use ( $cloud_ids ) {
-				return in_array( $snippet->cloud_id, $cloud_ids, true );
 			}
 		);
 	}

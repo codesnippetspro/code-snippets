@@ -45,6 +45,13 @@ class Cloud_List_Table extends WP_List_Table {
 	public $total_items;
 
 	/**
+     * Curent page number of search results
+     *
+     * @var int
+     */
+    public $current_page;
+
+	/**
 	 * Number of items per page
 	 *
 	 * @var int
@@ -144,12 +151,18 @@ class Cloud_List_Table extends WP_List_Table {
     public function prepare_items() {
         $columns = $this->get_columns();
         $hidden = ['id', 'code', 'cloud_id', 'revision'];
-        $this->_column_headers = array($columns, $hidden, $sortable);
+        $this->_column_headers = array($columns, $hidden);
 
 		//Process any actions
 		$this->process_actions();
 		
-		$this->items = $this->cloud_snippets;
+		/* Determine what page the user is currently looking at */
+		$this->current_page = $this->get_pagenum();
+
+		/* The WP_List_Table class does not handle pagination for us, so we need to ensure that the data is trimmed to only the current page. */
+		$data = array_slice( $this->cloud_snippets, ( ( $this->current_page - 1 ) * self::SNIPPETS_PER_PAGE ), self::SNIPPETS_PER_PAGE );
+		
+		$this->items = $data;
 		
 		/* We register our pagination options and calculations */
 		$this->prepare_pagniation();
@@ -182,18 +195,10 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return array
 	 */
     public function prepare_pagniation() {
-		/* Determine what page the user is currently looking at */
-		$current_page = $this->get_pagenum();
-
-		/* The WP_List_Table class does not handle pagination for us, so we need to ensure that the data is trimmed to only the current page. */
-		$data = array_slice( $this->cloud_snippets, ( ( $current_page - 1 ) * self::SNIPPETS_PER_PAGE ), self::SNIPPETS_PER_PAGE );
-		
-		$this->items = $data;
-
 		$this->set_pagination_args( array(
+            'per_page'    => self::SNIPPETS_PER_PAGE,
             'total_items' => $this->total_items,
             'total_pages' => ceil( $this->total_items / self::SNIPPETS_PER_PAGE ),
-            'per_page'    => self::SNIPPETS_PER_PAGE,
         ) );
     }
 

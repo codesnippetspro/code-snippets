@@ -1090,7 +1090,7 @@ class List_Table extends WP_List_Table {
 
 		/* Determine what page the user is currently looking at */
 		$current_page = $this->get_pagenum();
-
+		
 		/* Check how many items are in the data array */
 		$total_items = count( $data );
 
