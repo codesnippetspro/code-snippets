@@ -21,7 +21,7 @@ abstract class Data_Item {
 	 *
 	 * @var array<string, string> Field alias names keyed to actual field names.
 	 */
-	protected $field_aliases;
+	private $field_aliases;
 
 	/**
 	 * Class constructor.

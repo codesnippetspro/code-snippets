@@ -1,8 +1,9 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\Cloud;
 
 use WP_List_Table;
+use function Code_Snippets\code_snippets;
 
 /**
  * Contains the class for handling the snippets table
@@ -19,291 +20,265 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 
 /**
  * This class handles the table for the manage cloud snippets menu
- * 
+ *
  */
 class Cloud_List_Table extends WP_List_Table {
 
-    /**
-	 * Items for the cloud list table
+	/**
+	 * Instance of Cloud API class.
 	 *
-	 * @var array
+	 * @var Cloud_API
 	 */
-	public $cloud_snippets = array();
+	protected $cloud_api;
 
 	/**
-	 * Whether the current screen is in the network admin
+	 * Items for the cloud list table.
 	 *
-	 * @var bool
+	 * @var Cloud_Snippets
 	 */
-	public $is_network;
+	protected $cloud_snippets;
 
 	/**
-	 * Total number of snippets
-	 *
-	 * @var int
+	 * Class constructor.
 	 */
-	public $total_items;
+	public function __construct() {
+		parent::__construct( array(
+			'singular' => 'cloud-snippet',
+			'plural'   => 'cloud-snippets',
+			'ajax'     => false,
+		) );
 
-	/**
-     * Curent page number of search results
-     *
-     * @var int
-     */
-    public $current_page;
+		$this->cloud_api = code_snippets()->cloud_api;
 
-	/**
-	 * Number of items per page
-	 *
-	 * @var int
-	 */
-	const SNIPPETS_PER_PAGE = 10;
-
-    /**
-	 * The constructor function for our class.
-	 * Adds hooks, initializes variables, setups class.
-	 *
-	 * @phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
-	 */
-	public function __construct($cloud_snippets) {
-        global $status, $page;
-        
-        $this->cloud_snippets = $cloud_snippets;
-		$this->total_items = count($this->cloud_snippets);
-		$this->is_network = is_network_admin();
-
-		/* Strip the result query arg from the URL */
+		// Strip the result query arg from the URL.
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
-        
-        /* Set up the class */
-        parent::__construct( array(
-            'singular'  => 'snippet',
-            'plural'    => 'snippets',
-            'ajax'      => false
-        ) );
-
-		//Add Thickbox and Render 
-		$this->render_cloud_snippet_thickbox();
-    }
-
-    /**
-	 * Set the 'id' column as hidden by default.
-	 *
-	 * @param array $hidden List of hidden columns.
-	 *
-	 * @return array
-	 */
-	public function default_hidden_columns( $hidden ) {
-		$hidden[] = 'id';
-		$hidden[] = 'code';
-		$hidden[] = 'cloud_id';
-		$hidden[] = 'revision';
-		return $hidden;
 	}
 
-    /**
-	 * Set the colums for the cloud table.
+	/**
+	 * Sets the list of columns that are hidden by default..
+	 *
+	 * @param array<string> $hidden List of hidden columns.
+	 *
+	 * @return array<string> Modified list of hidden columns
+	 */
+	public function default_hidden_columns( $hidden ) {
+		return array_merge( $hidden, [ 'id', 'code', 'cloud_id', 'revision' ] );
+	}
+
+	/**
+	 * Build the list of column headings.
 	 *
 	 * @return array
 	 */
-    public function get_columns(){
-        $columns = array(
-			'cb'            => '<input type="checkbox" />',
-            'id'          	=> __( 'id', 'code-snippets' ),			//Hidden
-            'cloud_id'      => __( 'cloud_id', 'code-snippets' ),	//Hidden
-            'code'          => __( 'code', 'code-snippets' ),		//Hidden
-            'revision'      => __( 'revision', 'code-snippets' ),	//Hidden
-            'name'          => __( 'Name', 'code-snippets' ),
-            'scope'      	=> __( 'Type', 'code-snippets' ),
-            'status'      	=> __( 'Status', 'code-snippets' ),
-            'description'   => __( 'Description', 'code-snippets' ),
-            'tags'   		=> __( 'Tags', 'code-snippets' ),
-            'updated'       => __( 'Updated', 'code-snippets' ),
-            'download'      => '',
-        );
-        
-		return apply_filters( 'code_snippets/cloud_list_table/columns', $columns );
-    }
+	public function get_columns() {
+		$columns = array(
+			'cb'          => '<input type="checkbox" />',
+			'id'          => __( 'ID', 'code-snippets' ),
+			'cloud_id'    => __( 'Cloud ID', 'code-snippets' ),
+			'code'        => __( 'Code', 'code-snippets' ),
+			'revision'    => __( 'Revision', 'code-snippets' ),
+			'name'        => __( 'Name', 'code-snippets' ),
+			'scope'       => __( 'Type', 'code-snippets' ),
+			'status'      => __( 'Status', 'code-snippets' ),
+			'description' => __( 'Description', 'code-snippets' ),
+			'tags'        => __( 'Tags', 'code-snippets' ),
+			'updated'     => __( 'Updated', 'code-snippets' ),
+			'download'    => '',
+		);
 
-    /** Text displayed when no snippet data is available */
-    public function no_items() {
-        esc_html_e( 'Looks like there are no snippets in your cloud codevault avaliable.', 'code-snippets' );
-    }
+		return apply_filters( 'code_snippets/cloud_list_table/columns', $columns );
+	}
+
+	/**
+	 * Text displayed when no snippet data is available.
+	 *
+	 * @return void
+	 */
+	public function no_items() {
+		esc_html_e( 'Looks like there are no snippets in your cloud codevault available.', 'code-snippets' );
+	}
 
 	/**
 	 * Define the bulk actions to include in the drop-down menus
 	 *
-	 * @return array An array of menu items with the ID paired to the label
+	 * @return array<string, string> An array of menu items with the ID paired to the label.
 	 */
 	public function get_bulk_actions() {
 		$actions = array(
-			'download-selected'   => __( 'Download', 'code-snippets' ),
+			'download-selected' => __( 'Download', 'code-snippets' ),
 		);
 
 		return apply_filters( 'code_snippets/cloud_list_table/bulk_actions', $actions );
 	}
 
-
-    /**
-	 * Prapare the items for the table.
+	/**
+	 * Fetch the snippets used to populate the table.
 	 *
-	 * @return void
+	 * @return Cloud_Snippets
 	 */
-    public function prepare_items() {
-        $columns = $this->get_columns();
-        $hidden = ['id', 'code', 'cloud_id', 'revision'];
-        $this->_column_headers = array($columns, $hidden);
-
-		//Process any actions
-		$this->process_actions();
-		
-		/* Determine what page the user is currently looking at */
-		$this->current_page = $this->get_pagenum();
-
-		/* The WP_List_Table class does not handle pagination for us, so we need to ensure that the data is trimmed to only the current page. */
-		$data = array_slice( $this->cloud_snippets, ( ( $this->current_page - 1 ) * self::SNIPPETS_PER_PAGE ), self::SNIPPETS_PER_PAGE );
-		
-		$this->items = $data;
-		
-		/* We register our pagination options and calculations */
-		$this->prepare_pagniation();
+	protected function fetch_snippets() {
+		return $this->cloud_api->get_codevault_snippets( $this->get_pagenum() );
 	}
 
 	/**
-	 * Process any actions that have been submitted
-	 * For Example Download Snippet to Database
+	 * Prepare items for the table.
+	 *
+	 * @return void
+	 */
+	public function prepare_items() {
+		$this->process_actions();
+
+		$columns = $this->get_columns();
+		$hidden = [ 'id', 'code', 'cloud_id', 'revision' ];
+		$this->_column_headers = array( $columns, $hidden );
+
+		$this->cloud_snippets = $this->fetch_snippets();
+		$this->items = $this->cloud_snippets->snippets;
+
+		$this->set_pagination_args( array(
+			'per_page'    => count( $this->cloud_snippets->snippets ),
+			'total_items' => $this->cloud_snippets->total_snippets,
+			'total_pages' => $this->cloud_snippets->total_pages,
+		) );
+	}
+
+	/**
+	 * Process any actions that have been submitted, such as downloading cloud snippets to the local database.
 	 *
 	 * @return void
 	 */
 	public function process_actions() {
-		
-		//Check if any actions were submitted
-		if ( isset( $_REQUEST['action'] ) ){
-			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source' ) );
-			$result = CS_Cloud::download_or_update_snippet( sanitize_key( $_GET['snippet'] ), sanitize_key( $_GET['source'] ), sanitize_key( $_REQUEST['action'] ) );
-			if ( $result['success'] ) {
-				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result['action'] ) ) );
-				exit;
-			}
+		if ( ! isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+			return;
 		}
+
+		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source' ) );
+
+		$result = $this->cloud_api->download_or_update_snippet(
+			sanitize_key( $_REQUEST['snippet'] ),
+			sanitize_key( $_REQUEST['source'] ),
+			sanitize_key( $_REQUEST['action'] )
+		);
+
+		if ( $result['success'] ) {
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result['action'] ) ) );
+			exit;
+		}
+
 		//***TODO: Add code to action bulk download of snippets ****//
 	}
 
+	/**
+	 * Build a hidden input field for a certain column and snippet value.
+	 *
+	 * @param string        $column_name Column name.
+	 * @param Cloud_Snippet $snippet     Column item.
+	 * @param mixed         $value       Input value.
+	 *
+	 * @return string
+	 */
+	protected function build_column_hidden_input( $column_name, $snippet, $value ) {
+		return sprintf(
+			'<input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
+			esc_attr( $column_name ),
+			esc_attr( $snippet->cloud_id ),
+			esc_attr( $column_name ),
+			esc_attr( $value )
+		);
+	}
 
 	/**
-	 * Process pagination request
-	 *
-	 * @return array
-	 */
-    public function prepare_pagniation() {
-		$this->set_pagination_args( array(
-            'per_page'    => self::SNIPPETS_PER_PAGE,
-            'total_items' => $this->total_items,
-            'total_pages' => ceil( $this->total_items / self::SNIPPETS_PER_PAGE ),
-        ) );
-    }
-
-    /**
 	 * Define the output of all columns that have no callback function
 	 *
-	 * @param CS_Cloud $item The snippet used for the current row.
-	 * @param string  $column_name The name of the column being printed.
+	 * @param Cloud_Snippet $item        The snippet used for the current row.
+	 * @param string        $column_name The name of the column being printed.
 	 *
 	 * @return string The content of the column to output.
 	 */
-    protected function column_default( $item, $column_name ) {
-		$downloaded = $this->is_downloaded($item['cloud_id']);
-        switch( $column_name ) { 
-            case 'tags':
-            case 'description':
-                return $item[ $column_name ] . sprintf(
-					'<input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
-					esc_attr( $column_name ),
-					esc_attr( $item[ 'cloud_id' ]),
-					esc_attr( $column_name ),
-					esc_attr( $item[ $column_name ] )
-				);
+	protected function column_default( $item, $column_name ) {
+		$link = $this->get_cloud_map_link( $item->cloud_id );
+
+		switch ( $column_name ) {
+			case 'tags':
+				return join( ', ', $item->tags );
+
+			case 'description':
+				return $item->description;
+
 			case 'name':
+				$edit_url = $link ? code_snippets()->get_snippet_edit_url( $link->local_id ) : '';
 				return sprintf(
-					'<a href="%s">%s</a><input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
-					esc_url( '/wp-admin/admin.php?page=edit-snippet&id=' . $downloaded['local_id'] ),
-					esc_attr( $item[ $column_name ] ),
-					esc_attr( $column_name ),
-					esc_attr( $item[ 'cloud_id' ]),
-					esc_attr( $column_name ),
-					esc_attr( $item[ $column_name ] )
+					$edit_url ? '<a href="%1$s">%2$s</a>' : '<a>%2$s</a>',
+					esc_url( $edit_url ),
+					esc_html( $item->name )
 				);
+
 			case 'updated':
-				return sprintf(
-					'<span>%s</span><input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
-					esc_attr( $item[ $column_name ] ),
-					esc_attr( $column_name ),
-					esc_attr( $item[ 'cloud_id' ]),
-					esc_attr( $column_name ),
-					esc_attr( $item[ $column_name ] )
-				);
+				return sprintf( '<span>%s</span>', esc_html( $item->updated ) );
 
 			case 'id':
 			case 'cloud_id':
 			case 'code':
 			case 'revision':
-				return sprintf(
-					'<input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
-					esc_attr( $column_name ),
-					esc_attr( $item[ 'cloud_id' ]),
-					esc_attr( $column_name ),
-					esc_html( $item[ $column_name ] )
-				);
+				return $item->$column_name;
+
 			case 'status':
-				$style = $this->get_style_from_status($item['status']);
 				return sprintf(
 					'<a class="snippet-type-badge snippet-status" data-type="%s">%s</a>',
-					esc_attr( $style ),
-					esc_html( $item['status'] )
+					esc_attr( $this->get_style_from_status( $item->status ) ),
+					esc_html( $item->status )
 				);
+
 			case 'scope':
-				$type = $this->get_type_from_scope($item['scope']);
+				$type = $this->get_lang_from_scope( $item->scope );
+
 				return sprintf(
 					'<a id="snippet-type-%s" class="snippet-type-badge snippet-type" data-type="%s">%s</a>',
-					esc_attr( $item[ 'cloud_id' ]),
-					esc_attr( strtolower($type) ),
+					esc_attr( $item->cloud_id ),
+					esc_attr( strtolower( $type ) ),
 					esc_html( $type )
 				);
+
 			case 'download':
 				return '';
-            default:
-                return print_r( $item, true ) ; //Show the whole array for troubleshooting purposes
-        }
-    }
 
-	/**
-	 * Transpose the scope to a type
-	 * 
-	 * @param string $scope The scope of the snippet
-	 * 
-	 * @return string The type of the snippet
-	 */
-	public function get_type_from_scope($scope) {
-		switch ($scope) {
-			case 'global':
-				return 'PHP';
-			case 'site-css':
-				return 'CSS';
-			case 'site-footer-js':
-				return 'JS';
-			case 'content':
-				return 'HTML';
+			default:
+				// TODO: maybe lock this behind WP_DEBUG or remove before release.
+				return print_r( $item, true ); // Show the whole array for troubleshooting purposes.
 		}
 	}
 
 	/**
-	 * Transpose the status to a style
-	 * 
+	 * Translate a snippet scope to a type.
+	 *
+	 * @param string $scope The scope of the snippet
+	 *
+	 * @return string The type of the snippet
+	 */
+	protected function get_lang_from_scope( $scope ) {
+		switch ( $scope ) {
+			case 'global':
+				return 'php';
+			case 'site-css':
+				return 'css';
+			case 'site-footer-js':
+				return 'javascript';
+			case 'content':
+				return 'mixed';
+			default:
+				return '';
+		}
+	}
+
+	/**
+	 * Translate a snippet status to a style class.
+	 *
 	 * @param string $status The scope of the snippet
-	 * 
+	 *
 	 * @return string The style to be used for the stats badge
 	 */
-	public function get_style_from_status($status) {
-		switch ($status) {
+	public function get_style_from_status( $status ) {
+		switch ( $status ) {
 			case 'AI Verified':
 				return 'html';
 			case 'Public':
@@ -317,21 +292,19 @@ class Cloud_List_Table extends WP_List_Table {
 		}
 	}
 
-	
 
 	/**
 	 * Define the columns that can be sorted. TODO: Add the ability to sort columns by clicking on the column name
 	 *
-	 * @return array The IDs of the columns that can be sorted
+	 * @return array<string, string|array<string|boolean>> The IDs of the columns that can be sorted
 	 */
 	public function get_sortable_columns() {
-
-		$sortable_columns = array(
-			'name'     => 'name',
-			'type'     => array( 'type', true ),
-			'status'   => array( 'status', true ),
-			'updated' => array( 'updated', true ),
-		);
+		$sortable_columns = [
+			'name'    => 'name',
+			'type'    => [ 'type', true ],
+			'status'  => [ 'status', true ],
+			'updated' => [ 'updated', true ],
+		];
 
 		return apply_filters( 'code_snippets/cloud_list_table/sortable_columns', $sortable_columns );
 	}
@@ -339,67 +312,60 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Define the output of the 'download' column
 	 *
-	 * @param CS_Cloud $item The snippet used for the current row.
+	 * @param Cloud_Snippet $item The snippet used for the current row.
 	 *
 	 * @return string The content of the column to output.
 	 */
-	protected function column_download( $item ) {	
-		$lang = strtolower( $this->get_type_from_scope($item['scope'] ) );
-		if($lang == 'js'){ $lang = 'javascript'; }
-		if($lang == 'html'){ $lang = 'markup'; }
-		$downloaded = $this->is_downloaded($item['cloud_id']);
-		if( $downloaded['is_downloaded'] ){
-			if( $downloaded['update_available'] ){
-				return sprintf('<a class="cloud-snippet-download" href="?page=%s&type=cloud&action=%s&snippet=%s&source=%s">Update Snippet</a>
-					<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s data-lang=%s>Preview Update</a>', 
-					esc_attr( $_REQUEST['page'] ), 
-					'update', 
-					esc_attr( $item['cloud_id'] ),
-					esc_attr( 'codevault' ),
-					esc_attr( $item['cloud_id'] ),
-					esc_attr( $lang ),
-				);			
-			}
-			return sprintf('<a href="%s" class="cloud-snippet-downloaded">View</a>',
-					esc_url( '/wp-admin/admin.php?page=edit-snippet&id=' . $downloaded['local_id'] ));	
-		}
-		
+	protected function column_download( $item ) {
+		$lang = $this->get_lang_from_scope( $item->scope );
+		$link = $this->get_cloud_map_link( $item->cloud_id );
 
-		return sprintf('<a class="cloud-snippet-download" href="?page=%s&type=cloud&action=%s&snippet=%s&source=%s">Download</a>
-				<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s data-lang=%s>Preview</a>', 
-				esc_attr( $_REQUEST['page'] ), 
-				'download', 
-				esc_attr( $item['cloud_id'] ),
-                esc_attr( 'codevault' ),
-				esc_attr( $item['cloud_id'] ),
-				esc_attr( $lang ),
-		);		
+		if ( $link ) {
+			if ( $link->update_available ) {
+				return sprintf( '<a class="cloud-snippet-download" href="?page=%s&type=cloud&action=%s&snippet=%s&source=%s">Update Snippet</a>
+					<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s data-lang=%s>Preview Update</a>',
+					esc_attr( $_REQUEST['page'] ),
+					'update',
+					esc_attr( $item->cloud_id ),
+					esc_attr( 'codevault' ),
+					esc_attr( $item->cloud_id ),
+					esc_attr( $lang )
+				);
+			}
+			return sprintf( '<a href="%s" class="cloud-snippet-downloaded">View</a>',
+				esc_url( '/wp-admin/admin.php?page=edit-snippet&id=' . $link['local_id'] ) );
+		}
+
+
+		return sprintf( '<a class="cloud-snippet-download" href="?page=%s&type=cloud&action=%s&snippet=%s&source=%s">Download</a>
+				<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s data-lang=%s>Preview</a>',
+			esc_attr( $_REQUEST['page'] ),
+			'download',
+			esc_attr( $item->cloud_id ),
+			esc_attr( 'codevault' ),
+			esc_attr( $item->cloud_id ),
+			esc_attr( $lang )
+		);
 	}
 
 	/**
 	 * Handles the checkbox column output.
 	 *
-	 * @param Snippet $item The snippet being used for the current row.
+	 * @param Cloud_Snippet $item The snippet being used for the current row.
 	 *
 	 * @return string The column content to be printed.
 	 */
 	protected function column_cb( $item ) {
-
-		$out = sprintf(
-			'<input type="checkbox" name="%s[]" value="%s">',
-			$item->shared_network ? 'shared_ids' : 'ids',
-			intval( $item->id )
-		);
-
+		$out = sprintf( '<input type="checkbox" name="cloud_ids[]" value="%s">', $item->cloud_id );
 		return apply_filters( 'code_snippets/cloud_list_table/column_cb', $out, $item );
 	}
 
 	/**
-	 * Retrieve the classes for the table
+	 * Retrieve the classes for the table.
 	 *
-	 * We override this in order to add 'snippets' as a class for custom styling
+	 * We override this in order to add 'snippets' as a class for custom styling.
 	 *
-	 * @return array The classes to include on the table element
+	 * @return array The classes to include on the table element.
 	 */
 	public function get_table_classes() {
 		$classes = array( 'cloud-table', 'widefat', $this->_args['plural'] );
@@ -410,74 +376,69 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Outputs content for a single row of the table
 	 *
-	 * @param Snippet $item The snippet being used for the current row.
+	 * @param Cloud_Snippet $item The snippet being used for the current row.
 	 */
 	public function single_row( $item ) {
-		$style =  $this->get_style_from_status($item['status']) ;
-		$downloaded = $this->is_downloaded($item['cloud_id']);
-		if($downloaded){
-			$status = 'inactive';
-		}else{
-			$status = 'active';
-		}
-		
+		$style = $this->get_style_from_status( $item->status );
+		$link = $this->get_cloud_map_link( $item->cloud_id );
+
+		$status = $link ? 'inactive' : 'active';
 		$row_class = "snippet $status-snippet $style-snippet";
 
-		if ( $item->shared_network ) {
-			$row_class .= ' shared-network-snippet';
-		}
-
-		printf( '<tr id="snippet-%s" class="%s" data-snippet-scope="%s">', 
-			esc_attr( $item['cloud_id'] ),
-			esc_attr( $row_class ), 
-			esc_attr( $item->scope ) 
+		printf( '<tr id="snippet-%s" class="%s" data-snippet-scope="%s">',
+			esc_attr( $item->cloud_id ),
+			esc_attr( $row_class ),
+			esc_attr( $item->scope )
 		);
+
 		$this->single_row_columns( $item );
 		echo '</tr>';
 	}
 
 	/**
-     * Render Cloud Snippet Thickbox Popup
-     * Returns the html for the thickbox popup
-     *
-     * @return string
-     */
-    public function render_cloud_snippet_thickbox(){
-		add_thickbox(); //Add thickbox to the page
-		
-        echo
-        '<div id="show-code-preview" style="display:none;">
-                <p id="snippet-name-thickbox"></p>
-                <p>Snippet Code:</p>
-                <pre class="thickbox-code-viewer">
-					<code id="snippet-code-thickbox" class=""></code>
-				</pre>
-		</div>';
-		
+	 * Display the table.
+	 *
+	 * @return void
+	 */
+	public function display() {
+		$this->render_cloud_snippet_thickbox();
+		parent::display();
 	}
 
 	/**
-	 * Check if a snippet has been downloaded
-	 * 
-	 * @param string $cloud_id The cloud id of the snippet
-	 * 
-	 * @return array|bool
+	 * Renders the html for the preview thickbox popup.
+	 *
+	 * @return void
 	 */
-	public function is_downloaded($cloud_id){
-		//Get the local to cloud map
-		$local_to_cloud_map = get_transient('cs_local_to_cloud_map');
-		//Filter the local to cloud map to get the snippet that is to be saved to the database
-		$downloaded = array_filter($local_to_cloud_map, function ($var) use ($cloud_id) {
-			return ($var['cloud_id'] == $cloud_id);
-		});
-		if(count($downloaded) > 0){
-			return [ 
-				'is_downloaded' => true, 
-				'local_id' => reset($downloaded)['local_id'],
-				'update_available' => reset($downloaded)['update_available'],
-			];
-		}
-		return false;
+	public function render_cloud_snippet_thickbox() {
+		add_thickbox();
+		?>
+		<div id="show-code-preview" style="display: none;">
+			<p id="snippet-name-thickbox"></p>
+			<p><?php esc_html_e( 'Snippet Code:', 'code-snippets' ); ?></p>
+			<pre class="thickbox-code-viewer">
+				<code id="snippet-code-thickbox" class=""></code>
+			</pre>
+		</div>
+		<?php
 	}
 
+	/**
+	 * Fetch the local data for a downloaded snippet.
+	 *
+	 * @param string $cloud_id The cloud ID of the snippet.
+	 *
+	 * @return Cloud_Link|null
+	 */
+	protected function get_cloud_map_link( $cloud_id ) {
+		$local_to_cloud_map = $this->cloud_api->get_local_to_cloud_map();
+
+		foreach ( $local_to_cloud_map as $link ) {
+			if ( $link->cloud_id === $cloud_id ) {
+				return $link;
+			}
+		}
+
+		return null;
+	}
 }

@@ -203,30 +203,25 @@ function get_snippet( $id = 0, $multisite = null ) {
 }
 
 /**
- * Retrieve a single snippets from the database from its Cloud ID.
- * Will return false-bool if no Cloud ID is specified.
+ * Retrieve a single snippets from the database using its cloud ID.
+ *
  * Read operation.
  *
- * @param string $id The Cloud ID of the snippet to retrieve
+ * @param string $cloud_id The Cloud ID of the snippet to retrieve
  *
- * @return Snippet|Bool A single snippet object or false if no snippet found.
- * @since 3.3.dev-1
+ * @return Snippet|null A single snippet object or null if no snippet found.
+ * @since 3.4.0
  */
-function get_snippet_by_cloud_id( $id, $multisite = null ) {
+function get_snippet_by_cloud_id( $cloud_id, $multisite = null ) {
 	global $wpdb;
 
 	$multisite = DB::validate_network_param( $multisite );
 	$table_name = code_snippets()->db->get_table_name( $multisite );
 
 	// Search for the snippet from the database.
-	$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE cloud_id = %d", $id ) );
-	if ( is_null( $snippet_data ) ) {
-		return false;
-	}
+	$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE cloud_id = %d", $cloud_id ) );
 
-	$snippet = new Snippet( $snippet_data );
-
-	return $snippet;
+	return is_null( $snippet_data ) ? null : new Snippet( $snippet_data );
 }
 
 /**
@@ -419,7 +414,7 @@ function delete_snippet( $id, $multisite = null ) {
 	if ( $result ) {
 		do_action( 'code_snippets/delete_snippet', $id, $multisite );
 		clean_snippets_cache( $table );
-		CS_Cloud::delete_snippet_from_transient_data( $id );
+		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 	}
 
 	return $result;

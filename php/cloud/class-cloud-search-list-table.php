@@ -1,6 +1,8 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\Cloud;
+
+use function Code_Snippets\code_snippets;
 
 /**
  * Contains the class for handling the snippets table
@@ -22,214 +24,80 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class Cloud_Search_List_Table extends Cloud_List_Table {
 
 	/**
-	 * Whether there are no search results.
-	 *
-	 * @var boolean
-	 */
-	public $no_results;
-
-	/**
-	 * Total number of pages of search results.
-	 *
-	 * @var int
-	 */
-	public $total_pages_results;
-
-	/**
-	 * Total number of search results.
-	 *
-	 * @var int
-	 */
-	public $total_search_results;
-
-	/**
-	 * Items for the cloud list table.
-	 *
-	 * @var array<object>
-	 */
-	public $cloud_snippets = array();
-
-	/**
-	 * Class constructor.
-	 *
-	 * @param array<object> $cloud_snippets       List of cloud snippets.
-	 * @param boolean       $no_results           Whether there were no results found when searching.
-	 * @param integer       $total_search_results Total number of search result items.
-	 * @param integer       $total_pages_results  Total number of search result pages.
-	 */
-	public function __construct( $cloud_snippets, $no_results, $total_search_results, $total_pages_results ) {
-		parent::__construct( $this->cloud_snippets );
-
-		$this->no_results = $no_results;
-		$this->cloud_snippets = $cloud_snippets;
-		$this->total_search_results = $total_search_results;
-		$this->total_pages_results = $total_pages_results;
-	}
-
-	/** Text displayed when no snippet data is available */
-	public function no_items() {
-		if ( $this->no_results ) {
-			echo '<p class="no-results">',
-			esc_html__( 'No snippets where found with that search term, please try again.', 'code-snippets' ),
-			'</p>';
-		}
-
-		esc_html_e( 'Please enter a search term to start searching code snippets in the cloud.', 'code-snippets' );
-	}
-
-	/**
-	 * Process pagination request
-	 *
-	 * @return array
-	 */
-	public function prepare_pagniation() {
-		$this->set_pagination_args( array(
-			'per_page'    => Cloud_List_Table::SNIPPETS_PER_PAGE,
-			'total_items' => $this->total_search_results,
-			'total_pages' => $this->total_pages_results,
-		) );
-	}
-
-	/**
-	 * Process any actions that have been submitted
+	 * Text displayed when no snippet data is available.
 	 *
 	 * @return void
 	 */
-	public function process_actions() {
-		parent::process_actions();
-		//Check for pagination request
-		if ( isset( $_REQUEST['paged'] ) && isset( $_REQUEST['s'] ) ) {
-			$search = sanitize_text_field( $_REQUEST['s'] );
-			$search_results = CS_Cloud::search_cloud_snippets( $search, $this->current_page );
-			$this->items = $search_results['snippets'];
+	public function no_items() {
+		if ( count( $this->cloud_snippets->snippets ) < 1 ) {
+			echo '<p class="no-results">',
+			esc_html__( 'No snippets could be found with that search term. Please try again.', 'code-snippets' ),
+			'</p>';
+		} else {
+			esc_html_e( 'Please enter a search term to start searching code snippets in the cloud.', 'code-snippets' );
 		}
 	}
 
+	/**
+	 * Fetch the snippets used to populate the table.
+	 *
+	 * @return Cloud_Snippets
+	 */
+	public function fetch_snippets() {
+		// Create an empty results object if there's no search query.
+		if ( empty( $_REQUEST['s'] ) ) {
+			return new Cloud_Snippets();
+		}
+
+		// If we have a search query, then send a search request to cloud server API search endpoint.
+		$search_query = sanitize_text_field( $_REQUEST['s'] );
+		return $this->cloud_api->fetch_search_results( $search_query, $this->get_pagenum() );
+	}
 
 	/**
 	 * Define the output of the 'download' column
 	 *
-	 * @param array<string, mixed> $item The snippet used for the current row.
+	 * @param Cloud_Snippet $item The snippet used for the current row.
 	 *
 	 * @return string The content of the column to output.
 	 */
 	protected function column_download( $item ) {
-		$lang = strtolower( $this->get_type_from_scope( $item['scope'] ) );
+		$lang = $this->get_lang_from_scope( $item->scope );
+		$link = $this->get_cloud_map_link( $item->cloud_id );
 
-		if ( $lang === 'js' ) {
-			$lang = 'javascript';
-		}
-
-		if ( $lang === 'html' ) {
-			$lang = 'markup';
-		}
-
-		$downloaded = $this->is_downloaded( $item['cloud_id'] );
-
-		if ( $downloaded['in_local_site'] ) {
-			if ( $downloaded['update_available'] ) {
-				return sprintf( '<a class="cloud-snippet-download" href="?page=%s&type=cloud&action=%s&snippet=%s&source=%s">Update Available</a>
-                    <a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s data-lang=%s>Preview</a>',
-					esc_attr( $_REQUEST['page'] ),
-					'update',
-					esc_attr( $item['cloud_id'] ),
-					esc_attr( 'search' ),
-					esc_attr( $item['cloud_id'] ),
-					esc_attr( $lang ),
-                );
-			}
-			return sprintf( '<a href="%s" class="cloud-snippet-downloaded">View</a>',
-				esc_url( '/wp-admin/admin.php?page=edit-snippet&id=' . $downloaded['snippet_id'] ) );
-		}
-
-		return sprintf( '<a class="cloud-snippet-download" href="?page=%s&type=cloud&action=%s&snippet=%s&source=%s">Download</a>
-				<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet=%s data-lang=%s>Preview</a>',
-			esc_attr( $_REQUEST['page'] ),
-			'download',
-			esc_attr( $item['id'] ),
-			esc_attr( 'search' ),
-			esc_attr( $item['cloud_id'] ),
-			esc_attr( $lang ),
-		);
-	}
-
-	/**
-	 * Define the output of the 'name' column
-	 *
-	 * @param CS_Cloud $item The snippet used for the current row.
-	 *
-	 * @return string The content of the column to output.
-	 */
-	protected function column_name( $item ) {
-		$downloaded = $this->is_downloaded( $item['cloud_id'] );
-		if ( $downloaded['in_local_site'] ) {
+		if ( $link && ! $link->update_available ) {
 			return sprintf(
-				'<a href="%s">%s</a><input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
-				esc_url( '/wp-admin/admin.php?page=edit-snippet&id=' . $downloaded['snippet_id'] ),
-				esc_attr( $item['name'] ),
-				esc_attr( 'name' ),
-				esc_attr( $item['cloud_id'] ),
-				esc_attr( 'name' ),
-				esc_attr( $item['name'] )
+				'<a href="%s" class="cloud-snippet-downloaded">%s</a>',
+				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
+				esc_html__( 'View', 'code-snippets' )
 			);
 		}
 
-		return sprintf(
-			'<a>%s</a><input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
-			esc_attr( $item['name'] ),
-			esc_attr( 'name' ),
-			esc_attr( $item['cloud_id'] ),
-			esc_attr( 'name' ),
-			esc_attr( $item['name'] )
+		$update_available = $link && $link->update_available;
+
+		$download_url = add_query_arg( [
+			'paged'   => $this->get_pagenum(),
+			'type'    => 'cloud',
+			'action'  => $update_available ? 'update' : 'download',
+			'snippet' => $item->cloud_id,
+			'source'  => 'search',
+		] );
+
+		$download_link = sprintf(
+			'<a class="cloud-snippet-download" href="%s">%s</a>',
+			esc_url( $download_url ),
+			$update_available ?
+				esc_html__( 'Update Available', 'code-snippets' ) :
+				esc_html__( 'Download', 'code-snippets' )
 		);
+
+		$thickbox_link = sprintf(
+			'<a href="#TB_inline?&width=700&height=500&inlineId=show-code-preview" class="cloud-snippet-preview thickbox" data-snippet="%s" data-lang="%s">%s</a>',
+			esc_attr( $item->cloud_id ),
+			esc_attr( $lang ),
+			esc_html__( 'Preview', 'code-snippets' )
+		);
+
+		return $download_link . $thickbox_link;
 	}
-
-	/**
-	 * Outputs content for a single row of the table
-	 *
-	 * @param Snippet $item The snippet being used for the current row.
-	 */
-	public function single_row( $item ) {
-		$style = $this->get_style_from_status( $item['status'] );
-		$downloaded = $this->is_downloaded( $item['cloud_id'] );
-
-		$status = $downloaded['downloaded'] ? 'inactive' : 'active';
-
-		$row_class = "snippet $status-snippet $style-snippet";
-
-		if ( $item->shared_network ) {
-			$row_class .= ' shared-network-snippet';
-		}
-
-		printf( '<tr class="%s" data-snippet-scope="%s">', esc_attr( $row_class ), esc_attr( $item->scope ) );
-		$this->single_row_columns( $item );
-		echo '</tr>';
-	}
-
-	/**
-	 * Check if a snippet has been downloaded
-	 *
-	 * @param string $cloud_id The cloud ID of the snippet.
-	 *
-	 * @return array<string, mixed>
-	 */
-	public function is_downloaded( $cloud_id ) {
-		$local_to_cloud_map = get_transient( 'cs_local_to_cloud_map' );
-
-		//Filter the local to cloud map to get the snippet that is to be saved to the database
-		$downloaded = array_filter( $local_to_cloud_map, function ( $item ) use ( $cloud_id ) {
-			return $item['cloud_id'] === $cloud_id;
-		} );
-
-		if ( count( $downloaded ) > 0 ) {
-			$matches = array_values( $downloaded );
-			return [
-				'in_local_site'    => true,
-				'snippet_id'       => $matches[0]['local_id'],
-				'update_available' => $matches[0]['update_available'],
-			];
-		}
-		return [ 'in_local_site' => false ];
-	}
-
 }

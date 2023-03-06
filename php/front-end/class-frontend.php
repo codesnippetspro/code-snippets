@@ -217,6 +217,22 @@ class Frontend {
 	}
 
 	/**
+	 * Enqueue all available Prism themes.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_all_prism_themes() {
+		self::register_prism_assets();
+
+		foreach ( self::get_prism_themes() as $theme => $label ) {
+			wp_enqueue_style( self::get_prism_theme_style_handle( $theme ) );
+		}
+
+		wp_enqueue_style( self::PRISM_HANDLE );
+		wp_enqueue_script( self::PRISM_HANDLE );
+	}
+
+	/**
 	 * Print a message to the user if the snippet ID attribute is invalid.
 	 *
 	 * @param int $id Snippet ID.
