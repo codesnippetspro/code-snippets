@@ -5,8 +5,6 @@ namespace Code_Snippets;
 use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\Cloud\Cloud_List_Table;
 use Code_Snippets\Cloud\Cloud_Search_List_Table;
-use Code_Snippets\Cloud\Cloud_Snippets;
-use function Code_Snippets\Settings\get_setting;
 
 /**
  * This class handles the manage snippets menu
@@ -147,24 +145,15 @@ class Manage_Menu extends Admin_Menu {
 		$this->load_cloud();
 	}
 
-
 	/**
-	 * Process a request to refresh all synced data.
+	 * Get the currently displayed snippet type.
 	 *
-	 * @return array<string, bool|string>
+	 * @return string
 	 */
-	public function process_refresh_synced_data_request() {
-		if ( isset( $_REQUEST['refresh'] ) && $_REQUEST['refresh'] ) {
-			$this->cloud_api->refresh_synced_data();;
-
-			return [
-				'success' => true,
-				'message' => __( 'Synced data refreshed successfully', 'code-snippets' ),
-			];
-
-		} else {
-			return [];
-		}
+	protected function get_current_type() {
+		$types = Plugin::get_types();
+		$current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : 'all';
+		return isset( $types[ $current_type ] ) ? $current_type : 'all';
 	}
 
 	/**
@@ -188,6 +177,11 @@ class Manage_Menu extends Admin_Menu {
 	 * Run startup checks for cloud connection or redirect to cloud connection page
 	 */
 	private function load_cloud() {
+		if ( isset( $_REQUEST['refresh_cloud'] ) && $_REQUEST['refresh_cloud'] ) {
+			$this->cloud_api->refresh_synced_data();
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', 'cloud-refreshed' ) ) );
+		}
+
 		if ( ! isset( $_REQUEST['type'] ) || 'cloud' !== $_REQUEST['type'] ) {
 			return;
 		}
@@ -197,11 +191,6 @@ class Manage_Menu extends Admin_Menu {
 			wp_safe_redirect( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings' ) ) );
 			exit;
 		}
-
-		// TODO: change this so we're not loading all themes all the time.
-		Frontend::enqueue_all_prism_themes();
-
-		$this->process_refresh_synced_data_request();
 
 		// Initialize the codevault cloud list table class.
 		$this->cloud_list_table = new Cloud_List_Table();
@@ -243,6 +232,10 @@ class Manage_Menu extends Admin_Menu {
 				'activation_error' => __( 'An error occurred when attempting to activate', 'code-snippets' ),
 			)
 		);
+
+		if ( 'cloud' === $this->get_current_type() ) {
+			Frontend::enqueue_all_prism_themes();
+		}
 	}
 
 	/**
@@ -271,6 +264,7 @@ class Manage_Menu extends Admin_Menu {
 					'cloned'            => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
 					'cloned-multi'      => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
 					'cloud-key-error'   => __( 'There is a problem with your Code Snippets Cloud Key.', 'code-snippets' ),
+					'cloud-refreshed'   => __( 'Synced cloud data refreshed <strong>successfully</strong>.', 'code-snippets' ),
 				)
 			)
 		);

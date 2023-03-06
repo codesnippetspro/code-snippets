@@ -199,7 +199,7 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 	 * @return string The content of the column to output.
 	 */
 	protected function column_download( $item ) {
-		$lang = $this->get_lang_from_scope( $item->scope );
+		$lang = $this->get_type_from_scope( $item->scope );
 		$link = $this->get_cloud_map_link( $item->cloud_id );
 
 		if ( $link && ! $link->update_available ) {

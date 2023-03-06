@@ -173,17 +173,16 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @param string        $column_name Column name.
 	 * @param Cloud_Snippet $snippet     Column item.
-	 * @param mixed         $value       Input value.
 	 *
 	 * @return string
 	 */
-	protected function build_column_hidden_input( $column_name, $snippet, $value ) {
+	protected function build_column_hidden_input( $column_name, $snippet ) {
 		return sprintf(
 			'<input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
 			esc_attr( $column_name ),
 			esc_attr( $snippet->cloud_id ),
 			esc_attr( $column_name ),
-			esc_attr( $value )
+			esc_attr( $snippet->$column_name )
 		);
 	}
 
@@ -207,11 +206,13 @@ class Cloud_List_Table extends WP_List_Table {
 
 			case 'name':
 				$edit_url = $link ? code_snippets()->get_snippet_edit_url( $link->local_id ) : '';
-				return sprintf(
+				$name_link = sprintf(
 					$edit_url ? '<a href="%1$s">%2$s</a>' : '<a>%2$s</a>',
 					esc_url( $edit_url ),
 					esc_html( $item->name )
 				);
+
+				return $name_link . $this->build_column_hidden_input( $column_name, $item );
 
 			case 'updated':
 				return sprintf( '<span>%s</span>', esc_html( $item->updated ) );
@@ -220,7 +221,7 @@ class Cloud_List_Table extends WP_List_Table {
 			case 'cloud_id':
 			case 'code':
 			case 'revision':
-				return $item->$column_name;
+				return $item->$column_name . $this->build_column_hidden_input( $column_name, $item );
 
 			case 'status':
 				return sprintf(
@@ -230,7 +231,7 @@ class Cloud_List_Table extends WP_List_Table {
 				);
 
 			case 'scope':
-				$type = $this->get_lang_from_scope( $item->scope );
+				$type = $this->get_type_from_scope( $item->scope );
 
 				return sprintf(
 					'<a id="snippet-type-%s" class="snippet-type-badge snippet-type" data-type="%s">%s</a>',
@@ -243,8 +244,7 @@ class Cloud_List_Table extends WP_List_Table {
 				return '';
 
 			default:
-				// TODO: maybe lock this behind WP_DEBUG or remove before release.
-				return print_r( $item, true ); // Show the whole array for troubleshooting purposes.
+				return apply_filters( "code_snippets/cloud_list_table/column_$column_name", '&#8212;', $item );
 		}
 	}
 
@@ -255,16 +255,16 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return string The type of the snippet
 	 */
-	protected function get_lang_from_scope( $scope ) {
+	protected function get_type_from_scope( $scope ) {
 		switch ( $scope ) {
 			case 'global':
 				return 'php';
 			case 'site-css':
 				return 'css';
 			case 'site-footer-js':
-				return 'javascript';
+				return 'js';
 			case 'content':
-				return 'mixed';
+				return 'html';
 			default:
 				return '';
 		}
@@ -317,8 +317,16 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return string The content of the column to output.
 	 */
 	protected function column_download( $item ) {
-		$lang = $this->get_lang_from_scope( $item->scope );
+		$lang = $this->get_type_from_scope( $item->scope );
 		$link = $this->get_cloud_map_link( $item->cloud_id );
+
+		if ( 'js' === $lang ) {
+			$lang = 'javascript';
+		}
+
+		if ( 'html' === $lang ) {
+			$lang = 'mixed';
+		}
 
 		if ( $link ) {
 			if ( $link->update_available ) {

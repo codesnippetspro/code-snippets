@@ -22,12 +22,15 @@ class Cloud_Link extends Data_Item {
 	 * @param array<string, mixed>|object $data Initial data fields.
 	 */
 	public function __construct( $data = null ) {
-		parent::__construct( [
-			'local_id'         => 0,
-			'cloud_id'         => '',
-			'in_codevault'     => false,
-			'update_available' => false,
-		], $data );
+		parent::__construct(
+			[
+				'local_id'         => 0,
+				'cloud_id'         => '',
+				'in_codevault'     => false,
+				'update_available' => false,
+			],
+			$data
+		);
 	}
 
 	/**

@@ -19,9 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $licensed = code_snippets()->licensing->is_licensed();
 $types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin::get_types() );
-
-$current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : 'all';
-$current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
+$current_type = $this->get_current_type();
 
 ?>
 
