@@ -117,7 +117,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return Cloud_Snippets
 	 */
 	protected function fetch_snippets() {
-		return $this->cloud_api->get_codevault_snippets( $this->get_pagenum() + 1 );
+		return $this->cloud_api->get_codevault_snippets( $this->get_pagenum() - 1 );
 	}
 
 	/**

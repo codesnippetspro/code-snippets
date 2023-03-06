@@ -30,12 +30,12 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		if ( count( $this->cloud_snippets->snippets ) < 1 ) {
+		if ( ! empty( $_REQUEST['cloud_search'] ) && count( $this->cloud_snippets->snippets ) < 1 ) {
 			echo '<p class="no-results">',
 			esc_html__( 'No snippets could be found with that search term. Please try again.', 'code-snippets' ),
 			'</p>';
 		} else {
-			esc_html_e( 'Please enter a search term to start searching code snippets in the cloud.', 'code-snippets' );
+			echo '<p>', esc_html__( 'Please enter a search term to start searching code snippets in the cloud.', 'code-snippets' ), '</p>';
 		}
 	}
 
@@ -52,7 +52,7 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 
 		// If we have a search query, then send a search request to cloud server API search endpoint.
 		$search_query = sanitize_text_field( $_REQUEST['cloud_search'] );
-		return $this->cloud_api->fetch_search_results( $search_query, $this->get_pagenum() + 1 );
+		return $this->cloud_api->fetch_search_results( $search_query, $this->get_pagenum() - 1 );
 	}
 
 	/**

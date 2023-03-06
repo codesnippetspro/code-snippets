@@ -108,7 +108,7 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 
 			<input type="text" id="cloud_search" name="cloud_search" class="cloud_search"
 			       value="<?php echo isset( $_REQUEST['cloud_search'] ) ? esc_html( sanitize_text_field( $_REQUEST['cloud_search'] ) ) : '' ?>"
-			       placeholder="<?php esc_html_e( 'e.g. Remove Unused Javascript…', 'code-snippets' ); ?>">
+			       placeholder="<?php esc_html_e( 'e.g. Remove unused JavaScript…', 'code-snippets' ); ?>">
 
 			<input type="submit" name="submit" id="cloud-search-submit" class="button"
 			       value="<?php esc_html_e( 'Search Cloud', 'code-snippets' ); ?>">
