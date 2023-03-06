@@ -137,14 +137,14 @@ class Manage_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
-		/* Load the contextual help tabs */
+		// Load the contextual help tabs.
 		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
-		$this->load_cloud();
 
-		// Initialize the list table class.
+		// Load the appropriate list table classes.
 		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
+		$this->load_cloud();
 	}
 
 
@@ -188,7 +188,6 @@ class Manage_Menu extends Admin_Menu {
 	 * Run startup checks for cloud connection or redirect to cloud connection page
 	 */
 	private function load_cloud() {
-		// Only run checks if attempting to access the cloud type.
 		if ( ! isset( $_REQUEST['type'] ) || 'cloud' !== $_REQUEST['type'] ) {
 			return;
 		}

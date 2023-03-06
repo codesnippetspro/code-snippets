@@ -32,7 +32,10 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 
 		$this->page_title_actions( code_snippets()->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
 
-		$this->list_table->search_notice();
+		if ( 'cloud' !== $current_type ) {
+			$this->list_table->search_notice();
+		}
+
 		?>
 	</h1>
 
@@ -96,20 +99,28 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		?>
 		<h2>Cloud Search</h2>
 		<p>Search the Code Snippets Cloud for snippets that you can import into your site.</p>
+		<form method="get" action="">
+			<?php List_Table::required_form_fields( 'search_box' ); ?>
+
+			<label class="screen-reader-text" for="cloud_search">
+				<?php esc_html_e( 'Search cloud snippets', 'code-snippets' ); ?>
+			</label>
+
+			<input type="text" id="cloud_search" name="cloud_search" class="cloud_search"
+			       value="<?php echo isset( $_REQUEST['cloud_search'] ) ? esc_html( sanitize_text_field( $_REQUEST['cloud_search'] ) ) : '' ?>"
+			       placeholder="<?php esc_html_e( 'e.g. Remove Unused Javascript…', 'code-snippets' ); ?>">
+
+			<input type="submit" name="submit" id="cloud-search-submit" class="button"
+			       value="<?php esc_html_e( 'Search Cloud', 'code-snippets' ); ?>">
+		</form>
+
+
 		<form method="post" action="">
 			<input type="hidden" id="code_snippets_ajax_nonce"
 			       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ) ?>">
-
-			<input type="text" name="s" class="cloud_search"
-			       value="<?php echo isset( $_REQUEST['s'] ) ? esc_html( sanitize_text_field( $_REQUEST['s'] ) ) : '' ?>"
-			       placeholder="<?php esc_html_e( 'e.g. Remove Unused Javascript…', 'code-snippets' ); ?>">
-
-			<input type="submit" name="submit" id="search-submit" class="button"
-			       value="<?php esc_html_e( 'Search Cloud', 'code-snippets' ); ?>">
-
 			<?php
 
-			List_Table::required_form_fields( 'search_box' );
+			List_Table::required_form_fields();
 			$this->cloud_search_list_table->display();
 
 			?>
@@ -135,13 +146,15 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 		<?php
 		List_Table::required_form_fields();
+
 		if ( 'cloud' == $current_type ) {
 			$this->cloud_list_table->display();
 		} else {
 			$this->list_table->display();
 		}
+
 		?>
 	</form>
 
-	<?php do_action( 'code_snippets/admin/manage' ); ?>
+	<?php do_action( 'code_snippets/admin/manage', $current_type ); ?>
 </div>
