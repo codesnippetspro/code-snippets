@@ -137,7 +137,7 @@ class List_Table extends WP_List_Table {
 	 */
 	public function default_hidden_columns( $hidden ) {
 		//$hidden[] = 'id';
-		array_push($hidden, 'id', 'code', 'cloud_id', 'revision');
+		array_push( $hidden, 'id', 'code', 'cloud_id', 'revision' );
 		return $hidden;
 	}
 
@@ -165,7 +165,7 @@ class List_Table extends WP_List_Table {
 				return $item->id;
 
 			case 'name':
-				return print_r( $item, true ) ;
+				return print_r( $item, true );
 
 			case 'description':
 				return apply_filters( 'code_snippets/list_table/column_description', $item->desc );
@@ -244,31 +244,33 @@ class List_Table extends WP_List_Table {
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
 				'export' => esc_html__( 'Export', 'code-snippets' ),
-				'cloud' => esc_html__( 'Sync to My Cloud', 'code-snippets' ),
+				'cloud'  => esc_html__( 'Sync to My Cloud', 'code-snippets' ),
 			);
 
-			
+
 			foreach ( $simple_actions as $action => $label ) {
 				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', esc_url( $this->get_action_link( $action, $snippet ) ), $label );
 			}
-			
-			$sync_status = $this->is_snippet_synced($snippet);
-			if($sync_status['synced']){		
-				if($sync_status['update']){
-					$actions[ 'cloud' ] = sprintf( '<a href="%s#snippet-%s">%s</a>', 
-					esc_url( '/wp-admin/admin.php?page=snippets&type=cloud' ),
-					esc_attr( $snippet->cloud_id ),
-					'Update Available' );
-				}else{
-					$actions[ 'cloud' ] = sprintf( '<a>%s</a>', 'Synced' );
+
+			$sync_status = $this->is_snippet_synced( $snippet );
+			if ( $sync_status['synced'] ) {
+				if ( $sync_status['update'] ) {
+					$actions['cloud'] = sprintf( '<a href="%s#snippet-%s">%s</a>',
+						esc_url( '/wp-admin/admin.php?page=snippets&type=cloud' ),
+						esc_attr( $snippet->cloud_id ),
+						'Update Available' );
+				} else {
+					$actions['cloud'] = sprintf( '<a>%s</a>', 'Synced' );
 				}
 			}//Handle updates to snippets from cloud search in an else statement here
-			
-			if($sync_status['refresh']){
-					$actions[ 'cloud' ] = sprintf( '<a href="%s">%s</a>', 
-					esc_url( '/wp-admin/admin.php?page=snippets&type=cloud' ),
-					'Refresh Sync' );
-				
+
+			if ( isset( $sync_status['refresh'] ) && $sync_status['refresh'] ) {
+				$actions['cloud'] = sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( add_query_arg( 'type', 'cloud', code_snippets()->get_menu_url() ) ),
+					esc_html__( 'Refresh Sync', 'code-snippets' )
+				);
+
 			}
 
 			$actions['delete'] = sprintf(
@@ -338,8 +340,8 @@ class List_Table extends WP_List_Table {
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
-		$sync_status = $this->is_snippet_synced($snippet);
-		if( $sync_status['synced'] ){
+		$sync_status = $this->is_snippet_synced( $snippet );
+		if ( $sync_status['synced'] ) {
 			echo ' <span class="dashicons dashicons-cloud cloud-synced"></span>';
 		}
 
@@ -814,7 +816,7 @@ class List_Table extends WP_List_Table {
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id', 'scope', '_wpnonce' ) );
 
 			/* If so, then perform the requested action and inform the user of the result */
-			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope);
+			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope );
 
 			if ( $result ) {
 				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
@@ -1009,7 +1011,7 @@ class List_Table extends WP_List_Table {
 					return $_GET['type'] === $snippet->type;
 				}
 			);
-			
+
 		}
 
 		/* Add scope tags */
@@ -1094,7 +1096,7 @@ class List_Table extends WP_List_Table {
 
 		/* Determine what page the user is currently looking at */
 		$current_page = $this->get_pagenum();
-		
+
 		/* Check how many items are in the data array */
 		$total_items = count( $data );
 
@@ -1366,29 +1368,29 @@ class List_Table extends WP_List_Table {
 		$local_to_cloud_map = get_transient( 'cs_local_to_cloud_map' );
 		//check if transient is empty
 		if ( empty( $local_to_cloud_map ) ) {
-			return array( 'refresh' =>  true ) ;
+			return array( 'refresh' => true );
 		}
 		//loop over items in array and see if snippet id exists in looped array items
-		
+
 		foreach ( $local_to_cloud_map as $key => $value ) {
-			if ( $value['cloud_id'] == $snippet->cloud_id ) {	
+			if ( $value['cloud_id'] == $snippet->cloud_id ) {
 				$synced = false;
 				$update = false;
 
-				if($value['in_codevault'] === true){
+				if ( $value['in_codevault'] === true ) {
 					$synced = true;
 				};
 
-				if($value['update_available'] === true){
+				if ( $value['update_available'] === true ) {
 					$update = true;
 				};
 
-				return array( 'synced' =>  $synced, 'update' => $update, );
+				return array( 'synced' => $synced, 'update' => $update, );
 			}
 		}
-		//if not return false	
+		//if not return false
 		return false;
-	}	
+	}
 
 	/**
 	 * Sync snippets to cloud
@@ -1399,5 +1401,5 @@ class List_Table extends WP_List_Table {
 		$snippets = get_snippets( $ids, $this->is_network );
 		CS_Cloud::store_snippets_to_cloud( $snippets );
 	}
-	
+
 }
