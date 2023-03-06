@@ -5,7 +5,6 @@ import 'prismjs/components/prism-css'
 import 'prismjs/components/prism-php'
 import 'prismjs/components/prism-markup'
 import 'prismjs/plugins/keep-markup/prism-keep-markup'
-import 'prismjs/plugins/normalize-whitespace/prism-normalize-whitespace'
 
 //Handle clicks on snippet preview button
 export const handleShowCloudPreview = () => {
