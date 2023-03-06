@@ -3,6 +3,7 @@
 namespace Code_Snippets\Cloud;
 
 use Data_Item;
+use function Code_Snippets\code_snippets_build_tags_array;
 
 /**
  * A connection between a local snippet and remote cloud snippet.
@@ -34,47 +35,28 @@ class Cloud_Link extends Data_Item {
 	}
 
 	/**
-	 * Prepare `local_id` values by ensuring they are an absolute integer.
+	 * Prepare a value before it is stored.
 	 *
-	 * @param mixed $local_id The field as provided.
+	 * @param mixed  $value Value to prepare.
+	 * @param string $field Field name.
 	 *
-	 * @return integer The field in the correct format.
+	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_local_id( $local_id ) {
-		return absint( $local_id );
-	}
+	protected function prepare_field( $value, $field ) {
+		switch ( $field ) {
+			case 'local_id':
+				return absint( $value );
 
-	/**
-	 * Prepare `remote_id` values by ensuring they are in the correct format.
-	 *
-	 * @param mixed $remote_id The field as provided.
-	 *
-	 * @return string The field in the correct format.
-	 */
-	protected function prepare_remote_id( $remote_id ) {
-		// TODO: add better sanitization here.
-		return (string) $remote_id;
-	}
+			case 'remote_id':
+				// TODO: add better sanitization here.
+				return (string) $value;
 
-	/**
-	 * Prepare `in_codevault` values by ensuring they are a boolean value.
-	 *
-	 * @param mixed $in_codevault The field as provided.
-	 *
-	 * @return boolean The field in the correct format.
-	 */
-	protected function prepare_in_codevault( $in_codevault ) {
-		return is_bool( $in_codevault ) ? $in_codevault : (bool) $in_codevault;
-	}
+			case 'in_codevault':
+			case 'update_available':
+				return is_bool( $value ) ? $value : (bool) $value;
 
-	/**
-	 * Prepare `update_available` values by ensuring they are a boolean value.
-	 *
-	 * @param mixed $update_available The field as provided.
-	 *
-	 * @return boolean The field in the correct format.
-	 */
-	protected function prepare_update_available( $update_available ) {
-		return is_bool( $update_available ) ? $update_available : (bool) $update_available;
+			default:
+				return $value;
+		}
 	}
 }

@@ -50,35 +50,27 @@ class Cloud_Snippet extends Data_Item {
 	}
 
 	/**
-	 * Prepare the `id` field by ensuring it is an absolute integer.
+	 * Prepare a value before it is stored.
 	 *
-	 * @param int $id The field as provided.
+	 * @param mixed  $value Value to prepare.
+	 * @param string $field Field name.
 	 *
-	 * @return int The field in the correct format.
+	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_id( $id ) {
-		return absint( $id );
-	}
+	protected function prepare_field( $value, $field ) {
+		switch ( $field ) {
+			case 'id':
+			case 'revision':
+				return absint( $value );
 
-	/**
-	 * Prepare the snippet tags by ensuring they are in the correct format
-	 *
-	 * @param string|array<string> $tags The field as provided.
-	 *
-	 * @return array<string> The field in the correct format.
-	 */
-	protected function prepare_tags( $tags ) {
-		return code_snippets_build_tags_array( $tags );
-	}
+			case 'cloud_id':
+				return (string) $value;
 
-	/**
-	 * Prepare the `revision` field by ensuring it is an absolute integer.
-	 *
-	 * @param int $id The field as provided.
-	 *
-	 * @return int The field in the correct format.
-	 */
-	protected function prepare_revision( $id ) {
-		return absint( $id );
+			case 'tags':
+				return code_snippets_build_tags_array( $value );
+
+			default:
+				return $value;
+		}
 	}
 }

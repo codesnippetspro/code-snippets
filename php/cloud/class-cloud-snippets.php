@@ -3,6 +3,7 @@
 namespace Code_Snippets\Cloud;
 
 use Data_Item;
+use function Code_Snippets\code_snippets_build_tags_array;
 
 /**
  * A list of snippets as retrieved from the cloud API.
@@ -39,6 +40,26 @@ class Cloud_Snippets extends Data_Item {
 	}
 
 	/**
+	 * Prepare a value before it is stored.
+	 *
+	 * @param mixed  $value Value to prepare.
+	 * @param string $field Field name.
+	 *
+	 * @return mixed Value in the correct format.
+	 */
+	protected function prepare_field( $value, $field ) {
+		switch ( $field ) {
+			case 'page':
+			case 'total_pages':
+			case 'total_snippets':
+				return absint( $value );
+
+			default:
+				return $value;
+		}
+	}
+
+	/**
 	 * Prepare the `snippets` field by ensuring it is a list of Cloud_Snippets objects.
 	 *
 	 * @param mixed $snippets The field as provided.
@@ -54,38 +75,5 @@ class Cloud_Snippets extends Data_Item {
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Prepare the `total_pages` field by ensuring it is an absolute integer.
-	 *
-	 * @param mixed $total_pages The field as provided.
-	 *
-	 * @return integer The field in the correct format.
-	 */
-	protected function prepare_total_pages( $total_pages ) {
-		return absint( $total_pages );
-	}
-
-	/**
-	 * Prepare the `total_snippets` field by ensuring it is an absolute integer.
-	 *
-	 * @param mixed $total_snippets The field as provided.
-	 *
-	 * @return integer The field in the correct format.
-	 */
-	protected function prepare_total_snippets( $total_snippets ) {
-		return absint( $total_snippets );
-	}
-
-	/**
-	 * Prepare the `page` field by ensuring it is an absolute integer.
-	 *
-	 * @param mixed $page The field as provided.
-	 *
-	 * @return integer The field in the correct format.
-	 */
-	protected function prepare_page( $page ) {
-		return absint( $page );
 	}
 }
