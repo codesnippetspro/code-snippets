@@ -1,0 +1,79 @@
+
+.CodeMirror-sizer {
+	min-height: 300px !important;
+	box-sizing: border-box;
+	padding-bottom: 1.5em !important;
+
+	&::after {
+		position: absolute;
+		bottom: 0;
+	}
+}
+
+.snippet-scope {
+	display: none;
+
+	.description {
+		display: block;
+	}
+}
+
+[data-snippet-type=php] {
+
+	.php-scopes-list {
+		display: block;
+	}
+
+	.CodeMirror-sizer {
+		padding-bottom: 0 !important;
+	}
+
+	.CodeMirror-sizer::before {
+		content: '<?php';
+	}
+}
+
+[data-snippet-type=css] {
+
+	.css-scopes-list {
+		display: block;
+	}
+
+	.CodeMirror-sizer::before {
+		content: '<style>';
+	}
+
+	.CodeMirror-sizer::after {
+		content: '</style>';
+	}
+}
+
+[data-snippet-type=js] {
+
+	.js-scopes-list {
+		display: block;
+	}
+
+	.CodeMirror-sizer::before {
+		content: '<script>';
+	}
+
+	.CodeMirror-sizer::after {
+		content: '</script>';
+	}
+}
+
+[data-snippet-type=html] {
+
+	.html-scopes-list {
+		display: block;
+	}
+
+	.CodeMirror-sizer::before {
+		content: '<!-- begin content -->';
+	}
+
+	.CodeMirror-sizer::after {
+		content: '<!-- end content -->';
+	}
+}

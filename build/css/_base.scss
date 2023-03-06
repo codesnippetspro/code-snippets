@@ -1,0 +1,29 @@
+
+$php-active: #0073aa;
+$php-inactive: #579;
+$php-background: #78c8e6;
+
+$css-inactive: #b452cd;
+$css-active: #7d26cd;
+$css-background: #551a8b;
+$css-highlight: #8000ff;
+
+$html-active: #548b54;
+$html-background: #548b54;
+$html-highlight: $html-active;
+
+$js-inactive: #cd6600;
+$js-active: #d44500;
+$js-background: #cd6600;
+$js-highlight: #cd6600;
+
+
+@mixin link-colors($color, $lightness: 15%) {
+	a {
+		color: $color;
+
+		&:hover, &:active, &:focus {
+			color: lighten($color, $lightness);
+		}
+	}
+}

@@ -1,0 +1,17 @@
+@import '../node_modules/prismjs/themes/prism.css';
+@import '../node_modules/prismjs/plugins/line-highlight/prism-line-highlight.css';
+@import '../node_modules/prismjs/plugins/line-numbers/prism-line-numbers.css';
+@import '../node_modules/prismjs/plugins/toolbar/prism-toolbar.css';
+@import '../node_modules/prismjs/plugins/inline-color/prism-inline-color.css';
+@import '../node_modules/prismjs/plugins/previewers/prism-previewers.css';
+@import '../node_modules/prismjs/plugins/autolinker/prism-autolinker.css';
+
+:not(.is-style-prism-shades-of-purple) pre[class*=language-].line-numbers .line-highlight {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 1em 0 0;
+}
+
+.is-style-prism-coy-without-shadows pre[class*=language-] .line-highlight {
+	margin-top: 0;
+}

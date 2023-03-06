@@ -1,0 +1,111 @@
+@import '../node_modules/@jcubic/tagger/tagger.css';
+@import 'editor';
+@import 'codemirror-colorpicker/dist/codemirror-colorpicker.css';
+
+@import 'type-badges';
+
+/**
+ * Custom styling for the single snippet admin page
+ */
+
+.form-table th {
+	width: auto;
+}
+
+h2 {
+	/* Provide some decent space between the fields and titles */
+	margin: 25px 0 15px 0;
+
+	&:first-of-type {
+		margin-top: 20px;
+	}
+
+	label {
+		cursor: auto;
+	}
+}
+
+.inactive-snippet, .active-snippet {
+	#title {
+		border-left-width: 4px;
+	}
+}
+
+.active-snippet #title {
+	border-left-color: #46b450;
+}
+
+.inactive-snippet #title {
+	border-left-color: #bbb;
+}
+
+.erroneous-snippet #title {
+	border-left-color: #dc3232;
+}
+
+#snippet-form {
+	margin-top: 10px
+}
+
+/* Position the description heading on the same level as the editor buttons */
+label[for='snippet_description'] h3 div {
+	position: absolute;
+}
+
+/* Add spacing in between the action buttons */
+.button + .button {
+	margin-left: .5em;
+}
+
+.submit-inline {
+	float: right;
+}
+
+p.snippet-scope, .snippet-scope p {
+	margin-top: 15px;
+}
+
+.snippet-scope label,
+.html-shortcode-options strong {
+	display: inline-block;
+	margin-right: 1.5em;
+}
+
+.below-editor {
+	display: flex;
+	justify-content: space-between;
+}
+
+.snippet-priority {
+
+	label {
+		font-weight: bold;
+		cursor: help;
+		font-size: 1.1em;
+		padding-right: 0.5em;
+	}
+
+	input {
+		width: 4em;
+	}
+}
+
+.snippet-editor {
+	position: relative;
+}
+
+.CodeMirror {
+	width: 100%;
+}
+
+.wrap h2.nav-tab-wrapper {
+	border-bottom: none;
+}
+
+.code-snippets-copy-text {
+	color: inherit;
+}
+
+@import 'edit/tooltips';
+@import 'edit/types';
+@import 'edit/tags';
