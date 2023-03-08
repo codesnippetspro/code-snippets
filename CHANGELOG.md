@@ -6,6 +6,7 @@
 * Added: Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
 * Added: Ability to filter shortcode output. Thanks to contributions from [Jack Szwergold](https://github.com/JackSzwergold).
 * Fixed: Bug causing all snippets to show in site health information instead of those active.
+* Fixed: Unnecessary sanitization of file upload data causing import process to fail on Windows systems.
 
 ## 3.2.1 (05 Oct 2022)
 * Fixed: Issue making survey reminder notice not dismissible.
