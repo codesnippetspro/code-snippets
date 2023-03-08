@@ -39,12 +39,13 @@ class Active_Snippets {
 	 * @return array[][]
 	 */
 	protected function fetch_active_snippets( $scope ) {
+		$scope_key = is_array( $scope ) ? implode( '|', $scope ) : $scope;
 
-		if ( ! isset( $this->active_snippets[ $scope ] ) ) {
-			$this->active_snippets[ $scope ] = code_snippets()->db->fetch_active_snippets( $scope );
+		if ( ! isset( $this->active_snippets[ $scope_key ] ) ) {
+			$this->active_snippets[ $scope_key ] = code_snippets()->db->fetch_active_snippets( $scope );
 		}
 
-		return $this->active_snippets[ $scope ];
+		return $this->active_snippets[ $scope_key ];
 	}
 
 	/**
