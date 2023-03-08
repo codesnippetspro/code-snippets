@@ -107,7 +107,7 @@ class Active_Snippets {
 		$rev = 0;
 		$scope_snippets = $this->fetch_active_snippets( $scope );
 
-		if ( empty( $scope_snippets[ $scope ] ) ) {
+		if ( empty( $scope_snippets ) ) {
 			return false;
 		}
 
