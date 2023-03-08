@@ -128,7 +128,7 @@ class Import_Menu extends Admin_Menu {
 			echo '</p></div>';
 		}
 
-		if ( ! empty( $_REQUEST['imported'] ) && intval( $_REQUEST['imported'] ) >= 0 ) {
+		if ( isset( $_REQUEST['imported'] ) ) {
 			echo '<div id="message" class="updated fade"><p>';
 
 			$imported = intval( $_REQUEST['imported'] );
