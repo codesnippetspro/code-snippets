@@ -16,7 +16,7 @@ namespace Code_Snippets;
  *
  * @var string A PHP-standardized version number string.
  */
-const PLUGIN_VERSION = '3.2.2';
+const PLUGIN_VERSION = CODE_SNIPPETS_VERSION;
 
 /**
  * The full path to the main file of this plugin.
@@ -57,5 +57,5 @@ function code_snippets() {
 
 code_snippets()->load_plugin();
 
-/* Execute the snippets once the plugins are loaded */
+// Execute the snippets once the plugins are loaded.
 add_action( 'plugins_loaded', __NAMESPACE__ . '\execute_active_snippets', 1 );
