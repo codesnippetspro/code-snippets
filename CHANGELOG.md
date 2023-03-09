@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.3.0 (UNRELEASED)
+## 3.3.0 (09 Mar 2022)
 * Fixed: Do not enqueue CSS or JS snippet file if no snippets exist. (PRO)
 * Improved: Added additional editor shortcuts to list in tooltip.
 * Added: Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
