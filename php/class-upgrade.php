@@ -39,7 +39,7 @@ class Upgrade {
 	 */
 	public function run() {
 
-		/* Always run multisite upgrades, even if not on the main site, as subsites depend on the network snippet table */
+		// Always run multisite upgrades, even if not on the main site, as sub-sites depend on the network snippet table.
 		if ( is_multisite() ) {
 			$this->do_multisite_upgrades();
 		}
@@ -54,12 +54,12 @@ class Upgrade {
 		$table_name = $this->db->table;
 		$prev_version = get_option( 'code_snippets_version' );
 
-		/* Do nothing if the plugin has not just been updated or installed */
+		// Do nothing if the plugin has not just been updated or installed.
 		if ( ! version_compare( $prev_version, $this->current_version, '<' ) ) {
 			return;
 		}
 
-		/* Update the plugin version stored in the database */
+		// Update the plugin version stored in the database.
 		$updated = update_option( 'code_snippets_version', $this->current_version );
 
 		if ( ! $updated ) {
@@ -69,7 +69,7 @@ class Upgrade {
 		$sample_snippets = $this->get_sample_content();
 		$this->db->create_table( $table_name );
 
-		/* Remove outdated user meta */
+		// Remove outdated user meta.
 		if ( version_compare( $prev_version, '2.14.1', '<' ) ) {
 			global $wpdb;
 
@@ -83,12 +83,12 @@ class Upgrade {
 			}
 		}
 
-		/* Update the scope column of the database */
+		// Update the scope column of the database.
 		if ( version_compare( $prev_version, '2.10.0', '<' ) ) {
 			$this->migrate_scope_data( $table_name );
 		}
 
-		/* Custom capabilities were removed after version 2.9.5 */
+		// Custom capabilities were removed after version 2.9.5.
 		if ( version_compare( $prev_version, '2.9.5', '<=' ) ) {
 			$role = get_role( apply_filters( 'code_snippets_role', 'administrator' ) );
 			$role->remove_cap( apply_filters( 'code_snippets_cap', 'manage_snippets' ) );
@@ -112,23 +112,23 @@ class Upgrade {
 		$table_name = $this->db->ms_table;
 		$prev_version = get_site_option( 'code_snippets_version' );
 
-		/* Do nothing if the plugin has not been updated or installed */
+		// Do nothing if the plugin has not been updated or installed.
 		if ( ! version_compare( $prev_version, $this->current_version, '<' ) ) {
 			return;
 		}
 
-		/* Always attempt to create or upgrade the database tables */
+		// Always attempt to create or upgrade the database tables.
 		$this->db->create_table( $table_name );
 
-		/* Update the plugin version stored in the database */
+		// Update the plugin version stored in the database.
 		update_site_option( 'code_snippets_version', $this->current_version );
 
-		/* Update the scope column of the database */
+		// Update the scope column of the database.
 		if ( version_compare( $prev_version, '2.10.0', '<' ) ) {
 			$this->migrate_scope_data( $table_name );
 		}
 
-		/* Custom capabilities were removed after version 2.9.5 */
+		// Custom capabilities were removed after version 2.9.5.
 		if ( version_compare( $prev_version, '2.9.5', '<=' ) ) {
 			$network_cap = apply_filters( 'code_snippets_network_cap', 'manage_network_snippets' );
 

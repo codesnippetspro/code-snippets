@@ -7,7 +7,7 @@
  *
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@codesnippets.pro>
- * @copyright 2012-2022 Shea Bunge
+ * @copyright 2012-2023 Code Snippets Pro
  * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
  * @version   3.3.0
  * @link      https://github.com/codesnippetspro/code-snippets
