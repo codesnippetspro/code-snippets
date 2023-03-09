@@ -70,9 +70,9 @@ process:
 
     gulp bundle
 
-This command will regenerate all processed files and copy those to be distributed to the `build/` directory, where they
+This command will regenerate all processed files and copy those to be distributed to the `bundle/` directory, where they
 can be copied directly into a Subversion repository or similar for distribution.
 
 Additionally, a `code-snippets.x.x.x.zip` file will also be generated, where `x.x.x` is the plugin version number,
-containing all files in the `build/` directory nested in a `code-snippets/` folder, as is expected by WordPress. This
+containing all files in the `bundle/` directory nested in a `code-snippets/` folder, as is expected by WordPress. This
 zip file is suitable for direct uploading through the WordPress plugin installer.
