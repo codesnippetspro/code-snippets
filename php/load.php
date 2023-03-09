@@ -1,6 +1,6 @@
 <?php
 /**
- * Initialise and load the plugin under the proper namespace
+ * Initialise and load the plugin under the proper namespace.
  *
  * @package Code_Snippets
  */
@@ -36,7 +36,7 @@ const PLUGIN_FILE = CODE_SNIPPETS_FILE;
  */
 const CACHE_GROUP = 'code_snippets';
 
-/* Load dependencies with Composer */
+// Load dependencies with Composer.
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
 /**
