@@ -324,7 +324,6 @@ class Edit_Menu extends Admin_Menu {
 
 		/* Update the shared network snippets if necessary */
 		if ( $snippet_id && is_network_admin() ) {
-
 			if ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
 				$shared_snippets = get_site_option( 'shared_network_snippets', array() );
 
