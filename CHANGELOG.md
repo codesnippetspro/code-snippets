@@ -8,6 +8,9 @@
 * Fixed: Bug causing all snippets to show in site health information instead of those active.
 * Fixed: Unnecessary sanitization of file upload data causing import process to fail on Windows systems.
 
+## 3.2.2 (17 Nov 2022)
+* Fixed: Plugin lacking a valid header error on activation.
+
 ## 3.2.1 (05 Oct 2022)
 * Fixed: Issue making survey reminder notice not dismissible.
 * Added: `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
