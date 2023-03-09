@@ -33,37 +33,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Halt loading here if the plugin is already loaded, or we're running an incompatible version of PHP.
-if ( defined( 'CODE_SNIPPETS_FILE' ) || version_compare( phpversion(), '5.6', '<' ) ) {
+if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '5.6', '>=' ) ) {
+
+	/**
+	 * The current plugin version.
+	 *
+	 * Should be set to the same value as set above.
+	 *
+	 * @const string
+	 */
+	define( 'CODE_SNIPPETS_VERSION', '3.3.0' );
+
+	/**
+	 * The full path to the main file of this plugin.
+	 *
+	 * This can later be passed to functions such as plugin_dir_path(), plugins_url() and plugin_basename()
+	 * to retrieve information about plugin paths.
+	 *
+	 * @since 2.0.0
+	 * @const string
+	 */
+	define( 'CODE_SNIPPETS_FILE', __FILE__ );
+
+	/**
+	 * Used to determine which version of Code Snippets is running.
+	 *
+	 * @since 3.0.0
+	 * @onst  boolean
+	 */
+	define( 'CODE_SNIPPETS_PRO', true );
+
+	require_once dirname( __FILE__ ) . '/php/load.php';
+} else {
 	require_once dirname( __FILE__ ) . '/php/deactivation-notice.php';
-	return;
 }
-
-/**
- * The current plugin version.
- *
- * Should be set to the same value as set above.
- *
- * @const string
- */
-define( 'CODE_SNIPPETS_VERSION', '3.3.0', false );
-
-/**
- * The full path to the main file of this plugin.
- *
- * This can later be passed to functions such as plugin_dir_path(), plugins_url() and plugin_basename()
- * to retrieve information about plugin paths.
- *
- * @since 2.0.0
- * @const string
- */
-define( 'CODE_SNIPPETS_FILE', __FILE__, false );
-
-/**
- * Used to determine which version of Code Snippets is running.
- *
- * @since 3.0.0
- * @onst  boolean
- */
-define( 'CODE_SNIPPETS_PRO', true, false );
-
-require_once dirname( __FILE__ ) . '/php/load.php';

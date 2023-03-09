@@ -1,5 +1,4 @@
 <?php
-
 /**
  * File loaded when the plugin cannot be activated.
  *
