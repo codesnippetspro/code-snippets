@@ -133,7 +133,7 @@ const refreshCloudSyncData = () => {
 	const refreshBtn = document.getElementById('refresh_data')
 	refreshBtn?.addEventListener('click', event => { 
 		event.preventDefault()
-		fetch('/wp-admin/admin.php?page=snippets&type=cloud&refresh=true', {}).then(response => {
+		fetch('/wp-admin/admin.php?page=snippets&type=cloud&refresh_cloud=true', {}).then(response => {
 			if(response.ok) {
 				console.log(response.body)
 				const sync_text = document.getElementById('cloud_sync_status')

@@ -12,9 +12,10 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @package Code_Snippets
  *
  * @property Cloud_Snippet[] $snippets       List of snippet items for the current page.
- * @property integer         $page           Page of data that this data belongs to.
+ * @property integer         $page   Page of data that this data belongs to.
  * @property integer         $total_pages    Total number of available pages of items.
  * @property integer         $total_snippets Total number of available snippet items.
+ * @property bool         	 $success	  	 If the request has any results.
  */
 class Cloud_Snippets extends Data_Item {
 
@@ -27,14 +28,15 @@ class Cloud_Snippets extends Data_Item {
 		parent::__construct(
 			[
 				'snippets'       => [],
-				'page'           => 0,
-				'total_pages'    => 0,
 				'total_snippets' => 0,
+				'total_pages'    => 0,
+				'page'   		 => 0,
 			],
 			$initial_data,
 			[
 				'items'       => 'snippets',
 				'total_items' => 'total_snippets',
+				'page'	  	  => 'page',
 			]
 		);
 	}

@@ -56,6 +56,13 @@ class List_Table extends WP_List_Table {
 	protected $order_dir;
 
 	/**
+	 * Array of local snippets synced to the cloud using the cloud link transient
+	 *
+	 * @var array
+	 */
+	protected $cloud_synced_snippets;
+
+	/**
 	 * The constructor function for our class.
 	 * Registers hooks, initializes variables, setups class.
 	 *
@@ -247,21 +254,29 @@ class List_Table extends WP_List_Table {
 				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', esc_url( $this->get_action_link( $action, $snippet ) ), $label );
 			}
 
-			$cloud_link = $this->get_cloud_link( $snippet );
-
-			if ( $cloud_link && $cloud_link->in_codevault ) {
-				if ( $cloud_link->update_available ) {
-					$actions['cloud'] = sprintf(
-						'<a href="%s#snippet-%s">%s</a>',
-						esc_url( add_query_arg( 'type', 'cloud', code_snippets()->get_menu_url( 'manage' ) ) ),
-						esc_attr( $snippet->cloud_id ),
-						esc_html__( 'Update Available', 'code-snippets' )
-					);
-
-				} else {
-					$actions['cloud'] = sprintf( '<a>%s</a>', 'Synced' );
+			//Check there is a valid cloud connection or show a link to set it up
+			if( $this->is_cloud_link_valid() ){
+				//Get the cloud link object
+				$cloud_link = $this->get_cloud_link( $snippet->id );
+				//Check this snippet is linked or orignated from the cloud
+				if ( $cloud_link ) {
+					//Check if an update is available
+					if ( $cloud_link->update_available ) {
+						$actions['cloud'] = sprintf(
+							'<a href="%s#snippet-%s">%s</a>',
+							esc_url( add_query_arg( 'type', 'cloud', code_snippets()->get_menu_url( 'manage' ) ) ),
+							esc_attr( $snippet->cloud_id ),
+							esc_html__( 'Update Available', 'code-snippets' )
+						);
+					}
+					//Check if the snippet is in the users codevault 
+					if ( $cloud_link->in_codevault && !$cloud_link->update_available ) {
+						$actions['cloud'] = sprintf( '<a>%s</a>', 'Synced' );
+					}	
 				}
-			} // Handle updates to snippets from cloud search in an else statement here
+			}else{
+				$actions['cloud'] = sprintf( '<a href="%s">Set up Cloud</a>', esc_url( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings' ) ) ));
+			}
 
 			$actions['delete'] = sprintf(
 				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
@@ -349,9 +364,19 @@ class List_Table extends WP_List_Table {
 			$out .= ' <span class="badge">' . esc_html__( 'Shared on Network', 'code-snippets' ) . '</span>';
 		}
 
-		$cloud_link = $this->get_cloud_link( $snippet );
+		$cloud_link = $this->get_cloud_link( $snippet->id );
 		if ( $cloud_link ) {
-			$out = '<span class="dashicons dashicons-cloud cloud-synced"></span>' . $out;
+			var_dump($cloud_link);
+			//If update available make cloud icon orange?
+			if ( $cloud_link->update_available ) {
+				$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>' . $out;
+			}elseif ( $cloud_link->in_codevault) { 
+				//If snippet in codevaule and no update available make cloud icon blue
+				$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>' . $out;
+			}else{
+				//Make cloud icon grey to show its from the cloud
+				$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>' . $out;
+			}
 		}
 
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
@@ -1016,7 +1041,7 @@ class List_Table extends WP_List_Table {
 		if ( $s ) {
 			$snippets['all'] = array_filter( $snippets['all'], array( $this, 'search_by_line_callback' ) );
 		}
-
+		
 		/* Clear recently activated snippets older than a week */
 		$recently_activated = $this->is_network ?
 			get_site_option( 'recently_activated_snippets', array() ) :
@@ -1345,19 +1370,35 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Check if snippet is synced to cloud.
 	 *
-	 * @param Snippet $snippet Snippet.
+	 * @param string $snippet_id.
 	 *
 	 * @return Cloud_Link|null
 	 */
-	public function get_cloud_link( $snippet ) {
-		// Loop over items in array and see if snippet id exists in looped array items.
-		foreach ( code_snippets()->cloud_api->get_local_to_cloud_map() as $link ) {
-			if ( $link->cloud_id === $snippet->cloud_id ) {
-				return $link;
-			}
+	public function get_cloud_link( $snippet_id ) {
+		$cloud_array = array();
+		//Check if cloud id is not null
+		if ( ! $snippet_id ) {
+			return null;
+		}
+
+		$local_to_cloud_map = code_snippets()->cloud_api->get_local_to_cloud_map();
+		$local_id_array = array_column( $local_to_cloud_map, 'local_id' );	
+		if ( in_array( $snippet_id, $local_id_array ) ) {
+			$index = array_search( $snippet_id, $local_id_array );
+			return $local_to_cloud_map[$index];
 		}
 
 		return null;
+	}
+
+	/**
+	 * Check if cloud link is valid
+	 *
+	 * @return bool
+	 */
+	private function is_cloud_link_valid() {
+		//
+		return code_snippets()->cloud_api->cloud_key_is_verified;
 	}
 
 	/**
@@ -1366,6 +1407,10 @@ class List_Table extends WP_List_Table {
 	 * @param array<integer> $ids List of snippet IDs.
 	 */
 	private function sync_to_cloud( $ids ) {
+
+		//TODO: WHEN CLEARING SYNCED DATA - NEW CODEVAULT DATA IS DRAWN FROM CLOUD HOWEVER ONLY PAGE 0 IS PULLED
+		//IF CODEVAULT HAS MORE THAN 10 SNIPPETS THEN ANY SYNCED ITEM WILL NOT BE PULLED FROM CLOUD AND THUS NOT 
+		//SHOWN ON CODEVAULT AND UPDATED IN THE ALL SNIPPETS TABLE......
 		$snippets = get_snippets( $ids, $this->is_network );
 		code_snippets()->cloud_api->store_snippets_in_cloud( $snippets );
 	}
