@@ -524,9 +524,8 @@ class Cloud_List_Table extends WP_List_Table {
 		$output = '<span class="displaying-num">' . $num . '</span>';
 
 		$current = $_REQUEST['cloud_page'] ? (int) $_REQUEST['cloud_page'] : $this->get_pagenum();
-		$current_url = remove_query_arg( wp_removable_query_args() );
-
 		$current_class = Cloud_List_Table::CLASS_NAME === $this->class_name ? 'cloud' : 'search';
+		$current_url = remove_query_arg( wp_removable_query_args() ). '#' . $current_class ;
 
 		$page_links = array();
 

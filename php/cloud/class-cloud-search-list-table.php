@@ -49,7 +49,6 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 		if ( empty( $_REQUEST['cloud_search'] ) ) {
 			return new Cloud_Snippets();
 		}
-
 		// If we have a search query, then send a search request to cloud server API search endpoint.
 		$search_query = sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) );
 		return $this->cloud_api->fetch_search_results( $search_query, $this->get_pagenum() - 1 );

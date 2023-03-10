@@ -38,5 +38,16 @@ export const handleShowCloudPreview = () => {
 			Prism.highlightElement(snippetCodeModalTag)
 		})
 	})
-
 }
+
+//Handle clicks on snippet search button
+export const handleClickSearchCloud = () => {
+	const searchButton = document.getElementById('cloud-search-submit')
+	const searchForm = <HTMLFormElement>document.getElementById('cloud-search-form')
+	searchButton?.addEventListener('click', event => {
+		event.preventDefault()
+		window.location.hash = ''
+		searchForm?.submit()
+	})
+}
+

@@ -1286,12 +1286,13 @@ class List_Table extends WP_List_Table {
 	 * @since 1.7
 	 */
 	public function search_notice() {
-		if ( ! empty( $_REQUEST['s'] ) || ! empty( $_GET['tag'] ) ) {
+		if ( ! empty( $_REQUEST['s'] ) || ! empty( $_GET['tag'] ) || ! empty( $_GET['cloud_search'] ) ) {
 
 			echo '<span class="subtitle">' . esc_html__( 'Search results', 'code-snippets' );
 
-			if ( ! empty( $_REQUEST['s'] ) ) {
-				$s = sanitize_text_field( wp_unslash( $_REQUEST['s'] ) );
+			if ( ! empty( $_REQUEST['s'] ) || ! empty( $_REQUEST['cloud_search'] ) ) {
+				$s = empty( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) ) : sanitize_text_field( wp_unslash( $_REQUEST['s'] ) );
+				
 
 				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
 
@@ -1320,7 +1321,7 @@ class List_Table extends WP_List_Table {
 			/* translators: 1: link URL, 2: link text */
 			printf(
 				'&nbsp;<a class="button clear-filters" href="%s">%s</a>',
-				esc_url( remove_query_arg( array( 's', 'tag' ) ) ),
+				esc_url( remove_query_arg( array( 's', 'tag', 'cloud_search' ) ) ),
 				esc_html__( 'Clear Filters', 'code-snippets' )
 			);
 		}
@@ -1410,6 +1411,10 @@ class List_Table extends WP_List_Table {
 		//TODO: WHEN CLEARING SYNCED DATA - NEW CODEVAULT DATA IS DRAWN FROM CLOUD HOWEVER ONLY PAGE 0 IS PULLED
 		//IF CODEVAULT HAS MORE THAN 10 SNIPPETS THEN ANY SYNCED ITEM WILL NOT BE PULLED FROM CLOUD AND THUS NOT 
 		//SHOWN ON CODEVAULT AND UPDATED IN THE ALL SNIPPETS TABLE......
+
+		//PLAN - CODEVAULT TRANSIENT TO ONLY STORE VISIBLE PAGE?
+
+		//HOW TO MANAGE UPDATES.........
 		$snippets = get_snippets( $ids, $this->is_network );
 		code_snippets()->cloud_api->store_snippets_in_cloud( $snippets );
 	}
