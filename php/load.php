@@ -36,6 +36,13 @@ const PLUGIN_FILE = CODE_SNIPPETS_FILE;
  */
 const CACHE_GROUP = 'code_snippets';
 
+/**
+ * Namespace used for REST API endpoints.
+ *
+ * @var string
+ */
+const REST_API_NAMESPACE = 'code-snippets/v';
+
 // Load dependencies with Composer.
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 

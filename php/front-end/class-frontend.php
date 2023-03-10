@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use WP_Post;
+use WP_REST_Request;
 
 /**
  * This class manages the shortcodes included with the plugin
@@ -37,6 +38,48 @@ class Frontend {
 		add_shortcode( self::SOURCE_SHORTCODE, [ $this, 'render_source_shortcode' ] );
 
 		add_filter( 'code_snippets/render_content_shortcode', 'trim' );
+	}
+
+	/**
+	 * Register REST API routes for use in front-end plugins.
+	 *
+	 * @return void
+	 */
+	public function register_rest_routes() {
+		register_rest_route(
+			'v1/snippets',
+			'/snippets-info',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'get_snippets_info' ],
+				'permission_callback' => function () {
+					return current_user_can( 'edit_posts' );
+				},
+			)
+		);
+	}
+
+	/**
+	 * Fetch snippets data in response to a request.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_snippets_info( WP_REST_Request $request ) {
+		$snippets = get_snippets();
+		$data = [];
+
+		foreach ( $snippets as $snippet ) {
+			$data[] = [
+				'id'     => $snippet->id,
+				'name'   => $snippet->name,
+				'type'   => $snippet->type,
+				'active' => $snippet->active,
+			];
+		}
+
+		return new WP_REST_Response( $data, 200 );
 	}
 
 	/**
