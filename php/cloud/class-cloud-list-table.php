@@ -26,6 +26,13 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class Cloud_List_Table extends WP_List_Table {
 
 	/**
+	 * Base URL for cloud API.
+	 *
+	 * @var string
+	 */
+	const CLASS_NAME = 'Code_Snippets\Cloud\Cloud_List_Table';
+
+	/**
 	 * Instance of Cloud API class.
 	 *
 	 * @var Cloud_API
@@ -40,6 +47,13 @@ class Cloud_List_Table extends WP_List_Table {
 	protected $cloud_snippets;
 
 	/**
+	 * Full name of the class.
+	 *
+	 * @var string
+	 */
+	protected $class_name;
+
+	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
@@ -52,6 +66,7 @@ class Cloud_List_Table extends WP_List_Table {
 		);
 
 		$this->cloud_api = code_snippets()->cloud_api;
+		$this->class_name = get_class( $this );
 
 		// Strip the result query arg from the URL.
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
@@ -120,6 +135,10 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return Cloud_Snippets
 	 */
 	protected function fetch_snippets() {
+		if ( $_REQUEST['cloud_page'] )  {
+			return $this->cloud_api->get_codevault_snippets( (int) $_REQUEST['cloud_page'] - 1 );
+		}
+
 		return $this->cloud_api->get_codevault_snippets( $this->get_pagenum() - 1 );
 	}
 
@@ -142,7 +161,7 @@ class Cloud_List_Table extends WP_List_Table {
 			[
 				'per_page'    => count( $this->cloud_snippets->snippets ),
 				'total_items' => $this->cloud_snippets->total_snippets,
-				'total_pages' => (int) ( $this->cloud_snippets->total_pages + 1 ),
+				'total_pages' => (int) $this->cloud_snippets->total_pages,
 			]
 		);
 	}
@@ -359,7 +378,7 @@ class Cloud_List_Table extends WP_List_Table {
 
 		$update_available = $link && $link->update_available;
 		//Get source of snippet - codevault or search use current class as snippet source is not set for every cloud snippet in cloud link
-		$source = 'Code_Snippets\Cloud\Cloud_List_Table' === get_class( $this ) ? 'codevault' : 'search';
+		$source = self::CLASS_NAME === $this->class_name ? 'codevault' : 'search';
 
 		$download_url = add_query_arg(
 			[
@@ -504,8 +523,10 @@ class Cloud_List_Table extends WP_List_Table {
 		$num = sprintf( _n( '%s item', '%s items', $total_items, 'code-snippets' ), number_format_i18n( $total_items ) );
 		$output = '<span class="displaying-num">' . $num . '</span>';
 
-		$current = $this->get_pagenum();
+		$current = $_REQUEST['cloud_page'] ? (int) $_REQUEST['cloud_page'] : $this->get_pagenum();
 		$current_url = remove_query_arg( wp_removable_query_args() );
+
+		$current_class = Cloud_List_Table::CLASS_NAME === $this->class_name ? 'cloud' : 'search';
 
 		$page_links = array();
 
@@ -532,7 +553,7 @@ class Cloud_List_Table extends WP_List_Table {
 		} else {
 			$page_links[] = sprintf(
 				"<a class='first-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				esc_url( remove_query_arg( 'search_page', $current_url ) ),
+				esc_url( remove_query_arg( $current_class.'_page', $current_url ) ),
 				__( 'First page' ),
 				'&laquo;'
 			);
@@ -543,7 +564,7 @@ class Cloud_List_Table extends WP_List_Table {
 		} else {
 			$page_links[] = sprintf(
 				"<a class='prev-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				esc_url( add_query_arg( 'search_page', max( 1, $current - 1 ), $current_url ) ),
+				esc_url( add_query_arg( $current_class.'_page', max( 1, $current - 1 ), $current_url ) ),
 				__( 'Previous page' ),
 				'&lsaquo;'
 			);
@@ -554,7 +575,7 @@ class Cloud_List_Table extends WP_List_Table {
 			$total_pages_before = '<span class="screen-reader-text">' . __( 'Current Page' ) . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
 		} else {
 			$html_current_page = sprintf(
-				"%s<input class='current-page' id='current-page-selector' type='text' name='search_page' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
+				"%s<input class='current-page' id='current-page-selector' type='text' name=$current_class.'_page' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
 				'<label for="current-page-selector" class="screen-reader-text">' . __( 'Current Page' ) . '</label>',
 				$current,
 				strlen( $total_pages )
@@ -571,7 +592,7 @@ class Cloud_List_Table extends WP_List_Table {
 		} else {
 			$page_links[] = sprintf(
 				"<a class='next-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				esc_url( add_query_arg( 'search_page', min( $total_pages, $current + 1 ), $current_url ) ),
+				esc_url( add_query_arg( $current_class.'_page', min( $total_pages, $current + 1 ), $current_url ) ),
 				__( 'Next page' ),
 				'&rsaquo;'
 			);
@@ -582,7 +603,7 @@ class Cloud_List_Table extends WP_List_Table {
 		} else {
 			$page_links[] = sprintf(
 				"<a class='last-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				esc_url( add_query_arg( 'search_page', $total_pages, $current_url ) ),
+				esc_url( add_query_arg( $current_class.'_page', $total_pages, $current_url ) ),
 				__( 'Last page' ),
 				'&raquo;'
 			);

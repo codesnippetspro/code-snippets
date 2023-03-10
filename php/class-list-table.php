@@ -366,7 +366,6 @@ class List_Table extends WP_List_Table {
 
 		$cloud_link = $this->get_cloud_link( $snippet->id );
 		if ( $cloud_link ) {
-			var_dump($cloud_link);
 			//If update available make cloud icon orange?
 			if ( $cloud_link->update_available ) {
 				$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>' . $out;

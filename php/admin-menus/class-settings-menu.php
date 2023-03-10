@@ -245,9 +245,10 @@ class Settings_Menu extends Admin_Menu {
 		}
 
 		check_admin_referer( 'code-snippets-options' );
-
+		
 		// Retrieve the submitted options and save them to the database.
 		if ( isset( $_POST['code_snippets_settings'] ) ) {
+
 			$value = map_deep( wp_unslash( $_POST['code_snippets_settings'] ), 'sanitize_key' );
 			update_site_option( 'code_snippets_settings', $value );
 			wp_cache_delete( Settings\CACHE_KEY );

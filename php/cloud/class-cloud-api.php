@@ -114,13 +114,8 @@ class Cloud_API {
 		$this->local_to_cloud_map = [];
 
 		// Create a list of snippet revisions in the format `cloud_id._.is_owner` => `revision`, e.g. [163_1 => 2].
-		$cloud_snippet_revisions = [];
 		$codevault_snippets = $this->get_codevault_snippets();
-
-		foreach ( $codevault_snippets->snippets as $cloud_snippet ) {
-			$ownership = $cloud_snippet->is_owner ? '1' : '0';
-			$cloud_snippet_revisions[ $cloud_snippet->id.'_'.$ownership ] = $cloud_snippet->revision;
-		}
+		$cloud_id_rev = $codevault_snippets->cloud_id_rev;
 
 		// Fetch and iterate through all local snippets to create the map.
 		foreach ( get_snippets() as $local_snippet ) {
@@ -133,11 +128,12 @@ class Cloud_API {
 			$cloud_id_owner = $this->get_cloud_id_and_ownership( $local_snippet->cloud_id );
 			$link->local_id = $local_snippet->id;
 			$link->cloud_id = intval( $cloud_id_owner['cloud_id'] );
+			
 			$link->is_owner = $cloud_id_owner['is_owner'];
-			$link->in_codevault = isset( $cloud_snippet_revisions[ $local_snippet->cloud_id ] );
+			$link->in_codevault = array_key_exists( $cloud_id_owner['cloud_id'] , $cloud_id_rev );
 
 			$cloud_snippet_revision = $link->in_codevault ?
-				$cloud_snippet_revisions[ $local_snippet->cloud_id ] :
+				$cloud_id_rev[ $link->cloud_id ] :
 				$this->get_cloud_snippet_revision( $local_snippet->cloud_id );
 
 			// Check if local revision is less than cloud revision.
@@ -221,10 +217,11 @@ class Cloud_API {
 		$this->codevault_snippets = null;
 
 		// Otherwise, fetch from API and store.
-		$url = self::CLOUD_API_URL . 'private/allsnippets';
+		$url = self::CLOUD_API_URL . 'private/allsnippets?page=' . $page;
 		$response = wp_remote_get( $url, [ 'headers' => $this->build_request_headers() ] );
 
 		$data = $this->unpack_request_json( $response );
+
 		$this->codevault_snippets = new Cloud_Snippets( $data );
 
 		$this->codevault_snippets->page = $page;
@@ -333,16 +330,6 @@ class Cloud_API {
 
 			// Clear cached data.
 			$this->refresh_synced_data();
-
-			// // Update local-to-cloud map transient.
-			// $link = new Cloud_Link();
-			// $link->local_id = $snippet->id;
-			// $link->cloud_id = $cloud_id;
-			// $link->is_owner = true;
-			// $link->in_codevault = true;
-			// $link->update_available = false;
-
-			//$this->add_map_link( $link );
 		}
 	}
 
@@ -523,6 +510,10 @@ class Cloud_API {
 	 */
 	public function download_snippet_from_cloud( $snippets_to_store, $in_codevault ) {
 		
+		if( is_object($snippets_to_store) ){
+			$snippets_to_store = [$snippets_to_store];
+		}
+
 		foreach ($snippets_to_store as $snippet_to_store) {
 			
 			$snippet = new Snippet( $snippet_to_store );
@@ -544,7 +535,6 @@ class Cloud_API {
 
 			$this->add_map_link( $link );
 		}
-
 		if( count($snippets_to_store) == 1 ){
 			return [
 				'success' => true,
@@ -554,7 +544,6 @@ class Cloud_API {
 		}
 
 		if( count($snippets_to_store) > 1 ){
-
 			return [
 				'success' => true,
 				'action'  => 'Downloaded',
@@ -590,30 +579,7 @@ class Cloud_API {
 
 		update_snippet_fields( $local_snippet->id, $fields );
 
-		foreach ( $this->get_local_to_cloud_map() as $link ) {
-			if ( $link->local_id === $local_snippet->id ) {
-				$link->update_available = false;
-			}
-		}
-
-		set_transient(
-			self::CLOUD_MAP_TRANSIENT_KEY,
-			$this->local_to_cloud_map,
-			DAY_IN_SECONDS * self::DAYS_TO_STORE_CS
-		);
-
-		foreach ( $this->get_codevault_snippets() as $cloud_snippet ) {
-			if ( $cloud_snippet->id === $local_snippet->id ) {
-				$cloud_snippet->code = $snippet_to_store->code;
-				$cloud_snippet->revision = $snippet_to_store->revision;
-			}
-		}
-
-		set_transient(
-			self::CODEVAULT_SNIPPETS_TRANSIENT_KEY,
-			$this->codevault_snippets,
-			DAY_IN_SECONDS * self::DAYS_TO_STORE_CS
-		);
+		$this->refresh_synced_data();
 
 		return [
 			'success' => true,

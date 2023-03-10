@@ -15,6 +15,7 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @property integer         $page   Page of data that this data belongs to.
  * @property integer         $total_pages    Total number of available pages of items.
  * @property integer         $total_snippets Total number of available snippet items.
+ * @property array         	 $cloud_id_rev  An array of all cloud snippet ids and their revision numbers.
  * @property bool         	 $success	  	 If the request has any results.
  */
 class Cloud_Snippets extends Data_Item {
@@ -31,12 +32,14 @@ class Cloud_Snippets extends Data_Item {
 				'total_snippets' => 0,
 				'total_pages'    => 0,
 				'page'   		 => 0,
+				'cloud_id_rev' 	 => [],
 			],
 			$initial_data,
 			[
 				'items'       => 'snippets',
 				'total_items' => 'total_snippets',
 				'page'	  	  => 'page',
+				'cloud_id_rev'=> 'cloud_id_rev',
 			]
 		);
 	}
