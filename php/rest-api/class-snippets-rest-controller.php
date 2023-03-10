@@ -48,6 +48,11 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	public function register_routes() {
 		$route = '/' . $this->rest_base;
 
+		$basic_args = array_intersect_key(
+			$this->get_endpoint_args_for_item_schema(),
+			[ 'network' ]
+		);
+
 		register_rest_route(
 			$this->namespace,
 			$route,
@@ -56,12 +61,14 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'schema'              => [ $this, 'get_item_schema' ],
 					'args'                => [],
 				],
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'create_item' ],
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
+					'schema'              => [ $this, 'get_item_schema' ],
 					'args'                => $this->get_endpoint_args_for_item_schema( true ),
 				],
 			]
@@ -75,27 +82,21 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_item' ],
 					'permission_callback' => [ $this, 'get_item_permissions_check' ],
-					'args'                => [
-						'context' => [
-							'default' => 'view',
-						],
-					],
+					'schema'              => [ $this, 'get_item_schema' ],
+					'args'                => $basic_args,
 				],
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'update_item' ],
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
+					'schema'              => [ $this, 'get_item_schema' ],
 					'args'                => $this->get_endpoint_args_for_item_schema( false ),
 				],
 				[
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => [ $this, 'delete_item' ],
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
-					'args'                => [
-						'force' => [
-							'default' => false,
-						],
-					],
+					'args'                => $basic_args,
 				],
 			]
 		);
@@ -140,7 +141,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 		$snippet_id = $request->get_param( 'id' );
 		$item = get_snippet( $snippet_id, $request->get_param( 'network' ) );
 
-		if ( ! $item->id && $snippet_id !== 0 && $snippet_id !== '0' ) {
+		if ( ! $item->id && 0 !== $snippet_id && '0' !== $snippet_id ) {
 			return new WP_Error(
 				'rest_cannot_get',
 				__( 'The snippet could not be found.', 'code-snippets' ),
@@ -309,5 +310,72 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	public function delete_item_permissions_check( $request ) {
 		return $this->create_item_permissions_check( $request );
+	}
+
+	/**
+	 * Get our sample schema for a post.
+	 *
+	 * @return array The sample schema for a post
+	 */
+	public function get_item_schema() {
+		if ( $this->schema ) {
+			return $this->schema;
+		}
+
+		$this->schema = [
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'snippet',
+			'type'       => 'object',
+			'properties' => [
+				'id'             => [
+					'description' => esc_html__( 'Unique identifier for the snippet.', 'code-snippets' ),
+					'type'        => 'integer',
+					'readonly'    => true,
+				],
+				'name'           => [
+					'description' => esc_html__( 'Descriptive title for the snippet.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'desc'           => [
+					'description' => esc_html__( 'Descriptive text associated with snippet.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'code'           => [
+					'description' => esc_html__( 'Executable snippet code.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'tags'           => [
+					'description' => esc_html__( 'List of tag categories the snippet belongs to.', 'code-snippets' ),
+					'type'        => 'array',
+				],
+				'scope'          => [
+					'description' => esc_html__( 'Context in which the snippet is executable.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'active'         => [
+					'description' => esc_html__( 'Snippet activation status.', 'code-snippets' ),
+					'type'        => 'boolean',
+				],
+				'priority'       => [
+					'description' => esc_html__( 'Relative priority in which the snippet is executed.', 'code-snippets' ),
+					'type'        => 'integer',
+				],
+				'network'        => [
+					'description' => esc_html__( 'Whether the snippet is network-wide instead of site-wide.', 'code-snippets' ),
+					'type'        => 'boolean',
+					'default'     => null,
+				],
+				'shared_network' => [
+					'description' => esc_html__( 'If a network snippet, whether can be activated on discrete sites instead of network-wide.', 'code-snippets' ),
+					'type'        => 'boolean',
+				],
+				'modified'       => [
+					'description' => esc_html__( 'Date and time when the snippet was last modified, in ISO format.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+			],
+		];
+
+		return $this->schema;
 	}
 }
