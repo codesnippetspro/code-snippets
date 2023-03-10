@@ -372,8 +372,10 @@ function deactivate_snippet( $id, $multisite = null ) {
  * Deletes a snippet from the database.
  * Write operation.
  *
- * @param int       $id        ID of the snippet to delete.
- * @param bool|null $multisite Delete from network-wide (true) or site-wide (false) table.
+ * @param integer      $id        ID of the snippet to delete.
+ * @param boolean|null $multisite Delete from network-wide (true) or site-wide (false) table.
+ *
+ * @return boolean Whether the operation completed successfully.
  *
  * @return bool Whether the snippet was deleted successfully.
  *
@@ -394,7 +396,7 @@ function delete_snippet( $id, $multisite = null ) {
 		clean_snippets_cache( $table );
 	}
 
-	return $result;
+	return (bool) $result;
 }
 
 /**
@@ -403,7 +405,7 @@ function delete_snippet( $id, $multisite = null ) {
  *
  * @param Snippet $snippet The snippet to add/update to the database.
  *
- * @return int ID of the snippet
+ * @return integer ID of the snippet.
  *
  * @since 2.0.0
  */

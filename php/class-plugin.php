@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\REST_API\Snippets_REST_Controller;
+
 /**
  * The main plugin class
  *
@@ -52,13 +54,6 @@ class Plugin {
 	public $active_snippets;
 
 	/**
-	 * Class for providing REST API endpoints for snippet data.
-	 *
-	 * @var REST_API
-	 */
-	protected $rest_api;
-
-	/**
 	 * Handles licensing and plugin updates.
 	 *
 	 * @var Licensing
@@ -84,6 +79,8 @@ class Plugin {
 			add_filter( 'home_url', array( $this, 'add_safe_mode_query_var' ) );
 			add_filter( 'admin_url', array( $this, 'add_safe_mode_query_var' ) );
 		}
+
+		add_action( 'rest_api_init', [ $this, 'register_rest_api_controllers' ] );
 	}
 
 	/**
@@ -111,7 +108,6 @@ class Plugin {
 		require_once $includes_path . '/settings/editor-preview.php';
 		require_once $includes_path . '/settings/settings.php';
 
-		$this->rest_api = new REST_API();
 		$this->active_snippets = new Active_Snippets();
 		$this->frontend = new Frontend();
 
@@ -122,6 +118,21 @@ class Plugin {
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 		$this->licensing = new Licensing();
+	}
+
+	/**
+	 * Register custom REST API controllers.
+	 *
+	 * @since [NEXT_VERSION]
+	 *
+	 * @return void
+	 */
+	public function register_rest_api_controllers() {
+		$controllers = [ new Snippets_REST_Controller() ];
+
+		foreach ( $controllers as $controller ) {
+			$controller->register_routes();
+		}
 	}
 
 	/**

@@ -1,5 +1,5 @@
 === Code Snippets ===
-Contributors: bungeshea, ver3
+Contributors: bungeshea, ver3, lightbulbman, codesnippetspro
 Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
