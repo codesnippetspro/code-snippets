@@ -153,11 +153,23 @@ abstract class Data_Item {
 			return;
 		}
 
-		if ( method_exists( $this, 'prepare_' . $field ) ) {
-			$value = call_user_func( array( $this, 'prepare_' . $field ), $value );
-		}
+		$value = method_exists( $this, 'prepare_' . $field ) ?
+			call_user_func( array( $this, 'prepare_' . $field ), $value ) :
+			$this->prepare_field( $value, $field );
 
 		$this->fields[ $field ] = $value;
+	}
+
+	/**
+	 * Prepare a value before it is stored.
+	 *
+	 * @param mixed  $value Value to prepare.
+	 * @param string $field Field name.
+	 *
+	 * @return mixed Value in the correct format.
+	 */
+	protected function prepare_field( $value, $field ) {
+		return $value;
 	}
 
 	/**

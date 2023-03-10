@@ -244,7 +244,6 @@ class Snippet extends Data_Item {
 		}
 
 		// Otherwise, discard the supplied value.
-
 		return null;
 	}
 
@@ -260,7 +259,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string
 	 */
-	private function get_display_name() {
+	protected function get_display_name() {
 		// translators: %d: snippet ID.
 		return empty( $this->name ) ? sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $this->id ) : $this->name;
 	}
