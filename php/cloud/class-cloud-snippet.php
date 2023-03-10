@@ -17,11 +17,11 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @property string        $code             The executable code.
  * @property array<string> $tags             An array of the tags.
  * @property string        $scope            The scope name.
- * @property string        $status           Verification status.
- * @property string        $created          The date and time when the snippet data was first created, in DD/MM/YY format.
- * @property string        $updated          When the snippet was last updated, in human-readable format.
+ * @property string        $status           Snippet Status ID.
+ * @property string        $created          The date and time when the snippet data was first created, in ISO format.
+ * @property string        $updated          When the snippet was last updated, in ISO format.
  * @property integer       $revision         The update revision number.
- * @property string        $cloud_id         Cloud ID and ownership status of snippet.
+ * @property bool          $is_owner         If user is owner or author of snippet 
  */
 class Cloud_Snippet extends Data_Item {
 
@@ -33,7 +33,7 @@ class Cloud_Snippet extends Data_Item {
 	public function __construct( $initial_data = null ) {
 		parent::__construct(
 			[
-				'id'          => 0,
+				'id'          => '',
 				'name'        => '',
 				'description' => '',
 				'code'        => '',
@@ -43,7 +43,7 @@ class Cloud_Snippet extends Data_Item {
 				'created'     => '',
 				'updated'     => '',
 				'revision'    => 0,
-				'cloud_id'    => '',
+				'is_owner'    => false,
 			],
 			$initial_data
 		);
@@ -63,8 +63,8 @@ class Cloud_Snippet extends Data_Item {
 			case 'revision':
 				return absint( $value );
 
-			case 'cloud_id':
-				return (string) $value;
+			case 'is_owner':
+				return (bool) $value;
 
 			case 'tags':
 				return code_snippets_build_tags_array( $value );

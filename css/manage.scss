@@ -322,14 +322,25 @@ $inactive-color: #ccc;
 	width: 100%;
 }
 
-.cloud-synced {
+.cloud-icon{
     margin-right: 3px;
     margin-bottom: 2px;
+}
+
+.cloud-synced {
     color: #00bcd4;
 }
 
+.cloud-downloaded{
+	color: #9e9e9e;
+}
+
+.cloud-update{
+	color: #ff9800;
+}
 .cloud-table > tbody > tr  {
 	height: 80px;
+	box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
 }
 .cloud-table tbody .active-snippet .column-name {
 	font-weight: 400;

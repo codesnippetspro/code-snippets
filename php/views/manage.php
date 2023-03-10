@@ -30,9 +30,8 @@ $current_type = $this->get_current_type();
 
 		$this->page_title_actions( code_snippets()->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
 
-		if ( 'cloud' !== $current_type ) {
-			$this->list_table->search_notice();
-		}
+		$this->list_table->search_notice();
+		
 
 		?>
 	</h1>
@@ -98,20 +97,25 @@ $current_type = $this->get_current_type();
 
 		?>
 		<h2>Cloud Search</h2>
-		<p>Search the Code Snippets Cloud for snippets that you can import into your site.</p>
-		<form method="get" action="">
+		<p id="search">Search the Code Snippets Cloud for snippets that you can import into your site.</p>
+		<form method="get" action="" id="cloud-search-form">
 			<?php List_Table::required_form_fields( 'search_box' ); ?>
 
 			<label class="screen-reader-text" for="cloud_search">
 				<?php esc_html_e( 'Search cloud snippets', 'code-snippets' ); ?>
 			</label>
 
+			<?php 
+				if( isset($_REQUEST['type'] ) ){
+					echo '<input type="hidden" name="type" value="' . sanitize_text_field( esc_attr( $_REQUEST['type' ] ) ) . '">';
+				}
+			?>
+
 			<input type="text" id="cloud_search" name="cloud_search" class="cloud_search"
 			       value="<?php echo esc_html( $search_query ); ?>"
 			       placeholder="<?php esc_html_e( 'e.g. Remove unused JavaScript…', 'code-snippets' ); ?>">
 
-			<input type="submit" name="submit" id="cloud-search-submit" class="button"
-			       value="<?php esc_html_e( 'Search Cloud', 'code-snippets' ); ?>">
+			<button type="submit" id="cloud-search-submit" class="button">Search Cloud</button>
 		</form>
 
 
@@ -127,7 +131,7 @@ $current_type = $this->get_current_type();
 		</form>
 
 		<h2>My Codevault</h2>
-
+		<p id="cloud">See all public and private snippets in your Code Snippet Cloud Codevault.</p>
 	<?php } ?>
 
 	<form method="get" action="">

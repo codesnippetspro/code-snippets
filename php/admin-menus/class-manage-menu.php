@@ -178,7 +178,9 @@ class Manage_Menu extends Admin_Menu {
 	private function load_cloud() {
 		if ( ! empty( $_REQUEST['refresh_cloud'] ) ) {
 			$this->cloud_api->refresh_synced_data();
-			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', 'cloud-refreshed' ) ) );
+			return true;
+			//Include below line if you want to regenerate cloud data from as refresh synced just deletes the data
+			//wp_safe_redirect( esc_url_raw( add_query_arg( 'result', 'cloud-refreshed' ) ) ); 
 		}
 
 		if ( ! isset( $_REQUEST['type'] ) || 'cloud' !== $this->get_current_type() ) {
