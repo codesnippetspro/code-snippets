@@ -21,7 +21,7 @@ abstract class Data_Item {
 	 *
 	 * @var array<string, string> Field alias names keyed to actual field names.
 	 */
-	private $field_aliases;
+	protected $field_aliases;
 
 	/**
 	 * Class constructor.
@@ -113,9 +113,14 @@ abstract class Data_Item {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
-				$message = sprintf( 'Trying to access invalid property on "%s" class: %s', get_class( $this ), $field );
+				$message = sprintf(
+					'Trying to access invalid property on "%s" class: %s',
+					get_class( $this ),
+					esc_html( $field )
+				);
+
 				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( esc_html( $message ), E_WARNING );
+				trigger_error( $message, E_WARNING );
 			}
 
 			return null;
@@ -135,9 +140,14 @@ abstract class Data_Item {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
-				$message = sprintf( 'Trying to set invalid property on "%s" class: %s', get_class( $this ), $field );
+				$message = sprintf(
+					'Trying to set invalid property on "%s" class: %s',
+					get_class( $this ),
+					esc_html( $field )
+				);
+
 				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( esc_html( $message ), E_WARNING );
+				trigger_error( $message, E_WARNING );
 			}
 
 			return;

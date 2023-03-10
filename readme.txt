@@ -1,10 +1,10 @@
 === Code Snippets ===
-Contributors: bungeshea, ver3
+Contributors: bungeshea, ver3, lightbulbman, codesnippetspro
 Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.2.2
+Stable tag: 3.3.0
 Tested up to: 6.1.1
 
 An easy, clean and simple way to run code snippets on your site.
@@ -127,6 +127,14 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.3.0 (09 Mar 2022) =
+* Fixed: Do not enqueue CSS or JS snippet file if no snippets exist. (PRO)
+* Improved: Added additional editor shortcuts to list in tooltip.
+* Added: Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
+* Added: Ability to filter shortcode output. Thanks to contributions from [Jack Szwergold](https://github.com/JackSzwergold).
+* Fixed: Bug causing all snippets to show in site health information instead of those active.
+* Fixed: Unnecessary sanitization of file upload data causing import process to fail on Windows systems.
 
 = 3.2.2 (17 Nov 2022) =
 * Fixed: Plugin lacking a valid header error on activation.
@@ -281,6 +289,9 @@ __New in Pro__
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
+
+= 3.3.0 =
+Assorted bug fixes and additional filter hooks.
 
 = 3.2.2 =
 Tested with WordPress 6.1.1.

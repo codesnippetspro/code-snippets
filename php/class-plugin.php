@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_API;
+use Code_Snippets\REST_API\Snippets_REST_Controller;
 
 /**
  * The main plugin class
@@ -61,13 +62,6 @@ class Plugin {
 	public $cloud_api;
 
 	/**
-	 * Class for providing REST API endpoints for snippet data.
-	 *
-	 * @var REST_API
-	 */
-	protected $rest_api;
-
-	/**
 	 * Handles licensing and plugin updates.
 	 *
 	 * @var Licensing
@@ -93,6 +87,8 @@ class Plugin {
 			add_filter( 'home_url', array( $this, 'add_safe_mode_query_var' ) );
 			add_filter( 'admin_url', array( $this, 'add_safe_mode_query_var' ) );
 		}
+
+		add_action( 'rest_api_init', [ $this, 'register_rest_api_controllers' ] );
 	}
 
 	/**
@@ -101,26 +97,25 @@ class Plugin {
 	public function load_plugin() {
 		$includes_path = __DIR__;
 
-		/* Database operation functions */
+		// Database operation functions.
 		$this->db = new DB();
 
-		/* Snippet operation functions */
+		// Snippet operation functions.
 		require_once $includes_path . '/snippet-ops.php';
 
-		/* CodeMirror editor functions */
+		// CodeMirror editor functions.
 		require_once $includes_path . '/editor.php';
 
-		/* General Administration functions */
+		// General Administration functions.
 		if ( is_admin() ) {
 			$this->admin = new Admin();
 		}
 
-		/* Settings component */
+		// Settings component.
 		require_once $includes_path . '/settings/settings-fields.php';
 		require_once $includes_path . '/settings/editor-preview.php';
 		require_once $includes_path . '/settings/settings.php';
 
-		$this->rest_api = new REST_API();
 		$this->active_snippets = new Active_Snippets();
 		$this->frontend = new Frontend();
 		$this->cloud_api = new Cloud_API();
@@ -132,6 +127,21 @@ class Plugin {
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 		$this->licensing = new Licensing();
+	}
+
+	/**
+	 * Register custom REST API controllers.
+	 *
+	 * @since [NEXT_VERSION]
+	 *
+	 * @return void
+	 */
+	public function register_rest_api_controllers() {
+		$controllers = [ new Snippets_REST_Controller() ];
+
+		foreach ( $controllers as $controller ) {
+			$controller->register_routes();
+		}
 	}
 
 	/**
@@ -270,7 +280,7 @@ class Plugin {
 		if ( is_multisite() ) {
 			$menu_perms = get_site_option( 'menu_items', array() );
 
-			/* If multisite is enabled and the snippet menu is not activated, restrict snippet operations to super admins only */
+			// If multisite is enabled and the snippet menu is not activated, restrict snippet operations to super admins only.
 			if ( empty( $menu_perms['snippets'] ) ) {
 				return $this->get_network_cap_name();
 			}

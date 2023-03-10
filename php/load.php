@@ -1,6 +1,6 @@
 <?php
 /**
- * Initialise and load the plugin under the proper namespace
+ * Initialise and load the plugin under the proper namespace.
  *
  * @package Code_Snippets
  */
@@ -16,7 +16,7 @@ namespace Code_Snippets;
  *
  * @var string A PHP-standardized version number string.
  */
-const PLUGIN_VERSION = '3.3.dev-1';
+const PLUGIN_VERSION = CODE_SNIPPETS_VERSION;
 
 /**
  * The full path to the main file of this plugin.
@@ -36,7 +36,14 @@ const PLUGIN_FILE = CODE_SNIPPETS_FILE;
  */
 const CACHE_GROUP = 'code_snippets';
 
-/* Load dependencies with Composer */
+/**
+ * Namespace used for REST API endpoints.
+ *
+ * @var string
+ */
+const REST_API_NAMESPACE = 'code-snippets/v';
+
+// Load dependencies with Composer.
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
 /**
@@ -57,5 +64,5 @@ function code_snippets() {
 
 code_snippets()->load_plugin();
 
-/* Execute the snippets once the plugins are loaded */
+// Execute the snippets once the plugins are loaded.
 add_action( 'plugins_loaded', __NAMESPACE__ . '\execute_active_snippets', 1 );

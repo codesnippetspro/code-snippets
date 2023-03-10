@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2be53d253ec5b1b16c818ecbb10de987",
+    "content-hash": "11c6f0797a3e3a634753c77709abf0a5",
     "packages": [
         {
             "name": "composer/installers",
@@ -159,16 +159,16 @@
         },
         {
             "name": "freemius/wordpress-sdk",
-            "version": "2.5.3",
+            "version": "2.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Freemius/wordpress-sdk.git",
-                "reference": "2e56d683dd7b30445940679ecb401d2aff746c9e"
+                "reference": "612248cf7bf743999905684325264b172c410b8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Freemius/wordpress-sdk/zipball/2e56d683dd7b30445940679ecb401d2aff746c9e",
-                "reference": "2e56d683dd7b30445940679ecb401d2aff746c9e",
+                "url": "https://api.github.com/repos/Freemius/wordpress-sdk/zipball/612248cf7bf743999905684325264b172c410b8c",
+                "reference": "612248cf7bf743999905684325264b172c410b8c",
                 "shasum": ""
             },
             "require": {
@@ -192,9 +192,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Freemius/wordpress-sdk/issues",
-                "source": "https://github.com/Freemius/wordpress-sdk/tree/2.5.3"
+                "source": "https://github.com/Freemius/wordpress-sdk/tree/2.5.4"
             },
-            "time": "2022-12-05T10:31:45+00:00"
+            "time": "2023-03-05T11:49:24+00:00"
         },
         {
             "name": "matthiasmullie/minify",
@@ -573,16 +573,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.7.1",
+            "version": "3.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "1359e176e9307e906dc3d890bcc9603ff6d90619"
+                "reference": "ed8e00df0a83aa96acf703f8c2979ff33341f879"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/1359e176e9307e906dc3d890bcc9603ff6d90619",
-                "reference": "1359e176e9307e906dc3d890bcc9603ff6d90619",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/ed8e00df0a83aa96acf703f8c2979ff33341f879",
+                "reference": "ed8e00df0a83aa96acf703f8c2979ff33341f879",
                 "shasum": ""
             },
             "require": {
@@ -618,14 +618,15 @@
             "homepage": "https://github.com/squizlabs/PHP_CodeSniffer",
             "keywords": [
                 "phpcs",
-                "standards"
+                "standards",
+                "static analysis"
             ],
             "support": {
                 "issues": "https://github.com/squizlabs/PHP_CodeSniffer/issues",
                 "source": "https://github.com/squizlabs/PHP_CodeSniffer",
                 "wiki": "https://github.com/squizlabs/PHP_CodeSniffer/wiki"
             },
-            "time": "2022-06-18T07:21:10+00:00"
+            "time": "2023-02-22T23:07:41+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",
