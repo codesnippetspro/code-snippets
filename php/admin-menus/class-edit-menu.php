@@ -121,15 +121,19 @@ class Edit_Menu extends Admin_Menu {
 		$this->snippet = get_snippet( $edit_id );
 		$snippet = $this->snippet;
 
-		if ( 0 === $edit_id && isset( $_GET['type'] ) && $_GET['type'] !== $snippet->type ) {
-			if ( 'php' === $_GET['type'] ) {
-				$snippet->scope = 'global';
-			} elseif ( 'css' === $_GET['type'] ) {
-				$snippet->scope = 'site-css';
-			} elseif ( 'html' === $_GET['type'] ) {
-				$snippet->scope = 'content';
-			} elseif ( 'js' === $_GET['type'] ) {
-				$snippet->scope = 'site-head-js';
+		if ( 0 === $edit_id && isset( $_GET['type'] ) && sanitize_key( $_GET['type'] ) !== $snippet->type ) {
+			$type = sanitize_key( $_GET['type'] );
+
+			$default_scopes = [
+				'php'  => 'global',
+				'css'  => 'site-css',
+				'html' => 'content',
+				'js'   => 'site-head-js',
+				'cond' => 'condition',
+			];
+
+			if ( isset( $default_scopes[ $type ] ) ) {
+				$snippet->scope = $default_scopes[ $type ];
 			}
 		}
 
@@ -660,7 +664,7 @@ class Edit_Menu extends Admin_Menu {
 		wp_enqueue_script(
 			'code-snippets-edit-menu',
 			plugins_url( 'dist/edit.js', $plugin->file ),
-			[ 'code-snippets-code-editor' ],
+			[ 'code-snippets-code-editor', 'react', 'react-dom' ],
 			$plugin->version,
 			true
 		);

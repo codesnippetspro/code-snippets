@@ -110,9 +110,9 @@ class Plugin {
 	/**
 	 * Register custom REST API controllers.
 	 *
+	 * @return void
 	 * @since [NEXT_VERSION]
 	 *
-	 * @return void
 	 */
 	public function register_rest_api_controllers() {
 		$controllers = [ new Snippets_REST_Controller() ];
@@ -296,6 +296,7 @@ class Plugin {
 				'html' => __( 'Content', 'code-snippets' ),
 				'css'  => __( 'Styles', 'code-snippets' ),
 				'js'   => __( 'Scripts', 'code-snippets' ),
+				'cond' => __( 'Conditions', 'code-snippets' ),
 			)
 		);
 	}

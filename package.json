@@ -46,7 +46,7 @@
         "codemirror-colorpicker": "^1.9.80",
         "php-parser": "github:glayzzle/php-parser#php8",
         "prismjs": "^1.29.0",
-        "react-select": "^5.6.1"
+        "react-select": "^5.7.0"
     },
     "devDependencies": {
         "@babel/core": "^7.20.2",

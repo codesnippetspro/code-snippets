@@ -1,0 +1,54 @@
+.snippet-condition-editor {
+	padding: 0 1.5em;
+
+	h4 {
+		margin-bottom: 0;
+	}
+
+	input[type="text"]:focus {
+		box-shadow: none;
+	}
+
+	.condition-add-button, .condition-remove-button {
+		display: flex;
+		flex-flow: row;
+		align-items: center;
+		justify-content: center;
+		max-width: 250px;
+
+		.dashicons + span {
+			margin-left: 2px;
+		}
+	}
+
+	.condition-remove-button {
+		color: currentColor;
+		border: none;
+		background: none;
+		padding: 0;
+
+		&:hover {
+			color: #b32d2e
+		}
+	}
+}
+
+.snippet-condition-group {
+	display: flex;
+	flex-flow: column;
+	margin: 1em 0 2em 0;
+
+	> * {
+		flex: 1;
+		margin-bottom: 1.5em;
+	}
+}
+
+.snippet-condition-row {
+	display: flex;
+	flex-flow: row;
+
+	> * {
+		margin-right: 1em;
+	}
+}

@@ -1,6 +1,5 @@
 @import '../node_modules/@jcubic/tagger/tagger.css';
 @import 'editor';
-
 @import 'type-badges';
 
 /**
@@ -109,3 +108,4 @@ p.snippet-scope, .snippet-scope p {
 @import 'edit/tooltips';
 @import 'edit/types';
 @import 'edit/tags';
+@import 'edit/conditions';

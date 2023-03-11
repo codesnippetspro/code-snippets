@@ -4,8 +4,6 @@
  *
  * @package    Code_Snippets
  * @subpackage Views
- *
- * @var Edit_Menu $this
  */
 
 namespace Code_Snippets;
@@ -15,13 +13,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
+/**
+ * This file has access to an instance of the Edit_Menu class.
+ *
+ * @var Edit_Menu $this
+ */
+
 $snippet = $this->snippet;
-$classes = array();
+$classes = [
+	sprintf( '%s-snippet', $snippet->scope ),
+];
 
 if ( ! $snippet->id ) {
 	$classes[] = 'new-snippet';
-} elseif ( 'single-use' === $snippet->scope ) {
-	$classes[] = 'single-use-snippet';
 } elseif ( 'html' !== $snippet->type ) {
 	$classes[] = ( $snippet->active ? '' : 'in' ) . 'active-snippet';
 }
@@ -117,6 +121,8 @@ if ( ! $snippet->id ) {
 
 			<?php $this->render_view( 'partials/editor-shortcuts' ); ?>
 		</div>
+
+		<div id="snippet-condition-editor" class="snippet-condition-editor"></div>
 
 		<div class="below-snippet-editor">
 			<?php do_action( 'code_snippets_below_editor', $snippet ); ?>

@@ -336,6 +336,13 @@ class Admin {
 			);
 		}
 
-		echo esc_html( $label ), 'all' === $type_name ? '' : ' <span class="badge">' . esc_html( $type_name ) . '</span>', '</a>';
+		$badge = '';
+		if ( 'cond' === $type_name ) {
+			$badge = ' <span class="dashicons dashicons-randomize"></span>';
+		} elseif ( 'all' !== $type_name ) {
+			$badge = ' <span class="badge">' . esc_html( $type_name ) . '</span>';
+		}
+
+		echo esc_html( $label ), $badge, '</a>';
 	}
 }

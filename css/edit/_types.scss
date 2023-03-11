@@ -1,5 +1,5 @@
 
-.CodeMirror-sizer {
+.snippet-condition-editor, .CodeMirror-sizer {
 	min-height: 300px !important;
 	box-sizing: border-box;
 	padding-bottom: 1.5em !important;
@@ -8,6 +8,10 @@
 		position: absolute;
 		bottom: 0;
 	}
+}
+
+.snippet-condition-editor {
+	display: none;
 }
 
 .snippet-scope {
@@ -75,5 +79,15 @@
 
 	.CodeMirror-sizer::after {
 		content: '<!-- end content -->';
+	}
+}
+
+[data-snippet-type=cond] {
+	.snippet-editor {
+		display: none;
+	}
+
+	.snippet-condition-editor {
+		display: block;
 	}
 }

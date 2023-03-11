@@ -8,7 +8,7 @@ export const config: Configuration = {
 	entry: {
 		manage: `${SOURCE_DIR}/manage.ts`,
 		edit: {
-			import: `${SOURCE_DIR}/edit.ts`,
+			import: `${SOURCE_DIR}/edit.tsx`,
 			dependOn: 'editor'
 		},
 		tags: `${SOURCE_DIR}/edit-tags.ts`,

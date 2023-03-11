@@ -172,17 +172,15 @@ class Snippet extends Data_Item {
 	protected function get_type() {
 		if ( '-css' === substr( $this->scope, -4 ) ) {
 			return 'css';
-		}
-
-		if ( '-js' === substr( $this->scope, -3 ) ) {
+		} elseif ( '-js' === substr( $this->scope, -3 ) ) {
 			return 'js';
-		}
-
-		if ( 'content' === substr( $this->scope, -7 ) ) {
+		} elseif ( 'content' === substr( $this->scope, -7 ) ) {
 			return 'html';
+		} elseif ( 'condition' === $this->scope ) {
+			return 'cond';
+		} else {
+			return 'php';
 		}
-
-		return 'php';
 	}
 
 	/**
@@ -191,7 +189,7 @@ class Snippet extends Data_Item {
 	 * @return string[]
 	 */
 	public static function get_types() {
-		return [ 'php', 'html', 'css', 'js' ];
+		return [ 'php', 'html', 'css', 'js', 'cond' ];
 	}
 
 	/**
@@ -205,6 +203,7 @@ class Snippet extends Data_Item {
 			'html' => __( 'Content', 'code-snippets' ),
 			'css'  => __( 'Styles', 'code-snippets' ),
 			'js'   => __( 'Scripts', 'code-snippets' ),
+			'cond' => __( 'Conditions', 'code-snippets' ),
 		];
 
 		return isset( $labels[ $this->type ] ) ? $labels[ $this->type ] : strtoupper( $this->type );
@@ -286,6 +285,7 @@ class Snippet extends Data_Item {
 			'content', 'head-content', 'footer-content',
 			'admin-css', 'site-css',
 			'site-head-js', 'site-footer-js',
+			'condition',
 		);
 	}
 
@@ -307,6 +307,7 @@ class Snippet extends Data_Item {
 			'site-css'       => 'admin-customizer',
 			'site-head-js'   => 'media-code',
 			'site-footer-js' => 'media-code',
+			'condition'      => 'randomize',
 		);
 	}
 
@@ -361,7 +362,6 @@ class Snippet extends Data_Item {
 	 * @return bool Whether the snippet is a shared network snippet.
 	 */
 	protected function get_shared_network() {
-
 		if ( isset( $this->fields['shared_network'] ) ) {
 			return $this->fields['shared_network'];
 		}
@@ -393,7 +393,6 @@ class Snippet extends Data_Item {
 	 * @return DateTime
 	 */
 	protected function get_modified_local() {
-
 		if ( function_exists( 'wp_timezone' ) ) {
 			$timezone = wp_timezone();
 		} else {
