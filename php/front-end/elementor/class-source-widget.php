@@ -120,11 +120,6 @@ class Source_Widget extends Widget {
 			'js'   => __( 'Scripts (JS)', 'code-snippets' ),
 		];
 
-		/**
-		 * Snippet object.
-		 *
-		 * @var Snippet $snippet
-		 */
 		foreach ( $this->snippets as $snippet ) {
 			$group = $labels[ $snippet->type ];
 			if ( ! isset( $options[ $group ] ) ) {
