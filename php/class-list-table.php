@@ -169,7 +169,7 @@ class List_Table extends WP_List_Table {
 			case 'type':
 				$type = $item->type;
 				return sprintf(
-					'<a class="snippet-type-badge" href="%s" data-type="%s">%s</a>',
+					'<a class="snippet-type-badge" href="%s" data-snippet-type="%s">%s</a>',
 					esc_url( add_query_arg( 'type', $type ) ),
 					esc_attr( $type ),
 					esc_html( $type )

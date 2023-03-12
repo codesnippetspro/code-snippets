@@ -1,8 +1,9 @@
 import React, { Dispatch, MouseEventHandler, SetStateAction, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import Select from 'react-select'
+import { BaseSnippetProps } from '../../types/BaseSnippetProps'
 import { conditionOptions } from './options'
-import { Condition } from './types'
+import { Condition, Conditions } from './types'
 
 interface ConditionRowProps {
 	condition: Condition
@@ -32,11 +33,13 @@ interface ConditionGroupProps {
 	heading: string
 	insertLabel: string
 	description: string
-	conditions: Condition[]
-	setConditions: Dispatch<SetStateAction<Condition[]>>
+	group: keyof Conditions
+	conditions: Conditions
+	setConditions: Dispatch<SetStateAction<Conditions>>
 }
 
 const ConditionGroup: React.FC<ConditionGroupProps> = ({
+	group,
 	conditions,
 	setConditions,
 	heading,
@@ -47,17 +50,23 @@ const ConditionGroup: React.FC<ConditionGroupProps> = ({
 		<h4>{heading}</h4>
 		<p className="description">{description}</p>
 		<div className="snippet-condition-group">
-			{conditions.map(condition =>
+			{conditions[group].map(condition =>
 				<ConditionRow
 					condition={condition}
-					onRemove={() => setConditions(value => value.filter(item => item !== condition))}
+					onRemove={() => setConditions(previous => {
+						previous[group] = previous[group].filter(item => item !== condition)
+						return previous
+					})}
 				/>
 			)}
 
 			<button
 				className="button condition-add-button"
 				onClick={() => {
-					setConditions(value => [...value, { subject: '', operator: 'eq', object: '' }])
+					setConditions(previous => {
+						previous[group].push({ subject: '', operator: 'eq', object: '' })
+						return previous
+					})
 				}}
 			>
 				<span className="dashicons dashicons-insert"></span>
@@ -66,27 +75,29 @@ const ConditionGroup: React.FC<ConditionGroupProps> = ({
 		</div>
 	</>
 
-export const ConditionEditor: React.FC = () => {
-	const [conditionsOR, setConditionsOR] = useState<Condition[]>(() => [])
-	const [conditionsAND, setConditionsAND] = useState<Condition[]>(() => [])
+export const ConditionEditor: React.FC<BaseSnippetProps> = ({ snippet, setSnippetField }) => {
+	const [conditions, setConditions] = useState<Conditions>(() =>
+		'condition' === snippet.scope ? JSON.parse(snippet.code) : { AND: [], OR: [] })
 
-	return (
+	return 'condition' === snippet.scope ?
 		<>
 			<ConditionGroup
-				conditions={conditionsAND}
-				setConditions={setConditionsAND}
+				group="AND"
+				conditions={conditions}
+				setConditions={setConditions}
 				heading={__('AND Conditions', 'code-snippets')}
 				insertLabel={__('Add AND condition', 'code-snippets')}
 				description={__('All conditions in this group must be true in order for the snippet to run.', 'code-snippets')}
 			/>
 
 			<ConditionGroup
-				conditions={conditionsOR}
-				setConditions={setConditionsOR}
+				group="OR"
+				conditions={conditions}
+				setConditions={setConditions}
 				heading={__('OR Conditions', 'code-snippets')}
 				insertLabel={__('Add OR condition', 'code-snippets')}
 				description={__('At least one condition in this group must be true in order for the snippet to run.', 'code-snippets')}
 			/>
-		</>
-	)
+		</> :
+		null
 }

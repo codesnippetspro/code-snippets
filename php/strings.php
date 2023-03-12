@@ -27,14 +27,6 @@ array(
 	'site-footer-js' => __( 'JavaScript loaded just before the closing &amp;lt;/body&amp;gt; tag', 'code-snippets' ),
 );
 
-// edit-scopes.php.
-array(
-	'head-content'   => __( 'Display in site &lt;head&gt; section.', 'code-snippets' ),
-	'footer-content' => __( 'Display at the end of the &lt;body&gt; section, in the footer.', 'code-snippets' ),
-	'site-css'       => __( 'Site front-end styles', 'code-snippets' ),
-	'admin-css'      => __( 'Administration area styles', 'code-snippets' ),
-);
-
 // class-content-widget.php.
 __( 'Processing Options', 'code-snippets' );
 __( 'Alignment', 'code-snippets' );

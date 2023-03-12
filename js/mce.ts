@@ -33,12 +33,12 @@ const insertContentMenu = (editor: Editor, activeEditor: WordPressEditor) => ({
 					type: 'listbox',
 					name: 'id',
 					label: activeEditor.getLang('code_snippets.snippet_label'),
-					values: convertToValues(activeEditor.getLang('code_snippets.all_snippets') as Record<string, string>),
+					values: convertToValues(activeEditor.getLang('code_snippets.all_snippets') as Record<string, string>)
 				},
 				{
 					type: 'checkbox',
 					name: 'line_numbers',
-					label: activeEditor.getLang('code_snippets.show_line_numbers_label'),
+					label: activeEditor.getLang('code_snippets.show_line_numbers_label')
 				}
 			],
 			onsubmit: (event: { data: SourceShortcodeOps }) => {
@@ -67,22 +67,22 @@ const insertSourceMenu = (editor: Editor, ed: WordPressEditor) => ({
 					type: 'listbox',
 					name: 'id',
 					label: ed.getLang('code_snippets.snippet_label'),
-					values: convertToValues(ed.getLang('code_snippets.content_snippets') as Record<string, string>),
+					values: convertToValues(ed.getLang('code_snippets.content_snippets') as Record<string, string>)
 				},
 				{
 					type: 'checkbox',
 					name: 'php',
-					label: ed.getLang('code_snippets.php_att_label'),
+					label: ed.getLang('code_snippets.php_att_label')
 				},
 				{
 					type: 'checkbox',
 					name: 'format',
-					label: ed.getLang('code_snippets.format_att_label'),
+					label: ed.getLang('code_snippets.format_att_label')
 				},
 				{
 					type: 'checkbox',
 					name: 'shortcodes',
-					label: ed.getLang('code_snippets.shortcodes_att_label'),
+					label: ed.getLang('code_snippets.shortcodes_att_label')
 				}
 			],
 			onsubmit: (event: { data: ContentShortcodeOps }) => {

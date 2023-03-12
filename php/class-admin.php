@@ -319,18 +319,18 @@ class Admin {
 	 */
 	public static function render_snippet_type_tab( $type_name, $label, $current_type = '' ) {
 		if ( $type_name === $current_type ) {
-			printf( '<a class="nav-tab nav-tab-active" data-type="%s">', esc_attr( $type_name ) );
+			printf( '<a class="nav-tab nav-tab-active" data-snippet-type="%s">', esc_attr( $type_name ) );
 
 		} elseif ( Plugin::is_pro_type( $type_name ) ) {
 			printf(
-				'<a class="nav-tab nav-tab-inactive" data-type="%s" title="%s" href="https://codesnippets.pro/pricing/" target="_blank">',
+				'<a class="nav-tab nav-tab-inactive" data-snippet-type="%s" title="%s" href="https://codesnippets.pro/pricing/" target="_blank">',
 				esc_attr( $type_name ),
 				esc_attr__( 'Available in Code Snippets Pro (external link)', 'code-snippets' )
 			);
 
 		} else {
 			printf(
-				'<a class="nav-tab" href="%s" data-type="%s">',
+				'<a class="nav-tab" href="%s" data-snippet-type="%s">',
 				esc_url( add_query_arg( 'type', $type_name ) ),
 				esc_attr( $type_name )
 			);

@@ -1,4 +1,4 @@
-const length = 140
+const length = 140;
 
 module.exports = {
 	parser: '@typescript-eslint/parser',
@@ -27,7 +27,7 @@ module.exports = {
 		'import/core-modules': ['tinymce']
 	},
 	rules: {
-		'quotes': ['error', 'single'],
+		'quotes': ['error', 'single', {avoidEscape: true}],
 		'linebreak-style': ['error', 'unix'],
 		'eqeqeq': ['error', 'always'],
 		'indent': ['error', 'tab', {SwitchCase: 1}],
@@ -40,7 +40,6 @@ module.exports = {
 		'arrow-parens': ['error', 'as-needed'],
 		'quote-props': ['error', 'consistent-as-needed'],
 		'yoda': ['error', 'always'],
-		'multiline-ternary': ['error', 'always-multiline'],
 		'dot-notation': 'error',
 		'operator-linebreak': ['error', 'after'],
 		'no-extra-parens': ['warn', 'all'],
@@ -58,6 +57,7 @@ module.exports = {
 		'semi': ['error', 'never'],
 
 		'no-ternary': 'off',
+		'multiline-ternary': 'off',
 		'no-nested-ternary': 'off',
 		'padded-blocks': 'off',
 		'implicit-arrow-linebreak': 'off',
@@ -73,4 +73,4 @@ module.exports = {
 		'array-element-newline': 'off',
 		'space-before-function-paren': 'off'
 	},
-}
+};
