@@ -57,27 +57,30 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ snippet }) =>
 	<p className="submit">
 		<SubmitButton snippet={snippet} />
 
-		{window.CODE_SNIPPETS_EDIT?.enableDownloads ?
-			<ActionButton
-				name="download_snippet"
-				text={__('Download', 'code-snippets')}
-				onClick={() => downloadSnippet(snippet)}
-			/> : ''}
+		{snippet.active ?
+			<>
+				{window.CODE_SNIPPETS_EDIT?.enableDownloads ?
+					<ActionButton
+						name="download_snippet"
+						text={__('Download', 'code-snippets')}
+						onClick={() => downloadSnippet(snippet)}
+					/> : ''}
 
-		<ActionButton
-			name="export_snippet"
-			text={__('Export', 'code-snippets')}
-			onClick={() => exportSnippet(snippet)}
-		/>
+				<ActionButton
+					name="export_snippet"
+					text={__('Export', 'code-snippets')}
+					onClick={() => exportSnippet(snippet)}
+				/>
 
-		<ActionButton
-			name="delete_snippet"
-			text={__('Delete', 'code-snippets')}
-			onClick={() =>
-				confirm([
-					__('You are about to permanently delete this snippet.', 'code-snippets'),
-					__("'Cancel' to stop, 'OK' to delete.", 'code-snippets')
-				].join('\n')) && deleteSnippet(snippet)
-			}
-		/>
+				<ActionButton
+					name="delete_snippet"
+					text={__('Delete', 'code-snippets')}
+					onClick={() =>
+						confirm([
+							__('You are about to permanently delete this snippet.', 'code-snippets'),
+							__("'Cancel' to stop, 'OK' to delete.", 'code-snippets')
+						].join('\n')) && deleteSnippet(snippet)
+					}
+				/>
+			</> : ''}
 	</p>

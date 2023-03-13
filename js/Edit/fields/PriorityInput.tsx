@@ -9,7 +9,7 @@ export const PriorityInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippet 
 			className="snippet-priority"
 			title={__('Snippets with a lower priority number will run before those with a higher number.', 'code-snippets')}
 		>
-			<label htmlFor="snippet_priority">{__('Priority', 'code-snippets')}</label>
+			<label htmlFor="snippet_priority">{`${__('Priority', 'code-snippets')} `}</label>
 			<input
 				type="number"
 				id="snippet_priority"

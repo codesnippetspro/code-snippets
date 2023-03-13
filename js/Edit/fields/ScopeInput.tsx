@@ -113,6 +113,7 @@ export const ScopeInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) 
 								checked={scope === snippet.scope}
 								onChange={event => event.target.checked && setSnippet(previous => ({ ...previous, scope }))}
 							/>
+							{' '}
 							<span className={`dashicons dashicons-${SCOPE_ICONS[scope]}`}></span>
 							{` ${SCOPE_DESCRIPTIONS[scope]}`}
 						</label>)}
