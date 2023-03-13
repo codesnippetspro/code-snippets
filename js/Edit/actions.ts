@@ -13,6 +13,8 @@ export const saveSnippet = (snippet: Snippet) => {
 	if (message && !confirm(message)) {
 		return
 	}
+
+	console.error('Save snippet not implemented.', snippet)
 }
 
 export const saveSnippetActivate = (snippet: Snippet) => {

@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef } from 'react'
+import React, { Dispatch, Ref, SetStateAction, useEffect, useRef } from 'react'
 import { BaseSnippetProps } from '../../types/BaseSnippetProps'
 import { CodeEditorInstance } from '../../types/editor'
 import { saveSnippet } from '../actions'
@@ -15,22 +15,24 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippet, set
 		setEditorInstance(instance => {
 			const { codeEditor } = window.wp
 
-			if (textareaRef.current && !instance) {
-				const editor = codeEditor.initialize(textareaRef.current)
-
-				const extraKeys = editor.codemirror.getOption('extraKeys')
-				const controlKey = window.navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'
-
-				editor.codemirror.setOption('extraKeys', {
-					...'object' === typeof extraKeys ? extraKeys : {},
-					[`${controlKey}-S`]: () => saveSnippet(snippet),
-					[`${controlKey}-Enter`]: () => saveSnippet(snippet)
-				})
+			if (!textareaRef.current || instance) {
+				return instance
 			}
 
-			return instance
+			const editor = codeEditor.initialize(textareaRef.current)
+
+			const extraKeys = editor.codemirror.getOption('extraKeys')
+			const controlKey = window.navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'
+
+			editor.codemirror.setOption('extraKeys', {
+				...'object' === typeof extraKeys ? extraKeys : {},
+				[`${controlKey}-S`]: () => saveSnippet(snippet),
+				[`${controlKey}-Enter`]: () => saveSnippet(snippet)
+			})
+
+			return editor
 		})
-	})
+	}, [setEditorInstance, snippet, textareaRef])
 
 	return snippet.id && 'condition' === snippet.scope ? null :
 		<div className="snippet-editor" style={{ display: 'condition' === snippet.scope ? 'none' : 'block' }}>

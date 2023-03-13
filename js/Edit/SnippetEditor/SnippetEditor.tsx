@@ -47,9 +47,9 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ tabType, label, current
 			<span className="badge">{tabType}</span>}
 	</a>
 
-export interface CodeEditorProps extends BaseSnippetProps {
-	editorInstance: CodeEditorInstance | undefined
-	setEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
+export interface SnippetEditorProps extends BaseSnippetProps {
+	codeEditorInstance: CodeEditorInstance | undefined
+	setCodeEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
 }
 
 export const TYPE_LABELS: Record<SnippetType, string> = {
@@ -67,16 +67,21 @@ const EDITOR_MODES: Partial<Record<SnippetType, string>> = {
 	html: 'application/x-httpd-php'
 }
 
-export const SnippetEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippet, editorInstance, setEditorInstance }) => {
+export const SnippetEditor: React.FC<SnippetEditorProps> = ({
+	snippet,
+	setSnippet,
+	codeEditorInstance,
+	setCodeEditorInstance
+}) => {
+	const snippetType = getSnippetType(snippet)
 
 	useEffect(() => {
-		const type = getSnippetType(snippet)
-		editorInstance?.codemirror.setOption('lint' as keyof EditorConfiguration, 'php' === type || 'css' === type)
+		codeEditorInstance?.codemirror.setOption('lint' as keyof EditorConfiguration, 'php' === snippetType || 'css' === snippetType)
 
-		if (type in EDITOR_MODES) {
-			editorInstance?.codemirror.setOption('mode', EDITOR_MODES[type])
+		if (snippetType in EDITOR_MODES) {
+			codeEditorInstance?.codemirror.setOption('mode', EDITOR_MODES[snippetType])
 		}
-	}, [snippet, editorInstance])
+	}, [codeEditorInstance, snippetType])
 
 	return (
 		<>
@@ -86,10 +91,8 @@ export const SnippetEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippet, 
 					{snippet.id ?
 						<span
 							className="snippet-type-badge"
-							data-snippet-type={getSnippetType(snippet)}
-						>
-							{getSnippetType(snippet)}
-						</span> :
+							data-snippet-type={snippetType}
+						>{snippetType}</span> :
 						''}
 				</label>
 			</h2>
@@ -107,7 +110,7 @@ export const SnippetEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippet, 
 				</h2>}
 
 			<ConditionEditor snippet={snippet} setSnippet={setSnippet} />
-			<CodeEditor snippet={snippet} setSnippet={setSnippet} setEditorInstance={setEditorInstance} />
+			<CodeEditor snippet={snippet} setSnippet={setSnippet} setEditorInstance={setCodeEditorInstance} />
 		</>
 	)
 }

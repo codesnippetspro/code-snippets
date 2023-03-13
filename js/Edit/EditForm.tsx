@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import apiFetch from '@wordpress/api-fetch'
 import { BaseSnippetProps } from '../types/BaseSnippetProps'
 import { CodeEditorInstance } from '../types/editor'
 import { Snippet } from '../types/Snippet'
 import { getSnippetType } from '../utils/snippets'
+import { saveSnippet } from './actions'
 import { SnippetEditor } from './SnippetEditor/SnippetEditor'
 import { DescriptionEditorProps } from './fields/DescriptionEditor'
 import { MultisiteSharingSettings } from './fields/MultisiteSharingSettings'
@@ -47,8 +48,8 @@ const SnippetEditForm: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =>
 			<SnippetEditorToolbar snippet={snippet} codeEditorInstance={codeEditorInstance} />
 			<SnippetEditor
 				{...inputProps}
-				editorInstance={codeEditorInstance}
-				setEditorInstance={setCodeEditorInstance}
+				codeEditorInstance={codeEditorInstance}
+				setCodeEditorInstance={setCodeEditorInstance}
 			/>
 
 			<div className="below-snippet-editor">
