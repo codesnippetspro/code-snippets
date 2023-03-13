@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { BaseSnippetProps } from '../../types/BaseSnippetProps'
 
-export const TagEditor: React.FC<BaseSnippetProps> = ({ snippet, setSnippetField }) => {
+export const TagEditor: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) => {
 	const options = window.CODE_SNIPPETS_EDIT?.tagOptions
 	const inputRef = useRef<HTMLInputElement>(null)
 
@@ -20,13 +20,14 @@ export const TagEditor: React.FC<BaseSnippetProps> = ({ snippet, setSnippetField
 				link: () => false
 			})
 		}
-	}, [])
+	}, [options, inputRef])
 
 	useEffect(() => {
 		if (inputRef.current) {
-			setSnippetField('tags', inputRef.current.value.split(/\s*,\s*/))
+			const tags = inputRef.current.value.split(/\s*,\s*/)
+			setSnippet(previous => ({ ...previous, tags }))
 		}
-	}, [inputRef.current])
+	}, [inputRef, setSnippet])
 
 	return options?.enabled ?
 		<>

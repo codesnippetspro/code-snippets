@@ -403,7 +403,7 @@ class Edit_Menu extends Admin_Menu {
 		wp_enqueue_script(
 			'code-snippets-edit-menu',
 			plugins_url( 'dist/edit.js', $plugin->file ),
-			[ 'code-snippets-code-editor', 'react', 'react-dom', 'wp-i18n', 'wp-api-fetch' ],
+			[ 'code-snippets-code-editor', 'react', 'react-dom', 'wp-i18n', 'wp-api-fetch', 'wp-url' ],
 			$plugin->version,
 			true
 		);

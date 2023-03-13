@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { EditorConfiguration } from 'codemirror'
-import React, { Dispatch, SetStateAction, useEffect, useRef } from 'react'
+import React, { Dispatch, SetStateAction, useEffect } from 'react'
 import { BaseSnippetProps } from '../../types/BaseSnippetProps'
 import { ConditionEditor } from '../ConditionEditor'
 import { CodeEditorInstance } from '../../types/editor'
@@ -11,13 +11,13 @@ import { getSnippetType, isProType } from '../../utils/snippets'
 import classnames from 'classnames'
 import { CodeEditor } from './CodeEditor'
 
-interface SnippetTypeTabProps extends Pick<BaseSnippetProps, 'setSnippetField'> {
+interface SnippetTypeTabProps extends Pick<BaseSnippetProps, 'setSnippet'> {
 	tabType: SnippetType
 	label: string
 	currentType: SnippetType
 }
 
-const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ tabType, label, currentType, setSnippetField }) =>
+const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ tabType, label, currentType, setSnippet }) =>
 	<a
 		data-snippet-type={tabType}
 		className={classnames({
@@ -25,17 +25,20 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ tabType, label, current
 			'nav-tab-active': tabType === currentType,
 			'nav-tab-inactive': isProType(tabType)
 		})}
-		onClick={event => {
-			event.preventDefault()
-			setSnippetField('scope', SNIPPET_TYPE_SCOPES[tabType][0])
-		}}
 		{...isProType(tabType) ?
 			{
 				title: __('Available in Code Snippets Pro (external link)', 'code-snippets'),
 				href: 'https://codesnippets.pro/pricing/',
 				target: '_blank'
 			} :
-			{ href: addQueryArgs(window.location.href, { type: tabType }) }
+			{
+				href: addQueryArgs(window.location.href, { type: tabType }),
+				onClick: event => {
+					event.preventDefault()
+					const scope = SNIPPET_TYPE_SCOPES[tabType][0]
+					setSnippet(previous => ({ ...previous, scope }))
+				}
+			}
 		}>
 		{`${label} `}
 
@@ -64,7 +67,7 @@ const EDITOR_MODES: Partial<Record<SnippetType, string>> = {
 	html: 'application/x-httpd-php'
 }
 
-export const SnippetEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippetField, editorInstance, setEditorInstance }) => {
+export const SnippetEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippet, editorInstance, setEditorInstance }) => {
 
 	useEffect(() => {
 		const type = getSnippetType(snippet)
@@ -99,12 +102,12 @@ export const SnippetEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippetFi
 							tabType={type}
 							label={TYPE_LABELS[type]}
 							currentType={getSnippetType(snippet)}
-							setSnippetField={setSnippetField}
+							setSnippet={setSnippet}
 						/>)}
 				</h2>}
 
-			<ConditionEditor snippet={snippet} setSnippetField={setSnippetField} />
-			<CodeEditor snippet={snippet} setSnippetField={setSnippetField} setEditorInstance={setEditorInstance} />
+			<ConditionEditor snippet={snippet} setSnippet={setSnippet} />
+			<CodeEditor snippet={snippet} setSnippet={setSnippet} setEditorInstance={setEditorInstance} />
 		</>
 	)
 }

@@ -85,10 +85,9 @@ const ShortcodeInfo: React.FC<{ snippet: Snippet }> = ({ snippet }) => {
 					<strong>{__('Shortcode Options: ', 'code-snippets')}</strong>
 					{optionLabels.map(([option, label]) =>
 						<label key={option}>
-							<input type="checkbox" value={option} checked={options[option]} onChange={event => setOptions(value => {
-								value[option] = event.target.checked
-								return value
-							})} />
+							<input type="checkbox" value={option} checked={options[option]} onChange={event =>
+								setOptions(previous => ({ ...previous, [option]: event.target.checked }))
+							} />
 							{` ${label}`}
 						</label>
 					)}
@@ -97,7 +96,7 @@ const ShortcodeInfo: React.FC<{ snippet: Snippet }> = ({ snippet }) => {
 		null
 }
 
-export const ScopeInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippetField }) =>
+export const ScopeInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =>
 	<>
 		<h2 className="screen-reader-text">{__('Scope', 'code-snippets')}</h2>
 
@@ -112,7 +111,7 @@ export const ScopeInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippetFiel
 								name="snippet_scope"
 								value={scope}
 								checked={scope === snippet.scope}
-								onChange={event => event.target.checked && setSnippetField('scope', scope)}
+								onChange={event => event.target.checked && setSnippet(previous => ({ ...previous, scope }))}
 							/>
 							<span className={`dashicons dashicons-${SCOPE_ICONS[scope]}`}></span>
 							{` ${SCOPE_DESCRIPTIONS[scope]}`}

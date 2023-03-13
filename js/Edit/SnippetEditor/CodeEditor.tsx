@@ -8,7 +8,7 @@ export interface CodeEditorProps extends BaseSnippetProps {
 	setEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
 }
 
-export const CodeEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippetField, setEditorInstance }) => {
+export const CodeEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippet, setEditorInstance }) => {
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
 	useEffect(() => {
@@ -30,7 +30,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippetField
 
 			return instance
 		})
-	}, [textareaRef.current])
+	})
 
 	return snippet.id && 'condition' === snippet.scope ? null :
 		<div className="snippet-editor" style={{ display: 'condition' === snippet.scope ? 'none' : 'block' }}>
@@ -41,7 +41,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippetField
 				rows={200}
 				spellCheck={false}
 				style={{ fontFamily: 'monospace', width: '100%' }}
-				onChange={event => setSnippetField('code', event.target.value)}
+				onChange={event => setSnippet(previous => ({ ...previous, code: event.target.value }))}
 			>{snippet.code}</textarea>
 
 			<CodeEditorShortcuts editorTheme={window.CODE_SNIPPETS_EDIT?.editorTheme ?? 'default'} />

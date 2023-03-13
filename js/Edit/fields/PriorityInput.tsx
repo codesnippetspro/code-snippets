@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n'
 import { BaseSnippetProps } from '../../types/BaseSnippetProps'
 import { getSnippetType } from '../../utils/snippets'
 
-export const PriorityInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippetField }) =>
+export const PriorityInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =>
 	'condition' === snippet.scope || 'html' === getSnippetType(snippet) ? null :
 		<p
 			className="snippet-priority"
@@ -15,6 +15,6 @@ export const PriorityInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippetF
 				id="snippet_priority"
 				name="snippet_priority"
 				value={snippet.priority}
-				onChange={event => setSnippetField('priority', parseInt(event.target.value, 10))}
+				onChange={event => setSnippet(previous => ({ ...previous, priority: parseInt(event.target.value, 10) }))}
 			/>
 		</p>

@@ -23,22 +23,24 @@ h2 {
 	}
 }
 
-.inactive-snippet, .active-snippet {
-	#title {
-		border-left-width: 4px;
+.saved-snippet {
+	&.inactive-snippet, &.active-snippet {
+		#title {
+			border-left-width: 4px;
+		}
 	}
-}
 
-.active-snippet #title {
-	border-left-color: #46b450;
-}
+	&.active-snippet #title {
+		border-left-color: #46b450;
+	}
 
-.inactive-snippet #title {
-	border-left-color: #bbb;
-}
+	&.inactive-snippet #title {
+		border-left-color: #bbb;
+	}
 
-.erroneous-snippet #title {
-	border-left-color: #dc3232;
+	&.erroneous-snippet #title {
+		border-left-color: #dc3232;
+	}
 }
 
 #snippet-form {

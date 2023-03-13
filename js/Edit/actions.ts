@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n'
 import { Snippet } from '../types/Snippet'
+
 export const saveSnippet = (snippet: Snippet) => {
 	const message = 'condition' === snippet.scope ? '' :
 		!snippet.name.trim() ?

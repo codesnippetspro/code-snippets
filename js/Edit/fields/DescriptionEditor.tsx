@@ -2,7 +2,7 @@ import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { BaseSnippetProps } from '../../types/BaseSnippetProps'
 
-export const DescriptionEditorProps: React.FC<BaseSnippetProps> = ({ snippet, setSnippetField }) =>
+export const DescriptionEditorProps: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =>
 	window.CODE_SNIPPETS_EDIT?.enableDescription ?
 		<>
 			<h2>
@@ -15,7 +15,7 @@ export const DescriptionEditorProps: React.FC<BaseSnippetProps> = ({ snippet, se
 			<textarea
 				id="snippet_description"
 				style={{ width: '100%' }}
-				onChange={event => setSnippetField('desc', event.target.value)}
+				onChange={event => setSnippet(previous => ({ ...previous, desc: event.target.value }))}
 			>{snippet.desc}</textarea>
 		</> :
 		null

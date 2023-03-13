@@ -30,9 +30,9 @@ const EMPTY_SNIPPET: Snippet = {
 	priority: 10
 }
 
-const SnippetEditForm: React.FC<BaseSnippetProps> = ({ snippet, setSnippetField }) => {
+const SnippetEditForm: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) => {
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
-	const inputProps: BaseSnippetProps = { snippet, setSnippetField }
+	const inputProps: BaseSnippetProps = { snippet, setSnippet }
 
 	return (
 		<div id="snippet-form" data-snippet-type={getSnippetType(snippet)} className={classnames({
@@ -70,23 +70,16 @@ export interface EditFormProps {
 }
 
 export const EditForm: React.FC<EditFormProps> = ({ snippetId }) => {
-	const [snippet, setSnippet] = useState<Snippet | undefined>(() =>
-		0 === snippetId ? { ...EMPTY_SNIPPET } : undefined)
+	const [snippet, setSnippet] = useState<Snippet>(EMPTY_SNIPPET)
 
 	useEffect(() => {
-		apiFetch<Snippet>({ path: `/code-snippets/v1/snippets/${snippetId}` })
-			.then(result => setSnippet(result))
-	}, [])
+		if (0 !== snippetId) {
+			apiFetch<Snippet>({ path: `/code-snippets/v1/snippets/${snippetId}` })
+				.then(result => setSnippet(result))
+		}
+	}, [snippetId])
 
-	const setSnippetField = <T extends keyof Snippet, >(field: T, value: Snippet[T]) =>
-		setSnippet(fields => {
-			if (fields) {
-				fields[field] = value
-			}
-			return fields
-		})
-
-	return snippet ?
-		<SnippetEditForm snippet={snippet} setSnippetField={setSnippetField} /> :
-		<p>{__('Loading snippet information…', 'code-snippets')}</p>
+	return 0 !== snippet.id || 0 === snippetId ?
+		<SnippetEditForm snippet={snippet} setSnippet={setSnippet} /> :
+		<p>{__('Loading snippet editor…', 'code-snippets')}</p>
 }

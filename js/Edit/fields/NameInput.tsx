@@ -2,7 +2,7 @@ import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { BaseSnippetProps } from '../../types/BaseSnippetProps'
 
-export const NameInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippetField }) =>
+export const NameInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =>
 	<div id="titlediv">
 		<div id="titlewrap">
 			<label htmlFor="title" className="screen-reader-text">
@@ -15,7 +15,7 @@ export const NameInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippetField
 				autoComplete="off"
 				value={snippet.name}
 				placeholder={__('Enter title here', 'code-snippets')}
-				onChange={event => setSnippetField('name', event.target.value)}
+				onChange={event => setSnippet(previous => ({ ...previous, name: event.target.value }))}
 			/>
 		</div>
 	</div>

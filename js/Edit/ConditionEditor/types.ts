@@ -10,6 +10,6 @@ export interface Condition {
 }
 
 export interface Conditions {
-	AND: Condition[]
-	OR: Condition[]
+	AND?: Condition[]
+	OR?: Condition[]
 }
