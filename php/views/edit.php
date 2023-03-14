@@ -134,14 +134,18 @@ $licensed = code_snippets()->licensing->is_licensed();
 
 		<?php
 		//Updated Cloud Snippet Check and Hidden Input Injection
-		if ( isset( $snippet->cloud_id) ) {
+		$cloud = false;
+		$cloud_update = false;
+		if ( isset( $snippet->cloud_id ) ) {
+			$cloud = true;
 			//If so check if update available using instance of plugin
 			$cloud_api = code_snippets()->cloud_api;
 			if( $cloud_api->is_update_available( $snippet->id ) ) {
+				$cloud_update = true;
 				$cloud_id_owner =  $cloud_api->get_cloud_id_and_ownership( $snippet->cloud_id );
 				$updated_snippet = $cloud_api->get_single_cloud_snippet( $cloud_id_owner['cloud_id'] );
 				$updated_code = $updated_snippet->code;
-				echo '<input type="hidden" id="updated_snippet_code" value="' . $updated_code . '">';		
+				echo '<input type="hidden" id="updated_snippet_code" name="updated_snippet_code" value="' . $updated_code . '">';		
 		?>
 			<div id="updated-code">
 				<h2><label>Snippet Update from the Cloud*</label></h2>
@@ -162,6 +166,22 @@ $licensed = code_snippets()->licensing->is_licensed();
 		<p class="submit">
 			<?php
 			$this->render_submit_buttons( $snippet );
+
+			if( $cloud && $cloud_update){
+				$update_url = add_query_arg(
+					[
+						'action'  => 'update',
+						'snippet' => $cloud_id_owner['cloud_id'],
+						'source'  => $cloud_id_owner['is_owner'] ? 'codevault' : 'search',
+					]
+				);
+
+				printf(
+					'<a href="%s" class="button button-secondary button-cloud-update">%s</a>',
+					esc_html( $update_url ),
+					esc_html( __( 'Save Update from Cloud', 'code-snippets' ) )
+				);
+			}
 
 			if ( $licensed && ( 'css' === $snippet->type || 'js' === $snippet->type ) ) {
 				$asset_url = add_query_arg(
