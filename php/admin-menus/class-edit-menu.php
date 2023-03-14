@@ -82,10 +82,6 @@ class Edit_Menu extends Admin_Menu {
 		// Load the contextual help tabs.
 		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
-
-		if ( get_setting( 'general', 'enable_description' ) ) {
-			add_action( 'code_snippets_edit_snippet', array( $this, 'render_description_editor' ), 9 );
-		}
 	}
 
 	/**
@@ -118,15 +114,14 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Load the data for the snippet currently being edited
+	 * Load the data for the snippet currently being edited.
 	 */
 	public function load_snippet_data() {
-		$edit_id = isset( $_REQUEST['id'] ) && intval( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
+		$edit_id = isset( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
 
 		$this->snippet = get_snippet( $edit_id );
-		$snippet = $this->snippet;
 
-		if ( 0 === $edit_id && isset( $_GET['type'] ) && sanitize_key( $_GET['type'] ) !== $snippet->type ) {
+		if ( 0 === $edit_id && isset( $_GET['type'] ) && sanitize_key( $_GET['type'] ) !== $this->snippet->type ) {
 			$type = sanitize_key( $_GET['type'] );
 
 			$default_scopes = [
@@ -138,11 +133,11 @@ class Edit_Menu extends Admin_Menu {
 			];
 
 			if ( isset( $default_scopes[ $type ] ) ) {
-				$snippet->scope = $default_scopes[ $type ];
+				$this->snippet->scope = $default_scopes[ $type ];
 			}
 		}
 
-		$this->snippet = apply_filters( 'code_snippets/admin/load_snippet_data', $snippet );
+		$this->snippet = apply_filters( 'code_snippets/admin/load_snippet_data', $this->snippet );
 	}
 
 	/**
@@ -258,34 +253,6 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Add a description editor to the single snippet page
-	 *
-	 * @param Snippet $snippet The snippet being used for this page.
-	 */
-	public function render_description_editor( Snippet $snippet ) {
-		$settings = Settings\get_settings_values();
-		$settings = $settings['description_editor'];
-
-		echo '<h2><label for="snippet_description">', esc_html__( 'Description', 'code-snippets' ), '</label></h2>';
-
-		remove_editor_styles(); // Stop custom theme styling interfering with the editor.
-
-		wp_editor(
-			$snippet->desc,
-			'description',
-			apply_filters(
-				'code_snippets/admin/description_editor_settings',
-				array(
-					'textarea_name' => 'snippet_description',
-					'textarea_rows' => $settings['rows'],
-					'teeny'         => ! $settings['use_full_mce'],
-					'media_buttons' => $settings['media_buttons'],
-				)
-			)
-		);
-	}
-
-	/**
 	 * Retrieve the first error in a snippet's code
 	 *
 	 * @param int $snippet_id Snippet ID.
@@ -389,37 +356,62 @@ class Edit_Menu extends Admin_Menu {
 	public function enqueue_assets() {
 		$plugin = code_snippets();
 		$rtl = is_rtl() ? '-rtl' : '';
-		$tags_enabled = get_setting( 'general', 'enable_tags' );
+
+		$settings = Settings\get_settings_values();
+		$tags_enabled = $settings['general']['enable_tags'];
+		$desc_enabled = $settings['general']['enable_description'];
 
 		enqueue_code_editor( $this->snippet->type );
+
+		$css_deps = [
+			'code-editor',
+		];
+
+		$js_deps = [
+			'code-snippets-code-editor',
+			'react',
+			'react-dom',
+			'wp-url',
+			'wp-i18n',
+			'wp-api-fetch',
+		];
 
 		wp_enqueue_style(
 			'code-snippets-edit',
 			plugins_url( "dist/edit$rtl.css", $plugin->file ),
-			[ 'code-editor' ],
+			$css_deps,
 			$plugin->version
 		);
 
 		wp_enqueue_script(
 			'code-snippets-edit-menu',
 			plugins_url( 'dist/edit.js', $plugin->file ),
-			[ 'code-snippets-code-editor', 'react', 'react-dom', 'wp-i18n', 'wp-api-fetch', 'wp-url' ],
+			$js_deps,
 			$plugin->version,
 			true
 		);
+
+		if ( $desc_enabled ) {
+			remove_editor_styles();
+			wp_enqueue_editor();
+			add_thickbox();
+			wp_enqueue_script( 'media-upload' );
+			wp_enqueue_script( 'wp-embed' );
+			wp_enqueue_script( 'quicktags' );
+			wp_enqueue_style( 'buttons' );
+		}
 
 		wp_localize_script(
 			'code-snippets-edit-menu',
 			'CODE_SNIPPETS_EDIT',
 			[
-				'isPreview'             => isset( $_REQUEST['preview'] ),
-				'activateByDefault'     => get_setting( 'general', 'activate_by_default' ),
-				'editorTheme'           => get_setting( 'editor', 'theme' ),
-				'extraSaveButtons'      => apply_filters( 'code_snippets/extra_save_buttons', true ),
-				'sharedNetworkSnippets' => get_site_option( 'shared_network_snippets', array() ),
-				'enableDownloads'       => apply_filters( 'code_snippets/enable_downloads', true ),
-				'enableDescription'     => get_setting( 'general', 'enable_description' ),
-				'tagOptions'            => apply_filters(
+				'isPreview'         => isset( $_REQUEST['preview'] ),
+				'activateByDefault' => get_setting( 'general', 'activate_by_default' ),
+				'editorTheme'       => get_setting( 'editor', 'theme' ),
+				'extraSaveButtons'  => apply_filters( 'code_snippets/extra_save_buttons', true ),
+				'enableDownloads'   => apply_filters( 'code_snippets/enable_downloads', true ),
+				'enableDescription' => $desc_enabled,
+				'tagOptions'        => apply_filters(
 					'code_snippets/tag_editor_options',
 					[
 						'enabled'       => $tags_enabled,
@@ -427,6 +419,9 @@ class Edit_Menu extends Admin_Menu {
 						'availableTags' => $tags_enabled ? get_all_snippet_tags() : [],
 					]
 				),
+				'descEditorOptions' => [
+					'rows' => $settings['general']['visual_editor_rows'],
+				],
 			]
 		);
 	}

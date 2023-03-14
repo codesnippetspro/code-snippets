@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
-import { BaseSnippetProps } from '../../types/BaseSnippetProps'
+import { SnippetInputProps } from '../../types/SnippetInputProps'
 import { Snippet, SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetScope } from '../../types/Snippet'
 import { isNetworkAdmin } from '../../utils/general'
 import { getSnippetType } from '../../utils/snippets'
@@ -33,8 +33,8 @@ const SCOPE_DESCRIPTIONS: Record<SnippetScope, string> = {
 	'footer-content': __('Display at the end of the <body> section, in the footer.', 'code-snippets'),
 	'site-css': __('Site front-end styles', 'code-snippets'),
 	'admin-css': __('Administration area styles', 'code-snippets'),
-	'site-footer-js': __('Load JS at the end of the &lt;body&gt; section', 'code-snippets'),
-	'site-head-js': __('Load JS in the &lt;head&gt; section', 'code-snippets'),
+	'site-footer-js': __('Load JS at the end of the <body> section', 'code-snippets'),
+	'site-head-js': __('Load JS in the <head> section', 'code-snippets'),
 	'condition': ''
 }
 
@@ -96,7 +96,7 @@ const ShortcodeInfo: React.FC<{ snippet: Snippet }> = ({ snippet }) => {
 		null
 }
 
-export const ScopeInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =>
+export const ScopeInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) =>
 	<>
 		<h2 className="screen-reader-text">{__('Scope', 'code-snippets')}</h2>
 

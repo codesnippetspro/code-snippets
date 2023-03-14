@@ -1,21 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { __ } from '@wordpress/i18n'
 import apiFetch from '@wordpress/api-fetch'
-import { BaseSnippetProps } from '../types/BaseSnippetProps'
-import { CodeEditorInstance } from '../types/editor'
+import { __ } from '@wordpress/i18n'
+import classnames from 'classnames'
+import React, { useEffect, useState } from 'react'
 import { Snippet } from '../types/Snippet'
+import { SnippetInputProps } from '../types/SnippetInputProps'
+import { CodeEditorInstance } from '../types/WordPressCodeEditor'
+import { isNetworkAdmin } from '../utils/general'
 import { getSnippetType } from '../utils/snippets'
-import { saveSnippet } from './actions'
-import { SnippetEditor } from './SnippetEditor/SnippetEditor'
-import { DescriptionEditorProps } from './fields/DescriptionEditor'
+import { ActionButtons } from './ActionButtons'
+import { DescriptionEditor } from './fields/DescriptionEditor'
 import { MultisiteSharingSettings } from './fields/MultisiteSharingSettings'
 import { NameInput } from './fields/NameInput'
-import { SnippetEditorToolbar } from './SnippetEditor/SnippetEditorToolbar'
-import classnames from 'classnames'
 import { PriorityInput } from './fields/PriorityInput'
 import { ScopeInput } from './fields/ScopeInput'
-import { ActionButtons } from './ActionButtons'
 import { TagEditor } from './fields/TagEditor'
+import { SnippetEditor } from './SnippetEditor/SnippetEditor'
+import { SnippetEditorToolbar } from './SnippetEditor/SnippetEditorToolbar'
 
 const EMPTY_SNIPPET: Snippet = {
 	id: 0,
@@ -31,9 +31,10 @@ const EMPTY_SNIPPET: Snippet = {
 	priority: 10
 }
 
-const SnippetEditForm: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) => {
+const SnippetEditForm: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) => {
+	const options = window.CODE_SNIPPETS_EDIT
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
-	const inputProps: BaseSnippetProps = { snippet, setSnippet }
+	const inputProps: SnippetInputProps = { snippet, setSnippet }
 
 	return (
 		<div id="snippet-form" data-snippet-type={getSnippetType(snippet)} className={classnames({
@@ -57,9 +58,9 @@ const SnippetEditForm: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =>
 				<PriorityInput {...inputProps} />
 			</div>
 
-			<MultisiteSharingSettings {...inputProps} />
-			<DescriptionEditorProps {...inputProps} />
-			<TagEditor {...inputProps} />
+			{isNetworkAdmin() ? <MultisiteSharingSettings {...inputProps} /> : null}
+			{options?.enableDescription ? <DescriptionEditor {...inputProps} /> : null}
+			{options?.tagOptions.enabled ? <TagEditor {...inputProps} /> : null}
 
 			<ActionButtons snippet={snippet} />
 		</div>

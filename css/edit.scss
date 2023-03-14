@@ -11,7 +11,7 @@
 }
 
 h2 {
-	/* Provide some decent space between the fields and titles */
+	/* Provide some decent space between the fields and titles. */
 	margin: 25px 0 15px 0;
 
 	&:first-of-type {
@@ -44,7 +44,12 @@ h2 {
 }
 
 #snippet-form {
-	margin-top: 10px
+	margin-top: 10px;
+
+	#snippet-tags, textarea {
+		width: 100%;
+		font-family: monospace;
+	}
 }
 
 /* Position the description heading on the same level as the editor buttons */
@@ -63,6 +68,19 @@ label[for='snippet_description'] h3 div {
 
 p.snippet-scope, .snippet-scope p {
 	margin-top: 15px;
+}
+
+.snippet-description-container {
+	margin-top: 25px;
+
+	> h2 {
+		float: left;
+		margin: 0;
+	}
+
+	.wp-editor-tools {
+		padding-top: 5px;
+	}
 }
 
 .snippet-scope label,

@@ -1,5 +1,5 @@
 
-.snippet-condition-editor, .CodeMirror-sizer {
+.CodeMirror-sizer {
 	min-height: 300px !important;
 	box-sizing: border-box;
 	padding-bottom: 1.5em !important;
@@ -23,7 +23,6 @@
 }
 
 [data-snippet-type=php] {
-
 	.php-scopes-list {
 		display: block;
 	}
@@ -38,7 +37,6 @@
 }
 
 [data-snippet-type=css] {
-
 	.css-scopes-list {
 		display: block;
 	}
@@ -53,7 +51,6 @@
 }
 
 [data-snippet-type=js] {
-
 	.js-scopes-list {
 		display: block;
 	}
@@ -68,7 +65,6 @@
 }
 
 [data-snippet-type=html] {
-
 	.html-scopes-list {
 		display: block;
 	}

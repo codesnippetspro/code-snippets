@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import { __ } from '@wordpress/i18n'
 import Select from 'react-select'
-import { BaseSnippetProps } from '../../types/BaseSnippetProps'
+import { SnippetInputProps } from '../../types/SnippetInputProps'
 import { Snippet } from '../../types/Snippet'
 import { conditionOptions } from './options'
 import { Condition, Conditions } from './types'
@@ -40,7 +40,7 @@ const ConditionRow: React.FC<ConditionRowProps> = ({ condition, group, setSnippe
 		</button>
 	</div>
 
-interface ConditionGroupProps extends BaseSnippetProps {
+interface ConditionGroupProps extends SnippetInputProps {
 	heading: string
 	insertLabel: string
 	description: string
@@ -86,7 +86,7 @@ const ConditionGroup: React.FC<ConditionGroupProps> = ({
 		</div>
 	</>
 
-export const ConditionEditor: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =>
+export const ConditionEditor: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) =>
 	'condition' === snippet.scope ?
 		<div className="snippet-condition-editor">
 			<ConditionGroup

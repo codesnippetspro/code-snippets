@@ -69,6 +69,15 @@ function get_settings_fields() {
 			'default' => true,
 		],
 
+		'visual_editor_rows' => [
+			'name'    => __( 'Description Editor Height', 'code-snippets' ),
+			'type'    => 'number',
+			'label'   => __( 'rows', 'code-snippets' ),
+			'desc'    => __( 'How large the snippet description editor should appear by default.', 'code-snippets' ),
+			'default' => 5,
+			'min'     => 0,
+		],
+
 		'list_order' => [
 			'name'    => __( 'Snippets List Order', 'code-snippets' ),
 			'type'    => 'select',
@@ -102,33 +111,7 @@ function get_settings_fields() {
 		unset( $fields['general']['complete_uninstall'] );
 	}
 
-	/* Description Editor settings section */
-	$fields['description_editor'] = [
-
-		'rows' => [
-			'name'    => __( 'Row Height', 'code-snippets' ),
-			'type'    => 'number',
-			'label'   => __( 'rows', 'code-snippets' ),
-			'default' => 5,
-			'min'     => 0,
-		],
-
-		'use_full_mce' => [
-			'name'    => __( 'Use Full Editor', 'code-snippets' ),
-			'type'    => 'checkbox',
-			'label'   => __( 'Enable all features of the visual editor.', 'code-snippets' ),
-			'default' => false,
-		],
-
-		'media_buttons' => [
-			'name'    => __( 'Media Buttons', 'code-snippets' ),
-			'type'    => 'checkbox',
-			'label'   => __( 'Enable the add media buttons.', 'code-snippets' ),
-			'default' => false,
-		],
-	];
-
-	/* Code Editor settings section */
+	// Code Editor settings section.
 
 	$fields['editor'] = [
 		'theme' => [

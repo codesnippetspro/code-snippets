@@ -1,10 +1,10 @@
-import React, { Dispatch, Ref, SetStateAction, useEffect, useRef } from 'react'
-import { BaseSnippetProps } from '../../types/BaseSnippetProps'
-import { CodeEditorInstance } from '../../types/editor'
+import React, { Dispatch, SetStateAction, useEffect, useRef } from 'react'
+import { SnippetInputProps } from '../../types/SnippetInputProps'
+import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
 import { saveSnippet } from '../actions'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 
-export interface CodeEditorProps extends BaseSnippetProps {
+export interface CodeEditorProps extends SnippetInputProps {
 	setEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
 }
 
@@ -42,7 +42,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippet, set
 				name="snippet_code"
 				rows={200}
 				spellCheck={false}
-				style={{ fontFamily: 'monospace', width: '100%' }}
 				onChange={event => setSnippet(previous => ({ ...previous, code: event.target.value }))}
 			>{snippet.code}</textarea>
 

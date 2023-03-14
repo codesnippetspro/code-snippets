@@ -1,8 +1,8 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { BaseSnippetProps } from '../../types/BaseSnippetProps'
+import { SnippetInputProps } from '../../types/SnippetInputProps'
 
-export const NameInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =>
+export const NameInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) =>
 	<div id="titlediv">
 		<div id="titlewrap">
 			<label htmlFor="title" className="screen-reader-text">

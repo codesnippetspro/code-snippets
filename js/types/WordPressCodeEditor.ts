@@ -22,9 +22,7 @@ export interface CodeEditorSettings {
 	onUpdateErrorNotice: () => void
 }
 
-export interface WordPressUtils {
-	codeEditor: {
-		initialize: (textarea: Element, options?: Partial<CodeEditorSettings>) => CodeEditorInstance
-		defaultSettings: CodeEditorSettings
-	}
+export interface WordPressCodeEditor {
+	initialize: (textarea: Element, options?: Partial<CodeEditorSettings>) => CodeEditorInstance
+	defaultSettings: CodeEditorSettings
 }

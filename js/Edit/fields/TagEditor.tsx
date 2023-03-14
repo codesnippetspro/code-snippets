@@ -1,9 +1,9 @@
 import tagger from '@jcubic/tagger'
 import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
-import { BaseSnippetProps } from '../../types/BaseSnippetProps'
+import { SnippetInputProps } from '../../types/SnippetInputProps'
 
-export const TagEditor: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) => {
+export const TagEditor: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) => {
 	const options = window.CODE_SNIPPETS_EDIT?.tagOptions
 	const inputRef = useRef<HTMLInputElement>(null)
 
@@ -30,9 +30,9 @@ export const TagEditor: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =
 	}, [inputRef, setSnippet])
 
 	return options?.enabled ?
-		<>
-			<h2 style={{ margin: '25px 0 10px' }}>
-				<label htmlFor="snippet_tags" style={{ cursor: 'auto' }}>
+		<div className="snippet-tags-container">
+			<h2>
+				<label htmlFor="snippet_tags">
 					{__('Tags', 'code-snippets')}
 				</label>
 			</h2>
@@ -42,10 +42,9 @@ export const TagEditor: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =
 				type="text"
 				id="snippet_tags"
 				name="snippet_tags"
-				style={{ width: '100%' }}
 				placeholder={__('Enter a list of tags; separated by commas', 'code-snippets')}
 				value={snippet.tags.join(', ')}
 			/>
-		</> :
+		</div> :
 		null
 }

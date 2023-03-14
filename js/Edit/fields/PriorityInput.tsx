@@ -1,9 +1,9 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { BaseSnippetProps } from '../../types/BaseSnippetProps'
+import { SnippetInputProps } from '../../types/SnippetInputProps'
 import { getSnippetType } from '../../utils/snippets'
 
-export const PriorityInput: React.FC<BaseSnippetProps> = ({ snippet, setSnippet }) =>
+export const PriorityInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) =>
 	'condition' === snippet.scope || 'html' === getSnippetType(snippet) ? null :
 		<p
 			className="snippet-priority"

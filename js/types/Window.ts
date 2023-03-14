@@ -1,20 +1,26 @@
-import { CodeEditorInstance, EditorOption, WordPressUtils } from './editor'
+import tinymce from 'tinymce'
+import { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './WordPressCodeEditor'
+import { WordPressEditor } from './WordPressEditor'
+
+export interface WordPressUtils {
+	readonly wpActiveEditor?: string
+	readonly tinymce?: typeof tinymce
+	readonly editor?: WordPressEditor
+	readonly codeEditor: WordPressCodeEditor
+}
 
 declare global {
 	interface Window {
 		readonly pagenow: string
 		readonly ajaxurl: string
 		readonly wp: WordPressUtils
-		code_snippets_editor?: CodeEditorInstance
 		code_snippets_editor_preview?: CodeEditorInstance
 		code_snippets_editor_settings: EditorOption[]
-		readonly code_snippets_manage_i18n: Record<string, string>
 		readonly CODE_SNIPPETS_EDIT?: {
 			isPreview: boolean
 			enableDownloads: boolean
 			extraSaveButtons: boolean
 			activateByDefault: boolean
-			sharedNetworkSnippets: number[]
 			enableDescription: boolean
 			enableTags: boolean
 			editorTheme: string
@@ -22,6 +28,10 @@ declare global {
 				enabled: boolean
 				allowSpaces: boolean
 				availableTags: string[]
+			}
+			descEditorOptions: {
+				rows: number
+				mediaButtons: boolean
 			}
 		}
 	}

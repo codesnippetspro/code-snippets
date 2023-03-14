@@ -1,17 +1,17 @@
 import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
-import { EditorConfiguration } from 'codemirror'
+import { Editor, EditorConfiguration } from 'codemirror'
 import React, { Dispatch, SetStateAction, useEffect } from 'react'
-import { BaseSnippetProps } from '../../types/BaseSnippetProps'
+import { SnippetInputProps } from '../../types/SnippetInputProps'
+import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
 import { ConditionEditor } from '../ConditionEditor'
-import { CodeEditorInstance } from '../../types/editor'
-import { SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetType } from '../../types/Snippet'
+import { Snippet, SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetType } from '../../types/Snippet'
 import '../../editor'
 import { getSnippetType, isProType } from '../../utils/snippets'
 import classnames from 'classnames'
 import { CodeEditor } from './CodeEditor'
 
-interface SnippetTypeTabProps extends Pick<BaseSnippetProps, 'setSnippet'> {
+interface SnippetTypeTabProps extends Pick<SnippetInputProps, 'setSnippet'> {
 	tabType: SnippetType
 	label: string
 	currentType: SnippetType
@@ -47,7 +47,7 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ tabType, label, current
 			<span className="badge">{tabType}</span>}
 	</a>
 
-export interface SnippetEditorProps extends BaseSnippetProps {
+export interface SnippetEditorProps extends SnippetInputProps {
 	codeEditorInstance: CodeEditorInstance | undefined
 	setCodeEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
 }
@@ -67,6 +67,37 @@ const EDITOR_MODES: Partial<Record<SnippetType, string>> = {
 	html: 'application/x-httpd-php'
 }
 
+interface SnippetTypeTabsProps {
+	codeEditor: Editor
+	setSnippet: Dispatch<SetStateAction<Snippet>>
+	snippetType: SnippetType
+}
+
+const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({ codeEditor, setSnippet, snippetType }) => {
+
+	useEffect(() => {
+		codeEditor.setOption('lint' as keyof EditorConfiguration, 'php' === snippetType || 'css' === snippetType)
+
+		if (snippetType in EDITOR_MODES) {
+			codeEditor.setOption('mode', EDITOR_MODES[snippetType])
+			codeEditor.refresh()
+		}
+	}, [codeEditor, snippetType])
+
+	return (
+		<h2 className="nav-tab-wrapper" id="snippet-type-tabs">
+			{SNIPPET_TYPES.map(type =>
+				<SnippetTypeTab
+					key={type}
+					tabType={type}
+					label={TYPE_LABELS[type]}
+					currentType={snippetType}
+					setSnippet={setSnippet}
+				/>)}
+		</h2>
+	)
+}
+
 export const SnippetEditor: React.FC<SnippetEditorProps> = ({
 	snippet,
 	setSnippet,
@@ -75,42 +106,26 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({
 }) => {
 	const snippetType = getSnippetType(snippet)
 
-	useEffect(() => {
-		codeEditorInstance?.codemirror.setOption('lint' as keyof EditorConfiguration, 'php' === snippetType || 'css' === snippetType)
-
-		if (snippetType in EDITOR_MODES) {
-			codeEditorInstance?.codemirror.setOption('mode', EDITOR_MODES[snippetType])
-		}
-	}, [codeEditorInstance, snippetType])
-
 	return (
-		<>
+		<div className="snippet-code-container">
 			<h2>
 				<label htmlFor="snippet_code">
 					{`${__('Code', 'code-snippets')} `}
 					{snippet.id ?
-						<span
-							className="snippet-type-badge"
-							data-snippet-type={snippetType}
-						>{snippetType}</span> :
+						<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> :
 						''}
 				</label>
 			</h2>
 
-			{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview ? '' :
-				<h2 className="nav-tab-wrapper" id="snippet-type-tabs">
-					{SNIPPET_TYPES.map(type =>
-						<SnippetTypeTab
-							key={type}
-							tabType={type}
-							label={TYPE_LABELS[type]}
-							currentType={getSnippetType(snippet)}
-							setSnippet={setSnippet}
-						/>)}
-				</h2>}
+			{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview || !codeEditorInstance ? '' :
+				<SnippetTypeTabs
+					setSnippet={setSnippet}
+					snippetType={snippetType}
+					codeEditor={codeEditorInstance.codemirror}
+				/>}
 
 			<ConditionEditor snippet={snippet} setSnippet={setSnippet} />
 			<CodeEditor snippet={snippet} setSnippet={setSnippet} setEditorInstance={setCodeEditorInstance} />
-		</>
+		</div>
 	)
 }
