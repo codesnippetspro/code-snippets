@@ -76,20 +76,14 @@ function are_settings_unified() {
  * @return array<string, array<string, mixed>>
  */
 function get_settings_values() {
-
-	// Check if the settings have been cached.
 	$settings = wp_cache_get( CACHE_KEY );
 	if ( $settings ) {
 		return $settings;
 	}
 
-	/* Begin with the default settings */
 	$settings = get_default_settings();
-
-	/* Retrieve saved settings from the database */
 	$saved = get_self_option( are_settings_unified(), 'code_snippets_settings', array() );
 
-	/* Replace the default field values with the ones saved in the database */
 	foreach ( $settings as $section => $fields ) {
 		if ( isset( $saved[ $section ] ) ) {
 			$settings[ $section ] = array_replace( $fields, $saved[ $section ] );
@@ -97,7 +91,6 @@ function get_settings_values() {
 	}
 
 	wp_cache_set( CACHE_KEY, $settings );
-
 	return $settings;
 }
 
@@ -140,9 +133,8 @@ function update_setting( $section, $field, $new_value ) {
  */
 function get_settings_sections() {
 	$sections = array(
-		'general'            => __( 'General', 'code-snippets' ),
-		'description_editor' => __( 'Description Editor', 'code-snippets' ),
-		'editor'             => __( 'Code Editor', 'code-snippets' ),
+		'general' => __( 'General', 'code-snippets' ),
+		'editor'  => __( 'Code Editor', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
@@ -162,25 +154,21 @@ function register_plugin_settings() {
 		add_option( 'code_snippets_settings', get_default_settings() );
 	}
 
-	/* Register the setting */
+	// Register the setting.
 	register_setting(
 		'code-snippets',
 		'code_snippets_settings',
 		array( 'sanitize_callback' => NS . 'sanitize_settings' )
 	);
 
-	/* Register settings sections */
+	// Register settings sections.
 	$sections = get_settings_sections();
-
-	if ( ! get_setting( 'general', 'enable_description' ) ) {
-		unset( $sections['description_editor'] );
-	}
 
 	foreach ( $sections as $section_id => $section_name ) {
 		add_settings_section( $section_id, $section_name, '__return_empty_string', 'code-snippets' );
 	}
 
-	/* Register settings fields */
+	// Register settings fields
 	foreach ( get_settings_fields() as $section_id => $fields ) {
 		foreach ( $fields as $field_id => $field ) {
 			$field_object = new Setting_Field( $section_id, $field_id, $field );
@@ -188,7 +176,7 @@ function register_plugin_settings() {
 		}
 	}
 
-	/* Add editor preview as a field */
+	// Add editor preview as a field.
 	add_settings_field(
 		'editor_preview',
 		__( 'Editor Preview', 'code-snippets' ),
