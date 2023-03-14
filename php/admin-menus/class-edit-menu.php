@@ -2,6 +2,7 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\REST_API\Snippets_REST_Controller;
 use function Code_Snippets\Settings\get_setting;
 
 /**
@@ -405,6 +406,10 @@ class Edit_Menu extends Admin_Menu {
 			'code-snippets-edit-menu',
 			'CODE_SNIPPETS_EDIT',
 			[
+				'restAPI'           => [
+					'base'  => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
+					'nonce' => wp_create_nonce( 'wp_rest' ),
+				],
 				'isPreview'         => isset( $_REQUEST['preview'] ),
 				'activateByDefault' => get_setting( 'general', 'activate_by_default' ),
 				'editorTheme'       => get_setting( 'editor', 'theme' ),

@@ -10,9 +10,9 @@ export interface Snippet {
 	scope: SnippetScope
 	priority: number
 	active: boolean
-	network: boolean
-	shared_network: boolean
-	modified: string
+	network?: boolean
+	shared_network?: boolean | null
+	modified?: string
 }
 
 export const SNIPPET_SCOPES = <const> [

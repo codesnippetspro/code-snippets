@@ -3,7 +3,7 @@ import { __, isRTL } from '@wordpress/i18n'
 import { ActionButton } from '../../common/ActionButton'
 import { Snippet } from '../../types/Snippet'
 import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
-import { saveSnippet, saveSnippetActivate, saveSnippetDeactivate } from '../actions'
+import { saveSnippet, saveAndActivateSnippet, saveSnippetDeactivate } from '../actions'
 
 export interface CodeEditorToolbarProps {
 	snippet: Snippet
@@ -40,7 +40,7 @@ const InlineActionButtons: React.FC<Pick<CodeEditorToolbarProps, 'snippet'>> = (
 			id="save_snippet_execute_extra"
 			text={__('Execute Once', 'code-snippets')}
 			title={__('Save Snippet and Execute Once', 'code-snippets')}
-			onClick={() => saveSnippetActivate(snippet)}
+			onClick={() => saveAndActivateSnippet(snippet)}
 		/>}
 
 		{snippet.active ?
@@ -56,7 +56,7 @@ const InlineActionButtons: React.FC<Pick<CodeEditorToolbarProps, 'snippet'>> = (
 				id="save_snippet_activate_extra"
 				text={__('Activate', 'code-snippets')}
 				title={__('Save Snippet and Activate', 'code-snippets')}
-				onClick={() => saveSnippetActivate(snippet)}
+				onClick={() => saveAndActivateSnippet(snippet)}
 			/>}
 	</> : null
 

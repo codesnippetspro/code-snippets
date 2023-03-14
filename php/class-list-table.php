@@ -463,7 +463,7 @@ class List_Table extends WP_List_Table {
 			'activate-selected'   => $this->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
 			'deactivate-selected' => $this->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
 			'clone-selected'      => __( 'Clone', 'code-snippets' ),
-			'download-selected'   => __( 'Download', 'code-snippets' ),
+			'download-selected'   => __( 'Export Code', 'code-snippets' ),
 			'export-selected'     => __( 'Export', 'code-snippets' ),
 			'delete-selected'     => __( 'Delete', 'code-snippets' ),
 		);

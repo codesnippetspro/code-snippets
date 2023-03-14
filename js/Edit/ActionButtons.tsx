@@ -1,15 +1,13 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { ActionButton } from '../common/ActionButton'
-import { Snippet } from '../types/Snippet'
+import { SnippetInputProps } from '../types/SnippetInputProps'
+import { useSnippetsAPI } from '../utils/api'
 import { isNetworkAdmin } from '../utils/general'
-import { deleteSnippet, downloadSnippet, exportSnippet, saveSnippet, saveSnippetActivate, saveSnippetDeactivate } from './actions'
+import { saveSnippet, saveAndActivateSnippet, deleteSnippet, exportSnippet, exportSnippetCode } from './actions'
 
-export interface ActionButtonsProps {
-	snippet: Snippet
-}
-
-const SubmitButton: React.FC<ActionButtonsProps> = ({ snippet }) => {
+const SubmitButton: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) => {
+	const api = useSnippetsAPI(setSnippet)
 	const canActivate = !snippet.shared_network || !isNetworkAdmin()
 	const activateByDefault = canActivate && window.CODE_SNIPPETS_EDIT?.activateByDefault &&
 		!snippet.active && 'single-use' !== snippet.scope
@@ -20,14 +18,14 @@ const SubmitButton: React.FC<ActionButtonsProps> = ({ snippet }) => {
 				primary
 				name="save_snippet"
 				text={__('Save Changes', 'code-snippets')}
-				onClick={() => saveSnippet(snippet)}
+				onClick={() => saveSnippet(snippet, api)}
 			/>}
 
 		{'single-use' === snippet.scope ?
 			<ActionButton
 				name="save_snippet_execute"
 				text={__('Save Changes and Execute Once', 'code-snippets')}
-				onClick={() => saveSnippetActivate(snippet)}
+				onClick={() => saveAndActivateSnippet(snippet, api, true)}
 			/> :
 
 			canActivate ?
@@ -35,52 +33,52 @@ const SubmitButton: React.FC<ActionButtonsProps> = ({ snippet }) => {
 					<ActionButton
 						name="save_snippet_deactivate"
 						text={__('Save Changes and Deactivate', 'code-snippets')}
-						onClick={() => saveSnippetDeactivate(snippet)}
+						onClick={() => saveAndActivateSnippet(snippet, api, false)}
 					/> :
 					<ActionButton
 						primary={activateByDefault}
 						name="save_snippet_activate"
 						text={__('Save Changes and Activate', 'code-snippets')}
-						onClick={() => saveSnippetActivate(snippet)}
+						onClick={() => saveAndActivateSnippet(snippet, api, true)}
 					/> : ''}
 
 		{activateByDefault ?
 			<ActionButton
 				name="save_snippet"
 				text={__('Save Changes', 'code-snippets')}
-				onClick={() => saveSnippet(snippet)}
+				onClick={() => saveSnippet(snippet, api)}
 			/> : ''}
 	</>
 }
 
-export const ActionButtons: React.FC<ActionButtonsProps> = ({ snippet }) =>
-	<p className="submit">
-		<SubmitButton snippet={snippet} />
+export const ActionButtons: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) => {
+	const api = useSnippetsAPI(setSnippet)
 
-		{snippet.active ?
-			<>
-				{window.CODE_SNIPPETS_EDIT?.enableDownloads ?
+	return (
+		<p className="submit">
+			<SubmitButton snippet={snippet} setSnippet={setSnippet} />
+
+			{snippet.active ?
+				<>
 					<ActionButton
-						name="download_snippet"
-						text={__('Download', 'code-snippets')}
-						onClick={() => downloadSnippet(snippet)}
-					/> : ''}
+						name="export_snippet"
+						text={__('Export', 'code-snippets')}
+						onClick={() => exportSnippet(snippet, api)}
+					/>
 
-				<ActionButton
-					name="export_snippet"
-					text={__('Export', 'code-snippets')}
-					onClick={() => exportSnippet(snippet)}
-				/>
+					{window.CODE_SNIPPETS_EDIT?.enableDownloads ?
+						<ActionButton
+							name="export_snippet_code"
+							text={__('Export Code', 'code-snippets')}
+							onClick={() => exportSnippetCode(snippet, api)}
+						/> : ''}
 
-				<ActionButton
-					name="delete_snippet"
-					text={__('Delete', 'code-snippets')}
-					onClick={() =>
-						confirm([
-							__('You are about to permanently delete this snippet.', 'code-snippets'),
-							__("'Cancel' to stop, 'OK' to delete.", 'code-snippets')
-						].join('\n')) && deleteSnippet(snippet)
-					}
-				/>
-			</> : ''}
-	</p>
+					<ActionButton
+						name="delete_snippet"
+						text={__('Delete', 'code-snippets')}
+						onClick={() => deleteSnippet(snippet, api)}
+					/>
+				</> : ''}
+		</p>
+	)
+}

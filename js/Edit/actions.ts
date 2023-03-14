@@ -1,37 +1,39 @@
 import { __ } from '@wordpress/i18n'
 import { Snippet } from '../types/Snippet'
+import { SnippetsAPI } from '../utils/api'
 
-export const saveSnippet = (snippet: Snippet) => {
-	const message = 'condition' === snippet.scope ? '' :
-		!snippet.name.trim() ?
-			snippet.code.trim() ?
+const verifySnippetData = ({ code, name, scope }: Snippet): boolean => {
+	const message = 'condition' === scope ? '' :
+		!name.trim() ?
+			code.trim() ?
 				__('This snippet has no title. Continue?', 'code-snippets') :
 				__('This snippet has no code or title. Continue?', 'code-snippets') :
-			snippet.code.trim() ? '' :
+			code.trim() ? '' :
 				__('This snippet has no snippet code. Continue?', 'code-snippets')
 
-	if (message && !confirm(message)) {
-		return
+	return '' !== message && !confirm(message)
+}
+
+export const saveSnippet = (snippet: Snippet, api: SnippetsAPI) =>
+	verifySnippetData(snippet) && api.create(snippet)
+
+export const saveAndActivateSnippet = (snippet: Snippet, api: SnippetsAPI, activate: boolean) => {
+	if (verifySnippetData(snippet)) {
+		snippet.active = activate
+		api.create(snippet)
 	}
-
-	console.error('Save snippet not implemented.', snippet)
 }
 
-export const saveSnippetActivate = (snippet: Snippet) => {
-	snippet.active = true
-	saveSnippet(snippet)
-}
+export const exportSnippet = (snippet: Snippet, api: SnippetsAPI) =>
+	api.export(snippet)
 
-export const saveSnippetDeactivate = (snippet: Snippet) => {
-	snippet.active = false
-	saveSnippet(snippet)
-}
+export const exportSnippetCode = (snippet: Snippet, api: SnippetsAPI) =>
+	api.exportCode(snippet)
 
-export const downloadSnippet = (snippet: Snippet) =>
-	console.error('Download snippet not implemented.', snippet)
-
-export const deleteSnippet = (snippet: Snippet) =>
-	console.error('Delete snippet not implemented.', snippet)
-
-export const exportSnippet = (snippet: Snippet) =>
-	console.error('Export snippet not implemented.', snippet)
+export const deleteSnippet = (snippet: Snippet, api: SnippetsAPI) =>
+	confirm([
+		__('You are about to permanently delete this snippet.', 'code-snippets'),
+		__("'Cancel' to stop, 'OK' to delete.", 'code-snippets')
+	].join('\n')) ?
+		api.delete(snippet) :
+		undefined
