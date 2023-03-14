@@ -55,7 +55,6 @@ class Snippet extends Data_Item {
 	 * @param array<string, mixed>|object $initial_data Initial snippet data.
 	 */
 	public function __construct( $initial_data = null ) {
-
 		$default_values = array(
 			'id'             => 0,
 			'name'           => '',
@@ -234,23 +233,22 @@ class Snippet extends Data_Item {
 	 */
 	protected function prepare_modified( $modified ) {
 
-		/* if the supplied value is a DateTime object, convert it to string representation */
+		// If the supplied value is a DateTime object, convert it to string representation.
 		if ( $modified instanceof DateTime ) {
 			return $modified->format( self::DATE_FORMAT );
 		}
 
-		/* if the supplied value is probably a timestamp, attempt to convert it to a string */
+		// If the supplied value is probably a timestamp, attempt to convert it to a string.
 		if ( is_numeric( $modified ) ) {
 			return gmdate( self::DATE_FORMAT, $modified );
 		}
 
-		/* if the supplied value is a string, check it is not just the default value */
+		// If the supplied value is a string, check it is not just the default value.
 		if ( is_string( $modified ) && self::DEFAULT_DATE !== $modified ) {
 			return $modified;
 		}
 
-		/* otherwise, discard the supplied value */
-
+		// Otherwise, discard the supplied value.
 		return null;
 	}
 
@@ -274,7 +272,7 @@ class Snippet extends Data_Item {
 	 * @return string
 	 */
 	protected function get_display_name() {
-		/* translators: %d: snippet ID */
+		// translators: %d: snippet ID.
 		return empty( $this->name ) ? sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $this->id ) : $this->name;
 	}
 
@@ -413,7 +411,7 @@ class Snippet extends Data_Item {
 		} else {
 			$timezone = get_option( 'timezone_string' );
 
-			/* calculate the timezone manually if it is not available */
+			// Calculate the timezone manually if it is not available.
 			if ( ! $timezone ) {
 				$offset = (float) get_option( 'gmt_offset' );
 				$hours = (int) $offset;
@@ -449,7 +447,7 @@ class Snippet extends Data_Item {
 		$local_time = $this->modified_local;
 
 		if ( $time_diff >= 0 && $time_diff < YEAR_IN_SECONDS ) {
-			/* translators: %s: Human-readable time difference. */
+			// translators: %s: Human-readable time difference.
 			$human_time = sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( $timestamp ) );
 		} else {
 			$human_time = $local_time->format( __( 'Y/m/d', 'code-snippets' ) );
@@ -459,7 +457,7 @@ class Snippet extends Data_Item {
 			return $human_time;
 		}
 
-		/* translators: 1: date format, 2: time format */
+		// translators: 1: date format, 2: time format.
 		$date_format = _x( '%1$s \a\t %2$s', 'date and time format', 'code-snippets' );
 		$date_format = sprintf( $date_format, get_option( 'date_format' ), get_option( 'time_format' ) );
 

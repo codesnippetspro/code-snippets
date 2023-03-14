@@ -60,25 +60,25 @@ class DB {
 	}
 
 	/**
-	 * Validate the multisite parameter of the get_table_name() function
+	 * Validate the multisite parameter of the get_table_name() function.
 	 *
-	 * @param bool|null $network Value of multisite parameter – true for multisite, false for single-site.
+	 * @param boolean|null $network Value of multisite parameter: `true` for multisite, `false` for single-site.
 	 *
-	 * @return bool Validated value of multisite parameter.
+	 * @return boolean Validated value of multisite parameter.
 	 */
 	public static function validate_network_param( $network ) {
 
-		/* If multisite is not active, then the parameter should always be false */
+		// If multisite is not active, then the parameter should always be false.
 		if ( ! is_multisite() ) {
 			return false;
 		}
 
-		/* If $multisite is null, try to base it on the current admin page */
+		// If $multisite is null, try to base it on the current admin page.
 		if ( is_null( $network ) && function_exists( 'is_network_admin' ) ) {
 			$network = is_network_admin();
 		}
 
-		return $network;
+		return (bool) $network;
 	}
 
 	/**

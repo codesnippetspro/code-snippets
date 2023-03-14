@@ -47,7 +47,7 @@ class Import_Menu extends Admin_Menu {
 	 */
 	private function process_import_files() {
 
-		/* Ensure the import file exists */
+		// Ensure the import file exists.
 		if ( ! isset(
 			$_FILES['code_snippets_import_files']['name'],
 			$_FILES['code_snippets_import_files']['type'],
@@ -58,21 +58,21 @@ class Import_Menu extends Admin_Menu {
 
 		check_admin_referer( 'import_code_snippets_file' );
 
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$upload_files = $_FILES['code_snippets_import_files']['tmp_name'];
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$upload_filenames = $_FILES['code_snippets_import_files']['name'];
+		$upload_mime_types = array_map( 'sanitize_mime_type', wp_unslash( $_FILES['code_snippets_import_files']['type'] ) );
+
 		$count = 0;
 		$network = is_network_admin();
 		$error = false;
-
-		$upload_files = array_map( 'sanitize_text_field', wp_unslash( $_FILES['code_snippets_import_files']['tmp_name'] ) );
-		$upload_filenames = array_map( 'sanitize_text_field', wp_unslash( $_FILES['code_snippets_import_files']['name'] ) );
-		$upload_mime_types = array_map( 'sanitize_mime_type', wp_unslash( $_FILES['code_snippets_import_files']['type'] ) );
-
 		$dup_action = isset( $_POST['duplicate_action'] ) ? sanitize_key( $_POST['duplicate_action'] ) : 'ignore';
 
-		/* Loop through the uploaded files and import the snippets */
-
+		// Loop through the uploaded files and import the snippets.
 		foreach ( $upload_files as $i => $import_file ) {
-			$ext = pathinfo( $upload_filenames[ $i ] );
-			$ext = $ext['extension'];
+			$filename_info = pathinfo( $upload_filenames[ $i ] );
+			$ext = $filename_info['extension'];
 			$mime_type = $upload_mime_types[ $i ];
 
 			$import = new Import( $import_file, $network, $dup_action );
@@ -92,7 +92,7 @@ class Import_Menu extends Admin_Menu {
 			}
 		}
 
-		/* Send the amount of imported snippets to the page */
+		// Send the amount of imported snippets to the page.
 		$url = add_query_arg( $error ? array( 'error' => true ) : array( 'imported' => $count ) );
 		wp_safe_redirect( esc_url_raw( $url ) );
 		exit;
@@ -128,7 +128,7 @@ class Import_Menu extends Admin_Menu {
 			echo '</p></div>';
 		}
 
-		if ( ! empty( $_REQUEST['imported'] ) && intval( $_REQUEST['imported'] ) >= 0 ) {
+		if ( isset( $_REQUEST['imported'] ) ) {
 			echo '<div id="message" class="updated fade"><p>';
 
 			$imported = intval( $_REQUEST['imported'] );
