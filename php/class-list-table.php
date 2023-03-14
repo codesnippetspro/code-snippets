@@ -247,7 +247,7 @@ class List_Table extends WP_List_Table {
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
 				'export' => esc_html__( 'Export', 'code-snippets' ),
-				'cloud'  => esc_html__( 'Sync to My Cloud', 'code-snippets' ),
+				'cloud'  => esc_html__( 'Sync to Codevault', 'code-snippets' ),
 			);
 
 			foreach ( $simple_actions as $action => $label ) {
@@ -260,17 +260,17 @@ class List_Table extends WP_List_Table {
 				$cloud_link = $this->get_cloud_link( $snippet->id );
 				//Check this snippet is linked or orignated from the cloud
 				if ( $cloud_link ) {
-					//Check if an update is available
+					//Check if an update is available -- add a link to the update
 					if ( $cloud_link->update_available ) {
-						$actions['cloud'] = sprintf(
-							'<a href="%s#snippet-%s">%s</a>',
-							esc_url( add_query_arg( 'type', 'cloud', code_snippets()->get_menu_url( 'manage' ) ) ),
-							esc_attr( $snippet->cloud_id ),
-							esc_html__( 'Update Available', 'code-snippets' )
+						$actions['cloud_update'] = sprintf(
+							'<a href="%s#updated-code">%s</a>',
+							esc_url( $this->get_action_link( 'edit', $snippet ) ),
+							esc_html__( 'Cloud Update', 'code-snippets' )
 						);
+
 					}
 					//Check if the snippet is in the users codevault 
-					if ( $cloud_link->in_codevault && !$cloud_link->update_available ) {
+					if ( $cloud_link->in_codevault) {
 						$actions['cloud'] = sprintf( '<a>%s</a>', 'Synced' );
 					}	
 				}

@@ -336,7 +336,12 @@ $inactive-color: #ccc;
 }
 
 .cloud-update{
-	color: #ff9800;
+	color: #ff9800 !important; 
+}
+
+.cloud_update a{
+	color: #ff9800 !important; 
+	text-decoration: underline;
 }
 .cloud-table > tbody > tr  {
 	height: 80px;

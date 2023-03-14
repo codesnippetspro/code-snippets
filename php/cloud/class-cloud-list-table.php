@@ -377,24 +377,31 @@ class Cloud_List_Table extends WP_List_Table {
 		}
 
 		$update_available = $link && $link->update_available;
-		//Get source of snippet - codevault or search use current class as snippet source is not set for every cloud snippet in cloud link
-		$source = self::CLASS_NAME === $this->class_name ? 'codevault' : 'search';
 
-		$download_url = add_query_arg(
-			[
-				'action'  => $update_available ? 'update' : 'download',
-				'snippet' => $item->id,
-				'source'  => $source ,
-			]
-		);
+		if( $update_available ) {
+			$action_link = sprintf(
+				'<a class="cloud-snippet-download" href="%s">%s</a>',
+				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) . '/#updated-code' ),
+				esc_html__( 'Update Available', 'code-snippets' )
+			);
+		}else{
+			//Get source of snippet - codevault or search use current class as snippet source is not set for every cloud snippet in cloud link
+			$source = self::CLASS_NAME === $this->class_name ? 'codevault' : 'search';
 
-		$download_link = sprintf(
-			'<a class="cloud-snippet-download" href="%s">%s</a>',
-			esc_url( $download_url ),
-			$update_available ?
-				esc_html__( 'Update Available', 'code-snippets' ) :
-				esc_html__( 'Download', 'code-snippets' )
-		);
+			$download_url = add_query_arg(
+				[
+					'action'  => 'download',
+					'snippet' => $item->id,
+					'source'  => $source ,
+				]
+			);
+
+			$action_link = sprintf(
+				'<a class="cloud-snippet-download" href="%s">%s</a>',
+					esc_url( $download_url ),
+					esc_html__( 'Download', 'code-snippets' )
+			);
+		}
 
 		$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
 
@@ -406,7 +413,7 @@ class Cloud_List_Table extends WP_List_Table {
 			esc_html__( 'Preview', 'code-snippets' )
 		);
 
-		return $download_link . $thickbox_link;
+		return $action_link . $thickbox_link;
 	}
 
 	/**

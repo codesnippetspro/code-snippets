@@ -112,8 +112,6 @@ class Cloud_API {
 
 		// Otherwise, regenerate the local-to-cloud-map.
 		$this->local_to_cloud_map = [];
-
-		// Create a list of snippet revisions in the format `cloud_id._.is_owner` => `revision`, e.g. [163_1 => 2].
 		$codevault_snippets = $this->get_codevault_snippets();
 		$cloud_id_rev = $codevault_snippets->cloud_id_rev;
 
@@ -126,19 +124,20 @@ class Cloud_API {
 
 			$link = new Cloud_Link();
 			$cloud_id_owner = $this->get_cloud_id_and_ownership( $local_snippet->cloud_id );
+			$cloud_id_int = intval( $cloud_id_owner['cloud_id'] );
 			$link->local_id = $local_snippet->id;
-			$link->cloud_id = intval( $cloud_id_owner['cloud_id'] );
-			
+			$link->cloud_id = $cloud_id_int;
 			$link->is_owner = $cloud_id_owner['is_owner'];
-			$link->in_codevault = array_key_exists( $cloud_id_owner['cloud_id'] , $cloud_id_rev );
+			//Check if cloud id exists in cloud_id_rev array - this shows if the snippet is in the codevault
+			$link->in_codevault =  $cloud_id_rev[$cloud_id_int] ? true : false;
 
-			$cloud_snippet_revision = $link->in_codevault ?
-				$cloud_id_rev[ $link->cloud_id ] :
+			// Get the cloud snippet revision if in codevault get from cloud_id_rev array otherwise get from cloud.
+			$cloud_snippet_revision = 
+				$cloud_id_rev[$cloud_id_int] ? $cloud_id_rev[$cloud_id_int] :
 				$this->get_cloud_snippet_revision( $local_snippet->cloud_id );
-
+			
 			// Check if local revision is less than cloud revision.
-			$link->update_available = $local_snippet->revision < $cloud_snippet_revision;
-
+			$link->update_available = (int) $local_snippet->revision < $cloud_snippet_revision;
 			$this->local_to_cloud_map[] = $link;
 		}
 
@@ -342,11 +341,12 @@ class Cloud_API {
 	 */
 	public function update_snippets_in_cloud( $snippets_to_update ) {
 		foreach ( $snippets_to_update as $snippet ) {
-			$cloud_id = $this->get_cloud_id_and_ownership( $snippet->cloud_id );
+			$cloud_id_owner = $this->get_cloud_id_and_ownership( $snippet->cloud_id );
+			$cloud_id = (int) $cloud_id_owner['cloud_id'];
 
 			// Send post request to cs store api with snippet data.
 			$response = wp_remote_post(
-				self::CLOUD_API_URL . 'private/updatesnippet',
+				self::CLOUD_API_URL . 'private/updatesnippet/' . $cloud_id,
 				[
 					'method'  => 'POST',
 					'headers' => $this->build_request_headers(),
@@ -355,7 +355,6 @@ class Cloud_API {
 						'desc'     => $snippet->desc,
 						'code'     => $snippet->code,
 						'revision' => $snippet->revision,
-						'cloud_id' => $cloud_id['cloud_id'],
 						'local_id' => $snippet->id,
 					],
 				]
@@ -402,18 +401,13 @@ class Cloud_API {
 	 * @return Cloud_Snippet Retrieved snippet.
 	 */
 	public static function get_single_cloud_snippet( $cloud_id ) {
-		$response = wp_remote_get(
-			add_query_arg(
-				[
-					'site_host'  => wp_parse_url( get_site_url(), PHP_URL_HOST ),
-					'site_token' => get_setting( 'cloud', 'local_token' ),
-				],
-				self::CLOUD_API_URL . sprintf( 'public/getsnippet/%s', $cloud_id )
-			)
-		);
 
+		//CHANGE TO PRIVATE ROUTE 'PRIVATE/GETSNIPPET' AND ADD BEARER TOKEN
+		$url = self::CLOUD_API_URL . sprintf( 'private/getsnippet/%s', $cloud_id );
+		$response = wp_remote_get( $url, [ 'headers' => self::build_request_headers() ] );
 		$cloud_snippet = self::unpack_request_json( $response );
-		return new Cloud_Snippet( reset($cloud_snippet) );
+		
+		return new Cloud_Snippet( $cloud_snippet['snippet'] );
 	}
 
 	/**
@@ -585,6 +579,28 @@ class Cloud_API {
 			'success' => true,
 			'action'  => 'Updated',
 		];
+	}
+
+	/**
+	 * Check if a snippet has update available using cloud link.
+	 *
+	 * @param int $snippet_id The local ID of the snippet.
+	 *
+	 * @return bool Whether the snippet has update available or not.
+	 */
+	public function is_update_available( $snippet_id ) {
+		$cloud_link = $this->get_local_to_cloud_map();
+		//find the snippet from the array of objects using snippet id
+		$snippet = array_filter(
+			$cloud_link,
+			function ( $snippet ) use ( $snippet_id ) {
+				return $snippet->local_id === $snippet_id;
+			}
+		);
+		//Get the first element of the array
+		$snippet = reset($snippet);
+		//Return the update available value which is a boolean
+		return $snippet->update_available;
 	}
 
 }

@@ -102,7 +102,7 @@ $licensed = code_snippets()->licensing->is_licensed();
 			</label>
 		</h2>
 
-		<?php
+		<?php	
 
 		if ( ! $snippet->id && ! isset( $_REQUEST['preview'] ) ) {
 			echo '<h2 class="nav-tab-wrapper" id="snippet-type-tabs">';
@@ -130,8 +130,27 @@ $licensed = code_snippets()->licensing->is_licensed();
 			<?php do_action( 'code_snippets_below_editor', $snippet ); ?>
 		</div>
 
-		<?php
+		
 
+		<?php
+		//Updated Cloud Snippet Check and Hidden Input Injection
+		if ( isset( $snippet->cloud_id) ) {
+			//If so check if update available using instance of plugin
+			$cloud_api = code_snippets()->cloud_api;
+			if( $cloud_api->is_update_available( $snippet->id ) ) {
+				$cloud_id_owner =  $cloud_api->get_cloud_id_and_ownership( $snippet->cloud_id );
+				$updated_snippet = $cloud_api->get_single_cloud_snippet( $cloud_id_owner['cloud_id'] );
+				$updated_code = $updated_snippet->code;
+				echo '<input type="hidden" id="updated_snippet_code" value="' . $updated_code . '">';		
+		?>
+			<div id="updated-code">
+				<h2><label>Snippet Update from the Cloud*</label></h2>
+				<p>There is an update to this snippet from the cloud. The original snippet is shown on the <b>Left Hand Side</b> and updated code on the <b>Right Hand Side</b> with the differences highlighted.</p> 
+				<p><b>Important:</b> Please review updated code below as updating this snippet will overwrite the code with the below.</p>
+			</div>
+		<?php
+			}
+		}
 		/* Allow plugins to add fields and content to this page */
 		do_action( 'code_snippets_edit_snippet', $snippet );
 
