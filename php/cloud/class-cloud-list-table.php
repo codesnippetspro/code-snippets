@@ -201,16 +201,11 @@ class Cloud_List_Table extends WP_List_Table {
 		$ids = isset( $_POST['cloud_ids'] ) ? array_map( 'intval', $_POST['cloud_ids'] ) : array();
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
 		if( 'download-selected' == $this->current_action() ) {
-			//Loop though the ids and download the snippet
-				wp_die( var_dump( $ids ) );
-				// array (size=3)
-				// 	0 => int 1
-				// 	1 => int 314
-				// 	2 => int 633
+				$this->download_snippets( $ids );
+				$result = 'download-multi';
 		}
 
 		if ( isset( $result ) ) {
-
 			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 			exit;
 		}
@@ -534,6 +529,30 @@ class Cloud_List_Table extends WP_List_Table {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Bulk Download Snippets.
+	 *
+	 * @param array $ids array of int cloud ids to download
+	 *
+	 * @return void
+	 */
+	public function download_snippets( $ids ) {
+		foreach ( $ids as $id ) {
+			//Check if snippet already exists in cloud link transient and skip if it does 
+			$cloud_link = $this->get_cloud_map_link( $id );
+			if ( $cloud_link ) {
+				continue;
+			}
+			//TODO: This doesn't work to distinguish between codevault and search results
+			$source = Cloud_List_Table::CLASS_NAME === $this->class_name ? 'codevault' : 'search';
+			//TODO: For bulk download codevault snippets this doesn't update cloud link for first snippet
+			$snippet =  $this->cloud_api->download_or_update_snippet( $id, $source, 'download' );
+
+			// Sleep for 1 second to avoid rate limiting
+			sleep( 1 );
+		}
 	}
 
 	/**

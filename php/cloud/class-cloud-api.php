@@ -5,6 +5,8 @@ namespace Code_Snippets\Cloud;
 
 use Code_Snippets\Snippet;
 use WP_Error;
+use wpdb;
+
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\Settings\get_setting;
@@ -284,7 +286,7 @@ class Cloud_API {
 	protected function add_map_link( Cloud_Link $link ) {
 		$local_to_cloud_map = $this->get_local_to_cloud_map();
 		$local_to_cloud_map[] = $link;
-
+		
 		set_transient(
 			self::CLOUD_MAP_TRANSIENT_KEY,
 			$local_to_cloud_map,
@@ -533,6 +535,7 @@ class Cloud_API {
 				'success' => true,
 				'action'  => 'Single Downloaded',
 				'snippet_id' => $new_snippet_id,
+				'link_id' => $link->id,
 			];
 		}
 
@@ -547,7 +550,6 @@ class Cloud_API {
 				'error'   => 'There was a problem saving or no snippets found to download.',
 			];
 		}
-
 
 	}
 
