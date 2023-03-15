@@ -49,7 +49,11 @@ module.exports = {
 		'no-magic-numbers': ['error', {ignore: [-1, 0, 1]}],
 		'no-plusplus': ['error', {allowForLoopAfterthoughts: true}],
 		'dot-location': ['error', 'property'],
-		'capitalized-comments': ['warn', 'always', {ignoreInlineComments: true, ignoreConsecutiveComments: true}],
+		'capitalized-comments': ['warn', 'always', {
+			ignorePattern: 'translators:',
+			ignoreInlineComments: true,
+			ignoreConsecutiveComments: true
+		}],
 		'no-invalid-this': 'error',
 		'max-lines-per-function': ['warn', {skipBlankLines: true, skipComments: true}],
 		'prefer-named-capture-group': 'error',

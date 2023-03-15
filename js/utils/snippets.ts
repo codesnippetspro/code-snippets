@@ -1,4 +1,19 @@
 import { Snippet, SnippetType } from '../types/Snippet'
+import { isNetworkAdmin } from './general'
+
+export const createEmptySnippet = (): Snippet => ({
+	id: 0,
+	name: '',
+	desc: '',
+	code: '',
+	tags: [],
+	scope: 'global',
+	modified: '',
+	active: false,
+	network: isNetworkAdmin(),
+	shared_network: null,
+	priority: 10
+})
 
 export const getSnippetType = ({ scope }: Snippet): SnippetType => {
 	if (scope.endsWith('-css')) {

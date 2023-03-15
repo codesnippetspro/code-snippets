@@ -333,21 +333,6 @@ class Edit_Menu extends Admin_Menu {
 			echo '<div id="message" class="error fade"><p>';
 			esc_html_e( 'An error occurred when saving the snippet.', 'code-snippets' );
 			echo '</p></div>';
-			return;
-		}
-
-		$messages = array(
-			'added'                   => __( 'Snippet <strong>added</strong>.', 'code-snippets' ),
-			'updated'                 => __( 'Snippet <strong>updated</strong>.', 'code-snippets' ),
-			'added-and-activated'     => __( 'Snippet <strong>added</strong> and <strong>activated</strong>.', 'code-snippets' ),
-			'updated-and-executed'    => __( 'Snippet <strong>added</strong> and <strong>executed</strong>.', 'code-snippets' ),
-			'updated-and-activated'   => __( 'Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets' ),
-			'updated-and-deactivated' => __( 'Snippet <strong>updated</strong> and <strong>deactivated</strong>.', 'code-snippets' ),
-		);
-
-		if ( isset( $messages[ $result ] ) ) {
-			echo '<div id="message" class="updated fade"><p>', wp_kses( $messages[ $result ], [ 'strong' => [] ] ), '</p></div>';
-
 		}
 	}
 
@@ -375,6 +360,7 @@ class Edit_Menu extends Admin_Menu {
 			'wp-url',
 			'wp-i18n',
 			'wp-api-fetch',
+			'wp-components'
 		];
 
 		wp_enqueue_style(
@@ -406,6 +392,7 @@ class Edit_Menu extends Admin_Menu {
 			'code-snippets-edit-menu',
 			'CODE_SNIPPETS_EDIT',
 			[
+				'snippet'           => $this->snippet->get_fields(),
 				'restAPI'           => [
 					'base'  => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'nonce' => wp_create_nonce( 'wp_rest' ),

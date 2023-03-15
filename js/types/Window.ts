@@ -1,4 +1,5 @@
 import tinymce from 'tinymce'
+import { Snippet } from './Snippet'
 import { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './WordPressCodeEditor'
 import { WordPressEditor } from './WordPressEditor'
 
@@ -17,6 +18,7 @@ declare global {
 		code_snippets_editor_preview?: CodeEditorInstance
 		code_snippets_editor_settings: EditorOption[]
 		readonly CODE_SNIPPETS_EDIT?: {
+			snippet: Snippet
 			restAPI: {
 				base: string
 				nonce: string

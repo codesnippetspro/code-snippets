@@ -228,9 +228,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	public function create_item( $request ) {
 		$snippet = $this->prepare_item_for_database( $request );
-		$result_id = save_snippet( $snippet );
-
-		$result = $result_id ? get_snippet( $result_id, $snippet->network ) : null;
+		$result = save_snippet( $snippet );
 
 		return $result ?
 			$this->prepare_item_for_response( $result, $request ) :

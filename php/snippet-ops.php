@@ -490,7 +490,7 @@ function test_snippet_code( Snippet $snippet ) {
  *
  * @param Snippet|array<string, mixed> $snippet The snippet to add/update to the database.
  *
- * @return integer ID of the snippet.
+ * @return Snippet Updated snippet.
  *
  * @since 2.0.0
  */
@@ -556,7 +556,7 @@ function save_snippet( $snippet ) {
 
 	update_shared_network_snippets( [ $snippet ] );
 	clean_snippets_cache( $table );
-	return $snippet->id;
+	return $snippet;
 }
 
 /**

@@ -27,8 +27,10 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
 		type={type}
 		{...props}
 		onClick={event => {
-			event.preventDefault()
-			onClick?.(event)
+			if (onClick) {
+				event.preventDefault()
+				onClick(event)
+			}
 		}}
 		className={classnames('button', {
 			'button-primary': primary,

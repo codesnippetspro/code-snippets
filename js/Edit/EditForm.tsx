@@ -1,12 +1,13 @@
-import apiFetch from '@wordpress/api-fetch'
-import { __ } from '@wordpress/i18n'
-import classnames from 'classnames'
 import React, { useEffect, useState } from 'react'
+import { __ } from '@wordpress/i18n'
+import apiFetch from '@wordpress/api-fetch'
+import classnames from 'classnames'
+import { Notices } from '../types/Notice'
 import { Snippet } from '../types/Snippet'
 import { SnippetInputProps } from '../types/SnippetInputProps'
 import { CodeEditorInstance } from '../types/WordPressCodeEditor'
 import { isNetworkAdmin } from '../utils/general'
-import { getSnippetType } from '../utils/snippets'
+import { createEmptySnippet, getSnippetType } from '../utils/snippets'
 import { ActionButtons } from './ActionButtons'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { MultisiteSharingSettings } from './fields/MultisiteSharingSettings'
@@ -17,53 +18,58 @@ import { TagsInput } from './fields/TagsInput'
 import { SnippetEditor } from './SnippetEditor/SnippetEditor'
 import { SnippetEditorToolbar } from './SnippetEditor/SnippetEditorToolbar'
 
-const EMPTY_SNIPPET: Snippet = {
-	id: 0,
-	name: '',
-	desc: '',
-	code: '',
-	tags: [],
-	scope: 'global',
-	modified: '',
-	active: false,
-	network: false,
-	shared_network: false,
-	priority: 10
-}
+const OPTIONS = window.CODE_SNIPPETS_EDIT
 
 const SnippetEditForm: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) => {
-	const options = window.CODE_SNIPPETS_EDIT
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
+	const [notices, setNotices] = useState<Notices>([])
+	const [isWorking, setIsWorking] = useState(false)
+
 	const inputProps: SnippetInputProps = { snippet, setSnippet }
+	const actionProps = { ...inputProps, isWorking, setNotices, setIsWorking }
 
 	return (
-		<div id="snippet-form" data-snippet-type={getSnippetType(snippet)} className={classnames({
-			[`${snippet.scope}-snippet`]: true,
-			'new-snippet': !snippet.id,
-			'saved-snippet': snippet.id,
-			'active-snippet': snippet.active,
-			'inactive-snippet': !snippet.active
-		})}>
-			<NameInput {...inputProps} />
+		<>
+			{notices.map(([type, message], index) =>
+				<div key={message} id="message" className={`notice ${type} fade is-dismissible`}>
+					<p>{message}</p>
+					<button type="button" className="notice-dismiss" onClick={event => {
+						event.preventDefault()
+						setNotices(notices.filter((_, i) => index !== i))
+					}}>
+						<span className="screen-reader-text">{__('Dismiss notice.', 'code-snippets')}</span>
+					</button>
+				</div>
+			)}
 
-			<SnippetEditorToolbar snippet={snippet} codeEditorInstance={codeEditorInstance} />
-			<SnippetEditor
-				{...inputProps}
-				codeEditorInstance={codeEditorInstance}
-				setCodeEditorInstance={setCodeEditorInstance}
-			/>
+			<div id="snippet-form" data-snippet-type={getSnippetType(snippet)} className={classnames({
+				[`${snippet.scope}-snippet`]: true,
+				'new-snippet': !snippet.id,
+				'saved-snippet': snippet.id,
+				'active-snippet': snippet.active,
+				'inactive-snippet': !snippet.active
+			})}>
+				<NameInput {...inputProps} />
 
-			<div className="below-snippet-editor">
-				<ScopeInput {...inputProps} />
-				<PriorityInput {...inputProps} />
+				<SnippetEditorToolbar {...actionProps} codeEditorInstance={codeEditorInstance} />
+				<SnippetEditor
+					{...inputProps}
+					codeEditorInstance={codeEditorInstance}
+					setCodeEditorInstance={setCodeEditorInstance}
+				/>
+
+				<div className="below-snippet-editor">
+					<ScopeInput {...inputProps} />
+					<PriorityInput {...inputProps} />
+				</div>
+
+				{isNetworkAdmin() ? <MultisiteSharingSettings {...inputProps} /> : null}
+				{OPTIONS?.enableDescription ? <DescriptionEditor {...inputProps} /> : null}
+				{OPTIONS?.tagOptions.enabled ? <TagsInput {...inputProps} /> : null}
+
+				<ActionButtons {...actionProps} />
 			</div>
-
-			{isNetworkAdmin() ? <MultisiteSharingSettings {...inputProps} /> : null}
-			{options?.enableDescription ? <DescriptionEditor {...inputProps} /> : null}
-			{options?.tagOptions.enabled ? <TagsInput {...inputProps} /> : null}
-
-			<ActionButtons {...inputProps} />
-		</div>
+		</>
 	)
 }
 
@@ -72,14 +78,14 @@ export interface EditFormProps {
 }
 
 export const EditForm: React.FC<EditFormProps> = ({ snippetId }) => {
-	const [snippet, setSnippet] = useState<Snippet>(EMPTY_SNIPPET)
+	const [snippet, setSnippet] = useState<Snippet>(() => OPTIONS?.snippet ?? createEmptySnippet())
 
 	useEffect(() => {
-		if (0 !== snippetId) {
+		if (0 !== snippetId && snippetId !== snippet.id) {
 			apiFetch<Snippet>({ path: `/code-snippets/v1/snippets/${snippetId}` })
 				.then(result => setSnippet(result))
 		}
-	}, [snippetId])
+	}, [snippetId, snippet.id])
 
 	return 0 !== snippet.id || 0 === snippetId ?
 		<SnippetEditForm snippet={snippet} setSnippet={setSnippet} /> :
