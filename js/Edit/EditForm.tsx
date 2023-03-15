@@ -13,7 +13,7 @@ import { MultisiteSharingSettings } from './fields/MultisiteSharingSettings'
 import { NameInput } from './fields/NameInput'
 import { PriorityInput } from './fields/PriorityInput'
 import { ScopeInput } from './fields/ScopeInput'
-import { TagEditor } from './fields/TagEditor'
+import { TagsInput } from './fields/TagsInput'
 import { SnippetEditor } from './SnippetEditor/SnippetEditor'
 import { SnippetEditorToolbar } from './SnippetEditor/SnippetEditorToolbar'
 
@@ -60,9 +60,9 @@ const SnippetEditForm: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) =
 
 			{isNetworkAdmin() ? <MultisiteSharingSettings {...inputProps} /> : null}
 			{options?.enableDescription ? <DescriptionEditor {...inputProps} /> : null}
-			{options?.tagOptions.enabled ? <TagEditor {...inputProps} /> : null}
+			{options?.tagOptions.enabled ? <TagsInput {...inputProps} /> : null}
 
-			<ActionButtons snippet={snippet} />
+			<ActionButtons {...inputProps} />
 		</div>
 	)
 }

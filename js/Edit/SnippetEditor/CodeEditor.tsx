@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef } from 'react'
 import { SnippetInputProps } from '../../types/SnippetInputProps'
 import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
+import { useSnippetsAPI } from '../../utils/api'
 import { saveSnippet } from '../actions'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 
@@ -9,6 +10,7 @@ export interface CodeEditorProps extends SnippetInputProps {
 }
 
 export const CodeEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippet, setEditorInstance }) => {
+	const api = useSnippetsAPI(setSnippet)
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
 	useEffect(() => {
@@ -26,13 +28,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippet, set
 
 			editor.codemirror.setOption('extraKeys', {
 				...'object' === typeof extraKeys ? extraKeys : {},
-				[`${controlKey}-S`]: () => saveSnippet(snippet),
-				[`${controlKey}-Enter`]: () => saveSnippet(snippet)
+				[`${controlKey}-S`]: () => saveSnippet(snippet, api),
+				[`${controlKey}-Enter`]: () => saveSnippet(snippet, api)
 			})
 
 			return editor
 		})
-	}, [setEditorInstance, snippet, textareaRef])
+	}, [setEditorInstance, snippet, textareaRef, api])
 
 	return snippet.id && 'condition' === snippet.scope ? null :
 		<div className="snippet-editor" style={{ display: 'condition' === snippet.scope ? 'none' : 'block' }}>

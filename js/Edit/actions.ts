@@ -14,8 +14,9 @@ const verifySnippetData = ({ code, name, scope }: Snippet): boolean => {
 	return '' !== message && !confirm(message)
 }
 
-export const saveSnippet = (snippet: Snippet, api: SnippetsAPI) =>
+export const saveSnippet = (snippet: Snippet, api: SnippetsAPI) => {
 	verifySnippetData(snippet) && api.create(snippet)
+}
 
 export const saveAndActivateSnippet = (snippet: Snippet, api: SnippetsAPI, activate: boolean) => {
 	if (verifySnippetData(snippet)) {
@@ -24,16 +25,19 @@ export const saveAndActivateSnippet = (snippet: Snippet, api: SnippetsAPI, activ
 	}
 }
 
-export const exportSnippet = (snippet: Snippet, api: SnippetsAPI) =>
+export const exportSnippet = (snippet: Snippet, api: SnippetsAPI) => {
 	api.export(snippet)
+}
 
-export const exportSnippetCode = (snippet: Snippet, api: SnippetsAPI) =>
+export const exportSnippetCode = (snippet: Snippet, api: SnippetsAPI) => {
 	api.exportCode(snippet)
+}
 
-export const deleteSnippet = (snippet: Snippet, api: SnippetsAPI) =>
+export const deleteSnippet = (snippet: Snippet, api: SnippetsAPI) => {
 	confirm([
 		__('You are about to permanently delete this snippet.', 'code-snippets'),
 		__("'Cancel' to stop, 'OK' to delete.", 'code-snippets')
 	].join('\n')) ?
 		api.delete(snippet) :
 		undefined
+}

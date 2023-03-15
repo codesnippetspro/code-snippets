@@ -10,7 +10,7 @@ const keys = {
 	'Shift': _x('Shift', 'keyboard key', 'code-snippets'),
 	'Option': _x('Option', 'keyboard key', 'code-snippets'),
 	'Alt': _x('Alt', 'keyboard key', 'code-snippets'),
-	'Tab': _x('Tab', 'keyboard key', 'code-snippets'),
+	'TAB': _x('Tab', 'keyboard key', 'code-snippets'),
 	'Up': _x('Up', 'keyboard key', 'code-snippets'),
 	'Down': _x('Down', 'keyboard key', 'code-snippets'),
 	'A': _x('A', 'keyboard key', 'code-snippets'),
