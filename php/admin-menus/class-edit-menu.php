@@ -159,7 +159,6 @@ class Edit_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	private function process_actions() {
-
 		// Check for a valid nonce.
 		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'save_snippet' ) ) {
 			return;
@@ -190,6 +189,13 @@ class Edit_Menu extends Admin_Menu {
 			if ( isset( $_POST['download_snippet'] ) ) {
 				$export = new Export_Attachment( $snippet_id );
 				$export->download_snippets_code();
+			}
+
+			// Update Snippet from the cloud 
+			if ( isset( $_POST['cloud_update'] ) ) {
+				$cloud_id_owner = code_snippets()->cloud_api->get_cloud_id_and_ownership( $_POST['snippet_cloud_id'] );
+				$source = $cloud_id_owner['is_owner'] ? 'codevault' : 'search';
+				code_snippets()->cloud_api->download_or_update_snippet( $_POST['snippet_cloud_id'], $source, 'update' );
 			}
 
 			do_action( 'code_snippets/admin/process_actions', $snippet_id );
@@ -838,6 +844,7 @@ class Edit_Menu extends Admin_Menu {
 
 			$actions['export_snippet'] = __( 'Export', 'code-snippets' );
 			$actions['delete_snippet'] = __( 'Delete', 'code-snippets' );
+			$actions['cloud_update']   = __( 'Save Update from Cloud', 'code-snippets' );
 		}
 
 		if ( $snippet->is_pro && ! code_snippets()->licensing->is_licensed() ) {

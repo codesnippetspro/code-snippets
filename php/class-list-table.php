@@ -838,8 +838,6 @@ class List_Table extends WP_List_Table {
 			return;
 		}
 
-		check_admin_referer( 'bulk-' . $this->_args['plural'] );
-
 		$ids = isset( $_POST['ids'] ) ? array_map( 'intval', $_POST['ids'] ) : array();
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
 
@@ -902,6 +900,11 @@ class List_Table extends WP_List_Table {
 					delete_snippet( $id, $this->is_network );
 				}
 				$result = 'deleted-multi';
+				break;
+			
+			case 'sync-selected':
+				$this->sync_to_cloud( $ids );
+				$result = 'synced-multi';
 				break;
 		}
 
@@ -1408,13 +1411,6 @@ class List_Table extends WP_List_Table {
 	 */
 	private function sync_to_cloud( $ids ) {
 
-		//TODO: WHEN CLEARING SYNCED DATA - NEW CODEVAULT DATA IS DRAWN FROM CLOUD HOWEVER ONLY PAGE 0 IS PULLED
-		//IF CODEVAULT HAS MORE THAN 10 SNIPPETS THEN ANY SYNCED ITEM WILL NOT BE PULLED FROM CLOUD AND THUS NOT 
-		//SHOWN ON CODEVAULT AND UPDATED IN THE ALL SNIPPETS TABLE......
-
-		//PLAN - CODEVAULT TRANSIENT TO ONLY STORE VISIBLE PAGE?
-
-		//HOW TO MANAGE UPDATES.........
 		$snippets = get_snippets( $ids, $this->is_network );
 		code_snippets()->cloud_api->store_snippets_in_cloud( $snippets );
 	}

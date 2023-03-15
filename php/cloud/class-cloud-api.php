@@ -314,7 +314,6 @@ class Cloud_API {
 					],
 				]
 			);
-
 			$data = $this->unpack_request_json( $response );
 			$cloud_id = (string) $data['cloud_id'];
 			$revision = (int) $data['revision'];
@@ -560,7 +559,11 @@ class Cloud_API {
 	 * @return array The result of the update.
 	 */
 	public function update_snippet_from_cloud( $snippet_to_store ) {
-		$snippet_to_store = reset($snippet_to_store);
+
+		if( is_array($snippet_to_store) ){
+			$snippet_to_store = reset($snippet_to_store);
+		}
+
 		$ownership = $snippet_to_store->is_owner ? '1' : '0';
 		$cloud_id = $snippet_to_store->id.'_'.$ownership;
 		$local_snippet = get_snippet_by_cloud_id( sanitize_key( $cloud_id ) );

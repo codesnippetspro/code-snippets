@@ -172,28 +172,48 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	public function process_actions() {
-		if ( ! isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+		
+		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source' ) );
+		
+		if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+			if( 'download' === $_REQUEST['action'] || 'update' === $_REQUEST['action'] ){
+				$result = $this->cloud_api->download_or_update_snippet(
+					sanitize_key( $_REQUEST['snippet'] ),
+					sanitize_key( $_REQUEST['source'] ),
+					sanitize_key( $_REQUEST['action'] )
+				);
+				if ( $result['success'] ) {
+					if( $result['snippet_id'] ){
+						//Redirect to edit snippet page
+						wp_safe_redirect( code_snippets()->get_snippet_edit_url( $result['snippet_id'] ) );
+						exit;
+					}
+					wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result['action'] ) ) );
+					exit;
+				}
+			}
+		}		
+		/* Only continue from this point if there are bulk actions to process */
+		if ( ! isset( $_POST['cloud_ids'] ) && ! isset( $_POST['shared_cloud_ids'] ) ) {
 			return;
 		}
 
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source' ) );
-
-		$result = $this->cloud_api->download_or_update_snippet(
-			sanitize_key( $_REQUEST['snippet'] ),
-			sanitize_key( $_REQUEST['source'] ),
-			sanitize_key( $_REQUEST['action'] )
-		);
-		if ( $result['success'] ) {
-			if( $result['snippet_id'] ){
-				//Redirect to edit snippet page
-				wp_safe_redirect( code_snippets()->get_snippet_edit_url( $result['snippet_id'] ) );
-				exit;
-			}
-			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result['action'] ) ) );
-			exit;
+		$ids = isset( $_POST['cloud_ids'] ) ? array_map( 'intval', $_POST['cloud_ids'] ) : array();
+		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
+		if( 'download-selected' == $this->current_action() ) {
+			//Loop though the ids and download the snippet
+				wp_die( var_dump( $ids ) );
+				// array (size=3)
+				// 	0 => int 1
+				// 	1 => int 314
+				// 	2 => int 633
 		}
 
-		// TODO: Add code to action bulk download of snippets.
+		if ( isset( $result ) ) {
+
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
+			exit;
+		}
 	}
 
 	/**
@@ -424,8 +444,13 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return string The column content to be printed.
 	 */
 	protected function column_cb( $item ) {
-		$out = sprintf( '<input type="checkbox" name="cloud_ids[]" value="%s">', $item->cloud_id );
-		return apply_filters( 'code_snippets/cloud_list_table/column_cb', $out, $item );
+		$out = sprintf(
+			'<input type="checkbox" name="%s[]" value="%s">',
+			$item->shared_network ? 'shared_cloud_ids' : 'cloud_ids',
+			$item->id
+		);
+
+		return apply_filters( 'code_snippets/list_table/column_cb', $out, $item );
 	}
 
 	/**

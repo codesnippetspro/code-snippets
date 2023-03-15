@@ -166,23 +166,6 @@ $licensed = code_snippets()->licensing->is_licensed();
 		<p class="submit">
 			<?php
 			$this->render_submit_buttons( $snippet );
-
-			if( $cloud && $cloud_update){
-				$update_url = add_query_arg(
-					[
-						'action'  => 'update',
-						'snippet' => $cloud_id_owner['cloud_id'],
-						'source'  => $cloud_id_owner['is_owner'] ? 'codevault' : 'search',
-					]
-				);
-
-				printf(
-					'<a href="%s" class="button button-secondary button-cloud-update">%s</a>',
-					esc_html( $update_url ),
-					esc_html( __( 'Save Update from Cloud', 'code-snippets' ) )
-				);
-			}
-
 			if ( $licensed && ( 'css' === $snippet->type || 'js' === $snippet->type ) ) {
 				$asset_url = add_query_arg(
 					array(
