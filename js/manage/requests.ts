@@ -1,9 +1,7 @@
-import { Snippet } from '../types/snippet'
+import { Snippet, SnippetScope } from '../types/Snippet'
+import { isNetworkAdmin } from '../utils/general'
 
 export type SuccessCallback = (response: { success: boolean, data?: unknown }) => void
-
-const isNetworkAdmin = () =>
-	'-network' === window.pagenow.substring(window.pagenow.length - '-network'.length)
 
 const sendSnippetRequest = (query: string, onSuccess?: SuccessCallback) => {
 	const request = new XMLHttpRequest()
@@ -41,7 +39,7 @@ export const updateSnippet = (field: keyof Snippet, row: Element, snippet: Parti
 	snippet.id = parseInt(columnId.textContent, 10)
 	snippet.shared_network = Boolean(row.className.match(/\bshared-network-snippet\b/))
 	snippet.network = snippet.shared_network || isNetworkAdmin()
-	snippet.scope = row.getAttribute('data-snippet-scope') ?? snippet.scope
+	snippet.scope = row.getAttribute('data-snippet-scope') as SnippetScope | null ?? snippet.scope
 
 	const queryString = `action=update_code_snippet&_ajax_nonce=${nonce.value}&field=${field}&snippet=${JSON.stringify(snippet)}`
 	sendSnippetRequest(queryString, successCallback)

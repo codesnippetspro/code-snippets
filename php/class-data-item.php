@@ -120,7 +120,7 @@ abstract class Data_Item {
 				);
 
 				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( $message, E_WARNING );
+				trigger_error( $message, E_USER_WARNING );
 			}
 
 			return null;
@@ -147,7 +147,7 @@ abstract class Data_Item {
 				);
 
 				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( $message, E_WARNING );
+				trigger_error( $message, E_USER_ERROR );
 			}
 
 			return;

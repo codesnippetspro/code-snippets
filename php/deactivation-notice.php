@@ -20,10 +20,13 @@ if ( ! defined( 'ABSPATH' ) || function_exists( 'code_snippets_deactivation_noti
  */
 function code_snippets_deactivation_notice() {
 	$plugins = array();
+	$required_php_version = '7.0';
 
-	if ( version_compare( phpversion(), '5.6', '<' ) ) {
-		echo '<div class="error fade"><p>';
-		echo '<strong>', esc_html__( 'Code Snippets requires PHP 5.6 or later.', 'code-snippets' ), '</strong><br>';
+	if ( version_compare( phpversion(), $required_php_version, '<' ) ) {
+		echo '<div class="error fade"><p><strong>';
+		// translators: %s: required PHP version number.
+		echo esc_html( sprintf( __( 'Code Snippets requires PHP %s or later.', 'code-snippets' ), $required_php_version ) );
+		echo '</strong><br>';
 
 		$update_url = function_exists( 'wp_get_default_update_php_url' ) ?
 			wp_get_default_update_php_url() :

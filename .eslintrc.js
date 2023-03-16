@@ -1,4 +1,4 @@
-const length = 140
+const length = 140;
 
 module.exports = {
 	parser: '@typescript-eslint/parser',
@@ -21,13 +21,20 @@ module.exports = {
 		'eslint:recommended',
 		'plugin:@typescript-eslint/recommended',
 		'plugin:import/recommended',
-		'plugin:import/typescript'
+		'plugin:import/typescript',
+		'plugin:react-hooks/recommended'
 	],
 	settings: {
 		'import/core-modules': ['tinymce', 'jquery', 'react']
 	},
 	rules: {
-		'quotes': ['error', 'single'],
+		'@typescript-eslint/prefer-ts-expect-error': 'error',
+		'@typescript-eslint/no-unused-vars': ['warn', {
+			ignoreRestSiblings: true,
+			varsIgnorePattern: '^_',
+			argsIgnorePattern: '^_'
+		}],
+		'quotes': ['error', 'single', {avoidEscape: true}],
 		'linebreak-style': ['error', 'unix'],
 		'eqeqeq': ['error', 'always'],
 		'indent': ['error', 'tab', {SwitchCase: 1}],
@@ -40,7 +47,6 @@ module.exports = {
 		'arrow-parens': ['error', 'as-needed'],
 		'quote-props': ['error', 'consistent-as-needed'],
 		'yoda': ['error', 'always'],
-		'multiline-ternary': ['error', 'always-multiline'],
 		'dot-notation': 'error',
 		'operator-linebreak': ['error', 'after'],
 		'no-extra-parens': ['warn', 'all'],
@@ -49,15 +55,20 @@ module.exports = {
 		'no-magic-numbers': ['error', {ignore: [-1, 0, 1]}],
 		'no-plusplus': ['error', {allowForLoopAfterthoughts: true}],
 		'dot-location': ['error', 'property'],
-		'capitalized-comments': ['error', 'always', {ignoreInlineComments: true, ignoreConsecutiveComments: true}],
+		'capitalized-comments': ['warn', 'always', {
+			ignorePattern: 'translators:',
+			ignoreInlineComments: true,
+			ignoreConsecutiveComments: true
+		}],
 		'no-invalid-this': 'error',
-		'max-lines-per-function': ['error', {skipBlankLines: true, skipComments: true}],
+		'max-lines-per-function': ['warn', {skipBlankLines: true, skipComments: true}],
 		'prefer-named-capture-group': 'error',
 		'func-style': ['error', 'expression'],
 		'no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
 		'semi': ['error', 'never'],
 
 		'no-ternary': 'off',
+		'multiline-ternary': 'off',
 		'no-nested-ternary': 'off',
 		'padded-blocks': 'off',
 		'implicit-arrow-linebreak': 'off',
@@ -73,4 +84,4 @@ module.exports = {
 		'array-element-newline': 'off',
 		'space-before-function-paren': 'off'
 	},
-}
+};

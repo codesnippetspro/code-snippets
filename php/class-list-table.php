@@ -169,7 +169,7 @@ class List_Table extends WP_List_Table {
 			case 'type':
 				$type = $item->type;
 				return sprintf(
-					'<a class="snippet-type-badge" href="%s" data-type="%s">%s</a>',
+					'<a class="snippet-type-badge" href="%s" data-snippet-type="%s">%s</a>',
 					esc_url( add_query_arg( 'type', $type ) ),
 					esc_attr( $type ),
 					esc_html( $type )
@@ -463,7 +463,7 @@ class List_Table extends WP_List_Table {
 			'activate-selected'   => $this->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
 			'deactivate-selected' => $this->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
 			'clone-selected'      => __( 'Clone', 'code-snippets' ),
-			'download-selected'   => __( 'Download', 'code-snippets' ),
+			'download-selected'   => __( 'Export Code', 'code-snippets' ),
 			'export-selected'     => __( 'Export', 'code-snippets' ),
 			'delete-selected'     => __( 'Delete', 'code-snippets' ),
 		);
