@@ -10,6 +10,10 @@
 	width: auto;
 }
 
+.notice.error blockquote {
+	margin-bottom: 0;
+}
+
 h2 {
 	/* Provide some decent space between the fields and titles. */
 	margin: 25px 0 15px 0;
@@ -26,20 +30,20 @@ h2 {
 .saved-snippet {
 	&.inactive-snippet, &.active-snippet {
 		#title {
-			border-left-width: 4px;
+			border-right-width: 4px;
 		}
 	}
 
 	&.active-snippet #title {
-		border-left-color: #46b450;
+		border-right-color: #46b450;
 	}
 
 	&.inactive-snippet #title {
-		border-left-color: #bbb;
+		border-right-color: #bbb;
 	}
 
 	&.erroneous-snippet #title {
-		border-left-color: #dc3232;
+		border-right-color: #dc3232;
 	}
 }
 

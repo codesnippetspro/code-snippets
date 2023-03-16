@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import { AxiosError, AxiosResponse } from 'axios'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { Notices } from '../types/Notice'
@@ -34,20 +34,19 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 	const api = useSnippetsAPI()
 
 	const displayRequestErrors = useCallback((error: AxiosError, message?: string) => {
-		console.error('request failed', error)
+		console.error('Request failed', error)
 		setIsWorking(false)
-
-		const errorMessage = message ?
-			sprintf(message, error.message) :
-			error.message
-
-		setNotices(notices => [...notices, ['error', errorMessage]])
+		setNotices(notices => [
+			...notices,
+			['error', message ? `${message} ${error.message}` : error.message]
+		])
 	}, [setIsWorking, setNotices])
 
 	const doSnippetRequest = useCallback((
 		createRequest: () => Promise<AxiosResponse<Snippet>>,
 		getNotice: (result: Snippet) => string,
-		errorNotice?: string
+		// translators: %s: error message.
+		errorNotice: string = __('Something went wrong.', 'code-snippets')
 	) => {
 		setIsWorking(true)
 
@@ -59,11 +58,8 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 					setSnippet({ ...data })
 					setNotices(notices => [...notices, ['updated', getNotice(data)]])
 				} else {
-					setNotices(notices => [
-						...notices,
-						// eslint-disable-next-line max-len
-						['error', __('Something went wrong: the server did not send a valid response. Please try again.', 'code-snippets')]
-					])
+					const errorMessage = `${errorNotice} ${__('The server did not send a valid response.', 'code-snippets')}`
+					setNotices(notices => [...notices, ['error', errorMessage]])
 				}
 			})
 			.catch(error => displayRequestErrors(error, errorNotice))
@@ -80,7 +76,7 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 				downloadAsFile(response.data, filename, MIME_TYPES[getSnippetType(snippet)])
 			})
 			// translators: %s: error message.
-			.catch(error => displayRequestErrors(error, __('Could not download export file: %s.', 'code-snippets')))
+			.catch(error => displayRequestErrors(error, __('Could not download export file.', 'code-snippets')))
 	}, [displayRequestErrors, setIsWorking])
 
 	const submitSnippet = useCallback((
@@ -92,15 +88,13 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 			doSnippetRequest(
 				() => api.update(snippet),
 				getUpdateNotice,
-				// translators: %s: error message.
-				__('Could not create snippet: %s.', 'code-snippets')
+				__('Could not update snippet.', 'code-snippets')
 			)
 		} else {
 			doSnippetRequest(
 				() => api.create(snippet),
 				getCreateNotice,
-				// translators: %s: error message.
-				__('Could not update snippet: %s.', 'code-snippets')
+				__('Could not create snippet.', 'code-snippets')
 			)
 		}
 	}, [api, doSnippetRequest])
@@ -109,8 +103,8 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 		submit: (snippet: Snippet) => {
 			submitSnippet(
 				snippet,
-				() => __('Snippet created successfully.', 'code-snippets'),
-				() => __('Snippet updated successfully.', 'code-snippets')
+				() => __('Snippet created.', 'code-snippets'),
+				() => __('Snippet updated.', 'code-snippets')
 			)
 		},
 
@@ -118,28 +112,22 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 			submitSnippet(
 				{ ...snippet, active: activate },
 				result => result.active ?
-					__('Snippet created and activated successfully.', 'code-snippets') :
-					__('Snippet created successfully.', 'code-snippets'),
+					__('Snippet created and activated.', 'code-snippets') :
+					__('Snippet created.', 'code-snippets'),
 				result => result.active ?
 					'single-use' === result.scope ?
-						__('Snippet updated and executed successfully.', 'code-snippets') :
-						__('Snippet updated and activated successfully.', 'code-snippets') :
-					__('Snippet updated and deactivated successfully.', 'code-snippets')
+						__('Snippet updated and executed.', 'code-snippets') :
+						__('Snippet updated and activated.', 'code-snippets') :
+					__('Snippet updated.', 'code-snippets')
 			)
 		},
 
 		delete: (snippet: Snippet) => {
-			if (confirm([
-				__('You are about to permanently delete this snippet.', 'code-snippets'),
-				__("'Cancel' to stop, 'OK' to delete.", 'code-snippets')
-			].join('\n'))) {
-				api.delete(snippet)
-					.then(() => setNotices(notices => [
-						...notices, ['updated', __('Snippet deleted.', 'code-snippets')]
-					]))
-					// translators: %s: error message.
-					.catch(error => displayRequestErrors(error, __('Could not delete snippet: %s.', 'code-snippets')))
-			}
+			api.delete(snippet)
+				.then(() => setNotices(notices => [
+					...notices, ['updated', __('Snippet deleted.', 'code-snippets')]
+				]))
+				.catch(error => displayRequestErrors(error, __('Could not delete snippet.', 'code-snippets')))
 		},
 
 		export: (snippet: Snippet) =>

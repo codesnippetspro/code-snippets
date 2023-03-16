@@ -23,8 +23,8 @@ Version:      3.3.0
 License:      GPL-2.0-or-later
 License URI:  license.txt
 Text Domain:  code-snippets
-Requires PHP: 5.6
-Requires at least: 3.6
+Requires PHP: 7.0
+Requires at least: 5.0
 */
 
 /* Exit if accessed directly */
@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Halt loading here if the plugin is already loaded, or we're running an incompatible version of PHP.
-if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '5.6', '>=' ) ) {
+if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.0', '>=' ) ) {
 
 	/**
 	 * The current plugin version.

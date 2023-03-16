@@ -7,6 +7,9 @@
 
 namespace Code_Snippets;
 
+use Exception;
+use ParseError;
+
 /**
  * Clean the cache where active snippets are stored.
  *
@@ -447,41 +450,36 @@ function delete_snippet( $id, $multisite = null ) {
 	return (bool) $result;
 }
 
+
 /**
- * Validate the snippet code before saving to database
+ * Test snippet code for errors, augmenting the snippet object.
  *
  * @param Snippet $snippet Snippet object.
- *
- * @return bool Whether the code produces errors.
  */
 function test_snippet_code( Snippet $snippet ) {
-	if ( empty( $snippet->code ) || 'php' !== $snippet->type ) {
-		return false;
+	$snippet->code_error = null;
+
+	if ( 'php' !== $snippet->type ) {
+		return;
 	}
 
-	ob_start( function ( $out ) {
-		$error = error_get_last();
+	$validator = new Validator( $snippet->code );
+	$result = $validator->validate();
 
-		if ( is_null( $error ) ) {
-			return $out;
+	if ( $result ) {
+		$snippet->code_error = [ $result['message'], $result['line'] ];
+	}
+
+	if ( ! $snippet->code_error && 'single-use' !== $snippet->scope ) {
+		$result = execute_snippet( $snippet->code, $snippet->id, true );
+
+		if ( $result instanceof ParseError ) {
+			$snippet->code_error = [
+				ucfirst( rtrim( $result->getMessage(), '.' ) ) . '.',
+				$result->getLine(),
+			];
 		}
-
-		$m = '<h3>' . esc_html__( "Don't Panic", 'code-snippets' ) . '</h3>';
-		// translators: %d: line where error was produced.
-		$m .= '<p>' . sprintf( esc_html__( 'The code snippet you are trying to save produced a fatal error on line %d:', 'code-snippets' ), intval( $error['line'] ) ) . '</p>';
-		$m .= '<strong>' . esc_html( $error['message'] ) . '</strong>';
-		$m .= '<p>' . esc_html__( 'The previous version of the snippet is unchanged, and the rest of this site should be functioning normally as before.', 'code-snippets' ) . '</p>';
-		$m .= '<p>' . esc_html__( 'Please use the back button in your browser to return to the previous page and try to fix the code error.', 'code-snippets' );
-		$m .= ' ' . esc_html__( 'If you prefer, you can close this page and discard the changes you just made. No changes will be made to this site.', 'code-snippets' ) . '</p>';
-
-		return $m;
-	} );
-
-	$result = eval( $snippet->code );
-	ob_end_clean();
-
-	do_action( 'code_snippets/after_execute_snippet', $snippet->id, $snippet->code, $result );
-	return false === $result;
+	}
 }
 
 /**
@@ -490,7 +488,7 @@ function test_snippet_code( Snippet $snippet ) {
  *
  * @param Snippet|array<string, mixed> $snippet The snippet to add/update to the database.
  *
- * @return Snippet Updated snippet.
+ * @return Snippet|null Updated snippet.
  *
  * @since 2.0.0
  */
@@ -512,9 +510,9 @@ function save_snippet( $snippet ) {
 
 		// Deactivate snippet if code contains errors.
 		if ( $snippet->active && 'single-use' !== $snippet->scope ) {
-			$validator = new Validator( $snippet->code );
+			test_snippet_code( $snippet );
 
-			if ( ! $validator->validate() || ! test_snippet_code( $snippet ) ) {
+			if ( $snippet->code_error ) {
 				$snippet->active = 0;
 			}
 		}
@@ -538,7 +536,7 @@ function save_snippet( $snippet ) {
 	if ( 0 === $snippet->id ) {
 		$result = $wpdb->insert( $table, $data, '%s' ); // db call ok.
 		if ( false === $result ) {
-			return 0;
+			return null;
 		}
 
 		$snippet->id = $wpdb->insert_id;
@@ -548,7 +546,7 @@ function save_snippet( $snippet ) {
 		// Otherwise, update the snippet data.
 		$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] ); // db call ok.
 		if ( false === $result ) {
-			return 0;
+			return null;
 		}
 
 		do_action( 'code_snippets/update_snippet', $snippet, $table );
@@ -565,29 +563,30 @@ function save_snippet( $snippet ) {
  *
  * Code must NOT be escaped, as it will be executed directly.
  *
- * @param string $code         Snippet code to execute.
- * @param int    $id           Snippet ID.
- * @param bool   $catch_output Whether to attempt to suppress the output of execution using buffers.
+ * @param string  $code  Snippet code to execute.
+ * @param integer $id    Snippet ID.
+ * @param boolean $force Force snippet execution, even if save mode is active.
  *
- * @return mixed Result of the code execution
+ * @return ParseError|mixed Code error if encountered during execution, or result of snippet execution otherwise.
+ *
  * @since 2.0.0
  */
-function execute_snippet( $code, $id = 0, $catch_output = true ) {
-	if ( empty( $code ) || defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
+function execute_snippet( string $code, int $id = 0, bool $force = false ) {
+	if ( empty( $code ) || ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 		return false;
 	}
 
-	if ( $catch_output ) {
-		ob_start();
+	ob_start();
+
+	try {
+		$result = eval( $code );
+	} catch ( ParseError $parseError ) {
+		$result = $parseError;
 	}
 
-	$result = eval( $code );
+	ob_end_clean();
 
-	if ( $catch_output ) {
-		ob_end_clean();
-	}
-
-	do_action( 'code_snippets/after_execute_snippet', $id, $code, $result );
+	do_action( 'code_snippets/after_execute_snippet', $code, $id, $result );
 	return $result;
 }
 
@@ -599,7 +598,7 @@ function execute_snippet( $code, $id = 0, $catch_output = true ) {
  *
  * @since 2.0.0
  */
-function execute_active_snippets() {
+function execute_active_snippets(): bool {
 	global $wpdb;
 
 	// Bail early if safe mode is active.

@@ -27,14 +27,15 @@ export const EditForm: React.FC = () => {
 
 	return (
 		<>
-			<NoticeList notices={notices} setNotices={setNotices} />
+			<NoticeList notices={notices} setNotices={setNotices} {...inputProps} />
 
 			<div id="snippet-form" data-snippet-type={getSnippetType(snippet)} className={classnames({
 				[`${snippet.scope}-snippet`]: true,
 				'new-snippet': !snippet.id,
 				'saved-snippet': !!snippet.id,
 				'active-snippet': snippet.active,
-				'inactive-snippet': !snippet.active
+				'inactive-snippet': !snippet.active,
+				'erroneous-snippet': !!snippet.code_error
 			})}>
 				<NameInput {...inputProps} />
 				<SnippetEditor {...actionProps} />

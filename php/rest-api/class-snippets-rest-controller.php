@@ -79,16 +79,15 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-					'schema'              => [ $this, 'get_item_schema' ],
-					'args'                => [],
+					'args'                => $network_args,
 				],
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'create_item' ],
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
-					'schema'              => [ $this, 'get_item_schema' ],
 					'args'                => $this->get_endpoint_args_for_item_schema( true ),
 				],
+				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
 
@@ -100,14 +99,12 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_item' ],
 					'permission_callback' => [ $this, 'get_item_permissions_check' ],
-					'schema'              => [ $this, 'get_item_schema' ],
 					'args'                => $network_args,
 				],
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'update_item' ],
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
-					'schema'              => [ $this, 'get_item_schema' ],
 					'args'                => $this->get_endpoint_args_for_item_schema( false ),
 				],
 				[
@@ -116,6 +113,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
 					'args'                => $network_args,
 				],
+				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
 
@@ -123,8 +121,9 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 			$this->namespace,
 			$route . '/schema',
 			[
-				'methods'  => WP_REST_Server::READABLE,
-				'callback' => [ $this, 'get_public_item_schema' ],
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'get_public_item_schema' ],
+				'permission_callback' => '__return_true',
 			]
 		);
 
@@ -186,14 +185,14 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	public function get_items( $request ) {
 		$snippets = get_snippets();
-		$data = [];
+		$snippets_data = [];
 
 		foreach ( $snippets as $snippet ) {
 			$snippet_data = $this->prepare_item_for_response( $snippet, $request );
-			$data[] = $this->prepare_response_for_collection( $snippet_data );
+			$snippets_data[] = $this->prepare_response_for_collection( $snippet_data );
 		}
 
-		return rest_ensure_response( $data );
+		return rest_ensure_response( $snippets_data );
 	}
 
 	/**
@@ -250,7 +249,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 		$snippet_id = absint( $request->get_param( 'id' ) );
 		$snippet = $snippet_id ? get_snippet( $snippet_id, $request->get_param( 'network' ) ) : null;
 
-		if ( ! $snippet_id || ! $snippet ) {
+		if ( ! $snippet_id || ! $snippet || ! $snippet->id ) {
 			return new WP_Error(
 				'rest_cannot_update',
 				__( 'Cannot update a snippet without a valid ID.', 'code-snippets' ),
@@ -259,9 +258,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 		}
 
 		$item = $this->prepare_item_for_database( $request, $snippet );
-
-		$result_id = save_snippet( $item );
-		$result = $result_id ? get_snippet( $result_id, $item->network ) : null;
+		$result = save_snippet( $item );
 
 		return $result ?
 			$this->prepare_item_for_response( $result, $request ) :
