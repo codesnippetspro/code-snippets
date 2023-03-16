@@ -5,6 +5,7 @@ import { Snippet } from './Snippet'
 export interface SnippetInputProps {
 	snippet: Snippet
 	setSnippet: Dispatch<SetStateAction<Snippet>>
+	isReadOnly: boolean
 }
 
 export interface SnippetActionsInputProps extends SnippetActionsProps, SnippetInputProps {

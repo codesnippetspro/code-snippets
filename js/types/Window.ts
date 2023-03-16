@@ -21,14 +21,15 @@ declare global {
 				base: string
 				nonce: string
 			}
-			pageTitleActions: Record<string, string>
 			isPreview: boolean
+			isLicensed: boolean
+			enableTags: boolean
 			enableDownloads: boolean
 			extraSaveButtons: boolean
 			activateByDefault: boolean
 			enableDescription: boolean
-			enableTags: boolean
 			editorTheme: string
+			pageTitleActions: Record<string, string>
 			tagOptions: {
 				enabled: boolean
 				allowSpaces: boolean

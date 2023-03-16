@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { Notices } from '../types/Notice'
 import { Snippet } from '../types/Snippet'
 import { SnippetActionsInputProps, SnippetInputProps } from '../types/SnippetInputProps'
 import { CodeEditorInstance } from '../types/WordPressCodeEditor'
 import { isNetworkAdmin } from '../utils/general'
-import { createEmptySnippet, getSnippetType } from '../utils/snippets'
+import { createEmptySnippet, getSnippetType, isLicensed, isProSnippet } from '../utils/snippets'
 import { ActionButtons } from './components/ActionButtons'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { MultisiteSharingSettings } from './fields/MultisiteSharingSettings'
@@ -20,13 +20,16 @@ import { SnippetEditorToolbar } from './SnippetEditor/SnippetEditorToolbar'
 
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 
-const getFormClassName = (snippet: Snippet): string => classnames(
+const getFormClassName = (snippet: Snippet, isReadOnly: boolean): string => classnames(
 	'snippet-form',
 	`${snippet.scope}-snippet`,
 	`${getSnippetType(snippet)}-snippet`,
 	`${snippet.id ? 'saved' : 'new'}-snippet`,
 	`${snippet.active ? 'active' : 'inactive'}-snippet`,
-	{ 'erroneous-snippet': !!snippet.code_error }
+	{
+		'erroneous-snippet': !!snippet.code_error,
+		'read-only-snippet': isReadOnly
+	}
 )
 
 export const EditForm: React.FC = () => {
@@ -35,7 +38,8 @@ export const EditForm: React.FC = () => {
 	const [isWorking, setIsWorking] = useState(false)
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
 
-	const inputProps: SnippetInputProps = { snippet, setSnippet }
+	const isReadOnly = useMemo(() => !isLicensed() && isProSnippet(snippet.scope), [snippet.scope])
+	const inputProps: SnippetInputProps = { snippet, setSnippet, isReadOnly }
 	const actionProps: SnippetActionsInputProps = { ...inputProps, isWorking, setNotices, setIsWorking }
 
 	return (
@@ -43,7 +47,7 @@ export const EditForm: React.FC = () => {
 			<PageHeading {...inputProps} codeEditorInstance={codeEditorInstance} />
 			<NoticeList notices={notices} setNotices={setNotices} {...inputProps} />
 
-			<div id="snippet-form" className={getFormClassName(snippet)}>
+			<div id="snippet-form" className={getFormClassName(snippet, isReadOnly)}>
 				<NameInput {...inputProps} />
 
 				<SnippetEditorToolbar {...actionProps} codeEditorInstance={codeEditorInstance} />
