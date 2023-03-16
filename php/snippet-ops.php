@@ -7,7 +7,6 @@
 
 namespace Code_Snippets;
 
-use Exception;
 use ParseError;
 
 /**
@@ -18,7 +17,7 @@ use ParseError;
  *
  * @return void
  */
-function clean_active_snippets_cache( $table_name, $scopes = false ) {
+function clean_active_snippets_cache( string $table_name, $scopes = false ) {
 	$scope_groups = $scopes ? [ $scopes ] : [
 		[ 'head-content', 'footer-content' ],
 		[ 'global', 'single-use', 'front-end' ],
@@ -37,7 +36,7 @@ function clean_active_snippets_cache( $table_name, $scopes = false ) {
  *
  * @return void
  */
-function clean_snippets_cache( $table_name ) {
+function clean_snippets_cache( string $table_name ) {
 	wp_cache_delete( "all_snippet_tags_$table_name", CACHE_GROUP );
 	wp_cache_delete( "all_snippets_$table_name", CACHE_GROUP );
 	clean_active_snippets_cache( $table_name );
@@ -54,7 +53,7 @@ function clean_snippets_cache( $table_name ) {
  *
  * @since 2.0
  */
-function get_snippets( array $ids = array(), $multisite = null ) {
+function get_snippets( array $ids = array(), $multisite = null ): array {
 	global $wpdb;
 
 	// If only one ID has been passed in, defer to the get_snippet() function.
@@ -138,13 +137,13 @@ function get_all_snippet_tags() {
 /**
  * Make sure that the tags are a valid array.
  *
- * @param mixed $tags The tags to convert into an array.
+ * @param array|string $tags The tags to convert into an array.
  *
  * @return array<string> The converted tags.
  *
  * @since 2.0.0
  */
-function code_snippets_build_tags_array( $tags ) {
+function code_snippets_build_tags_array( $tags ): array {
 
 	/* If there are no tags set, return an empty array. */
 	if ( empty( $tags ) ) {
@@ -167,13 +166,13 @@ function code_snippets_build_tags_array( $tags ) {
  * Will return empty snippet object if no snippet ID is specified.
  * Read operation.
  *
- * @param int          $id        The ID of the snippet to retrieve. 0 to build a new snippet.
+ * @param integer      $id        The ID of the snippet to retrieve. 0 to build a new snippet.
  * @param boolean|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
  *
  * @return Snippet A single snippet object.
  * @since 2.0.0
  */
-function get_snippet( $id = 0, $multisite = null ) {
+function get_snippet( int $id = 0, bool $multisite = null ): Snippet {
 	global $wpdb;
 
 	$id = absint( $id );
@@ -215,7 +214,7 @@ function get_snippet( $id = 0, $multisite = null ) {
  *
  * @return boolean Whether an update was performed.
  */
-function update_shared_network_snippets( $snippets ) {
+function update_shared_network_snippets( array $snippets ): bool {
 	$shared = [];
 	$unshared = [];
 
@@ -272,13 +271,13 @@ function update_shared_network_snippets( $snippets ) {
  * Activates a snippet.
  * Write operation.
  *
- * @param int       $id        ID of the snippet to activate.
- * @param bool|null $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
+ * @param integer      $id        ID of the snippet to activate.
+ * @param boolean|null $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
  *
  * @return Snippet|string Snippet object on success, error message on failure.
  * @since 2.0.0
  */
-function activate_snippet( $id, $multisite = null ) {
+function activate_snippet( int $id, bool $multisite = null ) {
 	global $wpdb;
 	$db = code_snippets()->db;
 	$table_name = $db->get_table_name( $multisite );
@@ -324,7 +323,7 @@ function activate_snippet( $id, $multisite = null ) {
  *
  * @since 2.0.0
  */
-function activate_snippets( array $ids, $multisite = null ) {
+function activate_snippets( array $ids, bool $multisite = null ) {
 	global $wpdb;
 	$db = code_snippets()->db;
 	$table_name = $db->get_table_name( $multisite );
@@ -378,10 +377,9 @@ function activate_snippets( array $ids, $multisite = null ) {
  *
  * @return Snippet|null Snippet that was deactivated on success, or null on failure.
  *
- * @uses  $wpdb to set the snippets' active status.
  * @since 2.0.0
  */
-function deactivate_snippet( $id, $multisite = null ) {
+function deactivate_snippet( int $id, bool $multisite = null ) {
 	global $wpdb;
 	$db = code_snippets()->db;
 	$table = $db->get_table_name( $multisite );
@@ -432,7 +430,7 @@ function deactivate_snippet( $id, $multisite = null ) {
  *
  * @since 2.0.0
  */
-function delete_snippet( $id, $multisite = null ) {
+function delete_snippet( int $id, bool $multisite = null ): bool {
 	global $wpdb;
 	$table = code_snippets()->db->get_table_name( $multisite );
 
