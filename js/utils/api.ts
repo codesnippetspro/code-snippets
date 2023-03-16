@@ -1,11 +1,13 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import axios, { AxiosResponse } from 'axios'
 import { addQueryArgs } from '@wordpress/url'
 import { Snippet } from '../types/Snippet'
+import { isNetworkAdmin } from './general'
 
 const CONFIG = window.CODE_SNIPPETS_EDIT?.restAPI
 
 export interface SnippetsAPI {
+	fetchAll: (network?: boolean | null) => Promise<AxiosResponse<Snippet[]>>
 	fetch: (snippetId: number, network?: boolean | null) => Promise<AxiosResponse<Snippet>>
 	create: (snippet: Snippet) => Promise<AxiosResponse<Snippet>>
 	update: (snippet: Snippet) => Promise<AxiosResponse<Snippet>>
@@ -26,8 +28,11 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 		addQueryArgs([CONFIG?.base, id, action].filter(Boolean).join('/'), { network })
 
 	return useMemo((): SnippetsAPI => ({
+		fetchAll: network =>
+			axiosInstance.get<Snippet[]>(addQueryArgs(CONFIG?.base, { network })),
+
 		fetch: (snippetId, network) =>
-			axiosInstance.get(addQueryArgs(`${CONFIG?.base}/${snippetId}`, { network })),
+			axiosInstance.get<Snippet>(addQueryArgs(`${CONFIG?.base}/${snippetId}`, { network })),
 
 		create: snippet => {
 			console.info(`Sending request to ${CONFIG?.base}`, snippet)
@@ -63,4 +68,18 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 		exportCode: snippet =>
 			axiosInstance.get<string, AxiosResponse<string>>(buildURL(snippet, 'export-code'))
 	}), [axiosInstance])
+}
+
+export const useSnippets = (): Snippet[] | undefined => {
+	const api = useSnippetsAPI()
+	const [snippets, setSnippets] = useState<Snippet[]>()
+
+	useEffect(() => {
+		if (!snippets) {
+			api.fetchAll(isNetworkAdmin())
+				.then(response => setSnippets(response.data))
+		}
+	}, [api, snippets])
+
+	return snippets
 }
