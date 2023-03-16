@@ -45,33 +45,32 @@ const InlineActionButtons: React.FC<InlineActionButtonsProps> = ({ snippet, isWo
 				disabled={isWorking}
 			/>
 
-			{'single-use' === snippet.scope &&
-		  <ActionButton
-			  small
-			  id="save_snippet_execute_extra"
-			  text={__('Execute Once', 'code-snippets')}
-			  title={__('Save Snippet and Execute Once', 'code-snippets')}
-			  onClick={() => actions.submitAndActivate(snippet, true)}
-			  disabled={isWorking}
-		  />}
-
-			{snippet.active ?
+			{'single-use' === snippet.scope ?
 				<ActionButton
 					small
-					id="save_snippet_deactivate_extra"
-					text={__('Deactivate', 'code-snippets')}
-					title={__('Save Snippet and Deactivate', 'code-snippets')}
-					onClick={() => actions.submitAndActivate(snippet, false)}
-					disabled={isWorking}
-				/> :
-				<ActionButton
-					small
-					id="save_snippet_activate_extra"
-					text={__('Activate', 'code-snippets')}
-					title={__('Save Snippet and Activate', 'code-snippets')}
+					id="save_snippet_execute_extra"
+					text={__('Execute Once', 'code-snippets')}
+					title={__('Save Snippet and Execute Once', 'code-snippets')}
 					onClick={() => actions.submitAndActivate(snippet, true)}
 					disabled={isWorking}
-				/>}
+				/> :
+				snippet.active ?
+					<ActionButton
+						small
+						id="save_snippet_deactivate_extra"
+						text={__('Deactivate', 'code-snippets')}
+						title={__('Save Snippet and Deactivate', 'code-snippets')}
+						onClick={() => actions.submitAndActivate(snippet, false)}
+						disabled={isWorking}
+					/> :
+					<ActionButton
+						small
+						id="save_snippet_activate_extra"
+						text={__('Activate', 'code-snippets')}
+						title={__('Save Snippet and Activate', 'code-snippets')}
+						onClick={() => actions.submitAndActivate(snippet, true)}
+						disabled={isWorking}
+					/>}
 		</>
 	)
 }

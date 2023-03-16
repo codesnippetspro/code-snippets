@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { Editor, EditorConfiguration } from 'codemirror'
-import React, { Dispatch, SetStateAction, useEffect } from 'react'
-import { SnippetInputProps } from '../../types/SnippetInputProps'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { SnippetActionsInputProps, SnippetInputProps } from '../../types/SnippetInputProps'
 import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
 import { ConditionEditor } from '../ConditionEditor'
 import { Snippet, SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetType } from '../../types/Snippet'
@@ -10,6 +10,7 @@ import '../../editor'
 import { getSnippetType, isProType } from '../../utils/snippets'
 import classnames from 'classnames'
 import { CodeEditor } from './CodeEditor'
+import { SnippetEditorToolbar } from './SnippetEditorToolbar'
 
 interface SnippetTypeTabProps extends Pick<SnippetInputProps, 'setSnippet'> {
 	tabType: SnippetType
@@ -46,11 +47,6 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ tabType, label, current
 			<span className="dashicons dashicons-randomize"></span> :
 			<span className="badge">{tabType}</span>}
 	</a>
-
-export interface SnippetEditorProps extends SnippetInputProps {
-	codeEditorInstance: CodeEditorInstance | undefined
-	setCodeEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
-}
 
 export const TYPE_LABELS: Record<SnippetType, string> = {
 	php: __('Functions', 'code-snippets'),
@@ -98,34 +94,45 @@ const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({ codeEditor, setSnippe
 	)
 }
 
-export const SnippetEditor: React.FC<SnippetEditorProps> = ({
-	snippet,
-	setSnippet,
-	codeEditorInstance,
-	setCodeEditorInstance
-}) => {
+export const SnippetEditor: React.FC<SnippetActionsInputProps> = ({ snippet, setSnippet, ...actionsProps }) => {
+	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
 	const snippetType = getSnippetType(snippet)
 
 	return (
-		<div className="snippet-code-container">
-			<h2>
-				<label htmlFor="snippet_code">
-					{`${__('Code', 'code-snippets')} `}
-					{snippet.id ?
-						<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> :
-						''}
-				</label>
-			</h2>
+		<>
+			<SnippetEditorToolbar
+				snippet={snippet}
+				setSnippet={setSnippet}
+				codeEditorInstance={codeEditorInstance}
+				{...actionsProps}
+			/>
 
-			{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview || !codeEditorInstance ? '' :
-				<SnippetTypeTabs
+			<div className="snippet-code-container">
+				<h2>
+					<label htmlFor="snippet_code">
+						{`${__('Code', 'code-snippets')} `}
+						{snippet.id ?
+							<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> :
+							''}
+					</label>
+				</h2>
+
+				{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview || !codeEditorInstance ? '' :
+					<SnippetTypeTabs
+						setSnippet={setSnippet}
+						snippetType={snippetType}
+						codeEditor={codeEditorInstance.codemirror}
+					/>}
+
+				<ConditionEditor snippet={snippet} setSnippet={setSnippet} />
+				<CodeEditor
+					snippet={snippet}
 					setSnippet={setSnippet}
-					snippetType={snippetType}
-					codeEditor={codeEditorInstance.codemirror}
-				/>}
-
-			<ConditionEditor snippet={snippet} setSnippet={setSnippet} />
-			<CodeEditor snippet={snippet} setSnippet={setSnippet} setEditorInstance={setCodeEditorInstance} />
-		</div>
+					editorInstance={codeEditorInstance}
+					setEditorInstance={setCodeEditorInstance}
+					{...actionsProps}
+				/>
+			</div>
+		</>
 	)
 }

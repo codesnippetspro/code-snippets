@@ -53,9 +53,18 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 
 		createRequest()
 			.then(({ data }) => {
-				setSnippet({ ...data })
 				setIsWorking(false)
-				setNotices(notices => [...notices, ['updated', getNotice(data)]])
+
+				if (data.id) {
+					setSnippet({ ...data })
+					setNotices(notices => [...notices, ['updated', getNotice(data)]])
+				} else {
+					setNotices(notices => [
+						...notices,
+						// eslint-disable-next-line max-len
+						['error', __('Something went wrong: the server did not send a valid response. Please try again.', 'code-snippets')]
+					])
+				}
 			})
 			.catch(error => displayRequestErrors(error, errorNotice))
 	}, [displayRequestErrors, setIsWorking, setNotices, setSnippet])

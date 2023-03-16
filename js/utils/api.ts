@@ -32,12 +32,20 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 		create: snippet => {
 			console.info(`Sending request to ${CONFIG?.base}`, snippet)
 			return axiosInstance.post<Snippet>(`${CONFIG?.base}`, snippet)
+				.then(response => {
+					console.info('Received response', response)
+					return response
+				})
 		},
 
 		update: snippet => {
 			const url = buildURL(snippet)
 			console.info(`Sending request to ${url}`, snippet)
 			return axiosInstance.post<Snippet, AxiosResponse<Snippet>, Snippet>(url, snippet)
+				.then(response => {
+					console.info('Received response', response)
+					return response
+				})
 		},
 
 		delete: (snippet: Snippet) =>

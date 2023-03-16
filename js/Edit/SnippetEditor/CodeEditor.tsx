@@ -1,40 +1,50 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef } from 'react'
-import { SnippetInputProps } from '../../types/SnippetInputProps'
+import { SnippetActionsInputProps } from '../../types/SnippetInputProps'
 import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
-import { useSnippetsAPI } from '../../utils/api'
-import { saveSnippet } from '../actions'
+import { useSnippetActions } from '../actions'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 
-export interface CodeEditorProps extends SnippetInputProps {
+export interface CodeEditorProps extends SnippetActionsInputProps {
+	editorInstance: CodeEditorInstance | undefined
 	setEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
 }
 
-export const CodeEditor: React.FC<CodeEditorProps> = ({ snippet, setSnippet, setEditorInstance }) => {
-	const api = useSnippetsAPI(setSnippet)
+export const CodeEditor: React.FC<CodeEditorProps> = ({
+	snippet,
+	setSnippet,
+	editorInstance,
+	setEditorInstance,
+	...actionsProps
+}) => {
+	const actions = useSnippetActions({ setSnippet, ...actionsProps })
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
 	useEffect(() => {
-		setEditorInstance(instance => {
-			const { codeEditor } = window.wp
+		setEditorInstance(editorInstance => {
+			if (textareaRef.current && !editorInstance) {
+				editorInstance = window.wp.codeEditor.initialize(textareaRef.current)
 
-			if (!textareaRef.current || instance) {
-				return instance
+				editorInstance.codemirror.on('changes', instance =>
+					setSnippet(previous => ({ ...previous, code: instance.getValue() })))
 			}
 
-			const editor = codeEditor.initialize(textareaRef.current)
-
-			const extraKeys = editor.codemirror.getOption('extraKeys')
-			const controlKey = window.navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'
-
-			editor.codemirror.setOption('extraKeys', {
-				...'object' === typeof extraKeys ? extraKeys : {},
-				[`${controlKey}-S`]: () => saveSnippet(snippet, api),
-				[`${controlKey}-Enter`]: () => saveSnippet(snippet, api)
-			})
-
-			return editor
+			return editorInstance
 		})
-	}, [setEditorInstance, snippet, textareaRef, api])
+	}, [setEditorInstance, textareaRef, setSnippet])
+
+	useEffect(() => {
+		if (editorInstance) {
+			const extraKeys = editorInstance.codemirror.getOption('extraKeys')
+			const controlKey = window.navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'
+			const submitSnippet = () => actions.submit(snippet)
+
+			editorInstance.codemirror.setOption('extraKeys', {
+				...'object' === typeof extraKeys ? extraKeys : undefined,
+				[`${controlKey}-S`]: submitSnippet,
+				[`${controlKey}-Enter`]: submitSnippet
+			})
+		}
+	}, [actions, editorInstance, snippet])
 
 	return snippet.id && 'condition' === snippet.scope ? null :
 		<div className="snippet-editor" style={{ display: 'condition' === snippet.scope ? 'none' : 'block' }}>

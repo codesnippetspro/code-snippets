@@ -28,6 +28,8 @@ module.exports = {
 		'import/core-modules': ['tinymce']
 	},
 	rules: {
+		'@typescript-eslint/prefer-ts-expect-error': 'error',
+		'@typescript-eslint/no-unused-vars': ['error', {ignoreRestSiblings: true, varsIgnorePattern: '^_', argsIgnorePattern: '^_'}],
 		'quotes': ['error', 'single', {avoidEscape: true}],
 		'linebreak-style': ['error', 'unix'],
 		'eqeqeq': ['error', 'always'],

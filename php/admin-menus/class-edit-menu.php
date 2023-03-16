@@ -104,14 +104,7 @@ class Edit_Menu extends Admin_Menu {
 			$this->page_title_actions( [ 'manage', 'import', 'settings' ] );
 		}
 
-		echo '</h1>';
-
-		printf(
-			'<div id="edit-snippet-form-container" data-snippet-id="%s"></div>',
-			esc_attr( $this->snippet->id )
-		);
-
-		echo '</div>';
+		echo '</h1><div id="edit-snippet-form-container"></div></div>';
 	}
 
 	/**

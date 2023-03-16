@@ -83,9 +83,8 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ actions, snippet, isWorking
 
 		<ConfirmDialog
 			open={isConfirmDialogOpen}
-			title={missingCode ? __('Missing snippet code', 'code-snippets') :
-				missingTitle ? __('Missing snippet title', 'code-snippets') : ''}
-			confirmLabel={__('Continue', 'code-snippet')}
+			title={__('Snippet incomplete', 'code-snippets')}
+			confirmLabel={__('Continue', 'code-snippets')}
 			onCancel={closeDialog}
 			onConfirm={() => {
 				submitAction?.()
@@ -93,8 +92,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ actions, snippet, isWorking
 			}}
 		>
 			<p>
-				{missingCode && missingTitle ?
-					__('This snippet has no code or title. Continue?', 'code-snippets') :
+				{missingCode && missingTitle ? __('This snippet has no code or title. Continue?', 'code-snippets') :
 					missingCode ? __('This snippet has no snippet code. Continue?', 'code-snippets') :
 						missingTitle ? __('This snippet has no title. Continue?', 'code-snippets') : ''}
 			</p>
