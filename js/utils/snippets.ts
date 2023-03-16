@@ -1,4 +1,4 @@
-import { Snippet, SnippetType } from '../types/Snippet'
+import { Snippet, SnippetScope, SnippetType } from '../types/Snippet'
 import { isNetworkAdmin } from './general'
 
 export const createEmptySnippet = (): Snippet => ({
@@ -15,7 +15,9 @@ export const createEmptySnippet = (): Snippet => ({
 	priority: 10
 })
 
-export const getSnippetType = ({ scope }: Snippet): SnippetType => {
+export const getSnippetType = (snippet: Snippet | SnippetScope): SnippetType => {
+	const scope = 'string' === typeof snippet ? snippet : snippet.scope
+
 	if (scope.endsWith('-css')) {
 		return 'css'
 	}

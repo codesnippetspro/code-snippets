@@ -27,7 +27,7 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		<?php
 		esc_html_e( 'Snippets', 'code-snippets' );
 
-		$this->page_title_actions( code_snippets()->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
+		$this->render_page_title_actions( code_snippets()->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
 
 		$this->list_table->search_notice();
 		?>

@@ -87,24 +87,22 @@ const ConditionGroup: React.FC<ConditionGroupProps> = ({
 	</>
 
 export const ConditionEditor: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) =>
-	'condition' === snippet.scope ?
-		<div className="snippet-condition-editor">
-			<ConditionGroup
-				group="AND"
-				snippet={snippet}
-				setSnippet={setSnippet}
-				heading={__('AND Conditions', 'code-snippets')}
-				insertLabel={__('Add AND condition', 'code-snippets')}
-				description={__('All conditions in this group must be true in order for the snippet to run.', 'code-snippets')}
-			/>
+	<div id="snippet_conditions" className="snippet-condition-editor">
+		<ConditionGroup
+			group="AND"
+			snippet={snippet}
+			setSnippet={setSnippet}
+			heading={__('AND Conditions', 'code-snippets')}
+			insertLabel={__('Add AND condition', 'code-snippets')}
+			description={__('All conditions in this group must be true in order for the snippet to run.', 'code-snippets')}
+		/>
 
-			<ConditionGroup
-				group="OR"
-				snippet={snippet}
-				setSnippet={setSnippet}
-				heading={__('OR Conditions', 'code-snippets')}
-				insertLabel={__('Add OR condition', 'code-snippets')}
-				description={__('At least one condition in this group must be true in order for the snippet to run.', 'code-snippets')}
-			/>
-		</div> :
-		null
+		<ConditionGroup
+			group="OR"
+			snippet={snippet}
+			setSnippet={setSnippet}
+			heading={__('OR Conditions', 'code-snippets')}
+			insertLabel={__('Add OR condition', 'code-snippets')}
+			description={__('At least one condition in this group must be true in order for the snippet to run.', 'code-snippets')}
+		/>
+	</div>

@@ -1,11 +1,11 @@
 import { Spinner } from '@wordpress/components'
 import React, { MouseEvent, useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import { ActionButton } from '../common/ActionButton'
-import { ConfirmDialog } from '../common/ConfirmDialog'
-import { Snippet } from '../types/Snippet'
-import { isNetworkAdmin } from '../utils/general'
-import { SnippetActionsProps, SnippetActionsValue, useSnippetActions } from './actions'
+import { ActionButton } from '../../common/ActionButton'
+import { ConfirmDialog } from '../../common/ConfirmDialog'
+import { Snippet } from '../../types/Snippet'
+import { isNetworkAdmin } from '../../utils/general'
+import { SnippetActionsProps, SnippetActionsValue, useSnippetActions } from '../actions'
 
 export interface SubmitButtonProps {
 	actions: SnippetActionsValue

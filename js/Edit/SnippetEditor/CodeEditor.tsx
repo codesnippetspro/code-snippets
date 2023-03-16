@@ -46,8 +46,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 		}
 	}, [actions, editorInstance, snippet])
 
-	return snippet.id && 'condition' === snippet.scope ? null :
-		<div className="snippet-editor" style={{ display: 'condition' === snippet.scope ? 'none' : 'block' }}>
+	return (
+		<div className="snippet-editor">
 			<textarea
 				ref={textareaRef}
 				id="snippet_code"
@@ -59,4 +59,5 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
 			<CodeEditorShortcuts editorTheme={window.CODE_SNIPPETS_EDIT?.editorTheme ?? 'default'} />
 		</div>
+	)
 }

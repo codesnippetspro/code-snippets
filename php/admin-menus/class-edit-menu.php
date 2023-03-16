@@ -39,6 +39,8 @@ class Edit_Menu extends Admin_Menu {
 
 	/**
 	 * Register the admin menu
+	 *
+	 * @return void
 	 */
 	public function register() {
 		parent::register();
@@ -62,13 +64,22 @@ class Edit_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
-		// Retrieve the current snippet object.
 		$this->load_snippet_data();
+		$this->ensure_correct_page();
 
+		$contextual_help = new Contextual_Help( 'edit' );
+		$contextual_help->load();
+	}
+
+	/**
+	 * Disallow vising the Edit Snippet page without a valid ID.
+	 *
+	 * @return void
+	 */
+	protected function ensure_correct_page() {
 		$screen = get_current_screen();
-		$edit_hook =
-			get_plugin_page_hookname( $this->slug, $this->base_slug ) .
-			$screen->in_admin( 'network' ) ? '-network' : '';
+		$edit_hook = get_plugin_page_hookname( $this->slug, $this->base_slug );
+		$edit_hook .= $screen->in_admin( 'network' ) ? '-network' : '';
 
 		// Disallow visiting the edit snippet page without a valid ID.
 		if ( $screen->base === $edit_hook && ( empty( $_REQUEST['id'] ) || 0 === $this->snippet->id || null === $this->snippet->id ) &&
@@ -76,13 +87,6 @@ class Edit_Menu extends Admin_Menu {
 			wp_safe_redirect( code_snippets()->get_menu_url( 'add' ) );
 			exit;
 		}
-
-		// Process any submitted actions.
-		$this->process_actions();
-
-		// Load the contextual help tabs.
-		$contextual_help = new Contextual_Help( 'edit' );
-		$contextual_help->load();
 	}
 
 	/**
@@ -91,20 +95,10 @@ class Edit_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
-		echo '<div class="wrap"><h1>';
-
-		if ( $this->snippet->id ) {
-			esc_html_e( 'Edit Snippet', 'code-snippets' );
-			$this->page_title_actions( [ 'add' ] );
-		} else {
-			esc_html_e( 'Add New Snippet', 'code-snippets' );
-		}
-
-		if ( code_snippets()->is_compact_menu() ) {
-			$this->page_title_actions( [ 'manage', 'import', 'settings' ] );
-		}
-
-		echo '</h1><div id="edit-snippet-form-container"></div></div>';
+		printf(
+			'<div id="edit-snippet-form-container">%s</div>',
+			esc_html__( 'Loading edit page…', 'code-snippets' )
+		);
 	}
 
 	/**
@@ -135,201 +129,6 @@ class Edit_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Process data sent from the edit page
-	 */
-	private function process_actions() {
-
-		/* Check for a valid nonce */
-		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'save_snippet' ) ) {
-			return;
-		}
-
-		if ( isset( $_POST['save_snippet'] ) || isset( $_POST['save_snippet_execute'] ) ||
-		     isset( $_POST['save_snippet_activate'] ) || isset( $_POST['save_snippet_deactivate'] ) ) {
-			$this->save_posted_snippet();
-		}
-
-		if ( isset( $_POST['snippet_id'] ) ) {
-			$snippet_id = intval( $_POST['snippet_id'] );
-
-			/* Delete the snippet if the button was clicked */
-			if ( isset( $_POST['delete_snippet'] ) ) {
-				delete_snippet( $snippet_id );
-				wp_safe_redirect( add_query_arg( 'result', 'delete', code_snippets()->get_menu_url( 'manage' ) ) );
-				exit;
-			}
-
-			/* Export the snippet if the button was clicked */
-			if ( isset( $_POST['export_snippet'] ) ) {
-				$export = new Export_Attachment( $snippet_id );
-				$export->download_snippets_json();
-			}
-
-			/* Download the snippet if the button was clicked */
-			if ( isset( $_POST['download_snippet'] ) ) {
-				$export = new Export_Attachment( $snippet_id );
-				$export->download_snippets_code();
-			}
-
-			do_action( 'code_snippets/admin/process_actions', $snippet_id );
-		}
-	}
-
-	/**
-	 * Save the posted snippet data to the database and redirect
-	 */
-	private function save_posted_snippet() {
-
-		/* Build snippet object from fields with 'snippet_' prefix */
-		$snippet = new Snippet();
-
-		/* Activate or deactivate the snippet before saving if we clicked the button */
-
-		if ( isset( $_POST['save_snippet_execute'] ) ) {
-			$snippet->active = 1;
-		} elseif ( isset( $_POST['snippet_sharing'] ) && 'on' === $_POST['snippet_sharing'] ) {
-			// Shared network snippets cannot be network-activated.
-			$snippet->active = 0;
-			unset( $_POST['save_snippet_activate'], $_POST['save_snippet_deactivate'] );
-		} elseif ( isset( $_POST['save_snippet_activate'] ) ) {
-			$snippet->active = 1;
-		} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
-			$snippet->active = 0;
-		}
-
-		/* Save the snippet to the database */
-		$snippet_id = save_snippet( $snippet );
-
-		/* If the saved snippet ID is invalid, display an error message */
-		if ( ! $snippet_id || $snippet_id < 1 ) {
-			/* An error occurred */
-			wp_safe_redirect( add_query_arg( 'result', 'save-error', code_snippets()->get_menu_url( 'add' ) ) );
-			exit;
-		}
-
-		/* Display message if a parse error occurred */
-		if ( isset( $code_error ) && $code_error ) {
-			wp_safe_redirect(
-				add_query_arg(
-					array(
-						'id'     => $snippet_id,
-						'result' => 'code-error',
-					),
-					code_snippets()->get_menu_url( 'edit' )
-				)
-			);
-			exit;
-		}
-
-		/* Set the result depending on if the snippet was just added */
-		$result = isset( $_POST['snippet_id'] ) ? 'updated' : 'added';
-
-		/* Append a suffix if the snippet was activated or deactivated */
-		if ( isset( $_POST['save_snippet_activate'] ) ) {
-			$result .= '-and-activated';
-		} elseif ( isset( $_POST['save_snippet_deactivate'] ) ) {
-			$result .= '-and-deactivated';
-		} elseif ( isset( $_POST['save_snippet_execute'] ) ) {
-			$result .= '-and-executed';
-		}
-
-		/* Redirect to edit snippet page */
-		$redirect_uri = add_query_arg(
-			array(
-				'id'     => $snippet_id,
-				'result' => $result,
-			),
-			code_snippets()->get_menu_url( 'edit' )
-		);
-
-		wp_safe_redirect( esc_url_raw( $redirect_uri ) );
-		exit;
-	}
-
-	/**
-	 * Retrieve the first error in a snippet's code
-	 *
-	 * @param int $snippet_id Snippet ID.
-	 *
-	 * @return array<string, mixed>|bool Error if execution failed, otherwise false.
-	 */
-	private function get_snippet_error( $snippet_id ) {
-
-		if ( ! intval( $snippet_id ) ) {
-			return false;
-		}
-
-		$snippet = get_snippet( intval( $snippet_id ) );
-
-		if ( '' === $snippet->code ) {
-			return false;
-		}
-
-		$validator = new Validator( $snippet->code );
-		$error = $validator->validate();
-
-		if ( $error ) {
-			return $error;
-		}
-
-		ob_start();
-		$result = eval( $snippet->code );
-		ob_end_clean();
-
-		if ( false !== $result ) {
-			return false;
-		}
-
-		$error = error_get_last();
-
-		if ( is_null( $error ) ) {
-			return false;
-		}
-
-		return $error;
-	}
-
-	/**
-	 * Print the status and error messages
-	 */
-	protected function print_messages() {
-
-		if ( ! isset( $_REQUEST['result'] ) ) {
-			return;
-		}
-
-		$result = sanitize_key( $_REQUEST['result'] );
-
-		if ( 'code-error' === $result ) {
-			$error = isset( $_REQUEST['id'] ) ? $this->get_snippet_error( intval( $_REQUEST['id'] ) ) : false;
-
-			if ( $error ) {
-				/* translators: %d: line of file where error originated */
-				$text = __( 'The snippet has been deactivated due to an error on line %d:', 'code-snippets' );
-
-				printf(
-					'<div id="message" class="error fade"><p>%s</p><p><strong>%s</strong></p></div>',
-					sprintf( esc_html( $text ), intval( $error['line'] ) ),
-					wp_kses_post( $error['message'] )
-				);
-
-			} else {
-				echo '<div id="message" class="error fade"><p>';
-				esc_html_e( 'The snippet has been deactivated due to an error in the code.', 'code-snippets' );
-				echo '</p></div>';
-			}
-
-			return;
-		}
-
-		if ( 'save-error' === $result ) {
-			echo '<div id="message" class="error fade"><p>';
-			esc_html_e( 'An error occurred when saving the snippet.', 'code-snippets' );
-			echo '</p></div>';
-		}
-	}
-
-	/**
 	 * Enqueue assets for the edit menu
 	 */
 	public function enqueue_assets() {
@@ -344,7 +143,7 @@ class Edit_Menu extends Admin_Menu {
 
 		$css_deps = [
 			'code-editor',
-			'wp-components'
+			'wp-components',
 		];
 
 		$js_deps = [
@@ -354,7 +153,7 @@ class Edit_Menu extends Admin_Menu {
 			'wp-url',
 			'wp-i18n',
 			'wp-api-fetch',
-			'wp-components'
+			'wp-components',
 		];
 
 		wp_enqueue_style(
@@ -386,6 +185,7 @@ class Edit_Menu extends Admin_Menu {
 					'base'  => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'nonce' => wp_create_nonce( 'wp_rest' ),
 				],
+				'pageTitleActions'  => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'manage', 'import', 'settings' ] ) : [],
 				'isPreview'         => isset( $_REQUEST['preview'] ),
 				'activateByDefault' => get_setting( 'general', 'activate_by_default' ),
 				'editorTheme'       => get_setting( 'editor', 'theme' ),

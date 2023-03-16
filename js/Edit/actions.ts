@@ -4,16 +4,8 @@ import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { Notices } from '../types/Notice'
 import { Snippet, SnippetType } from '../types/Snippet'
 import { useSnippetsAPI } from '../utils/api'
-import { downloadAsFile } from '../utils/general'
+import { downloadAsFile, downloadSnippetExportFile } from '../utils/general'
 import { getSnippetType } from '../utils/snippets'
-
-const MIME_TYPES: Record<SnippetType, string> = {
-	php: 'text/php',
-	html: 'text/php',
-	css: 'text/css',
-	js: 'text/javascript',
-	cond: 'application/json'
-}
 
 export interface SnippetActionsProps {
 	setSnippet: Dispatch<SetStateAction<Snippet>>
@@ -72,8 +64,7 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 			.then(response => {
 				setIsWorking(false)
 				console.info('file response', response)
-				const filename = snippet.name.toLowerCase().replace(/[^\w-]+/, '-')
-				downloadAsFile(response.data, filename, MIME_TYPES[getSnippetType(snippet)])
+				downloadSnippetExportFile(response.data, snippet)
 			})
 			// translators: %s: error message.
 			.catch(error => displayRequestErrors(error, __('Could not download export file.', 'code-snippets')))

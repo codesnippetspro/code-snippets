@@ -22,7 +22,7 @@
 	}
 }
 
-[data-snippet-type=php] {
+.snippet-form.php-snippet {
 	.php-scopes-list {
 		display: block;
 	}
@@ -36,7 +36,7 @@
 	}
 }
 
-[data-snippet-type=css] {
+.snippet-form.css-snippet {
 	.css-scopes-list {
 		display: block;
 	}
@@ -50,7 +50,7 @@
 	}
 }
 
-[data-snippet-type=js] {
+.snippet-form.js-snippet {
 	.js-scopes-list {
 		display: block;
 	}
@@ -64,7 +64,7 @@
 	}
 }
 
-[data-snippet-type=html] {
+.snippet-form.html-snippet {
 	.html-scopes-list {
 		display: block;
 	}
@@ -78,7 +78,7 @@
 	}
 }
 
-[data-snippet-type=cond] {
+.snippet-form.cond-snippet {
 	.snippet-editor {
 		display: none;
 	}

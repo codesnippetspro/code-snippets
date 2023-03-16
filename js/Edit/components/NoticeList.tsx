@@ -1,8 +1,8 @@
 import classnames from 'classnames'
 import React, { Dispatch, MouseEventHandler, ReactNode, SetStateAction } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
-import { Notices } from '../types/Notice'
-import { SnippetInputProps } from '../types/SnippetInputProps'
+import { Notices } from '../../types/Notice'
+import { SnippetInputProps } from '../../types/SnippetInputProps'
 
 interface DismissibleNoticeProps {
 	classNames?: classnames.Argument

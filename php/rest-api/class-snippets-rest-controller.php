@@ -2,21 +2,21 @@
 
 namespace Code_Snippets\REST_API;
 
-use Code_Snippets\Export;
-use Code_Snippets\Snippet;
 use WP_Error;
-use WP_REST_Controller;
+use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Response;
-use WP_REST_Server;
-use function Code_Snippets\activate_snippet;
-use function Code_Snippets\deactivate_snippet;
-use function Code_Snippets\delete_snippet;
+use WP_REST_Controller;
+use Code_Snippets\Export;
+use Code_Snippets\Snippet;
 use const Code_Snippets\REST_API_NAMESPACE;
-use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
+use function Code_Snippets\code_snippets;
+use function Code_Snippets\delete_snippet;
+use function Code_Snippets\activate_snippet;
+use function Code_Snippets\deactivate_snippet;
 
 /**
  * Allows fetching snippet data through the WordPress REST API.
@@ -55,7 +55,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return string
 	 */
-	public static function get_base_route() {
+	public static function get_base_route(): string {
 		return REST_API_NAMESPACE . self::VERSION . '/' . self::BASE_ROUTE;
 	}
 
@@ -183,7 +183,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return WP_REST_Response Response object on success.
 	 */
-	public function get_items( $request ) {
+	public function get_items( $request ): WP_REST_Response {
 		$snippets = get_snippets();
 		$snippets_data = [];
 
@@ -296,7 +296,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function activate_item( $request ) {
+	public function activate_item( WP_REST_Request $request ) {
 		$item = $this->prepare_item_for_database( $request );
 		$result = activate_snippet( $item->id, $item->network );
 
@@ -316,7 +316,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function deactivate_item( $request ) {
+	public function deactivate_item( WP_REST_Request $request ) {
 		$item = $this->prepare_item_for_database( $request );
 		$result = deactivate_snippet( $item->id, $item->network );
 
@@ -336,7 +336,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return Export
 	 */
-	protected function build_export( $request ) {
+	protected function build_export( WP_REST_Request $request ): Export {
 		$item = $this->prepare_item_for_database( $request );
 		return new Export( [ $item->id ], code_snippets()->db->get_table_name( $item->network ) );
 	}
@@ -348,7 +348,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function export_item( $request ) {
+	public function export_item( WP_REST_Request $request ) {
 		$export = $this->build_export( $request );
 		$result = $export->export_snippets_json();
 
@@ -362,7 +362,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function export_item_code( $request ) {
+	public function export_item_code( WP_REST_Request $request ) {
 		$export = $this->build_export( $request );
 		$result = $export->export_snippets_code();
 
@@ -377,7 +377,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return Snippet The prepared item.
 	 */
-	protected function prepare_item_for_database( $request, $item = null ) {
+	protected function prepare_item_for_database( $request, Snippet $item = null ) {
 		if ( ! $item instanceof Snippet ) {
 			$item = new Snippet();
 		}
@@ -410,7 +410,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return boolean
 	 */
-	public function get_items_permissions_check( $request ) {
+	public function get_items_permissions_check( $request ): bool {
 		return code_snippets()->current_user_can();
 	}
 
@@ -421,7 +421,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return boolean
 	 */
-	public function get_item_permissions_check( $request ) {
+	public function get_item_permissions_check( $request ): bool {
 		return $this->get_items_permissions_check( $request );
 	}
 
@@ -432,7 +432,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return boolean
 	 */
-	public function create_item_permissions_check( $request ) {
+	public function create_item_permissions_check( $request ): bool {
 		return code_snippets()->current_user_can();
 	}
 
@@ -443,7 +443,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return boolean
 	 */
-	public function update_item_permissions_check( $request ) {
+	public function update_item_permissions_check( $request ): bool {
 		return $this->create_item_permissions_check( $request );
 	}
 
@@ -454,7 +454,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return boolean
 	 */
-	public function delete_item_permissions_check( $request ) {
+	public function delete_item_permissions_check( $request ): bool {
 		return $this->create_item_permissions_check( $request );
 	}
 
@@ -463,7 +463,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return array<string, mixed> The sample schema for a post
 	 */
-	public function get_item_schema() {
+	public function get_item_schema(): array {
 		if ( $this->schema ) {
 			return $this->schema;
 		}

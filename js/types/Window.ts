@@ -3,26 +3,25 @@ import { Snippet } from './Snippet'
 import { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './WordPressCodeEditor'
 import { WordPressEditor } from './WordPressEditor'
 
-export interface WordPressUtils {
-	readonly wpActiveEditor?: string
-	readonly tinymce?: typeof tinymce
-	readonly editor?: WordPressEditor
-	readonly codeEditor: WordPressCodeEditor
-}
-
 declare global {
 	interface Window {
+		readonly wp: {
+			readonly editor?: WordPressEditor
+			readonly codeEditor: WordPressCodeEditor
+		}
 		readonly pagenow: string
 		readonly ajaxurl: string
-		readonly wp: WordPressUtils
-		code_snippets_editor_preview?: CodeEditorInstance
-		code_snippets_editor_settings: EditorOption[]
+		readonly tinymce?: tinymce.EditorManager
+		readonly wpActiveEditor?: string
+		readonly code_snippets_editor_preview?: CodeEditorInstance
+		readonly code_snippets_editor_settings: EditorOption[]
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet
 			restAPI: {
 				base: string
 				nonce: string
 			}
+			pageTitleActions: Record<string, string>
 			isPreview: boolean
 			enableDownloads: boolean
 			extraSaveButtons: boolean

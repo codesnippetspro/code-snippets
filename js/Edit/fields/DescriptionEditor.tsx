@@ -3,6 +3,8 @@ import React, { useCallback, useEffect } from 'react'
 import { __ } from '@wordpress/i18n'
 import { SnippetInputProps } from '../../types/SnippetInputProps'
 
+export const EDITOR_ID = 'snippet_description'
+
 const DEFAULT_ROWS = 5
 
 const TOOLBAR_BUTTONS = [
@@ -35,7 +37,7 @@ const TOOLBAR_BUTTONS_2 = [
 ].join(' ')
 
 const initializeEditor = (onChange: (content: string) => void) => {
-	window.wp.editor?.initialize('snippet_description', {
+	window.wp.editor?.initialize(EDITOR_ID, {
 		mediaButtons: window.CODE_SNIPPETS_EDIT?.descEditorOptions.mediaButtons,
 		quicktags: true,
 		tinymce: {
@@ -60,13 +62,13 @@ export const DescriptionEditor: React.FC<SnippetInputProps> = ({ snippet, setSni
 	return window.CODE_SNIPPETS_EDIT?.enableDescription ?
 		<div className="snippet-description-container">
 			<h2>
-				<label htmlFor="snippet_description">
+				<label htmlFor={EDITOR_ID}>
 					{__('Description', 'code-snippets')}
 				</label>
 			</h2>
 
 			<textarea
-				id="snippet_description"
+				id={EDITOR_ID}
 				className="wp-editor-area"
 				onChange={event => onChange(event.target.value)}
 				autoComplete="off"
