@@ -459,7 +459,7 @@ function save_snippet( Snippet $snippet ) {
 	// Build array of data to insert.
 	$data = array(
 		'name'        => $snippet->name,
-		'description' => $snippet->desc,
+		'description' => $snippet->desc == null ? 'test' : $snippet->desc,
 		'code'        => $snippet->code,
 		'tags'        => $snippet->tags_list,
 		'scope'       => $snippet->scope,
@@ -469,14 +469,13 @@ function save_snippet( Snippet $snippet ) {
 		'revision'    => $snippet->revision,
 		'cloud_id'    => $snippet->cloud_id ? $snippet->cloud_id : null,
 	);
-
 	// Create a new snippet if the ID is not set.
 	if ( 0 === $snippet->id ) {
 		$result = $wpdb->insert( $table, $data, '%s' ); // db call ok.
 		if ( false === $result ) {
 			return 0;
 		}
-
+		
 		$snippet->id = $wpdb->insert_id;
 		do_action( 'code_snippets/create_snippet', $snippet, $table );
 	} else {

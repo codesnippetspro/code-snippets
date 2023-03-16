@@ -442,9 +442,6 @@ class Cloud_API {
 	public function download_or_update_snippet( $cloud_id_string, $source, $action ) {
 
 		$cloud_id = intval( $cloud_id_string );
-		
-		// $actual_cloud_id = $this->get_cloud_id_and_ownership( $cloud_id )['cloud_id'];
-		
 		switch ($source) {
 			case 'codevault':
 				$in_codevault = true;
@@ -505,10 +502,10 @@ class Cloud_API {
 	 */
 	public function download_snippet_from_cloud( $snippets_to_store, $in_codevault ) {
 		
+
 		if( is_object($snippets_to_store) ){
 			$snippets_to_store = [$snippets_to_store];
 		}
-
 		foreach ($snippets_to_store as $snippet_to_store) {
 			
 			$snippet = new Snippet( $snippet_to_store );
@@ -518,6 +515,7 @@ class Cloud_API {
 			$snippet->id = 0;
 			$snippet->active = 0;
 			$snippet->cloud_id = $snippet_to_store->id.'_'.$ownership;
+			$snippet->desc = $snippet_to_store->description ? $snippet_to_store->description : ''; //if no description is set, set it to empty string
 
 			// Save the snippet to the database.
 			$new_snippet_id = save_snippet( $snippet );
@@ -525,11 +523,15 @@ class Cloud_API {
 			$link = new Cloud_Link();
 			$link->local_id = $new_snippet_id;
 			$link->cloud_id = $snippet->cloud_id;
+			$link->is_owner = $snippet_to_store->is_owner;
 			$link->in_codevault = $in_codevault;
 			$link->update_available = false;
 
 			$this->add_map_link( $link );
+			
 		}
+
+
 		if( count($snippets_to_store) == 1 ){
 			return [
 				'success' => true,

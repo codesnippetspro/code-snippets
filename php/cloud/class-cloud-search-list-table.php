@@ -25,6 +25,19 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class Cloud_Search_List_Table extends Cloud_List_Table {
 
 	/**
+	 * Define the bulk actions to include in the drop-down menus
+	 *
+	 * @return array<string, string> An array of menu items with the ID paired to the label.
+	 */
+	public function get_bulk_actions() {
+		$actions = array(
+			'download-search-selected' => __( 'Download', 'code-snippets' ),
+		);
+
+		return apply_filters( 'code_snippets/cloud_list_table/bulk_actions', $actions );
+	}
+
+	/**
 	 * Text displayed when no snippet data is available.
 	 *
 	 * @return void

@@ -123,7 +123,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 */
 	public function get_bulk_actions() {
 		$actions = array(
-			'download-selected' => __( 'Download', 'code-snippets' ),
+			'download-codevault-selected' => __( 'Download', 'code-snippets' ),
 		);
 
 		return apply_filters( 'code_snippets/cloud_list_table/bulk_actions', $actions );
@@ -197,11 +197,10 @@ class Cloud_List_Table extends WP_List_Table {
 		if ( ! isset( $_POST['cloud_ids'] ) && ! isset( $_POST['shared_cloud_ids'] ) ) {
 			return;
 		}
-
 		$ids = isset( $_POST['cloud_ids'] ) ? array_map( 'intval', $_POST['cloud_ids'] ) : array();
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
-		if( 'download-selected' == $this->current_action() ) {
-				$this->download_snippets( $ids );
+		if( 'download-codevault-selected' == $this->current_action() || 'download-search-selected' == $this->current_action()) {
+				$this->download_snippets( $ids, $this->current_action() );
 				$result = 'download-multi';
 		}
 
@@ -535,23 +534,20 @@ class Cloud_List_Table extends WP_List_Table {
 	 * Bulk Download Snippets.
 	 *
 	 * @param array $ids array of int cloud ids to download
+	 * @param string $source whether the download is from the codevault or search results i.e. download-codevault-selected
 	 *
 	 * @return void
 	 */
-	public function download_snippets( $ids ) {
+	public function download_snippets( $ids, $source ) {
+		$source = explode( '-', $source )[1];
 		foreach ( $ids as $id ) {
 			//Check if snippet already exists in cloud link transient and skip if it does 
 			$cloud_link = $this->get_cloud_map_link( $id );
 			if ( $cloud_link ) {
 				continue;
 			}
-			//TODO: This doesn't work to distinguish between codevault and search results
-			$source = Cloud_List_Table::CLASS_NAME === $this->class_name ? 'codevault' : 'search';
 			//TODO: For bulk download codevault snippets this doesn't update cloud link for first snippet
-			$snippet =  $this->cloud_api->download_or_update_snippet( $id, $source, 'download' );
-
-			// Sleep for 1 second to avoid rate limiting
-			sleep( 1 );
+			$snippet = $this->cloud_api->download_or_update_snippet( $id, $source, 'download' );
 		}
 	}
 
@@ -670,4 +666,12 @@ class Cloud_List_Table extends WP_List_Table {
 		$this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
 		echo wp_kses_post( $this->_pagination );
 	}
+
+	public function cloud_display_admin_notice($message, $type) {
+		$class = ($type == 'error') ? 'notice notice-error' : 'notice notice-success';
+		echo '<div class="' . $class . '"><p>' . $message . '</p></div>';
+
+		add_action('admin_notices', 'cloud_display_admin_notice');
+	}
+
 }
