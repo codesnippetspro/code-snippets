@@ -351,6 +351,7 @@ class Edit_Menu extends Admin_Menu {
 
 		$css_deps = [
 			'code-editor',
+			'wp-components'
 		];
 
 		$js_deps = [
@@ -381,11 +382,6 @@ class Edit_Menu extends Admin_Menu {
 		if ( $desc_enabled ) {
 			remove_editor_styles();
 			wp_enqueue_editor();
-			add_thickbox();
-			wp_enqueue_script( 'media-upload' );
-			wp_enqueue_script( 'wp-embed' );
-			wp_enqueue_script( 'quicktags' );
-			wp_enqueue_style( 'buttons' );
 		}
 
 		wp_localize_script(

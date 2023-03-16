@@ -1,7 +1,8 @@
 import { Spinner } from '@wordpress/components'
-import React from 'react'
+import React, { MouseEvent, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { ActionButton } from '../common/ActionButton'
+import { ConfirmDialog } from '../common/ConfirmDialog'
 import { Snippet } from '../types/Snippet'
 import { isNetworkAdmin } from '../utils/general'
 import { SnippetActionsProps, SnippetActionsValue, useSnippetActions } from './actions'
@@ -12,10 +13,31 @@ export interface SubmitButtonProps {
 	isWorking: boolean
 }
 
+// eslint-disable-next-line max-lines-per-function
 const SubmitButton: React.FC<SubmitButtonProps> = ({ actions, snippet, isWorking }) => {
+	const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
+	const [submitAction, setSubmitAction] = useState<() => void>()
+
 	const canActivate = !snippet.shared_network || !isNetworkAdmin()
 	const activateByDefault = canActivate && window.CODE_SNIPPETS_EDIT?.activateByDefault &&
 		!snippet.active && 'single-use' !== snippet.scope
+
+	const missingCode = '' === snippet.code.trim() && 'condition' !== snippet.scope
+	const missingTitle = '' === snippet.name.trim()
+
+	const doSubmit = (event: MouseEvent<HTMLButtonElement>, submitAction: () => void) => {
+		if (missingCode || missingTitle) {
+			setIsConfirmDialogOpen(true)
+			setSubmitAction(() => submitAction)
+		} else {
+			submitAction()
+		}
+	}
+
+	const closeDialog = () => {
+		setIsConfirmDialogOpen(false)
+		setSubmitAction(undefined)
+	}
 
 	return <>
 		{activateByDefault ? '' :
@@ -23,7 +45,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ actions, snippet, isWorking
 				primary
 				name="save_snippet"
 				text={__('Save Changes', 'code-snippets')}
-				onClick={() => actions.submit(snippet)}
+				onClick={event => doSubmit(event, () => actions.submit(snippet))}
 				disabled={isWorking}
 			/>}
 
@@ -31,7 +53,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ actions, snippet, isWorking
 			<ActionButton
 				name="save_snippet_execute"
 				text={__('Save Changes and Execute Once', 'code-snippets')}
-				onClick={() => actions.submitAndActivate(snippet, true)}
+				onClick={event => doSubmit(event, () => actions.submitAndActivate(snippet, true))}
 				disabled={isWorking}
 			/> :
 
@@ -40,14 +62,14 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ actions, snippet, isWorking
 					<ActionButton
 						name="save_snippet_deactivate"
 						text={__('Save Changes and Deactivate', 'code-snippets')}
-						onClick={() => actions.submitAndActivate(snippet, false)}
+						onClick={event => doSubmit(event, () => actions.submitAndActivate(snippet, false))}
 						disabled={isWorking}
 					/> :
 					<ActionButton
 						primary={activateByDefault}
 						name="save_snippet_activate"
 						text={__('Save Changes and Activate', 'code-snippets')}
-						onClick={() => actions.submitAndActivate(snippet, true)}
+						onClick={event => doSubmit(event, () => actions.submitAndActivate(snippet, true))}
 						disabled={isWorking}
 					/> : ''}
 
@@ -55,9 +77,28 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ actions, snippet, isWorking
 			<ActionButton
 				name="save_snippet"
 				text={__('Save Changes', 'code-snippets')}
-				onClick={() => actions.submit(snippet)}
+				onClick={event => doSubmit(event, () => actions.submit(snippet))}
 				disabled={isWorking}
 			/> : ''}
+
+		<ConfirmDialog
+			open={isConfirmDialogOpen}
+			title={missingCode ? __('Missing snippet code', 'code-snippets') :
+				missingTitle ? __('Missing snippet title', 'code-snippets') : ''}
+			confirmLabel={__('Continue', 'code-snippet')}
+			onCancel={closeDialog}
+			onConfirm={() => {
+				submitAction?.()
+				closeDialog()
+			}}
+		>
+			<p>
+				{missingCode && missingTitle ?
+					__('This snippet has no code or title. Continue?', 'code-snippets') :
+					missingCode ? __('This snippet has no snippet code. Continue?', 'code-snippets') :
+						missingTitle ? __('This snippet has no title. Continue?', 'code-snippets') : ''}
+			</p>
+		</ConfirmDialog>
 	</>
 }
 
@@ -68,12 +109,13 @@ export interface ActionButtonProps extends SnippetActionsProps {
 
 export const ActionButtons: React.FC<ActionButtonProps> = ({ snippet, isWorking, ...actionsProps }) => {
 	const actions = useSnippetActions({ ...actionsProps })
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
 	return (
 		<p className="submit">
 			<SubmitButton actions={actions} snippet={snippet} isWorking={isWorking} />
 
-			{snippet.active ?
+			{snippet.id ?
 				<>
 					<ActionButton
 						name="export_snippet"
@@ -93,12 +135,30 @@ export const ActionButtons: React.FC<ActionButtonProps> = ({ snippet, isWorking,
 					<ActionButton
 						name="delete_snippet"
 						text={__('Delete', 'code-snippets')}
-						onClick={() => actions.delete(snippet)}
+						onClick={() => setIsDeleteDialogOpen(true)}
 						disabled={isWorking}
 					/>
 				</> : ''}
 
 			{isWorking ? <Spinner /> : ''}
+
+			<ConfirmDialog
+				open={isDeleteDialogOpen}
+				title={__('Permanently delete?', 'code-snippets')}
+				confirmLabel={__('Delete', 'code-snippet')}
+				confirmButtonClassName="is-destructive"
+				onCancel={() => setIsDeleteDialogOpen(false)}
+				onConfirm={() => {
+					setIsDeleteDialogOpen(false)
+					actions.delete(snippet)
+				}}
+			>
+				<p>
+					{__('You are about to permanently delete this snippet.', 'code-snippets')}{' '}
+					{__('Are you sure?', 'code-snippets')}
+				</p>
+				<p><strong>{__('This action cannot be undone.', 'code-snippets')}</strong></p>
+			</ConfirmDialog>
 		</p>
 	)
 }

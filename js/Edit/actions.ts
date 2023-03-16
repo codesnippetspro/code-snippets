@@ -15,18 +15,6 @@ const MIME_TYPES: Record<SnippetType, string> = {
 	cond: 'application/json'
 }
 
-const verifySnippetData = ({ code, name, scope }: Snippet): boolean => {
-	const missingCode = '' === code.trim() && 'condition' !== scope
-	const missingTitle = '' === name.trim()
-
-	const message = missingCode && missingTitle ? __('This snippet has no code or title. Continue?', 'code-snippets') :
-		missingCode ? __('This snippet has no snippet code. Continue?', 'code-snippets') :
-			missingTitle ? __('This snippet has no title. Continue?', 'code-snippets') :
-				''
-
-	return '' === message || confirm(message)
-}
-
 export interface SnippetActionsProps {
 	setSnippet: Dispatch<SetStateAction<Snippet>>
 	setIsWorking: Dispatch<SetStateAction<boolean>>
@@ -110,10 +98,6 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 
 	return useMemo(() => ({
 		submit: (snippet: Snippet) => {
-			if (!verifySnippetData(snippet)) {
-				return
-			}
-
 			submitSnippet(
 				snippet,
 				() => __('Snippet created successfully.', 'code-snippets'),
@@ -122,10 +106,6 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 		},
 
 		submitAndActivate: (snippet: Snippet, activate: boolean) => {
-			if (!verifySnippetData(snippet)) {
-				return
-			}
-
 			submitSnippet(
 				{ ...snippet, active: activate },
 				result => result.active ?
