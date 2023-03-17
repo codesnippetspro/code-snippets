@@ -6,6 +6,7 @@ import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { Snippet } from '../../types/Snippet'
 import { isNetworkAdmin } from '../../utils/general'
 import { SnippetActionsProps, SnippetActionsValue, useSnippetActions } from '../actions'
+import { PreviewButtons } from './PreviewButtons'
 
 export interface SubmitButtonProps {
 	actions: SnippetActionsValue
@@ -138,12 +139,14 @@ export const ActionButtons: React.FC<ActionButtonProps> = ({ snippet, isWorking,
 					/>
 				</> : ''}
 
+			<PreviewButtons snippet={snippet} />
+
 			{isWorking ? <Spinner /> : ''}
 
 			<ConfirmDialog
 				open={isDeleteDialogOpen}
 				title={__('Permanently delete?', 'code-snippets')}
-				confirmLabel={__('Delete', 'code-snippet')}
+				confirmLabel={__('Delete', 'code-snippets')}
 				confirmButtonClassName="is-destructive"
 				onCancel={() => setIsDeleteDialogOpen(false)}
 				onConfirm={() => {

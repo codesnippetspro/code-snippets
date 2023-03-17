@@ -17,7 +17,7 @@ export const config: Configuration = {
 		},
 		mce: `${SOURCE_DIR}/mce.ts`,
 		prism: `${SOURCE_DIR}/prism.ts`,
-		blocks: `${SOURCE_DIR}/blocks.ts`,
+		blocks: `${SOURCE_DIR}/blocks/index.ts`,
 		elementor: `${SOURCE_DIR}/elementor.ts`,
 		editor: `${SOURCE_DIR}/editor.ts`
 	},
