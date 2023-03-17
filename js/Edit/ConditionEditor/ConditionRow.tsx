@@ -1,24 +1,36 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { Condition, ConditionGroups, ConditionSubject } from '../../types/Condition'
+import React, { useEffect, useState } from 'react'
+import { ConditionSubject } from '../../types/Condition'
 import { Snippet } from '../../types/Snippet'
+import { SnippetInputProps } from '../../types/SnippetInputProps'
 import { ConditionField } from './ConditionField'
 import { ObjectOptions, OPERATOR_OPTIONS, SUBJECT_OPTION_PROMISES, SUBJECT_OPTIONS } from './options'
 import { RemoveButton } from './RemoveButton'
 
-export interface ConditionRowProps {
-	group: keyof ConditionGroups
-	condition: Condition
+const updateSubject = (snippet: Snippet, groupId: string, conditionId: string, value?: ConditionSubject): Snippet => ({
+	...snippet,
+	conditions: {
+		...snippet.conditions,
+		[groupId]: {
+			...snippet.conditions?.[groupId],
+			[conditionId]: { ...snippet.conditions?.[groupId][conditionId], subject: value, object: undefined }
+		}
+	}
+})
+
+export interface ConditionRowProps extends SnippetInputProps {
+	groupId: string
 	conditionId: string
-	setSnippet: Dispatch<SetStateAction<Snippet>>
 }
 
-export const ConditionRow: React.FC<ConditionRowProps> = ({ group, condition, conditionId, setSnippet }) => {
+export const ConditionRow: React.FC<ConditionRowProps> = ({ ...fieldProps }) => {
 	const [loadedSubject, setLoadedSubject] = useState<ConditionSubject>()
 	const [objectOptions, setObjectOptions] = useState<ObjectOptions | undefined>(undefined)
-	const fieldProps = { group, conditionId, condition, setSnippet }
+
+	const { groupId, conditionId, snippet, setSnippet } = fieldProps
+	const condition = snippet.conditions?.[groupId][conditionId]
 
 	useEffect(() => {
-		if (!objectOptions && condition.subject && SUBJECT_OPTION_PROMISES[condition.subject]) {
+		if (!objectOptions && condition?.subject && SUBJECT_OPTION_PROMISES[condition.subject]) {
 			setLoadedSubject(undefined)
 			SUBJECT_OPTION_PROMISES[condition.subject]()
 				.then(result => {
@@ -26,10 +38,10 @@ export const ConditionRow: React.FC<ConditionRowProps> = ({ group, condition, co
 					setLoadedSubject(condition.subject)
 				})
 		}
-	}, [condition.subject, objectOptions])
+	}, [condition?.subject, objectOptions])
 
 	return (
-		<div id={`snippet-condition-${group}-${conditionId}`} className="snippet-condition-row">
+		<div id={`snippet-condition-${groupId}-${conditionId}`} className="snippet-condition-row">
 			<ConditionField
 				{...fieldProps}
 				field="subject"
@@ -37,17 +49,7 @@ export const ConditionRow: React.FC<ConditionRowProps> = ({ group, condition, co
 				onChange={option => {
 					setObjectOptions(undefined)
 					setLoadedSubject(undefined)
-
-					setSnippet(previous => ({
-						...previous,
-						conditions: {
-							...previous.conditions,
-							[group]: {
-								...previous.conditions?.[group],
-								[conditionId]: { ...condition, subject: option?.value ?? '', object: '' }
-							}
-						}
-					}))
+					setSnippet(previous => updateSubject(previous, groupId, conditionId, option?.value))
 				}}
 			/>
 
@@ -61,10 +63,10 @@ export const ConditionRow: React.FC<ConditionRowProps> = ({ group, condition, co
 				{...fieldProps}
 				field="object"
 				options={objectOptions}
-				isLoading={condition.subject && loadedSubject !== condition.subject}
+				isLoading={!!condition?.subject && loadedSubject !== condition.subject}
 			/>
 
-			<RemoveButton group={group} conditionId={conditionId} setSnippet={setSnippet} />
+			<RemoveButton groupId={groupId} conditionId={conditionId} setSnippet={setSnippet} />
 		</div>
 	)
 }

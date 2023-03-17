@@ -1,5 +1,8 @@
+
 .snippet-condition-editor {
 	padding: 0 1.5em;
+	flex-flow: column;
+	align-items: flex-start;
 
 	h4 {
 		margin-bottom: 0;
@@ -9,12 +12,11 @@
 		box-shadow: none;
 	}
 
-	.condition-add-button, .condition-remove-button {
+	.condition-add-button {
 		display: flex;
 		flex-flow: row;
 		align-items: center;
 		justify-content: center;
-		max-width: 250px;
 
 		.dashicons + span {
 			margin-left: 2px;
@@ -31,12 +33,34 @@
 			color: #b32d2e
 		}
 	}
+
+	.condition-add-row-button {
+		margin: 0;
+	}
+
+	.condition-add-group-button {
+		margin: 1em 0;
+	}
+
+	.condition-group-sep {
+		text-align: center;
+		font-style: italic;
+	}
+}
+
+
+.snippet-condition-groups {
+	display: flex;
+	flex-flow: column;
 }
 
 .snippet-condition-group {
+	flex: 1;
 	display: flex;
 	flex-flow: column;
-	margin: 1em 0 2em 0;
+	padding: 1em;
+	margin: 1em 0;
+	border: 1px solid #bbb;
 
 	> * {
 		flex: 1;
@@ -45,12 +69,9 @@
 }
 
 .snippet-condition-row {
-	display: flex;
-	flex-flow: row;
-
-	> * {
-		margin-right: 1em;
-	}
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr auto;
+	grid-gap: 1em;
 }
 
 .snippet-condition-field-select {

@@ -1,23 +1,56 @@
-import React from 'react'
 import { __ } from '@wordpress/i18n'
+import React from 'react'
 import { SnippetInputProps } from '../../types/SnippetInputProps'
-import { ConditionGroup } from './ConditionGroup'
+import { AddConditionButton, AddGroupButton } from './AddButton'
+import { ConditionRow } from './ConditionRow'
 
-export const ConditionEditor: React.FC<SnippetInputProps> = ({ ...inputProps }) =>
+interface ConditionGroupProps extends SnippetInputProps {
+	groupId: string
+
+}
+
+const ConditionGroup: React.FC<ConditionGroupProps> = ({ groupId, snippet, setSnippet, isReadOnly }) =>
+	<>
+		<fieldset key={groupId} className="snippet-condition-group">
+			{snippet.conditions && Object.keys(snippet.conditions[groupId]).map(conditionId =>
+				<ConditionRow
+					key={conditionId}
+					groupId={groupId}
+					conditionId={conditionId}
+					isReadOnly={isReadOnly}
+					setSnippet={setSnippet}
+					snippet={snippet}
+				/>
+			)}
+
+			<AddConditionButton groupId={groupId} setSnippet={setSnippet} />
+		</fieldset>
+		<div className="condition-group-sep">{__('OR', 'code-snippets')}</div>
+	</>
+
+export const ConditionEditor: React.FC<SnippetInputProps> = ({ snippet, setSnippet, ...inputProps }) =>
 	<div id="snippet_conditions" className="snippet-condition-editor">
-		<ConditionGroup
-			group="AND"
-			heading={__('AND Conditions', 'code-snippets')}
-			insertLabel={__('Add AND condition', 'code-snippets')}
-			description={__('All conditions in this group must be true in order for the snippet to run.', 'code-snippets')}
-			{...inputProps}
-		/>
+		<div className="snippet-condition-groups">
+			<>
+				{snippet.conditions ?
+					Object.keys(snippet.conditions).map(groupId =>
+						snippet.conditions?.[groupId] ?
+							<ConditionGroup
+								key={groupId}
+								groupId={groupId}
+								snippet={snippet}
+								setSnippet={setSnippet}
+								{...inputProps}
+							/> : null
+					) :
+					<>
+						<p>
+							{__('Get started by clicking the button below.', 'code-snippets')}{' '}
+							{__('Once created, you can choose to apply your condition to individual snippets.', 'code-snippets')}
+						</p>
+					</>}
+			</>
 
-		<ConditionGroup
-			group="OR"
-			heading={__('OR Conditions', 'code-snippets')}
-			insertLabel={__('Add OR condition', 'code-snippets')}
-			description={__('At least one condition in this group must be true in order for the snippet to run.', 'code-snippets')}
-			{...inputProps}
-		/>
+			<AddGroupButton setSnippet={setSnippet} />
+		</div>
 	</div>

@@ -1,8 +1,8 @@
-import React, { Dispatch, ReactElement, SetStateAction, useMemo } from 'react'
+import React, { ReactElement, useMemo } from 'react'
 import Select, { Props as SelectProps, OptionsOrGroups, SingleValue } from 'react-select'
-import { Condition, ConditionGroups } from '../../types/Condition'
+import { Condition } from '../../types/Condition'
 import { SelectGroup, SelectOption } from '../../types/SelectOption'
-import { Snippet } from '../../types/Snippet'
+import { SnippetInputProps } from '../../types/SnippetInputProps'
 
 const findOption = <T, >(options: OptionsOrGroups<SelectOption<T>, SelectGroup<T>>, value: T): SingleValue<SelectOption<T>> | undefined => {
 	for (const option of options) {
@@ -16,22 +16,23 @@ const findOption = <T, >(options: OptionsOrGroups<SelectOption<T>, SelectGroup<T
 	}
 }
 
-export interface ConditionFieldProps<F extends keyof Condition>
-	extends SelectProps<SelectOption<Condition[F]>, false, SelectGroup<Condition[F]>> {
+export interface ConditionFieldProps<F extends keyof Condition> extends SnippetInputProps,
+	SelectProps<SelectOption<Condition[F]>, false, SelectGroup<Condition[F]>> {
 	field: F
-	group: keyof ConditionGroups
-	condition: Condition
+	groupId: string
 	conditionId: string
-	setSnippet: Dispatch<SetStateAction<Snippet>>
 }
 
 export const ConditionField = <F extends keyof Condition>(
-	{ field, conditionId, group, condition, options, setSnippet, ...selectProps }: ConditionFieldProps<F>
+	{ field, conditionId, groupId, options, snippet, setSnippet, ...selectProps }: ConditionFieldProps<F>
 ): ReactElement => {
-	const value = useMemo<SingleValue<SelectOption<Condition[F]>> | undefined>(
-		() => options ? findOption(options, condition[field]) : undefined,
-		[condition, field, options]
-	)
+	const value = useMemo<SingleValue<SelectOption<Condition[F]>> | undefined>(() => {
+		const condition = snippet.conditions?.[groupId][conditionId]
+
+		return options && condition ?
+			findOption(options, condition[field]) :
+			undefined
+	}, [conditionId, field, groupId, options, snippet.conditions])
 
 	return (
 		<Select
@@ -44,7 +45,10 @@ export const ConditionField = <F extends keyof Condition>(
 					...previous,
 					conditions: {
 						...previous.conditions,
-						[group]: { ...previous.conditions?.[group], [conditionId]: { ...condition, [field]: option?.value ?? '' } }
+						[groupId]: {
+							...previous.conditions?.[groupId],
+							[conditionId]: { ...previous.conditions?.[groupId][conditionId], [field]: option?.value ?? '' }
+						}
 					}
 				}))
 			}}

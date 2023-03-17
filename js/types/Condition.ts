@@ -1,15 +1,11 @@
 export interface Condition {
-	subject: ConditionSubject
-	operator: ConditionOperator
-	object: string | number
-}
-
-export type ConditionGroups = {
-	AND?: ConditionGroup
-	OR?: ConditionGroup
+	subject?: ConditionSubject
+	operator?: ConditionOperator
+	object?: string | number | boolean
 }
 
 export type ConditionGroup = Record<string, Condition>
+export type ConditionGroups = Record<string, ConditionGroup>
 
 export type ConditionSubject =
 	'post' | 'page' | 'postType' | 'category' | 'tag' |
