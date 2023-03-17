@@ -26,13 +26,13 @@ export interface ConditionFieldProps<F extends keyof Condition> extends SnippetI
 export const ConditionField = <F extends keyof Condition>(
 	{ field, conditionId, groupId, options, snippet, setSnippet, ...selectProps }: ConditionFieldProps<F>
 ): ReactElement => {
-	const value = useMemo<SingleValue<SelectOption<Condition[F]>> | undefined>(() => {
-		const condition = snippet.conditions?.[groupId][conditionId]
+	const condition = snippet.conditions?.[groupId][conditionId]
 
+	const value = useMemo<SingleValue<SelectOption<Condition[F]>> | undefined>(() => {
 		return options && condition ?
 			findOption(options, condition[field]) :
 			undefined
-	}, [conditionId, field, groupId, options, snippet.conditions])
+	}, [condition, field, options])
 
 	return (
 		<Select

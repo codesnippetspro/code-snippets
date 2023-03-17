@@ -1,18 +1,17 @@
 import { __ } from '@wordpress/i18n'
 import React from 'react'
 import { SnippetInputProps } from '../../types/SnippetInputProps'
-import { AddConditionButton, AddGroupButton } from './AddButton'
+import { AddGroupButton } from './AddButton'
 import { ConditionRow } from './ConditionRow'
 
 interface ConditionGroupProps extends SnippetInputProps {
 	groupId: string
-
 }
 
 const ConditionGroup: React.FC<ConditionGroupProps> = ({ groupId, snippet, setSnippet, isReadOnly }) =>
 	<>
 		<fieldset key={groupId} className="snippet-condition-group">
-			{snippet.conditions && Object.keys(snippet.conditions[groupId]).map(conditionId =>
+			{snippet.conditions && Object.keys(snippet.conditions[groupId]).map((conditionId, index, keys) =>
 				<ConditionRow
 					key={conditionId}
 					groupId={groupId}
@@ -20,10 +19,9 @@ const ConditionGroup: React.FC<ConditionGroupProps> = ({ groupId, snippet, setSn
 					isReadOnly={isReadOnly}
 					setSnippet={setSnippet}
 					snippet={snippet}
+					isLastItem={index === keys.length - 1}
 				/>
 			)}
-
-			<AddConditionButton groupId={groupId} setSnippet={setSnippet} />
 		</fieldset>
 		<div className="condition-group-sep">{__('OR', 'code-snippets')}</div>
 	</>

@@ -1,7 +1,9 @@
+import { __ } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
 import { ConditionSubject } from '../../types/Condition'
 import { Snippet } from '../../types/Snippet'
 import { SnippetInputProps } from '../../types/SnippetInputProps'
+import { AddConditionButton } from './AddButton'
 import { ConditionField } from './ConditionField'
 import { ObjectOptions, OPERATOR_OPTIONS, SUBJECT_OPTION_PROMISES, SUBJECT_OPTIONS } from './options'
 import { RemoveButton } from './RemoveButton'
@@ -20,9 +22,10 @@ const updateSubject = (snippet: Snippet, groupId: string, conditionId: string, v
 export interface ConditionRowProps extends SnippetInputProps {
 	groupId: string
 	conditionId: string
+	isLastItem?: boolean
 }
 
-export const ConditionRow: React.FC<ConditionRowProps> = ({ ...fieldProps }) => {
+export const ConditionRow: React.FC<ConditionRowProps> = ({ isLastItem, ...fieldProps }) => {
 	const [loadedSubject, setLoadedSubject] = useState<ConditionSubject>()
 	const [objectOptions, setObjectOptions] = useState<ObjectOptions | undefined>(undefined)
 
@@ -65,6 +68,10 @@ export const ConditionRow: React.FC<ConditionRowProps> = ({ ...fieldProps }) => 
 				options={objectOptions}
 				isLoading={!!condition?.subject && loadedSubject !== condition.subject}
 			/>
+
+			{isLastItem ?
+				<AddConditionButton groupId={groupId} setSnippet={setSnippet} /> :
+				<span className="condition-row-sep">{__('AND', 'code-snippets')}</span>}
 
 			<RemoveButton groupId={groupId} conditionId={conditionId} setSnippet={setSnippet} />
 		</div>

@@ -17,6 +17,7 @@
 		flex-flow: row;
 		align-items: center;
 		justify-content: center;
+		margin: 0 auto;
 
 		.dashicons + span {
 			margin-left: 2px;
@@ -28,6 +29,7 @@
 		border: none;
 		background: none;
 		padding: 0;
+		line-height: 1;
 
 		&:hover {
 			color: #b32d2e
@@ -42,7 +44,7 @@
 		margin: 1em 0;
 	}
 
-	.condition-group-sep {
+	.condition-group-sep, .condition-row-sep {
 		text-align: center;
 		font-style: italic;
 	}
@@ -70,8 +72,9 @@
 
 .snippet-condition-row {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr auto;
+	grid-template-columns: 1fr 1fr 1fr 8ch auto;
 	grid-gap: 1em;
+	align-items: center;
 }
 
 .snippet-condition-field-select {
