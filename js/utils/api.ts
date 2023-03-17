@@ -6,6 +6,15 @@ import { isNetworkAdmin } from './general'
 
 const CONFIG = window.CODE_SNIPPETS_EDIT?.restAPI
 
+const trimLeadingSlash = (path: string) =>
+	'/' === path.charAt(0) ? path.substring(1) : path
+
+const trimTrailingSlash = (path: string) =>
+	'/' === path.charAt(path.length - 1) ? path.substring(0, path.length - 1) : path
+
+export const apiGet = <T>(endpoint: string): Promise<AxiosResponse<T>> =>
+	axios.get<T>(`${trimTrailingSlash(CONFIG?.base ?? '')}/${trimLeadingSlash(endpoint)}`)
+
 export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<AxiosResponse<Snippet[]>>
 	fetch: (snippetId: number, network?: boolean | null) => Promise<AxiosResponse<Snippet>>
@@ -25,18 +34,18 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 		}), [])
 
 	const buildURL = ({ id, network }: Snippet, action?: string) =>
-		addQueryArgs([CONFIG?.base, id, action].filter(Boolean).join('/'), { network })
+		addQueryArgs([CONFIG?.snippets, id, action].filter(Boolean).join('/'), { network })
 
 	return useMemo((): SnippetsAPI => ({
 		fetchAll: network =>
-			axiosInstance.get<Snippet[]>(addQueryArgs(CONFIG?.base, { network })),
+			axiosInstance.get<Snippet[]>(addQueryArgs(CONFIG?.snippets, { network })),
 
 		fetch: (snippetId, network) =>
-			axiosInstance.get<Snippet>(addQueryArgs(`${CONFIG?.base}/${snippetId}`, { network })),
+			axiosInstance.get<Snippet>(addQueryArgs(`${CONFIG?.snippets}/${snippetId}`, { network })),
 
 		create: snippet => {
-			console.info(`Sending request to ${CONFIG?.base}`, snippet)
-			return axiosInstance.post<Snippet>(`${CONFIG?.base}`, snippet)
+			console.info(`Sending request to ${CONFIG?.snippets}`, snippet)
+			return axiosInstance.post<Snippet>(`${CONFIG?.snippets}`, snippet)
 				.then(response => {
 					console.info('Received response', response)
 					return response

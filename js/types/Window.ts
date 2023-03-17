@@ -20,6 +20,7 @@ declare global {
 			restAPI: {
 				base: string
 				nonce: string
+				snippets: string
 			}
 			isPreview: boolean
 			isLicensed: boolean

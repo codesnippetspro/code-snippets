@@ -95,7 +95,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_field( $value, $field ) {
+	protected function prepare_field( $value, string $field ) {
 		switch ( $field ) {
 			case 'id':
 			case 'priority':
@@ -110,6 +110,37 @@ class Snippet extends Data_Item {
 			default:
 				return parent::prepare_field( $value, $field );
 		}
+	}
+
+	/**
+	 * Prepare the value of the conditions field when reading.
+	 *
+	 * @param string|mixed $value Conditions encoded as JSON
+	 *
+	 * @return mixed
+	 */
+	protected function prepare_conditions( $value ) {
+		if ( 'cond' === $this->type ) {
+			$this->code = is_string( $value ) ? $value : wp_json_encode( $value );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Retrieve list of current data fields.
+	 *
+	 * @return array<string, mixed> Field names keyed to current values.
+	 */
+	public function get_fields(): array {
+		$fields = parent::get_fields();
+
+		if ( 'condition' === $this->scope ) {
+			$fields['conditions'] = json_decode( $fields['code'] );
+			$fields['code'] = '';
+		}
+
+		return $fields;
 	}
 
 	/**

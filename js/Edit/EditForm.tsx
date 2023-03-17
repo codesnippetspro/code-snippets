@@ -20,17 +20,18 @@ import { SnippetEditorToolbar } from './SnippetEditor/SnippetEditorToolbar'
 
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 
-const getFormClassName = (snippet: Snippet, isReadOnly: boolean): string => classnames(
-	'snippet-form',
-	`${snippet.scope}-snippet`,
-	`${getSnippetType(snippet)}-snippet`,
-	`${snippet.id ? 'saved' : 'new'}-snippet`,
-	`${snippet.active ? 'active' : 'inactive'}-snippet`,
-	{
-		'erroneous-snippet': !!snippet.code_error,
-		'read-only-snippet': isReadOnly
-	}
-)
+const getFormClassName = ({ active, code_error, id, scope }: Snippet, isReadOnly: boolean): string =>
+	classnames(
+		'snippet-form',
+		`${scope}-snippet`,
+		`${getSnippetType(scope)}-snippet`,
+		`${id ? 'saved' : 'new'}-snippet`,
+		`${active ? 'active' : 'inactive'}-snippet`,
+		{
+			'erroneous-snippet': !!code_error,
+			'read-only-snippet': isReadOnly
+		}
+	)
 
 export const EditForm: React.FC = () => {
 	const [snippet, setSnippet] = useState<Snippet>(() => OPTIONS?.snippet ?? createEmptySnippet())

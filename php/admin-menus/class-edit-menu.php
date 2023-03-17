@@ -182,8 +182,9 @@ class Edit_Menu extends Admin_Menu {
 			[
 				'snippet'           => $this->snippet->get_fields(),
 				'restAPI'           => [
-					'base'  => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
-					'nonce' => wp_create_nonce( 'wp_rest' ),
+					'base'     => esc_url_raw( rest_url() ),
+					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
+					'nonce'    => wp_create_nonce( 'wp_rest' ),
 				],
 				'isLicensed'        => false,
 				'pageTitleActions'  => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'manage', 'import', 'settings' ] ) : [],
