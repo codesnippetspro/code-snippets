@@ -26,7 +26,7 @@
         ]
     },
     "require": {
-        "composer/installers": "~1.0",
+        "composer/installers": "~1.12",
         "php": ">=7.0",
         "ext-dom": "*",
         "ext-json": "*"
