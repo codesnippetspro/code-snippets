@@ -113,14 +113,9 @@ abstract class Data_Item {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
-				$message = sprintf(
-					'Trying to access invalid property on "%s" class: %s',
-					get_class( $this ),
-					esc_html( $field )
-				);
-
+				$message = sprintf( 'Trying to access invalid property on "%s" class: %s', get_class( $this ), $field );
 				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( $message, E_USER_WARNING );
+				trigger_error( esc_html( $message ), E_USER_WARNING );
 			}
 
 			return null;
@@ -140,14 +135,9 @@ abstract class Data_Item {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
-				$message = sprintf(
-					'Trying to set invalid property on "%s" class: %s',
-					get_class( $this ),
-					esc_html( $field )
-				);
-
+				$message = sprintf( 'Trying to set invalid property on "%s" class: %s', get_class( $this ), $field );
 				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( $message, E_USER_ERROR );
+				trigger_error( esc_html( $message ), E_USER_ERROR );
 			}
 
 			return;

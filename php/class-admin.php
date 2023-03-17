@@ -336,13 +336,14 @@ class Admin {
 			);
 		}
 
-		$badge = '';
+		echo esc_html( $label );
+
 		if ( 'cond' === $type_name ) {
-			$badge = ' <span class="dashicons dashicons-randomize"></span>';
+			echo ' <span class="dashicons dashicons-randomize"></span>';
 		} elseif ( 'all' !== $type_name ) {
-			$badge = ' <span class="badge">' . esc_html( $type_name ) . '</span>';
+			echo ' <span class="badge">' . esc_html( $type_name ) . '</span>';
 		}
 
-		echo esc_html( $label ), $badge, '</a>';
+		echo '</a>';
 	}
 }

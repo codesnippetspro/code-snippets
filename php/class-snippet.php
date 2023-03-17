@@ -115,7 +115,7 @@ class Snippet extends Data_Item {
 	/**
 	 * Prepare the value of the conditions field when reading.
 	 *
-	 * @param string|mixed $value Conditions encoded as JSON
+	 * @param string|mixed $value Conditions encoded as JSON.
 	 *
 	 * @return mixed
 	 */

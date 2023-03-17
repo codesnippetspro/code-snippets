@@ -111,8 +111,8 @@ class Plugin {
 	 * Register custom REST API controllers.
 	 *
 	 * @return void
-	 * @since [NEXT_VERSION]
 	 *
+	 * @since [NEXT_VERSION]
 	 */
 	public function register_rest_api_controllers() {
 		$controllers = [ new Snippets_REST_Controller() ];
