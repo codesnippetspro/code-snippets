@@ -1,10 +1,11 @@
-const length = 140;
+const length = 140
 
 module.exports = {
 	parser: '@typescript-eslint/parser',
 	plugins: [
 		'@typescript-eslint',
-		'import'
+		'import',
+		'react'
 	],
 	parserOptions: {
 		ecmaVersion: 9,
@@ -13,19 +14,21 @@ module.exports = {
 		project: ['./tsconfig.json']
 	},
 	env: {
-		browser: true,
+		es6: true,
 		node: true,
-		es6: true
+		browser: true
 	},
 	extends: [
 		'eslint:recommended',
 		'plugin:@typescript-eslint/recommended',
 		'plugin:import/recommended',
 		'plugin:import/typescript',
+		'plugin:react/recommended',
 		'plugin:react-hooks/recommended'
 	],
 	settings: {
-		'import/core-modules': ['tinymce', 'jquery', 'react']
+		'import/core-modules': ['tinymce'],
+		'react': { version: '17.0.2' }
 	},
 	rules: {
 		'@typescript-eslint/prefer-ts-expect-error': 'error',
@@ -34,15 +37,15 @@ module.exports = {
 			varsIgnorePattern: '^_',
 			argsIgnorePattern: '^_'
 		}],
-		'quotes': ['error', 'single', {avoidEscape: true}],
+		'quotes': ['error', 'single', { avoidEscape: true }],
 		'linebreak-style': ['error', 'unix'],
 		'eqeqeq': ['error', 'always'],
-		'indent': ['error', 'tab', {SwitchCase: 1}],
+		'indent': ['error', 'tab', { SwitchCase: 1 }],
 		'max-len': ['warn', length],
 		'array-bracket-newline': ['error', 'consistent'],
 		'function-call-argument-newline': ['error', 'consistent'],
 		'comma-dangle': ['error', 'only-multiline'],
-		'no-tabs': ['error', {allowIndentationTabs: true}],
+		'no-tabs': ['error', { allowIndentationTabs: true }],
 		'one-var': ['error', 'never'],
 		'arrow-parens': ['error', 'as-needed'],
 		'quote-props': ['error', 'consistent-as-needed'],
@@ -50,10 +53,10 @@ module.exports = {
 		'dot-notation': 'error',
 		'operator-linebreak': ['error', 'after'],
 		'no-extra-parens': ['warn', 'all'],
-		'object-property-newline': ['error', {allowAllPropertiesOnSameLine: true}],
+		'object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
 		'prefer-template': 'error',
-		'no-magic-numbers': ['error', {ignore: [-1, 0, 1]}],
-		'no-plusplus': ['error', {allowForLoopAfterthoughts: true}],
+		'no-magic-numbers': ['error', { ignore: [-1, 0, 1] }],
+		'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
 		'dot-location': ['error', 'property'],
 		'capitalized-comments': ['warn', 'always', {
 			ignorePattern: 'translators:',
@@ -61,7 +64,7 @@ module.exports = {
 			ignoreConsecutiveComments: true
 		}],
 		'no-invalid-this': 'error',
-		'max-lines-per-function': ['warn', {skipBlankLines: true, skipComments: true}],
+		'max-lines-per-function': ['warn', { skipBlankLines: true, skipComments: true }],
 		'prefer-named-capture-group': 'error',
 		'func-style': ['error', 'expression'],
 		'no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
@@ -83,5 +86,5 @@ module.exports = {
 		'require-unicode-regexp': 'off',
 		'array-element-newline': 'off',
 		'space-before-function-paren': 'off'
-	},
-};
+	}
+}

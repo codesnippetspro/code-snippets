@@ -8,40 +8,41 @@ export const EDITOR_ID = 'snippet_description'
 const DEFAULT_ROWS = 5
 
 const TOOLBAR_BUTTONS = [
-	'bold',
-	'italic',
-	'underline',
-	'strikethrough',
-	'blockquote',
-	'bullist',
-	'numlist',
-	'alignleft',
-	'aligncenter',
-	'alignright',
-	'link',
-	'wp_adv',
-	'code_snippets'
-].join(' ')
-
-const TOOLBAR_BUTTONS_2 = [
-	'formatselect',
-	'forecolor',
-	'pastetext',
-	'removeformat',
-	'charmap',
-	'outdent',
-	'indent',
-	'undo',
-	'redo',
-	'spellchecker'
-].join(' ')
+	[
+		'bold',
+		'italic',
+		'underline',
+		'strikethrough',
+		'blockquote',
+		'bullist',
+		'numlist',
+		'alignleft',
+		'aligncenter',
+		'alignright',
+		'link',
+		'wp_adv',
+		'code_snippets'
+	],
+	[
+		'formatselect',
+		'forecolor',
+		'pastetext',
+		'removeformat',
+		'charmap',
+		'outdent',
+		'indent',
+		'undo',
+		'redo',
+		'spellchecker'
+	]
+]
 
 const initializeEditor = (onChange: (content: string) => void) => {
 	window.wp.editor?.initialize(EDITOR_ID, {
 		mediaButtons: window.CODE_SNIPPETS_EDIT?.descEditorOptions.mediaButtons,
 		quicktags: true,
 		tinymce: {
-			toolbar: [TOOLBAR_BUTTONS, TOOLBAR_BUTTONS_2],
+			toolbar: TOOLBAR_BUTTONS.map(line => line.join(' ')),
 			setup: editor => {
 				editor.on('change', () => onChange(editor.getContent()))
 			}
@@ -49,7 +50,7 @@ const initializeEditor = (onChange: (content: string) => void) => {
 	})
 }
 
-export const DescriptionEditor: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) => {
+export const DescriptionEditor: React.FC<SnippetInputProps> = ({ snippet, setSnippet, isReadOnly }) => {
 	const onChange = useCallback(
 		(desc: string) => setSnippet(previous => ({ ...previous, desc })),
 		[setSnippet]
@@ -72,6 +73,7 @@ export const DescriptionEditor: React.FC<SnippetInputProps> = ({ snippet, setSni
 				className="wp-editor-area"
 				onChange={event => onChange(event.target.value)}
 				autoComplete="off"
+				disabled={isReadOnly}
 				rows={window.CODE_SNIPPETS_EDIT?.descEditorOptions.rows ?? DEFAULT_ROWS}
 				cols={40}
 			>{snippet.desc}</textarea>

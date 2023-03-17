@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
 import { SnippetInputProps } from '../../types/SnippetInputProps'
-import { Snippet, SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetScope } from '../../types/Snippet'
+import { SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetScope } from '../../types/Snippet'
 import { isNetworkAdmin } from '../../utils/general'
 import { getSnippetType } from '../../utils/snippets'
 import { CopyToClipboardButton } from '../../common/CopyToClipboardButton'
@@ -44,7 +44,7 @@ interface ShortcodeOptions {
 	shortcodes: boolean
 }
 
-const ShortcodeInfo: React.FC<{ snippet: Snippet }> = ({ snippet }) => {
+const ShortcodeInfo: React.FC<SnippetInputProps> = ({ snippet, isReadOnly }) => {
 	const [options, setOptions] = useState<ShortcodeOptions>(() => ({
 		php: snippet.code.includes('<?'),
 		format: true,
@@ -85,9 +85,14 @@ const ShortcodeInfo: React.FC<{ snippet: Snippet }> = ({ snippet }) => {
 					<strong>{__('Shortcode Options: ', 'code-snippets')}</strong>
 					{optionLabels.map(([option, label]) =>
 						<label key={option}>
-							<input type="checkbox" value={option} checked={options[option]} onChange={event =>
-								setOptions(previous => ({ ...previous, [option]: event.target.checked }))
-							} />
+							<input
+								type="checkbox"
+								value={option}
+								checked={options[option]}
+								disabled={isReadOnly}
+								onChange={event =>
+									setOptions(previous => ({ ...previous, [option]: event.target.checked }))}
+							/>
 							{` ${label}`}
 						</label>
 					)}
@@ -96,7 +101,7 @@ const ShortcodeInfo: React.FC<{ snippet: Snippet }> = ({ snippet }) => {
 		null
 }
 
-export const ScopeInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet }) =>
+export const ScopeInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, isReadOnly }) =>
 	<>
 		<h2 className="screen-reader-text">{__('Scope', 'code-snippets')}</h2>
 
@@ -112,13 +117,14 @@ export const ScopeInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet })
 								value={scope}
 								checked={scope === snippet.scope}
 								onChange={event => event.target.checked && setSnippet(previous => ({ ...previous, scope }))}
+								disabled={isReadOnly}
 							/>
 							{' '}
 							<span className={`dashicons dashicons-${SCOPE_ICONS[scope]}`}></span>
 							{` ${SCOPE_DESCRIPTIONS[scope]}`}
 						</label>)}
 
-					{'html' === type ? <ShortcodeInfo snippet={snippet} /> : null}
+					{'html' === type ? <ShortcodeInfo {...{ snippet, setSnippet, isReadOnly }} /> : null}
 				</p>
 			)}
 	</>

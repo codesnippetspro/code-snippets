@@ -580,8 +580,8 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 
 	try {
 		$result = eval( $code );
-	} catch ( ParseError $parseError ) {
-		$result = $parseError;
+	} catch ( ParseError $parse_error ) {
+		$result = $parse_error;
 	}
 
 	ob_end_clean();

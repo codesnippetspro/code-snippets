@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import axios, { AxiosResponse } from 'axios'
 import { addQueryArgs } from '@wordpress/url'
-import { Snippet } from '../types/Snippet'
-import { isNetworkAdmin } from './general'
+import { Snippet } from '../../types/Snippet'
+import { isNetworkAdmin } from '../general'
 
-const CONFIG = window.CODE_SNIPPETS_EDIT?.restAPI
+const ROUTE_BASE = window.CODE_SNIPPETS_EDIT?.restAPI.snippets
 
-export interface SnippetsAPI {
+export interface Snippets {
 	fetchAll: (network?: boolean | null) => Promise<AxiosResponse<Snippet[]>>
 	fetch: (snippetId: number, network?: boolean | null) => Promise<AxiosResponse<Snippet>>
 	create: (snippet: Snippet) => Promise<AxiosResponse<Snippet>>
@@ -18,25 +18,25 @@ export interface SnippetsAPI {
 	exportCode: (snippet: Snippet) => Promise<AxiosResponse<string>>
 }
 
-export const useSnippetsAPI = (): SnippetsAPI => {
+export const useSnippetsAPI = (): Snippets => {
 	const axiosInstance = useMemo(() =>
 		axios.create({
-			headers: { 'X-WP-Nonce': CONFIG?.nonce }
+			headers: { 'X-WP-Nonce': window.CODE_SNIPPETS_EDIT?.restAPI.nonce }
 		}), [])
 
 	const buildURL = ({ id, network }: Snippet, action?: string) =>
-		addQueryArgs([CONFIG?.base, id, action].filter(Boolean).join('/'), { network })
+		addQueryArgs([ROUTE_BASE, id, action].filter(Boolean).join('/'), { network })
 
-	return useMemo((): SnippetsAPI => ({
+	return useMemo((): Snippets => ({
 		fetchAll: network =>
-			axiosInstance.get<Snippet[]>(addQueryArgs(CONFIG?.base, { network })),
+			axiosInstance.get<Snippet[]>(addQueryArgs(ROUTE_BASE, { network })),
 
 		fetch: (snippetId, network) =>
-			axiosInstance.get<Snippet>(addQueryArgs(`${CONFIG?.base}/${snippetId}`, { network })),
+			axiosInstance.get<Snippet>(addQueryArgs(`${ROUTE_BASE}/${snippetId}`, { network })),
 
 		create: snippet => {
-			console.info(`Sending request to ${CONFIG?.base}`, snippet)
-			return axiosInstance.post<Snippet>(`${CONFIG?.base}`, snippet)
+			console.info(`Sending request to ${ROUTE_BASE}`, snippet)
+			return axiosInstance.post<Snippet>(`${ROUTE_BASE}`, snippet)
 				.then(response => {
 					console.info('Received response', response)
 					return response

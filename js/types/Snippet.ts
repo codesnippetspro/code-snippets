@@ -1,11 +1,11 @@
-import { Conditions } from '../Edit/ConditionEditor/types'
+import { ConditionGroups } from './Condition'
 
 export interface Snippet {
 	id: number
 	name: string
 	desc: string
 	code: string
-	conditions?: Conditions
+	conditions?: ConditionGroups
 	tags: string[]
 	scope: SnippetScope
 	priority: number

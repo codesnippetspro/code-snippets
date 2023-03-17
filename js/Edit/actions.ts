@@ -2,10 +2,9 @@ import { __ } from '@wordpress/i18n'
 import { AxiosError, AxiosResponse } from 'axios'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { Notices } from '../types/Notice'
-import { Snippet, SnippetType } from '../types/Snippet'
-import { useSnippetsAPI } from '../utils/api'
-import { downloadAsFile, downloadSnippetExportFile } from '../utils/general'
-import { getSnippetType } from '../utils/snippets'
+import { Snippet } from '../types/Snippet'
+import { useSnippetsAPI } from '../utils/api/snippets'
+import { downloadSnippetExportFile } from '../utils/general'
 
 export interface SnippetActionsProps {
 	setSnippet: Dispatch<SetStateAction<Snippet>>

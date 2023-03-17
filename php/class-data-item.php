@@ -30,7 +30,7 @@ abstract class Data_Item {
 	 * @param array<string, mixed>|Data_Item $initial_data   Optional initial data to populate fields.
 	 * @param array<string, string>          $field_aliases  Optional list of field name aliases to map when resolving a field name.
 	 */
-	public function __construct( $default_values, $initial_data = null, $field_aliases = [] ) {
+	public function __construct( array $default_values, $initial_data = null, array $field_aliases = [] ) {
 		$this->fields = $default_values;
 		$this->field_aliases = $field_aliases;
 
@@ -46,7 +46,7 @@ abstract class Data_Item {
 	/**
 	 * Set all data fields from an array or object. Invalid fields will be ignored.
 	 *
-	 * @param array<string, mixed>|object $data List of data.
+	 * @param array<string, mixed>|mixed $data List of data.
 	 */
 	public function set_fields( $data ) {
 		// Only accept arrays or objects.
@@ -70,7 +70,7 @@ abstract class Data_Item {
 	 *
 	 * @return array<string, mixed> Field names keyed to current values.
 	 */
-	public function get_fields() {
+	public function get_fields(): array {
 		return $this->fields;
 	}
 
@@ -81,8 +81,8 @@ abstract class Data_Item {
 	 *
 	 * @return string The resolved field name.
 	 */
-	protected function resolve_field_name( $field ) {
-		return isset( $this->field_aliases[ $field ] ) ? $this->field_aliases[ $field ] : $field;
+	protected function resolve_field_name( string $field ): string {
+		return $this->field_aliases[ $field ] ?? $field;
 	}
 
 	/**
@@ -92,7 +92,7 @@ abstract class Data_Item {
 	 *
 	 * @return bool Whether the field is set.
 	 */
-	public function __isset( $field ) {
+	public function __isset( string $field ) {
 		$field = $this->resolve_field_name( $field );
 		return isset( $this->fields[ $field ] ) || method_exists( $this, 'get_' . $field );
 	}
@@ -104,7 +104,7 @@ abstract class Data_Item {
 	 *
 	 * @return mixed The field value
 	 */
-	public function __get( $field ) {
+	public function __get( string $field ) {
 		$field = $this->resolve_field_name( $field );
 
 		if ( method_exists( $this, 'get_' . $field ) ) {
@@ -113,14 +113,9 @@ abstract class Data_Item {
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
-				$message = sprintf(
-					'Trying to access invalid property on "%s" class: %s',
-					get_class( $this ),
-					esc_html( $field )
-				);
-
+				$message = sprintf( 'Trying to access invalid property on "%s" class: %s', get_class( $this ), $field );
 				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( $message, E_USER_WARNING );
+				trigger_error( esc_html( $message ), E_USER_WARNING );
 			}
 
 			return null;
@@ -135,19 +130,14 @@ abstract class Data_Item {
 	 * @param string $field The field name.
 	 * @param mixed  $value The field value.
 	 */
-	public function __set( $field, $value ) {
+	public function __set( string $field, $value ) {
 		$field = $this->resolve_field_name( $field );
 
 		if ( ! $this->is_allowed_field( $field ) ) {
 			if ( WP_DEBUG ) {
-				$message = sprintf(
-					'Trying to set invalid property on "%s" class: %s',
-					get_class( $this ),
-					esc_html( $field )
-				);
-
+				$message = sprintf( 'Trying to set invalid property on "%s" class: %s', get_class( $this ), $field );
 				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( $message, E_USER_ERROR );
+				trigger_error( esc_html( $message ), E_USER_ERROR );
 			}
 
 			return;
@@ -168,7 +158,7 @@ abstract class Data_Item {
 	 *
 	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_field( $value, $field ) {
+	protected function prepare_field( $value, string $field ) {
 		return $value;
 	}
 
@@ -177,7 +167,7 @@ abstract class Data_Item {
 	 *
 	 * @return array<string> List of field names.
 	 */
-	public function get_allowed_fields() {
+	public function get_allowed_fields(): array {
 		return array_keys( $this->fields ) + array_keys( $this->field_aliases );
 	}
 
@@ -188,7 +178,7 @@ abstract class Data_Item {
 	 *
 	 * @return bool true if the is allowed, false if invalid.
 	 */
-	public function is_allowed_field( $field ) {
+	public function is_allowed_field( string $field ): bool {
 		return array_key_exists( $field, $this->fields ) || array_key_exists( $field, $this->field_aliases );
 	}
 
@@ -201,7 +191,7 @@ abstract class Data_Item {
 	 *
 	 * @return bool true if the field was set successfully, false if the field name is invalid.
 	 */
-	public function set_field( $field, $value ) {
+	public function set_field( string $field, $value ): bool {
 		if ( ! $this->is_allowed_field( $field ) ) {
 			return false;
 		}

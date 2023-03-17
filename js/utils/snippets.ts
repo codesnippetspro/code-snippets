@@ -1,6 +1,8 @@
 import { Snippet, SnippetScope, SnippetType } from '../types/Snippet'
 import { isNetworkAdmin } from './general'
 
+const PRO_TYPES: SnippetType[] = ['css', 'js']
+
 export const createEmptySnippet = (): Snippet => ({
 	id: 0,
 	name: '',
@@ -37,5 +39,11 @@ export const getSnippetType = (snippet: Snippet | SnippetScope): SnippetType => 
 	return 'php'
 }
 
+export const isProSnippet = (snippet: Snippet | SnippetScope): boolean =>
+	PRO_TYPES.includes(getSnippetType(snippet))
+
 export const isProType = (type: SnippetType): boolean =>
-	'css' === type || 'js' === type
+	PRO_TYPES.includes(type)
+
+export const isLicensed = (): boolean =>
+	!!window.CODE_SNIPPETS_EDIT?.isLicensed

@@ -131,7 +131,7 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({
 						codeEditor={codeEditorInstance.codemirror}
 					/>}
 
-				<ConditionEditor snippet={snippet} setSnippet={setSnippet} />
+				<ConditionEditor snippet={snippet} setSnippet={setSnippet} {...actionsProps} />
 				<CodeEditor
 					snippet={snippet}
 					setSnippet={setSnippet}

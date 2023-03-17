@@ -11,6 +11,7 @@ export const SuggestionList: React.FC<SuggestionListProps> = ({ id, suggestions,
 		<datalist id={id}>
 			{suggestions.map(suggestion =>
 				<option
+					key={suggestion}
 					value={suggestion}
 					onClick={() => onSelect(suggestion)}
 				/>
