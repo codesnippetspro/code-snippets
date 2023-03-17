@@ -8,7 +8,7 @@ import { Pages, PAGES_ENDPOINT } from '../../types/wp/Page'
 import { Post, Posts, POSTS_ENDPOINT } from '../../types/wp/Post'
 import { POST_TYPES_ENDPOINT, PostTypes } from '../../types/wp/PostType'
 import { Users, USERS_ENDPOINT } from '../../types/wp/User'
-import { apiGet } from '../../utils/api'
+import { apiGet } from '../../utils/api/wp'
 
 export const SUBJECT_OPTIONS: OptionsOrGroups<SelectOption<ConditionSubject>, SelectGroup<ConditionSubject>> = [
 	{

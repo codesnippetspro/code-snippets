@@ -3,7 +3,7 @@ import { AxiosError, AxiosResponse } from 'axios'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { Notices } from '../types/Notice'
 import { Snippet } from '../types/Snippet'
-import { useSnippetsAPI } from '../utils/api'
+import { useSnippetsAPI } from '../utils/api/snippets'
 import { downloadSnippetExportFile } from '../utils/general'
 
 export interface SnippetActionsProps {
