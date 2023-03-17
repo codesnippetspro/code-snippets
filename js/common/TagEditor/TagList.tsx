@@ -8,7 +8,7 @@ export interface TagListProps {
 export const TagList: React.FC<TagListProps> = ({ tags, onRemove }) =>
 	<>
 		{tags.map(tag =>
-			<li>
+			<li key={tag}>
 				<span>
 					<span className="label">{tag}</span>
 					<a href=".#" className="close" onClick={event => {

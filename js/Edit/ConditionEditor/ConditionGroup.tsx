@@ -28,6 +28,7 @@ export const ConditionGroup: React.FC<ConditionGroupProps> = ({
 			{conditions ?
 				Object.keys(conditions).map(conditionId =>
 					<ConditionRow
+						key={conditionId}
 						group={group}
 						condition={conditions[conditionId]}
 						conditionId={conditionId}
