@@ -187,6 +187,7 @@ class Edit_Menu extends Admin_Menu {
 					'nonce'    => wp_create_nonce( 'wp_rest' ),
 				],
 				'isLicensed'        => false,
+				'addNewUrl'         => $plugin->get_menu_url( 'add' ),
 				'pageTitleActions'  => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'manage', 'import', 'settings' ] ) : [],
 				'isPreview'         => isset( $_REQUEST['preview'] ),
 				'activateByDefault' => get_setting( 'general', 'activate_by_default' ),

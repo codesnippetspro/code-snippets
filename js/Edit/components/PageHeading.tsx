@@ -21,7 +21,7 @@ export const PageHeading: React.FC<PageHeadingProps> = ({ snippet, setSnippet, c
 				__('Add New Snippet', 'code-snippets')}
 
 		{snippet.id ? <>{' '}
-			<a href=".#" className="page-title-action" onClick={() => {
+			<a href={OPTIONS?.addNewUrl} className="page-title-action" onClick={() => {
 				setSnippet(() => createEmptySnippet())
 				codeEditorInstance?.codemirror.setValue('')
 				window.tinymce?.activeEditor.setContent('')

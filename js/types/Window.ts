@@ -22,6 +22,7 @@ declare global {
 				nonce: string
 				snippets: string
 			}
+			addNewUrl: string
 			isPreview: boolean
 			isLicensed: boolean
 			enableTags: boolean
