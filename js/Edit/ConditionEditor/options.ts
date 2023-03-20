@@ -3,11 +3,11 @@ import { AxiosResponse } from 'axios'
 import { Options, OptionsOrGroups } from 'react-select'
 import { ConditionOperator, ConditionSubject } from '../../types/Condition'
 import { SelectGroup, SelectOption } from '../../types/SelectOption'
-import { CATEGORIES_ENDPOINT, TAGS_ENDPOINT, Terms } from '../../types/wp/Term'
+import { Categories, CATEGORIES_ENDPOINT, PostTags, TAGS_ENDPOINT, Terms } from '../../types/wp/Term'
 import { Pages, PAGES_ENDPOINT } from '../../types/wp/Page'
 import { Post, Posts, POSTS_ENDPOINT } from '../../types/wp/Post'
 import { POST_TYPES_ENDPOINT, PostTypes } from '../../types/wp/PostType'
-import { User, Users, USERS_ENDPOINT } from '../../types/wp/User'
+import { Users, USERS_ENDPOINT } from '../../types/wp/User'
 import { apiGet } from '../../utils/api/wp'
 
 export const SUBJECT_OPTIONS: OptionsOrGroups<SelectOption<ConditionSubject>, SelectGroup<ConditionSubject>> = [
@@ -92,9 +92,9 @@ export const SUBJECT_OPTION_PROMISES: Record<ConditionSubject, () => Promise<Obj
 	postType: () =>
 		getSubjectOptions<PostTypes>('postType', POST_TYPES_ENDPOINT, mapPostTypes),
 	category: () =>
-		getSubjectOptions<Terms>('category', CATEGORIES_ENDPOINT, mapTerms),
+		getSubjectOptions<Categories>('category', CATEGORIES_ENDPOINT, mapTerms),
 	tag: () =>
-		getSubjectOptions<Terms>('tag', TAGS_ENDPOINT, mapTerms),
+		getSubjectOptions<PostTags>('tag', TAGS_ENDPOINT, mapTerms),
 	user: () =>
 		getSubjectOptions<Users>('user', USERS_ENDPOINT, mapUsers),
 	userRole: () =>
