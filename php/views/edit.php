@@ -10,6 +10,8 @@
 
 namespace Code_Snippets;
 
+use wpdb;
+
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
@@ -141,18 +143,19 @@ $licensed = code_snippets()->licensing->is_licensed();
 			//If so check if update available using instance of plugin
 			$cloud_api = code_snippets()->cloud_api;
 			if( $cloud_api->is_update_available( $snippet->id ) ) {
-				$cloud_update = true;
 				$cloud_id_owner =  $cloud_api->get_cloud_id_and_ownership( $snippet->cloud_id );
-				$updated_snippet = $cloud_api->get_single_cloud_snippet( $cloud_id_owner['cloud_id'] );
-				$updated_code = $updated_snippet->code;
-				echo '<input type="hidden" id="updated_snippet_code" name="updated_snippet_code" value="' . $updated_code . '">';		
-		?>
-			<div id="updated-code">
-				<h2><label>Snippet Update from the Cloud*</label></h2>
-				<p>There is an update to this snippet from the cloud. The original snippet is shown on the <b>Left Hand Side</b> and updated code on the <b>Right Hand Side</b> with the differences highlighted.</p> 
-				<p><b>Important:</b> Please review updated code below as updating this snippet will overwrite the code with the below.</p>
-			</div>
-		<?php
+				if( $cloud_id_owner['is_owner'] ) {
+					$cloud_update = true;
+					$updated_snippet = $cloud_api->get_single_cloud_snippet( $cloud_id_owner['cloud_id'] );
+					$updated_code = $updated_snippet->code;
+					echo '<input type="hidden" id="updated_snippet_code" name="updated_snippet_code" value="' . $updated_code . '">					
+						<div id="updated-code">
+							<h2><label>Snippet Update from the Cloud*</label></h2>
+							<p>There is an update to this snippet from the cloud. The original snippet is shown on the <b>Left Hand Side</b> and updated code on the <b>Right Hand Side</b> with the differences highlighted.</p> 
+							<p><b>Important:</b> Please review updated code below as updating this snippet will overwrite the code with the below.</p>
+						</div>';
+				}
+	
 			}
 		}
 		/* Allow plugins to add fields and content to this page */
@@ -165,7 +168,7 @@ $licensed = code_snippets()->licensing->is_licensed();
 
 		<p class="submit">
 			<?php
-			$this->render_submit_buttons( $snippet );
+			$this->render_submit_buttons( $snippet, '', true, $cloud_update );
 			if ( $licensed && ( 'css' === $snippet->type || 'js' === $snippet->type ) ) {
 				$asset_url = add_query_arg(
 					array(

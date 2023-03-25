@@ -444,7 +444,24 @@ class Cloud_List_Table extends WP_List_Table {
 			$item->id
 		);
 
-		return apply_filters( 'code_snippets/list_table/column_cb', $out, $item );
+		return apply_filters( 'code_snippets/cloud_list_table/column_cb', $out, $item );
+	}
+
+	/**
+	 * Handles the hidden code column
+	 *
+	 * @param Cloud_Snippet $item The snippet being used for the current row.
+	 *
+	 * @return string The column content to be printed.
+	 */
+	protected function column_code( $item ) {
+		$out = sprintf(
+			'<input id="cloud-snippet-code-%s" class="cloud-snippet-item hidden" type="hidden" name="code" value="%s" />',
+			esc_attr( $item->id ),
+			esc_attr( $item->code )
+		);
+
+		return apply_filters( 'code_snippets/cloud_list_table/column_code', $out, $item );
 	}
 
 	/**

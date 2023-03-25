@@ -869,17 +869,26 @@ class Edit_Menu extends Admin_Menu {
 	 * @param Snippet $snippet       The snippet currently being edited.
 	 * @param string  $size          Additional size classes to pass to button.
 	 * @param bool    $extra_actions Whether to include additional buttons alongside save buttons.
+	 * @param bool    $cloud_update Whether there is a cloud update available.
 	 *
 	 * @return void
 	 */
-	public function render_submit_buttons( $snippet, $size = '', $extra_actions = true ) {
+	public function render_submit_buttons( $snippet, $size = '', $extra_actions = true, $cloud_update ) {
 
+		
 		$actions = $this->get_actions_list( $snippet, $extra_actions );
 		$type = 'primary';
 		$size = $size ? ' ' . $size : '';
 
 		foreach ( $actions as $action => $label ) {
 			$other = null;
+
+			if( !$cloud_update ){
+				//remove cloud update button
+				if( $action == 'cloud_update' ){
+					continue;
+				}
+			}
 
 			if ( 'delete_snippet' === $action ) {
 				$other = sprintf(

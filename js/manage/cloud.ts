@@ -29,10 +29,17 @@ export const handleShowCloudPreview = () => {
 			snippetNameModalTag.textContent = snippetName
 			snippetCodeModalTag.classList.remove(...snippetCodeModalTag.classList)
 			snippetCodeModalTag.classList.add(`language-${snippetLanguage}`)
-			snippetCodeModalTag.innerHTML = snippetCode
+			snippetCodeModalTag.textContent = snippetCode
 
 			if ('markup' === snippetLanguage) {
 				snippetCodeModalTag.innerHTML = `<xmp>${snippetCode}</xmp>`
+			}
+
+			if ('php' === snippetLanguage) {
+				//Check if there is an opening php tag if not add it
+				if (!snippetCode.startsWith('<?php')) {
+					snippetCodeModalTag.textContent = `<?php ${snippetCode}`
+				}
 			}
 
 			Prism.highlightElement(snippetCodeModalTag)

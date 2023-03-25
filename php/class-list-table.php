@@ -260,18 +260,17 @@ class List_Table extends WP_List_Table {
 				$cloud_link = $this->get_cloud_link( $snippet->id );
 				//Check this snippet is linked or orignated from the cloud
 				if ( $cloud_link ) {
-					//Check if an update is available -- add a link to the update
-					if ( $cloud_link->update_available ) {
-						$actions['cloud_update'] = sprintf(
-							'<a href="%s#updated-code">%s</a>',
-							esc_url( $this->get_action_link( 'edit', $snippet ) ),
-							esc_html__( 'Cloud Update', 'code-snippets' )
-						);
-
-					}
 					//Check if the snippet is in the users codevault 
 					if ( $cloud_link->in_codevault) {
 						$actions['cloud'] = sprintf( '<a>%s</a>', 'Synced' );
+						//Check if an update is available only in users codevault
+						if ( $cloud_link->update_available ) {
+							$actions['cloud_update'] = sprintf(
+								'<a href="%s#updated-code">%s</a>',
+								esc_url( $this->get_action_link( 'edit', $snippet ) ),
+								esc_html__( 'Cloud Update', 'code-snippets' )
+							);
+						}
 					}	
 				}
 			}else{
