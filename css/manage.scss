@@ -9,10 +9,10 @@ $inactive-color: #ccc;
 
 .wp-core-ui .button.nav-tab-button {
 	margin-left: 0.5em;
-	color: #50575e;
-	float: left;
-	border: 1px solid #c3c4c7;
-	background: #dcdcde;
+	float: right;
+	color: #a7aaad;
+	background: #f6f7f7;
+	border-color: #f6f7f7;
 
 	&:hover {
 		background-color: #fff;

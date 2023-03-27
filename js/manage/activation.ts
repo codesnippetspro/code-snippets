@@ -1,4 +1,5 @@
-import { Snippet } from '../types/snippet'
+import { __ } from '@wordpress/i18n'
+import { Snippet } from '../types/Snippet'
 import { updateSnippet } from './requests'
 
 /**
@@ -22,8 +23,6 @@ const updateViewCount = (element: HTMLElement, increment: boolean) => {
  * @param event
  */
 export const toggleSnippetActive = (link: HTMLAnchorElement, event: Event) => {
-	const strings = window.code_snippets_manage_i18n
-
 	const row = link?.parentElement?.parentElement // Switch < cell < row
 	if (!row) {
 		console.error('Could not toggle snippet active status.', row)
@@ -53,10 +52,10 @@ export const toggleSnippetActive = (link: HTMLAnchorElement, event: Event) => {
 			activeCount ? updateViewCount(activeCount, activating) : null
 			inactiveCount ? updateViewCount(inactiveCount, activating) : null
 
-			button.title = activating ? strings.deactivate : strings.activate
+			button.title = activating ? __('Deactivate', 'code-snippets') : __('Activate', 'code-snippets')
 		} else {
 			row.className += ' erroneous-snippet'
-			button.title = strings.activation_error
+			button.title = __('An error occurred when attempting to activate', 'code-snippets')
 		}
 	})
 }

@@ -128,26 +128,16 @@ class Manage_Menu extends Admin_Menu {
 		wp_enqueue_style(
 			'code-snippets-manage',
 			plugins_url( "dist/manage$rtl.css", $plugin->file ),
-			array(),
+			[],
 			$plugin->version
 		);
 
 		wp_enqueue_script(
 			'code-snippets-manage-js',
 			plugins_url( 'dist/manage.js', $plugin->file ),
-			array(),
+			[ 'wp-i18n' ],
 			$plugin->version,
 			true
-		);
-
-		wp_localize_script(
-			'code-snippets-manage-js',
-			'code_snippets_manage_i18n',
-			array(
-				'activate'         => __( 'Activate', 'code-snippets' ),
-				'deactivate'       => __( 'Deactivate', 'code-snippets' ),
-				'activation_error' => __( 'An error occurred when attempting to activate', 'code-snippets' ),
-			)
 		);
 	}
 

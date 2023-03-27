@@ -49,7 +49,7 @@ abstract class Admin_Menu {
 	 * @param string $label The label shown in the admin menu.
 	 * @param string $title The text used for the page title.
 	 */
-	public function __construct( $name, $label, $title ) {
+	public function __construct( string $name, string $label, string $title ) {
 		$this->name = $name;
 		$this->label = $label;
 		$this->title = $title;
@@ -102,7 +102,7 @@ abstract class Admin_Menu {
 	 *
 	 * @param string $name Name of view template to render.
 	 */
-	protected function render_view( $name ) {
+	protected function render_view( string $name ) {
 		include dirname( PLUGIN_FILE ) . '/php/views/' . $name . '.php';
 	}
 
@@ -116,7 +116,9 @@ abstract class Admin_Menu {
 	/**
 	 * Print the status and error messages
 	 */
-	abstract protected function print_messages();
+	protected function print_messages() {
+		// None required by default.
+	}
 
 	/**
 	 * Retrieve a result message based on a posted status
@@ -127,7 +129,7 @@ abstract class Admin_Menu {
 	 *
 	 * @return bool Whether a result message was printed.
 	 */
-	protected function print_result_message( $messages, $request_var = 'result', $class = 'updated' ) {
+	protected function print_result_message( array $messages, string $request_var = 'result', string $class = 'updated' ): bool {
 
 		if ( empty( $_REQUEST[ $request_var ] ) ) {
 			return false;
@@ -152,12 +154,12 @@ abstract class Admin_Menu {
 	 * Executed when the admin page is loaded
 	 */
 	public function load() {
-		/* Make sure the user has permission to be here */
+		// Make sure the user has permission to be here.
 		if ( ! current_user_can( code_snippets()->get_cap() ) ) {
 			wp_die( esc_html__( 'You are not authorized to access this page.', 'code-snippets' ) );
 		}
 
-		/* Create the snippet tables if they don't exist */
+		// Create the snippet tables if they are missing.
 		$db = code_snippets()->db;
 
 		if ( is_multisite() ) {
@@ -174,41 +176,60 @@ abstract class Admin_Menu {
 	abstract public function enqueue_assets();
 
 	/**
-	 * Render a list of links to other pages in the page title
+	 * Generate a list of page title links for passing to React.
 	 *
-	 * @param array<string> $actions List of actions to render as links, as array values.
+	 * @param array<string> $actions List of actions to convert into links, as array values.
+	 *
+	 * @return array<string, string> Link labels keyed to link URLs.
 	 */
-	protected function page_title_actions( $actions ) {
+	protected function page_title_action_links( array $actions ): array {
+		$plugin = code_snippets();
+		$links = [];
 
 		foreach ( $actions as $action ) {
-			if ( 'settings' === $action && ! isset( code_snippets()->admin->menus['settings'] ) ) {
+			if ( 'settings' === $action && ! isset( $plugin->admin->menus['settings'] ) ) {
 				continue;
 			}
 
-			$url = code_snippets()->get_menu_url( $action );
+			$url = $plugin->get_menu_url( $action );
 
 			if ( isset( $_GET['type'] ) && in_array( $_GET['type'], Snippet::get_types(), true ) ) {
 				$url = add_query_arg( 'type', sanitize_key( wp_unslash( $_GET['type'] ) ), $url );
 			}
 
-			printf( '<a href="%s" class="page-title-action">', esc_url( $url ) );
-
 			switch ( $action ) {
 				case 'manage':
-					echo esc_html_x( 'Manage', 'snippets', 'code-snippets' );
+					$label = _x( 'Manage', 'snippets', 'code-snippets' );
 					break;
 				case 'add':
-					echo esc_html_x( 'Add New', 'snippet', 'code-snippets' );
+					$label = _x( 'Add New', 'snippet', 'code-snippets' );
 					break;
 				case 'import':
-					echo esc_html_x( 'Import', 'snippets', 'code-snippets' );
+					$label = _x( 'Import', 'snippets', 'code-snippets' );
 					break;
 				case 'settings':
-					echo esc_html_x( 'Settings', 'snippets', 'code-snippets' );
+					$label = _x( 'Settings', 'snippets', 'code-snippets' );
 					break;
+				default:
+					$label = '';
 			}
 
-			echo '</a>';
+			if ( $label && $url ) {
+				$links[ $label ] = $url;
+			}
+		}
+
+		return $links;
+	}
+
+	/**
+	 * Render a list of links to other pages in the page title
+	 *
+	 * @param array<string> $actions List of actions to render as links, as array values.
+	 */
+	protected function render_page_title_actions( array $actions ) {
+		foreach ( $this->page_title_action_links( $actions ) as $label => $url ) {
+			printf( '<a href="%s" class="page-title-action">%s</a>', esc_url( $url ), esc_html( $label ) );
 		}
 	}
 }

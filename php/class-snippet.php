@@ -12,27 +12,29 @@ use DateTimeZone;
  * @since   2.4.0
  * @package Code_Snippets
  *
- * @property int           $id                      The database ID.
- * @property string        $name                    The snippet title.
- * @property string        $desc                    The formatted description.
- * @property string        $code                    The executable code.
- * @property array<string> $tags                    An array of the tags.
- * @property string        $scope                   The scope name.
- * @property int           $priority                Execution priority.
- * @property bool          $active                  The active status.
- * @property bool          $network                 true if is multisite-wide snippet, false if site-wide.
- * @property bool          $shared_network          Whether the snippet is a shared network snippet.
- * @property string        $modified                The date and time when the snippet data was most recently saved to the database.
+ * @property int                    $id                 The database ID.
+ * @property string                 $name               The snippet title.
+ * @property string                 $desc               The formatted description.
+ * @property string                 $code               The executable code.
+ * @property array<string>          $tags               An array of the tags.
+ * @property string                 $scope              The scope name.
+ * @property int                    $priority           Execution priority.
+ * @property bool                   $active             The active status.
+ * @property bool                   $network            true if is multisite-wide snippet, false if site-wide.
+ * @property bool                   $shared_network     Whether the snippet is a shared network snippet.
+ * @property string                 $modified           The date and time when the snippet data was most recently saved to the database.
+ * @property array{string,int}|null $code_error         Code error encountered when last testing snippet code.
+ * @property object|null            $conditions         Snippet conditionals
  *
- * @property-read string   $display_name            The snippet name if it exists or a placeholder if it does not.
- * @property-read string   $tags_list               The tags in string list format.
- * @property-read string   $scope_icon              The dashicon used to represent the current scope.
- * @property-read string   $scope_name              Human-readable description of the snippet type.
- * @property-read string   $type                    The type of snippet.
- * @property-read string   $lang                    The language that the snippet code is written in.
- * @property-read int      $modified_timestamp      The last modification date in Unix timestamp format.
- * @property-read DateTime $modified_local          The last modification date in the local timezone.
- * @property-read string   $type_desc               Human-readable description of the snippet type.
+ * @property-read string            $display_name       The snippet name if it exists or a placeholder if it does not.
+ * @property-read string            $tags_list          The tags in string list format.
+ * @property-read string            $scope_icon         The dashicon used to represent the current scope.
+ * @property-read string            $scope_name         Human-readable description of the snippet type.
+ * @property-read string            $type               The type of snippet.
+ * @property-read string            $lang               The language that the snippet code is written in.
+ * @property-read int               $modified_timestamp The last modification date in Unix timestamp format.
+ * @property-read DateTime          $modified_local     The last modification date in the local timezone.
+ * @property-read string            $type_desc          Human-readable description of the snippet type.
  */
 class Snippet extends Data_Item {
 
@@ -64,6 +66,8 @@ class Snippet extends Data_Item {
 			'network'        => null,
 			'shared_network' => null,
 			'modified'       => null,
+			'code_error'     => null,
+			'conditions'     => null,
 		);
 
 		$field_aliases = array(
@@ -84,14 +88,59 @@ class Snippet extends Data_Item {
 	}
 
 	/**
-	 * Prepare the ID by ensuring it is an absolute integer
+	 * Prepare a value before it is stored.
 	 *
-	 * @param int $id The field as provided.
+	 * @param mixed  $value Value to prepare.
+	 * @param string $field Field name.
 	 *
-	 * @return int The field in the correct format.
+	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_id( $id ) {
-		return absint( $id );
+	protected function prepare_field( $value, string $field ) {
+		switch ( $field ) {
+			case 'id':
+			case 'priority':
+				return absint( $value );
+
+			case 'tags':
+				return code_snippets_build_tags_array( $value );
+
+			case 'active':
+				return is_bool( $value ) ? $value : (bool) $value;
+
+			default:
+				return parent::prepare_field( $value, $field );
+		}
+	}
+
+	/**
+	 * Prepare the value of the conditions field when reading.
+	 *
+	 * @param string|mixed $value Conditions encoded as JSON.
+	 *
+	 * @return mixed
+	 */
+	protected function prepare_conditions( $value ) {
+		if ( 'cond' === $this->type ) {
+			$this->code = is_string( $value ) ? $value : wp_json_encode( $value );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Retrieve list of current data fields.
+	 *
+	 * @return array<string, mixed> Field names keyed to current values.
+	 */
+	public function get_fields(): array {
+		$fields = parent::get_fields();
+
+		if ( 'condition' === $this->scope ) {
+			$fields['conditions'] = json_decode( $fields['code'] );
+			$fields['code'] = '';
+		}
+
+		return $fields;
 	}
 
 	/**
@@ -116,39 +165,6 @@ class Snippet extends Data_Item {
 	}
 
 	/**
-	 * Prepare the snippet tags by ensuring they are in the correct format
-	 *
-	 * @param string|array<string> $tags The field as provided.
-	 *
-	 * @return array<string> The field in the correct format.
-	 */
-	protected function prepare_tags( $tags ) {
-		return code_snippets_build_tags_array( $tags );
-	}
-
-	/**
-	 * Prepare the active field by ensuring it is the correct type
-	 *
-	 * @param bool|int $active The field as provided.
-	 *
-	 * @return bool The field in the correct format.
-	 */
-	protected function prepare_active( $active ) {
-		return is_bool( $active ) ? $active : (bool) $active;
-	}
-
-	/**
-	 * Prepare the priority field by ensuring it is an integer
-	 *
-	 * @param int $priority The field as provided.
-	 *
-	 * @return int The field in the correct format.
-	 */
-	protected function prepare_priority( $priority ) {
-		return intval( $priority );
-	}
-
-	/**
 	 * If $network is anything other than true, set it to false
 	 *
 	 * @param bool $network The field as provided.
@@ -156,7 +172,6 @@ class Snippet extends Data_Item {
 	 * @return bool The field in the correct format.
 	 */
 	protected function prepare_network( $network ) {
-
 		if ( null === $network && function_exists( 'is_network_admin' ) ) {
 			return is_network_admin();
 		}
@@ -172,17 +187,15 @@ class Snippet extends Data_Item {
 	protected function get_type() {
 		if ( '-css' === substr( $this->scope, -4 ) ) {
 			return 'css';
-		}
-
-		if ( '-js' === substr( $this->scope, -3 ) ) {
+		} elseif ( '-js' === substr( $this->scope, -3 ) ) {
 			return 'js';
-		}
-
-		if ( 'content' === substr( $this->scope, -7 ) ) {
+		} elseif ( 'content' === substr( $this->scope, -7 ) ) {
 			return 'html';
+		} elseif ( 'condition' === $this->scope ) {
+			return 'cond';
+		} else {
+			return 'php';
 		}
-
-		return 'php';
 	}
 
 	/**
@@ -191,7 +204,7 @@ class Snippet extends Data_Item {
 	 * @return string[]
 	 */
 	public static function get_types() {
-		return [ 'php', 'html', 'css', 'js' ];
+		return [ 'php', 'html', 'css', 'js', 'cond' ];
 	}
 
 	/**
@@ -205,6 +218,7 @@ class Snippet extends Data_Item {
 			'html' => __( 'Content', 'code-snippets' ),
 			'css'  => __( 'Styles', 'code-snippets' ),
 			'js'   => __( 'Scripts', 'code-snippets' ),
+			'cond' => __( 'Conditions', 'code-snippets' ),
 		];
 
 		return isset( $labels[ $this->type ] ) ? $labels[ $this->type ] : strtoupper( $this->type );
@@ -286,6 +300,7 @@ class Snippet extends Data_Item {
 			'content', 'head-content', 'footer-content',
 			'admin-css', 'site-css',
 			'site-head-js', 'site-footer-js',
+			'condition',
 		);
 	}
 
@@ -307,6 +322,7 @@ class Snippet extends Data_Item {
 			'site-css'       => 'admin-customizer',
 			'site-head-js'   => 'media-code',
 			'site-footer-js' => 'media-code',
+			'condition'      => 'randomize',
 		);
 	}
 
@@ -361,7 +377,6 @@ class Snippet extends Data_Item {
 	 * @return bool Whether the snippet is a shared network snippet.
 	 */
 	protected function get_shared_network() {
-
 		if ( isset( $this->fields['shared_network'] ) ) {
 			return $this->fields['shared_network'];
 		}
@@ -393,7 +408,6 @@ class Snippet extends Data_Item {
 	 * @return DateTime
 	 */
 	protected function get_modified_local() {
-
 		if ( function_exists( 'wp_timezone' ) ) {
 			$timezone = wp_timezone();
 		} else {

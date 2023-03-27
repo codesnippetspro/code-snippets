@@ -155,7 +155,7 @@ export const bundle: TaskFunction = (() => {
 })()
 
 export const watch: TaskFunction = series(build, done => {
-	watchFiles(SRC_FILES.css.all, css)
-	watchFiles(SRC_FILES.js, js)
+	watchFiles(SRC_FILES.css.all, series(css))
+	watchFiles(SRC_FILES.js, series(js))
 	done()
 })
