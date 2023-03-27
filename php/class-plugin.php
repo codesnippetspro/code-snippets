@@ -318,7 +318,8 @@ class Plugin {
 				'html'  => __( 'Content', 'code-snippets' ),
 				'css'   => __( 'Styles', 'code-snippets' ),
 				'js'    => __( 'Scripts', 'code-snippets' ),
-				'cloud' => __( 'Cloud', 'code-snippets' ),
+				'cloud' => __( 'Codevault', 'code-snippets' ),
+				'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
 			)
 		);
 	}
@@ -347,7 +348,8 @@ class Plugin {
 			'html'  => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
 			'css'   => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
 			'js'    => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
-			'cloud' => __( 'Cloud snippets are snippets that are stored in the cloud and can be synced with other sites.', 'code-snippets' ),
+			'cloud' => __( 'See all your public and private snippets that are stored in your Code Snippet Cloud Codevault.', 'code-snippets' ),
+			'cloud_search' => __( 'Explore and Search user contributed code snippets from Code Snippet Cloud.', 'code-snippets' ),
 		);
 
 		$descriptions = apply_filters( 'code_snippets/plugins/type_descriptions', $descriptions );

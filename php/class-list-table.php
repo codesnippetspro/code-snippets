@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_Link;
+use Code_Snippets\Cloud\Cloud_Snippet;
 use function Code_Snippets\Settings\get_setting;
 use WP_List_Table;
 
@@ -390,9 +391,14 @@ class List_Table extends WP_List_Table {
 	 */
 	protected function column_cb( $item ) {
 
+		if ( $item instanceof Cloud_Snippet ) {
+			$checkbox_name = 'cloud_ids';
+		} else {
+			$checkbox_name = $item->shared_network ? 'shared_ids' : 'ids';
+		}
 		$out = sprintf(
 			'<input type="checkbox" name="%s[]" value="%s">',
-			$item->shared_network ? 'shared_ids' : 'ids',
+			$checkbox_name,
 			$item->id
 		);
 

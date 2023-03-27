@@ -183,7 +183,10 @@ class Manage_Menu extends Admin_Menu {
 			//wp_safe_redirect( esc_url_raw( add_query_arg( 'result', 'cloud-refreshed' ) ) ); 
 		}
 
-		if ( ! isset( $_REQUEST['type'] ) || 'cloud' !== $this->get_current_type() ) {
+		$cloud_types = [ 'cloud', 'cloud_search'];
+
+
+		if( ! in_array( $this->get_current_type(), $cloud_types ) || ! isset( $_REQUEST['type'] ) ) {
 			return;
 		}
 
@@ -234,7 +237,7 @@ class Manage_Menu extends Admin_Menu {
 			)
 		);
 
-		if ( 'cloud' === $this->get_current_type() ) {
+		if ( 'cloud' === $this->get_current_type() || 'cloud_search' === $this->get_current_type() ) {
 			Frontend::enqueue_all_prism_themes();
 		}
 	}

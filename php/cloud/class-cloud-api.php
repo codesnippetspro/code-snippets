@@ -223,6 +223,10 @@ class Cloud_API {
 
 		$data = $this->unpack_request_json( $response );
 
+		foreach ( $data['snippets'] as $key => $snippet ) {
+			$data['snippets'][$key]['cloud_id'] = $snippet['id']; 
+		}
+
 		$this->codevault_snippets = new Cloud_Snippets( $data );
 
 		$this->codevault_snippets->page = $page;
@@ -239,14 +243,16 @@ class Cloud_API {
 	/**
 	 * Search Code Snippets Cloud -> Static Function
 	 *
+	 * @param string  $search_method Search by name of codevault or keyword(s).
 	 * @param string  $search Search query.
 	 * @param integer $page   Search result page to retrieve. Defaults to '0'.
 	 *
 	 * @return Cloud_Snippets Result of search query.
 	 */
-	public static function fetch_search_results( $search, $page = 0 ) {
+	public static function fetch_search_results( $search_method, $search, $page = 0 ) {
 		$api_url = add_query_arg(
 			[
+				's_method'  => $search_method,
 				's'    		=> $search,
 				'page' 		=> $page,
 				'site_token'=> get_setting( 'cloud', 'local_token' ),
@@ -366,7 +372,7 @@ class Cloud_API {
 			if ( $updated['success'] ) {
 				$this->refresh_synced_data();
 			}
-		}
+		}		
 	}
 
 	/**

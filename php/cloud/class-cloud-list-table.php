@@ -135,7 +135,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return Cloud_Snippets
 	 */
 	protected function fetch_snippets() {
-		if ( $_REQUEST['cloud_page'] )  {
+		if ( isset( $_REQUEST['cloud_page'] ) )  {
 			return $this->cloud_api->get_codevault_snippets( (int) $_REQUEST['cloud_page'] - 1 );
 		}
 
@@ -587,7 +587,7 @@ class Cloud_List_Table extends WP_List_Table {
 		$num = sprintf( _n( '%s item', '%s items', $total_items, 'code-snippets' ), number_format_i18n( $total_items ) );
 		$output = '<span class="displaying-num">' . $num . '</span>';
 
-		$current = $_REQUEST['cloud_page'] ? (int) $_REQUEST['cloud_page'] : $this->get_pagenum();
+		$current = isset( $_REQUEST['cloud_page'] ) ? (int) $_REQUEST['cloud_page'] : $this->get_pagenum();
 		$current_class = Cloud_List_Table::CLASS_NAME === $this->class_name ? 'cloud' : 'search';
 		$current_url = remove_query_arg( wp_removable_query_args() ). '#' . $current_class ;
 

@@ -69,6 +69,7 @@ $current_type = $this->get_current_type();
 			'css'   => __( 'style snippets', 'code-snippets' ),
 			'js'    => __( 'javascript snippets', 'code-snippets' ),
 			'cloud' => __( 'cloud snippets', 'code-snippets' ),
+			'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
 		];
 
 		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
@@ -92,13 +93,12 @@ $current_type = $this->get_current_type();
 	do_action( 'code_snippets/admin/manage/before_list_table' );
 	$this->list_table->views();
 
-	if ( 'cloud' === $current_type ) {
+	if ( 'cloud_search' === $current_type ) {
 		$search_query = isset( $_REQUEST['cloud_search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) ) : '';
-
 		?>
-		<h2>Cloud Search</h2>
-		<p id="search">Search the Code Snippets Cloud for snippets that you can import into your site.</p>
 		<form method="get" action="" id="cloud-search-form">
+			<p>Search cloud snippets by entering either the name of a codevault (Important : codevault name is case and spelling sensitive and only public snippets will be shown) or by keyword(s)</p>
+			
 			<?php List_Table::required_form_fields( 'search_box' ); ?>
 
 			<label class="screen-reader-text" for="cloud_search">
@@ -110,12 +110,16 @@ $current_type = $this->get_current_type();
 					echo '<input type="hidden" name="type" value="' . sanitize_text_field( esc_attr( $_REQUEST['type' ] ) ) . '">';
 				}
 			?>
-
-			<input type="text" id="cloud_search" name="cloud_search" class="cloud_search"
-			       value="<?php echo esc_html( $search_query ); ?>"
-			       placeholder="<?php esc_html_e( 'e.g. Remove unused JavaScript…', 'code-snippets' ); ?>">
-
-			<button type="submit" id="cloud-search-submit" class="button">Search Cloud</button>
+			<div class="input-group">
+				<select id="cloud-select-prepend" class="select-prepend" name="cloud_select">
+					<option value="term"> Search by Keyword(s) </option>
+					<option value="codevault"> Name of Codevault </option>
+				</select>
+				<input type="text" id="cloud_search" name="cloud_search" class="cloud_search"
+					value="<?php echo esc_html( $search_query ); ?>"
+					placeholder="<?php esc_html_e( 'e.g. Remove unused JavaScript…', 'code-snippets' ); ?>">
+				<button type="submit" id="cloud-search-submit" class="button">Search Cloud <span class="dashicons dashicons-search cloud-search"></span></button>
+			</div>
 		</form>
 
 
@@ -123,49 +127,46 @@ $current_type = $this->get_current_type();
 			<input type="hidden" id="code_snippets_ajax_nonce"
 			       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 			<?php
+				List_Table::required_form_fields();
+				//Check if url has a search query called cloud_search
+				if( isset( $_REQUEST['cloud_search'] ) ){
+					//If it does, then we want to display the cloud search table
+					$this->cloud_search_list_table->display();
+				}			
+		echo '</form>';
+	}else{
+			?>
 
-			List_Table::required_form_fields();
-			$this->cloud_search_list_table->display();
+		<form method="get" action="">
+			<?php
+			List_Table::required_form_fields( 'search_box' );
 
+			if ( 'cloud' === $current_type ) {
+				$this->cloud_list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'cloud_search_id' );
+			} else {
+				$this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
+			}
 			?>
 		</form>
 
-		<h2>My Codevault</h2>
-		<p id="cloud">See all public and private snippets in your Code Snippet Cloud Codevault.</p>
-	<?php } ?>
+		<form method="post" action="">
+			<input type="hidden" id="code_snippets_ajax_nonce"
+				value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
+			<?php
+			List_Table::required_form_fields();
 
-	<form method="get" action="">
-		<?php
-		List_Table::required_form_fields( 'search_box' );
-
-		if ( 'cloud' === $current_type ) {
-			$this->cloud_list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'cloud_search_id' );
-		} else {
-			$this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
-		}
-		?>
-	</form>
-
-	<form method="post" action="">
-		<input type="hidden" id="code_snippets_ajax_nonce"
-		       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
-		<?php
-		List_Table::required_form_fields();
-
-		if ( 'cloud' === $current_type ) {
-			$this->cloud_list_table->display();
-		} else {
-			$this->list_table->display();
-		}
-
-		?>
-	</form>
-
-	<div class="cloud-key">
-		<p><b><u>Cloud Sync Guide</u></b></p>
-		<p><span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>Snippet Synced to Codevault</p>
-		<p><span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>Snippet Downloaded from Cloud</p>
-		<p><span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>Snippet Update available</p>
-	</div>
-	<?php do_action( 'code_snippets/admin/manage', $current_type ); ?>
+			if ( 'cloud' === $current_type ) {
+				$this->cloud_list_table->display();
+			} else {
+				$this->list_table->display();
+			}
+			?>
+		</form>
+		<div class="cloud-key">
+			<p><b><u>Cloud Sync Guide</u></b></p>
+			<p><span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>Snippet Synced to Codevault</p>
+			<p><span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>Snippet Downloaded from Cloud</p>
+			<p><span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>Snippet Update available</p>
+		</div>
+	<?php } do_action( 'code_snippets/admin/manage', $current_type ); ?>
 </div>

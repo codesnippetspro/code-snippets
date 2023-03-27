@@ -34,6 +34,7 @@ class Cloud_Snippet extends Data_Item {
 		parent::__construct(
 			[
 				'id'          => '',
+				'cloud_id' => '',
 				'name'        => '',
 				'description' => '',
 				'code'        => '',
@@ -44,6 +45,7 @@ class Cloud_Snippet extends Data_Item {
 				'updated'     => '',
 				'revision'    => 0,
 				'is_owner'    => false,
+				'shared_network' => false,
 			],
 			$initial_data
 		);

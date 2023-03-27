@@ -34,7 +34,7 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 			'download-search-selected' => __( 'Download', 'code-snippets' ),
 		);
 
-		return apply_filters( 'code_snippets/cloud_list_table/bulk_actions', $actions );
+		return apply_filters( 'code_snippets/cloud_search_list_table/bulk_actions', $actions );
 	}
 
 	/**
@@ -45,10 +45,10 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 	public function no_items() {
 		if ( ! empty( $_REQUEST['cloud_search'] ) && count( $this->cloud_snippets->snippets ) < 1 ) {
 			echo '<p class="no-results">',
-			esc_html__( 'No snippets could be found with that search term. Please try again.', 'code-snippets' ),
+			esc_html__( 'No snippets or codevault could be found with that search term. Please try again.', 'code-snippets' ),
 			'</p>';
 		} else {
-			echo '<p>', esc_html__( 'Please enter a search term to start searching code snippets in the cloud.', 'code-snippets' ), '</p>';
+			echo '<p>', esc_html__( 'Please enter a term to start searching code snippets in the cloud.', 'code-snippets' ), '</p>';
 		}
 	}
 
@@ -59,12 +59,15 @@ class Cloud_Search_List_Table extends Cloud_List_Table {
 	 */
 	public function fetch_snippets() {
 		// Create an empty results object if there's no search query.
+		//TODO: Get featured snippets from cloud server API.
 		if ( empty( $_REQUEST['cloud_search'] ) ) {
 			return new Cloud_Snippets();
 		}
+
 		// If we have a search query, then send a search request to cloud server API search endpoint.
 		$search_query = sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) );
-		return $this->cloud_api->fetch_search_results( $search_query, $this->get_pagenum() - 1 );
+		$search_by = sanitize_text_field( wp_unslash( $_REQUEST['cloud_select'] ) );
+		return $this->cloud_api->fetch_search_results( $search_by, $search_query, $this->get_pagenum() - 1 );
 	}
 
 	/**
