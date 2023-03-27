@@ -28,7 +28,7 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 		<?php
 		esc_html_e( 'Snippets', 'code-snippets' );
 
-		$this->page_title_actions( code_snippets()->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
+		$this->render_page_title_actions( code_snippets()->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
 
 		$this->list_table->search_notice();
 		?>
@@ -45,7 +45,8 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 
 		if ( ! $licensed ) {
 			?>
-			<a class="button button-large nav-tab-button go-pro-button" href="https://codesnippets.pro/pricing/" target="_blank"
+			<a class="button button-large nav-tab-button nav-tab-inactive go-pro-button"
+			   href="https://codesnippets.pro/pricing/" target="_blank"
 			   title="Find more about Pro (opens in external tab)">
 				<?php echo wp_kses( __( 'Upgrade to <span class="badge">Pro</span>', 'code-snippets' ), [ 'span' => [ 'class' => 'badge' ] ] ); ?>
 				<span class="dashicons dashicons-external"></span>

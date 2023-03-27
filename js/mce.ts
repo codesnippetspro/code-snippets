@@ -1,21 +1,7 @@
 import * as tinymce from 'tinymce'
 import { Editor } from 'tinymce'
-
-interface SourceShortcodeOps {
-	id: string
-	line_numbers: boolean
-}
-
-interface ContentShortcodeOps {
-	id: string
-	php: boolean
-	format: boolean
-	shortcodes: boolean
-}
-
-interface WordPressEditor extends Editor {
-	getLang: (s: string) => string | Record<string, string>
-}
+import { ContentShortcodeAtts, SourceShortcodeAtts } from './types/Shortcodes'
+import { LocalisedEditor } from './types/WordPressEditor'
 
 const convertToValues = (array: Record<string, string>) =>
 	Object.keys(array).map(key => ({
@@ -23,7 +9,7 @@ const convertToValues = (array: Record<string, string>) =>
 		value: key
 	}))
 
-const insertContentMenu = (editor: Editor, activeEditor: WordPressEditor) => ({
+export const insertContentMenu = (editor: Editor, activeEditor: LocalisedEditor) => ({
 	text: activeEditor.getLang('code_snippets.insert_source_menu'),
 	onclick: () => {
 		editor.windowManager.open({
@@ -33,15 +19,15 @@ const insertContentMenu = (editor: Editor, activeEditor: WordPressEditor) => ({
 					type: 'listbox',
 					name: 'id',
 					label: activeEditor.getLang('code_snippets.snippet_label'),
-					values: convertToValues(activeEditor.getLang('code_snippets.all_snippets') as Record<string, string>),
+					values: convertToValues(activeEditor.getLang('code_snippets.all_snippets') as Record<string, string>)
 				},
 				{
 					type: 'checkbox',
 					name: 'line_numbers',
-					label: activeEditor.getLang('code_snippets.show_line_numbers_label'),
+					label: activeEditor.getLang('code_snippets.show_line_numbers_label')
 				}
 			],
-			onsubmit: (event: { data: SourceShortcodeOps }) => {
+			onsubmit: (event: { data: SourceShortcodeAtts }) => {
 				const id = parseInt(event.data.id, 10)
 				if (!id) return
 
@@ -57,7 +43,7 @@ const insertContentMenu = (editor: Editor, activeEditor: WordPressEditor) => ({
 	}
 })
 
-const insertSourceMenu = (editor: Editor, ed: WordPressEditor) => ({
+export const insertSourceMenu = (editor: Editor, ed: LocalisedEditor) => ({
 	text: ed.getLang('code_snippets.insert_content_menu'),
 	onclick: () => {
 		editor.windowManager.open({
@@ -67,25 +53,25 @@ const insertSourceMenu = (editor: Editor, ed: WordPressEditor) => ({
 					type: 'listbox',
 					name: 'id',
 					label: ed.getLang('code_snippets.snippet_label'),
-					values: convertToValues(ed.getLang('code_snippets.content_snippets') as Record<string, string>),
+					values: convertToValues(ed.getLang('code_snippets.content_snippets') as Record<string, string>)
 				},
 				{
 					type: 'checkbox',
 					name: 'php',
-					label: ed.getLang('code_snippets.php_att_label'),
+					label: ed.getLang('code_snippets.php_att_label')
 				},
 				{
 					type: 'checkbox',
 					name: 'format',
-					label: ed.getLang('code_snippets.format_att_label'),
+					label: ed.getLang('code_snippets.format_att_label')
 				},
 				{
 					type: 'checkbox',
 					name: 'shortcodes',
-					label: ed.getLang('code_snippets.shortcodes_att_label'),
+					label: ed.getLang('code_snippets.shortcodes_att_label')
 				}
 			],
-			onsubmit: (event: { data: ContentShortcodeOps }) => {
+			onsubmit: (event: { data: ContentShortcodeAtts }) => {
 				const id = parseInt(event.data.id, 10)
 				if (!id) return
 
@@ -104,7 +90,7 @@ const insertSourceMenu = (editor: Editor, ed: WordPressEditor) => ({
 })
 
 tinymce.PluginManager.add('code_snippets', editor => {
-	const activeEditor = tinymce.activeEditor as WordPressEditor
+	const activeEditor = tinymce.activeEditor as LocalisedEditor
 
 	editor.addButton('code_snippets', {
 		icon: 'code',

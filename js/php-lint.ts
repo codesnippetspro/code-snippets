@@ -43,8 +43,7 @@ class Linter {
 		const parser = new Parser({
 			parser: {
 				suppressErrors: true,
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore types file has not been updated to support this
+				// @ts-expect-error types file has not been updated to support version key.
 				version: 800
 			},
 			ast: {

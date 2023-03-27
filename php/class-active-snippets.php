@@ -130,7 +130,7 @@ class Active_Snippets {
 	 *
 	 * @return string URL to asset.
 	 */
-	public function get_asset_url( $scope, $latest_rev = false ) {
+	public function get_asset_url( string $scope, bool $latest_rev = false ): string {
 		$base = 'admin-css' === $scope ? self_admin_url( '/' ) : home_url( '/' );
 
 		if ( '-css' === substr( $scope, -4 ) ) {

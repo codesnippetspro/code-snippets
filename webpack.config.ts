@@ -6,25 +6,24 @@ const DEST_DIR = './dist'
 
 export const config: Configuration = {
 	entry: {
-		manage: `${SOURCE_DIR}/manage.ts`,
+		manage: `${SOURCE_DIR}/manage/index.ts`,
 		edit: {
-			import: `${SOURCE_DIR}/edit.ts`,
+			import: `${SOURCE_DIR}/Edit/index.tsx`,
 			dependOn: 'editor'
 		},
-		tags: `${SOURCE_DIR}/edit-tags.ts`,
 		settings: {
-			import: `${SOURCE_DIR}/settings.ts`,
+			import: `${SOURCE_DIR}/settings/index.ts`,
 			dependOn: 'editor'
 		},
 		mce: `${SOURCE_DIR}/mce.ts`,
 		prism: `${SOURCE_DIR}/prism.ts`,
-		blocks:`${SOURCE_DIR}/blocks.ts`,
+		blocks: `${SOURCE_DIR}/blocks/index.ts`,
 		elementor: `${SOURCE_DIR}/elementor.ts`,
-		editor: `${SOURCE_DIR}/editor.ts`,
+		editor: `${SOURCE_DIR}/editor.ts`
 	},
 	output: {
 		path: path.join(path.resolve(__dirname), DEST_DIR),
-		filename: '[name].js',
+		filename: '[name].js'
 	},
 	externalsType: 'window',
 	externals: {
@@ -61,7 +60,7 @@ export const config: Configuration = {
 					plugins: [
 						['prismjs', {
 							languages: ['php', 'php-extras'],
-							plugins: ['line-highlight', 'line-numbers'],
+							plugins: ['line-highlight', 'line-numbers']
 						}]
 					]
 				}

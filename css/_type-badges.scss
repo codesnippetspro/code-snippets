@@ -22,12 +22,12 @@ h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
 $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-active);
 
 @each $type, $color in $badges {
-	.nav-tab[data-type=#{$type}] .badge, .snippet-type-badge[data-type=#{$type}] {
+	.nav-tab[data-snippet-type=#{$type}] .badge, .snippet-type-badge[data-snippet-type=#{$type}] {
 		color: $color;
 		border-color: currentColor;
 	}
 
-	.nav-tab-inactive[data-type=#{$type}]:hover .badge {
+	.nav-tab-inactive[data-snippet-type=#{$type}]:hover .badge {
 		color: $color;
 	}
 }

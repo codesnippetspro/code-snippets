@@ -1,0 +1,82 @@
+
+.snippet-condition-editor {
+	padding: 0 1.5em;
+	flex-flow: column;
+	align-items: flex-start;
+
+	h4 {
+		margin-bottom: 0;
+	}
+
+	input[type="text"]:focus {
+		box-shadow: none;
+	}
+
+	.condition-add-button {
+		display: flex;
+		flex-flow: row;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto;
+
+		.dashicons + span {
+			margin-left: 2px;
+		}
+	}
+
+	.condition-remove-button {
+		color: currentColor;
+		border: none;
+		background: none;
+		padding: 0;
+		line-height: 1;
+
+		&:hover {
+			color: #b32d2e
+		}
+	}
+
+	.condition-add-row-button {
+		margin: 0;
+	}
+
+	.condition-add-group-button {
+		margin: 1em 0;
+	}
+
+	.condition-group-sep, .condition-row-sep {
+		text-align: center;
+		font-style: italic;
+	}
+}
+
+
+.snippet-condition-groups {
+	display: flex;
+	flex-flow: column;
+}
+
+.snippet-condition-group {
+	flex: 1;
+	display: flex;
+	flex-flow: column;
+	padding: 1em;
+	margin: 1em 0;
+	border: 1px solid #bbb;
+
+	> * {
+		flex: 1;
+		margin-bottom: 1.5em;
+	}
+}
+
+.snippet-condition-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 8ch auto;
+	grid-gap: 1em;
+	align-items: center;
+}
+
+.snippet-condition-field-select {
+	min-width: 150px;
+}

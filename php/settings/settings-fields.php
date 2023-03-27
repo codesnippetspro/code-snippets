@@ -69,6 +69,14 @@ function get_settings_fields() {
 			'default' => true,
 		],
 
+		'visual_editor_rows' => [
+			'name'    => __( 'Description Editor Height', 'code-snippets' ),
+			'type'    => 'number',
+			'label'   => _x( 'rows', 'unit', 'code-snippets' ),
+			'default' => 5,
+			'min'     => 0,
+		],
+
 		'list_order' => [
 			'name'    => __( 'Snippets List Order', 'code-snippets' ),
 			'type'    => 'select',
@@ -84,7 +92,7 @@ function get_settings_fields() {
 		],
 
 		'disable_prism' => [
-			'name'    => __( 'Disable Shortcode Syntax Highlighter', 'code-snippets' ),
+			'name'    => __( 'Disable Syntax Highlighter', 'code-snippets' ),
 			'type'    => 'checkbox',
 			'label'   => __( 'Disable syntax highlighting when displaying snippet code on the front-end.', 'code-snippets' ),
 			'default' => false,
@@ -113,33 +121,7 @@ function get_settings_fields() {
 		unset( $fields['general']['complete_uninstall'] );
 	}
 
-	/* Description Editor settings section */
-	$fields['description_editor'] = [
-
-		'rows' => [
-			'name'    => __( 'Row Height', 'code-snippets' ),
-			'type'    => 'number',
-			'label'   => __( 'rows', 'code-snippets' ),
-			'default' => 5,
-			'min'     => 0,
-		],
-
-		'use_full_mce' => [
-			'name'    => __( 'Use Full Editor', 'code-snippets' ),
-			'type'    => 'checkbox',
-			'label'   => __( 'Enable all features of the visual editor.', 'code-snippets' ),
-			'default' => false,
-		],
-
-		'media_buttons' => [
-			'name'    => __( 'Media Buttons', 'code-snippets' ),
-			'type'    => 'checkbox',
-			'label'   => __( 'Enable the add media buttons.', 'code-snippets' ),
-			'default' => false,
-		],
-	];
-
-	/* Code Editor settings section */
+	// Code Editor settings section.
 
 	$fields['editor'] = [
 		'theme' => [
@@ -153,7 +135,7 @@ function get_settings_fields() {
 		'indent_with_tabs' => [
 			'name'       => __( 'Indent With Tabs', 'code-snippets' ),
 			'type'       => 'checkbox',
-			'label'      => __( 'Use hard tabs (not spaces) for indentation.', 'code-snippets' ),
+			'label'      => __( 'Use hard tabs instead of spaces for indentation.', 'code-snippets' ),
 			'default'    => true,
 			'codemirror' => 'indentWithTabs',
 		],
@@ -163,6 +145,7 @@ function get_settings_fields() {
 			'type'       => 'number',
 			'desc'       => __( 'The width of a tab character.', 'code-snippets' ),
 			'default'    => 4,
+			'label'      => _x( 'spaces', 'unit', 'code-snippets' ),
 			'codemirror' => 'tabSize',
 			'min'        => 0,
 		],
@@ -170,8 +153,9 @@ function get_settings_fields() {
 		'indent_unit' => [
 			'name'       => __( 'Indent Unit', 'code-snippets' ),
 			'type'       => 'number',
-			'desc'       => __( 'How many spaces a block should be indented.', 'code-snippets' ),
+			'desc'       => __( 'The number of spaces to indent a block.', 'code-snippets' ),
 			'default'    => 4,
+			'label'      => _x( 'spaces', 'unit', 'code-snippets' ),
 			'codemirror' => 'indentUnit',
 			'min'        => 0,
 		],
@@ -179,7 +163,7 @@ function get_settings_fields() {
 		'wrap_lines' => [
 			'name'       => __( 'Wrap Lines', 'code-snippets' ),
 			'type'       => 'checkbox',
-			'label'      => __( 'Whether the editor should scroll or wrap for long lines.', 'code-snippets' ),
+			'label'      => __( 'Soft-wrap long lines of code instead of horizontally scrolling.', 'code-snippets' ),
 			'default'    => true,
 			'codemirror' => 'lineWrapping',
 		],
@@ -226,7 +210,7 @@ function get_settings_fields() {
 		'keymap'                => [
 			'name'       => __( 'Keymap', 'code-snippets' ),
 			'type'       => 'select',
-			'desc'       => __( 'The keymap to use in the editor.', 'code-snippets' ),
+			'desc'       => __( 'The set of keyboard shortcuts to use in the code editor.', 'code-snippets' ),
 			'default'    => 'default',
 			'options'    => [
 				'default' => __( 'Default', 'code-snippets' ),

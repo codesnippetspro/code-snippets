@@ -23,7 +23,7 @@ class Export {
 	 * @param array<int>|int $ids        List of snippet IDs to export.
 	 * @param string         $table_name Name of the database table to fetch snippets from.
 	 */
-	public function __construct( $ids, $table_name = '' ) {
+	public function __construct( $ids, string $table_name = '' ) {
 		$this->fetch_snippets( $ids, $table_name );
 	}
 
@@ -33,7 +33,7 @@ class Export {
 	 * @param array<int>|int $ids        List of snippet IDs to export.
 	 * @param string         $table_name Name of database table to fetch snippets from.
 	 */
-	private function fetch_snippets( $ids, $table_name ) {
+	private function fetch_snippets( $ids, string $table_name ) {
 		if ( '' === $table_name ) {
 			$table_name = code_snippets()->db->get_table_name();
 		}
@@ -52,7 +52,7 @@ class Export {
 	 *
 	 * @return string
 	 */
-	public function build_filename( $format ) {
+	public function build_filename( string $format ): string {
 		if ( 1 === count( $this->snippets_list ) ) {
 			/* If there is only snippet to export, use its name instead of the site name */
 			$title = strtolower( $this->snippets_list[0]->name );
@@ -70,7 +70,7 @@ class Export {
 	 *
 	 * @return string Snippets as JSON object.
 	 */
-	public function export_snippets_json() {
+	public function export_snippets_json(): string {
 		$snippets = array();
 
 		foreach ( $this->snippets_list as $snippet ) {
@@ -100,7 +100,7 @@ class Export {
 	/**
 	 * Bundle a snippets into a PHP file.
 	 */
-	public function export_snippets_php() {
+	public function export_snippets_php(): string {
 		$result = "<?php\n";
 
 		foreach ( $this->snippets_list as $snippet ) {
@@ -141,9 +141,9 @@ class Export {
 	 *
 	 * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	 *
-	 * @param string $type Snippet type. Supports 'css' or 'js'.
+	 * @param string|null $type Snippet type. Supports 'css' or 'js'.
 	 */
-	public function export_snippets_code( $type = null ) {
+	public function export_snippets_code( string $type = null ): string {
 		$result = '';
 
 		if ( ! $type ) {

@@ -1,8 +1,7 @@
 @import '../node_modules/@jcubic/tagger/tagger.css';
 @import 'editor';
-@import 'codemirror-colorpicker/dist/codemirror-colorpicker.css';
-
 @import 'type-badges';
+@import 'codemirror-colorpicker/dist/codemirror-colorpicker.css';
 
 /**
  * Custom styling for the single snippet admin page
@@ -12,8 +11,12 @@
 	width: auto;
 }
 
+.notice.error blockquote {
+	margin-bottom: 0;
+}
+
 h2 {
-	/* Provide some decent space between the fields and titles */
+	/* Provide some decent space between the fields and titles. */
 	margin: 25px 0 15px 0;
 
 	&:first-of-type {
@@ -25,26 +28,33 @@ h2 {
 	}
 }
 
-.inactive-snippet, .active-snippet {
-	#title {
-		border-left-width: 4px;
+.saved-snippet {
+	&.inactive-snippet, &.active-snippet {
+		#title {
+			border-right-width: 4px;
+		}
+	}
+
+	&.active-snippet #title {
+		border-right-color: #46b450;
+	}
+
+	&.inactive-snippet #title {
+		border-right-color: #bbb;
+	}
+
+	&.erroneous-snippet #title {
+		border-right-color: #dc3232;
 	}
 }
 
-.active-snippet #title {
-	border-left-color: #46b450;
-}
-
-.inactive-snippet #title {
-	border-left-color: #bbb;
-}
-
-.erroneous-snippet #title {
-	border-left-color: #dc3232;
-}
-
 #snippet-form {
-	margin-top: 10px
+	margin-top: 10px;
+
+	#snippet-tags, textarea {
+		width: 100%;
+		font-family: monospace;
+	}
 }
 
 /* Position the description heading on the same level as the editor buttons */
@@ -57,12 +67,29 @@ label[for='snippet_description'] h3 div {
 	margin-left: .5em;
 }
 
+.submit, .submit-inline {
+	display: flex;
+}
+
 .submit-inline {
 	float: right;
 }
 
 p.snippet-scope, .snippet-scope p {
 	margin-top: 15px;
+}
+
+.snippet-description-container {
+	margin-top: 25px;
+
+	> h2 {
+		float: left;
+		margin: 0;
+	}
+
+	.wp-editor-tools {
+		padding-top: 5px;
+	}
 }
 
 .snippet-scope label,
@@ -110,3 +137,4 @@ p.snippet-scope, .snippet-scope p {
 @import 'edit/tooltips';
 @import 'edit/types';
 @import 'edit/tags';
+@import 'edit/conditions';

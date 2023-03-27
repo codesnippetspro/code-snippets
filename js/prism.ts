@@ -20,4 +20,4 @@ document.addEventListener('readystatechange', () => {
 	}
 })
 
-window.code_snippets_prism = Prism
+window.CODE_SNIPPETS_PRISM = Prism
