@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios'
 import { Options, OptionsOrGroups } from 'react-select'
 import { ConditionOperator, ConditionSubject } from '../../types/Condition'
 import { SelectGroup, SelectOption } from '../../types/SelectOption'
-import { CATEGORIES_ENDPOINT, TAGS_ENDPOINT, Term, Terms } from '../../types/wp/Term'
+import { Categories, CATEGORIES_ENDPOINT, PostTags, TAGS_ENDPOINT, Terms } from '../../types/wp/Term'
 import { Pages, PAGES_ENDPOINT } from '../../types/wp/Page'
 import { Post, Posts, POSTS_ENDPOINT } from '../../types/wp/Post'
 import { POST_TYPES_ENDPOINT, PostTypes } from '../../types/wp/PostType'
@@ -49,34 +49,56 @@ const ROLE_OPTIONS: Options<SelectOption<string>> = [
 	{ value: 'subscriber', label: __('Subscriber', 'code-snippets') }
 ]
 
+export type ObjectOptions = Options<SelectOption<number | string>>
+
+const SUBJECT_OPTIONS_CACHE: Partial<Record<ConditionSubject, ObjectOptions>> = {}
+
+const getSubjectOptions = <T>(
+	subject: ConditionSubject,
+	endpoint: string,
+	mapper: (response: AxiosResponse<T>) => ObjectOptions
+): Promise<ObjectOptions> => {
+	const cached = SUBJECT_OPTIONS_CACHE[subject]
+	return cached ?
+		Promise.resolve(cached) :
+		apiGet<T>(endpoint)
+			.then(mapper)
+			.then(items => {
+				SUBJECT_OPTIONS_CACHE[subject] = items
+				return items
+			})
+}
+
 const mapPosts = (response: AxiosResponse<Pick<Post, 'id' | 'title'>[]>): SelectOption<number>[] =>
 	response.data.map(post => <SelectOption<number>> { value: post.id, label: post.title.rendered })
 
-const mapTerms = (response: AxiosResponse<Term[]>): SelectOption<number>[] =>
+const mapTerms = (response: AxiosResponse<Terms>): SelectOption<number>[] =>
 	response.data.map(term => <SelectOption<number>> { value: term.id, label: term.name })
 
-const getUsers = (): Promise<SelectOption<number>[]> =>
-	apiGet<Users>(USERS_ENDPOINT)
-		.then(response => response.data.map(user =>
-			<SelectOption<number>> { value: user.id, label: user.name }))
+const mapPostTypes = (response: AxiosResponse<PostTypes>): SelectOption<string>[] =>
+	Object.values(response.data).map(postType =>
+		<SelectOption<string>> { value: postType.slug, label: postType.name })
 
-export type ObjectOptions = Options<SelectOption<number | string>>
+const mapUsers = (response: AxiosResponse<Users>): SelectOption<number>[] =>
+	response.data.map(user =>
+		<SelectOption<number>> { value: user.id, label: user.name }
+	)
 
 export const SUBJECT_OPTION_PROMISES: Record<ConditionSubject, () => Promise<ObjectOptions>> = {
 	post: () =>
-		apiGet<Posts>(POSTS_ENDPOINT).then(mapPosts),
+		getSubjectOptions<Posts>('post', POSTS_ENDPOINT, mapPosts),
 	page: () =>
-		apiGet<Pages>(PAGES_ENDPOINT).then(mapPosts),
+		getSubjectOptions<Pages>('page', PAGES_ENDPOINT, mapPosts),
 	postType: () =>
-		apiGet<PostTypes>(POST_TYPES_ENDPOINT)
-			.then(response =>
-				Object.values(response.data).map(postType =>
-					<SelectOption<string>> { value: postType.slug, label: postType.name })),
+		getSubjectOptions<PostTypes>('postType', POST_TYPES_ENDPOINT, mapPostTypes),
 	category: () =>
-		apiGet<Terms>(CATEGORIES_ENDPOINT).then(mapTerms),
+		getSubjectOptions<Categories>('category', CATEGORIES_ENDPOINT, mapTerms),
 	tag: () =>
-		apiGet<Terms>(TAGS_ENDPOINT).then(mapTerms),
-	user: getUsers,
-	userRole: () => Promise.resolve(ROLE_OPTIONS),
-	authenticated: () => Promise.resolve(BOOLEAN_OPTIONS)
+		getSubjectOptions<PostTags>('tag', TAGS_ENDPOINT, mapTerms),
+	user: () =>
+		getSubjectOptions<Users>('user', USERS_ENDPOINT, mapUsers),
+	userRole: () =>
+		Promise.resolve(ROLE_OPTIONS),
+	authenticated: () =>
+		Promise.resolve(BOOLEAN_OPTIONS)
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11c6f0797a3e3a634753c77709abf0a5",
+    "content-hash": "6f16a3957425df5844472213e9a11677",
     "packages": [
         {
             "name": "composer/installers",
@@ -159,16 +159,16 @@
         },
         {
             "name": "freemius/wordpress-sdk",
-            "version": "2.5.4",
+            "version": "2.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Freemius/wordpress-sdk.git",
-                "reference": "612248cf7bf743999905684325264b172c410b8c"
+                "reference": "72c4f4ec119019976fe3326421f93cb089a8a527"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Freemius/wordpress-sdk/zipball/612248cf7bf743999905684325264b172c410b8c",
-                "reference": "612248cf7bf743999905684325264b172c410b8c",
+                "url": "https://api.github.com/repos/Freemius/wordpress-sdk/zipball/72c4f4ec119019976fe3326421f93cb089a8a527",
+                "reference": "72c4f4ec119019976fe3326421f93cb089a8a527",
                 "shasum": ""
             },
             "require": {
@@ -192,9 +192,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Freemius/wordpress-sdk/issues",
-                "source": "https://github.com/Freemius/wordpress-sdk/tree/2.5.4"
+                "source": "https://github.com/Freemius/wordpress-sdk/tree/2.5.5"
             },
-            "time": "2023-03-05T11:49:24+00:00"
+            "time": "2023-03-20T07:22:28+00:00"
         },
         {
             "name": "matthiasmullie/minify",
@@ -688,7 +688,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.6",
+        "php": ">=7.0",
         "ext-dom": "*",
         "ext-json": "*"
     },

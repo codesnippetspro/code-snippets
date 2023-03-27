@@ -26,6 +26,7 @@ declare global {
 				nonce: string
 			}
 			pageTitleActions: Record<string, string>
+			addNewUrl: string
 			isPreview: boolean
 			enableDownloads: boolean
 			extraSaveButtons: boolean

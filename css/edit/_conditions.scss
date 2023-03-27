@@ -67,6 +67,10 @@
 	> * {
 		flex: 1;
 		margin-bottom: 1.5em;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 }
 
