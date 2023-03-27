@@ -42,7 +42,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '5.6', 
 	 *
 	 * @const string
 	 */
-	define( 'CODE_SNIPPETS_VERSION', '3.3.0' );
+	define( 'CODE_SNIPPETS_VERSION', '3.3.1-dev-1' );
 
 	/**
 	 * The full path to the main file of this plugin.

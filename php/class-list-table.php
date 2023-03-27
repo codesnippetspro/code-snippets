@@ -364,17 +364,19 @@ class List_Table extends WP_List_Table {
 			$out .= ' <span class="badge">' . esc_html__( 'Shared on Network', 'code-snippets' ) . '</span>';
 		}
 
-		$cloud_link = $this->get_cloud_link( $snippet->id );
-		if ( $cloud_link ) {
-			//If update available make cloud icon orange?
-			if ( $cloud_link->update_available ) {
-				$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>' . $out;
-			}elseif ( $cloud_link->in_codevault) { 
-				//If snippet in codevaule and no update available make cloud icon blue
-				$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>' . $out;
-			}else{
-				//Make cloud icon grey to show its from the cloud
-				$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>' . $out;
+		if( $this->is_cloud_link_valid() ){
+			$cloud_link = $this->get_cloud_link( $snippet->id );
+			if ( $cloud_link ) {
+				//If update available make cloud icon orange?
+				if ( $cloud_link->update_available ) {
+					$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>' . $out;
+				}elseif ( $cloud_link->in_codevault) { 
+					//If snippet in codevaule and no update available make cloud icon blue
+					$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>' . $out;
+				}else{
+					//Make cloud icon grey to show its from the cloud
+					$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>' . $out;
+				}
 			}
 		}
 
