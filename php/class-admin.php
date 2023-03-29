@@ -53,9 +53,28 @@ class Admin {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_filter( 'debug_information', array( $this, 'debug_information' ) );
 		add_action( 'code_snippets/admin/manage', array( $this, 'print_notices' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 
 		if ( ! empty( $_POST['save_snippet'] ) ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
+		}
+	}
+
+	/**
+	 * Enqueue general admin assets.
+	 *
+	 * @param string $hook_name Current plugin page hook name.
+	 *
+	 * @return void
+	 */
+	public function enqueue_admin_assets( $hook_name ) {
+		if ( 'plugins.php' === $hook_name ) {
+			wp_enqueue_style(
+				'code-snippets-plugins-css',
+				plugins_url( 'dist/plugins.css', PLUGIN_FILE ),
+				[],
+				PLUGIN_VERSION
+			);
 		}
 	}
 
@@ -90,7 +109,6 @@ class Admin {
 	 * @return bool Whether the snippet will be executed.
 	 */
 	public function prevent_exec_on_save( $exec, $exec_id, $table_name ) {
-
 		if ( ! isset( $_POST['save_snippet'], $_POST['snippet_id'] ) ) {
 			return $exec;
 		}
