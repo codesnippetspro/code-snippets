@@ -17,6 +17,10 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @property string        $code             The executable code.
  * @property array<string> $tags             An array of the tags.
  * @property string        $scope            The scope name.
+ * @property string        $codevault        Name of user codevault.
+ * @property string        $total_votes      The total number of votes.
+ * @property string        $vote_count       The number of actual votes.
+ * @property string        $wp_tested        Tested with WP version.
  * @property string        $status           Snippet Status ID.
  * @property string        $created          The date and time when the snippet data was first created, in ISO format.
  * @property string        $updated          When the snippet was last updated, in ISO format.
@@ -41,6 +45,10 @@ class Cloud_Snippet extends Data_Item {
 				'tags'        => [],
 				'scope'       => '',
 				'status'      => '',
+				'codevault'   => '',
+				'total_votes' => '',
+				'vote_count'  => '',
+				'wp_tested '  => '',
 				'created'     => '',
 				'updated'     => '',
 				'revision'    => 0,

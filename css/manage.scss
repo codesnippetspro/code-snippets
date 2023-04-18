@@ -280,7 +280,7 @@ $inactive-color: #ccc;
 @include snippet-type-colors(css, $css-active, $css-inactive, $css-background, $css-highlight);
 @include snippet-type-colors(html, $html-active, $html-active, $html-background, $html-highlight);
 @include snippet-type-colors(js, $js-active, $js-inactive, $js-background, $js-highlight);
-@include snippet-type-colors(unverified, $unverified-active, $unverified-inactive, $unverified-background, $unverified-highlight);
+//@include snippet-type-colors(unverified, $unverified-active, $unverified-inactive, $unverified-background, $unverified-highlight);
 
 @media screen and (max-width: 782px) {
 	p.search-box {
@@ -332,6 +332,10 @@ $inactive-color: #ccc;
 }
 
 .cloud-downloaded{
+	color: #e91e63;
+}
+
+.cloud-not-downloaded{
 	color: #9e9e9e;
 }
 
@@ -363,18 +367,26 @@ $inactive-color: #ccc;
 	text-decoration: dotted underline;
 }
 
-.column-download a {
+.column-download a, .action-button-link {
     border: 1px solid;
     border-radius: 5px;
     padding: 5px;
     margin-bottom: 5px;
     display: block;
     text-align: center;
+	background: transparent;
 }
 
-.cloud-snippet-downloaded {
-    background: transparent;
+.cloud-snippet-download{
+	color: #2271b1 !important;
+}
+
+.cloud-snippet-downloaded, .cloud-snippet-preview-style {
     color: #616161 !important;
+}
+
+.cloud-snippet-update{
+	color: #ff9800 !important;
 }
 
 .snippet-type-badge {
@@ -385,7 +397,8 @@ $inactive-color: #ccc;
 	margin-left: 10px;
 	border: 1px solid;
     border-radius: 5px;
-    padding: 1px;
+    font-size: 15px;
+    line-height: 19px;
 }
 
 #cloud-search-form{
@@ -457,4 +470,82 @@ $inactive-color: #ccc;
 
 .cloud-search{
 	margin-left: 5px;
+}
+
+
+.ai-verified-snippet .badge, .snippet-type-badge[data-type=ai-verified]{
+	background-color: #ccfbf1;
+	color: #0f766e;
+}
+
+.private-snippet .badge, .snippet-type-badge[data-type=private]{
+	background-color: #eff6ff;
+	color: #1d4ed8;
+}
+
+.public-snippet .badge, .snippet-type-badge[data-type=public]{
+	background-color: #fefce8;
+	color: #a16207;
+}
+
+
+.unverified-snippet .badge, .snippet-type-badge[data-type=unverified]{
+	background-color: #fff1f2;
+	color: #be123c;
+	&:hover{
+		background-color: #fde2e4;
+		color: #be123c;
+	}
+}
+
+.no-results {
+    font-size: 15px;
+}
+
+.cloud-search-card-bottom{
+	min-height: 40px;
+}
+
+#cloud-search-results .cloud-snippets #the-list{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.cloud-snippets .plugin-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.voted-info{
+	display: inline-flex;
+    gap: 3px;
+    align-items: center;
+	margin-bottom: 6px !important;
+	&:hover{
+		.thumbs-up{
+			stroke: #059669;
+			fill: #6ee7b7;
+			animation: thumb 1s ease-in-out infinite;
+		}
+	}
+}
+
+.thumbs-up{
+	width: 1.25rem; /* 20px */
+	height: 1.25rem; /* 20px */
+	transform-origin: bottom left;
+	&:hover{
+		stroke: #059669;
+		fill: #6ee7b7;
+	}
+}
+
+@keyframes thumb{
+	0%{transform:rotate(0)}
+	33%{transform:rotate(7deg)}
+	66%{transform:rotate(-15deg)}
+	90%{transform:rotate(5deg)}
+	to{transform:rotate(0)}
 }

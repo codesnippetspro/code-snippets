@@ -258,7 +258,7 @@ class List_Table extends WP_List_Table {
 			//Check there is a valid cloud connection or show a link to set it up
 			if( $this->is_cloud_link_valid() ){
 				//Get the cloud link object
-				$cloud_link = $this->get_cloud_link( $snippet->id );
+				$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
 				//Check this snippet is linked or orignated from the cloud
 				if ( $cloud_link ) {
 					//Check if the snippet is in the users codevault 
@@ -365,7 +365,7 @@ class List_Table extends WP_List_Table {
 		}
 
 		if( $this->is_cloud_link_valid() ){
-			$cloud_link = $this->get_cloud_link( $snippet->id );
+			$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
 			if ( $cloud_link ) {
 				//If update available make cloud icon orange?
 				if ( $cloud_link->update_available ) {
@@ -1375,30 +1375,6 @@ class List_Table extends WP_List_Table {
 
 			save_snippet( $snippet );
 		}
-	}
-
-	/**
-	 * Check if snippet is synced to cloud.
-	 *
-	 * @param string $snippet_id.
-	 *
-	 * @return Cloud_Link|null
-	 */
-	public function get_cloud_link( $snippet_id ) {
-		$cloud_array = array();
-		//Check if cloud id is not null
-		if ( ! $snippet_id ) {
-			return null;
-		}
-
-		$local_to_cloud_map = code_snippets()->cloud_api->get_local_to_cloud_map();
-		$local_id_array = array_column( $local_to_cloud_map, 'local_id' );	
-		if ( in_array( $snippet_id, $local_id_array ) ) {
-			$index = array_search( $snippet_id, $local_id_array );
-			return $local_to_cloud_map[$index];
-		}
-
-		return null;
 	}
 
 	/**

@@ -616,4 +616,115 @@ class Cloud_API {
 		return $snippet->update_available;
 	}
 
+	/**
+	 * Check if snippet is synced to cloud.
+	 *
+	 * @param string $snippet_id.
+	 * @param string $local_or_cloud - is the id local id or cloud id.
+	 *
+	 * @return Cloud_Link|null
+	 */
+	public function get_cloud_link( $snippet_id, $local_or_cloud ) {
+		$local_to_cloud_map = $this->get_local_to_cloud_map();
+		if( $local_or_cloud == 'cloud' ){
+			$local_id_array = array_column( $local_to_cloud_map, 'cloud_id' );
+		}
+		if( $local_or_cloud == 'local' ){
+			$local_id_array = array_column( $local_to_cloud_map, 'local_id' );
+		}
+		if ( in_array( $snippet_id, $local_id_array ) ) {
+			$index = array_search( $snippet_id, $local_id_array );
+			return $local_to_cloud_map[$index];
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * Static Helper Methods
+	 *
+	 */
+
+	/**
+	 * Translate a snippet scope to a type.
+	 *
+	 * @param string $scope The scope of the snippet.
+	 *
+	 * @return string The type of the snippet.
+	 */
+	public static function get_type_from_scope( $scope ) {
+		switch ( $scope ) {
+			case 'global':
+				return 'php';
+			case 'site-css':
+				return 'css';
+			case 'site-footer-js':
+				return 'js';
+			case 'content':
+				return 'html';
+			default:
+				return '';
+		}
+	}
+
+	/**
+	 * Translate a snippet status to a style class.
+	 *
+	 * @param int $status The scope of the snippet.
+	 *
+	 * @return string The style to be used for the stats badge.
+	 */
+	public static function get_style_from_status( $status ) {
+		switch ( $status ) {
+			case 3: //Private
+				return 'css';
+			case 4: //Public
+				return 'js';
+			case 5: //Unverified
+				return 'unverified';
+			case 6: //AI Verified
+				return 'html';
+			default:
+				return 'php';
+		}
+	}
+
+	/**
+	 * Translate a snippet status to a status-name.
+	 *
+	 * @param int $status The scope of the snippet.
+	 *
+	 * @return string The style to be used for the stats badge.
+	 */
+	public static function get_status_name_from_status( $status ) {
+		switch ( $status ) {
+			case 3: //Private
+				return 'Private';
+			case 4: //Public
+				return 'Public';
+			case 5: //Unverified
+				return 'Unverified';
+			case 6: //AI Verified
+				return 'AI-Verified';
+		}
+	}
+
+	/**
+	 * Renders the html for the preview thickbox popup.
+	 *
+	 * @return void
+	 */
+	public static function render_cloud_snippet_thickbox() {
+		add_thickbox();
+		?>
+		<div id="show-code-preview" style="display: none;">
+			<h3 id="snippet-name-thickbox"></h3>
+			<h4><?php esc_html_e( 'Snippet Code:', 'code-snippets' ); ?></h4>
+			<pre class="thickbox-code-viewer">
+				<code id="snippet-code-thickbox" class=""></code>
+			</pre>
+		</div>
+		<?php
+	}
 }

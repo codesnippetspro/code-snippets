@@ -331,7 +331,7 @@ class Admin {
 				'';
 				break;
 			case 'cloud':
-				echo '<span class="cloud-badge dashicons dashicons-cloud-saved cloud-icon cloud-synced"></span>';	
+				echo '<span class="cloud-badge dashicons dashicons-cloud cloud-icon cloud-synced"></span>';	
 				break;
 			case 'cloud_search':
 				echo '<span class="cloud-badge dashicons dashicons-search cloud-icon cloud-downloaded"></span>';	

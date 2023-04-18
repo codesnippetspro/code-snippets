@@ -5,6 +5,7 @@ namespace Code_Snippets;
 use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\Cloud\Cloud_List_Table;
 use Code_Snippets\Cloud\Cloud_Search_List_Table;
+use Code_Snippets\Cloud\Cloud_Search_Install_List_Table;
 
 /**
  * This class handles the manage snippets menu
@@ -201,6 +202,7 @@ class Manage_Menu extends Admin_Menu {
 		$this->cloud_list_table->prepare_items();
 
 		// Initialize the search cloud list table class.
+		//$this->cloud_search_list_table = new Cloud_Search_List_Table();
 		$this->cloud_search_list_table = new Cloud_Search_List_Table();
 		$this->cloud_search_list_table->prepare_items();
 	}

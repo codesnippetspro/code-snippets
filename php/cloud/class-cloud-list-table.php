@@ -237,7 +237,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return string The content of the column to output.
 	 */
 	protected function column_default( $item, $column_name ) {
-		$link = $this->get_cloud_map_link( $item->id );
+		$link = code_snippets()->cloud_api->get_cloud_link( $item->id, 'cloud' );
 
 		switch ( $column_name ) {
 			case 'tags':
@@ -247,14 +247,27 @@ class Cloud_List_Table extends WP_List_Table {
 				return $item->description;
 
 			case 'name':
+				$cloud_link = code_snippets()->cloud_api->get_cloud_link( $item->id, 'cloud' );
+				if ( $cloud_link ) {
+					//If update available make cloud icon orange?
+					if ( $cloud_link->update_available ) {
+						$cloud_icon = '<span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>';
+					}elseif ( $cloud_link->in_codevault) { 
+						//If snippet in codevaule and no update available make cloud icon blue
+						$cloud_icon = '<span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>';
+					}
+				}else{
+					//Make cloud icon grey to show its from the cloud
+					$cloud_icon = '<span class="dashicons dashicons-cloud cloud-icon cloud-not-downloaded"></span>';
+				}
 				$edit_url = $link ? code_snippets()->get_snippet_edit_url( $link->local_id ) : '';
 				$name_link = sprintf(
 					$edit_url ? '<a href="%1$s">%2$s</a>' : '<a>%2$s</a>',
 					esc_url( $edit_url ),
 					esc_html( $item->name )
 				);
-
-				return $name_link . $this->build_column_hidden_input( $column_name, $item );
+				
+				return $cloud_icon . $name_link . $this->build_column_hidden_input( $column_name, $item );
 
 			case 'updated':
 				return sprintf( '<span>%s</span>', esc_html( human_time_diff( strtotime($item->updated), current_time( 'U' ) ) ) );
@@ -268,12 +281,12 @@ class Cloud_List_Table extends WP_List_Table {
 			case 'status':
 				return sprintf(
 					'<a class="snippet-type-badge snippet-status" data-type="%s">%s</a>',
-					esc_attr( $this->get_style_from_status( $item->status ) ),
-					esc_html( $this->get_status_name_from_status_id( $item->status) )
+					esc_attr( strtolower( Cloud_API::get_status_name_from_status( $item->status ) ) ),
+					esc_html( Cloud_API::get_status_name_from_status( $item->status) )
 				);
 
 			case 'scope':
-				$type = $this->get_type_from_scope( $item->scope );
+				$type = Cloud_API::get_type_from_scope( $item->scope );
 
 				return sprintf(
 					'<a id="snippet-type-%s" class="snippet-type-badge snippet-type" data-type="%s">%s</a>',
@@ -287,70 +300,6 @@ class Cloud_List_Table extends WP_List_Table {
 
 			default:
 				return apply_filters( "code_snippets/cloud_list_table/column_$column_name", '&#8212;', $item );
-		}
-	}
-
-	/**
-	 * Translate a snippet scope to a type.
-	 *
-	 * @param string $scope The scope of the snippet.
-	 *
-	 * @return string The type of the snippet.
-	 */
-	protected function get_type_from_scope( $scope ) {
-		switch ( $scope ) {
-			case 'global':
-				return 'php';
-			case 'site-css':
-				return 'css';
-			case 'site-footer-js':
-				return 'js';
-			case 'content':
-				return 'html';
-			default:
-				return '';
-		}
-	}
-
-	/**
-	 * Translate a snippet status to a style class.
-	 *
-	 * @param int $status The scope of the snippet.
-	 *
-	 * @return string The style to be used for the stats badge.
-	 */
-	public function get_style_from_status( $status ) {
-		switch ( $status ) {
-			case 3: //Private
-				return 'css';
-			case 4: //Public
-				return 'js';
-			case 5: //Unverified
-				return 'unverified';
-			case 6: //AI Verified
-				return 'html';
-			default:
-				return 'php';
-		}
-	}
-
-	/**
-	 * Translate a snippet status to a style class.
-	 *
-	 * @param int $status The scope of the snippet.
-	 *
-	 * @return string The style to be used for the stats badge.
-	 */
-	public function get_status_name_from_status_id( $status ) {
-		switch ( $status ) {
-			case 3:
-				return 'Private';
-			case 4:
-				return 'Public';
-			case 5:
-				return 'Unverified';
-			case 6:
-				return 'AI Verified';
 		}
 	}
 
@@ -378,9 +327,10 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return string The content of the column to output.
 	 */
-	protected function column_download( $item ) {
-		$lang = $this->get_type_from_scope( $item->scope );
-		$link = $this->get_cloud_map_link( $item->id );
+	public function column_download( $item ) {
+		$lang = Cloud_API::get_type_from_scope( $item->scope );
+		$link = code_snippets()->cloud_api->get_cloud_link( $item->id, 'cloud' );
+		$update_available = $link && $link->update_available;
 
 		if ( $link && ! $link->update_available ) {
 			return sprintf(
@@ -390,11 +340,9 @@ class Cloud_List_Table extends WP_List_Table {
 			);
 		}
 
-		$update_available = $link && $link->update_available;
-
 		if( $update_available ) {
 			$action_link = sprintf(
-				'<a class="cloud-snippet-download" href="%s">%s</a>',
+				'<a class="cloud-snippet-update" href="%s">%s</a>',
 				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) . '/#updated-code' ),
 				esc_html__( 'Update Available', 'code-snippets' )
 			);
@@ -420,7 +368,7 @@ class Cloud_List_Table extends WP_List_Table {
 		$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
 
 		$thickbox_link = sprintf(
-			'<a href="%s" class="cloud-snippet-preview thickbox" data-snippet="%s" data-lang="%s">%s</a>',
+			'<a href="%s" class="cloud-snippet-preview cloud-snippet-preview-style thickbox" data-snippet="%s" data-lang="%s">%s</a>',
 			esc_url( $thickbox_url ),
 			esc_attr( $item->id ),
 			esc_attr( $lang ),
@@ -483,11 +431,9 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @param Cloud_Snippet $item The snippet being used for the current row.
 	 */
 	public function single_row( $item ) {
-		$style = $this->get_style_from_status( $item->status );
-		$link = $this->get_cloud_map_link( $item->id );
-		
-		$status = $link ? 'inactive' : 'active';
-		$row_class = "snippet $status-snippet $style-snippet";
+		$type = Cloud_API::get_type_from_scope( $item->scope );
+		$status_name = strtolower( Cloud_API::get_status_name_from_status( $item->status ) );
+		$row_class = "snippet $status_name-snippet $type-snippet";
 
 		printf(
 			'<tr id="snippet-%s" class="%s" data-snippet-scope="%s">',
@@ -506,46 +452,10 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	public function display() {
-		$this->render_cloud_snippet_thickbox();
+		Cloud_API::render_cloud_snippet_thickbox();
 		parent::display();
 	}
 
-	/**
-	 * Renders the html for the preview thickbox popup.
-	 *
-	 * @return void
-	 */
-	public function render_cloud_snippet_thickbox() {
-		add_thickbox();
-		?>
-		<div id="show-code-preview" style="display: none;">
-			<h3 id="snippet-name-thickbox"></h3>
-			<h4><?php esc_html_e( 'Snippet Code:', 'code-snippets' ); ?></h4>
-			<pre class="thickbox-code-viewer">
-				<code id="snippet-code-thickbox" class=""></code>
-			</pre>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Fetch the local data for a downloaded snippet.
-	 *
-	 * @param string $cloud_id The cloud ID of the snippet.
-	 *
-	 * @return Cloud_Link|null
-	 */
-	protected function get_cloud_map_link( $cloud_id ) {
-		$local_to_cloud_map = $this->cloud_api->get_local_to_cloud_map();
-		$cloud_id_array = array_column( $local_to_cloud_map, 'cloud_id' );
-
-		if ( in_array( $cloud_id, $cloud_id_array, false ) ) {
-			$index = array_search( $cloud_id, $cloud_id_array, false );
-			return $local_to_cloud_map[ $index ];
-		}
-
-		return null;
-	}
 
 	/**
 	 * Bulk Download Snippets.
@@ -559,7 +469,7 @@ class Cloud_List_Table extends WP_List_Table {
 		$source = explode( '-', $source )[1];
 		foreach ( $ids as $id ) {
 			//Check if snippet already exists in cloud link transient and skip if it does 
-			$cloud_link = $this->get_cloud_map_link( $id );
+			$cloud_link = code_snippets()->cloud_api->get_cloud_link( $id, 'cloud' );
 			if ( $cloud_link ) {
 				continue;
 			}

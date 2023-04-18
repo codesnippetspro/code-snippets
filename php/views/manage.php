@@ -123,9 +123,9 @@ $current_type = $this->get_current_type();
 		</form>
 
 
-		<form method="post" action="">
+		<form method="post" action="" id="cloud-search-results">
 			<input type="hidden" id="code_snippets_ajax_nonce"
-			       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
+			    value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 			<?php
 				List_Table::required_form_fields();
 				//Check if url has a search query called cloud_search
@@ -164,8 +164,9 @@ $current_type = $this->get_current_type();
 		</form>
 		<div class="cloud-key">
 			<p><b><u>Cloud Sync Guide</u></b></p>
-			<p><span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>Snippet Synced to Codevault</p>
-			<p><span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>Snippet Downloaded from Cloud</p>
+			<p><span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>Snippet downloaded and in sync with Codevault</p>
+			<p><span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>Snippet Downloaded from Cloud but not synced with Codevault</p>
+			<p><span class="dashicons dashicons-cloud cloud-icon cloud-not-downloaded"></span>Snippet in Codevault but not downloaded to local site</p>
 			<p><span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>Snippet Update available</p>
 		</div>
 	<?php } do_action( 'code_snippets/admin/manage', $current_type ); ?>
