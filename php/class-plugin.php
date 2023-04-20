@@ -116,6 +116,9 @@ class Plugin {
 		require_once $includes_path . '/settings/editor-preview.php';
 		require_once $includes_path . '/settings/settings.php';
 
+		// Cloud List Table shared functions.
+		require_once $includes_path . '/cloud/list-table-shared-ops.php';
+
 		$this->active_snippets = new Active_Snippets();
 		$this->frontend = new Frontend();
 		$this->cloud_api = new Cloud_API();

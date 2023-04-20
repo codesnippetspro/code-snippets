@@ -25,18 +25,11 @@ if ( ! class_exists( 'WP_Plugin_Install_List_Table' ) ) {
  */
 class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	/**
-	 * Base URL for cloud API.
-	 *
-	 * @var string
-	 */
-	const CLASS_NAME = 'Code_Snippets\Cloud\Cloud_Search_List_Table';
-
-	/**
 	 * Instance of Cloud API class.
 	 *
 	 * @var Cloud_API
 	 */
-	protected $cloud_api;
+	protected $cloud_api; 
 
 	/**
 	 * Items for the cloud list table.
@@ -44,13 +37,6 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 * @var Cloud_Snippets
 	 */
 	protected $cloud_snippets;
-
-	/**
-	 * Full name of the class.
-	 *
-	 * @var string
-	 */
-	protected $class_name;
 
 	/**
 	 * Class constructor.
@@ -65,7 +51,6 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 		);
 
 		$this->cloud_api = code_snippets()->cloud_api;
-		$this->class_name = get_class( $this );
 
 		// Strip the result query arg from the URL.
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
@@ -79,20 +64,16 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	public function prepare_items() {
 		$this->process_actions();
 
-		//$columns = $this->get_columns();
-		//$hidden = [ 'id', 'code', 'cloud_id', 'revision' ];
-		//$this->_column_headers = array( $columns, $hidden );
-
 		$this->cloud_snippets = $this->fetch_snippets();
 		$this->items = $this->cloud_snippets->snippets;
 
-		// $this->set_pagination_args(
-		// 	[
-		// 		'per_page'    => count( $this->cloud_snippets->snippets ),
-		// 		'total_items' => $this->cloud_snippets->total_snippets,
-		// 		'total_pages' => (int) $this->cloud_snippets->total_pages,
-		// 	]
-		// );
+		$this->set_pagination_args(
+			[
+				'per_page'    => count( $this->cloud_snippets->snippets ),
+				'total_items' => $this->cloud_snippets->total_snippets,
+				'total_pages' => (int) $this->cloud_snippets->total_pages,
+			]
+		);
 	}
 
 	/**
@@ -103,40 +84,14 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	public function process_actions() {
 		
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source' ) );
-		
-		if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
-			if( 'download' === $_REQUEST['action'] || 'update' === $_REQUEST['action'] ){
-				$result = $this->cloud_api->download_or_update_snippet(
-					sanitize_key( $_REQUEST['snippet'] ),
-					sanitize_key( $_REQUEST['source'] ),
-					sanitize_key( $_REQUEST['action'] )
-				);
-				if ( $result['success'] ) {
-					if( $result['snippet_id'] ){
-						//Redirect to edit snippet page
-						wp_safe_redirect( code_snippets()->get_snippet_edit_url( $result['snippet_id'] ) );
-						exit;
-					}
-					wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result['action'] ) ) );
-					exit;
-				}
-			}
-		}		
-		/* Only continue from this point if there are bulk actions to process */
-		if ( ! isset( $_POST['cloud_ids'] ) && ! isset( $_POST['shared_cloud_ids'] ) ) {
-			return;
-		}
-		$ids = isset( $_POST['cloud_ids'] ) ? array_map( 'intval', $_POST['cloud_ids'] ) : array();
-		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
-		if( 'download-codevault-selected' == $this->current_action() || 'download-search-selected' == $this->current_action()) {
-				$this->download_snippets( $ids, $this->current_action() );
-				$result = 'download-multi';
-		}
+		$action = $_REQUEST['action'];
+		$snippet = $_REQUEST['snippet'];
+		$source = $_REQUEST['source'];
 
-		if ( isset( $result ) ) {
-			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
-			exit;
+		if ( isset( $action, $snippet, $source ) ) {
+			cloud_lts_process_download_action( $action, $source, $snippet );
 		}
+				
 	}
 
 	public function display_rows() {
@@ -156,8 +111,8 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 			?>
 		<div class="plugin-card cloud-search-card plugin-card-<?php echo sanitize_html_class( $item->id ); ?>">
 			<?php
-			echo( $this->build_column_hidden_input( 'code', $item ) );
-			echo( $this->build_column_hidden_input( 'name', $item ) );
+			echo( cloud_lts_build_column_hidden_input( 'code', $item ) );
+			echo( cloud_lts_build_column_hidden_input( 'name', $item ) );
 			?>
 			<div class="plugin-card-top">
 				<div class="name column-name">					
@@ -216,27 +171,6 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 		<?php }
 	}
 
-
-	protected function display_tablenav( $which ) {
-
-			?>
-			<div class="tablenav top">
-				<div class="alignleft actions">
-					<?php
-					/**
-					 * Fires before the Plugin Install table header pagination is displayed.
-					 *
-					 * @since 2.7.0
-					 */
-					do_action( 'install_plugins_table_header' );
-					?>
-				</div>
-				<?php $this->pagination( $which ); ?>
-				<br class="clear" />
-			</div>
-			<?php
-	}
-
 	/**
 	 * Get the action links for a Code Snippet from the cloud
 	 *
@@ -245,58 +179,12 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 * @return string The HTML content to display.
 	 */
 	protected function get_action_links( $snippet ) {
-		$lang = Cloud_API::get_type_from_scope( $snippet->scope );
-		$link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'cloud' );
-		$update_available = $link && $link->update_available;
-
-		if ( $link && ! $link->update_available ) {
-			return sprintf(
-				'<a href="%s" class="cloud-snippet-downloaded action-button-link">%s</a>',
-				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
-				esc_html__( 'View', 'code-snippets' )
-			);
-		}
-
-		if( $update_available ) {
-			$action_link = sprintf(
-				'<a class="cloud-snippet-update action-button-link" href="%s">%s</a>',
-				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) . '/#updated-code' ),
-				esc_html__( 'Update Available', 'code-snippets' )
-			);
-		}else{
-			//Get source of snippet - codevault or search use current class as snippet source is not set for every cloud snippet in cloud link
-			$source = self::CLASS_NAME === $this->class_name ? 'codevault' : 'search';
-
-			$download_url = add_query_arg(
-				[
-					'action'  => 'download',
-					'snippet' => $snippet->id,
-					'source'  => $source ,
-				]
-			);
-
-			$action_link = sprintf(
-				'<a class="cloud-snippet-download action-button-link" href="%s">%s</a>',
-					esc_url( $download_url ),
-					esc_html__( 'Download', 'code-snippets' )
-			);
-		}
-
-		$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
-
-		$thickbox_link = sprintf(
-			'<a href="%s" class="cloud-snippet-preview cloud-snippet-preview-style thickbox action-button-link" data-snippet="%s" data-lang="%s">%s</a>',
-			esc_url( $thickbox_url ),
-			esc_attr( $snippet->id ),
-			esc_attr( $lang ),
-			esc_html__( 'Preview', 'code-snippets' )
-		);
-
-		return $action_link . $thickbox_link;
+		
+		return cloud_lts_build_action_links( $snippet, 'search' );
 	}
 
 	/**
-	 * Define the url for the nam anchor tag
+	 * Define the url for the name anchor tag
 	 *
 	 * @param Cloud_Snippet $snippet The snippet to get URL.
 	 *
@@ -317,24 +205,6 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 			'cloud-snippet-link' 		=>	esc_url( '#TB_inline?&width=700&height=500&inlineId=show-code-preview' ),
 			'cloud-snippet-downloaded' 	=> false,
 		];
-	}
-
-	/**
-	 * Build a hidden input field for any hidden columns.
-	 *
-	 * @param string        $column_name Column name - Name, Code.
-	 * @param Cloud_Snippet $snippet     Column item.
-	 *
-	 * @return string
-	 */
-	protected function build_column_hidden_input( $column_name, $snippet ) {
-		return sprintf(
-			'<input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
-			esc_attr( $column_name ),
-			esc_attr( $snippet->id ),
-			esc_attr( $column_name ),
-			esc_attr( $snippet->$column_name )
-		);
 	}
 
 	/**
@@ -407,5 +277,29 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	public function display() {
 		Cloud_API::render_cloud_snippet_thickbox();
 		parent::display();
+	}
+
+	/**
+	 * Displays the pagination.
+	 *
+	 * @param string $which Context where the pagination will be displayed.
+	 *
+	 * @return void
+	 */
+	protected function pagination( $which ) {
+		$total_items = $this->_pagination_args['total_items'];
+		$total_pages = $this->_pagination_args['total_pages'];
+		$pagenum = $this->get_pagenum();
+
+		if ( 'top' === $which && $total_pages > 1 ) {
+			$this->screen->render_screen_reader_content( 'heading_pagination' );
+		}
+
+		$paginate = cloud_lts_pagination( $which, 'search', $total_items, $total_pages, $pagenum );
+		$page_class = $paginate['page_class'];
+		$output = $paginate['output'];
+
+		echo $this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
+		//echo wp_kses_post( $this->_pagination ); TODO: This removes the top input box for page number
 	}
 }

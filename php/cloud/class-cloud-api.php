@@ -486,7 +486,6 @@ class Cloud_API {
 	 */
 	public function get_single_snippet_from_codevault( $actual_cloud_id ){
 		$snippets = $this->get_codevault_snippets();
-
 		// Filter the cloud snippet array to get the snippet that is to be saved to the database.
 		$snippet_to_store = array_filter(
 			$snippets->snippets,

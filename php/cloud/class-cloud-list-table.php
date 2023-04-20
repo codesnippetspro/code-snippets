@@ -24,14 +24,6 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * @package Code_Snippets
  */
 class Cloud_List_Table extends WP_List_Table {
-
-	/**
-	 * Base URL for cloud API.
-	 *
-	 * @var string
-	 */
-	const CLASS_NAME = 'Code_Snippets\Cloud\Cloud_List_Table';
-
 	/**
 	 * Instance of Cloud API class.
 	 *
@@ -47,13 +39,6 @@ class Cloud_List_Table extends WP_List_Table {
 	protected $cloud_snippets;
 
 	/**
-	 * Full name of the class.
-	 *
-	 * @var string
-	 */
-	protected $class_name;
-
-	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
@@ -66,7 +51,6 @@ class Cloud_List_Table extends WP_List_Table {
 		);
 
 		$this->cloud_api = code_snippets()->cloud_api;
-		$this->class_name = get_class( $this );
 
 		// Strip the result query arg from the URL.
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
@@ -174,25 +158,14 @@ class Cloud_List_Table extends WP_List_Table {
 	public function process_actions() {
 		
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source' ) );
-		
-		if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
-			if( 'download' === $_REQUEST['action'] || 'update' === $_REQUEST['action'] ){
-				$result = $this->cloud_api->download_or_update_snippet(
-					sanitize_key( $_REQUEST['snippet'] ),
-					sanitize_key( $_REQUEST['source'] ),
-					sanitize_key( $_REQUEST['action'] )
-				);
-				if ( $result['success'] ) {
-					if( $result['snippet_id'] ){
-						//Redirect to edit snippet page
-						wp_safe_redirect( code_snippets()->get_snippet_edit_url( $result['snippet_id'] ) );
-						exit;
-					}
-					wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result['action'] ) ) );
-					exit;
-				}
-			}
-		}		
+		$action = $_REQUEST['action'];
+		$snippet = $_REQUEST['snippet'];
+		$source = $_REQUEST['source'];
+
+		if ( isset( $action, $snippet, $source ) ) {
+			cloud_lts_process_download_action( $action, $source, $snippet );
+		}
+
 		/* Only continue from this point if there are bulk actions to process */
 		if ( ! isset( $_POST['cloud_ids'] ) && ! isset( $_POST['shared_cloud_ids'] ) ) {
 			return;
@@ -208,24 +181,6 @@ class Cloud_List_Table extends WP_List_Table {
 			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 			exit;
 		}
-	}
-
-	/**
-	 * Build a hidden input field for a certain column and snippet value.
-	 *
-	 * @param string        $column_name Column name.
-	 * @param Cloud_Snippet $snippet     Column item.
-	 *
-	 * @return string
-	 */
-	protected function build_column_hidden_input( $column_name, $snippet ) {
-		return sprintf(
-			'<input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
-			esc_attr( $column_name ),
-			esc_attr( $snippet->id ),
-			esc_attr( $column_name ),
-			esc_attr( $snippet->$column_name )
-		);
 	}
 
 	/**
@@ -267,7 +222,7 @@ class Cloud_List_Table extends WP_List_Table {
 					esc_html( $item->name )
 				);
 				
-				return $cloud_icon . $name_link . $this->build_column_hidden_input( $column_name, $item );
+				return $cloud_icon . $name_link . cloud_lts_build_column_hidden_input( $column_name, $item );
 
 			case 'updated':
 				return sprintf( '<span>%s</span>', esc_html( human_time_diff( strtotime($item->updated), current_time( 'U' ) ) ) );
@@ -276,8 +231,7 @@ class Cloud_List_Table extends WP_List_Table {
 			case 'cloud_id':
 			case 'code':
 			case 'revision':
-				return $item->$column_name . $this->build_column_hidden_input( $column_name, $item );
-
+				return $item->$column_name . cloud_lts_build_column_hidden_input( $column_name, $item );
 			case 'status':
 				return sprintf(
 					'<a class="snippet-type-badge snippet-status" data-type="%s">%s</a>',
@@ -328,54 +282,8 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return string The content of the column to output.
 	 */
 	public function column_download( $item ) {
-		$lang = Cloud_API::get_type_from_scope( $item->scope );
-		$link = code_snippets()->cloud_api->get_cloud_link( $item->id, 'cloud' );
-		$update_available = $link && $link->update_available;
 
-		if ( $link && ! $link->update_available ) {
-			return sprintf(
-				'<a href="%s" class="cloud-snippet-downloaded">%s</a>',
-				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
-				esc_html__( 'View', 'code-snippets' )
-			);
-		}
-
-		if( $update_available ) {
-			$action_link = sprintf(
-				'<a class="cloud-snippet-update" href="%s">%s</a>',
-				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) . '/#updated-code' ),
-				esc_html__( 'Update Available', 'code-snippets' )
-			);
-		}else{
-			//Get source of snippet - codevault or search use current class as snippet source is not set for every cloud snippet in cloud link
-			$source = self::CLASS_NAME === $this->class_name ? 'codevault' : 'search';
-
-			$download_url = add_query_arg(
-				[
-					'action'  => 'download',
-					'snippet' => $item->id,
-					'source'  => $source ,
-				]
-			);
-
-			$action_link = sprintf(
-				'<a class="cloud-snippet-download" href="%s">%s</a>',
-					esc_url( $download_url ),
-					esc_html__( 'Download', 'code-snippets' )
-			);
-		}
-
-		$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
-
-		$thickbox_link = sprintf(
-			'<a href="%s" class="cloud-snippet-preview cloud-snippet-preview-style thickbox" data-snippet="%s" data-lang="%s">%s</a>',
-			esc_url( $thickbox_url ),
-			esc_attr( $item->id ),
-			esc_attr( $lang ),
-			esc_html__( 'Preview', 'code-snippets' )
-		);
-
-		return $action_link . $thickbox_link;
+		return cloud_lts_build_action_links( $item, 'codevault' );
 	}
 
 	/**
@@ -488,112 +396,28 @@ class Cloud_List_Table extends WP_List_Table {
 	protected function pagination( $which ) {
 		$total_items = $this->_pagination_args['total_items'];
 		$total_pages = $this->_pagination_args['total_pages'];
+		$pagenum = $this->get_pagenum();
 
 		if ( 'top' === $which && $total_pages > 1 ) {
 			$this->screen->render_screen_reader_content( 'heading_pagination' );
 		}
 
-		/* translators: %s: Number of items. */
-		$num = sprintf( _n( '%s item', '%s items', $total_items, 'code-snippets' ), number_format_i18n( $total_items ) );
-		$output = '<span class="displaying-num">' . $num . '</span>';
+		$paginate = cloud_lts_pagination( $which, 'cloud', $total_items, $total_pages, $pagenum );
+		$page_class = $paginate['page_class'];
+		$output = $paginate['output'];	
 
-		$current = isset( $_REQUEST['cloud_page'] ) ? (int) $_REQUEST['cloud_page'] : $this->get_pagenum();
-		$current_class = Cloud_List_Table::CLASS_NAME === $this->class_name ? 'cloud' : 'search';
-		$current_url = remove_query_arg( wp_removable_query_args() ). '#' . $current_class ;
-
-		$page_links = array();
-
-		$total_pages_before = '<span class="paging-input">';
-		$total_pages_after = '</span></span>';
-
-		$disable_first = false;
-		$disable_last = false;
-		$disable_prev = false;
-		$disable_next = false;
-
-		if ( 1 === $current ) {
-			$disable_first = true;
-			$disable_prev = true;
-		}
-
-		if ( $total_pages === $current ) {
-			$disable_last = true;
-			$disable_next = true;
-		}
-
-		if ( $disable_first ) {
-			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
-		} else {
-			$page_links[] = sprintf(
-				"<a class='first-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				esc_url( remove_query_arg( $current_class.'_page', $current_url ) ),
-				__( 'First page' ),
-				'&laquo;'
-			);
-		}
-
-		if ( $disable_prev ) {
-			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&lsaquo;</span>';
-		} else {
-			$page_links[] = sprintf(
-				"<a class='prev-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				esc_url( add_query_arg( $current_class.'_page', max( 1, $current - 1 ), $current_url ) ),
-				__( 'Previous page' ),
-				'&lsaquo;'
-			);
-		}
-
-		if ( 'bottom' === $which ) {
-			$html_current_page = $current;
-			$total_pages_before = '<span class="screen-reader-text">' . __( 'Current Page' ) . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
-		} else {
-			$html_current_page = sprintf(
-				"%s<input class='current-page' id='current-page-selector' type='text' name=$current_class.'_page' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
-				'<label for="current-page-selector" class="screen-reader-text">' . __( 'Current Page' ) . '</label>',
-				$current,
-				strlen( $total_pages )
-			);
-		}
-		$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
-
-		/* translators: 1: Current page, 2: Total pages. */
-		$current_html = _x( '%1$s of %2$s', 'paging', 'code-snippets' );
-		$page_links[] = $total_pages_before . sprintf( $current_html, $html_current_page, $html_total_pages ) . $total_pages_after;
-
-		if ( $disable_next ) {
-			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&rsaquo;</span>';
-		} else {
-			$page_links[] = sprintf(
-				"<a class='next-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				esc_url( add_query_arg( $current_class.'_page', min( $total_pages, $current + 1 ), $current_url ) ),
-				__( 'Next page' ),
-				'&rsaquo;'
-			);
-		}
-
-		if ( $disable_last ) {
-			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&raquo;</span>';
-		} else {
-			$page_links[] = sprintf(
-				"<a class='last-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				esc_url( add_query_arg( $current_class.'_page', $total_pages, $current_url ) ),
-				__( 'Last page' ),
-				'&raquo;'
-			);
-		}
-
-		$pagination_links_class = 'pagination-links';
-		if ( ! empty( $infinite_scroll ) ) {
-			$pagination_links_class .= ' hide-if-js';
-		}
-		$output .= "\n<span class='$pagination_links_class'>" . implode( "\n", $page_links ) . '</span>';
-
-		$page_class = $total_pages ? ( $total_pages < 2 ? ' one-page' : '' ) : ' no-pages';
-
-		$this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
-		echo wp_kses_post( $this->_pagination );
+		echo $this->_pagination = "<div class='tablenav-pages{$page_class}'>{$output}</div>";
+		//echo wp_kses_post( $this->_pagination ); TODO: This removes the top input box for page number
 	}
 
+	/**
+	 * Display the admin notice
+	 *
+	 * @param string $message The message to display.
+	 * @param string $type the type of notice - 'success' or 'error'.
+	 *
+	 * @return void
+	 */
 	public function cloud_display_admin_notice($message, $type) {
 		$class = ($type == 'error') ? 'notice notice-error' : 'notice notice-success';
 		echo '<div class="' . $class . '"><p>' . $message . '</p></div>';

@@ -110,7 +110,7 @@ $licensed = code_snippets()->licensing->is_licensed();
 			echo '<h2 class="nav-tab-wrapper" id="snippet-type-tabs">';
 
 			$snippet_types = Plugin::get_types();
-			unset( $snippet_types['cloud'] );
+			unset( $snippet_types['cloud'], $snippet_types['cloud_search'] );
 
 			foreach ( $snippet_types as $type_name => $label ) {
 				Admin::render_snippet_type_tab( $type_name, $label, $snippet->type );
