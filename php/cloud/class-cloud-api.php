@@ -223,6 +223,10 @@ class Cloud_API {
 
 		$data = $this->unpack_request_json( $response );
 
+		if ( ! $data || ! isset( $data['snippets'] ) ) {
+			return;
+		}
+
 		foreach ( $data['snippets'] as $key => $snippet ) {
 			$data['snippets'][$key]['cloud_id'] = $snippet['id']; 
 		}

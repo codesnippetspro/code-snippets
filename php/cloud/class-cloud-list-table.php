@@ -140,10 +140,16 @@ class Cloud_List_Table extends WP_List_Table {
 
 		$this->cloud_snippets = $this->fetch_snippets();
 		$this->items = $this->cloud_snippets->snippets;
+		
+		if($this->cloud_snippets ){
+			$per_page_count = count( $this->cloud_snippets->snippets );
+		}else{
+			$per_page_count = 0;
+		}
 
 		$this->set_pagination_args(
 			[
-				'per_page'    => count( $this->cloud_snippets->snippets ),
+				'per_page'    => $per_page_count,
 				'total_items' => $this->cloud_snippets->total_snippets,
 				'total_pages' => (int) $this->cloud_snippets->total_pages,
 			]
