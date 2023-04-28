@@ -137,6 +137,21 @@ class Export {
 	}
 
 	/**
+	 * Export snippets in a generic JSON format that is not intended for importing.
+	 *
+	 * @return string
+	 */
+	public function export_snippets_basic_json(): string {
+		$snippet_data = array();
+
+		foreach ( $this->snippets_list as $snippet ) {
+			$snippet_data[] = array_filter( $snippet->get_fields() );
+		}
+
+		return wp_json_encode( 1 === count( $snippet_data ) ? $snippet_data[0] : $snippet_data );
+	}
+
+	/**
 	 * Generate a downloadable CSS or JavaScript file from a list of snippets
 	 *
 	 * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -154,7 +169,10 @@ class Export {
 			return $this->export_snippets_php();
 		}
 
-		/* Loop through the snippets */
+		if ( 'cond' === $type ) {
+			return $this->export_snippets_basic_json();
+		}
+
 		foreach ( $this->snippets_list as $snippet ) {
 			$snippet = new Snippet( $snippet );
 
