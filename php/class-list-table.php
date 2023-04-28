@@ -167,9 +167,18 @@ class List_Table extends WP_List_Table {
 
 			case 'type':
 				$type = $item->type;
+				$url = add_query_arg( 'type', $type );
+
+				if ( 'cond' === $type ) {
+					return sprintf(
+						'<a href="%s"><span class="dashicons dashicons-randomize"></span></a>',
+						esc_url( $url )
+					);
+				}
+
 				return sprintf(
 					'<a class="snippet-type-badge" href="%s" data-snippet-type="%s">%s</a>',
-					esc_url( add_query_arg( 'type', $type ) ),
+					esc_url( $url ),
 					esc_attr( $type ),
 					esc_html( $type )
 				);
@@ -363,8 +372,6 @@ class List_Table extends WP_List_Table {
 	 * @return string The column output.
 	 */
 	protected function column_tags( Snippet $snippet ): string {
-
-		// Return now if there are no tags.
 		if ( empty( $snippet->tags ) ) {
 			return '';
 		}
