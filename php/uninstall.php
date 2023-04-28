@@ -12,7 +12,7 @@ namespace Code_Snippets\Uninstall;
  *
  * @return boolean
  */
-function complete_uninstall_enabled() {
+function complete_uninstall_enabled(): bool {
 	$unified = false;
 
 	if ( is_multisite() ) {

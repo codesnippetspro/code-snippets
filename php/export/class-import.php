@@ -17,34 +17,34 @@ use DOMElement;
 class Import {
 
 	/**
-	 * Path to file to import
+	 * Path to file to import.
 	 *
 	 * @var string
 	 */
 	private $file;
 
 	/**
-	 * Whether snippets should be imported into the network-wide or site-wide table
+	 * Whether snippets should be imported into the network-wide or site-wide table.
 	 *
 	 * @var bool|null
 	 */
 	private $multisite;
 
 	/**
-	 * Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'
+	 * Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'.
 	 *
 	 * @var string
 	 */
 	private $dup_action;
 
 	/**
-	 * Class constructor
+	 * Class constructor.
 	 *
 	 * @param string    $file       The path to the file to import.
 	 * @param bool|null $multisite  Import into network-wide table (true) or site-wide table (false).
 	 * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'.
 	 */
-	public function __construct( $file, $multisite = null, $dup_action = 'ignore' ) {
+	public function __construct( string $file, bool $multisite = null, string $dup_action = 'ignore' ) {
 		$this->file = $file;
 		$this->multisite = $multisite;
 		$this->dup_action = $dup_action;
@@ -159,7 +159,7 @@ class Import {
 	 *
 	 * @return array<int> IDs of imported snippets.
 	 */
-	private function save_snippets( $snippets ) {
+	private function save_snippets( array $snippets ): array {
 		$existing_snippets = $this->fetch_existing_snippets();
 		$imported = array();
 

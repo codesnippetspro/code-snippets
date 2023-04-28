@@ -215,7 +215,7 @@ class DB {
 	 *
 	 * @phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	 */
-	private static function fetch_snippets_from_table( $table_name, array $scopes, $active_only = true ) {
+	private static function fetch_snippets_from_table( string $table_name, array $scopes, bool $active_only = true ) {
 		global $wpdb;
 
 		$cache_key = sprintf( 'active_snippets_%s_%s', sanitize_key( join( '_', $scopes ) ), $table_name );
@@ -260,7 +260,7 @@ class DB {
 	 *
 	 * @return array<string, array<string, mixed>> List of active snippets, indexed by table.
 	 */
-	public function fetch_active_snippets( $scopes ) {
+	public function fetch_active_snippets( $scopes ): array {
 		$active_snippets = array();
 
 		// Ensure that the list of scopes is an array.

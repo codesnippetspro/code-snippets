@@ -180,13 +180,13 @@ class Edit_Menu extends Admin_Menu {
 			'code-snippets-edit-menu',
 			'CODE_SNIPPETS_EDIT',
 			[
+				'isLicensed'        => false,
 				'snippet'           => $this->snippet->get_fields(),
 				'restAPI'           => [
 					'base'     => esc_url_raw( rest_url() ),
 					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'nonce'    => wp_create_nonce( 'wp_rest' ),
 				],
-				'isLicensed'        => false,
 				'addNewUrl'         => $plugin->get_menu_url( 'add' ),
 				'pageTitleActions'  => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'manage', 'import', 'settings' ] ) : [],
 				'isPreview'         => isset( $_REQUEST['preview'] ),

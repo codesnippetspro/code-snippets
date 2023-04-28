@@ -26,14 +26,14 @@ class Validator {
 	/**
 	 * The index of the token currently being examined.
 	 *
-	 * @var int
+	 * @var integer
 	 */
 	private $current;
 
 	/**
 	 * The total number of tokens.
 	 *
-	 * @var int
+	 * @var integer
 	 */
 	private $length;
 
@@ -42,21 +42,21 @@ class Validator {
 	 *
 	 * @var array<string, string[]>
 	 */
-	private $defined_identifiers = array();
+	private $defined_identifiers = [];
 
 	/**
 	 * Exclude certain tokens from being checked.
 	 *
 	 * @var array<string, string[]>
 	 */
-	private $exceptions = array();
+	private $exceptions = [];
 
 	/**
 	 * Class constructor.
 	 *
 	 * @param string $code Snippet code for parsing.
 	 */
-	public function __construct( $code ) {
+	public function __construct( string $code ) {
 		$this->code = $code;
 		$this->tokens = token_get_all( "<?php\n" . $this->code );
 		$this->length = count( $this->tokens );
@@ -68,7 +68,7 @@ class Validator {
 	 *
 	 * @return bool
 	 */
-	private function end() {
+	private function end(): bool {
 		return $this->current === $this->length;
 	}
 
@@ -100,7 +100,7 @@ class Validator {
 	 *
 	 * @return bool true if the identifier is not unique.
 	 */
-	private function check_duplicate_identifier( $type, $identifier ) {
+	private function check_duplicate_identifier( string $type, string $identifier ): bool {
 
 		if ( ! isset( $this->defined_identifiers[ $type ] ) ) {
 			switch ( $type ) {
@@ -154,7 +154,7 @@ class Validator {
 				}
 
 				// Add the identifier to the list of exceptions.
-				$this->exceptions[ $type ] = isset( $this->exceptions[ $type ] ) ? $this->exceptions[ $type ] : array();
+				$this->exceptions[ $type ] = $this->exceptions[ $type ] ?? [];
 				$this->exceptions[ $type ][] = trim( $token[1], '\'"' );
 				continue;
 			}

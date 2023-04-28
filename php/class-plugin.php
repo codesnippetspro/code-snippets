@@ -59,7 +59,7 @@ class Plugin {
 	 * @param string $version Current plugin version.
 	 * @param string $file    Path to main plugin file.
 	 */
-	public function __construct( $version, $file ) {
+	public function __construct( string $version, string $file ) {
 		$this->version = $version;
 		$this->file = $file;
 
@@ -123,22 +123,22 @@ class Plugin {
 	}
 
 	/**
-	 * Disable snippet execution if the necessary query var is set
+	 * Disable snippet execution if the necessary query var is set.
 	 *
 	 * @param bool $execute_snippets Current filter value.
 	 *
 	 * @return bool New filter value.
 	 */
-	public function disable_snippet_execution( $execute_snippets ) {
+	public function disable_snippet_execution( bool $execute_snippets ): bool {
 		return ! empty( $_REQUEST['snippets-safe-mode'] ) && $this->current_user_can() ? false : $execute_snippets;
 	}
 
 	/**
-	 * Determine whether the menu is full or compact
+	 * Determine whether the menu is full or compact.
 	 *
 	 * @return bool
 	 */
-	public function is_compact_menu() {
+	public function is_compact_menu(): bool {
 		return ! is_network_admin() && apply_filters( 'code_snippets_compact_menu', false );
 	}
 
@@ -149,7 +149,7 @@ class Plugin {
 	 *
 	 * @return string The menu's slug.
 	 */
-	public function get_menu_slug( $menu = '' ) {
+	public function get_menu_slug( string $menu = '' ): string {
 		$add = array( 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' );
 		$edit = array( 'edit', 'edit-snippet' );
 		$import = array( 'import', 'import-snippets', 'import-code-snippets' );
@@ -176,7 +176,7 @@ class Plugin {
 	 *
 	 * @return string The menu's URL.
 	 */
-	public function get_menu_url( $menu = '', $context = 'self' ) {
+	public function get_menu_url( string $menu = '', string $context = 'self' ): string {
 		$slug = $this->get_menu_slug( $menu );
 
 		if ( $this->is_compact_menu() && 'network' !== $context ) {
@@ -200,14 +200,14 @@ class Plugin {
 	}
 
 	/**
-	 * Fetch the admin menu slug for a snippets menu
+	 * Fetch the admin menu slug for a snippets admin menu.
 	 *
-	 * @param int    $snippet_id Snippet ID.
-	 * @param string $context    URL scheme to use.
+	 * @param integer $snippet_id Snippet ID.
+	 * @param string  $context    URL scheme to use.
 	 *
 	 * @return string The URL to the edit snippet page for that snippet.
 	 */
-	public function get_snippet_edit_url( $snippet_id, $context = 'self' ) {
+	public function get_snippet_edit_url( int $snippet_id, string $context = 'self' ): string {
 		return add_query_arg(
 			'id',
 			absint( $snippet_id ),
@@ -218,28 +218,29 @@ class Plugin {
 	/**
 	 * Determine whether the current user can perform actions on snippets.
 	 *
-	 * @return boolean Whether the current user has the required capability
+	 * @return boolean Whether the current user has the required capability.
+	 *
 	 * @since 2.8.6
 	 */
-	public function current_user_can() {
+	public function current_user_can(): bool {
 		return current_user_can( $this->get_cap() );
 	}
 
 	/**
-	 * Retrieve the name of the capability required to manage sub-site snippets
+	 * Retrieve the name of the capability required to manage sub-site snippets.
 	 *
 	 * @return string
 	 */
-	public function get_cap_name() {
+	public function get_cap_name(): string {
 		return apply_filters( 'code_snippets_cap', 'manage_options' );
 	}
 
 	/**
-	 * Retrieve the name of the capability required to manage network snippets
+	 * Retrieve the name of the capability required to manage network snippets.
 	 *
 	 * @return string
 	 */
-	public function get_network_cap_name() {
+	public function get_network_cap_name(): string {
 		return apply_filters( 'code_snippets_network_cap', 'manage_network_options' );
 	}
 
@@ -250,11 +251,11 @@ class Plugin {
 	 * If multisite, checks if *Enable Administration Menus: Snippets* is active
 	 * under the *Settings > Network Settings* network admin menu
 	 *
-	 * @return string The capability required to manage snippets
+	 * @return string The capability required to manage snippets.
+	 *
 	 * @since 2.0
 	 */
-	public function get_cap() {
-
+	public function get_cap(): string {
 		if ( is_multisite() ) {
 			$menu_perms = get_site_option( 'menu_items', array() );
 
@@ -274,13 +275,10 @@ class Plugin {
 	 *
 	 * @return string Modified URL.
 	 */
-	public function add_safe_mode_query_var( $url ) {
-
-		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
-			return add_query_arg( 'snippets-safe-mode', (bool) $_REQUEST['snippets-safe-mode'], $url );
-		}
-
-		return $url;
+	public function add_safe_mode_query_var( string $url ): string {
+		return isset( $_REQUEST['snippets-safe-mode'] ) ?
+			add_query_arg( 'snippets-safe-mode', (bool) $_REQUEST['snippets-safe-mode'], $url ) :
+			$url;
 	}
 
 	/**
@@ -288,7 +286,7 @@ class Plugin {
 	 *
 	 * @return array<string, string> Snippet types.
 	 */
-	public static function get_types() {
+	public static function get_types(): array {
 		return apply_filters(
 			'code_snippets_types',
 			array(
@@ -308,7 +306,7 @@ class Plugin {
 	 *
 	 * @return bool
 	 */
-	public static function is_pro_type( $type ) {
+	public static function is_pro_type( string $type ): bool {
 		return 'css' === $type || 'js' === $type;
 	}
 
@@ -319,7 +317,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function get_type_description( $type ) {
+	public function get_type_description( string $type ): string {
 		$descriptions = array(
 			'php'  => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
 			'html' => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
@@ -328,7 +326,6 @@ class Plugin {
 		);
 
 		$descriptions = apply_filters( 'code_snippets/plugins/type_descriptions', $descriptions );
-
-		return isset( $descriptions[ $type ] ) ? $descriptions[ $type ] : '';
+		return $descriptions[ $type ] ?? '';
 	}
 }

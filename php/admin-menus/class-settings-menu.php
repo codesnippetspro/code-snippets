@@ -85,7 +85,7 @@ class Settings_Menu extends Admin_Menu {
 	 *
 	 * @return array<string, array<string, mixed>>
 	 */
-	private function get_sections() {
+	private function get_sections(): array {
 		global $wp_settings_sections;
 
 		if ( ! isset( $wp_settings_sections[ self::SETTINGS_PAGE ] ) ) {
@@ -102,7 +102,7 @@ class Settings_Menu extends Admin_Menu {
 	 *
 	 * @return string
 	 */
-	public function get_current_section( $default = 'general' ) {
+	public function get_current_section( string $default = 'general' ): string {
 		$sections = $this->get_sections();
 
 		if ( ! $sections ) {

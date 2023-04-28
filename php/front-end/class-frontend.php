@@ -68,7 +68,7 @@ class Frontend {
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_snippets_info( WP_REST_Request $request ) {
+	public function get_snippets_info( WP_REST_Request $request ): WP_REST_Response {
 		$snippets = get_snippets();
 		$data = [];
 
@@ -127,7 +127,7 @@ class Frontend {
 	 *
 	 * @return array<WP_Post> Unchanged list of posts.
 	 */
-	public function enqueue_highlighting( $posts ) {
+	public function enqueue_highlighting( array $posts ): array {
 
 		// Exit early if there are no posts to check or if the highlighter has been disabled.
 		if ( empty( $posts ) || Settings\get_setting( 'general', 'disable_prism' ) ) {
@@ -160,6 +160,8 @@ class Frontend {
 
 	/**
 	 * Enqueue the styles and scripts for the Prism syntax highlighter.
+	 *
+	 * @return void
 	 */
 	public static function register_prism_assets() {
 		$plugin = code_snippets();
@@ -183,12 +185,12 @@ class Frontend {
 	/**
 	 * Print a message to the user if the snippet ID attribute is invalid.
 	 *
-	 * @param int $id Snippet ID.
+	 * @param integer $id Snippet ID.
 	 *
 	 * @return string Warning message.
 	 */
-	private function invalid_id_warning( $id ) {
-		/* translators: %d: snippet ID */
+	private function invalid_id_warning( int $id ): string {
+		// translators: %d: snippet ID.
 		$text = esc_html__( 'Could not load snippet with an invalid ID: %d.', 'code-snippets' );
 		return current_user_can( 'edit_posts' ) ? sprintf( $text, intval( $id ) ) : '';
 	}
@@ -200,7 +202,7 @@ class Frontend {
 	 *
 	 * @return string Shortcode content.
 	 */
-	public function render_content_shortcode( $atts ) {
+	public function render_content_shortcode( array $atts ): string {
 		$atts = shortcode_atts(
 			array(
 				'id'         => 0,
@@ -279,13 +281,13 @@ class Frontend {
 
 	/**
 	 * Converts a value and key into an HTML attribute pair.
-	 *
+	 *create_attribute_pair
 	 * @param string $value Attribute value.
 	 * @param string $key   Attribute name.
 	 *
 	 * @return void
 	 */
-	private static function create_attribute_pair( &$value, $key ) {
+	private static function create_attribute_pair( string &$value, string $key ) {
 		$value = sprintf( '%s="%s"', sanitize_key( $key ), esc_attr( $value ) );
 	}
 
@@ -297,7 +299,7 @@ class Frontend {
 	 *
 	 * @return string Shortcode content.
 	 */
-	private function render_snippet_source( Snippet $snippet, $atts = [] ) {
+	private function render_snippet_source( Snippet $snippet, array $atts = [] ): string {
 		$atts = array_merge(
 			array(
 				'line_numbers'    => false,
@@ -351,7 +353,7 @@ class Frontend {
 	 *
 	 * @return string Shortcode content.
 	 */
-	public function render_source_shortcode( $atts ) {
+	public function render_source_shortcode( array $atts ): string {
 
 		$atts = shortcode_atts(
 			array(
