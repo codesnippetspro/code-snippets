@@ -27,7 +27,7 @@ export const downloadAsFile = (content: BlobPart, filename: string, type: string
 export const downloadSnippetExportFile = (content: BlobPart, { id, name, scope }: Snippet) => {
 	const [ext, mimeType] = MIME_INFO[getSnippetType(scope)]
 
-	const title = name.toLowerCase().replace(/[^\w-]+/, '-') ?? `snippet-${id}`
+	const title = name.toLowerCase().replace(/[^\w-]+/g, '-') ?? `snippet-${id}`
 	const filename = `${title}.code-snippets.${ext}`
 
 	downloadAsFile(content, filename, mimeType)
