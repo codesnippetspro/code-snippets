@@ -163,10 +163,6 @@ class Export {
 			return $this->export_snippets_php();
 		}
 
-		if ( 'cond' === $type ) {
-			return $this->export_snippets_basic_json();
-		}
-
 		foreach ( $this->snippets_list as $snippet ) {
 			$snippet = new Snippet( $snippet );
 

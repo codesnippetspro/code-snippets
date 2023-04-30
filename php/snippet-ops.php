@@ -517,8 +517,6 @@ function save_snippet( $snippet ) {
 				$snippet->active = 0;
 			}
 		}
-	} elseif ( 'cond' === $snippet->type ) {
-		$snippet->code = wp_json_encode( $snippet->conditions );
 	}
 
 	// Build the list of data to insert. Shared network snippets are always considered inactive.

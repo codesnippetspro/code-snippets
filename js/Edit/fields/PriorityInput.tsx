@@ -4,7 +4,7 @@ import { SnippetInputProps } from '../../types/SnippetInputProps'
 import { getSnippetType } from '../../utils/snippets'
 
 export const PriorityInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, isReadOnly }) =>
-	'condition' === snippet.scope || 'html' === getSnippetType(snippet) ? null :
+	'html' === getSnippetType(snippet) ? null :
 		<p
 			className="snippet-priority"
 			title={__('Snippets with a lower priority number will run before those with a higher number.', 'code-snippets')}

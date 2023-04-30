@@ -169,13 +169,6 @@ class List_Table extends WP_List_Table {
 				$type = $item->type;
 				$url = add_query_arg( 'type', $type );
 
-				if ( 'cond' === $type ) {
-					return sprintf(
-						'<a href="%s"><span class="dashicons dashicons-randomize"></span></a>',
-						esc_url( $url )
-					);
-				}
-
 				return sprintf(
 					'<a class="snippet-type-badge" href="%s" data-snippet-type="%s">%s</a>',
 					esc_url( $url ),

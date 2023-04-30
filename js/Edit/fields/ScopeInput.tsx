@@ -19,8 +19,7 @@ const SCOPE_ICONS: Record<SnippetScope, string> = {
 	'admin-css': 'dashboard',
 	'site-css': 'admin-customizer',
 	'site-head-js': 'media-code',
-	'site-footer-js': 'media-code',
-	'condition': 'randomize'
+	'site-footer-js': 'media-code'
 }
 
 const SCOPE_DESCRIPTIONS: Record<SnippetScope, string> = {
@@ -34,8 +33,7 @@ const SCOPE_DESCRIPTIONS: Record<SnippetScope, string> = {
 	'site-css': __('Site front-end styles', 'code-snippets'),
 	'admin-css': __('Administration area styles', 'code-snippets'),
 	'site-footer-js': __('Load JS at the end of the <body> section', 'code-snippets'),
-	'site-head-js': __('Load JS in the <head> section', 'code-snippets'),
-	'condition': ''
+	'site-head-js': __('Load JS in the <head> section', 'code-snippets')
 }
 
 interface ShortcodeOptions {
@@ -106,7 +104,7 @@ export const ScopeInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, i
 		<h2 className="screen-reader-text">{__('Scope', 'code-snippets')}</h2>
 
 		{SNIPPET_TYPES
-			.filter(type => 'cond' !== type && (!snippet.id || type === getSnippetType(snippet)))
+			.filter(type => !snippet.id || type === getSnippetType(snippet))
 			.map(type =>
 				<p key={type} className={`snippet-scope ${type}-scopes-list`}>
 					{SNIPPET_TYPE_SCOPES[type].map(scope =>

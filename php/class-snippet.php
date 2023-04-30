@@ -68,7 +68,6 @@ class Snippet extends Data_Item {
 			'shared_network' => null,
 			'modified'       => null,
 			'code_error'     => null,
-			'conditions'     => null,
 		);
 
 		$field_aliases = array(
@@ -111,37 +110,6 @@ class Snippet extends Data_Item {
 			default:
 				return parent::prepare_field( $value, $field );
 		}
-	}
-
-	/**
-	 * Prepare the value of the conditions field when reading.
-	 *
-	 * @param string|mixed $value Conditions encoded as JSON.
-	 *
-	 * @return mixed
-	 */
-	protected function prepare_conditions( $value ) {
-		if ( 'cond' === $this->type ) {
-			$this->code = is_string( $value ) ? $value : wp_json_encode( $value );
-		}
-
-		return $value;
-	}
-
-	/**
-	 * Retrieve list of current data fields.
-	 *
-	 * @return array<string, mixed> Field names keyed to current values.
-	 */
-	public function get_fields(): array {
-		$fields = parent::get_fields();
-
-		if ( 'condition' === $this->scope ) {
-			$fields['conditions'] = json_decode( $fields['code'] );
-			$fields['code'] = '';
-		}
-
-		return $fields;
 	}
 
 	/**
@@ -192,8 +160,6 @@ class Snippet extends Data_Item {
 			return 'js';
 		} elseif ( 'content' === substr( $this->scope, -7 ) ) {
 			return 'html';
-		} elseif ( 'condition' === $this->scope ) {
-			return 'cond';
 		} else {
 			return 'php';
 		}
@@ -205,7 +171,7 @@ class Snippet extends Data_Item {
 	 * @return string[]
 	 */
 	public static function get_types(): array {
-		return [ 'php', 'html', 'css', 'js', 'cond' ];
+		return [ 'php', 'html', 'css', 'js' ];
 	}
 
 	/**
@@ -219,7 +185,6 @@ class Snippet extends Data_Item {
 			'html' => __( 'Content', 'code-snippets' ),
 			'css'  => __( 'Styles', 'code-snippets' ),
 			'js'   => __( 'Scripts', 'code-snippets' ),
-			'cond' => __( 'Conditions', 'code-snippets' ),
 		];
 
 		return isset( $labels[ $this->type ] ) ? $labels[ $this->type ] : strtoupper( $this->type );
@@ -303,7 +268,6 @@ class Snippet extends Data_Item {
 			'content', 'head-content', 'footer-content',
 			'admin-css', 'site-css',
 			'site-head-js', 'site-footer-js',
-			'condition',
 		);
 	}
 
@@ -325,7 +289,6 @@ class Snippet extends Data_Item {
 			'site-css'       => 'admin-customizer',
 			'site-head-js'   => 'media-code',
 			'site-footer-js' => 'media-code',
-			'condition'      => 'randomize',
 		);
 	}
 
