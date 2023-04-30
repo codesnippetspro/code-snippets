@@ -339,7 +339,9 @@ class Admin {
 
 		echo esc_html( $label );
 
-		if ( 'all' !== $type_name ) {
+		if ( 'cond' === $type_name ) {
+			echo ' <span class="dashicons dashicons-randomize"></span>';
+		} elseif ( 'all' !== $type_name ) {
 			echo ' <span class="badge">' . esc_html( $type_name ) . '</span>';
 		}
 

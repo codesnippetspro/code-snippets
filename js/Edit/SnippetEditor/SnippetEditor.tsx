@@ -4,6 +4,7 @@ import { Editor, EditorConfiguration } from 'codemirror'
 import React, { Dispatch, SetStateAction, useEffect } from 'react'
 import { SnippetActionsInputProps, SnippetInputProps } from '../../types/SnippetInputProps'
 import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
+import { ConditionEditor } from '../ConditionEditor'
 import { Snippet, SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetType } from '../../types/Snippet'
 import '../../editor'
 import { getSnippetType, isProType } from '../../utils/snippets'
@@ -41,14 +42,17 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ tabType, label, current
 		}>
 		{`${label} `}
 
-		<span className="badge">{tabType}</span>
+		{'cond' === tabType ?
+			<span className="dashicons dashicons-randomize"></span> :
+			<span className="badge">{tabType}</span>}
 	</a>
 
 export const TYPE_LABELS: Record<SnippetType, string> = {
 	php: __('Functions', 'code-snippets'),
 	html: __('Content', 'code-snippets'),
 	css: __('Styles', 'code-snippets'),
-	js: __('Scripts', 'code-snippets')
+	js: __('Scripts', 'code-snippets'),
+	cond: __('Conditions', 'code-snippets')
 }
 
 const EDITOR_MODES: Partial<Record<SnippetType, string>> = {
@@ -107,11 +111,17 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({
 		<>
 			<div className="snippet-code-container">
 				<h2>
-					<label htmlFor="snippet_code">
-						{__('Code', 'code-snippets')}{' '}
-						{snippet.id ?
-							<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> : null}
-					</label>
+					{'condition' === snippet.scope ?
+						<label htmlFor="snippet_conditions">
+							{__('Conditions', 'code-snippets')}{' '}
+							{snippet.id ? <span className="dashicons dashicons-randomize"></span> : null}
+						</label> :
+
+						<label htmlFor="snippet_code">
+							{__('Code', 'code-snippets')}{' '}
+							{snippet.id ?
+								<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> : null}
+						</label>}
 				</h2>
 
 				{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview || !codeEditorInstance ? '' :
@@ -121,6 +131,7 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({
 						codeEditor={codeEditorInstance.codemirror}
 					/>}
 
+				<ConditionEditor snippet={snippet} setSnippet={setSnippet} {...actionsProps} />
 				<CodeEditor
 					snippet={snippet}
 					setSnippet={setSnippet}

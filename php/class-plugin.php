@@ -294,6 +294,7 @@ class Plugin {
 				'html' => __( 'Content', 'code-snippets' ),
 				'css'  => __( 'Styles', 'code-snippets' ),
 				'js'   => __( 'Scripts', 'code-snippets' ),
+				'cond' => __( 'Conditions', 'code-snippets' ),
 			)
 		);
 	}

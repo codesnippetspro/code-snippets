@@ -32,6 +32,10 @@ export const getSnippetType = (snippet: Snippet | SnippetScope): SnippetType => 
 		return 'html'
 	}
 
+	if ('condition' === scope) {
+		return 'cond'
+	}
+
 	return 'php'
 }
 

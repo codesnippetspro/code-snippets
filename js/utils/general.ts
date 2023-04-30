@@ -10,6 +10,7 @@ const MIME_INFO = <const> {
 	html: ['php', 'text/php'],
 	css: ['css', 'text/css'],
 	js: ['js', 'text/javascript'],
+	cond: ['json', 'application/json'],
 	json: ['json', 'application/json']
 }
 

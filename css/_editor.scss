@@ -1,9 +1,12 @@
 @import '../node_modules/codemirror-colorpicker/dist/codemirror-colorpicker.css';
 
-.CodeMirror {
+.CodeMirror, .snippet-condition-editor {
 	border: 1px solid #dfdfdf;
 	border-radius: 3px;
 	height: auto !important;
+}
+
+.CodeMirror {
 	background-color: #fff;
 }
 

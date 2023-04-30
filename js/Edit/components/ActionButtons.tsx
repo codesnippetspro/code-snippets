@@ -22,7 +22,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ actions, snippet, isWorking
 	const activateByDefault = canActivate && window.CODE_SNIPPETS_EDIT?.activateByDefault &&
 		!snippet.active && 'single-use' !== snippet.scope
 
-	const missingCode = '' === snippet.code.trim()
+	const missingCode = '' === snippet.code.trim() && 'condition' !== snippet.scope
 	const missingTitle = '' === snippet.name.trim()
 
 	const doSubmit = (event: MouseEvent<HTMLButtonElement>, submitAction: () => void) => {
