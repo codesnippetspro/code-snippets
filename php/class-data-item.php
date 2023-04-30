@@ -87,16 +87,16 @@ abstract class Data_Item {
 	 *
 	 * @return array<string, mixed>
 	 */
-	public function get_dirty_fields(): array {
-		$dirty = [];
+	public function get_modified_fields(): array {
+		$modified_fields = [];
 
 		foreach ( $this->get_fields() as $field => $value ) {
 			if ( $value && $value !== $this->default_values[ $field ] ) {
-				$dirty[ $field ] = $value;
+				$modified_fields[ $field ] = $value;
 			}
 		}
 
-		return $dirty;
+		return $modified_fields;
 	}
 
 	/**

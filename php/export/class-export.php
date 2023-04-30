@@ -80,7 +80,7 @@ class Export {
 						str_replace( "\r\n", "\n", $value ) :
 						$value;
 				},
-				$snippet->get_dirty_fields()
+				$snippet->get_modified_fields()
 			);
 		}
 
@@ -139,7 +139,7 @@ class Export {
 		$snippet_data = array();
 
 		foreach ( $this->snippets_list as $snippet ) {
-			$snippet_data[] = $snippet->get_dirty_fields();
+			$snippet_data[] = $snippet->get_modified_fields();
 		}
 
 		return wp_json_encode( 1 === count( $snippet_data ) ? $snippet_data[0] : $snippet_data );
