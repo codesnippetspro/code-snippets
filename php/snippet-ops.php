@@ -63,8 +63,9 @@ function get_snippets( array $ids = array(), $multisite = null ): array {
 	}
 
 	$db = code_snippets()->db;
-	$multisite = $db->validate_network_param( $multisite );
 	$table_name = $db->get_table_name( $multisite );
+	$multisite = $db->ms_table === $table_name;
+
 	$snippets = wp_cache_get( "all_snippets_$table_name", CACHE_GROUP );
 
 	// Fetch all snippets from the database if none are cached.
@@ -166,18 +167,20 @@ function code_snippets_build_tags_array( $tags ): array {
  * Will return empty snippet object if no snippet ID is specified.
  * Read operation.
  *
- * @param integer      $id        The ID of the snippet to retrieve. 0 to build a new snippet.
- * @param boolean|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
+ * @param integer             $id        The ID of the snippet to retrieve. 0 to build a new snippet.
+ * @param boolean|string|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
  *
  * @return Snippet A single snippet object.
  * @since 2.0.0
  */
-function get_snippet( int $id = 0, bool $multisite = null ): Snippet {
+function get_snippet( int $id = 0, $multisite = null ): Snippet {
 	global $wpdb;
 
 	$id = absint( $id );
-	$multisite = DB::validate_network_param( $multisite );
-	$table_name = code_snippets()->db->get_table_name( $multisite );
+
+	$db = code_snippets()->db;
+	$table_name = $db->get_table_name( $multisite );
+	$multisite = $db->ms_table === $multisite;
 
 	if ( 0 === $id ) {
 		// If an invalid ID is provided, then return an empty snippet object.

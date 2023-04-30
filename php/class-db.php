@@ -3,45 +3,45 @@
 namespace Code_Snippets;
 
 /**
- * Functions used to manage the database tables
+ * Functions used to manage the database tables.
  *
  * @package Code_Snippets
  */
 class DB {
 
 	/**
-	 * Unprefixed site-wide table name
+	 * Unprefixed site-wide table name.
 	 */
 	const TABLE_NAME = 'snippets';
 
 	/**
-	 * Unprefixed network-wide table name
+	 * Unprefixed network-wide table name.
 	 */
 	const MS_TABLE_NAME = 'ms_snippets';
 
 	/**
-	 * Side-wide table name
+	 * Side-wide table name.
 	 *
 	 * @var string
 	 */
 	public $table;
 
 	/**
-	 * Network-wide table name
+	 * Network-wide table name.
 	 *
 	 * @var string
 	 */
 	public $ms_table;
 
 	/**
-	 * Class constructor
+	 * Class constructor.
 	 */
 	public function __construct() {
 		$this->set_table_vars();
 	}
 
 	/**
-	 * Register the snippet table names with WordPress
+	 * Register the snippet table names with WordPress.
 	 *
 	 * @since 2.0
 	 */
@@ -51,34 +51,12 @@ class DB {
 		$this->table = $wpdb->prefix . self::TABLE_NAME;
 		$this->ms_table = $wpdb->base_prefix . self::MS_TABLE_NAME;
 
-		/* Register the snippet table names with WordPress */
+		// Register the snippet table names with WordPress.
 		$wpdb->snippets = $this->table;
 		$wpdb->ms_snippets = $this->ms_table;
 
 		$wpdb->tables[] = self::TABLE_NAME;
 		$wpdb->ms_global_tables[] = self::MS_TABLE_NAME;
-	}
-
-	/**
-	 * Validate the multisite parameter of the get_table_name() function.
-	 *
-	 * @param boolean|null $network Value of multisite parameter: `true` for multisite, `false` for single-site.
-	 *
-	 * @return boolean Validated value of multisite parameter.
-	 */
-	public static function validate_network_param( $network ) {
-
-		// If multisite is not active, then the parameter should always be false.
-		if ( ! is_multisite() ) {
-			return false;
-		}
-
-		// If $multisite is null, try to base it on the current admin page.
-		if ( is_null( $network ) && function_exists( 'is_network_admin' ) ) {
-			$network = is_network_admin();
-		}
-
-		return (bool) $network;
 	}
 
 	/**
@@ -89,17 +67,24 @@ class DB {
 	 * @return string The snippet table name
 	 * @since 2.0
 	 */
-	public function get_table_name( $multisite = null ) {
+	public function get_table_name( $multisite = null ): string {
 
-		/* If the first parameter is a string, assume it is a table name */
+		// If the first parameter is a string, assume it is a table name.
 		if ( is_string( $multisite ) ) {
 			return $multisite;
 		}
 
-		/* Validate the multisite parameter */
-		$multisite = $this->validate_network_param( $multisite );
+		// If multisite is not active, then always use the local table.
+		if ( ! is_multisite() ) {
+			return $this->table;
+		}
 
-		/* return the correct table name depending on the value of $multisite */
+		// If $multisite is null, try to base it on the current admin page.
+		if ( is_null( $multisite ) && function_exists( 'is_network_admin' ) ) {
+			$multisite = is_network_admin();
+		}
+
+		// Return the correct table name depending on the value of $multisite.
 		return $multisite ? $this->ms_table : $this->table;
 	}
 
@@ -111,7 +96,7 @@ class DB {
 	 *
 	 * @return bool Whether the database table exists.
 	 */
-	public static function table_exists( $table_name, $refresh = false ) {
+	public static function table_exists( string $table_name, bool $refresh = false ): bool {
 		global $wpdb;
 		static $checked = array();
 
@@ -127,12 +112,12 @@ class DB {
 	 */
 	public function create_missing_tables() {
 
-		/* Create the network snippets table if it doesn't exist */
+		// Create the network snippets table if it doesn't exist.
 		if ( is_multisite() && ! self::table_exists( $this->ms_table ) ) {
 			$this->create_table( $this->ms_table );
 		}
 
-		/* Create the table if it doesn't exist */
+		// Create the table if it doesn't exist.
 		if ( ! self::table_exists( $this->table ) ) {
 			$this->create_table( $this->table );
 		}
@@ -154,13 +139,10 @@ class DB {
 	 *
 	 * @param string $table_name Name of database table.
 	 */
-	public static function create_missing_table( $table_name ) {
-
-		if ( self::table_exists( $table_name ) ) {
-			return;
+	public static function create_missing_table( string $table_name ) {
+		if ( ! self::table_exists( $table_name ) ) {
+			self::create_table( $table_name );
 		}
-
-		self::create_table( $table_name );
 	}
 
 	/**
@@ -172,7 +154,7 @@ class DB {
 	 * @since 1.6
 	 * @uses  dbDelta() to apply the SQL code
 	 */
-	public static function create_table( $table_name ) {
+	public static function create_table( string $table_name ): bool {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 

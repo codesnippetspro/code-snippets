@@ -54,10 +54,10 @@ class Export {
 	 */
 	public function build_filename( string $format ): string {
 		if ( 1 === count( $this->snippets_list ) ) {
-			/* If there is only snippet to export, use its name instead of the site name */
+			// If there is only snippet to export, use its name instead of the site name.
 			$title = strtolower( $this->snippets_list[0]->name );
 		} else {
-			/* Otherwise, use the site name as set in Settings > General */
+			// Otherwise, use the site name as set in Settings > General.
 			$title = strtolower( get_bloginfo( 'name' ) );
 		}
 
@@ -74,18 +74,14 @@ class Export {
 		$snippets = array();
 
 		foreach ( $this->snippets_list as $snippet ) {
-			$fields = array( 'name', 'desc', 'tags', 'scope', 'code', 'priority' );
-			$final_snippet = array();
-
-			foreach ( $fields as $field ) {
-				if ( ! empty( $snippet->$field ) ) {
-					$final_snippet[ $field ] = str_replace( "\r\n", "\n", $snippet->$field );
-				}
-			}
-
-			if ( $final_snippet ) {
-				$snippets[] = $final_snippet;
-			}
+			$snippets[] = array_map(
+				function ( $value ) {
+					return is_string( $value ) ?
+						str_replace( "\r\n", "\n", $value ) :
+						$value;
+				},
+				array_filter( $snippet->get_fields() )
+			);
 		}
 
 		$data = array(
