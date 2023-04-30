@@ -1,15 +1,17 @@
-import { Snippet, SnippetType } from '../types/Snippet'
+import { Snippet } from '../types/Snippet'
 import { getSnippetType } from './snippets'
 
 const SECOND_IN_MS = 1000
 const TIMEOUT_SECONDS = 40
 
-const MIME_INFO: Record<SnippetType, [string, string]> = {
+
+const MIME_INFO = <const> {
 	php: ['php', 'text/php'],
 	html: ['php', 'text/php'],
 	css: ['css', 'text/css'],
 	js: ['js', 'text/javascript'],
-	cond: ['json', 'application/json']
+	cond: ['json', 'application/json'],
+	json: ['json', 'application/json']
 }
 
 export const isNetworkAdmin = () =>
@@ -24,8 +26,8 @@ export const downloadAsFile = (content: BlobPart, filename: string, type: string
 	setTimeout(() => link.click(), 0)
 }
 
-export const downloadSnippetExportFile = (content: BlobPart, { id, name, scope }: Snippet) => {
-	const [ext, mimeType] = MIME_INFO[getSnippetType(scope)]
+export const downloadSnippetExportFile = (content: BlobPart, { id, name, scope }: Snippet, type?: keyof typeof MIME_INFO) => {
+	const [ext, mimeType] = MIME_INFO[type ?? getSnippetType(scope)]
 
 	const title = name.toLowerCase().replace(/[^\w-]+/g, '-') ?? `snippet-${id}`
 	const filename = `${title}.code-snippets.${ext}`

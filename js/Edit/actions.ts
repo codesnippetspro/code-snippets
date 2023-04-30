@@ -56,14 +56,14 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 			.catch(error => displayRequestErrors(error, errorNotice))
 	}, [displayRequestErrors, setIsWorking, setNotices, setSnippet])
 
-	const doFileRequest = useCallback((snippet: Snippet, createRequest: () => Promise<AxiosResponse<string>>) => {
+	const doFileRequest = useCallback((snippet: Snippet, createRequest: () => Promise<AxiosResponse<string>>, jsonExport: boolean) => {
 		setIsWorking(true)
 
 		createRequest()
 			.then(response => {
 				setIsWorking(false)
 				console.info('file response', response)
-				downloadSnippetExportFile(response.data, snippet)
+				downloadSnippetExportFile(response.data, snippet, jsonExport ? 'json' : undefined)
 			})
 			// translators: %s: error message.
 			.catch(error => displayRequestErrors(error, __('Could not download export file.', 'code-snippets')))
@@ -121,10 +121,10 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 		},
 
 		export: (snippet: Snippet) =>
-			doFileRequest(snippet, () => api.export(snippet)),
+			doFileRequest(snippet, () => api.export(snippet), true),
 
 		exportCode: (snippet: Snippet) =>
-			doFileRequest(snippet, () => api.exportCode(snippet))
+			doFileRequest(snippet, () => api.exportCode(snippet), false)
 
 	}), [api, displayRequestErrors, doFileRequest, setNotices, submitSnippet])
 }
