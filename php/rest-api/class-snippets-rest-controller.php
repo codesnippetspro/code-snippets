@@ -350,7 +350,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	public function export_item( WP_REST_Request $request ) {
 		$export = $this->build_export( $request );
-		$result = $export->export_snippets_json();
+		$result = $export->create_export_object();
 
 		return rest_ensure_response( $result );
 	}

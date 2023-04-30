@@ -68,9 +68,9 @@ class Export {
 	/**
 	 * Bundle snippets together into JSON format.
 	 *
-	 * @return string Snippets as JSON object.
+	 * @return array<string, string|Snippet[]> Snippets as JSON object.
 	 */
-	public function export_snippets_json(): string {
+	public function create_export_object(): array {
 		$snippets = array();
 
 		foreach ( $this->snippets_list as $snippet ) {
@@ -84,13 +84,11 @@ class Export {
 			);
 		}
 
-		$data = array(
+		return array(
 			'generator'    => 'Code Snippets v' . code_snippets()->version,
 			'date_created' => gmdate( 'Y-m-d H:i' ),
 			'snippets'     => $snippets,
 		);
-
-		return wp_json_encode( $data, apply_filters( 'code_snippets/export/json_encode_options', 0 ) );
 	}
 
 	/**
@@ -109,7 +107,7 @@ class Export {
 			$result .= "\n/**\n * $snippet->display_name\n";
 
 			if ( ! empty( $snippet->desc ) ) {
-				/* Convert description to PhpDoc */
+				// Convert description to PhpDoc.
 				$desc = wp_strip_all_tags( str_replace( "\n", "\n * ", $snippet->desc ) );
 				$result .= " *\n * $desc\n";
 			}
