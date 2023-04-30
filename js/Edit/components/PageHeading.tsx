@@ -12,13 +12,9 @@ interface PageHeadingProps extends SnippetInputProps {
 
 export const PageHeading: React.FC<PageHeadingProps> = ({ snippet, setSnippet, codeEditorInstance }) =>
 	<h1>
-		{'condition' === snippet.scope ?
-			snippet.id ?
-				__('Edit Conditions', 'code-snippets') :
-				__('Add New Conditions', 'code-snippets') :
-			snippet.id ?
-				__('Edit Snippet', 'code-snippets') :
-				__('Add New Snippet', 'code-snippets')}
+		{snippet.id ?
+			__('Edit Snippet', 'code-snippets') :
+			__('Add New Snippet', 'code-snippets')}
 
 		{snippet.id ? <>{' '}
 			<a href={OPTIONS?.addNewUrl} className="page-title-action" onClick={() => {

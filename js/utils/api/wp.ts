@@ -2,11 +2,11 @@ import axios, { AxiosResponse } from 'axios'
 
 const REST_BASE = window.CODE_SNIPPETS_EDIT?.restAPI.base ?? ''
 
-const trimLeadingSlash = (path: string) =>
-	'/' === path.charAt(0) ? path.substring(1) : path
+export const trimLeadingSlash = (path: string): string =>
+	'/' === path.charAt(0) ? path.slice(1) : path
 
-const trimTrailingSlash = (path: string) =>
-	'/' === path.charAt(path.length - 1) ? path.substring(0, path.length - 1) : path
+export const trimTrailingSlash = (path: string): string =>
+	'/' === path.charAt(path.length - 1) ? path.slice(0, -1) : path
 
 const getRestUrl = (endpoint: string): string =>
 	`${trimTrailingSlash(REST_BASE)}/${trimLeadingSlash(endpoint)}`

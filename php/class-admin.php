@@ -91,7 +91,7 @@ class Admin {
 	 *
 	 * @since 1.7.1
 	 */
-	public function mu_menu_items( $menu_items ) {
+	public function mu_menu_items( array $menu_items ): array {
 		$menu_items['snippets'] = __( 'Snippets', 'code-snippets' );
 		$menu_items['snippets_settings'] = __( 'Snippets &raquo; Settings', 'code-snippets' );
 
@@ -108,7 +108,9 @@ class Admin {
 	 *
 	 * @return bool Whether the snippet will be executed.
 	 */
-	public function prevent_exec_on_save( $exec, $exec_id, $table_name ) {
+	public function prevent_exec_on_save( bool $exec, int $exec_id, string $table_name ): bool {
+
+		// TODO: make this work for AJAX method.
 		if ( ! isset( $_POST['save_snippet'], $_POST['snippet_id'] ) ) {
 			return $exec;
 		}
@@ -169,9 +171,9 @@ class Admin {
 	 * @return array<string> The modified plugin info links.
 	 * @since 2.0.0
 	 */
-	public function plugin_meta_links( $links, $file ) {
+	public function plugin_meta_links( array $links, string $file ): array {
 
-		/* We only want to affect the Code Snippets plugin listing */
+		// We only want to affect the Code Snippets plugin listing.
 		if ( plugin_basename( PLUGIN_FILE ) !== $file ) {
 			return $links;
 		}
@@ -213,7 +215,7 @@ class Admin {
 	 * @return array<string, array<string, mixed>> Updated Site Health information.
 	 * @author sc0ttkclark
 	 */
-	public function debug_information( $info ) {
+	public function debug_information( array $info ): array {
 		$fields = array();
 
 		// build the debug information from snippet data.
@@ -323,7 +325,7 @@ class Admin {
 	 *
 	 * @return void
 	 */
-	public static function render_snippet_type_tab( $type_name, $label, $current_type = '' ) {
+	public static function render_snippet_type_tab( string $type_name, string $label, string $current_type = '' ) {
 		if ( $type_name === $current_type ) {
 			printf( '<a class="nav-tab nav-tab-active" data-snippet-type="%s">', esc_attr( $type_name ) );
 
@@ -344,9 +346,7 @@ class Admin {
 
 		echo esc_html( $label );
 
-		if ( 'cond' === $type_name ) {
-			echo ' <span class="dashicons dashicons-randomize"></span>';
-		} elseif ( 'all' !== $type_name ) {
+		if ( 'all' !== $type_name ) {
 			echo ' <span class="badge">' . esc_html( $type_name ) . '</span>';
 		}
 

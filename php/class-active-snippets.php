@@ -251,7 +251,7 @@ class Active_Snippets {
 	 *
 	 * @param string $scope Name of scope to print.
 	 */
-	private function print_content_snippets( $scope ) {
+	private function print_content_snippets( string $scope ) {
 		$snippets_list = $this->fetch_active_snippets( [ 'head-content', 'footer-content' ] );
 
 		foreach ( $snippets_list as $snippets ) {

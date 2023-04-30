@@ -15,7 +15,7 @@ use function Code_Snippets\Settings\get_setting;
  * @param string               $type       Type of code editor – either 'php', 'css', 'js', or 'html'.
  * @param array<string, mixed> $extra_atts Pass a list of attributes to override the saved ones.
  */
-function enqueue_code_editor( $type, $extra_atts = [] ) {
+function enqueue_code_editor( string $type, array $extra_atts = [] ) {
 	$plugin = code_snippets();
 
 	$modes = [

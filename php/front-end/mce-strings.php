@@ -3,13 +3,17 @@
  * For some reason, WordPress requires that TinyMCE translations be hosted in an external file. So that's what this is.
  *
  * @package Code_Snippets
- *
- * @var array<string, string|mixed> $strings
  */
 
 namespace Code_Snippets;
 
 use _WP_Editors;
+
+/**
+ * Variable types.
+ *
+ * @var array<string, string|array<string, Snippet[]>> $strings
+ */
 
 $strings = [
 	'insert_content_menu'  => __( 'Content Snippet', 'code-snippets' ),

@@ -10,7 +10,6 @@
 
 namespace Code_Snippets;
 
-/* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }

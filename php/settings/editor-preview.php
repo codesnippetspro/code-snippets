@@ -68,7 +68,7 @@ function enqueue_editor_preview_assets() {
  *
  * @return array<string, string> List of editor themes.
  */
-function get_editor_theme_list() {
+function get_editor_theme_list(): array {
 	$themes = [
 		'default' => __( 'Default', 'code-snippets' ),
 	];

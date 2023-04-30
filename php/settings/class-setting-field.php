@@ -62,7 +62,7 @@ class Setting_Field {
 	 * @param string               $field_id   Setting field identifier.
 	 * @param array<string, mixed> $args       The setting field attributes.
 	 */
-	public function __construct( $section_id, $field_id, array $args ) {
+	public function __construct( string $section_id, string $field_id, array $args ) {
 		$this->field_id = $field_id;
 		$this->section = $section_id;
 		$this->args = array_merge( $this->args, $args );
@@ -75,7 +75,7 @@ class Setting_Field {
 	 *
 	 * @return mixed Attribute value.
 	 */
-	public function __get( $argument ) {
+	public function __get( string $argument ) {
 
 		if ( 'input_name' === $argument ) {
 			return sprintf( 'code_snippets_settings[%s][%s]', $this->section, $this->field_id );
@@ -126,7 +126,7 @@ class Setting_Field {
 	 * @param string  $label      Input label.
 	 * @param boolean $checked    Whether the checkbox should be checked.
 	 */
-	private static function render_checkbox( $input_name, $label, $checked ) {
+	private static function render_checkbox( string $input_name, string $label, bool $checked ) {
 
 		$checkbox = sprintf(
 			'<input type="checkbox" name="%s"%s>',
@@ -157,6 +157,8 @@ class Setting_Field {
 	 * Render a checkbox field for a setting
 	 *
 	 * @since 2.0.0
+	 *
+	 * @return void
 	 */
 	public function render_checkbox_field() {
 		$this->render_checkbox( $this->input_name, $this->label, $this->get_saved_value() );
@@ -166,6 +168,8 @@ class Setting_Field {
 	 * Render a checkbox field for a setting
 	 *
 	 * @since 2.0.0
+	 *
+	 * @return void
 	 */
 	public function render_checkboxes_field() {
 		$saved_value = $this->get_saved_value();
@@ -184,9 +188,10 @@ class Setting_Field {
 
 	/**
 	 * Render a basic text field for an editor setting.
+	 *
+	 * @return void
 	 */
 	private function render_text_field() {
-
 		printf(
 			'<input type="text" name="%s" value="%s" class="regular-text">',
 			esc_attr( $this->input_name ),

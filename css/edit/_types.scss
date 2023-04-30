@@ -10,10 +10,6 @@
 	}
 }
 
-.snippet-condition-editor {
-	display: none;
-}
-
 .snippet-scope {
 	display: none;
 
@@ -75,15 +71,5 @@
 
 	.CodeMirror-sizer::after {
 		content: '<!-- end content -->';
-	}
-}
-
-.snippet-form.cond-snippet {
-	.snippet-editor {
-		display: none;
-	}
-
-	.snippet-condition-editor {
-		display: flex;
 	}
 }

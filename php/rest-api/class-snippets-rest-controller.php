@@ -338,7 +338,11 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	protected function build_export( WP_REST_Request $request ): Export {
 		$item = $this->prepare_item_for_database( $request );
-		return new Export( [ $item->id ], code_snippets()->db->get_table_name( $item->network ) );
+
+		$ids = [ $item->id ];
+		$table_name = code_snippets()->db->get_table_name( $item->network );
+
+		return new Export( $ids, $table_name );
 	}
 
 	/**
@@ -350,8 +354,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	public function export_item( WP_REST_Request $request ) {
 		$export = $this->build_export( $request );
-		$result = $export->export_snippets_json();
-
+		$result = $export->create_export_object();
 		return rest_ensure_response( $result );
 	}
 

@@ -52,7 +52,7 @@ require_once dirname( __DIR__ ) . '/vendor/autoload.php';
  * @since 2.6.0
  * @return Plugin
  */
-function code_snippets() {
+function code_snippets(): Plugin {
 	static $plugin;
 
 	if ( is_null( $plugin ) ) {

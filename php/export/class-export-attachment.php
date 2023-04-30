@@ -26,7 +26,10 @@ class Export_Attachment extends Export {
 	public function download_snippets_json() {
 		$this->do_headers( 'json', 'application/json' );
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $this->export_snippets_json();
+		echo wp_json_encode(
+			$this->create_export_object(),
+			apply_filters( 'code_snippets/export/json_encode_options', 0 )
+		);
 		exit;
 	}
 

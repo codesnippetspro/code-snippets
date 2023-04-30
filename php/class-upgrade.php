@@ -29,7 +29,7 @@ class Upgrade {
 	 * @param string $version Current plugin version.
 	 * @param DB     $db      Instance of database class.
 	 */
-	public function __construct( $version, DB $db ) {
+	public function __construct( string $version, DB $db ) {
 		$this->db = $db;
 		$this->current_version = $version;
 	}
@@ -146,7 +146,7 @@ class Upgrade {
 	 *
 	 * @param string $table_name Name of database table.
 	 */
-	private function migrate_scope_data( $table_name ) {
+	private function migrate_scope_data( string $table_name ) {
 		global $wpdb;
 
 		$scopes = array(
@@ -171,7 +171,7 @@ class Upgrade {
 	 *
 	 * @return array<string, Snippet> List of Snippet objects.
 	 */
-	private function get_sample_content() {
+	private function get_sample_content(): array {
 		$tag = "\n\n" . esc_html__( 'This is a sample snippet. Feel free to use it, edit it, or remove it.', 'code-snippets' );
 
 		$snippets_data = array(

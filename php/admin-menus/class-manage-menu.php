@@ -145,8 +145,7 @@ class Manage_Menu extends Admin_Menu {
 	 * Print the status and error messages
 	 */
 	protected function print_messages() {
-
-		/* Output a warning if safe mode is active */
+		// Output a warning if safe mode is active.
 		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 			echo '<div id="message" class="error fade"><p>';
 			echo wp_kses_post( __( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank">Help</a>', 'code-snippets' ) );
@@ -180,12 +179,8 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @return mixed
 	 */
-	public function save_screen_option( $status, $option, $value ) {
-		if ( 'snippets_per_page' === $option ) {
-			return $value;
-		}
-
-		return $status;
+	public function save_screen_option( $status, string $option, $value ) {
+		return 'snippets_per_page' === $option ? $value : $status;
 	}
 
 	/**

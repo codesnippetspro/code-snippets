@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import { AxiosError, AxiosResponse } from 'axios'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
+import { ExportSnippets } from '../types/ExportSnippets'
 import { Notices } from '../types/Notice'
 import { Snippet } from '../types/Snippet'
 import { useSnippetsAPI } from '../utils/api/snippets'
@@ -56,14 +57,21 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 			.catch(error => displayRequestErrors(error, errorNotice))
 	}, [displayRequestErrors, setIsWorking, setNotices, setSnippet])
 
-	const doFileRequest = useCallback((snippet: Snippet, createRequest: () => Promise<AxiosResponse<string>>) => {
+	const doFileRequest = useCallback((snippet: Snippet, createRequest: () => Promise<AxiosResponse<string | ExportSnippets>>) => {
 		setIsWorking(true)
 
 		createRequest()
 			.then(response => {
+				const data = response.data
 				setIsWorking(false)
 				console.info('file response', response)
-				downloadSnippetExportFile(response.data, snippet)
+
+				if ('string' === typeof data) {
+					downloadSnippetExportFile(data, snippet)
+				} else {
+					const JSON_INDENT_SPACES = 2
+					downloadSnippetExportFile(JSON.stringify(data, undefined, JSON_INDENT_SPACES), snippet, 'json')
+				}
 			})
 			// translators: %s: error message.
 			.catch(error => displayRequestErrors(error, __('Could not download export file.', 'code-snippets')))

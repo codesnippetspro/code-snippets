@@ -17,6 +17,13 @@ abstract class Data_Item {
 	protected $fields;
 
 	/**
+	 * List of default values provided for fields.
+	 *
+	 * @var array<string, mixed>
+	 */
+	protected $default_values;
+
+	/**
 	 * Optional list of field name aliases to map when resolving a field name.
 	 *
 	 * @var array<string, string> Field alias names keyed to actual field names.
@@ -32,6 +39,7 @@ abstract class Data_Item {
 	 */
 	public function __construct( array $default_values, $initial_data = null, array $field_aliases = [] ) {
 		$this->fields = $default_values;
+		$this->default_values = $default_values;
 		$this->field_aliases = $field_aliases;
 
 		// If we've accidentally passed an existing object, then fetch its fields before constructing the new object.
@@ -72,6 +80,23 @@ abstract class Data_Item {
 	 */
 	public function get_fields(): array {
 		return $this->fields;
+	}
+
+	/**
+	 * Retrieve a list of current data fields, excluding values that are unchanged from the default.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function get_modified_fields(): array {
+		$modified_fields = [];
+
+		foreach ( $this->get_fields() as $field => $value ) {
+			if ( $value && $value !== $this->default_values[ $field ] ) {
+				$modified_fields[ $field ] = $value;
+			}
+		}
+
+		return $modified_fields;
 	}
 
 	/**

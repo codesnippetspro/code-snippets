@@ -8,21 +8,21 @@ namespace Code_Snippets;
 abstract class Admin_Menu {
 
 	/**
-	 * The snippet page short name
+	 * The snippet page short name.
 	 *
 	 * @var string
 	 */
 	public $name;
 
 	/**
-	 * The label shown in the admin menu
+	 * The label shown in the admin menu.
 	 *
 	 * @var string
 	 */
 	public $label;
 
 	/**
-	 * The text used for the page title
+	 * The text used for the page title.
 	 *
 	 * @var string
 	 */
@@ -43,7 +43,7 @@ abstract class Admin_Menu {
 	protected $slug;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
 	 * @param string $name  The snippet page short name.
 	 * @param string $label The label shown in the admin menu.
@@ -59,7 +59,9 @@ abstract class Admin_Menu {
 	}
 
 	/**
-	 * Register action and filter hooks
+	 * Register action and filter hooks.
+	 *
+	 * @return void
 	 */
 	public function run() {
 		if ( ! code_snippets()->is_compact_menu() ) {
@@ -69,15 +71,15 @@ abstract class Admin_Menu {
 	}
 
 	/**
-	 * Add a sub-menu to the Snippets menu
+	 * Add a sub-menu to the Snippets menu.
 	 *
 	 * @param string $slug  Menu slug.
 	 * @param string $label Label shown in admin menu.
 	 * @param string $title Page title.
 	 *
-	 * @uses add_submenu_page() to register a submenu
+	 * @return void
 	 */
-	public function add_menu( $slug, $label, $title ) {
+	public function add_menu( string $slug, string $label, string $title ) {
 		$hook = add_submenu_page(
 			$this->base_slug,
 			$title,

@@ -5,6 +5,7 @@ namespace Code_Snippets;
 use Data_Item;
 use DateTime;
 use DateTimeZone;
+use Exception;
 
 /**
  * A snippet object.
@@ -68,7 +69,6 @@ class Snippet extends Data_Item {
 			'shared_network' => null,
 			'modified'       => null,
 			'code_error'     => null,
-			'conditions'     => null,
 		);
 
 		$field_aliases = array(
@@ -84,7 +84,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @param string $tag Tag content to add to list.
 	 */
-	public function add_tag( $tag ) {
+	public function add_tag( string $tag ) {
 		$this->fields['tags'][] = $tag;
 	}
 
@@ -111,37 +111,6 @@ class Snippet extends Data_Item {
 			default:
 				return parent::prepare_field( $value, $field );
 		}
-	}
-
-	/**
-	 * Prepare the value of the conditions field when reading.
-	 *
-	 * @param string|mixed $value Conditions encoded as JSON.
-	 *
-	 * @return mixed
-	 */
-	protected function prepare_conditions( $value ) {
-		if ( 'cond' === $this->type ) {
-			$this->code = is_string( $value ) ? $value : wp_json_encode( $value );
-		}
-
-		return $value;
-	}
-
-	/**
-	 * Retrieve list of current data fields.
-	 *
-	 * @return array<string, mixed> Field names keyed to current values.
-	 */
-	public function get_fields(): array {
-		$fields = parent::get_fields();
-
-		if ( 'condition' === $this->scope ) {
-			$fields['conditions'] = json_decode( $fields['code'] );
-			$fields['code'] = '';
-		}
-
-		return $fields;
 	}
 
 	/**
@@ -172,7 +141,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return bool The field in the correct format.
 	 */
-	protected function prepare_network( $network ) {
+	protected function prepare_network( bool $network ): bool {
 		if ( null === $network && function_exists( 'is_network_admin' ) ) {
 			return is_network_admin();
 		}
@@ -185,15 +154,13 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string The snippet type – will be a filename extension.
 	 */
-	protected function get_type() {
+	protected function get_type(): string {
 		if ( '-css' === substr( $this->scope, -4 ) ) {
 			return 'css';
 		} elseif ( '-js' === substr( $this->scope, -3 ) ) {
 			return 'js';
 		} elseif ( 'content' === substr( $this->scope, -7 ) ) {
 			return 'html';
-		} elseif ( 'condition' === $this->scope ) {
-			return 'cond';
 		} else {
 			return 'php';
 		}
@@ -204,8 +171,8 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string[]
 	 */
-	public static function get_types() {
-		return [ 'php', 'html', 'css', 'js', 'cond' ];
+	public static function get_types(): array {
+		return [ 'php', 'html', 'css', 'js' ];
 	}
 
 	/**
@@ -213,13 +180,12 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string
 	 */
-	protected function get_type_desc() {
+	protected function get_type_desc(): string {
 		$labels = [
 			'php'  => __( 'Functions', 'code-snippets' ),
 			'html' => __( 'Content', 'code-snippets' ),
 			'css'  => __( 'Styles', 'code-snippets' ),
 			'js'   => __( 'Scripts', 'code-snippets' ),
-			'cond' => __( 'Conditions', 'code-snippets' ),
 		];
 
 		return isset( $labels[ $this->type ] ) ? $labels[ $this->type ] : strtoupper( $this->type );
@@ -230,7 +196,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string The name of a language filename extension.
 	 */
-	protected function get_lang() {
+	protected function get_lang(): string {
 		return $this->type;
 	}
 
@@ -264,6 +230,8 @@ class Snippet extends Data_Item {
 
 	/**
 	 * Update the last modification date to the current date and time.
+	 *
+	 * @return void
 	 */
 	public function update_modified() {
 		$this->modified = gmdate( self::DATE_FORMAT );
@@ -274,7 +242,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string
 	 */
-	protected function get_display_name() {
+	protected function get_display_name(): string {
 		// translators: %d: snippet ID.
 		return empty( $this->name ) ? sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $this->id ) : $this->name;
 	}
@@ -284,7 +252,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string The tags separated by a comma and a space.
 	 */
-	protected function get_tags_list() {
+	protected function get_tags_list(): string {
 		return implode( ', ', $this->tags );
 	}
 
@@ -295,13 +263,12 @@ class Snippet extends Data_Item {
 	 *
 	 * @phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine
 	 */
-	public static function get_all_scopes() {
+	public static function get_all_scopes(): array {
 		return array(
 			'global', 'admin', 'front-end', 'single-use',
 			'content', 'head-content', 'footer-content',
 			'admin-css', 'site-css',
 			'site-head-js', 'site-footer-js',
-			'condition',
 		);
 	}
 
@@ -310,7 +277,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return array<string, string> Scope name keyed to the class name of a dashicon.
 	 */
-	public static function get_scope_icons() {
+	public static function get_scope_icons(): array {
 		return array(
 			'global'         => 'admin-site',
 			'admin'          => 'admin-tools',
@@ -323,7 +290,6 @@ class Snippet extends Data_Item {
 			'site-css'       => 'admin-customizer',
 			'site-head-js'   => 'media-code',
 			'site-footer-js' => 'media-code',
-			'condition'      => 'randomize',
 		);
 	}
 
@@ -332,7 +298,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string The name of the scope.
 	 */
-	protected function get_scope_name() {
+	protected function get_scope_name(): string {
 		switch ( $this->scope ) {
 			case 'global':
 				return __( 'Global function', 'code-snippets' );
@@ -366,7 +332,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string A dashicon name.
 	 */
-	protected function get_scope_icon() {
+	protected function get_scope_icon(): string {
 		$icons = self::get_scope_icons();
 
 		return $icons[ $this->scope ];
@@ -377,7 +343,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return bool Whether the snippet is a shared network snippet.
 	 */
-	protected function get_shared_network() {
+	protected function get_shared_network(): bool {
 		if ( isset( $this->fields['shared_network'] ) ) {
 			return $this->fields['shared_network'];
 		}
@@ -395,9 +361,9 @@ class Snippet extends Data_Item {
 	/**
 	 * Retrieve the snippet modification date as a timestamp.
 	 *
-	 * @return int Timestamp value.
+	 * @return integer Timestamp value.
 	 */
-	protected function get_modified_timestamp() {
+	protected function get_modified_timestamp(): int {
 		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
 
 		return $datetime ? $datetime->getTimestamp() : 0;
@@ -408,7 +374,9 @@ class Snippet extends Data_Item {
 	 *
 	 * @return DateTime
 	 */
-	protected function get_modified_local() {
+	protected function get_modified_local(): DateTime {
+		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
+
 		if ( function_exists( 'wp_timezone' ) ) {
 			$timezone = wp_timezone();
 		} else {
@@ -424,12 +392,14 @@ class Snippet extends Data_Item {
 				$timezone = sprintf( '%s%02d:%02d', $sign, abs( $hours ), abs( $minutes ) );
 			}
 
-			$timezone = new DateTimeZone( $timezone );
+			try {
+				$timezone = new DateTimeZone( $timezone );
+			} catch ( Exception $exception ) {
+				return $datetime;
+			}
 		}
 
-		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
 		$datetime->setTimezone( $timezone );
-
 		return $datetime;
 	}
 
@@ -440,7 +410,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string
 	 */
-	public function format_modified( $include_html = true ) {
+	public function format_modified( bool $include_html = true ): string {
 		if ( ! $this->modified ) {
 			return '';
 		}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import axios, { AxiosResponse } from 'axios'
 import { addQueryArgs } from '@wordpress/url'
+import { ExportSnippets } from '../../types/ExportSnippets'
 import { Snippet } from '../../types/Snippet'
 import { isNetworkAdmin } from '../general'
 
@@ -14,7 +15,7 @@ export interface Snippets {
 	delete: (snippet: Snippet) => Promise<AxiosResponse<void>>
 	activate: (snippet: Snippet) => Promise<AxiosResponse<Snippet>>
 	deactivate: (snippet: Snippet) => Promise<AxiosResponse<Snippet>>
-	export: (snippet: Snippet) => Promise<AxiosResponse<string>>
+	export: (snippet: Snippet) => Promise<AxiosResponse<ExportSnippets>>
 	exportCode: (snippet: Snippet) => Promise<AxiosResponse<string>>
 }
 
@@ -25,7 +26,7 @@ export const useSnippetsAPI = (): Snippets => {
 		}), [])
 
 	const buildURL = ({ id, network }: Snippet, action?: string) =>
-		addQueryArgs([ROUTE_BASE, id, action].filter(Boolean).join('/'), { network })
+		addQueryArgs([ROUTE_BASE, id, action].filter(Boolean).join('/'), network ? { network } : undefined)
 
 	return useMemo((): Snippets => ({
 		fetchAll: network =>
@@ -63,7 +64,7 @@ export const useSnippetsAPI = (): Snippets => {
 			axiosInstance.post<Snippet, AxiosResponse<Snippet>, never>(buildURL(snippet, 'deactivate')),
 
 		export: snippet =>
-			axiosInstance.get<string>(buildURL(snippet, 'export')),
+			axiosInstance.get<ExportSnippets>(buildURL(snippet, 'export')),
 
 		exportCode: snippet =>
 			axiosInstance.get<string, AxiosResponse<string>>(buildURL(snippet, 'export-code'))

@@ -54,10 +54,10 @@ class Export {
 	 */
 	public function build_filename( string $format ): string {
 		if ( 1 === count( $this->snippets_list ) ) {
-			/* If there is only snippet to export, use its name instead of the site name */
+			// If there is only snippet to export, use its name instead of the site name.
 			$title = strtolower( $this->snippets_list[0]->name );
 		} else {
-			/* Otherwise, use the site name as set in Settings > General */
+			// Otherwise, use the site name as set in Settings > General.
 			$title = strtolower( get_bloginfo( 'name' ) );
 		}
 
@@ -68,33 +68,27 @@ class Export {
 	/**
 	 * Bundle snippets together into JSON format.
 	 *
-	 * @return string Snippets as JSON object.
+	 * @return array<string, string|Snippet[]> Snippets as JSON object.
 	 */
-	public function export_snippets_json(): string {
+	public function create_export_object(): array {
 		$snippets = array();
 
 		foreach ( $this->snippets_list as $snippet ) {
-			$fields = array( 'name', 'desc', 'tags', 'scope', 'code', 'priority' );
-			$final_snippet = array();
-
-			foreach ( $fields as $field ) {
-				if ( ! empty( $snippet->$field ) ) {
-					$final_snippet[ $field ] = str_replace( "\r\n", "\n", $snippet->$field );
-				}
-			}
-
-			if ( $final_snippet ) {
-				$snippets[] = $final_snippet;
-			}
+			$snippets[] = array_map(
+				function ( $value ) {
+					return is_string( $value ) ?
+						str_replace( "\r\n", "\n", $value ) :
+						$value;
+				},
+				$snippet->get_modified_fields()
+			);
 		}
 
-		$data = array(
+		return array(
 			'generator'    => 'Code Snippets v' . code_snippets()->version,
 			'date_created' => gmdate( 'Y-m-d H:i' ),
 			'snippets'     => $snippets,
 		);
-
-		return wp_json_encode( $data, apply_filters( 'code_snippets/export/json_encode_options', 0 ) );
 	}
 
 	/**
@@ -113,7 +107,7 @@ class Export {
 			$result .= "\n/**\n * $snippet->display_name\n";
 
 			if ( ! empty( $snippet->desc ) ) {
-				/* Convert description to PhpDoc */
+				// Convert description to PhpDoc.
 				$desc = wp_strip_all_tags( str_replace( "\n", "\n * ", $snippet->desc ) );
 				$result .= " *\n * $desc\n";
 			}
@@ -137,6 +131,21 @@ class Export {
 	}
 
 	/**
+	 * Export snippets in a generic JSON format that is not intended for importing.
+	 *
+	 * @return string
+	 */
+	public function export_snippets_basic_json(): string {
+		$snippet_data = array();
+
+		foreach ( $this->snippets_list as $snippet ) {
+			$snippet_data[] = $snippet->get_modified_fields();
+		}
+
+		return wp_json_encode( 1 === count( $snippet_data ) ? $snippet_data[0] : $snippet_data );
+	}
+
+	/**
 	 * Generate a downloadable CSS or JavaScript file from a list of snippets
 	 *
 	 * @phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -154,7 +163,6 @@ class Export {
 			return $this->export_snippets_php();
 		}
 
-		/* Loop through the snippets */
 		foreach ( $this->snippets_list as $snippet ) {
 			$snippet = new Snippet( $snippet );
 
