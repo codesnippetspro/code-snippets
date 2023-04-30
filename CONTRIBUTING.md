@@ -9,7 +9,7 @@ The following tools will need to be installed.
 
 - [Composer](https://getcomposer.org/download/) v2 or later.
 - [Node.js](https://nodejs.org/en/download/) v14.15 or later with
-[npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) v7 or later.
+  [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) v7 or later.
 
 Once Node.js and npm are installed, run the following command from inside the plugin directory to install the required
 node packages:
@@ -39,7 +39,8 @@ In order to get things built from the source files, the following command can be
 This will run the default `build` gulp task, which:
 
 1. Copies required vendor files from the `node_modules/` directory, such as CodeMirror and PrismJS theme files.
-2. Transforms the SCSS source files into browser-ready minified CSS code, including right-to-left files where appropriate.
+2. Transforms the SCSS source files into browser-ready minified CSS code, including right-to-left files where
+   appropriate.
 3. Transforms the TypeScript source files into browser-ready minified JavaScript code, after checking with a linter.
 
 The generated files will be located together under the `dist/` directory, where they are loaded from by WordPress.
@@ -80,12 +81,12 @@ zip file is suitable for direct uploading through the WordPress plugin installer
 ## Switching between Free and Pro
 
 While developing both Code Snippets and Code Snippets Pro, it is convenient to have both versions together in the same
-repository to allow easy switching and merging between the `develop` and `pro` branches.
+repository to allow easy switching and merging between the `core` and `pro` branches.
 
 Due to the need for the free version of Code Snippets to be publicly available while the Pro version is only accessible
-to the Code Snippets Team, these branches are divided into separate repositories, with the `develop` and `master`
-branches stored at [codesnippetspro/code-snippets](https://github.com/codesnippetspro/code-snippets), and the `pro`
-branch at [codesnippetspro/pro](https://github.com/codesnippetspro/pro).
+to the Code Snippets Team, these branches are divided into separate repositories, with the `core` branch stored
+at [codesnippetspro/code-snippets](https://github.com/codesnippetspro/code-snippets), and the `pro` branch
+at [codesnippetspro/pro](https://github.com/codesnippetspro/pro).
 
 Despite this fragmentation, it is recommended to not store the code in separate repositories, but to instead add these
 as separate remotes in the same repository. To achieve this, first clone a version of Code Snippets to your local
@@ -93,17 +94,20 @@ machine:
 
     git clone git@github.com:codesnippetspro/code-snippets.git
     cd code-snippets
+    git remote rename origin origin/core
 
-This will download a copy of the Code Snippets repository, and set the `origin` to be `codesnippetspro/code-snippets`.
+This will download a copy of the Code Snippets repository, and set the `origin/core` remote to
+be `codesnippetspro/code-snippets`. Normally you might just have a single `origin` remote when working with a Git
+repository, but in this case we will have two, one for each repository, and so are renaming to reduce confusion.
 
 Next, add the pro repository as a separate remote. The name here is not important, just as long as it is different
 enough to reduce confusion:
 
-    git remote add pro git@github.com:codesnippetspro/pro.git
+    git remote add origin/pro git@github.com:codesnippetspro/pro.git
     git fetch
 
-Once this is achieved, you should be able to switch between versions with `git checkout develop` and `git checkout pro`.
+Once this is achieved, you should be able to switch between versions with `git checkout core` and `git checkout pro`.
 
-When creating feature branches, ensure that they are based off the correct branch `develop` or `pro`, and that they
+When creating feature branches, ensure that they are based off the correct branch `core` or `pro`, and that they
 are pushed to the correct remote. It is especially important to avoid pushing any branches based on `pro` to the public
 repository.
