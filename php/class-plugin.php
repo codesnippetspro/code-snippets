@@ -2,6 +2,7 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 
 /**
@@ -52,6 +53,13 @@ class Plugin {
 	 * @var Active_Snippets
 	 */
 	public $active_snippets;
+
+	/**
+	 * Class for managing cloud API actions.
+	 *
+	 * @var Cloud_API
+	 */
+	public $cloud_api;
 
 	/**
 	 * Handles licensing and plugin updates.
@@ -108,8 +116,12 @@ class Plugin {
 		require_once $includes_path . '/settings/editor-preview.php';
 		require_once $includes_path . '/settings/settings.php';
 
+		// Cloud List Table shared functions.
+		require_once $includes_path . '/cloud/list-table-shared-ops.php';
+
 		$this->active_snippets = new Active_Snippets();
 		$this->frontend = new Frontend();
+		$this->cloud_api = new Cloud_API();
 
 		if ( class_exists( 'WP_CLI_Command' ) ) {
 			Command::register();
@@ -303,10 +315,12 @@ class Plugin {
 		return apply_filters(
 			'code_snippets_types',
 			array(
-				'php'  => __( 'Functions', 'code-snippets' ),
-				'html' => __( 'Content', 'code-snippets' ),
-				'css'  => __( 'Styles', 'code-snippets' ),
-				'js'   => __( 'Scripts', 'code-snippets' ),
+				'php'   => __( 'Functions', 'code-snippets' ),
+				'html'  => __( 'Content', 'code-snippets' ),
+				'css'   => __( 'Styles', 'code-snippets' ),
+				'js'    => __( 'Scripts', 'code-snippets' ),
+				'cloud' => __( 'Codevault', 'code-snippets' ),
+				'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
 			)
 		);
 	}
@@ -331,10 +345,12 @@ class Plugin {
 	 */
 	public function get_type_description( string $type ): string {
 		$descriptions = array(
-			'php'  => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
-			'html' => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
-			'css'  => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
-			'js'   => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
+			'php'   => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
+			'html'  => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
+			'css'   => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
+			'js'    => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
+			'cloud' => __( 'See all your public and private snippets that are stored in your Code Snippet Cloud Codevault.', 'code-snippets' ),
+			'cloud_search' => __( 'Explore and Search user contributed code snippets from Code Snippet Cloud.', 'code-snippets' ),
 		);
 
 		$descriptions = apply_filters( 'code_snippets/plugins/type_descriptions', $descriptions );

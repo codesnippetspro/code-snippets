@@ -152,7 +152,6 @@ class Settings_Menu extends Admin_Menu {
 
 				settings_fields( 'code-snippets' );
 				$this->do_settings_tabs();
-
 				?>
 				<p class="submit">
 					<?php submit_button( null, 'primary', 'submit', false ); ?>
@@ -204,10 +203,35 @@ class Settings_Menu extends Admin_Menu {
 				call_user_func( $section['callback'], $section );
 			}
 
+			if ( 'cloud' === $section['id'] ) {
+				echo '<p id="cloud_guide" class="hidden cloud-guide">';
+				esc_html_e( 'Please make sure to click verify token to connect to the cloud and if successful then click on save settings.', 'code-snippets' );
+				echo '</p>';
+			}
+
 			printf( '<table class="form-table settings-section %s-settings">', esc_attr( $section['id'] ) );
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
 			echo '</table>';
+
+			if ( 'cloud' === $section['id'] ) {
+				$settings = get_option( 'code_snippets_settings' );
+				$is_token_verified = $settings['cloud']['token_verified'];
+
+				if ( $is_token_verified && 'false' !== $is_token_verified ) {
+					echo '<p id="cloud_sync_status" class="cloud-message cloud-success hidden">';
+					esc_html_e( 'Status: Cloud Sync Connected', 'code-snippets' );
+				} else {
+					echo '<p id="cloud_sync_status" class="cloud-message cloud-error hidden">';
+					esc_html_e( 'Status: Cloud Sync Not Connected', 'code-snippets' );
+				}
+
+				echo '</p>';
+
+				echo '<p class="hidden cloud-message cloud-error">', esc_html__( 'Invalid token, Please try again or Generate a new token from your Code Snippets Cloud account.', 'code-snippets' ), '</p>';
+				echo '<p class="hidden cloud-message cloud-success">', esc_html__( 'Token verified successfully', 'code-snippets' ), '</p>';
+			}
 		}
+
 	}
 
 	/**
@@ -221,9 +245,10 @@ class Settings_Menu extends Admin_Menu {
 		}
 
 		check_admin_referer( 'code-snippets-options' );
-
+		
 		// Retrieve the submitted options and save them to the database.
 		if ( isset( $_POST['code_snippets_settings'] ) ) {
+
 			$value = map_deep( wp_unslash( $_POST['code_snippets_settings'] ), 'sanitize_key' );
 			update_site_option( 'code_snippets_settings', $value );
 			wp_cache_delete( Settings\CACHE_KEY );

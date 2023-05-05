@@ -343,13 +343,23 @@ class Admin {
 				esc_attr( $type_name )
 			);
 		}
-
-		echo esc_html( $label );
-
-		if ( 'all' !== $type_name ) {
-			echo ' <span class="badge">' . esc_html( $type_name ) . '</span>';
+		
+		echo esc_html( $label ); 
+		//'all' === $type_name ? '' : ' <span class="badge">' . esc_html( $type_name ) . '</span>', '</a>';
+		switch ($type_name) {
+			case 'all':
+				'';
+				break;
+			case 'cloud':
+				echo '<span class="cloud-badge dashicons dashicons-cloud cloud-icon cloud-synced"></span>';	
+				break;
+			case 'cloud_search':
+				echo '<span class="cloud-badge dashicons dashicons-search cloud-icon cloud-downloaded"></span>';	
+				break;
+			default:
+				echo '<span class="badge">' . esc_html( $type_name ) . '</span>';
+				break;
 		}
-
 		echo '</a>';
 	}
 }

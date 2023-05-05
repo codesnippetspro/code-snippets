@@ -1,6 +1,6 @@
 {
     "name": "code-snippets-pro",
-    "version": "3.4.0-alpha.1",
+    "version": "3.5.0-beta.1",
     "description": "Manage code snippets running on a WordPress-powered site through a graphical interface",
     "homepage": "https://wordpress.org/plugins/code-snippets",
     "main": "gulpfile.babel.ts",
@@ -44,8 +44,10 @@
         "@wordpress/icons": "^9.19.0",
         "@wordpress/server-side-render": "^4.5.0",
         "axios": "^1.3.4",
+        "@types/diff-match-patch": "^1.0.32",
         "codemirror": "^5.29",
         "codemirror-colorpicker": "^1.9.80",
+        "diff-match-patch": "^1.0.5",
         "php-parser": "github:glayzzle/php-parser#php8",
         "prism-themes": "^1.9.0",
         "prismjs": "^1.29.0",
