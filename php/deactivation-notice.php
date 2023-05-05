@@ -4,8 +4,9 @@
  *
  * All code in this file should be compatible with PHP 5.2 or later.
  *
- * @package Code_Snippets
- * @
+ * @package      Code_Snippets
+ *
+ * @noinspection PhpNestedDirNameCallsCanBeReplacedWithLevelParameterInspection
  */
 
 if ( ! defined( 'ABSPATH' ) || function_exists( 'code_snippets_deactivation_notice' ) ) {

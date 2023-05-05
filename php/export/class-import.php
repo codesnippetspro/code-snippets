@@ -3,7 +3,6 @@
 namespace Code_Snippets;
 
 use DOMDocument;
-use DOMElement;
 
 /**
  * Handles importing snippets from export files into the site

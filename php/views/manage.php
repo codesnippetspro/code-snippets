@@ -8,7 +8,11 @@
 
 namespace Code_Snippets;
 
-/* @var Manage_Menu $this */
+/**
+ * Loaded from the Manage_Menu class.
+ *
+ * @var Manage_Menu $this
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
