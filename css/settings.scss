@@ -1,6 +1,6 @@
 @import 'editor';
 
-$sections: general, editor, license;
+$sections: general, description_editor, editor, license, cloud;
 
 p.submit {
 	max-width: 1020px;
@@ -94,4 +94,35 @@ body.js {
 
 #code_snippets_license_key {
 	font-family: Consolas, Monaco, monospace;
+}
+
+#cloud_token {
+	max-width: 450px;
+    width: 90vw;
+}
+
+.cloud-message {
+	width: fit-content;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+.cloud-error {
+    background: #e53935;
+    color: #ffebee;
+}
+
+.cloud-success {
+	background: #43a047;
+	color: #e8f5e9;
+}
+
+.refresh-success {
+    background: #2271b1;
+    color: #ffeb3b;
+}
+
+.cloud-settings tbody tr:nth-child(n+4) {
+    display: none;
 }

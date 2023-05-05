@@ -448,6 +448,7 @@ function delete_snippet( int $id, bool $multisite = null ): bool {
 	if ( $result ) {
 		do_action( 'code_snippets/delete_snippet', $id, $multisite );
 		clean_snippets_cache( $table );
+		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 	}
 
 	return (bool) $result;
@@ -520,26 +521,30 @@ function save_snippet( $snippet ) {
 			}
 		}
 	}
+	// Increment the revision number.
+	$snippet->increment_revision();
 
 	// Build the list of data to insert. Shared network snippets are always considered inactive.
 	$data = [
 		'name'        => $snippet->name,
-		'description' => $snippet->desc,
+		'description' => $snippet->desc == null ? 'test' : $snippet->desc,
 		'code'        => $snippet->code,
 		'tags'        => $snippet->tags_list,
 		'scope'       => $snippet->scope,
 		'priority'    => $snippet->priority,
 		'active'      => intval( $snippet->active && ! $snippet->shared_network ),
 		'modified'    => $snippet->modified,
+		'revision'    => $snippet->revision,
+		'cloud_id'    => $snippet->cloud_id ? $snippet->cloud_id : null,
 	];
-
+	
 	// Create a new snippet if the ID is not set.
 	if ( 0 === $snippet->id ) {
 		$result = $wpdb->insert( $table, $data, '%s' ); // db call ok.
 		if ( false === $result ) {
 			return null;
 		}
-
+		
 		$snippet->id = $wpdb->insert_id;
 		do_action( 'code_snippets/create_snippet', $snippet, $table );
 	} else {

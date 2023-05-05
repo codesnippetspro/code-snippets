@@ -19,11 +19,14 @@ h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
 	vertical-align: middle;
 }
 
+//$badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-active, unverified: $unverified-active);
 $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-active);
 
 @each $type, $color in $badges {
 	.nav-tab[data-snippet-type=#{$type}] .badge, .snippet-type-badge[data-snippet-type=#{$type}] {
 		color: $color;
+	.nav-tab[data-type=#{$type}] .badge, .snippet-type-badge[data-type=#{$type}] {
+		color: $color !important;
 		border-color: currentColor;
 	}
 

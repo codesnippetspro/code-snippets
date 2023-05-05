@@ -10,6 +10,8 @@
 
 namespace Code_Snippets;
 
+use wpdb;
+
 /* Bail if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
@@ -66,6 +68,8 @@ $licensed = code_snippets()->licensing->is_licensed();
 
 		printf( '<input type="hidden" name="current_snippet_scope" value="%s">', esc_attr( $snippet->scope ) );
 
+		printf( '<input type="hidden" name="snippet_cloud_id" value="%s">', esc_attr( $snippet->cloud_id ) );
+
 		do_action( 'code_snippets/admin/before_title_input', $snippet );
 		?>
 
@@ -100,12 +104,15 @@ $licensed = code_snippets()->licensing->is_licensed();
 			</label>
 		</h2>
 
-		<?php
+		<?php	
 
 		if ( ! $snippet->id && ! isset( $_REQUEST['preview'] ) ) {
 			echo '<h2 class="nav-tab-wrapper" id="snippet-type-tabs">';
 
-			foreach ( Plugin::get_types() as $type_name => $label ) {
+			$snippet_types = Plugin::get_types();
+			unset( $snippet_types['cloud'], $snippet_types['cloud_search'] );
+
+			foreach ( $snippet_types as $type_name => $label ) {
 				Admin::render_snippet_type_tab( $type_name, $label, $snippet->type );
 			}
 
@@ -125,8 +132,32 @@ $licensed = code_snippets()->licensing->is_licensed();
 			<?php do_action( 'code_snippets_below_editor', $snippet ); ?>
 		</div>
 
-		<?php
+		
 
+		<?php
+		//Updated Cloud Snippet Check and Hidden Input Injection
+		$cloud = false;
+		$cloud_update = false;
+		if ( isset( $snippet->cloud_id ) ) {
+			$cloud = true;
+			//If so check if update available using instance of plugin
+			$cloud_api = code_snippets()->cloud_api;
+			if( $cloud_api->is_update_available( $snippet->id ) ) {
+				$cloud_id_owner =  $cloud_api->get_cloud_id_and_ownership( $snippet->cloud_id );
+				if( $cloud_id_owner['is_owner'] ) {
+					$cloud_update = true;
+					$updated_snippet = $cloud_api->get_single_cloud_snippet( $cloud_id_owner['cloud_id'] );
+					$updated_code = $updated_snippet->code;
+					echo '<input type="hidden" id="updated_snippet_code" name="updated_snippet_code" value="' . $updated_code . '">					
+						<div id="updated-code">
+							<h2><label>Snippet Update from the Cloud*</label></h2>
+							<p>There is an update to this snippet from the cloud. The original snippet is shown on the <b>Left Hand Side</b> and updated code on the <b>Right Hand Side</b> with the differences highlighted.</p> 
+							<p><b>Important:</b> Please review updated code below as updating this snippet will overwrite the code with the below.</p>
+						</div>';
+				}
+	
+			}
+		}
 		/* Allow plugins to add fields and content to this page */
 		do_action( 'code_snippets_edit_snippet', $snippet );
 
@@ -137,8 +168,7 @@ $licensed = code_snippets()->licensing->is_licensed();
 
 		<p class="submit">
 			<?php
-			$this->render_submit_buttons( $snippet );
-
+			$this->render_submit_buttons( $snippet, '', true, $cloud_update );
 			if ( $licensed && ( 'css' === $snippet->type || 'js' === $snippet->type ) ) {
 				$asset_url = add_query_arg(
 					array(

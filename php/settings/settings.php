@@ -134,6 +134,7 @@ function get_settings_sections(): array {
 	$sections = array(
 		'general' => __( 'General', 'code-snippets' ),
 		'editor'  => __( 'Code Editor', 'code-snippets' ),
+		'cloud'   => __( 'Cloud Sync', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
@@ -219,6 +220,7 @@ function sanitize_setting_value( array $field, $input_value ) {
 			return $results;
 
 		case 'text':
+		case 'hidden':
 			return trim( sanitize_text_field( $input_value ) );
 
 		case 'callback':
@@ -244,6 +246,7 @@ function sanitize_settings( array $input ): array {
 
 	// Don't directly loop through $input as it does not include as deselected checkboxes.
 	foreach ( get_settings_fields() as $section_id => $fields ) {
+
 		foreach ( $fields as $field_id => $field ) {
 
 			// Fetch the corresponding input value from the posted data.

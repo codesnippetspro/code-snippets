@@ -18,7 +18,7 @@ class Block_Editor {
 		}
 
 		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'load_editor_assets' ) );
+		add_action( 'enqueue_block_editor_assets', array( 'Frontend', 'enqueue_all_prism_themes' ) );
 
 		add_filter(
 			class_exists( 'WP_Block_Editor_Context' ) ? 'block_categories_all' : 'block_categories',
@@ -150,21 +150,6 @@ class Block_Editor {
 				)
 			);
 		}
-	}
-
-	/**
-	 * Load additional assets only in the block editor.
-	 *
-	 * @return void
-	 */
-	public function load_editor_assets() {
-		Frontend::register_prism_assets();
-
-		foreach ( Frontend::get_prism_themes() as $theme => $label ) {
-			wp_enqueue_style( Frontend::get_prism_theme_style_handle( $theme ) );
-		}
-
-		wp_enqueue_style( Frontend::PRISM_HANDLE );
 	}
 
 	/**
