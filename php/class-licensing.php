@@ -92,7 +92,7 @@ class Licensing {
 	 *
 	 * @return bool
 	 */
-	public function is_licensed() {
+	public function is_licensed(): bool {
 		return $this->sdk->can_use_premium_code();
 	}
 
@@ -101,7 +101,7 @@ class Licensing {
 	 *
 	 * @return bool
 	 */
-	public function was_licensed() {
+	public function was_licensed(): bool {
 		return $this->sdk->has_any_license();
 	}
 
@@ -121,7 +121,7 @@ class Licensing {
 	 *
 	 * @return string
 	 */
-	public function plugin_icon() {
+	public function plugin_icon(): string {
 		return dirname( CODE_SNIPPETS_FILE ) . '/assets/icon.svg';
 	}
 
@@ -133,7 +133,7 @@ class Licensing {
 	 *
 	 * @return bool
 	 */
-	public function is_submenu_visible( $is_visible, $submenu_id ) {
+	public function is_submenu_visible( bool $is_visible, string $submenu_id ): bool {
 		return 'account' === $submenu_id ? $is_visible : false;
 	}
 
