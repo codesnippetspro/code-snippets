@@ -2,7 +2,6 @@
 
 namespace Code_Snippets\Elementor;
 
-use Code_Snippets\Snippet;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
@@ -26,7 +25,7 @@ class Content_Widget extends Widget {
 	 *
 	 * @return string
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'code-snippets-content';
 	}
 
@@ -35,7 +34,7 @@ class Content_Widget extends Widget {
 	 *
 	 * @return string
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return __( 'Content Snippet', 'code-snippets' );
 	}
 
@@ -44,7 +43,7 @@ class Content_Widget extends Widget {
 	 *
 	 * @return string
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-shortcode';
 	}
 
@@ -53,15 +52,10 @@ class Content_Widget extends Widget {
 	 *
 	 * @return array
 	 */
-	protected function build_snippet_options() {
+	protected function build_snippet_options(): array {
 		$snippets = get_snippets();
 		$options = [];
 
-		/**
-		 * Snippet object.
-		 *
-		 * @var Snippet $snippet
-		 */
 		foreach ( $snippets as $snippet ) {
 			if ( 'html' === $snippet->type ) {
 				$options[ $snippet->id ] = $snippet->name;

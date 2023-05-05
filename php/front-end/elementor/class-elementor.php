@@ -26,7 +26,7 @@ class Elementor {
 	 *
 	 * @param Elements_Manager $elements_manager Elements manager.
 	 */
-	public function add_widget_category( $elements_manager ) {
+	public function add_widget_category( Elements_Manager $elements_manager ) {
 
 		$elements_manager->add_category(
 			'code-snippets',

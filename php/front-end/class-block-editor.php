@@ -174,7 +174,7 @@ class Block_Editor {
 	 *
 	 * @return array Modified block categories.
 	 */
-	public function block_categories( $categories ) {
+	public function block_categories( array $categories ): array {
 		$position = -1;
 
 		foreach ( $categories as $index => $category ) {
@@ -206,7 +206,7 @@ class Block_Editor {
 	 *
 	 * @return string Block output.
 	 */
-	public function render_content( $attributes ) {
+	public function render_content( array $attributes ): string {
 		return sprintf(
 			'<div %s>%s</div>',
 			get_block_wrapper_attributes(),
@@ -221,7 +221,7 @@ class Block_Editor {
 	 *
 	 * @return string Block output.
 	 */
-	public function render_source( $attributes ) {
+	public function render_source( array $attributes ): string {
 		return sprintf(
 			'<div %s>%s</div>',
 			get_block_wrapper_attributes(),

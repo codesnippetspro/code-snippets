@@ -49,7 +49,7 @@ class Source_Widget extends Widget {
 	 *
 	 * @return void
 	 */
-	private function load_prism_dependencies( $data ) {
+	private function load_prism_dependencies( array $data ) {
 		if ( get_setting( 'general', 'disable_prism' ) ) {
 			return;
 		}
@@ -92,7 +92,7 @@ class Source_Widget extends Widget {
 	/**
 	 * Return the widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'code-snippets-source';
 	}
 
@@ -101,7 +101,7 @@ class Source_Widget extends Widget {
 	 *
 	 * @return string
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return __( 'Code Snippet Source', 'code-snippets' );
 	}
 
@@ -110,7 +110,7 @@ class Source_Widget extends Widget {
 	 *
 	 * @return array
 	 */
-	protected function build_snippet_options() {
+	protected function build_snippet_options(): array {
 		$options = [];
 
 		$labels = [

@@ -78,7 +78,7 @@ class Import {
 				'scope',
 				'priority',
 				'shared_network',
-				'modified'
+				'modified',
 			];
 
 			foreach ( $import_fields as $field ) {
@@ -114,7 +114,6 @@ class Import {
 
 		$snippets = array();
 
-		/* @var DOMElement $snippet_xml */
 		foreach ( $snippets_xml as $snippet_xml ) {
 			$snippet = new Snippet();
 			$snippet->network = $this->multisite;

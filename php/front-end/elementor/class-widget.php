@@ -16,7 +16,7 @@ abstract class Widget extends Widget_Base {
 	 *
 	 * @return array
 	 */
-	public function get_categories() {
+	public function get_categories(): array {
 		return [ 'code-snippets' ];
 	}
 
@@ -25,7 +25,7 @@ abstract class Widget extends Widget_Base {
 	 *
 	 * @return string
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-code';
 	}
 }

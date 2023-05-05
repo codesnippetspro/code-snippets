@@ -164,7 +164,7 @@ class Active_Snippets {
 		}
 
 		$url = $this->get_asset_url( "$scope-css" );
-		wp_enqueue_style( "code-snippets-{$scope}-styles", $url, array(), $rev );
+		wp_enqueue_style( "code-snippets-$scope-styles", $url, array(), $rev );
 	}
 
 	/**

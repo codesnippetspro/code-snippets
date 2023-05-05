@@ -104,7 +104,7 @@ class Frontend {
 	 *
 	 * @return string
 	 */
-	public static function get_prism_theme_style_handle( $theme ) {
+	public static function get_prism_theme_style_handle( string $theme ): string {
 		return "code-snippets-prism-theme-$theme";
 	}
 
@@ -273,7 +273,7 @@ class Frontend {
 	private function invalid_id_warning( int $id ): string {
 		// translators: %d: snippet ID.
 		$text = esc_html__( 'Could not load snippet with an invalid ID: %d.', 'code-snippets' );
-		return current_user_can( 'edit_posts' ) ? sprintf( $text, intval( $id ) ) : '';
+		return current_user_can( 'edit_posts' ) ? sprintf( $text, $id ) : '';
 	}
 
 	/**
@@ -362,7 +362,7 @@ class Frontend {
 
 	/**
 	 * Converts a value and key into an HTML attribute pair.
-	 *create_attribute_pair
+	 *
 	 * @param string $value Attribute value.
 	 * @param string $key   Attribute name.
 	 *
