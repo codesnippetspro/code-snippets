@@ -208,7 +208,7 @@ class List_Table extends WP_List_Table {
 
 		// Edit links go to a different menu.
 		if ( 'edit' === $action ) {
-			return code_snippets()->get_snippet_edit_url( $snippet->id, $network_redirect ? 'network' : 'self' );
+			return code_snippets()->get_snippet_edit_url( (int) $snippet->id, $network_redirect ? 'network' : 'self' );
 		}
 
 		$query_args = array(
@@ -355,7 +355,7 @@ class List_Table extends WP_List_Table {
 		if ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
 			$out = sprintf(
 				'<a href="%s" class="snippet-name">%s</a>',
-				esc_attr( code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ) ),
+				esc_attr( code_snippets()->get_snippet_edit_url( (int) $snippet->id, $snippet->network ? 'network' : 'admin' ) ),
 				$out
 			);
 		}

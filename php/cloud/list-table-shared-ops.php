@@ -48,7 +48,7 @@ function cloud_lts_process_download_action( $action, $source, $snippet ) {
         if ( $result['success'] ) {
             if( $result['snippet_id'] ){
                 //Redirect to edit snippet page
-                wp_safe_redirect( code_snippets()->get_snippet_edit_url( $result['snippet_id'] ) );
+                wp_safe_redirect( code_snippets()->get_snippet_edit_url( (int) $result['snippet_id'] ) );
                 exit;
             }
             wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result['action'] ) ) );

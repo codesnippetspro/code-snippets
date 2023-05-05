@@ -232,7 +232,7 @@ class Plugin {
 	 *
 	 * @return string The URL to the edit snippet page for that snippet.
 	 */
-	public function get_snippet_edit_url( int $snippet_id, string $context = 'self' ): string {
+	public function get_snippet_edit_url(int $snippet_id, string $context = 'self' ): string {
 		return add_query_arg(
 			'id',
 			absint( $snippet_id ),

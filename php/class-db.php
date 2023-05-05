@@ -60,6 +60,28 @@ class DB {
 	}
 
 	/**
+	 * Validate the multisite parameter of the get_table_name() function.
+	 *
+	 * @param boolean|null $network Value of multisite parameter: `true` for multisite, `false` for single-site.
+	 *
+	 * @return boolean Validated value of multisite parameter.
+	 */
+	public static function validate_network_param( $network ) {
+
+		// If multisite is not active, then the parameter should always be false.
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
+		// If $multisite is null, try to base it on the current admin page.
+		if ( is_null( $network ) && function_exists( 'is_network_admin' ) ) {
+			$network = is_network_admin();
+		}
+
+		return (bool) $network;
+	}
+
+	/**
 	 * Return the appropriate snippet table name
 	 *
 	 * @param string|bool|null $multisite Whether retrieve the multisite table name (true) or the site table name (false).

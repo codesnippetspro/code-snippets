@@ -28,6 +28,7 @@ declare global {
 			pageTitleActions: Record<string, string>
 			addNewUrl: string
 			isPreview: boolean
+			isLicensed: boolean
 			enableDownloads: boolean
 			extraSaveButtons: boolean
 			activateByDefault: boolean

@@ -131,12 +131,14 @@ class Cloud_API {
 			$link->cloud_id = $cloud_id_int;
 			$link->is_owner = $cloud_id_owner['is_owner'];
 			//Check if cloud id exists in cloud_id_rev array - this shows if the snippet is in the codevault
-			$link->in_codevault =  $cloud_id_rev[$cloud_id_int] ? true : false;
+			$link->in_codevault =  $cloud_id_rev[$cloud_id_int] ?? false;
 
 			// Get the cloud snippet revision if in codevault get from cloud_id_rev array otherwise get from cloud.
-			$cloud_snippet_revision = 
-				$cloud_id_rev[$cloud_id_int] ? $cloud_id_rev[$cloud_id_int] :
-				$this->get_cloud_snippet_revision( $local_snippet->cloud_id );
+			if( $link->in_codevault ) {
+				$cloud_snippet_revision = 
+					$cloud_id_rev[$cloud_id_int] ? $cloud_id_rev[$cloud_id_int] :
+					$this->get_cloud_snippet_revision( $local_snippet->cloud_id );
+			}
 			
 			// Check if local revision is less than cloud revision.
 			$link->update_available = (int) $local_snippet->revision < $cloud_snippet_revision;
@@ -413,10 +415,13 @@ class Cloud_API {
 	 */
 	public static function get_single_cloud_snippet( $cloud_id ) {
 
-		//CHANGE TO PRIVATE ROUTE 'PRIVATE/GETSNIPPET' AND ADD BEARER TOKEN
 		$url = self::CLOUD_API_URL . sprintf( 'private/getsnippet/%s', $cloud_id );
-		$response = wp_remote_get( $url, [ 'headers' => self::build_request_headers() ] );
+		$cloud_api_key = get_setting( 'cloud', 'cloud_token' );
+		$header_string = [ 'Authorization' => 'Bearer ' . $cloud_api_key ];
+		$response = wp_remote_get( $url, [ 'headers' => $header_string ] );
 		$cloud_snippet = self::unpack_request_json( $response );
+
+		//wp_die( print_r($cloud_snippet['snippet']) );
 		
 		return new Cloud_Snippet( $cloud_snippet['snippet'] );
 	}
@@ -527,10 +532,10 @@ class Cloud_API {
 			$snippet->desc = $snippet_to_store->description ? $snippet_to_store->description : ''; //if no description is set, set it to empty string
 
 			// Save the snippet to the database.
-			$new_snippet_id = save_snippet( $snippet );
+			$new_snippet = save_snippet( $snippet );
 
 			$link = new Cloud_Link();
-			$link->local_id = $new_snippet_id;
+			$link->local_id = $new_snippet->id;
 			$link->cloud_id = $snippet->cloud_id;
 			$link->is_owner = $snippet_to_store->is_owner;
 			$link->in_codevault = $in_codevault;
@@ -545,7 +550,7 @@ class Cloud_API {
 			return [
 				'success' => true,
 				'action'  => 'Single Downloaded',
-				'snippet_id' => $new_snippet_id,
+				'snippet_id' => $new_snippet->id,
 				'link_id' => $link->id,
 			];
 		}

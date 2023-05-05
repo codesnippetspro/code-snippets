@@ -164,9 +164,9 @@ class Cloud_List_Table extends WP_List_Table {
 	public function process_actions() {
 		
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source' ) );
-		$action = $_REQUEST['action'];
-		$snippet = $_REQUEST['snippet'];
-		$source = $_REQUEST['source'];
+		$action = $_REQUEST['action'] ?? '';
+		$snippet = $_REQUEST['snippet'] ?? ''; 
+		$source = $_REQUEST['source'] ?? '';
 
 		if ( isset( $action, $snippet, $source ) ) {
 			cloud_lts_process_download_action( $action, $source, $snippet );
@@ -221,7 +221,7 @@ class Cloud_List_Table extends WP_List_Table {
 					//Make cloud icon grey to show its from the cloud
 					$cloud_icon = '<span class="dashicons dashicons-cloud cloud-icon cloud-not-downloaded"></span>';
 				}
-				$edit_url = $link ? code_snippets()->get_snippet_edit_url( $link->local_id ) : '';
+				$edit_url = $link ? code_snippets()->get_snippet_edit_url( (int) $link->local_id ) : '';
 				$name_link = sprintf(
 					$edit_url ? '<a href="%1$s">%2$s</a>' : '<a>%2$s</a>',
 					esc_url( $edit_url ),

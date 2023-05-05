@@ -6,7 +6,7 @@
  * to the localization, please see https://github.com/codesnippetspro/code-snippets
  *
  * @package   Code_Snippets
- * @author    Shea Bunge <shea@codesnippets.pro>, Atif Riaz <atif@codesnippets.pro>
+ * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2023 Code Snippets Pro
  * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
  * @version   3.5.0-beta.1

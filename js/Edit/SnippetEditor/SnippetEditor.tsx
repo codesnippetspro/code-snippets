@@ -6,7 +6,7 @@ import { SnippetActionsInputProps, SnippetInputProps } from '../../types/Snippet
 import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
 import { Snippet, SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetType } from '../../types/Snippet'
 import '../../editor'
-import { getSnippetType, isProType } from '../../utils/snippets'
+import { getSnippetType, isLicensed } from '../../utils/snippets'
 import classnames from 'classnames'
 import { CodeEditor } from './CodeEditor'
 
@@ -22,9 +22,9 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ tabType, label, current
 		className={classnames({
 			'nav-tab': true,
 			'nav-tab-active': tabType === currentType,
-			'nav-tab-inactive': isProType(tabType)
+			'nav-tab-inactive': !isLicensed(),
 		})}
-		{...isProType(tabType) ?
+		{...!isLicensed() ?
 			{
 				title: __('Available in Code Snippets Pro (external link)', 'code-snippets'),
 				href: 'https://codesnippets.pro/pricing/',
@@ -74,6 +74,7 @@ const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({ codeEditor, setSnippe
 			codeEditor.refresh()
 		}
 	}, [codeEditor, snippetType])
+
 
 	return (
 		<h2 className="nav-tab-wrapper" id="snippet-type-tabs">
