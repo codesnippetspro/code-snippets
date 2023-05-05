@@ -13,7 +13,7 @@ namespace Code_Snippets\Settings;
  *
  * @return array<string, array<string, array>>
  */
-function get_default_settings() {
+function get_default_settings(): array {
 	static $defaults;
 
 	if ( isset( $defaults ) ) {
@@ -38,7 +38,7 @@ function get_default_settings() {
  *
  * @return array<string, array<string, array>>
  */
-function get_settings_fields() {
+function get_settings_fields(): array {
 	static $fields;
 
 	if ( isset( $fields ) ) {

@@ -117,7 +117,7 @@ class Admin {
 	 * @return array<string> Modified plugin action links
 	 * @since 2.0.0
 	 */
-	public function plugin_settings_link( $links ) {
+	public function plugin_settings_link( array $links ): array {
 		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
 
 		array_unshift(
