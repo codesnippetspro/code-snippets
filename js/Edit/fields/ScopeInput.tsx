@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { SnippetInputProps } from '../../types/SnippetInputProps'
@@ -92,15 +93,20 @@ const ShortcodeInfo: React.FC<SnippetInputProps> = ({ snippet, isReadOnly }) => 
 
 	return 'content' === snippet.scope ?
 		<>
-			<p>
-				{__('There are multiple options for inserting this snippet into a post, page or other content.', 'code-snippets')}{' '}
+			<p className="description">
+				{__('There are multiple options for inserting this snippet into a post, page or other content.', 'code-snippets')}
+				{' '}
 				{snippet.id ?
 					// eslint-disable-next-line max-len
 					__('You can copy the below shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets') :
 					// eslint-disable-next-line max-len
 					__('After saving, you can copy a shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')}
 				{' '}
-				<a href="https://help.codesnippets.pro/article/50-inserting-snippets">{__('Learn more →', 'code-snippets')}</a>
+				<ExternalLink
+					href={__('https://help.codesnippets.pro/article/50-inserting-snippets', 'code-snippets')}
+				>
+					{__('Learn more', 'code-snippets')}
+				</ExternalLink>
 			</p>
 
 			{snippet.id ?
