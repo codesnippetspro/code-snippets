@@ -26,8 +26,9 @@ declare global {
 				nonce: string
 				snippets: string
 			}
-			pageTitleActions: Record<string, string>
+			pluginUrl: string
 			addNewUrl: string
+			pageTitleActions: Record<string, string>
 			isPreview: boolean
 			enableDownloads: boolean
 			extraSaveButtons: boolean
