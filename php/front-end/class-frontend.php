@@ -204,7 +204,7 @@ class Frontend {
 	 * @return string Evaluated shortcode content.
 	 */
 	protected function evaluate_shortcode_content( Snippet $snippet, array $atts ): string {
-		if ( ! $atts['php'] ) {
+		if ( empty( $atts['php'] ) ) {
 			return $snippet->code;
 		}
 
@@ -230,6 +230,8 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	public function render_content_shortcode( array $atts ): string {
+		$original_atts = $atts;
+
 		$atts = shortcode_atts(
 			array(
 				'id'         => 0,
@@ -277,7 +279,7 @@ class Frontend {
 			);
 		}
 
-		$content = $this->evaluate_shortcode_content( $snippet, $atts );
+		$content = $this->evaluate_shortcode_content( $snippet, $original_atts );
 
 		if ( $atts['format'] ) {
 			$functions = [ 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'capital_P_dangit' ];
@@ -297,7 +299,7 @@ class Frontend {
 			add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
 		}
 
-		return apply_filters( 'code_snippets/content_shortcode', $content, $snippet, $atts );
+		return apply_filters( 'code_snippets/content_shortcode', $content, $snippet, $atts, $original_atts );
 	}
 
 	/**
@@ -375,7 +377,6 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	public function render_source_shortcode( array $atts ): string {
-
 		$atts = shortcode_atts(
 			array(
 				'id'              => 0,
