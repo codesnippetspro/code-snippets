@@ -48,6 +48,15 @@ class Content_Widget extends Widget {
 	}
 
 	/**
+	 * Retrieve the help URL for this widget.
+	 *
+	 * @return string
+	 */
+	public function get_custom_help_url(): string {
+		return __( 'https://help.codesnippets.pro/article/54-content-snippet-options', 'code-snippets' );
+	}
+
+	/**
 	 * Build a list of snippets for the drop-down menu.
 	 *
 	 * @return array
