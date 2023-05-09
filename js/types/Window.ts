@@ -19,14 +19,17 @@ declare global {
 		readonly code_snippets_editor_preview?: CodeEditorInstance
 		readonly code_snippets_editor_settings: EditorOption[]
 		CODE_SNIPPETS_PRISM: typeof Prism
-		readonly CODE_SNIPPETS_EDIT?: {
-			snippet: Snippet
+		readonly CODE_SNIPPETS?: {
+			pluginUrl: string
+			isLicensed: boolean
 			restAPI: {
 				base: string
 				nonce: string
 				snippets: string
 			}
-			pluginUrl: string
+		}
+		readonly CODE_SNIPPETS_EDIT?: {
+			snippet: Snippet
 			addNewUrl: string
 			pageTitleActions: Record<string, string>
 			isPreview: boolean
@@ -34,7 +37,6 @@ declare global {
 			extraSaveButtons: boolean
 			activateByDefault: boolean
 			enableDescription: boolean
-			enableTags: boolean
 			editorTheme: string
 			tagOptions: {
 				enabled: boolean
