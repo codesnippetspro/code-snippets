@@ -81,31 +81,6 @@ class Admin {
 	}
 
 	/**
-	 * Localise a plugin script to provide the CODE_SNIPPETS object.
-	 *
-	 * @param string $handle Script handle.
-	 *
-	 * @return void
-	 */
-	public function localize_script( string $handle ) {
-		$plugin = code_snippets();
-
-		wp_localize_script(
-			$handle,
-			'CODE_SNIPPETS',
-			[
-				'isLicensed' => $plugin->licensing->is_licensed(),
-				'restAPI'    => [
-					'base'     => esc_url_raw( rest_url() ),
-					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
-					'nonce'    => wp_create_nonce( 'wp_rest' ),
-				],
-				'pluginUrl'  => plugins_url( '', PLUGIN_FILE ),
-			]
-		);
-	}
-
-	/**
 	 * Allow super admins to control site admin access to
 	 * snippet admin menus
 	 *

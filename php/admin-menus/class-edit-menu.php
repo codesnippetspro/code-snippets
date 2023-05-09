@@ -185,7 +185,7 @@ class Edit_Menu extends Admin_Menu {
 			wp_enqueue_editor();
 		}
 
-		$plugin->admin->localize_script( self::JS_HANDLE );
+		$plugin->localize_script( self::JS_HANDLE );
 
 		wp_localize_script(
 			self::JS_HANDLE,
