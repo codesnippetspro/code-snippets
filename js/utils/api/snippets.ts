@@ -5,7 +5,7 @@ import { ExportSnippets } from '../../types/ExportSnippets'
 import { Snippet } from '../../types/Snippet'
 import { isNetworkAdmin } from '../general'
 
-const ROUTE_BASE = window.CODE_SNIPPETS_EDIT?.restAPI.snippets
+const ROUTE_BASE = window.CODE_SNIPPETS?.restAPI.snippets
 
 export interface Snippets {
 	fetchAll: (network?: boolean | null) => Promise<AxiosResponse<Snippet[]>>
@@ -22,7 +22,7 @@ export interface Snippets {
 export const useSnippetsAPI = (): Snippets => {
 	const axiosInstance = useMemo(() =>
 		axios.create({
-			headers: { 'X-WP-Nonce': window.CODE_SNIPPETS_EDIT?.restAPI.nonce }
+			headers: { 'X-WP-Nonce': window.CODE_SNIPPETS?.restAPI.nonce }
 		}), [])
 
 	const buildURL = ({ id, network }: Snippet, action?: string) =>

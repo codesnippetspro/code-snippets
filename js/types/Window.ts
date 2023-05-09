@@ -15,17 +15,19 @@ declare global {
 		readonly wpActiveEditor?: string
 		readonly code_snippets_editor_preview?: CodeEditorInstance
 		readonly code_snippets_editor_settings: EditorOption[]
-		readonly CODE_SNIPPETS_EDIT?: {
-			snippet: Snippet
+		readonly CODE_SNIPPETS?: {
+			pluginUrl: string
+			isLicensed: boolean
 			restAPI: {
 				base: string
 				nonce: string
 				snippets: string
 			}
-			pluginUrl: string
+		}
+		readonly CODE_SNIPPETS_EDIT?: {
+			snippet: Snippet
 			addNewUrl: string
 			isPreview: boolean
-			isLicensed: boolean
 			enableTags: boolean
 			enableDownloads: boolean
 			extraSaveButtons: boolean

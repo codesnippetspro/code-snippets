@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 
-const REST_BASE = window.CODE_SNIPPETS_EDIT?.restAPI.base ?? ''
+const REST_BASE = window.CODE_SNIPPETS?.restAPI.base ?? ''
 
 export const trimLeadingSlash = (path: string): string =>
 	'/' === path.charAt(0) ? path.slice(1) : path

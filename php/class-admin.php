@@ -2,6 +2,9 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\REST_API\Snippets_REST_Controller;
+use function Code_Snippets\Settings\get_setting;
+
 /**
  * Functions specific to the administration interface
  *
@@ -57,6 +60,29 @@ class Admin {
 		if ( ! empty( $_POST['save_snippet'] ) ) {
 			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
 		}
+	}
+
+	/**
+	 * Localise a plugin script to provide the CODE_SNIPPETS object.
+	 *
+	 * @param string $handle Script handle.
+	 *
+	 * @return void
+	 */
+	public function localize_script( string $handle ) {
+		wp_localize_script(
+			$handle,
+			'CODE_SNIPPETS',
+			[
+				'isLicensed' => false,
+				'restAPI'    => [
+					'base'     => esc_url_raw( rest_url() ),
+					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
+					'nonce'    => wp_create_nonce( 'wp_rest' ),
+				],
+				'pluginUrl'  => plugins_url( '', PLUGIN_FILE ),
+			]
+		);
 	}
 
 	/**
