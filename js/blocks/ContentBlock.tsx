@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { Options } from 'react-select'
 import { __ } from '@wordpress/i18n'
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
-import { PanelBody, ToggleControl } from '@wordpress/components'
+import { ExternalLink, PanelBody, ToggleControl } from '@wordpress/components'
 import { BlockConfiguration, BlockEditProps } from '@wordpress/blocks'
 import { useSnippets } from '../utils/api/snippets'
 import { getSnippetType } from '../utils/snippets'
@@ -47,15 +47,25 @@ const Edit: React.FC<BlockEditProps<ContentBlockAttributes>> = ({ setAttributes,
 					<ToggleControl
 						label={__('Run PHP code', 'code-snippets')}
 						checked={attributes.php}
-						onChange={isChecked => setAttributes({ ...attributes, php: isChecked })} />
+						onChange={isChecked => setAttributes({ ...attributes, php: isChecked })}
+					/>
 					<ToggleControl
 						label={__('Add paragraphs and formatting', 'code-snippets')}
 						checked={attributes.format}
-						onChange={isChecked => setAttributes({ ...attributes, format: isChecked })} />
+						onChange={isChecked => setAttributes({ ...attributes, format: isChecked })}
+					/>
 					<ToggleControl
 						label={__('Enable embedded shortcodes', 'code-snippets')}
 						checked={attributes.shortcodes}
-						onChange={isChecked => setAttributes({ ...attributes, shortcodes: isChecked })} />
+						onChange={isChecked => setAttributes({ ...attributes, shortcodes: isChecked })}
+						help={
+							<ExternalLink
+								href={__('https://help.codesnippets.pro/article/54-content-snippet-options', 'code-snippets')}
+							>
+								{__('Learn more about these options', 'code-snippets')}
+							</ExternalLink>
+						}
+					/>
 				</PanelBody>
 			</InspectorControls>
 

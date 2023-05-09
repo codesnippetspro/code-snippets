@@ -24,6 +24,7 @@ declare global {
 			restAPI: {
 				base: string
 				nonce: string
+				snippets: string
 			}
 			pageTitleActions: Record<string, string>
 			addNewUrl: string
