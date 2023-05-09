@@ -186,6 +186,7 @@ class Edit_Menu extends Admin_Menu {
 					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'nonce'    => wp_create_nonce( 'wp_rest' ),
 				],
+				'pluginUrl'         => plugins_url( '', PLUGIN_FILE ),
 				'addNewUrl'         => $plugin->get_menu_url( 'add' ),
 				'pageTitleActions'  => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'manage', 'import', 'settings' ] ) : [],
 				'isPreview'         => isset( $_REQUEST['preview'] ),

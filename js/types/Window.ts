@@ -22,6 +22,7 @@ declare global {
 				nonce: string
 				snippets: string
 			}
+			pluginUrl: string
 			addNewUrl: string
 			isPreview: boolean
 			isLicensed: boolean
