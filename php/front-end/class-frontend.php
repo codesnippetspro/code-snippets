@@ -189,10 +189,29 @@ class Frontend {
 	 *
 	 * @return string Warning message.
 	 */
-	private function invalid_id_warning( int $id ): string {
+	protected function invalid_id_warning( int $id ): string {
 		// translators: %d: snippet ID.
 		$text = esc_html__( 'Could not load snippet with an invalid ID: %d.', 'code-snippets' );
 		return current_user_can( 'edit_posts' ) ? sprintf( $text, $id ) : '';
+	}
+
+	/**
+	 * Allow boolean attributes to be provided without a value, similar to how React works.
+	 *
+	 * @param array<string|number, mixed> $atts          Unfiltered shortcode attributes.
+	 * @param array<string>               $boolean_flags List of attribute names with boolean values.
+	 *
+	 * @return array<string|number, mixed> Shortcode attributes with flags converted to attributes.
+	 */
+	protected function convert_boolean_attribute_flags( array $atts, array $boolean_flags ): array {
+		foreach ( $atts as $key => $value ) {
+			if ( in_array( $value, $boolean_flags, true ) && ! isset( $atts[ $value ] ) ) {
+				$atts[ $value ] = true;
+				unset( $atts[ $key ] );
+			}
+		}
+
+		return $atts;
 	}
 
 	/**
@@ -230,6 +249,7 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	public function render_content_shortcode( array $atts ): string {
+		$atts = $this->convert_boolean_attribute_flags( $atts, [ 'network', 'php', 'format', 'shortcodes', 'debug' ] );
 		$original_atts = $atts;
 
 		$atts = shortcode_atts(
@@ -377,6 +397,8 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	public function render_source_shortcode( array $atts ): string {
+		$atts = $this->convert_boolean_attribute_flags( $atts, [ 'network', 'line_numbers' ] );
+
 		$atts = shortcode_atts(
 			array(
 				'id'              => 0,
