@@ -196,6 +196,33 @@ class Frontend {
 	}
 
 	/**
+	 * Evaluate the code from a content shortcode.
+	 *
+	 * @param Snippet              $snippet Snippet.
+	 * @param array<string, mixed> $atts    Shortcode attributes.
+	 *
+	 * @return string Evaluated shortcode content.
+	 */
+	protected function evaluate_shortcode_content( Snippet $snippet, array $atts ): string {
+		if ( ! $atts['php'] ) {
+			return $snippet->code;
+		}
+
+		/**
+		 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
+		 * authors to use custom attributes.
+		 *
+		 * @phpcs:disable WordPress.PHP.DontExtract.extract_extract
+		 */
+		extract( $atts );
+
+		ob_start();
+		eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
+
+		return ob_get_clean();
+	}
+
+	/**
 	 * Render the value of a content shortcode
 	 *
 	 * @param array<string, mixed> $atts Shortcode attributes.
@@ -250,13 +277,7 @@ class Frontend {
 			);
 		}
 
-		$content = $snippet->code;
-
-		if ( $atts['php'] ) {
-			ob_start();
-			eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
-			$content = ob_get_clean();
-		}
+		$content = $this->evaluate_shortcode_content( $snippet, $atts );
 
 		if ( $atts['format'] ) {
 			$functions = [ 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'capital_P_dangit' ];
