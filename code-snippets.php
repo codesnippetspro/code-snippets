@@ -1,33 +1,26 @@
 <?php
 /**
- * Code Snippets - An easy, clean and simple way to add code snippets to your site.
+ * Plugin Name:  Code Snippets
+ * Plugin URI:   https://codesnippets.pro
+ * Description:  An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
+ * Author:       Code Snippets Pro
+ * Author URI:   https://codesnippets.pro
+ * License:      GPL-2.0-or-later
+ * License URI:  license.txt
+ * Text Domain:  code-snippets
+ * Version:      3.4.0-beta.1
+ * Requires PHP: 7.0
+ * Requires at least: 5.0
  *
- * If you're interested in helping to develop Code Snippets, or perhaps contribute
- * to the localization, please see https://github.com/codesnippetspro/code-snippets
- *
+ * @version   3.4.0-beta.1
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2023 Code Snippets Pro
  * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
- * @version   3.4.0-beta.1
  * @link      https://github.com/codesnippetspro/code-snippets
  */
 
-/*
-Plugin Name:  Code Snippets
-Plugin URI:   https://codesnippets.pro
-Description:  An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
-Author:       Code Snippets Pro
-Author URI:   https://codesnippets.pro
-Version:      3.4.0-beta.1
-License:      GPL-2.0-or-later
-License URI:  license.txt
-Text Domain:  code-snippets
-Requires PHP: 7.0
-Requires at least: 5.0
-*/
-
-/* Exit if accessed directly */
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
