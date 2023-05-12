@@ -1,5 +1,6 @@
 import { defineMode, getMode, EditorConfiguration, ModeSpec } from 'codemirror'
 import './php-lint'
+import 'codemirror-colorpicker/dist/codemirror-colorpicker.js'
 
 type ModeSpecOptions = {
 	startOpen: boolean

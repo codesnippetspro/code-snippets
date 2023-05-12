@@ -323,7 +323,7 @@ function activate_snippet( int $id, bool $multisite = null ) {
 
 	// Retrieve the snippet code from the database for validation before activating.
 	$snippet = get_snippet( $id, $multisite );
-	if ( ! $snippet || 0 === $snippet->id ) {
+	if ( 0 === $snippet->id ) {
 		// translators: %d: snippet identifier.
 		return sprintf( __( 'Could not locate snippet with ID %d.', 'code-snippets' ), $id );
 	}

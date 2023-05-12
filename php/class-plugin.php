@@ -356,4 +356,27 @@ class Plugin {
 		$descriptions = apply_filters( 'code_snippets/plugins/type_descriptions', $descriptions );
 		return $descriptions[ $type ] ?? '';
 	}
+
+	/**
+	 * Localise a plugin script to provide the CODE_SNIPPETS object.
+	 *
+	 * @param string $handle Script handle.
+	 *
+	 * @return void
+	 */
+	public function localize_script( string $handle ) {
+		wp_localize_script(
+			$handle,
+			'CODE_SNIPPETS',
+			[
+				'isLicensed' => $this->licensing->is_licensed(),
+				'restAPI'    => [
+					'base'     => esc_url_raw( rest_url() ),
+					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
+					'nonce'    => wp_create_nonce( 'wp_rest' ),
+				],
+				'pluginUrl'  => plugins_url( '', PLUGIN_FILE ),
+			]
+		);
+	}
 }

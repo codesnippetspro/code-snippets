@@ -11,7 +11,17 @@ use function Code_Snippets\Settings\get_setting;
 class Edit_Menu extends Admin_Menu {
 
 	/**
-	 * The snippet object currently being edited.
+	 * Handle for JavaScript asset file.
+	 */
+	const JS_HANDLE = 'code-snippets-edit-menu';
+
+	/**
+	 * Handle for CSS asset file.
+	 */
+	const CSS_HANDLE = 'code-snippets-edit';
+
+	/**
+	 * The snippet object currently being edited
 	 *
 	 * @var Snippet
 	 * @see Edit_Menu::load_snippet_data()
@@ -171,14 +181,14 @@ class Edit_Menu extends Admin_Menu {
 		];
 
 		wp_enqueue_style(
-			'code-snippets-edit',
+			self::CSS_HANDLE,
 			plugins_url( "dist/edit$rtl.css", $plugin->file ),
 			$css_deps,
 			$plugin->version
 		);
 
 		wp_enqueue_script(
-			'code-snippets-edit-menu',
+			self::JS_HANDLE,
 			plugins_url( 'dist/edit.js', $plugin->file ),
 			$js_deps,
 			$plugin->version,
@@ -190,17 +200,13 @@ class Edit_Menu extends Admin_Menu {
 			wp_enqueue_editor();
 		}
 
+		$plugin->localize_script( self::JS_HANDLE );
+
 		wp_localize_script(
-			'code-snippets-edit-menu',
+			self::JS_HANDLE,
 			'CODE_SNIPPETS_EDIT',
 			[
-				'isLicensed'        => $plugin->licensing->is_licensed(),
 				'snippet'           => $this->snippet->get_fields(),
-				'restAPI'           => [
-					'base'     => esc_url_raw( rest_url() ),
-					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
-					'nonce'    => wp_create_nonce( 'wp_rest' ),
-				],
 				'addNewUrl'         => $plugin->get_menu_url( 'add' ),
 				'pageTitleActions'  => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'manage', 'import', 'settings' ] ) : [],
 				'isPreview'         => isset( $_REQUEST['preview'] ),

@@ -70,7 +70,7 @@ class Command extends WP_CLI_Command {
 	 *
 	 * @return Formatter
 	 */
-	protected function get_formatter( &$assoc_args ) {
+	protected function get_formatter( array &$assoc_args ): Formatter {
 		return new Formatter( $assoc_args, $this->obj_fields, $this->item_type );
 	}
 
@@ -81,7 +81,7 @@ class Command extends WP_CLI_Command {
 	 *
 	 * @return array Snippet information.
 	 */
-	protected function build_snippet_info( Snippet $snippet ) {
+	protected function build_snippet_info( Snippet $snippet ): array {
 		$status = $snippet->active ? 'active' : ( $snippet->shared_network ? 'shared on network' : 'inactive' );
 
 		return [
@@ -106,8 +106,8 @@ class Command extends WP_CLI_Command {
 	 *
 	 * @return bool Value of the argument if present, otherwise the default.
 	 */
-	protected function parse_network_arg( $assoc_args, $default = false ) {
-		return isset( $assoc_args['network'] ) ? $assoc_args['network'] : $default;
+	protected function parse_network_arg( array $assoc_args, bool $default = false ): bool {
+		return $assoc_args['network'] ?? $default;
 	}
 
 	/**
@@ -179,11 +179,11 @@ class Command extends WP_CLI_Command {
 	 * @subcommand list
 	 * @throws ExitException If no snippets available to list.
 	 */
-	public function list_snippets( $args, $assoc_args ) {
+	public function list_snippets( array $args, array $assoc_args ) {
 		$snippets = get_snippets( $args, $this->parse_network_arg( $assoc_args ) );
 		$items = [];
 
-		if ( ! is_array( $snippets ) ) {
+		if ( ! $snippets ) {
 			WP_CLI::error( 'No snippets found.' );
 		}
 
@@ -249,7 +249,7 @@ class Command extends WP_CLI_Command {
 	 * @param array $args       Indexed array of positional arguments.
 	 * @param array $assoc_args Associative array of associative arguments.
 	 */
-	public function get( $args, $assoc_args ) {
+	public function get( array $args, array $assoc_args ) {
 		$snippet = get_snippet( intval( $args[0] ), $this->parse_network_arg( $assoc_args ) );
 		$snippet_info = (object) $this->build_snippet_info( $snippet );
 
@@ -281,8 +281,8 @@ class Command extends WP_CLI_Command {
 	 * @param array $args       Indexed array of positional arguments.
 	 * @param array $assoc_args Associative array of associative arguments.
 	 */
-	public function activate( $args, $assoc_args ) {
-		$network = $this->parse_network_arg( 'network' );
+	public function activate( array $args, array $assoc_args ) {
+		$network = $this->parse_network_arg( $assoc_args );
 		$activated = activate_snippets( $args, $network );
 
 		report_batch_operation_results(
@@ -314,8 +314,8 @@ class Command extends WP_CLI_Command {
 	 * @param array $args       Indexed array of positional arguments.
 	 * @param array $assoc_args Associative array of associative arguments.
 	 */
-	public function deactivate( $args, $assoc_args ) {
-		$network = $this->parse_network_arg( 'network' );
+	public function deactivate( array $args, array $assoc_args ) {
+		$network = $this->parse_network_arg( $assoc_args );
 		$successes = [];
 
 		foreach ( $args as $id ) {
@@ -353,8 +353,8 @@ class Command extends WP_CLI_Command {
 	 * @param array $args       Indexed array of positional arguments.
 	 * @param array $assoc_args Associative array of associative arguments.
 	 */
-	public function delete( $args, $assoc_args ) {
-		$network = $this->parse_network_arg( 'network' );
+	public function delete( array $args, array $assoc_args ) {
+		$network = $this->parse_network_arg( $assoc_args );
 		$successes = [];
 
 		foreach ( $args as $id ) {
@@ -422,7 +422,7 @@ class Command extends WP_CLI_Command {
 	 * @alias add
 	 * @throws ExitException If issue encountered saving snippet data.
 	 */
-	public function update( $args, $assoc_args ) {
+	public function update( array $args, array $assoc_args ) {
 		$snippet_id = isset( $assoc_args['id'] ) ? intval( $assoc_args['id'] ) : 0;
 		$snippet = 0 === $snippet_id ? new Snippet() :
 			get_snippet( $snippet_id, $this->parse_network_arg( $assoc_args ) );
@@ -468,7 +468,7 @@ class Command extends WP_CLI_Command {
 	 *
 	 * @throws ExitException If invalid arguments provided or error encountered writing to export file.
 	 */
-	public function export( $ids, $assoc_args ) {
+	public function export( array $ids, array $assoc_args ) {
 		$assoc_args = wp_parse_args(
 			$assoc_args,
 			array(
@@ -480,7 +480,7 @@ class Command extends WP_CLI_Command {
 		);
 
 		$export = new Export( $ids, code_snippets()->db->get_table_name( $assoc_args['network'] ) );
-		$data = $export->export_snippets_json();
+		$data = wp_json_encode( $export->create_export_object() );
 
 		if ( $assoc_args['stdout'] && ( $assoc_args['dir'] || $assoc_args['filename_format'] ) ) {
 			WP_CLI::error( '--stdout and --dir cannot be used together.' );
@@ -504,7 +504,7 @@ class Command extends WP_CLI_Command {
 		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fopen
 		$handle = fopen( $filename, 'w' );
 		if ( ! $handle ) {
-			WP_CLI::error( "Cannot open '{$filename}' for writing." );
+			WP_CLI::error( "Cannot open '$filename' for writing." );
 		}
 
 		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fwrite
@@ -513,7 +513,7 @@ class Command extends WP_CLI_Command {
 		fclose( $handle );
 
 		if ( ! $assoc_args['stdout'] ) {
-			WP_CLI::success( "Exported snippets to '{$filename}'." );
+			WP_CLI::success( "Exported snippets to '$filename'." );
 		}
 	}
 
@@ -541,7 +541,7 @@ class Command extends WP_CLI_Command {
 	 * @param array $args       Indexed array of positional arguments.
 	 * @param array $assoc_args Associative array of associative arguments.
 	 */
-	public function import( $args, $assoc_args ) {
+	public function import( array $args, array $assoc_args ) {
 		$assoc_args = wp_parse_args(
 			$assoc_args,
 			array(

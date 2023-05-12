@@ -44,10 +44,8 @@ $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-
 }
 
 .nav-tab.nav-tab-inactive {
-	background: #f6f7f7;
-	border-color: #f6f7f7;
+	background: transparent;
 	text-shadow: 0 1px 0 #fff;
-	float: right;
 
 	&, .badge {
 		color: #a7aaad;
@@ -58,7 +56,7 @@ $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-
 	}
 }
 
-.go-pro-button .badge {
+.go-pro-button .badge, .go-pro-badge {
 	color: #ce0000;
 	border-color: #ce0000;
 	margin-left: 1px;

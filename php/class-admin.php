@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\REST_API\Snippets_REST_Controller;
+
 /**
  * Functions specific to the administration interface
  *
@@ -67,7 +69,7 @@ class Admin {
 	 *
 	 * @return void
 	 */
-	public function enqueue_admin_assets( $hook_name ) {
+	public function enqueue_admin_assets( string $hook_name ) {
 		if ( 'plugins.php' === $hook_name ) {
 			wp_enqueue_style(
 				'code-snippets-plugins-css',
@@ -136,7 +138,7 @@ class Admin {
 	 * @return array<string> Modified plugin action links
 	 * @since 2.0.0
 	 */
-	public function plugin_settings_link( $links ) {
+	public function plugin_settings_link( array $links ): array {
 		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
 
 		array_unshift(

@@ -17,4 +17,6 @@ npm-debug.log
 .idea/
 Thumbs.db
 .DS_Store
-Local
+
+# storyman
+.story

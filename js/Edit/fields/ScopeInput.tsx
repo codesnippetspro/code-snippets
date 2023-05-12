@@ -1,8 +1,10 @@
+import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import { SnippetInputProps } from '../../types/SnippetInputProps'
 import { SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetScope } from '../../types/Snippet'
 import { isNetworkAdmin } from '../../utils/general'
+import { buildShortcodeTag, ShortcodeAtts } from '../../utils/shortcodes'
 import { getSnippetType } from '../../utils/snippets'
 import { CopyToClipboardButton } from '../../common/CopyToClipboardButton'
 
@@ -42,6 +44,46 @@ interface ShortcodeOptions {
 	shortcodes: boolean
 }
 
+const ShortcodeTag: React.FC<{ atts: ShortcodeAtts }> = ({ atts }) =>
+	<p>
+		<code className="shortcode-tag">{buildShortcodeTag(SHORTCODE_TAG, atts)}</code>
+
+		<CopyToClipboardButton
+			title={__('Copy shortcode to clipboard', 'code-snippets')}
+			text={buildShortcodeTag(SHORTCODE_TAG, atts)}
+		/>
+	</p>
+
+interface ShortcodeOptionsProps {
+	optionLabels: [keyof ShortcodeOptions, string][]
+	options: ShortcodeOptions
+	setOptions: Dispatch<SetStateAction<ShortcodeOptions>>
+	isReadOnly: boolean
+}
+
+const ShortcodeOptions: React.FC<ShortcodeOptionsProps> = ({
+	optionLabels,
+	options,
+	setOptions,
+	isReadOnly
+}) =>
+	<p className="html-shortcode-options">
+		<strong>{__('Shortcode Options: ', 'code-snippets')}</strong>
+		{optionLabels.map(([option, label]) =>
+			<label key={option}>
+				<input
+					type="checkbox"
+					value={option}
+					checked={options[option]}
+					disabled={isReadOnly}
+					onChange={event =>
+						setOptions(previous => ({ ...previous, [option]: event.target.checked }))}
+				/>
+				{` ${label}`}
+			</label>
+		)}
+	</p>
+
 const ShortcodeInfo: React.FC<SnippetInputProps> = ({ snippet, isReadOnly }) => {
 	const [options, setOptions] = useState<ShortcodeOptions>(() => ({
 		php: snippet.code.includes('<?'),
@@ -49,54 +91,44 @@ const ShortcodeInfo: React.FC<SnippetInputProps> = ({ snippet, isReadOnly }) => 
 		shortcodes: false
 	}))
 
-	const shortcodeTag = [
-		SHORTCODE_TAG,
-		snippet.id ? `id=${snippet.id}` : '',
-		snippet.network || isNetworkAdmin() ? 'network=true' : '',
-		...Object.entries(options).map(([option, value]) => value ? `${option}=true` : '')
-	].filter(Boolean).join(' ')
-
-	const optionLabels: [keyof ShortcodeOptions, string][] = [
-		['php', __('Evaluate PHP code', 'code-snippets')],
-		['format', __('Add paragraphs and formatting', 'code-snippets')],
-		['shortcodes', __('Evaluate additional shortcode tags', 'code-snippets')]
-	]
-
-	return snippet.id && 'content' === snippet.scope ?
+	return 'content' === snippet.scope ?
 		<>
-			{/* eslint-disable-next-line max-len */}
-			<p>{__('There are multiple options for inserting this snippet into a post, page or other content. You can copy the below shortcode, or use the Classic Editor button, Block Editor block (Pro) or Elementor widget (Pro).', 'code-snippets')}</p>
-
-			<p>
-				<code className="shortcode-tag">
-					[{shortcodeTag}]
-				</code>
-
-				<CopyToClipboardButton
-					title={__('Copy shortcode to clipboard', 'code-snippets')}
-					text={`[${shortcodeTag}]`}
-				/>
+			<p className="description">
+				{__('There are multiple options for inserting this snippet into a post, page or other content.', 'code-snippets')}
+				{' '}
+				{snippet.id ?
+					// eslint-disable-next-line max-len
+					__('You can copy the below shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets') :
+					// eslint-disable-next-line max-len
+					__('After saving, you can copy a shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')}
+				{' '}
+				<ExternalLink
+					href={__('https://help.codesnippets.pro/article/50-inserting-snippets', 'code-snippets')}
+				>
+					{__('Learn more', 'code-snippets')}
+				</ExternalLink>
 			</p>
 
 			{snippet.id ?
-				<p className="html-shortcode-options">
-					<strong>{__('Shortcode Options: ', 'code-snippets')}</strong>
-					{optionLabels.map(([option, label]) =>
-						<label key={option}>
-							<input
-								type="checkbox"
-								value={option}
-								checked={options[option]}
-								disabled={isReadOnly}
-								onChange={event =>
-									setOptions(previous => ({ ...previous, [option]: event.target.checked }))}
-							/>
-							{` ${label}`}
-						</label>
-					)}
-				</p> : ''}
-		</> :
-		null
+				<>
+					<ShortcodeTag atts={{
+						id: snippet.id,
+						network: snippet.network || isNetworkAdmin(),
+						...options
+					}} />
+
+					<ShortcodeOptions
+						options={options}
+						setOptions={setOptions}
+						isReadOnly={isReadOnly}
+						optionLabels={[
+							['php', __('Evaluate PHP code', 'code-snippets')],
+							['format', __('Add paragraphs and formatting', 'code-snippets')],
+							['shortcodes', __('Evaluate additional shortcode tags', 'code-snippets')]
+						]}
+					/>
+				</> : null}
+		</> : null
 }
 
 export const ScopeInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, isReadOnly }) =>

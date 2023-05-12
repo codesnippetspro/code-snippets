@@ -3,7 +3,6 @@
 namespace Code_Snippets;
 
 use DOMDocument;
-use DOMElement;
 
 /**
  * Handles importing snippets from export files into the site
@@ -78,7 +77,7 @@ class Import {
 				'scope',
 				'priority',
 				'shared_network',
-				'modified'
+				'modified',
 			];
 
 			foreach ( $import_fields as $field ) {
@@ -114,7 +113,6 @@ class Import {
 
 		$snippets = array();
 
-		/* @var DOMElement $snippet_xml */
 		foreach ( $snippets_xml as $snippet_xml ) {
 			$snippet = new Snippet();
 			$snippet->network = $this->multisite;

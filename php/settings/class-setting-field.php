@@ -212,7 +212,6 @@ class Setting_Field {
 	 * @since 2.0.0
 	 */
 	private function render_number_field() {
-
 		printf(
 			'<input type="number" name="%s" value="%s"',
 			esc_attr( $this->input_name ),

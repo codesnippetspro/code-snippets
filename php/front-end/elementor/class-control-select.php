@@ -18,7 +18,7 @@ class Control_Select extends Control_Select2 {
 	 *
 	 * @return string Control type.
 	 */
-	public function get_type() {
+	public function get_type(): string {
 		return self::CONTROL_TYPE;
 	}
 

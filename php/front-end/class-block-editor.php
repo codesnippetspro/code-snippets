@@ -30,8 +30,7 @@ class Block_Editor {
 	 * Initialise the editor blocks.
 	 */
 	public function init() {
-		$version = code_snippets()->version;
-		$file = code_snippets()->file;
+		$plugin = code_snippets();
 		$handle = 'code-snippets-block-editor';
 
 		$prism_dep = [];
@@ -42,7 +41,7 @@ class Block_Editor {
 
 		wp_register_script(
 			$handle,
-			plugins_url( 'dist/blocks.js', $file ),
+			plugins_url( 'dist/blocks.js', $plugin->file ),
 			array_merge(
 				$prism_dep,
 				array(
@@ -57,17 +56,18 @@ class Block_Editor {
 					'react-dom',
 				)
 			),
-			$version,
+			$plugin->version,
 			false
 		);
 
+		$plugin->localize_script( $handle );
 		wp_set_script_translations( $handle, 'code-snippets' );
 
 		wp_register_style(
 			$handle,
-			plugins_url( 'dist/block-editor.css', $file ),
+			plugins_url( 'dist/block-editor.css', $plugin->file ),
 			array(),
-			$version,
+			$plugin->version,
 			false
 		);
 
@@ -159,7 +159,7 @@ class Block_Editor {
 	 *
 	 * @return array Modified block categories.
 	 */
-	public function block_categories( $categories ) {
+	public function block_categories( array $categories ): array {
 		$position = -1;
 
 		foreach ( $categories as $index => $category ) {
@@ -191,7 +191,7 @@ class Block_Editor {
 	 *
 	 * @return string Block output.
 	 */
-	public function render_content( $attributes ) {
+	public function render_content( array $attributes ): string {
 		return sprintf(
 			'<div %s>%s</div>',
 			get_block_wrapper_attributes(),
@@ -206,7 +206,7 @@ class Block_Editor {
 	 *
 	 * @return string Block output.
 	 */
-	public function render_source( $attributes ) {
+	public function render_source( array $attributes ): string {
 		return sprintf(
 			'<div %s>%s</div>',
 			get_block_wrapper_attributes(),

@@ -7,6 +7,7 @@ import { CodeEditorInstance } from '../types/WordPressCodeEditor'
 import { isNetworkAdmin } from '../utils/general'
 import { createEmptySnippet, getSnippetType, isLicensed, isProSnippet } from '../utils/snippets'
 import { ActionButtons } from './components/ActionButtons'
+import { UpgradeDialog } from './components/UpgradeDialog'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { MultisiteSharingSettings } from './fields/MultisiteSharingSettings'
 import { NameInput } from './fields/NameInput'
@@ -37,6 +38,7 @@ export const EditForm: React.FC = () => {
 	const [snippet, setSnippet] = useState<Snippet>(() => OPTIONS?.snippet ?? createEmptySnippet())
 	const [notices, setNotices] = useState<Notices>([])
 	const [isWorking, setIsWorking] = useState(false)
+	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
 
 	const isReadOnly = useMemo(() => !isLicensed() && isProSnippet(snippet.scope), [snippet.scope])
@@ -54,6 +56,7 @@ export const EditForm: React.FC = () => {
 				<SnippetEditorToolbar {...actionProps} codeEditorInstance={codeEditorInstance} />
 				<SnippetEditor
 					{...actionProps}
+					openUpgradeDialog={() => setIsUpgradeDialogOpen(true)}
 					codeEditorInstance={codeEditorInstance}
 					setCodeEditorInstance={setCodeEditorInstance}
 				/>
@@ -69,6 +72,8 @@ export const EditForm: React.FC = () => {
 
 				<ActionButtons {...actionProps} />
 			</div>
+
+			<UpgradeDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
 		</div>
 	)
 }
