@@ -229,7 +229,7 @@ function get_settings_fields() {
 		'cloud_token'    => [
 			'name'       => __( 'Cloud API Token', 'code-snippets' ),
 			'element_id' => 'cloud_token',
-			'type'       => 'text',
+			'type'       => 'cloud_token',
 			'default'    => null,
 		],
 		'verify_button'  => [

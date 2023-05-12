@@ -15,7 +15,6 @@ interface SnippetTypeTabProps extends Pick<SnippetInputProps, 'setSnippet'> {
 	label: string
 	currentType: SnippetType
 }
-
 const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ tabType, label, currentType, setSnippet }) =>
 	<a
 		data-snippet-type={tabType}
@@ -67,7 +66,7 @@ interface SnippetTypeTabsProps {
 const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({ codeEditor, setSnippet, snippetType }) => {
 
 	useEffect(() => {
-		codeEditor.setOption('lint' as keyof EditorConfiguration, 'php' === snippetType || 'css' === snippetType)
+		codeEditor.setOption('lint' as keyof EditorConfiguration, 'php' === snippetType || 'css' === snippetType )
 
 		if (snippetType in EDITOR_MODES) {
 			codeEditor.setOption('mode', EDITOR_MODES[snippetType])

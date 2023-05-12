@@ -282,4 +282,20 @@ class Setting_Field {
 			esc_attr( $this->element_id )
 		);
 	}
+
+	/**
+	 * Render input group for cloud API token
+	 */
+	private function render_cloud_token_field() {
+		printf(
+			'<div class="cloud-token-input-group">
+				<input id="%s" name="%s" type="password" value="%s" class="cloud-token-input %s">
+				<button id="cloud-token-button" type="button" class="cloud-token-button button button-secondary">Show</button>
+			</div>',
+			esc_attr( $this->element_id ),
+			esc_attr( $this->input_name ),
+			esc_attr( $this->get_saved_value() ),
+			esc_attr( $this->element_id )
+		);
+	}
 }

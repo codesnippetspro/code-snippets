@@ -117,6 +117,7 @@ export const handleSettingsTabs = () => {
 	}
 
 	verifyToken()
+	showHideToken()
 }
 
 export const generateTokenForCloud = (baseToken: string) => {
@@ -147,4 +148,21 @@ const refreshCloudSyncData = () => {
 		})
 	})
 
+}
+
+// Show- Hide the cloud token in the input field
+export const showHideToken = () => {
+	const showHideBtn = document.getElementById('cloud-token-button') as HTMLButtonElement
+	const tokenInput = document.getElementById('cloud_token') as HTMLInputElement
+	showHideBtn?.addEventListener('click', event => {
+		event.preventDefault()
+		console.log('clicked')
+		if( 'password' === tokenInput.type ) {
+			tokenInput.type = 'text'
+			showHideBtn.innerHTML = 'Hide'
+		} else {
+			tokenInput.type = 'password'
+			showHideBtn.innerHTML = 'Show'
+		}
+	})
 }

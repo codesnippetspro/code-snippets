@@ -220,6 +220,7 @@ function sanitize_setting_value( array $field, $input_value ) {
 			return $results;
 
 		case 'text':
+		case 'cloud_token':
 		case 'hidden':
 			return trim( sanitize_text_field( $input_value ) );
 
