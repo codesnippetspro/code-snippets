@@ -73,6 +73,10 @@ function enqueue_code_editor( string $type, array $extra_atts = [] ) {
 		]
 	);
 
+	wp_enqueue_script( 'htmlhint' );
+	wp_enqueue_script( 'csslint' );
+	wp_enqueue_script( 'jshint' );
+
 	wp_enqueue_script(
 		'code-snippets-code-editor',
 		plugins_url( 'dist/editor.js', $plugin->file ),
