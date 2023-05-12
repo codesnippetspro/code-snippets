@@ -353,7 +353,7 @@ class Plugin {
 			$handle,
 			'CODE_SNIPPETS',
 			[
-				'isLicensed' => false,
+				'isLicensed' => $this->licensing->is_licensed(),
 				'restAPI'    => [
 					'base'     => esc_url_raw( rest_url() ),
 					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
