@@ -36,6 +36,7 @@
 		text-align: center;
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
+		margin: 2em 0;
 	}
 
 	.action-buttons {
@@ -48,5 +49,11 @@
 
 	.current-plan-cost {
 		font-size: 13px;
+	}
+
+	.button .dashicons,
+	.button svg {
+		vertical-align: middle;
+		margin-left: 1ch;
 	}
 }
