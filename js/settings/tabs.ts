@@ -61,8 +61,20 @@ const verifyToken = () => {
 		//Send a HTTP Request to the API - update this to verify URL **TODO**
 		cs(tokenValue, localToken).then(response => {
 			if(response?.ok) {
-				document.querySelector('.cloud-success')?.classList.remove('hidden')
-				hiddenInput.value = 'true'
+				response.json().then(data => {
+					if( 'success' === data?.sync_status ) {
+						document.querySelector('.cloud-success')?.classList.remove('hidden')
+						hiddenInput.value = 'true'
+					}
+					if( 'error' === data?.sync_status) {
+						const cloudError = document.querySelector('.cloud-error')
+						if(null !== cloudError) {
+							cloudError?.classList.remove('hidden')
+							cloudError.innerHTML = data.message
+						}
+						hiddenInput.value = 'false'
+					}
+				})
 			} 
 		})
 	})

@@ -48,7 +48,7 @@ class Cloud_Snippet extends Data_Item {
 				'codevault'   => '',
 				'total_votes' => '',
 				'vote_count'  => '',
-				'wp_tested '  => '',
+				'wp_tested'   => '',
 				'created'     => '',
 				'updated'     => '',
 				'revision'    => 0,

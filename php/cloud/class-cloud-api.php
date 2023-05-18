@@ -56,6 +56,13 @@ class Cloud_API {
 	const DAYS_TO_STORE_CS = 1;
 
 	/**
+	 * Locally Generated Token
+	 *
+	 * @var string
+	 */
+	private $local_token;
+
+	/**
 	 * Cloud API key.
 	 *
 	 * @var string
@@ -90,6 +97,7 @@ class Cloud_API {
 	 */
 	public function __construct() {
 		$this->cloud_key = get_setting( 'cloud', 'cloud_token' );
+		$this->local_token = get_setting( 'cloud', 'local_token' );
 		$token_verified = get_setting( 'cloud', 'token_verified' );
 		$this->cloud_key_is_verified = $token_verified && 'false' !== $token_verified;
 	}
@@ -138,10 +146,10 @@ class Cloud_API {
 				$cloud_snippet_revision = 
 					$cloud_id_rev[$cloud_id_int] ? $cloud_id_rev[$cloud_id_int] :
 					$this->get_cloud_snippet_revision( $local_snippet->cloud_id );
+				
+				$link->update_available = (int) $local_snippet->revision < $cloud_snippet_revision;
 			}
-			
-			// Check if local revision is less than cloud revision.
-			$link->update_available = (int) $local_snippet->revision < $cloud_snippet_revision;
+	
 			$this->local_to_cloud_map[] = $link;
 		}
 
@@ -182,7 +190,10 @@ class Cloud_API {
 	 */
 	private function build_request_headers() {
 		$cloud_api_key = get_setting( 'cloud', 'cloud_token' );
-		return [ 'Authorization' => 'Bearer ' . $cloud_api_key ];
+		return [ 
+			'Authorization' => 'Bearer ' . $cloud_api_key ,
+			'Local-Token' 	=> $this->local_token,
+		];
 	}
 
 	/**
@@ -417,8 +428,8 @@ class Cloud_API {
 
 		$url = self::CLOUD_API_URL . sprintf( 'private/getsnippet/%s', $cloud_id );
 		$cloud_api_key = get_setting( 'cloud', 'cloud_token' );
-		$header_string = [ 'Authorization' => 'Bearer ' . $cloud_api_key ];
-		$response = wp_remote_get( $url, [ 'headers' => $header_string ] );
+		$self = new self();
+		$response = wp_remote_get( $url, [ 'headers' => $self->build_request_headers() ] );
 		$cloud_snippet = self::unpack_request_json( $response );
 
 		//wp_die( print_r($cloud_snippet['snippet']) );
@@ -443,6 +454,45 @@ class Cloud_API {
 
 		$cloud_snippet_revision = json_decode( $body, true );
 		return isset( $cloud_snippet_revision['snippet_revision'] ) ? $cloud_snippet_revision['snippet_revision'] : null;
+	}
+
+	/**
+	 * Get list of all routines from the cloud API.
+	 *
+	 *
+	 * @return string|null Routine name and id, null otherwise.
+	 */
+	public static function get_routines() {
+		$api_url = self::CLOUD_API_URL . sprintf( 'private/routines' );
+		$self = new self();
+		$response = wp_remote_get( $api_url, [ 'headers' => $self->build_request_headers() ] );
+		$routines = self::unpack_request_json( $response );
+
+		return $routines;
+	}
+
+	/**
+	 * Get List of Snippets from a Routine from the cloud API.
+	 *
+	 * @param int $routine_id Routine ID.
+	 *
+	 * @return Cloud_Snippets
+	 */
+	public function get_snippets_from_routine( $routine_id ) {
+		$api_url = self::CLOUD_API_URL . sprintf( 'private/getroutine/%s', $routine_id );
+		$response = wp_remote_post(
+			$api_url,
+			[
+				'method'  => 'POST',
+				'headers' => $this->build_request_headers(),
+			]
+		);
+
+		$results = self::unpack_request_json( $response );
+		$results = new Cloud_Snippets( $results );
+		$results->page = 1;
+
+		return $results;
 	}
 
 	/**
@@ -692,6 +742,7 @@ class Cloud_API {
 			case 5: //Unverified
 				return 'unverified';
 			case 6: //AI Verified
+			case 8: //Pro Verified
 				return 'html';
 			default:
 				return 'php';
@@ -715,6 +766,8 @@ class Cloud_API {
 				return 'Unverified';
 			case 6: //AI Verified
 				return 'AI-Verified';
+			case 8:
+				return 'Pro-Verified';
 		}
 	}
 
@@ -735,4 +788,6 @@ class Cloud_API {
 		</div>
 		<?php
 	}
+
+	
 }

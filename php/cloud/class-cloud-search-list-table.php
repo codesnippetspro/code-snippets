@@ -3,7 +3,12 @@
 namespace Code_Snippets\Cloud;
 
 use WP_Plugin_Install_List_Table;
+use Code_Snippets\Snippet;
+
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\save_snippet;
+use function Code_Snippets\get_snippet_by_cloud_id;
+
 
 /**
  * Contains the class for handling the snippets table
@@ -65,10 +70,10 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 * @return void
 	 */
 	public function prepare_items() {
-		$this->process_actions();
-
 		$this->cloud_snippets = $this->fetch_snippets();
 		$this->items = $this->cloud_snippets->snippets;
+		
+		$this->process_actions();
 
 		$this->set_pagination_args(
 			[
@@ -86,25 +91,32 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 */
 	public function process_actions() {
 		
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source' ) );
+		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source', 'cloud-routine-run', 'cloud-routine-show', 'cloud_routines', 'cloud_search' ) );
 		$action = $_REQUEST['action'] ?? '';
 		$snippet = $_REQUEST['snippet'] ?? '';
 		$source = $_REQUEST['source'] ?? '';
+		$routine = $_REQUEST['cloud_routines'] ?? '';
+		$routine_run = $_REQUEST['cloud-routine-run'] ?? false;
 
 		if ( isset( $action, $snippet, $source ) ) {
 			cloud_lts_process_download_action( $action, $source, $snippet );
+		}
+
+		if ( isset( $routine, $routine_run ) ) {
+			//wp_die( var_dump( $routine_run ) );
+			if( $routine_run == 'true'){ 
+				$this->run_routine_action( $this->items );
+			}
 		}
 				
 	}
 
 	public function display_rows() {
 		foreach ( (array) $this->items as $item ) {			
-			//wp_die( var_dump( $item ) );
 			$name_link = $this->get_link_for_name( $item );
 			$name			= esc_attr($item->name);
 			$codevault 		= esc_attr($item->codevault);
 			$description 	= esc_attr( $this->process_description( $item->description ) );
-			//TODO: investigate why this is not showing
 			$wp_tested 		= esc_attr( $item->wp_tested );
 			$votes 			= esc_attr( $item->vote_count );
 			$number_of_votes = esc_attr( $item->total_votes );
@@ -133,7 +145,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 				</div>
 				<div class="desc column-description">
 					<p><?php echo __( $description ) ?></p>
-					<p class="authors"><cite><?php echo sprintf( __( 'Codevault:  <a href="https://codesnippets.cloud/codevault/%s">%s</a>' ), $codevault, $codevault  ) ?></cite></p>
+					<p class="authors"><cite><?php echo sprintf( __( 'Codevault:  <a target="_blank" href="https://codesnippets.cloud/codevault/%s">%s</a>' ), $codevault, $codevault  ) ?></cite></p>
 				</div>
 			</div>
 			<div class="plugin-card-bottom cloud-search-card-bottom">
@@ -161,11 +173,12 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 					?>
 				</div>
 				<div class="column-compatibility">
+				<strong><?php _e( 'WP Compatability:' ); ?></strong>
 					<?php
 					if ( empty( $wp_tested ) ) {
-						echo __( '<span class="compatibility-untested">' . __( 'Wordpress version not indicated by author' ) . '</span>' );
+						echo __( '<span class="compatibility-untested">' . __( 'Not indicated by author' ) . '</span>' );
 					} else {
-						echo sprintf( __( '<span class="compatibility-compatible">Author states comptability with Wordpress  %s</span>' ), $wp_tested );
+						echo sprintf( __( '<span class="compatibility-compatible">Author states %s</span>' ), $wp_tested );
 					}
 					?>
 				</div>
@@ -245,16 +258,24 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 * @return Cloud_Snippets
 	 */
 	public function fetch_snippets() {
-		// Create an empty results object if there's no search query.
-		//TODO: Get featured snippets from cloud server API.
-		if ( empty( $_REQUEST['cloud_search'] ) ) {
-			return new Cloud_Snippets();
+		$routine 		= $_REQUEST['cloud_routines'] ?? 0;
+		$cloud_search 	= $_REQUEST['cloud_search'] ?? '';
+
+		//Check first if routines are set to show
+		if( !$routine == '0'  ){
+			$routine = (int) sanitize_text_field( wp_unslash( $_REQUEST['cloud_routines'] ) );
+			return $this->cloud_api->get_snippets_from_routine( $routine );
 		}
 
-		// If we have a search query, then send a search request to cloud server API search endpoint.
-		$search_query = sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) );
-		$search_by = sanitize_text_field( wp_unslash( $_REQUEST['cloud_select'] ) );
-		return $this->cloud_api->fetch_search_results( $search_by, $search_query, $this->get_pagenum() - 1 );
+		if ( !$cloud_search == '') {
+			// If we have a search query, then send a search request to cloud server API search endpoint.
+			$search_query = sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) );
+			$search_by = sanitize_text_field( wp_unslash( $_REQUEST['cloud_select'] ) );
+			return $this->cloud_api->fetch_search_results( $search_by, $search_query, $this->get_pagenum() - 1 );
+		}
+		
+		//If no search or routine is set, then return empty object
+		return new Cloud_Snippets();
 	}
 
 	/**
@@ -305,4 +326,52 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 		echo $this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
 		//echo wp_kses_post( $this->_pagination ); TODO: This removes the top input box for page number
 	}
+
+	/**
+	 * Run the routine action
+	 *
+	 * @param array $snippets Array of Cloud Snippets
+	 *
+	 * @return void
+	 */
+	public function run_routine_action( $items ) {
+		
+		foreach($items as $snippet_to_store){
+			// Check if the snippet already exists in the database.
+			$in_codevault = get_snippet_by_cloud_id( $snippet_to_store->id.'_'.$snippet_to_store->is_owner );
+		
+			$snippet = new Snippet( $snippet_to_store );
+
+			// Set the snippet id to 0 to ensure that the snippet is saved as a new snippet.
+			$ownership = $snippet_to_store->is_owner ? '1' : '0';
+			$snippet->id = 0;
+			$snippet->active = 0;
+			$snippet->cloud_id = $snippet_to_store->id.'_'.$ownership;
+			$snippet->desc = $snippet_to_store->description ? $snippet_to_store->description : ''; //if no description is set, set it to empty string
+
+			// Save the snippet to the database.
+			$new_snippet = save_snippet( $snippet );
+
+			$link = new Cloud_Link();
+			$link->local_id = $new_snippet->id;
+			$link->cloud_id = $snippet->cloud_id;
+			$link->is_owner = $snippet_to_store->is_owner;
+			$link->in_codevault = $in_codevault;
+			$link->update_available = false;
+
+			$this->add_map_link( $link );
+		}
+
+		// Force Page Redirect to the snippets page and type all
+		return $redirect_url = add_query_arg(
+			[
+				'page' => 'code-snippets',
+				'type' => 'all',
+			],
+			admin_url( 'admin.php' )
+		);
+
+
+	}
+
 }

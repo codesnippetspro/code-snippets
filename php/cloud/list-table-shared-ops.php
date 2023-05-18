@@ -23,7 +23,7 @@ function cloud_lts_build_column_hidden_input( $column_name, $snippet ) {
         esc_attr( $column_name ),
         esc_attr( $snippet->id ),
         esc_attr( $column_name ),
-        esc_attr( $snippet->$column_name )
+        esc_attr( esc_html( $snippet->$column_name ) )
     );
 }
 
