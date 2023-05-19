@@ -103,7 +103,6 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 		}
 
 		if ( isset( $routine, $routine_run ) ) {
-			//wp_die( var_dump( $routine_run ) );
 			if( $routine_run == 'true'){ 
 				$this->run_routine_action( $this->items );
 			}
