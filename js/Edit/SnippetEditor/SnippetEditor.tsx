@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __, _x } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { Editor, EditorConfiguration } from 'codemirror'
 import React, { Dispatch, SetStateAction, useEffect } from 'react'
@@ -53,10 +53,6 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({
 		{`${label} `}
 
 		<span className="badge">{tabType}</span>
-
-		{isProType(tabType) && !isLicensed() ?
-			<span className="badge go-pro-badge">{__('Pro', 'code-snippets')}</span> :
-			null}
 	</a>
 
 export const TYPE_LABELS: Record<SnippetType, string> = {
@@ -108,6 +104,21 @@ const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({
 					setSnippet={setSnippet}
 					openUpgradeDialog={openUpgradeDialog}
 				/>)}
+
+			{!isLicensed() ?
+				<a
+					className="button button-large nav-tab-button nav-tab-inactive go-pro-button"
+					href="https://codesnippets.pro/pricing/"
+					title="Find more about Pro"
+					onClick={event => {
+						event.preventDefault()
+						openUpgradeDialog()
+					}}
+				>
+					{_x('Upgrade to ', 'Upgrade to Pro', 'code-snippets')}
+					<span className="badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>
+				</a> :
+				null}
 		</h2>
 	)
 }

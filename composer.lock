@@ -159,16 +159,16 @@
         },
         {
             "name": "freemius/wordpress-sdk",
-            "version": "2.5.5",
+            "version": "2.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Freemius/wordpress-sdk.git",
-                "reference": "72c4f4ec119019976fe3326421f93cb089a8a527"
+                "reference": "bbbcf3d976a1fd90355037b163746fdca6c93a4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Freemius/wordpress-sdk/zipball/72c4f4ec119019976fe3326421f93cb089a8a527",
-                "reference": "72c4f4ec119019976fe3326421f93cb089a8a527",
+                "url": "https://api.github.com/repos/Freemius/wordpress-sdk/zipball/bbbcf3d976a1fd90355037b163746fdca6c93a4c",
+                "reference": "bbbcf3d976a1fd90355037b163746fdca6c93a4c",
                 "shasum": ""
             },
             "require": {
@@ -192,9 +192,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Freemius/wordpress-sdk/issues",
-                "source": "https://github.com/Freemius/wordpress-sdk/tree/2.5.5"
+                "source": "https://github.com/Freemius/wordpress-sdk/tree/2.5.8"
             },
-            "time": "2023-03-20T07:22:28+00:00"
+            "time": "2023-05-15T06:17:55+00:00"
         },
         {
             "name": "matthiasmullie/minify",
