@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.4.0 (unreleased)
+## 3.4.0 (17 May 2023)
 * Added: Proper WordPress REST API support for retrieving and modifying snippets.
 * Improved: Better compatibility with modern versions of PHP (7.0+).
 * Improved: Converted Edit/Add New Snippet page to use React.
@@ -20,8 +20,9 @@
 * Improved: Make shortcode attributes available as individual variables.
 * Improved: Allow boolean attributes to be passed to code snippets shortcodes without specifying a value.
 * Improved: Replace external links to Pro pricing page with an upgrade modal.
+* Fixed: Issue preventing linting libraries from loading correctly in the code editor.
 
-## 3.3.0 (09 Mar 2022)
+## 3.3.0 (09 Mar 2023)
 * Fixed: Do not enqueue CSS or JS snippet file if no snippets exist. (PRO)
 * Improved: Added additional editor shortcuts to list in tooltip.
 * Added: Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
