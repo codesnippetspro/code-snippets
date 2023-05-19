@@ -61,8 +61,9 @@ interface UpgradeInfoProps {
 
 const UpgradeInfo: React.FC<UpgradeInfoProps> = ({ nextTab }) =>
 	<>
-		<p>{__('You are using the free version of Code Snippets.', 'code-snippets')}</p>
-		<p>{__('Upgrade to Code Snippets Pro to unleash its full potential:', 'code-snippets')}
+		<p>
+			{__('You are using the free version of Code Snippets.', 'code-snippets')}{' '}
+			{__('Upgrade to Code Snippets Pro to unleash its full potential:', 'code-snippets')}
 			<ul>
 				<li>
 					<strong>{__('CSS stylesheet snippets: ', 'code-snippets')}</strong>
@@ -90,7 +91,7 @@ const UpgradeInfo: React.FC<UpgradeInfoProps> = ({ nextTab }) =>
 				</li>
 			</ul>
 
-			{__('… and more!', 'code-snippets')}
+			{__('…and so much more!', 'code-snippets')}
 		</p>
 
 		<p className="action-buttons">
