@@ -56,10 +56,6 @@ class Admin {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_meta_links' ), 10, 2 );
 		add_filter( 'debug_information', array( $this, 'debug_information' ) );
 		add_action( 'code_snippets/admin/manage', array( $this, 'print_notices' ) );
-
-		if ( ! empty( $_POST['save_snippet'] ) ) {
-			add_action( 'code_snippets/allow_execute_snippet', array( $this, 'prevent_exec_on_save' ), 10, 3 );
-		}
 	}
 
 	/**
@@ -80,36 +76,6 @@ class Admin {
 		$menu_items['snippets_settings'] = __( 'Snippets &raquo; Settings', 'code-snippets' );
 
 		return $menu_items;
-	}
-
-	/**
-	 * Prevent the snippet currently being saved from being executed
-	 * so that it is not run twice (once normally, once when validated)
-	 *
-	 * @param bool   $exec       Whether the snippet will be executed.
-	 * @param int    $exec_id    ID of the snippet being executed.
-	 * @param string $table_name Name of the database table the snippet is stored in.
-	 *
-	 * @return bool Whether the snippet will be executed.
-	 */
-	public function prevent_exec_on_save( bool $exec, int $exec_id, string $table_name ): bool {
-
-		// TODO: make this work for AJAX method.
-		if ( ! isset( $_POST['save_snippet'], $_POST['snippet_id'] ) ) {
-			return $exec;
-		}
-
-		if ( code_snippets()->db->get_table_name() !== $table_name ) {
-			return $exec;
-		}
-
-		$id = intval( $_POST['snippet_id'] );
-
-		if ( $id === $exec_id ) {
-			return false;
-		}
-
-		return $exec;
 	}
 
 	/**

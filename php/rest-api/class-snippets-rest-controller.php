@@ -60,6 +60,15 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Retrieve the full base route including the REST API prefix.
+	 *
+	 * @return string
+	 */
+	public static function get_prefixed_base_route(): string {
+		return '/' . rtrim( rest_get_url_prefix(), '/\\' ) . '/' . self::get_base_route();
+	}
+
+	/**
 	 * Register REST routes.
 	 */
 	public function register_routes() {
