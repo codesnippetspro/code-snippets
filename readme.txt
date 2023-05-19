@@ -4,8 +4,8 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.3.0
-Tested up to: 6.2
+Stable tag: 3.4.0
+Tested up to: 6.2.1
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -128,7 +128,29 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 
 == Changelog ==
 
-= 3.3.0 (09 Mar 2022) =
+= 3.4.0 (17 May 2023) =
+* Added: Proper WordPress REST API support for retrieving and modifying snippets.
+* Improved: Better compatibility with modern versions of PHP (7.0+).
+* Improved: Converted Edit/Add New Snippet page to use React.
+  * Converted action buttons to asynchronously use REST API endpoints through AJAX.
+  * Load page components dynamically through React.
+  * Added action notice queue system.
+  * Replaced native alert dialog with proper React modal.
+* Improved: Catch snippet execution errors to prevent site from crashing.
+* Improved: Display recent snippet errors in admin dashboard instead.
+* Improved: Updated editor block to use new REST API endpoints. (PRO)
+* Improved: Change colour of upgrade notice in Pro plugin. (PRO)
+* Improved: All available snippet data is included in export files.
+* Improved: Only import specific fields from export file, even if additional fields specified.
+* Fixed: Issue preventing editor colorpicker from loading correctly. (PRO)
+* Improved: Added help links to content snippet options.
+* Improved: Pass additional attributes specified in `[code_snippet]` content shortcode to shortcode content.
+* Improved: Make shortcode attributes available as individual variables.
+* Improved: Allow boolean attributes to be passed to code snippets shortcodes without specifying a value.
+* Improved: Replace external links to Pro pricing page with an upgrade modal.
+* Fixed: Issue preventing linting libraries from loading correctly in the code editor.
+
+= 3.3.0 (09 Mar 2023) =
 * Fixed: Do not enqueue CSS or JS snippet file if no snippets exist. (PRO)
 * Improved: Added additional editor shortcuts to list in tooltip.
 * Added: Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
@@ -289,6 +311,9 @@ __New in Pro__
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
+
+= 3.4.0 =
+New editor screen and code error checking.
 
 = 3.3.0 =
 Assorted bug fixes and additional filter hooks.
