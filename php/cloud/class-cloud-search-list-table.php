@@ -91,7 +91,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 */
 	public function process_actions() {
 		
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source', 'cloud-routine-run', 'cloud-routine-show', 'cloud_routines', 'cloud_search' ) );
+		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source', 'cloud-routine-run', 'cloud-routine-show', ) );
 		$action = $_REQUEST['action'] ?? '';
 		$snippet = $_REQUEST['snippet'] ?? '';
 		$source = $_REQUEST['source'] ?? '';
