@@ -4,6 +4,7 @@ namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
+use Code_Snippets\REST_API\Cloud_REST_Controller;
 
 /**
  * The main plugin class
@@ -140,7 +141,7 @@ class Plugin {
 	 * @since [NEXT_VERSION]
 	 */
 	public function register_rest_api_controllers() {
-		$controllers = [ new Snippets_REST_Controller() ];
+		$controllers = [ new Snippets_REST_Controller(), new Cloud_REST_Controller() ];
 
 		foreach ( $controllers as $controller ) {
 			$controller->register_routes();

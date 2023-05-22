@@ -337,7 +337,9 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 		
 		foreach($items as $snippet_to_store){
 			// Check if the snippet already exists in the database.
-			$in_codevault = get_snippet_by_cloud_id( $snippet_to_store->id.'_'.$snippet_to_store->is_owner );
+			$codevault_snippet = get_snippet_by_cloud_id( $snippet_to_store->id.'_'.$snippet_to_store->is_owner );
+			//If the snippet exists then set in_codevault to true otherwise false
+			$in_codevault = $codevault_snippet ? true : false;
 		
 			$snippet = new Snippet( $snippet_to_store );
 
@@ -358,7 +360,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 			$link->in_codevault = $in_codevault;
 			$link->update_available = false;
 
-			$this->add_map_link( $link );
+			code_snippets()->cloud_api->add_map_link( $link );
 		}
 
 		// Force Page Redirect to the snippets page and type all

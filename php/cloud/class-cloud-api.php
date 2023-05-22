@@ -306,7 +306,7 @@ class Cloud_API {
 	 *
 	 * @return void
 	 */
-	protected function add_map_link( Cloud_Link $link ) {
+	public function add_map_link( Cloud_Link $link ) {
 		$local_to_cloud_map = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
 		$local_to_cloud_map[] = $link;
 		
