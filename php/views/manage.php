@@ -97,10 +97,10 @@ $current_type = $this->get_current_type();
 		$routine_id = isset( $_REQUEST['cloud_routines'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_routines'] ) ) : '';
 		?>
 		
-		<p class="text-justify">Use the search bar below to search cloud snippets by entering either the name of a codevault 
+		<p class="text-justify"><?php echo __('Use the search bar below to search cloud snippets by entering either the name of a codevault 
 			(Important : codevault name is case and spelling sensitive and only public snippets will be shown) or by keyword(s).
 			The dropdown list below shows your saved cloud routines. A routine is a set of snippets grouped together to be downloaded from the cloud together.
-			Please visit your code snippets cloud account to create and manage your routines.
+			Please visit your code snippets cloud account to create and manage your routines.'); ?>
 		</p>
 
 		<form method="get" action="" id="cloud-search-form">
@@ -114,24 +114,30 @@ $current_type = $this->get_current_type();
 				}
 			?>
 			<div class="heading-box"> 
-				<p class="cloud-search-heading">Search Cloud</p>
+				<p class="cloud-search-heading"><?php echo __('Search Cloud'); ?></p>
 			</div>
 			<div class="input-group">
 				<select id="cloud-select-prepend" class="select-prepend" name="cloud_select">
-					<option value="term"> Search by Keyword(s) </option>
-					<option value="codevault"> Name of Codevault </option>
+					<option value="term"><?php echo __('Search by Keyword(s)'); ?></option>
+					<option value="codevault"><?php echo __(' Name of Codevault'); ?> </option>
 				</select>
 				<input type="text" id="cloud_search" name="cloud_search" class="cloud_search"
 					value="<?php echo esc_html( $search_query ); ?>"
 					placeholder="<?php esc_html_e( 'e.g. Remove unused JavaScript…', 'code-snippets' ); ?>">
-				<button type="submit" id="cloud-search-submit" class="button">Search Cloud <span class="dashicons dashicons-search cloud-search"></span></button>
+				<button type="submit" id="cloud-search-submit" class="button"><?php echo __('Search Cloud'); ?><span class="dashicons dashicons-search cloud-search"></span></button>
 			</div>
 			<div class="heading-box"> 
-				<p class="cloud-search-heading">Cloud Routines</p>
+				<p class="cloud-search-heading"><?php echo __('Cloud Routines'); ?></p>
+				<p class="text-justify"><?php echo __('Enter a Routine Share Code below to see all snippets from a publicly viewable routine or
+					you can select one of your saved routines from the dropdown list below.'); ?>
+				</p>
 			</div>
 			<div class="input-group routine-group">
+				<input type="text" id="routine_share_name" name="routine_share_name" class="routine_share_name"
+					placeholder="<?php esc_html_e( 'Enter Routine Share Code..', 'code-snippets' ); ?>">
+				<p class="routine-share-text">OR</p>
 				<select id="cloud-routines" class="select-routine" name="cloud_routines">
-					<option value="0"> Please choose a Routine </option>
+					<option value="0"><?php echo __('Please choose one of your routines'); ?></option>
 					<?php
 						$routines = Cloud_API::get_routines();
 						foreach( $routines['routines'][0] as $routine ){

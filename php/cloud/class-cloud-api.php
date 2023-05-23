@@ -496,6 +496,30 @@ class Cloud_API {
 	}
 
 	/**
+	 * Get List of Snippets from a Shared Routine from the cloud API.
+	 *
+	 * @param string $routine_share_name
+	 *
+	 * @return Cloud_Snippets
+	 */
+	public function get_snippets_from_shared_routine( $routine_share_name ) {
+		$api_url = self::CLOUD_API_URL . sprintf( 'private/getsharedroutine?share_name=%s', $routine_share_name );
+		$response = wp_remote_post(
+			$api_url,
+			[
+				'method'  => 'POST',
+				'headers' => $this->build_request_headers(),
+			]
+		);
+
+		$results = self::unpack_request_json( $response );
+		$results = new Cloud_Snippets( $results );
+		$results->page = 1;
+
+		return $results;
+	}
+
+	/**
 	 * Download a snippet from the cloud.
 	 *
 	 * @param string $cloud_id The cloud ID of the snippet as string from query args

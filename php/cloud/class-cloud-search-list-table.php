@@ -91,7 +91,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 */
 	public function process_actions() {
 		
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source', 'cloud-routine-run', 'cloud-routine-show', ) );
+		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source', 'cloud-routine-run', 'cloud-routine-show', 'routine_share_name', 'cloud_routines' ) );
 		$action = $_REQUEST['action'] ?? '';
 		$snippet = $_REQUEST['snippet'] ?? '';
 		$source = $_REQUEST['source'] ?? '';
@@ -259,13 +259,20 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	public function fetch_snippets() {
 		$routine 		= $_REQUEST['cloud_routines'] ?? 0;
 		$cloud_search 	= $_REQUEST['cloud_search'] ?? '';
+		$routine_share_name = $_REQUEST['routine_share_name'] ?? '';
 
-		//Check first if routines are set to show
+		//Check if user own routine selected
 		if( !$routine == '0'  ){
 			$routine = (int) sanitize_text_field( wp_unslash( $_REQUEST['cloud_routines'] ) );
 			return $this->cloud_api->get_snippets_from_routine( $routine );
 		}
+		//Check if user shared routine entered
+		if( !$routine_share_name == '' ){
+			$routine_share_name = sanitize_text_field( wp_unslash( $_REQUEST['routine_share_name'] ) );
+			return $this->cloud_api->get_snippets_from_shared_routine( $routine_share_name );
+		}
 
+		//Check if search term has been entered
 		if ( !$cloud_search == '') {
 			// If we have a search query, then send a search request to cloud server API search endpoint.
 			$search_query = sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) );

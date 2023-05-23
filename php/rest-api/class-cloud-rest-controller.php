@@ -69,8 +69,7 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 	public function cloud_api_check( $request ): bool {
 		
         //Get Cloud Token from Authorization Header Bearer
-		$cloud_token = $request->get_header('Authorization');
-		$cloud_token = str_replace('Bearer ', '', $cloud_token);
+		$cloud_token = $request->get_header('access-control');
         
         if ( $cloud_token === $this->local_token ) {
             return true;
@@ -87,41 +86,57 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item_from_cloud( $request ) {
+		//Create an empty array to store the snippet
+		$snippet_to_store = [];
+		//Process the request body
+		$body = json_decode( $request->get_body() );
+		//Get the first item in the array
+		$body = reset($body);
+		//Convert to Array
+		$body = json_decode( $body, true );
 
-		//Overwrite or set a few default params
-		$request->set_param( 'active', false );
-		$request->set_param( 'network', false );
-		$request->set_param( 'shared_network', false );
-
-		$snippet = $this->create_item( $request );
+		//Set up Snippet to store
+		$snippet_to_store['id'] 			=  0;
+		$snippet_to_store['name'] 			=  $body['name'];
+		$snippet_to_store['desc'] 			=  $body['description'];
+		$snippet_to_store['code'] 			=  $body['code'];
+		$snippet_to_store['scope']	 		=  $body['scope'];
+		$snippet_to_store['active'] 		=  false;
+		$snippet_to_store['network'] 		=  false;
+		$snippet_to_store['modified'] 		=  $body['created'];
+		$snippet_to_store['revision'] 		=  $body['revision'] ?? 1;
+		$snippet_to_store['priority'] 		=  10;
+		$snippet_to_store['cloud_id'] 		=  $body['id'];
+		$snippet_to_store['shared_network'] =  false;
+		
+		//Create the snippet
+		$snippet = $this->create_item( $snippet_to_store );
 
 		//Check if snippet was created.
 		if ( is_wp_error( $snippet ) ) {
 			//Grab the error message and return WP Error Response
 			$error = $snippet->get_error_message();
 			return new WP_Error( 'snippet_not_created', $error, [ 'status' => 500 ] );
-		}
+		}		
 
-		//Get Cloud ID from request object
-		$cloud_id = $request->get_param('cloud_id');
-		$is_owner = $request->get_param('is_owner');
-		$in_codevault = $request->get_param('in_codevault');
-		
-
-		$link = new Cloud_Link();
-		$link->local_id = $snippet->data['id'];;
-		$link->cloud_id = $cloud_id;
-		$link->is_owner = $is_owner ? true : false;
-		$link->in_codevault = $in_codevault ? true : false ;
+		//Create a link between the local snippet and the cloud snippet
+		$link 					= new Cloud_Link();
+		$link->local_id 		= $snippet->data['id'];
+		$link->cloud_id 		= $snippet_to_store['id'];
+		$link->is_owner 		= false; //Set false by default
+		$link->in_codevault 	= false ; //Set false by default
 		$link->update_available = false; //Set false by default
 
+		//Add the link to the cloud
 		code_snippets()->cloud_api->add_map_link( $link );
 		
+		//Construct success response
 		$response = [
 			'status'  => 'success',
 			'message' => __( 'Snippet created', 'code-snippets' ),
 		];
 
+		//Return the response
 		return rest_ensure_response( $response );
 	}
 
