@@ -69,6 +69,7 @@ $current_type = $this->get_current_type();
 			'js'    => __( 'javascript snippets', 'code-snippets' ),
 			'cloud' => __( 'cloud snippets', 'code-snippets' ),
 			'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
+			'routines' => __( 'Routines', 'code-snippets' ),
 		];
 
 		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
@@ -93,14 +94,13 @@ $current_type = $this->get_current_type();
 	$this->list_table->views();
 
 	if ( 'cloud_search' === $current_type ) {
+
 		$search_query = isset( $_REQUEST['cloud_search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) ) : '';
-		$routine_id = isset( $_REQUEST['cloud_routines'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_routines'] ) ) : '';
-		?>
+	?>
 		
-		<p class="text-justify"><?php echo __('Use the search bar below to search cloud snippets by entering either the name of a codevault 
-			(Important : codevault name is case and spelling sensitive and only public snippets will be shown) or by keyword(s).
-			The dropdown list below shows your saved cloud routines. A routine is a set of snippets grouped together to be downloaded from the cloud together.
-			Please visit your code snippets cloud account to create and manage your routines.'); ?>
+		<p class="text-justify">
+			<?php echo __('Use the search bar below to search cloud snippets by entering either the name of a codevault 
+			(Important : codevault name is case and spelling sensitive and only public snippets will be shown) or by keyword(s).'); ?>
 		</p>
 
 		<form method="get" action="" id="cloud-search-form">
@@ -126,6 +126,36 @@ $current_type = $this->get_current_type();
 					placeholder="<?php esc_html_e( 'e.g. Remove unused JavaScript…', 'code-snippets' ); ?>">
 				<button type="submit" id="cloud-search-submit" class="button"><?php echo __('Search Cloud'); ?><span class="dashicons dashicons-search cloud-search"></span></button>
 			</div>
+		</form>
+		<form method="post" action="" id="cloud-search-results">
+			<input type="hidden" id="code_snippets_ajax_nonce" value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
+			<?php
+				List_Table::required_form_fields();
+				//Check if url has a search query called cloud_search
+				if( isset( $_REQUEST['cloud_search'] ) ){
+					//If it does, then we want to display the cloud search table
+					$this->cloud_search_list_table->display();
+				}			
+		echo '</form>';
+	
+	}elseif('routines' === $current_type ){
+
+		$routine_id = isset( $_REQUEST['cloud_routines'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_routines'] ) ) : '';
+	?>
+		<p class="text-justify"><?php echo __('A Cloud routine is a set of snippets grouped together to be downloaded from the cloud together.
+			Please visit your code snippets cloud account to create and manage your routines. You can also enter a routine share code from someone else who 
+			has shared their routine publicly.'); ?>
+		</p>
+		<form method="get" action="" id="cloud-search-form">
+			<?php List_Table::required_form_fields( 'search_box' ); ?>
+			<label class="screen-reader-text" for="cloud-routines">
+				<?php esc_html_e( 'Find and Run Cloud Routines', 'code-snippets' ); ?>
+			</label>
+			<?php 
+				if( isset($_REQUEST['type'] ) ){
+					echo '<input type="hidden" name="type" value="' . sanitize_text_field( esc_attr( $_REQUEST['type' ] ) ) . '">';
+				}
+			?>			
 			<div class="heading-box"> 
 				<p class="cloud-search-heading"><?php echo __('Cloud Routines'); ?></p>
 				<p class="text-justify"><?php echo __('Enter a Routine Share Code below to see all snippets from a publicly viewable routine or
@@ -152,23 +182,20 @@ $current_type = $this->get_current_type();
 				<button type="submit" id="cloud-routine-run" class="button" name="cloud-routine-run" value="true">Run Routine</button>
 			</div>
 		</form>
-
-		
-
 		<form method="post" action="" id="cloud-search-results">
-			<input type="hidden" id="code_snippets_ajax_nonce"
-			    value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
+			<input type="hidden" id="code_snippets_ajax_nonce" value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
 			<?php
 				List_Table::required_form_fields();
 				//Check if url has a search query called cloud_search
-				if( isset( $_REQUEST['cloud_search'] ) ){
+				if( isset( $_REQUEST['cloud_routines'] ) ){
 					//If it does, then we want to display the cloud search table
-					$this->cloud_search_list_table->display();
+					$this->cloud_routines->display();
 				}			
 		echo '</form>';
-	}else{
-			?>
 
+	}else{
+
+	?>
 		<form method="get" action="">
 			<?php
 			List_Table::required_form_fields( 'search_box' );

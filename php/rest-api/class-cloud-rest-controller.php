@@ -106,7 +106,7 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 		$snippet_to_store['modified'] 		=  $body['created'];
 		$snippet_to_store['revision'] 		=  $body['revision'] ?? 1;
 		$snippet_to_store['priority'] 		=  10;
-		$snippet_to_store['cloud_id'] 		=  $body['id'];
+		$snippet_to_store['cloud_id'] 		=  $body['id'].'_0'; //Set to not owner
 		$snippet_to_store['shared_network'] =  false;
 		
 		//Create the snippet

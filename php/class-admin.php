@@ -324,6 +324,9 @@ class Admin {
 			case 'cloud_search':
 				echo '<span class="cloud-badge dashicons dashicons-search cloud-icon cloud-downloaded"></span>';	
 				break;
+			case 'routines':
+				echo '<span class="cloud-badge dashicons dashicons-controls-repeat cloud-icon cloud-routine"></span>';	
+				break;
 			default:
 				echo '<span class="badge">' . esc_html( $type_name ) . '</span>';
 				break;

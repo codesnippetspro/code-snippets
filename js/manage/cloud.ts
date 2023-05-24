@@ -40,4 +40,13 @@ export const handleShowCloudPreview = () => {
 		})
 	})
 }
+//Handle Cloud Routine Text and Select Inputs
+export const handleCloudRoutineInputsChange = () => {
+	//On change of routine share input or select, clear the other
+	const routineInput = <HTMLInputElement>document.getElementById('routine_share_name')
+	const routineSelect = <HTMLSelectElement>document.getElementById('cloud-routines')
+
+	routineInput?.addEventListener('change', () => { routineSelect.value = '0' })
+	routineSelect?.addEventListener('change', () => { routineInput.value = '' })
+}
 

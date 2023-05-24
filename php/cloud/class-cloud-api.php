@@ -177,8 +177,8 @@ class Cloud_API {
 
 		$cloud_id_owner = explode( '_', $cloud_id );
 		return [
-			'cloud_id' 			=> (int) $cloud_id_owner[0],
-			'is_owner' 			=> (bool) $cloud_id_owner[1],
+			'cloud_id' 			=> (int) $cloud_id_owner[0] ?? '',
+			'is_owner' 			=> (bool) $cloud_id_owner[1] ? true : false,
 			'is_owner_string' 	=> (bool) $cloud_id_owner[1] ? '1' : '0',
 		];
 	}
@@ -460,7 +460,7 @@ class Cloud_API {
 	 * Get list of all routines from the cloud API.
 	 *
 	 *
-	 * @return string|null Routine name and id, null otherwise.
+	 * @return array|null Routine name and id, null otherwise.
 	 */
 	public static function get_routines() {
 		$api_url = self::CLOUD_API_URL . sprintf( 'private/routines' );

@@ -1,7 +1,8 @@
 import { handleSnippetActivationSwitches } from './activation'
 import { handleSnippetPriorityChanges } from './priority'
-import { handleShowCloudPreview } from './cloud'
+import { handleShowCloudPreview, handleCloudRoutineInputsChange } from './cloud'
 
 handleSnippetActivationSwitches()
 handleSnippetPriorityChanges()
 handleShowCloudPreview()
+handleCloudRoutineInputsChange()
