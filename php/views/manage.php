@@ -141,6 +141,7 @@ $current_type = $this->get_current_type();
 	}elseif('routines' === $current_type ){
 
 		$routine_id = isset( $_REQUEST['cloud_routines'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_routines'] ) ) : '';
+		$routine_name = isset( $_REQUEST['routine_share_name'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['routine_share_name'] ) ) : '';
 	?>
 		<p class="text-justify"><?php echo __('A Cloud routine is a set of snippets grouped together to be downloaded from the cloud together.
 			Please visit your code snippets cloud account to create and manage your routines. You can also enter a routine share code from someone else who 
@@ -164,17 +165,21 @@ $current_type = $this->get_current_type();
 			</div>
 			<div class="input-group routine-group">
 				<input type="text" id="routine_share_name" name="routine_share_name" class="routine_share_name"
-					placeholder="<?php esc_html_e( 'Enter Routine Share Code..', 'code-snippets' ); ?>">
+					placeholder="<?php esc_html_e( 'Enter Routine Share Code..', 'code-snippets' ); ?> " 
+					value="<?php echo esc_html( $routine_name ); ?>">
 				<p class="routine-share-text">OR</p>
 				<select id="cloud-routines" class="select-routine" name="cloud_routines">
 					<option value="0"><?php echo __('Please choose one of your routines'); ?></option>
 					<?php
 						$routines = Cloud_API::get_routines();
+						$selected = '';
 						foreach( $routines['routines'][0] as $routine ){
 							if( $routine['id'] == $routine_id ){
-								echo '<option value="' . $routine['id'] . '" selected>' . $routine['name'] . '</option>';
+								//echo '<option value="' . $routine['id'] . '" selected>' . $routine['name'] . '</option>';
+								$selected = ' selected';
 							}
-							echo '<option value="' . $routine['id'] . '">' . $routine['name'] . '</option>';
+							echo '<option value="' . $routine['id'] . '"'. $selected .'>' . $routine['name'] . '</option>';
+							$selected = '';
 						}
 					?>
 				</select>
@@ -187,7 +192,7 @@ $current_type = $this->get_current_type();
 			<?php
 				List_Table::required_form_fields();
 				//Check if url has a search query called cloud_search
-				if( isset( $_REQUEST['cloud_routines'] ) ){
+				if( isset( $_REQUEST['cloud_routines'] ) || isset( $_REQUEST['routine_share_name'] ) ){
 					//If it does, then we want to display the cloud search table
 					$this->cloud_routines->display();
 				}			

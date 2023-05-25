@@ -24,11 +24,9 @@ class Cloud_Routines extends Cloud_Search_List_Table{
 	public function process_actions() {
 	
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( '_wpnonce', 'cloud-routine-run', 'cloud-routine-show', 'routine_share_name', 'cloud_routines' ) );
-		$routine = $_REQUEST['cloud_routines'] ?? '';
-		$routine_run = $_REQUEST['cloud-routine-run'] ?? false;
 
-		if ( isset( $routine, $routine_run ) ) {
-			if( $routine_run == 'true'){ 
+		if ( isset( $_REQUEST['cloud-routine-run'] ) ) {
+			if ($_REQUEST['cloud-routine-run']== 'true' ) {
 				$this->run_routine_action( $this->items );
 			}
 		}
@@ -97,14 +95,8 @@ class Cloud_Routines extends Cloud_Search_List_Table{
 			code_snippets()->cloud_api->add_map_link( $link );
 		}
 
-		// Force Page Redirect to the snippets page and type all
-		return $redirect_url = add_query_arg(
-			[
-				'page' => 'code-snippets',
-				'type' => 'all',
-			],
-			admin_url( 'admin.php' )
-		);
+		// Redirect to the snippets page.
+		wp_safe_redirect( admin_url( 'admin.php?page=snippets&type=all' ) );
 	}
 
 }
