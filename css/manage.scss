@@ -458,7 +458,7 @@ $inactive-color: #ccc;
 	margin-left: 5px;
 }
 
-.routine-group{
+.bundle-group{
 	margin-top: 10px;
     justify-content: space-between;
 	display: flex;
@@ -466,7 +466,7 @@ $inactive-color: #ccc;
 	flex-wrap: nowrap;
 }
 
-#cloud-routines{
+#cloud-bundles{
 	color: #495057;
     display: flex;
     flex: 1 1 auto;
@@ -476,15 +476,15 @@ $inactive-color: #ccc;
     width: 50%;
 }
 
-#cloud-routine-show{
+#cloud-bundle-show{
 	width: 10%;
 }
 
-#cloud-routine-run{
+#cloud-bundle-run{
 	width: 15%;
 }
 
-#routine_share_name{
+#bundle_share_name{
 	color: #495057;
     font-size: 1rem;
 	width: 25%;

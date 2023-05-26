@@ -5,7 +5,7 @@ namespace Code_Snippets;
 use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\Cloud\Cloud_List_Table;
 use Code_Snippets\Cloud\Cloud_Search_List_Table;
-use Code_Snippets\Cloud\Cloud_Routines;
+use Code_Snippets\Cloud\Cloud_Bundles;
 use Code_Snippets\Cloud\Cloud_Search_Install_List_Table;
 
 /**
@@ -45,11 +45,11 @@ class Manage_Menu extends Admin_Menu {
 	public $cloud_search_list_table;
 
 	/**
-	 * Instance of the cloud table for routines
+	 * Instance of the cloud table for bundles
 	 *
-	 * @var Cloud_Routines
+	 * @var Cloud_Bundles
 	 */
-	public $cloud_routines;
+	public $cloud_bundles;
 
 	/**
 	 * Class constructor
@@ -192,7 +192,7 @@ class Manage_Menu extends Admin_Menu {
 			//wp_safe_redirect( esc_url_raw( add_query_arg( 'result', 'cloud-refreshed' ) ) ); 
 		}
 
-		$cloud_types = [ 'cloud', 'cloud_search', 'routines'];
+		$cloud_types = [ 'cloud', 'cloud_search', 'bundles'];
 
 
 		if( ! in_array( $this->get_current_type(), $cloud_types ) || ! isset( $_REQUEST['type'] ) ) {
@@ -214,8 +214,8 @@ class Manage_Menu extends Admin_Menu {
 		$this->cloud_search_list_table->prepare_items();
 
 		// Initialize the search cloud list table class.
-		$this->cloud_routines = new Cloud_Routines();
-		$this->cloud_routines->prepare_items();
+		$this->cloud_bundles = new Cloud_Bundles();
+		$this->cloud_bundles->prepare_items();
 	}
 
 	/**

@@ -322,7 +322,7 @@ class Plugin {
 				'js'    => __( 'Scripts', 'code-snippets' ),
 				'cloud' => __( 'Codevault', 'code-snippets' ),
 				'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
-				'routines' => __( 'Routines', 'code-snippets' ),
+				'bundles' => __( 'Bundles', 'code-snippets' ),
 			)
 		);
 	}

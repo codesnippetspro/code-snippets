@@ -10,11 +10,11 @@ use function Code_Snippets\get_snippet_by_cloud_id;
 
 
 /**
- * This class handles the table for cloud routines
+ * This class handles the table for cloud bundles.
  *
  * @package Code_Snippets
  */
-class Cloud_Routines extends Cloud_Search_List_Table{ 
+class Cloud_Bundles extends Cloud_Search_List_Table{ 
 
     /**
 	 * Process any actions that have been submitted, such as downloading cloud snippets to the local database.
@@ -23,11 +23,11 @@ class Cloud_Routines extends Cloud_Search_List_Table{
 	 */
 	public function process_actions() {
 	
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array( '_wpnonce', 'cloud-routine-run', 'cloud-routine-show', 'routine_share_name', 'cloud_routines' ) );
+		$_SERVER['REQUEST_URI'] = remove_query_arg( array( '_wpnonce', 'cloud-bundle-run', 'cloud-bundle-show', 'bundle_share_name', 'cloud_bundles' ) );
 
-		if ( isset( $_REQUEST['cloud-routine-run'] ) ) {
-			if ($_REQUEST['cloud-routine-run']== 'true' ) {
-				$this->run_routine_action( $this->items );
+		if ( isset( $_REQUEST['cloud-bundle-run'] ) ) {
+			if ($_REQUEST['cloud-bundle-run']== 'true' ) {
+				$this->run_bundle_action( $this->items );
 			}
 		}
 				
@@ -40,32 +40,32 @@ class Cloud_Routines extends Cloud_Search_List_Table{
 	 * @return Cloud_Snippets
 	 */
 	public function fetch_snippets() {
-		$routine 		= $_REQUEST['cloud_routines'] ?? 0;
-		$routine_share_name = $_REQUEST['routine_share_name'] ?? '';
+		$bundle 		= $_REQUEST['cloud_bundles'] ?? 0;
+		$bundle_share_name = $_REQUEST['bundle_share_name'] ?? '';
         
-		//Check if user own routine selected
-		if( !$routine == '0' || !$routine == 0 ){
-			$routine = (int) sanitize_text_field( wp_unslash( $_REQUEST['cloud_routines'] ) );
-			return $this->cloud_api->get_snippets_from_routine( $routine );
+		//Check if user own bundle selected
+		if( !$bundle == '0' || !$bundle == 0 ){
+			$bundle = (int) sanitize_text_field( wp_unslash( $_REQUEST['cloud_bundles'] ) );
+			return $this->cloud_api->get_snippets_from_bundle( $bundle );
 		}
-		//Check if user shared routine entered
-		if( !$routine_share_name == '' ){
-			$routine_share_name = sanitize_text_field( wp_unslash( $_REQUEST['routine_share_name'] ) );
-			return $this->cloud_api->get_snippets_from_shared_routine( $routine_share_name );
+		//Check if user shared bundle entered
+		if( !$bundle_share_name == '' ){
+			$bundle_share_name = sanitize_text_field( wp_unslash( $_REQUEST['bundle_share_name'] ) );
+			return $this->cloud_api->get_snippets_from_shared_bundle( $bundle_share_name );
 		}
 		
-		//If no search or routine is set, then return empty object
+		//If no search or bundle is set, then return empty object
 		return new Cloud_Snippets();
 	}
 
     /**
-	 * Run the routine action
+	 * Run the bundle action
 	 *
 	 * @param array $snippets Array of Cloud Snippets
 	 *
 	 * @return void
 	 */
-	public function run_routine_action( $items ) {
+	public function run_bundle_action( $items ) {
 		
 		foreach($items as $snippet_to_store){
 			// Check if the snippet already exists in the database.
@@ -97,6 +97,17 @@ class Cloud_Routines extends Cloud_Search_List_Table{
 
 		// Redirect to the snippets page.
 		wp_safe_redirect( admin_url( 'admin.php?page=snippets&type=all' ) );
+	}
+
+	/**
+	 * Text displayed when no bundle data is available.
+	 *
+	 * @return void
+	 */
+	public function no_items() {
+		
+		echo '<p>', esc_html__( 'Sorry, we cannot find a bundle with that share code or any snippets in this bundle please check and try again.', 'code-snippets' ), '</p>';
+	
 	}
 
 }

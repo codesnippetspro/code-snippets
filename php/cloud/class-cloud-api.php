@@ -457,29 +457,29 @@ class Cloud_API {
 	}
 
 	/**
-	 * Get list of all routines from the cloud API.
+	 * Get list of all bundles from the cloud API.
 	 *
 	 *
-	 * @return array|null Routine name and id, null otherwise.
+	 * @return array|null Bundle name and id, null otherwise.
 	 */
-	public static function get_routines() {
-		$api_url = self::CLOUD_API_URL . sprintf( 'private/routines' );
+	public static function get_bundles() {
+		$api_url = self::CLOUD_API_URL . sprintf( 'private/bundles' );
 		$self = new self();
 		$response = wp_remote_get( $api_url, [ 'headers' => $self->build_request_headers() ] );
-		$routines = self::unpack_request_json( $response );
+		$bundles = self::unpack_request_json( $response );
 
-		return $routines;
+		return $bundles;
 	}
 
 	/**
-	 * Get List of Snippets from a Routine from the cloud API.
+	 * Get List of Snippets from a Bundle from the cloud API.
 	 *
-	 * @param int $routine_id Routine ID.
+	 * @param int $bundle_id Bundle ID.
 	 *
 	 * @return Cloud_Snippets
 	 */
-	public function get_snippets_from_routine( $routine_id ) {
-		$api_url = self::CLOUD_API_URL . sprintf( 'private/getroutine/%s', $routine_id );
+	public function get_snippets_from_bundle( $bundle_id ) {
+		$api_url = self::CLOUD_API_URL . sprintf( 'private/getbundle/%s', $bundle_id );
 		$response = wp_remote_post(
 			$api_url,
 			[
@@ -496,14 +496,14 @@ class Cloud_API {
 	}
 
 	/**
-	 * Get List of Snippets from a Shared Routine from the cloud API.
+	 * Get List of Snippets from a Shared Bundle from the cloud API.
 	 *
-	 * @param string $routine_share_name
+	 * @param string $bundle_share_name
 	 *
 	 * @return Cloud_Snippets
 	 */
-	public function get_snippets_from_shared_routine( $routine_share_name ) {
-		$api_url = self::CLOUD_API_URL . sprintf( 'private/getsharedroutine?share_name=%s', $routine_share_name );
+	public function get_snippets_from_shared_bundle( $bundle_share_name ) {
+		$api_url = self::CLOUD_API_URL . sprintf( 'private/getsharedbundle?share_name=%s', $bundle_share_name );
 		$response = wp_remote_post(
 			$api_url,
 			[

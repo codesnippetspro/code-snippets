@@ -40,13 +40,13 @@ export const handleShowCloudPreview = () => {
 		})
 	})
 }
-//Handle Cloud Routine Text and Select Inputs
-export const handleCloudRoutineInputsChange = () => {
-	//On change of routine share input or select, clear the other
-	const routineInput = <HTMLInputElement>document.getElementById('routine_share_name')
-	const routineSelect = <HTMLSelectElement>document.getElementById('cloud-routines')
+//Handle Cloud Bundle Text and Select Inputs
+export const handleCloudBundleInputsChange = () => {
+	//On change of bundle share input or select, clear the other
+	const bundleInput = <HTMLInputElement>document.getElementById('bundle_share_name')
+	const bundleSelect = <HTMLSelectElement>document.getElementById('cloud-bundles')
 
-	routineInput?.addEventListener('change', () => { routineSelect.value = '0' })
-	routineSelect?.addEventListener('change', () => { routineInput.value = '' })
+	bundleInput?.addEventListener('change', () => { bundleSelect.value = '0' })
+	bundleSelect?.addEventListener('change', () => { bundleInput.value = '' })
 }
 

@@ -69,7 +69,7 @@ $current_type = $this->get_current_type();
 			'js'    => __( 'javascript snippets', 'code-snippets' ),
 			'cloud' => __( 'cloud snippets', 'code-snippets' ),
 			'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
-			'routines' => __( 'Routines', 'code-snippets' ),
+			'bundles' => __( 'Bundles', 'code-snippets' ),
 		];
 
 		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
@@ -138,19 +138,19 @@ $current_type = $this->get_current_type();
 				}			
 		echo '</form>';
 	
-	}elseif('routines' === $current_type ){
+	}elseif('bundles' === $current_type ){
 
-		$routine_id = isset( $_REQUEST['cloud_routines'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_routines'] ) ) : '';
-		$routine_name = isset( $_REQUEST['routine_share_name'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['routine_share_name'] ) ) : '';
+		$bundle_id = isset( $_REQUEST['cloud_bundles'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_bundles'] ) ) : '';
+		$bundle_name = isset( $_REQUEST['bundle_share_name'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['bundle_share_name'] ) ) : '';
 	?>
-		<p class="text-justify"><?php echo __('A Cloud routine is a set of snippets grouped together to be downloaded from the cloud together.
-			Please visit your code snippets cloud account to create and manage your routines. You can also enter a routine share code from someone else who 
-			has shared their routine publicly.'); ?>
+		<p class="text-justify"><?php echo __('A Cloud bundle is a set of snippets grouped together to be downloaded from the cloud together.
+			Please visit your code snippets cloud account to create and manage your bundles. You can also enter a bundle share code from someone else who 
+			has shared their bundle publicly.'); ?>
 		</p>
 		<form method="get" action="" id="cloud-search-form">
 			<?php List_Table::required_form_fields( 'search_box' ); ?>
-			<label class="screen-reader-text" for="cloud-routines">
-				<?php esc_html_e( 'Find and Run Cloud Routines', 'code-snippets' ); ?>
+			<label class="screen-reader-text" for="cloud-bundles">
+				<?php esc_html_e( 'Find and Get Cloud Bundles', 'code-snippets' ); ?>
 			</label>
 			<?php 
 				if( isset($_REQUEST['type'] ) ){
@@ -158,33 +158,33 @@ $current_type = $this->get_current_type();
 				}
 			?>			
 			<div class="heading-box"> 
-				<p class="cloud-search-heading"><?php echo __('Cloud Routines'); ?></p>
-				<p class="text-justify"><?php echo __('Enter a Routine Share Code below to see all snippets from a publicly viewable routine or
-					you can select one of your saved routines from the dropdown list below.'); ?>
+				<p class="cloud-search-heading"><?php echo __('Cloud Bundles'); ?></p>
+				<p class="text-justify"><?php echo __('Enter a Bundle Share Code below to see all snippets from a publicly viewable bundle or
+					you can select one of your saved bundles from the dropdown list below.'); ?>
 				</p>
 			</div>
-			<div class="input-group routine-group">
-				<input type="text" id="routine_share_name" name="routine_share_name" class="routine_share_name"
-					placeholder="<?php esc_html_e( 'Enter Routine Share Code..', 'code-snippets' ); ?> " 
-					value="<?php echo esc_html( $routine_name ); ?>">
-				<p class="routine-share-text">OR</p>
-				<select id="cloud-routines" class="select-routine" name="cloud_routines">
-					<option value="0"><?php echo __('Please choose one of your routines'); ?></option>
+			<div class="input-group bundle-group">
+				<input type="text" id="bundle_share_name" name="bundle_share_name" class="bundle_share_name"
+					placeholder="<?php esc_html_e( 'Enter Bundle Share Code..', 'code-snippets' ); ?> " 
+					value="<?php echo esc_html( $bundle_name ); ?>">
+				<p class="bundle-share-text">OR</p>
+				<select id="cloud-bundles" class="select-bundle" name="cloud_bundles">
+					<option value="0"><?php echo __('Please choose one of your bundles'); ?></option>
 					<?php
-						$routines = Cloud_API::get_routines();
+						$bundles = Cloud_API::get_bundles();
 						$selected = '';
-						foreach( $routines['routines'][0] as $routine ){
-							if( $routine['id'] == $routine_id ){
-								//echo '<option value="' . $routine['id'] . '" selected>' . $routine['name'] . '</option>';
+						foreach( $bundles['bundles'][0] as $bundle ){
+							if( $bundle['id'] == $bundle_id ){
+								//echo '<option value="' . $bundle['id'] . '" selected>' . $bundle['name'] . '</option>';
 								$selected = ' selected';
 							}
-							echo '<option value="' . $routine['id'] . '"'. $selected .'>' . $routine['name'] . '</option>';
+							echo '<option value="' . $bundle['id'] . '"'. $selected .'>' . $bundle['name'] . '</option>';
 							$selected = '';
 						}
 					?>
 				</select>
-				<button type="submit" id="cloud-routine-show" class="button" name="cloud-routine-show" value="true">Show</button>
-				<button type="submit" id="cloud-routine-run" class="button" name="cloud-routine-run" value="true">Run Routine</button>
+				<button type="submit" id="cloud-bundle-show" class="button" name="cloud-bundle-show" value="true"><?php esc_html_e( 'Show', 'code-snippets' ); ?></button>
+				<button type="submit" id="cloud-bundle-run" class="button" name="cloud-bundle-run" value="true"><?php esc_html_e( 'Get Snippets', 'code-snippets' ); ?></button>
 			</div>
 		</form>
 		<form method="post" action="" id="cloud-search-results">
@@ -192,9 +192,9 @@ $current_type = $this->get_current_type();
 			<?php
 				List_Table::required_form_fields();
 				//Check if url has a search query called cloud_search
-				if( isset( $_REQUEST['cloud_routines'] ) || isset( $_REQUEST['routine_share_name'] ) ){
+				if( isset( $_REQUEST['cloud_bundles'] ) || isset( $_REQUEST['bundle_share_name'] ) ){
 					//If it does, then we want to display the cloud search table
-					$this->cloud_routines->display();
+					$this->cloud_bundles->display();
 				}			
 		echo '</form>';
 
