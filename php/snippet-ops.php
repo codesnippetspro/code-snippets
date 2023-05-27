@@ -613,17 +613,20 @@ function execute_active_snippets(): bool {
 
 	// Detect if a snippet is currently being edited, and if so, spare it from execution.
 	$edit_id = 0;
-	$edit_table = '';
+	$edit_table = $db->table;
 
 	if ( wp_is_json_request() && ! empty( $_SERVER['REQUEST_URI'] ) ) {
 		$url = wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
 
-		if ( false !== strpos( $url['path'], Snippets_REST_Controller::get_prefixed_base_route() ) ) {
+		if ( isset( $url['path'] ) && false !== strpos( $url['path'], Snippets_REST_Controller::get_prefixed_base_route() ) ) {
 			$path_parts = explode( '/', $url['path'] );
-			wp_parse_str( $url['query'], $path_params );
 			$edit_id = intval( end( $path_parts ) );
-			$edit_table = isset( $path_params['network'] ) && rest_sanitize_boolean( $path_params['network'] ) ?
-				$db->ms_table : $db->table;
+
+			if ( ! empty( $url['query'] ) ) {
+				wp_parse_str( $url['query'], $path_params );
+				$edit_table = isset( $path_params['network'] ) && rest_sanitize_boolean( $path_params['network'] ) ?
+					$db->ms_table : $db->table;
+			}
 		}
 	}
 
