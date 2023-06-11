@@ -172,8 +172,16 @@ export const bundle: TaskFunction = (() => {
 	)
 })()
 
+const composerDumpAutoload: TaskFunction = done => {
+	exec('composer dumpautoload', error => {
+	  if (error) throw error
+	  done()
+	})
+  }
+
 export const watch: TaskFunction = series(build, done => {
 	watchFiles(SRC_FILES.css.all, series(css))
 	watchFiles(SRC_FILES.js, series(js))
+	watchFiles(SRC_FILES.php, series(composerDumpAutoload))
 	done()
 })
