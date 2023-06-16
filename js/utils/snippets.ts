@@ -43,3 +43,17 @@ export const isProType = (type: SnippetType): boolean =>
 
 export const isLicensed = (): boolean =>
 	!!window.CODE_SNIPPETS?.isLicensed
+
+export const encodeSnippetCode = (snippet: Snippet) => {
+	const encoded: Record<string, string | undefined> = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'$': '&#36;'
+	}
+
+	snippet.code = snippet.code.replace(/[&<>$]/g, match => encoded[match] ?? match)
+	snippet.encoded = true
+
+	return snippet
+}

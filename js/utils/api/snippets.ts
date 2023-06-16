@@ -5,6 +5,7 @@ import { ExportSnippets } from '../../types/ExportSnippets'
 import { Snippet } from '../../types/Snippet'
 import { isNetworkAdmin } from '../general'
 import { useAxios } from './axios'
+import { encodeSnippetCode } from '../snippets'
 
 const ROUTE_BASE = window.CODE_SNIPPETS?.restAPI.snippets
 
@@ -41,10 +42,10 @@ export const useSnippetsAPI = (): Snippets => {
 			get<Snippet>(addQueryArgs(`${ROUTE_BASE}/${snippetId}`, { network })),
 
 		create: snippet =>
-			post<Snippet, Snippet>(`${ROUTE_BASE}`, snippet),
+			post<Snippet, Snippet>(`${ROUTE_BASE}`, encodeSnippetCode(snippet)),
 
 		update: snippet =>
-			post<Snippet, Snippet>(buildURL(snippet), snippet),
+			post<Snippet, Snippet>(buildURL(snippet), encodeSnippetCode(snippet)),
 
 		delete: (snippet: Snippet) =>
 			del(buildURL(snippet)),
