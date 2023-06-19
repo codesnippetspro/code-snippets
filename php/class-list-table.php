@@ -45,7 +45,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var string
 	 */
-	protected $order_by; 
+	protected $order_by;
 
 	/**
 	 * Direction to use when ordering the snippets list. Either 'asc' or 'desc'.
@@ -313,7 +313,7 @@ class List_Table extends WP_List_Table {
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
-		$out = esc_html( $snippet->display_name ); 
+		$out = esc_html( $snippet->display_name );
 
 		if ( 'global' !== $snippet->scope ) {
 			$out .= ' <span class="dashicons dashicons-' . $snippet->scope_icon . '"></span>';
@@ -334,12 +334,7 @@ class List_Table extends WP_List_Table {
 		}
 
 		// Return the name contents.
-		$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
-		if ( $cloud_link ) {
-			//Make cloud icon grey to show its from the cloud
-			$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>' . $out;
-		}
-		
+
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
 
 		return $out . $row_actions;
@@ -643,7 +638,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @param string $context The context in which the fields are being outputted.
 	 */
-	public static function required_form_fields( string $context = 'main' ) {
+	public function required_form_fields( string $context = 'main' ) {
 		$vars = apply_filters(
 			'code_snippets/list_table/required_form_fields',
 			array( 'page', 's', 'status', 'paged', 'tag' ),
@@ -1078,17 +1073,17 @@ class List_Table extends WP_List_Table {
 	private function get_sort_direction( $a_data, $b_data ) {
 
 		// If the data is numeric, then calculate the ordering directly.
-		if ( is_numeric( $a_data ) ) {
+		if ( is_numeric( $a_data ) && is_numeric( $b_data ) ) {
 			return $a_data - $b_data;
 		}
 
 		// If only one of the data points is empty, then place it before the one which is not.
-		if ( '' === $a_data xor '' === $b_data ) {
-			return '' === $a_data ? 1 : -1;
+		if ( empty( $a_data ) xor empty( $b_data ) ) {
+			return empty( $a_data ) ? 1 : -1;
 		}
 
 		// Sort using the default string sort order if possible.
-		if ( is_string( $a_data ) ) {
+		if ( is_string( $a_data ) && is_string( $b_data ) ) {
 			return strcasecmp( $a_data, $b_data );
 		}
 

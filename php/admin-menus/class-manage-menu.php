@@ -2,9 +2,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_API;
-use Code_Snippets\Cloud\Cloud_Search_List_Table;
-
 /**
  * This class handles the manage snippets menu
  *
@@ -19,14 +16,6 @@ class Manage_Menu extends Admin_Menu {
 	 * @var List_Table
 	 */
 	public $list_table;
-
-		/**
-	 * Instance of the cloud list table class for search results.
-	 *
-	 * @var Cloud_Search_List_Table
-	 */
-	public $cloud_search_list_table;
-
 
 	/**
 	 * Class constructor
@@ -123,15 +112,10 @@ class Manage_Menu extends Admin_Menu {
 		/* Load the contextual help tabs */
 		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
-		
-		// Initialize the search cloud list table class.
-		$this->cloud_search_list_table = new Cloud_Search_List_Table();
-		$this->cloud_search_list_table->prepare_items();
 
 		/* Initialize the list table class */
 		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
-
 	}
 
 	/**
@@ -155,21 +139,6 @@ class Manage_Menu extends Admin_Menu {
 			$plugin->version,
 			true
 		);
-
-		if ( 'cloud_search' === $this->get_current_type() ) {
-			Frontend::enqueue_all_prism_themes();
-		}
-	}
-
-	/**
-	 * Get the currently displayed snippet type.
-	 *
-	 * @return string
-	 */
-	protected function get_current_type() {
-		$types = Plugin::get_types();
-		$current_type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'all';
-		return isset( $types[ $current_type ] ) ? $current_type : 'all';
 	}
 
 	/**

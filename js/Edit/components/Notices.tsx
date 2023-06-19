@@ -1,8 +1,8 @@
 import classnames from 'classnames'
 import React, { Dispatch, MouseEventHandler, ReactNode, SetStateAction } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
-import { Notices } from '../../types/Notice'
 import { SnippetInputProps } from '../../types/SnippetInputProps'
+import { Notice } from '../../types/Notice'
 
 interface DismissibleNoticeProps {
 	classNames?: classnames.Argument
@@ -22,22 +22,18 @@ const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ classNames, onRem
 		</button>
 	</div>
 
-export interface NoticeListProps extends SnippetInputProps {
-	notices: Notices
-	setNotices: Dispatch<SetStateAction<Notices>>
+export interface NoticesProps extends SnippetInputProps {
+	notice: Notice | undefined
+	setNotice: Dispatch<SetStateAction<Notice | undefined>>
 }
 
-export const NoticeList: React.FC<NoticeListProps> = ({ notices, setNotices, snippet, setSnippet }) =>
+export const Notices: React.FC<NoticesProps> = ({ notice, setNotice, snippet, setSnippet }) =>
 	<>
-		{notices.map(([type, message], index) =>
-			<DismissibleNotice
-				key={index}
-				classNames={type}
-				onRemove={() => setNotices(notices.filter((_, i) => index !== i))}
-			>
-				<p>{message}</p>
-			</DismissibleNotice>
-		)}
+		{notice ?
+			<DismissibleNotice classNames={notice[0]} onRemove={() => setNotice(undefined)}>
+				<p>{notice[1]}</p>
+			</DismissibleNotice> :
+			null}
 
 		{snippet.code_error ?
 			<DismissibleNotice
