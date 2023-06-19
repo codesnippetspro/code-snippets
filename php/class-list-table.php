@@ -45,7 +45,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var string
 	 */
-	protected $order_by;
+	protected $order_by; 
 
 	/**
 	 * Direction to use when ordering the snippets list. Either 'asc' or 'desc'.
@@ -313,7 +313,7 @@ class List_Table extends WP_List_Table {
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
-		$out = esc_html( $snippet->display_name );
+		$out = esc_html( $snippet->display_name ); 
 
 		if ( 'global' !== $snippet->scope ) {
 			$out .= ' <span class="dashicons dashicons-' . $snippet->scope_icon . '"></span>';
@@ -334,7 +334,12 @@ class List_Table extends WP_List_Table {
 		}
 
 		// Return the name contents.
-
+		$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
+		if ( $cloud_link ) {
+			//Make cloud icon grey to show its from the cloud
+			$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>' . $out;
+		}
+		
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
 
 		return $out . $row_actions;
@@ -638,7 +643,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @param string $context The context in which the fields are being outputted.
 	 */
-	public function required_form_fields( string $context = 'main' ) {
+	public static function required_form_fields( string $context = 'main' ) {
 		$vars = apply_filters(
 			'code_snippets/list_table/required_form_fields',
 			array( 'page', 's', 'status', 'paged', 'tag' ),

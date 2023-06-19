@@ -60,6 +60,28 @@ class DB {
 	}
 
 	/**
+	 * Validate the multisite parameter of the get_table_name() function.
+	 *
+	 * @param boolean|null $network Value of multisite parameter: `true` for multisite, `false` for single-site.
+	 *
+	 * @return boolean Validated value of multisite parameter.
+	 */
+	public static function validate_network_param( $network ) {
+
+		// If multisite is not active, then the parameter should always be false.
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
+		// If $multisite is null, try to base it on the current admin page.
+		if ( is_null( $network ) && function_exists( 'is_network_admin' ) ) {
+			$network = is_network_admin();
+		}
+
+		return (bool) $network;
+	}
+
+	/**
 	 * Return the appropriate snippet table name
 	 *
 	 * @param string|bool|null $multisite Whether retrieve the multisite table name (true) or the site table name (false).
@@ -169,6 +191,8 @@ class DB {
 				priority    SMALLINT    NOT NULL DEFAULT 10,
 				active      TINYINT(1)  NOT NULL DEFAULT 0,
 				modified    DATETIME    NOT NULL DEFAULT '0000-00-00 00:00:00',
+				revision	BIGINT(20)  NOT NULL DEFAULT 1,
+				cloud_id	VARCHAR(255) NULL,
 				PRIMARY KEY  (id),
 				KEY scope (scope),
 				KEY active (active)
