@@ -400,10 +400,6 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 			}
 		}
 
-		if ( ! empty( $request['encoded'] ) ) {
-			$item->code = html_entity_decode( $item->code );
-		}
-
 		return $item;
 	}
 

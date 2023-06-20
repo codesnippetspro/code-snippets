@@ -1,17 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AxiosResponse, CreateAxiosDefaults } from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { addQueryArgs } from '@wordpress/url'
 import { ExportSnippets } from '../../types/ExportSnippets'
 import { Snippet } from '../../types/Snippet'
 import { isNetworkAdmin } from '../general'
-import { useAxios } from './axios'
-import { encodeSnippetCode } from '../snippets'
 
 const ROUTE_BASE = window.CODE_SNIPPETS?.restAPI.snippets
-
-const AXIOS_CONFIG: CreateAxiosDefaults = {
-	headers: { 'X-WP-Nonce': window.CODE_SNIPPETS?.restAPI.nonce }
-}
 
 export interface Snippets {
 	fetchAll: (network?: boolean | null) => Promise<AxiosResponse<Snippet[]>>
@@ -25,43 +19,56 @@ export interface Snippets {
 	exportCode: (snippet: Snippet) => Promise<AxiosResponse<string>>
 }
 
-const buildURL = ({ id, network }: Snippet, action?: string) =>
-	addQueryArgs(
-		[ROUTE_BASE, id, action].filter(Boolean).join('/'),
-		{ network: network ? true : undefined }
-	)
-
 export const useSnippetsAPI = (): Snippets => {
-	const { get, post, del } = useAxios(AXIOS_CONFIG)
+	const axiosInstance = useMemo(() =>
+		axios.create({
+			headers: { 'X-WP-Nonce': window.CODE_SNIPPETS?.restAPI.nonce }
+		}), [])
+
+	const buildURL = ({ id, network }: Snippet, action?: string) =>
+		addQueryArgs([ROUTE_BASE, id, action].filter(Boolean).join('/'), network ? { network } : undefined)
 
 	return useMemo((): Snippets => ({
 		fetchAll: network =>
-			get<Snippet[]>(addQueryArgs(ROUTE_BASE, { network })),
+			axiosInstance.get<Snippet[]>(addQueryArgs(ROUTE_BASE, { network })),
 
 		fetch: (snippetId, network) =>
-			get<Snippet>(addQueryArgs(`${ROUTE_BASE}/${snippetId}`, { network })),
+			axiosInstance.get<Snippet>(addQueryArgs(`${ROUTE_BASE}/${snippetId}`, { network })),
 
-		create: snippet =>
-			post<Snippet, Snippet>(`${ROUTE_BASE}`, encodeSnippetCode(snippet)),
+		create: snippet => {
+			console.info(`Sending request to ${ROUTE_BASE}`, snippet)
+			return axiosInstance.post<Snippet>(`${ROUTE_BASE}`, snippet)
+				.then(response => {
+					console.info('Received response', response)
+					return response
+				})
+		},
 
-		update: snippet =>
-			post<Snippet, Snippet>(buildURL(snippet), encodeSnippetCode(snippet)),
+		update: snippet => {
+			const url = buildURL(snippet)
+			console.info(`Sending request to ${url}`, snippet)
+			return axiosInstance.post<Snippet, AxiosResponse<Snippet>, Snippet>(url, snippet)
+				.then(response => {
+					console.info('Received response', response)
+					return response
+				})
+		},
 
 		delete: (snippet: Snippet) =>
-			del(buildURL(snippet)),
+			axiosInstance.delete(buildURL(snippet)),
 
 		activate: snippet =>
-			post<Snippet, never>(buildURL(snippet, 'activate')),
+			axiosInstance.post<Snippet, AxiosResponse<Snippet>, never>(buildURL(snippet, 'activate')),
 
 		deactivate: snippet =>
-			post<Snippet, never>(buildURL(snippet, 'deactivate')),
+			axiosInstance.post<Snippet, AxiosResponse<Snippet>, never>(buildURL(snippet, 'deactivate')),
 
 		export: snippet =>
-			get<ExportSnippets>(buildURL(snippet, 'export')),
+			axiosInstance.get<ExportSnippets>(buildURL(snippet, 'export')),
 
 		exportCode: snippet =>
-			get<string>(buildURL(snippet, 'export-code'))
-	}), [get, post, del])
+			axiosInstance.get<string, AxiosResponse<string>>(buildURL(snippet, 'export-code'))
+	}), [axiosInstance])
 }
 
 export const useSnippets = (): Snippet[] | undefined => {

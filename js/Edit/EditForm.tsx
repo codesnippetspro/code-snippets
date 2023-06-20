@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import classnames from 'classnames'
+import { Notices } from '../types/Notice'
 import { Snippet } from '../types/Snippet'
 import { SnippetActionsInputProps, SnippetInputProps } from '../types/SnippetInputProps'
 import { CodeEditorInstance } from '../types/WordPressCodeEditor'
@@ -13,11 +14,10 @@ import { NameInput } from './fields/NameInput'
 import { PriorityInput } from './fields/PriorityInput'
 import { ScopeInput } from './fields/ScopeInput'
 import { TagsInput } from './fields/TagsInput'
-import { Notices } from './components/Notices'
+import { NoticeList } from './components/NoticeList'
 import { PageHeading } from './components/PageHeading'
 import { SnippetEditor } from './SnippetEditor/SnippetEditor'
 import { SnippetEditorToolbar } from './SnippetEditor/SnippetEditorToolbar'
-import { Notice } from '../types/Notice'
 
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 
@@ -36,20 +36,19 @@ const getFormClassName = ({ active, code_error, id, scope }: Snippet, isReadOnly
 
 export const EditForm: React.FC = () => {
 	const [snippet, setSnippet] = useState<Snippet>(() => OPTIONS?.snippet ?? createEmptySnippet())
+	const [notices, setNotices] = useState<Notices>([])
 	const [isWorking, setIsWorking] = useState(false)
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
-	const [currentNotice, setCurrentNotice] = useState<Notice>()
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
 
 	const isReadOnly = useMemo(() => !isLicensed() && isProSnippet(snippet.scope), [snippet.scope])
 	const inputProps: SnippetInputProps = { snippet, setSnippet, isReadOnly }
-	const actionProps: SnippetActionsInputProps = { ...inputProps, isWorking, setIsWorking, setCurrentNotice }
+	const actionProps: SnippetActionsInputProps = { ...inputProps, isWorking, setNotices, setIsWorking }
 
 	return (
 		<div className="wrap">
 			<PageHeading {...inputProps} codeEditorInstance={codeEditorInstance} />
-
-			<Notices notice={currentNotice} setNotice={setCurrentNotice} {...inputProps} />
+			<NoticeList notices={notices} setNotices={setNotices} {...inputProps} />
 
 			<div id="snippet-form" className={getFormClassName(snippet, isReadOnly)}>
 				<NameInput {...inputProps} />

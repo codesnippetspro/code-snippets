@@ -8,6 +8,9 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_API; 
+
+
 /**
  * Loaded from the Manage_Menu class.
  *
@@ -64,6 +67,9 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 			'html' => __( 'content snippets', 'code-snippets' ),
 			'css'  => __( 'style snippets', 'code-snippets' ),
 			'js'   => __( 'javascript snippets', 'code-snippets' ),
+			'cloud' => __( 'cloud snippets', 'code-snippets' ),
+			'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
+			'bundles' => __( 'Bundles', 'code-snippets' ),
 		];
 
 		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
@@ -82,24 +88,16 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 	<?php
 	do_action( 'code_snippets/admin/manage/before_list_table' );
 	$this->list_table->views();
-	?>
 
-	<form method="get" action="">
-		<?php
-		$this->list_table->required_form_fields( 'search_box' );
-		$this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
-		?>
-	</form>
+	switch ($current_type) {
+		case 'cloud_search':
+			include_once( 'partials/cloud-search.php' );
+			break;
+			
+		default:
+			include_once( 'partials/list-table.php' );
+			break;
+	}
 
-	<form method="post" action="">
-		<input type="hidden" id="code_snippets_ajax_nonce"
-		       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
-
-		<?php
-		$this->list_table->required_form_fields();
-		$this->list_table->display();
-		?>
-	</form>
-
-	<?php do_action( 'code_snippets/admin/manage' ); ?>
+	do_action( 'code_snippets/admin/manage' ); ?>
 </div>
