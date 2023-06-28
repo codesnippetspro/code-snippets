@@ -9,6 +9,8 @@ namespace Code_Snippets;
 
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use ParseError;
+use function Code_Snippets\Settings\get_self_option;
+use function Code_Snippets\Settings\update_self_option;
 
 /**
  * Clean the cache where active snippets are stored.
@@ -47,25 +49,24 @@ function clean_snippets_cache( string $table_name ) {
  * Retrieve a list of snippets from the database.
  * Read operation.
  *
- * @param array<string>    $ids       The IDs of the snippets to fetch.
- * @param bool|null|string $multisite Retrieve multisite-wide snippets (true) or site-wide snippets (false).
+ * @param array<string> $ids     The IDs of the snippets to fetch.
+ * @param bool|null     $network Retrieve multisite-wide snippets (true) or site-wide snippets (false).
  *
  * @return array<Snippet> List of Snippet objects.
  *
  * @since 2.0
  */
-function get_snippets( array $ids = array(), $multisite = null ): array {
+function get_snippets( array $ids = array(), bool $network = null ): array {
 	global $wpdb;
 
 	// If only one ID has been passed in, defer to the get_snippet() function.
 	$ids_count = count( $ids );
 	if ( 1 === $ids_count ) {
-		return array( get_snippet( $ids[0], $multisite ) );
+		return array( get_snippet( $ids[0], $network ) );
 	}
 
-	$db = code_snippets()->db;
-	$table_name = $db->get_table_name( $multisite );
-	$multisite = $db->ms_table === $table_name;
+	$network = DB::validate_network_param( $network );
+	$table_name = code_snippets()->db->get_table_name( $network );
 
 	$snippets = wp_cache_get( "all_snippets_$table_name", CACHE_GROUP );
 
@@ -75,15 +76,15 @@ function get_snippets( array $ids = array(), $multisite = null ): array {
 
 		$snippets = $results ?
 			array_map(
-				function ( $snippet_data ) use ( $multisite ) {
-					$snippet_data['network'] = $multisite;
+				function ( $snippet_data ) use ( $network ) {
+					$snippet_data['network'] = $network;
 					return new Snippet( $snippet_data );
 				},
 				$results
 			) :
 			array();
 
-		$snippets = apply_filters( 'code_snippets/get_snippets', $snippets, $multisite );
+		$snippets = apply_filters( 'code_snippets/get_snippets', $snippets, $network );
 
 		if ( 0 === $ids_count ) {
 			wp_cache_set( "all_snippets_$table_name", $snippets, CACHE_GROUP );
@@ -112,7 +113,7 @@ function get_snippets( array $ids = array(), $multisite = null ): array {
  */
 function get_all_snippet_tags() {
 	global $wpdb;
-	$table_name = code_snippets()->db->get_table_name();
+	$table_name = code_snippets()->db->get_table_name( null );
 	$cache_key = "all_snippet_tags_$table_name";
 
 	$tags = wp_cache_get( $cache_key, CACHE_GROUP );
@@ -168,20 +169,19 @@ function code_snippets_build_tags_array( $tags ): array {
  * Will return empty snippet object if no snippet ID is specified.
  * Read operation.
  *
- * @param integer             $id        The ID of the snippet to retrieve. 0 to build a new snippet.
- * @param boolean|string|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
+ * @param int       $id      The ID of the snippet to retrieve. 0 to build a new snippet.
+ * @param bool|null $network Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
  *
  * @return Snippet A single snippet object.
+ *
  * @since 2.0.0
  */
-function get_snippet( int $id = 0, $multisite = null ): Snippet {
+function get_snippet( int $id = 0, bool $network = null ): Snippet {
 	global $wpdb;
 
 	$id = absint( $id );
-
-	$db = code_snippets()->db;
-	$table_name = $db->get_table_name( $multisite );
-	$multisite = $db->ms_table === $multisite;
+	$network = DB::validate_network_param( $network );
+	$table_name = code_snippets()->db->get_table_name( $network );
 
 	if ( 0 === $id ) {
 		// If an invalid ID is provided, then return an empty snippet object.
@@ -194,7 +194,7 @@ function get_snippet( int $id = 0, $multisite = null ): Snippet {
 		if ( is_array( $cached_snippets ) ) {
 			foreach ( $cached_snippets as $snippet ) {
 				if ( $snippet->id === $id ) {
-					return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
+					return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $network );
 				}
 			}
 		}
@@ -204,8 +204,8 @@ function get_snippet( int $id = 0, $multisite = null ): Snippet {
 		$snippet = new Snippet( $snippet_data );
 	}
 
-	$snippet->network = $multisite;
-	return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $multisite );
+	$snippet->network = $network;
+	return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $network );
 }
 
 /**
@@ -275,19 +275,20 @@ function update_shared_network_snippets( array $snippets ): bool {
  * Activates a snippet.
  * Write operation.
  *
- * @param integer      $id        ID of the snippet to activate.
- * @param boolean|null $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
+ * @param int       $id      ID of the snippet to activate.
+ * @param bool|null $network Whether the snippets are multisite-wide (true) or site-wide (false).
  *
  * @return Snippet|string Snippet object on success, error message on failure.
  * @since 2.0.0
  */
-function activate_snippet( int $id, bool $multisite = null ) {
+function activate_snippet( int $id, bool $network = null ) {
 	global $wpdb;
-	$db = code_snippets()->db;
-	$table_name = $db->get_table_name( $multisite );
+	$network = DB::validate_network_param( $network );
+	$table_name = code_snippets()->db->get_table_name( $network );
 
 	// Retrieve the snippet code from the database for validation before activating.
-	$snippet = get_snippet( $id, $multisite );
+	$snippet = get_snippet( $id, $network );
+
 	if ( 0 === $snippet->id ) {
 		// translators: %d: snippet identifier.
 		return sprintf( __( 'Could not locate snippet with ID %d.', 'code-snippets' ), $id );
@@ -320,18 +321,19 @@ function activate_snippet( int $id, bool $multisite = null ) {
  * Activates multiple snippets.
  * Write operation.
  *
- * @param array<integer> $ids       The IDs of the snippets to activate.
- * @param boolean|null   $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
+ * @param array<integer> $ids     The IDs of the snippets to activate.
+ * @param bool|null      $network Whether the snippets are multisite-wide (true) or site-wide (false).
  *
  * @return Snippet[]|null Snippets which were successfully activated, or null on failure.
  *
  * @since 2.0.0
  */
-function activate_snippets( array $ids, bool $multisite = null ) {
+function activate_snippets( array $ids, bool $network = null ) {
 	global $wpdb;
-	$db = code_snippets()->db;
-	$table_name = $db->get_table_name( $multisite );
-	$snippets = get_snippets( $ids, $multisite );
+	$network = DB::validate_network_param( $network );
+	$table_name = code_snippets()->db->get_table_name( $network );
+
+	$snippets = get_snippets( $ids, $network );
 
 	if ( ! $snippets ) {
 		return null;
@@ -376,17 +378,17 @@ function activate_snippets( array $ids, bool $multisite = null ) {
  * Deactivate a snippet.
  * Write operation.
  *
- * @param int       $id        ID of the snippet to deactivate.
- * @param bool|null $multisite Whether the snippets are multisite-wide (true) or site-wide (false).
+ * @param int       $id      ID of the snippet to deactivate.
+ * @param bool|null $network Whether the snippets are multisite-wide (true) or site-wide (false).
  *
  * @return Snippet|null Snippet that was deactivated on success, or null on failure.
  *
  * @since 2.0.0
  */
-function deactivate_snippet( int $id, bool $multisite = null ) {
+function deactivate_snippet( int $id, bool $network = null ) {
 	global $wpdb;
-	$db = code_snippets()->db;
-	$table = $db->get_table_name( $multisite );
+	$network = DB::validate_network_param( $network );
+	$table = code_snippets()->db->get_table_name( $network );
 
 	// Set the snippet to active.
 	$result = $wpdb->update(
@@ -403,23 +405,13 @@ function deactivate_snippet( int $id, bool $multisite = null ) {
 
 	// Update the recently active list.
 	$snippet = get_snippet( $id );
-	$recently_active = array( $id => time() );
-
-	if ( $table === $db->table ) {
-		update_option(
-			'recently_activated_snippets',
-			$recently_active + (array) get_option( 'recently_activated_snippets', array() )
-		);
-	} elseif ( $table === $db->ms_table ) {
-		update_site_option(
-			'recently_activated_snippets',
-			$recently_active + (array) get_site_option( 'recently_activated_snippets', array() )
-		);
-	}
+	$recently_active = [ $id => time() ] + get_self_option( $network, 'recently_activated_snippets', [] );
+	update_self_option( $network, 'recently_activated_snippets', $recently_active );
 
 	update_shared_network_snippets( [ $snippet ] );
-	do_action( 'code_snippets/deactivate_snippet', $id, $multisite );
+	do_action( 'code_snippets/deactivate_snippet', $id, $network );
 	clean_snippets_cache( $table );
+
 	return $snippet;
 }
 
@@ -427,18 +419,19 @@ function deactivate_snippet( int $id, bool $multisite = null ) {
  * Deletes a snippet from the database.
  * Write operation.
  *
- * @param integer      $id        ID of the snippet to delete.
- * @param boolean|null $multisite Delete from network-wide (true) or site-wide (false) table.
+ * @param int       $id      ID of the snippet to delete.
+ * @param bool|null $network Delete from network-wide (true) or site-wide (false) table.
  *
- * @return boolean Whether the operation completed successfully.
+ * @return bool Whether the operation completed successfully.
  *
  * @return bool Whether the snippet was deleted successfully.
  *
  * @since 2.0.0
  */
-function delete_snippet( int $id, bool $multisite = null ): bool {
+function delete_snippet( int $id, bool $network = null ): bool {
 	global $wpdb;
-	$table = code_snippets()->db->get_table_name( $multisite );
+	$network = DB::validate_network_param( $network );
+	$table = code_snippets()->db->get_table_name( $network );
 
 	$result = $wpdb->delete(
 		$table,
@@ -447,7 +440,7 @@ function delete_snippet( int $id, bool $multisite = null ): bool {
 	); // db call ok.
 
 	if ( $result ) {
-		do_action( 'code_snippets/delete_snippet', $id, $multisite );
+		do_action( 'code_snippets/delete_snippet', $id, $network );
 		clean_snippets_cache( $table );
 	}
 
@@ -605,7 +598,7 @@ function execute_active_snippets(): bool {
 
 	// Bail early if safe mode is active.
 	if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ||
-	     ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
+		! apply_filters( 'code_snippets/execute_snippets', true ) ) {
 		return false;
 	}
 
@@ -615,17 +608,20 @@ function execute_active_snippets(): bool {
 
 	// Detect if a snippet is currently being edited, and if so, spare it from execution.
 	$edit_id = 0;
-	$edit_table = '';
+	$edit_table = $db->table;
 
 	if ( wp_is_json_request() && ! empty( $_SERVER['REQUEST_URI'] ) ) {
 		$url = wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
 
-		if ( false !== strpos( $url['path'], Snippets_REST_Controller::get_prefixed_base_route() ) ) {
+		if ( isset( $url['path'] ) && false !== strpos( $url['path'], Snippets_REST_Controller::get_prefixed_base_route() ) ) {
 			$path_parts = explode( '/', $url['path'] );
-			wp_parse_str( $url['query'], $path_params );
 			$edit_id = intval( end( $path_parts ) );
-			$edit_table = isset( $path_params['network'] ) && rest_sanitize_boolean( $path_params['network'] ) ?
-				$db->ms_table : $db->table;
+
+			if ( ! empty( $url['query'] ) ) {
+				wp_parse_str( $url['query'], $path_params );
+				$edit_table = isset( $path_params['network'] ) && rest_sanitize_boolean( $path_params['network'] ) ?
+					$db->ms_table : $db->table;
+			}
 		}
 	}
 
@@ -658,7 +654,7 @@ function execute_active_snippets(): bool {
 			}
 
 			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
-			     ! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
+				! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
 				execute_snippet( $code, $snippet_id );
 			}
 		}

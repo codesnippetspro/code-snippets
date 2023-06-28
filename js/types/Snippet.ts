@@ -11,6 +11,7 @@ export interface Snippet {
 	shared_network?: boolean | null
 	modified?: string
 	code_error?: [string, number] | null
+	encoded?: boolean
 }
 
 export const SNIPPET_SCOPES = <const> [
