@@ -314,6 +314,8 @@ function activate_snippet( int $id, bool $network = null ) {
 	update_shared_network_snippets( [ $snippet ] );
 	do_action( 'code_snippets/activate_snippet', $snippet );
 	clean_snippets_cache( $table_name );
+	code_snippets()->active_snippets->increment_snippet_rev( $snippet );
+
 	return $snippet;
 }
 
@@ -371,6 +373,8 @@ function activate_snippets( array $ids, bool $network = null ) {
 	update_shared_network_snippets( $valid_snippets );
 	do_action( 'code_snippets/activate_snippets', $valid_snippets, $table_name );
 	clean_snippets_cache( $table_name );
+	code_snippets()->active_snippets->increment_snippets_rev( $network );
+
 	return $valid_ids;
 }
 
@@ -411,6 +415,7 @@ function deactivate_snippet( int $id, bool $network = null ) {
 	update_shared_network_snippets( [ $snippet ] );
 	do_action( 'code_snippets/deactivate_snippet', $id, $network );
 	clean_snippets_cache( $table );
+	code_snippets()->active_snippets->increment_snippets_rev( $network );
 
 	return $snippet;
 }
@@ -421,8 +426,6 @@ function deactivate_snippet( int $id, bool $network = null ) {
  *
  * @param int       $id      ID of the snippet to delete.
  * @param bool|null $network Delete from network-wide (true) or site-wide (false) table.
- *
- * @return bool Whether the operation completed successfully.
  *
  * @return bool Whether the snippet was deleted successfully.
  *
@@ -442,6 +445,7 @@ function delete_snippet( int $id, bool $network = null ): bool {
 	if ( $result ) {
 		do_action( 'code_snippets/delete_snippet', $id, $network );
 		clean_snippets_cache( $table );
+		code_snippets()->active_snippets->increment_rev( 'all', $network );
 	}
 
 	return (bool) $result;
@@ -549,6 +553,8 @@ function save_snippet( $snippet ) {
 
 	update_shared_network_snippets( [ $snippet ] );
 	clean_snippets_cache( $table );
+	code_snippets()->active_snippets->increment_snippet_rev( $snippet );
+
 	return $snippet;
 }
 
@@ -598,7 +604,7 @@ function execute_active_snippets(): bool {
 
 	// Bail early if safe mode is active.
 	if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ||
-		! apply_filters( 'code_snippets/execute_snippets', true ) ) {
+	     ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
 		return false;
 	}
 
@@ -654,7 +660,7 @@ function execute_active_snippets(): bool {
 			}
 
 			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
-				! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
+			     ! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
 				execute_snippet( $code, $snippet_id );
 			}
 		}
