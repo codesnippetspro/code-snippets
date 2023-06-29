@@ -13,7 +13,7 @@ const getRestUrl = (endpoint: string): string =>
 
 const GET_CACHE: Record<string, AxiosResponse> = {}
 
-export const apiGet = <T>(endpoint: string, refresh = false): Promise<AxiosResponse<T>> =>
+export const getCached = <T>(endpoint: string, refresh = false): Promise<AxiosResponse<T>> =>
 	!refresh && GET_CACHE[endpoint] ?
 		Promise.resolve(GET_CACHE[endpoint]) :
 		axios.get<T>(getRestUrl(endpoint))
