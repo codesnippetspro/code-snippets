@@ -33,18 +33,6 @@ declare module 'postcss-hexrgba' {
 	export default function (): Plugin
 }
 
-declare module 'gulp-eslint' {
-	import { Transform } from 'stream'
-	export default gulpEslint
-
-	const gulpEslint: {
-		(): Transform
-		format(formatter?: string, output?: WritableStream): Transform
-		formatEach(formatter?: string, output?: WritableStream): Transform
-		failAfterError(): Transform
-	}
-}
-
 declare module 'gulp-phpcs' {
 	import { Transform } from 'stream'
 	const phpcs: {
