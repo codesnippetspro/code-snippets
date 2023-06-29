@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.4.1 (unreleased)
+## 3.4.1 (29 Jun 2023)
 * Fixed: Undefined array key error. [[#](https://wordpress.org/support/topic/after-updating-occasionally-getting-undefined-array-key-query/)]
 * Fixed: Potential type issue when loading Prism. [[#](https://wordpress.org/support/topic/code-snippets-fatal-error-breaking-xml-sitemaps/)]
 * Improved: Added better debugging when calling REST API methods from the edit menu.
