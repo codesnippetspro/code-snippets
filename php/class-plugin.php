@@ -2,7 +2,7 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_API;
+use Code_Snippets\Cloud\Cloud_API; 
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use Code_Snippets\REST_API\Cloud_REST_Controller;
 
@@ -353,6 +353,7 @@ class Plugin {
 			'js'    => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
 			'cloud' => __( 'See all your public and private snippets that are stored in your Code Snippet Cloud Codevault.', 'code-snippets' ),
 			'cloud_search' => __( 'Explore and Search user contributed code snippets from Code Snippet Cloud.', 'code-snippets' ),
+			'bundles' => __( 'Bundles are collections of snippets that can be downloaded from the cloud as a batch.', 'code-snippets' ),
 		);
 
 		$descriptions = apply_filters( 'code_snippets/plugins/type_descriptions', $descriptions );

@@ -45,9 +45,9 @@ class Active_Snippets {
 				exit;
 			}
 
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
+			//add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
+			//add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
 		}
 	}
 
@@ -106,11 +106,11 @@ class Active_Snippets {
 	public function get_rev( $scope ) {
 		$rev = 0;
 		$scope_snippets = $this->fetch_active_snippets( $scope );
-
+		
 		if ( empty( $scope_snippets ) ) {
 			return false;
 		}
-
+		
 		$revisions = get_option( 'code_snippets_assets_rev' );
 		$rev += isset( $revisions[ $scope ] ) ? intval( $revisions[ $scope ] ) : 0;
 
@@ -163,7 +163,7 @@ class Active_Snippets {
 			return;
 		}
 
-		$url = $this->get_asset_url( "$scope-css" );
+		$url = $this->get_asset_url( "$scope-css" );		
 		wp_enqueue_style( "code-snippets-$scope-styles", $url, array(), $rev );
 	}
 
