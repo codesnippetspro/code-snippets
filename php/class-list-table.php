@@ -1078,17 +1078,17 @@ class List_Table extends WP_List_Table {
 	private function get_sort_direction( $a_data, $b_data ) {
 
 		// If the data is numeric, then calculate the ordering directly.
-		if ( is_numeric( $a_data ) ) {
+		if ( is_numeric( $a_data ) && is_numeric( $b_data ) ) {
 			return $a_data - $b_data;
 		}
 
 		// If only one of the data points is empty, then place it before the one which is not.
-		if ( '' === $a_data xor '' === $b_data ) {
-			return '' === $a_data ? 1 : -1;
+		if ( empty( $a_data ) xor empty( $b_data ) ) {
+			return empty( $a_data ) ? 1 : -1;
 		}
 
 		// Sort using the default string sort order if possible.
-		if ( is_string( $a_data ) ) {
+		if ( is_string( $a_data ) && is_string( $b_data ) ) {
 			return strcasecmp( $a_data, $b_data );
 		}
 
