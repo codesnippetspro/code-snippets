@@ -1,0 +1,17 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🚀 Feature Request
+    url: https://roadmap.codesnippets.pro/ideas
+    about: Suggest new ideas, features, or enhancements
+  - name: ❓ Support Question
+    url: https://help.codesnippets.pro/
+    about: For Code Snippets users who need assistant and have general usage questions.
+  - name: 💎 Premium Support - For customer only
+    url: https://help.codesnippets.pro/
+    about: If you have an active license you are entitled to premium support.
+  - name: 🗨️ Code Snippets Global Community
+    url: https://www.facebook.com/groups/codesnippetsplugin
+    about: The main Facebook group where all kinds of users come together to help each other.
+  - name: 📚 Code Snippets Documentation
+    url: https://help.codesnippets.pro/
+    about: Anything you need to know about Code Snippets and what to do if you may have an issue.

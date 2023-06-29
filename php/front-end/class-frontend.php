@@ -189,11 +189,11 @@ class Frontend {
 	/**
 	 * Enqueue the syntax highlighting assets if they are required for the current posts
 	 *
-	 * @param array<WP_Post> $posts List of currently visible posts.
+	 * @param array<WP_Post|int>|null|false $posts List of currently visible posts.
 	 *
-	 * @return array<WP_Post> Unchanged list of posts.
+	 * @return array<WP_Post|int> Unchanged list of posts.
 	 */
-	public function enqueue_highlighting( array $posts ): array {
+	public function enqueue_highlighting( $posts ): array {
 
 		// Exit early if there are no posts to check or if the highlighter has been disabled.
 		if ( empty( $posts ) || Settings\get_setting( 'general', 'disable_prism' ) ) {

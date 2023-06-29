@@ -1,3 +1,1 @@
-export type NoticeType = 'updated' | 'error'
-
-export type Notices = [NoticeType, string][]
+export type Notice = ['error' | 'updated', string]

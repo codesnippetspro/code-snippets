@@ -2,15 +2,15 @@ import { __ } from '@wordpress/i18n'
 import { AxiosError, AxiosResponse } from 'axios'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { ExportSnippets } from '../types/ExportSnippets'
-import { Notices } from '../types/Notice'
 import { Snippet } from '../types/Snippet'
 import { useSnippetsAPI } from '../utils/api/snippets'
 import { downloadSnippetExportFile } from '../utils/general'
+import { Notice } from '../types/Notice'
 
 export interface SnippetActionsProps {
 	setSnippet: Dispatch<SetStateAction<Snippet>>
 	setIsWorking: Dispatch<SetStateAction<boolean>>
-	setNotices: Dispatch<SetStateAction<Notices>>
+	setCurrentNotice: Dispatch<SetStateAction<Notice | undefined>>
 }
 
 export interface SnippetActionsValue {
@@ -22,17 +22,18 @@ export interface SnippetActionsValue {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: SnippetActionsProps): SnippetActionsValue => {
+export const useSnippetActions = ({
+	setSnippet,
+	setIsWorking,
+	setCurrentNotice
+}: SnippetActionsProps): SnippetActionsValue => {
 	const api = useSnippetsAPI()
 
 	const displayRequestErrors = useCallback((error: AxiosError, message?: string) => {
 		console.error('Request failed', error)
 		setIsWorking(false)
-		setNotices(notices => [
-			...notices,
-			['error', message ? `${message} ${error.message}` : error.message]
-		])
-	}, [setIsWorking, setNotices])
+		setCurrentNotice(['error', message ? `${message} ${error.message}` : error.message])
+	}, [setIsWorking, setCurrentNotice])
 
 	const doSnippetRequest = useCallback((
 		createRequest: () => Promise<AxiosResponse<Snippet>>,
@@ -41,6 +42,7 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 		errorNotice: string = __('Something went wrong.', 'code-snippets')
 	) => {
 		setIsWorking(true)
+		setCurrentNotice(undefined)
 
 		createRequest()
 			.then(({ data }) => {
@@ -48,14 +50,13 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 
 				if (data.id) {
 					setSnippet({ ...data })
-					setNotices(notices => [...notices, ['updated', getNotice(data)]])
+					setCurrentNotice(['updated', getNotice(data)])
 				} else {
-					const errorMessage = `${errorNotice} ${__('The server did not send a valid response.', 'code-snippets')}`
-					setNotices(notices => [...notices, ['error', errorMessage]])
+					setCurrentNotice(['error', `${errorNotice} ${__('The server did not send a valid response.', 'code-snippets')}`])
 				}
 			})
 			.catch(error => displayRequestErrors(error, errorNotice))
-	}, [displayRequestErrors, setIsWorking, setNotices, setSnippet])
+	}, [displayRequestErrors, setIsWorking, setSnippet, setCurrentNotice])
 
 	const doFileRequest = useCallback((snippet: Snippet, createRequest: () => Promise<AxiosResponse<string | ExportSnippets>>) => {
 		setIsWorking(true)
@@ -122,9 +123,7 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 
 		delete: (snippet: Snippet) => {
 			api.delete(snippet)
-				.then(() => setNotices(notices => [
-					...notices, ['updated', __('Snippet deleted.', 'code-snippets')]
-				]))
+				.then(() => setCurrentNotice(['updated', __('Snippet deleted.', 'code-snippets')]))
 				.catch(error => displayRequestErrors(error, __('Could not delete snippet.', 'code-snippets')))
 		},
 
@@ -134,5 +133,5 @@ export const useSnippetActions = ({ setSnippet, setNotices, setIsWorking }: Snip
 		exportCode: (snippet: Snippet) =>
 			doFileRequest(snippet, () => api.exportCode(snippet))
 
-	}), [api, displayRequestErrors, doFileRequest, setNotices, submitSnippet])
+	}), [api, displayRequestErrors, doFileRequest, setCurrentNotice, submitSnippet])
 }

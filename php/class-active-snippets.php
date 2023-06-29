@@ -69,12 +69,36 @@ class Active_Snippets {
 	}
 
 	/**
+	 * Increment the asset revision for a specified snippet.
+	 *
+	 * @param Snippet $snippet Recently updated snippet.
+	 *
+	 * @return void
+	 */
+	public function increment_snippet_rev( Snippet $snippet ) {
+		if ( 'css' === $snippet->type || 'js' === $snippet->type ) {
+			$this->increment_rev( $snippet->scope, $snippet->network && ! $snippet->shared_network );
+		}
+	}
+
+	/**
+	 * Increment the asset revision for multiple specified snippet.
+	 *
+	 * @param bool $network Whether to increase for the whole network or the current site.
+	 *
+	 * @return void
+	 */
+	public function increment_snippets_rev( bool $network ) {
+		$this->increment_rev( 'all', $network );
+	}
+
+	/**
 	 * Increment the asset revision for a specified scope
 	 *
 	 * @param string $scope   Name of snippet scope.
 	 * @param bool   $network Whether to increase for the whole network or the current site.
 	 */
-	public function increment_rev( $scope, $network ) {
+	public function increment_rev( string $scope, bool $network ) {
 		if ( $network && ! is_multisite() ) {
 			return;
 		}
@@ -103,7 +127,7 @@ class Active_Snippets {
 	 *
 	 * @return int Current asset revision number.
 	 */
-	public function get_rev( $scope ) {
+	public function get_rev( string $scope ) {
 		$rev = 0;
 		$scope_snippets = $this->fetch_active_snippets( $scope );
 

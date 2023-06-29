@@ -726,12 +726,6 @@ class List_Table extends WP_List_Table {
 	 * @return bool|string Result of performing action
 	 */
 	private function perform_action( int $id, string $action, string $scope = '' ) {
-
-		if ( in_array( $action, array( 'activate', 'deactivate', 'activate-shared', 'deactivate-shared', 'delete' ), true ) &&
-		     ( '-js' === substr( $scope, -3 ) || '-css' === substr( $scope, -4 ) ) ) {
-			code_snippets()->active_snippets->increment_rev( $scope, $this->is_network );
-		}
-
 		switch ( $action ) {
 
 			case 'activate':
@@ -909,12 +903,6 @@ class List_Table extends WP_List_Table {
 		}
 
 		if ( isset( $result ) ) {
-
-			// We have no way of knowing whether CSS/JS snippets were modified or not, so always increment the asset revisions.
-			if ( in_array( $result, array( 'activated-multi', 'deactivated-multi', 'deleted-multi' ), true ) ) {
-				code_snippets()->active_snippets->increment_rev( 'all', $this->is_network );
-			}
-
 			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
 			exit;
 		}
@@ -1148,17 +1136,17 @@ class List_Table extends WP_List_Table {
 	private function get_sort_direction( $a_data, $b_data ) {
 
 		// If the data is numeric, then calculate the ordering directly.
-		if ( is_numeric( $a_data ) ) {
+		if ( is_numeric( $a_data ) && is_numeric( $b_data ) ) {
 			return $a_data - $b_data;
 		}
 
 		// If only one of the data points is empty, then place it before the one which is not.
-		if ( '' === $a_data xor '' === $b_data ) {
-			return '' === $a_data ? 1 : -1;
+		if ( empty( $a_data ) xor empty( $b_data ) ) {
+			return empty( $a_data ) ? 1 : -1;
 		}
 
 		// Sort using the default string sort order if possible.
-		if ( is_string( $a_data ) ) {
+		if ( is_string( $a_data ) && is_string( $b_data ) ) {
 			return strcasecmp( $a_data, $b_data );
 		}
 

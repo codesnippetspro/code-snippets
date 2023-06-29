@@ -1,11 +1,11 @@
 === Code Snippets ===
-Contributors: bungeshea, ver3, lightbulbman, codesnippetspro
+Contributors: bungeshea, ver3, lightbulbman, 0aksmith, codesnippetspro
 Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.4.0
-Tested up to: 6.2.1
+Stable tag: 3.4.1
+Tested up to: 6.2.2
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -127,6 +127,15 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.4.1 (29 Jun 2023) =
+* Fixed: Undefined array key error. [[#](https://wordpress.org/support/topic/after-updating-occasionally-getting-undefined-array-key-query/)]
+* Fixed: Potential type issue when loading Prism. [[#](https://wordpress.org/support/topic/code-snippets-fatal-error-breaking-xml-sitemaps/)]
+* Improved: Added better debugging when calling REST API methods from the edit menu.
+* Improved: Escape special characters when sending snippet code through AJAX to avoid false-positives from security modules. [[#](https://wordpress.org/support/topic/latest-3-4-0-ajax-bug-cannot-save-snippets-403-error/)]
+* Improved: Only display the latest update or error notice on the edit page, instead of allowing them to stack.
+* Fixed: Potential type issue when sorting snippets. [[#](https://github.com/codesnippetspro/code-snippets/issues/166)]
+* Fixed: Issue preventing asset revision numbers from updating correctly. (PRO) [[#](https://github.com/codesnippetspro/code-snippets/issues/166)]
 
 = 3.4.0 (17 May 2023) =
 * Added: Proper WordPress REST API support for retrieving and modifying snippets.

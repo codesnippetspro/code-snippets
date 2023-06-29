@@ -60,22 +60,22 @@ class DB {
 	}
 
 	/**
-	 * Validate the multisite parameter of the get_table_name() function.
+	 * Validate a provided 'network' or 'multisite' param, converting it to a boolean.
 	 *
-	 * @param boolean|null $network Value of multisite parameter: `true` for multisite, `false` for single-site.
+	 * @param bool|null|mixed $network Network argument value.
 	 *
-	 * @return boolean Validated value of multisite parameter.
+	 * @return bool Sanitized value.
 	 */
-	public static function validate_network_param( $network ) {
+	public static function validate_network_param( $network = null ): bool {
 
-		// If multisite is not active, then the parameter should always be false.
+		// If multisite is not active, then assume the value is false.
 		if ( ! is_multisite() ) {
 			return false;
 		}
 
 		// If $multisite is null, try to base it on the current admin page.
 		if ( is_null( $network ) && function_exists( 'is_network_admin' ) ) {
-			$network = is_network_admin();
+			return is_network_admin();
 		}
 
 		return (bool) $network;
@@ -84,30 +84,14 @@ class DB {
 	/**
 	 * Return the appropriate snippet table name
 	 *
-	 * @param string|bool|null $multisite Whether retrieve the multisite table name (true) or the site table name (false).
+	 * @param bool|null|mixed $is_network Whether retrieve the multisite table name (true) or the site table name (false).
 	 *
 	 * @return string The snippet table name
 	 * @since 2.0
 	 */
-	public function get_table_name( $multisite = null ): string {
-
-		// If the first parameter is a string, assume it is a table name.
-		if ( is_string( $multisite ) ) {
-			return $multisite;
-		}
-
-		// If multisite is not active, then always use the local table.
-		if ( ! is_multisite() ) {
-			return $this->table;
-		}
-
-		// If $multisite is null, try to base it on the current admin page.
-		if ( is_null( $multisite ) && function_exists( 'is_network_admin' ) ) {
-			$multisite = is_network_admin();
-		}
-
-		// Return the correct table name depending on the value of $multisite.
-		return $multisite ? $this->ms_table : $this->table;
+	public function get_table_name( $is_network ): string {
+		$is_network = is_bool( $is_network ) ? $is_network : self::validate_network_param( $is_network );
+		return $is_network ? $this->ms_table : $this->table;
 	}
 
 	/**
