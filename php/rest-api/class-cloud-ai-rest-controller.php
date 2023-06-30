@@ -19,7 +19,7 @@ use function Code_Snippets\Settings\get_setting;
  * @since   3.4.0
  * @package Code_Snippets
  */
-class CloudAI_REST_Controller extends WP_REST_Controller {
+class CloudAI_REST_Controller extends Snippets_REST_Controller {
 	
 	/**
 	 * Locally  Token
@@ -27,6 +27,8 @@ class CloudAI_REST_Controller extends WP_REST_Controller {
 	 * @var string
 	 */
 	private $local_token;
+	private $fs_plugin_data;
+	private $freemius_licence;
 
 	/**
 	 * Class constructor.
@@ -35,6 +37,11 @@ class CloudAI_REST_Controller extends WP_REST_Controller {
 	 */
 	public function __construct() {
 		$this->local_token = get_setting( 'cloud', 'local_token' );
+		$fs_account_data = get_option('fs_accounts');
+		
+		// TODO: check if fs_account_data is not empty before accessing named properties
+		$this->fs_plugin_data = $fs_account_data['plugins']['code-snippets'];
+		$this->freemius_licence = $fs_account_data['all_licenses'][$this->fs_plugin_data->id][0]->secret_key;
 	}
 
 
@@ -42,16 +49,16 @@ class CloudAI_REST_Controller extends WP_REST_Controller {
 	 * Register REST routes.
 	 */
 	public function register_routes() {
-        $route = '/' . $this->rest_base;
+        $route_base = '/cloudai';
 
         register_rest_route(
 			$this->namespace,
-			$route . '/prompt',
+			$route_base . '/prompt',
 			[
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'cloud_ai_prompt' ],
-					// 'permission_callback' => [ $this, 'cloud_api_check' ],
+					'permission_callback' => [ $this, 'cloud_api_check' ],
 					'args'                => $this->get_endpoint_args_for_item_schema( true ),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
@@ -60,12 +67,12 @@ class CloudAI_REST_Controller extends WP_REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
-			$route . '/explain',
+			$route_base . '/explain',
 			[
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'cloud_ai_explain' ],
-					// 'permission_callback' => [ $this, 'cloud_api_check' ],
+					'permission_callback' => [ $this, 'cloud_api_check' ],
 					'args'                => $this->get_endpoint_args_for_item_schema( true ),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
@@ -74,15 +81,16 @@ class CloudAI_REST_Controller extends WP_REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
-			$route . '/check',
+			$route_base . '/check',
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'cloud_ai_check' ],
 					// 'permission_callback' => [ $this, 'cloud_api_check' ],
+					// 'permission_callback' => '__return_true',
 					'args'                => $this->get_endpoint_args_for_item_schema( true ),
 				],
-				'schema' => [ $this, 'get_item_schema' ],
+				// 'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
     }
@@ -159,7 +167,11 @@ class CloudAI_REST_Controller extends WP_REST_Controller {
 		//Construct success response
 		$response = [
 			'status'  => 'success',
-			'message' => __( 'Snippet created', 'code-snippets' ),
+			'message' => [
+				'local_token' => $this->local_token,
+				'fs_plugin_data' => $this->fs_plugin_data,
+				'freemius_licence' => $this->freemius_licence,
+			],
 		];
 
 		//Return the response
