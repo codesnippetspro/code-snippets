@@ -203,7 +203,7 @@ class Cloud_API {
 	 *
 	 * @return array<string, mixed>|null Associative array of JSON data on success, null on failure.
 	 */
-	private static function unpack_request_json( $response ) {
+	public static function unpack_request_json( $response ) {
 		$body = wp_remote_retrieve_body( $response );
 		return $body ? json_decode( $body, true ) : null;
 	}
