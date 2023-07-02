@@ -89,7 +89,7 @@ class DB {
 	 * @return string The snippet table name
 	 * @since 2.0
 	 */
-	public function get_table_name( $is_network ): string {
+	public function get_table_name( $is_network = null ): string {
 		$is_network = is_bool( $is_network ) ? $is_network : self::validate_network_param( $is_network );
 		return $is_network ? $this->ms_table : $this->table;
 	}
