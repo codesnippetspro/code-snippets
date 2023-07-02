@@ -6,6 +6,7 @@ use WP_Error;
 use GuzzleHttp\Client as ApiClient;
 use GuzzleHttp\Psr7\Request as ApiRequest;
 use GuzzleHttp\Psr7\Response as ApiResponse;
+use \GuzzleHttp\Psr7\MultipartStream as ApiMultipartStream;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use function Code_Snippets\Settings\get_setting;
@@ -53,23 +54,47 @@ class Cloud_AI extends Cloud_API {
      * @return ResponseInterface
      * @throws GuzzleException
      */
-    private function sendPostRequest($url, $data, $headers = []) {
+    private function sendPostRequest($endpoint, $message) {
         $client = new ApiClient();
-        $headers['Content-Type'] = 'multipart/form-data';
+        
+        $url = self::CLOUD_AI_URL . $endpoint;
+        
+        $headers = [
+            'Authorization' => "Bearer {$this->cloud_key}",
+        ];
 
         $options = [
-            'multipart' => $data
+            'multipart' => [
+                [
+                    'name' => 'prompt',
+                    'contents' => $message
+                ],
+                [
+                    'name' => 'fs_key',
+                    'contents' => $this->freemius_licence
+                ]
+            ]
         ];
         
         $request = new ApiRequest('POST', $url, $headers);
-        $promise = $client->sendAsync($request, $options)->then(function (ApiResponse $response) {
-            return $response->getBody()->getContents();
-        });
+        $response = $client->sendAsync($request, $options)->wait();
+        $response = $response->getBody()->getContents();
+        do_action('inspect', ['Cloud_AI::sendPostRequest', compact('url', 'headers', 'options', 'request', 'response'), __FILE__, __LINE__]);
+
+        // $stream = new ApiMultipartStream($parts);
+
+        // $request = new ApiRequest('POST', $url, $headers);
+        // $request = $request->withHeader('Content-Type', 'multipart/form-data');
+        // $request = $request->withBody($stream);
         
-        $response = $promise->wait();
+        // $promise = $client->sendAsync($request)->then(function (ApiResponse $response) {
+        //     return $response->getBody()->getContents();
+        // });
         
-        do_action( 'inspect', [ 'Cloud_AI::sendPostRequest', \compact('client', 'options', 'headers', 'request', 'promise', 'response'), __FILE__, __LINE__ ] );
-        return $this->unpack_request_json($response);
+        // $ = $promise->wait();
+        
+        // return $this->unpack_request_json($response);
+        return $response;
     }
 
     /**
@@ -80,25 +105,11 @@ class Cloud_AI extends Cloud_API {
      * @throws GuzzleException
      */
     public function prompt($message) {
-        $url = self::CLOUD_AI_URL . self::PROMT_PATH;
-        $data =  [
-            [
-                'name' => 'prompt',
-                'contents' => $message
-            ],
-            [
-                'name' => 'fs_key',
-                'contents' => $this->freemius_licence
-            ]
-        ];
+        $endpoint = self::PROMT_PATH;
 
-        $headers = [
-            'Authorization' => $this->cloud_key,
-        ];
+        do_action( 'inspect', [ 'Cloud_AI::prompt', \compact('endpoint', 'message'), __FILE__, __LINE__ ] );
 
-        do_action( 'inspect', [ 'Cloud_AI::prompt', \compact('url', 'data', 'headers'), __FILE__, __LINE__ ] );
-
-        return $this->sendPostRequest($url, $data, $headers);
+        return $this->sendPostRequest($endpoint, $message);
     }
 
     /**
@@ -109,22 +120,7 @@ class Cloud_AI extends Cloud_API {
      * @throws GuzzleException
      */
     public function explain($message) {
-        $url = self::CLOUD_AI_URL . self::EXPLAIN_PATH;
-        $data =  [
-            [
-                'name' => 'prompt',
-                'contents' => $message
-            ],
-            [
-                'name' => 'fs_key',
-                'contents' => $this->freemius_licence
-            ]
-        ];
-
-        $headers = [
-            'Authorization' => $this->cloud_key,
-        ];
-
-        return $this->sendPostRequest($url, $data, $headers);
+        $endpoint = self::EXPLAIN_PATH;
+        return $this->sendPostRequest($endpoint, $message);
     }
 }
