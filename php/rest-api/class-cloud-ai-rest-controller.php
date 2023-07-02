@@ -6,10 +6,7 @@ use WP_Error;
 use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Response;
-use WP_REST_Controller;
-use Code_Snippets\Snippet;
-use Code_Snippets\Cloud\Cloud_Link;
-use function Code_Snippets\code_snippets;
+use Code_Snippets\Cloud\Cloud_AI;
 use function Code_Snippets\Settings\get_setting;
 
 
@@ -36,7 +33,7 @@ class CloudAI_REST_Controller extends Snippets_REST_Controller {
 	 * @return void
 	 */
 	public function __construct() {
-		$this->local_token = get_setting( 'cloud', 'local_token' );
+		$this->local_token = get_setting( 'cloud', 'cloud_token' );
 		$fs_account_data = get_option('fs_accounts');
 		
 		// TODO: check if fs_account_data is not empty before accessing named properties
@@ -163,7 +160,7 @@ class CloudAI_REST_Controller extends Snippets_REST_Controller {
 	 */
 	public function cloud_ai_check( $request ) {
 		
-		
+		$cloud_ai = new Cloud_AI();
 		//Construct success response
 		$response = [
 			'status'  => 'success',
@@ -171,6 +168,7 @@ class CloudAI_REST_Controller extends Snippets_REST_Controller {
 				'local_token' => $this->local_token,
 				'fs_plugin_data' => $this->fs_plugin_data,
 				'freemius_licence' => $this->freemius_licence,
+				'cloud_ai' => $cloud_ai->prompt('create a snippet that will add a new admin notice to the dashboard with the message "Sup bro! this AI is working"'),
 			],
 		];
 
