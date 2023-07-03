@@ -63,7 +63,7 @@ class Cloud_AI extends Cloud_API {
             'Authorization' => "Bearer {$this->cloud_key}",
         ];
 
-        $options = [
+        $parts = [
             'multipart' => [
                 [
                     'name' => 'prompt',
@@ -77,24 +77,21 @@ class Cloud_AI extends Cloud_API {
         ];
         
         $request = new ApiRequest('POST', $url, $headers);
-        $response = $client->sendAsync($request, $options)->wait();
-        $response = $response->getBody()->getContents();
-        do_action('inspect', ['Cloud_AI::sendPostRequest', compact('url', 'headers', 'options', 'request', 'response'), __FILE__, __LINE__]);
+        $response = $client->sendAsync($request, $parts)->wait();
 
-        // $stream = new ApiMultipartStream($parts);
+        $promise = $client->sendAsync($request, $parts)->then(function (ApiResponse $response) {
+            return $response->getBody()->getContents();
+        });
 
-        // $request = new ApiRequest('POST', $url, $headers);
-        // $request = $request->withHeader('Content-Type', 'multipart/form-data');
-        // $request = $request->withBody($stream);
-        
-        // $promise = $client->sendAsync($request)->then(function (ApiResponse $response) {
-        //     return $response->getBody()->getContents();
-        // });
-        
-        // $ = $promise->wait();
-        
-        // return $this->unpack_request_json($response);
-        return $response;
+        $promise = $promise->wait();
+        $response = json_decode($promise, true);
+
+        if (!isset($response['response'])) {
+            $trace = debug_backtrace();
+            return new WP_Error('cloud_ai_error', 'Cloud AI Response Error', $trace);
+        }
+
+        return $response['response'];
     }
 
     /**
@@ -106,9 +103,6 @@ class Cloud_AI extends Cloud_API {
      */
     public function prompt($message) {
         $endpoint = self::PROMT_PATH;
-
-        do_action( 'inspect', [ 'Cloud_AI::prompt', \compact('endpoint', 'message'), __FILE__, __LINE__ ] );
-
         return $this->sendPostRequest($endpoint, $message);
     }
 
