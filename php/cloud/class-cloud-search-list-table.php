@@ -156,6 +156,16 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 							esc_html( Cloud_API::get_status_name_from_status( $item->status) )
 						);
 					?>
+					<div class="tooltip-box">
+						<span class="dashicons dashicons-editor-help"></span>						
+						<div class="tooltip-text">
+							<p class="tooltip-text-title"><?php echo __( 'Snippet Statuses' ); ?></p>
+							<p class="tooltip-text-item"><a class="snippet-type-badge snippet-status" data-type="public">Public</a> <?php echo __( ' Snippet has passed basic review.' ); ?></p>
+							<p class="tooltip-text-item"><a class="snippet-type-badge snippet-status" data-type="ai-verified">AI Verified</a> <?php echo __( ' Snippet has been tested by our AI bot.' ); ?></p>
+							<p class="tooltip-text-item"><a class="snippet-type-badge snippet-status" data-type="unverified">Unverified</a> <?php echo __( ' Snippet has not undergone any review yet.' ); ?></p>
+							<p class="tooltip-text-link"><a class="tooltip-text-link" href="https://codesnippets.cloud/getstarted">Click Here for full list</a></p>
+						</div>
+					</div>
 				</div>
 				<div class="column-compatibility">
 				<strong><?php _e( 'WP Compatability:' ); ?></strong>

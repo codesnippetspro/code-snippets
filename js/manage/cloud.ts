@@ -14,13 +14,9 @@ export const handleShowCloudPreview = () => {
 		button.addEventListener('click', () => {
 			const snippetId = button.getAttribute('data-snippet')
 			const snippetLanguage = button.getAttribute('data-lang')
-			const snippetNameInput = <HTMLInputElement>document.getElementById(`cloud-snippet-name-${snippetId}`)
-			const snippetName = snippetNameInput?.value
 			const snippetCodeInput = <HTMLInputElement>document.getElementById(`cloud-snippet-code-${snippetId}`)
 			const snippetCode = snippetCodeInput?.value
-			const snippetNameModalTag = <HTMLElement>document.getElementById('snippet-name-thickbox')
 			const snippetCodeModalTag = <HTMLElement>document.getElementById('snippet-code-thickbox')
-			snippetNameModalTag.textContent = snippetName
 			snippetCodeModalTag.classList.remove(...snippetCodeModalTag.classList)
 			snippetCodeModalTag.classList.add(`language-${snippetLanguage}`)
 			snippetCodeModalTag.textContent = snippetCode

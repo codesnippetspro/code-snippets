@@ -1,6 +1,6 @@
 <?php
 /**
- * HTML for the cloud bundles tab
+ * HTML for the snippet bundles tab
  *
  * @package    Code_Snippets
  * @subpackage Views
@@ -13,14 +13,14 @@ $bundle_name = isset( $_REQUEST['bundle_share_name'] ) ? sanitize_text_field( wp
 
 ?>
 
-<p class="text-justify"><?php echo __('A Cloud bundle is a set of snippets grouped together to be downloaded from the cloud together.
+<p class="text-justify"><?php echo __('A Snippet bundle is a set of snippets grouped together to be downloaded from the cloud together.
     Please visit your code snippets cloud account to create and manage your bundles. You can also enter a bundle share code from someone else who 
     has shared their bundle publicly.'); ?>
 </p>
 <form method="get" action="" id="cloud-search-form">
     <?php List_Table::required_form_fields( 'search_box' ); ?>
     <label class="screen-reader-text" for="cloud-bundles">
-        <?php esc_html_e( 'Find and Get Cloud Bundles', 'code-snippets' ); ?>
+        <?php esc_html_e( 'Find and Get Snippet Bundles', 'code-snippets' ); ?>
     </label>
     <?php 
         if( isset($_REQUEST['type'] ) ){
@@ -28,7 +28,7 @@ $bundle_name = isset( $_REQUEST['bundle_share_name'] ) ? sanitize_text_field( wp
         }
     ?>			
     <div class="heading-box"> 
-        <p class="cloud-search-heading"><?php echo __('Cloud Bundles'); ?></p>
+        <p class="cloud-search-heading"><?php echo __('Snippet Bundles'); ?></p>
         <p class="text-justify"><?php echo __('Enter a Bundle Share Code below to see all snippets from a publicly viewable bundle or
             you can select one of your saved bundles from the dropdown list below.'); ?>
         </p>

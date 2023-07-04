@@ -107,8 +107,9 @@ function cloud_lts_build_action_links( $snippet, $source ) {
     $thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
 
     $thickbox_link = sprintf(
-        '<a href="%s" class="cloud-snippet-preview cloud-snippet-preview-style thickbox %s" data-snippet="%s" data-lang="%s">%s</a>',
+        '<a href="%s" title="%s" class="cloud-snippet-preview cloud-snippet-preview-style thickbox %s" data-snippet="%s" data-lang="%s">%s</a>',
         esc_url( $thickbox_url ),
+        esc_attr( $snippet->name ),
         $addtional_classes,
         esc_attr( $snippet->id ),
         esc_attr( $lang ),

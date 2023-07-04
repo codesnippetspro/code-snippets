@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.5.0 (04 July 2023)
+* Added: Code Snippet Cloud API Support.
+* Added: Back up and Synchronise local snippets with Code Snippet Cloud Codevault.
+* Added: Synchronised local snippets are automatically updated in Cloud.
+* Added: Bulk actions - 'update' and 'download'.
+* Added: Download Snippets from Code Snippet Cloud from Public and Private Codevault storage.
+* Added: Search and Download any publicly viewable snippet in Code Snippet Cloud by keyword or name of codevault.
+* Added: Deploy Snippets from Code Snippet Cloud to wordpress site with Code Snippet Pro installed directly from Code Snippet Cloud.
+* Added: Bundles of Joy! Search and Download Snippet Bundles in one go direct from Code Snippet Cloud.
+
+
 ## 3.4.1 (29 Jun 2023)
 * Fixed: Undefined array key error. [[#](https://wordpress.org/support/topic/after-updating-occasionally-getting-undefined-array-key-query/)]
 * Fixed: Potential type issue when loading Prism. [[#](https://wordpress.org/support/topic/code-snippets-fatal-error-breaking-xml-sitemaps/)]
