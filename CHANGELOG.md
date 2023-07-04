@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.5.0 (04 July 2023)
+* Added: Code Snippet Cloud API Support.
+* Added: Search and Download any publicly viewable snippet in Code Snippet Cloud by keyword or name of codevault.
+
 ## 3.4.1 (29 Jun 2023)
 * Fixed: Undefined array key error. [[#](https://wordpress.org/support/topic/after-updating-occasionally-getting-undefined-array-key-query/)]
 * Fixed: Potential type issue when loading Prism. [[#](https://wordpress.org/support/topic/code-snippets-fatal-error-breaking-xml-sitemaps/)]
