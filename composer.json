@@ -38,6 +38,19 @@
         "phpcompatibility/phpcompatibility-wp": "*",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2"
     },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "freemius/wordpress-sdk",
+                "version": "2.5.10",
+                "dist": {
+                    "type": "zip",
+                    "url": "/tmp/wordpress-sdk-2.5.10.zip"
+                }
+            }
+        }
+    ],
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
