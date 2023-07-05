@@ -46,7 +46,7 @@ class CloudAI_REST_Controller extends Snippets_REST_Controller {
 	 * Register REST routes.
 	 */
 	public function register_routes() {
-        $route_base = '/cloudai';
+        $route_base = '/cloud-ai';
 
         register_rest_route(
 			$this->namespace,
@@ -165,9 +165,8 @@ class CloudAI_REST_Controller extends Snippets_REST_Controller {
 		$response = [
 			'status'  => 'success',
 			'message' => [
-				'cloud_ai' => $cloud_ai->prompt('create a snippet that will add a new admin notice to the dashboard with the message "Sup bro! this AI is working"'),
+				'cloud_ai' => $cloud_ai->prompt('create a snippet that will add a new admin notice to the dashboard with the message "Great stuff! Code Snippets AI is awesome!"'),
 				'local_token' => $this->local_token,
-				'fs_plugin_data' => $this->fs_plugin_data,
 				'freemius_licence' => $this->freemius_licence,
 			],
 		];
