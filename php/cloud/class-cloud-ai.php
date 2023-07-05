@@ -6,7 +6,6 @@ use WP_Error;
 use GuzzleHttp\Client as ApiClient;
 use GuzzleHttp\Psr7\Request as ApiRequest;
 use GuzzleHttp\Psr7\Response as ApiResponse;
-use \GuzzleHttp\Psr7\MultipartStream as ApiMultipartStream;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use function Code_Snippets\Settings\get_setting;
