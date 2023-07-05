@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.4.2 (05 Jul 2023)
+* Fixed: Issue causing export process to fail with fatal error. [[#](https://wordpress.org/support/topic/critical-error-on-exporting-snippets/)]
+* Fixed: Type issue on `the_posts` filter when no posts available. [[#](https://wordpress.org/support/topic/collision-with-plugin-xml-sitemap-google-news/)]
+
 ## 3.4.1 (29 Jun 2023)
 * Fixed: Undefined array key error. [[#](https://wordpress.org/support/topic/after-updating-occasionally-getting-undefined-array-key-query/)]
 * Fixed: Potential type issue when loading Prism. [[#](https://wordpress.org/support/topic/code-snippets-fatal-error-breaking-xml-sitemaps/)]
@@ -53,7 +57,7 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 * Added: WP-CLI commands for retrieving, activating, deactivating, deleting, creating, updating, exporting and importing snippets.
 * Fixed: Path to iron visible when updating the pro plugin.
 
-## 3.2.0 (22 July 2022)
+## 3.2.0 (22 Jul 2022)
 * Fixed: Remove default value from SQL columns to improve compatibility with certain versions of MySQL.
 * Fixed: Delay loading snippets in Gutenberg editor blocks. (PRO)
 * Added: Option to show and hide line numbers in Gutenberg source code editor block. (PRO)
@@ -71,7 +75,7 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 * Improved: Compatibility of Elementor widgets with the latest version of Elementor. (PRO)
 * Improved: Replace icon font menu icon with embedded SVG icon.
 
-## 3.1.2 (3 July 2022)
+## 3.1.2 (03 Jul 2022)
 * Updated external links and branding for Code Snippets Pro.
 * Improved: Add link URLs to settings pages, as an alternative to in-page navigation.
 * Fixed: Various fixes to block editor scripts. (PRO)
@@ -149,7 +153,7 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 ## 2.14.3 (10 Dec 2021)
 * Fixed: Potential security issue outputting snippets-safe-mode query variable value as-is. Thanks to Krzysztof Zając for reporting.
 
-## 2.14.2 (9 Sep 2021)
+## 2.14.2 (09 Sep 2021)
 * Fixed: Prevent network snippets table from being created on single-site installs.
 * Added translations:
 	- Spanish by [Ibidem Group](https://www.ibidemgroup.com)
@@ -298,14 +302,14 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 * Fixed: Prevent snippets from being executed twice when saving due to invalid ID being passed to allow_execute_snippet filter.
 * Fixed: Re-enabled output suppression when executing snippets.
 
-## 2.9.2 (8 Sep 2017)
+## 2.9.2 (08 Sep 2017)
 * Fixed: Do not attempt to combine queries for fetching local and multisite snippets.
 
-## 2.9.1 (7 Sep 2017)
+## 2.9.1 (07 Sep 2017)
 * Fixed: Prevent illegal mix of collations errors when fetching snippets from database tables with different collations.
 [[#](https://wordpress.org/support/topic/issue-on-multisite-with-wpml/)]
 
-## 2.9.0 (6 Sep 2017)
+## 2.9.0 (06 Sep 2017)
 * Fixed: Prevented invalid properties from being set when saving a snippet.
 * Fixed: Use the correct protocol when saving a snippet.
 * Improved: Moved code to disable snippet execution into a filter hook.
@@ -361,7 +365,7 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 * Updated CodeMirror to version 5.10.0.
 * Fixed a few strings not being translated.
 
-## 2.7.2 (1 Oct 2016)
+## 2.7.2 (01 Oct 2016)
 * Updated German translation by [Mario Siegmann](https://web-alltag.de).
 
 ## 2.7.1 (30 Sep 2016)
@@ -522,10 +526,10 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 * Fixed empty MO translation files.
 * Removed duplicate MySQL primary key indexing.
 
-## 1.9.1.1 (3 Jan 2014)
+## 1.9.1.1 (03 Jan 2014)
 * Add capability check to site snippets importer.
 
-## 1.9.1 (2 Jan 2014)
+## 1.9.1 (02 Jan 2014)
 * Use an icon font for menu icon instead of embedded SVG.
 * Use Sass (libsass) instead of Compass.
 * Unminify CodeMirror scripts.
@@ -566,7 +570,7 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 * Fixed code typo that was breaking export files.
 * Updated CodeMirror to 3.15.
 
-## 1.8 (9 July 2013)
+## 1.8 (09 Jul 2013)
 * Allow no snippet name or code to be set.
 * Prevented an error on fresh multisite installations.
 * Refactored code to use best practices.
@@ -576,13 +580,13 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 * Added error message handling for import snippets page.
 * Don't encode HTML entities in database.
 
-## 1.7.1.2 (3 May 2013)
+## 1.7.1.2 (03 May 2013)
 * Correct path to admin menu icon. Fixes [#8](https://github.com/codesnippetspro/code-snippets/issues/8)
 
-## 1.7.1.1 (29 April 2013)
+## 1.7.1.1 (29 Apr 2013)
 * Fixed a bug with custom capabilities and admin menus.
 
-## 1.7.1 (22 April 2013)
+## 1.7.1 (22 Apr 2013)
 * Fix a bug with snippet being set as deactivated when saved.
 * Updated PHP Documentation completely. [[View online](https://bungeshea.github.io/code-snippets/api)]
 * Only load admin functions when viewing dashboard.
@@ -650,7 +654,7 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 * Changed plugin website URI.
 * Cleaned up some code.
 
-## 1.3 (1 Aug 2012)
+## 1.3 (01 Aug 2012)
 * Added export option to 'Manage Snippets' page.
 * Added 'Import Snippets' page.
 
