@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f16a3957425df5844472213e9a11677",
+    "content-hash": "953745ae417c377b3c15c7310605eeb9",
     "packages": [
         {
             "name": "composer/installers",
@@ -159,42 +159,12 @@
         },
         {
             "name": "freemius/wordpress-sdk",
-            "version": "2.5.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Freemius/wordpress-sdk.git",
-                "reference": "e9e3b37d165a881326991a672af0269a6e2b2cda"
-            },
+            "version": "2.5.10",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Freemius/wordpress-sdk/zipball/e9e3b37d165a881326991a672af0269a6e2b2cda",
-                "reference": "e9e3b37d165a881326991a672af0269a6e2b2cda",
-                "shasum": ""
+                "url": "/tmp/wordpress-sdk-2.5.10.zip"
             },
-            "require": {
-                "php": ">=5.2"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0-only"
-            ],
-            "description": "Freemius WordPress SDK",
-            "homepage": "https://freemius.com",
-            "keywords": [
-                "freemius",
-                "plugin",
-                "sdk",
-                "theme",
-                "wordpress",
-                "wordpress-plugin",
-                "wordpress-theme"
-            ],
-            "support": {
-                "issues": "https://github.com/Freemius/wordpress-sdk/issues",
-                "source": "https://github.com/Freemius/wordpress-sdk/tree/2.5.9"
-            },
-            "time": "2023-06-12T06:57:05+00:00"
+            "type": "library"
         },
         {
             "name": "matthiasmullie/minify",
