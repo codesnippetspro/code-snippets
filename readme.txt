@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.4.1
+Stable tag: 3.4.2
 Tested up to: 6.2.2
 
 An easy, clean and simple way to run code snippets on your site.
@@ -128,6 +128,10 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 
 == Changelog ==
 
+= 3.4.2 (05 Jul 2023) =
+* Fixed: Issue causing export process to fail with fatal error. [[#](https://wordpress.org/support/topic/critical-error-on-exporting-snippets/)]
+* Fixed: Type issue on `the_posts` filter when no posts available. [[#](https://wordpress.org/support/topic/collision-with-plugin-xml-sitemap-google-news/)]
+
 = 3.4.1 (29 Jun 2023) =
 * Fixed: Undefined array key error. [[#](https://wordpress.org/support/topic/after-updating-occasionally-getting-undefined-array-key-query/)]
 * Fixed: Potential type issue when loading Prism. [[#](https://wordpress.org/support/topic/code-snippets-fatal-error-breaking-xml-sitemaps/)]
@@ -181,7 +185,7 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 * Added: WP-CLI commands for retrieving, activating, deactivating, deleting, creating, updating, exporting and importing snippets.
 * Fixed: Path to iron visible when updating the pro plugin.
 
-= 3.2.0 (22 July 2022) =
+= 3.2.0 (22 Jul 2022) =
 * Fixed: Remove default value from SQL columns to improve compatibility with certain versions of MySQL.
 * Fixed: Delay loading snippets in Gutenberg editor blocks. (PRO)
 * Added: Option to show and hide line numbers in Gutenberg source code editor block. (PRO)
@@ -199,7 +203,7 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 * Improved: Compatibility of Elementor widgets with the latest version of Elementor. (PRO)
 * Improved: Replace icon font menu icon with embedded SVG icon.
 
-= 3.1.2 (3 July 2022) =
+= 3.1.2 (03 Jul 2022) =
 * Updated external links and branding for Code Snippets Pro.
 * Improved: Add link URLs to settings pages, as an alternative to in-page navigation.
 * Fixed: Various fixes to block editor scripts. (PRO)
@@ -268,64 +272,12 @@ __New in Pro__
 * Added: Elementor widget for displaying content snippets.
 * Added: Elementor widget for displaying snippet source code.
 
-= 2.14.6 (13 May 2022) =
-* Fixed: Issue with processing uploaded import files.
-* Fixed: Issue with processing tag filters.
-
-= 2.14.5 (10 May 2022) =
-* Fixed: Incompatibility issue with older versions of PHP.
-
-= 2.14.4 (5 May 2022) =
-* Fixed: Prevent array key errors when loading the snippet table with unknown order values.
-
-= 2.14.3 (10 Dec 2021) =
-* Fixed: Potential security issue outputting snippets-safe-mode query variable value as-is. Thanks to Krzysztof Zając for reporting.
-
-= 2.14.2 (9 Sep 2021) =
-* Fixed: Prevent network snippets table from being created on single-site installs.
-* Added translations:
-    - Spanish by [Ibidem Group](https://www.ibidemgroup.com)
-    - Urdu by [Samuel Badree](https://mobilemall.pk/)
-    - Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
-* Added: Support for `:class` syntax to the code validator.
-* Added: PHP8 support to the code linter.
-* Added: Color picker feature to the code editor.
-* Added: Failsafe to prevent multiple versions of Code Snippets from running simultaneously.
-
-= 2.14.1 (10 Mar 2021) =
-* Added: Czech translation by [Lukáš Tesař](https://github.com/atomicf4ll).
-* Fixed: Code validator now supports `function_exists` and `class_exists` checks.
-* Fixed: Code validator now supports anonymous functions.
-* Fixed: Issue with saving the hidden columns setting.
-* Fixed: Replaced the outdated tag-it library with [tagger](https://github.com/jcubic/tagger) for powering the snippet tags editor.
-* Added: Code direction setting for RTL users.
-* Updated CodeMirror to version 5.59.4.
-* Added: Additional action hooks and search API thanks to [@Spreeuw](https://github.com/Spreeuw).
-
-= 2.14.0 (26 Jan 2020) =
-* Updated CodeMirror to version 5.50.2.
-* Added: Basic error checking for duplicate functions and classes.
-* Updated Italian translations to fix display issues – thanks to [Francesco Marino](https://360fun.net).
-* Fixed: Ordering snippets in the table by name will now be case-insensitive.
-* Added: Additional API options for retrieving snippets.
-* Fixed: Code editor will now properly highlight embedded HTML, CSS and JavaScript code.
-* Changed the indicator color for inactive snippets from red to grey.
-* Fixed a bug preventing the editor theme from being set to default.
-* Added: Store the time and date when each snippet was last modified.
-* Added: Basic error checking when activating snippets.
-* Fixed: Ensure that imported snippets are always inactive.
-* Fixed: Check the referer on the import menu to prevent CSRF attacks. Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfence.com/blog/author/wfchloe/) for reporting.
-* Fixed: Ensure that individual snippet action links use proper verification.
-
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
 
+= 3.4.2 =
+Bug fixes for export process and plugin compatibility.
+
 = 3.4.0 =
 New editor screen and code error checking.
-
-= 3.3.0 =
-Assorted bug fixes and additional filter hooks.
-
-= 3.2.2 =
-Tested with WordPress 6.1.1.

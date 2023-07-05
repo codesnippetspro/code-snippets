@@ -113,7 +113,7 @@ function get_snippets( array $ids = array(), bool $network = null ): array {
  */
 function get_all_snippet_tags() {
 	global $wpdb;
-	$table_name = code_snippets()->db->get_table_name( null );
+	$table_name = code_snippets()->db->get_table_name();
 	$cache_key = "all_snippet_tags_$table_name";
 
 	$tags = wp_cache_get( $cache_key, CACHE_GROUP );
