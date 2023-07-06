@@ -25,7 +25,15 @@ $types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin
 
 $current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET['type'] ) ) : 'all';
 $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
+$version = code_snippets()->version;
 
+if (strpos($version, 'beta') !== false) {
+	echo'<div class="beta-test-notice">
+			<p id="beta-testing">Thank you for testing this <span class="highlight-yellow">Beta version of Code Snippets</span>. We would love to hear your feedback.
+				<a href="mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback">Cick here to submit your feedback.</a>
+			</p>
+		</div>';
+}
 ?>
 
 <div class="wrap">
