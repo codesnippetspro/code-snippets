@@ -19,7 +19,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 $licensed = code_snippets()->licensing->is_licensed();
 $types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin::get_types() );
 $current_type = $this->get_current_type();
+$version = code_snippets()->version;
 
+if (strpos($version, 'beta') !== false) {
+	echo'<div class="beta-test-notice">
+			<p id="beta-testing">Thank you for testing this <span class="highlight-yellow">Beta version of Code Snippets</span>. We would love to hear your feedback.
+				<a href="mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback">Cick here to submit your feedback.</a>
+			</p>
+		</div>';
+}
 ?>
 
 <div class="wrap">
@@ -108,5 +116,6 @@ $current_type = $this->get_current_type();
 			break;
 	}
 
-	do_action( 'code_snippets/admin/manage', $current_type ); ?>
+	do_action( 'code_snippets/admin/manage', $current_type ); 
+	?>
 </div>

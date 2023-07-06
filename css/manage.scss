@@ -618,6 +618,15 @@ $inactive-color: #ccc;
 	overflow: visible !important;
 }
 
+.beta-test-notice{
+	margin-top: 20px;
+}
+.highlight-yellow{
+	background: #FFEE58;
+    padding: 3px;
+    border-radius: 3px;
+}
+
 @keyframes thumb{
 	0%{transform:rotate(0)}
 	33%{transform:rotate(7deg)}
