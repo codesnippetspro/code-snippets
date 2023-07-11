@@ -16,9 +16,9 @@ class Cloud_AI extends Cloud_API {
     const PROMT_PATH = '/prompt';
     const EXPLAIN_PATH = '/explain';
 
+    private $fs_plugin_data;
     private $freemius_licence;
     private $cloud_key;
-    private $fs_plugin_data;
 
     /**
      * Class constructor.
