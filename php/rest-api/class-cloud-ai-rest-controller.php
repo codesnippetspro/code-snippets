@@ -135,7 +135,6 @@ class CloudAI_REST_Controller extends Snippets_REST_Controller {
 		$response = [
 			'status'  => 'success',
 			'message' => $api_response,
-			// 'key' => wp_create_nonce( 'cs_cloud_ai_api' ),
 		];
 
 		return rest_ensure_response( $response );
