@@ -378,6 +378,7 @@ class Plugin {
 					'base'     => esc_url_raw( rest_url() ),
 					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'nonce'    => wp_create_nonce( 'wp_rest' ),
+					'cloudApiNonce'  => wp_create_nonce( 'cs_cloud_ai_api' ),
 				],
 				'pluginUrl'  => plugins_url( '', PLUGIN_FILE ),
 			]
