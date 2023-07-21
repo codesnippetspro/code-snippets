@@ -81,7 +81,7 @@ class Cloud_API {
 			$this->local_to_cloud_map = $stored_data;
 			return $stored_data;
 		}
-		
+
 		// Otherwise, regenerate the local-to-cloud-map.
 		$this->local_to_cloud_map = [];
 
@@ -98,8 +98,8 @@ class Cloud_API {
 			$link->local_id = $local_snippet->id;
 			$link->cloud_id = $cloud_id_int;
 			$link->is_owner = false;
-			$link->in_codevault =  false;
-	
+			$link->in_codevault = false;
+
 			$this->local_to_cloud_map[] = $link;
 		}
 
@@ -123,19 +123,19 @@ class Cloud_API {
 	 * Search Code Snippets Cloud -> Static Function
 	 *
 	 * @param string  $search_method Search by name of codevault or keyword(s).
-	 * @param string  $search Search query.
-	 * @param integer $page   Search result page to retrieve. Defaults to '0'.
+	 * @param string  $search        Search query.
+	 * @param integer $page          Search result page to retrieve. Defaults to '0'.
 	 *
 	 * @return Cloud_Snippets Result of search query.
 	 */
-	public static function fetch_search_results( $search_method, $search, $page = 0 ) {
+	public static function fetch_search_results( string $search_method, string $search, int $page = 0 ) {
 		$api_url = add_query_arg(
 			[
-				's_method'  => $search_method,
-				's'    		=> $search,
-				'page' 		=> $page,
-				'site_token'=> self::CLOUD_SEARCH_API_TOKEN,
-				'site_host'	=> parse_url( get_site_url(), PHP_URL_HOST ),
+				's_method'   => $search_method,
+				's'          => $search,
+				'page'       => $page,
+				'site_token' => self::CLOUD_SEARCH_API_TOKEN,
+				'site_host'  => wp_parse_url( get_site_url(), PHP_URL_HOST ),
 			],
 			self::CLOUD_API_URL . 'public/search'
 		);
@@ -169,7 +169,7 @@ class Cloud_API {
 	public function add_map_link( Cloud_Link $link ) {
 		$local_to_cloud_map = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
 		$local_to_cloud_map[] = $link;
-		
+
 		set_transient(
 			self::CLOUD_MAP_TRANSIENT_KEY,
 			$local_to_cloud_map,
@@ -177,7 +177,6 @@ class Cloud_API {
 		);
 	}
 
-	
 
 	/**
 	 * Delete a snippet from local-to-cloud map.
@@ -220,27 +219,25 @@ class Cloud_API {
 		}
 
 		$cloud_snippet_revision = json_decode( $body, true );
-		return isset( $cloud_snippet_revision['snippet_revision'] ) ? $cloud_snippet_revision['snippet_revision'] : null;
+		return $cloud_snippet_revision['snippet_revision'] ?? null;
 	}
-
 
 	/**
 	 * Download a snippet from the cloud.
 	 *
-	 * @param string $cloud_id The cloud ID of the snippet as string from query args
-	 * @param string $source   The source table of the snippet: 'codevault' or 'search'.
-	 * @param string $action   The action to be performed: 'download' or 'update'.
+	 * @param int|string $cloud_id The cloud ID of the snippet as string from query args.
+	 * @param string     $source   The source table of the snippet: 'codevault' or 'search'.
+	 * @param string     $action   The action to be performed: 'download' or 'update'.
 	 *
 	 * @return array<string, string|bool> Result of operation: an array with `success` and `error_message` keys.
 	 */
-	public function download_or_update_snippet( $cloud_id_string, $source, $action ) {
-
-		$cloud_id = intval( $cloud_id_string );
+	public function download_or_update_snippet( int $cloud_id, string $source, string $action ): array {
+		$cloud_id = intval( $cloud_id );
 		$snippet_to_store = $this->get_single_cloud_snippet( $cloud_id );
 
-		switch ($action) {
+		switch ( $action ) {
 			case 'download':
-				return $this->download_snippet_from_cloud( $snippet_to_store, false);
+				return $this->download_snippet_from_cloud( $snippet_to_store );
 			case 'update':
 				return $this->update_snippet_from_cloud( $snippet_to_store );
 			default:
@@ -258,37 +255,38 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Snippet Retrieved snippet.
 	 */
-	public static function get_single_cloud_snippet( $cloud_id ) {
-
+	public static function get_single_cloud_snippet( int $cloud_id ): Cloud_Snippet {
 		$url = self::CLOUD_API_URL . sprintf( 'public/getsnippet/%s', $cloud_id );
 		$response = wp_remote_get( $url );
 		$cloud_snippet = self::unpack_request_json( $response );
-		
+
 		return new Cloud_Snippet( $cloud_snippet['snippet'] );
 	}
 
 	/**
 	 * Download a snippet from the cloud.
 	 *
-	 * @param object $snippet_to_store The snippet to be downloaded.
+	 * @param Cloud_Snippet|Cloud_Snippet[] $snippets_to_store The snippet to be downloaded.
 	 *
 	 * @return array The result of the download.
 	 */
-	public function download_snippet_from_cloud( $snippets_to_store ) {
-		
-		if( is_object($snippets_to_store) ){
-			$snippets_to_store = [$snippets_to_store];
+	public function download_snippet_from_cloud( $snippets_to_store ): array {
+		$new_snippet = null;
+		$link = null;
+
+		if ( ! is_array( $snippets_to_store ) ) {
+			$snippets_to_store = [ $snippets_to_store ];
 		}
-		foreach ($snippets_to_store as $snippet_to_store) {
-			
+
+		foreach ( $snippets_to_store as $snippet_to_store ) {
 			$snippet = new Snippet( $snippet_to_store );
 
 			// Set the snippet id to 0 to ensure that the snippet is saved as a new snippet.
 			$ownership = '0';
 			$snippet->id = 0;
 			$snippet->active = 0;
-			$snippet->cloud_id = $snippet_to_store->id.'_'.$ownership;
-			$snippet->desc = $snippet_to_store->description ? $snippet_to_store->description : ''; //if no description is set, set it to empty string
+			$snippet->cloud_id = $snippet_to_store->id . '_' . $ownership;
+			$snippet->desc = $snippet_to_store->description ? $snippet_to_store->description : '';
 
 			// Save the snippet to the database.
 			$new_snippet = save_snippet( $snippet );
@@ -301,25 +299,23 @@ class Cloud_API {
 			$link->update_available = false;
 
 			$this->add_map_link( $link );
-			
 		}
 
-
-		if( count($snippets_to_store) == 1 ){
+		if ( 1 === count( $snippets_to_store ) && $new_snippet && $link ) {
 			return [
-				'success' => true,
-				'action'  => 'Single Downloaded',
+				'success'    => true,
+				'action'     => 'Single Downloaded',
 				'snippet_id' => $new_snippet->id,
-				'link_id' => $link->id,
+				'link_id'    => $link->cloud_id,
 			];
 		}
 
-		if( count($snippets_to_store) > 1 ){
+		if ( count( $snippets_to_store ) > 1 ) {
 			return [
 				'success' => true,
 				'action'  => 'Downloaded',
 			];
-		}else{
+		} else {
 			return [
 				'success' => false,
 				'error'   => 'There was a problem saving or no snippets found to download.',
@@ -331,18 +327,17 @@ class Cloud_API {
 	/**
 	 * Update a snippet from the cloud.
 	 *
-	 * @param array  $snippets Array of snippets to be updated.
+	 * @param Cloud_Snippet|Cloud_Snippet[] $snippet_to_store Array of snippets to be updated.
 	 *
 	 * @return array The result of the update.
 	 */
-	public function update_snippet_from_cloud( $snippet_to_store ) {
-
-		if( is_array($snippet_to_store) ){
-			$snippet_to_store = reset($snippet_to_store);
+	public function update_snippet_from_cloud( $snippet_to_store ): array {
+		if ( is_array( $snippet_to_store ) ) {
+			$snippet_to_store = reset( $snippet_to_store );
 		}
 
 		$ownership = $snippet_to_store->is_owner ? '1' : '0';
-		$cloud_id = $snippet_to_store->id.'_'.$ownership;
+		$cloud_id = $snippet_to_store->id . '_' . $ownership;
 		$local_snippet = get_snippet_by_cloud_id( sanitize_key( $cloud_id ) );
 		// Only update the code, active and revision fields.
 		$fields = [
@@ -368,49 +363,49 @@ class Cloud_API {
 	 *
 	 * @return bool Whether the snippet has update available or not.
 	 */
-	public function is_update_available( $snippet_id ) {
+	public function is_update_available( int $snippet_id ): bool {
 		$cloud_link = $this->get_local_to_cloud_map();
-		//find the snippet from the array of objects using snippet id
+
+		// Find the snippet from the array of objects using snippet id.
 		$snippet = array_filter(
 			$cloud_link,
 			function ( $snippet ) use ( $snippet_id ) {
 				return $snippet->local_id === $snippet_id;
 			}
 		);
-		//Get the first element of the array
-		$snippet = reset($snippet);
-		//Return the update available value which is a boolean
+
+		// Get the first element of the array.
+		$snippet = reset( $snippet );
+		// Return the update available value which is a boolean.
 		return $snippet->update_available;
 	}
 
 	/**
 	 * Check if snippet is synced to cloud.
 	 *
-	 * @param string $snippet_id.
-	 * @param string $local_or_cloud - is the id local id or cloud id.
+	 * @param int    $snippet_id     Snippet ID.
+	 * @param string $local_or_cloud Whether the ID is a local ID or cloud ID.
 	 *
 	 * @return Cloud_Link|null
 	 */
-	public function get_cloud_link( $snippet_id, $local_or_cloud ) {
+	public function get_cloud_link( int $snippet_id, string $local_or_cloud ) {
 		$local_to_cloud_map = $this->get_local_to_cloud_map();
-		if( $local_or_cloud == 'cloud' ){
-			$local_id_array = array_column( $local_to_cloud_map, 'cloud_id' );
-		}
-		if( $local_or_cloud == 'local' ){
-			$local_id_array = array_column( $local_to_cloud_map, 'local_id' );
-		}
-		if ( in_array( $snippet_id, $local_id_array ) ) {
-			$index = array_search( $snippet_id, $local_id_array );
-			return $local_to_cloud_map[$index];
+
+		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
+			$local_id_array = array_map( 'intval', array_column( $local_to_cloud_map, "${$local_or_cloud}_id" ) );
+
+			if ( in_array( $snippet_id, $local_id_array, true ) ) {
+				$index = array_search( $snippet_id, $local_id_array, true );
+				return $local_to_cloud_map[ $index ];
+			}
 		}
 
 		return null;
 	}
 
 	/**
-	 * 
-	 * Static Helper Methods
 	 *
+	 * Static Helper Methods
 	 */
 
 	/**
@@ -420,7 +415,7 @@ class Cloud_API {
 	 *
 	 * @return string The type of the snippet.
 	 */
-	public static function get_type_from_scope( $scope ) {
+	public static function get_type_from_scope( string $scope ): string {
 		switch ( $scope ) {
 			case 'global':
 				return 'php';
@@ -442,16 +437,16 @@ class Cloud_API {
 	 *
 	 * @return string The style to be used for the stats badge.
 	 */
-	public static function get_style_from_status( $status ) {
+	public static function get_style_from_status( int $status ): string {
 		switch ( $status ) {
-			case 3: //Private
+			case 3: // Private.
 				return 'css';
-			case 4: //Public
+			case 4: // Public.
 				return 'js';
-			case 5: //Unverified
+			case 5: // Unverified.
 				return 'unverified';
-			case 6: //AI Verified
-			case 8: //Pro Verified
+			case 6: // AI Verified.
+			case 8: // Pro Verified.
 				return 'html';
 			default:
 				return 'php';
@@ -465,18 +460,20 @@ class Cloud_API {
 	 *
 	 * @return string The style to be used for the stats badge.
 	 */
-	public static function get_status_name_from_status( $status ) {
+	public static function get_status_name_from_status( int $status ): string {
 		switch ( $status ) {
-			case 3: //Private
+			case 3: // Private.
 				return 'Private';
-			case 4: //Public
+			case 4: // Public.
 				return 'Public';
-			case 5: //Unverified
+			case 5: // Unverified.
 				return 'Unverified';
-			case 6: //AI Verified
+			case 6: // AI Verified.
 				return 'AI-Verified';
 			case 8:
 				return 'Pro-Verified';
+            default:
+                return '';
 		}
 	}
 
@@ -488,15 +485,14 @@ class Cloud_API {
 	public static function render_cloud_snippet_thickbox() {
 		add_thickbox();
 		?>
-		<div id="show-code-preview" style="display: none;">
-			<h3 id="snippet-name-thickbox"></h3>
-			<h4><?php esc_html_e( 'Snippet Code:', 'code-snippets' ); ?></h4>
-			<pre class="thickbox-code-viewer">
+        <div id="show-code-preview" style="display: none;">
+            <h3 id="snippet-name-thickbox"></h3>
+            <h4><?php
+				esc_html_e( 'Snippet Code:', 'code-snippets' ); ?></h4>
+            <pre class="thickbox-code-viewer">
 				<code id="snippet-code-thickbox" class=""></code>
 			</pre>
-		</div>
+        </div>
 		<?php
 	}
-
-	
 }

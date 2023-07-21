@@ -25,7 +25,7 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @property string        $created          The date and time when the snippet data was first created, in ISO format.
  * @property string        $updated          When the snippet was last updated, in ISO format.
  * @property integer       $revision         The update revision number.
- * @property bool          $is_owner         If user is owner or author of snippet 
+ * @property bool          $is_owner         If user is owner or author of snippet.
  */
 class Cloud_Snippet extends Data_Item {
 
@@ -37,22 +37,22 @@ class Cloud_Snippet extends Data_Item {
 	public function __construct( $initial_data = null ) {
 		parent::__construct(
 			[
-				'id'          => '',
-				'cloud_id' => '',
-				'name'        => '',
-				'description' => '',
-				'code'        => '',
-				'tags'        => [],
-				'scope'       => '',
-				'status'      => '',
-				'codevault'   => '',
-				'total_votes' => '',
-				'vote_count'  => '',
-				'wp_tested'   => '',
-				'created'     => '',
-				'updated'     => '',
-				'revision'    => 0,
-				'is_owner'    => false,
+				'id'             => '',
+				'cloud_id'       => '',
+				'name'           => '',
+				'description'    => '',
+				'code'           => '',
+				'tags'           => [],
+				'scope'          => '',
+				'status'         => '',
+				'codevault'      => '',
+				'total_votes'    => '',
+				'vote_count'     => '',
+				'wp_tested'      => '',
+				'created'        => '',
+				'updated'        => '',
+				'revision'       => 0,
+				'is_owner'       => false,
 				'shared_network' => false,
 			],
 			$initial_data
@@ -67,7 +67,7 @@ class Cloud_Snippet extends Data_Item {
 	 *
 	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_field( $value, $field ) {
+	protected function prepare_field( $value, string $field ) {
 		switch ( $field ) {
 			case 'id':
 			case 'revision':

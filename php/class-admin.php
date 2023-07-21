@@ -161,7 +161,7 @@ class Admin {
 				),
 			)
 		);
-	} 
+	}
 
 	/**
 	 * Add Code Snippets information to Site Health information.
@@ -308,21 +308,20 @@ class Admin {
 
 		echo esc_html( $label );
 
-		switch ($type_name) {
+		switch ( $type_name ) {
 			case 'all':
-				'';
 				break;
 			case 'cloud':
-				echo '<span class="cloud-badge dashicons dashicons-cloud cloud-icon cloud-synced"></span>';	
+				echo '<span class="cloud-badge dashicons dashicons-cloud cloud-icon cloud-synced"></span>';
 				break;
 			case 'cloud_search':
-				echo '<span class="cloud-badge dashicons dashicons-search cloud-icon cloud-downloaded"></span>';	
+				echo '<span class="cloud-badge dashicons dashicons-search cloud-icon cloud-downloaded"></span>';
 				break;
 			case 'bundles':
-				echo '<span class="cloud-badge dashicons dashicons-screenoptions cloud-icon cloud-bundle"></span>';	
+				echo '<span class="cloud-badge dashicons dashicons-screenoptions cloud-icon cloud-bundle"></span>';
 				break;
 			case 'ai':
-				echo '<span class="cloud-badge ai-icon">AI</span>';	
+				echo '<span class="cloud-badge ai-icon">AI</span>';
 				break;
 			default:
 				echo '<span class="badge">' . esc_html( $type_name ) . '</span>';

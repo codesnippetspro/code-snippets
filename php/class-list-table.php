@@ -45,7 +45,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var string
 	 */
-	protected $order_by; 
+	protected $order_by;
 
 	/**
 	 * Direction to use when ordering the snippets list. Either 'asc' or 'desc'.
@@ -313,7 +313,7 @@ class List_Table extends WP_List_Table {
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
-		$out = esc_html( $snippet->display_name ); 
+		$out = esc_html( $snippet->display_name );
 
 		if ( 'global' !== $snippet->scope ) {
 			$out .= ' <span class="dashicons dashicons-' . $snippet->scope_icon . '"></span>';
@@ -334,12 +334,11 @@ class List_Table extends WP_List_Table {
 		}
 
 		// Return the name contents.
-		$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
-		if ( $cloud_link ) {
-			//Make cloud icon grey to show its from the cloud
+		if ( code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' ) ) {
+			// Make cloud icon grey to show it is from the cloud.
 			$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>' . $out;
 		}
-		
+
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
 
 		return $out . $row_actions;
@@ -469,7 +468,7 @@ class List_Table extends WP_List_Table {
 			'delete-selected'     => __( 'Delete', 'code-snippets' ),
 		];
 
-		return apply_filters( 'code_snippets/list_table/bulk_actions', $actions );
+		return apply_filters( 'code_snippets/list_table/bulk_actions', array_merge( parent::get_bulk_actions(), $actions ) );
 	}
 
 	/**
@@ -494,7 +493,7 @@ class List_Table extends WP_List_Table {
 	 */
 	public function get_views(): array {
 		global $totals, $status;
-		$status_links = array();
+		$status_links = parent::get_views();
 
 		// Loop through the view counts.
 		foreach ( $totals as $type => $count ) {

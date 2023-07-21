@@ -8,9 +8,13 @@
 
 namespace Code_Snippets;
 
-/* @var Edit_Menu $this */
+/**
+ * Loaded from the Edit_Menu class.
+ *
+ * @var Edit_Menu $this
+ * @var Snippet   $snippet
+ */
 
-/* @var Snippet $snippet */
 $snippet = $this->snippet;
 
 echo '<h2 class="screen-reader-text">', esc_html__( 'Scope', 'code-snippets' ), '</h2>';

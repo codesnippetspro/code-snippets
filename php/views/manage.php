@@ -8,9 +8,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_API; 
-
-
 /**
  * Loaded from the Manage_Menu class.
  *
@@ -27,10 +24,10 @@ $current_type = isset( $_GET['type'] ) ? sanitize_text_field( wp_unslash( $_GET[
 $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 $version = code_snippets()->version;
 
-if (strpos($version, 'beta') !== false) {
-	echo'<div class="beta-test-notice">
+if ( false !== strpos( $version, 'beta' ) ) {
+	echo '<div class="beta-test-notice">
 			<p id="beta-testing">Thank you for testing this <span class="highlight-yellow">Beta version of Code Snippets</span>. We would love to hear your feedback.
-				<a href="mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback">Cick here to submit your feedback.</a>
+				<a href="mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback">Click here to submit your feedback.</a>
 			</p>
 		</div>';
 }
@@ -71,13 +68,13 @@ if (strpos($version, 'beta') !== false) {
 		echo '<p class="snippet-type-description">', esc_html( $desc );
 
 		$type_names = [
-			'php'  => __( 'function snippets', 'code-snippets' ),
-			'html' => __( 'content snippets', 'code-snippets' ),
-			'css'  => __( 'style snippets', 'code-snippets' ),
-			'js'   => __( 'javascript snippets', 'code-snippets' ),
-			'cloud' => __( 'cloud snippets', 'code-snippets' ),
+			'php'          => __( 'function snippets', 'code-snippets' ),
+			'html'         => __( 'content snippets', 'code-snippets' ),
+			'css'          => __( 'style snippets', 'code-snippets' ),
+			'js'           => __( 'javascript snippets', 'code-snippets' ),
+			'cloud'        => __( 'cloud snippets', 'code-snippets' ),
 			'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
-			'bundles' => __( 'Bundles', 'code-snippets' ),
+			'bundles'      => __( 'Bundles', 'code-snippets' ),
 		];
 
 		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
@@ -91,21 +88,20 @@ if (strpos($version, 'beta') !== false) {
 			esc_html( $learn_more_text )
 		);
 	}
-	?>
 
-	<?php
 	do_action( 'code_snippets/admin/manage/before_list_table' );
 	$this->list_table->views();
 
-	switch ($current_type) {
+	switch ( $current_type ) {
 		case 'cloud_search':
-			include_once( 'partials/cloud-search.php' );
+			include_once 'partials/cloud-search.php';
 			break;
-			
+
 		default:
-			include_once( 'partials/list-table.php' );
+			include_once 'partials/list-table.php';
 			break;
 	}
 
-	do_action( 'code_snippets/admin/manage' ); ?>
+	do_action( 'code_snippets/admin/manage' );
+	?>
 </div>

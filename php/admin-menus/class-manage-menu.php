@@ -20,7 +20,7 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public $list_table;
 
-		/**
+	/**
 	 * Instance of the cloud list table class for search results.
 	 *
 	 * @var Cloud_Search_List_Table
@@ -123,7 +123,7 @@ class Manage_Menu extends Admin_Menu {
 		/* Load the contextual help tabs */
 		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
-		
+
 		// Initialize the search cloud list table class.
 		$this->cloud_search_list_table = new Cloud_Search_List_Table();
 		$this->cloud_search_list_table->prepare_items();

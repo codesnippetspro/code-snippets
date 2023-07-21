@@ -508,7 +508,7 @@ function save_snippet( $snippet ) {
 			test_snippet_code( $snippet );
 
 			if ( $snippet->code_error ) {
-				$snippet->active = 0;  
+				$snippet->active = 0;
 			}
 		}
 	}
@@ -529,7 +529,7 @@ function save_snippet( $snippet ) {
 		'revision'    => $snippet->revision,
 		'cloud_id'    => $snippet->cloud_id ? $snippet->cloud_id : null,
 	];
-	
+
 	// Create a new snippet if the ID is not set.
 	if ( 0 === $snippet->id ) {
 		$result = $wpdb->insert( $table, $data, '%s' ); // db call ok.
@@ -601,7 +601,7 @@ function execute_active_snippets(): bool {
 
 	// Bail early if safe mode is active.
 	if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ||
-		! apply_filters( 'code_snippets/execute_snippets', true ) ) {
+	     ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
 		return false;
 	}
 
@@ -657,7 +657,7 @@ function execute_active_snippets(): bool {
 			}
 
 			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
-				! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
+			     ! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
 				execute_snippet( $code, $snippet_id );
 			}
 		}
