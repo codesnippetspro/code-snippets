@@ -13,7 +13,7 @@ declare global {
 		readonly ajaxurl: string
 		readonly tinymce?: tinymce.EditorManager
 		readonly wpActiveEditor?: string
-		readonly code_snippets_editor_preview?: CodeEditorInstance
+		code_snippets_editor_preview?: CodeEditorInstance
 		readonly code_snippets_editor_settings: EditorOption[]
 		readonly CODE_SNIPPETS?: {
 			pluginUrl: string

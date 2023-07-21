@@ -146,7 +146,12 @@ export const ScopeInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, i
 								name="snippet_scope"
 								value={scope}
 								checked={scope === snippet.scope}
-								onChange={event => event.target.checked && setSnippet(previous => ({ ...previous, scope }))}
+								onChange={event =>
+									event.target.checked && setSnippet(previous => ({
+										...previous,
+										scope
+									}))
+								}
 								disabled={isReadOnly}
 							/>
 							{' '}

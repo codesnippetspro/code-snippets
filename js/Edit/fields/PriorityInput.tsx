@@ -16,6 +16,9 @@ export const PriorityInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet
 				name="snippet_priority"
 				value={snippet.priority}
 				disabled={isReadOnly}
-				onChange={event => setSnippet(previous => ({ ...previous, priority: parseInt(event.target.value, 10) }))}
+				onChange={event => setSnippet(previous => ({
+					...previous,
+					priority: parseInt(event.target.value, 10)
+				}))}
 			/>
 		</p>
