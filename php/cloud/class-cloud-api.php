@@ -12,6 +12,7 @@ use function Code_Snippets\save_snippet;
 use function Code_Snippets\Settings\get_setting;
 use function Code_Snippets\update_snippet_fields;
 use function Code_Snippets\get_snippet_by_cloud_id;
+use const Code_Snippets\PLUGIN_FILE;
 
 /**
  * Functions used to manage cloud synchronisation.
@@ -123,6 +124,9 @@ class Cloud_API {
 		// Otherwise, regenerate the local-to-cloud-map.
 		$this->local_to_cloud_map = [];
 		$codevault_snippets = $this->get_codevault_snippets();
+		if ( ! $codevault_snippets ) {
+			return $this->local_to_cloud_map;
+		}
 		$cloud_id_rev = $codevault_snippets->cloud_id_rev;
 
 		// Fetch and iterate through all local snippets to create the map.

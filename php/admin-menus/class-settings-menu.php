@@ -215,7 +215,12 @@ class Settings_Menu extends Admin_Menu {
 
 			if ( 'cloud' === $section['id'] ) {
 				$settings = get_option( 'code_snippets_settings' );
-				$is_token_verified = $settings['cloud']['token_verified'];
+
+				if ( ! isset( $settings['cloud'] ) ) {
+					$is_token_verified = 'false';
+				}else{
+					$is_token_verified = $settings['cloud']['token_verified'];
+				}
 
 				if ( $is_token_verified && 'false' !== $is_token_verified ) {
 					echo '<p id="cloud_sync_status" class="cloud-message cloud-success hidden">';
