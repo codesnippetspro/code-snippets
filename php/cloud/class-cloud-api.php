@@ -124,9 +124,11 @@ class Cloud_API {
 		// Otherwise, regenerate the local-to-cloud-map.
 		$this->local_to_cloud_map = [];
 		$codevault_snippets = $this->get_codevault_snippets();
+
 		if ( ! $codevault_snippets ) {
 			return $this->local_to_cloud_map;
 		}
+
 		$cloud_id_rev = $codevault_snippets->cloud_id_rev;
 
 		// Fetch and iterate through all local snippets to create the map.
