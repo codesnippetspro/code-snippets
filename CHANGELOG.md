@@ -1,8 +1,13 @@
 # Changelog
 
 ## 3.5.0-beta.1 (06 July 2023)
-* Added: Code Snippet Cloud API Support.
-* Added: Search and Download any publicly viewable snippet in Code Snippet Cloud by keyword or name of codevault.
+* Added: Support for the Code Snippets Cloud API.
+* Added: Search and download public snippets.
+* Added: Codevault back-up and synchronisation. (PRO)
+* Added: Synchronised local snippets are automatically updated in Cloud. (PRO)
+* Added: Download snippets from public and private codevaults. (PRO)
+* Added: Deploy snippets to plugin from Code Snippets Cloud app. (PRO)
+* Added: Search and download bundles of snippets. (PRO)
 
 ## 3.4.2 (05 Jul 2023)
 * Fixed: Issue causing export process to fail with fatal error. [[#](https://wordpress.org/support/topic/critical-error-on-exporting-snippets/)]
