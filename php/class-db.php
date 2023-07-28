@@ -166,17 +166,17 @@ class DB {
 
 		/* Create the database table */
 		$sql = "CREATE TABLE $table_name (
-				id          BIGINT(20)  NOT NULL AUTO_INCREMENT,
-				name        TINYTEXT    NOT NULL,
-				description TEXT        NOT NULL,
-				code        LONGTEXT    NOT NULL,
-				tags        LONGTEXT    NOT NULL,
-				scope       VARCHAR(15) NOT NULL DEFAULT 'global',
-				priority    SMALLINT    NOT NULL DEFAULT 10,
-				active      TINYINT(1)  NOT NULL DEFAULT 0,
-				modified    DATETIME    NOT NULL DEFAULT '0000-00-00 00:00:00',
-				revision	BIGINT(20)  NOT NULL DEFAULT 1,
-				cloud_id	VARCHAR(255) NULL,
+				id          BIGINT(20)   NOT NULL AUTO_INCREMENT,
+				name        TINYTEXT     NOT NULL,
+				description TEXT         NOT NULL,
+				code        LONGTEXT     NOT NULL,
+				tags        LONGTEXT     NOT NULL,
+				scope       VARCHAR(15)  NOT NULL DEFAULT 'global',
+				priority    SMALLINT     NOT NULL DEFAULT 10,
+				active      TINYINT(1)   NOT NULL DEFAULT 0,
+				modified    DATETIME     NOT NULL DEFAULT '0000-00-00 00:00:00',
+				revision    BIGINT(20)   NOT NULL DEFAULT 1,
+				cloud_id    VARCHAR(255) NULL,
 				PRIMARY KEY  (id),
 				KEY scope (scope),
 				KEY active (active)

@@ -468,7 +468,7 @@ class List_Table extends WP_List_Table {
 			'delete-selected'     => __( 'Delete', 'code-snippets' ),
 		];
 
-		return apply_filters( 'code_snippets/list_table/bulk_actions', array_merge( parent::get_bulk_actions(), $actions ) );
+		return apply_filters( 'code_snippets/list_table/bulk_actions', $actions );
 	}
 
 	/**

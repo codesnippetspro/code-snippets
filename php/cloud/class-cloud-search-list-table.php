@@ -114,28 +114,23 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	public function display_rows() {
 		parent::display_rows();
 
+		/**
+		 * The current table item.
+		 *
+		 * @var $item Cloud_Snippet
+		 */
 		foreach ( $this->items as $item ) {
-			$name_link = $this->get_link_for_name( $item );
-			$name = esc_attr( $item->name );
-			$codevault = esc_attr( $item->codevault );
-			$description = esc_attr( $this->process_description( $item->description ) );
-			$wp_tested = esc_attr( $item->wp_tested );
-			$votes = esc_attr( $item->vote_count );
-			$number_of_votes = esc_attr( $item->total_votes );
-			$tags = $item->tags;
-
-			// Grab first tag in array of tags.
-			$category = strtolower( esc_attr( $tags[0] ) );
 			?>
 			<div class="plugin-card cloud-search-card plugin-card-<?php echo sanitize_html_class( $item->id ); ?>">
 				<?php
-				cloud_lts_build_column_hidden_input( 'code', $item );
-				cloud_lts_build_column_hidden_input( 'name', $item );
+				cloud_lts_display_column_hidden_input( 'code', $item );
+				cloud_lts_display_column_hidden_input( 'name', $item );
 				?>
 				<div class="plugin-card-top">
 					<div class="name column-name">
 						<h3>
 							<?php
+							$name_link = $this->get_link_for_name();
 
 							if ( $name_link['cloud-snippet-downloaded'] ) {
 								printf( '<a href="%s">', esc_url( $name_link['cloud-snippet-link'] ) );
@@ -146,7 +141,10 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 								);
 							}
 
-							echo esc_html( $name );
+							echo esc_html( $item->name );
+
+							// Grab first tag in array of tags.
+							$category = count( $item->tags ) > 0 ? strtolower( esc_attr( $item->tags[0] ) ) : '';
 
 							printf(
 								'<img src="%s" class="plugin-icon" alt="%s">',
@@ -162,7 +160,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						<?php cloud_lts_build_action_links( $item, 'search' ); ?>
 					</div>
 					<div class="desc column-description">
-						<p><?php wp_kses_post( $description ); ?></p>
+						<p><?php wp_kses_post( $this->process_description( $item->description ) ); ?></p>
 						<p class="authors">
 							<cite>
 								<?php
@@ -170,8 +168,8 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 
 								printf(
 									'<a target="_blank" href="%s">%s</a>',
-									esc_url( sprintf( 'https://codesnippets.cloud/codevault/%s', $codevault ) ),
-									esc_html( $codevault )
+									esc_url( sprintf( 'https://codesnippets.cloud/codevault/%s', $item->codevault ) ),
+									esc_html( $item->codevault )
 								);
 
 								?>
@@ -188,8 +186,13 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						<span class="num-ratings" aria-hidden="true">
 							<?php
 							// translators: 1: number of votes, 2: number of users.
-							$format = __( '%1$d times by %2$d users', 'code-snippets' );
-							echo esc_html( printf( $format, number_format_i18n( $votes ), number_format_i18n( $number_of_votes ) ) );
+							$votes_text = _nx( '%d time', '%d times', number_format_i18n( $item->vote_count ), 'vote count', 'code-snippets' );
+
+							// translators: 1: number of users.
+							$users_text = _n( '%d user', '%d users', number_format_i18n( $item->total_votes ), 'code-snippets' );
+
+							// translators: 1: number of votes with label, 2: number of users with label.
+							echo esc_html( sprintf( _x( '%1$s by %2$s', 'votes', 'code-snippets' ), $votes_text, $users_text ) );
 							?>
 						</span>
 					</div>
@@ -283,7 +286,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 */
 	protected function process_description( string $description ): string {
 		$description = wp_strip_all_tags( $description );
-		return strlen( $description ) > 150 ? substr( $description, 0, 150 ) . '...' : $description;
+		return strlen( $description ) > 150 ? substr( $description, 0, 150 ) . '…' : $description;
 	}
 
 	/**

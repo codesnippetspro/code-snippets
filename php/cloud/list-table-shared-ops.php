@@ -15,7 +15,7 @@ use function Code_Snippets\code_snippets;
  * @param string        $column_name Column name.
  * @param Cloud_Snippet $snippet     Column item.
  */
-function cloud_lts_build_column_hidden_input( string $column_name, Cloud_Snippet $snippet ) {
+function cloud_lts_display_column_hidden_input( string $column_name, Cloud_Snippet $snippet ) {
 	printf(
 		'<input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
 		esc_attr( $column_name ),
@@ -232,10 +232,10 @@ function cloud_lts_pagination( $which, $source, $total_items, $total_pages, $pag
 		$pagination_links_class .= ' hide-if-js';
 	}
 
-	$finaloutput = $output .= "\n<span class='$pagination_links_class'>" . implode( "\n", $page_links ) . '</span>';
+	$output .= "\n<span class='$pagination_links_class'>" . implode( "\n", $page_links ) . '</span>';
 
 	return [
-		'output'     => $finaloutput,
+		'output'     => $output,
 		'page_class' => $total_pages ? ( $total_pages < 2 ? ' one-page' : '' ) : ' no-pages',
 	];
 }
