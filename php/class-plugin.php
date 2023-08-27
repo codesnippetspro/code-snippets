@@ -131,6 +131,9 @@ class Plugin {
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 		$this->licensing = new Licensing();
+
+		//Hook into save options to verify cloud token in one step
+		add_filter('pre_update_option', [ $this, 'cloud_save_settings' ], 10, 3);
 	}
 
 	/**
@@ -381,5 +384,51 @@ class Plugin {
 				'pluginUrl'  => plugins_url( '', PLUGIN_FILE ),
 			]
 		);
+	}
+
+	/** Add hook into the option saving process and performs some custom logic
+	 * Filter the options save data to run cloud specific functions / checks
+	 *
+	 * @param mixed $value the new unserialized option value
+	 * @param string $option Name of the option 
+	 * @param mixed $old_value The old option value. 
+	 * 
+	 * @return void
+	 */
+	public function cloud_save_settings( $value, $option, $old_value ) {
+
+		if(  $option == "code_snippets_settings" ){
+			$cloud_token =  $value['cloud']['cloud_token'];
+
+			// Check cloud token is not null or empty
+			if( !is_null($cloud_token) || !empty($cloud_token) ){
+
+				// Check if the cloud token is not already verified
+				if( $value['cloud']['token_verified'] == 'false' ){
+
+					// Verify the cloud token
+					$cloud_connection = code_snippets()->cloud_api->establish_new_cloud_connection( $cloud_token );
+					
+					// If the cloud connection is successful, save the token
+					if( $cloud_connection['success'] ){
+						//Keep the cloud token as it is in the options array
+						$value['cloud']['cloud_token'] = $cloud_token;
+						// Add new value of cloud > local token to the options array
+						$value['cloud']['local_token'] = $cloud_connection['local_token'];
+					}else{
+						// Set the cloud token to empty string
+						$value['cloud']['cloud_token'] = NULL;
+						// Set the local token to empty string
+						$value['cloud']['local_token'] = NULL;
+					}
+
+					//wp_die( var_dump( $old_value ) );
+					return $value;
+				}
+
+			}
+
+		}
+
 	}
 }

@@ -99,8 +99,17 @@ class Cloud_API {
 	public function __construct() {
 		$this->cloud_key = get_setting( 'cloud', 'cloud_token' );
 		$this->local_token = get_setting( 'cloud', 'local_token' );
-		$token_verified = get_setting( 'cloud', 'token_verified' );
-		$this->cloud_key_is_verified = $token_verified && 'false' !== $token_verified;
+		$this->is_cloud_key_verified();
+	}
+
+	/**
+	 * Check cloud key is valid and verified
+	 * 
+	 * @return boolean
+	 */
+	public function is_cloud_key_verified() {
+		$cloud_token = get_setting( 'cloud', 'token_verified' );
+		return $this->cloud_key_is_verified = $cloud_token && 'false' !== $cloud_token;
 	}
 
 	/**
@@ -215,6 +224,92 @@ class Cloud_API {
 	}
 
 	/**
+	 * Establish new connection to the cloud platform.
+	 *
+	 * @param string $cloud_key Cloud API key.
+	 *
+	 * @return boolean
+	 */
+	public function establish_new_cloud_connection( $cloud_key ) {
+		
+		// Create a random string of 30 characters mixed numbers and letters - lower and uppercase
+		$local_token = wp_generate_password( 30, false );
+
+		// Get the current site url
+		$site_url = get_site_url();
+
+		// Send POST request to CLOUD_API_URL . 'private/syncandverify' with site_token and site_host as form data
+
+		$body = [
+			'site_token' => $local_token,
+			'site_host'  => parse_url( $site_url, PHP_URL_HOST ),
+		];
+
+		$body = json_encode( $body );
+
+		$response = wp_remote_post(
+			self::CLOUD_API_URL . 'private/syncandverify',
+			[
+				'method'  => 'POST',
+				'headers' => [
+					'Authorization' => 'Bearer ' . $cloud_key,
+					'Local-Token'   => $local_token,
+					'Content-Type'  => 'multipart/form-data',
+					'accept'        => 'application/json',
+				],
+				'body'    => [
+					'site_token' => $local_token,
+					'site_host'  => parse_url( $site_url, PHP_URL_HOST ),
+				],
+			]
+		);
+
+		// Check the response codes and return accordingly
+		if ( wp_remote_retrieve_response_code( $response ) === 401 ) {
+			return [
+				'success' => false,
+				'message' => 'That token is invalide - please check and try again.',
+			];
+		}
+
+		if ( !wp_remote_retrieve_response_code( $response ) === 200 ) {
+			return [
+				'success' => false,
+				'message' => 'There was an error connecting to the cloud platform. Please try again later.',
+			];
+		}
+
+		// Get the response body
+		$body = wp_remote_retrieve_body( $response );
+
+		// Decode the response body	
+		$data = json_decode( $body, true );
+
+		wp_die( var_dump( $data));
+
+		// Check the response and return accordingly 
+		if ( $data['sync_status'] == 'error' ) {
+			return[
+				'success' => false,
+				'message' => $data['message'],
+			];
+		}
+		if ( $data['sync_status'] == 'success' ) {
+			return[
+				'success' => true,
+				'message' => $data['message'],
+				'local_token' => $local_token,
+			];
+		}
+
+		// If all else fails..
+		return [
+			'success' => false,
+			'message' => 'There was an unknown error, please try again later.',
+		];
+	}
+
+	/**
 	 * Retrieves a list of all snippets from the cloud API.
 	 *
 	 * @param integer $page Page of data to retrieve.
@@ -229,7 +324,7 @@ class Cloud_API {
 
 		// Fetch data from the stored transient, if available.
 		$stored_data = get_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
-		if ( $stored_data && is_array( $stored_data ) ) {
+		if ( $stored_data ) {
 			$this->codevault_snippets = $stored_data;
 			return $this->codevault_snippets;
 		}

@@ -57,6 +57,19 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
+
+		register_rest_route(
+			$this->namespace,
+			$route . '/removesync',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'remove_sync' ],
+					'args'                => $this->get_endpoint_args_for_item_schema( true ),
+				],
+				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
     }
 
     /**
@@ -140,6 +153,31 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 		return rest_ensure_response( $response );
 	}
 
+	/**
+	 * Remove Sync
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function remove_sync( $request ) {
+		//Get the settings and set the cloud token and local token to empty strings and change the token_verified to false
+		$settings = get_option( 'code_snippets_settings' );
+		$settings['cloud']['cloud_token'] = '';
+		$settings['cloud']['local_token'] = '';
+		$settings['cloud']['token_verified'] = 'false';
 
+		//Update the settings
+		update_option( 'code_snippets_settings', $settings );
+
+		//Construct success response
+		$response = [
+			'status'  => 'success',
+			'message' => __( 'Sync has been revoked', 'code-snippets' ),
+		];
+
+		//Return the response
+		return rest_ensure_response( $response );
+	}
 
 }

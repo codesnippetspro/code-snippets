@@ -1372,7 +1372,7 @@ class List_Table extends WP_List_Table {
 	 */
 	private function is_cloud_link_valid() {
 		//
-		return code_snippets()->cloud_api->cloud_key_is_verified;
+		return code_snippets()->cloud_api->is_cloud_key_valid();
 	}
 
 	/**
