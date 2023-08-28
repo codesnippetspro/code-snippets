@@ -125,7 +125,7 @@ class Cloud_API {
 
 		// Fetch data from the stored transient, if available.
 		$stored_data = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
-		if ( $stored_data && is_array( $stored_data ) ) {
+		if ( $stored_data ) {
 			$this->local_to_cloud_map = $stored_data;
 			return $stored_data;
 		}
