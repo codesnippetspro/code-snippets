@@ -200,11 +200,16 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		// Ensure cloud connection is available.
-		if ( ! $this->cloud_api->is_cloud_connection_available() ) {
-			wp_safe_redirect( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings' ) ) );
-			exit;
+		//NEED TO CHECK CACHE BEFORE CALLING API EACH TIME EXCEPT THE FIRST TIME
+		$cloud_key = $this->cloud_api->is_cloud_key_available();
+		
+		if( !$cloud_key['success'] ){
+			//redirect to admin.php?page=snippets&type=all and show an admin notice
+			wp_safe_redirect( add_query_arg( 'result', 'cloud-key-'.$cloud_key['redirect-slug'], code_snippets()->get_menu_url( 'manage' ) ) );	
+			return;
 		}
-
+		
+		
 		// Initialize the codevault cloud list table class.
 		$this->cloud_list_table = new Cloud_List_Table();
 		$this->cloud_list_table->prepare_items();
@@ -279,8 +284,10 @@ class Manage_Menu extends Admin_Menu {
 					'deleted-multi'     => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
 					'cloned'            => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
 					'cloned-multi'      => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
-					'cloud-key-error'   => __( 'There is a problem with your Code Snippets Cloud Key.', 'code-snippets' ),
 					'cloud-refreshed'   => __( 'Synced cloud data refreshed <strong>successfully</strong>.', 'code-snippets' ),
+					'cloud-key-invalid'  => __( 'There is a problem in the Snippet with the cloud key, please try to import and try again.', 'code-snippets' ),
+					'cloud-key-inactive' => __( 'The Snippet with the cloud key is disabled please enable and try again. ', 'code-snippets' ),
+					'cloud-key-deleted'  => __( 'The Snippet with the cloud key is deleted please import the snippet and enable and try again. ', 'code-snippets' ),
 				)
 			)
 		);

@@ -246,19 +246,18 @@ function get_settings_fields(): array {
 			'button_label' => 'Refresh',
 			'default'      => null,
 		],
-		'remove_sync'   => [
-			'name'         => __( 'Remove Cloud Sync', 'code-snippets' ),
-			'type'         => 'button', //Change to checkbox or similar?
-			'button_id'    => 'remove_sync',
-			'button_label' => 'Remove Sync',
-			'default'      => null,
-		],
 		'token_verified' => [
 			'name'       => null,
 			'element_id' => 'cloud_token_verified',
 			'type'       => 'hidden',
-			'default'    => 'false',
+			'default'    =>  false,
 		],
+		'token_snippet_id' => [
+			'name'       => null,
+			'element_id' => 'cloud_token_snippet_id',
+			'type'       => 'hidden',
+			'default'    => null,
+		],	
 		'local_token'    => [
 			'name'       => null,
 			'element_id' => 'local_token',
