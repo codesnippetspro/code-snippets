@@ -200,7 +200,6 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		// Ensure cloud connection is available.
-		//NEED TO CHECK CACHE BEFORE CALLING API EACH TIME EXCEPT THE FIRST TIME
 		$cloud_key = $this->cloud_api->is_cloud_key_available();
 		
 		if( !$cloud_key['success'] ){

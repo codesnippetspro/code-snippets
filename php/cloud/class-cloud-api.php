@@ -10,6 +10,7 @@ use wpdb;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\Settings\get_setting;
+use function Code_Snippets\Settings\update_setting;
 use function Code_Snippets\update_snippet_fields;
 use function Code_Snippets\get_snippet_by_cloud_id;
 use function Code_Snippets\get_snippet_with_token_data;
@@ -230,16 +231,11 @@ class Cloud_API {
 
 		// If the cloud connection is successful, save the token in code snippets settings[cloud][cloud_token]
 		if( $cloud_connection['success'] ){
-			// Get the saved code snippets setting
-			$code_snippets_settings = get_option( 'code_snippets_settings' );
-			// Update the cloud token in the code snippets settings
-			$code_snippets_settings['cloud']['cloud_token'] = $saved_cloud_token;
-			$code_snippets_settings['cloud']['local_token'] = $cloud_connection['local_token'];
-			$code_snippets_settings['cloud']['token_verified'] = true;
-			// Add the token snippet id to the code snippets settings
-			$code_snippets_settings['cloud']['token_snippet_id'] = $token_snippet->id;
-			// Update the code snippets settings
-			update_option( 'code_snippets_settings', $code_snippets_settings );
+			// Update Settings
+			update_setting( 'cloud', 'cloud_token', $saved_cloud_token );
+			update_setting( 'cloud', 'local_token', $cloud_connection['local_token'] );
+			update_setting( 'cloud', 'token_verified', true );
+			update_setting( 'cloud', 'token_snippet_id', $token_snippet->id );
 			// Update the cloud key
 			$this->cloud_key = $saved_cloud_token;
 			// Update the local token
@@ -1014,22 +1010,19 @@ class Cloud_API {
 	 * @return array<string, mixed>
 	 */
 	public function remove_sync( $id, $network) {
-		$settings = get_option( 'code_snippets_settings' );
 		//Get the token snippet ID from the settings
-		$token_snippet = $settings['cloud']['token_snippet_id'];
+		$token_snippet = get_setting( 'cloud', 'token_snippet_id');
 
 		//Get the token snippet
 		if ( $id == $token_snippet ) {	
-			//Get the settings and set the cloud token and local token to empty strings and change the token_verified to false
-			$settings['cloud']['cloud_token'] = null;
-			$settings['cloud']['local_token'] = null;
-			$settings['cloud']['token_verified'] = false;
-			$settings['cloud']['token_snippet_id'] = null;
+			// Update Settings
+			update_setting( 'cloud', 'cloud_token', '' );
+			update_setting( 'cloud', 'local_token', '' );
+			update_setting( 'cloud', 'token_verified', false );
+			update_setting( 'cloud', 'token_snippet_id', '' );
 			//Update the cloud_key and cloud_key_is_verified to false
 			$this->cloud_key = null;
 			$this->cloud_key_is_verified = false;
-			//Update the settings
-			update_option( 'code_snippets_settings', $settings );
 			//Delete transients cs_codevault_snippets from database
 			delete_transient('cs_codevault_snippets');	
 
