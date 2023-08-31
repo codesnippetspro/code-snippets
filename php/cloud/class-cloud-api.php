@@ -460,19 +460,6 @@ class Cloud_API {
 	}
 
 	/**
-	 * Refresh all stored data.
-	 *
-	 * @return void
-	 */
-	public function refresh_synced_data() {
-		// Simply deleting the data is sufficient, as it will be recreated and stored the next time it is requested.
-		$this->local_to_cloud_map = null;
-		$this->codevault_snippets = null;
-		delete_transient( self::CLOUD_MAP_TRANSIENT_KEY );
-		delete_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
-	}
-
-	/**
 	 * Add a new link item to the local-to-cloud map.
 	 *
 	 * @param Cloud_Link $link Link to add.
@@ -1020,11 +1007,11 @@ class Cloud_API {
 			update_setting( 'cloud', 'local_token', '' );
 			update_setting( 'cloud', 'token_verified', false );
 			update_setting( 'cloud', 'token_snippet_id', '' );
-			//Update the cloud_key and cloud_key_is_verified to false
-			$this->cloud_key = null;
-			$this->cloud_key_is_verified = false;
-			//Delete transients cs_codevault_snippets from database
-			delete_transient('cs_codevault_snippets');	
+			//Reset Sync
+			$this->local_to_cloud_map = null;
+			$this->codevault_snippets = null;
+			delete_transient( self::CLOUD_MAP_TRANSIENT_KEY );
+			delete_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
 
 			//Todo:  Send request to Cloud API to remove sync
 			return [

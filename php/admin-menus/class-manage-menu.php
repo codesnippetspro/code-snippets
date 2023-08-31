@@ -165,33 +165,11 @@ class Manage_Menu extends Admin_Menu {
 		return isset( $types[ $current_type ] ) ? $current_type : 'all';
 	}
 
-	/**
-	 * Display Cloud Key Notice
-	 *
-	 * @return void
-	 */
-	public function display_cloud_key_notice() {
-		// translators: %s: cloud settings page.
-		$message = __( 'Please enter a valid Cloud API Token in the <a href="%s">Cloud Settings</a> to enable Cloud Sync.', 'code-snippets' );
-		$message = sprintf( $message, esc_url( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings ' ) ) ) );
-
-		printf(
-			'<div class="notice notice-error is-dismissible"><p>%s</p></div>',
-			wp_kses_post( $message )
-		);
-	}
 
 	/**
 	 * Run startup checks for cloud connection or redirect to cloud connection page
 	 */
 	private function load_cloud() {
-		if ( ! empty( $_REQUEST['refresh_cloud'] ) ) {
-			$this->cloud_api->refresh_synced_data();
-			return true;
-			//Include below line if you want to regenerate cloud data from as refresh synced just deletes the data
-			//wp_safe_redirect( esc_url_raw( add_query_arg( 'result', 'cloud-refreshed' ) ) ); 
-		}
-
 		$cloud_types = [ 'cloud', 'cloud_search', 'bundles'];
 
 

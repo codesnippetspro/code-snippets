@@ -201,6 +201,13 @@ class Upgrade {
 				'tags'  => array( 'sample', 'dates' ),
 				'scope' => 'content',
 			),
+			array(
+				'name'  => esc_html__( 'Code Snippet Cloud Access', 'code-snippets' ),
+				'code'  => "//Your token goes here after the equal sign and must be in single quotes...\n\$cloud_token = 'Insert Cloud Token Here..';",
+				'desc'  => esc_html__( 'Snippet used to connect to code snippet cloud and enable/disable access to the cloud..', 'code-snippets' ) . $tag,
+				'tags'  => array( 'extend_cs' ),
+				'scope' => 'admin',
+			),
 		);
 
 		$snippets = array();

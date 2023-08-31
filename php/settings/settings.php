@@ -134,7 +134,7 @@ function get_settings_sections(): array {
 	$sections = array(
 		'general' => __( 'General', 'code-snippets' ),
 		'editor'  => __( 'Code Editor', 'code-snippets' ),
-		'cloud'   => __( 'Cloud Sync', 'code-snippets' ),
+		//'cloud'   => __( 'Cloud Sync', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
