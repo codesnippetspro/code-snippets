@@ -266,9 +266,9 @@ class Cloud_API {
 
 		$cloud_id_owner = explode( '_', $cloud_id );
 		return [
-			'cloud_id' 			=> (int) $cloud_id_owner[0] ?? '',
-			'is_owner' 			=> (bool) $cloud_id_owner[1] ? true : false,
-			'is_owner_string' 	=> (bool) $cloud_id_owner[1] ? '1' : '0',
+			'cloud_id' => (int) $cloud_id_owner[0] ?? '',
+			'is_owner' => (bool) $cloud_id_owner[1] ? true : false,
+			'is_owner_string' => (bool) $cloud_id_owner[1] ? '1' : '0',
 		];
 	}
 
@@ -281,7 +281,7 @@ class Cloud_API {
 		$cloud_api_key = get_setting( 'cloud', 'cloud_token' );
 		return [ 
 			'Authorization' => 'Bearer ' . $cloud_api_key ,
-			'Local-Token' 	=> $this->local_token,
+			'Local-Token' => $this->local_token,
 		];
 	}
 
@@ -442,11 +442,11 @@ class Cloud_API {
 	public static function fetch_search_results( $search_method, $search, $page = 0 ) {
 		$api_url = add_query_arg(
 			[
-				's_method'  => $search_method,
-				's'    		=> $search,
-				'page' 		=> $page,
-				'site_token'=> get_setting( 'cloud', 'local_token' ),
-				'site_host'	=> parse_url( get_site_url(), PHP_URL_HOST ),
+			's_method'  => $search_method,
+			's'    		=> $search,
+			'page' 		=> $page,
+			'site_token'=> get_setting( 'cloud', 'local_token' ),
+			'site_host'	=> parse_url( get_site_url(), PHP_URL_HOST ),
 			],
 			self::CLOUD_API_URL . 'public/search'
 		);
@@ -547,7 +547,7 @@ class Cloud_API {
 			$updated = $this->unpack_request_json( $response );
 
 			if ( $updated['success'] ) {
-				$this->refresh_synced_data();
+			$this->refresh_synced_data();
 			}
 		}		
 	}
