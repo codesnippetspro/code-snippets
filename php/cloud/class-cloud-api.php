@@ -112,7 +112,8 @@ class Cloud_API {
 	 */
 	public function is_cloud_key_verified() {
 		$cloud_token = get_setting( 'cloud', 'token_verified' );
-		return $this->cloud_key_is_verified = $cloud_token && false !== $cloud_token;
+		$this->cloud_key_is_verified = $cloud_token;
+		return $this->cloud_key_is_verified  && false !== $cloud_token;
 	}
 
 	/**
@@ -226,6 +227,8 @@ class Cloud_API {
 			];
 		}
 
+		//wp_die( print_r($saved_cloud_token) );
+
 		// Establish new cloud connection
 		$cloud_connection = $this->establish_new_cloud_connection( $saved_cloud_token );
 
@@ -249,9 +252,16 @@ class Cloud_API {
 			];
 		}
 
+		if($cloud_connection['message'] == 'no_codevault'){
+			return [
+				'success' => false,
+				'redirect-slug' => 'no-codevault',
+			];
+		}
+
 		return [
 			'success' => false,
-			'redirect-slug' => 'invalid',
+			'redirect-slug' => 'invalid',	
 		];
 	}
 
@@ -361,6 +371,10 @@ class Cloud_API {
 
 		// Check the response and return accordingly 
 		if ( $data['sync_status'] == 'error' ) {
+			// Check if the data message starts with No Codevault!
+			if ( strpos( $data['message'], 'No Codevault!' ) !== false ) {
+				$data['message'] = 'no_codevault';
+			}
 			return[
 				'success' => false,
 				'message' => $data['message'],
