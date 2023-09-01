@@ -248,6 +248,8 @@ class Manage_Menu extends Admin_Menu {
 			echo '</p></div>';
 		}
 
+		$cloud_setup_url = '<a href="https://codesnippets.cloud/cloud-setup-guide" target="_blank">Cloud Setup Guide</a>';
+
 		$this->print_result_message(
 			apply_filters(
 				'code_snippets/manage/result_messages',
@@ -262,11 +264,11 @@ class Manage_Menu extends Admin_Menu {
 					'cloned'            => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
 					'cloned-multi'      => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
 					'cloud-refreshed'   => __( 'Synced cloud data refreshed <strong>successfully</strong>.', 'code-snippets' ),
-					'cloud-key-invalid'  => __( 'There is a problem with the special access token, please re-download from the cloud and try again.', 'code-snippets' ),
-					'cloud-key-inactive' => __( 'The Snippet with the cloud key is disabled please enable and try again. ', 'code-snippets' ),
-					'cloud-key-deleted'  => __( 'The Snippet with the cloud key is deleted please import the snippet and enable and try again. ', 'code-snippets' ),
-					'cloud-key-expired'  => __( 'The Snippet with the cloud key is expired please re-download from the cloud and try again. ', 'code-snippets' ),
-					'cloud-key-no-codevault'  => __( 'There is no codevault set up on the cloud.Please log into your Code Snippet Cloud account and set up a Codevault.', 'code-snippets' ),
+					'cloud-key-invalid'  => __( 'There is a problem with the special access token, please re-download from the cloud and try again. Read our '.$cloud_setup_url, 'code-snippets' ),
+					'cloud-key-inactive' => __( 'The Snippet with the cloud key is disabled please enable and try again. Read our '.$cloud_setup_url, 'code-snippets' ),
+					'cloud-key-deleted'  => __( 'The Snippet with the cloud key is deleted please import the snippet and enable and try again. Read our '.$cloud_setup_url, 'code-snippets' ),
+					'cloud-key-expired'  => __( 'The Snippet with the cloud key is expired please re-download from the cloud and try again. Read our '.$cloud_setup_url, 'code-snippets' ),
+					'cloud-key-no-codevault'  => __( 'There is no codevault set up on the cloud.Please log into your Code Snippet Cloud account and set up a Codevault. Read our '.$cloud_setup_url, 'code-snippets' ),
 				)
 			)
 		);
