@@ -223,49 +223,6 @@ function get_settings_fields(): array {
 
 	];
 
-	/* Cloud Sync Settings */
-	$fields['cloud'] = [
-
-		'cloud_token'    => [
-			'name'       => __( 'Cloud API Token', 'code-snippets' ),
-			'element_id' => 'cloud_token',
-			'type'       => 'cloud_token',
-			'default'    => null,
-		],
-		'verify_button'  => [
-			'name'         => __( '*Verify Token Before Saving', 'code-snippets' ),
-			'type'         => 'button',
-			'button_id'    => 'verify_token',
-			'button_label' => 'Verify Now',
-			'default'      => null,
-		],
-		'refresh_data'   => [
-			'name'         => __( 'Refresh Synced Data', 'code-snippets' ),
-			'type'         => 'button',
-			'button_id'    => 'refresh_data',
-			'button_label' => 'Refresh',
-			'default'      => null,
-		],
-		'token_verified' => [
-			'name'       => null,
-			'element_id' => 'cloud_token_verified',
-			'type'       => 'hidden',
-			'default'    =>  false,
-		],
-		'token_snippet_id' => [
-			'name'       => null,
-			'element_id' => 'cloud_token_snippet_id',
-			'type'       => 'hidden',
-			'default'    => null,
-		],	
-		'local_token'    => [
-			'name'       => null,
-			'element_id' => 'local_token',
-			'type'       => 'hidden',
-			'default'    => null,
-		],
-	];
-
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );
 
 	return $fields;
