@@ -139,7 +139,16 @@ class Cloud_List_Table extends WP_List_Table {
 		$this->_column_headers = array( $columns, $hidden );
 
 		$this->cloud_snippets = $this->fetch_snippets();
-		$this->items = $this->cloud_snippets->snippets;
+		// Check if there are any snippets to display
+		if ( ! $this->cloud_snippets ) {
+			$this->items = array();
+			$total_snippets = 0;
+			$total_pages = 0;
+		}else{
+			$this->items = $this->cloud_snippets->snippets;
+			$total_snippets = $this->cloud_snippets->total_snippets;
+			$total_pages = (int) $this->cloud_snippets->total_pages;
+		}
 		
 		if($this->cloud_snippets ){
 			$per_page_count = count( $this->cloud_snippets->snippets );
@@ -150,8 +159,8 @@ class Cloud_List_Table extends WP_List_Table {
 		$this->set_pagination_args(
 			[
 				'per_page'    => $per_page_count,
-				'total_items' => $this->cloud_snippets->total_snippets,
-				'total_pages' => (int) $this->cloud_snippets->total_pages,
+				'total_items' => $total_snippets,
+				'total_pages' => $total_pages,
 			]
 		);
 	}

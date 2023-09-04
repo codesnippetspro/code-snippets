@@ -62,9 +62,6 @@ class Manage_Menu extends Admin_Menu {
 		);
 
 		$this->cloud_api = code_snippets()->cloud_api;
-
-		// Var dump the code snippet settings array from options api  ========================
-		//print_r( get_option( 'code_snippets_settings' ) );  ========================
 	}
 
 	/**

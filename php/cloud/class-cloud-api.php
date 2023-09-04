@@ -225,9 +225,8 @@ class Cloud_API {
 	 * @return boolean
 	 */
 	public function is_cloud_key_verified() {
-		$cloud_token = $this->get_cloud_setting( 'token_verified' );
-		$this->cloud_key_is_verified = $cloud_token;
-		return $this->cloud_key_is_verified  && false !== $cloud_token;
+		$this->cloud_key_is_verified = boolval( $this->get_cloud_setting( 'token_verified' ) );
+		return $this->cloud_key_is_verified;
 	}
 
 	/**
@@ -348,6 +347,8 @@ class Cloud_API {
 		// Extract token from snippet
 		$saved_cloud_token = $token_snippet->cloud_id;
 
+		//wp_die( var_dump( $saved_cloud_token ) );
+
 		if( !$saved_cloud_token ){
 			return [
 				'success' => false,
@@ -357,6 +358,8 @@ class Cloud_API {
 
 		// Establish new cloud connection
 		$cloud_connection = $this->establish_new_cloud_connection( $saved_cloud_token );
+
+		//wp_die( var_dump( $cloud_connection ) );
 
 		if($cloud_connection['message'] == 'no_codevault'){
 			return [
@@ -542,13 +545,15 @@ class Cloud_API {
 			return $this->codevault_snippets;
 		}
 
-		$this->codevault_snippets = null;
+		//$this->codevault_snippets = null;
 
 		// Otherwise, fetch from API and store.
 		$url = self::CLOUD_API_URL . 'private/allsnippets?page=' . $page;
 		$response = wp_remote_get( $url, [ 'headers' => $this->build_request_headers() ] );
 
 		$data = $this->unpack_request_json( $response );
+
+		wp_die( var_dump( $response ) );
 
 		if ( ! $data || ! isset( $data['snippets'] ) ) {
 			return;
@@ -1114,7 +1119,7 @@ class Cloud_API {
 	
 
 	/**
-	 * Remove Sync Locally and on cloud API
+	 * Remove Sync if the token snippet is deleted.
 	 *
 	 * @return array<string, mixed>
 	 */
@@ -1125,19 +1130,11 @@ class Cloud_API {
 
 		//Get the token snippet
 		if ( $id == $token_snippet ) {	
-			// Update All Cloud Settings
-			$this->update_cloud_settings( [
-				'cloud_token' => '',
-				'cloud_token_verified' => false,
-				'token_snippet_id' => '',
-				'local_token' => '',
-			] );
+			// Refresh Settings Data
+			$this->refresh_cloud_settings_data();
 
-			//Reset Sync
-			$this->local_to_cloud_map = null;
-			$this->codevault_snippets = null;
-			delete_transient( self::CLOUD_MAP_TRANSIENT_KEY );
-			delete_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
+			//Refresh Stored Data
+			$this->refresh_synced_data();
 
 			//Todo:  Send request to Cloud API to remove sync
 			return [
@@ -1147,4 +1144,33 @@ class Cloud_API {
 
 		}
 	}
+
+	/**
+	 * Refresh all stored data.
+	 *
+	 * @return void
+	 */
+	public function refresh_synced_data() {
+		// Simply deleting the data is sufficient, as it will be recreated and stored the next time it is requested.
+		$this->local_to_cloud_map = null;
+		$this->codevault_snippets = null;
+		delete_transient( self::CLOUD_MAP_TRANSIENT_KEY );
+		delete_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
+	}
+
+	/**
+	 * Refresh all settings data
+	 *
+	 * @return void
+	 */
+	public function refresh_cloud_settings_data() {
+		// Simply deleting the data is sufficient, as it will be recreated and stored the next time it is requested.
+		$this->update_cloud_settings( [
+			'cloud_token' => '',
+			'token_verified' => false,
+			'token_snippet_id' => '',
+			'local_token' => '',
+		] );
+	}
+
 }
