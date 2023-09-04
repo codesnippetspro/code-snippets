@@ -4,6 +4,7 @@ namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_Snippet;
 use function Code_Snippets\Settings\get_setting;
+use function Code_Snippets\code_snippets;
 use WP_List_Table;
 
 /**
@@ -277,6 +278,11 @@ class List_Table extends WP_List_Table {
 				}
 			}else{
 				$actions['cloud'] = sprintf( '<a href="%s">Set up Cloud</a>', esc_url( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings' ) ) ));
+			}
+
+			// Check if the snippet is the special cloud access snippet if so remove the cloud action
+			if ( code_snippets()->cloud_api->is_cloud_access_snippet( $snippet->id) ) {
+				$actions['cloud'] = sprintf( '<a>%s</a>', 'Cloud Access Snippet' );
 			}
 
 			$actions['delete'] = sprintf(

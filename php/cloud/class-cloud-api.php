@@ -231,6 +231,20 @@ class Cloud_API {
 	}
 
 	/**
+	 * Check snippet is special token snippet
+	 * 
+	 * @param string|integer $snippet_id
+	 * 
+	 * @return boolean
+	 */
+	public function is_cloud_access_snippet( $snippet_id) {
+		$token_snippet_id = $this->get_cloud_setting( 'token_snippet_id' );
+		$snippet_id = (int) $snippet_id;
+		$token_snippet_id = (int) $token_snippet_id;
+		return $token_snippet_id == $snippet_id;
+	}
+
+	/**
 	 * Create local-to-cloud map to keep track of local snippets that have been synced to the cloud.
 	 *
 	 * @return Cloud_Link[]
@@ -331,8 +345,8 @@ class Cloud_API {
 			];
 		}
 
-		// Extract the actual token from the snippet code
-		$saved_cloud_token = $this->get_cloud_token_from_snippet_code( $token_snippet->code );
+		// Extract token from snippet
+		$saved_cloud_token = $token_snippet->cloud_id;
 
 		if( !$saved_cloud_token ){
 			return [
@@ -340,8 +354,6 @@ class Cloud_API {
 				'redirect-slug' => 'invalid',
 			];
 		}
-
-		//wp_die( print_r($saved_cloud_token) );
 
 		// Establish new cloud connection
 		$cloud_connection = $this->establish_new_cloud_connection( $saved_cloud_token );
@@ -1100,23 +1112,6 @@ class Cloud_API {
 		<?php
 	}
 	
-	/**
-	 * Get the cloud token from the snippet code.
-	 *
-	 * @param string $code The code of the snippet.
-	 * 
-	 * @return string|boolean
-	 */
-	private function get_cloud_token_from_snippet_code( $code ){
-		// Token is stored as a string like this $cloud_token = '10|rQrwqNTlZoKt60L6Qqiw3Bv9fJWCgtaVUAf4eanO';
-		// Check it the token is set in the snippet code and extract it otherwise return false
-		if ( preg_match( '/\$cloud_token\s*=\s*\'(.*)\'/', $code, $matches ) ) {
-			return $matches[1];
-		} else {
-			return false;
-		}
-	}
-
 
 	/**
 	 * Remove Sync Locally and on cloud API
