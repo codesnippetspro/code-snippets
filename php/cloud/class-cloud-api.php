@@ -553,8 +553,6 @@ class Cloud_API {
 
 		$data = $this->unpack_request_json( $response );
 
-		wp_die( var_dump( $response ) );
-
 		if ( ! $data || ! isset( $data['snippets'] ) ) {
 			return;
 		}
