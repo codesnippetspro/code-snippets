@@ -347,8 +347,6 @@ class Cloud_API {
 		// Extract token from snippet
 		$saved_cloud_token = $token_snippet->cloud_id;
 
-		//wp_die( var_dump( $saved_cloud_token ) );
-
 		if( !$saved_cloud_token ){
 			return [
 				'success' => false,
@@ -358,8 +356,6 @@ class Cloud_API {
 
 		// Establish new cloud connection
 		$cloud_connection = $this->establish_new_cloud_connection( $saved_cloud_token );
-
-		//wp_die( var_dump( $cloud_connection ) );
 
 		if($cloud_connection['message'] == 'no_codevault'){
 			return [
