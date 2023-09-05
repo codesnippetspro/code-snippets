@@ -278,6 +278,11 @@ class Cloud_API {
 				continue;
 			}
 
+			// If the snippet is a token snippet skip it
+			if( $this->is_cloud_access_snippet( $local_snippet->id ) ) {
+				continue;
+			}
+
 			$link = new Cloud_Link();
 			$cloud_id_owner = $this->get_cloud_id_and_ownership( $local_snippet->cloud_id );
 			$cloud_id_int = intval( $cloud_id_owner['cloud_id'] );
