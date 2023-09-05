@@ -1,10 +1,4 @@
 <?php
-
-namespace Code_Snippets;
-
-use function Code_Snippets\Settings\get_setting;
-use WP_List_Table;
-
 /**
  * Contains the class for handling the snippets table
  *
@@ -12,6 +6,11 @@ use WP_List_Table;
  *
  * phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
  */
+
+namespace Code_Snippets;
+
+use WP_List_Table;
+use function Code_Snippets\Settings\get_setting;
 
 // The WP_List_Table base class is not included by default, so we need to load it.
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -956,11 +955,12 @@ class List_Table extends WP_List_Table {
 		$this->fetch_shared_network_snippets();
 
 		// Filter snippets by type.
-		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
+		$type = sanitize_key( wp_unslash( isset( $_GET['type'] ) ?? '' ) );
+		if ( $type && 'all' !== $type ) {
 			$snippets['all'] = array_filter(
 				$snippets['all'],
-				function ( Snippet $snippet ) {
-					return $_GET['type'] === $snippet->type;
+				function ( Snippet $snippet ) use ( $type ) {
+					return $type === $snippet->type;
 				}
 			);
 		}

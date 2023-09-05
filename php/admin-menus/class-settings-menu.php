@@ -98,19 +98,19 @@ class Settings_Menu extends Admin_Menu {
 	/**
 	 * Retrieve the name of the settings section currently being viewed.
 	 *
-	 * @param string $default Name of the default tab displayed.
+	 * @param string $default_section Name of the default tab displayed.
 	 *
 	 * @return string
 	 */
-	public function get_current_section( string $default = 'general' ): string {
+	public function get_current_section( string $default_section = 'general' ): string {
 		$sections = $this->get_sections();
 
 		if ( ! $sections ) {
-			return $default;
+			return $default_section;
 		}
 
-		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $default;
-		return isset( $sections[ $active_tab ] ) ? $active_tab : $default;
+		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $default_section;
+		return isset( $sections[ $active_tab ] ) ? $active_tab : $default_section;
 	}
 
 	/**

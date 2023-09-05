@@ -9,7 +9,6 @@ use WP_REST_Response;
 use WP_REST_Controller;
 use Code_Snippets\Export;
 use Code_Snippets\Snippet;
-use const Code_Snippets\REST_API_NAMESPACE;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
@@ -17,6 +16,7 @@ use function Code_Snippets\code_snippets;
 use function Code_Snippets\delete_snippet;
 use function Code_Snippets\activate_snippet;
 use function Code_Snippets\deactivate_snippet;
+use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
  * Allows fetching snippet data through the WordPress REST API.

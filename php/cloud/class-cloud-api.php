@@ -321,7 +321,6 @@ class Cloud_API {
 				'error'   => 'There was a problem saving or no snippets found to download.',
 			];
 		}
-
 	}
 
 	/**

@@ -107,7 +107,9 @@ class DB {
 		static $checked = array();
 
 		if ( $refresh || ! isset( $checked[ $table_name ] ) ) {
-			$checked[ $table_name ] = $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name; // cache pass, db call ok.
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, caching is handled through $checked variable.
+			$result = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) );
+			$checked[ $table_name ] = $result === $table_name;
 		}
 
 		return $checked[ $table_name ];
@@ -232,7 +234,7 @@ class DB {
 				$scopes
 			),
 			'ARRAY_A'
-		); // db call ok.
+		);
 
 		// Cache the full list of snippets.
 		if ( is_array( $snippets ) ) {

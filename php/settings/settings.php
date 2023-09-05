@@ -28,14 +28,14 @@ function add_self_option( bool $network, string $option, $value ): bool {
 /**
  * Retrieves an option value based on an option name from either the current site or the current network
  *
- * @param bool   $network Whether to get a network-wide option.
- * @param string $option  Name of option to retrieve. Expected to not be SQL-escaped.
- * @param mixed  $default Optional value to return if option doesn't exist. Default false.
+ * @param bool   $network       Whether to get a network-wide option.
+ * @param string $option        Name of option to retrieve. Expected to not be SQL-escaped.
+ * @param mixed  $default_value Optional value to return if option doesn't exist. Default false.
  *
  * @return mixed Value set for the option.
  */
-function get_self_option( bool $network, string $option, $default = false ) {
-	return $network ? get_site_option( $option, $default ) : get_option( $option, $default );
+function get_self_option( bool $network, string $option, $default_value = false ) {
+	return $network ? get_site_option( $option, $default_value ) : get_option( $option, $default_value );
 }
 
 /**

@@ -111,7 +111,6 @@ class Manage_Menu extends Admin_Menu {
 		);
 
 		add_action( 'load-' . $hook, array( $class, 'load' ) );
-
 	}
 
 	/**
@@ -131,7 +130,6 @@ class Manage_Menu extends Admin_Menu {
 		/* Initialize the list table class */
 		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
-
 	}
 
 	/**
@@ -231,7 +229,7 @@ class Manage_Menu extends Admin_Menu {
 			array( 'id' => $snippet->id ),
 			array( '%d' ),
 			array( '%d' )
-		); // db call ok.
+		);
 
 		clean_snippets_cache( $table );
 	}
@@ -293,21 +291,18 @@ class Manage_Menu extends Admin_Menu {
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
-			} else {
-
-				if ( $snippet->active ) {
-					$result = activate_snippet( $snippet->id, $snippet->network );
-					if ( is_string( $result ) ) {
-						wp_send_json_error(
-							array(
-								'type'    => 'action_error',
-								'message' => $result,
-							)
-						);
-					}
-				} else {
-					deactivate_snippet( $snippet->id, $snippet->network );
+			} elseif ( $snippet->active ) {
+				$result = activate_snippet( $snippet->id, $snippet->network );
+				if ( is_string( $result ) ) {
+					wp_send_json_error(
+						array(
+							'type'    => 'action_error',
+							'message' => $result,
+						)
+					);
 				}
+			} else {
+				deactivate_snippet( $snippet->id, $snippet->network );
 			}
 		}
 

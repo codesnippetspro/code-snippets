@@ -444,6 +444,6 @@ class Snippet extends Data_Item {
 	 * Increment the revision number by one.
 	 */
 	public function increment_revision() {
-		$this->revision++;
+		++$this->revision;
 	}
 }

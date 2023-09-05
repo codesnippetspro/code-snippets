@@ -178,12 +178,11 @@ abstract class Data_Item {
 	/**
 	 * Prepare a value before it is stored.
 	 *
-	 * @param mixed  $value Value to prepare.
-	 * @param string $field Field name.
+	 * @param mixed $value Value to prepare.
 	 *
 	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_field( $value, string $field ) {
+	protected function prepare_field( $value ) {
 		return $value;
 	}
 

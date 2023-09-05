@@ -1,11 +1,4 @@
 <?php
-
-namespace Code_Snippets\Cloud;
-
-use Code_Snippets\Snippet;
-use WP_Plugin_Install_List_Table;
-use function Code_Snippets\code_snippets;
-
 /**
  * Contains the class for handling the snippets table
  *
@@ -13,6 +6,12 @@ use function Code_Snippets\code_snippets;
  *
  * phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
  */
+
+namespace Code_Snippets\Cloud;
+
+use Code_Snippets\Snippet;
+use WP_Plugin_Install_List_Table;
+use function Code_Snippets\code_snippets;
 
 /* The WP_List_Table base class is not included by default, so we need to load it */
 if ( ! class_exists( 'WP_Plugin_Install_List_Table' ) ) {
@@ -103,7 +102,6 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 				sanitize_key( wp_unslash( $_REQUEST['snippet'] ) )
 			);
 		}
-
 	}
 
 	/**
@@ -205,7 +203,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 					</div>
 					<div class="column-downloaded">
 						<?php
-						echo sprintf(
+						printf(
 							'<a class="snippet-type-badge snippet-status" data-type="%s">%s</a>',
 							esc_attr( strtolower( $this->cloud_api->get_status_name_from_status( $item->status ) ) ),
 							esc_html( $this->cloud_api->get_status_name_from_status( $item->status ) )

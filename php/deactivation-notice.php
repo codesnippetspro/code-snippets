@@ -7,6 +7,7 @@
  * @package      Code_Snippets
  *
  * @noinspection PhpNestedDirNameCallsCanBeReplacedWithLevelParameterInspection
+ * phpcs:disable Modernize.FunctionCalls.Dirname.FileConstant
  */
 
 if ( ! defined( 'ABSPATH' ) || function_exists( 'code_snippets_deactivation_notice' ) ) {
