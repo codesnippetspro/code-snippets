@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.5.0-beta.1 (06 July 2023)
+## 3.5.0 (08 September 2023)
 * Added: Code Snippet Cloud API Support.
 * Added: Back up and Synchronise local snippets with Code Snippet Cloud Codevault.
 * Added: Synchronised local snippets are automatically updated in Cloud.
