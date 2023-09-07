@@ -1,7 +1,7 @@
 # Changelog
 
-## 3.5.0 (08 September 2023)
-* Added: Support for the Code Snippets Cloud API.
+## 3.5.0 (08 Sep 2023)
+=* Added: Support for the Code Snippets Cloud API.
 * Added: Search and download public snippets.
 * Added: Codevault back-up and synchronisation. (PRO)
 * Added: Synchronised local snippets are automatically updated in Cloud. (PRO)

@@ -12,7 +12,7 @@
  * Requires PHP: 7.0
  * Requires at least: 5.0
  *
- * @version   3.5.0-beta.1
+ * @version   3.5.0
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2023 Code Snippets Pro
