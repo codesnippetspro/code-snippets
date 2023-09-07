@@ -140,12 +140,11 @@ abstract class Admin_Menu {
 		$result = sanitize_key( $_REQUEST[ $request_var ] );
 
 		// Check if the $messages[ $result ] starts with 'cloud-key' if so change $class to 'error'.
-		if ( 'cloud-key' === substr( $result , 0, 9 ) ) {
-			$class = 'error';
+		if ( 'cloud-key' === substr( $result, 0, 9 ) ) {
+			$class_name = 'error';
 		}
 
 		if ( isset( $messages[ $result ] ) ) {
-
 			printf(
 				'<div id="message" class="%2$s fade"><p>%1$s</p></div>',
 				wp_kses_post( $messages[ $result ] ),

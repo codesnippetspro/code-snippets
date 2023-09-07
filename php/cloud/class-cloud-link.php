@@ -55,7 +55,7 @@ class Cloud_Link extends Data_Item {
 				return is_bool( $value ) ? $value : (bool) $value;
 
 			default:
-				return parent::prepare_field( $value, $field );
+				return $value;
 		}
 	}
 }

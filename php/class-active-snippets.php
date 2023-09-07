@@ -45,9 +45,9 @@ class Active_Snippets {
 				exit;
 			}
 
-			//add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
-			//add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
 		}
 	}
 
@@ -107,14 +107,14 @@ class Active_Snippets {
 
 		if ( 'all' === $scope ) {
 			foreach ( $revisions as $i => $v ) {
-				$revisions[ $i ]++;
+				++$revisions[ $i ];
 			}
 		} else {
 			if ( ! isset( $revisions[ $scope ] ) ) {
 				$revisions[ $scope ] = 0;
 			}
 
-			$revisions[ $scope ]++;
+			++$revisions[ $scope ];
 		}
 
 		Settings\update_self_option( $network, 'code_snippets_assets_rev', $revisions );
@@ -130,11 +130,11 @@ class Active_Snippets {
 	public function get_rev( string $scope ) {
 		$rev = 0;
 		$scope_snippets = $this->fetch_active_snippets( $scope );
-		
+
 		if ( empty( $scope_snippets ) ) {
 			return false;
 		}
-		
+
 		$revisions = get_option( 'code_snippets_assets_rev' );
 		$rev += isset( $revisions[ $scope ] ) ? intval( $revisions[ $scope ] ) : 0;
 
@@ -187,7 +187,7 @@ class Active_Snippets {
 			return;
 		}
 
-		$url = $this->get_asset_url( "$scope-css" );		
+		$url = $this->get_asset_url( "$scope-css" );
 		wp_enqueue_style( "code-snippets-$scope-styles", $url, array(), $rev );
 	}
 

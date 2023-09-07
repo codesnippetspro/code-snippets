@@ -80,7 +80,7 @@ class Cloud_Snippet extends Data_Item {
 				return code_snippets_build_tags_array( $value );
 
 			default:
-				return parent::prepare_field( $value, $field );
+				return $value;
 		}
 	}
 }

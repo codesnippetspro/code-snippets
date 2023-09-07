@@ -22,7 +22,6 @@
  * phpcs:disable Modernize.FunctionCalls.Dirname.FileConstant
  */
 
-
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	return;

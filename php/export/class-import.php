@@ -78,7 +78,7 @@ class Import {
 				'priority',
 				'shared_network',
 				'modified',
-				'cloud_id'
+				'cloud_id',
 			];
 
 			foreach ( $import_fields as $field ) {

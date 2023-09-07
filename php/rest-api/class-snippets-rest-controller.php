@@ -230,7 +230,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Create one item from the collection
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request $request |array Full data about the request.
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */

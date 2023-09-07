@@ -101,13 +101,13 @@ class Command extends WP_CLI_Command {
 	/**
 	 * Parse the network argument from those passed to a command.
 	 *
-	 * @param array $assoc_args Associative array of associative arguments.
-	 * @param bool  $default    Value to return if argument is not present. Defaults to 'false'.
+	 * @param array $assoc_args    Associative array of associative arguments.
+	 * @param bool  $default_value Value to return if argument is not present. Defaults to 'false'.
 	 *
 	 * @return bool Value of the argument if present, otherwise the default.
 	 */
-	protected function parse_network_arg( array $assoc_args, bool $default = false ): bool {
-		return $assoc_args['network'] ?? $default;
+	protected function parse_network_arg( array $assoc_args, bool $default_value = false ): bool {
+		return $assoc_args['network'] ?? $default_value;
 	}
 
 	/**
@@ -493,23 +493,23 @@ class Command extends WP_CLI_Command {
 
 			if ( ! is_dir( $path ) ) {
 				WP_CLI::error( sprintf( "The directory '%s' does not exist.", $path ) );
-			} elseif ( ! is_writable( $path ) ) {
+			} elseif ( ! wp_is_writable( $path ) ) {
 				WP_CLI::error( sprintf( "The directory '%s' is not writable.", $path ) );
 			}
 
-			$filename = $path . DIRECTORY_SEPARATOR .
-			            sanitize_file_name( $assoc_args['filename_format'] ?: $export->build_filename( 'json' ) );
+			$filename_format = empty( $assoc_args['filename_format'] ) ? $export->build_filename( 'json' ) : $assoc_args['filename_format'];
+			$filename = $path . DIRECTORY_SEPARATOR . sanitize_file_name( $filename_format );
 		}
 
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fopen
+		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		$handle = fopen( $filename, 'w' );
 		if ( ! $handle ) {
 			WP_CLI::error( "Cannot open '$filename' for writing." );
 		}
 
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fwrite
+		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
 		fwrite( $handle, $data );
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fclose
+		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		fclose( $handle );
 
 		if ( ! $assoc_args['stdout'] ) {
@@ -557,10 +557,8 @@ class Command extends WP_CLI_Command {
 				if ( ! empty( $dir_files ) ) {
 					$files = array_merge( $files, $dir_files );
 				}
-			} else {
-				if ( file_exists( $file ) ) {
-					$files[] = $file;
-				}
+			} elseif ( file_exists( $file ) ) {
+				$files[] = $file;
 			}
 		}
 

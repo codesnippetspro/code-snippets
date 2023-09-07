@@ -60,7 +60,7 @@ class Cloud_Snippets extends Data_Item {
 				return absint( $value );
 
 			default:
-				return parent::prepare_field( $value, $field );
+				return $value;
 		}
 	}
 

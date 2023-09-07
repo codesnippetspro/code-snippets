@@ -278,18 +278,6 @@ class Frontend {
 	}
 
 	/**
-	 * Enqueue all available Prism themes.
-	 *
-	 * @return void
-	 */
-	public static function enqueue_all_prism_themes() {
-		self::register_prism_assets();
-
-		wp_enqueue_style( self::PRISM_HANDLE );
-		wp_enqueue_script( self::PRISM_HANDLE );
-	}
-
-	/**
 	 * Print a message to the user if the snippet ID attribute is invalid.
 	 *
 	 * @param integer $id Snippet ID.
