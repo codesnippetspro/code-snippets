@@ -218,16 +218,6 @@ class Manage_Menu extends Admin_Menu {
 			true
 		);
 
-		wp_localize_script(
-			'code-snippets-manage-js',
-			'code_snippets_manage_i18n',
-			array(
-				'activate'         => __( 'Activate', 'code-snippets' ),
-				'deactivate'       => __( 'Deactivate', 'code-snippets' ),
-				'activation_error' => __( 'An error occurred when attempting to activate', 'code-snippets' ),
-			)
-		);
-
 		if ( 'cloud' === $this->get_current_type() || 'cloud_search' === $this->get_current_type() ) {
 			Frontend::enqueue_all_prism_themes();
 		}

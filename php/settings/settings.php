@@ -245,7 +245,6 @@ function sanitize_settings( array $input ): array {
 
 	// Don't directly loop through $input as it does not include as deselected checkboxes.
 	foreach ( get_settings_fields() as $section_id => $fields ) {
-
 		foreach ( $fields as $field_id => $field ) {
 
 			// Fetch the corresponding input value from the posted data.

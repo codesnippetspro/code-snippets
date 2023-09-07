@@ -42,8 +42,6 @@ if ( false !== strpos( $version, 'beta' ) ) {
 		$this->render_page_title_actions( code_snippets()->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
 
 		$this->list_table->search_notice();
-
-
 		?>
 	</h1>
 

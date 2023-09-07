@@ -26,7 +26,7 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @property string        $updated          When the snippet was last updated, in ISO format.
  * @property integer       $revision         The update revision number.
  * @property bool          $is_owner         If user is owner or author of snippet.
- * = */
+ */
 class Cloud_Snippet extends Data_Item {
 
 	/**

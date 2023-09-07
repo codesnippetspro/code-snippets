@@ -92,7 +92,6 @@ const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({
 		}
 	}, [codeEditor, snippetType])
 
-
 	return (
 		<h2 className="nav-tab-wrapper" id="snippet-type-tabs">
 			{SNIPPET_TYPES.map(type =>

@@ -207,7 +207,7 @@ class List_Table extends WP_List_Table {
 
 		// Edit links go to a different menu.
 		if ( 'edit' === $action ) {
-			return code_snippets()->get_snippet_edit_url( (int) $snippet->id, $network_redirect ? 'network' : 'self' );
+			return code_snippets()->get_snippet_edit_url( $snippet->id, $network_redirect ? 'network' : 'self' );
 		}
 
 		$query_args = array(
@@ -396,15 +396,9 @@ class List_Table extends WP_List_Table {
 	 * @return string The column content to be printed.
 	 */
 	protected function column_cb( $item ): string {
-
-		if ( $item instanceof Cloud_Snippet ) {
-			$checkbox_name = 'cloud_ids';
-		} else {
-			$checkbox_name = $item->shared_network ? 'shared_ids' : 'ids';
-		}
 		$out = sprintf(
 			'<input type="checkbox" name="%s[]" value="%s">',
-			$checkbox_name,
+			$item instanceof Cloud_Snippet ? 'cloud_ids' : ( $item->shared_network ? 'shared_ids' : 'ids' ),
 			$item->id
 		);
 
@@ -834,6 +828,9 @@ class List_Table extends WP_List_Table {
 			return;
 		}
 
+		// TODO: add this back in.
+		// check_admin_referer( 'bulk-' . $this->_args['plural'] );.
+
 		$ids = isset( $_POST['ids'] ) ? array_map( 'intval', $_POST['ids'] ) : array();
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
 
@@ -1023,7 +1020,6 @@ class List_Table extends WP_List_Table {
 					return $type === $snippet->type;
 				}
 			);
-
 		}
 
 		// Add scope tags.
