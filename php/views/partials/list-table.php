@@ -14,8 +14,6 @@ namespace Code_Snippets;
  * @var Manage_Menu $this
  */
 
-$is_pro = code_snippets()->licensing->is_licensed();
-
 ?>
 
 <form method="get" action="">
@@ -59,29 +57,20 @@ $is_pro = code_snippets()->licensing->is_licensed();
 		<span class="dashicons dashicons-cloud cloud-icon cloud-synced-legend "></span>
 		<?php
 		esc_html_e( 'Snippet downloaded and in sync with codevault.', 'code-snippets' );
-
-		if ( ! $is_pro ) {
-			echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
-		}
+		$this->print_pro_message();
 		?>
 	</p>
 	<p><span class="dashicons dashicons-cloud cloud-icon cloud-not-downloaded"></span>
 		<?php
 		esc_html_e( 'Snippet in codevault but not downloaded to local site.', 'code-snippets' );
-
-		if ( ! $is_pro ) {
-			echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
-		}
+		$this->print_pro_message();
 		?>
 	</p>
 	<p>
 		<span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>
 		<?php
 		esc_html_e( 'Snippet update available.', 'code-snippets' );
-
-		if ( ! $is_pro ) {
-			echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
-		}
+		$this->print_pro_message();
 		?>
 	</p>
 </div>

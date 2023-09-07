@@ -4,7 +4,6 @@ namespace Code_Snippets;
 
 use Code_Snippets\Elementor\Elementor;
 use WP_Post;
-use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 

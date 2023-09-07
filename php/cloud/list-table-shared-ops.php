@@ -31,7 +31,7 @@ function cloud_lts_display_column_hidden_input( string $column_name, Cloud_Snipp
 /**
  * Process the download snippet action
  *
- * @param string $action  Action - 'download' or 'update.
+ * @param string $action  Action - 'download' or 'update'.
  * @param string $source  Source - 'search' or 'cloud'.
  * @param string $snippet Snippet ID.
  *
@@ -116,11 +116,19 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 		);
 	}
 
-	$action_link .= sprintf(
-		'<a href="#" class="cloud-snippet-preview cloud-snippet-preview-style %s" disabled>Type: <span class="%s-badge go-pro-badge">%s</span></a>',
-		$additional_classes,
+	$type_badge = sprintf(
+		'<span class="%s-badge go-pro-badge">%s</span>',
 		esc_attr( $lang ),
-		esc_attr( $lang )
+		esc_html( $lang )
+	);
+
+	// translators: %s: type badge.
+	$type_label = sprintf( esc_html__( 'Type: %s' ), $type_badge );
+
+	$action_link .= sprintf(
+		'<a href="#" class="cloud-snippet-preview cloud-snippet-preview-style %s">%s</a>',
+		esc_attr( $additional_classes ),
+		$type_label
 	);
 
 	$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
@@ -149,7 +157,7 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
  *
  * @return array
  */
-function cloud_lts_pagination( $which, $source, $total_items, $total_pages, $pagenum ) {
+function cloud_lts_pagination( string $which, string $source, int $total_items, int $total_pages, int $pagenum ): array {
 	/* translators: %s: Number of items. */
 	$num = sprintf( _n( '%s item', '%s items', $total_items, 'code-snippets' ), number_format_i18n( $total_items ) );
 	$output = '<span class="displaying-num">' . $num . '</span>';
@@ -159,6 +167,7 @@ function cloud_lts_pagination( $which, $source, $total_items, $total_pages, $pag
 
 	$page_links = array();
 
+	$html_current_page = '';
 	$total_pages_before = '<span class="paging-input">';
 	$total_pages_after = '</span></span>';
 
@@ -199,20 +208,20 @@ function cloud_lts_pagination( $which, $source, $total_items, $total_pages, $pag
 
 	if ( 'bottom' === $which ) {
 		$html_current_page = $current;
-		$total_pages_before = '<span class="screen-reader-text">' . __( 'Current Page' ) . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
+		$total_pages_before = sprintf( '<span class="screen-reader-text">%s</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">', __( 'Current page', 'code-snippets' ) );
 	}
 
 	if ( 'top' === $which ) {
 		$html_current_page = sprintf(
-			"<label for='current-page-selector' class='screen-reader-text'>%s</label><input class='current-page-selector' id='current-page-selector' type='text' name='%s_page' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
-			__( 'Current Page' ),
+			'<label for="current-page-selector" class="screen-reader-text">%s</label><input class="current-page-selector" id="current-page-selector" type="text" name="%s_page" value="%s" size="%d" aria-describedby="table-paging" /><span class="tablenav-paging-text">',
+			__( 'Current page', 'code-snippets' ),
 			$source,
 			$current,
 			strlen( $total_pages )
 		);
 	}
 
-	$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
+	$html_total_pages = sprintf( '<span class="total-pages">%s</span>', number_format_i18n( $total_pages ) );
 
 	/* translators: 1: Current page, 2: Total pages. */
 	$current_html = _x( '%1$s of %2$s', 'paging', 'code-snippets' );
@@ -222,7 +231,7 @@ function cloud_lts_pagination( $which, $source, $total_items, $total_pages, $pag
 		$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&rsaquo;</span>';
 	} else {
 		$page_links[] = sprintf(
-			"<a class='next-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+			'<a class="next-page button" href="%s"><span class="screen-reader-text">%s</span><span aria-hidden="true">%s</span></a>',
 			esc_url( add_query_arg( $source . '_page', min( $total_pages, $current + 1 ), $current_url ) ),
 			__( 'Next page' ),
 			'&rsaquo;'
@@ -233,9 +242,9 @@ function cloud_lts_pagination( $which, $source, $total_items, $total_pages, $pag
 		$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&raquo;</span>';
 	} else {
 		$page_links[] = sprintf(
-			"<a class='last-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+			'<a class="last-page button" href="%s"><span class="screen-reader-text">%s</span><span aria-hidden="true">%s</span></a>',
 			esc_url( add_query_arg( $source . '_page', $total_pages, $current_url ) ),
-			__( 'Last page' ),
+			__( 'Last page', 'code-snippets' ),
 			'&raquo;'
 		);
 	}

@@ -2,7 +2,6 @@
 
 namespace Code_Snippets\Cloud;
 
-use Data_Item;
 use function Code_Snippets\code_snippets_build_tags_array;
 
 /**
@@ -32,9 +31,9 @@ class Cloud_Snippet extends Data_Item {
 	/**
 	 * Constructor function.
 	 *
-	 * @param array<string, mixed>|object $initial_data Initial snippet data.
+	 * @param array<string, mixed>|null $initial_data Initial snippet data.
 	 */
-	public function __construct( $initial_data = null ) {
+	public function __construct( array $initial_data = null ) {
 		parent::__construct(
 			[
 				'id'             => '',

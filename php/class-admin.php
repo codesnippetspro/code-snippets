@@ -327,7 +327,7 @@ class Admin {
 				echo '<span class="cloud-badge dashicons dashicons-screenoptions cloud-icon cloud-bundle"></span>';
 				break;
 			case 'ai':
-				echo '<span class="cloud-badge ai-icon">AI</span>';
+				echo '<span class="cloud-badge ai-icon">', esc_html__( 'AI', 'code-snippets' ), '</span>';
 				break;
 			default:
 				echo '<span class="badge">' . esc_html( $type_name ) . '</span>';

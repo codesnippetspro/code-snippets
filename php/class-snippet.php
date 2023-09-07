@@ -4,8 +4,6 @@ namespace Code_Snippets;
 
 use Data_Item;
 use DateTime;
-use DateTimeZone;
-use Exception;
 
 /**
  * A snippet object.

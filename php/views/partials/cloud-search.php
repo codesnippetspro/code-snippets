@@ -13,10 +13,8 @@ $search_query = isset( $_REQUEST['cloud_search'] ) ? sanitize_text_field( wp_uns
 ?>
 
 <p class="text-justify">
-	<?php
-	esc_html_e( 'Use the search bar below to search cloud snippets by entering either the name of a codevault or by keyword(s).', 'code-snippets' );
-	esc_html_e( ' (Important: codevault name is case and spelling sensitive and only public snippets will be shown)', 'code-snippets' );
-	?>
+	<?php esc_html_e( 'Use the search bar below to search cloud snippets by entering either the name of a codevault or keywords.', 'code-snippets' ); ?>
+	<?php esc_html_e( '(Important: codevault name is case and spelling sensitive and only public snippets will be shown)', 'code-snippets' ); ?>
 </p>
 
 <form method="get" action="" id="cloud-search-form">

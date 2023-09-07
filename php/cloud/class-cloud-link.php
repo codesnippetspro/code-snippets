@@ -2,7 +2,7 @@
 
 namespace Code_Snippets\Cloud;
 
-use Data_Item;
+use Code_Snippets\Data_Item;
 
 /**
  * A connection between a local snippet and remote cloud snippet.

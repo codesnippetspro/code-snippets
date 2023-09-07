@@ -10,7 +10,6 @@ namespace Code_Snippets\Cloud;
 use WP_Plugin_Install_List_Table;
 use function Code_Snippets\code_snippets;
 
-/* The WP_List_Table base class is not included by default, so we need to load it */
 if ( ! class_exists( 'WP_Plugin_Install_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-plugin-install-list-table.php';
 }
@@ -189,7 +188,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						</span>
 					</div>
 					<div class="column-updated">
-						<strong><?php esc_attr_e( 'Last Updated:' ); ?></strong>
+						<strong><?php esc_attr_e( 'Last Updated:', 'code-snippets' ); ?></strong>
 						<?php
 						// translators: %s: Human-readable time difference.
 						echo esc_html( sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( strtotime( $item->updated ) ) ) );

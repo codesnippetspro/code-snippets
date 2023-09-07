@@ -2,8 +2,7 @@
 
 namespace Code_Snippets\Cloud;
 
-use Data_Item;
-use function Code_Snippets\code_snippets_build_tags_array;
+use Code_Snippets\Data_Item;
 
 /**
  * A list of snippets as retrieved from the cloud API.
