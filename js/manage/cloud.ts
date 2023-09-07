@@ -6,17 +6,21 @@ import 'prismjs/components/prism-php'
 import 'prismjs/components/prism-markup'
 import 'prismjs/plugins/keep-markup/prism-keep-markup'
 
-//Handle clicks on snippet preview button
+/**
+ * Handle clicks on snippet preview button.
+ */
 export const handleShowCloudPreview = () => {
 	const previewButtons = document.querySelectorAll('.cloud-snippet-preview')
-	//Add click event listener to buttons
+
 	previewButtons.forEach(button => {
 		button.addEventListener('click', () => {
 			const snippetId = button.getAttribute('data-snippet')
 			const snippetLanguage = button.getAttribute('data-lang')
-			const snippetCodeInput = <HTMLInputElement>document.getElementById(`cloud-snippet-code-${snippetId}`)
+
+			const snippetCodeInput = <HTMLInputElement> document.getElementById(`cloud-snippet-code-${snippetId}`)
 			const snippetCode = snippetCodeInput?.value
-			const snippetCodeModalTag = <HTMLElement>document.getElementById('snippet-code-thickbox')
+			const snippetCodeModalTag = <HTMLElement> document.getElementById('snippet-code-thickbox')
+
 			snippetCodeModalTag.classList.remove(...snippetCodeModalTag.classList)
 			snippetCodeModalTag.classList.add(`language-${snippetLanguage}`)
 			snippetCodeModalTag.textContent = snippetCode
@@ -26,7 +30,7 @@ export const handleShowCloudPreview = () => {
 			}
 
 			if ('php' === snippetLanguage) {
-				//Check if there is an opening php tag if not add it
+				// Check if there is an opening php tag if not add it.
 				if (!snippetCode.startsWith('<?php')) {
 					snippetCodeModalTag.textContent = `<?php ${snippetCode}`
 				}
@@ -36,13 +40,21 @@ export const handleShowCloudPreview = () => {
 		})
 	})
 }
-//Handle Cloud Bundle Text and Select Inputs
+
+/**
+ * Handle cloud bundle text and select inputs.
+ *
+ * On change of bundle share input or select, clear the other.
+ */
 export const handleCloudBundleInputsChange = () => {
-	//On change of bundle share input or select, clear the other
-	const bundleInput = <HTMLInputElement>document.getElementById('bundle_share_name')
-	const bundleSelect = <HTMLSelectElement>document.getElementById('cloud-bundles')
+	const bundleInput = <HTMLInputElement> document.getElementById('bundle_share_name')
+	const bundleSelect = <HTMLSelectElement> document.getElementById('cloud-bundles')
 
-	bundleInput?.addEventListener('change', () => { bundleSelect.value = '0' })
-	bundleSelect?.addEventListener('change', () => { bundleInput.value = '' })
+	bundleInput?.addEventListener('change', () => {
+		bundleSelect.value = '0'
+	})
+
+	bundleSelect?.addEventListener('change', () => {
+		bundleInput.value = ''
+	})
 }
-

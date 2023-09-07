@@ -3,7 +3,6 @@
 namespace Code_Snippets\Cloud;
 
 use Data_Item;
-use function Code_Snippets\code_snippets_build_tags_array;
 
 /**
  * A connection between a local snippet and remote cloud snippet.
@@ -12,7 +11,7 @@ use function Code_Snippets\code_snippets_build_tags_array;
  *
  * @property integer $local_id         ID of local snippet as stored in WordPress database, if applicable.
  * @property integer $cloud_id         ID of remote snippet on cloud platform, if applicable.
- * @property boolean $is_owner   	   Ownership status of remote snippet on cloud platform.
+ * @property boolean $is_owner         Ownership status of remote snippet on cloud platform.
  * @property boolean $in_codevault     Whether the remote snippet is stored in the users' codevault.
  * @property boolean $update_available If synchronised, whether there is an update available on the cloud platform.
  */
@@ -28,7 +27,7 @@ class Cloud_Link extends Data_Item {
 			[
 				'local_id'         => 0,
 				'cloud_id'         => 0,
-				'is_owner'		   => false,
+				'is_owner'         => false,
 				'in_codevault'     => false,
 				'update_available' => false,
 			],
@@ -44,7 +43,7 @@ class Cloud_Link extends Data_Item {
 	 *
 	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_field( $value, $field ) {
+	protected function prepare_field( $value, string $field ) {
 		switch ( $field ) {
 			case 'local_id':
 			case 'remote_id':
@@ -56,7 +55,7 @@ class Cloud_Link extends Data_Item {
 				return is_bool( $value ) ? $value : (bool) $value;
 
 			default:
-				return $value;
+				return parent::prepare_field( $value, $field );
 		}
 	}
 }

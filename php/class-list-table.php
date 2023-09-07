@@ -1,12 +1,4 @@
 <?php
-
-namespace Code_Snippets;
-
-use Code_Snippets\Cloud\Cloud_Snippet;
-use function Code_Snippets\Settings\get_setting;
-use function Code_Snippets\code_snippets;
-use WP_List_Table;
-
 /**
  * Contains the class for handling the snippets table
  *
@@ -14,6 +6,12 @@ use WP_List_Table;
  *
  * phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
  */
+
+namespace Code_Snippets;
+
+use Code_Snippets\Cloud\Cloud_Snippet;
+use WP_List_Table;
+use function Code_Snippets\Settings\get_setting;
 
 // The WP_List_Table base class is not included by default, so we need to load it.
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -257,16 +255,14 @@ class List_Table extends WP_List_Table {
 				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', esc_url( $this->get_action_link( $action, $snippet ) ), $label );
 			}
 
-			//Check there is a valid cloud connection or show a link to set it up
-			if( $this->is_cloud_link_valid() ){
-				//Get the cloud link object
+			// Check there is a valid cloud connection or show a link to set it up.
+			if ( $this->is_cloud_link_valid() ) {
 				$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
-				//Check this snippet is linked or orignated from the cloud
+				// Check this snippet is linked or originated from the cloud.
 				if ( $cloud_link ) {
-					//Check if the snippet is in the users codevault 
-					if ( $cloud_link->in_codevault) {
+					if ( $cloud_link->in_codevault ) {
 						$actions['cloud'] = sprintf( '<a>%s</a>', 'Synced' );
-						//Check if an update is available only in users codevault
+						// Check if an update is available only in users codevault.
 						if ( $cloud_link->update_available ) {
 							$actions['cloud_update'] = sprintf(
 								'<a href="%s#updated-code">%s</a>',
@@ -274,14 +270,14 @@ class List_Table extends WP_List_Table {
 								esc_html__( 'Cloud Update', 'code-snippets' )
 							);
 						}
-					}	
+					}
 				}
-			}else{
-				$actions['cloud'] = sprintf( '<a href="%s">Set up Cloud</a>', esc_url( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings' ) ) ));
+			} else {
+				$actions['cloud'] = sprintf( '<a href="%s">Set up Cloud</a>', esc_url( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings' ) ) ) );
 			}
 
-			// Check if the snippet is the special cloud access snippet if so remove the cloud action
-			if ( code_snippets()->cloud_api->is_cloud_access_snippet( $snippet->id) ) {
+			// Check if the snippet is the special cloud access snippet if so remove the cloud action.
+			if ( code_snippets()->cloud_api->is_cloud_access_snippet( $snippet->id ) ) {
 				$actions['cloud'] = sprintf( '<a>%s</a>', 'Cloud Access Snippet' );
 			}
 
@@ -361,7 +357,7 @@ class List_Table extends WP_List_Table {
 		if ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
 			$out = sprintf(
 				'<a href="%s" class="snippet-name">%s</a>',
-				esc_attr( code_snippets()->get_snippet_edit_url( (int) $snippet->id, $snippet->network ? 'network' : 'admin' ) ),
+				esc_attr( code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ) ),
 				$out
 			);
 		}
@@ -371,17 +367,18 @@ class List_Table extends WP_List_Table {
 		}
 
 		// Return the name contents.
-		if( $this->is_cloud_link_valid() ){
+
+		if ( $this->is_cloud_link_valid() ) {
 			$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
 			if ( $cloud_link ) {
-				//If update available make cloud icon orange?
+				// If update available make cloud icon orange?
 				if ( $cloud_link->update_available ) {
 					$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>' . $out;
-				}elseif ( $cloud_link->in_codevault) { 
-					//If snippet in codevaule and no update available make cloud icon blue
+				} elseif ( $cloud_link->in_codevault ) {
+					// If snippet in codevault and no update available make cloud icon blue.
 					$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>' . $out;
-				}else{
-					//Make cloud icon grey to show its from the cloud
+				} else {
+					// Make cloud icon grey to show it's from the cloud.
 					$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>' . $out;
 				}
 			}
@@ -398,7 +395,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @return string The column content to be printed.
 	 */
-	protected function column_cb( $item ): string{
+	protected function column_cb( $item ): string {
 
 		if ( $item instanceof Cloud_Snippet ) {
 			$checkbox_name = 'cloud_ids';
@@ -549,7 +546,7 @@ class List_Table extends WP_List_Table {
 	 */
 	public function get_views(): array {
 		global $totals, $status;
-		$status_links = array();
+		$status_links = parent::get_views();
 
 		// Loop through the view counts.
 		foreach ( $totals as $type => $count ) {
@@ -698,8 +695,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @param string $context The context in which the fields are being outputted.
 	 */
-	public static function required_form_fields( $context = 'main' ) {
-
+	public static function required_form_fields( string $context = 'main' ) {
 		$vars = apply_filters(
 			'code_snippets/list_table/required_form_fields',
 			array( 'page', 's', 'status', 'paged', 'tag' ),
@@ -901,7 +897,7 @@ class List_Table extends WP_List_Table {
 				}
 				$result = 'deleted-multi';
 				break;
-			
+
 			case 'sync-selected':
 				$this->sync_to_cloud( $ids );
 				$result = 'synced-multi';
@@ -940,7 +936,6 @@ class List_Table extends WP_List_Table {
 				esc_html__( 'Perhaps you would like to add a new one?', 'code-snippets' )
 			);
 		}
-
 	}
 
 	/**
@@ -1020,11 +1015,12 @@ class List_Table extends WP_List_Table {
 		$this->fetch_shared_network_snippets();
 
 		// Filter snippets by type.
-		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
+		$type = sanitize_key( wp_unslash( isset( $_GET['type'] ) ?? '' ) );
+		if ( $type && 'all' !== $type ) {
 			$snippets['all'] = array_filter(
 				$snippets['all'],
-				function ( Snippet $snippet ) {
-					return $_GET['type'] === $snippet->type;
+				function ( Snippet $snippet ) use ( $type ) {
+					return $type === $snippet->type;
 				}
 			);
 
@@ -1296,7 +1292,6 @@ class List_Table extends WP_List_Table {
 
 			if ( ! empty( $_REQUEST['s'] ) || ! empty( $_REQUEST['cloud_search'] ) ) {
 				$s = empty( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) ) : sanitize_text_field( wp_unslash( $_REQUEST['s'] ) );
-				
 
 				if ( preg_match( '/@line:(?P<line>\d+)/', $s, $matches ) ) {
 
@@ -1376,8 +1371,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @return bool
 	 */
-	private function is_cloud_link_valid() {
-		//
+	private function is_cloud_link_valid(): bool {
 		return code_snippets()->cloud_api->is_cloud_key_verified();
 	}
 
@@ -1386,10 +1380,8 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @param array<integer> $ids List of snippet IDs.
 	 */
-	private function sync_to_cloud( $ids ) {
-
+	private function sync_to_cloud( array $ids ) {
 		$snippets = get_snippets( $ids, $this->is_network );
 		code_snippets()->cloud_api->store_snippets_in_cloud( $snippets );
 	}
-
 }

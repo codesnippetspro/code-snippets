@@ -22,7 +22,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @var Cloud_API
 	 */
 	private $cloud_api;
- 
+
 	/**
 	 * Instance of the list table class.
 	 *
@@ -135,7 +135,6 @@ class Manage_Menu extends Admin_Menu {
 		);
 
 		add_action( 'load-' . $hook, array( $class, 'load' ) );
-
 	}
 
 	/**
@@ -148,45 +147,42 @@ class Manage_Menu extends Admin_Menu {
 		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
 
-		// Load the appropriate list table classes.
+		// Initialize the search cloud list table class.
+		$this->cloud_search_list_table = new Cloud_Search_List_Table();
+		$this->cloud_search_list_table->prepare_items();
+
+		// Initialize the list table class.
 		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
 		$this->load_cloud();
 	}
 
 	/**
-	 * Get the currently displayed snippet type.
-	 *
-	 * @return string
-	 */
-	protected function get_current_type() {
-		$types = Plugin::get_types();
-		$current_type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'all';
-		return isset( $types[ $current_type ] ) ? $current_type : 'all';
-	}
-
-
-	/**
 	 * Run startup checks for cloud connection or redirect to cloud connection page
 	 */
 	private function load_cloud() {
-		$cloud_types = [ 'cloud', 'cloud_search', 'bundles'];
+		$cloud_types = [ 'cloud', 'cloud_search', 'bundles' ];
 
-
-		if( ! in_array( $this->get_current_type(), $cloud_types ) || ! isset( $_REQUEST['type'] ) ) {
+		if ( ! in_array( $this->get_current_type(), $cloud_types, true ) || ! isset( $_REQUEST['type'] ) ) {
 			return;
 		}
 
 		// Ensure cloud connection is available.
 		$cloud_key = $this->cloud_api->is_cloud_key_available();
-		
-		if( !$cloud_key['success'] ){
-			//redirect to admin.php?page=snippets&type=all and show an admin notice
-			wp_safe_redirect( add_query_arg( 'result', 'cloud-key-'.$cloud_key['redirect-slug'], code_snippets()->get_menu_url( 'manage' ) ) );	
-			return;
+
+		if ( ! $cloud_key['success'] ) {
+			wp_safe_redirect(
+				esc_url_raw(
+					add_query_arg(
+						'result',
+						'cloud-key-' . $cloud_key['redirect-slug'],
+						code_snippets()->get_menu_url( 'manage' )
+					)
+				)
+			);
+			exit;
 		}
-		
-		
+
 		// Initialize the codevault cloud list table class.
 		$this->cloud_list_table = new Cloud_List_Table();
 		$this->cloud_list_table->prepare_items();
@@ -238,6 +234,17 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Get the currently displayed snippet type.
+	 *
+	 * @return string
+	 */
+	protected function get_current_type(): string {
+		$types = Plugin::get_types();
+		$current_type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'all';
+		return isset( $types[ $current_type ] ) ? $current_type : 'all';
+	}
+
+	/**
 	 * Print the status and error messages
 	 */
 	protected function print_messages() {
@@ -248,27 +255,29 @@ class Manage_Menu extends Admin_Menu {
 			echo '</p></div>';
 		}
 
-		$cloud_setup_url = '<a href="https://codesnippets.cloud/cloud-setup-guide" target="_blank">Cloud Setup Guide</a>';
+		// translators: %s: cloud setup guide URL.
+		$cloud_setup_url = 'https://codesnippets.cloud/cloud-setup-guide';
+		$cloud_setup_text = sprintf( ' Read our <a href="%s" target="_blank">cloud setup guide</a>.', esc_url( $cloud_setup_url ) );
 
 		$this->print_result_message(
 			apply_filters(
 				'code_snippets/manage/result_messages',
 				array(
-					'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
-					'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
-					'activated-multi'   => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
-					'deactivated'       => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
-					'deactivated-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
-					'deleted'           => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
-					'deleted-multi'     => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
-					'cloned'            => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
-					'cloned-multi'      => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
-					'cloud-refreshed'   => __( 'Synced cloud data refreshed <strong>successfully</strong>.', 'code-snippets' ),
-					'cloud-key-invalid'  => __( 'There is a problem with the special access token, please re-download from the cloud and try again. Read our '.$cloud_setup_url, 'code-snippets' ),
-					'cloud-key-inactive' => __( 'The Snippet with the cloud key is disabled please enable and try again. Read our '.$cloud_setup_url, 'code-snippets' ),
-					'cloud-key-deleted'  => __( 'The Snippet with the cloud key is deleted please import the snippet and enable and try again. Read our '.$cloud_setup_url, 'code-snippets' ),
-					'cloud-key-expired'  => __( 'The Snippet with the cloud key is expired please re-download from the cloud and try again. Read our '.$cloud_setup_url, 'code-snippets' ),
-					'cloud-key-no-codevault'  => __( 'There is no codevault set up on the cloud.Please log into your Code Snippet Cloud account and set up a Codevault. Read our '.$cloud_setup_url, 'code-snippets' ),
+					'executed'               => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
+					'activated'              => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
+					'activated-multi'        => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
+					'deactivated'            => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
+					'deactivated-multi'      => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
+					'deleted'                => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
+					'deleted-multi'          => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
+					'cloned'                 => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
+					'cloned-multi'           => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
+					'cloud-refreshed'        => __( 'Synced cloud data refreshed <strong>successfully</strong>.', 'code-snippets' ),
+					'cloud-key-invalid'      => __( 'There is a problem with the special access token, please re-download from the cloud and try again.', 'code-snippets' ) . $cloud_setup_text,
+					'cloud-key-inactive'     => __( 'The snippet with the cloud key is deactivated. Please activate it and try again.', 'code - snippets' ) . $cloud_setup_text,
+					'cloud-key-deleted'      => __( 'The snippet with the cloud key has been deleted. Please import the snippet and activate it to try again.', 'code-snippets' ) . $cloud_setup_text,
+					'cloud-key-expired'      => __( 'The snippet with the cloud key is expired. Please re-download from the cloud and try again.', 'code-snippets' ) . $cloud_setup_text,
+					'cloud-key-no-codevault' => __( 'There is no codevault set up on the cloud. Please log into your Code Snippet Cloud account and set up a codevault.', 'code-snippets' ) . $cloud_setup_text,
 				)
 			)
 		);
@@ -304,7 +313,7 @@ class Manage_Menu extends Admin_Menu {
 			array( 'id' => $snippet->id ),
 			array( '%d' ),
 			array( '%d' )
-		); // db call ok.
+		);
 
 		clean_snippets_cache( $table );
 	}
@@ -366,21 +375,18 @@ class Manage_Menu extends Admin_Menu {
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
-			} else {
-
-				if ( $snippet->active ) {
-					$result = activate_snippet( $snippet->id, $snippet->network );
-					if ( is_string( $result ) ) {
-						wp_send_json_error(
-							array(
-								'type'    => 'action_error',
-								'message' => $result,
-							)
-						);
-					}
-				} else {
-					deactivate_snippet( $snippet->id, $snippet->network );
+			} elseif ( $snippet->active ) {
+				$result = activate_snippet( $snippet->id, $snippet->network );
+				if ( is_string( $result ) ) {
+					wp_send_json_error(
+						array(
+							'type'    => 'action_error',
+							'message' => $result,
+						)
+					);
 				}
+			} else {
+				deactivate_snippet( $snippet->id, $snippet->network );
 			}
 		}
 

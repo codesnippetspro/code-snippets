@@ -16,7 +16,7 @@ declare global {
 		readonly tinymce?: tinymce.EditorManager
 		readonly elementorFrontend: ElementorFrontend
 		readonly wpActiveEditor?: string
-		readonly code_snippets_editor_preview?: CodeEditorInstance
+		code_snippets_editor_preview?: CodeEditorInstance
 		readonly code_snippets_editor_settings: EditorOption[]
 		CODE_SNIPPETS_PRISM: typeof Prism
 		readonly CODE_SNIPPETS?: {

@@ -2,7 +2,7 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_API; 
+use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use Code_Snippets\REST_API\Cloud_REST_Controller;
 
@@ -131,7 +131,6 @@ class Plugin {
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 		$this->licensing = new Licensing();
-
 	}
 
 	/**
@@ -234,7 +233,7 @@ class Plugin {
 	 *
 	 * @return string The URL to the edit snippet page for that snippet.
 	 */
-	public function get_snippet_edit_url(int $snippet_id, string $context = 'self' ): string {
+	public function get_snippet_edit_url( int $snippet_id, string $context = 'self' ): string {
 		return add_query_arg(
 			'id',
 			absint( $snippet_id ),
@@ -317,13 +316,13 @@ class Plugin {
 		return apply_filters(
 			'code_snippets_types',
 			array(
-				'php'   => __( 'Functions', 'code-snippets' ),
-				'html'  => __( 'Content', 'code-snippets' ),
-				'css'   => __( 'Styles', 'code-snippets' ),
-				'js'    => __( 'Scripts', 'code-snippets' ),
-				'cloud' => __( 'Codevault', 'code-snippets' ),
+				'php'          => __( 'Functions', 'code-snippets' ),
+				'html'         => __( 'Content', 'code-snippets' ),
+				'css'          => __( 'Styles', 'code-snippets' ),
+				'js'           => __( 'Scripts', 'code-snippets' ),
+				'cloud'        => __( 'Codevault', 'code-snippets' ),
 				'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
-				'bundles' => __( 'Bundles', 'code-snippets' ),
+				'bundles'      => __( 'Bundles', 'code-snippets' ),
 			)
 		);
 	}
@@ -336,7 +335,7 @@ class Plugin {
 	 * @return bool
 	 */
 	public static function is_pro_type( string $type ): bool {
-		return 'css' === $type || 'js' === $type;
+		return 'css' === $type || 'js' === $type || 'cloud' === $type || 'bundles' === $type;
 	}
 
 	/**
@@ -348,13 +347,13 @@ class Plugin {
 	 */
 	public function get_type_description( string $type ): string {
 		$descriptions = array(
-			'php'   => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
-			'html'  => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
-			'css'   => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
-			'js'    => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
-			'cloud' => __( 'See all your public and private snippets that are stored in your Code Snippet Cloud Codevault.', 'code-snippets' ),
+			'php'          => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
+			'html'         => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
+			'css'          => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
+			'js'           => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
+			'cloud'        => __( 'See all your public and private snippets that are stored in your Code Snippet Cloud Codevault.', 'code-snippets' ),
 			'cloud_search' => __( 'Explore and Search user contributed code snippets from Code Snippet Cloud.', 'code-snippets' ),
-			'bundles' => __( 'Bundles are collections of snippets that can be downloaded from the cloud as a batch.', 'code-snippets' ),
+			'bundles'      => __( 'Bundles are collections of snippets that can be downloaded from the cloud as a batch.', 'code-snippets' ),
 		);
 
 		$descriptions = apply_filters( 'code_snippets/plugins/type_descriptions', $descriptions );
@@ -383,5 +382,4 @@ class Plugin {
 			]
 		);
 	}
-
 }

@@ -107,7 +107,9 @@ class DB {
 		static $checked = array();
 
 		if ( $refresh || ! isset( $checked[ $table_name ] ) ) {
-			$checked[ $table_name ] = $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name; // cache pass, db call ok.
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, caching is handled through $checked variable.
+			$result = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) );
+			$checked[ $table_name ] = $result === $table_name;
 		}
 
 		return $checked[ $table_name ];
@@ -166,17 +168,17 @@ class DB {
 
 		/* Create the database table */
 		$sql = "CREATE TABLE $table_name (
-				id          BIGINT(20)  NOT NULL AUTO_INCREMENT,
-				name        TINYTEXT    NOT NULL,
-				description TEXT        NOT NULL,
-				code        LONGTEXT    NOT NULL,
-				tags        LONGTEXT    NOT NULL,
-				scope       VARCHAR(15) NOT NULL DEFAULT 'global',
-				priority    SMALLINT    NOT NULL DEFAULT 10,
-				active      TINYINT(1)  NOT NULL DEFAULT 0,
-				modified    DATETIME    NOT NULL DEFAULT '0000-00-00 00:00:00',
-				revision	BIGINT(20)  NOT NULL DEFAULT 1,
-				cloud_id	VARCHAR(255) NULL,
+				id          BIGINT(20)   NOT NULL AUTO_INCREMENT,
+				name        TINYTEXT     NOT NULL,
+				description TEXT         NOT NULL,
+				code        LONGTEXT     NOT NULL,
+				tags        LONGTEXT     NOT NULL,
+				scope       VARCHAR(15)  NOT NULL DEFAULT 'global',
+				priority    SMALLINT     NOT NULL DEFAULT 10,
+				active      TINYINT(1)   NOT NULL DEFAULT 0,
+				modified    DATETIME     NOT NULL DEFAULT '0000-00-00 00:00:00',
+				revision    BIGINT(20)   NOT NULL DEFAULT 1,
+				cloud_id    VARCHAR(255) NULL,
 				PRIMARY KEY  (id),
 				KEY scope (scope),
 				KEY active (active)
@@ -232,7 +234,7 @@ class DB {
 				$scopes
 			),
 			'ARRAY_A'
-		); // db call ok.
+		);
 
 		// Cache the full list of snippets.
 		if ( is_array( $snippets ) ) {

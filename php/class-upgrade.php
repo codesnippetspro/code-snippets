@@ -156,13 +156,14 @@ class Upgrade {
 		);
 
 		foreach ( $scopes as $scope_number => $scope_name ) {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, will flush at end of process.
 			$wpdb->query(
 				$wpdb->prepare(
 					"UPDATE $table_name SET scope = %s WHERE scope = %d",
 					$scope_name,
 					$scope_number
 				)
-			); // cache ok, will flush at end of process; db call ok.
+			);
 		}
 	}
 

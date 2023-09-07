@@ -146,7 +146,9 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({
 					<label htmlFor="snippet_code">
 						{__('Code', 'code-snippets')}{' '}
 						{snippet.id ?
-							<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> : null}
+							<span className="snippet-type-badge" data-snippet-type={snippetType}>
+								{snippetType}
+							</span> : null}
 					</label>
 				</h2>
 

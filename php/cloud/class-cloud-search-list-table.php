@@ -1,17 +1,14 @@
 <?php
+/**
+ * Contains the class for handling the cloud search results table
+ *
+ * @package Code_Snippets
+ */
 
 namespace Code_Snippets\Cloud;
 
 use WP_Plugin_Install_List_Table;
 use function Code_Snippets\code_snippets;
-
-/**
- * Contains the class for handling the snippets table
- *
- * @package Code_Snippets
- *
- * phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
- */
 
 /* The WP_List_Table base class is not included by default, so we need to load it */
 if ( ! class_exists( 'WP_Plugin_Install_List_Table' ) ) {
@@ -19,17 +16,15 @@ if ( ! class_exists( 'WP_Plugin_Install_List_Table' ) ) {
 }
 
 /**
- * This class handles the table for the manage cloud snippets search results
- *
- * @package Code_Snippets
+ * Class for handling the cloud search results table.
  */
-class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
+class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	/**
 	 * Instance of Cloud API class.
 	 *
 	 * @var Cloud_API
 	 */
-	protected $cloud_api; 
+	protected $cloud_api;
 
 	/**
 	 * Items for the cloud list table.
@@ -38,13 +33,13 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 */
 	protected $cloud_snippets;
 
-
 	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
-		//Declare global variable due to undeclared warning
+		// Declare global variable due to undeclared warning.
 		global $tab;
+
 		parent::__construct(
 			[
 				'singular' => 'cloud-snippet',
@@ -53,10 +48,10 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 			]
 		);
 
-		$this->cloud_api = code_snippets()->cloud_api;
-
 		// Strip the result query arg from the URL.
-		$_SERVER['REQUEST_URI'] = remove_query_arg(['result' ]);
+		$_SERVER['REQUEST_URI'] = remove_query_arg( [ 'result' ] );
+
+		$this->cloud_api = code_snippets()->cloud_api;
 	}
 
 	/**
@@ -67,14 +62,14 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	public function prepare_items() {
 		$this->cloud_snippets = $this->fetch_snippets();
 		$this->items = $this->cloud_snippets->snippets;
-		
+
 		$this->process_actions();
 
 		$this->set_pagination_args(
 			[
 				'per_page'    => count( $this->cloud_snippets->snippets ),
 				'total_items' => $this->cloud_snippets->total_snippets,
-				'total_pages' => (int) $this->cloud_snippets->total_pages,
+				'total_pages' => $this->cloud_snippets->total_pages,
 			]
 		);
 	}
@@ -85,113 +80,181 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 * @return void
 	 */
 	public function process_actions() {
-		
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source', 'cloud-bundle-run', 'cloud-bundle-show', 'bundle_share_name', 'cloud_bundles' ) );
-		$action = $_REQUEST['action'] ?? '';
-		$snippet = $_REQUEST['snippet'] ?? '';
-		$source = $_REQUEST['source'] ?? '';
+		$_SERVER['REQUEST_URI'] = remove_query_arg(
+			array( 'action', 'snippet', '_wpnonce', 'source', 'cloud-bundle-run', 'cloud-bundle-show', 'bundle_share_name', 'cloud_bundles' )
+		);
 
-		if ( isset( $action, $snippet, $source ) ) {
-			cloud_lts_process_download_action( $action, $source, $snippet );
+		if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+			cloud_lts_process_download_action(
+				sanitize_key( wp_unslash( $_REQUEST['action'] ) ),
+				sanitize_key( wp_unslash( $_REQUEST['source'] ) ),
+				sanitize_key( wp_unslash( $_REQUEST['snippet'] ) )
+			);
 		}
-						
-	}
-
-	public function display_rows() {
-		foreach ( (array) $this->items as $item ) {			
-			$name_link = $this->get_link_for_name( $item );
-			$name			= esc_attr($item->name);
-			$codevault 		= esc_attr($item->codevault);
-			$description 	= esc_attr( $this->process_description( $item->description ) );
-			$wp_tested 		= esc_attr( $item->wp_tested );
-			$votes 			= esc_attr( $item->vote_count );
-			$number_of_votes = esc_attr( $item->total_votes );
-			$tags = $item->tags;
-			//grab first tag in array of tags
-			$category 		= strtolower( esc_attr( $tags[0] ) );
-			?>
-		<div class="plugin-card cloud-search-card plugin-card-<?php echo sanitize_html_class( $item->id ); ?>">
-			<?php
-			echo( cloud_lts_build_column_hidden_input( 'code', $item ) );
-			echo( cloud_lts_build_column_hidden_input( 'name', $item ) );
-			?>
-			<div class="plugin-card-top">
-				<div class="name column-name">					
-					<h3>
-						<a href="<?php echo esc_url( $name_link['cloud-snippet-link'] ); ?>" <?php if( !$name_link['cloud-snippet-downloaded'] ){ echo esc_attr('class="cloud-snippet-preview thickbox" data-snippet="17" data-lang="css"'); }  ?> >
-						<?php echo __( $name ) ?>
-						<img src="https://codesnippets.cloud/images/plugin-icons/<?php echo __($category) ?>-logo.png" class="plugin-icon" alt="<?php echo __($category) ?>" />
-						</a>
-					</h3>
-				</div>
-				<div class="action-links">
-					<?php
-						echo( $this->get_action_links( $item ) );
-					?>
-				</div>
-				<div class="desc column-description">
-					<p><?php echo __( $description ) ?></p>
-					<p class="authors"><cite><?php echo sprintf( __( 'Codevault:  <a target="_blank" href="https://codesnippets.cloud/codevault/%s">%s</a>' ), $codevault, $codevault  ) ?></cite></p>
-				</div>
-			</div>
-			<div class="plugin-card-bottom cloud-search-card-bottom">
-				<div class="vers column-rating voted-info">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="thumbs-up">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z"></path>
-					</svg>
-					<span class="num-ratings" aria-hidden="true"> <?php echo number_format_i18n( $votes ); ?> times by <?php echo number_format_i18n( $number_of_votes ); ?> users.</span>
-				</div>
-				<div class="column-updated">
-					<strong><?php _e( 'Last Updated:' ); ?></strong>
-					<?php
-						/* translators: %s: Human-readable time difference. */
-						printf( __( '%s ago' ), human_time_diff( strtotime( $item->updated ) ) );
-					?>
-				</div>
-				<div class="column-downloaded">
-					<?php
-						echo sprintf(
-							'<a class="snippet-type-badge snippet-status" data-type="%s">%s</a>',
-							esc_attr( strtolower( Cloud_API::get_status_name_from_status( $item->status ) ) ),
-							esc_html( Cloud_API::get_status_name_from_status( $item->status) )
-						);
-					?>
-					<div class="tooltip-box">
-						<span class="dashicons dashicons-editor-help"></span>						
-						<div class="tooltip-text">
-							<p class="tooltip-text-title"><?php echo __( 'Snippet Statuses' ); ?></p>
-							<p class="tooltip-text-item"><a class="snippet-type-badge snippet-status" data-type="public">Public</a> <?php echo __( ' Snippet has passed basic review.' ); ?></p>
-							<p class="tooltip-text-item"><a class="snippet-type-badge snippet-status" data-type="ai-verified">AI Verified</a> <?php echo __( ' Snippet has been tested by our AI bot.' ); ?></p>
-							<p class="tooltip-text-item"><a class="snippet-type-badge snippet-status" data-type="unverified">Unverified</a> <?php echo __( ' Snippet has not undergone any review yet.' ); ?></p>
-							<p class="tooltip-text-link"><a class="tooltip-text-link" href="https://codesnippets.cloud/getstarted">Click Here for full list</a></p>
-						</div>
-					</div>
-				</div>
-				<div class="column-compatibility">
-				<strong><?php _e( 'WP Compatability:' ); ?></strong>
-					<?php
-					if ( empty( $wp_tested ) ) {
-						echo __( '<span class="compatibility-untested">' . __( 'Not indicated by author' ) . '</span>' );
-					} else {
-						echo sprintf( __( '<span class="compatibility-compatible">Author states %s</span>' ), $wp_tested );
-					}
-					?>
-				</div>
-			</div>
-		</div>
-		<?php }
 	}
 
 	/**
-	 * Get the action links for a Code Snippet from the cloud
+	 * Output table rows.
 	 *
-	 * @param Cloud_Snippet $snippet The snippet.
-	 *
-	 * @return string The HTML content to display.
+	 * @return void
 	 */
-	protected function get_action_links( $snippet ) {
-		
-		return cloud_lts_build_action_links( $snippet, 'search' );
+	public function display_rows() {
+		parent::display_rows();
+
+		/**
+		 * The current table item.
+		 *
+		 * @var $item Cloud_Snippet
+		 */
+		foreach ( $this->items as $item ) {
+			?>
+			<div class="plugin-card cloud-search-card plugin-card-<?php echo sanitize_html_class( $item->id ); ?>">
+				<?php
+				cloud_lts_display_column_hidden_input( 'code', $item );
+				cloud_lts_display_column_hidden_input( 'name', $item );
+				?>
+				<div class="plugin-card-top">
+					<div class="name column-name">
+						<h3>
+							<?php
+							$name_link = $this->get_link_for_name( $item );
+
+							if ( $name_link['cloud-snippet-downloaded'] ) {
+								printf( '<a href="%s">', esc_url( $name_link['cloud-snippet-link'] ) );
+							} else {
+								printf(
+									'<a href="%s" class="cloud-snippet-preview thickbox" data-snippet="17" data-lang="css">',
+									esc_url( $name_link['cloud-snippet-link'] )
+								);
+							}
+
+							echo esc_html( $item->name );
+
+							// Grab first tag in array of tags.
+							$category = count( $item->tags ) > 0 ? strtolower( esc_attr( $item->tags[0] ) ) : '';
+
+							printf(
+								'<img src="%s" class="plugin-icon" alt="%s">',
+								esc_url( "https://codesnippets.cloud/images/plugin-icons/$category-logo.png" ),
+								esc_attr( $category )
+							);
+
+							echo '</a>';
+							?>
+						</h3>
+					</div>
+					<div class="action-links">
+						<?php cloud_lts_build_action_links( $item, 'search' ); ?>
+					</div>
+					<div class="desc column-description">
+						<p><?php wp_kses_post( $this->process_description( $item->description ) ); ?></p>
+						<p class="authors">
+							<cite>
+								<?php
+								esc_html_e( 'Codevault: ', 'code-snippets' );
+
+								printf(
+									'<a target="_blank" href="%s">%s</a>',
+									esc_url( sprintf( 'https://codesnippets.cloud/codevault/%s', $item->codevault ) ),
+									esc_html( $item->codevault )
+								);
+
+								?>
+							</cite>
+						</p>
+					</div>
+				</div>
+				<div class="plugin-card-bottom cloud-search-card-bottom">
+					<div class="vers column-rating voted-info">
+						<svg xmlns="http://www.w3.org/2000/svg"
+						     fill="none"
+						     viewBox="0 0 24 24"
+						     stroke-width="1.5"
+						     stroke="currentColor"
+						     class="thumbs-up">
+							<path stroke-linecap="round" stroke-linejoin="round"
+							      d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z"></path>
+						</svg>
+						<span class="num-ratings" aria-hidden="true">
+							<?php
+							// translators: 1: number of votes, 2: number of users.
+							$votes_text = _nx( '%d time', '%d times', number_format_i18n( $item->vote_count ), 'vote count', 'code-snippets' );
+
+							// translators: 1: number of users.
+							$users_text = _n( '%d user', '%d users', number_format_i18n( $item->total_votes ), 'code-snippets' );
+
+							// translators: 1: number of votes with label, 2: number of users with label.
+							echo esc_html( sprintf( _x( '%1$s by %2$s', 'votes', 'code-snippets' ), $votes_text, $users_text ) );
+							?>
+						</span>
+					</div>
+					<div class="column-updated">
+						<strong><?php esc_attr_e( 'Last Updated:' ); ?></strong>
+						<?php
+						// translators: %s: Human-readable time difference.
+						echo esc_html( sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( strtotime( $item->updated ) ) ) );
+						?>
+					</div>
+					<div class="column-downloaded">
+						<?php
+						printf(
+							'<a class="snippet-type-badge snippet-status" data-type="%s">%s</a>',
+							esc_attr( strtolower( $this->cloud_api->get_status_name_from_status( $item->status ) ) ),
+							esc_html( $this->cloud_api->get_status_name_from_status( $item->status ) )
+						);
+						?>
+						<div class="tooltip-box">
+							<span class="dashicons dashicons-editor-help"></span>
+							<div class="tooltip-text">
+								<p class="tooltip-text-title">
+									<?php esc_html_e( 'Snippet Statuses', 'code-snippets' ); ?>
+								</p>
+
+								<p class="tooltip-text-item">
+									<a class="snippet-type-badge snippet-status" data-type="public">
+										<?php esc_html_e( 'Public', 'code-snippets' ); ?>
+									</a>
+									<?php esc_html_e( 'Snippet has passed basic review.', 'code-snippets' ); ?>
+								</p>
+
+								<p class="tooltip-text-item">
+									<a class="snippet-type-badge snippet-status" data-type="ai-verified">
+										<?php esc_html_e( 'AI Verified', 'code-snippets' ); ?>
+									</a>
+									<?php esc_html_e( ' Snippet has been tested by our AI bot.', 'code-snippets' ); ?>
+								</p>
+
+								<p class="tooltip-text-item">
+									<a class="snippet-type-badge snippet-status" data-type="unverified">
+										<?php esc_html_e( 'Unverified', 'code-snippets' ); ?>
+									</a>
+									<?php esc_html_e( ' Snippet has not undergone any review yet.', 'code-snippets' ); ?>
+								</p>
+
+								<p class="tooltip-text-link">
+									<a class="tooltip-text-link" href="https://codesnippets.cloud/getstarted">
+										<?php esc_html_e( 'View the full list.', 'code-snippets' ); ?>
+									</a>
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="column-compatibility">
+						<strong><?php esc_html_e( 'WP Compatability:', 'code-snippets' ); ?></strong>
+						<?php
+						if ( empty( $wp_tested ) ) {
+							echo '<span class="compatibility-untested">', esc_html__( 'Not indicated by author', 'code-snippets' ), '</span>';
+						} else {
+							// translators: tested status.
+							$text = sprintf( __( 'Author states %s', 'code-snippets' ), $wp_tested );
+							echo '<span class="compatibility-compatible">', esc_html( $text ), '</span>';
+						}
+						?>
+					</div>
+				</div>
+			</div>
+			<?php
+		}
 	}
 
 	/**
@@ -199,37 +262,30 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 *
 	 * @param Cloud_Snippet $snippet The snippet to get URL.
 	 *
-	 * @return string The URL to be used.
+	 * @return array The URL to be used.
 	 */
-	protected function get_link_for_name( $snippet ) {
+	protected function get_link_for_name( Cloud_Snippet $snippet ): array {
 		$link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'cloud' );
-		
-		if ( $link ) {
-	
-			return [
-				'cloud-snippet-link' 		=>	esc_url( code_snippets()->get_snippet_edit_url( (int) $link->local_id ) ), 
-				'cloud-snippet-downloaded' 	=> true,
-			];
-		}
-		
-		return [
-			'cloud-snippet-link' 		=>	esc_url( '#TB_inline?&width=700&height=500&inlineId=show-code-preview' ),
-			'cloud-snippet-downloaded' 	=> false,
+
+		return $link ? [
+			'cloud-snippet-link'       => code_snippets()->get_snippet_edit_url( $link->local_id ),
+			'cloud-snippet-downloaded' => true,
+		] : [
+			'cloud-snippet-link'       => '#TB_inline?&width=700&height=500&inlineId=show-code-preview',
+			'cloud-snippet-downloaded' => false,
 		];
 	}
 
 	/**
 	 * Process the description text - limit to 150 characters.
 	 *
-	 * @param string $description From API
+	 * @param string $description Description as provided by the API.
 	 *
 	 * @return string formatted description string max 150 chars.
 	 */
-	protected function process_description( $description ) {
-		$description = strip_tags( $description );
-		$description = strlen( $description ) > 150 ? substr( $description, 0, 150 ) . '...' : $description;
-
-		return $description;
+	protected function process_description( string $description ): string {
+		$description = wp_strip_all_tags( $description );
+		return strlen( $description ) > 150 ? substr( $description, 0, 150 ) . '…' : $description;
 	}
 
 	/**
@@ -252,18 +308,17 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 *
 	 * @return Cloud_Snippets
 	 */
-	public function fetch_snippets() {
-		$cloud_search 	= $_REQUEST['cloud_search'] ?? '';
-
-		//Check if search term has been entered
-		if ( !$cloud_search == '') {
+	public function fetch_snippets(): Cloud_Snippets {
+		// Check if search term has been entered.
+		if ( isset( $_REQUEST['cloud_search'], $_REQUEST['cloud_select'] ) ) {
 			// If we have a search query, then send a search request to cloud server API search endpoint.
 			$search_query = sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) );
 			$search_by = sanitize_text_field( wp_unslash( $_REQUEST['cloud_select'] ) );
-			return $this->cloud_api->fetch_search_results( $search_by, $search_query, $this->get_pagenum() - 1 );
+
+			return Cloud_API::fetch_search_results( $search_by, $search_query, $this->get_pagenum() - 1 );
 		}
-		
-		//If no search results, then return empty object
+
+		// If no search results, then return empty object.
 		return new Cloud_Snippets();
 	}
 
@@ -272,7 +327,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 	 *
 	 * @return integer
 	 */
-	public function get_pagenum() {
+	public function get_pagenum(): int {
 		$page = isset( $_REQUEST['search_page'] ) ? absint( $_REQUEST['search_page'] ) : 0;
 
 		if ( isset( $this->_pagination_args['total_pages'] ) && $page > $this->_pagination_args['total_pages'] ) {
@@ -312,7 +367,11 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table{
 		$page_class = $paginate['page_class'];
 		$output = $paginate['output'];
 
-		echo $this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
-		//echo wp_kses_post( $this->_pagination ); TODO: This removes the top input box for page number
+		$this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $this->_pagination;
+
+		// echo wp_kses_post( $this->_pagination ); TODO: This removes the top input box for page number.
 	}
 }

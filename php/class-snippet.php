@@ -26,8 +26,8 @@ use Exception;
  * @property string                 $modified           The date and time when the snippet data was most recently saved to the database.
  * @property array{string,int}|null $code_error         Code error encountered when last testing snippet code.
  * @property object|null            $conditions         Snippet conditionals
- * @property int           			$revision           Revision or version number of snippet.
- * @property string        			$cloud_id           Cloud ID and ownership status of snippet.
+ * @property int                    $revision           Revision or version number of snippet.
+ * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
  *
  * @property-read string            $display_name       The snippet name if it exists or a placeholder if it does not.
  * @property-read string            $tags_list          The tags in string list format.
@@ -242,13 +242,6 @@ class Snippet extends Data_Item {
 	}
 
 	/**
-	 * Increment the revision number by one.
-	 */
-	public function increment_revision() {
-		$this->revision++;
-	}
-
-	/**
 	 * Retrieve the snippet title if set or a placeholder title if not.
 	 *
 	 * @return string
@@ -453,5 +446,12 @@ class Snippet extends Data_Item {
 	 */
 	private function get_is_pro(): bool {
 		return 'css' === $this->type || 'js' === $this->type;
+	}
+
+	/**
+	 * Increment the revision number by one.
+	 */
+	public function increment_revision() {
+		++$this->revision;
 	}
 }

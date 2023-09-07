@@ -130,11 +130,9 @@ class Frontend {
 	/**
 	 * Fetch snippets data in response to a request.
 	 *
-	 * @param WP_REST_Request $request Request object.
-	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_snippets_info( WP_REST_Request $request ): WP_REST_Response {
+	public function get_snippets_info(): WP_REST_Response {
 		$snippets = get_snippets();
 		$data = [];
 
@@ -280,6 +278,18 @@ class Frontend {
 	}
 
 	/**
+	 * Enqueue all available Prism themes.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_all_prism_themes() {
+		self::register_prism_assets();
+
+		wp_enqueue_style( self::PRISM_HANDLE );
+		wp_enqueue_script( self::PRISM_HANDLE );
+	}
+
+	/**
 	 * Print a message to the user if the snippet ID attribute is invalid.
 	 *
 	 * @param integer $id Snippet ID.
@@ -363,7 +373,7 @@ class Frontend {
 			self::CONTENT_SHORTCODE
 		);
 
-		$id = intval( $atts['snippet_id'] ) ?: intval( $atts['id'] );
+		$id = 0 !== intval( $atts['snippet_id'] ) ? intval( $atts['snippet_id'] ) : intval( $atts['id'] );
 		if ( ! $id ) {
 			return $this->invalid_id_warning( $id );
 		}
@@ -508,7 +518,7 @@ class Frontend {
 			self::SOURCE_SHORTCODE
 		);
 
-		$id = intval( $atts['snippet_id'] ) ?: intval( $atts['id'] );
+		$id = 0 !== intval( $atts['snippet_id'] ) ? intval( $atts['snippet_id'] ) : intval( $atts['id'] );
 		if ( ! $id ) {
 			return $this->invalid_id_warning( $id );
 		}

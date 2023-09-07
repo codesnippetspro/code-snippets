@@ -18,6 +18,8 @@
  * @copyright 2012-2023 Code Snippets Pro
  * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
  * @link      https://github.com/codesnippetspro/code-snippets
+ *
+ * phpcs:disable Modernize.FunctionCalls.Dirname.FileConstant
  */
 
 

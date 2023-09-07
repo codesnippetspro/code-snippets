@@ -88,7 +88,7 @@ class Validator {
 	 */
 	private function next() {
 		if ( ! $this->end() ) {
-			$this->current++;
+			++$this->current;
 		}
 	}
 
@@ -244,9 +244,9 @@ class Validator {
 				$token = $this->peek();
 
 				if ( '{' === $token ) {
-					$depth++;
+					++$depth;
 				} elseif ( '}' === $token ) {
-					$depth--;
+					--$depth;
 				}
 
 				$this->next();

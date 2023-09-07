@@ -34,7 +34,7 @@
         "freemius/wordpress-sdk": "^2.5"
     },
     "require-dev": {
-        "wp-coding-standards/wpcs": "dev-master",
+        "wp-coding-standards/wpcs": "^3.0",
         "phpcompatibility/phpcompatibility-wp": "*",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2"
     },

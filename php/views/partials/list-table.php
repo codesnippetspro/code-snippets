@@ -7,37 +7,81 @@
  */
 
 namespace Code_Snippets;
+
+/**
+ * Loaded from the manage menu.
+ *
+ * @var Manage_Menu $this
+ */
+
+$is_pro = code_snippets()->licensing->is_licensed();
+
 ?>
 
 <form method="get" action="">
-    <?php
-    List_Table::required_form_fields( 'search_box' );
+	<?php
+	List_Table::required_form_fields( 'search_box' );
 
-    if ( 'cloud' === $current_type ) {
-        $this->cloud_list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'cloud_search_id' );
-    } else {
-        $this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
-    }
-    ?>
+	if ( 'cloud' === $this->get_current_type() ) {
+		$this->cloud_list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'cloud_search_id' );
+	} else {
+		$this->list_table->search_box( __( 'Search Snippets', 'code-snippets' ), 'search_id' );
+	}
+
+	?>
 </form>
 
 <form method="post" action="">
-    <input type="hidden" id="code_snippets_ajax_nonce"
-        value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
-    <?php
-    List_Table::required_form_fields();
+	<input type="hidden" id="code_snippets_ajax_nonce"
+	       value="<?php echo esc_attr( wp_create_nonce( 'code_snippets_manage_ajax' ) ); ?>">
+	<?php
+	List_Table::required_form_fields();
 
-    if ( 'cloud' === $current_type ) {
-        $this->cloud_list_table->display();
-    } else {
-        $this->list_table->display();
-    }
-    ?>
+	if ( 'cloud' === $this->get_current_type() ) {
+		$this->cloud_list_table->display();
+	} else {
+		$this->list_table->display();
+	}
+
+	?>
 </form>
 <div class="cloud-key">
-    <p><b><u>Cloud Sync Guide</u></b></p>
-    <p><span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>Snippet downloaded and in sync with Codevault</p>
-    <p><span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>Snippet Downloaded from Cloud but not synced with Codevault</p>
-    <p><span class="dashicons dashicons-cloud cloud-icon cloud-not-downloaded"></span>Snippet in Codevault but not downloaded to local site</p>
-    <p><span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>Snippet Update available</p>
+	<p><strong><u><?php esc_html_e( 'Cloud Sync Guide', 'code-snippets' ); ?></u></strong></p>
+	<p>
+		<span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>
+		<?php esc_html_e( 'Snippet downloaded and in-sync with codevault.', 'code-snippets' ); ?>
+	</p>
+	<p>
+		<span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>
+		<?php esc_html_e( 'Snippet downloaded from cloud but not synced with codevault.', 'code-snippets' ); ?>
+	</p>
+	<p>
+		<span class="dashicons dashicons-cloud cloud-icon cloud-synced-legend "></span>
+		<?php
+		esc_html_e( 'Snippet downloaded and in sync with codevault.', 'code-snippets' );
+
+		if ( ! $is_pro ) {
+			echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
+		}
+		?>
+	</p>
+	<p><span class="dashicons dashicons-cloud cloud-icon cloud-not-downloaded"></span>
+		<?php
+		esc_html_e( 'Snippet in codevault but not downloaded to local site.', 'code-snippets' );
+
+		if ( ! $is_pro ) {
+			echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
+		}
+		?>
+	</p>
+	<p>
+		<span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>
+		<?php
+		esc_html_e( 'Snippet update available.', 'code-snippets' );
+
+		if ( ! $is_pro ) {
+			echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
+		}
+		?>
+	</p>
 </div>
