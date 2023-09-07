@@ -2,8 +2,7 @@
 
 namespace Code_Snippets\Cloud;
 
-use Data_Item;
-use function Code_Snippets\code_snippets_build_tags_array;
+use Code_Snippets\Data_Item;
 
 /**
  * A list of snippets as retrieved from the cloud API.
@@ -52,7 +51,7 @@ class Cloud_Snippets extends Data_Item {
 	 *
 	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_field( $value, $field ) {
+	protected function prepare_field( $value, string $field ) {
 		switch ( $field ) {
 			case 'page':
 			case 'total_pages':

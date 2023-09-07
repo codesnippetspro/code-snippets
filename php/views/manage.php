@@ -25,12 +25,17 @@ $current_type = isset( $types[ $current_type ] ) ? $current_type : 'all';
 $version = code_snippets()->version;
 
 if ( false !== strpos( $version, 'beta' ) ) {
-	echo '<div class="beta-test-notice">
-			<p id="beta-testing">Thank you for testing this <span class="highlight-yellow">Beta version of Code Snippets</span>. We would love to hear your feedback.
-				<a href="mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback">Click here to submit your feedback.</a>
-			</p>
-		</div>';
+	echo '<div class="beta-test-notice"><p id="beta-testing">';
+	echo wp_kses(
+		__( 'Thank you for testing this <span class="highlight-yellow">Beta version of Code Snippets</span>. We would love to hear your feedback.', 'code-snippets' ),
+		[ 'span' => [ 'class' => [ 'highlight-yellow' ] ] ]
+	);
+
+	$feedback_url = __( 'mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback', 'code-snippets' );
+	printf( '<a href="%s">%s</a>', esc_url( $feedback_url ), esc_html__( 'Click here to submit your feedback', 'code-snippets' ) );
+	echo '</p></div>';
 }
+
 ?>
 
 <div class="wrap">
@@ -57,7 +62,7 @@ if ( false !== strpos( $version, 'beta' ) ) {
 		<a class="button button-large nav-tab-button nav-tab-inactive go-pro-button"
 		   href="https://codesnippets.pro/pricing/" target="_blank"
 		   title="Find more about Pro (opens in external tab)">
-			<?php echo wp_kses( __( 'Upgrade to <span class="badge">Pro</span>', 'code-snippets' ), [ 'span' => [ 'class' => 'badge' ] ] ); ?>
+			<?php echo wp_kses( __( 'Upgrade to <span class="badge">Pro</span> ', 'code-snippets' ), [ 'span' => [ 'class' => 'badge' ] ] ); ?>
 			<span class="dashicons dashicons-external"></span>
 		</a>
 	</h2>

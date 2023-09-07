@@ -4,8 +4,6 @@ namespace Code_Snippets;
 
 use Data_Item;
 use DateTime;
-use DateTimeZone;
-use Exception;
 
 /**
  * A snippet object.
@@ -112,7 +110,7 @@ class Snippet extends Data_Item {
 				return is_bool( $value ) ? $value : (bool) $value;
 
 			default:
-				return parent::prepare_field( $value, $field );
+				return $value;
 		}
 	}
 

@@ -9,7 +9,7 @@
 
 namespace Code_Snippets\Cloud;
 
-use Code_Snippets\Snippet;
+use Cloud_Snippets;
 use WP_Plugin_Install_List_Table;
 use function Code_Snippets\code_snippets;
 
@@ -195,7 +195,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						</span>
 					</div>
 					<div class="column-updated">
-						<strong><?php esc_attr_e( 'Last Updated:' ); ?></strong>
+						<strong><?php esc_attr_e( 'Last Updated:', 'code-snippets' ); ?></strong>
 						<?php
 						// translators: %s: Human-readable time difference.
 						echo esc_html( sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( strtotime( $item->updated ) ) ) );
@@ -270,7 +270,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 */
 	protected function get_link_for_name(): array {
 		return [
-			'cloud-snippet-link'       => esc_url( '#TB_inline?&width=700&height=500&inlineId=show-code-preview' ),
+			'cloud-snippet-link'       => '#TB_inline?&width=700&height=500&inlineId=show-code-preview',
 			'cloud-snippet-downloaded' => false,
 		];
 	}

@@ -1,16 +1,14 @@
 <?php
 
-
 namespace Code_Snippets\Cloud;
 
-use Code_Snippets\Snippet;
+use Cloud_Snippet;
+use Cloud_Snippets;
 use WP_Error;
-use wpdb;
-
+use function Code_Snippets\get_snippet_by_cloud_id;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\update_snippet_fields;
-use function Code_Snippets\get_snippet_by_cloud_id;
 
 /**
  * Functions used to manage cloud synchronisation.
@@ -55,7 +53,6 @@ class Cloud_API {
 	 * @var integer
 	 */
 	const DAYS_TO_STORE_CS = 1;
-
 
 	/**
 	 * Local to Cloud Snippets Map Object
@@ -103,7 +100,12 @@ class Cloud_API {
 			$this->local_to_cloud_map[] = $link;
 		}
 
-		set_transient( self::CLOUD_MAP_TRANSIENT_KEY, $this->local_to_cloud_map, DAY_IN_SECONDS * self::DAYS_TO_STORE_CS );
+		set_transient(
+			self::CLOUD_MAP_TRANSIENT_KEY,
+			$this->local_to_cloud_map,
+			DAY_IN_SECONDS * self::DAYS_TO_STORE_CS
+		);
+
 		return $this->local_to_cloud_map;
 	}
 
@@ -128,7 +130,7 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Snippets Result of search query.
 	 */
-	public static function fetch_search_results( string $search_method, string $search, int $page = 0 ) {
+	public static function fetch_search_results( string $search_method, string $search, int $page = 0 ): Cloud_Snippets {
 		$api_url = add_query_arg(
 			[
 				's_method'   => $search_method,
@@ -185,7 +187,7 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Link|null The deleted map link if one was found, null otherwise.
 	 */
-	public function delete_snippet_from_transient_data( $snippet_id ) {
+	public function delete_snippet_from_transient_data( int $snippet_id ) {
 		$this->get_local_to_cloud_map();
 		$link_to_delete = null;
 
@@ -210,7 +212,7 @@ class Cloud_API {
 	 *
 	 * @return string|null Revision number on success, null otherwise.
 	 */
-	public static function get_cloud_snippet_revision( $cloud_id ) {
+	public static function get_cloud_snippet_revision( string $cloud_id ) {
 		$api_url = self::CLOUD_API_URL . sprintf( 'public/getsnippetrevision/%s', $cloud_id );
 		$body = wp_remote_retrieve_body( wp_remote_get( $api_url ) );
 
@@ -243,7 +245,7 @@ class Cloud_API {
 			default:
 				return [
 					'success' => false,
-					'error'   => 'Invalid action.',
+					'error'   => __( 'Invalid action.', 'code-snippets' ),
 				];
 		}
 	}
@@ -304,7 +306,7 @@ class Cloud_API {
 		if ( 1 === count( $snippets_to_store ) && $new_snippet && $link ) {
 			return [
 				'success'    => true,
-				'action'     => 'Single Downloaded',
+				'action'     => __( 'Single Downloaded', 'code-snippets' ),
 				'snippet_id' => $new_snippet->id,
 				'link_id'    => $link->cloud_id,
 			];
@@ -313,12 +315,12 @@ class Cloud_API {
 		if ( count( $snippets_to_store ) > 1 ) {
 			return [
 				'success' => true,
-				'action'  => 'Downloaded',
+				'action'  => __( 'Downloaded', 'code-snippets' ),
 			];
 		} else {
 			return [
 				'success' => false,
-				'error'   => 'There was a problem saving or no snippets found to download.',
+				'error'   => __( 'There was a problem saving or no snippets found to download.', 'code-snippets' ),
 			];
 		}
 	}
@@ -351,7 +353,7 @@ class Cloud_API {
 
 		return [
 			'success' => true,
-			'action'  => 'Updated',
+			'action'  => __( 'Updated', 'code-snippets' ),
 		];
 	}
 
@@ -461,18 +463,18 @@ class Cloud_API {
 	 */
 	public static function get_status_name_from_status( int $status ): string {
 		switch ( $status ) {
-			case 3: // Private.
-				return 'Private';
-			case 4: // Public.
-				return 'Public';
-			case 5: // Unverified.
-				return 'Unverified';
-			case 6: // AI Verified.
-				return 'AI-Verified';
+			case 3:
+				return __( 'Private', 'code-snippets' );
+			case 4:
+				return __( 'Public', 'code-snippets' );
+			case 5:
+				return __( 'Unverified', 'code-snippets' );
+			case 6:
+				return __( 'AI-Verified', 'code-snippets' );
 			case 8:
-				return 'Pro-Verified';
-            default:
-                return '';
+				return __( 'Pro-Verified', 'code-snippets' );
+			default:
+				return '';
 		}
 	}
 
@@ -484,14 +486,13 @@ class Cloud_API {
 	public static function render_cloud_snippet_thickbox() {
 		add_thickbox();
 		?>
-        <div id="show-code-preview" style="display: none;">
-            <h3 id="snippet-name-thickbox"></h3>
-            <h4><?php
-				esc_html_e( 'Snippet Code:', 'code-snippets' ); ?></h4>
-            <pre class="thickbox-code-viewer">
-				<code id="snippet-code-thickbox" class=""></code>
+		<div id="show-code-preview" style="display: none;">
+			<h3 id="snippet-name-thickbox"></h3>
+			<h4><?php esc_html_e( 'Snippet Code:', 'code-snippets' ); ?></h4>
+			<pre class="thickbox-code-viewer">
+				<code id="snippet-code-thickbox"></code>
 			</pre>
-        </div>
+		</div>
 		<?php
 	}
 }

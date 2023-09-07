@@ -1,5 +1,7 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Base class for representing an item of data without needing to use direct access or individual getter and setter functions.
  *

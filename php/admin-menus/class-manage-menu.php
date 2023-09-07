@@ -2,7 +2,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\Cloud\Cloud_Search_List_Table;
 
 /**
@@ -164,10 +163,19 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @return string
 	 */
-	protected function get_current_type() {
+	protected function get_current_type(): string {
 		$types = Plugin::get_types();
 		$current_type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'all';
 		return isset( $types[ $current_type ] ) ? $current_type : 'all';
+	}
+
+	/**
+	 * Display a Go Pro badge.
+	 *
+	 * @return void
+	 */
+	public function print_pro_message() {
+		echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
 	}
 
 	/**

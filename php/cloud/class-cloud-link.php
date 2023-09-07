@@ -2,8 +2,7 @@
 
 namespace Code_Snippets\Cloud;
 
-use Data_Item;
-use function Code_Snippets\code_snippets_build_tags_array;
+use Code_Snippets\Data_Item;
 
 /**
  * A connection between a local snippet and remote cloud snippet.
@@ -56,7 +55,7 @@ class Cloud_Link extends Data_Item {
 				return is_bool( $value ) ? $value : (bool) $value;
 
 			default:
-				return parent::prepare_field( $value, $field );
+				return $value;
 		}
 	}
 }
