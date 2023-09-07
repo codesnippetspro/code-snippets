@@ -143,7 +143,7 @@ export const ActionButtons: React.FC<ActionButtonProps> = ({ snippet, isWorking,
 			<ConfirmDialog
 				open={isDeleteDialogOpen}
 				title={__('Permanently delete?', 'code-snippets')}
-				confirmLabel={__('Delete', 'code-snippet')}
+				confirmLabel={__('Delete', 'code-snippets')}
 				confirmButtonClassName="is-destructive"
 				onCancel={() => setIsDeleteDialogOpen(false)}
 				onConfirm={() => {

@@ -361,9 +361,19 @@
 }
 
 @keyframes thumb {
-	0%  { transform: rotate(0)}
-	33% { transform: rotate(7deg)}
-	66% { transform: rotate(-15deg)}
-	90% { transform: rotate(5deg)}
-	to  { transform: rotate(0)}
+	0% {
+		transform: rotate(0)
+	}
+	33% {
+		transform: rotate(7deg)
+	}
+	66% {
+		transform: rotate(-15deg)
+	}
+	90% {
+		transform: rotate(5deg)
+	}
+	to {
+		transform: rotate(0)
+	}
 }

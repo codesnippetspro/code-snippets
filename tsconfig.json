@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
-      "jsx": "react"
+    "jsx": "react"
   },
   "include": [
     "js",

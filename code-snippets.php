@@ -12,7 +12,7 @@
  * Requires PHP: 7.0
  * Requires at least: 5.0
  *
- * @version   3.5.0-beta.1
+ * @version   3.5.0
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2023 Code Snippets Pro
@@ -37,7 +37,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.0', 
 	 *
 	 * @const string
 	 */
-	define( 'CODE_SNIPPETS_VERSION', '3.5.0-beta.1' );
+	define( 'CODE_SNIPPETS_VERSION', '3.5.0' );
 
 	/**
 	 * The full path to the main file of this plugin.

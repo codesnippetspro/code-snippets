@@ -6,13 +6,17 @@ import 'prismjs/components/prism-php'
 import 'prismjs/components/prism-markup'
 import 'prismjs/plugins/keep-markup/prism-keep-markup'
 
+/**
+ * Handle clicks on snippet preview button.
+ */
 export const handleShowCloudPreview = () => {
 	const previewButtons = document.querySelectorAll('.cloud-snippet-preview')
-	//Add click event listener to buttons
+
 	previewButtons.forEach(button => {
 		button.addEventListener('click', () => {
 			const snippetId = button.getAttribute('data-snippet')
 			const snippetLanguage = button.getAttribute('data-lang')
+
 			const snippetCodeInput = <HTMLInputElement> document.getElementById(`cloud-snippet-code-${snippetId}`)
 			const snippetCode = snippetCodeInput?.value
 			const snippetCodeModalTag = <HTMLElement> document.getElementById('snippet-code-thickbox')
@@ -26,7 +30,7 @@ export const handleShowCloudPreview = () => {
 			}
 
 			if ('php' === snippetLanguage) {
-				//Check if there is an opening php tag if not add it
+				// Check if there is an opening php tag if not add it.
 				if (!snippetCode.startsWith('<?php')) {
 					snippetCodeModalTag.textContent = `<?php ${snippetCode}`
 				}
