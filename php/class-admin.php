@@ -153,9 +153,9 @@ class Admin {
 			array(
 				sprintf(
 					$format,
-					'https://codesnippets.pro/about/',
+					'https://help.codesnippets.pro/',
 					esc_attr__( 'Find out more about Code Snippets', 'code-snippets' ),
-					esc_html__( 'About', 'code-snippets' )
+					esc_html__( 'Docs & FAQ', 'code-snippets' )
 				),
 				sprintf(
 					$format,
