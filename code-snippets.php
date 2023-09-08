@@ -8,7 +8,7 @@
  * License:      GPL-2.0-or-later
  * License URI:  license.txt
  * Text Domain:  code-snippets
- * Version:      3.5.0-beta.1
+ * Version:      3.5.0
  * Requires PHP: 7.0
  * Requires at least: 5.0
  *
