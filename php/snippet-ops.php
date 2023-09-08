@@ -261,7 +261,8 @@ function get_snippet_with_token_data() {
 	$table_name = code_snippets()->db->get_table_name();
 
 	// This is the snippet that holds the cloud token and external API tokens -- Add more tags or specificity if needed?
-	$token_snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE tags LIKE %s LIMIT 1", $wpdb->esc_like( '%extend_cs%' ) ) );
+	$extend_cs = $wpdb->esc_like( 'extend_cs' );
+	$token_snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE tags LIKE '%{$extend_cs}%' LIMIT 1" ) );
 
 	// Check if snippet returns any data from database call.
 	return $token_snippet ? new Snippet( $token_snippet ) : false;
