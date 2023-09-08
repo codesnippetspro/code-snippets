@@ -2,8 +2,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\REST_API\Snippets_REST_Controller;
-
 /**
  * Functions specific to the administration interface
  *

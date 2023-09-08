@@ -26,13 +26,6 @@ class Cloud_API {
 	const CLOUD_API_URL = 'https://codesnippets.cloud/api/v1/';
 
 	/**
-	 * Base URL to cloud platform UI.
-	 *
-	 * @var string
-	 */
-	const CLOUD_URL = 'https://codesnippets.cloud/';
-
-	/**
 	 * Base URL for cloud API.
 	 *
 	 * @var string

@@ -10,6 +10,7 @@
 * Added: Search and download any publicly viewable snippet in Code Snippet Cloud by keyword or name of codevault. (PRO)
 * Added: Deploy snippets to plugin from Code Snippets Cloud app. (PRO)
 * Added: Bundles of Joy! Search and download Snippet Bundles in one go direct from Code Snippets Cloud. (PRO)
+* Fixed: Error when attempting to update network shared snippets after saving. [[#](https://wordpress.org/support/topic/activating-snippets-breaks-on-wordpress-6-3/)]
 
 ## 3.4.2 (05 Jul 2023)
 * Fixed: Issue causing export process to fail with fatal error. [[#](https://wordpress.org/support/topic/critical-error-on-exporting-snippets/)]
