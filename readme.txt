@@ -4,8 +4,8 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.4.2
-Tested up to: 6.2.2
+Stable tag: 3.5.0
+Tested up to: 6.3.1
 
 An easy, clean and simple way to run code snippets on your site.
 
@@ -127,6 +127,18 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.5.0 (08 Sep 2023) =
+* Added: Support for the Code Snippets Cloud API.
+* Added: Search and download public snippets.
+* Added: Codevault back-up and synchronisation. (PRO)
+* Added: Synchronised local snippets are automatically updated in Cloud. (PRO)
+* Added: Bulk actions - 'update' and 'download'.
+* Added: Download snippets from public and private codevaults. (PRO)
+* Added: Search and download any publicly viewable snippet in Code Snippet Cloud by keyword or name of codevault. (PRO)
+* Added: Deploy snippets to plugin from Code Snippets Cloud app. (PRO)
+* Added: Bundles of Joy! Search and download Snippet Bundles in one go direct from Code Snippets Cloud. (PRO)
+* Fixed: Error when attempting to update network shared snippets after saving. [[#](https://wordpress.org/support/topic/activating-snippets-breaks-on-wordpress-6-3/)]
 
 = 3.4.2 (05 Jul 2023) =
 * Fixed: Issue causing export process to fail with fatal error. [[#](https://wordpress.org/support/topic/critical-error-on-exporting-snippets/)]
