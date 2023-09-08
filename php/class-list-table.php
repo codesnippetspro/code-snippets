@@ -241,7 +241,6 @@ class List_Table extends WP_List_Table {
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
 				'export' => esc_html__( 'Export', 'code-snippets' ),
-				'cloud'  => esc_html__( 'Sync to Codevault', 'code-snippets' ),
 			);
 
 			foreach ( $simple_actions as $action => $label ) {
@@ -250,9 +249,17 @@ class List_Table extends WP_List_Table {
 
 			if ( $this->is_cloud_link_valid() ) {
 				$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
+
+				$actions['cloud'] = sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( $this->get_action_link( 'cloud', $snippet ) ),
+					esc_html__( 'Sync to Codevault', 'code-snippets' )
+				);
+
 				// Check this snippet is linked or originated from the cloud.
 				if ( $cloud_link && $cloud_link->in_codevault ) {
 					$actions['cloud'] = sprintf( '<a>%s</a>', esc_html__( 'Synced', 'code-snippets' ) );
+
 					// Check if an update is available only in users codevault.
 					if ( $cloud_link->update_available ) {
 						$actions['cloud_update'] = sprintf(
