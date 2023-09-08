@@ -126,7 +126,7 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function init_cs_cloud_settings() {
-		$this->code_snippets_cloud_settings = get_option( CLOUD_SETTINGS_CACHE_KEY );
+		$this->code_snippets_cloud_settings = get_option( self::CLOUD_SETTINGS_CACHE_KEY );
 		// Check if the settings exist in the database if not create defaults.
 		if ( ! $this->code_snippets_cloud_settings ) {
 			$this->code_snippets_cloud_settings = [
@@ -135,10 +135,10 @@ class Cloud_API {
 				'token_verified'   => false,
 				'token_snippet_id' => '',
 			];
-			update_option( CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
+			update_option( self::CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
 		}
 
-		wp_cache_set( CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
+		wp_cache_set( self::CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
 
 		$this->cloud_key = $this->code_snippets_cloud_settings['cloud_token'];
 		$this->local_token = $this->code_snippets_cloud_settings['local_token'];
@@ -153,7 +153,7 @@ class Cloud_API {
 	 */
 	public function get_cloud_setting( string $setting ) {
 		// Check if the settings are in cache.
-		$this->code_snippets_cloud_settings = wp_cache_get( CLOUD_SETTINGS_CACHE_KEY );
+		$this->code_snippets_cloud_settings = wp_cache_get( self::CLOUD_SETTINGS_CACHE_KEY );
 
 		if ( ! $this->code_snippets_cloud_settings ) {
 			$this->init_cs_cloud_settings();
@@ -168,7 +168,7 @@ class Cloud_API {
 	 * @return array
 	 */
 	public function get_cloud_settings() {
-		$this->code_snippets_cloud_settings = wp_cache_get( CLOUD_SETTINGS_CACHE_KEY );
+		$this->code_snippets_cloud_settings = wp_cache_get( self::CLOUD_SETTINGS_CACHE_KEY );
 
 		if ( ! $this->code_snippets_cloud_settings ) {
 			$this->init_cs_cloud_settings();
@@ -193,7 +193,7 @@ class Cloud_API {
 		$this->code_snippets_cloud_settings[ $setting ] = $value;
 
 		update_option( 'code_snippets_cloud_settings', $this->code_snippets_cloud_settings );
-		wp_cache_set( CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
+		wp_cache_set( self::CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
 	}
 
 	/**
@@ -209,7 +209,7 @@ class Cloud_API {
 		}
 
 		update_option( 'code_snippets_cloud_settings', $this->code_snippets_cloud_settings );
-		wp_cache_set( CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
+		wp_cache_set( self::CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
 	}
 
 
