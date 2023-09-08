@@ -350,7 +350,7 @@ function activate_snippets( array $ids, bool $network = null ) {
 
 		if ( ! $code_error ) {
 			$valid_ids[] = $snippet->id;
-			$valid_snippets = $snippet;
+			$valid_snippets[] = $snippet;
 		}
 	}
 
