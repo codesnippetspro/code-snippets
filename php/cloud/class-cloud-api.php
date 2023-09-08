@@ -2,8 +2,7 @@
 
 namespace Code_Snippets\Cloud;
 
-use Cloud_Snippet;
-use Cloud_Snippets;
+use Code_Snippets\Snippet;
 use WP_Error;
 use function Code_Snippets\get_snippet_by_cloud_id;
 use function Code_Snippets\get_snippets;
@@ -23,13 +22,6 @@ class Cloud_API {
 	 * @var string
 	 */
 	const CLOUD_API_URL = 'https://codesnippets.cloud/api/v1/';
-
-	/**
-	 * Base URL to cloud platform UI.
-	 *
-	 * @var string
-	 */
-	const CLOUD_URL = 'https://codesnippets.cloud/';
 
 	/**
 	 * Base URL for cloud API.

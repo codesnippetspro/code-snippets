@@ -9,11 +9,9 @@
 
 namespace Code_Snippets\Cloud;
 
-use Cloud_Snippets;
 use WP_Plugin_Install_List_Table;
 use function Code_Snippets\code_snippets;
 
-/* The WP_List_Table base class is not included by default, so we need to load it */
 if ( ! class_exists( 'WP_Plugin_Install_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-plugin-install-list-table.php';
 }
