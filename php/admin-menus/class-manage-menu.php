@@ -274,10 +274,14 @@ class Manage_Menu extends Admin_Menu {
 					'cloned-multi'           => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
 					'cloud-refreshed'        => __( 'Synced cloud data refreshed <strong>successfully</strong>.', 'code-snippets' ),
 					'cloud-key-invalid'      => __( 'There is a problem with the special access token, please re-download from the cloud and try again.', 'code-snippets' ) . $cloud_setup_text,
-					'cloud-key-inactive'     => __( 'The snippet with the cloud key is deactivated. Please activate it and try again.', 'code - snippets' ) . $cloud_setup_text,
+					'cloud-key-inactive'     => __( 'The snippet with the cloud key is deactivated. Please activate it and try again.', 'code-snippets' ) . $cloud_setup_text,
 					'cloud-key-deleted'      => __( 'The snippet with the cloud key has been deleted. Please import the snippet and activate it to try again.', 'code-snippets' ) . $cloud_setup_text,
 					'cloud-key-expired'      => __( 'The snippet with the cloud key is expired. Please re-download from the cloud and try again.', 'code-snippets' ) . $cloud_setup_text,
-					'cloud-key-no-codevault' => __( 'There is no codevault set up on the cloud. Please log into your Code Snippet Cloud account and set up a codevault.', 'code-snippets' ) . $cloud_setup_text,
+					'cloud-key-no-codevault' => sprintf(
+						'%s <a href="https://codesnippets.cloud/user/profile#codevaultSection" target="_blank">%s</a>',
+						__( 'There is no codevault set up on the cloud.', 'code-snippets' ),
+						__( 'Please log into your Code Snippet Cloud account and set up a codevault.', 'code-snippets' )
+					),
 				)
 			)
 		);
