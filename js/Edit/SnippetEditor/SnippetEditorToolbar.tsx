@@ -5,6 +5,7 @@ import { ActionButton } from '../../common/ActionButton'
 import { Snippet } from '../../types/Snippet'
 import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
 import { SnippetActionsProps, useSnippetActions } from '../actions'
+import { GptInterface } from '../components/GptInterface'
 
 export interface InlineActionButtonsProps extends SnippetActionsProps {
 	snippet: Snippet
@@ -35,6 +36,10 @@ const InlineActionButtons: React.FC<InlineActionButtonsProps> = ({ snippet, isWo
 	return (
 		<>
 			{isWorking ? <Spinner /> : ''}
+			<GptInterface 
+				snippet={snippet}
+				isWorking={isWorking}
+			/>
 
 			<ActionButton
 				small

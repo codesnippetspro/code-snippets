@@ -5,18 +5,18 @@ import { ActionButton } from '../../common/ActionButton'
 import { Snippet } from '../../types/Snippet'
 
 
-interface GpInterfaceProps {
+interface GptInterfaceProps {
 	codeEditorInstance?: CodeEditorInstance
 	snippet: Snippet
 	isWorking: boolean
 }
 
-export const GpInterface: React.FC<GpInterfaceProps> = ({ codeEditorInstance, snippet, isWorking }) =>
+export const GptInterface: React.FC<GptInterfaceProps> = ({ codeEditorInstance, snippet, isWorking }) =>
 	<>
 		<ActionButton
 			primary
 			name="cs_gpt_prompt"
-			text={__('Prompt', 'code-snippets')}
+			text={__('Create', 'code-snippets')}
 			onClick={event => {
 				event.preventDefault()
 			}

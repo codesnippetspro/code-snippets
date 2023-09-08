@@ -9,7 +9,6 @@ import '../../editor'
 import { getSnippetType, isLicensed, isProType } from '../../utils/snippets'
 import classnames from 'classnames'
 import { CodeEditor } from './CodeEditor'
-import { GpInterface } from '../components/GptInterface'
 
 interface SnippetTypeTabProps extends Pick<SnippetInputProps, 'setSnippet'> {
 	tabType: SnippetType
@@ -149,10 +148,6 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({
 						{snippet.id ?
 							<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> : null}
 					</label>
-					<GpInterface 
-						snippet={snippet}
-						isWorking={actionsProps.isWorking}
-					/>
 				</h2>
 
 				{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview || !codeEditorInstance ? '' :
