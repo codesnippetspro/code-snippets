@@ -3,6 +3,7 @@
 namespace Code_Snippets\REST_API;
 
 use Code_Snippets\Export;
+use Code_Snippets\Snippet;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -229,13 +230,13 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Create one item from the collection
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request|array $request Full data about the request.
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item( $request ) {
 		$snippet = $this->prepare_item_for_database( $request );
-		$result = save_snippet( $snippet );
+		$result = $snippet ? save_snippet( $snippet ) : null;
 
 		return $result ?
 			$this->prepare_item_for_response( $result, $request ) :

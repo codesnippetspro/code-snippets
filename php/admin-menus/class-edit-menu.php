@@ -28,13 +28,6 @@ class Edit_Menu extends Admin_Menu {
 	protected $snippet = null;
 
 	/**
-	 * Whether the edit screen should be read-only or editable.
-	 *
-	 * @var boolean
-	 */
-	protected $read_only = false;
-
-	/**
 	 * Constructor.
 	 *
 	 * @return void

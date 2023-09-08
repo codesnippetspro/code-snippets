@@ -55,13 +55,6 @@ class List_Table extends WP_List_Table {
 	protected $order_dir;
 
 	/**
-	 * Array of local snippets synced to the cloud using the cloud link transient
-	 *
-	 * @var array
-	 */
-	protected $cloud_synced_snippets;
-
-	/**
 	 * The constructor function for our class.
 	 * Registers hooks, initializes variables, setups class.
 	 *
@@ -255,30 +248,25 @@ class List_Table extends WP_List_Table {
 				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', esc_url( $this->get_action_link( $action, $snippet ) ), $label );
 			}
 
-			// Check there is a valid cloud connection or show a link to set it up.
 			if ( $this->is_cloud_link_valid() ) {
 				$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
 				// Check this snippet is linked or originated from the cloud.
-				if ( $cloud_link ) {
-					if ( $cloud_link->in_codevault ) {
-						$actions['cloud'] = sprintf( '<a>%s</a>', 'Synced' );
-						// Check if an update is available only in users codevault.
-						if ( $cloud_link->update_available ) {
-							$actions['cloud_update'] = sprintf(
-								'<a href="%s#updated-code">%s</a>',
-								esc_url( $this->get_action_link( 'edit', $snippet ) ),
-								esc_html__( 'Cloud Update', 'code-snippets' )
-							);
-						}
+				if ( $cloud_link && $cloud_link->in_codevault ) {
+					$actions['cloud'] = sprintf( '<a>%s</a>', esc_html__( 'Synced', 'code-snippets' ) );
+					// Check if an update is available only in users codevault.
+					if ( $cloud_link->update_available ) {
+						$actions['cloud_update'] = sprintf(
+							'<a href="%s#updated-code">%s</a>',
+							esc_url( $this->get_action_link( 'edit', $snippet ) ),
+							esc_html__( 'Cloud Update', 'code-snippets' )
+						);
 					}
 				}
-			} else {
-				$actions['cloud'] = sprintf( '<a href="%s">Set up Cloud</a>', esc_url( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings' ) ) ) );
 			}
 
 			// Check if the snippet is the special cloud access snippet if so remove the cloud action.
 			if ( code_snippets()->cloud_api->is_cloud_access_snippet( $snippet->id ) ) {
-				$actions['cloud'] = sprintf( '<a>%s</a>', 'Cloud Access Snippet' );
+				$actions['cloud'] = sprintf( '<a>%s</a>', __( 'Cloud Access Snippet', 'code-snippets' ) );
 			}
 
 			$actions['delete'] = sprintf(

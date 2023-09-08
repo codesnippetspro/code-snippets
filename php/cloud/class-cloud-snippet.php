@@ -2,6 +2,7 @@
 
 namespace Code_Snippets\Cloud;
 
+use Code_Snippets\Data_Item;
 use function Code_Snippets\code_snippets_build_tags_array;
 
 /**

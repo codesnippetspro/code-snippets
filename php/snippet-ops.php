@@ -615,7 +615,7 @@ function save_snippet( $snippet ) {
 			return null;
 		}
 
-		// Check if snippet is has a cloud id.
+		// Check if snippet has a cloud id.
 		if ( $snippet->cloud_id ) {
 			// Check if snippet is owned by the current user.
 			$is_owner = substr( $snippet->cloud_id, -1 );
@@ -623,7 +623,7 @@ function save_snippet( $snippet ) {
 			// If snippet is owned by the current user then send to cloud for update.
 			if ( 1 === intval( $is_owner ) ) {
 				$snippets_to_update[] = $snippet;
-				// Update the snippet om the cloud - cloud will also verify ownership.
+				// Update the snippet on the cloud - cloud will also verify ownership.
 				code_snippets()->cloud_api->update_snippets_in_cloud( $snippets_to_update );
 			}
 		}

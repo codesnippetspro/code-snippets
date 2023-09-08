@@ -189,7 +189,7 @@ abstract class Admin_Menu {
 	 *
 	 * @return array<string, string> Link labels keyed to link URLs.
 	 */
-	protected function page_title_action_links( array $actions ): array {
+	public function page_title_action_links( array $actions ): array {
 		$plugin = code_snippets();
 		$links = [];
 
@@ -234,7 +234,7 @@ abstract class Admin_Menu {
 	 *
 	 * @param array<string> $actions List of actions to render as links, as array values.
 	 */
-	protected function render_page_title_actions( array $actions ) {
+	public function render_page_title_actions( array $actions ) {
 		foreach ( $this->page_title_action_links( $actions ) as $label => $url ) {
 			printf( '<a href="%s" class="page-title-action">%s</a>', esc_url( $url ), esc_html( $label ) );
 		}

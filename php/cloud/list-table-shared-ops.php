@@ -27,6 +27,24 @@ function cloud_lts_display_column_hidden_input( string $column_name, Cloud_Snipp
 	);
 }
 
+/**
+ * Display a hidden input field for a certain column and snippet value.
+ *
+ * @param string        $column_name Column name.
+ * @param Cloud_Snippet $snippet     Column item.
+ *
+ * @return string HTML
+ */
+function cloud_lts_build_column_hidden_input( string $column_name, Cloud_Snippet $snippet ): string {
+	return sprintf(
+		'<input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
+		esc_attr( $column_name ),
+		esc_attr( $snippet->id ),
+		esc_attr( $column_name ),
+		esc_attr( $snippet->$column_name )
+	);
+}
+
 
 /**
  * Process the download snippet action

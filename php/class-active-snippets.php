@@ -224,7 +224,7 @@ class Active_Snippets {
 	 *
 	 * @param string $mime_type File MIME type used to set Content-Type header.
 	 */
-	private static function do_asset_headers( $mime_type ) {
+	private static function do_asset_headers( string $mime_type ) {
 		$expiry = 365 * 24 * 60 * 60; // year in seconds.
 		header( 'Content-Type: ' . $mime_type, true, 200 );
 		header( sprintf( 'Expires: %s GMT', gmdate( 'D, d M Y H:i:s', time() + $expiry ) ) );
@@ -235,7 +235,7 @@ class Active_Snippets {
 	 *
 	 * @param string $type Must be either 'css' or 'js'.
 	 */
-	private function print_code( $type ) {
+	private function print_code( string $type ) {
 		if ( 'js' !== $type && 'css' !== $type ) {
 			return;
 		}

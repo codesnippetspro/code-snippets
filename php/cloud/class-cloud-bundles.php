@@ -2,9 +2,6 @@
 
 namespace Code_Snippets\Cloud;
 
-use Code_Snippets\Snippet;
-
-use function Code_Snippets\save_snippet;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet_by_cloud_id;
 

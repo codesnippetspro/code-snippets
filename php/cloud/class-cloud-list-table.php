@@ -53,13 +53,13 @@ class Cloud_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Sets the list of columns that are hidden by default..
+	 * Sets the list of columns that are hidden by default.
 	 *
 	 * @param array<string> $hidden List of hidden columns.
 	 *
 	 * @return array<string> Modified list of hidden columns
 	 */
-	public function default_hidden_columns( $hidden ) {
+	public function default_hidden_columns( array $hidden ): array {
 		return array_merge( $hidden, [ 'id', 'code', 'cloud_id', 'revision' ] );
 	}
 
@@ -68,7 +68,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_columns() {
+	public function get_columns(): array {
 		$columns = array(
 			'cb'          => '<input type="checkbox" />',
 			'id'          => __( 'ID', 'code-snippets' ),
@@ -101,7 +101,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return array<string, string> An array of menu items with the ID paired to the label.
 	 */
-	public function get_bulk_actions() {
+	public function get_bulk_actions(): array {
 		$actions = array(
 			'download-codevault-selected' => __( 'Download', 'code-snippets' ),
 		);
@@ -211,7 +211,9 @@ class Cloud_List_Table extends WP_List_Table {
 				return $item->description;
 
 			case 'name':
+				$cloud_icon = '';
 				$cloud_link = code_snippets()->cloud_api->get_cloud_link( $item->id, 'cloud' );
+
 				if ( $cloud_link ) {
 					// If update available make cloud icon orange?
 					if ( $cloud_link->update_available ) {
@@ -221,10 +223,10 @@ class Cloud_List_Table extends WP_List_Table {
 						$cloud_icon = '<span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>';
 					}
 				} else {
-					// Make cloud icon grey to show its from the cloud.
+					// Make cloud icon grey to show it is from the cloud.
 					$cloud_icon = '<span class="dashicons dashicons-cloud cloud-icon cloud-not-downloaded"></span>';
 				}
-				$edit_url = $link ? code_snippets()->get_snippet_edit_url( (int) $link->local_id ) : '';
+				$edit_url = $link ? code_snippets()->get_snippet_edit_url( $link->local_id ) : '';
 				$name_link = sprintf(
 					$edit_url ? '<a href="%1$s">%2$s</a>' : '<a>%2$s</a>',
 					esc_url( $edit_url ),
@@ -253,7 +255,7 @@ class Cloud_List_Table extends WP_List_Table {
 
 				return sprintf(
 					'<a id="snippet-type-%s" class="snippet-type-badge snippet-type" data-type="%s">%s</a>',
-					esc_attr( $item->cloud_id ),
+					esc_attr( $type ),
 					esc_attr( strtolower( $type ) ),
 					esc_html( $type )
 				);
@@ -290,7 +292,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return string The content of the column to output.
 	 */
-	public function column_download( $item ): string {
+	public function column_download( Cloud_Snippet $item ): string {
 		return cloud_lts_build_action_links( $item, 'codevault' );
 	}
 
@@ -302,12 +304,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return string The column content to be printed.
 	 */
 	protected function column_cb( $item ): string {
-		$out = sprintf(
-			'<input type="checkbox" name="%s[]" value="%s">',
-			$item->shared_network ? 'shared_cloud_ids' : 'cloud_ids',
-			$item->id
-		);
-
+		$out = sprintf( '<input type="checkbox" name="cloud_ids[]" value="%s">', $item->id );
 		return apply_filters( 'code_snippets/cloud_list_table/column_cb', $out, $item );
 	}
 
@@ -318,7 +315,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return string The column content to be printed.
 	 */
-	protected function column_code( $item ): string {
+	protected function column_code( Cloud_Snippet $item ): string {
 		$out = sprintf(
 			'<input id="cloud-snippet-code-%s" class="cloud-snippet-item hidden" type="hidden" name="code" value="%s" />',
 			esc_attr( $item->id ),
@@ -381,7 +378,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return void
 	 */
-	public function download_snippets( $ids, $source ) {
+	public function download_snippets( array $ids, string $source ) {
 		$source = explode( '-', $source )[1];
 		foreach ( $ids as $id ) {
 			// Check if snippet already exists in cloud link transient and skip if it does.
@@ -390,7 +387,7 @@ class Cloud_List_Table extends WP_List_Table {
 				continue;
 			}
 			// TODO: For bulk download codevault snippets this doesn't update cloud link for first snippet.
-			$snippet = $this->cloud_api->download_or_update_snippet( $id, $source, 'download' );
+			$this->cloud_api->download_or_update_snippet( $id, $source, 'download' );
 		}
 	}
 
@@ -414,7 +411,7 @@ class Cloud_List_Table extends WP_List_Table {
 		$page_class = $paginate['page_class'];
 		$output = $paginate['output'];
 
-		$this->_pagination = "<div class='tablenav-pages{$page_class}'>{$output}</div>";
+		$this->_pagination = "<div class='tablenav-pages$page_class'>$output</div>";
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $this->_pagination;

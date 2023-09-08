@@ -19,18 +19,18 @@ use function Code_Snippets\update_snippet_fields;
 class Cloud_API {
 
 	/**
-	 * Base URL for cloud API.
+	 * Base URL for cloud website.
 	 *
 	 * @var string
 	 */
-	const CLOUD_API_URL = 'https://codesnippets.cloud/api/v1/';
+	const CLOUD_URL = 'https://codesnippets.cloud/';
 
 	/**
 	 * Base URL for cloud API.
 	 *
 	 * @var string
 	 */
-	const CLOUD_SEARCH_API_TOKEN = 'csc-1a2b3c4d5e6f7g8h9i0j';
+	const CLOUD_API_URL = 'https://codesnippets.cloud/api/v1/';
 
 	/**
 	 * Key used to access the local-to-cloud map transient data.
@@ -283,7 +283,7 @@ class Cloud_API {
 					$cloud_id_rev[ $cloud_id_int ] ? $cloud_id_rev[ $cloud_id_int ] :
 						$this->get_cloud_snippet_revision( $local_snippet->cloud_id );
 
-				$link->update_available = (int) $local_snippet->revision < $cloud_snippet_revision;
+				$link->update_available = $local_snippet->revision < $cloud_snippet_revision;
 			}
 
 			$this->local_to_cloud_map[] = $link;

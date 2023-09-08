@@ -366,7 +366,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 		$page_class = $paginate['page_class'];
 		$output = $paginate['output'];
 
-		$this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
+		$this->_pagination = "<div class='tablenav-pages$page_class'>$output</div>";
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $this->_pagination;
