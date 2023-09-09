@@ -251,7 +251,7 @@ class Cloud_API {
 
 		// Fetch data from the stored transient, if available.
 		$stored_data = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
-		if ( $stored_data && is_array( $stored_data ) ) {
+		if ( $stored_data ) {
 			$this->local_to_cloud_map = $stored_data;
 			return $stored_data;
 		}
@@ -687,24 +687,26 @@ class Cloud_API {
 	 *
 	 * @param integer $snippet_id Local snippet ID.
 	 *
-	 * @return Cloud_Link|null The deleted map link if one was found, null otherwise.
+	 * @return void
 	 */
 	public function delete_snippet_from_transient_data( int $snippet_id ) {
-		$this->get_local_to_cloud_map();
-		$link_to_delete = null;
+		if( !$this->local_to_cloud_map ){
+			$this->get_local_to_cloud_map();
+		}
 
 		foreach ( $this->local_to_cloud_map as $link ) {
 			if ( $link->local_id === $snippet_id ) {
-				$link_to_delete = $link;
-				break;
+				// Remove the link from the local_to_cloud_map.
+				$index = array_search( $link, $this->local_to_cloud_map, true );
+				unset( $this->local_to_cloud_map[ $index ] );
+				// Update the transient data.
+				set_transient(
+					self::CLOUD_MAP_TRANSIENT_KEY,
+					$this->local_to_cloud_map,
+					DAY_IN_SECONDS * self::DAYS_TO_STORE_CS
+				);
 			}
-		}
-		if ( $link_to_delete ) {
-
-			$this->refresh_synced_data();
-		}
-
-		return $link_to_delete;
+		}	
 	}
 
 	/**
@@ -884,7 +886,7 @@ class Cloud_API {
 
 		$link = new Cloud_Link();
 		$link->local_id = $new_snippet->id;
-		$link->cloud_id = $snippet->cloud_id;
+		$link->cloud_id = $snippet_to_store->id;
 		$link->is_owner = $snippet_to_store->is_owner;
 		$link->in_codevault = $in_codevault;
 		$link->update_available = false;
@@ -992,26 +994,27 @@ class Cloud_API {
 	 * @param int    $snippet_id     Snippet ID.
 	 * @param string $local_or_cloud Whether the ID is a local ID or cloud ID.
 	 *
-	 * @return Cloud_Link|null
+	 * @return Cloud_Link|bool
 	 */
 	public function get_cloud_link( int $snippet_id, string $local_or_cloud ) {
-		$local_to_cloud_map = $this->get_local_to_cloud_map();
-
-		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
-			$local_id_array = array_map(
-				function ( $snippet ) use ( $local_or_cloud ) {
-					return $snippet->{$local_or_cloud . '_id'};
-				},
-				$local_to_cloud_map
-			);
-
-			if ( in_array( $snippet_id, $local_id_array, true ) ) {
-				$index = array_search( $snippet_id, $local_id_array, true );
-				return $local_to_cloud_map[ $index ];
-			}
+		if( !$this->local_to_cloud_map){
+			$this->get_local_to_cloud_map();
 		}
 
-		return null;
+		$local_id_array = array_map(
+			function ( $snippet ) use ( $local_or_cloud ) {
+				return $snippet->{$local_or_cloud . '_id'};
+			},
+			$this->local_to_cloud_map
+		);
+
+		if ( in_array( $snippet_id, $local_id_array, true ) ) {
+			$index = array_search( $snippet_id, $local_id_array, true );
+			return $this->local_to_cloud_map[ $index ];
+		}
+
+		// If the snippet is not synced to cloud return false.
+		return false;	
 	}
 
 	/**
