@@ -817,6 +817,7 @@ class Cloud_API {
 			case 'codevault':
 				$in_codevault = true;
 				$snippet_to_store = $this->get_single_snippet_from_codevault( $cloud_id );
+				$snippet_to_store = reset( $snippet_to_store );
 				break;
 			case 'search':
 				$in_codevault = false;

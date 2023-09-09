@@ -46,10 +46,6 @@ namespace Code_Snippets;
 <div class="cloud-key">
 	<p><strong><u><?php esc_html_e( 'Cloud Sync Guide', 'code-snippets' ); ?></u></strong></p>
 	<p>
-		<span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>
-		<?php esc_html_e( 'Snippet downloaded and in-sync with codevault.', 'code-snippets' ); ?>
-	</p>
-	<p>
 		<span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>
 		<?php esc_html_e( 'Snippet downloaded from cloud but not synced with codevault.', 'code-snippets' ); ?>
 	</p>
