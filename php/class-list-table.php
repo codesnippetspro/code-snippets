@@ -241,6 +241,8 @@ class List_Table extends WP_List_Table {
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
 				'export' => esc_html__( 'Export', 'code-snippets' ),
+				'cloud' => sprintf('<a href="https://codesnippets.cloud/cloud-setup-guide" target="_blank">%s</a>',
+					__( 'Set up cloud.', 'code-snippets' )),
 			);
 
 			foreach ( $simple_actions as $action => $label ) {
@@ -273,6 +275,9 @@ class List_Table extends WP_List_Table {
 
 			// Check if the snippet is the special cloud access snippet if so remove the cloud action.
 			if ( code_snippets()->cloud_api->is_cloud_access_snippet( $snippet->id ) ) {
+				unset( $actions['edit'] );
+				unset( $actions['clone'] );
+				unset( $actions['export'] );
 				$actions['cloud'] = sprintf( '<a>%s</a>', __( 'Cloud Access Snippet', 'code-snippets' ) );
 			}
 
@@ -1006,8 +1011,9 @@ class List_Table extends WP_List_Table {
 		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets() );
 		$this->fetch_shared_network_snippets();
 
-		// Filter snippets by type.
-		$type = sanitize_key( wp_unslash( isset( $_GET['type'] ) ?? '' ) );
+		// Filter snippets by type - isset outside of sanitize_key to prevent bool being passed to sanitize function
+		$type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : '';
+
 		if ( $type && 'all' !== $type ) {
 			$snippets['all'] = array_filter(
 				$snippets['all'],

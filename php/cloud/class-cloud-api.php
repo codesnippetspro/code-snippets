@@ -110,7 +110,8 @@ class Cloud_API {
 	public function __construct() {
 		$this->init_cs_cloud_settings();
 		$this->is_cloud_key_verified();
-		add_action( 'code_snippets/deactivate_snippet', array( $this, 'remove_sync' ), 10, 2 );
+		add_action( 'code_snippets/deactivate_snippet', array( $this, 'disable_sync' ), 10, 2 );
+		add_action( 'code_snippets/delete_snippet', array( $this, 'remove_sync' ), 10, 2 );
 	}
 
 	/**
@@ -135,6 +136,15 @@ class Cloud_API {
 
 		$this->cloud_key = $this->code_snippets_cloud_settings['cloud_token'];
 		$this->local_token = $this->code_snippets_cloud_settings['local_token'];
+	}
+
+	/**
+	 * Get Cloud Settings Cache Key
+	 *
+	 * @return string
+	 */
+	public static function get_cloud_settings_key() {
+		return self::CLOUD_SETTINGS_CACHE_KEY;
 	}
 
 	/**
@@ -987,7 +997,12 @@ class Cloud_API {
 		$local_to_cloud_map = $this->get_local_to_cloud_map();
 
 		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
-			$local_id_array = array_map( 'intval', array_column( $local_to_cloud_map, "${$local_or_cloud}_id" ) );
+			$local_id_array = array_map(
+				function ( $snippet ) use ( $local_or_cloud ) {
+					return $snippet->{$local_or_cloud . '_id'};
+				},
+				$local_to_cloud_map
+			);
 
 			if ( in_array( $snippet_id, $local_id_array, true ) ) {
 				$index = array_search( $snippet_id, $local_id_array, true );
@@ -1091,17 +1106,42 @@ class Cloud_API {
 	}
 
 	/**
-	 * Remove Sync if the token snippet is deleted.
+	 * Disable Sync if the token snippet is deactivated 
+	 *
+	 * @param string|int $id Snippet ID.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function disable_sync( $id ): array {
+
+		$token_snippet = $this->get_cloud_setting( 'token_snippet_id' );
+
+		if ( $id === $token_snippet ) {
+			$this->refresh_cloud_settings_data( false, $id );
+			$this->refresh_synced_data();
+
+			return [
+				'success' => true,
+				'message' => __( 'Sync has been disable', 'code-snippets' ),
+			];
+		}
+
+		return [];
+	}
+
+	/**
+	 * Remove Sync if the token snippet is  deleted.
 	 *
 	 * @param string|int $id Snippet ID.
 	 *
 	 * @return array<string, mixed>
 	 */
 	public function remove_sync( $id ): array {
+
 		$token_snippet = $this->get_cloud_setting( 'token_snippet_id' );
 
 		if ( $id === $token_snippet ) {
-			$this->refresh_cloud_settings_data();
+			$this->refresh_cloud_settings_data( true );
 			$this->refresh_synced_data();
 
 			// TODO: Send request to Cloud API to remove sync.
@@ -1130,16 +1170,19 @@ class Cloud_API {
 
 	/**
 	 * Refresh all settings data
+	 * 
+	 * @param string $token_id The token snippet ID.
+	 * @param bool $token_id_wipe Whether to wipe the token or not.
 	 *
 	 * @return void
 	 */
-	public function refresh_cloud_settings_data() {
+	public function refresh_cloud_settings_data( $token_id_wipe, $token_id = '') {
 		// Simply deleting the data is sufficient, as it will be recreated and stored the next time it is requested.
 		$this->update_cloud_settings(
 			[
 				'cloud_token'      => '',
 				'token_verified'   => false,
-				'token_snippet_id' => '',
+				'token_snippet_id' => $token_id_wipe ? '' : $token_id,
 				'local_token'      => '',
 			]
 		);

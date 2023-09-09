@@ -7,6 +7,7 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use ParseError;
 use function Code_Snippets\Settings\get_self_option;
@@ -257,6 +258,19 @@ function get_snippet_by_cloud_id( string $cloud_id, $multisite = null ) {
  */
 function get_snippet_with_token_data() {
 	global $wpdb;
+	$cloud_settings_key = Cloud_API::get_cloud_settings_key();
+	// First check if the token snippet ID is code snippets cloud settings.
+	$cloud_settings = get_option( $cloud_settings_key );
+	if( $cloud_settings ) {
+		// Make sure the token snippet ID is set and not empty string.
+		if( ! empty( $cloud_settings['token_snippet_id'] ) ) {
+			$token_snippet = get_snippet( $cloud_settings['token_snippet_id'] );
+			// Check if snippet is not empty snippet object
+			if( $token_snippet->id ) {
+				return $token_snippet;
+			}
+		}
+	}
 
 	$table_name = code_snippets()->db->get_table_name();
 
