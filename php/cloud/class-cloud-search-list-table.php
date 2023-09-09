@@ -60,6 +60,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 */
 	public function prepare_items() {
 		$this->cloud_snippets = $this->fetch_snippets();
+		
 		$this->items = $this->cloud_snippets->snippets;
 
 		$this->process_actions();
@@ -98,8 +99,6 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 * @return void
 	 */
 	public function display_rows() {
-		parent::display_rows();
-
 		/**
 		 * The current table item.
 		 *
@@ -143,10 +142,10 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						</h3>
 					</div>
 					<div class="action-links">
-						<?php cloud_lts_build_action_links( $item, 'search' ); ?>
+						<?php echo cloud_lts_build_action_links( $item, 'search' ); ?>
 					</div>
 					<div class="desc column-description">
-						<p><?php wp_kses_post( $this->process_description( $item->description ) ); ?></p>
+						<p><?php echo wp_kses_post( $this->process_description( $item->description ) ); ?></p>
 						<p class="authors">
 							<cite>
 								<?php
@@ -166,21 +165,28 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 				<div class="plugin-card-bottom cloud-search-card-bottom">
 					<div class="vers column-rating voted-info">
 						<svg xmlns="http://www.w3.org/2000/svg"
-						     fill="none"
-						     viewBox="0 0 24 24"
-						     stroke-width="1.5"
-						     stroke="currentColor"
-						     class="thumbs-up">
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="thumbs-up">
 							<path stroke-linecap="round" stroke-linejoin="round"
-							      d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z"></path>
+							d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z"></path>
 						</svg>
 						<span class="num-ratings" aria-hidden="true">
 							<?php
-							// translators: 1: number of votes, 2: number of users.
-							$votes_text = _nx( '%d time', '%d times', number_format_i18n( $item->vote_count ), 'vote count', 'code-snippets' );
+							$vote_count = (int) $item->vote_count;
+							$total_votes = (int) $item->total_votes;
+							if($total_votes > 0){ 
+								// translators: 1: number of votes, 2: number of users.
+								$votes_text = _nx( '%d time', '%d times', number_format_i18n( $vote_count ), 'vote-count', 'code-snippets' );
 
-							// translators: 1: number of users.
-							$users_text = _n( '%d user', '%d users', number_format_i18n( $item->total_votes ), 'code-snippets' );
+								// translators: 1: number of users.
+								$users_text = _n( '%d user', '%d users', number_format_i18n( $total_votes ), 'code-snippets' );
+							}else{
+								$votes_text = esc_html__( 'Not voted', 'code-snippets' );
+								$users_text = esc_html__( 'any users', 'code-snippets' );
+							}
 
 							// translators: 1: number of votes with label, 2: number of users with label.
 							echo esc_html( sprintf( _x( '%1$s by %2$s', 'votes', 'code-snippets' ), $votes_text, $users_text ) );
@@ -278,11 +284,11 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	/**
 	 * Process the description text - limit to 150 characters.
 	 *
-	 * @param string $description Description as provided by the API.
+	 * @param string|null $description Description as provided by the API.
 	 *
 	 * @return string formatted description string max 150 chars.
 	 */
-	protected function process_description( string $description ): string {
+	protected function process_description( $description ): string {
 		$description = wp_strip_all_tags( $description );
 		return strlen( $description ) > 150 ? substr( $description, 0, 150 ) . '…' : $description;
 	}

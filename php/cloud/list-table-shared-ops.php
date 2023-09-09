@@ -81,11 +81,8 @@ function cloud_lts_process_download_action( string $action, string $source, stri
  */
 function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ): string {
 	$lang = Cloud_API::get_type_from_scope( $snippet->scope );
-
 	$link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'cloud' );
-	$update_available = $link && $link->update_available;
 	$additional_classes = 'search' === $source ? 'action-button-link' : '';
-
 	$is_licensed = code_snippets()->licensing->is_licensed();
 	$download = true;
 	$action_link = '';
@@ -94,23 +91,25 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 		$download = false;
 	}
 
-	if ( $link && ! $link->update_available ) {
-		return sprintf(
-			'<a href="%s" class="cloud-snippet-downloaded %s">%s</a>',
-			esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
-			$additional_classes,
-			esc_html__( 'View', 'code-snippets' )
-		);
+	if ( $link ) {
+		if ( $is_licensed && $link->update_available ) {
+			$action_link = sprintf(
+				'<a class="cloud-snippet-update %s" href="%s">%s</a>',
+				$additional_classes,
+				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) . '/#updated-code' ),
+				esc_html__( 'Update Available', 'code-snippets' )
+			);
+		}else{
+			return sprintf(
+				'<a href="%s" class="cloud-snippet-downloaded %s">%s</a>',
+				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
+				$additional_classes,
+				esc_html__( 'View', 'code-snippets' )
+			);
+		}
 	}
 
-	if ( $is_licensed && $update_available ) {
-		$action_link = sprintf(
-			'<a class="cloud-snippet-update %s" href="%s">%s</a>',
-			$additional_classes,
-			esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) . '/#updated-code' ),
-			esc_html__( 'Update Available', 'code-snippets' )
-		);
-	} elseif ( $download ) {
+	if ( $download ) {
 		$download_url = add_query_arg(
 			[
 				'action'  => 'download',
@@ -118,21 +117,24 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 				'source'  => $source,
 			]
 		);
-
-		$action_link = sprintf(
-			'<a class="cloud-snippet-download %s" href="%s">%s</a>',
-			$additional_classes,
-			esc_url( $download_url ),
-			esc_html__( 'Download', 'code-snippets' )
-		);
-	} elseif ( ! $is_licensed ) {
-		$action_link = sprintf(
-			'<a class="cloud-snippet-download %s" href="#"><span class="go-pro-badge">%s</span>%s</a>',
-			$additional_classes,
-			esc_html_x( 'Pro', 'pro only', 'code-snippets' ),
-			esc_html_x( ' Only', 'pro only', 'code-snippets' )
-		);
-	}
+		
+		if ( ! $is_licensed ) {
+			$action_link = sprintf(
+				'<a class="cloud-snippet-download %s" href="#"><span class="go-pro-badge">%s</span>%s</a>',
+				$additional_classes,
+				esc_html_x( 'Pro', 'pro only', 'code-snippets' ),
+				esc_html_x( ' Only', 'pro only', 'code-snippets' )
+			);
+		}else {
+			$action_link = sprintf(
+				'<a class="cloud-snippet-download %s" href="%s">%s</a>',
+				$additional_classes,
+				esc_url( $download_url ),
+				esc_html__( 'Download', 'code-snippets' )
+			);
+		}
+	} 
+	
 
 	$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
 
