@@ -411,12 +411,11 @@ class Cloud_List_Table extends WP_List_Table {
 		$page_class = $paginate['page_class'];
 		$output = $paginate['output'];
 
-		$this->_pagination = "<div class='tablenav-pages$page_class'>$output</div>";
+		$this->_pagination = "<div class='tablenav-pages{$page_class}'>{$output}</div>";
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $this->_pagination;
-
-		// echo wp_kses_post( $this->_pagination ); TODO: This removes the top input box for page number.
+		//echo wp_kses_post( $this->_pagination ); //TODO: This removes the top input box for page number.
 	}
 
 	/**

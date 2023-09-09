@@ -520,17 +520,14 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Snippets|null
 	 */
-	public function get_codevault_snippets( int $page = 0 ) {
-		// Attempt to retrieve cached data if possible.
-		if ( $this->codevault_snippets ) {
-			return $this->codevault_snippets;
-		}
-
+	public function get_codevault_snippets( int $page = 0 ) {		
 		// Fetch data from the stored transient, if available.
 		$stored_data = get_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
 		if ( $stored_data ) {
 			$this->codevault_snippets = $stored_data;
-			return $this->codevault_snippets;
+			if( $page === $this->codevault_snippets->page ){
+				return $this->codevault_snippets;
+			}
 		}
 
 		// Otherwise, fetch from API and store.
