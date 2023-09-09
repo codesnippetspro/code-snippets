@@ -208,7 +208,7 @@ class Cloud_List_Table extends WP_List_Table {
 				return join( ', ', $item->tags );
 
 			case 'description':
-				return $item->description;
+				return $item->description ?? '';
 
 			case 'name':
 				$cloud_icon = '';
