@@ -83,13 +83,15 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 		$_SERVER['REQUEST_URI'] = remove_query_arg(
 			array( 'action', 'snippet', '_wpnonce', 'source', 'cloud-bundle-run', 'cloud-bundle-show', 'bundle_share_name', 'cloud_bundles' )
 		);
-
-		if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
-			cloud_lts_process_download_action(
-				sanitize_key( wp_unslash( $_REQUEST['action'] ) ),
-				sanitize_key( wp_unslash( $_REQUEST['source'] ) ),
-				sanitize_key( wp_unslash( $_REQUEST['snippet'] ) )
-			);
+		// Check request is coming form the cloud search page
+		if ( isset( $_REQUEST['type'] ) && 'cloud_search' === $_REQUEST['type'] ) {
+			if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+				cloud_lts_process_download_action(
+					sanitize_key( wp_unslash( $_REQUEST['action'] ) ),
+					sanitize_key( wp_unslash( $_REQUEST['source'] ) ),
+					sanitize_key( wp_unslash( $_REQUEST['snippet'] ) )
+				);
+			}
 		}
 	}
 

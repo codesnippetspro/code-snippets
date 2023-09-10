@@ -527,9 +527,8 @@ class Cloud_API {
 			$this->codevault_snippets = $stored_data;
 			if( $page === $this->codevault_snippets->page ){
 				return $this->codevault_snippets;
-			}
+			}	
 		}
-
 		// Otherwise, fetch from API and store.
 		$url = self::CLOUD_API_URL . 'private/allsnippets?page=' . $page;
 		$response = wp_remote_get( $url, [ 'headers' => $this->build_request_headers() ] );
@@ -713,7 +712,7 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Snippet Retrieved snippet.
 	 */
-	public static function get_single_cloud_snippet( int $cloud_id ): Cloud_Snippet {
+	public static function get_single_snippet_from_cloud( int $cloud_id ): Cloud_Snippet {
 		$url = self::CLOUD_API_URL . sprintf( 'public/getsnippet/%s', $cloud_id );
 		$response = wp_remote_get( $url );
 		$cloud_snippet = self::unpack_request_json( $response );
@@ -806,21 +805,22 @@ class Cloud_API {
 	 * @param int|string $cloud_id The cloud ID of the snippet as string from query args.
 	 * @param string     $source   The source table of the snippet: 'codevault' or 'search'.
 	 * @param string     $action   The action to be performed: 'download' or 'update'.
+	 * @param int        $codevault_page The current page of the codevault.
 	 *
 	 * @return array<string, string|bool> Result of operation: an array with `success` and `error_message` keys.
 	 */
-	public function download_or_update_snippet( int $cloud_id, string $source, string $action ): array {
+	public function download_or_update_snippet( int $cloud_id, string $source, string $action, int $codevault_page ): array {
 		$cloud_id = intval( $cloud_id );
 
 		switch ( $source ) {
 			case 'codevault':
 				$in_codevault = true;
-				$snippet_to_store = $this->get_single_snippet_from_codevault( $cloud_id );
+				$snippet_to_store = $this->get_single_snippet_from_codevault( $cloud_id, $codevault_page );
 				$snippet_to_store = reset( $snippet_to_store );
 				break;
 			case 'search':
 				$in_codevault = false;
-				$snippet_to_store = $this->get_single_cloud_snippet( $cloud_id );
+				$snippet_to_store = $this->get_single_snippet_from_cloud( $cloud_id );
 				break;
 			default:
 				return [
@@ -831,7 +831,7 @@ class Cloud_API {
 
 		switch ( $action ) {
 			case 'download':
-				return $this->download_snippets_from_cloud( $snippet_to_store, $in_codevault );
+				return $this->store_snippets_from_cloud_to_local( $snippet_to_store, $in_codevault );
 			case 'update':
 				return $this->update_snippet_from_cloud( $snippet_to_store );
 			default:
@@ -846,18 +846,21 @@ class Cloud_API {
 	 * Get a single snippet from the codevault.
 	 *
 	 * @param int $actual_cloud_id The cloud ID of the snippet.
+	 * @param int $current_page    The current page of the codevault
 	 *
 	 * @return Cloud_Snippet[]|null The snippet object on success, null otherwise.
 	 */
-	public function get_single_snippet_from_codevault( int $actual_cloud_id ) {
-		$snippets = $this->get_codevault_snippets();
+	public function get_single_snippet_from_codevault( int $actual_cloud_id, int $current_page ) {
+		$snippets = $this->get_codevault_snippets( $current_page );
 		// Filter the cloud snippet array to get the snippet that is to be saved to the database.
-		return array_filter(
+		$filtered_array = array_filter(
 			$snippets->snippets,
 			function ( $snippet ) use ( $actual_cloud_id ) {
 				return $snippet->id === $actual_cloud_id;
 			}
 		);
+
+		return $filtered_array;
 	}
 
 	/**
@@ -868,7 +871,7 @@ class Cloud_API {
 	 *
 	 * @return array The result of the download.
 	 */
-	public function download_snippet_from_cloud( $snippet_to_store, $in_codevault ) {
+	public function store_single_snippet_from_cloud_to_local( $snippet_to_store, $in_codevault ) {
 		$snippet = new Snippet( $snippet_to_store );
 
 		// Set the snippet id to 0 to ensure that the snippet is saved as a new snippet.
@@ -906,13 +909,13 @@ class Cloud_API {
 	 *
 	 * @return array The result of the download.
 	 */
-	public function download_snippets_from_cloud( $snippets_to_store, $in_codevault ) {
+	public function store_snippets_from_cloud_to_local( $snippets_to_store, $in_codevault ) {
 		if ( ! is_array( $snippets_to_store ) ) {
-			return $this->download_snippet_from_cloud( $snippets_to_store, $in_codevault );
+			return $this->store_single_snippet_from_cloud_to_local( $snippets_to_store, $in_codevault );
 		}
 
 		foreach ( $snippets_to_store as $snippet_to_store ) {
-			$this->download_snippet_from_cloud( $snippet_to_store, $in_codevault );
+			$this->store_single_snippet_from_cloud_to_local( $snippet_to_store, $in_codevault );
 		}
 
 		if ( count( $snippets_to_store ) > 1 ) {
