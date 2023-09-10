@@ -180,6 +180,7 @@ class Plugin {
 		$edit = array( 'edit', 'edit-snippet' );
 		$import = array( 'import', 'import-snippets', 'import-code-snippets' );
 		$settings = array( 'settings', 'snippets-settings' );
+		$cloud = array( 'cloud', 'cloud-snippets' );
 
 		if ( in_array( $menu, $edit, true ) ) {
 			return 'edit-snippet';
@@ -189,6 +190,8 @@ class Plugin {
 			return 'import-code-snippets';
 		} elseif ( in_array( $menu, $settings, true ) ) {
 			return 'snippets-settings';
+		} elseif ( in_array( $menu, $cloud, true ) ) {
+			return 'snippets&type=cloud';
 		} else {
 			return 'snippets';
 		}

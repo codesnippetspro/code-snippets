@@ -593,11 +593,11 @@ function save_snippet( $snippet ) {
 			}
 		}
 	}
-	// Increment the revision number.
-	$snippet->increment_revision();
-
-	// Increment the revision number.
-	$snippet->increment_revision();
+	// Increment the revision number unless revision = 1 or revision is not set.
+	if ( $snippet->revision && $snippet->revision > 1 ) {
+		$snippet->increment_revision();
+	} 
+	
 
 	// Build the list of data to insert. Shared network snippets are always considered inactive.
 	$data = [

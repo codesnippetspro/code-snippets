@@ -90,13 +90,20 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 	if ( ! $is_licensed && in_array( $lang, [ 'css', 'js' ], true ) ) {
 		$download = false;
 	}
-
 	if ( $link ) {
 		if ( $is_licensed && $link->update_available ) {
+			$download = false;
+			$update_url = add_query_arg(
+				[
+					'action'  => 'update',
+					'snippet' => $snippet->id,
+					'source'  => $source,
+				]
+			);
 			$action_link = sprintf(
 				'<a class="cloud-snippet-update %s" href="%s">%s</a>',
 				$additional_classes,
-				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) . '/#updated-code' ),
+				esc_url( $update_url ),
 				esc_html__( 'Update Available', 'code-snippets' )
 			);
 		}else{

@@ -50,6 +50,22 @@ class Cloud_List_Table extends WP_List_Table {
 
 		// Strip the result query arg from the URL.
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
+
+		// Check if there is a GET request query parameter to refresh data from the cloud.
+		if ( isset( $_GET['refresh'] ) && 'true' === $_GET['refresh'] ) {
+			code_snippets()->cloud_api->refresh_synced_data();
+
+			wp_safe_redirect(
+				esc_url_raw(
+					add_query_arg(
+						'result',
+						'cloud-refreshed',
+						code_snippets()->get_menu_url( 'cloud' )
+					)
+				)
+			);
+
+		}
 	}
 
 	/**
@@ -430,23 +446,5 @@ class Cloud_List_Table extends WP_List_Table {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $this->_pagination;
 		//echo wp_kses_post( $this->_pagination ); //TODO: This removes the top input box for page number.
-	}
-
-	/**
-	 * Display the admin notice
-	 *
-	 * @param string $message The message to display.
-	 * @param string $type    the type of notice - 'success' or 'error'.
-	 *
-	 * @return void
-	 */
-	public function cloud_display_admin_notice( string $message, string $type ) {
-		printf(
-			'<div class="notice notice-%s"><p>%s</p></div>',
-			'error' === $type ? 'error' : 'success',
-			wp_kses_post( $message )
-		);
-
-		add_action( 'admin_notices', 'cloud_display_admin_notice' );
 	}
 }

@@ -265,9 +265,8 @@ class List_Table extends WP_List_Table {
 					// Check if an update is available only in users codevault.
 					if ( $cloud_link->update_available ) {
 						$actions['cloud_update'] = sprintf(
-							'<a href="%s#updated-code">%s</a>',
-							esc_url( $this->get_action_link( 'edit', $snippet ) ),
-							esc_html__( 'Cloud Update', 'code-snippets' )
+							'<a>%s</a>',
+							esc_html__( 'Update Available', 'code-snippets' )
 						);
 					}
 				}

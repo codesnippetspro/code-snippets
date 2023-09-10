@@ -272,7 +272,7 @@ class Manage_Menu extends Admin_Menu {
 					'deleted-multi'          => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
 					'cloned'                 => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
 					'cloned-multi'           => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
-					'cloud-refreshed'        => __( 'Synced cloud data refreshed <strong>successfully</strong>.', 'code-snippets' ),
+					'cloud-refreshed'        => __( 'Synced cloud data has been <strong>successfully</strong> refreshed.', 'code-snippets' ),
 					'cloud-key-invalid'      => __( 'There is a problem with the cloud access snippet, please re-download from the cloud and try again.', 'code-snippets' ) . $cloud_setup_text,
 					'cloud-key-inactive'     => __( 'The cloud access snippet is deactivated. Please activate it and try again.', 'code-snippets' ) . $cloud_setup_text,
 					'cloud-key-deleted'      => __( 'The cloud access snippet is missing, please import it and try again.', 'code-snippets' ) . $cloud_setup_text,

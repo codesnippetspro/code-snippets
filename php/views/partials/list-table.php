@@ -15,7 +15,16 @@ namespace Code_Snippets;
  */
 
 ?>
-
+<?php
+if ( 'cloud' === $this->get_current_type() ) {
+	echo sprintf(
+		'<p class="refresh-button-description" >%s</p> <a id="refresh-button" class="button button-primary" href="%s">%s</a>',
+		esc_html__( 'Click the button below to check for any snippet updates in the cloud and refresh your codevault data below.', 'code-snippets' ),
+		esc_url( admin_url( 'admin.php?page=snippets&type=cloud&refresh=true' ) ),
+		esc_html__( 'Refresh Codevault', 'code-snippets' )
+	);
+}
+?>
 <form method="get" action="">
 	<?php
 	List_Table::required_form_fields( 'search_box' );
