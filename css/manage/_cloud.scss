@@ -49,6 +49,10 @@
 	box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
 }
 
+.cloud-table > tbody > tr > td {
+	max-width: 250px;
+}
+
 .cloud-table tbody .active-snippet .column-name {
 	font-weight: 400;
 	max-width: 400px;
