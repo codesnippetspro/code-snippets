@@ -93,15 +93,14 @@ class Import {
 
 		$imported = $this->save_snippets( $snippets );
 
-		// Cloud Access Snippet Import Action
-		if( $data['cloud_access'] || $data['cloud_access'] == 'true'){
-			$cloud_settings_key = Cloud_API::get_cloud_settings_key();
+		// Cloud access snippet import action.
+		if ( $data['cloud_access'] ) {
+			$cloud_settings = get_option( Cloud_API::CLOUD_SETTINGS_CACHE_KEY );
 
-			$cloud_settings = get_option( $cloud_settings_key );
-			if( $cloud_settings ) {
-				// Set the token snippet id from the first id in imported array
-				$cloud_settings['token_snippet_id'] = (int) $imported[0];
-				update_option( $cloud_settings_key, $cloud_settings );
+			if ( $cloud_settings ) {
+				// Set the token snippet id from the first id in imported array.
+				$cloud_settings['token_snippet_id'] = $imported[0];
+				update_option( Cloud_API::CLOUD_SETTINGS_CACHE_KEY, $cloud_settings );
 			}
 		}
 

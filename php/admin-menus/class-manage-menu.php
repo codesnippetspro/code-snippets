@@ -246,45 +246,11 @@ class Manage_Menu extends Admin_Menu {
 
 	/**
 	 * Print the status and error messages
+	 *
+	 * @return void;
 	 */
 	protected function print_messages() {
-		// Output a warning if safe mode is active.
-		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
-			echo '<div id="message" class="error fade"><p>';
-			echo wp_kses_post( __( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank">Help</a>', 'code-snippets' ) );
-			echo '</p></div>';
-		}
-
-		// translators: %s: cloud setup guide URL.
-		$cloud_setup_url = 'https://codesnippets.cloud/cloud-setup-guide';
-		$cloud_setup_text = sprintf( ' Read our <a href="%s" target="_blank">cloud setup guide</a>.', esc_url( $cloud_setup_url ) );
-
-		$this->print_result_message(
-			apply_filters(
-				'code_snippets/manage/result_messages',
-				array(
-					'executed'               => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
-					'activated'              => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
-					'activated-multi'        => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
-					'deactivated'            => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
-					'deactivated-multi'      => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
-					'deleted'                => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
-					'deleted-multi'          => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
-					'cloned'                 => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
-					'cloned-multi'           => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
-					'cloud-refreshed'        => __( 'Synced cloud data has been <strong>successfully</strong> refreshed.', 'code-snippets' ),
-					'cloud-key-invalid'      => __( 'There is a problem with the cloud access snippet, please re-download from the cloud and try again.', 'code-snippets' ) . $cloud_setup_text,
-					'cloud-key-inactive'     => __( 'The cloud access snippet is deactivated. Please activate it and try again.', 'code-snippets' ) . $cloud_setup_text,
-					'cloud-key-deleted'      => __( 'The cloud access snippet is missing, please import it and try again.', 'code-snippets' ) . $cloud_setup_text,
-					'cloud-key-expired'      => __( 'The cloud access snippet has expired. Please re-download from the cloud and try again.', 'code-snippets' ) . $cloud_setup_text,
-					'cloud-key-no-codevault' => sprintf(
-						'%s <a href="https://codesnippets.cloud/user/profile#codevaultSection" target="_blank">%s</a>',
-						__( 'There is no codevault set up on the cloud.', 'code-snippets' ),
-						__( 'Please log into your Code Snippet Cloud account and set up a codevault.', 'code-snippets' )
-					),
-				)
-			)
-		);
+		$this->render_view( 'partials/list-table-notices' );
 	}
 
 	/**

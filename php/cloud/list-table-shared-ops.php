@@ -45,14 +45,13 @@ function cloud_lts_build_column_hidden_input( string $column_name, Cloud_Snippet
 	);
 }
 
-
 /**
  * Process the download snippet action
  *
- * @param string $action  Action - 'download' or 'update'.
- * @param string $source  Source - 'search' or 'cloud'.
- * @param string $snippet Snippet ID.
- * @param string $codevault page The current page of the codevault.
+ * @param string $action         Action - 'download' or 'update'.
+ * @param string $source         Source - 'search' or 'cloud'.
+ * @param string $snippet        Snippet ID.
+ * @param int    $codevault_page The current page of the codevault.
  *
  * @return void
  */
@@ -90,6 +89,7 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 	if ( ! $is_licensed && in_array( $lang, [ 'css', 'js' ], true ) ) {
 		$download = false;
 	}
+
 	if ( $link ) {
 		if ( $is_licensed && $link->update_available ) {
 			$download = false;
@@ -106,7 +106,7 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 				esc_url( $update_url ),
 				esc_html__( 'Update Available', 'code-snippets' )
 			);
-		}else{
+		} else {
 			return sprintf(
 				'<a href="%s" class="cloud-snippet-downloaded %s">%s</a>',
 				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
@@ -124,24 +124,21 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 				'source'  => $source,
 			]
 		);
-		
-		if ( ! $is_licensed ) {
-			$action_link = sprintf(
+
+		$action_link = $is_licensed ?
+			sprintf(
+				'<a class="cloud-snippet-download %s" href="%s">%s</a>',
+				$additional_classes,
+				esc_url( $download_url ),
+				esc_html__( 'Download', 'code-snippets' )
+			) :
+			sprintf(
 				'<a class="cloud-snippet-download %s" href="#"><span class="go-pro-badge">%s</span>%s</a>',
 				$additional_classes,
 				esc_html_x( 'Pro', 'pro only', 'code-snippets' ),
 				esc_html_x( ' Only', 'pro only', 'code-snippets' )
 			);
-		}else {
-			$action_link = sprintf(
-				'<a class="cloud-snippet-download %s" href="%s">%s</a>',
-				$additional_classes,
-				esc_url( $download_url ),
-				esc_html__( 'Download', 'code-snippets' )
-			);
-		}
-	} 
-	
+	}
 
 	$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
 

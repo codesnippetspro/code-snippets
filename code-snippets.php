@@ -8,7 +8,7 @@
  * License:      GPL-2.0-or-later
  * License URI:  license.txt
  * Text Domain:  code-snippets
- * Version:      3.5.0
+ * Version:      3.5.0-rc.1
  * Requires PHP: 7.0
  * Requires at least: 5.0
  *
@@ -37,7 +37,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.0', 
 	 *
 	 * @const string
 	 */
-	define( 'CODE_SNIPPETS_VERSION', '3.5.0' );
+	define( 'CODE_SNIPPETS_VERSION', '3.5.0-rc.1' );
 
 	/**
 	 * The full path to the main file of this plugin.

@@ -125,13 +125,13 @@ abstract class Admin_Menu {
 	/**
 	 * Retrieve a result message based on a posted status
 	 *
+	 * @param string                $notice_type Class to use on buttons.
 	 * @param array<string, string> $messages    List of possible messages to display.
 	 * @param string                $request_var Name of $_REQUEST variable to check.
-	 * @param string                $class_name  Class to use on buttons. Default 'updated'.
 	 *
 	 * @return bool Whether a result message was printed.
 	 */
-	protected function print_result_message( array $messages, string $request_var = 'result', string $class_name = 'updated' ): bool {
+	protected function print_result_message( string $notice_type, array $messages, string $request_var = 'result' ): bool {
 
 		if ( empty( $_REQUEST[ $request_var ] ) ) {
 			return false;
@@ -139,16 +139,11 @@ abstract class Admin_Menu {
 
 		$result = sanitize_key( $_REQUEST[ $request_var ] );
 
-		// Check if the $messages[ $result ] starts with 'cloud-key' if so change $class to 'error'.
-		if ( 'cloud-key' === substr( $result, 0, 9 ) ) {
-			$class_name = 'error';
-		}
-
 		if ( isset( $messages[ $result ] ) ) {
 			printf(
-				'<div id="message" class="%2$s fade"><p>%1$s</p></div>',
+				'<div id="message" class="notice notice-%2$s fade"><p>%1$s</p></div>',
 				wp_kses_post( $messages[ $result ] ),
-				esc_attr( $class_name )
+				esc_attr( $notice_type )
 			);
 
 			return true;

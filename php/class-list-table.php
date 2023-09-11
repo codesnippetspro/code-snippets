@@ -241,8 +241,10 @@ class List_Table extends WP_List_Table {
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
 				'export' => esc_html__( 'Export', 'code-snippets' ),
-				'cloud' => sprintf('<a href="https://codesnippets.cloud/cloud-setup-guide" target="_blank">%s</a>',
-					__( 'Set up cloud.', 'code-snippets' )),
+				'cloud'  => sprintf(
+					'<a href="https://codesnippets.cloud/cloud-setup-guide" target="_blank">%s</a>',
+					esc_html__( 'Set up cloud.', 'code-snippets' )
+				),
 			);
 
 			foreach ( $simple_actions as $action => $label ) {
@@ -1010,7 +1012,7 @@ class List_Table extends WP_List_Table {
 		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets() );
 		$this->fetch_shared_network_snippets();
 
-		// Filter snippets by type - isset outside of sanitize_key to prevent bool being passed to sanitize function
+		// Filter snippets by type.
 		$type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : '';
 
 		if ( $type && 'all' !== $type ) {

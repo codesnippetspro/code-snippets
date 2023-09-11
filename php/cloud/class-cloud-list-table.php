@@ -181,6 +181,7 @@ class Cloud_List_Table extends WP_List_Table {
 			]
 		);
 	}
+
 	/**
 	 * Process any actions that have been submitted, such as downloading cloud snippets to the local database.
 	 *
@@ -189,16 +190,15 @@ class Cloud_List_Table extends WP_List_Table {
 	public function process_actions() {
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source' ) );
 		$codevault_page = $this->get_current_page_number();
+
 		// Check if the current page is the codevault page.
-		if ( isset( $_REQUEST['type'] ) && 'cloud' === $_REQUEST['type'] ) {
-			if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {		
-				cloud_lts_process_download_action(
-					sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ),
-					sanitize_text_field( wp_unslash( $_REQUEST['source'] ) ),
-					sanitize_text_field( wp_unslash( $_REQUEST['snippet'] ) ),
-					$codevault_page,
-				);
-			}
+		if ( isset( $_REQUEST['type'] ) && 'cloud' === $_REQUEST['type'] && isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+			cloud_lts_process_download_action(
+				sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ),
+				sanitize_text_field( wp_unslash( $_REQUEST['source'] ) ),
+				sanitize_text_field( wp_unslash( $_REQUEST['snippet'] ) ),
+				$codevault_page
+			);
 		}
 
 		// Only continue from this point if there are bulk actions to process.
@@ -402,8 +402,8 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Bulk Download Snippets.
 	 *
-	 * @param array  $ids    List of int cloud ids to download.
-	 * @param string $source Whether the download is from the codevault or search results i.e. download-codevault-selected.
+	 * @param array  $ids            List of int cloud ids to download.
+	 * @param string $source         Whether the download is from the codevault or search results i.e. download-codevault-selected.
 	 * @param int    $codevault_page The current page of the codevault.
 	 *
 	 * @return void
@@ -443,8 +443,8 @@ class Cloud_List_Table extends WP_List_Table {
 
 		$this->_pagination = "<div class='tablenav-pages{$page_class}'>{$output}</div>";
 
+		// TODO: Add proper input escaping. wp_kses_post removes the top input box for page number.
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $this->_pagination;
-		//echo wp_kses_post( $this->_pagination ); //TODO: This removes the top input box for page number.
 	}
 }

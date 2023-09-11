@@ -139,15 +139,6 @@ class Cloud_API {
 	}
 
 	/**
-	 * Get Cloud Settings Cache Key
-	 *
-	 * @return string
-	 */
-	public static function get_cloud_settings_key() {
-		return self::CLOUD_SETTINGS_CACHE_KEY;
-	}
-
-	/**
 	 * Get Specific Cloud Setting
 	 *
 	 * @param string $setting Setting name.
@@ -520,14 +511,14 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Snippets|null
 	 */
-	public function get_codevault_snippets( int $page = 0 ) {		
+	public function get_codevault_snippets( int $page = 0 ) {
 		// Fetch data from the stored transient, if available.
 		$stored_data = get_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
 		if ( $stored_data ) {
 			$this->codevault_snippets = $stored_data;
-			if( $page === $this->codevault_snippets->page ){
+			if ( $page === $this->codevault_snippets->page ) {
 				return $this->codevault_snippets;
-			}	
+			}
 		}
 		// Otherwise, fetch from API and store.
 		$url = self::CLOUD_API_URL . 'private/allsnippets?page=' . $page;
@@ -686,7 +677,7 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function delete_snippet_from_transient_data( int $snippet_id ) {
-		if( !$this->local_to_cloud_map ){
+		if ( ! $this->local_to_cloud_map ) {
 			$this->get_local_to_cloud_map();
 		}
 
@@ -702,7 +693,7 @@ class Cloud_API {
 					DAY_IN_SECONDS * self::DAYS_TO_STORE_CS
 				);
 			}
-		}	
+		}
 	}
 
 	/**
@@ -802,9 +793,9 @@ class Cloud_API {
 	/**
 	 * Download a snippet from the cloud.
 	 *
-	 * @param int|string $cloud_id The cloud ID of the snippet as string from query args.
-	 * @param string     $source   The source table of the snippet: 'codevault' or 'search'.
-	 * @param string     $action   The action to be performed: 'download' or 'update'.
+	 * @param int|string $cloud_id       The cloud ID of the snippet as string from query args.
+	 * @param string     $source         The source table of the snippet: 'codevault' or 'search'.
+	 * @param string     $action         The action to be performed: 'download' or 'update'.
 	 * @param int        $codevault_page The current page of the codevault.
 	 *
 	 * @return array<string, string|bool> Result of operation: an array with `success` and `error_message` keys.
@@ -846,7 +837,7 @@ class Cloud_API {
 	 * Get a single snippet from the codevault.
 	 *
 	 * @param int $actual_cloud_id The cloud ID of the snippet.
-	 * @param int $current_page    The current page of the codevault
+	 * @param int $current_page    The current page of the codevault.
 	 *
 	 * @return Cloud_Snippet[]|null The snippet object on success, null otherwise.
 	 */
@@ -867,7 +858,7 @@ class Cloud_API {
 	 * Download a snippet from the cloud.
 	 *
 	 * @param Cloud_Snippet $snippet_to_store The snippet to be downloaded.
-	 * @param bool          $in_codevault      Whether the snippet is in the codevault or not.
+	 * @param bool          $in_codevault     Whether the snippet is in the codevault or not.
 	 *
 	 * @return array The result of the download.
 	 */
@@ -997,7 +988,7 @@ class Cloud_API {
 	 * @return Cloud_Link|bool
 	 */
 	public function get_cloud_link( int $snippet_id, string $local_or_cloud ) {
-		if( !$this->local_to_cloud_map){
+		if ( ! $this->local_to_cloud_map ) {
 			$this->get_local_to_cloud_map();
 		}
 
@@ -1014,7 +1005,7 @@ class Cloud_API {
 		}
 
 		// If the snippet is not synced to cloud return false.
-		return false;	
+		return false;
 	}
 
 	/**
@@ -1110,7 +1101,7 @@ class Cloud_API {
 	}
 
 	/**
-	 * Disable Sync if the token snippet is deactivated 
+	 * Disable Sync if the token snippet is deactivated
 	 *
 	 * @param string|int $id Snippet ID.
 	 *
@@ -1134,7 +1125,7 @@ class Cloud_API {
 	}
 
 	/**
-	 * Remove Sync if the token snippet is  deleted.
+	 * Remove Sync if the token snippet is deleted.
 	 *
 	 * @param string|int $id Snippet ID.
 	 *
@@ -1174,13 +1165,13 @@ class Cloud_API {
 
 	/**
 	 * Refresh all settings data
-	 * 
-	 * @param string $token_id The token snippet ID.
-	 * @param bool $token_id_wipe Whether to wipe the token or not.
+	 *
+	 * @param bool   $token_id_wipe Whether to wipe the token or not.
+	 * @param string $token_id      The token snippet ID.
 	 *
 	 * @return void
 	 */
-	public function refresh_cloud_settings_data( $token_id_wipe, $token_id = '') {
+	public function refresh_cloud_settings_data( bool $token_id_wipe, string $token_id = '' ) {
 		// Simply deleting the data is sufficient, as it will be recreated and stored the next time it is requested.
 		$this->update_cloud_settings(
 			[

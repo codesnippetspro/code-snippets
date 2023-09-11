@@ -258,25 +258,24 @@ function get_snippet_by_cloud_id( string $cloud_id, $multisite = null ) {
  */
 function get_snippet_with_token_data() {
 	global $wpdb;
-	$cloud_settings_key = Cloud_API::get_cloud_settings_key();
+
 	// First check if the token snippet ID is code snippets cloud settings.
-	$cloud_settings = get_option( $cloud_settings_key );
-	if( $cloud_settings ) {
-		// Make sure the token snippet ID is set and not empty string.
-		if( ! empty( $cloud_settings['token_snippet_id'] ) ) {
-			$token_snippet = get_snippet( $cloud_settings['token_snippet_id'] );
-			// Check if snippet is not empty snippet object
-			if( $token_snippet->id ) {
-				return $token_snippet;
-			}
+	$cloud_settings = get_option( Cloud_API::CLOUD_SETTINGS_CACHE_KEY );
+
+	// Make sure the token snippet ID is set and not empty string.
+	if ( $cloud_settings && ! empty( $cloud_settings['token_snippet_id'] ) ) {
+		$token_snippet = get_snippet( $cloud_settings['token_snippet_id'] );
+		// Check if snippet is not empty snippet object.
+		if ( $token_snippet->id ) {
+			return $token_snippet;
 		}
 	}
 
 	$table_name = code_snippets()->db->get_table_name();
 
 	// This is the snippet that holds the cloud token and external API tokens -- Add more tags or specificity if needed?
-	$extend_cs = $wpdb->esc_like( 'extend_cs' );
-	$token_snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE tags LIKE '%{$extend_cs}%' LIMIT 1" ) );
+	// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+	$token_snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE tags LIKE '%extend_cs%' LIMIT 1" ) );
 
 	// Check if snippet returns any data from database call.
 	return $token_snippet ? new Snippet( $token_snippet ) : false;
@@ -593,11 +592,11 @@ function save_snippet( $snippet ) {
 			}
 		}
 	}
+
 	// Increment the revision number unless revision = 1 or revision is not set.
 	if ( $snippet->revision && $snippet->revision > 1 ) {
 		$snippet->increment_revision();
-	} 
-	
+	}
 
 	// Build the list of data to insert. Shared network snippets are always considered inactive.
 	$data = [
@@ -623,7 +622,6 @@ function save_snippet( $snippet ) {
 		$snippet->id = $wpdb->insert_id;
 		do_action( 'code_snippets/create_snippet', $snippet, $table );
 	} else {
-
 		// Otherwise, update the snippet data.
 		$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
 		if ( false === $result ) {
