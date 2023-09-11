@@ -1013,7 +1013,7 @@ class List_Table extends WP_List_Table {
 		$this->fetch_shared_network_snippets();
 
 		// Filter snippets by type.
-		$type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : '';
+		$type = sanitize_key( wp_unslash( $_GET['type'] ?? '' ) );
 
 		if ( $type && 'all' !== $type ) {
 			$snippets['all'] = array_filter(

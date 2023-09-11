@@ -303,9 +303,11 @@ class Admin {
 			);
 
 		} else {
+			$current_url = remove_query_arg( [ 'cloud_select', 'cloud_search' ] );
+
 			printf(
 				'<a class="nav-tab" href="%s" data-snippet-type="%s">',
-				esc_url( add_query_arg( 'type', $type_name ) ),
+				esc_url( add_query_arg( 'type', $type_name, $current_url ) ),
 				esc_attr( $type_name )
 			);
 		}

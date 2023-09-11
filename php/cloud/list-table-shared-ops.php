@@ -140,6 +140,21 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 			);
 	}
 
+	$type_badge = sprintf(
+		'<span class="snippet-type-badge %s-badge">%s</span>',
+		esc_attr( $lang ),
+		esc_html( $lang )
+	);
+
+	// translators: %s: type badge.
+	$type_label = sprintf( esc_html__( 'Type: %s' ), $type_badge );
+
+	$action_link .= sprintf(
+		'<a href="#" class="cloud-snippet-preview cloud-snippet-preview-style %s">%s</a>',
+		esc_attr( $additional_classes ),
+		$type_label
+	);
+
 	$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
 
 	$thickbox_link = sprintf(

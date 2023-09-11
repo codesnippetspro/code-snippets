@@ -342,28 +342,6 @@ class Plugin {
 	}
 
 	/**
-	 * Retrieve the description for a particular snippet type.
-	 *
-	 * @param string $type Snippet type name.
-	 *
-	 * @return string
-	 */
-	public function get_type_description( string $type ): string {
-		$descriptions = array(
-			'php'          => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
-			'html'         => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
-			'css'          => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
-			'js'           => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
-			'cloud'        => __( 'See all your public and private snippets that are stored in your Code Snippet Cloud Codevault.', 'code-snippets' ),
-			'cloud_search' => __( 'Explore and Search user contributed code snippets from Code Snippet Cloud.', 'code-snippets' ),
-			'bundles'      => __( 'Bundles are collections of snippets that can be downloaded from the cloud as a batch.', 'code-snippets' ),
-		);
-
-		$descriptions = apply_filters( 'code_snippets/plugins/type_descriptions', $descriptions );
-		return $descriptions[ $type ] ?? '';
-	}
-
-	/**
 	 * Localise a plugin script to provide the CODE_SNIPPETS object.
 	 *
 	 * @param string $handle Script handle.

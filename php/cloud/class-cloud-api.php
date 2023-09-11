@@ -988,8 +988,16 @@ class Cloud_API {
 	 * @return Cloud_Link|bool
 	 */
 	public function get_cloud_link( int $snippet_id, string $local_or_cloud ) {
-		if ( ! $this->local_to_cloud_map ) {
-			$this->get_local_to_cloud_map();
+		$local_to_cloud_map = $this->get_local_to_cloud_map();
+
+		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
+			$column = 'cloud' === $local_or_cloud ? 'cloud_id' : 'local_id';
+			$local_id_array = array_map( 'intval', array_column( $local_to_cloud_map, $column ) );
+
+			if ( in_array( $snippet_id, $local_id_array, true ) ) {
+				$index = array_search( $snippet_id, $local_id_array, true );
+				return $local_to_cloud_map[ $index ];
+			}
 		}
 
 		$local_id_array = array_map(
@@ -1074,9 +1082,9 @@ class Cloud_API {
 			case 5:
 				return __( 'Unverified', 'code-snippets' );
 			case 6:
-				return __( 'AI-Verified', 'code-snippets' );
+				return __( 'AI Verified', 'code-snippets' );
 			case 8:
-				return __( 'Pro-Verified', 'code-snippets' );
+				return __( 'Pro Verified', 'code-snippets' );
 			default:
 				return '';
 		}
