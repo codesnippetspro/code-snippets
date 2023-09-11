@@ -2,7 +2,6 @@
 
 namespace Code_Snippets;
 
-
 /**
  * Handles exporting snippets from the site in various downloadable formats
  *

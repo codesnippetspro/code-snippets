@@ -102,7 +102,7 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 	}
 
 	$type_badge = sprintf(
-		'<span class="%s-badge go-pro-badge">%s</span>',
+		'<span class="snippet-type-badge %s-badge">%s</span>',
 		esc_attr( $lang ),
 		esc_html( $lang )
 	);
