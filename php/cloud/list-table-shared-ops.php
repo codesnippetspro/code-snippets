@@ -94,27 +94,13 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 		);
 	} else {
 		$action_link = sprintf(
-			'<a class="cloud-snippet-download %s" href="#"><span class="go-pro-badge">%s</span>%s</a>',
+			'<a class="cloud-snippet-download %s" href="%s" target="_blank"><span class="go-pro-badge">%s</span>%s</a>',
 			$additional_classes,
+			'https://codesnippets.pro/pricing/',
 			esc_html_x( 'Pro', 'pro only', 'code-snippets' ),
 			esc_html_x( ' Only', 'pro only', 'code-snippets' )
 		);
 	}
-
-	$type_badge = sprintf(
-		'<span class="snippet-type-badge %s-badge">%s</span>',
-		esc_attr( $lang ),
-		esc_html( $lang )
-	);
-
-	// translators: %s: type badge.
-	$type_label = sprintf( esc_html__( 'Type: %s' ), $type_badge );
-
-	$action_link .= sprintf(
-		'<a href="#" class="cloud-snippet-preview cloud-snippet-preview-style %s">%s</a>',
-		esc_attr( $additional_classes ),
-		$type_label
-	);
 
 	$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
 
