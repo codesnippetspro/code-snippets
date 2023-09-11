@@ -68,29 +68,54 @@ if ( false !== strpos( $version, 'beta' ) ) {
 	</h2>
 
 	<?php
-	$desc = code_snippets()->get_type_description( $current_type );
-	if ( $desc ) {
-		echo '<p class="snippet-type-description">', esc_html( $desc );
 
-		$type_names = [
-			'php'          => __( 'function snippets', 'code-snippets' ),
-			'html'         => __( 'content snippets', 'code-snippets' ),
-			'css'          => __( 'style snippets', 'code-snippets' ),
-			'js'           => __( 'javascript snippets', 'code-snippets' ),
-			'cloud'        => __( 'cloud snippets', 'code-snippets' ),
-			'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
-			'bundles'      => __( 'Bundles', 'code-snippets' ),
-		];
+	$type_info = [
+		'php'          => [
+			__( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
+			__( 'Learn more about function snippets &rarr;', 'code-snippets' ),
+			'https://codesnippets.pro/learn-php/',
+		],
+		'html'         => [
+			__( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
+			__( 'Learn more about content snippets &rarr;', 'code-snippets' ),
+			'https://codesnippets.pro/learn-html/',
+		],
+		'css'          => [
+			__( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
+			esc_html__( 'Learn more about style snippets &rarr;', 'code-snippets' ),
+			'https://codesnippets.pro/learn-css/',
+		],
+		'js'           => [
+			__( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
+			__( 'Learn more about javascript snippets &rarr;', 'code-snippets' ),
+			'https://codesnippets.pro/learn-js/',
+		],
+		'cloud'        => [
+			__( 'See all your public and private snippets that are stored in your Code Snippet Cloud codevault.', 'code-snippets' ),
+			__( 'Learn more about Code Snippets Cloud &rarr;', 'code-snippets' ),
+			'https://codesnippets.cloud/getstarted/',
+		],
+		'cloud-search' => [
+			__( 'Explore and search user-contributed code snippets from Code Snippet Cloud.', 'code-snippets' ),
+			__( 'Learn more about Code Snippets Cloud &rarr;', 'code-snippets' ),
+			'https://codesnippets.cloud/',
+		],
+		'bundles'      => [
+			__( 'Bundles are collections of snippets that can be downloaded from the cloud as a batch.', 'code-snippets' ),
+			__( 'Learn more about bundles &rarr;', 'code-snippets' ),
+			'https://codesnippets.cloud/bundles/',
+		],
+	];
 
-		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
 
-		/* translators: %s: snippet type name */
-		$learn_more_text = sprintf( __( 'Learn more about %s &rarr;', 'code-snippets' ), $type_names[ $current_type ] );
+	if ( isset( $type_info[ $current_type ] ) ) {
+		$info = $type_info[ $current_type ];
 
 		printf(
-			' <a href="%s" target="_blank">%s</a></p>',
-			esc_url( "https://codesnippets.pro/learn-$current_type/" ),
-			esc_html( $learn_more_text )
+			'<p class="snippet-type-description">%s <a href="%s" target="_blank">%s</a></p>',
+			esc_html( $info[0] ),
+			esc_url( $info[2] ),
+			esc_html( $info[1] )
 		);
 	}
 

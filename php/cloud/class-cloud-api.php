@@ -463,9 +463,9 @@ class Cloud_API {
 			case 5:
 				return __( 'Unverified', 'code-snippets' );
 			case 6:
-				return __( 'AI-Verified', 'code-snippets' );
+				return __( 'AI Verified', 'code-snippets' );
 			case 8:
-				return __( 'Pro-Verified', 'code-snippets' );
+				return __( 'Pro Verified', 'code-snippets' );
 			default:
 				return '';
 		}
