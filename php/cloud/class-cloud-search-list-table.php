@@ -130,8 +130,11 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 								printf( '<a href="%s">', esc_url( $name_link['cloud-snippet-link'] ) );
 							} else {
 								printf(
-									'<a href="%s" class="cloud-snippet-preview thickbox" data-snippet="17" data-lang="css">',
-									esc_url( $name_link['cloud-snippet-link'] )
+									'<a href="%s" title="%s" class="cloud-snippet-preview thickbox" data-snippet="%s" data-lang="%s">',
+									esc_url( $name_link['cloud-snippet-link'] ),
+									esc_attr__( 'Preview this snippet', 'code-snippets' ),
+									esc_attr( $item->id ),
+									esc_attr( Cloud_API::get_type_from_scope( $item->scope ) )
 								);
 							}
 
@@ -151,7 +154,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						</h3>
 					</div>
 					<div class="action-links">
-						<?php cloud_lts_build_action_links( $item, 'search' ); ?>
+						<?php echo wp_kses_post( cloud_lts_build_action_links( $item, 'search' ) ); ?>
 					</div>
 					<div class="desc column-description">
 						<p><?php wp_kses_post( $this->process_description( $item->description ) ); ?></p>
@@ -194,7 +197,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						</span>
 					</div>
 					<div class="column-updated">
-						<strong><?php esc_attr_e( 'Last Updated:', 'code-snippets' ); ?></strong>
+						<strong><?php esc_html_e( 'Last Updated:', 'code-snippets' ); ?></strong>
 						<?php
 						// translators: %s: Human-readable time difference.
 						echo esc_html( sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( strtotime( $item->updated ) ) ) );
@@ -236,7 +239,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 								</p>
 
 								<p class="tooltip-text-link">
-									<a class="tooltip-text-link" href="https://codesnippets.cloud/getstarted">
+									<a class="tooltip-text-link" href="https://codesnippets.cloud/getstarted" target="_blankx">
 										<?php esc_html_e( 'View the full list.', 'code-snippets' ); ?></a>
 								</p>
 							</div>

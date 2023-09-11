@@ -19,8 +19,8 @@ export const handleShowCloudPreview = () => {
 
 			const snippetCodeInput = <HTMLInputElement> document.getElementById(`cloud-snippet-code-${snippetId}`)
 			const snippetCode = snippetCodeInput?.value
-			const snippetCodeModalTag = <HTMLElement> document.getElementById('snippet-code-thickbox')
 
+			const snippetCodeModalTag = <HTMLElement> document.getElementById('snippet-code-thickbox')
 			snippetCodeModalTag.classList.remove(...snippetCodeModalTag.classList)
 			snippetCodeModalTag.classList.add(`language-${snippetLanguage}`)
 			snippetCodeModalTag.textContent = snippetCode
@@ -32,7 +32,7 @@ export const handleShowCloudPreview = () => {
 			if ('php' === snippetLanguage) {
 				// Check if there is an opening php tag if not add it.
 				if (!snippetCode.startsWith('<?php')) {
-					snippetCodeModalTag.textContent = `<?php ${snippetCode}`
+					snippetCodeModalTag.textContent = `<?php\n${snippetCode}`
 				}
 			}
 
