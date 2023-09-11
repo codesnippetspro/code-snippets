@@ -385,7 +385,8 @@ class Cloud_API {
 		$local_to_cloud_map = $this->get_local_to_cloud_map();
 
 		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
-			$local_id_array = array_map( 'intval', array_column( $local_to_cloud_map, "${$local_or_cloud}_id" ) );
+			$column = 'cloud' === $local_or_cloud ? 'cloud_id' : 'local_id';
+			$local_id_array = array_map( 'intval', array_column( $local_to_cloud_map, $column ) );
 
 			if ( in_array( $snippet_id, $local_id_array, true ) ) {
 				$index = array_search( $snippet_id, $local_id_array, true );
