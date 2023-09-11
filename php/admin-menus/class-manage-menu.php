@@ -26,7 +26,6 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public $cloud_search_list_table;
 
-
 	/**
 	 * Class constructor
 	 */

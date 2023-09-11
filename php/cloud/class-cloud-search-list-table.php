@@ -90,7 +90,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 */
 	public function process_actions() {
 		$_SERVER['REQUEST_URI'] = remove_query_arg(
-			array( 'action', 'snippet', '_wpnonce', 'source', 'cloud-bundle-run', 'cloud-bundle-show', 'bundle_share_name', 'cloud_bundles' )
+			[ 'action', 'snippet', '_wpnonce', 'source', 'cloud-bundle-run', 'cloud-bundle-show', 'bundle_share_name', 'cloud_bundles' ]
 		);
 
 		if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
@@ -239,7 +239,9 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 								</p>
 
 								<p class="tooltip-text-link">
-									<a class="tooltip-text-link" href="https://codesnippets.cloud/getstarted" target="_blankx">
+									<a class="tooltip-text-link"
+									   href="https://codesnippets.cloud/getstarted"
+									   target="_blankx">
 										<?php esc_html_e( 'View the full list.', 'code-snippets' ); ?></a>
 								</p>
 							</div>
@@ -309,7 +311,9 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 */
 	public function fetch_snippets(): Cloud_Snippets {
 		// Check if search term has been entered.
-		if ( isset( $_REQUEST['cloud_search'], $_REQUEST['cloud_select'] ) ) {
+		if ( isset( $_REQUEST['type'], $_REQUEST['cloud_search'], $_REQUEST['cloud_select'] ) &&
+		     'cloud_search' === sanitize_key( wp_unslash( $_REQUEST['type'] ) )
+		) {
 			// If we have a search query, then send a search request to cloud server API search endpoint.
 			$search_query = sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) );
 			$search_by = sanitize_text_field( wp_unslash( $_REQUEST['cloud_select'] ) );
