@@ -265,7 +265,9 @@ class Cloud_API {
 			}
 
 			// If the snippet is a token snippet skip it.
-			if ( $this->is_cloud_access_snippet( $local_snippet->id ) ) {
+			$has_valid_cloud_id = boolval( strpos( $local_snippet->cloud_id, '_' ) );
+			$is_cloud_access_snippet = $this->is_cloud_access_snippet( $local_snippet->id );
+			if ( ! $has_valid_cloud_id || $is_cloud_access_snippet ) {
 				continue;
 			}
 
@@ -989,11 +991,11 @@ class Cloud_API {
 	 */
 	public function get_cloud_link( int $snippet_id, string $local_or_cloud ) {
 		$local_to_cloud_map = $this->get_local_to_cloud_map();
-
+		
 		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
 			$column = 'cloud' === $local_or_cloud ? 'cloud_id' : 'local_id';
 			$local_id_array = array_map( 'intval', array_column( $local_to_cloud_map, $column ) );
-
+			
 			if ( in_array( $snippet_id, $local_id_array, true ) ) {
 				$index = array_search( $snippet_id, $local_id_array, true );
 				return $local_to_cloud_map[ $index ];
