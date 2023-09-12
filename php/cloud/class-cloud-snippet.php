@@ -75,7 +75,8 @@ class Cloud_Snippet extends Data_Item {
 
 			case 'is_owner':
 				return (bool) $value;
-
+			case 'description':
+				return ( null === $value ) ? '' : $value;
 			case 'tags':
 				return code_snippets_build_tags_array( $value );
 

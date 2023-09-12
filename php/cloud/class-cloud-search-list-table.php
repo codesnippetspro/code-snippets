@@ -280,7 +280,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	/**
 	 * Process the description text - limit to 150 characters.
 	 *
-	 * @param string|null $description Description as provided by the API.
+	 * @param string|null|mixed $description Description as provided by the API.
 	 *
 	 * @return string formatted description string max 150 chars.
 	 */

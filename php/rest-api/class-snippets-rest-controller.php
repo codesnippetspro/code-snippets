@@ -21,7 +21,7 @@ use const Code_Snippets\REST_API_NAMESPACE;
 /**
  * Allows fetching snippet data through the WordPress REST API.
  *
- * @since   [NEXT_VERSION]
+ * @since   3.4.0
  * @package Code_Snippets
  */
 class Snippets_REST_Controller extends WP_REST_Controller {

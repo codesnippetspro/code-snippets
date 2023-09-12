@@ -199,6 +199,7 @@ class Edit_Menu extends Admin_Menu {
 			'CODE_SNIPPETS_EDIT',
 			[
 				'snippet'           => $this->snippet->get_fields(),
+				'menuUrl'           => $plugin->get_menu_url(),
 				'addNewUrl'         => $plugin->get_menu_url( 'add' ),
 				'pageTitleActions'  => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'manage', 'import', 'settings' ] ) : [],
 				'isPreview'         => isset( $_REQUEST['preview'] ),

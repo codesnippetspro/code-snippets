@@ -21,10 +21,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 $licensed = code_snippets()->licensing->is_licensed();
 $types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin::get_types() );
 $current_type = $this->get_current_type();
-$version = code_snippets()->version;
 
-if ( false !== strpos( $version, 'beta' ) ) {
-	echo '<div class="beta-test-notice"><p id="beta-testing">';
+if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
+	echo '<div class="notice beta-test-notice"><p id="beta-testing">';
 	echo wp_kses(
 		__( 'Thank you for testing this <span class="highlight-yellow">Beta version of Code Snippets</span>. We would love to hear your feedback.', 'code-snippets' ),
 		[ 'span' => [ 'class' => [ 'highlight-yellow' ] ] ]
@@ -73,35 +72,30 @@ if ( false !== strpos( $version, 'beta' ) ) {
 	<?php
 
 	$type_info = [
-		'php'     => [
+		'php'   => [
 			__( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
 			__( 'Learn more about function snippets &rarr;', 'code-snippets' ),
 			'https://codesnippets.pro/learn-php/',
 		],
-		'html'    => [
+		'html'  => [
 			__( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
 			__( 'Learn more about content snippets &rarr;', 'code-snippets' ),
 			'https://codesnippets.pro/learn-html/',
 		],
-		'css'     => [
+		'css'   => [
 			__( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
 			esc_html__( 'Learn more about style snippets &rarr;', 'code-snippets' ),
 			'https://codesnippets.pro/learn-css/',
 		],
-		'js'      => [
+		'js'    => [
 			__( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
 			__( 'Learn more about javascript snippets &rarr;', 'code-snippets' ),
 			'https://codesnippets.pro/learn-js/',
 		],
-		'cloud'   => [
+		'cloud' => [
 			__( 'See all your public and private snippets that are stored in your Code Snippet Cloud codevault.', 'code-snippets' ),
 			__( 'Learn more about Code Snippets Cloud &rarr;', 'code-snippets' ),
 			'https://codesnippets.cloud/getstarted/',
-		],
-		'bundles' => [
-			__( 'Bundles are collections of snippets that can be downloaded from the cloud as a batch.', 'code-snippets' ),
-			__( 'Learn more about bundles &rarr;', 'code-snippets' ),
-			'https://codesnippets.cloud/bundles/',
 		],
 	];
 

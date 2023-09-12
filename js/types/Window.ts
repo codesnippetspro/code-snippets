@@ -30,6 +30,7 @@ declare global {
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet
+			menuUrl: string
 			addNewUrl: string
 			pageTitleActions: Record<string, string>
 			isPreview: boolean

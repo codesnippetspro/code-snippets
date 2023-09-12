@@ -138,7 +138,7 @@ class Plugin {
 	 *
 	 * @return void
 	 *
-	 * @since [NEXT_VERSION]
+	 * @since 3.4.0
 	 */
 	public function register_rest_api_controllers() {
 		$controllers = [ new Snippets_REST_Controller(), new Cloud_REST_Controller() ];
