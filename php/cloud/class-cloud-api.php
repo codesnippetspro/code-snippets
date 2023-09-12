@@ -66,7 +66,7 @@ class Cloud_API {
 
 		// Fetch data from the stored transient, if available.
 		$stored_data = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
-		if ( $stored_data && is_array( $stored_data ) ) {
+		if ( $stored_data ) {
 			$this->local_to_cloud_map = $stored_data;
 			return $stored_data;
 		}
@@ -78,6 +78,12 @@ class Cloud_API {
 		foreach ( get_snippets() as $local_snippet ) {
 			// Skip snippets that are only stored locally.
 			if ( ! $local_snippet->cloud_id ) {
+				continue;
+			}
+
+			// If the snippet is a token snippet skip it.
+			$has_valid_cloud_id = boolval( strpos( $local_snippet->cloud_id, '_' ) );
+			if ( ! $has_valid_cloud_id ) {
 				continue;
 			}
 
