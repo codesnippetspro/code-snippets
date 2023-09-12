@@ -133,6 +133,10 @@ p.snippet-scope, .snippet-scope p {
 	color: inherit;
 }
 
+.wrap .notice {
+	scroll-margin: 0.75em;
+}
+
 @import 'edit/tooltips';
 @import 'edit/types';
 @import 'edit/tags';
