@@ -8,6 +8,12 @@
 
 namespace Code_Snippets;
 
+/**
+ * Loaded from manage menu.
+ *
+ * @var Manage_Menu $this
+ */
+
 $search_query = isset( $_REQUEST['cloud_search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) ) : '';
 $cloud_select = sanitize_key( wp_unslash( $_REQUEST['cloud_select'] ?? '' ) );
 
@@ -64,7 +70,7 @@ $cloud_select = sanitize_key( wp_unslash( $_REQUEST['cloud_select'] ?? '' ) );
 
 	List_Table::required_form_fields();
 
-	if ( isset( $_REQUEST['cloud_search'] ) ) {
+	if ( $search_query ) {
 		$this->cloud_search_list_table->display();
 	}
 

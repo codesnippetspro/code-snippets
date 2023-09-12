@@ -280,11 +280,11 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	/**
 	 * Process the description text - limit to 150 characters.
 	 *
-	 * @param string $description Description as provided by the API.
+	 * @param string|null|mixed $description Description as provided by the API.
 	 *
 	 * @return string formatted description string max 150 chars.
 	 */
-	protected function process_description( string $description ): string {
+	protected function process_description( $description ): string {
 		$description = wp_strip_all_tags( $description );
 		return strlen( $description ) > 150 ? substr( $description, 0, 150 ) . '…' : $description;
 	}
