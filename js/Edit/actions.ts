@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n'
+import { addQueryArgs } from '@wordpress/url'
 import { AxiosError, AxiosResponse } from 'axios'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { ExportSnippets } from '../types/ExportSnippets'
@@ -123,7 +124,9 @@ export const useSnippetActions = ({
 
 		delete: (snippet: Snippet) => {
 			api.delete(snippet)
-				.then(() => setCurrentNotice(['updated', __('Snippet deleted.', 'code-snippets')]))
+				.then(() => {
+					window.location.replace(addQueryArgs(window?.CODE_SNIPPETS_EDIT?.menuUrl, { result: 'deleted' }))
+				})
 				.catch(error => displayRequestErrors(error, __('Could not delete snippet.', 'code-snippets')))
 		},
 

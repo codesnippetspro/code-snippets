@@ -26,6 +26,7 @@ declare global {
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet
+			menuUrl: string
 			addNewUrl: string
 			isPreview: boolean
 			enableTags: boolean

@@ -3,6 +3,7 @@
 namespace Code_Snippets\REST_API;
 
 use Code_Snippets\Export;
+use Code_Snippets\Snippet;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -20,7 +21,7 @@ use const Code_Snippets\REST_API_NAMESPACE;
 /**
  * Allows fetching snippet data through the WordPress REST API.
  *
- * @since   [NEXT_VERSION]
+ * @since   3.4.0
  * @package Code_Snippets
  */
 class Snippets_REST_Controller extends WP_REST_Controller {
