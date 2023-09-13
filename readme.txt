@@ -292,9 +292,3 @@ __New in Pro__
 
 = 3.5.0 =
 Code Snippets Cloud is here! Share snippets and synchronise between sites.
-
-= 3.4.2 =
-Bug fixes for export process and plugin compatibility.
-
-= 3.4.0 =
-New editor screen and code error checking.
