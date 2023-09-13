@@ -6,11 +6,8 @@ use WP_Error;
 use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Response;
-use WP_REST_Controller;
-use Code_Snippets\Snippet;
 use Code_Snippets\Cloud\Cloud_Link;
 use function Code_Snippets\code_snippets;
-use function Code_Snippets\Settings\get_setting;
 
 
 /**
@@ -34,7 +31,8 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 	 * @return void
 	 */
 	public function __construct() {
-		$this->local_token = get_setting( 'cloud', 'local_token' );
+		$this->local_token = code_snippets()->cloud_api->get_cloud_setting( 'token_snippet_id' ) ?? '';
+
 	}
 
 
@@ -139,13 +137,12 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function remove_sync() {
-		// Get the settings and set the cloud token and local token to empty strings and change the token_verified to false.
-		$settings = get_option( 'code_snippets_settings' );
-		$settings['cloud']['cloud_token'] = '';
-		$settings['cloud']['local_token'] = '';
-		$settings['cloud']['token_verified'] = 'false';
-
-		update_option( 'code_snippets_settings', $settings );
+		
+		code_snippets()->cloud_api->refresh_cloud_settings_data( true ); 
+		code_snippets()->cloud_api->refresh_synced_data();
+		
+		// Consider disabling the token snippet
+		$this->local_token = '';
 
 		$response = [
 			'status'  => 'success',

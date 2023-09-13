@@ -205,32 +205,8 @@ class Settings_Menu extends Admin_Menu {
 
 			printf( '<div class="settings-section %s-settings"><table class="form-table">', esc_attr( $section['id'] ) );
 
-			if ( 'cloud' === $section['id'] ) {
-				echo '<p id="cloud_guide" class="hidden cloud-guide">';
-				esc_html_e( 'Please make sure to click verify token to connect to the cloud and if successful then click on save settings.', 'code-snippets' );
-				echo '</p>';
-			}
-
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
-			echo '</table>';
-
-			if ( 'cloud' === $section['id'] ) {
-				$is_token_verified = code_snippets()->cloud_api->is_cloud_key_verified();
-
-				if ( $is_token_verified ) {
-					echo '<p id="cloud_sync_status" class="cloud-message cloud-success">';
-					esc_html_e( 'Status: Cloud Sync Connected', 'code-snippets' );
-				} else {
-					echo '<p id="cloud_sync_status" class="cloud-message cloud-error">';
-					esc_html_e( 'Status: Cloud Sync Not Connected', 'code-snippets' );
-				}
-
-				echo '</p>';
-
-				echo '<p class="hidden cloud-message cloud-error">', esc_html__( 'Invalid token, Please try again or Generate a new token from your Code Snippets Cloud account.', 'code-snippets' ), '</p>';
-				echo '<p class="hidden cloud-message cloud-success">', esc_html__( 'Token verified successfully', 'code-snippets' ), '</p>';
-			}
-			echo '</div>';
+			echo '</table></div>';
 		}
 	}
 

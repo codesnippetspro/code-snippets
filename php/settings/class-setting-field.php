@@ -255,19 +255,6 @@ class Setting_Field {
 	}
 
 	/**
-	 * Render a button to verify cloud api
-	 *
-	 * @since 3.0.0
-	 */
-	private function render_button_field() {
-		printf(
-			'<button class="button button-secondary" type="button" id="%s">%s</button>',
-			esc_html( $this->button_id ),
-			esc_html( $this->button_label )
-		);
-	}
-
-	/**
 	 * Render a hidden input field for an editor setting.
 	 */
 	private function render_hidden_field() {
@@ -282,19 +269,4 @@ class Setting_Field {
 		);
 	}
 
-	/**
-	 * Render input group for cloud API token
-	 */
-	private function render_cloud_token_field() {
-		printf(
-			'<div class="cloud-token-input-group">
-				<input id="%s" name="%s" type="password" value="%s" class="cloud-token-input %s">
-				<button id="cloud-token-button" type="button" class="cloud-token-button button button-secondary">Show</button>
-			</div>',
-			esc_attr( $this->element_id ),
-			esc_attr( $this->input_name ),
-			esc_attr( $this->get_saved_value() ),
-			esc_attr( $this->element_id )
-		);
-	}
 }
