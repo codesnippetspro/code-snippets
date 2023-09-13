@@ -128,7 +128,7 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 
 == Changelog ==
 
-= 3.5.0 (08 Sep 2023) =
+= 3.5.0 (14 Sep 2023) =
 * Added: Support for the Code Snippets Cloud API.
 * Added: Search and download public snippets.
 * Added: Codevault back-up and synchronisation. (PRO)
@@ -139,6 +139,8 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 * Added: Deploy snippets to plugin from Code Snippets Cloud app. (PRO)
 * Added: Bundles of Joy! Search and download Snippet Bundles in one go direct from Code Snippets Cloud. (PRO)
 * Fixed: Error when attempting to update network shared snippets after saving. [[#](https://wordpress.org/support/topic/activating-snippets-breaks-on-wordpress-6-3/)]
+* Improved: Redirect to snippets table when deleting snippet from the edit menu.
+* Improved: Scroll new notices into view on edit menu.
 
 = 3.4.2 (05 Jul 2023) =
 * Fixed: Issue causing export process to fail with fatal error. [[#](https://wordpress.org/support/topic/critical-error-on-exporting-snippets/)]
@@ -287,6 +289,9 @@ __New in Pro__
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
+
+= 3.5.0 =
+Code Snippets Cloud is here! Share snippets and synchronise between sites.
 
 = 3.4.2 =
 Bug fixes for export process and plugin compatibility.
