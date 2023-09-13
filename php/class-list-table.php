@@ -241,15 +241,16 @@ class List_Table extends WP_List_Table {
 				'edit'   => esc_html__( 'Edit', 'code-snippets' ),
 				'clone'  => esc_html__( 'Clone', 'code-snippets' ),
 				'export' => esc_html__( 'Export', 'code-snippets' ),
-				'cloud'  => sprintf(
-					'<a href="https://codesnippets.cloud/cloud-setup-guide" target="_blank">%s</a>',
-					esc_html__( 'Set up cloud.', 'code-snippets' )
-				),
 			);
 
 			foreach ( $simple_actions as $action => $label ) {
 				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', esc_url( $this->get_action_link( $action, $snippet ) ), $label );
 			}
+
+			$actions['cloud'] = sprintf(
+				'<a href="https://codesnippets.cloud/cloud-setup-guide" target="_blank">%s</a>',
+				esc_html__( 'Set up cloud', 'code-snippets' )
+			);
 
 			if ( $this->is_cloud_link_valid() ) {
 				$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
