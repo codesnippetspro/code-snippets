@@ -265,7 +265,9 @@ class Cloud_API {
 			}
 
 			// If the snippet is a token snippet skip it.
-			if ( $this->is_cloud_access_snippet( $local_snippet->id ) ) {
+			$has_valid_cloud_id = boolval( strpos( $local_snippet->cloud_id, '_' ) );
+			$is_cloud_access_snippet = $this->is_cloud_access_snippet( $local_snippet->id );
+			if ( ! $has_valid_cloud_id || $is_cloud_access_snippet ) {
 				continue;
 			}
 
