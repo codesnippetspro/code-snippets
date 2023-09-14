@@ -48,7 +48,7 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'create_item_from_cloud' ],
-					'permission_callback' => [ $this, 'cloud_api_check' ],
+					'permission_callback' => [ $this, 'permission_callback' ],
 					'args'                => $this->get_endpoint_args_for_item_schema( true ),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
@@ -60,9 +60,10 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 			$route . '/removesync',
 			[
 				[
-					'methods'  => WP_REST_Server::READABLE,
-					'callback' => [ $this, 'remove_sync' ],
-					'args'     => $this->get_endpoint_args_for_item_schema( true ),
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'remove_sync' ],
+					'permission_callback' => [ $this, 'permission_callback' ],
+					'args'                => $this->get_endpoint_args_for_item_schema( true ),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
 			]
@@ -76,7 +77,7 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 	 *
 	 * @return boolean
 	 */
-	public function cloud_api_check( WP_REST_Request $request ): bool {
+	public function permission_callback( WP_REST_Request $request ): bool {
 		return $request->get_header( 'access-control' ) === $this->local_token;
 	}
 

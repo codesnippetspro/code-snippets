@@ -1,6 +1,10 @@
 # Changelog
 
-## 3.5.0 (14 Sep 2023)
+## 3.5.1 (13 Sep 2023)
+* Fixed: Undefined array key error when accessing plugin settings page.
+* Fixed: Issue registering API endpoints affecting edit post screen.
+
+## 3.5.0 (13 Sep 2023)
 * Added: Support for the Code Snippets Cloud API.
 * Added: Search and download public snippets.
 * Added: Codevault back-up and synchronisation. (PRO)
