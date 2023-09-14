@@ -136,5 +136,5 @@ export const useSnippetActions = ({
 		exportCode: (snippet: Snippet) =>
 			doFileRequest(snippet, () => api.exportCode(snippet))
 
-	}), [api, displayRequestErrors, doFileRequest, setCurrentNotice, submitSnippet])
+	}), [api, displayRequestErrors, doFileRequest, submitSnippet])
 }
