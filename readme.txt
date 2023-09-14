@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.5.0
+Stable tag: 3.5.1
 Tested up to: 6.3.1
 
 An easy, clean and simple way to run code snippets on your site.
@@ -289,6 +289,9 @@ __New in Pro__
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
+
+= 3.5.1 =
+Code Snippets Cloud is here! Share snippets and synchronise between sites.
 
 = 3.5.0 =
 Code Snippets Cloud is here! Share snippets and synchronise between sites.
