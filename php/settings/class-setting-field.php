@@ -268,5 +268,4 @@ class Setting_Field {
 			esc_attr( $this->element_id )
 		);
 	}
-
 }

@@ -32,7 +32,6 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 	 */
 	public function __construct() {
 		$this->local_token = code_snippets()->cloud_api->get_cloud_setting( 'token_snippet_id' ) ?? '';
-
 	}
 
 
@@ -137,11 +136,12 @@ class Cloud_REST_Controller extends Snippets_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function remove_sync() {
-		
-		code_snippets()->cloud_api->refresh_cloud_settings_data( true ); 
-		code_snippets()->cloud_api->refresh_synced_data();
-		
-		// Consider disabling the token snippet
+		$cloud_api = code_snippets()->cloud_api;
+
+		$cloud_api->refresh_cloud_settings_data( true );
+		$cloud_api->refresh_synced_data();
+
+		// Consider disabling the token snippet.
 		$this->local_token = '';
 
 		$response = [
