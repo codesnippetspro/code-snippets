@@ -2,6 +2,7 @@ name: Release new developer version
 
 on:
   workflow_dispatch:
+  
 
 jobs:
   get-release-version:
@@ -9,8 +10,8 @@ jobs:
     outputs:
       release-version: ${{ steps.version.outputs.version }}
     steps:
-      - name: Setup jq
-        uses: dcarbone/install-jq-action@v2.0.0
+      - name: Setup repo
+        uses: actions/checkout@v2
 
       - name: Get relese version
         id: version
