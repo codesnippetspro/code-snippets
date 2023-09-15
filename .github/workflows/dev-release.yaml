@@ -69,6 +69,7 @@ jobs:
         id: npm-install
         shell: bash
         run: |
+          npm config set registry https://registry.npmjs.org/
           npm ci
       
       - name: Install composer dependencies
