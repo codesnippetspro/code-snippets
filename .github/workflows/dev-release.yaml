@@ -16,7 +16,9 @@ jobs:
       - name: Get relese version
         id: version
         run: |
-          echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+          version=$(jq -r .version package.json)
+          echo $version
+          echo "version=$version" >> $GITHUB_OUTPUT
 
   npm-run-build:
     runs-on: ubuntu-latest
