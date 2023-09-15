@@ -13,7 +13,7 @@ jobs:
         id: version
         shell: bash
         run: |
-          echo "jq -r .version package.json" >> $GITHUB_OUTPUT
+          echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
 
   npm-run-build:
     runs-on: ubuntu-latest
