@@ -9,9 +9,11 @@ jobs:
     outputs:
       release-version: ${{ steps.version.outputs.version }}
     steps:
+      - name: Setup jq
+        uses: dcarbone/install-jq-action@v2.0.0
+
       - name: Get relese version
         id: version
-        shell: bash
         run: |
           echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
 
