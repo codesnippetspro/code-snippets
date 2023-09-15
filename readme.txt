@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.5.0
+Stable tag: 3.5.1
 Tested up to: 6.3.1
 
 An easy, clean and simple way to run code snippets on your site.
@@ -127,6 +127,10 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.5.1 (15 Sep 2023) =
+* Fixed: Undefined array key error when accessing plugin settings page. (PRO)
+* Fixed: Issue registering API endpoints affecting edit post screen. (PRO)
 
 = 3.5.0 (14 Sep 2023) =
 * Added: Support for the Code Snippets Cloud API.
@@ -289,6 +293,9 @@ __New in Pro__
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
 
 == Upgrade Notice ==
+
+= 3.5.1 =
+Code Snippets Cloud is here! Share snippets and synchronise between sites.
 
 = 3.5.0 =
 Code Snippets Cloud is here! Share snippets and synchronise between sites.

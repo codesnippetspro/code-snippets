@@ -104,7 +104,6 @@ function get_settings_values(): array {
 function get_setting( string $section, string $field ) {
 	$settings = get_settings_values();
 
-	//wp_die( var_dump( $settings ));
 	return $settings[ $section ][ $field ];
 }
 
