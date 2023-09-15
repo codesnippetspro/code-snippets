@@ -1218,10 +1218,8 @@ class Cloud_API {
 		// JSON Encode the cloud_id_array.
 		$cloud_id_array = json_encode( $cloud_id_array );
 
-		do_action( 'inspect', [ 'cloud_id_array', $cloud_id_array ] );
-
 		// Send post request to cs store api with snippet data.
-		$response = wp_remote_post(
+		wp_remote_post(
 			self::CLOUD_API_URL . 'private/setsyncedsnippetlist',
 			[
 				'method'  => 'POST',
