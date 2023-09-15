@@ -47,11 +47,17 @@ jobs:
         id: checkout
         uses: actions/checkout@v3
       
+      - name: Install gulp
+        id: gulp-install
+        shell: bash
+        run: |
+          npm install --global gulp-cli
+
       - name: Install node dependencies
         id: npm-install
         shell: bash
         run: |
-          npm install --global gulp-cli && npm install
+          npm install
       
       - name: Install composer dependencies
         id: composer-install
