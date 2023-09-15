@@ -66,11 +66,10 @@ jobs:
       #     # npm i $prismdir
 
       - name: Install node dependencies
-        id: npm-install
+        id: yarn-install
         shell: bash
         run: |
-          npm config set registry https://registry.npmjs.org/
-          npm ci
+          yarn install
       
       - name: Install composer dependencies
         id: composer-install
