@@ -70,7 +70,7 @@ jobs:
         shell: bash
         run: |
           npm config set registry https://registry.npmjs.org/
-          yarn install
+          npm ci
       
       - name: Install composer dependencies
         id: composer-install
