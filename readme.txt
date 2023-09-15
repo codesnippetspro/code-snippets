@@ -128,6 +128,10 @@ The best way to do this is to fork the [repository on GitHub](https://github.com
 
 == Changelog ==
 
+= 3.5.1 (15 Sep 2023) =
+* Fixed: Undefined array key error when accessing plugin settings page. (PRO)
+* Fixed: Issue registering API endpoints affecting edit post screen. (PRO)
+
 = 3.5.0 (14 Sep 2023) =
 * Added: Support for the Code Snippets Cloud API.
 * Added: Search and download public snippets.
