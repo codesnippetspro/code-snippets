@@ -53,6 +53,7 @@ jobs:
         run: |
           npm config set registry https://registry.npmjs.org/
           npm install --global gulp-cli
+          npm i prism-themes
 
       - name: Install node dependencies
         id: npm-install
