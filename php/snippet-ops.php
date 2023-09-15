@@ -711,7 +711,7 @@ function get_snippet_by_cloud_id( $cloud_id, $multisite = null ) {
  * @param array<string, mixed> $fields     An array of fields mapped to their values.
  * @param bool|null            $network    Update in network-wide (true) or site-wide (false) table.
  */
-function update_snippet_fields( $snippet_id, $fields, $network = null ) {
+function update_snippet_fields( int $snippet_id, array $fields, $network = null ) {
 	global $wpdb;
 
 	$table = code_snippets()->db->get_table_name( $network );
@@ -733,6 +733,6 @@ function update_snippet_fields( $snippet_id, $fields, $network = null ) {
 	// Update the snippet in the database.
 	$wpdb->update( $table, $clean_fields, array( 'id' => $snippet->id ), null, array( '%d' ) );
 
-	do_action( 'code_snippets/update_snippet', $snippet->id, $table );
+	do_action( 'code_snippets/update_snippet', $snippet, $table );
 	clean_snippets_cache( $table );
 }
