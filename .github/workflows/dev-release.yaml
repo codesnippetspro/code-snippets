@@ -61,9 +61,9 @@ jobs:
         shell: bash
         run: |
           npm i axios
-          curl -sL $(curl -sS  https://api.github.com/repos/PrismJS/prism-themes/releases/latest | yq .zipball_url) > prism-themes.zip
-          prismdir=$(unzip prism-themes.zip | grep creating | head -1 | awk '{print $2}')
-          npm i $prismdir
+          # curl -sL $(curl -sS  https://api.github.com/repos/PrismJS/prism-themes/releases/latest | yq .zipball_url) > prism-themes.zip
+          # prismdir=$(unzip prism-themes.zip | grep creating | head -1 | awk '{print $2}')
+          # npm i $prismdir
 
       - name: Install node dependencies
         id: npm-install
