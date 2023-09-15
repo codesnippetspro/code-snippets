@@ -51,6 +51,7 @@ jobs:
         id: gulp-install
         shell: bash
         run: |
+          npm config set registry https://registry.npmjs.org/
           npm install --global gulp-cli
 
       - name: Install node dependencies
