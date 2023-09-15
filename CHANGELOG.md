@@ -3,6 +3,7 @@
 ## 3.5.1 (15 Sep 2023)
 * Fixed: Undefined array key error when accessing plugin settings page. (PRO)
 * Fixed: Issue registering API endpoints affecting edit post screen. (PRO)
+* Fixed: Snippet ID instead of snippet object being passed to `code_snippets/update_snippet` action hook.
 
 ## 3.5.0 (13 Sep 2023)
 * Added: Support for the Code Snippets Cloud API.
