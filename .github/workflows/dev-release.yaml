@@ -51,8 +51,7 @@ jobs:
         id: npm-install
         shell: bash
         run: |
-          npm install --global gulp-cli
-          npm install
+          npm install --global gulp-cli && npm install
       
       - name: Install composer dependencies
         id: composer-install
@@ -64,8 +63,7 @@ jobs:
         id: gulp-bundle
         shell: bash
         run: |
-          npm audit fix
-          gulp bundle
+          npm audit fix && gulp bundle
 
       - name: Create Release
         id: create-release
