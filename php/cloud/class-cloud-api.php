@@ -822,6 +822,20 @@ class Cloud_API {
 				];
 		}
 
+		// Get all cloud_id from the Cloud Link Map and send this as a json array to the cloud.
+		$cloud_snippets_synced_to_local_site = array_map(
+			function ( $link ) {
+				// Check if the cloud_id is not empty, null or 0
+				if ( ! $link->cloud_id || ! $link->cloud_id == 0 ) {
+					return $link->cloud_id;
+				}
+			},
+			$this->get_local_to_cloud_map()
+		);
+
+		// Send the cloud_ids to the cloud.
+		$this->send_cloud_synced_snippet_list( $cloud_snippets_synced_to_local_site );
+
 		switch ( $action ) {
 			case 'download':
 				return $this->store_snippets_from_cloud_to_local( $snippet_to_store, $in_codevault );
@@ -1189,6 +1203,32 @@ class Cloud_API {
 				'token_verified'   => false,
 				'token_snippet_id' => $token_id_wipe ? '' : $token_id,
 				'local_token'      => '',
+			]
+		);
+	}
+
+	/**
+	 * Send the list of synced snippets to the cloud.
+	 *
+	 * @param array $cloud_snippets_synced_to_local_site List of cloud IDs.
+	 *
+	 * @return void
+	 */
+	public function send_cloud_synced_snippet_list( $cloud_id_array ){
+		// JSON Encode the cloud_id_array.
+		$cloud_id_array = json_encode( $cloud_id_array );
+
+		do_action( 'inspect', [ 'cloud_id_array', $cloud_id_array ] );
+
+		// Send post request to cs store api with snippet data.
+		$response = wp_remote_post(
+			self::CLOUD_API_URL . 'private/setsyncedsnippetlist',
+			[
+				'method'  => 'POST',
+				'headers' => $this->build_request_headers(),
+				'body'    => [
+					'cloud_id_array' => $cloud_id_array,
+				],
 			]
 		);
 	}
