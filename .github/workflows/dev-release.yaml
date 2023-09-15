@@ -82,7 +82,7 @@ jobs:
         id: gulp-bundle
         shell: bash
         run: |
-          npm audit fix && gulp bundle
+          gulp bundle
 
       - name: Create Release
         id: create-release
