@@ -56,20 +56,20 @@ jobs:
           npm config set registry https://registry.npmjs.org/
           npm install --global gulp-cli
       
-      - name: Pre-isntall Prism dependencies
-        id: pre-install
-        shell: bash
-        run: |
-          npm i axios
-          # curl -sL $(curl -sS  https://api.github.com/repos/PrismJS/prism-themes/releases/latest | yq .zipball_url) > prism-themes.zip
-          # prismdir=$(unzip prism-themes.zip | grep creating | head -1 | awk '{print $2}')
-          # npm i $prismdir
+      # - name: Pre-isntall Prism dependencies
+      #   id: pre-install
+      #   shell: bash
+      #   run: |
+      #     npm ci
+      #     # curl -sL $(curl -sS  https://api.github.com/repos/PrismJS/prism-themes/releases/latest | yq .zipball_url) > prism-themes.zip
+      #     # prismdir=$(unzip prism-themes.zip | grep creating | head -1 | awk '{print $2}')
+      #     # npm i $prismdir
 
       - name: Install node dependencies
         id: npm-install
         shell: bash
         run: |
-          npm install
+          npm ci
       
       - name: Install composer dependencies
         id: composer-install
