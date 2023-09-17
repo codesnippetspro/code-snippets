@@ -8,17 +8,17 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup repo
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
       - name: Get relese version
         id: release-version
         run: |
           RELEASE_VERSION=$(jq -r .version package.json)
           echo $RELEASE_VERSION
           echo "version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
-
-      - name: Setup repo
-        uses: actions/checkout@v2
-        with:
-          persist-credentials: false
 
       - name: Setup node
         uses: actions/setup-node@v3
