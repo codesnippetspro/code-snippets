@@ -98,16 +98,17 @@ jobs:
         id: send-notification-to-slack
         shell: bash
         run: |
-          VERSION="${{ env.RELEASE_VERSION }}"
-          RELEASE_URL="${{ steps.create-release.outputs.url }}"
-          DOWNLAOD_URL="${{ steps.create-release.outputs.upload_url }}"
           GIT_REF=$(echo ${GITHUB_REF} | cut -d / -f 3)
+          echo "${GIT_REF}"
           JOB_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-          COMMIT_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
+          echo "${JOB_URL}"
           MESSAGE="<\!channel> :rocket: *Code Snippets* \`${GIT_REF}`\ version: \`${VERSION}\` successfully relased! <${JOB_URL}|View job> | <${RELEASE_URL}|View release>\n:point_right: *<${DOWNLAOD_URL}|Download zip here>*"
           echo "${MESSAGE}"
           curl -X POST "$SLACK_WEBHOOK" \
-            -H "Content-type: application/json" \
-            -d "{\"type\":\"mrkdwn\",\"text\":\"${MESSAGE}\"}"
+          -H "Content-type: application/json" \
+          -d "{\"type\":\"mrkdwn\",\"text\":\"${MESSAGE}\"}"
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          VERSION: ${{ env.RELEASE_VERSION }}
+          RELEASE_URL: ${{ steps.create-release.outputs.url }}
+          DOWNLAOD_URL: ${{ steps.create-release.outputs.upload_url }}
