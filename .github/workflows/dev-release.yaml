@@ -92,15 +92,16 @@ jobs:
           JOB_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           echo "${JOB_URL}"
           touch slack-message
-          echo '<!channel> :rocket: *Code Snippets* `' >> slack-message
-          echo ${GIT_REF} >> slack-message
-          echo '` version: `' >> slack-message
-          echo ${RELEASE_VERSION} >> slack-message
-          echo '` successfully relased! ' >> slack-message
-          echo "<${JOB_URL}|View job> | <${RELEASE_URL}|View release>\n" >> slack-message
-          echo ":point_right: *<${DOWNLOAD_URL}|Download zip here>*" >> slack-message
-          echo "$(cat slack-message)"
-          curl -X POST "$SLACK_WEBHOOK" \
+          echo -n '<!channel> :rocket: *Code Snippets* `' >> slack-message
+          echo -n ${GIT_REF} >> slack-message
+          echo -n '` version: `' >> slack-message
+          echo -n ${RELEASE_VERSION} >> slack-message
+          echo -n '` successfully relased! ' >> slack-message
+          echo -n "<${JOB_URL}|View job> | <${RELEASE_URL}|View release>\n" >> slack-message
+          echo -n ":point_right: *<${DOWNLOAD_URL}|Download zip here>*" >> slack-message
+          MESSAGE=$(cat slack-message)
+          echo "${MESSAGE}"
+          curl -sS -X POST "$SLACK_WEBHOOK" \
           -H "Content-type: application/json" \
           -d "{\"type\":\"mrkdwn\",\"text\":\"${MESSAGE}\"}"
         env:
