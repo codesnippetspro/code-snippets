@@ -102,7 +102,7 @@ jobs:
           echo "${GIT_REF}"
           JOB_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           echo "${JOB_URL}"
-          MESSAGE="<\!channel> :rocket: *Code Snippets* \`${GIT_REF}`\ version: \`${VERSION}\` successfully relased! <${JOB_URL}|View job> | <${RELEASE_URL}|View release>\n:point_right: *<${DOWNLAOD_URL}|Download zip here>*"
+          MESSAGE="<\!channel> :rocket: *Code Snippets* \\`${GIT_REF}`\\ version: \\`${VERSION}\\` successfully relased! <${JOB_URL}|View job> | <${RELEASE_URL}|View release>\n:point_right: *<${DOWNLAOD_URL}|Download zip here>*"
           echo "${MESSAGE}"
           curl -X POST "$SLACK_WEBHOOK" \
           -H "Content-type: application/json" \
