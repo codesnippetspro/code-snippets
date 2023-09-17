@@ -108,4 +108,4 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           RELEASE_VERSION: ${{ steps.release-version.outputs.version }}
           RELEASE_URL: ${{ steps.create-release.outputs.url }}
-          DOWNLOAD_URL: ${{ fromJSON(steps.<step-id>.outputs.assets)[0].browser_download_url }}
+          DOWNLOAD_URL: ${{ fromJSON(steps.create-release.outputs.assets)[0].browser_download_url }}
