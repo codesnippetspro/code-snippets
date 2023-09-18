@@ -20,18 +20,21 @@ declare global {
 		readonly code_snippets_editor_settings: EditorOption[]
 		CODE_SNIPPETS_PRISM: typeof Prism
 		readonly CODE_SNIPPETS?: {
-			pluginUrl: string
 			isLicensed: boolean
 			restAPI: {
 				base: string
 				nonce: string
 				snippets: string
 			}
+			urls: {
+				plugin: string
+				manage: string
+				addNew: string
+				edit: string
+			}
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet
-			menuUrl: string
-			addNewUrl: string
 			pageTitleActions: Record<string, string>
 			isPreview: boolean
 			isLicensed: boolean

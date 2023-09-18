@@ -8,7 +8,14 @@ export interface AxiosAPI {
 	axiosInstance: AxiosInstance
 }
 
-const debugResponseHandler = <T>(response: T) => {
+const debugRequest = async <T, D = never>(
+	method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+	url: string,
+	doRequest: Promise<AxiosResponse<T, D>>,
+	data?: D
+): Promise<AxiosResponse<T, D>> => {
+	console.debug(`${method} ${url}`, ...data ? [data] : [])
+	const response = await doRequest
 	console.debug('Response', response)
 	return response
 }
@@ -17,23 +24,14 @@ export const useAxios = (defaultConfig: CreateAxiosDefaults): AxiosAPI => {
 	const axiosInstance = useMemo(() => axios.create(defaultConfig), [defaultConfig])
 
 	return useMemo((): AxiosAPI => ({
-		get: <T>(url: string) => {
-			console.debug(`GET ${url}`)
-			return axiosInstance.get<T, AxiosResponse<T, never>, never>(url)
-				.then(debugResponseHandler)
-		},
+		get: <T>(url: string): Promise<AxiosResponse<T, never>> =>
+			debugRequest('GET', url, axiosInstance.get<T, AxiosResponse<T, never>, never>(url)),
 
-		post: <T, D>(url: string, data?: D) => {
-			console.debug(`POST ${url}`, data)
-			return axiosInstance.post<T, AxiosResponse<T, D>, D>(url, data)
-				.then(debugResponseHandler)
-		},
+		post: <T, D>(url: string, data?: D) =>
+			debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T, D>, D>(url, data), data),
 
-		del: <T>(url: string) => {
-			console.debug(`DELETE ${url}`)
-			return axiosInstance.delete<T, AxiosResponse<T, never>, never>(url)
-				.then(debugResponseHandler)
-		},
+		del: <T>(url: string) =>
+			debugRequest('DELETE', url, axiosInstance.delete<T, AxiosResponse<T, never>, never>(url)),
 
 		axiosInstance
 	}), [axiosInstance])
