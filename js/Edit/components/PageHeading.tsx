@@ -17,10 +17,19 @@ export const PageHeading: React.FC<PageHeadingProps> = ({ snippet, setSnippet, c
 			__('Add New Snippet', 'code-snippets')}
 
 		{snippet.id ? <>{' '}
-			<a href={OPTIONS?.addNewUrl} className="page-title-action" onClick={() => {
+			<a href={window.CODE_SNIPPETS?.urls.addNew} className="page-title-action" onClick={event => {
+				event.preventDefault()
+
 				setSnippet(() => createEmptySnippet())
 				codeEditorInstance?.codemirror.setValue('')
 				window.tinymce?.activeEditor.setContent('')
+
+				window.document.title = window.document.title.replace(
+					__('Edit Snippet', 'code-snippets'),
+					__('Add New Snippet', 'code-snippets')
+				)
+
+				window.history.replaceState({}, window.document.title, window.CODE_SNIPPETS?.urls.addNew)
 			}}>
 				{_x('Add New', 'snippet', 'code-snippets')}
 			</a>

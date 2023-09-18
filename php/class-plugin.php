@@ -343,7 +343,12 @@ class Plugin {
 					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'nonce'    => wp_create_nonce( 'wp_rest' ),
 				],
-				'pluginUrl'  => plugins_url( '', PLUGIN_FILE ),
+				'urls'       => [
+					'plugin' => plugins_url( '', PLUGIN_FILE ),
+					'manage' => $this->get_menu_url(),
+					'edit'   => $this->get_menu_url( 'edit' ),
+					'addNew' => $this->get_menu_url( 'add' ),
+				],
 			]
 		);
 	}

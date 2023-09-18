@@ -4,7 +4,6 @@ import { getSnippetType } from './snippets'
 const SECOND_IN_MS = 1000
 const TIMEOUT_SECONDS = 40
 
-
 const MIME_INFO = <const> {
 	php: ['php', 'text/php'],
 	html: ['php', 'text/php'],
@@ -13,7 +12,7 @@ const MIME_INFO = <const> {
 	json: ['json', 'application/json']
 }
 
-export const isNetworkAdmin = () =>
+export const isNetworkAdmin = (): boolean =>
 	window.pagenow.endsWith('-network')
 
 export const downloadAsFile = (content: BlobPart, filename: string, type: string) => {
