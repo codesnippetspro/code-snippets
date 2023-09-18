@@ -16,9 +16,10 @@ export const TagsInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, is
 
 			<TagEditor
 				id="snippet_tags"
-				onChange={tags => setSnippet(previous => ({ ...previous, tags }))}
 				tags={snippet.tags}
+				addOnBlur
 				disabled={isReadOnly}
+				onChange={tags => setSnippet(previous => ({ ...previous, tags }))}
 				completions={options.availableTags}
 				allowSpaces={options.allowSpaces}
 				placeholder={__('Enter a list of tags; separated by commas', 'code-snippets')}
