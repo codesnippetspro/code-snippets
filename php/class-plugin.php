@@ -361,7 +361,12 @@ class Plugin {
 					'nonce'    => wp_create_nonce( 'wp_rest' ),
 					'cloudApiNonce'  => wp_create_nonce( 'cs_cloud_ai_api' ),
 				],
-				'pluginUrl'  => plugins_url( '', PLUGIN_FILE ),
+				'urls'       => [
+					'plugin' => plugins_url( '', PLUGIN_FILE ),
+					'manage' => $this->get_menu_url(),
+					'edit'   => $this->get_menu_url( 'edit' ),
+					'addNew' => $this->get_menu_url( 'add' ),
+				],
 			]
 		);
 	}
