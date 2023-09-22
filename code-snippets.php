@@ -37,11 +37,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.0', 
 	 *
 	 * @const string
 	 */
-<<<<<<<<< Temporary merge branch 1
-	define( 'CODE_SNIPPETS_VERSION', '3.5.0' );
-=========
-	define( 'CODE_SNIPPETS_VERSION', '3.4.2.2' );
->>>>>>>>> Temporary merge branch 2
+	define( 'CODE_SNIPPETS_VERSION', '3.5.1' );
 
 	/**
 	 * The full path to the main file of this plugin.
