@@ -96,7 +96,7 @@ jobs:
           echo -n ${GIT_REF} >> slack-message
           echo -n '` version: `' >> slack-message
           echo -n ${RELEASE_VERSION} >> slack-message
-          echo -n '` successfully relased! ' >> slack-message
+          echo -n '` built successfully! ' >> slack-message
           echo -n "<${JOB_URL}|View job> | <${RELEASE_URL}|View release>\n" >> slack-message
           echo -n ":point_right: *<${DOWNLOAD_URL}|Download zip here>*" >> slack-message
           MESSAGE=$(cat slack-message)
