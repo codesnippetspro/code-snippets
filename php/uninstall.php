@@ -3,6 +3,8 @@
  * Functions for cleaning data when the plugin is uninstalled.
  *
  * @package Code_Snippets
+ *
+ * phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
  */
 
 namespace Code_Snippets\Uninstall;
@@ -33,11 +35,16 @@ function complete_uninstall_enabled(): bool {
 function uninstall_current_site() {
 	global $wpdb;
 
-	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" ); // cache ok, db call ok.
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" );
 
 	delete_option( 'code_snippets_version' );
 	delete_option( 'recently_activated_snippets' );
 	delete_option( 'code_snippets_settings' );
+
+	// Remove Cloud settings.
+	delete_option( 'code_snippets_cloud_settings' );
+	delete_transient( 'cs_codevault_snippets' );
+	delete_transient( 'cs_local_to_cloud_map' );
 }
 
 /**
@@ -59,7 +66,7 @@ function uninstall_multisite() {
 	restore_current_blog();
 
 	// Remove network snippets table.
-	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ms_snippets" ); // cache ok, db call ok.
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ms_snippets" );
 
 	// Remove saved options.
 	delete_site_option( 'code_snippets_version' );

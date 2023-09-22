@@ -45,9 +45,9 @@ class Active_Snippets {
 				exit;
 			}
 
-			//add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
-			//add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
 		}
 	}
 
@@ -107,14 +107,14 @@ class Active_Snippets {
 
 		if ( 'all' === $scope ) {
 			foreach ( $revisions as $i => $v ) {
-				$revisions[ $i ]++;
+				++$revisions[ $i ];
 			}
 		} else {
 			if ( ! isset( $revisions[ $scope ] ) ) {
 				$revisions[ $scope ] = 0;
 			}
 
-			$revisions[ $scope ]++;
+			++$revisions[ $scope ];
 		}
 
 		Settings\update_self_option( $network, 'code_snippets_assets_rev', $revisions );
@@ -130,11 +130,11 @@ class Active_Snippets {
 	public function get_rev( string $scope ) {
 		$rev = 0;
 		$scope_snippets = $this->fetch_active_snippets( $scope );
-		
+
 		if ( empty( $scope_snippets ) ) {
 			return false;
 		}
-		
+
 		$revisions = get_option( 'code_snippets_assets_rev' );
 		$rev += isset( $revisions[ $scope ] ) ? intval( $revisions[ $scope ] ) : 0;
 
@@ -187,7 +187,7 @@ class Active_Snippets {
 			return;
 		}
 
-		$url = $this->get_asset_url( "$scope-css" );		
+		$url = $this->get_asset_url( "$scope-css" );
 		wp_enqueue_style( "code-snippets-$scope-styles", $url, array(), $rev );
 	}
 
@@ -224,7 +224,7 @@ class Active_Snippets {
 	 *
 	 * @param string $mime_type File MIME type used to set Content-Type header.
 	 */
-	private static function do_asset_headers( $mime_type ) {
+	private static function do_asset_headers( string $mime_type ) {
 		$expiry = 365 * 24 * 60 * 60; // year in seconds.
 		header( 'Content-Type: ' . $mime_type, true, 200 );
 		header( sprintf( 'Expires: %s GMT', gmdate( 'D, d M Y H:i:s', time() + $expiry ) ) );
@@ -235,7 +235,7 @@ class Active_Snippets {
 	 *
 	 * @param string $type Must be either 'css' or 'js'.
 	 */
-	private function print_code( $type ) {
+	private function print_code( string $type ) {
 		if ( 'js' !== $type && 'css' !== $type ) {
 			return;
 		}

@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.5.1 (15 Sep 2023)
+* Fixed: Undefined array key error when accessing plugin settings page. (PRO)
+* Fixed: Issue registering API endpoints affecting edit post screen. (PRO)
+* Fixed: Snippet ID instead of snippet object being passed to `code_snippets/update_snippet` action hook.
+
+## 3.5.0 (13 Sep 2023)
+* Added: Support for the Code Snippets Cloud API.
+* Added: Search and download public snippets.
+* Added: Codevault back-up and synchronisation. (PRO)
+* Added: Synchronised local snippets are automatically updated in Cloud. (PRO)
+* Added: Bulk actions - 'update' and 'download'.
+* Added: Download snippets from public and private codevaults. (PRO)
+* Added: Search and download any publicly viewable snippet in Code Snippet Cloud by keyword or name of codevault. (PRO)
+* Added: Deploy snippets to plugin from Code Snippets Cloud app. (PRO)
+* Added: Bundles of Joy! Search and download Snippet Bundles in one go direct from Code Snippets Cloud. (PRO)
+* Fixed: Error when attempting to update network shared snippets after saving. [[#](https://wordpress.org/support/topic/activating-snippets-breaks-on-wordpress-6-3/)]
+* Improved: Redirect to snippets table when deleting snippet from the edit menu.
+* Improved: Scroll new notices into view on edit menu.
+
 ## 3.4.2 (05 Jul 2023)
 * Fixed: Issue causing export process to fail with fatal error. [[#](https://wordpress.org/support/topic/critical-error-on-exporting-snippets/)]
 * Fixed: Type issue on `the_posts` filter when no posts available. [[#](https://wordpress.org/support/topic/collision-with-plugin-xml-sitemap-google-news/)]

@@ -1,25 +1,21 @@
 <?php
+/**
+ * Contains the class for handling the cloud table.
+ *
+ * @package Code_Snippets
+ */
 
 namespace Code_Snippets\Cloud;
 
 use WP_List_Table;
 use function Code_Snippets\code_snippets;
 
-/**
- * Contains the class for handling the snippets table
- *
- * @package Code_Snippets
- *
- * phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
- */
-
-/* The WP_List_Table base class is not included by default, so we need to load it */
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
 /**
- * This class handles the table for the manage cloud snippets menu
+ * This class handles the table for the manage cloud snippets menu.
  *
  * @package Code_Snippets
  */
@@ -54,16 +50,32 @@ class Cloud_List_Table extends WP_List_Table {
 
 		// Strip the result query arg from the URL.
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
+
+		// Check if there is a GET request query parameter to refresh data from the cloud.
+		if ( isset( $_GET['refresh'] ) && 'true' === $_GET['refresh'] ) {
+			code_snippets()->cloud_api->refresh_synced_data();
+
+			wp_safe_redirect(
+				esc_url_raw(
+					add_query_arg(
+						'result',
+						'cloud-refreshed',
+						code_snippets()->get_menu_url( 'cloud' )
+					)
+				)
+			);
+
+		}
 	}
 
 	/**
-	 * Sets the list of columns that are hidden by default..
+	 * Sets the list of columns that are hidden by default.
 	 *
 	 * @param array<string> $hidden List of hidden columns.
 	 *
 	 * @return array<string> Modified list of hidden columns
 	 */
-	public function default_hidden_columns( $hidden ) {
+	public function default_hidden_columns( array $hidden ): array {
 		return array_merge( $hidden, [ 'id', 'code', 'cloud_id', 'revision' ] );
 	}
 
@@ -72,7 +84,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_columns() {
+	public function get_columns(): array {
 		$columns = array(
 			'cb'          => '<input type="checkbox" />',
 			'id'          => __( 'ID', 'code-snippets' ),
@@ -105,7 +117,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return array<string, string> An array of menu items with the ID paired to the label.
 	 */
-	public function get_bulk_actions() {
+	public function get_bulk_actions(): array {
 		$actions = array(
 			'download-codevault-selected' => __( 'Download', 'code-snippets' ),
 		);
@@ -116,14 +128,22 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Fetch the snippets used to populate the table.
 	 *
-	 * @return Cloud_Snippets
+	 * @return Cloud_Snippets|null
 	 */
 	protected function fetch_snippets() {
-		if ( isset( $_REQUEST['cloud_page'] ) )  {
-			return $this->cloud_api->get_codevault_snippets( (int) $_REQUEST['cloud_page'] - 1 );
-		}
+		return $this->cloud_api->get_codevault_snippets(
+			$this->get_current_page_number()
+		);
+	}
 
-		return $this->cloud_api->get_codevault_snippets( $this->get_pagenum() - 1 );
+	/**
+	 * Get the current page number.
+	 *
+	 * @return int $pagenum The current page number.
+	 */
+	public function get_current_page_number(): int {
+		$pagenum = ( isset( $_REQUEST['cloud_page'] ) ? (int) $_REQUEST['cloud_page'] : $this->get_pagenum() ) - 1;
+		return $pagenum;
 	}
 
 	/**
@@ -139,19 +159,25 @@ class Cloud_List_Table extends WP_List_Table {
 		$this->_column_headers = array( $columns, $hidden );
 
 		$this->cloud_snippets = $this->fetch_snippets();
-		$this->items = $this->cloud_snippets->snippets;
-		
-		if($this->cloud_snippets ){
+
+		// Check if there are any snippets to display.
+		if ( $this->cloud_snippets ) {
+			$this->items = $this->cloud_snippets->snippets;
+			$total_snippets = $this->cloud_snippets->total_snippets;
+			$total_pages = $this->cloud_snippets->total_pages;
 			$per_page_count = count( $this->cloud_snippets->snippets );
-		}else{
+		} else {
+			$this->items = array();
+			$total_snippets = 0;
+			$total_pages = 0;
 			$per_page_count = 0;
 		}
 
 		$this->set_pagination_args(
 			[
 				'per_page'    => $per_page_count,
-				'total_items' => $this->cloud_snippets->total_snippets,
-				'total_pages' => (int) $this->cloud_snippets->total_pages,
+				'total_items' => $total_snippets,
+				'total_pages' => $total_pages,
 			]
 		);
 	}
@@ -162,25 +188,31 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	public function process_actions() {
-		
 		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source' ) );
-		$action = $_REQUEST['action'] ?? '';
-		$snippet = $_REQUEST['snippet'] ?? ''; 
-		$source = $_REQUEST['source'] ?? '';
+		$codevault_page = $this->get_current_page_number();
 
-		if ( isset( $action, $snippet, $source ) ) {
-			cloud_lts_process_download_action( $action, $source, $snippet );
+		// Check if the current page is the codevault page.
+		if ( isset( $_REQUEST['type'] ) && 'cloud' === $_REQUEST['type'] && isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+			cloud_lts_process_download_action(
+				sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ),
+				sanitize_text_field( wp_unslash( $_REQUEST['source'] ) ),
+				sanitize_text_field( wp_unslash( $_REQUEST['snippet'] ) ),
+				$codevault_page
+			);
 		}
 
-		/* Only continue from this point if there are bulk actions to process */
+		// Only continue from this point if there are bulk actions to process.
 		if ( ! isset( $_POST['cloud_ids'] ) && ! isset( $_POST['shared_cloud_ids'] ) ) {
 			return;
 		}
+
 		$ids = isset( $_POST['cloud_ids'] ) ? array_map( 'intval', $_POST['cloud_ids'] ) : array();
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'action' );
-		if( 'download-codevault-selected' == $this->current_action() || 'download-search-selected' == $this->current_action()) {
-				$this->download_snippets( $ids, $this->current_action() );
-				$result = 'download-multi';
+
+		$action = $this->current_action();
+		if ( 'download-codevault-selected' === $action || 'download-search-selected' === $action ) {
+			$this->download_snippets( $ids, $action, $codevault_page );
+			$result = 'download-multi';
 		}
 
 		if ( isset( $result ) ) {
@@ -197,7 +229,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return string The content of the column to output.
 	 */
-	protected function column_default( $item, $column_name ) {
+	protected function column_default( $item, $column_name ): string {
 		$link = code_snippets()->cloud_api->get_cloud_link( $item->id, 'cloud' );
 
 		switch ( $column_name ) {
@@ -205,33 +237,35 @@ class Cloud_List_Table extends WP_List_Table {
 				return join( ', ', $item->tags );
 
 			case 'description':
-				return $item->description;
+				return $item->description ?? '';
 
 			case 'name':
+				$cloud_icon = '';
 				$cloud_link = code_snippets()->cloud_api->get_cloud_link( $item->id, 'cloud' );
+
 				if ( $cloud_link ) {
-					//If update available make cloud icon orange?
+					// If update available make cloud icon orange?
 					if ( $cloud_link->update_available ) {
 						$cloud_icon = '<span class="dashicons dashicons-cloud cloud-icon cloud-update"></span>';
-					}elseif ( $cloud_link->in_codevault) { 
-						//If snippet in codevaule and no update available make cloud icon blue
+					} elseif ( $cloud_link->in_codevault ) {
+						// If snippet in codevault and no update available make cloud icon blue.
 						$cloud_icon = '<span class="dashicons dashicons-cloud cloud-icon cloud-synced"></span>';
 					}
-				}else{
-					//Make cloud icon grey to show its from the cloud
+				} else {
+					// Make cloud icon grey to show it is from the cloud.
 					$cloud_icon = '<span class="dashicons dashicons-cloud cloud-icon cloud-not-downloaded"></span>';
 				}
-				$edit_url = $link ? code_snippets()->get_snippet_edit_url( (int) $link->local_id ) : '';
+				$edit_url = $link ? code_snippets()->get_snippet_edit_url( $link->local_id ) : '';
 				$name_link = sprintf(
 					$edit_url ? '<a href="%1$s">%2$s</a>' : '<a>%2$s</a>',
 					esc_url( $edit_url ),
 					esc_html( $item->name )
 				);
-				
+
 				return $cloud_icon . $name_link . cloud_lts_build_column_hidden_input( $column_name, $item );
 
 			case 'updated':
-				return sprintf( '<span>%s</span>', esc_html( human_time_diff( strtotime($item->updated), current_time( 'U' ) ) ) );
+				return sprintf( '<span>%s</span>', esc_html( human_time_diff( strtotime( $item->updated ) ) ) );
 
 			case 'id':
 			case 'cloud_id':
@@ -242,7 +276,7 @@ class Cloud_List_Table extends WP_List_Table {
 				return sprintf(
 					'<a class="snippet-type-badge snippet-status" data-type="%s">%s</a>',
 					esc_attr( strtolower( Cloud_API::get_status_name_from_status( $item->status ) ) ),
-					esc_html( Cloud_API::get_status_name_from_status( $item->status) )
+					esc_html( Cloud_API::get_status_name_from_status( $item->status ) )
 				);
 
 			case 'scope':
@@ -250,7 +284,7 @@ class Cloud_List_Table extends WP_List_Table {
 
 				return sprintf(
 					'<a id="snippet-type-%s" class="snippet-type-badge snippet-type" data-type="%s">%s</a>',
-					esc_attr( $item->cloud_id ),
+					esc_attr( $type ),
 					esc_attr( strtolower( $type ) ),
 					esc_html( $type )
 				);
@@ -269,7 +303,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return array<string, string|array<string|boolean>> The IDs of the columns that can be sorted
 	 */
-	public function get_sortable_columns() {
+	public function get_sortable_columns(): array {
 		$sortable_columns = [
 			'name'    => 'name',
 			'type'    => [ 'type', true ],
@@ -287,8 +321,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return string The content of the column to output.
 	 */
-	public function column_download( $item ) {
-
+	public function column_download( Cloud_Snippet $item ): string {
 		return cloud_lts_build_action_links( $item, 'codevault' );
 	}
 
@@ -299,13 +332,8 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return string The column content to be printed.
 	 */
-	protected function column_cb( $item ) {
-		$out = sprintf(
-			'<input type="checkbox" name="%s[]" value="%s">',
-			$item->shared_network ? 'shared_cloud_ids' : 'cloud_ids',
-			$item->id
-		);
-
+	protected function column_cb( $item ): string {
+		$out = sprintf( '<input type="checkbox" name="cloud_ids[]" value="%s">', $item->id );
 		return apply_filters( 'code_snippets/cloud_list_table/column_cb', $out, $item );
 	}
 
@@ -316,7 +344,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return string The column content to be printed.
 	 */
-	protected function column_code( $item ) {
+	protected function column_code( Cloud_Snippet $item ): string {
 		$out = sprintf(
 			'<input id="cloud-snippet-code-%s" class="cloud-snippet-item hidden" type="hidden" name="code" value="%s" />',
 			esc_attr( $item->id ),
@@ -333,7 +361,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return array The classes to include on the table element.
 	 */
-	public function get_table_classes() {
+	public function get_table_classes(): array {
 		$classes = array( 'cloud-table', 'widefat', $this->_args['plural'] );
 
 		return apply_filters( 'code_snippets/cloud_list_table/table_classes', $classes );
@@ -351,7 +379,7 @@ class Cloud_List_Table extends WP_List_Table {
 
 		printf(
 			'<tr id="snippet-%s" class="%s" data-snippet-scope="%s">',
-			esc_attr( $item->cloud_id ),
+			esc_attr( $item->id ),
 			esc_attr( $row_class ),
 			esc_attr( $item->scope )
 		);
@@ -374,21 +402,22 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Bulk Download Snippets.
 	 *
-	 * @param array $ids array of int cloud ids to download
-	 * @param string $source whether the download is from the codevault or search results i.e. download-codevault-selected
+	 * @param array  $ids            List of int cloud ids to download.
+	 * @param string $source         Whether the download is from the codevault or search results i.e. download-codevault-selected.
+	 * @param int    $codevault_page The current page of the codevault.
 	 *
 	 * @return void
 	 */
-	public function download_snippets( $ids, $source ) {
+	public function download_snippets( array $ids, string $source, int $codevault_page ) {
 		$source = explode( '-', $source )[1];
 		foreach ( $ids as $id ) {
-			//Check if snippet already exists in cloud link transient and skip if it does 
+			// Check if snippet already exists in cloud link transient and skip if it does.
 			$cloud_link = code_snippets()->cloud_api->get_cloud_link( $id, 'cloud' );
 			if ( $cloud_link ) {
 				continue;
 			}
-			//TODO: For bulk download codevault snippets this doesn't update cloud link for first snippet
-			$snippet = $this->cloud_api->download_or_update_snippet( $id, $source, 'download' );
+			// TODO: For bulk download codevault snippets this doesn't update cloud link for first snippet.
+			$this->cloud_api->download_or_update_snippet( $id, $source, 'download', $codevault_page );
 		}
 	}
 
@@ -410,25 +439,12 @@ class Cloud_List_Table extends WP_List_Table {
 
 		$paginate = cloud_lts_pagination( $which, 'cloud', $total_items, $total_pages, $pagenum );
 		$page_class = $paginate['page_class'];
-		$output = $paginate['output'];	
+		$output = $paginate['output'];
 
-		echo $this->_pagination = "<div class='tablenav-pages{$page_class}'>{$output}</div>";
-		//echo wp_kses_post( $this->_pagination ); TODO: This removes the top input box for page number
+		$this->_pagination = "<div class='tablenav-pages{$page_class}'>{$output}</div>";
+
+		// TODO: Add proper input escaping. wp_kses_post removes the top input box for page number.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $this->_pagination;
 	}
-
-	/**
-	 * Display the admin notice
-	 *
-	 * @param string $message The message to display.
-	 * @param string $type the type of notice - 'success' or 'error'.
-	 *
-	 * @return void
-	 */
-	public function cloud_display_admin_notice($message, $type) {
-		$class = ($type == 'error') ? 'notice notice-error' : 'notice notice-success';
-		echo '<div class="' . $class . '"><p>' . $message . '</p></div>';
-
-		add_action('admin_notices', 'cloud_display_admin_notice');
-	}
-
 }

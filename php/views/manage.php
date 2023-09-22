@@ -8,9 +8,11 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_API;
-
-/* @var Manage_Menu $this */
+/**
+ * Loaded from the manage menu class.
+ *
+ * @var Manage_Menu $this
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
@@ -19,6 +21,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 $licensed = code_snippets()->licensing->is_licensed();
 $types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin::get_types() );
 $current_type = $this->get_current_type();
+
+if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
+	echo '<div class="notice beta-test-notice"><p id="beta-testing">';
+	echo wp_kses(
+		__( 'Thank you for testing this <span class="highlight-yellow">Beta version of Code Snippets</span>. We would love to hear your feedback.', 'code-snippets' ),
+		[ 'span' => [ 'class' => [ 'highlight-yellow' ] ] ]
+	);
+
+	$feedback_url = __( 'mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback', 'code-snippets' );
+	printf( '<a href="%s">%s</a>', esc_url( $feedback_url ), esc_html__( 'Click here to submit your feedback', 'code-snippets' ) );
+	echo '</p></div>';
+}
 
 ?>
 
@@ -30,8 +44,6 @@ $current_type = $this->get_current_type();
 		$this->render_page_title_actions( code_snippets()->is_compact_menu() ? [ 'add', 'import', 'settings' ] : [ 'add', 'import' ] );
 
 		$this->list_table->search_notice();
-		
-
 		?>
 	</h1>
 
@@ -58,55 +70,65 @@ $current_type = $this->get_current_type();
 	</h2>
 
 	<?php
-	$desc = code_snippets()->get_type_description( $current_type );
-	if ( $desc ) {
-		echo '<p class="snippet-type-description">', esc_html( $desc );
 
-		$type_names = [
-			'php'   => __( 'function snippets', 'code-snippets' ),
-			'html'  => __( 'content snippets', 'code-snippets' ),
-			'css'   => __( 'style snippets', 'code-snippets' ),
-			'js'    => __( 'javascript snippets', 'code-snippets' ),
-			'cloud' => __( 'cloud snippets', 'code-snippets' ),
-			'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
-			'bundles' => __( 'Bundles', 'code-snippets' ),
-			'ai' => __( 'AI Generate', 'code-snippets' ),
-		];
+	$type_info = [
+		'php'   => [
+			__( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
+			__( 'Learn more about function snippets &rarr;', 'code-snippets' ),
+			'https://codesnippets.pro/learn-php/',
+		],
+		'html'  => [
+			__( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
+			__( 'Learn more about content snippets &rarr;', 'code-snippets' ),
+			'https://codesnippets.pro/learn-html/',
+		],
+		'css'   => [
+			__( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
+			esc_html__( 'Learn more about style snippets &rarr;', 'code-snippets' ),
+			'https://codesnippets.pro/learn-css/',
+		],
+		'js'    => [
+			__( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
+			__( 'Learn more about javascript snippets &rarr;', 'code-snippets' ),
+			'https://codesnippets.pro/learn-js/',
+		],
+		'cloud' => [
+			__( 'See all your public and private snippets that are stored in your Code Snippet Cloud codevault.', 'code-snippets' ),
+			__( 'Learn more about Code Snippets Cloud &rarr;', 'code-snippets' ),
+			'https://codesnippets.cloud/getstarted/',
+		],
+	];
 
-		$type_names = apply_filters( 'code_snippets/admin/manage/type_names', $type_names );
 
-		/* translators: %s: snippet type name */
-		$learn_more_text = sprintf( __( 'Learn more about %s &rarr;', 'code-snippets' ), $type_names[ $current_type ] );
-
-		$learn_url = 'cloud' === $current_type ?
-			Cloud_API::CLOUD_URL :
-			"https://codesnippets.pro/learn-$current_type/";
+	if ( isset( $type_info[ $current_type ] ) ) {
+		$info = $type_info[ $current_type ];
 
 		printf(
-			' <a href="%s" target="_blank">%s</a></p>',
-			esc_url( $learn_url ),
-			esc_html( $learn_more_text )
+			'<p class="snippet-type-description">%s <a href="%s" target="_blank">%s</a></p>',
+			esc_html( $info[0] ),
+			esc_url( $info[2] ),
+			esc_html( $info[1] )
 		);
 	}
-	?>
 
-	<?php
 	do_action( 'code_snippets/admin/manage/before_list_table' );
 	$this->list_table->views();
 
-	switch ($current_type) {
+	switch ( $current_type ) {
 		case 'cloud_search':
-			include_once( 'partials/cloud-search.php' );
+			include_once 'partials/cloud-search.php';
 			break;
 
 		case 'bundles':
-			include_once( 'partials/bundles.php' );
+			include_once 'partials/bundles.php';
 			break;
-			
+
 		default:
-			include_once( 'partials/list-table.php' );
+			include_once 'partials/list-table.php';
 			break;
 	}
 
-	do_action( 'code_snippets/admin/manage', $current_type ); ?>
+	do_action( 'code_snippets/admin/manage', $current_type );
+
+	?>
 </div>

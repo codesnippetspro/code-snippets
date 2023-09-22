@@ -18,7 +18,7 @@ class Block_Editor {
 		}
 
 		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'enqueue_block_editor_assets', array( 'Frontend', 'enqueue_all_prism_themes' ) );
+		add_action( 'enqueue_block_editor_assets', array( Frontend::class, 'enqueue_all_prism_themes' ) );
 
 		add_filter(
 			class_exists( 'WP_Block_Editor_Context' ) ? 'block_categories_all' : 'block_categories',

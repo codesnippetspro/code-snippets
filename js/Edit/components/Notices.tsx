@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import React, { Dispatch, MouseEventHandler, ReactNode, SetStateAction } from 'react'
+import React, { Dispatch, MouseEventHandler, ReactNode, SetStateAction, useEffect, useRef } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { SnippetInputProps } from '../../types/SnippetInputProps'
 import { Notice } from '../../types/Notice'
@@ -10,17 +10,23 @@ interface DismissibleNoticeProps {
 	children?: ReactNode
 }
 
-const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ classNames, onRemove, children }) =>
-	<div id="message" className={classnames('notice fade is-dismissible', classNames)}>
-		<>{children}</>
+const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ classNames, onRemove, children }) => {
+	const ref = useRef<HTMLDivElement>(null)
+	useEffect(() => ref?.current?.scrollIntoView({ behavior: 'smooth' }), [ref])
 
-		<button type="button" className="notice-dismiss" onClick={event => {
-			event.preventDefault()
-			onRemove(event)
-		}}>
-			<span className="screen-reader-text">{__('Dismiss notice.', 'code-snippets')}</span>
-		</button>
-	</div>
+	return (
+		<div id="message" className={classnames('notice fade is-dismissible', classNames)} ref={ref}>
+			<>{children}</>
+
+			<button type="button" className="notice-dismiss" onClick={event => {
+				event.preventDefault()
+				onRemove(event)
+			}}>
+				<span className="screen-reader-text">{__('Dismiss notice.', 'code-snippets')}</span>
+			</button>
+		</div>
+	)
+}
 
 export interface NoticesProps extends SnippetInputProps {
 	notice: Notice | undefined

@@ -2,8 +2,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\REST_API\Snippets_REST_Controller;
-
 /**
  * Functions specific to the administration interface
  *
@@ -155,9 +153,9 @@ class Admin {
 			array(
 				sprintf(
 					$format,
-					'https://codesnippets.pro/about/',
+					'https://help.codesnippets.pro/',
 					esc_attr__( 'Find out more about Code Snippets', 'code-snippets' ),
-					esc_html__( 'About', 'code-snippets' )
+					esc_html__( 'Docs & FAQ', 'code-snippets' )
 				),
 				sprintf(
 					$format,
@@ -305,32 +303,37 @@ class Admin {
 			);
 
 		} else {
+			$current_url = remove_query_arg( [ 'cloud_select', 'cloud_search' ] );
+
 			printf(
 				'<a class="nav-tab" href="%s" data-snippet-type="%s">',
-				esc_url( add_query_arg( 'type', $type_name ) ),
+				esc_url( add_query_arg( 'type', $type_name, $current_url ) ),
 				esc_attr( $type_name )
 			);
 		}
-		
-		echo esc_html( $label ); 
-		//'all' === $type_name ? '' : ' <span class="badge">' . esc_html( $type_name ) . '</span>', '</a>';
-		switch ($type_name) {
+
+		echo esc_html( $label );
+
+		switch ( $type_name ) {
 			case 'all':
-				'';
 				break;
 			case 'cloud':
-				echo '<span class="cloud-badge dashicons dashicons-cloud cloud-icon cloud-synced"></span>';	
+				echo '<span class="cloud-badge dashicons dashicons-cloud cloud-icon cloud-synced"></span>';
 				break;
 			case 'cloud_search':
-				echo '<span class="cloud-badge dashicons dashicons-search cloud-icon cloud-downloaded"></span>';	
+				echo '<span class="cloud-badge dashicons dashicons-search cloud-icon cloud-downloaded"></span>';
 				break;
 			case 'bundles':
-				echo '<span class="cloud-badge dashicons dashicons-screenoptions cloud-icon cloud-bundle"></span>';	
+				echo '<span class="cloud-badge dashicons dashicons-screenoptions cloud-icon cloud-bundle"></span>';
+				break;
+			case 'ai':
+				echo '<span class="cloud-badge ai-icon">', esc_html__( 'AI', 'code-snippets' ), '</span>';
 				break;
 			default:
 				echo '<span class="badge">' . esc_html( $type_name ) . '</span>';
 				break;
 		}
+
 		echo '</a>';
 	}
 }

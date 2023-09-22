@@ -25,11 +25,15 @@
 		<!-- allow smart tabs -->
 		<exclude name="WordPress.WhiteSpace.PrecisionAlignment.Found" />
 		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed" />
+		<exclude name="Universal.WhiteSpace.PrecisionAlignment.Found" />
+
+		<!-- working with custom tables makes direct queries a necessity. -->
+		<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
 
 		<!-- allow modern PHP syntax -->
 		<exclude name="WordPress.PHP.DisallowShortTernary.Found" />
 		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound" />
-		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
 
 		<!-- todo -->
 		<exclude name="WordPress.Security.NonceVerification.Recommended" />

@@ -2,7 +2,7 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_API; 
+use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use Code_Snippets\REST_API\Cloud_REST_Controller;
 use Code_Snippets\REST_API\CloudAI_REST_Controller;
@@ -139,7 +139,7 @@ class Plugin {
 	 *
 	 * @return void
 	 *
-	 * @since [NEXT_VERSION]
+	 * @since 3.4.0
 	 */
 	public function register_rest_api_controllers() {
 		$controllers = [ new Snippets_REST_Controller(), new Cloud_REST_Controller(), new CloudAI_REST_Controller() ];
@@ -181,6 +181,7 @@ class Plugin {
 		$edit = array( 'edit', 'edit-snippet' );
 		$import = array( 'import', 'import-snippets', 'import-code-snippets' );
 		$settings = array( 'settings', 'snippets-settings' );
+		$cloud = array( 'cloud', 'cloud-snippets' );
 
 		if ( in_array( $menu, $edit, true ) ) {
 			return 'edit-snippet';
@@ -190,6 +191,8 @@ class Plugin {
 			return 'import-code-snippets';
 		} elseif ( in_array( $menu, $settings, true ) ) {
 			return 'snippets-settings';
+		} elseif ( in_array( $menu, $cloud, true ) ) {
+			return 'snippets&type=cloud';
 		} else {
 			return 'snippets';
 		}
@@ -234,7 +237,7 @@ class Plugin {
 	 *
 	 * @return string The URL to the edit snippet page for that snippet.
 	 */
-	public function get_snippet_edit_url(int $snippet_id, string $context = 'self' ): string {
+	public function get_snippet_edit_url( int $snippet_id, string $context = 'self' ): string {
 		return add_query_arg(
 			'id',
 			absint( $snippet_id ),
@@ -317,13 +320,13 @@ class Plugin {
 		return apply_filters(
 			'code_snippets_types',
 			array(
-				'php'   => __( 'Functions', 'code-snippets' ),
-				'html'  => __( 'Content', 'code-snippets' ),
-				'css'   => __( 'Styles', 'code-snippets' ),
-				'js'    => __( 'Scripts', 'code-snippets' ),
-				'cloud' => __( 'Codevault', 'code-snippets' ),
+				'php'          => __( 'Functions', 'code-snippets' ),
+				'html'         => __( 'Content', 'code-snippets' ),
+				'css'          => __( 'Styles', 'code-snippets' ),
+				'js'           => __( 'Scripts', 'code-snippets' ),
+				'cloud'        => __( 'Codevault', 'code-snippets' ),
 				'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
-				'bundles' => __( 'Bundles', 'code-snippets' ),
+				'bundles'      => __( 'Bundles', 'code-snippets' ),
 			)
 		);
 	}
@@ -336,29 +339,7 @@ class Plugin {
 	 * @return bool
 	 */
 	public static function is_pro_type( string $type ): bool {
-		return 'css' === $type || 'js' === $type;
-	}
-
-	/**
-	 * Retrieve the description for a particular snippet type.
-	 *
-	 * @param string $type Snippet type name.
-	 *
-	 * @return string
-	 */
-	public function get_type_description( string $type ): string {
-		$descriptions = array(
-			'php'   => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
-			'html'  => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
-			'css'   => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
-			'js'    => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
-			'cloud' => __( 'See all your public and private snippets that are stored in your Code Snippet Cloud Codevault.', 'code-snippets' ),
-			'cloud_search' => __( 'Explore and Search user contributed code snippets from Code Snippet Cloud.', 'code-snippets' ),
-			'bundles' => __( 'Bundles are collections of snippets that can be downloaded from the cloud as a batch.', 'code-snippets' ),
-		);
-
-		$descriptions = apply_filters( 'code_snippets/plugins/type_descriptions', $descriptions );
-		return $descriptions[ $type ] ?? '';
+		return 'css' === $type || 'js' === $type || 'cloud' === $type || 'bundles' === $type;
 	}
 
 	/**

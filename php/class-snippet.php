@@ -2,7 +2,6 @@
 
 namespace Code_Snippets;
 
-use Data_Item;
 use DateTime;
 use DateTimeZone;
 use Exception;
@@ -26,8 +25,8 @@ use Exception;
  * @property string                 $modified           The date and time when the snippet data was most recently saved to the database.
  * @property array{string,int}|null $code_error         Code error encountered when last testing snippet code.
  * @property object|null            $conditions         Snippet conditionals
- * @property int           			$revision           Revision or version number of snippet.
- * @property string        			$cloud_id           Cloud ID and ownership status of snippet.
+ * @property int                    $revision           Revision or version number of snippet.
+ * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
  *
  * @property-read string            $display_name       The snippet name if it exists or a placeholder if it does not.
  * @property-read string            $tags_list          The tags in string list format.
@@ -113,7 +112,7 @@ class Snippet extends Data_Item {
 				return is_bool( $value ) ? $value : (bool) $value;
 
 			default:
-				return parent::prepare_field( $value, $field );
+				return $value;
 		}
 	}
 
@@ -239,13 +238,6 @@ class Snippet extends Data_Item {
 	 */
 	public function update_modified() {
 		$this->modified = gmdate( self::DATE_FORMAT );
-	}
-
-	/**
-	 * Increment the revision number by one.
-	 */
-	public function increment_revision() {
-		$this->revision++;
 	}
 
 	/**
@@ -453,5 +445,12 @@ class Snippet extends Data_Item {
 	 */
 	private function get_is_pro(): bool {
 		return 'css' === $this->type || 'js' === $this->type;
+	}
+
+	/**
+	 * Increment the revision number by one.
+	 */
+	public function increment_revision() {
+		++$this->revision;
 	}
 }

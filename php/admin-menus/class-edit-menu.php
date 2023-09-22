@@ -2,7 +2,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\REST_API\Snippets_REST_Controller;
 use function Code_Snippets\Settings\get_setting;
 
 /**
@@ -27,13 +26,6 @@ class Edit_Menu extends Admin_Menu {
 	 * @see Edit_Menu::load_snippet_data()
 	 */
 	protected $snippet = null;
-
-	/**
-	 * Whether the edit screen should be read-only or editable.
-	 *
-	 * @var boolean
-	 */
-	protected $read_only = false;
 
 	/**
 	 * Constructor.
@@ -207,6 +199,7 @@ class Edit_Menu extends Admin_Menu {
 			'CODE_SNIPPETS_EDIT',
 			[
 				'snippet'           => $this->snippet->get_fields(),
+				'menuUrl'           => $plugin->get_menu_url(),
 				'addNewUrl'         => $plugin->get_menu_url( 'add' ),
 				'pageTitleActions'  => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'manage', 'import', 'settings' ] ) : [],
 				'isPreview'         => isset( $_REQUEST['preview'] ),

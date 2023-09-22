@@ -17,7 +17,6 @@ $js-active: #d44500;
 $js-background: #cd6600;
 $js-highlight: #cd6600;
 
-
 @mixin link-colors($color, $lightness: 15%) {
 	a {
 		color: $color;

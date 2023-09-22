@@ -2,8 +2,7 @@
 
 namespace Code_Snippets\Cloud;
 
-use Data_Item;
-use function Code_Snippets\code_snippets_build_tags_array;
+use Code_Snippets\Data_Item;
 
 /**
  * A list of snippets as retrieved from the cloud API.
@@ -11,12 +10,12 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @since   3.4.0
  * @package Code_Snippets
  *
- * @property Cloud_Snippet[] $snippets       List of snippet items for the current page.
- * @property integer         $page   Page of data that this data belongs to.
- * @property integer         $total_pages    Total number of available pages of items.
- * @property integer         $total_snippets Total number of available snippet items.
- * @property array         	 $cloud_id_rev  An array of all cloud snippet ids and their revision numbers.
- * @property bool         	 $success	  	 If the request has any results.
+ * @property Cloud_Snippet[] $snippets        List of snippet items for the current page.
+ * @property integer         $page            Page of data that this data belongs to.
+ * @property integer         $total_pages     Total number of available pages of items.
+ * @property integer         $total_snippets  Total number of available snippet items.
+ * @property array           $cloud_id_rev    An array of all cloud snippet IDs and their revision numbers.
+ * @property bool            $success         If the request has any results.
  */
 class Cloud_Snippets extends Data_Item {
 
@@ -31,15 +30,15 @@ class Cloud_Snippets extends Data_Item {
 				'snippets'       => [],
 				'total_snippets' => 0,
 				'total_pages'    => 0,
-				'page'   		 => 0,
-				'cloud_id_rev' 	 => [],
+				'page'           => 0,
+				'cloud_id_rev'   => [],
 			],
 			$initial_data,
 			[
-				'items'       => 'snippets',
-				'total_items' => 'total_snippets',
-				'page'	  	  => 'page',
-				'cloud_id_rev'=> 'cloud_id_rev',
+				'items'        => 'snippets',
+				'total_items'  => 'total_snippets',
+				'page'         => 'page',
+				'cloud_id_rev' => 'cloud_id_rev',
 			]
 		);
 	}
@@ -52,7 +51,7 @@ class Cloud_Snippets extends Data_Item {
 	 *
 	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_field( $value, $field ) {
+	protected function prepare_field( $value, string $field ) {
 		switch ( $field ) {
 			case 'page':
 			case 'total_pages':
@@ -71,7 +70,7 @@ class Cloud_Snippets extends Data_Item {
 	 *
 	 * @return Cloud_Snippets[] The field in the correct format.
 	 */
-	protected function prepare_snippets( $snippets ) {
+	protected function prepare_snippets( $snippets ): array {
 		$result = [];
 		$snippets = is_array( $snippets ) ? $snippets : [ $snippets ];
 

@@ -25,7 +25,11 @@ export const downloadAsFile = (content: BlobPart, filename: string, type: string
 	setTimeout(() => link.click(), 0)
 }
 
-export const downloadSnippetExportFile = (content: BlobPart, { id, name, scope }: Snippet, type?: keyof typeof MIME_INFO) => {
+export const downloadSnippetExportFile = (
+	content: BlobPart,
+	{ id, name, scope }: Snippet,
+	type?: keyof typeof MIME_INFO
+) => {
 	const [ext, mimeType] = MIME_INFO[type ?? getSnippetType(scope)]
 
 	const title = name.toLowerCase().replace(/[^\w-]+/g, '-') ?? `snippet-${id}`

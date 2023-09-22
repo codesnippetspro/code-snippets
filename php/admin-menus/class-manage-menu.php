@@ -6,7 +6,6 @@ use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\Cloud\Cloud_List_Table;
 use Code_Snippets\Cloud\Cloud_Search_List_Table;
 use Code_Snippets\Cloud\Cloud_Bundles;
-use Code_Snippets\Cloud\Cloud_Search_Install_List_Table;
 
 /**
  * This class handles the manage snippets menu
@@ -22,7 +21,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @var Cloud_API
 	 */
 	private $cloud_api;
- 
+
 	/**
 	 * Instance of the list table class.
 	 *
@@ -135,7 +134,6 @@ class Manage_Menu extends Admin_Menu {
 		);
 
 		add_action( 'load-' . $hook, array( $class, 'load' ) );
-
 	}
 
 	/**
@@ -148,60 +146,39 @@ class Manage_Menu extends Admin_Menu {
 		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
 
-		// Load the appropriate list table classes.
+		// Initialize the search cloud list table class.
+		$this->cloud_search_list_table = new Cloud_Search_List_Table();
+		$this->cloud_search_list_table->prepare_items();
+
+		// Initialize the list table class.
 		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
 		$this->load_cloud();
 	}
 
 	/**
-	 * Get the currently displayed snippet type.
-	 *
-	 * @return string
-	 */
-	protected function get_current_type() {
-		$types = Plugin::get_types();
-		$current_type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'all';
-		return isset( $types[ $current_type ] ) ? $current_type : 'all';
-	}
-
-	/**
-	 * Display Cloud Key Notice
-	 *
-	 * @return void
-	 */
-	public function display_cloud_key_notice() {
-		// translators: %s: cloud settings page.
-		$message = __( 'Please enter a valid Cloud API Token in the <a href="%s">Cloud Settings</a> to enable Cloud Sync.', 'code-snippets' );
-		$message = sprintf( $message, esc_url( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings ' ) ) ) );
-
-		printf(
-			'<div class="notice notice-error is-dismissible"><p>%s</p></div>',
-			wp_kses_post( $message )
-		);
-	}
-
-	/**
 	 * Run startup checks for cloud connection or redirect to cloud connection page
 	 */
 	private function load_cloud() {
-		if ( ! empty( $_REQUEST['refresh_cloud'] ) ) {
-			$this->cloud_api->refresh_synced_data();
-			return true;
-			//Include below line if you want to regenerate cloud data from as refresh synced just deletes the data
-			//wp_safe_redirect( esc_url_raw( add_query_arg( 'result', 'cloud-refreshed' ) ) ); 
-		}
+		$cloud_types = [ 'cloud', 'cloud_search', 'bundles' ];
 
-		$cloud_types = [ 'cloud', 'cloud_search', 'bundles'];
-
-
-		if( ! in_array( $this->get_current_type(), $cloud_types ) || ! isset( $_REQUEST['type'] ) ) {
+		if ( ! in_array( $this->get_current_type(), $cloud_types, true ) || ! isset( $_REQUEST['type'] ) ) {
 			return;
 		}
 
 		// Ensure cloud connection is available.
-		if ( ! $this->cloud_api->is_cloud_connection_available() ) {
-			wp_safe_redirect( add_query_arg( 'section', 'cloud', code_snippets()->get_menu_url( 'settings' ) ) );
+		$cloud_key = $this->cloud_api->is_cloud_key_available();
+
+		if ( ! $cloud_key['success'] ) {
+			wp_safe_redirect(
+				esc_url_raw(
+					add_query_arg(
+						'result',
+						'cloud-key-' . $cloud_key['redirect-slug'],
+						code_snippets()->get_menu_url( 'manage' )
+					)
+				)
+			);
 			exit;
 		}
 
@@ -240,50 +217,40 @@ class Manage_Menu extends Admin_Menu {
 			true
 		);
 
-		wp_localize_script(
-			'code-snippets-manage-js',
-			'code_snippets_manage_i18n',
-			array(
-				'activate'         => __( 'Activate', 'code-snippets' ),
-				'deactivate'       => __( 'Deactivate', 'code-snippets' ),
-				'activation_error' => __( 'An error occurred when attempting to activate', 'code-snippets' ),
-			)
-		);
-
 		if ( 'cloud' === $this->get_current_type() || 'cloud_search' === $this->get_current_type() ) {
 			Frontend::enqueue_all_prism_themes();
 		}
 	}
 
 	/**
+	 * Get the currently displayed snippet type.
+	 *
+	 * @return string
+	 */
+	protected function get_current_type(): string {
+		$types = Plugin::get_types();
+		$current_type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'all';
+		return isset( $types[ $current_type ] ) ? $current_type : 'all';
+	}
+
+	/**
+	 * Display a Go Pro badge.
+	 *
+	 * @return void
+	 */
+	public function print_pro_message() {
+		if ( ! code_snippets()->licensing->is_licensed() ) {
+			echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
+		}
+	}
+
+	/**
 	 * Print the status and error messages
+	 *
+	 * @return void;
 	 */
 	protected function print_messages() {
-		// Output a warning if safe mode is active.
-		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
-			echo '<div id="message" class="error fade"><p>';
-			echo wp_kses_post( __( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank">Help</a>', 'code-snippets' ) );
-			echo '</p></div>';
-		}
-
-		$this->print_result_message(
-			apply_filters(
-				'code_snippets/manage/result_messages',
-				array(
-					'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
-					'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
-					'activated-multi'   => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
-					'deactivated'       => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
-					'deactivated-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
-					'deleted'           => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
-					'deleted-multi'     => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
-					'cloned'            => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
-					'cloned-multi'      => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
-					'cloud-key-error'   => __( 'There is a problem with your Code Snippets Cloud Key.', 'code-snippets' ),
-					'cloud-refreshed'   => __( 'Synced cloud data refreshed <strong>successfully</strong>.', 'code-snippets' ),
-				)
-			)
-		);
+		$this->render_view( 'partials/list-table-notices' );
 	}
 
 	/**
@@ -316,7 +283,7 @@ class Manage_Menu extends Admin_Menu {
 			array( 'id' => $snippet->id ),
 			array( '%d' ),
 			array( '%d' )
-		); // db call ok.
+		);
 
 		clean_snippets_cache( $table );
 	}
@@ -378,21 +345,18 @@ class Manage_Menu extends Admin_Menu {
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
-			} else {
-
-				if ( $snippet->active ) {
-					$result = activate_snippet( $snippet->id, $snippet->network );
-					if ( is_string( $result ) ) {
-						wp_send_json_error(
-							array(
-								'type'    => 'action_error',
-								'message' => $result,
-							)
-						);
-					}
-				} else {
-					deactivate_snippet( $snippet->id, $snippet->network );
+			} elseif ( $snippet->active ) {
+				$result = activate_snippet( $snippet->id, $snippet->network );
+				if ( is_string( $result ) ) {
+					wp_send_json_error(
+						array(
+							'type'    => 'action_error',
+							'message' => $result,
+						)
+					);
 				}
+			} else {
+				deactivate_snippet( $snippet->id, $snippet->network );
 			}
 		}
 

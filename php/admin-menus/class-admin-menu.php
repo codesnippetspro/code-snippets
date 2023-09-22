@@ -125,13 +125,13 @@ abstract class Admin_Menu {
 	/**
 	 * Retrieve a result message based on a posted status
 	 *
+	 * @param string                $notice_type Class to use on buttons.
 	 * @param array<string, string> $messages    List of possible messages to display.
 	 * @param string                $request_var Name of $_REQUEST variable to check.
-	 * @param string                $class       Class to use on buttons. Default 'updated'.
 	 *
 	 * @return bool Whether a result message was printed.
 	 */
-	protected function print_result_message( array $messages, string $request_var = 'result', string $class = 'updated' ): bool {
+	protected function print_result_message( string $notice_type, array $messages, string $request_var = 'result' ): bool {
 
 		if ( empty( $_REQUEST[ $request_var ] ) ) {
 			return false;
@@ -141,9 +141,9 @@ abstract class Admin_Menu {
 
 		if ( isset( $messages[ $result ] ) ) {
 			printf(
-				'<div id="message" class="%2$s fade"><p>%1$s</p></div>',
+				'<div id="message" class="notice notice-%2$s fade"><p>%1$s</p></div>',
 				wp_kses_post( $messages[ $result ] ),
-				esc_attr( $class )
+				esc_attr( $notice_type )
 			);
 
 			return true;
@@ -184,7 +184,7 @@ abstract class Admin_Menu {
 	 *
 	 * @return array<string, string> Link labels keyed to link URLs.
 	 */
-	protected function page_title_action_links( array $actions ): array {
+	public function page_title_action_links( array $actions ): array {
 		$plugin = code_snippets();
 		$links = [];
 
@@ -229,7 +229,7 @@ abstract class Admin_Menu {
 	 *
 	 * @param array<string> $actions List of actions to render as links, as array values.
 	 */
-	protected function render_page_title_actions( array $actions ) {
+	public function render_page_title_actions( array $actions ) {
 		foreach ( $this->page_title_action_links( $actions ) as $label => $url ) {
 			printf( '<a href="%s" class="page-title-action">%s</a>', esc_url( $url ), esc_html( $label ) );
 		}

@@ -28,14 +28,14 @@ function add_self_option( bool $network, string $option, $value ): bool {
 /**
  * Retrieves an option value based on an option name from either the current site or the current network
  *
- * @param bool   $network Whether to get a network-wide option.
- * @param string $option  Name of option to retrieve. Expected to not be SQL-escaped.
- * @param mixed  $default Optional value to return if option doesn't exist. Default false.
+ * @param bool   $network       Whether to get a network-wide option.
+ * @param string $option        Name of option to retrieve. Expected to not be SQL-escaped.
+ * @param mixed  $default_value Optional value to return if option doesn't exist. Default false.
  *
  * @return mixed Value set for the option.
  */
-function get_self_option( bool $network, string $option, $default = false ) {
-	return $network ? get_site_option( $option, $default ) : get_option( $option, $default );
+function get_self_option( bool $network, string $option, $default_value = false ) {
+	return $network ? get_site_option( $option, $default_value ) : get_option( $option, $default_value );
 }
 
 /**
@@ -134,7 +134,6 @@ function get_settings_sections(): array {
 	$sections = array(
 		'general' => __( 'General', 'code-snippets' ),
 		'editor'  => __( 'Code Editor', 'code-snippets' ),
-		'cloud'   => __( 'Cloud Sync', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
@@ -220,7 +219,6 @@ function sanitize_setting_value( array $field, $input_value ) {
 			return $results;
 
 		case 'text':
-		case 'cloud_token':
 		case 'hidden':
 			return trim( sanitize_text_field( $input_value ) );
 
@@ -247,7 +245,6 @@ function sanitize_settings( array $input ): array {
 
 	// Don't directly loop through $input as it does not include as deselected checkboxes.
 	foreach ( get_settings_fields() as $section_id => $fields ) {
-
 		foreach ( $fields as $field_id => $field ) {
 
 			// Fetch the corresponding input value from the posted data.

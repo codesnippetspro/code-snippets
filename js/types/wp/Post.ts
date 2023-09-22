@@ -37,6 +37,7 @@ export interface Post {
 
 export type PostStatus = 'publish' | 'future' | 'draft' | 'pending' | 'private'
 
-export type PostFormat = 'standard' | 'aside' | 'chat' | 'gallery' | 'link' | 'image' | 'quote' | 'status' | 'video' | 'audio'
+export type PostFormat =
+	'standard' | 'aside' | 'chat' | 'gallery' | 'link' | 'image' | 'quote' | 'status' | 'video' | 'audio'
 
 export type Posts = Post[]

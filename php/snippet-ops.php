@@ -7,6 +7,7 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use ParseError;
 use function Code_Snippets\Settings\get_self_option;
@@ -72,7 +73,7 @@ function get_snippets( array $ids = array(), bool $network = null ): array {
 
 	// Fetch all snippets from the database if none are cached.
 	if ( ! is_array( $snippets ) ) {
-		$results = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A ); // db call ok.
+		$results = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A );
 
 		$snippets = $results ?
 			array_map(
@@ -123,7 +124,7 @@ function get_all_snippet_tags() {
 
 	// Grab all tags from the database.
 	$tags = array();
-	$all_tags = $wpdb->get_col( "SELECT tags FROM $table_name" ); // db call ok.
+	$all_tags = $wpdb->get_col( "SELECT tags FROM $table_name" );
 
 	// Merge all tags into a single array.
 	foreach ( $all_tags as $snippet_tags ) {
@@ -200,7 +201,8 @@ function get_snippet( int $id = 0, bool $network = null ): Snippet {
 		}
 
 		// Otherwise, retrieve the snippet from the database.
-		$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) ); // cache pass, db call ok.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+		$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) );
 		$snippet = new Snippet( $snippet_data );
 	}
 
@@ -208,40 +210,39 @@ function get_snippet( int $id = 0, bool $network = null ): Snippet {
 	return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $network );
 }
 
+
 /**
- * Retrieve a single snippets from the database using its cloud ID.
+ * Retrieve snippet holding cloud token and external API tokens
  *
  * Read operation.
  *
- * @param string       $cloud_id  The Cloud ID of the snippet to retrieve.
- * @param boolean|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
- *
- * @return Snippet|null A single snippet object or null if no snippet was found.
+ * @return Snippet|boolean - Returns the snippet code if found, false if not found.
  *
  * @since 3.5.0
  */
-function get_snippet_by_cloud_id( $cloud_id, $multisite = null ) {
+function get_snippet_with_token_data() {
 	global $wpdb;
 
-	$multisite = DB::validate_network_param( $multisite );
-	$table_name = code_snippets()->db->get_table_name( $multisite );
+	// First check if the token snippet ID is code snippets cloud settings.
+	$cloud_settings = get_option( Cloud_API::CLOUD_SETTINGS_CACHE_KEY );
 
-	$cached_snippets = wp_cache_get( "all_snippets_$table_name", CACHE_GROUP );
-
-	// Attempt to fetch snippet from the cached list, if it exists.
-	if ( is_array( $cached_snippets ) ) {
-		foreach ( $cached_snippets as $snippet ) {
-			if ( $snippet->cloud_id === $cloud_id ) {
-				return apply_filters( 'code_snippets/get_snippet_by_cloud_id', $snippet, $cloud_id, $multisite );
-			}
+	// Make sure the token snippet ID is set and not empty string.
+	if ( $cloud_settings && ! empty( $cloud_settings['token_snippet_id'] ) ) {
+		$token_snippet = get_snippet( $cloud_settings['token_snippet_id'] );
+		// Check if snippet is not empty snippet object.
+		if ( $token_snippet->id ) {
+			return $token_snippet;
 		}
 	}
 
-	// Otherwise, search for the snippet from the database.
-	$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE cloud_id = %s", $cloud_id ) ); // cache pass, db call ok.
-	$snippet = $snippet_data ? new Snippet( $snippet_data ) : null;
+	$table_name = code_snippets()->db->get_table_name();
 
-	return apply_filters( 'code_snippets/get_snippet_by_cloud_id', $snippet, $cloud_id, $multisite );
+	// This is the snippet that holds the cloud token and external API tokens -- Add more tags or specificity if needed?
+	// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+	$token_snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE tags LIKE '%extend_cs%' LIMIT 1" ) );
+
+	// Check if snippet returns any data from database call.
+	return $token_snippet ? new Snippet( $token_snippet ) : false;
 }
 
 /**
@@ -341,7 +342,7 @@ function activate_snippet( int $id, bool $network = null ) {
 		array( 'id' => $id ),
 		array( '%d' ),
 		array( '%d' )
-	); // db call ok.
+	);
 
 	if ( ! $result ) {
 		return __( 'Could not activate snippet.', 'code-snippets' );
@@ -387,7 +388,7 @@ function activate_snippets( array $ids, bool $network = null ) {
 
 		if ( ! $code_error ) {
 			$valid_ids[] = $snippet->id;
-			$valid_snippets = $snippet;
+			$valid_snippets[] = $snippet;
 		}
 	}
 
@@ -400,7 +401,7 @@ function activate_snippets( array $ids, bool $network = null ) {
 	$ids_format = implode( ',', array_fill( 0, count( $valid_ids ), '%d' ) );
 
 	// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-	$rows_updated = $wpdb->query( $wpdb->prepare( "UPDATE $table_name SET active = 1 WHERE id IN ($ids_format)", $valid_ids ) ); // db call ok.
+	$rows_updated = $wpdb->query( $wpdb->prepare( "UPDATE $table_name SET active = 1 WHERE id IN ($ids_format)", $valid_ids ) );
 
 	if ( ! $rows_updated ) {
 		return null;
@@ -437,7 +438,7 @@ function deactivate_snippet( int $id, bool $network = null ) {
 		array( 'id' => $id ),
 		array( '%d' ),
 		array( '%d' )
-	); // db call ok.
+	);
 
 	if ( ! $result ) {
 		return null;
@@ -476,7 +477,7 @@ function delete_snippet( int $id, bool $network = null ): bool {
 		$table,
 		array( 'id' => $id ),
 		array( '%d' )
-	); // db call ok.
+	);
 
 	if ( $result ) {
 		do_action( 'code_snippets/delete_snippet', $id, $network );
@@ -555,13 +556,16 @@ function save_snippet( $snippet ) {
 			}
 		}
 	}
-	// Increment the revision number.
-	$snippet->increment_revision();
+
+	// Increment the revision number unless revision = 1 or revision is not set.
+	if ( $snippet->revision && $snippet->revision > 1 ) {
+		$snippet->increment_revision();
+	}
 
 	// Build the list of data to insert. Shared network snippets are always considered inactive.
 	$data = [
 		'name'        => $snippet->name,
-		'description' => $snippet->desc == null ? 'test' : $snippet->desc,
+		'description' => $snippet->desc,
 		'code'        => $snippet->code,
 		'tags'        => $snippet->tags_list,
 		'scope'       => $snippet->scope,
@@ -571,25 +575,24 @@ function save_snippet( $snippet ) {
 		'revision'    => $snippet->revision,
 		'cloud_id'    => $snippet->cloud_id ? $snippet->cloud_id : null,
 	];
-	
+
 	// Create a new snippet if the ID is not set.
 	if ( 0 === $snippet->id ) {
-		$result = $wpdb->insert( $table, $data, '%s' ); // db call ok.
+		$result = $wpdb->insert( $table, $data, '%s' );
 		if ( false === $result ) {
 			return null;
 		}
-		
+
 		$snippet->id = $wpdb->insert_id;
 		do_action( 'code_snippets/create_snippet', $snippet, $table );
 	} else {
-
 		// Otherwise, update the snippet data.
-		$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] ); // db call ok.
+		$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
 		if ( false === $result ) {
 			return null;
 		}
 
-		// Check if snippet is has a cloud id.
+		// Check if snippet has a cloud id.
 		if ( $snippet->cloud_id ) {
 			// Check if snippet is owned by the current user.
 			$is_owner = substr( $snippet->cloud_id, -1 );
@@ -597,7 +600,7 @@ function save_snippet( $snippet ) {
 			// If snippet is owned by the current user then send to cloud for update.
 			if ( 1 === intval( $is_owner ) ) {
 				$snippets_to_update[] = $snippet;
-				// Update the snippet om the cloud - cloud will also verify ownership.
+				// Update the snippet on the cloud - cloud will also verify ownership.
 				code_snippets()->cloud_api->update_snippets_in_cloud( $snippets_to_update );
 			}
 		}
@@ -610,40 +613,6 @@ function save_snippet( $snippet ) {
 	code_snippets()->active_snippets->increment_snippet_rev( $snippet );
 
 	return $snippet;
-}
-
-/**
- * Update a snippet entry given a list of fields.
- * Write operation.
- *
- * @param int                  $snippet_id ID of the snippet to update.
- * @param array<string, mixed> $fields     An array of fields mapped to their values.
- * @param bool|null            $network    Update in network-wide (true) or site-wide (false) table.
- */
-function update_snippet_fields( $snippet_id, $fields, $network = null ) {
-	global $wpdb;
-
-	$table = code_snippets()->db->get_table_name( $network );
-
-	// Build a new snippet object for the validation.
-	$snippet = new Snippet();
-	$snippet->id = $snippet_id;
-
-	// Validate fields through the snippet class and copy them into a clean array.
-	$clean_fields = array();
-
-	foreach ( $fields as $field => $value ) {
-
-		if ( $snippet->set_field( $field, $value ) ) {
-			$clean_fields[ $field ] = $snippet->$field;
-		}
-	}
-
-	// Update the snippet in the database.
-	$wpdb->update( $table, $clean_fields, array( 'id' => $snippet->id ), null, array( '%d' ) ); // db call ok.
-
-	do_action( 'code_snippets/update_snippet', $snippet->id, $table );
-	clean_snippets_cache( $table );
 }
 
 /**
@@ -742,7 +711,7 @@ function execute_active_snippets(): bool {
 						array( 'id' => $snippet_id ),
 						array( '%d' ),
 						array( '%d' )
-					); // db call ok.
+					);
 					clean_snippets_cache( $table_name );
 				}
 			}
@@ -755,4 +724,74 @@ function execute_active_snippets(): bool {
 	}
 
 	return true;
+}
+
+/**
+ * Retrieve a single snippets from the database using its cloud ID.
+ *
+ * Read operation.
+ *
+ * @param string       $cloud_id  The Cloud ID of the snippet to retrieve.
+ * @param boolean|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
+ *
+ * @return Snippet|null A single snippet object or null if no snippet was found.
+ *
+ * @since 3.5.0
+ */
+function get_snippet_by_cloud_id( string $cloud_id, $multisite = null ) {
+	global $wpdb;
+
+	$multisite = DB::validate_network_param( $multisite );
+	$table_name = code_snippets()->db->get_table_name( $multisite );
+
+	$cached_snippets = wp_cache_get( "all_snippets_$table_name", CACHE_GROUP );
+
+	// Attempt to fetch snippet from the cached list, if it exists.
+	if ( is_array( $cached_snippets ) ) {
+		foreach ( $cached_snippets as $snippet ) {
+			if ( $snippet->cloud_id === $cloud_id ) {
+				return apply_filters( 'code_snippets/get_snippet_by_cloud_id', $snippet, $cloud_id, $multisite );
+			}
+		}
+	}
+
+	// Otherwise, search for the snippet from the database.
+	$snippet_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE cloud_id = %s", $cloud_id ) ); // cache pass, db call ok.
+	$snippet = $snippet_data ? new Snippet( $snippet_data ) : null;
+
+	return apply_filters( 'code_snippets/get_snippet_by_cloud_id', $snippet, $cloud_id, $multisite );
+}
+
+/**
+ * Update a snippet entry given a list of fields.
+ * Write operation.
+ *
+ * @param int                  $snippet_id ID of the snippet to update.
+ * @param array<string, mixed> $fields     An array of fields mapped to their values.
+ * @param bool|null            $network    Update in network-wide (true) or site-wide (false) table.
+ */
+function update_snippet_fields( int $snippet_id, array $fields, $network = null ) {
+	global $wpdb;
+
+	$table = code_snippets()->db->get_table_name( $network );
+
+	// Build a new snippet object for the validation.
+	$snippet = new Snippet();
+	$snippet->id = $snippet_id;
+
+	// Validate fields through the snippet class and copy them into a clean array.
+	$clean_fields = array();
+
+	foreach ( $fields as $field => $value ) {
+
+		if ( $snippet->set_field( $field, $value ) ) {
+			$clean_fields[ $field ] = $snippet->$field;
+		}
+	}
+
+	// Update the snippet in the database.
+	$wpdb->update( $table, $clean_fields, array( 'id' => $snippet->id ), null, array( '%d' ) );
+
+	do_action( 'code_snippets/update_snippet', $snippet->id, $table );
+	clean_snippets_cache( $table );
 }

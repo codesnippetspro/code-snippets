@@ -1,5 +1,7 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Base class for representing an item of data without needing to use direct access or individual getter and setter functions.
  *
@@ -183,9 +185,7 @@ abstract class Data_Item {
 	 *
 	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_field( $value, string $field ) {
-		return $value;
-	}
+	abstract protected function prepare_field( $value, string $field );
 
 	/**
 	 * Retrieve the list of fields that can be written to.

@@ -98,19 +98,19 @@ class Settings_Menu extends Admin_Menu {
 	/**
 	 * Retrieve the name of the settings section currently being viewed.
 	 *
-	 * @param string $default Name of the default tab displayed.
+	 * @param string $default_section Name of the default tab displayed.
 	 *
 	 * @return string
 	 */
-	public function get_current_section( string $default = 'general' ): string {
+	public function get_current_section( string $default_section = 'general' ): string {
 		$sections = $this->get_sections();
 
 		if ( ! $sections ) {
-			return $default;
+			return $default_section;
 		}
 
-		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $default;
-		return isset( $sections[ $active_tab ] ) ? $active_tab : $default;
+		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $default_section;
+		return isset( $sections[ $active_tab ] ) ? $active_tab : $default_section;
 	}
 
 	/**
@@ -203,35 +203,11 @@ class Settings_Menu extends Admin_Menu {
 				call_user_func( $section['callback'], $section );
 			}
 
-			if ( 'cloud' === $section['id'] ) {
-				echo '<p id="cloud_guide" class="hidden cloud-guide">';
-				esc_html_e( 'Please make sure to click verify token to connect to the cloud and if successful then click on save settings.', 'code-snippets' );
-				echo '</p>';
-			}
+			printf( '<div class="settings-section %s-settings"><table class="form-table">', esc_attr( $section['id'] ) );
 
-			printf( '<table class="form-table settings-section %s-settings">', esc_attr( $section['id'] ) );
 			do_settings_fields( self::SETTINGS_PAGE, $section['id'] );
-			echo '</table>';
-
-			if ( 'cloud' === $section['id'] ) {
-				$settings = get_option( 'code_snippets_settings' );
-				$is_token_verified = $settings['cloud']['token_verified'];
-
-				if ( $is_token_verified && 'false' !== $is_token_verified ) {
-					echo '<p id="cloud_sync_status" class="cloud-message cloud-success hidden">';
-					esc_html_e( 'Status: Cloud Sync Connected', 'code-snippets' );
-				} else {
-					echo '<p id="cloud_sync_status" class="cloud-message cloud-error hidden">';
-					esc_html_e( 'Status: Cloud Sync Not Connected', 'code-snippets' );
-				}
-
-				echo '</p>';
-
-				echo '<p class="hidden cloud-message cloud-error">', esc_html__( 'Invalid token, Please try again or Generate a new token from your Code Snippets Cloud account.', 'code-snippets' ), '</p>';
-				echo '<p class="hidden cloud-message cloud-success">', esc_html__( 'Token verified successfully', 'code-snippets' ), '</p>';
-			}
+			echo '</table></div>';
 		}
-
 	}
 
 	/**
@@ -245,7 +221,7 @@ class Settings_Menu extends Admin_Menu {
 		}
 
 		check_admin_referer( 'code-snippets-options' );
-		
+
 		// Retrieve the submitted options and save them to the database.
 		if ( isset( $_POST['code_snippets_settings'] ) ) {
 
