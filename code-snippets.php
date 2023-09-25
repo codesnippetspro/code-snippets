@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Halt loading here if the plugin is already loaded, or we're running an incompatible version of PHP.
-if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.0', '>=' ) ) {
+if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.4', '>=' ) ) {
 
 	/**
 	 * The current plugin version.

@@ -93,7 +93,7 @@ class Cloud_API {
 	 *
 	 * @var Cloud_Link[]|null
 	 */
-	private $local_to_cloud_map = null;
+	private ?array $local_to_cloud_map = null;
 
 	/**
 	 * Code Snippets Cloud Settings
@@ -234,7 +234,7 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Link[]
 	 */
-	public function get_local_to_cloud_map() {
+	public function get_local_to_cloud_map(): ?array {
 		// Return the cached data if available.
 		if ( $this->local_to_cloud_map ) {
 			return $this->local_to_cloud_map;
@@ -428,7 +428,7 @@ class Cloud_API {
 	 *
 	 * @return array<string, mixed>|null Associative array of JSON data on success, null on failure.
 	 */
-	private static function unpack_request_json( $response ) {
+	private static function unpack_request_json( $response ): ?array {
 		$body = wp_remote_retrieve_body( $response );
 		return $body ? json_decode( $body, true ) : null;
 	}
@@ -720,7 +720,7 @@ class Cloud_API {
 	 *
 	 * @return string|null Revision number on success, null otherwise.
 	 */
-	public static function get_cloud_snippet_revision( string $cloud_id ) {
+	public static function get_cloud_snippet_revision( string $cloud_id ): ?string {
 		$api_url = self::CLOUD_API_URL . sprintf( 'public/getsnippetrevision/%s', $cloud_id );
 		$body = wp_remote_retrieve_body( wp_remote_get( $api_url ) );
 
@@ -825,10 +825,8 @@ class Cloud_API {
 		// Get all cloud_id from the Cloud Link Map and send this as a json array to the cloud.
 		$cloud_snippets_synced_to_local_site = array_map(
 			function ( $link ) {
-				// Check if the cloud_id is not empty, null or 0
-				if ( ! $link->cloud_id || ! $link->cloud_id == 0 ) {
-					return $link->cloud_id;
-				}
+				// Check if the cloud_id is not empty, null or 0.
+				return ! $link->cloud_id || 0 !== $link->cloud_id ? $link->cloud_id : null;
 			},
 			$this->get_local_to_cloud_map()
 		);
@@ -1003,7 +1001,7 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Link|bool
 	 */
-	public function get_cloud_link( int $snippet_id, string $local_or_cloud ) {
+	public function get_cloud_link( int $snippet_id, string $local_or_cloud ): ?Cloud_Link {
 		$local_to_cloud_map = $this->get_local_to_cloud_map();
 
 		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
@@ -1210,13 +1208,13 @@ class Cloud_API {
 	/**
 	 * Send the list of synced snippets to the cloud.
 	 *
-	 * @param array $cloud_snippets_synced_to_local_site List of cloud IDs.
+	 * @param array $cloud_id_array List of cloud IDs.
 	 *
 	 * @return void
 	 */
-	public function send_cloud_synced_snippet_list( $cloud_id_array ){
+	public function send_cloud_synced_snippet_list( array $cloud_id_array ) {
 		// JSON Encode the cloud_id_array.
-		$cloud_id_array = json_encode( $cloud_id_array );
+		$cloud_id_array = wp_json_encode( $cloud_id_array );
 
 		// Send post request to cs store api with snippet data.
 		wp_remote_post(

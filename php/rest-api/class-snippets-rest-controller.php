@@ -24,7 +24,7 @@ use const Code_Snippets\REST_API_NAMESPACE;
  * @since   3.4.0
  * @package Code_Snippets
  */
-class Snippets_REST_Controller extends WP_REST_Controller {
+final class Snippets_REST_Controller extends WP_REST_Controller {
 
 	/**
 	 * Current API version.
@@ -389,7 +389,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return Snippet The prepared item.
 	 */
-	protected function prepare_item_for_database( $request, Snippet $item = null ) {
+	protected function prepare_item_for_database( $request, Snippet $item = null ): ?Snippet {
 		if ( ! $item instanceof Snippet ) {
 			$item = new Snippet();
 		}
