@@ -16,7 +16,7 @@ export interface SnippetActionsProps {
 
 export interface SnippetActionsValue {
 	submit: (snippet: Snippet) => void
-	submitAndActivate: (snippet: Snippet, activate: boolean) => void
+	submitAndActivate: (snippet: Snippet, active: boolean) => void
 	delete: (snippet: Snippet) => void
 	export: (snippet: Snippet) => void
 	exportCode: (snippet: Snippet) => void
@@ -55,6 +55,7 @@ export const useSnippetActions = ({
 				return data
 			}
 
+			console.info('Response data', data)
 			setCurrentNotice(['error', `${errorNotice} ${__('The server did not send a valid response.', 'code-snippets')}`])
 			return undefined
 		} catch (error) {
@@ -122,9 +123,9 @@ export const useSnippetActions = ({
 				() => __('Snippet updated.', 'code-snippets')
 			),
 
-		submitAndActivate: async (snippet: Snippet, activate: boolean) =>
+		submitAndActivate: async (snippet: Snippet, active: boolean) =>
 			await submitSnippet(
-				{ ...snippet, active: activate },
+				{ ...snippet, active },
 				result => result.active ?
 					__('Snippet created and activated.', 'code-snippets') :
 					__('Snippet created.', 'code-snippets'),

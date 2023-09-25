@@ -57,7 +57,7 @@ function clean_snippets_cache( string $table_name ) {
  *
  * @since 2.0
  */
-function get_snippets( array $ids = array(), bool $network = null ): array {
+function get_snippets( array $ids = array(), ?bool $network = null ): array {
 	global $wpdb;
 
 	// If only one ID has been passed in, defer to the get_snippet() function.
@@ -177,7 +177,7 @@ function code_snippets_build_tags_array( $tags ): array {
  *
  * @since 2.0.0
  */
-function get_snippet( int $id = 0, bool $network = null ): Snippet {
+function get_snippet( int $id = 0, ?bool $network = null ): Snippet {
 	global $wpdb;
 
 	$id = absint( $id );
@@ -318,7 +318,7 @@ function update_shared_network_snippets( array $snippets ): bool {
  * @return Snippet|string Snippet object on success, error message on failure.
  * @since 2.0.0
  */
-function activate_snippet( int $id, bool $network = null ) {
+function activate_snippet( int $id, ?bool $network = null ) {
 	global $wpdb;
 	$network = DB::validate_network_param( $network );
 	$table_name = code_snippets()->db->get_table_name( $network );
@@ -367,7 +367,7 @@ function activate_snippet( int $id, bool $network = null ) {
  *
  * @since 2.0.0
  */
-function activate_snippets( array $ids, bool $network = null ) {
+function activate_snippets( array $ids, ?bool $network = null ): ?array {
 	global $wpdb;
 	$network = DB::validate_network_param( $network );
 	$table_name = code_snippets()->db->get_table_name( $network );
@@ -426,7 +426,7 @@ function activate_snippets( array $ids, bool $network = null ) {
  *
  * @since 2.0.0
  */
-function deactivate_snippet( int $id, bool $network = null ) {
+function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 	global $wpdb;
 	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
@@ -468,7 +468,7 @@ function deactivate_snippet( int $id, bool $network = null ) {
  *
  * @since 2.0.0
  */
-function delete_snippet( int $id, bool $network = null ): bool {
+function delete_snippet( int $id, ?bool $network = null ): bool {
 	global $wpdb;
 	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
@@ -738,7 +738,7 @@ function execute_active_snippets(): bool {
  *
  * @since 3.5.0
  */
-function get_snippet_by_cloud_id( string $cloud_id, $multisite = null ) {
+function get_snippet_by_cloud_id( string $cloud_id, ?bool $multisite = null ): ?Snippet {
 	global $wpdb;
 
 	$multisite = DB::validate_network_param( $multisite );
@@ -770,7 +770,7 @@ function get_snippet_by_cloud_id( string $cloud_id, $multisite = null ) {
  * @param array<string, mixed> $fields     An array of fields mapped to their values.
  * @param bool|null            $network    Update in network-wide (true) or site-wide (false) table.
  */
-function update_snippet_fields( int $snippet_id, array $fields, $network = null ) {
+function update_snippet_fields( int $snippet_id, array $fields, ?bool $network = null ) {
 	global $wpdb;
 
 	$table = code_snippets()->db->get_table_name( $network );

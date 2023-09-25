@@ -14,42 +14,42 @@ class Validator {
 	 *
 	 * @var string
 	 */
-	private $code;
+	private string $code;
 
 	/**
 	 * List of tokens.
 	 *
 	 * @var array<string>
 	 */
-	private $tokens;
+	private array $tokens;
 
 	/**
 	 * The index of the token currently being examined.
 	 *
 	 * @var integer
 	 */
-	private $current;
+	private int $current;
 
 	/**
 	 * The total number of tokens.
 	 *
 	 * @var integer
 	 */
-	private $length;
+	private int $length;
 
 	/**
 	 * Array to keep track of the various function, class and interface identifiers which have been defined.
 	 *
 	 * @var array<string, string[]>
 	 */
-	private $defined_identifiers = [];
+	private array $defined_identifiers = [];
 
 	/**
 	 * Exclude certain tokens from being checked.
 	 *
 	 * @var array<string, string[]>
 	 */
-	private $exceptions = [];
+	private array $exceptions = [];
 
 	/**
 	 * Class constructor.
