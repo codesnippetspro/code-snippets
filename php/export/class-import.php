@@ -20,21 +20,21 @@ class Import {
 	 *
 	 * @var string
 	 */
-	private $file;
+	private string $file;
 
 	/**
 	 * Whether snippets should be imported into the network-wide or site-wide table.
 	 *
 	 * @var bool
 	 */
-	private $multisite;
+	private bool $multisite;
 
 	/**
 	 * Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'.
 	 *
 	 * @var string
 	 */
-	private $dup_action;
+	private string $dup_action;
 
 	/**
 	 * Class constructor.
@@ -43,7 +43,7 @@ class Import {
 	 * @param bool|null $network    Import into network-wide table (true) or site-wide table (false).
 	 * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'.
 	 */
-	public function __construct( string $file, bool $network = null, string $dup_action = 'ignore' ) {
+	public function __construct( string $file, ?bool $network = null, string $dup_action = 'ignore' ) {
 		$this->file = $file;
 		$this->multisite = DB::validate_network_param( $network );
 		$this->dup_action = $dup_action;

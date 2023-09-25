@@ -4,11 +4,15 @@
  *
  * @package    Code_Snippets
  * @subpackage Views
- *
- * @var Import_Menu $this
  */
 
 namespace Code_Snippets;
+
+/**
+ * Loaded from the Import_Menu class.
+ *
+ * @var Import_Menu $this
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
@@ -24,7 +28,7 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 		esc_html_e( 'Import Snippets', 'code-snippets' );
 
 		if ( code_snippets()->is_compact_menu() ) {
-			$this->page_title_actions( [ 'manage', 'add', 'settings' ] );
+			$this->render_page_title_actions( [ 'manage', 'add', 'settings' ] );
 		}
 
 		?>
@@ -39,7 +43,7 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 		<p>
 			<?php
 			/* translators: %s: link to snippets admin menu */
-			$text = __( 'Afterwards, you will need to visit the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' );
+			$text = __( 'Afterward, you will need to visit the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' );
 
 			printf( wp_kses( $text, [ 'a' => [ 'href' ] ] ), esc_url( code_snippets()->get_menu_url( 'manage' ) ) );
 

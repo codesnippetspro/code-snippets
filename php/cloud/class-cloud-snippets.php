@@ -70,7 +70,7 @@ class Cloud_Snippets extends Data_Item {
 	 *
 	 * @return Cloud_Snippets[] The field in the correct format.
 	 */
-	protected function prepare_snippets( $snippets ) {
+	protected function prepare_snippets( $snippets ): array {
 		$result = [];
 		$snippets = is_array( $snippets ) ? $snippets : [ $snippets ];
 

@@ -24,14 +24,14 @@ class DB {
 	 *
 	 * @var string
 	 */
-	public $table;
+	public string $table;
 
 	/**
 	 * Network-wide table name.
 	 *
 	 * @var string
 	 */
-	public $ms_table;
+	public string $ms_table;
 
 	/**
 	 * Class constructor.
@@ -62,11 +62,11 @@ class DB {
 	/**
 	 * Validate a provided 'network' or 'multisite' param, converting it to a boolean.
 	 *
-	 * @param bool|null|mixed $network Network argument value.
+	 * @param bool|null $network Network argument value.
 	 *
 	 * @return bool Sanitized value.
 	 */
-	public static function validate_network_param( $network = null ): bool {
+	public static function validate_network_param( ?bool $network = null ): bool {
 
 		// If multisite is not active, then assume the value is false.
 		if ( ! is_multisite() ) {
@@ -84,12 +84,12 @@ class DB {
 	/**
 	 * Return the appropriate snippet table name
 	 *
-	 * @param bool|null|mixed $is_network Whether retrieve the multisite table name (true) or the site table name (false).
+	 * @param bool|null $is_network Whether retrieve the multisite table name (true) or the site table name (false).
 	 *
 	 * @return string The snippet table name
 	 * @since 2.0
 	 */
-	public function get_table_name( $is_network = null ): string {
+	public function get_table_name( ?bool $is_network = null ): string {
 		$is_network = is_bool( $is_network ) ? $is_network : self::validate_network_param( $is_network );
 		return $is_network ? $this->ms_table : $this->table;
 	}

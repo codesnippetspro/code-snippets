@@ -209,7 +209,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string
 	 */
-	protected function prepare_modified( $modified ) {
+	protected function prepare_modified( $modified ): ?string {
 
 		// If the supplied value is a DateTime object, convert it to string representation.
 		if ( $modified instanceof DateTime ) {

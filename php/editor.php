@@ -103,7 +103,7 @@ function enqueue_code_editor( string $type, array $extra_atts = [] ) {
  *
  * @return array<string> The available themes.
  */
-function get_editor_themes() {
+function get_editor_themes(): array {
 	static $themes = null;
 
 	if ( ! is_null( $themes ) ) {

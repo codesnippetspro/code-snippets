@@ -17,14 +17,14 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @var List_Table
 	 */
-	public $list_table;
+	public List_Table $list_table;
 
 	/**
 	 * Instance of the cloud list table class for search results.
 	 *
 	 * @var Cloud_Search_List_Table
 	 */
-	public $cloud_search_list_table;
+	public Cloud_Search_List_Table $cloud_search_list_table;
 
 	/**
 	 * Class constructor

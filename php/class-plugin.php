@@ -5,7 +5,6 @@ namespace Code_Snippets;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use Code_Snippets\Cloud\Cloud_API;
 
-
 /**
  * The main plugin class
  *
@@ -18,49 +17,49 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	public $version;
+	public string $version;
 
 	/**
 	 * Filesystem path to the main plugin file
 	 *
 	 * @var string
 	 */
-	public $file;
+	public string $file;
 
 	/**
 	 * Database class
 	 *
 	 * @var DB
 	 */
-	public $db;
+	public DB $db;
 
 	/**
 	 * Administration area class
 	 *
 	 * @var Admin
 	 */
-	public $admin;
+	public Admin $admin;
 
 	/**
 	 * Front-end functionality class
 	 *
 	 * @var Frontend
 	 */
-	public $frontend;
+	public Frontend $frontend;
 
 	/**
 	 * Class for managing cloud API actions.
 	 *
 	 * @var Cloud_API
 	 */
-	public $cloud_api;
+	public Cloud_API $cloud_api;
 
 	/**
 	 * Class for managing active snippets
 	 *
 	 * @var Active_Snippets
 	 */
-	public $active_snippets;
+	public Active_Snippets $active_snippets;
 
 	/**
 	 * Class constructor

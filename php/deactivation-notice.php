@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) || function_exists( 'code_snippets_deactivation_noti
  */
 function code_snippets_deactivation_notice() {
 	$plugins = array();
-	$required_php_version = '7.0';
+	$required_php_version = '7.4';
 
 	if ( version_compare( phpversion(), $required_php_version, '<' ) ) {
 		echo '<div class="error fade"><p><strong>';

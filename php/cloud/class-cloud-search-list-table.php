@@ -22,26 +22,20 @@ if ( ! class_exists( 'WP_Plugin_Install_List_Table' ) ) {
  * @package Code_Snippets
  */
 class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
+
 	/**
 	 * Instance of Cloud API class.
 	 *
 	 * @var Cloud_API
 	 */
-	protected $cloud_api;
+	protected Cloud_API $cloud_api;
 
 	/**
 	 * Items for the cloud list table.
 	 *
 	 * @var Cloud_Snippets
 	 */
-	protected $cloud_snippets;
-
-	/**
-	 * Base URL for cloud API.
-	 *
-	 * @var string
-	 */
-	const CLOUD_SEARCH_API_TOKEN = 'csc-1a2b3c4d5e6f7g8h9i0j';
+	protected Cloud_Snippets $cloud_snippets;
 
 	/**
 	 * Class constructor.
@@ -49,6 +43,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	public function __construct() {
 		// Declare global variable due to undeclared warning.
 		global $tab;
+
 		parent::__construct(
 			[
 				'singular' => 'cloud-snippet',
@@ -280,11 +275,11 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	/**
 	 * Process the description text - limit to 150 characters.
 	 *
-	 * @param string|null|mixed $description Description as provided by the API.
+	 * @param string|null $description Description as provided by the API.
 	 *
 	 * @return string formatted description string max 150 chars.
 	 */
-	protected function process_description( $description ): string {
+	protected function process_description( ?string $description ): string {
 		$description = wp_strip_all_tags( $description );
 		return strlen( $description ) > 150 ? substr( $description, 0, 150 ) . '…' : $description;
 	}
@@ -370,7 +365,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 		$page_class = $paginate['page_class'];
 		$output = $paginate['output'];
 
-		$this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
+		$this->_pagination = "<div class='tablenav-pages$page_class'>$output</div>";
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $this->_pagination;

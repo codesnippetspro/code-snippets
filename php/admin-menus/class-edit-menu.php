@@ -22,10 +22,10 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * The snippet object currently being edited
 	 *
-	 * @var Snippet
+	 * @var Snippet|null
 	 * @see Edit_Menu::load_snippet_data()
 	 */
-	protected $snippet = null;
+	protected ?Snippet $snippet = null;
 
 	/**
 	 * Constructor

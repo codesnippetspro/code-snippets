@@ -51,14 +51,14 @@ class Cloud_API {
 	 *
 	 * @var Cloud_Link[]|null
 	 */
-	private $local_to_cloud_map = null;
+	private ?array $local_to_cloud_map = null;
 
 	/**
 	 * Create local-to-cloud map to keep track of local snippets that have been synced to the cloud.
 	 *
 	 * @return Cloud_Link[]
 	 */
-	public function get_local_to_cloud_map() {
+	public function get_local_to_cloud_map(): ?array {
 		// Return the cached data if available.
 		if ( $this->local_to_cloud_map ) {
 			return $this->local_to_cloud_map;
@@ -114,7 +114,7 @@ class Cloud_API {
 	 *
 	 * @return array<string, mixed>|null Associative array of JSON data on success, null on failure.
 	 */
-	private static function unpack_request_json( $response ) {
+	private static function unpack_request_json( $response ): ?array {
 		$body = wp_remote_retrieve_body( $response );
 		return $body ? json_decode( $body, true ) : null;
 	}
@@ -185,7 +185,7 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Link|null The deleted map link if one was found, null otherwise.
 	 */
-	public function delete_snippet_from_transient_data( int $snippet_id ) {
+	public function delete_snippet_from_transient_data( int $snippet_id ): ?Cloud_Link {
 		$this->get_local_to_cloud_map();
 		$link_to_delete = null;
 
@@ -210,7 +210,7 @@ class Cloud_API {
 	 *
 	 * @return string|null Revision number on success, null otherwise.
 	 */
-	public static function get_cloud_snippet_revision( string $cloud_id ) {
+	public static function get_cloud_snippet_revision( string $cloud_id ): ?string {
 		$api_url = self::CLOUD_API_URL . sprintf( 'public/getsnippetrevision/%s', $cloud_id );
 		$body = wp_remote_retrieve_body( wp_remote_get( $api_url ) );
 
@@ -387,7 +387,7 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Link|null
 	 */
-	public function get_cloud_link( int $snippet_id, string $local_or_cloud ) {
+	public function get_cloud_link( int $snippet_id, string $local_or_cloud ): ?Cloud_Link {
 		$local_to_cloud_map = $this->get_local_to_cloud_map();
 
 		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {

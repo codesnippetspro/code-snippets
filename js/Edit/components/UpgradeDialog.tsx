@@ -125,7 +125,7 @@ export const UpgradeDialog: React.FC<UpgradeDialogProps> = ({ isOpen, setIsOpen 
 			}}
 		>
 			<h1 className="logo">
-				<img src={`${window.CODE_SNIPPETS?.pluginUrl}/assets/icon.svg`} alt="" />
+				<img src={`${window.CODE_SNIPPETS?.urls.plugin}/assets/icon.svg`} alt="" />
 				{__('Code Snippets Pro', 'code-snippets')}
 			</h1>
 
