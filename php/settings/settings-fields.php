@@ -108,7 +108,7 @@ function get_settings_fields(): array {
 		'database_update' => [
 			'name'    => __( 'Database Table Update', 'code-snippets' ),
 			'type'    => 'database_update_button',
-			'label'   => __( 'To manually update the Code Snippets database table, click the button below. This action will only affect the Code Snippets table and should be used only when necessary.', 'code-snippets' ),
+			'label'   => __( 'To manually update the Code Snippets database table, click the button above. This action will only affect the Code Snippets table and should be used only when necessary.', 'code-snippets' ),
 			'default' => false,
 		],
 	];
