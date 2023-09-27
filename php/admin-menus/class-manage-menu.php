@@ -48,7 +48,7 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @var Cloud_Bundles
 	 */
-	public $cloud_bundles;
+	public Cloud_Bundles $cloud_bundles;
 
 	/**
 	 * Class constructor
