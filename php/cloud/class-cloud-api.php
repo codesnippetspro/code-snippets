@@ -65,28 +65,28 @@ class Cloud_API {
 	 *
 	 * @var string
 	 */
-	private $local_token;
+	private string $local_token;
 
 	/**
 	 * Cloud API key.
 	 *
 	 * @var string
 	 */
-	private $cloud_key;
+	private string $cloud_key;
 
 	/**
 	 * Verification status of cloud API key.
 	 *
 	 * @var boolean
 	 */
-	public $cloud_key_is_verified;
+	private bool $cloud_key_is_verified;
 
 	/**
 	 * List of cloud snippets.
 	 *
 	 * @var Cloud_Snippets|null
 	 */
-	private $codevault_snippets = null;
+	private ?Cloud_Snippets $codevault_snippets = null;
 
 	/**
 	 * Local to Cloud Snippets Map Object
@@ -96,46 +96,19 @@ class Cloud_API {
 	private ?array $local_to_cloud_map = null;
 
 	/**
-	 * Code Snippets Cloud Settings
-	 *
-	 * @var array|null
-	 */
-	private $code_snippets_cloud_settings;
-
-	/**
 	 * Class constructor.
 	 *
 	 * @return void
 	 */
 	public function __construct() {
-		$this->init_cs_cloud_settings();
-		$this->is_cloud_key_verified();
+		$settings = $this->get_cloud_settings();
+
+		$this->cloud_key = $settings['cloud_token'];
+		$this->local_token = $settings['local_token'];
+		$this->cloud_key_is_verified = boolval( $settings['token_verified'] );
+
 		add_action( 'code_snippets/deactivate_snippet', array( $this, 'disable_sync' ), 10, 2 );
 		add_action( 'code_snippets/delete_snippet', array( $this, 'remove_sync' ), 10, 2 );
-	}
-
-	/**
-	 * Initialise Cloud Settings
-	 *
-	 * @return void
-	 */
-	public function init_cs_cloud_settings() {
-		$this->code_snippets_cloud_settings = get_option( self::CLOUD_SETTINGS_CACHE_KEY );
-		// Check if the settings exist in the database if not create defaults.
-		if ( ! $this->code_snippets_cloud_settings ) {
-			$this->code_snippets_cloud_settings = [
-				'cloud_token'      => '',
-				'local_token'      => '',
-				'token_verified'   => false,
-				'token_snippet_id' => '',
-			];
-			update_option( self::CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
-		}
-
-		wp_cache_set( self::CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
-
-		$this->cloud_key = $this->code_snippets_cloud_settings['cloud_token'];
-		$this->local_token = $this->code_snippets_cloud_settings['local_token'];
 	}
 
 	/**
@@ -146,14 +119,8 @@ class Cloud_API {
 	 * @return string|boolean
 	 */
 	public function get_cloud_setting( string $setting ) {
-		// Check if the settings are in cache.
-		$this->code_snippets_cloud_settings = wp_cache_get( self::CLOUD_SETTINGS_CACHE_KEY );
-
-		if ( ! $this->code_snippets_cloud_settings ) {
-			$this->init_cs_cloud_settings();
-		}
-
-		return $this->code_snippets_cloud_settings[ $setting ] ?? false;
+		$settings = $this->get_cloud_settings();
+		return $settings[ $setting ] ?? false;
 	}
 
 	/**
@@ -161,33 +128,35 @@ class Cloud_API {
 	 *
 	 * @return array
 	 */
-	public function get_cloud_settings() {
-		$this->code_snippets_cloud_settings = wp_cache_get( self::CLOUD_SETTINGS_CACHE_KEY );
+	public function get_cloud_settings(): array {
+		static $settings = null;
 
-		if ( ! $this->code_snippets_cloud_settings ) {
-			$this->init_cs_cloud_settings();
+		if ( ! is_null( $settings ) ) {
+			return $settings;
 		}
 
-		return $this->code_snippets_cloud_settings;
-	}
+		$settings = wp_cache_get( self::CLOUD_SETTINGS_CACHE_KEY );
 
-	/**
-	 * Update cloud setting.
-	 *
-	 * @param string $setting Setting to update.
-	 * @param string $value   Updated value.
-	 *
-	 * @return void
-	 */
-	public function update_cloud_setting( $setting, $value ) {
-		if ( ! isset( $this->code_snippets_cloud_settings[ $setting ] ) ) {
-			return;
+		if ( $settings ) {
+			return $settings;
 		}
 
-		$this->code_snippets_cloud_settings[ $setting ] = $value;
+		$settings = get_option( self::CLOUD_SETTINGS_CACHE_KEY );
 
-		update_option( 'code_snippets_cloud_settings', $this->code_snippets_cloud_settings );
-		wp_cache_set( self::CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
+		// Check if the settings exist in the database if not create defaults.
+		if ( false === $settings ) {
+			$settings = [
+				'cloud_token'      => '',
+				'local_token'      => '',
+				'token_verified'   => false,
+				'token_snippet_id' => '',
+			];
+
+			update_option( self::CLOUD_SETTINGS_CACHE_KEY, $settings );
+		}
+
+		wp_cache_set( self::CLOUD_SETTINGS_CACHE_KEY, $settings );
+		return $settings;
 	}
 
 	/**
@@ -198,12 +167,14 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function update_cloud_settings( array $settings ) {
+		$existing_settings = $this->get_cloud_settings();
+
 		foreach ( $settings as $setting => $value ) {
-			$this->code_snippets_cloud_settings[ $setting ] = $value;
+			$existing_settings[ $setting ] = $value;
 		}
 
-		update_option( 'code_snippets_cloud_settings', $this->code_snippets_cloud_settings );
-		wp_cache_set( self::CLOUD_SETTINGS_CACHE_KEY, $this->code_snippets_cloud_settings );
+		update_option( 'code_snippets_cloud_settings', $existing_settings );
+		wp_cache_set( self::CLOUD_SETTINGS_CACHE_KEY, $existing_settings );
 	}
 
 
@@ -213,7 +184,6 @@ class Cloud_API {
 	 * @return boolean
 	 */
 	public function is_cloud_key_verified(): bool {
-		$this->cloud_key_is_verified = boolval( $this->get_cloud_setting( 'token_verified' ) );
 		return $this->cloud_key_is_verified;
 	}
 
@@ -601,7 +571,7 @@ class Cloud_API {
 	 *
 	 * @param Snippet[] $snippets List of code snippets to store.
 	 */
-	public function store_snippets_in_cloud( $snippets ) {
+	public function store_snippets_in_cloud( array $snippets ) {
 		foreach ( $snippets as $snippet ) {
 			// Send post request to cs store api with snippet data.
 			$response = wp_remote_post(
@@ -855,17 +825,15 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Snippet[]|null The snippet object on success, null otherwise.
 	 */
-	public function get_single_snippet_from_codevault( int $actual_cloud_id, int $current_page ) {
+	public function get_single_snippet_from_codevault( int $actual_cloud_id, int $current_page ): ?array {
 		$snippets = $this->get_codevault_snippets( $current_page );
 		// Filter the cloud snippet array to get the snippet that is to be saved to the database.
-		$filtered_array = array_filter(
+		return array_filter(
 			$snippets->snippets,
 			function ( $snippet ) use ( $actual_cloud_id ) {
 				return $snippet->id === $actual_cloud_id;
 			}
 		);
-
-		return $filtered_array;
 	}
 
 	/**
@@ -876,7 +844,7 @@ class Cloud_API {
 	 *
 	 * @return array The result of the download.
 	 */
-	public function store_single_snippet_from_cloud_to_local( $snippet_to_store, $in_codevault ) {
+	public function store_single_snippet_from_cloud_to_local( Cloud_Snippet $snippet_to_store, bool $in_codevault ): array {
 		$snippet = new Snippet( $snippet_to_store );
 
 		// Set the snippet id to 0 to ensure that the snippet is saved as a new snippet.
@@ -914,26 +882,24 @@ class Cloud_API {
 	 *
 	 * @return array The result of the download.
 	 */
-	public function store_snippets_from_cloud_to_local( $snippets_to_store, $in_codevault ) {
-		if ( ! is_array( $snippets_to_store ) ) {
-			return $this->store_single_snippet_from_cloud_to_local( $snippets_to_store, $in_codevault );
+	public function store_snippets_from_cloud_to_local( array $snippets_to_store, bool $in_codevault ): array {
+		if ( 1 === count( $snippets_to_store ) ) {
+			return $this->store_single_snippet_from_cloud_to_local( $snippets_to_store[0], $in_codevault );
 		}
 
 		foreach ( $snippets_to_store as $snippet_to_store ) {
 			$this->store_single_snippet_from_cloud_to_local( $snippet_to_store, $in_codevault );
 		}
 
-		if ( count( $snippets_to_store ) > 1 ) {
-			return [
+		return count( $snippets_to_store ) > 1 ?
+			[
 				'success' => true,
 				'action'  => __( 'Downloaded', 'code-snippets' ),
-			];
-		} else {
-			return [
+			] :
+			[
 				'success' => false,
 				'error'   => __( 'There was a problem saving or no snippets found to download.', 'code-snippets' ),
 			];
-		}
 	}
 
 	/**
@@ -1130,7 +1096,6 @@ class Cloud_API {
 	 * @return array<string, mixed>
 	 */
 	public function disable_sync( $id ): array {
-
 		$token_snippet = $this->get_cloud_setting( 'token_snippet_id' );
 
 		if ( $id === $token_snippet ) {
@@ -1194,7 +1159,6 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function refresh_cloud_settings_data( bool $token_id_wipe, string $token_id = '' ) {
-		// Simply deleting the data is sufficient, as it will be recreated and stored the next time it is requested.
 		$this->update_cloud_settings(
 			[
 				'cloud_token'      => '',
@@ -1213,17 +1177,13 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function send_cloud_synced_snippet_list( array $cloud_id_array ) {
-		// JSON Encode the cloud_id_array.
-		$cloud_id_array = wp_json_encode( $cloud_id_array );
-
-		// Send post request to cs store api with snippet data.
 		wp_remote_post(
 			self::CLOUD_API_URL . 'private/setsyncedsnippetlist',
 			[
 				'method'  => 'POST',
 				'headers' => $this->build_request_headers(),
 				'body'    => [
-					'cloud_id_array' => $cloud_id_array,
+					'cloud_id_array' => wp_json_encode( $cloud_id_array ),
 				],
 			]
 		);
