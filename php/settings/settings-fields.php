@@ -104,6 +104,13 @@ function get_settings_fields(): array {
 			'label'   => __( 'When the plugin is deleted from the Plugins menu, also delete all snippets and plugin settings.', 'code-snippets' ),
 			'default' => false,
 		],
+
+		'database_update' => [
+			'name'    => __( 'Database Table Update', 'code-snippets' ),
+			'type'    => 'database_update_button',
+			'label'   => __( 'To manually update the Code Snippets database table, click the button below. This action will only affect the Code Snippets table and should be used only when necessary.', 'code-snippets' ),
+			'default' => false,
+		],
 	];
 
 	if ( is_multisite() && ! is_main_site() ) {

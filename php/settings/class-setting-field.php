@@ -250,4 +250,21 @@ class Setting_Field {
 
 		echo '</select>';
 	}
+
+	/**
+	 * Render a button to manually update the database
+	 * 
+	 * @since 3.5.1
+	 */
+	private function render_database_update_button_field() {
+		$button_text = __( 'Update Database Table', 'code-snippets' );
+		$button_url = add_query_arg( 'update_database', true, admin_url( 'admin.php?page=snippets-settings' ) );
+
+		printf(
+			'<a href="%s" class="button">%s</a><p class="settings-button-label">%s</p>',
+			esc_url( $button_url ),
+			esc_html( $button_text ),
+			wp_kses_post( $this->label )
+		);
+	}
 }
