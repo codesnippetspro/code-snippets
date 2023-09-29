@@ -387,7 +387,7 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Link|null
 	 */
-	public function get_cloud_link( int $snippet_id, string $local_or_cloud ): ?Cloud_Link {
+	public function get_cloud_link( int $snippet_id, string $local_or_cloud ): Cloud_Link|null {
 		$local_to_cloud_map = $this->get_local_to_cloud_map();
 
 		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
