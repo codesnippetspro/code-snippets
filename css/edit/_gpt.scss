@@ -1,0 +1,19 @@
+.cloud-create-modal {
+
+	.components-modal__content {
+		min-width: 550px;
+	}
+
+	.action-buttons {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.components-button.is-secondary {
+		box-shadow: none;
+	}
+}
+
+.generate-button {
+	float: right;
+}

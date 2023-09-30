@@ -19,8 +19,10 @@ declare global {
 			isLicensed: boolean
 			restAPI: {
 				base: string
-				nonce: string
 				snippets: string
+				cloud: string
+				nonce: string
+				localToken: string
 			}
 			urls: {
 				plugin: string

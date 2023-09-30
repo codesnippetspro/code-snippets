@@ -1,7 +1,8 @@
-import domReady from '@wordpress/dom-ready'
 import React, { useCallback, useEffect } from 'react'
 import { __ } from '@wordpress/i18n'
-import { SnippetInputProps } from '../../types/SnippetInputProps'
+import domReady from '@wordpress/dom-ready'
+import { GenerateButton } from '../buttons/GenerateButton'
+import { useSnippetForm } from '../SnippetForm/context'
 
 export const EDITOR_ID = 'snippet_description'
 
@@ -50,7 +51,9 @@ const initializeEditor = (onChange: (content: string) => void) => {
 	})
 }
 
-export const DescriptionEditor: React.FC<SnippetInputProps> = ({ snippet, setSnippet, isReadOnly }) => {
+export const DescriptionEditor: React.FC = () => {
+	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
+
 	const onChange = useCallback(
 		(desc: string) => setSnippet(previous => ({ ...previous, desc })),
 		[setSnippet]
@@ -62,6 +65,8 @@ export const DescriptionEditor: React.FC<SnippetInputProps> = ({ snippet, setSni
 
 	return window.CODE_SNIPPETS_EDIT?.enableDescription ?
 		<div className="snippet-description-container">
+			<GenerateButton snippet={snippet} disabled={isReadOnly} />
+
 			<h2>
 				<label htmlFor={EDITOR_ID}>
 					{__('Description', 'code-snippets')}

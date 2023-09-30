@@ -41,7 +41,7 @@ module.exports = {
 		'linebreak-style': ['error', 'unix'],
 		'eqeqeq': ['error', 'always'],
 		'indent': ['error', 'tab', { SwitchCase: 1 }],
-		'max-len': ['warn', length],
+		'max-len': ['warn', length, { ignorePattern: 'd="([\\s\\S]*?)"' }],
 		'array-bracket-newline': ['error', 'consistent'],
 		'function-call-argument-newline': ['error', 'consistent'],
 		'comma-dangle': ['error', 'only-multiline'],

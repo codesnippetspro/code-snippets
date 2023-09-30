@@ -162,6 +162,7 @@ class Edit_Menu extends Admin_Menu {
 			'wp-i18n',
 			'wp-api-fetch',
 			'wp-components',
+			'wp-block-editor',
 		];
 
 		wp_enqueue_style(

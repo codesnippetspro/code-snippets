@@ -711,7 +711,7 @@ class List_Table extends WP_List_Table {
 				return 'deactivated';
 
 			case 'clone':
-				$this->clone_snippets( array( $id ) );
+				$this->clone_snippets( [ $id ] );
 				return 'cloned';
 
 			case 'delete':
@@ -719,12 +719,12 @@ class List_Table extends WP_List_Table {
 				return 'deleted';
 
 			case 'export':
-				$export = new Export_Attachment( $id );
+				$export = new Export_Attachment( [ $id ], $this->is_network );
 				$export->download_snippets_json();
 				break;
 
 			case 'download':
-				$export = new Export_Attachment( $id );
+				$export = new Export_Attachment( [ $id ], $this->is_network );
 				$export->download_snippets_code();
 				break;
 		}
@@ -822,12 +822,12 @@ class List_Table extends WP_List_Table {
 				break;
 
 			case 'export-selected':
-				$export = new Export_Attachment( $ids );
+				$export = new Export_Attachment( $ids, $this->is_network );
 				$export->download_snippets_json();
 				break;
 
 			case 'download-selected':
-				$export = new Export_Attachment( $ids );
+				$export = new Export_Attachment( $ids, $this->is_network );
 				$export->download_snippets_code();
 				break;
 
