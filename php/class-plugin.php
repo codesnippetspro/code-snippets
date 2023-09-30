@@ -4,8 +4,6 @@ namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
-use Code_Snippets\REST_API\Cloud_REST_Controller;
-use Code_Snippets\REST_API\CloudAI_REST_Controller;
 
 /**
  * The main plugin class
@@ -90,7 +88,7 @@ class Plugin {
 			add_filter( 'admin_url', array( $this, 'add_safe_mode_query_var' ) );
 		}
 
-		add_action( 'rest_api_init', [ $this, 'register_rest_api_controllers' ] );
+		add_action( 'rest_api_init', [ $this, 'init_rest_api' ] );
 	}
 
 	/**
@@ -139,14 +137,11 @@ class Plugin {
 	 *
 	 * @return void
 	 *
-	 * @since 3.4.0
+	 * @since [NEXT_RELEASE]
 	 */
-	public function register_rest_api_controllers() {
-		$controllers = [ new Snippets_REST_Controller(), new Cloud_REST_Controller(), new CloudAI_REST_Controller() ];
-
-		foreach ( $controllers as $controller ) {
-			$controller->register_routes();
-		}
+	public function init_rest_api() {
+		$snippets_controller = new Snippets_REST_Controller();
+		$snippets_controller->register_routes();
 	}
 
 	/**

@@ -36,3 +36,6 @@ export const downloadSnippetExportFile = (
 
 	downloadAsFile(content, filename, mimeType)
 }
+
+export const isMacOS = () =>
+	window.navigator.userAgent.match(/mac/i)
