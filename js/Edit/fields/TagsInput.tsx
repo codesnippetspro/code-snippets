@@ -1,7 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { TagEditor } from '../../common/TagEditor'
-import { GenerateButton } from '../buttons/GenerateButton'
 import { useSnippetForm } from '../SnippetForm/context'
 
 const options = window.CODE_SNIPPETS_EDIT?.tagOptions
@@ -11,8 +10,6 @@ export const TagsInput: React.FC = () => {
 
 	return options?.enabled ?
 		<div className="snippet-tags-container">
-			<GenerateButton snippet={snippet} disabled={isReadOnly} />
-
 			<h2>
 				<label htmlFor="snippet_tags">
 					{__('Tags', 'code-snippets')}

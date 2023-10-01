@@ -62,7 +62,8 @@ label[for='snippet_description'] h3 div {
 }
 
 /* Add spacing in between the action buttons */
-.button + .button {
+.button + .button,
+.generate-button + .button {
 	margin-left: .5em;
 }
 
