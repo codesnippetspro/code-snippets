@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
@@ -39,7 +39,7 @@ const InlineActivateButton: React.FC = () => {
 }
 
 const InlineActionButtons: React.FC = () => {
-	const { snippet, isWorking, isReadOnly, submitSnippet } = useSnippetForm()
+	const { isWorking, submitSnippet } = useSnippetForm()
 
 	return (
 		<>

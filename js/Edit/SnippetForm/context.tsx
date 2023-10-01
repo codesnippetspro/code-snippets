@@ -9,6 +9,7 @@ import { useSnippetSubmit } from '../utils/submit'
 export interface SnippetFormContext {
 	snippet: Snippet
 	setSnippet: Dispatch<SetStateAction<Snippet>>
+	updateSnippet: Dispatch<SetStateAction<Snippet>>
 	isReadOnly: boolean
 	isWorking: boolean
 	setIsWorking: Dispatch<SetStateAction<boolean>>
@@ -52,9 +53,19 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 		setCurrentNotice(['error', [message, isAxiosError(error) ? error.message : ''].filter(Boolean).join(' ')])
 	}, [setIsWorking, setCurrentNotice])
 
+	const updateSnippet: Dispatch<SetStateAction<Snippet>> = useCallback((value: SetStateAction<Snippet>) => {
+		setSnippet(previous => {
+			const updated = 'object' === typeof value ? value : value(previous)
+			codeEditorInstance?.codemirror.setValue(updated.code)
+			window.tinymce?.activeEditor.setContent(updated.desc)
+			return updated
+		})
+	}, [codeEditorInstance?.codemirror])
+
 	const value: SnippetFormContext = {
 		snippet,
 		setSnippet,
+		updateSnippet,
 		isReadOnly,
 		isWorking,
 		setIsWorking,
