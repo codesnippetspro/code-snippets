@@ -30,20 +30,20 @@ h2:first-of-type, .submit-inline {
 .saved-snippet {
 	&.inactive-snippet, &.active-snippet {
 		#title {
-			border-right-width: 4px;
+			border-left-width: 4px;
 		}
 	}
 
 	&.active-snippet #title {
-		border-right-color: #46b450;
+		border-left-color: #46b450;
 	}
 
 	&.inactive-snippet #title {
-		border-right-color: #bbb;
+		border-left-color: #bbb;
 	}
 
 	&.erroneous-snippet #title {
-		border-right-color: #dc3232;
+		border-left-color: #dc3232;
 	}
 }
 

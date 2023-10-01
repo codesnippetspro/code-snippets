@@ -24,7 +24,7 @@ export const TagsInput: React.FC = () => {
 				onChange={tags => setSnippet(previous => ({ ...previous, tags }))}
 				completions={options.availableTags}
 				allowSpaces={options.allowSpaces}
-				placeholder={__('Enter a list of tags; separated by commas', 'code-snippets')}
+				placeholder={__('Enter a list of tags; separated by commas.', 'code-snippets')}
 			/>
 		</div> :
 		null
