@@ -62,6 +62,35 @@ class Settings_Menu extends Admin_Menu {
 				exit;
 			}
 		}
+
+		if(  isset( $_GET['connect-authorise-cloud'] ) ) {
+			if ( 'true' == $_GET['connect-authorise-cloud'] ){
+				code_snippets()->cloud_api->init_cloud_conection();
+			}
+		}
+
+		if(  isset( $_GET['confirm-authorise-cloud'] ) ) {
+			if ( 'true' == $_GET['confirm-authorise-cloud'] ){
+				$auth_code = $_GET['code'];
+				$state = $_GET['state'];
+
+				$cloud_response = code_snippets()->cloud_api->verify_cloud_connection_response( $state );
+
+				if( $cloud_response ){
+					$token_exchange = code_snippets()->cloud_api->exchange_auth_code_for_token( $auth_code);
+
+					if( $token_exchange ){
+						// Show Success Message
+						add_settings_error(
+							'code-snippets-settings-notices',
+							'cloud-connection-success',
+							__( 'Cloud Connection Successful', 'code-snippets' ),
+							'updated'
+						);
+					}
+				}
+			}
+		}
 	}
 
 	/**

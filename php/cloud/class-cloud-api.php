@@ -11,6 +11,8 @@ use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\update_snippet_fields;
 
+require_once ABSPATH . 'wp-includes/pluggable.php';
+
 /**
  * Functions used to manage cloud synchronisation.
  *
@@ -107,6 +109,8 @@ class Cloud_API {
 		$this->local_token = $settings['local_token'];
 		$this->cloud_key_is_verified = boolval( $settings['token_verified'] );
 
+		$this->init_oauth_sync();
+
 		add_action( 'code_snippets/deactivate_snippet', array( $this, 'disable_sync' ), 10, 2 );
 		add_action( 'code_snippets/delete_snippet', array( $this, 'remove_sync' ), 10, 2 );
 	}
@@ -150,6 +154,9 @@ class Cloud_API {
 				'local_token'      => '',
 				'token_verified'   => false,
 				'token_snippet_id' => '',
+				'code_verifier'    => '',
+				'code_challenge'   => '',
+				'state'            => '',
 			];
 
 			update_option( self::CLOUD_SETTINGS_CACHE_KEY, $settings );
@@ -177,6 +184,44 @@ class Cloud_API {
 		wp_cache_set( self::CLOUD_SETTINGS_CACHE_KEY, $existing_settings );
 	}
 
+	/**
+	 * Initialise data for OAuth Cloud Connect.
+	 *
+	 * @return void
+	 */
+	private function init_oauth_sync() {
+		// Check if the cloud key is already verified.
+		if ( $this->cloud_key_is_verified ) {
+			return;
+		}
+
+		// Check if the code verifier is already set.
+		if ( $this->get_cloud_setting( 'code_verifier' ) ) {
+			return;
+		}
+
+		// Create PCKE code verifier and challenge.
+		$cvc = $this->create_code_verifier_and_challenge();
+
+		$code_verifier = $cvc['code_verifier'];
+		$code_challenge = $cvc['code_challenge'];
+
+		// Create state
+		$state = wp_generate_password( 15, false );
+
+		// Create the Local Token
+		$local_token = wp_generate_password( 30, false );
+
+		// Save the code verifier in the database in cloud settings
+		$this->update_cloud_settings(
+			[
+				'code_verifier'  => $code_verifier,
+				'code_challenge' => $code_challenge,
+				'state'          => $state,
+				'local_token'    => $local_token,
+			]
+		);
+	}
 
 	/**
 	 * Check cloud key is valid and verified
@@ -413,7 +458,8 @@ class Cloud_API {
 	public function establish_new_cloud_connection( string $cloud_key ): array {
 
 		// Create a random string of 30 characters mixed numbers and letters - lower and uppercase.
-		$local_token = wp_generate_password( 30, false );
+		//$local_token = wp_generate_password( 30, false );
+		$local_token = $this->get_cloud_setting( 'local_token' );
 
 		$site_url = get_site_url();
 
@@ -474,6 +520,125 @@ class Cloud_API {
 			'success' => false,
 			'message' => 'There was an unknown error, please try again later.',
 		];
+	}
+
+	/**
+	 * Connect and Authorise Cloud Connection
+	 * Redirect to the cloud connection OAuth Login
+	 *
+	 * @return wp_redirect|bool
+	 */
+	public function init_cloud_conection() {
+
+		$site_url = get_site_url();
+		$site_host = wp_parse_url( $site_url, PHP_URL_HOST );
+
+		$state = $this->get_cloud_setting( 'state' );
+		$local_token = $this->get_cloud_setting( 'local_token' );
+		$code_challenge = $this->get_cloud_setting( 'code_challenge' );
+
+		$client_id = $site_host.'-'.$local_token;
+
+		//$url = esc_html( self::CLOUD_URL .'/oauth/login?response_type=code&client_id=').$client_id.'&code_challenge='.$code_challenge.'&state='.$state;
+		
+		// TESTING URL
+		$url = esc_html( 'http://localhost/oauth/login?response_type=code').'&client_id='.$client_id.'&code_challenge='.$code_challenge.'&state='.$state;
+		
+		wp_redirect( $url );
+	}
+
+	/**
+	 * Verify Response from Cloud Connection is Authentic 
+	 *
+	 * @param string $state State sent to cloud.
+	 * 
+	 * @return boolean
+	 */
+	public function verify_cloud_connection_response( $incoming_state ): bool {
+
+		$existing_state = $this->get_cloud_setting( 'state' );
+
+		// Check if the state is the same as the one sent.
+		if ( $incoming_state !== $existing_state ) {
+			
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Exchange the auth code for a bearer token.
+	 *
+	 * @param string $auth_code Authorisation code.
+	 * 
+	 * @return  bool|WP_Error
+	 */
+	public function exchange_auth_code_for_token( string $auth_code ) {
+		// Get all settings needed for the API Call
+		$code_verifier = $this->get_cloud_setting( 'code_verifier' );
+		$local_token = $this->get_cloud_setting( 'local_token' );
+		$site_url = get_site_url();
+		$site_host = wp_parse_url( $site_url, PHP_URL_HOST );
+		$client_id = $site_host.'-'.$local_token;
+
+		// Send POST re	quest to API 
+		$response = wp_remote_post(
+			//self::CLOUD_API_URL . 'auth/token', // LIVE URL
+			'http://localhost/api/v1/auth/token', // TEST URL 
+			[
+				'method'  => 'POST',
+				'headers' => [
+					'Accept'                      => 'application/json',
+					'Local-Token'                 => $local_token,
+					'Access-Control-Allow-Origin' => '*',
+				],
+				'body'    => [
+					'code'          => $auth_code,
+					'client_id'     => $client_id,
+					'grant_type'	=> 'authorization_code',
+					'code_verifier' => $code_verifier,
+				],
+			]
+		);
+
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body, true );
+
+		// Check the response codes and return accordingly.
+		if ( 401 === wp_remote_retrieve_response_code( $response ) ) {
+			return new WP_Error(
+				'invalid_token',
+				'That token is invalid - please check and try again.'
+			);
+		}
+
+		if ( 422 === wp_remote_retrieve_response_code( $response ) ) {
+			return new WP_Error(
+				'Something Went Wrong',
+				'Please see error message:  '.$data['message']
+			);
+
+		}
+
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return new WP_Error(
+				'connection_error',
+				'There was an error connecting to the cloud platform. Please try again later.'
+			);
+		}
+
+		// Save the token in code snippets cloud settings.
+		$this->update_cloud_settings(
+			[
+				'cloud_token'    => $data['token'],
+				'token_verified' => true,
+			]
+		);
+		
+		$this->cloud_key = $data['token'];
+
+		return true;
 	}
 
 	/**
@@ -1187,5 +1352,24 @@ class Cloud_API {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Create Code Verifier and challenge for OAuth Flow
+	 * 
+	 * @return array
+	 */
+	protected function create_code_verifier_and_challenge(): array {
+		$code_verifier = wp_generate_password( 128, false, false );
+		$code_verifier = strtr( $code_verifier, '+/', '-_' );
+		$code_verifier = str_replace( '=', '', $code_verifier );
+
+		$code_challenge = strtr( base64_encode( hash( 'sha256', $code_verifier, true ) ), '+/', '-_' );
+		$code_challenge = str_replace( '=', '', $code_challenge );
+
+		return [
+			'code_verifier' => $code_verifier,
+			'code_challenge' => $code_challenge,
+		];
 	}
 }

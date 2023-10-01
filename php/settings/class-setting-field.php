@@ -9,6 +9,8 @@
 
 namespace Code_Snippets\Settings;
 
+use function Code_Snippets\code_snippets;
+
 /**
  * Represents a single setting field
  *
@@ -268,4 +270,37 @@ class Setting_Field {
 			esc_attr( $this->element_id )
 		);
 	}
+
+	/**
+	 * Render a hidden input field for an editor setting.
+	 */
+	private function render_connect_cloud_button_field() {
+		$button_text = __( 'Connect and Authorise', 'code-snippets' );
+		// $site_url = get_site_url();
+		// $site_host = wp_parse_url( $site_url, PHP_URL_HOST );
+		// $local_token = code_snippets()->cloud_api->get_cloud_setting( 'local_token' );
+		// $client_id = $site_host.'-'.$local_token;
+		// $code_challenge = code_snippets()->cloud_api->get_cloud_setting( 'code_challenge' );
+		// $state = code_snippets()->cloud_api->get_cloud_setting( 'state' );
+
+		// $button_url =  esc_html('http://localhost/oauth/login?response_type=code&');
+
+		// printf(
+		// 	'<a href="%sclient_id=%s&code_challenge=%s&state=%s" class="button">%s</a><p class="settings-button-label">%s</p>',
+		// 	esc_url( $button_url ),
+		// 	esc_html( $client_id ),
+		// 	esc_html( $code_challenge ),
+		// 	esc_html( $state ),
+		// 	esc_html( $button_text ),
+		// 	wp_kses_post( $this->name )
+		// );
+
+		printf(
+			'<a href="%s" class="button">%s</a><p class="settings-button-label">%s</p>',
+			esc_url( admin_url( 'admin.php?page=snippets-settings&connect-authorise-cloud=true' ) ),
+			esc_html( $button_text ),
+			wp_kses_post( $this->name )
+		);
+	}
+
 }

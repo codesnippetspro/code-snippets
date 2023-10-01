@@ -115,6 +115,13 @@ function get_settings_fields(): array {
 			'label'   => __( 'When the plugin is deleted from the Plugins menu, also delete all snippets and plugin settings.', 'code-snippets' ),
 			'default' => false,
 		],
+
+		'connect_to_cloud' => [
+			'name'    => __( 'Connect & Authorise', 'code-snippets' ),
+			'type'    => 'connect_cloud_button',
+			'label'   => __( 'Click to connect and authorise your cloud account.', 'code-snippets' ),
+			'default' => false,
+		],
 	];
 
 	if ( is_multisite() && ! is_main_site() ) {
