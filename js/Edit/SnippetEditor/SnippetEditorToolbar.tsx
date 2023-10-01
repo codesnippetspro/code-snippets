@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
+import { GenerateButton } from '../buttons/GenerateButton'
+import { GenerateCodeModal } from '../components/GenerateCodeModal'
 import { useSnippetForm } from '../SnippetForm/context'
 
 const InlineActivateButton: React.FC = () => {
@@ -39,11 +41,28 @@ const InlineActivateButton: React.FC = () => {
 }
 
 const InlineActionButtons: React.FC = () => {
-	const { isWorking, submitSnippet } = useSnippetForm()
+	const { snippet, isWorking, isReadOnly, submitSnippet } = useSnippetForm()
+	const [showCreateModal, setShowCreateModal] = useState(false)
 
 	return (
 		<>
 			{isWorking ? <Spinner /> : ''}
+
+			{snippet.code.trim() ?
+				<GenerateButton
+					snippet={snippet}
+					disabled={isWorking || isReadOnly}
+					title={__('Explain this snippet with AI.', 'code-snippets')}
+				>
+					{__('Explain', 'code-snippets')}
+				</GenerateButton> :
+				<GenerateButton
+					primary={0 === snippet.id}
+					snippet={snippet}
+					disabled={isWorking || isReadOnly}
+					title={__('Generate a new snippet with AI.', 'code-snippets')}
+					onClick={() => setShowCreateModal(true)}
+				/>}
 
 			<Button
 				small
@@ -56,6 +75,8 @@ const InlineActionButtons: React.FC = () => {
 			</Button>
 
 			<InlineActivateButton />
+
+			{showCreateModal ? <GenerateCodeModal onClose={() => setShowCreateModal(false)} /> : null}
 		</>
 	)
 }

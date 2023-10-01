@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_API;
+use Code_Snippets\REST_API\Cloud_REST_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 
 /**
@@ -142,6 +143,9 @@ class Plugin {
 	public function init_rest_api() {
 		$snippets_controller = new Snippets_REST_Controller();
 		$snippets_controller->register_routes();
+
+		$cloud_api = new Cloud_REST_API( $this->cloud_api );
+		$cloud_api->register_routes();
 	}
 
 	/**
@@ -351,10 +355,11 @@ class Plugin {
 			[
 				'isLicensed' => $this->licensing->is_licensed(),
 				'restAPI'    => [
-					'base'     => esc_url_raw( rest_url() ),
-					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
-					'nonce'    => wp_create_nonce( 'wp_rest' ),
-					'cloudApiNonce'  => wp_create_nonce( 'cs_cloud_ai_api' ),
+					'base'       => esc_url_raw( rest_url() ),
+					'snippets'   => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
+					'cloud'      => esc_url_raw( rest_url( Cloud_REST_API::get_base_route() ) ),
+					'nonce'      => wp_create_nonce( 'wp_rest' ),
+					'localToken' => $this->cloud_api->get_local_token(),
 				],
 				'urls'       => [
 					'plugin' => plugins_url( '', PLUGIN_FILE ),
