@@ -68,7 +68,7 @@ export const DescriptionEditor: React.FC = () => {
 			<GenerateButton
 				snippet={snippet}
 				disabled={isReadOnly}
-				processResponse={generated => {
+				onResponse={generated => {
 					updateSnippet(previous => ({
 						...previous,
 						name: generated.name && '' === previous.name.trim() ? generated.name : previous.name,

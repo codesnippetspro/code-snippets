@@ -14,7 +14,7 @@ export const TagsInput: React.FC = () => {
 			<GenerateButton
 				snippet={snippet}
 				disabled={isReadOnly}
-				processResponse={generated => {
+				onResponse={generated => {
 					setSnippet(previous => ({
 						...previous,
 						tags: [...new Set([...previous.tags, ...generated.tags ?? []])]

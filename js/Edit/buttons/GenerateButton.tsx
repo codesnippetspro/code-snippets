@@ -35,7 +35,8 @@ export const GenerateIcon = () =>
 
 export interface GenerateButtonProps extends ButtonProps {
 	snippet: Snippet
-	processResponse?: (generated: ExplainedSnippet) => void
+	onRequest?: VoidFunction
+	onResponse?: (generated: ExplainedSnippet) => void
 }
 
 export const GenerateButton: React.FC<GenerateButtonProps> = ({
@@ -43,7 +44,8 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
 	children,
 	onClick,
 	disabled,
-	processResponse,
+	onRequest,
+	onResponse,
 	...props
 }) => {
 	const [isWorking, setIsWorking] = useState(false)
@@ -68,11 +70,12 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
 				onClick={onClick ?? (() => {
 					setIsWorking(true)
 					setErrorMessage(undefined)
+					onRequest?.()
 
 					explainSnippet(snippet.code)
 						.then(response => {
 							setIsWorking(false)
-							processResponse?.(response)
+							onResponse?.(response)
 						})
 						.catch(error => {
 							setIsWorking(false)
