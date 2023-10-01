@@ -6,7 +6,7 @@ import { useSnippetForm } from '../SnippetForm/context'
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 
 export const PageHeading: React.FC = () => {
-	const { snippet, setSnippet } = useSnippetForm()
+	const { snippet, updateSnippet } = useSnippetForm()
 
 	return (
 		<h1>
@@ -17,16 +17,14 @@ export const PageHeading: React.FC = () => {
 			{snippet.id ? <>{' '}
 				<a href={window.CODE_SNIPPETS?.urls.addNew} className="page-title-action" onClick={event => {
 					event.preventDefault()
-
-					setSnippet(() => createEmptySnippet())
-					window.tinymce?.activeEditor.setContent('')
+					updateSnippet(() => createEmptySnippet())
 
 					window.document.title = window.document.title.replace(
 						__('Edit Snippet', 'code-snippets'),
 						__('Add New Snippet', 'code-snippets')
 					)
 
-					window.history.replaceState({}, window.document.title, window.CODE_SNIPPETS?.urls.addNew)
+					window.history.replaceState({}, '', window.CODE_SNIPPETS?.urls.addNew)
 				}}>
 					{_x('Add New', 'snippet', 'code-snippets')}
 				</a>

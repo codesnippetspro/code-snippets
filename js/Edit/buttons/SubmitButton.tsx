@@ -6,7 +6,6 @@ import { Snippet } from '../../types/Snippet'
 import { isNetworkAdmin } from '../../utils/general'
 import { useSnippetForm } from '../SnippetForm/context'
 
-
 const SaveChangesButton: React.FC<ButtonProps> = ({ ...props }) =>
 	<Button
 		name="save_snippet"
