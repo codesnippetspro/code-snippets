@@ -16,4 +16,11 @@
 
 .generate-button {
 	float: right;
+	display: flex;
+	align-items: center;
+
+	.dashicons-warning {
+		color: #b32d2e;
+		margin-right: 11px;
+	}
 }

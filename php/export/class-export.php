@@ -71,8 +71,6 @@ class Export {
 			'date_created' => gmdate( 'Y-m-d H:i' ),
 			'snippets'     => $snippets,
 		);
-
-		return $this->snippets_list;
 	}
 
 	/**
