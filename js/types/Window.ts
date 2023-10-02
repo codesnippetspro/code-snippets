@@ -36,6 +36,7 @@ declare global {
 			isPreview: boolean
 			enableTags: boolean
 			enableDownloads: boolean
+			scrollToNotices: boolean
 			extraSaveButtons: boolean
 			activateByDefault: boolean
 			enableDescription: boolean

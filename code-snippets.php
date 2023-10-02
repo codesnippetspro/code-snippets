@@ -9,7 +9,7 @@
  * License URI:  license.txt
  * Text Domain:  code-snippets
  * Version:      3.6.0-alpha.1
- * Requires PHP: 7.0
+ * Requires PHP: 7.4
  * Requires at least: 5.0
  *
  * @version   3.6.0-alpha.1
