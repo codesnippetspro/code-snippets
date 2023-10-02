@@ -33,6 +33,7 @@ export const handleSettingsTabs = () => {
 		return
 	}
 
+	const submitWrap = document.querySelector<HTMLElement>('.code-snippets-settings .submit')
 	const tabs = tabsWrapper.querySelectorAll('.nav-tab') ?? []
 
 	for (const tab of tabs) {
@@ -44,6 +45,10 @@ export const handleSettingsTabs = () => {
 				selectTab(tabsWrapper, tab, section)
 				refreshEditorPreview(section)
 				updateHttpReferer(section)
+			}
+
+			if (submitWrap) {
+				submitWrap.style.display = 'debug' === section ? 'none' : 'block'
 			}
 		})
 	}
