@@ -13,7 +13,7 @@ const AXIOS_CONFIG: CreateAxiosDefaults = {
 	headers: { 'X-WP-Nonce': window.CODE_SNIPPETS?.restAPI.nonce }
 }
 
-export interface Snippets {
+export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<AxiosResponse<Snippet[]>>
 	fetch: (snippetId: number, network?: boolean | null) => Promise<AxiosResponse<Snippet>>
 	create: (snippet: Snippet) => Promise<AxiosResponse<Snippet>>
@@ -31,10 +31,10 @@ const buildURL = ({ id, network }: Snippet, action?: string) =>
 		{ network: network ? true : undefined }
 	)
 
-export const useSnippetsAPI = (): Snippets => {
+export const useSnippetsAPI = (): SnippetsAPI => {
 	const { get, post, del } = useAxios(AXIOS_CONFIG)
 
-	return useMemo((): Snippets => ({
+	return useMemo((): SnippetsAPI => ({
 		fetchAll: network =>
 			get<Snippet[]>(addQueryArgs(ROUTE_BASE, { network })),
 

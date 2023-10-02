@@ -347,11 +347,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	protected function build_export( WP_REST_Request $request ): Export {
 		$item = $this->prepare_item_for_database( $request );
-
-		$ids = [ $item->id ];
-		$table_name = code_snippets()->db->get_table_name( $item->network );
-
-		return new Export( $ids, $table_name );
+		return new Export( [ $item->id ], $item->network );
 	}
 
 	/**

@@ -31,7 +31,9 @@
         "ext-dom": "*",
         "ext-json": "*",
         "matthiasmullie/minify": "^1.3",
-        "freemius/wordpress-sdk": "^2.5.10"
+        "freemius/wordpress-sdk": "^2.5.10",
+        "guzzlehttp/guzzle": "^7.0",
+        "symfony/deprecation-contracts": "2.5"
     },
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.0",

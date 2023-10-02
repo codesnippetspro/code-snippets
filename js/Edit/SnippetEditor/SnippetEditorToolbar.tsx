@@ -1,85 +1,151 @@
+import React, { useState } from 'react'
+import { LineWidget } from 'codemirror'
 import { Spinner } from '@wordpress/components'
-import React from 'react'
 import { __, isRTL } from '@wordpress/i18n'
-import { ActionButton } from '../../common/ActionButton'
-import { Snippet } from '../../types/Snippet'
-import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
-import { SnippetActionsProps, useSnippetActions } from '../actions'
+import { Button } from '../../common/Button'
+import { GenerateButton } from '../buttons/GenerateButton'
+import { GenerateCodeModal } from '../components/GenerateCodeModal'
+import { useSnippetForm } from '../SnippetForm/context'
 
-export interface InlineActionButtonsProps extends SnippetActionsProps {
-	snippet: Snippet
-	isWorking: boolean
+const InlineActivateButton: React.FC = () => {
+	const { snippet, isWorking, submitAndActivateSnippet, submitAndDeactivateSnippet } = useSnippetForm()
+
+	return 'single-use' === snippet.scope ?
+		<Button
+			small
+			id="save_snippet_execute_extra"
+			title={__('Save Snippet and Execute Once', 'code-snippets')}
+			onClick={() => submitAndActivateSnippet()}
+			disabled={isWorking}
+		>
+			{__('Execute Once', 'code-snippets')}
+		</Button> :
+		snippet.active ?
+			<Button
+				small
+				id="save_snippet_deactivate_extra"
+				title={__('Save Snippet and Deactivate', 'code-snippets')}
+				onClick={() => submitAndDeactivateSnippet()}
+				disabled={isWorking}
+			>
+				{__('Deactivate', 'code-snippets')}
+			</Button> :
+			<Button
+				small
+				id="save_snippet_activate_extra"
+				title={__('Save Snippet and Activate', 'code-snippets')}
+				onClick={() => submitAndActivateSnippet()}
+				disabled={isWorking}
+			>
+				{__('Activate', 'code-snippets')}
+			</Button>
 }
 
-export interface CodeEditorToolbarProps extends InlineActionButtonsProps {
-	codeEditorInstance: CodeEditorInstance | undefined
+const ExplainCodeButton: React.FC = () => {
+	const { snippet, isWorking, isReadOnly, codeEditorInstance } = useSnippetForm()
+	const [, setWidgets] = useState<LineWidget[]>([])
+
+	return (
+		<GenerateButton
+			snippet={snippet}
+			disabled={isWorking || isReadOnly}
+			title={__('Explain this snippet with AI.', 'code-snippets')}
+			onRequest={() => {
+				setWidgets(widgets => {
+					widgets.forEach(widget => widget.clear())
+					return []
+				})
+			}}
+			onResponse={generated => {
+				const doc = codeEditorInstance?.codemirror.getDoc()
+				console.info('lines', generated.lines)
+
+				setWidgets(() => doc && generated.lines ?
+					Object.entries(generated.lines).map(([line, message]) => {
+						const lineNumber = parseInt(line, 10) - 1
+
+						const widget = document.createElement('div')
+						widget.className = 'code-line-explanation'
+
+						const icon = document.createElement('img')
+						icon.setAttribute('src', `${window.CODE_SNIPPETS?.urls.plugin}/assets/generate.svg`)
+
+						widget.appendChild(icon)
+						widget.appendChild(document.createTextNode(message))
+
+						return doc.addLineWidget(lineNumber, widget, { above: true })
+					}) : [])
+			}}
+		>
+			{__('Explain', 'code-snippets')}
+		</GenerateButton>
+	)
 }
 
-const RTLControl: React.FC<Pick<CodeEditorToolbarProps, 'codeEditorInstance'>> = ({ codeEditorInstance }) =>
-	<>
-		<label htmlFor="snippet-code-direction" className="screen-reader-text">
-			{__('Code Direction', 'code-snippets')}
-		</label>
+const GenerateCodeButton: React.FC = () => {
+	const { snippet, isWorking, isReadOnly } = useSnippetForm()
+	const [showCreateModal, setShowCreateModal] = useState(false)
 
-		<select id="snippet-code-direction" onChange={event =>
-			codeEditorInstance?.codemirror.setOption('direction', 'rtl' === event.target.value ? 'rtl' : 'ltr')
-		}>
-			<option value="ltr">{__('LTR', 'code-snippets')}</option>
-			<option value="rtl">{__('RTL', 'code-snippets')}</option>
-		</select>
+	return <>
+		<GenerateButton
+			primary={0 === snippet.id}
+			snippet={snippet}
+			disabled={isWorking || isReadOnly}
+			title={__('Generate a new snippet with AI.', 'code-snippets')}
+			onClick={() => setShowCreateModal(true)}
+		/>
+
+		{showCreateModal ? <GenerateCodeModal onClose={() => setShowCreateModal(false)} /> : null}
 	</>
+}
 
-const InlineActionButtons: React.FC<InlineActionButtonsProps> = ({ snippet, isWorking, ...actionsProps }) => {
-	const actions = useSnippetActions(actionsProps)
+const InlineActionButtons: React.FC = () => {
+	const { snippet, isWorking, submitSnippet } = useSnippetForm()
 
 	return (
 		<>
 			{isWorking ? <Spinner /> : ''}
 
-			<ActionButton
+			{snippet.code.trim() ?
+				<ExplainCodeButton /> :
+				<GenerateCodeButton />}
+
+			<Button
 				small
 				id="save_snippet_extra"
-				text={__('Save Changes', 'code-snippets')}
 				title={__('Save Snippet', 'code-snippets')}
-				onClick={() => actions.submit(snippet)}
+				onClick={() => submitSnippet()}
 				disabled={isWorking}
-			/>
+			>
+				{__('Save Changes', 'code-snippets')}
+			</Button>
 
-			{'single-use' === snippet.scope ?
-				<ActionButton
-					small
-					id="save_snippet_execute_extra"
-					text={__('Execute Once', 'code-snippets')}
-					title={__('Save Snippet and Execute Once', 'code-snippets')}
-					onClick={() => actions.submitAndActivate(snippet, true)}
-					disabled={isWorking}
-				/> :
-				snippet.active ?
-					<ActionButton
-						small
-						id="save_snippet_deactivate_extra"
-						text={__('Deactivate', 'code-snippets')}
-						title={__('Save Snippet and Deactivate', 'code-snippets')}
-						onClick={() => actions.submitAndActivate(snippet, false)}
-						disabled={isWorking}
-					/> :
-					<ActionButton
-						small
-						id="save_snippet_activate_extra"
-						text={__('Activate', 'code-snippets')}
-						title={__('Save Snippet and Activate', 'code-snippets')}
-						onClick={() => actions.submitAndActivate(snippet, true)}
-						disabled={isWorking}
-					/>}
+			<InlineActivateButton />
 		</>
 	)
 }
 
-export const SnippetEditorToolbar: React.FC<CodeEditorToolbarProps> = ({ codeEditorInstance, ...actionButtonsProps }) =>
-	<p className="submit-inline">
-		{window.CODE_SNIPPETS_EDIT?.extraSaveButtons ?
-			<InlineActionButtons {...actionButtonsProps} /> : ''}
+const RTLControl: React.FC = () => {
+	const { codeEditorInstance } = useSnippetForm()
 
-		{isRTL() ?
-			<RTLControl codeEditorInstance={codeEditorInstance} /> : ''}
-	</p>
+	return (
+		<>
+			<label htmlFor="snippet-code-direction" className="screen-reader-text">
+				{__('Code Direction', 'code-snippets')}
+			</label>
+
+			<select id="snippet-code-direction" onChange={event =>
+				codeEditorInstance?.codemirror.setOption('direction', 'rtl' === event.target.value ? 'rtl' : 'ltr')
+			}>
+				<option value="ltr">{__('LTR', 'code-snippets')}</option>
+				<option value="rtl">{__('RTL', 'code-snippets')}</option>
+			</select>
+		</>
+	)
+}
+
+export const SnippetEditorToolbar: React.FC = () =>
+	<div className="submit-inline">
+		{window.CODE_SNIPPETS_EDIT?.extraSaveButtons ? <InlineActionButtons /> : null}
+		{isRTL() ? <RTLControl /> : null}
+	</div>

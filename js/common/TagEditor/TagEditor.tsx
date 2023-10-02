@@ -132,7 +132,7 @@ export const TagEditor: React.FC<TagEditorProps> = ({
 		}
 	}
 
-	return <div className="tagger wrap">
+	return <div className="tagger">
 		<ul onClick={() => inputRef.current?.focus()}>
 			<TagList tags={tags} onRemove={removeTag} />
 			<li className="tagger-new">
