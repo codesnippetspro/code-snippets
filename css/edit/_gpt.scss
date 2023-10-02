@@ -1,0 +1,26 @@
+.cloud-create-modal {
+
+	.components-modal__content {
+		min-width: 550px;
+	}
+
+	.action-buttons {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.components-button.is-secondary {
+		box-shadow: none;
+	}
+}
+
+.generate-button {
+	float: right;
+	display: flex;
+	align-items: center;
+
+	.dashicons-warning {
+		color: #b32d2e;
+		margin-right: 11px;
+	}
+}
