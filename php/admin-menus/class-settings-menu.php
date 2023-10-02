@@ -39,6 +39,7 @@ class Settings_Menu extends Admin_Menu {
 				delete_site_option( 'code_snippets_settings' );
 			} else {
 				delete_option( 'code_snippets_settings' );
+				delete_option( 'code_snippets_cloud_settings' );
 			}
 
 			add_settings_error(
