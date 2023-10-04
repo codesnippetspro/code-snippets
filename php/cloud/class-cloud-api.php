@@ -116,6 +116,33 @@ class Cloud_API {
 	}
 
 	/**
+	 * Retrieve the cloud local token.
+	 *
+	 * @return string
+	 */
+	public function get_local_token(): string {
+		return $this->local_token;
+	}
+
+	/**
+	 * Retrieve the cloud API key.
+	 *
+	 * @return string
+	 */
+	public function get_cloud_key(): string {
+		return $this->cloud_key;
+	}
+
+	/**
+	 * Check cloud key is valid and verified
+	 *
+	 * @return boolean
+	 */
+	public function is_cloud_key_verified(): bool {
+		return $this->cloud_key_is_verified;
+	}
+
+	/**
 	 * Get Specific Cloud Setting
 	 *
 	 * @param string $setting Setting name.
@@ -132,7 +159,7 @@ class Cloud_API {
 	 *
 	 * @return array
 	 */
-	public function get_cloud_settings(): array {
+	private function get_cloud_settings(): array {
 		static $settings = null;
 
 		if ( ! is_null( $settings ) ) {
@@ -173,7 +200,7 @@ class Cloud_API {
 	 *
 	 * @return void
 	 */
-	public function update_cloud_settings( array $settings ) {
+	private function update_cloud_settings( array $settings ) {
 		$existing_settings = $this->get_cloud_settings();
 
 		foreach ( $settings as $setting => $value ) {
@@ -222,16 +249,6 @@ class Cloud_API {
 			]
 		);
 	}
-
-	/**
-	 * Check cloud key is valid and verified
-	 *
-	 * @return boolean
-	 */
-	public function is_cloud_key_verified(): bool {
-		return $this->cloud_key_is_verified;
-	}
-
 	/**
 	 * Check snippet is special token snippet
 	 *
@@ -322,7 +339,7 @@ class Cloud_API {
 	 * @return boolean
 	 */
 	public function is_cloud_connection_available(): bool {
-		return $this->cloud_key && $this->cloud_key_is_verified;
+		return $this->get_cloud_key() && $this->is_cloud_key_verified();
 	}
 
 	/**
@@ -424,19 +441,16 @@ class Cloud_API {
 	/**
 	 * Build a list of headers required for an authenticated request.
 	 *
-	 * @return array<string, mixed>
+	 * @return array<string, string>
 	 */
-	private function build_request_headers(): array {
-		$cloud_api_key = $this->get_cloud_setting( 'cloud_token' );
+	public function build_request_headers(): array {
 		return [
-			'Authorization' => 'Bearer ' . $cloud_api_key,
-			'Local-Token'   => $this->local_token,
+			'Authorization' => "Bearer {$this->get_cloud_key()}",
+			'Local-Token'   => $this->get_local_token(),
 		];
 	}
 
 	/**
-	 * =======
-	 * >>>>>>> PD-157-cloud/core
 	 * Unpack JSON data from a request response.
 	 *
 	 * @param array|WP_Error $response Response from wp_request_*.
@@ -648,7 +662,7 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Snippets|null
 	 */
-	public function get_codevault_snippets( int $page = 0 ) {
+	public function get_codevault_snippets( int $page = 0 ): ?Cloud_Snippets {
 		// Fetch data from the stored transient, if available.
 		$stored_data = get_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
 		if ( $stored_data ) {
@@ -872,7 +886,7 @@ class Cloud_API {
 	 *
 	 * @return array|null Bundle name and id, null otherwise.
 	 */
-	public static function get_bundles() {
+	public static function get_bundles(): ?array {
 		$api_url = self::CLOUD_API_URL . 'private/bundles';
 		$self = new self();
 		$response = wp_remote_get( $api_url, [ 'headers' => $self->build_request_headers() ] );
@@ -1157,8 +1171,8 @@ class Cloud_API {
 			return $this->local_to_cloud_map[ $index ];
 		}
 
-		// If the snippet is not synced to cloud return false.
-		return false;
+		// If the snippet is not synced to cloud return null.
+		return null;
 	}
 
 	/**

@@ -20,29 +20,11 @@ class Export {
 	/**
 	 * Class constructor
 	 *
-	 * @param array<int>|int $ids        List of snippet IDs to export.
-	 * @param string         $table_name Name of the database table to fetch snippets from.
+	 * @param array<int>   $ids     List of snippet IDs to export.
+	 * @param boolean|null $network Whether to fetch snippets from local or network table..
 	 */
-	public function __construct( $ids, string $table_name = '' ) {
-		$this->fetch_snippets( $ids, $table_name );
-	}
-
-	/**
-	 * Fetch the selected snippets from the database
-	 *
-	 * @param array<int>|int $ids        List of snippet IDs to export.
-	 * @param string         $table_name Name of database table to fetch snippets from.
-	 */
-	private function fetch_snippets( $ids, string $table_name ) {
-		if ( '' === $table_name ) {
-			$table_name = code_snippets()->db->get_table_name();
-		}
-
-		if ( ! is_array( $ids ) ) {
-			$ids = array( $ids );
-		}
-
-		$this->snippets_list = get_snippets( $ids, $table_name );
+	public function __construct( array $ids, ?bool $network = null ) {
+		$this->snippets_list = get_snippets( $ids, $network );
 	}
 
 	/**

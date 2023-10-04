@@ -1,0 +1,46 @@
+.cloud-create-modal {
+
+	.components-modal__content {
+		min-width: 550px;
+	}
+
+	.action-buttons {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.components-button.is-secondary {
+		box-shadow: none;
+	}
+}
+
+.generate-button {
+	float: right;
+	display: flex;
+	align-items: center;
+
+	.dashicons-warning {
+		color: #b32d2e;
+		margin-right: 11px;
+	}
+}
+
+.code-line-explanation {
+	display: flex;
+	align-items: center;
+	font-size: 13px;
+	margin: 0;
+	padding: 0 8px;
+	background-color: #fff;
+	border: 1px solid #bbb;
+	border-left: 0;
+	border-right: 0;
+	color: #666;
+	font-style: italic;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
+
+	img {
+		height: 1rem;
+		padding-right: 5px;
+	}
+}

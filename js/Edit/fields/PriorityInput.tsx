@@ -1,10 +1,12 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { SnippetInputProps } from '../../types/SnippetInputProps'
 import { getSnippetType } from '../../utils/snippets'
+import { useSnippetForm } from '../SnippetForm/context'
 
-export const PriorityInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, isReadOnly }) =>
-	'html' === getSnippetType(snippet) ? null :
+export const PriorityInput: React.FC = () => {
+	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
+
+	return 'html' === getSnippetType(snippet) ? null :
 		<p
 			className="snippet-priority"
 			title={__('Snippets with a lower priority number will run before those with a higher number.', 'code-snippets')}
@@ -22,3 +24,4 @@ export const PriorityInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet
 				}))}
 			/>
 		</p>
+}

@@ -1,26 +1,14 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef } from 'react'
-import { SnippetActionsInputProps } from '../../types/SnippetInputProps'
-import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
-import { useSnippetActions } from '../actions'
+import React, { useEffect, useRef } from 'react'
+import { isMacOS } from '../../utils/general'
+import { useSnippetForm } from '../SnippetForm/context'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 
-export interface CodeEditorProps extends SnippetActionsInputProps {
-	editorInstance: CodeEditorInstance | undefined
-	setEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
-}
-
-export const CodeEditor: React.FC<CodeEditorProps> = ({
-	snippet,
-	setSnippet,
-	editorInstance,
-	setEditorInstance,
-	...actionsProps
-}) => {
-	const actions = useSnippetActions({ setSnippet, ...actionsProps })
+export const CodeEditor: React.FC = () => {
+	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance, submitSnippet } = useSnippetForm()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
 	useEffect(() => {
-		setEditorInstance(editorInstance => {
+		setCodeEditorInstance(editorInstance => {
 			if (textareaRef.current && !editorInstance) {
 				editorInstance = window.wp.codeEditor.initialize(textareaRef.current)
 
@@ -30,21 +18,20 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
 			return editorInstance
 		})
-	}, [setEditorInstance, textareaRef, setSnippet])
+	}, [setCodeEditorInstance, textareaRef, setSnippet])
 
 	useEffect(() => {
-		if (editorInstance) {
-			const extraKeys = editorInstance.codemirror.getOption('extraKeys')
-			const controlKey = window.navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'
-			const submitSnippet = () => actions.submit(snippet)
+		if (codeEditorInstance) {
+			const extraKeys = codeEditorInstance.codemirror.getOption('extraKeys')
+			const controlKey = isMacOS() ? 'Cmd' : 'Ctrl'
 
-			editorInstance.codemirror.setOption('extraKeys', {
+			codeEditorInstance.codemirror.setOption('extraKeys', {
 				...'object' === typeof extraKeys ? extraKeys : undefined,
 				[`${controlKey}-S`]: submitSnippet,
 				[`${controlKey}-Enter`]: submitSnippet
 			})
 		}
-	}, [actions, editorInstance, snippet])
+	}, [submitSnippet, codeEditorInstance, snippet])
 
 	return (
 		<div className="snippet-editor">

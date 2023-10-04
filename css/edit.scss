@@ -16,34 +16,34 @@
 
 h2 {
 	/* Provide some decent space between the fields and titles. */
-	margin: 25px 0 15px 0;
-
-	&:first-of-type {
-		margin-top: 20px;
-	}
+	margin: 25px 0 15px;
 
 	label {
 		cursor: auto;
 	}
 }
 
+h2:first-of-type, .submit-inline {
+	margin: 20px 0 10px;
+}
+
 .saved-snippet {
 	&.inactive-snippet, &.active-snippet {
 		#title {
-			border-right-width: 4px;
+			border-left-width: 4px;
 		}
 	}
 
 	&.active-snippet #title {
-		border-right-color: #46b450;
+		border-left-color: #46b450;
 	}
 
 	&.inactive-snippet #title {
-		border-right-color: #bbb;
+		border-left-color: #bbb;
 	}
 
 	&.erroneous-snippet #title {
-		border-right-color: #dc3232;
+		border-left-color: #dc3232;
 	}
 }
 
@@ -62,8 +62,20 @@ label[for='snippet_description'] h3 div {
 }
 
 /* Add spacing in between the action buttons */
-.button + .button {
+.button + .button,
+.generate-button + .button {
 	margin-left: .5em;
+}
+
+h2 .button {
+	font-weight: normal;
+}
+
+.button svg {
+	height: 1rem;
+	vertical-align: middle;
+	line-height: 1;
+	margin: -2px 3px 0 0;
 }
 
 .submit, .submit-inline {
@@ -72,6 +84,7 @@ label[for='snippet_description'] h3 div {
 
 .submit-inline {
 	float: right;
+	margin-bottom: 0;
 }
 
 p.snippet-scope, .snippet-scope p {
@@ -81,13 +94,12 @@ p.snippet-scope, .snippet-scope p {
 .snippet-description-container {
 	margin-top: 25px;
 
-	> h2 {
-		float: left;
-		margin: 0;
-	}
-
 	.wp-editor-tools {
 		padding-top: 5px;
+	}
+
+	.wp-editor-tabs {
+		float: left;
 	}
 }
 
@@ -141,3 +153,4 @@ p.snippet-scope, .snippet-scope p {
 @import 'edit/types';
 @import 'edit/tags';
 @import 'edit/upgrade-dialog';
+@import 'edit/gpt';

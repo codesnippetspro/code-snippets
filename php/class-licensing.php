@@ -28,7 +28,7 @@ class Licensing {
 	 *
 	 * @var Freemius
 	 */
-	public $sdk;
+	public Freemius $sdk;
 
 	/**
 	 * Class constructor.
@@ -103,6 +103,16 @@ class Licensing {
 	 */
 	public function was_licensed(): bool {
 		return $this->sdk->has_any_license();
+	}
+
+	/**
+	 * Retrieve the current license secret key.
+	 *
+	 * @return string|null
+	 */
+	public function get_license_key(): ?string {
+		$license = $this->sdk->_get_license();
+		return $license ? $license->secret_key : null;
 	}
 
 	/**

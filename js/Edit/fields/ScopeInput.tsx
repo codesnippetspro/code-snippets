@@ -1,12 +1,12 @@
 import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import React, { Dispatch, SetStateAction, useState } from 'react'
-import { SnippetInputProps } from '../../types/SnippetInputProps'
 import { SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetScope } from '../../types/Snippet'
 import { isNetworkAdmin } from '../../utils/general'
 import { buildShortcodeTag, ShortcodeAtts } from '../../utils/shortcodes'
 import { getSnippetType } from '../../utils/snippets'
 import { CopyToClipboardButton } from '../../common/CopyToClipboardButton'
+import { useSnippetForm } from '../SnippetForm/context'
 
 const SHORTCODE_TAG = 'code_snippet'
 
@@ -84,7 +84,8 @@ const ShortcodeOptions: React.FC<ShortcodeOptionsProps> = ({
 		)}
 	</p>
 
-const ShortcodeInfo: React.FC<SnippetInputProps> = ({ snippet, isReadOnly }) => {
+const ShortcodeInfo: React.FC = () => {
+	const { snippet, isReadOnly } = useSnippetForm()
 	const [options, setOptions] = useState<ShortcodeOptions>(() => ({
 		php: snippet.code.includes('<?'),
 		format: true,
@@ -131,8 +132,10 @@ const ShortcodeInfo: React.FC<SnippetInputProps> = ({ snippet, isReadOnly }) => 
 		</> : null
 }
 
-export const ScopeInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, isReadOnly }) =>
-	<>
+export const ScopeInput: React.FC = () => {
+	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
+
+	return <>
 		<h2 className="screen-reader-text">{__('Scope', 'code-snippets')}</h2>
 
 		{SNIPPET_TYPES
@@ -159,7 +162,8 @@ export const ScopeInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, i
 							{` ${SCOPE_DESCRIPTIONS[scope]}`}
 						</label>)}
 
-					{'html' === type ? <ShortcodeInfo {...{ snippet, setSnippet, isReadOnly }} /> : null}
+					{'html' === type ? <ShortcodeInfo /> : null}
 				</p>
 			)}
 	</>
+}
