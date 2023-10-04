@@ -1006,8 +1006,8 @@ class Cloud_API {
 			return $this->local_to_cloud_map[ $index ];
 		}
 
-		// If the snippet is not synced to cloud return null.
-		return null;
+		// If the snippet is not synced to cloud return.
+		return false;
 	}
 
 	/**
