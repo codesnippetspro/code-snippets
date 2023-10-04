@@ -60,7 +60,8 @@ class Cloud_Bundles extends Cloud_Search_List_Table {
 		foreach ( $items as $snippet_to_store ) {
 			// Check if the snippet already exists in the database.
 			$codevault_snippet = get_snippet_by_cloud_id( $snippet_to_store->id . '_' . $snippet_to_store->is_owner );
-			code_snippets()->cloud_api->download_snippet_from_cloud( $snippet_to_store, (bool) $codevault_snippet );
+			$snippet_to_store = [ $snippet_to_store ];
+			code_snippets()->cloud_api->store_snippets_from_cloud_to_local( $snippet_to_store, (bool) $codevault_snippet );
 		}
 
 		wp_safe_redirect( esc_url_raw( code_snippets()->get_menu_url() ) );

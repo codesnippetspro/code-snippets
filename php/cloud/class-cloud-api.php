@@ -979,9 +979,9 @@ class Cloud_API {
 	 * @param int    $snippet_id     Snippet ID.
 	 * @param string $local_or_cloud Whether the ID is a local ID or cloud ID.
 	 *
-	 * @return Cloud_Link|bool
+	 * @return Cloud_Link|bool - Wordpress throws error due to pipe | in return type.
 	 */
-	public function get_cloud_link( int $snippet_id, string $local_or_cloud ): Cloud_Link|bool { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	public function get_cloud_link( int $snippet_id, string $local_or_cloud ) { // phpcs:ignore
 		$local_to_cloud_map = $this->get_local_to_cloud_map();
 
 		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
