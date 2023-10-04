@@ -1172,7 +1172,7 @@ class Cloud_API {
 		}
 
 		// If the snippet is not synced to cloud return null.
-		return null;
+		return false;
 	}
 
 	/**
