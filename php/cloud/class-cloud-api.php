@@ -553,10 +553,10 @@ class Cloud_API {
 
 		$client_id = $site_host.'-'.$local_token;
 
-		//$url = esc_html( self::CLOUD_URL .'/oauth/login?response_type=code&client_id=').$client_id.'&code_challenge='.$code_challenge.'&state='.$state;
+		$url = esc_html( self::CLOUD_URL .'oauth/login?response_type=code').'&client_id='.$client_id.'&code_challenge='.$code_challenge.'&state='.$state;
 		
 		// TESTING URL
-		$url = esc_html( 'http://localhost/oauth/login?response_type=code').'&client_id='.$client_id.'&code_challenge='.$code_challenge.'&state='.$state;
+		//$url = esc_html( 'http://localhost/oauth/login?response_type=code').'&client_id='.$client_id.'&code_challenge='.$code_challenge.'&state='.$state;
 		
 		wp_redirect( $url );
 	}
@@ -598,8 +598,8 @@ class Cloud_API {
 
 		// Send POST re	quest to API 
 		$response = wp_remote_post(
-			//self::CLOUD_API_URL . 'auth/token', // LIVE URL
-			'http://localhost/api/v1/auth/token', // TEST URL 
+			self::CLOUD_API_URL . 'auth/token', // LIVE URL
+			//'http://localhost/api/v1/auth/token', // TEST URL 
 			[
 				'method'  => 'POST',
 				'headers' => [
@@ -985,6 +985,8 @@ class Cloud_API {
 
 		switch ( $action ) {
 			case 'download':
+				// Convert snippet to store to an array.
+				$snippet_to_store = [ $snippet_to_store ];
 				return $this->store_snippets_from_cloud_to_local( $snippet_to_store, $in_codevault );
 			case 'update':
 				return $this->update_snippet_from_cloud( $snippet_to_store );
@@ -1146,7 +1148,7 @@ class Cloud_API {
 	 *
 	 * @return Cloud_Link|bool
 	 */
-	public function get_cloud_link( int $snippet_id, string $local_or_cloud ): Cloud_Link|bool { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	public function get_cloud_link( int $snippet_id, string $local_or_cloud ) { // phpcs:ignore
 		$local_to_cloud_map = $this->get_local_to_cloud_map();
 
 		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
