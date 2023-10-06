@@ -6,7 +6,6 @@ use Code_Snippets\Snippet;
 use WP_Error;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet_by_cloud_id;
-use function Code_Snippets\get_snippet_with_token_data;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\update_snippet_fields;
@@ -81,7 +80,7 @@ class Cloud_API {
 	 *
 	 * @var boolean
 	 */
-	private bool $cloud_key_is_verified;
+	public bool $cloud_key_is_verified;
 
 	/**
 	 * List of cloud snippets.
@@ -111,8 +110,6 @@ class Cloud_API {
 
 		$this->init_oauth_sync();
 
-		add_action( 'code_snippets/deactivate_snippet', array( $this, 'disable_sync' ), 10, 2 );
-		add_action( 'code_snippets/delete_snippet', array( $this, 'remove_sync' ), 10, 2 );
 	}
 
 	/**
@@ -180,7 +177,6 @@ class Cloud_API {
 				'cloud_token'      => '',
 				'local_token'      => '',
 				'token_verified'   => false,
-				'token_snippet_id' => '',
 				'code_verifier'    => '',
 				'code_challenge'   => '',
 				'state'            => '',
@@ -249,17 +245,7 @@ class Cloud_API {
 			]
 		);
 	}
-	/**
-	 * Check snippet is special token snippet
-	 *
-	 * @param string|integer $snippet_id Snippet ID.
-	 *
-	 * @return boolean
-	 */
-	public function is_cloud_access_snippet( $snippet_id ): bool {
-		$token_snippet_id = $this->get_cloud_setting( 'token_snippet_id' );
-		return (int) $token_snippet_id === (int) $snippet_id;
-	}
+	
 
 	/**
 	 * Create local-to-cloud map to keep track of local snippets that have been synced to the cloud.
@@ -293,13 +279,6 @@ class Cloud_API {
 		foreach ( get_snippets() as $local_snippet ) {
 			// Skip snippets that are only stored locally.
 			if ( ! $local_snippet->cloud_id ) {
-				continue;
-			}
-
-			// If the snippet is a token snippet skip it.
-			$has_valid_cloud_id = boolval( strpos( $local_snippet->cloud_id, '_' ) );
-			$is_cloud_access_snippet = $this->is_cloud_access_snippet( $local_snippet->id );
-			if ( ! $has_valid_cloud_id || $is_cloud_access_snippet ) {
 				continue;
 			}
 
@@ -343,7 +322,7 @@ class Cloud_API {
 	}
 
 	/**
-	 * Check if the API Token key is available.
+	 * Check Cloud Connection is Available or Establish New Connection
 	 *
 	 * @return array
 	 */
@@ -356,36 +335,16 @@ class Cloud_API {
 			];
 		}
 
-		// Check if the Token Snippet exists.
-		$token_snippet = get_snippet_with_token_data();
-
-		if ( ! $token_snippet ) {
+		// Check if cloud key is verified
+		if ( ! $this->is_cloud_key_verified() ) {
 			return [
 				'success'       => false,
-				'redirect-slug' => 'deleted',
-			];
-		}
-
-		// Check if the Token Snippet is active.
-		if ( ! $token_snippet->active ) {
-			return [
-				'success'       => false,
-				'redirect-slug' => 'inactive',
-			];
-		}
-
-		// Extract token from snippet.
-		$saved_cloud_token = $token_snippet->cloud_id;
-
-		if ( ! $saved_cloud_token ) {
-			return [
-				'success'       => false,
-				'redirect-slug' => 'invalid',
+				'redirect-slug' => 'not-connected',
 			];
 		}
 
 		// Establish new cloud connection.
-		$cloud_connection = $this->establish_new_cloud_connection( $saved_cloud_token );
+		$cloud_connection = $this->establish_new_cloud_connection();
 
 		if ( 'no_codevault' === $cloud_connection['message'] ) {
 			return [
@@ -394,25 +353,17 @@ class Cloud_API {
 			];
 		}
 
-		// If the cloud connection is successful, save the token in code snippets settings[cloud][cloud_token].
+		// Check if the connection was successful.
+
 		if ( ! $cloud_connection['success'] ) {
+			// If not successful return the error message.
 			return [
 				'success'       => false,
 				'redirect-slug' => 'invalid',
+				'message'       => $cloud_connection['message'],
 			];
 		}
 
-		$this->update_cloud_settings(
-			[
-				'cloud_token'      => $saved_cloud_token,
-				'local_token'      => $cloud_connection['local_token'],
-				'token_verified'   => true,
-				'token_snippet_id' => $token_snippet->id,
-			]
-		);
-
-		$this->cloud_key = $saved_cloud_token;
-		$this->local_token = $cloud_connection['local_token'];
 		$this->cloud_key_is_verified = true;
 
 		return [
@@ -465,15 +416,14 @@ class Cloud_API {
 	/**
 	 * Establish new connection to the cloud platform.
 	 *
-	 * @param string $cloud_key Cloud API key.
-	 *
-	 * @return array - success, message, local_token
+	 * @return array - success, message,
 	 */
-	public function establish_new_cloud_connection( string $cloud_key ): array {
+	public function establish_new_cloud_connection(): array {
 
 		// Create a random string of 30 characters mixed numbers and letters - lower and uppercase.
 		//$local_token = wp_generate_password( 30, false );
 		$local_token = $this->get_cloud_setting( 'local_token' );
+		$cloud_key = $this->get_cloud_setting( 'cloud_token' );
 
 		$site_url = get_site_url();
 
@@ -499,7 +449,7 @@ class Cloud_API {
 		if ( 401 === wp_remote_retrieve_response_code( $response ) ) {
 			return [
 				'success' => false,
-				'message' => 'That token is invalide - please check and try again.',
+				'message' => 'That token is invalid - please check and try again.',
 			];
 		}
 
@@ -526,7 +476,6 @@ class Cloud_API {
 			return [
 				'success'     => true,
 				'message'     => $data['message'],
-				'local_token' => $local_token,
 			];
 		}
 
@@ -1270,52 +1219,16 @@ class Cloud_API {
 	}
 
 	/**
-	 * Disable Sync if the token snippet is deactivated
+	 * Remove or Reset Cloud Sync
 	 *
-	 * @param string|int $id Snippet ID.
-	 *
-	 * @return array<string, mixed>
+	 * @return bool
 	 */
-	public function disable_sync( $id ): array {
-		$token_snippet = $this->get_cloud_setting( 'token_snippet_id' );
+	public function remove_sync() {
 
-		if ( $id === $token_snippet ) {
-			$this->refresh_cloud_settings_data( false, $id );
-			$this->refresh_synced_data();
+		$this->refresh_cloud_settings_data();
+		$this->refresh_synced_data();
 
-			return [
-				'success' => true,
-				'message' => __( 'Sync has been disable', 'code-snippets' ),
-			];
-		}
-
-		return [];
-	}
-
-	/**
-	 * Remove Sync if the token snippet is deleted.
-	 *
-	 * @param string|int $id Snippet ID.
-	 *
-	 * @return array<string, mixed>
-	 */
-	public function remove_sync( $id ): array {
-
-		$token_snippet = $this->get_cloud_setting( 'token_snippet_id' );
-
-		if ( $id === $token_snippet ) {
-			$this->refresh_cloud_settings_data( true );
-			$this->refresh_synced_data();
-
-			// TODO: Send request to Cloud API to remove sync.
-
-			return [
-				'success' => true,
-				'message' => __( 'Sync has been revoked', 'code-snippets' ),
-			];
-		}
-
-		return [];
+		return true;
 	}
 
 	/**
@@ -1334,17 +1247,14 @@ class Cloud_API {
 	/**
 	 * Refresh all settings data
 	 *
-	 * @param bool   $token_id_wipe Whether to wipe the token or not.
-	 * @param string $token_id      The token snippet ID.
 	 *
 	 * @return void
 	 */
-	public function refresh_cloud_settings_data( bool $token_id_wipe, string $token_id = '' ) {
+	public function refresh_cloud_settings_data() {
 		$this->update_cloud_settings(
 			[
 				'cloud_token'      => '',
 				'token_verified'   => false,
-				'token_snippet_id' => $token_id_wipe ? '' : $token_id,
 				'local_token'      => '',
 			]
 		);

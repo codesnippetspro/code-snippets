@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $licensed = code_snippets()->licensing->is_licensed();
+$cloud_enabled = code_snippets()->cloud_api->cloud_key_is_verified;
 $types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin::get_types() );
 $current_type = $this->get_current_type();
 
@@ -67,6 +68,11 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 			<?php
 		}
 		?>
+		<div class="cloud-connect-wrap <?php  echo esc_html__( $cloud_enabled ? 'cloud-connect-active' : '' ) ?>">
+			<span class="dot"></span> 
+			<p>Cloud Sync: <span class="cloud-connect-text"><?php  echo esc_html__( $cloud_enabled ? 'Connected' : 'Disconnected' ) ?></p>
+			<?php  include_once 'partials/cloud-sync-guide.php'; ?>
+		</div>
 	</h2>
 
 	<?php

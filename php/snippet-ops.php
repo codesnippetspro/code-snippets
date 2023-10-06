@@ -212,40 +212,6 @@ function get_snippet( int $id = 0, ?bool $network = null ): Snippet {
 
 
 /**
- * Retrieve snippet holding cloud token and external API tokens
- *
- * Read operation.
- *
- * @return Snippet|boolean - Returns the snippet code if found, false if not found.
- *
- * @since 3.5.0
- */
-function get_snippet_with_token_data() {
-	global $wpdb;
-
-	// First check if the token snippet ID is code snippets cloud settings.
-	$cloud_settings = get_option( Cloud_API::CLOUD_SETTINGS_CACHE_KEY );
-
-	// Make sure the token snippet ID is set and not empty string.
-	if ( $cloud_settings && ! empty( $cloud_settings['token_snippet_id'] ) ) {
-		$token_snippet = get_snippet( $cloud_settings['token_snippet_id'] );
-		// Check if snippet is not empty snippet object.
-		if ( $token_snippet->id ) {
-			return $token_snippet;
-		}
-	}
-
-	$table_name = code_snippets()->db->get_table_name();
-
-	// This is the snippet that holds the cloud token and external API tokens -- Add more tags or specificity if needed?
-	// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-	$token_snippet = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE tags LIKE '%extend_cs%' LIMIT 1" ) );
-
-	// Check if snippet returns any data from database call.
-	return $token_snippet ? new Snippet( $token_snippet ) : false;
-}
-
-/**
  * Ensure the list of shared network snippets is correct if one has been recently activated or deactivated.
  * Write operation.
  *

@@ -291,9 +291,9 @@ class Setting_Field {
 		
 		printf(
 			'<a href="%s" class="button">%s</a><p class="settings-button-label">%s</p>',
-			esc_url( admin_url( 'admin.php?page=snippets-settings&connect-authorise-cloud=true' ) ),
+			esc_url( code_snippets()->get_menu_url( 'settings', 'admin' ) . '&connect-authorise-cloud=true' ),
 			esc_html( $button_text ),
-			wp_kses_post( $this->name )
+			wp_kses_post( $this->label )
 		);
 	}
 

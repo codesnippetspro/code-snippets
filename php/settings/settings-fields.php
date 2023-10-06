@@ -119,7 +119,7 @@ function get_settings_fields(): array {
 		],
 
 		'connect_to_cloud' => [
-			'name'    => __( 'Connect & Authorise', 'code-snippets' ),
+			'name'    => __( 'Connect to Cloud', 'code-snippets' ),
 			'type'    => 'connect_cloud_button',
 			'label'   => __( 'Click to connect and authorise your cloud account.', 'code-snippets' ),
 			'default' => false,
@@ -237,6 +237,13 @@ function get_settings_fields(): array {
 			'type'    => 'button',
 			'url'     => add_query_arg( 'update_database', true, code_snippets()->get_menu_url( 'settings' ) ),
 			'desc'    => __( 'To manually update the Code Snippets database table, click the button above. This action will only affect the Code Snippets table and should be used only when necessary.', 'code-snippets' ),
+			'default' => false,
+		],
+		'remove_sync' => [
+			'name'    => __( 'Reset / Remove Cloud Connection', 'code-snippets' ),
+			'type'    => 'button',
+			'url'     => add_query_arg( 'remove_sync', true, code_snippets()->get_menu_url( 'settings' ) ),
+			'desc'    => __( 'To manually remove/reset the connection to code snippet cloud, click the button above. This action will not affect any snippets stored on this site.', 'code-snippets' ),
 			'default' => false,
 		],
 	];

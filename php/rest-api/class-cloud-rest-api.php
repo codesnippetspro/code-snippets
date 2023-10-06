@@ -247,7 +247,7 @@ final class Cloud_REST_API {
 	public function remove_sync() {
 		$cloud_api = code_snippets()->cloud_api;
 
-		$cloud_api->refresh_cloud_settings_data( true );
+		$cloud_api->refresh_cloud_settings_data();
 		$cloud_api->refresh_synced_data();
 
 		$response = [

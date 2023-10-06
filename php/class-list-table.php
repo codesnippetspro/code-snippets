@@ -248,8 +248,9 @@ class List_Table extends WP_List_Table {
 			}
 
 			$actions['cloud'] = sprintf(
-				'<a href="https://codesnippets.cloud/cloud-setup-guide" target="_blank">%s</a>',
-				esc_html__( 'Set up cloud', 'code-snippets' )
+				'<a href="%s">%s</a>',
+				esc_url( admin_url( 'admin.php?page=snippets-settings&connect-authorise-cloud=true' ) ),
+				esc_html__( 'Set up cloud', 'code-snippets' ),
 			);
 
 			if ( $this->is_cloud_link_valid() ) {
@@ -273,14 +274,6 @@ class List_Table extends WP_List_Table {
 						);
 					}
 				}
-			}
-
-			// Check if the snippet is the special cloud access snippet if so remove the cloud action.
-			if ( code_snippets()->cloud_api->is_cloud_access_snippet( $snippet->id ) ) {
-				unset( $actions['edit'] );
-				unset( $actions['clone'] );
-				unset( $actions['export'] );
-				$actions['cloud'] = sprintf( '<a>%s</a>', __( 'Cloud Access Snippet', 'code-snippets' ) );
 			}
 
 			$actions['delete'] = sprintf(

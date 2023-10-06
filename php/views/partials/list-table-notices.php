@@ -59,29 +59,31 @@ switch ( $result ) {
 		</div>
 		<?php
 		break;
-
 	case 'cloud-key-invalid':
-	case 'cloud-key-inactive':
-	case 'cloud-key-expired':
-		$notices = [
-			'cloud-key-invalid'  => __( 'The snippet with the cloud key is invalid. Please re-download from the cloud and try again.', 'code-snippets' ),
-			'cloud-key-inactive' => __( 'The snippet with the cloud key is deactivated. Please activate it and try again.', 'code-snippets' ),
-			'cloud-key-expired'  => __( 'The cloud access snippet has expired. Please re-download from the cloud and try again.', 'code-snippets' ),
-		];
-
 		?>
-		<div class="notice notice-error fade">
-			<p><strong><?php echo esc_html( $notices[ $result ] ); ?></strong></p>
+		<div id="message" class="notice notice-error fade is-dismissible">
+			<p><strong><?php esc_html_e( 'There is a problem with the cloud connection. Please reset connection and try to connect again.', 'code-snippets' ); ?></strong></p>
 			<p>
-				<?php
-				// translators: %s: cloud setup URL.
-				$text = __( 'See our <a href="%s" target="_blank">cloud setup guide</a> for more details.', 'code-snippets' );
-				echo wp_kses_post( sprintf( $text, 'https://codesnippets.cloud/cloud-setup-guide' ) );
-				?>
+				<a href="<?php echo esc_url( code_snippets()->get_menu_url( 'settings', 'admin' ) . '&remove_sync=1' )  ?>">
+					<?php esc_html_e( 'Click here to reset the cloud connection.', 'code-snippets' ); ?></a>
 			</p>
 		</div>
 		<?php
 		break;
+
+	case 'cloud-key-not-connected':
+		?>
+		<div id="message" class="notice notice-error fade is-dismissible">
+			<p><strong><?php esc_html_e( 'Sorry, you are not connected to your cloud account.', 'code-snippets' ); ?></strong></p>
+			<p>
+				<a href="<?php echo esc_url( code_snippets()->get_menu_url( 'settings', 'admin' ) . '&connect-authorise-cloud=true' )  ?>">
+					<?php esc_html_e( 'Click here to login and connect to your cloud account.', 'code-snippets' ); ?></a>
+			</p>
+		</div>
+		<?php
+		break;
+	
+
 
 	default:
 		$result_messages = apply_filters(

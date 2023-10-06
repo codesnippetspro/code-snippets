@@ -92,6 +92,19 @@ class Settings_Menu extends Admin_Menu {
 				}
 			}
 		}
+
+		if ( isset( $_REQUEST['remove_sync'] ) ) {
+			if ('1' == $_REQUEST['remove_sync'] ){
+				code_snippets()->cloud_api->remove_sync();
+
+				add_settings_error(
+					'code-snippets-settings-notices',
+					'sync_removed',
+					__( 'The Connection to the Code Snippet Cloud has been removed.', 'code-snippets' ),
+					'updated'
+				);
+			}	
+		}
 	}
 
 	/**

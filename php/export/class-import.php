@@ -3,7 +3,6 @@
 namespace Code_Snippets;
 
 use DOMDocument;
-use Code_Snippets\Cloud\Cloud_API;
 
 /**
  * Handles importing snippets from export files into the site
@@ -93,16 +92,6 @@ class Import {
 
 		$imported = $this->save_snippets( $snippets );
 
-		// Cloud access snippet import action.
-		if ( $data['cloud_access'] ) {
-			$cloud_settings = get_option( Cloud_API::CLOUD_SETTINGS_CACHE_KEY );
-
-			if ( $cloud_settings ) {
-				// Set the token snippet id from the first id in imported array.
-				$cloud_settings['token_snippet_id'] = $imported[0];
-				update_option( Cloud_API::CLOUD_SETTINGS_CACHE_KEY, $cloud_settings );
-			}
-		}
 
 		do_action( 'code_snippets/import/json', $this->file, $this->multisite );
 		return $imported;
