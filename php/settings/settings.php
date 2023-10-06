@@ -134,6 +134,7 @@ function get_settings_sections(): array {
 	$sections = array(
 		'general' => __( 'General', 'code-snippets' ),
 		'editor'  => __( 'Code Editor', 'code-snippets' ),
+		'debug'   => __( 'Debug', 'code-snippets' ),
 	);
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );

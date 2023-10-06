@@ -38,6 +38,13 @@ class DB {
 	 */
 	public function __construct() {
 		$this->set_table_vars();
+
+		if ( isset( $_REQUEST['update_database'] ) ) {
+			if ('1' == $_REQUEST['update_database'] ){
+				// Update the database table manually.
+				$this->create_or_upgrade_tables();
+			}	
+		}
 	}
 
 	/**
@@ -176,7 +183,7 @@ class DB {
 				scope       VARCHAR(15)  NOT NULL DEFAULT 'global',
 				priority    SMALLINT     NOT NULL DEFAULT 10,
 				active      TINYINT(1)   NOT NULL DEFAULT 0,
-				modified    DATETIME     NOT NULL DEFAULT '0000-00-00 00:00:00',
+				modified    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				revision    BIGINT(20)   NOT NULL DEFAULT 1,
 				cloud_id    VARCHAR(255) NULL,
 				PRIMARY KEY  (id),

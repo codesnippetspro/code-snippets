@@ -21,6 +21,7 @@ use function Code_Snippets\code_snippets;
  *
  * @property-read int                   $min                Minimum value (for numerical inputs).
  * @property-read int                   $max                Maximum value(for numerical inputs).
+ * @property-read string                $url                URL target (for button inputs).
  * @property-read array<string, string> $options            List of options for a select or checkboxes field.
  * @property-read callable              $render_callback    Custom function to use when rendering a callback field.
  * @property-read callable              $sanitize_callback  Custom function to use when sanitize the setting value.
@@ -159,9 +160,8 @@ class Setting_Field {
 	/**
 	 * Render a checkbox field for a setting
 	 *
-	 * @since 2.0.0
-	 *
 	 * @return void
+	 * @since 2.0.0
 	 */
 	public function render_checkbox_field() {
 		$this->render_checkbox( $this->input_name, $this->label, $this->get_saved_value() );
@@ -170,9 +170,8 @@ class Setting_Field {
 	/**
 	 * Render a checkbox field for a setting
 	 *
-	 * @since 2.0.0
-	 *
 	 * @return void
+	 * @since 2.0.0
 	 */
 	public function render_checkboxes_field() {
 		$saved_value = $this->get_saved_value();
@@ -236,7 +235,7 @@ class Setting_Field {
 	}
 
 	/**
-	 * Render a number select field for an editor setting
+	 * Render a number select field for an editor setting.
 	 *
 	 * @since 3.0.0
 	 */
@@ -254,6 +253,19 @@ class Setting_Field {
 		}
 
 		echo '</select>';
+	}
+
+	/**
+	 * Render a button link.
+	 *
+	 * @since 3.5.1
+	 */
+	private function render_button_field() {
+		printf(
+			'<a href="%s" class="button">%s</a>',
+			esc_url( $this->url ),
+			esc_html( $this->name )
+		);
 	}
 
 	/**

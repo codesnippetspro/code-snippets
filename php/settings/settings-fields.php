@@ -8,6 +8,8 @@
 
 namespace Code_Snippets\Settings;
 
+use function Code_Snippets\code_snippets;
+
 /**
  * Retrieve the default setting values
  *
@@ -227,7 +229,16 @@ function get_settings_fields(): array {
 			],
 			'codemirror' => 'keyMap',
 		],
+	];
 
+	$fields['debug'] = [
+		'database_update' => [
+			'name'    => __( 'Database Table Update', 'code-snippets' ),
+			'type'    => 'button',
+			'url'     => add_query_arg( 'update_database', true, code_snippets()->get_menu_url( 'settings' ) ),
+			'desc'    => __( 'To manually update the Code Snippets database table, click the button above. This action will only affect the Code Snippets table and should be used only when necessary.', 'code-snippets' ),
+			'default' => false,
+		],
 	];
 
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );
