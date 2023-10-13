@@ -264,7 +264,7 @@ class Setting_Field {
 		printf(
 			'<a href="%s" class="button">%s</a>',
 			esc_url( $this->url ),
-			esc_html( $this->name )
+			esc_html( empty( $this->label ) ? $this->name : $this->label )
 		);
 	}
 
@@ -282,19 +282,4 @@ class Setting_Field {
 			esc_attr( $this->element_id )
 		);
 	}
-
-	/**
-	 * Render a hidden input field for an editor setting.
-	 */
-	private function render_connect_cloud_button_field() {
-		$button_text = __( 'Connect and Authorise', 'code-snippets' );
-		
-		printf(
-			'<a href="%s" class="button">%s</a><p class="settings-button-label">%s</p>',
-			esc_url( code_snippets()->get_menu_url( 'settings', 'admin' ) . '&connect-authorise-cloud=true' ),
-			esc_html( $button_text ),
-			wp_kses_post( $this->label )
-		);
-	}
-
 }

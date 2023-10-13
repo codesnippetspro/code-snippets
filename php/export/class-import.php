@@ -92,7 +92,6 @@ class Import {
 
 		$imported = $this->save_snippets( $snippets );
 
-
 		do_action( 'code_snippets/import/json', $this->file, $this->multisite );
 		return $imported;
 	}

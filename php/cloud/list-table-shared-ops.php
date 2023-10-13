@@ -73,14 +73,14 @@ function cloud_lts_process_download_action( string $action, string $source, stri
 /**
  * Build action links for snippet.
  *
- * @param Cloud_Snippet $snippet Snippet/Column item.
- * @param string        $source  Source - 'search' or 'codevault'.
+ * @param Cloud_Snippet $cloud_snippet Snippet/Column item.
+ * @param string        $source        Source - 'search' or 'codevault'.
  *
  * @return string
  */
-function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ): string {
-	$lang = Cloud_API::get_type_from_scope( $snippet->scope );
-	$link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'cloud' );
+function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $source ): string {
+	$lang = Cloud_API::get_type_from_scope( $cloud_snippet->scope );
+	$link = code_snippets()->cloud_api->get_link_for_cloud_snippet( $cloud_snippet );
 	$additional_classes = 'search' === $source ? 'action-button-link' : '';
 	$is_licensed = code_snippets()->licensing->is_licensed();
 	$download = true;
@@ -96,7 +96,7 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 			$update_url = add_query_arg(
 				[
 					'action'  => 'update',
-					'snippet' => $snippet->id,
+					'snippet' => $cloud_snippet->id,
 					'source'  => $source,
 				]
 			);
@@ -120,7 +120,7 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 		$download_url = add_query_arg(
 			[
 				'action'  => 'download',
-				'snippet' => $snippet->id,
+				'snippet' => $cloud_snippet->id,
 				'source'  => $source,
 			]
 		);
@@ -146,9 +146,9 @@ function cloud_lts_build_action_links( Cloud_Snippet $snippet, string $source ):
 	$thickbox_link = sprintf(
 		'<a href="%s" title="%s" class="cloud-snippet-preview cloud-snippet-preview-style thickbox %s" data-snippet="%s" data-lang="%s">%s</a>',
 		esc_url( $thickbox_url ),
-		esc_attr( $snippet->name ),
+		esc_attr( $cloud_snippet->name ),
 		$additional_classes,
-		esc_attr( $snippet->id ),
+		esc_attr( $cloud_snippet->id ),
 		esc_attr( $lang ),
 		esc_html__( 'Preview', 'code-snippets' )
 	);

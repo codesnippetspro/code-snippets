@@ -254,7 +254,7 @@ class List_Table extends WP_List_Table {
 			);
 
 			if ( $this->is_cloud_link_valid() ) {
-				$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
+				$cloud_link = code_snippets()->cloud_api->get_link_for_snippet( $snippet );
 
 				$actions['cloud'] = sprintf(
 					'<a href="%s">%s</a>',
@@ -361,10 +361,9 @@ class List_Table extends WP_List_Table {
 			$out .= ' <span class="badge">' . esc_html__( 'Shared on Network', 'code-snippets' ) . '</span>';
 		}
 
-		// Return the name contents.
-
 		if ( $this->is_cloud_link_valid() ) {
-			$cloud_link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' );
+			$cloud_link = code_snippets()->cloud_api->get_link_for_snippet( $snippet );
+
 			if ( $cloud_link ) {
 				// If update available make cloud icon orange?
 				if ( $cloud_link->update_available ) {

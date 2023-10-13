@@ -292,7 +292,7 @@ class Admin {
 	 * @return void
 	 */
 	public static function render_snippet_type_tab( string $type_name, string $label, string $current_type = '' ) {
-		$cloud_tabs = [ 'cloud', 'cloud_search', 'bundles'];
+		$cloud_tabs = [ 'cloud', 'cloud_search', 'bundles' ];
 		$nav_tab_inactive = false;
 
 		if ( $type_name === $current_type ) {
@@ -304,15 +304,14 @@ class Admin {
 				esc_attr( $type_name ),
 				esc_attr__( 'Available in Code Snippets Pro (external link)', 'code-snippets' )
 			);
-		
+
 		} else {
 			$current_url = remove_query_arg( [ 'cloud_select', 'cloud_search' ] );
 
-			// If type name in cloud tabs array and cloud key is verified = false then add class nav-tab-inactive
-			if ( in_array( $type_name, $cloud_tabs ) && code_snippets()->cloud_api->cloud_key_is_verified === false ) {
+			if ( in_array( $type_name, $cloud_tabs, true ) && ! code_snippets()->cloud_api->is_cloud_key_verified() ) {
 				$nav_tab_inactive = true;
-			} 
-			
+			}
+
 			printf(
 				'<a class="nav-tab %s" href="%s" data-snippet-type="%s">',
 				$nav_tab_inactive ? 'nav-tab-inactive' : '',

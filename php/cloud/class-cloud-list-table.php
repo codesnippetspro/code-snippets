@@ -20,19 +20,20 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * @package Code_Snippets
  */
 class Cloud_List_Table extends WP_List_Table {
+
 	/**
 	 * Instance of Cloud API class.
 	 *
 	 * @var Cloud_API
 	 */
-	protected $cloud_api;
+	protected Cloud_API $cloud_api;
 
 	/**
 	 * Items for the cloud list table.
 	 *
 	 * @var Cloud_Snippets
 	 */
-	protected $cloud_snippets;
+	protected Cloud_Snippets $cloud_snippets;
 
 	/**
 	 * Class constructor.
@@ -130,7 +131,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @return Cloud_Snippets|null
 	 */
-	protected function fetch_snippets() {
+	protected function fetch_snippets(): ?Cloud_Snippets {
 		return $this->cloud_api->get_codevault_snippets(
 			$this->get_current_page_number()
 		);
@@ -230,7 +231,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return string The content of the column to output.
 	 */
 	protected function column_default( $item, $column_name ): string {
-		$link = code_snippets()->cloud_api->get_cloud_link( $item->id, 'cloud' );
+		$link = code_snippets()->cloud_api->get_link_for_cloud_snippet( $item );
 
 		switch ( $column_name ) {
 			case 'tags':
@@ -241,7 +242,7 @@ class Cloud_List_Table extends WP_List_Table {
 
 			case 'name':
 				$cloud_icon = '';
-				$cloud_link = code_snippets()->cloud_api->get_cloud_link( $item->id, 'cloud' );
+				$cloud_link = code_snippets()->cloud_api->get_link_for_cloud_snippet( $item );
 
 				if ( $cloud_link ) {
 					// If update available make cloud icon orange?
@@ -402,22 +403,23 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Bulk Download Snippets.
 	 *
-	 * @param array  $ids            List of int cloud ids to download.
+	 * @param array  $cloud_ids      List of int cloud ids to download.
 	 * @param string $source         Whether the download is from the codevault or search results i.e. download-codevault-selected.
 	 * @param int    $codevault_page The current page of the codevault.
 	 *
 	 * @return void
 	 */
-	public function download_snippets( array $ids, string $source, int $codevault_page ) {
+	public function download_snippets( array $cloud_ids, string $source, int $codevault_page ) {
 		$source = explode( '-', $source )[1];
-		foreach ( $ids as $id ) {
+
+		foreach ( $cloud_ids as $cloud_id ) {
 			// Check if snippet already exists in cloud link transient and skip if it does.
-			$cloud_link = code_snippets()->cloud_api->get_cloud_link( $id, 'cloud' );
-			if ( $cloud_link ) {
-				continue;
+			$cloud_link = code_snippets()->cloud_api->get_link_for_cloud_id( $cloud_id );
+
+			if ( ! $cloud_link ) {
+				// TODO: For bulk download codevault snippets this doesn't update cloud link for first snippet.
+				$this->cloud_api->download_or_update_snippet( $cloud_id, $source, 'download', $codevault_page );
 			}
-			// TODO: For bulk download codevault snippets this doesn't update cloud link for first snippet.
-			$this->cloud_api->download_or_update_snippet( $id, $source, 'download', $codevault_page );
 		}
 	}
 

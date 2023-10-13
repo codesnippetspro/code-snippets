@@ -80,7 +80,7 @@ class Cloud_API {
 	 *
 	 * @var boolean
 	 */
-	public bool $cloud_key_is_verified;
+	private bool $cloud_key_is_verified;
 
 	/**
 	 * List of cloud snippets.
@@ -109,7 +109,7 @@ class Cloud_API {
 		$this->cloud_key_is_verified = boolval( $settings['token_verified'] );
 
 		$this->init_oauth_sync();
-
+		add_filter( 'allowed_redirect_hosts', [ $this, 'allow_cloud_redirects' ] );
 	}
 
 	/**
@@ -174,12 +174,12 @@ class Cloud_API {
 		// Check if the settings exist in the database if not create defaults.
 		if ( false === $settings ) {
 			$settings = [
-				'cloud_token'      => '',
-				'local_token'      => '',
-				'token_verified'   => false,
-				'code_verifier'    => '',
-				'code_challenge'   => '',
-				'state'            => '',
+				'cloud_token'    => '',
+				'local_token'    => '',
+				'token_verified' => false,
+				'code_verifier'  => '',
+				'code_challenge' => '',
+				'state'          => '',
 			];
 
 			update_option( self::CLOUD_SETTINGS_CACHE_KEY, $settings );
@@ -214,7 +214,7 @@ class Cloud_API {
 	 */
 	private function init_oauth_sync() {
 		// Check if the cloud key is already verified.
-		if ( $this->cloud_key_is_verified ) {
+		if ( $this->is_cloud_key_verified() ) {
 			return;
 		}
 
@@ -229,13 +229,9 @@ class Cloud_API {
 		$code_verifier = $cvc['code_verifier'];
 		$code_challenge = $cvc['code_challenge'];
 
-		// Create state
 		$state = wp_generate_password( 15, false );
-
-		// Create the Local Token
 		$local_token = wp_generate_password( 30, false );
 
-		// Save the code verifier in the database in cloud settings
 		$this->update_cloud_settings(
 			[
 				'code_verifier'  => $code_verifier,
@@ -245,14 +241,26 @@ class Cloud_API {
 			]
 		);
 	}
-	
+
+	/**
+	 * Filter the list of allowed redirect hosts to include the Cloud site.
+	 *
+	 * @param string[] $allowed_hosts List of allowed redirect hosts.
+	 *
+	 * @return string[] Modified list of allowed redirect hosts.
+	 */
+	public function allow_cloud_redirects( array $allowed_hosts ): array {
+		$api_url = wp_parse_url( self::CLOUD_URL );
+		$allowed_hosts[] = $api_url['host'];
+		return $allowed_hosts;
+	}
 
 	/**
 	 * Create local-to-cloud map to keep track of local snippets that have been synced to the cloud.
 	 *
 	 * @return Cloud_Link[]
 	 */
-	public function get_local_to_cloud_map(): ?array {
+	private function get_cloud_links(): ?array {
 		// Return the cached data if available.
 		if ( $this->local_to_cloud_map ) {
 			return $this->local_to_cloud_map;
@@ -335,7 +343,6 @@ class Cloud_API {
 			];
 		}
 
-		// Check if cloud key is verified
 		if ( ! $this->is_cloud_key_verified() ) {
 			return [
 				'success'       => false,
@@ -384,7 +391,7 @@ class Cloud_API {
 		$cloud_id_owner = explode( '_', $cloud_id );
 		return [
 			'cloud_id'        => (int) $cloud_id_owner[0] ?? '',
-			'is_owner'        => (bool) $cloud_id_owner[1],
+			'is_owner'        => (bool) $cloud_id_owner[1] ?? false,
 			'is_owner_string' => $cloud_id_owner[1] ? '1' : '0',
 		];
 	}
@@ -421,7 +428,6 @@ class Cloud_API {
 	public function establish_new_cloud_connection(): array {
 
 		// Create a random string of 30 characters mixed numbers and letters - lower and uppercase.
-		//$local_token = wp_generate_password( 30, false );
 		$local_token = $this->get_cloud_setting( 'local_token' );
 		$cloud_key = $this->get_cloud_setting( 'cloud_token' );
 
@@ -474,8 +480,8 @@ class Cloud_API {
 			];
 		} elseif ( 'success' === $data['sync_status'] ) {
 			return [
-				'success'     => true,
-				'message'     => $data['message'],
+				'success' => true,
+				'message' => $data['message'],
 			];
 		}
 
@@ -486,13 +492,11 @@ class Cloud_API {
 	}
 
 	/**
-	 * Connect and Authorise Cloud Connection
-	 * Redirect to the cloud connection OAuth Login
+	 * Connect and Authorise Cloud Connection.
 	 *
-	 * @return wp_redirect|bool
+	 * Redirect to the cloud connection OAuth Login
 	 */
-	public function init_cloud_conection() {
-
+	public function init_cloud_connection() {
 		$site_url = get_site_url();
 		$site_host = wp_parse_url( $site_url, PHP_URL_HOST );
 
@@ -500,55 +504,50 @@ class Cloud_API {
 		$local_token = $this->get_cloud_setting( 'local_token' );
 		$code_challenge = $this->get_cloud_setting( 'code_challenge' );
 
-		$client_id = $site_host.'-'.$local_token;
+		$client_id = $site_host . '-' . $local_token;
 
-		$url = esc_html( self::CLOUD_URL .'oauth/login?response_type=code').'&client_id='.$client_id.'&code_challenge='.$code_challenge.'&state='.$state;
-		
-		// TESTING URL
-		//$url = esc_html( 'http://localhost/oauth/login?response_type=code').'&client_id='.$client_id.'&code_challenge='.$code_challenge.'&state='.$state;
-		
-		wp_redirect( $url );
+		$url = add_query_arg(
+			[
+				'response_type'  => 'code',
+				'client_id'      => $client_id,
+				'code_challenge' => $code_challenge,
+				'state'          => $state,
+
+			],
+			self::CLOUD_URL . 'oauth/login'
+		);
+
+		wp_safe_redirect( esc_url_raw( $url ) );
+		exit;
 	}
 
 	/**
-	 * Verify Response from Cloud Connection is Authentic 
+	 * Verify Response from Cloud Connection is Authentic
 	 *
-	 * @param string $state State sent to cloud.
-	 * 
+	 * @param string $incoming_state State sent to cloud.
+	 *
 	 * @return boolean
 	 */
-	public function verify_cloud_connection_response( $incoming_state ): bool {
+	public function verify_cloud_connection_response( string $incoming_state ): bool {
 
 		$existing_state = $this->get_cloud_setting( 'state' );
 
 		// Check if the state is the same as the one sent.
-		if ( $incoming_state !== $existing_state ) {
-			
-			return false;
-		}
-
-		return true;
+		return $incoming_state === $existing_state;
 	}
 
 	/**
 	 * Exchange the auth code for a bearer token.
 	 *
 	 * @param string $auth_code Authorisation code.
-	 * 
+	 *
 	 * @return  bool|WP_Error
 	 */
 	public function exchange_auth_code_for_token( string $auth_code ) {
-		// Get all settings needed for the API Call
-		$code_verifier = $this->get_cloud_setting( 'code_verifier' );
 		$local_token = $this->get_cloud_setting( 'local_token' );
-		$site_url = get_site_url();
-		$site_host = wp_parse_url( $site_url, PHP_URL_HOST );
-		$client_id = $site_host.'-'.$local_token;
 
-		// Send POST re	quest to API 
 		$response = wp_remote_post(
-			self::CLOUD_API_URL . 'auth/token', // LIVE URL
-			//'http://localhost/api/v1/auth/token', // TEST URL 
+			self::CLOUD_API_URL . 'auth/token',
 			[
 				'method'  => 'POST',
 				'headers' => [
@@ -558,9 +557,9 @@ class Cloud_API {
 				],
 				'body'    => [
 					'code'          => $auth_code,
-					'client_id'     => $client_id,
-					'grant_type'	=> 'authorization_code',
-					'code_verifier' => $code_verifier,
+					'client_id'     => wp_parse_url( get_site_url(), PHP_URL_HOST ) . '-' . $local_token,
+					'grant_type'    => 'authorization_code',
+					'code_verifier' => $this->get_cloud_setting( 'code_verifier' ),
 				],
 			]
 		);
@@ -579,7 +578,7 @@ class Cloud_API {
 		if ( 422 === wp_remote_retrieve_response_code( $response ) ) {
 			return new WP_Error(
 				'Something Went Wrong',
-				'Please see error message:  '.$data['message']
+				'Please see error message:  ' . $data['message']
 			);
 
 		}
@@ -598,7 +597,7 @@ class Cloud_API {
 				'token_verified' => true,
 			]
 		);
-		
+
 		$this->cloud_key = $data['token'];
 
 		return true;
@@ -778,7 +777,7 @@ class Cloud_API {
 	 */
 	public function delete_snippet_from_transient_data( int $snippet_id ) {
 		if ( ! $this->local_to_cloud_map ) {
-			$this->get_local_to_cloud_map();
+			$this->get_cloud_links();
 		}
 
 		foreach ( $this->local_to_cloud_map as $link ) {
@@ -926,7 +925,7 @@ class Cloud_API {
 				// Check if the cloud_id is not empty, null or 0.
 				return ! $link->cloud_id || 0 !== $link->cloud_id ? $link->cloud_id : null;
 			},
-			$this->get_local_to_cloud_map()
+			$this->get_cloud_links()
 		);
 
 		// Send the cloud_ids to the cloud.
@@ -1073,7 +1072,7 @@ class Cloud_API {
 	 * @return bool Whether the snippet has update available or not.
 	 */
 	public function is_update_available( int $snippet_id ): bool {
-		$cloud_link = $this->get_local_to_cloud_map();
+		$cloud_link = $this->get_cloud_links();
 
 		// Find the snippet from the array of objects using snippet id.
 		$snippet = array_filter(
@@ -1090,46 +1089,58 @@ class Cloud_API {
 	}
 
 	/**
-	 * Check if snippet is synced to cloud.
+	 * Find the cloud link for a given local snippet identifier.
 	 *
-	 * @param int    $snippet_id     Snippet ID.
-	 * @param string $local_or_cloud Whether the ID is a local ID or cloud ID.
+	 * @param Snippet $snippet Local snippet.
 	 *
-	 * @return Cloud_Link|bool - Wordpress throws error due to pipe | in return type.
+	 * @return Cloud_Link|null
 	 */
-	public function get_cloud_link( int $snippet_id, string $local_or_cloud ) { // phpcs:ignore
-		$local_to_cloud_map = $this->get_local_to_cloud_map();
+	public function get_link_for_snippet( Snippet $snippet ): ?Cloud_Link {
+		$cloud_links = $this->get_cloud_links();
 
-		if ( 'local' === $local_or_cloud || 'cloud' === $local_or_cloud ) {
-			$column = 'cloud' === $local_or_cloud ? 'cloud_id' : 'local_id';
-			$local_id_array = array_map( 'intval', array_column( $local_to_cloud_map, $column ) );
-
-			if ( in_array( $snippet_id, $local_id_array, true ) ) {
-				$index = array_search( $snippet_id, $local_id_array, true );
-				return $local_to_cloud_map[ $index ];
+		if ( $cloud_links ) {
+			foreach ( $cloud_links as $cloud_link ) {
+				if ( $cloud_link->local_id === $snippet->id ) {
+					return $cloud_link;
+				}
 			}
 		}
 
-		$local_id_array = array_map(
-			function ( $snippet ) use ( $local_or_cloud ) {
-				return $snippet->{$local_or_cloud . '_id'};
-			},
-			$this->local_to_cloud_map
-		);
-
-		if ( in_array( $snippet_id, $local_id_array, true ) ) {
-			$index = array_search( $snippet_id, $local_id_array, true );
-			return $this->local_to_cloud_map[ $index ];
-		}
-
-		// If the snippet is not synced to cloud return.
-		return false;
+		return null;
 	}
 
 	/**
+	 * Find the cloud link for a given cloud snippet identifier.
 	 *
-	 * Static Helper Methods
+	 * @param int $cloud_id Cloud ID.
+	 *
+	 * @return Cloud_Link|null
 	 */
+	public function get_link_for_cloud_id( int $cloud_id ): ?Cloud_Link {
+		$cloud_links = $this->get_cloud_links();
+
+		if ( $cloud_links ) {
+			foreach ( $cloud_links as $cloud_link ) {
+				if ( $cloud_link->cloud_id === $cloud_id ) {
+					return $cloud_link;
+				}
+			}
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * Find the cloud link for a given cloud snippet.
+	 *
+	 * @param Cloud_Snippet $cloud_snippet Cloud snippet.
+	 *
+	 * @return Cloud_Link|null
+	 */
+	public function get_link_for_cloud_snippet( Cloud_Snippet $cloud_snippet ): ?Cloud_Link {
+		return $this->get_link_for_cloud_id( $cloud_snippet->id );
+	}
 
 	/**
 	 * Translate a snippet scope to a type.
@@ -1247,15 +1258,14 @@ class Cloud_API {
 	/**
 	 * Refresh all settings data
 	 *
-	 *
 	 * @return void
 	 */
 	public function refresh_cloud_settings_data() {
 		$this->update_cloud_settings(
 			[
-				'cloud_token'      => '',
-				'token_verified'   => false,
-				'local_token'      => '',
+				'cloud_token'    => '',
+				'token_verified' => false,
+				'local_token'    => '',
 			]
 		);
 	}
@@ -1282,7 +1292,7 @@ class Cloud_API {
 
 	/**
 	 * Create Code Verifier and challenge for OAuth Flow
-	 * 
+	 *
 	 * @return array
 	 */
 	protected function create_code_verifier_and_challenge(): array {
@@ -1290,11 +1300,12 @@ class Cloud_API {
 		$code_verifier = strtr( $code_verifier, '+/', '-_' );
 		$code_verifier = str_replace( '=', '', $code_verifier );
 
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 		$code_challenge = strtr( base64_encode( hash( 'sha256', $code_verifier, true ) ), '+/', '-_' );
 		$code_challenge = str_replace( '=', '', $code_challenge );
 
 		return [
-			'code_verifier' => $code_verifier,
+			'code_verifier'  => $code_verifier,
 			'code_challenge' => $code_challenge,
 		];
 	}

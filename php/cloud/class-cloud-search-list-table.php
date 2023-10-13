@@ -118,14 +118,14 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 					<div class="name column-name">
 						<h3>
 							<?php
-							$name_link = $this->get_link_for_name( $item );
+							$link = code_snippets()->cloud_api->get_link_for_cloud_snippet( $item );
 
-							if ( $name_link['cloud-snippet-downloaded'] ) {
-								printf( '<a href="%s">', esc_url( $name_link['cloud-snippet-link'] ) );
+							if ( $link ) {
+								printf( '<a href="%s">', esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ) );
 							} else {
 								printf(
 									'<a href="%s" title="%s" class="cloud-snippet-preview thickbox" data-snippet="%s" data-lang="%s">',
-									esc_url( $name_link['cloud-snippet-link'] ),
+									'#TB_inline?&width=700&height=500&inlineId=show-code-preview',
 									esc_attr__( 'Preview this snippet', 'code-snippets' ),
 									esc_attr( $item->id ),
 									esc_attr( Cloud_API::get_type_from_scope( $item->scope ) )
@@ -257,25 +257,6 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 			</div>
 			<?php
 		}
-	}
-
-	/**
-	 * Define the url for the name anchor tag
-	 *
-	 * @param Cloud_Snippet $snippet The snippet to get URL.
-	 *
-	 * @return array The URL to be used.
-	 */
-	protected function get_link_for_name( Cloud_Snippet $snippet ): array {
-		$link = code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'cloud' );
-
-		return $link ? [
-			'cloud-snippet-link'       => code_snippets()->get_snippet_edit_url( $link->local_id ),
-			'cloud-snippet-downloaded' => true,
-		] : [
-			'cloud-snippet-link'       => '#TB_inline?&width=700&height=500&inlineId=show-code-preview',
-			'cloud-snippet-downloaded' => false,
-		];
 	}
 
 	/**

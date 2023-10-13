@@ -51,7 +51,8 @@ switch ( $result ) {
 	case 'cloud-key-no-codevault':
 		?>
 		<div id="message" class="notice notice-error fade is-dismissible">
-			<p><strong><?php esc_html_e( 'There is no codevault set up on the cloud.', 'code-snippets' ); ?></strong></p>
+			<p><strong><?php esc_html_e( 'There is no codevault set up on the cloud.', 'code-snippets' ); ?></strong>
+			</p>
 			<p>
 				<a href="https://codesnippets.cloud/user/profile#codevaultSection" target="_blank">
 					<?php esc_html_e( 'Please log into your Code Snippet Cloud account and set up a codevault.', 'code-snippets' ); ?></a>
@@ -60,11 +61,15 @@ switch ( $result ) {
 		<?php
 		break;
 	case 'cloud-key-invalid':
+		$reset_sync_url = add_query_arg( 'remove_sync', 1, code_snippets()->get_menu_url( 'settings', 'admin' ) );
+
 		?>
 		<div id="message" class="notice notice-error fade is-dismissible">
-			<p><strong><?php esc_html_e( 'There is a problem with the cloud connection. Please reset connection and try to connect again.', 'code-snippets' ); ?></strong></p>
 			<p>
-				<a href="<?php echo esc_url( code_snippets()->get_menu_url( 'settings', 'admin' ) . '&remove_sync=1' )  ?>">
+				<strong><?php esc_html_e( 'There is a problem with the cloud connection. Please reset connection and try to connect again.', 'code-snippets' ); ?></strong>
+			</p>
+			<p>
+				<a href="<?php echo esc_url( $reset_sync_url ); ?>">
 					<?php esc_html_e( 'Click here to reset the cloud connection.', 'code-snippets' ); ?></a>
 			</p>
 		</div>
@@ -72,17 +77,20 @@ switch ( $result ) {
 		break;
 
 	case 'cloud-key-not-connected':
+		$connect_url = add_query_arg( 'connect-authorise-cloud', 1, code_snippets()->get_menu_url( 'settings', 'admin' ) );
+
 		?>
 		<div id="message" class="notice notice-error fade is-dismissible">
-			<p><strong><?php esc_html_e( 'Sorry, you are not connected to your cloud account.', 'code-snippets' ); ?></strong></p>
 			<p>
-				<a href="<?php echo esc_url( code_snippets()->get_menu_url( 'settings', 'admin' ) . '&connect-authorise-cloud=true' )  ?>">
+				<strong><?php esc_html_e( 'Sorry, you are not connected to your cloud account.', 'code-snippets' ); ?></strong>
+			</p>
+			<p>
+				<a href="<?php echo esc_url( $connect_url ); ?>">
 					<?php esc_html_e( 'Click here to login and connect to your cloud account.', 'code-snippets' ); ?></a>
 			</p>
 		</div>
 		<?php
 		break;
-	
 
 
 	default:

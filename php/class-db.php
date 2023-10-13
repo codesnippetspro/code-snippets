@@ -39,11 +39,8 @@ class DB {
 	public function __construct() {
 		$this->set_table_vars();
 
-		if ( isset( $_REQUEST['update_database'] ) ) {
-			if ('1' == $_REQUEST['update_database'] ){
-				// Update the database table manually.
-				$this->create_or_upgrade_tables();
-			}	
+		if ( isset( $_REQUEST['update_database'] ) && sanitize_key( $_REQUEST['update_database'] ) ) {
+			$this->create_or_upgrade_tables();
 		}
 	}
 

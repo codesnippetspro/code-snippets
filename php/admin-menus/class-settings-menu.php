@@ -64,46 +64,39 @@ class Settings_Menu extends Admin_Menu {
 			}
 		}
 
-		if(  isset( $_GET['connect-authorise-cloud'] ) ) {
-			if ( 'true' == $_GET['connect-authorise-cloud'] ){
-				code_snippets()->cloud_api->init_cloud_conection();
-			}
+		if ( isset( $_GET['connect-authorise-cloud'] ) && 'true' === $_GET['connect-authorise-cloud'] ) {
+			code_snippets()->cloud_api->init_cloud_connection();
 		}
 
-		if(  isset( $_GET['confirm-authorise-cloud'] ) ) {
-			if ( 'true' == $_GET['confirm-authorise-cloud'] ){
-				$auth_code = $_GET['code'];
-				$state = $_GET['state'];
+		if ( isset( $_GET['confirm-authorise-cloud'] ) && 'true' === $_GET['confirm-authorise-cloud'] ) {
+			$auth_code = sanitize_text_field( wp_unslash( $_GET['code'] ?? '' ) );
+			$state = sanitize_text_field( wp_unslash( $_GET['state'] ?? '' ) );
 
-				$cloud_response = code_snippets()->cloud_api->verify_cloud_connection_response( $state );
+			$cloud_response = code_snippets()->cloud_api->verify_cloud_connection_response( $state );
 
-				if( $cloud_response ){
-					$token_exchange = code_snippets()->cloud_api->exchange_auth_code_for_token( $auth_code);
+			if ( $cloud_response ) {
+				$token_exchange = code_snippets()->cloud_api->exchange_auth_code_for_token( $auth_code );
 
-					if( $token_exchange ){
-						// Show Success Message
-						add_settings_error(
-							'code-snippets-settings-notices',
-							'cloud-connection-success',
-							__( 'Cloud Connection Successful', 'code-snippets' ),
-							'updated'
-						);
-					}
+				if ( $token_exchange ) {
+					add_settings_error(
+						'code-snippets-settings-notices',
+						'cloud-connection-success',
+						__( 'Cloud Connection Successful', 'code-snippets' ),
+						'updated'
+					);
 				}
 			}
 		}
 
-		if ( isset( $_REQUEST['remove_sync'] ) ) {
-			if ('1' == $_REQUEST['remove_sync'] ){
-				code_snippets()->cloud_api->remove_sync();
+		if ( isset( $_REQUEST['remove_sync'] ) && '1' === $_REQUEST['remove_sync'] ) {
+			code_snippets()->cloud_api->remove_sync();
 
-				add_settings_error(
-					'code-snippets-settings-notices',
-					'sync_removed',
-					__( 'The Connection to the Code Snippet Cloud has been removed.', 'code-snippets' ),
-					'updated'
-				);
-			}	
+			add_settings_error(
+				'code-snippets-settings-notices',
+				'sync_removed',
+				__( 'The Connection to the Code Snippet Cloud has been removed.', 'code-snippets' ),
+				'updated'
+			);
 		}
 	}
 
