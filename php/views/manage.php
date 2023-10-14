@@ -80,7 +80,7 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 					?>
 				</span>
 			</p>
-			<?php $this->render_view( 'partials/cloud-sync-guide.php' ); ?>
+			<?php $this->render_view( 'partials/cloud-sync-guide' ); ?>
 		</div>
 	</h2>
 
