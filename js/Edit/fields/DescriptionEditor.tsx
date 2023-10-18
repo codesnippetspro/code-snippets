@@ -65,17 +65,20 @@ export const DescriptionEditor: React.FC = () => {
 
 	return window.CODE_SNIPPETS_EDIT?.enableDescription ?
 		<div className="snippet-description-container">
-			<GenerateButton
-				snippet={snippet}
-				disabled={isReadOnly}
-				onResponse={generated => {
-					updateSnippet(previous => ({
-						...previous,
-						name: generated.name && '' === previous.name.trim() ? generated.name : previous.name,
-						desc: `${previous.desc}${generated.desc ? `\n<p>${generated.desc}</p>` : ''}`
-					}))
-				}}
-			/>
+			{'' === snippet.code.trim() ? null :
+				<GenerateButton
+					snippet={snippet}
+					disabled={isReadOnly}
+					onResponse={generated => {
+						updateSnippet(previous => ({
+							...previous,
+							name: generated.name && '' === previous.name.trim() ? generated.name : previous.name,
+							desc: `${previous.desc}${generated.desc ? `\n<p>${generated.desc}</p>` : ''}`
+						}))
+					}}
+				>
+					{__('Add Description', 'code-snippets')}
+				</GenerateButton>}
 
 			<h2>
 				<label htmlFor={EDITOR_ID}>

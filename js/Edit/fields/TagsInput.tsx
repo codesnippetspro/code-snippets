@@ -11,16 +11,19 @@ export const TagsInput: React.FC = () => {
 
 	return options?.enabled ?
 		<div className="snippet-tags-container">
-			<GenerateButton
-				snippet={snippet}
-				disabled={isReadOnly}
-				onResponse={generated => {
-					setSnippet(previous => ({
-						...previous,
-						tags: [...new Set([...previous.tags, ...generated.tags ?? []])]
-					}))
-				}}
-			/>
+			{'' === snippet.code.trim() ? null :
+				<GenerateButton
+					snippet={snippet}
+					disabled={isReadOnly}
+					onResponse={generated => {
+						setSnippet(previous => ({
+							...previous,
+							tags: [...new Set([...previous.tags, ...generated.tags ?? []])]
+						}))
+					}}
+				>
+					{__('Add Tags', 'code-snippets')}
+				</GenerateButton>}
 
 			<h2>
 				<label htmlFor="snippet_tags">

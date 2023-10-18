@@ -1,11 +1,22 @@
 @import 'base';
 
-.nav-tab .badge, .snippet-type-badge, .go-pro-button .badge {
-	font-size: 10px;
-	text-transform: uppercase;
+%badge {
 	border: 1px solid;
 	padding: 1px 2px;
 	border-radius: 5px;
+}
+
+.nav-tab .badge,
+.snippet-type-badge,
+.go-pro-button .badge {
+	@extend %badge;
+	font-size: 10px;
+	text-transform: uppercase;
+}
+
+.button .badge {
+	@extend %badge;
+	font-size: .8em;
 }
 
 .nav-tab .badge, .button .snippet-type-badge, .go-pro-button .badge,

@@ -93,9 +93,13 @@ const GenerateCodeButton: React.FC = () => {
 			disabled={isWorking || isReadOnly}
 			title={__('Generate a new snippet with AI.', 'code-snippets')}
 			onClick={() => setShowCreateModal(true)}
-		/>
+		>
+			{'' === snippet.code.trim() ?
+				__('Generate', 'code-snippets') :
+				__('Generate New', 'code-snippets')}
+		</GenerateButton>
 
-		{showCreateModal ? <GenerateCodeModal onClose={() => setShowCreateModal(false)} /> : null}
+		<GenerateCodeModal show={showCreateModal} onClose={() => setShowCreateModal(false)} />
 	</>
 }
 
@@ -106,9 +110,8 @@ const InlineActionButtons: React.FC = () => {
 		<>
 			{isWorking ? <Spinner /> : ''}
 
-			{snippet.code.trim() ?
-				<ExplainCodeButton /> :
-				<GenerateCodeButton />}
+			<GenerateCodeButton />
+			{'' === snippet.code.trim() ? null : <ExplainCodeButton />}
 
 			<Button
 				small

@@ -86,7 +86,8 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
 				})}
 			>
 				<GenerateIcon />
-				{children ?? __('Generate', 'code-snippets')}
+				{' '}{children}{' '}
+				<span className="badge">beta</span>
 			</Button>
 		</div> :
 		null
