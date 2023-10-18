@@ -53,16 +53,12 @@ class Cloud_List_Table extends WP_List_Table {
 		$_SERVER['REQUEST_URI'] = remove_query_arg( 'result' );
 
 		// Check if there is a GET request query parameter to refresh data from the cloud.
-		if ( isset( $_GET['refresh'] ) && 'true' === $_GET['refresh'] ) {
+		if ( ! empty( $_GET['refresh'] ) && 'false' !== sanitize_text_field( wp_unslash( $_GET['refresh'] ) ) ) {
 			code_snippets()->cloud_api->refresh_synced_data();
 
 			wp_safe_redirect(
 				esc_url_raw(
-					add_query_arg(
-						'result',
-						'cloud-refreshed',
-						code_snippets()->get_menu_url( 'cloud' )
-					)
+					add_query_arg( 'result', 'cloud-refreshed', code_snippets()->get_menu_url( 'cloud' ) )
 				)
 			);
 

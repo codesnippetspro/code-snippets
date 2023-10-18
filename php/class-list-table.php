@@ -249,7 +249,7 @@ class List_Table extends WP_List_Table {
 
 			$actions['cloud'] = sprintf(
 				'<a href="%s">%s</a>',
-				esc_url( admin_url( 'admin.php?page=snippets-settings&connect-authorise-cloud=true' ) ),
+				esc_url( add_query_arg( 'connect-authorise-cloud', true, code_snippets()->get_menu_url( 'settings' ) ) ),
 				esc_html__( 'Set up cloud', 'code-snippets' ),
 			);
 

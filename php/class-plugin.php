@@ -219,7 +219,7 @@ class Plugin {
 			$url = 'admin.php?page=' . $slug;
 		}
 
-		if ( 'network' === $context || 'snippets-settings' === $slug ) {
+		if ( 'network' === $context ) {
 			return network_admin_url( $url );
 		} elseif ( 'admin' === $context ) {
 			return admin_url( $url );
