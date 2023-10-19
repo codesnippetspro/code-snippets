@@ -66,35 +66,35 @@ class Cloud_API {
 	 *
 	 * @var string
 	 */
-	private string $local_token;
+	private $local_token;
 
 	/**
 	 * Cloud API key.
 	 *
 	 * @var string
 	 */
-	private string $cloud_key;
+	private $cloud_key;
 
 	/**
 	 * Verification status of cloud API key.
 	 *
 	 * @var boolean
 	 */
-	private bool $cloud_key_is_verified;
+	private $cloud_key_is_verified;
 
 	/**
 	 * List of cloud snippets.
 	 *
 	 * @var Cloud_Snippets|null
 	 */
-	private ?Cloud_Snippets $codevault_snippets = null;
+	private $codevault_snippets = null;
 
 	/**
 	 * Local to Cloud Snippets Map Object
 	 *
 	 * @var Cloud_Link[]|null
 	 */
-	private ?array $local_to_cloud_map = null;
+	private $local_to_cloud_map = null;
 
 	/**
 	 * Class constructor.
@@ -1232,14 +1232,11 @@ class Cloud_API {
 	/**
 	 * Remove or Reset Cloud Sync
 	 *
-	 * @return bool
+	 * @return void
 	 */
 	public function remove_sync() {
-
 		$this->refresh_cloud_settings_data();
 		$this->refresh_synced_data();
-
-		return true;
 	}
 
 	/**

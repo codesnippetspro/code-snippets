@@ -18,7 +18,7 @@ class Contextual_Help {
 	 *
 	 * @var WP_Screen
 	 */
-	public WP_Screen $screen;
+	public $screen;
 
 	/**
 	 * Name of current screen
@@ -27,7 +27,7 @@ class Contextual_Help {
 	 *
 	 * @var string
 	 */
-	public string $screen_name;
+	public $screen_name;
 
 	/**
 	 * Class constructor

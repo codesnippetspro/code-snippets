@@ -24,14 +24,14 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 *
 	 * @var Cloud_API
 	 */
-	protected Cloud_API $cloud_api;
+	protected $cloud_api;
 
 	/**
 	 * Items for the cloud list table.
 	 *
 	 * @var Cloud_Snippets
 	 */
-	protected Cloud_Snippets $cloud_snippets;
+	protected $cloud_snippets;
 
 	/**
 	 * Class constructor.

@@ -26,14 +26,14 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @var Cloud_API
 	 */
-	protected Cloud_API $cloud_api;
+	protected $cloud_api;
 
 	/**
 	 * Items for the cloud list table.
 	 *
 	 * @var Cloud_Snippets
 	 */
-	protected Cloud_Snippets $cloud_snippets;
+	protected $cloud_snippets;
 
 	/**
 	 * Class constructor.
@@ -139,8 +139,7 @@ class Cloud_List_Table extends WP_List_Table {
 	 * @return int $pagenum The current page number.
 	 */
 	public function get_current_page_number(): int {
-		$pagenum = ( isset( $_REQUEST['cloud_page'] ) ? (int) $_REQUEST['cloud_page'] : $this->get_pagenum() ) - 1;
-		return $pagenum;
+		return ( isset( $_REQUEST['cloud_page'] ) ? (int) $_REQUEST['cloud_page'] : $this->get_pagenum() ) - 1;
 	}
 
 	/**
@@ -439,7 +438,7 @@ class Cloud_List_Table extends WP_List_Table {
 		$page_class = $paginate['page_class'];
 		$output = $paginate['output'];
 
-		$this->_pagination = "<div class='tablenav-pages{$page_class}'>{$output}</div>";
+		$this->_pagination = "<div class='tablenav-pages$page_class'>$output</div>";
 
 		// TODO: Add proper input escaping. wp_kses_post removes the top input box for page number.
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

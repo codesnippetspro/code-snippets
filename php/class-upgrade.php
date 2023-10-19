@@ -14,14 +14,14 @@ class Upgrade {
 	 *
 	 * @var DB
 	 */
-	private DB $db;
+	private $db;
 
 	/**
 	 * The current plugin version number
 	 *
 	 * @var string
 	 */
-	private string $current_version;
+	private $current_version;
 
 	/**
 	 * Class constructor

@@ -31,28 +31,28 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var bool
 	 */
-	public bool $is_network;
+	public $is_network;
 
 	/**
 	 * A list of statuses (views)
 	 *
 	 * @var array<string>
 	 */
-	public array $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
+	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
 
 	/**
 	 * Column name to use when ordering the snippets list.
 	 *
 	 * @var string
 	 */
-	protected string $order_by;
+	protected $order_by;
 
 	/**
 	 * Direction to use when ordering the snippets list. Either 'asc' or 'desc'.
 	 *
 	 * @var string
 	 */
-	protected string $order_dir;
+	protected $order_dir;
 
 	/**
 	 * The constructor function for our class.
@@ -250,7 +250,7 @@ class List_Table extends WP_List_Table {
 			$actions['cloud'] = sprintf(
 				'<a href="%s">%s</a>',
 				esc_url( add_query_arg( 'connect-authorise-cloud', true, code_snippets()->get_menu_url( 'settings' ) ) ),
-				esc_html__( 'Set up cloud', 'code-snippets' ),
+				esc_html__( 'Set up cloud', 'code-snippets' )
 			);
 
 			if ( $this->is_cloud_link_valid() ) {
@@ -406,7 +406,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @return string The column output.
 	 */
-	protected function column_tags( $snippet ): string {
+	protected function column_tags( Snippet $snippet ): string {
 
 		// Return now if there are no tags.
 		if ( empty( $snippet->tags ) ) {

@@ -15,7 +15,7 @@ class Export {
 	 *
 	 * @var Snippet[]
 	 */
-	protected array $snippets_list;
+	protected $snippets_list;
 
 	/**
 	 * Class constructor

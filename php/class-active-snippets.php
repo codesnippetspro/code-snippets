@@ -16,7 +16,7 @@ class Active_Snippets {
 	 *
 	 * @var Snippet[]
 	 */
-	private array $active_snippets = [];
+	private $active_snippets = [];
 
 	/**
 	 * Class constructor.

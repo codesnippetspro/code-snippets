@@ -27,7 +27,7 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @var List_Table
 	 */
-	public List_Table $list_table;
+	public $list_table;
 
 	/**
 	 * Instance of the cloud list table class for user codevault.
@@ -41,14 +41,14 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @var Cloud_Search_List_Table
 	 */
-	public Cloud_Search_List_Table $cloud_search_list_table;
+	public $cloud_search_list_table;
 
 	/**
 	 * Instance of the cloud table for bundles
 	 *
 	 * @var Cloud_Bundles
 	 */
-	public Cloud_Bundles $cloud_bundles;
+	public $cloud_bundles;
 
 	/**
 	 * Class constructor

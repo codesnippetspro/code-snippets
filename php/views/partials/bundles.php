@@ -35,6 +35,9 @@ $bundle_name = sanitize_text_field( wp_unslash( $_REQUEST['bundle_share_name'] ?
 		</p>
 	</div>
 	<div class="input-group bundle-group">
+		<label class="screen-reader-text" for="bundle_share_name">
+			<?php esc_html_e( 'Bundle share code', 'code-snippets' ); ?>
+		</label>
 		<input type="text" id="bundle_share_name" name="bundle_share_name" class="bundle_share_name"
 		       placeholder="<?php esc_html_e( 'Enter bundle share code…', 'code-snippets' ); ?> "
 		       value="<?php echo esc_html( $bundle_name ); ?>">

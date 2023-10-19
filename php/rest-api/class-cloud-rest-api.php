@@ -38,7 +38,7 @@ final class Cloud_REST_API {
 	 *
 	 * @var Cloud_API
 	 */
-	private Cloud_API $cloud_api;
+	private $cloud_api;
 
 	/**
 	 * Class constructor.

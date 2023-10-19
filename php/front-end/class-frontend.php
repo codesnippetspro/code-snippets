@@ -64,7 +64,7 @@ class Frontend {
 	 *
 	 * @return array
 	 */
-	public static function get_prism_themes() {
+	public static function get_prism_themes(): ?array {
 		static $themes = null;
 
 		if ( ! is_null( $themes ) ) {

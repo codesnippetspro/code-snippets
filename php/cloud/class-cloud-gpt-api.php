@@ -3,7 +3,6 @@
 namespace Code_Snippets\Cloud;
 
 use GuzzleHttp\Exception\GuzzleException;
-use StdClass;
 use WP_Error;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
@@ -34,7 +33,7 @@ class Cloud_GPT_API {
 	 *
 	 * @var Cloud_API
 	 */
-	private Cloud_API $cloud_api;
+	private $cloud_api;
 
 	/**
 	 * Class constructor.

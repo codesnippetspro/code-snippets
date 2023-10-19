@@ -9,8 +9,6 @@
 
 namespace Code_Snippets\Settings;
 
-use function Code_Snippets\code_snippets;
-
 /**
  * Represents a single setting field
  *
@@ -37,14 +35,14 @@ class Setting_Field {
 	 *
 	 * @var string
 	 */
-	private string $field_id;
+	private $field_id;
 
 	/**
 	 * Settings section identifier.
 	 *
 	 * @var string
 	 */
-	private string $section;
+	private $section;
 
 	/**
 	 * List of possible arguments.
