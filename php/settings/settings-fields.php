@@ -111,6 +111,13 @@ function get_settings_fields(): array {
 			'default' => array( 'css', 'js' ),
 		],
 
+		'hide_upgrade_menu' => [
+			'name'    => __( 'Hide Upgrade Menu', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => __( 'Hide the Upgrade button from the admin menu.', 'code-snippets' ),
+			'default' => false,
+		],
+
 		'complete_uninstall' => [
 			'name'    => __( 'Complete Uninstall', 'code-snippets' ),
 			'type'    => 'checkbox',
@@ -134,6 +141,10 @@ function get_settings_fields(): array {
 
 	if ( is_multisite() && ! is_main_site() ) {
 		unset( $fields['general']['complete_uninstall'] );
+	}
+
+	if ( code_snippets()->licensing->is_licensed() ) {
+		unset( $fields['general']['hide_upgrade_menu'] );
 	}
 
 	// Code Editor settings section.
