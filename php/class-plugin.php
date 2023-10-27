@@ -81,6 +81,7 @@ class Plugin {
 		}
 
 		add_action( 'rest_api_init', [ $this, 'init_rest_api' ] );
+		add_action( 'allowed_redirect_hosts', [ $this, 'allow_code_snippets_redirect' ] );
 	}
 
 	/**
@@ -123,8 +124,6 @@ class Plugin {
 	 * Register custom REST API controllers.
 	 *
 	 * @return void
-	 *
-	 * @since [NEXT_RELEASE]
 	 */
 	public function init_rest_api() {
 		$snippets_controller = new Snippets_REST_Controller();
@@ -222,6 +221,18 @@ class Plugin {
 			absint( $snippet_id ),
 			$this->get_menu_url( 'edit', $context )
 		);
+	}
+
+	/**
+	 * Allow redirecting to the Code Snippets site.
+	 *
+	 * @param array<string> $hosts Allowed hosts.
+	 *
+	 * @return array Modified allowed hosts.
+	 */
+	public function allow_code_snippets_redirect( array $hosts ): array {
+		$hosts[] = 'codesnippets.pro';
+		return $hosts;
 	}
 
 	/**

@@ -100,6 +100,13 @@ function get_settings_fields(): array {
 			'default' => false,
 		],
 
+		'hide_upgrade_menu' => [
+			'name'    => __( 'Hide Upgrade Menu', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => __( 'Hide the Upgrade button from the admin menu.', 'code-snippets' ),
+			'default' => false,
+		],
+
 		'complete_uninstall' => [
 			'name'    => __( 'Complete Uninstall', 'code-snippets' ),
 			'type'    => 'checkbox',
