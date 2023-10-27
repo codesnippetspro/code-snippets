@@ -89,7 +89,7 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		$menu_title = sprintf(
-			'<span class="button button-primary button-small" style="display: block; text-align: center;">%s %s</span>',
+			'<span class="button button-primary button-small" style="display: block; text-align: center; font-weight: bold;">%s %s</span>',
 			_x( 'Upgrade', 'top-level menu label', 'code-snippets' ),
 			'<span class="dashicons dashicons-external" style="vertical-align: top;"></span>'
 		);
