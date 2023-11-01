@@ -89,9 +89,9 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		$menu_title = sprintf(
-			'<span class="button button-primary button-small" style="display: block; text-align: center; font-weight: bold;">%s %s</span>',
-			_x( 'Upgrade', 'top-level menu label', 'code-snippets' ),
-			'<span class="dashicons dashicons-external" style="vertical-align: top;"></span>'
+			'<span class="button button-primary code-snippets-upgrade-button">%s %s</span>',
+			_x( 'Go Pro', 'top-level menu label', 'code-snippets' ),
+			'<span class="dashicons dashicons-external"></span>'
 		);
 
 		$hook = add_submenu_page(
@@ -105,6 +105,21 @@ class Manage_Menu extends Admin_Menu {
 		);
 
 		add_action( "load-$hook", [ $this, 'load_upgrade_menu' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_button_css' ] );
+	}
+
+	/**
+	 * Print CSS required for the upgrade button.
+	 *
+	 * @return void
+	 */
+	public function enqueue_menu_button_css() {
+		wp_enqueue_style(
+			'code-snippets-menu-button',
+			plugins_url( 'dist/menu-button.css', PLUGIN_FILE ),
+			[],
+			PLUGIN_VERSION
+		);
 	}
 
 	/**
