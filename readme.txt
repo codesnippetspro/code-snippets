@@ -119,6 +119,9 @@ You can get help with Code Snippets, report bugs or errors, and suggest new feat
 = How can I help contribute to the development of the Code Snippets plugin? =
 The best way to do this is to fork the [repository on GitHub](https://github.com/codesnippetspro/code-snippets) and send a pull request.
 
+= How can I report security bugs found in this plugin? =
+You can report security bugs found in the source code of this plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/code-snippets). The Patchstack team will assist with verification, triage, and notification of security vulnerabilities.
+
 == Screenshots ==
 
 1. Managing existing snippets

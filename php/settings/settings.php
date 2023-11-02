@@ -8,9 +8,9 @@
 
 namespace Code_Snippets\Settings;
 
-const NS = __NAMESPACE__ . '\\';
-
 const CACHE_KEY = 'code_snippets_settings';
+const OPTION_GROUP = 'code-snippets';
+const OPTION_NAME = 'code_snippets_settings';
 
 /**
  * Add a new option for either the current site or the current network
@@ -81,7 +81,7 @@ function get_settings_values(): array {
 	}
 
 	$settings = get_default_settings();
-	$saved = get_self_option( are_settings_unified(), 'code_snippets_settings', array() );
+	$saved = get_self_option( are_settings_unified(), OPTION_NAME, array() );
 
 	foreach ( $settings as $section => $fields ) {
 		if ( isset( $saved[ $section ] ) ) {
@@ -122,7 +122,7 @@ function update_setting( string $section, string $field, $new_value ): bool {
 	$settings[ $section ][ $field ] = $new_value;
 
 	wp_cache_set( CACHE_KEY, $settings );
-	return update_self_option( are_settings_unified(), 'code_snippets_settings', $settings );
+	return update_self_option( are_settings_unified(), OPTION_NAME, $settings );
 }
 
 /**
@@ -146,18 +146,18 @@ function get_settings_sections(): array {
 function register_plugin_settings() {
 
 	if ( are_settings_unified() ) {
-		if ( ! get_site_option( 'code_snippets_settings' ) ) {
-			add_site_option( 'code_snippets_settings', get_default_settings() );
+		if ( ! get_site_option( OPTION_NAME ) ) {
+			add_site_option( OPTION_NAME, get_default_settings() );
 		}
-	} elseif ( ! get_option( 'code_snippets_settings' ) ) {
-		add_option( 'code_snippets_settings', get_default_settings() );
+	} elseif ( ! get_option( OPTION_NAME ) ) {
+		add_option( OPTION_NAME, get_default_settings() );
 	}
 
 	// Register the setting.
 	register_setting(
-		'code-snippets',
-		'code_snippets_settings',
-		array( 'sanitize_callback' => NS . 'sanitize_settings' )
+		OPTION_GROUP,
+		OPTION_NAME,
+		[ 'sanitize_callback' => __NAMESPACE__ . '\\sanitize_settings' ]
 	);
 
 	// Register settings sections.
@@ -177,13 +177,13 @@ function register_plugin_settings() {
 	add_settings_field(
 		'editor_preview',
 		__( 'Editor Preview', 'code-snippets' ),
-		NS . 'render_editor_preview',
+		__NAMESPACE__ . '\\render_editor_preview',
 		'code-snippets',
 		'editor'
 	);
 }
 
-add_action( 'admin_init', NS . 'register_plugin_settings' );
+add_action( 'admin_init', __NAMESPACE__ . '\\register_plugin_settings' );
 
 /**
  * Sanitize a single setting value.
@@ -200,11 +200,11 @@ function sanitize_setting_value( array $field, $input_value ) {
 			return 'on' === $input_value;
 
 		case 'number':
-			return absint( $input_value );
+			return intval( $input_value );
 
 		case 'select':
-			// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
-			return in_array( $input_value, array_keys( $field['options'] ) ) ? $input_value : null;
+			$select_options = array_map( 'strval', array_keys( $field['options'] ) );
+			return in_array( strval( $input_value ), $select_options, true ) ? $input_value : null;
 
 		case 'checkboxes':
 			$results = [];
@@ -223,7 +223,7 @@ function sanitize_setting_value( array $field, $input_value ) {
 			return trim( sanitize_text_field( $input_value ) );
 
 		case 'callback':
-			return array_key_exists( 'sanitize_callback', $field ) && is_callable( $field['sanitize_callback'] ) ?
+			return isset( $field['sanitize_callback'] ) && is_callable( $field['sanitize_callback'] ) ?
 				call_user_func( $field['sanitize_callback'], $input_value ) :
 				null;
 
@@ -240,6 +240,19 @@ function sanitize_setting_value( array $field, $input_value ) {
  * @return array<string, array<string, mixed>> The validated settings.
  */
 function sanitize_settings( array $input ): array {
+	wp_cache_delete( CACHE_KEY );
+
+	if ( ! empty( $input['reset_settings'] ) ) {
+		add_settings_error(
+			OPTION_NAME,
+			'settings_reset',
+			__( 'All settings have been reset to their defaults.', 'code-snippets' ),
+			'updated'
+		);
+
+		return [];
+	}
+
 	$settings = get_settings_values();
 	$updated = false;
 
@@ -260,12 +273,10 @@ function sanitize_settings( array $input ): array {
 		}
 	}
 
-	wp_cache_delete( CACHE_KEY );
-
 	// Add an updated message.
 	if ( $updated ) {
 		add_settings_error(
-			'code-snippets-settings-notices',
+			OPTION_NAME,
 			'settings-saved',
 			__( 'Settings saved.', 'code-snippets' ),
 			'updated'

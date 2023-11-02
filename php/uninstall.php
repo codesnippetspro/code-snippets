@@ -9,6 +9,8 @@
 
 namespace Code_Snippets\Uninstall;
 
+use const Code_Snippets\Settings\OPTION_NAME;
+
 /**
  * Determine whether the option for allowing a complete uninstallation is enabled.
  *
@@ -22,7 +24,7 @@ function complete_uninstall_enabled(): bool {
 		$unified = empty( $menu_perms['snippets_settings'] );
 	}
 
-	$settings = $unified ? get_site_option( 'code_snippets_settings' ) : get_option( 'code_snippets_settings' );
+	$settings = $unified ? get_site_option( OPTION_NAME ) : get_option( OPTION_NAME );
 
 	return isset( $settings['general']['complete_uninstall'] ) && $settings['general']['complete_uninstall'];
 }
@@ -39,7 +41,7 @@ function uninstall_current_site() {
 
 	delete_option( 'code_snippets_version' );
 	delete_option( 'recently_activated_snippets' );
-	delete_option( 'code_snippets_settings' );
+	delete_option( OPTION_NAME );
 }
 
 /**

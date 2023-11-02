@@ -48,7 +48,7 @@ export const handleSettingsTabs = () => {
 			}
 
 			if (submitWrap) {
-				submitWrap.style.display = 'debug' === section ? 'none' : 'block'
+				submitWrap.style.display = 'debug' === section ? 'none' : 'flex'
 			}
 		})
 	}

@@ -81,7 +81,7 @@ class Setting_Field {
 	public function __get( string $argument ) {
 
 		if ( 'input_name' === $argument ) {
-			return sprintf( 'code_snippets_settings[%s][%s]', $this->section, $this->field_id );
+			return sprintf( '%s[%s][%s]', OPTION_NAME, $this->section, $this->field_id );
 		}
 
 		return $this->args[ $argument ];

@@ -2,6 +2,10 @@
 
 namespace Code_Snippets;
 
+use const Code_Snippets\Settings\CACHE_KEY;
+use const Code_Snippets\Settings\OPTION_GROUP;
+use const Code_Snippets\Settings\OPTION_NAME;
+
 /**
  * This class handles the settings admin menu
  *
@@ -32,27 +36,6 @@ class Settings_Menu extends Admin_Menu {
 	 */
 	public function load() {
 		parent::load();
-
-		if ( ! empty( $_GET['reset_settings'] ) ) {
-
-			if ( Settings\are_settings_unified() ) {
-				delete_site_option( 'code_snippets_settings' );
-			} else {
-				delete_option( 'code_snippets_settings' );
-			}
-
-			add_settings_error(
-				'code-snippets-settings-notices',
-				'settings_reset',
-				__( 'All settings have been reset to their defaults.', 'code-snippets' ),
-				'updated'
-			);
-
-			set_transient( 'settings_errors', get_settings_errors(), 30 );
-
-			wp_safe_redirect( esc_url_raw( add_query_arg( 'settings-updated', true, remove_query_arg( 'reset_settings' ) ) ) );
-			exit;
-		}
 
 		if ( is_network_admin() ) {
 			if ( Settings\are_settings_unified() ) {
@@ -144,22 +127,27 @@ class Settings_Menu extends Admin_Menu {
 				?>
 			</h1>
 
-			<?php settings_errors( 'code-snippets-settings-notices' ); ?>
+			<?php settings_errors( OPTION_NAME ); ?>
 
 			<form action="<?php echo esc_url( $update_url ); ?>" method="post">
 				<input type="hidden" name="section" value="<?php echo esc_attr( $current_section ); ?>">
 				<?php
 
-				settings_fields( 'code-snippets' );
+				settings_fields( OPTION_GROUP );
 				$this->do_settings_tabs();
 
 				?>
 				<p class="submit">
-					<?php submit_button( null, 'primary', 'submit', false ); ?>
+					<?php
+					submit_button( null, 'primary', 'submit', false );
 
-					<a class="button button-secondary"
-					   href="<?php echo esc_url( add_query_arg( 'reset_settings', true ) ); ?>"><?php
-						esc_html_e( 'Reset to Default', 'code-snippets' ); ?></a>
+					submit_button(
+						__( 'Reset to Default', 'code-snippets' ),
+						'secondary',
+						sprintf( '%s[%s]', OPTION_NAME, 'reset_settings' ),
+						false
+					);
+					?>
 				</p>
 			</form>
 		</div>
@@ -214,21 +202,22 @@ class Settings_Menu extends Admin_Menu {
 	public function update_network_options() {
 
 		// Ensure the settings have been saved.
-		if ( empty( $_GET['update_site_option'] ) || empty( $_POST['code_snippets_settings'] ) ) {
+		if ( empty( $_GET['update_site_option'] ) || empty( $_POST[ OPTION_NAME ] ) ) {
 			return;
 		}
 
 		check_admin_referer( 'code-snippets-options' );
 
 		// Retrieve the saved options and save them to the database.
-		$value = map_deep( wp_unslash( $_POST['code_snippets_settings'] ), 'sanitize_key' );
-		update_site_option( 'code_snippets_settings', $value );
-		wp_cache_delete( Settings\CACHE_KEY );
+		$value = map_deep( wp_unslash( $_POST[ OPTION_NAME ] ), 'sanitize_key' );
+		update_site_option( OPTION_NAME, $value );
+		wp_cache_delete( CACHE_KEY );
 
 		// Add an updated notice.
 		if ( ! count( get_settings_errors() ) ) {
 			add_settings_error( 'general', 'settings_updated', __( 'Settings saved.', 'code-snippets' ), 'updated' );
 		}
+
 		set_transient( 'settings_errors', get_settings_errors(), 30 );
 
 		// Redirect back to the settings menu.
