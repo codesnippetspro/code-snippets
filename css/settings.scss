@@ -4,10 +4,8 @@ $sections: general, editor, debug;
 
 p.submit {
 	max-width: 1020px;
-
-	.button-secondary {
-		float: right;
-	}
+	display: flex;
+	justify-content: space-between;
 }
 
 .nav-tab-wrapper {

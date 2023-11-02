@@ -1,0 +1,21 @@
+#adminmenu .code-snippets-upgrade-button {
+	color: #fff;
+	background-color: #d46F4d;
+	border: none;
+	display: block;
+	text-align: center;
+	font-weight: bold;
+	transition: background-color .1s linear;
+
+	&:hover {
+		background-color: #08c5d1;
+	}
+
+	.dashicons {
+		vertical-align: text-bottom
+	}
+}
+
+#adminmenu .wp-submenu a[href="admin.php?page=code_snippets_upgrade"]:hover {
+	box-shadow: none;
+}
