@@ -258,7 +258,7 @@ class Setting_Field {
 		printf(
 			'<button type="submit" name="%s" class="button">%s</button>',
 			esc_attr( $this->input_name ),
-			esc_html( empty( $this->label ) ? $this->name : $this->label )
+			esc_html( $this->label ? $this->label : $this->name )
 		);
 	}
 }

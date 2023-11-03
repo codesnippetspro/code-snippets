@@ -51,9 +51,10 @@ function get_settings_fields(): array {
 
 	$fields['debug'] = [
 		'database_update' => [
-			'name' => __( 'Database Table Update', 'code-snippets' ),
+			'name' => __( 'Database Table Upgrade', 'code-snippets' ),
 			'type' => 'action',
-			'desc' => __( 'Use this button to manually update the Code Snippets database table. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
+			'label' => __( 'Upgrade Database Table', 'code-snippets' ),
+			'desc' => __( 'Use this button to manually upgrade the Code Snippets database table. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
 		],
 	];
 
