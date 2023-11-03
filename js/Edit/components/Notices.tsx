@@ -10,16 +10,15 @@ interface DismissibleNoticeProps {
 }
 
 const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ classNames, onRemove, children }) => {
-	const ref = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		if (window.CODE_SNIPPETS_EDIT?.scrollToNotices) {
-			ref?.current?.scrollIntoView({ behavior: 'smooth' })
+			window.scrollTo({ top: 0, behavior: 'smooth' })
 		}
-	}, [ref])
+	}, [])
 
 	return (
-		<div id="message" className={classnames('notice fade is-dismissible', classNames)} ref={ref}>
+		<div id="message" className={classnames('notice fade is-dismissible', classNames)}>
 			<>{children}</>
 
 			<button type="button" className="notice-dismiss" onClick={event => {
