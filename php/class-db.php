@@ -24,27 +24,20 @@ class DB {
 	 *
 	 * @var string
 	 */
-	public string $table;
+	public $table;
 
 	/**
 	 * Network-wide table name.
 	 *
 	 * @var string
 	 */
-	public string $ms_table;
+	public $ms_table;
 
 	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
 		$this->set_table_vars();
-
-		if ( isset( $_REQUEST['update_database'] ) ) {
-			if ('1' == $_REQUEST['update_database'] ){
-				// Update the database table manually.
-				$this->create_or_upgrade_tables();
-			}	
-		}
 	}
 
 	/**

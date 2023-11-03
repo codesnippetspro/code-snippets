@@ -1,14 +1,12 @@
 <?php
 /**
- * Manages the settings fields definitions
+ * Manages the settings field definitions.
  *
  * @package    Code_Snippets
  * @subpackage Settings
  */
 
 namespace Code_Snippets\Settings;
-
-use function Code_Snippets\code_snippets;
 
 /**
  * Retrieve the default setting values
@@ -28,7 +26,9 @@ function get_default_settings(): array {
 		$defaults[ $section_id ] = array();
 
 		foreach ( $fields as $field_id => $field_atts ) {
-			$defaults[ $section_id ][ $field_id ] = $field_atts['default'];
+			if ( isset( $field_atts['default'] ) ) {
+				$defaults[ $section_id ][ $field_id ] = $field_atts['default'];
+			}
 		}
 	}
 
@@ -222,11 +222,9 @@ function get_settings_fields(): array {
 
 	$fields['debug'] = [
 		'database_update' => [
-			'name'    => __( 'Database Table Update', 'code-snippets' ),
-			'type'    => 'button',
-			'url'     => add_query_arg( 'update_database', true, code_snippets()->get_menu_url( 'settings' ) ),
-			'desc'    => __( 'To manually update the Code Snippets database table, click the button above. This action will only affect the Code Snippets table and should be used only when necessary.', 'code-snippets' ),
-			'default' => false,
+			'name' => __( 'Database Table Update', 'code-snippets' ),
+			'type' => 'action',
+			'desc' => __( 'To manually update the Code Snippets database table, click the button above. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
 		],
 	];
 

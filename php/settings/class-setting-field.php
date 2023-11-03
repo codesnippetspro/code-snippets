@@ -9,8 +9,6 @@
 
 namespace Code_Snippets\Settings;
 
-use function Code_Snippets\code_snippets;
-
 /**
  * Represents a single setting field
  *
@@ -21,7 +19,6 @@ use function Code_Snippets\code_snippets;
  *
  * @property-read int                   $min                Minimum value (for numerical inputs).
  * @property-read int                   $max                Maximum value(for numerical inputs).
- * @property-read string                $url                URL target (for button inputs).
  * @property-read array<string, string> $options            List of options for a select or checkboxes field.
  * @property-read callable              $render_callback    Custom function to use when rendering a callback field.
  * @property-read callable              $sanitize_callback  Custom function to use when sanitize the setting value.
@@ -36,14 +33,14 @@ class Setting_Field {
 	 *
 	 * @var string
 	 */
-	private string $field_id;
+	private $field_id;
 
 	/**
 	 * Settings section identifier.
 	 *
 	 * @var string
 	 */
-	private string $section;
+	private $section;
 
 	/**
 	 * List of possible arguments.
@@ -257,11 +254,11 @@ class Setting_Field {
 	 *
 	 * @since 3.5.1
 	 */
-	private function render_button_field() {
+	private function render_action_field() {
 		printf(
-			'<a href="%s" class="button">%s</a>',
-			esc_url( $this->url ),
-			esc_html( $this->name )
+			'<button type="submit" name="%s" class="button">%s</button>',
+			esc_attr( $this->input_name ),
+			esc_html( empty( $this->label ) ? $this->name : $this->label )
 		);
 	}
 }
