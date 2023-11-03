@@ -259,7 +259,7 @@ function process_settings_actions( array $input ): ?array {
 		add_settings_error(
 			OPTION_NAME,
 			'database_update_done',
-			__( 'Successfully run database table update.', 'code-snippets' ),
+			__( 'Successfully performed database table upgrade.', 'code-snippets' ),
 			'updated'
 		);
 	}
