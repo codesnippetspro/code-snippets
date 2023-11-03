@@ -53,10 +53,10 @@ function get_settings_fields(): array {
 
 	$fields['debug'] = [
 		'database_update' => [
-			'name' => __( 'Database Table Upgrade', 'code-snippets' ),
-			'type' => 'action',
+			'name'  => __( 'Database Table Upgrade', 'code-snippets' ),
+			'type'  => 'action',
 			'label' => __( 'Upgrade Database Table', 'code-snippets' ),
-			'desc' => __( 'Use this button to manually upgrade the Code Snippets database table. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
+			'desc'  => __( 'Use this button to manually upgrade the Code Snippets database table. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
 		],
 	];
 
@@ -143,9 +143,10 @@ function get_settings_fields(): array {
 
 	if ( code_snippets()->cloud_api->is_cloud_connection_available() ) {
 		$fields['debug']['disconnect_cloud'] = [
-			'name' => __( 'Reset / Remove Cloud Connection', 'code-snippets' ),
-			'type' => 'action',
-			'desc' => __( 'Use this button to manually remove and reset the connection to Code Snippets Cloud. This action will not affect any snippets stored on this site.', 'code-snippets' ),
+			'name'  => __( 'Reset Cloud Connection', 'code-snippets' ),
+			'type'  => 'action',
+			'label' => __( 'Disconnect from Cloud', 'code-snippets' ),
+			'desc'  => __( 'Use this button to manually remove and reset the connection to Code Snippets Cloud. This action will not affect any snippets stored on this site.', 'code-snippets' ),
 		];
 	} else {
 		$fields['general']['connect_cloud'] = [
