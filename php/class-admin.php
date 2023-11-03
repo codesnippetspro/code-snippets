@@ -14,7 +14,7 @@ class Admin {
 	 *
 	 * @var array<string, Admin_Menu>
 	 */
-	public array $menus = array();
+	public $menus = array();
 
 	/**
 	 * Class constructor

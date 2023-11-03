@@ -25,7 +25,7 @@ class Edit_Menu extends Admin_Menu {
 	 * @var Snippet|null
 	 * @see Edit_Menu::load_snippet_data()
 	 */
-	protected ?Snippet $snippet = null;
+	protected $snippet = null;
 
 	/**
 	 * Constructor

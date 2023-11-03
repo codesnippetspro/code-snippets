@@ -20,21 +20,21 @@ class Import {
 	 *
 	 * @var string
 	 */
-	private string $file;
+	private $file;
 
 	/**
 	 * Whether snippets should be imported into the network-wide or site-wide table.
 	 *
 	 * @var bool
 	 */
-	private bool $multisite;
+	private $multisite;
 
 	/**
 	 * Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'.
 	 *
 	 * @var string
 	 */
-	private string $dup_action;
+	private $dup_action;
 
 	/**
 	 * Class constructor.

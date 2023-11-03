@@ -17,49 +17,49 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	public string $version;
+	public $version;
 
 	/**
 	 * Filesystem path to the main plugin file
 	 *
 	 * @var string
 	 */
-	public string $file;
+	public $file;
 
 	/**
 	 * Database class
 	 *
 	 * @var DB
 	 */
-	public DB $db;
+	public $db;
 
 	/**
 	 * Administration area class
 	 *
 	 * @var Admin
 	 */
-	public Admin $admin;
+	public $admin;
 
 	/**
 	 * Front-end functionality class
 	 *
 	 * @var Frontend
 	 */
-	public Frontend $frontend;
+	public $frontend;
 
 	/**
 	 * Class for managing cloud API actions.
 	 *
 	 * @var Cloud_API
 	 */
-	public Cloud_API $cloud_api;
+	public $cloud_api;
 
 	/**
 	 * Class for managing active snippets
 	 *
 	 * @var Active_Snippets
 	 */
-	public Active_Snippets $active_snippets;
+	public $active_snippets;
 
 	/**
 	 * Class constructor

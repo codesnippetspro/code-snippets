@@ -16,21 +16,21 @@ abstract class Data_Item {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $fields;
+	protected $fields;
 
 	/**
 	 * List of default values provided for fields.
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $default_values;
+	protected $default_values;
 
 	/**
 	 * Optional list of field name aliases to map when resolving a field name.
 	 *
 	 * @var array<string, string> Field alias names keyed to actual field names.
 	 */
-	protected array $field_aliases;
+	protected $field_aliases;
 
 	/**
 	 * Class constructor.

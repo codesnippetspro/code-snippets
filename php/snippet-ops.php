@@ -602,7 +602,7 @@ function execute_active_snippets(): bool {
 
 	// Bail early if safe mode is active.
 	if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ||
-		! apply_filters( 'code_snippets/execute_snippets', true ) ) {
+	     ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
 		return false;
 	}
 
@@ -612,7 +612,7 @@ function execute_active_snippets(): bool {
 
 	// Detect if a snippet is currently being edited, and if so, spare it from execution.
 	$edit_id = 0;
-	$edit_table = $db->table; 
+	$edit_table = $db->table;
 
 	if ( wp_is_json_request() && ! empty( $_SERVER['REQUEST_URI'] ) ) {
 		$url = wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );

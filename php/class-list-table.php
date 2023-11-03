@@ -30,28 +30,28 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var bool
 	 */
-	public bool $is_network;
+	public $is_network;
 
 	/**
 	 * A list of statuses (views)
 	 *
 	 * @var array<string>
 	 */
-	public array $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
+	public $statuses = [ 'all', 'active', 'inactive', 'recently_activated' ];
 
 	/**
 	 * Column name to use when ordering the snippets list.
 	 *
 	 * @var string
 	 */
-	protected string $order_by;
+	protected $order_by;
 
 	/**
 	 * Direction to use when ordering the snippets list. Either 'asc' or 'desc'.
 	 *
 	 * @var string
 	 */
-	protected string $order_dir;
+	protected $order_dir;
 
 	/**
 	 * The constructor function for our class.

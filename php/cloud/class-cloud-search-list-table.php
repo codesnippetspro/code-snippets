@@ -19,6 +19,8 @@ if ( ! class_exists( 'WP_Plugin_Install_List_Table' ) ) {
 /**
  * This class handles the table for the manage cloud snippets search results
  *
+ * @property string $_pagination Pagination HTML.
+ *
  * @package Code_Snippets
  */
 class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
@@ -28,14 +30,14 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 *
 	 * @var Cloud_API
 	 */
-	protected Cloud_API $cloud_api;
+	protected $cloud_api;
 
 	/**
 	 * Items for the cloud list table.
 	 *
 	 * @var Cloud_Snippets
 	 */
-	protected Cloud_Snippets $cloud_snippets;
+	protected $cloud_snippets;
 
 	/**
 	 * Class constructor.
