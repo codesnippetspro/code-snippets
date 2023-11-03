@@ -28,7 +28,9 @@ function get_default_settings(): array {
 		$defaults[ $section_id ] = array();
 
 		foreach ( $fields as $field_id => $field_atts ) {
-			$defaults[ $section_id ][ $field_id ] = $field_atts['default'];
+			if ( isset( $field_atts['default'] ) ) {
+				$defaults[ $section_id ][ $field_id ] = $field_atts['default'];
+			}
 		}
 	}
 
@@ -126,12 +128,11 @@ function get_settings_fields(): array {
 		],
 
 		'connect_to_cloud' => [
-			'name'    => __( 'Connect to Cloud', 'code-snippets' ),
-			'type'    => 'button',
-			'label'   => __( 'Connect and Authorise', 'code-snippets' ),
-			'url'     => add_query_arg( 'connect-authorise-cloud', true ),
-			'desc'    => __( 'Click to connect and authorise your cloud account.', 'code-snippets' ),
-			'default' => false,
+			'name'   => __( 'Connect to Cloud', 'code-snippets' ),
+			'type'   => 'action',
+			'action' => 'connect-authorise-cloud',
+			'label'  => __( 'Connect and Authorise', 'code-snippets' ),
+			'desc'   => __( 'Click to connect and authorise your cloud account.', 'code-snippets' ),
 		],
 	];
 
@@ -250,18 +251,16 @@ function get_settings_fields(): array {
 
 	$fields['debug'] = [
 		'database_update' => [
-			'name'    => __( 'Database Table Update', 'code-snippets' ),
-			'type'    => 'button',
-			'url'     => add_query_arg( 'update_database', true ),
-			'desc'    => __( 'Use this button to manually update the Code Snippets database table. This action will only affect the Code Snippets table and should be used only when necessary.', 'code-snippets' ),
-			'default' => false,
+			'name'   => __( 'Database Table Update', 'code-snippets' ),
+			'type'   => 'action',
+			'action' => 'update_database',
+			'desc'   => __( 'Use this button to manually update the Code Snippets database table. This action will only affect the Code Snippets table and should be used only when necessary.', 'code-snippets' ),
 		],
 		'remove_sync'     => [
-			'name'    => __( 'Reset / Remove Cloud Connection', 'code-snippets' ),
-			'type'    => 'button',
-			'url'     => add_query_arg( 'remove_sync', true ),
-			'desc'    => __( 'Use this button to manually remove and reset the connection to Code Snippets Cloud. This action will not affect any snippets stored on this site.', 'code-snippets' ),
-			'default' => false,
+			'name'   => __( 'Reset / Remove Cloud Connection', 'code-snippets' ),
+			'type'   => 'action',
+			'action' => 'remove_sync',
+			'desc'   => __( 'Use this button to manually remove and reset the connection to Code Snippets Cloud. This action will not affect any snippets stored on this site.', 'code-snippets' ),
 		],
 	];
 

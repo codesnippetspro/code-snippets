@@ -29,6 +29,16 @@ class Cloud_GPT_API {
 	const EXPLAIN_PATH = '/explain';
 
 	/**
+	 * Snippet types which can be used with prompts to generate code.
+	 */
+	const VALID_PROMPT_TYPES = [ 'php', 'css', 'js', 'html' ];
+
+	/**
+	 * Snippet fields which can be used to generate explanations.
+	 */
+	const VALID_EXPLAIN_FIELDS = [ 'code', 'desc', 'tags' ];
+
+	/**
 	 * Cloud API instance.
 	 *
 	 * @var Cloud_API
@@ -49,12 +59,12 @@ class Cloud_GPT_API {
 	/**
 	 * Make a POST request.
 	 *
-	 * @param string $endpoint Endpoint to contact.
-	 * @param string $prompt   Prompt to send as POST data.
+	 * @param string                $endpoint Endpoint to contact.
+	 * @param array<string, string> $data     Data to include in POST request..
 	 *
 	 * @return array|WP_Error Response data on success or error on failure.
 	 */
-	private function send_post_request( string $endpoint, string $prompt ) {
+	private function send_post_request( string $endpoint, array $data ) {
 		if ( ! $this->cloud_api->is_cloud_key_verified() ) {
 			return new WP_Error(
 				'cloud_ai_key_error',
@@ -70,26 +80,28 @@ class Cloud_GPT_API {
 			);
 		}
 
-		$parts = [
-			'multipart' => [
-				[
-					'name'     => 'prompt',
-					'contents' => $prompt,
-				],
-				[
-					'name'     => 'fs_key',
-					'contents' => $freemius_license,
-				],
+		$multipart_data = [
+			[
+				'name'     => 'fs_key',
+				'contents' => $freemius_license,
 			],
 		];
 
+		foreach ( $data as $name => $contents ) {
+			$multipart_data[] = [
+				'name'     => $name,
+				'contents' => $contents,
+			];
+		}
+
 		$url = sprintf( '%s/%s', self::API_URL, ltrim( $endpoint, '/\\' ) );
 
-		$request = new Request( 'POST', $url, $this->cloud_api->build_request_headers() );
 		$client = new Client();
+		$request = new Request( 'POST', $url, $this->cloud_api->build_request_headers() );
 
 		try {
-			$response = $client->send( $request, $parts );
+			$response = $client->send( $request, [ 'multipart' => $multipart_data ] );
+
 		} catch ( GuzzleException $exception ) {
 			return new WP_Error(
 				'cloud_ai_request_error',
@@ -132,12 +144,35 @@ class Cloud_GPT_API {
 	/**
 	 * Make a POST request to the Cloud AI prompt endpoint.
 	 *
-	 * @param string $prompt Message prompt.
+	 * @param string $prompt Prompt to use for generating code.
+	 * @param string $type   Snippet type.
 	 *
-	 * @return array<string, string>|WP_Error
+	 * @return array<string, string>|WP_Error Request response.
 	 */
-	public function prompt( string $prompt ) {
-		$response = $this->send_post_request( self::PROMPT_PATH, $prompt );
+	public function prompt( string $prompt, string $type ) {
+		if ( empty( $prompt ) ) {
+			return new WP_Error(
+				'generate_snippet_missing_prompt',
+				esc_html__( 'Cannot generate snippet for an empty prompt.', 'code-snippets' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		if ( ! in_array( $type, self::VALID_PROMPT_TYPES, true ) ) {
+			return new WP_Error(
+				'generate_snippet_invalid_type',
+				esc_html__( 'Cannot generate code for invalid snippet type.', 'code-snippets' ),
+				[
+					'status' => 400,
+					'type'   => $type,
+				]
+			);
+		}
+
+		$response = $this->send_post_request(
+			sprintf( '%s/%s', self::PROMPT_PATH, $type ),
+			[ 'prompt' => $prompt ]
+		);
 
 		return is_wp_error( $response ) ?
 			$response :
@@ -154,12 +189,35 @@ class Cloud_GPT_API {
 	/**
 	 * Make a POST request to the Cloud AI explain endpoint.
 	 *
-	 * @param string $code Snippet code to explain.
+	 * @param string $code  Snippet code to explain.
+	 * @param string $field Snippet field.
 	 *
 	 * @return array<string, mixed>|WP_Error
 	 */
-	public function explain( string $code ) {
-		$response = $this->send_post_request( self::EXPLAIN_PATH, $code );
+	public function explain( string $code, string $field ) {
+		if ( empty( $code ) ) {
+			return new WP_Error(
+				'explain_snippet_missing_code',
+				esc_html__( 'Cannot generate an explanation for empty snippet code.', 'code-snippets' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		if ( ! in_array( $field, self::VALID_EXPLAIN_FIELDS, true ) ) {
+			return new WP_Error(
+				'explain_snippet_invalid_field',
+				esc_html__( 'Cannot generate explanation for invalid snippet field.', 'code-snippets' ),
+				[
+					'status' => 400,
+					'field'  => $field,
+				]
+			);
+		}
+
+		$response = $this->send_post_request(
+			sprintf( '%s/%s', self::EXPLAIN_PATH, $field ),
+			[ 'prompt' => $code ]
+		);
 
 		return is_wp_error( $response ) ?
 			$response :

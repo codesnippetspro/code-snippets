@@ -67,6 +67,7 @@ export const DescriptionEditor: React.FC = () => {
 		<div className="snippet-description-container">
 			{'' === snippet.code.trim() ? null :
 				<GenerateButton
+					field="desc"
 					snippet={snippet}
 					disabled={isReadOnly}
 					onResponse={generated => {

@@ -103,7 +103,6 @@ class Cloud_API {
 	 */
 	public function __construct() {
 		$settings = $this->get_cloud_settings();
-
 		$this->cloud_key = $settings['cloud_token'];
 		$this->local_token = $settings['local_token'];
 		$this->cloud_key_is_verified = boolval( $settings['token_verified'] );
@@ -541,7 +540,7 @@ class Cloud_API {
 	 *
 	 * @param string $auth_code Authorisation code.
 	 *
-	 * @return  bool|WP_Error
+	 * @return bool|WP_Error
 	 */
 	public function exchange_auth_code_for_token( string $auth_code ) {
 		$local_token = $this->get_cloud_setting( 'local_token' );
@@ -571,22 +570,14 @@ class Cloud_API {
 		if ( 401 === wp_remote_retrieve_response_code( $response ) ) {
 			return new WP_Error(
 				'invalid_token',
-				'That token is invalid - please check and try again.'
+				esc_html__( 'That token is invalid - please check and try again.', 'code-snippets' )
 			);
-		}
-
-		if ( 422 === wp_remote_retrieve_response_code( $response ) ) {
-			return new WP_Error(
-				'Something Went Wrong',
-				'Please see error message:  ' . $data['message']
-			);
-
 		}
 
 		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			return new WP_Error(
-				'connection_error',
-				'There was an error connecting to the cloud platform. Please try again later.'
+				'snippets_cloud_connection_error',
+				esc_html__( 'There was an error connecting to the cloud platform. Please try again later.', 'code-snippets' )
 			);
 		}
 

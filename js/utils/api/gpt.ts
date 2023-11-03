@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
 import { useMemo } from 'react'
+import { Snippet, SnippetType } from '../../types/Snippet'
 import { useAxios } from './axios'
 
 const ROUTE_BASE = window.CODE_SNIPPETS?.restAPI.cloud
@@ -10,6 +11,8 @@ const AXIOS_CONFIG: AxiosRequestConfig = {
 		'Access-Control': window.CODE_SNIPPETS?.restAPI.localToken
 	}
 }
+
+export type ExplainSnippetFields = keyof Pick<Snippet, 'code' | 'desc' | 'tags'>
 
 export interface GeneratedSnippet {
 	name?: string
@@ -30,25 +33,25 @@ interface ApiResponse<T> {
 }
 
 export interface GenerativeAPI {
-	generateSnippet: (prompt: string) => Promise<GeneratedSnippet>
-	explainSnippet: (code: string) => Promise<ExplainedSnippet>
+	generateSnippet: (prompt: string, type: SnippetType) => Promise<GeneratedSnippet>
+	explainSnippet: (code: string, field: ExplainSnippetFields) => Promise<ExplainedSnippet>
 }
 
 export const useGenerativeAPI = (): GenerativeAPI => {
 	const { post } = useAxios(AXIOS_CONFIG)
 
 	return useMemo((): GenerativeAPI => ({
-		generateSnippet: prompt =>
-			post<ApiResponse<GeneratedSnippet>, { prompt: string }>(
+		generateSnippet: (prompt, type) =>
+			post<ApiResponse<GeneratedSnippet>, { prompt: string, type: SnippetType }>(
 				`${ROUTE_BASE}/ai/prompt`,
-				{ prompt }
+				{ prompt, type }
 			)
 				.then(response => response.data.message),
 
-		explainSnippet: code =>
-			post<ApiResponse<ExplainedSnippet>, { prompt: string }>(
+		explainSnippet: (code, field) =>
+			post<ApiResponse<ExplainedSnippet>, { code: string, field: ExplainSnippetFields }>(
 				`${ROUTE_BASE}/ai/explain`,
-				{ prompt: code }
+				{ code, field }
 			)
 				.then(response => response.data.message)
 	}), [post])

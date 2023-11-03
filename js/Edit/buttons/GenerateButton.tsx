@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { Button, ButtonProps } from '../../common/Button'
 import { Snippet } from '../../types/Snippet'
-import { ExplainedSnippet, useGenerativeAPI } from '../../utils/api/gpt'
+import { ExplainedSnippet, ExplainSnippetFields, useGenerativeAPI } from '../../utils/api/gpt'
 import { trimTrailingChar } from '../../utils/general'
 import { getSnippetType, isLicensed } from '../../utils/snippets'
 
@@ -34,12 +34,14 @@ export const GenerateIcon = () =>
 	</svg>
 
 export interface GenerateButtonProps extends ButtonProps {
+	field: ExplainSnippetFields
 	snippet: Snippet
 	onRequest?: VoidFunction
 	onResponse?: (generated: ExplainedSnippet) => void
 }
 
 export const GenerateButton: React.FC<GenerateButtonProps> = ({
+	field,
 	snippet,
 	children,
 	onClick,
@@ -72,7 +74,7 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
 					setErrorMessage(undefined)
 					onRequest?.()
 
-					explainSnippet(snippet.code)
+					explainSnippet(snippet.code, field)
 						.then(response => {
 							setIsWorking(false)
 							onResponse?.(response)

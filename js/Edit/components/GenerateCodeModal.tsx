@@ -4,6 +4,7 @@ import { isAxiosError } from 'axios'
 import React, { Dispatch, MouseEventHandler, SetStateAction, useState } from 'react'
 import { Snippet } from '../../types/Snippet'
 import { useGenerativeAPI } from '../../utils/api/gpt'
+import { getSnippetType } from '../../utils/snippets'
 import { GenerateIcon } from '../buttons/GenerateButton'
 import { useSnippetForm } from '../SnippetForm/context'
 
@@ -69,7 +70,7 @@ export const GenerateCodeModal: React.FC<GenerateCodeModalProps> = ({ show, onCl
 		setIsWaiting(true)
 		setErrorMessage(undefined)
 
-		generateSnippet(prompt)
+		generateSnippet(prompt, getSnippetType(snippet))
 			.then(generated => {
 				updateSnippet(previous => ({ ...previous, ...generated }))
 				setIsWaiting(false)

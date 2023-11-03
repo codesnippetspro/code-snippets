@@ -47,6 +47,7 @@ const ExplainCodeButton: React.FC = () => {
 
 	return (
 		<GenerateButton
+			field="code"
 			snippet={snippet}
 			disabled={isWorking || isReadOnly}
 			title={__('Explain this snippet with AI.', 'code-snippets')}
@@ -88,6 +89,7 @@ const GenerateCodeButton: React.FC = () => {
 
 	return <>
 		<GenerateButton
+			field="code"
 			primary={0 === snippet.id}
 			snippet={snippet}
 			disabled={isWorking || isReadOnly}

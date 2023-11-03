@@ -13,6 +13,7 @@ export const TagsInput: React.FC = () => {
 		<div className="snippet-tags-container">
 			{'' === snippet.code.trim() ? null :
 				<GenerateButton
+					field="tags"
 					snippet={snippet}
 					disabled={isReadOnly}
 					onResponse={generated => {

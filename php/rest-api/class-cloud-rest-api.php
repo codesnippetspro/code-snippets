@@ -101,7 +101,15 @@ final class Cloud_REST_API {
 					'permission_callback' => [ $this, 'cloud_permission_check' ],
 					'args'                => [
 						'prompt' => [
-							'required' => true,
+							'description' => esc_html__( 'Prompt to use when generating snippet.', 'code-snippets' ),
+							'required'    => true,
+							'type'        => 'string',
+						],
+						'type'   => [
+							'description' => esc_html__( 'Language type to use when generating code.', 'code-snippets' ),
+							'required'    => true,
+							'type'        => 'string',
+							'enum'        => Cloud_GPT_API::VALID_PROMPT_TYPES,
 						],
 					],
 				],
@@ -117,8 +125,16 @@ final class Cloud_REST_API {
 					'callback'            => [ $this, 'cloud_ai_explain' ],
 					'permission_callback' => [ $this, 'cloud_permission_check' ],
 					'args'                => [
-						'prompt' => [
-							'required' => true,
+						'code'  => [
+							'description' => esc_html__( 'Snippet code to use for generating an explanation.', 'code-snippets' ),
+							'required'    => true,
+							'type'        => 'string',
+						],
+						'field' => [
+							'description' => esc_html__( 'Snippet field to target when generating explanation.', 'code-snippets' ),
+							'required'    => true,
+							'type'        => 'string',
+							'enum'        => Cloud_GPT_API::VALID_EXPLAIN_FIELDS,
 						],
 					],
 				],
@@ -267,28 +283,19 @@ final class Cloud_REST_API {
 	 */
 	public function cloud_ai_prompt( WP_REST_Request $request ) {
 		$prompt = $request->get_param( 'prompt' );
-
-		if ( empty( $prompt ) ) {
-			return new WP_Error(
-				'rest_empty_prompt',
-				__( 'Prompt cannot be empty', 'code-snippets' ),
-				[ 'status' => 400 ]
-			);
-		}
+		$type = $request->get_param( 'type' );
 
 		$cloud_ai_api = new Cloud_GPT_API( $this->cloud_api );
-		$api_response = $cloud_ai_api->prompt( $prompt );
+		$result = $cloud_ai_api->prompt( $prompt, $type );
 
-		if ( is_wp_error( $api_response ) ) {
-			return $api_response;
-		}
-
-		$response = [
-			'status'  => 'success',
-			'message' => $api_response,
-		];
-
-		return rest_ensure_response( $response );
+		return is_wp_error( $result ) ?
+			$result :
+			rest_ensure_response(
+				[
+					'status'  => 'success',
+					'message' => $result,
+				]
+			);
 	}
 
 	/**
@@ -299,24 +306,19 @@ final class Cloud_REST_API {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function cloud_ai_explain( WP_REST_Request $request ) {
-		$prompt = $request->get_param( 'prompt' );
-
-		if ( empty( $prompt ) ) {
-			return new WP_Error( 'rest_empty_prompt', __( 'Prompt cannot be empty', 'code-snippets' ), [ 'status' => 400 ] );
-		}
+		$code = $request->get_param( 'code' );
+		$field = $request->get_param( 'field' );
 
 		$cloud_ai_api = new Cloud_GPT_API( $this->cloud_api );
-		$api_response = $cloud_ai_api->explain( $prompt );
+		$result = $cloud_ai_api->explain( $code, $field );
 
-		if ( is_wp_error( $api_response ) ) {
-			return $api_response;
-		}
-
-		$response = [
-			'status'  => 'success',
-			'message' => $api_response,
-		];
-
-		return rest_ensure_response( $response );
+		return is_wp_error( $result ) ?
+			$result :
+			rest_ensure_response(
+				[
+					'status'  => 'success',
+					'message' => $result,
+				]
+			);
 	}
 }
