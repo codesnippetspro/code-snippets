@@ -111,7 +111,6 @@ export const handleSettingsTabs = () => {
 		return
 	}
 
-	const submitWrap = document.querySelector<HTMLElement>('.code-snippets-settings .submit')
 	const tabs = tabsWrapper.querySelectorAll('.nav-tab') ?? []
 
 	for (const tab of tabs) {
@@ -125,10 +124,6 @@ export const handleSettingsTabs = () => {
 				updateHttpReferer(section)
 				showCloudGuide(section)
 				refreshCloudSyncData()
-			}
-
-			if (submitWrap) {
-				submitWrap.style.display = 'debug' === section ? 'none' : 'flex'
 			}
 		})
 	}
