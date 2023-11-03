@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
+
 $licensed = code_snippets()->licensing->is_licensed();
 $cloud_enabled = code_snippets()->cloud_api->is_cloud_key_verified();
 $types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin::get_types() );

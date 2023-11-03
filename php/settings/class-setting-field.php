@@ -19,7 +19,6 @@ namespace Code_Snippets\Settings;
  *
  * @property-read int                   $min                Minimum value (for numerical inputs).
  * @property-read int                   $max                Maximum value(for numerical inputs).
- * @property-read string                $url                URL target (for button inputs).
  * @property-read array<string, string> $options            List of options for a select or checkboxes field.
  * @property-read callable              $render_callback    Custom function to use when rendering a callback field.
  * @property-read callable              $sanitize_callback  Custom function to use when sanitize the setting value.
@@ -258,26 +257,11 @@ class Setting_Field {
 	 *
 	 * @since 3.5.1
 	 */
-	private function render_button_field() {
+	private function render_action_field() {
 		printf(
-			'<a href="%s" class="button">%s</a>',
-			esc_url( $this->url ),
-			esc_html( empty( $this->label ) ? $this->name : $this->label )
-		);
-	}
-
-	/**
-	 * Render a hidden input field for an editor setting.
-	 */
-	private function render_hidden_field() {
-		$value = $this->get_saved_value() ? $this->get_saved_value() : $this->default;
-
-		printf(
-			'<input id="%s" type="hidden" name="%s" value="%s" class="%s">',
-			esc_attr( $this->element_id ),
+			'<button type="submit" name="%s" class="button">%s</button>',
 			esc_attr( $this->input_name ),
-			esc_attr( $value ),
-			esc_attr( $this->element_id )
+			esc_html( empty( $this->label ) ? $this->name : $this->label )
 		);
 	}
 }

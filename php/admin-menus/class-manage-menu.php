@@ -17,13 +17,6 @@ use function Code_Snippets\Settings\get_setting;
 class Manage_Menu extends Admin_Menu {
 
 	/**
-	 * Instance of the Cloud API class.
-	 *
-	 * @var Cloud_API
-	 */
-	private $cloud_api;
-
-	/**
 	 * Instance of the list table class.
 	 *
 	 * @var List_Table
@@ -60,8 +53,6 @@ class Manage_Menu extends Admin_Menu {
 			_x( 'All Snippets', 'menu label', 'code-snippets' ),
 			__( 'Snippets', 'code-snippets' )
 		);
-
-		$this->cloud_api = code_snippets()->cloud_api;
 	}
 
 	/**
@@ -223,7 +214,7 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		// Ensure cloud connection is available.
-		$cloud_key = $this->cloud_api->is_cloud_key_available();
+		$cloud_key = code_snippets()->cloud_api->is_cloud_key_available();
 
 		if ( ! $cloud_key['success'] ) {
 			wp_safe_redirect(
@@ -303,7 +294,7 @@ class Manage_Menu extends Admin_Menu {
 	/**
 	 * Print the status and error messages
 	 *
-	 * @return void;
+	 * @return void
 	 */
 	protected function print_messages() {
 		$this->render_view( 'partials/list-table-notices' );

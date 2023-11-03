@@ -1,6 +1,6 @@
 <?php
 /**
- * Manages the settings fields definitions
+ * Manages the settings field definitions.
  *
  * @package    Code_Snippets
  * @subpackage Settings
@@ -50,6 +50,14 @@ function get_settings_fields(): array {
 	}
 
 	$fields = [];
+
+	$fields['debug'] = [
+		'database_update' => [
+			'name' => __( 'Database Table Update', 'code-snippets' ),
+			'type' => 'action',
+			'desc' => __( 'Use this button to manually update the Code Snippets database table. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
+		],
+	];
 
 	$fields['general'] = [
 		'activate_by_default' => [
@@ -112,40 +120,39 @@ function get_settings_fields(): array {
 			'desc'    => __( 'Minify snippet output by removing whitespace and optimising code to reduce load times.', 'code-snippets' ),
 			'default' => array( 'css', 'js' ),
 		],
+	];
 
-		'hide_upgrade_menu' => [
+	if ( ! code_snippets()->licensing->is_licensed() ) {
+		$fields['general']['hide_upgrade_menu'] = [
 			'name'    => __( 'Hide Upgrade Menu', 'code-snippets' ),
 			'type'    => 'checkbox',
 			'label'   => __( 'Hide the Upgrade button from the admin menu.', 'code-snippets' ),
 			'default' => false,
-		],
+		];
+	}
 
-		'complete_uninstall' => [
+	if ( ! is_multisite() || is_main_site() ) {
+		$fields['general']['complete_uninstall'] = [
 			'name'    => __( 'Complete Uninstall', 'code-snippets' ),
 			'type'    => 'checkbox',
 			'label'   => __( 'When the plugin is deleted from the Plugins menu, also delete all snippets and plugin settings.', 'code-snippets' ),
 			'default' => false,
-		],
-
-		'connect_to_cloud' => [
-			'name'   => __( 'Connect to Cloud', 'code-snippets' ),
-			'type'   => 'action',
-			'action' => 'connect-authorise-cloud',
-			'label'  => __( 'Connect and Authorise', 'code-snippets' ),
-			'desc'   => __( 'Click to connect and authorise your cloud account.', 'code-snippets' ),
-		],
-	];
+		];
+	}
 
 	if ( code_snippets()->cloud_api->is_cloud_connection_available() ) {
-		unset( $fields['general']['connect_to_cloud'] );
-	}
-
-	if ( is_multisite() && ! is_main_site() ) {
-		unset( $fields['general']['complete_uninstall'] );
-	}
-
-	if ( code_snippets()->licensing->is_licensed() ) {
-		unset( $fields['general']['hide_upgrade_menu'] );
+		$fields['debug']['disconnect_cloud'] = [
+			'name' => __( 'Reset / Remove Cloud Connection', 'code-snippets' ),
+			'type' => 'action',
+			'desc' => __( 'Use this button to manually remove and reset the connection to Code Snippets Cloud. This action will not affect any snippets stored on this site.', 'code-snippets' ),
+		];
+	} else {
+		$fields['general']['connect_cloud'] = [
+			'name'  => __( 'Connect to Cloud', 'code-snippets' ),
+			'type'  => 'action',
+			'label' => __( 'Connect and Authorise', 'code-snippets' ),
+			'desc'  => __( 'Click to connect and authorise your cloud account.', 'code-snippets' ),
+		];
 	}
 
 	// Code Editor settings section.
@@ -246,21 +253,6 @@ function get_settings_fields(): array {
 				'sublime' => __( 'Sublime Text', 'code-snippets' ),
 			],
 			'codemirror' => 'keyMap',
-		],
-	];
-
-	$fields['debug'] = [
-		'database_update' => [
-			'name'   => __( 'Database Table Update', 'code-snippets' ),
-			'type'   => 'action',
-			'action' => 'update_database',
-			'desc'   => __( 'Use this button to manually update the Code Snippets database table. This action will only affect the Code Snippets table and should be used only when necessary.', 'code-snippets' ),
-		],
-		'remove_sync'     => [
-			'name'   => __( 'Reset / Remove Cloud Connection', 'code-snippets' ),
-			'type'   => 'action',
-			'action' => 'remove_sync',
-			'desc'   => __( 'Use this button to manually remove and reset the connection to Code Snippets Cloud. This action will not affect any snippets stored on this site.', 'code-snippets' ),
 		],
 	];
 

@@ -103,6 +103,7 @@ class Cloud_API {
 	 */
 	public function __construct() {
 		$settings = $this->get_cloud_settings();
+
 		$this->cloud_key = $settings['cloud_token'];
 		$this->local_token = $settings['local_token'];
 		$this->cloud_key_is_verified = boolval( $settings['token_verified'] );

@@ -37,6 +37,27 @@ class Settings_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
+		if ( isset( $_GET['confirm-authorise-cloud'], $_GET['code'], $_GET['state'] ) ) {
+			$api = code_snippets()->cloud_api;
+			$auth_code = sanitize_text_field( wp_unslash( $_GET['code'] ) );
+			$state = sanitize_text_field( wp_unslash( $_GET['state'] ) );
+
+			$cloud_response = $api->verify_cloud_connection_response( $state );
+
+			if ( $cloud_response ) {
+				$api->exchange_auth_code_for_token( $auth_code );
+			}
+
+			wp_safe_redirect(
+				add_query_arg(
+					'connect_cloud_result',
+					$cloud_response ? 'ok' : 'fail',
+					code_snippets()->get_menu_url( 'settings' )
+				)
+			);
+			exit;
+		}
+
 		if ( is_network_admin() ) {
 			if ( Settings\are_settings_unified() ) {
 				$this->update_network_options();
@@ -44,41 +65,6 @@ class Settings_Menu extends Admin_Menu {
 				wp_safe_redirect( code_snippets()->get_menu_url( 'settings', 'admin' ) );
 				exit;
 			}
-		}
-
-		if ( ! empty( $_GET['connect-authorise-cloud'] ) && 'false' !== sanitize_key( $_GET['connect-authorise-cloud'] ) ) {
-			code_snippets()->cloud_api->init_cloud_connection();
-		}
-
-		if ( ! empty( $_GET['confirm-authorise-cloud'] ) && 'false' !== sanitize_key( $_GET['confirm-authorise-cloud'] ) ) {
-			$auth_code = sanitize_text_field( wp_unslash( $_GET['code'] ?? '' ) );
-			$state = sanitize_text_field( wp_unslash( $_GET['state'] ?? '' ) );
-
-			$cloud_response = code_snippets()->cloud_api->verify_cloud_connection_response( $state );
-
-			if ( $cloud_response ) {
-				$token_exchange = code_snippets()->cloud_api->exchange_auth_code_for_token( $auth_code );
-
-				if ( $token_exchange ) {
-					add_settings_error(
-						'code-snippets-settings-notices',
-						'cloud-connection-success',
-						__( 'This site has been successfully connected to Code Snippets Cloud.', 'code-snippets' ),
-						'updated'
-					);
-				}
-			}
-		}
-
-		if ( isset( $_REQUEST['remove_sync'] ) && '1' === $_REQUEST['remove_sync'] ) {
-			code_snippets()->cloud_api->remove_sync();
-
-			add_settings_error(
-				'code-snippets-settings-notices',
-				'sync_removed',
-				__( 'This site has been successfully disconnected from Code Snippets Cloud.', 'code-snippets' ),
-				'updated'
-			);
 		}
 	}
 
@@ -161,6 +147,22 @@ class Settings_Menu extends Admin_Menu {
 				}
 				?>
 			</h1>
+
+			<?php
+
+			if ( isset( $_GET['connect_cloud_result'] ) ) {
+				$success = 'ok' === sanitize_key( wp_unslash( $_GET['connect_cloud_result'] ) );
+				printf( '<div class="notice notice-%s settings-error is-dismissible"><p><strong>', $success ? 'success' : 'error' );
+
+				echo $success ?
+					esc_html__( 'Successfully connected this site to Code Snippets Cloud.', 'code-snippets' ) :
+					esc_html__( 'Failed to connect this site to Code Snippets Cloud. Please try again.', 'code-snippets' );
+
+				echo '</strong></p></div>';
+				$_SERVER['REQUEST_URI'] = remove_query_arg( 'connect_cloud_result' );
+			}
+			?>
+
 
 			<?php settings_errors( OPTION_NAME ); ?>
 
