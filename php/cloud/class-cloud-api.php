@@ -500,7 +500,7 @@ class Cloud_API {
 		$site_url = get_site_url();
 		$site_host = wp_parse_url( $site_url, PHP_URL_HOST );
 
-		$state = $this->get_cloud_setting( 'state' );
+		$state = $this->get_current_state();
 		$local_token = $this->get_cloud_setting( 'local_token' );
 		$code_challenge = $this->get_cloud_setting( 'code_challenge' );
 
@@ -522,18 +522,12 @@ class Cloud_API {
 	}
 
 	/**
-	 * Verify Response from Cloud Connection is Authentic
+	 * Retrieve the current cloud connection state.
 	 *
-	 * @param string $incoming_state State sent to cloud.
-	 *
-	 * @return boolean
+	 * @return string
 	 */
-	public function verify_cloud_connection_response( string $incoming_state ): bool {
-
-		$existing_state = $this->get_cloud_setting( 'state' );
-
-		// Check if the state is the same as the one sent.
-		return $incoming_state === $existing_state;
+	public function get_current_state(): string {
+		return $this->get_cloud_setting( 'state' );
 	}
 
 	/**
@@ -541,9 +535,9 @@ class Cloud_API {
 	 *
 	 * @param string $auth_code Authorisation code.
 	 *
-	 * @return bool|WP_Error
+	 * @return WP_Error|null Error on failure, null on success.
 	 */
-	public function exchange_auth_code_for_token( string $auth_code ) {
+	public function decode_auth_code( string $auth_code ): ?WP_Error {
 		$local_token = $this->get_cloud_setting( 'local_token' );
 
 		$response = wp_remote_post(
@@ -591,8 +585,7 @@ class Cloud_API {
 		);
 
 		$this->cloud_key = $data['token'];
-
-		return true;
+		return null;
 	}
 
 	/**

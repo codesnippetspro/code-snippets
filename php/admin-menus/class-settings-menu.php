@@ -42,16 +42,16 @@ class Settings_Menu extends Admin_Menu {
 			$auth_code = sanitize_text_field( wp_unslash( $_GET['code'] ) );
 			$state = sanitize_text_field( wp_unslash( $_GET['state'] ) );
 
-			$cloud_response = $api->verify_cloud_connection_response( $state );
+			$success = $api->get_current_state() === $state;
 
-			if ( $cloud_response ) {
-				$api->exchange_auth_code_for_token( $auth_code );
+			if ( $success ) {
+				$api->decode_auth_code( $auth_code );
 			}
 
 			wp_safe_redirect(
 				add_query_arg(
 					'connect_cloud_result',
-					$cloud_response ? 'ok' : 'fail',
+					$success ? 'ok' : 'fail',
 					code_snippets()->get_menu_url( 'settings' )
 				)
 			);
