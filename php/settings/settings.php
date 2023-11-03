@@ -8,6 +8,8 @@
 
 namespace Code_Snippets\Settings;
 
+use function Code_Snippets\code_snippets;
+
 const CACHE_KEY = 'code_snippets_settings';
 const OPTION_GROUP = 'code-snippets';
 const OPTION_NAME = 'code_snippets_settings';
@@ -144,7 +146,6 @@ function get_settings_sections(): array {
  * Register settings sections, fields, etc
  */
 function register_plugin_settings() {
-
 	if ( are_settings_unified() ) {
 		if ( ! get_site_option( OPTION_NAME ) ) {
 			add_site_option( OPTION_NAME, get_default_settings() );
@@ -233,16 +234,15 @@ function sanitize_setting_value( array $field, $input_value ) {
 }
 
 /**
- * Validate the settings
+ * Process settings actions.
  *
- * @param array<string, array<string, mixed>> $input The received settings.
+ * @param array $input Provided settings input.
  *
- * @return array<string, array<string, mixed>> The validated settings.
+ * @return array|null New $input value to return, or null to continue with settings update process.
  */
-function sanitize_settings( array $input ): array {
-	wp_cache_delete( CACHE_KEY );
+function process_settings_actions( array $input ): ?array {
 
-	if ( ! empty( $input['reset_settings'] ) ) {
+	if ( isset( $input['reset_settings'] ) ) {
 		add_settings_error(
 			OPTION_NAME,
 			'settings_reset',
@@ -251,6 +251,35 @@ function sanitize_settings( array $input ): array {
 		);
 
 		return [];
+	}
+
+	if ( isset( $input['debug']['database_update'] ) ) {
+		code_snippets()->db->create_or_upgrade_tables();
+
+		add_settings_error(
+			OPTION_NAME,
+			'database_update_done',
+			__( 'Successfully run database table update.', 'code-snippets' ),
+			'updated'
+		);
+	}
+
+	return null;
+}
+
+/**
+ * Validate the settings
+ *
+ * @param array<string, array<string, mixed>> $input The received settings.
+ *
+ * @return array<string, array<string, mixed>> The validated settings.
+ */
+function sanitize_settings( array $input ): array {
+	wp_cache_delete( CACHE_KEY );
+	$result = process_settings_actions( $input );
+
+	if ( ! is_null( $result ) ) {
+		return $result;
 	}
 
 	$settings = get_settings_values();

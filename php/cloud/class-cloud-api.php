@@ -51,7 +51,7 @@ class Cloud_API {
 	 *
 	 * @var Cloud_Link[]|null
 	 */
-	private ?array $local_to_cloud_map = null;
+	private $local_to_cloud_map = null;
 
 	/**
 	 * Create local-to-cloud map to keep track of local snippets that have been synced to the cloud.
