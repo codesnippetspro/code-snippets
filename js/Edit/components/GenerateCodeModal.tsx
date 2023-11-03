@@ -32,6 +32,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
 			onChange={value => setPrompt(value)}
 			disabled={isWaiting}
 			rows={2}
+			autoFocus
 		/>
 
 		{'string' === typeof errorMessage ?
