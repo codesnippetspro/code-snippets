@@ -30,79 +30,6 @@ const updateHttpReferer = (section: string) => {
 	const newReferer = httpReferer.value.replace(/(?<base>[&?]section=)[^&]+/, `$1${section}`)
 	httpReferer.value = newReferer + (newReferer === httpReferer.value ? `&section=${section}` : '')
 }
-//Declare the hidden input
-const hiddenInput = document.getElementById('cloud_token_verified') as HTMLInputElement
-
-//Show the cloud guide text and sync status
-const showCloudGuide = (section: string) => {
-	if ('cloud' === section) {
-		const cloudGuide = document.getElementById('cloud_guide')
-		const cloudSyncStatus = document.getElementById('cloud_sync_status')
-		cloudGuide?.classList.remove('hidden')
-		cloudSyncStatus?.classList.remove('hidden')
-	}
-}
-
-//Verify API Token by seding a HTTP Request to the API and checking the response
-const verifyToken = () => {
-	const verifyTokenButton = document.getElementById('verify_token')
-	verifyTokenButton?.addEventListener('click', event => {
-		//Hide all messages
-		document.querySelectorAll('.cloud-message')?.forEach(element => {
-			element.classList.add('hidden')
-		})
-		event.preventDefault()
-		//Get the token value
-		const tokenInput = document.getElementById('cloud_token') as HTMLInputElement
-		const localTokenInput = document.getElementById('local_token') as HTMLInputElement
-		const tokenValue = tokenInput.value
-		const localToken = generateTokenForCloud(tokenValue)
-		localTokenInput.value = localToken
-		//Send a HTTP Request to the API - update this to verify URL **TODO**
-		cs(tokenValue, localToken).then(response => {
-			if(response?.ok) {
-				response.json().then(data => {
-					if( 'success' === data?.sync_status ) {
-						document.querySelector('.cloud-success')?.classList.remove('hidden')
-						hiddenInput.value = 'true'
-					}
-					if( 'error' === data?.sync_status) {
-						const cloudError = document.querySelector('.cloud-error')
-						if(null !== cloudError) {
-							cloudError?.classList.remove('hidden')
-							cloudError.innerHTML = data.message
-						}
-						hiddenInput.value = 'false'
-					}
-				})
-			} 
-		})
-	})
-}
-
-const cs  = async function cloudAPIVerify(tokenValue: string, localToken: string) {
-	const formData = new FormData()
-	formData.append('site_token', localToken)
-	formData.append('site_host', window.location.host)
-	try {
-		const response = await fetch('https://codesnippets.cloud/api/v1/private/syncandverify', {
-			method: 'POST',
-			headers: {
-				'Authorization': `Bearer ${tokenValue}`,
-				'Access-Control-Allow-Origin': '*',
-				'Accept': 'application/json',
-			},
-			body: formData
-		})
-		if (!response.ok) throw await response.json()
-		console.log(response)
-		return response
-	} catch (e) {
-		console.log(e)
-		document.querySelector('.cloud-error')?.classList.remove('hidden')
-		hiddenInput.value = 'false'
-	}
-}
 
 export const handleSettingsTabs = () => {
 	const tabsWrapper = document.getElementById('settings-sections-tabs')
@@ -122,59 +49,7 @@ export const handleSettingsTabs = () => {
 				selectTab(tabsWrapper, tab, section)
 				refreshEditorPreview(section)
 				updateHttpReferer(section)
-				showCloudGuide(section)
-				refreshCloudSyncData()
 			}
 		})
 	}
-
-	verifyToken()
-	showHideToken()
-}
-
-export const generateTokenForCloud = (baseToken: string) => {
-	let result = ''
-	const charactersLength = baseToken.length
-	for ( let i = 0; i < charactersLength; i++ ) {
-		result += baseToken.charAt(Math.floor(Math.random() * charactersLength))
-	}
-	return result
-}
-
-// Refresh the cloud sync data
-const refreshCloudSyncData = () => {
-	const refreshBtn = document.getElementById('refresh_data')
-	refreshBtn?.addEventListener('click', event => { 
-		event.preventDefault()
-		fetch('/wp-admin/admin.php?page=snippets&type=cloud&refresh_cloud=true', {}).then(response => {
-			if(response.ok) {
-				console.log(response.body)
-				const sync_text = document.getElementById('cloud_sync_status')
-				//Create new element p tag
-				const newSyncText = document.createElement('p')
-				newSyncText.innerHTML = 'Cloud Data Successfully Refreshed'
-				newSyncText.classList.add('cloud-message', 'refresh-success')
-				//Insert new element before the sync_text element
-				sync_text?.parentNode?.insertBefore(newSyncText, sync_text)
-			}
-		})
-	})
-
-}
-
-// Show- Hide the cloud token in the input field
-export const showHideToken = () => {
-	const showHideBtn = document.getElementById('cloud-token-button') as HTMLButtonElement
-	const tokenInput = document.getElementById('cloud_token') as HTMLInputElement
-	showHideBtn?.addEventListener('click', event => {
-		event.preventDefault()
-		console.log('clicked')
-		if( 'password' === tokenInput.type ) {
-			tokenInput.type = 'text'
-			showHideBtn.innerHTML = 'Hide'
-		} else {
-			tokenInput.type = 'password'
-			showHideBtn.innerHTML = 'Show'
-		}
-	})
 }
