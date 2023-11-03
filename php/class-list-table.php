@@ -1345,9 +1345,10 @@ class List_Table extends WP_List_Table {
 		$snippets = get_snippets( $ids, $this->is_network );
 
 		foreach ( $snippets as $snippet ) {
-			// Copy all data from the previous snippet aside from the ID and active status.
+			// Copy all data from the previous snippet aside from the ID and active status and cloud ID
 			$snippet->id = 0;
 			$snippet->active = false;
+			$snippet->cloud_id = '';
 
 			// translators: %s: snippet title.
 			$snippet->name = sprintf( __( '%s [CLONE]', 'code-snippets' ), $snippet->name );
