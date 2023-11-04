@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use DateTime;
+
 /**
  * Functions specific to the administration interface
  *
@@ -235,7 +237,17 @@ class Admin {
 			return;
 		}
 
-		if ( ! in_array( 'pro', $dismissed, true ) ) {
+		$now = new DateTime();
+		$period_start = new DateTime( '2023-11-19 12:00am' );
+		$period_end = new DateTime( '2023-11-30 11:59pm' );
+
+		if ( ! in_array( 'bf23', $dismissed, true ) && $now > $period_start && $now < $period_end ) {
+			$notice = 'bf23';
+			$action_url = 'https://snipco.de/I_iW';
+			$action_label = __( 'Learn more →', 'coe-snippets' );
+			$text = __( "Don't miss out on our biggest Black Friday sale ever! Get up to 50% off on all plans.", 'code-snippets' );
+
+		} elseif ( ! in_array( 'pro', $dismissed, true ) ) {
 			$notice = 'pro';
 			$action_url = 'https://codesnippets.pro/pricing/';
 			$action_label = __( 'Upgrade now', 'code-snippets' );
@@ -250,11 +262,15 @@ class Admin {
 			return;
 		}
 
-		printf( '<div class="notice notice-info code-snippets-notice code-snippets-%s-notice is-dismissible"><p>', esc_attr( sanitize_key( $notice ) ) );
+		printf(
+			'<div class="notice notice-info code-snippets-notice code-snippets-%s-notice is-dismissible"><p>',
+			esc_attr( sanitize_key( $notice ) )
+		);
+
 		echo wp_kses( $text, [ 'strong' => [] ] );
 
 		printf(
-			'<a href="%s" class="button secondary" target="_blank" style="margin: auto .5em;">%s</a>',
+			'<a href="%s" class="button button-secondary" target="_blank" style="margin: auto .5em;">%s</a>',
 			esc_url( $action_url ),
 			esc_html( $action_label )
 		);
