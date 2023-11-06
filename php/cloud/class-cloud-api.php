@@ -534,7 +534,6 @@ class Cloud_API {
 				'code_challenge' => $this->get_cloud_setting( 'code_challenge' ),
 				'state'          => $this->get_current_state(),
 				'callback_url'   => esc_url_raw( $callback_url ),
-
 			],
 			self::CLOUD_URL . 'oauth/login'
 		);

@@ -263,8 +263,8 @@ class Admin {
 		if ( ! in_array( 'bf23', $dismissed, true ) && $now > $period_start && $now < $period_end ) {
 			$notice = 'bf23';
 			$action_url = 'https://snipco.de/I_iX';
-			$action_label = __( 'Learn more →', 'code-snippets' );
-			$text = __( 'Upgrade your plan for less this Black Friday! Get up to 25% off on all plans.', 'code-snippets' );
+			$action_label = __( 'Learn more', 'code-snippets' );
+			$text = __( 'Upgrade your plan for less this Black Friday! Save 25% on all plan upgrades.', 'code-snippets' );
 
 		} elseif ( ! in_array( 'survey', $dismissed, true ) && ! in_array( 'true', $dismissed, true ) ) {
 			$notice = 'survey';
