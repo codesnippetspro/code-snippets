@@ -3,9 +3,13 @@
 $sections: general, editor, debug;
 
 p.submit {
-	max-width: 1020px;
 	display: flex;
 	justify-content: space-between;
+}
+
+.settings-section,
+p.submit {
+	max-width: 1020px;
 }
 
 .nav-tab-wrapper {
