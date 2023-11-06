@@ -251,7 +251,7 @@ class Admin {
 			$notice = 'pro';
 			$action_url = 'https://codesnippets.pro/pricing/';
 			$action_label = __( 'Upgrade now', 'code-snippets' );
-			$text = __( '<strong>Code Snippets Pro is here!</strong> Find more about the new features in Pro and our introductory launch offers.', 'code-snippets' );
+			$text = __( '<strong>Code Snippets Pro is here!</strong> Find more about the features in Pro and our current offers.', 'code-snippets' );
 
 		} elseif ( ! in_array( 'survey', $dismissed, true ) && ! in_array( 'true', $dismissed, true ) ) {
 			$notice = 'survey';
