@@ -2,6 +2,7 @@
 
 namespace Code_Snippets;
 
+use WP_Error;
 use const Code_Snippets\Settings\CACHE_KEY;
 use const Code_Snippets\Settings\OPTION_GROUP;
 use const Code_Snippets\Settings\OPTION_NAME;
@@ -38,24 +39,46 @@ class Settings_Menu extends Admin_Menu {
 		parent::load();
 
 		if ( isset( $_GET['confirm-authorise-cloud'], $_GET['code'], $_GET['state'] ) ) {
-			$api = code_snippets()->cloud_api;
 			$auth_code = sanitize_text_field( wp_unslash( $_GET['code'] ) );
 			$state = sanitize_text_field( wp_unslash( $_GET['state'] ) );
 
-			$success = $api->get_current_state() === $state;
-
-			if ( $success ) {
-				$api->decode_auth_code( $auth_code );
-			}
+			$result = code_snippets()->cloud_api->decode_auth_code( $state, $auth_code );
 
 			wp_safe_redirect(
 				add_query_arg(
 					'connect_cloud_result',
-					$success ? 'ok' : 'fail',
+					is_null( $result ) ? 'ok' : 'fail',
 					code_snippets()->get_menu_url( 'settings' )
 				)
 			);
 			exit;
+		}
+
+		if ( isset( $_GET['connect-authorise-cloud'], $_GET['_wpnonce'] ) ) {
+			$api = code_snippets()->cloud_api;
+
+			if ( $api->verify_action_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) ) ) {
+				$api->init_cloud_connection();
+			} else {
+				wp_die( '', 401 );
+			}
+		}
+
+		if ( isset( $_GET['reset-cloud'], $_GET['_wpnonce'] ) ) {
+			$api = code_snippets()->cloud_api;
+
+			if ( $api->verify_action_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) ) ) {
+				code_snippets()->cloud_api->remove_sync();
+
+				add_settings_error(
+					OPTION_NAME,
+					'snippets_cloud_sync_disconnected',
+					__( 'This site has been successfully disconnected from Code Snippets Cloud.', 'code-snippets' ),
+					'updated'
+				);
+			} else {
+				wp_die( '', 401 );
+			}
 		}
 
 		if ( is_network_admin() ) {

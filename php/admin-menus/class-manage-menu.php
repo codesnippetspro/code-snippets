@@ -2,7 +2,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\Cloud\Cloud_List_Table;
 use Code_Snippets\Cloud\Cloud_Search_List_Table;
 use Code_Snippets\Cloud\Cloud_Bundles;
@@ -214,7 +213,7 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		// Ensure cloud connection is available.
-		$cloud_key = code_snippets()->cloud_api->is_cloud_key_available();
+		$cloud_key = code_snippets()->cloud_api->ensure_cloud_connection_available();
 
 		if ( ! $cloud_key['success'] ) {
 			wp_safe_redirect(

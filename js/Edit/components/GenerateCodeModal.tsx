@@ -5,7 +5,7 @@ import React, { Dispatch, MouseEventHandler, SetStateAction, useState } from 're
 import { Snippet } from '../../types/Snippet'
 import { useGenerativeAPI } from '../../utils/api/gpt'
 import { getSnippetType } from '../../utils/snippets'
-import { GenerateIcon } from '../buttons/GenerateButton'
+import { GenerateIcon } from '../buttons/CloudAIButton'
 import { useSnippetForm } from '../SnippetForm/context'
 
 interface PromptFormProps {

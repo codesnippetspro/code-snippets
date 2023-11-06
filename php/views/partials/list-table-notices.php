@@ -8,6 +8,8 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_API;
+
 /**
  * Loaded from the manage menu.
  *
@@ -35,19 +37,6 @@ if ( empty( $_REQUEST['result'] ) ) {
 $result = sanitize_key( $_REQUEST['result'] );
 
 switch ( $result ) {
-	case 'cloud-key-deleted':
-		?>
-		<div id="message" class="notice notice-info fade is-dismissible">
-			<p><strong><?php esc_html_e( 'Cannot find a snippet with a cloud key.', 'code-snippets' ); ?></strong></p>
-			<p>
-				<a href="https://codesnippets.cloud/cloud-setup-guide" target="_blank">
-					<?php esc_html_e( 'If this is your first time using Cloud, read our setup guide.', 'code-snippets' ); ?></a>
-				<?php esc_html_e( 'Otherwise, please import the snippet and activate it to try again.', 'code-snippets' ); ?>
-			</p>
-		</div>
-		<?php
-		break;
-
 	case 'cloud-key-no-codevault':
 		?>
 		<div id="message" class="notice notice-error fade is-dismissible">
@@ -60,33 +49,30 @@ switch ( $result ) {
 		</div>
 		<?php
 		break;
-	case 'cloud-key-invalid':
-		$reset_sync_url = add_query_arg( 'remove_sync', 1, code_snippets()->get_menu_url( 'settings', 'admin' ) );
 
+	case 'cloud-key-invalid':
 		?>
 		<div id="message" class="notice notice-error fade is-dismissible">
 			<p>
-				<strong><?php esc_html_e( 'There is a problem with the cloud connection. Please reset connection and try to connect again.', 'code-snippets' ); ?></strong>
-			</p>
-			<p>
-				<a href="<?php echo esc_url( $reset_sync_url ); ?>">
-					<?php esc_html_e( 'Click here to reset the cloud connection.', 'code-snippets' ); ?></a>
+				<?php esc_html_e( 'There is a problem with the cloud connection. Please reset the connection and try connecting again.', 'code-snippets' ); ?>
+
+				<a href="<?php echo esc_url( Cloud_API::get_reset_cloud_url() ); ?>" class="button button-secondary">
+					<?php esc_html_e( 'Reset Connection', 'code-snippets' ); ?></a>
 			</p>
 		</div>
 		<?php
 		break;
 
 	case 'cloud-key-not-connected':
-		$connect_url = add_query_arg( 'connect-authorise-cloud', 1, code_snippets()->get_menu_url( 'settings', 'admin' ) );
-
 		?>
 		<div id="message" class="notice notice-error fade is-dismissible">
 			<p>
-				<strong><?php esc_html_e( 'Sorry, you are not connected to your cloud account.', 'code-snippets' ); ?></strong>
-			</p>
-			<p>
-				<a href="<?php echo esc_url( $connect_url ); ?>">
-					<?php esc_html_e( 'Click here to login and connect to your cloud account.', 'code-snippets' ); ?></a>
+				<?php esc_html_e( 'A connection to Code Snippets Cloud is required to use this functionality.', 'code-snippets' ); ?>
+				<a href="<?php echo esc_url( Cloud_API::get_connect_cloud_url() ); ?>"
+				   class="button button-secondary"
+				   target="_blank">
+					<?php esc_html_e( 'Connect and Authorise', 'code-snippets' ); ?>
+				</a>
 			</p>
 		</div>
 		<?php

@@ -21,6 +21,7 @@ declare global {
 		CODE_SNIPPETS_PRISM: typeof Prism
 		readonly CODE_SNIPPETS?: {
 			isLicensed: boolean
+			isCloudConnected: boolean
 			restAPI: {
 				base: string
 				snippets: string
@@ -33,6 +34,7 @@ declare global {
 				manage: string
 				addNew: string
 				edit: string
+				connectCloud: string
 			}
 		}
 		readonly CODE_SNIPPETS_EDIT?: {

@@ -245,7 +245,7 @@ final class Cloud_REST_API {
 		$link->in_codevault = false;
 		$link->update_available = false;
 
-		code_snippets()->cloud_api->add_map_link( $link );
+		code_snippets()->cloud_api->add_cloud_link( $link );
 
 		$response = [
 			'status'  => 'success',
@@ -261,17 +261,14 @@ final class Cloud_REST_API {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function remove_sync() {
-		$cloud_api = code_snippets()->cloud_api;
+		code_snippets()->cloud_api->remove_sync( null );
 
-		$cloud_api->refresh_cloud_settings_data();
-		$cloud_api->refresh_synced_data();
-
-		$response = [
-			'status'  => 'success',
-			'message' => __( 'Sync has been revoked', 'code-snippets' ),
-		];
-
-		return rest_ensure_response( $response );
+		return rest_ensure_response(
+			[
+				'status'  => 'success',
+				'message' => __( 'Sync has been revoked.', 'code-snippets' ),
+			]
+		);
 	}
 
 	/**

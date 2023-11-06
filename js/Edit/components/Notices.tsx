@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import React, { MouseEventHandler, ReactNode, useEffect, useRef } from 'react'
+import React, { MouseEventHandler, ReactNode, useEffect } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { useSnippetForm } from '../SnippetForm/context'
 

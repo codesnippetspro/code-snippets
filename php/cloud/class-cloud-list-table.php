@@ -54,7 +54,7 @@ class Cloud_List_Table extends WP_List_Table {
 
 		// Check if there is a GET request query parameter to refresh data from the cloud.
 		if ( ! empty( $_GET['refresh'] ) && 'false' !== sanitize_text_field( wp_unslash( $_GET['refresh'] ) ) ) {
-			code_snippets()->cloud_api->refresh_synced_data();
+			code_snippets()->cloud_api->clear_caches();
 
 			wp_safe_redirect(
 				esc_url_raw(

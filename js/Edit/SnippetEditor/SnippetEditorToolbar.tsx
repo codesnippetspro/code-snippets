@@ -3,7 +3,8 @@ import { LineWidget } from 'codemirror'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
-import { GenerateButton } from '../buttons/GenerateButton'
+import { CloudAIButton } from '../buttons/CloudAIButton'
+import { ExplainSnippetButton } from '../buttons/ExplainSnippetButton'
 import { GenerateCodeModal } from '../components/GenerateCodeModal'
 import { useSnippetForm } from '../SnippetForm/context'
 
@@ -46,7 +47,7 @@ const ExplainCodeButton: React.FC = () => {
 	const [, setWidgets] = useState<LineWidget[]>([])
 
 	return (
-		<GenerateButton
+		<ExplainSnippetButton
 			field="code"
 			snippet={snippet}
 			disabled={isWorking || isReadOnly}
@@ -79,7 +80,7 @@ const ExplainCodeButton: React.FC = () => {
 			}}
 		>
 			{__('Explain', 'code-snippets')}
-		</GenerateButton>
+		</ExplainSnippetButton>
 	)
 }
 
@@ -88,8 +89,7 @@ const GenerateCodeButton: React.FC = () => {
 	const [showCreateModal, setShowCreateModal] = useState(false)
 
 	return <>
-		<GenerateButton
-			field="code"
+		<CloudAIButton
 			primary={0 === snippet.id}
 			snippet={snippet}
 			disabled={isWorking || isReadOnly}
@@ -99,7 +99,7 @@ const GenerateCodeButton: React.FC = () => {
 			{'' === snippet.code.trim() ?
 				__('Generate', 'code-snippets') :
 				__('Generate New', 'code-snippets')}
-		</GenerateButton>
+		</CloudAIButton>
 
 		<GenerateCodeModal show={showCreateModal} onClose={() => setShowCreateModal(false)} />
 	</>
