@@ -238,14 +238,14 @@ class Admin {
 		}
 
 		$now = new DateTime();
-		$period_start = new DateTime( '2023-11-19 12:00am' );
-		$period_end = new DateTime( '2023-11-30 11:59pm' );
+		$period_start = new DateTime( '2023-11-19 00:00:00' );
+		$period_end = new DateTime( '2023-12-01 00:00:00' );
 
 		if ( ! in_array( 'bf23', $dismissed, true ) && $now > $period_start && $now < $period_end ) {
 			$notice = 'bf23';
 			$action_url = 'https://snipco.de/I_iW';
-			$action_label = __( 'Learn more →', 'coe-snippets' );
-			$text = __( "Don't miss out on our biggest Black Friday sale ever! Get up to 50% off on all plans.", 'code-snippets' );
+			$action_label = __( 'Learn more', 'code-snippets' );
+			$text = __( "Don't miss out on our biggest Black Friday sale ever! Get 50% off on our plans.", 'code-snippets' );
 
 		} elseif ( ! in_array( 'pro', $dismissed, true ) ) {
 			$notice = 'pro';
