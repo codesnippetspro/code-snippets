@@ -233,7 +233,7 @@ class Cloud_API {
 	 * @return void
 	 */
 	private function init_oauth_sync() {
-		// Bail early if the cloud key is already verified, or we already have a code verifier set.
+		// Bail early if the cloud key is already verified or if code verifier is already set.
 		if ( $this->is_cloud_key_verified() || $this->get_cloud_setting( 'code_verifier' ) ) {
 			return;
 		}
@@ -578,7 +578,7 @@ class Cloud_API {
 
 		$body = wp_remote_retrieve_body( $response );
 		$data = json_decode( $body, true );
-
+		
 		// Check the response codes and return accordingly.
 		if ( 401 === wp_remote_retrieve_response_code( $response ) ) {
 			return new WP_Error(
@@ -1205,6 +1205,8 @@ class Cloud_API {
 				'cloud_token'    => '',
 				'token_verified' => false,
 				'local_token'    => '',
+				'code_challenge' => '',
+				'code_verifier'  => '',
 			]
 		);
 
