@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.6.0-beta.1 (18 Oct 2023)
+## 3.6.0 (07 Nov 2023)
 * Updated minimum PHP requirement to 7.4.
 
 * Added: Ability to authenticate with Code Snippets Cloud using OAuth. (PRO)
@@ -13,6 +13,8 @@
 * Improved: Added debug settings menu for manually performing problem-solving actions.
 * Fixed: Moved active status border on edit name field to left-hand side.
 * Added: Filter to disable scroll-into-view functionality for edit page notices.
+* Fixed: New notices will not scroll if already at top of page.
+* Fixed: Potential CSRF vulnerability allowing an authenticated user to reset settings.
 
 ## 3.5.1 (15 Sep 2023)
 * Fixed: Undefined array key error when accessing plugin settings page. (PRO)
