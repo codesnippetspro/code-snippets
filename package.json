@@ -1,9 +1,9 @@
 {
     "name": "code-snippets-pro",
-    "version": "3.6.0",
-    "description": "Manage code snippets running on a WordPress-powered site through a graphical interface",
-    "homepage": "https://wordpress.org/plugins/code-snippets",
+    "description": "Manage code snippets running on a WordPress-powered site through a graphical interface.",
+    "homepage": "https://codesnippets.pro",
     "main": "gulpfile.babel.ts",
+    "version": "3.6.1",
     "directories": {
         "test": "tests"
     },

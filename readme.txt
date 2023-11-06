@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.6.0
+Stable tag: 3.6.1
 Tested up to: 6.4
 
 An easy, clean and simple way to run code snippets on your site.
@@ -130,6 +130,9 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+## 3.6.1 (07 Nov 2023)
+* Fixed: Issue accessing fields on Snippets class.
 
 = 3.6.0 (07 Nov 2023) =
 * Updated minimum PHP requirement to 7.4.
@@ -262,5 +265,5 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 
 == Upgrade Notice ==
 
-= 3.6.0 =
+= 3.6.1 =
 New Pro feature: Generate and explain snippets using AI.

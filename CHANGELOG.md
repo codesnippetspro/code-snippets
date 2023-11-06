@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.6.1 (07 Nov 2023) 
+* Fixed: Issue accessing fields on Snippets class.
+
 ## 3.6.0 (07 Nov 2023)
 * Updated minimum PHP requirement to 7.4.
 
