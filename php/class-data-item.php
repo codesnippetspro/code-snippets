@@ -204,7 +204,7 @@ abstract class Data_Item {
 	 * @return bool true if the is allowed, false if invalid.
 	 */
 	public function is_allowed_field( string $field ): bool {
-		return array_key_exists( $field, $this->fields ) || array_key_exists( $field, $this->field_aliases );
+		return isset( $this->fields[ $field ] ) || isset( $this->field_aliases[ $field ] );
 	}
 
 	/**
