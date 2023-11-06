@@ -522,12 +522,18 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function init_cloud_connection() {
+		$callback_url = add_query_arg(
+			[ 'confirm-authorise-cloud' => true ],
+			code_snippets()->get_menu_url( 'settings' )
+		);
+
 		$url = add_query_arg(
 			[
 				'response_type'  => 'code',
 				'client_id'      => $this->get_client_id(),
 				'code_challenge' => $this->get_cloud_setting( 'code_challenge' ),
 				'state'          => $this->get_current_state(),
+				'callback_url'   => esc_url_raw( $callback_url ),
 
 			],
 			self::CLOUD_URL . 'oauth/login'
