@@ -1,9 +1,8 @@
-import { Modal, Button as ModalButton } from '@wordpress/components'
+import { Modal } from '@wordpress/components'
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { Button, ButtonProps } from '../../common/Button'
 import { Snippet } from '../../types/Snippet'
-import { ExplainedSnippet, ExplainSnippetFields } from '../../utils/api/gpt'
 import { isAIAvailable } from '../../utils/snippets'
 
 export const GenerateIcon = () =>
