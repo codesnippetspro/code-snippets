@@ -10,8 +10,9 @@ export const MultisiteSharingSettings: React.FC = () => {
 		<p className="snippet-sharing-setting">
 			<label htmlFor="snippet_sharing">
 				<input
-					type="checkbox"
+					id="snippet_sharing"
 					name="snippet_sharing"
+					type="checkbox"
 					checked={!!snippet.shared_network}
 					disabled={isReadOnly}
 					onChange={event =>

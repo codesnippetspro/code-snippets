@@ -221,8 +221,8 @@ function get_snippet( int $id = 0, ?bool $network = null ): Snippet {
  * @return boolean Whether an update was performed.
  */
 function update_shared_network_snippets( array $snippets ): bool {
-	$shared = [];
-	$unshared = [];
+	$shared_ids = [];
+	$unshared_ids = [];
 
 	if ( ! is_multisite() ) {
 		return false;
@@ -231,37 +231,37 @@ function update_shared_network_snippets( array $snippets ): bool {
 	foreach ( $snippets as $snippet ) {
 		if ( $snippet->shared_network ) {
 			if ( $snippet->active ) {
-				$shared[] = $snippet;
+				$shared_ids[] = $snippet->id;
 			} else {
-				$unshared[] = $snippet;
+				$unshared_ids[] = $snippet->id;
 			}
 		}
 	}
 
-	if ( ! $shared && ! $unshared ) {
+	if ( ! $shared_ids && ! $unshared_ids ) {
 		return false;
 	}
 
-	$shared_snippets = get_site_option( 'shared_network_snippets', [] );
-	$updated_shared_snippets = array_values( array_diff( array_merge( $shared_snippets, $shared ), $unshared ) );
+	$existing_shared_ids = get_site_option( 'shared_network_snippets', [] );
+	$updated_shared_ids = array_values( array_diff( array_merge( $existing_shared_ids, $shared_ids ), $unshared_ids ) );
 
-	if ( $shared_snippets === $updated_shared_snippets ) {
+	if ( $existing_shared_ids === $updated_shared_ids ) {
 		return false;
 	}
 
-	update_site_option( 'shared_network_snippets', $updated_shared_snippets );
+	update_site_option( 'shared_network_snippets', $updated_shared_ids );
 
 	// Deactivate the snippet on all sites if necessary.
-	if ( $unshared ) {
+	if ( $unshared_ids ) {
 		$sites = get_sites( [ 'fields' => 'ids' ] );
 
 		foreach ( $sites as $site ) {
 			switch_to_blog( $site );
-			$active_shared_snippets = get_option( 'active_shared_network_snippets' );
+			$active_shared_ids = get_option( 'active_shared_network_snippets' );
 
-			if ( is_array( $active_shared_snippets ) ) {
-				$active_shared_snippets = array_diff( $active_shared_snippets, $unshared );
-				update_option( 'active_shared_network_snippets', $active_shared_snippets );
+			if ( is_array( $active_shared_ids ) ) {
+				$active_shared_ids = array_diff( $active_shared_ids, $unshared_ids );
+				update_option( 'active_shared_network_snippets', $active_shared_ids );
 			}
 
 			clean_active_snippets_cache( code_snippets()->db->ms_table );
@@ -506,6 +506,7 @@ function save_snippet( $snippet ) {
 
 	// Update the last modification date if necessary.
 	$snippet->update_modified();
+	$snippet->increment_revision();
 
 	if ( 'php' === $snippet->type ) {
 		// Remove tags from beginning and end of snippet.
@@ -527,7 +528,10 @@ function save_snippet( $snippet ) {
 		$snippet->increment_revision();
 	}
 
-	// Build the list of data to insert. Shared network snippets are always considered inactive.
+	// Shared network snippets are always considered inactive.
+	$snippet->active = $snippet->active && ! $snippet->shared_network;
+
+	// Build the list of data to insert.
 	$data = [
 		'name'        => $snippet->name,
 		'description' => $snippet->desc,
@@ -535,7 +539,7 @@ function save_snippet( $snippet ) {
 		'tags'        => $snippet->tags_list,
 		'scope'       => $snippet->scope,
 		'priority'    => $snippet->priority,
-		'active'      => intval( $snippet->active && ! $snippet->shared_network ),
+		'active'      => intval( $snippet->active ),
 		'modified'    => $snippet->modified,
 		'revision'    => $snippet->revision,
 		'cloud_id'    => $snippet->cloud_id ? $snippet->cloud_id : null,

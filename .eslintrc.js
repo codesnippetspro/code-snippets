@@ -72,7 +72,6 @@ module.exports = {
 
 		'no-ternary': 'off',
 		'multiline-ternary': 'off',
-		'no-nested-ternary': 'off',
 		'padded-blocks': 'off',
 		'implicit-arrow-linebreak': 'off',
 
