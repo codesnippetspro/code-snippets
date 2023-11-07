@@ -106,7 +106,7 @@ function get_settings_values(): array {
 function get_setting( string $section, string $field ) {
 	$settings = get_settings_values();
 
-	return $settings[ $section ][ $field ];
+	return $settings[ $section ][ $field ] ?? null;
 }
 
 /**

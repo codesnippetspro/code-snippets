@@ -160,7 +160,7 @@ class Setting_Field {
 	 * @since 2.0.0
 	 */
 	public function render_checkbox_field() {
-		$this->render_checkbox( $this->input_name, $this->label, $this->get_saved_value() );
+		$this->render_checkbox( $this->input_name, $this->label, $this->get_saved_value() ?? false );
 	}
 
 	/**
