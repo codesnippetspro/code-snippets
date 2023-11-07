@@ -144,7 +144,7 @@ export const TagEditor: React.FC<TagEditorProps> = ({
 					value={inputValue}
 					list={`tagger-completion-${completionOpen ? '' : '-disabled'}${id}`}
 					onBlur={() => addOnBlur ? addTag() : undefined}
-					onChange={event => setInputValue(event.target.value)}
+					onChange={event => event?.target && setInputValue(event.target.value)}
 					onKeyDown={keyboardHandler}
 					onInput={inputHandler}
 				/>

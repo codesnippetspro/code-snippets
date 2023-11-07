@@ -85,7 +85,9 @@ export const SubmitButton: React.FC = () => {
 	const [submitAction, setSubmitAction] = useState<VoidFunction>()
 
 	const validationWarning = validateSnippet(snippet)
-	const activateByDefault = !!window.CODE_SNIPPETS_EDIT?.activateByDefault && !snippet.active && 'single-use' !== snippet.scope
+	const activateByDefault = !!window.CODE_SNIPPETS_EDIT?.activateByDefault &&
+		!snippet.active && 'single-use' !== snippet.scope &&
+		(!snippet.shared_network || !isNetworkAdmin())
 
 	const onSubmit = (submitAction: VoidFunction) => {
 		if (validationWarning) {

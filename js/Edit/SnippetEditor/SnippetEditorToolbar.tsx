@@ -2,40 +2,49 @@ import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
+import { isNetworkAdmin } from '../../utils/general'
 import { useSnippetForm } from '../SnippetForm/context'
 
 const InlineActivateButton: React.FC = () => {
 	const { snippet, isWorking, submitAndActivateSnippet, submitAndDeactivateSnippet } = useSnippetForm()
 
-	return 'single-use' === snippet.scope ?
-		<Button
-			small
-			id="save_snippet_execute_extra"
-			title={__('Save Snippet and Execute Once', 'code-snippets')}
-			onClick={() => submitAndActivateSnippet()}
-			disabled={isWorking}
-		>
-			{__('Execute Once', 'code-snippets')}
-		</Button> :
-		snippet.active ?
+	if (snippet.shared_network && isNetworkAdmin()) {
+		return null
+	}
+
+	if ('single-use' === snippet.scope) {
+		return (
 			<Button
 				small
-				id="save_snippet_deactivate_extra"
-				title={__('Save Snippet and Deactivate', 'code-snippets')}
-				onClick={() => submitAndDeactivateSnippet()}
-				disabled={isWorking}
-			>
-				{__('Deactivate', 'code-snippets')}
-			</Button> :
-			<Button
-				small
-				id="save_snippet_activate_extra"
-				title={__('Save Snippet and Activate', 'code-snippets')}
+				id="save_snippet_execute_extra"
+				title={__('Save Snippet and Execute Once', 'code-snippets')}
 				onClick={() => submitAndActivateSnippet()}
 				disabled={isWorking}
 			>
-				{__('Activate', 'code-snippets')}
+				{__('Execute Once', 'code-snippets')}
 			</Button>
+		)
+	}
+
+	return snippet.active ?
+		<Button
+			small
+			id="save_snippet_deactivate_extra"
+			title={__('Save Snippet and Deactivate', 'code-snippets')}
+			onClick={() => submitAndDeactivateSnippet()}
+			disabled={isWorking}
+		>
+			{__('Deactivate', 'code-snippets')}
+		</Button> :
+		<Button
+			small
+			id="save_snippet_activate_extra"
+			title={__('Save Snippet and Activate', 'code-snippets')}
+			onClick={() => submitAndActivateSnippet()}
+			disabled={isWorking}
+		>
+			{__('Activate', 'code-snippets')}
+		</Button>
 }
 
 const InlineActionButtons: React.FC = () => {
