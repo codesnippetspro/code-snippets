@@ -16,19 +16,19 @@ class Licensing {
 	/**
 	 * Freemius product ID.
 	 */
-	const PRODUCT_ID = 10565;
+	private const PRODUCT_ID = 10565;
 
 	/**
 	 * Freemius public key.
 	 */
-	const PUBLIC_KEY = 'pk_107ff34fc0b2a9700c150c1acf13a';
+	private const PUBLIC_KEY = 'pk_107ff34fc0b2a9700c150c1acf13a';
 
 	/**
 	 * Freemius SDK instance.
 	 *
 	 * @var Freemius
 	 */
-	public $sdk;
+	private $sdk;
 
 	/**
 	 * Class constructor.
@@ -69,9 +69,9 @@ class Licensing {
 		);
 
 		do_action( 'freemius_loaded' );
-
 		$this->register_hooks();
-		$this->override_strings();
+
+		add_action( 'init', [ $this, 'override_strings' ] );
 	}
 
 	/**
@@ -184,6 +184,6 @@ class Licensing {
 			6
 		);
 
-        $this->sdk->add_filter( 'show_affiliate_program_notice', '__return_false' );
+		$this->sdk->add_filter( 'show_affiliate_program_notice', '__return_false' );
 	}
 }
