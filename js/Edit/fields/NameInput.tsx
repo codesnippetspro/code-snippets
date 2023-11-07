@@ -19,8 +19,8 @@ export const NameInput: React.FC = () => {
 					value={snippet.name}
 					disabled={isReadOnly}
 					placeholder={__('Enter title here', 'code-snippets')}
-					onChange={event => event?.target?.value &&
-						setSnippet(previous => ({ ...previous, name: event.target.value }))}
+					onChange={event =>
+						setSnippet(previous => ({ ...previous, name: event?.target?.value ?? '' }))}
 				/>
 			</div>
 		</div>
