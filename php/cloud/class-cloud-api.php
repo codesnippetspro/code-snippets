@@ -578,7 +578,7 @@ class Cloud_API {
 
 		$body = wp_remote_retrieve_body( $response );
 		$data = json_decode( $body, true );
-		
+
 		// Check the response codes and return accordingly.
 		if ( 401 === wp_remote_retrieve_response_code( $response ) ) {
 			return new WP_Error(

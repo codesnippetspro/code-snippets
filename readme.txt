@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript
 License: MIT
 License URI: license.txt
-Stable tag: 3.6.1
+Stable tag: 3.6.2
 Tested up to: 6.4
 
 An easy, clean and simple way to run code snippets on your site.
@@ -131,7 +131,16 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-## 3.6.1 (07 Nov 2023)
+= 3.6.2 (08 Nov 2023) =
+* Fixed: Error when attempting to save shared network snippets marked as active.
+* Fixed: Type error when rendering checkbox fields without a stored or default value.
+* Fixed: Removed automatic encoding of code content.
+* Fixed: Label for snippet sharing input incorrectly linked to input field.
+* Fixed: Error when attempting to download export files from Edit menu.
+* Fixed: Issue loading Freemius string overrides too early. (PRO)
+* Fixed: Fix redirect URL when connecting with OAuth on subdirectory or HTTPS sites. (PRO)
+
+= 3.6.1 (07 Nov 2023) =
 * Fixed: Issue accessing fields on Snippets class.
 
 = 3.6.0 (07 Nov 2023) =
@@ -262,8 +271,3 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 * Improved: Allow display styles in snippet descriptions.
 
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
-
-== Upgrade Notice ==
-
-= 3.6.1 =
-New Pro feature: Generate and explain snippets using AI.

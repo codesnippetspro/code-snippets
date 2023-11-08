@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.6.2 (08 Nov 2023)
+* Fixed: Error when attempting to save shared network snippets marked as active.
+* Fixed: Type error when rendering checkbox fields without a stored or default value.
+* Fixed: Removed automatic encoding of code content.
+* Fixed: Label for snippet sharing input incorrectly linked to input field.
+* Fixed: Error when attempting to download export files from Edit menu.
+* Fixed: Issue loading Freemius string overrides too early. (PRO)
+* Fixed: Fix redirect URL when connecting with OAuth on subdirectory or HTTPS sites. (PRO)
+
 ## 3.6.1 (07 Nov 2023) 
 * Fixed: Issue accessing fields on Snippets class.
 

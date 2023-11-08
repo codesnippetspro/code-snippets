@@ -15,15 +15,11 @@ if ( ! class_exists( 'WP_Plugin_Install_List_Table' ) ) {
 }
 
 /**
-<<<<<<< HEAD
  * Class for handling the cloud search results table.
-=======
- * This class handles the table for the manage cloud snippets search results
  *
  * @property string $_pagination Pagination HTML.
  *
  * @package Code_Snippets
->>>>>>> core
  */
 class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 
