@@ -177,7 +177,6 @@ class Cloud_API {
 		);
 	}
 
-
 	/**
 	 * Delete a snippet from local-to-cloud map.
 	 *

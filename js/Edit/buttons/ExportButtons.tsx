@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
 import { ExportSnippets } from '../../types/ExportSnippets'
 import { useSnippetsAPI } from '../../utils/api/snippets'
-import { downloadSnippetExportFile } from '../../utils/general'
+import { downloadSnippetExportFile } from '../../utils/files'
 import { useSnippetForm } from '../SnippetForm/context'
 
 export const ExportButtons: React.FC = () => {
