@@ -128,7 +128,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function load_upgrade_menu() {
-		wp_safe_redirect( 'https://codesnippets.pro/pricing' );
+		wp_safe_redirect( 'https://snipco.de/JE2f' );
 		exit;
 	}
 
