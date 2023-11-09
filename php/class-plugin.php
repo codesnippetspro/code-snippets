@@ -252,6 +252,7 @@ class Plugin {
 	 */
 	public function allow_code_snippets_redirect( array $hosts ): array {
 		$hosts[] = 'codesnippets.pro';
+		$hosts[] = 'snipco.de';
 		return $hosts;
 	}
 
