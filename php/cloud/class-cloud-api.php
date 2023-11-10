@@ -10,8 +10,6 @@ use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\update_snippet_fields;
 
-require_once ABSPATH . 'wp-includes/pluggable.php';
-
 /**
  * Functions used to manage cloud synchronisation.
  *
