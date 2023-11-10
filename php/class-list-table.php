@@ -273,7 +273,9 @@ class List_Table extends WP_List_Table {
 
 				// Check this snippet is linked or originated from the cloud.
 				if ( $cloud_link && $cloud_link->in_codevault ) {
-					$actions['cloud'] = sprintf( '<a>%s</a>', esc_html__( 'Synced', 'code-snippets' ) );
+					$actions['cloud'] = sprintf( '<a href="%s" >%s</a>', 
+					esc_url( $this->get_action_link( 'unsync-cloud', $snippet ) ),
+					esc_html__( 'Unlink from Cloud', 'code-snippets' ) );
 
 					// Check if an update is available only in users codevault.
 					if ( $cloud_link->update_available ) {
@@ -781,6 +783,10 @@ class List_Table extends WP_List_Table {
 			case 'cloud':
 				$this->sync_to_cloud( array( $id ) );
 				return 'synced';
+			
+			case 'unsync-cloud':
+				$this->unsync_from_cloud( array( $id ) );
+				return 'unsynced';
 		}
 
 		return false;
@@ -1374,5 +1380,15 @@ class List_Table extends WP_List_Table {
 	private function sync_to_cloud( array $ids ) {
 		$snippets = get_snippets( $ids, $this->is_network );
 		code_snippets()->cloud_api->store_snippets_in_cloud( $snippets );
+	}
+
+	/**
+	 * Unsync snippets from cloud
+	 *
+	 * @param array<integer> $ids List of snippet IDs.
+	 */
+	private function unsync_from_cloud( array $ids ) {
+		$snippets = get_snippets( $ids, $this->is_network );
+		code_snippets()->cloud_api->remove_snippets_from_cloud( $snippets );
 	}
 }

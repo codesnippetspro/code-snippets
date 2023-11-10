@@ -10,8 +10,6 @@ use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\update_snippet_fields;
 
-require_once ABSPATH . 'wp-includes/pluggable.php';
-
 /**
  * Functions used to manage cloud synchronisation.
  *
@@ -709,6 +707,9 @@ class Cloud_API {
 	 */
 	public function store_snippets_in_cloud( array $snippets ) {
 		foreach ( $snippets as $snippet ) {
+			// Remove HTML Tags in description. e.g. <p>
+			$snippet->desc = wp_strip_all_tags( $snippet->desc );
+			
 			// Send post request to cs store api with snippet data.
 			$response = wp_remote_post(
 				self::CLOUD_API_URL . 'private/storesnippet',
@@ -1225,4 +1226,20 @@ class Cloud_API {
 		delete_transient( self::CLOUD_MAP_TRANSIENT_KEY );
 		delete_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
 	}
+
+	/**
+	 * Unsync local snippets from the cloud
+	 *
+	 * @param Snippet[] $snippets List of code snippets to remove sync. 
+	 */
+	public function remove_snippets_from_cloud( array $snippets ) {
+		foreach ( $snippets as $snippet ) {
+			$local_id = $snippet->id;
+			// Set cloud_id to NULL
+			update_snippet_fields( $local_id, [ 'cloud_id' => null ] );
+			// Remove the link from the local_to_cloud_map.
+			$this->delete_snippet_from_transient_data( $local_id );
+		}
+	}
+	
 }
