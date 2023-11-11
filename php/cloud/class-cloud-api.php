@@ -688,8 +688,6 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function add_cloud_link( Cloud_Link $link ) {
-
-
 		$local_to_cloud_map = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
 		$local_to_cloud_map[] = $link;
 
@@ -707,9 +705,8 @@ class Cloud_API {
 	 */
 	public function store_snippets_in_cloud( array $snippets ) {
 		foreach ( $snippets as $snippet ) {
-			// Remove HTML Tags in description. e.g. <p>
 			$snippet->desc = wp_strip_all_tags( $snippet->desc );
-			
+
 			// Send post request to cs store api with snippet data.
 			$response = wp_remote_post(
 				self::CLOUD_API_URL . 'private/storesnippet',
@@ -725,9 +722,11 @@ class Cloud_API {
 					],
 				]
 			);
+
 			$data = $this->unpack_request_json( $response );
 			$cloud_id = (string) $data['cloud_id'];
 			$revision = (int) $data['revision'];
+
 			// Update the stored local snippet information.
 			update_snippet_fields(
 				$snippet->id,
@@ -737,7 +736,6 @@ class Cloud_API {
 				)
 			);
 
-			// Clear cached data.
 			$this->clear_caches();
 		}
 	}
@@ -781,7 +779,7 @@ class Cloud_API {
 	/**
 	 * Delete a snippet from local-to-cloud map.
 	 *
-	 * @param integer $snippet_id Local snippet ID.
+	 * @param int $snippet_id Local snippet ID.
 	 *
 	 * @return void
 	 */
@@ -795,6 +793,7 @@ class Cloud_API {
 				// Remove the link from the local_to_cloud_map.
 				$index = array_search( $link, $this->cached_cloud_links, true );
 				unset( $this->cached_cloud_links[ $index ] );
+
 				// Update the transient data.
 				set_transient(
 					self::CLOUD_MAP_TRANSIENT_KEY,
@@ -1230,16 +1229,13 @@ class Cloud_API {
 	/**
 	 * Unsync local snippets from the cloud
 	 *
-	 * @param Snippet[] $snippets List of code snippets to remove sync. 
+	 * @param Snippet[] $snippets List of code snippets to remove sync.
 	 */
 	public function remove_snippets_from_cloud( array $snippets ) {
 		foreach ( $snippets as $snippet ) {
-			$local_id = $snippet->id;
-			// Set cloud_id to NULL
-			update_snippet_fields( $local_id, [ 'cloud_id' => null ] );
-			// Remove the link from the local_to_cloud_map.
-			$this->delete_snippet_from_transient_data( $local_id );
+			update_snippet_fields( $snippet->id, [ 'cloud_id' => null ], $snippet->network );
+
+			$this->delete_snippet_from_transient_data( $snippet->id );
 		}
 	}
-	
 }

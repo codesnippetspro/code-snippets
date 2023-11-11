@@ -273,9 +273,11 @@ class List_Table extends WP_List_Table {
 
 				// Check this snippet is linked or originated from the cloud.
 				if ( $cloud_link && $cloud_link->in_codevault ) {
-					$actions['cloud'] = sprintf( '<a href="%s" >%s</a>', 
-					esc_url( $this->get_action_link( 'unsync-cloud', $snippet ) ),
-					esc_html__( 'Unlink from Cloud', 'code-snippets' ) );
+					$actions['cloud'] = sprintf(
+						'<a href="%s">%s</a>',
+						esc_url( $this->get_action_link( 'unsync-cloud', $snippet ) ),
+						esc_html__( 'Unlink from Cloud', 'code-snippets' )
+					);
 
 					// Check if an update is available only in users codevault.
 					if ( $cloud_link->update_available ) {
@@ -783,7 +785,7 @@ class List_Table extends WP_List_Table {
 			case 'cloud':
 				$this->sync_to_cloud( array( $id ) );
 				return 'synced';
-			
+
 			case 'unsync-cloud':
 				$this->unsync_from_cloud( array( $id ) );
 				return 'unsynced';
