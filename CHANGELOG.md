@@ -8,6 +8,7 @@
 * Fixed: Error when attempting to download export files from Edit menu.
 * Fixed: Issue loading Freemius string overrides too early. (PRO)
 * Fixed: Fix redirect URL when connecting with OAuth on subdirectory or HTTPS sites. (PRO)
+* Fixed: Import error when attempting to completely uninstall the plugin,
 
 ## 3.6.1 (07 Nov 2023) 
 * Fixed: Issue accessing fields on Snippets class.
