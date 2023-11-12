@@ -79,7 +79,7 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function __construct() {
-		$this->init_oauth_sync();
+		add_action( 'plugins_loaded', [ $this, 'init_oauth_sync' ] );
 		add_filter( 'allowed_redirect_hosts', [ $this, 'allow_cloud_redirects' ] );
 	}
 
@@ -226,23 +226,36 @@ class Cloud_API {
 	}
 
 	/**
+	 * Normalise a generated password by removing special characters
+	 *
+	 * @param string $password Original generated password.
+	 *
+	 * @return string Sanitised password.
+	 */
+	private function sanitise_generated_password( string $password ): string {
+		return str_replace( '=', '', strtr( $password, '+/', '-_' ) );
+	}
+
+	/**
 	 * Initialise data for OAuth Cloud Connect.
 	 *
 	 * @return void
+	 *
+	 * @uses wp_generate_password() – must be loaded after pluggable functions.
 	 */
-	private function init_oauth_sync() {
+	public function init_oauth_sync() {
 		// Bail early if the cloud key is already verified or if code verifier is already set.
 		if ( $this->is_cloud_key_verified() || $this->get_cloud_setting( 'code_verifier' ) ) {
 			return;
 		}
 
-		$code_verifier = wp_generate_password( 128, false, false );
-		$code_verifier = strtr( $code_verifier, '+/', '-_' );
-		$code_verifier = str_replace( '=', '', $code_verifier );
+		$code_verifier = $this->sanitise_generated_password(
+			wp_generate_password( 128, false )
+		);
 
-		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-		$code_challenge = strtr( base64_encode( hash( 'sha256', $code_verifier, true ) ), '+/', '-_' );
-		$code_challenge = str_replace( '=', '', $code_challenge );
+		$code_challenge = $this->sanitise_generated_password(
+			base64_encode( hash( 'sha256', $code_verifier, true ) ) // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		);
 
 		$state = wp_generate_password( 15, false );
 		$local_token = wp_generate_password( 30, false );
