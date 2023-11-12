@@ -113,11 +113,15 @@ export const build = series(clean, parallel(vendor, css, js))
 
 export default build
 
-export const version: TaskFunction = () =>
-	src('./code-snippets.php')
+export const version: TaskFunction = parallel(
+	() => src('./code-snippets.php')
 		.pipe(replace(/(?<prefix>Version:\s+|@version\s+)\d+\.\d+[\w-.]+$/mg, `$1${pkg.version}`))
 		.pipe(replace(/(?<prefix>'CODE_SNIPPETS_VERSION',\s+)'[\w-.]+'/, `$1'${pkg.version}'`))
+		.pipe(dest('.')),
+	() => src('./readme.txt')
+		.pipe(replace(/(?<prefix>Stable tag:\s+|@version\s+)\d+\.\d+[\w-.]+$/mg, `$1${pkg.version}`))
 		.pipe(dest('.'))
+)
 
 export const bundle: TaskFunction = (() => {
 	const cleanupBefore: TaskFunction = () =>
