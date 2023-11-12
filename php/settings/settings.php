@@ -281,21 +281,12 @@ function process_settings_actions( array $input ): ?array {
 	}
 
 	if ( isset( $input['debug']['reset_caches'] ) ) {
-		clean_snippets_cache( code_snippets()->db->get_table_name() );
-
-		add_settings_error(
-			OPTION_NAME,
-			'snippet_caches_reset',
-			__( 'Successfully reset snippets caches.', 'code-snippets' ),
-			'updated'
-		);
-	}
-
-	if ( isset( $input['debug']['reset_caches'] ) ) {
 		clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
+		code_snippets()->active_snippets->increment_snippets_rev( false );
 
 		if ( is_multisite() ) {
 			clean_snippets_cache( code_snippets()->db->get_table_name( true ) );
+			code_snippets()->active_snippets->increment_snippets_rev( true );
 		}
 
 		add_settings_error(
