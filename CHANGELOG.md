@@ -1,7 +1,8 @@
 # Changelog
 
-## 3.6.3 (12 Nov 2023)
+## 3.6.3 (13 Nov 2023)
 * Fixed: Import error when initialising cloud sync configuration. (PRO)
+* Improved: Added debug action for resetting snippets caches.
 
 ## 3.6.2 (11 Nov 2023)
 * Fixed: Error when attempting to save shared network snippets marked as active.
