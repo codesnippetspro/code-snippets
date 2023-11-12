@@ -61,11 +61,11 @@ class Admin {
 	/**
 	 * Enqueue general admin assets.
 	 *
-	 * @param string $hook_name Current plugin page hook name.
+	 * @param string|null $hook_name Current plugin page hook name.
 	 *
 	 * @return void
 	 */
-	public function enqueue_admin_assets( string $hook_name ) {
+	public function enqueue_admin_assets( ?string $hook_name ) {
 		if ( 'plugins.php' === $hook_name ) {
 			wp_enqueue_style(
 				'code-snippets-plugins-css',
