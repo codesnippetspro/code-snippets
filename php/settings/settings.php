@@ -8,6 +8,7 @@
 
 namespace Code_Snippets\Settings;
 
+use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\code_snippets;
 
 const CACHE_KEY = 'code_snippets_settings';
@@ -275,6 +276,17 @@ function process_settings_actions( array $input ): ?array {
 			OPTION_NAME,
 			'snippets_cloud_sync_disconnected',
 			__( 'This site has been successfully disconnected from Code Snippets Cloud.', 'code-snippets' ),
+			'updated'
+		);
+	}
+
+	if ( isset( $input['debug']['reset_caches'] ) ) {
+		clean_snippets_cache( code_snippets()->db->get_table_name() );
+
+		add_settings_error(
+			OPTION_NAME,
+			'snippet_caches_reset',
+			__( 'Successfully reset snippets caches.', 'code-snippets' ),
 			'updated'
 		);
 	}
