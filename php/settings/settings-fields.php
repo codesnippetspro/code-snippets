@@ -51,10 +51,15 @@ function get_settings_fields(): array {
 
 	$fields['debug'] = [
 		'database_update' => [
-			'name' => __( 'Database Table Upgrade', 'code-snippets' ),
-			'type' => 'action',
+			'name'  => __( 'Database Table Upgrade', 'code-snippets' ),
+			'type'  => 'action',
 			'label' => __( 'Upgrade Database Table', 'code-snippets' ),
-			'desc' => __( 'Use this button to manually upgrade the Code Snippets database table. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
+			'desc'  => __( 'Use this button to manually upgrade the Code Snippets database table. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
+		],
+		'reset_caches'    => [
+			'name' => __( 'Reset Caches', 'code-snippets' ),
+			'type' => 'action',
+			'desc' => __( 'Use this button to manually clear snippets caches.', 'code-snippets' ),
 		],
 	];
 

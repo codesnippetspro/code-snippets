@@ -1,6 +1,10 @@
 # Changelog
 
-## 3.6.2 (08 Nov 2023)
+## 3.6.3 (13 Nov 2023)
+* Fixed: Import error when initialising cloud sync configuration. (PRO)
+* Improved: Added debug action for resetting snippets caches.
+
+## 3.6.2 (11 Nov 2023)
 * Fixed: Error when attempting to save shared network snippets marked as active.
 * Fixed: Type error when rendering checkbox fields without a stored or default value.
 * Fixed: Removed automatic encoding of code content.
@@ -8,6 +12,7 @@
 * Fixed: Error when attempting to download export files from Edit menu.
 * Fixed: Issue loading Freemius string overrides too early. (PRO)
 * Fixed: Fix redirect URL when connecting with OAuth on subdirectory or HTTPS sites. (PRO)
+* Fixed: Import error when attempting to completely uninstall the plugin.
 
 ## 3.6.1 (07 Nov 2023) 
 * Fixed: Issue accessing fields on Snippets class.
