@@ -68,8 +68,8 @@ class Manage_Menu extends Admin_Menu {
 			__( 'Snippets', 'code-snippets' ),
 			_x( 'Snippets', 'top-level menu label', 'code-snippets' ),
 			code_snippets()->get_cap(),
-			code_snippets()->get_menu_slug(),
-			array( $this, 'render' ),
+			code_snippets()->get_menu_slug( 'welcome'),
+			array( $this, 'render_welcome' ),
 			"data:image/svg+xml;base64,$encoded_icon",
 			apply_filters( 'code_snippets/admin/menu_position', is_network_admin() ? 21 : 67 )
 		);
