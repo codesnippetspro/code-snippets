@@ -1,0 +1,98 @@
+.welcome-wrap{
+    padding: 25px;
+    border-radius: 10px;
+    background: white;
+    min-height: calc(90vh - 60px);
+
+    h1{
+        font-weight: bold;
+    }
+
+    .version{
+        margin-top: 0px;
+        margin-bottom: 20px;
+    }
+
+    .section{
+        margin-top: 30px;
+
+        .list-quicklinks{
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+
+            .link-quicklink{
+                padding: 7px;
+                border-radius: 5px;
+                cursor: pointer;
+                border: none;
+                display: block;
+                font-weight: 700;
+                text-align: center;
+                text-decoration: none;
+                color: #fff;
+
+                .dashicons{
+                    margin-left: 5px;
+                }
+            }
+
+            .link-pro{
+                background-color: #d46f4d;
+                padding: 7px 12px;
+            }
+
+            .link-cloud{
+                background-color: #08c5d1;
+            }
+
+            .link-new-snippet{
+                background: #2271b1;
+                padding: 7px 10px;
+            }
+
+            .link-resources{
+                background: #424242;
+            }
+
+            .link-community{
+                background: #3b5998;
+            }
+        }
+
+        .cs-grid-2{
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .cs-grid-3{
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }   
+
+        .cs-grid{
+            display: grid;
+            grid-auto-rows: 1fr;
+            margin-top: 20px;
+            max-width: 1140px;
+
+            .news-item-img{
+                border-radius: 5px;
+                box-shadow: 0px 2px 6px rgba(35,40,45,.2);
+                width: 100%;
+                max-width: 300px;
+                height: 200px;
+                max-height: 200px;
+                overflow: hidden;
+                object-fit: cover;
+                transition: all .3s ease-in-out;
+
+                &:hover{
+                    box-shadow: 0 2px 9px 1px rgba(35,40,45,0.5) !important;
+                }
+            }
+
+        }
+
+    }
+}

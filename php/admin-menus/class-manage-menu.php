@@ -68,8 +68,8 @@ class Manage_Menu extends Admin_Menu {
 			__( 'Snippets', 'code-snippets' ),
 			_x( 'Snippets', 'top-level menu label', 'code-snippets' ),
 			code_snippets()->get_cap(),
-			code_snippets()->get_menu_slug( 'welcome'),
-			array( $this, 'render_welcome' ),
+			code_snippets()->get_menu_slug(),
+			array( $this, 'render' ),
 			"data:image/svg+xml;base64,$encoded_icon",
 			apply_filters( 'code_snippets/admin/menu_position', is_network_admin() ? 21 : 67 )
 		);
@@ -104,7 +104,18 @@ class Manage_Menu extends Admin_Menu {
 			100
 		);
 
+		add_submenu_page(
+			code_snippets()->get_menu_slug(),
+			__( 'Welcome to Code Snippets', 'code-snippets' ),
+			__( 'What\'s New', 'code-snippets' ),
+			code_snippets()->get_cap(),
+			'code_snippets',
+			array( $this, 'render_welcome' ),
+			1
+		);
+
 		add_action( "load-$hook", [ $this, 'load_upgrade_menu' ] );
+		//add_action( "load-$welcome", [ $this, 'load_welcome_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_button_css' ] );
 	}
 
@@ -130,6 +141,22 @@ class Manage_Menu extends Admin_Menu {
 	public function load_upgrade_menu() {
 		wp_safe_redirect( 'https://snipco.de/JE2f' );
 		exit;
+	}
+
+	/**
+	 * Load the welcome view
+	 *
+	 * @return void
+	 */
+	public function render_welcome() {
+		//Enqueue the welcome screen CSS
+		wp_enqueue_style(
+			'code-snippets-welcome',
+			plugins_url( 'dist/welcome.css', PLUGIN_FILE ),
+			[],
+			PLUGIN_VERSION
+		);
+		$this->render_view( 'welcome' );
 	}
 
 	/**

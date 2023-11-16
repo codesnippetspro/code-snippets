@@ -56,7 +56,7 @@ abstract class Admin_Menu {
 		$this->label = $label;
 		$this->title = $title;
 
-		$this->base_slug = code_snippets()->get_menu_slug( 'welcome' );
+		$this->base_slug = code_snippets()->get_menu_slug();
 		$this->slug = code_snippets()->get_menu_slug( $name );
 	}
 
@@ -115,13 +115,6 @@ abstract class Admin_Menu {
 	 */
 	public function render() {
 		$this->render_view( $this->name );
-	}
-
-	/**
-	 * Render the welcome page
-	 */
-	public function render_welcome() {
-		$this->render_view( 'welcome' );
 	}
 
 	/**
