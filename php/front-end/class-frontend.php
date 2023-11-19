@@ -3,7 +3,6 @@
 namespace Code_Snippets;
 
 use WP_Post;
-use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 
@@ -64,11 +63,9 @@ class Frontend {
 	/**
 	 * Fetch snippets data in response to a request.
 	 *
-	 * @param WP_REST_Request $request Request object.
-	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_snippets_info( WP_REST_Request $request ): WP_REST_Response {
+	public function get_snippets_info(): WP_REST_Response {
 		$snippets = get_snippets();
 		$data = [];
 
@@ -123,11 +120,11 @@ class Frontend {
 	/**
 	 * Enqueue the syntax highlighting assets if they are required for the current posts
 	 *
-	 * @param array<WP_Post> $posts List of currently visible posts.
+	 * @param array<WP_Post|int>|null|false $posts List of currently visible posts.
 	 *
-	 * @return array<WP_Post> Unchanged list of posts.
+	 * @return array<WP_Post|int>|null|false Unchanged list of posts.
 	 */
-	public function enqueue_highlighting( array $posts ): array {
+	public function enqueue_highlighting( $posts ) {
 
 		// Exit early if there are no posts to check or if the highlighter has been disabled.
 		if ( empty( $posts ) || Settings\get_setting( 'general', 'disable_prism' ) ) {
@@ -183,16 +180,74 @@ class Frontend {
 	}
 
 	/**
+	 * Enqueue all available Prism themes.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_all_prism_themes() {
+		self::register_prism_assets();
+
+		wp_enqueue_style( self::PRISM_HANDLE );
+		wp_enqueue_script( self::PRISM_HANDLE );
+	}
+
+	/**
 	 * Print a message to the user if the snippet ID attribute is invalid.
 	 *
 	 * @param integer $id Snippet ID.
 	 *
 	 * @return string Warning message.
 	 */
-	private function invalid_id_warning( int $id ): string {
+	protected function invalid_id_warning( int $id ): string {
 		// translators: %d: snippet ID.
 		$text = esc_html__( 'Could not load snippet with an invalid ID: %d.', 'code-snippets' );
-		return current_user_can( 'edit_posts' ) ? sprintf( $text, intval( $id ) ) : '';
+		return current_user_can( 'edit_posts' ) ? sprintf( $text, $id ) : '';
+	}
+
+	/**
+	 * Allow boolean attributes to be provided without a value, similar to how React works.
+	 *
+	 * @param array<string|number, mixed> $atts          Unfiltered shortcode attributes.
+	 * @param array<string>               $boolean_flags List of attribute names with boolean values.
+	 *
+	 * @return array<string|number, mixed> Shortcode attributes with flags converted to attributes.
+	 */
+	protected function convert_boolean_attribute_flags( array $atts, array $boolean_flags ): array {
+		foreach ( $atts as $key => $value ) {
+			if ( in_array( $value, $boolean_flags, true ) && ! isset( $atts[ $value ] ) ) {
+				$atts[ $value ] = true;
+				unset( $atts[ $key ] );
+			}
+		}
+
+		return $atts;
+	}
+
+	/**
+	 * Evaluate the code from a content shortcode.
+	 *
+	 * @param Snippet              $snippet Snippet.
+	 * @param array<string, mixed> $atts    Shortcode attributes.
+	 *
+	 * @return string Evaluated shortcode content.
+	 */
+	protected function evaluate_shortcode_content( Snippet $snippet, array $atts ): string {
+		if ( empty( $atts['php'] ) ) {
+			return $snippet->code;
+		}
+
+		/**
+		 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
+		 * authors to use custom attributes.
+		 *
+		 * @phpcs:disable WordPress.PHP.DontExtract.extract_extract
+		 */
+		extract( $atts );
+
+		ob_start();
+		eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
+
+		return ob_get_clean();
 	}
 
 	/**
@@ -203,6 +258,9 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	public function render_content_shortcode( array $atts ): string {
+		$atts = $this->convert_boolean_attribute_flags( $atts, [ 'network', 'php', 'format', 'shortcodes', 'debug' ] );
+		$original_atts = $atts;
+
 		$atts = shortcode_atts(
 			array(
 				'id'         => 0,
@@ -217,7 +275,7 @@ class Frontend {
 			self::CONTENT_SHORTCODE
 		);
 
-		$id = intval( $atts['snippet_id'] ) ?: intval( $atts['id'] );
+		$id = 0 !== intval( $atts['snippet_id'] ) ? intval( $atts['snippet_id'] ) : intval( $atts['id'] );
 		if ( ! $id ) {
 			return $this->invalid_id_warning( $id );
 		}
@@ -250,13 +308,7 @@ class Frontend {
 			);
 		}
 
-		$content = $snippet->code;
-
-		if ( $atts['php'] ) {
-			ob_start();
-			eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
-			$content = ob_get_clean();
-		}
+		$content = $this->evaluate_shortcode_content( $snippet, $original_atts );
 
 		if ( $atts['format'] ) {
 			$functions = [ 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'capital_P_dangit' ];
@@ -276,12 +328,12 @@ class Frontend {
 			add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
 		}
 
-		return apply_filters( 'code_snippets/content_shortcode', $content, $snippet, $atts );
+		return apply_filters( 'code_snippets/content_shortcode', $content, $snippet, $atts, $original_atts );
 	}
 
 	/**
 	 * Converts a value and key into an HTML attribute pair.
-	 *create_attribute_pair
+	 *
 	 * @param string $value Attribute value.
 	 * @param string $key   Attribute name.
 	 *
@@ -354,6 +406,7 @@ class Frontend {
 	 * @return string Shortcode content.
 	 */
 	public function render_source_shortcode( array $atts ): string {
+		$atts = $this->convert_boolean_attribute_flags( $atts, [ 'network', 'line_numbers' ] );
 
 		$atts = shortcode_atts(
 			array(
@@ -367,7 +420,7 @@ class Frontend {
 			self::SOURCE_SHORTCODE
 		);
 
-		$id = intval( $atts['snippet_id'] ) ?: intval( $atts['id'] );
+		$id = 0 !== intval( $atts['snippet_id'] ) ? intval( $atts['snippet_id'] ) : intval( $atts['id'] );
 		if ( ! $id ) {
 			return $this->invalid_id_warning( $id );
 		}

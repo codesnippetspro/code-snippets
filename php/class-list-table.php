@@ -1,10 +1,4 @@
 <?php
-
-namespace Code_Snippets;
-
-use function Code_Snippets\Settings\get_setting;
-use WP_List_Table;
-
 /**
  * Contains the class for handling the snippets table
  *
@@ -12,6 +6,11 @@ use WP_List_Table;
  *
  * phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
  */
+
+namespace Code_Snippets;
+
+use WP_List_Table;
+use function Code_Snippets\Settings\get_setting;
 
 // The WP_List_Table base class is not included by default, so we need to load it.
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -38,7 +37,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var array<string>
 	 */
-	public $statuses = array( 'all', 'active', 'inactive', 'recently_activated' );
+	public $statuses = [ 'all', 'active', 'inactive', 'recently_activated' ];
 
 	/**
 	 * Column name to use when ordering the snippets list.
@@ -341,6 +340,10 @@ class List_Table extends WP_List_Table {
 		}
 
 		// Return the name contents.
+		if ( code_snippets()->cloud_api->get_cloud_link( $snippet->id, 'local' ) ) {
+			// Make cloud icon grey to show it is from the cloud.
+			$out = '<span class="dashicons dashicons-cloud cloud-icon cloud-downloaded"></span>' . $out;
+		}
 
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
 
@@ -496,7 +499,7 @@ class List_Table extends WP_List_Table {
 	 */
 	public function get_views(): array {
 		global $totals, $status;
-		$status_links = array();
+		$status_links = parent::get_views();
 
 		// Loop through the view counts.
 		foreach ( $totals as $type => $count ) {
@@ -645,7 +648,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @param string $context The context in which the fields are being outputted.
 	 */
-	public function required_form_fields( string $context = 'main' ) {
+	public static function required_form_fields( string $context = 'main' ) {
 		$vars = apply_filters(
 			'code_snippets/list_table/required_form_fields',
 			array( 'page', 's', 'status', 'paged', 'tag' ),
@@ -715,7 +718,7 @@ class List_Table extends WP_List_Table {
 				return 'deactivated';
 
 			case 'clone':
-				$this->clone_snippets( array( $id ) );
+				$this->clone_snippets( [ $id ] );
 				return 'cloned';
 
 			case 'delete':
@@ -723,12 +726,12 @@ class List_Table extends WP_List_Table {
 				return 'deleted';
 
 			case 'export':
-				$export = new Export_Attachment( $id );
+				$export = new Export_Attachment( [ $id ], $this->is_network );
 				$export->download_snippets_json();
 				break;
 
 			case 'download':
-				$export = new Export_Attachment( $id );
+				$export = new Export_Attachment( [ $id ], $this->is_network );
 				$export->download_snippets_code();
 				break;
 		}
@@ -826,12 +829,12 @@ class List_Table extends WP_List_Table {
 				break;
 
 			case 'export-selected':
-				$export = new Export_Attachment( $ids );
+				$export = new Export_Attachment( $ids, $this->is_network );
 				$export->download_snippets_json();
 				break;
 
 			case 'download-selected':
-				$export = new Export_Attachment( $ids );
+				$export = new Export_Attachment( $ids, $this->is_network );
 				$export->download_snippets_code();
 				break;
 
@@ -959,11 +962,13 @@ class List_Table extends WP_List_Table {
 		$this->fetch_shared_network_snippets();
 
 		// Filter snippets by type.
-		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
+		$type = sanitize_key( wp_unslash( $_GET['type'] ?? '' ) );
+
+		if ( $type && 'all' !== $type ) {
 			$snippets['all'] = array_filter(
 				$snippets['all'],
-				function ( Snippet $snippet ) {
-					return $_GET['type'] === $snippet->type;
+				function ( Snippet $snippet ) use ( $type ) {
+					return $type === $snippet->type;
 				}
 			);
 		}
@@ -1080,17 +1085,17 @@ class List_Table extends WP_List_Table {
 	private function get_sort_direction( $a_data, $b_data ) {
 
 		// If the data is numeric, then calculate the ordering directly.
-		if ( is_numeric( $a_data ) ) {
+		if ( is_numeric( $a_data ) && is_numeric( $b_data ) ) {
 			return $a_data - $b_data;
 		}
 
 		// If only one of the data points is empty, then place it before the one which is not.
-		if ( '' === $a_data xor '' === $b_data ) {
-			return '' === $a_data ? 1 : -1;
+		if ( empty( $a_data ) xor empty( $b_data ) ) {
+			return empty( $a_data ) ? 1 : -1;
 		}
 
 		// Sort using the default string sort order if possible.
-		if ( is_string( $a_data ) ) {
+		if ( is_string( $a_data ) && is_string( $b_data ) ) {
 			return strcasecmp( $a_data, $b_data );
 		}
 

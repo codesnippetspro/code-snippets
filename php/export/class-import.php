@@ -3,7 +3,6 @@
 namespace Code_Snippets;
 
 use DOMDocument;
-use DOMElement;
 
 /**
  * Handles importing snippets from export files into the site
@@ -26,7 +25,7 @@ class Import {
 	/**
 	 * Whether snippets should be imported into the network-wide or site-wide table.
 	 *
-	 * @var bool|null
+	 * @var bool
 	 */
 	private $multisite;
 
@@ -41,12 +40,12 @@ class Import {
 	 * Class constructor.
 	 *
 	 * @param string    $file       The path to the file to import.
-	 * @param bool|null $multisite  Import into network-wide table (true) or site-wide table (false).
+	 * @param bool|null $network    Import into network-wide table (true) or site-wide table (false).
 	 * @param string    $dup_action Action to take if duplicate snippets are detected. Can be 'skip', 'ignore', or 'replace'.
 	 */
-	public function __construct( string $file, bool $multisite = null, string $dup_action = 'ignore' ) {
+	public function __construct( string $file, ?bool $network = null, string $dup_action = 'ignore' ) {
 		$this->file = $file;
-		$this->multisite = $multisite;
+		$this->multisite = DB::validate_network_param( $network );
 		$this->dup_action = $dup_action;
 	}
 
@@ -79,7 +78,7 @@ class Import {
 				'scope',
 				'priority',
 				'shared_network',
-				'modified'
+				'modified',
 			];
 
 			foreach ( $import_fields as $field ) {
@@ -115,7 +114,6 @@ class Import {
 
 		$snippets = array();
 
-		/* @var DOMElement $snippet_xml */
 		foreach ( $snippets_xml as $snippet_xml ) {
 			$snippet = new Snippet();
 			$snippet->network = $this->multisite;

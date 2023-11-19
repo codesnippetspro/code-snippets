@@ -1,19 +1,14 @@
 import axios, { AxiosResponse } from 'axios'
+import { trimLeadingChar, trimTrailingChar } from '../general'
 
-const REST_BASE = window.CODE_SNIPPETS_EDIT?.restAPI.base ?? ''
-
-export const trimLeadingSlash = (path: string): string =>
-	'/' === path.charAt(0) ? path.slice(1) : path
-
-export const trimTrailingSlash = (path: string): string =>
-	'/' === path.charAt(path.length - 1) ? path.slice(0, -1) : path
+const REST_BASE = window.CODE_SNIPPETS?.restAPI.base ?? ''
 
 const getRestUrl = (endpoint: string): string =>
-	`${trimTrailingSlash(REST_BASE)}/${trimLeadingSlash(endpoint)}`
+	`${trimTrailingChar(REST_BASE, '/')}/${trimLeadingChar(endpoint, '/')}`
 
 const GET_CACHE: Record<string, AxiosResponse> = {}
 
-export const apiGet = <T>(endpoint: string, refresh = false): Promise<AxiosResponse<T>> =>
+export const getCached = <T>(endpoint: string, refresh = false): Promise<AxiosResponse<T>> =>
 	!refresh && GET_CACHE[endpoint] ?
 		Promise.resolve(GET_CACHE[endpoint]) :
 		axios.get<T>(getRestUrl(endpoint))

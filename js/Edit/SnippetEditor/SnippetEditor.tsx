@@ -1,42 +1,53 @@
-import { __ } from '@wordpress/i18n'
+import React, { useEffect } from 'react'
+import { __, _x } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { Editor, EditorConfiguration } from 'codemirror'
-import React, { Dispatch, SetStateAction, useEffect } from 'react'
-import { SnippetActionsInputProps, SnippetInputProps } from '../../types/SnippetInputProps'
-import { CodeEditorInstance } from '../../types/WordPressCodeEditor'
-import { ConditionEditor } from '../ConditionEditor'
-import { Snippet, SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetType } from '../../types/Snippet'
+import { SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetScope, SnippetType } from '../../types/Snippet'
 import '../../editor'
-import { getSnippetType, isProType } from '../../utils/snippets'
+import { getSnippetType, isLicensed, isProType } from '../../utils/snippets'
 import classnames from 'classnames'
+import { ConditionEditor } from '../ConditionEditor'
+import { useSnippetForm } from '../SnippetForm/context'
 import { CodeEditor } from './CodeEditor'
 
-interface SnippetTypeTabProps extends Pick<SnippetInputProps, 'setSnippet'> {
+interface SnippetTypeTabProps {
 	tabType: SnippetType
 	label: string
 	currentType: SnippetType
+	updateScope: (scope: SnippetScope) => void
+	openUpgradeDialog: VoidFunction
 }
 
-const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ tabType, label, currentType, setSnippet }) =>
+const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({
+	tabType,
+	label,
+	currentType,
+	updateScope,
+	openUpgradeDialog
+}) =>
 	<a
 		data-snippet-type={tabType}
 		className={classnames({
 			'nav-tab': true,
 			'nav-tab-active': tabType === currentType,
-			'nav-tab-inactive': isProType(tabType)
+			'nav-tab-inactive': isProType(tabType) && !isLicensed()
 		})}
-		{...isProType(tabType) ?
+		{...isProType(tabType) && !isLicensed() ?
 			{
-				title: __('Available in Code Snippets Pro (external link)', 'code-snippets'),
+				title: __('Learn more about Code Snippets Pro.', 'code-snippets'),
 				href: 'https://codesnippets.pro/pricing/',
-				target: '_blank'
+				target: '_blank',
+				onClick: event => {
+					event.preventDefault()
+					openUpgradeDialog()
+				}
 			} :
 			{
 				href: addQueryArgs(window.location.href, { type: tabType }),
 				onClick: event => {
 					event.preventDefault()
 					const scope = SNIPPET_TYPE_SCOPES[tabType][0]
-					setSnippet(previous => ({ ...previous, scope }))
+					updateScope(scope)
 				}
 			}
 		}>
@@ -64,11 +75,17 @@ const EDITOR_MODES: Partial<Record<SnippetType, string>> = {
 
 interface SnippetTypeTabsProps {
 	codeEditor: Editor
-	setSnippet: Dispatch<SetStateAction<Snippet>>
 	snippetType: SnippetType
+	updateScope: (scope: SnippetScope) => void
+	openUpgradeDialog: VoidFunction
 }
 
-const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({ codeEditor, setSnippet, snippetType }) => {
+const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({
+	codeEditor,
+	updateScope,
+	snippetType,
+	openUpgradeDialog
+}) => {
 
 	useEffect(() => {
 		codeEditor.setOption('lint' as keyof EditorConfiguration, 'php' === snippetType || 'css' === snippetType)
@@ -87,24 +104,34 @@ const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({ codeEditor, setSnippe
 					tabType={type}
 					label={TYPE_LABELS[type]}
 					currentType={snippetType}
-					setSnippet={setSnippet}
+					updateScope={updateScope}
+					openUpgradeDialog={openUpgradeDialog}
 				/>)}
+
+			{!isLicensed() ?
+				<a
+					className="button button-large nav-tab-button nav-tab-inactive go-pro-button"
+					href="https://codesnippets.pro/pricing/"
+					title="Find more about Pro"
+					onClick={event => {
+						event.preventDefault()
+						openUpgradeDialog()
+					}}
+				>
+					{_x('Upgrade to ', 'Upgrade to Pro', 'code-snippets')}
+					<span className="badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>
+				</a> :
+				null}
 		</h2>
 	)
 }
 
-export interface SnippetEditorProps extends SnippetActionsInputProps {
-	codeEditorInstance: CodeEditorInstance | undefined
-	setCodeEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
+export interface SnippetEditorProps {
+	openUpgradeDialog: VoidFunction
 }
 
-export const SnippetEditor: React.FC<SnippetEditorProps> = ({
-	snippet,
-	setSnippet,
-	codeEditorInstance,
-	setCodeEditorInstance,
-	...actionsProps
-}) => {
+export const SnippetEditor: React.FC<SnippetEditorProps> = ({ openUpgradeDialog }) => {
+	const { snippet, setSnippet, codeEditorInstance } = useSnippetForm()
 	const snippetType = getSnippetType(snippet)
 
 	return (
@@ -112,9 +139,10 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({
 			<div className="snippet-code-container">
 				<h2>
 					{'condition' === snippet.scope ?
-						<label htmlFor="snippet_conditions">
-							{__('Conditions', 'code-snippets')}{' '}
-							{snippet.id ? <span className="dashicons dashicons-randomize"></span> : null}
+						<label htmlFor="snippet_code">
+							{`${__('Code', 'code-snippets')} `}
+							{snippet.id ?
+								<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> : null}
 						</label> :
 
 						<label htmlFor="snippet_code">
@@ -126,19 +154,14 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({
 
 				{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview || !codeEditorInstance ? '' :
 					<SnippetTypeTabs
-						setSnippet={setSnippet}
 						snippetType={snippetType}
 						codeEditor={codeEditorInstance.codemirror}
+						openUpgradeDialog={openUpgradeDialog}
+						updateScope={scope => setSnippet(previous => ({ ...previous, scope }))}
 					/>}
 
-				<ConditionEditor snippet={snippet} setSnippet={setSnippet} {...actionsProps} />
-				<CodeEditor
-					snippet={snippet}
-					setSnippet={setSnippet}
-					editorInstance={codeEditorInstance}
-					setEditorInstance={setCodeEditorInstance}
-					{...actionsProps}
-				/>
+				<ConditionEditor />
+				<CodeEditor />
 			</div>
 		</>
 	)

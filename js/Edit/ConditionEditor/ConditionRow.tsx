@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
 import { ConditionSubject } from '../../types/Condition'
 import { Snippet } from '../../types/Snippet'
-import { SnippetInputProps } from '../../types/SnippetInputProps'
+import { useSnippetForm } from '../SnippetForm/context'
 import { AddConditionButton } from './AddButton'
 import { ConditionField } from './ConditionField'
 import { ObjectOptions, OPERATOR_OPTIONS, SUBJECT_OPTION_PROMISES, SUBJECT_OPTIONS } from './options'
@@ -19,17 +19,18 @@ const updateSubject = (snippet: Snippet, groupId: string, conditionId: string, v
 	}
 })
 
-export interface ConditionRowProps extends SnippetInputProps {
+export interface ConditionRowProps {
 	groupId: string
 	conditionId: string
+	onAddCondition: VoidFunction
 	isLastItem?: boolean
 }
 
-export const ConditionRow: React.FC<ConditionRowProps> = ({ isLastItem, ...fieldProps }) => {
+export const ConditionRow: React.FC<ConditionRowProps> = ({ isLastItem, groupId, conditionId, onAddCondition }) => {
 	const [loadedSubject, setLoadedSubject] = useState<ConditionSubject>()
 	const [objectOptions, setObjectOptions] = useState<ObjectOptions | undefined>(undefined)
 
-	const { groupId, conditionId, snippet, setSnippet } = fieldProps
+	const { snippet, setSnippet } = useSnippetForm()
 	const condition = snippet.conditions?.[groupId][conditionId]
 
 	useEffect(() => {
@@ -46,8 +47,9 @@ export const ConditionRow: React.FC<ConditionRowProps> = ({ isLastItem, ...field
 	return (
 		<div id={`snippet-condition-${groupId}-${conditionId}`} className="snippet-condition-row">
 			<ConditionField
-				{...fieldProps}
 				field="subject"
+				groupId={groupId}
+				conditionId={conditionId}
 				options={SUBJECT_OPTIONS}
 				onChange={option => {
 					setObjectOptions(undefined)
@@ -57,20 +59,22 @@ export const ConditionRow: React.FC<ConditionRowProps> = ({ isLastItem, ...field
 			/>
 
 			<ConditionField
-				{...fieldProps}
 				field="operator"
+				groupId={groupId}
+				conditionId={conditionId}
 				options={OPERATOR_OPTIONS}
 			/>
 
 			<ConditionField
-				{...fieldProps}
 				field="object"
+				groupId={groupId}
+				conditionId={conditionId}
 				options={objectOptions}
 				isLoading={!!condition?.subject && loadedSubject !== condition.subject}
 			/>
 
 			{isLastItem ?
-				<AddConditionButton groupId={groupId} setSnippet={setSnippet} /> :
+				<AddConditionButton onClick={onAddCondition} /> :
 				<span className="condition-row-sep">{__('AND', 'code-snippets')}</span>}
 
 			<RemoveButton groupId={groupId} conditionId={conditionId} setSnippet={setSnippet} />

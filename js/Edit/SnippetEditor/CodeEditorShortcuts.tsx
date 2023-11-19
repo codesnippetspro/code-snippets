@@ -1,8 +1,9 @@
 import { __, _x } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React from 'react'
+import { isMacOS } from '../../utils/general'
 
-const SEP = _x( '-', 'keyboard shortcut separator', 'code-snippets')
+const SEP = _x('-', 'keyboard shortcut separator', 'code-snippets')
 
 const keys = {
 	'Cmd': _x('Cmd', 'keyboard key', 'code-snippets'),
@@ -107,7 +108,7 @@ export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editor
 			{_x('?', 'help tooltip', 'code-snippets')}
 		</div>
 
-		<div className={classnames('editor-help-text', {'platform-mac': window.navigator.platform.match('Mac')})}>
+		<div className={classnames('editor-help-text', { 'platform-mac': isMacOS() })}>
 			<table>
 				{shortcuts.map(({ label, mod, key }) =>
 					<tr key={label}>
@@ -121,7 +122,9 @@ export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editor
 										{SEP}
 									</> :
 									'Option' === mod ?
-										<span className="mac-key"><kbd className="mac-key">{keys.Option}</kbd>{SEP}</span> :
+										<span className="mac-key">
+											<kbd className="mac-key">{keys.Option}</kbd>{SEP}
+										</span> :
 										<><kbd>{keys[modifier]}</kbd>{SEP}</>
 							)}
 							<kbd>{keys[key]}</kbd>

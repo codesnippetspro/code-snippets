@@ -46,4 +46,4 @@ export const isProType = (type: SnippetType): boolean =>
 	PRO_TYPES.includes(type)
 
 export const isLicensed = (): boolean =>
-	!!window.CODE_SNIPPETS_EDIT?.isLicensed
+	!!window.CODE_SNIPPETS?.isLicensed

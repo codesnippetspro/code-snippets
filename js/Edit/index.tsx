@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { EditForm } from './EditForm'
+import { SnippetForm } from './SnippetForm/SnippetForm'
 
 const container = document.getElementById('edit-snippet-form-container')
-ReactDOM.render(<EditForm />, container)
+ReactDOM.render(<SnippetForm />, container)

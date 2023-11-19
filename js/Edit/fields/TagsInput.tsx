@@ -1,12 +1,14 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { TagEditor } from '../../common/TagEditor'
-import { SnippetInputProps } from '../../types/SnippetInputProps'
+import { useSnippetForm } from '../SnippetForm/context'
 
 const options = window.CODE_SNIPPETS_EDIT?.tagOptions
 
-export const TagsInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, isReadOnly }) =>
-	options?.enabled ?
+export const TagsInput: React.FC = () => {
+	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
+
+	return options?.enabled ?
 		<div className="snippet-tags-container">
 			<h2>
 				<label htmlFor="snippet_tags">
@@ -16,12 +18,14 @@ export const TagsInput: React.FC<SnippetInputProps> = ({ snippet, setSnippet, is
 
 			<TagEditor
 				id="snippet_tags"
-				onChange={tags => setSnippet(previous => ({ ...previous, tags }))}
 				tags={snippet.tags}
+				addOnBlur
 				disabled={isReadOnly}
+				onChange={tags => setSnippet(previous => ({ ...previous, tags }))}
 				completions={options.availableTags}
 				allowSpaces={options.allowSpaces}
-				placeholder={__('Enter a list of tags; separated by commas', 'code-snippets')}
+				placeholder={__('Enter a list of tags; separated by commas.', 'code-snippets')}
 			/>
 		</div> :
 		null
+}

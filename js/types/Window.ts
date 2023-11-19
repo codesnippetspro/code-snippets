@@ -13,20 +13,30 @@ declare global {
 		readonly ajaxurl: string
 		readonly tinymce?: tinymce.EditorManager
 		readonly wpActiveEditor?: string
-		readonly code_snippets_editor_preview?: CodeEditorInstance
+		code_snippets_editor_preview?: CodeEditorInstance
 		readonly code_snippets_editor_settings: EditorOption[]
-		readonly CODE_SNIPPETS_EDIT?: {
-			snippet: Snippet
+		readonly CODE_SNIPPETS?: {
+			isLicensed: boolean
 			restAPI: {
 				base: string
-				nonce: string
 				snippets: string
+				cloud: string
+				nonce: string
+				localToken: string
 			}
-			addNewUrl: string
+			urls: {
+				plugin: string
+				manage: string
+				addNew: string
+				edit: string
+			}
+		}
+		readonly CODE_SNIPPETS_EDIT?: {
+			snippet: Snippet
 			isPreview: boolean
-			isLicensed: boolean
 			enableTags: boolean
 			enableDownloads: boolean
+			scrollToNotices: boolean
 			extraSaveButtons: boolean
 			activateByDefault: boolean
 			enableDescription: boolean

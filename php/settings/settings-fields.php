@@ -1,6 +1,6 @@
 <?php
 /**
- * Manages the settings fields definitions
+ * Manages the settings field definitions.
  *
  * @package    Code_Snippets
  * @subpackage Settings
@@ -13,7 +13,7 @@ namespace Code_Snippets\Settings;
  *
  * @return array<string, array<string, array>>
  */
-function get_default_settings() {
+function get_default_settings(): array {
 	static $defaults;
 
 	if ( isset( $defaults ) ) {
@@ -26,7 +26,9 @@ function get_default_settings() {
 		$defaults[ $section_id ] = array();
 
 		foreach ( $fields as $field_id => $field_atts ) {
-			$defaults[ $section_id ][ $field_id ] = $field_atts['default'];
+			if ( isset( $field_atts['default'] ) ) {
+				$defaults[ $section_id ][ $field_id ] = $field_atts['default'];
+			}
 		}
 	}
 
@@ -38,7 +40,7 @@ function get_default_settings() {
  *
  * @return array<string, array<string, array>>
  */
-function get_settings_fields() {
+function get_settings_fields(): array {
 	static $fields;
 
 	if ( isset( $fields ) ) {
@@ -46,6 +48,20 @@ function get_settings_fields() {
 	}
 
 	$fields = [];
+
+	$fields['debug'] = [
+		'database_update' => [
+			'name'  => __( 'Database Table Upgrade', 'code-snippets' ),
+			'type'  => 'action',
+			'label' => __( 'Upgrade Database Table', 'code-snippets' ),
+			'desc'  => __( 'Use this button to manually upgrade the Code Snippets database table. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
+		],
+		'reset_caches'    => [
+			'name' => __( 'Reset Caches', 'code-snippets' ),
+			'type' => 'action',
+			'desc' => __( 'Use this button to manually clear snippets caches.', 'code-snippets' ),
+		],
+	];
 
 	$fields['general'] = [
 		'activate_by_default' => [
@@ -98,16 +114,21 @@ function get_settings_fields() {
 			'default' => false,
 		],
 
-		'complete_uninstall' => [
-			'name'    => __( 'Complete Uninstall', 'code-snippets' ),
+		'hide_upgrade_menu' => [
+			'name'    => __( 'Hide Upgrade Menu', 'code-snippets' ),
 			'type'    => 'checkbox',
-			'label'   => __( 'When the plugin is deleted from the Plugins menu, also delete all snippets and plugin settings.', 'code-snippets' ),
+			'label'   => __( 'Hide the Upgrade button from the admin menu.', 'code-snippets' ),
 			'default' => false,
 		],
 	];
 
-	if ( is_multisite() && ! is_main_site() ) {
-		unset( $fields['general']['complete_uninstall'] );
+	if ( ! is_multisite() || is_main_site() ) {
+		$fields['general']['complete_uninstall'] = [
+			'name'    => __( 'Complete Uninstall', 'code-snippets' ),
+			'type'    => 'checkbox',
+			'label'   => __( 'When the plugin is deleted from the Plugins menu, also delete all snippets and plugin settings.', 'code-snippets' ),
+			'default' => false,
+		];
 	}
 
 	// Code Editor settings section.
@@ -209,7 +230,6 @@ function get_settings_fields() {
 			],
 			'codemirror' => 'keyMap',
 		],
-
 	];
 
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );

@@ -2,7 +2,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\REST_API\Snippets_REST_Controller;
 use function Code_Snippets\Settings\get_setting;
 
 /**
@@ -11,9 +10,19 @@ use function Code_Snippets\Settings\get_setting;
 class Edit_Menu extends Admin_Menu {
 
 	/**
+	 * Handle for JavaScript asset file.
+	 */
+	const JS_HANDLE = 'code-snippets-edit-menu';
+
+	/**
+	 * Handle for CSS asset file.
+	 */
+	const CSS_HANDLE = 'code-snippets-edit';
+
+	/**
 	 * The snippet object currently being edited
 	 *
-	 * @var Snippet
+	 * @var Snippet|null
 	 * @see Edit_Menu::load_snippet_data()
 	 */
 	protected $snippet = null;
@@ -154,17 +163,18 @@ class Edit_Menu extends Admin_Menu {
 			'wp-i18n',
 			'wp-api-fetch',
 			'wp-components',
+			'wp-block-editor',
 		];
 
 		wp_enqueue_style(
-			'code-snippets-edit',
+			self::CSS_HANDLE,
 			plugins_url( "dist/edit$rtl.css", $plugin->file ),
 			$css_deps,
 			$plugin->version
 		);
 
 		wp_enqueue_script(
-			'code-snippets-edit-menu',
+			self::JS_HANDLE,
 			plugins_url( 'dist/edit.js', $plugin->file ),
 			$js_deps,
 			$plugin->version,
@@ -176,22 +186,18 @@ class Edit_Menu extends Admin_Menu {
 			wp_enqueue_editor();
 		}
 
+		$plugin->localize_script( self::JS_HANDLE );
+
 		wp_localize_script(
-			'code-snippets-edit-menu',
+			self::JS_HANDLE,
 			'CODE_SNIPPETS_EDIT',
 			[
-				'isLicensed'        => false,
 				'snippet'           => $this->snippet->get_fields(),
-				'restAPI'           => [
-					'base'     => esc_url_raw( rest_url() ),
-					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
-					'nonce'    => wp_create_nonce( 'wp_rest' ),
-				],
-				'addNewUrl'         => $plugin->get_menu_url( 'add' ),
 				'pageTitleActions'  => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'manage', 'import', 'settings' ] ) : [],
 				'isPreview'         => isset( $_REQUEST['preview'] ),
 				'activateByDefault' => get_setting( 'general', 'activate_by_default' ),
 				'editorTheme'       => get_setting( 'editor', 'theme' ),
+				'scrollToNotices'   => apply_filters( 'code_snippets/scroll_to_notices', true ),
 				'extraSaveButtons'  => apply_filters( 'code_snippets/extra_save_buttons', true ),
 				'enableDownloads'   => apply_filters( 'code_snippets/enable_downloads', true ),
 				'enableDescription' => $desc_enabled,

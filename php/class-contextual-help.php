@@ -113,7 +113,6 @@ class Contextual_Help {
 	 * Register and handle the help tabs for the manage snippets admin page
 	 */
 	private function load_manage_help() {
-
 		$this->add_help_tab(
 			'overview',
 			__( 'Overview', 'code-snippets' ),
@@ -136,7 +135,6 @@ class Contextual_Help {
 	 * Register and handle the help tabs for the single snippet admin page
 	 */
 	private function load_edit_help() {
-
 		$this->add_help_tab(
 			'overview',
 			__( 'Overview', 'code-snippets' ),

@@ -2,29 +2,29 @@
 
 namespace Code_Snippets\REST_API;
 
-use WP_Error;
-use WP_REST_Server;
-use WP_REST_Request;
-use WP_REST_Response;
-use WP_REST_Controller;
 use Code_Snippets\Export;
 use Code_Snippets\Snippet;
-use const Code_Snippets\REST_API_NAMESPACE;
+use WP_Error;
+use WP_REST_Controller;
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_REST_Server;
+use function Code_Snippets\activate_snippet;
+use function Code_Snippets\code_snippets;
+use function Code_Snippets\deactivate_snippet;
+use function Code_Snippets\delete_snippet;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
-use function Code_Snippets\code_snippets;
-use function Code_Snippets\delete_snippet;
-use function Code_Snippets\activate_snippet;
-use function Code_Snippets\deactivate_snippet;
+use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
  * Allows fetching snippet data through the WordPress REST API.
  *
- * @since   [NEXT_VERSION]
+ * @since   3.4.0
  * @package Code_Snippets
  */
-class Snippets_REST_Controller extends WP_REST_Controller {
+final class Snippets_REST_Controller extends WP_REST_Controller {
 
 	/**
 	 * Current API version.
@@ -57,6 +57,15 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	public static function get_base_route(): string {
 		return REST_API_NAMESPACE . self::VERSION . '/' . self::BASE_ROUTE;
+	}
+
+	/**
+	 * Retrieve the full base route including the REST API prefix.
+	 *
+	 * @return string
+	 */
+	public static function get_prefixed_base_route(): string {
+		return '/' . rtrim( rest_get_url_prefix(), '/\\' ) . '/' . self::get_base_route();
 	}
 
 	/**
@@ -338,11 +347,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	protected function build_export( WP_REST_Request $request ): Export {
 		$item = $this->prepare_item_for_database( $request );
-
-		$ids = [ $item->id ];
-		$table_name = code_snippets()->db->get_table_name( $item->network );
-
-		return new Export( $ids, $table_name );
+		return new Export( [ $item->id ], $item->network );
 	}
 
 	/**
@@ -380,7 +385,7 @@ class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return Snippet The prepared item.
 	 */
-	protected function prepare_item_for_database( $request, Snippet $item = null ) {
+	protected function prepare_item_for_database( $request, Snippet $item = null ): ?Snippet {
 		if ( ! $item instanceof Snippet ) {
 			$item = new Snippet();
 		}

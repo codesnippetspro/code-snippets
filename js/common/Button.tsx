@@ -1,18 +1,18 @@
 import React, { ButtonHTMLAttributes } from 'react'
 import classnames from 'classnames'
 
-export interface ActionButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'id' | 'name'> {
+export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'id' | 'name'> {
 	id?: string
 	name?: string
 	primary?: boolean
 	small?: boolean
 	large?: boolean
-	text: string
 }
 
-export const ActionButton: React.FC<ActionButtonProps> = ({
+export const Button: React.FC<ButtonProps> = ({
 	id,
-	text,
+	children,
+	className,
 	name = 'submit',
 	primary = false,
 	small = false,
@@ -32,9 +32,11 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
 				onClick(event)
 			}
 		}}
-		className={classnames('button', {
+		className={classnames('button', className, {
 			'button-primary': primary,
 			'button-large': large,
 			'button-small': small
 		})}
-	>{text}</button>
+	>
+		{children}
+	</button>

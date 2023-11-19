@@ -2,7 +2,7 @@ import React, { ReactElement, useMemo } from 'react'
 import Select, { Props as SelectProps, OptionsOrGroups, SingleValue } from 'react-select'
 import { Condition } from '../../types/Condition'
 import { SelectGroup, SelectOption } from '../../types/SelectOption'
-import { SnippetInputProps } from '../../types/SnippetInputProps'
+import { useSnippetForm } from '../SnippetForm/context'
 
 const findOption = <T, >(options: OptionsOrGroups<SelectOption<T>, SelectGroup<T>>, value: T): SingleValue<SelectOption<T>> | undefined => {
 	for (const option of options) {
@@ -16,16 +16,21 @@ const findOption = <T, >(options: OptionsOrGroups<SelectOption<T>, SelectGroup<T
 	}
 }
 
-export interface ConditionFieldProps<F extends keyof Condition> extends SnippetInputProps,
-	SelectProps<SelectOption<Condition[F]>, false, SelectGroup<Condition[F]>> {
+export interface ConditionFieldProps<F extends keyof Condition>
+	extends SelectProps<SelectOption<Condition[F]>, false, SelectGroup<Condition[F]>> {
 	field: F
 	groupId: string
 	conditionId: string
 }
 
-export const ConditionField = <F extends keyof Condition>(
-	{ field, conditionId, groupId, options, snippet, setSnippet, ...selectProps }: ConditionFieldProps<F>
-): ReactElement => {
+export const ConditionField = <F extends keyof Condition>({
+	field,
+	conditionId,
+	groupId,
+	options,
+	...selectProps
+}: ConditionFieldProps<F>): ReactElement => {
+	const { snippet, setSnippet } = useSnippetForm()
 	const condition = snippet.conditions?.[groupId][conditionId]
 
 	const value = useMemo<SingleValue<SelectOption<Condition[F]>> | undefined>(() => {

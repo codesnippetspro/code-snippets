@@ -2,6 +2,7 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 
 /**
@@ -47,6 +48,13 @@ class Plugin {
 	public $frontend;
 
 	/**
+	 * Class for managing cloud API actions.
+	 *
+	 * @var Cloud_API
+	 */
+	public $cloud_api;
+
+	/**
 	 * Class for managing active snippets
 	 *
 	 * @var Active_Snippets
@@ -72,7 +80,8 @@ class Plugin {
 			add_filter( 'admin_url', array( $this, 'add_safe_mode_query_var' ) );
 		}
 
-		add_action( 'rest_api_init', [ $this, 'register_rest_api_controllers' ] );
+		add_action( 'rest_api_init', [ $this, 'init_rest_api' ] );
+		add_action( 'allowed_redirect_hosts', [ $this, 'allow_code_snippets_redirect' ] );
 	}
 
 	/**
@@ -100,8 +109,12 @@ class Plugin {
 		require_once $includes_path . '/settings/editor-preview.php';
 		require_once $includes_path . '/settings/settings.php';
 
+		// Cloud List Table shared functions.
+		require_once $includes_path . '/cloud/list-table-shared-ops.php';
+
 		$this->active_snippets = new Active_Snippets();
 		$this->frontend = new Frontend();
+		$this->cloud_api = new Cloud_API();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
@@ -111,15 +124,10 @@ class Plugin {
 	 * Register custom REST API controllers.
 	 *
 	 * @return void
-	 *
-	 * @since [NEXT_VERSION]
 	 */
-	public function register_rest_api_controllers() {
-		$controllers = [ new Snippets_REST_Controller() ];
-
-		foreach ( $controllers as $controller ) {
-			$controller->register_routes();
-		}
+	public function init_rest_api() {
+		$snippets_controller = new Snippets_REST_Controller();
+		$snippets_controller->register_routes();
 	}
 
 	/**
@@ -216,6 +224,19 @@ class Plugin {
 	}
 
 	/**
+	 * Allow redirecting to the Code Snippets site.
+	 *
+	 * @param array<string> $hosts Allowed hosts.
+	 *
+	 * @return array Modified allowed hosts.
+	 */
+	public function allow_code_snippets_redirect( array $hosts ): array {
+		$hosts[] = 'codesnippets.pro';
+		$hosts[] = 'snipco.de';
+		return $hosts;
+	}
+
+	/**
 	 * Determine whether the current user can perform actions on snippets.
 	 *
 	 * @return boolean Whether the current user has the required capability.
@@ -290,11 +311,14 @@ class Plugin {
 		return apply_filters(
 			'code_snippets_types',
 			array(
-				'php'  => __( 'Functions', 'code-snippets' ),
-				'html' => __( 'Content', 'code-snippets' ),
-				'css'  => __( 'Styles', 'code-snippets' ),
-				'js'   => __( 'Scripts', 'code-snippets' ),
-				'cond' => __( 'Conditions', 'code-snippets' ),
+				'php'          => __( 'Functions', 'code-snippets' ),
+				'html'         => __( 'Content', 'code-snippets' ),
+				'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
+				'css'          => __( 'Styles', 'code-snippets' ),
+				'js'           => __( 'Scripts', 'code-snippets' ),
+				'cond'         => __( 'Conditions', 'code-snippets' ),
+				'cloud'        => __( 'Codevault', 'code-snippets' ),
+				'bundles'      => __( 'Bundles', 'code-snippets' ),
 			)
 		);
 	}
@@ -307,25 +331,34 @@ class Plugin {
 	 * @return bool
 	 */
 	public static function is_pro_type( string $type ): bool {
-		return 'css' === $type || 'js' === $type;
+		return 'css' === $type || 'js' === $type || 'cloud' === $type || 'bundles' === $type;
 	}
 
 	/**
-	 * Retrieve the description for a particular snippet type.
+	 * Localise a plugin script to provide the CODE_SNIPPETS object.
 	 *
-	 * @param string $type Snippet type name.
+	 * @param string $handle Script handle.
 	 *
-	 * @return string
+	 * @return void
 	 */
-	public function get_type_description( string $type ): string {
-		$descriptions = array(
-			'php'  => __( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
-			'html' => __( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
-			'css'  => __( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
-			'js'   => __( 'Script snippets are loaded on the site front-end in a JavaScript file, either in the head or body sections.', 'code-snippets' ),
+	public function localize_script( string $handle ) {
+		wp_localize_script(
+			$handle,
+			'CODE_SNIPPETS',
+			[
+				'isLicensed' => false,
+				'restAPI'    => [
+					'base'     => esc_url_raw( rest_url() ),
+					'snippets' => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
+					'nonce'    => wp_create_nonce( 'wp_rest' ),
+				],
+				'urls'       => [
+					'plugin' => plugins_url( '', PLUGIN_FILE ),
+					'manage' => $this->get_menu_url(),
+					'edit'   => $this->get_menu_url( 'edit' ),
+					'addNew' => $this->get_menu_url( 'add' ),
+				],
+			]
 		);
-
-		$descriptions = apply_filters( 'code_snippets/plugins/type_descriptions', $descriptions );
-		return $descriptions[ $type ] ?? '';
 	}
 }

@@ -127,11 +127,11 @@ abstract class Admin_Menu {
 	 *
 	 * @param array<string, string> $messages    List of possible messages to display.
 	 * @param string                $request_var Name of $_REQUEST variable to check.
-	 * @param string                $class       Class to use on buttons. Default 'updated'.
+	 * @param string                $class_name  Class to use on buttons. Default 'updated'.
 	 *
 	 * @return bool Whether a result message was printed.
 	 */
-	protected function print_result_message( array $messages, string $request_var = 'result', string $class = 'updated' ): bool {
+	protected function print_result_message( array $messages, string $request_var = 'result', string $class_name = 'updated' ): bool {
 
 		if ( empty( $_REQUEST[ $request_var ] ) ) {
 			return false;
@@ -143,7 +143,7 @@ abstract class Admin_Menu {
 			printf(
 				'<div id="message" class="%2$s fade"><p>%1$s</p></div>',
 				wp_kses_post( $messages[ $result ] ),
-				esc_attr( $class )
+				esc_attr( $class_name )
 			);
 
 			return true;

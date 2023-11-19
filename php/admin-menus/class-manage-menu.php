@@ -2,6 +2,9 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_Search_List_Table;
+use function Code_Snippets\Settings\get_setting;
+
 /**
  * This class handles the manage snippets menu
  *
@@ -16,6 +19,13 @@ class Manage_Menu extends Admin_Menu {
 	 * @var List_Table
 	 */
 	public $list_table;
+
+	/**
+	 * Instance of the cloud list table class for search results.
+	 *
+	 * @var Cloud_Search_List_Table
+	 */
+	public $cloud_search_list_table;
 
 	/**
 	 * Class constructor
@@ -40,6 +50,7 @@ class Manage_Menu extends Admin_Menu {
 			add_action( 'network_admin_menu', array( $this, 'register_compact_menu' ), 2 );
 		}
 
+		add_action( 'admin_menu', array( $this, 'register_upgrade_menu' ), 500 );
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
 		add_action( 'wp_ajax_update_code_snippet', array( $this, 'ajax_callback' ) );
 	}
@@ -65,6 +76,60 @@ class Manage_Menu extends Admin_Menu {
 
 		// Register the sub-menu.
 		parent::register();
+	}
+
+	/**
+	 * Register the 'upgrade' menu item.
+	 *
+	 * @return void
+	 */
+	public function register_upgrade_menu() {
+		if ( get_setting( 'general', 'hide_upgrade_menu' ) ) {
+			return;
+		}
+
+		$menu_title = sprintf(
+			'<span class="button button-primary code-snippets-upgrade-button">%s %s</span>',
+			_x( 'Go Pro', 'top-level menu label', 'code-snippets' ),
+			'<span class="dashicons dashicons-external"></span>'
+		);
+
+		$hook = add_submenu_page(
+			code_snippets()->get_menu_slug(),
+			__( 'Upgrade to Pro', 'code-snippets' ),
+			$menu_title,
+			code_snippets()->get_cap(),
+			'code_snippets_upgrade',
+			'__return_empty_string',
+			100
+		);
+
+		add_action( "load-$hook", [ $this, 'load_upgrade_menu' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_button_css' ] );
+	}
+
+	/**
+	 * Print CSS required for the upgrade button.
+	 *
+	 * @return void
+	 */
+	public function enqueue_menu_button_css() {
+		wp_enqueue_style(
+			'code-snippets-menu-button',
+			plugins_url( 'dist/menu-button.css', PLUGIN_FILE ),
+			[],
+			PLUGIN_VERSION
+		);
+	}
+
+	/**
+	 * Redirect the user upon opening the upgrade menu.
+	 *
+	 * @return void
+	 */
+	public function load_upgrade_menu() {
+		wp_safe_redirect( 'https://snipco.de/JE2f' );
+		exit;
 	}
 
 	/**
@@ -100,7 +165,6 @@ class Manage_Menu extends Admin_Menu {
 		);
 
 		add_action( 'load-' . $hook, array( $class, 'load' ) );
-
 	}
 
 	/**
@@ -112,6 +176,10 @@ class Manage_Menu extends Admin_Menu {
 		/* Load the contextual help tabs */
 		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
+
+		// Initialize the search cloud list table class.
+		$this->cloud_search_list_table = new Cloud_Search_List_Table();
+		$this->cloud_search_list_table->prepare_items();
 
 		/* Initialize the list table class */
 		$this->list_table = new List_Table();
@@ -139,6 +207,30 @@ class Manage_Menu extends Admin_Menu {
 			$plugin->version,
 			true
 		);
+
+		if ( 'cloud_search' === $this->get_current_type() ) {
+			Frontend::enqueue_all_prism_themes();
+		}
+	}
+
+	/**
+	 * Get the currently displayed snippet type.
+	 *
+	 * @return string
+	 */
+	protected function get_current_type(): string {
+		$types = Plugin::get_types();
+		$current_type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'all';
+		return isset( $types[ $current_type ] ) ? $current_type : 'all';
+	}
+
+	/**
+	 * Display a Go Pro badge.
+	 *
+	 * @return void
+	 */
+	public function print_pro_message() {
+		echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
 	}
 
 	/**
@@ -200,7 +292,7 @@ class Manage_Menu extends Admin_Menu {
 			array( 'id' => $snippet->id ),
 			array( '%d' ),
 			array( '%d' )
-		); // db call ok.
+		);
 
 		clean_snippets_cache( $table );
 	}
@@ -262,21 +354,18 @@ class Manage_Menu extends Admin_Menu {
 					update_option( 'active_shared_network_snippets', $active_shared_snippets );
 					clean_active_snippets_cache( code_snippets()->db->ms_table );
 				}
-			} else {
-
-				if ( $snippet->active ) {
-					$result = activate_snippet( $snippet->id, $snippet->network );
-					if ( is_string( $result ) ) {
-						wp_send_json_error(
-							array(
-								'type'    => 'action_error',
-								'message' => $result,
-							)
-						);
-					}
-				} else {
-					deactivate_snippet( $snippet->id, $snippet->network );
+			} elseif ( $snippet->active ) {
+				$result = activate_snippet( $snippet->id, $snippet->network );
+				if ( is_string( $result ) ) {
+					wp_send_json_error(
+						array(
+							'type'    => 'action_error',
+							'message' => $result,
+						)
+					);
 				}
+			} else {
+				deactivate_snippet( $snippet->id, $snippet->network );
 			}
 		}
 

@@ -1,0 +1,60 @@
+
+.code-snippets-upgrade-dialog {
+	.logo {
+		font-size: 25px;
+		display: grid;
+		gap: 0.2em;
+		grid-template-columns: auto auto;
+		justify-content: center;
+		align-items: center;
+		color: #3f444b;
+
+		img {
+			height: 50px;
+		}
+	}
+
+	p {
+		text-align: left;
+	}
+
+	ul {
+		list-style: none;
+
+		li:before {
+			content: '✓ ';
+			margin-left: 1em;
+			color: #2ecc40;
+		}
+	}
+
+	.components-modal__content {
+		margin-top: 0;
+		padding: 32px;
+	}
+
+	.upgrade-plans {
+		text-align: center;
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		margin: 2em 0;
+	}
+
+	.action-buttons {
+		display: grid;
+		grid-template-columns: auto auto;
+		justify-content: space-around;
+		align-items: center;
+		margin-bottom: 0;
+	}
+
+	.current-plan-cost {
+		font-size: 1rem;
+	}
+
+	.button .dashicons,
+	.button svg {
+		vertical-align: middle;
+		margin-left: 1ch;
+	}
+}

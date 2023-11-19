@@ -1,4 +1,5 @@
 import { src, dest, series, parallel, watch as watchFiles, TaskFunction } from 'gulp'
+import replace from 'gulp-replace'
 import * as path from 'path'
 import { exec } from 'child_process'
 import { promises as fs } from 'fs'
@@ -15,7 +16,7 @@ import zip from 'gulp-zip'
 import rtlcss from 'gulp-rtlcss'
 import cssimport from 'postcss-easy-import'
 import hexrgba from 'postcss-hexrgba'
-import eslint from 'gulp-eslint'
+import eslint from 'gulp-eslint-new'
 import codesniffer from 'gulp-phpcs'
 import removeSourceMaps from 'gulp-remove-sourcemaps'
 import * as pkg from './package.json'
@@ -27,8 +28,8 @@ const SRC_FILES = {
 	css: {
 		all: ['css/**/*.scss'],
 		source: ['css/*.scss', '!css/**/_*.scss'],
-		directional: ['edit.css', 'manage.css'],
-	},
+		directional: ['edit.css', 'manage.css']
+	}
 }
 
 const DEST_DIR = 'dist/'
@@ -45,7 +46,7 @@ const BUNDLE_FILES = [
 	'code-snippets.php',
 	'uninstall.php',
 	'readme.txt',
-	'license.txt',
+	'license.txt'
 ]
 
 const transformCss = () =>
@@ -111,6 +112,16 @@ export const test = parallel(lintJs, phpcs)
 export const build = series(clean, parallel(vendor, css, js))
 
 export default build
+
+export const version: TaskFunction = parallel(
+	() => src('./code-snippets.php')
+		.pipe(replace(/(?<prefix>Version:\s+|@version\s+)\d+\.\d+[\w-.]+$/mg, `$1${pkg.version}`))
+		.pipe(replace(/(?<prefix>'CODE_SNIPPETS_VERSION',\s+)'[\w-.]+'/, `$1'${pkg.version}'`))
+		.pipe(dest('.')),
+	() => src('./readme.txt')
+		.pipe(replace(/(?<prefix>Stable tag:\s+|@version\s+)\d+\.\d+[\w-.]+$/mg, `$1${pkg.version}`))
+		.pipe(dest('.'))
+)
 
 export const bundle: TaskFunction = (() => {
 	const cleanupBefore: TaskFunction = () =>

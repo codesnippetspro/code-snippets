@@ -1,5 +1,7 @@
 <?php
 
+namespace Code_Snippets;
+
 /**
  * Base class for representing an item of data without needing to use direct access or individual getter and setter functions.
  *
@@ -183,9 +185,7 @@ abstract class Data_Item {
 	 *
 	 * @return mixed Value in the correct format.
 	 */
-	protected function prepare_field( $value, string $field ) {
-		return $value;
-	}
+	abstract protected function prepare_field( $value, string $field );
 
 	/**
 	 * Retrieve the list of fields that can be written to.
@@ -204,7 +204,8 @@ abstract class Data_Item {
 	 * @return bool true if the is allowed, false if invalid.
 	 */
 	public function is_allowed_field( string $field ): bool {
-		return array_key_exists( $field, $this->fields ) || array_key_exists( $field, $this->field_aliases );
+		return $this->fields && array_key_exists( $field, $this->fields ) ||
+		       $this->field_aliases && array_key_exists( $field, $this->field_aliases );
 	}
 
 	/**
