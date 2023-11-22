@@ -1,0 +1,25 @@
+{
+    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+    "preferredVersions": {
+        "php": "7.4",
+        "wp": "5.9"
+    },
+    "landingPage": "/wp-admin/admin.php?page=snippets",
+    "steps": [
+        {
+            "step": "login",
+            "username": "admin",
+            "password": "password"
+        },
+        {
+            "step": "installPlugin",
+            "pluginZipFile": {
+                "resource": "wordpress.org/plugins",
+                "slug": "code-snippets"
+            },
+            "options": {
+                "activate": true
+            }
+        }
+    ]
+}
