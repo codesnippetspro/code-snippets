@@ -28,6 +28,13 @@ class Manage_Menu extends Admin_Menu {
 	public $cloud_search_list_table;
 
 	/**
+	 *  URL for Welecome Page.
+	 *
+	 * @var string
+	 */
+	const WELCOME_JSON_URL = 'https://codesnippets.pro/wp-content/uploads/cs_welcome/cs_welcome.json';
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
@@ -157,6 +164,17 @@ class Manage_Menu extends Admin_Menu {
 			PLUGIN_VERSION
 		);
 		$this->render_view( 'welcome' );
+	}
+
+	/**
+	 * Load the welcome data
+	 *
+	 * @return array
+	 */
+	public function load_welcome_data() {
+		$welcome_data = wp_remote_get( self::WELCOME_JSON_URL );
+		$welcome_data = json_decode( wp_remote_retrieve_body( $welcome_data ), true );
+		return $welcome_data;
 	}
 
 	/**

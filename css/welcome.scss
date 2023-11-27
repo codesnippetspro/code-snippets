@@ -73,8 +73,12 @@
         .cs-grid{
             display: grid;
             grid-auto-rows: 1fr;
-            margin-top: 20px;
-            max-width: 1140px;
+            margin-top: 40px;
+            row-gap: 40px;
+
+            .news-item{
+                text-align: center;
+            }
 
             .news-item-img{
                 border-radius: 5px;
@@ -91,8 +95,15 @@
                     box-shadow: 0 2px 9px 1px rgba(35,40,45,0.5) !important;
                 }
             }
-
         }
 
+        .changelog-list{
+            list-style-position: inside;
+            list-style-type: disc;
+
+            li{
+                margin-left: 1rem;
+            }
+        }
     }
 }
