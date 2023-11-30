@@ -22,53 +22,57 @@ if ( ! defined( 'ABSPATH' ) ) {
 use function Code_Snippets\code_snippets;
 ?>
 
-<div class="wrap welcome-wrap">
+<div class="csp-wrap csp-welcome-wrap">
 
-    <div>
-        <img class="cs-logo" width="50px" src="https://codesnippets.pro/wp-content/uploads/2023/11/code-snippets-pro-logo80h-copy-1.png" alt="Code Snippets Logo">    
+    <div class="csp-header-wrap">
+        <img class="csp-logo" width="50px" src="https://codesnippets.pro/wp-content/uploads/2023/11/code-snippets-pro-logo80h-copy-1.png" alt="Code Snippets Logo">    
+        <h1 class="csp-heading">Welcome to Code Snippets</h1>
     </div>
 
-	<h1>Welcome to Code Snippets</h1>
-    <p class="version">Version <?php echo code_snippets()->version  ?> </p>
-
-	<!-- <p>Thank you for choosing Code Snippets for your code management needs. We hope you find our platform easy to use and helpful in organizing your code snippets.</p> -->
-
-    <section class="section section-quicklinks">
-        <h2>Useful links and resources:</h2>
-        <ul class="list-quicklinks">
-            <li><a href="admin.php?page=add-snippet" class="link-quicklink link-new-snippet">New Snippet <span class="dashicons dashicons-edit"></span></a></li>
-            <li><a href="https://codesnippets.cloud/" class="link-quicklink link-cloud">Code Snippet Cloud <span class="dashicons dashicons-cloud"></span></a></li>
-            <li><a href="https://codesnippets.pro/pricing/" class="link-quicklink link-pro">Go Pro <span class="dashicons dashicons-external"></span></a></li>
-            <li><a href="https://help.codesnippets.pro/" class="link-quicklink link-resources">Learn More <span class="dashicons dashicons-welcome-learn-more"></span></a></li>
-            <li><a href="https://www.facebook.com/groups/282962095661875/" class="link-quicklink link-community">Community Support <span class="dashicons dashicons-facebook"></span></a></li>
-        </ul>
-    </section>
-
-    <section class="section section-news"> 
-        <h2>What's New in version <?php echo code_snippets()->version  ?> </h2>
-        <p>Key feature, fixes or improvements in this update:</p> 
-        <ul class="changelog-list">
-            <li>Fixed: Import error when initialising cloud sync configuration. (PRO)</li>
-            <li>Improved: Added debug action for resetting snippets caches.</li>
-        </ul>
-    </section>
+    <article class="csp-section-changes"> 
+        <div class="csp-section-changes-header">
+            <h2 class="csp-h2">Version <?php echo code_snippets()->version  ?> </h2>
+            <a href="https://codesnippets.pro/changelog/" class="csp-link csp-link-changelog">Full Changelog <span class="dashicons dashicons-external"></span></a>
+        </div>
+        <div class="csp-section-changes-log">
+            <p>This update introduces significant improvements and bug fixes, with a focus on enhancing the current cloud sync and Code Snippets AI:</p> 
+            <ul class="csp-changelog-list">
+                <li><strong>Bug Fix:</strong> Import error when initialising cloud sync configuration. (PRO)</li>
+                <li><strong>Improvement:</strong>  Added debug action for resetting snippets caches.</li>
+            </ul>         
+        </div>
+    </article>
     
-    <section class="section section-links"> 
-        <h2>Useful links to guides, videos and more..</h2>
-        
-        <div class="cs-grid cs-grid-3"> 
+    <section class="csp-section-nav">
+        <h2 class="csp-h2 csp-section-links-heading">Useful links and resources:</h2>
+        <ul class="csp-list-nav">
+            <li><a href="admin.php?page=add-snippet" class="csp-link-nav csp-link-new-snippet"><span class="dashicons dashicons-edit"></span><div class="csp-link-text"><span class="csp-link-text-top">Create</span><span class="csp-link-text-bottom">Add new snippet</span></div></a></li>
+            <li><a href="https://codesnippets.cloud/" class="csp-link-nav csp-link-cloud"><span class="dashicons dashicons-cloud"></span><div class="csp-link-text"><span class="csp-link-text-top">Cloud</span><span class="csp-link-text-bottom">Sync and transfer</span></div></a></li>
+            <li><a href="https://codesnippets.pro/pricing/" class="csp-link-nav csp-link-pro"><span class="dashicons dashicons-external"></span><div class="csp-link-text"><span class="csp-link-text-top">Pro</span><span class="csp-link-text-bottom">See all features</span></div></a></li>
+            <li><a href="https://help.codesnippets.pro/" class="csp-link-nav csp-link-resources"><span class="dashicons dashicons-welcome-learn-more"></span><div class="csp-link-text"><span class="csp-link-text-top">Learn</span><span class="csp-link-text-bottom">Become a pro</span></div></a></li>
+            <li><a href="https://www.facebook.com/groups/282962095661875/" class="csp-link-nav csp-link-community"><span class="dashicons dashicons-facebook"></span><div class="csp-link-text"><span class="csp-link-text-top">Community</span><span class="csp-link-text-bottom">Join Facebook group</span></div></a></li>
+        </ul>
+    </section>
 
+
+    <section class="csp-section-links"> 
+        <h2 class="csp-h2 csp-section-links-heading">Helpful tips, hints and tricks:</h2>
+        <div class="csp-grid csp-grid-3"> 
             <?php
                 $news_items = $this->load_welcome_data();
-
                 foreach ( $news_items as $news_item ) {
-                    
-                    echo'<div class="news-item">
-                        
-                            <a href="'. $news_item['follow_url'] .'" class="news-item-link">
-                                <img class="news-item-img" src="'. $news_item['image_url'] .'" alt="">
-                            </a>
-                            <p> ' . $news_item['title'] . ' </p>
+                    echo'<div class="csp-news-item">
+                            <div class="csp-news-item-img-wrap">
+                                <img class="csp-news-item-img" src="'. $news_item['image_url'] .'">
+                            </div>
+                            <div class="csp-news-item-content">
+                            <p class="csp-h2 csp-news-item-title">'. $news_item['title'] .'</p>
+                            <p class="csp-news-item-description">'. $news_item['description'] .'</p>
+                            </div>
+                            <div class="csp-news-item-footer">
+                                <p class="csp-news-item-category">'. $news_item['category'] .'</p>
+                                <a href="'. $news_item['follow_url'] .'" class="csp-link csp-link-changelog" target="_blank">Read more <span class="dashicons dashicons-external"></span></a>
+                            </div>
                         </div>';
                 }
             ?>
