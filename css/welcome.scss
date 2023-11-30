@@ -3,9 +3,8 @@
 
     .csp-header-wrap{
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
-        gap: 20px;
         justify-content: center;
 
         .csp-heading{
@@ -42,7 +41,7 @@
         margin-top: 20px;
         padding: 50px 20px;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         gap: 20px;
 
         .csp-section-changes-header{
