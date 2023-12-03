@@ -114,7 +114,7 @@ class Manage_Menu extends Admin_Menu {
 		add_submenu_page(
 			code_snippets()->get_menu_slug(),
 			__( 'Welcome to Code Snippets', 'code-snippets' ),
-			__( 'What\'s New', 'code-snippets' ),
+			__( 'Resources', 'code-snippets' ),
 			code_snippets()->get_cap(),
 			'code_snippets',
 			array( $this, 'render_welcome' ),

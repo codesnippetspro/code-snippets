@@ -29,28 +29,11 @@ $current_user = wp_get_current_user();
     <div class="csp-header-wrap">
         <img class="csp-logo" width="50px" src="https://codesnippets.pro/wp-content/uploads/2023/11/code-snippets-pro-logo80h-copy-1.png" alt="Code Snippets Logo">    
         <h1 class="csp-heading">
-            <?php printf( __( 'Welcome, %s to Code Snippets', 'code-snippets' ), esc_html__( $current_user->display_name, 'code-snippets' ) );   ?>
+            <?php printf( __( 'Welcome, <span>%s</span> to Code Snippets', 'code-snippets' ), esc_html__( $current_user->display_name, 'code-snippets' ) );   ?>
         </h1>
     </div>
 
-    <article class="csp-section-changes"> 
-        <div class="csp-section-changes-header">
-            <h2 class="csp-h2">
-                <?php printf( __( 'What\'s new in Version %s', 'code-snippets' ), esc_html( code_snippets()->version ) ); ?>
-            </h2>
-            <a href="https://codesnippets.pro/changelog/" class="csp-link csp-link-changelog"><?php echo __('Full Changelog', 'code-snippets'); ?><span class="dashicons dashicons-external"></span></a>
-        </div>
-        <div class="csp-section-changes-log">
-            <p><?php echo __( 'This update introduces significant improvements and bug fixes, with a focus on enhancing the current cloud sync and Code Snippets AI:', 'code-snippets' ) ?></p> 
-            <ul class="csp-changelog-list">
-                <li><?php echo __('<b>Bug Fix: </b>', 'code-snippets' );  echo __('Import error when initialising cloud sync configuration. (PRO)', 'code-snippets' ); ?></li>
-                <li><?php echo __('<b>Improvement: </b>', 'code-snippets' );  echo __('Added debug action for resetting snippets caches', 'code-snippets' ); ?></li>
-            </ul>         
-        </div>
-    </article>
-    
     <section class="csp-section-nav">
-        <h2 class="csp-h2 csp-section-links-heading"><?php echo __('Useful links and resources:', 'code-snippets'); ?></h2>
         <ul class="csp-list-nav">
             <li>
                 <?php 
@@ -100,24 +83,70 @@ $current_user = wp_get_current_user();
         </ul>
     </section>
 
+    <article class="csp-section-changes"> 
+        <div class="csp-section-changes-left-col csp-section-changes-col">
+            <div class="csp-section-changes-header">
+                <h2 class="csp-h2">
+                    <?php echo __( 'Code Snippet AI is here.. ', 'code-snippets' ); ?>
+                    🚀
+                </h2>
+                <a href="https://codesnippets.pro/changelog/" class="csp-link csp-link-changelog"><?php echo __('Read more', 'code-snippets'); ?><span class="dashicons dashicons-external"></span></a>
+            </div>
+            <div class="csp-section-changes-img-wrap">
+                <img class="csp-section-changes-img" src="https://codesnippets.pro/wp-content/uploads/2023/12/cs_ai_demo_full.gif" alt="Code Snippets AI">
+            </div>           
+        </div>
+        <div class="csp-section-changes-right-col csp-section-changes-col">
+            <div class="csp-section-changes-right-col-top csp-card-white">
+                <div class="csp-section-changes-header">
+                    <h2 class="csp-h2">
+                        <?php printf( __( 'What\'s new in Version %s', 'code-snippets' ), esc_html( code_snippets()->version ) ); ?>
+                    </h2>
+                    <a href="https://codesnippets.pro/changelog/" class="csp-link csp-link-changelog"><?php echo __('Full Changelog', 'code-snippets'); ?><span class="dashicons dashicons-external"></span></a>
+                </div>
+                <div class="csp-section-changes-log">
+                    <p><?php echo __( 'This update introduces significant improvements and bug fixes, with a focus on enhancing the current cloud sync and Code Snippets AI:', 'code-snippets' ) ?></p> 
+                    <ul class="csp-changelog-list">
+                        <li><?php echo __('<b>Bug Fix: </b>', 'code-snippets' );  echo __('Import error when initialising cloud sync configuration. (PRO)', 'code-snippets' ); ?></li>
+                        <li><?php echo __('<b>Improvement: </b>', 'code-snippets' );  echo __('Added debug action for resetting snippets caches', 'code-snippets' ); ?></li>
+                    </ul>         
+                </div>
+            </div>
+            <div class="csp-section-changes-right-col-bottom csp-card-white">
+                <div class="csp-section-changes-header">
+                    <h2 class="csp-h2">
+                        Some other cool stuff
+                    </h2>
+                    <a href="https://codesnippets.pro/changelog/" class="csp-link csp-link-changelog"><?php echo __('Link to cool stuff', 'code-snippets'); ?><span class="dashicons dashicons-external"></span></a>
+                </div>
+                <div class="csp-section-changes-log">
+                    <p><?php echo __( 'A paragraph about some cool stuff...', 'code-snippets' ) ?></p>        
+                </div>
+            </div>
+        </div>
+    </article>
+    
+ 
+
 
     <section class="csp-section-links"> 
         <h2 class="csp-h2 csp-section-links-heading"><?php echo __('Helpful tips, hints and tricks:', 'code-snippets'); ?></h2>
         <div class="csp-grid csp-grid-3"> 
             <?php
                 $news_items = $this->load_welcome_data();
-                foreach ( $news_items as $news_item ) {
+                $item_limit = 3;
+                for( $i = 0; $i < $item_limit; $i++ ) {
                     echo'<div class="csp-news-item">
                             <div class="csp-news-item-img-wrap">
-                                <img class="csp-news-item-img" src="'. esc_url($news_item['image_url']) .'">
+                                <img class="csp-news-item-img" src="'. esc_url( $news_items[$i]['image_url'] ) .'">
                             </div>
                             <div class="csp-news-item-content">
-                            <p class="csp-h2 csp-news-item-title">'. esc_html__( $news_item['title'], 'code-snippets') .'</p>
-                            <p class="csp-news-item-description">'. esc_html__($news_item['description'], 'code-snippets') .'</p>
+                            <p class="csp-h2 csp-news-item-title">'. esc_html__( $news_items[$i]['title'], 'code-snippets') .'</p>
+                            <p class="csp-news-item-description">'. esc_html__( $news_items[$i]['description'], 'code-snippets') .'</p>
                             </div>
                             <div class="csp-news-item-footer">
-                                <p class="csp-news-item-category">'. esc_html__($news_item['category'], 'code-snippets') .'</p>
-                                <a href="'. esc_url($news_item['follow_url']) .'" class="csp-link csp-link-changelog" target="_blank">Read more <span class="dashicons dashicons-external"></span></a>
+                                <p class="csp-news-item-category">'. esc_html__( $news_items[$i]['category'], 'code-snippets') .'</p>
+                                <a href="'. esc_url( $news_items[$i]['follow_url'] )  .'" class="csp-link csp-link-changelog" target="_blank">Read more <span class="dashicons dashicons-external"></span></a>
                             </div>
                         </div>';
                 }
