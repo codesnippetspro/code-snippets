@@ -17,7 +17,7 @@ export const config: Configuration = {
 		},
 		mce: `${SOURCE_DIR}/mce.ts`,
 		prism: `${SOURCE_DIR}/prism.ts`,
-		editor: `${SOURCE_DIR}/editor.ts`
+		editor: `${SOURCE_DIR}/editor.ts`,
 	},
 	output: {
 		path: path.join(path.resolve(__dirname), DEST_DIR),

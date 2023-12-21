@@ -156,20 +156,20 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render_welcome() {
-		//Enqueue the welcome screen CSS
+		//Enqueue the welcome screen CSS 
 		wp_enqueue_style(
 			'code-snippets-welcome',
 			plugins_url( 'dist/welcome.css', PLUGIN_FILE ),
 			[],
 			PLUGIN_VERSION
-		);
+		);		
 		$this->render_view( 'welcome' );
 	}
 
 	/**
 	 * Load the welcome data
 	 *
-	 * @return array
+	 * @return string
 	 */
 	public function load_welcome_data() {
 		$welcome_data = wp_remote_get( self::WELCOME_JSON_URL );

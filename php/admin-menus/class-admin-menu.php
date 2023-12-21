@@ -172,6 +172,7 @@ abstract class Admin_Menu {
 		$db->create_missing_table( $db->table );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+
 	}
 
 	/**
