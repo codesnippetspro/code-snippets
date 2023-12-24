@@ -24,6 +24,18 @@ class Cloud_Bundles extends Cloud_Search_List_Table {
 		if ( isset( $_REQUEST['cloud-bundle-run'] ) && sanitize_key( wp_unslash( $_REQUEST['cloud-bundle-run'] ) ) ) {
 			$this->run_bundle_action( $this->items );
 		}
+
+		// Process Download single snippet action
+		if ( isset( $_REQUEST['type'] ) && 'bundles' === $_REQUEST['type'] ) {
+			if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+				cloud_lts_process_download_action(
+					sanitize_key( wp_unslash( $_REQUEST['action'] ) ),
+					sanitize_key( wp_unslash( $_REQUEST['source'] ) ),
+					sanitize_key( wp_unslash( $_REQUEST['snippet'] ) ),
+					0
+				);
+			}
+		}
 	}
 
 	/**
