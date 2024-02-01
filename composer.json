@@ -38,7 +38,9 @@
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.0",
         "phpcompatibility/phpcompatibility-wp": "*",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2"
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+        "php-stubs/wp-cli-stubs": "^2.9",
+        "php-stubs/wordpress-stubs": "^6.4"
     },
     "config": {
         "allow-plugins": {
