@@ -11,29 +11,24 @@ An easy, clean and simple way to enhance your site with code snippets.
 
 == Description ==
 
-✂ Code Snippets provides an effortless way to enhance your WordPress site. Say goodbye to the hassle of tweaking your
-theme's `functions.php` file and downloading endless plugins – Code Snippets simplifies the process!
+✂ Code Snippets provides an effortless way to enhance your WordPress site. Say goodbye to the hassle of tweaking your theme's `functions.php` file and downloading endless plugins – Code Snippets simplifies the process!
 
-**🚀 Upgrade to Code Snippets Pro** for complete CSS, JavaScript, Gutenberg, and Elementor integrations. Elevate your
-snippets experience now: [Check out our pricing](https://codesnippets.pro/pricing).
+**🚀 Upgrade to Code Snippets Pro** for complete CSS, JavaScript, Gutenberg, and Elementor integrations. Elevate your snippets experience now: [Check out our pricing](https://codesnippets.pro/pricing).
 
-A snippet is like a mini-plugin for your WordPress site, providing added functionality without the clutter. Unlike other
-solutions that involve dump code into your `functions.php` file, Code Snippets offers a sleek GUI interface for seamless
-integration and real-time execution.
+A snippet is like a mini-plugin for your WordPress site, providing added functionality without the clutter. Unlike other solutions that involve dump code into your `functions.php` file, Code Snippets offers a sleek GUI interface for seamless integration and real-time execution.
 
-**🎥 Watch a quick overview by Imran Siddiq:** [See Code Snippets in action](https://youtu.be/EMjIWjcYONk).
+**🎥 Watch a quick overview by Imran Siddiq:**
 
 https://youtu.be/EMjIWjcYONk
 
-Managing snippets is a breeze with our graphical interface, similar to the Plugins menu. Activate and deactivate
-snippets effortlessly, just like plugins.
+Managing snippets is a breeze with our graphical interface, similar to the Plugins menu. Activate and deactivate snippets effortlessly, just like plugins.
 
-**📚 Learn from Ferdy Korpershoek's tutorial:** [Get hands-on with Code Snippets](https://youtu.be/29jD2BcBX5w).
+The snippet editor lets you add a name, a visually appealing description, and tags for easy categorization. Export snippets in JSON or PHP for seamless transfer between sites.
+
+
+**📚 Learn from Ferdy Korpershoek's tutorial:**
 
 https://youtu.be/29jD2BcBX5w
-
-The snippet editor lets you add a name, a visually appealing description, and tags for easy categorization. Export
-snippets in JSON or PHP for seamless transfer between sites.
 
 **🌐 Connect with us:**
 
@@ -41,13 +36,9 @@ snippets in JSON or PHP for seamless transfer between sites.
 * [Facebook Community](https://facebook.com/groups/codesnippetsplugin)
 * [GitHub Repository](https://github.com/codesnippetspro/code-snippets)
 
-Like our plugin? Find it useful? Share your experience by leaving a review
-on [WordPress.org](https://wordpress.org/support/view/plugin-reviews/code-snippets). Your feedback is instrumental to
-shaping our future growth!
+Like our plugin? Find it useful? Share your experience by leaving a review on [WordPress.org](https://wordpress.org/support/view/plugin-reviews/code-snippets). Your feedback is instrumental to shaping our future growth!
 
-We'd like to thank the wonderful people who have helped contribute translations to allow Code Snippets to be used in
-different languages.
-[You can find a full list here](https://github.com/codesnippetspro/code-snippets/blob/core/CREDITS.md#translators).
+We'd like to thank the wonderful people who have helped contribute translations to allow Code Snippets to be used in different languages. [You can find a full list here](https://github.com/codesnippetspro/code-snippets/blob/core/CREDITS.md#translators).
 
 == Installation ==
 
@@ -67,53 +58,42 @@ different languages.
 3. Upload the contents of the zip file to the `wp-content/plugins/` folder of your WordPress installation
 4. Activate the Code Snippets plugin from 'Plugins' page.
 
-Network Activating Code Snippets through the Network Dashboard will enable a special interface for running snippets
-across the entire network.
+Network Activating Code Snippets through the Network Dashboard will enable a special interface for running snippets across the entire network.
 
 == Frequently Asked Questions ==
 
-A full list of our Frequently Asked Questions can be found
-at [help.codesnippets.pro](https://help.codesnippets.pro/collection/3-faq).
+A full list of our Frequently Asked Questions can be found at [help.codesnippets.pro](https://help.codesnippets.pro/collection/3-faq).
 
 = How can I recover my site if it is crashed by a buggy snippet? =
-You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are
-available here: <https://help.codesnippets.pro/article/12-safe-mode>.
+You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: <https://help.codesnippets.pro/article/12-safe-mode>.
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.
 
 = Can the plugin be completely uninstalled? =
-If you enable the 'Complete Uninstall' option on the plugin settings page, Code Snippets will clean up all of its data
-when deleted through the WordPress 'Plugins' menu. This includes all stored snippets. If you would like to preserve the
-snippets, ensure they are exported first.
+If you enable the 'Complete Uninstall' option on the plugin settings page, Code Snippets will clean up all of its data when deleted through the WordPress 'Plugins' menu.
+This includes all stored snippets. If you would like to preserve the snippets, ensure they are exported first.
 
 = Can I copy snippets that I have created to another WordPress site? =
-Yes! You can individually export a single snippet using the link below the snippet name on the 'Manage Snippets' page or
-bulk export multiple snippets using the 'Bulk Actions' feature. Snippets can later be imported using the 'Import
-Snippets' page by uploading the export file.
+Yes! You can individually export a single snippet using the link below the snippet name on the 'Manage Snippets' page or bulk export multiple snippets using the 'Bulk Actions' feature.
+Snippets can later be imported using the 'Import Snippets' page by uploading the export file.
 
 = Can I export my snippets to PHP for a site where I'm not using the Code Snippets plugin? =
-Yes. Click the checkboxes next to the snippets you want to export, and then choose **Export to PHP** from the Bulk
-Actions menu and click Apply. The generated PHP file will contain the exported snippets' code, as well as their name and
-description in comments.
+Yes. Click the checkboxes next to the snippets you want to export, and then choose **Export to PHP** from the Bulk Actions menu and click Apply.
+The generated PHP file will contain the exported snippets' code, as well as their name and description in comments.
 
 = Can I run network-wide snippets on a multisite installation? =
-You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network
-Dashboard. You can also activate Code Snippets just on the main site, and then individually on other sites of your
-choice.
+You can run snippets across an entire multisite network by **Network Activating** Code Snippets through the Network Dashboard.
+You can also activate Code Snippets just on the main site, and then individually on other sites of your choice.
 
 = Where are the snippets stored in my WordPress database? =
-Snippets are stored in the `wp_snippets` table in the WordPress database. The table name may differ depending on what
-your table prefix is set to.
+Snippets are stored in the `wp_snippets` table in the WordPress database. The table name may differ depending on what your table prefix is set to.
 
 = Where can I go for help or suggest new features? =
-You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on
-the [WordPress Support Forums](https://wordpress.org/support/plugin/code-snippets) or
-on [GitHub](https://github.com/codesnippetspro/code-snippets)
+You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums](https://wordpress.org/support/plugin/code-snippets) or on [GitHub](https://github.com/codesnippetspro/code-snippets)
 
 = How can I help contribute to the development of the Code Snippets plugin? =
-The best way to do this is to fork the [repository on GitHub](https://github.com/codesnippetspro/code-snippets) and send
-a pull request.
+The best way to do this is to fork the [repository on GitHub](https://github.com/codesnippetspro/code-snippets) and send a pull request.
 
 = How can I report security bugs found in this plugin? =
 You can report security bugs found in the source code of this plugin through
