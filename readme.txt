@@ -1,72 +1,45 @@
 === Code Snippets ===
 Contributors: bungeshea, ver3, lightbulbman, 0aksmith, codesnippetspro
 Donate link: https://codesnippets.pro
-Tags: snippets, functions, multisite, code, php, html, css, javascript
+Tags: snippets, functions, multisite, code, php, html, css, javascript, js, content, scripts, styles, cloud, shortcode
 License: MIT
 License URI: license.txt
 Stable tag: 3.6.2
-Tested up to: 6.4
+Tested up to: 6.4.3
 
-An easy, clean and simple way to run code snippets on your site.
+An easy, clean and simple way to enhance your site with code snippets.
 
 == Description ==
 
-Code Snippets is an easy, clean and simple way to run code snippets on your site. It removes the need to add custom snippets to your theme's `functions.php` file.
+**✂ Code Snippets** provides an effortless way to enhance your WordPress site.
 
-[**Code Snippets Pro** is now available, with full CSS, JavaScript, Gutenberg and Elementor integrations.](https://codesnippets.pro/pricing/)
+**🚀 Upgrade to Code Snippets Pro** for complete CSS, JavaScript, Gutenberg, Elementor and cloud synchronisation integrations. **[Elevate your snippets experience now!](https://codesnippets.pro/pricing)**
 
-A snippet is a small chunk of PHP code that you can use to extend the functionality of a WordPress-powered website; essentially a mini-plugin with less load on your site.
+Say goodbye to the hassle of tweaking your theme's `functions.php` file and downloading endless plugins – Code Snippets simplifies the process!
 
-Most snippet-hosting sites tell you to add snippet code to your active theme's `functions.php` file, which can get rather long and messy after a while.
+A snippet is like a mini-plugin for your WordPress site, providing added functionality without the clutter.
 
-Code Snippets changes that by providing a GUI interface for adding snippets and **actually running them on your site** just as if they were in your theme's `functions.php` file.
+Unlike other solutions that involve dumping code into your `functions.php` file, Code Snippets offers an intuitive graphical interface for seamless integration and real-time execution. Managing snippets is as easy as activating and deactivating plugins, only without the bloat and overhead.
 
-**Quick overview of Code Snippets by Imran Siddiq**
+**🎥 Watch a quick overview by Imran Siddiq:**
 
 https://youtu.be/EMjIWjcYONk
 
-Code Snippets provides graphical interface, similar to the Plugins menu, for managing snippets. Snippets can be activated and deactivated, just like plugins.
+☁️ Each copy of Code Snippets includes full integration with the community-powered [Code Snippets Cloud](https://codesnippets.cloud/) platform, providing easy access to hundreds of tweaks and enhancements ready to power-up any WordPress site.
 
-The snippet editor includes fields for a name, a visual editor-enabled description, tags to allow you to categorize snippets, and a full-featured code editor. Snippets can be exported for transfer to another site, either in JSON for later importing by the Code Snippets plugin, or in PHP for creating your own plugin or theme.
-
-**Comprehensive Code Snippets tutorial with practical examples by Ferdy Korpershoek**
+**📚 Learn from Ferdy Korpershoek's tutorial:**
 
 https://youtu.be/29jD2BcBX5w
 
-If you have any feedback, issues, or suggestions for improvements please leave a topic in the [Support Forum](https://wordpress.org/support/plugin/code-snippets), [join the community on Facebook](https://facebook.com/groups/codesnippetsplugin), or [check us out on GitHub](https://github.com/codesnippetspro/code-snippets).
+**🌐 Connect with us:**
 
-If you like this plugin, or it is useful to you in some way, please consider reviewing it on [WordPress.org](https://wordpress.org/support/view/plugin-reviews/code-snippets).
+* [Support Forum](https://wordpress.org/support/plugin/code-snippets)
+* [Facebook Community](https://facebook.com/groups/codesnippetsplugin)
+* [GitHub Repository](https://github.com/codesnippetspro/code-snippets)
 
-== Translations ==
+🌟 Like our plugin? Find it useful? Please consider sharing your experience by [leaving a review on WordPress.org](https://wordpress.org/support/view/plugin-reviews/code-snippets). Your feedback is instrumental to shaping our future growth!
 
-Code Snippets can be used in these different languages thanks to the following translators:
-
-* Belarusian – [Hrank.com](https://www.hrank.com)
-* Brazilian Portuguese – [Bruno Borges](http://brunoborges.info)
-* Chinese – [Jincheng Shan](http://shanjincheng.com) and [诗语](https://profiles.wordpress.org/f2010525/)
-* Chinese (Taiwan) – [Alex Lion](https://www.alexclassroom.com/) and [Chun-Chih Cheng](https://profiles.wordpress.org/alex1114/)
-* Croatian – [Borisa Djuraskovic from Web Hosting Hub](https://www.webhostinghub.com/)
-* Czech  – [Lukáš Tesař](mailto:lukastesar03@gmail.com) and [Jakub Humpolec](https://profiles.wordpress.org/jumphy/)
-* Danish – [Finn Sommer Jensen](https://profiles.wordpress.org/finnsommer/)
-* Dutch – [Sander Spies](https://github.com/sander1), [Peter Smits](https://psmits.com) and [mother.of.code.a11n](https://profiles.wordpress.org/imazed/)
-* English (New Zealand) and English (UK) – [webaware](https://profiles.wordpress.org/webaware/)
-* English (South Africa) – [webaware](https://profiles.wordpress.org/webaware/) and [Ian Barnes](https://profiles.wordpress.org/ianbarnes/)
-* French – [momo-fr](https://www.momofr.net/), [Didier Demory](https://www.wptrads.com/), [Cyrille Sanson](https://100son.net/) and [Shea Bunge](https://sheabunge.com)
-* French (Canada) – [Dominic Desbiens](https://www.dominicdesbiens.com/)
-* German – [Mario Siegmann](https://web-alltag.de/), [Joerg Knoerchen](https://www.sensorgrafie.de/), [David Decker](https://deckerweb.de) and [Andreas](https://profiles.wordpress.org/perryzelda/)
-* Greek – [Konstantinos Megas](https://profiles.wordpress.org/nextdoorpanda/) and [Toni Bishop from Jrop](https://www.jrop.com/)
-* Indonesian – [Jordan Silaen from ChameleonJohn.com](https://www.chameleonjohn.com/)
-* Italian – [Usman Wagan](https://coupontoaster.com/), [Luisa Ravelli](https://profiles.wordpress.org/darkavenger/) and [ElectricFeet](https://profiles.wordpress.org/electricfeet/)
-* Japanese – [mt8](https://mt8.biz/), [Takakazu Nagaya](https://profiles.wordpress.org/tanagaya/), [Naoko Takano](https://naoko.blog/) and [melvas](https://profiles.wordpress.org/melvas/)
-* Persian – [Mohammad Novintanon](http://mnovintan.ir/)
-* Russian – [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html), [Yui](https://profiles.wordpress.org/fierevere/), [Denis Yanchevskiy](https://denisco.pro/) and [krioteh](https://profiles.wordpress.org/krioteh/)
-* Slovak – [Ján Fajčák](https://wp.sk)
-* Spanish (Colombia) and Spanish (Ecuador) – [Javier Esteban](https://javieresteban.org/)
-* Spanish (Spain) – [Ibidem Group](https://www.ibidemgroup.com), [Javier Esteban](https://javieresteban.org/), [Fernando Tellado](https://ayudawp.com/) and [Juanma Aranda](https://juanmaaranda.com/)
-* Spanish (Venezuela) – [Yordan Soares](https://yordansoar.es/)
-* Swedish – [Argentum](https://profiles.wordpress.org/argentum/), [Fredrik](https://profiles.wordpress.org/elbogen/) and [Tor-Bjorn Fjellner](https://profiles.wordpress.org/tobifjellner/)
-* Urdu – [Samuel Badree](https://mobilemall.pk/)
-* Vietnamese – [Tuan Phan](https://profiles.wordpress.org/khunglong/)
+🌍 We'd like to thank the wonderful people who have helped contribute translations to allow Code Snippets to be used in different languages. [You can find a full list here](https://github.com/codesnippetspro/code-snippets/blob/core/CREDITS.md#translators).
 
 == Installation ==
 
@@ -114,7 +87,7 @@ You can run snippets across an entire multisite network by **Network Activating*
 Snippets are stored in the `wp_snippets` table in the WordPress database. The table name may differ depending on what your table prefix is set to.
 
 = Where can I go for help or suggest new features? =
-You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums](https://wordpress.org/support/plugin/code-snippets) or on [GitHub](https://github.com/codesnippetspro/code-snippets)
+You can get help with Code Snippets, report bugs or errors, and suggest new features and improvements either on the [WordPress Support Forums](https://wordpress.org/support/plugin/code-snippets) or on [GitHub](https://github.com/codesnippetspro/code-snippets).
 
 = How can I help contribute to the development of the Code Snippets plugin? =
 The best way to do this is to fork the [repository on GitHub](https://github.com/codesnippetspro/code-snippets) and send a pull request.
