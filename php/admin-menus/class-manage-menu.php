@@ -208,6 +208,8 @@ class Manage_Menu extends Admin_Menu {
 			true
 		);
 
+		wp_set_script_translations( 'code-snippets-manage-js', 'code-snippets' );
+
 		if ( 'cloud_search' === $this->get_current_type() ) {
 			Frontend::enqueue_all_prism_themes();
 		}

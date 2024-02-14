@@ -149,36 +149,34 @@ class Edit_Menu extends Admin_Menu {
 
 		enqueue_code_editor( $this->snippet->type );
 
-		$css_deps = [
-			'code-editor',
-			'wp-components',
-		];
-
-		$js_deps = [
-			'code-snippets-code-editor',
-			'react',
-			'react-dom',
-			'wp-url',
-			'wp-i18n',
-			'wp-api-fetch',
-			'wp-components',
-			'wp-block-editor',
-		];
-
 		wp_enqueue_style(
 			self::CSS_HANDLE,
 			plugins_url( "dist/edit$rtl.css", $plugin->file ),
-			$css_deps,
+			[
+				'code-editor',
+				'wp-components',
+			],
 			$plugin->version
 		);
 
 		wp_enqueue_script(
 			self::JS_HANDLE,
 			plugins_url( 'dist/edit.js', $plugin->file ),
-			$js_deps,
+			[
+				'code-snippets-code-editor',
+				'react',
+				'react-dom',
+				'wp-url',
+				'wp-i18n',
+				'wp-api-fetch',
+				'wp-components',
+				'wp-block-editor',
+			],
 			$plugin->version,
 			true
 		);
+
+		wp_set_script_translations( self::JS_HANDLE, 'code-snippets' );
 
 		if ( $desc_enabled ) {
 			remove_editor_styles();
