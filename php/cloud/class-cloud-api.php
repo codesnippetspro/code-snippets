@@ -408,8 +408,8 @@ class Cloud_API {
 
 		return [
 			'cloud_id'        => (int) $cloud_id_owner[0] ?? '',
-			'is_owner'        => (bool) $cloud_id_owner[1] ?? false,
-			'is_owner_string' => $cloud_id_owner[1] ? '1' : '0',
+			'is_owner' => isset($cloud_id_owner[1]) ? (bool) $cloud_id_owner[1] : false,
+			'is_owner_string' => isset($cloud_id_owner[1]) && $cloud_id_owner[1] ? '1' : '0',
 		];
 	}
 
@@ -587,9 +587,10 @@ class Cloud_API {
 			]
 		);
 
+		
 		$body = wp_remote_retrieve_body( $response );
 		$data = json_decode( $body, true );
-
+		
 		// Check the response codes and return accordingly.
 		if ( 401 === wp_remote_retrieve_response_code( $response ) ) {
 			return new WP_Error(

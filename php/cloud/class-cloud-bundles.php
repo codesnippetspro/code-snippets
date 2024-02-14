@@ -24,6 +24,18 @@ class Cloud_Bundles extends Cloud_Search_List_Table {
 		if ( isset( $_REQUEST['cloud-bundle-run'] ) && sanitize_key( wp_unslash( $_REQUEST['cloud-bundle-run'] ) ) ) {
 			$this->run_bundle_action( $this->items );
 		}
+
+		// Process Download single snippet action
+		if ( isset( $_REQUEST['type'] ) && 'bundles' === $_REQUEST['type'] ) {
+			if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+				cloud_lts_process_download_action(
+					sanitize_key( wp_unslash( $_REQUEST['action'] ) ),
+					sanitize_key( wp_unslash( $_REQUEST['source'] ) ),
+					sanitize_key( wp_unslash( $_REQUEST['snippet'] ) ),
+					0
+				);
+			}
+		}
 	}
 
 	/**
@@ -59,7 +71,13 @@ class Cloud_Bundles extends Cloud_Search_List_Table {
 	public function run_bundle_action( array $items ) {
 		foreach ( $items as $snippet_to_store ) {
 			// Check if the snippet already exists in the database.
-			$codevault_snippet = get_snippet_by_cloud_id( $snippet_to_store->id . '_' . $snippet_to_store->is_owner );
+			$snippet_locally_stored = get_snippet_by_cloud_id( $snippet_to_store->id . '_' . $snippet_to_store->is_owner );
+			// If snippet is already stored locally, then skip.
+			if ( $snippet_locally_stored ) {
+				continue;
+			}
+			// Is the snippet in user code vault.
+			$codevault_snippet = (bool) $snippet_to_store->is_owner;
 			$snippet_to_store = [ $snippet_to_store ];
 			code_snippets()->cloud_api->store_snippets_from_cloud_to_local( $snippet_to_store, (bool) $codevault_snippet );
 		}

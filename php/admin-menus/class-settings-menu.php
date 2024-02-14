@@ -41,7 +41,7 @@ class Settings_Menu extends Admin_Menu {
 		if ( isset( $_GET['confirm-authorise-cloud'], $_GET['code'], $_GET['state'] ) ) {
 			$auth_code = sanitize_text_field( wp_unslash( $_GET['code'] ) );
 			$state = sanitize_text_field( wp_unslash( $_GET['state'] ) );
-
+			
 			$result = code_snippets()->cloud_api->decode_auth_code( $state, $auth_code );
 
 			wp_safe_redirect(
