@@ -43,5 +43,3 @@ export const isProType = (type: SnippetType): boolean =>
 
 export const isLicensed = (): boolean =>
 	!!window.CODE_SNIPPETS?.isLicensed
-
-export const isAIAvailable = (): boolean => isLicensed()

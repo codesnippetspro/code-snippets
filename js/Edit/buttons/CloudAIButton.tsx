@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { Button, ButtonProps } from '../../common/Button'
 import { Snippet } from '../../types/Snippet'
-import { isAIAvailable } from '../../utils/snippets'
+import { isLicensed } from '../../utils/snippets'
 
 export const GenerateIcon = () =>
 	<svg
@@ -43,7 +43,7 @@ export const CloudAIButton: React.FC<CloudAIButtonProps> = ({
 }) => {
 	const [isCloudModalOpen, setIsCloudModalOpen] = useState(false)
 
-	return isAIAvailable(snippet) ?
+	return isLicensed() ?
 		<>
 			{isCloudModalOpen ?
 				<Modal
@@ -58,8 +58,8 @@ export const CloudAIButton: React.FC<CloudAIButtonProps> = ({
 						<span className="dashicons dashicons-cloud"></span>
 					</div>
 
-					<p>A connection to Code Snippets Cloud is required to use this functionality.</p>
-					<p>Once connected, reload this page to recognise the new connection status.</p>
+					<p>{__('A connection to Code Snippets Cloud is required to use this functionality.', 'code-snippets')}</p>
+					<p>{__('Once connected, reload this page to recognise the new connection status.', 'code-snippets')}</p>
 
 					<div className="action-buttons">
 						<a
