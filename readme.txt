@@ -4,8 +4,8 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript, js, content, scripts, styles, cloud, shortcode
 License: MIT
 License URI: license.txt
-Stable tag: 3.6.2
-Tested up to: 6.4.3
+Stable tag: 3.6.4-beta.1
+Tested up to: 6.5-beta2
 
 An easy, clean and simple way to enhance your site with code snippets.
 
@@ -103,6 +103,16 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.6.4 (beta release) =
+* Fixed: Minor type compatability issue with newer versions of PHP.
+* Improvement: Increment the revision number of CSS and JS snippet when using the 'Reset Caches' debug action. (PRO)
+* Fixed: Undefined array key issue when initiating cloud sync. (PRO)
+* Fixed: Bug preventing downloading a single snippet from a bundle. (PRO)
+* Added: AI generation for all snippet types: HTML, CSS, JS. (PRO)
+* Fixed: Translations not loading for strings in JavaScript files.
+* Improved: UX in generate dialog, such as allowing 'Enter' to submit the form. (PRO)
+* Added: Button to create a cloud connection directly from the Snippets menu when disconnected. (PRO)
 
 = 3.6.3 (13 Nov 2023) =
 * Fixed: Import error when initialising cloud sync configuration. (PRO)
@@ -229,23 +239,5 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 * Added: Option to choose from 44 different themes for the Prism code highlighter in the source editor block and Elementor widget. (PRO)
 * Improved: Compatibility of Elementor widgets with the latest version of Elementor. (PRO)
 * Improved: Replace icon font menu icon with embedded SVG icon.
-
-= 3.1.2 (03 Jul 2022) =
-* Updated external links and branding for Code Snippets Pro.
-* Improved: Add link URLs to settings pages, as an alternative to in-page navigation.
-* Fixed: Various fixes to block editor scripts. (PRO)
-* Fixed: Improved visual style of Gutenberg editor blocks. (PRO)
-
-= 3.1.1 (13 Jun 2022) =
-* Fixed: Download snippets feature not including snippet content.
-* Fixed: Alignment of 'opens externally' dashicon.
-* Improved: Added additional parameters to `code_snippets/export/filename` filter.
-
-= 3.1.0 (17 May 2022) =
-* Fixed: Caching inconsistencies preventing snippets and settings from refreshing on sites with persistent object caching.
-* Improved: Simplified database queries.
-* Added: More comprehensive cache coverage, including for active snippets.
-* Added: Icon to 'Go Pro' button indicating it opens an external tab.
-* Improved: Allow display styles in snippet descriptions.
 
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
