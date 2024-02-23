@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.6.4 (unreleased)
+* Fixed: Minor type compatability issue with newer versions of PHP.
+* Improvement: Increment the revision number of CSS and JS snippet when using the 'Reset Caches' debug action. (PRO)
+* Fixed: Undefined array key issue when initiating cloud sync. (PRO)
+* Fixed: Bug preventing downloading a single snippet from a bundle. (PRO)
+* Added: AI generation for all snippet types: HTML, CSS, JS. (PRO)
+* Fixed: Translations not loading for strings in JavaScript files.
+* Improved: UX in generate dialog, such as allowing 'Enter' to submit the form. (PRO)
+* Added: Button to create a cloud connection directly from the Snippets menu when disconnected. (PRO)
+
 ## 3.6.3 (13 Nov 2023)
 * Fixed: Import error when initialising cloud sync configuration. (PRO)
 * Improved: Added debug action for resetting snippets caches.
