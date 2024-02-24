@@ -52,16 +52,22 @@ class Cloud_Bundles extends Cloud_Search_List_Table {
 	/**
 	 * Run the bundle action
 	 *
-	 * @param array $items List of cloud Snippets.
+	 * @param Cloud_Snippet[] $snippets_to_store List of cloud snippets to store locally.
 	 *
 	 * @return void
 	 */
-	public function run_bundle_action( array $items ) {
-		foreach ( $items as $snippet_to_store ) {
+	public function run_bundle_action( array $snippets_to_store ) {
+		$api = code_snippets()->cloud_api;
+
+		foreach ( $snippets_to_store as $snippet_to_store ) {
 			// Check if the snippet already exists in the database.
-			$codevault_snippet = get_snippet_by_cloud_id( $snippet_to_store->id . '_' . $snippet_to_store->is_owner );
-			$snippet_to_store = [ $snippet_to_store ];
-			code_snippets()->cloud_api->store_snippets_from_cloud_to_local( $snippet_to_store, (bool) $codevault_snippet );
+			$snippet_locally_stored = get_snippet_by_cloud_id( $snippet_to_store->id . '_' . $snippet_to_store->is_owner );
+
+			if ( $snippet_locally_stored ) {
+				continue;
+			}
+
+			$api->store_snippets_from_cloud_to_local( [ $snippet_to_store ], (bool) $snippet_to_store->is_owner );
 		}
 
 		wp_safe_redirect( esc_url_raw( code_snippets()->get_menu_url() ) );
