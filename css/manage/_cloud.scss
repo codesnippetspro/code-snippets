@@ -266,12 +266,13 @@
 }
 
 .cloud-connect-wrap {
-	float: right;
-	gap: 5px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	max-height: 35px;
+	margin: 0 3px;
+	float: right;
+	gap: 5px;
 }
 
 .dot {
@@ -286,7 +287,7 @@
 }
 
 .cloud-connect-active .dot {
-	background-color: #25a349;	
+	background-color: #25a349;
 }
 
 .cloud-connect-active .cloud-connect-text {

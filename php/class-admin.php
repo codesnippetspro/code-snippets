@@ -131,16 +131,13 @@ class Admin {
 		);
 
 		if ( ! code_snippets()->licensing->is_licensed() ) {
-			$actions[] = [
-				sprintf(
-					'<a href="%1$s" title="%2$s" style="color: #d46f4d; font-weight: bold;" target="_blank">%3$s</a>',
-					'https://snipco.de/JE2i',
-					esc_attr__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
-					esc_html__( 'Go Pro', 'code-snippets' )
-				),
-			];
+			$actions[] = sprintf(
+				'<a href="%1$s" title="%2$s" style="color: #d46f4d; font-weight: bold;" target="_blank">%3$s</a>',
+				'https://snipco.de/JE2i',
+				esc_attr__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
+				esc_html__( 'Go Pro', 'code-snippets' )
+			);
 		}
-
 		return $actions;
 	}
 

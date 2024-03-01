@@ -408,8 +408,8 @@ class Cloud_API {
 
 		return [
 			'cloud_id'        => (int) $cloud_id_owner[0] ?? '',
-			'is_owner'        => (bool) $cloud_id_owner[1] ?? false,
-			'is_owner_string' => $cloud_id_owner[1] ? '1' : '0',
+			'is_owner'        => isset( $cloud_id_owner[1] ) && $cloud_id_owner[1],
+			'is_owner_string' => isset( $cloud_id_owner[1] ) && $cloud_id_owner[1] ? '1' : '0',
 		];
 	}
 

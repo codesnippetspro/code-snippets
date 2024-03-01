@@ -8,6 +8,8 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_API;
+
 /**
  * Loaded from the manage menu class.
  *
@@ -72,7 +74,7 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 		<div class="cloud-connect-wrap <?php echo $cloud_enabled ? 'cloud-connect-active' : ''; ?>">
 			<span class="dot"></span>
 			<p>
-				<?php esc_html_e( 'Cloud Sync:', 'code-snippets' ); ?>
+				<?php esc_html_e( 'Cloud sync:', 'code-snippets' ); ?>
 				<span class="cloud-connect-text">
 					<?php
 					echo $cloud_enabled ?
@@ -81,7 +83,20 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 					?>
 				</span>
 			</p>
-			<?php $this->render_view( 'partials/cloud-sync-guide' ); ?>
+			<?php
+
+			if ( $cloud_enabled ) {
+				$this->render_view( 'partials/cloud-sync-guide' );
+			} else {
+				printf(
+					'<a href="%s" class="button button-secondary button-small" target="_blank" title="%s">%s</a>',
+					esc_url( Cloud_API::get_connect_cloud_url() ),
+					esc_attr__( 'Authorize a connection between this site and Code Snippets Cloud.', 'code-snippets' ),
+					esc_html__( 'Connect', 'code-snippets' )
+				);
+			}
+
+			?>
 		</div>
 	</h2>
 
