@@ -307,11 +307,18 @@ $inactive-color: #ccc;
 	text-transform: uppercase;
 }
 
-#refresh-button {
-	margin-top: 10px;
-	margin-bottom: -20px;
+.refresh-button-conatiner {
+	display: flex;
+	align-items: center;
+    justify-content: flex-start;
+	margin-top: 15px;
+	margin-bottom: -39px;
+	gap: 7px;
 }
 
-.refresh-button-description {
-	margin-bottom: -5px;
+#refresh-button {
+	width: 30px;
+	padding: 0;
+	font-size: 20px;
+	line-height: 1.4;
 }
