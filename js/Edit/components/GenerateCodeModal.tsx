@@ -1,7 +1,7 @@
 import { Button, Modal, TextareaControl, Flex, Spinner } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
-import React, { Dispatch, FormEventHandler, MouseEventHandler, SetStateAction, useRef, useState } from 'react'
+import React, { Dispatch, FormEventHandler, SetStateAction, useRef, useState } from 'react'
 import { Snippet } from '../../types/Snippet'
 import { useGenerativeAPI } from '../../utils/api/gpt'
 import { getSnippetType } from '../../utils/snippets'
