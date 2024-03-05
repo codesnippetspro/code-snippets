@@ -16,10 +16,9 @@ namespace Code_Snippets;
 
 if ( 'cloud' === $this->get_current_type() ) {
 	printf(
-		'<p class="refresh-button-description">%s</p> <a id="refresh-button" class="button button-primary" href="%s">%s</a>',
-		esc_html__( 'Click the button below to check for any snippet updates in the cloud and refresh your codevault data below.', 'code-snippets' ),
+		'<div class="refresh-button-conatiner"><a id="refresh-button" class="button dashicons dashicons-update-alt" href="%s"></a><span>%s</span></div>',
 		esc_url( add_query_arg( 'refresh', 'true', code_snippets()->get_menu_url( 'cloud' ) ) ),
-		esc_html__( 'Refresh Codevault', 'code-snippets' )
+		esc_html__( 'Synchronise snippets and refresh your codevault.', 'code-snippets' ),
 	);
 }
 ?>
