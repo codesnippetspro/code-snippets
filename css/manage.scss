@@ -315,3 +315,14 @@ $inactive-color: #ccc;
 .refresh-button-description {
 	margin-bottom: -5px;
 }
+
+@media screen and (max-width: 1190px) {
+	.nav-tab {
+		.snippet-label {
+			display: none;
+		}
+		.cloud-badge{
+			margin-right: 10px;
+		}
+	}
+}
