@@ -48,7 +48,7 @@ class Settings_Menu extends Admin_Menu {
 				add_query_arg(
 					'connect_cloud_result',
 					is_null( $result ) ? 'ok' : 'fail',
-					code_snippets()->get_menu_url( 'settings' )
+					code_snippets()->get_menu_url( 'manage' )
 				)
 			);
 			exit;
