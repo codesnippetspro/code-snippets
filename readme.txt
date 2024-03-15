@@ -4,8 +4,8 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript, js, content, scripts, styles, cloud, shortcode
 License: MIT
 License URI: license.txt
-Stable tag: 3.6.4-beta.1
-Tested up to: 6.5-beta2
+Stable tag: 3.6.4
+Tested up to: 6.5-RC2
 
 An easy, clean and simple way to enhance your site with code snippets.
 
@@ -104,7 +104,7 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-= 3.6.4 (beta release) =
+= 3.6.4 (15 Mar 2024) =
 * Fixed: Minor type compatability issue with newer versions of PHP.
 * Improvement: Increment the revision number of CSS and JS snippet when using the 'Reset Caches' debug action. (PRO)
 * Fixed: Undefined array key issue when initiating cloud sync. (PRO)
