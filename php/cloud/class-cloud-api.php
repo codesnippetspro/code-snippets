@@ -783,7 +783,7 @@ class Cloud_API {
 
 			$updated = $this->unpack_request_json( $response );
 
-			if ( $updated['success'] ) {
+			if ( $updated && $updated['success'] ) {
 				$this->clear_caches();
 			}
 		}
