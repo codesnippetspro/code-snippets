@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.6.4 (beta release)
+## 3.6.4 (15 Mar 2024)
 * Fixed: Minor type compatability issue with newer versions of PHP.
 * Improvement: Increment the revision number of CSS and JS snippet when using the 'Reset Caches' debug action. (PRO)
 * Fixed: Undefined array key issue when initiating cloud sync. (PRO)
