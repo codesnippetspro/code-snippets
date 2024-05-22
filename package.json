@@ -3,7 +3,7 @@
     "description": "Manage code snippets running on a WordPress-powered site through a graphical interface.",
     "homepage": "https://codesnippets.pro",
     "main": "gulpfile.babel.ts",
-    "version": "3.6.4",
+    "version": "3.6.5-alpha.0",
     "directories": {
         "test": "tests"
     },
@@ -15,10 +15,10 @@
         "phpcs": "vendor/bin/phpcs -s *.php php/",
         "phpcbf": "vendor/bin/phpcbf *.php php/",
         "version": "gulp version",
-        "version-dev": "npm version prerelease --git-tag-version=false --preid=dev",
-        "version-alpha": "npm version prerelease --git-tag-version=false --preid=alpha",
-        "version-beta": "npm version prerelease --git-tag-version=false --preid=beta",
-        "version-rc": "npm version prerelease --git-tag-version=false --preid=rc"
+        "version-dev": "npm version --git-tag-version=false --preid=dev",
+        "version-alpha": "npm version --git-tag-version=false --preid=alpha",
+        "version-beta": "npm version --git-tag-version=false --preid=beta",
+        "version-rc": "npm version --git-tag-version=false --preid=rc"
     },
     "repository": {
         "type": "git",

@@ -21,18 +21,18 @@ class Welcome_Menu extends Admin_Menu {
 	protected const WELCOME_JSON_URL = 'https://codesnippets.pro/wp-content/uploads/cs_welcome/cs_welcome.json';
 
 	/**
-	 * Key used for caching welcome page data.
-	 *
-	 * @var string
-	 */
-	protected const CACHE_KEY = 'code_snippets_welcome_data';
-
-	/**
 	 * Limit of number of items to display when loading lists of items.
 	 *
 	 * @var int
 	 */
 	protected const ITEM_LIMIT = 4;
+
+	/**
+	 * Key used for caching welcome page data.
+	 *
+	 * @var string
+	 */
+	protected const CACHE_KEY = 'code_snippets_welcome_data';
 
 	/**
 	 * Data fetched from the remote API.
@@ -84,6 +84,15 @@ class Welcome_Menu extends Admin_Menu {
 			$this->build_changelog_data();
 			set_transient( self::CACHE_KEY, $this->welcome_data, DAY_IN_SECONDS * 2 );
 		}
+	}
+
+	/**
+	 * Purge the welcome data cache.
+	 *
+	 * @return void
+	 */
+	public static function clear_cache() {
+		delete_transient( self::CACHE_KEY );
 	}
 
 	/**

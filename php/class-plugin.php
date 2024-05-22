@@ -193,7 +193,7 @@ class Plugin {
 		} elseif ( in_array( $menu, $cloud, true ) ) {
 			return 'snippets&type=cloud';
 		} elseif ( in_array( $menu, $welcome, true ) ) {
-			return 'code-snippets';
+			return 'code-snippets-welcome';
 		} else {
 			return 'snippets';
 		}

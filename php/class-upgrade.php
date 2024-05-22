@@ -103,6 +103,7 @@ class Upgrade {
 		}
 
 		clean_snippets_cache( $table_name );
+		Welcome_Menu::clear_cache();
 	}
 
 	/**

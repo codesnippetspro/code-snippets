@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript, js, content, scripts, styles, cloud, shortcode
 License: MIT
 License URI: license.txt
-Stable tag: 3.6.4
+Stable tag: 3.6.5-alpha.0
 Tested up to: 6.5-RC2
 
 An easy, clean and simple way to enhance your site with code snippets.

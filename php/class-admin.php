@@ -260,15 +260,11 @@ class Admin {
 			return;
 		}
 
-		$now = new DateTime();
-		$period_start = new DateTime( '2023-11-19 00:00:00' );
-		$period_end = new DateTime( '2023-12-01 00:00:00' );
-
-		if ( ! in_array( 'bf23', $dismissed, true ) && $now > $period_start && $now < $period_end ) {
-			$notice = 'bf23';
-			$action_url = 'https://snipco.de/I_iX';
-			$action_label = __( 'Learn more', 'code-snippets' );
-			$text = __( 'Upgrade your plan for less this Black Friday! Save 25% on all plan upgrades.', 'code-snippets' );
+		if ( ! in_array( 'pro', $dismissed, true ) ) {
+			$notice = 'pro';
+			$action_url = 'https://codesnippets.pro/pricing/';
+			$action_label = __( 'Upgrade now', 'code-snippets' );
+			$text = __( '<strong>Lifetime plans return!</strong> Enjoy Code Snippets Pro with new pricing choices, including lifetime, monthly and yearly subscriptions.', 'code-snippets' );
 
 		} elseif ( ! in_array( 'survey', $dismissed, true ) && ! in_array( 'true', $dismissed, true ) ) {
 			$notice = 'survey';
@@ -339,13 +335,13 @@ class Admin {
 			);
 		}
 
-		if( 'all' === $type_name ) {
+		if ( 'all' === $type_name ) {
 			$label_class = 'all-snippets-label';
-		}else {
+		} else {
 			$label_class = 'snippet-label';
 		}
 
-		echo '<span class="'. $label_class .'">', esc_html( $label ), '</span>';
+		echo '<span class="' . $label_class . '">', esc_html( $label ), '</span>';
 
 		switch ( $type_name ) {
 			case 'all':
