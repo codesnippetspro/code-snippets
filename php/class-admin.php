@@ -39,6 +39,8 @@ class Admin {
 			$this->menus['settings'] = new Settings_Menu();
 		}
 
+		$this->menus['welcome'] = new Welcome_Menu();
+
 		foreach ( $this->menus as $menu ) {
 			$menu->run();
 		}

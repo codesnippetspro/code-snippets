@@ -6,6 +6,8 @@
 	text-align: center;
 	font-weight: bold;
 	transition: background-color .1s linear;
+	white-space: break-spaces;
+	line-height: inherit;
 
 	&:hover {
 		background-color: #08c5d1;

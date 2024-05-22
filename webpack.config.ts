@@ -19,7 +19,7 @@ export const config: Configuration = {
 		prism: `${SOURCE_DIR}/prism.ts`,
 		blocks: `${SOURCE_DIR}/blocks/index.ts`,
 		elementor: `${SOURCE_DIR}/elementor.ts`,
-		editor: `${SOURCE_DIR}/editor.ts`
+		editor: `${SOURCE_DIR}/editor.ts`,
 	},
 	output: {
 		path: path.join(path.resolve(__dirname), DEST_DIR),

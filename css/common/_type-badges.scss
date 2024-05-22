@@ -63,9 +63,27 @@ $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-
 	}
 }
 
+.go-pro-badge, .pro-badge, .core-badge {
+	margin-left: 3px;
+	border: 1px solid currentColor;
+	border-radius: 5px;
+	font-size: 10px;
+	padding: 1px 2px;
+	text-transform: uppercase;
+
+}
+
+.go-pro-badge, .pro-badge {
+	color: $theme-pro;
+}
+
+.core-badge {
+	color: $theme-core;
+}
+
 .go-pro-button .badge, .go-pro-badge {
-	color: #ce0000;
-	border-color: #ce0000;
+	color: $theme-pro;
+	border-color: $theme-pro;
 	margin-left: 1px;
 }
 
