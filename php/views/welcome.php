@@ -20,6 +20,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $hero = $this->get_hero_item();
 
+$changelog_sections = [
+	'Added'    => [
+		'title' => __( 'New features', 'code-snippets' ),
+		'icon'  => 'lightbulb',
+	],
+	'Improved' => [
+		'title' => __( 'Improvements', 'code-snippets' ),
+		'icon'  => 'chart-line',
+	],
+	'Fixed'    => [
+		'title' => __( 'Bug fixes', 'code-snippets' ),
+		'icon'  => 'buddicons-replies',
+	],
+	'Other'    => [
+		'title' => __( 'Other', 'code-snippets' ),
+		'icon'  => 'open-folder',
+	],
+];
+
+$plugin_types = [
+	'core' => _x( 'Core', 'badge label', 'code-snippets' ),
+	'pro'  => _x( 'Pro', 'badge label', 'code-snippets' ),
+];
+
 ?>
 
 <div class="csp-welcome-wrap">
@@ -52,17 +76,14 @@ $hero = $this->get_hero_item();
 		</ul>
 	</div>
 
-	<article class="csp-section-changes">
-		<h2>
-			<span class="dashicons dashicons-pressthis"></span>
-			<?php esc_html_e( 'Latest news', 'code-snippets' ); ?>
-		</h2>
+	<section class="csp-section-changes">
+		<h1>📰 <?php esc_html_e( 'Latest news', 'code-snippets' ); ?></h1>
 		<div class="csp-cards">
 			<a class="csp-card" href="<?php echo esc_url( $hero['follow_url'] ); ?>" target="_blank"
 			   title="<?php esc_html_e( 'Read more', 'code-snippets' ); ?>">
 				<header>
 					<span class="dashicons dashicons-external"></span>
-					<h3><?php echo esc_html( $hero['name'] ); ?></h3>
+					<h2><?php echo esc_html( $hero['name'] ); ?></h2>
 				</header>
 				<figure>
 					<div id="csp-loading-spinner" class="csp-loading-spinner"></div>
@@ -77,52 +98,52 @@ $hero = $this->get_hero_item();
 			   title="<?php esc_html_e( 'Read the full changelog', 'code-snippets' ); ?>">
 				<header>
 					<span class="dashicons dashicons-external"></span>
-					<h3>
-						<?php
-						/* translators: %s: current plugin version number. */
-						echo esc_html( sprintf( __( "What's new in version %s", 'code-snippets' ), code_snippets()->version ) );
-						?>
-					</h3>
+					<h2><?php esc_html_e( 'Latest changes', 'code-snippets' ); ?></h2>
 				</header>
-				<div class="csp-section-changes-log">
-					<p><?php echo esc_html( $this->get_changelog_desc() ); ?></p>
-					<?php foreach ( $this->get_latest_changes() as $section ) { ?>
-						<h4>
-							<span class="dashicons dashicons-<?php echo esc_attr( $section['icon'] ); ?>"></span>
-							<?php echo esc_html( $section['title'] ); ?>
-						</h4>
-						<ul class="csp-changelog-list">
+				<div class="csp-section-changelog">
+					<?php foreach ( $this->get_changelog() as $version => $version_changes ) { ?>
+						<h3><?php echo esc_html( $version ); ?></h3>
+						<article>
 							<?php
-							foreach ( $section['changes'] as $change_type => $changes ) {
-								foreach ( $changes as $change ) { ?>
-									<li>
-										<span class="badge <?php echo esc_attr( $change_type ); ?>-badge">
-											<?php
-											echo esc_html(
-												'pro' === $change_type ?
-													_x( 'Pro', 'badge label', 'code-snippets' ) :
-													_x( 'Core', 'badge label', 'code-snippets' )
-											);
-											?>
-										</span>
-										<span><?php echo esc_html( $change ); ?></span>
-									</li>
-									<?php
+							foreach ( $changelog_sections as $section_key => $section ) {
+								if ( empty( $version_changes[ $section_key ] ) ) {
+									continue;
 								}
-							}
-							?>
-						</ul>
+								?>
+								<h4>
+									<span class="dashicons dashicons-<?php echo esc_attr( $section['icon'] ); ?>"></span>
+									<?php echo esc_html( $section['title'] ); ?>
+								</h4>
+								<ul>
+									<?php
+									foreach ( $plugin_types as $plugin_type => $type_label ) {
+										if ( empty( $version_changes[ $section_key ][ $plugin_type ] ) ) {
+											continue;
+										}
+
+										foreach ( $version_changes[ $section_key ][ $plugin_type ] as $change ) {
+											?>
+											<li>
+												<span class="badge <?php echo esc_attr( $plugin_type ); ?>-badge">
+													<?php echo esc_html( $type_label ); ?>
+												</span>
+												<span><?php echo esc_html( $change ); ?></span>
+											</li>
+											<?php
+										}
+									}
+									?>
+								</ul>
+							<?php } ?>
+						</article>
 					<?php } ?>
 				</div>
 			</a>
 		</div>
-	</article>
+	</section>
 
 	<section class="csp-section-articles csp-section-links">
-		<h2>
-			<span class="dashicons dashicons-sos"></span>
-			<?php esc_html_e( 'Helpful articles', 'code-snippets' ); ?>
-		</h2>
+		<h1>🛟 <?php esc_html_e( 'Helpful articles', 'code-snippets' ); ?></h1>
 		<div class="csp-cards">
 			<?php foreach ( $this->get_remote_items( 'features' ) as $feature ) { ?>
 				<a class="csp-card"
@@ -133,7 +154,7 @@ $hero = $this->get_hero_item();
 						     alt="<?php esc_attr_e( 'Feature image', 'code-snippets' ); ?>);">
 					</figure>
 					<header>
-						<h3><?php echo esc_html( $feature['title'] ); ?></h3>
+						<h2><?php echo esc_html( $feature['title'] ); ?></h2>
 						<p class="csp-card-item-description"><?php echo esc_html( $feature['description'] ); ?></p>
 					</header>
 					<footer>
@@ -146,10 +167,7 @@ $hero = $this->get_hero_item();
 	</section>
 
 	<section class="csp-section-links csp-section-partners">
-		<h2>
-			<span class="dashicons dashicons-products"></span>
-			<?php esc_html_e( 'Partners and apps', 'code-snippets' ); ?>
-		</h2>
+		<h1>🚀 <?php esc_html_e( 'Partners and apps', 'code-snippets' ); ?></h1>
 		<div class="csp-cards">
 			<?php foreach ( $this->get_remote_items( 'partners' ) as $partner ) { ?>
 				<a class="csp-card"
@@ -161,7 +179,7 @@ $hero = $this->get_hero_item();
 					</figure>
 					<header>
 						<span class="dashicons dashicons-external"></span>
-						<h3><?php echo esc_html( $partner['title'] ); ?></h3>
+						<h2><?php echo esc_html( $partner['title'] ); ?></h2>
 					</header>
 				</a>
 			<?php } ?>

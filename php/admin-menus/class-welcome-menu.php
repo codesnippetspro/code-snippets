@@ -18,7 +18,7 @@ class Welcome_Menu extends Admin_Menu {
 	 *
 	 * @var string
 	 */
-	protected const WELCOME_JSON_URL = 'https://codesnippets.pro/wp-content/uploads/cs_welcome/cs_welcome.json';
+	protected const WELCOME_JSON_URL = 'https://snipco.de/welcome-json';
 
 	/**
 	 * Limit of number of items to display when loading lists of items.
@@ -26,6 +26,13 @@ class Welcome_Menu extends Admin_Menu {
 	 * @var int
 	 */
 	protected const ITEM_LIMIT = 4;
+
+	/**
+	 * Limit of number of items of historic versions to display in the changelog.
+	 *
+	 * @var int
+	 */
+	protected const MAX_CHANGELOG_ENTRIES = 4;
 
 	/**
 	 * Key used for caching welcome page data.
@@ -139,72 +146,47 @@ class Welcome_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Retrieve a description of the latest changelog change.
-	 *
-	 * @return string
-	 */
-	protected function get_changelog_desc(): string {
-		return __( 'This update introduces significant improvements and bug fixes, with a focus on enhancing the current cloud sync and Code Snippets AI.', 'code-snippets' );
-	}
-
-	/**
 	 * Build the full list of latest changes for caching.
 	 *
 	 * @return void
 	 */
 	protected function build_changelog_data() {
-		$text = "* Fixed: Minor type compatability issue with newer versions of PHP.
-* Improved: Increment the revision number of CSS and JS snippet when using the 'Reset Caches' debug action. (PRO)
-* Fixed: Undefined array key issue when initiating cloud sync. (PRO)
-* Fixed: Bug preventing downloading a single snippet from a bundle. (PRO)
-* Added: AI generation for all snippet types: HTML, CSS, JS. (PRO)
-* Fixed: Translations not loading for strings in JavaScript files.
-* Improved: UX in generate dialog, such as allowing 'Enter' to submit the form. (PRO)
-* Added: Button to create a cloud connection directly from the Snippets menu when disconnected. (PRO)";
+		$valid_sections = [ 'Added', 'Improved', 'Fixed' ];
+		$changelog = [];
 
-		$default_changes = array_fill_keys( [ 'core', 'pro' ], [] );
-		$sections = [
-			'Added'    => [
-				'title'   => __( 'New features', 'code-snippets' ),
-				'icon'    => 'lightbulb',
-				'changes' => $default_changes,
-			],
-			'Improved' => [
-				'title'   => __( 'Improvements', 'code-snippets' ),
-				'icon'    => 'chart-line',
-				'changes' => $default_changes,
-			],
-			'Fixed'    => [
-				'title'   => __( 'Bug fixes', 'code-snippets' ),
-				'icon'    => 'buddicons-replies',
-				'changes' => $default_changes,
-			],
-			'Other'    => [
-				'title'   => __( 'Other', 'code-snippets' ),
-				'icon'    => 'open-folder',
-				'changes' => $default_changes,
-			],
-		];
+		$changelog_file = file_get_contents( plugin_dir_path( PLUGIN_FILE ) . 'CHANGELOG.md' );
+		$changelog_entries = explode( "\n## ", $changelog_file );
 
-		foreach ( explode( "\n", $text ) as $raw_line ) {
-			$line = trim( str_replace( '(PRO)', '', str_replace( '*', '', $raw_line ) ) );
-			$parts = explode( ': ', $line, 2 );
+		foreach ( array_slice( $changelog_entries, 1, self::MAX_CHANGELOG_ENTRIES ) as $lines ) {
+			$lines = explode( "\n", $lines );
+			$version = explode( '(', $lines[0], 2 );
+			$version = $version[0];
 
-			$section = isset( $sections[ $parts[0] ] ) ? $parts[0] : 'Other';
-			$subsection = str_contains( $raw_line, '(PRO)' ) ? 'pro' : 'core';
+			$changelog[ $version ] = [];
 
-			$line = end( $parts );
-			if ( $line ) {
-				$sections[ $section ]['changes'][ $subsection ][] = $line;
+			foreach ( array_slice( $lines, 1 ) as $raw_line ) {
+				$entry = trim( str_replace( '(PRO)', '', str_replace( '*', '', $raw_line ) ) );
+				$parts = explode( ': ', $entry, 2 );
+				$entry = end( $parts );
+
+				if ( $entry ) {
+					$section = in_array( $parts[0], $valid_sections, true ) ? $parts[0] : 'Other';
+					$subsection = str_contains( $raw_line, '(PRO)' ) ? 'pro' : 'core';
+
+					if ( ! isset( $changelog[ $version ][ $section ] ) ) {
+						$changelog[ $version ][ $section ] = [
+							$subsection => [ $entry ],
+						];
+					} elseif ( ! isset( $changelog[ $version ][ $section ][ $subsection ] ) ) {
+						$changelog[ $version ][ $section ][ $subsection ] = [ $entry ];
+					} else {
+						$changelog[ $version ][ $section ][ $subsection ][] = $entry;
+					}
+				}
 			}
 		}
 
-		$this->welcome_data['changes'] = array_filter(
-			$sections,
-			function ( $section ) {
-				return ! empty( $section['changes']['core'] ) || ! empty( $section['changes']['pro'] );
-			}
-		);
+		$this->welcome_data['changelog'] = $changelog;
 	}
 
 	/**
@@ -230,7 +212,7 @@ class Welcome_Menu extends Admin_Menu {
 				'label' => __( 'Community', 'code-snippets' ),
 			],
 			'discord'   => [
-				'url'   => 'https://discord.gg/7EgrDz9P2w',
+				'url'   => 'https://snipco.de/discord',
 				'icon'  => 'discord',
 				'label' => __( 'Discord', 'code-snippets' ),
 			],
@@ -270,9 +252,14 @@ class Welcome_Menu extends Admin_Menu {
 	/**
 	 * Retrieve a list of latest changes for display.
 	 *
-	 * @return array<string, array{title: string, icon: string, changes: string[]}>
+	 * @return array<string, array{
+	 *     'Added': ?array<'core' | 'pro', string>,
+	 *     'Fixed': ?array<'core' | 'pro', string>,
+	 *     'Improved': ?array<'core' | 'pro', string>,
+	 *     'Other': ?array<'core' | 'pro', string>
+	 * }>
 	 */
-	protected function get_latest_changes(): array {
-		return $this->welcome_data['changes'] ?? [];
+	protected function get_changelog(): array {
+		return $this->welcome_data['changelog'] ?? [];
 	}
 }

@@ -262,7 +262,7 @@ class Admin {
 
 		if ( ! in_array( 'pro', $dismissed, true ) ) {
 			$notice = 'pro';
-			$action_url = 'https://codesnippets.pro/pricing/';
+			$action_url = 'https://snipco.de/Mlll';
 			$action_label = __( 'Upgrade now', 'code-snippets' );
 			$text = __( '<strong>Lifetime plans return!</strong> Enjoy Code Snippets Pro with new pricing choices, including lifetime, monthly and yearly subscriptions.', 'code-snippets' );
 

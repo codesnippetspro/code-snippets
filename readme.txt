@@ -4,8 +4,8 @@ Donate link: https://codesnippets.pro
 Tags: snippets, functions, multisite, code, php, html, css, javascript, js, content, scripts, styles, cloud, shortcode
 License: MIT
 License URI: license.txt
-Stable tag: 3.6.5-alpha.0
-Tested up to: 6.5-RC2
+Stable tag: 3.6.5
+Tested up to: 6.5.3
 
 An easy, clean and simple way to enhance your site with code snippets.
 
@@ -103,6 +103,9 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.6.5 (24 May 2024) =
+* Added: New admin menu providing useful resources and updates on the Code Snippets plugin and community.
 
 = 3.6.4 (15 Mar 2024) =
 * Fixed: Minor type compatability issue with newer versions of PHP.
@@ -221,23 +224,5 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 * Improved: Enabled 'add paragraphs and formatting' option by default for newly inserted content snippets.
 * Added: WP-CLI commands for retrieving, activating, deactivating, deleting, creating, updating, exporting and importing snippets.
 * Fixed: Path to iron visible when updating the pro plugin.
-
-= 3.2.0 (22 Jul 2022) =
-* Fixed: Remove default value from SQL columns to improve compatibility with certain versions of MySQL.
-* Fixed: Delay loading snippets in Gutenberg editor blocks. (PRO)
-* Added: Option to show and hide line numbers in Gutenberg source code editor block. (PRO)
-* Added: Support for highlighting HTML, CSS, JS and embedded code in the front-end PrismJS code highlighter.
-* Added: Additional features to front-end PrismJS code highlighter, including automatic links and a copy button.
-* Added: Support for multiple code styles in the source code Gutenberg editor block. (PRO)
-* Added: Admin notice announcing release of Code Snippets Pro.
-* Fixed: Inconsistencies with translations between different plugin versions.
-* Fixed: Issue with Content Snippet shortcode information not displaying.
-* Added: Button for copying shortcode text to clipboard.
-* Improved: Include Code Snippets CSS and JS source code in distributed package.
-* Improved: Don't delete data from plugin if deleting Code Snippets Free while Code Snippets Pro is active.
-* Improved: Streamlined user interface and experience in Gutenberg editor blocks. (PRO)
-* Added: Option to choose from 44 different themes for the Prism code highlighter in the source editor block and Elementor widget. (PRO)
-* Improved: Compatibility of Elementor widgets with the latest version of Elementor. (PRO)
-* Improved: Replace icon font menu icon with embedded SVG icon.
 
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
