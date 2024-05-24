@@ -18,7 +18,7 @@ class Welcome_Menu extends Admin_Menu {
 	 *
 	 * @var string
 	 */
-	protected const WELCOME_JSON_URL = 'https://snipco.de/welcome-json';
+	protected const WELCOME_JSON_URL = 'https://codesnippets.pro/wp-content/uploads/cs_welcome/cs_welcome.json';
 
 	/**
 	 * Limit of number of items to display when loading lists of items.
@@ -109,7 +109,14 @@ class Welcome_Menu extends Admin_Menu {
 	 */
 	protected function fetch_remote_welcome_data() {
 		$remote_welcome_data = wp_remote_get( self::WELCOME_JSON_URL );
+		if ( is_wp_error( $remote_welcome_data ) ) {
+			return;
+		}
+
 		$remote_welcome_data = json_decode( wp_remote_retrieve_body( $remote_welcome_data ), true );
+		if ( ! is_array( $remote_welcome_data ) ) {
+			return;
+		}
 
 		$this->welcome_data['hero-item'] = array_merge(
 			[

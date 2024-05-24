@@ -151,7 +151,7 @@ $plugin_types = [
 				   title="<?php esc_html_e( 'Read more', 'code-snippets' ); ?>">
 					<figure>
 						<img src="<?php echo esc_url( $feature['image_url'] ); ?>"
-						     alt="<?php esc_attr_e( 'Feature image', 'code-snippets' ); ?>);">
+						     alt="<?php esc_attr_e( 'Feature image', 'code-snippets' ); ?>">
 					</figure>
 					<header>
 						<h2><?php echo esc_html( $feature['title'] ); ?></h2>
