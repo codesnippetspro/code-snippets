@@ -52,7 +52,7 @@ export const createArchive = (): Promise<void> => {
 }
 
 const bundle = async () => {
-	console.info('\ngenerating composer and webpack files\n')
+	console.info('generating composer and webpack files\n')
 
 	await Promise.all([
 		cleanup(`${plugin.name}.*.zip`),
@@ -60,9 +60,10 @@ const bundle = async () => {
 		webpack({ mode: 'production' })
 	])
 
-	await copy(BUNDLE_FILES, DEST_DIR)
-	await createArchive()
+	await copy(BUNDLE_FILES, DEST_DIR, filename =>
+		filename.replace(/^src\//, ''))
 
+	await createArchive()
 	await execute('composer', 'install')
 }
 

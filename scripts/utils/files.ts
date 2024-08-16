@@ -11,7 +11,7 @@ export const cleanup = (...paths: string[]): Promise<Awaited<void>[]> =>
 		rm(resolve(filename), { force: true, recursive: true })
 	))
 
-export const copy = async (patterns: string[], dest: string): Promise<void> => {
+export const copy = async (patterns: string[], dest: string, transform?: (filename: string) => string): Promise<void> => {
 	const filenames = glob(patterns)
 	await rm(dest, { force: true, recursive: true })
 	await mkdir(dest, { recursive: true })
@@ -21,7 +21,7 @@ export const copy = async (patterns: string[], dest: string): Promise<void> => {
 
 		if (!stats.isDirectory()) {
 			console.log(`copying ${filename}`)
-			const destPath = resolve(dest, filename)
+			const destPath = resolve(dest, transform?.(filename) ?? filename)
 
 			await mkdir(dirname(destPath), { recursive: true })
 			const out = createWriteStream(destPath, 'utf8')

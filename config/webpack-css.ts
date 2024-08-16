@@ -1,5 +1,5 @@
 import path from 'path'
-import { Configuration } from 'webpack'
+import { Configuration, EntryObject } from 'webpack'
 import { Config as PostCssConfig } from 'postcss-load-config'
 import libsass from 'sass'
 import cssnano from 'cssnano'
@@ -20,21 +20,21 @@ const postcssOptions: PostCssConfig = {
 	]
 }
 
+const entriesFromFiles = (patterns: string | string[], entry: (filename: string) => string): EntryObject =>
+	Object.fromEntries(
+		glob.sync(patterns)
+			.map(filename => [entry(filename), `./${filename}`])
+	)
+
 export const cssWebpackConfig: Configuration = {
 	entry: {
-		...Object.fromEntries(
-			glob.sync(['src/css/*.scss', '!src/css/**/_*.scss'])
-				.map(filename => {
-					const name = path.parse(filename).name
-					return [`${name}-style`, `./${filename}`]
-				})
+		...entriesFromFiles(
+			['src/css/*.scss', '!src/css/**/_*.scss'],
+			filename => `${path.parse(filename).name}-style`
 		),
-		...Object.fromEntries(
-			glob.sync('node_modules/codemirror/theme/*.css')
-				.map(filename => {
-					const name = path.parse(filename).name
-					return [`codemirror-theme-${name}`, `./${filename}`]
-				})
+		...entriesFromFiles(
+			'node_modules/codemirror/theme/*.css',
+			filename => `codemirror-theme-${path.parse(filename).name}`
 		)
 	},
 	module: {
