@@ -7,7 +7,7 @@ const selectTab = (tabsWrapper: Element, tab: Element, section: string) => {
 	tabsWrapper.closest('.wrap')?.setAttribute('data-active-tab', section)
 
 	//Hide all cloud messages - this is a bit of a hack, but it works make better **TODO**
-	document.querySelectorAll('.cloud-message')?.forEach(element => {
+	document.querySelectorAll('.cloud-message').forEach(element => {
 		element.classList.add('hidden')
 	})
 }

@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react'
 import { Options } from 'react-select'
 import { __ } from '@wordpress/i18n'
+import ServerSideRender from '@wordpress/server-side-render'
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { ExternalLink, PanelBody, ToggleControl } from '@wordpress/components'
 import { BlockConfiguration, BlockEditProps } from '@wordpress/blocks'
-import { useSnippets } from '../utils/api/snippets'
+import { useSnippets } from '../hooks/useSnippets'
 import { getSnippetType } from '../utils/snippets'
 import { SnippetSelectOption, SnippetSelector } from './SnippetSelector'
 import { Snippet } from '../types/Snippet'
-import ServerSideRender from '@wordpress/server-side-render'
 
 export const CONTENT_BLOCK = 'code-snippets/content'
 

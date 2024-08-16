@@ -41,7 +41,7 @@ export const ExplainSnippetButton: React.FC<ExplainSnippetButtonProps> = ({
 			<CloudAIButton
 				{...props}
 				snippet={snippet}
-				disabled={disabled || isWorking}
+				disabled={disabled ?? isWorking}
 				onClick={() => {
 					setIsWorking(true)
 					setErrorMessage(undefined)
@@ -52,7 +52,7 @@ export const ExplainSnippetButton: React.FC<ExplainSnippetButtonProps> = ({
 							setIsWorking(false)
 							onResponse?.(response)
 						})
-						.catch(error => {
+						.catch((error: unknown) => {
 							setIsWorking(false)
 							setErrorMessage(isAxiosError(error) ?
 								error.message :

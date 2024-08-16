@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n'
 import { Button, ButtonProps } from '../../common/Button'
 import { Snippet } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/general'
+
 export const GenerateIcon = () =>
 	<svg
 		viewBox="0 0 105.23233 130.03937"
@@ -73,9 +74,11 @@ export const CloudAIButton: React.FC<CloudAIButtonProps> = ({
 				null}
 
 			<Button small {...props} onClick={event => {
-				window.CODE_SNIPPETS?.isCloudConnected ?
-					onClick?.(event) :
+				if (window.CODE_SNIPPETS?.isCloudConnected) {
+					onClick?.(event)
+				} else {
 					setIsCloudModalOpen(true)
+				}
 			}}>
 				<GenerateIcon />
 				{' '}{children}{' '}

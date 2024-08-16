@@ -50,14 +50,18 @@ export const handleShowCloudPreview = () => {
  * On change of bundle share input or select, clear the other.
  */
 export const handleCloudBundleInputsChange = () => {
-	const bundleInput = <HTMLInputElement> document.getElementById('bundle_share_name')
-	const bundleSelect = <HTMLSelectElement> document.getElementById('cloud-bundles')
+	const bundleInput = <HTMLInputElement | null> document.getElementById('bundle_share_name')
+	const bundleSelect = <HTMLSelectElement | null> document.getElementById('cloud-bundles')
 
-	bundleInput?.addEventListener('change', () => {
+	if (!bundleSelect || !bundleInput) {
+		return
+	}
+
+	bundleInput.addEventListener('change', () => {
 		bundleSelect.value = '0'
 	})
 
-	bundleSelect?.addEventListener('change', () => {
+	bundleSelect.addEventListener('change', () => {
 		bundleInput.value = ''
 	})
 }

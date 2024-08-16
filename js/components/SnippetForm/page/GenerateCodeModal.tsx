@@ -87,7 +87,7 @@ export const GenerateCodeModal: React.FC<GenerateCodeModalProps> = ({ show, onCl
 				setIsWaiting(false)
 				onClose()
 			})
-			.catch(error => {
+			.catch((error: unknown) => {
 				setIsWaiting(false)
 				setErrorMessage(isAxiosError(error) ? error.message : '')
 			})

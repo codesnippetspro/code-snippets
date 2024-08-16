@@ -3,6 +3,7 @@ import { LineWidget } from 'codemirror'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { handleUnknownError } from '../../../utils/errors'
 import { isNetworkAdmin } from '../../../utils/general'
 import { Button } from '../../common/Button'
 import { CloudAIButton } from '../buttons/CloudAIButton'
@@ -22,7 +23,9 @@ const InlineActivateButton: React.FC = () => {
 				small
 				id="save_snippet_execute_extra"
 				title={__('Save Snippet and Execute Once', 'code-snippets')}
-				onClick={() => submitAndActivateSnippet()}
+				onClick={() => {
+					submitAndActivateSnippet().then(() => undefined).catch(handleUnknownError)
+				}}
 				disabled={isWorking}
 			>
 				{__('Execute Once', 'code-snippets')}
@@ -35,7 +38,9 @@ const InlineActivateButton: React.FC = () => {
 			small
 			id="save_snippet_deactivate_extra"
 			title={__('Save Snippet and Deactivate', 'code-snippets')}
-			onClick={() => submitAndDeactivateSnippet()}
+			onClick={() => {
+				submitAndDeactivateSnippet().then(() => undefined).catch(handleUnknownError)
+			}}
 			disabled={isWorking}
 		>
 			{__('Deactivate', 'code-snippets')}
@@ -44,7 +49,9 @@ const InlineActivateButton: React.FC = () => {
 			small
 			id="save_snippet_activate_extra"
 			title={__('Save Snippet and Activate', 'code-snippets')}
-			onClick={() => submitAndActivateSnippet()}
+			onClick={() => {
+				submitAndActivateSnippet().then(() => undefined).catch(handleUnknownError)
+			}}
 			disabled={isWorking}
 		>
 			{__('Activate', 'code-snippets')}
@@ -128,7 +135,9 @@ const InlineActionButtons: React.FC = () => {
 				small
 				id="save_snippet_extra"
 				title={__('Save Snippet', 'code-snippets')}
-				onClick={() => submitSnippet()}
+				onClick={() => {
+					submitSnippet().then(() => undefined).catch(handleUnknownError)
+				}}
 				disabled={isWorking}
 			>
 				{__('Save Changes', 'code-snippets')}

@@ -6,7 +6,7 @@ import { BlockConfiguration, BlockEditProps } from '@wordpress/blocks'
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { shortcode } from '@wordpress/icons'
 import { Snippet, SnippetType } from '../types/Snippet'
-import { useSnippets } from '../utils/api/snippets'
+import { useSnippets } from '../hooks/useSnippets'
 import { getSnippetType } from '../utils/snippets'
 import { SnippetSelectGroup, SnippetSelector } from './SnippetSelector'
 

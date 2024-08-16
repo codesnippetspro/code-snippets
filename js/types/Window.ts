@@ -18,7 +18,7 @@ declare global {
 		readonly wpActiveEditor?: string
 		code_snippets_editor_preview?: CodeEditorInstance
 		readonly code_snippets_editor_settings: EditorOption[]
-		CODE_SNIPPETS_PRISM: typeof Prism
+		CODE_SNIPPETS_PRISM?: typeof Prism
 		readonly CODE_SNIPPETS?: {
 			isLicensed: boolean
 			isCloudConnected: boolean
