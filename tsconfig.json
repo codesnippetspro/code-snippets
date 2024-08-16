@@ -9,7 +9,7 @@
         "jsx": "react"
     },
     "include": [
-        "js",
+        "src/js",
         "config",
         "scripts",
         "eslint.config.mjs"

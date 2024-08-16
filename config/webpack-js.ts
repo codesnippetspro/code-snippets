@@ -2,10 +2,11 @@ import { DefinePlugin, Configuration } from 'webpack'
 import { join, resolve } from 'path'
 import ESLintPlugin from 'eslint-webpack-plugin'
 import RemoveEmptyScriptsPlugin from 'webpack-remove-empty-scripts'
-import { toCamelCase } from '../js/utils/text'
+import { toCamelCase } from '../src/js/utils/text'
 import { dependencies } from '../package.json'
 
-const SOURCE_DIR = './js'
+const SOURCE_DIR = './src/js'
+const DEST_DIR = './src/dist'
 
 const babelConfig = {
 	presets: [
@@ -32,7 +33,7 @@ export const jsWebpackConfig: Configuration = {
 		settings: { import: `${SOURCE_DIR}/settings.ts`, dependOn: 'editor' }
 	},
 	output: {
-		path: join(resolve(__dirname), '..', 'dist'),
+		path: join(resolve(__dirname), '..', DEST_DIR),
 		filename: '[name].js',
 		clean: true
 	},

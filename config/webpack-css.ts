@@ -23,7 +23,7 @@ const postcssOptions: PostCssConfig = {
 export const cssWebpackConfig: Configuration = {
 	entry: {
 		...Object.fromEntries(
-			glob.sync(['css/*.scss', '!css/**/_*.scss'])
+			glob.sync(['src/css/*.scss', '!src/css/**/_*.scss'])
 				.map(filename => {
 					const name = path.parse(filename).name
 					return [`${name}-style`, `./${filename}`]

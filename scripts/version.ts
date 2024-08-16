@@ -9,14 +9,14 @@ const replaceInFile = (filename: string, transform: (contents: string) => string
 }
 
 replaceInFile(
-	'code-snippets.php',
+	'src/code-snippets.php',
 	contents => contents
 		.replace(/(?<prefix>Version:\s+|@version\s+)\d+\.\d+[\w-.]+$/mg, `$1${plugin.version}`)
 		.replace(/(?<prefix>'CODE_SNIPPETS_VERSION',\s+)'[\w-.]+'/, `$1'${plugin.version}'`)
 )
 
 replaceInFile(
-	'readme.txt',
+	'src/readme.txt',
 	contents => contents
 		.replace(/(?<prefix>Stable tag:\s+|@version\s+)\d+\.\d+[\w-.]+$/mg, `$1${plugin.version}`)
 )

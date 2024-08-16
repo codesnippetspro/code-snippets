@@ -10,17 +10,17 @@ import archiver from 'archiver'
 const DEST_DIR = 'bundle/'
 
 const BUNDLE_FILES = [
-	'assets/**/*',
-	'css/**/*',
-	'js/**/*',
-	'dist/**/*',
-	'!dist/**/*.map',
-	'php/**/*',
-	'vendor/**/*',
-	'code-snippets.php',
-	'uninstall.php',
-	'readme.txt',
-	'license.txt',
+	'src/assets/**/*',
+	'src/css/**/*',
+	'src/js/**/*',
+	'src/dist/**/*',
+	'!src/dist/**/*.map',
+	'src/php/**/*',
+	'src/vendor/**/*',
+	'src/code-snippets.php',
+	'src/uninstall.php',
+	'src/readme.txt',
+	'src/license.txt',
 	'CHANGELOG.md'
 ]
 

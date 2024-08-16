@@ -12,7 +12,7 @@ export default typescript.config(
 	...typescript.configs.stylisticTypeChecked,
 	react.configs.flat.recommended,
 	{
-		ignores: ['bundle/*', 'dist/*', 'svn/*', 'vendor/*', 'eslint.config.mjs']
+		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', 'eslint.config.mjs']
 	},
 	{
 		plugins: {
