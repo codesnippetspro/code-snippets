@@ -1,19 +1,23 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "noImplicitAny": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "downlevelIteration": true,
-    "jsx": "react"
-  },
-  "include": [
-    "js",
-    ".eslintrc.js",
-    "gulpfile.babel.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "extends": "@tsconfig/node18/tsconfig.json",
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "downlevelIteration": true,
+        "noImplicitAny": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": false,
+        "jsx": "react"
+    },
+    "include": [
+        "js",
+        "config",
+        "scripts",
+        "eslint.config.mjs"
+    ],
+    "ts-node": {
+        "files": true,
+        "require": [
+            "tsconfig-paths/register"
+        ]
+    }
 }

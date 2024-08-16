@@ -1,4 +1,4 @@
-import * as Prism from 'prismjs'
+import Prism from 'prismjs'
 import 'prismjs/components/prism-markup'
 import 'prismjs/components/prism-markup-templating'
 import 'prismjs/components/prism-clike'

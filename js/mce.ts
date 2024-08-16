@@ -19,7 +19,7 @@ export const insertContentMenu = (editor: Editor, activeEditor: LocalisedEditor)
 					type: 'listbox',
 					name: 'id',
 					label: activeEditor.getLang('code_snippets.snippet_label'),
-					values: convertToValues(activeEditor.getLang('code_snippets.all_snippets') as Record<string, string>)
+					values: convertToValues(<Record<string, string>> activeEditor.getLang('code_snippets.all_snippets'))
 				},
 				{
 					type: 'checkbox',
@@ -29,7 +29,9 @@ export const insertContentMenu = (editor: Editor, activeEditor: LocalisedEditor)
 			],
 			onsubmit: (event: { data: SourceShortcodeAtts }) => {
 				const id = parseInt(event.data.id, 10)
-				if (!id) return
+				if (!id) {
+					return
+				}
 
 				let atts = ''
 
@@ -53,7 +55,7 @@ export const insertSourceMenu = (editor: Editor, ed: LocalisedEditor) => ({
 					type: 'listbox',
 					name: 'id',
 					label: ed.getLang('code_snippets.snippet_label'),
-					values: convertToValues(ed.getLang('code_snippets.content_snippets') as Record<string, string>)
+					values: convertToValues(<Record<string, string>> ed.getLang('code_snippets.content_snippets'))
 				},
 				{
 					type: 'checkbox',
@@ -73,7 +75,9 @@ export const insertSourceMenu = (editor: Editor, ed: LocalisedEditor) => ({
 			],
 			onsubmit: (event: { data: ContentShortcodeAtts }) => {
 				const id = parseInt(event.data.id, 10)
-				if (!id) return
+				if (!id) {
+					return
+				}
 
 				let atts = ''
 
@@ -90,7 +94,7 @@ export const insertSourceMenu = (editor: Editor, ed: LocalisedEditor) => ({
 })
 
 tinymce.PluginManager.add('code_snippets', editor => {
-	const activeEditor = tinymce.activeEditor as LocalisedEditor
+	const activeEditor = <LocalisedEditor> tinymce.activeEditor
 
 	editor.addButton('code_snippets', {
 		icon: 'code',

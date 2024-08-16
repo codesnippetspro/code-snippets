@@ -17,22 +17,22 @@ export const createEmptySnippet = (): Snippet => ({
 	priority: 10
 })
 
-export const getSnippetType = (snippet: Snippet | SnippetScope): SnippetType => {
-	const scope = 'string' === typeof snippet ? snippet : snippet.scope
+export const getSnippetType = (snippetOrScope: Snippet | SnippetScope): SnippetType => {
+	const scope = 'string' === typeof snippetOrScope ? snippetOrScope : snippetOrScope.scope
 
-	if (scope.endsWith('-css')) {
-		return 'css'
+	switch (true) {
+		case scope.endsWith('-css'):
+			return 'css'
+
+		case scope.endsWith('-js'):
+			return 'js'
+
+		case scope.endsWith('content'):
+			return 'html'
+
+		default:
+			return 'php'
 	}
-
-	if (scope.endsWith('-js')) {
-		return 'js'
-	}
-
-	if (scope.endsWith('content')) {
-		return 'html'
-	}
-
-	return 'php'
 }
 
 export const isProSnippet = (snippet: Snippet | SnippetScope): boolean =>
@@ -40,6 +40,3 @@ export const isProSnippet = (snippet: Snippet | SnippetScope): boolean =>
 
 export const isProType = (type: SnippetType): boolean =>
 	PRO_TYPES.includes(type)
-
-export const isLicensed = (): boolean =>
-	!!window.CODE_SNIPPETS?.isLicensed

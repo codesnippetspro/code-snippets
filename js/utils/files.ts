@@ -28,7 +28,9 @@ export const downloadSnippetExportFile = (
 ) => {
 	const [ext, mimeType] = MIME_INFO[type ?? getSnippetType(scope)]
 
-	const title = name.toLowerCase().replace(/[^\w-]+/g, '-') ?? `snippet-${id}`
+	const sanitizedName = name.toLowerCase().replace(/[^\w-]+/g, '-').trim()
+
+	const title = '' === sanitizedName ? `snippet-${id}` : sanitizedName
 	const filename = `${title}.code-snippets.${ext}`
 
 	downloadAsFile(content, filename, mimeType)

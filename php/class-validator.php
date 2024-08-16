@@ -144,7 +144,7 @@ class Validator {
 			}
 
 			// If this is a function or class exists check, then allow this function or class to be defined.
-			if ( T_STRING === $token[0] && 'function_exists' === $token[1] || 'class_exists' === $token[1] ) {
+			if ( T_STRING === $token[0] && ( 'function_exists' === $token[1] || 'class_exists' === $token[1] ) ) {
 				$type = 'function_exists' === $token[1] ? T_FUNCTION : T_CLASS;
 
 				// Eat tokens until we find the function or class name.

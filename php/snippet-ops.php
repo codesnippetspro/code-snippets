@@ -599,7 +599,7 @@ function save_snippet( $snippet ) {
  * @since 2.0.0
  */
 function execute_snippet( string $code, int $id = 0, bool $force = false ) {
-	if ( empty( $code ) || ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
+	if ( empty( $code ) || ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ) {
 		return false;
 	}
 
@@ -629,7 +629,7 @@ function execute_active_snippets(): bool {
 	global $wpdb;
 
 	// Bail early if safe mode is active.
-	if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ||
+	if ( ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ||
 	     ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
 		return false;
 	}

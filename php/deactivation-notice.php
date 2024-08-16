@@ -7,6 +7,7 @@
  * @package      Code_Snippets
  *
  * @noinspection PhpNestedDirNameCallsCanBeReplacedWithLevelParameterInspection
+ *
  * phpcs:disable Modernize.FunctionCalls.Dirname.FileConstant
  */
 

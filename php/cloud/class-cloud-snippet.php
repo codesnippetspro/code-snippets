@@ -34,7 +34,7 @@ class Cloud_Snippet extends Data_Item {
 	 *
 	 * @param array<string, mixed>|null $initial_data Initial snippet data.
 	 */
-	public function __construct( array $initial_data = null ) {
+	public function __construct( ?array $initial_data = null ) {
 		parent::__construct(
 			[
 				'id'             => '',

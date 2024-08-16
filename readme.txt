@@ -1,10 +1,10 @@
 === Code Snippets ===
 Contributors: bungeshea, ver3, lightbulbman, 0aksmith, codesnippetspro
 Donate link: https://codesnippets.pro
-Tags: snippets, functions, multisite, code, php, html, css, javascript, js, content, scripts, styles, cloud, shortcode
+Tags: code, snippets, multisite, php, css
 License: MIT
 License URI: license.txt
-Stable tag: 3.6.5
+Stable tag: 3.6.5.1
 Tested up to: 6.5.3
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -23,13 +23,9 @@ Unlike other solutions that involve dumping code into your `functions.php` file,
 
 **🎥 Watch a quick overview by Imran Siddiq:**
 
-https://youtu.be/EMjIWjcYONk
+https://youtu.be/uzND-wdSCMQ
 
 ☁️ Each copy of Code Snippets includes full integration with the community-powered [Code Snippets Cloud](https://codesnippets.cloud/) platform, providing easy access to hundreds of tweaks and enhancements ready to power-up any WordPress site.
-
-**📚 Learn from Ferdy Korpershoek's tutorial:**
-
-https://youtu.be/29jD2BcBX5w
 
 **🌐 Connect with us:**
 

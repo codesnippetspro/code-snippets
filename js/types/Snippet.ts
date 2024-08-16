@@ -13,6 +13,9 @@ export interface Snippet {
 	code_error?: [string, number] | null
 }
 
+export type SnippetType = typeof SNIPPET_TYPES[number]
+export type SnippetScope = typeof SNIPPET_SCOPES[number]
+
 export const SNIPPET_SCOPES = <const> [
 	'global', 'admin', 'front-end', 'single-use',
 	'content', 'head-content', 'footer-content',
@@ -21,9 +24,6 @@ export const SNIPPET_SCOPES = <const> [
 ]
 
 export const SNIPPET_TYPES = <const> ['php', 'html', 'css', 'js']
-
-export type SnippetType = typeof SNIPPET_TYPES[number]
-export type SnippetScope = typeof SNIPPET_SCOPES[number]
 
 export const SNIPPET_TYPE_SCOPES: Record<SnippetType, SnippetScope[]> = {
 	php: ['global', 'admin', 'front-end', 'single-use'],

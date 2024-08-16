@@ -197,32 +197,36 @@ class Frontend {
 			return $posts;
 		}
 
-		// Concatenate all provided content together, so we can check it all in one go.
-		$content = implode( ' ', wp_list_pluck( $posts, 'post_content' ) );
+		// Loop through the posts, checking for an existing shortcode, short-circuiting if possible.
+		$found_shortcode_content = null;
 
-		// Bail now if the provided post don't contain the source shortcode or block editor block.
-		if ( false === stripos( $content, '[' . self::SOURCE_SHORTCODE ) &&
-		     false === strpos( $content, '<!-- wp:code-snippets/source ' ) ) {
-			return $posts;
+		foreach ( $posts as $post ) {
+			if ( false !== stripos( $post->post_content, '[' . self::SOURCE_SHORTCODE ) ||
+			     false !== strpos( $post->post_content, '<!-- wp:code-snippets/source ' ) ) {
+				$found_shortcode_content = $post->post_content;
+				break;
+			}
 		}
 
-		// Load Prism assets on the appropriate hook.
-		$this->register_prism_assets();
+		// Load assets on the appropriate hook if a matching shortcode was found.
+		if ( null !== $found_shortcode_content ) {
+			$this->register_prism_assets();
 
-		add_action(
-			'wp_enqueue_scripts',
-			function () use ( $content ) {
-				foreach ( self::get_prism_themes() as $theme => $label ) {
-					if ( strpos( $content, "is-style-prism-$theme" ) ) {
-						wp_enqueue_style( self::get_prism_theme_style_handle( $theme ) );
+			add_action(
+				'wp_enqueue_scripts',
+				function () use ( $found_shortcode_content ) {
+					foreach ( self::get_prism_themes() as $theme => $label ) {
+						if ( strpos( $found_shortcode_content, "is-style-prism-$theme" ) ) {
+							wp_enqueue_style( self::get_prism_theme_style_handle( $theme ) );
+						}
 					}
-				}
 
-				wp_enqueue_style( self::PRISM_HANDLE );
-				wp_enqueue_script( self::PRISM_HANDLE );
-			},
-			100
-		);
+					wp_enqueue_style( self::PRISM_HANDLE );
+					wp_enqueue_script( self::PRISM_HANDLE );
+				},
+				100
+			);
+		}
 
 		return $posts;
 	}

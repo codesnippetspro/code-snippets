@@ -1,3 +1,5 @@
+import Prism from 'prismjs'
+
 window.addEventListener('elementor/frontend/init', () => {
 	const { elementorFrontend } = window
 

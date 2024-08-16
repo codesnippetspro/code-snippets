@@ -82,7 +82,7 @@ class Export {
 		foreach ( $this->snippets_list as $snippet ) {
 			$code = trim( $snippet->code );
 
-			if ( 'php' !== $snippet->type && 'html' !== $snippet->type || ! $code ) {
+			if ( ( 'php' !== $snippet->type && 'html' !== $snippet->type ) || ! $code ) {
 				continue;
 			}
 
@@ -134,7 +134,7 @@ class Export {
 	 *
 	 * @param string|null $type Snippet type. Supports 'css' or 'js'.
 	 */
-	public function export_snippets_code( string $type = null ): string {
+	public function export_snippets_code( ?string $type = null ): string {
 		$result = '';
 
 		if ( ! $type ) {
