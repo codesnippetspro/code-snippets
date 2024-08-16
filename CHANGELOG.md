@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.6.5 (24 May 2024)
+* Added: New admin menu providing useful resources and updates on the Code Snippets plugin and community.
+
+## 3.6.4 (15 Mar 2024)
+* Fixed: Minor type compatability issue with newer versions of PHP.
+* Improved: Increment the revision number of CSS and JS snippet when using the 'Reset Caches' debug action. (PRO)
+* Fixed: Undefined array key issue when initiating cloud sync. (PRO)
+* Fixed: Bug preventing downloading a single snippet from a bundle. (PRO)
+* Added: AI generation for all snippet types: HTML, CSS, JS. (PRO)
+* Fixed: Translations not loading for strings in JavaScript files.
+* Improved: UX in generate dialog, such as allowing 'Enter' to submit the form. (PRO)
+* Added: Button to create a cloud connection directly from the Snippets menu when disconnected. (PRO)
+
 ## 3.6.3 (13 Nov 2023)
 * Fixed: Import error when initialising cloud sync configuration. (PRO)
 * Improved: Added debug action for resetting snippets caches.
@@ -14,7 +27,7 @@
 * Fixed: Fix redirect URL when connecting with OAuth on subdirectory or HTTPS sites. (PRO)
 * Fixed: Import error when attempting to completely uninstall the plugin.
 
-## 3.6.1 (07 Nov 2023) 
+## 3.6.1 (07 Nov 2023)
 * Fixed: Issue accessing fields on Snippets class.
 
 ## 3.6.0 (07 Nov 2023)
@@ -69,10 +82,10 @@
 * Added: Proper WordPress REST API support for retrieving and modifying snippets.
 * Improved: Better compatibility with modern versions of PHP (7.0+).
 * Improved: Converted Edit/Add New Snippet page to use React.
-  * Converted action buttons to asynchronously use REST API endpoints through AJAX.
-  * Load page components dynamically through React.
-  * Added action notice queue system.
-  * Replaced native alert dialog with proper React modal.
+    * Converted action buttons to asynchronously use REST API endpoints through AJAX.
+    * Load page components dynamically through React.
+    * Added action notice queue system.
+    * Replaced native alert dialog with proper React modal.
 * Improved: Catch snippet execution errors to prevent site from crashing.
 * Improved: Display recent snippet errors in admin dashboard instead.
 * Improved: Updated editor block to use new REST API endpoints. (PRO)
@@ -103,7 +116,7 @@
 * Added: `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
 * Added: Additional hooks to various snippet actions, thanks to contributions made by [ancient-spirit](https://github.com/ancient-spirit).
 * Added: Fold markers, additional keyboard shortcuts and keymap options to snippet editor,
-thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
+  thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 * Improved: Removed duplicate tables exist query. ([#](https://wordpress.org/support/topic/duplicate-queries-21)).
 * Improved: Enabled 'add paragraphs and formatting' option by default for newly inserted content snippets.
 * Added: WP-CLI commands for retrieving, activating, deactivating, deleting, creating, updating, exporting and importing snippets.
@@ -208,9 +221,9 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 ## 2.14.2 (09 Sep 2021)
 * Fixed: Prevent network snippets table from being created on single-site installs.
 * Added translations:
-	- Spanish by [Ibidem Group](https://www.ibidemgroup.com)
-	- Urdu by [Samuel Badree](https://mobilemall.pk/)
-	- Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
+    - Spanish by [Ibidem Group](https://www.ibidemgroup.com)
+    - Urdu by [Samuel Badree](https://mobilemall.pk/)
+    - Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
 * Added: Support for `:class` syntax to the code validator.
 * Added: PHP8 support to the code linter.
 * Added: Color picker feature to the code editor.
@@ -239,7 +252,7 @@ thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
 * Added: Basic error checking when activating snippets.
 * Fixed: Ensure that imported snippets are always inactive.
 * Fixed: Check the referer on the import menu to prevent CSRF attacks.
-Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfence.com/blog/author/wfchloe/) for reporting.
+  Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfence.com/blog/author/wfchloe/) for reporting.
 * Fixed: Ensure that individual snippet action links use proper verification.
 
 ## 2.13.3 (13 Mar 2019)
@@ -252,7 +265,7 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 * Fixed: Use Unix newlines in code export file.
 * Updated CodeMirror to version 5.44.0.
 * Fixed: Correctly register snippet tables with WordPress to prevent database repair errors.
-[[#](https://wordpress.org/support/topic/database-corrupted-4/)]
+  [[#](https://wordpress.org/support/topic/database-corrupted-4/)]
 * Fixed: CodeMirror indentation settings being applied incorrectly.
 
 ## 2.13.2 (25 Jan 2019)
@@ -359,7 +372,7 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 
 ## 2.9.1 (07 Sep 2017)
 * Fixed: Prevent illegal mix of collations errors when fetching snippets from database tables with different collations.
-[[#](https://wordpress.org/support/topic/issue-on-multisite-with-wpml/)]
+  [[#](https://wordpress.org/support/topic/issue-on-multisite-with-wpml/)]
 
 ## 2.9.0 (06 Sep 2017)
 * Fixed: Prevented invalid properties from being set when saving a snippet.
@@ -682,11 +695,11 @@ Thanks to [Chloe with the Wordfence Threat Intelligence team](https://www.wordfe
 ## 1.5 (18 Sep 2012)
 * Updated CodeMirror to version 2.33.
 * Updated the 'Manage Snippets' page to use the WP_List_Table class.
-	* Added 'Screen Options' tab to 'Manage Snippets' page.
-	* Added search capability to 'Manage Snippets' page.
-	* Added views to easily filter activated, deactivated and recently activated snippets.
-	* Added ID column to 'Manage Snippets' page.
-	* Added sortable name and ID column on 'Manage Snippets' page ([#](https://wordpress.org/support/topic/plugin-code-snippets-suggestion-sort-by-snippet-name))
+    * Added 'Screen Options' tab to 'Manage Snippets' page.
+    * Added search capability to 'Manage Snippets' page.
+    * Added views to easily filter activated, deactivated and recently activated snippets.
+    * Added ID column to 'Manage Snippets' page.
+    * Added sortable name and ID column on 'Manage Snippets' page ([#](https://wordpress.org/support/topic/plugin-code-snippets-suggestion-sort-by-snippet-name))
 * Added custom capabilities.
 * Improved API.
 * Added 'Export to PHP' feature. ([#](https://wordpress.org/support/topic/plugin-code-snippets-suggestion-bulk-export-to-php))

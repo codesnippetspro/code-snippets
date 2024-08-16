@@ -1,0 +1,89 @@
+@import 'base';
+
+.nav-tab .badge, .snippet-type-badge, .go-pro-button .badge {
+	font-size: 10px;
+	text-transform: uppercase;
+	border: 1px solid;
+	padding: 1px 2px;
+	border-radius: 5px;
+}
+
+.nav-tab .badge, .button .snippet-type-badge, .go-pro-button .badge,
+h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
+	/* rtl:ignore */
+	margin-left: 3px;
+}
+
+.nav-tab span,
+.nav-tab .badge {
+	vertical-align: middle;
+}
+
+$badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-active);
+
+@each $type, $color in $badges {
+	.nav-tab[data-snippet-type=#{$type}] .badge, .snippet-type-badge[data-snippet-type=#{$type}] {
+		color: $color;
+		border-color: currentColor;
+	}
+
+	.nav-tab-inactive[data-snippet-type=#{$type}]:hover .badge {
+		color: $color;
+	}
+}
+
+.nav-tab-button .dashicons-external {
+	font-size: 15px;
+	color: #666;
+	vertical-align: middle;
+}
+
+.nav-tab.nav-tab-inactive {
+	background: transparent;
+	text-shadow: 0 1px 0 #fff;
+
+	&, .badge {
+		color: #a7aaad;
+	}
+
+	&:hover {
+		color: #50575e;
+	}
+}
+
+.go-pro-badge, .pro-badge, .core-badge {
+	margin-left: 3px;
+	border: 1px solid currentColor;
+	border-radius: 5px;
+	font-size: 10px;
+	padding: 1px 2px;
+	text-transform: uppercase;
+
+}
+
+.go-pro-badge, .pro-badge {
+	color: $theme-pro;
+}
+
+.core-badge {
+	color: $theme-core;
+}
+
+.go-pro-button .badge, .go-pro-badge {
+	color: $theme-pro;
+	border-color: $theme-pro;
+	margin-left: 1px;
+}
+
+.wp-core-ui .button.nav-tab-button {
+	margin-left: 0.5em;
+	float: right;
+	color: #a7aaad;
+	background: #f6f7f7;
+	border-color: #f6f7f7;
+
+	&:hover {
+		background-color: #fff;
+		color: #3c434a;
+	}
+}
