@@ -1,4 +1,4 @@
-import { Snippet } from './Snippet'
+import type { Snippet } from './Snippet'
 
 export interface SnippetsExport {
 	generator: string

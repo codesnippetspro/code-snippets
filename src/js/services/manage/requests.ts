@@ -1,5 +1,5 @@
-import { Snippet, SnippetScope } from '../../types/Snippet'
 import { isNetworkAdmin } from '../../utils/general'
+import type { Snippet, SnippetScope } from '../../types/Snippet'
 
 export interface ResponseData<T = unknown> {
 	success: boolean

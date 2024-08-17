@@ -1,6 +1,6 @@
-import { rm, mkdir, stat } from 'fs/promises'
-import { createWriteStream, createReadStream } from 'fs'
-import { join, dirname } from 'path'
+import { mkdir, rm, stat } from 'fs/promises'
+import { createReadStream, createWriteStream } from 'fs'
+import { dirname, join } from 'path'
 import { glob } from 'glob'
 
 export const resolve = (...parts: string[]): string =>

@@ -1,5 +1,6 @@
-import { registerHelper, defineMode, getMode, EditorConfiguration, ModeSpec } from 'codemirror'
+import { defineMode, getMode, registerHelper } from 'codemirror'
 import { Linter } from './utils/Linter'
+import type { EditorConfiguration, ModeSpec } from 'codemirror'
 
 interface ModeSpecOptions {
 	startOpen: boolean

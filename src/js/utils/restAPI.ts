@@ -1,5 +1,6 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios from 'axios'
 import { trimLeadingChar, trimTrailingChar } from './text'
+import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 const REST_BASE = window.CODE_SNIPPETS?.restAPI.base ?? ''
 

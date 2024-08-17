@@ -3,14 +3,14 @@
     "description": "Manage code snippets running on a WordPress-powered site through a graphical interface.",
     "homepage": "https://wordpress.org/plugins/code-snippets",
     "version": "3.6.5.1",
-    "main": "dist/edit.js",
+    "main": "src/dist/edit.js",
     "directories": {
         "test": "tests"
     },
     "scripts": {
         "test": "eslint && npm run phpcs",
-        "build": "webpack --mode development",
-        "watch": "webpack --mode development --watch",
+        "build": "webpack",
+        "watch": "webpack --watch",
         "bundle": "ts-node scripts/bundle.ts",
         "phpcs": "src/vendor/bin/phpcs -s --colors ./phpcs.xml",
         "phpcbf": "src/vendor/bin/phpcbf ./phpcs.xml",
@@ -55,6 +55,8 @@
         "react-select": "^5.8.0"
     },
     "devDependencies": {
+        "@eslint/compat": "^1.1.1",
+        "@eslint/eslintrc": "^3.1.0",
         "@eslint/js": "^9.9.0",
         "@stylistic/eslint-plugin": "^2.6.4",
         "@tsconfig/node18": "^18.2.4",
@@ -79,8 +81,10 @@
         "css-loader": "^7.1.2",
         "cssnano": "^7.0.5",
         "eslint": "^9.9.0",
+        "eslint-import-resolver-typescript": "^3.6.1",
+        "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-react": "^7.35.0",
-        "eslint-plugin-react-refresh": "^0.4.9",
+        "eslint-plugin-react-hooks": "^4.6.2",
         "eslint-webpack-plugin": "^4.2.0",
         "glob": "^11.0.0",
         "globals": "^15.9.0",
@@ -101,5 +105,8 @@
         "webpack-merge": "^6.0.1",
         "webpack-remove-empty-scripts": "^1.0.4",
         "webpack-rtl-plugin": "^2.0.0"
+    },
+    "overrides": {
+        "eslint": "^9.9.0"
     }
 }

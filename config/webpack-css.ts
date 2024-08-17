@@ -1,6 +1,4 @@
 import path from 'path'
-import { Configuration, EntryObject } from 'webpack'
-import { Config as PostCssConfig } from 'postcss-load-config'
 import libsass from 'sass'
 import cssnano from 'cssnano'
 import autoprefixer from 'autoprefixer'
@@ -9,6 +7,8 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import RemoveEmptyScriptsPlugin from 'webpack-remove-empty-scripts'
 import WebpackRTLPlugin from 'webpack-rtl-plugin'
 import { glob } from 'glob'
+import type { Config as PostCssConfig } from 'postcss-load-config'
+import type { Configuration, EntryObject } from 'webpack'
 
 const postcssOptions: PostCssConfig = {
 	plugins: [
@@ -30,7 +30,7 @@ export const cssWebpackConfig: Configuration = {
 	entry: {
 		...entriesFromFiles(
 			['src/css/*.scss', '!src/css/**/_*.scss'],
-			filename => `${path.parse(filename).name}-style`
+			filename => `${path.parse(filename).name}-css`
 		),
 		...entriesFromFiles(
 			'node_modules/codemirror/theme/*.css',
@@ -96,7 +96,7 @@ export const cssWebpackConfig: Configuration = {
 				chunk?.name ?
 					`${chunk.name}.css`
 						.replace(/^codemirror-theme-/, 'editor-themes/')
-						.replace(/-style\.css$/, '.css') :
+						.replace(/-css\.css$/, '.css') :
 					'[name].css'
 		}),
 		new WebpackRTLPlugin({

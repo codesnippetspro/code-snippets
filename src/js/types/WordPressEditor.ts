@@ -1,4 +1,4 @@
-import tinymce from 'tinymce'
+import type tinymce from 'tinymce'
 
 export interface VisualEditorSettings {
 	tinymce: boolean | tinymce.Settings & {

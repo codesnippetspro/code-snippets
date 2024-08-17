@@ -1,12 +1,15 @@
 import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
-import React, { Dispatch, SetStateAction, useState } from 'react'
-import { SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetScope } from '../../../types/Snippet'
+import React, { useState } from 'react'
+import { SNIPPET_TYPES, SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
 import { isNetworkAdmin } from '../../../utils/general'
-import { buildShortcodeTag, ShortcodeAtts } from '../../../utils/shortcodes'
+import { buildShortcodeTag } from '../../../utils/shortcodes'
 import { getSnippetType } from '../../../utils/snippets'
 import { CopyToClipboardButton } from '../../common/CopyToClipboardButton'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import type { ShortcodeAtts } from '../../../utils/shortcodes'
+import type { SnippetScope } from '../../../types/Snippet'
+import type { Dispatch, SetStateAction} from 'react'
 
 const SHORTCODE_TAG = 'code_snippet'
 

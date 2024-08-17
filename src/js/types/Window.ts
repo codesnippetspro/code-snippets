@@ -1,7 +1,7 @@
-import tinymce from 'tinymce'
-import { Snippet } from './Snippet'
-import { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './WordPressCodeEditor'
-import { WordPressEditor } from './WordPressEditor'
+import type tinymce from 'tinymce'
+import type { Snippet } from './Snippet'
+import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './WordPressCodeEditor'
+import type { WordPressEditor } from './WordPressEditor'
 
 declare global {
 	interface Window {

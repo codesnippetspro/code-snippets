@@ -1,7 +1,8 @@
 declare module 'webpack-rtl-plugin' {
-	import { ConfigOptions, Plugin } from 'rtlcss'
-	import cssnano from 'cssnano'
-	import webpack, { WebpackPluginInstance } from 'webpack'
+	import type { ConfigOptions, Plugin } from 'rtlcss'
+	import type cssnano from 'cssnano'
+	import type { WebpackPluginInstance } from 'webpack'
+	import type webpack from 'webpack'
 
 	class WebpackRtlPlugin implements WebpackPluginInstance {
 		constructor(options?: {

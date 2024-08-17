@@ -1,4 +1,4 @@
-import { GroupBase } from 'react-select'
+import type { GroupBase } from 'react-select'
 
 export interface SelectOption<T> {
 	readonly value: T

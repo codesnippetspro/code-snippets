@@ -1,9 +1,10 @@
-import { DefinePlugin, Configuration } from 'webpack'
 import { join, resolve } from 'path'
+import { DefinePlugin } from 'webpack'
 import ESLintPlugin from 'eslint-webpack-plugin'
 import RemoveEmptyScriptsPlugin from 'webpack-remove-empty-scripts'
 import { toCamelCase } from '../src/js/utils/text'
 import { dependencies } from '../package.json'
+import type { Configuration } from 'webpack'
 
 const SOURCE_DIR = './src/js'
 const DEST_DIR = './src/dist'
