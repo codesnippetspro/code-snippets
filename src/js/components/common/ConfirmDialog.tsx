@@ -1,6 +1,7 @@
-import React, { ReactNode } from 'react'
+import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { Modal, Flex, Button } from '@wordpress/components'
+import { Button, Flex, Modal } from '@wordpress/components'
+import type { ReactNode } from 'react'
 
 export interface ConfirmDialogProps {
 	open?: boolean

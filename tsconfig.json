@@ -3,7 +3,11 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": true,
+        "forceConsistentCasingInFileNames": true,
         "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
         "resolveJsonModule": true,
         "skipLibCheck": false,
         "jsx": "react"

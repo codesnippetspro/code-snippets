@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { handleUnknownError } from '../../../utils/errors'
-import { Button, ButtonProps } from '../../common/Button'
+import { Button } from '../../common/Button'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
-import { Snippet } from '../../../types/Snippet'
 import { isNetworkAdmin } from '../../../utils/general'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import type { Snippet } from '../../../types/Snippet'
+import type { ButtonProps } from '../../common/Button'
 
 interface SubmitButtonProps extends ButtonProps {
 	inlineButtons?: boolean
@@ -84,6 +85,7 @@ const ActivateOrDeactivateButton: React.FC<ActivateOrDeactivateButtonProps> = ({
 		case snippet.active:
 			return <DeactivateButton onClick={onDeactivate} {...commonProps} />
 
+		default:
 		case !snippet.active:
 			return <ActivateButton onClick={onActivate} primary={primaryActivate} {...commonProps} />
 	}

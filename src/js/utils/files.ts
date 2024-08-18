@@ -1,5 +1,5 @@
-import { Snippet } from '../types/Snippet'
 import { getSnippetType } from './snippets'
+import type { Snippet } from '../types/Snippet'
 
 const SECOND_IN_MS = 1000
 const TIMEOUT_SECONDS = 40

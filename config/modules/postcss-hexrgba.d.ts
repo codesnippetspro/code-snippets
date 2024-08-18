@@ -1,4 +1,4 @@
 declare module 'postcss-hexrgba' {
-	import { Plugin } from 'postcss'
+	import type { Plugin } from 'postcss'
 	export default function (): Plugin
 }

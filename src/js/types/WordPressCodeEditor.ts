@@ -1,4 +1,4 @@
-import { Editor, EditorConfiguration } from 'codemirror'
+import type { Editor, EditorConfiguration } from 'codemirror'
 
 export interface EditorOption {
 	name: string

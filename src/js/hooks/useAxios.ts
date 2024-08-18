@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import axios, { AxiosInstance, AxiosResponse, CreateAxiosDefaults } from 'axios'
+import axios from 'axios'
+import type { AxiosInstance, AxiosResponse, CreateAxiosDefaults } from 'axios'
 
 export interface AxiosAPI {
 	get: <T>(url: string) => Promise<AxiosResponse<T, never>>

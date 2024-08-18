@@ -1,4 +1,4 @@
-import { handleSnippetActivationSwitches, handleSnippetPriorityChanges, handleShowCloudPreview } from './services/manage'
+import { handleShowCloudPreview, handleSnippetActivationSwitches, handleSnippetPriorityChanges } from './services/manage'
 
 handleSnippetActivationSwitches()
 handleSnippetPriorityChanges()

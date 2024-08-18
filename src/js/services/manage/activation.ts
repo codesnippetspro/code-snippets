@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n'
-import { Snippet } from '../../types/Snippet'
 import { updateSnippet } from './requests'
+import type { Snippet } from '../../types/Snippet'
 
 /**
  * Update the snippet count of a specific view

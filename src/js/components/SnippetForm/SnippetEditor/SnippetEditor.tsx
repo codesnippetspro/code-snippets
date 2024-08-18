@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react'
 import { __, _x } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
-import { Editor, EditorConfiguration } from 'codemirror'
-import { SNIPPET_TYPE_SCOPES, SNIPPET_TYPES, SnippetScope, SnippetType } from '../../../types/Snippet'
+import classnames from 'classnames'
+import { SNIPPET_TYPES, SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
 import '../../../editor'
 import { isLicensed } from '../../../utils/general'
 import { getSnippetType, isProType } from '../../../utils/snippets'
-import classnames from 'classnames'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { CodeEditor } from './CodeEditor'
+import type { SnippetScope, SnippetType } from '../../../types/Snippet'
+import type { Editor, EditorConfiguration } from 'codemirror'
 
 interface SnippetTypeTabProps {
 	tabType: SnippetType

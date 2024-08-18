@@ -1,24 +1,32 @@
 // @ts-check
 
-import eslint from '@eslint/js'
 import globals from 'globals'
+import eslintJs from '@eslint/js'
+import eslintTs from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
-import typescript from 'typescript-eslint'
 import react from 'eslint-plugin-react'
+import { fixupPluginRules } from '@eslint/compat'
+import { FlatCompat } from '@eslint/eslintrc'
 
-export default typescript.config(
-	eslint.configs.recommended,
-	...typescript.configs.strictTypeChecked,
-	...typescript.configs.stylisticTypeChecked,
+const compat = new FlatCompat({
+	baseDirectory: import.meta.dirname,
+	recommendedConfig: eslintJs.configs.recommended
+})
+
+const legacyPlugin = (name, alias = name) =>
+	fixupPluginRules(compat.plugins(name)[0]?.plugins?.[alias])
+
+export default eslintTs.config(
+	eslintJs.configs.recommended,
+	...eslintTs.configs.strictTypeChecked,
+	...eslintTs.configs.stylisticTypeChecked,
+	...compat.extends('plugin:import/typescript'),
+	...compat.extends('plugin:react-hooks/recommended'),
 	react.configs.flat.recommended,
 	{
 		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', 'eslint.config.mjs']
 	},
 	{
-		plugins: {
-			'@stylistic': stylistic,
-			'react': react
-		},
 		languageOptions: {
 			ecmaVersion: 2018,
 			globals: { ...globals.browser },
@@ -29,8 +37,21 @@ export default typescript.config(
 				projectService: { allowDefaultProject: ['eslint.config.mjs'] }
 			}
 		},
+		plugins: {
+			'@stylistic': stylistic,
+			'react': react,
+			'import': legacyPlugin('eslint-plugin-import', 'import')
+		},
 		settings: {
-			react: { version: 'detect' }
+			'react': {
+				version: 'detect'
+			},
+			'import/resolver': {
+				typescript: {
+					alwaysTryTypes: true,
+					project: './tsconfig.json',
+				}
+			}
 		},
 		rules: {
 			'@stylistic/array-bracket-newline': ['error', 'consistent'],
@@ -58,8 +79,11 @@ export default typescript.config(
 				assertionStyle: 'angle-bracket',
 				objectLiteralTypeAssertions: 'never'
 			}],
+			'@typescript-eslint/consistent-type-imports': 'error',
+			'@typescript-eslint/consistent-type-exports': 'error',
 			'@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
 			'@typescript-eslint/no-for-in-array': 'error',
+			'@typescript-eslint/no-import-type-side-effects': 'error',
 			'@typescript-eslint/no-inferrable-types': ['error', { ignoreProperties: true, ignoreParameters: false }],
 			'@typescript-eslint/no-unused-vars': ['error', {
 				argsIgnorePattern: '^_',
@@ -79,6 +103,17 @@ export default typescript.config(
 			'dot-notation': 'error',
 			'eqeqeq': ['error', 'always'],
 			'func-style': ['error', 'expression'],
+			'import/export': 'error',
+			'import/named': 'error',
+			'import/no-duplicates': 'warn',
+			'import/no-namespace': 'error',
+			'import/no-unresolved': 'error',
+			'import/no-useless-path-segments': 'warn',
+			'import/order': ['error', {
+				'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+				'newlines-between': 'never',
+				'alphabetize': { orderImportKind: 'asc' }
+			}],
 			'max-lines-per-function': ['warn', { skipBlankLines: true, skipComments: true }],
 			'no-invalid-this': 'error',
 			'no-magic-numbers': ['error', { ignore: [-1, 0, 1] }],
@@ -87,6 +122,7 @@ export default typescript.config(
 			'one-var': ['error', 'never'],
 			'prefer-named-capture-group': 'error',
 			'prefer-template': 'error',
+			'sort-imports': ['error', { ignoreDeclarationSort: true }],
 			'yoda': ['error', 'always']
 		}
 	},

@@ -1,11 +1,11 @@
 import React from 'react'
-import { AxiosResponse } from 'axios'
 import { __ } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
-import { SnippetsExport } from '../../../types/SnippetsExport'
 import { useSnippetsAPI } from '../../../hooks/useSnippets'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import type { SnippetsExport } from '../../../types/SnippetsExport'
+import type { AxiosResponse } from 'axios'
 
 export const ExportButtons: React.FC = () => {
 	const api = useSnippetsAPI()

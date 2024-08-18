@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AxiosResponse, CreateAxiosDefaults } from 'axios'
 import { addQueryArgs } from '@wordpress/url'
-import { SnippetsExport } from '../types/SnippetsExport'
-import { Snippet } from '../types/Snippet'
 import { handleUnknownError } from '../utils/errors'
 import { isNetworkAdmin } from '../utils/general'
 import { useAxios } from './useAxios'
+import type { Snippet } from '../types/Snippet'
+import type { SnippetsExport } from '../types/SnippetsExport'
+import type { AxiosResponse, CreateAxiosDefaults } from 'axios'
 
 const ROUTE_BASE = window.CODE_SNIPPETS?.restAPI.snippets
 

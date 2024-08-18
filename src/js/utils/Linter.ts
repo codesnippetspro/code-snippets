@@ -30,8 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Block, Location, Node, Engine } from 'php-parser'
+import { Engine } from 'php-parser'
 import CodeMirror from 'codemirror'
+import type { Block, Location, Node} from 'php-parser'
 
 export interface Annotation {
 	message: string

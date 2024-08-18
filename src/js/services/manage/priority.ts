@@ -1,5 +1,5 @@
-import { Snippet } from '../../types/Snippet'
 import { updateSnippet } from './requests'
+import type { Snippet } from '../../types/Snippet'
 
 /**
  * Update the priority of a snippet
