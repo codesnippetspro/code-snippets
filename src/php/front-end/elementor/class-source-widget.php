@@ -263,7 +263,7 @@ class Source_Widget extends Widget {
 		printf(
 			'<div class="%s%s">%s</div>',
 			esc_attr( $settings['word_wrap'] ),
-			'default' === $settings['theme'] ? '' : esc_attr( " is-style-prism-${settings['theme']}" ),
+			'default' === $settings['theme'] ? '' : esc_attr( " is-style-prism-{$settings['theme']}" ),
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 			code_snippets()->frontend->render_source_shortcode( $settings )
 		);
