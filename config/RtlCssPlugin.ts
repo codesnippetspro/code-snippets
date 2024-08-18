@@ -33,7 +33,7 @@ export class RtlCssPlugin {
 				stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
 			}, assets => {
 				for (const chunk of compilation.chunks) {
-					if (chunk.name && !this.options.entries.has(chunk.name)) {
+					if (chunk.name && this.options.entries.has(chunk.name)) {
 						for (const sourceFilename of chunk.files) {
 							if ('.css' === path.extname(sourceFilename)) {
 								const rtlFilename = this.options.transformFilename(sourceFilename)
