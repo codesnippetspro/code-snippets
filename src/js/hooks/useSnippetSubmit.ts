@@ -3,27 +3,39 @@ import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
 import { useSnippetsAPI } from './useSnippets'
-import type { Dispatch, SetStateAction} from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 import type { ScreenNotice } from '../types/ScreenNotice'
 import type { Snippet } from '../types/Snippet'
 
-const getSuccessNotice = (request: Snippet, response: Snippet, active: boolean | undefined) => {
+const getSuccessNotice = (request: Snippet, response: Snippet, active: boolean | undefined): string => {
+	const isConditional = 'condition' === request.scope
+
 	if (active === undefined) {
 		return 0 === request.id ?
-			__('Snippet created.', 'code-snippets') :
-			__('Snippet updated.', 'code-snippets')
+			(isConditional ?
+				__('Conditional created.', 'code-snippets') :
+				__('Snippet created.', 'code-snippets')) :
+			(isConditional ?
+				__('Conditional updated.', 'code-snippets') :
+				__('Snippet updated.', 'code-snippets'))
 	}
 
 	if (0 === request.id && active) {
-		return __('Snippet created and activated.', 'code-snippets')
+		return isConditional ?
+			__('Conditional created and activated.', 'code-snippets') :
+			__('Snippet created and activated.', 'code-snippets')
 	}
 
 	if (active) {
 		return 'single-use' === response.scope ?
 			__('Snippet updated and executed.', 'code-snippets') :
-			__('Snippet updated and activated.', 'code-snippets')
+			(isConditional ?
+				__('Conditional updated and activated.', 'code-snippets') :
+				__('Snippet updated and activated.', 'code-snippets'))
 	} else {
-		return __('Snippet updated and deactivated')
+		return isConditional ?
+			__('Conditional updated and deactivated') :
+			__('Snippet updated and deactivated')
 	}
 }
 
@@ -52,9 +64,13 @@ export const useSnippetSubmit = (
 
 		if (undefined === result || 'string' === typeof result) {
 			const message = [
-				snippet.id ?
-					__('Could not create snippet.', 'code-snippets') :
-					__('Could not update snippet.', 'code-snippets'),
+				'condition' === snippet.scope ?
+					(snippet.id ?
+						__('Could not create conditional.', 'code-snippets') :
+						__('Could not update conditional.', 'code-snippets')) :
+					(snippet.id ?
+						__('Could not create snippet.', 'code-snippets') :
+						__('Could not update snippet.', 'code-snippets')),
 				result ?? __('The server did not send a valid response.', 'code-snippets')
 			]
 
@@ -66,8 +82,12 @@ export const useSnippetSubmit = (
 
 			if (snippet.id && result.id) {
 				window.document.title = window.document.title.replace(
-					__('Add New Snippet', 'code-snippets'),
-					__('Edit Snippet', 'code-snippets')
+					'condition' === snippet.scope ?
+						__('Add New Conditional', 'code-snippets') :
+						__('Add New Snippet', 'code-snippets'),
+					'condition' === snippet.scope ?
+						__('Edit Conditional', 'code-snippets') :
+						__('Edit Snippet', 'code-snippets')
 				)
 
 				window.history.replaceState({}, '', addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: result.id }))

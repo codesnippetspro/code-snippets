@@ -10,7 +10,6 @@ import { ExplainSnippetButton } from '../SnippetForm/buttons/ExplainSnippetButto
 import { GenerateCodeModal } from '../SnippetForm/page/GenerateCodeModal'
 import type { LineWidget } from 'codemirror'
 
-
 const InlineActivateButton: React.FC = () => {
 	const { snippet, isWorking, submitAndActivateSnippet, submitAndDeactivateSnippet } = useSnippetForm()
 
@@ -126,10 +125,10 @@ const InlineActionButtons: React.FC = () => {
 
 	return (
 		<>
-			{isWorking ? <Spinner /> : ''}
+			{isWorking && <Spinner />}
 
-			<GenerateCodeButton />
-			{'' === snippet.code.trim() ? null : <ExplainCodeButton />}
+			{'condition' !== snippet.scope && <GenerateCodeButton />}
+			{'condition' !== snippet.scope && '' !== snippet.code.trim() && <ExplainCodeButton />}
 
 			<Button
 				small

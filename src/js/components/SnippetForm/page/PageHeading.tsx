@@ -12,8 +12,8 @@ export const PageHeading: React.FC = () => {
 		<h1>
 			{'condition' === snippet.scope ?
 				snippet.id ?
-					__('Edit Conditions', 'code-snippets') :
-					__('Add New Conditions', 'code-snippets') :
+					__('Edit Conditional', 'code-snippets') :
+					__('Add New Conditional', 'code-snippets') :
 				snippet.id ?
 					__('Edit Snippet', 'code-snippets') :
 					__('Add New Snippet', 'code-snippets')}
