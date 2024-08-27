@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { handleUnknownError } from '../../../utils/errors'
+import { getSnippetType } from '../../../utils/snippets'
 import { Button } from '../../common/Button'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { isNetworkAdmin } from '../../../utils/general'
@@ -92,8 +93,11 @@ const ActivateOrDeactivateButton: React.FC<ActivateOrDeactivateButtonProps> = ({
 }
 
 const validateSnippet = (snippet: Snippet): undefined | string => {
-	const missingCode = '' === snippet.code.trim()
 	const missingTitle = '' === snippet.name.trim()
+
+	const missingCode = 'cond' === getSnippetType(snippet) ?
+		!snippet.conditions :
+		'' === snippet.code.trim()
 
 	switch (true) {
 		case missingCode && missingTitle:
@@ -176,13 +180,12 @@ export const SubmitButton: React.FC<SubmitButtonsProps> = ({ inlineButtons }) =>
 			onDeactivate={() => handleSubmit(submitAndDeactivateSnippet)}
 		/>
 
-		{activateByDefault ? null :
+		{activateByDefault ?
 			<SaveChangesButton
-				primary={!inlineButtons}
 				onClick={() => handleSubmit(submitSnippet)}
 				disabled={isWorking}
 				inlineButtons={inlineButtons}
-			/>}
+			/> : null}
 
 		<SubmitConfirmDialog
 			isOpen={isConfirmDialogOpen}

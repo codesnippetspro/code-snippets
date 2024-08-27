@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
-import { isMacOS } from '../../../utils/general'
-import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { isMacOS } from '../../utils/general'
+import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 
 export const CodeEditor: React.FC = () => {

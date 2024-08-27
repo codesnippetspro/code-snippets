@@ -1,5 +1,3 @@
-export const USERS_ENDPOINT = '/wp/v2/users'
-
 export interface User {
 	readonly id: number
 	username?: string

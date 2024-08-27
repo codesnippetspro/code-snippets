@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
-import { LineWidget } from 'codemirror'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
-import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { handleUnknownError } from '../../../utils/errors'
-import { isNetworkAdmin } from '../../../utils/general'
-import { Button } from '../../common/Button'
-import { CloudAIButton } from '../buttons/CloudAIButton'
-import { ExplainSnippetButton } from '../buttons/ExplainSnippetButton'
-import { GenerateCodeModal } from '../page/GenerateCodeModal'
+import { useSnippetForm } from '../../hooks/useSnippetForm'
+import { handleUnknownError } from '../../utils/errors'
+import { isNetworkAdmin } from '../../utils/general'
+import { Button } from '../common/Button'
+import { CloudAIButton } from '../SnippetForm/buttons/CloudAIButton'
+import { ExplainSnippetButton } from '../SnippetForm/buttons/ExplainSnippetButton'
+import { GenerateCodeModal } from '../SnippetForm/page/GenerateCodeModal'
+import type { LineWidget } from 'codemirror'
+
 
 const InlineActivateButton: React.FC = () => {
 	const { snippet, isWorking, submitAndActivateSnippet, submitAndDeactivateSnippet } = useSnippetForm()
@@ -120,7 +121,6 @@ const GenerateCodeButton: React.FC = () => {
 		<GenerateCodeModal show={showCreateModal} onClose={() => setShowCreateModal(false)} />
 	</>
 }
-
 const InlineActionButtons: React.FC = () => {
 	const { snippet, isWorking, submitSnippet } = useSnippetForm()
 

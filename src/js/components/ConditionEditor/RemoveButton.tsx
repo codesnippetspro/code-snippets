@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n'
-import React, { Dispatch, SetStateAction } from 'react'
-import { Snippet } from '../../../types/Snippet'
+import React from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import type { Snippet } from '../../types/Snippet'
 
 const removeCondition = (snippet: Snippet, groupId: string, conditionId: string): Snippet => {
 	if (!snippet.conditions?.[groupId][conditionId]) {
@@ -26,13 +27,15 @@ export interface RemoveButtonProps {
 }
 
 export const RemoveButton: React.FC<RemoveButtonProps> = ({ groupId, conditionId, setSnippet }) =>
-	<button
-		className="button condition-remove-button"
-		title={__('Remove this condition from the group.', 'code-snippets')}
-		onClick={event => {
-			event.preventDefault()
-			setSnippet(previous => removeCondition(previous, groupId, conditionId))
-		}}
-	>
-		<span className="dashicons dashicons-trash"></span>
-	</button>
+	<div>
+		<button
+			className="button condition-remove-button"
+			title={__('Remove this condition from the group.', 'code-snippets')}
+			onClick={event => {
+				event.preventDefault()
+				setSnippet(previous => removeCondition(previous, groupId, conditionId))
+			}}
+		>
+			<span className="dashicons dashicons-trash"></span>
+		</button>
+	</div>

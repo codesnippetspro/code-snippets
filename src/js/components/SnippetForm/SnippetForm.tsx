@@ -3,6 +3,8 @@ import classnames from 'classnames'
 import { isNetworkAdmin } from '../../utils/general'
 import { createEmptySnippet, getSnippetType } from '../../utils/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
+import { SnippetEditor } from '../SnippetEditor/SnippetEditor'
+import { SnippetEditorToolbar } from '../SnippetEditor/SnippetEditorToolbar'
 import { ActionButtons } from './buttons/ActionButtons'
 import { UpgradeDialog } from './page/UpgradeDialog'
 import { DescriptionEditor } from './fields/DescriptionEditor'
@@ -13,8 +15,6 @@ import { ScopeInput } from './fields/ScopeInput'
 import { TagsInput } from './fields/TagsInput'
 import { Notices } from './page/Notices'
 import { PageHeading } from './page/PageHeading'
-import { SnippetEditor } from './SnippetEditor/SnippetEditor'
-import { SnippetEditorToolbar } from './SnippetEditor/SnippetEditorToolbar'
 
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 

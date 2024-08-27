@@ -1,11 +1,11 @@
 import { __ } from '@wordpress/i18n'
 import React from 'react'
-import { ConditionGroup, ConditionGroups } from '../../../types/Condition'
-import { useSnippetForm } from '../SnippetForm/context'
+import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { AddGroupButton } from './AddButton'
 import { ConditionRow } from './ConditionRow'
+import type { ConditionGroup , ConditionGroups } from '../../types/Condition'
 
-const getNextIndex = (items: Record<PropertyKey, unknown>) => {
+const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
 	const keys = items ? Object.keys(items) : []
 	return 1 + (keys.length ? Math.max(...keys.map(Number).filter(value => !Number.isNaN(value))) : 0)
 }
@@ -20,11 +20,11 @@ const createCondition = (conditions: ConditionGroup | undefined = {}): Condition
 	[getNextIndex(conditions)]: { subject: '', operator: 'eq', object: '' }
 })
 
-interface ConditionGroupProps {
+interface ConditionGroupEditorProps {
 	groupId: string
 }
 
-const ConditionGroup: React.FC<ConditionGroupProps> = ({ groupId }) => {
+const ConditionGroupEditor: React.FC<ConditionGroupEditorProps> = ({ groupId }) => {
 	const { snippet, setSnippet } = useSnippetForm()
 
 	return <>
@@ -59,7 +59,7 @@ export const ConditionEditor: React.FC = () => {
 				{snippet.conditions ?
 					Object.keys(snippet.conditions).map(groupId =>
 						snippet.conditions?.[groupId] ?
-							<ConditionGroup key={groupId} groupId={groupId} /> : null
+							<ConditionGroupEditor key={groupId} groupId={groupId} /> : null
 					) :
 					<>
 						<p>

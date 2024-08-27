@@ -1,12 +1,13 @@
-import { Button, Modal, TextareaControl, Flex, Spinner } from '@wordpress/components'
+import { Button, Flex, Modal, Spinner, TextareaControl } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
-import React, { Dispatch, FormEventHandler, SetStateAction, useRef, useState } from 'react'
-import { Snippet } from '../../../types/Snippet'
+import React, { useRef, useState } from 'react'
 import { useGenerativeAPI } from '../../../hooks/useGenerativeAPI'
 import { getSnippetType } from '../../../utils/snippets'
 import { GenerateIcon } from '../buttons/CloudAIButton'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import type { Snippet } from '../../../types/Snippet'
+import type { Dispatch, FormEventHandler, SetStateAction} from 'react'
 
 interface PromptFormProps {
 	snippet: Snippet

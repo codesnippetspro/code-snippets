@@ -136,6 +136,10 @@ $inactive-color: #ccc;
 
 .snippets {
 
+	td.column-id {
+		text-align: center;
+	}
+
 	tr {
 		background: #fff;
 	}
@@ -300,7 +304,7 @@ $inactive-color: #ccc;
 .refresh-button-container {
 	display: flex;
 	align-items: center;
-    justify-content: flex-start;
+	justify-content: flex-start;
 	margin-top: 15px;
 	margin-bottom: -39px;
 	gap: 7px;
@@ -313,12 +317,26 @@ $inactive-color: #ccc;
 	line-height: 1.4;
 }
 
+.cloud-badge {
+	border: 1px solid;
+	border-radius: 5px;
+	font-size: 15px;
+	line-height: 19px;
+}
+
+.nav-tab {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
 @media screen and (max-width: 1190px) {
 	.nav-tab {
 		.snippet-label {
 			display: none;
 		}
-		.cloud-badge{
+
+		.cloud-badge {
 			margin-right: 10px;
 		}
 	}

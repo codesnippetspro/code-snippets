@@ -1,9 +1,10 @@
 import { Modal } from '@wordpress/components'
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import { Button, ButtonProps } from '../../common/Button'
-import { Snippet } from '../../../types/Snippet'
+import { Button } from '../../common/Button'
 import { isLicensed } from '../../../utils/general'
+import type { ButtonProps } from '../../common/Button'
+import type { Snippet } from '../../../types/Snippet'
 
 export const GenerateIcon = () =>
 	<svg

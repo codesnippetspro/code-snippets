@@ -2,11 +2,12 @@ import { Spinner, Tooltip } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
 import React, { useState } from 'react'
-import { ButtonProps } from '../../common/Button'
-import { Snippet } from '../../../types/Snippet'
-import { ExplainedSnippet, ExplainSnippetFields, useGenerativeAPI } from '../../../hooks/useGenerativeAPI'
+import { useGenerativeAPI } from '../../../hooks/useGenerativeAPI'
 import { trimTrailingChar } from '../../../utils/text'
 import { CloudAIButton } from './CloudAIButton'
+import type { ButtonProps } from '../../common/Button'
+import type { Snippet } from '../../../types/Snippet'
+import type { ExplainSnippetFields, ExplainedSnippet} from '../../../hooks/useGenerativeAPI'
 
 export interface ExplainSnippetButtonProps extends Omit<ButtonProps, 'onClick'> {
 	field: ExplainSnippetFields

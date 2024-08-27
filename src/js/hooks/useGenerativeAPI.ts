@@ -1,7 +1,7 @@
-import { AxiosRequestConfig } from 'axios'
 import { useMemo } from 'react'
-import { Snippet, SnippetType } from '../types/Snippet'
 import { useAxios } from './useAxios'
+import type { AxiosRequestConfig } from 'axios'
+import type { Snippet, SnippetType } from '../types/Snippet'
 
 const ROUTE_BASE = window.CODE_SNIPPETS?.restAPI.cloud
 

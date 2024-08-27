@@ -1,4 +1,4 @@
-import { ConditionGroups } from './Condition'
+import type { ConditionGroups } from './Condition'
 
 export interface Snippet {
 	id: number
