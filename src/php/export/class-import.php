@@ -73,6 +73,7 @@ class Import {
 				'desc',
 				'description',
 				'code',
+				'conditions',
 				'tags',
 				'scope',
 				'priority',

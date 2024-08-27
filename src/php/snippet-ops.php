@@ -521,6 +521,8 @@ function save_snippet( $snippet ) {
 				$snippet->active = 0;
 			}
 		}
+	} elseif ( 'cond' === $snippet->type ) {
+		$snippet->code = wp_json_encode( $snippet->conditions );
 	}
 
 	// Increment the revision number unless revision = 1 or revision is not set.

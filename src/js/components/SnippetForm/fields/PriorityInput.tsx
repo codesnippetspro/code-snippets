@@ -6,7 +6,7 @@ import { useSnippetForm } from '../../../hooks/useSnippetForm'
 export const PriorityInput: React.FC = () => {
 	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
 
-	return 'html' === getSnippetType(snippet) ? null :
+	return 'condition' === snippet.scope || 'html' === getSnippetType(snippet) ? null :
 		<p
 			className="snippet-priority"
 			title={__('Snippets with a lower priority number will run before those with a higher number.', 'code-snippets')}

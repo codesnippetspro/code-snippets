@@ -10,9 +10,13 @@ export const PageHeading: React.FC = () => {
 
 	return (
 		<h1>
-			{snippet.id ?
-				__('Edit Snippet', 'code-snippets') :
-				__('Add New Snippet', 'code-snippets')}
+			{'condition' === snippet.scope ?
+				snippet.id ?
+					__('Edit Conditions', 'code-snippets') :
+					__('Add New Conditions', 'code-snippets') :
+				snippet.id ?
+					__('Edit Snippet', 'code-snippets') :
+					__('Add New Snippet', 'code-snippets')}
 
 			{snippet.id ? <>{' '}
 				<a href={window.CODE_SNIPPETS?.urls.addNew} className="page-title-action" onClick={event => {

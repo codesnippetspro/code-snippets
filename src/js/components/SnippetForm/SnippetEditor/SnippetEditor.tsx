@@ -6,6 +6,7 @@ import { SNIPPET_TYPES, SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
 import '../../../editor'
 import { isLicensed } from '../../../utils/general'
 import { getSnippetType, isProType } from '../../../utils/snippets'
+import { ConditionEditor } from '../ConditionEditor'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { CodeEditor } from './CodeEditor'
 import type { SnippetScope, SnippetType } from '../../../types/Snippet'
@@ -54,14 +55,17 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({
 		}>
 		{`${label} `}
 
-		<span className="badge">{tabType}</span>
+		{'cond' === tabType ?
+			<span className="dashicons dashicons-randomize"></span> :
+			<span className="badge">{tabType}</span>}
 	</a>
 
 export const TYPE_LABELS: Record<SnippetType, string> = {
 	php: __('Functions', 'code-snippets'),
 	html: __('Content', 'code-snippets'),
 	css: __('Styles', 'code-snippets'),
-	js: __('Scripts', 'code-snippets')
+	js: __('Scripts', 'code-snippets'),
+	cond: __('Conditions', 'code-snippets')
 }
 
 const EDITOR_MODES: Partial<Record<SnippetType, string>> = {
@@ -132,26 +136,35 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({ openUpgradeDialog 
 	const snippetType = getSnippetType(snippet)
 
 	return (
-		<div className="snippet-code-container">
-			<h2>
-				<label htmlFor="snippet_code">
-					{`${__('Code', 'code-snippets')} `}
-					{snippet.id ?
-						<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> : null}
-				</label>
-			</h2>
+		<>
+			<div className="snippet-code-container">
+				<h2>
+					{'condition' === snippet.scope ?
+						<label htmlFor="snippet_conditions">
+							{__('Conditions', 'code-snippets')}{' '}
+							{snippet.id ?
+								<span className="dashicons dashicons-randomize"></span> : null}
+						</label> :
+						<label htmlFor="snippet_code">
+							{__('Code', 'code-snippets')}{' '}
+							{snippet.id ?
+								<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> : null}
+						</label>}
+				</h2>
 
-			{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview || !codeEditorInstance ? '' :
-				<SnippetTypeTabs
-					snippetType={snippetType}
-					codeEditor={codeEditorInstance.codemirror}
-					openUpgradeDialog={openUpgradeDialog}
-					updateScope={scope => {
-						setSnippet(previous => ({ ...previous, scope }))
-					}}
-				/>}
+				{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview || !codeEditorInstance ? '' :
+					<SnippetTypeTabs
+						snippetType={snippetType}
+						codeEditor={codeEditorInstance.codemirror}
+						openUpgradeDialog={openUpgradeDialog}
+						updateScope={scope => {
+							setSnippet(previous => ({ ...previous, scope }))
+						}}
+					/>}
 
-			<CodeEditor />
-		</div>
+				<ConditionEditor />
+				<CodeEditor />
+			</div>
+		</>
 	)
 }

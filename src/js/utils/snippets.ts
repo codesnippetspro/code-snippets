@@ -30,6 +30,9 @@ export const getSnippetType = (snippetOrScope: Snippet | SnippetScope): SnippetT
 		case scope.endsWith('content'):
 			return 'html'
 
+		case 'condition' === scope:
+			return 'cond'
+
 		default:
 			return 'php'
 	}
