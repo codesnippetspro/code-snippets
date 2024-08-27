@@ -1,6 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { Snippet, SnippetScope } from '../../../types/Snippet'
+import type { Snippet, SnippetScope } from '../../../types/Snippet'
 
 const _SCOPE_LABELS: Partial<Record<SnippetScope, string>> = {
 	'site-css': __('Site front-end stylesheet', 'code-snippets'),

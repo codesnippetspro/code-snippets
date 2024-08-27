@@ -86,7 +86,7 @@
         "eslint-import-resolver-typescript": "^3.6.1",
         "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-react": "^7.35.0",
-        "eslint-plugin-react-hooks": "^4.6.2",
+        "eslint-plugin-react-hooks": "^5.1.0-rc-f65ac7bd-20240826",
         "eslint-webpack-plugin": "^4.2.0",
         "glob": "^11.0.0",
         "globals": "^15.9.0",

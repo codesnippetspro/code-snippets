@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n'
+import axios from 'axios'
 import { getRestUrl } from '../../utils/restAPI'
 import type { SelectGroups, SelectOption, SelectOptions } from '../../types/SelectOption'
 import type { ConditionOperator, ConditionSubject, ConditionSubjects } from '../../types/Condition'
-import axios from 'axios'
 
 export const SUBJECT_OPTIONS: SelectGroups<ConditionSubject> = [
 	{

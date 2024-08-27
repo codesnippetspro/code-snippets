@@ -1,26 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Select from 'react-select'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
+import { findOptionByValue } from '../../utils/options'
 import type { ReactElement } from 'react'
-import type { OptionsOrGroups, Props as SelectProps } from 'react-select'
+import type { Props as SelectProps } from 'react-select'
 import type { Condition } from '../../types/Condition'
 import type { SelectGroup, SelectOption } from '../../types/SelectOption'
-
-const findOptionByValue = <T, >(optionsOrGroups?: OptionsOrGroups<SelectOption<T>, SelectGroup<T>>, value?: T): SelectOption<T> | undefined => {
-	if (optionsOrGroups && value) {
-		for (const optionOrGroup of optionsOrGroups) {
-			const option: SelectOption<T> | undefined = 'options' in optionOrGroup ?
-				optionOrGroup.options.find(option => option.value === value) :
-				optionOrGroup
-
-			if (option?.value === value) {
-				return option
-			}
-		}
-	}
-
-	return undefined
-}
 
 export interface ConditionFieldProps<F extends keyof Condition>
 	extends SelectProps<SelectOption<Condition[F]>, false, SelectGroup<Condition[F]>> {
@@ -37,22 +22,14 @@ export const ConditionField = <F extends keyof Condition>({
 	...selectProps
 }: ConditionFieldProps<F>): ReactElement => {
 	const { snippet, setSnippet } = useSnippetForm()
-	const condition = snippet.conditions?.[groupId][conditionId]
-	const [selectedOption, setSelectedOption] = useState<SelectOption<Condition[F]> | undefined>(() => findOptionByValue(options, condition?.[field]))
+	const currentValue = snippet.conditions?.[groupId][conditionId]?.[field]
+
+	const [selectedOption, setSelectedOption] =
+		useState<SelectOption<Condition[F]> | undefined>(() => findOptionByValue(options, currentValue))
 
 	useEffect(() => {
-		if (selectedOption && !findOptionByValue(options, selectedOption.value)) {
-			setSelectedOption(undefined)
-		}
-
-		if (!selectedOption && condition?.[field]) {
-			setSelectedOption(findOptionByValue(options, condition[field]))
-		}
-	}, [selectedOption, options])
-
-	useEffect(() => {
-		setSelectedOption(findOptionByValue(options, condition?.[field]))
-	}, [condition])
+		setSelectedOption(findOptionByValue(options, currentValue))
+	}, [options, currentValue])
 
 	return (
 		<Select

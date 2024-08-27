@@ -5,6 +5,7 @@ import eslintJs from '@eslint/js'
 import eslintTs from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
 import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
 import { fixupPluginRules } from '@eslint/compat'
 import { FlatCompat } from '@eslint/eslintrc'
 
@@ -21,8 +22,11 @@ export default eslintTs.config(
 	...eslintTs.configs.strictTypeChecked,
 	...eslintTs.configs.stylisticTypeChecked,
 	...compat.extends('plugin:import/typescript'),
-	...compat.extends('plugin:react-hooks/recommended'),
 	react.configs.flat.recommended,
+	{
+		plugins: { 'react-hooks': reactHooks },
+		rules: reactHooks.configs.recommended.rules,
+	},
 	{
 		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', 'eslint.config.mjs']
 	},
