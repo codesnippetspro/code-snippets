@@ -17,15 +17,15 @@ use function Code_Snippets\update_snippet_fields;
  */
 class Cloud_API {
 
-	/**
-	 * Base URL for cloud website.
-	 */
-	private const CLOUD_URL = 'https://codesnippets.cloud/';
+	// /**
+	//  * Base URL for cloud website.
+	//  */
+	// private const CLOUD_URL = 'https://codesnippets.cloud/';
 
-	/**
-	 * Base URL for cloud API.
-	 */
-	private const CLOUD_API_URL = 'https://codesnippets.cloud/api/v1/';
+	// /**
+	//  * Base URL for cloud API.
+	//  */
+	// private const CLOUD_API_URL = 'https://codesnippets.cloud/api/v1/';
 
 	/**
 	 * Key used to access the local-to-cloud map transient data.
@@ -79,9 +79,29 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function __construct() {
+        defined('CS_CLOUD_URL') ? CS_CLOUD_URL : define('CS_CLOUD_URL', 'https://codesnippets.cloud/');
+        defined('CS_CLOUD_API_URL') ? CS_CLOUD_API_URL : define('CS_CLOUD_API_URL', CS_CLOUD_URL . 'api/v1/');
 		add_action( 'plugins_loaded', [ $this, 'init_oauth_sync' ] );
 		add_filter( 'allowed_redirect_hosts', [ $this, 'allow_cloud_redirects' ] );
 	}
+
+    /**
+     * Retrieve the Cloud URL from wp-config or fallback to default.
+     *
+     * @return string
+     */
+    public static function get_cloud_url(): string {
+        return defined('CS_CLOUD_URL') ? CS_CLOUD_URL : 'https://codesnippets.cloud/';
+    }
+
+    /**
+     * Retrieve the Cloud API URL from wp-config or fallback to default.
+     *
+     * @return string
+     */
+    public static function get_cloud_api_url(): string {
+        return defined('CS_CLOUD_API_URL') ? CS_CLOUD_API_URL : 'https://codesnippets.cloud/api/v1/';
+    }
 
 	/**
 	 * Retrieve the value of a cloud setting, if it exists.
@@ -342,7 +362,7 @@ class Cloud_API {
 	 * @return string[] Modified list of allowed redirect hosts.
 	 */
 	public function allow_cloud_redirects( array $allowed_hosts ): array {
-		$api_url = wp_parse_url( self::CLOUD_URL );
+		$api_url = wp_parse_url( self::get_cloud_url() );
 		$allowed_hosts[] = $api_url['host'];
 		return $allowed_hosts;
 	}
@@ -448,7 +468,7 @@ class Cloud_API {
 
 		// Send POST request to CLOUD_API_URL . 'private/syncandverify' with site_token and site_host as form data.
 		$response = wp_remote_post(
-			self::CLOUD_API_URL . 'private/syncandverify',
+			self::get_cloud_api_url() . 'private/syncandverify',
 			[
 				'method'  => 'POST',
 				'headers' => [
@@ -546,7 +566,7 @@ class Cloud_API {
 				'state'          => $this->get_current_state(),
 				'callback_url'   => esc_url_raw( $callback_url ),
 			],
-			self::CLOUD_URL . 'oauth/login'
+			self::get_cloud_url() . 'oauth/login'
 		);
 
 		wp_safe_redirect( esc_url_raw( $url ) );
@@ -570,7 +590,7 @@ class Cloud_API {
 		}
 
 		$response = wp_remote_post(
-			self::CLOUD_API_URL . 'auth/token',
+			self::get_cloud_api_url() . 'auth/token',
 			[
 				'method'  => 'POST',
 				'headers' => [
@@ -638,7 +658,7 @@ class Cloud_API {
 
 		// Otherwise, fetch from API and store.
 		$response = wp_remote_get(
-			self::CLOUD_API_URL . 'private/allsnippets?page=' . $page,
+			self::get_cloud_api_url() . 'private/allsnippets?page=' . $page,
 			[ 'headers' => $this->build_request_headers() ]
 		);
 
@@ -682,7 +702,7 @@ class Cloud_API {
 				'site_token' => self::get_local_token(),
 				'site_host'  => wp_parse_url( get_site_url(), PHP_URL_HOST ),
 			],
-			self::CLOUD_API_URL . 'public/search'
+			self::get_cloud_api_url() . 'public/search'
 		);
 
 		$results = self::unpack_request_json( wp_remote_get( $api_url ) );
@@ -722,7 +742,7 @@ class Cloud_API {
 
 			// Send post request to cs store api with snippet data.
 			$response = wp_remote_post(
-				self::CLOUD_API_URL . 'private/storesnippet',
+				self::get_cloud_api_url() . 'private/storesnippet',
 				[
 					'method'  => 'POST',
 					'headers' => $this->build_request_headers(),
@@ -767,7 +787,7 @@ class Cloud_API {
 
 			// Send post request to cs store api with snippet data.
 			$response = wp_remote_post(
-				self::CLOUD_API_URL . 'private/updatesnippet/' . $cloud_id,
+				self::get_cloud_api_url() . 'private/updatesnippet/' . $cloud_id,
 				[
 					'method'  => 'POST',
 					'headers' => $this->build_request_headers(),
@@ -825,7 +845,7 @@ class Cloud_API {
 	 * @return Cloud_Snippet Retrieved snippet.
 	 */
 	public static function get_single_snippet_from_cloud( int $cloud_id ): Cloud_Snippet {
-		$url = self::CLOUD_API_URL . sprintf( 'public/getsnippet/%s', $cloud_id );
+		$url = self::get_cloud_api_url() . sprintf( 'public/getsnippet/%s', $cloud_id );
 		$response = wp_remote_get( $url );
 		$cloud_snippet = self::unpack_request_json( $response );
 
@@ -840,7 +860,7 @@ class Cloud_API {
 	 * @return string|null Revision number on success, null otherwise.
 	 */
 	public static function get_cloud_snippet_revision( string $cloud_id ): ?string {
-		$api_url = self::CLOUD_API_URL . sprintf( 'public/getsnippetrevision/%s', $cloud_id );
+		$api_url = self::get_cloud_api_url() . sprintf( 'public/getsnippetrevision/%s', $cloud_id );
 		$body = wp_remote_retrieve_body( wp_remote_get( $api_url ) );
 
 		if ( ! $body ) {
@@ -858,7 +878,7 @@ class Cloud_API {
 	 */
 	public static function get_bundles(): ?array {
 		$response = wp_remote_get(
-			self::CLOUD_API_URL . 'private/bundles',
+			self::get_cloud_api_url() . 'private/bundles',
 			[ 'headers' => self::build_request_headers() ]
 		);
 		return self::unpack_request_json( $response );
@@ -872,7 +892,7 @@ class Cloud_API {
 	 * @return Cloud_Snippets
 	 */
 	public function get_snippets_from_bundle( int $bundle_id ): Cloud_Snippets {
-		$api_url = self::CLOUD_API_URL . sprintf( 'private/getbundle/%s', $bundle_id );
+		$api_url = self::get_cloud_api_url() . sprintf( 'private/getbundle/%s', $bundle_id );
 		$response = wp_remote_post(
 			$api_url,
 			[
@@ -896,7 +916,7 @@ class Cloud_API {
 	 * @return Cloud_Snippets
 	 */
 	public function get_snippets_from_shared_bundle( string $bundle_share_name ): Cloud_Snippets {
-		$api_url = self::CLOUD_API_URL . sprintf( 'private/getsharedbundle?share_name=%s', $bundle_share_name );
+		$api_url = self::get_cloud_api_url() . sprintf( 'private/getsharedbundle?share_name=%s', $bundle_share_name );
 		$response = wp_remote_post(
 			$api_url,
 			[
@@ -953,7 +973,7 @@ class Cloud_API {
 
 		// Send the cloud_ids to the cloud.
 		wp_remote_post(
-			self::CLOUD_API_URL . 'private/setsyncedsnippetlist',
+			self::get_cloud_api_url() . 'private/setsyncedsnippetlist',
 			[
 				'method'  => 'POST',
 				'headers' => $this->build_request_headers(),
