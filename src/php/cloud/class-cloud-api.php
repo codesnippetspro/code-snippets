@@ -17,16 +17,6 @@ use function Code_Snippets\update_snippet_fields;
  */
 class Cloud_API {
 
-	// /**
-	//  * Base URL for cloud website.
-	//  */
-	// private const CLOUD_URL = 'https://codesnippets.cloud/';
-
-	// /**
-	//  * Base URL for cloud API.
-	//  */
-	// private const CLOUD_API_URL = 'https://codesnippets.cloud/api/v1/';
-
 	/**
 	 * Key used to access the local-to-cloud map transient data.
 	 */
