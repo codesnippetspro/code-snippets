@@ -434,7 +434,7 @@ class Snippet extends Data_Item {
 		}
 
 		// translators: 1: date format, 2: time format.
-		$date_format = _x( '%1$s \a\t %2$s', 'date and time format', 'code-snippets' );
+		$date_format = _x( '%1$s at %2$s', 'date and time format', 'code-snippets' );
 		$date_format = sprintf( $date_format, get_option( 'date_format' ), get_option( 'time_format' ) );
 
 		return sprintf( '<span title="%s">%s</span>', $local_time->format( $date_format ), $human_time );
