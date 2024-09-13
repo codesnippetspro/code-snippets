@@ -5,7 +5,7 @@ Tags: code, snippets, multisite, php, css
 License: MIT
 License URI: license.txt
 Stable tag: 3.6.5.1
-Tested up to: 6.5.3
+Tested up to: 6.6.2
 
 An easy, clean and simple way to enhance your site with code snippets.
 
@@ -43,8 +43,11 @@ https://youtu.be/uzND-wdSCMQ
 
 1. Log into your WordPress admin
 2. Click __Plugins__
+
 3. Click __Add New__
+
 4. Search for __Code Snippets__
+
 5. Click __Install Now__ under "Code Snippets"
 6. Activate the plugin
 
@@ -100,125 +103,211 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-= 3.6.5 (24 May 2024) =
-* Added: New admin menu providing useful resources and updates on the Code Snippets plugin and community.
+= 3.6.5 (2024-05-24) =
 
-= 3.6.4 (15 Mar 2024) =
-* Fixed: Minor type compatability issue with newer versions of PHP.
-* Improvement: Increment the revision number of CSS and JS snippet when using the 'Reset Caches' debug action. (PRO)
-* Fixed: Undefined array key issue when initiating cloud sync. (PRO)
-* Fixed: Bug preventing downloading a single snippet from a bundle. (PRO)
-* Added: AI generation for all snippet types: HTML, CSS, JS. (PRO)
-* Fixed: Translations not loading for strings in JavaScript files.
-* Improved: UX in generate dialog, such as allowing 'Enter' to submit the form. (PRO)
-* Added: Button to create a cloud connection directly from the Snippets menu when disconnected. (PRO)
+__Added__
 
-= 3.6.3 (13 Nov 2023) =
-* Fixed: Import error when initialising cloud sync configuration. (PRO)
-* Improved: Added debug action for resetting snippets caches.
+* New admin menu providing useful resources and updates on the Code Snippets plugin and community.
 
-= 3.6.2 (11 Nov 2023) =
-* Fixed: Error when attempting to save shared network snippets marked as active.
-* Fixed: Type error when rendering checkbox fields without a stored or default value.
-* Fixed: Removed automatic encoding of code content.
-* Fixed: Label for snippet sharing input incorrectly linked to input field.
-* Fixed: Error when attempting to download export files from Edit menu.
-* Fixed: Issue loading Freemius string overrides too early. (PRO)
-* Fixed: Fix redirect URL when connecting with OAuth on subdirectory or HTTPS sites. (PRO)
-* Fixed: Import error when attempting to completely uninstall the plugin.
+= 3.6.4 (2024-03-15) =
 
-= 3.6.1 (07 Nov 2023) =
-* Fixed: Issue accessing fields on Snippets class.
+__Added__
 
-= 3.6.0 (07 Nov 2023) =
+* AI generation for all snippet types: HTML, CSS, JS. (PRO)
+* Button to create a cloud connection directly from the Snippets menu when disconnected. (PRO)
+
+__Changed__
+
+* Increment the revision number of CSS and JS snippet when using the 'Reset Caches' debug action. (PRO)
+* UX in generate dialog, such as allowing 'Enter' to submit the form. (PRO)
+
+__Fixed__
+
+* Minor type compatability issue with newer versions of PHP.
+* Undefined array key issue when initiating cloud sync. (PRO)
+* Bug preventing downloading a single snippet from a bundle. (PRO)
+* Translations not loading for strings in JavaScript files.
+
+= 3.6.3 (2023-11-13) =
+
+__Added__
+
+* Added debug action for resetting snippets caches.
+
+__Fixed__
+
+* Import error when initialising cloud sync configuration. (PRO)
+
+= 3.6.2 (2023-11-11) =
+
+__Removed__
+
+* Removed automatic encoding of code content.
+
+__Fixed__
+
+* Error when attempting to save shared network snippets marked as active.
+* Type error when rendering checkbox fields without a stored or default value.
+* Label for snippet sharing input incorrectly linked to input field.
+* Error when attempting to download export files from Edit menu.
+* Issue loading Freemius string overrides too early. (PRO)
+* Fix redirect URL when connecting with OAuth on subdirectory or HTTPS sites. (PRO)
+* Import error when attempting to completely uninstall the plugin.
+
+= 3.6.1 (2023-11-07) =
+
+__Fixed__
+
+* Issue accessing fields on Snippets class.
+
+= 3.6.0 (2023-11-07) =
+
+__Added__
+
+* Ability to authenticate with Code Snippets Cloud using OAuth. (PRO)
+* Integration with GPT AI for generating snippets. (PRO)
+* Ability to generate line-by-line descriptions of snippet code with GPT AI. (PRO)
+* Ability to generate tags and description text from existing snippet code with GPT AI. (PRO)
+* Added debug settings menu for manually performing problem-solving actions.
+* Filter to disable scroll-into-view functionality for edit page notices.
+
+__Changed__
+
 * Updated minimum PHP requirement to 7.4.
+* Ensure that the URL of the edit snippet page changes when adding a new snippet.
+* Snippet tags will automatically be added when focus is lost on the tags field.
 
-* Added: Ability to authenticate with Code Snippets Cloud using OAuth. (PRO)
-* Added: Integration with GPT AI for generating snippets. (PRO)
-* Added: Ability to generate line-by-line descriptions of snippet code with GPT AI. (PRO)
-* Added: Ability to generate tags and description text from existing snippet code with GPT AI. (PRO)
+__Fixed__
 
-* Improved: Ensure that the URL of the edit snippet page changes when adding a new snippet.
-* Improved: Snippet tags will automatically be added when focus is lost on the tags field.
-* Improved: Added debug settings menu for manually performing problem-solving actions.
-* Fixed: Moved active status border on edit name field to left-hand side.
-* Added: Filter to disable scroll-into-view functionality for edit page notices.
-* Fixed: New notices will not scroll if already at top of page.
-* Fixed: Potential CSRF vulnerability allowing an authenticated user to reset settings.
+* Moved active status border on edit name field to left-hand side.
+* New notices will not scroll if already at top of page.
+* Potential CSRF vulnerability allowing an authenticated user to reset settings.
 
-= 3.5.1 (15 Sep 2023) =
-* Fixed: Undefined array key error when accessing plugin settings page. (PRO)
-* Fixed: Issue registering API endpoints affecting edit post screen. (PRO)
+= 3.5.1 (2023-09-15) =
 
-= 3.5.0 (14 Sep 2023) =
-* Added: Support for the Code Snippets Cloud API.
-* Added: Search and download public snippets.
-* Added: Codevault back-up and synchronisation. (PRO)
-* Added: Synchronised local snippets are automatically updated in Cloud. (PRO)
-* Added: Bulk actions - 'update' and 'download'.
-* Added: Download snippets from public and private codevaults. (PRO)
-* Added: Search and download any publicly viewable snippet in Code Snippet Cloud by keyword or name of codevault. (PRO)
-* Added: Deploy snippets to plugin from Code Snippets Cloud app. (PRO)
-* Added: Bundles of Joy! Search and download Snippet Bundles in one go direct from Code Snippets Cloud. (PRO)
-* Fixed: Error when attempting to update network shared snippets after saving. [[#](https://wordpress.org/support/topic/activating-snippets-breaks-on-wordpress-6-3/)]
-* Improved: Redirect to snippets table when deleting snippet from the edit menu.
-* Improved: Scroll new notices into view on edit menu.
+__Fixed__
 
-= 3.4.2 (05 Jul 2023) =
-* Fixed: Issue causing export process to fail with fatal error. [[#](https://wordpress.org/support/topic/critical-error-on-exporting-snippets/)]
-* Fixed: Type issue on `the_posts` filter when no posts available. [[#](https://wordpress.org/support/topic/collision-with-plugin-xml-sitemap-google-news/)]
+* Undefined array key error when accessing plugin settings page. (PRO)
+* Issue registering API endpoints affecting edit post screen. (PRO)
+* Snippet ID instead of snippet object being passed to `code_snippets/update_snippet` action hook.
 
-= 3.4.1 (29 Jun 2023) =
-* Fixed: Undefined array key error. [[#](https://wordpress.org/support/topic/after-updating-occasionally-getting-undefined-array-key-query/)]
-* Fixed: Potential type issue when loading Prism. [[#](https://wordpress.org/support/topic/code-snippets-fatal-error-breaking-xml-sitemaps/)]
-* Improved: Added better debugging when calling REST API methods from the edit menu.
-* Improved: Escape special characters when sending snippet code through AJAX to avoid false-positives from security modules. [[#](https://wordpress.org/support/topic/latest-3-4-0-ajax-bug-cannot-save-snippets-403-error/)]
-* Improved: Only display the latest update or error notice on the edit page, instead of allowing them to stack.
-* Fixed: Potential type issue when sorting snippets. [[#](https://github.com/codesnippetspro/code-snippets/issues/166)]
-* Fixed: Issue preventing asset revision numbers from updating correctly. (PRO) [[#](https://github.com/codesnippetspro/code-snippets/issues/166)]
+= 3.5.0 (2023-09-13) =
 
-= 3.4.0 (17 May 2023) =
-* Added: Proper WordPress REST API support for retrieving and modifying snippets.
-* Improved: Better compatibility with modern versions of PHP (7.0+).
-* Improved: Converted Edit/Add New Snippet page to use React.
+__Added__
+
+* Support for the Code Snippets Cloud API.
+* Search and download public snippets.
+* Codevault back-up and synchronisation. (PRO)
+* Synchronised local snippets are automatically updated in Cloud. (PRO)
+* Bulk actions - 'update' and 'download'.
+* Download snippets from public and private codevaults. (PRO)
+* Search and download any publicly viewable snippet in Code Snippet Cloud by keyword or name of codevault. (PRO)
+* Deploy snippets to plugin from Code Snippets Cloud app. (PRO)
+* Bundles of Joy! Search and download Snippet Bundles in one go direct from Code Snippets Cloud. (PRO)
+
+__Changed__
+
+* Redirect to snippets table when deleting snippet from the edit menu.
+* Scroll new notices into view on edit menu.
+
+__Fixed__
+
+* Error when attempting to update network shared snippets after saving. [[#](https://wordpress.org/support/topic/activating-snippets-breaks-on-wordpress-6-3/)]
+
+= 3.4.2 (2023-07-05) =
+
+__Fixed__
+
+* Issue causing export process to fail with fatal error. [[#](https://wordpress.org/support/topic/critical-error-on-exporting-snippets/)]
+* Type issue on `the_posts` filter when no posts available. [[#](https://wordpress.org/support/topic/collision-with-plugin-xml-sitemap-google-news/)]
+
+= 3.4.1 (2023-06-29) =
+
+__Added__
+
+* Added better debugging when calling REST API methods from the edit menu.
+
+__Changed__
+
+* Escape special characters when sending snippet code through AJAX to avoid false-positives from security modules. [[#](https://wordpress.org/support/topic/latest-3-4-0-ajax-bug-cannot-save-snippets-403-error/)]
+* Only display the latest update or error notice on the edit page, instead of allowing them to stack.
+
+__Fixed__
+
+* Undefined array key error. [[#](https://wordpress.org/support/topic/after-updating-occasionally-getting-undefined-array-key-query/)]
+* Potential type issue when loading Prism. [[#](https://wordpress.org/support/topic/code-snippets-fatal-error-breaking-xml-sitemaps/)]
+* Potential type issue when sorting snippets. [[#](https://github.com/codesnippetspro/code-snippets/issues/166)]
+* Issue preventing asset revision numbers from updating correctly. (PRO) [[#](https://github.com/codesnippetspro/code-snippets/issues/166)]
+
+= 3.4.0 (2023-05-17) =
+
+__Added__
+
+* Proper WordPress REST API support for retrieving and modifying snippets.
+* Added help links to content snippet options.
+
+__Changed__
+
+* Better compatibility with modern versions of PHP (7.0+).
+* Converted Edit/Add New Snippet page to use React.
   * Converted action buttons to asynchronously use REST API endpoints through AJAX.
   * Load page components dynamically through React.
   * Added action notice queue system.
   * Replaced native alert dialog with proper React modal.
-* Improved: Catch snippet execution errors to prevent site from crashing.
-* Improved: Display recent snippet errors in admin dashboard instead.
-* Improved: Updated editor block to use new REST API endpoints. (PRO)
-* Improved: Change colour of upgrade notice in Pro plugin. (PRO)
-* Improved: All available snippet data is included in export files.
-* Improved: Only import specific fields from export file, even if additional fields specified.
-* Fixed: Issue preventing editor colorpicker from loading correctly. (PRO)
-* Improved: Added help links to content snippet options.
-* Improved: Pass additional attributes specified in `[code_snippet]` content shortcode to shortcode content.
-* Improved: Make shortcode attributes available as individual variables.
-* Improved: Allow boolean attributes to be passed to code snippets shortcodes without specifying a value.
-* Improved: Replace external links to Pro pricing page with an upgrade modal.
-* Fixed: Issue preventing linting libraries from loading correctly in the code editor.
+* Catch snippet execution errors to prevent site from crashing.
+* Display recent snippet errors in admin dashboard instead.
+* Updated editor block to use new REST API endpoints. (PRO)
+* Change colour of upgrade notice in Pro plugin. (PRO)
+* All available snippet data is included in export files.
+* Only import specific fields from export file, even if additional fields specified.
+* Pass additional attributes specified in `[code_snippet]` content shortcode to shortcode content.
+* Make shortcode attributes available as individual variables.
+* Allow boolean attributes to be passed to code snippets shortcodes without specifying a value.
+* Replace external links to Pro pricing page with an upgrade modal.
 
-= 3.3.0 (09 Mar 2023) =
-* Fixed: Do not enqueue CSS or JS snippet file if no snippets exist. (PRO)
-* Improved: Added additional editor shortcuts to list in tooltip.
-* Added: Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
-* Added: Ability to filter shortcode output. Thanks to contributions from [Jack Szwergold](https://github.com/JackSzwergold).
-* Fixed: Bug causing all snippets to show in site health information instead of those active.
-* Fixed: Unnecessary sanitization of file upload data causing import process to fail on Windows systems.
+__Fixed__
 
-= 3.2.2 (17 Nov 2022) =
-* Fixed: Plugin lacking a valid header error on activation.
+* Issue preventing editor colorpicker from loading correctly. (PRO)
+* Issue preventing linting libraries from loading correctly in the code editor.
 
-= 3.2.1 (05 Oct 2022) =
-* Fixed: Issue making survey reminder notice not dismissible.
-* Added: `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
-* Added: Additional hooks to various snippet actions, thanks to contributions made by [ancient-spirit](https://github.com/ancient-spirit).
-* Added: Fold markers, additional keyboard shortcuts and keymap options to snippet editor,
-thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
-* Improved: Removed duplicate tables exist query. ([#](https://wordpress.org/support/topic/duplicate-queries-21)).
-* Improved: Enabled 'add paragraphs and formatting' option by default for newly inserted content snippets.
-* Added: WP-CLI commands for retrieving, activating, deactivating, deleting, creating, updating, exporting and importing snippets.
-* Fixed: Path to iron visible when updating the pro plugin.
+= 3.3.0 (2023-03-09) =
 
-**[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/master/CHANGELOG.md)**
+__Added__
+
+* Added additional editor shortcuts to list in tooltip.
+* Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
+* Ability to filter shortcode output. Thanks to contributions from [Jack Szwergold](https://github.com/JackSzwergold).
+
+__Fixed__
+
+* Do not enqueue CSS or JS snippet file if no snippets exist. (PRO)
+* Bug causing all snippets to show in site health information instead of those active.
+* Unnecessary sanitization of file upload data causing import process to fail on Windows systems.
+
+= 3.2.2 (2022-11-17) =
+
+__Fixed__
+
+* Plugin lacking a valid header error on activation.
+
+= 3.2.1 (2022-10-05) =
+
+__Added__
+
+* `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
+* Additional hooks to various snippet actions, thanks to contributions made by [ancient-spirit](https://github.com/ancient-spirit).
+* Fold markers, additional keyboard shortcuts and keymap options to snippet editor,
+  thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
+* WP-CLI commands for retrieving, activating, deactivating, deleting, creating, updating, exporting and importing snippets.
+
+__Changed__
+
+* Removed duplicate tables exist query. ([#](https://wordpress.org/support/topic/duplicate-queries-21)).
+* Enabled 'add paragraphs and formatting' option by default for newly inserted content snippets.
+
+__Fixed__
+
+* Issue making survey reminder notice not dismissible.
+* Path to iron visible when updating the pro plugin.
+
+**[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/core/CHANGELOG.md)**
