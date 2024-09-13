@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
-import { isNetworkAdmin } from '../../utils/general'
+import { isNetworkAdmin } from '../../utils/conditions'
 import { createEmptySnippet, getSnippetType } from '../../utils/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { SnippetEditor } from '../SnippetEditor/SnippetEditor'

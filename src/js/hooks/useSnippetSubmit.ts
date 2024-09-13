@@ -16,7 +16,6 @@ const snippetMessages = <const> {
 	updatedDeactivated: __('Snippet updated and deactivated'),
 	failedCreate: __('Could not create snippet.', 'code-snippets'),
 	failedUpdate: __('Could not update snippet.', 'code-snippets')
-
 }
 
 const conditionalMessages: typeof snippetMessages = {

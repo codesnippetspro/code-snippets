@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { handleUnknownError } from '../../utils/errors'
-import { isMacOS } from '../../utils/general'
+import { isMacOS } from '../../utils/conditions'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 
