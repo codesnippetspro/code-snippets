@@ -335,13 +335,11 @@ class Admin {
 			);
 		}
 
-		if ( 'all' === $type_name ) {
-			$label_class = 'all-snippets-label';
-		} else {
-			$label_class = 'snippet-label';
-		}
-
-		echo '<span class="' . $label_class . '">', esc_html( $label ), '</span>';
+		printf(
+			'<span class="%s">%s</span>',
+			'all' === $type_name ? 'all-snippets-label' : 'snippet-label',
+			esc_html( $label )
+		);
 
 		switch ( $type_name ) {
 			case 'all':

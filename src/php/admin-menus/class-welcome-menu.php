@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_Search_List_Table;
+use WP_Filesystem_Direct;
 use function Code_Snippets\Settings\get_setting;
 
 /**
@@ -158,36 +159,54 @@ class Welcome_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	protected function build_changelog_data() {
-		$valid_sections = [ 'Added', 'Improved', 'Fixed' ];
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
+		$filesystem = new WP_Filesystem_Direct( null );
+
+		$changelog_filename = 'CHANGELOG.md';
 		$changelog = [];
 
-		$changelog_file = file_get_contents( plugin_dir_path( PLUGIN_FILE ) . 'CHANGELOG.md' );
-		$changelog_entries = explode( "\n## ", $changelog_file );
+		$changelog_dir = plugin_dir_path( PLUGIN_FILE );
 
-		foreach ( array_slice( $changelog_entries, 1, self::MAX_CHANGELOG_ENTRIES ) as $lines ) {
-			$lines = explode( "\n", $lines );
-			$version = explode( '(', $lines[0], 2 );
-			$version = $version[0];
+		while ( plugin_dir_path( $changelog_dir ) !== $changelog_dir && ! $filesystem->exists( $changelog_dir . $changelog_filename ) ) {
+			$changelog_dir = plugin_dir_path( $changelog_dir );
+		}
+
+		if ( ! $filesystem->exists( $changelog_dir . $changelog_filename ) ) {
+			return;
+		}
+
+		$changelog_contents = $filesystem->get_contents( $changelog_dir . $changelog_filename );
+		$changelog_releases = explode( "\n## ", $changelog_contents );
+
+		foreach ( array_slice( $changelog_releases, 1, self::MAX_CHANGELOG_ENTRIES ) as $changelog_release ) {
+			$sections = explode( "\n### ", $changelog_release );
+
+			if ( count( $sections ) < 2 ) {
+				continue;
+			}
+
+			$header_parts = explode( '(', $sections[0], 2 );
+			$version = trim( trim( $header_parts[0] ), '[]' );
 
 			$changelog[ $version ] = [];
 
-			foreach ( array_slice( $lines, 1 ) as $raw_line ) {
-				$entry = trim( str_replace( '(PRO)', '', str_replace( '*', '', $raw_line ) ) );
-				$parts = explode( ': ', $entry, 2 );
-				$entry = end( $parts );
+			foreach ( array_slice( $sections, 1 ) as $section_contents ) {
+				$lines = array_filter( array_map( 'trim', explode( "\n", $section_contents ) ) );
+				$section_type = $lines[0];
 
-				if ( $entry ) {
-					$section = in_array( $parts[0], $valid_sections, true ) ? $parts[0] : 'Other';
-					$subsection = str_contains( $raw_line, '(PRO)' ) ? 'pro' : 'core';
+				foreach ( array_slice( $lines, 1 ) as $line ) {
+					$entry = trim( str_replace( '(PRO)', '', str_replace( '*', '', $line ) ) );
+					$core_or_pro = str_contains( $line, '(PRO)' ) ? 'pro' : 'core';
 
-					if ( ! isset( $changelog[ $version ][ $section ] ) ) {
-						$changelog[ $version ][ $section ] = [
-							$subsection => [ $entry ],
+					if ( ! isset( $changelog[ $version ][ $section_type ] ) ) {
+						$changelog[ $version ][ $section_type ] = [
+							$core_or_pro => [ $entry ],
 						];
-					} elseif ( ! isset( $changelog[ $version ][ $section ][ $subsection ] ) ) {
-						$changelog[ $version ][ $section ][ $subsection ] = [ $entry ];
+					} elseif ( ! isset( $changelog[ $version ][ $section_type ][ $core_or_pro ] ) ) {
+						$changelog[ $version ][ $section_type ][ $core_or_pro ] = [ $entry ];
 					} else {
-						$changelog[ $version ][ $section ][ $subsection ][] = $entry;
+						$changelog[ $version ][ $section_type ][ $core_or_pro ][] = $entry;
 					}
 				}
 			}

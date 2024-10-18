@@ -89,7 +89,7 @@ const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({
 	openUpgradeDialog
 }) => {
 	useEffect(() => {
-		codeEditor.setOption('lint' as keyof EditorConfiguration, 'php' === snippetType || 'css' === snippetType )
+		codeEditor.setOption('lint' as keyof EditorConfiguration, 'php' === snippetType || 'css' === snippetType)
 
 		if (snippetType in EDITOR_MODES) {
 			codeEditor.setOption('mode', EDITOR_MODES[snippetType])
