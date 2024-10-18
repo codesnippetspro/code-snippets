@@ -33,22 +33,27 @@ class Active_Snippets {
 		add_action( 'wp_footer', [ $this, 'load_footer_content' ] );
 
 		if ( code_snippets()->licensing->was_licensed() ) {
-			// respond to a request to print out the active CSS snippets.
-			if ( isset( $_GET['code-snippets-css'] ) ) {
-				$this->print_code( 'css' );
-				exit;
-			}
-
-			// respond to a request to print the active JavaScript snippets.
-			if ( isset( $_GET['code-snippets-js-snippets'] ) && ! is_admin() ) {
-				$this->print_code( 'js' );
-				exit;
-			}
-
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
+			$this->init_pro();
 		}
+	}
+
+	/**
+	 * Initialise class functions for the pro functionality.
+	 */
+	protected function init_pro() {
+		if ( isset( $_GET['code-snippets-css'] ) ) {
+			$this->print_external_code( 'css' );
+			exit;
+		}
+
+		if ( isset( $_GET['code-snippets-js-snippets'] ) && ! is_admin() ) {
+			$this->print_external_code( 'js' );
+			exit;
+		}
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
 	}
 
 	/**
@@ -123,13 +128,16 @@ class Active_Snippets {
 	/**
 	 * Retrieve the current asset revision number
 	 *
-	 * @param string $scope Name of snippet scope.
+	 * @param string $scope Scope name..
 	 *
 	 * @return int Current asset revision number.
 	 */
 	public function get_rev( string $scope ) {
 		$rev = 0;
-		$scope_snippets = $this->fetch_active_snippets( $scope );
+		$type = Snippet::get_type_from_scope( $scope );
+		$conditional_scope = "conditional-$type";
+
+		$scope_snippets = $this->fetch_active_snippets( [ $scope, $conditional_scope ] );
 
 		if ( empty( $scope_snippets ) ) {
 			return false;
@@ -137,10 +145,12 @@ class Active_Snippets {
 
 		$revisions = get_option( 'code_snippets_assets_rev' );
 		$rev += isset( $revisions[ $scope ] ) ? intval( $revisions[ $scope ] ) : 0;
+		$rev += isset( $revisions[ $conditional_scope ] ) ? intval( $revisions[ $conditional_scope ] ) : 0;
 
 		if ( is_multisite() ) {
 			$ms_revisions = get_site_option( 'code_snippets_assets_rev' );
 			$rev += isset( $ms_revisions[ $scope ] ) ? intval( $ms_revisions[ $scope ] ) : 0;
+			$rev += isset( $ms_revisions[ $conditional_scope ] ) ? intval( $ms_revisions[ $conditional_scope ] ) : 0;
 		}
 
 		return $rev;
@@ -188,7 +198,10 @@ class Active_Snippets {
 		}
 
 		$url = $this->get_asset_url( "$scope-css" );
-		wp_enqueue_style( "code-snippets-$scope-styles", $url, array(), $rev );
+		$handle = "code-snippets-$scope-styles";
+
+		wp_enqueue_style( $handle, $url, [], $rev );
+		wp_add_inline_style( $handle, $this->build_inline_code( 'css' ) );
 	}
 
 	/**
@@ -209,13 +222,17 @@ class Active_Snippets {
 		}
 
 		if ( $footer_rev ) {
+			$handle = 'code-snippets-site-footer';
+
 			wp_enqueue_script(
-				'code-snippets-site-footer',
+				$handle,
 				$this->get_asset_url( 'site-footer-js' ),
 				array(),
 				$footer_rev,
 				true
 			);
+
+			wp_add_inline_script( $handle, $this->build_inline_code( 'js' ) );
 		}
 	}
 
@@ -231,11 +248,41 @@ class Active_Snippets {
 	}
 
 	/**
+	 * Output the code from a list of snippets
+	 *
+	 * @param string $code Snippet code.
+	 * @param string $type Code type, 'css' or 'js'.
+	 *
+	 * @return string Processed code.
+	 */
+	private static function process_code( string $code, string $type ): string {
+		$minify_types = Settings\get_setting( 'general', 'minify_output' );
+
+		switch ( $type ) {
+			case 'css':
+				if ( in_array( 'css', $minify_types, true ) ) {
+					$minifier = new Minify\CSS( $code );
+					$code = $minifier->minify();
+				}
+				break;
+
+			case 'js':
+				if ( in_array( 'js', $minify_types, true ) ) {
+					$minifier = new Minify\JS( $code );
+					$code = $minifier->minify();
+				}
+				break;
+		}
+
+		return $code;
+	}
+
+	/**
 	 * Fetch and print the active snippets for a given type and the current scope.
 	 *
 	 * @param string $type Must be either 'css' or 'js'.
 	 */
-	private function print_code( string $type ) {
+	private function print_external_code( string $type ) {
 		if ( 'js' !== $type && 'css' !== $type ) {
 			return;
 		}
@@ -254,20 +301,46 @@ class Active_Snippets {
 		// Concatenate all fetched code together into a single string.
 		$code = '';
 		foreach ( $active_snippets as $snippets ) {
-			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 			$code .= implode( "\n\n", array_column( $snippets, 'code' ) );
 		}
 
-		// Minify the prepared code if the setting has been set.
-		$setting = Settings\get_setting( 'general', 'minify_output' );
-		if ( is_array( $setting ) && in_array( $type, $setting, true ) ) {
-			$minifier = 'css' === $type ? new Minify\CSS( $code ) : new Minify\JS( $code );
-			$code = $minifier->minify();
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo self::process_code( $code, $type );
+		exit;
+	}
+
+	/**
+	 * Generate inline code for a given type, paying respect to conditionals.
+	 *
+	 * @param string $type Type of code, 'css' or 'js'.
+	 *
+	 * @return string Code ready for output.
+	 */
+	private function build_inline_code( string $type ): string {
+		$current_scope = "conditional-$type";
+		$snippets_by_table = code_snippets()->db->fetch_active_snippets( [ $current_scope, 'condition' ] );
+		$code = '';
+
+		foreach ( $snippets_by_table as $snippets ) {
+			$conditionals = [];
+
+			foreach ( $snippets as $snippet ) {
+				if ( 'condition' === $snippet['scope'] ) {
+					$conditional_id = intval( $snippet['id'] );
+					$conditionals[ $conditional_id ] = evaluate_conditional( $snippet['code'] );
+				}
+			}
+
+			foreach ( $snippets as $snippet ) {
+				$conditional_id = intval( $snippet['conditional'] );
+				if ( 'condition' !== $snippet['scope'] &&
+				     ( ! $conditional_id || ! isset( $conditionals[ $conditional_id ] ) || $conditionals[ $conditional_id ] ) ) {
+					$code .= $snippet['code'] . "\n\n";
+				}
+			}
 		}
 
-		// Output the code and exit.
-		echo $code;
-		exit;
+		return self::process_code( $code, $type );
 	}
 
 	/**

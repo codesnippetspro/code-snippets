@@ -188,22 +188,33 @@ class Snippet extends Data_Item {
 	}
 
 	/**
+	 * Determine the type of code a given scope will produce.
+	 *
+	 * @param string $scope Scope name.
+	 *
+	 * @return string The snippet type – will be a filename extension.
+	 */
+	public static function get_type_from_scope( string $scope ): string {
+		if ( '-css' === substr( $scope, -4 ) ) {
+			return 'css';
+		} elseif ( '-js' === substr( $scope, -3 ) ) {
+			return 'js';
+		} elseif ( 'content' === substr( $scope, -7 ) ) {
+			return 'html';
+		} elseif ( 'condition' === $scope ) {
+			return 'cond';
+		} else {
+			return 'php';
+		}
+	}
+
+	/**
 	 * Determine the type of code this snippet is, based on its scope
 	 *
 	 * @return string The snippet type – will be a filename extension.
 	 */
 	protected function get_type(): string {
-		if ( '-css' === substr( $this->scope, -4 ) ) {
-			return 'css';
-		} elseif ( '-js' === substr( $this->scope, -3 ) ) {
-			return 'js';
-		} elseif ( 'content' === substr( $this->scope, -7 ) ) {
-			return 'html';
-		} elseif ( 'condition' === $this->scope ) {
-			return 'cond';
-		} else {
-			return 'php';
-		}
+		return self::get_type_from_scope( $this->scope );
 	}
 
 	/**

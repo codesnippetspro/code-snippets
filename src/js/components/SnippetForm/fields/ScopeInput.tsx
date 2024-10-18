@@ -178,8 +178,8 @@ export const ScopeInput: React.FC = () => {
 					{scope.startsWith('conditional-') && <ConditionalSelector />}
 				</div>
 			)}
-
-			{'html' === snippetType ? <ShortcodeInfo /> : null}
 		</p>
+
+		{'html' === snippetType ? <ShortcodeInfo /> : null}
 	</>
 }
