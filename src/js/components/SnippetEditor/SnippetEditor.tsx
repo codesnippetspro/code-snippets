@@ -162,8 +162,9 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({ openUpgradeDialog 
 						}}
 					/>}
 
-				<ConditionEditor />
-				<CodeEditor />
+				{'condition' === snippet.scope ?
+					<ConditionEditor /> :
+					<CodeEditor />}
 			</div>
 		</>
 	)

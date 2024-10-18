@@ -1,14 +1,26 @@
 @import 'base';
 
-.nav-tab .badge, .snippet-type-badge, .go-pro-button .badge {
+.button .badge,
+.go-pro-button .badge,
+.nav-tab .badge,
+.snippet-type-badge {
+	border: 1px solid;
+	border-radius: 5px;
+	padding: 1px 2px
+}
+
+
+.nav-tab .badge,
+.snippet-type-badge,
+.go-pro-button .badge {
 	font-size: 10px;
 	text-transform: uppercase;
-	border: 1px solid;
-	padding: 1px 2px;
-	border-radius: 5px;
 	line-height: 1.2;
 }
 
+.button .badge {
+	font-size: .8em
+}
 .nav-tab .badge, .button .snippet-type-badge, .go-pro-button .badge,
 h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
 	/* rtl:ignore */

@@ -1,19 +1,20 @@
 import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
-import { SNIPPET_TYPES, SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
+import { SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
 import { isNetworkAdmin } from '../../../utils/conditions'
 import { buildShortcodeTag } from '../../../utils/shortcodes'
 import { getSnippetType } from '../../../utils/snippets'
 import { CopyToClipboardButton } from '../../common/CopyToClipboardButton'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { ConditionalSelector } from './ConditionalSelector'
 import type { ShortcodeAtts } from '../../../utils/shortcodes'
 import type { SnippetScope } from '../../../types/Snippet'
-import type { Dispatch, SetStateAction} from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 
 const SHORTCODE_TAG = 'code_snippet'
 
-const SCOPE_ICONS: Record<SnippetScope, string> = {
+const SCOPE_ICONS: Partial<Record<SnippetScope, string>> = {
 	'global': 'admin-site',
 	'admin': 'admin-tools',
 	'front-end': 'admin-appearance',
@@ -24,11 +25,10 @@ const SCOPE_ICONS: Record<SnippetScope, string> = {
 	'admin-css': 'dashboard',
 	'site-css': 'admin-customizer',
 	'site-head-js': 'media-code',
-	'site-footer-js': 'media-code',
-	'condition': 'randomize'
+	'site-footer-js': 'media-code'
 }
 
-const SCOPE_DESCRIPTIONS: Record<SnippetScope, string> = {
+const SCOPE_DESCRIPTIONS: Partial<Record<SnippetScope, string>> = {
 	'global': __('Run snippet everywhere', 'code-snippets'),
 	'admin': __('Only run in administration area', 'code-snippets'),
 	'front-end': __('Only run on site front-end', 'code-snippets'),
@@ -39,8 +39,7 @@ const SCOPE_DESCRIPTIONS: Record<SnippetScope, string> = {
 	'site-css': __('Site front-end styles', 'code-snippets'),
 	'admin-css': __('Administration area styles', 'code-snippets'),
 	'site-footer-js': __('Load JS at the end of the <body> section', 'code-snippets'),
-	'site-head-js': __('Load JS in the <head> section', 'code-snippets'),
-	'condition': ''
+	'site-head-js': __('Load JS in the <head> section', 'code-snippets')
 }
 
 interface ShortcodeOptions {
@@ -140,35 +139,48 @@ const ShortcodeInfo: React.FC = () => {
 export const ScopeInput: React.FC = () => {
 	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
 
+	const snippetType = getSnippetType(snippet)
+
 	return <>
 		<h2 className="screen-reader-text">{__('Scope', 'code-snippets')}</h2>
 
-		{SNIPPET_TYPES
-			.filter(type => 'cond' !== type && (!snippet.id || type === getSnippetType(snippet)))
-			.map(type =>
-				<p key={type} className={`snippet-scope ${type}-scopes-list`}>
-					{SNIPPET_TYPE_SCOPES[type].map(scope =>
-						<label key={scope}>
-							<input
-								type="radio"
-								name="snippet_scope"
-								value={scope}
-								checked={scope === snippet.scope}
-								onChange={event =>
-									event.target.checked && setSnippet(previous => ({
-										...previous,
-										scope
-									}))
-								}
-								disabled={isReadOnly}
-							/>
-							{' '}
-							<span className={`dashicons dashicons-${SCOPE_ICONS[scope]}`}></span>
-							{` ${SCOPE_DESCRIPTIONS[scope]}`}
-						</label>)}
+		<p className={`snippet-scope ${snippetType}-scopes-list`}>
+			{SNIPPET_TYPE_SCOPES[snippetType].map(scope =>
+				<div key={scope} className={scope.startsWith('conditional-') ? 'conditional-scope-select' : ''}>
+					<label>
+						<input
+							type="radio"
+							name="snippet_scope"
+							value={scope}
+							checked={scope === snippet.scope}
+							onChange={event =>
+								event.target.checked && setSnippet(previous => ({
+									...previous,
+									scope
+								}))
+							}
+							disabled={isReadOnly}
+						/>
+						{' '}
 
-					{'html' === type ? <ShortcodeInfo /> : null}
-				</p>
+						{scope.startsWith('conditional-') ?
+							<>
+								<span className="dashicons dashicons-randomize"></span>
+								{` ${__('Conditional', 'code-snippets')}`}
+							</>
+						 :
+							<>
+								<span className={`dashicons dashicons-${SCOPE_ICONS[scope]}`}></span>
+								{` ${SCOPE_DESCRIPTIONS[scope]}`}
+							</>
+						}
+					</label>
+
+					{scope.startsWith('conditional-') && <ConditionalSelector />}
+				</div>
 			)}
+
+			{'html' === snippetType ? <ShortcodeInfo /> : null}
+		</p>
 	</>
 }

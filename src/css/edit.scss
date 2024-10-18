@@ -91,6 +91,16 @@ h2 .button {
 
 p.snippet-scope, .snippet-scope p {
 	margin-top: 15px;
+	display: flex;
+	gap: 1.5em;
+	align-items: center;
+}
+
+.conditional-scope-select {
+	display: flex;
+	flex-flow: row;
+	align-items: center;
+	gap: 10px;
 }
 
 .snippet-description-container {
@@ -103,12 +113,6 @@ p.snippet-scope, .snippet-scope p {
 	.wp-editor-tabs {
 		float: left;
 	}
-}
-
-.snippet-scope label,
-.html-shortcode-options strong {
-	display: inline-block;
-	margin-right: 1.5em;
 }
 
 .below-snippet-editor {

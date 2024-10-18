@@ -10,23 +10,7 @@
 	}
 }
 
-.snippet-condition-editor {
-	display: none;
-}
-
-.snippet-scope {
-	display: none;
-
-	.description {
-		display: block;
-	}
-}
-
 .snippet-form.php-snippet {
-	.php-scopes-list {
-		display: block;
-	}
-
 	.CodeMirror-sizer {
 		padding-bottom: 0 !important;
 	}
@@ -37,10 +21,6 @@
 }
 
 .snippet-form.css-snippet {
-	.css-scopes-list {
-		display: block;
-	}
-
 	.CodeMirror-sizer::before {
 		content: '<style>';
 	}
@@ -51,10 +31,6 @@
 }
 
 .snippet-form.js-snippet {
-	.js-scopes-list {
-		display: block;
-	}
-
 	.CodeMirror-sizer::before {
 		content: '<script>';
 	}
@@ -65,25 +41,11 @@
 }
 
 .snippet-form.html-snippet {
-	.html-scopes-list {
-		display: block;
-	}
-
 	.CodeMirror-sizer::before {
 		content: '<!-- begin content -->';
 	}
 
 	.CodeMirror-sizer::after {
 		content: '<!-- end content -->';
-	}
-}
-
-.snippet-form.cond-snippet {
-	.snippet-editor {
-		display: none;
-	}
-
-	.snippet-condition-editor {
-		display: flex;
 	}
 }

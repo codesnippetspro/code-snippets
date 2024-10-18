@@ -12,27 +12,26 @@ export interface Snippet {
 	active: boolean
 	network?: boolean
 	shared_network?: boolean | null
+	conditionalId?: number
 	modified?: string
 	code_error?: [string, number] | null
 }
 
-export type SnippetType = typeof SNIPPET_TYPES[number]
-export type SnippetScope = typeof SNIPPET_SCOPES[number]
+export type SnippetType = keyof typeof SNIPPET_TYPE_SCOPES
 
-export const SNIPPET_SCOPES = <const> [
-	'global', 'admin', 'front-end', 'single-use',
-	'content', 'head-content', 'footer-content',
-	'admin-css', 'site-css',
-	'site-head-js', 'site-footer-js',
-	'condition'
-]
+export type SnippetScope =
+	typeof SNIPPET_TYPE_SCOPES['php'][number] |
+	typeof SNIPPET_TYPE_SCOPES['html'][number] |
+	typeof SNIPPET_TYPE_SCOPES['css'][number] |
+	typeof SNIPPET_TYPE_SCOPES['js'][number] |
+	typeof SNIPPET_TYPE_SCOPES['cond'][number]
 
-export const SNIPPET_TYPES = <const> ['php', 'html', 'css', 'js', 'cond']
-
-export const SNIPPET_TYPE_SCOPES: Record<SnippetType, SnippetScope[]> = {
-	php: ['global', 'admin', 'front-end', 'single-use'],
-	html: ['content', 'head-content', 'footer-content'],
-	css: ['admin-css', 'site-css'],
-	js: ['site-head-js', 'site-footer-js'],
+export const SNIPPET_TYPE_SCOPES = <const> {
+	php: ['global', 'admin', 'front-end', 'single-use', 'conditional-php'],
+	html: ['content', 'head-content', 'footer-content', 'conditional-html'],
+	css: ['admin-css', 'site-css', 'conditional-css'],
+	js: ['site-head-js', 'site-footer-js', 'conditional-js'],
 	cond: ['condition']
 }
+
+export const SNIPPET_TYPES = <readonly SnippetType[]> Object.keys(SNIPPET_TYPE_SCOPES)
