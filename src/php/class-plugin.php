@@ -104,6 +104,7 @@ class Plugin {
 
 		// Snippet operation functions.
 		require_once $includes_path . '/snippet-ops.php';
+		require_once $includes_path . '/conditionals.php';
 
 		// CodeMirror editor functions.
 		require_once $includes_path . '/editor.php';

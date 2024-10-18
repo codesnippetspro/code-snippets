@@ -638,7 +638,7 @@ function execute_active_snippets(): bool {
 	}
 
 	$db = code_snippets()->db;
-	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
+	$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end', 'conditional-php', 'condition' ];
 	$data = $db->fetch_active_snippets( $scopes );
 
 	// Detect if a snippet is currently being edited, and if so, spare it from execution.
@@ -661,11 +661,23 @@ function execute_active_snippets(): bool {
 	}
 
 	foreach ( $data as $table_name => $active_snippets ) {
+		$conditionals = [];
+
+		foreach ( $active_snippets as $snippet ) {
+			if ( 'condition' === $snippet['scope'] ) {
+				$snippet_id = intval( $snippet['id'] );
+				$conditionals[ $snippet_id ] = evaluate_conditional( $snippet['code'] );
+			}
+		}
 
 		// Loop through the returned snippets and execute the PHP code.
 		foreach ( $active_snippets as $snippet ) {
 			$snippet_id = intval( $snippet['id'] );
 			$code = $snippet['code'];
+
+			if ( 'condition' === $snippet['scope'] ) {
+				continue;
+			}
 
 			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
 			if ( 'single-use' === $snippet['scope'] ) {
@@ -688,10 +700,20 @@ function execute_active_snippets(): bool {
 				}
 			}
 
-			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
-			     ! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
-				execute_snippet( $code, $snippet_id );
+			if ( ! apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ||
+			     ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
+				continue;
 			}
+
+			if ( $snippet['conditional'] ) {
+				$conditional_id = intval( $snippet['conditional'] );
+
+				if ( isset( $conditionals[ $conditional_id ] ) && ! $conditionals[ $conditional_id ] ) {
+					continue;
+				}
+			}
+
+			execute_snippet( $code, $snippet_id );
 		}
 	}
 
