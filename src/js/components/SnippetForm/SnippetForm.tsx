@@ -43,10 +43,11 @@ const EditForm: React.FC = () => {
 				<SnippetEditorToolbar />
 				<SnippetEditor openUpgradeDialog={() => setIsUpgradeDialogOpen(true)} />
 
-				<div className="below-snippet-editor">
-					<ScopeInput />
-					<PriorityInput />
-				</div>
+				{'condition' !== snippet.scope ?
+					<div className="below-snippet-editor">
+						<ScopeInput />
+						<PriorityInput />
+					</div> : null}
 
 				{isNetworkAdmin() ? <MultisiteSharingSettings /> : null}
 				{OPTIONS?.enableDescription ? <DescriptionEditor /> : null}

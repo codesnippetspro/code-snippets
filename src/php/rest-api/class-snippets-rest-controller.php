@@ -506,6 +506,10 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 					'description' => esc_html__( 'Context in which the snippet is executable.', 'code-snippets' ),
 					'type'        => 'string',
 				],
+				'conditional'    => [
+					'description' => esc_html__( 'Identifier of conditional linked to this snippet.', 'code-snippets' ),
+					'type'        => 'integer',
+				],
 				'active'         => [
 					'description' => esc_html__( 'Snippet activation status.', 'code-snippets' ),
 					'type'        => 'boolean',

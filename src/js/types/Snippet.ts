@@ -8,11 +8,11 @@ export interface Snippet {
 	conditions?: ConditionGroups
 	tags: string[]
 	scope: SnippetScope
+	conditional: number
 	priority: number
 	active: boolean
 	network?: boolean
 	shared_network?: boolean | null
-	conditionalId?: number
 	modified?: string
 	code_error?: [string, number] | null
 }

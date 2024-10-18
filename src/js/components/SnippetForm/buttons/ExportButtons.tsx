@@ -1,7 +1,7 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
-import { useSnippetsAPI } from '../../../hooks/useSnippets'
+import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import type { SnippetsExport } from '../../../types/SnippetsExport'

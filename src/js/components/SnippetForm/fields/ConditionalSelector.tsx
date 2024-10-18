@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { useSnippets } from '../../../hooks/useSnippets'
+import { useSnippets } from '../../../hooks/useSnippetsAPI'
 import { findOptionByValue } from '../../../utils/options'
-import type { SelectOptions } from '../../../types/SelectOption'
 import { getConditionalScope } from '../../../utils/snippets'
+import type { SelectOptions } from '../../../types/SelectOption'
 
 export const ConditionalSelector: React.FC = () => {
 	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
@@ -15,7 +15,7 @@ export const ConditionalSelector: React.FC = () => {
 		if (snippets) {
 			setOptions(
 				snippets
-					.filter(snippet => 'condition' === snippet.scope)
+					.filter(snippet => 'condition' === snippet.scope && snippet.active)
 					.map(snippet => ({
 						value: snippet.id,
 						label: snippet.name
@@ -27,13 +27,14 @@ export const ConditionalSelector: React.FC = () => {
 	return (
 		<Select
 			options={options}
+			isLoading={snippets === undefined}
 			isDisabled={isReadOnly}
-			value={findOptionByValue(options, snippet.conditionalId)}
+			value={findOptionByValue(options, snippet.conditional)}
 			onChange={option => {
 				setSnippet(snippet => ({
 					...snippet,
 					scope: getConditionalScope(snippet),
-					conditionalId: option?.value
+					conditional: option?.value ?? 0
 				}))
 			}}
 

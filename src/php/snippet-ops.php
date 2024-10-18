@@ -540,6 +540,7 @@ function save_snippet( $snippet ) {
 		'code'        => $snippet->code,
 		'tags'        => $snippet->tags_list,
 		'scope'       => $snippet->scope,
+		'conditional' => intval( $snippet->conditional ),
 		'priority'    => $snippet->priority,
 		'active'      => intval( $snippet->active ),
 		'modified'    => $snippet->modified,

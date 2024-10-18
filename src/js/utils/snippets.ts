@@ -1,5 +1,5 @@
 import { isNetworkAdmin } from './conditions'
-import { Snippet, SnippetScope, SnippetType } from '../types/Snippet'
+import type { Snippet, SnippetScope, SnippetType } from '../types/Snippet'
 
 const PRO_TYPES: SnippetType[] = ['css', 'js']
 
@@ -10,6 +10,7 @@ export const createEmptySnippet = (): Snippet => ({
 	code: '',
 	tags: [],
 	scope: 'global',
+	conditional: 0,
 	modified: '',
 	active: false,
 	network: isNetworkAdmin(),

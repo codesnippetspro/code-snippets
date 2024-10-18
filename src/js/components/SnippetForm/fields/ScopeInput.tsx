@@ -167,8 +167,7 @@ export const ScopeInput: React.FC = () => {
 							<>
 								<span className="dashicons dashicons-randomize"></span>
 								{` ${__('Conditional', 'code-snippets')}`}
-							</>
-						 :
+							</> :
 							<>
 								<span className={`dashicons dashicons-${SCOPE_ICONS[scope]}`}></span>
 								{` ${SCOPE_DESCRIPTIONS[scope]}`}

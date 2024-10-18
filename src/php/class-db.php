@@ -174,6 +174,7 @@ class DB {
 				code        LONGTEXT     NOT NULL,
 				tags        LONGTEXT     NOT NULL,
 				scope       VARCHAR(15)  NOT NULL DEFAULT 'global',
+				conditional BIGINT(20)   NOT NULL DEFAULT 0,
 				priority    SMALLINT     NOT NULL DEFAULT 10,
 				active      TINYINT(1)   NOT NULL DEFAULT 0,
 				modified    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
