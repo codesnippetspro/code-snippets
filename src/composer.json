@@ -22,7 +22,7 @@
     },
     "autoload": {
         "classmap": [
-            "src/php/"
+            "php/"
         ]
     },
     "require": {
@@ -43,7 +43,6 @@
         "php-stubs/wordpress-stubs": "^6.4"
     },
     "config": {
-        "vendor-dir": "src/vendor",
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "composer/installers": true
