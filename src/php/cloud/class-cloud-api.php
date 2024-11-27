@@ -54,14 +54,14 @@ class Cloud_API {
 	 *
 	 * @var Cloud_Snippets|null
 	 */
-	private $cached_codevault_snippets = null;
+	private ?Cloud_Snippets $cached_codevault_snippets = null;
 
 	/**
 	 * Cached list of cloud links.
 	 *
 	 * @var Cloud_Link[]|null
 	 */
-	private $cached_cloud_links = null;
+	private ?array $cached_cloud_links = null;
 
 	/**
 	 * Class constructor.
@@ -69,29 +69,35 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function __construct() {
-        defined('CS_CLOUD_URL') ? CS_CLOUD_URL : define('CS_CLOUD_URL', 'https://codesnippets.cloud/');
-        defined('CS_CLOUD_API_URL') ? CS_CLOUD_API_URL : define('CS_CLOUD_API_URL', CS_CLOUD_URL . 'api/v1/');
+		if ( ! defined( 'CS_CLOUD_URL' ) ) {
+			define( 'CS_CLOUD_URL', 'https://codesnippets.cloud/' );
+		}
+
+		if ( ! defined( 'CS_CLOUD_API_URL' ) ) {
+			define( 'CS_CLOUD_API_URL', CS_CLOUD_URL . 'api/v1/' );
+		}
+
 		add_action( 'plugins_loaded', [ $this, 'init_oauth_sync' ] );
 		add_filter( 'allowed_redirect_hosts', [ $this, 'allow_cloud_redirects' ] );
 	}
 
-    /**
-     * Retrieve the Cloud URL from wp-config or fallback to default.
-     *
-     * @return string
-     */
-    public static function get_cloud_url(): string {
-        return defined('CS_CLOUD_URL') ? CS_CLOUD_URL : 'https://codesnippets.cloud/';
-    }
+	/**
+	 * Retrieve the Cloud URL from wp-config or fallback to default.
+	 *
+	 * @return string
+	 */
+	public static function get_cloud_url(): string {
+		return defined( 'CS_CLOUD_URL' ) ? CS_CLOUD_URL : 'https://codesnippets.cloud/';
+	}
 
-    /**
-     * Retrieve the Cloud API URL from wp-config or fallback to default.
-     *
-     * @return string
-     */
-    public static function get_cloud_api_url(): string {
-        return defined('CS_CLOUD_API_URL') ? CS_CLOUD_API_URL : 'https://codesnippets.cloud/api/v1/';
-    }
+	/**
+	 * Retrieve the Cloud API URL from wp-config or fallback to default.
+	 *
+	 * @return string
+	 */
+	public static function get_cloud_api_url(): string {
+		return defined( 'CS_CLOUD_API_URL' ) ? CS_CLOUD_API_URL : 'https://codesnippets.cloud/api/v1/';
+	}
 
 	/**
 	 * Retrieve the value of a cloud setting, if it exists.

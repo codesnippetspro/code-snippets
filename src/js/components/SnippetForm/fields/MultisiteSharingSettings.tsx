@@ -13,7 +13,7 @@ export const MultisiteSharingSettings: React.FC = () => {
 					id="snippet_sharing"
 					name="snippet_sharing"
 					type="checkbox"
-					checked={!!snippet.shared_network}
+					checked={Boolean(snippet.shared_network)}
 					disabled={isReadOnly}
 					onChange={event =>
 						setSnippet(previous => ({ ...previous, shared_network: event.target.checked }))}

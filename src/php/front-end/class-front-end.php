@@ -8,11 +8,11 @@ use WP_REST_Response;
 use WP_REST_Server;
 
 /**
- * This class manages the shortcodes included with the plugin
+ * This class manages the shortcodes included with the plugin,
  *
  * @package Code_Snippets
  */
-class Frontend {
+class Front_End {
 
 	/**
 	 * Name of the shortcode tag for rendering the code source

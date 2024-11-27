@@ -229,8 +229,8 @@ function update_shared_network_snippets( array $snippets ): bool {
 	}
 
 	foreach ( $snippets as $snippet ) {
-		if ( $snippet->shared_network ) {
-			if ( $snippet->active ) {
+		if ( $snippet->network ) {
+			if ( $snippet->shared_network ) {
 				$shared_ids[] = $snippet->id;
 			} else {
 				$unshared_ids[] = $snippet->id;

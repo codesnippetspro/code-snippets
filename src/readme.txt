@@ -2,7 +2,7 @@
 Contributors: bungeshea, ver3, lightbulbman, 0aksmith, pauserratgutierrez, codesnippetspro
 Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
-License: MIT
+License: GPL-2.0-or-later
 License URI: license.txt
 Stable tag: 3.6.5.1
 Tested up to: 6.6.2
