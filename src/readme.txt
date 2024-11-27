@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.6.5.1
+Stable tag: 3.6.6
 Tested up to: 6.6.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -102,6 +102,23 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= [3.6.6] (2024-11-27) =
+
+__Changed__
+* Improved compatability with modern versions of PHP.
+* Extended welcome API to include admin notices.
+
+__Fixed__
+* Memory issue from checking aggregate posts while loading front-end syntax highlighter.
+* Translation functions being called too early on upgrade, resulting in localisation loading errors.
+* Bug preventing the 'share on network' status of network snippets from correctly updating.
+* Incorrect logic controlling when to display 'Save Changes' or 'Save Changes and Activate' buttons.
+* Old notices persisting when switching between editing and creating snippets.
+
+= 3.6.5.1 (2024-05-24) =
+
+* Redeployment of [v3.6.5](#365-2024-05-24) to overcome issue with initial build.
 
 = 3.6.5 (2024-05-24) =
 

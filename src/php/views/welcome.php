@@ -145,7 +145,7 @@ $plugin_types = [
 	<section class="csp-section-articles csp-section-links">
 		<h1>🛟 <?php esc_html_e( 'Helpful articles', 'code-snippets' ); ?></h1>
 		<div class="csp-cards">
-			<?php foreach ( $this->api->get_image_list( 'features' ) as $feature ) { ?>
+			<?php foreach ( $this->api->get_features() as $feature ) { ?>
 				<a class="csp-card"
 				   href="<?php echo esc_url( $feature['follow_url'] ); ?>" target="_blank"
 				   title="<?php esc_html_e( 'Read more', 'code-snippets' ); ?>">
@@ -169,7 +169,7 @@ $plugin_types = [
 	<section class="csp-section-links csp-section-partners">
 		<h1>🚀 <?php esc_html_e( 'Partners and apps', 'code-snippets' ); ?></h1>
 		<div class="csp-cards">
-			<?php foreach ( $this->api->get_image_list( 'partners' ) as $partner ) { ?>
+			<?php foreach ( $this->api->get_partners() as $partner ) { ?>
 				<a class="csp-card"
 				   href="<?php echo esc_url( $partner['follow_url'] ); ?>" target="_blank"
 				   title="<?php esc_attr_e( 'Go to Partner', 'code-snippets' ); ?>">

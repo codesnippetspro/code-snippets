@@ -2,7 +2,7 @@
 
 namespace Code_Snippets\Elementor;
 
-use Code_Snippets\Frontend;
+use Code_Snippets\Front_End;
 use Code_Snippets\Snippet;
 use Elementor\Controls_Manager;
 use Exception;
@@ -54,13 +54,13 @@ class Source_Widget extends Widget {
 			return;
 		}
 
-		Frontend::register_prism_assets();
+		Front_End::register_prism_assets();
 		$handle = 'code-snippets-elementor';
 
 		wp_register_script(
 			$handle,
 			plugins_url( 'dist/elementor.js', code_snippets()->file ),
-			[ 'elementor-frontend', Frontend::PRISM_HANDLE ],
+			[ 'elementor-frontend', Front_End::PRISM_HANDLE ],
 			code_snippets()->version,
 			true
 		);
@@ -68,10 +68,10 @@ class Source_Widget extends Widget {
 		$this->add_script_depends( $handle );
 
 		if ( ! empty( $data['settings']['theme'] ) && 'default' !== $data['settings']['theme'] ) {
-			$this->add_style_depends( Frontend::get_prism_theme_style_handle( $data['settings']['theme'] ) );
+			$this->add_style_depends( Front_End::get_prism_theme_style_handle( $data['settings']['theme'] ) );
 		}
 
-		$this->add_style_depends( Frontend::PRISM_HANDLE );
+		$this->add_style_depends( Front_End::PRISM_HANDLE );
 
 		add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'enqueue_all_prism_themes' ) );
 	}
@@ -82,11 +82,11 @@ class Source_Widget extends Widget {
 	 * @return void
 	 */
 	public function enqueue_all_prism_themes() {
-		foreach ( Frontend::get_prism_themes() as $theme => $label ) {
-			wp_enqueue_style( Frontend::get_prism_theme_style_handle( $theme ) );
+		foreach ( Front_End::get_prism_themes() as $theme => $label ) {
+			wp_enqueue_style( Front_End::get_prism_theme_style_handle( $theme ) );
 		}
 
-		wp_enqueue_style( Frontend::PRISM_HANDLE );
+		wp_enqueue_style( Front_End::PRISM_HANDLE );
 	}
 
 	/**
@@ -196,7 +196,7 @@ class Source_Widget extends Widget {
 				'default'            => 'default',
 				'options'            => array_merge(
 					[ 'default' => __( 'Default', 'code-snippets' ) ],
-					Frontend::get_prism_themes()
+					Front_End::get_prism_themes()
 				),
 				'separator'          => 'before',
 				'frontend_available' => true,

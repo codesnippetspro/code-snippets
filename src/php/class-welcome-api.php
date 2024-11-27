@@ -145,28 +145,53 @@ class Welcome_API {
 	}
 
 	/**
-	 * Parse a list of image items from a remote dataset.
+	 * Parse a list of features from a remote dataset.
 	 *
 	 * @param array $remote Remote data.
 	 *
-	 * @return array[] Parsed image data
+	 * @return array[] Parsed feature data.
 	 */
-	private function parse_image_list( array $remote ): array {
-		$items = [];
-
+	private function parse_features( array $remote ): array {
 		$limit = max( self::ITEM_LIMIT, count( $remote ) );
+		$features = [];
 
 		for ( $i = 0; $i < $limit; $i++ ) {
-			$remote_item = $remote[ $i ];
+			$feature = $remote[ $i ];
 
-			$items[] = [
-				'title'      => $remote_item['title'] ?? '',
-				'follow_url' => $remote_item['follow_url'] ?? '',
-				'image_url'  => $remote_item['image_url'] ?? '',
+			$features[] = [
+				'title'       => $feature['title'] ?? '',
+				'follow_url'  => $feature['follow_url'] ?? '',
+				'image_url'   => $feature['image_url'] ?? '',
+				'category'    => $feature['category'] ?? '',
+				'description' => $feature['description'] ?? '',
 			];
 		}
 
-		return $items;
+		return $features;
+	}
+
+	/**
+	 * Parse a list of partners from a remote dataset.
+	 *
+	 * @param array $remote Remote data.
+	 *
+	 * @return array[] Parsed partner data.
+	 */
+	private function parse_partners( array $remote ): array {
+		$limit = max( self::ITEM_LIMIT, count( $remote ) );
+		$partners = [];
+
+		for ( $i = 0; $i < $limit; $i++ ) {
+			$partner = $remote[ $i ];
+
+			$partners[] = [
+				'title'      => $partner['title'] ?? '',
+				'follow_url' => $partner['follow_url'] ?? '',
+				'image_url'  => $partner['image_url'] ?? '',
+			];
+		}
+
+		return $partners;
 	}
 
 	/**
@@ -176,6 +201,7 @@ class Welcome_API {
 	 */
 	protected function fetch_remote_welcome_data() {
 		$remote_welcome_data = wp_remote_get( self::WELCOME_JSON_URL );
+
 		if ( is_wp_error( $remote_welcome_data ) ) {
 			return;
 		}
@@ -188,8 +214,8 @@ class Welcome_API {
 
 		$this->welcome_data['banner'] = $this->parse_banner( self::safe_get_array( $remote_welcome_data, 'banner' ) );
 		$this->welcome_data['hero-item'] = $this->parse_hero_item( self::safe_get_array( $remote_welcome_data, 'hero-item' ) );
-		$this->welcome_data['features'] = $this->parse_image_list( self::safe_get_array( $remote_welcome_data, 'features' ) );
-		$this->welcome_data['partners'] = $this->parse_image_list( self::safe_get_array( $remote_welcome_data, 'partners' ) );
+		$this->welcome_data['features'] = $this->parse_features( self::safe_get_array( $remote_welcome_data, 'features' ) );
+		$this->welcome_data['partners'] = $this->parse_partners( self::safe_get_array( $remote_welcome_data, 'partners' ) );
 	}
 
 	/**
@@ -236,7 +262,7 @@ class Welcome_API {
 
 				foreach ( array_slice( $lines, 1 ) as $line ) {
 					$entry = trim( str_replace( '(PRO)', '', str_replace( '*', '', $line ) ) );
-					$core_or_pro = str_contains( $line, '(PRO)' ) ? 'pro' : 'core';
+					$core_or_pro = false === strpos( $line, '(PRO)' ) ? 'core' : 'pro';
 
 					if ( ! isset( $changelog[ $version ][ $section_type ] ) ) {
 						$changelog[ $version ][ $section_type ] = [
@@ -287,15 +313,17 @@ class Welcome_API {
 	}
 
 	/**
-	 * Retrieve the list of featured images retrieved from the remote API.
+	 * Retrieve the list of features retrieved from the remote API.
 	 *
 	 * @return array{
 	 *     title: string,
 	 *     follow_url: string,
-	 *     image_url: string
-	 * }[] Featured image details.
+	 *     image_url: string,
+	 *     category: string,
+	 *     description: string
+	 * }[] Feature details.
 	 */
-	public function get_featured_images(): array {
+	public function get_features(): array {
 		return $this->welcome_data['features'] ?? [];
 	}
 
