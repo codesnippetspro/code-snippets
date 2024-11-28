@@ -106,6 +106,7 @@ You can report security bugs found in the source code of this plugin through the
 = 3.6.6.1 (2024-05-24) =
 
 * Redeployment of v3.6.6 to overcome issue with initial build.
+* Fixes type issue when caching cloud links. (PRO)
 
 = 3.6.6 (2024-11-27) =
 
