@@ -298,8 +298,9 @@ class Cloud_API {
 		}
 
 		// Fetch data from the stored transient, if available.
-		$this->cached_cloud_links = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
-		if ( $this->cached_cloud_links ) {
+		$stored_cached_cloud_links = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
+		if ( $stored_cached_cloud_links ) {
+			$this->cached_cloud_links = $stored_cached_cloud_links;
 			return $this->cached_cloud_links;
 		}
 
