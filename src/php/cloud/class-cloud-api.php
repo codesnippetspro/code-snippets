@@ -293,14 +293,14 @@ class Cloud_API {
 	 */
 	private function get_cloud_links(): ?array {
 		// Return the cached data if available.
-		if ( $this->cached_cloud_links ) {
+		if ( is_array( $this->cached_cloud_links ) && ! empty( $this->cached_cloud_links ) ) {
 			return $this->cached_cloud_links;
 		}
 
 		// Fetch data from the stored transient, if available.
-		$stored_cached_cloud_links = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
-		if ( $stored_cached_cloud_links ) {
-			$this->cached_cloud_links = $stored_cached_cloud_links;
+		$transient_data = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
+		if ( is_array( $transient_data ) ) {
+			$this->cached_cloud_links = $transient_data;
 			return $this->cached_cloud_links;
 		}
 
@@ -645,15 +645,16 @@ class Cloud_API {
 			return $this->cached_codevault_snippets;
 		}
 
-		// Fetch data from the stored transient, if available.
-		$this->cached_codevault_snippets = get_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
-		if ( $this->cached_codevault_snippets ) {
+		$transient_data = get_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
+
+		if ( $transient_data instanceof Cloud_Snippets ) {
+			$this->cached_codevault_snippets = $transient_data;
+
 			if ( $page === $this->cached_codevault_snippets->page ) {
 				return $this->cached_codevault_snippets;
 			}
 		}
 
-		// Otherwise, fetch from API and store.
 		$response = wp_remote_get(
 			self::get_cloud_api_url() . 'private/allsnippets?page=' . $page,
 			[ 'headers' => $this->build_request_headers() ]
