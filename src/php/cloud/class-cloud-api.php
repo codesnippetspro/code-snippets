@@ -293,7 +293,7 @@ class Cloud_API {
 	 */
 	private function get_cloud_links(): ?array {
 		// Return the cached data if available.
-		if ( is_array( $this->cached_cloud_links ) && ! empty( $this->cached_cloud_links ) ) {
+		if ( is_array( $this->cached_cloud_links ) ) {
 			return $this->cached_cloud_links;
 		}
 
@@ -641,10 +641,12 @@ class Cloud_API {
 	 * @return Cloud_Snippets|null
 	 */
 	public function get_codevault_snippets( int $page = 0 ): ?Cloud_Snippets {
+		// Return the cached data if available.
 		if ( $this->cached_codevault_snippets ) {
 			return $this->cached_codevault_snippets;
 		}
 
+		// Fetch data from the stored transient, if available.
 		$transient_data = get_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
 
 		if ( $transient_data instanceof Cloud_Snippets ) {
@@ -655,6 +657,7 @@ class Cloud_API {
 			}
 		}
 
+		// Otherwise, fetch from API and store.
 		$response = wp_remote_get(
 			self::get_cloud_api_url() . 'private/allsnippets?page=' . $page,
 			[ 'headers' => $this->build_request_headers() ]
