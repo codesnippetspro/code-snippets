@@ -1,10 +1,9 @@
 # Changelog
 
-## 3.6.6.1 (2024-05-24) ##
-
-* Redeployment of v3.6.6 to overcome issue with initial build.
+## 3.6.6.1 (2024-11-27)
 
 ### Fixed
+* Redeployment of [v3.6.6](#366-2024-11-27) to overcome issue with initial build.
 * Type issue when caching cloud links. (PRO)
 
 ## [3.6.6] (2024-11-27)

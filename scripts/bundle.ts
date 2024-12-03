@@ -1,4 +1,4 @@
-import { spawn, SpawnOptions } from 'child_process'
+import { spawn } from 'child_process'
 import { createWriteStream } from 'fs'
 import process from 'node:process'
 import { webpack as webpackAsync } from 'webpack'
@@ -6,6 +6,7 @@ import archiver from 'archiver'
 import plugin from '../package.json'
 import webpackConfig from '../webpack.config'
 import { cleanup, copy, resolve } from './utils/files'
+import type { SpawnOptions } from 'child_process'
 import type { Configuration } from 'webpack'
 
 const DEST_DIR = 'bundle/'

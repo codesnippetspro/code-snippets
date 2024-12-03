@@ -1,5 +1,5 @@
 === Code Snippets ===
-Contributors: bungeshea, ver3, lightbulbman, 0aksmith, pauserratgutierrez, codesnippetspro
+Contributors: bungeshea, ver3, nate33, lightbulbman, 0aksmith, pauserratgutierrez, johnpixle, codesnippetspro
 Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
@@ -103,10 +103,12 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-= 3.6.6.1 (2024-05-24) =
+= 3.6.6.1 (2024-11-27) =
+
+__Fixed__
 
 * Redeployment of v3.6.6 to overcome issue with initial build.
-* Fixes type issue when caching cloud links. (PRO)
+* Type issue when caching cloud links. (PRO)
 
 = 3.6.6 (2024-11-27) =
 
