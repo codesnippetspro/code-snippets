@@ -5,8 +5,9 @@
 $active-color: #2196f3;
 $inactive-color: #ccc;
 
-@import 'common/type-badges';
-@import 'manage/cloud';
+@use 'common/theme';
+@use 'common/type-badges';
+@use 'manage/cloud';
 
 .column-name,
 .column-type {
@@ -225,13 +226,13 @@ $inactive-color: #ccc;
 }
 
 .inactive-snippet {
-	@include link-colors($php-inactive);
+	@include theme.link-colors(theme.$php-inactive);
 }
 
 .active-snippet {
 
 	td, th {
-		background-color: rgba($php-background, 0.06);
+		background-color: rgba(theme.$php-background, 0.06);
 	}
 
 	th.check-column {
@@ -245,11 +246,11 @@ $inactive-color: #ccc;
 
 @mixin snippet-type-colors($type, $active, $inactive, $background, $highlight) {
 	.#{$type}-snippet {
-		@include link-colors($inactive);
+		@include theme.link-colors($inactive);
 	}
 
 	.#{$type}-snippet.active-snippet {
-		@include link-colors($active);
+		@include theme.link-colors($active);
 
 		td, th {
 			background-color: rgba($background, 0.06);
@@ -265,9 +266,9 @@ $inactive-color: #ccc;
 	}
 }
 
-@include snippet-type-colors(css, $css-active, $css-inactive, $css-background, $css-highlight);
-@include snippet-type-colors(html, $html-active, $html-active, $html-background, $html-highlight);
-@include snippet-type-colors(js, $js-active, $js-inactive, $js-background, $js-highlight);
+@include snippet-type-colors(css, theme.$css-active, theme.$css-inactive, theme.$css-background, theme.$css-highlight);
+@include snippet-type-colors(html, theme.$html-active, theme.$html-active, theme.$html-background, theme.$html-highlight);
+@include snippet-type-colors(js, theme.$js-active, theme.$js-inactive, theme.$js-background, theme.$js-highlight);
 
 @media screen and (max-width: 782px) {
 	p.search-box {
