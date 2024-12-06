@@ -72,7 +72,7 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 		}
 		?>
 		<div class="cloud-connect-wrap <?php echo $cloud_enabled ? 'cloud-connect-active' : ''; ?>">
-			<span class="dot"></span>
+			<span class="cloud-status-dot"></span>
 			<p>
 				<?php esc_html_e( 'Cloud sync:', 'code-snippets' ); ?>
 				<span class="cloud-connect-text">

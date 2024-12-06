@@ -275,23 +275,24 @@
 	gap: 5px;
 }
 
-.dot {
+.cloud-status-dot {
 	height: 10px;
 	width: 10px;
 	background-color: #ce0000;
 	border-radius: 50%;
+
+
+	.cloud-connect-active & {
+		background-color: #25a349;
+	}
 }
 
 .cloud-connect-text {
 	color: #ce0000;
-}
 
-.cloud-connect-active .dot {
-	background-color: #25a349;
-}
-
-.cloud-connect-active .cloud-connect-text {
-	color: #2e7d32;
+	.cloud-connect-active & {
+		color: #2e7d32;
+	}
 }
 
 .voted-info {
