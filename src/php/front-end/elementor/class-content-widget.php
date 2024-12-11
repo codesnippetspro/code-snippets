@@ -214,7 +214,7 @@ class Content_Widget extends Widget {
 		} else {
 			$settings['debug'] = is_admin();
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo code_snippets()->frontend->render_content_shortcode( $settings );
+			echo code_snippets()->front_end->render_content_shortcode( $settings );
 		}
 	}
 }

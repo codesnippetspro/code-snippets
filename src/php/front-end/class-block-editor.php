@@ -195,7 +195,7 @@ class Block_Editor {
 		return sprintf(
 			'<div %s>%s</div>',
 			get_block_wrapper_attributes(),
-			code_snippets()->frontend->render_content_shortcode( $attributes )
+			code_snippets()->front_end->render_content_shortcode( $attributes )
 		);
 	}
 
@@ -210,7 +210,7 @@ class Block_Editor {
 		return sprintf(
 			'<div %s>%s</div>',
 			get_block_wrapper_attributes(),
-			code_snippets()->frontend->render_source_shortcode( $attributes )
+			code_snippets()->front_end->render_source_shortcode( $attributes )
 		);
 	}
 }
