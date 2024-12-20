@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use DateTimeImmutable;
+use DateTimeZone;
 
 /**
  * Functions specific to the administration interface
@@ -269,7 +270,7 @@ class Admin {
 		}
 
 		$welcome = $this->welcome_api->get_banner();
-		$now = new DateTimeImmutable( 'now' );
+		$now = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 
 		if ( isset( $welcome['key'] ) && ! in_array( $welcome['key'], $dismissed, true ) &&
 		     ( empty( $welcome['start_datetime'] ) || $now > $welcome['start_datetime'] ) &&
