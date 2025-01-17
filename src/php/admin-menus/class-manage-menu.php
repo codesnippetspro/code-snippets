@@ -14,24 +14,23 @@ use function Code_Snippets\Settings\get_setting;
 class Manage_Menu extends Admin_Menu {
 
 	/**
-	 * Holds the list table class
+	 * Instance of the list table class.
 	 *
 	 * @var List_Table
 	 */
-	public $list_table;
+	public List_Table $list_table;
 
 	/**
 	 * Instance of the cloud list table class for search results.
 	 *
 	 * @var Cloud_Search_List_Table
 	 */
-	public $cloud_search_list_table;
+	public Cloud_Search_List_Table $cloud_search_list_table;
 
 	/**
 	 * Class constructor
 	 */
 	public function __construct() {
-
 		parent::__construct(
 			'manage',
 			_x( 'All Snippets', 'menu label', 'code-snippets' ),
@@ -173,15 +172,12 @@ class Manage_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
-		/* Load the contextual help tabs */
 		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
 
-		// Initialize the search cloud list table class.
 		$this->cloud_search_list_table = new Cloud_Search_List_Table();
 		$this->cloud_search_list_table->prepare_items();
 
-		/* Initialize the list table class */
 		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
 	}
@@ -210,8 +206,8 @@ class Manage_Menu extends Admin_Menu {
 
 		wp_set_script_translations( 'code-snippets-manage-js', 'code-snippets' );
 
-		if ( 'cloud_search' === $this->get_current_type() ) {
-			Frontend::enqueue_all_prism_themes();
+		if ( 'cloud' === $this->get_current_type() || 'cloud_search' === $this->get_current_type() ) {
+			Front_End::enqueue_all_prism_themes();
 		}
 	}
 
@@ -232,36 +228,18 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function print_pro_message() {
-		echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
+		if ( ! code_snippets()->licensing->is_licensed() ) {
+			echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
+		}
 	}
 
 	/**
 	 * Print the status and error messages
+	 *
+	 * @return void
 	 */
 	protected function print_messages() {
-		// Output a warning if safe mode is active.
-		if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
-			echo '<div id="message" class="error fade"><p>';
-			echo wp_kses_post( __( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode. <a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank">Help</a>', 'code-snippets' ) );
-			echo '</p></div>';
-		}
-
-		$this->print_result_message(
-			apply_filters(
-				'code_snippets/manage/result_messages',
-				array(
-					'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
-					'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
-					'activated-multi'   => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
-					'deactivated'       => __( 'Snippet <strong>deactivated</strong>.', 'code-snippets' ),
-					'deactivated-multi' => __( 'Selected snippets <strong>deactivated</strong>.', 'code-snippets' ),
-					'deleted'           => __( 'Snippet <strong>deleted</strong>.', 'code-snippets' ),
-					'deleted-multi'     => __( 'Selected snippets <strong>deleted</strong>.', 'code-snippets' ),
-					'cloned'            => __( 'Snippet <strong>cloned</strong>.', 'code-snippets' ),
-					'cloned-multi'      => __( 'Selected snippets <strong>cloned</strong>.', 'code-snippets' ),
-				)
-			)
-		);
+		$this->render_view( 'partials/list-table-notices' );
 	}
 
 	/**

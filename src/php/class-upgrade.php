@@ -14,14 +14,14 @@ class Upgrade {
 	 *
 	 * @var DB
 	 */
-	private $db;
+	private DB $db;
 
 	/**
 	 * The current plugin version number
 	 *
 	 * @var string
 	 */
-	private $current_version;
+	private string $current_version;
 
 	/**
 	 * Class constructor
@@ -66,7 +66,6 @@ class Upgrade {
 			return; // Bail if the data was not successfully saved to prevent this process from repeating.
 		}
 
-		$sample_snippets = $this->get_sample_content();
 		$this->db->create_table( $table_name );
 
 		// Remove outdated user meta.
@@ -95,15 +94,27 @@ class Upgrade {
 		}
 
 		if ( false === $prev_version ) {
-			if ( apply_filters( 'code_snippets/create_sample_content', true ) ) {
-				foreach ( $sample_snippets as $sample_snippet ) {
-					save_snippet( $sample_snippet );
-				}
-			}
+			add_action( 'init', [ $this, 'create_sample_content' ] );
 		}
 
 		clean_snippets_cache( $table_name );
-		Welcome_Menu::clear_cache();
+		Welcome_API::clear_cache();
+	}
+
+	/**
+	 * Create example snippets.
+	 *
+	 * As this uses translation functions, this should not be called earlier than 'init'.
+	 *
+	 * @return void
+	 */
+	public function create_sample_content() {
+		if ( apply_filters( 'code_snippets/create_sample_content', true ) ) {
+			$sample_snippets = $this->get_sample_content();
+			foreach ( $sample_snippets as $sample_snippet ) {
+				save_snippet( $sample_snippet );
+			}
+		}
 	}
 
 	/**

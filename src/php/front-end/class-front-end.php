@@ -7,11 +7,11 @@ use WP_REST_Response;
 use WP_REST_Server;
 
 /**
- * This class manages the shortcodes included with the plugin
+ * This class manages the shortcodes included with the plugin,
  *
  * @package Code_Snippets
  */
-class Frontend {
+class Front_End {
 
 	/**
 	 * Name of the shortcode tag for rendering the code source
@@ -132,18 +132,18 @@ class Frontend {
 		}
 
 		// Loop through the posts, checking for an existing shortcode, short-circuiting if possible.
-		$found_shortcode = false;
+		$found_shortcode_content = null;
 
 		foreach ( $posts as $post ) {
 			if ( false !== stripos( $post->post_content, '[' . self::SOURCE_SHORTCODE ) ||
 			     false !== strpos( $post->post_content, '<!-- wp:code-snippets/source ' ) ) {
-				$found_shortcode = true;
+				$found_shortcode_content = $post->post_content;
 				break;
 			}
 		}
 
 		// Load assets on the appropriate hook if a matching shortcode was found.
-		if ( $found_shortcode ) {
+		if ( null !== $found_shortcode_content ) {
 			$this->register_prism_assets();
 
 			add_action(
@@ -266,7 +266,7 @@ class Frontend {
 		$original_atts = $atts;
 
 		$atts = shortcode_atts(
-			array(
+			[
 				'id'         => 0,
 				'snippet_id' => 0,
 				'network'    => false,
@@ -274,7 +274,7 @@ class Frontend {
 				'format'     => false,
 				'shortcodes' => false,
 				'debug'      => false,
-			),
+			],
 			$atts,
 			self::CONTENT_SHORTCODE
 		);
@@ -288,7 +288,7 @@ class Frontend {
 
 		// Render the source code if this is not a shortcode snippet.
 		if ( 'content' !== $snippet->scope ) {
-			return $snippet->id ? $this->render_snippet_source( $snippet ) : '';
+			return $snippet->id ? $this->render_snippet_source( $snippet ) : $this->invalid_id_warning( $snippet->id );
 		}
 
 		// If the snippet is inactive, either display a message or render nothing.

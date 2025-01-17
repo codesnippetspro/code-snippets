@@ -8,6 +8,8 @@
 
 namespace Code_Snippets\Settings;
 
+use function Code_Snippets\code_snippets;
+
 /**
  * Retrieve the default setting values
  *
@@ -134,14 +136,6 @@ function get_settings_fields(): array {
 	// Code Editor settings section.
 
 	$fields['editor'] = [
-		'theme' => [
-			'name'       => __( 'Theme', 'code-snippets' ),
-			'type'       => 'select',
-			'default'    => 'default',
-			'options'    => get_editor_theme_list(),
-			'codemirror' => 'theme',
-		],
-
 		'indent_with_tabs' => [
 			'name'       => __( 'Indent With Tabs', 'code-snippets' ),
 			'type'       => 'checkbox',
@@ -217,6 +211,7 @@ function get_settings_fields(): array {
 			'default'    => true,
 			'codemirror' => 'styleActiveLine',
 		],
+		
 		'keymap'                => [
 			'name'       => __( 'Keymap', 'code-snippets' ),
 			'type'       => 'select',
@@ -230,6 +225,14 @@ function get_settings_fields(): array {
 			],
 			'codemirror' => 'keyMap',
 		],
+
+		'theme' => [
+			'name'       => __( 'Theme', 'code-snippets' ),
+			'type'       => 'select',
+			'default'    => 'default',
+			'options'    => get_editor_theme_list(),
+			'codemirror' => 'theme',
+		],		
 	];
 
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );

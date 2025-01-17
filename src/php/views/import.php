@@ -9,7 +9,7 @@
 namespace Code_Snippets;
 
 /**
- * Loaded from the Import_Menu class.
+ * Loaded from import menu.
  *
  * @var Import_Menu $this
  */
@@ -42,12 +42,20 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 
 		<p>
 			<?php
-			/* translators: %s: link to snippets admin menu */
-			$text = __( 'Afterward, you will need to visit the <a href="%s">All Snippets</a> page to activate the imported snippets.', 'code-snippets' );
-
-			printf( wp_kses( $text, [ 'a' => [ 'href' ] ] ), esc_url( code_snippets()->get_menu_url( 'manage' ) ) );
-
-			?>
+			    /* translators: %s: link to snippets admin menu */
+			    $text = __( 'Afterward, you will need to visit the <a href="%s" >All Snippets</a> page to activate the imported snippets.', 'code-snippets' );
+			    $url = esc_url( code_snippets()->get_menu_url( 'manage' ) );
+			
+			    echo wp_kses(
+			        sprintf( $text, $url ),
+			        array(
+			            'a' => array(
+			                'href' => array(),
+					'target' => array(),
+			            )
+			        )
+			    );
+			    ?>
 		</p>
 
 

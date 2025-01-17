@@ -14,6 +14,7 @@ const initialiseCodeMirror = () => {
 	}
 
 	console.error('Could not initialise CodeMirror on textarea.', textarea)
+	return undefined
 }
 
 export const handleEditorPreviewUpdates = () => {

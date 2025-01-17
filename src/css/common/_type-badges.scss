@@ -1,6 +1,6 @@
-@import 'base';
+@use 'theme';
 
-.nav-tab .badge, .snippet-type-badge, .go-pro-button .badge {
+.nav-tab .badge, .snippet-type-badge, .go-pro-button .badge, .button .badge {
 	font-size: 10px;
 	text-transform: uppercase;
 	border: 1px solid;
@@ -14,12 +14,17 @@ h1 .snippet-type-badge, h2 .snippet-type-badge, h3 .snippet-type-badge {
 	margin-left: 3px;
 }
 
+.button .badge {
+	font-size: 8px;
+	text-transform: lowercase;
+}
+
 .nav-tab span,
 .nav-tab .badge {
 	vertical-align: middle;
 }
 
-$badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-active);
+$badges: (php: theme.$php-active, css: theme.$css-highlight, js: theme.$js-highlight, html: theme.$html-active);
 
 @each $type, $color in $badges {
 	.nav-tab[data-snippet-type=#{$type}] .badge, .snippet-type-badge[data-snippet-type=#{$type}] {
@@ -62,16 +67,16 @@ $badges: (php: $php-active, css: $css-highlight, js: $js-highlight, html: $html-
 }
 
 .go-pro-badge, .pro-badge {
-	color: $theme-pro;
+	color: theme.$pro;
 }
 
 .core-badge {
-	color: $theme-core;
+	color: theme.$core;
 }
 
 .go-pro-button .badge, .go-pro-badge {
-	color: $theme-pro;
-	border-color: $theme-pro;
+	color: theme.$pro;
+	border-color: theme.$pro;
 	margin-left: 1px;
 }
 

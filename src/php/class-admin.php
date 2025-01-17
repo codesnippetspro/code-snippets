@@ -2,7 +2,9 @@
 
 namespace Code_Snippets;
 
-use DateTime;
+use DateTimeImmutable;
+use DateTimeZone;
+use Exception;
 
 /**
  * Functions specific to the administration interface
@@ -16,13 +18,21 @@ class Admin {
 	 *
 	 * @var array<string, Admin_Menu>
 	 */
-	public $menus = array();
+	public array $menus = array();
+
+	/**
+	 * Welcome_API class instance.
+	 *
+	 * @var Welcome_API
+	 */
+	public Welcome_API $welcome_api;
 
 	/**
 	 * Class constructor
 	 */
 	public function __construct() {
 		if ( is_admin() ) {
+			$this->welcome_api = new Welcome_API();
 			$this->run();
 		}
 	}
@@ -39,7 +49,7 @@ class Admin {
 			$this->menus['settings'] = new Settings_Menu();
 		}
 
-		$this->menus['welcome'] = new Welcome_Menu();
+		$this->menus['welcome'] = new Welcome_Menu( $this->welcome_api );
 
 		foreach ( $this->menus as $menu ) {
 			$menu->run();
@@ -57,6 +67,25 @@ class Admin {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'debug_information', array( $this, 'debug_information' ) );
 		add_action( 'code_snippets/admin/manage', array( $this, 'print_notices' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+	}
+
+	/**
+	 * Enqueue general admin assets.
+	 *
+	 * @param string|null $hook_name Current plugin page hook name.
+	 *
+	 * @return void
+	 */
+	public function enqueue_admin_assets( ?string $hook_name ) {
+		if ( 'plugins.php' === $hook_name ) {
+			wp_enqueue_style(
+				'code-snippets-plugins-css',
+				plugins_url( 'dist/plugins.css', PLUGIN_FILE ),
+				[],
+				PLUGIN_VERSION
+			);
+		}
 	}
 
 	/**
@@ -95,7 +124,7 @@ class Admin {
 
 		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
 
-		return array_merge(
+		$actions = array_merge(
 			[
 				sprintf(
 					$format,
@@ -110,16 +139,18 @@ class Admin {
 					esc_html__( 'Snippets', 'code-snippets' )
 				),
 			],
-			$actions,
-			[
-				sprintf(
-					'<a href="%1$s" title="%2$s" style="color: #d46f4d; font-weight: bold;" target="_blank">%3$s</a>',
-					'https://snipco.de/JE2i',
-					esc_attr__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
-					esc_html__( 'Go Pro', 'code-snippets' )
-				),
-			]
+			$actions
 		);
+
+		if ( ! code_snippets()->licensing->is_licensed() ) {
+			$actions[] = sprintf(
+				'<a href="%1$s" title="%2$s" style="color: #d46f4d; font-weight: bold;" target="_blank">%3$s</a>',
+				'https://snipco.de/JE2i',
+				esc_attr__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
+				esc_html__( 'Go Pro', 'code-snippets' )
+			);
+		}
+		return $actions;
 	}
 
 	/**
@@ -231,15 +262,32 @@ class Admin {
 	public function print_notices() {
 		global $current_user;
 
-		$key = 'ignore_code_snippets_survey_message';
-		$dismissed = get_user_meta( $current_user->ID, $key );
+		$meta_key = 'ignore_code_snippets_survey_message';
+		$dismissed = get_user_meta( $current_user->ID, $meta_key );
 
-		if ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $key ) ) {
-			add_user_meta( $current_user->ID, $key, sanitize_key( wp_unslash( $_GET[ $key ] ) ) );
+		if ( isset( $_GET[ $meta_key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $meta_key ) ) {
+			add_user_meta( $current_user->ID, $meta_key, sanitize_key( wp_unslash( $_GET[ $meta_key ] ) ) );
 			return;
 		}
 
-		if ( ! in_array( 'pro', $dismissed, true ) ) {
+		$welcome = $this->welcome_api->get_banner();
+
+		try {
+			$now = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
+		} catch ( Exception $e ) {
+			$now = $welcome['start_datetime'];
+		}
+
+		if ( isset( $welcome['key'] ) && ! in_array( $welcome['key'], $dismissed, true ) &&
+		     ( empty( $welcome['start_datetime'] ) || $now >= $welcome['start_datetime'] ) &&
+		     ( empty( $welcome['end_datetime'] ) || $now <= $welcome['end_datetime'] ) ) {
+			$notice = $welcome['key'];
+
+			$text = $welcome['text_free'];
+			$action_url = $welcome['action_url_free'];
+			$action_label = $welcome['action_label_free'];
+
+		} elseif ( ! in_array( 'pro', $dismissed, true ) ) {
 			$notice = 'pro';
 			$action_url = 'https://snipco.de/Mlll';
 			$action_label = __( 'Upgrade now', 'code-snippets' );
@@ -259,7 +307,7 @@ class Admin {
 			esc_attr( sanitize_key( $notice ) )
 		);
 
-		echo wp_kses( $text, [ 'strong' => [] ] );
+		echo wp_kses_post( $text );
 
 		printf(
 			'<a href="%s" class="button button-secondary" target="_blank" style="margin: auto .5em;">%s</a>',
@@ -269,7 +317,7 @@ class Admin {
 
 		printf(
 			'<a href="%s" class="notice-dismiss"><span class="screen-reader-text">%s</span></a>',
-			esc_url( wp_nonce_url( add_query_arg( $key, $notice ), $key ) ),
+			esc_url( wp_nonce_url( add_query_arg( $meta_key, $notice ), $meta_key ) ),
 			esc_attr__( 'Dismiss', 'code-snippets' )
 		);
 
@@ -286,10 +334,13 @@ class Admin {
 	 * @return void
 	 */
 	public static function render_snippet_type_tab( string $type_name, string $label, string $current_type = '' ) {
+		$cloud_tabs = [ 'cloud', 'cloud_search', 'bundles' ];
+		$nav_tab_inactive = false;
+
 		if ( $type_name === $current_type ) {
 			printf( '<a class="nav-tab nav-tab-active" data-snippet-type="%s">', esc_attr( $type_name ) );
 
-		} elseif ( Plugin::is_pro_type( $type_name ) ) {
+		} elseif ( ! code_snippets()->licensing->is_licensed() && Plugin::is_pro_type( $type_name ) ) {
 			printf(
 				'<a class="nav-tab nav-tab-inactive" data-snippet-type="%s" title="%s" href="https://codesnippets.pro/pricing/" target="_blank">',
 				esc_attr( $type_name ),
@@ -299,14 +350,25 @@ class Admin {
 		} else {
 			$current_url = remove_query_arg( [ 'cloud_select', 'cloud_search' ] );
 
+			if ( in_array( $type_name, $cloud_tabs, true ) && ! code_snippets()->cloud_api->is_cloud_key_verified() ) {
+				$nav_tab_inactive = true;
+			}
+
 			printf(
-				'<a class="nav-tab" href="%s" data-snippet-type="%s">',
+				'<a class="nav-tab %s" href="%s" data-snippet-type="%s">',
+				$nav_tab_inactive ? 'nav-tab-inactive' : '',
 				esc_url( add_query_arg( 'type', $type_name, $current_url ) ),
 				esc_attr( $type_name )
 			);
 		}
 
-		echo esc_html( $label );
+		if ( 'all' === $type_name ) {
+			$label_class = 'all-snippets-label';
+		} else {
+			$label_class = 'snippet-label';
+		}
+
+		echo '<span class="' . $label_class . '">', esc_html( $label ), '</span>';
 
 		switch ( $type_name ) {
 			case 'all':

@@ -4,8 +4,8 @@ import globals from 'globals'
 import eslintJs from '@eslint/js'
 import eslintTs from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
-import react from 'eslint-plugin-react'
-import { fixupPluginRules } from '@eslint/compat'
+import importPlugin from 'eslint-plugin-import'
+import reactPlugin from 'eslint-plugin-react'
 import { FlatCompat } from '@eslint/eslintrc'
 
 const compat = new FlatCompat({
@@ -13,16 +13,13 @@ const compat = new FlatCompat({
 	recommendedConfig: eslintJs.configs.recommended
 })
 
-const legacyPlugin = (name, alias = name) =>
-	fixupPluginRules(compat.plugins(name)[0]?.plugins?.[alias])
-
 export default eslintTs.config(
 	eslintJs.configs.recommended,
 	...eslintTs.configs.strictTypeChecked,
 	...eslintTs.configs.stylisticTypeChecked,
-	...compat.extends('plugin:import/typescript'),
 	...compat.extends('plugin:react-hooks/recommended'),
-	react.configs.flat.recommended,
+	reactPlugin.configs.flat.recommended,
+	importPlugin.flatConfigs.recommended,
 	{
 		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', 'eslint.config.mjs']
 	},
@@ -39,8 +36,7 @@ export default eslintTs.config(
 		},
 		plugins: {
 			'@stylistic': stylistic,
-			'react': react,
-			'import': legacyPlugin('eslint-plugin-import', 'import')
+			'react': reactPlugin
 		},
 		settings: {
 			'react': {

@@ -230,13 +230,13 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Create one item from the collection
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param WP_REST_Request|array $request Full data about the request.
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item( $request ) {
 		$snippet = $this->prepare_item_for_database( $request );
-		$result = save_snippet( $snippet );
+		$result = $snippet ? save_snippet( $snippet ) : null;
 
 		return $result ?
 			$this->prepare_item_for_response( $result, $request ) :
@@ -269,13 +269,16 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		$item = $this->prepare_item_for_database( $request, $snippet );
 		$result = save_snippet( $item );
 
-		return $result ?
-			$this->prepare_item_for_response( $result, $request ) :
-			new WP_Error(
-				'rest_cannot_update',
-				__( 'The snippet could not be updated.', 'code-snippets' ),
-				[ 'status' => 500 ]
-			);
+		if ( $result ) {
+			$request->set_param( 'id', $result->id );
+			return $this->get_item( $request );
+		}
+
+		return new WP_Error(
+			'rest_cannot_update',
+			__( 'The snippet could not be updated.', 'code-snippets' ),
+			[ 'status' => 500 ]
+		);
 	}
 
 	/**
@@ -408,7 +411,14 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function prepare_item_for_response( $item, $request ) {
-		return rest_ensure_response( $item->get_fields() );
+		$schema = $this->get_item_schema();
+		$response = [];
+
+		foreach ( array_keys( $schema['properties'] ) as $property ) {
+			$response[ $property ] = $item->$property;
+		}
+
+		return rest_ensure_response( $response );
 	}
 
 	/**

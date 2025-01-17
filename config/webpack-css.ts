@@ -5,10 +5,10 @@ import autoprefixer from 'autoprefixer'
 import hexrgba from 'postcss-hexrgba'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import RemoveEmptyScriptsPlugin from 'webpack-remove-empty-scripts'
-import WebpackRTLPlugin from 'webpack-rtl-plugin'
 import { glob } from 'glob'
-import type { Config as PostCssConfig } from 'postcss-load-config'
+import { RtlCssPlugin } from './RtlCssPlugin'
 import type { Configuration, EntryObject } from 'webpack'
+import type { Config as PostCssConfig } from 'postcss-load-config'
 
 const postcssOptions: PostCssConfig = {
 	plugins: [
@@ -99,9 +99,8 @@ export const cssWebpackConfig: Configuration = {
 						.replace(/-css\.css$/, '.css') :
 					'[name].css'
 		}),
-		new WebpackRTLPlugin({
-			test: /^(?<filename>edit|manage)\.css$/,
-			filename: [/(?<ext>\.css)/i, '-rtl$1']
+		new RtlCssPlugin({
+			entries: new Set(['manage-css', 'edit-css'])
 		})
 	]
 }

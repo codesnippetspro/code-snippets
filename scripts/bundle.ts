@@ -6,6 +6,7 @@ import archiver from 'archiver'
 import plugin from '../package.json'
 import webpackConfig from '../webpack.config'
 import { cleanup, copy, resolve } from './utils/files'
+import type { SpawnOptions } from 'child_process'
 import type { Configuration } from 'webpack'
 
 const DEST_DIR = 'bundle/'
@@ -25,12 +26,12 @@ const BUNDLE_FILES = [
 	'CHANGELOG.md'
 ]
 
-const execute = (command: string, ...args: readonly string[]): Promise<number | null> =>
+const execute = (command: string, args: readonly string[], options: SpawnOptions): Promise<number | null> =>
 	new Promise(resolve => {
-		const child = spawn(command, args)
+		const child = spawn(command, args, { ...options })
 
-		child.stdout.on('data', (data: string) => process.stdout.write(data))
-		child.stderr.on('data', (data: string) => process.stderr.write(data))
+		child.stdout?.on('data', (data: string) => process.stdout.write(data))
+		child.stderr?.on('data', (data: string) => process.stderr.write(data))
 		child.on('close', code => resolve(code))
 	})
 
@@ -57,7 +58,7 @@ const bundle = async () => {
 
 	await Promise.all([
 		cleanup(`${plugin.name}.*.zip`),
-		execute('composer', 'install', '--no-dev'),
+		execute('composer', ['install', '--no-dev'], { cwd: 'src' }),
 		webpack({ mode: 'production' })
 	])
 
@@ -65,7 +66,7 @@ const bundle = async () => {
 		filename.replace(/^src\//, ''))
 
 	await createArchive()
-	await execute('composer', 'install')
+	await execute('composer', ['install'], { cwd: 'src' })
 }
 
 void bundle().then()

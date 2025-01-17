@@ -1,0 +1,15 @@
+{
+    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+    "landingPage": "/wp-admin/admin.php?page=snippets",
+    "preferredVersions": {
+        "php": "latest",
+        "wp": "latest"
+    },
+    "phpExtensionBundles": [
+        "kitchen-sink"
+    ],
+    "features": {
+        "networking": true
+    },
+    "login": true
+}

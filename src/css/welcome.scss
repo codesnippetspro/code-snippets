@@ -1,5 +1,6 @@
-@import 'common/base';
-@import 'common/type-badges';
+@use 'sass:color';
+@use 'common/theme';
+@use 'common/type-badges';
 
 $breakpoint: 1060px;
 
@@ -51,7 +52,7 @@ $breakpoint: 1060px;
 			margin: 0;
 
 			span {
-				text-decoration: underline $theme-primary wavy 3px;
+				text-decoration: underline theme.$primary wavy 3px;
 				text-decoration-skip-ink: none;
 				text-underline-offset: 11px;
 				text-transform: capitalize;
@@ -111,11 +112,11 @@ $breakpoint: 1060px;
 	}
 
 	@each $link_name, $color in (
-			pro: $theme-secondary,
+			pro: theme.$secondary,
 			cloud: #08c5d1,
 			resources: #424242,
-			discord: $brand-discord,
-			facebook: $brand-facebook) {
+			discord: theme.$brand-discord,
+			facebook: theme.$brand-facebook) {
 		.csp-link-#{$link_name} {
 			background: $color;
 			border-color: $color;
@@ -140,7 +141,7 @@ $breakpoint: 1060px;
 }
 
 .csp-card {
-	border: 1px solid $theme-outline;
+	border: 1px solid theme.$outline;
 	background: white;
 	border-radius: 10px;
 	display: flex;
@@ -151,7 +152,7 @@ a.csp-card {
 	text-decoration: none;
 
 	&:hover {
-		background: lighten($theme-primary, 55%);
+		background: color.adjust(theme.$primary, $lightness: 55%);
 		transition: .5s background-color;
 		box-shadow: 0 1px 1px rgb(255 255 255 / 50%);
 
@@ -162,7 +163,7 @@ a.csp-card {
 }
 
 .csp-section-changes {
-	border: 1px solid $theme-outline;
+	border: 1px solid theme.$outline;
 	border-left: 0;
 	border-right: 0;
 	padding: 40px 0 50px 0;
@@ -181,7 +182,7 @@ a.csp-card {
 		box-shadow: 0 1px 1px rgb(0 0 0 / 5%);
 
 		h2 {
-			color: $theme-primary;
+			color: theme.$primary;
 		}
 
 		&:last-child {
@@ -306,7 +307,7 @@ a.csp-card {
 
 		.csp-card-item-category {
 			color: white;
-			background: $theme-secondary;
+			background: theme.$secondary;
 			display: block;
 			font-size: .9rem;
 			letter-spacing: 1px;
@@ -320,7 +321,7 @@ a.csp-card {
 
 		h3 {
 			font-size: 1.7rem;
-			color: $theme-primary;
+			color: theme.$primary;
 			line-height: normal;
 		}
 
@@ -347,7 +348,7 @@ a.csp-card {
 }
 
 .csp-section-partners {
-	border-top: 1px solid $theme-outline;
+	border-top: 1px solid theme.$outline;
 
 	header {
 		display: flex;
@@ -362,7 +363,7 @@ a.csp-card {
 	width: 0;
 	padding: 15px;
 	border: 6px solid #e7c0b3;
-	border-right-color: $theme-secondary;
+	border-right-color: theme.$secondary;
 	border-radius: 22px;
 	animation: loading-rotate 1s infinite linear;
 	position: absolute;

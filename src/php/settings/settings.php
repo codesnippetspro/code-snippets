@@ -8,6 +8,7 @@
 
 namespace Code_Snippets\Settings;
 
+use Code_Snippets\Welcome_API;
 use Code_Snippets\Welcome_Menu;
 use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\code_snippets;
@@ -223,6 +224,7 @@ function sanitize_setting_value( array $field, $input_value ) {
 			return $results;
 
 		case 'text':
+		case 'hidden':
 			return trim( sanitize_text_field( $input_value ) );
 
 		case 'callback':
@@ -252,6 +254,7 @@ function process_settings_actions( array $input ): ?array {
 			'updated'
 		);
 
+		delete_option( 'code_snippets_cloud_settings' );
 		return [];
 	}
 
@@ -267,7 +270,7 @@ function process_settings_actions( array $input ): ?array {
 	}
 
 	if ( isset( $input['debug']['reset_caches'] ) ) {
-		Welcome_Menu::clear_cache();
+		Welcome_API::clear_cache();
 		clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
 
 		if ( is_multisite() ) {

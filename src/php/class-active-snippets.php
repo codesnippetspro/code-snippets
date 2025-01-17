@@ -1,5 +1,4 @@
 <?php
-
 namespace Code_Snippets;
 
 /**
@@ -14,7 +13,7 @@ class Active_Snippets {
 	 *
 	 * @var Snippet[]
 	 */
-	private $active_snippets = [];
+	private array $active_snippets = [];
 
 	/**
 	 * Class constructor.

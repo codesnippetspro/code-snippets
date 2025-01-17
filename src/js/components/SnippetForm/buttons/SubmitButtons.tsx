@@ -176,13 +176,12 @@ export const SubmitButton: React.FC<SubmitButtonsProps> = ({ inlineButtons }) =>
 			onDeactivate={() => handleSubmit(submitAndDeactivateSnippet)}
 		/>
 
-		{activateByDefault ? null :
+		{activateByDefault ?
 			<SaveChangesButton
-				primary={!inlineButtons}
 				onClick={() => handleSubmit(submitSnippet)}
 				disabled={isWorking}
 				inlineButtons={inlineButtons}
-			/>}
+			/> : null}
 
 		<SubmitConfirmDialog
 			isOpen={isConfirmDialogOpen}

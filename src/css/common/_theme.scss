@@ -1,3 +1,12 @@
+@use 'sass:color';
+
+$primary: #03c7d2;
+$secondary: #d46f4d;
+$outline: #9e9e9e;
+
+$core: #0073aa;
+$pro: #ce0000;
+
 $php-active: #0073aa;
 $php-inactive: #579;
 $php-background: #78c8e6;
@@ -16,13 +25,6 @@ $js-active: #d44500;
 $js-background: #cd6600;
 $js-highlight: #cd6600;
 
-$theme-primary: #03c7d2;
-$theme-secondary: #d46f4d;
-$theme-outline: #9e9e9e;
-
-$theme-core: #0073aa;
-$theme-pro: #ce0000;
-
 $brand-discord: #5865f2;
 $brand-facebook: #3b5998;
 
@@ -31,7 +33,7 @@ $brand-facebook: #3b5998;
 		color: $color;
 
 		&:hover, &:active, &:focus {
-			color: lighten($color, $lightness);
+			color: color.adjust($color, $lightness: $lightness);
 		}
 	}
 }
