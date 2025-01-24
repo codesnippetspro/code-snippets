@@ -31,7 +31,7 @@ class Command extends WP_CLI_Command {
 	 *
 	 * @var string
 	 */
-	protected $item_type = 'snippet';
+	protected string $item_type = 'snippet';
 
 	/**
 	 * Snippet object fields.
@@ -39,7 +39,7 @@ class Command extends WP_CLI_Command {
 	 * @see Snippet
 	 * @var string[]
 	 */
-	protected $obj_fields = array(
+	protected array $obj_fields = array(
 		'id',
 		'name',
 		'type',

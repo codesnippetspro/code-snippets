@@ -8,6 +8,8 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_API;
+
 /**
  * Loaded from the manage menu class.
  *

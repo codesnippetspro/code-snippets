@@ -67,7 +67,7 @@ class Plugin {
 	 *
 	 * @var Licensing
 	 */
-	public $licensing;
+	public Licensing $licensing;
 
 	/**
 	 *

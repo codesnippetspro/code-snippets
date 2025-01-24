@@ -67,7 +67,7 @@ class Cloud_Bundles extends Cloud_Search_List_Table {
 				continue;
 			}
 
-			$api->store_snippets_from_cloud_to_local( [ $snippet_to_store ], (bool) $snippet_to_store->is_owner );
+			$api->store_snippets_from_cloud_to_local( [ $snippet_to_store ], $snippet_to_store->is_owner );
 		}
 
 		wp_safe_redirect( esc_url_raw( code_snippets()->get_menu_url() ) );

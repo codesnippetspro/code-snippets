@@ -27,7 +27,7 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @var Cloud_List_Table
 	 */
-	public $cloud_list_table;
+	public Cloud_List_Table $cloud_list_table;
 
 	/**
 	 * Instance of the cloud list table class for search results.
@@ -41,7 +41,7 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @var Cloud_Bundles
 	 */
-	public $cloud_bundles;
+	public Cloud_Bundles $cloud_bundles;
 
 	/**
 	 * Class constructor

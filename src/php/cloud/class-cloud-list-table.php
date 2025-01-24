@@ -18,6 +18,8 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * This class handles the table for the manage cloud snippets menu.
  *
  * @package Code_Snippets
+ *
+ * @property string $_pagination Used by parent class to store pagination output.
  */
 class Cloud_List_Table extends WP_List_Table {
 
@@ -26,14 +28,14 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @var Cloud_API
 	 */
-	protected $cloud_api;
+	protected Cloud_API $cloud_api;
 
 	/**
 	 * Items for the cloud list table.
 	 *
 	 * @var Cloud_Snippets
 	 */
-	protected $cloud_snippets;
+	protected Cloud_Snippets $cloud_snippets;
 
 	/**
 	 * Class constructor.

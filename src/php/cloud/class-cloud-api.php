@@ -4,6 +4,7 @@ namespace Code_Snippets\Cloud;
 
 use Code_Snippets\Snippet;
 use WP_Error;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet_by_cloud_id;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
@@ -933,8 +934,6 @@ class Cloud_API {
 	 * @param int        $codevault_page The current page of the codevault.
 	 *
 	 * @return array<string, string|bool> Result of operation: an array with `success` and `error_message` keys.
-	 *
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function download_or_update_snippet( int $cloud_id, string $source, string $action, int $codevault_page ): array {
 		$cloud_id = intval( $cloud_id );

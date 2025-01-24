@@ -34,14 +34,14 @@ class Front_End {
 	 *
 	 * @var Elementor
 	 */
-	protected $elementor;
+	protected Elementor $elementor;
 
 	/**
 	 * Class for handling the Gutenberg block.
 	 *
 	 * @var Block_Editor
 	 */
-	public $block_editor;
+	public Block_Editor $block_editor;
 
 	/**
 	 * Maximum depth for shortcode recursion.

@@ -25,7 +25,7 @@ class Source_Widget extends Widget {
 	 *
 	 * @var Snippet[]
 	 */
-	private $snippets;
+	private array $snippets;
 
 	/**
 	 * Class constructor.

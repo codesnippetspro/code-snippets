@@ -43,7 +43,7 @@ class Cloud_GPT_API {
 	 *
 	 * @var Cloud_API
 	 */
-	private $cloud_api;
+	private Cloud_API $cloud_api;
 
 	/**
 	 * Class constructor.
@@ -60,7 +60,7 @@ class Cloud_GPT_API {
 	 * Make a POST request.
 	 *
 	 * @param string                $endpoint Endpoint to contact.
-	 * @param array<string, string> $data     Data to include in POST request..
+	 * @param array<string, string> $data     Data to include in POST request.
 	 *
 	 * @return array|WP_Error Response data on success or error on failure.
 	 */

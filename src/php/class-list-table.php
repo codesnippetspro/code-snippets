@@ -39,7 +39,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var bool
 	 */
-	private $is_cloud_connected;
+	private bool $is_cloud_connected;
 
 	/**
 	 * A list of statuses (views)
@@ -825,7 +825,7 @@ class List_Table extends WP_List_Table {
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id', 'scope', '_wpnonce' ) );
 
 			// If so, then perform the requested action and inform the user of the result.
-			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope );
+			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ) );
 
 			if ( $result ) {
 				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
@@ -1091,8 +1091,8 @@ class List_Table extends WP_List_Table {
 
 		// Count the totals for each section.
 		$totals = array_map(
-			function ( $list ) {
-				return count( $list );
+			function ( $section_snippets ) {
+				return count( $section_snippets );
 			},
 			$snippets
 		);
