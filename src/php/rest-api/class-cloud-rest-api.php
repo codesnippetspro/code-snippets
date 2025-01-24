@@ -261,7 +261,7 @@ final class Cloud_REST_API {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function remove_sync() {
-		code_snippets()->cloud_api->remove_sync( null );
+		code_snippets()->cloud_api->remove_sync();
 
 		return rest_ensure_response(
 			[

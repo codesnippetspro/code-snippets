@@ -804,32 +804,6 @@ class Cloud_API {
 	}
 
 	/**
-	 * @param int $snippet_id Local snippet ID.
-	 *
-	 * @return void
-	 */
-	public function delete_snippet_from_transient_data( int $snippet_id ) {
-		if ( ! $this->cached_cloud_links ) {
-			$this->get_cloud_links();
-		}
-
-		foreach ( $this->cached_cloud_links as $link ) {
-			if ( $link->local_id === $snippet_id ) {
-				// Remove the link from the local_to_cloud_map.
-				$index = array_search( $link, $this->cached_cloud_links, true );
-				unset( $this->cached_cloud_links[ $index ] );
-
-				// Update the transient data.
-				set_transient(
-					self::CLOUD_MAP_TRANSIENT_KEY,
-					$this->cached_cloud_links,
-					DAY_IN_SECONDS * self::DAYS_TO_STORE_CS
-				);
-			}
-		}
-	}
-
-	/**
 	 * Delete a snippet from local-to-cloud map.
 	 *
 	 * @param int $snippet_id Local snippet ID.
