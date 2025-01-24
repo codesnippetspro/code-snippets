@@ -1,6 +1,26 @@
 # Changelog
 
-## 3.6.6.1 (2024-11-27)
+## [3.6.7] (2025-01-24)
+
+### Added
+* Generated snippet shortcode tags will include the snippet name, for easier identification.
+* Admin notices will dismiss automatically after five seconds. ([#208](https://github.com/codesnippetspro/code-snippets/issues/208))
+
+### Changed
+* Updated CSS to use latest Sass features.
+* Moved theme selector to just above editor preview on settings page (thanks to [brandonjp]). ([#206](https://github.com/codesnippetspro/code-snippets/issues/206)) 
+* `[code_snippet]` shortcodes can now be nested within each other. ([#198](https://github.com/codesnippetspro/code-snippets/issues/198))
+
+### Fixed 
+* Save buttons above editor did not follow usual validation process in Pro. (PRO) ([#197](https://github.com/codesnippetspro/code-snippets/issues/197))
+* Minor inconsistencies in consistent UI elements between Core and Pro.
+* Tags input not allowing input. ([#211](https://github.com/codesnippetspro/code-snippets/issues/211))
+* Issue with Elementor source code widget. (PRO) ([#205](https://github.com/codesnippetspro/code-snippets/issues/205))
+* Snippet descriptions not visible when viewing cloud search results.
+* Snippet import page not displaying number of successfully imported snippets.
+* Use UTC time when deciding when to display campaign notices.
+
+## [3.6.6.1] (2024-11-27)
 
 ### Fixed
 * Redeployment of [v3.6.6](#366-2024-11-27) to overcome issue with initial build.
@@ -11,6 +31,8 @@
 ### Changed
 * Improved compatability with modern versions of PHP.
 * Extended welcome API to include admin notices.
+* Action hook `code_snippets/update_snippet` now only includes the snippet ID instead of the full snippet object.
+* Action hook `code_snippets/admin/manage` now includes the currently viewed type.
 
 ### Fixed
 * Memory issue from checking aggregate posts while loading front-end syntax highlighter. 
@@ -1138,7 +1160,11 @@
 ### Added
 * Stable version released.
 
+[brandonjp]: https://github.com/brandonjp
+
 [unreleased]: https://github.com/codesnippetspro/code-snippets/tree/core
+[3.6.7]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.7
+[3.6.6.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.6.1
 [3.6.6]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.6
 [3.6.5]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.5
 [3.6.4]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.4

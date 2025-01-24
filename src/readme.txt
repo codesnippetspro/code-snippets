@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.6.6.1
+Stable tag: 3.6.7
 Tested up to: 6.7.1
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -102,6 +102,26 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.6.7 (2025-01-24) =
+
+__Added__
+* Generated snippet shortcode tags will include the snippet name, for easier identification.
+* Admin notices will dismiss automatically after five seconds. ([#208](https://github.com/codesnippetspro/code-snippets/issues/208))
+
+__Changed__
+* Updated CSS to use latest Sass features.
+* Moved theme selector to just above editor preview on settings page (thanks to [brandonjp]). ([#206](https://github.com/codesnippetspro/code-snippets/issues/206))
+* `[code_snippet]` shortcodes can now be nested within each other. ([#198](https://github.com/codesnippetspro/code-snippets/issues/198))
+
+__Fixed__
+* Save buttons above editor did not follow usual validation process in Pro. (PRO) ([#197](https://github.com/codesnippetspro/code-snippets/issues/197))
+* Minor inconsistencies in consistent UI elements between Core and Pro.
+* Tags input not allowing input. ([#211](https://github.com/codesnippetspro/code-snippets/issues/211))
+* Issue with Elementor source code widget. (PRO) ([#205](https://github.com/codesnippetspro/code-snippets/issues/205))
+* Snippet descriptions not visible when viewing cloud search results.
+* Snippet import page not displaying number of successfully imported snippets.
+* Use UTC time when deciding when to display campaign notices.
 
 = 3.6.6.1 (2024-11-27) =
 
@@ -309,31 +329,5 @@ __Fixed__
 * Do not enqueue CSS or JS snippet file if no snippets exist. (PRO)
 * Bug causing all snippets to show in site health information instead of those active.
 * Unnecessary sanitization of file upload data causing import process to fail on Windows systems.
-
-= 3.2.2 (2022-11-17) =
-
-__Fixed__
-
-* Plugin lacking a valid header error on activation.
-
-= 3.2.1 (2022-10-05) =
-
-__Added__
-
-* `Ctrl`+`/` or `Cmd`+`/` as shortcut for commenting out code in the snippet editor.
-* Additional hooks to various snippet actions, thanks to contributions made by [ancient-spirit](https://github.com/ancient-spirit).
-* Fold markers, additional keyboard shortcuts and keymap options to snippet editor,
-  thanks to contributions made by [Amaral Krichman](https://github.com/karmaral).
-* WP-CLI commands for retrieving, activating, deactivating, deleting, creating, updating, exporting and importing snippets.
-
-__Changed__
-
-* Removed duplicate tables exist query. ([#](https://wordpress.org/support/topic/duplicate-queries-21)).
-* Enabled 'add paragraphs and formatting' option by default for newly inserted content snippets.
-
-__Fixed__
-
-* Issue making survey reminder notice not dismissible.
-* Incorrect path to icon when updating the pro plugin.
 
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/core/CHANGELOG.md)**
