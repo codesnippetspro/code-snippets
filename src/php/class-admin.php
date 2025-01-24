@@ -368,7 +368,7 @@ class Admin {
 			$label_class = 'snippet-label';
 		}
 
-		echo sprintf( '<span class="%s">%s</span>', esc_attr( $label_class ), esc_html( $label ) );
+		printf( '<span class="%s">%s</span>', esc_attr( $label_class ), esc_html( $label ) );
 
 		switch ( $type_name ) {
 			case 'all':
