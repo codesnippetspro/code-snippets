@@ -61,10 +61,11 @@ export const DescriptionEditor: React.FC = () => {
 		domReady(() => initializeEditor(onChange))
 	}, [onChange])
 
-	return window.CODE_SNIPPETS_EDIT?.enableDescription ?
-		<div className="snippet-description-container">
-			{'' === snippet.code.trim() ? null :
-				<ExplainSnippetButton
+	return window.CODE_SNIPPETS_EDIT?.enableDescription
+		? <div className="snippet-description-container">
+			{'' === snippet.code.trim()
+				? null
+				: <ExplainSnippetButton
 					field="desc"
 					snippet={snippet}
 					disabled={isReadOnly}
@@ -94,6 +95,6 @@ export const DescriptionEditor: React.FC = () => {
 				rows={window.CODE_SNIPPETS_EDIT.descEditorOptions.rows}
 				cols={40}
 			>{snippet.desc}</textarea>
-		</div> :
-		null
+		</div>
+		: null
 }

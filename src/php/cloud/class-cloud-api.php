@@ -69,14 +69,6 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function __construct() {
-		if ( ! defined( 'CS_CLOUD_URL' ) ) {
-			define( 'CS_CLOUD_URL', 'https://codesnippets.cloud/' );
-		}
-
-		if ( ! defined( 'CS_CLOUD_API_URL' ) ) {
-			define( 'CS_CLOUD_API_URL', CS_CLOUD_URL . 'api/v1/' );
-		}
-
 		add_action( 'plugins_loaded', [ $this, 'init_oauth_sync' ] );
 		add_filter( 'allowed_redirect_hosts', [ $this, 'allow_cloud_redirects' ] );
 	}
@@ -87,7 +79,9 @@ class Cloud_API {
 	 * @return string
 	 */
 	public static function get_cloud_url(): string {
-		return defined( 'CS_CLOUD_URL' ) ? CS_CLOUD_URL : 'https://codesnippets.cloud/';
+		return defined( 'CS_CLOUD_URL' )
+			? CS_CLOUD_URL
+			: 'https://codesnippets.cloud/';
 	}
 
 	/**
@@ -96,7 +90,9 @@ class Cloud_API {
 	 * @return string
 	 */
 	public static function get_cloud_api_url(): string {
-		return defined( 'CS_CLOUD_API_URL' ) ? CS_CLOUD_API_URL : 'https://codesnippets.cloud/api/v1/';
+		return defined( 'CS_CLOUD_API_URL' )
+			? CS_CLOUD_API_URL
+			: self::get_cloud_url() . 'api/v1/';
 	}
 
 	/**
@@ -332,10 +328,7 @@ class Cloud_API {
 
 			// Get the cloud snippet revision if in codevault get from cloud_id_rev array otherwise get from cloud.
 			if ( $link->in_codevault ) {
-				$cloud_snippet_revision =
-					$cloud_id_rev[ $cloud_id_int ] ? $cloud_id_rev[ $cloud_id_int ] :
-						$this->get_cloud_snippet_revision( $local_snippet->cloud_id );
-
+				$cloud_snippet_revision = $cloud_id_rev[ $cloud_id_int ] ?? $this->get_cloud_snippet_revision( $local_snippet->cloud_id );
 				$link->update_available = $local_snippet->revision < $cloud_snippet_revision;
 			}
 
@@ -811,6 +804,32 @@ class Cloud_API {
 	}
 
 	/**
+	 * @param int $snippet_id Local snippet ID.
+	 *
+	 * @return void
+	 */
+	public function delete_snippet_from_transient_data( int $snippet_id ) {
+		if ( ! $this->cached_cloud_links ) {
+			$this->get_cloud_links();
+		}
+
+		foreach ( $this->cached_cloud_links as $link ) {
+			if ( $link->local_id === $snippet_id ) {
+				// Remove the link from the local_to_cloud_map.
+				$index = array_search( $link, $this->cached_cloud_links, true );
+				unset( $this->cached_cloud_links[ $index ] );
+
+				// Update the transient data.
+				set_transient(
+					self::CLOUD_MAP_TRANSIENT_KEY,
+					$this->cached_cloud_links,
+					DAY_IN_SECONDS * self::DAYS_TO_STORE_CS
+				);
+			}
+		}
+	}
+
+	/**
 	 * Delete a snippet from local-to-cloud map.
 	 *
 	 * @param int $snippet_id Local snippet ID.
@@ -849,7 +868,6 @@ class Cloud_API {
 		$url = self::get_cloud_api_url() . sprintf( 'public/getsnippet/%s', $cloud_id );
 		$response = wp_remote_get( $url );
 		$cloud_snippet = self::unpack_request_json( $response );
-
 		return new Cloud_Snippet( $cloud_snippet['snippet'] );
 	}
 
@@ -1026,7 +1044,7 @@ class Cloud_API {
 	 *
 	 * @return array The result of the download.
 	 */
-	public function store_single_snippet_from_cloud_to_local( Cloud_Snippet $snippet_to_store, bool $in_codevault ): array {
+	public function download_snippet_from_cloud( Cloud_Snippet $snippet_to_store, bool $in_codevault ): array {
 		$snippet = new Snippet( $snippet_to_store );
 
 		// Set the snippet id to 0 to ensure that the snippet is saved as a new snippet.
@@ -1066,11 +1084,11 @@ class Cloud_API {
 	 */
 	public function store_snippets_from_cloud_to_local( array $snippets_to_store, bool $in_codevault ): array {
 		if ( 1 === count( $snippets_to_store ) ) {
-			return $this->store_single_snippet_from_cloud_to_local( $snippets_to_store[0], $in_codevault );
+			return $this->download_snippet_from_cloud( $snippets_to_store[0], $in_codevault );
 		}
 
 		foreach ( $snippets_to_store as $snippet_to_store ) {
-			$this->store_single_snippet_from_cloud_to_local( $snippet_to_store, $in_codevault );
+			$this->download_snippet_from_cloud( $snippet_to_store, $in_codevault );
 		}
 
 		return count( $snippets_to_store ) > 1 ?

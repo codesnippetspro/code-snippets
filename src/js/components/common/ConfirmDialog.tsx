@@ -24,8 +24,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 	cancelLabel = __('Cancel', 'code-snippets'),
 	confirmButtonClassName
 }) =>
-	open ?
-		<Modal
+	open
+		? <Modal
 			title={title}
 			onRequestClose={onCancel}
 			closeButtonLabel={cancelLabel}
@@ -45,5 +45,5 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 					{confirmLabel}
 				</Button>
 			</Flex>
-		</Modal> :
-		null
+		</Modal>
+		: null

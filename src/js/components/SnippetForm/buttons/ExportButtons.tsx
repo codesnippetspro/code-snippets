@@ -41,8 +41,8 @@ export const ExportButtons: React.FC = () => {
 				{__('Export', 'code-snippets')}
 			</Button>
 
-			{window.CODE_SNIPPETS_EDIT?.enableDownloads ?
-				<Button
+			{window.CODE_SNIPPETS_EDIT?.enableDownloads
+				? <Button
 					name="export_snippet_code"
 					onClick={() => {
 						api.exportCode(snippet)
@@ -53,7 +53,8 @@ export const ExportButtons: React.FC = () => {
 					disabled={isWorking}
 				>
 					{__('Export Code', 'code-snippets')}
-				</Button> : ''}
+				</Button>
+				: ''}
 		</>
 	)
 }
