@@ -327,31 +327,9 @@ class Front_End {
 		}
 
 		if ( $atts['shortcodes'] ) {
-			// Remove this shortcode from the list to prevent recursion.
+			// Temporarily remove this shortcode from the list to prevent recursion while executing do_shortcode.
 			remove_shortcode( self::CONTENT_SHORTCODE );
-
-			// Recursion depth is limited to prevent infinite loops.
-			static $depth = 0;
-
-			// Find the shortcode in the content and replace it with the evaluated content.
-			$content = preg_replace_callback(
-				'/\[' . self::CONTENT_SHORTCODE . '([^]]*)]/',
-				function ( $matches ) use ( &$depth ) {
-					if ( $depth >= self::MAX_SHORTCODE_DEPTH ) {
-						return '<!-- Max shortcode depth reached -->';
-					}
-
-					$depth++;
-					$atts = shortcode_parse_atts( $matches[1] );
-					$result = $this->render_content_shortcode( $atts );
-					$depth--;
-
-					return $result;
-				},
-				$content
-			);
-
-			// Add this shortcode back to the list.
+			$content = do_shortcode( $atts['format'] ? shortcode_unautop( $content ) : $content );
 			add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
 		}
 
