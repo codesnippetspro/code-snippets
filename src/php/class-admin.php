@@ -262,6 +262,10 @@ class Admin {
 	public function print_notices() {
 		global $current_user;
 
+		if ( apply_filters( 'code_snippets/hide_welcome_banner', false ) ) {
+			return;
+		}
+
 		$meta_key = 'ignore_code_snippets_survey_message';
 		$dismissed = get_user_meta( $current_user->ID, $meta_key );
 
@@ -286,12 +290,6 @@ class Admin {
 			$text = $welcome['text_free'];
 			$action_url = $welcome['action_url_free'];
 			$action_label = $welcome['action_label_free'];
-
-		} elseif ( ! in_array( 'pro', $dismissed, true ) ) {
-			$notice = 'pro';
-			$action_url = 'https://snipco.de/Mlll';
-			$action_label = __( 'Upgrade now', 'code-snippets' );
-			$text = __( '<strong>Lifetime plans return!</strong> Enjoy Code Snippets Pro with new pricing choices, including lifetime, monthly and yearly subscriptions.', 'code-snippets' );
 
 		} elseif ( ! in_array( 'survey', $dismissed, true ) && ! in_array( 'true', $dismissed, true ) ) {
 			$notice = 'survey';
