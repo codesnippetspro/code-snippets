@@ -13,7 +13,7 @@ use function Code_Snippets\code_snippets;
 /**
  * Retrieve the default setting values
  *
- * @return array<string, array<string, array>>
+ * @return array<string, array<string, mixed>>
  */
 function get_default_settings(): array {
 	static $defaults;
