@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.6.8] (2025-02-13)
+
+### Added
+* `code_snippets/hide_welcome_banner` filter hook for hiding welcome banner in dashboard.
+
+### Removed
+* Functionality allowing `[code_snippet]` shortcodes to be embedded recursively – it will be re-added in a future version.
+
+### Fixed
+* Shortcodes embedded within `[code_snippet]` shortcodes not evaluating correctly.
+* Translation functions being called too early in some instances when loading plugin settings.
+* 'Generate' button not appearing on some sites. (PRO)
+* Incorrect arrow entity used in cloud list table (props to [brandonjp]).
+
 ## [3.6.7] (2025-01-24)
 
 ### Added
