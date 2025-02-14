@@ -33,9 +33,9 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Items for the cloud list table.
 	 *
-	 * @var Cloud_Snippets
+	 * @var ?Cloud_Snippets
 	 */
-	protected Cloud_Snippets $cloud_snippets;
+	protected ?Cloud_Snippets $cloud_snippets;
 
 	/**
 	 * Class constructor.
