@@ -867,14 +867,19 @@ class Cloud_API {
 	/**
 	 * Get list of all bundles from the cloud API.
 	 *
-	 * @return array|null Bundle name and id, null otherwise.
+	 * @return array{id: string, name: string} List of retrieved bundles.
 	 */
-	public static function get_bundles(): ?array {
+	public static function get_bundles(): array {
 		$response = wp_remote_get(
 			self::get_cloud_api_url() . 'private/bundles',
 			[ 'headers' => self::build_request_headers() ]
 		);
-		return self::unpack_request_json( $response );
+
+		$data = self::unpack_request_json( $response );
+
+		return isset( $data['bundles'][0] ) && is_array( $data['bundles'][0] ) ?
+			$data['bundles'][0] :
+			[];
 	}
 
 	/**
