@@ -67,25 +67,6 @@ class Admin {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'debug_information', array( $this, 'debug_information' ) );
 		add_action( 'code_snippets/admin/manage', array( $this, 'print_notices' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
-	}
-
-	/**
-	 * Enqueue general admin assets.
-	 *
-	 * @param string|null $hook_name Current plugin page hook name.
-	 *
-	 * @return void
-	 */
-	public function enqueue_admin_assets( ?string $hook_name ) {
-		if ( 'plugins.php' === $hook_name ) {
-			wp_enqueue_style(
-				'code-snippets-plugins-css',
-				plugins_url( 'dist/plugins.css', PLUGIN_FILE ),
-				[],
-				PLUGIN_VERSION
-			);
-		}
 	}
 
 	/**

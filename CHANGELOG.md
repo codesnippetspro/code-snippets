@@ -1,9 +1,12 @@
 # Changelog
 
-## [3.6.8] (2025-02-13)
+## [3.6.8] (2025-02-14)
 
 ### Added
 * `code_snippets/hide_welcome_banner` filter hook for hiding welcome banner in dashboard.
+
+### Changed
+* Updated Freemius SDK to the latest version. (PRO)
 
 ### Removed
 * Functionality allowing `[code_snippet]` shortcodes to be embedded recursively – it will be re-added in a future version.
@@ -13,6 +16,7 @@
 * Translation functions being called too early in some instances when loading plugin settings.
 * 'Generate' button not appearing on some sites. (PRO)
 * Incorrect arrow entity used in cloud list table (props to [brandonjp]).
+* Removed reference to missing plugins.css file in core plugin version.
 
 ## [3.6.7] (2025-01-24)
 
