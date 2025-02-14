@@ -46,13 +46,15 @@ $bundle_name = sanitize_text_field( wp_unslash( $_REQUEST['bundle_share_name'] ?
 			<option value="0"><?php esc_html_e( 'Please choose one of your bundles', 'code-snippets' ); ?></option>
 			<?php
 			$bundles = Cloud\Cloud_API::get_bundles();
-			foreach ( $bundles['bundles'][0] as $bundle ) {
-				printf(
-					'<option value="%s"%s>%s</option>',
-					esc_attr( $bundle['id'] ),
-					selected( $bundle['id'], $bundle_id, false ),
-					esc_html( $bundle['name'] )
-				);
+			if ( isset( $bundles['bundles'][0] ) && is_array( $bundles['bundles'][0] ) ) {
+        foreach ( $bundles['bundles'][0] as $bundle ) {
+          printf(
+            '<option value="%s"%s>%s</option>',
+            esc_attr( $bundle['id'] ),
+            selected( $bundle['id'], $bundle_id, false ),
+            esc_html( $bundle['name'] )
+          );
+        }
 			}
 			?>
 		</select>
