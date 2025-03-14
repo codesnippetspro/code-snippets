@@ -34,21 +34,21 @@ class Setting_Field {
 	 *
 	 * @var string
 	 */
-	private $field_id;
+	private string $field_id;
 
 	/**
 	 * Settings section identifier.
 	 *
 	 * @var string
 	 */
-	private $section;
+	private string $section;
 
 	/**
 	 * List of possible arguments.
 	 *
 	 * @var array<string, mixed>
 	 */
-	private $args = array(
+	private array $args = array(
 		'desc'    => '',
 		'label'   => '',
 		'min'     => null,

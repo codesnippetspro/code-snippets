@@ -13,39 +13,45 @@
 .snippet-form.php-snippet {
 	.CodeMirror-sizer {
 		padding-bottom: 0 !important;
-	}
 
-	.CodeMirror-sizer::before {
-		content: '<?php';
+		&::before {
+			content: '<?php';
+		}
 	}
 }
 
 .snippet-form.css-snippet {
-	.CodeMirror-sizer::before {
-		content: '<style>';
-	}
+	.CodeMirror-sizer {
+		&::before {
+			content: '<style>';
+		}
 
-	.CodeMirror-sizer::after {
-		content: '</style>';
+		&::after {
+			content: '</style>';
+		}
 	}
 }
 
 .snippet-form.js-snippet {
-	.CodeMirror-sizer::before {
-		content: '<script>';
-	}
+	.CodeMirror-sizer {
+		&::before {
+			content: '<script>';
+		}
 
-	.CodeMirror-sizer::after {
-		content: '</script>';
+		&::after {
+			content: '</script>';
+		}
 	}
 }
 
 .snippet-form.html-snippet {
-	.CodeMirror-sizer::before {
-		content: '<!-- begin content -->';
-	}
+	.CodeMirror-sizer {
+		&::before {
+			content: '<!-- begin content -->';
+		}
 
-	.CodeMirror-sizer::after {
-		content: '<!-- end content -->';
+		&::after {
+			content: '<!-- end content -->';
+		}
 	}
 }

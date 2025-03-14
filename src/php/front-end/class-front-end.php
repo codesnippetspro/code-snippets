@@ -8,11 +8,11 @@ use WP_REST_Response;
 use WP_REST_Server;
 
 /**
- * This class manages the shortcodes included with the plugin
+ * This class manages the shortcodes included with the plugin,
  *
  * @package Code_Snippets
  */
-class Frontend {
+class Front_End {
 
 	/**
 	 * Name of the shortcode tag for rendering the code source
@@ -34,14 +34,19 @@ class Frontend {
 	 *
 	 * @var Elementor
 	 */
-	protected $elementor;
+	protected Elementor $elementor;
 
 	/**
 	 * Class for handling the Gutenberg block.
 	 *
 	 * @var Block_Editor
 	 */
-	public $block_editor;
+	public Block_Editor $block_editor;
+
+	/**
+	 * Maximum depth for shortcode recursion.
+	 */
+	const MAX_SHORTCODE_DEPTH = 5;
 
 	/**
 	 * Class constructor
@@ -407,13 +412,9 @@ class Frontend {
 		}
 
 		if ( $atts['shortcodes'] ) {
-			// Remove this shortcode from the list to prevent recursion.
+			// Temporarily remove this shortcode from the list to prevent recursion while executing do_shortcode.
 			remove_shortcode( self::CONTENT_SHORTCODE );
-
-			// Evaluate shortcodes.
 			$content = do_shortcode( $atts['format'] ? shortcode_unautop( $content ) : $content );
-
-			// Add this shortcode back to the list.
 			add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
 		}
 

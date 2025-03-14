@@ -18,6 +18,8 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * This class handles the table for the manage cloud snippets menu.
  *
  * @package Code_Snippets
+ *
+ * @property string $_pagination Used by parent class to store pagination output.
  */
 class Cloud_List_Table extends WP_List_Table {
 
@@ -26,14 +28,14 @@ class Cloud_List_Table extends WP_List_Table {
 	 *
 	 * @var Cloud_API
 	 */
-	protected $cloud_api;
+	protected Cloud_API $cloud_api;
 
 	/**
 	 * Items for the cloud list table.
 	 *
-	 * @var Cloud_Snippets
+	 * @var ?Cloud_Snippets
 	 */
-	protected $cloud_snippets;
+	protected ?Cloud_Snippets $cloud_snippets;
 
 	/**
 	 * Class constructor.
@@ -125,12 +127,12 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Fetch the snippets used to populate the table.
 	 *
-	 * @return Cloud_Snippets|null
+	 * @return Cloud_Snippets
 	 */
-	protected function fetch_snippets(): ?Cloud_Snippets {
-		return $this->cloud_api->get_codevault_snippets(
-			$this->get_current_page_number()
-		);
+	protected function fetch_snippets(): Cloud_Snippets {
+    $remote_snippets = $this->cloud_api->get_codevault_snippets( $this->get_current_page_number() );
+    return is_null( $remote_snippets ) ? new Cloud_Snippets() : $remote_snippets;
+
 	}
 
 	/**

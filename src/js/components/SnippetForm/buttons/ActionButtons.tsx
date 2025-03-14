@@ -12,11 +12,12 @@ export const ActionButtons: React.FC = () => {
 		<p className="submit">
 			<SubmitButton />
 
-			{snippet.id ?
-				<>
+			{snippet.id
+				? <>
 					<ExportButtons />
 					<DeleteButton />
-				</> : ''}
+				</>
+				: ''}
 
 			{isWorking ? <Spinner /> : ''}
 		</p>

@@ -1,6 +1,77 @@
 # Changelog
 
-## [Unreleased]
+## [3.6.9] (2025-02-17)
+
+### Changed
+* Updated `Cloud_API::get_bundles()` to properly check bundle data and return an empty array if no valid bundles are present.
+* Refactored `Cloud_List_Table::fetch_snippets()` to always return a valid `Cloud_Snippets` instance.
+* Cleaned up bundle iteration code and improved translation handling in the bundles view.
+
+### Fixed
+* Fixed errors in bundle iteration by adding a check for the bundles array before iterating.
+
+## [3.6.8] (2025-02-14)
+
+### Added
+* `code_snippets/hide_welcome_banner` filter hook for hiding welcome banner in dashboard.
+
+### Changed
+* Updated Freemius SDK to the latest version. (PRO)
+
+### Removed
+* Functionality allowing `[code_snippet]` shortcodes to be embedded recursively – it will be re-added in a future version.
+
+### Fixed
+* Shortcodes embedded within `[code_snippet]` shortcodes not evaluating correctly.
+* Translation functions being called too early in some instances when loading plugin settings.
+* 'Generate' button not appearing on some sites. (PRO)
+* Incorrect arrow entity used in cloud list table (props to [brandonjp]).
+* Removed reference to missing plugins.css file in core plugin version.
+
+## [3.6.7] (2025-01-24)
+
+### Added
+* Generated snippet shortcode tags will include the snippet name, for easier identification.
+* Admin notices will dismiss automatically after five seconds. ([#208](https://github.com/codesnippetspro/code-snippets/issues/208))
+
+### Changed
+* Updated CSS to use latest Sass features.
+* Moved theme selector to just above editor preview on settings page (thanks to [brandonjp]). ([#206](https://github.com/codesnippetspro/code-snippets/issues/206)) 
+* `[code_snippet]` shortcodes can now be nested within each other. ([#198](https://github.com/codesnippetspro/code-snippets/issues/198))
+
+### Fixed 
+* Save buttons above editor did not follow usual validation process in Pro. (PRO) ([#197](https://github.com/codesnippetspro/code-snippets/issues/197))
+* Minor inconsistencies in consistent UI elements between Core and Pro.
+* Tags input not allowing input. ([#211](https://github.com/codesnippetspro/code-snippets/issues/211))
+* Issue with Elementor source code widget. (PRO) ([#205](https://github.com/codesnippetspro/code-snippets/issues/205))
+* Snippet descriptions not visible when viewing cloud search results.
+* Snippet import page not displaying number of successfully imported snippets.
+* Use UTC time when deciding when to display campaign notices.
+
+## [3.6.6.1] (2024-11-27)
+
+### Fixed
+* Redeployment of [v3.6.6](#366-2024-11-27) to overcome issue with initial build.
+* Type issue when caching cloud links. (PRO)
+
+## [3.6.6] (2024-11-27)
+
+### Changed
+* Improved compatability with modern versions of PHP.
+* Extended welcome API to include admin notices.
+* Action hook `code_snippets/update_snippet` now only includes the snippet ID instead of the full snippet object.
+* Action hook `code_snippets/admin/manage` now includes the currently viewed type.
+
+### Fixed
+* Memory issue from checking aggregate posts while loading front-end syntax highlighter. 
+* Translation functions being called too early on upgrade, resulting in localisation loading errors.
+* Bug preventing the 'share on network' status of network snippets from correctly updating.
+* Incorrect logic controlling when to display 'Save Changes' or 'Save Changes and Activate' buttons.
+* Old notices persisting when switching between editing and creating snippets.
+
+## 3.6.5.1 (2024-05-24)
+
+* Redeployment of [v3.6.5](#365-2024-05-24) to overcome issue with initial build.
 
 ## [3.6.5] (2024-05-24)
 
@@ -1117,7 +1188,12 @@
 ### Added
 * Stable version released.
 
+[brandonjp]: https://github.com/brandonjp
+
 [unreleased]: https://github.com/codesnippetspro/code-snippets/tree/core
+[3.6.7]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.7
+[3.6.6.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.6.1
+[3.6.6]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.6
 [3.6.5]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.5
 [3.6.4]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.4
 [3.6.3]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.3

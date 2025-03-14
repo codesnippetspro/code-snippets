@@ -32,35 +32,35 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var bool
 	 */
-	public $is_network;
+	public bool $is_network;
 
 	/**
 	 * Whether a cloud connection is available.
 	 *
 	 * @var bool
 	 */
-	private $is_cloud_connected;
+	private bool $is_cloud_connected;
 
 	/**
 	 * A list of statuses (views)
 	 *
 	 * @var array<string>
 	 */
-	public $statuses = [ 'all', 'active', 'inactive', 'recently_activated' ];
+	public array $statuses = [ 'all', 'active', 'inactive', 'recently_activated' ];
 
 	/**
 	 * Column name to use when ordering the snippets list.
 	 *
 	 * @var string
 	 */
-	protected $order_by;
+	protected string $order_by;
 
 	/**
 	 * Direction to use when ordering the snippets list. Either 'asc' or 'desc'.
 	 *
 	 * @var string
 	 */
-	protected $order_dir;
+	protected string $order_dir;
 
 	/**
 	 * The constructor function for our class.
@@ -724,11 +724,10 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @param int    $id     Snippet ID.
 	 * @param string $action Action to perform.
-	 * @param string $scope  Snippet scope; used for cache busting CSS and JS snippets.
 	 *
 	 * @return bool|string Result of performing action
 	 */
-	private function perform_action( int $id, string $action, string $scope = '' ) {
+	private function perform_action( int $id, string $action ) {
 		switch ( $action ) {
 
 			case 'activate':
@@ -826,7 +825,7 @@ class List_Table extends WP_List_Table {
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id', 'scope', '_wpnonce' ) );
 
 			// If so, then perform the requested action and inform the user of the result.
-			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope );
+			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ) );
 
 			if ( $result ) {
 				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
@@ -952,7 +951,13 @@ class List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	private function fetch_shared_network_snippets() {
+		/**
+		 * Table data.
+		 *
+		 * @var $snippets array<string, Snippet[]>
+		 */
 		global $snippets;
+
 		$ids = get_site_option( 'shared_network_snippets' );
 
 		if ( ! is_multisite() || ! $ids ) {
@@ -963,7 +968,6 @@ class List_Table extends WP_List_Table {
 			$limit = count( $snippets['all'] );
 
 			for ( $i = 0; $i < $limit; $i++ ) {
-				/** Snippet @var Snippet $snippet */
 				$snippet = &$snippets['all'][ $i ];
 
 				if ( in_array( $snippet->id, $ids, true ) ) {
@@ -1086,10 +1090,12 @@ class List_Table extends WP_List_Table {
 		}
 
 		// Count the totals for each section.
-		$totals = array();
-		foreach ( $snippets as $type => $list ) {
-			$totals[ $type ] = count( $list );
-		}
+		$totals = array_map(
+			function ( $section_snippets ) {
+				return count( $section_snippets );
+			},
+			$snippets
+		);
 
 		// If the current status is empty, default to all.
 		if ( empty( $snippets[ $status ] ) ) {

@@ -34,8 +34,8 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({
 			'nav-tab-active': tabType === currentType,
 			'nav-tab-inactive': isProType(tabType) && !isLicensed()
 		})}
-		{...isProType(tabType) && !isLicensed() ?
-			{
+		{...isProType(tabType) && !isLicensed()
+			? {
 				title: __('Learn more about Code Snippets Pro.', 'code-snippets'),
 				href: 'https://codesnippets.pro/pricing/',
 				target: '_blank',
@@ -43,8 +43,8 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({
 					event.preventDefault()
 					openUpgradeDialog()
 				}
-			} :
-			{
+			}
+			: {
 				href: addQueryArgs(window.location.href, { type: tabType }),
 				onClick: event => {
 					event.preventDefault()
@@ -109,8 +109,8 @@ const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({
 					openUpgradeDialog={openUpgradeDialog}
 				/>)}
 
-			{!isLicensed() ?
-				<a
+			{!isLicensed()
+				? <a
 					className="button button-large nav-tab-button nav-tab-inactive go-pro-button"
 					href="https://codesnippets.pro/pricing/"
 					title="Find more about Pro"
@@ -121,8 +121,8 @@ const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({
 				>
 					{_x('Upgrade to ', 'Upgrade to Pro', 'code-snippets')}
 					<span className="badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>
-				</a> :
-				null}
+				</a>
+				: null}
 		</h2>
 	)
 }
@@ -141,19 +141,22 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({ openUpgradeDialog 
 				<h2>
 					{'condition' === snippet.scope ?
 						<label htmlFor="snippet_conditions">
-							{__('Conditions', 'code-snippets')}{' '}
-							{snippet.id ?
-								<span className="dashicons dashicons-randomize"></span> : null}
+							{`${__('Conditions', 'code-snippets')} `}
+							{snippet.id
+								? <span className="dashicons dashicons-randomize"></span>
+								: null}
 						</label> :
 						<label htmlFor="snippet_code">
-							{__('Code', 'code-snippets')}{' '}
-							{snippet.id ?
-								<span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span> : null}
+							{`${__('Code', 'code-snippets')} `}
+							{snippet.id
+								? <span className="snippet-type-badge" data-snippet-type={snippetType}>{snippetType}</span>
+								: null}
 						</label>}
 				</h2>
 
-				{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview || !codeEditorInstance ? '' :
-					<SnippetTypeTabs
+				{snippet.id || window.CODE_SNIPPETS_EDIT?.isPreview || !codeEditorInstance
+					? ''
+					: <SnippetTypeTabs
 						snippetType={snippetType}
 						codeEditor={codeEditorInstance.codemirror}
 						openUpgradeDialog={openUpgradeDialog}

@@ -24,14 +24,14 @@ class DB {
 	 *
 	 * @var string
 	 */
-	public $table;
+	public string $table;
 
 	/**
 	 * Network-wide table name.
 	 *
 	 * @var string
 	 */
-	public $ms_table;
+	public string $ms_table;
 
 	/**
 	 * Class constructor.

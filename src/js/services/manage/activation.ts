@@ -43,9 +43,9 @@ export const toggleSnippetActive = (link: HTMLAnchorElement, event: Event) => {
 		const button: HTMLAnchorElement | null = row.querySelector('.snippet-activation-switch')
 
 		if (response.success) {
-			row.className = activating ?
-				row.className.replace(/\binactive-snippet\b/, 'active-snippet') :
-				row.className.replace(/\bactive-snippet\b/, 'inactive-snippet')
+			row.className = activating
+				? row.className.replace(/\binactive-snippet\b/, 'active-snippet')
+				: row.className.replace(/\bactive-snippet\b/, 'inactive-snippet')
 
 			const views = document.querySelector('.subsubsub')
 			const activeCount = views?.querySelector<HTMLElement>('.active .count')

@@ -15,49 +15,25 @@ use function Code_Snippets\Settings\get_setting;
 class Welcome_Menu extends Admin_Menu {
 
 	/**
-	 *  URL for the welcome page data.
+	 * Instance of Welcome_API class.
 	 *
-	 * @var string
+	 * @var Welcome_API
 	 */
-	protected const WELCOME_JSON_URL = 'https://codesnippets.pro/wp-content/uploads/cs_welcome/cs_welcome.json';
-
-	/**
-	 * Limit of number of items to display when loading lists of items.
-	 *
-	 * @var int
-	 */
-	protected const ITEM_LIMIT = 4;
-
-	/**
-	 * Limit of number of items of historic versions to display in the changelog.
-	 *
-	 * @var int
-	 */
-	protected const MAX_CHANGELOG_ENTRIES = 4;
-
-	/**
-	 * Key used for caching welcome page data.
-	 *
-	 * @var string
-	 */
-	protected const CACHE_KEY = 'code_snippets_welcome_data';
-
-	/**
-	 * Data fetched from the remote API.
-	 *
-	 * @var ?array
-	 */
-	private $welcome_data = null;
+	protected Welcome_API $api;
 
 	/**
 	 * Class constructor
+	 *
+	 * @param Welcome_API $api Instance of API class.
 	 */
-	public function __construct() {
+	public function __construct( $api ) {
 		parent::__construct(
 			'welcome',
 			_x( "What's New", 'menu label', 'code-snippets' ),
 			__( 'Welcome to Code Snippets', 'code-snippets' )
 		);
+
+		$this->api = $api;
 	}
 
 	/**
@@ -72,147 +48,6 @@ class Welcome_Menu extends Admin_Menu {
 			[],
 			PLUGIN_VERSION
 		);
-	}
-
-	/**
-	 * Load remote welcome data when the page is loaded.
-	 *
-	 * @return void
-	 */
-	public function load() {
-		parent::load();
-
-		if ( ! is_array( $this->welcome_data ) ) {
-			$this->welcome_data = get_transient( self::CACHE_KEY );
-		}
-
-		if ( ! is_array( $this->welcome_data ) ) {
-			$this->welcome_data = [];
-			$this->fetch_remote_welcome_data();
-			$this->build_changelog_data();
-			set_transient( self::CACHE_KEY, $this->welcome_data, DAY_IN_SECONDS * 2 );
-		}
-	}
-
-	/**
-	 * Purge the welcome data cache.
-	 *
-	 * @return void
-	 */
-	public static function clear_cache() {
-		delete_transient( self::CACHE_KEY );
-	}
-
-	/**
-	 * Fetch remote welcome data from the remote server and add it to the stored data.
-	 *
-	 * @return void
-	 */
-	protected function fetch_remote_welcome_data() {
-		$remote_welcome_data = wp_remote_get( self::WELCOME_JSON_URL );
-		if ( is_wp_error( $remote_welcome_data ) ) {
-			return;
-		}
-
-		$remote_welcome_data = json_decode( wp_remote_retrieve_body( $remote_welcome_data ), true );
-		if ( ! is_array( $remote_welcome_data ) ) {
-			return;
-		}
-
-		$this->welcome_data['hero-item'] = array_merge(
-			[
-				'follow_url' => '',
-				'name'       => '',
-				'image_url'  => '',
-			],
-			isset( $remote_welcome_data['hero-item'][0] ) && is_array( $remote_welcome_data['hero-item'][0] ) ?
-				$remote_welcome_data['hero-item'][0] : []
-		);
-
-		$default_item = [
-			'follow_url' => '',
-			'image_url'  => '',
-			'title'      => '',
-		];
-
-		foreach ( [ 'features', 'partners' ] as $items_key ) {
-			$this->welcome_data[ $items_key ] = [];
-
-			if ( ! isset( $this->welcome_data[ $items_key ] ) || ! is_array( $this->welcome_data[ $items_key ] ) ) {
-				continue;
-			}
-
-			$limit = max( self::ITEM_LIMIT, count( $this->welcome_data[ $items_key ] ) );
-
-			for ( $i = 0; $i < $limit; $i++ ) {
-				$this->welcome_data[ $items_key ][] = array_merge(
-					$default_item,
-					$remote_welcome_data[ $items_key ][ $i ]
-				);
-			}
-		}
-	}
-
-	/**
-	 * Build the full list of latest changes for caching.
-	 *
-	 * @return void
-	 */
-	protected function build_changelog_data() {
-		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
-		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
-		$filesystem = new WP_Filesystem_Direct( null );
-
-		$changelog_filename = 'CHANGELOG.md';
-		$changelog = [];
-
-		$changelog_dir = plugin_dir_path( PLUGIN_FILE );
-
-		while ( plugin_dir_path( $changelog_dir ) !== $changelog_dir && ! $filesystem->exists( $changelog_dir . $changelog_filename ) ) {
-			$changelog_dir = plugin_dir_path( $changelog_dir );
-		}
-
-		if ( ! $filesystem->exists( $changelog_dir . $changelog_filename ) ) {
-			return;
-		}
-
-		$changelog_contents = $filesystem->get_contents( $changelog_dir . $changelog_filename );
-		$changelog_releases = explode( "\n## ", $changelog_contents );
-
-		foreach ( array_slice( $changelog_releases, 1, self::MAX_CHANGELOG_ENTRIES ) as $changelog_release ) {
-			$sections = explode( "\n### ", $changelog_release );
-
-			if ( count( $sections ) < 2 ) {
-				continue;
-			}
-
-			$header_parts = explode( '(', $sections[0], 2 );
-			$version = trim( trim( $header_parts[0] ), '[]' );
-
-			$changelog[ $version ] = [];
-
-			foreach ( array_slice( $sections, 1 ) as $section_contents ) {
-				$lines = array_filter( array_map( 'trim', explode( "\n", $section_contents ) ) );
-				$section_type = $lines[0];
-
-				foreach ( array_slice( $lines, 1 ) as $line ) {
-					$entry = trim( str_replace( '(PRO)', '', str_replace( '*', '', $line ) ) );
-					$core_or_pro = str_contains( $line, '(PRO)' ) ? 'pro' : 'core';
-
-					if ( ! isset( $changelog[ $version ][ $section_type ] ) ) {
-						$changelog[ $version ][ $section_type ] = [
-							$core_or_pro => [ $entry ],
-						];
-					} elseif ( ! isset( $changelog[ $version ][ $section_type ][ $core_or_pro ] ) ) {
-						$changelog[ $version ][ $section_type ][ $core_or_pro ] = [ $entry ];
-					} else {
-						$changelog[ $version ][ $section_type ][ $core_or_pro ][] = $entry;
-					}
-				}
-			}
-		}
-
-		$this->welcome_data['changelog'] = $changelog;
 	}
 
 	/**
@@ -253,39 +88,5 @@ class Welcome_Menu extends Admin_Menu {
 		}
 
 		return $links;
-	}
-
-	/**
-	 * Retrieve remote data for the hero item.
-	 *
-	 * @return array{follow_url: string, name: string, image_url: string}
-	 */
-	protected function get_hero_item(): array {
-		return $this->welcome_data['hero-item'] ?? [];
-	}
-
-	/**
-	 * Parse a list of remote items, ensuring there are no missing keys and a limit number is enforced.
-	 *
-	 * @param 'features'|'partners' $remote_key Key from remote data to parse.
-	 *
-	 * @return array<array{follow_url: string, image_url: string, title: string}>
-	 */
-	protected function get_remote_items( string $remote_key ): array {
-		return $this->welcome_data[ $remote_key ] ?? [];
-	}
-
-	/**
-	 * Retrieve a list of latest changes for display.
-	 *
-	 * @return array<string, array{
-	 *     'Added': ?array<'core' | 'pro', string>,
-	 *     'Fixed': ?array<'core' | 'pro', string>,
-	 *     'Improved': ?array<'core' | 'pro', string>,
-	 *     'Other': ?array<'core' | 'pro', string>
-	 * }>
-	 */
-	protected function get_changelog(): array {
-		return $this->welcome_data['changelog'] ?? [];
 	}
 }

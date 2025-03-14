@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
-import { useSnippetsAPI } from './useSnippetsAPI'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ScreenNotice } from '../types/ScreenNotice'
 import type { Snippet } from '../types/Snippet'
@@ -41,9 +40,9 @@ const getSuccessNotice = (request: Snippet, response: Snippet, active: boolean |
 	}
 
 	if (active) {
-		return 'single-use' === response.scope ?
-			__('Snippet updated and executed.', 'code-snippets') :
-			messages.updatedActivated
+		return 'single-use' === response.scope
+			? __('Snippet updated and executed.', 'code-snippets')
+			: messages.updatedActivated
 	} else {
 		return messages.updatedDeactivated
 	}

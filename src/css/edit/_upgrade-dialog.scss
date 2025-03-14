@@ -1,4 +1,3 @@
-
 .code-snippets-upgrade-dialog {
 	.logo {
 		font-size: 25px;
@@ -56,5 +55,9 @@
 	.button svg {
 		vertical-align: middle;
 		margin-left: 1ch;
+	}
+
+	.components-external-link.button {
+		text-decoration: none;
 	}
 }

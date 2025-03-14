@@ -4,9 +4,9 @@ import globals from 'globals'
 import eslintJs from '@eslint/js'
 import eslintTs from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
-import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
-import { fixupPluginRules } from '@eslint/compat'
+import importPlugin from 'eslint-plugin-import'
+import reactPlugin from 'eslint-plugin-react'
 import { FlatCompat } from '@eslint/eslintrc'
 
 const compat = new FlatCompat({
@@ -14,15 +14,13 @@ const compat = new FlatCompat({
 	recommendedConfig: eslintJs.configs.recommended
 })
 
-const legacyPlugin = (name, alias = name) =>
-	fixupPluginRules(compat.plugins(name)[0]?.plugins?.[alias])
-
 export default eslintTs.config(
 	eslintJs.configs.recommended,
 	...eslintTs.configs.strictTypeChecked,
 	...eslintTs.configs.stylisticTypeChecked,
-	...compat.extends('plugin:import/typescript'),
-	react.configs.flat.recommended,
+	...compat.extends('plugin:react-hooks/recommended'),
+	reactPlugin.configs.flat.recommended,
+	importPlugin.flatConfigs.recommended,
 	{
 		plugins: { 'react-hooks': reactHooks },
 		rules: reactHooks.configs.recommended.rules,
@@ -43,8 +41,7 @@ export default eslintTs.config(
 		},
 		plugins: {
 			'@stylistic': stylistic,
-			'react': react,
-			'import': legacyPlugin('eslint-plugin-import', 'import')
+			'react': reactPlugin
 		},
 		settings: {
 			'react': {
@@ -72,7 +69,7 @@ export default eslintTs.config(
 			'@stylistic/no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
 			'@stylistic/no-tabs': ['error', { allowIndentationTabs: true }],
 			'@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
-			'@stylistic/operator-linebreak': ['error', 'after'],
+			'@stylistic/operator-linebreak': ['error', 'before'],
 			'@stylistic/padded-blocks': ['error', 'never'],
 			'@stylistic/quote-props': ['error', 'consistent-as-needed'],
 			'@stylistic/quotes': ['error', 'single', { avoidEscape: true }],

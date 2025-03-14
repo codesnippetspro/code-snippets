@@ -12,35 +12,35 @@ abstract class Admin_Menu {
 	 *
 	 * @var string
 	 */
-	public $name;
+	public string $name;
 
 	/**
 	 * The label shown in the admin menu.
 	 *
 	 * @var string
 	 */
-	public $label;
+	public string $label;
 
 	/**
 	 * The text used for the page title.
 	 *
 	 * @var string
 	 */
-	public $title;
+	public string $title;
 
 	/**
 	 * The base slug for the top-level admin menu.
 	 *
 	 * @var string
 	 */
-	protected $base_slug;
+	protected string $base_slug;
 
 	/**
 	 * The slug for this admin menu.
 	 *
 	 * @var string
 	 */
-	protected $slug;
+	protected string $slug;
 
 	/**
 	 * Constructor.

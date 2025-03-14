@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-$hero = $this->get_hero_item();
+$hero = $this->api->get_hero_item();
 
 $changelog_sections = [
 	'Added'    => [
@@ -101,7 +101,7 @@ $plugin_types = [
 					<h2><?php esc_html_e( 'Latest changes', 'code-snippets' ); ?></h2>
 				</header>
 				<div class="csp-section-changelog">
-					<?php foreach ( $this->get_changelog() as $version => $version_changes ) { ?>
+					<?php foreach ( $this->api->get_changelog() as $version => $version_changes ) { ?>
 						<h3><?php echo esc_html( $version ); ?></h3>
 						<article>
 							<?php
@@ -145,7 +145,7 @@ $plugin_types = [
 	<section class="csp-section-articles csp-section-links">
 		<h1>🛟 <?php esc_html_e( 'Helpful articles', 'code-snippets' ); ?></h1>
 		<div class="csp-cards">
-			<?php foreach ( $this->get_remote_items( 'features' ) as $feature ) { ?>
+			<?php foreach ( $this->api->get_features() as $feature ) { ?>
 				<a class="csp-card"
 				   href="<?php echo esc_url( $feature['follow_url'] ); ?>" target="_blank"
 				   title="<?php esc_html_e( 'Read more', 'code-snippets' ); ?>">
@@ -169,7 +169,7 @@ $plugin_types = [
 	<section class="csp-section-links csp-section-partners">
 		<h1>🚀 <?php esc_html_e( 'Partners and apps', 'code-snippets' ); ?></h1>
 		<div class="csp-cards">
-			<?php foreach ( $this->get_remote_items( 'partners' ) as $partner ) { ?>
+			<?php foreach ( $this->api->get_partners() as $partner ) { ?>
 				<a class="csp-card"
 				   href="<?php echo esc_url( $partner['follow_url'] ); ?>" target="_blank"
 				   title="<?php esc_attr_e( 'Go to Partner', 'code-snippets' ); ?>">
@@ -189,7 +189,10 @@ $plugin_types = [
 
 <script type="text/javascript">
 	function hideLoadingAnimation() {
-		document.getElementById('csp-loading-spinner').style.display = 'none'
-		document.getElementById('csp-changes-img').style.display = 'block'
+		const spinner = document.getElementById<HTMLDivElement>('csp-loading-spinner')
+		const image = document.getElementById<HTMLDivElement>('csp-changes-img')
+
+		spinner.style.display = 'none'
+		image.style.display = 'block'
 	}
 </script>

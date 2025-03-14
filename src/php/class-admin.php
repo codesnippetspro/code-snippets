@@ -2,7 +2,9 @@
 
 namespace Code_Snippets;
 
-use DateTime;
+use DateTimeImmutable;
+use DateTimeZone;
+use Exception;
 
 /**
  * Functions specific to the administration interface
@@ -16,13 +18,21 @@ class Admin {
 	 *
 	 * @var array<string, Admin_Menu>
 	 */
-	public $menus = array();
+	public array $menus = array();
+
+	/**
+	 * Welcome_API class instance.
+	 *
+	 * @var Welcome_API
+	 */
+	public Welcome_API $welcome_api;
 
 	/**
 	 * Class constructor
 	 */
 	public function __construct() {
 		if ( is_admin() ) {
+			$this->welcome_api = new Welcome_API();
 			$this->run();
 		}
 	}
@@ -39,7 +49,7 @@ class Admin {
 			$this->menus['settings'] = new Settings_Menu();
 		}
 
-		$this->menus['welcome'] = new Welcome_Menu();
+		$this->menus['welcome'] = new Welcome_Menu( $this->welcome_api );
 
 		foreach ( $this->menus as $menu ) {
 			$menu->run();
@@ -252,19 +262,34 @@ class Admin {
 	public function print_notices() {
 		global $current_user;
 
-		$key = 'ignore_code_snippets_survey_message';
-		$dismissed = get_user_meta( $current_user->ID, $key );
-
-		if ( isset( $_GET[ $key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $key ) ) {
-			add_user_meta( $current_user->ID, $key, sanitize_key( wp_unslash( $_GET[ $key ] ) ) );
+		if ( apply_filters( 'code_snippets/hide_welcome_banner', false ) ) {
 			return;
 		}
 
-		if ( ! in_array( 'pro', $dismissed, true ) ) {
-			$notice = 'pro';
-			$action_url = 'https://snipco.de/Mlll';
-			$action_label = __( 'Upgrade now', 'code-snippets' );
-			$text = __( '<strong>Lifetime plans return!</strong> Enjoy Code Snippets Pro with new pricing choices, including lifetime, monthly and yearly subscriptions.', 'code-snippets' );
+		$meta_key = 'ignore_code_snippets_survey_message';
+		$dismissed = get_user_meta( $current_user->ID, $meta_key );
+
+		if ( isset( $_GET[ $meta_key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $meta_key ) ) {
+			add_user_meta( $current_user->ID, $meta_key, sanitize_key( wp_unslash( $_GET[ $meta_key ] ) ) );
+			return;
+		}
+
+		$welcome = $this->welcome_api->get_banner();
+
+		try {
+			$now = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
+		} catch ( Exception $e ) {
+			$now = $welcome['start_datetime'];
+		}
+
+		if ( isset( $welcome['key'] ) && ! in_array( $welcome['key'], $dismissed, true ) &&
+		     ( empty( $welcome['start_datetime'] ) || $now >= $welcome['start_datetime'] ) &&
+		     ( empty( $welcome['end_datetime'] ) || $now <= $welcome['end_datetime'] ) ) {
+			$notice = $welcome['key'];
+
+			$text = $welcome['text_free'];
+			$action_url = $welcome['action_url_free'];
+			$action_label = $welcome['action_label_free'];
 
 		} elseif ( ! in_array( 'survey', $dismissed, true ) && ! in_array( 'true', $dismissed, true ) ) {
 			$notice = 'survey';
@@ -280,7 +305,7 @@ class Admin {
 			esc_attr( sanitize_key( $notice ) )
 		);
 
-		echo wp_kses( $text, [ 'strong' => [] ] );
+		echo wp_kses_post( $text );
 
 		printf(
 			'<a href="%s" class="button button-secondary" target="_blank" style="margin: auto .5em;">%s</a>',
@@ -290,7 +315,7 @@ class Admin {
 
 		printf(
 			'<a href="%s" class="notice-dismiss"><span class="screen-reader-text">%s</span></a>',
-			esc_url( wp_nonce_url( add_query_arg( $key, $notice ), $key ) ),
+			esc_url( wp_nonce_url( add_query_arg( $meta_key, $notice ), $meta_key ) ),
 			esc_attr__( 'Dismiss', 'code-snippets' )
 		);
 
@@ -337,7 +362,7 @@ class Admin {
 
 		printf(
 			'<span class="%s">%s</span>',
-			'all' === $type_name ? 'all-snippets-label' : 'snippet-label',
+			esc_attr( 'all' === $type_name ? 'all-snippets-label' : 'snippet-label' ),
 			esc_html( $label )
 		);
 

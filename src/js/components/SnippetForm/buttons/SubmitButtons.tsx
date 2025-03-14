@@ -30,9 +30,9 @@ const SaveAndExecuteButton: React.FC<SubmitButtonProps> = ({ inlineButtons, ...p
 		title={inlineButtons ? __('Save Snippet and Execute Once', 'code-snippets') : undefined}
 		{...props}
 	>
-		{inlineButtons ?
-			__('Execute Once', 'code-snippets') :
-			__('Save Changes and Execute Once', 'code-snippets')}
+		{inlineButtons
+			? __('Execute Once', 'code-snippets')
+			: __('Save Changes and Execute Once', 'code-snippets')}
 	</Button>
 
 const DeactivateButton: React.FC<SubmitButtonProps> = ({ inlineButtons, ...props }) =>
@@ -41,9 +41,9 @@ const DeactivateButton: React.FC<SubmitButtonProps> = ({ inlineButtons, ...props
 		title={inlineButtons ? __('Save Snippet and Deactivate', 'code-snippets') : undefined}
 		{...props}
 	>
-		{inlineButtons ?
-			__('Deactivate', 'code-snippets') :
-			__('Save Changes and Deactivate', 'code-snippets')}
+		{inlineButtons
+			? __('Deactivate', 'code-snippets')
+			: __('Save Changes and Deactivate', 'code-snippets')}
 	</Button>
 
 const ActivateButton: React.FC<SubmitButtonProps> = ({ inlineButtons, ...props }) =>
@@ -52,9 +52,9 @@ const ActivateButton: React.FC<SubmitButtonProps> = ({ inlineButtons, ...props }
 		title={inlineButtons ? __('Save Snippet and Activate', 'code-snippets') : undefined}
 		{...props}
 	>
-		{inlineButtons ?
-			__('Activate', 'code-snippets') :
-			__('Save Changes and Activate', 'code-snippets')}
+		{inlineButtons
+			? __('Activate', 'code-snippets')
+			: __('Save Changes and Activate', 'code-snippets')}
 	</Button>
 
 interface ActivateOrDeactivateButtonProps {
@@ -115,9 +115,11 @@ const validateSnippet = (snippet: Snippet): undefined | string => {
 }
 
 const shouldActivateByDefault = (snippet: Snippet, inlineButtons?: boolean): boolean =>
-	!inlineButtons && !!window.CODE_SNIPPETS_EDIT?.activateByDefault &&
-	!snippet.active && 'single-use' !== snippet.scope &&
-	(!snippet.shared_network || !isNetworkAdmin())
+	!inlineButtons
+	&& !!window.CODE_SNIPPETS_EDIT?.activateByDefault
+	&& !snippet.active
+	&& 'single-use' !== snippet.scope
+	&& (!snippet.shared_network || !isNetworkAdmin())
 
 interface SubmitConfirmDialogProps {
 	isOpen: boolean
@@ -163,8 +165,8 @@ export const SubmitButton: React.FC<SubmitButtonsProps> = ({ inlineButtons }) =>
 	}
 
 	return <>
-		{activateByDefault ? null :
-			<SaveChangesButton
+		{activateByDefault ? null
+			: <SaveChangesButton
 				primary={!inlineButtons}
 				onClick={() => handleSubmit(submitSnippet)}
 				disabled={isWorking}
@@ -180,8 +182,8 @@ export const SubmitButton: React.FC<SubmitButtonsProps> = ({ inlineButtons }) =>
 			onDeactivate={() => handleSubmit(submitAndDeactivateSnippet)}
 		/>
 
-		{activateByDefault ?
-			<SaveChangesButton
+		{activateByDefault
+			? <SaveChangesButton
 				onClick={() => handleSubmit(submitSnippet)}
 				disabled={isWorking}
 				inlineButtons={inlineButtons}

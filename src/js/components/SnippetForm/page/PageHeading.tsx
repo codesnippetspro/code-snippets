@@ -6,7 +6,7 @@ import { useSnippetForm } from '../../../hooks/useSnippetForm'
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 
 export const PageHeading: React.FC = () => {
-	const { snippet, updateSnippet } = useSnippetForm()
+	const { snippet, updateSnippet, setCurrentNotice } = useSnippetForm()
 
 	return (
 		<h1>
@@ -22,6 +22,7 @@ export const PageHeading: React.FC = () => {
 				<a href={window.CODE_SNIPPETS?.urls.addNew} className="page-title-action" onClick={event => {
 					event.preventDefault()
 					updateSnippet(() => createEmptySnippet())
+					setCurrentNotice(undefined)
 
 					window.document.title = window.document.title.replace(
 						__('Edit Snippet', 'code-snippets'),

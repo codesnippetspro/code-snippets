@@ -28,7 +28,7 @@ class Licensing {
 	 *
 	 * @var Freemius
 	 */
-	private $sdk;
+	private Freemius $sdk;
 
 	/**
 	 * Class constructor.

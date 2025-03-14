@@ -20,28 +20,28 @@ class Manage_Menu extends Admin_Menu {
 	 *
 	 * @var List_Table
 	 */
-	public $list_table;
+	public List_Table $list_table;
 
 	/**
 	 * Instance of the cloud list table class for user codevault.
 	 *
 	 * @var Cloud_List_Table
 	 */
-	public $cloud_list_table;
+	public Cloud_List_Table $cloud_list_table;
 
 	/**
 	 * Instance of the cloud list table class for search results.
 	 *
 	 * @var Cloud_Search_List_Table
 	 */
-	public $cloud_search_list_table;
+	public Cloud_Search_List_Table $cloud_search_list_table;
 
 	/**
 	 * Instance of the cloud table for bundles
 	 *
 	 * @var Cloud_Bundles
 	 */
-	public $cloud_bundles;
+	public Cloud_Bundles $cloud_bundles;
 
 	/**
 	 * Class constructor
@@ -188,15 +188,12 @@ class Manage_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
-		// Load the contextual help tabs.
 		$contextual_help = new Contextual_Help( 'manage' );
 		$contextual_help->load();
 
-		// Initialize the search cloud list table class.
 		$this->cloud_search_list_table = new Cloud_Search_List_Table();
 		$this->cloud_search_list_table->prepare_items();
 
-		// Initialize the list table class.
 		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
 		$this->load_cloud();
@@ -266,7 +263,7 @@ class Manage_Menu extends Admin_Menu {
 		wp_set_script_translations( 'code-snippets-manage-js', 'code-snippets' );
 
 		if ( 'cloud' === $this->get_current_type() || 'cloud_search' === $this->get_current_type() ) {
-			Frontend::enqueue_all_prism_themes();
+			Front_End::enqueue_all_prism_themes();
 		}
 	}
 

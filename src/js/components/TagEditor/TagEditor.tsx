@@ -6,7 +6,7 @@ import React, { useRef, useState } from 'react'
 import { handleUnknownError } from '../../utils/errors'
 import { SuggestionList } from './SuggestionList'
 import { TagList } from './TagList'
-import type { InputHTMLAttributes, KeyboardEventHandler} from 'react'
+import type { InputHTMLAttributes, KeyboardEventHandler } from 'react'
 
 const COMPLETION_MIN_LENGTH = 2
 const SPECIAL_CHARS_RE = /(?<specialChar>[-\\^$[\]()+{}?*.|])/g
@@ -106,31 +106,33 @@ export const TagEditor: React.FC<TagEditorProps> = ({
 		switch (key) {
 			case 'Enter':
 			case ',':
+				event.preventDefault()
 				addTag()
 				break
 
 			case 'Backspace':
 				if (!inputValue) {
+					event.preventDefault()
 					removeTag()
 				}
 				break
 
 			case ' ':
 				if (ctrlKey || metaKey) {
+					event.preventDefault()
 					triggerCompletion(true)
 				} else if (!allowSpaces) {
+					event.preventDefault()
 					addTag()
 				}
 				break
 
 			case 'Tab':
 				if (!isTagLimit()) {
-					return
+					event.preventDefault()
 				}
+				break
 		}
-
-		event.preventDefault()
-		event.stopPropagation()
 	}
 
 	const inputHandler = () => {
@@ -143,32 +145,34 @@ export const TagEditor: React.FC<TagEditorProps> = ({
 		}
 	}
 
-	return <div className="tagger">
-		<ul onClick={() => inputRef.current?.focus()}>
-			<TagList tags={tags} onRemove={removeTag} />
-			<li className="tagger-new">
-				<input
-					{...inputProps}
-					id={id}
-					type="text"
-					ref={inputRef}
-					value={inputValue}
-					list={`tagger-completion-${completionOpen ? '' : '-disabled'}${id}`}
-					onBlur={() => addOnBlur ? addTag() : undefined}
-					onChange={event => setInputValue(event.target.value)}
-					onKeyDown={keyboardHandler}
-					onInput={inputHandler}
-				/>
-				<SuggestionList
-					id={`tagger-completion-${id}`}
-					suggestions={completionList.filter(suggestion => !tags.includes(suggestion))}
-					onSelect={suggestion => {
-						addTag(suggestion)
-						setCompletionList([])
-						setCompletionOpen(false)
-					}}
-				/>
-			</li>
-		</ul>
-	</div>
+	return (
+		<div className="tagger">
+			<ul onClick={() => inputRef.current?.focus()}>
+				<TagList tags={tags} onRemove={removeTag} />
+				<li className="tagger-new">
+					<input
+						{...inputProps}
+						id={id}
+						type="text"
+						ref={inputRef}
+						value={inputValue}
+						list={`tagger-completion-${completionOpen ? '' : '-disabled'}${id}`}
+						onBlur={() => addOnBlur ? addTag() : undefined}
+						onChange={event => setInputValue(event.target.value)}
+						onKeyDown={keyboardHandler}
+						onInput={inputHandler}
+					/>
+					<SuggestionList
+						id={`tagger-completion-${id}`}
+						suggestions={completionList.filter(suggestion => !tags.includes(suggestion))}
+						onSelect={suggestion => {
+							addTag(suggestion)
+							setCompletionList([])
+							setCompletionOpen(false)
+						}}
+					/>
+				</li>
+			</ul>
+		</div>
+	)
 }

@@ -2,61 +2,11 @@ import React, { useState } from 'react'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
-import { handleUnknownError } from '../../utils/errors'
-import { isNetworkAdmin } from '../../utils/conditions'
-import { Button } from '../common/Button'
 import { CloudAIButton } from '../SnippetForm/buttons/CloudAIButton'
 import { ExplainSnippetButton } from '../SnippetForm/buttons/ExplainSnippetButton'
+import { SubmitButton } from '../SnippetForm/buttons/SubmitButtons'
 import { GenerateCodeModal } from '../SnippetForm/page/GenerateCodeModal'
 import type { LineWidget } from 'codemirror'
-
-const InlineActivateButton: React.FC = () => {
-	const { snippet, isWorking, submitAndActivateSnippet, submitAndDeactivateSnippet } = useSnippetForm()
-
-	if (snippet.shared_network && isNetworkAdmin()) {
-		return null
-	}
-
-	if ('single-use' === snippet.scope) {
-		return (
-			<Button
-				small
-				id="save_snippet_execute_extra"
-				title={__('Save Snippet and Execute Once', 'code-snippets')}
-				onClick={() => {
-					submitAndActivateSnippet().then(() => undefined).catch(handleUnknownError)
-				}}
-				disabled={isWorking}
-			>
-				{__('Execute Once', 'code-snippets')}
-			</Button>
-		)
-	}
-
-	return snippet.active ?
-		<Button
-			small
-			id="save_snippet_deactivate_extra"
-			title={__('Save Snippet and Deactivate', 'code-snippets')}
-			onClick={() => {
-				submitAndDeactivateSnippet().then(() => undefined).catch(handleUnknownError)
-			}}
-			disabled={isWorking}
-		>
-			{__('Deactivate', 'code-snippets')}
-		</Button> :
-		<Button
-			small
-			id="save_snippet_activate_extra"
-			title={__('Save Snippet and Activate', 'code-snippets')}
-			onClick={() => {
-				submitAndActivateSnippet().then(() => undefined).catch(handleUnknownError)
-			}}
-			disabled={isWorking}
-		>
-			{__('Activate', 'code-snippets')}
-		</Button>
-}
 
 const ExplainCodeButton: React.FC = () => {
 	const { snippet, isWorking, isReadOnly, codeEditorInstance } = useSnippetForm()
@@ -121,28 +71,16 @@ const GenerateCodeButton: React.FC = () => {
 	</>
 }
 const InlineActionButtons: React.FC = () => {
-	const { snippet, isWorking, submitSnippet } = useSnippetForm()
+	const { snippet, isWorking } = useSnippetForm()
 
 	return (
 		<>
 			{isWorking && <Spinner />}
 
+			{'condition' !== snippet.scope && !isWorking && '' !== snippet.code.trim() && <ExplainCodeButton />}
 			{'condition' !== snippet.scope && <GenerateCodeButton />}
-			{'condition' !== snippet.scope && '' !== snippet.code.trim() && <ExplainCodeButton />}
 
-			<Button
-				small
-				id="save_snippet_extra"
-				title={__('Save Snippet', 'code-snippets')}
-				onClick={() => {
-					submitSnippet().then(() => undefined).catch(handleUnknownError)
-				}}
-				disabled={isWorking}
-			>
-				{__('Save Changes', 'code-snippets')}
-			</Button>
-
-			<InlineActivateButton />
+			<SubmitButton inlineButtons />
 		</>
 	)
 }

@@ -6,7 +6,6 @@
 /code-snippets-pro.*.zip
 /src/dist/
 /bundle/
-/build/
 
 # Node
 node_modules/

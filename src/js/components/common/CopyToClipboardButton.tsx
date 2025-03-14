@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { handleUnknownError } from '../../utils/errors'
-import type { HTMLAttributes, MouseEventHandler} from 'react'
+import type { HTMLAttributes, MouseEventHandler } from 'react'
 
 const TIMEOUT = 3000
 
@@ -31,12 +31,12 @@ export const CopyToClipboardButton: React.FC<CopyToClipboardButtonProps> = ({
 			.catch(handleUnknownError)
 	}
 
-	return clipboard ?
-		<a
+	return clipboard
+		? <a
 			href="#"
 			className={`code-snippets-copy-text dashicons dashicons-${isSuccess ? successIcon : copyIcon}`}
 			onClick={clickHandler}
 			{...props}
-		></a> :
-		null
+		></a>
+		: null
 }

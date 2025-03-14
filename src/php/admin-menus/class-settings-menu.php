@@ -2,7 +2,6 @@
 
 namespace Code_Snippets;
 
-use WP_Error;
 use const Code_Snippets\Settings\CACHE_KEY;
 use const Code_Snippets\Settings\OPTION_GROUP;
 use const Code_Snippets\Settings\OPTION_NAME;

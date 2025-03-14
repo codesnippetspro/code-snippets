@@ -54,14 +54,14 @@ class Cloud_API {
 	 *
 	 * @var Cloud_Snippets|null
 	 */
-	private $cached_codevault_snippets = null;
+	private ?Cloud_Snippets $cached_codevault_snippets = null;
 
 	/**
 	 * Cached list of cloud links.
 	 *
 	 * @var Cloud_Link[]|null
 	 */
-	private $cached_cloud_links = null;
+	private ?array $cached_cloud_links = null;
 
 	/**
 	 * Class constructor.
@@ -69,29 +69,31 @@ class Cloud_API {
 	 * @return void
 	 */
 	public function __construct() {
-        defined('CS_CLOUD_URL') ? CS_CLOUD_URL : define('CS_CLOUD_URL', 'https://codesnippets.cloud/');
-        defined('CS_CLOUD_API_URL') ? CS_CLOUD_API_URL : define('CS_CLOUD_API_URL', CS_CLOUD_URL . 'api/v1/');
 		add_action( 'plugins_loaded', [ $this, 'init_oauth_sync' ] );
 		add_filter( 'allowed_redirect_hosts', [ $this, 'allow_cloud_redirects' ] );
 	}
 
-    /**
-     * Retrieve the Cloud URL from wp-config or fallback to default.
-     *
-     * @return string
-     */
-    public static function get_cloud_url(): string {
-        return defined('CS_CLOUD_URL') ? CS_CLOUD_URL : 'https://codesnippets.cloud/';
-    }
+	/**
+	 * Retrieve the Cloud URL from wp-config or fallback to default.
+	 *
+	 * @return string
+	 */
+	public static function get_cloud_url(): string {
+		return defined( 'CS_CLOUD_URL' )
+			? CS_CLOUD_URL
+			: 'https://codesnippets.cloud/';
+	}
 
-    /**
-     * Retrieve the Cloud API URL from wp-config or fallback to default.
-     *
-     * @return string
-     */
-    public static function get_cloud_api_url(): string {
-        return defined('CS_CLOUD_API_URL') ? CS_CLOUD_API_URL : 'https://codesnippets.cloud/api/v1/';
-    }
+	/**
+	 * Retrieve the Cloud API URL from wp-config or fallback to default.
+	 *
+	 * @return string
+	 */
+	public static function get_cloud_api_url(): string {
+		return defined( 'CS_CLOUD_API_URL' )
+			? CS_CLOUD_API_URL
+			: self::get_cloud_url() . 'api/v1/';
+	}
 
 	/**
 	 * Retrieve the value of a cloud setting, if it exists.
@@ -287,13 +289,14 @@ class Cloud_API {
 	 */
 	private function get_cloud_links(): ?array {
 		// Return the cached data if available.
-		if ( $this->cached_cloud_links ) {
+		if ( is_array( $this->cached_cloud_links ) ) {
 			return $this->cached_cloud_links;
 		}
 
 		// Fetch data from the stored transient, if available.
-		$this->cached_cloud_links = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
-		if ( $this->cached_cloud_links ) {
+		$transient_data = get_transient( self::CLOUD_MAP_TRANSIENT_KEY );
+		if ( is_array( $transient_data ) ) {
+			$this->cached_cloud_links = $transient_data;
 			return $this->cached_cloud_links;
 		}
 
@@ -325,10 +328,7 @@ class Cloud_API {
 
 			// Get the cloud snippet revision if in codevault get from cloud_id_rev array otherwise get from cloud.
 			if ( $link->in_codevault ) {
-				$cloud_snippet_revision =
-					$cloud_id_rev[ $cloud_id_int ] ? $cloud_id_rev[ $cloud_id_int ] :
-						$this->get_cloud_snippet_revision( $local_snippet->cloud_id );
-
+				$cloud_snippet_revision = $cloud_id_rev[ $cloud_id_int ] ?? $this->get_cloud_snippet_revision( $local_snippet->cloud_id );
 				$link->update_available = $local_snippet->revision < $cloud_snippet_revision;
 			}
 
@@ -634,13 +634,17 @@ class Cloud_API {
 	 * @return Cloud_Snippets|null
 	 */
 	public function get_codevault_snippets( int $page = 0 ): ?Cloud_Snippets {
+		// Return the cached data if available.
 		if ( $this->cached_codevault_snippets ) {
 			return $this->cached_codevault_snippets;
 		}
 
 		// Fetch data from the stored transient, if available.
-		$this->cached_codevault_snippets = get_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
-		if ( $this->cached_codevault_snippets ) {
+		$transient_data = get_transient( self::CODEVAULT_SNIPPETS_TRANSIENT_KEY );
+
+		if ( $transient_data instanceof Cloud_Snippets ) {
+			$this->cached_codevault_snippets = $transient_data;
+
 			if ( $page === $this->cached_codevault_snippets->page ) {
 				return $this->cached_codevault_snippets;
 			}
@@ -838,7 +842,6 @@ class Cloud_API {
 		$url = self::get_cloud_api_url() . sprintf( 'public/getsnippet/%s', $cloud_id );
 		$response = wp_remote_get( $url );
 		$cloud_snippet = self::unpack_request_json( $response );
-
 		return new Cloud_Snippet( $cloud_snippet['snippet'] );
 	}
 
@@ -864,14 +867,19 @@ class Cloud_API {
 	/**
 	 * Get list of all bundles from the cloud API.
 	 *
-	 * @return array|null Bundle name and id, null otherwise.
+	 * @return array{id: string, name: string} List of retrieved bundles.
 	 */
-	public static function get_bundles(): ?array {
+	public static function get_bundles(): array {
 		$response = wp_remote_get(
 			self::get_cloud_api_url() . 'private/bundles',
 			[ 'headers' => self::build_request_headers() ]
 		);
-		return self::unpack_request_json( $response );
+
+		$data = self::unpack_request_json( $response );
+
+		return isset( $data['bundles'][0] ) && is_array( $data['bundles'][0] ) ?
+			$data['bundles'][0] :
+			[];
 	}
 
 	/**
@@ -1015,7 +1023,7 @@ class Cloud_API {
 	 *
 	 * @return array The result of the download.
 	 */
-	public function store_single_snippet_from_cloud_to_local( Cloud_Snippet $snippet_to_store, bool $in_codevault ): array {
+	public function download_snippet_from_cloud( Cloud_Snippet $snippet_to_store, bool $in_codevault ): array {
 		$snippet = new Snippet( $snippet_to_store );
 
 		// Set the snippet id to 0 to ensure that the snippet is saved as a new snippet.
@@ -1055,11 +1063,11 @@ class Cloud_API {
 	 */
 	public function store_snippets_from_cloud_to_local( array $snippets_to_store, bool $in_codevault ): array {
 		if ( 1 === count( $snippets_to_store ) ) {
-			return $this->store_single_snippet_from_cloud_to_local( $snippets_to_store[0], $in_codevault );
+			return $this->download_snippet_from_cloud( $snippets_to_store[0], $in_codevault );
 		}
 
 		foreach ( $snippets_to_store as $snippet_to_store ) {
-			$this->store_single_snippet_from_cloud_to_local( $snippet_to_store, $in_codevault );
+			$this->download_snippet_from_cloud( $snippet_to_store, $in_codevault );
 		}
 
 		return count( $snippets_to_store ) > 1 ?

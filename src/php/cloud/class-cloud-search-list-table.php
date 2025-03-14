@@ -28,20 +28,24 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 *
 	 * @var Cloud_API
 	 */
-	protected $cloud_api;
+	protected Cloud_API $cloud_api;
 
 	/**
 	 * Items for the cloud list table.
 	 *
 	 * @var Cloud_Snippets
 	 */
-	protected $cloud_snippets;
+	protected Cloud_Snippets $cloud_snippets;
 
 	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
-		// Declare global variable due to undeclared warning.
+		/**
+		 * Declare global variable due to undeclared warning.
+		 *
+		 * @noinspection PhpUnusedLocalVariableInspection
+		 */
 		global $tab;
 
 		parent::__construct(

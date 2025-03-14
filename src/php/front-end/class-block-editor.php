@@ -18,7 +18,7 @@ class Block_Editor {
 		}
 
 		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'enqueue_block_editor_assets', array( Frontend::class, 'enqueue_all_prism_themes' ) );
+		add_action( 'enqueue_block_editor_assets', array( Front_End::class, 'enqueue_all_prism_themes' ) );
 
 		add_filter(
 			class_exists( 'WP_Block_Editor_Context' ) ? 'block_categories_all' : 'block_categories',
@@ -35,8 +35,8 @@ class Block_Editor {
 
 		$prism_dep = [];
 		if ( ! Settings\get_setting( 'general', 'disable_prism' ) ) {
-			Frontend::register_prism_assets();
-			$prism_dep = [ Frontend::PRISM_HANDLE ];
+			Front_End::register_prism_assets();
+			$prism_dep = [ Front_End::PRISM_HANDLE ];
 		}
 
 		wp_register_script(
@@ -141,7 +141,7 @@ class Block_Editor {
 			)
 		);
 
-		foreach ( Frontend::get_prism_themes() as $theme => $label ) {
+		foreach ( Front_End::get_prism_themes() as $theme => $label ) {
 			register_block_style(
 				'code-snippets/source',
 				array(
@@ -195,7 +195,7 @@ class Block_Editor {
 		return sprintf(
 			'<div %s>%s</div>',
 			get_block_wrapper_attributes(),
-			code_snippets()->frontend->render_content_shortcode( $attributes )
+			code_snippets()->front_end->render_content_shortcode( $attributes )
 		);
 	}
 
@@ -210,7 +210,7 @@ class Block_Editor {
 		return sprintf(
 			'<div %s>%s</div>',
 			get_block_wrapper_attributes(),
-			code_snippets()->frontend->render_source_shortcode( $attributes )
+			code_snippets()->front_end->render_source_shortcode( $attributes )
 		);
 	}
 }

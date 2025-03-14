@@ -1,6 +1,11 @@
-@import '~@jcubic/tagger/tagger.css';
-@import 'common/editor';
-@import 'common/type-badges';
+@use 'common/editor';
+@use 'common/type-badges';
+@use 'edit/tooltips';
+@use 'edit/types';
+@use 'edit/tags';
+@use 'edit/upgrade-dialog';
+@use 'edit/gpt';
+@use 'edit/conditions';
 
 /**
  * Custom styling for the single snippet admin page
@@ -62,11 +67,9 @@ label[for='snippet_description'] h3 div {
 }
 
 /* Add spacing in between the action buttons */
-.submit, .submit-inline {
-	> *,
-	> .button {
-		margin-left: .5em;
-	}
+.button + .button,
+.generate-button + .button {
+	margin-left: .5em;
 }
 
 h2 .button {
@@ -155,9 +158,8 @@ p.snippet-scope, .snippet-scope p {
 	scroll-margin: 0.75em;
 }
 
-@import 'edit/tooltips';
-@import 'edit/types';
-@import 'edit/tags';
-@import 'edit/conditions';
-@import 'edit/upgrade-dialog';
-@import 'edit/gpt';
+#edit-snippet-form-container .cs-sticky-notice {
+	position: sticky;
+	top: 40px;
+	z-index: 100;
+}
