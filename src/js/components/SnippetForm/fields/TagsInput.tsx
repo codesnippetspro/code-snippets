@@ -8,8 +8,8 @@ const options = window.CODE_SNIPPETS_EDIT?.tagOptions
 export const TagsInput: React.FC = () => {
 	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
 
-	return options?.enabled ?
-		<div className="snippet-tags-container">
+	return options?.enabled
+		? <div className="snippet-tags-container">
 			<h2>
 				<label htmlFor="snippet_tags">
 					{__('Tags', 'code-snippets')}
@@ -26,6 +26,6 @@ export const TagsInput: React.FC = () => {
 				allowSpaces={options.allowSpaces}
 				placeholder={__('Enter a list of tags; separated by commas.', 'code-snippets')}
 			/>
-		</div> :
-		null
+		</div>
+		: null
 }

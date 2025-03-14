@@ -60,8 +60,8 @@ export const DescriptionEditor: React.FC = () => {
 		domReady(() => initializeEditor(onChange))
 	}, [onChange])
 
-	return window.CODE_SNIPPETS_EDIT?.enableDescription ?
-		<div className="snippet-description-container">
+	return window.CODE_SNIPPETS_EDIT?.enableDescription
+		? <div className="snippet-description-container">
 			<h2>
 				<label htmlFor={EDITOR_ID}>
 					{__('Description', 'code-snippets')}
@@ -77,6 +77,6 @@ export const DescriptionEditor: React.FC = () => {
 				rows={window.CODE_SNIPPETS_EDIT.descEditorOptions.rows}
 				cols={40}
 			>{snippet.desc}</textarea>
-		</div> :
-		null
+		</div>
+		: null
 }

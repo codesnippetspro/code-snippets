@@ -103,8 +103,6 @@ export const TagEditor: React.FC<TagEditorProps> = ({
 	const keyboardHandler: KeyboardEventHandler<HTMLInputElement> = event => {
 		const { key, ctrlKey, metaKey } = event
 
-		console.log('keyboardHandler', key, ctrlKey, metaKey)
-
 		switch (key) {
 			case 'Enter':
 			case ',':

@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import React from 'react'
 import { KEYBOARD_KEYS } from '../../../types/KeyboardShortcut'
 import { isMacOS } from '../../../utils/general'
-import type { KeyboardShortcut } from '../../../types/KeyboardShortcut'
+import type { KeyboardKey, KeyboardShortcut } from '../../../types/KeyboardShortcut'
 
 const shortcuts: Record<string, KeyboardShortcut> = {
 	saveChanges: {
@@ -70,6 +70,30 @@ const shortcuts: Record<string, KeyboardShortcut> = {
 
 const SEP = _x('-', 'keyboard shortcut separator', 'code-snippets')
 
+const ModifierKey: React.FC<{ modifier: KeyboardKey }> = ({ modifier }) => {
+	switch (modifier) {
+		case 'Ctrl':
+		case 'Cmd':
+			return (
+				<>
+					<kbd className="pc-key">{KEYBOARD_KEYS.Ctrl}</kbd>
+					<kbd className="mac-key">{KEYBOARD_KEYS.Cmd}</kbd>
+					{SEP}
+				</>
+			)
+
+		case 'Option':
+			return (
+				<span className="mac-key">
+					<kbd className="mac-key">{KEYBOARD_KEYS.Option}</kbd>{SEP}
+				</span>
+			)
+
+		default:
+			return <><kbd>{KEYBOARD_KEYS[modifier]}</kbd>{SEP}</>
+	}
+}
+
 export interface CodeEditorShortcutsProps {
 	editorTheme: string
 }
@@ -88,17 +112,7 @@ export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editor
 						<td>
 							{(Array.isArray(mod) ? mod : [mod]).map(modifier =>
 								<span key={modifier}>
-									{'Ctrl' === modifier || 'Cmd' === modifier ?
-										<>
-											<kbd className="pc-key">{KEYBOARD_KEYS.Ctrl}</kbd>
-											<kbd className="mac-key">{KEYBOARD_KEYS.Cmd}</kbd>
-											{SEP}
-										</> :
-										'Option' === mod ?
-											<span className="mac-key">
-												<kbd className="mac-key">{KEYBOARD_KEYS.Option}</kbd>{SEP}
-											</span> :
-											<><kbd>{KEYBOARD_KEYS[modifier]}</kbd>{SEP}</>}
+									<ModifierKey modifier={modifier} />
 								</span>
 							)}
 							<kbd>{KEYBOARD_KEYS[key]}</kbd>

@@ -9,7 +9,6 @@
 namespace Code_Snippets\Settings;
 
 use Code_Snippets\Welcome_API;
-use Code_Snippets\Welcome_Menu;
 use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\code_snippets;
 

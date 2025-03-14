@@ -44,8 +44,18 @@ class Contextual_Help {
 	public function load() {
 		$this->screen = get_current_screen();
 
-		if ( method_exists( $this, "load_{$this->screen_name}_help" ) ) {
-			call_user_func( array( $this, "load_{$this->screen_name}_help" ) );
+		switch ( $this->screen_name ) {
+			case 'manage':
+				$this->load_manage_help();
+				break;
+
+			case 'edit':
+				$this->load_edit_help();
+				break;
+
+			case 'import':
+				$this->load_import_help();
+				break;
 		}
 
 		$this->load_help_sidebar();

@@ -41,7 +41,11 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		// Declare global variable due to undeclared warning.
+		/**
+		 * Declare global variable due to undeclared warning.
+		 *
+		 * @noinspection PhpUnusedLocalVariableInspection
+		 */
 		global $tab;
 
 		parent::__construct(

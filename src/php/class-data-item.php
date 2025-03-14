@@ -96,15 +96,13 @@ abstract class Data_Item {
 	 * @return array<string, mixed>
 	 */
 	public function get_modified_fields(): array {
-		$modified_fields = [];
-
-		foreach ( $this->get_fields() as $field => $value ) {
-			if ( $value && $value !== $this->default_values[ $field ] ) {
-				$modified_fields[ $field ] = $value;
-			}
-		}
-
-		return $modified_fields;
+		return array_filter(
+			$this->get_fields(),
+			function ( $value, $field ) {
+				return $value && $value !== $this->default_values[ $field ];
+			},
+			ARRAY_FILTER_USE_BOTH
+		);
 	}
 
 	/**

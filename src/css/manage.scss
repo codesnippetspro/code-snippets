@@ -72,19 +72,11 @@ $inactive-color: #ccc;
 		border-radius: 50%;
 	}
 
-	&:hover::before {
-		transform: translateX(40%);
-	}
-
 	.snippets .active-snippet & {
 		background-color: $active-color;
 
 		&::before {
 			transform: translateX(100%);
-		}
-
-		&:hover::before {
-			transform: translateX(60%);
 		}
 	}
 

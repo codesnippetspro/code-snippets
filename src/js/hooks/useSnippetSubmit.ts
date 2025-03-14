@@ -3,15 +3,15 @@ import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
 import { useSnippetsAPI } from './useSnippets'
-import type { Dispatch, SetStateAction} from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 import type { ScreenNotice } from '../types/ScreenNotice'
 import type { Snippet } from '../types/Snippet'
 
 const getSuccessNotice = (request: Snippet, response: Snippet, active: boolean | undefined) => {
 	if (active === undefined) {
-		return 0 === request.id ?
-			__('Snippet created.', 'code-snippets') :
-			__('Snippet updated.', 'code-snippets')
+		return 0 === request.id
+			? __('Snippet created.', 'code-snippets')
+			: __('Snippet updated.', 'code-snippets')
 	}
 
 	if (0 === request.id && active) {
@@ -19,9 +19,9 @@ const getSuccessNotice = (request: Snippet, response: Snippet, active: boolean |
 	}
 
 	if (active) {
-		return 'single-use' === response.scope ?
-			__('Snippet updated and executed.', 'code-snippets') :
-			__('Snippet updated and activated.', 'code-snippets')
+		return 'single-use' === response.scope
+			? __('Snippet updated and executed.', 'code-snippets')
+			: __('Snippet updated and activated.', 'code-snippets')
 	} else {
 		return __('Snippet updated and deactivated')
 	}
@@ -52,9 +52,9 @@ export const useSnippetSubmit = (
 
 		if (undefined === result || 'string' === typeof result) {
 			const message = [
-				snippet.id ?
-					__('Could not create snippet.', 'code-snippets') :
-					__('Could not update snippet.', 'code-snippets'),
+				snippet.id
+					? __('Could not create snippet.', 'code-snippets')
+					: __('Could not update snippet.', 'code-snippets'),
 				result ?? __('The server did not send a valid response.', 'code-snippets')
 			]
 

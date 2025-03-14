@@ -32,7 +32,7 @@
 
 import { Engine } from 'php-parser'
 import CodeMirror from 'codemirror'
-import type { Block, Location, Node} from 'php-parser'
+import type { Block, Location, Node } from 'php-parser'
 
 export interface Annotation {
 	message: string
@@ -156,9 +156,9 @@ export class Linter {
 	 * @param severity
 	 */
 	annotate(message: string, location: Location | null, severity = 'error') {
-		const [start, end] = location ?
-			location.end.offset < location.start.offset ? [location.end, location.start] : [location.start, location.end] :
-			[{ line: 0, column: 0 }, { line: 0, column: 0 }]
+		const [start, end] = location
+			? location.end.offset < location.start.offset ? [location.end, location.start] : [location.start, location.end]
+			: [{ line: 0, column: 0 }, { line: 0, column: 0 }]
 
 		this.annotations.push({
 			message,
