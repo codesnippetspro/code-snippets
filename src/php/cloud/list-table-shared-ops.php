@@ -200,7 +200,7 @@ function cloud_lts_pagination( string $which, string $source, int $total_items, 
 		$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
 	} else {
 		$page_links[] = sprintf(
-			'<a class="first-page button" href="%s"><span class="screen-reader-text">%s</span><span aria-hidden="true">&lsaquo;</span></a>',
+			'<a class="first-page button" href="%s"><span class="screen-reader-text">%s</span><span aria-hidden="true">&laquo;</span></a>',
 			esc_url( remove_query_arg( $source . '_page', $current_url ) ),
 			esc_html__( 'First page', 'code-snippets' )
 		);
@@ -210,7 +210,7 @@ function cloud_lts_pagination( string $which, string $source, int $total_items, 
 		$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&lsaquo;</span>';
 	} else {
 		$page_links[] = sprintf(
-			'<a class="prev-page button" href="%s"><span class="screen-reader-text">%s</span><span aria-hidden="true">&laquo;</span></a>',
+			'<a class="prev-page button" href="%s"><span class="screen-reader-text">%s</span><span aria-hidden="true">&lsaquo;</span></a>',
 			esc_url( add_query_arg( $source . '_page', max( 1, $current - 1 ), $current_url ) ),
 			esc_html__( 'Previous page', 'code-snippets' )
 		);
