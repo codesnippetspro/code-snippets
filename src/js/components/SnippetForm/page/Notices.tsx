@@ -1,10 +1,8 @@
 import classnames from 'classnames'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import type { ReactNode } from 'react'
-
-const NOTICE_TIMEOUT_MS = 5000
 
 interface DismissibleNoticeProps {
 	classNames?: classnames.Argument
@@ -13,28 +11,17 @@ interface DismissibleNoticeProps {
 	autoHide?: boolean
 }
 
-const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ classNames, onRemove, children, autoHide = true }) => {
-	useEffect(() => {
-		if (autoHide) {
-			const timer = setTimeout(onRemove, NOTICE_TIMEOUT_MS)
-			return () => clearTimeout(timer)
-		}
-		return undefined
-	}, [autoHide, onRemove])
+const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ classNames, onRemove, children }) =>
+	<div id="message" className={classnames('notice fade is-dismissible', classNames)}>
+		<>{children}</>
 
-	return (
-		<div id="message" className={classnames('cs-sticky-notice notice fade is-dismissible', classNames)}>
-			<>{children}</>
-
-			<button type="button" className="notice-dismiss" onClick={event => {
-				event.preventDefault()
-				onRemove()
-			}}>
-				<span className="screen-reader-text">{__('Dismiss notice.', 'code-snippets')}</span>
-			</button>
-		</div>
-	)
-}
+		<button type="button" className="notice-dismiss" onClick={event => {
+			event.preventDefault()
+			onRemove()
+		}}>
+			<span className="screen-reader-text">{__('Dismiss notice.', 'code-snippets')}</span>
+		</button>
+	</div>
 
 export const Notices: React.FC = () => {
 	const { currentNotice, setCurrentNotice, snippet, setSnippet } = useSnippetForm()

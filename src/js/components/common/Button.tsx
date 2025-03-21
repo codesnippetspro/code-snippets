@@ -14,7 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
 	id,
 	children,
 	className,
-	name = 'submit',
+	name,
 	primary = false,
 	small = false,
 	large = false,

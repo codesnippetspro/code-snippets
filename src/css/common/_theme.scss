@@ -7,26 +7,35 @@ $outline: #9e9e9e;
 $core: #0073aa;
 $pro: #ce0000;
 
-$php-active: #0073aa;
-$php-inactive: #579;
-$php-background: #78c8e6;
-
-$css-inactive: #b452cd;
-$css-active: #7d26cd;
-$css-background: #551a8b;
-$css-highlight: #8000ff;
-
-$html-active: #548b54;
-$html-background: #548b54;
-$html-highlight: $html-active;
-
-$js-inactive: #cd6600;
-$js-active: #d44500;
-$js-background: #cd6600;
-$js-highlight: #cd6600;
-
 $brand-discord: #5865f2;
 $brand-facebook: #3b5998;
+
+$types: (
+		php: (
+				active: #0073aa,
+				inactive: #579,
+				background: #78c8e6,
+				highlight: #0073aa
+		),
+		css: (
+				active: #7d26cd,
+				inactive: #b452cd,
+				background: #551a8b,
+				highlight: #8000ff
+		),
+		html: (
+				active: #548b54,
+				inactive: #548b54,
+				background: #548b54,
+				highlight: #548b54
+		),
+		js: (
+				active: #d44500,
+				inactive: #cd6600,
+				background: #cd6600,
+				highlight: #cd6600
+		)
+);
 
 @mixin link-colors($color, $lightness: 15%) {
 	a {

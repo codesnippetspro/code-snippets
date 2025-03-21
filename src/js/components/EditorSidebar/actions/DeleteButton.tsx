@@ -14,9 +14,12 @@ export const DeleteButton: React.FC = () => {
 	return (
 		<>
 			<Button
-				name="delete_snippet"
-				onClick={() => setIsDialogOpen(true)}
+				id="delete-snippet"
+				className="delete-button"
 				disabled={isWorking}
+				onClick={() => {
+					setIsDialogOpen(true)
+				}}
 			>
 				{__('Delete', 'code-snippets')}
 			</Button>

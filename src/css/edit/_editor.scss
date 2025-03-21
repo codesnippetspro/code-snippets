@@ -1,4 +1,10 @@
 
+.CodeMirror,
+.snippet-form textarea {
+	width: 100%;
+	font-family: monospace;
+}
+
 .CodeMirror-sizer {
 	min-height: 300px !important;
 	box-sizing: border-box;
@@ -8,20 +14,16 @@
 		position: absolute;
 		bottom: 0;
 	}
-}
 
-.snippet-form.php-snippet {
-	.CodeMirror-sizer {
+	.snippet-form.php-snippet & {
 		padding-bottom: 0 !important;
 
 		&::before {
 			content: '<?php';
 		}
 	}
-}
 
-.snippet-form.css-snippet {
-	.CodeMirror-sizer {
+	.snippet-form.css-snippet & {
 		&::before {
 			content: '<style>';
 		}
@@ -30,10 +32,8 @@
 			content: '</style>';
 		}
 	}
-}
 
-.snippet-form.js-snippet {
-	.CodeMirror-sizer {
+	.snippet-form.js-snippet & {
 		&::before {
 			content: '<script>';
 		}
@@ -42,16 +42,42 @@
 			content: '</script>';
 		}
 	}
-}
 
-.snippet-form.html-snippet {
-	.CodeMirror-sizer {
+	.snippet-form.html-snippet & {
 		&::before {
 			content: '<!-- begin content -->';
 		}
 
 		&::after {
 			content: '<!-- end content -->';
+		}
+	}
+}
+
+.snippet-editor {
+	position: relative;
+}
+
+.snippet-editor-help {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+
+	td:first-child {
+		padding-right: 0.5em;
+	}
+
+	.mac-key {
+		display: none;
+	}
+
+	.help-tooltip-text.platform-mac {
+		.mac-key {
+			display: inline;
+		}
+
+		.pc-key {
+			display: none;
 		}
 	}
 }

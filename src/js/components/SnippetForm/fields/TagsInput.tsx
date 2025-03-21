@@ -1,7 +1,7 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { TagEditor } from '../../TagEditor'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { TagEditor } from '../../TagEditor/TagEditor'
 
 const options = window.CODE_SNIPPETS_EDIT?.tagOptions
 

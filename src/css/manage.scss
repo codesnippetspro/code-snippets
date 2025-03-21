@@ -2,11 +2,11 @@
  * Custom styling for the snippets table
  */
 
-$active-color: #2196f3;
-$inactive-color: #ccc;
-
+@use 'sass:map';
+@use 'sass:color';
 @use 'common/theme';
 @use 'common/type-badges';
+@use 'common/switch';
 @use 'manage/cloud';
 
 .column-name,
@@ -45,81 +45,6 @@ $inactive-color: #ccc;
 
 	&:disabled {
 		color: inherit;
-	}
-}
-
-.snippet-execution-button,
-.snippet-activation-switch {
-	display: block;
-	position: relative;
-}
-
-.snippet-activation-switch {
-	margin-top: 5px;
-	width: 30px;
-	height: 17px;
-	border-radius: 34px;
-	background-color: #ccc;
-
-	&::before {
-		transition: all .4s;
-		content: '';
-		height: 13px;
-		width: 13px;
-		display: inline-block;
-		margin: 2px;
-		background-color: white;
-		border-radius: 50%;
-	}
-
-	.snippets .active-snippet & {
-		background-color: $active-color;
-
-		&::before {
-			transform: translateX(100%);
-		}
-	}
-
-	.snippets .erroneous-snippet &::before {
-		content: '!';
-		transform: translateX(50%);
-		text-align: center;
-		font-weight: bold;
-		line-height: 1;
-		color: #bbb;
-	}
-}
-
-.snippet-execution-button {
-	margin-left: 10px;
-	margin-top: 9px;
-	width: 0;
-	height: 0;
-	border-top: 9px solid transparent;
-	border-bottom: 9px solid transparent;
-	border-left: 10px solid $inactive-color;
-	transition: all 0.3s;
-
-	&::before {
-		content: '';
-		position: absolute;
-		top: -14px;
-		left: -21px;
-		bottom: -14px;
-		right: -8px;
-		border-radius: 50%;
-		border: 1.8px solid $inactive-color;
-		z-index: 2;
-		transition: all .3s;
-	}
-
-	&:hover, &:focus {
-		border-left-color: #579;
-
-		&::before {
-			transform: scale(1.1);
-			border-color: #579;
-		}
 	}
 }
 
@@ -222,49 +147,41 @@ $inactive-color: #ccc;
 }
 
 .inactive-snippet {
-	@include theme.link-colors(theme.$php-inactive);
+	@include theme.link-colors(map.get(theme.$types, 'php', 'inactive'));
 }
 
 .active-snippet {
 
 	td, th {
-		background-color: rgba(theme.$php-background, 0.06);
+		background-color: rgba(map.get(theme.$types, 'php', 'background'), 0.06);
 	}
 
 	th.check-column {
 		border-left: 2px solid #2ea2cc;
 	}
-
-	.snippet-activation-switch {
-		background-color: $active-color;
-	}
 }
 
-@mixin snippet-type-colors($type, $active, $inactive, $background, $highlight) {
+@each $type, $colors in theme.$types {
 	.#{$type}-snippet {
-		@include theme.link-colors($inactive);
+		@include theme.link-colors(map.get($colors, 'inactive'));
 	}
 
 	.#{$type}-snippet.active-snippet {
-		@include theme.link-colors($active);
+		@include theme.link-colors(map.get($colors, 'active'));
 
 		td, th {
-			background-color: rgba($background, 0.06);
+			background-color: rgba(map.get($colors, 'background'), 0.06);
 		}
 
 		.snippet-activation-switch {
-			background-color: $highlight;
+			background-color: map.get($colors, 'highlight');
 		}
 
 		th.check-column {
-			border-left-color: $highlight;
+			border-left-color: map.get($colors, 'highlight');
 		}
 	}
 }
-
-@include snippet-type-colors(css, theme.$css-active, theme.$css-inactive, theme.$css-background, theme.$css-highlight);
-@include snippet-type-colors(html, theme.$html-active, theme.$html-active, theme.$html-background, theme.$html-highlight);
-@include snippet-type-colors(js, theme.$js-active, theme.$js-inactive, theme.$js-background, theme.$js-highlight);
 
 @media screen and (max-width: 782px) {
 	p.search-box {

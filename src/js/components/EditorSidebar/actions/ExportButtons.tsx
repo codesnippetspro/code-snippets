@@ -25,7 +25,7 @@ export const ExportButtons: React.FC = () => {
 	}
 
 	return (
-		<>
+		<div className="snippet-export-buttons">
 			<Button
 				name="export_snippet"
 				onClick={() => {
@@ -55,6 +55,6 @@ export const ExportButtons: React.FC = () => {
 					{__('Export Code', 'code-snippets')}
 				</Button>
 				: ''}
-		</>
+		</div>
 	)
 }
