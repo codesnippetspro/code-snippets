@@ -48,8 +48,8 @@ export const SnippetSelector: React.FC<SnippetSelectorProps> = ({
 			</ToolbarGroup>
 		</BlockControls>
 
-		{0 === attributes.snippet_id ?
-			<Placeholder className={`code-snippet-selector ${className}`} icon={icon} label={label}>
+		{0 === attributes.snippet_id
+			? <Placeholder className={`code-snippet-selector ${className}`} icon={icon} label={label}>
 				<form>
 					<Select
 						name="snippet-select"
@@ -59,6 +59,6 @@ export const SnippetSelector: React.FC<SnippetSelectorProps> = ({
 						placeholder={__('Select a snippet to insert…', 'code-snippets')}
 					/>
 				</form>
-			</Placeholder> :
-			renderContent()}
+			</Placeholder>
+			: renderContent()}
 	</>

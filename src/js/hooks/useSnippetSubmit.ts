@@ -2,10 +2,10 @@ import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
+import { useSnippetsAPI } from './useSnippetsAPI'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ScreenNotice } from '../types/ScreenNotice'
 import type { Snippet } from '../types/Snippet'
-import { useSnippetsAPI } from './useSnippetsAPI'
 
 const snippetMessages = <const> {
 	addNew: __('Add New Snippet', 'code-snippets'),
@@ -20,7 +20,7 @@ const snippetMessages = <const> {
 	failedUpdate: __('Could not update snippet.', 'code-snippets')
 }
 
-const conditionalMessages: typeof snippetMessages = {
+const conditionMessages: typeof snippetMessages = {
 	addNew: __('Add New Condition', 'code-snippets'),
 	edit: __('Edit Condition', 'code-snippets'),
 	created: __('Condition created.', 'code-snippets'),
@@ -34,7 +34,7 @@ const conditionalMessages: typeof snippetMessages = {
 }
 
 const getSuccessNotice = (request: Snippet, response: Snippet, active: boolean | undefined): string => {
-	const messages = 'condition' === request.scope ? conditionalMessages : snippetMessages
+	const messages = 'condition' === request.scope ? conditionMessages : snippetMessages
 
 	if (active === undefined) {
 		return 0 === request.id ? messages.created : messages.updated
@@ -76,7 +76,7 @@ export const useSnippetSubmit = (
 			}
 		})()
 
-		const messages = 'condition' === snippet.scope ? conditionalMessages : snippetMessages
+		const messages = 'condition' === snippet.scope ? conditionMessages : snippetMessages
 
 		if (undefined === result || 'string' === typeof result) {
 			const message = [
@@ -87,8 +87,12 @@ export const useSnippetSubmit = (
 			setCurrentNotice(['error', message.filter(Boolean).join(' ')])
 			return undefined
 		} else {
-			setSnippet({ ...result })
 			setCurrentNotice(['updated', getSuccessNotice(snippet, result, active)])
+
+			setSnippet({
+				...result,
+				conditions: 'condition' === result.scope ? JSON.parse(result.code) : undefined
+			})
 
 			if (snippet.id && result.id) {
 				window.document.title = window.document.title.replace(snippetMessages.addNew, messages.edit)

@@ -18,8 +18,11 @@ export const createEmptySnippet = (): Snippet => ({
 	priority: 10
 })
 
+const getSnippetScope = (snippetOrScope: Snippet | SnippetScope): SnippetScope =>
+	'string' === typeof snippetOrScope ? snippetOrScope : snippetOrScope.scope
+
 export const getSnippetType = (snippetOrScope: Snippet | SnippetScope): SnippetType => {
-	const scope = 'string' === typeof snippetOrScope ? snippetOrScope : snippetOrScope.scope
+	const scope = getSnippetScope(snippetOrScope)
 
 	switch (true) {
 		case scope.endsWith('-css'):
@@ -43,6 +46,9 @@ export const getConditionalScope = (snippetOrScope: Snippet | SnippetScope): Sni
 	const snippetType = getSnippetType(snippetOrScope)
 	return 'cond' === snippetType ? 'condition' : `conditional-${snippetType}`
 }
+
+export const isCondition = (snippetOrScope: Snippet | SnippetScope): boolean =>
+	'condition' === getSnippetScope(snippetOrScope)
 
 export const isProSnippet = (snippet: Snippet | SnippetScope): boolean =>
 	PRO_TYPES.includes(getSnippetType(snippet))

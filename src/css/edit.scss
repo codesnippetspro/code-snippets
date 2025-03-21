@@ -11,10 +11,9 @@
 @use 'edit/editor';
 
 @use 'common/tooltips';
-@use 'edit/conditions';
 @use 'edit/upgrade-dialog';
-@use 'edit/gpt';
 @use 'edit/conditions';
+@use 'edit/gpt';
 
 .notice.error blockquote {
 	margin-bottom: 0;
@@ -28,11 +27,22 @@
 	height: 1rem;
 	vertical-align: middle;
 	line-height: 1;
-	margin: -2px 3px 0 0;
+	margin: 0;
 }
 
 .snippet-description-container {
 	margin-top: 25px;
+
+	.wp-editor-tabs {
+		float: left;
+	}
+
+	.generate-button {
+		float: right;
+		margin-top: 37px;
+		z-index: 99;
+		position: relative;
+	}
 }
 
 #edit-snippet-form-container .cs-sticky-notice {

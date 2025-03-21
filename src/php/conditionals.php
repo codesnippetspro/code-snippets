@@ -78,13 +78,14 @@ function evaluate_conditional_group( array $conditions ): bool {
  * @return boolean Result of evaluating the conditional.
  */
 function evaluate_conditional( string $conditional ): bool {
+/*	TODO: re-enable this
 	$or_groups = json_decode( $conditional, false );
 
 	foreach ( $or_groups as $and_group ) {
 		if ( evaluate_conditional_group( get_object_vars( $and_group ) ) ) {
 			return true;
 		}
-	}
+	}*/
 
 	return false;
 }

@@ -61,7 +61,10 @@ export const cssWebpackConfig: Configuration = {
 						loader: 'sass-loader',
 						options: {
 							implementation: libsass,
-							sourceMap: true
+							sourceMap: true,
+							sassOptions: {
+								loadPaths: ['node_modules']
+							}
 						}
 					}
 				]

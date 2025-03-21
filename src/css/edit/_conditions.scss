@@ -1,9 +1,15 @@
 
 .snippet-condition-editor {
-	padding: 0 1.5em;
+	margin-top: 33px;
+	padding: 32px;
 	flex-flow: column;
 	align-items: flex-start;
-	max-width: 800px;
+	border: 1px solid #C3C4C7;
+	background: #F6F7F7;
+
+	h2:first-of-type {
+		margin: 0;
+	}
 
 	h4 {
 		margin-bottom: 0;
@@ -13,36 +19,17 @@
 		box-shadow: none;
 	}
 
-	.condition-add-button {
-		display: flex;
-		flex-flow: row;
-		align-items: center;
-		justify-content: center;
-		margin: 0 auto;
-
-		.dashicons + span {
-			margin-left: 2px;
-		}
-	}
-
+	.condition-clone-button,
 	.condition-remove-button {
-		color: currentColor;
 		border: none;
 		background: none;
 		padding: 0;
 		line-height: 1;
-
-		&:hover {
-			color: #b32d2e
-		}
+		fill: #646970;
 	}
 
-	.condition-add-row-button {
-		margin: 0;
-	}
-
-	.condition-add-group-button {
-		margin: 1em 0;
+	.condition-remove-button:hover svg {
+		fill: #b32d2e
 	}
 
 	.condition-group-sep, .condition-row-sep {
@@ -52,18 +39,18 @@
 }
 
 
-.snippet-condition-groups {
+.snippet-condition-rules {
 	display: flex;
 	flex-flow: column;
+	align-items: flex-start;
+	gap: 8px;
+	margin: 16px 0;
 }
 
 .snippet-condition-group {
 	flex: 1;
 	display: flex;
 	flex-flow: column;
-	padding: 1em;
-	margin: 1em 0;
-	border: 1px solid #bbb;
 
 	> * {
 		flex: 1;
@@ -76,12 +63,30 @@
 }
 
 .snippet-condition-row {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 8ch auto;
-	grid-gap: 1em;
+	display: flex;
+	flex-flow: row;
+	gap: 1em;
 	align-items: center;
+	width: 100%;
 }
 
 .snippet-condition-field-select {
-	min-width: 15em;
+	min-width: 9em;
+}
+
+.snippet-condition-enabled-select,
+.snippet-condition-operator-select {
+	text-transform: uppercase;
+}
+
+.snippet-condition-subject-select {
+	flex: 1;
+}
+
+.snippet-condition-operator-select {
+	min-width: 8em;
+}
+
+.snippet-condition-object-select {
+	min-width: 16em;
 }

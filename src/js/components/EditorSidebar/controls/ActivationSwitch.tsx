@@ -17,6 +17,7 @@ export const ActivationSwitch = () => {
 			<input
 				id="snippet-activation-switch"
 				type="checkbox"
+				checked={snippet.active}
 				disabled={isWorking || !!snippet.shared_network}
 				className="switch snippet-activation-switch"
 				title={snippet.active

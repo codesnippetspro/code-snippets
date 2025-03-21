@@ -107,8 +107,8 @@ const Edit: React.FC<BlockEditProps<SourceBlockAttributes>> = ({ attributes, set
 				options={options}
 				attributes={attributes}
 				setAttributes={setAttributes}
-				renderContent={() => snippet ?
-					<SnippetSourceCode snippet={snippet} attributes={attributes} /> : <Spinner />}
+				renderContent={() => snippet
+					? <SnippetSourceCode snippet={snippet} attributes={attributes} /> : <Spinner />}
 			/>
 		</div>
 	)

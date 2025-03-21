@@ -4,14 +4,35 @@ import { __ } from '@wordpress/i18n'
 import { createEmptySnippet, getSnippetType } from '../../utils/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { Button } from '../common/Button'
+import { ConditionEditor } from '../ConditionEditor'
 import { EditorSidebar } from '../EditorSidebar'
-import { CodeEditor } from './fields/CodeEditor'
 import { SnippetLocationInput } from './fields/SnippetLocationInput'
 import { SnippetTypeInput } from './fields/SnippetTypeInput'
 import { UpgradeDialog } from './page/UpgradeDialog'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
 import { PageHeading } from './page/PageHeading'
+import type { Dispatch, SetStateAction} from 'react'
+
+interface EditSnippetFormProps {
+	setIsUpgradeDialogOpen: Dispatch<SetStateAction<boolean>>
+}
+
+const EditCodeForm: React.FC<EditSnippetFormProps> = ({ setIsUpgradeDialogOpen }) =>
+	<div className="above-editor-container">
+		<SnippetTypeInput openUpgradeDialog={() => setIsUpgradeDialogOpen(true)} />
+
+		<SnippetLocationInput />
+
+		<div className="conditions-editor-open">
+			<h3>{__('Conditions', 'code-snippets')}</h3>
+			<Button large>
+				<span className="dashicons dashicons-randomize"></span>
+				{__('Set Conditions', 'code-snippets')}
+				<span className="badge">{__('beta', 'code-snippets')}</span>
+			</Button>
+		</div>
+	</div>
 
 const EditForm: React.FC = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
@@ -39,22 +60,9 @@ const EditForm: React.FC = () => {
 				<main className="snippet-form-main">
 					<NameInput />
 
-					<div className="above-editor-container">
-						<SnippetTypeInput openUpgradeDialog={() => setIsUpgradeDialogOpen(true)} />
-
-						<SnippetLocationInput />
-
-						<div className="conditions-editor-open">
-							<h3>{__('Conditions', 'code-snippets')}</h3>
-							<Button large>
-								<span className="dashicons dashicons-randomize"></span>
-								{__('Set Conditions', 'code-snippets')}
-								<span className="badge">{__('beta', 'code-snippets')}</span>
-							</Button>
-						</div>
-					</div>
-
-					<CodeEditor />
+					{'condition' === snippet.scope
+						? <ConditionEditor />
+						: <EditCodeForm setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />}
 
 					{window.CODE_SNIPPETS_EDIT?.enableDescription ? <DescriptionEditor /> : null}
 				</main>

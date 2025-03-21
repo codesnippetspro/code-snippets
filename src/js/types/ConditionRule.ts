@@ -4,7 +4,8 @@ import type { PostType } from './wp/PostType'
 import type { Category, PostTag } from './wp/Term'
 import type { User } from './wp/User'
 
-export interface Condition {
+export interface ConditionRule {
+	enabled?: boolean
 	subject?: ConditionSubject
 	operator?: ConditionOperator
 	object?: string | number | boolean
@@ -23,7 +24,6 @@ export interface ConditionSubjects {
 
 export type ConditionSubject = keyof ConditionSubjects
 
-export type ConditionGroup = Record<string, Condition>
-export type ConditionGroups = Record<string, ConditionGroup>
+export type ConditionRules = Record<string, ConditionRule>
 
-export type ConditionOperator = 'eq' | 'neq'
+export type ConditionOperator = 'is' | 'not'

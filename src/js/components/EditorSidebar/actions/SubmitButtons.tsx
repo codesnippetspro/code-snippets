@@ -66,9 +66,9 @@ const ActivateOrDeactivateButton: React.FC<ActivateOrDeactivateButtonProps> = ({
 const validateSnippet = (snippet: Snippet): undefined | string => {
 	const missingTitle = '' === snippet.name.trim()
 
-	const missingCode = 'cond' === getSnippetType(snippet) ?
-		!snippet.conditions :
-		'' === snippet.code.trim()
+	const missingCode = 'cond' === getSnippetType(snippet)
+		? !snippet.conditions
+		: '' === snippet.code.trim()
 
 	switch (true) {
 		case missingCode && missingTitle:

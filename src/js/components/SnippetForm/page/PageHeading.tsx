@@ -1,6 +1,5 @@
 import { __, _x } from '@wordpress/i18n'
 import React from 'react'
-import { Snippet } from '../../../types/Snippet'
 import { createEmptySnippet } from '../../../utils/snippets'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import type { Snippet } from '../../../types/Snippet'
@@ -9,12 +8,12 @@ const OPTIONS = window.CODE_SNIPPETS_EDIT
 
 const getEditHeading = (snippet: Snippet): string =>
 	'condition' === snippet.scope
-		? __('Edit Conditions', 'code-snippets')
+		? __('Edit Condition', 'code-snippets')
 		: __('Edit Snippet', 'code-snippets')
 
 const getAddNewHeading = (snippet: Snippet): string =>
 	'condition' === snippet.scope
-		? __('Add New Conditions', 'code-snippets')
+		? __('Add New Condition', 'code-snippets')
 		: __('Add New Snippet', 'code-snippets')
 
 export const PageHeading: React.FC = () => {

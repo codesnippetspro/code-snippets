@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import { __, _x } from '@wordpress/i18n'
 import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { SNIPPET_TYPE_SCOPES, SnippetCodeType } from '../../../types/Snippet'
+import { SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
 import { getSnippetType, isProType } from '../../../utils/snippets'
-import type { SnippetType } from '../../../types/Snippet'
+import type { SnippetCodeType, SnippetType } from '../../../types/Snippet'
 import type { SelectOption } from '../../../types/SelectOption'
 import type { EditorConfiguration } from 'codemirror'
 
@@ -17,7 +17,7 @@ const EDITOR_MODES: Record<SnippetCodeType, string> = {
 	css: 'text/css',
 	js: 'javascript',
 	php: 'text/x-php',
-	html: 'application/x-httpd-php',
+	html: 'application/x-httpd-php'
 }
 
 const OPTIONS: SelectOption<SnippetType>[] = [
@@ -48,7 +48,7 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ openUpgradeD
 
 			codeEditor.setOption('lint' as keyof EditorConfiguration, 'php' === snippetType || 'css' === snippetType)
 
-			if (snippetType !== 'cond' && EDITOR_MODES[snippetType]) {
+			if ('cond' !== snippetType && EDITOR_MODES[snippetType]) {
 				codeEditor.setOption('mode', EDITOR_MODES[snippetType])
 				codeEditor.refresh()
 			}

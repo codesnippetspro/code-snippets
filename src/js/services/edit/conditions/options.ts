@@ -1,16 +1,21 @@
-import { __ } from '@wordpress/i18n'
+import { __, _x } from '@wordpress/i18n'
 import axios from 'axios'
-import { getRestUrl } from '../../utils/restAPI'
-import type { SelectGroups, SelectOption, SelectOptions } from '../../types/SelectOption'
-import type { ConditionOperator, ConditionSubject, ConditionSubjects } from '../../types/Condition'
+import { getRestUrl } from '../../../utils/restAPI'
+import type { SelectGroups, SelectOption, SelectOptions } from '../../../types/SelectOption'
+import type { ConditionOperator, ConditionSubject, ConditionSubjects } from '../../../types/ConditionRule'
+
+export const ENABLED_OPTIONS: SelectGroups<boolean> = [
+	{ value: true, label: __('Enable', 'code-snippets') },
+	{ value: false, label: __('Disable', 'code-snippets') }
+]
 
 export const SUBJECT_OPTIONS: SelectGroups<ConditionSubject> = [
 	{
 		label: __('Post', 'code-snippets'),
 		options: [
-			{ value: 'post', label: __('Current post', 'code-snippets') },
-			{ value: 'page', label: __('Current page', 'code-snippets') },
-			{ value: 'postType', label: __('Current post type', 'code-snippets') },
+			{ value: 'post', label: __('Post', 'code-snippets') },
+			{ value: 'page', label: __('Page', 'code-snippets') },
+			{ value: 'postType', label: __('Post type', 'code-snippets') },
 			{ value: 'category', label: __('Post category', 'code-snippets') },
 			{ value: 'tag', label: __('Post tag', 'code-snippets') }
 		]
@@ -18,16 +23,16 @@ export const SUBJECT_OPTIONS: SelectGroups<ConditionSubject> = [
 	{
 		label: __('User', 'code-snippets'),
 		options: [
-			{ value: 'user', label: __('Current user', 'code-snippets') },
-			{ value: 'userRole', label: __('Current user role', 'code-snippets') },
+			{ value: 'user', label: __('User', 'code-snippets') },
+			{ value: 'userRole', label: __('User role', 'code-snippets') },
 			{ value: 'authenticated', label: __('Logged-in', 'code-snippets') }
 		]
 	}
 ]
 
 export const OPERATOR_OPTIONS: SelectOptions<ConditionOperator> = [
-	{ value: 'eq', label: __('is equal to', 'code-snippets') },
-	{ value: 'neq', label: __('is not equal to', 'code-snippets') }
+	{ value: 'is', label: _x('is', 'condition operator', 'code-snippets') },
+	{ value: 'not', label: _x('is not', 'condition operator', 'code-snippets') }
 ]
 
 const BOOLEAN_OPTIONS: SelectOptions<boolean> = [
@@ -60,7 +65,7 @@ const OPTIONS_ENDPOINTS: {
 }
 
 const cachedSubjectOptions: Partial<Record<ConditionSubject, ObjectOptions>> = {
-	userRole:  [
+	userRole: [
 		{ value: 'administrator', label: __('Administrator', 'code-snippets') },
 		{ value: 'editor', label: __('Editor', 'code-snippets') },
 		{ value: 'author', label: __('Author', 'code-snippets') },
