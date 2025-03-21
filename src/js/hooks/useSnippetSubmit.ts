@@ -8,25 +8,29 @@ import type { Snippet } from '../types/Snippet'
 import { useSnippetsAPI } from './useSnippetsAPI'
 
 const snippetMessages = <const> {
+	addNew: __('Add New Snippet', 'code-snippets'),
 	edit: __('Edit Snippet', 'code-snippets'),
 	created: __('Snippet created.', 'code-snippets'),
 	updated: __('Snippet updated.', 'code-snippets'),
 	createdActivated: __('Snippet created and activated.', 'code-snippets'),
 	updatedActivated: __('Snippet updated and activated.', 'code-snippets'),
 	updatedDeactivated: __('Snippet updated and deactivated'),
+	updatedExecuted: __('Snippet updated and executed.', 'code-snippets'),
 	failedCreate: __('Could not create snippet.', 'code-snippets'),
 	failedUpdate: __('Could not update snippet.', 'code-snippets')
 }
 
 const conditionalMessages: typeof snippetMessages = {
-	edit: __('Edit Conditional', 'code-snippets'),
-	created: __('Conditional created.', 'code-snippets'),
-	updated: __('Conditional updated.', 'code-snippets'),
-	createdActivated: __('Conditional created and activated', 'code-snippets'),
-	updatedActivated: __('Conditional updated and activated.', 'code-snippets'),
-	updatedDeactivated: __('Conditional updated and deactivated'),
-	failedCreate: __('Could not create conditional.', 'code-snippets'),
-	failedUpdate: __('Could not update conditional.', 'code-snippets')
+	addNew: __('Add New Condition', 'code-snippets'),
+	edit: __('Edit Condition', 'code-snippets'),
+	created: __('Condition created.', 'code-snippets'),
+	updated: __('Condition updated.', 'code-snippets'),
+	createdActivated: __('Condition created and activated', 'code-snippets'),
+	updatedActivated: __('Condition updated and activated.', 'code-snippets'),
+	updatedDeactivated: __('Condition updated and deactivated'),
+	updatedExecuted: snippetMessages.updatedExecuted,
+	failedCreate: __('Could not create condition.', 'code-snippets'),
+	failedUpdate: __('Could not update condition.', 'code-snippets')
 }
 
 const getSuccessNotice = (request: Snippet, response: Snippet, active: boolean | undefined): string => {
@@ -42,7 +46,7 @@ const getSuccessNotice = (request: Snippet, response: Snippet, active: boolean |
 
 	if (active) {
 		return 'single-use' === response.scope
-			? __('Snippet updated and executed.', 'code-snippets')
+			? messages.updatedExecuted
 			: messages.updatedActivated
 	} else {
 		return messages.updatedDeactivated
@@ -87,7 +91,7 @@ export const useSnippetSubmit = (
 			setCurrentNotice(['updated', getSuccessNotice(snippet, result, active)])
 
 			if (snippet.id && result.id) {
-				window.document.title = window.document.title.replace(__('Add New Snippet', 'code-snippets'), messages.edit)
+				window.document.title = window.document.title.replace(snippetMessages.addNew, messages.edit)
 				window.history.replaceState({}, '', addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: result.id }))
 			}
 

@@ -3,7 +3,7 @@ import { __, _x } from '@wordpress/i18n'
 import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { SNIPPET_TYPE_SCOPES, SnippetCodeType } from '../../../types/Snippet'
-import { isLicensed } from '../../../utils/conditions'
+import { isLicensed } from '../../../utils/screen'
 import { getSnippetType, isProType } from '../../../utils/snippets'
 import type { SnippetType } from '../../../types/Snippet'
 import type { SelectOption } from '../../../types/SelectOption'
@@ -17,10 +17,10 @@ const EDITOR_MODES: Record<SnippetCodeType, string> = {
 	css: 'text/css',
 	js: 'javascript',
 	php: 'text/x-php',
-	html: 'application/x-httpd-php'
+	html: 'application/x-httpd-php',
 }
 
-const OPTIONS: SelectOption<SnippetCodeType>[] = [
+const OPTIONS: SelectOption<SnippetType>[] = [
 	{ value: 'php', label: __('Functions', 'code-snippets') },
 	{ value: 'html', label: __('Content', 'code-snippets') },
 	{ value: 'css', label: __('Styles', 'code-snippets') },
@@ -31,8 +31,8 @@ const SnippetTypeOption: React.FC<SelectOption<SnippetType>> = ({ label, value }
 	<div className="snippet-type-option">
 		<div>
 			{label}
-			{isProType(value) && !isLicensed() &&
-		  <span className="badge go-pro-badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>}
+			{isProType(value) && !isLicensed()
+				&& <span className="badge go-pro-badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>}
 		</div>
 		<div className="snippet-type-badge snippet-type-badge-inverted badge" data-snippet-type={value}>{value.toUpperCase()}</div>
 	</div>

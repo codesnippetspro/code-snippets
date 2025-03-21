@@ -18,15 +18,9 @@ export interface Snippet {
 }
 
 export type SnippetCodeType = 'php' | 'html' | 'css' | 'js'
-
 export type SnippetType = SnippetCodeType | 'cond'
 
-export type SnippetScope =
-	typeof SNIPPET_TYPE_SCOPES['php'][number] |
-	typeof SNIPPET_TYPE_SCOPES['html'][number] |
-	typeof SNIPPET_TYPE_SCOPES['css'][number] |
-	typeof SNIPPET_TYPE_SCOPES['js'][number] |
-	typeof SNIPPET_TYPE_SCOPES['cond'][number]
+export type SnippetScope = typeof SNIPPET_TYPE_SCOPES[SnippetType][number]
 
 export const SNIPPET_TYPE_SCOPES = <const> {
 	php: ['global', 'admin', 'front-end', 'single-use', 'conditional-php'],
@@ -35,5 +29,3 @@ export const SNIPPET_TYPE_SCOPES = <const> {
 	js: ['site-head-js', 'site-footer-js', 'conditional-js'],
 	cond: ['condition']
 }
-
-export const SNIPPET_TYPES = <readonly SnippetType[]> Object.keys(SNIPPET_TYPE_SCOPES)

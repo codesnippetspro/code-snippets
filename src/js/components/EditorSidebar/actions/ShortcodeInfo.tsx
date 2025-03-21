@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { isNetworkAdmin } from '../../../utils/conditions'
+import { isNetworkAdmin } from '../../../utils/screen'
 import { buildShortcodeTag } from '../../../utils/shortcodes'
 import { CopyToClipboardButton } from '../../common/CopyToClipboardButton'
 import type { ShortcodeAtts } from '../../../utils/shortcodes'
@@ -68,16 +68,16 @@ export const ShortcodeInfo: React.FC = () => {
 		shortcodes: false
 	}))
 
-	return 'content' === snippet.scope ?
-		<>
+	return 'content' === snippet.scope
+		? <>
 			<p className="description">
 				{__('There are multiple options for inserting this snippet into a post, page or other content.', 'code-snippets')}
 				{' '}
-				{snippet.id ?
+				{snippet.id
 					// eslint-disable-next-line @stylistic/max-len
-					__('You can copy the below shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets') :
+					? __('You can copy the below shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')
 					// eslint-disable-next-line @stylistic/max-len
-					__('After saving, you can copy a shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')}
+					: __('After saving, you can copy a shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')}
 				{' '}
 				<ExternalLink
 					href={__('https://help.codesnippets.pro/article/50-inserting-snippets', 'code-snippets')}
@@ -86,8 +86,8 @@ export const ShortcodeInfo: React.FC = () => {
 				</ExternalLink>
 			</p>
 
-			{snippet.id ?
-				<>
+			{snippet.id
+				? <>
 					<ShortcodeTag atts={{
 						id: snippet.id,
 						network: snippet.network ?? isNetworkAdmin(),

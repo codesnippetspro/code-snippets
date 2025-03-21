@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { handleUnknownError } from '../../../utils/errors'
-import { isMacOS } from '../../../utils/conditions'
+import { isMacOS } from '../../../utils/screen'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
-
 export const CodeEditor: React.FC = () => {
 	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance, submitSnippet } = useSnippetForm()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)

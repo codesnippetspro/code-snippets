@@ -1,4 +1,4 @@
-import { isNetworkAdmin } from '../../utils/conditions'
+import { isNetworkAdmin } from '../../utils/screen'
 import type { Snippet, SnippetScope } from '../../types/Snippet'
 
 export interface ResponseData<T = unknown> {

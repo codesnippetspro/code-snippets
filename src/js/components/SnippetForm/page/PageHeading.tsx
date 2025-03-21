@@ -3,6 +3,7 @@ import React from 'react'
 import { Snippet } from '../../../types/Snippet'
 import { createEmptySnippet } from '../../../utils/snippets'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import type { Snippet } from '../../../types/Snippet'
 
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 

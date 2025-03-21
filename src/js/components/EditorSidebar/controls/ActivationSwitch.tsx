@@ -19,13 +19,13 @@ export const ActivationSwitch = () => {
 				type="checkbox"
 				disabled={isWorking || !!snippet.shared_network}
 				className="switch snippet-activation-switch"
-				title={snippet.active ?
-					__('Deactivate', 'code-snippets') :
-					__('Activate', 'code-snippets')}
+				title={snippet.active
+					? __('Deactivate', 'code-snippets')
+					: __('Activate', 'code-snippets')}
 				onChange={() => {
-					(snippet.active ?
-						submitAndDeactivateSnippet() :
-						submitAndActivateSnippet())
+					(snippet.active
+						? submitAndDeactivateSnippet()
+						: submitAndActivateSnippet())
 						.then(() => undefined)
 						.catch(handleUnknownError)
 				}}

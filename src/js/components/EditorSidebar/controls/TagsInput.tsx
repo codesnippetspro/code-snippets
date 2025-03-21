@@ -8,8 +8,8 @@ const options = window.CODE_SNIPPETS_EDIT?.tagOptions
 export const TagsInput: React.FC = () => {
 	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
 
-	return options?.enabled ?
-		<div className="snippet-tags-container">
+	return options?.enabled
+		? <div className="snippet-tags-container">
 			<h4><label>{__('Tags', 'code-snippets')}</label></h4>
 
 			<FormTokenField
@@ -26,6 +26,6 @@ export const TagsInput: React.FC = () => {
 					}))
 				}}
 			/>
-		</div> :
-		null
+		</div>
+		: null
 }
