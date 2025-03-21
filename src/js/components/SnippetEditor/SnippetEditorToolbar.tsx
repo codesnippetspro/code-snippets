@@ -1,15 +1,15 @@
 import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
-import { SubmitButton } from '../buttons/SubmitButtons'
-import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { useSnippetForm } from '../../hooks/useSnippetForm'
+import { SubmitButton } from '../SnippetForm/buttons/SubmitButtons'
 
 const InlineActionButtons: React.FC = () => {
 	const { isWorking } = useSnippetForm()
 
 	return (
 		<>
-			{isWorking ? <Spinner /> : ''}
+			{isWorking && <Spinner />}
 			<SubmitButton inlineButtons />
 		</>
 	)

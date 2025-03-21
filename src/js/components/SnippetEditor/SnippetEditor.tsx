@@ -2,14 +2,14 @@ import React, { useEffect } from 'react'
 import { __, _x } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import classnames from 'classnames'
-import { SNIPPET_TYPES, SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
-import '../../../editor'
-import { isLicensed } from '../../../utils/general'
-import { getSnippetType, isProType } from '../../../utils/snippets'
+import { SNIPPET_TYPES, SNIPPET_TYPE_SCOPES } from '../../types/Snippet'
+import '../../editor'
+import { isLicensed } from '../../utils/conditions'
+import { getSnippetType, isProType } from '../../utils/snippets'
 import { ConditionEditor } from '../ConditionEditor'
-import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { CodeEditor } from './CodeEditor'
-import type { SnippetScope, SnippetType } from '../../../types/Snippet'
+import type { SnippetScope, SnippetType } from '../../types/Snippet'
 import type { Editor, EditorConfiguration } from 'codemirror'
 
 interface SnippetTypeTabProps {
@@ -165,8 +165,9 @@ export const SnippetEditor: React.FC<SnippetEditorProps> = ({ openUpgradeDialog 
 						}}
 					/>}
 
-				<ConditionEditor />
-				<CodeEditor />
+				{'condition' === snippet.scope
+					? <ConditionEditor />
+					: <CodeEditor />}
 			</div>
 		</>
 	)

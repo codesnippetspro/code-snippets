@@ -1,12 +1,14 @@
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
-import { ConditionSubject } from '../../../types/Condition'
-import { Snippet } from '../../../types/Snippet'
-import { useSnippetForm } from '../SnippetForm/context'
+import { useSnippetForm } from '../../hooks/useSnippetForm'
+import { OPERATOR_OPTIONS, SUBJECT_OPTIONS, fetchSubjectOptions } from '../../services/edit/conditions'
+import { handleUnknownError } from '../../utils/errors'
 import { AddConditionButton } from './AddButton'
 import { ConditionField } from './ConditionField'
-import { ObjectOptions, OPERATOR_OPTIONS, SUBJECT_OPTION_PROMISES, SUBJECT_OPTIONS } from './options'
 import { RemoveButton } from './RemoveButton'
+import type { ObjectOptions } from '../../services/edit/conditions'
+import type { Snippet } from '../../types/Snippet'
+import type { ConditionSubject } from '../../types/Condition'
 
 const updateSubject = (snippet: Snippet, groupId: string, conditionId: string, value?: ConditionSubject): Snippet => ({
 	...snippet,
@@ -34,13 +36,15 @@ export const ConditionRow: React.FC<ConditionRowProps> = ({ isLastItem, groupId,
 	const condition = snippet.conditions?.[groupId][conditionId]
 
 	useEffect(() => {
-		if (!objectOptions && condition?.subject && SUBJECT_OPTION_PROMISES[condition.subject]) {
+		if (!objectOptions && condition?.subject) {
 			setLoadedSubject(undefined)
-			SUBJECT_OPTION_PROMISES[condition.subject]()
-				.then(result => {
-					setObjectOptions(result)
+
+			fetchSubjectOptions(condition.subject)
+				.then(options => {
+					setObjectOptions(options)
 					setLoadedSubject(condition.subject)
 				})
+				.catch(handleUnknownError)
 		}
 	}, [condition?.subject, objectOptions])
 

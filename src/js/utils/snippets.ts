@@ -1,4 +1,4 @@
-import { isNetworkAdmin } from './general'
+import { isNetworkAdmin } from './conditions'
 import type { Snippet, SnippetScope, SnippetType } from '../types/Snippet'
 
 const PRO_TYPES: SnippetType[] = ['css', 'js']
@@ -10,6 +10,7 @@ export const createEmptySnippet = (): Snippet => ({
 	code: '',
 	tags: [],
 	scope: 'global',
+	conditional: 0,
 	modified: '',
 	active: false,
 	network: isNetworkAdmin(),
@@ -36,6 +37,11 @@ export const getSnippetType = (snippetOrScope: Snippet | SnippetScope): SnippetT
 		default:
 			return 'php'
 	}
+}
+
+export const getConditionalScope = (snippetOrScope: Snippet | SnippetScope): SnippetScope => {
+	const snippetType = getSnippetType(snippetOrScope)
+	return 'cond' === snippetType ? 'condition' : `conditional-${snippetType}`
 }
 
 export const isProSnippet = (snippet: Snippet | SnippetScope): boolean =>

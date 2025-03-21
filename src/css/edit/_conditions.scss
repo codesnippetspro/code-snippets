@@ -3,6 +3,7 @@
 	padding: 0 1.5em;
 	flex-flow: column;
 	align-items: flex-start;
+	max-width: 800px;
 
 	h4 {
 		margin-bottom: 0;
@@ -82,5 +83,5 @@
 }
 
 .snippet-condition-field-select {
-	min-width: 150px;
+	min-width: 15em;
 }

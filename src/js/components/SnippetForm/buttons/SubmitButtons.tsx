@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { handleUnknownError } from '../../../utils/errors'
+import { getSnippetType } from '../../../utils/snippets'
 import { Button } from '../../common/Button'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
-import { isNetworkAdmin } from '../../../utils/general'
+import { isNetworkAdmin } from '../../../utils/conditions'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import type { Snippet } from '../../../types/Snippet'
 import type { ButtonProps } from '../../common/Button'
@@ -92,8 +93,11 @@ const ActivateOrDeactivateButton: React.FC<ActivateOrDeactivateButtonProps> = ({
 }
 
 const validateSnippet = (snippet: Snippet): undefined | string => {
-	const missingCode = '' === snippet.code.trim()
 	const missingTitle = '' === snippet.name.trim()
+
+	const missingCode = 'cond' === getSnippetType(snippet) ?
+		!snippet.conditions :
+		'' === snippet.code.trim()
 
 	switch (true) {
 		case missingCode && missingTitle:

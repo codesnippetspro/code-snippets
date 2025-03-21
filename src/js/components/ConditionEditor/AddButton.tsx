@@ -1,7 +1,8 @@
 import { __ } from '@wordpress/i18n'
 import classnames from 'classnames'
-import React, { ButtonHTMLAttributes } from 'react'
-import { ConditionGroups } from '../../../types/Condition'
+import React from 'react'
+import type { ButtonHTMLAttributes } from 'react'
+import type { ConditionGroups } from '../../types/Condition'
 
 export interface AddButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	group: keyof ConditionGroups

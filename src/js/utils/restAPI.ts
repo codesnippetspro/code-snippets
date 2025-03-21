@@ -1,10 +1,8 @@
-import axios from 'axios'
 import { trimLeadingChar, trimTrailingChar } from './text'
-import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 const REST_BASE = window.CODE_SNIPPETS?.restAPI.base ?? ''
 
-const getRestUrl = (endpoint: string): string =>
+export const getRestUrl = (endpoint: string): string =>
 	`${trimTrailingChar(REST_BASE, '/')}/${trimLeadingChar(endpoint, '/')}`
 
 const GET_CACHE: Record<string, AxiosResponse<unknown> | undefined> = {}

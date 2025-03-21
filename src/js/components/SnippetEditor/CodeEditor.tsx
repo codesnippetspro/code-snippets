@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
-import { isMacOS } from '../../../utils/general'
-import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { handleUnknownError } from '../../utils/errors'
+import { isMacOS } from '../../utils/conditions'
+import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 
 export const CodeEditor: React.FC = () => {
@@ -23,13 +24,17 @@ export const CodeEditor: React.FC = () => {
 
 	useEffect(() => {
 		if (codeEditorInstance) {
-			const extraKeys = codeEditorInstance.codemirror.getOption('extraKeys')
+			const extraKeys = codeEditorInstance.codemirror.getOption('extraKeys') ?? {}
 			const controlKey = isMacOS() ? 'Cmd' : 'Ctrl'
+
+			const handleSubmit = () => {
+				submitSnippet().catch(handleUnknownError)
+			}
 
 			codeEditorInstance.codemirror.setOption('extraKeys', {
 				...'object' === typeof extraKeys ? extraKeys : undefined,
-				[`${controlKey}-S`]: submitSnippet,
-				[`${controlKey}-Enter`]: submitSnippet
+				[`${controlKey}-S`]: handleSubmit,
+				[`${controlKey}-Enter`]: handleSubmit
 			})
 		}
 	}, [submitSnippet, codeEditorInstance, snippet])

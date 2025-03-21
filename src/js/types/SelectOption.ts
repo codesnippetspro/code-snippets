@@ -1,4 +1,4 @@
-import type { GroupBase } from 'react-select'
+import type { GroupBase, Options, OptionsOrGroups } from 'react-select'
 
 export interface SelectOption<T> {
 	readonly value: T
@@ -6,3 +6,7 @@ export interface SelectOption<T> {
 }
 
 export type SelectGroup<T> = GroupBase<SelectOption<T>>
+
+export type SelectOptions<T> = Options<SelectOption<T>>
+
+export type SelectGroups<T> = OptionsOrGroups<SelectOption<T>, SelectGroup<T>>
