@@ -16,7 +16,10 @@ export const MultisiteSharingSettings: React.FC = () => {
 			<div className="help-tooltip">
 				<span className="dashicons dashicons-editor-help"></span>
 				<span className="help-tooltip-text">
-					{__('Instead of running on every site, allow this snippet to be activated on individual sites on the network.', 'code-snippets')}
+					{
+						// eslint-disable-next-line @stylistic/max-len
+						__('Instead of running on every site, allow this snippet to be activated on individual sites on the network.', 'code-snippets')
+					}
 				</span>
 			</div>
 

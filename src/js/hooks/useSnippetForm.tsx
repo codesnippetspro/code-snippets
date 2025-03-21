@@ -1,6 +1,6 @@
 import { isAxiosError } from 'axios'
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { isLicensed } from '../utils/general'
+import { isLicensed } from '../utils/screen'
 import { isProSnippet } from '../utils/snippets'
 import { useSnippetSubmit } from './useSnippetSubmit'
 import type { Dispatch, PropsWithChildren, SetStateAction} from 'react'

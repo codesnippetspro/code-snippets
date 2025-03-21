@@ -2,7 +2,7 @@ import { __, _x } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React from 'react'
 import { KEYBOARD_KEYS } from '../../../types/KeyboardShortcut'
-import { isMacOS } from '../../../utils/general'
+import { isMacOS } from '../../../utils/screen'
 import type { KeyboardKey, KeyboardShortcut } from '../../../types/KeyboardShortcut'
 
 const shortcuts: Record<string, KeyboardShortcut> = {

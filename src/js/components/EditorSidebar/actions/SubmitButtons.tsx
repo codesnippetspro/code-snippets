@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n'
 import { handleUnknownError } from '../../../utils/errors'
 import { Button } from '../../common/Button'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
-import { isNetworkAdmin } from '../../../utils/general'
+import { isNetworkAdmin } from '../../../utils/screen'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import type { Snippet } from '../../../types/Snippet'
 import type { ButtonProps } from '../../common/Button'
@@ -63,8 +63,8 @@ const ActivateOrDeactivateButton: React.FC<ActivateOrDeactivateButtonProps> = ({
 }
 
 const validateSnippet = (snippet: Snippet): undefined | string => {
-	const missingCode = '' === snippet.code.trim()
 	const missingTitle = '' === snippet.name.trim()
+	const missingCode = '' === snippet.code.trim()
 
 	switch (true) {
 		case missingCode && missingTitle:
@@ -81,9 +81,9 @@ const validateSnippet = (snippet: Snippet): undefined | string => {
 	}
 }
 const shouldActivateByDefault = (snippet: Snippet): boolean =>
-	!!window.CODE_SNIPPETS_EDIT?.activateByDefault &&
-	!snippet.active && 'single-use' !== snippet.scope &&
-	(!snippet.shared_network || !isNetworkAdmin())
+	!!window.CODE_SNIPPETS_EDIT?.activateByDefault
+	&& !snippet.active && 'single-use' !== snippet.scope
+	&& (!snippet.shared_network || !isNetworkAdmin())
 
 interface SubmitConfirmDialogProps {
 	isOpen: boolean
@@ -125,8 +125,8 @@ export const SubmitButton: React.FC = () => {
 	}
 
 	return <>
-		{activateByDefault ?
-			<SaveChangesButton
+		{activateByDefault
+			? <SaveChangesButton
 				primary={!activateByDefault}
 				onClick={() => handleSubmit(submitSnippet)}
 				disabled={isWorking}
@@ -140,8 +140,8 @@ export const SubmitButton: React.FC = () => {
 			onDeactivate={() => handleSubmit(submitAndDeactivateSnippet)}
 		/>
 
-		{activateByDefault ? null :
-			<SaveChangesButton
+		{activateByDefault ? null
+			: <SaveChangesButton
 				primary
 				onClick={() => handleSubmit(submitSnippet)}
 				disabled={isWorking}

@@ -13,21 +13,11 @@ export interface Snippet {
 	code_error?: [string, number] | null
 }
 
-export type SnippetLocation = 'site-head' | 'site-footer'
+export type SnippetType = 'php' | 'html' | 'css' | 'js'
 
-export type SnippetType = typeof SNIPPET_TYPES[number]
-export type SnippetScope = typeof SNIPPET_SCOPES[number]
+export type SnippetScope = typeof SNIPPET_TYPE_SCOPES[SnippetType][number]
 
-export const SNIPPET_SCOPES = <const> [
-	'global', 'admin', 'front-end', 'single-use',
-	'content', 'head-content', 'footer-content',
-	'admin-css', 'site-css',
-	'site-head-js', 'site-footer-js'
-]
-
-export const SNIPPET_TYPES = <const> ['php', 'html', 'css', 'js']
-
-export const SNIPPET_TYPE_SCOPES: Record<SnippetType, SnippetScope[]> = {
+export const SNIPPET_TYPE_SCOPES = <const> {
 	php: ['global', 'admin', 'front-end', 'single-use'],
 	html: ['content', 'head-content', 'footer-content'],
 	css: ['admin-css', 'site-css'],

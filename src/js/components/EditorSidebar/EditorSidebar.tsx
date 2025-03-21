@@ -2,7 +2,7 @@ import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { isRTL } from '@wordpress/i18n'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
-import { isNetworkAdmin } from '../../utils/general'
+import { isNetworkAdmin } from '../../utils/screen'
 import { getSnippetType } from '../../utils/snippets'
 import { Notices } from '../SnippetForm/page/Notices'
 import { ShortcodeInfo } from './actions/ShortcodeInfo'
@@ -31,8 +31,8 @@ export const EditorSidebar = () => {
 
 				{window.CODE_SNIPPETS_EDIT?.tagOptions.enabled ? <TagsInput /> : null}
 
-				{snippet.id ?
-					<div className="row-actions visible">
+				{snippet.id
+					? <div className="row-actions visible">
 						<ExportButtons />
 						<DeleteButton />
 					</div> : null}

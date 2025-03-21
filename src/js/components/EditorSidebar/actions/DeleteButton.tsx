@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
-import { useSnippetsAPI } from '../../../hooks/useSnippets'
+import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 
 export const DeleteButton: React.FC = () => {

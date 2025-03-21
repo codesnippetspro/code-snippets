@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { addQueryArgs } from '@wordpress/url'
 import { handleUnknownError } from '../utils/errors'
-import { isNetworkAdmin } from '../utils/general'
+import { isNetworkAdmin } from '../utils/screen'
 import { useAxios } from './useAxios'
 import type { Snippet } from '../types/Snippet'
 import type { SnippetsExport } from '../types/SnippetsExport'

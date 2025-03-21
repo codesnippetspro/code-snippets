@@ -5,13 +5,13 @@ import { createEmptySnippet, getSnippetType } from '../../utils/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { Button } from '../common/Button'
 import { EditorSidebar } from '../EditorSidebar'
+import { CodeEditor } from './fields/CodeEditor'
 import { SnippetLocationInput } from './fields/SnippetLocationInput'
 import { SnippetTypeInput } from './fields/SnippetTypeInput'
 import { UpgradeDialog } from './page/UpgradeDialog'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
 import { PageHeading } from './page/PageHeading'
-import { CodeEditor } from './fields/CodeEditor'
 
 const EditForm: React.FC = () => {
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
