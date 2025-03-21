@@ -5,6 +5,7 @@ import { useCallback } from 'react'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ScreenNotice } from '../types/ScreenNotice'
 import type { Snippet } from '../types/Snippet'
+import { useSnippetsAPI } from './useSnippetsAPI'
 
 const snippetMessages = <const> {
 	edit: __('Edit Snippet', 'code-snippets'),

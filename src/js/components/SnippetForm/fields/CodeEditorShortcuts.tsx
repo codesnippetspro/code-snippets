@@ -1,9 +1,8 @@
 import { __, _x } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React from 'react'
-import { KEYBOARD_KEYS } from '../../types/KeyboardShortcut'
-import { isMacOS } from '../../utils/conditions'
-import type { KeyboardKey, KeyboardShortcut } from '../../types/KeyboardShortcut'
+import { KEYBOARD_KEYS, KeyboardKey, KeyboardShortcut } from '../../../types/KeyboardShortcut'
+import { isMacOS } from '../../../utils/conditions'
 
 const shortcuts: Record<string, KeyboardShortcut> = {
 	saveChanges: {
@@ -99,12 +98,10 @@ export interface CodeEditorShortcutsProps {
 }
 
 export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editorTheme }) =>
-	<div className="snippet-editor-help">
-		<div className={`editor-help-tooltip cm-s-${editorTheme}`}>
-			{_x('?', 'help tooltip', 'code-snippets')}
-		</div>
+	<div className="snippet-editor-help help-tooltip">
+		<span className={`dashicons dashicons-editor-help cm-s-${editorTheme}`}></span>
 
-		<div className={classnames('editor-help-text', { 'platform-mac': isMacOS() })}>
+		<div className={classnames('help-tooltip-text', { 'platform-mac': isMacOS() })}>
 			<table>
 				{Object.entries(shortcuts).map(([name, { label, mod, key }]) =>
 					<tr key={name}>

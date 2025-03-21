@@ -9,52 +9,14 @@ import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import type { Snippet } from '../../../types/Snippet'
 import type { ButtonProps } from '../../common/Button'
 
-interface SubmitButtonProps extends ButtonProps {
-	inlineButtons?: boolean
-}
-
-const SaveChangesButton: React.FC<SubmitButtonProps> = ({ inlineButtons, ...props }) =>
+const SaveChangesButton: React.FC<ButtonProps> = ({ ...props }) =>
 	<Button
 		name="save_snippet"
 		type="submit"
-		small={inlineButtons}
-		title={inlineButtons ? __('Save Snippet', 'code-snippets') : undefined}
+		large
 		{...props}
 	>
-		{__('Save Changes', 'code-snippets')}
-	</Button>
-
-const SaveAndExecuteButton: React.FC<SubmitButtonProps> = ({ inlineButtons, ...props }) =>
-	<Button
-		name="save_snippet_execute"
-		title={inlineButtons ? __('Save Snippet and Execute Once', 'code-snippets') : undefined}
-		{...props}
-	>
-		{inlineButtons
-			? __('Execute Once', 'code-snippets')
-			: __('Save Changes and Execute Once', 'code-snippets')}
-	</Button>
-
-const DeactivateButton: React.FC<SubmitButtonProps> = ({ inlineButtons, ...props }) =>
-	<Button
-		name="save_snippet_deactivate"
-		title={inlineButtons ? __('Save Snippet and Deactivate', 'code-snippets') : undefined}
-		{...props}
-	>
-		{inlineButtons
-			? __('Deactivate', 'code-snippets')
-			: __('Save Changes and Deactivate', 'code-snippets')}
-	</Button>
-
-const ActivateButton: React.FC<SubmitButtonProps> = ({ inlineButtons, ...props }) =>
-	<Button
-		name="save_snippet_activate"
-		title={inlineButtons ? __('Save Snippet and Activate', 'code-snippets') : undefined}
-		{...props}
-	>
-		{inlineButtons
-			? __('Activate', 'code-snippets')
-			: __('Save Changes and Activate', 'code-snippets')}
+		{__('Save Snippet', 'code-snippets')}
 	</Button>
 
 interface ActivateOrDeactivateButtonProps {
@@ -71,24 +33,33 @@ const ActivateOrDeactivateButton: React.FC<ActivateOrDeactivateButtonProps> = ({
 	disabled,
 	onActivate,
 	onDeactivate,
-	inlineButtons,
 	primaryActivate
 }) => {
-	const commonProps: SubmitButtonProps = { small: inlineButtons, type: 'submit', disabled, inlineButtons }
-
 	switch (true) {
 		case snippet.shared_network && isNetworkAdmin():
 			return null
 
 		case 'single-use' === snippet.scope:
-			return <SaveAndExecuteButton onClick={onActivate} {...commonProps} />
+			return (
+				<Button name="save_snippet_execute" onClick={onActivate} type="submit" disabled={disabled} large>
+					{__('Save and Execute Once', 'code-snippets')}
+				</Button>
+			)
 
 		case snippet.active:
-			return <DeactivateButton onClick={onDeactivate} {...commonProps} />
+			return (
+				<Button name="save_snippet_deactivate" onClick={onDeactivate} type="submit" disabled={disabled} large>
+					{__('Save and Deactivate', 'code-snippets')}
+				</Button>
+			)
 
 		default:
 		case !snippet.active:
-			return <ActivateButton onClick={onActivate} primary={primaryActivate} {...commonProps} />
+			return (
+				<Button name="save_snippet_activate" type="submit" onClick={onActivate} primary={primaryActivate} disabled={disabled} large>
+					{__('Save and Activate', 'code-snippets')}
+				</Button>
+			)
 	}
 }
 
@@ -113,13 +84,10 @@ const validateSnippet = (snippet: Snippet): undefined | string => {
 			return undefined
 	}
 }
-
-const shouldActivateByDefault = (snippet: Snippet, inlineButtons?: boolean): boolean =>
-	!inlineButtons
-	&& !!window.CODE_SNIPPETS_EDIT?.activateByDefault
-	&& !snippet.active
-	&& 'single-use' !== snippet.scope
-	&& (!snippet.shared_network || !isNetworkAdmin())
+const shouldActivateByDefault = (snippet: Snippet): boolean =>
+	!!window.CODE_SNIPPETS_EDIT?.activateByDefault &&
+	!snippet.active && 'single-use' !== snippet.scope &&
+	(!snippet.shared_network || !isNetworkAdmin())
 
 interface SubmitConfirmDialogProps {
 	isOpen: boolean
@@ -142,16 +110,12 @@ const SubmitConfirmDialog: React.FC<SubmitConfirmDialogProps> = ({ isOpen, onClo
 		<p>{`${validationWarning} ${__('Continue?', 'code-snippets')}`}</p>
 	</ConfirmDialog>
 
-export interface SubmitButtonsProps {
-	inlineButtons?: boolean
-}
-
-export const SubmitButton: React.FC<SubmitButtonsProps> = ({ inlineButtons }) => {
+export const SubmitButton: React.FC = () => {
 	const { snippet, isWorking, submitSnippet, submitAndActivateSnippet, submitAndDeactivateSnippet } = useSnippetForm()
 	const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
 	const [submitAction, setSubmitAction] = useState<VoidFunction>()
 	const validationWarning = validateSnippet(snippet)
-	const activateByDefault = shouldActivateByDefault(snippet, inlineButtons)
+	const activateByDefault = shouldActivateByDefault(snippet)
 
 	const handleSubmit = (submitAction: () => Promise<Snippet | undefined>): void => {
 		if (validationWarning) {
@@ -165,29 +129,27 @@ export const SubmitButton: React.FC<SubmitButtonsProps> = ({ inlineButtons }) =>
 	}
 
 	return <>
-		{activateByDefault ? null
-			: <SaveChangesButton
-				primary={!inlineButtons}
+		{activateByDefault ?
+			<SaveChangesButton
+				primary={!activateByDefault}
 				onClick={() => handleSubmit(submitSnippet)}
 				disabled={isWorking}
-				inlineButtons={inlineButtons}
-			/>}
+			/> : null}
 
 		<ActivateOrDeactivateButton
 			snippet={snippet}
 			disabled={isWorking}
-			inlineButtons={inlineButtons}
 			primaryActivate={activateByDefault}
 			onActivate={() => handleSubmit(submitAndActivateSnippet)}
 			onDeactivate={() => handleSubmit(submitAndDeactivateSnippet)}
 		/>
 
-		{activateByDefault
-			? <SaveChangesButton
+		{activateByDefault ? null :
+			<SaveChangesButton
+				primary
 				onClick={() => handleSubmit(submitSnippet)}
 				disabled={isWorking}
-				inlineButtons={inlineButtons}
-			/> : null}
+			/>}
 
 		<SubmitConfirmDialog
 			isOpen={isConfirmDialogOpen}

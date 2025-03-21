@@ -1,5 +1,9 @@
 
-.editor-help-tooltip {
+.help-tooltip {
+	position: relative;
+}
+
+.help-tooltip-anchor {
 	cursor: help;
 	padding: 0.3em 0.3em 0;
 	display: inline-block;
@@ -7,18 +11,11 @@
 	background: transparent !important;
 }
 
-.snippet-editor-help {
-	position: absolute;
-	right: 5px;
-	top: 5px;
-
-	&:hover .editor-help-text {
-		visibility: visible;
-		opacity: 1;
-	}
+.help-tooltip .dashicons {
+	color: lightslategrey;
 }
 
-.editor-help-text {
+.help-tooltip-text {
 	visibility: hidden;
 	background-color: #555;
 	color: #fff;
@@ -34,6 +31,11 @@
 	white-space: nowrap;
 	font-size: small;
 
+	.help-tooltip:hover > & {
+		visibility: visible;
+		opacity: 1;
+	}
+
 	&::after {
 		content: "";
 		position: absolute;
@@ -42,23 +44,5 @@
 		margin-right: 10px;
 		border: 5px solid transparent;
 		border-bottom-color: #555;
-	}
-
-	td:first-child {
-		padding-right: 0.5em;
-	}
-
-	.mac-key {
-		display: none;
-	}
-
-	&.platform-mac {
-		.mac-key {
-			display: inline;
-		}
-
-		.pc-key {
-			display: none;
-		}
 	}
 }

@@ -67,7 +67,7 @@ class Edit_Menu extends Admin_Menu {
 		$this->add_menu(
 			code_snippets()->get_menu_slug( 'add' ),
 			_x( 'Add New', 'menu label', 'code-snippets' ),
-			__( 'Add New Snippet', 'code-snippets' )
+			__( 'Create New Snippet', 'code-snippets' )
 		);
 	}
 
@@ -203,8 +203,6 @@ class Edit_Menu extends Admin_Menu {
 				'isPreview'         => isset( $_REQUEST['preview'] ),
 				'activateByDefault' => get_setting( 'general', 'activate_by_default' ),
 				'editorTheme'       => get_setting( 'editor', 'theme' ),
-				'scrollToNotices'   => apply_filters( 'code_snippets/scroll_to_notices', true ),
-				'extraSaveButtons'  => apply_filters( 'code_snippets/extra_save_buttons', true ),
 				'enableDownloads'   => apply_filters( 'code_snippets/enable_downloads', true ),
 				'enableDescription' => $desc_enabled,
 				'tagOptions'        => apply_filters(

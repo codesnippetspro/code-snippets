@@ -17,7 +17,9 @@ export interface Snippet {
 	code_error?: [string, number] | null
 }
 
-export type SnippetType = keyof typeof SNIPPET_TYPE_SCOPES
+export type SnippetCodeType = 'php' | 'html' | 'css' | 'js'
+
+export type SnippetType = SnippetCodeType | 'cond'
 
 export type SnippetScope =
 	typeof SNIPPET_TYPE_SCOPES['php'][number] |

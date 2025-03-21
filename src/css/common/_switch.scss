@@ -1,0 +1,75 @@
+$active-color: #2196f3;
+$inactive-color: #ccc;
+
+.snippet-execution-button,
+.snippet-activation-switch,
+input[type=checkbox].switch {
+	display: block;
+	position: relative;
+}
+
+.snippet-activation-switch,
+input[type=checkbox].switch {
+	appearance: none;
+	border: 0;
+	outline: 0;
+	cursor: pointer;
+	margin-top: 5px;
+	width: 30px;
+	height: 17px;
+	border-radius: 34px;
+	background-color: #ccc;
+	text-align: left;
+
+	&::before {
+		transition: all .4s;
+		content: '';
+		height: 13px;
+		width: 13px;
+		display: inline-block;
+		margin: 2px;
+		background-color: white;
+		border-radius: 50%;
+	}
+
+	&:checked {
+		background-color: $active-color;
+
+		&::before {
+			transform: translateX(100%);
+		}
+	}
+}
+
+.erroneous-snippet .snippet-activation-switch::before {
+	content: '!';
+	transform: translateX(50%);
+	text-align: center;
+	font-weight: bold;
+	line-height: 1;
+	color: #bbb;
+}
+
+.snippet-execution-button {
+	margin-left: 10px;
+	margin-top: 9px;
+	width: 0;
+	height: 0;
+	border-top: 9px solid transparent;
+	border-bottom: 9px solid transparent;
+	border-left: 10px solid $inactive-color;
+	transition: all 0.3s;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: -14px;
+		left: -21px;
+		bottom: -14px;
+		right: -8px;
+		border-radius: 50%;
+		border: 1.8px solid $inactive-color;
+		z-index: 2;
+		transition: all .3s;
+	}
+}

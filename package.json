@@ -2,7 +2,7 @@
     "name": "code-snippets-pro",
     "description": "Manage code snippets running on a WordPress-powered site through a graphical interface.",
     "homepage": "https://codesnippets.pro",
-    "version": "3.7.0-beta.2",
+    "version": "3.7.0-dev.1",
     "main": "src/dist/edit.js",
     "directories": {
         "test": "tests"
@@ -47,12 +47,17 @@
         "classnames": "^2.5.1",
         "codemirror": "^5.29",
         "codemirror-colorpicker": "^1.9.80",
+<<<<<<< HEAD
         "diff-match-patch": "^1.0.5",
+=======
+        "hoist-non-react-statics": "^3.3.2",
+>>>>>>> conditions/core
         "php-parser": "^3.2.2",
         "prism-themes": "^1.9.0",
         "prismjs": "^1.29.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
+        "react-is": "^19.0.0",
         "react-select": "^5.10.0"
     },
     "devDependencies": {

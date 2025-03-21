@@ -1,0 +1,66 @@
+
+.snippet-editor-sidebar {
+
+	.button-large {
+		height: 48px;
+	}
+
+	.row-actions {
+		display: flex;
+
+		.button {
+			background: none;
+			border: none;
+		}
+	}
+
+	.delete-button {
+		color: #cc1818;
+
+		&:hover {
+			color: #9e1313;
+		}
+
+		&:focus {
+			color: #710d0d;
+			border-color: #710d0d;
+		}
+	}
+
+	.help-tooltip {
+		margin: 0 auto 0 5px;
+	}
+
+	.box {
+		background-color: #fff;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding: 1.5em;
+
+		display: flex;
+		flex-flow: column;
+		gap: 1em;
+
+		h4 {
+			margin: 0.5em 0;
+		}
+
+		> div {
+			display: flex;
+			flex-flow: row wrap;
+			justify-content: space-between;
+			align-items: center;
+		}
+	}
+}
+
+.snippet-priority input {
+	width: 4em;
+}
+
+p.submit {
+	display: flex;
+	flex-flow: column;
+	gap: 1em;
+	margin-top: 1em;
+}

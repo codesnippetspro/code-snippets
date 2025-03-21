@@ -1,0 +1,76 @@
+
+.snippet-form {
+	margin-top: 10px;
+	max-width: 1440px;
+	display: grid;
+	grid-template-columns: auto 280px;
+	gap: 30px;
+
+	@media (max-width: 1024px) {
+		grid-template-columns: 1fr;
+	}
+
+	#titlediv #title {
+		height: 45px
+	}
+
+	h2, h3 {
+		margin: 25px 0 15px;
+		font-size: 1.16em;
+
+		label {
+			cursor: auto;
+		}
+
+		.button {
+			font-weight: normal;
+		}
+	}
+}
+
+.above-editor-container {
+	display: flex;
+	flex-flow: row wrap;
+	gap: 1em;
+
+	> * {
+		flex: 1;
+		display: flex;
+		flex-flow: column;
+		min-width: 180px;
+	}
+}
+
+.snippet-type-option {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-flow: row;
+
+	div.snippet-type-badge {
+		float: right;
+	}
+}
+
+.conditions-editor-open .button {
+	font-weight: bold;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	border-color: #ccc;
+	background-color: #fff;;
+
+	.dashicons {
+		margin-right: 5px;
+	}
+
+	.badge {
+		margin: 3px 0 3px auto;
+		text-transform: uppercase;
+		border: 1px solid currentColor;
+		border-radius: 4px;
+		line-height: 1;
+		padding: 5px;
+		font-size: smaller;
+	}
+}
