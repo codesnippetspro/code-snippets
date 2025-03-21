@@ -67,25 +67,6 @@ class Admin {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'debug_information', array( $this, 'debug_information' ) );
 		add_action( 'code_snippets/admin/manage', array( $this, 'print_notices' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
-	}
-
-	/**
-	 * Enqueue general admin assets.
-	 *
-	 * @param string|null $hook_name Current plugin page hook name.
-	 *
-	 * @return void
-	 */
-	public function enqueue_admin_assets( ?string $hook_name ) {
-		if ( 'plugins.php' === $hook_name ) {
-			wp_enqueue_style(
-				'code-snippets-plugins-css',
-				plugins_url( 'dist/plugins.css', PLUGIN_FILE ),
-				[],
-				PLUGIN_VERSION
-			);
-		}
 	}
 
 	/**
@@ -262,6 +243,10 @@ class Admin {
 	public function print_notices() {
 		global $current_user;
 
+		if ( apply_filters( 'code_snippets/hide_welcome_banner', false ) ) {
+			return;
+		}
+
 		$meta_key = 'ignore_code_snippets_survey_message';
 		$dismissed = get_user_meta( $current_user->ID, $meta_key );
 
@@ -286,12 +271,6 @@ class Admin {
 			$text = $welcome['text_free'];
 			$action_url = $welcome['action_url_free'];
 			$action_label = $welcome['action_label_free'];
-
-		} elseif ( ! in_array( 'pro', $dismissed, true ) ) {
-			$notice = 'pro';
-			$action_url = 'https://snipco.de/Mlll';
-			$action_label = __( 'Upgrade now', 'code-snippets' );
-			$text = __( '<strong>Lifetime plans return!</strong> Enjoy Code Snippets Pro with new pricing choices, including lifetime, monthly and yearly subscriptions.', 'code-snippets' );
 
 		} elseif ( ! in_array( 'survey', $dismissed, true ) && ! in_array( 'true', $dismissed, true ) ) {
 			$notice = 'survey';

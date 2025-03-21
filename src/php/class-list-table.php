@@ -666,11 +666,10 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @param int    $id     Snippet ID.
 	 * @param string $action Action to perform.
-	 * @param string $scope  Snippet scope; used for cache busting CSS and JS snippets.
 	 *
 	 * @return bool|string Result of performing action
 	 */
-	private function perform_action( int $id, string $action, string $scope = '' ) {
+	private function perform_action( int $id, string $action ) {
 		switch ( $action ) {
 
 			case 'activate':
@@ -880,7 +879,13 @@ class List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	private function fetch_shared_network_snippets() {
+		/**
+		 * Table data.
+		 *
+		 * @var $snippets array<string, Snippet[]>
+		 */
 		global $snippets;
+
 		$ids = get_site_option( 'shared_network_snippets' );
 
 		if ( ! is_multisite() || ! $ids ) {
@@ -891,7 +896,6 @@ class List_Table extends WP_List_Table {
 			$limit = count( $snippets['all'] );
 
 			for ( $i = 0; $i < $limit; $i++ ) {
-				/** Snippet @var Snippet $snippet */
 				$snippet = &$snippets['all'][ $i ];
 
 				if ( in_array( $snippet->id, $ids, true ) ) {
@@ -1014,10 +1018,12 @@ class List_Table extends WP_List_Table {
 		}
 
 		// Count the totals for each section.
-		$totals = array();
-		foreach ( $snippets as $type => $list ) {
-			$totals[ $type ] = count( $list );
-		}
+		$totals = array_map(
+			function ( $section_snippets ) {
+				return count( $section_snippets );
+			},
+			$snippets
+		);
 
 		// If the current status is empty, default to all.
 		if ( empty( $snippets[ $status ] ) ) {

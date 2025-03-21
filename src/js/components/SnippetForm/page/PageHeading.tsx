@@ -1,5 +1,5 @@
-import { __, _x } from '@wordpress/i18n'
 import React from 'react'
+import { __, _x } from '@wordpress/i18n'
 import { createEmptySnippet } from '../../../utils/snippets'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 
@@ -10,9 +10,9 @@ export const PageHeading: React.FC = () => {
 
 	return (
 		<h1>
-			{snippet.id ?
-				__('Edit Snippet', 'code-snippets') :
-				__('Create New Snippet', 'code-snippets')}
+			{snippet.id
+				? __('Edit Snippet', 'code-snippets')
+				: __('Add New Snippet', 'code-snippets')}
 
 			{snippet.id ? <>{' '}
 				<a href={window.CODE_SNIPPETS?.urls.addNew} className="page-title-action" onClick={event => {

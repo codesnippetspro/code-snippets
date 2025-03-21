@@ -80,7 +80,6 @@ const validateSnippet = (snippet: Snippet): undefined | string => {
 			return undefined
 	}
 }
-
 const shouldActivateByDefault = (snippet: Snippet): boolean =>
 	!!window.CODE_SNIPPETS_EDIT?.activateByDefault &&
 	!snippet.active && 'single-use' !== snippet.scope &&

@@ -372,7 +372,6 @@ class Plugin {
 					'manage'       => esc_url_raw( $this->get_menu_url() ),
 					'edit'         => esc_url_raw( $this->get_menu_url( 'edit' ) ),
 					'addNew'       => esc_url_raw( $this->get_menu_url( 'add' ) ),
-					'connectCloud' => esc_url_raw( Cloud_API::get_connect_cloud_url() ),
 				],
 			]
 		);

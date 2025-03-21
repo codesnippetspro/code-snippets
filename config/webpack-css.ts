@@ -93,11 +93,11 @@ export const cssWebpackConfig: Configuration = {
 		new RemoveEmptyScriptsPlugin(),
 		new MiniCssExtractPlugin({
 			filename: ({ chunk }) =>
-				chunk?.name ?
-					`${chunk.name}.css`
+				chunk?.name
+					? `${chunk.name}.css`
 						.replace(/^codemirror-theme-/, 'editor-themes/')
-						.replace(/-css\.css$/, '.css') :
-					'[name].css'
+						.replace(/-css\.css$/, '.css')
+					: '[name].css'
 		}),
 		new RtlCssPlugin({
 			entries: new Set(['manage-css', 'edit-css'])

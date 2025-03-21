@@ -29,6 +29,11 @@ class Front_End {
 	const PRISM_HANDLE = 'code-snippets-prism';
 
 	/**
+	 * Maximum depth for shortcode recursion.
+	 */
+	const MAX_SHORTCODE_DEPTH = 5;
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
@@ -322,13 +327,9 @@ class Front_End {
 		}
 
 		if ( $atts['shortcodes'] ) {
-			// Remove this shortcode from the list to prevent recursion.
+			// Temporarily remove this shortcode from the list to prevent recursion while executing do_shortcode.
 			remove_shortcode( self::CONTENT_SHORTCODE );
-
-			// Evaluate shortcodes.
 			$content = do_shortcode( $atts['format'] ? shortcode_unautop( $content ) : $content );
-
-			// Add this shortcode back to the list.
 			add_shortcode( self::CONTENT_SHORTCODE, [ $this, 'render_content_shortcode' ] );
 		}
 

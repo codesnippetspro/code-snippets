@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ExternalLink, Modal } from '@wordpress/components'
 import { __, _n, sprintf } from '@wordpress/i18n'
-import type { Dispatch, SetStateAction} from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 
 export interface UpgradeDialogProps {
 	isOpen: boolean
@@ -116,8 +116,8 @@ const UpgradeInfo: React.FC<UpgradeInfoProps> = ({ nextTab }) =>
 export const UpgradeDialog: React.FC<UpgradeDialogProps> = ({ isOpen, setIsOpen }) => {
 	const [currentTab, setCurrentTab] = useState(0)
 
-	return isOpen ?
-		<Modal
+	return isOpen
+		? <Modal
 			title=""
 			className="code-snippets-upgrade-dialog"
 			onRequestClose={() => {
@@ -130,11 +130,11 @@ export const UpgradeDialog: React.FC<UpgradeDialogProps> = ({ isOpen, setIsOpen 
 				{__('Code Snippets Pro', 'code-snippets')}
 			</h1>
 
-			{0 === currentTab ?
-				<UpgradeInfo nextTab={() => setCurrentTab(1)} /> :
-				<UpgradeDialogPlans />
+			{0 === currentTab
+				? <UpgradeInfo nextTab={() => setCurrentTab(1)} />
+				: <UpgradeDialogPlans />
 			}
 
-		</Modal> :
-		null
+		</Modal>
+		: null
 }

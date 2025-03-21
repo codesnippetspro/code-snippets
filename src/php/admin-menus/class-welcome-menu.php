@@ -2,9 +2,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_Search_List_Table;
-use function Code_Snippets\Settings\get_setting;
-
 /**
  * This class handles the welcome menu.
  *
