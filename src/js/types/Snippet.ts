@@ -5,7 +5,6 @@ export interface Snippet {
 	name: string
 	desc: string
 	code: string
-	conditions?: ConditionRules
 	tags: string[]
 	scope: SnippetScope
 	conditional: number
@@ -15,6 +14,7 @@ export interface Snippet {
 	shared_network?: boolean | null
 	modified?: string
 	code_error?: [string, number] | null
+	conditions: ConditionRules
 }
 
 export type SnippetCodeType = 'php' | 'html' | 'css' | 'js'

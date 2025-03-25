@@ -104,6 +104,7 @@ export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editor
 
 		<div className={classnames('help-tooltip-text', { 'platform-mac': isMacOS() })}>
 			<table>
+				<tbody>
 				{Object.entries(shortcuts).map(([name, { label, mod, key }]) =>
 					<tr key={name}>
 						<td>{label}</td>
@@ -115,8 +116,8 @@ export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editor
 							)}
 							<kbd>{KEYBOARD_KEYS[key]}</kbd>
 						</td>
-					</tr>
-				)}
+					</tr>)}
+				</tbody>
 			</table>
 		</div>
 	</div>

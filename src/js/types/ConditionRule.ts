@@ -12,6 +12,9 @@ export interface ConditionRule {
 }
 
 export interface ConditionSubjects {
+	global: boolean
+	admin: boolean
+	frontend: boolean
 	post: Post
 	page: Page
 	postType: PostType

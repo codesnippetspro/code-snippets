@@ -4,6 +4,7 @@ import { handleUnknownError } from '../../../utils/errors'
 import { isMacOS } from '../../../utils/screen'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
+
 export const CodeEditor: React.FC = () => {
 	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance, submitSnippet } = useSnippetForm()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -49,12 +50,13 @@ export const CodeEditor: React.FC = () => {
 					ref={textareaRef}
 					id="snippet-code"
 					name="snippet_code"
+					value={snippet.code}
 					rows={200}
 					spellCheck={false}
 					onChange={event => {
 						setSnippet(previous => ({ ...previous, code: event.target.value }))
 					}}
-				>{snippet.code}</textarea>
+				/>
 
 				<CodeEditorShortcuts editorTheme={window.CODE_SNIPPETS_EDIT?.editorTheme ?? 'default'} />
 			</div>

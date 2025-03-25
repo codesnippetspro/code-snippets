@@ -1,6 +1,6 @@
 @use 'codemirror-colorpicker/dist/codemirror-colorpicker.css' as colorpicker;
 
-.CodeMirror, .snippet-condition-editor {
+.CodeMirror, .snippet-condition-editor-container {
 	border: 1px solid #dfdfdf;
 	border-radius: 3px;
 	height: auto !important;

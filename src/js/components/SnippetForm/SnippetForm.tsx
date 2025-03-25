@@ -1,37 +1,39 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import { createEmptySnippet, getSnippetType } from '../../utils/snippets'
+import { getSnippetType, parseSnippetObject } from '../../utils/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
-import { Button } from '../common/Button'
 import { ConditionEditor } from '../ConditionEditor'
+import { ConditionsModalButton } from '../ConditionModal/ConditionModal'
 import { EditorSidebar } from '../EditorSidebar'
+import { CodeEditor } from './fields/CodeEditor'
 import { SnippetLocationInput } from './fields/SnippetLocationInput'
 import { SnippetTypeInput } from './fields/SnippetTypeInput'
 import { UpgradeDialog } from './page/UpgradeDialog'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
 import { PageHeading } from './page/PageHeading'
-import type { Dispatch, SetStateAction} from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 
 interface EditSnippetFormProps {
 	setIsUpgradeDialogOpen: Dispatch<SetStateAction<boolean>>
 }
 
 const EditCodeForm: React.FC<EditSnippetFormProps> = ({ setIsUpgradeDialogOpen }) =>
-	<div className="above-editor-container">
-		<SnippetTypeInput openUpgradeDialog={() => setIsUpgradeDialogOpen(true)} />
-
-		<SnippetLocationInput />
-
-		<div className="conditions-editor-open">
-			<h3>{__('Conditions', 'code-snippets')}</h3>
-			<Button large>
-				<span className="dashicons dashicons-randomize"></span>
-				{__('Set Conditions', 'code-snippets')}
-				<span className="badge">{__('beta', 'code-snippets')}</span>
-			</Button>
+	<>
+		<div className="above-editor-container">
+			<SnippetTypeInput openUpgradeDialog={() => setIsUpgradeDialogOpen(true)} />
+			<SnippetLocationInput />
+			<ConditionsModalButton />
 		</div>
+
+		<CodeEditor />
+	</>
+
+const EditConditionForm: React.FC = () =>
+	<div id="snippet_conditions" className="snippet-condition-editor-container">
+		<h2>{__('Condition Rules', 'code-snippets')}</h2>
+		<ConditionEditor />
 	</div>
 
 const EditForm: React.FC = () => {
@@ -61,7 +63,7 @@ const EditForm: React.FC = () => {
 					<NameInput />
 
 					{'condition' === snippet.scope
-						? <ConditionEditor />
+						? <EditConditionForm />
 						: <EditCodeForm setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />}
 
 					{window.CODE_SNIPPETS_EDIT?.enableDescription ? <DescriptionEditor /> : null}
@@ -76,6 +78,6 @@ const EditForm: React.FC = () => {
 }
 
 export const SnippetForm: React.FC = () =>
-	<WithSnippetFormContext initialSnippet={() => window.CODE_SNIPPETS_EDIT?.snippet ?? createEmptySnippet()}>
+	<WithSnippetFormContext initialSnippet={() => parseSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
 		<EditForm />
 	</WithSnippetFormContext>

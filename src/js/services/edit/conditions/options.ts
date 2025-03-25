@@ -11,6 +11,14 @@ export const ENABLED_OPTIONS: SelectGroups<boolean> = [
 
 export const SUBJECT_OPTIONS: SelectGroups<ConditionSubject> = [
 	{
+		label: _x('Site', 'condition type', 'code-snippets'),
+		options: [
+			{ value: 'global', label: __('Entire site', 'code-snippets') },
+			{ value: 'frontend', label: __('Site front-end only', 'code-snippets') },
+			{ value: 'admin', label: __('Administration area only', 'code-snippets') }
+		]
+	},
+	{
 		label: __('Post', 'code-snippets'),
 		options: [
 			{ value: 'post', label: __('Post', 'code-snippets') },
@@ -40,7 +48,7 @@ const BOOLEAN_OPTIONS: SelectOptions<boolean> = [
 	{ value: false, label: __('No', 'code-snippets') }
 ]
 
-export type ObjectOptions = SelectOptions<string | number | boolean>
+export type ObjectOptions = SelectOptions<string | number | boolean> | false | undefined
 
 const OPTIONS_ENDPOINTS: {
 	[S in keyof ConditionSubjects]?: [string, (item: ConditionSubjects[S]) => SelectOption<string | number | boolean>]
@@ -65,6 +73,9 @@ const OPTIONS_ENDPOINTS: {
 }
 
 const cachedSubjectOptions: Partial<Record<ConditionSubject, ObjectOptions>> = {
+	global: false,
+	frontend: false,
+	admin: false,
 	userRole: [
 		{ value: 'administrator', label: __('Administrator', 'code-snippets') },
 		{ value: 'editor', label: __('Editor', 'code-snippets') },

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Select from 'react-select'
 import classnames from 'classnames'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
+import { updateConditionField } from '../../services/edit/conditions/rules'
 import { findOptionByValue } from '../../utils/options'
 import type { ReactElement } from 'react'
 import type { Props as SelectProps } from 'react-select'
@@ -44,16 +45,7 @@ export const ConditionFieldEditor = <F extends keyof ConditionRule>({
 			getOptionValue={option => String(option.value)}
 			onChange={selected => {
 				setSelectedOption(selected ?? undefined)
-				setSnippet(previous => ({
-					...previous,
-					conditions: {
-						...previous.conditions,
-						[ruleId]: {
-							...previous.conditions?.[ruleId],
-							[field]: selected ? selected.value : undefined
-						}
-					}
-				}))
+				setSnippet(previous => updateConditionField(previous, ruleId, field, selected ? selected.value : undefined))
 			}}
 			{...selectProps}
 		/>

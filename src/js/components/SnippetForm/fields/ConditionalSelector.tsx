@@ -3,7 +3,6 @@ import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { useSnippets } from '../../../hooks/useSnippetsAPI'
 import { findOptionByValue } from '../../../utils/options'
-import { getConditionalScope } from '../../../utils/snippets'
 import type { SelectOptions } from '../../../types/SelectOption'
 
 export const ConditionalSelector: React.FC = () => {
@@ -33,7 +32,6 @@ export const ConditionalSelector: React.FC = () => {
 			onChange={option => {
 				setSnippet(snippet => ({
 					...snippet,
-					scope: getConditionalScope(snippet),
 					conditional: option?.value ?? 0
 				}))
 			}}

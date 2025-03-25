@@ -64,17 +64,17 @@ export const DescriptionEditor: React.FC = () => {
 	return window.CODE_SNIPPETS_EDIT?.enableDescription
 		? <div className="snippet-description-container">
 			<ExplainSnippetButton
-					field="desc"
-					onResponse={generated => {
-						updateSnippet(previous => ({
-							...previous,
-							name: generated.name && '' === previous.name.trim() ? generated.name : previous.name,
-							desc: `${previous.desc}${generated.desc ? `\n<p>${generated.desc}</p>` : ''}`
-						}))
-					}}
-				>
-					{_x('Generate', 'generate snippet content', 'code-snippets')}
-				</ExplainSnippetButton>
+				field="desc"
+				onResponse={generated => {
+					updateSnippet(previous => ({
+						...previous,
+						name: generated.name && '' === previous.name.trim() ? generated.name : previous.name,
+						desc: `${previous.desc}${generated.desc ? `\n<p>${generated.desc}</p>` : ''}`
+					}))
+				}}
+			>
+				{_x('Generate', 'generate snippet content', 'code-snippets')}
+			</ExplainSnippetButton>
 
 			<h2>
 				<label htmlFor={EDITOR_ID}>
@@ -90,7 +90,8 @@ export const DescriptionEditor: React.FC = () => {
 				disabled={isReadOnly}
 				rows={window.CODE_SNIPPETS_EDIT.descEditorOptions.rows}
 				cols={40}
-			>{snippet.desc}</textarea>
+				value={snippet.desc}
+			/>
 		</div>
 		: null
 }

@@ -57,8 +57,11 @@
 	height: 100%;
 	display: flex;
 	align-items: center;
-	border-color: #ccc;
-	background-color: #fff;;
+
+	&.no-condition {
+		border-color: #ccc;
+		background-color: #fff;;
+	}
 
 	.dashicons {
 		margin-right: 5px;

@@ -1,11 +1,15 @@
+@use 'condition-modal';
 
-.snippet-condition-editor {
+.snippet-condition-editor-container {
 	margin-top: 33px;
 	padding: 32px;
-	flex-flow: column;
-	align-items: flex-start;
 	border: 1px solid #C3C4C7;
 	background: #F6F7F7;
+}
+
+.snippet-condition-editor {
+	flex-flow: column;
+	align-items: flex-start;
 
 	h2:first-of-type {
 		margin: 0;
@@ -38,31 +42,15 @@
 	}
 }
 
-
 .snippet-condition-rules {
 	display: flex;
 	flex-flow: column;
 	align-items: flex-start;
 	gap: 8px;
-	margin: 16px 0;
+	margin: 10px 0;
 }
 
-.snippet-condition-group {
-	flex: 1;
-	display: flex;
-	flex-flow: column;
-
-	> * {
-		flex: 1;
-		margin-bottom: 1.5em;
-
-		&:last-child {
-			margin-bottom: 0;
-		}
-	}
-}
-
-.snippet-condition-row {
+.snippet-condition-rule {
 	display: flex;
 	flex-flow: row;
 	gap: 1em;

@@ -1,5 +1,9 @@
 
 .help-tooltip {
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	border-bottom: 1px dotted;
 	position: relative;
 }
 
