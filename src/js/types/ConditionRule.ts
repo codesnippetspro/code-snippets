@@ -27,6 +27,6 @@ export interface ConditionSubjects {
 
 export type ConditionSubject = keyof ConditionSubjects
 
-export type ConditionRules = Record<string, ConditionRule>
+export type ConditionRules = Record<string, ConditionRule | undefined>
 
 export type ConditionOperator = 'is' | 'not'

@@ -47,6 +47,30 @@ export const CloneButton: React.FC<ButtonProps> = ({ ruleId, setSnippet }) =>
 		</button>
 	</div>
 
+interface ConditionObjectEditorProps {
+	ruleId: string
+	objectOptions: ObjectOptions
+	objectOptionsLoaded: boolean
+}
+
+const ConditionObjectEditor: React.FC<ConditionObjectEditorProps> = ({ ruleId, objectOptions, objectOptionsLoaded }) =>
+	objectOptions
+		? <>
+			<ConditionFieldEditor
+				field="operator"
+				ruleId={ruleId}
+				options={OPERATOR_OPTIONS}
+			/>
+
+			<ConditionFieldEditor
+				field="object"
+				ruleId={ruleId}
+				options={objectOptions}
+				isLoading={!objectOptionsLoaded}
+			/>
+		</>
+		: null
+
 export interface ConditionRuleEditorProps {
 	ruleId: string
 }
@@ -56,7 +80,7 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId
 	const [objectOptions, setObjectOptions] = useState<ObjectOptions | undefined>(undefined)
 
 	const { snippet, setSnippet } = useSnippetForm()
-	const condition = snippet.conditions?.[ruleId]
+	const condition = snippet.conditions[ruleId]
 
 	useEffect(() => {
 		if (objectOptions === undefined && condition?.subject) {
@@ -90,22 +114,11 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId
 				}}
 			/>
 
-			{objectOptions
-				? <>
-					<ConditionFieldEditor
-						field="operator"
-						ruleId={ruleId}
-						options={OPERATOR_OPTIONS}
-					/>
-
-					<ConditionFieldEditor
-						field="object"
-						ruleId={ruleId}
-						options={objectOptions}
-						isLoading={!!condition?.subject && loadedSubject !== condition.subject}
-					/>
-				</>
-				: null}
+			<ConditionObjectEditor
+				ruleId={ruleId}
+				objectOptions={objectOptions}
+				objectOptionsLoaded={loadedSubject === condition?.subject}
+			/>
 
 			<CloneButton ruleId={ruleId} setSnippet={setSnippet} />
 			<RemoveButton ruleId={ruleId} setSnippet={setSnippet} />

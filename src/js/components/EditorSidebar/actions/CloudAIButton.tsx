@@ -3,9 +3,9 @@ import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
 import { isLicensed } from '../../../utils/screen'
+import { GenerateIcon } from '../../common/icons/GenerateIcon'
 import type { ButtonProps } from '../../common/Button'
 import type { Snippet } from '../../../types/Snippet'
-import { GenerateIcon } from '../../common/icons/GenerateIcon'
 
 export interface CloudAIButtonProps extends ButtonProps {
 	snippet: Snippet

@@ -105,18 +105,18 @@ export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editor
 		<div className={classnames('help-tooltip-text', { 'platform-mac': isMacOS() })}>
 			<table>
 				<tbody>
-				{Object.entries(shortcuts).map(([name, { label, mod, key }]) =>
-					<tr key={name}>
-						<td>{label}</td>
-						<td>
-							{(Array.isArray(mod) ? mod : [mod]).map(modifier =>
-								<span key={modifier}>
-									<ModifierKey modifier={modifier} />
-								</span>
-							)}
-							<kbd>{KEYBOARD_KEYS[key]}</kbd>
-						</td>
-					</tr>)}
+					{Object.entries(shortcuts).map(([name, { label, mod, key }]) =>
+						<tr key={name}>
+							<td>{label}</td>
+							<td>
+								{(Array.isArray(mod) ? mod : [mod]).map(modifier =>
+									<span key={modifier}>
+										<ModifierKey modifier={modifier} />
+									</span>
+								)}
+								<kbd>{KEYBOARD_KEYS[key]}</kbd>
+							</td>
+						</tr>)}
 				</tbody>
 			</table>
 		</div>

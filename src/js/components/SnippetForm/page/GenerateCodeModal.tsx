@@ -4,10 +4,10 @@ import { isAxiosError } from 'axios'
 import React, { useRef, useState } from 'react'
 import { useGenerativeAPI } from '../../../hooks/useGenerativeAPI'
 import { getSnippetType } from '../../../utils/snippets'
-import { GenerateIcon } from '../buttons/CloudAIButton'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { GenerateIcon } from '../../common/icons/GenerateIcon'
 import type { Snippet } from '../../../types/Snippet'
-import type { Dispatch, FormEventHandler, SetStateAction} from 'react'
+import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
 
 interface PromptFormProps {
 	snippet: Snippet
@@ -46,14 +46,14 @@ const PromptForm: React.FC<PromptFormProps> = ({
 				}}
 			/>
 
-			{'string' === typeof errorMessage ?
-				<div className="notice notice-error">
+			{'string' === typeof errorMessage
+				? <div className="notice notice-error">
 					<p>{`${__('An error occurred attempting to contact the API.')} ${errorMessage}`}</p>
 				</div> : null}
 
-			{snippet.name || snippet.code || snippet.tags.length || snippet.desc ?
-				<p><strong>{__('This action will overwrite the current snippet, including the title and description.')}</strong></p> :
-				null}
+			{snippet.name || snippet.code || snippet.tags.length || snippet.desc
+				? <p><strong>{__('This action will overwrite the current snippet, including the title and description.')}</strong></p>
+				: null}
 
 			<Flex direction="row" justify="flex-end">
 				{isWaiting ? <Spinner /> : ''}
@@ -94,8 +94,8 @@ export const GenerateCodeModal: React.FC<GenerateCodeModalProps> = ({ show, onCl
 			})
 	}
 
-	return show ?
-		<Modal
+	return show
+		? <Modal
 			icon={<GenerateIcon />}
 			title={__('Generate with Cloud AI', 'code-snippets')}
 			onRequestClose={() => onClose()}
@@ -109,6 +109,6 @@ export const GenerateCodeModal: React.FC<GenerateCodeModalProps> = ({ show, onCl
 				errorMessage={errorMessage}
 				onGenerate={onGenerate}
 			/>
-		</Modal> :
-		null
+		</Modal>
+		: null
 }

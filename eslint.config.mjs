@@ -63,7 +63,7 @@ export default eslintTs.config(
 			'@stylistic/indent': ['error', 'tab', { SwitchCase: 1 }],
 			'@stylistic/jsx-quotes': ['error', 'prefer-double'],
 			'@stylistic/linebreak-style': ['error', 'unix'],
-			'@stylistic/max-len': ['warn', 140, { ignorePattern: 'd="([\\s\\S]*?)"' }],
+			'@stylistic/max-len': ['warn', 140, { ignorePattern: 'd="([\\s\\S]*?)"|_[_xn]\\(' }],
 			'@stylistic/multiline-ternary': 'off',
 			'@stylistic/no-extra-parens': ['error', 'all'],
 			'@stylistic/no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],

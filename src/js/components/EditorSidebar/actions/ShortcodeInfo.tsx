@@ -74,9 +74,9 @@ export const ShortcodeInfo: React.FC = () => {
 				{__('There are multiple options for inserting this snippet into a post, page or other content.', 'code-snippets')}
 				{' '}
 				{snippet.id
-					// eslint-disable-next-line @stylistic/max-len
+					 
 					? __('You can copy the below shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')
-					// eslint-disable-next-line @stylistic/max-len
+					 
 					: __('After saving, you can copy a shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')}
 				{' '}
 				<ExternalLink

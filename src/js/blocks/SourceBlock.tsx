@@ -7,14 +7,16 @@ import { shortcode } from '@wordpress/icons'
 import { useSnippets } from '../hooks/useSnippetsAPI'
 import { getSnippetType } from '../utils/snippets'
 import { SnippetSelector } from './SnippetSelector'
-import type { SnippetSelectGroup} from './SnippetSelector'
-import type { Snippet, SnippetType } from '../types/Snippet'
+import type { SelectGroup } from '../types/SelectOption'
+import type { Snippet, SnippetCodeType } from '../types/Snippet'
 import type { BlockConfiguration, BlockEditProps } from '@wordpress/blocks'
 
 export const SOURCE_BLOCK = 'code-snippets/source'
 
-const buildOptions = (snippets: Snippet[]): SnippetSelectGroup[] => {
-	const categories: Partial<Record<SnippetType, SnippetSelectGroup>> = {
+type Mutable<T> = { -readonly [P in keyof T]: Mutable<T[P]> }
+
+const buildOptions = (snippets: Snippet[]): SelectGroup<number>[] => {
+	const categories: Record<SnippetCodeType, Mutable<SelectGroup<number>>> = {
 		php: { label: __('Functions (PHP)', 'code-snippets'), options: [] },
 		html: { label: __('Content (Mixed)', 'code-snippets'), options: [] },
 		css: { label: __('Styles (CSS)', 'code-snippets'), options: [] },
@@ -22,10 +24,14 @@ const buildOptions = (snippets: Snippet[]): SnippetSelectGroup[] => {
 	}
 
 	for (const snippet of snippets) {
-		categories[getSnippetType(snippet)]?.options.push({
-			value: snippet.id,
-			label: snippet.name
-		})
+		const type = getSnippetType(snippet)
+
+		if ('cond' !== type) {
+			categories[type].options.push({
+				value: snippet.id,
+				label: snippet.name
+			})
+		}
 	}
 
 	return Object.values(categories)

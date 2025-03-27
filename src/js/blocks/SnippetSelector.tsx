@@ -4,25 +4,15 @@ import { BlockControls } from '@wordpress/block-editor'
 import { Placeholder, ToolbarButton, ToolbarGroup } from '@wordpress/components'
 import { undo } from '@wordpress/icons'
 import Select from 'react-select'
-import type { OptionsOrGroups } from 'react-select'
 import type { IconType } from '@wordpress/components'
 import type { ReactElement } from 'react'
-
-export interface SnippetSelectOption {
-	value: number
-	label: string
-}
-
-export interface SnippetSelectGroup {
-	label: string
-	options: SnippetSelectOption[]
-}
+import type { SelectOptions } from '../types/SelectOption'
 
 export interface SnippetSelectorProps {
 	label: string
 	className: string
 	icon: IconType
-	options: OptionsOrGroups<SnippetSelectOption, SnippetSelectGroup>
+	options: SelectOptions<number>
 	attributes: { snippet_id: number }
 	setAttributes: (attributes: SnippetSelectorProps['attributes']) => void
 	renderContent: () => ReactElement

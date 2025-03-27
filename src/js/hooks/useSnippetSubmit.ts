@@ -91,6 +91,8 @@ export const useSnippetSubmit = (
 
 			setSnippet({
 				...result,
+				// TODO: parse this safely.
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				conditions: 'condition' === result.scope ? JSON.parse(result.code) : undefined
 			})
 

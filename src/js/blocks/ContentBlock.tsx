@@ -6,14 +6,13 @@ import { ExternalLink, PanelBody, ToggleControl } from '@wordpress/components'
 import { useSnippets } from '../hooks/useSnippetsAPI'
 import { getSnippetType } from '../utils/snippets'
 import { SnippetSelector } from './SnippetSelector'
-import type { SnippetSelectOption} from './SnippetSelector'
+import type { SelectOptions } from '../types/SelectOption'
 import type { BlockConfiguration, BlockEditProps } from '@wordpress/blocks'
-import type { Options } from 'react-select'
 import type { Snippet } from '../types/Snippet'
 
 export const CONTENT_BLOCK = 'code-snippets/content'
 
-const buildOptions = (snippets: Snippet[]): Options<SnippetSelectOption> =>
+const buildOptions = (snippets: Snippet[]): SelectOptions<number> =>
 	snippets
 		.filter(snippet =>
 			'html' === getSnippetType(snippet) && snippet.active)
@@ -36,7 +35,7 @@ const Edit: React.FC<BlockEditProps<ContentBlockAttributes>> = ({ setAttributes,
 	const snippets = useSnippets()
 	const blockProps = useBlockProps()
 
-	const options = useMemo<Options<SnippetSelectOption>>(
+	const options = useMemo<SelectOptions<number>>(
 		() => snippets ? buildOptions(snippets) : [],
 		[snippets]
 	)

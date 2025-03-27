@@ -27,7 +27,7 @@ export const ConditionEditor: React.FC = () => {
 	return (
 		<div className="snippet-condition-editor">
 			<div className="snippet-condition-rules">
-				{Object.keys(snippet.conditions ?? {}).map(ruleId =>
+				{Object.keys(snippet.conditions).map(ruleId =>
 					<ConditionRuleEditor key={ruleId} ruleId={ruleId} />)}
 			</div>
 

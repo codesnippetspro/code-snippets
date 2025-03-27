@@ -59,7 +59,7 @@
 }
 
 .snippet-condition-field-select {
-	min-width: 9em;
+	flex: 0 1 9em;
 }
 
 .snippet-condition-enabled-select,
@@ -68,13 +68,13 @@
 }
 
 .snippet-condition-subject-select {
-	flex: 1;
+	flex: 1 9em;
 }
 
 .snippet-condition-operator-select {
-	min-width: 8em;
+	flex: 0 1 8em;
 }
 
 .snippet-condition-object-select {
-	min-width: 16em;
+	flex: 0 1 16em;
 }

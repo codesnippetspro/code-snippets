@@ -7,7 +7,7 @@ const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
 }
 
 export const createInitialConditionRules = (): ConditionRules => ({
-	'0': { enabled: true, subject: 'global', operator: 'is', object: true }
+	0: { enabled: true, subject: 'global', operator: 'is', object: true }
 })
 
 export const createEmptyConditionRule = (): ConditionRule =>
@@ -25,7 +25,7 @@ export const cloneConditionRule = (
 	snippet: Snippet,
 	ruleId: string
 ): Snippet => {
-	if (!snippet.conditions?.[ruleId]) {
+	if (!snippet.conditions[ruleId]) {
 		console.log('cannot find condition rule to clone', ruleId)
 		return snippet
 	}
@@ -40,7 +40,7 @@ export const cloneConditionRule = (
 }
 
 export const removeConditionRule = (snippet: Snippet, ruleId: string): Snippet => {
-	if (!snippet.conditions?.[ruleId]) {
+	if (!snippet.conditions[ruleId]) {
 		console.log('cannot find condition rule to remove', ruleId)
 		return snippet
 	}
@@ -57,7 +57,7 @@ export const updateConditionRule = (
 	...snippet,
 	conditions: {
 		...snippet.conditions,
-		[ruleId]: { ...snippet.conditions?.[ruleId], ...delta }
+		[ruleId]: { ...snippet.conditions[ruleId], ...delta }
 	}
 })
 

@@ -22,7 +22,7 @@ export const ConditionFieldEditor = <F extends keyof ConditionRule>({
 	...selectProps
 }: ConditionFieldEditorProps<F>): ReactElement => {
 	const { snippet, setSnippet } = useSnippetForm()
-	const currentValue = snippet.conditions?.[ruleId]?.[field]
+	const currentValue = snippet.conditions[ruleId]?.[field]
 
 	const [selectedOption, setSelectedOption] = useState<SelectOption<ConditionRule[F]> | undefined>(() =>
 		findOptionByValue(options, currentValue))

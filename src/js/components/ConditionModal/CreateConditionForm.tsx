@@ -1,17 +1,16 @@
-import React, { FormEventHandler } from 'react'
-import { Tooltip } from '../common/Tooltip'
-import { ConditionEditor } from '../ConditionEditor'
+import React from 'react'
 import { BaseControl } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
+import { Tooltip } from '../common/Tooltip'
+import { ConditionEditor } from '../ConditionEditor'
 import { CancelButton } from './CancelButton'
+import type { FormEventHandler } from 'react'
 
 export interface CreateConditionFormProps {
 	closeModal: VoidFunction
 }
 
 export const CreateConditionForm: React.FC<CreateConditionFormProps> = ({ closeModal }) => {
-
-
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
 	}

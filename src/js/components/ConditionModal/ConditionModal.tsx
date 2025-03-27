@@ -1,9 +1,9 @@
 import { Modal } from '@wordpress/components'
 import React, { useState } from 'react'
 import classnames from 'classnames'
+import { __ } from '@wordpress/i18n'
 import { createInitialConditionRules } from '../../services/edit/conditions/rules'
 import { Button } from '../common/Button'
-import { __ } from '@wordpress/i18n'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { ApplyConditionForm } from './ApplyConditionForm'
 import { CreateConditionForm } from './CreateConditionForm'
@@ -45,7 +45,7 @@ export const ConditionsModalButton: React.FC = () => {
 	const { snippet, setSnippet } = useSnippetForm()
 	const [isModalOpen, setIsModalOpen] = useState(true) // TODO: Change to false
 
-	const hasCondition = snippet.conditional !== 0
+	const hasCondition = 0 !== snippet.conditional
 
 	const handleClose = () => {
 		setSnippet(previous => ({ ...previous, conditions: createInitialConditionRules() }))
