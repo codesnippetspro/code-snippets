@@ -7,6 +7,7 @@
 @use 'common/theme';
 @use 'common/type-badges';
 @use 'common/switch';
+@use 'common/select';
 @use 'manage/cloud';
 
 .column-name,
@@ -156,10 +157,6 @@
 
 	th.check-column {
 		border-left: 2px solid #2ea2cc;
-	}
-
-	.snippet-activation-switch {
-		background-color: #0073aa;
 	}
 }
 

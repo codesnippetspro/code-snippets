@@ -1,8 +1,8 @@
 import { __, _x } from '@wordpress/i18n'
 import { REST_API_AXIOS_CONFIG, REST_BASE, REST_CONDITIONS_BASE } from '../utils/restAPI'
+import { useAxios } from './useAxios'
 import type { SelectGroups, SelectOption, SelectOptions } from '../types/SelectOption'
 import type { ConditionOperator, ConditionSubject, ConditionSubjects } from '../types/ConditionRule'
-import { useAxios } from './useAxios'
 
 export const ENABLED_OPTIONS: SelectGroups<boolean> = [
 	{ value: true, label: __('Enable', 'code-snippets') },

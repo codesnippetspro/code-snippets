@@ -1,10 +1,24 @@
-import { createInitialConditionRules } from './conditions'
 import { SNIPPET_TYPE_SCOPES } from '../types/Snippet'
+import { createInitialConditionRules } from './conditions'
 import { isNetworkAdmin } from './screen'
 import type { ConditionRules } from '../types/ConditionRule'
 import type { Snippet, SnippetScope, SnippetType } from '../types/Snippet'
 
 const PRO_TYPES: SnippetType[] = ['css', 'js']
+
+const defaults: Omit<Snippet, 'tags' | 'conditions'> = {
+	id: 0,
+	name: '',
+	code: '',
+	desc: '',
+	scope: 'global',
+	modified: '',
+	active: false,
+	network: isNetworkAdmin(),
+	shared_network: null,
+	priority: 10,
+	conditional: 0
+}
 
 const isAbsInt = (value: unknown): value is number =>
 	'number' === typeof value && 0 < value
@@ -22,24 +36,8 @@ const isValidConditionRules = (rules: unknown): rules is ConditionRules =>
 		.every(rule => 'object' === typeof rule && null !== rule)
 
 export const createSnippetObject = (fields: unknown = undefined): Snippet => {
-	const defaults: Snippet = {
-		id: 0,
-		name: '',
-		code: '',
-		desc: '',
-		tags: [],
-		scope: 'global',
-		modified: '',
-		active: false,
-		network: isNetworkAdmin(),
-		shared_network: null,
-		priority: 10,
-		conditional: 0,
-		conditions: {}
-	}
-
 	if ('object' !== typeof fields || null === fields) {
-		return { ...defaults, conditions: createInitialConditionRules() }
+		return { ...defaults, tags: [], conditions: createInitialConditionRules() }
 	}
 
 	const parsed: Snippet = {
@@ -47,7 +45,7 @@ export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 		name: 'name' in fields && 'string' === typeof fields.name ? fields.name : defaults.name,
 		desc: 'desc' in fields && 'string' === typeof fields.desc ? fields.desc : defaults.desc,
 		code: 'code' in fields && 'string' === typeof fields.code ? fields.code : defaults.code,
-		tags: 'tags' in fields ? parseStringArray(fields.tags) ?? defaults.tags : defaults.tags,
+		tags: 'tags' in fields ? parseStringArray(fields.tags) ?? [] : [],
 		scope: 'scope' in fields && isValidScope(fields.scope) ? fields.scope : defaults.scope,
 		modified: 'modified' in fields && 'string' === typeof fields.modified ? fields.modified : defaults.modified,
 		active: 'active' in fields && 'boolean' === typeof fields.active ? fields.active : defaults.active,
@@ -56,10 +54,12 @@ export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 			|| defaults.shared_network,
 		priority: 'priority' in fields && 'number' === typeof fields.priority ? fields.priority : defaults.priority,
 		conditional: 'conditional' in fields && isAbsInt(fields.conditional) ? fields.conditional : defaults.conditional,
-		conditions: 'conditions' in fields && isValidConditionRules(fields.conditions) ? fields.conditions : defaults.conditions
+		conditions: createInitialConditionRules()
 	}
 
-	if ('condition' === parsed.scope && '' !== parsed.code.trim() && 0 === Object.keys(parsed.conditions).length) {
+	if ('conditions' in fields && isValidConditionRules(fields.conditions)) {
+		parsed.conditions = fields.conditions
+	} else if ('condition' === parsed.scope && '' !== parsed.code.trim()) {
 		try {
 			const parsedRules: unknown = JSON.parse(parsed.code)
 

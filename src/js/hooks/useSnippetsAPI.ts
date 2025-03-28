@@ -38,7 +38,7 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 			get<Snippet>(addQueryArgs(`${REST_SNIPPETS_BASE}/${snippetId}`, { network })),
 
 		create: snippet =>
-			post<Snippet, Snippet>(`${REST_SNIPPETS_BASE}`, snippet),
+			post<Snippet, Snippet>(REST_SNIPPETS_BASE, snippet),
 
 		update: snippet =>
 			post<Snippet, Snippet>(buildURL(snippet), snippet),

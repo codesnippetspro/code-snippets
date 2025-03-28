@@ -639,7 +639,7 @@ function execute_active_snippets(): bool {
 	}
 
 	$db = code_snippets()->db;
-	$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end', 'conditional-php', 'condition' ];
+	$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end', 'condition' ];
 	$data = $db->fetch_active_snippets( $scopes );
 
 	// Detect if a snippet is currently being edited, and if so, spare it from execution.

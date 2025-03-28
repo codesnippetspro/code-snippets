@@ -317,10 +317,10 @@ class Snippet extends Data_Item {
 	 */
 	public static function get_all_scopes(): array {
 		return array(
-			'global', 'admin', 'front-end', 'single-use', 'conditional-php',
-			'content', 'head-content', 'footer-content', 'conditional-html',
-			'admin-css', 'site-css', 'conditional-css',
-			'site-head-js', 'site-footer-js', 'conditional-js',
+			'global', 'admin', 'front-end', 'single-use',
+			'content', 'head-content', 'footer-content',
+			'admin-css', 'site-css',
+			'site-head-js', 'site-footer-js',
 			'condition',
 		);
 	}
@@ -336,17 +336,13 @@ class Snippet extends Data_Item {
 			'admin'            => 'admin-tools',
 			'front-end'        => 'admin-appearance',
 			'single-use'       => 'clock',
-			'conditional-php'  => 'admin-site',
 			'content'          => 'shortcode',
 			'head-content'     => 'editor-code',
 			'footer-content'   => 'editor-code',
-			'conditional-html' => 'shortcode',
 			'admin-css'        => 'dashboard',
 			'site-css'         => 'admin-customizer',
-			'conditional-css'  => 'admin-customizer',
 			'site-head-js'     => 'media-code',
 			'site-footer-js'   => 'media-code',
-			'conditional-js'   => 'media-code',
 			'condition'        => 'randomize',
 		);
 	}
@@ -366,28 +362,20 @@ class Snippet extends Data_Item {
 				return __( 'Front-end function', 'code-snippets' );
 			case 'single-use':
 				return __( 'Single-use function', 'code-snippets' );
-			case 'conditional-php':
-				return __( 'Conditional function', 'code-snippets' );
 			case 'content':
 				return __( 'Content', 'code-snippets' );
 			case 'head-content':
 				return __( 'Head content', 'code-snippets' );
 			case 'footer-content':
 				return __( 'Footer content', 'code-snippets' );
-			case 'conditional-html':
-				return __( 'Conditional content', 'code-snippets' );
 			case 'admin-css':
 				return __( 'Admin styles', 'code-snippets' );
 			case 'site-css':
 				return __( 'Front-end styles', 'code-snippets' );
-			case 'conditional-css':
-				return __( 'Conditional styles', 'code-snippets' );
 			case 'site-head-js':
 				return __( 'Head scripts', 'code-snippets' );
 			case 'site-footer-js':
 				return __( 'Footer scripts', 'code-snippets' );
-			case 'conditional-js':
-				return __( 'Conditional scripts', 'code-snippets' );
 		}
 
 		return '';

@@ -2,8 +2,9 @@ import { __ } from '@wordpress/i18n'
 import React from 'react'
 import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { SNIPPET_TYPE_SCOPES, type SnippetScope } from '../../../types/Snippet'
+import { SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
 import { getSnippetType } from '../../../utils/snippets'
+import type { SnippetScope } from '../../../types/Snippet'
 import type { SelectOption } from '../../../types/SelectOption'
 
 const SCOPE_ICONS: Record<SnippetScope, string> = {
@@ -48,6 +49,7 @@ export const SnippetLocationInput: React.FC = () => {
 			<h3><label htmlFor="snippet-location">{__('Snippet Location', 'code-snippets')}</label></h3>
 			<Select
 				id="snippet-location"
+				className="code-snippets-select"
 				options={options}
 				styles={{
 					menu: provided => ({ ...provided, zIndex: 9999 }),

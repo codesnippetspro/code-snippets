@@ -2,15 +2,6 @@ import { useMemo } from 'react'
 import { REST_API_AXIOS_CONFIG, REST_CLOUD_BASE } from '../utils/restAPI'
 import { useAxios } from './useAxios'
 import type { Snippet, SnippetType } from '../types/Snippet'
-import { CreateAxiosDefaults } from 'axios'
-
-const AXIOS_CONFIG: CreateAxiosDefaults = {
-	...REST_API_AXIOS_CONFIG,
-	headers: {
-		...REST_API_AXIOS_CONFIG.headers,
-		'X-WP-Nonce': window.CODE_SNIPPETS?.restAPI.nonce
-	}
-}
 
 export type ExplainSnippetFields = keyof Pick<Snippet, 'code' | 'desc' | 'tags'>
 
@@ -38,7 +29,7 @@ export interface GenerativeAPI {
 }
 
 export const useGenerativeAPI = (): GenerativeAPI => {
-	const { post } = useAxios(AXIOS_CONFIG)
+	const { post } = useAxios(REST_API_AXIOS_CONFIG)
 
 	return useMemo((): GenerativeAPI => ({
 		generateSnippet: (prompt, type) =>

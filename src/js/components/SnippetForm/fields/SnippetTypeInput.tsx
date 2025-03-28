@@ -59,6 +59,7 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ openUpgradeD
 		<div className="snippet-type-container">
 			<label><h3>{__('Snippet Type', 'code-snippets')}</h3></label>
 			<Select
+				className="code-snippets-select"
 				options={OPTIONS}
 				value={OPTIONS.find(option => option.value === snippetType)}
 				styles={{
