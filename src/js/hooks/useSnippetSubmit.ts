@@ -22,7 +22,6 @@ const messages = <const> {
 }
 
 const getSuccessNotice = (request: Snippet, response: Snippet, active: boolean | undefined): string => {
-
 	if (active === undefined) {
 		return 0 === request.id ? messages.created : messages.updated
 	}

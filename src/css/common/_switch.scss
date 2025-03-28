@@ -12,7 +12,7 @@ input[type=checkbox].switch {
 	appearance: none;
 	outline: 0;
 	cursor: pointer;
-	margin-top: 5px;
+	margin: 0;
 	width: 30px;
 	height: 17px;
 	border-radius: 34px;
@@ -25,14 +25,23 @@ input[type=checkbox].switch {
 		height: 13px;
 		width: 13px;
 		display: inline-block;
-		margin: 2px;
 		background-color: theme.$accent;
 		border-radius: 50%;
 	}
 }
 
+.snippet-activation-switch::before {
+	margin: 2px;
+}
+
+input[type=checkbox].switch::before {
+	margin: 1px;
+}
+
 .active-snippet .snippet-activation-switch,
 input[type=checkbox].switch:checked {
+	background-color: #0073aa;
+
 	&::before {
 		background-color: white;
 		transform: translateX(100%);

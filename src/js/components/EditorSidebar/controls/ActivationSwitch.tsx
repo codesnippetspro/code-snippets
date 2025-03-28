@@ -9,16 +9,16 @@ export const ActivationSwitch = () => {
 	return (
 		<div>
 			<h4>
-				<label htmlFor="snippet-activation-switch">
+				<label htmlFor="activation-switch">
 					{__('Is Active', 'code-snippets')}
 				</label>
 			</h4>
 
 			<input
-				id="snippet-activation-switch"
+				id="activation-switch"
 				type="checkbox"
 				disabled={isWorking || !!snippet.shared_network}
-				className="switch snippet-activation-switch"
+				className="switch"
 				title={snippet.active
 					? __('Deactivate', 'code-snippets')
 					: __('Activate', 'code-snippets')}

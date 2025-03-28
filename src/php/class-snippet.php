@@ -271,7 +271,7 @@ class Snippet extends Data_Item {
 			'global', 'admin', 'front-end', 'single-use',
 			'content', 'head-content', 'footer-content',
 			'admin-css', 'site-css',
-			'site-head-js', 'site-footer-js',
+			'site-head-js', 'site-footer-js'
 		);
 	}
 
@@ -324,7 +324,7 @@ class Snippet extends Data_Item {
 			case 'site-head-js':
 				return __( 'Head styles', 'code-snippets' );
 			case 'site-footer-js':
-				return __( 'Footer styles', 'code-snippets' );
+				return __( 'Footer scripts', 'code-snippets' );
 		}
 
 		return '';

@@ -49,19 +49,14 @@
 		background-color: #a7aaad;
 	}
 }
-
-.go-pro-badge, .pro-badge {
-	color: theme.$pro;
-}
-
 .core-badge {
 	color: theme.$core;
 }
 
 .go-pro-button .badge,
 .go-pro-badge {
-	color: #fff;
-	background-color: theme.$pro;
+	color: #DF9279;
+	background-color: #F7E8E3;
 	margin-left: 1px;
 	font-size: 10px;
 }

@@ -1,18 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { addQueryArgs } from '@wordpress/url'
 import { handleUnknownError } from '../utils/errors'
+import { REST_API_AXIOS_CONFIG, REST_SNIPPETS_BASE } from '../utils/restAPI'
 import { isNetworkAdmin } from '../utils/screen'
 import { createSnippetObject } from '../utils/snippets'
 import { useAxios } from './useAxios'
 import type { Snippet } from '../types/Snippet'
 import type { SnippetsExport } from '../types/SnippetsExport'
-import type { AxiosResponse, CreateAxiosDefaults } from 'axios'
-
-const ROUTE_BASE = window.CODE_SNIPPETS?.restAPI.snippets
-
-const AXIOS_CONFIG: CreateAxiosDefaults = {
-	headers: { 'X-WP-Nonce': window.CODE_SNIPPETS?.restAPI.nonce }
-}
+import type { AxiosResponse } from 'axios'
 
 export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<AxiosResponse<Snippet[]>>
@@ -28,22 +23,22 @@ export interface SnippetsAPI {
 
 const buildURL = ({ id, network }: Snippet, action?: string) =>
 	addQueryArgs(
-		[ROUTE_BASE, id, action].filter(Boolean).join('/'),
+		[REST_SNIPPETS_BASE, id, action].filter(Boolean).join('/'),
 		{ network: network ? true : undefined }
 	)
 
 export const useSnippetsAPI = (): SnippetsAPI => {
-	const { get, post, del } = useAxios(AXIOS_CONFIG)
+	const { get, post, del } = useAxios(REST_API_AXIOS_CONFIG)
 
 	return useMemo((): SnippetsAPI => ({
 		fetchAll: network =>
-			get<Snippet[]>(addQueryArgs(ROUTE_BASE, { network })),
+			get<Snippet[]>(addQueryArgs(REST_SNIPPETS_BASE, { network })),
 
 		fetch: (snippetId, network) =>
-			get<Snippet>(addQueryArgs(`${ROUTE_BASE}/${snippetId}`, { network })),
+			get<Snippet>(addQueryArgs(`${REST_SNIPPETS_BASE}/${snippetId}`, { network })),
 
 		create: snippet =>
-			post<Snippet, Snippet>(`${ROUTE_BASE}`, snippet),
+			post<Snippet, Snippet>(REST_SNIPPETS_BASE, snippet),
 
 		update: snippet =>
 			post<Snippet, Snippet>(buildURL(snippet), snippet),
