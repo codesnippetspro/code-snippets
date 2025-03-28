@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { addQueryArgs } from '@wordpress/url'
 import { handleUnknownError } from '../utils/errors'
 import { isNetworkAdmin } from '../utils/screen'
+import { createSnippetObject } from '../utils/snippets'
 import { useAxios } from './useAxios'
 import type { Snippet } from '../types/Snippet'
 import type { SnippetsExport } from '../types/SnippetsExport'
@@ -71,7 +72,8 @@ export const useSnippets = (): Snippet[] | undefined => {
 	useEffect(() => {
 		if (!snippets) {
 			api.fetchAll(isNetworkAdmin())
-				.then(response => setSnippets(response.data))
+				.then(response =>
+					setSnippets(response.data.map(snippet => createSnippetObject(snippet))))
 				.catch(handleUnknownError)
 		}
 	}, [api, snippets])

@@ -1,20 +1,12 @@
 import { __, _x } from '@wordpress/i18n'
 import React from 'react'
-import { createEmptySnippet } from '../../../utils/snippets'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import type { Snippet } from '../../../types/Snippet'
+import { createSnippetObject } from '../../../utils/snippets'
 
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 
-const getEditHeading = (snippet: Snippet): string =>
-	'condition' === snippet.scope
-		? __('Edit Conditions', 'code-snippets')
-		: __('Edit Snippet', 'code-snippets')
-
-const getAddNewHeading = (snippet: Snippet): string =>
-	'condition' === snippet.scope
-		? __('Add New Conditions', 'code-snippets')
-		: __('Add New Snippet', 'code-snippets')
+const editHeading = __('Edit Snippet', 'code-snippets')
+const addNewHeading = __('Add New Snippet', 'code-snippets')
 
 export const PageHeading: React.FC = () => {
 	const { snippet, updateSnippet, setCurrentNotice } = useSnippetForm()
@@ -23,24 +15,24 @@ export const PageHeading: React.FC = () => {
 		<h1>
 			{snippet.id
 				? <>
-					{`${getEditHeading(snippet)} `}
+					{`{${editHeading} `}
 
 					<a
 						href={window.CODE_SNIPPETS?.urls.addNew}
 						className="page-title-action"
 						onClick={event => {
 							event.preventDefault()
-							updateSnippet(() => createEmptySnippet())
+							updateSnippet(() => createSnippetObject())
 							setCurrentNotice(undefined)
 
-							window.document.title = window.document.title.replace(getEditHeading(snippet), getAddNewHeading(snippet))
+							window.document.title = window.document.title.replace(editHeading, addNewHeading)
 							window.history.replaceState({}, '', window.CODE_SNIPPETS?.urls.addNew)
 						}}
 					>
 						{_x('Add New', 'snippet', 'code-snippets')}
 					</a>
 				</>
-				: getAddNewHeading(snippet)}
+				: addNewHeading}
 
 			{OPTIONS?.pageTitleActions && Object.entries(OPTIONS.pageTitleActions).map(([label, url]) =>
 				<>

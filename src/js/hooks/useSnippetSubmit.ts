@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
+import { createSnippetObject } from '../utils/snippets'
 import { useSnippetsAPI } from './useSnippetsAPI'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ScreenNotice } from '../types/ScreenNotice'
@@ -71,7 +72,7 @@ export const useSnippetSubmit = (
 			setCurrentNotice(['error', message.filter(Boolean).join(' ')])
 			return undefined
 		} else {
-			setSnippet({ ...result })
+			setSnippet(createSnippetObject(result))
 			setCurrentNotice(['updated', getSuccessNotice(snippet, result, active)])
 
 			if (snippet.id && result.id) {

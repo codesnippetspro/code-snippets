@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import { createEmptySnippet, getSnippetType } from '../../utils/snippets'
+import { createSnippetObject, getSnippetType } from '../../utils/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { Button } from '../common/Button'
 import { EditorSidebar } from '../EditorSidebar'
@@ -68,6 +68,9 @@ const EditForm: React.FC = () => {
 }
 
 export const SnippetForm: React.FC = () =>
-	<WithSnippetFormContext initialSnippet={() => window.CODE_SNIPPETS_EDIT?.snippet ?? createEmptySnippet()}>
+	<WithSnippetFormContext initialSnippet={() =>
+		typeof window.CODE_SNIPPETS_EDIT?.snippet === 'object' && null !== window.CODE_SNIPPETS_EDIT?.snippet
+			? createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)
+			: createSnippetObject()}>
 		<EditForm />
 	</WithSnippetFormContext>
