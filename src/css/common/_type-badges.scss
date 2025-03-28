@@ -2,7 +2,6 @@
 @use 'theme';
 
 %badge {
-	display: inline-block;
 	font-size: 12px;
 	font-weight: 700;
 	text-transform: uppercase;
@@ -10,6 +9,9 @@
 	border-radius: 3px;
 	text-align: center;
 	width: 3.5em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .nav-tab .badge,
@@ -25,23 +27,6 @@
 	@extend %badge;
 }
 
-
-.nav-tab .badge,
-.button .snippet-type-badge,
-.go-pro-button .badge,
-h1 .snippet-type-badge,
-h2 .snippet-type-badge,
-h3 .snippet-type-badge,
-.snippet-type-option .badge {
-	/* rtl:ignore */
-	margin-left: 8px;
-}
-
-.nav-tab span,
-.nav-tab .badge {
-	vertical-align: middle;
-}
-
 @each $type, $color in theme.$types {
 	.nav-tab[data-snippet-type=#{$type}] .badge,
 	.snippet-type-badge[data-snippet-type=#{$type}],
@@ -54,7 +39,6 @@ h3 .snippet-type-badge,
 .nav-tab-button .dashicons-external {
 	font-size: 15px;
 	color: #666;
-	vertical-align: middle;
 }
 
 .nav-tab.nav-tab-inactive {
@@ -74,7 +58,8 @@ h3 .snippet-type-badge,
 	color: theme.$core;
 }
 
-.go-pro-button .badge, .go-pro-badge {
+.go-pro-button .badge,
+.go-pro-badge {
 	color: #fff;
 	background-color: theme.$pro;
 	margin-left: 1px;
