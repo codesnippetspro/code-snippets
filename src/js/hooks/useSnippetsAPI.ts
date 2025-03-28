@@ -7,18 +7,17 @@ import { createSnippetObject } from '../utils/snippets'
 import { useAxios } from './useAxios'
 import type { Snippet } from '../types/Snippet'
 import type { SnippetsExport } from '../types/SnippetsExport'
-import type { AxiosResponse } from 'axios'
 
 export interface SnippetsAPI {
-	fetchAll: (network?: boolean | null) => Promise<AxiosResponse<Snippet[]>>
-	fetch: (snippetId: number, network?: boolean | null) => Promise<AxiosResponse<Snippet>>
-	create: (snippet: Snippet) => Promise<AxiosResponse<Snippet>>
-	update: (snippet: Snippet) => Promise<AxiosResponse<Snippet>>
-	delete: (snippet: Snippet) => Promise<AxiosResponse<void>>
-	activate: (snippet: Snippet) => Promise<AxiosResponse<Snippet>>
-	deactivate: (snippet: Snippet) => Promise<AxiosResponse<Snippet>>
-	export: (snippet: Snippet) => Promise<AxiosResponse<SnippetsExport>>
-	exportCode: (snippet: Snippet) => Promise<AxiosResponse<string>>
+	fetchAll: (network?: boolean | null) => Promise<Snippet[]>
+	fetch: (snippetId: number, network?: boolean | null) => Promise<Snippet>
+	create: (snippet: Snippet) => Promise<Snippet>
+	update: (snippet: Snippet) => Promise<Snippet>
+	delete: (snippet: Snippet) => Promise<void>
+	activate: (snippet: Snippet) => Promise<Snippet>
+	deactivate: (snippet: Snippet) => Promise<Snippet>
+	export: (snippet: Snippet) => Promise<SnippetsExport>
+	exportCode: (snippet: Snippet) => Promise<string>
 }
 
 const buildURL = ({ id, network }: Snippet, action?: string) =>
@@ -68,7 +67,7 @@ export const useSnippets = (): Snippet[] | undefined => {
 		if (!snippets) {
 			api.fetchAll(isNetworkAdmin())
 				.then(response =>
-					setSnippets(response.data.map(snippet => createSnippetObject(snippet))))
+					setSnippets(response.map(snippet => createSnippetObject(snippet))))
 				.catch(handleUnknownError)
 		}
 	}, [api, snippets])

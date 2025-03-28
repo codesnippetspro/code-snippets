@@ -3,9 +3,9 @@ import axios from 'axios'
 import type { AxiosInstance, AxiosResponse, CreateAxiosDefaults } from 'axios'
 
 export interface AxiosAPI {
-	get: <T>(url: string) => Promise<AxiosResponse<T, never>>
-	post: <T, D>(url: string, data?: D) => Promise<AxiosResponse<T, D>>
-	del: <T>(url: string) => Promise<AxiosResponse<T, never>>
+	get: <T>(url: string) => Promise<T>
+	post: <T>(url: string, data?: object) => Promise<T>
+	del: <T>(url: string) => Promise<T>
 	axiosInstance: AxiosInstance
 }
 
@@ -14,24 +14,24 @@ const debugRequest = async <T, D = never>(
 	url: string,
 	doRequest: Promise<AxiosResponse<T, D>>,
 	data?: D
-): Promise<AxiosResponse<T, D>> => {
+): Promise<T> => {
 	console.debug(`${method} ${url}`, ...data ? [data] : [])
 	const response = await doRequest
 	console.debug('Response', response)
-	return response
+	return response.data
 }
 
 export const useAxios = (defaultConfig: CreateAxiosDefaults): AxiosAPI => {
 	const axiosInstance = useMemo(() => axios.create(defaultConfig), [defaultConfig])
 
 	return useMemo((): AxiosAPI => ({
-		get: <T>(url: string): Promise<AxiosResponse<T, never>> =>
+		get: <T>(url: string): Promise<T> =>
 			debugRequest('GET', url, axiosInstance.get<T, AxiosResponse<T, never>, never>(url)),
 
-		post: <T, D>(url: string, data?: D) =>
-			debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T, D>, D>(url, data), data),
+		post: <T>(url: string, data?: object): Promise<T> =>
+			debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T, typeof data>, typeof data>(url, data), data),
 
-		del: <T>(url: string) =>
+		del: <T>(url: string): Promise<T> =>
 			debugRequest('DELETE', url, axiosInstance.delete<T, AxiosResponse<T, never>, never>(url)),
 
 		axiosInstance

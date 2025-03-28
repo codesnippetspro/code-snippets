@@ -5,13 +5,13 @@
 @use 'common/codemirror';
 @use 'common/type-badges';
 @use 'common/switch';
+@use 'common/select';
+@use 'common/tooltips';
 
 @use 'edit/form';
 @use 'edit/sidebar';
 @use 'edit/editor';
 
-@use 'common/tooltips';
-@use 'common/select';
 @use 'edit/upgrade-dialog';
 @use 'edit/conditions';
 @use 'edit/gpt';
