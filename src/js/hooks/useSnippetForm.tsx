@@ -3,7 +3,7 @@ import React, { createContext, useCallback, useContext, useMemo, useState } from
 import { isLicensed } from '../utils/screen'
 import { isProSnippet } from '../utils/snippets'
 import { useSnippetSubmit } from './useSnippetSubmit'
-import type { Dispatch, PropsWithChildren, SetStateAction} from 'react'
+import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { ScreenNotice } from '../types/ScreenNotice'
 import type { Snippet } from '../types/Snippet'
 import type { CodeEditorInstance } from '../types/WordPressCodeEditor'
@@ -46,6 +46,7 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 	const [isWorking, setIsWorking] = useState(false)
 	const [currentNotice, setCurrentNotice] = useState<ScreenNotice>()
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
+
 	const submitSnippet = useSnippetSubmit(setSnippet, setIsWorking, setCurrentNotice)
 	const isReadOnly = useMemo(() => !isLicensed() && isProSnippet(snippet.scope), [snippet.scope])
 

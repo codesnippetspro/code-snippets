@@ -31,25 +31,25 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 
 	return useMemo((): SnippetsAPI => ({
 		fetchAll: network =>
-			get<Snippet[]>(addQueryArgs(REST_SNIPPETS_BASE, { network })),
+			get<Snippet[]>(addQueryArgs(REST_SNIPPETS_BASE  , { network })),
 
 		fetch: (snippetId, network) =>
 			get<Snippet>(addQueryArgs(`${REST_SNIPPETS_BASE}/${snippetId}`, { network })),
 
 		create: snippet =>
-			post<Snippet, Snippet>(REST_SNIPPETS_BASE, snippet),
+			post<Snippet>(REST_SNIPPETS_BASE, snippet),
 
 		update: snippet =>
-			post<Snippet, Snippet>(buildURL(snippet), snippet),
+			post<Snippet>(buildURL(snippet), snippet),
 
 		delete: (snippet: Snippet) =>
 			del(buildURL(snippet)),
 
 		activate: snippet =>
-			post<Snippet, never>(buildURL(snippet, 'activate')),
+			post<Snippet>(buildURL(snippet, 'activate')),
 
 		deactivate: snippet =>
-			post<Snippet, never>(buildURL(snippet, 'deactivate')),
+			post<Snippet>(buildURL(snippet, 'deactivate')),
 
 		export: snippet =>
 			get<SnippetsExport>(buildURL(snippet, 'export')),

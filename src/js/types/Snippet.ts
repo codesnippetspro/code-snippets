@@ -5,14 +5,15 @@ export interface Snippet {
 	readonly name: string
 	readonly desc: string
 	readonly code: string
-	readonly tags: string[]
+	readonly tags: readonly string[]
 	readonly scope: SnippetScope
+	readonly conditional: number
 	readonly priority: number
 	readonly active: boolean
-	readonly network?: boolean
+	readonly network: boolean
 	readonly shared_network?: boolean | null
 	readonly modified?: string
-	readonly code_error?: [string, number] | null
+	readonly code_error?: readonly [string, number] | null
 	readonly conditions: ConditionRules
 }
 

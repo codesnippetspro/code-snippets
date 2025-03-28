@@ -34,6 +34,26 @@ const isValidConditionRules = (rules: unknown): rules is ConditionRules =>
 	'object' === typeof rules && null !== rules && Object.values(rules)
 		.every(rule => 'object' === typeof rule && null !== rule)
 
+const parseConditions = (parsed: Omit<Snippet, 'conditions'>, fields: object): Partial<Snippet> => {
+	if ('conditions' in fields && isValidConditionRules(fields.conditions)) {
+		return { conditions: fields.conditions }
+	}
+
+	if ('condition' === parsed.scope && '' !== parsed.code.trim()) {
+		try {
+			const parsedRules: unknown = JSON.parse(parsed.code)
+
+			if (isValidConditionRules(parsedRules)) {
+				return { conditions: parsedRules, code: '' }
+			}
+		} catch (error) {
+			console.error('Failed to parse condition rules JSON.', parsed.code, error)
+		}
+	}
+
+	return {}
+}
+
 export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 	if ('object' !== typeof fields || null === fields) {
 		return { ...defaults, tags: [], conditions: createInitialConditionRules() }
@@ -56,22 +76,7 @@ export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 		conditions: createInitialConditionRules()
 	}
 
-	if ('conditions' in fields && isValidConditionRules(fields.conditions)) {
-		parsed.conditions = fields.conditions
-	} else if ('condition' === parsed.scope && '' !== parsed.code.trim()) {
-		try {
-			const parsedRules: unknown = JSON.parse(parsed.code)
-
-			if (isValidConditionRules(parsedRules)) {
-				parsed.conditions = parsedRules
-				parsed.code = defaults.code
-			}
-		} catch (error) {
-			console.error('Failed to parse condition rules JSON.', parsed.code, error)
-		}
-	}
-
-	return parsed
+	return { ...parsed, ...parseConditions(parsed, fields) }
 }
 
 const getSnippetScope = (snippetOrScope: Snippet | SnippetScope): SnippetScope =>

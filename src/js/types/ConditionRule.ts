@@ -1,3 +1,4 @@
+import type { Snippet } from './Snippet'
 import type { UserRole } from './wp/UserRole'
 import type { Page } from './wp/Page'
 import type { Post } from './wp/Post'
@@ -5,29 +6,30 @@ import type { PostType } from './wp/PostType'
 import type { Category, PostTag } from './wp/Term'
 import type { User } from './wp/User'
 
-export interface ConditionRule {
-	enabled?: boolean
-	subject?: ConditionSubject
-	operator?: ConditionOperator
-	object?: string | number | boolean
+export interface ConditionRule<S extends ConditionSubject> {
+	readonly enabled?: boolean
+	readonly subject?: S
+	readonly operator?: ConditionOperator
+	readonly object?: ConditionSubjects[ConditionSubject][]
 }
 
 export interface ConditionSubjects {
 	global: boolean
 	admin: boolean
 	frontend: boolean
-	post: Post
-	page: Page
-	postType: PostType
-	category: Category
-	tag: PostTag
-	user: User
+	post: Post['id']
+	page: Page['id']
+	postType: PostType['slug']
+	category: Category['id']
+	tag: PostTag['id']
+	user: User['id']
 	authenticated: boolean
-	userRole: UserRole
+	userRole: UserRole['role']
+	condition: Snippet['id']
 }
 
 export type ConditionSubject = keyof ConditionSubjects
 
-export type ConditionRules = Record<string, ConditionRule | undefined>
+export type ConditionRules = Record<string, ConditionRule<ConditionSubject> | undefined>
 
 export type ConditionOperator = 'is' | 'not'

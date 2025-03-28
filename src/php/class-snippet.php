@@ -128,10 +128,6 @@ class Snippet extends Data_Item {
 	 * @return mixed
 	 */
 	protected function prepare_conditions( $value ) {
-		if ( 'cond' === $this->type ) {
-			$this->code = is_string( $value ) ? $value : wp_json_encode( $value );
-		}
-
 		return $value;
 	}
 
@@ -332,18 +328,18 @@ class Snippet extends Data_Item {
 	 */
 	public static function get_scope_icons(): array {
 		return array(
-			'global'           => 'admin-site',
-			'admin'            => 'admin-tools',
-			'front-end'        => 'admin-appearance',
-			'single-use'       => 'clock',
-			'content'          => 'shortcode',
-			'head-content'     => 'editor-code',
-			'footer-content'   => 'editor-code',
-			'admin-css'        => 'dashboard',
-			'site-css'         => 'admin-customizer',
-			'site-head-js'     => 'media-code',
-			'site-footer-js'   => 'media-code',
-			'condition'        => 'randomize',
+			'global'         => 'admin-site',
+			'admin'          => 'admin-tools',
+			'front-end'      => 'admin-appearance',
+			'single-use'     => 'clock',
+			'content'        => 'shortcode',
+			'head-content'   => 'editor-code',
+			'footer-content' => 'editor-code',
+			'admin-css'      => 'dashboard',
+			'site-css'       => 'admin-customizer',
+			'site-head-js'   => 'media-code',
+			'site-footer-js' => 'media-code',
+			'condition'      => 'randomize',
 		);
 	}
 

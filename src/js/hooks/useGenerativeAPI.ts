@@ -33,17 +33,11 @@ export const useGenerativeAPI = (): GenerativeAPI => {
 
 	return useMemo((): GenerativeAPI => ({
 		generateSnippet: (prompt, type) =>
-			post<ApiResponse<GeneratedSnippet>, { prompt: string, type: SnippetType }>(
-				`${REST_CLOUD_BASE}/ai/prompt`,
-				{ prompt, type }
-			)
-				.then(response => response.data.message),
+			post<ApiResponse<GeneratedSnippet>>(`${REST_CLOUD_BASE}/ai/prompt`, { prompt, type })
+				.then(response => response.message),
 
 		explainSnippet: (code, field) =>
-			post<ApiResponse<ExplainedSnippet>, { code: string, field: ExplainSnippetFields }>(
-				`${REST_CLOUD_BASE}/ai/explain`,
-				{ code, field }
-			)
-				.then(response => response.data.message)
+			post<ApiResponse<ExplainedSnippet>>(`${REST_CLOUD_BASE}/ai/explain`, { code, field })
+				.then(response => response.message)
 	}), [post])
 }

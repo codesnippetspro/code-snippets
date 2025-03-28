@@ -1,4 +1,4 @@
-import type { ConditionRule, ConditionRules } from '../types/ConditionRule'
+import type { ConditionRule, ConditionRules, ConditionSubject } from '../types/ConditionRule'
 import type { Snippet } from '../types/Snippet'
 
 const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
@@ -49,7 +49,7 @@ export const removeConditionRule = (snippet: Snippet, ruleId: string): Snippet =
 export const updateConditionRule = (
 	snippet: Snippet,
 	ruleId: string,
-	delta: Partial<ConditionRule>
+	delta: Partial<ConditionRule<ConditionSubject>>
 ): Snippet => ({
 	...snippet,
 	conditions: {
@@ -57,11 +57,3 @@ export const updateConditionRule = (
 		[ruleId]: { ...snippet.conditions[ruleId], ...delta }
 	}
 })
-
-export const updateConditionField = <F extends keyof ConditionRule>(
-	snippet: Snippet,
-	ruleId: string,
-	field: F,
-	value: ConditionRule[F]
-): Snippet =>
-	updateConditionRule(snippet, ruleId, { [field]: value })

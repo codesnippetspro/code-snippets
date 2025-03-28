@@ -20,7 +20,7 @@ export const CloudAIButton: React.FC<CloudAIButtonProps> = ({
 }) => {
 	const [isCloudModalOpen, setIsCloudModalOpen] = useState(false)
 
-	return isLicensed()
+	return isLicensed() && 'condition' !== snippet.scope
 		? <>
 			{isCloudModalOpen
 				? <Modal

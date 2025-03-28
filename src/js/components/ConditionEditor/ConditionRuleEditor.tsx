@@ -1,16 +1,18 @@
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
-import { ENABLED_OPTIONS, OPERATOR_OPTIONS, SUBJECT_OPTIONS, useConditionsAPI } from '../../hooks/useConditionsAPI'
-import { cloneConditionRule, removeConditionRule, updateConditionField } from '../../utils/conditions'
+import { ENABLED_OPTIONS, SUBJECT_OPTIONS, useConditionsAPI } from '../../hooks/useConditionsAPI'
+import { cloneConditionRule, removeConditionRule, updateConditionRule } from '../../utils/conditions'
 import { handleUnknownError } from '../../utils/errors'
 import { CloneIcon } from '../common/icons/CloneIcon'
 import { RemoveIcon } from '../common/icons/RemoveIcon'
-import { ConditionFieldEditor } from './ConditionFieldEditor'
+import { MultiSelect, SingleSelect } from '../common/Select'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ObjectOptions } from '../../hooks/useConditionsAPI'
 import type { Snippet } from '../../types/Snippet'
 import type { ConditionSubject } from '../../types/ConditionRule'
+
+const SUBJECT_KEYWORD_RE = /__(?<text>.+)__/
 
 export interface ButtonProps {
 	ruleId: string
@@ -18,59 +20,85 @@ export interface ButtonProps {
 }
 
 const RemoveButton: React.FC<ButtonProps> = ({ ruleId, setSnippet }) =>
-	<div>
-		<button
-			type="button"
-			className="button condition-remove-button"
-			title={__('Remove this condition rule.', 'code-snippets')}
-			onClick={event => {
-				event.preventDefault()
-				setSnippet(previous => removeConditionRule(previous, ruleId))
-			}}
-		>
-			<RemoveIcon />
-		</button>
-	</div>
+	<button
+		type="button"
+		className="button condition-remove-button"
+		title={__('Remove this condition rule.', 'code-snippets')}
+		onClick={event => {
+			event.preventDefault()
+			setSnippet(previous => removeConditionRule(previous, ruleId))
+		}}
+	>
+		<RemoveIcon />
+	</button>
 
 export const CloneButton: React.FC<ButtonProps> = ({ ruleId, setSnippet }) =>
-	<div>
-		<button
-			type="button"
-			className="button condition-clone-button"
-			title={__('Clone this condition rule.', 'code-snippets')}
-			onClick={event => {
-				event.preventDefault()
-				setSnippet(previous => cloneConditionRule(previous, ruleId))
-			}}
-		>
-			<CloneIcon />
-		</button>
-	</div>
+	<button
+		type="button"
+		className="button condition-clone-button"
+		title={__('Clone this condition rule.', 'code-snippets')}
+		onClick={event => {
+			event.preventDefault()
+			setSnippet(previous => cloneConditionRule(previous, ruleId))
+		}}
+	>
+		<CloneIcon />
+	</button>
 
-interface ConditionObjectEditorProps {
+interface ConditionObjectEditorProps<S extends ConditionSubject> {
 	ruleId: string
-	objectOptions: ObjectOptions
+	objectOptions: ObjectOptions<S>
 	objectOptionsLoaded: boolean
 }
 
-const ConditionObjectEditor: React.FC<ConditionObjectEditorProps> = ({ ruleId, objectOptions, objectOptionsLoaded }) =>
-	objectOptions
-		? <>
-			<ConditionFieldEditor
-				field="operator"
-				ruleId={ruleId}
-				options={OPERATOR_OPTIONS}
-				fallbackValue="is"
-			/>
+const ConditionObjectEditor = <S extends ConditionSubject>({
+	ruleId,
+	objectOptions,
+	objectOptionsLoaded
+}: ConditionObjectEditorProps<S>) => {
+	const { snippet, setSnippet } = useSnippetForm()
 
-			<ConditionFieldEditor
-				field="object"
-				ruleId={ruleId}
+	const objects = snippet.conditions[ruleId]?.object ?? []
+
+	return objectOptions
+		? <>
+			<MultiSelect
+				className="snippet-condition-field-select snippet-condition-object-select"
 				options={objectOptions}
+				currentValue={Array.isArray(objects) ? objects : []}
 				isLoading={!objectOptionsLoaded}
+				onChange={object => {
+					setSnippet(previous => updateConditionRule(previous, ruleId, { object }))
+				}}
 			/>
 		</>
 		: null
+}
+
+interface ConditionSubjectEditorProps {
+	ruleId: string
+	clearObjectOptions: VoidFunction
+}
+
+const ConditionSubjectEditor: React.FC<ConditionSubjectEditorProps> = ({ ruleId, clearObjectOptions }) => {
+	const { snippet, setSnippet } = useSnippetForm()
+
+	return (
+		<SingleSelect
+			className="snippet-condition-field-select snippet-condition-subject-select"
+			options={SUBJECT_OPTIONS}
+			currentValue={snippet.conditions[ruleId]?.subject}
+			onChange={subject => {
+				clearObjectOptions()
+				setSnippet(previous => updateConditionRule(previous, ruleId, { subject }))
+			}}
+			formatOptionLabel={option =>
+				<span dangerouslySetInnerHTML={{
+					__html: option.label.replace(SUBJECT_KEYWORD_RE, '<strong>$1</strong>')
+				}}></span>}
+		/>
+	)
+}
 
 export interface ConditionRuleEditorProps {
 	ruleId: string
@@ -81,7 +109,7 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId
 	const { snippet, setSnippet } = useSnippetForm()
 
 	const [loadedSubject, setLoadedSubject] = useState<ConditionSubject>()
-	const [objectOptions, setObjectOptions] = useState<ObjectOptions | undefined>(undefined)
+	const [objectOptions, setObjectOptions] = useState<ObjectOptions<ConditionSubject> | undefined>(undefined)
 
 	const condition = snippet.conditions[ruleId]
 
@@ -96,25 +124,24 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId
 				})
 				.catch(handleUnknownError)
 		}
-	}, [condition?.subject, objectOptions])
+	}, [condition?.subject, objectOptions, fetchSubjectOptions])
 
 	return (
 		<div id={`snippet-condition-${ruleId}`} className="snippet-condition-rule">
-			<ConditionFieldEditor
-				field="enabled"
-				ruleId={ruleId}
+			<SingleSelect
+				className="snippet-condition-field-select snippet-condition-enabled-select"
 				options={ENABLED_OPTIONS}
-				fallbackValue={true}
+				currentValue={snippet.conditions[ruleId]?.enabled ?? true}
+				onChange={enabled => {
+					setSnippet(previous => updateConditionRule(previous, ruleId, { enabled }))
+				}}
 			/>
 
-			<ConditionFieldEditor
-				field="subject"
+			<ConditionSubjectEditor
 				ruleId={ruleId}
-				options={SUBJECT_OPTIONS}
-				onChange={option => {
+				clearObjectOptions={() => {
 					setLoadedSubject(undefined)
 					setObjectOptions(undefined)
-					setSnippet(previous => updateConditionField(previous, ruleId, 'subject', option?.value))
 				}}
 			/>
 

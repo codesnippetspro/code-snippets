@@ -1,11 +1,11 @@
 import { BaseControl } from '@wordpress/components'
-import React, { useMemo, useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import Select from 'react-select'
-import { useSnippets } from '../../hooks/useSnippetsAPI'
+import React, { useMemo, useState } from 'react'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
+import { useSnippets } from '../../hooks/useSnippetsAPI'
+import { SingleSelect } from '../common/Select'
 import { CancelButton } from './CancelButton'
-import type { SelectOption, SelectOptions } from '../../types/SelectOption'
+import type { SelectOptions } from '../../types/SelectOption'
 import type { Snippet } from '../../types/Snippet'
 import type { FormEventHandler } from 'react'
 
@@ -16,33 +16,22 @@ export interface ApplyConditionFormProps {
 export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ closeModal }) => {
 	const snippets = useSnippets()
 	const { snippet, setSnippet } = useSnippetForm()
-	const [selectedOption, setSelectedOption] = useState<SelectOption<Snippet> | undefined>(undefined)
+	const [conditionalId, setConditionalId] = useState<Snippet['id'] | undefined>(snippet.conditional)
 
-	const options = useMemo<SelectOptions<Snippet>>(() => {
-		const newOptions = snippets
+	const options = useMemo<SelectOptions<Snippet['id']>>(() =>
+		snippets
 			?.filter(snippet => snippet.active && 'condition' === snippet.scope)
-			.map(snippet => ({
-				value: snippet,
-				label: snippet.name
-			})) ?? []
-
-		if (snippets && snippet.conditional) {
-			setSelectedOption(newOptions.find(option => option.value.id === snippet.conditional))
-		}
-
-		return newOptions
-	}, [snippets, snippet.conditional])
+			.map(snippet => ({ value: snippet.id, label: snippet.name }))
+			?? [],
+	[snippets]
+	)
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
 
 		// TODO: add validation
-		if (selectedOption) {
-			setSnippet(previous => ({
-				...previous,
-				conditional: selectedOption.value.id
-			}))
-
+		if (conditionalId) {
+			setSnippet(previous => ({ ...previous, conditional: conditionalId }))
 			closeModal()
 		}
 	}
@@ -51,12 +40,12 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ closeMod
 		<form className="modal-form" onSubmit={handleSubmit}>
 			<div className="modal-content">
 				<BaseControl label={__('Saved Conditions', 'code-snippets')}>
-					<Select
-						className="code-snippets-select"
+					<SingleSelect
+						required
 						isLoading={snippets === undefined}
-						value={selectedOption ?? null}
+						currentValue={conditionalId}
 						options={options}
-						onChange={newValue => setSelectedOption(newValue ?? undefined)}
+						onChange={newValue => setConditionalId(newValue)}
 					/>
 
 				</BaseControl>
