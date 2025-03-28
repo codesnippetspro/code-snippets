@@ -9,46 +9,48 @@ const isAbsInt = (value: unknown): value is number =>
 const isBooleanOrUndefined = (value: unknown): value is boolean | undefined =>
 	'boolean' == typeof value || value === undefined
 
+const parseStringArray = (value: unknown): string[] | undefined =>
+	Array.isArray(value) ? value.filter(entry => typeof entry === 'string') : undefined
+
 export const isValidScope = (scope: unknown): scope is SnippetScope =>
 	'string' === typeof scope &&
 	Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
 		typeScopes.some(typeScope => typeScope === scope))
 
-export const createSnippetObject = (fields: {} = {}): Snippet => ({
-	id: 'id' in fields && isAbsInt(fields.id)
-		? fields.id
-		: 0,
-	name: 'name' in fields && 'string' === typeof fields.name
-		? fields.name
-		: '',
-	desc: 'desc' in fields && 'string' === typeof fields.desc
-		? fields.desc
-		: '',
-	code: 'code' in fields && 'string' === typeof fields.code
-		? fields.code
-		: '',
-	tags: 'tags' in fields && Array.isArray(fields.tags) ?
-		fields.tags.filter(value => typeof value === 'string')
-		: [],
-	scope: 'scope' in fields && isValidScope(fields.scope)
-		? fields.scope
-		: 'global',
-	modified: 'modified' in fields && 'string' === typeof fields.modified
-		? fields.modified
-		: '',
-	active: 'active' in fields && 'boolean' === typeof fields.active
-		? fields.active
-		: false,
-	network: 'network' in fields && isBooleanOrUndefined(fields.network)
-		? fields.network
-		: isNetworkAdmin(),
-	shared_network: 'shared_network' in fields && isBooleanOrUndefined(fields.shared_network)
-		? fields.shared_network
-		: null,
-	priority: 'priority' in fields && typeof fields.priority === 'number'
-		? fields.priority
-		: 10
-})
+export const createSnippetObject = (fields: unknown = undefined): Snippet => {
+	const defaults: Snippet = {
+		id: 0,
+		name: '',
+		code: '',
+		desc: '',
+		tags: [],
+		scope: 'global',
+		modified: '',
+		active: false,
+		network: isNetworkAdmin(),
+		shared_network: null,
+		priority: 10
+	}
+
+	if (typeof fields !== 'object' || null === fields) {
+		return defaults
+	}
+
+	return ({
+		id: 'id' in fields && isAbsInt(fields.id) ? fields.id : defaults.id,
+		name: 'name' in fields && 'string' === typeof fields.name ? fields.name : defaults.name,
+		desc: 'desc' in fields && 'string' === typeof fields.desc ? fields.desc : defaults.desc,
+		code: 'code' in fields && 'string' === typeof fields.code ? fields.code : defaults.code,
+		tags: 'tags' in fields ? parseStringArray(fields.tags) ?? defaults.tags : defaults.tags,
+		scope: 'scope' in fields && isValidScope(fields.scope) ? fields.scope : defaults.scope,
+		modified: 'modified' in fields && 'string' === typeof fields.modified ? fields.modified : defaults.modified,
+		active: 'active' in fields && 'boolean' === typeof fields.active ? fields.active : defaults.active,
+		network: 'network' in fields && isBooleanOrUndefined(fields.network) ? fields.network : defaults.network,
+		shared_network: 'shared_network' in fields && isBooleanOrUndefined(fields.shared_network)
+			? fields.shared_network : defaults.shared_network,
+		priority: 'priority' in fields && typeof fields.priority === 'number' ? fields.priority : defaults.priority
+	})
+}
 
 export const getSnippetType = (snippetOrScope: Snippet | SnippetScope): SnippetType => {
 	const scope = 'string' === typeof snippetOrScope ? snippetOrScope : snippetOrScope.scope

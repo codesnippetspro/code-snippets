@@ -68,9 +68,6 @@ const EditForm: React.FC = () => {
 }
 
 export const SnippetForm: React.FC = () =>
-	<WithSnippetFormContext initialSnippet={() =>
-		typeof window.CODE_SNIPPETS_EDIT?.snippet === 'object' && null !== window.CODE_SNIPPETS_EDIT?.snippet
-			? createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)
-			: createSnippetObject()}>
+	<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
 		<EditForm />
 	</WithSnippetFormContext>
