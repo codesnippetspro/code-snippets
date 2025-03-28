@@ -10,7 +10,7 @@ export interface Snippet {
 	conditional: number
 	priority: number
 	active: boolean
-	network?: boolean
+	network: boolean
 	shared_network?: boolean | null
 	modified?: string
 	code_error?: [string, number] | null

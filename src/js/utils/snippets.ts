@@ -1,21 +1,25 @@
+import { createInitialConditionRules } from '../services/edit/conditions/rules'
+import { SNIPPET_TYPE_SCOPES } from '../types/Snippet'
 import { isNetworkAdmin } from './screen'
-import { Snippet, SNIPPET_TYPE_SCOPES, SnippetScope, SnippetType } from '../types/Snippet'
+import type { ConditionRules } from '../types/ConditionRule'
+import type { Snippet, SnippetScope, SnippetType } from '../types/Snippet'
 
 const PRO_TYPES: SnippetType[] = ['css', 'js']
 
 const isAbsInt = (value: unknown): value is number =>
-	typeof value === 'number' && value > 0
-
-const isBooleanOrUndefined = (value: unknown): value is boolean | undefined =>
-	'boolean' == typeof value || value === undefined
+	'number' === typeof value && 0 < value
 
 const parseStringArray = (value: unknown): string[] | undefined =>
-	Array.isArray(value) ? value.filter(entry => typeof entry === 'string') : undefined
+	Array.isArray(value) ? value.filter(entry => 'string' === typeof entry) : undefined
 
 export const isValidScope = (scope: unknown): scope is SnippetScope =>
-	'string' === typeof scope &&
-	Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
+	'string' === typeof scope
+	&& Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
 		typeScopes.some(typeScope => typeScope === scope))
+
+const isValidConditionRules = (rules: unknown): rules is ConditionRules =>
+	'object' === typeof rules && null !== rules && Object.values(rules)
+		.every(rule => 'object' === typeof rule && null !== rule)
 
 export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 	const defaults: Snippet = {
@@ -29,14 +33,16 @@ export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 		active: false,
 		network: isNetworkAdmin(),
 		shared_network: null,
-		priority: 10
+		priority: 10,
+		conditional: 0,
+		conditions: {}
 	}
 
-	if (typeof fields !== 'object' || null === fields) {
-		return defaults
+	if ('object' !== typeof fields || null === fields) {
+		return { ...defaults, conditions: createInitialConditionRules() }
 	}
 
-	return ({
+	const parsed: Snippet = {
 		id: 'id' in fields && isAbsInt(fields.id) ? fields.id : defaults.id,
 		name: 'name' in fields && 'string' === typeof fields.name ? fields.name : defaults.name,
 		desc: 'desc' in fields && 'string' === typeof fields.desc ? fields.desc : defaults.desc,
@@ -45,11 +51,28 @@ export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 		scope: 'scope' in fields && isValidScope(fields.scope) ? fields.scope : defaults.scope,
 		modified: 'modified' in fields && 'string' === typeof fields.modified ? fields.modified : defaults.modified,
 		active: 'active' in fields && 'boolean' === typeof fields.active ? fields.active : defaults.active,
-		network: 'network' in fields && isBooleanOrUndefined(fields.network) ? fields.network : defaults.network,
-		shared_network: 'shared_network' in fields && isBooleanOrUndefined(fields.shared_network)
-			? fields.shared_network : defaults.shared_network,
-		priority: 'priority' in fields && typeof fields.priority === 'number' ? fields.priority : defaults.priority
-	})
+		network: 'network' in fields && 'boolean' === typeof fields.network ? fields.network : defaults.network,
+		shared_network: 'shared_network' in fields && 'boolean' === typeof fields.shared_network && fields.shared_network
+			|| defaults.shared_network,
+		priority: 'priority' in fields && 'number' === typeof fields.priority ? fields.priority : defaults.priority,
+		conditional: 'conditional' in fields && isAbsInt(fields.conditional) ? fields.conditional : defaults.conditional,
+		conditions: 'conditions' in fields && isValidConditionRules(fields.conditions) ? fields.conditions : defaults.conditions
+	}
+
+	if ('condition' === parsed.scope && '' !== parsed.code.trim() && 0 === Object.keys(parsed.conditions).length) {
+		try {
+			const parsedRules: unknown = JSON.parse(parsed.code)
+
+			if (isValidConditionRules(parsedRules)) {
+				parsed.conditions = parsedRules
+				parsed.code = defaults.code
+			}
+		} catch (error) {
+			console.error('Failed to parse condition rules JSON.', parsed.code, error)
+		}
+	}
+
+	return parsed
 }
 
 const getSnippetScope = (snippetOrScope: Snippet | SnippetScope): SnippetScope =>

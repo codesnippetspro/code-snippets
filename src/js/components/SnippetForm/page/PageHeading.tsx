@@ -1,8 +1,8 @@
 import { __, _x } from '@wordpress/i18n'
 import React from 'react'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { Snippet } from '../../../types/Snippet'
 import { createSnippetObject } from '../../../utils/snippets'
+import type { Snippet } from '../../../types/Snippet'
 
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 
@@ -23,7 +23,7 @@ export const PageHeading: React.FC = () => {
 		<h1>
 			{snippet.id
 				? <>
-					{`{${getEditHeading(snippet)} `}
+					{`${getEditHeading(snippet)} `}
 
 					<a
 						href={window.CODE_SNIPPETS?.urls.addNew}

@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { isNetworkAdmin } from '../../../utils/screen'
 import { buildShortcodeTag } from '../../../utils/shortcodes'
 import { CopyToClipboardButton } from '../../common/CopyToClipboardButton'
 import type { ShortcodeAtts } from '../../../utils/shortcodes'
@@ -74,9 +73,9 @@ export const ShortcodeInfo: React.FC = () => {
 				{__('There are multiple options for inserting this snippet into a post, page or other content.', 'code-snippets')}
 				{' '}
 				{snippet.id
-					 
+
 					? __('You can copy the below shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')
-					 
+
 					: __('After saving, you can copy a shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')}
 				{' '}
 				<ExternalLink
@@ -90,7 +89,7 @@ export const ShortcodeInfo: React.FC = () => {
 				? <>
 					<ShortcodeTag atts={{
 						id: snippet.id,
-						network: snippet.network ?? isNetworkAdmin(),
+						network: snippet.network,
 						...options
 					}} />
 

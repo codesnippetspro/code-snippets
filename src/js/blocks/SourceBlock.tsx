@@ -85,7 +85,7 @@ const Edit: React.FC<BlockEditProps<SourceBlockAttributes>> = ({ attributes, set
 		[attributes.snippet_id, snippets]
 	)
 
-	const options = useMemo<SnippetSelectGroup[]>(
+	const options = useMemo<SelectGroup<number>[]>(
 		() => snippets ? buildOptions(snippets) : [],
 		[snippets]
 	)
