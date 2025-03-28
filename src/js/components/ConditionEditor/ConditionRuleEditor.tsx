@@ -1,14 +1,14 @@
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
-import { ENABLED_OPTIONS, OPERATOR_OPTIONS, SUBJECT_OPTIONS, fetchSubjectOptions } from '../../services/edit/conditions/options'
+import { ENABLED_OPTIONS, OPERATOR_OPTIONS, SUBJECT_OPTIONS, useConditionsAPI } from '../../hooks/useConditionsAPI'
 import { cloneConditionRule, removeConditionRule, updateConditionField } from '../../services/edit/conditions/rules'
 import { handleUnknownError } from '../../utils/errors'
 import { CloneIcon } from '../common/icons/CloneIcon'
 import { RemoveIcon } from '../common/icons/RemoveIcon'
 import { ConditionFieldEditor } from './ConditionFieldEditor'
 import type { Dispatch, SetStateAction } from 'react'
-import type { ObjectOptions } from '../../services/edit/conditions/options'
+import type { ObjectOptions } from '../../hooks/useConditionsAPI'
 import type { Snippet } from '../../types/Snippet'
 import type { ConditionSubject } from '../../types/ConditionRule'
 
@@ -76,10 +76,12 @@ export interface ConditionRuleEditorProps {
 }
 
 export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId }) => {
+	const { fetchSubjectOptions } = useConditionsAPI()
+	const { snippet, setSnippet } = useSnippetForm()
+
 	const [loadedSubject, setLoadedSubject] = useState<ConditionSubject>()
 	const [objectOptions, setObjectOptions] = useState<ObjectOptions | undefined>(undefined)
 
-	const { snippet, setSnippet } = useSnippetForm()
 	const condition = snippet.conditions[ruleId]
 
 	useEffect(() => {

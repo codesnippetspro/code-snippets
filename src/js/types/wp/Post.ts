@@ -1,5 +1,3 @@
-export const POSTS_ENDPOINT = '/wp/v2/posts'
-
 export interface Post {
 	id: number
 	date: string | null

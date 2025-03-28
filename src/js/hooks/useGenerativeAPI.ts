@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
+import { REST_API_AXIOS_CONFIG, REST_CLOUD_BASE } from '../utils/restAPI'
 import { useAxios } from './useAxios'
-import type { AxiosRequestConfig } from 'axios'
 import type { Snippet, SnippetType } from '../types/Snippet'
+import { CreateAxiosDefaults } from 'axios'
 
-const ROUTE_BASE = window.CODE_SNIPPETS?.restAPI.cloud
-
-const AXIOS_CONFIG: AxiosRequestConfig = {
+const AXIOS_CONFIG: CreateAxiosDefaults = {
+	...REST_API_AXIOS_CONFIG,
 	headers: {
-		'X-WP-Nonce': window.CODE_SNIPPETS?.restAPI.nonce,
-		'Access-Control': window.CODE_SNIPPETS?.restAPI.localToken
+		...REST_API_AXIOS_CONFIG.headers,
+		'X-WP-Nonce': window.CODE_SNIPPETS?.restAPI.nonce
 	}
 }
 
@@ -43,14 +43,14 @@ export const useGenerativeAPI = (): GenerativeAPI => {
 	return useMemo((): GenerativeAPI => ({
 		generateSnippet: (prompt, type) =>
 			post<ApiResponse<GeneratedSnippet>, { prompt: string, type: SnippetType }>(
-				`${ROUTE_BASE}/ai/prompt`,
+				`${REST_CLOUD_BASE}/ai/prompt`,
 				{ prompt, type }
 			)
 				.then(response => response.data.message),
 
 		explainSnippet: (code, field) =>
 			post<ApiResponse<ExplainedSnippet>, { code: string, field: ExplainSnippetFields }>(
-				`${ROUTE_BASE}/ai/explain`,
+				`${REST_CLOUD_BASE}/ai/explain`,
 				{ code, field }
 			)
 				.then(response => response.data.message)

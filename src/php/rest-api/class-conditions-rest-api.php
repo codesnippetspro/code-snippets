@@ -1,0 +1,77 @@
+<?php
+
+namespace Code_Snippets\REST_API;
+
+use WP_Error;
+use WP_HTTP_Response;
+use WP_REST_Server;
+use WP_REST_Response;
+use function Code_Snippets\code_snippets;
+use function get_editable_roles;
+use function wp_roles;
+use const Code_Snippets\REST_API_NAMESPACE;
+
+/**
+ * Provides object data to the snippet condition editor.
+ *
+ * @package Code_Snippets
+ */
+final class Conditions_REST_API {
+
+	/**
+	 * Current API version.
+	 */
+	const VERSION = 1;
+
+	/**
+	 * The base route for these API endpoints.
+	 */
+	const BASE_ROUTE = 'conditions';
+
+	/**
+	 * Retrieve this controller's REST API base path, including namespace.
+	 *
+	 * @return string
+	 */
+	public static function get_base_route(): string {
+		return REST_API_NAMESPACE . self::VERSION . '/' . self::BASE_ROUTE;
+	}
+
+	/**
+	 * Register REST routes.
+	 */
+	public function register_routes() {
+		$namespace = REST_API_NAMESPACE . self::VERSION;
+		$permission_callback = [ code_snippets(), 'current_user_can' ];
+
+		register_rest_route(
+			$namespace,
+			self::BASE_ROUTE . '/roles',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_role_names' ],
+					'permission_callback' => $permission_callback,
+				],
+			]
+		);
+	}
+
+	/**
+	 * Retrieve a list of role information.
+	 *
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 */
+	public function get_role_names() {
+		$roles = [];
+
+		foreach ( wp_roles()->get_names() as $role => $display_name ) {
+			$roles[] = [
+				'role' => $role,
+				'name' => $display_name,
+			];
+		}
+
+		return rest_ensure_response( $roles );
+	}
+}

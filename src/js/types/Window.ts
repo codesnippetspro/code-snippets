@@ -25,6 +25,7 @@ declare global {
 			restAPI: {
 				base: string
 				snippets: string
+				conditions: string
 				cloud: string
 				nonce: string
 				localToken: string

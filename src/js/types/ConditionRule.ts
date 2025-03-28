@@ -1,6 +1,7 @@
 import type { Page } from './wp/Page'
 import type { Post } from './wp/Post'
 import type { PostType } from './wp/PostType'
+import { UserRole } from './wp/UserRole'
 import type { Category, PostTag } from './wp/Term'
 import type { User } from './wp/User'
 
@@ -22,7 +23,7 @@ export interface ConditionSubjects {
 	tag: PostTag
 	user: User
 	authenticated: boolean
-	userRole: string
+	userRole: UserRole
 }
 
 export type ConditionSubject = keyof ConditionSubjects

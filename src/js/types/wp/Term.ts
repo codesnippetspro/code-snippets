@@ -1,6 +1,3 @@
-export const TAGS_ENDPOINT = '/wp/v2/tags'
-export const CATEGORIES_ENDPOINT = '/wp/v2/categories'
-
 export interface Term {
 	id: number
 	count: number

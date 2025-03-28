@@ -1,5 +1,3 @@
-export const POST_TYPES_ENDPOINT = '/wp/v2/types'
-
 export interface PostType {
 	description: string
 	hierarchical: boolean
