@@ -1,16 +1,16 @@
 export interface Snippet {
-	id: number
-	name: string
-	desc: string
-	code: string
-	tags: string[]
-	scope: SnippetScope
-	priority: number
-	active: boolean
-	network?: boolean
-	shared_network?: boolean | null
-	modified?: string
-	code_error?: [string, number] | null
+	readonly id: number
+	readonly name: string
+	readonly desc: string
+	readonly code: string
+	readonly tags: string[]
+	readonly scope: SnippetScope
+	readonly priority: number
+	readonly active: boolean
+	readonly network?: boolean
+	readonly shared_network?: boolean | null
+	readonly modified?: string
+	readonly code_error?: [string, number] | null
 }
 
 export type SnippetType = 'php' | 'html' | 'css' | 'js'

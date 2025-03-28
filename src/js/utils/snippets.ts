@@ -27,8 +27,7 @@ const parseStringArray = (value: unknown): string[] | undefined =>
 	Array.isArray(value) ? value.filter(entry => 'string' === typeof entry) : undefined
 
 export const isValidScope = (scope: unknown): scope is SnippetScope =>
-	'string' === typeof scope
-	&& Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
+	'string' === typeof scope && Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
 		typeScopes.some(typeScope => typeScope === scope))
 
 export const createSnippetObject = (fields: unknown = undefined): Snippet => {

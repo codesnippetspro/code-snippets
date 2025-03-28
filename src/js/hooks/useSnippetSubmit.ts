@@ -53,7 +53,7 @@ export const useSnippetSubmit = (
 		const result = await (async (): Promise<Snippet | string | undefined> => {
 			try {
 				const requestData: Snippet = { ...snippet, active: active ?? snippet.active }
-				const { data } = await (0 === snippet.id ? api.create(requestData) : api.update(requestData))
+				const data = await (0 === snippet.id ? api.create(requestData) : api.update(requestData))
 				setIsWorking(false)
 				return data.id ? data : undefined
 			} catch (error) {
