@@ -1,8 +1,8 @@
 import { __, _x } from '@wordpress/i18n'
 import React from 'react'
-import { createEmptySnippet } from '../../../utils/snippets'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import type { Snippet } from '../../../types/Snippet'
+import { Snippet } from '../../../types/Snippet'
+import { createSnippetObject } from '../../../utils/snippets'
 
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 
@@ -23,14 +23,14 @@ export const PageHeading: React.FC = () => {
 		<h1>
 			{snippet.id
 				? <>
-					{`${getEditHeading(snippet)} `}
+					{`{${getEditHeading(snippet)} `}
 
 					<a
 						href={window.CODE_SNIPPETS?.urls.addNew}
 						className="page-title-action"
 						onClick={event => {
 							event.preventDefault()
-							updateSnippet(() => createEmptySnippet())
+							updateSnippet(() => createSnippetObject())
 							setCurrentNotice(undefined)
 
 							window.document.title = window.document.title.replace(getEditHeading(snippet), getAddNewHeading(snippet))

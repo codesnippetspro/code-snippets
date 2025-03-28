@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
+import { createSnippetObject } from '../utils/snippets'
 import { useSnippetsAPI } from './useSnippetsAPI'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ScreenNotice } from '../types/ScreenNotice'
@@ -87,14 +88,8 @@ export const useSnippetSubmit = (
 			setCurrentNotice(['error', message.filter(Boolean).join(' ')])
 			return undefined
 		} else {
+			setSnippet(createSnippetObject(result))
 			setCurrentNotice(['updated', getSuccessNotice(snippet, result, active)])
-
-			setSnippet({
-				...result,
-				// TODO: parse this safely.
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				conditions: 'condition' === result.scope ? JSON.parse(result.code) : undefined
-			})
 
 			if (snippet.id && result.id) {
 				window.document.title = window.document.title.replace(snippetMessages.addNew, messages.edit)

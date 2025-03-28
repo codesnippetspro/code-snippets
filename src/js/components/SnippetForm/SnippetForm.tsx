@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import { getSnippetType, parseSnippetObject } from '../../utils/snippets'
+import { createSnippetObject, getSnippetType } from '../../utils/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { ConditionEditor } from '../ConditionEditor'
 import { ConditionsModalButton } from '../ConditionModal/ConditionModal'
@@ -78,6 +78,6 @@ const EditForm: React.FC = () => {
 }
 
 export const SnippetForm: React.FC = () =>
-	<WithSnippetFormContext initialSnippet={() => parseSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
+	<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
 		<EditForm />
 	</WithSnippetFormContext>

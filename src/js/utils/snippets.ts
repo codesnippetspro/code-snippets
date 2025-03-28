@@ -1,65 +1,55 @@
-import { createInitialConditionRules } from '../services/edit/conditions/rules'
-import { SNIPPET_TYPE_SCOPES } from '../types/Snippet'
 import { isNetworkAdmin } from './screen'
-import type { Snippet, SnippetScope, SnippetType } from '../types/Snippet'
-import type { ConditionRules } from '../types/ConditionRule'
+import { Snippet, SNIPPET_TYPE_SCOPES, SnippetScope, SnippetType } from '../types/Snippet'
 
 const PRO_TYPES: SnippetType[] = ['css', 'js']
 
-export const createEmptySnippet = (): Snippet => ({
-	id: 0,
-	name: '',
-	desc: '',
-	code: '',
-	tags: [],
-	scope: 'global',
-	conditional: 0,
-	modified: '',
-	active: false,
-	network: isNetworkAdmin(),
-	shared_network: null,
-	priority: 10,
-	conditions: createInitialConditionRules()
-})
+const isAbsInt = (value: unknown): value is number =>
+	typeof value === 'number' && value > 0
 
-export const isValidScope = (scope: unknown): scope is SnippetScope => {
-	if ('string' === typeof scope) {
-		Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
-			typeScopes.some(typeScope => typeScope === scope)
-		)
+const isBooleanOrUndefined = (value: unknown): value is boolean | undefined =>
+	'boolean' == typeof value || value === undefined
+
+const parseStringArray = (value: unknown): string[] | undefined =>
+	Array.isArray(value) ? value.filter(entry => typeof entry === 'string') : undefined
+
+export const isValidScope = (scope: unknown): scope is SnippetScope =>
+	'string' === typeof scope &&
+	Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
+		typeScopes.some(typeScope => typeScope === scope))
+
+export const createSnippetObject = (fields: unknown = undefined): Snippet => {
+	const defaults: Snippet = {
+		id: 0,
+		name: '',
+		code: '',
+		desc: '',
+		tags: [],
+		scope: 'global',
+		modified: '',
+		active: false,
+		network: isNetworkAdmin(),
+		shared_network: null,
+		priority: 10
 	}
 
-	return false
-}
-
-export const parseSnippetObject = (data: unknown): Snippet => {
-	const fallback = createEmptySnippet()
-
-	if ('object' !== typeof data || null === data) {
-		return fallback
+	if (typeof fields !== 'object' || null === fields) {
+		return defaults
 	}
 
-	return {
-		id: 'id' in data && 'number' === typeof data.id ? data.id : fallback.id,
-		name: 'name' in data && 'string' === typeof data.name ? data.name : fallback.name,
-		desc: 'desc' in data && 'string' === typeof data.desc ? data.desc : fallback.desc,
-		code: 'code' in data && 'string' === typeof data.code ? data.code : fallback.code,
-		tags: 'tags' in data && Array.isArray(data.tags)
-			? data.tags.map((tag: unknown) => 'string' === typeof tag ? tag : '').filter(Boolean)
-			: fallback.tags,
-		scope: 'scope' in data && isValidScope(data.scope) ? data.scope : fallback.scope,
-		conditional: 'conditional' in data && 'number' === typeof data.conditional ? data.conditional : fallback.conditional,
-		modified: 'modified' in data && 'string' === typeof data.modified ? data.modified : fallback.modified,
-		active: 'active' in data && 'boolean' === typeof data.active ? data.active : fallback.active,
-		network: 'network' in data && 'boolean' === typeof data.network ? data.network : fallback.network,
-		shared_network: 'shared_network' in data && 'boolean' === typeof data.shared_network
-			? data.shared_network
-			: fallback.shared_network,
-		priority: 'priority' in data && 'number' === typeof data.priority ? data.priority : fallback.priority,
-		conditions: 'conditions' in data && null !== data.conditions && data.conditions !== undefined
-			? <ConditionRules> data.conditions
-			: fallback.conditions
-	}
+	return ({
+		id: 'id' in fields && isAbsInt(fields.id) ? fields.id : defaults.id,
+		name: 'name' in fields && 'string' === typeof fields.name ? fields.name : defaults.name,
+		desc: 'desc' in fields && 'string' === typeof fields.desc ? fields.desc : defaults.desc,
+		code: 'code' in fields && 'string' === typeof fields.code ? fields.code : defaults.code,
+		tags: 'tags' in fields ? parseStringArray(fields.tags) ?? defaults.tags : defaults.tags,
+		scope: 'scope' in fields && isValidScope(fields.scope) ? fields.scope : defaults.scope,
+		modified: 'modified' in fields && 'string' === typeof fields.modified ? fields.modified : defaults.modified,
+		active: 'active' in fields && 'boolean' === typeof fields.active ? fields.active : defaults.active,
+		network: 'network' in fields && isBooleanOrUndefined(fields.network) ? fields.network : defaults.network,
+		shared_network: 'shared_network' in fields && isBooleanOrUndefined(fields.shared_network)
+			? fields.shared_network : defaults.shared_network,
+		priority: 'priority' in fields && typeof fields.priority === 'number' ? fields.priority : defaults.priority
+	})
 }
 
 const getSnippetScope = (snippetOrScope: Snippet | SnippetScope): SnippetScope =>
