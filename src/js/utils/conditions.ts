@@ -1,5 +1,5 @@
-import type { ConditionRule, ConditionRules } from '../../../types/ConditionRule'
-import type { Snippet } from '../../../types/Snippet'
+import type { ConditionRule, ConditionRules } from '../types/ConditionRule'
+import type { Snippet } from '../types/Snippet'
 
 const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
 	const keys = items ? Object.keys(items) : []

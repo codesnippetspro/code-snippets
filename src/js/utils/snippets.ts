@@ -1,4 +1,4 @@
-import { createInitialConditionRules } from '../services/edit/conditions/rules'
+import { createInitialConditionRules } from './conditions'
 import { SNIPPET_TYPE_SCOPES } from '../types/Snippet'
 import { isNetworkAdmin } from './screen'
 import type { ConditionRules } from '../types/ConditionRule'

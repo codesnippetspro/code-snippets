@@ -1,7 +1,7 @@
 import { __, _x } from '@wordpress/i18n'
 import React from 'react'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
-import { addConditionRule } from '../../services/edit/conditions/rules'
+import { addConditionRule } from '../../utils/conditions'
 import { ConditionRuleEditor } from './ConditionRuleEditor'
 
 const AddRuleButton: React.FC = () => {
