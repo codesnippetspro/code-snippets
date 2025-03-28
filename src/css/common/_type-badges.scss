@@ -1,13 +1,30 @@
 @use 'sass:map';
 @use 'theme';
 
-.nav-tab .badge, .snippet-type-badge, .go-pro-button .badge, .button .badge {
-	font-size: 10px;
+%badge {
+	display: inline-block;
+	font-size: 12px;
+	font-weight: 700;
 	text-transform: uppercase;
-	border: 1px solid;
 	padding: 1px 2px;
-	border-radius: 5px;
+	border-radius: 3px;
+	text-align: center;
+	width: 3.5em;
 }
+
+.nav-tab .badge,
+.snippet-type-badge,
+.go-pro-button .badge,
+.button .badge {
+	@extend %badge;
+}
+
+.go-pro-badge,
+.pro-badge,
+.core-badge {
+	@extend %badge;
+}
+
 
 .nav-tab .badge,
 .button .snippet-type-badge,
@@ -17,12 +34,7 @@ h2 .snippet-type-badge,
 h3 .snippet-type-badge,
 .snippet-type-option .badge {
 	/* rtl:ignore */
-	margin-left: 3px;
-}
-
-.button .badge {
-	font-size: 8px;
-	text-transform: lowercase;
+	margin-left: 8px;
 }
 
 .nav-tab span,
@@ -30,28 +42,12 @@ h3 .snippet-type-badge,
 	vertical-align: middle;
 }
 
-.snippet-type-badge-inverted {
-	font-size: inherit;
-	padding: 3px 6px;
-}
-
-@each $type, $colors in theme.$types {
-	$color: map.get($colors, 'highlight');
-
+@each $type, $color in theme.$types {
 	.nav-tab[data-snippet-type=#{$type}] .badge,
-	.snippet-type-badge[data-snippet-type=#{$type}] {
-		color: $color;
-		border-color: currentColor;
-	}
-
-	.snippet-type-badge-inverted[data-snippet-type=#{$type}]  {
-		color: white;
-		background-color: $color;
-		border-color: $color;
-	}
-
+	.snippet-type-badge[data-snippet-type=#{$type}],
 	.nav-tab-inactive[data-snippet-type=#{$type}]:hover .badge {
-		color: $color;
+		color: theme.contrasting-text-color($color);
+		background-color: $color;
 	}
 }
 
@@ -63,25 +59,11 @@ h3 .snippet-type-badge,
 
 .nav-tab.nav-tab-inactive {
 	background: transparent;
-	text-shadow: 0 1px 0 #fff;
 
-	&, .badge {
-		color: #a7aaad;
+	.badge {
+		color: #fff;
+		background-color: #a7aaad;
 	}
-
-	&:hover {
-		color: #50575e;
-	}
-}
-
-.go-pro-badge, .pro-badge, .core-badge {
-	margin-left: 3px;
-	border: 1px solid currentColor;
-	border-radius: 5px;
-	font-size: 10px;
-	padding: 1px 2px;
-	text-transform: uppercase;
-
 }
 
 .go-pro-badge, .pro-badge {
@@ -93,9 +75,10 @@ h3 .snippet-type-badge,
 }
 
 .go-pro-button .badge, .go-pro-badge {
-	color: theme.$pro;
-	border-color: theme.$pro;
+	color: #fff;
+	background-color: theme.$pro;
 	margin-left: 1px;
+	font-size: 10px;
 }
 
 .wp-core-ui .button.nav-tab-button {

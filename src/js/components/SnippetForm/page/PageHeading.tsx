@@ -15,7 +15,7 @@ export const PageHeading: React.FC = () => {
 		<h1>
 			{snippet.id
 				? <>
-					{`{${editHeading} `}
+					{`${editHeading} `}
 
 					<a
 						href={window.CODE_SNIPPETS?.urls.addNew}

@@ -1,5 +1,4 @@
-$active-color: #2196f3;
-$inactive-color: #ccc;
+@use 'theme';
 
 .snippet-execution-button,
 .snippet-activation-switch,
@@ -11,15 +10,14 @@ input[type=checkbox].switch {
 .snippet-activation-switch,
 input[type=checkbox].switch {
 	appearance: none;
-	border: 0;
 	outline: 0;
 	cursor: pointer;
 	margin-top: 5px;
 	width: 30px;
 	height: 17px;
 	border-radius: 34px;
-	background-color: #ccc;
 	text-align: left;
+	border: 1px solid theme.$accent;
 
 	&::before {
 		transition: all .4s;
@@ -28,16 +26,16 @@ input[type=checkbox].switch {
 		width: 13px;
 		display: inline-block;
 		margin: 2px;
-		background-color: white;
+		background-color: theme.$accent;
 		border-radius: 50%;
 	}
+}
 
-	&:checked {
-		background-color: $active-color;
-
-		&::before {
-			transform: translateX(100%);
-		}
+.active-snippet .snippet-activation-switch,
+input[type=checkbox].switch:checked {
+	&::before {
+		background-color: white;
+		transform: translateX(100%);
 	}
 }
 
@@ -57,8 +55,7 @@ input[type=checkbox].switch {
 	height: 0;
 	border-top: 9px solid transparent;
 	border-bottom: 9px solid transparent;
-	border-left: 10px solid $inactive-color;
-	transition: all 0.3s;
+	border-left: 10px solid #ccc;
 
 	&::before {
 		content: '';
@@ -68,8 +65,17 @@ input[type=checkbox].switch {
 		bottom: -14px;
 		right: -8px;
 		border-radius: 50%;
-		border: 1.8px solid $inactive-color;
+		border: 1.8px solid #ccc;
 		z-index: 2;
-		transition: all .3s;
+	}
+
+	&:hover {
+		border-left-color: theme.$accent;
+		transition: border-left-color 0.6s;
+
+		&::before {
+			border-color: theme.$accent;
+			transition: border-color 0.6s;
+		}
 	}
 }
