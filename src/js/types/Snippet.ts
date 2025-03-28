@@ -20,6 +20,7 @@ export interface Snippet {
 export type SnippetCodeType = 'php' | 'html' | 'css' | 'js'
 export type SnippetType = SnippetCodeType | 'cond'
 
+export type SnippetCodeScope = typeof SNIPPET_TYPE_SCOPES[SnippetCodeType][number]
 export type SnippetScope = typeof SNIPPET_TYPE_SCOPES[SnippetType][number]
 
 export const SNIPPET_TYPE_SCOPES = <const> {

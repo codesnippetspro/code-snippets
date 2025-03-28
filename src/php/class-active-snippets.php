@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use MatthiasMullie\Minify;
+use WP_Exception;
 
 /**
  * Class for loading active snippets of various types.
@@ -27,6 +28,8 @@ class Active_Snippets {
 
 	/**
 	 * Initialise class functions.
+	 *
+	 * @throws WP_Exception
 	 */
 	public function init() {
 		add_action( 'wp_head', [ $this, 'load_head_content' ] );
@@ -39,6 +42,8 @@ class Active_Snippets {
 
 	/**
 	 * Initialise class functions for the pro functionality.
+	 *
+	 * @throws WP_Exception
 	 */
 	protected function init_pro() {
 		if ( isset( $_GET['code-snippets-css'] ) ) {
@@ -51,9 +56,8 @@ class Active_Snippets {
 			exit;
 		}
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_js' ), 15 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_css' ), 15 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend' ), 15 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ), 15 );
 	}
 
 	/**
@@ -134,10 +138,8 @@ class Active_Snippets {
 	 */
 	public function get_rev( string $scope ) {
 		$rev = 0;
-		$type = Snippet::get_type_from_scope( $scope );
-		$conditional_scope = "conditional-$type";
 
-		$scope_snippets = $this->fetch_active_snippets( [ $scope, $conditional_scope ] );
+		$scope_snippets = $this->fetch_active_snippets( [ $scope ] );
 
 		if ( empty( $scope_snippets ) ) {
 			return false;
@@ -145,12 +147,10 @@ class Active_Snippets {
 
 		$revisions = get_option( 'code_snippets_assets_rev' );
 		$rev += isset( $revisions[ $scope ] ) ? intval( $revisions[ $scope ] ) : 0;
-		$rev += isset( $revisions[ $conditional_scope ] ) ? intval( $revisions[ $conditional_scope ] ) : 0;
 
 		if ( is_multisite() ) {
 			$ms_revisions = get_site_option( 'code_snippets_assets_rev' );
 			$rev += isset( $ms_revisions[ $scope ] ) ? intval( $ms_revisions[ $scope ] ) : 0;
-			$rev += isset( $ms_revisions[ $conditional_scope ] ) ? intval( $ms_revisions[ $conditional_scope ] ) : 0;
 		}
 
 		return $rev;
@@ -187,52 +187,72 @@ class Active_Snippets {
 	}
 
 	/**
-	 * Enqueue the active style snippets for the current page
+	 * Enqueue snippet assets for the site front-end.
+	 *
+	 * @return void
+	 *
+	 * @throws WP_Exception
 	 */
-	public function enqueue_css() {
-		$scope = is_admin() ? 'admin' : 'site';
-		$rev = $this->get_rev( "$scope-css" );
+	public function enqueue_frontend() {
+		$this->enqueue_css( 'site-css' );
+		$this->enqueue_js( 'site-head-js' );
+		$this->enqueue_js( 'site-footer-js' );
+	}
+
+	/**
+	 * Enqueue snippet assets for the site admin area.
+	 *
+	 * @return void
+	 *
+	 * @throws WP_Exception
+	 */
+	public function enqueue_admin() {
+		$this->enqueue_css( 'admin-css' );
+	}
+
+	/**
+	 * Enqueue the active style snippets for the current page
+	 *
+	 * @param string $scope CSS scope, either 'site-css' or 'admin-css'.
+	 *
+	 * @throws WP_Exception if an invalid snippet scope is provided.
+	 */
+	private function enqueue_css( string $scope ) {
+		$rev = $this->get_rev( $scope );
 
 		if ( ! $rev ) {
 			return;
 		}
 
-		$url = $this->get_asset_url( "$scope-css" );
+		$url = $this->get_asset_url( $scope );
 		$handle = "code-snippets-$scope-styles";
 
 		wp_enqueue_style( $handle, $url, [], $rev );
-		wp_add_inline_style( $handle, $this->build_inline_code( 'css' ) );
+		wp_add_inline_style( $handle, $this->build_inline_code( $scope ) );
 	}
 
 	/**
-	 * Enqueue the active javascript snippets for the current page
+	 * Enqueue active JavaScript snippets for the current page
+	 *
+	 * @param string $scope JS scope, either 'site-head-js' or 'site-footer-js'.
+	 *
+	 * @throws WP_Exception if an invalid snippet scope is provided.
 	 */
-	public function enqueue_js() {
-		$head_rev = $this->get_rev( 'site-head-js' );
-		$footer_rev = $this->get_rev( 'site-footer-js' );
+	private function enqueue_js( string $scope ) {
+		$rev = $this->get_rev( $scope );
 
-		if ( $head_rev ) {
-			wp_enqueue_script(
-				'code-snippets-site-head',
-				$this->get_asset_url( 'site-head-js' ),
-				array(),
-				$head_rev,
-				false
-			);
-		}
-
-		if ( $footer_rev ) {
-			$handle = 'code-snippets-site-footer';
+		if ( $rev ) {
+			$handle = "code-snippets-$scope";
 
 			wp_enqueue_script(
 				$handle,
-				$this->get_asset_url( 'site-footer-js' ),
+				$this->get_asset_url( $scope ),
 				array(),
-				$footer_rev,
-				true
+				$rev,
+				'site-footer-js' === $scope
 			);
 
-			wp_add_inline_script( $handle, $this->build_inline_code( 'js' ) );
+			wp_add_inline_script( $handle, $this->build_inline_code( $scope ) );
 		}
 	}
 
@@ -250,26 +270,37 @@ class Active_Snippets {
 	/**
 	 * Output the code from a list of snippets
 	 *
-	 * @param string $code Snippet code.
-	 * @param string $type Code type, 'css' or 'js'.
+	 * @param string $code  Snippet code.
+	 * @param string $scope Snippet scope.
 	 *
 	 * @return string Processed code.
+	 *
+	 * @throws WP_Exception if an invalid snippet scope is provided.
 	 */
-	private static function process_code( string $code, string $type ): string {
+	private static function process_code( string $code, string $scope ): string {
 		$minify_types = Settings\get_setting( 'general', 'minify_output' );
 
-		switch ( $type ) {
-			case 'css':
+		switch ( $scope ) {
+			case 'site-css':
+			case 'admin-css':
 				if ( in_array( 'css', $minify_types, true ) ) {
 					$minifier = new Minify\CSS( $code );
 					$code = $minifier->minify();
 				}
 				break;
 
-			case 'js':
+			case 'site-head-js':
+			case 'site-footer-js':
 				if ( in_array( 'js', $minify_types, true ) ) {
 					$minifier = new Minify\JS( $code );
 					$code = $minifier->minify();
+				}
+				break;
+
+			default:
+				if ( function_exists( 'wp_trigger_error' ) ) {
+					$message = sprintf( 'Cannot process code for snippet scope: %s', esc_html( $scope ) );
+					wp_trigger_error( __FUNCTION__, $message );
 				}
 				break;
 		}
@@ -281,6 +312,8 @@ class Active_Snippets {
 	 * Fetch and print the active snippets for a given type and the current scope.
 	 *
 	 * @param string $type Must be either 'css' or 'js'.
+	 *
+	 * @throws WP_Exception if an invalid snippet type is provided.
 	 */
 	private function print_external_code( string $type ) {
 		if ( 'js' !== $type && 'css' !== $type ) {
@@ -312,13 +345,14 @@ class Active_Snippets {
 	/**
 	 * Generate inline code for a given type, paying respect to conditionals.
 	 *
-	 * @param string $type Type of code, 'css' or 'js'.
+	 * @param string $scope Code scope.
 	 *
 	 * @return string Code ready for output.
+	 *
+	 * @throws WP_Exception if an invalid snippet scope is provided.
 	 */
-	private function build_inline_code( string $type ): string {
-		$current_scope = "conditional-$type";
-		$snippets_by_table = code_snippets()->db->fetch_active_snippets( [ $current_scope, 'condition' ] );
+	private function build_inline_code( string $scope ): string {
+		$snippets_by_table = code_snippets()->db->fetch_active_snippets( [ $scope, 'condition' ] );
 		$code = '';
 
 		foreach ( $snippets_by_table as $snippets ) {
@@ -340,7 +374,7 @@ class Active_Snippets {
 			}
 		}
 
-		return self::process_code( $code, $type );
+		return self::process_code( $code, $scope );
 	}
 
 	/**

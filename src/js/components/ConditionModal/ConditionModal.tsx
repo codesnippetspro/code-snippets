@@ -43,7 +43,7 @@ const ModalInner: React.FC<ModalInnerProps> = ({ closeModal }) => {
 
 export const ConditionsModalButton: React.FC = () => {
 	const { snippet, setSnippet } = useSnippetForm()
-	const [isModalOpen, setIsModalOpen] = useState(true) // TODO: Change to false
+	const [isModalOpen, setIsModalOpen] = useState(false)
 
 	const hasCondition = 0 !== snippet.conditional
 

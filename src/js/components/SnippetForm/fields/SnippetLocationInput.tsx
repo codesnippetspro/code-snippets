@@ -4,10 +4,10 @@ import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
 import { getSnippetType } from '../../../utils/snippets'
-import type { SnippetScope } from '../../../types/Snippet'
+import type { SnippetCodeScope } from '../../../types/Snippet'
 import type { SelectOption } from '../../../types/SelectOption'
 
-const SCOPE_ICONS: Record<SnippetScope, string> = {
+const SCOPE_ICONS: Record<SnippetCodeScope, string> = {
 	'global': 'admin-site',
 	'admin': 'admin-tools',
 	'front-end': 'admin-appearance',
@@ -21,7 +21,7 @@ const SCOPE_ICONS: Record<SnippetScope, string> = {
 	'site-footer-js': 'media-code'
 }
 
-const SCOPE_DESCRIPTIONS: Record<SnippetScope, string> = {
+const SCOPE_DESCRIPTIONS: Record<SnippetCodeScope, string> = {
 	'global': __('Run everywhere', 'code-snippets'),
 	'admin': __('Only run in administration area', 'code-snippets'),
 	'front-end': __('Only run on site front-end', 'code-snippets'),
@@ -38,7 +38,8 @@ const SCOPE_DESCRIPTIONS: Record<SnippetScope, string> = {
 export const SnippetLocationInput: React.FC = () => {
 	const { snippet, setSnippet } = useSnippetForm()
 
-	const options: SelectOption<SnippetScope>[] = SNIPPET_TYPE_SCOPES[getSnippetType(snippet)]
+	const options: SelectOption<SnippetCodeScope>[] = SNIPPET_TYPE_SCOPES[getSnippetType(snippet)]
+		.filter(scope => 'condition' !== scope)
 		.map(scope => ({
 			value: scope,
 			label: SCOPE_DESCRIPTIONS[scope]

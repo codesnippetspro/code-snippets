@@ -7,7 +7,6 @@ use WP_HTTP_Response;
 use WP_REST_Server;
 use WP_REST_Response;
 use function Code_Snippets\code_snippets;
-use function get_editable_roles;
 use function wp_roles;
 use const Code_Snippets\REST_API_NAMESPACE;
 

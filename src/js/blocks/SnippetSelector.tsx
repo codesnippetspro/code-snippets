@@ -43,7 +43,7 @@ export const SnippetSelector: React.FC<SnippetSelectorProps> = ({
 				<form>
 					<Select
 						name="snippet-select"
-						className="code-snippets-large-select"
+						className="code-snippets-select"
 						options={options}
 						onChange={option => setAttributes({ snippet_id: option && 'value' in option ? option.value : 0 })}
 						placeholder={__('Select a snippet to insert…', 'code-snippets')}

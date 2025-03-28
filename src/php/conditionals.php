@@ -12,12 +12,12 @@ use WP_Error;
 /**
  * Evaluate an individual clause of a conditional.
  *
- * @param string $item_type Type of object that this condition represents.
- * @param string $item      Object that this condition is testing for.
+ * @param ?string $item_type Type of object that this condition represents.
+ * @param ?string $item      Object that this condition is testing for.
  *
  * @return bool|WP_Error Result of evaluating condition.
  */
-function evaluate_conditional_clause( string $item_type, string $item ) {
+function evaluate_conditional_clause( ?string $item_type, ?string $item ) {
 	switch ( $item_type ) {
 		case 'post':
 		case 'page':
@@ -53,18 +53,25 @@ function evaluate_conditional_clause( string $item_type, string $item ) {
 /**
  * Evaluate a single group of conditions using AND logic, ensuring each condition evaluates to true.
  *
- * @param array $conditions Group of conditions.
+ * @param array $rule Condition rule.
  *
  * @return bool
  */
-function evaluate_conditional_group( array $conditions ): bool {
-	foreach ( $conditions as $condition ) {
-		$is_true = evaluate_conditional_clause( $condition->subject, $condition->object );
-		$result = 'neq' === $condition->operator ? ! $is_true : $is_true;
+function evaluate_conditional_rule( array $rule ): bool {
+	$enabled = $rule['enabled'] ?? null;
+	$subject = $rule['subject'] ?? null;
+	$object = $rule['object'] ?? null;
+	$operator = $rule['operator'] ?? null;
 
-		if ( ! $result || is_wp_error( $result ) ) {
-			return false;
-		}
+	$is_true = evaluate_conditional_clause( $subject, $object );
+	$result = 'not' === $operator ? ! $is_true : $is_true;
+
+	if ( $enabled === false ) {
+		$result = ! $result;
+	}
+
+	if ( ! $result || is_wp_error( $result ) ) {
+		return false;
 	}
 
 	return true;
@@ -78,14 +85,13 @@ function evaluate_conditional_group( array $conditions ): bool {
  * @return boolean Result of evaluating the conditional.
  */
 function evaluate_conditional( string $conditional ): bool {
-/*	TODO: re-enable this
-	$or_groups = json_decode( $conditional, false );
+	$rules = json_decode( $conditional, false );
 
-	foreach ( $or_groups as $and_group ) {
-		if ( evaluate_conditional_group( get_object_vars( $and_group ) ) ) {
+	foreach ( $rules as $rule ) {
+		if ( evaluate_conditional_rule( get_object_vars( $rule ) ) ) {
 			return true;
 		}
-	}*/
+	}
 
 	return false;
 }

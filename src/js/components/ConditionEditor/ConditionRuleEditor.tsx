@@ -60,6 +60,7 @@ const ConditionObjectEditor: React.FC<ConditionObjectEditorProps> = ({ ruleId, o
 				field="operator"
 				ruleId={ruleId}
 				options={OPERATOR_OPTIONS}
+				fallbackValue="is"
 			/>
 
 			<ConditionFieldEditor
@@ -103,6 +104,7 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId
 				field="enabled"
 				ruleId={ruleId}
 				options={ENABLED_OPTIONS}
+				fallbackValue={true}
 			/>
 
 			<ConditionFieldEditor

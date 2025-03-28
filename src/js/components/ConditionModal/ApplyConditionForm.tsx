@@ -52,6 +52,7 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ closeMod
 			<div className="modal-content">
 				<BaseControl label={__('Saved Conditions', 'code-snippets')}>
 					<Select
+						className="code-snippets-select"
 						isLoading={snippets === undefined}
 						value={selectedOption ?? null}
 						options={options}

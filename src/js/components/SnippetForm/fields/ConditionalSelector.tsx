@@ -25,6 +25,7 @@ export const ConditionalSelector: React.FC = () => {
 
 	return (
 		<Select
+			className="code-snippets-select"
 			options={options}
 			isLoading={snippets === undefined}
 			isDisabled={isReadOnly}

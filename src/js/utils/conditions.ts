@@ -7,17 +7,14 @@ const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
 }
 
 export const createInitialConditionRules = (): ConditionRules => ({
-	0: { enabled: true, subject: 'global', operator: 'is', object: true }
+	0: { enabled: true, subject: 'global' }
 })
-
-export const createEmptyConditionRule = (): ConditionRule =>
-	({ enabled: true, subject: undefined, operator: 'is', object: undefined })
 
 export const addConditionRule = (snippet: Snippet): Snippet => ({
 	...snippet,
 	conditions: {
 		...snippet.conditions,
-		[getNextIndex(snippet.conditions)]: createEmptyConditionRule()
+		[getNextIndex(snippet.conditions)]: {}
 	}
 })
 

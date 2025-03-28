@@ -5,15 +5,15 @@
 	padding: 32px;
 	border: 1px solid #C3C4C7;
 	background: #F6F7F7;
+
+	h2:first-of-type {
+		margin-top: 0;
+	}
 }
 
 .snippet-condition-editor {
 	flex-flow: column;
 	align-items: flex-start;
-
-	h2:first-of-type {
-		margin: 0;
-	}
 
 	h4 {
 		margin-bottom: 0;
