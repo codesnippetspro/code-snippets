@@ -364,6 +364,9 @@ class Admin {
 			case 'ai':
 				echo '<span class="cloud-badge ai-icon">', esc_html__( 'AI', 'code-snippets' ), '</span>';
 				break;
+			case 'cond':
+				echo '<span class="badge"><span class="dashicons dashicons-randomize"></span></span>';
+				break;
 			default:
 				echo '<span class="badge">' . esc_html( $type_name ) . '</span>';
 				break;

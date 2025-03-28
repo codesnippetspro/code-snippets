@@ -172,7 +172,7 @@ class List_Table extends WP_List_Table {
 					'<a class="snippet-type-badge" href="%s" data-snippet-type="%s">%s</a>',
 					esc_url( $url ),
 					esc_attr( $type ),
-					esc_html( $type )
+					'cond' === $type ? '<span class="dashicons dashicons-randomize"></span>' : esc_html( $type )
 				);
 
 			case 'date':

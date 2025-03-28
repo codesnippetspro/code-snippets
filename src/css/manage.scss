@@ -203,13 +203,31 @@
 	line-height: 1.4;
 }
 
+.cloud-badge {
+	border: 1px solid;
+	border-radius: 5px;
+	font-size: 15px;
+	line-height: 19px;
+}
+
+.wrap h2.nav-tab-wrapper {
+	display: flex;
+	flex-flow: row wrap-reverse;
+	gap: 0.5em;
+
+	.nav-tab {
+		display: flex;
+		flex-flow: row wrap;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+	}
+}
+
 @media screen and (max-width: 1190px) {
 	.nav-tab {
 		.snippet-label {
 			display: none;
-		}
-		.cloud-badge{
-			margin-right: 10px;
 		}
 	}
 }
