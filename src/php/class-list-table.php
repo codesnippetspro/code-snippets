@@ -361,10 +361,6 @@ class List_Table extends WP_List_Table {
 
 		$out = esc_html( $snippet->display_name );
 
-		if ( 'global' !== $snippet->scope ) {
-			$out .= sprintf( ' <span class="dashicons dashicons-%s"></span>', $snippet->scope_icon );
-		}
-
 		// Add a link to the snippet if it isn't an unreadable network-only snippet.
 		if ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
 			$out = sprintf(
@@ -468,10 +464,6 @@ class List_Table extends WP_List_Table {
 			'priority'    => __( 'Priority', 'code-snippets' ),
 			'id'          => __( 'ID', 'code-snippets' ),
 		);
-
-		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
-			unset( $columns['type'] );
-		}
 
 		if ( ! get_setting( 'general', 'enable_description' ) ) {
 			unset( $columns['description'] );
