@@ -19,7 +19,7 @@ interface ModalInnerProps {
 
 const ModalInner: React.FC<ModalInnerProps> = ({ closeModal }) => {
 	const { snippet } = useSnippetForm()
-	const [currentView, setCurrentView] = useState(() => snippet.conditional ? 1 : 0)
+	const [currentView, setCurrentView] = useState(() => snippet.conditionId ? 1 : 0)
 
 	return <>
 		<nav className="modal-nav">
@@ -45,7 +45,7 @@ export const ConditionsModalButton: React.FC = () => {
 	const { snippet, setSnippet } = useSnippetForm()
 	const [isModalOpen, setIsModalOpen] = useState(false)
 
-	const hasCondition = 0 !== snippet.conditional
+	const hasCondition = 0 !== snippet.conditionId
 
 	const handleClose = () => {
 		setSnippet(previous => ({ ...previous, conditions: initialiseConditionGroups() }))

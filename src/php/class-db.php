@@ -168,18 +168,18 @@ class DB {
 
 		/* Create the database table */
 		$sql = "CREATE TABLE $table_name (
-				id          BIGINT(20)   NOT NULL AUTO_INCREMENT,
-				name        TINYTEXT     NOT NULL,
-				description TEXT         NOT NULL,
-				code        LONGTEXT     NOT NULL,
-				tags        LONGTEXT     NOT NULL,
-				scope       VARCHAR(15)  NOT NULL DEFAULT 'global',
-				conditional BIGINT(20)   NOT NULL DEFAULT 0,
-				priority    SMALLINT     NOT NULL DEFAULT 10,
-				active      TINYINT(1)   NOT NULL DEFAULT 0,
-				modified    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				revision    BIGINT(20)   NOT NULL DEFAULT 1,
-				cloud_id    VARCHAR(255) NULL,
+				id           BIGINT(20)   NOT NULL AUTO_INCREMENT,
+				name         TINYTEXT     NOT NULL,
+				description  TEXT         NOT NULL,
+				code         LONGTEXT     NOT NULL,
+				tags         LONGTEXT     NOT NULL,
+				scope        VARCHAR(15)  NOT NULL DEFAULT 'global',
+				condition_id BIGINT(20)   NOT NULL DEFAULT 0,
+				priority     SMALLINT     NOT NULL DEFAULT 10,
+				active       TINYINT(1)   NOT NULL DEFAULT 0,
+				modified     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				revision     BIGINT(20)   NOT NULL DEFAULT 1,
+				cloud_id     VARCHAR(255) NULL,
 				PRIMARY KEY  (id),
 				KEY scope (scope),
 				KEY active (active)
@@ -223,12 +223,12 @@ class DB {
 		}
 
 		$scopes_format = implode( ',', array_fill( 0, count( $scopes ), '%s' ) );
-		$extra_where = $active_only ? 'AND active=1' : '';
+		$extra_where = $active_only ? 'AND (active=1 OR scope = "condition")' : '';
 
 		$snippets = $wpdb->get_results(
 			$wpdb->prepare(
 				"
-				SELECT id, code, scope, conditional, active
+				SELECT id, code, scope, condition_id, active
 				FROM $table_name
 				WHERE scope IN ($scopes_format) $extra_where
 				ORDER BY priority, id",

@@ -1,6 +1,6 @@
 <?php
 /**
- * Utilities for handling conditional logic.
+ * Utilities for handling snippet conditions.
  *
  * @package Code_Snippets
  */
@@ -10,14 +10,14 @@ namespace Code_Snippets;
 use WP_Error;
 
 /**
- * Evaluate an individual clause of a conditional.
+ * Evaluate an individual clause of a condition.
  *
  * @param ?string                    $subject Type of object that this condition represents.
  * @param array<string | int | bool> $objects Object that this condition is testing for.
  *
  * @return bool|WP_Error Result of evaluating condition.
  */
-function evaluate_conditional_clause( ?string $subject, array $objects ) {
+function evaluate_condition_clause( ?string $subject, array $objects ) {
 	switch ( $subject ) {
 		case 'post':
 		case 'page':
@@ -52,7 +52,7 @@ function evaluate_conditional_clause( ?string $subject, array $objects ) {
 			return false;
 
 		default:
-			return new WP_Error( "Invalid conditional subject: $subject." );
+			return new WP_Error( "Invalid condition subject: $subject." );
 	}
 }
 
@@ -63,12 +63,12 @@ function evaluate_conditional_clause( ?string $subject, array $objects ) {
  *
  * @return bool
  */
-function evaluate_conditional_rule( array $rule ): bool {
+function evaluate_condition_rule( array $rule ): bool {
 	$subject = $rule['subject'] ?? null;
 	$operator = $rule['operator'] ?? null;
 	$objects = isset( $rule['object'] ) && is_array( $rule['object'] ) ? $rule['object'] : [];
 
-	$result = evaluate_conditional_clause( $subject, $objects );
+	$result = evaluate_condition_clause( $subject, $objects );
 
 	if ( 'not' === $operator ) {
 		$result = ! $result;
@@ -78,11 +78,11 @@ function evaluate_conditional_rule( array $rule ): bool {
 }
 
 /**
- * Determine the result of evaluating a given conditional for the current page.
+ * Determine the result of evaluating a given condition for the current page.
  *
  * @param string $condition_json Conditional code, in JSON string format.
  *
- * @return boolean Result of evaluating the conditional.
+ * @return boolean Result of evaluating the condition.
  */
 function evaluate_condition( string $condition_json ): bool {
 	$groups = json_decode( $condition_json, false );
@@ -91,7 +91,7 @@ function evaluate_condition( string $condition_json ): bool {
 		$is_true = true;
 
 		foreach ( $group as $rule ) {
-			if ( ! evaluate_conditional_rule( get_object_vars( $rule ) ) ) {
+			if ( ! evaluate_condition_rule( get_object_vars( $rule ) ) ) {
 				$is_true = false;
 				break;
 			}

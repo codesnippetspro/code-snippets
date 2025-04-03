@@ -95,7 +95,7 @@ export const CreateConditionForm: React.FC<CreateConditionFormProps> = ({ closeM
 
 		api.create(conditionSnippet)
 			.then(result => {
-				setSnippet(previous => ({ ...previous, conditional: result.id }))
+				setSnippet(previous => ({ ...previous, conditionId: result.id }))
 				setIsSubmitting(false)
 				closeModal()
 			})

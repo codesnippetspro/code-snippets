@@ -18,7 +18,7 @@ use Exception;
  * @property string                 $code               The executable code.
  * @property array<string>          $tags               An array of the tags.
  * @property string                 $scope              The scope name.
- * @property int                    $conditional        ID of the conditional this snippet is linked to.
+ * @property int                    $condition_id       ID of the condition this snippet is linked to.
  * @property int                    $priority           Execution priority.
  * @property bool                   $active             The active status.
  * @property bool                   $network            true if is multisite-wide snippet, false if site-wide.
@@ -65,7 +65,7 @@ class Snippet extends Data_Item {
 			'code'           => '',
 			'tags'           => array(),
 			'scope'          => 'global',
-			'conditional'    => 0,
+			'condition_id'   => 0,
 			'active'         => false,
 			'priority'       => 10,
 			'network'        => null,
@@ -106,7 +106,7 @@ class Snippet extends Data_Item {
 		switch ( $field ) {
 			case 'id':
 			case 'priority':
-			case 'conditional':
+			case 'condition_id':
 				return absint( $value );
 
 			case 'tags':

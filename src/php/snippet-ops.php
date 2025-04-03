@@ -536,17 +536,17 @@ function save_snippet( $snippet ) {
 
 	// Build the list of data to insert.
 	$data = [
-		'name'        => $snippet->name,
-		'description' => $snippet->desc,
-		'code'        => $snippet->code,
-		'tags'        => $snippet->tags_list,
-		'scope'       => $snippet->scope,
-		'conditional' => intval( $snippet->conditional ),
-		'priority'    => $snippet->priority,
-		'active'      => intval( $snippet->active ),
-		'modified'    => $snippet->modified,
-		'revision'    => $snippet->revision,
-		'cloud_id'    => $snippet->cloud_id ? $snippet->cloud_id : null,
+		'name'         => $snippet->name,
+		'description'  => $snippet->desc,
+		'code'         => $snippet->code,
+		'tags'         => $snippet->tags_list,
+		'scope'        => $snippet->scope,
+		'condition_id' => intval( $snippet->condition_id ),
+		'priority'     => $snippet->priority,
+		'active'       => intval( $snippet->active ),
+		'modified'     => $snippet->modified,
+		'revision'     => $snippet->revision,
+		'cloud_id'     => $snippet->cloud_id ? $snippet->cloud_id : null,
 	];
 
 	// Create a new snippet if the ID is not set.
@@ -662,12 +662,12 @@ function execute_active_snippets(): bool {
 	}
 
 	foreach ( $data as $table_name => $active_snippets ) {
-		$conditionals = [];
+		$conditions = [];
 
 		foreach ( $active_snippets as $snippet ) {
 			if ( 'condition' === $snippet['scope'] ) {
 				$snippet_id = intval( $snippet['id'] );
-				$conditionals[ $snippet_id ] = evaluate_condition( $snippet['code'] );
+				$conditions[ $snippet_id ] = evaluate_condition( $snippet['code'] );
 			}
 		}
 
@@ -706,10 +706,10 @@ function execute_active_snippets(): bool {
 				continue;
 			}
 
-			if ( $snippet['conditional'] ) {
-				$conditional_id = intval( $snippet['conditional'] );
+			if ( $snippet['condition_id'] ) {
+				$condition_id = intval( $snippet['condition_id'] );
 
-				if ( isset( $conditionals[ $conditional_id ] ) && ! $conditionals[ $conditional_id ] ) {
+				if ( isset( $conditions[ $condition_id ] ) && ! $conditions[ $condition_id ] ) {
 					continue;
 				}
 			}

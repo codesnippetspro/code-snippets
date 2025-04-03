@@ -17,7 +17,7 @@ const defaults: Omit<Snippet, 'tags' | 'conditions'> = {
 	network: isNetworkAdmin(),
 	shared_network: null,
 	priority: 10,
-	conditional: 0
+	conditionId: 0
 }
 
 const isAbsInt = (value: unknown): value is number =>
@@ -72,7 +72,8 @@ export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 		shared_network: 'shared_network' in fields && 'boolean' === typeof fields.shared_network && fields.shared_network
 			|| defaults.shared_network,
 		priority: 'priority' in fields && 'number' === typeof fields.priority ? fields.priority : defaults.priority,
-		conditional: 'conditional' in fields && isAbsInt(fields.conditional) ? fields.conditional : defaults.conditional,
+		conditionId: 'condition_id' in fields && isAbsInt(fields.condition_id) ? fields.condition_id :
+			('conditionId' in fields && isAbsInt(fields.conditionId) ? fields.conditionId : defaults.conditionId),
 		conditions: initialiseConditionGroups()
 	}
 

@@ -343,7 +343,7 @@ class Active_Snippets {
 	}
 
 	/**
-	 * Generate inline code for a given type, paying respect to conditionals.
+	 * Generate inline code for a given type, paying respect to conditions.
 	 *
 	 * @param string $scope Code scope.
 	 *
@@ -366,7 +366,7 @@ class Active_Snippets {
 			}
 
 			foreach ( $snippets as $snippet ) {
-				$condition_id = intval( $snippet['conditional'] );
+				$condition_id = intval( $snippet['condition_id'] );
 				if ( 'condition' !== $snippet['scope'] &&
 				     ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) ) {
 					$code .= $snippet['code'] . "\n\n";

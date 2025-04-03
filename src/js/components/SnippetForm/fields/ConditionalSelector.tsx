@@ -29,11 +29,11 @@ export const ConditionalSelector: React.FC = () => {
 			options={options}
 			isLoading={snippets === undefined}
 			isDisabled={isReadOnly}
-			value={findOptionByValue(options, snippet.conditional)}
+			value={findOptionByValue(options, snippet.conditionId)}
 			onChange={option => {
 				setSnippet(snippet => ({
 					...snippet,
-					conditional: option?.value ?? 0
+					conditionId: option?.value ?? 0
 				}))
 			}}
 
