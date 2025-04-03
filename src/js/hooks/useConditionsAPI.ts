@@ -48,6 +48,7 @@ export const SUBJECT_OPTIONS: SelectGroups<ConditionSubject> = [
 		options: [
 			{ value: 'user', label: __('When the current logged-in __user__ is', 'code-snippets') },
 			{ value: 'userRole', label: __('When the current user is one of these __roles__', 'code-snippets') },
+			{ value: 'userCap', label: __('When the current user has one of these __capabilities__', 'code-snippets') },
 			{ value: 'authenticated', label: __('If the visitor is __logged-in__', 'code-snippets') }
 		]
 	}
@@ -58,13 +59,13 @@ const BOOLEAN_OPTIONS: SelectOptions<boolean> = [
 	{ value: false, label: __('No', 'code-snippets') }
 ]
 
-export type ObjectOptions<S extends ConditionSubject> = SelectOptions<ConditionSubjects[S]> | false | undefined
+export type ObjectOptions<S extends ConditionSubject> = SelectGroups<ConditionSubjects[S]> | false | undefined
 
 export interface ConditionsAPI {
 	fetchSubjectOptions: <S extends ConditionSubject>(subject: S) => Promise<ObjectOptions<S>>
 }
 
-const useSubjectFactory = (): { [S in ConditionSubject]?: () => Promise<SelectOptions<ConditionSubjects[S]>> } => {
+const useSubjectFactory = (): { [S in ConditionSubject]?: () => Promise<SelectGroups<ConditionSubjects[S]>> } => {
 	const { fetchAll } = useSnippetsAPI()
 	const { get } = useAxios(REST_API_AXIOS_CONFIG)
 
@@ -95,14 +96,24 @@ const useSubjectFactory = (): { [S in ConditionSubject]?: () => Promise<SelectOp
 					({ value: tag.id, label: tag.name }))),
 
 		user: () =>
-			get<Users>(`${REST_BASE}/wp/v2/users`).then(users =>
-				users.map(user =>
-					({ value: user.id, label: user.name }))),
+			get<Users>(`${REST_BASE}/wp/v2/users`).then(users => [
+				{
+					label: __('User ID', 'code-snippets'),
+					options: users
+						.map(user => ({ value: user.id, label: `${user.id} (${user.name})` }))
+						.toSorted((a, b) => a.value - b.value)
+				}
+			]),
 
 		userRole: () =>
 			get<UserRoles>(`${REST_CONDITIONS_BASE}/roles`).then(roles =>
 				roles.map(role =>
 					({ value: role.role, label: role.name }))),
+
+		userCap: () =>
+			get<string[]>(`${REST_CONDITIONS_BASE}/capabilities`).then(caps =>
+				caps.map(cap =>
+					({ value: cap, label: cap }))),
 
 		condition: () =>
 			fetchAll(isNetworkAdmin()).then(snippets =>

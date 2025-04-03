@@ -49,14 +49,16 @@
 		background-color: #a7aaad;
 	}
 }
+
 .core-badge {
-	color: theme.$core;
+	color: map.get(theme.$version_core, 'text');
+	background: map.get(theme.$version_core, 'background');
 }
 
 .go-pro-button .badge,
 .go-pro-badge {
-	color: #DF9279;
-	background-color: #F7E8E3;
+	color: map.get(theme.$version_pro, 'text');
+	background-color: map.get(theme.$version_pro, 'background');
 	margin-left: 1px;
 	font-size: 10px;
 }

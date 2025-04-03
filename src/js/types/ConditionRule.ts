@@ -25,6 +25,7 @@ export interface ConditionSubjects {
 	user: User['id']
 	authenticated: boolean
 	userRole: UserRole['role']
+	userCap: string
 	condition: Snippet['id']
 }
 

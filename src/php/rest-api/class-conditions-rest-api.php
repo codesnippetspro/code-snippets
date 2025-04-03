@@ -54,6 +54,18 @@ final class Conditions_REST_API {
 				],
 			]
 		);
+
+		register_rest_route(
+			$namespace,
+			self::BASE_ROUTE . '/capabilities',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_capabilities' ],
+					'permission_callback' => $permission_callback,
+				],
+			]
+		);
 	}
 
 	/**
@@ -72,5 +84,20 @@ final class Conditions_REST_API {
 		}
 
 		return rest_ensure_response( $roles );
+	}
+
+	/**
+	 * Retrieve a full list of capabilities.
+	 *
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 */
+	public function get_capabilities() {
+		$caps = [];
+
+		foreach ( wp_roles()->roles as $role_info ) {
+			$caps = array_merge( $caps, array_keys( $role_info['capabilities'] ) );
+		}
+
+		return rest_ensure_response( array_unique( $caps ) );
 	}
 }

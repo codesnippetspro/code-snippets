@@ -45,6 +45,9 @@ function evaluate_conditional_clause( ?string $item_type, ?string $item ) {
 			$user = wp_get_current_user();
 			return $user && in_array( $item, $user->roles, true );
 
+		case 'userCap':
+			return current_user_can( $item );
+
 		default:
 			return new WP_Error( "Invalid conditional subject: $item_type." );
 	}

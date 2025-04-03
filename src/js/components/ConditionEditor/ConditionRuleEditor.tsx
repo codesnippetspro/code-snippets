@@ -57,7 +57,6 @@ const ConditionObjectEditor = <S extends ConditionSubject>({
 	objectOptionsLoaded
 }: ConditionObjectEditorProps<S>) => {
 	const { snippet, setSnippet } = useSnippetForm()
-
 	const objects = snippet.conditions[ruleId]?.object ?? []
 
 	return objectOptions
