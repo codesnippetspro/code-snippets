@@ -23,8 +23,15 @@
 		box-shadow: none;
 	}
 
-	.condition-clone-button,
-	.condition-remove-button {
+	.condition-add-group-button {
+		align-self: center;
+	}
+
+	.condition-add-rule-button {
+		text-transform: uppercase;
+	}
+
+	.condition-remove-rule-button {
 		border: none;
 		background: none;
 		padding: 0;
@@ -32,22 +39,47 @@
 		fill: #646970;
 	}
 
-	.condition-remove-button:hover svg {
+	.condition-remove-rule-button:hover svg {
 		fill: #b32d2e
-	}
-
-	.condition-group-sep, .condition-row-sep {
-		text-align: center;
-		font-style: italic;
 	}
 }
 
-.snippet-condition-rules {
+.snippet-condition-groups {
 	display: flex;
 	flex-flow: column;
-	align-items: flex-start;
-	gap: 8px;
+	gap: 24px;
 	margin: 10px 0;
+}
+
+.snippet-condition-group {
+	background-color: #F0F0F0;
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	padding: 16px;
+	gap: 8px;
+}
+
+.condition-group-sep {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-transform: uppercase;
+	font-weight: 700;
+
+	&::before, &::after {
+		content: '';
+		flex: 1;
+		border-bottom: 1px solid #E2E2E4;
+	}
+
+	&:not(:empty)::before {
+		margin-right: 8px;
+	}
+
+	&:not(:empty)::after {
+		margin-left: 8px;
+	}
 }
 
 .snippet-condition-rule {
@@ -55,7 +87,6 @@
 	flex-flow: row;
 	gap: 1em;
 	align-items: stretch;
-	width: 100%;
 
 	.code-snippets-select:last-of-type {
 		flex: 1;

@@ -20,7 +20,7 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ closeMod
 
 	const options = useMemo<SelectOptions<Snippet['id']>>(() =>
 		snippets
-			?.filter(snippet => snippet.active && 'condition' === snippet.scope)
+			?.filter(snippet => 'condition' === snippet.scope)
 			.map(snippet => ({ value: snippet.id, label: snippet.name }))
 			?? [],
 	[snippets]

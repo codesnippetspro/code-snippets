@@ -1,7 +1,7 @@
 import { SNIPPET_TYPE_SCOPES } from '../types/Snippet'
-import { createInitialConditionRules } from './conditions'
+import { initialiseConditionGroups } from './conditions'
 import { isNetworkAdmin } from './screen'
-import type { ConditionRules } from '../types/ConditionRule'
+import type { Condition } from '../types/Condition'
 import type { Snippet, SnippetScope, SnippetType } from '../types/Snippet'
 
 const PRO_TYPES: SnippetType[] = ['css', 'js']
@@ -30,7 +30,7 @@ export const isValidScope = (scope: unknown): scope is SnippetScope =>
 	'string' === typeof scope && Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
 		typeScopes.some(typeScope => typeScope === scope))
 
-const isValidConditionRules = (rules: unknown): rules is ConditionRules =>
+const isValidConditionRules = (rules: unknown): rules is Condition =>
 	'object' === typeof rules && null !== rules && Object.values(rules)
 		.every(rule => 'object' === typeof rule && null !== rule)
 
@@ -56,7 +56,7 @@ const parseConditions = (parsed: Omit<Snippet, 'conditions'>, fields: object): P
 
 export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 	if ('object' !== typeof fields || null === fields) {
-		return { ...defaults, tags: [], conditions: createInitialConditionRules() }
+		return { ...defaults, tags: [], conditions: initialiseConditionGroups() }
 	}
 
 	const parsed: Snippet = {
@@ -73,7 +73,7 @@ export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 			|| defaults.shared_network,
 		priority: 'priority' in fields && 'number' === typeof fields.priority ? fields.priority : defaults.priority,
 		conditional: 'conditional' in fields && isAbsInt(fields.conditional) ? fields.conditional : defaults.conditional,
-		conditions: createInitialConditionRules()
+		conditions: initialiseConditionGroups()
 	}
 
 	return { ...parsed, ...parseConditions(parsed, fields) }
@@ -103,8 +103,8 @@ export const getSnippetType = (snippetOrScope: Snippet | SnippetScope): SnippetT
 	}
 }
 
-export const isCondition = (snippetOrScope: Snippet | SnippetScope): boolean =>
-	'condition' === getSnippetScope(snippetOrScope)
+export const isCondition = (snippet: Snippet): boolean =>
+	'condition' === snippet.scope
 
 export const isProSnippet = (snippet: Snippet | SnippetScope): boolean =>
 	PRO_TYPES.includes(getSnippetType(snippet))

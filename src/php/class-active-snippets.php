@@ -356,19 +356,19 @@ class Active_Snippets {
 		$code = '';
 
 		foreach ( $snippets_by_table as $snippets ) {
-			$conditionals = [];
+			$conditions = [];
 
 			foreach ( $snippets as $snippet ) {
 				if ( 'condition' === $snippet['scope'] ) {
-					$conditional_id = intval( $snippet['id'] );
-					$conditionals[ $conditional_id ] = evaluate_conditional( $snippet['code'] );
+					$condition_id = intval( $snippet['id'] );
+					$conditions[ $condition_id ] = evaluate_condition( $snippet['code'] );
 				}
 			}
 
 			foreach ( $snippets as $snippet ) {
-				$conditional_id = intval( $snippet['conditional'] );
+				$condition_id = intval( $snippet['conditional'] );
 				if ( 'condition' !== $snippet['scope'] &&
-				     ( ! $conditional_id || ! isset( $conditionals[ $conditional_id ] ) || $conditionals[ $conditional_id ] ) ) {
+				     ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) ) {
 					$code .= $snippet['code'] . "\n\n";
 				}
 			}

@@ -1,4 +1,4 @@
-import type { ConditionRule, ConditionRules, ConditionSubject } from '../types/ConditionRule'
+import type { Condition, ConditionGroup, ConditionRule, ConditionSubject } from '../types/Condition'
 import type { Snippet } from '../types/Snippet'
 
 const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
@@ -6,24 +6,46 @@ const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
 	return 1 + (keys.length ? Math.max(...keys.map(Number).filter(value => !Number.isNaN(value))) : 0)
 }
 
-export const createInitialConditionRules = (): ConditionRules => ({
-	0: { enabled: true, subject: 'global' }
-})
-
-export const addConditionRule = (snippet: Snippet): Snippet => ({
-	...snippet,
-	conditions: {
-		...snippet.conditions,
-		[getNextIndex(snippet.conditions)]: {}
+export const initialiseConditionGroups = (): Condition => ({
+	0: {
+		0: { subject: 'global' }
 	}
 })
 
+export const addConditionGroup = (snippet: Snippet): Snippet => ({
+	...snippet,
+	conditions: {
+		...snippet.conditions,
+		[getNextIndex(snippet.conditions)]: { 0: {} }
+	}
+})
+
+export const appendConditionRule = (snippet: Snippet, groupId: string, afterRuleId: string): Snippet => {
+	const amendedGroup: ConditionGroup = {}
+
+	if (!snippet.conditions[groupId]) {
+		console.error('cannot find condition group amend', snippet.conditions, groupId)
+		return snippet
+	}
+
+	for (const [ruleId, rule] of Object.entries(snippet.conditions[groupId])) {
+		amendedGroup[ruleId] = rule
+
+		if (ruleId === afterRuleId) {
+			amendedGroup[getNextIndex(snippet.conditions[groupId])] = {}
+		}
+	}
+
+	return { ...snippet, conditions: { ...snippet.conditions, [groupId]: amendedGroup } }
+}
+
 export const cloneConditionRule = (
 	snippet: Snippet,
+	groupId: string,
 	ruleId: string
 ): Snippet => {
-	if (!snippet.conditions[ruleId]) {
-		console.log('cannot find condition rule to clone', ruleId)
+	if (!snippet.conditions[groupId]?.[ruleId]) {
+		console.error('cannot find condition rule to clone', snippet.conditions, groupId, ruleId)
 		return snippet
 	}
 
@@ -31,29 +53,50 @@ export const cloneConditionRule = (
 		...snippet,
 		conditions: {
 			...snippet.conditions,
-			[getNextIndex(snippet.conditions)]: { ...snippet.conditions[ruleId] }
+			[groupId]: {
+				...snippet.conditions[groupId],
+				[getNextIndex(snippet.conditions[groupId])]: { ...snippet.conditions[groupId][ruleId] }
+			}
 		}
 	}
 }
 
-export const removeConditionRule = (snippet: Snippet, ruleId: string): Snippet => {
-	if (!snippet.conditions[ruleId]) {
-		console.log('cannot find condition rule to remove', ruleId)
+export const removeConditionRule = (snippet: Snippet, groupId: string, ruleId: string): Snippet => {
+	if (!snippet.conditions[groupId]?.[ruleId]) {
+		console.debug('cannot find condition rule to remove', snippet.conditions, groupId, ruleId)
 		return snippet
 	}
 
-	const { [ruleId]: condition, ...remaining } = snippet.conditions
-	return { ...snippet, conditions: remaining }
+	const { [ruleId]: condition, ...remaining } = snippet.conditions[groupId]
+
+	return {
+		...snippet,
+		conditions: {
+			...snippet.conditions,
+			[groupId]: remaining
+		}
+	}
 }
 
 export const updateConditionRule = (
 	snippet: Snippet,
+	groupId: string,
 	ruleId: string,
 	delta: Partial<ConditionRule<ConditionSubject>>
-): Snippet => ({
-	...snippet,
-	conditions: {
-		...snippet.conditions,
-		[ruleId]: { ...snippet.conditions[ruleId], ...delta }
+): Snippet => {
+	if (!snippet.conditions[groupId]?.[ruleId]) {
+		console.debug('cannot find condition rule to update', snippet.conditions, groupId, ruleId)
+		return snippet
 	}
-})
+
+	return {
+		...snippet,
+		conditions: {
+			...snippet.conditions,
+			[groupId]: {
+				...snippet.conditions[groupId],
+				[ruleId]: { ...snippet.conditions[groupId][ruleId], ...delta }
+			}
+		}
+	}
+}

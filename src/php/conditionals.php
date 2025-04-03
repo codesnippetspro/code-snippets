@@ -12,44 +12,47 @@ use WP_Error;
 /**
  * Evaluate an individual clause of a conditional.
  *
- * @param ?string $item_type Type of object that this condition represents.
- * @param ?string $item      Object that this condition is testing for.
+ * @param ?string                    $subject Type of object that this condition represents.
+ * @param array<string | int | bool> $objects Object that this condition is testing for.
  *
  * @return bool|WP_Error Result of evaluating condition.
  */
-function evaluate_conditional_clause( ?string $item_type, ?string $item ) {
-	switch ( $item_type ) {
+function evaluate_conditional_clause( ?string $subject, array $objects ) {
+	switch ( $subject ) {
 		case 'post':
 		case 'page':
-			$post = get_post();
-			return $post && intval( $item ) === $post->ID && $post->post_type === $item_type;
+			return is_single( $objects );
 
 		case 'postType':
 			$post = get_post();
-			return $post && $post->post_type === $item;
+			return $post && in_array( $post->post_type, $objects );
 
 		case 'tag':
 		case 'category':
-			$terms = get_the_terms( false, $item_type );
-			return $terms && ! is_wp_error( $terms ) &&
-			       in_array( intval( $item ), wp_list_pluck( $terms, 'term_id' ), true );
+			return has_term( $objects, $subject );
 
 		case 'user':
 			$user = wp_get_current_user();
-			return $user && intval( $item ) === $user->ID;
+			return $user && in_array( $user->ID, $objects );
 
 		case 'authenticated':
 			return is_user_logged_in();
 
 		case 'userRole':
 			$user = wp_get_current_user();
-			return $user && in_array( $item, $user->roles, true );
+			return $user && ! empty( array_intersect( $user->roles, $objects ) );
 
 		case 'userCap':
-			return current_user_can( $item );
+			foreach ( $objects as $cap ) {
+				if ( current_user_can( $cap ) ) {
+					return true;
+				}
+			}
+
+			return false;
 
 		default:
-			return new WP_Error( "Invalid conditional subject: $item_type." );
+			return new WP_Error( "Invalid conditional subject: $subject." );
 	}
 }
 
@@ -61,37 +64,40 @@ function evaluate_conditional_clause( ?string $item_type, ?string $item ) {
  * @return bool
  */
 function evaluate_conditional_rule( array $rule ): bool {
-	$enabled = $rule['enabled'] ?? null;
 	$subject = $rule['subject'] ?? null;
-	$object = $rule['object'] ?? null;
 	$operator = $rule['operator'] ?? null;
+	$objects = isset( $rule['object'] ) && is_array( $rule['object'] ) ? $rule['object'] : [];
 
-	$is_true = evaluate_conditional_clause( $subject, $object );
-	$result = 'not' === $operator ? ! $is_true : $is_true;
+	$result = evaluate_conditional_clause( $subject, $objects );
 
-	if ( $enabled === false ) {
+	if ( 'not' === $operator ) {
 		$result = ! $result;
 	}
 
-	if ( ! $result || is_wp_error( $result ) ) {
-		return false;
-	}
-
-	return true;
+	return $result && ! is_wp_error( $result );
 }
 
 /**
  * Determine the result of evaluating a given conditional for the current page.
  *
- * @param string $conditional Conditional code, in JSON string format.
+ * @param string $condition_json Conditional code, in JSON string format.
  *
  * @return boolean Result of evaluating the conditional.
  */
-function evaluate_conditional( string $conditional ): bool {
-	$rules = json_decode( $conditional, false );
+function evaluate_condition( string $condition_json ): bool {
+	$groups = json_decode( $condition_json, false );
 
-	foreach ( $rules as $rule ) {
-		if ( evaluate_conditional_rule( get_object_vars( $rule ) ) ) {
+	foreach ( $groups as $group ) {
+		$is_true = true;
+
+		foreach ( $group as $rule ) {
+			if ( ! evaluate_conditional_rule( get_object_vars( $rule ) ) ) {
+				$is_true = false;
+				break;
+			}
+		}
+
+		if ( $is_true ) {
 			return true;
 		}
 	}

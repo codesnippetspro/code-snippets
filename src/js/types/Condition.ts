@@ -6,11 +6,14 @@ import type { PostType } from './wp/PostType'
 import type { Category, PostTag } from './wp/Term'
 import type { User } from './wp/User'
 
+export type Condition = Record<string, ConditionGroup | undefined>
+export type ConditionGroup = Record<string, ConditionRule<ConditionSubject> | undefined>
+export type ConditionSubject = keyof ConditionSubjects
+
 export interface ConditionRule<S extends ConditionSubject> {
-	readonly enabled?: boolean
 	readonly subject?: S
 	readonly operator?: ConditionOperator
-	readonly object?: ConditionSubjects[ConditionSubject][]
+	readonly object?: ConditionSubjects[S][]
 }
 
 export interface ConditionSubjects {
@@ -28,9 +31,5 @@ export interface ConditionSubjects {
 	userCap: string
 	condition: Snippet['id']
 }
-
-export type ConditionSubject = keyof ConditionSubjects
-
-export type ConditionRules = Record<string, ConditionRule<ConditionSubject> | undefined>
 
 export type ConditionOperator = 'is' | 'not'

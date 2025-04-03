@@ -1,4 +1,4 @@
-import type { ConditionRules } from './ConditionRule'
+import type { Condition } from './Condition'
 
 export interface Snippet {
 	readonly id: number
@@ -14,7 +14,7 @@ export interface Snippet {
 	readonly shared_network?: boolean | null
 	readonly modified?: string
 	readonly code_error?: readonly [string, number] | null
-	readonly conditions: ConditionRules
+	readonly conditions: Condition
 }
 
 export type SnippetCodeType = 'php' | 'html' | 'css' | 'js'

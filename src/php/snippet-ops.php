@@ -667,7 +667,7 @@ function execute_active_snippets(): bool {
 		foreach ( $active_snippets as $snippet ) {
 			if ( 'condition' === $snippet['scope'] ) {
 				$snippet_id = intval( $snippet['id'] );
-				$conditionals[ $snippet_id ] = evaluate_conditional( $snippet['code'] );
+				$conditionals[ $snippet_id ] = evaluate_condition( $snippet['code'] );
 			}
 		}
 

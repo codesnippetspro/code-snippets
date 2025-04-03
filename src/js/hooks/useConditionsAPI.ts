@@ -6,17 +6,12 @@ import { useAxios } from './useAxios'
 import { useSnippetsAPI } from './useSnippetsAPI'
 import type { UserRoles } from '../types/wp/UserRole'
 import type { Pages } from '../types/wp/Page'
-import type { ConditionSubject, ConditionSubjects } from '../types/ConditionRule'
+import type { ConditionOperator, ConditionSubject, ConditionSubjects } from '../types/Condition'
 import type { SelectGroups, SelectOptions } from '../types/SelectOption'
 import type { Posts } from '../types/wp/Post'
 import type { PostTypes } from '../types/wp/PostType'
 import type { Categories, PostTags } from '../types/wp/Term'
 import type { Users } from '../types/wp/User'
-
-export const ENABLED_OPTIONS: SelectGroups<boolean> = [
-	{ value: true, label: __('Enable', 'code-snippets') },
-	{ value: false, label: __('Disable', 'code-snippets') }
-]
 
 export const SUBJECT_OPTIONS: SelectGroups<ConditionSubject> = [
 	{
@@ -52,6 +47,11 @@ export const SUBJECT_OPTIONS: SelectGroups<ConditionSubject> = [
 			{ value: 'authenticated', label: __('If the visitor is __logged-in__', 'code-snippets') }
 		]
 	}
+]
+
+export const OPERATOR_OPTIONS: SelectOptions<ConditionOperator> = [
+	{ value: 'is', label: _x('is', 'condition operator', 'code-snippets')},
+	{ value: 'not', label: _x('is not', 'condition operator', 'code-snippets')}
 ]
 
 const BOOLEAN_OPTIONS: SelectOptions<boolean> = [

@@ -1,6 +1,7 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { isCondition } from '../../../utils/snippets'
 
 export const NameInput: React.FC = () => {
 	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
@@ -18,7 +19,9 @@ export const NameInput: React.FC = () => {
 					autoComplete="off"
 					value={snippet.name}
 					disabled={isReadOnly}
-					placeholder={__('Enter snippet title', 'code-snippets')}
+					placeholder={isCondition(snippet)
+						? __('Enter condition title', 'code-snippets')
+						: __('Enter snippet title', 'code-snippets')}
 					onChange={event =>
 						setSnippet(previous => ({ ...previous, name: event.target.value }))}
 				/>
