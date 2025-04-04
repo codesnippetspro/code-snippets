@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import { createSnippetObject, getSnippetType } from '../../utils/snippets'
+import { createSnippetObject, getSnippetType, isCondition } from '../../utils/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { ConditionEditor } from '../ConditionEditor'
 import { ConditionsModalButton } from '../ConditionModal/ConditionModal'
@@ -13,26 +13,9 @@ import { UpgradeDialog } from './page/UpgradeDialog'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
 import { PageHeading } from './page/PageHeading'
-import type { Dispatch, SetStateAction } from 'react'
-
-interface EditSnippetFormProps {
-	setIsUpgradeDialogOpen: Dispatch<SetStateAction<boolean>>
-}
-
-const EditCodeForm: React.FC<EditSnippetFormProps> = ({ setIsUpgradeDialogOpen }) =>
-	<>
-		<div className="above-editor-container">
-			<SnippetTypeInput openUpgradeDialog={() => setIsUpgradeDialogOpen(true)} />
-			<SnippetLocationInput />
-			<ConditionsModalButton />
-		</div>
-
-		<CodeEditor />
-	</>
 
 const EditConditionForm: React.FC = () =>
 	<div id="snippet_conditions" className="snippet-condition-editor-container">
-		<h2>{__('Condition Rules', 'code-snippets')}</h2>
 		<ConditionEditor />
 	</div>
 
@@ -62,9 +45,14 @@ const EditForm: React.FC = () => {
 				<main className="snippet-form-main">
 					<NameInput />
 
-					{'condition' === snippet.scope
-						? <EditConditionForm />
-						: <EditCodeForm setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />}
+					<div className="above-editor-container">
+						<SnippetTypeInput openUpgradeDialog={() => setIsUpgradeDialogOpen(true)} />
+						<SnippetLocationInput />
+						<ConditionsModalButton />
+					</div>
+
+					<CodeEditor />
+					{isCondition(snippet) && <EditConditionForm />}
 
 					{window.CODE_SNIPPETS_EDIT?.enableDescription ? <DescriptionEditor /> : null}
 				</main>

@@ -24,7 +24,8 @@ const OPTIONS: SelectOption<SnippetType>[] = [
 	{ value: 'php', label: __('Functions', 'code-snippets') },
 	{ value: 'html', label: __('Content', 'code-snippets') },
 	{ value: 'css', label: __('Styles', 'code-snippets') },
-	{ value: 'js', label: __('Scripts', 'code-snippets') }
+	{ value: 'js', label: __('Scripts', 'code-snippets') },
+	{ value: 'cond', label: __('Conditions', 'code-snippets') }
 ]
 
 const SnippetTypeOption: React.FC<SelectOption<SnippetType>> = ({ label, value }) =>

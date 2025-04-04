@@ -1,22 +1,23 @@
-import type { Condition, ConditionGroup, ConditionRule, ConditionSubject } from '../types/Condition'
+import type { ConditionGroup, ConditionRule, ConditionSubject } from '../types/Condition'
 import type { Snippet } from '../types/Snippet'
 
 const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
-	const keys = items ? Object.keys(items) : []
-	return 1 + (keys.length ? Math.max(...keys.map(Number).filter(value => !Number.isNaN(value))) : 0)
-}
+	const keys = items
+		? Object.keys(items)
+			.map(key => Number(key.replaceAll('_', '')))
+			.filter(key => !Number.isNaN(key))
+		: []
 
-export const initialiseConditionGroups = (): Condition => ({
-	0: {
-		0: { subject: 'global' }
-	}
-})
+	console.log(items, keys)
+
+	return 1 + (keys.length ? Math.max(...keys) : 0)
+}
 
 export const addConditionGroup = (snippet: Snippet): Snippet => ({
 	...snippet,
 	conditions: {
 		...snippet.conditions,
-		[getNextIndex(snippet.conditions)]: { 0: {} }
+		[getNextIndex(snippet.conditions)]: { '0_': {} }
 	}
 })
 

@@ -4,9 +4,9 @@ import { __, sprintf } from '@wordpress/i18n'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
 import { createSnippetObject } from '../../utils/snippets'
+import { Button } from '../common/Button'
 import { Tooltip } from '../common/Tooltip'
 import { ConditionEditor } from '../ConditionEditor'
-import { CancelButton } from './CancelButton'
 import type { Snippet } from '../../types/Snippet'
 import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
 
@@ -48,7 +48,9 @@ interface ModalFooterProps extends ConditionNameFieldProps {
 
 const ModalFooter: React.FC<ModalFooterProps> = ({ closeModal, isSubmitting, conditionName, setConditionName }) =>
 	<div className="modal-footer">
-		<CancelButton closeModal={closeModal} />
+		<Button className="cancel-button" onClick={() => closeModal()}>
+			{__('Cancel', 'code-snippets')}
+		</Button>
 
 		<div>
 			{isSubmitting && <Spinner />}

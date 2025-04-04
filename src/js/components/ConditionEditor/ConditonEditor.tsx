@@ -11,16 +11,18 @@ export const ConditionEditor: React.FC = () => {
 	return (
 		<div className="snippet-condition-editor">
 			<div className="snippet-condition-groups">
-				{Object.keys(snippet.conditions).map(groupId =>
-					<Fragment key={groupId}>
-						<fieldset className="snippet-condition-group">
-							{snippet.conditions[groupId] && 0 < Object.keys(snippet.conditions[groupId]).length
-								&& Object.keys(snippet.conditions[groupId]).map(ruleId =>
-									<ConditionRuleEditor key={`${groupId}-${ruleId}`} groupId={groupId} ruleId={ruleId} />)}
-						</fieldset>
+				{Object.keys(snippet.conditions)
+					.filter(groupId => snippet.conditions[groupId] && 0 < Object.keys(snippet.conditions[groupId]).length)
+					.map(groupId =>
+						<Fragment key={groupId}>
+							<fieldset className="snippet-condition-group">
+								{snippet.conditions[groupId] && 0 < Object.keys(snippet.conditions[groupId]).length
+									&& Object.keys(snippet.conditions[groupId]).map(ruleId =>
+										<ConditionRuleEditor key={`${groupId}-${ruleId}`} groupId={groupId} ruleId={ruleId} />)}
+							</fieldset>
 
-						<div className="condition-group-sep">{_x('or', 'boolean logical operator', 'code-snippets')}</div>
-					</Fragment>)}
+							<div className="condition-group-sep">{_x('or', 'boolean logical operator', 'code-snippets')}</div>
+						</Fragment>)}
 				<AddGroupButton />
 			</div>
 		</div>

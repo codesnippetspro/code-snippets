@@ -3,7 +3,7 @@ import React from 'react'
 import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
-import { getSnippetType } from '../../../utils/snippets'
+import { getSnippetType, isCondition } from '../../../utils/snippets'
 import type { SnippetCodeScope } from '../../../types/Snippet'
 import type { SelectOption } from '../../../types/SelectOption'
 
@@ -47,24 +47,27 @@ export const SnippetLocationInput: React.FC = () => {
 
 	return (
 		<div className="snippet-location-container">
-			<h3><label htmlFor="snippet-location">{__('Snippet Location', 'code-snippets')}</label></h3>
-			<Select
-				id="snippet-location"
-				className="code-snippets-select"
-				options={options}
-				styles={{
-					menu: provided => ({ ...provided, zIndex: 9999 }),
-					input: provided => ({ ...provided, ':focus': { boxShadow: 'none' } })
-				}}
-				value={options.find(option => option.value === snippet.scope)}
-				formatOptionLabel={({ label, value }) =>
-					<>
-						<span className={`dashicons dashicons-${SCOPE_ICONS[value]}`}></span>{` ${label}`}
-					</>
-				}
-				onChange={option =>
-					option?.value && setSnippet(previous => ({ ...previous, scope: option.value }))}
-			/>
+			{isCondition(snippet) ? null
+				: <>
+					<h3><label htmlFor="snippet-location">{__('Snippet Location', 'code-snippets')}</label></h3>
+					<Select
+						id="snippet-location"
+						className="code-snippets-select"
+						options={options}
+						styles={{
+							menu: provided => ({ ...provided, zIndex: 9999 }),
+							input: provided => ({ ...provided, ':focus': { boxShadow: 'none' } })
+						}}
+						value={options.find(option => option.value === snippet.scope)}
+						formatOptionLabel={({ label, value }) =>
+							<>
+								<span className={`dashicons dashicons-${SCOPE_ICONS[value]}`}></span>{` ${label}`}
+							</>
+						}
+						onChange={option =>
+							option?.value && setSnippet(previous => ({ ...previous, scope: option.value }))}
+					/>
+				</>}
 		</div>
 	)
 }

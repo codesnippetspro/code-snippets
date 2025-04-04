@@ -3,7 +3,7 @@ import { Spinner } from '@wordpress/components'
 import { isRTL } from '@wordpress/i18n'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { isNetworkAdmin } from '../../utils/screen'
-import { getSnippetType } from '../../utils/snippets'
+import { getSnippetType, isCondition } from '../../utils/snippets'
 import { Notices } from '../SnippetForm/page/Notices'
 import { ShortcodeInfo } from './actions/ShortcodeInfo'
 import { MultisiteSharingSettings } from './controls/MultisiteSharingSettings'
@@ -21,7 +21,7 @@ export const EditorSidebar = () => {
 	return (
 		<div className="snippet-editor-sidebar">
 			<div className="box">
-				{snippet.id ? <ActivationSwitch /> : null}
+				{snippet.id && !isCondition(snippet) ? <ActivationSwitch /> : null}
 
 				{isNetworkAdmin() ? <MultisiteSharingSettings /> : null}
 

@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n'
 import { handleUnknownError } from '../../../utils/errors'
 import { isMacOS } from '../../../utils/screen'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { isCondition } from '../../../utils/snippets'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 
 export const CodeEditor: React.FC = () => {

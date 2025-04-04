@@ -31,7 +31,7 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 
 	return useMemo((): SnippetsAPI => ({
 		fetchAll: network =>
-			get<Snippet[]>(addQueryArgs(REST_SNIPPETS_BASE  , { network })),
+			get<Snippet[]>(addQueryArgs(REST_SNIPPETS_BASE, { network })),
 
 		fetch: (snippetId, network) =>
 			get<Snippet>(addQueryArgs(`${REST_SNIPPETS_BASE}/${snippetId}`, { network })),

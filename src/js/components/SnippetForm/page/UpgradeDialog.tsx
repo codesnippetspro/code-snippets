@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ExternalLink, Modal } from '@wordpress/components'
 import { __, _n, sprintf } from '@wordpress/i18n'
+import { Button } from '../../common/Button'
 import type { Dispatch, SetStateAction } from 'react'
 
 export interface UpgradeDialogProps {
@@ -103,13 +104,10 @@ const UpgradeInfo: React.FC<UpgradeInfoProps> = ({ nextTab }) =>
 				{__('Learn More', 'code-snippets')}
 			</ExternalLink>
 
-			<button
-				className="button button-primary button-large"
-				onClick={nextTab}
-			>
+			<Button primary large onClick={nextTab}>
 				{__('See Plans', 'code-snippets')}
 				<span className="dashicons dashicons-arrow-right"></span>
-			</button>
+			</Button>
 		</p>
 	</>
 

@@ -2,7 +2,7 @@ import { Modal } from '@wordpress/components'
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import { initialiseConditionGroups } from '../../utils/conditions'
+import { isCondition } from '../../utils/snippets'
 import { Button } from '../common/Button'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { ApplyConditionForm } from './ApplyConditionForm'
@@ -48,25 +48,28 @@ export const ConditionsModalButton: React.FC = () => {
 	const hasCondition = 0 !== snippet.conditionId
 
 	const handleClose = () => {
-		setSnippet(previous => ({ ...previous, conditions: initialiseConditionGroups() }))
+		setSnippet(previous => ({ ...previous, conditions: {} }))
 		setIsModalOpen(false)
 	}
 
 	return <>
 		<div className={classnames('conditions-editor-open', hasCondition ? 'has-condition' : 'no-condition')}>
-			<h3>{__('Conditions', 'code-snippets')}</h3>
+			{isCondition(snippet) ? null
+				: <>
+					<h3>{__('Conditions', 'code-snippets')}</h3>
 
-			<Button
-				large
-				primary={hasCondition}
-				onClick={() => setIsModalOpen(true)}
-			>
-				<span className="dashicons dashicons-randomize"></span>
-				{hasCondition
-					? __('Conditions', 'code-snippets')
-					: __('Set Conditions', 'code-snippets')}
-				<span className="badge">{__('beta', 'code-snippets')}</span>
-			</Button>
+					<Button
+						large
+						primary={hasCondition}
+						onClick={() => setIsModalOpen(true)}
+					>
+						<span className="dashicons dashicons-randomize"></span>
+						{hasCondition
+							? __('Conditions', 'code-snippets')
+							: __('Set Conditions', 'code-snippets')}
+						<span className="badge">{__('beta', 'code-snippets')}</span>
+					</Button>
+				</>}
 		</div>
 
 		{isModalOpen

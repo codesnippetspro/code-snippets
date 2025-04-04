@@ -4,8 +4,8 @@ import React, { useMemo, useState } from 'react'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { useSnippets } from '../../hooks/useSnippetsAPI'
 import { isCondition } from '../../utils/snippets'
+import { Button } from '../common/Button'
 import { SingleSelect } from '../common/Select'
-import { CancelButton } from './CancelButton'
 import type { SelectOptions } from '../../types/SelectOption'
 import type { Snippet } from '../../types/Snippet'
 import type { FormEventHandler } from 'react'
@@ -53,9 +53,12 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ closeMod
 			</div>
 
 			<div className="modal-footer">
-				<CancelButton closeModal={closeModal} />
+				<Button className="cancel-button" onClick={() => closeModal()}>
+					{__('Cancel', 'code-snippets')}
+				</Button>
 
 				<button
+					type="submit"
 					className="button button-primary button-large"
 				>
 					{__('Apply', 'code-snippets')}
