@@ -80,6 +80,7 @@ class Snippet extends Data_Item {
 		$field_aliases = array(
 			'description' => 'desc',
 			'language'    => 'lang',
+			'conditionId' => 'condition_id',
 		);
 
 		parent::__construct( $default_values, $initial_data, $field_aliases );

@@ -5,8 +5,9 @@ import { REST_API_AXIOS_CONFIG, REST_SNIPPETS_BASE } from '../utils/restAPI'
 import { isNetworkAdmin } from '../utils/screen'
 import { createSnippetObject } from '../utils/snippets'
 import { useAxios } from './useAxios'
+import type { SnippetSchema } from '../types/api/SnippetSchema'
 import type { Snippet } from '../types/Snippet'
-import type { SnippetsExport } from '../types/SnippetsExport'
+import type { SnippetsExport } from '../types/api/SnippetsExport'
 
 export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<Snippet[]>
@@ -26,30 +27,44 @@ const buildURL = ({ id, network }: Snippet, action?: string) =>
 		{ network: network ? true : undefined }
 	)
 
+const mapToSchema = ({ conditionId, ...fields }: Snippet): SnippetSchema => ({
+	condition_id: conditionId,
+	...fields
+})
+
+const mapFromSchema = (schema: SnippetSchema): Snippet =>
+	createSnippetObject(schema)
+
 export const useSnippetsAPI = (): SnippetsAPI => {
 	const { get, post, del } = useAxios(REST_API_AXIOS_CONFIG)
 
 	return useMemo((): SnippetsAPI => ({
 		fetchAll: network =>
-			get<Snippet[]>(addQueryArgs(REST_SNIPPETS_BASE, { network })),
+			get<SnippetSchema[]>(addQueryArgs(REST_SNIPPETS_BASE, { network }))
+				.then(response => response.map(mapFromSchema)),
 
 		fetch: (snippetId, network) =>
-			get<Snippet>(addQueryArgs(`${REST_SNIPPETS_BASE}/${snippetId}`, { network })),
+			get<SnippetSchema>(addQueryArgs(`${REST_SNIPPETS_BASE}/${snippetId}`, { network }))
+				.then(response => mapFromSchema(response)),
 
 		create: snippet =>
-			post<Snippet>(REST_SNIPPETS_BASE, snippet),
+			post<SnippetSchema>(REST_SNIPPETS_BASE, mapToSchema(snippet))
+				.then(response => mapFromSchema(response)),
 
 		update: snippet =>
-			post<Snippet>(buildURL(snippet), snippet),
+			post<SnippetSchema>(buildURL(snippet), mapToSchema(snippet))
+				.then(response => mapFromSchema(response)),
 
 		delete: (snippet: Snippet) =>
 			del(buildURL(snippet)),
 
 		activate: snippet =>
-			post<Snippet>(buildURL(snippet, 'activate')),
+			post<SnippetSchema>(buildURL(snippet, 'activate'))
+				.then(response => mapFromSchema(response)),
 
 		deactivate: snippet =>
-			post<Snippet>(buildURL(snippet, 'deactivate')),
+			post<SnippetSchema>(buildURL(snippet, 'deactivate'))
+				.then(response => mapFromSchema(response)),
 
 		export: snippet =>
 			get<SnippetsExport>(buildURL(snippet, 'export')),

@@ -1,10 +1,10 @@
 import type { Snippet } from './Snippet'
-import type { UserRole } from './wp/UserRole'
-import type { Page } from './wp/Page'
-import type { Post } from './wp/Post'
-import type { PostType } from './wp/PostType'
-import type { Category, PostTag } from './wp/Term'
-import type { User } from './wp/User'
+import type { UserRole } from './api/UserRole'
+import type { Page } from './api/Page'
+import type { Post } from './api/Post'
+import type { PostType } from './api/PostType'
+import type { Category, PostTag } from './api/Term'
+import type { User } from './api/User'
 
 export type Condition = Record<string, ConditionGroup | undefined>
 export type ConditionGroup = Record<string, ConditionRule<ConditionSubject> | undefined>
@@ -17,9 +17,7 @@ export interface ConditionRule<S extends ConditionSubject> {
 }
 
 export interface ConditionSubjects {
-	global: boolean
-	admin: boolean
-	frontend: boolean
+	siteArea: 'global' | 'frontend' | 'admin'
 	post: Post['id']
 	page: Page['id']
 	postType: PostType['slug']

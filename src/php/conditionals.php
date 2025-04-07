@@ -25,7 +25,7 @@ function evaluate_condition_clause( ?string $subject, array $objects ) {
 
 		case 'postType':
 			$post = get_post();
-			return $post && in_array( $post->post_type, $objects );
+			return $post && in_array( $post->post_type, $objects, true );
 
 		case 'tag':
 		case 'category':
@@ -33,7 +33,7 @@ function evaluate_condition_clause( ?string $subject, array $objects ) {
 
 		case 'user':
 			$user = wp_get_current_user();
-			return $user && in_array( $user->ID, $objects );
+			return $user && in_array( $user->ID, $objects, true );
 
 		case 'authenticated':
 			return is_user_logged_in();

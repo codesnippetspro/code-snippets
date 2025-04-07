@@ -9,6 +9,7 @@ import { EditorSidebar } from '../EditorSidebar'
 import { CodeEditor } from './fields/CodeEditor'
 import { SnippetLocationInput } from './fields/SnippetLocationInput'
 import { SnippetTypeInput } from './fields/SnippetTypeInput'
+import { ConditionTable } from './page/ConditionTable'
 import { UpgradeDialog } from './page/UpgradeDialog'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
@@ -55,6 +56,8 @@ const EditForm: React.FC = () => {
 					{isCondition(snippet) && <EditConditionForm />}
 
 					{window.CODE_SNIPPETS_EDIT?.enableDescription ? <DescriptionEditor /> : null}
+
+					{isCondition(snippet) && <ConditionTable />}
 				</main>
 
 				<EditorSidebar />

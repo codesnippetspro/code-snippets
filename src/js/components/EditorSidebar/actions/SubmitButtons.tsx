@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { handleUnknownError } from '../../../utils/errors'
-import { getSnippetType } from '../../../utils/snippets'
+import { getSnippetType, isCondition } from '../../../utils/snippets'
 import { Button } from '../../common/Button'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { isNetworkAdmin } from '../../../utils/screen'
@@ -36,7 +36,7 @@ const ActivateOrDeactivateButton: React.FC<ActivateOrDeactivateButtonProps> = ({
 	primaryActivate
 }) => {
 	switch (true) {
-		case snippet.shared_network && isNetworkAdmin():
+		case isCondition(snippet) || snippet.shared_network && isNetworkAdmin():
 			return null
 
 		case 'single-use' === snippet.scope:

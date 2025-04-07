@@ -15,7 +15,7 @@ export const isValidScope = (scope: unknown): scope is SnippetScope =>
 const isValidCondition = (condition: unknown): condition is Condition =>
 	'object' === typeof condition && null !== condition && Object.values(condition)
 		.every((group: unknown) => 'object' === typeof group && null !== group
-			&& Object.keys(group).every((rule: unknown) => 'object' === typeof rule && null !== rule))
+			&& Object.values(group).every((rule: unknown) => 'object' === typeof rule && null !== rule))
 
 const generateObjectKeys = <T>(items: Record<PropertyKey, T>, transformItem?: (item: T) => T): Record<string, T> =>
 	Object.fromEntries(
@@ -26,7 +26,7 @@ const generateObjectKeys = <T>(items: Record<PropertyKey, T>, transformItem?: (i
 const parseConditionGroups = (condition: Condition) =>
 	generateObjectKeys(condition, group => group && generateObjectKeys(group))
 
-const parseConditions = (parsed: Omit<Snippet, 'conditions'>, fields: object): Partial<Snippet> => {
+const parseConditions = (parsed: Snippet, fields: object): Partial<Snippet> => {
 	if ('conditions' in fields && isValidCondition(fields.conditions)) {
 		return { conditions: parseConditionGroups(fields.conditions) }
 	}

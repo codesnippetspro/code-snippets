@@ -8,9 +8,7 @@ const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
 			.filter(key => !Number.isNaN(key))
 		: []
 
-	console.log(items, keys)
-
-	return 1 + (keys.length ? Math.max(...keys) : 0)
+	return `${1 + (keys.length ? Math.max(...keys) : 0)}_`
 }
 
 export const addConditionGroup = (snippet: Snippet): Snippet => ({

@@ -318,28 +318,38 @@ class List_Table extends WP_List_Table {
 			return '';
 		}
 
-		if ( 'single-use' === $snippet->scope ) {
-			$class = 'snippet-execution-button';
-			$action = 'run-once';
-			$label = esc_html__( 'Run Once', 'code-snippets' );
-		} else {
-			$class = 'snippet-activation-switch';
-			$action = $snippet->active ? 'deactivate' : 'activate';
-			$label = $snippet->network && ! $snippet->shared_network ?
-				( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
-				( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
+		switch ( $snippet->scope ) {
+			case 'single-use':
+				$class = 'snippet-execution-button';
+				$action = 'run-once';
+				$label = esc_html__( 'Run Once', 'code-snippets' );
+				break;
+
+			case 'condition':
+				$action = $class = $label = null;
+				break;
+
+			default:
+				$class = 'snippet-activation-switch';
+				$action = $snippet->active ? 'deactivate' : 'activate';
+				$label = $snippet->network && ! $snippet->shared_network ?
+					( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
+					( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
+				break;
 		}
 
-		if ( $snippet->shared_network ) {
+		if ( $action && $snippet->shared_network ) {
 			$action .= '-shared';
 		}
 
-		return sprintf(
-			'<a class="%s" href="%s" title="%s">&nbsp;</a> ',
-			esc_attr( $class ),
-			esc_url( $this->get_action_link( $action, $snippet ) ),
-			esc_attr( $label )
-		);
+		return $action && $class && $label
+			? sprintf(
+				'<a class="%s" href="%s" title="%s">&nbsp;</a> ',
+				esc_attr( $class ),
+				esc_url( $this->get_action_link( $action, $snippet ) ),
+				esc_attr( $label )
+			)
+			: '';
 	}
 
 	/**
