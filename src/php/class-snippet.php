@@ -292,8 +292,8 @@ class Snippet extends Data_Item {
 	 * @return string
 	 */
 	protected function get_display_name(): string {
-		// translators: %d: snippet ID.
-		return empty( $this->name ) ? sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $this->id ) : $this->name;
+		// translators: %s: snippet identifier.
+		return empty( $this->name ) ? sprintf( esc_html__( 'Snippet #%d', 'code-snippets' ), $this->id ) : $this->name;
 	}
 
 	/**

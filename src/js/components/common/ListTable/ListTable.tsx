@@ -1,17 +1,19 @@
 import React, { useMemo, useState } from 'react'
 import classnames from 'classnames'
-import { TableHeadings, TableHeadingsProps } from './TableHeadings'
+import { TableHeadings } from './TableHeadings'
 import { TableItems } from './TableItems'
-import { TableNav, TableNavProps } from './TableNav'
+import { TableNav } from './TableNav'
+import type { TableNavProps } from './TableNav'
+import type { TableHeadingsProps } from './TableHeadings'
 import type { Key, ReactNode } from 'react'
 
 export interface ListTableColumn<T> {
-	key: Key
+	id: Key
 	title: string
+	render: (item: T) => ReactNode
 	isHidden?: boolean
-	isHeading?: boolean
 	isPrimary?: boolean
-	getSortedValue?: (item: T) => Key
+	sortedValue?: (item: T) => Key
 	defaultSortDirection?: ListTableSortDirection
 }
 
@@ -30,7 +32,6 @@ export interface ListTableItemsProps<T, K extends Key> {
 	getKey: (item: T) => K
 	columns: ListTableColumn<T>[]
 	noItems?: ReactNode
-	renderColumn: (column: ListTableColumn<T>, item: T) => ReactNode
 }
 
 export interface ListTableProps<T, K extends Key> extends ListTableItemsProps<T, K>, ListTableNavProps<K> {
@@ -38,6 +39,30 @@ export interface ListTableProps<T, K extends Key> extends ListTableItemsProps<T,
 	striped?: boolean
 	className?: string
 }
+
+const sortItems = <T, >(
+	items: T[],
+	sortColumn: ListTableColumn<T> | undefined,
+	sortDirection: ListTableSortDirection
+): T[] =>
+	items.toSorted((itemA, itemB) => {
+		const valueA = sortColumn?.sortedValue?.(itemA)
+		const valueB = sortColumn?.sortedValue?.(itemB)
+
+		if (valueA === undefined || valueB === undefined) {
+			return 0
+		}
+
+		if (valueA < valueB) {
+			return 'asc' === sortDirection ? -1 : 1
+		}
+
+		if (valueA > valueB) {
+			return 'asc' === sortDirection ? 1 : -1
+		}
+
+		return 0
+	})
 
 export const ListTable = <T, K extends Key>({
 	items,
@@ -48,7 +73,6 @@ export const ListTable = <T, K extends Key>({
 	actions,
 	noItems,
 	className,
-	renderColumn,
 	extraTableNav,
 	handleBulkAction
 }: ListTableProps<T, K>) => {
@@ -56,33 +80,14 @@ export const ListTable = <T, K extends Key>({
 	const [sortColumn, setSortColumn] = useState<ListTableColumn<T>>()
 	const [sortDirection, setSortDirection] = useState<ListTableSortDirection>('asc')
 
-	const sortedItems = useMemo(() => {
-		console.log('sorting items', items, sortColumn, sortDirection)
-
-		return items.toSorted((itemA, itemB) => {
-			const valueA = sortColumn?.getSortedValue?.(itemA)
-			const valueB = sortColumn?.getSortedValue?.(itemB)
-
-			if (valueA === undefined || valueB === undefined) {
-				return 0
-			}
-
-			if (valueA < valueB) {
-				return 'asc' === sortDirection ? -1 : 1
-			}
-
-			if (valueA > valueB) {
-				return 'asc' === sortDirection ? 1 : -1
-			}
-
-			return 0
-		})
-	}, [items, sortColumn, sortDirection])
+	const sortedItems: T[] = useMemo(
+		() => sortItems(items, sortColumn, sortDirection),
+		[items, sortColumn, sortDirection])
 
 	const tableNavProps: Omit<TableNavProps<K>, 'which'> =
-		{ hasItems: items.length > 0, actions, extraTableNav, handleBulkAction, selected }
+		{ hasItems: 0 < items.length, actions, extraTableNav, handleBulkAction, selected }
 
-	const tableHeadingsProps: TableHeadingsProps<T, K> =
+	const tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'> =
 		{ items: sortedItems, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }
 
 	return (
@@ -90,13 +95,13 @@ export const ListTable = <T, K extends Key>({
 			<TableNav which="top" {...tableNavProps} />
 			<table className={classnames('wp-list-table widefat', { striped, fixed }, className)}>
 				<thead>
-				<TableHeadings firstOnPage {...tableHeadingsProps} />
+					<TableHeadings which="head" {...tableHeadingsProps} />
 				</thead>
 				<tbody id="the-list">
-				<TableItems {...{ items: sortedItems, getKey, columns, noItems, renderColumn, setSelected }} />
+					<TableItems items={sortedItems} {...{ getKey, columns, noItems, setSelected }} />
 				</tbody>
 				<tfoot>
-				<TableHeadings {...tableHeadingsProps} />
+					<TableHeadings which="foot" {...tableHeadingsProps} />
 				</tfoot>
 			</table>
 			<TableNav which="bottom" {...tableNavProps} />

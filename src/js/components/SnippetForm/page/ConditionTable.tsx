@@ -1,29 +1,36 @@
-import { __, sprintf } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { useSnippets } from '../../../hooks/useSnippetsAPI'
-import { Snippet } from '../../../types/Snippet'
-import { getSnippetType } from '../../../utils/snippets'
+import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets'
+import { stripTags } from '../../../utils/text'
 import { ListTable } from '../../common/ListTable'
 import { SnippetTypeBadge } from '../../common/SnippetTypeBadge'
+import type { Snippet } from '../../../types/Snippet'
 import type { ListTableColumn } from '../../common/ListTable'
-import { addQueryArgs } from '@wordpress/url'
 
 const columns: ListTableColumn<Snippet>[] = [
 	{
-		key: 'name',
+		id: 'name',
 		title: __('Snippet Name', 'code-snippets'),
-		isHeading: true,
-		getSortedValue: snippet => snippet.name
+		isPrimary: true,
+		sortedValue: snippet => snippet.name,
+		render: snippet =>
+			<a href={getSnippetEditUrl(snippet)} target="_blank" rel="noreferrer">
+				<strong>{getSnippetDisplayName(snippet)}</strong>
+			</a>
 	},
 	{
-		key: 'type',
+		id: 'type',
 		title: __('Type', 'code-snippets'),
-		getSortedValue: snippet => getSnippetType(snippet)
+		sortedValue: snippet => getSnippetType(snippet),
+		render: snippet =>
+			<SnippetTypeBadge snippetType={getSnippetType(snippet)} />
 	},
 	{
-		key: 'desc',
-		title: __('Description', 'code-snippets')
+		id: 'desc',
+		title: __('Description', 'code-snippets'),
+		render: snippet => stripTags(snippet.desc)
 	}
 ]
 
@@ -58,28 +65,8 @@ export const ConditionTable: React.FC = () => {
 				actions={actions}
 				noItems={__('No snippets are using this condition.', 'code-snippets')}
 				handleBulkAction={(action, _selected) => {
-					if (action === 'detach') {
+					if ('detach' === action) {
 						// TODO: update snippet data.
-					}
-
-				}}
-				renderColumn={(column, snippet) => {
-					switch (column.key) {
-						case 'name':
-							return (
-								<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: snippet.id })} target="_blank" rel="noreferrer">
-									<strong>{snippet.name.trim() ? snippet.name : sprintf(__('Untitled #%d', 'code-snippets'), snippet.id)}</strong>
-								</a>
-							)
-
-						case 'type':
-							return <SnippetTypeBadge snippetType={getSnippetType(snippet)} />
-
-						case 'desc':
-							return snippet.desc
-
-						default:
-							return null
 					}
 				}}
 			/>

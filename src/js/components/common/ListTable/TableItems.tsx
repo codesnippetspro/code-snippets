@@ -1,6 +1,6 @@
 import React from 'react'
-import { Dispatch, Key, SetStateAction, ThHTMLAttributes } from 'react'
-import { ListTableColumn, ListTableItemsProps } from './ListTable'
+import type { Dispatch, Key, SetStateAction, ThHTMLAttributes } from 'react'
+import type { ListTableColumn, ListTableItemsProps } from './ListTable'
 
 interface CheckboxCellProps<T, K extends Key> extends Pick<TableItemsProps<T, K>, 'getKey'> {
 	item: T
@@ -28,32 +28,32 @@ const CheckboxCell = <T, K extends Key>({ item, setSelected, getKey }: CheckboxC
 		/>
 	</th>
 
-interface TableCellProps<T, K extends Key> extends Pick<TableItemsProps<T, K>, 'renderColumn'> {
+interface TableCellProps<T> {
 	item: T
-	column: ListTableColumn
+	column: ListTableColumn<T>
 }
 
-const TableCell = <T, K extends Key>({ item, column, renderColumn }: TableCellProps<T, K>) => {
+const TableCell = <T, >({ item, column }: TableCellProps<T>) => {
 	const props: ThHTMLAttributes<HTMLTableCellElement> = {
-		className: `${column.key}-column`,
-		children: renderColumn(column, item)
+		className: `${column.id}-column`,
+		children: column.render(item)
 	}
 
-	return column.isHeading ? <th {...props} /> : <td {...props} />
+	return column.isPrimary ? <th {...props} /> : <td {...props} />
 }
 
-export interface TableItemsProps<T, K extends Key> extends ListTableItemsProps<T, K> {
+export interface TableItemsProps<T, K extends Key> extends Pick<ListTableItemsProps<T, K>, 'items' | 'getKey' | 'columns' | 'noItems'> {
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }
 
-export const TableItems = <T, K extends Key>({ items, getKey, columns, renderColumn, noItems, setSelected }: TableItemsProps<T, K>) =>
+export const TableItems = <T, K extends Key>({ items, getKey, columns, noItems, setSelected }: TableItemsProps<T, K>) =>
 	0 < items.length
 		? items.map(item =>
 			<tr key={getKey(item)}>
 				<CheckboxCell {...{ item, setSelected, getKey }} />
 
 				{columns.map(column =>
-					<TableCell key={column.key} {...{ item, column, renderColumn }} />)}
+					<TableCell key={column.id} {...{ item, column }} />)}
 			</tr>
 		)
 		: <tr className="no-items">

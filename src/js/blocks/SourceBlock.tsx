@@ -54,7 +54,7 @@ const SnippetSourceCode: React.FC<SnippetSourceCodeProps> = ({
 	snippet: { code, id, scope },
 	attributes: { className, line_numbers, highlight_lines }
 }) => {
-	const type = getSnippetType(scope)
+	const type = getSnippetType({ scope })
 	const language = 'css' === type ? 'css' : 'js' === type ? 'js' : 'php'
 
 	useEffect(() => {

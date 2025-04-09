@@ -1,8 +1,10 @@
+import { addQueryArgs } from '@wordpress/url'
+import { __, sprintf } from '@wordpress/i18n'
 import { parseSnippetObject } from './objects'
 import { isNetworkAdmin } from './screen'
-import type { Snippet, SnippetScope, SnippetType } from '../types/Snippet'
+import type { Snippet, SnippetType } from '../types/Snippet'
 
-const PRO_TYPES: SnippetType[] = ['css', 'js']
+const PRO_TYPES = new Set<SnippetType>(['css', 'js'])
 
 const defaults: Omit<Snippet, 'tags' | 'conditions'> = {
 	id: 0,
@@ -21,12 +23,7 @@ const defaults: Omit<Snippet, 'tags' | 'conditions'> = {
 export const createSnippetObject = (fields: unknown = null): Snippet =>
 	parseSnippetObject(fields, { ...defaults, tags: [], conditions: {} })
 
-const getSnippetScope = (snippetOrScope: Snippet | SnippetScope): SnippetScope =>
-	'string' === typeof snippetOrScope ? snippetOrScope : snippetOrScope.scope
-
-export const getSnippetType = (snippetOrScope: Snippet | SnippetScope): SnippetType => {
-	const scope = getSnippetScope(snippetOrScope)
-
+export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType => {
 	switch (true) {
 		case scope.endsWith('-css'):
 			return 'css'
@@ -45,11 +42,20 @@ export const getSnippetType = (snippetOrScope: Snippet | SnippetScope): SnippetT
 	}
 }
 
-export const isCondition = (snippet: Snippet): boolean =>
+export const getSnippetEditUrl = ({ id }: Pick<Snippet, 'id'>): string =>
+	addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id })
+
+export const getSnippetDisplayName = (snippet: Snippet): string =>
+	'' === snippet.name.trim()
+		// translators: %s: snippet identifier.
+		? sprintf(__('Snippet #%d', 'code-snippets'), snippet.id)
+		: snippet.name
+
+export const isCondition = (snippet: Pick<Snippet, 'scope'>): boolean =>
 	'condition' === snippet.scope
 
-export const isProSnippet = (snippet: Snippet | SnippetScope): boolean =>
-	PRO_TYPES.includes(getSnippetType(snippet))
+export const isProSnippet = (snippet: Pick<Snippet, 'scope'>): boolean =>
+	PRO_TYPES.has(getSnippetType(snippet))
 
 export const isProType = (type: SnippetType): boolean =>
-	PRO_TYPES.includes(type)
+	PRO_TYPES.has(type)

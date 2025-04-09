@@ -35,7 +35,7 @@ const EditForm: React.FC = () => {
 			<div id="snippet-form" className={classnames(
 				'snippet-form',
 				`${snippet.scope}-snippet`,
-				`${getSnippetType(snippet.scope)}-snippet`,
+				`${getSnippetType(snippet)}-snippet`,
 				`${snippet.id ? 'saved' : 'new'}-snippet`,
 				`${snippet.active ? 'active' : 'inactive'}-snippet`,
 				{

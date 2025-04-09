@@ -1,6 +1,7 @@
-import React, { InputHTMLAttributes } from "react"
+import React from 'react'
 import classnames from 'classnames'
-import { __ } from "@wordpress/i18n"
+import { __ } from '@wordpress/i18n'
+import type { InputHTMLAttributes } from 'react'
 
 export interface SubmitButtonProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id' | 'name' | 'value'> {
 	id?: string
@@ -23,8 +24,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
 	className,
 	...inputProps
 }) => {
-
-	const button = (
+	const button =
 		<input
 			id={id ?? name}
 			type="submit"
@@ -41,7 +41,6 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
 			)}
 			{...inputProps}
 		/>
-	)
 
 	return wrap ? <p className="submit">{button}</p> : button
 }

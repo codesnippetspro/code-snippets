@@ -1,8 +1,8 @@
-import { ChangeEventHandler, Key, useState } from 'react'
-import { SubmitButton } from '../SubmitButton'
-import { ListTableNavProps } from './ListTable'
-import React from 'react'
+import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
+import { SubmitButton } from '../SubmitButton'
+import type { ListTableNavProps } from './ListTable'
+import type { ChangeEventHandler, Key} from 'react'
 
 type BulkActionsProps<K extends Key> = Required<Pick<TableNavProps<K>, 'which' | 'actions' | 'handleBulkAction' | 'selected'>>
 
@@ -20,19 +20,19 @@ const BulkActions = <K extends Key>({ which, actions, handleBulkAction, selected
 				{__('Select bulk action', 'code-snippets')}
 			</label>
 
-			<select name={`action${which === 'bottom' ? '-2' : ''}`} id={`bulk-action-selector-${which}`} onChange={handleChange}>
+			<select name={`action${'bottom' === which ? '-2' : ''}`} id={`bulk-action-selector-${which}`} onChange={handleChange}>
 				<option value="-1">{__('Bulk actions', 'code-snippets')}</option>
 				{Object.entries(actions).map(([key, value]) =>
-					typeof value === 'object'
+					'object' === typeof value
 						? <optgroup key={key} label={key}>
-							{Object.entries(value).map((([name, title]) =>
-								<option key={name} value={name} className={'edit' === name ? 'hide-if-no-js' : undefined}>{title}</option>))}
+							{Object.entries(value).map(([name, title]) =>
+								<option key={name} value={name} className={'edit' === name ? 'hide-if-no-js' : undefined}>{title}</option>)}
 						</optgroup>
 						: <option key={key} value={key} className={'edit' === key ? 'hide-if-no-js' : undefined}>{value}</option>)}
 			</select>
 
 			<SubmitButton
-				id={`doaction${which === 'bottom' ? '-2' : ''}`}
+				id={`doaction${'bottom' === which ? '-2' : ''}`}
 				name="bulk_action"
 				text={__('Apply', 'code-snippets')}
 				className="action"
@@ -59,7 +59,7 @@ export interface TableNavProps<K extends Key> extends ListTableNavProps<K> {
 }
 
 export const TableNav = <K extends Key>({ which, actions, hasItems, handleBulkAction, extraTableNav, selected }: TableNavProps<K>) => {
-	const showBulkActions = hasItems && actions && handleBulkAction && Object.keys(actions).length > 0
+	const showBulkActions = hasItems && actions && handleBulkAction && 0 < Object.keys(actions).length
 
 	return extraTableNav || showBulkActions
 		? <div className={`tablenav ${which}`}>

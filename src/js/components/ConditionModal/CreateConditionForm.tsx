@@ -3,22 +3,16 @@ import { BaseControl, Spinner } from '@wordpress/components'
 import { __, sprintf } from '@wordpress/i18n'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
-import { createSnippetObject } from '../../utils/snippets'
+import { createSnippetObject, getSnippetDisplayName } from '../../utils/snippets'
 import { Button } from '../common/Button'
 import { Tooltip } from '../common/Tooltip'
 import { ConditionEditor } from '../ConditionEditor'
 import type { Snippet } from '../../types/Snippet'
 import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
 
-const getSnippetName = (snippet: Snippet): string =>
-	'' === snippet.name.trim()
-		// translators: %s: snippet identifier.
-		? sprintf(__('Snippet #%d', 'code-snippets'), snippet.id)
-		: snippet.name
-
 const generateConditionNameForSnippet = (snippet: Snippet) =>
-	// translators: %s: snippet name.
-	sprintf(__('Condition for "%s"', 'code-snippets'), getSnippetName(snippet))
+	// translators: %s: snippet display name.
+	sprintf(__('Condition for "%s"', 'code-snippets'), getSnippetDisplayName(snippet))
 
 interface ConditionNameFieldProps {
 	isSubmitting: boolean
