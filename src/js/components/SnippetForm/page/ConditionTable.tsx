@@ -9,15 +9,17 @@ import { SnippetTypeBadge } from '../../common/SnippetTypeBadge'
 import type { ListTableColumn } from '../../common/ListTable'
 import { addQueryArgs } from '@wordpress/url'
 
-const columns: ListTableColumn[] = [
+const columns: ListTableColumn<Snippet>[] = [
 	{
 		key: 'name',
 		title: __('Snippet Name', 'code-snippets'),
-		isHeading: true
+		isHeading: true,
+		getSortedValue: snippet => snippet.name
 	},
 	{
 		key: 'type',
-		title: __('Type', 'code-snippets')
+		title: __('Type', 'code-snippets'),
+		getSortedValue: snippet => getSnippetType(snippet)
 	},
 	{
 		key: 'desc',

@@ -15,11 +15,13 @@ const CheckboxCell = <T, K extends Key>({ item, setSelected, getKey }: CheckboxC
 			onChange={event => {
 				setSelected(previous => {
 					const updated = new Set(previous)
+
 					if (event.target.checked) {
 						updated.add(getKey(item))
 					} else {
 						updated.delete(getKey(item))
 					}
+
 					return updated
 				})
 			}}
