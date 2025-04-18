@@ -229,6 +229,7 @@ function get_settings_fields(): array {
 			'type'       => 'select',
 			'desc'       => __( 'The set of keyboard shortcuts to use in the code editor.', 'code-snippets' ),
 			'options'    => [
+				'default' => __( 'Default', 'code-snippets' ),
 				'vim'     => __( 'Vim', 'code-snippets' ),
 				'emacs'   => __( 'Emacs', 'code-snippets' ),
 				'sublime' => __( 'Sublime Text', 'code-snippets' ),
