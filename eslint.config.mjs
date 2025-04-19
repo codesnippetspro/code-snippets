@@ -69,7 +69,7 @@ export default eslintTs.config(
 			'@stylistic/no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
 			'@stylistic/no-tabs': ['error', { allowIndentationTabs: true }],
 			'@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
-			'@stylistic/operator-linebreak': ['error', 'before'],
+			'@stylistic/operator-linebreak': ['error', 'after', { 'overrides': { '?': 'before', ':': 'before' } }],
 			'@stylistic/padded-blocks': ['error', 'never'],
 			'@stylistic/quote-props': ['error', 'consistent-as-needed'],
 			'@stylistic/quotes': ['error', 'single', { avoidEscape: true }],

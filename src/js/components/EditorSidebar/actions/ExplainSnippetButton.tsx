@@ -4,6 +4,7 @@ import { isAxiosError } from 'axios'
 import React, { useState } from 'react'
 import { useGenerativeAPI } from '../../../hooks/useGenerativeAPI'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { isCondition } from '../../../utils/snippets'
 import { trimTrailingChar } from '../../../utils/text'
 import { CloudAIButton } from './CloudAIButton'
 import type { ButtonProps } from '../../common/Button'
@@ -26,7 +27,7 @@ export const ExplainSnippetButton: React.FC<ExplainSnippetButtonProps> = ({
 	const [errorMessage, setErrorMessage] = useState<string>()
 	const { explainSnippet } = useGenerativeAPI()
 
-	return '' !== snippet.code.trim() || 'condition' === snippet.scope
+	return '' !== snippet.code.trim() || isCondition(snippet)
 		? <div className="generate-button">
 			{isWorking ? <Spinner /> : null}
 

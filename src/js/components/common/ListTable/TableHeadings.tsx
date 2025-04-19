@@ -95,7 +95,7 @@ export const TableHeadings = <T, K extends Key>({
 			}
 
 			return column.sortedValue
-				? <SortableHeading {...{ column, sortColumn, setSortColumn, sortDirection, setSortDirection, cellProps }} />
+				? <SortableHeading key={column.id} {...{ column, sortColumn, setSortColumn, sortDirection, setSortDirection, cellProps }} />
 				: <th key={column.id} {...cellProps}>{column.title}</th>
 		})}
 	</tr>

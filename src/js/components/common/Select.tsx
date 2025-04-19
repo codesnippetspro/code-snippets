@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Select from 'react-select'
+import classnames from 'classnames'
 import { findOptionByValue, findOptionsByValues } from '../../utils/options'
 import type { SelectGroup, SelectOption } from '../../types/SelectOption'
 import type { Props } from 'react-select'
@@ -9,7 +10,7 @@ const SelectBase = <T, IsMulti extends boolean>({
 	...selectProps
 }: Props<SelectOption<T>, IsMulti, SelectGroup<T>>) =>
 	<Select
-		className={`code-snippets-select ${className}`}
+		className={classnames('code-snippets-select', className)}
 		styles={{
 			menu: base => ({ ...base, zIndex: 9999 }),
 			indicatorSeparator: () => ({ display: 'none' })
@@ -20,7 +21,7 @@ const SelectBase = <T, IsMulti extends boolean>({
 	/>
 
 export interface SingleSelectProps<T> extends Omit<Props<SelectOption<T>, false, SelectGroup<T>>, 'isMulti' | 'onChange'> {
-	currentValue: T
+	currentValue?: T
 	onChange: (selectedValue: T | undefined) => void
 }
 

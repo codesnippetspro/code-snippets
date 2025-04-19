@@ -108,3 +108,16 @@
 .snippet-condition-operator-select {
 	text-transform: uppercase;
 }
+
+.condition-snippets-table {
+	.wp-list-table th {
+		vertical-align: top;
+	}
+
+	.snippet-selector {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		margin: 1em 0;
+		gap: 1em;
+	}
+}

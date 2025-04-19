@@ -14,8 +14,8 @@ export const isValidScope = (scope: unknown): scope is SnippetScope =>
 
 const isValidCondition = (condition: unknown): condition is Condition =>
 	'object' === typeof condition && null !== condition && Object.values(condition)
-		.every((group: unknown) => 'object' === typeof group && null !== group
-			&& Object.values(group).every((rule: unknown) => 'object' === typeof rule && null !== rule))
+		.every((group: unknown) => 'object' === typeof group && null !== group &&
+			Object.values(group).every((rule: unknown) => 'object' === typeof rule && null !== rule))
 
 const generateObjectKeys = <T>(items: Record<PropertyKey, T>, transformItem?: (item: T) => T): Record<string, T> =>
 	Object.fromEntries(
@@ -61,8 +61,8 @@ export const parseSnippetObject = (fields: unknown, defaults: Snippet): Snippet 
 		modified: 'modified' in fields && 'string' === typeof fields.modified ? fields.modified : defaults.modified,
 		active: 'active' in fields && 'boolean' === typeof fields.active ? fields.active : defaults.active,
 		network: 'network' in fields && 'boolean' === typeof fields.network ? fields.network : defaults.network,
-		shared_network: 'shared_network' in fields && 'boolean' === typeof fields.shared_network && fields.shared_network
-			|| defaults.shared_network,
+		shared_network: 'shared_network' in fields && 'boolean' === typeof fields.shared_network && fields.shared_network ||
+			defaults.shared_network,
 		priority: 'priority' in fields && 'number' === typeof fields.priority ? fields.priority : defaults.priority,
 		conditionId: 'condition_id' in fields && isAbsInt(fields.condition_id) ? fields.condition_id
 			: 'conditionId' in fields && isAbsInt(fields.conditionId) ? fields.conditionId : defaults.conditionId,

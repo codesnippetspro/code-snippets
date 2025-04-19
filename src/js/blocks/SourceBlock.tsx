@@ -5,37 +5,13 @@ import { PanelBody, Spinner, TextControl, ToggleControl } from '@wordpress/compo
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { shortcode } from '@wordpress/icons'
 import { useSnippets } from '../hooks/useSnippetsAPI'
-import { getSnippetType } from '../utils/snippets'
+import { buildSnippetSelectOptions, getSnippetType, isCondition } from '../utils/snippets'
 import { SnippetSelector } from './SnippetSelector'
 import type { SelectGroup } from '../types/SelectOption'
-import type { Snippet, SnippetCodeType } from '../types/Snippet'
+import type { Snippet } from '../types/Snippet'
 import type { BlockConfiguration, BlockEditProps } from '@wordpress/blocks'
 
 export const SOURCE_BLOCK = 'code-snippets/source'
-
-type Mutable<T> = { -readonly [P in keyof T]: Mutable<T[P]> }
-
-const buildOptions = (snippets: Snippet[]): SelectGroup<number>[] => {
-	const categories: Record<SnippetCodeType, Mutable<SelectGroup<number>>> = {
-		php: { label: __('Functions (PHP)', 'code-snippets'), options: [] },
-		html: { label: __('Content (Mixed)', 'code-snippets'), options: [] },
-		css: { label: __('Styles (CSS)', 'code-snippets'), options: [] },
-		js: { label: __('Scripts (JS)', 'code-snippets'), options: [] }
-	}
-
-	for (const snippet of snippets) {
-		const type = getSnippetType(snippet)
-
-		if ('cond' !== type) {
-			categories[type].options.push({
-				value: snippet.id,
-				label: snippet.name
-			})
-		}
-	}
-
-	return Object.values(categories)
-}
 
 interface SourceBlockAttributes {
 	snippet_id: number
@@ -85,8 +61,10 @@ const Edit: React.FC<BlockEditProps<SourceBlockAttributes>> = ({ attributes, set
 		[attributes.snippet_id, snippets]
 	)
 
-	const options = useMemo<SelectGroup<number>[]>(
-		() => snippets ? buildOptions(snippets) : [],
+	const options = useMemo<SelectGroup<Snippet>[]>(
+		() => snippets
+			? buildSnippetSelectOptions(snippets.filter(snippet => !isCondition(snippet)))
+			: [],
 		[snippets]
 	)
 

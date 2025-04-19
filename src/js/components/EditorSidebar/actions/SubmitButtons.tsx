@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { handleUnknownError } from '../../../utils/errors'
-import { getSnippetType, isCondition } from '../../../utils/snippets'
+import { isCondition } from '../../../utils/snippets'
 import { Button } from '../../common/Button'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { isNetworkAdmin } from '../../../utils/screen'
@@ -9,14 +9,18 @@ import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import type { Snippet } from '../../../types/Snippet'
 import type { ButtonProps } from '../../common/Button'
 
-const SaveChangesButton: React.FC<ButtonProps> = ({ ...props }) =>
+interface SaveChangesButtonProps extends ButtonProps {
+	snippet: Snippet
+}
+
+const SaveChangesButton: React.FC<SaveChangesButtonProps> = ({ snippet, ...props }) =>
 	<Button
 		name="save_snippet"
 		type="submit"
 		large
 		{...props}
 	>
-		{__('Save Snippet', 'code-snippets')}
+		{isCondition(snippet) ? __('Save Condition', 'code-snippets') : __('Save Snippet', 'code-snippets')}
 	</Button>
 
 interface ActivateOrDeactivateButtonProps {
@@ -66,7 +70,7 @@ const ActivateOrDeactivateButton: React.FC<ActivateOrDeactivateButtonProps> = ({
 const validateSnippet = (snippet: Snippet): undefined | string => {
 	const missingTitle = '' === snippet.name.trim()
 
-	const missingCode = 'cond' === getSnippetType(snippet)
+	const missingCode = isCondition(snippet)
 		? !snippet.conditions
 		: '' === snippet.code.trim()
 
@@ -85,9 +89,9 @@ const validateSnippet = (snippet: Snippet): undefined | string => {
 	}
 }
 const shouldActivateByDefault = (snippet: Snippet): boolean =>
-	!!window.CODE_SNIPPETS_EDIT?.activateByDefault
-	&& !snippet.active && 'single-use' !== snippet.scope
-	&& (!snippet.shared_network || !isNetworkAdmin())
+	!!window.CODE_SNIPPETS_EDIT?.activateByDefault &&
+	!snippet.active && 'single-use' !== snippet.scope &&
+	(!snippet.shared_network || !isNetworkAdmin())
 
 interface SubmitConfirmDialogProps {
 	isOpen: boolean
@@ -131,6 +135,7 @@ export const SubmitButton: React.FC = () => {
 	return <>
 		{activateByDefault
 			? <SaveChangesButton
+				snippet={snippet}
 				primary={!activateByDefault}
 				onClick={() => handleSubmit(submitSnippet)}
 				disabled={isWorking}
@@ -147,6 +152,7 @@ export const SubmitButton: React.FC = () => {
 		{activateByDefault ? null
 			: <SaveChangesButton
 				primary
+				snippet={snippet}
 				onClick={() => handleSubmit(submitSnippet)}
 				disabled={isWorking}
 			/>}

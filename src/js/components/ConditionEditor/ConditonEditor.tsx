@@ -16,8 +16,8 @@ export const ConditionEditor: React.FC = () => {
 					.map(groupId =>
 						<Fragment key={groupId}>
 							<fieldset className="snippet-condition-group">
-								{snippet.conditions[groupId] && 0 < Object.keys(snippet.conditions[groupId]).length
-									&& Object.keys(snippet.conditions[groupId]).map(ruleId =>
+								{snippet.conditions[groupId] && 0 < Object.keys(snippet.conditions[groupId]).length &&
+									Object.keys(snippet.conditions[groupId]).map(ruleId =>
 										<ConditionRuleEditor key={`${groupId}-${ruleId}`} groupId={groupId} ruleId={ruleId} />)}
 							</fieldset>
 

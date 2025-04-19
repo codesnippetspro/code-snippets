@@ -3,6 +3,7 @@ import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { useSnippets } from '../../../hooks/useSnippetsAPI'
 import { findOptionByValue } from '../../../utils/options'
+import { isCondition } from '../../../utils/snippets'
 import type { SelectOptions } from '../../../types/SelectOption'
 
 export const ConditionalSelector: React.FC = () => {
@@ -13,12 +14,10 @@ export const ConditionalSelector: React.FC = () => {
 	useEffect(() => {
 		if (snippets) {
 			setOptions(
-				snippets
-					.filter(snippet => 'condition' === snippet.scope && snippet.active)
-					.map(snippet => ({
-						value: snippet.id,
-						label: snippet.name
-					}))
+				snippets.filter(isCondition).map(snippet => ({
+					value: snippet.id,
+					label: snippet.name
+				}))
 			)
 		}
 	}, [snippets])

@@ -5,7 +5,7 @@ export interface Snippet {
 	readonly name: string
 	readonly desc: string
 	readonly code: string
-	readonly tags: readonly string[]
+	readonly tags: string[]
 	readonly scope: SnippetScope
 	readonly priority: number
 	readonly active: boolean

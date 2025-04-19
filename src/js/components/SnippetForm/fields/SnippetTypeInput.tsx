@@ -4,7 +4,7 @@ import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
-import { getSnippetType, isProType } from '../../../utils/snippets'
+import { getSnippetType, isCondition, isProType } from '../../../utils/snippets'
 import { SnippetTypeBadge } from '../../common/SnippetTypeBadge'
 import type { SnippetCodeType, SnippetType } from '../../../types/Snippet'
 import type { SelectOption } from '../../../types/SelectOption'
@@ -33,16 +33,15 @@ const SnippetTypeOption: React.FC<SelectOption<SnippetType>> = ({ label, value }
 	<div className="snippet-type-option">
 		<div>
 			{label}
-			{isProType(value) && !isLicensed()
-				&& <span className="badge go-pro-badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>}
+			{isProType(value) && !isLicensed() &&
+				<span className="badge go-pro-badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>}
 		</div>
 		<SnippetTypeBadge snippetType={value} />
 	</div>
 
 export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ openUpgradeDialog }) => {
 	const { snippet, setSnippet, codeEditorInstance } = useSnippetForm()
-
-	const snippetType = getSnippetType(snippet.scope)
+	const snippetType = getSnippetType(snippet)
 
 	useEffect(() => {
 		if (codeEditorInstance) {
@@ -63,6 +62,7 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ openUpgradeD
 			<Select
 				className="code-snippets-select"
 				options={OPTIONS}
+				isDisabled={0 !== snippet.id && isCondition(snippet)}
 				value={OPTIONS.find(option => option.value === snippetType)}
 				styles={{
 					menu: provided => ({ ...provided, zIndex: 9999 }),

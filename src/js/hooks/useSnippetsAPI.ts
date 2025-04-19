@@ -14,14 +14,16 @@ export interface SnippetsAPI {
 	fetch: (snippetId: number, network?: boolean | null) => Promise<Snippet>
 	create: (snippet: Snippet) => Promise<Snippet>
 	update: (snippet: Snippet) => Promise<Snippet>
-	delete: (snippet: Snippet) => Promise<void>
-	activate: (snippet: Snippet) => Promise<Snippet>
-	deactivate: (snippet: Snippet) => Promise<Snippet>
-	export: (snippet: Snippet) => Promise<SnippetsExport>
-	exportCode: (snippet: Snippet) => Promise<string>
+	delete: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<void>
+	activate: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<Snippet>
+	deactivate: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<Snippet>
+	export: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<SnippetsExport>
+	exportCode: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<string>
+	attach: (snippet: Pick<Snippet, 'id' | 'network' | 'conditionId'>) => Promise<void>
+	detach: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<void>
 }
 
-const buildURL = ({ id, network }: Snippet, action?: string) =>
+const buildURL = ({ id, network }: Pick<Snippet, 'id' | 'network'>, action?: string) =>
 	addQueryArgs(
 		[REST_SNIPPETS_BASE, id, action].filter(Boolean).join('/'),
 		{ network: network ? true : undefined }
@@ -36,7 +38,7 @@ const mapFromSchema = (schema: SnippetSchema): Snippet =>
 	createSnippetObject(schema)
 
 export const useSnippetsAPI = (): SnippetsAPI => {
-	const { get, post, del } = useAxios(REST_API_AXIOS_CONFIG)
+	const { get, post, put, del } = useAxios(REST_API_AXIOS_CONFIG)
 
 	return useMemo((): SnippetsAPI => ({
 		fetchAll: network =>
@@ -55,7 +57,7 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 			post<SnippetSchema>(buildURL(snippet), mapToSchema(snippet))
 				.then(response => mapFromSchema(response)),
 
-		delete: (snippet: Snippet) =>
+		delete: snippet =>
 			del(buildURL(snippet)),
 
 		activate: snippet =>
@@ -70,8 +72,15 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 			get<SnippetsExport>(buildURL(snippet, 'export')),
 
 		exportCode: snippet =>
-			get<string>(buildURL(snippet, 'export-code'))
-	}), [get, post, del])
+			get<string>(buildURL(snippet, 'export-code')),
+
+		attach: snippet =>
+			put(buildURL(snippet, 'attach'), { condition_id: snippet.conditionId }),
+
+		detach: snippet =>
+			put(buildURL(snippet, 'detach'))
+
+	}), [get, post, put, del])
 }
 
 export const useSnippets = (): Snippet[] | undefined => {

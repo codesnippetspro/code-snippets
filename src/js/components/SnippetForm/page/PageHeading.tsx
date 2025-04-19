@@ -30,7 +30,7 @@ export const PageHeading: React.FC = () => {
 						className="page-title-action"
 						onClick={event => {
 							event.preventDefault()
-							updateSnippet(() => createSnippetObject())
+							updateSnippet(({ scope }) => createSnippetObject({ scope }))
 							setCurrentNotice(undefined)
 
 							window.document.title = window.document.title.replace(getEditHeading(snippet), getAddNewHeading(snippet))
