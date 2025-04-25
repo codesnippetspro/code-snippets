@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import { createSnippetObject, getSnippetType, isCondition } from '../../utils/snippets'
+import { createSnippetObject, getSnippetType, isCondition } from '../../utils/snippets/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { ConditionEditor } from '../ConditionEditor'
 import { ConditionsModalButton } from '../ConditionModal/ConditionModal'

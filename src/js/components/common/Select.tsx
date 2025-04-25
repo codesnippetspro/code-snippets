@@ -16,7 +16,7 @@ const SelectBase = <T, IsMulti extends boolean>({
 			indicatorSeparator: () => ({ display: 'none' })
 		}}
 		getOptionLabel={option => option.label}
-		getOptionValue={option => String(option.value)}
+		getOptionValue={option => String(option.key)}
 		{...selectProps}
 	/>
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { isCondition } from '../../../utils/snippets'
+import { isCondition } from '../../../utils/snippets/snippets'
 
 export const NameInput: React.FC = () => {
 	const { snippet, setSnippet, isReadOnly } = useSnippetForm()

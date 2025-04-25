@@ -2,7 +2,7 @@ import React from 'react'
 import { __, _x } from '@wordpress/i18n'
 import { FormTokenField } from '@wordpress/components'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { isCondition } from '../../../utils/snippets'
+import { isCondition } from '../../../utils/snippets/snippets'
 import { ExplainSnippetButton } from '../actions/ExplainSnippetButton'
 
 const options = window.CODE_SNIPPETS_EDIT?.tagOptions

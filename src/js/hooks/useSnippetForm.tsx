@@ -1,28 +1,32 @@
 import { isAxiosError } from 'axios'
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { isLicensed } from '../utils/screen'
-import { isProSnippet } from '../utils/snippets'
-import { useSnippetSubmit } from './useSnippetSubmit'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { handleUnknownError } from '../utils/errors'
+import { isLicensed, isNetworkAdmin } from '../utils/screen'
+import { isProSnippet } from '../utils/snippets/snippets'
+import { submitSnippet } from '../utils/snippets/submit'
+import { useSnippetsAPI } from './useSnippetsAPI'
+import type { SnippetsAPI } from './useSnippetsAPI'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { ScreenNotice } from '../types/ScreenNotice'
 import type { Snippet } from '../types/Snippet'
 import type { CodeEditorInstance } from '../types/WordPressCodeEditor'
 
 export interface SnippetFormContext {
+	api: SnippetsAPI
 	snippet: Snippet
-	setSnippet: Dispatch<SetStateAction<Snippet>>
-	updateSnippet: Dispatch<SetStateAction<Snippet>>
-	isReadOnly: boolean
 	isWorking: boolean
+	isReadOnly: boolean
+	setSnippet: Dispatch<SetStateAction<Snippet>>
+	saveSnippet: (delta?: Partial<Snippet>) => Promise<Snippet | undefined>
+	snippetsList: readonly Snippet[] | undefined
+	updateSnippet: Dispatch<SetStateAction<Snippet>>
 	setIsWorking: Dispatch<SetStateAction<boolean>>
 	currentNotice: ScreenNotice | undefined
 	setCurrentNotice: Dispatch<SetStateAction<ScreenNotice | undefined>>
 	codeEditorInstance: CodeEditorInstance | undefined
-	setCodeEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
 	handleRequestError: (error: unknown, message?: string) => void
-	submitSnippet: () => Promise<Snippet | undefined>
-	submitAndActivateSnippet: () => Promise<Snippet | undefined>
-	submitAndDeactivateSnippet: () => Promise<Snippet | undefined>
+	refreshSnippetsList: () => void
+	setCodeEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
 }
 
 const SnippetFormContext = createContext<SnippetFormContext | undefined>(undefined)
@@ -42,13 +46,25 @@ export interface WithSnippetFormContextProps extends PropsWithChildren {
 }
 
 export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ children, initialSnippet }) => {
+	const api = useSnippetsAPI()
 	const [snippet, setSnippet] = useState<Snippet>(initialSnippet)
 	const [isWorking, setIsWorking] = useState(false)
+	const [snippetsList, setSnippetsList] = useState<Snippet[]>()
 	const [currentNotice, setCurrentNotice] = useState<ScreenNotice>()
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
 
-	const submitSnippet = useSnippetSubmit(setSnippet, setIsWorking, setCurrentNotice)
 	const isReadOnly = useMemo(() => !isLicensed() && isProSnippet({ scope: snippet.scope }), [snippet.scope])
+
+	const saveSnippet = useCallback((delta?: Partial<Snippet>) =>
+		submitSnippet({ ...snippet, ...delta }, { api, setSnippet, setIsWorking, setCurrentNotice }), [api, snippet])
+
+	useEffect(() => {
+		if (!snippetsList) {
+			api.fetchAll(isNetworkAdmin())
+				.then(response => setSnippetsList(response))
+				.catch(handleUnknownError)
+		}
+	}, [api, snippetsList])
 
 	const handleRequestError = useCallback((error: unknown, message?: string) => {
 		console.error('Request failed', error)
@@ -65,21 +81,24 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 		})
 	}, [codeEditorInstance?.codemirror])
 
+	const refreshSnippetsList = useCallback(() => setSnippetsList(undefined), [])
+
 	const value: SnippetFormContext = {
+		api,
 		snippet,
-		setSnippet,
-		updateSnippet,
-		isReadOnly,
 		isWorking,
+		isReadOnly,
+		setSnippet,
+		saveSnippet,
+		snippetsList,
 		setIsWorking,
+		updateSnippet,
 		currentNotice,
 		setCurrentNotice,
 		codeEditorInstance,
-		setCodeEditorInstance,
 		handleRequestError,
-		submitSnippet: () => submitSnippet(snippet),
-		submitAndActivateSnippet: () => submitSnippet(snippet, true),
-		submitAndDeactivateSnippet: () => submitSnippet(snippet, false)
+		refreshSnippetsList,
+		setCodeEditorInstance,
 	}
 
 	return <SnippetFormContext.Provider value={value}>{children}</SnippetFormContext.Provider>

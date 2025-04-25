@@ -4,7 +4,7 @@ import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { handleUnknownError } from '../../../utils/errors'
 
 export const ActivationSwitch = () => {
-	const { snippet, isWorking, submitAndActivateSnippet, submitAndDeactivateSnippet } = useSnippetForm()
+	const { snippet, isWorking, saveSnippet } = useSnippetForm()
 
 	return (
 		<div>
@@ -24,9 +24,7 @@ export const ActivationSwitch = () => {
 					? __('Deactivate', 'code-snippets')
 					: __('Activate', 'code-snippets')}
 				onChange={() => {
-					(snippet.active
-						? submitAndDeactivateSnippet()
-						: submitAndActivateSnippet())
+					saveSnippet({ active: !snippet.active })
 						.then(() => undefined)
 						.catch(handleUnknownError)
 				}}

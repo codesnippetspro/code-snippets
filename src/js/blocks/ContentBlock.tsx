@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import ServerSideRender from '@wordpress/server-side-render'
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { ExternalLink, PanelBody, ToggleControl } from '@wordpress/components'
-import { useSnippets } from '../hooks/useSnippetsAPI'
-import { getSnippetType } from '../utils/snippets'
+import { useSnippetsAPI } from '../hooks/useSnippetsAPI'
+import { handleUnknownError } from '../utils/errors'
+import { isNetworkAdmin } from '../utils/screen'
+import { getSnippetDisplayName, getSnippetType } from '../utils/snippets/snippets'
 import { SnippetSelector } from './SnippetSelector'
 import type { SelectOptions } from '../types/SelectOption'
 import type { BlockConfiguration, BlockEditProps } from '@wordpress/blocks'
@@ -12,13 +14,13 @@ import type { Snippet } from '../types/Snippet'
 
 export const CONTENT_BLOCK = 'code-snippets/content'
 
-const buildOptions = (snippets: Snippet[]): SelectOptions<number> =>
+const buildOptions = (snippets: Snippet[]): SelectOptions<Snippet> =>
 	snippets
-		.filter(snippet =>
-			'html' === getSnippetType(snippet) && snippet.active)
+		.filter(snippet => 'html' === getSnippetType(snippet) && snippet.active)
 		.map(snippet => ({
-			value: snippet.id,
-			label: snippet.name
+			key: `${snippet.id}-${snippet.network}`,
+			value: snippet,
+			label: getSnippetDisplayName(snippet)
 		}))
 
 export interface ContentBlockAttributes {
@@ -28,17 +30,19 @@ export interface ContentBlockAttributes {
 	format?: boolean
 	shortcodes?: boolean
 	debug?: boolean
-	className: string
+	className?: string
 }
 
 const Edit: React.FC<BlockEditProps<ContentBlockAttributes>> = ({ setAttributes, attributes }) => {
-	const snippets = useSnippets()
 	const blockProps = useBlockProps()
+	const { fetchAll } = useSnippetsAPI()
+	const [options, setOptions] = useState<SelectOptions<Snippet>>([])
 
-	const options = useMemo<SelectOptions<number>>(
-		() => snippets ? buildOptions(snippets) : [],
-		[snippets]
-	)
+	useEffect(() => {
+		fetchAll(isNetworkAdmin())
+			.then(snippets => setOptions(buildOptions(snippets)))
+			.catch(handleUnknownError)
+	}, [fetchAll])
 
 	return (
 		<div {...blockProps}>
@@ -47,17 +51,17 @@ const Edit: React.FC<BlockEditProps<ContentBlockAttributes>> = ({ setAttributes,
 					<ToggleControl
 						label={__('Run PHP code', 'code-snippets')}
 						checked={attributes.php}
-						onChange={isChecked => setAttributes({ ...attributes, php: isChecked })}
+						onChange={isChecked => setAttributes({ php: isChecked })}
 					/>
 					<ToggleControl
 						label={__('Add paragraphs and formatting', 'code-snippets')}
 						checked={attributes.format}
-						onChange={isChecked => setAttributes({ ...attributes, format: isChecked })}
+						onChange={isChecked => setAttributes({ format: isChecked })}
 					/>
 					<ToggleControl
 						label={__('Enable embedded shortcodes', 'code-snippets')}
 						checked={attributes.shortcodes}
-						onChange={isChecked => setAttributes({ ...attributes, shortcodes: isChecked })}
+						onChange={isChecked => setAttributes({ shortcodes: isChecked })}
 						help={
 							<ExternalLink
 								href={__('https://help.codesnippets.pro/article/54-content-snippet-options', 'code-snippets')}
@@ -70,12 +74,12 @@ const Edit: React.FC<BlockEditProps<ContentBlockAttributes>> = ({ setAttributes,
 			</InspectorControls>
 
 			<SnippetSelector
+				icon="shortcode"
 				label={__('Content Snippet', 'code-snippets')}
 				className="code-snippets-content-block"
-				icon="shortcode"
 				options={options}
-				attributes={attributes}
-				setAttributes={setAttributes}
+				onChange={snippet => setAttributes({ snippet_id: snippet?.id ?? 0 })}
+				isValueSelected={0 !== attributes.snippet_id}
 				renderContent={() =>
 					<ServerSideRender block={CONTENT_BLOCK} attributes={{ ...attributes, debug: true }} />}
 			/>
@@ -96,7 +100,7 @@ export const ContentBlock: BlockConfiguration<ContentBlockAttributes> = {
 		format: { type: 'boolean', default: true },
 		shortcodes: { type: 'boolean', default: false },
 		debug: { type: 'boolean', default: false },
-		className: { type: 'string' }
+		className: { type: 'string', default: undefined }
 	},
 	edit: props => <Edit {...props} />,
 	save: () => null

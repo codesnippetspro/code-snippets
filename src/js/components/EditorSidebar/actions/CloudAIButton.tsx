@@ -1,7 +1,7 @@
 import { Modal } from '@wordpress/components'
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import { isCondition } from '../../../utils/snippets'
+import { isCondition } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
 import { isLicensed } from '../../../utils/screen'
 import { GenerateIcon } from '../../common/icons/GenerateIcon'

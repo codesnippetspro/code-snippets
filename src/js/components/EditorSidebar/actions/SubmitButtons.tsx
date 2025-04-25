@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { handleUnknownError } from '../../../utils/errors'
-import { isCondition } from '../../../utils/snippets'
+import { isCondition } from '../../../utils/snippets/snippets'
 import { Button } from '../../common/Button'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { isNetworkAdmin } from '../../../utils/screen'
@@ -114,21 +114,30 @@ const SubmitConfirmDialog: React.FC<SubmitConfirmDialogProps> = ({ isOpen, onClo
 		<p>{`${validationWarning} ${__('Continue?', 'code-snippets')}`}</p>
 	</ConfirmDialog>
 
+enum SubmitAction {
+	SAVE, SAVE_AND_ACTIVATE, SAVE_AND_DEACTIVATE
+}
+
+const SUBMIT_ACTION_DELTA: Record<SubmitAction, Partial<Snippet>> = {
+	[SubmitAction.SAVE]: {},
+	[SubmitAction.SAVE_AND_ACTIVATE]: { active: true },
+	[SubmitAction.SAVE_AND_DEACTIVATE]: { active: false }
+}
+
 export const SubmitButton: React.FC = () => {
-	const { snippet, isWorking, submitSnippet, submitAndActivateSnippet, submitAndDeactivateSnippet } = useSnippetForm()
+	const { snippet, isWorking, saveSnippet } = useSnippetForm()
+	const [submitAction, setSubmitAction] = useState<SubmitAction>()
 	const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
-	const [submitAction, setSubmitAction] = useState<VoidFunction>()
+
 	const validationWarning = validateSnippet(snippet)
 	const activateByDefault = shouldActivateByDefault(snippet)
 
-	const handleSubmit = (submitAction: () => Promise<Snippet | undefined>): void => {
+	const handleSubmit = (action: SubmitAction) => {
 		if (validationWarning) {
 			setIsConfirmDialogOpen(true)
-			setSubmitAction(() => submitAction)
+			setSubmitAction(action)
 		} else {
-			submitAction()
-				.then(() => undefined)
-				.catch(handleUnknownError)
+			saveSnippet(SUBMIT_ACTION_DELTA[action]).then(() => undefined).catch(handleUnknownError)
 		}
 	}
 
@@ -137,7 +146,7 @@ export const SubmitButton: React.FC = () => {
 			? <SaveChangesButton
 				snippet={snippet}
 				primary={!activateByDefault}
-				onClick={() => handleSubmit(submitSnippet)}
+				onClick={() => handleSubmit(SubmitAction.SAVE)}
 				disabled={isWorking}
 			/> : null}
 
@@ -145,22 +154,25 @@ export const SubmitButton: React.FC = () => {
 			snippet={snippet}
 			disabled={isWorking}
 			primaryActivate={activateByDefault}
-			onActivate={() => handleSubmit(submitAndActivateSnippet)}
-			onDeactivate={() => handleSubmit(submitAndDeactivateSnippet)}
+			onActivate={() => handleSubmit(SubmitAction.SAVE_AND_ACTIVATE)}
+			onDeactivate={() => handleSubmit(SubmitAction.SAVE_AND_DEACTIVATE)}
 		/>
 
 		{activateByDefault ? null
 			: <SaveChangesButton
 				primary
 				snippet={snippet}
-				onClick={() => handleSubmit(submitSnippet)}
+				onClick={() => handleSubmit(SubmitAction.SAVE)}
 				disabled={isWorking}
 			/>}
 
 		<SubmitConfirmDialog
 			isOpen={isConfirmDialogOpen}
 			validationWarning={validationWarning}
-			onSubmit={submitAction}
+			onSubmit={() => {
+				saveSnippet(SUBMIT_ACTION_DELTA[submitAction ?? SubmitAction.SAVE])
+					.then(() => undefined).catch(handleUnknownError)
+			}}
 			onClose={() => {
 				setIsConfirmDialogOpen(false)
 				setSubmitAction(undefined)

@@ -1,9 +1,9 @@
 import { addQueryArgs } from '@wordpress/url'
 import { __, sprintf } from '@wordpress/i18n'
+import { isNetworkAdmin } from '../screen'
 import { parseSnippetObject } from './objects'
-import { isNetworkAdmin } from './screen'
-import type { SelectGroup, SelectOption } from '../types/SelectOption'
-import type { Snippet, SnippetType } from '../types/Snippet'
+import type { SelectGroup, SelectOption } from '../../types/SelectOption'
+import type { Snippet, SnippetType } from '../../types/Snippet'
 
 const PRO_TYPES = new Set<SnippetType>(['css', 'js'])
 
@@ -54,17 +54,11 @@ export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType =
 export const getSnippetEditUrl = ({ id }: Pick<Snippet, 'id'>): string =>
 	addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id })
 
-export const getSnippetDisplayName = (snippet: Pick<Snippet, 'name' |'id'>): string =>
+export const getSnippetDisplayName = (snippet: Pick<Snippet, 'name' | 'id' | 'scope'>): string =>
 	'' === snippet.name.trim()
 		// translators: %s: snippet identifier.
-		? sprintf(__('Snippet #%d', 'code-snippets'), snippet.id)
+		? sprintf(isCondition(snippet) ? __('Condition #%d', 'code-snippets') : __('Snippet #%d', 'code-snippets'), snippet.id)
 		: snippet.name
-
-export const getConditionDisplayName = (condition: Pick<Snippet, 'name' |'id'>): string =>
-	'' === condition.name.trim()
-		// translators: %s: condition identifier.
-		? sprintf(__('Condition #%d', 'code-snippets'), condition.id)
-		: condition.name
 
 export const isCondition = (snippet: Pick<Snippet, 'scope'>): boolean =>
 	'condition' === snippet.scope
@@ -75,13 +69,14 @@ export const isProSnippet = (snippet: Pick<Snippet, 'scope'>): boolean =>
 export const isProType = (type: SnippetType): boolean =>
 	PRO_TYPES.has(type)
 
-export const buildSnippetSelectOptions = (snippets: Snippet[]): SelectGroup<Snippet>[] => {
+export const buildSnippetSelectOptionGroups = (snippets: Snippet[]): SelectGroup<Snippet>[] => {
 	const optionGroups = new Map<SnippetType, SelectOption<Snippet>[]>
 
 	for (const snippet of snippets) {
 		const option: SelectOption<Snippet> = {
-			label: getSnippetDisplayName(snippet),
-			value: snippet
+			key: `${snippet.id}-${snippet.network}}`,
+			value: snippet,
+			label: getSnippetDisplayName(snippet)
 		}
 
 		const type = getSnippetType(snippet)

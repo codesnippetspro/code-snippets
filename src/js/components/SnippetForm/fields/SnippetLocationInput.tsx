@@ -3,7 +3,7 @@ import React from 'react'
 import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
-import { getSnippetType, isCondition } from '../../../utils/snippets'
+import { getSnippetType, isCondition } from '../../../utils/snippets/snippets'
 import type { SnippetCodeScope } from '../../../types/Snippet'
 import type { SelectOption } from '../../../types/SelectOption'
 
@@ -41,6 +41,7 @@ export const SnippetLocationInput: React.FC = () => {
 	const options: SelectOption<SnippetCodeScope>[] = SNIPPET_TYPE_SCOPES[getSnippetType(snippet)]
 		.filter(scope => 'condition' !== scope)
 		.map(scope => ({
+			key: scope,
 			value: scope,
 			label: SCOPE_DESCRIPTIONS[scope]
 		}))

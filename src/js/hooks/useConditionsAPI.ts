@@ -1,10 +1,9 @@
 import { __, _x } from '@wordpress/i18n'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { REST_API_AXIOS_CONFIG, REST_BASE, REST_CONDITIONS_BASE } from '../utils/restAPI'
-import { isNetworkAdmin } from '../utils/screen'
-import { isCondition } from '../utils/snippets'
+import { getSnippetDisplayName, isCondition } from '../utils/snippets/snippets'
 import { useAxios } from './useAxios'
-import { useSnippetsAPI } from './useSnippetsAPI'
+import { useSnippetForm } from './useSnippetForm'
 import type { UserRoles } from '../types/api/UserRole'
 import type { Pages } from '../types/api/Page'
 import type { ConditionOperator, ConditionSubject, ConditionSubjects } from '../types/Condition'
@@ -74,7 +73,6 @@ export interface ConditionsAPI {
 }
 
 const useSubjectFactory = (): { [S in ConditionSubject]?: () => Promise<SelectGroups<ConditionSubjects[S]>> } => {
-	const { fetchAll } = useSnippetsAPI()
 	const { get } = useAxios(REST_API_AXIOS_CONFIG)
 
 	return useMemo(() => ({
@@ -121,20 +119,24 @@ const useSubjectFactory = (): { [S in ConditionSubject]?: () => Promise<SelectGr
 		userCap: () =>
 			get<string[]>(`${REST_CONDITIONS_BASE}/capabilities`).then(caps =>
 				caps.map(cap =>
-					({ value: cap, label: cap }))),
+					({ value: cap, label: cap })))
 
-		condition: () =>
-			fetchAll(isNetworkAdmin()).then(snippets =>
-				snippets
-					.filter(snippet => isCondition(snippet))
-					.map(snippet =>
-						({ value: snippet.id, label: snippet.name.trim() ? snippet.name : `Condition #${snippet.id}` })))
-	}), [get, fetchAll])
+	}), [get])
 }
 
 export const useConditionsAPI = (): ConditionsAPI => {
 	const factories = useSubjectFactory()
+	const { snippet: currentSnippet, snippetsList } = useSnippetForm()
 	const [cache, setCache] = useState(STATIC_OPTIONS)
+
+	useEffect(() => {
+		setCache(previous => ({
+			...previous,
+			condition: snippetsList
+				?.filter(snippet => isCondition(snippet) && snippet.id !== currentSnippet.id)
+				.map(snippet => ({ value: snippet.id, label: getSnippetDisplayName(snippet) })) ?? []
+		}))
+	}, [currentSnippet, snippetsList])
 
 	const fetchObjectOptions = useCallback(async <S extends ConditionSubject>(subject: S): Promise<ObjectOptions<S>> => {
 		if (cache[subject] !== undefined) {

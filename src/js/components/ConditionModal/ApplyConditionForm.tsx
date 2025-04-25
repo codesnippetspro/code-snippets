@@ -2,10 +2,7 @@ import { BaseControl } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
-import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
-import { handleUnknownError } from '../../utils/errors'
-import { isNetworkAdmin } from '../../utils/screen'
-import { getConditionDisplayName, isCondition } from '../../utils/snippets'
+import { getSnippetDisplayName, isCondition } from '../../utils/snippets/snippets'
 import { Button } from '../common/Button'
 import { SingleSelect } from '../common/Select'
 import type { SelectOption } from '../../types/SelectOption'
@@ -17,21 +14,16 @@ export interface ApplyConditionFormProps {
 }
 
 export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ closeModal }) => {
-	const { fetchAll } = useSnippetsAPI()
-	const { snippet, setSnippet } = useSnippetForm()
+	const { snippet, setSnippet, snippetsList } = useSnippetForm()
 	const [options, setOptions] = useState<SelectOption<Snippet['id']>[]>()
 	const [conditionId, setConditionId] = useState<Snippet['id'] | undefined>(snippet.conditionId)
 
 	useEffect(() => {
-		if (!options) {
-			fetchAll(isNetworkAdmin())
-				.then(snippets => {
-					setOptions(snippets.filter(isCondition).map(snippet =>
-						({ value: snippet.id, label: getConditionDisplayName(snippet) })))
-				})
-				.catch(handleUnknownError)
+		if (!options && snippetsList) {
+			setOptions(snippetsList.filter(isCondition).map(snippet =>
+				({ key: snippet.id, value: snippet.id, label: getSnippetDisplayName(snippet) })))
 		}
-	}, [fetchAll, options])
+	}, [snippetsList, options])
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()

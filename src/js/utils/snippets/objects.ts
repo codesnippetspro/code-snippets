@@ -1,6 +1,6 @@
-import { SNIPPET_TYPE_SCOPES } from '../types/Snippet'
-import type { Snippet, SnippetScope } from '../types/Snippet'
-import type { Condition } from '../types/Condition'
+import { SNIPPET_TYPE_SCOPES } from '../../types/Snippet'
+import type { Snippet, SnippetScope } from '../../types/Snippet'
+import type { Condition } from '../../types/Condition'
 
 const isAbsInt = (value: unknown): value is number =>
 	'number' === typeof value && 0 < value

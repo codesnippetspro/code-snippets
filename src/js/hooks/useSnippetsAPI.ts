@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { addQueryArgs } from '@wordpress/url'
-import { handleUnknownError } from '../utils/errors'
 import { REST_API_AXIOS_CONFIG, REST_SNIPPETS_BASE } from '../utils/restAPI'
-import { isNetworkAdmin } from '../utils/screen'
-import { createSnippetObject } from '../utils/snippets'
+import { createSnippetObject } from '../utils/snippets/snippets'
 import { useAxios } from './useAxios'
 import type { SnippetSchema } from '../types/api/SnippetSchema'
 import type { Snippet } from '../types/Snippet'
@@ -34,39 +32,36 @@ const mapToSchema = ({ conditionId, ...fields }: Snippet): SnippetSchema => ({
 	...fields
 })
 
-const mapFromSchema = (schema: SnippetSchema): Snippet =>
-	createSnippetObject(schema)
-
 export const useSnippetsAPI = (): SnippetsAPI => {
 	const { get, post, put, del } = useAxios(REST_API_AXIOS_CONFIG)
 
 	return useMemo((): SnippetsAPI => ({
 		fetchAll: network =>
 			get<SnippetSchema[]>(addQueryArgs(REST_SNIPPETS_BASE, { network }))
-				.then(response => response.map(mapFromSchema)),
+				.then(response => response.map(createSnippetObject)),
 
 		fetch: (snippetId, network) =>
 			get<SnippetSchema>(addQueryArgs(`${REST_SNIPPETS_BASE}/${snippetId}`, { network }))
-				.then(response => mapFromSchema(response)),
+				.then(createSnippetObject),
 
 		create: snippet =>
 			post<SnippetSchema>(REST_SNIPPETS_BASE, mapToSchema(snippet))
-				.then(response => mapFromSchema(response)),
+				.then(createSnippetObject),
 
 		update: snippet =>
 			post<SnippetSchema>(buildURL(snippet), mapToSchema(snippet))
-				.then(response => mapFromSchema(response)),
+				.then(createSnippetObject),
 
 		delete: snippet =>
 			del(buildURL(snippet)),
 
 		activate: snippet =>
 			post<SnippetSchema>(buildURL(snippet, 'activate'))
-				.then(response => mapFromSchema(response)),
+				.then(createSnippetObject),
 
 		deactivate: snippet =>
 			post<SnippetSchema>(buildURL(snippet, 'deactivate'))
-				.then(response => mapFromSchema(response)),
+				.then(createSnippetObject),
 
 		export: snippet =>
 			get<SnippetsExport>(buildURL(snippet, 'export')),
@@ -81,20 +76,4 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 			put(buildURL(snippet, 'detach'))
 
 	}), [get, post, put, del])
-}
-
-export const useSnippets = (): Snippet[] | undefined => {
-	const api = useSnippetsAPI()
-	const [snippets, setSnippets] = useState<Snippet[]>()
-
-	useEffect(() => {
-		if (!snippets) {
-			api.fetchAll(isNetworkAdmin())
-				.then(response =>
-					setSnippets(response.map(snippet => createSnippetObject(snippet))))
-				.catch(handleUnknownError)
-		}
-	}, [api, snippets])
-
-	return snippets
 }

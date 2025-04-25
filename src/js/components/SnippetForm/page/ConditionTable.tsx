@@ -1,16 +1,14 @@
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { handleUnknownError } from '../../../utils/errors'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { buildSnippetSelectOptions, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isCondition } from '../../../utils/snippets'
+import { buildSnippetSelectOptionGroups, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isCondition } from '../../../utils/snippets/snippets'
 import { stripTags } from '../../../utils/text'
 import { Button } from '../../common/Button'
 import { ListTable } from '../../common/ListTable'
 import { SingleSelect } from '../../common/Select'
 import { SnippetTypeBadge } from '../../common/SnippetTypeBadge'
-import type { Dispatch, SetStateAction } from 'react'
 import type { SelectGroup } from '../../../types/SelectOption'
 import type { Snippet } from '../../../types/Snippet'
 import type { ListTableBulkAction, ListTableColumn } from '../../common/ListTable'
@@ -41,19 +39,19 @@ const columns: ListTableColumn<Snippet>[] = [
 ]
 
 interface SnippetSelectorProps {
-	snippets: Snippet[] | undefined
-	condition: Snippet
 	onSubmit: (selected: Snippet) => void
 }
 
-const SnippetSelector: React.FC<SnippetSelectorProps> = ({ snippets, condition, onSubmit }) => {
+const SnippetSelector: React.FC<SnippetSelectorProps> = ({ onSubmit }) => {
 	const [currentValue, setCurrentValue] = useState<Snippet>()
+	const { snippet: condition, snippetsList } = useSnippetForm()
 
 	const options: SelectGroup<Snippet>[] | undefined = useMemo(
 		() =>
-			snippets &&
-			buildSnippetSelectOptions(snippets.filter(snippet => !isCondition(snippet) && snippet.conditionId !== condition.id)),
-		[snippets, condition.id]
+			snippetsList &&
+			buildSnippetSelectOptionGroups(snippetsList.filter(snippet =>
+				!isCondition(snippet) && snippet.conditionId !== condition.id)),
+		[snippetsList, condition.id]
 	)
 
 	return (
@@ -79,48 +77,45 @@ const SnippetSelector: React.FC<SnippetSelectorProps> = ({ snippets, condition, 
 	)
 }
 
-interface TableFormProps {
-	allSnippets: Snippet[] | undefined
-	setAllSnippets: Dispatch<SetStateAction<Snippet[] | undefined>>
-	attachedSnippets: Snippet[]
-}
+export const ConditionTable: React.FC = () => {
+	const { snippet: condition, snippetsList, refreshSnippetsList, api: { attach, detach } } = useSnippetForm()
+	const [attachedSnippets, setAttachedSnippets] = useState<Snippet[]>()
 
-const TableForm: React.FC<TableFormProps> = ({ allSnippets, setAllSnippets, attachedSnippets }) => {
-	const { attach, detach } = useSnippetsAPI()
-	const { snippet: condition } = useSnippetForm()
+	useEffect(() => {
+		setAttachedSnippets(
+			condition.id
+				? snippetsList?.filter(snippet => snippet.conditionId === condition.id)
+				: undefined
+		)
+	}, [snippetsList, condition.id])
 
 	const actions: ListTableBulkAction<Snippet['id']>[] = useMemo(() => [
 		{
 			name: __('Detach condition', 'code-snippets'),
 			apply: snippetIds =>
-				Promise
-					.allSettled(
-						[...snippetIds.values()].map(snippetId =>
-							detach({ id: snippetId, network: isNetworkAdmin() })))
-					.then(() => setAllSnippets(undefined))
+				Promise.allSettled(
+					[...snippetIds.values()].map(snippetId => detach({ id: snippetId, network: isNetworkAdmin() })))
+					.then(refreshSnippetsList)
 		}
-	], [detach, setAllSnippets])
+	], [detach, refreshSnippetsList])
 
 	const actionColumn: ListTableColumn<Snippet> = useMemo(() => ({
 		id: 'actions',
 		render: snippet =>
 			<Button onClick={() => {
-				detach(snippet)
-					.then(() => setAllSnippets(undefined))
-					.catch(handleUnknownError)
+				detach(snippet).then(refreshSnippetsList).catch(handleUnknownError)
 			}}>{__('Detach', 'code-snippets')}</Button>
-	}), [detach, setAllSnippets])
+	}), [detach, refreshSnippetsList])
 
-	return (
-		<form className="condition-snippets-table">
+	return attachedSnippets === undefined
+		? null
+		: <form className="condition-snippets-table">
 			<h3>{__('Snippets using this Condition', 'code-snippets')}</h3>
 
 			<SnippetSelector
-				snippets={allSnippets}
-				condition={condition}
 				onSubmit={selectedSnippet => {
 					attach({ id: selectedSnippet.id, network: isNetworkAdmin(), conditionId: condition.id })
-						.then(() => setAllSnippets(undefined))
+						.then(refreshSnippetsList)
 						.catch(handleUnknownError)
 				}} />
 
@@ -132,32 +127,4 @@ const TableForm: React.FC<TableFormProps> = ({ allSnippets, setAllSnippets, atta
 				noItems={__('No snippets are using this condition.', 'code-snippets')}
 			/>
 		</form>
-	)
-}
-
-export const ConditionTable: React.FC = () => {
-	const { snippet: condition } = useSnippetForm()
-	const { fetchAll } = useSnippetsAPI()
-	const [allSnippets, setAllSnippets] = useState<Snippet[]>()
-	const [attachedSnippets, setAttachedSnippets] = useState<Snippet[]>()
-
-	useEffect(() => {
-		if (!allSnippets) {
-			fetchAll(isNetworkAdmin())
-				.then(response => {
-					setAllSnippets(response)
-					setAttachedSnippets(
-						condition.id ? response.filter(snippet => snippet.conditionId === condition.id) : undefined)
-				})
-				.catch(handleUnknownError)
-		}
-	}, [allSnippets, fetchAll, condition.id])
-
-	return attachedSnippets === undefined
-		? null
-		: <TableForm
-			allSnippets={allSnippets}
-			setAllSnippets={setAllSnippets}
-			attachedSnippets={attachedSnippets}
-		/>
 }

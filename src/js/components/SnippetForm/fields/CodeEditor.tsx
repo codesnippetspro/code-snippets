@@ -6,7 +6,7 @@ import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 
 export const CodeEditor: React.FC = () => {
-	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance, submitSnippet } = useSnippetForm()
+	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance, saveSnippet } = useSnippetForm()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
 	useEffect(() => {
@@ -28,7 +28,7 @@ export const CodeEditor: React.FC = () => {
 			const extraKeys = codeEditorInstance.codemirror.getOption('extraKeys') ?? {}
 			const controlKey = isMacOS() ? 'Cmd' : 'Ctrl'
 			const onSave = () => {
-				submitSnippet()
+				saveSnippet()
 					.then(() => undefined)
 					.catch(handleUnknownError)
 			}
@@ -39,7 +39,7 @@ export const CodeEditor: React.FC = () => {
 				[`${controlKey}-Enter`]: onSave
 			})
 		}
-	}, [submitSnippet, codeEditorInstance, snippet])
+	}, [saveSnippet, codeEditorInstance, snippet])
 
 	return (
 		<div className="snippet-code-container">
