@@ -100,14 +100,14 @@ const UpgradeInfo: React.FC<UpgradeInfoProps> = ({ nextTab }) =>
 				className="button button-secondary"
 				href="https://codesnippets.pro/pricing/"
 			>
-				{__('Learn More', 'code-snippets')}
+				{__('Learn more', 'code-snippets')}
 			</ExternalLink>
 
 			<button
 				className="button button-primary button-large"
 				onClick={nextTab}
 			>
-				{__('See Plans', 'code-snippets')}
+				{__('See plans', 'code-snippets')}
 				<span className="dashicons dashicons-arrow-right"></span>
 			</button>
 		</p>

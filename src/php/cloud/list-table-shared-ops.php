@@ -115,11 +115,10 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 				esc_html__( 'Download', 'code-snippets' )
 			) :
 			sprintf(
-				'<a class="cloud-snippet-download %s" href="%s" target="_blank"><span class="go-pro-badge">%s</span>%s</a>',
+				'<a class="cloud-snippet-download %s" href="%s" target="_blank">%s</a>',
 				$additional_classes,
 				'https://codesnippets.pro/pricing/',
-				esc_html_x( 'Pro', 'pro only', 'code-snippets' ),
-				esc_html_x( ' Only', 'pro only', 'code-snippets' )
+				__( '<span class="go-pro-badge">Pro</span> Only', 'code-snippets' ),
 			);
 	}
 

@@ -255,7 +255,7 @@ class Validator {
 			// If we did not make it out of the class, then there's a problem.
 			if ( $depth > 0 ) {
 				return array(
-					'message' => __( 'Parse error: syntax error, unexpected end of snippet', 'code-snippets' ),
+					'message' => __( 'Parse error: syntax error, unexpected end of snippet.', 'code-snippets' ),
 					'line'    => $token[2],
 				);
 			}
