@@ -16,11 +16,13 @@ const SelectBase = <T, IsMulti extends boolean>({
 			indicatorSeparator: () => ({ display: 'none' })
 		}}
 		getOptionLabel={option => option.label}
-		getOptionValue={option => String(option.key)}
+		getOptionValue={option => String(option.key ?? option.value)}
 		{...selectProps}
 	/>
 
-export interface SingleSelectProps<T> extends Omit<Props<SelectOption<T>, false, SelectGroup<T>>, 'isMulti' | 'onChange'> {
+export type SelectProps<T, IsMulti extends boolean = boolean> = Omit<Props<SelectOption<T>, IsMulti, SelectGroup<T>>, 'isMulti' | 'onChange'>
+
+export interface SingleSelectProps<T> extends SelectProps<T, false> {
 	currentValue?: T
 	onChange: (selectedValue: T | undefined) => void
 }
@@ -52,7 +54,7 @@ export const SingleSelect = <T, >({
 	)
 }
 
-export interface MultiSelectProps<T> extends Omit<Props<SelectOption<T>, true, SelectGroup<T>>, 'isMulti' | 'onChange'> {
+export interface MultiSelectProps<T> extends SelectProps<T, true> {
 	currentValue: T[]
 	onChange: (values: T[]) => void
 }

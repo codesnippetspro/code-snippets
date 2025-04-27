@@ -2,7 +2,7 @@ import type { Key } from 'react'
 import type { GroupBase, Options, OptionsOrGroups } from 'react-select'
 
 export interface SelectOption<T> {
-	readonly key: Key
+	readonly key?: Key
 	readonly value: T
 	readonly label: string
 }

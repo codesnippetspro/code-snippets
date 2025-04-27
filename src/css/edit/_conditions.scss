@@ -87,13 +87,9 @@
 	flex-flow: row;
 	gap: 1em;
 	align-items: stretch;
-
-	.code-snippets-select:last-of-type {
-		flex: 1;
-	}
 }
 
-.code-snippets-subject-select {
+.snippet-condition-subject-select {
 	min-width: 12em;
 }
 
@@ -103,6 +99,7 @@
 
 .snippet-condition-object-select {
 	min-width: 16em;
+	flex: 1;
 }
 
 .snippet-condition-operator-select {

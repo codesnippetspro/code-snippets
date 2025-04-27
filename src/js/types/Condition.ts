@@ -1,14 +1,8 @@
-import type { Snippet } from './Snippet'
-import type { UserRole } from './api/UserRole'
-import type { Page } from './api/Page'
-import type { Post } from './api/Post'
-import type { PostType } from './api/PostType'
-import type { Category, PostTag } from './api/Term'
-import type { User } from './api/User'
+import { _x } from '@wordpress/i18n'
+import type { ConditionSubject, ConditionSubjects } from './ConditionSubject'
 
 export type Condition = Record<string, ConditionGroup | undefined>
 export type ConditionGroup = Record<string, ConditionRule<ConditionSubject> | undefined>
-export type ConditionSubject = keyof ConditionSubjects
 
 export interface ConditionRule<S extends ConditionSubject> {
 	readonly subject?: S
@@ -16,18 +10,16 @@ export interface ConditionRule<S extends ConditionSubject> {
 	readonly object?: ConditionSubjects[S][]
 }
 
-export interface ConditionSubjects {
-	siteArea: 'global' | 'frontend' | 'admin'
-	post: Post['id']
-	page: Page['id']
-	postType: PostType['slug']
-	category: Category['id']
-	tag: PostTag['id']
-	user: User['id']
-	authenticated: boolean
-	userRole: UserRole['role']
-	userCap: string
-	condition: Snippet['id']
+export const CONDITION_OPERATOR_LABELS = <const> {
+	'is': _x('is', 'condition operator', 'code-snippets'),
+	'not': _x('is not', 'condition operator', 'code-snippets'),
+	'in': _x('in', 'condition operator', 'code-snippets'),
+	'not in': _x('not in', 'condition operator', 'code-snippets'),
+	'before': _x('before', 'condition operator', 'code-snippets'),
+	'after': _x('after', 'condition operator', 'code-snippets'),
+	'between': _x('between', 'condition operator', 'code-snippets'),
+	'true': _x('is true', 'condition operator', 'code-snippets'),
+	'false': _x('is false', 'condition operator', 'code-snippets')
 }
 
-export type ConditionOperator = 'is' | 'not'
+export type ConditionOperator = keyof typeof CONDITION_OPERATOR_LABELS

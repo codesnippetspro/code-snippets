@@ -1,16 +1,19 @@
+import React, { useMemo } from 'react'
 import { __, _x } from '@wordpress/i18n'
-import React, { useEffect, useState } from 'react'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
-import { OPERATOR_OPTIONS, SUBJECT_OPTIONS, useConditionsAPI } from '../../hooks/useConditionsAPI'
+import { useConditionOptions } from '../../hooks/useConditionOptions'
+import { CONDITION_OPERATOR_LABELS } from '../../types/Condition'
+import { CONDITIONS_SUBJECT_GROUPS } from '../../types/ConditionSubjectDefinitions'
 import { appendConditionRule, removeConditionRule, updateConditionRule } from '../../utils/conditions'
-import { handleUnknownError } from '../../utils/errors'
+import { CONDITION_SUBJECTS } from '../../utils/conditions/subjects'
+import { buildOptionGroups } from '../../utils/options'
 import { Button } from '../common/Button'
 import { RemoveIcon } from '../common/icons/RemoveIcon'
 import { MultiSelect, SingleSelect } from '../common/Select'
+import type { SelectGroups } from '../../types/SelectOption'
+import type { ConditionSubject, ConditionSubjects } from '../../types/ConditionSubject'
 import type { Dispatch, SetStateAction } from 'react'
-import type { ObjectOptions } from '../../hooks/useConditionsAPI'
 import type { Snippet } from '../../types/Snippet'
-import type { ConditionSubject } from '../../types/Condition'
 
 const SUBJECT_KEYWORD_RE = /__(?<text>.+)__/
 
@@ -42,7 +45,7 @@ export const AddRuleButton: React.FC<ButtonProps> = ({ groupId, ruleId, setSnipp
 interface ConditionObjectEditorProps<S extends ConditionSubject> {
 	groupId: string
 	ruleId: string
-	objectOptions: ObjectOptions<S>
+	objectOptions: SelectGroups<ConditionSubjects[S]> | undefined
 	objectOptionsLoaded: boolean
 }
 
@@ -53,30 +56,84 @@ const ConditionObjectEditor = <S extends ConditionSubject>({
 	objectOptionsLoaded
 }: ConditionObjectEditorProps<S>) => {
 	const { snippet, setSnippet } = useSnippetForm()
-	const objects = snippet.conditions[groupId]?.[ruleId]?.object ?? []
+	const condition = snippet.conditions[groupId]?.[ruleId]
 
-	return objectOptions
-		? <>
-			<SingleSelect
-				className="snippet-condition-field-select snippet-condition-operator-select"
-				options={OPERATOR_OPTIONS}
-				currentValue={snippet.conditions[groupId]?.[ruleId]?.operator ?? 'is'}
-				onChange={operator => {
-					setSnippet(previous => updateConditionRule(previous, groupId, ruleId, { operator }))
-				}}
-			/>
+	const operatorOptions = useMemo(
+		() => condition?.subject
+			? CONDITION_SUBJECTS[condition.subject].operators.map(operator =>
+				({ value: operator, label: CONDITION_OPERATOR_LABELS[operator] }))
+			: [],
+		[condition?.subject])
 
-			<MultiSelect
-				className="snippet-condition-field-select snippet-condition-object-select"
-				options={objectOptions}
-				currentValue={Array.isArray(objects) ? objects : []}
-				isLoading={!objectOptionsLoaded}
-				onChange={object => {
-					setSnippet(previous => updateConditionRule(previous, groupId, ruleId, { object }))
-				}}
-			/>
-		</>
-		: null
+	if (!condition?.subject) {
+		return null
+	}
+
+	const className = 'snippet-condition-field-select snippet-condition-object-select'
+	const allowedOperators = CONDITION_SUBJECTS[condition.subject].operators
+
+	const currentOperator = condition.operator && allowedOperators.includes(condition.operator)
+		? condition.operator
+		: allowedOperators[0]
+
+	const OperatorSelect = () =>
+		<SingleSelect
+			className="snippet-condition-field-select snippet-condition-operator-select"
+			options={operatorOptions}
+			currentValue={currentOperator}
+			onChange={operator => {
+				setSnippet(previous => updateConditionRule(previous, groupId, ruleId, { operator }))
+			}}
+		/>
+
+	const SingleObjectSelect = () =>
+		<SingleSelect
+			className={className}
+			options={objectOptions}
+			currentValue={condition?.object?.[0]}
+			isLoading={!objectOptionsLoaded}
+			onChange={object => {
+				setSnippet(previous =>
+					updateConditionRule(previous, groupId, ruleId, { object: object ? [object] : [] }))
+			}}
+		/>
+
+	const MultiObjectSelect = () =>
+		<MultiSelect
+			className={className}
+			options={objectOptions}
+			currentValue={Array.isArray(condition?.object) ? condition.object : []}
+			isLoading={!objectOptionsLoaded}
+			onChange={object => {
+				setSnippet(previous => updateConditionRule(previous, groupId, ruleId, { object }))
+			}}
+		/>
+
+	switch (currentOperator) {
+		case 'is':
+		case 'not':
+			return <>
+				<OperatorSelect />
+				<SingleObjectSelect />
+			</>
+
+		case 'in':
+		case 'not in':
+			return <>
+				<OperatorSelect />
+				<MultiObjectSelect />
+			</>
+
+		case 'true':
+		case 'false':
+			return <>
+				<SingleObjectSelect />
+				<OperatorSelect />
+			</>
+
+		default:
+			return null
+	}
 }
 
 interface ConditionSubjectEditorProps {
@@ -88,10 +145,21 @@ interface ConditionSubjectEditorProps {
 const ConditionSubjectEditor: React.FC<ConditionSubjectEditorProps> = ({ groupId, ruleId, clearObjectOptions }) => {
 	const { snippet, setSnippet } = useSnippetForm()
 
+	const options = useMemo(
+		() => buildOptionGroups({
+			items: Object.entries(CONDITION_SUBJECTS),
+			groups: CONDITIONS_SUBJECT_GROUPS,
+			getGroup: ([_, subject]) => subject.group,
+			buildOption: ([name, { label }]) =>
+				({ value: name as ConditionSubject, label })
+		}),
+		[]
+	)
+
 	return (
 		<SingleSelect
 			className="snippet-condition-field-select snippet-condition-subject-select"
-			options={SUBJECT_OPTIONS}
+			options={options}
 			currentValue={snippet.conditions[groupId]?.[ruleId]?.subject}
 			onChange={subject => {
 				clearObjectOptions()
@@ -111,36 +179,16 @@ export interface ConditionRuleEditorProps {
 }
 
 export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ groupId, ruleId }) => {
-	const { fetchSubjectOptions } = useConditionsAPI()
 	const { snippet, setSnippet } = useSnippetForm()
-
-	const [loadedSubject, setLoadedSubject] = useState<ConditionSubject>()
-	const [objectOptions, setObjectOptions] = useState<ObjectOptions<ConditionSubject> | undefined>(undefined)
-
 	const condition = snippet.conditions[groupId]?.[ruleId]
-
-	useEffect(() => {
-		if (objectOptions === undefined && condition?.subject) {
-			setLoadedSubject(undefined)
-
-			fetchSubjectOptions(condition.subject)
-				.then(options => {
-					setObjectOptions(options)
-					setLoadedSubject(condition.subject)
-				})
-				.catch(handleUnknownError)
-		}
-	}, [condition?.subject, objectOptions, fetchSubjectOptions])
+	const { objectOptions, loadedSubject, clearObjectOptions } = useConditionOptions(condition?.subject)
 
 	return (
 		<div id={`snippet-condition-group-${groupId}-rule-${ruleId}`} className="snippet-condition-rule">
 			<ConditionSubjectEditor
 				groupId={groupId}
 				ruleId={ruleId}
-				clearObjectOptions={() => {
-					setLoadedSubject(undefined)
-					setObjectOptions(undefined)
-				}}
+				clearObjectOptions={clearObjectOptions}
 			/>
 
 			<ConditionObjectEditor

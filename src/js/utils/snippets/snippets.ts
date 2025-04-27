@@ -1,8 +1,9 @@
 import { addQueryArgs } from '@wordpress/url'
 import { __, sprintf } from '@wordpress/i18n'
+import { buildOptionGroups } from '../options'
 import { isNetworkAdmin } from '../screen'
 import { parseSnippetObject } from './objects'
-import type { SelectGroup, SelectOption } from '../../types/SelectOption'
+import type { SelectGroup } from '../../types/SelectOption'
 import type { Snippet, SnippetType } from '../../types/Snippet'
 
 const PRO_TYPES = new Set<SnippetType>(['css', 'js'])
@@ -69,26 +70,14 @@ export const isProSnippet = (snippet: Pick<Snippet, 'scope'>): boolean =>
 export const isProType = (type: SnippetType): boolean =>
 	PRO_TYPES.has(type)
 
-export const buildSnippetSelectOptionGroups = (snippets: Snippet[]): SelectGroup<Snippet>[] => {
-	const optionGroups = new Map<SnippetType, SelectOption<Snippet>[]>
-
-	for (const snippet of snippets) {
-		const option: SelectOption<Snippet> = {
-			key: `${snippet.id}-${snippet.network}}`,
+export const buildSnippetSelectOptionGroups = (snippets: Snippet[]): SelectGroup<Snippet>[] =>
+	buildOptionGroups({
+		items: snippets,
+		groups: TYPE_LABELS,
+		getGroup: getSnippetType,
+		buildOption: snippet => ({
+			key: `${snippet.id}-${snippet.network}`,
 			value: snippet,
 			label: getSnippetDisplayName(snippet)
-		}
-
-		const type = getSnippetType(snippet)
-		const optionGroup = optionGroups.get(type)
-
-		if (optionGroup) {
-			optionGroup.push(option)
-		} else {
-			optionGroups.set(type, [option])
-		}
-	}
-
-	return [...optionGroups].map(([type, options]) =>
-		({ label: TYPE_LABELS[type], options }))
-}
+		}),
+	})
