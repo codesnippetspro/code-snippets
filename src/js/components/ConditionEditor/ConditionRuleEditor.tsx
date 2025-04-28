@@ -35,7 +35,7 @@ const ObjectSelect = <S extends ConditionSubject>({ options, groupId, ruleId, op
 			isLoading={!optionsLoaded}
 			onSelect={value => {
 				setSnippet(previous =>
-					updateConditionRule(previous, groupId, ruleId, { object: value === null || value === undefined ? [] : [value] }))
+					updateConditionRule(previous, groupId, ruleId, { object: undefined === value ? [] : [value] }))
 			}}
 			onSelectMulti={values => {
 				setSnippet(previous =>
@@ -52,7 +52,7 @@ interface OperatorSelectProps {
 	currentOperator: ConditionOperator | undefined
 }
 
-const unaryOperations: Set<ConditionOperator> = new Set(['is', 'not', 'true', 'false'])
+const unaryOperations = new Set<ConditionOperator>(['is', 'not', 'true', 'false'])
 
 const OperatorSelect: React.FC<OperatorSelectProps> = ({ options, currentOperator, groupId, ruleId }) => {
 	const { setSnippet } = useSnippetForm()
@@ -70,7 +70,7 @@ const OperatorSelect: React.FC<OperatorSelectProps> = ({ options, currentOperato
 					return updateConditionRule(previous, groupId, ruleId, {
 						operator,
 						...operator && unaryOperations.has(operator) && previousRule?.object
-							? { object: [previousRule?.object[0]] }
+							? { object: [previousRule.object[0]] }
 							: {}
 					})
 				})

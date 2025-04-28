@@ -1,3 +1,4 @@
+import type { PostStatus } from './api/PostStatus'
 import type { Page } from './api/Page'
 import type { Post } from './api/Post'
 import type { PostType } from './api/PostType'
@@ -8,7 +9,7 @@ import type { Snippet } from './Snippet'
 
 export interface SiteConditionSubjects {
 	siteArea: 'global' | 'frontend' | 'admin'
-	currentQuery: 'frontpage' | 'home' | 'search' | 'archive' | '404'
+	currentQuery: 'home' | 'frontpage' | 'search' | 'archive' | '404' | 'single' | 'page' | 'postTypeArchive'
 	debugEnabled: boolean
 }
 
@@ -22,6 +23,8 @@ export interface PostConditionSubjects {
 	postType: PostType['slug']
 	category: Category['id']
 	tag: PostTag['id']
+	postStatus: PostStatus['slug']
+	postAuthor: Post['author']
 }
 
 export interface UserConditionSubjects {

@@ -1,7 +1,8 @@
 import { __ } from '@wordpress/i18n'
-import { SelectOptions } from '../../types/SelectOption'
 import { REST_BASE, REST_CONDITIONS_BASE } from '../restAPI'
 import { getSnippetDisplayName, isCondition } from '../snippets/snippets'
+import type { PostStatuses } from '../../types/api/PostStatus'
+import type { SelectOptions } from '../../types/SelectOption'
 import type { ConditionOperator } from '../../types/Condition'
 import type { UserRoles } from '../../types/api/UserRole'
 import type { ConditionSubjects, PostConditionSubjects, SiteConditionSubjects, SnippetConditionSubjects, UserConditionSubjects } from '../../types/ConditionSubject'
@@ -47,11 +48,14 @@ const SITE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<SiteConditionSubjects
 		label: __('Current query', 'code-snippets'),
 		operators: OPERATORS.multiple,
 		options: [
-			{ value: 'frontpage', label: __('Front page', 'code-snippets') },
 			{ value: 'home', label: __('Blog homepage', 'code-snippets') },
+			{ value: 'frontpage', label: __('Front page', 'code-snippets') },
 			{ value: 'search', label: __('Search results', 'code-snippets') },
 			{ value: 'archive', label: __('Archive page', 'code-snippets') },
-			{ value: '404', label: __('404 page', 'code-snippets') }
+			{ value: '404', label: __('404 page', 'code-snippets') },
+			{ value: 'single', label: __('Single post', 'code-snippets') },
+			{ value: 'page', label: __('Page', 'code-snippets') },
+			{ value: 'postTypeArchive', label: __('Post type archive', 'code-snippets') }
 		]
 	},
 	debugEnabled: {
@@ -119,20 +123,35 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 			api.get<PostTags>(`${REST_BASE}/wp/v2/tags`).then(tags =>
 				tags.map(tag =>
 					({ value: tag.id, label: tag.name })))
+	},
+	postStatus: {
+		group: 'posts',
+		label: __('Post status', 'code-snippets'),
+		operators: OPERATORS.multiple,
+		fetchOptions: api =>
+			api.get<PostStatuses>(`${REST_BASE}/wp/v2/statuses`).then(statuses =>
+				Object.values(statuses).map(status =>
+					({ value: status.slug, label: status.name })))
+	},
+	postAuthor: {
+		group: 'posts',
+		label: __('Post author', 'code-snippets'),
+		operators: OPERATORS.multiple,
+		fetchOptions: api =>
+			api.get<Users>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&per-page=50`).then(users =>
+				users.map(user => ({ value: user.id, label: user.name })))
 	}
 }
 
 const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects> = {
 	user: {
 		group: 'users',
-		label: __('User name', 'code-snippets'),
+		label: __('User', 'code-snippets'),
 		operators: OPERATORS.multiple,
 		fetchOptions: api =>
-			api.get<Users>(`${REST_BASE}/wp/v2/users`).then(users => [{
+			api.get<Users>(`${REST_BASE}/wp/v2/users?per-page=50&orderby=id`).then(users => [{
 				label: __('User ID', 'code-snippets'),
-				options: users
-					.map(user => ({ value: user.id, label: `${user.id} (${user.name})` }))
-					.toSorted((a, b) => a.value - b.value)
+				options: users.map(user => ({ value: user.id, label: `${user.id} (${user.name})` }))
 			}])
 	},
 	userRole: {

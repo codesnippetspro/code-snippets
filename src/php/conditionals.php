@@ -19,9 +19,66 @@ use WP_Error;
  */
 function evaluate_condition_clause( ?string $subject, array $objects ) {
 	switch ( $subject ) {
+		/* Site conditions. */
+
+		case 'siteArea':
+			$object = $objects[0] ?? null;
+
+			return 'global' === $object ||
+			       'admin' === $object && is_admin() ||
+			       'frontend' === $object && ! is_admin();
+
+		case 'currentQuery':
+			return array_any(
+				$objects,
+				function ( $object ) {
+					switch ( $object ) {
+						case 'home':
+							return is_home();
+
+						case 'frontpage':
+							return is_front_page();
+
+						case 'search':
+							return is_search();
+
+						case 'archive':
+							return is_archive();
+
+						case '404':
+							return is_404();
+
+						case 'single':
+							return is_single();
+
+						case 'page':
+							return is_page();
+
+						case 'postTypeArchive':
+							return is_post_type_archive();
+
+						default:
+							return false;
+					}
+				}
+			);
+
+		case 'debugEnabled':
+			return defined( 'WP_DEBUG' ) && WP_DEBUG;
+
+		/* Snippets conditions. */
+
+		case 'condition':
+			// TODO implement this in a non-recursive way.
+			return false;
+
+		/* Posts and pages conditions. */
+
 		case 'post':
-		case 'page':
 			return is_single( $objects );
+
+		case 'page':
+			return is_page( $objects );
 
 		case 'postType':
 			$post = get_post();
@@ -31,26 +88,31 @@ function evaluate_condition_clause( ?string $subject, array $objects ) {
 		case 'category':
 			return has_term( $objects, $subject );
 
+		case 'postStatus':
+			$post = get_post();
+			return $post && in_array( $post->post_status, $objects, true );
+
+		case 'postAuthor':
+			$post = get_post();
+			return $post && in_array( $post->post_author, $objects, true );
+
+		/* User conditions. */
+
 		case 'user':
 			$user = wp_get_current_user();
 			return $user && in_array( $user->ID, $objects, true );
-
-		case 'authenticated':
-			return is_user_logged_in();
 
 		case 'userRole':
 			$user = wp_get_current_user();
 			return $user && ! empty( array_intersect( $user->roles, $objects ) );
 
 		case 'userCap':
-			foreach ( $objects as $cap ) {
-				if ( current_user_can( $cap ) ) {
-					return true;
-				}
-			}
+			return array_any( $objects, 'current_user_can' );
 
-			return false;
+		case 'authenticated':
+			return is_user_logged_in();
 
+		/* Fallback. */
 		default:
 			return new WP_Error( "Invalid condition subject: $subject." );
 	}
@@ -70,7 +132,7 @@ function evaluate_condition_rule( array $rule ): bool {
 
 	$result = evaluate_condition_clause( $subject, $objects );
 
-	if ( 'not' === $operator ) {
+	if ( 'not' === $operator || 'not in' === $operator || 'false' === $operator ) {
 		$result = ! $result;
 	}
 
