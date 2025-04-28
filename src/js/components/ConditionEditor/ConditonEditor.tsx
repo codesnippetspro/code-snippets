@@ -1,7 +1,7 @@
 import { __, _x } from '@wordpress/i18n'
 import React, { Fragment } from 'react'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
-import { addConditionGroup } from '../../utils/conditions'
+import { addConditionGroup } from '../../utils/conditions/rules'
 import { Button } from '../common/Button'
 import { ConditionRuleEditor } from './ConditionRuleEditor'
 

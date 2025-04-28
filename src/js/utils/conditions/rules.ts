@@ -1,6 +1,6 @@
-import type { ConditionSubject } from '../types/ConditionSubject'
-import type { ConditionGroup, ConditionRule } from '../types/Condition'
-import type { Snippet } from '../types/Snippet'
+import type { ConditionSubject } from '../../types/ConditionSubject'
+import type { ConditionGroup, ConditionRule } from '../../types/Condition'
+import type { Snippet } from '../../types/Snippet'
 
 const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
 	const keys = items

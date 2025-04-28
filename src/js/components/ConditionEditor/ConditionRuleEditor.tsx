@@ -4,7 +4,7 @@ import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { useConditionOptions } from '../../hooks/useConditionOptions'
 import { CONDITION_OPERATOR_LABELS } from '../../types/Condition'
 import { CONDITIONS_SUBJECT_GROUPS } from '../../types/ConditionSubjectDefinitions'
-import { appendConditionRule, getConditionRule, removeConditionRule, updateConditionRule } from '../../utils/conditions'
+import { appendConditionRule, getConditionRule, removeConditionRule, updateConditionRule } from '../../utils/conditions/rules'
 import { CONDITION_SUBJECTS } from '../../utils/conditions/subjects'
 import { buildOptionGroups } from '../../utils/options'
 import { Button } from '../common/Button'
@@ -35,7 +35,7 @@ const ObjectSelect = <S extends ConditionSubject>({ options, groupId, ruleId, op
 			isLoading={!optionsLoaded}
 			onSelect={value => {
 				setSnippet(previous =>
-					updateConditionRule(previous, groupId, ruleId, { object: value ? [value] : [] }))
+					updateConditionRule(previous, groupId, ruleId, { object: value === null || value === undefined ? [] : [value] }))
 			}}
 			onSelectMulti={values => {
 				setSnippet(previous =>
@@ -52,6 +52,8 @@ interface OperatorSelectProps {
 	currentOperator: ConditionOperator | undefined
 }
 
+const unaryOperations: Set<ConditionOperator> = new Set(['is', 'not', 'true', 'false'])
+
 const OperatorSelect: React.FC<OperatorSelectProps> = ({ options, currentOperator, groupId, ruleId }) => {
 	const { setSnippet } = useSnippetForm()
 
@@ -61,9 +63,17 @@ const OperatorSelect: React.FC<OperatorSelectProps> = ({ options, currentOperato
 			options={options}
 			currentValue={currentOperator}
 			onChange={selected => {
-				setSnippet(previous => updateConditionRule(previous, groupId, ruleId, {
-					operator: selected?.value ?? undefined
-				}))
+				setSnippet(previous => {
+					const operator = selected?.value ?? undefined
+					const previousRule = getConditionRule(previous, groupId, ruleId)
+
+					return updateConditionRule(previous, groupId, ruleId, {
+						operator,
+						...operator && unaryOperations.has(operator) && previousRule?.object
+							? { object: [previousRule?.object[0]] }
+							: {}
+					})
+				})
 			}}
 		/>
 	)
@@ -165,9 +175,9 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ groupI
 	const rule = getConditionRule(snippet, groupId, ruleId)
 	const { objectOptions, loadedSubject, clearObjectOptions } = useConditionOptions(rule?.subject)
 
-	const allowedOperators: ConditionOperator[] = useMemo(
-		() => rule?.subject ? CONDITION_SUBJECTS[rule.subject].operators : [],
-		[rule?.subject])
+	const allowedOperators: ConditionOperator[] = rule?.subject
+		? CONDITION_SUBJECTS[rule.subject].operators
+		: []
 
 	const currentOperator = rule?.operator && allowedOperators.includes(rule.operator)
 		? rule.operator

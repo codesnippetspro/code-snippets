@@ -8,10 +8,7 @@ import type { Snippet } from './Snippet'
 
 export interface SiteConditionSubjects {
 	siteArea: 'global' | 'frontend' | 'admin'
-	isHome: boolean
-	isSearch: boolean
-	isArchive: boolean
-	is404: boolean
+	currentQuery: 'frontpage' | 'home' | 'search' | 'archive' | '404'
 	debugEnabled: boolean
 }
 

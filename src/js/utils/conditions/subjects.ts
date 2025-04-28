@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n'
+import { SelectOptions } from '../../types/SelectOption'
 import { REST_BASE, REST_CONDITIONS_BASE } from '../restAPI'
 import { getSnippetDisplayName, isCondition } from '../snippets/snippets'
 import type { ConditionOperator } from '../../types/Condition'
@@ -20,12 +21,12 @@ const OPERATORS = (() => {
 	return <const> { single, multiple, date, boolean }
 })()
 
-const YES_NO_OPTIONS = [
+const YES_NO_OPTIONS: SelectOptions<boolean> = [
 	{ value: true, label: __('Yes', 'code-snippets') },
 	{ value: false, label: __('No', 'code-snippets') }
 ]
 
-const ENABLED_OPTIONS = [
+const ENABLED_OPTIONS: SelectOptions<boolean> = [
 	{ value: true, label: __('Enabled', 'code-snippets') },
 	{ value: false, label: __('Disabled', 'code-snippets') }
 ]
@@ -41,33 +42,21 @@ const SITE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<SiteConditionSubjects
 			{ value: 'admin', label: __('Administration dashboard', 'code-snippets') }
 		]
 	},
-	isHome: {
+	currentQuery: {
 		group: 'site',
-		label: __('Homepage', 'code-snippets'),
-		operators: OPERATORS.single,
-		options: YES_NO_OPTIONS
-	},
-	isSearch: {
-		group: 'site',
-		label: __('Search results', 'code-snippets'),
-		operators: OPERATORS.single,
-		options: YES_NO_OPTIONS
-	},
-	isArchive: {
-		group: 'site',
-		label: __('Archive page', 'code-snippets'),
-		operators: OPERATORS.single,
-		options: YES_NO_OPTIONS
-	},
-	is404: {
-		group: 'site',
-		label: __('404 page', 'code-snippets'),
-		operators: OPERATORS.single,
-		options: YES_NO_OPTIONS
+		label: __('Current query', 'code-snippets'),
+		operators: OPERATORS.multiple,
+		options: [
+			{ value: 'frontpage', label: __('Front page', 'code-snippets') },
+			{ value: 'home', label: __('Blog homepage', 'code-snippets') },
+			{ value: 'search', label: __('Search results', 'code-snippets') },
+			{ value: 'archive', label: __('Archive page', 'code-snippets') },
+			{ value: '404', label: __('404 page', 'code-snippets') }
+		]
 	},
 	debugEnabled: {
 		group: 'site',
-		label: __('Debug mode', 'code-snippets'),
+		label: __('WP_DEBUG mode', 'code-snippets'),
 		operators: OPERATORS.single,
 		options: ENABLED_OPTIONS
 	}
