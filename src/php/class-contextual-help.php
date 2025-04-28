@@ -72,7 +72,7 @@ class Contextual_Help {
 			'https://codesnippets.pro'                           => __( 'Plugin Website', 'code-snippets' ),
 		];
 
-		$contents = '<p><strong>' . __( 'For more information:', 'code-snippets' ) . "</strong></p>\n";
+		$contents = '<p><strong>' . esc_html__( 'For more information:', 'code-snippets' ) . "</strong></p>\n";
 
 		foreach ( $sidebar_links as $url => $label ) {
 			$contents .= "\n" . sprintf( '<p><a href="%s">%s</a></p>', esc_url( $url ), esc_html( $label ) );

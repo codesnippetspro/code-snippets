@@ -292,7 +292,7 @@ class List_Table extends WP_List_Table {
 		}
 
 		return sprintf(
-			'<a class="%s" href="%s" title="%s">&nbsp;</a> ',
+			'<a class="%s" href="%s" aria-label="%s">&nbsp;</a> ',
 			esc_attr( $class ),
 			esc_url( $this->get_action_link( $action, $snippet ) ),
 			esc_attr( $label )

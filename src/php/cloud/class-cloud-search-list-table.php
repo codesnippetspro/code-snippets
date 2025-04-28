@@ -117,7 +117,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 		 */
 		foreach ( $this->items as $item ) {
 			?>
-			<div class="plugin-card cloud-search-card plugin-card-<?php echo sanitize_html_class( $item->id ); ?>">
+			<div class="plugin-card cloud-search-card plugin-card-<?php echo esc_attr( $item->id ); ?>">
 				<?php
 				cloud_lts_display_column_hidden_input( 'code', $item );
 				cloud_lts_display_column_hidden_input( 'name', $item );
@@ -132,7 +132,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 								printf( '<a href="%s">', esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ) );
 							} else {
 								printf(
-									'<a href="%s" title="%s" class="cloud-snippet-preview thickbox" data-snippet="%s" data-lang="%s">',
+									'<a href="%s" aria-label="%s" class="cloud-snippet-preview thickbox" data-snippet="%s" data-lang="%s">',
 									'#TB_inline?&width=700&height=500&inlineId=show-code-preview',
 									esc_attr__( 'Preview this snippet', 'code-snippets' ),
 									esc_attr( $item->id ),
@@ -163,14 +163,12 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						<p class="authors">
 							<cite>
 								<?php
-								esc_html_e( 'Codevault: ', 'code-snippets' );
-
 								printf(
-									'<a target="_blank" href="%s">%s</a>',
+									'%s <a target="_blank" href="%s">%s</a>',
+									esc_html__( 'Codevault:', 'code-snippets' );
 									esc_url( sprintf( 'https://codesnippets.cloud/codevault/%s', $item->codevault ) ),
 									esc_html( $item->codevault )
 								);
-
 								?>
 							</cite>
 						</p>
@@ -250,14 +248,22 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						</div>
 					</div>
 					<div class="column-compatibility">
-						<strong><?php esc_html_e( 'WP Compatability:', 'code-snippets' ); ?></strong>
+						<strong><?php esc_html_e( 'WP Compatibility:', 'code-snippets' ); ?></strong>
 						<?php
 						if ( empty( $wp_tested ) ) {
-							echo '<span class="compatibility-untested">', esc_html__( 'Not indicated by author', 'code-snippets' ), '</span>';
+							printf(
+								'<span class="compatibility-untested">%s</span>',
+								esc_html__( 'Not indicated by author', 'code-snippets' )
+							);
 						} else {
-							// translators: tested status.
-							$text = sprintf( __( 'Author states %s', 'code-snippets' ), $wp_tested );
-							echo '<span class="compatibility-compatible">', esc_html( $text ), '</span>';
+							printf(
+								'<span class="compatibility-compatible">%s</span>',
+								sprintf(
+									// translators: %s: tested status.
+									__( 'Author states %s', 'code-snippets' ),
+									$wp_tested
+								)
+							);
 						}
 						?>
 					</div>

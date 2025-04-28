@@ -103,20 +103,20 @@ class Admin {
 			return $actions;
 		}
 
-		$format = '<a href="%1$s" title="%2$s">%3$s</a>';
+		$format = '<a href="%1$s" aria-label="%2$s">%3$s</a>';
 
 		$actions = array_merge(
 			[
 				sprintf(
 					$format,
 					esc_url( code_snippets()->get_menu_url( 'settings' ) ),
-					esc_html__( 'Change plugin settings', 'code-snippets' ),
+					esc_attr__( 'Change plugin settings', 'code-snippets' ),
 					esc_html__( 'Settings', 'code-snippets' )
 				),
 				sprintf(
 					$format,
 					esc_url( code_snippets()->get_menu_url() ),
-					esc_html__( 'Manage your existing snippets', 'code-snippets' ),
+					esc_attr__( 'Manage your existing snippets', 'code-snippets' ),
 					esc_html__( 'Snippets', 'code-snippets' )
 				),
 			],
@@ -125,10 +125,10 @@ class Admin {
 
 		if ( ! code_snippets()->licensing->is_licensed() ) {
 			$actions[] = sprintf(
-				'<a href="%1$s" title="%2$s" style="color: #d46f4d; font-weight: bold;" target="_blank">%3$s</a>',
+				'<a href="%1$s" aria-label="%2$s" style="color: #d46f4d; font-weight: bold;" target="_blank">%3$s</a>',
 				'https://snipco.de/JE2i',
 				esc_attr__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
-				esc_html__( 'Get Pro', 'code-snippets' )
+				esc_attr__( 'Get Pro', 'code-snippets' )
 			);
 		}
 		return $actions;
@@ -148,7 +148,7 @@ class Admin {
 			return $plugin_meta;
 		}
 
-		$format = '<a href="%1$s" title="%2$s" target="_blank">%3$s</a>';
+		$format = '<a href="%1$s" aria-label="%2$s" target="_blank">%3$s</a>';
 
 		return array_merge(
 			$plugin_meta,
@@ -297,7 +297,7 @@ class Admin {
 		printf(
 			'<a href="%s" class="notice-dismiss"><span class="screen-reader-text">%s</span></a>',
 			esc_url( wp_nonce_url( add_query_arg( $meta_key, $notice ), $meta_key ) ),
-			esc_attr__( 'Dismiss', 'code-snippets' )
+			esc_html__( 'Dismiss', 'code-snippets' )
 		);
 
 		echo '</p></div>';
@@ -321,7 +321,7 @@ class Admin {
 
 		} elseif ( ! code_snippets()->licensing->is_licensed() && Plugin::is_pro_type( $type_name ) ) {
 			printf(
-				'<a class="nav-tab nav-tab-inactive" data-snippet-type="%s" title="%s" href="https://codesnippets.pro/pricing/" target="_blank">',
+				'<a class="nav-tab nav-tab-inactive" data-snippet-type="%s" aria-label="%s" href="https://codesnippets.pro/pricing/" target="_blank">',
 				esc_attr( $type_name ),
 				esc_attr__( 'Available in Code Snippets Pro (external link)', 'code-snippets' )
 			);
