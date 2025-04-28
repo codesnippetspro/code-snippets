@@ -45,19 +45,19 @@
 
 .CodeMirror-lint-marker-multiple {
 	position: absolute;
-	top: 0;
+	inset-block-start: 0;
 }
 
 [class*="CodeMirror-lint-marker"]:before {
 	font: normal 18px/1 dashicons;
 	position: relative;
-	top: -2px;
+	inset-block-start: -2px;
 }
 
 [class*="CodeMirror-lint-message"]:before {
 	font: normal 16px/1 dashicons;
-	left: 16px;
 	position: absolute;
+	inset-inline-start: 16px;
 }
 
 .CodeMirror-lint-message-error,

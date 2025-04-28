@@ -103,10 +103,10 @@ $inactive-color: #ccc;
 	&::before {
 		content: '';
 		position: absolute;
-		top: -14px;
-		left: -21px;
-		bottom: -14px;
-		right: -8px;
+		inset-block-start: -14px;
+		inset-inline-start: -21px;
+		inset-block-end: -14px;
+		inset-inline-end: -8px;
 		border-radius: 50%;
 		border: 1.8px solid $inactive-color;
 		z-index: 2;
@@ -149,7 +149,7 @@ $inactive-color: #ccc;
 	.row-actions {
 		color: #ddd;
 		position: relative;
-		left: 0;
+		inset-inline-start: 0;
 	}
 
 	.column-activate {

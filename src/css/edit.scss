@@ -155,6 +155,6 @@ p.snippet-scope, .snippet-scope p {
 
 #edit-snippet-form-container .cs-sticky-notice {
 	position: sticky;
-	top: 40px;
+	inset-block-start: 40px;
 	z-index: 100;
 }

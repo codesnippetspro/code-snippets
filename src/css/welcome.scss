@@ -367,8 +367,8 @@ a.csp-card {
 	border-radius: 22px;
 	animation: loading-rotate 1s infinite linear;
 	position: absolute;
-	left: 47%;
-	top: 45%;
+	inset-inline-start: 47%;
+	inset-block-start: 45%;
 }
 
 @keyframes loading-rotate {

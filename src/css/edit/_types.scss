@@ -6,7 +6,7 @@
 
 	&::after {
 		position: absolute;
-		bottom: 0;
+		inset-block-end: 0;
 	}
 }
 
