@@ -7,7 +7,7 @@ import { buildSnippetSelectOptionGroups, getSnippetDisplayName, getSnippetEditUr
 import { stripTags } from '../../../utils/text'
 import { Button } from '../../common/Button'
 import { ListTable } from '../../common/ListTable'
-import { SingleSelect } from '../../common/Select'
+import { Select } from '../../common/Select'
 import { SnippetTypeBadge } from '../../common/SnippetTypeBadge'
 import type { SelectGroup } from '../../../types/SelectOption'
 import type { Snippet } from '../../../types/Snippet'
@@ -56,10 +56,10 @@ const SnippetSelector: React.FC<SnippetSelectorProps> = ({ onSubmit }) => {
 
 	return (
 		<div className="snippet-selector">
-			<SingleSelect
+			<Select
 				options={options}
 				currentValue={currentValue}
-				onChange={selectedValue => setCurrentValue(selectedValue)}
+				onSelect={selectedValue => setCurrentValue(selectedValue)}
 			/>
 
 			<Button

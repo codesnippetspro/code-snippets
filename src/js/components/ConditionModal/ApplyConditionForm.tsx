@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { getSnippetDisplayName, isCondition } from '../../utils/snippets/snippets'
 import { Button } from '../common/Button'
-import { SingleSelect } from '../common/Select'
+import { Select } from '../common/Select'
 import type { SelectOption } from '../../types/SelectOption'
 import type { Snippet } from '../../types/Snippet'
 import type { FormEventHandler } from 'react'
@@ -39,10 +39,10 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ closeMod
 		<form className="modal-form" onSubmit={handleSubmit}>
 			<div className="modal-content">
 				<BaseControl label={__('Saved Conditions', 'code-snippets')}>
-					<SingleSelect
+					<Select
 						required
 						options={options}
-						onChange={newValue => setConditionId(newValue)}
+						onSelect={newValue => setConditionId(newValue)}
 						isLoading={options === undefined}
 						currentValue={conditionId}
 					/>

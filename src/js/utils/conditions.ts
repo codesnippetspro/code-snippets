@@ -12,6 +12,9 @@ const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
 	return `${1 + (keys.length ? Math.max(...keys) : 0)}_`
 }
 
+export const getConditionRule = (snippet: Snippet, groupId: string, ruleId: string): ConditionRule<ConditionSubject> | undefined =>
+	snippet.conditions[groupId]?.[ruleId]
+
 export const addConditionGroup = (snippet: Snippet): Snippet => ({
 	...snippet,
 	conditions: {

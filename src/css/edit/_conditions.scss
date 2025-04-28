@@ -91,6 +91,10 @@
 
 .snippet-condition-subject-select {
 	min-width: 12em;
+
+	&:last-of-type {
+		flex: 1;
+	}
 }
 
 .snippet-condition-operator-select {
