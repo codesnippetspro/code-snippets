@@ -9,8 +9,8 @@ $breakpoint: 1060px;
 
 	h1, h2, h3 {
 		font-weight: 700;
-		margin-top: 10px;
-		margin-bottom: 10px;
+		margin-block-start: 10px;
+		margin-block-end: 10px;
 
 		.dashicons {
 			font-size: 90%;
@@ -28,7 +28,7 @@ $breakpoint: 1060px;
 	}
 
 	.dashicons-external {
-		float: right;
+		float: inline-end;
 		color: #666;
 	}
 }
@@ -69,12 +69,12 @@ $breakpoint: 1060px;
 	margin: 0;
 
 	li {
-		margin-bottom: 0;
+		margin-block-end: 0;
 	}
 
 	li a {
-		margin-top: 10px;
-		margin-bottom: 10px;
+		margin-block-start: 10px;
+		margin-block-end: 10px;
 		align-items: center;
 		border-width: 1px;
 		border-style: solid;
@@ -94,8 +94,8 @@ $breakpoint: 1060px;
 
 		.dashicons, svg {
 			text-decoration: none;
-			margin-top: -1px;
-			margin-left: 3px;
+			margin-block-start: -1px;
+			margin-inline-start: 3px;
 		}
 
 		svg {
@@ -164,13 +164,13 @@ a.csp-card {
 
 .csp-section-changes {
 	border: 1px solid theme.$outline;
-	border-left: 0;
-	border-right: 0;
+	border-inline-start: 0;
+	border-inline-end: 0;
 	padding: 40px 0 50px 0;
 	display: flex;
 	flex-direction: column;
 	row-gap: 20px;
-	margin-top: 30px;
+	margin-block-start: 30px;
 
 	.csp-cards {
 		grid-template-columns: 2fr 1fr;
@@ -197,7 +197,7 @@ a.csp-card {
 		height: 400px;
 
 		h3 {
-			float: right;
+			float: inline-end;
 			color: #666;
 		}
 
@@ -206,7 +206,7 @@ a.csp-card {
 		}
 
 		ul {
-			margin-top: 5px;
+			margin-block-start: 5px;
 		}
 
 		li {
@@ -222,7 +222,7 @@ a.csp-card {
 		}
 
 		> article::after {
-			border-bottom: 1px solid #666;
+			border-block-end: 1px solid #666;
 			content: ' ';
 			display: block;
 			width: 50%;
@@ -230,7 +230,7 @@ a.csp-card {
 		}
 
 		> article:last-child {
-			padding-bottom: 1px;
+			padding-block-end: 1px;
 
 			&::after {
 				border: 0;
@@ -279,7 +279,7 @@ a.csp-card {
 	padding: 40px 0 50px 0;
 
 	.csp-card {
-		margin-top: 20px;
+		margin-block-start: 20px;
 		justify-content: flex-start;
 		color: black;
 		position: relative;
@@ -311,8 +311,8 @@ a.csp-card {
 			display: block;
 			font-size: .9rem;
 			letter-spacing: 1px;
-			margin-bottom: 0;
-			margin-top: 0;
+			margin-block-start: 0;
+			margin-block-end: 0;
 			text-transform: uppercase;
 			width: fit-content;
 			padding: 5px 15px;
@@ -348,7 +348,7 @@ a.csp-card {
 }
 
 .csp-section-partners {
-	border-top: 1px solid theme.$outline;
+	border-block-start: 1px solid theme.$outline;
 
 	header {
 		display: flex;
@@ -363,7 +363,7 @@ a.csp-card {
 	width: 0;
 	padding: 15px;
 	border: 6px solid #e7c0b3;
-	border-right-color: theme.$secondary;
+	border-inline-end-color: theme.$secondary;
 	border-radius: 22px;
 	animation: loading-rotate 1s infinite linear;
 	position: absolute;

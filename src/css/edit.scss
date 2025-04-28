@@ -15,7 +15,7 @@
 }
 
 .notice.error blockquote {
-	margin-bottom: 0;
+	margin-block-end: 0;
 }
 
 h2 {
@@ -34,25 +34,25 @@ h2:first-of-type, .submit-inline {
 .saved-snippet {
 	&.inactive-snippet, &.active-snippet {
 		#title {
-			border-left-width: 4px;
+			border-inline-start-width: 4px;
 		}
 	}
 
 	&.active-snippet #title {
-		border-left-color: #46b450;
+		border-inline-start-color: #46b450;
 	}
 
 	&.inactive-snippet #title {
-		border-left-color: #bbb;
+		border-inline-start-color: #bbb;
 	}
 
 	&.erroneous-snippet #title {
-		border-left-color: #dc3232;
+		border-inline-start-color: #dc3232;
 	}
 }
 
 #snippet-form {
-	margin-top: 10px;
+	margin-block-start: 10px;
 
 	#snippet-tags, textarea {
 		width: 100%;
@@ -68,7 +68,7 @@ label[for='snippet_description'] h3 div {
 /* Add spacing in between the action buttons */
 .button + .button,
 .generate-button + .button {
-	margin-left: .5em;
+	margin-inline-start: .5em;
 }
 
 h2 .button {
@@ -87,37 +87,37 @@ h2 .button {
 }
 
 .submit-inline {
-	float: right;
-	margin-bottom: 0;
+	float: inline-end;
+	margin-block-end: 0;
 }
 
 p.snippet-scope, .snippet-scope p {
-	margin-top: 15px;
+	margin-block-start: 15px;
 }
 
 .snippet-description-container {
-	margin-top: 25px;
+	margin-block-start: 25px;
 
 	.wp-editor-tools {
-		padding-top: 5px;
+		padding-block-start: 5px;
 	}
 
 	.wp-editor-tabs {
-		float: left;
+		float: inline-start;
 	}
 }
 
 .snippet-scope label,
 .html-shortcode-options strong {
 	display: inline-block;
-	margin-right: 1.5em;
+	margin-inline-end: 1.5em;
 }
 
 .below-snippet-editor {
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: space-between;
-	padding-top: 1px;
+	padding-block-start: 1px;
 }
 
 .snippet-priority {
@@ -125,7 +125,7 @@ p.snippet-scope, .snippet-scope p {
 		font-weight: bold;
 		cursor: help;
 		font-size: 1.1em;
-		padding-right: 0.5em;
+		padding-inline-end: 0.5em;
 	}
 
 	input {
@@ -142,7 +142,7 @@ p.snippet-scope, .snippet-scope p {
 }
 
 .wrap h2.nav-tab-wrapper {
-	border-bottom: none;
+	border-block-end: none;
 }
 
 .code-snippets-copy-text {

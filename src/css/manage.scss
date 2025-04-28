@@ -55,7 +55,7 @@ $inactive-color: #ccc;
 }
 
 .snippet-activation-switch {
-	margin-top: 5px;
+	margin-block-start: 5px;
 	width: 30px;
 	height: 17px;
 	border-radius: 34px;
@@ -91,13 +91,13 @@ $inactive-color: #ccc;
 }
 
 .snippet-execution-button {
-	margin-left: 10px;
-	margin-top: 9px;
+	margin-inline-start: 10px;
+	margin-block-start: 9px;
 	width: 0;
 	height: 0;
-	border-top: 9px solid transparent;
-	border-bottom: 9px solid transparent;
-	border-left: 10px solid $inactive-color;
+	border-block-start: 9px solid transparent;
+	border-block-end: 9px solid transparent;
+	border-inline-start: 10px solid $inactive-color;
 	transition: all 0.3s;
 
 	&::before {
@@ -114,7 +114,7 @@ $inactive-color: #ccc;
 	}
 
 	&:hover, &:focus {
-		border-left-color: #579;
+		border-inline-start-color: #579;
 
 		&::before {
 			transform: scale(1.1);
@@ -153,7 +153,7 @@ $inactive-color: #ccc;
 	}
 
 	.column-activate {
-		padding-right: 0 !important;
+		padding-inline-end: 0 !important;
 	}
 
 	.clear-filters {
@@ -167,7 +167,7 @@ $inactive-color: #ccc;
 	thead th.check-column,
 	tfoot th.check-column,
 	.inactive-snippet th.check-column {
-		padding-left: 5px;
+		padding-inline-start: 5px;
 	}
 
 	td.column-description {
@@ -183,7 +183,7 @@ $inactive-color: #ccc;
 	}
 
 	.badge {
-		margin-left: 4px;
+		margin-inline-start: 4px;
 		padding: 3px 6px;
 		text-decoration: none;
 		border: medium none;
@@ -195,19 +195,19 @@ $inactive-color: #ccc;
 
 		/* rtl:ignore */
 		.rtl & {
-			float: left;
+			float: inline-start;
 		}
 	}
 
 	tr.active-snippet + tr.inactive-snippet th,
 	tr.active-snippet + tr.inactive-snippet td {
-		border-top: 1px solid rgba(0, 0, 0, 0.03);
+		border-block-start: 1px solid rgba(0, 0, 0, 0.03);
 		box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.02), inset 0 -1px 0 #e1e1e1;
 	}
 
 	&, #all-snippets-table, #search-snippets-table {
 		a.delete:hover {
-			border-bottom: 1px solid #f00;
+			border-block-end: 1px solid #f00;
 			color: #f00;
 		}
 	}
@@ -228,7 +228,7 @@ $inactive-color: #ccc;
 	}
 
 	th.check-column {
-		border-left: 2px solid #2ea2cc;
+		border-inline-start: 2px solid #2ea2cc;
 	}
 
 	.snippet-activation-switch {
@@ -253,7 +253,7 @@ $inactive-color: #ccc;
 		}
 
 		th.check-column {
-			border-left-color: $highlight;
+			border-inline-start-color: $highlight;
 		}
 	}
 }
@@ -264,7 +264,7 @@ $inactive-color: #ccc;
 
 @media screen and (max-width: 782px) {
 	p.search-box {
-		float: left;
+		float: inline-start;
 		position: initial;
 		margin: 1em 0 0 0;
 		height: auto;
@@ -281,7 +281,7 @@ $inactive-color: #ccc;
 }
 
 .snippet-type-description {
-	border-bottom: 1px solid #ccc;
+	border-block-end: 1px solid #ccc;
 	margin: 0;
 	padding: 1em 0;
 }
@@ -294,8 +294,8 @@ $inactive-color: #ccc;
 	display: flex;
 	align-items: center;
     justify-content: flex-start;
-	margin-top: 15px;
-	margin-bottom: -39px;
+	margin-block-start: 15px;
+	margin-block-end: -39px;
 	gap: 7px;
 }
 
@@ -312,7 +312,7 @@ $inactive-color: #ccc;
 			display: none;
 		}
 		.cloud-badge{
-			margin-right: 10px;
+			margin-inline-end: 10px;
 		}
 	}
 }

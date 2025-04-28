@@ -28,7 +28,7 @@
 	z-index: 99;
 	top: 125%;
 	right: 0;
-	margin-right: -10px;
+	margin-inline-end: -10px;
 	opacity: 0;
 	transition: opacity 0.3s;
 	white-space: nowrap;
@@ -39,13 +39,13 @@
 		position: absolute;
 		bottom: 100%;
 		right: 0;
-		margin-right: 10px;
+		margin-inline-end: 10px;
 		border: 5px solid transparent;
-		border-bottom-color: #555;
+		border-block-end-color: #555;
 	}
 
 	td:first-child {
-		padding-right: 0.5em;
+		padding-inline-end: 0.5em;
 	}
 
 	.mac-key {
