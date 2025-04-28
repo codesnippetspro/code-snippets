@@ -10,7 +10,7 @@ __( 'You can now safely remove the free version of Code Snippets', 'code-snippet
 __( 'Success', 'code-snippets' );
 __( 'Notice', 'code-snippets' );
 __( 'Thanks', 'code-snippets' );
-__( 'Okay', 'code-snippets' );
+__( 'Ok', 'code-snippets' );
 
 // settings-fields.php.
 __( 'Minify Snippet Output', 'code-snippets' );

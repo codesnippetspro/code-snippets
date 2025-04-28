@@ -40,8 +40,8 @@ $changelog_sections = [
 ];
 
 $plugin_types = [
-	'core' => _x( 'Core', 'badge label', 'code-snippets' ),
-	'pro'  => _x( 'Pro', 'badge label', 'code-snippets' ),
+	'core' => __( 'Core', 'code-snippets' ),
+	'pro'  => __( 'Pro', 'code-snippets' ),
 ];
 
 ?>
