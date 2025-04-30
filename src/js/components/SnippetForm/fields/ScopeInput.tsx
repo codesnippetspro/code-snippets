@@ -110,7 +110,7 @@ const ShortcodeInfo: React.FC = () => {
 					: __('After saving, you can copy a shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')}
 				{' '}
 				<ExternalLink
-					href={__('https://help.codesnippets.pro/article/50-inserting-snippets', 'code-snippets')}
+					href="https://help.codesnippets.pro/article/50-inserting-snippets"
 				>
 					{__('Learn more', 'code-snippets')}
 				</ExternalLink>
