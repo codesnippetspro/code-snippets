@@ -20,7 +20,7 @@ if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 		<p>
 			<?php
 			printf(
-				'<strong>%s:</strong> %s',
+				'<strong>%s</strong> %s',
 				esc_html__( 'Warning:', 'code-snippets' ),
 				sprintf(
 					// translators: 1: constant name, 2: file name.
