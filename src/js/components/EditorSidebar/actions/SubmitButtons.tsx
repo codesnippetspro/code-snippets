@@ -1,182 +1,82 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { handleUnknownError } from '../../../utils/errors'
+import { SubmitSnippetAction } from '../../../types/SubmitSnippetAction'
 import { isCondition } from '../../../utils/snippets/snippets'
-import { Button } from '../../common/Button'
-import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import type { Snippet } from '../../../types/Snippet'
-import type { ButtonProps } from '../../common/Button'
+import { SubmitButton, SubmitButtonProps } from '../../common/SubmitButton'
 
-interface SaveChangesButtonProps extends ButtonProps {
-	snippet: Snippet
+const SaveButton = (props: SubmitButtonProps) => {
+	const { snippet } = useSnippetForm()
+
+	return (
+		<SubmitButton
+			large
+			name={SubmitSnippetAction.SAVE}
+			text={isCondition(snippet)
+				? __('Save Condition', 'code-snippets')
+				: __('Save Snippet', 'code-snippets')}
+			{...props}
+		/>
+	)
 }
-
-const SaveChangesButton: React.FC<SaveChangesButtonProps> = ({ snippet, ...props }) =>
-	<Button
-		name="save_snippet"
-		type="submit"
-		large
-		{...props}
-	>
-		{isCondition(snippet) ? __('Save Condition', 'code-snippets') : __('Save Snippet', 'code-snippets')}
-	</Button>
 
 interface ActivateOrDeactivateButtonProps {
-	snippet: Snippet
-	onActivate: VoidFunction
-	onDeactivate: VoidFunction
 	primaryActivate: boolean
-	inlineButtons?: boolean
-	disabled: boolean
 }
 
-const ActivateOrDeactivateButton: React.FC<ActivateOrDeactivateButtonProps> = ({
-	snippet,
-	disabled,
-	onActivate,
-	onDeactivate,
-	primaryActivate
-}) => {
+const ActivateOrDeactivateButton: React.FC<ActivateOrDeactivateButtonProps> = ({ primaryActivate }) => {
+	const { snippet, isWorking } = useSnippetForm()
+
 	switch (true) {
 		case isCondition(snippet) || snippet.shared_network && isNetworkAdmin():
 			return null
 
 		case 'single-use' === snippet.scope:
 			return (
-				<Button name="save_snippet_execute" onClick={onActivate} type="submit" disabled={disabled} large>
-					{__('Save and Execute Once', 'code-snippets')}
-				</Button>
+				<SubmitButton
+					large
+					name={SubmitSnippetAction.SAVE_AND_EXECUTE}
+					disabled={isWorking}
+					text={__('Save and Execute Once', 'code-snippets')}
+				/>
 			)
 
 		case snippet.active:
 			return (
-				<Button name="save_snippet_deactivate" onClick={onDeactivate} type="submit" disabled={disabled} large>
-					{__('Save and Deactivate', 'code-snippets')}
-				</Button>
+				<SubmitButton
+					name={SubmitSnippetAction.SAVE_AND_DEACTIVATE}
+					disabled={isWorking}
+					large
+					text={__('Save and Deactivate', 'code-snippets')}
+				/>
 			)
 
 		default:
 		case !snippet.active:
 			return (
-				<Button name="save_snippet_activate" type="submit" onClick={onActivate} primary={primaryActivate} disabled={disabled} large>
-					{__('Save and Activate', 'code-snippets')}
-				</Button>
+				<SubmitButton
+					name={SubmitSnippetAction.SAVE_AND_ACTIVATE}
+					primary={primaryActivate}
+					disabled={isWorking}
+					large
+					text={__('Save and Activate', 'code-snippets')}
+				/>
 			)
 	}
 }
 
-const validateSnippet = (snippet: Snippet): undefined | string => {
-	const missingTitle = '' === snippet.name.trim()
+export const SubmitButtons: React.FC = () => {
+	const { snippet } = useSnippetForm()
 
-	const missingCode = isCondition(snippet)
-		? !snippet.conditions
-		: '' === snippet.code.trim()
-
-	switch (true) {
-		case missingCode && missingTitle:
-			return __('This snippet has no code or title.', 'code-snippets')
-
-		case missingCode:
-			return __('This snippet has no snippet code.', 'code-snippets')
-
-		case missingTitle:
-			return __('This snippet has no title.', 'code-snippets')
-
-		default:
-			return undefined
-	}
-}
-const shouldActivateByDefault = (snippet: Snippet): boolean =>
-	!!window.CODE_SNIPPETS_EDIT?.activateByDefault &&
-	!snippet.active && 'single-use' !== snippet.scope &&
-	(!snippet.shared_network || !isNetworkAdmin())
-
-interface SubmitConfirmDialogProps {
-	isOpen: boolean
-	onClose: VoidFunction
-	onSubmit?: VoidFunction
-	validationWarning?: string
-}
-
-const SubmitConfirmDialog: React.FC<SubmitConfirmDialogProps> = ({ isOpen, onClose, onSubmit, validationWarning }) =>
-	<ConfirmDialog
-		open={isOpen}
-		title={__('Snippet incomplete', 'code-snippets')}
-		confirmLabel={__('Continue', 'code-snippets')}
-		onCancel={onClose}
-		onConfirm={() => {
-			onSubmit?.()
-			onClose()
-		}}
-	>
-		<p>{`${validationWarning} ${__('Continue?', 'code-snippets')}`}</p>
-	</ConfirmDialog>
-
-enum SubmitAction {
-	SAVE, SAVE_AND_ACTIVATE, SAVE_AND_DEACTIVATE
-}
-
-const SUBMIT_ACTION_DELTA: Record<SubmitAction, Partial<Snippet>> = {
-	[SubmitAction.SAVE]: {},
-	[SubmitAction.SAVE_AND_ACTIVATE]: { active: true },
-	[SubmitAction.SAVE_AND_DEACTIVATE]: { active: false }
-}
-
-export const SubmitButton: React.FC = () => {
-	const { snippet, isWorking, saveSnippet } = useSnippetForm()
-	const [submitAction, setSubmitAction] = useState<SubmitAction>()
-	const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
-
-	const validationWarning = validateSnippet(snippet)
-	const activateByDefault = shouldActivateByDefault(snippet)
-
-	const handleSubmit = (action: SubmitAction) => {
-		if (validationWarning) {
-			setIsConfirmDialogOpen(true)
-			setSubmitAction(action)
-		} else {
-			saveSnippet(SUBMIT_ACTION_DELTA[action]).then(() => undefined).catch(handleUnknownError)
-		}
-	}
+	const activateByDefault =
+		!!window.CODE_SNIPPETS_EDIT?.activateByDefault &&
+		!snippet.active && 'single-use' !== snippet.scope &&
+		(!snippet.shared_network || !isNetworkAdmin())
 
 	return <>
-		{activateByDefault
-			? <SaveChangesButton
-				snippet={snippet}
-				primary={!activateByDefault}
-				onClick={() => handleSubmit(SubmitAction.SAVE)}
-				disabled={isWorking}
-			/> : null}
-
-		<ActivateOrDeactivateButton
-			snippet={snippet}
-			disabled={isWorking}
-			primaryActivate={activateByDefault}
-			onActivate={() => handleSubmit(SubmitAction.SAVE_AND_ACTIVATE)}
-			onDeactivate={() => handleSubmit(SubmitAction.SAVE_AND_DEACTIVATE)}
-		/>
-
-		{activateByDefault ? null
-			: <SaveChangesButton
-				primary
-				snippet={snippet}
-				onClick={() => handleSubmit(SubmitAction.SAVE)}
-				disabled={isWorking}
-			/>}
-
-		<SubmitConfirmDialog
-			isOpen={isConfirmDialogOpen}
-			validationWarning={validationWarning}
-			onSubmit={() => {
-				saveSnippet(SUBMIT_ACTION_DELTA[submitAction ?? SubmitAction.SAVE])
-					.then(() => undefined).catch(handleUnknownError)
-			}}
-			onClose={() => {
-				setIsConfirmDialogOpen(false)
-				setSubmitAction(undefined)
-			}}
-		/>
+		{activateByDefault && <SaveButton primary={!activateByDefault} />}
+		<ActivateOrDeactivateButton primaryActivate={activateByDefault} />
+		{!activateByDefault && <SaveButton primary />}
 	</>
 }

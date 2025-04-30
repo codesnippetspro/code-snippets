@@ -8,7 +8,7 @@ import { Notices } from '../SnippetForm/page/Notices'
 import { ShortcodeInfo } from './actions/ShortcodeInfo'
 import { MultisiteSharingSettings } from './controls/MultisiteSharingSettings'
 import { ExportButtons } from './actions/ExportButtons'
-import { SubmitButton } from './actions/SubmitButtons'
+import { SubmitButtons } from './actions/SubmitButtons'
 import { ActivationSwitch } from './controls/ActivationSwitch'
 import { DeleteButton } from './actions/DeleteButton'
 import { PriorityInput } from './controls/PriorityInput'
@@ -39,7 +39,7 @@ export const EditorSidebar = () => {
 			</div>
 
 			<p className="submit">
-				<SubmitButton />
+				<SubmitButtons />
 				{isWorking ? <Spinner /> : ''}
 			</p>
 

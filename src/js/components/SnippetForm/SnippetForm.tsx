@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
+import { useSnippetFormSubmit, SubmitSnippetAction } from '../../hooks/useSnippetFormSubmit'
 import { createSnippetObject, getSnippetType, isCondition } from '../../utils/snippets/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { ConditionEditor } from '../ConditionEditor'
@@ -21,8 +22,18 @@ const EditConditionForm: React.FC = () =>
 	</div>
 
 const EditForm: React.FC = () => {
-	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 	const { snippet, isReadOnly } = useSnippetForm()
+	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
+	const { validateAndSubmit, SubmitConfirmationDialog } = useSnippetFormSubmit()
+
+	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault()
+
+		const submitAction = Object.values(SubmitSnippetAction)
+			.find(actionName => actionName === document.activeElement?.getAttribute('name'))
+
+		validateAndSubmit(submitAction)
+	}
 
 	return (
 		<div className="wrap">
@@ -32,7 +43,7 @@ const EditForm: React.FC = () => {
 
 			<PageHeading />
 
-			<div id="snippet-form" className={classnames(
+			<form id="snippet-form" method="post" onSubmit={handleSubmit} className={classnames(
 				'snippet-form',
 				`${snippet.scope}-snippet`,
 				`${getSnippetType(snippet)}-snippet`,
@@ -61,9 +72,10 @@ const EditForm: React.FC = () => {
 				</main>
 
 				<EditorSidebar />
-			</div>
+			</form>
 
 			<UpgradeDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
+			<SubmitConfirmationDialog />
 		</div>
 	)
 }

@@ -30,7 +30,7 @@ const findSelectOptions = <T, >(groups?: SelectGroups<T>, currentValue?: T | T[]
 
 const getOptionValue = <T, >(option: SelectOption<T>): string => {
 	if (option.key) {
-		return option.key
+		return 'string' === typeof option.key ? option.key : option.key.toString()
 	}
 
 	if ('string' === typeof option.value) {
