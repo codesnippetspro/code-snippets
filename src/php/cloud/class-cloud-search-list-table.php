@@ -132,7 +132,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 								printf( '<a href="%s">', esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ) );
 							} else {
 								printf(
-									'<a href="%s" aria-label="%s" class="cloud-snippet-preview thickbox" data-snippet="%s" data-lang="%s">',
+									'<a href="%s" title="%s" class="cloud-snippet-preview thickbox" data-snippet="%s" data-lang="%s">',
 									'#TB_inline?&width=700&height=500&inlineId=show-code-preview',
 									esc_attr__( 'Preview this snippet', 'code-snippets' ),
 									esc_attr( $item->id ),
