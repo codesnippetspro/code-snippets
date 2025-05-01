@@ -140,6 +140,16 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		fetchOptions: api =>
 			api.get<Users>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&per-page=50`).then(users =>
 				users.map(user => ({ value: user.id, label: user.name })))
+	},
+	postPublished: {
+		group: 'posts',
+		label: __('Post published', 'code-snippets'),
+		operators: OPERATORS.date
+	},
+	postModified: {
+		group: 'posts',
+		label: __('Post modified', 'code-snippets'),
+		operators: OPERATORS.date
 	}
 }
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { __, _x } from '@wordpress/i18n'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { useConditionOptions } from '../../hooks/useConditionOptions'
@@ -28,6 +28,7 @@ const ObjectSelect = <S extends ConditionSubject>({ options, groupId, ruleId, op
 
 	return (
 		<Select
+			required
 			isMulti={isMulti}
 			className="snippet-condition-field-select snippet-condition-object-select"
 			options={options}
@@ -59,25 +60,62 @@ const OperatorSelect: React.FC<OperatorSelectProps> = ({ options, currentOperato
 
 	return (
 		<Select
+			required
 			className="snippet-condition-field-select snippet-condition-operator-select"
 			options={options}
 			currentValue={currentOperator}
 			onChange={selected => {
-				setSnippet(previous => {
-					const operator = selected?.value ?? undefined
-					const previousRule = getConditionRule(previous, groupId, ruleId)
+				const operator = selected?.value ?? undefined
 
-					return updateConditionRule(previous, groupId, ruleId, {
+				setSnippet(previous =>
+					updateConditionRule(previous, groupId, ruleId, previousRule => ({
 						operator,
 						...operator && unaryOperations.has(operator) && previousRule?.object
 							? { object: [previousRule.object[0]] }
 							: {}
-					})
-				})
+					})))
 			}}
 		/>
 	)
 }
+
+interface DateRangeSelectProps {
+	groupId: string
+	ruleId: string
+	objectIndex?: number
+}
+
+const DateSelect: React.FC<DateRangeSelectProps> = ({ groupId, ruleId, objectIndex = 0 }) => {
+	const { snippet, setSnippet } = useSnippetForm()
+	const rule = getConditionRule(snippet, groupId, ruleId)
+	const [value, setValue] = React.useState<string>(() =>
+		'string' === typeof rule?.object?.[objectIndex] ? rule?.object?.[objectIndex] : '')
+
+	return (
+		<input
+			type="date"
+			name={`snippet-condition-date-${objectIndex}`}
+			value={value}
+			required
+			onChange={event => {
+				setValue(event.target.value)
+
+				setSnippet(previous =>
+					updateConditionRule(previous, groupId, ruleId, ({ object }) => {
+						const updated = object ? [...object] : []
+						updated[objectIndex] = event.target.value
+						return { object: updated }
+					}))
+			}} />
+	)
+}
+
+const DateRangeSelect: React.FC<DateRangeSelectProps> = ({ groupId, ruleId }) =>
+	<div className="code-snippets-date-range">
+		<DateSelect groupId={groupId} ruleId={ruleId} objectIndex={0} />
+		<span className="sep">{_x('and', 'date separator', 'code-snippets')}</span>
+		<DateSelect groupId={groupId} ruleId={ruleId} objectIndex={1} />
+	</div>
 
 interface ConditionObjectEditorProps<S extends ConditionSubject> {
 	groupId: string
@@ -127,6 +165,23 @@ const ConditionObjectEditor = <S extends ConditionSubject>({
 				</>
 			)
 
+		case 'before':
+		case 'after':
+			return (
+				<>
+					<OperatorSelect {...operatorProps} />
+					<DateSelect groupId={groupId} ruleId={ruleId} />
+				</>
+			)
+
+		case 'between':
+			return (
+				<>
+					<OperatorSelect {...operatorProps} />
+					<DateRangeSelect groupId={groupId} ruleId={ruleId} />
+				</>
+			)
+
 		default:
 			return null
 	}
@@ -138,28 +193,31 @@ interface ConditionSubjectEditorProps {
 	clearObjectOptions: VoidFunction
 }
 
+const CONDITION_SUBJECT_OPTIONS = buildOptionGroups({
+	items: Object.entries(CONDITION_SUBJECTS),
+	groups: CONDITIONS_SUBJECT_GROUPS,
+	getGroup: ([_, subject]) => subject.group,
+	buildOption: ([name, { label }]) =>
+		({ value: name as ConditionSubject, label })
+})
+
 const ConditionSubjectEditor: React.FC<ConditionSubjectEditorProps> = ({ groupId, ruleId, clearObjectOptions }) => {
 	const { snippet, setSnippet } = useSnippetForm()
 
-	const options = useMemo(
-		() => buildOptionGroups({
-			items: Object.entries(CONDITION_SUBJECTS),
-			groups: CONDITIONS_SUBJECT_GROUPS,
-			getGroup: ([_, subject]) => subject.group,
-			buildOption: ([name, { label }]) =>
-				({ value: name as ConditionSubject, label })
-		}),
-		[]
-	)
-
 	return (
 		<Select
+			required
 			className="snippet-condition-field-select snippet-condition-subject-select"
-			options={options}
+			options={CONDITION_SUBJECT_OPTIONS}
 			currentValue={snippet.conditions[groupId]?.[ruleId]?.subject}
 			onSelect={subject => {
 				clearObjectOptions()
-				setSnippet(previous => updateConditionRule(previous, groupId, ruleId, { subject }))
+				setSnippet(previous => updateConditionRule(previous, groupId, ruleId, {
+					subject,
+					...subject
+						? { operator: CONDITION_SUBJECTS[subject].operators[0], object: [] }
+						: undefined
+				}))
 			}}
 		/>
 	)

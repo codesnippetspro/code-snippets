@@ -98,12 +98,30 @@
 }
 
 .snippet-condition-operator-select {
-	min-width: 8em;
+	min-width: 10em;
 }
 
 .snippet-condition-object-select {
 	min-width: 16em;
 	flex: 1;
+}
+
+.snippet-condition-rule input[type=date] {
+	flex: 1;
+	background-color: #ffffff;
+	border: 1px solid #cccccc;
+	border-radius: 4px;
+}
+
+.code-snippets-date-range {
+	display: flex;
+	flex: 1;
+	align-items: stretch;
+	gap: 0.5em;
+
+	.sep {
+		align-self: center;
+	}
 }
 
 .snippet-condition-operator-select {

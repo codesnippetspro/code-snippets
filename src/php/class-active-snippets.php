@@ -361,7 +361,7 @@ class Active_Snippets {
 			foreach ( $snippets as $snippet ) {
 				if ( 'condition' === $snippet['scope'] ) {
 					$condition_id = intval( $snippet['id'] );
-					$conditions[ $condition_id ] = evaluate_condition( $snippet['code'] );
+					$conditions[ $condition_id ] = Conditions\evaluate_condition( $snippet['code'] );
 				}
 			}
 

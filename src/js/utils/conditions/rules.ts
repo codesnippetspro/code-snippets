@@ -12,8 +12,8 @@ const getNextIndex = (items: Record<PropertyKey, unknown> | undefined) => {
 	return `${1 + (keys.length ? Math.max(...keys) : 0)}_`
 }
 
-export const getConditionRule = (snippet: Snippet, groupId: string, ruleId: string): ConditionRule<ConditionSubject> | undefined =>
-	snippet.conditions[groupId]?.[ruleId]
+export const getConditionRule = <S extends ConditionSubject>(snippet: Snippet, groupId: string, ruleId: string): ConditionRule<S> | undefined =>
+	snippet.conditions[groupId]?.[ruleId] as ConditionRule<S>
 
 export const addConditionGroup = (snippet: Snippet): Snippet => ({
 	...snippet,
@@ -85,7 +85,8 @@ export const updateConditionRule = (
 	snippet: Snippet,
 	groupId: string,
 	ruleId: string,
-	delta: Partial<ConditionRule<ConditionSubject>>
+	delta: Partial<ConditionRule<ConditionSubject>> |
+		((previous: ConditionRule<ConditionSubject>) => Partial<ConditionRule<ConditionSubject>>)
 ): Snippet => {
 	if (!snippet.conditions[groupId]?.[ruleId]) {
 		console.debug('cannot find condition rule to update', snippet.conditions, groupId, ruleId)
@@ -98,7 +99,10 @@ export const updateConditionRule = (
 			...snippet.conditions,
 			[groupId]: {
 				...snippet.conditions[groupId],
-				[ruleId]: { ...snippet.conditions[groupId][ruleId], ...delta }
+				[ruleId]: {
+					...snippet.conditions[groupId][ruleId],
+					...'function' === typeof delta ? delta(snippet.conditions[groupId][ruleId]) : delta
+				}
 			}
 		}
 	}

@@ -30,7 +30,7 @@ export const useConditionOptions = <S extends ConditionSubject>(subject: S | und
 			} else if (definition.options) {
 				setLoadedSubject(subject)
 				setObjectOptions(definition.options)
-			} else if (definition.deriveOptions) {
+			} else if (definition.deriveOptions && snippetsList !== undefined) {
 				setLoadedSubject(subject)
 				setObjectOptions(definition.deriveOptions(snippet, snippetsList))
 			} else if (definition.fetchOptions) {

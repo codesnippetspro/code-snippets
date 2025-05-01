@@ -5,19 +5,67 @@
  * @package Code_Snippets
  */
 
-namespace Code_Snippets;
+namespace Code_Snippets\Conditions;
 
+use DateTimeImmutable;
+use Exception;
 use WP_Error;
+
+/**
+ * Parse DateTime value from a string without triggering an error.
+ *
+ * @param ?string $datetime String representation of DateTime value.
+ *
+ * @return DateTimeImmutable|null
+ */
+function safe_parse_datetime( ?string $datetime ): ?DateTimeImmutable {
+	try {
+		return $datetime ? new DateTimeImmutable( $datetime ) : null;
+	} catch ( Exception $e ) {
+		return null;
+	}
+}
+
+/**
+ * Determine if a given date is within a specified range.
+ *
+ * @param string      $date     Date to check.
+ * @param string|null $operator Operator to use for comparison.
+ * @param array       $objects  Array of dates to use for comparison.
+ *
+ * @return bool
+ */
+function is_within_date_range( string $date, ?string $operator, array $objects ): bool {
+	$parsed_date = safe_parse_datetime( $date );
+
+	switch ( $operator ) {
+		case 'before':
+			$end = isset( $objects[0] ) ? safe_parse_datetime( $objects[0] ) : null;
+			return $parsed_date && $end && $parsed_date < $end;
+
+		case 'after':
+			$start = isset( $objects[0] ) ? safe_parse_datetime( $objects[0] ) : null;
+			return $parsed_date && $start && $start > $parsed_date;
+
+		case 'between':
+			$start = isset( $objects[0] ) ? safe_parse_datetime( $objects[0] ) : null;
+			$end = isset( $objects[1] ) ? safe_parse_datetime( $objects[1] ) : null;
+			return $parsed_date && $start && $end && $parsed_date >= $start && $parsed_date <= end;
+	}
+
+	return false;
+}
 
 /**
  * Evaluate an individual clause of a condition.
  *
- * @param ?string                    $subject Type of object that this condition represents.
- * @param array<string | int | bool> $objects Object that this condition is testing for.
+ * @param ?string                    $subject  Type of object that this condition represents.
+ * @param ?string                    $operator Operator to use when evaluating the condition.
+ * @param array<string | int | bool> $objects  Object that this condition is testing for.
  *
  * @return bool|WP_Error Result of evaluating condition.
  */
-function evaluate_condition_clause( ?string $subject, array $objects ) {
+function evaluate_condition_clause( ?string $subject, ?string $operator, array $objects ) {
 	switch ( $subject ) {
 		/* Site conditions. */
 
@@ -58,7 +106,7 @@ function evaluate_condition_clause( ?string $subject, array $objects ) {
 							return is_post_type_archive();
 
 						default:
-							return false;
+							return new WP_Error( "Invalid currentQuery condition object: $object." );
 					}
 				}
 			);
@@ -96,6 +144,14 @@ function evaluate_condition_clause( ?string $subject, array $objects ) {
 			$post = get_post();
 			return $post && in_array( $post->post_author, $objects, true );
 
+		case 'postPublished':
+			$post = get_post();
+			return $post && is_within_date_range( $post->post_date, $operator, $objects );
+
+		case 'postModified':
+			$post = get_post();
+			return $post && is_within_date_range( $post->post_modified, $operator, $objects );
+
 		/* User conditions. */
 
 		case 'user':
@@ -121,22 +177,34 @@ function evaluate_condition_clause( ?string $subject, array $objects ) {
 /**
  * Evaluate a single group of conditions using AND logic, ensuring each condition evaluates to true.
  *
- * @param array $rule Condition rule.
+ * @param array{
+ *     subject: ?string,
+ *     operator: ?string,
+ *     object?: array<string | int | bool>
+ * } $rule Condition rule.
  *
  * @return bool
  */
 function evaluate_condition_rule( array $rule ): bool {
 	$subject = $rule['subject'] ?? null;
 	$operator = $rule['operator'] ?? null;
-	$objects = isset( $rule['object'] ) && is_array( $rule['object'] ) ? $rule['object'] : [];
+	$objects = $rule['object'] ?? [];
 
-	$result = evaluate_condition_clause( $subject, $objects );
-
-	if ( 'not' === $operator || 'not in' === $operator || 'false' === $operator ) {
-		$result = ! $result;
+	if ( ! is_array( $objects ) ) {
+		$objects = [ $objects ];
 	}
 
-	return $result && ! is_wp_error( $result );
+	$result = evaluate_condition_clause( $subject, $operator, $objects );
+
+	if ( is_wp_error( $result ) ) {
+		return false;
+	}
+
+	if ( 'not' === $operator || 'not in' === $operator || 'false' === $operator ) {
+		return ! $result;
+	}
+
+	return $result;
 }
 
 /**

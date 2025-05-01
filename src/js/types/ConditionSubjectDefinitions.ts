@@ -10,7 +10,7 @@ export interface ConditionSubjectDefinition<T> {
 	operators: ConditionOperator[]
 	options?: SelectGroups<T>
 	fetchOptions?: (api: AxiosAPI) => Promise<SelectGroups<T>>
-	deriveOptions?: (snippet: Snippet, snippets?: readonly Snippet[]) => SelectGroups<T>
+	deriveOptions?: (snippet: Snippet, snippets: readonly Snippet[]) => SelectGroups<T>
 }
 
 export type ConditionSubjectDefinitions<T> = { [S in keyof T]: ConditionSubjectDefinition<T[S]> }

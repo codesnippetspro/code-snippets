@@ -25,6 +25,8 @@ export interface PostConditionSubjects {
 	tag: PostTag['id']
 	postStatus: PostStatus['slug']
 	postAuthor: Post['author']
+	postPublished: string
+	postModified: string
 }
 
 export interface UserConditionSubjects {

@@ -49,9 +49,6 @@ const BulkActions = <K extends Key>({ which, actions, applyAction }: BulkActions
 				name="bulk_action"
 				text={__('Apply', 'code-snippets')}
 				className="action"
-				primary={false}
-				large={false}
-				wrap={false}
 				onClick={event => {
 					event.preventDefault()
 

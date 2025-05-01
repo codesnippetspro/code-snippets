@@ -17,10 +17,10 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
 	id,
 	text,
 	name = 'submit',
-	primary = true,
+	primary,
 	small,
 	large,
-	wrap = true,
+	wrap,
 	className,
 	...inputProps
 }) => {
