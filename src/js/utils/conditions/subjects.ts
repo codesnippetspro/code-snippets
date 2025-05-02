@@ -1,19 +1,20 @@
 import { __ } from '@wordpress/i18n'
 import { REST_BASE, REST_CONDITIONS_BASE } from '../restAPI'
 import { getSnippetDisplayName, isCondition } from '../snippets/snippets'
-import type { PostStatuses } from '../../types/api/PostStatus'
+import type { ConditionSubjects, DateConditionSubjects, PostConditionSubjects, SiteConditionSubjects, SnippetConditionSubjects, UserConditionSubjects } from '../../types/ConditionSubject'
+import type { LocalesSchema } from '../../types/schema/LocaleSchema'
+import type { PostStatusesSchema } from '../../types/schema/PostStatusSchema'
 import type { SelectOptions } from '../../types/SelectOption'
 import type { ConditionOperator } from '../../types/Condition'
-import type { UserRoles } from '../../types/api/UserRole'
-import type { ConditionSubjects, PostConditionSubjects, SiteConditionSubjects, SnippetConditionSubjects, UserConditionSubjects } from '../../types/ConditionSubject'
+import type { UserRoles } from '../../types/schema/UserRole'
 import type { ConditionSubjectDefinitions } from '../../types/ConditionSubjectDefinitions'
-import type { Users } from '../../types/api/User'
-import type { Categories, PostTags } from '../../types/api/Term'
-import type { PostTypes } from '../../types/api/PostType'
-import type { Posts } from '../../types/api/Post'
-import type { Pages } from '../../types/api/Page'
+import type { UsersSchema } from '../../types/schema/UserSchema'
+import type { Categories, PostTags } from '../../types/schema/TermSchema'
+import type { PostTypesSchema } from '../../types/schema/PostTypeSchema'
+import type { PostsSchema } from '../../types/schema/PostSchema'
+import type { PagesSchema } from '../../types/schema/PageSchema'
 
-const OPERATORS = (() => {
+export const CONDITION_OPERATORS = (() => {
 	const date: ConditionOperator[] = ['between', 'before', 'after']
 	const single: ConditionOperator[] = ['is', 'not']
 	const multiple: ConditionOperator[] = ['is', 'not', 'in', 'not in']
@@ -36,7 +37,7 @@ const SITE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<SiteConditionSubjects
 	siteArea: {
 		group: 'site',
 		label: __('Area', 'code-snippets'),
-		operators: OPERATORS.single,
+		operators: CONDITION_OPERATORS.single,
 		options: [
 			{ value: 'global', label: __('Entire site', 'code-snippets') },
 			{ value: 'frontend', label: __('Front-end', 'code-snippets') },
@@ -46,7 +47,7 @@ const SITE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<SiteConditionSubjects
 	currentQuery: {
 		group: 'site',
 		label: __('Current query', 'code-snippets'),
-		operators: OPERATORS.multiple,
+		operators: CONDITION_OPERATORS.multiple,
 		options: [
 			{ value: 'home', label: __('Blog homepage', 'code-snippets') },
 			{ value: 'frontpage', label: __('Front page', 'code-snippets') },
@@ -58,10 +59,16 @@ const SITE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<SiteConditionSubjects
 			{ value: 'postTypeArchive', label: __('Post type archive', 'code-snippets') }
 		]
 	},
+	visitorLanguage: {
+		group: 'site',
+		label: __('Visitor language', 'code-snippets'),
+		operators: CONDITION_OPERATORS.multiple,
+		useSubjectOptions: 'userLocale',
+	},
 	debugEnabled: {
 		group: 'site',
 		label: __('WP_DEBUG mode', 'code-snippets'),
-		operators: OPERATORS.single,
+		operators: CONDITION_OPERATORS.single,
 		options: ENABLED_OPTIONS
 	}
 }
@@ -70,11 +77,11 @@ const SNIPPETS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<SnippetConditionS
 	condition: {
 		group: 'snippets',
 		label: __('Condition', 'code-snippets'),
-		operators: OPERATORS.boolean,
+		operators: CONDITION_OPERATORS.boolean,
 		deriveOptions: (currentSnippet, snippets) =>
 			snippets
-				?.filter(snippet => isCondition(snippet) && snippet.id !== currentSnippet.id)
-				.map(snippet => ({ value: snippet.id, label: getSnippetDisplayName(snippet) })) ?? []
+				.filter(snippet => isCondition(snippet) && snippet.id !== currentSnippet.id)
+				.map(snippet => ({ value: snippet.id, label: getSnippetDisplayName(snippet) }))
 	}
 }
 
@@ -82,34 +89,34 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 	post: {
 		group: 'posts',
 		label: __('Post', 'code-snippets'),
-		operators: OPERATORS.multiple,
+		operators: CONDITION_OPERATORS.multiple,
 		fetchOptions: api =>
-			api.get<Posts>(`${REST_BASE}/wp/v2/posts`).then(posts =>
+			api.get<PostsSchema>(`${REST_BASE}/wp/v2/posts`).then(posts =>
 				posts.map(post =>
 					({ value: post.id, label: post.title.rendered })))
 	},
 	page: {
 		group: 'posts',
 		label: __('Page', 'code-snippets'),
-		operators: OPERATORS.multiple,
+		operators: CONDITION_OPERATORS.multiple,
 		fetchOptions: api =>
-			api.get<Pages>(`${REST_BASE}/wp/v2/pages`).then(pages =>
+			api.get<PagesSchema>(`${REST_BASE}/wp/v2/pages`).then(pages =>
 				pages.map(page =>
 					({ value: page.id, label: page.title.rendered })))
 	},
 	postType: {
 		group: 'posts',
 		label: __('Post type', 'code-snippets'),
-		operators: OPERATORS.multiple,
+		operators: CONDITION_OPERATORS.multiple,
 		fetchOptions: api =>
-			api.get<PostTypes>(`${REST_BASE}/wp/v2/types`).then(postTypes =>
+			api.get<PostTypesSchema>(`${REST_BASE}/wp/v2/types`).then(postTypes =>
 				Object.values(postTypes).map(postType =>
 					({ value: postType.slug, label: postType.name })))
 	},
 	category: {
 		group: 'posts',
 		label: __('Post category', 'code-snippets'),
-		operators: OPERATORS.multiple,
+		operators: CONDITION_OPERATORS.multiple,
 		fetchOptions: api =>
 			api.get<Categories>(`${REST_BASE}/wp/v2/categories`).then(categories =>
 				categories.map(category =>
@@ -118,48 +125,54 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 	tag: {
 		group: 'posts',
 		label: __('Post tag', 'code-snippets'),
-		operators: OPERATORS.multiple,
+		operators: CONDITION_OPERATORS.multiple,
 		fetchOptions: api =>
 			api.get<PostTags>(`${REST_BASE}/wp/v2/tags`).then(tags =>
 				tags.map(tag =>
 					({ value: tag.id, label: tag.name })))
 	},
+	author: {
+		group: 'posts',
+		label: __('Post author', 'code-snippets'),
+		operators: CONDITION_OPERATORS.multiple,
+		fetchOptions: api =>
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&per-page=50`).then(users =>
+				users.map(user => ({ value: user.id, label: user.name })))
+	},
 	postStatus: {
 		group: 'posts',
 		label: __('Post status', 'code-snippets'),
-		operators: OPERATORS.multiple,
+		operators: CONDITION_OPERATORS.multiple,
 		fetchOptions: api =>
-			api.get<PostStatuses>(`${REST_BASE}/wp/v2/statuses`).then(statuses =>
+			api.get<PostStatusesSchema>(`${REST_BASE}/wp/v2/statuses`).then(statuses =>
 				Object.values(statuses).map(status =>
 					({ value: status.slug, label: status.name })))
 	},
-	postAuthor: {
-		group: 'posts',
-		label: __('Post author', 'code-snippets'),
-		operators: OPERATORS.multiple,
-		fetchOptions: api =>
-			api.get<Users>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&per-page=50`).then(users =>
-				users.map(user => ({ value: user.id, label: user.name })))
-	},
 	postPublished: {
 		group: 'posts',
-		label: __('Post published', 'code-snippets'),
-		operators: OPERATORS.date
+		label: __('Publication date', 'code-snippets'),
+		operators: CONDITION_OPERATORS.date
 	},
 	postModified: {
 		group: 'posts',
-		label: __('Post modified', 'code-snippets'),
-		operators: OPERATORS.date
+		label: __('Modification date', 'code-snippets'),
+		operators: CONDITION_OPERATORS.date
 	}
 }
 
 const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects> = {
+	authenticated: {
+		group: 'users',
+		label: __('Logged-in', 'code-snippets'),
+		operators: CONDITION_OPERATORS.single,
+		options: YES_NO_OPTIONS
+	},
 	user: {
 		group: 'users',
-		label: __('User', 'code-snippets'),
-		operators: OPERATORS.multiple,
+		label: __('Current user', 'code-snippets'),
+		operators: CONDITION_OPERATORS.multiple,
 		fetchOptions: api =>
-			api.get<Users>(`${REST_BASE}/wp/v2/users?per-page=50&orderby=id`).then(users => [{
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?per-page=50&orderby=id`).then(users => [{
 				label: __('User ID', 'code-snippets'),
 				options: users.map(user => ({ value: user.id, label: `${user.id} (${user.name})` }))
 			}])
@@ -167,7 +180,7 @@ const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects
 	userRole: {
 		group: 'users',
 		label: __('User role', 'code-snippets'),
-		operators: OPERATORS.multiple,
+		operators: CONDITION_OPERATORS.multiple,
 		fetchOptions: api =>
 			api.get<UserRoles>(`${REST_CONDITIONS_BASE}/roles`).then(roles =>
 				roles.map(role =>
@@ -176,17 +189,52 @@ const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects
 	userCap: {
 		group: 'users',
 		label: __('User capability', 'code-snippets'),
-		operators: OPERATORS.multiple,
+		operators: CONDITION_OPERATORS.multiple,
 		fetchOptions: api =>
 			api.get<string[]>(`${REST_CONDITIONS_BASE}/capabilities`).then(caps =>
 				caps.map(cap =>
 					({ value: cap, label: cap })))
 	},
-	authenticated: {
+	userLocale: {
 		group: 'users',
-		label: __('Logged-in', 'code-snippets'),
-		operators: OPERATORS.single,
-		options: YES_NO_OPTIONS
+		label: __('User locale', 'code-snippets'),
+		operators: CONDITION_OPERATORS.multiple,
+		fetchOptions: api =>
+			api.get<LocalesSchema>(`${REST_CONDITIONS_BASE}/locales`).then(locales =>
+				locales.map(locale =>
+					({ value: locale.locale, label: locale.name })))
+	},
+	userRegistered: {
+		group: 'users',
+		label: __('Registration date', 'code-snippets'),
+		operators: CONDITION_OPERATORS.date
+	},
+}
+
+export const DATE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<DateConditionSubjects> = {
+	currentDate: {
+		group: 'date',
+		label: __('Current date', 'code-snippets'),
+		operators: CONDITION_OPERATORS.date
+	},
+	timeOfDay: {
+		group: 'date',
+		label: __('Time of day', 'code-snippets'),
+		operators: CONDITION_OPERATORS.date
+	},
+	dayOfWeek: {
+		group: 'date',
+		label: __('Day of week', 'code-snippets'),
+		operators: CONDITION_OPERATORS.multiple,
+		options: [
+			{ value: 'Mon', label: __('Monday', 'code-snippets') },
+			{ value: 'Tue', label: __('Tuesday', 'code-snippets') },
+			{ value: 'Wed', label: __('Wednesday', 'code-snippets') },
+			{ value: 'Thu', label: __('Thursday', 'code-snippets') },
+			{ value: 'Fri', label: __('Friday', 'code-snippets') },
+			{ value: 'Sat', label: __('Saturday', 'code-snippets') },
+			{ value: 'Sun', label: __('Sunday', 'code-snippets') }
+		]
 	}
 }
 
@@ -194,5 +242,6 @@ export const CONDITION_SUBJECTS: ConditionSubjectDefinitions<ConditionSubjects> 
 	...SITE_CONDITION_SUBJECTS,
 	...SNIPPETS_CONDITION_SUBJECTS,
 	...POSTS_CONDITION_SUBJECTS,
-	...USER_CONDITION_SUBJECTS
+	...USER_CONDITION_SUBJECTS,
+	...DATE_CONDITION_SUBJECTS
 }

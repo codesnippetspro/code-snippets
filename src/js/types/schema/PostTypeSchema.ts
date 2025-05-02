@@ -1,4 +1,4 @@
-export interface PostType {
+export interface PostTypeSchema {
 	description: string
 	hierarchical: boolean
 	has_archive: boolean
@@ -10,4 +10,4 @@ export interface PostType {
 	rest_namespace: string
 }
 
-export type PostTypes = Record<string, PostType>
+export type PostTypesSchema = Record<string, PostTypeSchema>

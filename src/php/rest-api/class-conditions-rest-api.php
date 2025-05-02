@@ -66,6 +66,18 @@ final class Conditions_REST_API {
 				],
 			]
 		);
+
+		register_rest_route(
+			$namespace,
+			self::BASE_ROUTE . '/locales',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_available_locales' ],
+					'permission_callback' => $permission_callback,
+				],
+			]
+		);
 	}
 
 	/**
@@ -99,5 +111,24 @@ final class Conditions_REST_API {
 		}
 
 		return rest_ensure_response( array_unique( $caps ) );
+	}
+
+	/**
+	 * Retrieve a list of available locales.
+	 *
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 */
+	public function get_available_locales() {
+		require_once ABSPATH . 'wp-admin/includes/translation-install.php';
+		$locales = [];
+
+		foreach ( wp_get_available_translations() as $locale => $translation ) {
+			$locales[] = [
+				'locale' => $locale,
+				'name'   => $translation['native_name'],
+			];
+		}
+
+		return rest_ensure_response( $locales );
 	}
 }

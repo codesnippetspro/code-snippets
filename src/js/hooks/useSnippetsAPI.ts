@@ -3,9 +3,9 @@ import { addQueryArgs } from '@wordpress/url'
 import { REST_API_AXIOS_CONFIG, REST_SNIPPETS_BASE } from '../utils/restAPI'
 import { createSnippetObject } from '../utils/snippets/snippets'
 import { useAxios } from './useAxios'
-import type { SnippetSchema } from '../types/api/SnippetSchema'
+import type { SnippetSchema } from '../types/schema/SnippetSchema'
 import type { Snippet } from '../types/Snippet'
-import type { SnippetsExport } from '../types/api/SnippetsExport'
+import type { SnippetsExport } from '../types/schema/SnippetsExport'
 
 export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<Snippet[]>

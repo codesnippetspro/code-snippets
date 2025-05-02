@@ -4,7 +4,7 @@ import { Button } from '../../common/Button'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import type { SnippetsExport } from '../../../types/api/SnippetsExport'
+import type { SnippetsExport } from '../../../types/schema/SnippetsExport'
 
 export const ExportButtons: React.FC = () => {
 	const api = useSnippetsAPI()

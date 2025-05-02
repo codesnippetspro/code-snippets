@@ -1,15 +1,16 @@
-import React, { ReactNode, useState } from 'react'
+import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { ConfirmDialog } from '../components/common/ConfirmDialog'
-import type { Snippet } from '../types/Snippet'
 import { handleUnknownError } from '../utils/errors'
 import { isCondition } from '../utils/snippets/snippets'
 import { useSnippetForm } from './useSnippetForm'
+import type { ReactNode} from 'react'
+import type { Snippet } from '../types/Snippet'
 
 export enum SubmitSnippetAction {
-	SAVE = "save_snippet",
-	SAVE_AND_ACTIVATE = "save_snippet_activate",
-	SAVE_AND_EXECUTE = "save_snippet_execute",
+	SAVE = 'save_snippet',
+	SAVE_AND_ACTIVATE = 'save_snippet_activate',
+	SAVE_AND_EXECUTE = 'save_snippet_execute',
 	SAVE_AND_DEACTIVATE = 'save_snippet_deactivate'
 }
 

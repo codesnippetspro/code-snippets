@@ -1,4 +1,4 @@
-export interface Post {
+export interface PostSchema {
 	id: number
 	date: string | null
 	date_gmt?: string | null
@@ -38,4 +38,4 @@ export type PostStatus = 'publish' | 'future' | 'draft' | 'pending' | 'private'
 export type PostFormat =
 	'standard' | 'aside' | 'chat' | 'gallery' | 'link' | 'image' | 'quote' | 'status' | 'video' | 'audio'
 
-export type Posts = Post[]
+export type PostsSchema = PostSchema[]

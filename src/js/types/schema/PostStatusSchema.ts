@@ -1,4 +1,4 @@
-export interface PostStatus {
+export interface PostStatusSchema {
 	name: string
 	public: boolean
 	queryable: boolean
@@ -9,4 +9,4 @@ export interface PostStatus {
 	}[]>
 }
 
-export type PostStatuses = Record<string, PostStatus>
+export type PostStatusesSchema = Record<string, PostStatusSchema>

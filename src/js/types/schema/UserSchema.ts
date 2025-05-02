@@ -1,4 +1,4 @@
-export interface User {
+export interface UserSchema {
 	readonly id: number
 	username?: string
 	name: string
@@ -19,4 +19,4 @@ export interface User {
 	meta: Record<string, unknown>
 }
 
-export type Users = User[]
+export type UsersSchema = UserSchema[]

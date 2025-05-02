@@ -70,7 +70,7 @@ const OperatorSelect: React.FC<OperatorSelectProps> = ({ options, currentOperato
 				setSnippet(previous =>
 					updateConditionRule(previous, groupId, ruleId, previousRule => ({
 						operator,
-						...operator && unaryOperations.has(operator) && previousRule?.object
+						...operator && unaryOperations.has(operator) && previousRule.object
 							? { object: [previousRule.object[0]] }
 							: {}
 					})))
@@ -89,11 +89,13 @@ const DateSelect: React.FC<DateRangeSelectProps> = ({ groupId, ruleId, objectInd
 	const { snippet, setSnippet } = useSnippetForm()
 	const rule = getConditionRule(snippet, groupId, ruleId)
 	const [value, setValue] = React.useState<string>(() =>
-		'string' === typeof rule?.object?.[objectIndex] ? rule?.object?.[objectIndex] : '')
+		'string' === typeof rule?.object?.[objectIndex] ? rule.object[objectIndex] : '')
+
+	const type = 'timeOfDay' === rule?.subject ? 'time' : 'datetime-local'
 
 	return (
 		<input
-			type="date"
+			type={type}
 			name={`snippet-condition-date-${objectIndex}`}
 			value={value}
 			required
@@ -127,64 +129,44 @@ interface ConditionObjectEditorProps<S extends ConditionSubject> {
 }
 
 const ConditionObjectEditor = <S extends ConditionSubject>({
-	groupId,
 	ruleId,
+	groupId,
 	objectOptions,
 	currentOperator,
 	operatorOptions,
 	objectOptionsLoaded
 }: ConditionObjectEditorProps<S>) => {
-	const operatorProps: OperatorSelectProps = { groupId, ruleId, currentOperator, options: operatorOptions }
-	const objectProps: ObjectSelectProps<S> = { groupId, ruleId, options: objectOptions, optionsLoaded: objectOptionsLoaded }
+	const operatorSelectProps: OperatorSelectProps = { groupId, ruleId, currentOperator, options: operatorOptions }
 
-	switch (currentOperator) {
-		case 'is':
-		case 'not':
-			return (
-				<>
-					<OperatorSelect {...operatorProps} />
-					<ObjectSelect {...objectProps} />
-				</>
-			)
+	const isSingleOperator = 'is' === currentOperator || 'not' === currentOperator
+	const isMultiOperator = 'in' === currentOperator || 'not in' === currentOperator
+	const isBooleanOperator = 'true' === currentOperator || 'false' === currentOperator
+	const isDateOperator = 'before' === currentOperator || 'after' === currentOperator || 'between' === currentOperator
 
-		case 'in':
-		case 'not in':
-			return (
-				<>
-					<OperatorSelect {...operatorProps} />
-					<ObjectSelect {...objectProps} isMulti />
-				</>
-			)
+	return (
+		<>
+			{isSingleOperator || isMultiOperator || isDateOperator
+				? <OperatorSelect {...operatorSelectProps} /> : null}
 
-		case 'true':
-		case 'false':
-			return (
-				<>
-					<ObjectSelect {...objectProps} />
-					<OperatorSelect {...operatorProps} />
-				</>
-			)
+			{isSingleOperator || isMultiOperator || isBooleanOperator
+				? <ObjectSelect
+					ruleId={ruleId}
+					groupId={groupId}
+					options={objectOptions}
+					optionsLoaded={objectOptionsLoaded}
+					isMulti={isMultiOperator}
+				/> : null}
 
-		case 'before':
-		case 'after':
-			return (
-				<>
-					<OperatorSelect {...operatorProps} />
-					<DateSelect groupId={groupId} ruleId={ruleId} />
-				</>
-			)
+			{'before' === currentOperator || 'after' === currentOperator
+				? <DateSelect ruleId={ruleId} groupId={groupId} /> : null}
 
-		case 'between':
-			return (
-				<>
-					<OperatorSelect {...operatorProps} />
-					<DateRangeSelect groupId={groupId} ruleId={ruleId} />
-				</>
-			)
+			{'between' === currentOperator
+				? <DateRangeSelect ruleId={ruleId} groupId={groupId} /> : null}
 
-		default:
-			return null
-	}
+			{isBooleanOperator
+				? <OperatorSelect {...operatorSelectProps} /> : null}
+		</>
+	)
 }
 
 interface ConditionSubjectEditorProps {

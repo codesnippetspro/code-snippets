@@ -29,28 +29,26 @@ function safe_parse_datetime( ?string $datetime ): ?DateTimeImmutable {
 /**
  * Determine if a given date is within a specified range.
  *
- * @param string      $date     Date to check.
- * @param string|null $operator Operator to use for comparison.
- * @param array       $objects  Array of dates to use for comparison.
+ * @param DateTimeImmutable $date     Date to check.
+ * @param string|null       $operator Operator to use for comparison.
+ * @param array             $objects  Array of dates to use for comparison.
  *
  * @return bool
  */
-function is_within_date_range( string $date, ?string $operator, array $objects ): bool {
-	$parsed_date = safe_parse_datetime( $date );
-
+function is_within_date_range( DateTimeImmutable $date, ?string $operator, array $objects ): bool {
 	switch ( $operator ) {
 		case 'before':
 			$end = isset( $objects[0] ) ? safe_parse_datetime( $objects[0] ) : null;
-			return $parsed_date && $end && $parsed_date < $end;
+			return $end && $date < $end;
 
 		case 'after':
 			$start = isset( $objects[0] ) ? safe_parse_datetime( $objects[0] ) : null;
-			return $parsed_date && $start && $start > $parsed_date;
+			return $start && $start > $date;
 
 		case 'between':
 			$start = isset( $objects[0] ) ? safe_parse_datetime( $objects[0] ) : null;
 			$end = isset( $objects[1] ) ? safe_parse_datetime( $objects[1] ) : null;
-			return $parsed_date && $start && $end && $parsed_date >= $start && $parsed_date <= end;
+			return $start && $end && $start <= $date && $date <= end;
 	}
 
 	return false;
@@ -68,7 +66,6 @@ function is_within_date_range( string $date, ?string $operator, array $objects )
 function evaluate_condition_clause( ?string $subject, ?string $operator, array $objects ) {
 	switch ( $subject ) {
 		/* Site conditions. */
-
 		case 'siteArea':
 			$object = $objects[0] ?? null;
 
@@ -111,17 +108,19 @@ function evaluate_condition_clause( ?string $subject, ?string $operator, array $
 				}
 			);
 
+		case 'visitorLanguage':
+			$lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
+			return $lang && in_array( $lang, $objects, true );
+
 		case 'debugEnabled':
 			return defined( 'WP_DEBUG' ) && WP_DEBUG;
 
 		/* Snippets conditions. */
-
 		case 'condition':
 			// TODO implement this in a non-recursive way.
 			return false;
 
 		/* Posts and pages conditions. */
-
 		case 'post':
 			return is_single( $objects );
 
@@ -136,23 +135,29 @@ function evaluate_condition_clause( ?string $subject, ?string $operator, array $
 		case 'category':
 			return has_term( $objects, $subject );
 
+		case 'author':
+			$post = get_post();
+			return $post && (int) $post->post_author && in_array( (int) $post->post_author, $objects, true );
+
 		case 'postStatus':
 			$post = get_post();
 			return $post && in_array( $post->post_status, $objects, true );
 
-		case 'postAuthor':
+		case 'postParent':
 			$post = get_post();
-			return $post && in_array( $post->post_author, $objects, true );
+			return $post && $post->post_parent && in_array( $post->post_parent, $objects, true );
 
 		case 'postPublished':
-			$post = get_post();
-			return $post && is_within_date_range( $post->post_date, $operator, $objects );
+			$datetime = get_post_datetime();
+			return $datetime && is_within_date_range( $datetime, $operator, $objects );
 
 		case 'postModified':
-			$post = get_post();
-			return $post && is_within_date_range( $post->post_modified, $operator, $objects );
+			$datetime = get_post_datetime( null, 'modified' );
+			return $datetime && is_within_date_range( $datetime, $operator, $objects );
 
 		/* User conditions. */
+		case 'authenticated':
+			return is_user_logged_in();
 
 		case 'user':
 			$user = wp_get_current_user();
@@ -165,8 +170,22 @@ function evaluate_condition_clause( ?string $subject, ?string $operator, array $
 		case 'userCap':
 			return array_any( $objects, 'current_user_can' );
 
-		case 'authenticated':
-			return is_user_logged_in();
+		case 'userLocale':
+			$locale = get_user_locale();
+			return $locale && in_array( $locale, $objects, true );
+
+		case 'userRegistered':
+			$user = wp_get_current_user();
+			$datetime = $user ? safe_parse_datetime( $user->user_registered ) : null;
+			return $datetime && is_within_date_range( $datetime, $operator, $objects );
+
+		/* Date and time conditions. */
+		case 'timeOfDay':
+		case 'currentDate':
+			return is_within_date_range( new DateTimeImmutable(), $operator, $objects );
+
+		case 'dayOfWeek':
+			return in_array( date( 'D' ), $objects, true );
 
 		/* Fallback. */
 		default:

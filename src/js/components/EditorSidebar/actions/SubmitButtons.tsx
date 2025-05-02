@@ -4,7 +4,8 @@ import { SubmitSnippetAction } from '../../../hooks/useSnippetFormSubmit'
 import { isCondition } from '../../../utils/snippets/snippets'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { SubmitButton, SubmitButtonProps } from '../../common/SubmitButton'
+import { SubmitButton } from '../../common/SubmitButton'
+import type { SubmitButtonProps } from '../../common/SubmitButton'
 
 const SaveButton = (props: SubmitButtonProps) => {
 	const { snippet } = useSnippetForm()

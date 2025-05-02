@@ -3,8 +3,8 @@
 .snippet-condition-editor-container {
 	margin-top: 33px;
 	padding: 32px;
-	border: 1px solid #C3C4C7;
-	background: #F6F7F7;
+	border: 1px solid #c3c4c7;
+	background: #f6f7f7;
 
 	h2:first-of-type {
 		margin-top: 0;
@@ -19,7 +19,7 @@
 		margin-bottom: 0;
 	}
 
-	input[type="text"]:focus {
+	input[type='text']:focus {
 		box-shadow: none;
 	}
 
@@ -52,7 +52,7 @@
 }
 
 .snippet-condition-group {
-	background-color: #F0F0F0;
+	background-color: #f0f0f0;
 	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
@@ -70,7 +70,7 @@
 	&::before, &::after {
 		content: '';
 		flex: 1;
-		border-bottom: 1px solid #E2E2E4;
+		border-bottom: 1px solid #e2e2e4;
 	}
 
 	&:not(:empty)::before {
@@ -106,10 +106,11 @@
 	flex: 1;
 }
 
-.snippet-condition-rule input[type=date] {
+.snippet-condition-rule input[type='time'],
+.snippet-condition-rule input[type='datetime-local'] {
 	flex: 1;
-	background-color: #ffffff;
-	border: 1px solid #cccccc;
+	background-color: #fff;
+	border: 1px solid #ccc;
 	border-radius: 4px;
 }
 

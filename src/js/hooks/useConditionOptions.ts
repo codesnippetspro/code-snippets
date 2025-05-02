@@ -22,11 +22,12 @@ export const useConditionOptions = <S extends ConditionSubject>(subject: S | und
 
 	useEffect(() => {
 		if (objectOptions === undefined && subject !== undefined) {
-			const definition = CONDITION_SUBJECTS[subject]
+			const subjectAlias = <S | undefined> CONDITION_SUBJECTS[subject].useSubjectOptions ?? subject
+			const definition = CONDITION_SUBJECTS[subjectAlias]
 
-			if (optionsCache[subject]) {
+			if (optionsCache[subjectAlias]) {
 				setLoadedSubject(subject)
-				setObjectOptions(optionsCache[subject])
+				setObjectOptions(optionsCache[subjectAlias])
 			} else if (definition.options) {
 				setLoadedSubject(subject)
 				setObjectOptions(definition.options)
