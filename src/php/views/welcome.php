@@ -80,7 +80,7 @@ $plugin_types = [
 		<h1>📰 <?php esc_html_e( 'Latest news', 'code-snippets' ); ?></h1>
 		<div class="csp-cards">
 			<a class="csp-card" href="<?php echo esc_url( $hero['follow_url'] ); ?>" target="_blank"
-			   title="<?php esc_html_e( 'Read more', 'code-snippets' ); ?>">
+			   title="<?php esc_attr_e( 'Read more', 'code-snippets' ); ?>">
 				<header>
 					<span class="dashicons dashicons-external"></span>
 					<h2><?php echo esc_html( $hero['name'] ); ?></h2>
@@ -95,7 +95,7 @@ $plugin_types = [
 			</a>
 
 			<a class="csp-card" href="https://wordpress.org/plugins/code-snippets/changelog" target="_blank"
-			   title="<?php esc_html_e( 'Read the full changelog', 'code-snippets' ); ?>">
+			   title="<?php esc_attr_e( 'Read the full changelog', 'code-snippets' ); ?>">
 				<header>
 					<span class="dashicons dashicons-external"></span>
 					<h2><?php esc_html_e( 'Latest changes', 'code-snippets' ); ?></h2>
@@ -148,7 +148,7 @@ $plugin_types = [
 			<?php foreach ( $this->api->get_features() as $feature ) { ?>
 				<a class="csp-card"
 				   href="<?php echo esc_url( $feature['follow_url'] ); ?>" target="_blank"
-				   title="<?php esc_html_e( 'Read more', 'code-snippets' ); ?>">
+				   title="<?php esc_attr_e( 'Read more', 'code-snippets' ); ?>">
 					<figure>
 						<img src="<?php echo esc_url( $feature['image_url'] ); ?>"
 						     alt="<?php esc_attr_e( 'Feature image', 'code-snippets' ); ?>">

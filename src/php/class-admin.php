@@ -110,13 +110,13 @@ class Admin {
 				sprintf(
 					$format,
 					esc_url( code_snippets()->get_menu_url( 'settings' ) ),
-					esc_html__( 'Change plugin settings', 'code-snippets' ),
+					esc_attr__( 'Change plugin settings', 'code-snippets' ),
 					esc_html__( 'Settings', 'code-snippets' )
 				),
 				sprintf(
 					$format,
 					esc_url( code_snippets()->get_menu_url() ),
-					esc_html__( 'Manage your existing snippets', 'code-snippets' ),
+					esc_attr__( 'Manage your existing snippets', 'code-snippets' ),
 					esc_html__( 'Snippets', 'code-snippets' )
 				),
 			],
@@ -128,7 +128,7 @@ class Admin {
 				'<a href="%1$s" title="%2$s" style="color: #d46f4d; font-weight: bold;" target="_blank">%3$s</a>',
 				'https://snipco.de/JE2i',
 				esc_attr__( 'Upgrade to Code Snippets Pro', 'code-snippets' ),
-				esc_html__( 'Get Pro', 'code-snippets' )
+				esc_attr__( 'Upgrade to Pro', 'code-snippets' )
 			);
 		}
 		return $actions;
@@ -297,7 +297,7 @@ class Admin {
 		printf(
 			'<a href="%s" class="notice-dismiss"><span class="screen-reader-text">%s</span></a>',
 			esc_url( wp_nonce_url( add_query_arg( $meta_key, $notice ), $meta_key ) ),
-			esc_attr__( 'Dismiss', 'code-snippets' )
+			esc_html__( 'Dismiss', 'code-snippets' )
 		);
 
 		echo '</p></div>';

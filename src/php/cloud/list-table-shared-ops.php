@@ -125,7 +125,7 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 	$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
 
 	$thickbox_link = sprintf(
-		'<a href="%s" title="%s" class="cloud-snippet-preview cloud-snippet-preview-style thickbox %s" data-snippet="%s" data-lang="%s">%s</a>',
+		'<a href="%s" aria-label="%s" class="cloud-snippet-preview cloud-snippet-preview-style thickbox %s" data-snippet="%s" data-lang="%s">%s</a>',
 		esc_url( $thickbox_url ),
 		esc_attr( $cloud_snippet->name ),
 		$additional_classes,
@@ -224,7 +224,7 @@ function cloud_lts_pagination( string $which, string $source, int $total_items, 
 		$page_links[] = sprintf(
 			'<a class="next-page button" href="%s"><span class="screen-reader-text">%s</span><span aria-hidden="true">%s</span></a>',
 			esc_url( add_query_arg( $source . '_page', min( $total_pages, $current + 1 ), $current_url ) ),
-			__( 'Next page' ),
+			esc_html__( 'Next page', 'code-snippets' ),
 			'&rsaquo;'
 		);
 	}
@@ -235,7 +235,7 @@ function cloud_lts_pagination( string $which, string $source, int $total_items, 
 		$page_links[] = sprintf(
 			'<a class="last-page button" href="%s"><span class="screen-reader-text">%s</span><span aria-hidden="true">%s</span></a>',
 			esc_url( add_query_arg( $source . '_page', $total_pages, $current_url ) ),
-			__( 'Last page', 'code-snippets' ),
+			esc_html__( 'Last page', 'code-snippets' ),
 			'&raquo;'
 		);
 	}
