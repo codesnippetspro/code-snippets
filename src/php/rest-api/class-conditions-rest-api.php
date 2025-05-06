@@ -40,44 +40,27 @@ final class Conditions_REST_API {
 	 * Register REST routes.
 	 */
 	public function register_routes() {
-		$namespace = REST_API_NAMESPACE . self::VERSION;
-		$permission_callback = [ code_snippets(), 'current_user_can' ];
+		$plugin = code_snippets();
 
-		register_rest_route(
-			$namespace,
-			self::BASE_ROUTE . '/roles',
-			[
+		$readable_routes = [
+			'/roles'        => [ $this, 'get_role_names' ],
+			'/capabilities' => [ $this, 'get_capabilities' ],
+			'/locales'      => [ $this, 'get_available_locales' ],
+			'/plugins'      => [ $this, 'get_installed_plugins' ],
+			'/themes'       => [ $this, 'get_installed_themes' ],
+		];
+
+		foreach ( $readable_routes as $route => $callback ) {
+			register_rest_route(
+				REST_API_NAMESPACE . self::VERSION,
+				self::BASE_ROUTE . $route,
 				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_role_names' ],
-					'permission_callback' => $permission_callback,
+					'callback'            => $callback,
+					'permission_callback' => [ $plugin, 'current_user_can' ],
 				],
-			]
-		);
-
-		register_rest_route(
-			$namespace,
-			self::BASE_ROUTE . '/capabilities',
-			[
-				[
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_capabilities' ],
-					'permission_callback' => $permission_callback,
-				],
-			]
-		);
-
-		register_rest_route(
-			$namespace,
-			self::BASE_ROUTE . '/locales',
-			[
-				[
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_available_locales' ],
-					'permission_callback' => $permission_callback,
-				],
-			]
-		);
+			);
+		}
 	}
 
 	/**
@@ -130,5 +113,44 @@ final class Conditions_REST_API {
 		}
 
 		return rest_ensure_response( $locales );
+	}
+
+	/**
+	 * Retrieve a list of plugins installed on the site.
+	 *
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 */
+	public function get_installed_plugins() {
+		$plugins = [];
+
+		foreach ( get_plugins() as $filename => $plugin_data ) {
+			$plugins[] = [
+				'filename' => $filename,
+				'name'     => $plugin_data['Title'],
+			];
+		}
+
+		return rest_ensure_response( $plugins );
+	}
+
+	/**
+	 * Retrieve a list of themes installed on the site.
+	 *
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 */
+	public function get_installed_themes() {
+		$themes = [];
+
+		foreach ( search_theme_directories() as $slug => $location ) {
+			$theme = wp_get_theme( $slug, $location['theme_root'] );
+
+			$themes[] = [
+				'name'       => $theme->display( 'Name', false ),
+				'stylesheet' => $theme->get_stylesheet(),
+				'template'   => $theme->get_template(),
+			];
+		}
+
+		return rest_ensure_response( $themes );
 	}
 }

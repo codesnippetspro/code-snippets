@@ -20,9 +20,17 @@ interface ObjectSelectProps<S extends ConditionSubject> {
 	isMulti?: boolean
 	options: SelectGroups<ConditionSubjects[S]>
 	optionsLoaded: boolean
+	onLoadMore: VoidFunction
 }
 
-const ObjectSelect = <S extends ConditionSubject>({ options, groupId, ruleId, optionsLoaded, isMulti = false }: ObjectSelectProps<S>) => {
+const ObjectSelect = <S extends ConditionSubject>({
+	ruleId,
+	groupId,
+	options,
+	onLoadMore,
+	optionsLoaded,
+	isMulti = false
+}: ObjectSelectProps<S>) => {
 	const { snippet, setSnippet } = useSnippetForm()
 	const rule = getConditionRule(snippet, groupId, ruleId)
 
@@ -34,6 +42,7 @@ const ObjectSelect = <S extends ConditionSubject>({ options, groupId, ruleId, op
 			options={options}
 			currentValue={isMulti ? rule?.object : rule?.object?.[0]}
 			isLoading={!optionsLoaded}
+			onMenuScrollToBottom={onLoadMore}
 			onSelect={value => {
 				setSnippet(previous =>
 					updateConditionRule(previous, groupId, ruleId, { object: undefined === value ? [] : [value] }))
@@ -126,6 +135,7 @@ interface ConditionObjectEditorProps<S extends ConditionSubject> {
 	currentOperator: ConditionOperator | undefined
 	operatorOptions: SelectOptions<ConditionOperator>
 	objectOptionsLoaded: boolean
+	loadMoreOptions: VoidFunction
 }
 
 const ConditionObjectEditor = <S extends ConditionSubject>({
@@ -134,6 +144,7 @@ const ConditionObjectEditor = <S extends ConditionSubject>({
 	objectOptions,
 	currentOperator,
 	operatorOptions,
+	loadMoreOptions,
 	objectOptionsLoaded
 }: ConditionObjectEditorProps<S>) => {
 	const operatorSelectProps: OperatorSelectProps = { groupId, ruleId, currentOperator, options: operatorOptions }
@@ -155,6 +166,7 @@ const ConditionObjectEditor = <S extends ConditionSubject>({
 					options={objectOptions}
 					optionsLoaded={objectOptionsLoaded}
 					isMulti={isMultiOperator}
+					onLoadMore={loadMoreOptions}
 				/> : null}
 
 			{'before' === currentOperator || 'after' === currentOperator
@@ -213,7 +225,7 @@ export interface ConditionRuleEditorProps {
 export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ groupId, ruleId }) => {
 	const { snippet, setSnippet } = useSnippetForm()
 	const rule = getConditionRule(snippet, groupId, ruleId)
-	const { objectOptions, loadedSubject, clearObjectOptions } = useConditionOptions(rule?.subject)
+	const { objectOptions, loadedSubject, clearObjectOptions, loadMoreOptions } = useConditionOptions(rule?.subject)
 
 	const allowedOperators: ConditionOperator[] = rule?.subject
 		? CONDITION_SUBJECTS[rule.subject].operators
@@ -239,6 +251,7 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ groupI
 				operatorOptions={allowedOperators.map(operator =>
 					({ value: operator, label: CONDITION_OPERATOR_LABELS[operator] }))}
 				objectOptionsLoaded={loadedSubject === rule?.subject}
+				loadMoreOptions={loadMoreOptions}
 			/>
 
 			<Button

@@ -10,7 +10,8 @@ export interface ConditionSubjectDefinition<T> {
 	group: keyof typeof CONDITIONS_SUBJECT_GROUPS
 	operators: ConditionOperator[]
 	options?: SelectGroups<T>
-	fetchOptions?: (restAPI: AxiosAPI) => Promise<SelectGroups<T>>
+	fetchAllOptions?: (restAPI: AxiosAPI) => Promise<SelectGroups<T>>
+	fetchPagedOptions?: (restAPI: AxiosAPI, page: number) => Promise<SelectGroups<T>>
 	deriveOptions?: (snippet: Snippet, snippets: readonly Snippet[]) => SelectGroups<T>
 	useSubjectOptions?: keyof { [A in keyof ConditionSubjects as ConditionSubjects[A] extends T ? A : never]: A }
 }

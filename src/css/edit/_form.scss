@@ -1,17 +1,19 @@
+$sidebar_width: 280px;
+$sidebar_gap: 30px;
 
 .snippet-form {
 	margin-top: 10px;
 	max-width: 1440px;
 	display: grid;
-	grid-template-columns: auto 280px;
-	gap: 30px;
+	grid-template-columns: auto $sidebar_width;
+	gap: $sidebar_gap;
 
 	@media (max-width: 1024px) {
 		grid-template-columns: 1fr;
 	}
 
 	#titlediv #title {
-		height: 45px
+		height: 45px;
 	}
 
 	h2, h3 {
@@ -25,6 +27,12 @@
 		.button {
 			font-weight: normal;
 		}
+	}
+}
+
+.condition-snippets-table {
+	@media (min-width: 1024px) {
+		margin-right: $sidebar_width + $sidebar_gap;
 	}
 }
 

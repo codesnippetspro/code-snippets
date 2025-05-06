@@ -67,13 +67,12 @@ const EditForm: React.FC = () => {
 					{isCondition(snippet) && <EditConditionForm />}
 
 					{window.CODE_SNIPPETS_EDIT?.enableDescription ? <DescriptionEditor /> : null}
-
-					{isCondition(snippet) && <ConditionTable />}
 				</main>
 
 				<EditorSidebar />
 			</form>
 
+			{isCondition(snippet) && <ConditionTable />}
 			<UpgradeDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
 			<SubmitConfirmationDialog />
 		</div>

@@ -108,6 +108,16 @@ function evaluate_condition_clause( ?string $subject, ?string $operator, array $
 				}
 			);
 
+		case 'currentTheme':
+			return in_array( get_stylesheet(), $objects, true ) || in_array( get_template(), $objects, true );
+
+		case 'activePlugin':
+			$active_plugins = (array) get_option( 'active_plugins', [] );
+			$active_multisite_plugins = is_multisite() ?
+				(array) get_site_option( 'active_sitewide_plugins', [] ) : [];
+
+			return array_intersect( $active_plugins, $objects ) || array_intersect( $active_multisite_plugins, $objects );
+
 		case 'visitorLanguage':
 			$lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
 			return $lang && in_array( $lang, $objects, true );

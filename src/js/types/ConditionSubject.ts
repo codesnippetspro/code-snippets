@@ -11,6 +11,8 @@ export interface SiteConditionSubjects {
 	siteArea: 'global' | 'frontend' | 'admin'
 	currentQuery: 'home' | 'frontpage' | 'search' | 'archive' | '404' | 'single' | 'page' | 'postTypeArchive'
 	visitorLanguage: string
+	currentTheme: string
+	activePlugin: string
 	debugEnabled: boolean
 }
 

@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n'
 import { REST_BASE, REST_CONDITIONS_BASE } from '../restAPI'
 import { getSnippetDisplayName, isCondition } from '../snippets/snippets'
+import type { PluginsSchema } from '../../types/schema/PluginSchema'
+import type { ThemesSchema } from '../../types/schema/ThemeSchema'
 import type { ConditionSubjects, DateConditionSubjects, PostConditionSubjects, SiteConditionSubjects, SnippetConditionSubjects, UserConditionSubjects } from '../../types/ConditionSubject'
 import type { LocalesSchema } from '../../types/schema/LocaleSchema'
 import type { PostStatusesSchema } from '../../types/schema/PostStatusSchema'
@@ -17,10 +19,11 @@ import type { PagesSchema } from '../../types/schema/PageSchema'
 export const CONDITION_OPERATORS = (() => {
 	const date: ConditionOperator[] = ['between', 'before', 'after']
 	const single: ConditionOperator[] = ['is', 'not']
+	const many: ConditionOperator[] = ['in', 'not in']
 	const multiple: ConditionOperator[] = ['is', 'not', 'in', 'not in']
 	const boolean: ConditionOperator[] = ['true', 'false']
 
-	return <const> { single, multiple, date, boolean }
+	return <const> { single, many, multiple, date, boolean }
 })()
 
 const YES_NO_OPTIONS: SelectOptions<boolean> = [
@@ -59,11 +62,29 @@ const SITE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<SiteConditionSubjects
 			{ value: 'postTypeArchive', label: __('Post type archive', 'code-snippets') }
 		]
 	},
+	activePlugin: {
+		group: 'site',
+		label: __('Active plugins', 'code-snippets'),
+		operators: CONDITION_OPERATORS.many,
+		fetchAllOptions: api =>
+			api.get<PluginsSchema>(`${REST_CONDITIONS_BASE}/plugins`).then(plugins =>
+				plugins.map(plugin =>
+					({ value: plugin.filename, label: plugin.name })))
+	},
+	currentTheme: {
+		group: 'site',
+		label: __('Current theme', 'code-snippets'),
+		operators: CONDITION_OPERATORS.many,
+		fetchAllOptions: api =>
+			api.get<ThemesSchema>(`${REST_CONDITIONS_BASE}/themes`).then(themes =>
+				themes.map(theme =>
+					({ value: theme.stylesheet, label: theme.name })))
+	},
 	visitorLanguage: {
 		group: 'site',
 		label: __('Visitor language', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		useSubjectOptions: 'userLocale',
+		useSubjectOptions: 'userLocale'
 	},
 	debugEnabled: {
 		group: 'site',
@@ -90,8 +111,8 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		group: 'posts',
 		label: __('Post', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
-			api.get<PostsSchema>(`${REST_BASE}/wp/v2/posts`).then(posts =>
+		fetchPagedOptions: (api, page) =>
+			api.get<PostsSchema>(`${REST_BASE}/wp/v2/posts?page=${page}`).then(posts =>
 				posts.map(post =>
 					({ value: post.id, label: post.title.rendered })))
 	},
@@ -99,8 +120,8 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		group: 'posts',
 		label: __('Page', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
-			api.get<PagesSchema>(`${REST_BASE}/wp/v2/pages`).then(pages =>
+		fetchPagedOptions: (api, page) =>
+			api.get<PagesSchema>(`${REST_BASE}/wp/v2/pages?page=${page}`).then(pages =>
 				pages.map(page =>
 					({ value: page.id, label: page.title.rendered })))
 	},
@@ -108,7 +129,7 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		group: 'posts',
 		label: __('Post type', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
+		fetchAllOptions: api =>
 			api.get<PostTypesSchema>(`${REST_BASE}/wp/v2/types`).then(postTypes =>
 				Object.values(postTypes).map(postType =>
 					({ value: postType.slug, label: postType.name })))
@@ -117,8 +138,8 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		group: 'posts',
 		label: __('Post category', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
-			api.get<Categories>(`${REST_BASE}/wp/v2/categories`).then(categories =>
+		fetchPagedOptions: (api, page) =>
+			api.get<Categories>(`${REST_BASE}/wp/v2/categories?page=${page}`).then(categories =>
 				categories.map(category =>
 					({ value: category.id, label: category.name })))
 	},
@@ -126,8 +147,8 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		group: 'posts',
 		label: __('Post tag', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
-			api.get<PostTags>(`${REST_BASE}/wp/v2/tags`).then(tags =>
+		fetchPagedOptions: (api, page) =>
+			api.get<PostTags>(`${REST_BASE}/wp/v2/tags?page=${page}`).then(tags =>
 				tags.map(tag =>
 					({ value: tag.id, label: tag.name })))
 	},
@@ -135,15 +156,15 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		group: 'posts',
 		label: __('Post author', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
-			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&per-page=50`).then(users =>
-				users.map(user => ({ value: user.id, label: user.name })))
+		fetchPagedOptions: (api, page) =>
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&page=${page}`)
+				.then(users => users.map(user => ({ value: user.id, label: user.name })))
 	},
 	postStatus: {
 		group: 'posts',
 		label: __('Post status', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
+		fetchAllOptions: api =>
 			api.get<PostStatusesSchema>(`${REST_BASE}/wp/v2/statuses`).then(statuses =>
 				Object.values(statuses).map(status =>
 					({ value: status.slug, label: status.name })))
@@ -171,8 +192,8 @@ const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects
 		group: 'users',
 		label: __('Current user', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
-			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?per-page=50&orderby=id`).then(users => [{
+		fetchPagedOptions: (api, page) =>
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?page=${page}&orderby=id`).then(users => [{
 				label: __('User ID', 'code-snippets'),
 				options: users.map(user => ({ value: user.id, label: `${user.id} (${user.name})` }))
 			}])
@@ -181,7 +202,7 @@ const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects
 		group: 'users',
 		label: __('User role', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
+		fetchAllOptions: api =>
 			api.get<UserRoles>(`${REST_CONDITIONS_BASE}/roles`).then(roles =>
 				roles.map(role =>
 					({ value: role.role, label: role.name })))
@@ -190,7 +211,7 @@ const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects
 		group: 'users',
 		label: __('User capability', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
+		fetchAllOptions: api =>
 			api.get<string[]>(`${REST_CONDITIONS_BASE}/capabilities`).then(caps =>
 				caps.map(cap =>
 					({ value: cap, label: cap })))
@@ -199,7 +220,7 @@ const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects
 		group: 'users',
 		label: __('User locale', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
-		fetchOptions: api =>
+		fetchAllOptions: api =>
 			api.get<LocalesSchema>(`${REST_CONDITIONS_BASE}/locales`).then(locales =>
 				locales.map(locale =>
 					({ value: locale.locale, label: locale.name })))
@@ -208,7 +229,7 @@ const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects
 		group: 'users',
 		label: __('Registration date', 'code-snippets'),
 		operators: CONDITION_OPERATORS.date
-	},
+	}
 }
 
 export const DATE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<DateConditionSubjects> = {
