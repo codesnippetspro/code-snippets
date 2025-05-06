@@ -388,11 +388,12 @@ class Front_End {
 			}
 
 			/* translators: 1: snippet name, 2: snippet edit link */
-			$text = __( '<strong>%1$s</strong> is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
-
+			$text = __( '%1$s is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
+			$snippet_name = '<strong>' . $snippet->name . '</strong>';
 			$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
+
 			return wp_kses(
-				sprintf( $text, $snippet->name, $edit_url ),
+				sprintf( $text, $snippet_name, $edit_url ),
 				[
 					'strong' => [],
 					'a'      => [

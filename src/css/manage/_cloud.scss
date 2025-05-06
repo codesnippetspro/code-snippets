@@ -4,7 +4,7 @@
 
 	small {
 		color: #646970;
-		float: right;
+		float: inline-end;
 	}
 }
 
@@ -21,7 +21,7 @@
 }
 
 .cloud-icon {
-	margin-right: 3px;
+	margin-inline-end: 3px;
 }
 
 .nav-tab-inactive .cloud-badge {
@@ -81,7 +81,7 @@
 }
 
 .cloud-table td .no-results {
-	margin-top: 15px;
+	margin-block-start: 15px;
 	color: #e32121;
 	text-align: center;
 }
@@ -94,7 +94,7 @@
 	border: 1px solid;
 	border-radius: 5px;
 	padding: 5px;
-	margin-bottom: 5px;
+	margin-block-end: 5px;
 	display: block;
 	text-align: center;
 	background: transparent;
@@ -117,7 +117,7 @@
 }
 
 .cloud-badge {
-	margin-left: 10px;
+	margin-inline-start: 10px;
 	border: 1px solid;
 	border-radius: 5px;
 	font-size: 15px;
@@ -125,8 +125,8 @@
 }
 
 #cloud-search-form {
-	margin-top: 30px;
-	margin-bottom: 30px;
+	margin-block-start: 30px;
+	margin-block-end: 30px;
 	text-align: center;
 }
 
@@ -157,7 +157,7 @@
 	-ms-flex: 1 1 auto;
 	flex: 1 1 auto;
 	width: 1%;
-	margin-bottom: 0;
+	margin-block-end: 0;
 
 	&:focus {
 		outline: 0;
@@ -167,9 +167,9 @@
 }
 
 #cloud-select-prepend {
-	margin-right: -3px;
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
+	margin-inline-end: -3px;
+	border-start-end-radius: 0;
+	border-end-end-radius: 0;
 	position: relative;
 	z-index: 2;
 	color: #2271b1;
@@ -185,18 +185,18 @@
 
 #cloud-search-submit {
 	padding: 0 15px;
-	margin-left: -3px;
+	margin-inline-start: -3px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
 .cloud-search {
-	margin-left: 5px;
+	margin-inline-start: 5px;
 }
 
 .bundle-group {
-	margin-top: 10px;
+	margin-block-start: 10px;
 	justify-content: space-between;
 	display: flex;
 	gap: 5px;
@@ -230,7 +230,7 @@
 .heading-box {
 	max-width: 900px;
 	margin: auto;
-	padding-bottom: 1rem;
+	padding-block-end: 1rem;
 }
 
 .cloud-search-heading {
@@ -239,13 +239,13 @@
 	padding: 9px 0 4px;
 	line-height: 1.3;
 	text-align: center;
-	margin-bottom: 0;
+	margin-block-end: 0;
 }
 
 .cloud-badge.ai-icon {
 	font-size: 12px;
 	padding: 3px;
-	margin-left: 5px;
+	margin-inline-start: 5px;
 	color: #b22222;
 }
 
@@ -271,7 +271,7 @@
 	align-items: center;
 	max-height: 35px;
 	margin: 0 3px;
-	float: right;
+	float: inline-end;
 	gap: 5px;
 }
 
@@ -299,7 +299,7 @@
 	display: inline-flex;
 	gap: 3px;
 	align-items: center;
-	margin-bottom: 6px !important;
+	margin-block-end: 6px !important;
 
 	&:hover {
 		.thumbs-up {
@@ -403,7 +403,7 @@
 }
 
 .tooltip-box .cloud-key {
-    right: 0;
+    inset-inline-end: 0;
     color: white;
     width: 450px;
 }
@@ -413,7 +413,7 @@
 }
 
 .beta-test-notice {
-	margin-top: 20px;
+	margin-block-start: 20px;
 }
 
 .highlight-yellow {

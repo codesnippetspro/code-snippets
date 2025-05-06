@@ -109,14 +109,12 @@ const SnippetTypeTabs: React.FC<SnippetTypeTabsProps> = ({
 				? <a
 					className="button button-large nav-tab-button nav-tab-inactive go-pro-button"
 					href="https://codesnippets.pro/pricing/"
-					title="Find more about Pro"
 					onClick={event => {
 						event.preventDefault()
 						openUpgradeDialog()
 					}}
 				>
-					{_x('Upgrade to ', 'Upgrade to Pro', 'code-snippets')}
-					<span className="badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>
+					{__('Upgrade to <span class="badge">Pro</span>', 'code-snippets')}
 				</a>
 				: null}
 		</h2>

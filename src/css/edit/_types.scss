@@ -2,11 +2,11 @@
 .CodeMirror-sizer {
 	min-height: 300px !important;
 	box-sizing: border-box;
-	padding-bottom: 1.5em !important;
+	padding-block-end: 1.5em !important;
 
 	&::after {
 		position: absolute;
-		bottom: 0;
+		inset-block-end: 0;
 	}
 }
 
@@ -24,7 +24,7 @@
 	}
 
 	.CodeMirror-sizer {
-		padding-bottom: 0 !important;
+		padding-block-end: 0 !important;
 
 		&::before {
 			content: '<?php';
