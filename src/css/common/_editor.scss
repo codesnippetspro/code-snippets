@@ -26,13 +26,13 @@
 
 	&::before {
 		content: '';
-		padding-bottom: 5px;
+		padding-block-end: 5px;
 	}
 }
 
 /* Fix cursor color with rubyblue theme (see https://goo.gl/3HDgRm */
 .cm-s-rubyblue .CodeMirror-cursor {
-	border-left: 1px solid white !important;
+	border-inline-start: 1px solid white !important;
 }
 
 [class*="CodeMirror-lint-marker"], [class*="CodeMirror-lint-message"], .CodeMirror-lint-marker-multiple {
@@ -45,19 +45,19 @@
 
 .CodeMirror-lint-marker-multiple {
 	position: absolute;
-	top: 0;
+	inset-block-start: 0;
 }
 
 [class*="CodeMirror-lint-marker"]:before {
 	font: normal 18px/1 dashicons;
 	position: relative;
-	top: -2px;
+	inset-block-start: -2px;
 }
 
 [class*="CodeMirror-lint-message"]:before {
 	font: normal 16px/1 dashicons;
-	left: 16px;
 	position: absolute;
+	inset-inline-start: 16px;
 }
 
 .CodeMirror-lint-message-error,
@@ -69,7 +69,7 @@
 
 .CodeMirror-lint-message-warning {
 	background-color: #fff8e5;
-	border-left: 4px solid #ffb900;
+	border-inline-start: 4px solid #ffb900;
 }
 
 .CodeMirror-lint-marker-warning::before, .CodeMirror-lint-message-warning::before {
@@ -79,7 +79,7 @@
 
 .CodeMirror-lint-message-error {
 	background-color: #fbeaea;
-	border-left: 4px solid #dc3232;
+	border-inline-start: 4px solid #dc3232;
 }
 
 .CodeMirror-lint-marker-error::before, .CodeMirror-lint-message-error::before {
@@ -105,7 +105,7 @@
 
 .CodeMirror-foldmarker {
 	color: inherit;
-	margin-left: 0.25em;
-	margin-right: 0.25em;
+	margin-inline-start: 0.25em;
+	margin-inline-end: 0.25em;
 	font-weight: bold;
 }

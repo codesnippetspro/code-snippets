@@ -25,7 +25,7 @@
 }
 
 .tagger > ul > li {
-	padding-bottom: 0.4rem;
+	padding-block-end: 0.4rem;
 	margin: 0.4rem 5px 4px;
 
 	&:not(.tagger-new) {
@@ -50,7 +50,7 @@
 
 .tagger li a.close {
 	padding: 4px;
-	margin-left: 4px;
+	margin-inline-start: 4px;
 
 	&:hover {
 		color: white;
@@ -67,7 +67,7 @@
 		outline: none;
 		box-shadow: none;
 		width: 100%;
-		padding-left: 0;
+		padding-inline-start: 0;
 		box-sizing: border-box;
 		background: transparent;
 	}

@@ -13,7 +13,7 @@ p.submit {
 }
 
 .nav-tab-wrapper {
-	margin-bottom: 1em;
+	margin-block-end: 1em;
 }
 
 input[type=number] {
@@ -23,7 +23,7 @@ input[type=number] {
 .CodeMirror {
 	max-width: 800px;
 	width: 100%;
-	padding-right: 1em;
+	padding-inline-end: 1em;
 }
 
 .CodeMirror-sizer::before {
@@ -72,7 +72,7 @@ body.js {
 
 .license-status {
 	display: inline-block;
-	padding-right: 2em;
+	padding-inline-end: 2em;
 	line-height: 2;
 	color: #aaa;
 }

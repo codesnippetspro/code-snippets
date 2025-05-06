@@ -14,19 +14,19 @@
 	}
 
 	.notice {
-		margin-left: 0;
-		margin-right: 0;
+		margin-inline-start: 0;
+		margin-inline-end: 0;
 	}
 }
 
 .generate-button {
-	float: right;
+	float: inline-end;
 	display: flex;
 	align-items: center;
 
 	.dashicons-warning {
 		color: #b32d2e;
-		margin-right: 11px;
+		margin-inline-end: 11px;
 	}
 }
 
@@ -38,15 +38,15 @@
 	padding: 0 8px;
 	background-color: #fff;
 	border: 1px solid #bbb;
-	border-left: 0;
-	border-right: 0;
+	border-inline-start: 0;
+	border-inline-end: 0;
 	color: #666;
 	font-style: italic;
 	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
 
 	img {
 		height: 1rem;
-		padding-right: 5px;
+		padding-inline-end: 5px;
 	}
 }
 
