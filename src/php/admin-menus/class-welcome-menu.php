@@ -79,7 +79,7 @@ class Welcome_Menu extends Admin_Menu {
 			$links['pro'] = [
 				'url'   => 'https://codesnippets.pro/pricing/',
 				'icon'  => 'cart',
-				'label' => __( 'Get Pro', 'code-snippets' ),
+				'label' => __( 'Upgrade to Pro', 'code-snippets' ),
 			];
 		}
 

@@ -15,10 +15,10 @@ pre[data-line] {
 
 .line-highlight {
 	position: absolute;
-	left: 0;
-	right: 0;
+	inset-inline-start: 0;
+	inset-inline-end: 0;
 	padding: inherit;
-	margin-top: 1em;
+	margin-block-start: 1em;
 	background: hsla(24, 20%, 50%, .08);
 	background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
 	pointer-events: none;
@@ -32,8 +32,8 @@ pre[data-line] {
 	&:before, &[data-end]:after {
 		content: attr(data-start);
 		position: absolute;
-		top: .4em;
-		left: .6em;
+		inset-block-start: .4em;
+		inset-inline-start: .6em;
 		min-width: 1em;
 		padding: 0 .5em;
 		background-color: hsla(24, 20%, 50%, .4);
@@ -48,8 +48,8 @@ pre[data-line] {
 
 	&[data-end]:after {
 		content: attr(data-end);
-		top: auto;
-		bottom: .4em;
+		inset-block-start: auto;
+		inset-block-end: .4em;
 	}
 
 	.line-numbers &:before, .line-numbers &:after {
@@ -65,7 +65,7 @@ pre[data-line] {
 	}
 
 	.is-style-prism-coy-without-shadows pre[class*=language-] & {
-		margin-top: 0;
+		margin-block-start: 0;
 	}
 }
 

@@ -16,7 +16,7 @@
 @use 'edit/gpt';
 
 .notice.error blockquote {
-	margin-bottom: 0;
+	margin-block-end: 0;
 }
 
 .code-snippets-copy-text {
@@ -36,6 +36,6 @@
 
 #edit-snippet-form-container .cs-sticky-notice {
 	position: sticky;
-	top: 40px;
+	inset-block-start: 40px;
 	z-index: 100;
 }

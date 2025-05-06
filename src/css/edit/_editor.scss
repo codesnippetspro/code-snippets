@@ -8,15 +8,15 @@
 .CodeMirror-sizer {
 	min-height: 300px !important;
 	box-sizing: border-box;
-	padding-bottom: 1.5em !important;
+	padding-block-end: 1.5em !important;
 
 	&::after {
 		position: absolute;
-		bottom: 0;
+		inset-block-end: 0;
 	}
 
 	.snippet-form.php-snippet & {
-		padding-bottom: 0 !important;
+		padding-block-end: 0 !important;
 
 		&::before {
 			content: '<?php';
@@ -60,8 +60,13 @@
 
 .snippet-editor-help {
 	position: absolute;
-	right: 5px;
-	top: 5px;
+	inset-inline-end: 5px;
+	inset-block-start: 5px;
+
+	&:hover .editor-help-text {
+		visibility: visible;
+		opacity: 1;
+	}
 
 	td:first-child {
 		padding-right: 0.5em;

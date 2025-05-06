@@ -14,7 +14,7 @@
 	}
 
 	p {
-		text-align: left;
+		text-align: start;
 	}
 
 	ul {
@@ -22,13 +22,13 @@
 
 		li:before {
 			content: '✓ ';
-			margin-left: 1em;
+			margin-inline-start: 1em;
 			color: #2ecc40;
 		}
 	}
 
 	.components-modal__content {
-		margin-top: 0;
+		margin-block-start: 0;
 		padding: 32px;
 	}
 
@@ -44,7 +44,7 @@
 		grid-template-columns: auto auto;
 		justify-content: space-around;
 		align-items: center;
-		margin-bottom: 0;
+		margin-block-end: 0;
 	}
 
 	.current-plan-cost {
@@ -54,7 +54,7 @@
 	.button .dashicons,
 	.button svg {
 		vertical-align: middle;
-		margin-left: 1ch;
+		margin-inline-start: 1ch;
 	}
 
 	.components-external-link.button {
