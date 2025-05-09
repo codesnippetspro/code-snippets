@@ -1,19 +1,46 @@
 $sidebar_width: 280px;
 $sidebar_gap: 30px;
 
+.conditions-editor-open .button {
+	font-weight: bold;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	min-height: 38px;
+
+	&.no-condition {
+		border-color: #ccc;
+		background-color: #fff;;
+	}
+
+	.dashicons {
+		margin-inline-end: 5px;
+	}
+
+	.badge {
+		margin: 3px 0 3px auto;
+		text-transform: uppercase;
+		border: 1px solid currentColor;
+		border-radius: 4px;
+		line-height: 1;
+		padding: 5px;
+		font-size: smaller;
+	}
+}
+
 .snippet-form {
-	margin-top: 10px;
-	max-width: 1440px;
+	margin-block-start: 10px;
+	max-inline-size: 1440px;
 	display: grid;
 	grid-template-columns: auto $sidebar_width;
 	gap: $sidebar_gap;
 
-	@media (max-width: 1024px) {
+	@media (width <= 1024px) {
 		grid-template-columns: 1fr;
 	}
 
 	#titlediv #title {
-		height: 45px;
+		block-size: 45px
 	}
 
 	h2, h3 {
@@ -45,7 +72,7 @@ $sidebar_gap: 30px;
 		flex: 1;
 		display: flex;
 		flex-flow: column;
-		min-width: 180px;
+		min-inline-size: 180px;
 	}
 }
 
@@ -56,33 +83,6 @@ $sidebar_gap: 30px;
 	flex-flow: row;
 
 	div.snippet-type-badge {
-		float: right;
-	}
-}
-
-.conditions-editor-open .button {
-	font-weight: bold;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	min-height: 38px;
-
-	&.no-condition {
-		border-color: #ccc;
-		background-color: #fff;;
-	}
-
-	.dashicons {
-		margin-right: 5px;
-	}
-
-	.badge {
-		margin: 3px 0 3px auto;
-		text-transform: uppercase;
-		border: 1px solid currentColor;
-		border-radius: 4px;
-		line-height: 1;
-		padding: 5px;
-		font-size: smaller;
+		float: inline-end;
 	}
 }

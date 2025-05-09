@@ -137,15 +137,22 @@ class Import_Menu extends Admin_Menu {
 				esc_html_e( 'No snippets were imported.', 'code-snippets' );
 
 			} else {
-				/* translators: 1: amount of snippets imported, 2: link to Snippets menu */
-				$text = _n(
-					'Successfully imported <strong>%1$d</strong> snippet. <a href="%2$s">Have fun!</a>',
-					'Successfully imported <strong>%1$d</strong> snippets. <a href="%2$s">Have fun!</a>',
-					$imported,
-					'code-snippets'
+				/* translators: %d: amount of snippets imported */
+				printf(
+					_n(
+						'Successfully imported %d snippet.',
+						'Successfully imported %d snippets.',
+						$imported,
+						'code-snippets'
+					),
+					'<strong>' . number_format_i18n( $imported ) . '</strong>',
 				);
 
-				printf( wp_kses_post( $text ), esc_html( $imported ), esc_url( code_snippets()->get_menu_url( 'manage' ) ) );
+				printf(
+					' <a href="%s">%s</a>',
+					esc_url( code_snippets()->get_menu_url( 'manage' ) ),
+					esc_html__( 'Have fun!', 'code-snippets' )
+				);
 			}
 
 			echo '</p></div>';

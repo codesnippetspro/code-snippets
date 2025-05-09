@@ -26,7 +26,7 @@ export default eslintTs.config(
 		rules: reactHooks.configs.recommended.rules,
 	},
 	{
-		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', 'eslint.config.mjs']
+		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', '*.config.mjs', '*.config.js']
 	},
 	{
 		languageOptions: {

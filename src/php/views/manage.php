@@ -33,8 +33,11 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 		[ 'span' => [ 'class' => [ 'highlight-yellow' ] ] ]
 	);
 
-	$feedback_url = __( 'mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback', 'code-snippets' );
-	printf( ' <a href="%s">%s</a>', esc_url( $feedback_url ), esc_html__( 'Click here to submit your feedback', 'code-snippets' ) );
+	printf(
+		' <a href="%s">%s</a>',
+		esc_url( __( 'mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback', 'code-snippets' ) ),
+		esc_html__( 'Click here to submit your feedback', 'code-snippets' )
+	);
 	echo '</p></div>';
 }
 
@@ -64,7 +67,7 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 			?>
 			<a class="button button-large nav-tab-button nav-tab-inactive go-pro-button"
 			   href="https://codesnippets.pro/pricing/" target="_blank"
-			   title="Find more about Pro (opens in external tab)">
+			   aria-label="<?php esc_attr_e( 'Find more about Pro (opens in external tab)', 'code-snippets' ); ?>">
 				<?php echo wp_kses( __( 'Upgrade to <span class="badge">Pro</span>', 'code-snippets' ), [ 'span' => [ 'class' => 'badge' ] ] ); ?>
 				<span class="dashicons dashicons-external"></span>
 			</a>
@@ -115,7 +118,7 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 		],
 		'css'   => [
 			__( 'Style snippets are written in CSS and loaded in the admin area or on the site front-end, just like the theme style.css.', 'code-snippets' ),
-			esc_html__( 'Learn more about style snippets &rarr;', 'code-snippets' ),
+			__( 'Learn more about style snippets &rarr;', 'code-snippets' ),
 			'https://codesnippets.pro/learn-css/',
 		],
 		'js'    => [

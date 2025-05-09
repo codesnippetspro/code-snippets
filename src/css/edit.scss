@@ -7,17 +7,15 @@
 @use 'common/switch';
 @use 'common/select';
 @use 'common/tooltips';
-
 @use 'edit/form';
 @use 'edit/sidebar';
 @use 'edit/editor';
-
 @use 'edit/upgrade-dialog';
 @use 'edit/conditions';
 @use 'edit/gpt';
 
 .notice.error blockquote {
-	margin-bottom: 0;
+	margin-block-end: 0;
 }
 
 .code-snippets-copy-text {
@@ -25,14 +23,14 @@
 }
 
 .button svg {
-	height: 1rem;
+	block-size: 1rem;
 	vertical-align: middle;
 	line-height: 1;
 	margin: 0;
 }
 
 .snippet-description-container {
-	margin-top: 25px;
+	margin-block-start: 25px;
 
 	.wp-editor-tools {
 		padding-top: 5px;
@@ -52,7 +50,7 @@
 
 #edit-snippet-form-container .cs-sticky-notice {
 	position: sticky;
-	top: 40px;
+	inset-block-start: 40px;
 	z-index: 100;
 }
 

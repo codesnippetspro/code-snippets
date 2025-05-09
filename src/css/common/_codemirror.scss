@@ -3,10 +3,7 @@
 .CodeMirror, .snippet-condition-editor-container {
 	border: 1px solid #dfdfdf;
 	border-radius: 3px;
-	height: auto !important;
-}
-
-.CodeMirror {
+	block-size: auto !important;
 	background-color: #fff;
 }
 
@@ -21,7 +18,6 @@
 
 /* Add a bit of extra space above the editor */
 .CodeMirror-sizer {
-
 	&::before, &::after {
 		display: block;
 		color: #bbb;
@@ -29,13 +25,13 @@
 
 	&::before {
 		content: '';
-		padding-bottom: 5px;
+		padding-block-end: 5px;
 	}
 }
 
 /* Fix cursor color with rubyblue theme (see https://goo.gl/3HDgRm */
 .cm-s-rubyblue .CodeMirror-cursor {
-	border-left: 1px solid white !important;
+	border-inline-start: 1px solid white !important;
 }
 
 [class*="CodeMirror-lint-marker"], [class*="CodeMirror-lint-message"], .CodeMirror-lint-marker-multiple {
@@ -48,31 +44,31 @@
 
 .CodeMirror-lint-marker-multiple {
 	position: absolute;
-	top: 0;
+	inset-block-start: 0;
 }
 
-[class*="CodeMirror-lint-marker"]:before {
+[class*="CodeMirror-lint-marker"]::before {
 	font: normal 18px/1 dashicons;
 	position: relative;
-	top: -2px;
+	inset-block-start: -2px;
 }
 
-[class*="CodeMirror-lint-message"]:before {
+[class*="CodeMirror-lint-message"]::before {
 	font: normal 16px/1 dashicons;
-	left: 16px;
 	position: absolute;
+	inset-inline-start: 16px;
 }
 
 .CodeMirror-lint-message-error,
 .CodeMirror-lint-message-warning {
-	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+	box-shadow: 0 1px 1px 0 rgb(0 0 0 / 10%);
 	margin: 5px 0 2px;
 	padding: 3px 12px 3px 28px;
 }
 
 .CodeMirror-lint-message-warning {
 	background-color: #fff8e5;
-	border-left: 4px solid #ffb900;
+	border-inline-start: 4px solid #ffb900;
 }
 
 .CodeMirror-lint-marker-warning::before, .CodeMirror-lint-message-warning::before {
@@ -82,7 +78,7 @@
 
 .CodeMirror-lint-message-error {
 	background-color: #fbeaea;
-	border-left: 4px solid #dc3232;
+	border-inline-start: 4px solid #dc3232;
 }
 
 .CodeMirror-lint-marker-error::before, .CodeMirror-lint-message-error::before {
@@ -98,7 +94,7 @@
 }
 
 .CodeMirror .CodeMirror-matchingbracket {
-	background: rgba(255, 150, 0, .3);
+	background: rgb(255 150 0 / 30%);
 	color: inherit;
 }
 
@@ -112,7 +108,6 @@
 
 .CodeMirror-foldmarker {
 	color: inherit;
-	margin-left: 0.25em;
-	margin-right: 0.25em;
+	margin-inline: 0.25em;
 	font-weight: bold;
 }

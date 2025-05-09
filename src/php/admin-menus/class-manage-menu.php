@@ -285,7 +285,7 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function print_pro_message() {
 		if ( ! code_snippets()->licensing->is_licensed() ) {
-			echo '<span class="go-pro-badge">', esc_html_x( 'Pro', 'go pro badge', 'code-snippets' ), '</span>';
+			echo '<span class="go-pro-badge">', esc_html__( 'Pro', 'code-snippets' ), '</span>';
 		}
 	}
 
