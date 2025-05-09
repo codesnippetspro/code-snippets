@@ -21,7 +21,7 @@ export default eslintTs.config(
 	reactPlugin.configs.flat.recommended,
 	importPlugin.flatConfigs.recommended,
 	{
-		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', 'eslint.config.mjs']
+		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', '*.config.mjs', '*.config.js']
 	},
 	{
 		languageOptions: {

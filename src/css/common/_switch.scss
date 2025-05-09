@@ -2,13 +2,13 @@
 
 .snippet-execution-button,
 .snippet-activation-switch,
-input[type=checkbox].switch {
+input[type="checkbox"].switch {
 	display: block;
 	position: relative;
 }
 
 .snippet-activation-switch,
-input[type=checkbox].switch {
+input[type="checkbox"].switch {
 	appearance: none;
 	outline: 0;
 	cursor: pointer;
@@ -34,12 +34,12 @@ input[type=checkbox].switch {
 	margin: 2px;
 }
 
-input[type=checkbox].switch::before {
+input[type="checkbox"].switch::before {
 	margin: 1px;
 }
 
 .active-snippet .snippet-activation-switch,
-input[type=checkbox].switch:checked {
+input[type="checkbox"].switch:checked {
 	background-color: #0073aa;
 
 	&::before {
@@ -69,10 +69,7 @@ input[type=checkbox].switch:checked {
 	&::before {
 		content: '';
 		position: absolute;
-		top: -14px;
-		left: -21px;
-		bottom: -14px;
-		right: -8px;
+		inset: -14px -8px -14px -21px;
 		border-radius: 50%;
 		border: 1.8px solid #ccc;
 		z-index: 2;

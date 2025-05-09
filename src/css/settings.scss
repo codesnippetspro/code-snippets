@@ -16,7 +16,7 @@ p.submit {
 	margin-block-end: 1em;
 }
 
-input[type=number] {
+input[type="number"] {
 	width: 4em;
 }
 
@@ -84,7 +84,7 @@ body.js {
 	color: #dc3232;
 }
 
-.wrap[data-active-tab=license] .submit {
+.wrap[data-active-tab="license"] .submit {
 	display: none;
 }
 

@@ -16,7 +16,6 @@
 
 /* Add a bit of extra space above the editor */
 .CodeMirror-sizer {
-
 	&::before, &::after {
 		display: block;
 		color: #bbb;
@@ -46,13 +45,13 @@
 	inset-block-start: 0;
 }
 
-[class*="CodeMirror-lint-marker"]:before {
+[class*="CodeMirror-lint-marker"]::before {
 	font: normal 18px/1 dashicons;
 	position: relative;
 	inset-block-start: -2px;
 }
 
-[class*="CodeMirror-lint-message"]:before {
+[class*="CodeMirror-lint-message"]::before {
 	font: normal 16px/1 dashicons;
 	position: absolute;
 	inset-inline-start: 16px;
@@ -60,7 +59,7 @@
 
 .CodeMirror-lint-message-error,
 .CodeMirror-lint-message-warning {
-	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+	box-shadow: 0 1px 1px 0 rgb(0 0 0 / 10%);
 	margin: 5px 0 2px;
 	padding: 3px 12px 3px 28px;
 }
@@ -93,7 +92,7 @@
 }
 
 .CodeMirror .CodeMirror-matchingbracket {
-	background: rgba(255, 150, 0, .3);
+	background: rgb(255 150 0 / 30%);
 	color: inherit;
 }
 
@@ -103,7 +102,6 @@
 
 .CodeMirror-foldmarker {
 	color: inherit;
-	margin-inline-start: 0.25em;
-	margin-inline-end: 0.25em;
+	margin-inline: 0.25em;
 	font-weight: bold;
 }

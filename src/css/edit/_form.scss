@@ -1,3 +1,25 @@
+.conditions-editor-open .button {
+	font-weight: bold;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	border-color: #ccc;
+	background-color: #fff;;
+
+	.dashicons {
+		margin-right: 5px;
+	}
+
+	.badge {
+		margin: 3px 0 3px 7px;
+		text-transform: uppercase;
+		border: 1px solid currentcolor;
+		border-radius: 4px;
+		line-height: 1;
+		padding: 5px;
+		font-size: smaller;
+	}
+}
 
 .snippet-form {
 	margin-top: 10px;
@@ -6,7 +28,7 @@
 	grid-template-columns: auto 280px;
 	gap: 30px;
 
-	@media (max-width: 1024px) {
+	@media (width <= 1024px) {
 		grid-template-columns: 1fr;
 	}
 
@@ -49,28 +71,5 @@
 
 	div.snippet-type-badge {
 		float: right;
-	}
-}
-
-.conditions-editor-open .button {
-	font-weight: bold;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	border-color: #ccc;
-	background-color: #fff;;
-
-	.dashicons {
-		margin-right: 5px;
-	}
-
-	.badge {
-		margin: 3px 0 3px 7px;
-		text-transform: uppercase;
-		border: 1px solid currentColor;
-		border-radius: 4px;
-		line-height: 1;
-		padding: 5px;
-		font-size: smaller;
 	}
 }

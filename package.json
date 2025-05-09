@@ -8,7 +8,7 @@
         "test": "tests"
     },
     "scripts": {
-        "test": "eslint && npm run phpcs",
+        "test": "eslint && stylelint 'src/css/**/*.scss' && phpcs",
         "build": "webpack",
         "watch": "webpack --watch",
         "bundle": "ts-node scripts/bundle.ts",
@@ -89,6 +89,10 @@
         "sass": "^1.84.0",
         "sass-loader": "^16.0.4",
         "style-loader": "^4.0.0",
+        "stylelint": "^16.19.1",
+        "stylelint-config-standard": "^38.0.0",
+        "stylelint-config-standard-scss": "^14.0.0",
+        "stylelint-use-logical": "^2.1.2",
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.7.3",

@@ -21,10 +21,32 @@
 	@extend %badge;
 }
 
-.go-pro-badge,
-.pro-badge,
-.core-badge {
+
+.go-pro-badge, .pro-badge, .core-badge {
 	@extend %badge;
+
+	margin-inline-start: 3px;
+	border: 1px solid currentcolor;
+	border-radius: 5px;
+	font-size: 10px;
+	padding: 1px 2px;
+	text-transform: uppercase;
+}
+
+.go-pro-badge, .pro-badge {
+	color: theme.$pro;
+}
+
+.core-badge {
+	color: theme.$core;
+}
+
+.go-pro-badge,
+.go-pro-button .badge {
+	color: theme.$pro;
+	background-color: #F7E8E3;
+	margin-inline-start: 1px;
+	font-size: 10px;
 }
 
 @each $type, $color in theme.$types {
@@ -48,32 +70,6 @@
 		color: #fff;
 		background-color: #a7aaad;
 	}
-}
-
-.go-pro-badge, .pro-badge, .core-badge {
-	margin-inline-start: 3px;
-	border: 1px solid currentColor;
-	border-radius: 5px;
-	font-size: 10px;
-	padding: 1px 2px;
-	text-transform: uppercase;
-
-}
-
-.go-pro-badge, .pro-badge {
-	color: theme.$pro;
-}
-
-.core-badge {
-	color: theme.$core;
-}
-
-.go-pro-button .badge,
-.go-pro-badge {
-	color: theme.$pro;
-	background-color: #F7E8E3;
-	margin-inline-start: 1px;
-	font-size: 10px;
 }
 
 .wp-core-ui .button.nav-tab-button {

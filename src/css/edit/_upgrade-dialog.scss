@@ -20,7 +20,7 @@
 	ul {
 		list-style: none;
 
-		li:before {
+		li::before {
 			content: '✓ ';
 			margin-inline-start: 1em;
 			color: #2ecc40;

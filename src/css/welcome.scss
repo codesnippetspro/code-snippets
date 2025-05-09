@@ -9,8 +9,7 @@ $breakpoint: 1060px;
 
 	h1, h2, h3 {
 		font-weight: 700;
-		margin-block-start: 10px;
-		margin-block-end: 10px;
+		margin-block: 10px;
 
 		.dashicons {
 			font-size: 90%;
@@ -39,7 +38,7 @@ $breakpoint: 1060px;
 	justify-content: space-between;
 	align-items: center;
 
-	.csp-welcome-logo {
+	header {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -61,20 +60,22 @@ $breakpoint: 1060px;
 	}
 }
 
-.csp-welcome-nav {
+.csp-welcome-header nav {
 	column-gap: 15px;
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-evenly;
-	margin: 0;
+
+	ul {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-evenly;
+		margin: 0;
+	}
 
 	li {
 		margin-block-end: 0;
 	}
 
 	li a {
-		margin-block-start: 10px;
-		margin-block-end: 10px;
+		margin-block: 10px;
 		align-items: center;
 		border-width: 1px;
 		border-style: solid;
@@ -107,7 +108,7 @@ $breakpoint: 1060px;
 		}
 
 		&:hover svg {
-			fill: currentColor;
+			fill: currentcolor;
 		}
 	}
 
@@ -131,9 +132,8 @@ $breakpoint: 1060px;
 .csp-cards {
 	display: grid;
 	grid-auto-rows: 1fr;
-	row-gap: 40px;
 	grid-template-columns: repeat(4, 1fr);
-	gap: 15px;
+	gap: 40px 15px;
 
 	@media (max-width: $breakpoint) {
 		grid-template-columns: 1fr !important;
@@ -166,7 +166,7 @@ a.csp-card {
 	border: 1px solid theme.$outline;
 	border-inline-start: 0;
 	border-inline-end: 0;
-	padding: 40px 0 50px 0;
+	padding: 40px 0 50px;
 	display: flex;
 	flex-direction: column;
 	row-gap: 20px;
@@ -184,10 +184,10 @@ a.csp-card {
 		h2 {
 			color: theme.$primary;
 		}
+	}
 
-		&:last-child {
-			overflow-y: scroll;
-		}
+	.csp-changelog-wrapper {
+		overflow-y: scroll;
 	}
 
 	.csp-section-changelog {
@@ -268,15 +268,8 @@ a.csp-card {
 	}
 }
 
-
-.csp-section-articles {
-	figure img {
-		aspect-ratio: 1;
-	}
-}
-
 .csp-section-links {
-	padding: 40px 0 50px 0;
+	padding: 40px 0 50px;
 
 	.csp-card {
 		margin-block-start: 20px;
@@ -293,7 +286,7 @@ a.csp-card {
 		}
 
 		figure {
-			margin: 1em 0 0 0;
+			margin: 1em 0 0;
 
 			img {
 				border-radius: 5px;
@@ -311,8 +304,7 @@ a.csp-card {
 			display: block;
 			font-size: .9rem;
 			letter-spacing: 1px;
-			margin-block-start: 0;
-			margin-block-end: 0;
+			margin-block: 0;
 			text-transform: uppercase;
 			width: fit-content;
 			padding: 5px 15px;
@@ -339,22 +331,25 @@ a.csp-card {
 		}
 	}
 
-}
+	&.csp-section-partners {
+		border-block-start: 1px solid theme.$outline;
 
-.csp-section-articles {
-	h2 {
-		font-size: 1.1rem;
+		header {
+			display: flex;
+			flex-direction: row-reverse;
+			justify-content: space-between;
+			align-items: center;
+		}
 	}
-}
 
-.csp-section-partners {
-	border-block-start: 1px solid theme.$outline;
+	&.csp-section-articles {
+		h2 {
+			font-size: 1.1rem;
+		}
 
-	header {
-		display: flex;
-		flex-direction: row-reverse;
-		justify-content: space-between;
-		align-items: center;
+		figure img {
+			aspect-ratio: 1;
+		}
 	}
 }
 
