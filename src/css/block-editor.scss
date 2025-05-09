@@ -5,14 +5,14 @@
 @use 'common/select';
 
 .code-snippets-select {
-	width: 100%;
-	margin-top: 1em;
+	inline-size: 100%;
+	margin-block-start: 1em;
 }
 
 .code-snippets-content-block,
 .code-snippets-source-block {
 	.components-placeholder__label svg {
-		width: 24px;
-		height: 24px;
+		inline-size: 24px;
+		block-size: 24px;
 	}
 }

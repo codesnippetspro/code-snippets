@@ -1,12 +1,12 @@
-$sidebar_width: 280px;
-$sidebar_gap: 30px;
+$sidebar-width: 280px;
+$sidebar-gap: 30px;
 
 .conditions-editor-open .button {
 	font-weight: bold;
-	height: 100%;
+	block-size: 100%;
 	display: flex;
 	align-items: center;
-	min-height: 38px;
+	min-block-size: 38px;
 
 	&.no-condition {
 		border-color: #ccc;
@@ -20,7 +20,7 @@ $sidebar_gap: 30px;
 	.badge {
 		margin: 3px 0 3px auto;
 		text-transform: uppercase;
-		border: 1px solid currentColor;
+		border: 1px solid currentcolor;
 		border-radius: 4px;
 		line-height: 1;
 		padding: 5px;
@@ -32,8 +32,8 @@ $sidebar_gap: 30px;
 	margin-block-start: 10px;
 	max-inline-size: 1440px;
 	display: grid;
-	grid-template-columns: auto $sidebar_width;
-	gap: $sidebar_gap;
+	grid-template-columns: auto $sidebar-width;
+	gap: $sidebar-gap;
 
 	@media (width <= 1024px) {
 		grid-template-columns: 1fr;
@@ -58,8 +58,8 @@ $sidebar_gap: 30px;
 }
 
 .condition-snippets-table {
-	@media (min-width: 1024px) {
-		margin-right: $sidebar_width + $sidebar_gap;
+	@media (width >= 1024px) {
+		margin-inline-end: $sidebar-width + $sidebar-gap;
 	}
 }
 

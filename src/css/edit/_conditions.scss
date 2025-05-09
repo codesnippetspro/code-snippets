@@ -1,13 +1,13 @@
 @use 'condition-modal';
 
 .snippet-condition-editor-container {
-	margin-top: 33px;
+	margin-block-start: 33px;
 	padding: 32px;
 	border: 1px solid #c3c4c7;
 	background: #f6f7f7;
 
 	h2:first-of-type {
-		margin-top: 0;
+		margin-block-start: 0;
 	}
 }
 
@@ -16,7 +16,7 @@
 	align-items: flex-start;
 
 	h4 {
-		margin-bottom: 0;
+		margin-block-end: 0;
 	}
 
 	input[type='text']:focus {
@@ -70,15 +70,15 @@
 	&::before, &::after {
 		content: '';
 		flex: 1;
-		border-bottom: 1px solid #e2e2e4;
+		border-block-end: 1px solid #e2e2e4;
 	}
 
 	&:not(:empty)::before {
-		margin-right: 8px;
+		margin-inline-end: 8px;
 	}
 
 	&:not(:empty)::after {
-		margin-left: 8px;
+		margin-inline-start: 8px;
 	}
 }
 
@@ -90,7 +90,7 @@
 }
 
 .snippet-condition-subject-select {
-	min-width: 12em;
+	min-inline-size: 12em;
 
 	&:last-of-type {
 		flex: 1;
@@ -98,11 +98,12 @@
 }
 
 .snippet-condition-operator-select {
-	min-width: 10em;
+	min-inline-size: 10em;
+	text-transform: uppercase;
 }
 
 .snippet-condition-object-select {
-	min-width: 16em;
+	min-inline-size: 16em;
 	flex: 1;
 }
 
@@ -123,10 +124,6 @@
 	.sep {
 		align-self: center;
 	}
-}
-
-.snippet-condition-operator-select {
-	text-transform: uppercase;
 }
 
 .condition-snippets-table {

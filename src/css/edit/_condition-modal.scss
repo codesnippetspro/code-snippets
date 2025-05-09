@@ -4,21 +4,21 @@
 
 	.components-modal__content {
 		padding: 0;
-		min-height: 450px;
+		min-block-size: 450px;
 		display: flex;
 		flex-flow: column;
 		background: #F6F7F7;
 		overflow: initial;
-		max-width: 100%;
+		max-inline-size: 100%;
 	}
 
 	.components-modal__header-heading::after {
 		content: 'beta';
 		text-transform: uppercase;
-		border: 1px solid currentColor;
+		border: 1px solid currentcolor;
 		border-radius: 3px;
 		padding: 3px 5px;
-		margin-left: 0.5em;
+		margin-inline-start: 0.5em;
 		font-size: small;
 	}
 
@@ -31,8 +31,8 @@
 	.modal-nav {
 		display: flex;
 		flex-flow: row wrap;
-		border-top: 1px solid #E2E2E4;;
-		border-bottom: 1px solid #E2E2E4;;
+		border-block-start: 1px solid #E2E2E4;;
+		border-block-end: 1px solid #E2E2E4;;
 		padding: 17.4px 24px;
 		background: #fff;
 		gap: 2em;
@@ -53,7 +53,7 @@
 	}
 
 	.modal-footer {
-		border-top: 1px solid #E2E2E4;
+		border-block-start: 1px solid #E2E2E4;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -71,12 +71,12 @@
 
 		.condition-title-input {
 			border: 1px solid #C3C4C7;
-			width: 20em;
+			inline-size: 20em;
 		}
 
 		.condition-title-input,
 		.button-large {
-			height: 45px;
+			block-size: 45px;
 		}
 	}
 }

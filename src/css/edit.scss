@@ -33,16 +33,16 @@
 	margin-block-start: 25px;
 
 	.wp-editor-tools {
-		padding-top: 5px;
+		padding-block-start: 5px;
 	}
 
 	.wp-editor-tabs {
-		float: left;
+		float: inline-start;
 	}
 
 	.generate-button {
-		float: right;
-		margin-top: 37px;
+		float: inline-end;
+		margin-block-start: 37px;
 		z-index: 99;
 		position: relative;
 	}
