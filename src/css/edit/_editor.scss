@@ -1,12 +1,12 @@
 
 .CodeMirror,
 .snippet-form textarea {
-	width: 100%;
+	inline-size: 100%;
 	font-family: monospace;
 }
 
 .CodeMirror-sizer {
-	min-height: 300px !important;
+	min-block-size: 300px !important;
 	box-sizing: border-box;
 	padding-block-end: 1.5em !important;
 
@@ -69,7 +69,7 @@
 	}
 
 	td:first-child {
-		padding-right: 0.5em;
+		padding-inline-end: 0.5em;
 	}
 
 	.mac-key {

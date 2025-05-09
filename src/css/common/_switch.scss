@@ -13,17 +13,17 @@ input[type="checkbox"].switch {
 	outline: 0;
 	cursor: pointer;
 	margin: 0;
-	width: 30px;
-	height: 17px;
+	inline-size: 30px;
+	block-size: 17px;
 	border-radius: 34px;
-	text-align: left;
+	text-align: start;
 	border: 1px solid theme.$accent;
 
 	&::before {
 		transition: all .4s;
 		content: '';
-		height: 13px;
-		width: 13px;
+		block-size: 13px;
+		inline-size: 13px;
 		display: inline-block;
 		background-color: theme.$accent;
 		border-radius: 50%;
@@ -58,13 +58,12 @@ input[type="checkbox"].switch:checked {
 }
 
 .snippet-execution-button {
-	margin-left: 10px;
-	margin-top: 9px;
-	width: 0;
-	height: 0;
-	border-top: 9px solid transparent;
-	border-bottom: 9px solid transparent;
-	border-left: 10px solid #ccc;
+	margin-inline-start: 10px;
+	margin-block-start: 9px;
+	inline-size: 0;
+	block-size: 0;
+	border-block: 9px solid transparent;
+	border-inline-start: 10px solid #ccc;
 
 	&::before {
 		content: '';
@@ -76,7 +75,7 @@ input[type="checkbox"].switch:checked {
 	}
 
 	&:hover {
-		border-left-color: theme.$accent;
+		border-inline-start-color: theme.$accent;
 		transition: border-left-color 0.6s;
 
 		&::before {

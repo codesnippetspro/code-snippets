@@ -9,7 +9,7 @@ p.submit {
 
 .settings-section,
 p.submit {
-	max-width: 1020px;
+	max-inline-size: 1020px;
 }
 
 .nav-tab-wrapper {
@@ -17,12 +17,12 @@ p.submit {
 }
 
 input[type="number"] {
-	width: 4em;
+	inline-size: 4em;
 }
 
 .CodeMirror {
-	max-width: 800px;
-	width: 100%;
+	max-inline-size: 800px;
+	inline-size: 100%;
 	padding-inline-end: 1em;
 }
 
@@ -45,12 +45,12 @@ body.js {
 		border: 0;
 		clip: rect(1px, 1px, 1px, 1px);
 		clip-path: inset(50%);
-		height: 1px;
+		block-size: 1px;
 		margin: -1px;
 		overflow: hidden;
 		padding: 0;
 		position: absolute;
-		width: 1px;
+		inline-size: 1px;
 		word-wrap: normal !important;
 	}
 
@@ -98,12 +98,12 @@ body.js {
 }
 
 #cloud_token {
-	max-width: 450px;
-    width: 90vw;
+	max-inline-size: 450px;
+    inline-size: 90vw;
 }
 
 .cloud-message {
-	width: fit-content;
+	inline-size: fit-content;
     padding: 5px;
     border-radius: 5px;
     font-weight: 600;

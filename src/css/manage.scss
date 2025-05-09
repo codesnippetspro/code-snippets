@@ -14,8 +14,8 @@
 .column-type {
 	.dashicons {
 		font-size: 16px;
-		width: 16px;
-		height: 16px;
+		inline-size: 16px;
+		block-size: 16px;
 		vertical-align: middle;
 	}
 
@@ -43,7 +43,7 @@
 	background: none;
 	border: none;
 	box-shadow: none;
-	width: 4em;
+	inline-size: 4em;
 	color: #666;
 	text-align: center;
 
@@ -106,7 +106,7 @@
 	}
 
 	td.column-description {
-		max-width: 700px;
+		max-inline-size: 700px;
 	}
 
 	.active-snippet, .inactive-snippet {
@@ -161,7 +161,7 @@
 		float: inline-start;
 		position: initial;
 		margin: 1em 0 0;
-		height: auto;
+		block-size: auto;
 	}
 }
 
@@ -193,7 +193,7 @@
 }
 
 #refresh-button {
-	width: 30px;
+	inline-size: 30px;
 	padding: 0;
 	font-size: 20px;
 	line-height: 1.4;

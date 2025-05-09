@@ -22,14 +22,14 @@
 }
 
 .button svg {
-	height: 1rem;
+	block-size: 1rem;
 	vertical-align: middle;
 	line-height: 1;
 	margin: -2px 3px 0 0;
 }
 
 .snippet-description-container {
-	margin-top: 25px;
+	margin-block-start: 25px;
 }
 
 #edit-snippet-form-container .cs-sticky-notice {

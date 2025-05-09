@@ -1,6 +1,6 @@
 .cloud-create-modal {
 	.components-modal__content {
-		min-width: 550px;
+		min-inline-size: 550px;
 	}
 
 	.action-buttons {
@@ -43,7 +43,7 @@
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
 	img {
-		height: 1rem;
+		block-size: 1rem;
 		padding-inline-end: 5px;
 	}
 }
@@ -55,8 +55,8 @@
 		justify-content: center;
 
 		.dashicons {
-			width: 50px;
-			height: 50px;
+			inline-size: 50px;
+			block-size: 50px;
 			font-size: 50px;
 		}
 	}

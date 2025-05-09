@@ -1,7 +1,7 @@
 
 .snippet-editor-sidebar {
 	.button-large {
-		height: 48px;
+		block-size: 48px;
 	}
 
 	.row-actions {
@@ -52,17 +52,17 @@
 	}
 
 	.components-form-token-field {
-		width: 100%;
+		inline-size: 100%;
 	}
 }
 
 .snippet-priority input {
-	width: 4em;
+	inline-size: 4em;
 }
 
 p.submit {
 	display: flex;
 	flex-flow: column;
 	gap: 1em;
-	margin-top: 1em;
+	margin-block-start: 1em;
 }
