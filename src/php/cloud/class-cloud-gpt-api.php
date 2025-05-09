@@ -16,7 +16,7 @@ class Cloud_GPT_API {
 	/**
 	 * Base URL for the API.
 	 */
-	const API_URL = 'https://codesnippets.cloud/api/v1/gpt';
+	const API_PATH = 'gpt';
 
 	/**
 	 * Path for prompt endpoint.
@@ -94,14 +94,14 @@ class Cloud_GPT_API {
 			];
 		}
 
-		$url = sprintf( '%s/%s', self::API_URL, ltrim( $endpoint, '/\\' ) );
+		$url = $this->cloud_api->get_cloud_api_url() . sprintf( '%s/%s', self::API_PATH, ltrim( $endpoint, '/\\' ) );
 
 		$client = new Client();
 		$request = new Request( 'POST', $url, $this->cloud_api->build_request_headers() );
 
 		try {
-			$response = $client->send( $request, [ 'multipart' => $multipart_data ] );
-
+			$promise = $client->sendAsync( $request, [ 'multipart' => $multipart_data ] );
+			$response = $promise->wait();
 		} catch ( GuzzleException $exception ) {
 			return new WP_Error(
 				'cloud_ai_request_error',
