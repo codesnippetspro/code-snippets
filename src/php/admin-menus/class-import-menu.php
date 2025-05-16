@@ -145,13 +145,13 @@ class Import_Menu extends Admin_Menu {
 						$imported,
 						'code-snippets'
 					),
-					'<strong>' . number_format_i18n(( $imported ) . '</strong>',
+					'<strong>' . number_format_i18n( $imported ) . '</strong>',
 				);
 
 				printf(
 					' <a href="%s">%s</a>',
-					esc_url( code_snippets()->get_menu_url( 'manage' ) )
-					esc_html__( 'Have fun!', 'code-snippets' );
+					esc_url( code_snippets()->get_menu_url( 'manage' ) ),
+					esc_html__( 'Have fun!', 'code-snippets' )
 				);
 			}
 

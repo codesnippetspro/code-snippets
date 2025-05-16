@@ -14,7 +14,7 @@ __( 'Ok', 'code-snippets' );
 
 // settings-fields.php.
 __( 'Minify Snippet Output', 'code-snippets' );
-__( 'Minify snippet output by removing whitespace and optimising code to reduce load times.', 'code-snippets' );
+__( 'Minify snippet output by removing whitespace and optimizing code to reduce load times.', 'code-snippets' );
 
 // edit.php.
 __( 'View Full Stylesheet', 'code-snippets' );

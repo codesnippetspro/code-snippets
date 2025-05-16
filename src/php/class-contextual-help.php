@@ -72,13 +72,19 @@ class Contextual_Help {
 			'https://codesnippets.pro'                           => __( 'Plugin Website', 'code-snippets' ),
 		];
 
+		$kses = [
+			'p' => [],
+			'strong' => [],
+			'a' => [ 'href'  => [] ],
+		];
+
 		$contents = sprintf( "<p><strong>%s</strong></p>\n", esc_html__( 'For more information:', 'code-snippets' ) );
 
 		foreach ( $sidebar_links as $url => $label ) {
 			$contents .= "\n" . sprintf( '<p><a href="%s">%s</a></p>', esc_url( $url ), esc_html( $label ) );
 		}
 
-		$this->screen->set_help_sidebar( wp_kses_post( $contents ) );
+		$this->screen->set_help_sidebar( wp_kses( $contents, $kses ) );
 	}
 
 	/**
