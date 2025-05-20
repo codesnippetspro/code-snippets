@@ -112,13 +112,16 @@ $breakpoint: 1060px;
 		}
 	}
 
-	@each $link_name, $color in (
-			pro: theme.$secondary,
-			cloud: #08c5d1,
-			resources: #424242,
-			discord: theme.$brand-discord,
-			facebook: theme.$brand-facebook) {
-		.csp-link-#{$link_name} {
+	$link-colors: (
+		pro: theme.$secondary,
+		cloud: #08c5d1,
+		resources: #424242,
+		discord: theme.$brand-discord,
+		facebook: theme.$brand-facebook
+	);
+
+	@each $link-name, $color in $link-colors {
+		.csp-link-#{$link-name} {
 			background: $color;
 			border-color: $color;
 
@@ -264,7 +267,7 @@ a.csp-card {
 	}
 
 	.dashicons-buddicons-replies {
-		color: #3D9970;
+		color: #3d9970;
 	}
 }
 

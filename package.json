@@ -8,12 +8,13 @@
         "test": "tests"
     },
     "scripts": {
-        "test": "eslint && stylelint 'src/css/**/*.scss' && phpcs",
+        "test": "npm run stylelint && eslint && npm run phpcs",
         "build": "webpack",
         "watch": "webpack --watch",
         "bundle": "ts-node scripts/bundle.ts",
         "phpcs": "src/vendor/bin/phpcs -s --colors ./src/phpcs.xml",
         "phpcbf": "src/vendor/bin/phpcbf ./src/phpcs.xml",
+        "stylelint": "stylelint 'src/css/**/*.scss'",
         "version": "ts-node scripts/version.ts",
         "version-dev": "npm version --git-tag-version=false --preid=dev",
         "version-alpha": "npm version --git-tag-version=false --preid=alpha",
@@ -58,6 +59,7 @@
         "@eslint/eslintrc": "^3.2.0",
         "@eslint/js": "^9.20.0",
         "@stylistic/eslint-plugin": "^3.1.0",
+        "@stylistic/stylelint-plugin": "^3.1.2",
         "@tsconfig/node18": "^18.2.4",
         "@types/archiver": "^6.0.3",
         "@types/codemirror": "^5.60.15",
