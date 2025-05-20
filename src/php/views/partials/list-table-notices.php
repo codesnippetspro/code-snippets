@@ -110,8 +110,12 @@ $result_messages = apply_filters(
 );
 
 if ( isset( $result_messages[ $result ] ) ) {
+	$result_kses = [
+		'strong' => [],
+	];
+
 	printf(
 		'<div id="message" class="notice notice-success fade is-dismissible"><p>%s</p></div>',
-		wp_kses_post( $result_messages[ $result ] )
+		wp_kses( $result_messages[ $result ], $result_kses )
 	);
 }

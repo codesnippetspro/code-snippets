@@ -165,7 +165,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 								<?php
 								printf(
 									'%s <a target="_blank" href="%s">%s</a>',
-									esc_html__( 'Codevault:', 'code-snippets' );
+									esc_html__( 'Codevault:', 'code-snippets' ),
 									esc_url( sprintf( 'https://codesnippets.cloud/codevault/%s', $item->codevault ) ),
 									esc_html( $item->codevault )
 								);
