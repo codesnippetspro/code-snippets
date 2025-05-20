@@ -35,15 +35,15 @@
 
 .go-pro-badge,
 .go-pro-button .badge {
-	color: map.get($version-pro, 'text');
-	background-color: map.get($version-pro, 'background');
+	color: map.get(theme.$version-pro, 'text');
+	background-color: map.get(theme.$version-pro, 'background');
 	margin-inline-start: 1px;
 	font-size: 10px;
 }
 
 .core-badge {
-	color: map.get($version-core, 'text');
-	background: map.get($version-core, 'background');
+	color: map.get(theme.$version-core, 'text');
+	background: map.get(theme.$version-core, 'background');
 }
 
 @each $type, $color in theme.$types {
