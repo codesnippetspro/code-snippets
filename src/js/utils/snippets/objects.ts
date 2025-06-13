@@ -1,6 +1,6 @@
 import { SNIPPET_TYPE_SCOPES } from '../../types/Snippet'
 import type { Snippet, SnippetScope } from '../../types/Snippet'
-import type { Condition } from '../../types/Condition'
+import type { ConditionGroups } from '../../types/ConditionGroups'
 
 const isAbsInt = (value: unknown): value is number =>
 	'number' === typeof value && 0 < value
@@ -12,7 +12,7 @@ export const isValidScope = (scope: unknown): scope is SnippetScope =>
 	'string' === typeof scope && Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
 		typeScopes.some(typeScope => typeScope === scope))
 
-const isValidCondition = (condition: unknown): condition is Condition =>
+const isValidCondition = (condition: unknown): condition is ConditionGroups =>
 	'object' === typeof condition && null !== condition && Object.values(condition)
 		.every((group: unknown) => 'object' === typeof group && null !== group &&
 			Object.values(group).every((rule: unknown) => 'object' === typeof rule && null !== rule))
@@ -23,7 +23,7 @@ const generateObjectKeys = <T>(items: Record<PropertyKey, T>, transformItem?: (i
 			[`_${index}`, transformItem ? transformItem(item) : item]
 		))
 
-const parseConditionGroups = (condition: Condition) =>
+const parseConditionGroups = (condition: ConditionGroups) =>
 	generateObjectKeys(condition, group => group && generateObjectKeys(group))
 
 const parseConditions = (parsed: Snippet, fields: object): Partial<Snippet> => {

@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import type { ConditionSubjects } from './ConditionSubject'
 import type { AxiosAPI } from '../hooks/useAxios'
-import type { ConditionOperator } from './Condition'
+import type { ConditionOperator } from './ConditionGroups'
 import type { SelectGroups } from './SelectOption'
 import type { Snippet } from './Snippet'
 

@@ -1,7 +1,7 @@
 import { _x } from '@wordpress/i18n'
 import type { ConditionSubject, ConditionSubjects } from './ConditionSubject'
 
-export type Condition = Record<string, ConditionGroup | undefined>
+export type ConditionGroups = Record<string, ConditionGroup | undefined>
 export type ConditionGroup = Record<string, ConditionRule<ConditionSubject> | undefined>
 
 export interface ConditionRule<S extends ConditionSubject> {

@@ -1,8 +1,7 @@
 import React from 'react'
 import { __, _x } from '@wordpress/i18n'
-import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { useConditionOptions } from '../../hooks/useConditionOptions'
-import { CONDITION_OPERATOR_LABELS } from '../../types/Condition'
+import { CONDITION_OPERATOR_LABELS } from '../../types/ConditionGroups'
 import { CONDITIONS_SUBJECT_GROUPS } from '../../types/ConditionSubjectDefinitions'
 import { appendConditionRule, getConditionRule, removeConditionRule, updateConditionRule } from '../../utils/conditions/rules'
 import { CONDITION_SUBJECTS } from '../../utils/conditions/subjects'
@@ -10,180 +9,13 @@ import { buildOptionGroups } from '../../utils/options'
 import { Button } from '../common/Button'
 import { RemoveIcon } from '../common/icons/RemoveIcon'
 import { Select } from '../common/Select'
-import type { ConditionOperator } from '../../types/Condition'
-import type { SelectGroups, SelectOptions } from '../../types/SelectOption'
-import type { ConditionSubject, ConditionSubjects } from '../../types/ConditionSubject'
+import type { Snippet } from '../../types/Snippet'
+import type { Dispatch, SetStateAction } from 'react'
+import type { ConditionOperator } from '../../types/ConditionGroups'
+import type { ConditionSubject } from '../../types/ConditionSubject'
+import { ConditionObjectEditor } from './ConditionObjectEditor'
 
-interface ObjectSelectProps<S extends ConditionSubject> {
-	groupId: string
-	ruleId: string
-	isMulti?: boolean
-	options: SelectGroups<ConditionSubjects[S]>
-	optionsLoaded: boolean
-	onLoadMore: VoidFunction
-}
-
-const ObjectSelect = <S extends ConditionSubject>({
-	ruleId,
-	groupId,
-	options,
-	onLoadMore,
-	optionsLoaded,
-	isMulti = false
-}: ObjectSelectProps<S>) => {
-	const { snippet, setSnippet } = useSnippetForm()
-	const rule = getConditionRule(snippet, groupId, ruleId)
-
-	return (
-		<Select
-			required
-			isMulti={isMulti}
-			className="snippet-condition-field-select snippet-condition-object-select"
-			options={options}
-			currentValue={isMulti ? rule?.object : rule?.object?.[0]}
-			isLoading={!optionsLoaded}
-			onMenuScrollToBottom={onLoadMore}
-			onSelect={value => {
-				setSnippet(previous =>
-					updateConditionRule(previous, groupId, ruleId, { object: undefined === value ? [] : [value] }))
-			}}
-			onSelectMulti={values => {
-				setSnippet(previous =>
-					updateConditionRule(previous, groupId, ruleId, { object: values }))
-			}}
-		/>
-	)
-}
-
-interface OperatorSelectProps {
-	groupId: string
-	ruleId: string
-	options: SelectGroups<ConditionOperator>
-	currentOperator: ConditionOperator | undefined
-}
-
-const unaryOperations = new Set<ConditionOperator>(['is', 'not', 'true', 'false'])
-
-const OperatorSelect: React.FC<OperatorSelectProps> = ({ options, currentOperator, groupId, ruleId }) => {
-	const { setSnippet } = useSnippetForm()
-
-	return (
-		<Select
-			required
-			className="snippet-condition-field-select snippet-condition-operator-select"
-			options={options}
-			currentValue={currentOperator}
-			onChange={selected => {
-				const operator = selected?.value ?? undefined
-
-				setSnippet(previous =>
-					updateConditionRule(previous, groupId, ruleId, previousRule => ({
-						operator,
-						...operator && unaryOperations.has(operator) && previousRule.object
-							? { object: [previousRule.object[0]] }
-							: {}
-					})))
-			}}
-		/>
-	)
-}
-
-interface DateRangeSelectProps {
-	groupId: string
-	ruleId: string
-	objectIndex?: number
-}
-
-const DateSelect: React.FC<DateRangeSelectProps> = ({ groupId, ruleId, objectIndex = 0 }) => {
-	const { snippet, setSnippet } = useSnippetForm()
-	const rule = getConditionRule(snippet, groupId, ruleId)
-	const [value, setValue] = React.useState<string>(() =>
-		'string' === typeof rule?.object?.[objectIndex] ? rule.object[objectIndex] : '')
-
-	const type = 'timeOfDay' === rule?.subject ? 'time' : 'datetime-local'
-
-	return (
-		<input
-			type={type}
-			name={`snippet-condition-date-${objectIndex}`}
-			value={value}
-			required
-			onChange={event => {
-				setValue(event.target.value)
-
-				setSnippet(previous =>
-					updateConditionRule(previous, groupId, ruleId, ({ object }) => {
-						const updated = object ? [...object] : []
-						updated[objectIndex] = event.target.value
-						return { object: updated }
-					}))
-			}} />
-	)
-}
-
-const DateRangeSelect: React.FC<DateRangeSelectProps> = ({ groupId, ruleId }) =>
-	<div className="code-snippets-date-range">
-		<DateSelect groupId={groupId} ruleId={ruleId} objectIndex={0} />
-		<span className="sep">{_x('and', 'date separator', 'code-snippets')}</span>
-		<DateSelect groupId={groupId} ruleId={ruleId} objectIndex={1} />
-	</div>
-
-interface ConditionObjectEditorProps<S extends ConditionSubject> {
-	groupId: string
-	ruleId: string
-	objectOptions: SelectGroups<ConditionSubjects[S]>
-	currentOperator: ConditionOperator | undefined
-	operatorOptions: SelectOptions<ConditionOperator>
-	objectOptionsLoaded: boolean
-	loadMoreOptions: VoidFunction
-}
-
-const ConditionObjectEditor = <S extends ConditionSubject>({
-	ruleId,
-	groupId,
-	objectOptions,
-	currentOperator,
-	operatorOptions,
-	loadMoreOptions,
-	objectOptionsLoaded
-}: ConditionObjectEditorProps<S>) => {
-	const operatorSelectProps: OperatorSelectProps = { groupId, ruleId, currentOperator, options: operatorOptions }
-
-	const isSingleOperator = 'is' === currentOperator || 'not' === currentOperator
-	const isMultiOperator = 'in' === currentOperator || 'not in' === currentOperator
-	const isBooleanOperator = 'true' === currentOperator || 'false' === currentOperator
-	const isDateOperator = 'before' === currentOperator || 'after' === currentOperator || 'between' === currentOperator
-
-	return (
-		<>
-			{isSingleOperator || isMultiOperator || isDateOperator
-				? <OperatorSelect {...operatorSelectProps} /> : null}
-
-			{isSingleOperator || isMultiOperator || isBooleanOperator
-				? <ObjectSelect
-					ruleId={ruleId}
-					groupId={groupId}
-					options={objectOptions}
-					optionsLoaded={objectOptionsLoaded}
-					isMulti={isMultiOperator}
-					onLoadMore={loadMoreOptions}
-				/> : null}
-
-			{'before' === currentOperator || 'after' === currentOperator
-				? <DateSelect ruleId={ruleId} groupId={groupId} /> : null}
-
-			{'between' === currentOperator
-				? <DateRangeSelect ruleId={ruleId} groupId={groupId} /> : null}
-
-			{isBooleanOperator
-				? <OperatorSelect {...operatorSelectProps} /> : null}
-		</>
-	)
-}
-
-interface ConditionSubjectEditorProps {
-	groupId: string
-	ruleId: string
+interface ConditionSubjectEditorProps extends ConditionRuleEditorProps {
 	clearObjectOptions: VoidFunction
 }
 
@@ -195,36 +27,31 @@ const CONDITION_SUBJECT_OPTIONS = buildOptionGroups({
 		({ value: name as ConditionSubject, label })
 })
 
-const ConditionSubjectEditor: React.FC<ConditionSubjectEditorProps> = ({ groupId, ruleId, clearObjectOptions }) => {
-	const { snippet, setSnippet } = useSnippetForm()
-
-	return (
-		<Select
-			required
-			className="snippet-condition-field-select snippet-condition-subject-select"
-			options={CONDITION_SUBJECT_OPTIONS}
-			currentValue={snippet.conditions[groupId]?.[ruleId]?.subject}
-			onSelect={subject => {
-				clearObjectOptions()
-				setSnippet(previous => updateConditionRule(previous, groupId, ruleId, {
-					subject,
-					...subject
-						? { operator: CONDITION_SUBJECTS[subject].operators[0], object: [] }
-						: undefined
-				}))
-			}}
-		/>
-	)
-}
+const ConditionSubjectEditor: React.FC<ConditionSubjectEditorProps> = ({ condition, groupId, ruleId, setCondition, clearObjectOptions }) =>
+	<Select
+		required
+		options={CONDITION_SUBJECT_OPTIONS}
+		currentValue={condition.conditions[groupId]?.[ruleId]?.subject}
+		onSelect={subject => {
+			clearObjectOptions()
+			setCondition(previous => updateConditionRule(previous, groupId, ruleId, {
+				subject,
+				...subject
+					? { operator: CONDITION_SUBJECTS[subject].operators[0], object: [] }
+					: undefined
+			}))
+		}}
+	/>
 
 export interface ConditionRuleEditorProps {
-	groupId: string
 	ruleId: string
+	groupId: string
+	condition: Snippet
+	setCondition: Dispatch<SetStateAction<Snippet>>
 }
 
-export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ groupId, ruleId }) => {
-	const { snippet, setSnippet } = useSnippetForm()
-	const rule = getConditionRule(snippet, groupId, ruleId)
+export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId, groupId, condition, setCondition }) => {
+	const rule = getConditionRule(condition, groupId, ruleId)
 	const { objectOptions, loadedSubject, clearObjectOptions, loadMoreOptions } = useConditionOptions(rule?.subject)
 
 	const allowedOperators: ConditionOperator[] = rule?.subject
@@ -236,40 +63,39 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ groupI
 		: allowedOperators[0]
 
 	return (
-		<div id={`snippet-condition-group-${groupId}-rule-${ruleId}`} className="snippet-condition-rule">
-			<ConditionSubjectEditor
-				groupId={groupId}
-				ruleId={ruleId}
-				clearObjectOptions={clearObjectOptions}
-			/>
+		<tr id={`snippet-condition-group-${groupId}-rule-${ruleId}`} className="snippet-condition-rule">
+			<td className="snippet-condition-field snippet-condition-subject">
+				<ConditionSubjectEditor {...{ condition, groupId, ruleId, setCondition, clearObjectOptions }} />
+			</td>
 
 			<ConditionObjectEditor
-				groupId={groupId}
-				ruleId={ruleId}
+				{...{ ruleId, groupId, condition, setCondition, currentOperator, loadMoreOptions }}
 				objectOptions={objectOptions ?? []}
-				currentOperator={currentOperator}
 				operatorOptions={allowedOperators.map(operator =>
 					({ value: operator, label: CONDITION_OPERATOR_LABELS[operator] }))}
 				objectOptionsLoaded={loadedSubject === rule?.subject}
-				loadMoreOptions={loadMoreOptions}
 			/>
 
-			<Button
-				primary
-				className="condition-add-rule-button"
-				title={__('Add a new rule after this one.', 'code-snippets')}
-				onClick={() => setSnippet(previous => appendConditionRule(previous, groupId, ruleId))}
-			>
-				{_x('and', 'boolean logical operator', 'code-snippets')}
-			</Button>
+			<td>
+				<Button
+					primary
+					className="condition-add-rule-button"
+					title={__('Add a new rule after this one.', 'code-snippets')}
+					onClick={() => setCondition(previous => appendConditionRule(previous, groupId, ruleId))}
+				>
+					{_x('and', 'boolean logical operator', 'code-snippets')}
+				</Button>
+			</td>
 
-			<Button
-				className="condition-remove-rule-button"
-				title={__('Remove this condition rule.', 'code-snippets')}
-				onClick={() => setSnippet(previous => removeConditionRule(previous, groupId, ruleId))}
-			>
-				<RemoveIcon />
-			</Button>
-		</div>
+			<td>
+				<Button
+					className="condition-remove-rule-button"
+					title={__('Remove this condition rule.', 'code-snippets')}
+					onClick={() => setCondition(previous => removeConditionRule(previous, groupId, ruleId))}
+				>
+					<RemoveIcon />
+				</Button>
+			</td>
+		</tr>
 	)
 }

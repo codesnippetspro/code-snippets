@@ -5,6 +5,7 @@
 	justify-content: center;
 	border-block-end: 1px dotted;
 	position: relative;
+	vertical-align: middle;
 }
 
 .help-tooltip-anchor {
@@ -32,8 +33,9 @@
 	margin-inline-end: -10px;
 	opacity: 0;
 	transition: opacity 0.3s;
-	white-space: nowrap;
 	font-size: small;
+	text-transform: none;
+	min-width: 200px;
 
 	.help-tooltip:hover > & {
 		visibility: visible;

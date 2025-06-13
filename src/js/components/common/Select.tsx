@@ -71,6 +71,8 @@ export const Select = <T, IsMulti extends boolean = false>({
 		<SelectBase
 			styles={{
 				menu: base => ({ ...base, zIndex: 9999 }),
+				control: base => ({ ...base, flexWrap: 'nowrap' }),
+				singleValue: base => ({ ...base, overflow: 'visible' }),
 				indicatorSeparator: () => ({ display: 'none' })
 			}}
 			value={isMulti ? selectedOptions : selectedOptions[0] ?? null}

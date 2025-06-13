@@ -27,11 +27,6 @@
 		align-self: center;
 	}
 
-	.condition-add-rule-button {
-		text-transform: uppercase;
-		justify-self: center;
-	}
-
 	.condition-remove-rule-button {
 		border: none;
 		background: none;
@@ -45,6 +40,11 @@
 	}
 }
 
+.condition-add-rule-button {
+	text-transform: uppercase;
+	justify-self: center;
+}
+
 .snippet-condition-groups {
 	display: flex;
 	flex-flow: column;
@@ -54,10 +54,8 @@
 .snippet-condition-group {
 	background-color: #f0f0f0;
 	border-radius: 8px;
-	display: flex;
-	flex-direction: column;
-	padding: 16px;
-	gap: 8px;
+	padding: 8px;
+	border-spacing: 8px;
 }
 
 .condition-group-sep {
@@ -83,29 +81,37 @@
 }
 
 .snippet-condition-rule {
-	display: flex;
-	flex-flow: row;
-	gap: 1em;
-	align-items: stretch;
+	//display: flex;
+	//flex-flow: row;
+	//gap: 1em;
+	//align-items: stretch;
 }
 
-.snippet-condition-subject-select {
-	min-inline-size: 12em;
-
-	&:last-of-type {
-		flex: 1;
-	}
+.snippet-condition-field {
+	vertical-align: top;
 }
 
-.snippet-condition-operator-select {
-	min-inline-size: 10em;
+td.snippet-condition-subject {
+	width: 100%;
+}
+
+//.snippet-condition-subject {
+//	min-inline-size: 12em;
+//
+//	&:last-of-type {
+//		flex: 1;
+//	}
+//}
+
+.snippet-condition-operator {
+	//min-inline-size: 10em;
 	text-transform: uppercase;
 }
 
-.snippet-condition-object-select {
-	min-inline-size: 16em;
-	flex: 1;
-}
+//.snippet-condition-object {
+//	min-inline-size: 16em;
+//	flex: 1;
+//}
 
 .snippet-condition-rule input[type='time'],
 .snippet-condition-rule input[type='datetime-local'] {
@@ -120,6 +126,7 @@
 	flex: 1;
 	align-items: stretch;
 	gap: 0.5em;
+	flex-flow: row wrap;
 
 	.sep {
 		align-self: center;
@@ -136,5 +143,19 @@
 		grid-template-columns: 1fr auto;
 		margin: 1em 0;
 		gap: 1em;
+	}
+}
+
+.snippet-condition-viewer {
+	.snippet-condition-field {
+		height: 40px;
+		background: #fff;
+		border-radius: 5px;
+		padding: 12px;
+	}
+
+	.condition-add-rule-button {
+		line-height: 40px;
+		color: #888;
 	}
 }

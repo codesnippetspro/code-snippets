@@ -1,22 +1,25 @@
-import { BaseControl } from '@wordpress/components'
-import { __ } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
-import { useSnippetForm } from '../../hooks/useSnippetForm'
+import { __ } from '@wordpress/i18n'
 import { getSnippetDisplayName, isCondition } from '../../utils/snippets/snippets'
 import { Button } from '../common/Button'
+import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { Select } from '../common/Select'
+import { SubmitButton } from '../common/SubmitButton'
 import type { SelectOption } from '../../types/SelectOption'
 import type { Snippet } from '../../types/Snippet'
 import type { FormEventHandler } from 'react'
+import { ConditionViewer } from '../ConditionViewer'
 
 export interface ApplyConditionFormProps {
-	closeModal: VoidFunction
+	onEdit: VoidFunction
+	onClose: VoidFunction
+	selectedCondition?: Snippet
+	setSelectedCondition: (id?: number) => void
 }
 
-export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ closeModal }) => {
-	const { snippet, setSnippet, snippetsList } = useSnippetForm()
+export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ selectedCondition, setSelectedCondition, onClose, onEdit }) => {
+	const { setSnippet, snippetsList } = useSnippetForm()
 	const [options, setOptions] = useState<SelectOption<Snippet['id']>[]>()
-	const [conditionId, setConditionId] = useState<Snippet['id'] | undefined>(snippet.conditionId)
 
 	useEffect(() => {
 		if (!options && snippetsList) {
@@ -28,39 +31,62 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ closeMod
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
 
-		// TODO: add validation
-		if (conditionId) {
-			setSnippet(previous => ({ ...previous, conditionId }))
-			closeModal()
+		if (selectedCondition) {
+			setSnippet(previous => ({ ...previous, conditionId: selectedCondition?.id }))
+			onClose()
 		}
 	}
 
 	return (
 		<form className="modal-form" onSubmit={handleSubmit}>
 			<div className="modal-content">
-				<BaseControl label={__('Saved Conditions', 'code-snippets')}>
-					<Select
-						required
-						options={options}
-						onSelect={newValue => setConditionId(newValue)}
-						isLoading={options === undefined}
-						currentValue={conditionId}
-					/>
+				<div className="modal-content-top">
+					<label htmlFor="condition-select">{__('Selected Condition', 'code-snippets')}</label>
 
-				</BaseControl>
+					<Button simple onClick={() => {
+						setSelectedCondition(undefined)
+						onEdit()
+					}}>
+						{__('Create new condition', 'code-snippets')}
+					</Button>
+				</div>
+
+				<div className="modal-content-mid">
+					<Select
+						name="condition-select"
+						required
+						isClearable
+						options={options}
+						onSelect={newValue => setSelectedCondition(newValue)}
+						isLoading={options === undefined}
+						currentValue={selectedCondition?.id}
+					/>
+				</div>
+
+				{selectedCondition && <ConditionViewer groups={selectedCondition.conditions} />}
 			</div>
 
 			<div className="modal-footer">
-				<Button className="cancel-button" onClick={() => closeModal()}>
+				<Button simple large onClick={onClose}>
 					{__('Cancel', 'code-snippets')}
 				</Button>
 
-				<button
-					type="submit"
-					className="button button-primary button-large"
-				>
-					{__('Apply', 'code-snippets')}
-				</button>
+				<div>
+					<Button large disabled={!selectedCondition} onClick={() => setSelectedCondition()}>
+						{__('Clear', 'code-snippets')}
+					</Button>
+
+					<Button large disabled={!selectedCondition} onClick={() => onEdit()}>
+						{__('Edit Condition', 'code-snippets')}
+					</Button>
+
+					<SubmitButton
+						large
+						primary
+						disabled={!selectedCondition}
+						text={__('Apply Condition', 'code-snippets')}
+					/>
+				</div>
 			</div>
 		</form>
 	)

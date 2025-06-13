@@ -1,3 +1,18 @@
+.wp-core-ui .button.button-simple-text {
+	background: none;
+	border: none;
+	appearance: none;
+	min-height: auto;
+	display: inline;
+	font-size: inherit;
+	padding: 0;
+	line-height: normal;
+
+	&:focus {
+		outline: none;
+		box-shadow: none;
+	}
+}
 
 .code-snippets-condition-modal {
 	overflow: initial;
@@ -26,20 +41,24 @@
 		display: flex;
 		flex-flow: column;
 		flex: 1;
+		overflow-y: auto;
 	}
 
-	.modal-nav {
+	.modal-splash {
 		display: flex;
-		flex-flow: row wrap;
-		border-block-start: 1px solid #E2E2E4;;
-		border-block-end: 1px solid #E2E2E4;;
-		padding: 17.4px 24px;
-		background: #fff;
-		gap: 2em;
+		justify-content: center;
+		align-items: center;
+		flex-flow: column;
+		flex: 1;
+	}
+
+	.modal-splash-buttons {
+		display: flex;
+		gap: 8px;
 	}
 
 	.modal-footer, .modal-content {
-		padding: 24px 28px;
+		padding: 21px 28px;
 	}
 
 	.modal-form {
@@ -52,16 +71,37 @@
 		flex: 1;
 	}
 
+	.modal-content-top {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		label {
+			font-weight: bold;
+		}
+	}
+
+	.modal-content-mid {
+		padding: 16px 0 36px;
+		margin-bottom: 36px;
+		border-bottom: 1px solid #E2E2E4;
+
+		input[type="text"] {
+			width: 100%;
+			height: 45px;
+			border-radius: 5px;
+			border: 1px solid #C3C4C7;
+		}
+	}
+
 	.modal-footer {
 		border-block-start: 1px solid #E2E2E4;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-
-		.cancel-button {
-			background: none;
-			border: none;
-		}
+		bottom: 0;
+		background: #F6F7F7;
+		width: 100%;
 
 		> div {
 			display: flex;
@@ -69,12 +109,6 @@
 			align-items: center;
 		}
 
-		.condition-title-input {
-			border: 1px solid #C3C4C7;
-			inline-size: 20em;
-		}
-
-		.condition-title-input,
 		.button-large {
 			block-size: 45px;
 		}

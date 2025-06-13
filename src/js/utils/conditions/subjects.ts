@@ -7,7 +7,7 @@ import type { ConditionSubjects, DateConditionSubjects, PostConditionSubjects, S
 import type { LocalesSchema } from '../../types/schema/LocaleSchema'
 import type { PostStatusesSchema } from '../../types/schema/PostStatusSchema'
 import type { SelectOptions } from '../../types/SelectOption'
-import type { ConditionOperator } from '../../types/Condition'
+import type { ConditionOperator } from '../../types/ConditionGroups'
 import type { UserRoles } from '../../types/schema/UserRole'
 import type { ConditionSubjectDefinitions } from '../../types/ConditionSubjectDefinitions'
 import type { UsersSchema } from '../../types/schema/UserSchema'
