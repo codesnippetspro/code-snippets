@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { REST_API_AXIOS_CONFIG, REST_CLOUD_BASE } from '../utils/restAPI'
-import { useAxios } from './useAxios'
+import { REST_CLOUD_BASE } from '../utils/restAPI'
+import { useRestAPI } from './useRestAPI'
 import type { Snippet, SnippetType } from '../types/Snippet'
 
 export type ExplainSnippetFields = keyof Pick<Snippet, 'code' | 'desc' | 'tags'>
@@ -29,7 +29,7 @@ export interface GenerativeAPI {
 }
 
 export const useGenerativeAPI = (): GenerativeAPI => {
-	const { post } = useAxios(REST_API_AXIOS_CONFIG)
+	const { api: { post } } = useRestAPI()
 
 	return useMemo((): GenerativeAPI => ({
 		generateSnippet: (prompt, type) =>

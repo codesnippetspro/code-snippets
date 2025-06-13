@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { CONDITION_SUBJECTS } from '../utils/conditions/subjects'
-import { REST_API_AXIOS_CONFIG } from '../utils/restAPI'
-import { useAxios } from './useAxios'
+import { useRestAPI } from './useRestAPI'
 import { useSnippetForm } from './useSnippetForm'
-import type { AxiosAPI } from './useAxios'
+import { useSnippetsList } from './useSnippetsList'
+import type { RestAPI} from './useRestAPI'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ConditionSubjectDefinitions } from '../types/ConditionSubjectDefinitions'
 import type { ConditionSubject, ConditionSubjects } from '../types/ConditionSubject'
@@ -23,7 +23,7 @@ const findSubjectDefinition = <S extends ConditionSubject>(selectedSubject: S): 
 }
 
 const usePagedConditionOptions = <S extends ConditionSubject>(
-	restAPI: AxiosAPI,
+	restAPI: RestAPI,
 	selectedSubject: S | undefined,
 	setOptionsCache: Dispatch<SetStateAction<ConditionSubjectOptions>>,
 	handleOptionsLoaded: (setOptions: SetStateAction<SelectGroups<ConditionSubjects[S]> | undefined>) => void
@@ -72,8 +72,9 @@ export interface UseConditionOptions<S extends ConditionSubject> {
 }
 
 export const useConditionOptions = <S extends ConditionSubject>(selectedSubject: S | undefined): UseConditionOptions<S> => {
-	const restAPI = useAxios(REST_API_AXIOS_CONFIG)
-	const { snippet, snippetsList } = useSnippetForm()
+	const { api } = useRestAPI()
+	const { snippet } = useSnippetForm()
+	const { snippetsList } = useSnippetsList()
 	const [optionsCache, setOptionsCache] = useState<ConditionSubjectOptions>({})
 	const [loadedSubject, setLoadedSubject] = useState<ConditionSubject>()
 	const [objectOptions, setObjectOptions] = useState<SelectGroups<ConditionSubjects[S]> | undefined>(undefined)
@@ -84,13 +85,13 @@ export const useConditionOptions = <S extends ConditionSubject>(selectedSubject:
 		setObjectOptions(options)
 	}, [selectedSubject])
 
-	const { loadPagedOptions, loadMoreOptions } = usePagedConditionOptions(restAPI, selectedSubject, setOptionsCache, handleOptionsLoaded)
+	const { loadPagedOptions, loadMoreOptions } = usePagedConditionOptions(api, selectedSubject, setOptionsCache, handleOptionsLoaded)
 
 	const loadAllOptions = useCallback(({ subject, definition }: SubjectWithDefinition<S>) => {
 		if (definition.fetchAllOptions && !loadingOptions) {
 			setLoadingOptions(true)
 
-			definition.fetchAllOptions(restAPI)
+			definition.fetchAllOptions(api)
 				.then(options => {
 					setOptionsCache(previous => ({ ...previous, [subject]: options }))
 					handleOptionsLoaded(options)
@@ -101,7 +102,7 @@ export const useConditionOptions = <S extends ConditionSubject>(selectedSubject:
 					setLoadingOptions(false)
 				})
 		}
-	}, [handleOptionsLoaded, loadingOptions, restAPI])
+	}, [handleOptionsLoaded, loadingOptions, api])
 
 	useEffect(() => {
 		if (objectOptions === undefined && selectedSubject !== undefined) {

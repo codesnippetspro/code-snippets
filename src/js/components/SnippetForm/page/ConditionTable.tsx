@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useMemo, useState } from 'react'
+import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { buildSnippetSelectOptionGroups, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isCondition } from '../../../utils/snippets/snippets'
@@ -44,7 +46,8 @@ interface SnippetSelectorProps {
 
 const SnippetSelector: React.FC<SnippetSelectorProps> = ({ onSubmit }) => {
 	const [currentValue, setCurrentValue] = useState<Snippet>()
-	const { snippet: condition, snippetsList } = useSnippetForm()
+	const { snippetsList } = useSnippetsList()
+	const { snippet: condition } = useSnippetForm()
 
 	const options: SelectGroup<Snippet>[] | undefined = useMemo(
 		() =>
@@ -78,7 +81,9 @@ const SnippetSelector: React.FC<SnippetSelectorProps> = ({ onSubmit }) => {
 }
 
 export const ConditionTable: React.FC = () => {
-	const { snippet: condition, snippetsList, refreshSnippetsList, api: { attach, detach } } = useSnippetForm()
+	const { snippet: condition } = useSnippetForm()
+	const { snippetsAPI: { attach, detach } } = useRestAPI()
+	const { snippetsList, refreshSnippetsList } = useSnippetsList()
 	const [attachedSnippets, setAttachedSnippets] = useState<Snippet[]>()
 
 	useEffect(() => {

@@ -1,12 +1,11 @@
 import classnames from 'classnames'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect } from 'react'
 import { __ } from '@wordpress/i18n'
 import { PanelBody, Spinner, TextControl, ToggleControl } from '@wordpress/components'
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { shortcode } from '@wordpress/icons'
-import { useSnippetsAPI } from '../hooks/useSnippetsAPI'
-import { handleUnknownError } from '../utils/errors'
-import { isNetworkAdmin } from '../utils/screen'
+import { WithRestAPIContext } from '../hooks/useRestAPI'
+import { WithSnippetsListContext } from '../hooks/useSnippetsList'
 import { buildSnippetSelectOptionGroups, getSnippetType, isCondition } from '../utils/snippets/snippets'
 import { SnippetSelector } from './SnippetSelector'
 import type { SelectGroup } from '../types/SelectOption'
@@ -61,29 +60,11 @@ const SnippetSourceCode: React.FC<SnippetSourceCodeProps> = ({
 	)
 }
 
+const buildSnippetListOptions = (snippets: Snippet[]): SelectGroup<Snippet>[] =>
+	buildSnippetSelectOptionGroups(snippets.filter(snippet => !isCondition(snippet)))
+
 const Edit: React.FC<BlockEditProps<SourceBlockAttributes>> = ({ attributes, setAttributes }) => {
 	const blockProps = useBlockProps()
-	const { fetchAll } = useSnippetsAPI()
-	const [options, setOptions] = useState<SelectGroup<Snippet>[]>([])
-	const [snippets, setSnippets] = useState<Snippet[]>()
-
-	useEffect(() => {
-		if (!snippets) {
-			fetchAll(isNetworkAdmin())
-				.then(snippetsList => {
-					setSnippets(snippetsList)
-					setOptions(buildSnippetSelectOptionGroups(snippetsList.filter(snippet => !isCondition(snippet))))
-				})
-				.catch(handleUnknownError)
-		}
-	}, [fetchAll, snippets])
-
-	const snippet = useMemo<Snippet | undefined>(
-		() => 0 === attributes.snippet_id
-			? undefined
-			: snippets?.find(({ id }) => id === attributes.snippet_id),
-		[attributes.snippet_id, snippets]
-	)
 
 	return (
 		<div {...blockProps}>
@@ -101,17 +82,22 @@ const Edit: React.FC<BlockEditProps<SourceBlockAttributes>> = ({ attributes, set
 				</PanelBody>
 			</InspectorControls>
 
-			<SnippetSelector
-				icon={shortcode}
-				label={__('Snippet Source Code', 'code-snippets')}
-				className="code-snippets-source-block"
-				options={options}
-				onChange={snippet => setAttributes({ snippet_id: snippet?.id ?? 0 })}
-				isValueSelected={0 !== attributes.snippet_id}
-				renderContent={() => snippet
-					? <SnippetSourceCode snippet={snippet} attributes={attributes} />
-					: <Spinner />}
-			/>
+			<WithRestAPIContext>
+				<WithSnippetsListContext>
+					<SnippetSelector
+						icon={shortcode}
+						label={__('Snippet Source Code', 'code-snippets')}
+						onChange={snippet => setAttributes({ snippet_id: snippet?.id ?? 0 })}
+						className="code-snippets-source-block"
+						buildOptions={buildSnippetListOptions}
+						selectedId={attributes.snippet_id}
+						renderContent={snippet =>
+							snippet
+								? <SnippetSourceCode snippet={snippet} attributes={attributes} />
+								: <Spinner />}
+					/>
+				</WithSnippetsListContext>
+			</WithRestAPIContext>
 		</div>
 	)
 }

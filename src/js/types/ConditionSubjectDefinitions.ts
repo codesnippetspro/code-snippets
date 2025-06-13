@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n'
 import type { ConditionSubjects } from './ConditionSubject'
-import type { AxiosAPI } from '../hooks/useAxios'
+import type { RestAPI } from '../hooks/useRestAPI'
 import type { ConditionOperator } from './ConditionGroups'
 import type { SelectGroups } from './SelectOption'
 import type { Snippet } from './Snippet'
@@ -10,8 +10,8 @@ export interface ConditionSubjectDefinition<T> {
 	group: keyof typeof CONDITIONS_SUBJECT_GROUPS
 	operators: ConditionOperator[]
 	options?: SelectGroups<T>
-	fetchAllOptions?: (restAPI: AxiosAPI) => Promise<SelectGroups<T>>
-	fetchPagedOptions?: (restAPI: AxiosAPI, page: number) => Promise<SelectGroups<T>>
+	fetchAllOptions?: (restAPI: RestAPI) => Promise<SelectGroups<T>>
+	fetchPagedOptions?: (restAPI: RestAPI, page: number) => Promise<SelectGroups<T>>
 	deriveOptions?: (snippet: Snippet, snippets: readonly Snippet[]) => SelectGroups<T>
 	useSubjectOptions?: keyof { [A in keyof ConditionSubjects as ConditionSubjects[A] extends T ? A : never]: A }
 }

@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { __ } from '@wordpress/i18n'
 import ServerSideRender from '@wordpress/server-side-render'
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { ExternalLink, PanelBody, ToggleControl } from '@wordpress/components'
-import { useSnippetsAPI } from '../hooks/useSnippetsAPI'
-import { handleUnknownError } from '../utils/errors'
-import { isNetworkAdmin } from '../utils/screen'
+import { WithRestAPIContext } from '../hooks/useRestAPI'
+import { WithSnippetsListContext } from '../hooks/useSnippetsList'
 import { getSnippetDisplayName, getSnippetType } from '../utils/snippets/snippets'
 import { SnippetSelector } from './SnippetSelector'
 import type { SelectOptions } from '../types/SelectOption'
@@ -35,14 +34,6 @@ export interface ContentBlockAttributes {
 
 const Edit: React.FC<BlockEditProps<ContentBlockAttributes>> = ({ setAttributes, attributes }) => {
 	const blockProps = useBlockProps()
-	const { fetchAll } = useSnippetsAPI()
-	const [options, setOptions] = useState<SelectOptions<Snippet>>([])
-
-	useEffect(() => {
-		fetchAll(isNetworkAdmin())
-			.then(snippets => setOptions(buildOptions(snippets)))
-			.catch(handleUnknownError)
-	}, [fetchAll])
 
 	return (
 		<div {...blockProps}>
@@ -73,16 +64,20 @@ const Edit: React.FC<BlockEditProps<ContentBlockAttributes>> = ({ setAttributes,
 				</PanelBody>
 			</InspectorControls>
 
-			<SnippetSelector
-				icon="shortcode"
-				label={__('Content Snippet', 'code-snippets')}
-				className="code-snippets-content-block"
-				options={options}
-				onChange={snippet => setAttributes({ snippet_id: snippet?.id ?? 0 })}
-				isValueSelected={0 !== attributes.snippet_id}
-				renderContent={() =>
-					<ServerSideRender block={CONTENT_BLOCK} attributes={{ ...attributes, debug: true }} />}
-			/>
+			<WithRestAPIContext>
+				<WithSnippetsListContext>
+					<SnippetSelector
+						icon="shortcode"
+						label={__('Content Snippet', 'code-snippets')}
+						className="code-snippets-content-block"
+						buildOptions={buildOptions}
+						onChange={snippet => setAttributes({ snippet_id: snippet?.id ?? 0 })}
+						selectedId={attributes.snippet_id}
+						renderContent={() =>
+							<ServerSideRender block={CONTENT_BLOCK} attributes={{ ...attributes, debug: true }} />}
+					/>
+				</WithSnippetsListContext>
+			</WithRestAPIContext>
 		</div>
 	)
 }

@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { createSnippetObject, isCondition } from './snippets'
-import type { SnippetsAPI } from '../../hooks/useSnippetsAPI'
+import type { SnippetsAPI } from './api'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ScreenNotice } from '../../types/ScreenNotice'
 import type { Snippet } from '../../types/Snippet'
@@ -53,21 +53,25 @@ const getSuccessNotice = (request: Snippet, response: Snippet, active: boolean |
 	}
 }
 
-export const submitSnippet = async (
+export const submitSnippet = async ({
+	snippet,
+	setSnippet,
+	snippetsAPI,
+	setIsWorking,
+	setCurrentNotice
+}: {
 	snippet: Snippet,
-	{ api, setSnippet, setIsWorking, setCurrentNotice }: {
-		api: SnippetsAPI,
-		setSnippet: Dispatch<SetStateAction<Snippet>>,
-		setIsWorking: Dispatch<SetStateAction<boolean>>,
-		setCurrentNotice: Dispatch<SetStateAction<ScreenNotice | undefined>>
-	}
-) => {
+	snippetsAPI: SnippetsAPI,
+	setSnippet: Dispatch<SetStateAction<Snippet>>,
+	setIsWorking: Dispatch<SetStateAction<boolean>>,
+	setCurrentNotice: Dispatch<SetStateAction<ScreenNotice | undefined>>
+}) => {
 	setIsWorking(true)
 	setCurrentNotice(undefined)
 
 	const result = await (async (): Promise<Snippet | string | undefined> => {
 		try {
-			const data = await (0 === snippet.id ? api.create(snippet) : api.update(snippet))
+			const data = await (0 === snippet.id ? snippetsAPI.create(snippet) : snippetsAPI.update(snippet))
 			setIsWorking(false)
 			return data.id ? data : undefined
 		} catch (error) {

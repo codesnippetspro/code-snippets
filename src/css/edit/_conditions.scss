@@ -42,6 +42,7 @@
 	.code-snippets-select {
 		div[aria-disabled=true] {
 			background-color: #fff;
+			border-color: #ccc;
 
 			div[class$='singleValue'] {
 				color: #333 !important;
@@ -71,6 +72,10 @@
 	display: flex;
 	flex-flow: column;
 	gap: 24px;
+
+	.code-snippets-condition-modal & {
+		gap: 16px;
+	}
 }
 
 .snippet-condition-group {
@@ -130,11 +135,10 @@
 	height: 100%;
 	background-color: #fff;
 	border-radius: 4px;
-	border: 1px solid #e6e6e6;
+	border: 1px solid #ccc;
 
 	&[disabled] {
 		color: #333 !important;
-		border-color: #e6e6e6;
 
 		&::-webkit-outer-spin-button,
 		&::-webkit-inner-spin-button {
@@ -155,6 +159,10 @@
 	flex-flow: row;
 	height: 100%;
 
+	.code-snippets-condition-modal & {
+		flex-flow: column;
+	}
+
 	input {
 		flex: 1;
 	}
@@ -169,7 +177,6 @@
 
 		&::before, &::after {
 			content: '';
-			flex: 1;
 			border-block-end: 1px solid #e2e2e4;
 			margin: 0 3px;
 		}

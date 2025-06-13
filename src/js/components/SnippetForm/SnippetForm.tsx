@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
+import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { SubmitSnippetAction, useSnippetFormSubmit } from '../../hooks/useSnippetFormSubmit'
+import { WithSnippetsListContext } from '../../hooks/useSnippetsList'
 import { createSnippetObject, getSnippetType, isCondition } from '../../utils/snippets/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { ConditionEditor } from '../ConditionEditor'
@@ -88,6 +90,10 @@ const EditForm: React.FC = () => {
 }
 
 export const SnippetForm: React.FC = () =>
-	<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
-		<EditForm />
-	</WithSnippetFormContext>
+	<WithRestAPIContext>
+		<WithSnippetsListContext>
+			<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
+				<EditForm />
+			</WithSnippetFormContext>
+		</WithSnippetsListContext>
+	</WithRestAPIContext>
