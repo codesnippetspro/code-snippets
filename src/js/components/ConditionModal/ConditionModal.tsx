@@ -26,18 +26,19 @@ const ModalSplash: React.FC<ModalSplashProps> = ({ setIsCreating }) =>
 		</p>
 	</div>
 
-interface ModalInnerProps extends ConditionModalProps {
+interface ModalInnerProps {
 	isCreating: boolean
+	closeModal: VoidFunction
 	setIsCreating: (isCreating?: boolean) => void
 }
 
 const ModalInner: React.FC<ModalInnerProps> = ({ isCreating, setIsCreating, closeModal }) => {
-	const { snippetsList } = useSnippetForm()
-	const [selectedConditionId, setSelectedConditionId] = useState<number>(0)
+	const { snippet, snippetsList } = useSnippetForm()
+	const [selectedConditionId, setSelectedConditionId] = useState<number>(snippet.conditionId)
 
 	const selectedCondition = useMemo(() =>
-			snippetsList?.find(snippet => snippet.id === selectedConditionId),
-		[snippetsList, selectedConditionId]
+		snippetsList?.find(snippet => snippet.id === selectedConditionId),
+	[snippetsList, selectedConditionId]
 	)
 
 	return isCreating
@@ -56,29 +57,30 @@ const ModalInner: React.FC<ModalInnerProps> = ({ isCreating, setIsCreating, clos
 }
 
 export interface ConditionModalProps {
-	closeModal: VoidFunction
+	isOpen: boolean
+	setIsOpen: (isOpen: boolean) => void
 }
 
-export const ConditionModal: React.FC<ConditionModalProps> = ({ closeModal }) => {
+export const ConditionModal: React.FC<ConditionModalProps> = ({ isOpen, setIsOpen }) => {
 	const { snippet } = useSnippetForm()
 	const [isCreating, setIsCreating] = useState<boolean | undefined>(() => snippet.conditionId ? false : undefined)
 
-	return (
-		<Modal
+	return isOpen
+		? <Modal
 			size="large"
 			title="Snippet Conditions"
 			className="code-snippets-condition-modal"
-			onRequestClose={closeModal}
+			onRequestClose={() => setIsOpen(false)}
 		>
 			{isCreating === undefined
 				? <ModalSplash
 					setIsCreating={setIsCreating}
 				/>
 				: <ModalInner
-					closeModal={closeModal}
+					closeModal={() => setIsOpen(false)}
 					isCreating={isCreating}
 					setIsCreating={setIsCreating}
 				/>}
 		</Modal>
-	)
+		: null
 }

@@ -55,8 +55,12 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 
 	const isReadOnly = useMemo(() => !isLicensed() && isProSnippet({ scope: snippet.scope }), [snippet.scope])
 
-	const saveSnippet = useCallback((delta?: Partial<Snippet>) =>
-		submitSnippet({ ...snippet, ...delta }, { api, setSnippet, setIsWorking, setCurrentNotice }), [api, snippet])
+	const saveSnippet = useCallback(
+		(delta?: Partial<Snippet>) => submitSnippet(
+			{ ...snippet, ...delta },
+			{ api, setSnippet, setIsWorking, setCurrentNotice }
+		),
+		[api, snippet])
 
 	useEffect(() => {
 		if (!snippetsList) {
@@ -98,7 +102,7 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 		codeEditorInstance,
 		handleRequestError,
 		refreshSnippetsList,
-		setCodeEditorInstance,
+		setCodeEditorInstance
 	}
 
 	return <SnippetFormContext.Provider value={value}>{children}</SnippetFormContext.Provider>

@@ -5,10 +5,34 @@ import { Button } from '../common/Button'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { Select } from '../common/Select'
 import { SubmitButton } from '../common/SubmitButton'
+import { ConditionEditor } from '../ConditionEditor'
 import type { SelectOption } from '../../types/SelectOption'
 import type { Snippet } from '../../types/Snippet'
 import type { FormEventHandler } from 'react'
-import { ConditionViewer } from '../ConditionViewer'
+
+const ModalFooter: React.FC<ApplyConditionFormProps> = ({ onClose, onEdit, selectedCondition, setSelectedCondition }) =>
+	<div className="modal-footer">
+		<Button simple large onClick={onClose}>
+			{__('Cancel', 'code-snippets')}
+		</Button>
+
+		<div>
+			<Button large disabled={!selectedCondition} onClick={() => setSelectedCondition()}>
+				{__('Clear', 'code-snippets')}
+			</Button>
+
+			<Button large disabled={!selectedCondition} onClick={() => onEdit()}>
+				{__('Edit Condition', 'code-snippets')}
+			</Button>
+
+			<SubmitButton
+				large
+				primary
+				disabled={!selectedCondition}
+				text={__('Apply Condition', 'code-snippets')}
+			/>
+		</div>
+	</div>
 
 export interface ApplyConditionFormProps {
 	onEdit: VoidFunction
@@ -32,7 +56,7 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ selected
 		event.preventDefault()
 
 		if (selectedCondition) {
-			setSnippet(previous => ({ ...previous, conditionId: selectedCondition?.id }))
+			setSnippet(previous => ({ ...previous, conditionId: selectedCondition.id }))
 			onClose()
 		}
 	}
@@ -63,31 +87,12 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({ selected
 					/>
 				</div>
 
-				{selectedCondition && <ConditionViewer groups={selectedCondition.conditions} />}
+				{selectedCondition
+					? <ConditionEditor condition={selectedCondition} />
+					: null}
 			</div>
 
-			<div className="modal-footer">
-				<Button simple large onClick={onClose}>
-					{__('Cancel', 'code-snippets')}
-				</Button>
-
-				<div>
-					<Button large disabled={!selectedCondition} onClick={() => setSelectedCondition()}>
-						{__('Clear', 'code-snippets')}
-					</Button>
-
-					<Button large disabled={!selectedCondition} onClick={() => onEdit()}>
-						{__('Edit Condition', 'code-snippets')}
-					</Button>
-
-					<SubmitButton
-						large
-						primary
-						disabled={!selectedCondition}
-						text={__('Apply Condition', 'code-snippets')}
-					/>
-				</div>
-			</div>
+			<ModalFooter {...{ onClose, onEdit, selectedCondition, setSelectedCondition }} />
 		</form>
 	)
 }

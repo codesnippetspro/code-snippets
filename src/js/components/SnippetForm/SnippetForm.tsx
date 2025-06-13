@@ -5,6 +5,7 @@ import { SubmitSnippetAction, useSnippetFormSubmit } from '../../hooks/useSnippe
 import { createSnippetObject, getSnippetType, isCondition } from '../../utils/snippets/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { ConditionEditor } from '../ConditionEditor'
+import { ConditionModal } from '../ConditionModal/ConditionModal'
 import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
 import { EditorSidebar } from '../EditorSidebar'
 import { CodeEditor } from './fields/CodeEditor'
@@ -29,6 +30,7 @@ const EditConditionForm: React.FC = () => {
 const EditForm: React.FC = () => {
 	const { snippet, isReadOnly } = useSnippetForm()
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
+	const [isConditionModalOpen, setIsConditionModalOpen] = useState(!isCondition(snippet)) // TODO: false
 	const { validateAndSubmit, SubmitConfirmationDialog } = useSnippetFormSubmit()
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -65,7 +67,7 @@ const EditForm: React.FC = () => {
 					<div className="above-editor-container">
 						<SnippetTypeInput openUpgradeDialog={() => setIsUpgradeDialogOpen(true)} />
 						<SnippetLocationInput />
-						<ConditionModalButton />
+						<ConditionModalButton setIsModalOpen={setIsConditionModalOpen} />
 					</div>
 
 					<CodeEditor />
@@ -78,8 +80,9 @@ const EditForm: React.FC = () => {
 			</form>
 
 			{isCondition(snippet) && <ConditionTable />}
-			<UpgradeDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
 			<SubmitConfirmationDialog />
+			<UpgradeDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
+			<ConditionModal isOpen={isConditionModalOpen} setIsOpen={setIsConditionModalOpen} />
 		</div>
 	)
 }

@@ -56,6 +56,7 @@ export const Select = <T, IsMulti extends boolean = false>({
 	onChange,
 	onSelect,
 	className,
+	isDisabled,
 	currentValue,
 	onSelectMulti,
 	...selectProps
@@ -73,12 +74,14 @@ export const Select = <T, IsMulti extends boolean = false>({
 				menu: base => ({ ...base, zIndex: 9999 }),
 				control: base => ({ ...base, flexWrap: 'nowrap' }),
 				singleValue: base => ({ ...base, overflow: 'visible' }),
+				dropdownIndicator: base => isDisabled ? { display: 'none' } : base,
 				indicatorSeparator: () => ({ display: 'none' })
 			}}
 			value={isMulti ? selectedOptions : selectedOptions[0] ?? null}
 			isMulti={isMulti}
 			options={options}
 			className={classnames('code-snippets-select', className)}
+			isDisabled={isDisabled}
 			getOptionLabel={option => option.label}
 			getOptionValue={getOptionValue}
 			onChange={(selected, actionMeta) => {

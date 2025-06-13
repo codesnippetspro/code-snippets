@@ -38,11 +38,33 @@
 	.condition-remove-rule-button:hover svg {
 		fill: #b32d2e
 	}
+
+	.code-snippets-select {
+		div[aria-disabled=true] {
+			background-color: #fff;
+
+			div[class$='singleValue'] {
+				color: #333 !important;
+			}
+		}
+	}
+
+	&.is-read-only {
+		.snippet-condition-rule:last-of-type .condition-rule-sep {
+			display: none;
+		}
+
+		.snippet-condition-rule + .snippet-condition-rule:last-of-type .condition-rule-sep {
+			display: block;
+			visibility: hidden;
+		}
+	}
 }
 
-.condition-add-rule-button {
+.condition-rule-sep {
 	text-transform: uppercase;
 	justify-self: center;
+	align-self: center;
 }
 
 .snippet-condition-groups {
@@ -54,8 +76,10 @@
 .snippet-condition-group {
 	background-color: #f0f0f0;
 	border-radius: 8px;
-	padding: 8px;
-	border-spacing: 8px;
+	padding: 16px;
+	display: flex;
+	flex-flow: column;
+	gap: 8px;
 }
 
 .condition-group-sep {
@@ -81,55 +105,74 @@
 }
 
 .snippet-condition-rule {
-	//display: flex;
-	//flex-flow: row;
-	//gap: 1em;
-	//align-items: stretch;
+	display: flex;
+	flex-flow: row;
+	gap: 8px;
+	justify-content: space-between;
 }
 
-.snippet-condition-field {
-	vertical-align: top;
+.snippet-condition-subject {
+	width: 256px;
 }
-
-td.snippet-condition-subject {
-	width: 100%;
-}
-
-//.snippet-condition-subject {
-//	min-inline-size: 12em;
-//
-//	&:last-of-type {
-//		flex: 1;
-//	}
-//}
 
 .snippet-condition-operator {
-	//min-inline-size: 10em;
+	width: 128px;
 	text-transform: uppercase;
 }
 
-//.snippet-condition-object {
-//	min-inline-size: 16em;
-//	flex: 1;
-//}
+.snippet-condition-object {
+	flex: 1 1 200px;
+}
 
 .snippet-condition-rule input[type='time'],
 .snippet-condition-rule input[type='datetime-local'] {
-	flex: 1;
+	width: 100%;
+	height: 100%;
 	background-color: #fff;
-	border: 1px solid #ccc;
 	border-radius: 4px;
+	border: 1px solid #e6e6e6;
+
+	&[disabled] {
+		color: #333 !important;
+		border-color: #e6e6e6;
+
+		&::-webkit-outer-spin-button,
+		&::-webkit-inner-spin-button {
+			appearance: none;
+			margin: 0;
+		}
+	}
+}
+
+.snippet-condition-actions {
+	display: flex;
+	gap: 8px;
 }
 
 .code-snippets-date-range {
 	display: flex;
-	flex: 1;
 	align-items: stretch;
-	gap: 0.5em;
-	flex-flow: row wrap;
+	flex-flow: row;
+	height: 100%;
+
+	input {
+		flex: 1;
+	}
 
 	.sep {
-		align-self: center;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: x-small;
+		font-style: italic;
+		color: #bbb;
+
+		&::before, &::after {
+			content: '';
+			flex: 1;
+			border-block-end: 1px solid #e2e2e4;
+			margin: 0 3px;
+		}
 	}
 }
 
@@ -143,19 +186,5 @@ td.snippet-condition-subject {
 		grid-template-columns: 1fr auto;
 		margin: 1em 0;
 		gap: 1em;
-	}
-}
-
-.snippet-condition-viewer {
-	.snippet-condition-field {
-		height: 40px;
-		background: #fff;
-		border-radius: 5px;
-		padding: 12px;
-	}
-
-	.condition-add-rule-button {
-		line-height: 40px;
-		color: #888;
 	}
 }

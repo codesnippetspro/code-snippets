@@ -71,8 +71,8 @@ const createInitialCondition = (snippet: Snippet): Snippet =>
 		scope: 'condition',
 		active: false,
 		conditions: {
-			'_0': {
-				'_0': {}
+			_0: {
+				_0: {}
 			}
 		}
 	})
@@ -84,7 +84,7 @@ export interface EditConditionFormProps {
 
 export const EditConditionForm: React.FC<EditConditionFormProps> = ({ onClose, condition: initialCondition }) => {
 	const api = useSnippetsAPI()
-	const { snippet, setSnippet } = useSnippetForm()
+	const { snippet, setSnippet, refreshSnippetsList } = useSnippetForm()
 	const [error, setError] = useState(false)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [condition, setCondition] = useState<Snippet>(() => initialCondition ?? createInitialCondition(snippet))
@@ -98,15 +98,17 @@ export const EditConditionForm: React.FC<EditConditionFormProps> = ({ onClose, c
 			? sprintf(__('Condition for "%s"', 'code-snippets'), getSnippetDisplayName(snippet))
 			: condition.name
 
-		api.create({ ...condition, name })
+		api.update({ ...condition, name })
 			.then(result => {
 				setSnippet(previous => ({ ...previous, conditionId: result.id }))
 				setIsSubmitting(false)
+				refreshSnippetsList()
 				onClose()
 			})
 			.catch((error: unknown) => {
 				console.error('Error creating condition', error)
 				setIsSubmitting(false)
+				refreshSnippetsList()
 				setError(true)
 			})
 	}

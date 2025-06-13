@@ -9,11 +9,11 @@ import { buildOptionGroups } from '../../utils/options'
 import { Button } from '../common/Button'
 import { RemoveIcon } from '../common/icons/RemoveIcon'
 import { Select } from '../common/Select'
+import { ConditionObjectEditor } from './ConditionObjectEditor'
 import type { Snippet } from '../../types/Snippet'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ConditionOperator } from '../../types/ConditionGroups'
 import type { ConditionSubject } from '../../types/ConditionSubject'
-import { ConditionObjectEditor } from './ConditionObjectEditor'
 
 interface ConditionSubjectEditorProps extends ConditionRuleEditorProps {
 	clearObjectOptions: VoidFunction
@@ -30,11 +30,13 @@ const CONDITION_SUBJECT_OPTIONS = buildOptionGroups({
 const ConditionSubjectEditor: React.FC<ConditionSubjectEditorProps> = ({ condition, groupId, ruleId, setCondition, clearObjectOptions }) =>
 	<Select
 		required
+		className="snippet-condition-field snippet-condition-subject"
+		isDisabled={setCondition === undefined}
 		options={CONDITION_SUBJECT_OPTIONS}
 		currentValue={condition.conditions[groupId]?.[ruleId]?.subject}
 		onSelect={subject => {
 			clearObjectOptions()
-			setCondition(previous => updateConditionRule(previous, groupId, ruleId, {
+			setCondition?.(previous => updateConditionRule(previous, groupId, ruleId, {
 				subject,
 				...subject
 					? { operator: CONDITION_SUBJECTS[subject].operators[0], object: [] }
@@ -47,12 +49,14 @@ export interface ConditionRuleEditorProps {
 	ruleId: string
 	groupId: string
 	condition: Snippet
-	setCondition: Dispatch<SetStateAction<Snippet>>
+	setCondition?: Dispatch<SetStateAction<Snippet>>
 }
 
 export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId, groupId, condition, setCondition }) => {
 	const rule = getConditionRule(condition, groupId, ruleId)
 	const { objectOptions, loadedSubject, clearObjectOptions, loadMoreOptions } = useConditionOptions(rule?.subject)
+
+	const isReadOnly = setCondition === undefined
 
 	const allowedOperators: ConditionOperator[] = rule?.subject
 		? CONDITION_SUBJECTS[rule.subject].operators
@@ -63,10 +67,8 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId
 		: allowedOperators[0]
 
 	return (
-		<tr id={`snippet-condition-group-${groupId}-rule-${ruleId}`} className="snippet-condition-rule">
-			<td className="snippet-condition-field snippet-condition-subject">
-				<ConditionSubjectEditor {...{ condition, groupId, ruleId, setCondition, clearObjectOptions }} />
-			</td>
+		<div id={`snippet-condition-group-${groupId}-rule-${ruleId}`} className="snippet-condition-rule">
+			<ConditionSubjectEditor {...{ condition, groupId, ruleId, setCondition, clearObjectOptions }} />
 
 			<ConditionObjectEditor
 				{...{ ruleId, groupId, condition, setCondition, currentOperator, loadMoreOptions }}
@@ -76,26 +78,27 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId
 				objectOptionsLoaded={loadedSubject === rule?.subject}
 			/>
 
-			<td>
-				<Button
-					primary
-					className="condition-add-rule-button"
-					title={__('Add a new rule after this one.', 'code-snippets')}
-					onClick={() => setCondition(previous => appendConditionRule(previous, groupId, ruleId))}
-				>
-					{_x('and', 'boolean logical operator', 'code-snippets')}
-				</Button>
-			</td>
+			<div className="snippet-condition-actions">
+				{isReadOnly
+					? <strong className="condition-rule-sep">{_x('and', 'boolean logical operator', 'code-snippets')}</strong>
+					: <Button
+						primary
+						className="condition-rule-sep"
+						title={__('Add a new rule after this one.', 'code-snippets')}
+						onClick={() => setCondition(previous => appendConditionRule(previous, groupId, ruleId))}
+					>
+						{_x('and', 'boolean logical operator', 'code-snippets')}
+					</Button>}
 
-			<td>
-				<Button
-					className="condition-remove-rule-button"
-					title={__('Remove this condition rule.', 'code-snippets')}
-					onClick={() => setCondition(previous => removeConditionRule(previous, groupId, ruleId))}
-				>
-					<RemoveIcon />
-				</Button>
-			</td>
-		</tr>
+				{!isReadOnly &&
+			<Button
+				className="condition-remove-rule-button"
+				title={__('Remove this condition rule.', 'code-snippets')}
+				onClick={() => setCondition(previous => removeConditionRule(previous, groupId, ruleId))}
+			>
+				<RemoveIcon />
+			</Button>}
+			</div>
+		</div>
 	)
 }

@@ -1,12 +1,13 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React from 'react'
+import { _x } from '@wordpress/i18n'
+import { getConditionRule, updateConditionRule } from '../../utils/conditions/rules'
+import { Select } from '../common/Select'
+import type { Dispatch, SetStateAction } from 'react'
 import type { ConditionOperator } from '../../types/ConditionGroups'
 import type { ConditionSubject, ConditionSubjects } from '../../types/ConditionSubject'
 import type { SelectGroups, SelectOptions } from '../../types/SelectOption'
 import type { Snippet } from '../../types/Snippet'
-import { getConditionRule, updateConditionRule } from '../../utils/conditions/rules'
-import { Select } from '../common/Select'
-import { ConditionRuleEditorProps } from './ConditionRuleEditor'
-import { _x } from '@wordpress/i18n'
+import type { ConditionRuleEditorProps } from './ConditionRuleEditor'
 
 interface ObjectSelectProps<S extends ConditionSubject> extends ConditionRuleEditorProps {
 	isMulti?: boolean
@@ -30,17 +31,19 @@ const ObjectSelect = <S extends ConditionSubject>({
 	return (
 		<Select
 			required
+			className="snippet-condition-field snippet-condition-object"
+			isDisabled={setCondition === undefined}
 			isMulti={isMulti}
 			options={options}
 			currentValue={isMulti ? rule?.object : rule?.object?.[0]}
 			isLoading={!optionsLoaded}
 			onMenuScrollToBottom={onLoadMore}
 			onSelect={value => {
-				setCondition(previous =>
+				setCondition?.(previous =>
 					updateConditionRule(previous, groupId, ruleId, { object: undefined === value ? [] : [value] }))
 			}}
 			onSelectMulti={values => {
-				setCondition(previous =>
+				setCondition?.(previous =>
 					updateConditionRule(previous, groupId, ruleId, { object: values }))
 			}}
 		/>
@@ -51,7 +54,7 @@ interface OperatorSelectProps {
 	ruleId: string
 	groupId: string
 	options: SelectGroups<ConditionOperator>
-	setCondition: Dispatch<SetStateAction<Snippet>>
+	setCondition?: Dispatch<SetStateAction<Snippet>>
 	currentOperator: ConditionOperator | undefined
 }
 
@@ -60,12 +63,14 @@ const unaryOperations = new Set<ConditionOperator>(['is', 'not', 'true', 'false'
 const OperatorSelect: React.FC<OperatorSelectProps> = ({ options, currentOperator, groupId, ruleId, setCondition }) =>
 	<Select
 		required
+		className="snippet-condition-field snippet-condition-operator"
+		isDisabled={setCondition === undefined}
 		options={options}
 		currentValue={currentOperator}
 		onChange={selected => {
 			const operator = selected?.value ?? undefined
 
-			setCondition(previous =>
+			setCondition?.(previous =>
 				updateConditionRule(previous, groupId, ruleId, previousRule => ({
 					operator,
 					...operator && unaryOperations.has(operator) && previousRule.object
@@ -89,13 +94,14 @@ const DateSelect: React.FC<DateSelectProps> = ({ ruleId, groupId, condition, set
 	return (
 		<input
 			type={type}
+			readOnly={setCondition === undefined}
 			name={`snippet-condition-date-${objectIndex}`}
 			value={value}
 			required
 			onChange={event => {
 				setValue(event.target.value)
 
-				setCondition(previous =>
+				setCondition?.(previous =>
 					updateConditionRule(previous, groupId, ruleId, ({ object }) => {
 						const updated = object ? [...object] : []
 						updated[objectIndex] = event.target.value
@@ -108,7 +114,7 @@ const DateSelect: React.FC<DateSelectProps> = ({ ruleId, groupId, condition, set
 const DateRangeSelect: React.FC<ConditionRuleEditorProps> = ({ ...ruleProps }) =>
 	<div className="code-snippets-date-range">
 		<DateSelect {...ruleProps} objectIndex={0} />
-		<span className="sep">{_x('and', 'date separator', 'code-snippets')}</span>
+		<span className="sep">{_x('to', 'date separator', 'code-snippets')}</span>
 		<DateSelect {...ruleProps} objectIndex={1} />
 	</div>
 
@@ -128,9 +134,9 @@ export const ConditionObjectEditor = <S extends ConditionSubject>({
 	objectOptionsLoaded,
 	...ruleProps
 }: ConditionObjectEditorProps<S>) => {
-	const objectClassName = 'snippet-condition-field snippet-condition-object'
 	const operatorSelectProps: OperatorSelectProps = { ...ruleProps, currentOperator, options: operatorOptions }
 
+	const isMissingOperator = undefined === currentOperator
 	const isSingleOperator = 'is' === currentOperator || 'not' === currentOperator
 	const isMultiOperator = 'in' === currentOperator || 'not in' === currentOperator
 	const isBooleanOperator = 'true' === currentOperator || 'false' === currentOperator
@@ -138,31 +144,29 @@ export const ConditionObjectEditor = <S extends ConditionSubject>({
 
 	return (
 		<>
-			{isSingleOperator || isMultiOperator || isDateOperator
-				? <td className="snippet-condition-field snippet-condition-operator">
-					<OperatorSelect {...operatorSelectProps} />
-				</td>
+			{isSingleOperator || isMultiOperator || isDateOperator || isMissingOperator
+				? <OperatorSelect {...operatorSelectProps} />
 				: null}
 
-			{isSingleOperator || isMultiOperator || isBooleanOperator
-				? <td className={objectClassName}>
-					<ObjectSelect
-						{...ruleProps}
-						options={objectOptions}
-						optionsLoaded={objectOptionsLoaded}
-						isMulti={isMultiOperator}
-						onLoadMore={loadMoreOptions}
-					/>
-				</td> : null}
+			{isSingleOperator || isMultiOperator || isBooleanOperator || isMissingOperator
+				? <ObjectSelect
+					{...ruleProps}
+					options={objectOptions}
+					optionsLoaded={objectOptionsLoaded}
+					isMulti={isMultiOperator}
+					onLoadMore={loadMoreOptions}
+				/>
+				: null}
 
-			{'before' === currentOperator || 'after' === currentOperator
-				? <td className={objectClassName}><DateSelect {...ruleProps} /></td> : null}
-
-			{'between' === currentOperator
-				? <td className={objectClassName}><DateRangeSelect {...ruleProps} /></td> : null}
+			{isDateOperator
+				? <div className="snippet-condition-field snippet-condition-object">
+					{'between' === currentOperator
+						? <DateRangeSelect {...ruleProps} />
+						: <DateSelect {...ruleProps} />}
+				</div> : null}
 
 			{isBooleanOperator
-				? <td className={objectClassName}><OperatorSelect {...operatorSelectProps} /></td> : null}
+				? <OperatorSelect {...operatorSelectProps} /> : null}
 		</>
 	)
 }

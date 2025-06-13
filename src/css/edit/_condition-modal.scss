@@ -86,9 +86,13 @@
 		margin-bottom: 36px;
 		border-bottom: 1px solid #E2E2E4;
 
-		input[type="text"] {
+		input[type='text'],
+		.code-snippets-select > div[class$='-control'] {
 			width: 100%;
 			height: 45px;
+		}
+
+		input[type='text'] {
 			border-radius: 5px;
 			border: 1px solid #C3C4C7;
 		}

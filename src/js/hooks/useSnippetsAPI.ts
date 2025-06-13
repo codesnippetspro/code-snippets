@@ -49,7 +49,7 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 				.then(createSnippetObject),
 
 		update: snippet =>
-			post<SnippetSchema>(buildURL(snippet), mapToSchema(snippet))
+			post<SnippetSchema>(snippet.id ? buildURL(snippet) : REST_SNIPPETS_BASE, mapToSchema(snippet))
 				.then(createSnippetObject),
 
 		delete: snippet =>
