@@ -70,14 +70,14 @@ function evaluate_condition_clause( ?string $subject, ?string $operator, array $
 			$object = $objects[0] ?? null;
 
 			return 'global' === $object ||
-			       'admin' === $object && is_admin() ||
-			       'frontend' === $object && ! is_admin();
+			       ( 'admin' === $object && is_admin() ) ||
+			       ( 'frontend' === $object && ! is_admin() );
 
 		case 'currentQuery':
 			return array_any(
 				$objects,
-				function ( $object ) {
-					switch ( $object ) {
+				function ( $condition_object ) {
+					switch ( $condition_object ) {
 						case 'home':
 							return is_home();
 
@@ -103,10 +103,14 @@ function evaluate_condition_clause( ?string $subject, ?string $operator, array $
 							return is_post_type_archive();
 
 						default:
-							return new WP_Error( "Invalid currentQuery condition object: $object." );
+							return new WP_Error( "Invalid currentQuery condition object: $condition_object." );
 					}
 				}
 			);
+
+		case 'visitorLanguage':
+			$lang = sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null ) );
+			return $lang && in_array( $lang, $objects, true );
 
 		case 'currentTheme':
 			return in_array( get_stylesheet(), $objects, true ) || in_array( get_template(), $objects, true );
@@ -117,10 +121,6 @@ function evaluate_condition_clause( ?string $subject, ?string $operator, array $
 				(array) get_site_option( 'active_sitewide_plugins', [] ) : [];
 
 			return array_intersect( $active_plugins, $objects ) || array_intersect( $active_multisite_plugins, $objects );
-
-		case 'visitorLanguage':
-			$lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
-			return $lang && in_array( $lang, $objects, true );
 
 		case 'debugEnabled':
 			return defined( 'WP_DEBUG' ) && WP_DEBUG;
@@ -195,7 +195,7 @@ function evaluate_condition_clause( ?string $subject, ?string $operator, array $
 			return is_within_date_range( new DateTimeImmutable(), $operator, $objects );
 
 		case 'dayOfWeek':
-			return in_array( date( 'D' ), $objects, true );
+			return in_array( gmdate( 'D' ), $objects, true );
 
 		/* Fallback. */
 		default:

@@ -4,14 +4,14 @@ import React from 'react'
 import type { ReactNode } from 'react'
 
 export interface DismissibleNoticeProps {
-	classNames?: classnames.Argument
+	className?: classnames.Argument
 	onDismiss: VoidFunction
 	children?: ReactNode
 	autoHide?: boolean
 }
 
-export const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ classNames, onDismiss, children }) =>
-	<div id="message" className={classnames('notice fade is-dismissible', classNames)}>
+export const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ className, onDismiss, children }) =>
+	<div id="message" className={classnames('notice fade is-dismissible', className)}>
 		<>{children}</>
 
 		<button type="button" className="notice-dismiss" onClick={event => {

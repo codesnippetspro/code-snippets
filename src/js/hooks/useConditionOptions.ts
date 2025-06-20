@@ -13,11 +13,11 @@ type ConditionSubjectOptions = { [S in ConditionSubject]?: SelectGroups<Conditio
 
 interface SubjectWithDefinition<S extends ConditionSubject> {
 	subject: S
-	definition: ConditionSubjectDefinitions<ConditionSubjects>[S]
+	definition: ConditionSubjectDefinitions<ConditionSubjects>[S] | undefined
 }
 
 const findSubjectDefinition = <S extends ConditionSubject>(selectedSubject: S): SubjectWithDefinition<S> => {
-	const subject = (<S | undefined> CONDITION_SUBJECTS[selectedSubject].useSubjectOptions) ?? selectedSubject
+	const subject = (<S | undefined> CONDITION_SUBJECTS[selectedSubject]?.useSubjectOptions) ?? selectedSubject
 	const definition = CONDITION_SUBJECTS[subject]
 	return { subject, definition }
 }
@@ -32,7 +32,7 @@ const usePagedConditionOptions = <S extends ConditionSubject>(
 	const [loadingOptions, setLoadingOptions] = useState(false)
 
 	const loadPagedOptions = useCallback(({ subject, definition }: SubjectWithDefinition<S>) => {
-		if (definition.fetchPagedOptions && !loadingOptions) {
+		if (definition?.fetchPagedOptions && !loadingOptions) {
 			const newPage = (currentPage[subject] ?? 0) + 1
 			setLoadingOptions(true)
 
@@ -55,7 +55,7 @@ const usePagedConditionOptions = <S extends ConditionSubject>(
 		if (selectedSubject !== undefined && !loadingOptions) {
 			const { subject, definition } = findSubjectDefinition(selectedSubject)
 
-			if (definition.fetchPagedOptions && -1 !== currentPage[subject]) {
+			if (definition?.fetchPagedOptions && -1 !== currentPage[subject]) {
 				loadPagedOptions({ subject, definition })
 			}
 		}
@@ -88,10 +88,10 @@ export const useConditionOptions = <S extends ConditionSubject>(selectedSubject:
 	const { loadPagedOptions, loadMoreOptions } = usePagedConditionOptions(api, selectedSubject, setOptionsCache, handleOptionsLoaded)
 
 	const loadAllOptions = useCallback(({ subject, definition }: SubjectWithDefinition<S>) => {
-		if (definition.fetchAllOptions && !loadingOptions) {
+		if (definition?.fetchAllOptions && !loadingOptions) {
 			setLoadingOptions(true)
 
-			definition.fetchAllOptions(api)
+			definition?.fetchAllOptions(api)
 				.then(options => {
 					setOptionsCache(previous => ({ ...previous, [subject]: options }))
 					handleOptionsLoaded(options)
@@ -110,13 +110,13 @@ export const useConditionOptions = <S extends ConditionSubject>(selectedSubject:
 
 			if (optionsCache[subject]) {
 				handleOptionsLoaded(optionsCache[subject])
-			} else if (definition.options) {
+			} else if (definition?.options) {
 				handleOptionsLoaded(definition.options)
-			} else if (definition.deriveOptions && snippetsList) {
+			} else if (definition?.deriveOptions && snippetsList) {
 				handleOptionsLoaded(definition.deriveOptions(snippet, snippetsList))
-			} else if (definition.fetchAllOptions) {
+			} else if (definition?.fetchAllOptions) {
 				loadAllOptions({ subject, definition })
-			} else if (definition.fetchPagedOptions) {
+			} else if (definition?.fetchPagedOptions) {
 				loadPagedOptions({ subject, definition })
 			}
 		}

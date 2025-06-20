@@ -20,7 +20,6 @@ export type ConditionSubjectDefinitions<T> = { [S in keyof T]: ConditionSubjectD
 
 export const CONDITIONS_SUBJECT_GROUPS = <const> {
 	site: __('Site', 'code-snippets'),
-	snippets: __('Snippets', 'code-snippets'),
 	posts: __('Posts and Pages', 'code-snippets'),
 	users: __('Users', 'code-snippets'),
 	date: __('Date and Time', 'code-snippets')

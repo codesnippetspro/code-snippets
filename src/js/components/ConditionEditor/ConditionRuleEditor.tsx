@@ -57,10 +57,7 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId
 	const { objectOptions, loadedSubject, clearObjectOptions, loadMoreOptions } = useConditionOptions(rule?.subject)
 
 	const isReadOnly = setCondition === undefined
-
-	const allowedOperators: ConditionOperator[] = rule?.subject
-		? CONDITION_SUBJECTS[rule.subject].operators
-		: []
+	const allowedOperators: ConditionOperator[] = (rule?.subject && CONDITION_SUBJECTS[rule.subject]?.operators) ?? []
 
 	const currentOperator = rule?.operator && allowedOperators.includes(rule.operator)
 		? rule.operator

@@ -103,7 +103,7 @@
 
 	.snippet-condition-editor {
 		padding-top: 24px;
-		margin-top: 36px;
+		margin-top: 24px;
 		border-block-start: 1px solid #E2E2E4;
 	}
 
@@ -124,6 +124,10 @@
 
 		.button-large {
 			block-size: 45px;
+
+			&.button-primary {
+				padding: 0 30px;
+			}
 		}
 	}
 }

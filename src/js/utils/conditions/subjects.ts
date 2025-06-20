@@ -1,9 +1,8 @@
 import { __ } from '@wordpress/i18n'
 import { REST_BASE, REST_CONDITIONS_BASE } from '../restAPI'
-import { getSnippetDisplayName, isCondition } from '../snippets/snippets'
 import type { PluginsSchema } from '../../types/schema/PluginSchema'
 import type { ThemesSchema } from '../../types/schema/ThemeSchema'
-import type { ConditionSubjects, DateConditionSubjects, PostConditionSubjects, SiteConditionSubjects, SnippetConditionSubjects, UserConditionSubjects } from '../../types/ConditionSubject'
+import type { ConditionSubjects, DateConditionSubjects, PostConditionSubjects, SiteConditionSubjects, UserConditionSubjects } from '../../types/ConditionSubject'
 import type { LocalesSchema } from '../../types/schema/LocaleSchema'
 import type { PostStatusesSchema } from '../../types/schema/PostStatusSchema'
 import type { SelectOptions } from '../../types/SelectOption'
@@ -91,18 +90,6 @@ const SITE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<SiteConditionSubjects
 		label: __('WP_DEBUG mode', 'code-snippets'),
 		operators: CONDITION_OPERATORS.single,
 		options: ENABLED_OPTIONS
-	}
-}
-
-const SNIPPETS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<SnippetConditionSubjects> = {
-	condition: {
-		group: 'snippets',
-		label: __('Condition', 'code-snippets'),
-		operators: CONDITION_OPERATORS.boolean,
-		deriveOptions: (currentSnippet, snippets) =>
-			snippets
-				.filter(snippet => isCondition(snippet) && snippet.id !== currentSnippet.id)
-				.map(snippet => ({ value: snippet.id, label: getSnippetDisplayName(snippet) }))
 	}
 }
 
@@ -261,7 +248,6 @@ export const DATE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<DateConditionS
 
 export const CONDITION_SUBJECTS: ConditionSubjectDefinitions<ConditionSubjects> = {
 	...SITE_CONDITION_SUBJECTS,
-	...SNIPPETS_CONDITION_SUBJECTS,
 	...POSTS_CONDITION_SUBJECTS,
 	...USER_CONDITION_SUBJECTS,
 	...DATE_CONDITION_SUBJECTS

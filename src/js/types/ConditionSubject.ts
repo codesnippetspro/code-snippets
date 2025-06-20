@@ -49,7 +49,6 @@ export interface DateConditionSubjects {
 
 export type ConditionSubjects =
 	SiteConditionSubjects &
-	SnippetConditionSubjects &
 	PostConditionSubjects &
 	UserConditionSubjects &
 	DateConditionSubjects

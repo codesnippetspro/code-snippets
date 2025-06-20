@@ -120,11 +120,11 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({
 					options={options}
 					selectedCondition={selectedCondition}
 					setSelectedCondition={setSelectedCondition}
-				/>.
+				/>
 
 				{showConfirmationNotice
-					? <DismissibleNotice onDismiss={dismissConfirmationNotice}>
-						{__('The condition has been saved.', 'code-snippets')}
+					? <DismissibleNotice className="notice-success" onDismiss={dismissConfirmationNotice}>
+						<p>{__('The condition has been saved.', 'code-snippets')}</p>
 					</DismissibleNotice> : null}
 
 				{selectedCondition && <ConditionEditor condition={selectedCondition} />}

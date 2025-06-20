@@ -8,7 +8,7 @@ export const Notices: React.FC = () => {
 
 	return <>
 		{currentNotice
-			? <DismissibleNotice classNames={currentNotice[0]} onRemove={() => setCurrentNotice(undefined)}>
+			? <DismissibleNotice className={currentNotice[0]} onRemove={() => setCurrentNotice(undefined)}>
 				<p>{currentNotice[1]}</p>
 			</DismissibleNotice>
 			: null}
