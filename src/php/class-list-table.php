@@ -264,7 +264,7 @@ class List_Table extends WP_List_Table {
 				esc_html__( 'Set up cloud', 'code-snippets' )
 			);
 
-			if ( $this->is_cloud_connected ) {
+			if ( $this->is_cloud_connected && ! $snippet->is_condition() ) {
 				$actions['cloud'] = sprintf(
 					'<a href="%s">%s</a>',
 					esc_url( $this->get_action_link( 'cloud', $snippet ) ),
@@ -326,7 +326,9 @@ class List_Table extends WP_List_Table {
 				break;
 
 			case 'condition':
-				$action = $class = $label = null;
+				$action = null;
+				$class = null;
+				$label = null;
 				break;
 
 			default:
@@ -344,7 +346,7 @@ class List_Table extends WP_List_Table {
 
 		return $action && $class && $label
 			? sprintf(
-			'<a class="%1$s" href="%2$s" title="%3$s" aria-label="%3$s">&nbsp;</a> ',
+				'<a class="%1$s" href="%2$s" title="%3$s" aria-label="%3$s">&nbsp;</a> ',
 				esc_attr( $class ),
 				esc_url( $this->get_action_link( $action, $snippet ) ),
 				esc_attr( $label )
@@ -360,7 +362,7 @@ class List_Table extends WP_List_Table {
 	 * @return string The content of the column to output.
 	 */
 	protected function column_name( Snippet $snippet ): string {
-		$cloud_link = $this->is_cloud_connected ?
+		$cloud_link = $this->is_cloud_connected && ! $snippet->is_condition() ?
 			code_snippets()->cloud_api->get_link_for_snippet( $snippet ) :
 			null;
 

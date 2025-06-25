@@ -7,6 +7,7 @@ use WP_CLI;
 use WP_CLI\ExitException;
 use WP_CLI\Formatter;
 use WP_CLI_Command;
+use WP_Exception;
 use function WP_CLI\Utils\report_batch_operation_results;
 
 /**
@@ -51,14 +52,15 @@ class Command extends WP_CLI_Command {
 	 * Register this class as a WP-CLI command.
 	 *
 	 * @return void
+	 *
+	 * @throws WP_Exception If an error is encountered while registering the command.
 	 */
 	public static function register() {
 		if ( class_exists( '\WP_CLI' ) ) {
 			try {
 				WP_CLI::add_command( 'snippet', self::class );
-			} catch ( Exception $e ) {
-				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( esc_html( $e ) );
+			} catch ( Exception $exception ) {
+				wp_trigger_error( __FUNCTION__, $exception->getMessage() );
 			}
 		}
 	}

@@ -1,12 +1,12 @@
 $sidebar-width: 280px;
 $sidebar-gap: 30px;
 
-.conditions-editor-open .button {
+.conditions-editor-open .button.button-large {
 	font-weight: bold;
 	block-size: 100%;
 	display: flex;
 	align-items: center;
-	min-block-size: 38px;
+	min-block-size: 45px;
 
 	&.no-condition {
 		border-color: #ccc;
@@ -58,8 +58,16 @@ $sidebar-gap: 30px;
 }
 
 .condition-snippets-table {
+	padding-block-start: 32px;
+	max-inline-size: 1440px;
+	box-sizing: border-box;
+
 	@media (width >= 1024px) {
-		margin-inline-end: $sidebar-width + $sidebar-gap;
+		padding-inline-end: $sidebar-width + $sidebar-gap;
+	}
+
+	.actions-column {
+		text-align: center;
 	}
 }
 

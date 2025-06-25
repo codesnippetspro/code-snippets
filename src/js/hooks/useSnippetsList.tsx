@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { handleUnknownError } from '../utils/errors'
 import { createContextHook } from '../utils/hooks'
 import { isNetworkAdmin } from '../utils/screen'
 import { useRestAPI } from './useRestAPI'
@@ -8,7 +7,7 @@ import type { Snippet } from '../types/Snippet'
 
 export interface SnippetsListContext {
 	snippetsList: readonly Snippet[] | undefined
-	refreshSnippetsList: () => void
+	refreshSnippetsList: () => Promise<void>
 }
 
 const [SnippetsListContext, useSnippetsList] = createContextHook<SnippetsListContext>('SnippetsList')
@@ -17,15 +16,20 @@ export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children 
 	const { snippetsAPI: { fetchAll } } = useRestAPI()
 	const [snippetsList, setSnippetsList] = useState<Snippet[]>()
 
-	useEffect(() => {
-		if (!snippetsList) {
-			fetchAll(isNetworkAdmin())
-				.then(response => setSnippetsList(response))
-				.catch(handleUnknownError)
+	const refreshSnippetsList = useCallback(async (): Promise<void> => {
+		try {
+			console.info('Fetching snippets list')
+			const response = await fetchAll(isNetworkAdmin())
+			setSnippetsList(response)
+		} catch (error: unknown) {
+			console.error('Error fetching snippets list', error)
 		}
-	}, [fetchAll, snippetsList])
+	}, [fetchAll])
 
-	const refreshSnippetsList = useCallback(() => setSnippetsList(undefined), [])
+	useEffect(() => {
+		refreshSnippetsList()
+			.catch(() => undefined)
+	}, [refreshSnippetsList])
 
 	const value: SnippetsListContext = {
 		snippetsList,

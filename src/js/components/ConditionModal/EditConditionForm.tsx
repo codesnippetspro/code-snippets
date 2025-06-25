@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { useRestAPI } from '../../hooks/useRestAPI'
 import { useSnippetsList } from '../../hooks/useSnippetsList'
-import { createSnippetObject, getSnippetDisplayName } from '../../utils/snippets/snippets'
+import { createSnippetObject, getSnippetDisplayName, getSnippetEditUrl } from '../../utils/snippets/snippets'
 import { Button } from '../common/Button'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { SubmitButton } from '../common/SubmitButton'
@@ -11,7 +11,7 @@ import { Tooltip } from '../common/Tooltip'
 import { ConditionEditor } from '../ConditionEditor'
 import { DismissibleNotice } from '../DismissableNotice'
 import type { Snippet } from '../../types/Snippet'
-import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
+import type { Dispatch, FormEventHandler, PropsWithChildren, SetStateAction } from 'react'
 
 interface ModalFooterProps {
 	onClose: VoidFunction
@@ -48,8 +48,13 @@ const ModalUpper: React.FC<ModalUpperProps> = ({ onClose, condition, isSubmittin
 				</Tooltip>
 			</label>
 
-			{condition.id ? null
-				: <Button simple onClick={() => onClose()}>{__('Apply existing condition', 'code-snippets')}</Button>}
+			{condition.id
+				? <a href={getSnippetEditUrl({ id: condition.id })} target="_blank" rel="noreferrer">
+					{__('Open full editor', 'code-snippets')}
+				</a>
+				: <Button simple onClick={() => onClose()}>
+					{__('Apply existing condition', 'code-snippets')}
+				</Button>}
 		</div>
 
 		<input
@@ -76,19 +81,28 @@ const createInitialCondition = (snippet: Snippet): Snippet =>
 		}
 	})
 
-const useSubmitCondition = ({
+interface ModalFormProps extends Pick<EditConditionFormProps, 'setSelectedConditionId' | 'onSave'> {
+	condition: Snippet
+	setHasError: Dispatch<SetStateAction<boolean>>
+	setIsSubmitting: Dispatch<SetStateAction<boolean>>
+}
+
+const ModalForm: React.FC<PropsWithChildren<ModalFormProps>> = ({
 	onSave,
+	children,
+	condition,
+	setHasError,
+	setIsSubmitting,
 	setSelectedConditionId
-}: Pick<EditConditionFormProps, 'onSave' | 'setSelectedConditionId'>) => {
+}) => {
 	const { snippetsAPI: { update } } = useRestAPI()
 	const { snippet, setSnippet } = useSnippetForm()
 	const { refreshSnippetsList } = useSnippetsList()
 
-	const [isSubmitting, setIsSubmitting] = useState(false)
-	const [error, setError] = useState(false)
-
-	const submit = (condition: Snippet) => {
+	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
+		event.preventDefault()
 		setIsSubmitting(true)
+		let success = false
 
 		const name = '' === condition.name.trim()
 			// translators: %s: snippet display name.
@@ -98,20 +112,25 @@ const useSubmitCondition = ({
 		update({ ...condition, name })
 			.then(result => {
 				setSnippet(previous => ({ ...previous, conditionId: result.id }))
-				setIsSubmitting(false)
 				setSelectedConditionId(result.id)
-				refreshSnippetsList()
-				onSave()
+				success = true
+				return refreshSnippetsList()
 			})
 			.catch((error: unknown) => {
 				console.error('Error creating condition', error)
+				setHasError(true)
+				return refreshSnippetsList()
+			})
+			.finally(() => {
 				setIsSubmitting(false)
-				refreshSnippetsList()
-				setError(true)
+
+				if (success) {
+					onSave()
+				}
 			})
 	}
 
-	return { submit, isSubmitting, error, setError }
+	return <form className="modal-form" onSubmit={handleSubmit}>{children}</form>
 }
 
 export interface EditConditionFormProps {
@@ -128,16 +147,16 @@ export const EditConditionForm: React.FC<EditConditionFormProps> = ({
 	setSelectedConditionId
 }) => {
 	const { snippet } = useSnippetForm()
+	const { snippetsList } = useSnippetsList()
+	const [hasError, setHasError] = useState(false)
 	const [condition, setCondition] = useState<Snippet>(() => initialCondition ?? createInitialCondition(snippet))
-	const { submit, isSubmitting, error, setError } = useSubmitCondition({ onSave, setSelectedConditionId })
+	const [isSubmitting, setIsSubmitting] = useState(false)
 
-	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
-		event.preventDefault()
-		submit(condition)
-	}
+	const hasOtherAttachedSnippets = !!initialCondition?.id && snippetsList?.some(({ id, conditionId }) =>
+		id !== snippet.id && conditionId === initialCondition.id)
 
 	return (
-		<form className="modal-form" onSubmit={handleSubmit}>
+		<ModalForm {...{ condition, setIsSubmitting, setHasError, setSelectedConditionId, onSave }}>
 			<div className="modal-content">
 				<ModalUpper
 					onClose={onCancel}
@@ -146,15 +165,21 @@ export const EditConditionForm: React.FC<EditConditionFormProps> = ({
 					setCondition={setCondition}
 				/>
 
+				{hasOtherAttachedSnippets
+					? <div className="notice notice-warning"><p>
+						<strong>{__('Heads-up!', 'code-snippets')}</strong>{' '}
+						{__('This condition is used by other snippets. Changes you make here will affect all snippets using this condition.', 'code-snippets')}
+					</p></div> : null}
+
 				<ConditionEditor condition={condition} setCondition={setCondition} />
 
-				{error
-					? <DismissibleNotice className="notice-error" onDismiss={() => setError(false)}>
+				{hasError
+					? <DismissibleNotice className="notice-error" onDismiss={() => setHasError(false)}>
 						{__('An unknown error occurred. Please try again later', 'code-snippets')}
 					</DismissibleNotice> : null}
 			</div>
 
 			<ModalFooter onClose={onCancel} isSubmitting={isSubmitting} />
-		</form>
+		</ModalForm>
 	)
 }

@@ -17,7 +17,7 @@ interface SubjectWithDefinition<S extends ConditionSubject> {
 }
 
 const findSubjectDefinition = <S extends ConditionSubject>(selectedSubject: S): SubjectWithDefinition<S> => {
-	const subject = (<S | undefined> CONDITION_SUBJECTS[selectedSubject]?.useSubjectOptions) ?? selectedSubject
+	const subject = (<S | undefined> CONDITION_SUBJECTS[selectedSubject].useSubjectOptions) ?? selectedSubject
 	const definition = CONDITION_SUBJECTS[subject]
 	return { subject, definition }
 }
@@ -91,7 +91,7 @@ export const useConditionOptions = <S extends ConditionSubject>(selectedSubject:
 		if (definition?.fetchAllOptions && !loadingOptions) {
 			setLoadingOptions(true)
 
-			definition?.fetchAllOptions(api)
+			definition.fetchAllOptions(api)
 				.then(options => {
 					setOptionsCache(previous => ({ ...previous, [subject]: options }))
 					handleOptionsLoaded(options)

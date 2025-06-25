@@ -3,8 +3,6 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { createContextHook } from '../utils/hooks'
 import { isLicensed } from '../utils/screen'
 import { isProSnippet } from '../utils/snippets/snippets'
-import { submitSnippet } from '../utils/snippets/submit'
-import { useRestAPI } from './useRestAPI'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { ScreenNotice } from '../types/ScreenNotice'
 import type { Snippet } from '../types/Snippet'
@@ -15,7 +13,6 @@ export interface SnippetFormContext {
 	isWorking: boolean
 	isReadOnly: boolean
 	setSnippet: Dispatch<SetStateAction<Snippet>>
-	saveSnippet: (delta?: Partial<Snippet>) => Promise<Snippet | undefined>
 	updateSnippet: Dispatch<SetStateAction<Snippet>>
 	setIsWorking: Dispatch<SetStateAction<boolean>>
 	currentNotice: ScreenNotice | undefined
@@ -32,18 +29,12 @@ export interface WithSnippetFormContextProps extends PropsWithChildren {
 }
 
 export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ children, initialSnippet }) => {
-	const { snippetsAPI } = useRestAPI()
 	const [snippet, setSnippet] = useState<Snippet>(initialSnippet)
 	const [isWorking, setIsWorking] = useState(false)
 	const [currentNotice, setCurrentNotice] = useState<ScreenNotice>()
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
 
 	const isReadOnly = useMemo(() => !isLicensed() && isProSnippet({ scope: snippet.scope }), [snippet.scope])
-
-	const saveSnippet = useCallback(
-		(delta?: Partial<Snippet>) =>
-			submitSnippet({ snippet: { ...snippet, ...delta }, snippetsAPI, setSnippet, setIsWorking, setCurrentNotice }),
-		[snippetsAPI, snippet])
 
 	const handleRequestError = useCallback((error: unknown, message?: string) => {
 		console.error('Request failed', error)
@@ -65,7 +56,6 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 		isWorking,
 		isReadOnly,
 		setSnippet,
-		saveSnippet,
 		setIsWorking,
 		updateSnippet,
 		currentNotice,

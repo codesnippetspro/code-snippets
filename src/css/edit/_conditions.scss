@@ -189,9 +189,16 @@
 	}
 
 	.snippet-selector {
-		display: grid;
-		grid-template-columns: 1fr auto;
+		display: flex;
 		margin: 1em 0;
 		gap: 1em;
+
+		.code-snippets-select {
+			flex: 1;
+		}
+
+		.button {
+			min-width: 7em;
+		}
 	}
 }

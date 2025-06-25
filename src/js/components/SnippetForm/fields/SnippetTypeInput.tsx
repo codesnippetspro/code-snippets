@@ -34,7 +34,7 @@ const SnippetTypeOption: React.FC<SelectOption<SnippetType>> = ({ label, value }
 		<div>
 			{label}
 			{isProType(value) && !isLicensed() &&
-				<span className="badge go-pro-badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>}
+		  <span className="badge go-pro-badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>}
 		</div>
 		<SnippetTypeBadge snippetType={value} />
 	</div>
@@ -61,13 +61,14 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ openUpgradeD
 			<label><h3>{__('Snippet Type', 'code-snippets')}</h3></label>
 			<Select
 				className="code-snippets-select"
-				options={OPTIONS}
-				isDisabled={0 !== snippet.id && isCondition(snippet)}
-				value={OPTIONS.find(option => option.value === snippetType)}
+				options={0 !== snippet.id && isCondition(snippet)
+					? OPTIONS.filter(option => option.value === snippetType)
+					: OPTIONS}
 				styles={{
 					menu: provided => ({ ...provided, zIndex: 9999 }),
 					input: provided => ({ ...provided, boxShadow: 'none' })
 				}}
+				value={OPTIONS.find(option => option.value === snippetType)}
 				formatOptionLabel={SnippetTypeOption}
 				onChange={option => {
 					if (option && isProType(option.value) && !isLicensed()) {

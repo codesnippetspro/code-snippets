@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { WithRestAPIContext } from '../../hooks/useRestAPI'
-import { SubmitSnippetAction, useSnippetFormSubmit } from '../../hooks/useSnippetFormSubmit'
-import { WithSnippetsListContext } from '../../hooks/useSnippetsList'
-import { createSnippetObject, getSnippetType, isCondition } from '../../utils/snippets/snippets'
+import { WithSnippetsListContext, useSnippetsList } from '../../hooks/useSnippetsList'
+import { SubmitSnippetAction, useSubmitSnippet } from '../../hooks/useSubmitSnippet'
+import { handleUnknownError } from '../../utils/errors'
+import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../utils/snippets/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
+import { ConfirmDialog } from '../common/ConfirmDialog'
 import { ConditionEditor } from '../ConditionEditor'
 import { ConditionModal } from '../ConditionModal/ConditionModal'
 import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
@@ -18,8 +20,101 @@ import { UpgradeDialog } from './page/UpgradeDialog'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
 import { PageHeading } from './page/PageHeading'
+import type { PropsWithChildren } from 'react'
+import type { Snippet } from '../../types/Snippet'
 
-const EditConditionForm: React.FC = () => {
+const editFormClassName = ({ snippet, isReadOnly }: { snippet: Snippet, isReadOnly: boolean }) =>
+	classnames(
+		'snippet-form',
+		`${snippet.scope}-snippet`,
+		`${getSnippetType(snippet)}-snippet`,
+		`${snippet.id ? 'saved' : 'new'}-snippet`,
+		`${snippet.active ? 'active' : 'inactive'}-snippet`,
+		{
+			'erroneous-snippet': !!snippet.code_error,
+			'read-only-snippet': isReadOnly
+		}
+	)
+
+interface ConfirmSubmitDialogProps {
+	doSubmit: (action: SubmitSnippetAction | undefined) => void
+	submitAction: SubmitSnippetAction | undefined
+	setSubmitAction: (action: SubmitSnippetAction | undefined) => void
+	validationWarning: string | undefined
+	setValidationWarning: (warning: string | undefined) => void
+}
+
+const ConfirmSubmitDialog: React.FC<ConfirmSubmitDialogProps> = ({
+	doSubmit,
+	submitAction,
+	setSubmitAction,
+	validationWarning,
+	setValidationWarning
+}) =>
+	<ConfirmDialog
+		open={validationWarning !== undefined}
+		title={__('Snippet incomplete', 'code-snippets')}
+		confirmLabel={__('Continue', 'code-snippets')}
+		onCancel={() => {
+			setSubmitAction(undefined)
+			setValidationWarning(undefined)
+		}}
+		onConfirm={() => {
+			doSubmit(submitAction)
+			setSubmitAction(undefined)
+			setValidationWarning(undefined)
+		}}
+	>
+		<p>{`${validationWarning} ${__('Continue?', 'code-snippets')}`}</p>
+	</ConfirmDialog>
+
+const EditForm: React.FC<PropsWithChildren> = ({ children }) => {
+	const { submitSnippet } = useSubmitSnippet()
+	const { snippet, isReadOnly } = useSnippetForm()
+	const { refreshSnippetsList } = useSnippetsList()
+
+	const [validationWarning, setValidationWarning] = useState<string | undefined>()
+	const [submitAction, setSubmitAction] = useState<SubmitSnippetAction | undefined>()
+
+	const doSubmit = (action?: SubmitSnippetAction) => {
+		submitSnippet(action)
+			.then(refreshSnippetsList)
+			.catch(handleUnknownError)
+	}
+
+	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault()
+
+		const action = Object.values(SubmitSnippetAction).find(actionName =>
+			actionName === document.activeElement?.getAttribute('name'))
+
+		const validationWarning = validateSnippet(snippet)
+
+		if (validationWarning) {
+			setValidationWarning(validationWarning)
+			setSubmitAction(action)
+		} else {
+			doSubmit(action)
+		}
+	}
+
+	return (
+		<>
+			<form
+				id="snippet-form snippet-sidebar-container"
+				method="post"
+				onSubmit={handleSubmit}
+				className={editFormClassName({ snippet, isReadOnly })}
+			>
+				{children}
+			</form>
+
+			<ConfirmSubmitDialog {...{ doSubmit, submitAction, setSubmitAction, validationWarning, setValidationWarning }} />
+		</>
+	)
+}
+
+const SnippetConditionsEditor: React.FC = () => {
 	const { snippet, setSnippet } = useSnippetForm()
 
 	return (
@@ -29,20 +124,10 @@ const EditConditionForm: React.FC = () => {
 	)
 }
 
-const EditForm: React.FC = () => {
-	const { snippet, isReadOnly } = useSnippetForm()
+const EditFormWrap: React.FC = () => {
+	const { snippet } = useSnippetForm()
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
-	const [isConditionModalOpen, setIsConditionModalOpen] = useState(!isCondition(snippet)) // TODO: false
-	const { validateAndSubmit, SubmitConfirmationDialog } = useSnippetFormSubmit()
-
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault()
-
-		const submitAction = Object.values(SubmitSnippetAction)
-			.find(actionName => actionName === document.activeElement?.getAttribute('name'))
-
-		validateAndSubmit(submitAction)
-	}
+	const [isConditionModalOpen, setIsConditionModalOpen] = useState(false)
 
 	return (
 		<div className="wrap">
@@ -52,17 +137,7 @@ const EditForm: React.FC = () => {
 
 			<PageHeading />
 
-			<form id="snippet-form" method="post" onSubmit={handleSubmit} className={classnames(
-				'snippet-form',
-				`${snippet.scope}-snippet`,
-				`${getSnippetType(snippet)}-snippet`,
-				`${snippet.id ? 'saved' : 'new'}-snippet`,
-				`${snippet.active ? 'active' : 'inactive'}-snippet`,
-				{
-					'erroneous-snippet': !!snippet.code_error,
-					'read-only-snippet': isReadOnly
-				}
-			)}>
+			<EditForm>
 				<main className="snippet-form-main">
 					<NameInput />
 
@@ -72,17 +147,17 @@ const EditForm: React.FC = () => {
 						<ConditionModalButton setIsModalOpen={setIsConditionModalOpen} />
 					</div>
 
-					<CodeEditor />
-					{isCondition(snippet) && <EditConditionForm />}
+					{isCondition(snippet)
+						? <SnippetConditionsEditor />
+						: <CodeEditor />}
 
 					{window.CODE_SNIPPETS_EDIT?.enableDescription ? <DescriptionEditor /> : null}
 				</main>
 
 				<EditorSidebar />
-			</form>
+			</EditForm>
 
 			{isCondition(snippet) && <ConditionTable />}
-			<SubmitConfirmationDialog />
 			<UpgradeDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
 			<ConditionModal isOpen={isConditionModalOpen} setIsOpen={setIsConditionModalOpen} />
 		</div>
@@ -93,7 +168,7 @@ export const SnippetForm: React.FC = () =>
 	<WithRestAPIContext>
 		<WithSnippetsListContext>
 			<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
-				<EditForm />
+				<EditFormWrap />
 			</WithSnippetFormContext>
 		</WithSnippetsListContext>
 	</WithRestAPIContext>

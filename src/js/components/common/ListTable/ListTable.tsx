@@ -19,7 +19,7 @@ export interface ListTableColumn<T> {
 
 export interface ListTableBulkAction<K extends Key> {
 	name: string
-	apply: (selected: Set<K>) => void
+	apply: (selected: Set<K>) => Promise<void>
 }
 
 export interface ListTableBulkActionGroup<K extends Key> {
@@ -31,6 +31,7 @@ export type ListTableSortDirection = 'asc' | 'desc'
 
 export interface ListTableNavProps<K extends Key> {
 	actions?: readonly (ListTableBulkAction<K> | ListTableBulkActionGroup<K>)[]
+	isDisabled?: boolean
 	extraTableNav?: (which: 'top' | 'bottom') => ReactNode
 }
 
@@ -80,7 +81,8 @@ export const ListTable = <T, K extends Key>({
 	actions,
 	noItems,
 	className,
-	extraTableNav
+	extraTableNav,
+	isDisabled = false,
 }: ListTableProps<T, K>) => {
 	const [selected, setSelected] = useState(new Set<K>())
 	const [sortColumn, setSortColumn] = useState<ListTableColumn<T>>()
@@ -91,7 +93,7 @@ export const ListTable = <T, K extends Key>({
 		[items, sortColumn, sortDirection])
 
 	const tableNavProps: Omit<TableNavProps<K>, 'which'> =
-		{ hasItems: 0 < items.length, actions, extraTableNav, selected }
+		{ hasItems: 0 < items.length, actions, extraTableNav, selected, isDisabled }
 
 	const tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'> =
 		{ items: sortedItems, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }

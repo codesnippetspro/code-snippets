@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useMemo, useState } from 'react'
+import { Spinner } from '@wordpress/components'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
@@ -37,17 +38,40 @@ const columns: ListTableColumn<Snippet>[] = [
 		id: 'desc',
 		title: __('Description', 'code-snippets'),
 		render: snippet => stripTags(snippet.desc)
+	},
+	{
+		id: 'actions',
+		render: snippet => <DetachConditionButton snippet={snippet} />
 	}
 ]
 
-interface SnippetSelectorProps {
-	onSubmit: (selected: Snippet) => void
+const DetachConditionButton: React.FC<{ snippet: Snippet }> = ({ snippet }) => {
+	const { snippetsAPI: { detach } } = useRestAPI()
+	const { refreshSnippetsList } = useSnippetsList()
+	const [showSpinner, setShowSpinner] = useState(false)
+
+	const handleClick = () => {
+		setShowSpinner(true)
+
+		detach(snippet)
+			.then(() => refreshSnippetsList())
+			.catch((error: unknown) => {
+				console.error(error)
+				setShowSpinner(false)
+			})
+	}
+
+	return showSpinner
+		? <Spinner />
+		: <Button onClick={handleClick}>{__('Detach', 'code-snippets')}</Button>
 }
 
-const SnippetSelector: React.FC<SnippetSelectorProps> = ({ onSubmit }) => {
-	const [currentValue, setCurrentValue] = useState<Snippet>()
-	const { snippetsList } = useSnippetsList()
+const SnippetSelector: React.FC = () => {
+	const { snippetsList, refreshSnippetsList } = useSnippetsList()
 	const { snippet: condition } = useSnippetForm()
+	const { snippetsAPI: { attach } } = useRestAPI()
+	const [currentValue, setCurrentValue] = useState<Snippet>()
+	const [isAttaching, setIsAttaching] = useState(false)
 
 	const options: SelectGroup<Snippet>[] | undefined = useMemo(
 		() =>
@@ -57,6 +81,17 @@ const SnippetSelector: React.FC<SnippetSelectorProps> = ({ onSubmit }) => {
 		[snippetsList, condition.id]
 	)
 
+	const handleSubmit = () => {
+		if (currentValue) {
+			setIsAttaching(true)
+
+			attach({ id: currentValue.id, network: isNetworkAdmin(), conditionId: condition.id })
+				.then(() => refreshSnippetsList())
+				.catch(handleUnknownError)
+				.finally(() => setIsAttaching(false))
+		}
+	}
+
 	return (
 		<div className="snippet-selector">
 			<Select
@@ -65,33 +100,27 @@ const SnippetSelector: React.FC<SnippetSelectorProps> = ({ onSubmit }) => {
 				onSelect={selectedValue => setCurrentValue(selectedValue)}
 			/>
 
-			<Button
-				primary
-				large
-				type="submit"
-				onClick={event => {
-					event.preventDefault()
-
-					if (currentValue) {
-						onSubmit(currentValue)
-					}
-				}}>{__('Attach', 'code-snippets')}</Button>
+			<Button primary large type="submit" onClick={handleSubmit} disabled={isAttaching}>
+				{isAttaching ? <Spinner /> : __('Attach', 'code-snippets')}
+			</Button>
 		</div>
 	)
 }
 
 export const ConditionTable: React.FC = () => {
 	const { snippet: condition } = useSnippetForm()
-	const { snippetsAPI: { attach, detach } } = useRestAPI()
+	const { snippetsAPI: { detach } } = useRestAPI()
 	const { snippetsList, refreshSnippetsList } = useSnippetsList()
-	const [attachedSnippets, setAttachedSnippets] = useState<Snippet[]>()
+	const [attachedSnippets, setAttachedSnippets] = useState<Snippet[]>([])
 
 	useEffect(() => {
-		setAttachedSnippets(
-			condition.id
-				? snippetsList?.filter(snippet => snippet.conditionId === condition.id)
-				: undefined
-		)
+		if (snippetsList) {
+			setAttachedSnippets(
+				condition.id
+					? snippetsList.filter(snippet => snippet.conditionId === condition.id)
+					: []
+			)
+		}
 	}, [snippetsList, condition.id])
 
 	const actions: ListTableBulkAction<Snippet['id']>[] = useMemo(() => [
@@ -104,32 +133,21 @@ export const ConditionTable: React.FC = () => {
 		}
 	], [detach, refreshSnippetsList])
 
-	const actionColumn: ListTableColumn<Snippet> = useMemo(() => ({
-		id: 'actions',
-		render: snippet =>
-			<Button onClick={() => {
-				detach(snippet).then(refreshSnippetsList).catch(handleUnknownError)
-			}}>{__('Detach', 'code-snippets')}</Button>
-	}), [detach, refreshSnippetsList])
-
-	return attachedSnippets === undefined
-		? null
-		: <form className="condition-snippets-table">
+	return condition.id
+		? <form className="condition-snippets-table">
 			<h3>{__('Snippets using this Condition', 'code-snippets')}</h3>
 
-			<SnippetSelector
-				onSubmit={selectedSnippet => {
-					attach({ id: selectedSnippet.id, network: isNetworkAdmin(), conditionId: condition.id })
-						.then(refreshSnippetsList)
-						.catch(handleUnknownError)
-				}} />
+			<SnippetSelector />
 
 			<ListTable
 				items={attachedSnippets}
-				columns={[...columns, actionColumn]}
+				columns={columns}
 				actions={actions}
 				getKey={snippet => snippet.id}
-				noItems={__('No snippets are using this condition.', 'code-snippets')}
+				noItems={snippetsList === undefined
+					? <Spinner />
+					: __('No snippets are using this condition.', 'code-snippets')}
 			/>
 		</form>
+		: null
 }

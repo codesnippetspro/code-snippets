@@ -15,28 +15,30 @@ import type { FormEventHandler } from 'react'
 export interface ModalFooterProps {
 	onEdit: VoidFunction
 	onClose: VoidFunction
+	isLoadingOptions: boolean
 	selectedCondition?: Snippet
 	setSelectedCondition: (id?: number) => void
 }
 
-const ModalFooter: React.FC<ModalFooterProps> = ({ onClose, onEdit, selectedCondition, setSelectedCondition }) =>
+const ModalFooter: React.FC<ModalFooterProps> = ({ onClose, onEdit, isLoadingOptions, selectedCondition, setSelectedCondition }) =>
 	<div className="modal-footer">
 		<Button simple large onClick={onClose}>
 			{__('Cancel', 'code-snippets')}
 		</Button>
 
 		<div>
-			<Button large disabled={!selectedCondition} onClick={() => setSelectedCondition()}>
+			<Button large disabled={isLoadingOptions || !selectedCondition} onClick={() => setSelectedCondition()}>
 				{__('Clear', 'code-snippets')}
 			</Button>
 
-			<Button large disabled={!selectedCondition} onClick={() => onEdit()}>
+			<Button large disabled={isLoadingOptions || !selectedCondition} onClick={() => onEdit()}>
 				{__('Edit Condition', 'code-snippets')}
 			</Button>
 
 			<SubmitButton
 				large
 				primary
+				disabled={isLoadingOptions}
 				text={selectedCondition
 					? __('Apply Condition', 'code-snippets')
 					: __('Confirm', 'code-snippets')}
@@ -65,12 +67,15 @@ const ModalUpper: React.FC<ModalUpperProps> = ({ onEdit, options, selectedCondit
 		</div>
 
 		<Select
-			id="condition-select"
+			inputId="condition-select"
 			className="condition-select"
 			isClearable
 			options={options}
 			onSelect={newValue => setSelectedCondition(newValue)}
 			isLoading={options === undefined}
+			placeholder={options === undefined
+				? __('Loading conditions…', 'code-snippets')
+				: __('Select a condition', 'code-snippets')}
 			currentValue={selectedCondition?.id}
 		/>
 	</>
@@ -105,11 +110,8 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
-
-		if (selectedCondition) {
-			setSnippet(previous => ({ ...previous, conditionId: selectedCondition.id }))
-			onClose()
-		}
+		setSnippet(previous => ({ ...previous, conditionId: selectedCondition?.id ?? 0 }))
+		onClose()
 	}
 
 	return (
@@ -125,12 +127,16 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({
 				{showConfirmationNotice
 					? <DismissibleNotice className="notice-success" onDismiss={dismissConfirmationNotice}>
 						<p>{__('The condition has been saved.', 'code-snippets')}</p>
-					</DismissibleNotice> : null}
+					</DismissibleNotice>
+					: null}
 
 				{selectedCondition && <ConditionEditor condition={selectedCondition} />}
 			</div>
 
-			<ModalFooter {...{ onClose, onEdit, selectedCondition, setSelectedCondition }} />
+			<ModalFooter
+				{...{ onClose, onEdit, selectedCondition, setSelectedCondition }}
+				isLoadingOptions={options === undefined}
+			/>
 		</form>
 	)
 }

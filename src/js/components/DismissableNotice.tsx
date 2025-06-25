@@ -7,7 +7,6 @@ export interface DismissibleNoticeProps {
 	className?: classnames.Argument
 	onDismiss: VoidFunction
 	children?: ReactNode
-	autoHide?: boolean
 }
 
 export const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ className, onDismiss, children }) =>

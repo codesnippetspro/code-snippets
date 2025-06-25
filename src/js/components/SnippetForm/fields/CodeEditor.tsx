@@ -1,12 +1,40 @@
 import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
+import { useSubmitSnippet } from '../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../utils/errors'
 import { isMacOS } from '../../../utils/screen'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
+import type { RefObject} from 'react'
+
+interface EditorTextareaProps {
+	ref: RefObject<HTMLTextAreaElement>
+}
+
+const EditorTextarea: React.FC<EditorTextareaProps> = ({ ref }) => {
+	const { snippet, setSnippet } = useSnippetForm()
+
+	return (
+		<div className="snippet-editor">
+			<textarea
+				ref={ref}
+				id="snippet-code"
+				name="snippet_code"
+				value={snippet.code}
+				rows={200}
+				spellCheck={false}
+				onChange={event => {
+					setSnippet(previous => ({ ...previous, code: event.target.value }))
+				}}
+			/>
+			<CodeEditorShortcuts editorTheme={window.CODE_SNIPPETS_EDIT?.editorTheme ?? 'default'} />
+		</div>
+	)
+}
 
 export const CodeEditor: React.FC = () => {
-	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance, saveSnippet } = useSnippetForm()
+	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance } = useSnippetForm()
+	const { submitSnippet } = useSubmitSnippet()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
 	useEffect(() => {
@@ -28,7 +56,7 @@ export const CodeEditor: React.FC = () => {
 			const extraKeys = codeEditorInstance.codemirror.getOption('extraKeys') ?? {}
 			const controlKey = isMacOS() ? 'Cmd' : 'Ctrl'
 			const onSave = () => {
-				saveSnippet()
+				submitSnippet()
 					.then(() => undefined)
 					.catch(handleUnknownError)
 			}
@@ -39,27 +67,12 @@ export const CodeEditor: React.FC = () => {
 				[`${controlKey}-Enter`]: onSave
 			})
 		}
-	}, [saveSnippet, codeEditorInstance, snippet])
+	}, [submitSnippet, codeEditorInstance, snippet])
 
 	return (
 		<div className="snippet-code-container">
 			<h2><label htmlFor="snippet-code">{__('Snippet Content', 'code-snippets')}</label></h2>
-
-			<div className="snippet-editor">
-				<textarea
-					ref={textareaRef}
-					id="snippet-code"
-					name="snippet_code"
-					value={snippet.code}
-					rows={200}
-					spellCheck={false}
-					onChange={event => {
-						setSnippet(previous => ({ ...previous, code: event.target.value }))
-					}}
-				/>
-
-				<CodeEditorShortcuts editorTheme={window.CODE_SNIPPETS_EDIT?.editorTheme ?? 'default'} />
-			</div>
+			<EditorTextarea ref={textareaRef} />
 		</div>
 	)
 }

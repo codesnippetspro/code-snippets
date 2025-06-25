@@ -8,16 +8,15 @@ export const Notices: React.FC = () => {
 
 	return <>
 		{currentNotice
-			? <DismissibleNotice className={currentNotice[0]} onRemove={() => setCurrentNotice(undefined)}>
+			? <DismissibleNotice className={currentNotice[0]} onDismiss={() => setCurrentNotice(undefined)}>
 				<p>{currentNotice[1]}</p>
 			</DismissibleNotice>
 			: null}
 
 		{snippet.code_error
 			? <DismissibleNotice
-				classNames="error"
-				onRemove={() => setSnippet(previous => ({ ...previous, code_error: null }))}
-				autoHide={false}
+				className="notice-error"
+				onDismiss={() => setSnippet(previous => ({ ...previous, code_error: null }))}
 			>
 				<p>
 					<strong>{sprintf(

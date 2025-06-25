@@ -25,7 +25,7 @@ use Exception;
  * @property bool                   $shared_network     Whether the snippet is a shared network snippet.
  * @property string                 $modified           The date and time when the snippet data was most recently saved to the database.
  * @property array{string,int}|null $code_error         Code error encountered when last testing snippet code.
- * @property object|null            $conditions         Snippet conditionals
+ * @property object|null            $conditions         Snippet conditions.
  * @property int                    $revision           Revision or version number of snippet.
  * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
  *
@@ -96,6 +96,15 @@ class Snippet extends Data_Item {
 	}
 
 	/**
+	 * Determine if the snippet is a condition.
+	 *
+	 * @return bool
+	 */
+	public function is_condition(): bool {
+		return 'condition' === $this->scope;
+	}
+
+	/**
 	 * Prepare a value before it is stored.
 	 *
 	 * @param mixed  $value Value to prepare.
@@ -114,22 +123,11 @@ class Snippet extends Data_Item {
 				return code_snippets_build_tags_array( $value );
 
 			case 'active':
-				return is_bool( $value ) ? $value : (bool) $value;
+				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition();
 
 			default:
 				return $value;
 		}
-	}
-
-	/**
-	 * Prepare the value of the conditions field when reading.
-	 *
-	 * @param string|mixed $value Conditions encoded as JSON.
-	 *
-	 * @return mixed
-	 */
-	protected function prepare_conditions( $value ) {
-		return $value;
 	}
 
 	/**

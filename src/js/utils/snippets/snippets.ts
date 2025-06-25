@@ -52,6 +52,28 @@ export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType =
 	}
 }
 
+export const validateSnippet = (snippet: Snippet): undefined | string => {
+	const missingTitle = '' === snippet.name.trim()
+
+	const missingCode = isCondition(snippet)
+		? !snippet.conditions
+		: '' === snippet.code.trim()
+
+	switch (true) {
+		case missingCode && missingTitle:
+			return __('This snippet has no code or title.', 'code-snippets')
+
+		case missingCode:
+			return __('This snippet has no snippet code.', 'code-snippets')
+
+		case missingTitle:
+			return __('This snippet has no title.', 'code-snippets')
+
+		default:
+			return undefined
+	}
+}
+
 export const getSnippetEditUrl = ({ id }: Pick<Snippet, 'id'>): string =>
 	addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id })
 

@@ -275,7 +275,7 @@ class Active_Snippets {
 	 *
 	 * @return string Processed code.
 	 *
-	 * @throws WP_Exception if an invalid snippet scope is provided.
+	 * @throws WP_Exception If an invalid snippet scope is provided.
 	 */
 	private static function process_code( string $code, string $scope ): string {
 		$minify_types = Settings\get_setting( 'general', 'minify_output' );
@@ -313,7 +313,7 @@ class Active_Snippets {
 	 *
 	 * @param string $type Must be either 'css' or 'js'.
 	 *
-	 * @throws WP_Exception if an invalid snippet type is provided.
+	 * @throws WP_Exception If an invalid snippet type is provided.
 	 */
 	private function print_external_code( string $type ) {
 		if ( 'js' !== $type && 'css' !== $type ) {
