@@ -11,6 +11,12 @@
 	}
 }
 
+.condition-rule-sep {
+	text-transform: uppercase;
+	justify-self: center;
+	align-self: center;
+}
+
 .snippet-condition-editor {
 	flex-flow: column;
 	align-items: flex-start;
@@ -60,12 +66,6 @@
 			visibility: hidden;
 		}
 	}
-}
-
-.condition-rule-sep {
-	text-transform: uppercase;
-	justify-self: center;
-	align-self: center;
 }
 
 .snippet-condition-groups {
