@@ -228,6 +228,56 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Build the cloud action links for a snippet.
+	 *
+	 * @param Snippet         $snippet    Current snippet.
+	 * @param Cloud_Link|null $cloud_link Snippet cloud link, if available.
+	 *
+	 * @return array <string, string> The action links HTML.
+	 */
+	private function get_cloud_action_links( Snippet $snippet, ?Cloud_Link $cloud_link ): array {
+		if ( $snippet->is_condition() ) {
+			return [];
+		}
+
+		if ( ! $this->is_cloud_connected ) {
+			return [
+				'cloud' => sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( add_query_arg( 'connect-authorise-cloud', true, code_snippets()->get_menu_url( 'settings' ) ) ),
+					esc_html__( 'Set up cloud', 'code-snippets' )
+				),
+			];
+		}
+
+		if ( ! $cloud_link || ! $cloud_link->in_codevault ) {
+			return [
+				'cloud' => sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( $this->get_action_link( 'cloud', $snippet ) ),
+					esc_html__( 'Sync to Codevault', 'code-snippets' )
+				),
+			];
+		}
+
+		$unlink_action = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( $this->get_action_link( 'unsync-cloud', $snippet ) ),
+			esc_html__( 'Unlink from Cloud', 'code-snippets' )
+		);
+
+		return $cloud_link->update_available
+			? [
+				'cloud'        => $unlink_action,
+				'cloud_update' => sprintf(
+					'<a>%s</a>',
+					esc_html__( 'Update Available', 'code-snippets' )
+				),
+			]
+			: [ 'cloud' => $unlink_action ];
+	}
+
+	/**
 	 * Build a list of action links for individual snippets
 	 *
 	 * @param Snippet         $snippet    The current snippet.
@@ -258,36 +308,7 @@ class List_Table extends WP_List_Table {
 				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', esc_url( $this->get_action_link( $action, $snippet ) ), $label );
 			}
 
-			$actions['cloud'] = sprintf(
-				'<a href="%s">%s</a>',
-				esc_url( add_query_arg( 'connect-authorise-cloud', true, code_snippets()->get_menu_url( 'settings' ) ) ),
-				esc_html__( 'Set up cloud', 'code-snippets' )
-			);
-
-			if ( $this->is_cloud_connected && ! $snippet->is_condition() ) {
-				$actions['cloud'] = sprintf(
-					'<a href="%s">%s</a>',
-					esc_url( $this->get_action_link( 'cloud', $snippet ) ),
-					esc_html__( 'Sync to Codevault', 'code-snippets' )
-				);
-
-				// Check this snippet is linked or originated from the cloud.
-				if ( $cloud_link && $cloud_link->in_codevault ) {
-					$actions['cloud'] = sprintf(
-						'<a href="%s">%s</a>',
-						esc_url( $this->get_action_link( 'unsync-cloud', $snippet ) ),
-						esc_html__( 'Unlink from Cloud', 'code-snippets' )
-					);
-
-					// Check if an update is available only in users codevault.
-					if ( $cloud_link->update_available ) {
-						$actions['cloud_update'] = sprintf(
-							'<a>%s</a>',
-							esc_html__( 'Update Available', 'code-snippets' )
-						);
-					}
-				}
-			}
+			$actions = array_merge( $actions, $this->get_cloud_action_links( $snippet, $cloud_link ) );
 
 			$actions['delete'] = sprintf(
 				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
