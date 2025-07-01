@@ -283,4 +283,14 @@ class DB {
 
 		return $active_snippets;
 	}
+
+	public function get_active_tables(): array {
+		$active_tables = array( $this->table );
+
+		if ( is_multisite() ) {
+			$active_tables[] = $this->ms_table;
+		}
+
+		return $active_tables;
+	}
 }

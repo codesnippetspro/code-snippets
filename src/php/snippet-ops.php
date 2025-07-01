@@ -314,7 +314,7 @@ function activate_snippet( int $id, ?bool $network = null ) {
 	}
 
 	update_shared_network_snippets( [ $snippet ] );
-	do_action( 'code_snippets/activate_snippet', $snippet );
+	do_action( 'code_snippets/activate_snippet', $snippet, $network );
 	clean_snippets_cache( $table_name );
 	return $snippet;
 }
@@ -392,7 +392,7 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
-	// Set the snippet to active.
+	// Set the snippet to inactive.
 	$result = $wpdb->update(
 		$table,
 		array( 'active' => '0' ),
@@ -433,6 +433,8 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
+	$snippet = get_snippet( $id, $network );
+
 	$result = $wpdb->delete(
 		$table,
 		array( 'id' => $id ),
@@ -440,7 +442,7 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 	);
 
 	if ( $result ) {
-		do_action( 'code_snippets/delete_snippet', $id, $network );
+		do_action( 'code_snippets/delete_snippet', $snippet, $network );
 		clean_snippets_cache( $table );
 		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 	}
@@ -668,6 +670,56 @@ function execute_active_snippets(): bool {
 	}
 
 	return true;
+}
+
+function execute_active_snippets_from_flat_files(): bool {
+	$tables = code_snippets()->db->get_active_tables();
+	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
+
+	foreach ( $tables as $table ) {
+		$base_dir = WP_CONTENT_DIR . '/code-snippets/' . $table;
+
+		if ( ! is_dir( $base_dir ) ) {
+			continue;
+		}
+
+		$active_snippets_file_path = $base_dir . '/index.php';
+		if ( ! is_file( $active_snippets_file_path ) ) {
+			continue;
+		}
+
+		$active_snippets = require $active_snippets_file_path;
+		$sorted_snippets = sort_by_priority( $active_snippets );
+
+		foreach ( $sorted_snippets as $snippet_id => $snippet_data ) {
+			if ( ! in_array( $snippet_data['scope'], $scopes, true ) ) {
+				continue;
+			}
+
+			$file = $base_dir . '/' . $snippet_id . '.php';
+			execute_snippet_from_flat_file( $file, $snippet_id );
+		}
+	}
+
+	return true;
+}
+
+function sort_by_priority( array $snippets ): array {
+	uasort( $snippets, function ( $a, $b ) {
+		return $a['priority'] <=> $b['priority'];
+	} );
+
+	return $snippets;
+}
+
+function execute_snippet_from_flat_file( $file, int $id = 0, bool $force = false ) {
+	if ( ! is_file( $file ) || ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ) {
+		return false;
+	}
+
+	require_once $file;
+
+	do_action( 'code_snippets/after_execute_snippet_from_flat_file', $file, $id );
 }
 
 /**

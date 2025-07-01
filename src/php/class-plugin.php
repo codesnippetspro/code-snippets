@@ -119,6 +119,10 @@ class Plugin {
 		// Cloud List Table shared functions.
 		require_once $includes_path . '/cloud/list-table-shared-ops.php';
 
+		// Snippet files.
+		require_once $includes_path . '/class-snippet-files.php';
+		( new Snippet_Files() )->register_hooks();
+
 		$this->active_snippets = new Active_Snippets();
 		$this->front_end = new Front_End();
 		$this->cloud_api = new Cloud_API();
