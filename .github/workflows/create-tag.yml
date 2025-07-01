@@ -1,0 +1,73 @@
+name: Create tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to create the tag for (e.g. 3.6.9) or `next`'
+        required: true
+        type: string
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout core branch
+        uses: actions/checkout@v4
+        with:
+          ref: core
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Install Composer dependencies
+        uses: php-actions/composer@v6
+        with:
+          php_version: '8.1'
+          working_dir: src
+          dev: no
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event.inputs.version }}" = "next" ]; then
+            CURR=$(jq -r .version package.json)
+            MAJOR=$(echo $CURR | cut -d. -f1)
+            MINOR=$(echo $CURR | cut -d. -f2)
+            PATCH=$(echo $CURR | cut -d. -f3)
+            NEW_PATCH=$((PATCH+1))
+            NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+            echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set npm version
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          npm version $VERSION --no-git-tag-version
+
+      - name: Generate changelog and update logs
+        uses: ai-action/ollama-action@v1
+        with:
+          model: llama3
+          prompt: |
+            Use the instructions and template in .story/instructions.md to generate and prepend the changelog for the new release.
+            Ensure CHANGELOG.md and src/readme.txt are updated and formatted as required.
+
+      - name: Commit and tag release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          git add CHANGELOG.md src/readme.txt package.json package-lock.json
+          git commit -m "chore(release): prepare v$VERSION"
+          TAG="v$VERSION"
+          git tag $TAG
+          git push origin core --follow-tags
+          git push origin $TAG

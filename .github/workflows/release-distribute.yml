@@ -1,0 +1,15 @@
+name: Release Distribute
+
+description: |
+  Build and upload the plugin zip on GitHub release creation.
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-and-upload:
+    uses: ./.github/workflows/build-reusable.yml
+    with:
+      node-version: '20.x'
+      php-version: '8.1'

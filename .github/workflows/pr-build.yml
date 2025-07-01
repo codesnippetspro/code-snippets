@@ -1,0 +1,13 @@
+name: PR Build
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  build:
+    if: contains(github.event.pull_request.labels.*.name, 'build')
+    uses: ./.github/workflows/build-reusable.yml
+    with:
+      node-version: '20.x'
+      php-version: '8.1'

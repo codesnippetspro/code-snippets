@@ -1,0 +1,43 @@
+name: Build Reusable
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        default: '20.x'
+        type: string
+      php-version:
+        required: false
+        default: '8.1'
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+
+      - name: Install dependencies
+        run: |
+          npm install
+          composer install --no-dev --working-dir=src
+
+      - name: Build plugin
+        run: npm run bundle
+
+      - name: Upload built zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-snippets-${{ github.sha }}.zip
+          path: bundle/code-snippets*.zip
