@@ -36,7 +36,7 @@ class Snippet_Files {
 	}
 
 	public function handle_snippet( $snippet, $table ) {
-        $snippet_type = $snippet->get_type();
+		$snippet_type = $snippet->get_type();
 		if ( 'php' !== $snippet_type ) {
 			return;
 		}
@@ -56,7 +56,7 @@ class Snippet_Files {
 	}
 
 	public function delete_snippet( $snippet, $network ) {
-        $snippet_type = $snippet->get_type();
+		$snippet_type = $snippet->get_type();
 		if ( 'php' !== $snippet_type ) {
 			return;
 		}
@@ -71,7 +71,7 @@ class Snippet_Files {
 	}
 
 	public function activate_snippet( $snippet, $network ) {
-        $snippet_type = $snippet->get_type();
+		$snippet_type = $snippet->get_type();
 		if ( 'php' !== $snippet_type ) {
 			return;
 		}
@@ -89,7 +89,7 @@ class Snippet_Files {
 
 	public function deactivate_snippet( $snippet_id, $network ) {
 		$snippet = get_snippet( $snippet_id, $network );
-        $snippet_type = $snippet->get_type();
+		$snippet_type = $snippet->get_type();
 
 		if ( ! $snippet || 'php' !== $snippet_type ) {
 			return;
