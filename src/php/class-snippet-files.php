@@ -24,6 +24,7 @@ class Snippet_Files {
 		add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
 		add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 2 );
 		add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
+		add_action( 'updated_option', [ $this, 'sync_active_shared_network_snippets' ], 10, 3 );
 	}
 
 	private function ensure_filesystem() {
@@ -107,10 +108,20 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Returns the base directory path for a given table.
+	 * Returns the base directory path for a given context.
 	 */
-	public static function get_base_dir( string $table, string $snippet_type ) {
-		return WP_CONTENT_DIR . '/code-snippets/' . $table . '/' . $snippet_type;
+	public static function get_base_dir( string $table = '', string $snippet_type = '' ) {
+		$base_dir = WP_CONTENT_DIR . '/code-snippets';
+
+		if ( ! empty( $table ) ) {
+			$base_dir .= '/' . $table;
+		}
+
+		if ( ! empty( $snippet_type ) ) {
+			$base_dir .= '/' . $snippet_type;
+		}
+
+		return $base_dir;
 	}
 
 	/**
@@ -164,8 +175,8 @@ class Snippet_Files {
 	 * Saves the index.php file via WP_Filesystem.
 	 */
 	private function save_config_file( string $config_file_path, array $active_snippets ) {
-		$index_content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn " . var_export( $active_snippets, true ) . ";\n";
-		$this->fs->put_contents( $config_file_path, $index_content, FS_CHMOD_FILE );
+		$file_content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn " . var_export( $active_snippets, true ) . ";\n";
+		$this->fs->put_contents( $config_file_path, $file_content, FS_CHMOD_FILE );
 	}
 
 	/**
@@ -182,5 +193,21 @@ class Snippet_Files {
 		}
 
 		$this->save_config_file( $config_file_path, $active_snippets );
+	}
+
+	public function sync_active_shared_network_snippets( $option, $old_value, $value ) {
+		if ( 'active_shared_network_snippets' !== $option ) {
+			return;
+		}
+
+		$table = code_snippets()->db->get_table_name();
+		$base_dir = self::get_base_dir( $table );
+
+		$this->maybe_create_directory( $base_dir );
+
+		$file_path = trailingslashit( $base_dir ) . 'active-shared-network-snippets.php';
+		$file_content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn " . var_export( $value, true ) . ";\n";
+
+		$this->fs->put_contents( $file_path, $file_content, FS_CHMOD_FILE );
 	}
 }
