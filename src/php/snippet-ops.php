@@ -689,7 +689,7 @@ function execute_active_snippets_from_flat_files(): bool {
 		}
 
 		$active_snippets = require $active_snippets_file_path;
-		$sorted_snippets = sort_by_priority( $active_snippets );
+		$sorted_snippets = cs_sort_snippets_by_priority( $active_snippets );
 
 		foreach ( $sorted_snippets as $snippet_id => $snippet_data ) {
 			if ( ! in_array( $snippet_data['scope'], $scopes, true ) ) {
@@ -704,7 +704,7 @@ function execute_active_snippets_from_flat_files(): bool {
 	return true;
 }
 
-function sort_by_priority( array $snippets ): array {
+function cs_sort_snippets_by_priority( array $snippets ): array {
 	uasort( $snippets, function ( $a, $b ) {
 		return $a['priority'] <=> $b['priority'];
 	} );
