@@ -659,6 +659,9 @@ function execute_active_snippets(): bool {
 						array( '%d' )
 					);
 					clean_snippets_cache( $table_name );
+
+					$network = $table_name === $db->ms_table;
+					do_action( 'code_snippets/deactivate_snippet', $snippet_id, $network );
 				}
 			}
 
@@ -672,12 +675,38 @@ function execute_active_snippets(): bool {
 	return true;
 }
 
+/**
+ * Execute the active snippets from the flat files.
+ * Read-write-execute operation.
+ *
+ * @return bool true on success, false on failure.
+ */
 function execute_active_snippets_from_flat_files(): bool {
-	$tables = code_snippets()->db->get_active_tables();
+	$db = code_snippets()->db;
+	$tables = $db->get_active_tables();
 	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
 
-	foreach ( $tables as $table ) {
-		$base_dir = WP_CONTENT_DIR . '/code-snippets/' . $table . '/php';
+	// Detect if a snippet is currently being edited, and if so, spare it from execution.
+	$edit_id = 0;
+	$edit_table = $db->table;
+
+	if ( wp_is_json_request() && ! empty( $_SERVER['REQUEST_URI'] ) ) {
+		$url = wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+
+		if ( isset( $url['path'] ) && false !== strpos( $url['path'], Snippets_REST_Controller::get_prefixed_base_route() ) ) {
+			$path_parts = explode( '/', $url['path'] );
+			$edit_id = intval( end( $path_parts ) );
+
+			if ( ! empty( $url['query'] ) ) {
+				wp_parse_str( $url['query'], $path_params );
+				$edit_table = isset( $path_params['network'] ) && rest_sanitize_boolean( $path_params['network'] ) ?
+					$db->ms_table : $db->table;
+			}
+		}
+	}
+
+	foreach ( $tables as $table_name ) {
+		$base_dir = WP_CONTENT_DIR . '/code-snippets/' . $table_name . '/php';
 
 		if ( ! is_dir( $base_dir ) ) {
 			continue;
@@ -691,13 +720,40 @@ function execute_active_snippets_from_flat_files(): bool {
 		$active_snippets = require $active_snippets_file_path;
 		$sorted_snippets = cs_sort_snippets_by_priority( $active_snippets );
 
-		foreach ( $sorted_snippets as $snippet_id => $snippet_data ) {
-			if ( ! in_array( $snippet_data['scope'], $scopes, true ) ) {
+		foreach ( $sorted_snippets as $snippet_id => $snippet ) {
+			if ( ! in_array( $snippet['scope'], $scopes, true ) ) {
 				continue;
 			}
 
+			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
+			if ( 'single-use' === $snippet['scope'] ) {
+				$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
+
+				if ( $table_name === $db->ms_table && is_array( $active_shared_ids ) && in_array( $snippet_id, $active_shared_ids, true ) ) {
+					unset( $active_shared_ids[ array_search( $snippet_id, $active_shared_ids, true ) ] );
+					$active_shared_ids = array_values( $active_shared_ids );
+					update_option( 'active_shared_network_snippets', $active_shared_ids );
+					clean_active_snippets_cache( $table_name );
+				} else {
+					$wpdb->update(
+						$table_name,
+						array( 'active' => '0' ),
+						array( 'id' => $snippet_id ),
+						array( '%d' ),
+						array( '%d' )
+					);
+					clean_snippets_cache( $table_name );
+
+					$network = $table_name === $db->ms_table;
+					do_action( 'code_snippets/deactivate_snippet', $snippet_id, $network );
+				}
+			}
+
 			$file = $base_dir . '/' . $snippet_id . '.php';
-			execute_snippet_from_flat_file( $file, $snippet_id );
+			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
+			! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
+				execute_snippet_from_flat_file( $file, $snippet_id );
+			}
 		}
 	}
 
