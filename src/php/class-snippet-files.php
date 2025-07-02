@@ -77,6 +77,8 @@ class Snippet_Files {
 	}
 
 	public function activate_snippet( Snippet $snippet, bool $network ) {
+		$snippet = get_snippet( $snippet->id, $network );
+
 		$snippet_type = $snippet->get_type();
 		if ( ! $this->should_handle_snippet( $snippet_type ) ) {
 			return;
@@ -182,14 +184,14 @@ class Snippet_Files {
 	/**
 	 * Updates the index.php file with snippet config.
 	 */
-	private function update_config_file( string $base_dir, Snippet $snippet, bool $remove = false ) {
+	private function update_config_file( string $base_dir, Snippet $snippet, ?bool $remove = false ) {
 		$config_file_path = trailingslashit( $base_dir ) . 'index.php';
 		$active_snippets = $this->load_config_file( $config_file_path );
 
-		if ( $remove ) {
-			unset( $active_snippets[ $snippet->id ] );
-		} else {
+		if ( ! $remove ) {
 			$active_snippets[ $snippet->id ] = $snippet->get_fields();
+		} else {
+			unset( $active_snippets[ $snippet->id ] );
 		}
 
 		$this->save_config_file( $config_file_path, $active_snippets );
@@ -209,5 +211,47 @@ class Snippet_Files {
 		$file_content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn " . var_export( $value, true ) . ";\n";
 
 		$this->fs->put_contents( $file_path, $file_content, FS_CHMOD_FILE );
+	}
+
+	public static function get_active_snippets_from_flat_files() {
+		$snippets = [];
+
+		$table = code_snippets()->db->get_table_name();
+		$base_dir = self::get_base_dir( $table, 'php' );
+		$snippets_file_path = $base_dir . '/index.php';
+
+		if ( is_file( $snippets_file_path ) ) {
+			$site_snippets = is_file( $snippets_file_path ) ? require $snippets_file_path : [];
+
+			$snippets[ $table ] = array_filter(
+				$site_snippets,
+				function ( $snippet ) {
+					return $snippet['active'];
+				}
+			);
+		}
+
+		if ( is_multisite() ) {
+			$root_base_dir = self::get_base_dir( $table );
+			$active_shared_ids_file_path = $root_base_dir . '/active-shared-network-snippets.php';
+
+			$active_shared_ids = is_file( $active_shared_ids_file_path ) ? require $active_shared_ids_file_path : [];
+			$ms_table = code_snippets()->db->get_table_name( true );
+			$ms_base_dir = self::get_base_dir( $ms_table, 'php' );
+			$ms_snippets_file_path = $ms_base_dir . '/index.php';
+
+			if ( is_file( $ms_snippets_file_path ) ) {
+				$ms_snippets = is_file( $ms_snippets_file_path ) ? require $ms_snippets_file_path : [];
+
+				$snippets[ $ms_table ] = array_filter(
+					$ms_snippets,
+					function ( $snippet ) use ( $active_shared_ids ) {
+						return $snippet['active'] || in_array( intval( $snippet['id'] ), $active_shared_ids, true );
+					}
+				);
+			}
+		}
+
+		return $snippets;
 	}
 }

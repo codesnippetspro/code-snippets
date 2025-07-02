@@ -675,12 +675,6 @@ function execute_active_snippets(): bool {
 	return true;
 }
 
-/**
- * Execute the active snippets from the flat files.
- * Read-write-execute operation.
- *
- * @return bool true on success, false on failure.
- */
 function execute_active_snippets_from_flat_files(): bool {
 	global $wpdb;
 
@@ -691,8 +685,8 @@ function execute_active_snippets_from_flat_files(): bool {
 	}
 
 	$db = code_snippets()->db;
-	$tables = $db->get_active_tables();
 	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
+	$data = Snippet_Files::get_active_snippets_from_flat_files();
 
 	// Detect if a snippet is currently being edited, and if so, spare it from execution.
 	$edit_id = 0;
@@ -713,29 +707,14 @@ function execute_active_snippets_from_flat_files(): bool {
 		}
 	}
 
-	foreach ( $tables as $table_name ) {
+	foreach ( $data as $table_name => $active_snippets ) {
 		$base_dir = Snippet_Files::get_base_dir( $table_name, 'php' );
+		$active_snippets = cs_sort_snippets_by_priority( $active_snippets );
 
-		if ( ! is_dir( $base_dir ) ) {
-			continue;
-		}
-
-		$active_snippets_file_path = $base_dir . '/index.php';
-		if ( ! is_file( $active_snippets_file_path ) ) {
-			continue;
-		}
-
-		$active_snippets = require $active_snippets_file_path;
-		$sorted_snippets = cs_sort_snippets_by_priority( $active_snippets );
-
-		foreach ( $sorted_snippets as $snippet_id => $snippet ) {
-			if ( ! in_array( $snippet['scope'], $scopes, true ) ) {
-				continue;
-			}
-
-			if ( ! $snippet['active'] ) {
-				continue;
-			}
+		// Loop through the returned snippets and execute the PHP code.
+		foreach ( $active_snippets as $snippet ) {
+			$snippet_id = intval( $snippet['id'] );
+			$code = $snippet['code'];
 
 			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
 			if ( 'single-use' === $snippet['scope'] ) {
@@ -761,9 +740,9 @@ function execute_active_snippets_from_flat_files(): bool {
 				}
 			}
 
-			$file = $base_dir . '/' . $snippet_id . '.php';
 			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
 			! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
+				$file = $base_dir . '/' . $snippet_id . '.php';
 				execute_snippet_from_flat_file( $file, $snippet_id );
 			}
 		}
