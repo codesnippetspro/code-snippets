@@ -4,6 +4,29 @@ namespace Code_Snippets;
 
 class Snippet_Files {
 
+	/**
+	 * Holds the WP_Filesystem instance.
+	 *
+	 * @var \WP_Filesystem_Base
+	 */
+	private $fs;
+
+	public function __construct() {
+		$this->init_filesystem();
+	}
+
+	/**
+	 * Initialize WP_Filesystem.
+	 */
+	private function init_filesystem() {
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+		WP_Filesystem();
+		global $wp_filesystem;
+		$this->fs = $wp_filesystem;
+	}
+
 	public function register_hooks() {
 		add_action( 'code_snippets/create_snippet', [ $this, 'handle_snippet' ], 10, 2 );
 		add_action( 'code_snippets/update_snippet', [ $this, 'handle_snippet' ], 10, 2 );
@@ -16,35 +39,19 @@ class Snippet_Files {
 		if ( 'php' !== $snippet->get_type() ) {
 			return;
 		}
-		$base_dir = WP_CONTENT_DIR . '/code-snippets/' . $table;
 
-		if ( ! is_dir( $base_dir ) ) {
-			wp_mkdir_p( $base_dir );
-		}
+		$base_dir = $this->get_base_dir( $table );
+		$this->maybe_create_directory( $base_dir );
 
-		$file_path = trailingslashit( $base_dir ) . $snippet->id . '.php';
+		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
 
 		if ( $snippet->active ) {
-			$content = "<?php\n\nif ( ! defined( 'ABSPATH' )) { return; }\n\n" . $snippet->code;
-
-			file_put_contents( $file_path, $content );
+			$this->write_snippet_file( $file_path, $snippet->code );
 		} else {
-			@unlink( $file_path );
+			$this->delete_file( $file_path );
 		}
 
-		$index_file_path = trailingslashit( $base_dir ) . 'index.php';
-
-		$active_snippets = is_file( $index_file_path ) ? require $index_file_path : [];
-
-		if ( $snippet->active ) {
-			$active_snippets[ $snippet->id ] = $snippet->get_fields();
-		} else {
-			unset( $active_snippets[ $snippet->id ] );
-		}
-
-		$index_content = "<?php\n\nif ( ! defined( 'ABSPATH' )) { return; }\n\nreturn " . var_export( $active_snippets, true ) . ";\n";
-
-		file_put_contents( $index_file_path, $index_content );
+		$this->update_index_file( $base_dir, $snippet, $snippet->active );
 	}
 
 	public function delete_snippet( $snippet, $network ) {
@@ -53,22 +60,12 @@ class Snippet_Files {
 		}
 
 		$table = code_snippets()->db->get_table_name( $network );
+		$base_dir = $this->get_base_dir( $table );
 
-		$base_dir = WP_CONTENT_DIR . '/code-snippets/' . $table;
+		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
+		$this->delete_file( $file_path );
 
-		$file_path = trailingslashit( $base_dir ) . $snippet->id . '.php';
-
-		@unlink( $file_path );
-
-		$index_file_path = trailingslashit( $base_dir ) . 'index.php';
-
-		$active_snippets = is_file( $index_file_path ) ? require $index_file_path : [];
-
-		unset( $active_snippets[ $snippet_id ] );
-
-		$index_content = "<?php\n\nif ( ! defined( 'ABSPATH' )) { return; }\n\nreturn " . var_export( $active_snippets, true ) . ";\n";
-
-		file_put_contents( $index_file_path, $index_content );
+		$this->update_index_file( $base_dir, $snippet, false );
 	}
 
 	public function activate_snippet( $snippet, $network ) {
@@ -77,47 +74,100 @@ class Snippet_Files {
 		}
 
 		$table = code_snippets()->db->get_table_name( $network );
+		$base_dir = $this->get_base_dir( $table );
 
-		$base_dir = WP_CONTENT_DIR . '/code-snippets/' . $table;
+		$this->maybe_create_directory( $base_dir );
 
-		$file_path = trailingslashit( $base_dir ) . $snippet->id . '.php';
+		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
+		$this->write_snippet_file( $file_path, $snippet->code );
 
-		$content = "<?php\n\nif ( ! defined( 'ABSPATH' )) { return; }\n\n" . $snippet->code;
-
-		file_put_contents( $file_path, $content );
-
-		$index_file_path = trailingslashit( $base_dir ) . 'index.php';
-
-		$active_snippets = is_file( $index_file_path ) ? require $index_file_path : [];
-
-		$active_snippets[ $snippet->id ] = $snippet->get_fields();
-
-		$index_content = "<?php\n\nif ( ! defined( 'ABSPATH' )) { return; }\n\nreturn " . var_export( $active_snippets, true ) . ";\n";
-
-		file_put_contents( $index_file_path, $index_content );
+		$this->update_index_file( $base_dir, $snippet, true );
 	}
 
 	public function deactivate_snippet( $snippet_id, $network ) {
 		$snippet = get_snippet( $snippet_id, $network );
 
-		if ( 'php' !== $snippet->get_type() ) {
+		if ( ! $snippet || 'php' !== $snippet->get_type() ) {
 			return;
 		}
 
-		$base_dir = WP_CONTENT_DIR . '/code-snippets/' . $network;
+		$table = code_snippets()->db->get_table_name( $network );
+		$base_dir = $this->get_base_dir( $table );
 
-		$file_path = trailingslashit( $base_dir ) . $snippet_id . '.php';
+		$file_path = $this->get_snippet_file_path( $base_dir, $snippet_id );
+		$this->delete_file( $file_path );
 
-		@unlink( $file_path );
+		$this->update_index_file( $base_dir, $snippet, false );
+	}
 
+	/**
+	 * Returns the base directory path for a given table.
+	 */
+	private function get_base_dir( $table ) {
+		return WP_CONTENT_DIR . '/code-snippets/' . $table;
+	}
+
+	/**
+	 * Creates the directory if it does not exist.
+	 */
+	private function maybe_create_directory( $dir ) {
+		if ( ! $this->fs->is_dir( $dir ) ) {
+			$this->fs->mkdir( $dir, FS_CHMOD_DIR );
+		}
+	}
+
+	/**
+	 * Returns the path to the snippet PHP file.
+	 */
+	private function get_snippet_file_path( $base_dir, $snippet_id ) {
+		return trailingslashit( $base_dir ) . $snippet_id . '.php';
+	}
+
+	/**
+	 * Writes the snippet code to a file, with the required header.
+	 */
+	private function write_snippet_file( $file_path, $code ) {
+		$content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\n" . $code;
+		$this->fs->put_contents( $file_path, $content, FS_CHMOD_FILE );
+	}
+
+	/**
+	 * Deletes a file if it exists.
+	 */
+	private function delete_file( $file_path ) {
+		if ( $this->fs->exists( $file_path ) ) {
+			$this->fs->delete( $file_path );
+		}
+	}
+
+	/**
+	 * Loads the index.php array by requiring it directly.
+	 */
+	private function load_index_file( $index_file_path ) {
+		return is_file( $index_file_path ) ? require $index_file_path : [];
+	}
+
+	/**
+	 * Saves the index.php file via WP_Filesystem.
+	 */
+	private function save_index_file( $index_file_path, $active_snippets ) {
+		$index_content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn " . var_export( $active_snippets, true ) . ";\n";
+		$this->fs->put_contents( $index_file_path, $index_content, FS_CHMOD_FILE );
+	}
+
+	/**
+	 * Updates the index.php file by adding or removing a snippet.
+	 */
+	private function update_index_file( $base_dir, $snippet, $active ) {
 		$index_file_path = trailingslashit( $base_dir ) . 'index.php';
+		$active_snippets = $this->load_index_file( $index_file_path );
 
-		$active_snippets = is_file( $index_file_path ) ? require $index_file_path : [];
+		if ( $active ) {
+			$active_snippets[ $snippet->id ] = $snippet->get_fields();
+		} else {
+			unset( $active_snippets[ $snippet->id ] );
+		}
 
-		unset( $active_snippets[ $snippet_id ] );
-
-		$index_content = "<?php\n\nif ( ! defined( 'ABSPATH' )) { return; }\n\nreturn " . var_export( $active_snippets, true ) . ";\n";
-
-		file_put_contents( $index_file_path, $index_content );
+		$this->save_index_file( $index_file_path, $active_snippets );
 	}
 }
