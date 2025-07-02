@@ -245,6 +245,16 @@ class Front_End {
 			return $snippet->code;
 		}
 
+		$network = DB::validate_network_param( $snippet->network );
+		$table_name = code_snippets()->db->get_table_name( $network );
+		$filepath = WP_CONTENT_DIR . '/code-snippets/' . $table_name . '/html/' . $snippet->id . '.php';
+
+		return file_exists( $filepath )
+			? $this->evaluate_shortcode_from_flat_file( $filepath, $atts )
+			: $this->evaluate_shortcode_from_db( $snippet, $atts );
+	}
+
+	private function evaluate_shortcode_from_db( Snippet $snippet, array $atts ): string {
 		/**
 		 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
 		 * authors to use custom attributes.
@@ -255,6 +265,23 @@ class Front_End {
 
 		ob_start();
 		eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
+
+		return ob_get_clean();
+	}
+
+	private function evaluate_shortcode_from_flat_file( $filepath, array $atts ): string {
+		ob_start();
+
+		( function( $atts ) use ( $filepath ) {
+			/**
+			 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
+			 * authors to use custom attributes.
+			 *
+			 * @phpcs:disable WordPress.PHP.DontExtract.extract_extract
+			 */
+			extract( $atts );
+			require_once $filepath;
+		} )( $atts );
 
 		return ob_get_clean();
 	}

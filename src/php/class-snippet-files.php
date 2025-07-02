@@ -37,7 +37,7 @@ class Snippet_Files {
 
 	public function handle_snippet( $snippet, $table ) {
 		$snippet_type = $snippet->get_type();
-		if ( 'php' !== $snippet_type ) {
+		if ( 'php' !== $snippet_type && 'html' !== $snippet_type ) {
 			return;
 		}
 
@@ -47,7 +47,7 @@ class Snippet_Files {
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
 
 		if ( $snippet->active ) {
-			$this->write_snippet_file( $file_path, $snippet->code );
+			$this->write_snippet_file( $file_path, $snippet->code, $snippet_type );
 		} else {
 			$this->delete_file( $file_path );
 		}
@@ -57,7 +57,7 @@ class Snippet_Files {
 
 	public function delete_snippet( $snippet, $network ) {
 		$snippet_type = $snippet->get_type();
-		if ( 'php' !== $snippet_type ) {
+		if ( 'php' !== $snippet_type && 'html' !== $snippet_type ) {
 			return;
 		}
 
@@ -72,7 +72,7 @@ class Snippet_Files {
 
 	public function activate_snippet( $snippet, $network ) {
 		$snippet_type = $snippet->get_type();
-		if ( 'php' !== $snippet_type ) {
+		if ( 'php' !== $snippet_type && 'html' !== $snippet_type ) {
 			return;
 		}
 
@@ -82,7 +82,7 @@ class Snippet_Files {
 		$this->maybe_create_directory( $base_dir );
 
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
-		$this->write_snippet_file( $file_path, $snippet->code );
+		$this->write_snippet_file( $file_path, $snippet->code, $snippet_type );
 
 		$this->update_index_file( $base_dir, $snippet, true );
 	}
@@ -91,7 +91,7 @@ class Snippet_Files {
 		$snippet = get_snippet( $snippet_id, $network );
 		$snippet_type = $snippet->get_type();
 
-		if ( ! $snippet || 'php' !== $snippet_type ) {
+		if ( 'php' !== $snippet_type && 'html' !== $snippet_type ) {
 			return;
 		}
 
@@ -130,8 +130,15 @@ class Snippet_Files {
 	/**
 	 * Writes the snippet code to a file, with the required header.
 	 */
-	private function write_snippet_file( $file_path, $code ) {
-		$content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\n" . $code;
+	private function write_snippet_file( $file_path, $code, $snippet_type ) {
+		$content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\n";
+
+        if ( 'html' === $snippet_type ) {
+            $content .= "?>\n\n";
+        }
+
+		$content .= $code;
+
 		$this->fs->put_contents( $file_path, $content, FS_CHMOD_FILE );
 	}
 
