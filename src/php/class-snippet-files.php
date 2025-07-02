@@ -52,7 +52,7 @@ class Snippet_Files {
 			$this->delete_file( $file_path );
 		}
 
-		$this->update_index_file( $base_dir, $snippet, $snippet->active );
+		$this->update_config_file( $base_dir, $snippet, $snippet->active );
 	}
 
 	public function delete_snippet( $snippet, $network ) {
@@ -67,7 +67,7 @@ class Snippet_Files {
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
 		$this->delete_file( $file_path );
 
-		$this->update_index_file( $base_dir, $snippet, false );
+		$this->update_config_file( $base_dir, $snippet, false );
 	}
 
 	public function activate_snippet( $snippet, $network ) {
@@ -84,7 +84,7 @@ class Snippet_Files {
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
 		$this->write_snippet_file( $file_path, $snippet->code, $snippet_type );
 
-		$this->update_index_file( $base_dir, $snippet, true );
+		$this->update_config_file( $base_dir, $snippet, true );
 	}
 
 	public function deactivate_snippet( $snippet_id, $network ) {
@@ -101,7 +101,7 @@ class Snippet_Files {
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet_id );
 		$this->delete_file( $file_path );
 
-		$this->update_index_file( $base_dir, $snippet, false );
+		$this->update_config_file( $base_dir, $snippet, false );
 	}
 
 	/**
@@ -133,9 +133,9 @@ class Snippet_Files {
 	private function write_snippet_file( $file_path, $code, $snippet_type ) {
 		$content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\n";
 
-        if ( 'html' === $snippet_type ) {
-            $content .= "?>\n\n";
-        }
+		if ( 'html' === $snippet_type ) {
+			$content .= "?>\n\n";
+		}
 
 		$content .= $code;
 
@@ -154,24 +154,24 @@ class Snippet_Files {
 	/**
 	 * Loads the index.php array by requiring it directly.
 	 */
-	private function load_index_file( $index_file_path ) {
-		return is_file( $index_file_path ) ? require $index_file_path : [];
+	private function load_config_file( $config_file_path ) {
+		return is_file( $config_file_path ) ? require $config_file_path : [];
 	}
 
 	/**
 	 * Saves the index.php file via WP_Filesystem.
 	 */
-	private function save_index_file( $index_file_path, $active_snippets ) {
+	private function save_config_file( $config_file_path, $active_snippets ) {
 		$index_content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn " . var_export( $active_snippets, true ) . ";\n";
-		$this->fs->put_contents( $index_file_path, $index_content, FS_CHMOD_FILE );
+		$this->fs->put_contents( $config_file_path, $index_content, FS_CHMOD_FILE );
 	}
 
 	/**
 	 * Updates the index.php file by adding or removing a snippet.
 	 */
-	private function update_index_file( $base_dir, $snippet, $active ) {
-		$index_file_path = trailingslashit( $base_dir ) . 'index.php';
-		$active_snippets = $this->load_index_file( $index_file_path );
+	private function update_config_file( $base_dir, $snippet, $active ) {
+		$config_file_path = trailingslashit( $base_dir ) . 'index.php';
+		$active_snippets = $this->load_config_file( $config_file_path );
 
 		if ( $active ) {
 			$active_snippets[ $snippet->id ] = $snippet->get_fields();
@@ -179,6 +179,6 @@ class Snippet_Files {
 			unset( $active_snippets[ $snippet->id ] );
 		}
 
-		$this->save_index_file( $index_file_path, $active_snippets );
+		$this->save_config_file( $config_file_path, $active_snippets );
 	}
 }
