@@ -685,7 +685,7 @@ function execute_active_snippets_from_flat_files(): bool {
 	}
 
 	$db = code_snippets()->db;
-	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
+	$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
 	$data = Snippet_Files::get_active_snippets_from_flat_files();
 
 	// Detect if a snippet is currently being edited, and if so, spare it from execution.
@@ -713,8 +713,11 @@ function execute_active_snippets_from_flat_files(): bool {
 
 		// Loop through the returned snippets and execute the PHP code.
 		foreach ( $active_snippets as $snippet ) {
+			if ( ! in_array( $snippet['scope'], $scopes, true ) ) {
+				continue;
+			}
+
 			$snippet_id = intval( $snippet['id'] );
-			$code = $snippet['code'];
 
 			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
 			if ( 'single-use' === $snippet['scope'] ) {
