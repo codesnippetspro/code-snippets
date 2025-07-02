@@ -36,11 +36,12 @@ class Snippet_Files {
 	}
 
 	public function handle_snippet( $snippet, $table ) {
-		if ( 'php' !== $snippet->get_type() ) {
+        $snippet_type = $snippet->get_type();
+		if ( 'php' !== $snippet_type ) {
 			return;
 		}
 
-		$base_dir = $this->get_base_dir( $table );
+		$base_dir = $this->get_base_dir( $table, $snippet_type );
 		$this->maybe_create_directory( $base_dir );
 
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
@@ -55,12 +56,13 @@ class Snippet_Files {
 	}
 
 	public function delete_snippet( $snippet, $network ) {
-		if ( 'php' !== $snippet->get_type() ) {
+        $snippet_type = $snippet->get_type();
+		if ( 'php' !== $snippet_type ) {
 			return;
 		}
 
 		$table = code_snippets()->db->get_table_name( $network );
-		$base_dir = $this->get_base_dir( $table );
+		$base_dir = $this->get_base_dir( $table, $snippet_type );
 
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
 		$this->delete_file( $file_path );
@@ -69,12 +71,13 @@ class Snippet_Files {
 	}
 
 	public function activate_snippet( $snippet, $network ) {
-		if ( 'php' !== $snippet->get_type() ) {
+        $snippet_type = $snippet->get_type();
+		if ( 'php' !== $snippet_type ) {
 			return;
 		}
 
 		$table = code_snippets()->db->get_table_name( $network );
-		$base_dir = $this->get_base_dir( $table );
+		$base_dir = $this->get_base_dir( $table, $snippet_type );
 
 		$this->maybe_create_directory( $base_dir );
 
@@ -86,13 +89,14 @@ class Snippet_Files {
 
 	public function deactivate_snippet( $snippet_id, $network ) {
 		$snippet = get_snippet( $snippet_id, $network );
+        $snippet_type = $snippet->get_type();
 
-		if ( ! $snippet || 'php' !== $snippet->get_type() ) {
+		if ( ! $snippet || 'php' !== $snippet_type ) {
 			return;
 		}
 
 		$table = code_snippets()->db->get_table_name( $network );
-		$base_dir = $this->get_base_dir( $table );
+		$base_dir = $this->get_base_dir( $table, $snippet_type );
 
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet_id );
 		$this->delete_file( $file_path );
@@ -103,8 +107,8 @@ class Snippet_Files {
 	/**
 	 * Returns the base directory path for a given table.
 	 */
-	private function get_base_dir( $table ) {
-		return WP_CONTENT_DIR . '/code-snippets/' . $table;
+	private function get_base_dir( $table, $snippet_type ) {
+		return WP_CONTENT_DIR . '/code-snippets/' . $table . '/' . $snippet_type;
 	}
 
 	/**

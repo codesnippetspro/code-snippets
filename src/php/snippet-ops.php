@@ -677,7 +677,7 @@ function execute_active_snippets_from_flat_files(): bool {
 	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
 
 	foreach ( $tables as $table ) {
-		$base_dir = WP_CONTENT_DIR . '/code-snippets/' . $table;
+		$base_dir = WP_CONTENT_DIR . '/code-snippets/' . $table . '/php';
 
 		if ( ! is_dir( $base_dir ) ) {
 			continue;
