@@ -706,7 +706,7 @@ function execute_active_snippets_from_flat_files(): bool {
 	}
 
 	foreach ( $tables as $table_name ) {
-		$base_dir = WP_CONTENT_DIR . '/code-snippets/' . $table_name . '/php';
+		$base_dir = Snippet_Files::get_base_dir( $table_name, 'php' );
 
 		if ( ! is_dir( $base_dir ) ) {
 			continue;
