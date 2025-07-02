@@ -11,20 +11,9 @@ class Snippet_Files {
 	 */
 	private $fs;
 
-	public function __construct() {
-		$this->init_filesystem();
-	}
-
-	/**
-	 * Initialize WP_Filesystem.
-	 */
-	private function init_filesystem() {
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-		WP_Filesystem();
-		global $wp_filesystem;
-		$this->fs = $wp_filesystem;
+	public function init() {
+		$this->ensure_filesystem();
+		$this->register_hooks();
 	}
 
 	public function register_hooks() {
@@ -33,6 +22,17 @@ class Snippet_Files {
 		add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
 		add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 2 );
 		add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
+	}
+
+	private function ensure_filesystem() {
+		if ( ! $this->fs ) {
+			if ( ! function_exists( 'WP_Filesystem' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+			}
+			WP_Filesystem();
+			global $wp_filesystem;
+			$this->fs = $wp_filesystem;
+		}
 	}
 
 	public function handle_snippet( $snippet, $table ) {

@@ -121,7 +121,7 @@ class Plugin {
 
 		// Snippet files.
 		require_once $includes_path . '/class-snippet-files.php';
-		( new Snippet_Files() )->register_hooks();
+		( new Snippet_Files() )->init();
 
 		$this->active_snippets = new Active_Snippets();
 		$this->front_end = new Front_End();
