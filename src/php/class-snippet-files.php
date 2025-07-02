@@ -19,11 +19,11 @@ class Snippet_Files {
 	}
 
 	public function register_hooks() {
-		add_action( 'code_snippets/create_snippet', array( $this, 'handle_snippet' ), 10, 2 );
-		add_action( 'code_snippets/update_snippet', array( $this, 'handle_snippet' ), 10, 2 );
-		add_action( 'code_snippets/delete_snippet', array( $this, 'delete_snippet' ), 10, 2 );
-		add_action( 'code_snippets/activate_snippet', array( $this, 'activate_snippet' ), 10, 2 );
-		add_action( 'code_snippets/deactivate_snippet', array( $this, 'deactivate_snippet' ), 10, 2 );
+		add_action( 'code_snippets/create_snippet', [ $this, 'handle_snippet' ], 10, 2 );
+		add_action( 'code_snippets/update_snippet', [ $this, 'handle_snippet' ], 10, 2 );
+		add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
+		add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 2 );
+		add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
 	}
 
 	private function ensure_filesystem() {
@@ -55,13 +55,9 @@ class Snippet_Files {
 
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
 
-		if ( $snippet->active ) {
-			$this->write_snippet_file( $file_path, $snippet->code, $snippet_type );
-		} else {
-			$this->delete_file( $file_path );
-		}
+		$this->write_snippet_file( $file_path, $snippet->code, $snippet_type );
 
-		$this->update_config_file( $base_dir, $snippet, $snippet->active );
+		$this->update_config_file( $base_dir, $snippet );
 	}
 
 	public function delete_snippet( Snippet $snippet, bool $network ) {
@@ -76,7 +72,7 @@ class Snippet_Files {
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
 		$this->delete_file( $file_path );
 
-		$this->update_config_file( $base_dir, $snippet, false );
+		$this->update_config_file( $base_dir, $snippet, true );
 	}
 
 	public function activate_snippet( Snippet $snippet, bool $network ) {
@@ -93,7 +89,7 @@ class Snippet_Files {
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
 		$this->write_snippet_file( $file_path, $snippet->code, $snippet_type );
 
-		$this->update_config_file( $base_dir, $snippet, true );
+		$this->update_config_file( $base_dir, $snippet );
 	}
 
 	public function deactivate_snippet( int $snippet_id, bool $network ) {
@@ -107,10 +103,7 @@ class Snippet_Files {
 		$table = code_snippets()->db->get_table_name( $network );
 		$base_dir = self::get_base_dir( $table, $snippet_type );
 
-		$file_path = $this->get_snippet_file_path( $base_dir, $snippet_id );
-		$this->delete_file( $file_path );
-
-		$this->update_config_file( $base_dir, $snippet, false );
+		$this->update_config_file( $base_dir, $snippet );
 	}
 
 	/**
@@ -176,16 +169,16 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Updates the index.php file by adding or removing a snippet.
+	 * Updates the index.php file with snippet config.
 	 */
-	private function update_config_file( string $base_dir, Snippet $snippet, bool $active ) {
+	private function update_config_file( string $base_dir, Snippet $snippet, bool $remove = false ) {
 		$config_file_path = trailingslashit( $base_dir ) . 'index.php';
 		$active_snippets = $this->load_config_file( $config_file_path );
 
-		if ( $active ) {
-			$active_snippets[ $snippet->id ] = $snippet->get_fields();
-		} else {
+		if ( $remove ) {
 			unset( $active_snippets[ $snippet->id ] );
+		} else {
+			$active_snippets[ $snippet->id ] = $snippet->get_fields();
 		}
 
 		$this->save_config_file( $config_file_path, $active_snippets );

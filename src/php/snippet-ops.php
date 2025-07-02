@@ -733,6 +733,10 @@ function execute_active_snippets_from_flat_files(): bool {
 				continue;
 			}
 
+			if ( ! $snippet['active'] ) {
+				continue;
+			}
+
 			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
 			if ( 'single-use' === $snippet['scope'] ) {
 				$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
