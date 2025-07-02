@@ -682,6 +682,12 @@ function execute_active_snippets(): bool {
  * @return bool true on success, false on failure.
  */
 function execute_active_snippets_from_flat_files(): bool {
+	// Bail early if safe mode is active.
+	if ( ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ||
+	! apply_filters( 'code_snippets/execute_snippets', true ) ) {
+		return false;
+	}
+
 	$db = code_snippets()->db;
 	$tables = $db->get_active_tables();
 	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
