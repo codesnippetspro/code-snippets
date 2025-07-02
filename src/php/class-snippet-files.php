@@ -232,16 +232,16 @@ class Snippet_Files {
 		}
 
 		if ( is_multisite() ) {
-			$root_base_dir = self::get_base_dir( $table );
-			$active_shared_ids_file_path = $root_base_dir . '/active-shared-network-snippets.php';
-
-			$active_shared_ids = is_file( $active_shared_ids_file_path ) ? require $active_shared_ids_file_path : [];
 			$ms_table = code_snippets()->db->get_table_name( true );
 			$ms_base_dir = self::get_base_dir( $ms_table, 'php' );
 			$ms_snippets_file_path = $ms_base_dir . '/index.php';
 
 			if ( is_file( $ms_snippets_file_path ) ) {
 				$ms_snippets = is_file( $ms_snippets_file_path ) ? require $ms_snippets_file_path : [];
+
+				$root_base_dir = self::get_base_dir( $table );
+				$active_shared_ids_file_path = $root_base_dir . '/active-shared-network-snippets.php';
+				$active_shared_ids = is_file( $active_shared_ids_file_path ) ? require $active_shared_ids_file_path : [];
 
 				$snippets[ $ms_table ] = array_filter(
 					$ms_snippets,
