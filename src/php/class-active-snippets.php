@@ -2,6 +2,9 @@
 
 namespace Code_Snippets;
 
+use MatthiasMullie\Minify;
+use WP_Exception;
+
 /**
  * Class for loading active snippets of various types.
  *

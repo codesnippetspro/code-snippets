@@ -1,17 +1,24 @@
-.conditions-editor-open .button {
+$sidebar-width: 280px;
+$sidebar-gap: 30px;
+
+.conditions-editor-open .button.button-large {
 	font-weight: bold;
 	block-size: 100%;
 	display: flex;
 	align-items: center;
-	border-color: #ccc;
-	background-color: #fff;;
+	min-block-size: 45px;
+
+	&.no-condition {
+		border-color: #ccc;
+		background-color: #fff;;
+	}
 
 	.dashicons {
 		margin-inline-end: 5px;
 	}
 
 	.badge {
-		margin: 3px 0 3px 7px;
+		margin: 3px 0 3px auto;
 		text-transform: uppercase;
 		border: 1px solid currentcolor;
 		border-radius: 4px;
@@ -25,8 +32,8 @@
 	margin-block-start: 10px;
 	max-inline-size: 1440px;
 	display: grid;
-	grid-template-columns: auto 280px;
-	gap: 30px;
+	grid-template-columns: auto $sidebar-width;
+	gap: $sidebar-gap;
 
 	@media (width <= 1024px) {
 		grid-template-columns: 1fr;

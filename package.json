@@ -1,8 +1,8 @@
 {
     "name": "code-snippets",
     "description": "Manage code snippets running on a WordPress-powered site through a graphical interface.",
-    "homepage": "https://wordpress.org/plugins/code-snippets",
-    "version": "3.7.0-dev.1",
+    "homepage": "https://codesnippets.pro",
+    "version": "3.7.0-alpha.1",
     "main": "src/dist/edit.js",
     "directories": {
         "test": "tests"
@@ -91,6 +91,7 @@
         "sass": "^1.84.0",
         "sass-loader": "^16.0.4",
         "style-loader": "^4.0.0",
+        "ts-loader": "^9.5.1",
         "stylelint": "^16.19.1",
         "stylelint-config-standard": "^38.0.0",
         "stylelint-config-standard-scss": "^14.0.0",

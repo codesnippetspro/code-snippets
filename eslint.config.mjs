@@ -4,6 +4,7 @@ import globals from 'globals'
 import eslintJs from '@eslint/js'
 import eslintTs from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
+import reactHooks from 'eslint-plugin-react-hooks'
 import importPlugin from 'eslint-plugin-import'
 import reactPlugin from 'eslint-plugin-react'
 import { FlatCompat } from '@eslint/eslintrc'
@@ -20,6 +21,10 @@ export default eslintTs.config(
 	...compat.extends('plugin:react-hooks/recommended'),
 	reactPlugin.configs.flat.recommended,
 	importPlugin.flatConfigs.recommended,
+	{
+		plugins: { 'react-hooks': reactHooks },
+		rules: reactHooks.configs.recommended.rules,
+	},
 	{
 		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', '*.config.mjs', '*.config.js']
 	},
@@ -58,13 +63,13 @@ export default eslintTs.config(
 			'@stylistic/indent': ['error', 'tab', { SwitchCase: 1 }],
 			'@stylistic/jsx-quotes': ['error', 'prefer-double'],
 			'@stylistic/linebreak-style': ['error', 'unix'],
-			'@stylistic/max-len': ['warn', 140, { ignorePattern: 'd="([\\s\\S]*?)"' }],
+			'@stylistic/max-len': ['warn', 140, { ignorePattern: 'd="(.*?)"|_[_xn]\\(|import .+ from .+' }],
 			'@stylistic/multiline-ternary': 'off',
 			'@stylistic/no-extra-parens': ['error', 'all'],
 			'@stylistic/no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
 			'@stylistic/no-tabs': ['error', { allowIndentationTabs: true }],
 			'@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
-			'@stylistic/operator-linebreak': ['error', 'before'],
+			'@stylistic/operator-linebreak': ['error', 'after', { 'overrides': { '?': 'before', ':': 'before' } }],
 			'@stylistic/padded-blocks': ['error', 'never'],
 			'@stylistic/quote-props': ['error', 'consistent-as-needed'],
 			'@stylistic/quotes': ['error', 'single', { avoidEscape: true }],

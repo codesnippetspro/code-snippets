@@ -25,11 +25,26 @@
 	block-size: 1rem;
 	vertical-align: middle;
 	line-height: 1;
-	margin: -2px 3px 0 0;
+	margin: 0;
 }
 
 .snippet-description-container {
 	margin-block-start: 25px;
+
+	.wp-editor-tools {
+		padding-block-start: 5px;
+	}
+
+	.wp-editor-tabs {
+		float: inline-start;
+	}
+
+	.generate-button {
+		float: inline-end;
+		margin-block-start: 37px;
+		z-index: 99;
+		position: relative;
+	}
 }
 
 #edit-snippet-form-container .cs-sticky-notice {

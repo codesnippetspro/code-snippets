@@ -3,6 +3,8 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_API;
+use Code_Snippets\REST_API\Cloud_REST_API;
+use Code_Snippets\REST_API\Conditions_REST_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 
 /**
@@ -212,7 +214,7 @@ class Plugin {
 			$url = 'admin.php?page=' . $slug;
 		}
 
-		if ( 'network' === $context || 'snippets-settings' === $slug ) {
+		if ( 'network' === $context ) {
 			return network_admin_url( $url );
 		} elseif ( 'admin' === $context ) {
 			return admin_url( $url );

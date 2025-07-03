@@ -1,26 +1,24 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
+import { useRestAPI } from '../../../hooks/useRestAPI'
 import { Button } from '../../common/Button'
-import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import type { SnippetsExport } from '../../../types/SnippetsExport'
-import type { AxiosResponse } from 'axios'
+import type { SnippetsExport } from '../../../types/schema/SnippetsExport'
 
 export const ExportButtons: React.FC = () => {
-	const api = useSnippetsAPI()
+	const { snippetsAPI } = useRestAPI()
 	const { snippet, isWorking, setIsWorking, handleRequestError } = useSnippetForm()
 
-	const handleFileResponse = (response: AxiosResponse<string | SnippetsExport>) => {
-		const data = response.data
+	const handleFileResponse = (response: string | SnippetsExport) => {
 		setIsWorking(false)
 		console.info('file response', response)
 
-		if ('string' === typeof data) {
-			downloadSnippetExportFile(data, snippet)
+		if ('string' === typeof response) {
+			downloadSnippetExportFile(response, snippet)
 		} else {
 			const JSON_INDENT_SPACES = 2
-			downloadSnippetExportFile(JSON.stringify(data, undefined, JSON_INDENT_SPACES), snippet, 'json')
+			downloadSnippetExportFile(JSON.stringify(response, undefined, JSON_INDENT_SPACES), snippet, 'json')
 		}
 	}
 
@@ -31,7 +29,7 @@ export const ExportButtons: React.FC = () => {
 				onClick={() => {
 					setIsWorking(true)
 
-					api.export(snippet)
+					snippetsAPI.export(snippet)
 						.then(handleFileResponse)
 						// translators: %s: error message.
 						.catch((error: unknown) => handleRequestError(error, __('Could not download export file.', 'code-snippets')))
@@ -45,7 +43,7 @@ export const ExportButtons: React.FC = () => {
 				? <Button
 					name="export_snippet_code"
 					onClick={() => {
-						api.exportCode(snippet)
+						snippetsAPI.exportCode(snippet)
 							.then(handleFileResponse)
 							// translators: %s: error message.
 							.catch((error: unknown) => handleRequestError(error, __('Could not download file.', 'code-snippets')))

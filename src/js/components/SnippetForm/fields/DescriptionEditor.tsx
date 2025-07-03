@@ -76,7 +76,8 @@ export const DescriptionEditor: React.FC = () => {
 				disabled={isReadOnly}
 				rows={window.CODE_SNIPPETS_EDIT.descEditorOptions.rows}
 				cols={40}
-			>{snippet.desc}</textarea>
+				value={snippet.desc}
+			/>
 		</div>
 		: null
 }

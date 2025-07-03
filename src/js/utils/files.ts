@@ -1,4 +1,4 @@
-import { getSnippetType } from './snippets'
+import { getSnippetType } from './snippets/snippets'
 import type { Snippet } from '../types/Snippet'
 
 const SECOND_IN_MS = 1000
@@ -9,6 +9,7 @@ const MIME_INFO = <const> {
 	html: ['php', 'text/php'],
 	css: ['css', 'text/css'],
 	js: ['js', 'text/javascript'],
+	cond: ['json', 'application/json'],
 	json: ['json', 'application/json']
 }
 
@@ -26,7 +27,7 @@ export const downloadSnippetExportFile = (
 	{ id, name, scope }: Snippet,
 	type?: keyof typeof MIME_INFO
 ) => {
-	const [ext, mimeType] = MIME_INFO[type ?? getSnippetType(scope)]
+	const [ext, mimeType] = MIME_INFO[type ?? getSnippetType({ scope })]
 
 	const sanitizedName = name.toLowerCase().replace(/[^\w-]+/g, '-').trim()
 

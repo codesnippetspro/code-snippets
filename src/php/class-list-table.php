@@ -217,13 +217,64 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Build the cloud action links for a snippet.
+	 *
+	 * @param Snippet         $snippet    Current snippet.
+	 * @param Cloud_Link|null $cloud_link Snippet cloud link, if available.
+	 *
+	 * @return array <string, string> The action links HTML.
+	 */
+	private function get_cloud_action_links( Snippet $snippet, ?Cloud_Link $cloud_link ): array {
+		if ( $snippet->is_condition() ) {
+			return [];
+		}
+
+		if ( ! $this->is_cloud_connected ) {
+			return [
+				'cloud' => sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( add_query_arg( 'connect-authorise-cloud', true, code_snippets()->get_menu_url( 'settings' ) ) ),
+					esc_html__( 'Set up cloud', 'code-snippets' )
+				),
+			];
+		}
+
+		if ( ! $cloud_link || ! $cloud_link->in_codevault ) {
+			return [
+				'cloud' => sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( $this->get_action_link( 'cloud', $snippet ) ),
+					esc_html__( 'Sync to Codevault', 'code-snippets' )
+				),
+			];
+		}
+
+		$unlink_action = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( $this->get_action_link( 'unsync-cloud', $snippet ) ),
+			esc_html__( 'Unlink from Cloud', 'code-snippets' )
+		);
+
+		return $cloud_link->update_available
+			? [
+				'cloud'        => $unlink_action,
+				'cloud_update' => sprintf(
+					'<a>%s</a>',
+					esc_html__( 'Update Available', 'code-snippets' )
+				),
+			]
+			: [ 'cloud' => $unlink_action ];
+	}
+
+	/**
 	 * Build a list of action links for individual snippets
 	 *
-	 * @param Snippet $snippet The current snippet.
+	 * @param Snippet         $snippet    The current snippet.
+	 * @param Cloud_Link|null $cloud_link Snippet cloud link, if available.
 	 *
 	 * @return array<string, string> The action links HTML.
 	 */
-	private function get_snippet_action_links( Snippet $snippet ): array {
+	private function get_snippet_action_links( Snippet $snippet, ?Cloud_Link $cloud_link ): array {
 		$actions = array();
 
 		if ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) {
@@ -275,28 +326,40 @@ class List_Table extends WP_List_Table {
 			return '';
 		}
 
-		if ( 'single-use' === $snippet->scope ) {
-			$class = 'snippet-execution-button';
-			$action = 'run-once';
-			$label = esc_html__( 'Run Once', 'code-snippets' );
-		} else {
-			$class = 'snippet-activation-switch';
-			$action = $snippet->active ? 'deactivate' : 'activate';
-			$label = $snippet->network && ! $snippet->shared_network ?
-				( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
-				( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
+		switch ( $snippet->scope ) {
+			case 'single-use':
+				$class = 'snippet-execution-button';
+				$action = 'run-once';
+				$label = esc_html__( 'Run Once', 'code-snippets' );
+				break;
+
+			case 'condition':
+				$action = null;
+				$class = null;
+				$label = null;
+				break;
+
+			default:
+				$class = 'snippet-activation-switch';
+				$action = $snippet->active ? 'deactivate' : 'activate';
+				$label = $snippet->network && ! $snippet->shared_network ?
+					( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
+					( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
+				break;
 		}
 
-		if ( $snippet->shared_network ) {
+		if ( $action && $snippet->shared_network ) {
 			$action .= '-shared';
 		}
 
-		return sprintf(
-			'<a class="%1$s" href="%2$s" title="%3$s" aria-label="%3$s">&nbsp;</a> ',
-			esc_attr( $class ),
-			esc_url( $this->get_action_link( $action, $snippet ) ),
-			esc_attr( $label )
-		);
+		return $action && $class && $label
+			? sprintf(
+				'<a class="%1$s" href="%2$s" title="%3$s" aria-label="%3$s">&nbsp;</a> ',
+				esc_attr( $class ),
+				esc_url( $this->get_action_link( $action, $snippet ) ),
+				esc_attr( $label )
+			)
+			: '';
 	}
 
 	/**
@@ -328,9 +391,7 @@ class List_Table extends WP_List_Table {
 			$out .= ' <span class="badge">' . esc_html__( 'Shared on Network', 'code-snippets' ) . '</span>';
 		}
 
-		// Return the name contents.
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
-
 		return $out . $row_actions;
 	}
 
@@ -751,7 +812,7 @@ class List_Table extends WP_List_Table {
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id', 'scope', '_wpnonce' ) );
 
 			// If so, then perform the requested action and inform the user of the result.
-			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope );
+			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ) );
 
 			if ( $result ) {
 				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );

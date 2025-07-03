@@ -16,6 +16,7 @@ use function Code_Snippets\delete_snippet;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
+use function Code_Snippets\update_snippet_fields;
 use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
@@ -515,6 +516,10 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 				'scope'          => [
 					'description' => esc_html__( 'Context in which the snippet is executable.', 'code-snippets' ),
 					'type'        => 'string',
+				],
+				'condition_id'   => [
+					'description' => esc_html__( 'Identifier of condition linked to this snippet.', 'code-snippets' ),
+					'type'        => 'integer',
 				],
 				'active'         => [
 					'description' => esc_html__( 'Snippet activation status.', 'code-snippets' ),

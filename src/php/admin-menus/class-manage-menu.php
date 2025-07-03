@@ -83,7 +83,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function register_upgrade_menu() {
-		if ( get_setting( 'general', 'hide_upgrade_menu' ) ) {
+		if ( code_snippets()->licensing->is_licensed() || get_setting( 'general', 'hide_upgrade_menu' ) ) {
 			return;
 		}
 
@@ -183,7 +183,7 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Enqueue scripts and stylesheets for the admin page
+	 * Enqueue scripts and stylesheets for the admin page.
 	 */
 	public function enqueue_assets() {
 		$plugin = code_snippets();

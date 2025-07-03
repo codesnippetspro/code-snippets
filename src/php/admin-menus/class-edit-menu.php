@@ -132,6 +132,7 @@ class Edit_Menu extends Admin_Menu {
 				'css'  => 'site-css',
 				'html' => 'content',
 				'js'   => 'site-head-js',
+				'cond' => 'condition',
 			];
 
 			if ( isset( $default_scopes[ $type ] ) ) {

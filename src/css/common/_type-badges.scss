@@ -33,20 +33,22 @@
 	text-transform: uppercase;
 }
 
-.go-pro-badge, .pro-badge {
-	color: theme.$pro;
-}
-
-.core-badge {
-	color: theme.$core;
+.pro-badge,
+.go-pro-badge,
+.go-pro-button .badge {
+	color: map.get(theme.$version-pro, 'text');
+	background-color: map.get(theme.$version-pro, 'background');
 }
 
 .go-pro-badge,
 .go-pro-button .badge {
-	color: theme.$pro;
-	background-color: #f7e8e3;
 	margin-inline-start: 1px;
 	font-size: 10px;
+}
+
+.core-badge {
+	color: map.get(theme.$version-core, 'text');
+	background: map.get(theme.$version-core, 'background');
 }
 
 @each $type, $color in theme.$types {

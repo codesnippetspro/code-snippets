@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.7.0-dev.1
+Stable tag: 3.7.0-alpha.1
 Tested up to: 6.7.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -102,6 +102,16 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.6.9 (2025-02-17) =
+
+__Changed__
+* Updated `Cloud_API::get_bundles()` to properly check bundle data and return an empty array if no valid bundles are present.
+* Refactored `Cloud_List_Table::fetch_snippets()` to always return a valid `Cloud_Snippets` instance.
+* Cleaned up bundle iteration code and improved translation handling in the bundles view.
+
+__Fixed__
+* Fixed errors in bundle iteration by adding a check for the bundles array before iterating.
 
 = 3.6.8 (2025-02-14) =
 

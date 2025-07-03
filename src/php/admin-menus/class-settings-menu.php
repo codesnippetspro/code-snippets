@@ -175,6 +175,9 @@ class Settings_Menu extends Admin_Menu {
 		echo '</h2>';
 
 		foreach ( $sections as $section ) {
+			if ( 'license' === $section['id'] ) {
+				continue;
+			}
 
 			if ( $section['title'] ) {
 				printf(

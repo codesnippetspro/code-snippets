@@ -1,43 +1,22 @@
-import classnames from 'classnames'
 import React from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import type { ReactNode } from 'react'
-
-interface DismissibleNoticeProps {
-	classNames?: classnames.Argument
-	onRemove: VoidFunction
-	children?: ReactNode
-	autoHide?: boolean
-}
-
-const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ classNames, onRemove, children }) =>
-	<div id="message" className={classnames('notice fade is-dismissible', classNames)}>
-		<>{children}</>
-
-		<button type="button" className="notice-dismiss" onClick={event => {
-			event.preventDefault()
-			onRemove()
-		}}>
-			<span className="screen-reader-text">{__('Dismiss notice.', 'code-snippets')}</span>
-		</button>
-	</div>
+import { DismissibleNotice } from '../../DismissableNotice'
 
 export const Notices: React.FC = () => {
 	const { currentNotice, setCurrentNotice, snippet, setSnippet } = useSnippetForm()
 
 	return <>
 		{currentNotice
-			? <DismissibleNotice classNames={currentNotice[0]} onRemove={() => setCurrentNotice(undefined)}>
+			? <DismissibleNotice className={currentNotice[0]} onDismiss={() => setCurrentNotice(undefined)}>
 				<p>{currentNotice[1]}</p>
 			</DismissibleNotice>
 			: null}
 
 		{snippet.code_error
 			? <DismissibleNotice
-				classNames="error"
-				onRemove={() => setSnippet(previous => ({ ...previous, code_error: null }))}
-				autoHide={false}
+				className="notice-error"
+				onDismiss={() => setSnippet(previous => ({ ...previous, code_error: null }))}
 			>
 				<p>
 					<strong>{sprintf(

@@ -1,3 +1,5 @@
+import type { ConditionGroups } from './ConditionGroups'
+
 export interface Snippet {
 	readonly id: number
 	readonly name: string
@@ -7,19 +9,24 @@ export interface Snippet {
 	readonly scope: SnippetScope
 	readonly priority: number
 	readonly active: boolean
-	readonly network?: boolean
+	readonly network: boolean
 	readonly shared_network?: boolean | null
 	readonly modified?: string
-	readonly code_error?: [string, number] | null
+	readonly conditionId: number
+	readonly code_error?: readonly [string, number] | null
+	readonly conditions: ConditionGroups
 }
 
-export type SnippetType = 'php' | 'html' | 'css' | 'js'
+export type SnippetCodeType = 'php' | 'html' | 'css' | 'js'
+export type SnippetType = SnippetCodeType | 'cond'
 
+export type SnippetCodeScope = typeof SNIPPET_TYPE_SCOPES[SnippetCodeType][number]
 export type SnippetScope = typeof SNIPPET_TYPE_SCOPES[SnippetType][number]
 
 export const SNIPPET_TYPE_SCOPES = <const> {
 	php: ['global', 'admin', 'front-end', 'single-use'],
 	html: ['content', 'head-content', 'footer-content'],
 	css: ['admin-css', 'site-css'],
-	js: ['site-head-js', 'site-footer-js']
+	js: ['site-head-js', 'site-footer-js'],
+	cond: ['condition']
 }

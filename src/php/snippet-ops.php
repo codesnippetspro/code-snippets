@@ -522,16 +522,17 @@ function save_snippet( $snippet ) {
 
 	// Build the list of data to insert.
 	$data = [
-		'name'        => $snippet->name,
-		'description' => $snippet->desc,
-		'code'        => $snippet->code,
-		'tags'        => $snippet->tags_list,
-		'scope'       => $snippet->scope,
-		'priority'    => $snippet->priority,
-		'active'      => intval( $snippet->active ),
-		'modified'    => $snippet->modified,
-		'revision'    => $snippet->revision,
-		'cloud_id'    => $snippet->cloud_id ? $snippet->cloud_id : null,
+		'name'         => $snippet->name,
+		'description'  => $snippet->desc,
+		'code'         => $snippet->code,
+		'tags'         => $snippet->tags_list,
+		'scope'        => $snippet->scope,
+		'condition_id' => intval( $snippet->condition_id ),
+		'priority'     => $snippet->priority,
+		'active'       => intval( $snippet->active ),
+		'modified'     => $snippet->modified,
+		'revision'     => $snippet->revision,
+		'cloud_id'     => $snippet->cloud_id ? $snippet->cloud_id : null,
 	];
 
 	// Create a new snippet if the ID is not set.
@@ -610,7 +611,7 @@ function execute_active_snippets(): bool {
 	}
 
 	$db = code_snippets()->db;
-	$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
+	$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end', 'condition' ];
 	$data = $db->fetch_active_snippets( $scopes );
 
 	// Detect if a snippet is currently being edited, and if so, spare it from execution.
@@ -633,11 +634,23 @@ function execute_active_snippets(): bool {
 	}
 
 	foreach ( $data as $table_name => $active_snippets ) {
+		$conditions = [];
+
+		foreach ( $active_snippets as $snippet ) {
+			if ( 'condition' === $snippet['scope'] ) {
+				$snippet_id = intval( $snippet['id'] );
+				$conditions[ $snippet_id ] = Conditions\evaluate_condition( $snippet['code'] );
+			}
+		}
 
 		// Loop through the returned snippets and execute the PHP code.
 		foreach ( $active_snippets as $snippet ) {
 			$snippet_id = intval( $snippet['id'] );
 			$code = $snippet['code'];
+
+			if ( 'condition' === $snippet['scope'] ) {
+				continue;
+			}
 
 			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
 			if ( 'single-use' === $snippet['scope'] ) {
@@ -660,10 +673,20 @@ function execute_active_snippets(): bool {
 				}
 			}
 
-			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
-			     ! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
-				execute_snippet( $code, $snippet_id );
+			if ( ! apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ||
+			     ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
+				continue;
 			}
+
+			if ( $snippet['condition_id'] ) {
+				$condition_id = intval( $snippet['condition_id'] );
+
+				if ( isset( $conditions[ $condition_id ] ) && ! $conditions[ $condition_id ] ) {
+					continue;
+				}
+			}
+
+			execute_snippet( $code, $snippet_id );
 		}
 	}
 

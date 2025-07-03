@@ -4,6 +4,7 @@ namespace Code_Snippets\Cloud;
 
 use Code_Snippets\Snippet;
 use WP_Error;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet_by_cloud_id;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
@@ -25,13 +26,6 @@ class Cloud_API {
 	 * Days to cache data retrieved from API.
 	 */
 	private const DAYS_TO_STORE_CS = 1;
-
-	/**
-	 * Name of key used to cache cloud settings.
-	 *
-	 * @var string
-	 */
-	private const CLOUD_SETTINGS_CACHE_KEY = 'code_snippets_cloud_settings';
 
 	/**
 	 * Token used for public API access.
@@ -266,7 +260,6 @@ class Cloud_API {
 		$url = self::get_cloud_api_url() . sprintf( 'public/getsnippet/%s', $cloud_id );
 		$response = wp_remote_get( $url );
 		$cloud_snippet = self::unpack_request_json( $response );
-
 		return new Cloud_Snippet( $cloud_snippet['snippet'] );
 	}
 
@@ -302,7 +295,6 @@ class Cloud_API {
 	 */
 	public function download_or_update_snippet( int $cloud_id, string $source, string $action ): array {
 		$cloud_id = intval( $cloud_id );
-
 		$snippet_to_store = $this->get_single_snippet_from_cloud( $cloud_id );
 
 		switch ( $action ) {

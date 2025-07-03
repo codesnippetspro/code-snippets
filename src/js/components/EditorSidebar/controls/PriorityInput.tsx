@@ -1,6 +1,7 @@
 import React from 'react'
 import { __, _x } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { Tooltip } from '../../common/Tooltip'
 
 export const PriorityInput = () => {
 	const { snippet, isReadOnly, setSnippet } = useSnippetForm()
@@ -13,12 +14,9 @@ export const PriorityInput = () => {
 				</label>
 			</h4>
 
-			<div className="help-tooltip">
-				<span className="dashicons dashicons-editor-help"></span>
-				<div className="help-tooltip-text">
-					{__('Snippets with a lower priority number will run before those with a higher number.', 'code-snippets')}
-				</div>
-			</div>
+			<Tooltip>
+				{__('Snippets with a lower priority number will run before those with a higher number.', 'code-snippets')}
+			</Tooltip>
 
 			<input
 				type="number"

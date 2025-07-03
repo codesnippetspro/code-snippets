@@ -3,11 +3,11 @@ import React from 'react'
 import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
-import { getSnippetType } from '../../../utils/snippets'
-import type { SnippetScope } from '../../../types/Snippet'
+import { getSnippetType, isCondition } from '../../../utils/snippets/snippets'
+import type { SnippetCodeScope } from '../../../types/Snippet'
 import type { SelectOption } from '../../../types/SelectOption'
 
-const SCOPE_ICONS: Record<SnippetScope, string> = {
+const SCOPE_ICONS: Record<SnippetCodeScope, string> = {
 	'global': 'admin-site',
 	'admin': 'admin-tools',
 	'front-end': 'admin-appearance',
@@ -21,7 +21,7 @@ const SCOPE_ICONS: Record<SnippetScope, string> = {
 	'site-footer-js': 'media-code'
 }
 
-const SCOPE_DESCRIPTIONS: Record<SnippetScope, string> = {
+const SCOPE_DESCRIPTIONS: Record<SnippetCodeScope, string> = {
 	'global': __('Run everywhere', 'code-snippets'),
 	'admin': __('Only run in administration area', 'code-snippets'),
 	'front-end': __('Only run on site front-end', 'code-snippets'),
@@ -38,32 +38,37 @@ const SCOPE_DESCRIPTIONS: Record<SnippetScope, string> = {
 export const SnippetLocationInput: React.FC = () => {
 	const { snippet, setSnippet } = useSnippetForm()
 
-	const options: SelectOption<SnippetScope>[] = SNIPPET_TYPE_SCOPES[getSnippetType(snippet)]
+	const options: SelectOption<SnippetCodeScope>[] = SNIPPET_TYPE_SCOPES[getSnippetType(snippet)]
+		.filter(scope => 'condition' !== scope)
 		.map(scope => ({
+			key: scope,
 			value: scope,
 			label: SCOPE_DESCRIPTIONS[scope]
 		}))
 
 	return (
 		<div className="snippet-location-container">
-			<h3><label htmlFor="snippet-location">{__('Snippet Location', 'code-snippets')}</label></h3>
-			<Select
-				id="snippet-location"
-				className="code-snippets-select"
-				options={options}
-				styles={{
-					menu: provided => ({ ...provided, zIndex: 9999 }),
-					input: provided => ({ ...provided, ':focus': { boxShadow: 'none' } })
-				}}
-				value={options.find(option => option.value === snippet.scope)}
-				formatOptionLabel={({ label, value }) =>
-					<>
-						<span className={`dashicons dashicons-${SCOPE_ICONS[value]}`}></span>{` ${label}`}
-					</>
-				}
-				onChange={option =>
-					option?.value && setSnippet(previous => ({ ...previous, scope: option.value }))}
-			/>
+			{isCondition(snippet) ? null
+				: <>
+					<h3><label htmlFor="snippet-location">{__('Snippet Location', 'code-snippets')}</label></h3>
+					<Select
+						id="snippet-location"
+						className="code-snippets-select"
+						options={options}
+						styles={{
+							menu: provided => ({ ...provided, zIndex: 9999 }),
+							input: provided => ({ ...provided, ':focus': { boxShadow: 'none' } })
+						}}
+						value={options.find(option => option.value === snippet.scope)}
+						formatOptionLabel={({ label, value }) =>
+							<>
+								<span className={`dashicons dashicons-${SCOPE_ICONS[value]}`}></span>{` ${label}`}
+							</>
+						}
+						onChange={option =>
+							option?.value && setSnippet(previous => ({ ...previous, scope: option.value }))}
+					/>
+				</>}
 		</div>
 	)
 }

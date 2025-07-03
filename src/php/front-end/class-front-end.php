@@ -172,19 +172,19 @@ class Front_End {
 	public static function register_prism_assets() {
 		$plugin = code_snippets();
 
-		wp_register_style(
-			self::PRISM_HANDLE,
-			plugins_url( 'dist/prism.css', $plugin->file ),
-			array(),
-			$plugin->version
-		);
-
 		wp_register_script(
 			self::PRISM_HANDLE,
 			plugins_url( 'dist/prism.js', $plugin->file ),
 			array(),
 			$plugin->version,
 			true
+		);
+
+		wp_register_style(
+			self::PRISM_HANDLE,
+			plugins_url( 'dist/prism.css', $plugin->file ),
+			array(),
+			$plugin->version
 		);
 	}
 

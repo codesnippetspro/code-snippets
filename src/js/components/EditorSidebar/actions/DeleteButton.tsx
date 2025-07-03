@@ -1,13 +1,13 @@
 import { addQueryArgs } from '@wordpress/url'
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
+import { useRestAPI } from '../../../hooks/useRestAPI'
 import { Button } from '../../common/Button'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
-import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 
 export const DeleteButton: React.FC = () => {
-	const api = useSnippetsAPI()
+	const { snippetsAPI } = useRestAPI()
 	const { snippet, setIsWorking, isWorking, handleRequestError } = useSnippetForm()
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -34,7 +34,7 @@ export const DeleteButton: React.FC = () => {
 					setIsDialogOpen(false)
 					setIsWorking(true)
 
-					api.delete(snippet)
+					snippetsAPI.delete(snippet)
 						.then(() => {
 							setIsWorking(false)
 							window.location.replace(addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { result: 'deleted' }))

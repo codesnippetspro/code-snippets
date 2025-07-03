@@ -8,6 +8,7 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
 	primary?: boolean
 	small?: boolean
 	large?: boolean
+	simple?: boolean
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -18,6 +19,7 @@ export const Button: React.FC<ButtonProps> = ({
 	primary = false,
 	small = false,
 	large = false,
+	simple = false,
 	type = 'button',
 	onClick,
 	...props
@@ -36,7 +38,8 @@ export const Button: React.FC<ButtonProps> = ({
 		className={classnames('button', className, {
 			'button-primary': primary,
 			'button-large': large,
-			'button-small': small
+			'button-small': small,
+			'button-simple-text': simple
 		})}
 	>
 		{children}

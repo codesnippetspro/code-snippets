@@ -1,5 +1,5 @@
 import React from 'react'
-import { __ } from '@wordpress/i18n'
+import { __, _x } from '@wordpress/i18n'
 import { FormTokenField } from '@wordpress/components'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 

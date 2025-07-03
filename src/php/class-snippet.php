@@ -18,13 +18,14 @@ use Exception;
  * @property string                 $code               The executable code.
  * @property array<string>          $tags               An array of the tags.
  * @property string                 $scope              The scope name.
+ * @property int                    $condition_id       ID of the condition this snippet is linked to.
  * @property int                    $priority           Execution priority.
  * @property bool                   $active             The active status.
  * @property bool                   $network            true if is multisite-wide snippet, false if site-wide.
  * @property bool                   $shared_network     Whether the snippet is a shared network snippet.
  * @property string                 $modified           The date and time when the snippet data was most recently saved to the database.
  * @property array{string,int}|null $code_error         Code error encountered when last testing snippet code.
- * @property object|null            $conditions         Snippet conditionals
+ * @property object|null            $conditions         Snippet conditions.
  * @property int                    $revision           Revision or version number of snippet.
  * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
  *
@@ -64,12 +65,14 @@ class Snippet extends Data_Item {
 			'code'           => '',
 			'tags'           => array(),
 			'scope'          => 'global',
+			'condition_id'   => 0,
 			'active'         => false,
 			'priority'       => 10,
 			'network'        => null,
 			'shared_network' => null,
 			'modified'       => null,
 			'code_error'     => null,
+			'conditions'     => null,
 			'revision'       => 1,
 			'cloud_id'       => '',
 		);
@@ -77,6 +80,7 @@ class Snippet extends Data_Item {
 		$field_aliases = array(
 			'description' => 'desc',
 			'language'    => 'lang',
+			'conditionId' => 'condition_id',
 		);
 
 		parent::__construct( $default_values, $initial_data, $field_aliases );
@@ -92,6 +96,15 @@ class Snippet extends Data_Item {
 	}
 
 	/**
+	 * Determine if the snippet is a condition.
+	 *
+	 * @return bool
+	 */
+	public function is_condition(): bool {
+		return 'condition' === $this->scope;
+	}
+
+	/**
 	 * Prepare a value before it is stored.
 	 *
 	 * @param mixed  $value Value to prepare.
@@ -103,17 +116,34 @@ class Snippet extends Data_Item {
 		switch ( $field ) {
 			case 'id':
 			case 'priority':
+			case 'condition_id':
 				return absint( $value );
 
 			case 'tags':
 				return code_snippets_build_tags_array( $value );
 
 			case 'active':
-				return is_bool( $value ) ? $value : (bool) $value;
+				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition();
 
 			default:
 				return $value;
 		}
+	}
+
+	/**
+	 * Retrieve list of current data fields.
+	 *
+	 * @return array<string, mixed> Field names keyed to current values.
+	 */
+	public function get_fields(): array {
+		$fields = parent::get_fields();
+
+		if ( 'condition' === $this->scope ) {
+			$fields['conditions'] = json_decode( $fields['code'] );
+			$fields['code'] = '';
+		}
+
+		return $fields;
 	}
 
 	/**
@@ -153,20 +183,33 @@ class Snippet extends Data_Item {
 	}
 
 	/**
+	 * Determine the type of code a given scope will produce.
+	 *
+	 * @param string $scope Scope name.
+	 *
+	 * @return string The snippet type – will be a filename extension.
+	 */
+	public static function get_type_from_scope( string $scope ): string {
+		if ( '-css' === substr( $scope, -4 ) ) {
+			return 'css';
+		} elseif ( '-js' === substr( $scope, -3 ) ) {
+			return 'js';
+		} elseif ( 'content' === substr( $scope, -7 ) ) {
+			return 'html';
+		} elseif ( 'condition' === $scope ) {
+			return 'cond';
+		} else {
+			return 'php';
+		}
+	}
+
+	/**
 	 * Determine the type of code this snippet is, based on its scope
 	 *
 	 * @return string The snippet type – will be a filename extension.
 	 */
 	protected function get_type(): string {
-		if ( '-css' === substr( $this->scope, -4 ) ) {
-			return 'css';
-		} elseif ( '-js' === substr( $this->scope, -3 ) ) {
-			return 'js';
-		} elseif ( 'content' === substr( $this->scope, -7 ) ) {
-			return 'html';
-		} else {
-			return 'php';
-		}
+		return self::get_type_from_scope( $this->scope );
 	}
 
 	/**
@@ -175,7 +218,7 @@ class Snippet extends Data_Item {
 	 * @return string[]
 	 */
 	public static function get_types(): array {
-		return [ 'php', 'html', 'css', 'js' ];
+		return [ 'php', 'html', 'css', 'js', 'cond' ];
 	}
 
 	/**
@@ -189,6 +232,7 @@ class Snippet extends Data_Item {
 			'html' => __( 'Content', 'code-snippets' ),
 			'css'  => __( 'Styles', 'code-snippets' ),
 			'js'   => __( 'Scripts', 'code-snippets' ),
+			'cond' => __( 'Conditions', 'code-snippets' ),
 		];
 
 		return isset( $labels[ $this->type ] ) ? $labels[ $this->type ] : strtoupper( $this->type );
@@ -246,8 +290,8 @@ class Snippet extends Data_Item {
 	 * @return string
 	 */
 	protected function get_display_name(): string {
-		// translators: %d: snippet ID.
-		return empty( $this->name ) ? sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $this->id ) : $this->name;
+		// translators: %s: snippet identifier.
+		return empty( $this->name ) ? sprintf( esc_html__( 'Snippet #%d', 'code-snippets' ), $this->id ) : $this->name;
 	}
 
 	/**
@@ -271,7 +315,8 @@ class Snippet extends Data_Item {
 			'global', 'admin', 'front-end', 'single-use',
 			'content', 'head-content', 'footer-content',
 			'admin-css', 'site-css',
-			'site-head-js', 'site-footer-js'
+			'site-head-js', 'site-footer-js',
+			'condition',
 		);
 	}
 
@@ -293,6 +338,7 @@ class Snippet extends Data_Item {
 			'site-css'       => 'admin-customizer',
 			'site-head-js'   => 'media-code',
 			'site-footer-js' => 'media-code',
+			'condition'      => 'randomize',
 		);
 	}
 
@@ -322,7 +368,7 @@ class Snippet extends Data_Item {
 			case 'site-css':
 				return __( 'Front-end styles', 'code-snippets' );
 			case 'site-head-js':
-				return __( 'Head styles', 'code-snippets' );
+				return __( 'Head scripts', 'code-snippets' );
 			case 'site-footer-js':
 				return __( 'Footer scripts', 'code-snippets' );
 		}
