@@ -71,16 +71,15 @@ jobs:
         with:
           node-version-file: .node-version
 
+      - name: Install Node dependencies
+        run: npm install
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - name: Install Composer dependencies
+        uses: php-actions/composer@v6
         with:
-          php-version: '8.1'
-
-      - name: Install dependencies
-        run: |
-          npm install
-          composer install --no-dev --working-dir=src
+          php_version: '8.1'
+          working_dir: src
+          dev: no
 
       - name: Run changelog script for template
         id: changelog

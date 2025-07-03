@@ -1,0 +1,24 @@
+name: Release Distribute
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      # the tag used for the release
+      ref: 
+  
+  upload:
+    uses: 
+    with:
+      # the path to the built artefact
+      path: 
+      ref: 
+
+  deploy:
+    uses: ./.github/workflows/svn_push.yml
+    with:
+      ref:
