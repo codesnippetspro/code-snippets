@@ -18,7 +18,8 @@
         "version-dev": "npm version --git-tag-version=false --preid=dev",
         "version-alpha": "npm version --git-tag-version=false --preid=alpha",
         "version-beta": "npm version --git-tag-version=false --preid=beta",
-        "version-rc": "npm version --git-tag-version=false --preid=rc"
+        "version-rc": "npm version --git-tag-version=false --preid=rc",
+        "changelog": "ts-node scripts/changelog.ts"
     },
     "repository": {
         "type": "git",
@@ -61,6 +62,7 @@
         "@types/archiver": "^6.0.3",
         "@types/codemirror": "^5.60.15",
         "@types/jquery": "^3.5.32",
+        "@types/js-yaml": "^4.0.9",
         "@types/node": "^22.13.1",
         "@types/prismjs": "^1.26.5",
         "@types/react": "^18.3.1",
