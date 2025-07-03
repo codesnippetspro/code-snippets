@@ -11,6 +11,8 @@ on:
 jobs:
   create-tag:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout core branch
         uses: actions/checkout@v4
@@ -52,20 +54,92 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           npm version $VERSION --no-git-tag-version
 
-      - name: Generate changelog and update logs
+  release-templates:
+    needs: create-tag
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        template: [$(ls .github/RELEASE_TEMPLATE/*.yml | xargs -n1 basename | sed 's/.yml//')]
+    steps:
+      - name: Checkout core branch
+        uses: actions/checkout@v4
+        with:
+          ref: core
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          composer install --no-dev --working-dir=src
+
+      - name: Run changelog script for template
+        id: changelog
+        run: |
+          npm run changelog -- .github/RELEASE_TEMPLATE/${{ matrix.template }}.yml
+
+      - name: Generate changelog with LLM
+        id: ollama
         uses: ai-action/ollama-action@v1
         with:
           model: llama3
+          prompt: ${{ steps.changelog.outputs.prompt }}
+
+      - name: Generate and apply patch
+        id: patch
+        uses: ai-action/ollama-action@v1
+        with:
+          model: qwen2.5-coder:14b
           prompt: |
-            Use the instructions and template in .story/instructions.md to generate and prepend the changelog for the new release.
-            Ensure CHANGELOG.md and src/readme.txt are updated and formatted as required.
+            Given the following file content and the following changelog entry, generate a git patch to update the file at ${{ steps.changelog.outputs.target }}:
+            ---
+            Current file content:
+            $(cat ${{ steps.changelog.outputs.target }})
+            ---
+            Changelog entry:
+            ${{ steps.ollama.outputs.response }}
+            ---
+            Output only the git patch.
+
+      - name: Apply generated patch
+        run: |
+          echo "${{ steps.patch.outputs.response }}" | git apply -
+
+      - name: Upload changed file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: updated-${{ matrix.template }}
+          path: ${{ steps.changelog.outputs.target }}
+
+  commit-and-tag:
+    needs: release-templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout core branch
+        uses: actions/checkout@v4
+        with:
+          ref: core
+
+      - name: Download all updated files
+        uses: actions/download-artifact@v4
+        with:
+          path: ./
 
       - name: Commit and tag release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          git add CHANGELOG.md src/readme.txt package.json package-lock.json
+          VERSION="${{ needs.create-tag.outputs.version }}"
+          git ls-files --others --modified --exclude-standard | xargs git add
           git commit -m "chore(release): prepare v$VERSION"
           TAG="v$VERSION"
           git tag $TAG
