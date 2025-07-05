@@ -1,11 +1,17 @@
 <?php
 
-require_once 'registry.php';
-require_once 'interfaces/interface-config-repository.php';
-require_once 'interfaces/interface-file-system.php';
-require_once 'interfaces/interface-snippet-handler.php';
-require_once 'handlers/php-snippet-handler.php';
-require_once 'handlers/html-snippet-handler.php';
-require_once 'classes/class-file-system-adapter.php';
-require_once 'classes/class-snippet-files.php';
-require_once 'classes/class-config-repository.php';
+$files = [
+	'registry.php',
+	'interfaces/interface-config-repository.php',
+	'interfaces/interface-file-system.php',
+	'interfaces/interface-snippet-handler.php',
+	'handlers/php-snippet-handler.php',
+	'handlers/html-snippet-handler.php',
+	'classes/class-file-system-adapter.php',
+	'classes/class-snippet-files.php',
+	'classes/class-config-repository.php',
+];
+
+foreach ( $files as $file ) {
+	require_once $file;
+}
