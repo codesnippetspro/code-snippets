@@ -8,12 +8,16 @@ class Snippet_Files {
 
 	private File_System_Interface $fs;
 
+	private Snippet_Config_Repository_Interface $config_repo;
+
 	public function __construct(
 		Snippet_Handler_Registry $handler_registry,
-		File_System_Interface $fs
+		File_System_Interface $fs,
+		Snippet_Config_Repository_Interface $config_repo
 	) {
 		$this->handler_registry = $handler_registry;
 		$this->fs = $fs;
+		$this->config_repo = $config_repo;
 	}
 
 	public function register_hooks() {
@@ -42,7 +46,7 @@ class Snippet_Files {
 
 		$this->fs->put_contents( $file_path, $contents, FS_CHMOD_FILE );
 
-		$this->update_config_file( $base_dir, $snippet );
+		$this->config_repo->update( $base_dir, $snippet );
 	}
 
 	public function delete_snippet( Snippet $snippet, bool $network ) {
@@ -59,7 +63,7 @@ class Snippet_Files {
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id, $handler->get_file_extension() );
 		$this->delete_file( $file_path );
 
-		$this->update_config_file( $base_dir, $snippet, true );
+		$this->config_repo->update( $base_dir, $snippet, true );
 	}
 
 	public function activate_snippet( Snippet $snippet, bool $network ) {
@@ -82,7 +86,7 @@ class Snippet_Files {
 
 		$this->fs->put_contents( $file_path, $contents, FS_CHMOD_FILE );
 
-		$this->update_config_file( $base_dir, $snippet );
+		$this->config_repo->update( $base_dir, $snippet );
 	}
 
 	public function deactivate_snippet( int $snippet_id, bool $network ) {
@@ -97,12 +101,9 @@ class Snippet_Files {
 		$table = code_snippets()->db->get_table_name( $network );
 		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
-		$this->update_config_file( $base_dir, $snippet );
+		$this->config_repo->update( $base_dir, $snippet );
 	}
 
-	/**
-	 * Returns the base directory path for a given context.
-	 */
 	public static function get_base_dir( string $table = '', string $snippet_type = '' ) {
 		$base_dir = WP_CONTENT_DIR . '/code-snippets';
 
@@ -117,60 +118,20 @@ class Snippet_Files {
 		return $base_dir;
 	}
 
-	/**
-	 * Creates the directory if it does not exist.
-	 */
 	private function maybe_create_directory( string $dir ) {
 		if ( ! $this->fs->is_dir( $dir ) ) {
 			$this->fs->mkdir( $dir, FS_CHMOD_DIR );
 		}
 	}
 
-	/**
-	 * Returns the path to the snippet PHP file.
-	 */
 	private function get_snippet_file_path( string $base_dir, int $snippet_id, string $ext ) {
 		return trailingslashit( $base_dir ) . $snippet_id . '.' . $ext;
 	}
 
-	/**
-	 * Deletes a file if it exists.
-	 */
 	private function delete_file( string $file_path ) {
 		if ( $this->fs->exists( $file_path ) ) {
 			$this->fs->delete( $file_path );
 		}
-	}
-
-	/**
-	 * Loads the index.php array by requiring it directly.
-	 */
-	private function load_config_file( string $config_file_path ) {
-		return is_file( $config_file_path ) ? require $config_file_path : [];
-	}
-
-	/**
-	 * Saves the index.php file via WP_Filesystem.
-	 */
-	private function save_config_file( string $config_file_path, array $active_snippets ) {
-		$file_content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn " . var_export( $active_snippets, true ) . ";\n";
-		$this->fs->put_contents( $config_file_path, $file_content, FS_CHMOD_FILE );
-	}
-
-	/**
-	 * Updates the index.php file with snippet config.
-	 */
-	private function update_config_file( string $base_dir, Snippet $snippet, ?bool $remove = false ) {
-		$config_file_path = trailingslashit( $base_dir ) . 'index.php';
-		$active_snippets = $this->load_config_file( $config_file_path );
-
-		if ( ! $remove ) {
-			$active_snippets[ $snippet->id ] = $snippet->get_fields();
-		} else {
-			unset( $active_snippets[ $snippet->id ] );
-		}
-
-		$this->save_config_file( $config_file_path, $active_snippets );
 	}
 
 	public function sync_active_shared_network_snippets( $option, $old_value, $value ) {

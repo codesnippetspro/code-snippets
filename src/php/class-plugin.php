@@ -121,12 +121,17 @@ class Plugin {
 
 		// Snippet files.
 		require_once $includes_path . '/flat-files/load.php';
+
 		$registry = new Snippet_Handler_Registry( [
 			'php'  => new Php_Snippet_Handler(),
 			'html' => new Html_Snippet_Handler(),
 		] );
+
 		$fs = new WordPress_Filesystem_Adapter();
-		( new Snippet_Files( $registry, $fs ) )->register_hooks();
+
+		$config_repo = new Snippet_Config_Repository( $fs );
+
+		( new Snippet_Files( $registry, $fs, $config_repo ) )->register_hooks();
 
 		$this->active_snippets = new Active_Snippets();
 		$this->front_end = new Front_End();
