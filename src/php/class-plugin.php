@@ -120,7 +120,7 @@ class Plugin {
 		require_once $includes_path . '/cloud/list-table-shared-ops.php';
 
 		// Snippet files.
-		require_once $includes_path . '/files/load.php';
+		require_once $includes_path . '/flat-files/load.php';
 		$registry = new Snippet_Handler_Registry( [
 			'php'  => new Php_Snippet_Handler(),
 			'html' => new Html_Snippet_Handler(),
