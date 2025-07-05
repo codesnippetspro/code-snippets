@@ -8,13 +8,13 @@ class Snippet_Files {
 
 	private File_System_Interface $fs;
 
-    public function __construct(
-        Snippet_Handler_Registry $handler_registry,
+	public function __construct(
+		Snippet_Handler_Registry $handler_registry,
 		File_System_Interface $fs
-    ) {
-        $this->handler_registry = $handler_registry;
-        $this->fs = $fs;
-    }
+	) {
+		$this->handler_registry = $handler_registry;
+		$this->fs = $fs;
+	}
 
 	public function register_hooks() {
 		add_action( 'code_snippets/create_snippet', [ $this, 'handle_snippet' ], 10, 2 );
