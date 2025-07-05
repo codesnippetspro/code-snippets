@@ -4,19 +4,17 @@ namespace Code_Snippets;
 
 class Snippet_Files {
 
-	/**
-	 * Holds the WP_Filesystem instance.
-	 *
-	 * @var \WP_Filesystem_Base
-	 */
-	private $fs;
+	private Snippet_Handler_Registry $handler_registry;
 
-	const TYPES_TO_HANDLE = [ 'php', 'html' ];
+	private File_System_Interface $fs;
 
-	public function init() {
-		$this->ensure_filesystem();
-		$this->register_hooks();
-	}
+    public function __construct(
+        Snippet_Handler_Registry $handler_registry,
+		File_System_Interface $fs
+    ) {
+        $this->handler_registry = $handler_registry;
+        $this->fs = $fs;
+    }
 
 	public function register_hooks() {
 		add_action( 'code_snippets/create_snippet', [ $this, 'handle_snippet' ], 10, 2 );
@@ -27,48 +25,36 @@ class Snippet_Files {
 		add_action( 'updated_option', [ $this, 'sync_active_shared_network_snippets' ], 10, 3 );
 	}
 
-	private function ensure_filesystem() {
-		if ( ! $this->fs ) {
-			if ( ! function_exists( 'WP_Filesystem' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/file.php';
-			}
-
-			WP_Filesystem();
-
-			global $wp_filesystem;
-
-			$this->fs = $wp_filesystem;
-		}
-	}
-
-	private function should_handle_snippet( string $snippet_type ) {
-		return in_array( $snippet_type, self::TYPES_TO_HANDLE, true );
-	}
-
 	public function handle_snippet( Snippet $snippet, string $table ) {
 		$snippet_type = $snippet->get_type();
-		if ( ! $this->should_handle_snippet( $snippet_type ) ) {
+		$handler = $this->handler_registry->get_handler( $snippet_type );
+
+		if ( ! $handler ) {
 			return;
 		}
 
-		$base_dir = self::get_base_dir( $table, $snippet_type );
+		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 		$this->maybe_create_directory( $base_dir );
 
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
 
-		$this->write_snippet_file( $file_path, $snippet->code, $snippet_type );
+		$contents = $handler->wrap_code( $snippet->code );
+
+		$this->fs->put_contents( $file_path, $contents, FS_CHMOD_FILE );
 
 		$this->update_config_file( $base_dir, $snippet );
 	}
 
 	public function delete_snippet( Snippet $snippet, bool $network ) {
 		$snippet_type = $snippet->get_type();
-		if ( ! $this->should_handle_snippet( $snippet_type ) ) {
+		$handler = $this->handler_registry->get_handler( $snippet_type );
+
+		if ( ! $handler ) {
 			return;
 		}
 
 		$table = code_snippets()->db->get_table_name( $network );
-		$base_dir = self::get_base_dir( $table, $snippet_type );
+		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
 		$this->delete_file( $file_path );
@@ -78,19 +64,23 @@ class Snippet_Files {
 
 	public function activate_snippet( Snippet $snippet, bool $network ) {
 		$snippet = get_snippet( $snippet->id, $network );
-
 		$snippet_type = $snippet->get_type();
-		if ( ! $this->should_handle_snippet( $snippet_type ) ) {
+		$handler = $this->handler_registry->get_handler( $snippet_type );
+
+		if ( ! $handler ) {
 			return;
 		}
 
 		$table = code_snippets()->db->get_table_name( $network );
-		$base_dir = self::get_base_dir( $table, $snippet_type );
+		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
 		$this->maybe_create_directory( $base_dir );
 
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
-		$this->write_snippet_file( $file_path, $snippet->code, $snippet_type );
+
+		$contents = $handler->wrap_code( $snippet->code );
+
+		$this->fs->put_contents( $file_path, $contents, FS_CHMOD_FILE );
 
 		$this->update_config_file( $base_dir, $snippet );
 	}
@@ -98,13 +88,14 @@ class Snippet_Files {
 	public function deactivate_snippet( int $snippet_id, bool $network ) {
 		$snippet = get_snippet( $snippet_id, $network );
 		$snippet_type = $snippet->get_type();
+		$handler = $this->handler_registry->get_handler( $snippet_type );
 
-		if ( ! $this->should_handle_snippet( $snippet_type ) ) {
+		if ( ! $handler ) {
 			return;
 		}
 
 		$table = code_snippets()->db->get_table_name( $network );
-		$base_dir = self::get_base_dir( $table, $snippet_type );
+		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
 		$this->update_config_file( $base_dir, $snippet );
 	}
@@ -140,21 +131,6 @@ class Snippet_Files {
 	 */
 	private function get_snippet_file_path( string $base_dir, int $snippet_id ) {
 		return trailingslashit( $base_dir ) . $snippet_id . '.php';
-	}
-
-	/**
-	 * Writes the snippet code to a file, with the required header.
-	 */
-	private function write_snippet_file( string $file_path, string $code, string $snippet_type ) {
-		$content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\n";
-
-		if ( 'html' === $snippet_type ) {
-			$content .= "?>\n\n";
-		}
-
-		$content .= $code;
-
-		$this->fs->put_contents( $file_path, $content, FS_CHMOD_FILE );
 	}
 
 	/**

@@ -120,8 +120,13 @@ class Plugin {
 		require_once $includes_path . '/cloud/list-table-shared-ops.php';
 
 		// Snippet files.
-		require_once $includes_path . '/class-snippet-files.php';
-		( new Snippet_Files() )->init();
+		require_once $includes_path . '/files/load.php';
+		$registry = new Snippet_Handler_Registry( [
+			'php'  => new Php_Snippet_Handler(),
+			'html' => new Html_Snippet_Handler(),
+		] );
+		$fs = new WordPress_Filesystem_Adapter();
+		( new Snippet_Files( $registry, $fs ) )->register_hooks();
 
 		$this->active_snippets = new Active_Snippets();
 		$this->front_end = new Front_End();
