@@ -36,7 +36,7 @@ class Snippet_Files {
 		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 		$this->maybe_create_directory( $base_dir );
 
-		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
+		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id, $handler->get_file_extension() );
 
 		$contents = $handler->wrap_code( $snippet->code );
 
@@ -56,7 +56,7 @@ class Snippet_Files {
 		$table = code_snippets()->db->get_table_name( $network );
 		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
-		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
+		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id, $handler->get_file_extension() );
 		$this->delete_file( $file_path );
 
 		$this->update_config_file( $base_dir, $snippet, true );
@@ -76,7 +76,7 @@ class Snippet_Files {
 
 		$this->maybe_create_directory( $base_dir );
 
-		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id );
+		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id, $handler->get_file_extension() );
 
 		$contents = $handler->wrap_code( $snippet->code );
 
@@ -129,8 +129,8 @@ class Snippet_Files {
 	/**
 	 * Returns the path to the snippet PHP file.
 	 */
-	private function get_snippet_file_path( string $base_dir, int $snippet_id ) {
-		return trailingslashit( $base_dir ) . $snippet_id . '.php';
+	private function get_snippet_file_path( string $base_dir, int $snippet_id, string $ext ) {
+		return trailingslashit( $base_dir ) . $snippet_id . '.' . $ext;
 	}
 
 	/**
