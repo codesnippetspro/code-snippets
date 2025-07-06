@@ -32,6 +32,7 @@ class Snippet_Files {
 		}
 
 		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ], 10, 1 );
+		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ], 10, 2 );
 	}
 
 	public function handle_snippet( Snippet $snippet, string $table ) {
@@ -205,5 +206,29 @@ class Snippet_Files {
 		];
 
 		return $fields;
+	}
+
+	public function create_all_flat_files( array $settings, array $input ) {
+		if ( ! isset( $settings['general']['enable_flat_files'] ) ) {
+			return;
+		}
+
+		if ( ! $settings['general']['enable_flat_files'] ) {
+			return;
+		}
+
+		$db = code_snippets()->db;
+		$data = $db->fetch_active_snippets( Snippet::get_all_scopes() );
+
+		if ( empty( $data ) ) {
+			return;
+		}
+
+		foreach ( $data as $table_name => $active_snippets ) {
+			foreach ( $active_snippets as $snippet ) {
+				$snippet_obj = get_snippet( $snippet['id'], $table_name === $db->ms_table );
+				$this->handle_snippet( $snippet_obj, $table_name );
+			}
+		}
 	}
 }
