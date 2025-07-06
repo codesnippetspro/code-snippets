@@ -245,6 +245,12 @@ class Front_End {
 			return $snippet->code;
 		}
 
+		$should_execute_from_flat_files = Settings\get_setting( 'general', 'enable_flat_files' );
+
+		if ( ! $should_execute_from_flat_files ) {
+			return $this->evaluate_shortcode_from_db( $snippet, $atts );
+		}
+
 		$network = DB::validate_network_param( $snippet->network );
 		$table_name = code_snippets()->db->get_table_name( $network );
 		$filepath = WP_CONTENT_DIR . '/code-snippets/' . $table_name . '/html/' . $snippet->id . '.php';
