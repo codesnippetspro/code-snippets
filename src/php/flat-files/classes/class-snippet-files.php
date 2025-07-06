@@ -21,13 +21,15 @@ class Snippet_Files {
 	}
 
 	public function register_hooks() {
-		add_action( 'code_snippets/create_snippet', [ $this, 'handle_snippet' ], 10, 2 );
-		add_action( 'code_snippets/update_snippet', [ $this, 'handle_snippet' ], 10, 2 );
-		add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
-		add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 2 );
-		add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
+		if ( Settings\get_setting( 'general', 'enable_flat_files' ) ) {
+			add_action( 'code_snippets/create_snippet', [ $this, 'handle_snippet' ], 10, 2 );
+			add_action( 'code_snippets/update_snippet', [ $this, 'handle_snippet' ], 10, 2 );
+			add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
+			add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 2 );
+			add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
 
-		add_action( 'updated_option', [ $this, 'sync_active_shared_network_snippets' ], 10, 3 );
+			add_action( 'updated_option', [ $this, 'sync_active_shared_network_snippets' ], 10, 3 );
+		}
 
 		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ], 10, 1 );
 	}
