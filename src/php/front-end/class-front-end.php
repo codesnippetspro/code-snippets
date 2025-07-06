@@ -33,10 +33,14 @@ class Front_End {
 	 */
 	const MAX_SHORTCODE_DEPTH = 5;
 
+	private Snippet_Handler_Registry $handler_registry;
+
 	/**
 	 * Class constructor
 	 */
-	public function __construct() {
+	public function __construct( Snippet_Handler_Registry $handler_registry ) {
+		$this->handler_registry = $handler_registry;
+
 		add_action( 'the_posts', [ $this, 'enqueue_highlighting' ] );
 		add_action( 'init', [ $this, 'setup_mce_plugin' ] );
 
@@ -233,6 +237,20 @@ class Front_End {
 	}
 
 	/**
+	 * Build the file path for a snippet's flat file.
+	 *
+	 * @param string          $table_name Table name for the snippet.
+	 * @param Snippet         $snippet    Snippet object.
+	 *
+	 * @return string Full file path for the snippet.
+	 */
+	private function build_snippet_filepath( string $table_name, Snippet $snippet ): string {
+		$handler = $this->handler_registry->get_handler( $snippet->get_type() );
+
+		return WP_CONTENT_DIR . '/code-snippets/' . $table_name . '/' . $handler->get_dir_name() . '/' . $snippet->id . '.' . $handler->get_file_extension();
+	}
+
+	/**
 	 * Evaluate the code from a content shortcode.
 	 *
 	 * @param Snippet              $snippet Snippet.
@@ -253,7 +271,7 @@ class Front_End {
 
 		$network = DB::validate_network_param( $snippet->network );
 		$table_name = code_snippets()->db->get_table_name( $network );
-		$filepath = WP_CONTENT_DIR . '/code-snippets/' . $table_name . '/html/' . $snippet->id . '.php';
+		$filepath = $this->build_snippet_filepath( $table_name, $snippet );
 
 		return file_exists( $filepath )
 			? $this->evaluate_shortcode_from_flat_file( $filepath, $atts )

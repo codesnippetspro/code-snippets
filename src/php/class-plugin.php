@@ -134,7 +134,7 @@ class Plugin {
 		( new Snippet_Files( $registry, $fs, $config_repo ) )->register_hooks();
 
 		$this->active_snippets = new Active_Snippets();
-		$this->front_end = new Front_End();
+		$this->front_end = new Front_End( $registry );
 		$this->cloud_api = new Cloud_API();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
