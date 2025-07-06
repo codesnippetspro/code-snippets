@@ -8,4 +8,5 @@ interface File_System_Interface {
 	public function delete( string $path ): bool;
 	public function is_dir( string $path ): bool;
 	public function mkdir( string $path, $chmod );
+	public function rmdir( string $path, bool $recursive = false ): bool;
 }
