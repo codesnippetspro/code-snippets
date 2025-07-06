@@ -65,5 +65,8 @@ function code_snippets(): Plugin {
 code_snippets()->load_plugin();
 
 // Execute the snippets once the plugins are loaded.
-// add_action( 'plugins_loaded', __NAMESPACE__ . '\execute_active_snippets', 1 );
-add_action( 'plugins_loaded', __NAMESPACE__ . '\execute_active_snippets_from_flat_files', 1 );
+$snippet_execution_fn = Settings\get_setting( 'general', 'enable_flat_files' )
+	? '\execute_active_snippets_from_flat_files'
+	: '\execute_active_snippets';
+
+add_action( 'plugins_loaded', __NAMESPACE__ . $snippet_execution_fn, 1 );

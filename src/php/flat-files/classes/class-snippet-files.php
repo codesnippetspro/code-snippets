@@ -26,7 +26,10 @@ class Snippet_Files {
 		add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
 		add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 2 );
 		add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
+
 		add_action( 'updated_option', [ $this, 'sync_active_shared_network_snippets' ], 10, 3 );
+
+		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ], 10, 1 );
 	}
 
 	public function handle_snippet( Snippet $snippet, string $table ) {
@@ -190,5 +193,15 @@ class Snippet_Files {
 		}
 
 		return $snippets;
+	}
+
+	public function add_settings_fields( array $fields ) {
+		$fields['general']['enable_flat_files'] = [
+			'name'  => __( 'Enable Flat Files', 'code-snippets' ),
+			'type'  => 'checkbox',
+			'label' => __( 'Snippets will be executed from flat files instead of the database.', 'code-snippets' ),
+		];
+
+		return $fields;
 	}
 }
