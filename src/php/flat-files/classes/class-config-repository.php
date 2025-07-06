@@ -3,6 +3,8 @@ namespace Code_Snippets;
 
 class Snippet_Config_Repository implements Snippet_Config_Repository_Interface {
 
+	const CONFIG_FILE_NAME = 'index.php';
+
 	private File_System_Interface $fs;
 
 	public function __construct( File_System_Interface $fs ) {
@@ -10,7 +12,7 @@ class Snippet_Config_Repository implements Snippet_Config_Repository_Interface {
 	}
 
 	public function load( string $base_dir ): array {
-		$config_file_path = trailingslashit( $base_dir ) . 'index.php';
+		$config_file_path = trailingslashit( $base_dir ) . static::CONFIG_FILE_NAME;
 
 		return is_file( $config_file_path )
 			? require $config_file_path
@@ -18,7 +20,7 @@ class Snippet_Config_Repository implements Snippet_Config_Repository_Interface {
 	}
 
 	public function save( string $base_dir, array $active_snippets ): void {
-		$config_file_path = trailingslashit( $base_dir ) . 'index.php';
+		$config_file_path = trailingslashit( $base_dir ) . static::CONFIG_FILE_NAME;
 
 		$file_content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn " .
 			var_export( $active_snippets, true ) .
