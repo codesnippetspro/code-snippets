@@ -244,7 +244,7 @@ class Front_End {
 	 *
 	 * @return string Full file path for the snippet.
 	 */
-	private function build_snippet_filepath( string $table_name, Snippet $snippet ): string {
+	private function build_snippet_flat_file_path( string $table_name, Snippet $snippet ): string {
 		$handler = $this->handler_registry->get_handler( $snippet->get_type() );
 
 		return WP_CONTENT_DIR . '/code-snippets/' . $table_name . '/' . $handler->get_dir_name() . '/' . $snippet->id . '.' . $handler->get_file_extension();
@@ -271,7 +271,7 @@ class Front_End {
 
 		$network = DB::validate_network_param( $snippet->network );
 		$table_name = code_snippets()->db->get_table_name( $network );
-		$filepath = $this->build_snippet_filepath( $table_name, $snippet );
+		$filepath = $this->build_snippet_flat_file_path( $table_name, $snippet );
 
 		return file_exists( $filepath )
 			? $this->evaluate_shortcode_from_flat_file( $filepath, $atts )
