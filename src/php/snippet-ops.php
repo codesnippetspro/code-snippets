@@ -316,6 +316,8 @@ function activate_snippet( int $id, ?bool $network = null ) {
 	update_shared_network_snippets( [ $snippet ] );
 	do_action( 'code_snippets/activate_snippet', $snippet );
 	clean_snippets_cache( $table_name );
+	code_snippets()->active_snippets->increment_snippet_rev( $snippet );
+
 	return $snippet;
 }
 
@@ -373,6 +375,8 @@ function activate_snippets( array $ids, ?bool $network = null ): ?array {
 	update_shared_network_snippets( $valid_snippets );
 	do_action( 'code_snippets/activate_snippets', $valid_snippets, $table_name );
 	clean_snippets_cache( $table_name );
+	code_snippets()->active_snippets->increment_snippets_rev( $network );
+
 	return $valid_ids;
 }
 
@@ -413,6 +417,7 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 	update_shared_network_snippets( [ $snippet ] );
 	do_action( 'code_snippets/deactivate_snippet', $id, $network );
 	clean_snippets_cache( $table );
+	code_snippets()->active_snippets->increment_snippets_rev( $network );
 
 	return $snippet;
 }
@@ -442,6 +447,8 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 	if ( $result ) {
 		do_action( 'code_snippets/delete_snippet', $id, $network );
 		clean_snippets_cache( $table );
+
+		code_snippets()->active_snippets->increment_rev( 'all', $network );
 		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 	}
 
@@ -517,6 +524,11 @@ function save_snippet( $snippet ) {
 		}
 	}
 
+	// Increment the revision number unless revision = 1 or revision is not set.
+	if ( $snippet->revision && $snippet->revision > 1 ) {
+		$snippet->increment_revision();
+	}
+
 	// Shared network snippets are always considered inactive.
 	$snippet->active = $snippet->active && ! $snippet->shared_network;
 
@@ -544,11 +556,23 @@ function save_snippet( $snippet ) {
 		$snippet->id = $wpdb->insert_id;
 		do_action( 'code_snippets/create_snippet', $snippet, $table );
 	} else {
-
 		// Otherwise, update the snippet data.
 		$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
 		if ( false === $result ) {
 			return null;
+		}
+
+		// Check if snippet has a cloud id.
+		if ( $snippet->cloud_id ) {
+			// Check if snippet is owned by the current user.
+			$is_owner = substr( $snippet->cloud_id, -1 );
+
+			// If snippet is owned by the current user then send to cloud for update.
+			if ( 1 === intval( $is_owner ) ) {
+				$snippets_to_update[] = $snippet;
+				// Update the snippet on the cloud - cloud will also verify ownership.
+				code_snippets()->cloud_api->update_snippets_in_cloud( $snippets_to_update );
+			}
 		}
 
 		do_action( 'code_snippets/update_snippet', $snippet, $table );
@@ -556,6 +580,8 @@ function save_snippet( $snippet ) {
 
 	update_shared_network_snippets( [ $snippet ] );
 	clean_snippets_cache( $table );
+	code_snippets()->active_snippets->increment_snippet_rev( $snippet );
+
 	return $snippet;
 }
 

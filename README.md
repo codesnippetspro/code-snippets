@@ -1,4 +1,4 @@
-# Code Snippets
+# Code Snippets Pro
 
 WordPress plugin for managing executable code snippets through a graphical interface.
 

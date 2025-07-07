@@ -2,6 +2,7 @@ import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { TagEditor } from '../../TagEditor'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { ExplainSnippetButton } from '../buttons/ExplainSnippetButton'
 
 const options = window.CODE_SNIPPETS_EDIT?.tagOptions
 
@@ -10,6 +11,22 @@ export const TagsInput: React.FC = () => {
 
 	return options?.enabled
 		? <div className="snippet-tags-container">
+			{'' === snippet.code.trim()
+				? null
+				: <ExplainSnippetButton
+					field="tags"
+					snippet={snippet}
+					disabled={isReadOnly}
+					onResponse={generated => {
+						setSnippet(previous => ({
+							...previous,
+							tags: [...new Set([...previous.tags, ...generated.tags ?? []])]
+						}))
+					}}
+				>
+					{__('Add Tags', 'code-snippets')}
+				</ExplainSnippetButton>}
+
 			<h2>
 				<label htmlFor="snippet_tags">
 					{__('Tags', 'code-snippets')}

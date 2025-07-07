@@ -266,14 +266,29 @@ function process_settings_actions( array $input ): ?array {
 			__( 'Successfully performed database table upgrade.', 'code-snippets' ),
 			'updated'
 		);
+
+	} elseif ( isset( $input['general']['connect_cloud'] ) ) {
+		code_snippets()->cloud_api->init_cloud_connection();
+
+	} elseif ( isset( $input['debug']['disconnect_cloud'] ) ) {
+		code_snippets()->cloud_api->remove_sync();
+
+		add_settings_error(
+			OPTION_NAME,
+			'snippets_cloud_sync_disconnected',
+			__( 'This site has been successfully disconnected from Code Snippets Cloud.', 'code-snippets' ),
+			'updated'
+		);
 	}
 
 	if ( isset( $input['debug']['reset_caches'] ) ) {
 		Welcome_API::clear_cache();
 		clean_snippets_cache( code_snippets()->db->get_table_name( false ) );
+		code_snippets()->active_snippets->increment_snippets_rev( false );
 
 		if ( is_multisite() ) {
 			clean_snippets_cache( code_snippets()->db->get_table_name( true ) );
+			code_snippets()->active_snippets->increment_snippets_rev( true );
 		}
 
 		add_settings_error(

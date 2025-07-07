@@ -37,6 +37,49 @@ class Settings_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
+		if ( isset( $_GET['confirm-authorise-cloud'], $_GET['code'], $_GET['state'] ) ) {
+			$auth_code = sanitize_text_field( wp_unslash( $_GET['code'] ) );
+			$state = sanitize_text_field( wp_unslash( $_GET['state'] ) );
+
+			$result = code_snippets()->cloud_api->decode_auth_code( $state, $auth_code );
+
+			wp_safe_redirect(
+				add_query_arg(
+					'connect_cloud_result',
+					is_null( $result ) ? 'ok' : 'fail',
+					code_snippets()->get_menu_url( 'manage' )
+				)
+			);
+			exit;
+		}
+
+		if ( isset( $_GET['connect-authorise-cloud'], $_GET['_wpnonce'] ) ) {
+			$api = code_snippets()->cloud_api;
+
+			if ( $api->verify_action_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) ) ) {
+				$api->init_cloud_connection();
+			} else {
+				wp_die( '', 401 );
+			}
+		}
+
+		if ( isset( $_GET['reset-cloud'], $_GET['_wpnonce'] ) ) {
+			$api = code_snippets()->cloud_api;
+
+			if ( $api->verify_action_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) ) ) {
+				code_snippets()->cloud_api->remove_sync();
+
+				add_settings_error(
+					OPTION_NAME,
+					'snippets_cloud_sync_disconnected',
+					__( 'This site has been successfully disconnected from Code Snippets Cloud.', 'code-snippets' ),
+					'updated'
+				);
+			} else {
+				wp_die( '', 401 );
+			}
+		}
+
 		if ( is_network_admin() ) {
 			if ( Settings\are_settings_unified() ) {
 				$this->update_network_options();
@@ -127,6 +170,22 @@ class Settings_Menu extends Admin_Menu {
 				?>
 			</h1>
 
+			<?php
+
+			if ( isset( $_GET['connect_cloud_result'] ) ) {
+				$success = 'ok' === sanitize_key( wp_unslash( $_GET['connect_cloud_result'] ) );
+				printf( '<div class="notice notice-%s settings-error is-dismissible"><p><strong>', $success ? 'success' : 'error' );
+
+				echo $success ?
+					esc_html__( 'Successfully connected this site to Code Snippets Cloud.', 'code-snippets' ) :
+					esc_html__( 'Failed to connect this site to Code Snippets Cloud. Please try again.', 'code-snippets' );
+
+				echo '</strong></p></div>';
+				$_SERVER['REQUEST_URI'] = remove_query_arg( 'connect_cloud_result' );
+			}
+			?>
+
+
 			<?php settings_errors( OPTION_NAME ); ?>
 
 			<form action="<?php echo esc_url( $update_url ); ?>" method="post">
@@ -175,6 +234,9 @@ class Settings_Menu extends Admin_Menu {
 		echo '</h2>';
 
 		foreach ( $sections as $section ) {
+			if ( 'license' === $section['id'] ) {
+				continue;
+			}
 
 			if ( $section['title'] ) {
 				printf(

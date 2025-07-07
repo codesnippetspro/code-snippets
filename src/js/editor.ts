@@ -1,5 +1,6 @@
 import { defineMode, getMode, registerHelper } from 'codemirror'
 import { Linter } from './utils/Linter'
+import 'codemirror-colorpicker/dist/codemirror-colorpicker.js'
 import type { EditorConfiguration, ModeSpec } from 'codemirror'
 
 interface ModeSpecOptions {

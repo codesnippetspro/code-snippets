@@ -5,6 +5,11 @@ const selectTab = (tabsWrapper: Element, tab: Element, section: string) => {
 
 	// Update the current active tab attribute so that only the active tab is displayed.
 	tabsWrapper.closest('.wrap')?.setAttribute('data-active-tab', section)
+
+	//Hide all cloud messages - this is a bit of a hack, but it works make better **TODO**
+	document.querySelectorAll('.cloud-message').forEach(element => {
+		element.classList.add('hidden')
+	})
 }
 
 // Refresh the editor preview if we're viewing the editor section.

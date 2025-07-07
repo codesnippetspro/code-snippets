@@ -47,7 +47,7 @@ function code_snippets_deactivation_notice() {
 
 	if ( defined( 'CODE_SNIPPETS_FILE' ) ) {
 		echo '<div class="error fade"><p>';
-		esc_html_e( 'Another version of Code Snippets appears to be installed. Deactivating this version.', 'code-snippets' );
+		esc_html_e( 'You can now safely remove the free version of Code Snippets.', 'code-snippets' );
 		echo '</p></div>';
 
 		$plugins[] = 'code-snippets/code-snippets.php';

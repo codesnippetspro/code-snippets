@@ -103,6 +103,10 @@
 	color: #666;
 }
 
+.CodeMirror .codemirror-colorview {
+	border: 0;
+}
+
 .CodeMirror-foldmarker {
 	color: inherit;
 	margin-inline-start: 0.25em;

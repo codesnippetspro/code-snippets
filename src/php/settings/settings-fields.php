@@ -30,6 +30,7 @@ function get_default_settings(): array {
 			'visual_editor_rows'  => 5,
 			'list_order'          => 'priority-asc',
 			'disable_prism'       => false,
+			'minify_output'       => [ 'css', 'js' ],
 			'hide_upgrade_menu'   => false,
 			'complete_uninstall'  => false,
 		],
@@ -120,6 +121,15 @@ function get_settings_fields(): array {
 			'type'  => 'checkbox',
 			'label' => __( 'Disable syntax highlighting when displaying snippet code on the front-end.', 'code-snippets' ),
 		],
+		'minify_output'       => [
+			'name'    => __( 'Minify Snippet Output', 'code-snippets' ),
+			'type'    => 'checkboxes',
+			'options' => [
+				'css' => __( 'Styles (CSS)', 'code-snippets' ),
+				'js'  => __( 'Scripts (JS)', 'code-snippets' ),
+			],
+			'desc'    => __( 'Minify snippet output by removing whitespace and optimising code to reduce load times.', 'code-snippets' ),
+		],
 	];
 
 	if ( ! code_snippets()->licensing->is_licensed() ) {
@@ -127,6 +137,23 @@ function get_settings_fields(): array {
 			'name'  => __( 'Hide Upgrade Menu', 'code-snippets' ),
 			'type'  => 'checkbox',
 			'label' => __( 'Hide the Upgrade button from the admin menu.', 'code-snippets' ),
+		];
+	}
+
+
+	if ( code_snippets()->cloud_api->is_cloud_connection_available() ) {
+		$fields['debug']['disconnect_cloud'] = [
+			'name'  => __( 'Reset Cloud Connection', 'code-snippets' ),
+			'type'  => 'action',
+			'label' => __( 'Disconnect from Cloud', 'code-snippets' ),
+			'desc'  => __( 'Use this button to manually remove and reset the connection to Code Snippets Cloud. This action will not affect any snippets stored on this site.', 'code-snippets' ),
+		];
+	} else {
+		$fields['general']['connect_cloud'] = [
+			'name'  => __( 'Connect to Cloud', 'code-snippets' ),
+			'type'  => 'action',
+			'label' => __( 'Connect and Authorise', 'code-snippets' ),
+			'desc'  => __( 'Click to connect and authorise your cloud account.', 'code-snippets' ),
 		];
 	}
 

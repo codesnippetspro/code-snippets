@@ -2,6 +2,7 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Elementor\Elementor;
 use WP_Post;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -29,6 +30,20 @@ class Front_End {
 	const PRISM_HANDLE = 'code-snippets-prism';
 
 	/**
+	 * Class for managing integration with the Elementor plugin.
+	 *
+	 * @var Elementor
+	 */
+	protected Elementor $elementor;
+
+	/**
+	 * Class for handling the Gutenberg block.
+	 *
+	 * @var Block_Editor
+	 */
+	public Block_Editor $block_editor;
+
+	/**
 	 * Maximum depth for shortcode recursion.
 	 */
 	const MAX_SHORTCODE_DEPTH = 5;
@@ -37,6 +52,9 @@ class Front_End {
 	 * Class constructor
 	 */
 	public function __construct() {
+		$this->elementor = new Elementor();
+		$this->block_editor = new Block_Editor();
+
 		add_action( 'the_posts', [ $this, 'enqueue_highlighting' ] );
 		add_action( 'init', [ $this, 'setup_mce_plugin' ] );
 
@@ -44,6 +62,54 @@ class Front_End {
 		add_shortcode( self::SOURCE_SHORTCODE, [ $this, 'render_source_shortcode' ] );
 
 		add_filter( 'code_snippets/render_content_shortcode', 'trim' );
+	}
+
+	/**
+	 * Retrieve a list of PrismJS themes.
+	 *
+	 * @return array
+	 */
+	public static function get_prism_themes(): ?array {
+		static $themes = null;
+
+		if ( ! is_null( $themes ) ) {
+			return $themes;
+		}
+
+		$themes = array();
+		$themes_dir = plugin_dir_path( PLUGIN_FILE ) . 'dist/prism-themes/';
+		$theme_files = glob( $themes_dir . '*.css' );
+
+		foreach ( $theme_files as $theme ) {
+			$theme = str_replace( $themes_dir, '', $theme );
+			$theme = str_replace( '.css', '', $theme );
+			$theme = str_replace( 'prism-', '', $theme );
+
+			$label = str_replace( '.', '-', $theme );
+			$label = array_map(
+				function ( $word ) {
+					return strlen( $word ) < 3 ?
+						'of' === $word ? $word : strtoupper( $word ) :
+						ucfirst( $word );
+				},
+				explode( '-', $label )
+			);
+
+			$themes[ $theme ] = implode( ' ', $label );
+		}
+
+		return $themes;
+	}
+
+	/**
+	 * Retrieve the style handle for a PrismJS theme.
+	 *
+	 * @param string $theme Theme name.
+	 *
+	 * @return string
+	 */
+	public static function get_prism_theme_style_handle( string $theme ): string {
+		return "code-snippets-prism-theme-$theme";
 	}
 
 	/**
@@ -153,7 +219,13 @@ class Front_End {
 
 			add_action(
 				'wp_enqueue_scripts',
-				function () {
+				function () use ( $found_shortcode_content ) {
+					foreach ( self::get_prism_themes() as $theme => $label ) {
+						if ( strpos( $found_shortcode_content, "is-style-prism-$theme" ) ) {
+							wp_enqueue_style( self::get_prism_theme_style_handle( $theme ) );
+						}
+					}
+
 					wp_enqueue_style( self::PRISM_HANDLE );
 					wp_enqueue_script( self::PRISM_HANDLE );
 				},
@@ -172,19 +244,28 @@ class Front_End {
 	public static function register_prism_assets() {
 		$plugin = code_snippets();
 
-		wp_register_style(
-			self::PRISM_HANDLE,
-			plugins_url( 'dist/prism.css', $plugin->file ),
-			array(),
-			$plugin->version
-		);
-
 		wp_register_script(
 			self::PRISM_HANDLE,
 			plugins_url( 'dist/prism.js', $plugin->file ),
 			array(),
 			$plugin->version,
 			true
+		);
+
+		foreach ( self::get_prism_themes() as $theme => $label ) {
+			wp_register_style(
+				self::get_prism_theme_style_handle( $theme ),
+				plugins_url( "dist/prism-themes/prism-$theme.css", $plugin->file ),
+				array(),
+				$plugin->version
+			);
+		}
+
+		wp_register_style(
+			self::PRISM_HANDLE,
+			plugins_url( 'dist/prism.css', $plugin->file ),
+			array(),
+			$plugin->version
 		);
 	}
 
@@ -195,6 +276,10 @@ class Front_End {
 	 */
 	public static function enqueue_all_prism_themes() {
 		self::register_prism_assets();
+
+		foreach ( self::get_prism_themes() as $theme => $label ) {
+			wp_enqueue_style( self::get_prism_theme_style_handle( $theme ) );
+		}
 
 		wp_enqueue_style( self::PRISM_HANDLE );
 		wp_enqueue_script( self::PRISM_HANDLE );

@@ -8,6 +8,8 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_API;
+
 /**
  * Loaded from the manage menu class.
  *
@@ -18,6 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
+
+$licensed = code_snippets()->licensing->is_licensed();
+$cloud_enabled = code_snippets()->cloud_api->is_cloud_key_verified();
 $types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin::get_types() );
 $current_type = $this->get_current_type();
 
@@ -58,13 +63,44 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 			Admin::render_snippet_type_tab( $type_name, $label, $current_type );
 		}
 
+		if ( ! $licensed ) {
+			?>
+			<a class="button button-large nav-tab-button nav-tab-inactive go-pro-button"
+			   href="https://codesnippets.pro/pricing/" target="_blank"
+			   aria-label="<?php esc_attr_e( 'Find more about Pro (opens in external tab)', 'code-snippets' ); ?>">
+				<?php echo wp_kses( __( 'Upgrade to <span class="badge">Pro</span>', 'code-snippets' ), [ 'span' => [ 'class' => 'badge' ] ] ); ?>
+				<span class="dashicons dashicons-external"></span>
+			</a>
+			<?php
+		}
 		?>
-		<a class="button button-large nav-tab-button nav-tab-inactive go-pro-button"
-		   href="https://codesnippets.pro/pricing/" target="_blank"
-		   aria-label="<?php esc_attr_e( 'Find more about Pro (opens in external tab)', 'code-snippets' ); ?>">
-			<?php echo wp_kses( __( 'Upgrade to <span class="badge">Pro</span>', 'code-snippets' ), [ 'span' => [ 'class' => 'badge' ] ] ); ?>
-			<span class="dashicons dashicons-external"></span>
-		</a>
+		<div class="cloud-connect-wrap <?php echo $cloud_enabled ? 'cloud-connect-active' : ''; ?>">
+			<span class="cloud-status-dot"></span>
+			<p>
+				<?php esc_html_e( 'Cloud sync:', 'code-snippets' ); ?>
+				<span class="cloud-connect-text">
+					<?php
+					echo $cloud_enabled ?
+						esc_html__( 'Connected', 'code-snippets' ) :
+						esc_html__( 'Disconnected', 'code-snippets' );
+					?>
+				</span>
+			</p>
+			<?php
+
+			if ( $cloud_enabled ) {
+				$this->render_view( 'partials/cloud-sync-guide' );
+			} else {
+				printf(
+					'<a href="%s" class="button button-secondary button-small" target="_blank" title="%s">%s</a>',
+					esc_url( Cloud_API::get_connect_cloud_url() ),
+					esc_attr__( 'Authorize a connection between this site and Code Snippets Cloud.', 'code-snippets' ),
+					esc_html__( 'Connect', 'code-snippets' )
+				);
+			}
+
+			?>
+		</div>
 	</h2>
 
 	<?php
@@ -115,6 +151,10 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 	switch ( $current_type ) {
 		case 'cloud_search':
 			include_once 'partials/cloud-search.php';
+			break;
+
+		case 'bundles':
+			include_once 'partials/bundles.php';
 			break;
 
 		default:

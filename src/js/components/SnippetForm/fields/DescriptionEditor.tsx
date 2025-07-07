@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react'
 import { __ } from '@wordpress/i18n'
 import domReady from '@wordpress/dom-ready'
+import { ExplainSnippetButton } from '../buttons/ExplainSnippetButton'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 
 export const EDITOR_ID = 'snippet_description'
@@ -49,7 +50,7 @@ const initializeEditor = (onChange: (content: string) => void) => {
 }
 
 export const DescriptionEditor: React.FC = () => {
-	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
+	const { snippet, setSnippet, updateSnippet, isReadOnly } = useSnippetForm()
 
 	const onChange = useCallback(
 		(desc: string) => setSnippet(previous => ({ ...previous, desc })),
@@ -62,6 +63,23 @@ export const DescriptionEditor: React.FC = () => {
 
 	return window.CODE_SNIPPETS_EDIT?.enableDescription
 		? <div className="snippet-description-container">
+			{'' === snippet.code.trim()
+				? null
+				: <ExplainSnippetButton
+					field="desc"
+					snippet={snippet}
+					disabled={isReadOnly}
+					onResponse={generated => {
+						updateSnippet(previous => ({
+							...previous,
+							name: generated.name && '' === previous.name.trim() ? generated.name : previous.name,
+							desc: `${previous.desc}${generated.desc ? `\n<p>${generated.desc}</p>` : ''}`
+						}))
+					}}
+				>
+					{__('Add Description', 'code-snippets')}
+				</ExplainSnippetButton>}
+
 			<h2>
 				<label htmlFor={EDITOR_ID}>
 					{__('Description', 'code-snippets')}

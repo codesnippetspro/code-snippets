@@ -42,22 +42,21 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 
 		<p>
 			<?php
-			    /* translators: %s: link to snippets admin menu */
-			    $text = __( 'Afterward, you will need to visit the <a href="%s" >All Snippets</a> page to activate the imported snippets.', 'code-snippets' );
-			    $url = esc_url( code_snippets()->get_menu_url( 'manage' ) );
-			
-			    echo wp_kses(
-			        sprintf( $text, $url ),
-			        array(
-			            'a' => array(
-			                'href' => array(),
-					'target' => array(),
-			            )
-			        )
-			    );
-			    ?>
-		</p>
+			/* translators: %s: link to snippets admin menu */
+			$text = __( 'Afterward, you will need to visit the <a href="%s" >All Snippets</a> page to activate the imported snippets.', 'code-snippets' );
+			$url = esc_url( code_snippets()->get_menu_url( 'manage' ) );
 
+			echo wp_kses(
+				sprintf( $text, $url ),
+				array(
+					'a' => array(
+						'href'   => array(),
+						'target' => array(),
+					),
+				)
+			);
+			?>
+		</p>
 
 		<form enctype="multipart/form-data" id="import-upload-form" method="post" class="wp-upload-form"
 		      name="code_snippets_import">

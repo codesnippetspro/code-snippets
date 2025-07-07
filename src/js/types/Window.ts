@@ -2,6 +2,7 @@ import type Prism from 'prismjs'
 import type tinymce from 'tinymce'
 import type { Snippet } from './Snippet'
 import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './WordPressCodeEditor'
+import type { ElementorFrontend } from './ElementorFrontend'
 import type { WordPressEditor } from './WordPressEditor'
 
 declare global {
@@ -13,12 +14,14 @@ declare global {
 		readonly pagenow: string
 		readonly ajaxurl: string
 		readonly tinymce?: tinymce.EditorManager
+		readonly elementorFrontend: ElementorFrontend
 		readonly wpActiveEditor?: string
 		code_snippets_editor_preview?: CodeEditorInstance
 		readonly code_snippets_editor_settings: EditorOption[]
 		CODE_SNIPPETS_PRISM?: typeof Prism
 		readonly CODE_SNIPPETS?: {
 			isLicensed: boolean
+			isCloudConnected: boolean
 			restAPI: {
 				base: string
 				snippets: string

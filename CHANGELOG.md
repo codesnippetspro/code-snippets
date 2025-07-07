@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.6.9] (2025-02-17)
+
+### Changed
+* Updated `Cloud_API::get_bundles()` to properly check bundle data and return an empty array if no valid bundles are present.
+* Refactored `Cloud_List_Table::fetch_snippets()` to always return a valid `Cloud_Snippets` instance.
+* Cleaned up bundle iteration code and improved translation handling in the bundles view.
+
+### Fixed
+* Fixed errors in bundle iteration by adding a check for the bundles array before iterating.
+
 ## [3.6.8] (2025-02-14)
 
 ### Added

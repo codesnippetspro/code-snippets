@@ -2,7 +2,9 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_List_Table;
 use Code_Snippets\Cloud\Cloud_Search_List_Table;
+use Code_Snippets\Cloud\Cloud_Bundles;
 use function Code_Snippets\Settings\get_setting;
 
 /**
@@ -21,11 +23,25 @@ class Manage_Menu extends Admin_Menu {
 	public List_Table $list_table;
 
 	/**
+	 * Instance of the cloud list table class for user codevault.
+	 *
+	 * @var Cloud_List_Table
+	 */
+	public Cloud_List_Table $cloud_list_table;
+
+	/**
 	 * Instance of the cloud list table class for search results.
 	 *
 	 * @var Cloud_Search_List_Table
 	 */
 	public Cloud_Search_List_Table $cloud_search_list_table;
+
+	/**
+	 * Instance of the cloud table for bundles
+	 *
+	 * @var Cloud_Bundles
+	 */
+	public Cloud_Bundles $cloud_bundles;
 
 	/**
 	 * Class constructor
@@ -83,7 +99,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function register_upgrade_menu() {
-		if ( get_setting( 'general', 'hide_upgrade_menu' ) ) {
+		if ( code_snippets()->licensing->is_licensed() || get_setting( 'general', 'hide_upgrade_menu' ) ) {
 			return;
 		}
 
@@ -180,10 +196,50 @@ class Manage_Menu extends Admin_Menu {
 
 		$this->list_table = new List_Table();
 		$this->list_table->prepare_items();
+		$this->load_cloud();
 	}
 
 	/**
-	 * Enqueue scripts and stylesheets for the admin page
+	 * Run startup checks for cloud connection or redirect to cloud connection page
+	 */
+	private function load_cloud() {
+		$cloud_types = [ 'cloud', 'cloud_search', 'bundles' ];
+
+		if ( ! in_array( $this->get_current_type(), $cloud_types, true ) || ! isset( $_REQUEST['type'] ) ) {
+			return;
+		}
+
+		// Ensure cloud connection is available.
+		$cloud_key = code_snippets()->cloud_api->ensure_cloud_connection_available();
+
+		if ( ! $cloud_key['success'] ) {
+			wp_safe_redirect(
+				esc_url_raw(
+					add_query_arg(
+						'result',
+						'cloud-key-' . $cloud_key['redirect-slug'],
+						code_snippets()->get_menu_url( 'manage' )
+					)
+				)
+			);
+			exit;
+		}
+
+		// Initialize the codevault cloud list table class.
+		$this->cloud_list_table = new Cloud_List_Table();
+		$this->cloud_list_table->prepare_items();
+
+		// Initialize the search cloud list table class.
+		$this->cloud_search_list_table = new Cloud_Search_List_Table();
+		$this->cloud_search_list_table->prepare_items();
+
+		// Initialize the search cloud list table class.
+		$this->cloud_bundles = new Cloud_Bundles();
+		$this->cloud_bundles->prepare_items();
+	}
+
+	/**
+	 * Enqueue scripts and stylesheets for the admin page.
 	 */
 	public function enqueue_assets() {
 		$plugin = code_snippets();

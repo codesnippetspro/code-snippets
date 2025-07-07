@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:  Code Snippets
+ * Plugin Name:  Code Snippets Pro
  * Plugin URI:   https://codesnippets.pro
  * Description:  An easy, clean and simple way to run code snippets on your site. No need to edit to your theme's functions.php file again!
  * Author:       Code Snippets Pro
@@ -8,11 +8,11 @@
  * License:      GPL-2.0-or-later
  * License URI:  license.txt
  * Text Domain:  code-snippets
- * Version:      3.6.8
+ * Version:      3.6.9
  * Requires PHP: 7.4
  * Requires at least: 5.0
  *
- * @version   3.6.8
+ * @version   3.6.9
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2023 Code Snippets Pro
@@ -37,7 +37,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.4', 
 	 *
 	 * @const string
 	 */
-	define( 'CODE_SNIPPETS_VERSION', '3.6.8' );
+	define( 'CODE_SNIPPETS_VERSION', '3.6.9' );
 
 	/**
 	 * The full path to the main file of this plugin.
