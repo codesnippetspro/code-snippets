@@ -18,11 +18,11 @@ jobs:
       - name: Download built zip
         uses: actions/download-artifact@v4
         with:
-          name: code-snippets-${{ github.sha }}.zip
+          name: code-snippets-${{ github.head_ref }}.zip
           path: ./dist
 
       - name: Upload PR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: code-snippets-pr-${{ github.sha }}.zip
+          name: code-snippets-${{ github.head_ref }}.zip
           path: ./dist/code-snippets-*.zip
