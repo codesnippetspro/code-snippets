@@ -36,4 +36,12 @@ class WordPress_Filesystem_Adapter implements File_System_Interface {
 	public function rmdir( string $path, bool $recursive = false ): bool {
 		return $this->fs->rmdir( $path, $recursive );
 	}
+
+	public function chmod( string $path, $chmod ): bool {
+		return $this->fs->chmod( $path, $chmod );
+	}
+
+	public function is_writable( string $path ): bool {
+		return $this->fs->is_writable( $path );
+	}
 }

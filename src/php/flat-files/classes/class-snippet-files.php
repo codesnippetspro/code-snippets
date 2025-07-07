@@ -20,7 +20,11 @@ class Snippet_Files {
 		$this->config_repo = $config_repo;
 	}
 
-	public function register_hooks() {
+	public function register_hooks(): void {
+		if ( ! $this->fs->is_writable( WP_CONTENT_DIR ) ) {
+			return;
+		}
+
 		if ( Settings\get_setting( 'general', 'enable_flat_files' ) ) {
 			add_action( 'code_snippets/create_snippet', [ $this, 'handle_snippet' ], 10, 2 );
 			add_action( 'code_snippets/update_snippet', [ $this, 'handle_snippet' ], 10, 2 );
@@ -35,7 +39,7 @@ class Snippet_Files {
 		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ], 10, 2 );
 	}
 
-	public function handle_snippet( Snippet $snippet, string $table ) {
+	public function handle_snippet( Snippet $snippet, string $table ): void {
 		$snippet_type = $snippet->get_type();
 		$handler = $this->handler_registry->get_handler( $snippet_type );
 
@@ -55,7 +59,7 @@ class Snippet_Files {
 		$this->config_repo->update( $base_dir, $snippet );
 	}
 
-	public function delete_snippet( Snippet $snippet, bool $network ) {
+	public function delete_snippet( Snippet $snippet, bool $network ): void {
 		$snippet_type = $snippet->get_type();
 		$handler = $this->handler_registry->get_handler( $snippet_type );
 
@@ -72,7 +76,7 @@ class Snippet_Files {
 		$this->config_repo->update( $base_dir, $snippet, true );
 	}
 
-	public function activate_snippet( Snippet $snippet, bool $network ) {
+	public function activate_snippet( Snippet $snippet, bool $network ): void {
 		$snippet = get_snippet( $snippet->id, $network );
 		$snippet_type = $snippet->get_type();
 		$handler = $this->handler_registry->get_handler( $snippet_type );
@@ -95,7 +99,7 @@ class Snippet_Files {
 		$this->config_repo->update( $base_dir, $snippet );
 	}
 
-	public function deactivate_snippet( int $snippet_id, bool $network ) {
+	public function deactivate_snippet( int $snippet_id, bool $network ): void {
 		$snippet = get_snippet( $snippet_id, $network );
 		$snippet_type = $snippet->get_type();
 		$handler = $this->handler_registry->get_handler( $snippet_type );
@@ -110,7 +114,7 @@ class Snippet_Files {
 		$this->config_repo->update( $base_dir, $snippet );
 	}
 
-	public static function get_base_dir( string $table = '', string $snippet_type = '' ) {
+	public static function get_base_dir( string $table = '', string $snippet_type = '' ): string {
 		$base_dir = WP_CONTENT_DIR . '/code-snippets';
 
 		if ( ! empty( $table ) ) {
@@ -124,23 +128,27 @@ class Snippet_Files {
 		return $base_dir;
 	}
 
-	private function maybe_create_directory( string $dir ) {
+	private function maybe_create_directory( string $dir ): void {
 		if ( ! $this->fs->is_dir( $dir ) ) {
-			$this->fs->mkdir( $dir, FS_CHMOD_DIR );
+			$result = wp_mkdir_p( $dir );
+
+			if ( $result ) {
+				$this->fs->chmod( $dir, FS_CHMOD_DIR );
+			}
 		}
 	}
 
-	private function get_snippet_file_path( string $base_dir, int $snippet_id, string $ext ) {
+	private function get_snippet_file_path( string $base_dir, int $snippet_id, string $ext ): string {
 		return trailingslashit( $base_dir ) . $snippet_id . '.' . $ext;
 	}
 
-	private function delete_file( string $file_path ) {
+	private function delete_file( string $file_path ): void {
 		if ( $this->fs->exists( $file_path ) ) {
 			$this->fs->delete( $file_path );
 		}
 	}
 
-	public function sync_active_shared_network_snippets( $option, $old_value, $value ) {
+	public function sync_active_shared_network_snippets( $option, $old_value, $value ): void {
 		if ( 'active_shared_network_snippets' !== $option ) {
 			return;
 		}
@@ -156,7 +164,7 @@ class Snippet_Files {
 		$this->fs->put_contents( $file_path, $file_content, FS_CHMOD_FILE );
 	}
 
-	public static function get_active_snippets_from_flat_files() {
+	public static function get_active_snippets_from_flat_files( array $scopes = [] ): array {
 		$snippets = [];
 
 		$table = code_snippets()->db->get_table_name();
@@ -168,8 +176,8 @@ class Snippet_Files {
 
 			$snippets[ $table ] = array_filter(
 				$site_snippets,
-				function ( $snippet ) {
-					return $snippet['active'];
+				function ( $snippet ) use ( $scopes ) {
+					return $snippet['active'] && in_array( $snippet['scope'], $scopes, true );
 				}
 			);
 		}
@@ -188,8 +196,8 @@ class Snippet_Files {
 
 				$snippets[ $ms_table ] = array_filter(
 					$ms_snippets,
-					function ( $snippet ) use ( $active_shared_ids ) {
-						return $snippet['active'] || in_array( intval( $snippet['id'] ), $active_shared_ids, true );
+					function ( $snippet ) use ( $active_shared_ids, $scopes ) {
+						return ( $snippet['active'] || in_array( intval( $snippet['id'] ), $active_shared_ids, true ) ) && in_array( $snippet['scope'], $scopes, true );
 					}
 				);
 			}
@@ -198,7 +206,7 @@ class Snippet_Files {
 		return $snippets;
 	}
 
-	public function add_settings_fields( array $fields ) {
+	public function add_settings_fields( array $fields ): array {
 		$fields['general']['enable_flat_files'] = [
 			'name'  => __( 'Enable Flat Files', 'code-snippets' ),
 			'type'  => 'checkbox',
@@ -208,7 +216,7 @@ class Snippet_Files {
 		return $fields;
 	}
 
-	public function create_all_flat_files( array $settings, array $input ) {
+	public function create_all_flat_files( array $settings, array $input ): void {
 		if ( ! isset( $settings['general']['enable_flat_files'] ) ) {
 			return;
 		}
