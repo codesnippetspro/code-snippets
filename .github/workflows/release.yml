@@ -27,8 +27,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy:
-    needs: upload
-    uses: ./.github/workflows/svn_push.yml
-    with:
-      ref: ${{ github.event.release.tag_name }}
+  # deploy:
+  #   needs: upload
+  #   uses: ./.github/workflows/svn_push.yml
+  #   with:
+  #     ref: ${{ github.event.release.tag_name }}
