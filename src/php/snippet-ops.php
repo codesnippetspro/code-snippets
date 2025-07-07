@@ -713,8 +713,8 @@ function execute_active_snippets_from_flat_files(): bool {
 
 		// Loop through the returned snippets and execute the PHP code.
 		foreach ( $active_snippets as $snippet ) {
-
 			$snippet_id = intval( $snippet['id'] );
+			$code = $snippet['code'];
 
 			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
 			if ( 'single-use' === $snippet['scope'] ) {
@@ -743,7 +743,7 @@ function execute_active_snippets_from_flat_files(): bool {
 			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
 			! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
 				$file = $base_dir . '/' . $snippet_id . '.php';
-				execute_snippet_from_flat_file( $file, $snippet_id );
+				execute_snippet_from_flat_file( $code, $file, $snippet_id );
 			}
 		}
 	}
@@ -759,8 +759,12 @@ function cs_sort_snippets_by_priority( array $snippets ): array {
 	return $snippets;
 }
 
-function execute_snippet_from_flat_file( $file, int $id = 0, bool $force = false ) {
-	if ( ! is_file( $file ) || ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ) {
+function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force = false ) {
+	if ( ! is_file( $file ) ) {
+		execute_snippet( $code, $id, $force );
+	}
+
+	if ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 		return false;
 	}
 
