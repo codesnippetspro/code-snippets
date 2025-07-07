@@ -8,17 +8,27 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
     with:
-      # the tag used for the release
-      ref: 
-  
+      ref: ${{ github.event.release.tag_name }}
+
   upload:
-    uses: 
-    with:
-      # the path to the built artefact
-      path: 
-      ref: 
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download built zip
+        uses: actions/download-artifact@v4
+        with:
+          name: code-snippets-${{ github.sha }}.zip
+          path: ./dist
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./dist/code-snippets-*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
+    needs: upload
     uses: ./.github/workflows/svn_push.yml
     with:
-      ref:
+      ref: ${{ github.event.release.tag_name }}
