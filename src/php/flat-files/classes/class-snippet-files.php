@@ -153,6 +153,10 @@ class Snippet_Files {
 			return;
 		}
 
+		$this->create_active_shared_network_snippets_file( $value );
+	}
+
+	private function create_active_shared_network_snippets_file( $value ): void {
 		$table = code_snippets()->db->get_table_name();
 		$base_dir = self::get_base_dir( $table );
 
@@ -225,6 +229,11 @@ class Snippet_Files {
 			return;
 		}
 
+		$this->create_snippet_flat_files();
+		$this->create_active_shared_network_snippets_config_file();
+	}
+
+	private function create_snippet_flat_files(): void {
 		$db = code_snippets()->db;
 		$data = $db->fetch_active_snippets( Snippet::get_all_scopes() );
 
@@ -237,6 +246,13 @@ class Snippet_Files {
 				$snippet_obj = get_snippet( $snippet['id'], $table_name === $db->ms_table );
 				$this->handle_snippet( $snippet_obj, $table_name );
 			}
+		}
+	}
+
+	private function create_active_shared_network_snippets_config_file(): void {
+		$active_shared_network_snippets = get_option( 'active_shared_network_snippets' );
+		if ( false !== $active_shared_network_snippets ) {
+			$this->create_active_shared_network_snippets_file( $active_shared_network_snippets );
 		}
 	}
 }
