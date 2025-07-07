@@ -29,11 +29,21 @@ jobs:
         run: |
           npm install
 
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ inputs.ref }}" = "core" ] || [ -z "${{ inputs.ref }}" ]; then
+            VERSION=$(jq -r .version package.json)
+          else
+            VERSION="${{ inputs.ref }}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Build plugin
         run: npm run bundle
 
       - name: Upload built zip
         uses: actions/upload-artifact@v4
         with:
-          name: code-snippets-${{ github.sha }}.zip
+          name: code-snippets-${{ steps.get_version.outputs.version }}.zip
           path: bundle/code-snippets*.zip
