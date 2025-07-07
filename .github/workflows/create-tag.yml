@@ -7,6 +7,12 @@ on:
         description: 'Version to create the tag for (e.g. 3.6.9) or `next`'
         required: true
         type: string
+        default: next
+      ref:
+        description: 'Branch or ref to checkout (defaults to `core`)'
+        required: false
+        type: string
+        default: core
 
 jobs:
   create-tag:
@@ -14,10 +20,10 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - name: Checkout core branch
+      - name: Checkout branch for release
         uses: actions/checkout@v4
         with:
-          ref: core
+          ref: ${{ github.event.inputs.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -61,10 +67,10 @@ jobs:
       matrix:
         template: [$(ls .github/RELEASE_TEMPLATE/*.yml | xargs -n1 basename | sed 's/.yml//')]
     steps:
-      - name: Checkout core branch
+      - name: Checkout branch for release
         uses: actions/checkout@v4
         with:
-          ref: core
+          ref: ${{ github.event.inputs.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -123,10 +129,10 @@ jobs:
     needs: release-templates
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout core branch
+      - name: Checkout branch for release
         uses: actions/checkout@v4
         with:
-          ref: core
+          ref: ${{ github.event.inputs.ref }}
 
       - name: Download all updated files
         uses: actions/download-artifact@v4
