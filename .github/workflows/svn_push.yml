@@ -1,7 +1,5 @@
 name: SVN Push
 
-description: 'Deploy plugin to WordPress.org SVN'
-
 on:
   workflow_call:
     inputs:
@@ -47,17 +45,24 @@ jobs:
           cd $SVN_DIR
           svn update trunk tags
 
-          # Unzip build into trunk
+          # Clear trunk directory
           rm -rf trunk/*
+
+          # Unzip build into trunk
           unzip -o $GITHUB_WORKSPACE/$ZIP_PATH -d trunk
 
-          # SVN add/rm
-          svn add --force trunk/*
+          # SVN add new files
+          svn add . --force
+
+          # Remove deleted files
           svn status | grep '^!' | awk '{print $2}' | xargs -r svn rm --force
 
-          # Commit trunk
+          # Check staged changes
+          svn status
+
+          # Commit trunk changes
           svn commit -m "Deploy trunk for ${{ inputs.ref }}" --username "$SVN_USERNAME" --password "$SVN_PASSWORD" --no-auth-cache --non-interactive
 
-          # Tag release
-          svn copy trunk tags/${{ inputs.ref }}
+          # Create new tag from trunk
+          svn cp trunk tags/${{ inputs.ref }}
           svn commit -m "Tag ${{ inputs.ref }}" tags/${{ inputs.ref }} --username "$SVN_USERNAME" --password "$SVN_PASSWORD" --no-auth-cache --non-interactive
