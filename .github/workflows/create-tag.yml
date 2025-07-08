@@ -9,10 +9,10 @@ on:
         type: string
         default: next
       ref:
-        description: 'Branch or ref to checkout (defaults to `core`)'
+        description: 'Branch or ref to checkout (defaults to `pro`)'
         required: false
         type: string
-        default: core
+        default: pro
 
 jobs:
   create-tag:
