@@ -1,4 +1,4 @@
-name: Build for Pull Request
+name: "(Pull Request): Build"
 
 on:
   pull_request:
@@ -17,7 +17,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            👌 Build started.. a link to download the built zip file will appear here soon..
+            👌 Build started.. a link to the built zip file will appear here soon..
   
   install:
     needs: comment
@@ -37,4 +37,4 @@ jobs:
           comment-id: ${{ needs.comment.outputs.comment_id }}
           body: |
             ### Download and install
-            📦 [${{ needs.install.outputs.artifact_name }}](${{ needs.install.outputs.artifact_url }})
+            📦 [${{ needs.install.outputs.artifact_name }}.zip](${{ needs.install.outputs.artifact_url }})
