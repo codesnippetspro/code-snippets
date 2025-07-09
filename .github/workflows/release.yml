@@ -1,0 +1,34 @@
+name: (On Release) Build & Upload
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      ref: ${{ github.event.release.tag_name }}
+
+  upload:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download built zip
+        uses: actions/download-artifact@v4
+        with:
+          name: code-snippets-${{ github.sha }}.zip
+          path: ./dist
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./dist/code-snippets-*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # deploy:
+  #   needs: upload
+  #   uses: ./.github/workflows/svn_push.yml
+  #   with:
+  #     ref: ${{ github.event.release.tag_name }}
