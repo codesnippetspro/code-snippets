@@ -17,7 +17,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            👌 Build started..
+            👌 Build started.. a link to download the built zip file will appear here soon..
   
   install:
     needs: comment
@@ -33,6 +33,7 @@ jobs:
         if: ${{ needs.install.outputs.artifact_name || needs.install.outputs.artifact_url }}
         uses: peter-evans/create-or-update-comment@v4
         with:
+          edit-mode: replace
           comment-id: ${{ needs.comment.outputs.comment_id }}
           body: |
             ### Download and install
