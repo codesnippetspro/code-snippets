@@ -1,4 +1,5 @@
-name: Build Reusable
+name: Build Plugin
+
 
 on:
   workflow_call:
@@ -6,11 +7,18 @@ on:
       ref:
         required: false
         type: string
-        default: core
-
+        default: ${{ inputs.ref }}
+    outputs:
+      artifact_name: 
+        value: ${{ jobs.build.outputs.artifact_name }}
+      artifact_url: 
+        value: ${{ jobs.build.outputs.artifact_url }}
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ steps.build.outputs.name }}.zip
+      artifact_url: ${{ steps.artifacts.outputs.artifact-url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,25 +34,15 @@ jobs:
         with:
           node-version-file: .node-version
 
-      - name: Install dependencies
+      - name: Install & Build
+        id: build
         run: |
-          npm install
+          npm install && npm run bundle
+          echo "name=$(jq -r .name package.json)" >> $GITHUB_OUTPUT
 
-      - name: Get version
-        id: get_version
-        run: |
-          if [ "${{ inputs.ref }}" = "core" ] || [ -z "${{ inputs.ref }}" ]; then
-            VERSION=$(jq -r .version package.json)
-          else
-            VERSION="${{ inputs.ref }}"
-          fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Build plugin
-        run: npm run bundle
-
-      - name: Upload built zip
+      - name: Upload
+        id: artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: code-snippets-${{ steps.get_version.outputs.version }}.zip
-          path: bundle/code-snippets*.zip
+          name: ${{ steps.build.outputs.name }}
+          path: ./bundle
