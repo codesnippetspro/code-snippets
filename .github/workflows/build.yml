@@ -1,5 +1,4 @@
-name: Build Plugin
-
+name: "(Build): Plugin"
 
 on:
   workflow_call:
@@ -17,7 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      artifact_name: ${{ steps.build.outputs.name }}.zip
+      artifact_name: ${{ steps.build.outputs.name }}
       artifact_url: ${{ steps.artifacts.outputs.artifact-url }}
     steps:
       - uses: actions/checkout@v4
