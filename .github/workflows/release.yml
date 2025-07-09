@@ -1,31 +1,48 @@
-name: (On Release) Build & Upload
+name: "(Release): Build"
 
 on:
   release:
     types: [created]
 
 jobs:
-  build:
+  install:
     uses: ./.github/workflows/build.yml
     with:
       ref: ${{ github.event.release.tag_name }}
 
   upload:
-    needs: build
+    needs: install
     runs-on: ubuntu-latest
     steps:
+      - name: Get artifact url
+        id: artifact
+        run: |
+          url="${{ needs.install.outputs.artifact_url }}"
+          id="${url##*/}"
+          echo "id=$id" >> $GITHUB_OUTPUT
+
       - name: Download built zip
+        id: download
         uses: actions/download-artifact@v4
         with:
-          name: code-snippets-${{ github.sha }}.zip
+          artifact-ids: ${{ steps.artifact.outputs.id }}
           path: ./dist
+
+      - name: Get artifact url
+        id: zip
+        run: |
+          zip_name="${{ needs.install.outputs.artifact_name }}.zip"
+
+          cd ./dist/${{ needs.install.outputs.artifact_name }}
+          zip -r "../$zip_name" .
+          cd ..
+
+          echo "path=$(pwd)/$zip_name" >> $GITHUB_OUTPUT
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v2
         with:
-          files: ./dist/code-snippets-*.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: ${{ steps.zip.outputs.path }}
 
   # deploy:
   #   needs: upload
