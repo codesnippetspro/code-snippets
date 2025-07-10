@@ -1,6 +1,15 @@
 # Contributing to Code Snippets
 
-## Setting things up
+## Project structure
+
+The base plugin folder is not the root of repository – instead, files to be loaded into WordPress as a plugin are
+located in `src/`. You should copy or symlink this folder into your WordPress `wp-content/plugins` folder as
+`code-snippets`.
+
+Keep in mind that you will need to follow the steps below to populate files under `src/dist/` and`src/vendor/`, which
+are required for the plugin to function correctly.
+
+## Required software
 
 In order to build a copy of Code Snippets from the files in this repository, you will need to prepare a few tools
 locally, and be comfortable running commands from a terminal or command line interface.
@@ -8,22 +17,24 @@ locally, and be comfortable running commands from a terminal or command line int
 The following tools will need to be installed.
 
 - [Composer](https://getcomposer.org/download/) v2 or later.
-- [Node.js](https://nodejs.org/en/download/) v14.15 or later with
-[npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) v7 or later.
+- [Node.js](https://nodejs.org/en/download/) v20.16.0 or later with
+  [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) v10 or later.
 
 Once Node.js and npm are installed, run the following command from inside the plugin directory to install the required
 node packages:
 
-    npm install
+```shell
+npm install
+```
 
 Additionally, run the following command to install the required Composer packages and generate autoload files:
 
-    composer install
+```shell
+npm run bundle
+```
 
-You will also need a system-level copy of [gulp](https://gulpjs.com/docs/en/getting-started/quick-start) in order to
-run the build scripts:
-
-    npm install --global gulp-cli
+If you want to interface with Composer directly, you will need to run commands under the `src/` directory, as that is
+where `composer.json`, `composer.lock`, and the `vendor/` directory are located.
 
 ## Building the plugin
 
@@ -34,30 +45,29 @@ plugin can be loaded into WordPress.
 
 In order to get things built from the source files, the following command can be used:
 
-    gulp
+```shell
+npm run build
+```
 
-This will run the default `build` gulp task, which:
+This will run the basic Webpack configuration, which will:
 
 1. Copies required vendor files from the `node_modules/` directory, such as CodeMirror and PrismJS theme files.
-2. Transforms the SCSS source files into browser-ready minified CSS code, including right-to-left files where appropriate.
+2. Transforms the SCSS source files into browser-ready minified CSS code, including right-to-left files where
+   appropriate.
 3. Transforms the TypeScript source files into browser-ready minified JavaScript code, after checking with a linter.
 
 The generated files will be located together under the `dist/` directory, where they are loaded from by WordPress.
-
-This task can also be run with `gulp build`. More information on the specific tasks available, such as only performing
-a single step out of those listed above, can be found by inspecting [`gulpfile.babel.ts`](gulpfile.babel.ts) or running
-the following command:
-
-    gulp --tasks
 
 ## Building while developing
 
 If you are actively editing the included TypeScript or SCSS sources and wish to see your changes reflected more quickly
 than running the entire build script, there is an alternative command available that will monitor the source files
-for changes and run only the necessary tasks when changes are detected. This can be begun by running the following 
+for changes and run only the necessary tasks when changes are detected. This can be begun by running the following
 command:
 
-    gulp watch
+```shell
+npm run watch
+```
 
 ## Preparing for release
 
@@ -68,7 +78,9 @@ In order to simplify things and reduce the file size of the distributed plugin p
 generating these distribution files separately from the plugin source. Running the following command will commence this
 process:
 
-    gulp bundle
+```shell
+npm run bundle
+```
 
 This command will regenerate all processed files and copy those to be distributed to the `bundle/` directory, where they
 can be copied directly into a Subversion repository or similar for distribution.

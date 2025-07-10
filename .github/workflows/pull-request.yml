@@ -1,0 +1,40 @@
+name: "(Pull Request): Build"
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  comment:
+    if: contains(github.event.pull_request.labels.*.name, 'build')
+    runs-on: ubuntu-latest
+    outputs: 
+      comment_id: ${{ steps.comment.outputs.comment-id }}
+    steps:
+      - name: Comment
+        id: comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            👌 Build started.. a link to the built zip file will appear here soon..
+  
+  install:
+    needs: comment
+    uses: ./.github/workflows/build.yml
+    with:
+      ref: ${{ github.head_ref }}
+
+  publish:
+    needs: ['comment', 'install']
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish comment
+        if: ${{ needs.install.outputs.artifact_name || needs.install.outputs.artifact_url }}
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          edit-mode: replace
+          comment-id: ${{ needs.comment.outputs.comment_id }}
+          body: |
+            ### Download and install
+            📦 [${{ needs.install.outputs.artifact_name }}.zip](${{ needs.install.outputs.artifact_url }})

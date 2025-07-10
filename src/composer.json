@@ -1,0 +1,48 @@
+{
+    "name": "codesnippetspro/code-snippets",
+    "description": "Manage code snippets running on a WordPress-powered site through a graphical interface",
+    "keywords": [
+        "wordpress",
+        "snippets",
+        "organization"
+    ],
+    "type": "wordpress-plugin",
+    "homepage": "https://wordpress.org/plugins/code-snippets",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Shea Bunge",
+            "email": "shea@codesnippets.pro",
+            "homepage": "https://sheabunge.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/codesnippetspro/code-snippets/issues",
+        "source": "https://github.com/codesnippetspro/code-snippets"
+    },
+    "autoload": {
+        "classmap": [
+            "php/"
+        ]
+    },
+    "require": {
+        "php": ">=7.4",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "composer/installers": "^2.3"
+    },
+    "require-dev": {
+        "wp-coding-standards/wpcs": "^3.1",
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "composer/installers": true
+        }
+    }
+}

@@ -1,10 +1,10 @@
 # Composer
-/vendor/
+/src/vendor/
 
 # generated files
 /code-snippets.*.zip
 /code-snippets-pro.*.zip
-/dist/
+/src/dist/
 /bundle/
 
 # Node

@@ -1,0 +1,81 @@
+
+.CodeMirror-sizer {
+	min-height: 300px !important;
+	box-sizing: border-box;
+	padding-block-end: 1.5em !important;
+
+	&::after {
+		position: absolute;
+		inset-block-end: 0;
+	}
+}
+
+.snippet-scope {
+	display: none;
+
+	.description {
+		display: block;
+	}
+}
+
+.snippet-form.php-snippet {
+	.php-scopes-list {
+		display: block;
+	}
+
+	.CodeMirror-sizer {
+		padding-block-end: 0 !important;
+
+		&::before {
+			content: '<?php';
+		}
+	}
+}
+
+.snippet-form.css-snippet {
+	.css-scopes-list {
+		display: block;
+	}
+
+	.CodeMirror-sizer {
+		&::before {
+			content: '<style>';
+		}
+
+		&::after {
+			content: '</style>';
+		}
+	}
+}
+
+.snippet-form.js-snippet {
+	.js-scopes-list {
+		display: block;
+	}
+
+	.CodeMirror-sizer {
+		&::before {
+			content: '<script>';
+		}
+
+		&::after {
+			content: '</script>';
+		}
+	}
+}
+
+.snippet-form.html-snippet {
+	.html-scopes-list {
+		display: block;
+	}
+
+	.CodeMirror-sizer {
+		&::before {
+			content: '<!-- begin content -->';
+		}
+
+		&::after {
+			content: '<!-- end content -->';
+		}
+	}
+}

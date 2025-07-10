@@ -31,7 +31,6 @@ env:
 before_install:
   - nvm install node
   - composer self-update
-  - npm install -g gulp
 
 # Prepare your build for testing.
 # Failures in this section will result in build status 'errored'.
@@ -54,7 +53,7 @@ script:
 
   # Search for PHP syntax errors.
   - find . -maxdepth 1 \( -name '*.php' \) -exec php -lf {} \;
-  - find php/ \( -name '*.php' \) -exec php -lf {} \;
+  - find src/php/ \( -name '*.php' \) -exec php -lf {} \;
 
   # Run tests
   - npm run test
