@@ -13,6 +13,9 @@ jobs:
   upload:
     needs: install
     runs-on: ubuntu-latest
+    outputs:
+      artifact_url: ${{ steps.zip.outputs.path }}
+      artifact_name: ${{ needs.install.outputs.artifact_name }}
     steps:
       - name: Get artifact url
         id: artifact
@@ -45,7 +48,7 @@ jobs:
           files: ${{ steps.zip.outputs.path }}
 
   deploy:
-    needs: install
+    needs: [install, upload]
     uses: codesnippetspro/.github-private/.github/workflows/publish_svn.yml@main
     with:
       repo: ${{ github.repository }}
