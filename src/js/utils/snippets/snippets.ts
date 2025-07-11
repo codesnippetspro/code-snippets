@@ -101,5 +101,5 @@ export const buildSnippetSelectOptionGroups = (snippets: Snippet[]): SelectGroup
 			key: `${snippet.id}-${snippet.network}`,
 			value: snippet,
 			label: getSnippetDisplayName(snippet)
-		}),
+		})
 	})

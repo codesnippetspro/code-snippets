@@ -252,6 +252,13 @@ class Front_End {
 			true
 		);
 
+		wp_register_style(
+			self::PRISM_HANDLE,
+			plugins_url( 'dist/prism.css', $plugin->file ),
+			array(),
+			$plugin->version
+		);
+
 		foreach ( self::get_prism_themes() as $theme => $label ) {
 			wp_register_style(
 				self::get_prism_theme_style_handle( $theme ),
@@ -260,13 +267,6 @@ class Front_End {
 				$plugin->version
 			);
 		}
-
-		wp_register_style(
-			self::PRISM_HANDLE,
-			plugins_url( 'dist/prism.css', $plugin->file ),
-			array(),
-			$plugin->version
-		);
 	}
 
 	/**

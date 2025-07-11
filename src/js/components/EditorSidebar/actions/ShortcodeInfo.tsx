@@ -73,9 +73,7 @@ export const ShortcodeInfo: React.FC = () => {
 				{__('There are multiple options for inserting this snippet into a post, page or other content.', 'code-snippets')}
 				{' '}
 				{snippet.id
-
 					? __('You can copy the below shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')
-
 					: __('After saving, you can copy a shortcode, or use the Classic Editor button, Block editor (Pro) or Elementor widget (Pro).', 'code-snippets')}
 				{' '}
 				<ExternalLink

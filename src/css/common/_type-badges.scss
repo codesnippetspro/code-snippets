@@ -33,6 +33,7 @@
 	text-transform: uppercase;
 }
 
+.pro-badge,
 .go-pro-badge,
 .go-pro-button .badge {
 	color: map.get(theme.$version-pro, 'text');
