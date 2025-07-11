@@ -44,8 +44,13 @@ jobs:
         with:
           files: ${{ steps.zip.outputs.path }}
 
-  # deploy:
-  #   needs: upload
-  #   uses: ./.github/workflows/svn_push.yml
-  #   with:
-  #     ref: ${{ github.event.release.tag_name }}
+  deploy:
+    needs: install
+    uses: codesnippetspro/.github-private/.github/workflows/publish_svn.yml@main
+    with:
+      repo: ${{ github.repository }}
+      branch: ${{ github.ref_name }}
+      tag: ${{ needs.install.outputs.version}}
+      slug: ${{ github.repository }}
+      artifact_url: ${{ needs.upload.outputs.artifact_url }}
+      artifact_name: ${{ needs.upload.outputs.artifact_name }}
