@@ -5,7 +5,7 @@
 @use 'sass:map';
 @use 'sass:color';
 @use 'common/theme';
-@use 'common/type-badges';
+@use 'common/badges';
 @use 'common/switch';
 @use 'common/select';
 @use 'manage/cloud';
@@ -121,23 +121,6 @@
 		}
 	}
 
-	.small-badge {
-		margin-inline-start: 4px;
-		padding: 3px 6px;
-		text-decoration: none;
-		border: medium none;
-		border-radius: 2px;
-		background-color: #e0e0e0;
-		background-color: rgb(0 0 0 / 8%);
-		font-size: smaller;
-		line-height: 1.2;
-
-		/* rtl:ignore */
-		.rtl & {
-			float: inline-start;
-		}
-	}
-
 	tr.active-snippet + tr.inactive-snippet th,
 	tr.active-snippet + tr.inactive-snippet td {
 		border-block-start: 1px solid rgb(0 0 0 / 3%);
@@ -201,13 +184,6 @@
 	padding: 0;
 	font-size: 20px;
 	line-height: 1.4;
-}
-
-.cloud-badge {
-	border: 1px solid;
-	border-radius: 5px;
-	font-size: 15px;
-	line-height: 19px;
 }
 
 .wrap h2.nav-tab-wrapper {

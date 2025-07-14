@@ -3,7 +3,7 @@ import { isNetworkAdmin } from '../screen'
 import { parseSnippetObject } from './objects'
 import type { Snippet, SnippetType } from '../../types/Snippet'
 
-const PRO_TYPES = new Set<SnippetType>(['css', 'js'])
+const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
 
 const defaults: Omit<Snippet, 'tags' | 'conditions'> = {
 	id: 0,

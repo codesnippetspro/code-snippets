@@ -36,7 +36,7 @@ const SCOPE_DESCRIPTIONS: Record<SnippetCodeScope, string> = {
 }
 
 export const SnippetLocationInput: React.FC = () => {
-	const { snippet, setSnippet } = useSnippetForm()
+	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
 
 	const options: SelectOption<SnippetCodeScope>[] = SNIPPET_TYPE_SCOPES[getSnippetType(snippet)]
 		.filter(scope => 'condition' !== scope)
@@ -55,6 +55,7 @@ export const SnippetLocationInput: React.FC = () => {
 						id="snippet-location"
 						className="code-snippets-select"
 						options={options}
+						isDisabled={isReadOnly}
 						styles={{
 							menu: provided => ({ ...provided, zIndex: 9999 }),
 							input: provided => ({ ...provided, ':focus': { boxShadow: 'none' } })

@@ -3,14 +3,15 @@
  */
 
 @use 'common/codemirror';
-@use 'common/type-badges';
+@use 'common/badges';
 @use 'common/switch';
 @use 'common/select';
 @use 'common/tooltips';
+@use 'common/upsell';
 @use 'edit/form';
 @use 'edit/sidebar';
 @use 'edit/editor';
-@use 'edit/upgrade-dialog';
+@use 'edit/conditions';
 @use 'edit/gpt';
 
 .notice.error blockquote {

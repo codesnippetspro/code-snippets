@@ -68,7 +68,11 @@ const UpgradeInfo: React.FC<UpgradeInfoProps> = ({ nextTab }) =>
 			{__('Upgrade to Code Snippets Pro to unleash its full potential:', 'code-snippets')}
 			<ul>
 				<li>
-					<strong>{__('CSS stylesheet snippets: ', 'code-snippets')}</strong>
+					<strong>{__('Conditions: ', 'code-snippets')}</strong>
+					{__('Control where and when your snippets run with powerful logic.', 'code-snippets')}
+				</li>
+				<li>
+					<strong>{__('CSS styles snippets: ', 'code-snippets')}</strong>
 					{__('Craft impeccable websites with advanced CSS snippets.', 'code-snippets')}
 				</li>
 				<li>
@@ -76,15 +80,15 @@ const UpgradeInfo: React.FC<UpgradeInfoProps> = ({ nextTab }) =>
 					{__('Enhance user interaction with the power of JavaScript.', 'code-snippets')}
 				</li>
 				<li>
-					<strong>{__('Specialized Elementor widgets: ', 'code-snippets')}</strong>
-					{__('Easily customize your site with Elementor widgets.', 'code-snippets')}
+					<strong>{__('Elementor widgets: ', 'code-snippets')}</strong>
+					{__('Easily customize your site with specialised Elementor integration.', 'code-snippets')}
 				</li>
 				<li>
-					<strong>{__('Integration with block editor: ', 'code-snippets')}</strong>
-					{__('Seamlessly incorporate your snippets within the block editor.', 'code-snippets')}
+					<strong>{__('Block editor integration: ', 'code-snippets')}</strong>
+					{__('Seamlessly embed your snippets within the block editor.', 'code-snippets')}
 				</li>
 				<li>
-					<strong>{__('WP-CLI snippet commands: ', 'code-snippets')}</strong>
+					<strong>{__('WP-CLI commands: ', 'code-snippets')}</strong>
 					{__('Access and control your snippets directly from the command line.', 'code-snippets')}
 				</li>
 				<li>

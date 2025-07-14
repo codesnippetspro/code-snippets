@@ -10,12 +10,18 @@ $visibility-private: (background: #F7E6BE, text: #CA961B);
 $visibility-public: (background: #DBEBF7, text: #2271B1);
 $brand-discord: #5865f2;
 $brand-facebook: #3b5998;
-$types: (
-	php: #1d97c6,
-	html: #ef6a36,
-	css: #9b59b6,
-	js: #ffeb3b,
-	cond: #2eae95
+
+$badges: (
+		php: #1d97c6,
+		html: #ef6a36,
+		css: #9b59b6,
+		js: #ffeb3b,
+		cond: #2eae95,
+		pro: #DF9279,
+		core: #61C5CB,
+		cloud: #00bcd4,
+		bundles: #50575e,
+		cloud_search: #ff9800
 );
 
 @function contrasting-text-color($bg-color) {

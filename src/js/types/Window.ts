@@ -43,6 +43,7 @@ declare global {
 			enableDownloads: boolean
 			activateByDefault: boolean
 			enableDescription: boolean
+			hideUpsell: boolean
 			editorTheme: string
 			tagOptions: {
 				enabled: boolean

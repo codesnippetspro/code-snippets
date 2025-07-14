@@ -8,6 +8,8 @@
 
 namespace Code_Snippets;
 
+use function Code_Snippets\Settings\get_setting;
+
 /**
  * Loaded from the manage menu class.
  *
@@ -58,13 +60,14 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 			Admin::render_snippet_type_tab( $type_name, $label, $current_type );
 		}
 
-		?>
-		<a class="button button-large nav-tab-button nav-tab-inactive go-pro-button"
-		   href="https://codesnippets.pro/pricing/" target="_blank"
-		   aria-label="<?php esc_attr_e( 'Find more about Pro (opens in external tab)', 'code-snippets' ); ?>">
-			<?php echo wp_kses( __( 'Upgrade to <span class="badge">Pro</span>', 'code-snippets' ), [ 'span' => [ 'class' => 'badge' ] ] ); ?>
-			<span class="dashicons dashicons-external"></span>
-		</a>
+		if ( ! get_setting( 'general', 'hide_upgrade_menu' ) ) { ?>
+			<a class="button button-large nav-tab-button nav-tab-inactive"
+			   href="https://codesnippets.pro/pricing/" target="_blank"
+			   aria-label="<?php esc_attr_e( 'Find more about Pro (opens in external tab)', 'code-snippets' ); ?>">
+				<?php echo wp_kses( __( 'Upgrade to <span class="badge pro-badge small-badge">Pro</span>', 'code-snippets' ), [ 'span' => [ 'class' => true ] ] ); ?>
+				<span class="dashicons dashicons-external"></span>
+			</a>
+		<?php } ?>
 	</h2>
 
 	<?php

@@ -28,22 +28,6 @@
 	font-size: 15px;
 }
 
-.cloud-badge {
-	margin-inline-start: 10px;
-	border: 1px solid;
-	border-radius: 5px;
-	font-size: 15px;
-	line-height: 19px;
-}
-
-.nav-tab-inactive .cloud-badge {
-	color: #a7aaad;
-}
-
-.nav-tab-inactive[data-snippet-type="cloud"]:hover .cloud-badge {
-	color: #00bcd4;
-}
-
 .cloud-synced-legend {
 	color: #00bcd4;
 }
@@ -56,11 +40,11 @@
 	color: #e91e63;
 }
 
-.nav-tab-inactive[data-snippet-type="cloud_search"]:hover .cloud-badge {
+.nav-tab-inactive.cloud_search-tab:hover .cloud-badge {
 	color: #e91e63;
 }
 
-.nav-tab-inactive[data-snippet-type="bundles"]:hover .cloud-badge {
+.nav-tab-inactive.bundles-tab:hover .cloud-badge {
 	color: #50575e;
 }
 
@@ -124,7 +108,7 @@
 	color: #ff9800 !important;
 }
 
-.snippet-type-badge {
+.badge {
 	white-space: nowrap;
 }
 
@@ -317,22 +301,22 @@
 	}
 }
 
-.ai-verified-snippet .badge, .snippet-type-badge[data-type="ai-verified"] {
+.ai-verified-snippet .badge, .ai-verified-badge {
 	background-color: #ccfbf1;
 	color: #0f766e;
 }
 
-.private-snippet .badge, .snippet-type-badge[data-type="private"] {
+.private-snippet .badge, .private-badge {
 	background-color: #eff6ff;
 	color: #1d4ed8;
 }
 
-.public-snippet .badge, .snippet-type-badge[data-type="public"] {
+.public-snippet .badge, .public-badge {
 	background-color: #fefce8;
 	color: #a16207;
 }
 
-.unverified-snippet .badge, .snippet-type-badge[data-type="unverified"] {
+.unverified-snippet .badge, .unverified-badge {
 	background-color: #fff1f2;
 	color: #be123c;
 
@@ -340,22 +324,6 @@
 		background-color: #fde2e4;
 		color: #be123c;
 	}
-}
-
-.css-badge {
-	color: #8000ff !important;
-}
-
-.js-badge {
-	color: #cd6600 !important;
-}
-
-.php-badge {
-	color: #0073aa !important;
-}
-
-.html-badge {
-	color: #548b54 !important;
 }
 
 .tooltip-box {
