@@ -33,7 +33,7 @@ jobs:
         id: version
         run: |
           if [ "${{ github.event.inputs.version }}" = "next" ]; then
-            CURR=$(composer get-version)
+            CURR=$(jq -r .version package.json)
             MAJOR=$(echo $CURR | cut -d. -f1)
             MINOR=$(echo $CURR | cut -d. -f2)
             PATCH=$(echo $CURR | cut -d. -f3)
