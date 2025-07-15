@@ -10,7 +10,6 @@
 	background: #fff;
 	border: 1px solid #c3c4c7;
 	border-radius: 5px;
-	margin-block-start: 31px;
 
 	p {
 		margin: 0;
@@ -20,7 +19,7 @@
 		text-decoration: none;
 	}
 
-	.button {
+	.button-primary {
 		background-color: theme.$secondary;
 		border: 0;
 		font-weight: bold;
@@ -29,6 +28,14 @@
 		&:hover, &:focus {
 			background-color: color.adjust(theme.$secondary, $lightness: -10%);
 		}
+	}
+
+	.button-link.button-small {
+		text-decoration: none;
+		font-weight: normal;
+		padding: 0;
+		color: #a7aaad;
+		line-height: 1;
 	}
 }
 

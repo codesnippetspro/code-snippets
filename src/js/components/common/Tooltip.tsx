@@ -7,17 +7,18 @@ export interface TooltipProps {
 	inline?: boolean
 	start?: boolean
 	end?: boolean
+	icon?: ReactNode
 	children: ReactNode
 	className?: classnames.Argument
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({ children, className, block, inline, start, end }) =>
+export const Tooltip: React.FC<TooltipProps> = ({ block, inline, start, end, icon, className, children }) =>
 	<div className={classnames(
 		'tooltip',
 		{ 'tooltip-block': block, 'tooltip-inline': inline, 'tooltip-start': start, 'tooltip-end': end },
 		className
 	)}>
-		<span className="dashicons dashicons-editor-help"></span>
+		{icon ?? <span className="dashicons dashicons-editor-help"></span>}
 		<div className="tooltip-content">
 			{children}
 		</div>
