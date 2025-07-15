@@ -112,11 +112,15 @@ const EditForm: React.FC<PropsWithChildren> = ({ children }) => {
 	)
 }
 
-const SnippetConditionsEditor: React.FC = () =>
-	<div id="snippet_conditions" className="snippet-condition-editor-container">
-		{/* TODO */}
-		<p>{__('This snippet type is not supported in this version of Code Snippets.')}</p>
-	</div>
+const ConditionsEditor: React.FC = () => {
+	const { snippet } = useSnippetForm()
+
+	return isCondition(snippet)
+		? <div id="snippet_conditions" className="snippet-condition-editor-container">
+			<p>{__('This snippet type is not supported in this version of Code Snippets.')}</p>
+		</div>
+		: null
+}
 
 const EditFormWrap: React.FC = () => {
 	const { snippet } = useSnippetForm()
@@ -142,13 +146,10 @@ const EditFormWrap: React.FC = () => {
 						</div>
 						: null}
 
-					{isCondition(snippet)
-						? <SnippetConditionsEditor />
-						: <CodeEditor />}
-
-					{!isLicensed() && <UpsellBanner />}
-
-					{window.CODE_SNIPPETS_EDIT?.enableDescription ? <DescriptionEditor /> : null}
+					<CodeEditor />
+					<ConditionsEditor />
+					<UpsellBanner />
+					<DescriptionEditor />
 				</main>
 
 				<EditorSidebar />

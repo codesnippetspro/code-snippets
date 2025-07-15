@@ -48,8 +48,6 @@
 	}
 }
 
-#edit-snippet-form-container .cs-sticky-notice {
-	position: sticky;
-	inset-block-start: 40px;
-	z-index: 100;
+form.condition-snippet .snippet-code-container {
+	display: none;
 }
