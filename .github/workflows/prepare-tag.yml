@@ -1,0 +1,84 @@
+name: "(Tag): Prepare"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to create the tag for (e.g. 3.6.9) or `next`'
+        required: true
+        type: string
+        default: next
+
+jobs:
+  prepare-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout branch for release
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+        
+      - name: Install Dependencies & Configure Git
+        run: |
+          npm install
+          git config user.name "code-snippets-bot"
+          git config user.email "sre@codesnippets.pro"
+
+      - name: Get tag version
+        id: version
+        run: |
+          if [ "${{ github.event.inputs.version }}" = "next" ]; then
+            CURR=$(composer get-version)
+            MAJOR=$(echo $CURR | cut -d. -f1)
+            MINOR=$(echo $CURR | cut -d. -f2)
+            PATCH=$(echo $CURR | cut -d. -f3)
+            NEW_PATCH=$((PATCH+1))
+            NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+            echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          fi      
+            
+      - name: Create and switch to tag branch
+        run: |
+          git checkout -b "tag/v${{ steps.version.outputs.version }}"
+
+      - name: Prepare changelog
+        if: false
+        id: changelog
+        uses: codesnippetspro/.github-private/.github/workflows/changelog.yml@main
+
+      - name: Apply changelog
+        if: false
+        run: echo "${{ steps.changelog.outputs.patch }}" | git apply -
+
+      - name: Commit changelog update
+        run: |
+          git ls-files --others --modified --exclude-standard | xargs git add
+          git add -u
+          git commit -m "chore(changelog): v${{ steps.version.outputs.version }}"
+
+      - name: Set new version
+        run: |
+          npm --no-git-tag-version version ${{ steps.version.outputs.version }}
+      
+      - name: Commit version update
+        run: |
+          git ls-files --others --modified --exclude-standard | xargs git add
+          git add -u
+          git commit -m "chore(tag): v${{ steps.version.outputs.version }}"
+      
+      - name: Push branch
+        run: |
+          git push --set-upstream origin "tag/v${{ steps.version.outputs.version }}"
+      
+      - name: Open pull request
+        env:
+          GH_TOKEN: ${{ secrets.CS_GH_TOKEN }}
+        run: |
+          gh pr create --title 'chore(release): `v${{ steps.version.outputs.version }}`' --body 'Release `v${{ steps.version.outputs.version }}`' --base main --head "tag/v${{ steps.version.outputs.version }}"
