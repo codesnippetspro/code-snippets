@@ -57,8 +57,27 @@ $sidebar-gap: 30px;
 	margin-block-start: 10px;
 	max-inline-size: 1440px;
 	display: grid;
-	grid-template-columns: auto $sidebar-width;
 	gap: $sidebar-gap;
+	grid-template-columns: 1fr $sidebar-width;
+	grid-template-areas: "upper sidebar" "lower sidebar";
+	transition: all 700ms;
+
+	&.snippet-form-expanded {
+		grid-template-areas: "upper upper" "lower sidebar";
+	}
+
+	.snippet-form-upper {
+		grid-area: upper;
+	}
+
+	.snippet-form-lower {
+		grid-area: lower;
+	}
+
+	.snippet-editor-sidebar {
+		grid-area: sidebar;
+		max-width: $sidebar-width;
+	}
 
 	@media (width <= 1024px) {
 		grid-template-columns: 1fr;

@@ -1,10 +1,13 @@
 import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
-import React from 'react'
+import React, { useState } from 'react'
 import { isLicensed } from '../../utils/screen'
+import { Button } from './Button'
 
-export const UpsellBanner = () =>
-	isLicensed() || window.CODE_SNIPPETS_EDIT?.hideUpsell
+export const UpsellBanner = () => {
+	const [isDismissed, setIsDismissed] = useState(false)
+
+	return isDismissed || isLicensed() || window.CODE_SNIPPETS_EDIT?.hideUpsell
 		? null
 		: <div className="code-snippets-upsell-banner">
 			<img
@@ -24,4 +27,10 @@ export const UpsellBanner = () =>
 			>
 				{__('Get Started', 'code-snippets')}
 			</ExternalLink>
+
+			<Button small link onClick={() => setIsDismissed(true)}>
+				<span className="dashicons dashicons-no-alt"></span>
+			</Button>
 		</div>
+
+}
