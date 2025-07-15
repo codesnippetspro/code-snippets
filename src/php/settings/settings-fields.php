@@ -164,7 +164,7 @@ function get_settings_fields(): array {
 		'wrap_lines'                  => [
 			'name'       => __( 'Wrap Lines', 'code-snippets' ),
 			'type'       => 'checkbox',
-			'label'      => __( 'Soft-wrap long lines of code instead of horizontally scrolling.', 'code-snippets' ),
+			'label'      => __( 'Softwrap long lines of code instead of horizontally scrolling.', 'code-snippets' ),
 			'codemirror' => 'lineWrapping',
 		],
 		'code_folding'                => [
