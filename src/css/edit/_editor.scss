@@ -58,25 +58,26 @@
 	position: relative;
 }
 
-.help-tooltip.snippet-editor-help {
+.snippet-editor-help {
 	position: absolute;
 	inset-inline-end: 5px;
 	inset-block-start: 5px;
 
-	&:hover .editor-help-text {
-		visibility: visible;
-		opacity: 1;
-	}
+	td {
+		&:first-child {
+			padding-inline-end: 0.5em;
+		}
 
-	td:first-child {
-		padding-inline-end: 0.5em;
+		@media screen and (width >= 512px) {
+			white-space: nowrap;
+		}
 	}
 
 	.mac-key {
 		display: none;
 	}
 
-	.help-tooltip-text.platform-mac {
+	.platform-mac {
 		.mac-key {
 			display: inline;
 		}

@@ -5,7 +5,6 @@ import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { WithSnippetsListContext, useSnippetsList } from '../../hooks/useSnippetsList'
 import { SubmitSnippetAction, useSubmitSnippet } from '../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../utils/errors'
-import { isLicensed } from '../../utils/screen'
 import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../utils/snippets/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { ConfirmDialog } from '../common/ConfirmDialog'
@@ -100,7 +99,7 @@ const EditForm: React.FC<PropsWithChildren> = ({ children }) => {
 	return (
 		<>
 			<form
-				id="snippet-form snippet-sidebar-container"
+				id="snippet-form"
 				method="post"
 				onSubmit={handleSubmit}
 				className={editFormClassName({ snippet, isReadOnly })}

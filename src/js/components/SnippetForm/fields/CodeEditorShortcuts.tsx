@@ -99,10 +99,10 @@ export interface CodeEditorShortcutsProps {
 }
 
 export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editorTheme }) =>
-	<div className="snippet-editor-help help-tooltip">
+	<div className="snippet-editor-help tooltip tooltip-inline tooltip-start">
 		<span className={`dashicons dashicons-editor-help cm-s-${editorTheme}`}></span>
 
-		<div className={classnames('help-tooltip-text', { 'platform-mac': isMacOS() })}>
+		<div className={classnames('tooltip-content', { 'platform-mac': isMacOS() })}>
 			<table>
 				<tbody>
 					{Object.entries(shortcuts).map(([name, { label, mod, key }]) =>

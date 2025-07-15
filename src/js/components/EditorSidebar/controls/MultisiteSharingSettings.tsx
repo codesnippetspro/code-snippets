@@ -13,9 +13,9 @@ export const MultisiteSharingSettings: React.FC = () => {
 				</label>
 			</h4>
 
-			<div className="help-tooltip">
+			<div className="tooltip-bottom">
 				<span className="dashicons dashicons-editor-help"></span>
-				<span className="help-tooltip-text">{
+				<span className="tooltip-content">{
 					__('Instead of running on every site, allow this snippet to be activated on individual sites on the network.', 'code-snippets')
 				}</span>
 			</div>
