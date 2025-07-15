@@ -61,17 +61,15 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgrade
 	}, [codeEditorInstance, snippetType])
 
 	return (
-		<div className=" snippet-type-container">
-			<label htmlFor=" snippet-type-select-input">
+		<div className="snippet-type-container">
+			<label htmlFor="snippet-type-select-input">
 				<h3>{__('Snippet Type', 'code-snippets')}</h3>
 			</label>
 			<Select
 				inputId="snippet-type-select-input"
 				className="code-snippets-select"
 				isDisabled={isReadOnly}
-				options={0 !== snippet.id && isCondition(snippet)
-					? OPTIONS.filter(option => option.value === snippetType)
-					: OPTIONS}
+				options={0 === snippet.id ? OPTIONS : OPTIONS.filter(option => 'cond' !== option.value)}
 				styles={{
 					menu: provided => ({ ...provided, zIndex: 9999 }),
 					input: provided => ({ ...provided, boxShadow: 'none' })
