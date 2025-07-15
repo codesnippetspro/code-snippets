@@ -48,6 +48,30 @@
 	}
 }
 
+.above-snippet-code {
+	display: flex;
+	align-items: center;
+	margin: 25px 0 15px;
+	gap: 8px;
+
+	h2 {
+		margin: 0;
+		margin-inline-end: auto;
+	}
+
+	.expand-editor-button {
+		display: flex;
+		gap: 5px;
+		align-items: center;
+
+		.dashicons {
+			width: 18px;
+			height: 18px;
+			font-size: 18px;
+		}
+	}
+}
+
 form.condition-snippet .snippet-code-container {
 	display: none;
 }

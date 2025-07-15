@@ -18,18 +18,11 @@
 }
 
 .generate-button {
-	float: inline-end;
 	display: flex;
 	align-items: center;
 
 	.dashicons-warning {
 		color: #b32d2e;
-		margin-inline-end: 11px;
-	}
-
-	svg {
-		inline-size: 25px;
-		block-size: 25px;
 	}
 }
 

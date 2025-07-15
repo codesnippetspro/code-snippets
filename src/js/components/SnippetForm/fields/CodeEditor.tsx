@@ -4,8 +4,11 @@ import { useSubmitSnippet } from '../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../utils/errors'
 import { isMacOS } from '../../../utils/screen'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { Button } from '../../common/Button'
+import { ExpandIcon } from '../../common/icons/ExpandIcon'
+import { MinimiseIcon } from '../../common/icons/MinimiseIcon'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
-import type { RefObject} from 'react'
+import type { Dispatch, RefObject, SetStateAction } from 'react'
 
 interface EditorTextareaProps {
 	textareaRef: RefObject<HTMLTextAreaElement>
@@ -32,7 +35,12 @@ const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
 	)
 }
 
-export const CodeEditor: React.FC = () => {
+export interface CodeEditorProps {
+	isExpanded: boolean
+	setIsExpanded: Dispatch<SetStateAction<boolean>>
+}
+
+export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpanded }) => {
 	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance } = useSnippetForm()
 	const { submitSnippet } = useSubmitSnippet()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -71,7 +79,15 @@ export const CodeEditor: React.FC = () => {
 
 	return (
 		<div className="snippet-code-container">
-			<h2><label htmlFor="snippet-code">{__('Snippet Content', 'code-snippets')}</label></h2>
+			<div className="above-snippet-code">
+				<h2><label htmlFor="snippet-code">{__('Snippet Content', 'code-snippets')}</label></h2>
+
+				<Button small className="expand-editor-button" onClick={() => setIsExpanded(current => !current)}>
+					{isExpanded ? <MinimiseIcon /> : <ExpandIcon />}
+					{isExpanded ? __('Minimise', 'code-snippets') : __('Expand', 'code-snippets')}
+				</Button>
+			</div>
+
 			<EditorTextarea textareaRef={textareaRef} />
 		</div>
 	)

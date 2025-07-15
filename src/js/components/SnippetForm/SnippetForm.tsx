@@ -21,9 +21,14 @@ import { PageHeading } from './page/PageHeading'
 import type { PropsWithChildren } from 'react'
 import type { Snippet } from '../../types/Snippet'
 
-const editFormClassName = ({ snippet, isReadOnly }: { snippet: Snippet, isReadOnly: boolean }) =>
+const editFormClassName = ({ snippet, isReadOnly, isExpanded }: {
+	snippet: Snippet,
+	isReadOnly: boolean,
+	isExpanded: boolean
+}) =>
 	classnames(
 		'snippet-form',
+		isExpanded ? 'snippet-form-expanded' : 'snippet-form-collapsed',
 		`${snippet.scope}-snippet`,
 		`${getSnippetType(snippet)}-snippet`,
 		`${snippet.id ? 'saved' : 'new'}-snippet`,
@@ -66,9 +71,13 @@ const ConfirmSubmitDialog: React.FC<ConfirmSubmitDialogProps> = ({
 		<p>{`${validationWarning} ${__('Continue?', 'code-snippets')}`}</p>
 	</ConfirmDialog>
 
-const EditForm: React.FC<PropsWithChildren> = ({ children }) => {
+interface EditFormProps extends PropsWithChildren {
+	className?: string
+}
+
+const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 	const { submitSnippet } = useSubmitSnippet()
-	const { snippet, isReadOnly } = useSnippetForm()
+	const { snippet } = useSnippetForm()
 	const { refreshSnippetsList } = useSnippetsList()
 
 	const [validationWarning, setValidationWarning] = useState<string | undefined>()
@@ -98,12 +107,7 @@ const EditForm: React.FC<PropsWithChildren> = ({ children }) => {
 
 	return (
 		<>
-			<form
-				id="snippet-form"
-				method="post"
-				onSubmit={handleSubmit}
-				className={editFormClassName({ snippet, isReadOnly })}
-			>
+			<form id="snippet-form" method="post" onSubmit={handleSubmit} className={className}>
 				{children}
 			</form>
 
@@ -123,7 +127,8 @@ const ConditionsEditor: React.FC = () => {
 }
 
 const EditFormWrap: React.FC = () => {
-	const { snippet } = useSnippetForm()
+	const { snippet, isReadOnly } = useSnippetForm()
+	const [isExpanded, setIsExpanded] = useState(false)
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 
 	return (
@@ -134,8 +139,8 @@ const EditFormWrap: React.FC = () => {
 
 			<PageHeading />
 
-			<EditForm>
-				<main className="snippet-form-main">
+			<EditForm className={editFormClassName({ snippet, isReadOnly, isExpanded })}>
+				<main className="snippet-form-upper">
 					<NameInput />
 
 					{!isCondition(snippet) || 0 === snippet.id
@@ -146,11 +151,14 @@ const EditFormWrap: React.FC = () => {
 						</div>
 						: null}
 
-					<CodeEditor />
+					<CodeEditor {...{ isExpanded, setIsExpanded }} />
 					<ConditionsEditor />
+				</main>
+
+				<div className="snippet-form-lower">
 					<UpsellBanner />
 					<DescriptionEditor />
-				</main>
+				</div>
 
 				<EditorSidebar />
 			</EditForm>
