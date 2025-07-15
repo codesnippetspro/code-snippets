@@ -42,6 +42,31 @@ class Cloud_API {
 	private ?array $cached_cloud_links = null;
 
 	/**
+	 * 'Private' status code.
+	 */
+	public const STATUS_PRIVATE = 3;
+
+	/**
+	 * 'Public' status code.
+	 */
+	public const STATUS_PUBLIC = 4;
+
+	/**
+	 * 'Public' status code.
+	 */
+	public const STATUS_UNVERIFIED = 5;
+
+	/**
+	 * 'AI Verified' status code.
+	 */
+	public const STATUS_AI_VERIFIED = 6;
+
+	/**
+	 * 'Pro Verified' status code.
+	 */
+	public const STATUS_PRO_VERIFIED = 8;
+
+	/**
 	 * Retrieve the Cloud URL from wp-config or fallback to default.
 	 *
 	 * @return string
@@ -431,27 +456,41 @@ class Cloud_API {
 	}
 
 	/**
-	 * Translate a snippet status to a status-name.
+	 * Get the label for a given cloud status.
 	 *
-	 * @param int $status The scope of the snippet.
+	 * @param int $status Cloud status code.
 	 *
-	 * @return string The style to be used for the stats badge.
+	 * @return string The label for the status.
 	 */
-	public static function get_status_name_from_status( int $status ): string {
-		switch ( $status ) {
-			case 3:
-				return __( 'Private', 'code-snippets' );
-			case 4:
-				return __( 'Public', 'code-snippets' );
-			case 5:
-				return __( 'Unverified', 'code-snippets' );
-			case 6:
-				return __( 'AI Verified', 'code-snippets' );
-			case 8:
-				return __( 'Pro Verified', 'code-snippets' );
-			default:
-				return '';
-		}
+	public static function get_status_label( int $status ): string {
+		$labels = [
+			self::STATUS_PRIVATE      => __( 'Private', 'code-snippets' ),
+			self::STATUS_PUBLIC       => __( 'Public', 'code-snippets' ),
+			self::STATUS_UNVERIFIED   => __( 'Unverified', 'code-snippets' ),
+			self::STATUS_AI_VERIFIED  => __( 'AI Verified', 'code-snippets' ),
+			self::STATUS_PRO_VERIFIED => __( 'Pro Verified', 'code-snippets' ),
+		];
+
+		return $labels[ $status ] ?? __( 'Unknown', 'code-snippets' );
+	}
+
+	/**
+	 * Get the badge class for a given cloud status.
+	 *
+	 * @param int $status Cloud status code.
+	 *
+	 * @return string
+	 */
+	public static function get_status_badge( int $status ): string {
+		$badge_names = [
+			self::STATUS_PRIVATE      => 'private',
+			self::STATUS_PUBLIC       => 'public',
+			self::STATUS_UNVERIFIED   => 'failure',
+			self::STATUS_AI_VERIFIED  => 'success',
+			self::STATUS_PRO_VERIFIED => 'info',
+		];
+
+		return $badge_names[ $status ] ?? 'neutral';
 	}
 
 	/**

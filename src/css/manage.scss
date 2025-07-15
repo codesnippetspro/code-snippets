@@ -109,10 +109,6 @@
 		padding-inline-start: 5px;
 	}
 
-	td.column-description {
-		max-inline-size: 700px;
-	}
-
 	.active-snippet, .inactive-snippet {
 		td, th {
 			padding: 10px 9px;
@@ -136,6 +132,14 @@
 
 	#wpbody-content & .column-name {
 		white-space: nowrap; /* prevents wrapping of snippet title */
+	}
+}
+
+td.column-description {
+	max-inline-size: 700px;
+
+	pre {
+		white-space: unset;
 	}
 }
 
