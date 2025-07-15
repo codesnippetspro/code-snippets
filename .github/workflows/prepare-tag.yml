@@ -34,14 +34,12 @@ jobs:
           fi
 
   changelog:
-    runs-on: ubuntu-latest
+    uses: codesnippetspro/.github-private/.github/workflows/changelog.yml@main
     needs: get-version
-    outputs:
-      patch: ${{ steps.changelog.outputs.patch }}
-    steps:
-      - name: Prepare changelog
-        id: changelog
-        uses: codesnippetspro/.github-private/.github/workflows/changelog.yml@main
+    with:
+      repo: ${{ github.repository }}
+      branch: ${{ github.ref_name }}
+      tag: ${{ needs.get-version.outputs.version }}
 
   git-push:
     runs-on: ubuntu-latest
