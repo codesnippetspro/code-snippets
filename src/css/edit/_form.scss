@@ -1,3 +1,5 @@
+@use '../common/theme';
+
 $sidebar-width: 280px;
 $sidebar-gap: 30px;
 
@@ -19,12 +21,20 @@ $sidebar-gap: 30px;
 
 	.badge {
 		margin: 3px 0 3px auto;
-		text-transform: uppercase;
+
+		+ .badge {
+			margin-inline-start: 5px;
+		}
+	}
+
+	.beta-badge {
 		border: 1px solid currentcolor;
-		border-radius: 4px;
-		line-height: 1;
-		padding: 5px;
-		font-size: smaller;
+	}
+
+	.pro-badge {
+		color: currentColor;
+		border: 1px solid currentcolor;
+		background: transparent;
 	}
 }
 
@@ -90,7 +100,11 @@ $sidebar-gap: 30px;
 	justify-content: space-between;
 	flex-flow: row;
 
-	div.snippet-type-badge {
+	.small-badge {
+		margin-left: 0.5em;
+	}
+
+	.badge {
 		float: inline-end;
 	}
 }

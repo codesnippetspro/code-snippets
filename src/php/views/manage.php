@@ -9,6 +9,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_API;
+use function Code_Snippets\Settings\get_setting;
 
 /**
  * Loaded from the manage menu class.
@@ -63,7 +64,7 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 			Admin::render_snippet_type_tab( $type_name, $label, $current_type );
 		}
 
-		if ( ! $licensed ) {
+		if ( ! $licensed && ! get_setting( 'general', 'hide_upgrade_menu' ) ) {
 			?>
 			<a class="button button-large nav-tab-button nav-tab-inactive go-pro-button"
 			   href="https://codesnippets.pro/pricing/" target="_blank"

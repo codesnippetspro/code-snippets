@@ -5,18 +5,20 @@ import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { WithSnippetsListContext, useSnippetsList } from '../../hooks/useSnippetsList'
 import { SubmitSnippetAction, useSubmitSnippet } from '../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../utils/errors'
+import { isLicensed } from '../../utils/screen'
 import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../utils/snippets/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { ConfirmDialog } from '../common/ConfirmDialog'
 import { ConditionEditor } from '../ConditionEditor'
 import { ConditionModal } from '../ConditionModal/ConditionModal'
+import { UpsellDialog } from '../common/UpsellDialog'
 import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
 import { EditorSidebar } from '../EditorSidebar'
+import { UpsellBanner } from '../common/UpsellBanner'
 import { CodeEditor } from './fields/CodeEditor'
 import { SnippetLocationInput } from './fields/SnippetLocationInput'
 import { SnippetTypeInput } from './fields/SnippetTypeInput'
 import { ConditionTable } from './page/ConditionTable'
-import { UpgradeDialog } from './page/UpgradeDialog'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
 import { PageHeading } from './page/PageHeading'
@@ -141,15 +143,19 @@ const EditFormWrap: React.FC = () => {
 				<main className="snippet-form-main">
 					<NameInput />
 
-					<div className="above-editor-container">
-						<SnippetTypeInput openUpgradeDialog={() => setIsUpgradeDialogOpen(true)} />
-						<SnippetLocationInput />
-						<ConditionModalButton setIsModalOpen={setIsConditionModalOpen} />
-					</div>
+					{!isCondition(snippet) || 0 === snippet.id
+						? <div className="above-editor-container">
+							<SnippetTypeInput setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
+							<SnippetLocationInput />
+							<ConditionModalButton setIsModalOpen={setIsConditionModalOpen} />
+						</div>
+						: null}
 
 					{isCondition(snippet)
 						? <SnippetConditionsEditor />
 						: <CodeEditor />}
+
+					{!isLicensed() && <UpsellBanner />}
 
 					{window.CODE_SNIPPETS_EDIT?.enableDescription ? <DescriptionEditor /> : null}
 				</main>
@@ -158,8 +164,8 @@ const EditFormWrap: React.FC = () => {
 			</EditForm>
 
 			{isCondition(snippet) && <ConditionTable />}
-			<UpgradeDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
 			<ConditionModal isOpen={isConditionModalOpen} setIsOpen={setIsConditionModalOpen} />
+			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
 		</div>
 	)
 }

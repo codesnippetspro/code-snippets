@@ -1,0 +1,25 @@
+import { ExternalLink } from '@wordpress/components'
+import { __ } from '@wordpress/i18n'
+import React from 'react'
+
+export const UpsellBanner = () =>
+	window.CODE_SNIPPETS_EDIT?.hideUpsell ? null
+		: <div className="code-snippets-upsell-banner">
+			<img
+				src={`${window.CODE_SNIPPETS?.urls.plugin}/assets/icon.svg`}
+				alt={__('Code Snippets logo', 'code-snippets')}
+				height="34"
+			/>
+			<p>
+				{__('Unlock ', 'code-snippets')}
+				<strong>{__('cloud sync, snippet conditions, AI features', 'code-snippets')}</strong>
+				{__(' and much more with Code Snippets Pro.', 'code-snippets')}
+			</p>
+
+			<ExternalLink
+				className="button button-primary button-large"
+				href="https://codesnippets.pro/pricing/"
+			>
+				{__('Get Started', 'code-snippets')}
+			</ExternalLink>
+		</div>

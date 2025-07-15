@@ -16,8 +16,8 @@ interface ShortcodeOptions {
 }
 
 const ShortcodeTag: React.FC<{ atts: ShortcodeAtts }> = ({ atts }) =>
-	<p>
-		<pre><code className="shortcode-tag">{buildShortcodeTag(SHORTCODE_TAG, atts)}</code></pre>
+	<p className="shortcode-tag-wrapper">
+		<code className="shortcode-tag">{buildShortcodeTag(SHORTCODE_TAG, atts)}</code>
 
 		<CopyToClipboardButton
 			title={__('Copy shortcode to clipboard', 'code-snippets')}

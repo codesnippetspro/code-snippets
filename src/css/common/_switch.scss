@@ -57,8 +57,28 @@ input[type="checkbox"].switch:checked {
 	color: #bbb;
 }
 
+a.snippet-condition-count {
+	border-radius: 50%;
+	border: 1.8px solid currentColor;
+	height: 29px;
+	width: 29px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+
+	.inactive-snippet & {
+		color: #ccc;
+	}
+
+	.active-snippet & {
+		font-weight: bold;
+		color: theme.$accent;
+	}
+}
+
 .snippet-execution-button {
-	margin-inline-start: 10px;
+	margin-inline-start: 11px;
 	margin-block-start: 9px;
 	inline-size: 0;
 	block-size: 0;

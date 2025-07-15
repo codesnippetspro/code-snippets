@@ -1,6 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
+import { isLicensed } from '../../utils/screen'
 import { isCondition } from '../../utils/snippets/snippets'
 import { Button } from '../common/Button'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
@@ -11,7 +12,7 @@ export interface ConditionModalButtonProps {
 }
 
 export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setIsModalOpen }) => {
-	const { snippet } = useSnippetForm()
+	const { snippet, isReadOnly } = useSnippetForm()
 
 	const hasCondition = 0 !== snippet.conditionId
 
@@ -24,13 +25,16 @@ export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setI
 					<Button
 						large
 						primary={hasCondition}
+						disabled={isReadOnly}
 						onClick={() => setIsModalOpen(true)}
 					>
 						<span className="dashicons dashicons-randomize"></span>
 						{hasCondition
 							? __('Conditions', 'code-snippets')
 							: __('Set Conditions', 'code-snippets')}
-						<span className="badge">{__('beta', 'code-snippets')}</span>
+
+						<span className="badge beta-badge small-badge">{__('beta', 'code-snippets')}</span>
+						{!isLicensed() && <span className="badge pro-badge small-badge">{__('Pro', 'code-snippets')}</span>}
 					</Button>
 				</>}
 		</div>

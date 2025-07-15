@@ -1,0 +1,67 @@
+@use 'sass:map';
+@use 'sass:color';
+@use 'theme';
+
+.badge {
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	border-radius: 3px;
+	text-align: center;
+	inline-size: 43px;
+	block-size: 24px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.small-badge {
+	block-size: auto;
+	inline-size: auto;
+	font-size: smaller;
+	padding: 0 0.5em;
+}
+
+.wp-core-ui .button.nav-tab-button {
+	margin-inline-start: 0.5em;
+	float: inline-end;
+	color: #a7aaad;
+	background: #f6f7f7;
+	border-color: #f6f7f7;
+	align-self: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 2px;
+}
+
+@each $name, $color in theme.$badges {
+	$text-color: theme.contrasting-text-color($color);
+
+	.badge.#{$name}-badge,
+	.nav-tab-inactive:hover .badge.#{$name}-badge,
+	:hover > .inverted-badges .#{$name}-badge {
+		color: $text-color;
+		background-color: $color;
+	}
+
+	.badge.#{$name}-badge:hover {
+		color: color.adjust($text-color, $lightness: 5%);
+		background-color: color.adjust($color, $lightness: 5%);
+	}
+}
+
+.nav-tab-inactive .badge,
+.inverted-badges .badge {
+	color: #fff;
+	background-color: #a7aaad;
+}
+
+.nav-tab-inactive {
+	background: transparent;
+}
+
+.nav-tab-button .dashicons-external {
+	font-size: 15px;
+	color: #666;
+}

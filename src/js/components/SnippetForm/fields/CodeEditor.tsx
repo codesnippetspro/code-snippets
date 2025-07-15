@@ -8,16 +8,16 @@ import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 import type { RefObject} from 'react'
 
 interface EditorTextareaProps {
-	ref: RefObject<HTMLTextAreaElement>
+	textareaRef: RefObject<HTMLTextAreaElement>
 }
 
-const EditorTextarea: React.FC<EditorTextareaProps> = ({ ref }) => {
+const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
 	const { snippet, setSnippet } = useSnippetForm()
 
 	return (
 		<div className="snippet-editor">
 			<textarea
-				ref={ref}
+				ref={textareaRef}
 				id="snippet-code"
 				name="snippet_code"
 				value={snippet.code}
@@ -72,7 +72,7 @@ export const CodeEditor: React.FC = () => {
 	return (
 		<div className="snippet-code-container">
 			<h2><label htmlFor="snippet-code">{__('Snippet Content', 'code-snippets')}</label></h2>
-			<EditorTextarea ref={textareaRef} />
+			<EditorTextarea textareaRef={textareaRef} />
 		</div>
 	)
 }

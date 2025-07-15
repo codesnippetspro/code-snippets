@@ -6,7 +6,7 @@ import { parseSnippetObject } from './objects'
 import type { SelectGroup } from '../../types/SelectOption'
 import type { Snippet, SnippetType } from '../../types/Snippet'
 
-const PRO_TYPES = new Set<SnippetType>(['css', 'js'])
+const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
 
 const TYPE_LABELS: Record<SnippetType, string> = {
 	php: __('Functions (PHP)', 'code-snippets'),

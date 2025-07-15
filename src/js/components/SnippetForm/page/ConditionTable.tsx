@@ -8,10 +8,10 @@ import { handleUnknownError } from '../../../utils/errors'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { buildSnippetSelectOptionGroups, getSnippetDisplayName, getSnippetEditUrl, getSnippetType, isCondition } from '../../../utils/snippets/snippets'
 import { stripTags } from '../../../utils/text'
+import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { ListTable } from '../../common/ListTable'
 import { Select } from '../../common/Select'
-import { SnippetTypeBadge } from '../../common/SnippetTypeBadge'
 import type { SelectGroup } from '../../../types/SelectOption'
 import type { Snippet } from '../../../types/Snippet'
 import type { ListTableBulkAction, ListTableColumn } from '../../common/ListTable'
@@ -32,7 +32,7 @@ const columns: ListTableColumn<Snippet>[] = [
 		title: __('Type', 'code-snippets'),
 		sortedValue: snippet => getSnippetType(snippet),
 		render: snippet =>
-			<SnippetTypeBadge snippetType={getSnippetType(snippet)} />
+			<Badge name={getSnippetType(snippet)} />
 	},
 	{
 		id: 'desc',

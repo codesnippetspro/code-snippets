@@ -136,7 +136,7 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 				'<a class="cloud-snippet-download %s" href="%s" target="_blank">%s</a>',
 				$additional_classes,
 				'https://codesnippets.pro/pricing/',
-				__( '<span class="go-pro-badge">Pro</span> Only', 'code-snippets' ),
+				__( '<span class="badge pro-badge small-badge">Pro</span> Only', 'code-snippets' ),
 			);
 	}
 

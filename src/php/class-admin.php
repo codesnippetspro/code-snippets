@@ -336,11 +336,11 @@ class Admin {
 		$nav_tab_inactive = false;
 
 		if ( $type_name === $current_type ) {
-			printf( '<a class="nav-tab nav-tab-active" data-snippet-type="%s">', esc_attr( $type_name ) );
+			printf( '<a class="nav-tab nav-tab-active %s-tab">', esc_attr( $type_name ) );
 
 		} elseif ( ! code_snippets()->licensing->is_licensed() && Plugin::is_pro_type( $type_name ) ) {
 			printf(
-				'<a class="nav-tab nav-tab-inactive" data-snippet-type="%s" title="%s" href="https://codesnippets.pro/pricing/" target="_blank">',
+				'<a class="nav-tab nav-tab-inactive %s-tab" title="%s" href="https://codesnippets.pro/pricing/" target="_blank">',
 				esc_attr( $type_name ),
 				esc_attr__( 'Available in Code Snippets Pro (external link)', 'code-snippets' )
 			);
@@ -353,10 +353,10 @@ class Admin {
 			}
 
 			printf(
-				'<a class="nav-tab %s" href="%s" data-snippet-type="%s">',
-				$nav_tab_inactive ? 'nav-tab-inactive' : '',
-				esc_url( add_query_arg( 'type', $type_name, $current_url ) ),
-				esc_attr( $type_name )
+				'<a class="%s %s-tab" href="%s">',
+				$nav_tab_inactive ? 'nav-tab nav-tab-inactive' : 'nav-tab',
+				esc_attr( $type_name ),
+				esc_url( add_query_arg( 'type', $type_name, $current_url ) )
 			);
 		}
 
@@ -366,27 +366,31 @@ class Admin {
 			esc_html( $label )
 		);
 
-		switch ( $type_name ) {
-			case 'all':
-				break;
-			case 'cloud':
-				echo '<span class="cloud-badge dashicons dashicons-cloud cloud-icon cloud-synced"></span>';
-				break;
-			case 'cloud_search':
-				echo '<span class="cloud-badge dashicons dashicons-search cloud-icon cloud-downloaded"></span>';
-				break;
-			case 'bundles':
-				echo '<span class="cloud-badge dashicons dashicons-screenoptions cloud-icon cloud-bundle"></span>';
-				break;
-			case 'ai':
-				echo '<span class="cloud-badge ai-icon">', esc_html__( 'AI', 'code-snippets' ), '</span>';
-				break;
-			case 'cond':
-				echo '<span class="badge"><span class="dashicons dashicons-randomize"></span></span>';
-				break;
-			default:
-				echo '<span class="badge">' . esc_html( $type_name ) . '</span>';
-				break;
+		if ( 'all' !== $type_name ) {
+			printf( '<span class="badge %s-badge">', esc_attr( $type_name ) );
+
+			switch ( $type_name ) {
+				case 'cloud':
+					echo '<span class="dashicons dashicons-cloud"></span>';
+					break;
+				case 'cloud_search':
+					echo '<span class="dashicons dashicons-search"></span>';
+					break;
+				case 'bundles':
+					echo '<span class="dashicons dashicons-screenoptions"></span>';
+					break;
+				case 'ai':
+					echo '<span class="ai-icon">', esc_html__( 'AI', 'code-snippets' ), '</span>';
+					break;
+				case 'cond':
+					echo '<span class="dashicons dashicons-randomize"></span>';
+					break;
+				default:
+					echo esc_html( $type_name );
+					break;
+			}
+
+			echo '</span>';
 		}
 
 		echo '</a>';

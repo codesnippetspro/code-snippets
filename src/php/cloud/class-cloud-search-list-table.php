@@ -208,7 +208,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						$status_name = $this->cloud_api->get_status_name_from_status( $item->status );
 
 						printf(
-							'<a class="snippet-type-badge snippet-status" data-type="%s">%s</a>',
+							'<a class="badge snippet-status" data-type="%s">%s</a>',
 							esc_attr( sanitize_title_with_dashes( strtolower( $status_name ) ) ),
 							esc_html( $status_name )
 						);
@@ -221,19 +221,19 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 								</p>
 
 								<p class="tooltip-text-item">
-									<a class="snippet-type-badge snippet-status" data-type="public">
+									<a class="badge snippet-status" data-type="public">
 										<?php esc_html_e( 'Public', 'code-snippets' ); ?></a>
 									<?php esc_html_e( 'Snippet has passed basic review.', 'code-snippets' ); ?>
 								</p>
 
 								<p class="tooltip-text-item">
-									<a class="snippet-type-badge snippet-status" data-type="ai-verified">
+									<a class="badge snippet-status" data-type="ai-verified">
 										<?php esc_html_e( 'AI Verified', 'code-snippets' ); ?></a>
 									<?php esc_html_e( ' Snippet has been tested by our AI bot.', 'code-snippets' ); ?>
 								</p>
 
 								<p class="tooltip-text-item">
-									<a class="snippet-type-badge snippet-status" data-type="unverified">
+									<a class="badge snippet-status" data-type="unverified">
 										<?php esc_html_e( 'Unverified', 'code-snippets' ); ?></a>
 									<?php esc_html_e( ' Snippet has not undergone any review yet.', 'code-snippets' ); ?>
 								</p>
