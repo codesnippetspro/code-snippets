@@ -10,24 +10,13 @@ on:
         default: next
 
 jobs:
-  prepare-tag:
+  get-version:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout branch for release
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-        
-      - name: Install Dependencies & Configure Git
-        run: |
-          npm install
-          git config user.name "code-snippets-bot"
-          git config user.email "sre@codesnippets.pro"
 
       - name: Get tag version
         id: version
@@ -42,43 +31,60 @@ jobs:
             echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
           else
             echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          fi      
-            
-      - name: Create and switch to tag branch
-        run: |
-          git checkout -b "tag/v${{ steps.version.outputs.version }}"
+          fi
 
+  changelog:
+    runs-on: ubuntu-latest
+    needs: get-version
+    outputs:
+      patch: ${{ steps.changelog.outputs.patch }}
+    steps:
       - name: Prepare changelog
-        if: false
         id: changelog
         uses: codesnippetspro/.github-private/.github/workflows/changelog.yml@main
 
-      - name: Apply changelog
-        if: false
-        run: echo "${{ steps.changelog.outputs.patch }}" | git apply -
+  git-push:
+    runs-on: ubuntu-latest
+    needs: [get-version, changelog]
+    steps:
+      - name: Checkout branch for release
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+        
+      - name: Install Dependencies & Configure Git
+        run: |
+          npm install
+          git config user.name "code-snippets-bot"
+          git config user.email "sre@codesnippets.pro"
+            
+      - name: Create and switch to tag branch
+        run: |
+          git checkout -b "tag/v${{ needs.get-version.outputs.version }}"
 
       - name: Commit changelog update
         run: |
+          echo "${{ needs.changelog.outputs.patch }}" | git apply -
           git ls-files --others --modified --exclude-standard | xargs git add
           git add -u
-          git commit -m "chore(changelog): v${{ steps.version.outputs.version }}"
-
-      - name: Set new version
-        run: |
-          npm --no-git-tag-version version ${{ steps.version.outputs.version }}
+          git commit -m "chore(changelog): v${{ needs.get-version.outputs.version }}"
       
       - name: Commit version update
         run: |
+          npm --no-git-tag-version version ${{ needs.get-version.outputs.version }}
           git ls-files --others --modified --exclude-standard | xargs git add
           git add -u
-          git commit -m "chore(tag): v${{ steps.version.outputs.version }}"
+          git commit -m "chore(tag): v${{ needs.get-version.outputs.version }}"
       
-      - name: Push branch
+      - name: "Push to branch `tag/v${{ needs.get-version.outputs.version }}`"
         run: |
-          git push --set-upstream origin "tag/v${{ steps.version.outputs.version }}"
+          git push --set-upstream origin "tag/v${{ needs.get-version.outputs.version }}"
       
-      - name: Open pull request
+      - name: "Open pull request: chore(release): `v${{ needs.get-version.outputs.version }}`"
         env:
           GH_TOKEN: ${{ secrets.CS_GH_TOKEN }}
         run: |
-          gh pr create --title 'chore(release): `v${{ steps.version.outputs.version }}`' --body 'Release `v${{ steps.version.outputs.version }}`' --base main --head "tag/v${{ steps.version.outputs.version }}"
+          gh pr create --title 'chore(release): `v${{ needs.get-version.outputs.version }}`' --body 'Release `v${{ needs.get-version.outputs.version }}`' --base main --head "tag/v${{ needs.get-version.outputs.version }}"
