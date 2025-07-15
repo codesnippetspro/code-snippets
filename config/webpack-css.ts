@@ -2,7 +2,8 @@ import path from 'path'
 import libsass from 'sass'
 import cssnano from 'cssnano'
 import autoprefixer from 'autoprefixer'
-import hexrgba from 'postcss-hexrgba'
+import rgbaCompat from 'postcss-hexrgba'
+import hslCompat from 'postcss-color-hsl'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import RemoveEmptyScriptsPlugin from 'webpack-remove-empty-scripts'
 import { glob } from 'glob'
@@ -12,7 +13,8 @@ import type { Config as PostCssConfig } from 'postcss-load-config'
 
 const postcssOptions: PostCssConfig = {
 	plugins: [
-		hexrgba(),
+		rgbaCompat(),
+		hslCompat(),
 		autoprefixer(),
 		cssnano({
 			preset: ['default', { discardComments: { removeAll: true } }]

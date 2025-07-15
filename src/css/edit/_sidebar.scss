@@ -46,8 +46,12 @@
 		> div {
 			display: flex;
 			flex-flow: row wrap;
-			justify-content: space-between;
 			align-items: center;
+			gap: 5px;
+
+			> :last-child {
+				margin-inline-start: auto;
+			}
 		}
 	}
 

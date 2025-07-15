@@ -14,7 +14,7 @@ export const PriorityInput = () => {
 				</label>
 			</h4>
 
-			<Tooltip>
+			<Tooltip block end>
 				{__('Snippets with a lower priority number will run before those with a higher number.', 'code-snippets')}
 			</Tooltip>
 

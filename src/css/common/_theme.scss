@@ -4,24 +4,30 @@ $accent: #2271b1;
 $primary: #03c7d2;
 $secondary: #d46f4d;
 $outline: #9e9e9e;
-$version-core: (background: #61C5CB, text: #fff);
-$version-pro: (background: #F7E8E3, text: #DF9279);
-$visibility-private: (background: #F7E6BE, text: #CA961B);
-$visibility-public: (background: #DBEBF7, text: #2271B1);
+$version-core: (background: #61c5cb, text: #fff);
+$version-pro: (background: #f7e8e3, text: #df9279);
+$visibility-private: (background: #f7e6be, text: #ca961b);
+$visibility-public: (background: #dbebf7, text: #2271b1);
 $brand-discord: #5865f2;
 $brand-facebook: #3b5998;
-
 $badges: (
-		php: #1d97c6,
-		html: #ef6a36,
-		css: #9b59b6,
-		js: #ffeb3b,
-		cond: #2eae95,
-		pro: #DF9279,
-		core: #61C5CB,
-		cloud: #00bcd4,
-		bundles: #50575e,
-		cloud_search: #ff9800
+	php: (#1d97c6, #fff),
+	html: (#ef6a36, #fff),
+	css: (#9b59b6, #fff),
+	js: (#ffeb3b, #1c1f20),
+	cond: (#2eae95, #fff),
+	core: (#61c5cb, #fff),
+	pro: (#f7e8e3, #df9279),
+	cloud: (#00bcd4, #fff),
+	bundles: (#50575e, #fff),
+	cloud_search: (#ff9800, #fff),
+	private: (#f7e6be, #ca961b),
+	public: (#dbebf7, #2271b1),
+	success: (#d3e8d1, #447340),
+	failure: (#fad7c1, #a24b16),
+	info: (#d2e6f4, #2b71a3),
+	neutral: (#e2e5e5, #6c7e7e),
+	special: (#dfc5ef, #6e249c)
 );
 
 @function contrasting-text-color($bg-color) {

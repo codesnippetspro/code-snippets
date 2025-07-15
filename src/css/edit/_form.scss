@@ -3,38 +3,53 @@
 $sidebar-width: 280px;
 $sidebar-gap: 30px;
 
+.snippet-type-option {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-flow: row;
+
+	.small-badge {
+		margin-inline-start: 0.5em;
+	}
+
+	.badge {
+		float: inline-end;
+	}
+}
+
+
 .conditions-editor-open .button.button-large {
 	font-weight: bold;
 	block-size: 100%;
 	display: flex;
 	align-items: center;
 	min-block-size: 45px;
+	gap: 5px;
+	overflow: hidden;
 
 	&.no-condition {
 		border-color: #ccc;
 		background-color: #fff;;
 	}
 
-	.dashicons {
-		margin-inline-end: 5px;
-	}
-
 	.badge {
-		margin: 3px 0 3px auto;
-
-		+ .badge {
-			margin-inline-start: 5px;
-		}
+		margin: 3px 0;
 	}
 
 	.beta-badge {
+		margin-inline-start: auto;
 		border: 1px solid currentcolor;
 	}
 
 	.pro-badge {
-		color: currentColor;
+		color: currentcolor;
 		border: 1px solid currentcolor;
 		background: transparent;
+
+		@media screen and (width >= 1080px) and (width <= 1250px) {
+			display: none;
+		}
 	}
 }
 
@@ -91,20 +106,5 @@ $sidebar-gap: 30px;
 		display: flex;
 		flex-flow: column;
 		min-inline-size: 180px;
-	}
-}
-
-.snippet-type-option {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	flex-flow: row;
-
-	.small-badge {
-		margin-left: 0.5em;
-	}
-
-	.badge {
-		float: inline-end;
 	}
 }

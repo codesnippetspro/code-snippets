@@ -1,9 +1,11 @@
 import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import React from 'react'
+import { isLicensed } from '../../utils/screen'
 
 export const UpsellBanner = () =>
-	window.CODE_SNIPPETS_EDIT?.hideUpsell ? null
+	isLicensed() || window.CODE_SNIPPETS_EDIT?.hideUpsell
+		? null
 		: <div className="code-snippets-upsell-banner">
 			<img
 				src={`${window.CODE_SNIPPETS?.urls.plugin}/assets/icon.svg`}

@@ -5,7 +5,6 @@ import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { WithSnippetsListContext, useSnippetsList } from '../../hooks/useSnippetsList'
 import { SubmitSnippetAction, useSubmitSnippet } from '../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../utils/errors'
-import { isLicensed } from '../../utils/screen'
 import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../utils/snippets/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { ConfirmDialog } from '../common/ConfirmDialog'
@@ -103,7 +102,7 @@ const EditForm: React.FC<PropsWithChildren> = ({ children }) => {
 	return (
 		<>
 			<form
-				id="snippet-form snippet-sidebar-container"
+				id="snippet-form"
 				method="post"
 				onSubmit={handleSubmit}
 				className={editFormClassName({ snippet, isReadOnly })}
@@ -116,14 +115,14 @@ const EditForm: React.FC<PropsWithChildren> = ({ children }) => {
 	)
 }
 
-const SnippetConditionsEditor: React.FC = () => {
+const ConditionsEditor: React.FC = () => {
 	const { snippet, setSnippet } = useSnippetForm()
 
-	return (
-		<div id="snippet_conditions" className="snippet-condition-editor-container">
+	return isCondition(snippet)
+		? <div id="snippet_conditions" className="snippet-condition-editor-container">
 			<ConditionEditor condition={snippet} setCondition={setSnippet} />
 		</div>
-	)
+		: null
 }
 
 const EditFormWrap: React.FC = () => {
@@ -151,13 +150,10 @@ const EditFormWrap: React.FC = () => {
 						</div>
 						: null}
 
-					{isCondition(snippet)
-						? <SnippetConditionsEditor />
-						: <CodeEditor />}
-
-					{!isLicensed() && <UpsellBanner />}
-
-					{window.CODE_SNIPPETS_EDIT?.enableDescription ? <DescriptionEditor /> : null}
+					<CodeEditor />
+					<ConditionsEditor />
+					<UpsellBanner />
+					<DescriptionEditor />
 				</main>
 
 				<EditorSidebar />

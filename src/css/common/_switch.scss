@@ -59,9 +59,9 @@ input[type="checkbox"].switch:checked {
 
 a.snippet-condition-count {
 	border-radius: 50%;
-	border: 1.8px solid currentColor;
-	height: 29px;
-	width: 29px;
+	border: 1.8px solid currentcolor;
+	block-size: 29px;
+	inline-size: 29px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
