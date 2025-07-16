@@ -49,7 +49,7 @@ jobs:
 
   # deploy:
   #   needs: [install, upload]
-  #   uses: codesnippetspro/.github-private/.github/workflows/publish_svn.yml@main
+  #   uses: codesnippetspro/.github-private/.github/workflows/publish_svn.yml@v1
   #   with:
   #     repo: ${{ github.repository }}
   #     branch: ${{ github.ref_name }}

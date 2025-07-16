@@ -40,7 +40,7 @@ jobs:
 
   changelog:
     needs: get-version
-    uses: codesnippetspro/.github-private/.github/workflows/changelog.yml
+    uses: codesnippetspro/.github-private/.github/workflows/changelog.yml@v1
     with:
       repo: ${{ github.repository }}
       branch: ${{ github.ref_name }}
