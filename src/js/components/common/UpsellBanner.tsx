@@ -32,5 +32,4 @@ export const UpsellBanner = () => {
 				<span className="dashicons dashicons-no-alt"></span>
 			</Button>
 		</div>
-
 }

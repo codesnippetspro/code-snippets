@@ -155,7 +155,7 @@ const EditFormWrap: React.FC = () => {
 						</div>
 						: null}
 
-					<CodeEditor isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
+					<CodeEditor {...{ isExpanded, setIsExpanded }} />
 					<ConditionsEditor />
 				</main>
 

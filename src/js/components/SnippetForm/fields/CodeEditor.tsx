@@ -87,6 +87,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 					{isExpanded ? __('Minimise', 'code-snippets') : __('Expand', 'code-snippets')}
 				</Button>
 			</div>
+
 			<EditorTextarea textareaRef={textareaRef} />
 		</div>
 	)

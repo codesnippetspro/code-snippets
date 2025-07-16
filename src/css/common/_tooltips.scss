@@ -99,7 +99,11 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 
 	&::before, .tooltip-content {
 		inset-block: 100% auto;
-		inset-inline-start: -50%;
+		margin-inline-start: 25%;
+	}
+
+	.tooltip-content {
+		inset-inline-end: -70%;
 	}
 }
 
@@ -127,6 +131,9 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 
 	&::before, .tooltip-content {
 		inset-inline-start: 100%;
+	}
+
+	.tooltip-content {
 		inset-block-start: -50%;
 	}
 }

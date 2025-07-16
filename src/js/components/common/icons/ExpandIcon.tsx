@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react'
 
 export const ExpandIcon = () =>
 	<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -13,8 +13,8 @@ export const ExpandIcon = () =>
 		<path
 			d="M12 3H15M15 3V6M15 3L10.5 7.5M6 15H3M3 15V12M3 15L7.5 10.5M12 15H15M15 15V12M15 15L10.5 10.5M6 3H3M3 3V6M3 3L7.5 7.5"
 			stroke="currentcolor"
-			stroke-width="1.5"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeWidth="1.5"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		/>
 	</svg>

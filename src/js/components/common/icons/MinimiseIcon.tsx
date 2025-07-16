@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react'
 
 export const MinimiseIcon = () =>
 	<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -13,8 +13,8 @@ export const MinimiseIcon = () =>
 		<path
 			d="M3.75 6.75H6.75M6.75 6.75V3.75M6.75 6.75L2.25 2.25M3.75 11.25H6.75M6.75 11.25V14.25M6.75 11.25L2.25 15.75M14.25 6.75H11.25M11.25 6.75V3.75M11.25 6.75L15.75 2.25M14.25 11.25H11.25M11.25 11.25V14.25M11.25 11.25L15.75 15.75"
 			stroke="currentcolor"
-			stroke-width="1.5"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeWidth="1.5"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		/>
 	</svg>
