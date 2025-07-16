@@ -50,6 +50,8 @@ jobs:
       repo: ${{ github.repository }}
       branch: ${{ github.ref_name }}
       tag: ${{ needs.get-version.outputs.version }}
+    secrets: inherit
+
 
   git-push:
     runs-on: ubuntu-latest
