@@ -1,5 +1,10 @@
 name: "(Tag): Prepare"
 
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
 on:
   workflow_dispatch:
     inputs:
@@ -36,6 +41,7 @@ jobs:
   changelog:
     uses: codesnippetspro/.github-private/.github/workflows/changelog.yml@main
     needs: get-version
+    secrets: inherit
     with:
       repo: ${{ github.repository }}
       branch: ${{ github.ref_name }}
@@ -83,6 +89,6 @@ jobs:
       
       - name: "Open pull request: chore(release): `v${{ needs.get-version.outputs.version }}`"
         env:
-          GH_TOKEN: ${{ secrets.CS_GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr create --title 'chore(release): `v${{ needs.get-version.outputs.version }}`' --body 'Release `v${{ needs.get-version.outputs.version }}`' --base main --head "tag/v${{ needs.get-version.outputs.version }}"
