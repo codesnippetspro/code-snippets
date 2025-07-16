@@ -40,6 +40,11 @@ jobs:
 
   changelog:
     needs: get-version
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+      models: read
     uses: codesnippetspro/.github-private/.github/workflows/changelog.yml@v1
     with:
       repo: ${{ github.repository }}
