@@ -13,7 +13,7 @@ export interface GeneratedSnippet {
 
 export interface ExplainedSnippet {
 	name?: string
-	lines?: Record<string, string>
+	lines?: Record<number, string>[]
 	desc?: string
 	tags?: string[]
 }

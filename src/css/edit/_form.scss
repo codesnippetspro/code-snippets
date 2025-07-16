@@ -113,6 +113,16 @@ $sidebar-gap: 30px;
 	.actions-column {
 		text-align: center;
 	}
+
+	.name-column {
+		white-space: nowrap;
+	}
+
+	th.sortable a,
+	th.sorted a {
+		display: flex;
+		flex-direction: row;
+	}
 }
 
 .above-editor-container {

@@ -246,18 +246,20 @@ function evaluate_condition_rule( array $rule ): bool {
 function evaluate_condition( string $condition_json ): bool {
 	$groups = json_decode( $condition_json, false );
 
-	foreach ( $groups as $group ) {
-		$is_true = true;
+	if ( $groups ) {
+		foreach ( $groups as $group ) {
+			$is_true = true;
 
-		foreach ( $group as $rule ) {
-			if ( ! evaluate_condition_rule( get_object_vars( $rule ) ) ) {
-				$is_true = false;
-				break;
+			foreach ( $group as $rule ) {
+				if ( ! evaluate_condition_rule( get_object_vars( $rule ) ) ) {
+					$is_true = false;
+					break;
+				}
 			}
-		}
 
-		if ( $is_true ) {
-			return true;
+			if ( $is_true ) {
+				return true;
+			}
 		}
 	}
 

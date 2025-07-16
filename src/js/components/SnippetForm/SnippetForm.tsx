@@ -20,6 +20,7 @@ import { SnippetTypeInput } from './fields/SnippetTypeInput'
 import { ConditionTable } from './page/ConditionTable'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
+import { GenerateCodeModal } from './page/GenerateCodeModal'
 import { PageHeading } from './page/PageHeading'
 import type { PropsWithChildren } from 'react'
 import type { Snippet } from '../../types/Snippet'
@@ -134,6 +135,7 @@ const EditFormWrap: React.FC = () => {
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false)
 	const [isConditionModalOpen, setIsConditionModalOpen] = useState(false)
+	const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false)
 
 	return (
 		<div className="wrap">
@@ -155,7 +157,7 @@ const EditFormWrap: React.FC = () => {
 						</div>
 						: null}
 
-					<CodeEditor {...{ isExpanded, setIsExpanded }} />
+					<CodeEditor {...{ isExpanded, setIsExpanded, setIsGenerateModalOpen }} />
 					<ConditionsEditor />
 				</main>
 
@@ -170,6 +172,7 @@ const EditFormWrap: React.FC = () => {
 			{isCondition(snippet) && <ConditionTable />}
 			<ConditionModal isOpen={isConditionModalOpen} setIsOpen={setIsConditionModalOpen} />
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
+			<GenerateCodeModal show={isGenerateModalOpen} onClose={() => setIsGenerateModalOpen(false)} />
 		</div>
 	)
 }

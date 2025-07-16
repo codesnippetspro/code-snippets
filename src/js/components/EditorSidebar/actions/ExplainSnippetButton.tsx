@@ -1,4 +1,4 @@
-import { Spinner, Tooltip } from '@wordpress/components'
+import { Spinner } from '@wordpress/components'
 import { __, _x } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
 import React, { useState } from 'react'
@@ -6,6 +6,7 @@ import { useGenerativeAPI } from '../../../hooks/useGenerativeAPI'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { isCondition } from '../../../utils/snippets/snippets'
 import { trimTrailingChar } from '../../../utils/text'
+import { Tooltip } from '../../common/Tooltip'
 import { CloudAIButton } from './CloudAIButton'
 import type { ButtonProps } from '../../common/Button'
 import type { ExplainSnippetFields, ExplainedSnippet } from '../../../hooks/useGenerativeAPI'
@@ -32,10 +33,8 @@ export const ExplainSnippetButton: React.FC<ExplainSnippetButtonProps> = ({
 			{isWorking ? <Spinner /> : null}
 
 			{errorMessage
-				? <Tooltip text={`${trimTrailingChar(errorMessage, '.')}. ${__('Please try again.', 'code-snippets')}`}>
-					<div>
-						<span className="dashicons dashicons-warning"></span>
-					</div>
+				? <Tooltip block end icon={<span className="dashicons dashicons-warning"></span>}>
+					{`${trimTrailingChar(errorMessage, '.')}. ${__('Please try again.', 'code-snippets')}`}
 				</Tooltip>
 				: null}
 

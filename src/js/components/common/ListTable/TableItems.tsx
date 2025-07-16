@@ -42,14 +42,15 @@ const TableCell = <T, >({ item, column }: TableCellProps<T>) => {
 	return column.isPrimary ? <th {...props} /> : <td {...props} />
 }
 
-export interface TableItemsProps<T, K extends Key> extends Pick<ListTableItemsProps<T, K>, 'items' | 'getKey' | 'columns' | 'noItems'> {
+export interface TableItemsProps<T, K extends Key>
+	extends Pick<ListTableItemsProps<T, K>, 'items' | 'getKey' | 'columns' | 'noItems' | 'rowClassName'> {
 	setSelected: Dispatch<SetStateAction<Set<K>>>
 }
 
-export const TableItems = <T, K extends Key>({ items, getKey, columns, noItems, setSelected }: TableItemsProps<T, K>) =>
+export const TableItems = <T, K extends Key>({ items, getKey, columns, noItems, setSelected, rowClassName }: TableItemsProps<T, K>) =>
 	0 < items.length
 		? items.map(item =>
-			<tr key={getKey(item)}>
+			<tr key={getKey(item)} className={rowClassName?.(item)}>
 				<CheckboxCell {...{ item, setSelected, getKey }} />
 
 				{columns.map(column =>

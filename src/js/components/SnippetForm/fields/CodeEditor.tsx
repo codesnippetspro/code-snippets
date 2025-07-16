@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSubmitSnippet } from '../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../utils/errors'
@@ -7,7 +7,10 @@ import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { Button } from '../../common/Button'
 import { ExpandIcon } from '../../common/icons/ExpandIcon'
 import { MinimiseIcon } from '../../common/icons/MinimiseIcon'
+import { ExplainSnippetButton } from '../../EditorSidebar/actions/ExplainSnippetButton'
+import { CloudAIButton } from '../../EditorSidebar/actions/CloudAIButton'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
+import type { LineWidget } from 'codemirror'
 import type { Dispatch, RefObject, SetStateAction } from 'react'
 
 interface EditorTextareaProps {
@@ -35,12 +38,76 @@ const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
 	)
 }
 
+const ExplainCodeButton: React.FC = () => {
+	const { codeEditorInstance } = useSnippetForm()
+	const [, setWidgets] = useState<LineWidget[]>([])
+
+	return (
+		<ExplainSnippetButton
+			field="code"
+			title={__('Explain this snippet with AI.', 'code-snippets')}
+			onRequest={() => {
+				setWidgets(widgets => {
+					widgets.forEach(widget => widget.clear())
+					return []
+				})
+			}}
+			onResponse={generated => {
+				const doc = codeEditorInstance?.codemirror.getDoc()
+				console.info('lines', generated.lines)
+
+				setWidgets(() => doc && generated.lines
+					? Object.values(generated.lines).map(generatedLine => {
+						const [line, message] = Object.entries(generatedLine)[0]
+						const lineNumber = parseInt(line, 10) - 1
+
+						const widget = document.createElement('div')
+						widget.className = 'code-line-explanation'
+
+						const icon = document.createElement('img')
+						icon.setAttribute('src', `${window.CODE_SNIPPETS?.urls.plugin}/assets/generate.svg`)
+
+						widget.appendChild(icon)
+						widget.appendChild(document.createTextNode(message))
+
+						return doc.addLineWidget(lineNumber, widget, { above: true })
+					}) : [])
+			}}
+		>
+			{__('Explain', 'code-snippets')}
+		</ExplainSnippetButton>
+	)
+}
+
+interface GenerateCodeButtonProps {
+	setShowCreateModal: Dispatch<SetStateAction<boolean>>
+}
+
+const GenerateCodeButton: React.FC<GenerateCodeButtonProps> = ({ setShowCreateModal }) => {
+	const { snippet, isWorking, isReadOnly } = useSnippetForm()
+
+	return (
+		<CloudAIButton
+			primary={0 === snippet.id}
+			snippet={snippet}
+			disabled={isWorking || isReadOnly}
+			title={__('Generate a new snippet with AI.', 'code-snippets')}
+			onClick={() => setShowCreateModal(true)}
+		>
+			{'' === snippet.code.trim()
+				? __('Generate', 'code-snippets')
+				: __('Generate New', 'code-snippets')}
+		</CloudAIButton>
+	)
+}
+
 export interface CodeEditorProps {
 	isExpanded: boolean
 	setIsExpanded: Dispatch<SetStateAction<boolean>>
+	setIsGenerateModalOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpanded }) => {
+export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpanded, setIsGenerateModalOpen }) => {
 	const { snippet, setSnippet, codeEditorInstance, setCodeEditorInstance } = useSnippetForm()
 	const { submitSnippet } = useSubmitSnippet()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -81,6 +148,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 		<div className="snippet-code-container">
 			<div className="above-snippet-code">
 				<h2><label htmlFor="snippet-code">{__('Snippet Content', 'code-snippets')}</label></h2>
+
+				<ExplainCodeButton />
+				<GenerateCodeButton setShowCreateModal={setIsGenerateModalOpen} />
 
 				<Button small className="expand-editor-button" onClick={() => setIsExpanded(current => !current)}>
 					{isExpanded ? <MinimiseIcon /> : <ExpandIcon />}

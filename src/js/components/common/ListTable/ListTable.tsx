@@ -40,6 +40,7 @@ export interface ListTableItemsProps<T, K extends Key> {
 	getKey: (item: T) => K
 	columns: ListTableColumn<T>[]
 	noItems?: ReactNode
+	rowClassName?: (item: T) => string
 }
 
 export interface ListTableProps<T, K extends Key> extends ListTableItemsProps<T, K>, ListTableNavProps<K> {
@@ -101,11 +102,11 @@ export const ListTable = <T, K extends Key>({
 	return (
 		<>
 			<TableNav which="top" {...tableNavProps} />
-			<table className={classnames('wp-list-table widefat', { striped, fixed }, className)}>
+			<table className={classnames('wp-list-table widefat snippets', { striped, fixed }, className)}>
 				<thead>
 					<TableHeadings which="head" {...tableHeadingsProps} />
 				</thead>
-				<tbody id="the-list">
+				<tbody>
 					<TableItems items={sortedItems} {...{ getKey, columns, noItems, setSelected }} />
 				</tbody>
 				<tfoot>

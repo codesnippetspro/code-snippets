@@ -24,7 +24,9 @@ const columns: ListTableColumn<Snippet>[] = [
 		sortedValue: snippet => snippet.name,
 		render: snippet =>
 			<a href={getSnippetEditUrl(snippet)} target="_blank" rel="noreferrer">
-				<strong>{getSnippetDisplayName(snippet)}</strong>
+				{snippet.active
+					? <strong>{getSnippetDisplayName(snippet)}</strong>
+					: getSnippetDisplayName(snippet)}
 			</a>
 	},
 	{
