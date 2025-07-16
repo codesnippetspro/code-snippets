@@ -39,13 +39,18 @@ jobs:
           fi
 
   changelog:
-    uses: codesnippetspro/.github-private/.github/workflows/changelog.yml@main
+    runs-on: ubuntu-latest
     needs: get-version
-    secrets: inherit
-    with:
-      repo: ${{ github.repository }}
-      branch: ${{ github.ref_name }}
-      tag: ${{ needs.get-version.outputs.version }}
+    outputs:
+      patch: ${{ steps.changelog.outputs.patch }}
+    steps:
+      - name: Create the changelog
+        id: changelog
+        uses: codesnippetspro/.github-private/.github/workflows/changelog.yml@main
+        with:
+          repo: ${{ github.repository }}
+          branch: ${{ github.ref_name }}
+          tag: ${{ needs.get-version.outputs.version }}
 
   git-push:
     runs-on: ubuntu-latest
