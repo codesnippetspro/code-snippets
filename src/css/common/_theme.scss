@@ -4,12 +4,9 @@ $accent: #2271b1;
 $primary: #03c7d2;
 $secondary: #d46f4d;
 $outline: #9e9e9e;
-$version-core: (background: #61c5cb, text: #fff);
-$version-pro: (background: #f7e8e3, text: #df9279);
-$visibility-private: (background: #f7e6be, text: #ca961b);
-$visibility-public: (background: #dbebf7, text: #2271b1);
 $brand-discord: #5865f2;
 $brand-facebook: #3b5998;
+
 $badges: (
 	php: (#1d97c6, #fff),
 	html: (#ef6a36, #fff),
@@ -28,6 +25,12 @@ $badges: (
 	info: (#d2e6f4, #2b71a3),
 	neutral: (#e2e5e5, #6c7e7e),
 	special: (#dfc5ef, #6e249c)
+);
+
+$notices: (
+	success: (#D3E9D3, #377A37),
+	warning: (#F2EBC3, #B0730A),
+	error: (#f8d7da, #721c24),
 );
 
 @function contrasting-text-color($bg-color) {

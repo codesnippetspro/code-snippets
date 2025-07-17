@@ -175,7 +175,7 @@ export const EditConditionForm: React.FC<EditConditionFormProps> = ({
 
 				{hasError
 					? <DismissibleNotice className="notice-error" onDismiss={() => setHasError(false)}>
-						{__('An unknown error occurred. Please try again later', 'code-snippets')}
+						<p>{__('An unknown error occurred. Please try again later', 'code-snippets')}</p>
 					</DismissibleNotice> : null}
 			</div>
 

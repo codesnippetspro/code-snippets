@@ -1,3 +1,5 @@
+@use '../common/notices';
+
 .wp-core-ui .button.button-simple-text {
 	background: none;
 	border: none;
@@ -15,6 +17,7 @@
 }
 
 .code-snippets-condition-modal {
+	@include notices.notices;
 	overflow: initial;
 
 	.components-modal__content {
@@ -112,14 +115,15 @@
 		border: 1px solid #C3C4C7;
 	}
 
-	.notice {
-		margin: 0;
-	}
 
 	.snippet-condition-editor {
 		padding-top: 24px;
 		margin-top: 24px;
 		border-block-start: 1px solid #E2E2E4;
+	}
+
+	.notice-error {
+		margin-top: 2em;
 	}
 
 	.modal-footer {
