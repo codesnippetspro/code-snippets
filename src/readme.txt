@@ -103,6 +103,17 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+ = 3.6.9 (2025-07-17) =
+
+ __Added__
+ * Added workflow for preparing and tagging new plugin versions
+ * Implemented new changelog automation workflows
+
+ __Fixed__
+ * Various fixes to improve changelog automation and dispatching logic
+ * Enhanced workflow consistency across multiple repositories
+
+
 = 3.6.8 (2025-02-14) =
 
 __Added__
