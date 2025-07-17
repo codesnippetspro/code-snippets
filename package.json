@@ -2,7 +2,7 @@
     "name": "code-snippets",
     "description": "Manage code snippets running on a WordPress-powered site through a graphical interface.",
     "homepage": "https://codesnippets.pro",
-    "version": "3.6.8",
+    "version": "3.6.9",
     "main": "src/dist/edit.js",
     "directories": {
         "test": "tests"
