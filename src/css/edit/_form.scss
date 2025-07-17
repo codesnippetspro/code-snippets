@@ -76,7 +76,7 @@ $sidebar-gap: 30px;
 
 	.snippet-editor-sidebar {
 		grid-area: sidebar;
-		max-width: $sidebar-width;
+		max-inline-size: $sidebar-width;
 	}
 
 	@media (width <= 1024px) {

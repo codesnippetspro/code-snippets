@@ -4,42 +4,45 @@ $accent: #2271b1;
 $primary: #03c7d2;
 $secondary: #d46f4d;
 $outline: #9e9e9e;
-$version-core: (background: #61c5cb, text: #fff);
-$version-pro: (background: #f7e8e3, text: #df9279);
-$visibility-private: (background: #f7e6be, text: #ca961b);
-$visibility-public: (background: #dbebf7, text: #2271b1);
 $brand-discord: #5865f2;
 $brand-facebook: #3b5998;
+$cloud: #00bcd4;
+$cloud-update: #ff9800;
+
+/* format: background-color [color] */
 $badges: (
-	php: (#1d97c6, #fff),
-	html: (#ef6a36, #fff),
-	css: (#9b59b6, #fff),
-	js: (#ffeb3b, #1c1f20),
-	cond: (#2eae95, #fff),
-	core: (#61c5cb, #fff),
-	pro: (#f7e8e3, #df9279),
-	cloud: (#00bcd4, #fff),
-	bundles: (#50575e, #fff),
-	cloud_search: (#ff9800, #fff),
-	private: (#f7e6be, #ca961b),
-	public: (#dbebf7, #2271b1),
-	success: (#d3e8d1, #447340),
-	failure: (#fad7c1, #a24b16),
-	info: (#d2e6f4, #2b71a3),
-	neutral: (#e2e5e5, #6c7e7e),
-	special: (#dfc5ef, #6e249c)
+	php: #1d97c6,
+	html: #ef6a36,
+	css: #9b59b6,
+	js: #ffeb3b #1c1f20,
+	cond: #2eae95,
+	core: #61c5cb,
+	pro: #f7e8e3 #df9279,
+	cloud: $cloud,
+	bundles: #50575e,
+	cloud_search: #ff9800,
+	private: #f7e6be #ca961b,
+	public: #dbebf7 $accent,
+	success: #d3e8d1 #447340,
+	failure: #fad7c1 #a24b16,
+	info: #d2e6f4 #2b71a3,
+	neutral: #e2e5e5 #6c7e7e,
+	special: #dfc5ef #6e249c
+);
+$notices: (
+	success: #d3e9d3 #377a37,
+	warning: #f2ebc3 #b0730a,
+	error: #f8d7da #721c24,
 );
 
 @function contrasting-text-color($bg-color) {
-	$red: color.channel($bg-color, 'red', $space: rgb);
-	$green: color.channel($bg-color, 'green', $space: rgb);
-	$blue: color.channel($bg-color, 'blue', $space: rgb);
+	$sum: 0;
 
-	@if ($red * 0.299 + $green * 0.587 + $blue * 0.114) > 186 {
-		@return #1C1F20;
-	} @else {
-		@return #fff;
+	@each $color, $multiplier in (red 0.299, green 0.587, blue 0.114) {
+		$sum: $sum + color.channel($bg-color, $color, $space: rgb) * $multiplier;
 	}
+
+	@return if ($sum > 186, #1c1f20, #fff)
 }
 
 @mixin link-colors($color, $lightness: 15%) {
