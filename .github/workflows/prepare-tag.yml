@@ -15,86 +15,121 @@ on:
         default: next
 
 jobs:
-  get-version:
+  version:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout branch for release
         uses: actions/checkout@v4
 
-      - name: Get tag version
+      - name: Get tag version from package.json
         id: version
         run: |
-          if [ "${{ github.event.inputs.version }}" = "next" ]; then
-            CURR=$(jq -r .version package.json)
+          INPUT_VERSION=${{ github.event.inputs.version }} 
+          if [ -z "$INPUT_VERSION" ]; then
+            echo "::info:: No version input provided, defaulting to 'next'."
+            INPUT_VERSION="next"
+          fi
+
+          if [ $INPUT_VERSION = "next" ]; then
+            CURR=$(jq -r .version composer.json)
             MAJOR=$(echo $CURR | cut -d. -f1)
             MINOR=$(echo $CURR | cut -d. -f2)
             PATCH=$(echo $CURR | cut -d. -f3)
             NEW_PATCH=$((PATCH+1))
             NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-            echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+            VERSION="$NEW_VERSION"
           else
-            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+            VERSION="${{ github.event.inputs.version }}"
           fi
+          
+          if [ -z "$VERSION" ]; then
+            echo "::error::Version is empty. Failing job."
+            exit 1
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
   changelog:
-    needs: get-version
-    permissions:
-      contents: write
-      pull-requests: write
-      actions: read
-      models: read
-    uses: codesnippetspro/.github-private/.github/workflows/changelog.yml@v1
-    with:
-      repo: ${{ github.repository }}
-      branch: ${{ github.ref_name }}
-      tag: ${{ needs.get-version.outputs.version }}
-    secrets: inherit
-
-
-  git-push:
     runs-on: ubuntu-latest
-    needs: [get-version, changelog]
+    needs: version
+    strategy:
+      matrix:
+        include:
+          - target-file: "CHANGELOG.md"
+            template: "changelog"
+            name: "github-changelog"
+          - target-file: "src/readme.txt"
+            template: "readme"
+            name: "wordpress-readme"
     steps:
-      - name: Checkout branch for release
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-        
-      - name: Install Dependencies & Configure Git
-        run: |
-          npm install
-          git config user.name "code-snippets-bot"
-          git config user.email "sre@codesnippets.pro"
-            
-      - name: Create and switch to tag branch
-        run: |
-          git checkout -b "tag/v${{ needs.get-version.outputs.version }}"
-
-      - name: Commit changelog update
-        run: |
-          echo "${{ needs.changelog.outputs.patch }}" | git apply -
-          git ls-files --others --modified --exclude-standard | xargs git add
-          git add -u
-          git commit -m "chore(changelog): v${{ needs.get-version.outputs.version }}"
-      
-      - name: Commit version update
-        run: |
-          npm --no-git-tag-version version ${{ needs.get-version.outputs.version }}
-          git ls-files --others --modified --exclude-standard | xargs git add
-          git add -u
-          git commit -m "chore(tag): v${{ needs.get-version.outputs.version }}"
-      
-      - name: "Push to branch `tag/v${{ needs.get-version.outputs.version }}`"
-        run: |
-          git push --set-upstream origin "tag/v${{ needs.get-version.outputs.version }}"
-      
-      - name: "Open pull request: chore(release): `v${{ needs.get-version.outputs.version }}`"
+      - name: Dispatch changelog generation
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create --title 'chore(release): `v${{ needs.get-version.outputs.version }}`' --body 'Release `v${{ needs.get-version.outputs.version }}`' --base main --head "tag/v${{ needs.get-version.outputs.version }}"
+          
+          if ! command -v gh &> /dev/null; then
+            sudo apt update && sudo apt install -y gh
+          fi
+          
+          gh workflow run changelog.yml \
+            --repo codesnippetspro/.github-private \
+            --field repo="${{ github.repository }}" \
+            --field branch="${{ github.ref_name }}" \
+            --field version="${{ needs.version.outputs.tag }}" \
+            --field template="${{ matrix.template }}" \
+            --field target-file="./${{ matrix.target-file }}"
+
+      - name: Monitor workflow execution
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          workflow_name="${{ matrix.name }}"
+          target_repo="codesnippetspro/.github-private"
+          max_attempts=30  # Maximum 5 minutes (30 * 10 seconds)
+          attempt=0
+          
+          echo "Monitoring workflow: $workflow_name in repository: $target_repo"
+          
+          # Check if the repository exists and is accessible
+          if ! gh repo view "$target_repo" >/dev/null 2>&1; then
+            echo "::warning::Repository $target_repo is not accessible or doesn't exist"
+            echo "::warning::Skipping monitoring for workflow: $workflow_name"
+            exit 0
+          fi
+          
+          while : ; do
+            attempt=$((attempt + 1))
+            
+            # Check if we've exceeded max attempts
+            if [ $attempt -gt $max_attempts ]; then
+              echo "::warning::Timeout reached after $max_attempts attempts. Workflow '$workflow_name' monitoring stopped."
+              echo "::warning::This might be expected if testing locally or if the workflow doesn't exist yet."
+              exit 0
+            fi
+            
+            # Get the latest run for this workflow with error handling
+            if ! status=$(gh run list --workflow changelog.yml --limit 1 --json status -q '.[0].status' --repo "$target_repo" 2>/dev/null); then
+              echo "::warning::Attempt $attempt/$max_attempts: Could not find workflow '$workflow_name' or no runs exist yet. Checking again..."
+              sleep 10
+              continue
+            fi
+            
+            if ! conclusion=$(gh run list --workflow changelog.yml --limit 1 --json conclusion -q '.[0].conclusion' --repo "$target_repo" 2>/dev/null); then
+              echo "::warning::Attempt $attempt/$max_attempts: Could not get conclusion for workflow '$workflow_name'. Checking again..."
+              sleep 10
+              continue
+            fi
+            
+            if [ "$status" = "completed" ]; then
+              if [ "$conclusion" != "success" ]; then
+                echo "::error::Workflow $workflow_name failed with conclusion: $conclusion"
+                exit 1
+              fi
+              echo "✅ Workflow $workflow_name completed successfully"
+              break
+            fi
+            
+            echo "⏳ Attempt $attempt/$max_attempts: Workflow $workflow_name is still running (status: $status). Waiting..."
+            sleep 10
+          done
