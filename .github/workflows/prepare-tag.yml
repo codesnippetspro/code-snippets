@@ -176,7 +176,7 @@ jobs:
           workflow_name="${{ matrix.name }}"
           workflow_id="${{ steps.dispatch.outputs.workflow_id }}"
           target_repo="codesnippetspro/.github-private"
-          max_attempts=10
+          max_attempts=20
           attempt=0
           
           echo "Monitoring workflow: $workflow_name in repository: $target_repo"
