@@ -632,7 +632,7 @@ class Command extends WP_CLI_Command {
 
 		$license_key = trim( $assoc_args['licensekey'] );
 		
-		// Validate license key format (basic validation)
+		// Validate license key format
 		if ( empty( $license_key ) || strlen( $license_key ) < 10 ) {
 			WP_CLI::error( 'Invalid license key format.' );
 		}
@@ -715,5 +715,87 @@ class Command extends WP_CLI_Command {
 		} catch ( Exception $e ) {
 			WP_CLI::error( 'License activation failed: ' . $e->getMessage() );
 		}
+	}
+	/**
+	 * Checks the license status
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Get license status
+	 *     $ wp snippet license-status
+	 *     License Status: Active
+	 *     License Key: ABC***DEF***GHI
+	 *     Expires: Never
+	 *     Activations: 1/5
+	 *
+	 * @param array $args       Indexed array of positional arguments.
+	 * @param array $assoc_args Associative array of associative arguments.
+	 *
+	 * @subcommand license-status
+	 */
+	public function license_status( array $args, array $assoc_args ) {
+		// Get Freemius instance
+		$fs = null;
+		if ( function_exists( 'freemius' ) ) {
+			$fs = freemius( 'code-snippets' );
+		}
+
+		if ( ! $fs ) {
+			WP_CLI::error( 'Freemius SDK not available' );
+		}
+
+		// Try different methods to get license information
+		$license = null;
+		$is_licensed = $fs->can_use_premium_code();
+		
+		// Try to get license using different Freemius methods
+		if ( method_exists( $fs, '_get_license' ) ) {
+			$license = $fs->_get_license();
+		} elseif ( method_exists( $fs, 'get_license' ) ) {
+			$license = $fs->get_license();
+		} elseif ( method_exists( $fs, 'get_user_license' ) ) {
+			$license = $fs->get_user_license();
+		}
+
+		// Build simple status message
+		$status = $is_licensed ? 'Active' : 'Inactive';
+		$license_key = 'Not available';
+		$expires = 'N/A';
+		$activations = 'N/A';
+
+		if ( is_object( $license ) ) {
+			// get masked license key
+			if ( method_exists( $license, 'get_html_escaped_masked_secret_key' ) ) {
+				$license_key = $license->get_html_escaped_masked_secret_key();
+			} elseif ( method_exists( $license, 'get_masked_secret_key' ) ) {
+				$license_key = $license->get_masked_secret_key();
+			} elseif ( isset( $license->secret_key ) ) {
+				$license_key = substr( $license->secret_key, 0, 3 ) . '***' . substr( $license->secret_key, -3 );
+			}
+
+			// Get expiration date
+			if ( method_exists( $license, 'is_lifetime' ) && $license->is_lifetime() ) {
+				$expires = 'Never';
+			} elseif ( isset( $license->expiration ) ) {
+				$expires = $license->expiration;
+			}
+
+			// Get activation count
+			if ( isset( $license->activated ) ) {
+				if ( method_exists( $license, 'is_unlimited' ) && $license->is_unlimited() ) {
+					$activations = $license->activated . '/∞';
+				} elseif ( isset( $license->quota ) ) {
+					$activations = $license->activated . '/' . $license->quota;
+				} else {
+					$activations = $license->activated;
+				}
+			}
+		}
+
+		// Display simple status
+		WP_CLI::line( 'License Status: ' . $status );
+		WP_CLI::line( 'License Key: ' . $license_key );
+		WP_CLI::line( 'Expires: ' . $expires );
+		WP_CLI::line( 'Activations: ' . $activations );
 	}
 }
