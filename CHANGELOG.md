@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.6.9] - 2025-07-17
+
+### Added
+* Add workflow automation for tag preparation and release management.
+* New pull request workflow enhancements for artifact handling.
+
+### Changed
+* Updated continuous integration workflows to support dynamic PHP versions.
+* Enhanced error handling in changelog generation scripts.
+* Enhanced security protocols in workflow executions.
+
+### Fixed
+* Fix for version tag dispatch mechanisms in CI configuration.
+* Multiple fixes in various scripts to enhance stability and performance.
+* Corrections in workflow condition checks to prevent erroneous triggers.
+
 ## [3.6.8] (2025-02-14)
 
 ### Added
