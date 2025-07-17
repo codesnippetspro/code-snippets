@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.6.9] - 2025-07-17
+
+### Added
+* Added new workflows for build and deploy processes ([#402](https://github.com/codesnippetspro/code-snippets/pull/402))
+
+### Changed
+* Updated existing workflows to improve efficiency in CI/CD pipelines
+
+### Fixed
+* Fixed issues related to workflow failures on specific branches
+
 ## [3.6.8] (2025-02-14)
 
 ### Added
