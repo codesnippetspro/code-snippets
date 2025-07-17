@@ -1,8 +1,8 @@
 import { addQueryArgs } from '@wordpress/url'
 import { REST_SNIPPETS_BASE } from '../restAPI'
-import { createSnippetObject } from './snippets'
+import { createSnippetObject, isCondition } from './snippets'
 import type { RestAPI } from '../../hooks/useRestAPI'
-import type { SnippetSchema } from '../../types/schema/SnippetSchema'
+import type { SnippetSchema, WritableSnippetSchema } from '../../types/schema/SnippetSchema'
 import type { Snippet } from '../../types/Snippet'
 import type { SnippetsExport } from '../../types/schema/SnippetsExport'
 
@@ -26,9 +26,32 @@ const buildURL = ({ id, network }: Pick<Snippet, 'id' | 'network'>, action?: str
 		{ network: network ? true : undefined }
 	)
 
-const mapToSchema = ({ conditionId, ...fields }: Snippet): SnippetSchema => ({
-	condition_id: conditionId,
-	...fields
+const mapToSchema = ({
+	name,
+	desc,
+	code,
+	tags,
+	scope,
+	priority,
+	active,
+	network,
+	conditionId,
+	conditions
+}: Snippet): WritableSnippetSchema => ({
+	name,
+	desc,
+	code: isCondition({ scope })
+		? JSON.stringify(
+			Object.values(conditions)
+				.map(group => group && Object.values(group))
+				.filter(Boolean))
+		: code,
+	tags,
+	scope,
+	priority,
+	active,
+	network,
+	condition_id: conditionId
 })
 
 export const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
@@ -41,11 +64,11 @@ export const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI 
 			.then(createSnippetObject),
 
 	create: snippet =>
-		post<SnippetSchema>(REST_SNIPPETS_BASE, mapToSchema(snippet))
+		post<SnippetSchema, WritableSnippetSchema>(REST_SNIPPETS_BASE, mapToSchema(snippet))
 			.then(createSnippetObject),
 
 	update: snippet =>
-		post<SnippetSchema>(snippet.id ? buildURL(snippet) : REST_SNIPPETS_BASE, mapToSchema(snippet))
+		post<SnippetSchema, WritableSnippetSchema>(snippet.id ? buildURL(snippet) : REST_SNIPPETS_BASE, mapToSchema(snippet))
 			.then(createSnippetObject),
 
 	delete: snippet =>

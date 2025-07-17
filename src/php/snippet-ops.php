@@ -634,15 +634,6 @@ function execute_active_snippets(): bool {
 	}
 
 	foreach ( $data as $table_name => $active_snippets ) {
-		$conditions = [];
-
-		foreach ( $active_snippets as $snippet ) {
-			if ( 'condition' === $snippet['scope'] ) {
-				$snippet_id = intval( $snippet['id'] );
-				$conditions[ $snippet_id ] = Conditions\evaluate_condition( $snippet['code'] );
-			}
-		}
-
 		// Loop through the returned snippets and execute the PHP code.
 		foreach ( $active_snippets as $snippet ) {
 			$snippet_id = intval( $snippet['id'] );

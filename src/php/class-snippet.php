@@ -25,7 +25,6 @@ use Exception;
  * @property bool                   $shared_network     Whether the snippet is a shared network snippet.
  * @property string                 $modified           The date and time when the snippet data was most recently saved to the database.
  * @property array{string,int}|null $code_error         Code error encountered when last testing snippet code.
- * @property object|null            $conditions         Snippet conditions.
  * @property int                    $revision           Revision or version number of snippet.
  * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
  *
@@ -72,7 +71,6 @@ class Snippet extends Data_Item {
 			'shared_network' => null,
 			'modified'       => null,
 			'code_error'     => null,
-			'conditions'     => null,
 			'revision'       => 1,
 			'cloud_id'       => '',
 		);
@@ -128,22 +126,6 @@ class Snippet extends Data_Item {
 			default:
 				return $value;
 		}
-	}
-
-	/**
-	 * Retrieve list of current data fields.
-	 *
-	 * @return array<string, mixed> Field names keyed to current values.
-	 */
-	public function get_fields(): array {
-		$fields = parent::get_fields();
-
-		if ( 'condition' === $this->scope ) {
-			$fields['conditions'] = json_decode( $fields['code'] );
-			$fields['code'] = '';
-		}
-
-		return $fields;
 	}
 
 	/**
