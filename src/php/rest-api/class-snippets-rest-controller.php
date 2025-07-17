@@ -567,6 +567,9 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 				'tags'           => [
 					'description' => esc_html__( 'List of tag categories the snippet belongs to.', 'code-snippets' ),
 					'type'        => 'array',
+					'items'       => [
+						'type' => 'string',
+					],
 				],
 				'scope'          => [
 					'description' => esc_html__( 'Context in which the snippet is executable.', 'code-snippets' ),
@@ -586,16 +589,23 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 				],
 				'network'        => [
 					'description' => esc_html__( 'Whether the snippet is network-wide instead of site-wide.', 'code-snippets' ),
-					'type'        => 'boolean',
+					'type'        => [ 'boolean', 'null' ],
 					'default'     => null,
 				],
 				'shared_network' => [
 					'description' => esc_html__( 'If a network snippet, whether can be activated on discrete sites instead of network-wide.', 'code-snippets' ),
-					'type'        => 'boolean',
+					'type'        => [ 'boolean', 'null' ],
 				],
 				'modified'       => [
 					'description' => esc_html__( 'Date and time when the snippet was last modified, in ISO format.', 'code-snippets' ),
 					'type'        => 'string',
+					'format'      => 'date-time',
+					'readonly'    => true,
+				],
+				'code_error'     => [
+					'description' => esc_html__( 'Error message if the snippet code could not be parsed.', 'code-snippets' ),
+					'type'        => 'string',
+					'readonly'    => true,
 				],
 			],
 		];

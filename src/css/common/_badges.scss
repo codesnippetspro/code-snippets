@@ -47,8 +47,12 @@
 }
 
 @each $name, $colors in theme.$badges {
+	$text-color: #fff;
 	$background-color: list.nth($colors, 1);
-	$text-color: list.nth($colors, 2);
+
+	@if list.length($colors) > 1 {
+		$text-color: list.nth($colors, 2);
+	}
 
 	.badge.#{$name}-badge,
 	.nav-tab-inactive:hover .badge.#{$name}-badge,
