@@ -103,6 +103,20 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+ = 3.6.9 (2025-07-17) =
+
+__Added__
+* New administrative features for workflow management.
+* Integration of advanced security protocols.
+
+__Changed__
+* Improved UI responsiveness across various devices.
+* Enhanced error handling and logging capabilities.
+
+__Fixed__
+* Addressed miscellaneous bugs in workflow engine and dictation functionality.
+
+
 = 3.6.8 (2025-02-14) =
 
 __Added__
