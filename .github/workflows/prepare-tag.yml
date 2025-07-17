@@ -65,7 +65,7 @@ jobs:
     steps:
       - name: Dispatch changelog generation
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           
           if ! command -v gh &> /dev/null; then
@@ -82,7 +82,7 @@ jobs:
 
       - name: Monitor workflow execution
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           workflow_name="${{ matrix.name }}"
           target_repo="codesnippetspro/.github-private"
