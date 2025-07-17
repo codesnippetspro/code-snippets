@@ -64,32 +64,110 @@ jobs:
             name: "wordpress-readme"
     steps:
       - name: Dispatch changelog generation
+        id: dispatch
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          
+          # Install latest GitHub CLI
           if ! command -v gh &> /dev/null; then
+            sudo mkdir -p -m 755 /etc/apt/keyrings
+            wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+            sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
             sudo apt update && sudo apt install -y gh
+          else
+            # Check if gh version supports --json flag
+            if ! gh workflow list --help | grep -q "\--json"; then
+              echo "📦 Updating GitHub CLI to latest version..."
+              sudo mkdir -p -m 755 /etc/apt/keyrings
+              wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+              sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+              echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+              sudo apt update && sudo apt install -y gh
+            fi
           fi
+
+          target_repo="codesnippetspro/.github-private"
           
-          gh workflow run changelog.yml \
-            --repo codesnippetspro/.github-private --ref main \
+          # Try different possible workflow names for "Changelog Generate"
+          workflow_candidates=(
+            "(Changelog): Generate"
+            "Changelog Generate"
+            "Changelog: Generate"
+            "changelog"
+            "generate"
+          )
+          
+          workflow_id=""
+          workflow_name=""
+          
+          # Dynamically retrieve the workflow ID by trying different name patterns
+          echo "🔍 Searching for changelog workflow in $target_repo..."
+          
+          for candidate in "${workflow_candidates[@]}"; do
+            echo "  Trying: '$candidate'"
+            if workflow_info=$(gh workflow list --repo "$target_repo" --json name,id | jq -r ".[] | select(.name == \"$candidate\") | .id"); then
+              if [ -n "$workflow_info" ] && [ "$workflow_info" != "null" ]; then
+                workflow_id="$workflow_info"
+                workflow_name="$candidate"
+                echo "✅ Found workflow '$candidate' with ID: $workflow_id"
+                break
+              fi
+            fi
+          done
+          
+          # If exact match failed, try partial matching
+          if [ -z "$workflow_id" ]; then
+            echo "🔍 Trying partial name matching..."
+            if workflow_info=$(gh workflow list --repo "$target_repo" --json name,id | jq -r '.[] | select(.name | test("(?i)(changelog|generate)")) | "\(.id)|\(.name)"' | head -1); then
+              if [ -n "$workflow_info" ] && [ "$workflow_info" != "null" ]; then
+                workflow_id=$(echo "$workflow_info" | cut -d'|' -f1)
+                workflow_name=$(echo "$workflow_info" | cut -d'|' -f2)
+                echo "✅ Found workflow '$workflow_name' with ID: $workflow_id"
+              fi
+            fi
+          fi
+
+          
+          if [ -z "$workflow_id" ]; then
+            echo "::error::No changelog workflow found in $target_repo"
+            echo "🔍 Available workflows:"
+            gh workflow list --repo "$target_repo" --json name,id | jq -r '.[] | "  \(.name) (ID: \(.id))"'
+            echo "skip_monitoring=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "✅ Found workflow '$workflow_name' with ID: $workflow_id"
+
+          # Attempt to dispatch the workflow
+          if ! gh workflow run "$workflow_id" \
+            --repo "$target_repo" --ref main \
             --field repo="${{ github.repository }}" \
             --field branch="${{ github.ref_name }}" \
             --field version="${{ needs.version.outputs.tag }}" \
             --field template="${{ matrix.template }}" \
-            --field target-file="./${{ matrix.target-file }}"
+            --field target-file="./${{ matrix.target-file }}"; then
+            echo "::error::Failed to dispatch workflow '$workflow_name' in $target_repo"
+            exit 1
+          fi
+
+          echo "✅ Successfully dispatched changelog generation for ${{ matrix.name }}"
+          echo "skip_monitoring=false" >> $GITHUB_OUTPUT
+          echo "workflow_id=$workflow_id" >> $GITHUB_OUTPUT
+          echo "workflow_name=$workflow_name" >> $GITHUB_OUTPUT
 
       - name: Monitor workflow execution
+        if: steps.dispatch.outputs.skip_monitoring != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          workflow_name="${{ matrix.name }}"
+          workflow_name="${{ steps.dispatch.outputs.workflow_name }}"
+          workflow_id="${{ steps.dispatch.outputs.workflow_id }}"
           target_repo="codesnippetspro/.github-private"
-          max_attempts=30  # Maximum 5 minutes (30 * 10 seconds)
+          max_attempts=10
           attempt=0
           
-          echo "Monitoring workflow: $workflow_name in repository: $target_repo"
+          echo "Monitoring workflow: $workflow_name (ID: $workflow_id) in repository: $target_repo"
           
           # Check if the repository exists and is accessible
           if ! gh repo view "$target_repo" >/dev/null 2>&1; then
@@ -98,38 +176,54 @@ jobs:
             exit 0
           fi
           
+          # Wait a bit for the workflow to start
+          echo "⏳ Waiting 10 seconds for workflow to start..."
+          sleep 10
+          
           while : ; do
             attempt=$((attempt + 1))
             
             # Check if we've exceeded max attempts
             if [ $attempt -gt $max_attempts ]; then
               echo "::warning::Timeout reached after $max_attempts attempts. Workflow '$workflow_name' monitoring stopped."
-              echo "::warning::This might be expected if testing locally or if the workflow doesn't exist yet."
+              echo "::warning::This might be expected if testing locally or if the workflow takes longer than expected."
               exit 0
             fi
             
-            # Get the latest run for this workflow with error handling
-            if ! status=$(gh run list --workflow changelog.yml --limit 1 --json status -q '.[0].status' --repo "$target_repo" --ref main 2>/dev/null); then
-              echo "::warning::Attempt $attempt/$max_attempts: Could not find workflow '$workflow_name' or no runs exist yet. Checking again..."
+            # Get the latest run for this workflow using the workflow ID
+            echo "🔍 Attempt $attempt/$max_attempts: Checking workflow status..."
+            
+            # First check if we can list any runs at all
+            if ! gh run list --repo "$target_repo" --limit 1 --json status,conclusion,workflowDatabaseId >/dev/null 2>&1; then
+              echo "::warning::Attempt $attempt/$max_attempts: Cannot access workflow runs in $target_repo. Checking again..."
               sleep 10
               continue
             fi
             
-            if ! conclusion=$(gh run list --workflow changelog.yml --limit 1 --json conclusion -q '.[0].conclusion' --repo "$target_repo" --ref main 2>/dev/null); then
-              echo "::warning::Attempt $attempt/$max_attempts: Could not get conclusion for workflow '$workflow_name'. Checking again..."
+            # Try to get the status of the most recent run for our workflow
+            run_data=$(gh run list --repo "$target_repo" --limit 10 --json status,conclusion,workflowDatabaseId 2>/dev/null | jq -r ".[] | select(.workflowDatabaseId == $workflow_id) | [.status, .conclusion] | @tsv" | head -1)
+            
+            if [ -z "$run_data" ]; then
+              echo "⏳ Attempt $attempt/$max_attempts: No runs found for workflow ID $workflow_id yet. Checking again..."
               sleep 10
               continue
             fi
+            
+            status=$(echo "$run_data" | cut -f1)
+            conclusion=$(echo "$run_data" | cut -f2)
+            
+            echo "📊 Workflow status: $status, conclusion: $conclusion"
             
             if [ "$status" = "completed" ]; then
-              if [ "$conclusion" != "success" ]; then
-                echo "::error::Workflow $workflow_name failed with conclusion: $conclusion"
+              if [ "$conclusion" != "success" ] && [ "$conclusion" != "null" ]; then
+                echo "::error::Workflow $workflow_name (ID: $workflow_id) failed with conclusion: $conclusion"
                 exit 1
               fi
-              echo "✅ Workflow $workflow_name completed successfully"
+              echo "✅ Workflow $workflow_name (ID: $workflow_id) completed successfully"
               break
             fi
             
-            echo "⏳ Attempt $attempt/$max_attempts: Workflow $workflow_name is still running (status: $status). Waiting..."
+            echo "⏳ Attempt $attempt/$max_attempts: Workflow $workflow_name (ID: $workflow_id) is still running (status: $status). Waiting..."
             sleep 10
           done
+
