@@ -717,16 +717,33 @@ class Command extends WP_CLI_Command {
 		}
 	}
 	/**
-	 * Checks the license status
+	 * Gets the current license status and information.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - json
+	 *   - yaml
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     # Get license status
 	 *     $ wp snippet license-status
-	 *     License Status: Active
-	 *     License Key: ABC***DEF***GHI
-	 *     Expires: Never
-	 *     Activations: 1/5
+	 *     +----------------+------------------+
+	 *     | Field          | Value            |
+	 *     +----------------+------------------+
+	 *     | is_licensed    | Yes              |
+	 *     | license_key    | ABC***DEF***GHI  |
+	 *     | is_expired     | No               |
+	 *     | expires        | Never            |
+	 *     | activations    | 1/5              |
+	 *     +----------------+------------------+
 	 *
 	 * @param array $args       Indexed array of positional arguments.
 	 * @param array $assoc_args Associative array of associative arguments.
@@ -741,7 +758,7 @@ class Command extends WP_CLI_Command {
 		}
 
 		if ( ! $fs ) {
-			WP_CLI::error( 'Freemius SDK not available' );
+			WP_CLI::error( 'Freemius SDK not available or plugin not properly initialized.' );
 		}
 
 		// Try different methods to get license information
@@ -757,45 +774,51 @@ class Command extends WP_CLI_Command {
 			$license = $fs->get_user_license();
 		}
 
-		// Build simple status message
-		$status = $is_licensed ? 'Active' : 'Inactive';
-		$license_key = 'Not available';
-		$expires = 'N/A';
-		$activations = 'N/A';
+		$status_info = array(
+			'is_licensed' => $is_licensed ? 'Yes' : 'No',
+			'license_key' => 'Not available',
+			'is_expired'  => 'N/A',
+			'expires'     => 'N/A',
+			'activations' => 'N/A',
+		);
 
 		if ( is_object( $license ) ) {
-			// get masked license key
+			// Try different methods to get masked license key
 			if ( method_exists( $license, 'get_html_escaped_masked_secret_key' ) ) {
-				$license_key = $license->get_html_escaped_masked_secret_key();
+				$status_info['license_key'] = $license->get_html_escaped_masked_secret_key();
 			} elseif ( method_exists( $license, 'get_masked_secret_key' ) ) {
-				$license_key = $license->get_masked_secret_key();
+				$status_info['license_key'] = $license->get_masked_secret_key();
 			} elseif ( isset( $license->secret_key ) ) {
-				$license_key = substr( $license->secret_key, 0, 3 ) . '***' . substr( $license->secret_key, -3 );
+				$status_info['license_key'] = substr( $license->secret_key, 0, 3 ) . '***' . substr( $license->secret_key, -3 );
+			}
+
+			// Check if expired
+			if ( method_exists( $license, 'is_expired' ) ) {
+				$status_info['is_expired'] = $license->is_expired() ? 'Yes' : 'No';
 			}
 
 			// Get expiration date
 			if ( method_exists( $license, 'is_lifetime' ) && $license->is_lifetime() ) {
-				$expires = 'Never';
+				$status_info['expires'] = 'Never';
 			} elseif ( isset( $license->expiration ) ) {
-				$expires = $license->expiration;
+				$status_info['expires'] = $license->expiration;
 			}
 
 			// Get activation count
 			if ( isset( $license->activated ) ) {
 				if ( method_exists( $license, 'is_unlimited' ) && $license->is_unlimited() ) {
-					$activations = $license->activated . '/∞';
+					$status_info['activations'] = $license->activated . '/∞';
 				} elseif ( isset( $license->quota ) ) {
-					$activations = $license->activated . '/' . $license->quota;
+					$status_info['activations'] = $license->activated . '/' . $license->quota;
 				} else {
-					$activations = $license->activated;
+					$status_info['activations'] = $license->activated;
 				}
 			}
 		}
 
-		// Display simple status
-		WP_CLI::line( 'License Status: ' . $status );
-		WP_CLI::line( 'License Key: ' . $license_key );
-		WP_CLI::line( 'Expires: ' . $expires );
-		WP_CLI::line( 'Activations: ' . $activations );
+		// Create a custom formatter for license status fields
+		$license_fields = array( 'is_licensed', 'license_key', 'is_expired', 'expires', 'activations' );
+		$formatter = new Formatter( $assoc_args, $license_fields, 'license' );
+		$formatter->display_item( (object) $status_info );
 	}
 }
