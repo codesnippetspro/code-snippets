@@ -73,7 +73,7 @@ jobs:
           fi
           
           gh workflow run changelog.yml \
-            --repo codesnippetspro/.github-private \
+            --repo codesnippetspro/.github-private --ref main \
             --field repo="${{ github.repository }}" \
             --field branch="${{ github.ref_name }}" \
             --field version="${{ needs.version.outputs.tag }}" \
@@ -109,13 +109,13 @@ jobs:
             fi
             
             # Get the latest run for this workflow with error handling
-            if ! status=$(gh run list --workflow changelog.yml --limit 1 --json status -q '.[0].status' --repo "$target_repo" 2>/dev/null); then
+            if ! status=$(gh run list --workflow changelog.yml --limit 1 --json status -q '.[0].status' --repo "$target_repo" --ref main 2>/dev/null); then
               echo "::warning::Attempt $attempt/$max_attempts: Could not find workflow '$workflow_name' or no runs exist yet. Checking again..."
               sleep 10
               continue
             fi
             
-            if ! conclusion=$(gh run list --workflow changelog.yml --limit 1 --json conclusion -q '.[0].conclusion' --repo "$target_repo" 2>/dev/null); then
+            if ! conclusion=$(gh run list --workflow changelog.yml --limit 1 --json conclusion -q '.[0].conclusion' --repo "$target_repo" --ref main 2>/dev/null); then
               echo "::warning::Attempt $attempt/$max_attempts: Could not get conclusion for workflow '$workflow_name'. Checking again..."
               sleep 10
               continue
