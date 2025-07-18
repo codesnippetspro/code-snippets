@@ -110,7 +110,7 @@ const ModalForm: React.FC<PropsWithChildren<ModalFormProps>> = ({
 			: condition.name
 
 		const duplicateNames = snippetsList?.filter(snippet =>
-			snippet.name === name && snippet.id !== condition.id).length
+			snippet.name.startsWith(name) && snippet.id !== condition.id).length
 
 		// translators: %s: condition name, %d: duplicate number.
 		update({ ...condition, name: duplicateNames ? sprintf(__('%s (%d)', 'code-snippets'), name, duplicateNames) : name })
