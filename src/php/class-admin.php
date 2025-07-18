@@ -333,12 +333,13 @@ class Admin {
 	 */
 	public static function render_snippet_type_tab( string $type_name, string $label, string $current_type = '' ) {
 		$cloud_tabs = [ 'cloud', 'cloud_search', 'bundles' ];
+		$pro_types = [ 'css', 'js', 'cond', 'cloud', 'bundles' ];
 		$nav_tab_inactive = false;
 
 		if ( $type_name === $current_type ) {
 			printf( '<a class="nav-tab nav-tab-active %s-tab">', esc_attr( $type_name ) );
 
-		} elseif ( ! code_snippets()->licensing->is_licensed() && Plugin::is_pro_type( $type_name ) ) {
+		} elseif ( ! code_snippets()->licensing->is_licensed() && in_array( $type_name, $pro_types, true ) ) {
 			printf(
 				'<a class="nav-tab nav-tab-inactive %s-tab" title="%s" href="https://codesnippets.pro/pricing/" target="_blank">',
 				esc_attr( $type_name ),

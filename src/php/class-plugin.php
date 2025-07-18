@@ -352,17 +352,6 @@ class Plugin {
 	}
 
 	/**
-	 * Determine whether a snippet type is Pro-only.
-	 *
-	 * @param string $type Snippet type name.
-	 *
-	 * @return bool
-	 */
-	public static function is_pro_type( string $type ): bool {
-		return 'css' === $type || 'js' === $type || 'cloud' === $type || 'bundles' === $type;
-	}
-
-	/**
 	 * Localise a plugin script to provide the CODE_SNIPPETS object.
 	 *
 	 * @param string $handle Script handle.

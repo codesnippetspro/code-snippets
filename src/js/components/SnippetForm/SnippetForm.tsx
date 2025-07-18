@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
+import { addQueryArgs } from '@wordpress/url'
 import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { WithSnippetsListContext, useSnippetsList } from '../../hooks/useSnippetsList'
 import { SubmitSnippetAction, useSubmitSnippet } from '../../hooks/useSubmitSnippet'
@@ -139,9 +140,15 @@ const EditFormWrap: React.FC = () => {
 
 	return (
 		<div className="wrap">
-			<p><small><a href={window.CODE_SNIPPETS?.urls.manage}>
-				{__('Back to all snippets', 'code-snippets')}
-			</a></small></p>
+			<p><small>
+				{isCondition(snippet) ?
+					<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { type: 'cond' })}>
+						{__('Back to all conditions', 'code-snippets')}
+					</a>
+					: <a href={window.CODE_SNIPPETS?.urls.manage}>
+						{__('Back to all snippets', 'code-snippets')}
+					</a>}
+			</small></p>
 
 			<PageHeading />
 

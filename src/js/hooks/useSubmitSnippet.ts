@@ -99,7 +99,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 
 		if (undefined === result || 'string' === typeof result) {
 			const message = [
-				snippet.id ? messages.failedCreate : messages.failedUpdate,
+				snippet.id ? messages.failedUpdate : messages.failedCreate,
 				result ?? __('The server did not send a valid response.', 'code-snippets')
 			]
 

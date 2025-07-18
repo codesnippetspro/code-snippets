@@ -36,7 +36,6 @@ use Exception;
  * @property-read string            $lang               The language that the snippet code is written in.
  * @property-read int               $modified_timestamp The last modification date in Unix timestamp format.
  * @property-read DateTime          $modified_local     The last modification date in the local timezone.
- * @property-read string            $type_desc          Human-readable description of the snippet type.
  * @property-read boolean           $is_pro             Whether the snippet type is pro-only.
  */
 class Snippet extends Data_Item {
@@ -204,29 +203,12 @@ class Snippet extends Data_Item {
 	}
 
 	/**
-	 * Retrieve description of snippet type.
-	 *
-	 * @return string
-	 */
-	protected function get_type_desc(): string {
-		$labels = [
-			'php'  => __( 'Functions', 'code-snippets' ),
-			'html' => __( 'Content', 'code-snippets' ),
-			'css'  => __( 'Styles', 'code-snippets' ),
-			'js'   => __( 'Scripts', 'code-snippets' ),
-			'cond' => __( 'Conditions', 'code-snippets' ),
-		];
-
-		return isset( $labels[ $this->type ] ) ? $labels[ $this->type ] : strtoupper( $this->type );
-	}
-
-	/**
 	 * Determine the language that the snippet code is written in, based on the scope
 	 *
 	 * @return string The name of a language filename extension.
 	 */
 	protected function get_lang(): string {
-		return $this->type;
+		return 'cond' === $this->type ? 'json' : $this->type;
 	}
 
 	/**
@@ -472,7 +454,7 @@ class Snippet extends Data_Item {
 	 * Determine whether the current snippet type is pro-only.
 	 */
 	private function get_is_pro(): bool {
-		return 'css' === $this->type || 'js' === $this->type;
+		return 'css' === $this->type || 'js' === $this->type || 'cond' === $this->type;
 	}
 
 	/**

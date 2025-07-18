@@ -44,7 +44,7 @@ const mapToSchema = ({
 		? JSON.stringify(
 			Object.values(conditions)
 				.map(group => group && Object.values(group))
-				.filter(Boolean))
+				.filter(group => Array.isArray(group) && group.length > 0))
 		: code,
 	tags,
 	scope,
