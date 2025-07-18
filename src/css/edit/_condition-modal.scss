@@ -1,21 +1,5 @@
 @use '../common/notices';
 
-.wp-core-ui .button.button-simple-text {
-	background: none;
-	border: none;
-	appearance: none;
-	min-block-size: auto;
-	display: inline;
-	font-size: inherit;
-	padding: 0;
-	line-height: normal;
-
-	&:focus {
-		outline: none;
-		box-shadow: none;
-	}
-}
-
 .code-snippets-condition-modal {
 	@include notices.notices;
 
@@ -55,6 +39,15 @@
 		flex-flow: column;
 		flex: 1;
 		overflow-y: auto;
+	}
+
+	.wp-core-ui & .button-link {
+		text-decoration: none;
+		appearance: none;
+		min-block-size: auto;
+		display: inline;
+		font-size: inherit;
+		line-height: normal;
 	}
 
 	.modal-splash {

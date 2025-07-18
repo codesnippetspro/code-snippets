@@ -22,7 +22,7 @@ export interface ModalFooterProps {
 
 const ModalFooter: React.FC<ModalFooterProps> = ({ onClose, onEdit, isLoadingOptions, selectedCondition, setSelectedCondition }) =>
 	<div className="modal-footer">
-		<Button simple large onClick={onClose}>
+		<Button link large onClick={onClose}>
 			{__('Cancel', 'code-snippets')}
 		</Button>
 
@@ -58,7 +58,7 @@ const ModalUpper: React.FC<ModalUpperProps> = ({ onEdit, options, selectedCondit
 		<div className="modal-content-top">
 			<label htmlFor="condition-select">{__('Selected Condition', 'code-snippets')}</label>
 
-			<Button simple onClick={() => {
+			<Button link onClick={() => {
 				setSelectedCondition(undefined)
 				onEdit()
 			}}>
