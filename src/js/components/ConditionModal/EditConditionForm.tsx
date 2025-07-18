@@ -20,7 +20,7 @@ interface ModalFooterProps {
 
 const ModalFooter: React.FC<ModalFooterProps> = ({ onClose, isSubmitting }) =>
 	<div className="modal-footer">
-		<Button simple onClick={onClose}>
+		<Button link onClick={onClose}>
 			{__('Cancel', 'code-snippets')}
 		</Button>
 
@@ -52,7 +52,7 @@ const ModalUpper: React.FC<ModalUpperProps> = ({ onClose, condition, isSubmittin
 				? <a href={getSnippetEditUrl({ id: condition.id })} target="_blank" rel="noreferrer">
 					{__('Open full editor', 'code-snippets')}
 				</a>
-				: <Button simple onClick={() => onClose()}>
+				: <Button link onClick={() => onClose()}>
 					{__('Apply existing condition', 'code-snippets')}
 				</Button>}
 		</div>

@@ -206,11 +206,7 @@ function evaluate_condition_clause( ?string $subject, ?string $operator, array $
 /**
  * Evaluate a single group of conditions using AND logic, ensuring each condition evaluates to true.
  *
- * @param array{
- *     subject: ?string,
- *     operator: ?string,
- *     object?: array<string | int | bool>
- * } $rule Condition rule.
+ * @param array{ subject: ?string, operator: ?string, object?: array<string | int | bool> } $rule Condition rule.
  *
  * @return bool
  */
