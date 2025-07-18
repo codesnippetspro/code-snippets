@@ -97,7 +97,7 @@ const ModalForm: React.FC<PropsWithChildren<ModalFormProps>> = ({
 }) => {
 	const { snippetsAPI: { update } } = useRestAPI()
 	const { snippet, setSnippet } = useSnippetForm()
-	const { refreshSnippetsList } = useSnippetsList()
+	const { snippetsList, refreshSnippetsList } = useSnippetsList()
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
@@ -109,7 +109,11 @@ const ModalForm: React.FC<PropsWithChildren<ModalFormProps>> = ({
 			? sprintf(__('Condition for "%s"', 'code-snippets'), getSnippetDisplayName(snippet))
 			: condition.name
 
-		update({ ...condition, name })
+		const duplicateNames = snippetsList?.filter(snippet =>
+			snippet.name === name && snippet.id !== condition.id).length
+
+		// translators: %s: condition name, %d: duplicate number.
+		update({ ...condition, name: duplicateNames ? sprintf(__('%s (%d)', 'code-snippets'), name, duplicateNames) : name })
 			.then(result => {
 				setSnippet(previous => ({ ...previous, conditionId: result.id }))
 				setSelectedConditionId(result.id)
