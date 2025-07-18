@@ -94,11 +94,13 @@ function get_snippets( array $ids = array(), ?bool $network = null ): array {
 	// If a list of IDs are provided, narrow down the snippets list.
 	if ( $ids_count > 0 ) {
 		$ids = array_map( 'intval', $ids );
-		return array_filter(
-			$snippets,
-			function ( Snippet $snippet ) use ( $ids ) {
-				return in_array( $snippet->id, $ids, true );
-			}
+		return array_values(
+			array_filter(
+				$snippets,
+				function ( Snippet $snippet ) use ( $ids ) {
+					return in_array( $snippet->id, $ids, true );
+				}
+			)
 		);
 	}
 
@@ -500,7 +502,6 @@ function save_snippet( $snippet ) {
 
 	// Update the last modification date if necessary.
 	$snippet->update_modified();
-	$snippet->increment_revision();
 
 	if ( 'php' === $snippet->type ) {
 		// Remove tags from beginning and end of snippet.
