@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.6.9] (2025-07-18)
+
+### Added
+* Feature improvements to workflow monitoring and feedback mechanisms.
+* New workflow to automate tag preparation and changelog updates.
+* Reusable workflows for SVN publishing and artifact handling.
+
+### Changed
+* Improved changelog automation to better handle dispatches and feedback.
+* Enhanced parsing logic for version retrieval from `package.json`.
+
+### Removed
+
+### Fixed
+* Various minor fixes in the build and release workflows.
+* Corrected entity usage in cloud table navigation.
+
 ## [3.6.9] - 2025-07-17
 
 ### Added
