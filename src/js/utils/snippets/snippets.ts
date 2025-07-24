@@ -20,7 +20,7 @@ const defaults: Omit<Snippet, 'tags' | 'conditions'> = {
 }
 
 export const createSnippetObject = (fields: unknown = null): Snippet =>
-	parseSnippetObject(fields, { ...defaults, tags: [], conditions: {} })
+	parseSnippetObject(fields, { ...defaults, tags: [] })
 
 export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType => {
 	switch (true) {
@@ -43,10 +43,7 @@ export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType =
 
 export const validateSnippet = (snippet: Snippet): undefined | string => {
 	const missingTitle = '' === snippet.name.trim()
-
-	const missingCode = isCondition(snippet)
-		? !snippet.conditions
-		: '' === snippet.code.trim()
+	const missingCode = '' === snippet.code.trim()
 
 	switch (true) {
 		case missingCode && missingTitle:

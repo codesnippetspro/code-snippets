@@ -1,6 +1,6 @@
 import { addQueryArgs } from '@wordpress/url'
 import { REST_SNIPPETS_BASE } from '../restAPI'
-import { createSnippetObject, isCondition } from './snippets'
+import { createSnippetObject } from './snippets'
 import type { RestAPI } from '../../hooks/useRestAPI'
 import type { SnippetSchema, WritableSnippetSchema } from '../../types/schema/SnippetSchema'
 import type { Snippet } from '../../types/Snippet'
@@ -10,7 +10,7 @@ export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<Snippet[]>
 	fetch: (snippetId: number, network?: boolean | null) => Promise<Snippet>
 	create: (snippet: Snippet) => Promise<Snippet>
-	update: (snippet: Snippet) => Promise<Snippet>
+	update: (snippet: Pick<Snippet, 'id' | 'network'> & Partial<Snippet>) => Promise<Snippet>
 	delete: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<void>
 	activate: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<Snippet>
 	deactivate: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<Snippet>
@@ -36,16 +36,10 @@ const mapToSchema = ({
 	active,
 	network,
 	conditionId,
-	conditions
-}: Snippet): WritableSnippetSchema => ({
+}: Partial<Snippet>): WritableSnippetSchema => ({
 	name,
 	desc,
-	code: isCondition({ scope })
-		? JSON.stringify(
-			Object.values(conditions)
-				.map(group => group && Object.values(group))
-				.filter(group => Array.isArray(group) && group.length > 0))
-		: code,
+	code,
 	tags,
 	scope,
 	priority,

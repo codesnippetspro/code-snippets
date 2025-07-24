@@ -675,14 +675,6 @@ function execute_active_snippets(): bool {
 				continue;
 			}
 
-			if ( $snippet['condition_id'] ) {
-				$condition_id = intval( $snippet['condition_id'] );
-
-				if ( isset( $conditions[ $condition_id ] ) && ! $conditions[ $condition_id ] ) {
-					continue;
-				}
-			}
-
 			execute_snippet( $code, $snippet_id );
 		}
 	}
