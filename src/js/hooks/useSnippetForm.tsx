@@ -1,6 +1,6 @@
 import { isAxiosError } from 'axios'
 import React, { useCallback, useMemo, useState } from 'react'
-import { createContextHook } from '../utils/hooks'
+import { createContextHook } from '../utils/bootstrap'
 import { isLicensed } from '../utils/screen'
 import { isProSnippet } from '../utils/snippets/snippets'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'

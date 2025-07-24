@@ -11,7 +11,7 @@ namespace Code_Snippets;
 /**
  * Loaded from the manage menu.
  *
- * @var Manage_Menu $this
+ * @var Manage_Menu_Legacy $this
  */
 
 ?>

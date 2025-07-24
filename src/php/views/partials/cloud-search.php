@@ -11,7 +11,7 @@ namespace Code_Snippets;
 /**
  * Loaded from manage menu.
  *
- * @var Manage_Menu $this
+ * @var Manage_Menu_Legacy $this
  */
 
 $search_query = isset( $_REQUEST['cloud_search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) ) : '';

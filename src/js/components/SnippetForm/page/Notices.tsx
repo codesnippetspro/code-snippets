@@ -1,7 +1,7 @@
 import React from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { DismissibleNotice } from '../../DismissableNotice'
+import { DismissibleNotice } from '../../common/DismissableNotice'
 
 export const Notices: React.FC = () => {
 	const { currentNotice, setCurrentNotice, snippet, setSnippet } = useSnippetForm()

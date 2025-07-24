@@ -24,9 +24,10 @@ const babelConfig = {
 
 export const jsWebpackConfig: Configuration = {
 	entry: {
-		edit: { import: `${SOURCE_DIR}/edit.tsx`, dependOn: 'editor' },
+		edit: { import: `${SOURCE_DIR}/edit.ts`, dependOn: 'editor' },
 		editor: `${SOURCE_DIR}/editor.ts`,
 		manage: `${SOURCE_DIR}/manage.ts`,
+		'manage-legacy': `${SOURCE_DIR}/manage-legacy.ts`,
 		mce: `${SOURCE_DIR}/mce.ts`,
 		prism: `${SOURCE_DIR}/prism.ts`,
 		settings: { import: `${SOURCE_DIR}/settings.ts`, dependOn: 'editor' }

@@ -13,7 +13,7 @@ use function Code_Snippets\Settings\get_setting;
 /**
  * Loaded from the manage menu class.
  *
- * @var Manage_Menu $this
+ * @var Manage_Menu_Legacy $this
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

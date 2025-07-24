@@ -175,6 +175,10 @@ class Plugin {
 		$cloud = array( 'cloud', 'cloud-snippets' );
 		$welcome = array( 'welcome', 'getting-started', 'code-snippets' );
 
+		if ( 'manage-legacy' === $menu ) {
+			return 'snippets-legacy';
+		}
+
 		if ( in_array( $menu, $edit, true ) ) {
 			return 'edit-snippet';
 		} elseif ( in_array( $menu, $add, true ) ) {
@@ -359,10 +363,10 @@ class Plugin {
 					'localToken' => $this->cloud_api->get_local_token(),
 				],
 				'urls'             => [
-					'plugin'       => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
-					'manage'       => esc_url_raw( $this->get_menu_url() ),
-					'edit'         => esc_url_raw( $this->get_menu_url( 'edit' ) ),
-					'addNew'       => esc_url_raw( $this->get_menu_url( 'add' ) ),
+					'plugin' => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
+					'manage' => esc_url_raw( $this->get_menu_url() ),
+					'edit'   => esc_url_raw( $this->get_menu_url( 'edit' ) ),
+					'addNew' => esc_url_raw( $this->get_menu_url( 'add' ) ),
 				],
 			]
 		);

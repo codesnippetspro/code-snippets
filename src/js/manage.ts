@@ -1,5 +1,4 @@
-import { handleShowCloudPreview, handleSnippetActivationSwitches, handleSnippetPriorityChanges } from './services/manage'
+import { SnippetsTable } from './components/SnippetsTable'
+import { loadComponent } from './utils/bootstrap'
 
-handleSnippetActivationSwitches()
-handleSnippetPriorityChanges()
-handleShowCloudPreview()
+loadComponent('snippets-table-container', SnippetsTable)

@@ -14,18 +14,14 @@ use function Code_Snippets\Settings\get_setting;
 class Manage_Menu extends Admin_Menu {
 
 	/**
-	 * Instance of the list table class.
-	 *
-	 * @var List_Table
+	 * Handle for JavaScript asset file.
 	 */
-	public List_Table $list_table;
+	const JS_HANDLE = 'code-snippets-manage-menu';
 
 	/**
-	 * Instance of the cloud list table class for search results.
-	 *
-	 * @var Cloud_Search_List_Table
+	 * Handle for CSS asset file.
 	 */
-	public Cloud_Search_List_Table $cloud_search_list_table;
+	const CSS_HANDLE = 'code-snippets-manage';
 
 	/**
 	 * Class constructor
@@ -167,19 +163,13 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Executed when the admin page is loaded
+	 * Executed when the admin page is loaded.
 	 */
 	public function load() {
 		parent::load();
 
-		$contextual_help = new Contextual_Help( 'manage' );
+		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
-
-		$this->cloud_search_list_table = new Cloud_Search_List_Table();
-		$this->cloud_search_list_table->prepare_items();
-
-		$this->list_table = new List_Table();
-		$this->list_table->prepare_items();
 	}
 
 	/**
@@ -190,45 +180,52 @@ class Manage_Menu extends Admin_Menu {
 		$rtl = is_rtl() ? '-rtl' : '';
 
 		wp_enqueue_style(
-			'code-snippets-manage',
+			self::CSS_HANDLE,
 			plugins_url( "dist/manage$rtl.css", $plugin->file ),
-			[],
+			[
+				'wp-components',
+			],
 			$plugin->version
 		);
 
 		wp_enqueue_script(
-			'code-snippets-manage-js',
+			self::JS_HANDLE,
 			plugins_url( 'dist/manage.js', $plugin->file ),
-			[ 'wp-i18n' ],
+			[
+				'react',
+				'react-dom',
+				'wp-url',
+				'wp-i18n',
+				'wp-components',
+			],
 			$plugin->version,
 			true
 		);
 
-		wp_set_script_translations( 'code-snippets-manage-js', 'code-snippets' );
+		Front_End::enqueue_all_prism_themes();
 
-		if ( 'cloud' === $this->get_current_type() || 'cloud_search' === $this->get_current_type() ) {
-			Front_End::enqueue_all_prism_themes();
-		}
+		wp_set_script_translations( self::JS_HANDLE, 'code-snippets' );
+		$plugin->localize_script( self::JS_HANDLE );
+
+		wp_localize_script(
+			self::JS_HANDLE,
+			'CODE_SNIPPETS_MANAGE',
+			[
+				'pageTitleActions' => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'add', 'import', 'settings' ] ) : [],
+			]
+		);
 	}
 
 	/**
-	 * Get the currently displayed snippet type.
-	 *
-	 * @return string
-	 */
-	protected function get_current_type(): string {
-		$types = Plugin::get_types();
-		$current_type = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'all';
-		return isset( $types[ $current_type ] ) ? $current_type : 'all';
-	}
-
-	/**
-	 * Print the status and error messages
+	 * Render the snippets table interface.
 	 *
 	 * @return void
 	 */
-	protected function print_messages() {
-		$this->render_view( 'partials/list-table-notices' );
+	public function render() {
+		printf(
+			'<div id="snippets-table-container">%s</div>',
+			esc_html__( 'Loading snippets table…', 'code-snippets' )
+		);
 	}
 
 	/**
@@ -242,102 +239,5 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function save_screen_option( $status, string $option, $value ) {
 		return 'snippets_per_page' === $option ? $value : $status;
-	}
-
-	/**
-	 * Update the priority value for a snippet.
-	 *
-	 * @param Snippet $snippet Snippet to update.
-	 *
-	 * @return void
-	 */
-	private function update_snippet_priority( Snippet $snippet ) {
-		global $wpdb;
-		$table = code_snippets()->db->get_table_name( $snippet->network );
-
-		$wpdb->update(
-			$table,
-			array( 'priority' => $snippet->priority ),
-			array( 'id' => $snippet->id ),
-			array( '%d' ),
-			array( '%d' )
-		);
-
-		clean_snippets_cache( $table );
-	}
-
-	/**
-	 * Handle AJAX requests
-	 */
-	public function ajax_callback() {
-		check_ajax_referer( 'code_snippets_manage_ajax' );
-
-		if ( ! isset( $_POST['field'], $_POST['snippet'] ) ) {
-			wp_send_json_error(
-				array(
-					'type'    => 'param_error',
-					'message' => 'incomplete request',
-				)
-			);
-		}
-
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$snippet_data = array_map( 'sanitize_text_field', json_decode( wp_unslash( $_POST['snippet'] ), true ) );
-
-		$snippet = new Snippet( $snippet_data );
-		$field = sanitize_key( $_POST['field'] );
-
-		if ( 'priority' === $field ) {
-
-			if ( ! isset( $snippet_data['priority'] ) || ! is_numeric( $snippet_data['priority'] ) ) {
-				wp_send_json_error(
-					array(
-						'type'    => 'param_error',
-						'message' => 'missing snippet priority data',
-					)
-				);
-			}
-
-			$this->update_snippet_priority( $snippet );
-
-		} elseif ( 'active' === $field ) {
-
-			if ( ! isset( $snippet_data['active'] ) ) {
-				wp_send_json_error(
-					array(
-						'type'    => 'param_error',
-						'message' => 'missing snippet active data',
-					)
-				);
-			}
-
-			if ( $snippet->shared_network ) {
-				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
-
-				if ( in_array( $snippet->id, $active_shared_snippets, true ) !== $snippet->active ) {
-
-					$active_shared_snippets = $snippet->active ?
-						array_merge( $active_shared_snippets, array( $snippet->id ) ) :
-						array_diff( $active_shared_snippets, array( $snippet->id ) );
-
-					update_option( 'active_shared_network_snippets', $active_shared_snippets );
-					clean_active_snippets_cache( code_snippets()->db->ms_table );
-				}
-			} elseif ( $snippet->active ) {
-				$result = activate_snippet( $snippet->id, $snippet->network );
-				if ( is_string( $result ) ) {
-					wp_send_json_error(
-						array(
-							'type'    => 'action_error',
-							'message' => $result,
-						)
-					);
-				}
-			} else {
-				deactivate_snippet( $snippet->id, $snippet->network );
-			}
-		}
-
-		wp_send_json_success();
 	}
 }

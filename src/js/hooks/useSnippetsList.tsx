@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { createContextHook } from '../utils/hooks'
+import { createContextHook } from '../utils/bootstrap'
 import { isNetworkAdmin } from '../utils/screen'
 import { useRestAPI } from './useRestAPI'
 import type { PropsWithChildren } from 'react'

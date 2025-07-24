@@ -14,7 +14,8 @@ const defaults: Omit<Snippet, 'tags'> = {
 	active: false,
 	network: isNetworkAdmin(),
 	shared_network: null,
-	priority: 10
+	priority: 10,
+	conditionId: 0
 }
 
 const isAbsInt = (value: unknown): value is number =>
@@ -44,10 +45,13 @@ export const createSnippetObject = (fields: unknown = undefined): Snippet => {
 		scope: 'scope' in fields && isValidScope(fields.scope) ? fields.scope : defaults.scope,
 		modified: 'modified' in fields && 'string' === typeof fields.modified ? fields.modified : defaults.modified,
 		active: 'active' in fields && 'boolean' === typeof fields.active ? fields.active : defaults.active,
-		network: 'network' in fields && isBooleanOrUndefined(fields.network) ? fields.network : defaults.network,
+		network: 'network' in fields && 'boolean' === typeof fields.network ? fields.network : defaults.network,
 		shared_network: 'shared_network' in fields && isBooleanOrUndefined(fields.shared_network)
 			? fields.shared_network : defaults.shared_network,
-		priority: 'priority' in fields && 'number' === typeof fields.priority ? fields.priority : defaults.priority
+		priority: 'priority' in fields && 'number' === typeof fields.priority ? fields.priority : defaults.priority,
+		conditionId: 'conditionId' in fields && isAbsInt(fields.conditionId) ? fields.conditionId
+			: 'condition_id' in fields && isAbsInt(fields.condition_id) ? fields.condition_id
+				: defaults.conditionId
 	}
 }
 

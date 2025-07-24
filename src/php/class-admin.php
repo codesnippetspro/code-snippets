@@ -41,7 +41,8 @@ class Admin {
 	 * Initialise classes
 	 */
 	public function load_classes() {
-		$this->menus['manage'] = new Manage_Menu();
+		$this->menus['manage_new'] = new Manage_Menu();
+		$this->menus['manage'] = new Manage_Menu_Legacy();
 		$this->menus['edit'] = new Edit_Menu();
 		$this->menus['import'] = new Import_Menu();
 
