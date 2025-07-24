@@ -3,6 +3,8 @@ import { __ } from '@wordpress/i18n'
 import { Spinner } from '@wordpress/components'
 import { handleUnknownError } from '../../../utils/errors'
 import { SubmitButton } from '../SubmitButton'
+import { TablePagination } from './TablePagination'
+import type { TablePaginationProps } from './TablePagination'
 import type { ListTableBulkAction, ListTableNavProps } from './ListTable'
 import type { Key } from 'react'
 
@@ -83,23 +85,26 @@ const BulkActions = <K extends Key>({ which, actions, applyAction }: BulkActions
 	)
 }
 
-export interface TableNavProps<K extends Key> extends ListTableNavProps<K> {
+export interface TableNavProps<K extends Key> extends ListTableNavProps<K>, Omit<TablePaginationProps, 'itemsPerPage'> {
 	which: 'top' | 'bottom'
-	hasItems: boolean
+	items: unknown[]
 	selected: Set<K>
+	itemsPerPage: number | undefined
 }
 
 export const TableNav = <K extends Key>({
 	which,
+	items,
 	actions,
-	hasItems,
 	selected,
-	extraTableNav
+	extraTableNav,
+	itemsPerPage,
+	...paginationProps
 }: TableNavProps<K>) =>
-	extraTableNav || hasItems && actions
+	extraTableNav || 0 < items.length && actions
 		? <div className={`tablenav ${which}`}>
 
-			{hasItems && actions
+			{0 < items.length && actions
 				? <BulkActions
 					which={which}
 					actions={actions}
@@ -108,8 +113,7 @@ export const TableNav = <K extends Key>({
 				: null}
 
 			{extraTableNav?.(which)}
-
-			{/* TODO pagination */}
+			{itemsPerPage && <TablePagination {...{ itemsPerPage, items, which, ...paginationProps }} />}
 
 			<br className="clear" />
 		</div>

@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { parseSnippetObject } from './objects'
 import type { Snippet, SnippetType } from '../../types/Snippet'
@@ -39,6 +39,12 @@ export const getSnippetEditUrl = (snippet?: Pick<Snippet, 'id'>): string | undef
 	snippet?.id
 		? addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: snippet.id })
 		: window.CODE_SNIPPETS?.urls.addNew
+
+export const getSnippetDisplayName = (snippet: Pick<Snippet, 'name' | 'id' | 'scope'>): string =>
+	'' === snippet.name.trim()
+		// translators: %s: snippet identifier.
+		? sprintf(isCondition(snippet) ? __('Condition #%d', 'code-snippets') : __('Snippet #%d', 'code-snippets'), snippet.id)
+		: snippet.name
 
 export const validateSnippet = (snippet: Snippet): undefined | string => {
 	const missingTitle = '' === snippet.name.trim()

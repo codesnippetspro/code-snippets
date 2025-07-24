@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import classnames from 'classnames'
+import { fetchQueryParam } from '../../../utils/urls'
 import { TableHeadings } from './TableHeadings'
 import { TableItems } from './TableItems'
 import { TableNav } from './TableNav'
@@ -44,7 +45,12 @@ export interface ListTableItemsProps<T, K extends Key> {
 	rowClassName?: (item: T) => string
 }
 
-export interface ListTableProps<T, K extends Key> extends ListTableItemsProps<T, K>, ListTableNavProps<K> {
+export interface ListTablePaginationProps {
+	itemsPerPage?: number
+	useQueryVars?: boolean
+}
+
+export interface ListTableProps<T, K extends Key> extends ListTableItemsProps<T, K>, ListTableNavProps<K>, ListTablePaginationProps {
 	fixed?: boolean
 	striped?: boolean
 	className?: string
@@ -74,6 +80,20 @@ const sortItems = <T, >(
 		return 0
 	})
 
+const pageItems = <T, >(
+	items: T[],
+	currentPage = 1,
+	itemsPerPage?: number
+): T[] => {
+	if (itemsPerPage) {
+		const start = (currentPage - 1) * itemsPerPage
+		const end = start + itemsPerPage
+		return items.slice(start, end)
+	} else {
+		return items
+	}
+}
+
 export const ListTable = <T, K extends Key>({
 	items,
 	fixed,
@@ -84,32 +104,35 @@ export const ListTable = <T, K extends Key>({
 	noItems,
 	className,
 	rowClassName,
+	itemsPerPage,
 	extraTableNav,
-	isDisabled = false,
+	useQueryVars = true,
+	isDisabled = false
 }: ListTableProps<T, K>) => {
 	const [selected, setSelected] = useState(new Set<K>())
 	const [sortColumn, setSortColumn] = useState<ListTableColumn<T>>()
+	const [currentPage, setCurrentPage] = useState(() => useQueryVars && Number(fetchQueryParam('paged')) || 1)
 	const [sortDirection, setSortDirection] = useState<ListTableSortDirection>('asc')
 
-	const sortedItems: T[] = useMemo(
-		() => sortItems(items, sortColumn, sortDirection),
-		[items, sortColumn, sortDirection])
+	const visibleItems: T[] = useMemo(
+		() => pageItems(sortItems(items, sortColumn, sortDirection), currentPage, itemsPerPage),
+		[items, sortColumn, sortDirection, currentPage, itemsPerPage])
 
 	const tableNavProps: Omit<TableNavProps<K>, 'which'> =
-		{ hasItems: 0 < items.length, actions, extraTableNav, selected, isDisabled }
+		{ items, actions, extraTableNav, selected, isDisabled, currentPage, itemsPerPage, setCurrentPage, useQueryVars }
 
 	const tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'> =
-		{ items: sortedItems, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }
+		{ items: visibleItems, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }
 
 	return (
 		<>
 			<TableNav which="top" {...tableNavProps} />
-			<table className={classnames('wp-list-table widefat snippets', { striped, fixed }, className)}>
+			<table className={classnames('wp-list-table widefat', { striped, fixed }, className)}>
 				<thead>
 					<TableHeadings which="head" {...tableHeadingsProps} />
 				</thead>
 				<tbody>
-					<TableItems items={sortedItems} {...{ getKey, columns, noItems, setSelected, rowClassName }} />
+					<TableItems items={visibleItems} {...{ getKey, columns, noItems, setSelected, rowClassName }} />
 				</tbody>
 				<tfoot>
 					<TableHeadings which="foot" {...tableHeadingsProps} />

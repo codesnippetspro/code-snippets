@@ -556,7 +556,8 @@ function save_snippet( $snippet ): ?Snippet {
 		}
 
 		$snippet->id = $wpdb->insert_id;
-		do_action( 'code_snippets/create_snippet', $snippet, $table );
+		$updated = get_snippet( $snippet->id );
+		do_action( 'code_snippets/create_snippet', $updated, $table );
 	} else {
 		$existing = get_snippet( $snippet->id, $snippet->network );
 

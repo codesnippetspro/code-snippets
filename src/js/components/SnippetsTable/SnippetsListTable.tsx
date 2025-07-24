@@ -1,9 +1,10 @@
 import { __, _x, sprintf } from '@wordpress/i18n'
 import React, { Fragment, useMemo } from 'react'
 import { addQueryArgs } from '@wordpress/url'
+import { useFilteredSnippets } from '../../hooks/useFilteredSnippets'
 import { useRestAPI } from '../../hooks/useRestAPI'
+import { useSnippetsFilters } from '../../hooks/useSnippetsFilters'
 import { useSnippetsList } from '../../hooks/useSnippetsList'
-import { useSnippetsTable } from '../../hooks/useSnippetsTable'
 import { handleUnknownError } from '../../utils/errors'
 import { REST_API_NAMESPACE, REST_BASE } from '../../utils/restAPI'
 import { getSnippetType } from '../../utils/snippets/snippets'
@@ -47,12 +48,9 @@ const STATUS_LABELS: [SnippetStatus | undefined, string][] = [
 	['recently_activated', __('Recently Activated', 'code-snippets')]
 ]
 
-interface SnippetStatusCountProps {
-	snippetsByStatus: Map<SnippetStatus | undefined, Snippet[]>
-}
-
-const SnippetStatusCounts: React.FC<SnippetStatusCountProps> = ({ snippetsByStatus }) => {
-	const { currentStatus, setCurrentStatus } = useSnippetsTable()
+const SnippetStatusCounts = () => {
+	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
+	const { snippetsByStatus } = useFilteredSnippets()
 	const visibleStatuses = STATUS_LABELS.filter(([status]) => snippetsByStatus.has(status))
 
 	return (
@@ -84,7 +82,7 @@ const SnippetStatusCounts: React.FC<SnippetStatusCountProps> = ({ snippetsByStat
 const ClearRecentlyActiveButton: React.FC = () => {
 	const { api } = useRestAPI()
 	const { refreshSnippetsList } = useSnippetsList()
-	const { currentStatus } = useSnippetsTable()
+	const { currentStatus } = useSnippetsFilters()
 
 	return 'recently_activated' === currentStatus
 		? <div className="alignleft actions">
@@ -108,7 +106,7 @@ interface ExtraTableNavProps {
 }
 
 const FilterByTagControl: React.FC<ExtraTableNavProps> = ({ visibleSnippets }) => {
-	const { currentTag, setCurrentTag } = useSnippetsTable()
+	const { currentTag, setCurrentTag } = useSnippetsFilters()
 
 	const tagsList: Set<string> = useMemo(
 		() => visibleSnippets.reduce((tags, snippet) => {
@@ -132,8 +130,8 @@ const FilterByTagControl: React.FC<ExtraTableNavProps> = ({ visibleSnippets }) =
 		: null
 }
 
-const SearchBox: React.FC = () => {
-	const { searchQuery, setSearchQuery } = useSnippetsTable()
+const SearchBox = () => {
+	const { searchQuery, setSearchQuery } = useSnippetsFilters()
 
 	return (
 		<p className="search-box">
@@ -150,12 +148,32 @@ const SearchBox: React.FC = () => {
 	)
 }
 
+const NoItemsMessage = () => {
+	const { currentType, currentTag, searchQuery } = useSnippetsFilters()
+
+	return searchQuery || currentTag
+		? <>
+			{__('No snippets were found matching the current search query.', 'code-snippets')}
+			{__(' Please enter a new query or use the "Clear Filters" button above.', 'code-snippets')}
+		</>
+		: <>{currentType
+			? __("It looks like you don't have any snippets of this type.", 'code-snippets')
+			: __("It looks like you don't have any snippets.", 'code-snippets')}
+
+		{' '}
+		<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.addNew, currentType ? { type: currentType } : {})}>
+			{__('Perhaps you would like to add a new one?', 'code-snippets')}
+		</a>
+		</>
+}
+
 export const SnippetsListTable: React.FC = () => {
-	const { currentType, currentStatus, currentTag, searchQuery, snippetsByStatus } = useSnippetsTable()
+	const { currentStatus } = useSnippetsFilters()
+	const { snippetsByStatus } = useFilteredSnippets()
 
 	return (
 		<>
-			<SnippetStatusCounts snippetsByStatus={snippetsByStatus} />
+			<SnippetStatusCounts />
 			<SearchBox />
 
 			<ListTable
@@ -163,26 +181,15 @@ export const SnippetsListTable: React.FC = () => {
 				getKey={snippet => snippet.id}
 				columns={TableColumns}
 				actions={actions}
-				extraTableNav={which => <>
-					{'top' === which && <FilterByTagControl visibleSnippets={snippetsByStatus.get(undefined) ?? []} />}
-					<ClearRecentlyActiveButton />
-				</>}
+				itemsPerPage={window.CODE_SNIPPETS_MANAGE?.snippetsPerPage}
+				extraTableNav={which =>
+					<>
+						{'top' === which && <FilterByTagControl visibleSnippets={snippetsByStatus.get(undefined) ?? []} />}
+						<ClearRecentlyActiveButton />
+					</>}
 				rowClassName={snippet =>
 					`snippet ${snippet.active ? 'active' : 'inactive'}-snippet ${getSnippetType(snippet)}-snippet ${snippet.scope}-snippet`}
-				noItems={searchQuery || currentTag
-					? <>
-						{__('No snippets were found matching the current search query.', 'code-snippets')}
-						{__(' Please enter a new query or use the "Clear Filters" button above.', 'code-snippets')}
-					</>
-					: <>{currentType
-						? __("It looks like you don't have any snippets of this type.", 'code-snippets')
-						: __("It looks like you don't have any snippets.", 'code-snippets')}
-
-					{' '}
-					<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.addNew, currentType ? { type: currentType } : {})}>
-						{__('Perhaps you would like to add a new one?', 'code-snippets')}
-					</a>
-					</>}
+				noItems={<NoItemsMessage />}
 			/>
 		</>
 	)

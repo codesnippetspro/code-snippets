@@ -14,7 +14,7 @@ const getEditHeading = (snippet: Snippet): string =>
 const getAddNewHeading = (snippet: Snippet): string =>
 	'condition' === snippet.scope
 		? __('Add New Condition', 'code-snippets')
-		: __('Add New Snippet', 'code-snippets')
+		: __('Create New Snippet', 'code-snippets')
 
 export const PageHeading: React.FC = () => {
 	const { snippet, updateSnippet, setCurrentNotice } = useSnippetForm()

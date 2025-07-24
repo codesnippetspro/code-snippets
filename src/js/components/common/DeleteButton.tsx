@@ -1,22 +1,34 @@
-import { addQueryArgs } from '@wordpress/url'
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import { useRestAPI } from '../../../hooks/useRestAPI'
-import { Button } from '../../common/Button'
-import { ConfirmDialog } from '../../common/ConfirmDialog'
-import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { useRestAPI } from '../../hooks/useRestAPI'
+import { Button } from './Button'
+import { ConfirmDialog } from './ConfirmDialog'
+import type { Snippet } from '../../types/Snippet'
+import type { ButtonProps } from './Button'
 
-export const DeleteButton: React.FC = () => {
+export interface DeleteButtonProps extends ButtonProps {
+	snippet: Snippet
+	setIsWorking?: (isWorking: boolean) => void
+	onSuccess?: () => Promise<void> | void
+	onError?: (error: unknown) => void
+}
+
+export const DeleteButton: React.FC<DeleteButtonProps> = ({
+	snippet,
+	onSuccess,
+	onError,
+	className = 'delete-button',
+	setIsWorking,
+	...buttonProps
+}) => {
 	const { snippetsAPI } = useRestAPI()
-	const { snippet, setIsWorking, isWorking, handleRequestError } = useSnippetForm()
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
 
 	return (
 		<>
 			<Button
-				id="delete-snippet"
-				className="delete-button"
-				disabled={isWorking}
+				{...buttonProps}
+				className={className}
 				onClick={() => {
 					setIsDialogOpen(true)
 				}}
@@ -32,17 +44,20 @@ export const DeleteButton: React.FC = () => {
 				onCancel={() => setIsDialogOpen(false)}
 				onConfirm={() => {
 					setIsDialogOpen(false)
-					setIsWorking(true)
+					setIsWorking?.(true)
 
 					snippetsAPI.delete(snippet)
 						.then(() => {
-							setIsWorking(false)
-							window.location.replace(addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { result: 'deleted' }))
+							setIsWorking?.(false)
+							return onSuccess?.()
 						})
-						.catch((error: unknown) => handleRequestError(error, __('Could not delete snippet.', 'code-snippets')))
+						.catch((error: unknown) => {
+							setIsWorking?.(false)
+							return onError?.(error)
+						})
 				}}
 			>
-				<p>
+				<p style={{ marginBlockStart: 0 }}>
 					{__('You are about to permanently delete this snippet.', 'code-snippets')}{' '}
 					{__('Are you sure?', 'code-snippets')}
 				</p>

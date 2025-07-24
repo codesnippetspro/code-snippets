@@ -2,12 +2,13 @@ import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { addQueryArgs } from '@wordpress/url'
+import { WithFilteredSnippetsContext } from '../../hooks/useFilteredSnippets'
 import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { WithSnippetsListContext } from '../../hooks/useSnippetsList'
-import { WithSnippetsTableContext, useSnippetsTable } from '../../hooks/useSnippetsTable'
+import { WithSnippetsTableFiltersContext, useSnippetsFilters } from '../../hooks/useSnippetsFilters'
 import { SNIPPET_TYPES } from '../../types/Snippet'
 import { isLicensed } from '../../utils/screen'
-import { isProType, SNIPPET_TYPE_LABELS } from '../../utils/snippets/snippets'
+import { SNIPPET_TYPE_LABELS, isProType } from '../../utils/snippets/snippets'
 import { Badge } from '../common/Badge'
 import { Button } from '../common/Button'
 import { UpsellDialog } from '../common/UpsellDialog'
@@ -20,7 +21,7 @@ interface SnippetTypeTabProps {
 }
 
 const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialogOpen }) => {
-	const { currentType, setCurrentType } = useSnippetsTable()
+	const { currentType, setCurrentType } = useSnippetsFilters()
 	const tabName = type ?? 'all'
 
 	return (
@@ -40,9 +41,9 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialo
 				}
 			}}
 		>
-				<span className={`${tabName}-label`}>
-			{type ? SNIPPET_TYPE_LABELS[type] : __('All Snippets', 'code-snippets')}
-				</span>
+			<span className={`${tabName}-label`}>
+				{type ? SNIPPET_TYPE_LABELS[type] : __('All Snippets', 'code-snippets')}
+			</span>
 			{type && <Badge name={type} />
 			}
 		</a>
@@ -50,7 +51,7 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialo
 }
 
 const PageHeading = () => {
-	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsTable()
+	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsFilters()
 	return (
 		<h1>
 			{__('Manage Code Snippets', 'code-snippets')}
@@ -94,7 +95,9 @@ const SnippetsTableInner = () => {
 					<SnippetTypeTab key={type} type={type} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />)}
 			</h2>
 
-			<SnippetsListTable />
+			<WithFilteredSnippetsContext>
+				<SnippetsListTable />
+			</WithFilteredSnippetsContext>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />
 		</div>
@@ -104,8 +107,8 @@ const SnippetsTableInner = () => {
 export const SnippetsTable: React.FC = () =>
 	<WithRestAPIContext>
 		<WithSnippetsListContext>
-			<WithSnippetsTableContext>
+			<WithSnippetsTableFiltersContext>
 				<SnippetsTableInner />
-			</WithSnippetsTableContext>
+			</WithSnippetsTableFiltersContext>
 		</WithSnippetsListContext>
 	</WithRestAPIContext>

@@ -63,11 +63,11 @@ class Edit_Menu extends Admin_Menu {
 			remove_submenu_page( $this->base_slug, $this->slug );
 		}
 
-		// Add New Snippet menu.
+		// Create New Snippet menu.
 		$this->add_menu(
 			code_snippets()->get_menu_slug( 'add' ),
 			_x( 'Add New', 'menu label', 'code-snippets' ),
-			__( 'Add New Snippet', 'code-snippets' )
+			__( 'Create New Snippet', 'code-snippets' )
 		);
 	}
 

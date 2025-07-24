@@ -2,16 +2,18 @@ import React, { Fragment, useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { humanTimeDiff } from '@wordpress/date'
-import { Modal } from '@wordpress/components'
+import { RawHTML } from '@wordpress/element'
+import { useFilteredSnippets } from '../../hooks/useFilteredSnippets'
 import { useRestAPI } from '../../hooks/useRestAPI'
+import { useSnippetsFilters } from '../../hooks/useSnippetsFilters'
 import { useSnippetsList } from '../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../utils/errors'
 import { downloadSnippetExportFile } from '../../utils/files'
 import { isNetworkAdmin } from '../../utils/screen'
-import { getSnippetEditUrl, getSnippetType } from '../../utils/snippets/snippets'
-import { stripTags } from '../../utils/text'
+import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../utils/snippets/snippets'
 import { Badge } from '../common/Badge'
 import { Button } from '../common/Button'
+import { DeleteButton } from '../common/DeleteButton'
 import type { Snippet } from '../../types/Snippet'
 import type { ListTableColumn } from '../common/ListTable'
 
@@ -21,66 +23,60 @@ interface ColumnProps {
 
 const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	const { snippetsAPI: { activate, deactivate } } = useRestAPI()
+	const { activeByCondition } = useFilteredSnippets()
 	const { refreshSnippetsList } = useSnippetsList()
 
-	return (
-		<input
-			type="checkbox"
-			checked={snippet.active}
-			className="switch"
-			title={snippet.active
-				? __('Deactivate', 'code-snippets')
-				: __('Activate', 'code-snippets')}
-			onChange={() => {
-				(snippet.active ? deactivate(snippet) : activate(snippet))
-					.then(() => refreshSnippetsList())
-					.catch(handleUnknownError)
-			}}
-		/>
-	)
-}
-
-const DeleteRowAction: React.FC<ColumnProps> = ({ snippet }) => {
-	const { snippetsAPI } = useRestAPI()
-	const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = useState(false)
-	const { refreshSnippetsList } = useSnippetsList()
-
-	return (
-		<>
-			<Button link className="delete" onClick={() => setConfirmDeleteDialogOpen(true)}>
-				{__('Delete', 'code-snippets')}
-			</Button>
-
-			{confirmDeleteDialogOpen
-				? <Modal
-					className="code-snippets-confirm-delete-dialog"
-					title={__('Are you sure?', 'code-snippets')}
-					isDismissible
-					onRequestClose={() => setConfirmDeleteDialogOpen(false)}
-					closeButtonLabel={__('Cancel', 'code-snippets')}
+	switch (snippet.scope) {
+		case 'single-use':
+			return (
+				<a
+					className="snippet-execution-button"
+					title={__('Run Once', 'code-snippets')}
+					href={addQueryArgs(window.location.href, { action: 'run-once', snippet: snippet.id })}
 				>
-					{__('You are about to permanently delete this snippet.', 'code-snippets')}
+					&nbsp;
+				</a>
+			)
 
-					<Button onClick={() => setConfirmDeleteDialogOpen(false)}>
-						{__('Cancel', 'code-snippets')}
-					</Button>
+		case 'condition':
+			return (
+				<a className="snippet-condition-count" href={getSnippetEditUrl(snippet)}>
+					{activeByCondition.get(snippet.id)?.length ?? 0}
+				</a>
+			)
 
-					<Button primary onClick={() => {
-						snippetsAPI.delete(snippet)
-							.then(() => refreshSnippetsList())
-							.catch(handleUnknownError)
-					}
-					}>
-						{__('Delete', 'code-snippets')}
-					</Button>
-				</Modal>
-				: null}
-		</>
-	)
+		default: {
+			const actionText = snippet.network && !snippet.shared_network
+				? snippet.active ? __('Network Deactivate', 'code-snippets') : __('Network Activate', 'code-snippets')
+				: snippet.active ? __('Deactivate', 'code-snippets') : __('Activate', 'code-snippets')
+
+			return (
+				<>
+					<label className="screen-reader-text" htmlFor={`snippet-${snippet.id}-switch`}>
+						{actionText}
+					</label>
+
+					<input
+						id={`snippet-${snippet.id}-switch`}
+						type="checkbox"
+						checked={snippet.active}
+						className="switch"
+						title={actionText}
+						onChange={() => {
+							(snippet.active ? deactivate(snippet) : activate(snippet))
+								.then(() => refreshSnippetsList())
+								.catch(handleUnknownError)
+						}}
+					/>
+				</>
+			)
+		}
+	}
 }
 
 const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 	const { snippetsAPI } = useRestAPI()
+	const { refreshSnippetsList } = useSnippetsList()
 
 	if (!isNetworkAdmin() && snippet.network && !snippet.shared_network) {
 		return (
@@ -101,6 +97,20 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 			<a href={getSnippetEditUrl(snippet)}>{__('Edit', 'code-snippets')}</a>{' | '}
 
 			<Button link onClick={() => {
+				snippetsAPI.create({
+					...snippet,
+					id: 0,
+					active: false,
+					// translators: %s: snippet title.
+					name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
+				})
+					.then(refreshSnippetsList)
+					.catch(handleUnknownError)
+			}}>
+				{__('Clone', 'code-snippets')}
+			</Button>{' | '}
+
+			<Button link onClick={() => {
 				snippetsAPI.export(snippet)
 					.then(response => downloadSnippetExportFile(response, snippet))
 					.catch(handleUnknownError)
@@ -108,27 +118,56 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 				{__('Export', 'code-snippets')}
 			</Button>{' | '}
 
-			<DeleteRowAction snippet={snippet} />
+			<DeleteButton link className="delete" snippet={snippet} onSuccess={refreshSnippetsList} />
 		</div>
 	)
 }
 
-const NameColumn: React.FC<ColumnProps> = ({ snippet }) => {
-	// translators: %s: snippet identifier.
-	const displayName = snippet.name.trim() ? snippet.name : sprintf(__('Snippet #%d', 'code-snippets'), snippet.id)
+const NameColumn: React.FC<ColumnProps> = ({ snippet }) =>
+	<>
+		{isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap
+			? <a href={getSnippetEditUrl(snippet)}>{getSnippetDisplayName(snippet)}</a>
+			: getSnippetDisplayName(snippet)}
+
+		{snippet.shared_network && <span className="badge">{__('Shared on Network', 'code-snippets')}</span>}
+
+		<RowActions snippet={snippet} />
+	</>
+
+const TypeColumn: React.FC<ColumnProps> = ({ snippet }) => {
+	const { setCurrentType } = useSnippetsFilters()
+	const type = getSnippetType(snippet)
 
 	return (
-		<>
-			{isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap
-				? <a href={getSnippetEditUrl(snippet)}>{displayName}</a>
-				: displayName}
-
-			{snippet.shared_network && <span className="badge">{__('Shared on Network', 'code-snippets')}</span>}
-
-			<RowActions snippet={snippet} />
-		</>
+		<a
+			href={addQueryArgs(window.location.href, { type })}
+			onClick={event => {
+				event.preventDefault()
+				setCurrentType(type)
+			}}
+		>
+			<Badge name={type} />
+		</a>
 	)
 }
+
+const TagsColumn: React.FC<ColumnProps> = ({ snippet }) =>
+	snippet.tags.map((tag, index) =>
+		<Fragment key={tag}>
+			<a key={tag} href={addQueryArgs(window.location.href, { tag })}>
+				{tag}
+			</a>
+			{index < snippet.tags.length - 1 ? ', ' : ''}
+		</Fragment>)
+
+const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
+	snippet.modified
+		? <span title={snippet.modified}>
+			<time dateTime={snippet.modified}>
+				{humanTimeDiff(snippet.modified, undefined)}
+			</time>
+		</span>
+		: <>&#8212;</>
 
 const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	const [value, setValue] = useState(snippet.priority)
@@ -175,41 +214,30 @@ export const TableColumns: ListTableColumn<Snippet>[] = [
 		id: 'name',
 		title: __('Name', 'code-snippets'),
 		isPrimary: true,
-		sortedValue: item => item.name.toLowerCase(),
+		sortedValue: snippet => getSnippetDisplayName(snippet).toLowerCase(),
 		render: snippet => <NameColumn snippet={snippet} />
 	},
 	{
 		id: 'type',
 		title: __('Type', 'code-snippets'),
-		sortedValue: item => getSnippetType(item),
-		render: snippet => <Badge name={getSnippetType(snippet)} />
+		sortedValue: snippet => getSnippetType(snippet),
+		render: snippet => <TypeColumn snippet={snippet} />
 	},
 	{
 		id: 'desc',
 		title: __('Description', 'code-snippets'),
-		// TODO: figure out how to allow formatting and markup.
-		render: snippet => stripTags(snippet.desc)
+		render: snippet => <RawHTML>{snippet.desc}</RawHTML>
 	},
 	{
 		id: 'tags',
 		title: __('Tags', 'code-snippets'),
-		render: snippet =>
-			snippet.tags.map((tag, index) =>
-				<Fragment key={tag}>
-					<a key={tag} href={addQueryArgs(window.location.href, { tag })}>
-						{tag}
-					</a>
-					{index < snippet.tags.length - 1 ? ', ' : ''}
-				</Fragment>
-			)
+		render: snippet => <TagsColumn snippet={snippet} />
 	},
 	{
 		id: 'date',
 		title: __('Modified', 'code-snippets'),
 		sortedValue: snippet => snippet.modified ? new Date(snippet.modified).toISOString() : '',
-		render: snippet => snippet.modified
-			? <time dateTime={snippet.modified}>{humanTimeDiff(snippet.modified, undefined)}</time>
-			: '&#8212;'
+		render: snippet => <DateColumn snippet={snippet} />
 	},
 	{
 		id: 'priority',

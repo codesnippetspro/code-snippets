@@ -8,7 +8,7 @@ import { useSnippetForm } from './useSnippetForm'
 import type { Snippet } from '../types/Snippet'
 
 const snippetMessages = <const> {
-	addNew: __('Add New Snippet', 'code-snippets'),
+	addNew: __('Create New Snippet', 'code-snippets'),
 	edit: __('Edit Snippet', 'code-snippets'),
 	created: __('Snippet created.', 'code-snippets'),
 	updated: __('Snippet updated.', 'code-snippets'),
@@ -21,7 +21,7 @@ const snippetMessages = <const> {
 }
 
 const conditionMessages: typeof snippetMessages = {
-	addNew: __('Add New Condition', 'code-snippets'),
+	addNew: __('Create New Condition', 'code-snippets'),
 	edit: __('Edit Condition', 'code-snippets'),
 	created: __('Condition created.', 'code-snippets'),
 	updated: __('Condition updated.', 'code-snippets'),

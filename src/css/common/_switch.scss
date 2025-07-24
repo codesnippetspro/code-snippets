@@ -13,11 +13,12 @@ input[type="checkbox"].switch {
 	outline: 0;
 	cursor: pointer;
 	margin: 0;
-	inline-size: 30px;
-	block-size: 17px;
+	inline-size: 32px;
+	block-size: 19px;
 	border-radius: 34px;
 	text-align: start;
 	border: 1px solid theme.$accent;
+	box-sizing: border-box;
 
 	&::before {
 		transition: all .4s;
@@ -27,15 +28,8 @@ input[type="checkbox"].switch {
 		display: inline-block;
 		background-color: theme.$accent;
 		border-radius: 50%;
+		margin: 2px;
 	}
-}
-
-.snippet-activation-switch::before {
-	margin: 2px;
-}
-
-input[type="checkbox"].switch::before {
-	margin: 1px;
 }
 
 .active-snippet .snippet-activation-switch,

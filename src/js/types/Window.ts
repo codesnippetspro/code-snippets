@@ -37,8 +37,9 @@ declare global {
 			}
 		}
 		readonly CODE_SNIPPETS_MANAGE?: {
-			hasNetworkCap: boolean
 			snippetsList: Snippet[]
+			hasNetworkCap: boolean
+			snippetsPerPage: number
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet

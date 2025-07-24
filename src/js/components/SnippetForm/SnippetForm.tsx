@@ -90,8 +90,8 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 				if (response && 0 !== response.id && window.CODE_SNIPPETS) {
 					if (window.location.href.toString().includes(window.CODE_SNIPPETS.urls.addNew)) {
 						document.title = document.title
-							.replace(__('Add New Snippet', 'code-snippets'), __('Edit Snippet', 'code-snippets'))
-							.replace(__('Add New Condition', 'code-snippets'), __('Edit Condition', 'code-snippets'))
+							.replace(__('Create New Snippet', 'code-snippets'), __('Edit Snippet', 'code-snippets'))
+							.replace(__('Create New Condition', 'code-snippets'), __('Edit Condition', 'code-snippets'))
 
 						const newUrl = addQueryArgs(window.CODE_SNIPPETS.urls.edit, { id: response.id })
 						window.history.pushState({}, document.title, newUrl)

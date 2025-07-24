@@ -1,3 +1,4 @@
+@use 'common/theme';
 @use 'common/badges';
 @use 'common/switch';
 @use 'common/select';
@@ -141,7 +142,7 @@
 	.delete {
 		color: #b32d2e;
 
-		&:hover {
+		&:hover, &:focus, &:active {
 			border-block-end: 1px solid #f00;
 			color: #f00;
 		}
@@ -155,4 +156,8 @@
 
 .wp-core-ui .button.clear-filters {
 	vertical-align: baseline;
+}
+
+.inactive-snippet {
+	@include theme.link-colors(#579);
 }

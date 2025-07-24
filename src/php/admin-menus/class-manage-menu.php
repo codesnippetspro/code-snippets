@@ -2,8 +2,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_Search_List_Table;
-use Code_Snippets\REST_API\Snippets_REST_Controller;
 use function Code_Snippets\Settings\get_setting;
 
 /**
@@ -222,8 +220,9 @@ class Manage_Menu extends Admin_Menu {
 			self::JS_HANDLE,
 			'CODE_SNIPPETS_MANAGE',
 			[
-				'hasNetworkCap' => current_user_can( code_snippets()->get_network_cap_name() ),
-				'snippetsList'  => array_map(
+				'hasNetworkCap'   => current_user_can( code_snippets()->get_network_cap_name() ),
+				'snippetsPerPage' => $this->get_snippets_per_page(),
+				'snippetsList'    => array_map(
 					function ( $snippet ) {
 						return $snippet->get_fields();
 					},
@@ -231,6 +230,21 @@ class Manage_Menu extends Admin_Menu {
 				),
 			]
 		);
+	}
+
+	/**
+	 * Get the number of snippets to show per page.
+	 *
+	 * @return int
+	 */
+	protected function get_snippets_per_page(): int {
+		$per_page = (int) get_user_option( 'snippets_per_page' );
+
+		if ( empty( $per_page ) || $per_page < 1 ) {
+			$per_page = 999;
+		}
+
+		return (int) apply_filters( 'snippets_per_page', $per_page );
 	}
 
 	/**
