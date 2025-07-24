@@ -170,6 +170,15 @@ class Manage_Menu extends Admin_Menu {
 
 		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
+
+		add_screen_option(
+			'per_page',
+			array(
+				'label'   => __( 'Snippets per page', 'code-snippets' ),
+				'default' => 999,
+				'option'  => 'snippets_per_page',
+			)
+		);
 	}
 
 	/**
@@ -196,6 +205,7 @@ class Manage_Menu extends Admin_Menu {
 				'react-dom',
 				'wp-url',
 				'wp-i18n',
+				'wp-date',
 				'wp-components',
 			],
 			$plugin->version,

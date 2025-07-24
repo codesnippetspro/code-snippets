@@ -1,0 +1,81 @@
+@use 'common/badges';
+@use 'common/switch';
+@use 'common/select';
+
+.wrap h2.nav-tab-wrapper {
+	display: flex;
+	flex-flow: row wrap-reverse;
+	gap: 0.5em;
+}
+
+.nav-tab {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+
+	@media screen and (width <= 1190px) {
+		.snippet-label {
+			display: none;
+		}
+	}
+}
+
+.nav-tab-wrapper + .subsubsub, p.search-box {
+	margin: 10px 0 0;
+}
+
+.wrap .subsubsub {
+	li::after {
+		content: ' | ';
+	}
+
+	li:last-child::after {
+		content: '';
+	}
+}
+
+.priority-column input {
+	appearance: none;
+	background: none;
+	border: none;
+	box-shadow: none;
+	inline-size: 4em;
+	color: #666;
+	text-align: center;
+
+	&:hover, &:focus, &:active {
+		color: #000;
+		background-color: rgb(0 0 0 / 10%);
+		border-radius: 6px;
+		appearance: unset;
+	}
+
+	&:disabled {
+		color: inherit;
+	}
+}
+
+.wp-list-table {
+	td.column-id {
+		text-align: center;
+	}
+
+	tr {
+		background: #fff;
+	}
+
+	ol, ul {
+		margin: 0 0 1.5em 1.5em;
+	}
+
+	ul {
+		list-style: disc;
+	}
+
+	th.sortable a, th.sorted a {
+		display: flex;
+		flex-direction: row;
+	}
+}

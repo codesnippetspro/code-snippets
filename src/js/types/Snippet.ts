@@ -14,8 +14,13 @@ export interface Snippet {
 	readonly code_error?: readonly [string, number] | null
 }
 
+export const SNIPPET_TYPES = ['php', 'html', 'css', 'js', 'cond'] as const
+export const SNIPPET_STATUSES = ['active', 'inactive', 'recently_activated'] as const
+
+export type SnippetType = typeof SNIPPET_TYPES[number]
+export type SnippetStatus = typeof SNIPPET_STATUSES[number]
+
 export type SnippetCodeType = 'php' | 'html' | 'css' | 'js'
-export type SnippetType = SnippetCodeType | 'cond'
 
 export type SnippetCodeScope = typeof SNIPPET_TYPE_SCOPES[SnippetCodeType][number]
 export type SnippetScope = typeof SNIPPET_TYPE_SCOPES[SnippetType][number]

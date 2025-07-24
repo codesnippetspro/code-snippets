@@ -3,6 +3,14 @@ import { isNetworkAdmin } from '../screen'
 import { parseSnippetObject } from './objects'
 import type { Snippet, SnippetType } from '../../types/Snippet'
 
+export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
+	php: __('Functions', 'code-snippets'),
+	html: __('Content', 'code-snippets'),
+	css: __('Styles', 'code-snippets'),
+	js: __('Scripts', 'code-snippets'),
+	cond: __('Conditions', 'code-snippets')
+}
+
 const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
 
 const defaults: Omit<Snippet, 'tags' | 'conditions'> = {

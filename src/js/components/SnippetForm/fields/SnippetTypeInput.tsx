@@ -3,9 +3,9 @@ import classnames from 'classnames'
 import { __, _x } from '@wordpress/i18n'
 import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
+import { SNIPPET_TYPE_SCOPES, SNIPPET_TYPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
-import { getSnippetType, isProType } from '../../../utils/snippets/snippets'
+import { getSnippetType, isProType, SNIPPET_TYPE_LABELS } from '../../../utils/snippets/snippets'
 import { Badge } from '../../common/Badge'
 import type { Dispatch, SetStateAction } from 'react'
 import type { SnippetCodeType, SnippetType } from '../../../types/Snippet'
@@ -23,13 +23,9 @@ const EDITOR_MODES: Record<SnippetCodeType, string> = {
 	html: 'application/x-httpd-php'
 }
 
-const OPTIONS: SelectOption<SnippetType>[] = [
-	{ value: 'php', label: __('Functions', 'code-snippets') },
-	{ value: 'html', label: __('Content', 'code-snippets') },
-	{ value: 'css', label: __('Styles', 'code-snippets') },
-	{ value: 'js', label: __('Scripts', 'code-snippets') },
-	{ value: 'cond', label: __('Conditions', 'code-snippets') }
-]
+const OPTIONS: SelectOption<SnippetType>[] =
+	SNIPPET_TYPES.map(type =>
+		({ value: type, label: SNIPPET_TYPE_LABELS[type] }))
 
 const SnippetTypeOption: React.FC<SelectOption<SnippetType>> = ({ label, value }) =>
 	<div className={classnames('snippet-type-option', { 'inverted-badges': isProType(value) && !isLicensed() })}>
