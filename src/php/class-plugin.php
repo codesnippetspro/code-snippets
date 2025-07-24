@@ -89,7 +89,6 @@ class Plugin {
 			add_filter( 'admin_url', array( $this, 'add_safe_mode_query_var' ) );
 		}
 
-		add_action( 'rest_api_init', [ $this, 'init_rest_api' ] );
 		add_action( 'allowed_redirect_hosts', [ $this, 'allow_code_snippets_redirect' ] );
 	}
 
@@ -124,20 +123,11 @@ class Plugin {
 		$this->active_snippets = new Active_Snippets();
 		$this->front_end = new Front_End();
 		$this->cloud_api = new Cloud_API();
+		new Rest_API();
 
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 		$this->licensing = new Licensing();
-	}
-
-	/**
-	 * Register custom REST API controllers.
-	 *
-	 * @return void
-	 */
-	public function init_rest_api() {
-		$snippets_controller = new Snippets_REST_Controller();
-		$snippets_controller->register_routes();
 	}
 
 	/**

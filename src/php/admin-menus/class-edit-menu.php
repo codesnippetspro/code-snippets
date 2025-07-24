@@ -67,7 +67,7 @@ class Edit_Menu extends Admin_Menu {
 		$this->add_menu(
 			code_snippets()->get_menu_slug( 'add' ),
 			_x( 'Add New', 'menu label', 'code-snippets' ),
-			__( 'Create New Snippet', 'code-snippets' )
+			__( 'Add New Snippet', 'code-snippets' )
 		);
 	}
 

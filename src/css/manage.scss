@@ -2,21 +2,14 @@
 @use 'common/switch';
 @use 'common/select';
 
-.wrap h2.nav-tab-wrapper {
-	display: flex;
-	flex-flow: row wrap-reverse;
-	gap: 0.5em;
-}
-
 .nav-tab {
 	display: flex;
 	flex-flow: row wrap;
 	align-items: center;
 	gap: 8px;
-	margin: 0;
 
 	@media screen and (width <= 1190px) {
-		.snippet-label {
+		span:first-child:not(:last-child) {
 			display: none;
 		}
 	}
@@ -26,13 +19,31 @@
 	margin: 10px 0 0;
 }
 
-.wrap .subsubsub {
-	li::after {
-		content: ' | ';
+.name-column,
+.type-column {
+	.dashicons {
+		font-size: 16px;
+		inline-size: 16px;
+		block-size: 16px;
+		vertical-align: middle;
 	}
 
-	li:last-child::after {
-		content: '';
+	.dashicons-clock {
+		vertical-align: middle;
+	}
+}
+
+.active-snippet .name-column > a {
+	font-weight: 600;
+}
+
+.active-snippet {
+	td, th {
+		background-color: rgba(#78c8e6, 0.06);
+	}
+
+	th.check-column {
+		border-inline-start: 2px solid #2ea2cc;
 	}
 }
 
@@ -78,4 +89,69 @@
 		display: flex;
 		flex-direction: row;
 	}
+
+	.row-actions {
+		color: #ddd;
+		position: relative;
+		inset-inline-start: 0;
+
+		.button-link {
+			min-height: unset;
+			line-height: unset;
+
+			&:hover {
+				background: none;
+			}
+		}
+	}
+
+	.column-activate {
+		padding-inline-end: 0 !important;
+	}
+
+	.clear-filters {
+		vertical-align: middle;
+	}
+
+	tfoot th.check-column {
+		padding: 13px 0 0 3px;
+	}
+
+	thead th.check-column,
+	tfoot th.check-column,
+	.inactive-snippet th.check-column {
+		padding-inline-start: 5px;
+	}
+
+	.active-snippet, .inactive-snippet {
+		td, th {
+			padding: 10px 9px;
+			border: none;
+			box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
+		}
+	}
+
+	tr.active-snippet + tr.inactive-snippet th,
+	tr.active-snippet + tr.inactive-snippet td {
+		border-block-start: 1px solid rgb(0 0 0 / 3%);
+		box-shadow: inset 0 1px 0 rgb(0 0 0 / 2%), inset 0 -1px 0 #e1e1e1;
+	}
+
+	.delete {
+		color: #b32d2e;
+
+		&:hover {
+			border-block-end: 1px solid #f00;
+			color: #f00;
+		}
+	}
+
+	#wpbody-content & .column-name {
+		white-space: nowrap; /* prevents wrapping of snippet title */
+		vertical-align: top;
+	}
+}
+
+.wp-core-ui .button.clear-filters {
+	vertical-align: baseline;
 }

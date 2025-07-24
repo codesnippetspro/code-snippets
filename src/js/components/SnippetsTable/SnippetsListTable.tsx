@@ -1,19 +1,17 @@
 import { __, _x, sprintf } from '@wordpress/i18n'
-import { useSnippetsList } from '../../hooks/useSnippetsList'
-import { Snippet, SNIPPET_STATUSES, SnippetStatus, SnippetType } from '../../types/Snippet'
-import { getSnippetType } from '../../utils/snippets/snippets'
-import { ListTable, ListTableBulkAction } from '../common/ListTable'
-import React, { useMemo, useState } from 'react'
+import React, { Fragment, useMemo } from 'react'
 import { addQueryArgs } from '@wordpress/url'
+import { useRestAPI } from '../../hooks/useRestAPI'
+import { useSnippetsList } from '../../hooks/useSnippetsList'
+import { useSnippetsTable } from '../../hooks/useSnippetsTable'
+import { handleUnknownError } from '../../utils/errors'
+import { REST_API_NAMESPACE, REST_BASE } from '../../utils/restAPI'
+import { getSnippetType } from '../../utils/snippets/snippets'
+import { ListTable } from '../common/ListTable'
 import { SubmitButton } from '../common/SubmitButton'
 import { TableColumns } from './TableColumns'
-
-const VIEW_LABELS: Record<SnippetStatus | 'all', string> = {
-	all: __('All', 'code-snippets'),
-	active: __('Active', 'code-snippets'),
-	inactive: __('Inactive', 'code-snippets'),
-	recently_activated: __('Recently Activate', 'code-snippets')
-}
+import type { ListTableBulkAction } from '../common/ListTable'
+import type { Snippet, SnippetStatus } from '../../types/Snippet'
 
 const actions: ListTableBulkAction<Snippet['id']>[] = [
 	{
@@ -42,109 +40,149 @@ const actions: ListTableBulkAction<Snippet['id']>[] = [
 	}
 ]
 
-interface TableViewsProps {
-	currentStatus?: SnippetStatus
-	setCurrentStatus: (status?: SnippetStatus) => void
+const STATUS_LABELS: [SnippetStatus | undefined, string][] = [
+	[undefined, __('All', 'code-snippets')],
+	['active', __('Active', 'code-snippets')],
+	['inactive', __('Inactive', 'code-snippets')],
+	['recently_activated', __('Recently Activated', 'code-snippets')]
+]
+
+interface SnippetStatusCountProps {
+	snippetsByStatus: Map<SnippetStatus | undefined, Snippet[]>
 }
 
-const TableViews: React.FC<TableViewsProps> = ({ currentStatus, setCurrentStatus }) => {
+const SnippetStatusCounts: React.FC<SnippetStatusCountProps> = ({ snippetsByStatus }) => {
+	const { currentStatus, setCurrentStatus } = useSnippetsTable()
+	const visibleStatuses = STATUS_LABELS.filter(([status]) => snippetsByStatus.has(status))
 
 	return (
 		<ul className="subsubsub">
-
-			{SNIPPET_STATUSES.map(status =>
-				<li key={status} className={status}>
-					<a
-						href={addQueryArgs(window.location.href, { status })}
-						className={currentStatus === status ? 'current' : undefined}
-						onClick={event => {
-							event.preventDefault()
-							setCurrentStatus(status)
-						}}
-					>
-						{`${VIEW_LABELS[status]} `}
-						<span className="count">{
-							// translators: %d: number of snippets in the current view.
-							sprintf(_x('(%d)', 'table view count', 'code-snippets'), 0)
-						}</span>
-					</a>
-				</li>)}
+			{visibleStatuses.map(([status, label], index) =>
+				<Fragment key={label}>
+					<li className={status ?? 'all'}>
+						<a
+							href={addQueryArgs(window.location.href, { status })}
+							className={currentStatus === status ? 'current' : undefined}
+							onClick={event => {
+								event.preventDefault()
+								setCurrentStatus(status)
+							}}
+						>
+							{`${label} `}
+							<span className="count">{
+								// translators: %d: number of snippets in the current view.
+								sprintf(_x('(%d)', 'table view count', 'code-snippets'), snippetsByStatus.get(status)?.length ?? 0)
+							}</span>
+						</a>
+					</li>
+					{index < visibleStatuses.length - 1 && ' | '}
+				</Fragment>)}
 		</ul>
 	)
 }
 
-interface ExtraTableNavProps {
-	which: 'top' | 'bottom'
-	currentTag?: string
-	currentStatus?: SnippetStatus
-	visibleSnippets: Snippet[]
-	setCurrentTag: (tag?: string) => void
+const ClearRecentlyActiveButton: React.FC = () => {
+	const { api } = useRestAPI()
+	const { refreshSnippetsList } = useSnippetsList()
+	const { currentStatus } = useSnippetsTable()
+
+	return 'recently_activated' === currentStatus
+		? <div className="alignleft actions">
+			<SubmitButton
+				secondary
+				name="clear-recent-list"
+				text={__('Clear List', 'code-snippets')}
+				onClick={event => {
+					event.preventDefault()
+					api.del(`${REST_BASE}/${REST_API_NAMESPACE}/v1/recently-active`)
+						.then(refreshSnippetsList)
+						.catch(handleUnknownError)
+				}}
+			/>
+		</div>
+		: null
 }
 
-const ExtraTableNav: React.FC<ExtraTableNavProps> = ({ which, currentTag, setCurrentTag, currentStatus, visibleSnippets }) => {
+interface ExtraTableNavProps {
+	visibleSnippets: Snippet[]
+}
 
-	const tagsList: Set<string> | undefined = useMemo(
-		() =>
-			'top' === which
-				? visibleSnippets.reduce((tags, snippet) => {
-					snippet.tags.forEach(tag => tags.add(tag))
-					return tags
-				}, new Set<string>())
-				: undefined,
-		[which, visibleSnippets])
+const FilterByTagControl: React.FC<ExtraTableNavProps> = ({ visibleSnippets }) => {
+	const { currentTag, setCurrentTag } = useSnippetsTable()
+
+	const tagsList: Set<string> = useMemo(
+		() => visibleSnippets.reduce((tags, snippet) => {
+			snippet.tags.forEach(tag => tags.add(tag))
+			return tags
+		}, new Set<string>()),
+		[visibleSnippets])
+
+	return 0 < tagsList.size
+		? <div className="alignleft actions">
+			<select
+				name="tag"
+				value={currentTag}
+				onChange={event => setCurrentTag(event.target.value)}
+			>
+				<option>{__('Show all tags', 'code-snippets')}</option>
+				{[...tagsList].map(tag =>
+					<option key={tag} value={tag}>{tag}</option>)}
+			</select>
+		</div>
+		: null
+}
+
+const SearchBox: React.FC = () => {
+	const { searchQuery, setSearchQuery } = useSnippetsTable()
 
 	return (
-		<>
-			{tagsList ?
-				<div className="alignleft actions">
-					<select name="tag" onChange={event => {
-						setCurrentTag(event.target.value ?? undefined)
-					}}>
-						<option value="">{__('Show all tags', 'code-snippets')}</option>
-						{[...tagsList].map(tag =>
-							<option key={tag} value={tag} selected={currentTag === tag}>{tag}</option>)}
-					</select>
-				</div>
-				: null}
-
-			{'recently_activated' === currentStatus
-				? <div className="alignleft actions">
-					<SubmitButton secondary name="clear-recent-list" text={__('Clear List', 'code-snippets')} />
-				</div>
-				: null}
-		</>
+		<p className="search-box">
+			<label className="screen-reader-text" htmlFor="snippets_search">{__('Search Snippets:', 'code-snippets')}</label>
+			<input
+				type="search"
+				id="snippets_search"
+				name="s"
+				value={searchQuery ?? ''}
+				onChange={event => setSearchQuery(event.target.value)}
+				placeholder={__('Search snippets', 'code-snippets')}
+			/>
+		</p>
 	)
 }
 
-export interface SnippetsListTableProps {
-	currentType?: SnippetType
-	currentStatus?: SnippetStatus
-	setCurrentStatus: (status?: SnippetStatus) => void
-}
-
-export const SnippetsListTable: React.FC<SnippetsListTableProps> = ({ currentType, currentStatus, setCurrentStatus }) => {
-	const { snippetsList } = useSnippetsList()
-	const [currentTag, setCurrentTag] = useState<string>()
-
-	const visibleSnippets = useMemo(
-		() => snippetsList?.filter(snippet =>
-			(!currentType || getSnippetType(snippet) === currentType) &&
-			(!currentStatus || (currentStatus === 'active' && snippet.active) || (currentStatus === 'inactive' && !snippet.active)) &&
-			(!currentTag || snippet.tags.includes(currentTag))
-		) ?? [],
-		[snippetsList, currentType, currentTag, currentStatus])
+export const SnippetsListTable: React.FC = () => {
+	const { currentType, currentStatus, currentTag, searchQuery, snippetsByStatus } = useSnippetsTable()
 
 	return (
 		<>
-			<TableViews currentStatus={currentStatus} setCurrentStatus={setCurrentStatus} />
+			<SnippetStatusCounts snippetsByStatus={snippetsByStatus} />
+			<SearchBox />
 
 			<ListTable
-				items={visibleSnippets}
+				items={snippetsByStatus.get(currentStatus) ?? []}
 				getKey={snippet => snippet.id}
 				columns={TableColumns}
 				actions={actions}
-				extraTableNav={which =>
-					<ExtraTableNav {...{ which, visibleSnippets, currentStatus, currentType, currentTag, setCurrentTag }} />}
+				extraTableNav={which => <>
+					{'top' === which && <FilterByTagControl visibleSnippets={snippetsByStatus.get(undefined) ?? []} />}
+					<ClearRecentlyActiveButton />
+				</>}
+				rowClassName={snippet =>
+					`snippet ${snippet.active ? 'active' : 'inactive'}-snippet ${getSnippetType(snippet)}-snippet ${snippet.scope}-snippet`}
+				noItems={searchQuery || currentTag
+					? <>
+						{__('No snippets were found matching the current search query.', 'code-snippets')}
+						{__(' Please enter a new query or use the "Clear Filters" button above.', 'code-snippets')}
+					</>
+					: <>{currentType
+						? __("It looks like you don't have any snippets of this type.", 'code-snippets')
+						: __("It looks like you don't have any snippets.", 'code-snippets')}
+
+					{' '}
+					<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.addNew, currentType ? { type: currentType } : {})}>
+						{__('Perhaps you would like to add a new one?', 'code-snippets')}
+					</a>
+					</>}
 			/>
 		</>
 	)

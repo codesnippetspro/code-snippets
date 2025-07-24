@@ -13,6 +13,7 @@ export interface ListTableColumn<T> {
 	render: (item: T) => ReactNode
 	isHidden?: boolean
 	isPrimary?: boolean
+	isHeading?: boolean
 	sortedValue?: (item: T) => Key
 	defaultSortDirection?: ListTableSortDirection
 }
@@ -82,6 +83,7 @@ export const ListTable = <T, K extends Key>({
 	actions,
 	noItems,
 	className,
+	rowClassName,
 	extraTableNav,
 	isDisabled = false,
 }: ListTableProps<T, K>) => {
@@ -107,7 +109,7 @@ export const ListTable = <T, K extends Key>({
 					<TableHeadings which="head" {...tableHeadingsProps} />
 				</thead>
 				<tbody>
-					<TableItems items={sortedItems} {...{ getKey, columns, noItems, setSelected }} />
+					<TableItems items={sortedItems} {...{ getKey, columns, noItems, setSelected, rowClassName }} />
 				</tbody>
 				<tfoot>
 					<TableHeadings which="foot" {...tableHeadingsProps} />

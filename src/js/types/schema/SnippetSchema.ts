@@ -16,5 +16,6 @@ export interface WritableSnippetSchema {
 export interface SnippetSchema extends Readonly<Required<WritableSnippetSchema>> {
 	readonly id: number
 	readonly modified: string
+	readonly last_active?: number
 	readonly code_error?: readonly [string, number] | null
 }

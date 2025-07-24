@@ -3,6 +3,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_Search_List_Table;
+use Code_Snippets\REST_API\Snippets_REST_Controller;
 use function Code_Snippets\Settings\get_setting;
 
 /**
@@ -221,7 +222,13 @@ class Manage_Menu extends Admin_Menu {
 			self::JS_HANDLE,
 			'CODE_SNIPPETS_MANAGE',
 			[
-				'pageTitleActions' => $plugin->is_compact_menu() ? $this->page_title_action_links( [ 'add', 'import', 'settings' ] ) : [],
+				'hasNetworkCap' => current_user_can( code_snippets()->get_network_cap_name() ),
+				'snippetsList'  => array_map(
+					function ( $snippet ) {
+						return $snippet->get_fields();
+					},
+					get_snippets()
+				),
 			]
 		);
 	}

@@ -547,6 +547,11 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 					'format'      => 'date-time',
 					'readonly'    => true,
 				],
+				'last_active'    => [
+					'description' => esc_html__( 'Timestamp of when the snippet was last active, if available.', 'code-snippets' ),
+					'type'        => 'integer',
+					'readonly'    => true,
+				],
 				'code_error'     => [
 					'description' => esc_html__( 'Error message if the snippet code could not be parsed.', 'code-snippets' ),
 					'type'        => 'string',

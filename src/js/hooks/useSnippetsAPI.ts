@@ -3,7 +3,7 @@ import { addQueryArgs } from '@wordpress/url'
 import { handleUnknownError } from '../utils/errors'
 import { REST_API_AXIOS_CONFIG, REST_SNIPPETS_BASE } from '../utils/restAPI'
 import { isNetworkAdmin } from '../utils/screen'
-import { createSnippetObject } from '../utils/snippets'
+import { createSnippetObject } from '../utils/snippets/snippets'
 import { useAxios } from './useAxios'
 import type { Snippet } from '../types/Snippet'
 import type { SnippetsExport } from '../types/SnippetsExport'
@@ -37,19 +37,19 @@ export const useSnippetsAPI = (): SnippetsAPI => {
 			get<Snippet>(addQueryArgs(`${REST_SNIPPETS_BASE}/${snippetId}`, { network })),
 
 		create: snippet =>
-			post<Snippet, Snippet>(REST_SNIPPETS_BASE, snippet),
+			post<Snippet>(REST_SNIPPETS_BASE, snippet),
 
 		update: snippet =>
-			post<Snippet, Snippet>(buildURL(snippet), snippet),
+			post<Snippet>(buildURL(snippet), snippet),
 
 		delete: (snippet: Snippet) =>
 			del(buildURL(snippet)),
 
 		activate: snippet =>
-			post<Snippet, never>(buildURL(snippet, 'activate')),
+			post<Snippet>(buildURL(snippet, 'activate')),
 
 		deactivate: snippet =>
-			post<Snippet, never>(buildURL(snippet, 'deactivate')),
+			post<Snippet>(buildURL(snippet, 'deactivate')),
 
 		export: snippet =>
 			get<SnippetsExport>(buildURL(snippet, 'export')),

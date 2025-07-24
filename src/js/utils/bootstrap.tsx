@@ -1,20 +1,21 @@
-import { createContext, useContext } from 'react'
+import React, { createContext, useContext } from 'react'
 import { createRoot } from 'react-dom/client'
 import type { Context, FunctionComponent } from 'react'
-import React from 'react'
 
 export const loadComponent = (containerId: string, Component: FunctionComponent): void => {
-	const container = document.getElementById('snippets-table-container')
+	window.addEventListener('DOMContentLoaded', () => {
+		const container = document.getElementById(containerId)
 
-	if (container) {
-		const root = createRoot(container)
-		root.render(<Component />)
-	} else {
-		console.error(`Could not find ${containerId.replace(/-_/, ' ')}.`)
-	}
+		if (container) {
+			const root = createRoot(container)
+			root.render(<Component />)
+		} else {
+			console.error(`Could not find element #${containerId}.`)
+		}
+	})
 }
 
-export const createContextHook = <T, >(name: string): [
+export const createContextHook = <T, >(hookName: string): [
 	Context<T | undefined>,
 	() => T
 ] => {
@@ -24,7 +25,7 @@ export const createContextHook = <T, >(name: string): [
 		const value = useContext(contextValue)
 
 		if (value === undefined) {
-			throw Error(`use${name} can only be used within a ${name} context provider.`)
+			throw Error(`${hookName} can only be used within a corresponding context provider.`)
 		}
 
 		return value

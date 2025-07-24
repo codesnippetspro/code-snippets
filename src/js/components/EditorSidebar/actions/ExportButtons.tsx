@@ -1,26 +1,13 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { useRestAPI } from '../../../hooks/useRestAPI'
-import { Button } from '../../common/Button'
 import { downloadSnippetExportFile } from '../../../utils/files'
+import { Button } from '../../common/Button'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import type { SnippetsExport } from '../../../types/schema/SnippetsExport'
 
 export const ExportButtons: React.FC = () => {
 	const { snippetsAPI } = useRestAPI()
 	const { snippet, isWorking, setIsWorking, handleRequestError } = useSnippetForm()
-
-	const handleFileResponse = (response: string | SnippetsExport) => {
-		setIsWorking(false)
-		console.info('file response', response)
-
-		if ('string' === typeof response) {
-			downloadSnippetExportFile(response, snippet)
-		} else {
-			const JSON_INDENT_SPACES = 2
-			downloadSnippetExportFile(JSON.stringify(response, undefined, JSON_INDENT_SPACES), snippet, 'json')
-		}
-	}
 
 	return (
 		<div className="snippet-export-buttons">
@@ -30,7 +17,7 @@ export const ExportButtons: React.FC = () => {
 					setIsWorking(true)
 
 					snippetsAPI.export(snippet)
-						.then(handleFileResponse)
+						.then(response => downloadSnippetExportFile(response, snippet))
 						// translators: %s: error message.
 						.catch((error: unknown) => handleRequestError(error, __('Could not download export file.', 'code-snippets')))
 				}}
@@ -44,7 +31,7 @@ export const ExportButtons: React.FC = () => {
 					name="export_snippet_code"
 					onClick={() => {
 						snippetsAPI.exportCode(snippet)
-							.then(handleFileResponse)
+							.then(response => downloadSnippetExportFile(response, snippet))
 							// translators: %s: error message.
 							.catch((error: unknown) => handleRequestError(error, __('Could not download file.', 'code-snippets')))
 					}}

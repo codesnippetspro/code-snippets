@@ -36,6 +36,10 @@ declare global {
 				connectCloud: string
 			}
 		}
+		readonly CODE_SNIPPETS_MANAGE?: {
+			hasNetworkCap: boolean
+			snippetsList: Snippet[]
+		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet
 			pageTitleActions: Record<string, string>

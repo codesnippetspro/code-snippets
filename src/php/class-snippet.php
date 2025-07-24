@@ -5,6 +5,7 @@ namespace Code_Snippets;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use function Code_Snippets\Settings\get_self_option;
 
 /**
  * A snippet object.
@@ -28,6 +29,7 @@ use Exception;
  * @property int                    $revision           Revision or version number of snippet.
  * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
  *
+ * @property-read int               $last_active        Timestamp of when the snippet was last active, if available.
  * @property-read string            $display_name       The snippet name if it exists or a placeholder if it does not.
  * @property-read string            $tags_list          The tags in string list format.
  * @property-read string            $scope_icon         The dashicon used to represent the current scope.
@@ -200,6 +202,16 @@ class Snippet extends Data_Item {
 	 */
 	public static function get_types(): array {
 		return [ 'php', 'html', 'css', 'js', 'cond' ];
+	}
+
+	/**
+	 * Retrieve the timestamp of when the snippet was last active, if available.
+	 *
+	 * @return string
+	 */
+	protected function get_last_active(): string {
+		$recently_active = get_self_option( $this->network, 'recently_activated_snippets', [] );
+		return $recently_active[ (string) $this->id ] ?? 0;
 	}
 
 	/**

@@ -445,6 +445,13 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 		do_action( 'code_snippets/delete_snippet', $id, $network );
 		clean_snippets_cache( $table );
 		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
+
+		$recently_active = get_self_option( $network, 'recently_activated_snippets', [] );
+
+		if ( isset( $recently_active[ $id ] ) ) {
+			unset( $recently_active[ $id ] );
+			update_self_option( $network, 'recently_activated_snippets', $recently_active );
+		}
 	}
 
 	return (bool) $result;
@@ -492,7 +499,7 @@ function test_snippet_code( Snippet $snippet ) {
  *
  * @since 2.0.0
  */
-function save_snippet( $snippet ) {
+function save_snippet( $snippet ): ?Snippet {
 	global $wpdb;
 	$table = code_snippets()->db->get_table_name( $snippet->network );
 
@@ -551,19 +558,34 @@ function save_snippet( $snippet ) {
 		$snippet->id = $wpdb->insert_id;
 		do_action( 'code_snippets/create_snippet', $snippet, $table );
 	} else {
+		$existing = get_snippet( $snippet->id, $snippet->network );
 
 		// Otherwise, update the snippet data.
 		$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
+
 		if ( false === $result ) {
 			return null;
 		}
 
-		do_action( 'code_snippets/update_snippet', $snippet, $table );
+		$updated = get_snippet( $snippet->id, $snippet->network );
+		do_action( 'code_snippets/update_snippet', $updated, $table, $existing );
+
+		if ( ! $updated->active && $existing->active ) {
+			$recently_active = [ $updated->id => time() ] + get_self_option( $updated->network, 'recently_activated_snippets', [] );
+			update_self_option( $updated->network, 'recently_activated_snippets', $recently_active );
+		} elseif ( ! $updated->active ) {
+			$recently_active = get_self_option( $updated->network, 'recently_activated_snippets', [] );
+
+			if ( isset( $recently_active[ $updated->id ] ) ) {
+				unset( $recently_active[ $updated->id ] );
+				update_self_option( $updated->network, 'recently_activated_snippets', $recently_active );
+			}
+		}
 	}
 
-	update_shared_network_snippets( [ $snippet ] );
+	update_shared_network_snippets( [ $updated ] );
 	clean_snippets_cache( $table );
-	return $snippet;
+	return $updated;
 }
 
 /**

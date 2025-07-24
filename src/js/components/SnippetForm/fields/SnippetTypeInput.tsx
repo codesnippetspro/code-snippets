@@ -3,9 +3,9 @@ import classnames from 'classnames'
 import { __, _x } from '@wordpress/i18n'
 import Select from 'react-select'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { SNIPPET_TYPE_SCOPES, SNIPPET_TYPES } from '../../../types/Snippet'
+import { SNIPPET_TYPES, SNIPPET_TYPE_SCOPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
-import { getSnippetType, isProType, SNIPPET_TYPE_LABELS } from '../../../utils/snippets/snippets'
+import { SNIPPET_TYPE_LABELS, getSnippetType, isProType } from '../../../utils/snippets/snippets'
 import { Badge } from '../../common/Badge'
 import type { Dispatch, SetStateAction } from 'react'
 import type { SnippetCodeType, SnippetType } from '../../../types/Snippet'
@@ -31,10 +31,11 @@ const SnippetTypeOption: React.FC<SelectOption<SnippetType>> = ({ label, value }
 	<div className={classnames('snippet-type-option', { 'inverted-badges': isProType(value) && !isLicensed() })}>
 		<div>
 			{label}
-			{isProType(value) && !isLicensed() &&
-		  <span className=" badge pro-badge small-badge">
-		  	{_x('Pro', 'Upgrade to Pro', 'code-snippets')}
-		  </span>}
+			{isProType(value) && !isLicensed()
+				? <span className="badge pro-badge small-badge">
+					{_x('Pro', 'Upgrade to Pro', 'code-snippets')}
+				</span>
+				: null}
 		</div>
 		<Badge name={value} />
 	</div>

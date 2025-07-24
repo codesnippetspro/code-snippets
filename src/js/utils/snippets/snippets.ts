@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n'
-import { isNetworkAdmin } from '../screen'
+import { addQueryArgs } from '@wordpress/url'
 import { parseSnippetObject } from './objects'
 import type { Snippet, SnippetType } from '../../types/Snippet'
 
@@ -13,22 +13,8 @@ export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
 
 const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
 
-const defaults: Omit<Snippet, 'tags' | 'conditions'> = {
-	id: 0,
-	name: '',
-	code: '',
-	desc: '',
-	scope: 'global',
-	modified: '',
-	active: false,
-	network: isNetworkAdmin(),
-	shared_network: null,
-	priority: 10,
-	conditionId: 0
-}
-
 export const createSnippetObject = (fields: unknown = null): Snippet =>
-	parseSnippetObject(fields, { ...defaults, tags: [] })
+	parseSnippetObject(fields)
 
 export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType => {
 	switch (true) {
@@ -48,6 +34,11 @@ export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType =
 			return 'php'
 	}
 }
+
+export const getSnippetEditUrl = (snippet?: Pick<Snippet, 'id'>): string | undefined =>
+	snippet?.id
+		? addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: snippet.id })
+		: window.CODE_SNIPPETS?.urls.addNew
 
 export const validateSnippet = (snippet: Snippet): undefined | string => {
 	const missingTitle = '' === snippet.name.trim()

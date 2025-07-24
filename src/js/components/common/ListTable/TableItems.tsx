@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Dispatch, Key, SetStateAction, ThHTMLAttributes } from 'react'
+import type { Dispatch, Key, SetStateAction } from 'react'
 import type { ListTableColumn, ListTableItemsProps } from './ListTable'
 
 interface CheckboxCellProps<T, K extends Key> extends Pick<TableItemsProps<T, K>, 'getKey'> {
@@ -34,12 +34,11 @@ interface TableCellProps<T> {
 }
 
 const TableCell = <T, >({ item, column }: TableCellProps<T>) => {
-	const props: ThHTMLAttributes<HTMLTableCellElement> = {
-		className: `${column.id}-column column-${column.id}`,
-		children: column.render(item)
-	}
+	const className = `${column.id}-column column-${column.id}`
 
-	return column.isPrimary ? <th {...props} /> : <td {...props} />
+	return column.isHeading
+		? <th className={className}>{column.render(item)}</th>
+		: <td className={className}>{column.render(item)}</td>
 }
 
 export interface TableItemsProps<T, K extends Key>

@@ -22,7 +22,7 @@ export interface SnippetFormContext {
 	setCodeEditorInstance: Dispatch<SetStateAction<CodeEditorInstance | undefined>>
 }
 
-export const [SnippetFormContext, useSnippetForm] = createContextHook<SnippetFormContext>('SnippetForm')
+export const [SnippetFormContext, useSnippetForm] = createContextHook<SnippetFormContext>('useSnippetForm')
 
 export interface WithSnippetFormContextProps extends PropsWithChildren {
 	initialSnippet: () => Snippet
