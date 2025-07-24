@@ -18,6 +18,7 @@ declare global {
 		readonly code_snippets_editor_settings: EditorOption[]
 		CODE_SNIPPETS_PRISM?: typeof Prism
 		readonly CODE_SNIPPETS?: {
+			debug: boolean
 			isLicensed: boolean
 			restAPI: {
 				base: string

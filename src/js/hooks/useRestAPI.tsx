@@ -26,10 +26,14 @@ const debugRequest = async <T, D = never>(
 	doRequest: Promise<AxiosResponse<T, D>>,
 	data?: D
 ): Promise<T> => {
-	console.debug(`${method} ${url}`, ...data ? [data] : [])
-	const response = await doRequest
-	console.debug('Response', response)
-	return response.data
+	if (window.CODE_SNIPPETS?.debug) {
+		console.debug(`${method} ${url}`, ...data ? [data] : [])
+		const response = await doRequest
+		console.debug('Response', response)
+		return response.data
+	} else {
+		return (await doRequest).data
+	}
 }
 
 const buildRestAPI = (axiosInstance: AxiosInstance): RestAPI => ({

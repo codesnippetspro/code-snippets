@@ -354,6 +354,7 @@ class Plugin {
 			$handle,
 			'CODE_SNIPPETS',
 			[
+				'debug'            => defined( 'WP_DEBUG' ) && WP_DEBUG,
 				'isLicensed'       => $this->licensing->is_licensed(),
 				'isCloudConnected' => Cloud_API::is_cloud_connection_available(),
 				'restAPI'          => [
