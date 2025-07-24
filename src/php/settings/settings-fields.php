@@ -37,6 +37,7 @@ function get_default_settings(): array {
 			'indent_with_tabs'            => true,
 			'tab_size'                    => 4,
 			'indent_unit'                 => 4,
+			'font-size'                   => 14,
 			'wrap_lines'                  => true,
 			'code_folding'                => true,
 			'line_numbers'                => true,
@@ -160,6 +161,15 @@ function get_settings_fields(): array {
 			'label'      => _x( 'spaces', 'unit', 'code-snippets' ),
 			'codemirror' => 'indentUnit',
 			'min'        => 0,
+		],
+		'font_size'                   => [
+			'name'       => __( 'Font Size', 'code-snippets' ),
+			'type'       => 'number',
+			'desc'       => __( 'The font size for the code editor.', 'code-snippets' ),
+			'label'      => _x( 'px', 'unit', 'code-snippets' ),
+			'codemirror' => 'fontSize',
+			'min'        => 8,
+			'max'        => 24,
 		],
 		'wrap_lines'                  => [
 			'name'       => __( 'Wrap Lines', 'code-snippets' ),
