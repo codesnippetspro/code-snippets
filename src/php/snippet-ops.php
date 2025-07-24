@@ -690,7 +690,7 @@ function execute_active_snippets_from_flat_files(): bool {
 
 	// Detect if a snippet is currently being edited, and if so, spare it from execution.
 	$edit_id = 0;
-	$edit_table = $db->table;
+	$edit_table = Snippet_Files::get_hashed_table_name( $db->table );
 
 	if ( wp_is_json_request() && ! empty( $_SERVER['REQUEST_URI'] ) ) {
 		$url = wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
@@ -702,7 +702,7 @@ function execute_active_snippets_from_flat_files(): bool {
 			if ( ! empty( $url['query'] ) ) {
 				wp_parse_str( $url['query'], $path_params );
 				$edit_table = isset( $path_params['network'] ) && rest_sanitize_boolean( $path_params['network'] ) ?
-					$db->ms_table : $db->table;
+					Snippet_Files::get_hashed_table_name( $db->ms_table ) : Snippet_Files::get_hashed_table_name( $db->table );
 			}
 		}
 	}
@@ -718,24 +718,25 @@ function execute_active_snippets_from_flat_files(): bool {
 
 			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
 			if ( 'single-use' === $snippet['scope'] ) {
+				$table_to_update = Snippet_Files::get_hashed_table_name( $db->table ) === $table_name ? $db->table : $db->ms_table;
 				$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
 
-				if ( $table_name === $db->ms_table && is_array( $active_shared_ids ) && in_array( $snippet_id, $active_shared_ids, true ) ) {
+				if ( Snippet_Files::get_hashed_table_name( $db->ms_table ) === $table_name && is_array( $active_shared_ids ) && in_array( $snippet_id, $active_shared_ids, true ) ) {
 					unset( $active_shared_ids[ array_search( $snippet_id, $active_shared_ids, true ) ] );
 					$active_shared_ids = array_values( $active_shared_ids );
 					update_option( 'active_shared_network_snippets', $active_shared_ids );
-					clean_active_snippets_cache( $table_name );
+					clean_active_snippets_cache( $table_to_update );
 				} else {
 					$wpdb->update(
-						$table_name,
+						$table_to_update,
 						array( 'active' => '0' ),
 						array( 'id' => $snippet_id ),
 						array( '%d' ),
 						array( '%d' )
 					);
-					clean_snippets_cache( $table_name );
+					clean_snippets_cache( $table_to_update );
 
-					$network = $table_name === $db->ms_table;
+					$network = Snippet_Files::get_hashed_table_name( $db->ms_table ) === $table_name;
 					do_action( 'code_snippets/deactivate_snippet', $snippet_id, $network );
 				}
 			}

@@ -31,15 +31,28 @@ class Snippet_Files {
 			add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
 			add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 2 );
 			add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
+			add_action( 'code_snippets/activate_snippets', [ $this, 'activate_snippets' ], 10, 2 );
 
 			add_action( 'updated_option', [ $this, 'sync_active_shared_network_snippets' ], 10, 3 );
+			add_action( 'add_option', [ $this, 'sync_active_shared_network_snippets_add' ], 10, 2 );
 		}
 
 		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ], 10, 1 );
 		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ], 10, 2 );
 	}
 
+	public function activate_snippets( $valid_snippets, $table ): void {
+		foreach ( $valid_snippets as $snippet ) {
+			$snippet->active = true;
+			$this->handle_snippet( $snippet, $table );
+		}
+	}
+
 	public function handle_snippet( Snippet $snippet, string $table ): void {
+		if ( 0 === $snippet->id ) {
+			return;
+		}
+
 		$snippet_type = $snippet->get_type();
 		$handler = $this->handler_registry->get_handler( $snippet_type );
 
@@ -47,6 +60,7 @@ class Snippet_Files {
 			return;
 		}
 
+		$table = self::get_hashed_table_name( $table );
 		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 		$this->maybe_create_directory( $base_dir );
 
@@ -67,7 +81,7 @@ class Snippet_Files {
 			return;
 		}
 
-		$table = code_snippets()->db->get_table_name( $network );
+		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
 		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
 		$file_path = $this->get_snippet_file_path( $base_dir, $snippet->id, $handler->get_file_extension() );
@@ -85,7 +99,7 @@ class Snippet_Files {
 			return;
 		}
 
-		$table = code_snippets()->db->get_table_name( $network );
+		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
 		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
 		$this->maybe_create_directory( $base_dir );
@@ -108,7 +122,7 @@ class Snippet_Files {
 			return;
 		}
 
-		$table = code_snippets()->db->get_table_name( $network );
+		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
 		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
 		$this->config_repo->update( $base_dir, $snippet );
@@ -126,6 +140,20 @@ class Snippet_Files {
 		}
 
 		return $base_dir;
+	}
+
+	public static function get_base_url( string $table = '', string $snippet_type = '' ): string {
+		$base_url = WP_CONTENT_URL . '/code-snippets';
+
+		if ( ! empty( $table ) ) {
+			$base_url .= '/' . $table;
+		}
+
+		if ( ! empty( $snippet_type ) ) {
+			$base_url .= '/' . $snippet_type;
+		}
+
+		return $base_url;
 	}
 
 	private function maybe_create_directory( string $dir ): void {
@@ -156,8 +184,16 @@ class Snippet_Files {
 		$this->create_active_shared_network_snippets_file( $value );
 	}
 
+	public function sync_active_shared_network_snippets_add( $option, $value ): void {
+		if ( 'active_shared_network_snippets' !== $option ) {
+			return;
+		}
+
+		$this->create_active_shared_network_snippets_file( $value );
+	}
+
 	private function create_active_shared_network_snippets_file( $value ): void {
-		$table = code_snippets()->db->get_table_name();
+		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name( false ) );
 		$base_dir = self::get_base_dir( $table );
 
 		$this->maybe_create_directory( $base_dir );
@@ -168,53 +204,104 @@ class Snippet_Files {
 		$this->fs->put_contents( $file_path, $file_content, FS_CHMOD_FILE );
 	}
 
-	public static function get_active_snippets_from_flat_files( array $scopes = [] ): array {
+	public static function get_hashed_table_name( string $table ): string {
+		return wp_hash( $table );
+	}
+
+	public static function get_active_snippets_from_flat_files(
+		array $scopes = [],
+		$snippet_type = 'php'
+	): array {
 		$snippets = [];
 
-		$table = code_snippets()->db->get_table_name();
-		$base_dir = self::get_base_dir( $table, 'php' );
-		$snippets_file_path = $base_dir . '/index.php';
-
-		if ( is_file( $snippets_file_path ) ) {
-			$site_snippets = is_file( $snippets_file_path ) ? require $snippets_file_path : [];
-
-			$snippets[ $table ] = array_filter(
-				$site_snippets,
-				function ( $snippet ) use ( $scopes ) {
-					return $snippet['active'] && in_array( $snippet['scope'], $scopes, true );
-				}
-			);
-		}
+		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name() );
+		$snippets[ $table ] = self::load_active_snippets_from_file(
+			$table,
+			$snippet_type,
+			$scopes
+		);
 
 		if ( is_multisite() ) {
-			$ms_table = code_snippets()->db->get_table_name( true );
-			$ms_base_dir = self::get_base_dir( $ms_table, 'php' );
-			$ms_snippets_file_path = $ms_base_dir . '/index.php';
+			$ms_table = self::get_hashed_table_name( code_snippets()->db->get_table_name( true ) );
 
-			if ( is_file( $ms_snippets_file_path ) ) {
-				$ms_snippets = is_file( $ms_snippets_file_path ) ? require $ms_snippets_file_path : [];
+			$root_base_dir = self::get_base_dir( $table );
+			$active_shared_ids_file_path = $root_base_dir . '/active-shared-network-snippets.php';
+			$active_shared_ids = is_file( $active_shared_ids_file_path )
+				? require $active_shared_ids_file_path
+				: [];
 
-				$root_base_dir = self::get_base_dir( $table );
-				$active_shared_ids_file_path = $root_base_dir . '/active-shared-network-snippets.php';
-				$active_shared_ids = is_file( $active_shared_ids_file_path ) ? require $active_shared_ids_file_path : [];
-
-				$snippets[ $ms_table ] = array_filter(
-					$ms_snippets,
-					function ( $snippet ) use ( $active_shared_ids, $scopes ) {
-						return ( $snippet['active'] || in_array( intval( $snippet['id'] ), $active_shared_ids, true ) ) && in_array( $snippet['scope'], $scopes, true );
-					}
-				);
-			}
+			$snippets[ $ms_table ] = self::load_active_snippets_from_file(
+				$ms_table,
+				$snippet_type,
+				$scopes,
+				$active_shared_ids
+			);
 		}
 
 		return $snippets;
 	}
 
+	private static function load_active_snippets_from_file(
+		string $table,
+		string $snippet_type,
+		array $scopes,
+		?array $active_shared_ids = null
+	): array {
+		$snippets = [];
+		$db = code_snippets()->db;
+
+		$base_dir = self::get_base_dir( $table, $snippet_type );
+		$snippets_file_path = $base_dir . '/index.php';
+
+		if ( ! is_file( $snippets_file_path ) ) {
+			return $snippets;
+		}
+
+		$cache_key = sprintf(
+			'active_snippets_%s_%s',
+			sanitize_key( join( '_', $scopes ) ),
+			self::get_hashed_table_name( $db->table ) === $table ? $db->table : $db->ms_table
+		);
+
+		$cached_snippets = wp_cache_get( $cache_key, CACHE_GROUP );
+
+		if ( is_array( $cached_snippets ) ) {
+			return $cached_snippets;
+		}
+
+		$file_snippets = require $snippets_file_path;
+
+		$filtered_snippets = array_filter(
+			$file_snippets,
+			function ( $snippet ) use ( $scopes, $active_shared_ids ) {
+				$is_active = $snippet['active'];
+
+				if ( null !== $active_shared_ids ) {
+					$is_active = $is_active || in_array(
+						intval( $snippet['id'] ),
+						$active_shared_ids,
+						true
+					);
+				}
+
+				return $is_active && in_array( $snippet['scope'], $scopes, true );
+			}
+		);
+
+		wp_cache_set( $cache_key, $filtered_snippets, CACHE_GROUP );
+
+		return $filtered_snippets;
+	}
+
 	public function add_settings_fields( array $fields ): array {
 		$fields['general']['enable_flat_files'] = [
-			'name'  => __( 'Enable Flat Files', 'code-snippets' ),
+			'name'  => __( 'Enable file-based execution', 'code-snippets' ),
 			'type'  => 'checkbox',
-			'label' => __( 'Snippets will be executed from flat files instead of the database.', 'code-snippets' ),
+			'label' => __( 'Snippets will be executed directly from files instead of the database.', 'code-snippets' ) . ' ' . sprintf(
+				'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+				esc_url( 'https://codesnippets.pro/doc/file-based-execution/' ),
+				__( 'Learn more.', 'code-snippets' )
+			),
 		];
 
 		return $fields;
@@ -235,24 +322,65 @@ class Snippet_Files {
 
 	private function create_snippet_flat_files(): void {
 		$db = code_snippets()->db;
-		$data = $db->fetch_active_snippets( Snippet::get_all_scopes() );
 
-		if ( empty( $data ) ) {
-			return;
-		}
+		$scopes = Snippet::get_all_scopes();
+
+		$data = $db->fetch_active_snippets( $scopes );
 
 		foreach ( $data as $table_name => $active_snippets ) {
 			foreach ( $active_snippets as $snippet ) {
-				$snippet_obj = get_snippet( $snippet['id'], $table_name === $db->ms_table );
+				$snippet_obj = get_snippet( $snippet['id'], $db->ms_table === $table_name );
 				$this->handle_snippet( $snippet_obj, $table_name );
 			}
+		}
+
+		if ( is_multisite() ) {
+			$current_blog_id = get_current_blog_id();
+
+			$sites = get_sites( [ 'fields' => 'ids' ] );
+			foreach ( $sites as $site_id ) {
+				switch_to_blog( $site_id );
+				$db->set_table_vars();
+
+				$site_data = $db->fetch_active_snippets( $scopes );
+				foreach ( $site_data as $table_name => $active_snippets ) {
+					foreach ( $active_snippets as $snippet ) {
+						$snippet_obj = get_snippet( $snippet['id'], false );
+						$this->handle_snippet( $snippet_obj, $table_name );
+					}
+				}
+
+				restore_current_blog();
+			}
+
+			$db->set_table_vars();
 		}
 	}
 
 	private function create_active_shared_network_snippets_config_file(): void {
-		$active_shared_network_snippets = get_option( 'active_shared_network_snippets' );
-		if ( false !== $active_shared_network_snippets ) {
-			$this->create_active_shared_network_snippets_file( $active_shared_network_snippets );
+		if ( is_multisite() ) {
+			$current_blog_id = get_current_blog_id();
+			$sites = get_sites( [ 'fields' => 'ids' ] );
+			$db = code_snippets()->db;
+
+			foreach ( $sites as $site_id ) {
+				switch_to_blog( $site_id );
+				$db->set_table_vars();
+
+				$active_shared_network_snippets = get_option( 'active_shared_network_snippets' );
+				if ( false !== $active_shared_network_snippets ) {
+					$this->create_active_shared_network_snippets_file( $active_shared_network_snippets );
+				}
+
+				restore_current_blog();
+			}
+
+			$db->set_table_vars();
+		} else {
+			$active_shared_network_snippets = get_option( 'active_shared_network_snippets' );
+			if ( false !== $active_shared_network_snippets ) {
+				$this->create_active_shared_network_snippets_file( $active_shared_network_snippets );
+			}
 		}
 	}
 }

@@ -79,8 +79,16 @@ function delete_flat_files_directory() {
 		return;
 	}
 
-	$fs = new \Code_Snippets\WordPress_Filesystem_Adapter();
-	$fs->rmdir( $flat_files_dir, true );
+	if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+
+	global $wp_filesystem;
+	WP_Filesystem();
+
+	if ( $wp_filesystem && $wp_filesystem->is_dir( $flat_files_dir ) ) {
+		$wp_filesystem->delete( $flat_files_dir, true );
+	}
 }
 
 /**

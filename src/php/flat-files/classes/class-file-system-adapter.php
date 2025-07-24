@@ -21,8 +21,8 @@ class WordPress_Filesystem_Adapter implements File_System_Interface {
 		return $this->fs->exists( $path );
 	}
 
-	public function delete( string $path ): bool {
-		return $this->fs->delete( $path );
+	public function delete( $file, $recursive = false, $type = false ): bool {
+		return $this->fs->delete( $file, $recursive, $type );
 	}
 
 	public function is_dir( string $path ): bool {

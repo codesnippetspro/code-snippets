@@ -26,8 +26,15 @@ class Active_Snippets {
 	 * Initialise class functions.
 	 */
 	public function init() {
-		add_action( 'wp_head', [ $this, 'load_head_content' ] );
-		add_action( 'wp_footer', [ $this, 'load_footer_content' ] );
+		$should_use_flat_files = Settings\get_setting( 'general', 'enable_flat_files' );
+		
+		if ( ! $should_use_flat_files ) {
+			add_action( 'wp_head', [ $this, 'load_head_content' ] );
+			add_action( 'wp_footer', [ $this, 'load_footer_content' ] );
+		} else {
+			add_action( 'wp_head', [ $this, 'load_head_content_from_flat_files' ] );
+			add_action( 'wp_footer', [ $this, 'load_footer_content_from_flat_files' ] );
+		}
 	}
 
 	/**
@@ -77,5 +84,29 @@ class Active_Snippets {
 	 */
 	public function load_footer_content() {
 		$this->print_content_snippets( 'footer-content' );
+	}
+
+	public function load_head_content_from_flat_files() {
+		$this->load_content_snippets_from_flat_files( 'head-content' );
+	}
+
+	public function load_footer_content_from_flat_files() {
+		$this->load_content_snippets_from_flat_files( 'footer-content' );
+	}
+
+	private function load_content_snippets_from_flat_files( string $scope ) {
+		$handler = code_snippets()->snippet_handler_registry->get_handler( 'html' );
+		$dir_name = $handler->get_dir_name();
+		$ext = $handler->get_file_extension();
+		$snippets = Snippet_Files::get_active_snippets_from_flat_files( [ $scope ], $dir_name );
+
+		foreach ( $snippets as $table_name => $active_snippets ) {
+			$active_snippets = cs_sort_snippets_by_priority( $active_snippets );
+			$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+
+			foreach ( $active_snippets as $snippet ) {
+				require_once $base_path . '/' . $snippet['id'] . '.' . $ext;
+			}
+		}
 	}
 }

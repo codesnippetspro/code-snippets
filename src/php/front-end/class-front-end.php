@@ -33,14 +33,10 @@ class Front_End {
 	 */
 	const MAX_SHORTCODE_DEPTH = 5;
 
-	private Snippet_Handler_Registry $handler_registry;
-
 	/**
 	 * Class constructor
 	 */
-	public function __construct( Snippet_Handler_Registry $handler_registry ) {
-		$this->handler_registry = $handler_registry;
-
+	public function __construct() {
 		add_action( 'the_posts', [ $this, 'enqueue_highlighting' ] );
 		add_action( 'init', [ $this, 'setup_mce_plugin' ] );
 
@@ -245,9 +241,9 @@ class Front_End {
 	 * @return string Full file path for the snippet.
 	 */
 	private function build_snippet_flat_file_path( string $table_name, Snippet $snippet ): string {
-		$handler = $this->handler_registry->get_handler( $snippet->get_type() );
+		$handler = code_snippets()->snippet_handler_registry->get_handler( $snippet->get_type() );
 
-		return WP_CONTENT_DIR . '/code-snippets/' . $table_name . '/' . $handler->get_dir_name() . '/' . $snippet->id . '.' . $handler->get_file_extension();
+		return Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/' . $snippet->id . '.' . $handler->get_file_extension();
 	}
 
 	/**
