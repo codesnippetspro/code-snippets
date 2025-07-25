@@ -253,6 +253,8 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
+		$this->render_navigation();
+
 		printf(
 			'<div id="snippets-table-container">%s</div>',
 			esc_html__( 'Loading snippets table…', 'code-snippets' )

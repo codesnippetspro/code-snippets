@@ -100,6 +100,8 @@ class Settings_Menu extends Admin_Menu {
 	 * Render the admin screen
 	 */
 	public function render() {
+		$this->render_navigation();
+
 		$update_url = is_network_admin() ? add_query_arg( 'update_site_option', true ) : admin_url( 'options.php' );
 		$current_section = $this->get_current_section();
 

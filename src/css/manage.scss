@@ -3,6 +3,7 @@
 @use 'common/switch';
 @use 'common/select';
 @use 'common/upsell';
+@use 'common/navigation';
 
 .nav-tab {
 	display: flex;
@@ -70,7 +71,23 @@
 	}
 }
 
+.snippets-table-heading {
+	display: flex;
+	align-items: center;
+	margin-block-end: 1.4rem;
+
+	h1 {
+		font-size: 1.6rem;
+		padding: 0;
+	}
+
+	.button-primary {
+		margin-inline-start: auto;
+	}
+}
+
 .wp-list-table {
+
 	td.column-id {
 		text-align: center;
 	}

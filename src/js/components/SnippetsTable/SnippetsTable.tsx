@@ -8,7 +8,7 @@ import { WithSnippetsListContext } from '../../hooks/useSnippetsList'
 import { WithSnippetsTableFiltersContext, useSnippetsFilters } from '../../hooks/useSnippetsFilters'
 import { SNIPPET_TYPES } from '../../types/Snippet'
 import { isLicensed } from '../../utils/screen'
-import { SNIPPET_TYPE_LABELS, isProType } from '../../utils/snippets/snippets'
+import { SNIPPET_TYPE_LABELS, isProType, getSnippetEditUrl } from '../../utils/snippets/snippets'
 import { Badge } from '../common/Badge'
 import { Button } from '../common/Button'
 import { UpsellDialog } from '../common/UpsellDialog'
@@ -53,8 +53,8 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialo
 const PageHeading = () => {
 	const { searchQueryText, searchLineNumber, currentTag, setSearchQuery, setCurrentTag } = useSnippetsFilters()
 	return (
-		<h1>
-			{__('Manage Code Snippets', 'code-snippets')}
+		<div className="snippets-table-heading">
+			<h1>{__('Manage Code Snippets', 'code-snippets')}</h1>
 
 			{searchQueryText || currentTag
 				? <span className="subtitle">
@@ -78,7 +78,11 @@ const PageHeading = () => {
 					</Button>
 				</span>
 				: null}
-		</h1>
+
+			<a href={getSnippetEditUrl()} className="button button-primary button-large">
+				{__('Create new snippet', 'code-snippets')}
+			</a>
+		</div>
 	)
 }
 

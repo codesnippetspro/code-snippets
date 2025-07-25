@@ -85,7 +85,7 @@ const ForwardNavigationButtons: React.FC<ForwardNavigationButtonsProps> = ({ cur
 				/* translators: Hidden accessibility text. */
 				helperText={__('Next page', 'code-snippets')}
 				{...buttonProps}
-			/>
+			/>{'\n'}
 			<NavigationButton
 				icon={<>&raquo;</>}
 				newPage={totalPages}
@@ -93,7 +93,7 @@ const ForwardNavigationButtons: React.FC<ForwardNavigationButtonsProps> = ({ cur
 				/* translators: Hidden accessibility text. */
 				helperText={__('Last page', 'code-snippets')}
 				{...buttonProps}
-			/>
+			/>{'\n'}
 		</>
 
 interface PagingInputProps {

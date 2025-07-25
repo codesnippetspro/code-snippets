@@ -110,6 +110,8 @@ class Edit_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
+		$this->render_navigation();
+
 		printf(
 			'<div id="edit-snippet-form-container">%s</div>',
 			esc_html__( 'Loading edit page…', 'code-snippets' )

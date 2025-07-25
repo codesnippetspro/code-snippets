@@ -1,6 +1,7 @@
 @use 'sass:color';
 @use 'common/theme';
 @use 'common/badges';
+@use 'common/navigation';
 
 $breakpoint: 1060px;
 
@@ -68,6 +69,7 @@ $breakpoint: 1060px;
 		flex-flow: row wrap;
 		justify-content: space-evenly;
 		margin: 0;
+		gap: 10px;
 	}
 
 	li {

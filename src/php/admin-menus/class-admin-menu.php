@@ -100,6 +100,13 @@ abstract class Admin_Menu {
 	}
 
 	/**
+	 * Render the navigation bar at the top of the admin page.
+	 */
+	protected function render_navigation() {
+		$this->render_view( 'partials/navigation' );
+	}
+
+	/**
 	 * Render the content of a vew template
 	 *
 	 * @param string $name Name of view template to render.
@@ -112,6 +119,7 @@ abstract class Admin_Menu {
 	 * Render the menu
 	 */
 	public function render() {
+		$this->render_navigation();
 		$this->render_view( $this->name );
 	}
 
