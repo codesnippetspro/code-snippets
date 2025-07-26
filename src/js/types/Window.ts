@@ -21,6 +21,7 @@ declare global {
 		readonly CODE_SNIPPETS?: {
 			debug: boolean
 			isLicensed: boolean
+			hideUpsell: boolean
 			restAPI: {
 				base: string
 				snippets: string
@@ -63,7 +64,6 @@ declare global {
 			enableDownloads: boolean
 			activateByDefault: boolean
 			enableDescription: boolean
-			hideUpsell: boolean
 			editorTheme: string
 			tagOptions: {
 				enabled: boolean
@@ -81,7 +81,7 @@ declare global {
 				follow_url: string
 				image_url: string
 			}
-			changelog: ChangelogSchema
+			changelog: ChangelogSchema[]
 			features: ImageLinkSchema[]
 			partners: ImageLinkSchema[]
 		}

@@ -231,6 +231,7 @@ class Welcome_API {
 		$changelog_filename = 'CHANGELOG.md';
 		$changelog = [];
 
+		$section_titles = [ 'Added', 'Changed', 'Deprecated', 'Removed', 'Fixed', 'Security', 'Other' ];
 		$changelog_dir = plugin_dir_path( PLUGIN_FILE );
 
 		while ( plugin_dir_path( $changelog_dir ) !== $changelog_dir && ! $filesystem->exists( $changelog_dir . $changelog_filename ) ) {
@@ -251,30 +252,52 @@ class Welcome_API {
 				continue;
 			}
 
-			$header_parts = explode( '(', $sections[0], 2 );
-			$version = trim( trim( $header_parts[0] ), '[]' );
-
-			$changelog[ $version ] = [];
+			$entries = array_fill_keys( $section_titles, [] );
 
 			foreach ( array_slice( $sections, 1 ) as $section_contents ) {
 				$lines = array_filter( array_map( 'trim', explode( "\n", $section_contents ) ) );
 				$section_type = $lines[0];
 
+				if ( ! isset( $entries[ $section_type ] ) ) {
+					$section_type = 'Other';
+				}
+
 				foreach ( array_slice( $lines, 1 ) as $line ) {
 					$entry = trim( str_replace( '(PRO)', '', str_replace( '*', '', $line ) ) );
 					$core_or_pro = false === strpos( $line, '(PRO)' ) ? 'core' : 'pro';
 
-					if ( ! isset( $changelog[ $version ][ $section_type ] ) ) {
-						$changelog[ $version ][ $section_type ] = [
-							$core_or_pro => [ $entry ],
-						];
-					} elseif ( ! isset( $changelog[ $version ][ $section_type ][ $core_or_pro ] ) ) {
-						$changelog[ $version ][ $section_type ][ $core_or_pro ] = [ $entry ];
+					$entry = str_replace( '`', '', $entry );
+					$entry = preg_replace( '/\[(.+?)]\(.+?\)/', '$1', $entry );
+
+					if ( ! isset( $entries[ $section_type ][ $core_or_pro ] ) ) {
+						$entries[ $section_type ][ $core_or_pro ] = [ $entry ];
 					} else {
-						$changelog[ $version ][ $section_type ][ $core_or_pro ][] = $entry;
+						$entries[ $section_type ][ $core_or_pro ][] = $entry;
 					}
 				}
 			}
+
+			$header_parts = explode( '(', $sections[0], 2 );
+			$version = trim( trim( $header_parts[0] ), '[]' );
+			$date = trim( trim( $header_parts[1] ?? '' ), '()' );
+
+			try {
+				$datetime = new DateTimeImmutable( $date );
+				$parsed_date = $datetime->format( get_option( 'date_format' ) );
+			} catch ( Exception $e ) {
+				$parsed_date = $date;
+			}
+
+			$changelog[] = [
+				'version' => $version,
+				'date'    => $parsed_date,
+				'entries' => array_filter(
+					$entries,
+					function ( $section ) {
+						return ! empty( $section );
+					}
+				),
+			];
 		}
 
 		$this->welcome_data['changelog'] = $changelog;

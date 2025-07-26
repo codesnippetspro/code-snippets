@@ -1,15 +1,17 @@
 export type ChangelogSchema = {
-	[version in string]: ChangelogSectionSchema
+	version: string
+	date: string
+	entries: ChangelogEntriesSchema
 }
 
-export type ChangelogSectionSchema = {
+export type ChangelogEntriesSchema = {
 	[section in ChangelogSectionTitle]?: {
 		core?: string[]
 		pro?: string[]
 	}
 }
 
-export const CHANGELOG_SECTIONS = ['Added', 'Improved', 'Fixed', 'Other'] as const
+export const CHANGELOG_SECTIONS = ['Added', 'Changed', 'Fixed', 'Deprecated', 'Removed', 'Security', 'Other'] as const
 export type ChangelogSectionTitle = typeof CHANGELOG_SECTIONS[number]
 
 export interface ImageLinkSchema {
