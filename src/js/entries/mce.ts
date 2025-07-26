@@ -1,7 +1,7 @@
 import tinymce from 'tinymce'
 import type { Editor } from 'tinymce'
-import type { ContentShortcodeAtts, SourceShortcodeAtts } from './types/Shortcodes'
-import type { LocalisedEditor } from './types/WordPressEditor'
+import type { ContentShortcodeAtts, SourceShortcodeAtts } from '../types/Shortcodes'
+import type { LocalisedEditor } from '../types/WordPressEditor'
 
 const convertToValues = (array: Record<string, string>) =>
 	Object.keys(array).map(key => ({

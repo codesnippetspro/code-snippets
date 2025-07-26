@@ -1,5 +1,6 @@
 import type Prism from 'prismjs'
 import type tinymce from 'tinymce'
+import { ChangelogSchema, ImageLinkSchema } from './schema/WelcomeSchema'
 import type { Snippet } from './Snippet'
 import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './WordPressCodeEditor'
 import type { WordPressEditor } from './WordPressEditor'
@@ -33,7 +34,20 @@ declare global {
 				manage: string
 				addNew: string
 				edit: string
+				welcome: string
+				settings: string
 				connectCloud: string
+			}
+			banner: {
+				key: string
+				start_datetime: { date: string, timezone_type: number, timezone: string }
+				end_datetime: { date: string, timezone_type: number, timezone: string }
+				text_free: string
+				action_url_free: string
+				action_label_free: string
+				text_pro: string
+				action_url_pro: string
+				action_label_pro: string
 			}
 		}
 		readonly CODE_SNIPPETS_MANAGE?: {
@@ -60,6 +74,16 @@ declare global {
 				rows: number
 				mediaButtons: boolean
 			}
+		}
+		readonly CODE_SNIPPETS_WELCOME?: {
+			hero: {
+				name: string
+				follow_url: string
+				image_url: string
+			}
+			changelog: ChangelogSchema
+			features: ImageLinkSchema[]
+			partners: ImageLinkSchema[]
 		}
 	}
 }

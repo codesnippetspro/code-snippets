@@ -2,6 +2,7 @@
 
 namespace Code_Snippets;
 
+use function Code_Snippets\Settings\get_settings_fields;
 use const Code_Snippets\Settings\CACHE_KEY;
 use const Code_Snippets\Settings\OPTION_GROUP;
 use const Code_Snippets\Settings\OPTION_NAME;
@@ -23,7 +24,6 @@ class Settings_Menu extends Admin_Menu {
 	 * Constructor
 	 */
 	public function __construct() {
-
 		parent::__construct(
 			'settings',
 			_x( 'Settings', 'menu label', 'code-snippets' ),
@@ -51,16 +51,76 @@ class Settings_Menu extends Admin_Menu {
 	 * Enqueue the stylesheet for the settings menu
 	 */
 	public function enqueue_assets() {
-		$plugin = code_snippets();
-
-		Settings\enqueue_editor_preview_assets();
+		$this->enqueue_codemirror();
+		$handle = 'code-snippets-settings';
 
 		wp_enqueue_style(
-			'code-snippets-settings',
-			plugins_url( 'dist/settings.css', $plugin->file ),
-			[ 'code-editor' ],
-			$plugin->version
+			$handle,
+			plugins_url( 'dist/settings.css', PLUGIN_FILE ),
+			self::$style_deps + [ 'code-editor' ],
+			PLUGIN_VERSION
 		);
+
+		wp_enqueue_script(
+			$handle,
+			plugins_url( 'dist/settings.js', PLUGIN_FILE ),
+			self::$script_deps + [ 'code-snippets-code-editor' ],
+			PLUGIN_VERSION,
+			true
+		);
+
+		wp_set_script_translations( $handle, 'code-snippets' );
+		code_snippets()->localize_script( $handle );
+
+		$this->add_codemirror_settings_script( $handle );
+	}
+
+	/**
+	 * Enqueue the CodeMirror scripts and styles, including all themes.
+	 *
+	 * @return void
+	 */
+	protected function enqueue_codemirror() {
+		enqueue_code_editor( 'php' );
+		$themes = get_editor_themes();
+
+		foreach ( $themes as $theme ) {
+			wp_enqueue_style(
+				'code-snippets-editor-theme-' . $theme,
+				plugins_url( "dist/editor-themes/$theme.css", PLUGIN_FILE ),
+				[ 'code-editor' ],
+				PLUGIN_VERSION
+			);
+		}
+	}
+
+	/**
+	 * Load the CodeMirror settings as an inline script variable.
+	 *
+	 * @param string $handle The handle of the script to which the settings will be added.
+	 *
+	 * @return void
+	 */
+	protected function add_codemirror_settings_script( string $handle ) {
+		$setting_fields = get_settings_fields();
+		$editor_fields = array();
+
+		foreach ( $setting_fields['editor'] as $name => $field ) {
+			if ( empty( $field['codemirror'] ) ) {
+				continue;
+			}
+
+			$editor_fields[] = array(
+				'name'       => $name,
+				'type'       => $field['type'],
+				'codemirror' => addslashes( $field['codemirror'] ),
+			);
+		}
+
+		// Pass the saved options to the external JavaScript file.
+		$inline_script = 'var code_snippets_editor_settings = ' . wp_json_encode( $editor_fields ) . ';';
+
+		wp_add_inline_script( $handle, $inline_script, 'before' );
 	}
 
 	/**

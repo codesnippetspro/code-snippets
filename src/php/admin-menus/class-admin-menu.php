@@ -43,6 +43,29 @@ abstract class Admin_Menu {
 	protected string $slug;
 
 	/**
+	 * Common JavaScript dependencies required for React components.
+	 *
+	 * @var string[]
+	 */
+	public static array $script_deps = [
+		'react',
+		'react-dom',
+		'wp-url',
+		'wp-i18n',
+		'wp-date',
+		'wp-components',
+	];
+
+	/**
+	 * Common CSS dependencies required for React components.
+	 *
+	 * @var string[]
+	 */
+	public static array $style_deps = [
+		'wp-components',
+	];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $name  The snippet page short name.
@@ -103,7 +126,7 @@ abstract class Admin_Menu {
 	 * Render the navigation bar at the top of the admin page.
 	 */
 	protected function render_navigation() {
-		$this->render_view( 'partials/navigation' );
+		echo '<div id="code-snippets-toolbar-container"></div>';
 	}
 
 	/**

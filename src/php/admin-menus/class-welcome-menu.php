@@ -26,10 +26,19 @@ class Welcome_Menu extends Admin_Menu {
 		parent::__construct(
 			'welcome',
 			_x( "What's New", 'menu label', 'code-snippets' ),
-			__( 'Welcome to Code Snippets', 'code-snippets' )
+			__( 'Resources and Updates', 'code-snippets' )
 		);
 
 		$this->api = $api;
+	}
+
+	/**
+	 * Load the welcome menu.
+	 *
+	 * @return void
+	 */
+	public function render() {
+		echo '<div id="code-snippets-welcome-container"></div>';
 	}
 
 	/**
@@ -38,51 +47,35 @@ class Welcome_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function enqueue_assets() {
+		$handle = 'code-snippets-welcome';
+
 		wp_enqueue_style(
-			'code-snippets-welcome',
+			$handle,
 			plugins_url( 'dist/welcome.css', PLUGIN_FILE ),
-			[],
+			self::$style_deps,
 			PLUGIN_VERSION
 		);
-	}
 
-	/**
-	 * Retrieve a list of links to display in the page header.
-	 *
-	 * @return array<string, array{url: string, icon: string, label: string}>
-	 */
-	protected function get_header_links(): array {
-		$links = [
-			'cloud'     => [
-				'url'   => 'https://codesnippets.cloud',
-				'icon'  => 'cloud',
-				'label' => __( 'Cloud', 'code-snippets' ),
-			],
-			'resources' => [
-				'url'   => 'https://help.codesnippets.pro/',
-				'icon'  => 'sos',
-				'label' => __( 'Support', 'code-snippets' ),
-			],
-			'facebook'  => [
-				'url'   => 'https://www.facebook.com/groups/282962095661875/',
-				'icon'  => 'facebook',
-				'label' => __( 'Community', 'code-snippets' ),
-			],
-			'discord'   => [
-				'url'   => 'https://snipco.de/discord',
-				'icon'  => 'discord',
-				'label' => __( 'Discord', 'code-snippets' ),
-			],
-		];
+		wp_enqueue_script(
+			$handle,
+			plugins_url( 'dist/welcome.js', PLUGIN_FILE ),
+			self::$script_deps,
+			PLUGIN_VERSION,
+			true
+		);
 
-		if ( ! code_snippets()->licensing->is_licensed() ) {
-			$links['pro'] = [
-				'url'   => 'https://codesnippets.pro/pricing/',
-				'icon'  => 'cart',
-				'label' => __( 'Upgrade to Pro', 'code-snippets' ),
-			];
-		}
+		code_snippets()->localize_script( $handle );
 
-		return $links;
+		wp_localize_script(
+			$handle,
+			'CODE_SNIPPETS_WELCOME',
+			[
+				'banner'    => $this->api->get_banner(),
+				'hero'      => $this->api->get_hero_item(),
+				'changelog' => $this->api->get_changelog(),
+				'features'  => $this->api->get_features(),
+				'partners'  => $this->api->get_partners(),
+			]
+		);
 	}
 }

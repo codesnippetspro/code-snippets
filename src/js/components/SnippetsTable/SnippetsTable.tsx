@@ -8,9 +8,10 @@ import { WithSnippetsListContext } from '../../hooks/useSnippetsList'
 import { WithSnippetsTableFiltersContext, useSnippetsFilters } from '../../hooks/useSnippetsFilters'
 import { SNIPPET_TYPES } from '../../types/Snippet'
 import { isLicensed } from '../../utils/screen'
-import { SNIPPET_TYPE_LABELS, isProType, getSnippetEditUrl } from '../../utils/snippets/snippets'
+import { SNIPPET_TYPE_LABELS, getSnippetEditUrl, isProType } from '../../utils/snippets/snippets'
 import { Badge } from '../common/Badge'
 import { Button } from '../common/Button'
+import { Toolbar } from '../common/Toolbar'
 import { UpsellDialog } from '../common/UpsellDialog'
 import { SnippetsListTable } from './SnippetsListTable'
 import type { SnippetType } from '../../types/Snippet'
@@ -112,6 +113,7 @@ export const SnippetsTable: React.FC = () =>
 	<WithRestAPIContext>
 		<WithSnippetsListContext>
 			<WithSnippetsTableFiltersContext>
+				<Toolbar />
 				<SnippetsTableInner />
 			</WithSnippetsTableFiltersContext>
 		</WithSnippetsListContext>

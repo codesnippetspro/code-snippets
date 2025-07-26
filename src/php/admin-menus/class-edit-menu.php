@@ -110,12 +110,7 @@ class Edit_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
-		$this->render_navigation();
-
-		printf(
-			'<div id="edit-snippet-form-container">%s</div>',
-			esc_html__( 'Loading edit page…', 'code-snippets' )
-		);
+		echo '<div id="edit-snippet-form-container"></div>';
 	}
 
 	/**
@@ -173,14 +168,7 @@ class Edit_Menu extends Admin_Menu {
 		wp_enqueue_script(
 			self::JS_HANDLE,
 			plugins_url( 'dist/edit.js', $plugin->file ),
-			[
-				'code-snippets-code-editor',
-				'react',
-				'react-dom',
-				'wp-url',
-				'wp-i18n',
-				'wp-components',
-			],
+			[ 'code-snippets-code-editor' ] + self::$script_deps,
 			$plugin->version,
 			true
 		);

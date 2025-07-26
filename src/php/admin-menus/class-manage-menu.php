@@ -190,23 +190,14 @@ class Manage_Menu extends Admin_Menu {
 		wp_enqueue_style(
 			self::CSS_HANDLE,
 			plugins_url( "dist/manage$rtl.css", $plugin->file ),
-			[
-				'wp-components',
-			],
+			self::$style_deps,
 			$plugin->version
 		);
 
 		wp_enqueue_script(
 			self::JS_HANDLE,
 			plugins_url( 'dist/manage.js', $plugin->file ),
-			[
-				'react',
-				'react-dom',
-				'wp-url',
-				'wp-i18n',
-				'wp-date',
-				'wp-components',
-			],
+			self::$script_deps,
 			$plugin->version,
 			true
 		);
@@ -253,12 +244,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
-		$this->render_navigation();
-
-		printf(
-			'<div id="snippets-table-container">%s</div>',
-			esc_html__( 'Loading snippets table…', 'code-snippets' )
-		);
+		echo '<div id="snippets-table-container"></div>';
 	}
 
 	/**

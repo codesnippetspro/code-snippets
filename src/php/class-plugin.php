@@ -354,10 +354,12 @@ class Plugin {
 					'localToken' => $this->cloud_api->get_local_token(),
 				],
 				'urls'             => [
-					'plugin' => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
-					'manage' => esc_url_raw( $this->get_menu_url() ),
-					'edit'   => esc_url_raw( $this->get_menu_url( 'edit' ) ),
-					'addNew' => esc_url_raw( $this->get_menu_url( 'add' ) ),
+					'plugin'   => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
+					'manage'   => esc_url_raw( $this->get_menu_url() ),
+					'edit'     => esc_url_raw( $this->get_menu_url( 'edit' ) ),
+					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
+					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
+					'settings' => esc_url_raw( $this->get_menu_url( 'settings' ) ),
 				],
 			]
 		);

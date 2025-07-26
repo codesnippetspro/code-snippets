@@ -3,7 +3,7 @@
 @use 'common/switch';
 @use 'common/select';
 @use 'common/upsell';
-@use 'common/navigation';
+@use 'common/toolbar';
 
 .nav-tab {
 	display: flex;
@@ -74,7 +74,7 @@
 .snippets-table-heading {
 	display: flex;
 	align-items: center;
-	margin-block-end: 1.4rem;
+	margin-block: 50px 1.4rem;
 
 	h1 {
 		font-size: 1.6rem;
@@ -87,7 +87,6 @@
 }
 
 .wp-list-table {
-
 	td.column-id {
 		text-align: center;
 	}
@@ -97,7 +96,8 @@
 	}
 
 	ol, ul {
-		margin: 0 0 1.5em 1.5em;
+		margin-block: 0 1.5em;
+		margin-inline: 1.5em 0;
 	}
 
 	ul {
@@ -115,7 +115,7 @@
 		inset-inline-start: 0;
 
 		.button-link {
-			min-height: unset;
+			min-block-size: unset;
 			line-height: unset;
 
 			&:hover {

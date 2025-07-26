@@ -9,6 +9,7 @@ import { handleUnknownError } from '../../utils/errors'
 import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../utils/snippets/snippets'
 import { WithSnippetFormContext, useSnippetForm } from '../../hooks/useSnippetForm'
 import { ConfirmDialog } from '../common/ConfirmDialog'
+import { Toolbar } from '../common/Toolbar'
 import { UpsellDialog } from '../common/UpsellDialog'
 import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
 import { EditorSidebar } from '../EditorSidebar'
@@ -191,6 +192,7 @@ export const SnippetForm: React.FC = () =>
 	<WithRestAPIContext>
 		<WithSnippetsListContext>
 			<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
+				<Toolbar />
 				<EditFormWrap />
 			</WithSnippetFormContext>
 		</WithSnippetsListContext>

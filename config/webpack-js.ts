@@ -6,7 +6,7 @@ import { toCamelCase } from '../src/js/utils/text'
 import { dependencies } from '../package.json'
 import type { Configuration } from 'webpack'
 
-const SOURCE_DIR = './src/js'
+const SOURCE_DIR = './src/js/entries'
 const DEST_DIR = './src/dist'
 
 const babelConfig = {
@@ -30,7 +30,8 @@ export const jsWebpackConfig: Configuration = {
 		'manage-legacy': `${SOURCE_DIR}/manage-legacy.ts`,
 		mce: `${SOURCE_DIR}/mce.ts`,
 		prism: `${SOURCE_DIR}/prism.ts`,
-		settings: { import: `${SOURCE_DIR}/settings.ts`, dependOn: 'editor' }
+		settings: { import: `${SOURCE_DIR}/settings.ts`, dependOn: 'editor' },
+		welcome: `${SOURCE_DIR}/welcome.ts`,
 	},
 	output: {
 		path: join(resolve(__dirname), '..', DEST_DIR),

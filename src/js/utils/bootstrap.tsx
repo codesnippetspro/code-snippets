@@ -3,16 +3,15 @@ import { createRoot } from 'react-dom/client'
 import type { Context, FunctionComponent } from 'react'
 
 export const loadComponent = (containerId: string, Component: FunctionComponent): void => {
-	window.addEventListener('DOMContentLoaded', () => {
-		const container = document.getElementById(containerId)
+	const container = document.getElementById(containerId)
+	console.log('loading on', container)
 
-		if (container) {
-			const root = createRoot(container)
-			root.render(<Component />)
-		} else {
-			console.error(`Could not find element #${containerId}.`)
-		}
-	})
+	if (container) {
+		const root = createRoot(container)
+		root.render(<Component />)
+	} else {
+		console.error(`Could not find element #${containerId}.`)
+	}
 }
 
 export const createContextHook = <T, >(hookName: string): [
