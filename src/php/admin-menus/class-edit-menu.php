@@ -193,7 +193,6 @@ class Edit_Menu extends Admin_Menu {
 				'editorTheme'       => get_setting( 'editor', 'theme' ),
 				'enableDownloads'   => apply_filters( 'code_snippets/enable_downloads', true ),
 				'enableDescription' => $desc_enabled,
-				'hideUpsell'        => get_setting( 'general', 'hide_upgrade_menu' ),
 				'tagOptions'        => apply_filters(
 					'code_snippets/tag_editor_options',
 					[

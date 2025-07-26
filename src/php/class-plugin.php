@@ -347,6 +347,7 @@ class Plugin {
 				'debug'            => defined( 'WP_DEBUG' ) && WP_DEBUG,
 				'isLicensed'       => $this->licensing->is_licensed(),
 				'isCloudConnected' => Cloud_API::is_cloud_connection_available(),
+				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
 				'restAPI'          => [
 					'base'       => esc_url_raw( rest_url() ),
 					'snippets'   => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),

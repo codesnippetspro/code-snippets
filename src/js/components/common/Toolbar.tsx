@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { ReactNode, useState } from 'react'
-import { isLicensed } from '../../utils/screen'
+import { isLicensed, shouldShowUpsell } from '../../utils/screen'
 import { fetchQueryParam } from '../../utils/urls'
 import { CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon, TeamsIcon } from './icons/ToolbarIcons'
 import { UpsellDialog } from './UpsellDialog'
@@ -98,8 +98,8 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 						</a>
 					</li>
 				)}
-				{isLicensed() ? null
-					: <li>
+				{shouldShowUpsell()
+					? <li>
 						<a
 							className="button button-large button-secondary"
 							href="https://codesnippets.pro/pricing/"
@@ -111,7 +111,8 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 						>
 							{__('Upgrade to Pro', 'code-snippets')}
 						</a>
-					</li>}
+					</li>
+					: null}
 			</ul>
 		</nav>
 	</div>

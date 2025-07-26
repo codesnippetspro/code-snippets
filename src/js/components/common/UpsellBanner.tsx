@@ -1,13 +1,13 @@
 import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
-import { isLicensed } from '../../utils/screen'
+import { shouldShowUpsell } from '../../utils/screen'
 import { Button } from './Button'
 
 export const UpsellBanner = () => {
 	const [isDismissed, setIsDismissed] = useState(false)
 
-	return isDismissed || isLicensed() || window.CODE_SNIPPETS_EDIT?.hideUpsell
+	return isDismissed || shouldShowUpsell()
 		? null
 		: <div className="code-snippets-upsell-banner">
 			<img
