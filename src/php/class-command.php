@@ -717,6 +717,7 @@ class Command extends WP_CLI_Command {
 			WP_CLI::error( 'License activation failed: ' . $e->getMessage() );
 		}
 	}
+
 	/**
 	 * Gets the current license status and information.
 	 *
