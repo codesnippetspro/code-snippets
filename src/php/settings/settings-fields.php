@@ -37,7 +37,7 @@ function get_default_settings(): array {
 			'indent_with_tabs'            => true,
 			'tab_size'                    => 4,
 			'indent_unit'                 => 4,
-			'font-size'                   => 14,
+			'font_size'                   => 14,
 			'wrap_lines'                  => true,
 			'code_folding'                => true,
 			'line_numbers'                => true,
