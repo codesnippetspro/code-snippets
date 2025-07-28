@@ -585,7 +585,8 @@ class Command extends WP_CLI_Command {
 			}
 		}
 	}
-		/**
+
+	/**
 	 * Activates a license key for the Code Snippets Pro plugin.
 	 *
 	 * ## OPTIONS
