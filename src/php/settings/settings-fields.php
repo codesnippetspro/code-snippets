@@ -162,15 +162,6 @@ function get_settings_fields(): array {
 			'codemirror' => 'indentUnit',
 			'min'        => 0,
 		],
-		'font_size'                   => [
-			'name'       => __( 'Font Size', 'code-snippets' ),
-			'type'       => 'number',
-			'desc'       => __( 'The font size for the code editor.', 'code-snippets' ),
-			'label'      => _x( 'px', 'unit', 'code-snippets' ),
-			'codemirror' => 'fontSize',
-			'min'        => 8,
-			'max'        => 24,
-		],
 		'wrap_lines'                  => [
 			'name'       => __( 'Wrap Lines', 'code-snippets' ),
 			'type'       => 'checkbox',
@@ -224,6 +215,14 @@ function get_settings_fields(): array {
 			'type'       => 'select',
 			'options'    => get_editor_theme_list(),
 			'codemirror' => 'theme',
+		],
+		'font_size'                   => [
+			'name'       => __( 'Code Editor Font Size', 'code-snippets' ),
+			'type'       => 'number',
+			'label'      => _x( 'px', 'unit', 'code-snippets' ),
+			'codemirror' => 'fontSize',
+			'min'        => 8,
+			'max'        => 28,
 		],
 	];
 
