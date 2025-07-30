@@ -6,11 +6,6 @@ import type { Snippet } from '../../../types/Snippet'
 
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 
-const getEditHeading = (snippet: Snippet): string =>
-	'condition' === snippet.scope
-		? __('Edit Condition', 'code-snippets')
-		: __('Edit Snippet', 'code-snippets')
-
 const getAddNewHeading = (snippet: Snippet): string =>
 	'condition' === snippet.scope
 		? __('Add New Condition', 'code-snippets')
@@ -23,7 +18,9 @@ export const PageHeading: React.FC = () => {
 		<h1>
 			{snippet.id
 				? <>
-					{`${getEditHeading(snippet)} `}
+					{`${'condition' === snippet.scope
+						? __('Edit Condition', 'code-snippets')
+						: __('Edit Snippet', 'code-snippets')} `}
 
 					<a
 						href={window.CODE_SNIPPETS?.urls.addNew}
@@ -33,8 +30,11 @@ export const PageHeading: React.FC = () => {
 							updateSnippet(({ scope }) => createSnippetObject({ scope }))
 							setCurrentNotice(undefined)
 
-							window.document.title = window.document.title.replace(getEditHeading(snippet), getAddNewHeading(snippet))
-							window.history.replaceState({}, '', window.CODE_SNIPPETS?.urls.addNew)
+							window.document.title = window.document.title
+								.replace(__('Edit Snippet', 'code-snippets'), getAddNewHeading(snippet))
+								.replace(__('Edit Condition', 'code-snippets'), getAddNewHeading(snippet))
+
+							window.history.pushState({}, '', window.CODE_SNIPPETS?.urls.addNew)
 						}}
 					>
 						{_x('Add New', 'snippet', 'code-snippets')}

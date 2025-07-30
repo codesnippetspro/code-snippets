@@ -1,4 +1,4 @@
-import type { ConditionGroups } from './ConditionGroups'
+import { ConditionGroups } from './ConditionGroups'
 
 export interface Snippet {
 	readonly id: number

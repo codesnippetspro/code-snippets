@@ -10,7 +10,7 @@ export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<Snippet[]>
 	fetch: (snippetId: number, network?: boolean | null) => Promise<Snippet>
 	create: (snippet: Snippet) => Promise<Snippet>
-	update: (snippet: Snippet) => Promise<Snippet>
+	update: (snippet: Pick<Snippet, 'id' | 'network'> & Partial<Snippet>) => Promise<Snippet>
 	delete: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<void>
 	activate: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<Snippet>
 	deactivate: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<Snippet>
@@ -35,12 +35,12 @@ const mapToSchema = ({
 	priority,
 	active,
 	network,
-	conditionId,
-	conditions
-}: Snippet): WritableSnippetSchema => ({
+	conditions,
+	conditionId
+}: Partial<Snippet>): WritableSnippetSchema => ({
 	name,
 	desc,
-	code: isCondition({ scope })
+	code: scope && conditions && isCondition({ scope })
 		? JSON.stringify(
 			Object.values(conditions)
 				.map(group => group && Object.values(group))

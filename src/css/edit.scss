@@ -51,7 +51,8 @@
 .above-snippet-code {
 	display: flex;
 	align-items: center;
-	margin: 25px 0 15px;
+	margin-block: 25px 15px;
+	margin-inline: 0;
 	gap: 8px;
 
 	h2 {

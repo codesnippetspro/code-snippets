@@ -2,10 +2,19 @@ import React, { useState } from 'react'
 import { ExternalLink } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { buildShortcodeTag } from '../../../utils/shortcodes'
 import { CopyToClipboardButton } from '../../common/CopyToClipboardButton'
-import type { ShortcodeAtts } from '../../../utils/shortcodes'
 import type { Dispatch, SetStateAction} from 'react'
+
+type ShortcodeAtts = Record<string, unknown>
+
+const buildShortcodeTag = (tag: string, atts: ShortcodeAtts): string =>
+	`[${[
+		tag,
+		...Object.entries(atts)
+			.filter(([, value]) => Boolean(value))
+			.map(([att, value]) =>
+				'boolean' === typeof value ? att : `${att}=${JSON.stringify(value)}`)
+	].filter(Boolean).join(' ')}]`
 
 const SHORTCODE_TAG = 'code_snippet'
 

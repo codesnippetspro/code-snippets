@@ -90,6 +90,18 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 
 	const doSubmit = (action?: SubmitSnippetAction) => {
 		submitSnippet(action)
+			.then(response => {
+				if (response && 0 !== response.id && window.CODE_SNIPPETS) {
+					if (window.location.href.toString().includes(window.CODE_SNIPPETS.urls.addNew)) {
+						document.title = document.title
+							.replace(__('Add New Snippet', 'code-snippets'), __('Edit Snippet', 'code-snippets'))
+							.replace(__('Add New Condition', 'code-snippets'), __('Edit Condition', 'code-snippets'))
+
+						const newUrl = addQueryArgs(window.CODE_SNIPPETS.urls.edit, { id: response.id })
+						window.history.pushState({}, document.title, newUrl)
+					}
+				}
+			})
 			.then(refreshSnippetsList)
 			.catch(handleUnknownError)
 	}
@@ -141,8 +153,8 @@ const EditFormWrap: React.FC = () => {
 	return (
 		<div className="wrap">
 			<p><small>
-				{isCondition(snippet) ?
-					<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { type: 'cond' })}>
+				{isCondition(snippet)
+					? <a href={addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { type: 'cond' })}>
 						{__('Back to all conditions', 'code-snippets')}
 					</a>
 					: <a href={window.CODE_SNIPPETS?.urls.manage}>

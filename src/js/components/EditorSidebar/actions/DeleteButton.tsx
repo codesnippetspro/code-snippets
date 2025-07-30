@@ -42,7 +42,7 @@ export const DeleteButton: React.FC = () => {
 						.catch((error: unknown) => handleRequestError(error, __('Could not delete snippet.', 'code-snippets')))
 				}}
 			>
-				<p>
+				<p style={{ marginBlockStart: 0 }}>
 					{__('You are about to permanently delete this snippet.', 'code-snippets')}{' '}
 					{__('Are you sure?', 'code-snippets')}
 				</p>

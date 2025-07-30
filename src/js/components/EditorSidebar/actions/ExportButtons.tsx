@@ -1,58 +1,56 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { useRestAPI } from '../../../hooks/useRestAPI'
+import { Snippet } from '../../../types/Snippet'
 import { Button } from '../../common/Button'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import type { SnippetsExport } from '../../../types/schema/SnippetsExport'
 
-export const ExportButtons: React.FC = () => {
-	const { snippetsAPI } = useRestAPI()
+interface ExportButtonProps {
+	name: string
+	label: string
+	makeRequest: (snippet: Snippet) => Promise<SnippetsExport | string>
+}
+
+const ExportButton: React.FC<ExportButtonProps> = ({ name, label, makeRequest }) => {
 	const { snippet, isWorking, setIsWorking, handleRequestError } = useSnippetForm()
 
-	const handleFileResponse = (response: string | SnippetsExport) => {
-		setIsWorking(false)
-		console.info('file response', response)
+	const handleClick = () => {
+		setIsWorking(true)
 
-		if ('string' === typeof response) {
-			downloadSnippetExportFile(response, snippet)
-		} else {
-			const JSON_INDENT_SPACES = 2
-			downloadSnippetExportFile(JSON.stringify(response, undefined, JSON_INDENT_SPACES), snippet, 'json')
-		}
+		makeRequest(snippet)
+			.then(response => downloadSnippetExportFile(response, snippet))
+			// translators: %s: error message.
+			.catch((error: unknown) => handleRequestError(error, __('Could not download export file.', 'code-snippets')))
+			.finally(() => setIsWorking(false))
 	}
 
 	return (
-		<div className="snippet-export-buttons">
-			<Button
-				name="export_snippet"
-				onClick={() => {
-					setIsWorking(true)
+		<Button name={name} onClick={handleClick} disabled={isWorking}>
+			{label}
+		</Button>
+	)
+}
 
-					snippetsAPI.export(snippet)
-						.then(handleFileResponse)
-						// translators: %s: error message.
-						.catch((error: unknown) => handleRequestError(error, __('Could not download export file.', 'code-snippets')))
-				}}
-				disabled={isWorking}
-			>
-				{__('Export', 'code-snippets')}
-			</Button>
+export const ExportButtons: React.FC = () => {
+	const { snippetsAPI } = useRestAPI()
+
+	return (
+		<div className="snippet-export-buttons">
+			<ExportButton
+				name="export_snippet"
+				label={__('Export', 'code-snippets')}
+				makeRequest={snippetsAPI.export}
+			/>
 
 			{window.CODE_SNIPPETS_EDIT?.enableDownloads
-				? <Button
+				? <ExportButton
 					name="export_snippet_code"
-					onClick={() => {
-						snippetsAPI.exportCode(snippet)
-							.then(handleFileResponse)
-							// translators: %s: error message.
-							.catch((error: unknown) => handleRequestError(error, __('Could not download file.', 'code-snippets')))
-					}}
-					disabled={isWorking}
-				>
-					{__('Export Code', 'code-snippets')}
-				</Button>
-				: ''}
+					label={__('Export Code', 'code-snippets')}
+					makeRequest={snippetsAPI.exportCode}
+				/>
+				: null}
 		</div>
 	)
 }

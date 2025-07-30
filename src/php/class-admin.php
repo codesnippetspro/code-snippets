@@ -267,7 +267,7 @@ class Admin {
 		}
 
 		$meta_key = 'ignore_code_snippets_survey_message';
-		$dismissed = get_user_meta( $current_user->ID, $meta_key );
+		$dismissed = get_user_meta( $current_user->ID, $meta_key, false );
 
 		if ( isset( $_GET[ $meta_key ], $_REQUEST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), $meta_key ) ) {
 			add_user_meta( $current_user->ID, $meta_key, sanitize_key( wp_unslash( $_GET[ $meta_key ] ) ) );
@@ -308,7 +308,7 @@ class Admin {
 		echo wp_kses_post( $text );
 
 		printf(
-			'<a href="%s" class="button button-secondary" target="_blank" style="margin: auto .5em;">%s</a>',
+			'<a href="%s" class="button button-secondary" target="_blank" style="margin-block: auto; margin-inline: .5em;">%s</a>',
 			esc_url( $action_url ),
 			esc_html( $action_label )
 		);

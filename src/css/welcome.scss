@@ -169,7 +169,8 @@ a.csp-card {
 	border: 1px solid theme.$outline;
 	border-inline-start: 0;
 	border-inline-end: 0;
-	padding: 40px 0 50px;
+	padding-block: 40px 50px;
+	padding-inline: 0;
 	display: flex;
 	flex-direction: column;
 	row-gap: 20px;
@@ -205,7 +206,8 @@ a.csp-card {
 		}
 
 		h4 {
-			margin: 30px 0 10px;
+			margin-block: 30px 10px;
+			margin-inline: 0;
 		}
 
 		ul {
@@ -229,7 +231,8 @@ a.csp-card {
 			content: ' ';
 			display: block;
 			inline-size: 50%;
-			margin: 3em auto 0;
+			margin-block: 3em 0;
+			margin-inline: auto;
 		}
 
 		> article:last-child {
@@ -242,7 +245,8 @@ a.csp-card {
 	}
 
 	figure {
-		margin: 1em 0 0;
+		margin-block: 1em 0;
+		margin-inline: 0;
 		overflow: hidden;
 		border-radius: 0.5rem;
 		border: 1px solid grey;
@@ -272,7 +276,8 @@ a.csp-card {
 }
 
 .csp-section-links {
-	padding: 40px 0 50px;
+	padding-block: 40px 50px;
+	padding-inline: 0;
 
 	.csp-card {
 		margin-block-start: 20px;
@@ -289,7 +294,8 @@ a.csp-card {
 		}
 
 		figure {
-			margin: 1em 0 0;
+			margin-block: 1em 0;
+			margin-inline: 0;
 
 			img {
 				border-radius: 5px;
@@ -310,7 +316,8 @@ a.csp-card {
 			margin-block: 0;
 			text-transform: uppercase;
 			inline-size: fit-content;
-			padding: 5px 15px;
+			padding-block: 5px;
+			padding-inline: 15px;
 			border-radius: 50px;
 		}
 

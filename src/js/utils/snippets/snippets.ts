@@ -1,7 +1,6 @@
 import { addQueryArgs } from '@wordpress/url'
 import { __, sprintf } from '@wordpress/i18n'
 import { buildOptionGroups } from '../options'
-import { isNetworkAdmin } from '../screen'
 import { parseSnippetObject } from './objects'
 import type { SelectGroup } from '../../types/SelectOption'
 import type { Snippet, SnippetType } from '../../types/Snippet'
@@ -16,22 +15,8 @@ const TYPE_LABELS: Record<SnippetType, string> = {
 	cond: __('Conditions', 'code-snippets')
 }
 
-const defaults: Omit<Snippet, 'tags' | 'conditions'> = {
-	id: 0,
-	name: '',
-	code: '',
-	desc: '',
-	scope: 'global',
-	modified: '',
-	active: false,
-	network: isNetworkAdmin(),
-	shared_network: null,
-	priority: 10,
-	conditionId: 0
-}
-
-export const createSnippetObject = (fields: unknown = null): Snippet =>
-	parseSnippetObject(fields, { ...defaults, tags: [], conditions: {} })
+export const createSnippetObject = (fields: unknown): Snippet =>
+	parseSnippetObject(fields)
 
 export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType => {
 	switch (true) {
@@ -54,6 +39,7 @@ export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType =
 
 export const validateSnippet = (snippet: Snippet): undefined | string => {
 	const missingTitle = '' === snippet.name.trim()
+
 
 	const missingCode = isCondition(snippet)
 		? !snippet.conditions

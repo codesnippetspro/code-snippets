@@ -14,7 +14,8 @@
 	display: inline-flex;
 	justify-content: center;
 	align-items: center;
-	padding: 0 3px;
+	padding-block: 0;
+	padding-inline: 3px;
 	box-sizing: border-box;
 	gap: 5px;
 	line-height: 1;
@@ -30,7 +31,8 @@
 	block-size: auto;
 	inline-size: auto;
 	font-size: smaller;
-	padding: 0 0.5em;
+	padding-block: 0;
+	padding-inline: 0.5em;
 }
 
 .wp-core-ui .button.nav-tab-button {

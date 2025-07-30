@@ -73,7 +73,8 @@
 	}
 
 	ol, ul {
-		margin: 0 0 1.5em 1.5em;
+		margin-block: 0 1.5em;
+		margin-inline: 1.5em 0;
 	}
 
 	ul {
@@ -100,7 +101,8 @@
 	}
 
 	tfoot th.check-column {
-		padding: 13px 0 0 3px;
+		padding-block: 13px 0;
+		padding-inline: 3px 0;
 	}
 
 	thead th.check-column,
@@ -111,7 +113,8 @@
 
 	.active-snippet, .inactive-snippet {
 		td, th {
-			padding: 10px 9px;
+			padding-block: 10px;
+			padding-inline: 9px;
 			border: none;
 			box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
 		}
@@ -151,7 +154,8 @@ td.column-description {
 	p.search-box {
 		float: inline-start;
 		position: initial;
-		margin: 1em 0 0;
+		margin-block: 1em 0;
+		margin-inline: 0;
 		block-size: auto;
 	}
 }
@@ -162,13 +166,15 @@ td.column-description {
 }
 
 .nav-tab-wrapper + .subsubsub, p.search-box {
-	margin: 10px 0 0;
+	margin-block: 10px 0;
+	margin-inline: 0;
 }
 
 .snippet-type-description {
 	border-block-end: 1px solid #ccc;
 	margin: 0;
-	padding: 1em 0;
+	padding-block: 1em;
+	padding-inline: 0;
 }
 
 .code-snippets-notice a.notice-dismiss {
