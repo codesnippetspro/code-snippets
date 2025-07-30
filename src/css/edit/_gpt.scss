@@ -31,14 +31,15 @@
 	align-items: center;
 	font-size: 13px;
 	margin: 0;
-	padding: 0 8px;
+	padding-block: 0;
+	padding-inline: 8px;
 	background-color: #fff;
 	border: 1px solid #bbb;
 	border-inline-start: 0;
 	border-inline-end: 0;
 	color: #666;
 	font-style: italic;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 
 	img {
 		block-size: 1rem;
