@@ -1,10 +1,11 @@
 import { __ } from '@wordpress/i18n'
 import classnames from 'classnames'
-import React, { ReactNode, useState } from 'react'
+import React, { useState } from 'react'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
 import { fetchQueryParam } from '../../utils/urls'
 import { CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon, TeamsIcon } from './icons/ToolbarIcons'
 import { UpsellDialog } from './UpsellDialog'
+import type { ReactNode } from 'react'
 
 interface NavLink {
 	name: string

@@ -6,6 +6,8 @@ use Code_Snippets\REST_API\Snippets_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
+use function Code_Snippets\Settings\delete_self_option;
+use function Code_Snippets\Settings\get_self_option;
 
 /**
  * Class for managing the REST API functionality of the plugin.
@@ -116,13 +118,10 @@ class Rest_API {
 	 * @return WP_REST_Response The recently activated snippets list prior to clearing it.
 	 */
 	public function clear_recent_list_callback( WP_REST_Request $request ): WP_REST_Response {
-		if ( $request->get_param( 'network' ) ) {
-			$current = get_site_option( 'recently_activated_snippets', [] );
-			update_site_option( 'recently_activated_snippets', [] );
-		} else {
-			$current = get_option( 'recently_activated_snippets', [] );
-			update_option( 'recently_activated_snippets', [] );
-		}
+		$network = $request->get_param( 'network' );
+
+		$current = get_self_option( $network, 'recently_activated_snippets', [] );
+		delete_self_option( $network, 'recently_activated_snippets' );
 
 		return rest_ensure_response( $current );
 	}

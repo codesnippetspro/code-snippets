@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
+import { __, sprintf } from '@wordpress/i18n'
 import { CHANGELOG_SECTIONS } from '../../types/schema/WelcomeSchema'
 import type { ChangelogSectionTitle } from '../../types/schema/WelcomeSchema'
-import { __, sprintf } from '@wordpress/i18n'
 
 const CHANGELOG_LABELS: Record<ChangelogSectionTitle, string> = {
 	Added: __('New features', 'code-snippets'),
@@ -61,13 +61,13 @@ export const Changelog = () =>
 			<a
 				href="https://wordpress.org/plugins/code-snippets/changelog"
 				className="button button-primary button-large"
-				target="_blank"
+				target="_blank" rel="noreferrer"
 			>
 				{__('View changelog', 'code-snippets')}
 			</a>
 		</header>
 		<div className="code-snippets-changelog-entries">
-			{CHANGELOG_DATA && CHANGELOG_DATA.map(({ version, date, entries }) =>
+			{CHANGELOG_DATA?.map(({ version, date, entries }) =>
 				<Fragment key={version}>
 					<header>
 						{/* translators: %s: version number. */}

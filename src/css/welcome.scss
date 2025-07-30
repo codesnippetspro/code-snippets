@@ -30,7 +30,7 @@ $breakpoint: 1060px;
 		flex-flow: row;
 		justify-content: space-between;
 		align-items: center;
-		border-bottom: 1px solid #e2e2e4;
+		border-block-end: 1px solid #e2e2e4;
 		margin-block-end: 20px;
 		padding-block-end: 20px;
 	}
@@ -114,7 +114,7 @@ $breakpoint: 1060px;
 		align-items: flex-start;
 		padding: 24px;
 		gap: 14px;
-		height: 100%;
+		block-size: 100%;
 	}
 
 	.button {

@@ -1,6 +1,6 @@
+import type { ChangelogSchema, ImageLinkSchema } from './schema/WelcomeSchema'
 import type Prism from 'prismjs'
 import type tinymce from 'tinymce'
-import { ChangelogSchema, ImageLinkSchema } from './schema/WelcomeSchema'
 import type { Snippet } from './Snippet'
 import type { CodeEditorInstance, EditorOption, WordPressCodeEditor } from './WordPressCodeEditor'
 import type { WordPressEditor } from './WordPressEditor'

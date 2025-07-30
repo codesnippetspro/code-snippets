@@ -1,8 +1,8 @@
-import { __ } from "@wordpress/i18n"
-import React, { useState } from "react"
-import { ImageLinkSchema } from '../../types/schema/WelcomeSchema'
+import { __ } from '@wordpress/i18n'
+import React, { useState } from 'react'
 import { Toolbar } from '../common/Toolbar'
 import { Changelog } from './Changelog'
+import type { ImageLinkSchema } from '../../types/schema/WelcomeSchema'
 
 const DATA = window.CODE_SNIPPETS_WELCOME
 
@@ -58,7 +58,7 @@ const Partners: React.FC<PartnersProps> = ({ partners }) =>
 	</>
 
 interface ArticlesProps {
-		articles: ImageLinkSchema[]
+	articles: ImageLinkSchema[]
 }
 
 const Articles: React.FC<ArticlesProps> = ({ articles }) =>
