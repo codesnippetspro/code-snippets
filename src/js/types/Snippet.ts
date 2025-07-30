@@ -1,5 +1,3 @@
-import type { ConditionGroups } from './ConditionGroups'
-
 export interface Snippet {
 	readonly id: number
 	readonly name: string
@@ -14,7 +12,6 @@ export interface Snippet {
 	readonly modified?: string
 	readonly conditionId: number
 	readonly code_error?: readonly [string, number] | null
-	readonly conditions: ConditionGroups
 }
 
 export type SnippetCodeType = 'php' | 'html' | 'css' | 'js'
