@@ -318,7 +318,7 @@ function activate_snippet( int $id, ?bool $network = null ) {
 	update_shared_network_snippets( [ $snippet ] );
 	do_action( 'code_snippets/activate_snippet', $snippet );
 	clean_snippets_cache( $table_name );
-	code_snippets()->active_snippets->increment_snippet_rev( $snippet );
+	code_snippets()->evaluate_assets->increment_snippet_rev( $snippet );
 
 	return $snippet;
 }
@@ -377,7 +377,7 @@ function activate_snippets( array $ids, ?bool $network = null ): ?array {
 	update_shared_network_snippets( $valid_snippets );
 	do_action( 'code_snippets/activate_snippets', $valid_snippets, $table_name );
 	clean_snippets_cache( $table_name );
-	code_snippets()->active_snippets->increment_snippets_rev( $network );
+	code_snippets()->evaluate_assets->increment_snippets_rev( $network );
 
 	return $valid_ids;
 }
@@ -419,7 +419,7 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 	update_shared_network_snippets( [ $snippet ] );
 	do_action( 'code_snippets/deactivate_snippet', $id, $network );
 	clean_snippets_cache( $table );
-	code_snippets()->active_snippets->increment_snippets_rev( $network );
+	code_snippets()->evaluate_assets->increment_snippets_rev( $network );
 
 	return $snippet;
 }
@@ -450,7 +450,7 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 		do_action( 'code_snippets/delete_snippet', $id, $network );
 		clean_snippets_cache( $table );
 
-		code_snippets()->active_snippets->increment_rev( 'all', $network );
+		code_snippets()->evaluate_assets->increment_rev( 'all', $network );
 		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 	}
 
@@ -587,7 +587,7 @@ function save_snippet( $snippet ) {
 
 	update_shared_network_snippets( [ $snippet ] );
 	clean_snippets_cache( $table );
-	code_snippets()->active_snippets->increment_snippet_rev( $snippet );
+	code_snippets()->evaluate_assets->increment_snippet_rev( $snippet );
 
 	return $snippet;
 }
@@ -626,6 +626,7 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 }
 
 /**
+<<<<<<< HEAD
  * Run the active snippets.
  * Read-write-execute operation.
  *

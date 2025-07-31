@@ -53,13 +53,14 @@ class Command extends WP_CLI_Command {
 	 *
 	 * @return void
 	 *
-	 * @throws WP_Exception If an error is encountered while registering the command.
+	 * @noinspection PhpDocMissingThrowsInspection
 	 */
 	public static function register() {
 		if ( class_exists( '\WP_CLI' ) ) {
 			try {
 				WP_CLI::add_command( 'snippet', self::class );
 			} catch ( Exception $exception ) {
+				/* @noinspection PhpUnhandledExceptionInspection E_USER_NOTICE level does now throw an error. */
 				wp_trigger_error( __FUNCTION__, $exception->getMessage() );
 			}
 		}

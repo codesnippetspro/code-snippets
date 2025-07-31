@@ -1,16 +1,28 @@
 <?php
 
-namespace Code_Snippets;
+namespace Evaluation;
 
+use Code_Snippets\DB;
+use Code_Snippets\Snippet;
 use MatthiasMullie\Minify;
 use WP_Exception;
+use Code_Snippets\Conditions;
+use Code_Snippets\Settings;
+use function Code_Snippets\code_snippets;
 
 /**
  * Class for loading active snippets of various types.
  *
  * @package Code_Snippets
  */
-class Active_Snippets {
+class Evaluate_Assets {
+
+	/**
+	 * Database instance.
+	 *
+	 * @var DB
+	 */
+	private DB $db;
 
 	/**
 	 * Cached list of active snippets.
@@ -21,31 +33,23 @@ class Active_Snippets {
 
 	/**
 	 * Class constructor.
-	 */
-	public function __construct() {
-		add_action( 'init', array( $this, 'init' ) );
-	}
-
-	/**
-	 * Initialise class functions.
 	 *
-	 * @throws WP_Exception
+	 * @param DB $db Database instance.
 	 */
-	public function init() {
-		add_action( 'wp_head', [ $this, 'load_head_content' ] );
-		add_action( 'wp_footer', [ $this, 'load_footer_content' ] );
+	public function __construct( DB $db ) {
+		$this->db = $db;
 
 		if ( code_snippets()->licensing->was_licensed() ) {
-			$this->init_pro();
+			add_action( 'init', [ $this, 'handle_code_output' ] );
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend' ), 15 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ), 15 );
 		}
 	}
 
 	/**
-	 * Initialise class functions for the pro functionality.
-	 *
-	 * @throws WP_Exception
+	 * Initialise class functions.
 	 */
-	protected function init_pro() {
+	public function handle_code_output() {
 		if ( isset( $_GET['code-snippets-css'] ) ) {
 			$this->print_external_code( 'css' );
 			exit;
@@ -55,9 +59,6 @@ class Active_Snippets {
 			$this->print_external_code( 'js' );
 			exit;
 		}
-
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend' ), 15 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ), 15 );
 	}
 
 	/**
@@ -71,7 +72,7 @@ class Active_Snippets {
 		$scope_key = is_array( $scope ) ? implode( '|', $scope ) : $scope;
 
 		if ( ! isset( $this->active_snippets[ $scope_key ] ) ) {
-			$this->active_snippets[ $scope_key ] = code_snippets()->db->fetch_active_snippets( $scope );
+			$this->active_snippets[ $scope_key ] = $this->db->fetch_active_snippets( $scope );
 		}
 
 		return $this->active_snippets[ $scope_key ];
@@ -190,8 +191,6 @@ class Active_Snippets {
 	 * Enqueue snippet assets for the site front-end.
 	 *
 	 * @return void
-	 *
-	 * @throws WP_Exception
 	 */
 	public function enqueue_frontend() {
 		$this->enqueue_css( 'site-css' );
@@ -203,8 +202,6 @@ class Active_Snippets {
 	 * Enqueue snippet assets for the site admin area.
 	 *
 	 * @return void
-	 *
-	 * @throws WP_Exception
 	 */
 	public function enqueue_admin() {
 		$this->enqueue_css( 'admin-css' );
@@ -214,8 +211,6 @@ class Active_Snippets {
 	 * Enqueue the active style snippets for the current page
 	 *
 	 * @param string $scope CSS scope, either 'site-css' or 'admin-css'.
-	 *
-	 * @throws WP_Exception if an invalid snippet scope is provided.
 	 */
 	private function enqueue_css( string $scope ) {
 		$rev = $this->get_rev( $scope );
@@ -235,8 +230,6 @@ class Active_Snippets {
 	 * Enqueue active JavaScript snippets for the current page
 	 *
 	 * @param string $scope JS scope, either 'site-head-js' or 'site-footer-js'.
-	 *
-	 * @throws WP_Exception if an invalid snippet scope is provided.
 	 */
 	private function enqueue_js( string $scope ) {
 		$rev = $this->get_rev( $scope );
@@ -275,7 +268,7 @@ class Active_Snippets {
 	 *
 	 * @return string Processed code.
 	 *
-	 * @throws WP_Exception If an invalid snippet scope is provided.
+	 * @noinspection PhpDocMissingThrowsInspection
 	 */
 	private static function process_code( string $code, string $scope ): string {
 		$minify_types = Settings\get_setting( 'general', 'minify_output' );
@@ -300,6 +293,7 @@ class Active_Snippets {
 			default:
 				if ( function_exists( 'wp_trigger_error' ) ) {
 					$message = sprintf( 'Cannot process code for snippet scope: %s', esc_html( $scope ) );
+					/* @noinspection PhpUnhandledExceptionInspection E_USER_NOTICE level does now throw an error. */
 					wp_trigger_error( __FUNCTION__, $message );
 				}
 				break;
@@ -312,8 +306,6 @@ class Active_Snippets {
 	 * Fetch and print the active snippets for a given type and the current scope.
 	 *
 	 * @param string $type Must be either 'css' or 'js'.
-	 *
-	 * @throws WP_Exception If an invalid snippet type is provided.
 	 */
 	private function print_external_code( string $type ) {
 		if ( 'js' !== $type && 'css' !== $type ) {
@@ -329,13 +321,9 @@ class Active_Snippets {
 			$current_scope = "site-$current_scope-js";
 		}
 
-		$active_snippets = code_snippets()->db->fetch_active_snippets( $current_scope );
-
 		// Concatenate all fetched code together into a single string.
-		$code = '';
-		foreach ( $active_snippets as $snippets ) {
-			$code .= implode( "\n\n", array_column( $snippets, 'code' ) );
-		}
+		$active_snippets = $this->db->fetch_active_snippets( [ $current_scope ] );
+		$code = implode( "\n\n", array_column( $active_snippets, 'code' ) );
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo self::process_code( $code, $type );
@@ -348,64 +336,28 @@ class Active_Snippets {
 	 * @param string $scope Code scope.
 	 *
 	 * @return string Code ready for output.
-	 *
-	 * @throws WP_Exception if an invalid snippet scope is provided.
 	 */
 	private function build_inline_code( string $scope ): string {
-		$snippets_by_table = code_snippets()->db->fetch_active_snippets( [ $scope, 'condition' ] );
+		$snippets = code_snippets()->db->fetch_active_snippets( [ $scope, 'condition' ] );
+		$conditions = [];
+
+		foreach ( $snippets as $snippet ) {
+			if ( 'condition' === $snippet['scope'] ) {
+				$condition_id = intval( $snippet['id'] );
+				$conditions[ $condition_id ] = Conditions\evaluate_condition( $snippet['code'] );
+			}
+		}
+
 		$code = '';
 
-		foreach ( $snippets_by_table as $snippets ) {
-			$conditions = [];
-
-			foreach ( $snippets as $snippet ) {
-				if ( 'condition' === $snippet['scope'] ) {
-					$condition_id = intval( $snippet['id'] );
-					$conditions[ $condition_id ] = Conditions\evaluate_condition( $snippet['code'] );
-				}
-			}
-
-			foreach ( $snippets as $snippet ) {
-				$condition_id = intval( $snippet['condition_id'] );
-				if ( 'condition' !== $snippet['scope'] &&
-				     ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) ) {
-					$code .= $snippet['code'] . "\n\n";
-				}
+		foreach ( $snippets as $snippet ) {
+			$condition_id = intval( $snippet['condition_id'] );
+			if ( 'condition' !== $snippet['scope'] &&
+			     ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) ) {
+				$code .= $snippet['code'] . "\n\n";
 			}
 		}
 
 		return self::process_code( $code, $scope );
-	}
-
-	/**
-	 * Print snippet code fetched from the database from a certain scope.
-	 *
-	 * @param string $scope Name of scope to print.
-	 */
-	private function print_content_snippets( string $scope ) {
-		$snippets_list = $this->fetch_active_snippets( [ 'head-content', 'footer-content' ] );
-
-		foreach ( $snippets_list as $snippets ) {
-			foreach ( $snippets as $snippet ) {
-				if ( $scope === $snippet['scope'] ) {
-					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-					echo "\n", $snippet['code'], "\n";
-				}
-			}
-		}
-	}
-
-	/**
-	 * Print head content snippets.
-	 */
-	public function load_head_content() {
-		$this->print_content_snippets( 'head-content' );
-	}
-
-	/**
-	 * Print footer content snippets.
-	 */
-	public function load_footer_content() {
-		$this->print_content_snippets( 'footer-content' );
 	}
 }

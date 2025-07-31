@@ -6,6 +6,9 @@ use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Cloud_REST_API;
 use Code_Snippets\REST_API\Conditions_REST_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
+use Evaluation\Evaluate_Assets;
+use Evaluation\Evaluate_Content;
+use Evaluation\Evaluate_Functions;
 
 /**
  * The main plugin class
@@ -36,6 +39,27 @@ class Plugin {
 	public DB $db;
 
 	/**
+	 * Class for evaluating function snippets.
+	 *
+	 * @var Evaluate_Functions
+	 */
+	public Evaluate_Functions $evaluate_functions;
+
+	/**
+	 * Class for evaluating content snippets.
+	 *
+	 * @var Evaluate_Content
+	 */
+	public Evaluate_Content $evaluate_content;
+
+	/**
+	 * Class for evaluating style and script snippets.
+	 *
+	 * @var Evaluate_Assets
+	 */
+	public Evaluate_Assets $evaluate_assets;
+
+	/**
 	 * Administration area class
 	 *
 	 * @var Admin
@@ -55,13 +79,6 @@ class Plugin {
 	 * @var Cloud_API
 	 */
 	public Cloud_API $cloud_api;
-
-	/**
-	 * Class for managing active snippets
-	 *
-	 * @var Active_Snippets
-	 */
-	public Active_Snippets $active_snippets;
 
 	/**
 	 * Handles licensing and plugin updates.
@@ -106,6 +123,9 @@ class Plugin {
 		// Snippet operation functions.
 		require_once $includes_path . '/snippet-ops.php';
 		require_once $includes_path . '/conditions.php';
+		$this->evaluate_assets = new Evaluate_Assets( $this->db );
+		$this->evaluate_content = new Evaluate_Content( $this->db );
+		$this->evaluate_functions = new Evaluate_Functions( $this->db );
 
 		// CodeMirror editor functions.
 		require_once $includes_path . '/editor.php';
@@ -123,7 +143,6 @@ class Plugin {
 		// Cloud List Table shared functions.
 		require_once $includes_path . '/cloud/list-table-shared-ops.php';
 
-		$this->active_snippets = new Active_Snippets();
 		$this->front_end = new Front_End();
 		$this->cloud_api = new Cloud_API();
 

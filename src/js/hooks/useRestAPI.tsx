@@ -15,8 +15,8 @@ export interface RestAPIContext {
 
 export interface RestAPI {
 	get: <T>(url: string) => Promise<T>
-	post: <T, D = never>(url: string, data?: D) => Promise<T>
-	put: <T, D = never>(url: string, data?: D) => Promise<T>
+	post: <T>(url: string, data?: object) => Promise<T>
+	put: <T>(url: string, data?: object) => Promise<T>
 	del: <T>(url: string) => Promise<T>
 }
 
