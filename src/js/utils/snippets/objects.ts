@@ -1,6 +1,6 @@
 import { SNIPPET_TYPE_SCOPES } from '../../types/Snippet'
-import type { Snippet, SnippetScope } from '../../types/Snippet'
 import { isNetworkAdmin } from '../screen'
+import type { Snippet, SnippetScope } from '../../types/Snippet'
 
 const defaults: Omit<Snippet, 'tags'> = {
 	id: 0,

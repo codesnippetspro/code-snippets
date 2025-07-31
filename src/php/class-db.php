@@ -228,7 +228,7 @@ class DB {
 		$snippets = $wpdb->get_results(
 			$wpdb->prepare(
 				"
-				SELECT id, code, scope, active
+				SELECT id, code, scope, active, priority
 				FROM $table_name
 				WHERE scope IN ($scopes_format) $extra_where
 				ORDER BY priority, id",
