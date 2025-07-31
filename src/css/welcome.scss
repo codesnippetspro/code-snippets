@@ -46,7 +46,8 @@ $breakpoint: 1060px;
 	flex-flow: column;
 
 	figure {
-		margin: 1em 0 0;
+		margin-block: 1em 0;
+		margin-inline: 0;
 		overflow: hidden;
 		border-radius: 0.5rem;
 		position: relative;

@@ -1,0 +1,51 @@
+name: "(Build): Plugin"
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: false
+        type: string
+        default: ${{ inputs.ref }}
+    outputs:
+      version:
+        value: ${{ jobs.build.outputs.version }}
+      artifact_name:
+        value: ${{ jobs.build.outputs.artifact_name }}
+      artifact_url:
+        value: ${{ jobs.build.outputs.artifact_url }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ steps.build.outputs.name }}
+      artifact_url: ${{ steps.artifacts.outputs.artifact-url }}
+      version: ${{ steps.build.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+
+      - name: Install & Build
+        id: build
+        run: |
+          npm install && npm run bundle
+          echo "name=$(jq -r .name package.json)" >> $GITHUB_OUTPUT
+          echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+
+      - name: Upload
+        id: artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build.outputs.name }}
+          path: ./bundle

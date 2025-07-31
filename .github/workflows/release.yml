@@ -1,0 +1,59 @@
+name: "(Release): Build"
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  install:
+    uses: ./.github/workflows/build.yml
+    with:
+      ref: ${{ github.event.release.tag_name }}
+
+  upload:
+    needs: install
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_url: ${{ steps.zip.outputs.path }}
+      artifact_name: ${{ needs.install.outputs.artifact_name }}
+    steps:
+      - name: Get artifact url
+        id: artifact
+        run: |
+          url="${{ needs.install.outputs.artifact_url }}"
+          id="${url##*/}"
+          echo "id=$id" >> $GITHUB_OUTPUT
+
+      - name: Download built zip
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ steps.artifact.outputs.id }}
+          path: ./dist
+
+      - name: Get artifact url
+        id: zip
+        run: |
+          zip_name="${{ needs.install.outputs.artifact_name }}.zip"
+
+          cd ./dist/${{ needs.install.outputs.artifact_name }}
+          zip -r "../$zip_name" .
+          cd ..
+
+          echo "path=$(pwd)/$zip_name" >> $GITHUB_OUTPUT
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.zip.outputs.path }}
+
+  # deploy:
+  #   needs: [install, upload]
+  #   uses: codesnippetspro/.github-private/.github/workflows/publish_svn.yml@v1
+  #   with:
+  #     repo: ${{ github.repository }}
+  #     branch: ${{ github.ref_name }}
+  #     tag: ${{ needs.install.outputs.version}}
+  #     slug: code-snippets
+  #     artifact_url: ${{ needs.upload.outputs.artifact_url }}
+  #     artifact_name: ${{ needs.upload.outputs.artifact_name }}

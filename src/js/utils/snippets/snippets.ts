@@ -13,7 +13,7 @@ export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
 
 const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
 
-export const createSnippetObject = (fields: unknown = null): Snippet =>
+export const createSnippetObject = (fields: unknown): Snippet =>
 	parseSnippetObject(fields)
 
 export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType => {

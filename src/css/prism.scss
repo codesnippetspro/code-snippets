@@ -10,7 +10,8 @@ complaining about deprecated syntax. Ideally, they can be removed if the file in
 
 pre[data-line] {
 	position: relative;
-	padding: 1em 0 1em 3em;
+	padding-block: 1em;
+	padding-inline: 3em 0;
 }
 
 .line-highlight {
@@ -34,7 +35,8 @@ pre[data-line] {
 		inset-block-start: .4em;
 		inset-inline-start: .6em;
 		min-inline-size: 1em;
-		padding: 0 .5em;
+		padding-block: 0;
+		padding-inline: .5em;
 		background-color: hsl(24deg 20% 50% / 40%);
 		color: hsl(24deg 20% 95%);
 		font: bold 65%/1.5 sans-serif;
@@ -63,7 +65,8 @@ pre[data-line] {
 	:not(.is-style-prism-shades-of-purple) pre[class*="language-"].line-numbers & {
 		box-sizing: border-box;
 		padding: 0;
-		margin: 1em 0 0;
+		margin-block: 1em 0;
+		margin-inline: 0;
 	}
 }
 

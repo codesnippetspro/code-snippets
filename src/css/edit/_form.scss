@@ -34,7 +34,8 @@ $sidebar-gap: 30px;
 	}
 
 	.badge {
-		margin: 3px 0;
+		margin-block: 3px;
+		margin-inline: 0;
 	}
 
 	.beta-badge {
@@ -88,7 +89,8 @@ $sidebar-gap: 30px;
 	}
 
 	h2, h3 {
-		margin: 25px 0 15px;
+		margin-block: 25px 15px;
+		margin-inline: 0;
 		font-size: 1.16em;
 
 		label {

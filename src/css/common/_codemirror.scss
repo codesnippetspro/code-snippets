@@ -32,7 +32,7 @@
 	border-inline-start: 1px solid white !important;
 }
 
-[class*="CodeMirror-lint-marker"], [class*="CodeMirror-lint-message"], .CodeMirror-lint-marker-multiple {
+[class*='CodeMirror-lint-marker'], [class*='CodeMirror-lint-message'], .CodeMirror-lint-marker-multiple {
 	background-image: none;
 }
 
@@ -45,13 +45,13 @@
 	inset-block-start: 0;
 }
 
-[class*="CodeMirror-lint-marker"]::before {
+[class*='CodeMirror-lint-marker']::before {
 	font: normal 18px/1 dashicons;
 	position: relative;
 	inset-block-start: -2px;
 }
 
-[class*="CodeMirror-lint-message"]::before {
+[class*='CodeMirror-lint-message']::before {
 	font: normal 16px/1 dashicons;
 	position: absolute;
 	inset-inline-start: 16px;
@@ -72,7 +72,7 @@
 }
 
 .CodeMirror-lint-marker-warning::before, .CodeMirror-lint-message-warning::before {
-	content: "\f534";
+	content: '\f534';
 	color: #f6a306;
 }
 
@@ -82,7 +82,7 @@
 }
 
 .CodeMirror-lint-marker-error::before, .CodeMirror-lint-message-error::before {
-	content: "\f153";
+	content: '\f153';
 	color: #dc3232;
 }
 

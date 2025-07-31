@@ -5,7 +5,7 @@ import { REST_API_AXIOS_CONFIG } from '../utils/restAPI'
 import { buildSnippetsAPI } from '../utils/snippets/api'
 import type { SnippetsAPI } from '../utils/snippets/api'
 import type { PropsWithChildren } from 'react'
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import type { AxiosInstance, AxiosResponse } from 'axios'
 
 export interface RestAPIContext {
 	api: RestAPI
@@ -15,8 +15,8 @@ export interface RestAPIContext {
 
 export interface RestAPI {
 	get: <T>(url: string) => Promise<T>
-	post: <T, D = never>(url: string, data?: D, config?: AxiosRequestConfig<D>) => Promise<T>
-	put: <T, D = never>(url: string, data?: D, config?: AxiosRequestConfig<D>) => Promise<T>
+	post: <T>(url: string, data?: object) => Promise<T>
+	put: <T>(url: string, data?: object) => Promise<T>
 	del: <T>(url: string) => Promise<T>
 }
 
@@ -40,14 +40,14 @@ const buildRestAPI = (axiosInstance: AxiosInstance): RestAPI => ({
 	get: <T, >(url: string): Promise<T> =>
 		debugRequest('GET', url, axiosInstance.get<T, AxiosResponse<T, never>, never>(url)),
 
-	post: <T, D>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<T> =>
-		debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T, D>, D>(url, data, config), data),
+	post: <T, >(url: string, data?: object): Promise<T> =>
+		debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T>>(url, data), data),
 
 	del: <T, >(url: string): Promise<T> =>
 		debugRequest('DELETE', url, axiosInstance.delete<T, AxiosResponse<T, never>, never>(url)),
 
-	put: <T, D>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<T> =>
-		debugRequest('PUT', url, axiosInstance.put<T, AxiosResponse<T, D>, D>(url, data, config), data)
+	put: <T, >(url: string, data?: object): Promise<T> =>
+		debugRequest('PUT', url, axiosInstance.put<T, AxiosResponse<T>>(url, data), data)
 })
 
 export const [RestAPIContext, useRestAPI] = createContextHook<RestAPIContext>('useRestAPI')

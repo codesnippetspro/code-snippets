@@ -34,20 +34,19 @@ export const parseSnippetObject = (fields: unknown): Snippet => {
 	}
 
 	return {
-		id: 'id' in fields && isAbsInt(fields.id) ? fields.id : defaults.id,
-		name: 'name' in fields && 'string' === typeof fields.name ? fields.name : defaults.name,
-		desc: 'desc' in fields && 'string' === typeof fields.desc ? fields.desc : defaults.desc,
-		code: 'code' in fields && 'string' === typeof fields.code ? fields.code : defaults.code,
-		tags: 'tags' in fields ? parseStringArray(fields.tags) ?? [] : [],
-		scope: 'scope' in fields && isValidScope(fields.scope) ? fields.scope : defaults.scope,
-		modified: 'modified' in fields && 'string' === typeof fields.modified ? fields.modified : defaults.modified,
-		active: 'active' in fields && 'boolean' === typeof fields.active ? fields.active : defaults.active,
-		network: 'network' in fields && 'boolean' === typeof fields.network ? fields.network : defaults.network,
-		shared_network: 'shared_network' in fields && 'boolean' === typeof fields.shared_network && fields.shared_network ||
-			defaults.shared_network,
-		priority: 'priority' in fields && 'number' === typeof fields.priority ? fields.priority : defaults.priority,
-		conditionId: 'condition_id' in fields && isAbsInt(fields.condition_id) ? fields.condition_id
-			: 'conditionId' in fields && isAbsInt(fields.conditionId) ? fields.conditionId : defaults.conditionId,
-		lastActive: 'last_active' in fields ? Number(fields.last_active) : undefined
+		...result,
+		...'id' in fields && isAbsInt(fields.id) && { id: fields.id },
+		...'name' in fields && 'string' === typeof fields.name && { name: fields.name },
+		...'desc' in fields && 'string' === typeof fields.desc && { desc: fields.desc },
+		...'code' in fields && 'string' === typeof fields.code && { code: fields.code },
+		...'tags' in fields && { tags: parseStringArray(fields.tags) ?? result.tags },
+		...'scope' in fields && isValidScope(fields.scope) && { scope: fields.scope },
+		...'modified' in fields && 'string' === typeof fields.modified && { modified: fields.modified },
+		...'active' in fields && 'boolean' === typeof fields.active && { active: fields.active },
+		...'network' in fields && 'boolean' === typeof fields.network && { network: fields.network },
+		...'shared_network' in fields && 'boolean' === typeof fields.shared_network && { shared_network: fields.shared_network },
+		...'priority' in fields && 'number' === typeof fields.priority && { priority: fields.priority },
+		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id },
+		...'last_active' in fields && { lastActive: Number(fields.last_active) }
 	}
 }

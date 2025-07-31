@@ -1,4 +1,3 @@
-
 .snippet-editor-sidebar {
 	.button-large {
 		block-size: 48px;
@@ -41,7 +40,8 @@
 		gap: 1em;
 
 		h4 {
-			margin: 0.5em 0;
+			margin-block: 0.5em;
+			margin-inline: 0;
 		}
 
 		> div {

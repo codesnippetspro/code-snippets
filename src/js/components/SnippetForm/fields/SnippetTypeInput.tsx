@@ -32,9 +32,7 @@ const SnippetTypeOption: React.FC<SelectOption<SnippetType>> = ({ label, value }
 		<div>
 			{label}
 			{isProType(value) && !isLicensed()
-				? <span className="badge pro-badge small-badge">
-					{_x('Pro', 'Upgrade to Pro', 'code-snippets')}
-				</span>
+				? <span className="badge pro-badge small-badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>
 				: null}
 		</div>
 		<Badge name={value} />

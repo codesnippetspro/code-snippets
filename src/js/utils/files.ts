@@ -1,5 +1,5 @@
 import { getSnippetType } from './snippets/snippets'
-import type { SnippetsExport } from '../types/SnippetsExport'
+import type { SnippetsExport } from '../types/schema/SnippetsExport'
 import type { Snippet } from '../types/Snippet'
 
 const SECOND_IN_MS = 1000
