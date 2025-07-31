@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Publish comment
-        if: ${{ needs.install.outputs.artifact_name || needs.install.outputs.artifact_url }}
+        if: ${{ needs.install.outputs.artifact_name && needs.install.outputs.artifact_url }}
         uses: peter-evans/create-or-update-comment@v4
         with:
           edit-mode: replace
