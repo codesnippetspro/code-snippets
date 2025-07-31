@@ -38,18 +38,16 @@ class Evaluate_Assets {
 	 */
 	public function __construct( DB $db ) {
 		$this->db = $db;
-
-		if ( code_snippets()->licensing->was_licensed() ) {
-			add_action( 'init', [ $this, 'handle_code_output' ] );
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend' ), 15 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ), 15 );
-		}
 	}
 
 	/**
 	 * Initialise class functions.
 	 */
-	public function handle_code_output() {
+	public function init() {
+		if ( ! code_snippets()->licensing->was_licensed() ) {
+			return;
+		}
+
 		if ( isset( $_GET['code-snippets-css'] ) ) {
 			$this->print_external_code( 'css' );
 			exit;
@@ -59,6 +57,9 @@ class Evaluate_Assets {
 			$this->print_external_code( 'js' );
 			exit;
 		}
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend' ), 15 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ), 15 );
 	}
 
 	/**
@@ -113,7 +114,7 @@ class Evaluate_Assets {
 			return;
 		}
 
-		$revisions = Settings\get_self_option( $network, 'code_snippets_assets_rev', array() );
+		$revisions = Settings\get_self_option( $network, 'code_snippets_assets_rev', [] );
 
 		if ( 'all' === $scope ) {
 			foreach ( $revisions as $i => $v ) {
@@ -293,7 +294,7 @@ class Evaluate_Assets {
 			default:
 				if ( function_exists( 'wp_trigger_error' ) ) {
 					$message = sprintf( 'Cannot process code for snippet scope: %s', esc_html( $scope ) );
-					/* @noinspection PhpUnhandledExceptionInspection E_USER_NOTICE level does now throw an error. */
+					/* @noinspection PhpUnhandledExceptionInspection E_USER_NOTICE level does not throw an error. */
 					wp_trigger_error( __FUNCTION__, $message );
 				}
 				break;

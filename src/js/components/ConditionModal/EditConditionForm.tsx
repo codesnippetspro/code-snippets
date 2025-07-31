@@ -9,7 +9,7 @@ import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { SubmitButton } from '../common/SubmitButton'
 import { Tooltip } from '../common/Tooltip'
 import { ConditionEditor } from '../ConditionEditor'
-import { DismissibleNotice } from '../DismissableNotice'
+import { DismissibleNotice } from '../common/DismissableNotice'
 import type { Snippet } from '../../types/Snippet'
 import type { Dispatch, FormEventHandler, PropsWithChildren, SetStateAction } from 'react'
 

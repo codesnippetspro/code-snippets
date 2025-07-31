@@ -6,6 +6,7 @@ use Code_Snippets\DB;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\clean_snippets_cache;
+use function Code_Snippets\Conditions\evaluate_condition;
 use function Code_Snippets\execute_snippet;
 
 /**
@@ -23,6 +24,20 @@ class Evaluate_Functions {
 	private DB $db;
 
 	/**
+	 * Snippets with an attached condition that should be evaluated later.
+	 *
+	 * @var array
+	 */
+	private array $snippets_with_condition = [];
+
+	/**
+	 * List of conditions that should be evaluated later.
+	 *
+	 * @var array
+	 */
+	private array $conditions = [];
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param DB $db Database class instance.
@@ -30,6 +45,7 @@ class Evaluate_Functions {
 	public function __construct( DB $db ) {
 		$this->db = $db;
 		add_action( 'plugins_loaded', [ $this, 'evaluate_early' ], 1 );
+		add_action( 'wp', [ $this, 'evaluate_conditional_snippets' ], 1 );
 	}
 
 	/**
@@ -106,6 +122,33 @@ class Evaluate_Functions {
 	}
 
 	/**
+	 * Evaluate a snippet.
+	 *
+	 * @param array  $snippet      Snippet data.
+	 * @param ?array $edit_snippet Snippet being edited, if any.
+	 *
+	 * @return void
+	 */
+	private function evaluate_snippet( array $snippet, ?array $edit_snippet = null ) {
+		$snippet_id = $snippet['id'];
+		$code = $snippet['code'];
+		$table_name = $snippet['table'];
+
+		// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
+		if ( 'single-use' === $snippet['scope'] ) {
+			$this->quick_deactivate_snippet( $snippet_id, $table_name );
+		}
+
+		if ( ! is_null( $edit_snippet ) && $edit_snippet['id'] === $snippet_id && $edit_snippet['table'] === $table_name ) {
+			return;
+		}
+
+		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
+			execute_snippet( $code, $snippet_id );
+		}
+	}
+
+	/**
 	 * Evaluate applicable active snippets as early as possible.
 	 *
 	 * @return bool True if snippets were evaluated, false if safe mode is active.
@@ -120,21 +163,51 @@ class Evaluate_Functions {
 		$edit_snippet = $this->get_currently_editing_snippet();
 
 		foreach ( $active_snippets as $snippet ) {
-			$snippet_id = $snippet['id'];
-			$code = $snippet['code'];
-			$table_name = $snippet['table'];
-
-			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
-			if ( 'single-use' === $snippet['scope'] ) {
-				$this->quick_deactivate_snippet( $snippet_id, $table_name );
-			}
-
-			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
-			     ( is_null( $edit_snippet ) || $edit_snippet['id'] !== $snippet_id || $edit_snippet['table'] !== $table_name ) ) {
-				execute_snippet( $code, $snippet_id );
+			if ( 'condition' === $snippet['scope'] ) {
+				$this->conditions[] = $snippet;
+			} elseif ( 0 !== $snippet['condition_id'] ) {
+				$this->snippets_with_condition[] = $snippet;
+			} else {
+				$this->evaluate_snippet( $snippet, $edit_snippet );
 			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * Evaluate conditional snippets on the 'wp' action.
+	 *
+	 * @return void
+	 *
+	 * @noinspection PhpDocMissingThrowsInspection
+	 */
+	public function evaluate_conditional_snippets() {
+		if ( $this->is_safe_mode_active() ) {
+			return;
+		}
+
+		$condition_results = [];
+
+		foreach ( $this->conditions as $condition ) {
+			$condition_results[ $condition['id'] ] = evaluate_condition( $condition['code'] );
+		}
+
+		foreach ( $this->snippets_with_condition as $snippet ) {
+			$condition_id = $snippet['condition_id'];
+
+			if ( isset( $condition_results[ $condition_id ] ) ) {
+				if ( $condition_results[ $condition_id ] ) {
+					$this->evaluate_snippet( $snippet );
+				}
+			} elseif ( function_exists( 'wp_trigger_error' ) ) {
+				/* @noinspection PhpUnhandledExceptionInspection E_USER_WARNING does not throw an exception. */
+				wp_trigger_error(
+					__FUNCTION__,
+					sprintf( 'Could not find condition %d for snippet %d.', $condition_id, $snippet['id'] ),
+					E_USER_WARNING
+				);
+			}
+		}
 	}
 }

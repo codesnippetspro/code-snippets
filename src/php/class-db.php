@@ -303,12 +303,13 @@ class DB {
 		if ( $snippets ) {
 			foreach ( $snippets as $snippet ) {
 				$active_snippets[] = [
-					'id'       => intval( $snippet['id'] ),
-					'code'     => $snippet['code'],
-					'scope'    => $snippet['scope'],
-					'table'    => $this->table,
-					'network'  => false,
-					'priority' => intval( $snippet['priority'] ),
+					'id'           => intval( $snippet['id'] ),
+					'code'         => $snippet['code'],
+					'scope'        => $snippet['scope'],
+					'table'        => $this->table,
+					'network'      => false,
+					'priority'     => intval( $snippet['priority'] ),
+					'condition_id' => intval( $snippet['condition_id'] ),
 				];
 			}
 		}
@@ -331,12 +332,13 @@ class DB {
 					}
 
 					$active_snippets[] = [
-						'id'       => $id,
-						'code'     => $snippet['code'],
-						'scope'    => $snippet['scope'],
-						'table'    => $this->ms_table,
-						'network'  => true,
-						'priority' => intval( $snippet['priority'] ),
+						'id'           => $id,
+						'code'         => $snippet['code'],
+						'scope'        => $snippet['scope'],
+						'table'        => $this->ms_table,
+						'network'      => true,
+						'priority'     => intval( $snippet['priority'] ),
+						'condition_id' => intval( $snippet['condition_id'] ),
 					];
 				}
 
