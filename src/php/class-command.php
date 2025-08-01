@@ -591,7 +591,7 @@ class Command extends WP_CLI_Command {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --licensekey=<string>
+	 * --license-key=<string>
 	 * : The license key to activate.
 	 *
 	 * [--network]
@@ -609,11 +609,11 @@ class Command extends WP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Activate a license key
-	 *     $ wp snippet license --licensekey=ABC123-DEF456-GHI789
+	 *     $ wp snippet license --license-key=ABC123-DEF456-GHI789
 	 *     Success: License activated successfully.
 	 *
 	 *     # Activate a license key network-wide
-	 *     $ wp snippet license --licensekey=ABC123-DEF456-GHI789 --network
+	 *     $ wp snippet license --license-key=ABC123-DEF456-GHI789 --network
 	 *     Success: License activated successfully on network.
 	 *
 	 *     # Activate with marketing permissions
@@ -628,11 +628,11 @@ class Command extends WP_CLI_Command {
 	public function license( array $args, array $assoc_args ) {
 		// Check if license key is provided
 		if ( empty( $assoc_args['licensekey'] ) ) {
-			WP_CLI::error( 'License key is required. Use --licensekey=<your-license-key>' );
+			WP_CLI::error( 'License key is required. Use --license-key=<your-license-key>' );
 		}
 
 		$license_key = trim( $assoc_args['licensekey'] );
-		
+
 		// Validate license key format
 		if ( empty( $license_key ) || strlen( $license_key ) < 10 ) {
 			WP_CLI::error( 'Invalid license key format.' );
@@ -655,14 +655,14 @@ class Command extends WP_CLI_Command {
 
 		// Parse optional arguments
 		$is_network = $this->parse_network_arg( $assoc_args );
-		$is_marketing_allowed = isset( $assoc_args['marketing'] ) ? 
-			filter_var( $assoc_args['marketing'], FILTER_VALIDATE_BOOLEAN ) : 
+		$is_marketing_allowed = isset( $assoc_args['marketing'] ) ?
+			filter_var( $assoc_args['marketing'], FILTER_VALIDATE_BOOLEAN ) :
 			false;
-		$is_extensions_tracking_allowed = isset( $assoc_args['extensions-tracking'] ) ? 
-			filter_var( $assoc_args['extensions-tracking'], FILTER_VALIDATE_BOOLEAN ) : 
+		$is_extensions_tracking_allowed = isset( $assoc_args['extensions-tracking'] ) ?
+			filter_var( $assoc_args['extensions-tracking'], FILTER_VALIDATE_BOOLEAN ) :
 			false;
-		$is_diagnostic_tracking_allowed = isset( $assoc_args['diagnostic-tracking'] ) ? 
-			filter_var( $assoc_args['diagnostic-tracking'], FILTER_VALIDATE_BOOLEAN ) : 
+		$is_diagnostic_tracking_allowed = isset( $assoc_args['diagnostic-tracking'] ) ?
+			filter_var( $assoc_args['diagnostic-tracking'], FILTER_VALIDATE_BOOLEAN ) :
 			false;
 
 		// Prepare sites array for network activation
@@ -702,11 +702,11 @@ class Command extends WP_CLI_Command {
 			} elseif ( $result === false ) {
 				WP_CLI::error( 'License activation failed: Invalid response from server.' );
 			} else {
-				$message = $is_network ? 
-					'License activated successfully on network.' : 
+				$message = $is_network ?
+					'License activated successfully on network.' :
 					'License activated successfully.';
 				WP_CLI::success( $message );
-				
+
 				// Display additional information if available
 				if ( is_string( $result ) && ! empty( $result ) ) {
 					WP_CLI::log( 'Next step: ' . $result );
@@ -766,7 +766,7 @@ class Command extends WP_CLI_Command {
 		// Try different methods to get license information
 		$license = null;
 		$is_licensed = $fs->can_use_premium_code();
-		
+
 		// Try to get license using different Freemius methods
 		if ( method_exists( $fs, '_get_license' ) ) {
 			$license = $fs->_get_license();
