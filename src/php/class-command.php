@@ -591,7 +591,7 @@ class Command extends WP_CLI_Command {
 	 *
 	 * ## OPTIONS
 	 *
-	 * --license-key=<string>
+	 * --license_key=<string>
 	 * : The license key to activate.
 	 *
 	 * [--network]
@@ -600,121 +600,39 @@ class Command extends WP_CLI_Command {
 	 * [--marketing=<bool>]
 	 * : Allow marketing communications. Defaults to false.
 	 *
-	 * [--extensions-tracking=<bool>]
-	 * : Allow extensions tracking. Defaults to false.
-	 *
-	 * [--diagnostic-tracking=<bool>]
-	 * : Allow diagnostic tracking. Defaults to false.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     # Activate a license key
-	 *     $ wp snippet license --license-key=ABC123-DEF456-GHI789
-	 *     Success: License activated successfully.
-	 *
-	 *     # Activate a license key network-wide
-	 *     $ wp snippet license --license-key=ABC123-DEF456-GHI789 --network
-	 *     Success: License activated successfully on network.
-	 *
-	 *     # Activate with marketing permissions
-	 *     $ wp snippet license --licensekey=ABC123-DEF456-GHI789 --marketing=true
-	 *     Success: License activated successfully.
-	 *
 	 * @param array $args       Indexed array of positional arguments.
 	 * @param array $assoc_args Associative array of associative arguments.
 	 *
 	 * @throws ExitException If license key is missing or activation fails.
 	 */
-	public function license( array $args, array $assoc_args ) {
-		// Check if license key is provided
-		if ( empty( $assoc_args['licensekey'] ) ) {
-			WP_CLI::error( 'License key is required. Use --license-key=<your-license-key>' );
+	public function activate_license( array $args, array $assoc_args ) {
+
+		if ( empty( $assoc_args['license_key'] ) ) {
+			WP_CLI::error( 'License key is required. Use --license_key=<your-license-key>' );
 		}
 
-		$license_key = trim( $assoc_args['licensekey'] );
+		$license_key = trim( $assoc_args['license_key'] );
 
-		// Validate license key format
-		if ( empty( $license_key ) || strlen( $license_key ) < 10 ) {
-			WP_CLI::error( 'Invalid license key format.' );
-		}
-
-		// Get Freemius instance
-		$fs = null;
-		if ( function_exists( 'freemius' ) ) {
-			$fs = freemius( 'code-snippets' );
-		}
-
-		if ( ! $fs ) {
-			WP_CLI::error( 'Freemius SDK not available or plugin not properly initialized.' );
-		}
-
-		// Check if already licensed
-		if ( $fs->can_use_premium_code() ) {
-			WP_CLI::warning( 'Plugin is already licensed. Use this command to change the license key.' );
-		}
-
-		// Parse optional arguments
 		$is_network = $this->parse_network_arg( $assoc_args );
-		$is_marketing_allowed = isset( $assoc_args['marketing'] ) ?
-			filter_var( $assoc_args['marketing'], FILTER_VALIDATE_BOOLEAN ) :
-			false;
-		$is_extensions_tracking_allowed = isset( $assoc_args['extensions-tracking'] ) ?
-			filter_var( $assoc_args['extensions-tracking'], FILTER_VALIDATE_BOOLEAN ) :
-			false;
-		$is_diagnostic_tracking_allowed = isset( $assoc_args['diagnostic-tracking'] ) ?
-			filter_var( $assoc_args['diagnostic-tracking'], FILTER_VALIDATE_BOOLEAN ) :
-			false;
 
-		// Prepare sites array for network activation
-		$sites = array();
-		if ( $is_network && is_multisite() ) {
-			$all_sites = get_sites();
-			foreach ( $all_sites as $site ) {
-				$sites[] = array(
-					'blog_id' => $site->blog_id,
-					'url'     => $site->siteurl,
-					'name'    => $site->blogname,
-				);
-			}
-		}
+		$options = [
+			'network' => $is_network,
+			'marketing' => isset( $assoc_args['marketing'] ) ? filter_var( $assoc_args['marketing'], FILTER_VALIDATE_BOOLEAN ) : false,
+		];
 
 		WP_CLI::log( 'Activating license key...' );
 
-		try {
-			// Use Freemius opt_in method with license key
-			$result = $fs->opt_in(
-				false, // email (will use current user)
-				false, // first name
-				false, // last name
-				$license_key, // license key
-				false, // is_uninstall
-				false, // trial_plan_id
-				false, // is_disconnected
-				$is_marketing_allowed, // marketing allowed
-				$sites, // sites for network activation
-				false // redirect (false for CLI)
-			);
+		// Use Licensing class for activation
+		$result = code_snippets()->licensing->activate_license_key( $license_key, $options );
 
-			if ( is_object( $result ) && isset( $result->error ) ) {
-				// Handle API error
-				$error_message = $result->error->message ?? 'Unknown error occurred.';
-				WP_CLI::error( 'License activation failed: ' . $error_message );
-			} elseif ( $result === false ) {
-				WP_CLI::error( 'License activation failed: Invalid response from server.' );
+		if ( $result['success'] ) {
+			WP_CLI::success( $result['message'] );
+		} else {
+			if ( isset( $result['type'] ) && $result['type'] === 'warning' ) {
+				WP_CLI::warning( $result['message'] );
 			} else {
-				$message = $is_network ?
-					'License activated successfully on network.' :
-					'License activated successfully.';
-				WP_CLI::success( $message );
-
-				// Display additional information if available
-				if ( is_string( $result ) && ! empty( $result ) ) {
-					WP_CLI::log( 'Next step: ' . $result );
-				}
+				WP_CLI::error( $result['message'] );
 			}
-
-		} catch ( Exception $e ) {
-			WP_CLI::error( 'License activation failed: ' . $e->getMessage() );
 		}
 	}
 
@@ -733,19 +651,6 @@ class Command extends WP_CLI_Command {
 	 *   - yaml
 	 * ---
 	 *
-	 * ## EXAMPLES
-	 *
-	 *     # Get license status
-	 *     $ wp snippet license-status
-	 *     +----------------+------------------+
-	 *     | Field          | Value            |
-	 *     +----------------+------------------+
-	 *     | is_licensed    | Yes              |
-	 *     | license_key    | ABC***DEF***GHI  |
-	 *     | is_expired     | No               |
-	 *     | expires        | Never            |
-	 *     | activations    | 1/5              |
-	 *     +----------------+------------------+
 	 *
 	 * @param array $args       Indexed array of positional arguments.
 	 * @param array $assoc_args Associative array of associative arguments.
@@ -753,74 +658,12 @@ class Command extends WP_CLI_Command {
 	 * @subcommand license-status
 	 */
 	public function license_status( array $args, array $assoc_args ) {
-		// Get Freemius instance
-		$fs = null;
-		if ( function_exists( 'freemius' ) ) {
-			$fs = freemius( 'code-snippets' );
-		}
-
-		if ( ! $fs ) {
-			WP_CLI::error( 'Freemius SDK not available or plugin not properly initialized.' );
-		}
-
-		// Try different methods to get license information
-		$license = null;
-		$is_licensed = $fs->can_use_premium_code();
-
-		// Try to get license using different Freemius methods
-		if ( method_exists( $fs, '_get_license' ) ) {
-			$license = $fs->_get_license();
-		} elseif ( method_exists( $fs, 'get_license' ) ) {
-			$license = $fs->get_license();
-		} elseif ( method_exists( $fs, 'get_user_license' ) ) {
-			$license = $fs->get_user_license();
-		}
-
-		$status_info = array(
-			'is_licensed' => $is_licensed ? 'Yes' : 'No',
-			'license_key' => 'Not available',
-			'is_expired'  => 'N/A',
-			'expires'     => 'N/A',
-			'activations' => 'N/A',
-		);
-
-		if ( is_object( $license ) ) {
-			// Try different methods to get masked license key
-			if ( method_exists( $license, 'get_html_escaped_masked_secret_key' ) ) {
-				$status_info['license_key'] = $license->get_html_escaped_masked_secret_key();
-			} elseif ( method_exists( $license, 'get_masked_secret_key' ) ) {
-				$status_info['license_key'] = $license->get_masked_secret_key();
-			} elseif ( isset( $license->secret_key ) ) {
-				$status_info['license_key'] = substr( $license->secret_key, 0, 3 ) . '***' . substr( $license->secret_key, -3 );
-			}
-
-			// Check if expired
-			if ( method_exists( $license, 'is_expired' ) ) {
-				$status_info['is_expired'] = $license->is_expired() ? 'Yes' : 'No';
-			}
-
-			// Get expiration date
-			if ( method_exists( $license, 'is_lifetime' ) && $license->is_lifetime() ) {
-				$status_info['expires'] = 'Never';
-			} elseif ( isset( $license->expiration ) ) {
-				$status_info['expires'] = $license->expiration;
-			}
-
-			// Get activation count
-			if ( isset( $license->activated ) ) {
-				if ( method_exists( $license, 'is_unlimited' ) && $license->is_unlimited() ) {
-					$status_info['activations'] = $license->activated . '/∞';
-				} elseif ( isset( $license->quota ) ) {
-					$status_info['activations'] = $license->activated . '/' . $license->quota;
-				} else {
-					$status_info['activations'] = $license->activated;
-				}
-			}
-		}
+		// Use Licensing class for status information
+		$status_info = code_snippets()->licensing->get_license_status();
 
 		// Create a custom formatter for license status fields
-		$license_fields = array( 'is_licensed', 'license_key', 'is_expired', 'expires', 'activations' );
+		$license_fields = [ 'is_licensed', 'license_key', 'is_expired', 'expires', 'activations' ];
 		$formatter = new Formatter( $assoc_args, $license_fields, 'license' );
-		$formatter->display_item( (object) $status_info );
+		$formatter->display_item( $status_info );
 	}
 }
