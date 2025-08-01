@@ -37,7 +37,7 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 	printf(
 		' <a href="%s">%s</a>',
 		esc_url( __( 'mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback', 'code-snippets' ) ),
-		esc_html__( 'Click here to submit your feedback', 'code-snippets' )
+		esc_html__( 'Please let us know!', 'code-snippets' )
 	);
 	echo '</p></div>';
 }
