@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.7.0-beta.1
+Stable tag: 3.7.0-beta.2
 Tested up to: 6.7.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -102,6 +102,18 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.7.0 (beta release) =
+
+### Added
+* New 'conditions' feature: control where and when snippets execute with a powerful logic builder. (PRO)
+
+### Changed
+* Redesigned edit menu with refreshed look and functionality.
+
+### Fixed
+* Fetching active snippets on a multisite network now respects the 'priority' field above all else when ordering snippets.
+* Cloud search appears correctly and allows downloading snippets in the free version of Code Snippets.
 
 = 3.6.9 (2025-02-17) =
 
@@ -343,19 +355,5 @@ __Fixed__
 
 * Issue preventing editor colorpicker from loading correctly. (PRO)
 * Issue preventing linting libraries from loading correctly in the code editor.
-
-= 3.3.0 (2023-03-09) =
-
-__Added__
-
-* Added additional editor shortcuts to list in tooltip.
-* Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
-* Ability to filter shortcode output. Thanks to contributions from [Jack Szwergold](https://github.com/JackSzwergold).
-
-__Fixed__
-
-* Do not enqueue CSS or JS snippet file if no snippets exist. (PRO)
-* Bug causing all snippets to show in site health information instead of those active.
-* Unnecessary sanitization of file upload data causing import process to fail on Windows systems.
 
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/core/CHANGELOG.md)**
