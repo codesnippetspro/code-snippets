@@ -197,16 +197,11 @@ td.column-description {
 }
 
 .wrap h2.nav-tab-wrapper {
-	display: flex;
-	flex-flow: row wrap-reverse;
-	gap: 0.5em;
-
 	.nav-tab {
 		display: flex;
 		flex-flow: row wrap;
 		align-items: center;
 		gap: 8px;
-		margin: 0;
 	}
 }
 

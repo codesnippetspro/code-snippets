@@ -303,51 +303,7 @@ class Admin {
 		echo '</p></div>';
 	}
 
-	/**
-	 * Render a nav tab for a snippet type.
-	 *
-	 * @param string $type_name    Type identifier.
-	 * @param string $label        Type label.
-	 * @param string $current_type Identifier of currently-selected type.
-	 *
-	 * @return void
-	 */
-	public static function render_snippet_type_tab( string $type_name, string $label, string $current_type = '' ) {
-		$cloud_tabs = [ 'cloud', 'cloud_search', 'bundles' ];
-		$pro_types = [ 'css', 'js', 'cond', 'cloud', 'bundles' ];
-		$nav_tab_inactive = false;
-
-		if ( $type_name === $current_type ) {
-			printf( '<a class="nav-tab nav-tab-active %s-tab">', esc_attr( $type_name ) );
-
-		} elseif ( ! code_snippets()->licensing->is_licensed() && in_array( $type_name, $pro_types, true ) ) {
-			printf(
-				'<a class="nav-tab nav-tab-inactive %s-tab" title="%s" href="https://codesnippets.pro/pricing/" target="_blank">',
-				esc_attr( $type_name ),
-				esc_attr__( 'Available in Code Snippets Pro (external link)', 'code-snippets' )
-			);
-
-		} else {
-			$current_url = remove_query_arg( [ 'cloud_select', 'cloud_search' ] );
-
-			if ( in_array( $type_name, $cloud_tabs, true ) && ! code_snippets()->cloud_api->is_cloud_key_verified() ) {
-				$nav_tab_inactive = true;
-			}
-
-			printf(
-				'<a class="%s %s-tab" href="%s">',
-				$nav_tab_inactive ? 'nav-tab nav-tab-inactive' : 'nav-tab',
-				esc_attr( $type_name ),
-				esc_url( add_query_arg( 'type', $type_name, $current_url ) )
-			);
-		}
-
-		printf(
-			'<span class="%s">%s</span>',
-			esc_attr( 'all' === $type_name ? 'all-snippets-label' : 'snippet-label' ),
-			esc_html( $label )
-		);
-
+	private static function render_snippet_tab_badge( string $type_name ) {
 		if ( 'all' !== $type_name ) {
 			printf( '<span class="badge %s-badge">', esc_attr( $type_name ) );
 
@@ -374,7 +330,65 @@ class Admin {
 
 			echo '</span>';
 		}
+	}
 
-		echo '</a>';
+	/**
+	 * Render a nav tab for a snippet type.
+	 *
+	 * @param array{string, string} $type_labels  Associative array of snippet type identifiers and their labels.
+	 * @param string                $current_type Identifier of currently-selected type.
+	 *
+	 * @return void
+	 */
+	public static function render_snippet_type_tabs( array $type_labels, string $current_type = '' ) {
+		$is_licensed = code_snippets()->licensing->is_licensed();
+		$pro_types = [ 'css', 'js', 'cond', 'cloud', 'bundles' ];
+		$cloud_tabs = [ 'cloud', 'bundles' ];
+
+		foreach ( $type_labels as $type_name => $label ) {
+			if ( ! $is_licensed && in_array( $type_name, $pro_types, true ) ) {
+				continue;
+			}
+
+			if ( $type_name === $current_type ) {
+				printf( '<a class="nav-tab nav-tab-active %s-tab">', esc_attr( $type_name ) );
+			} else {
+				$current_url = remove_query_arg( [ 'cloud_select', 'cloud_search' ] );
+				$nav_tab_inactive = in_array( $type_name, $cloud_tabs, true ) && ! code_snippets()->cloud_api->is_cloud_key_verified();
+
+				printf(
+					'<a class="%s %s-tab" href="%s">',
+					$nav_tab_inactive ? 'nav-tab nav-tab-inactive' : 'nav-tab',
+					esc_attr( $type_name ),
+					esc_url( add_query_arg( 'type', $type_name, $current_url ) )
+				);
+			}
+
+			printf(
+				'<span class="%s">%s</span>',
+				esc_attr( 'all' === $type_name ? 'all-snippets-label' : 'snippet-label' ),
+				esc_html( $label )
+			);
+
+			self::render_snippet_tab_badge( $type_name );
+			echo '</a>';
+		}
+
+		foreach ( $type_labels as $type_name => $label ) {
+			if ( $is_licensed || ! in_array( $type_name, $pro_types, true ) ) {
+				continue;
+			}
+
+			printf(
+				'<a class="nav-tab nav-tab-inactive %s-tab" href="%s" target="_blank" aria-label="%s">%s',
+				esc_attr( $type_name ),
+				esc_url( 'https://codesnippets.pro/pricing/' ),
+				esc_attr__( 'Find more about Pro (opens in external tab)', 'code-snippets' ),
+				esc_html( $label )
+			);
+
+			self::render_snippet_tab_badge( $type_name );
+			echo '</a>';
+		}
 	}
 }

@@ -152,7 +152,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 							echo esc_html( $item->name );
 
 							// Grab first tag in array of tags.
-							$category = count( $item->tags ) > 0 ? strtolower( esc_attr( $item->tags[0] ) ) : '';
+							$category = count( $item->tags ) > 0 ? strtolower( esc_attr( $item->tags[0] ) ) : 'general';
 
 							printf(
 								'<img src="%s" class="plugin-icon" alt="%s">',
@@ -165,7 +165,9 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						</h3>
 					</div>
 					<div class="action-links">
-						<?php echo wp_kses_post( cloud_lts_build_action_links( $item, 'search' ) ); ?>
+						<ul class="plugin-action-buttons">
+							<?php cloud_lts_render_action_buttons( $item, 'search' ); ?>
+						</ul>
 					</div>
 					<div class="desc column-description">
 						<p><?php echo wp_kses_post( $this->process_description( $item->description ) ); ?></p>
@@ -213,7 +215,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						?>
 					</div>
 					<div class="column-downloaded">
-						<div class="badge <?php echo esc_attr( $this->cloud_api->get_status_badge( $item->status ) ); ?>-badge tooltip tooltip-block tooltio-end">
+						<div class="badge <?php echo esc_attr( $this->cloud_api->get_status_badge( $item->status ) ); ?>-badge tooltip tooltip-block tooltip-end">
 							<?php
 
 							echo esc_html( $this->cloud_api->get_status_label( $item->status ) );
