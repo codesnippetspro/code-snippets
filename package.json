@@ -8,7 +8,7 @@
         "test": "tests"
     },
     "scripts": {
-        "test": "npm run stylelint && eslint && npm run phpcs",
+        "test": "npm run stylelint && npx eslint && npm run phpcs",
         "build": "webpack",
         "watch": "webpack --watch",
         "bundle": "ts-node scripts/bundle.ts",

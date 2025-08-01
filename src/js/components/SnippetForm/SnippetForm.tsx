@@ -22,9 +22,9 @@ import { ConditionTable } from './page/ConditionTable'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
 import { GenerateCodeModal } from './page/GenerateCodeModal'
+import { PageHeading } from './page/PageHeading'
 import type { PropsWithChildren } from 'react'
 import type { Snippet } from '../../types/Snippet'
-import { PageHeading } from './page/PageHeading'
 
 const editFormClassName = ({ snippet, isReadOnly, isExpanded }: {
 	snippet: Snippet,

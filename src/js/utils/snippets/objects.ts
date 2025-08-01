@@ -1,6 +1,6 @@
-import { ConditionGroups } from '../../types/ConditionGroups'
 import { SNIPPET_TYPE_SCOPES } from '../../types/Snippet'
 import { isNetworkAdmin } from '../screen'
+import type { ConditionGroups } from '../../types/ConditionGroups'
 import type { Snippet, SnippetScope } from '../../types/Snippet'
 
 const defaults: Omit<Snippet, 'tags' | 'conditions'> = {
@@ -81,7 +81,8 @@ export const parseSnippetObject = (fields: unknown): Snippet => {
 		...'network' in fields && 'boolean' === typeof fields.network && { network: fields.network },
 		...'shared_network' in fields && 'boolean' === typeof fields.shared_network && { shared_network: fields.shared_network },
 		...'priority' in fields && 'number' === typeof fields.priority && { priority: fields.priority },
-		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id }
+		...'conditionId' in fields && isAbsInt(fields.conditionId) && { conditionId: fields.conditionId },
+		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id },
 	}
 
 	return { ...parsed, ...parseConditions(parsed, fields) }
