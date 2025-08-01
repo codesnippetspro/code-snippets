@@ -60,9 +60,7 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 	<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
 		<?php
 
-		foreach ( $types as $type_name => $label ) {
-			Admin::render_snippet_type_tab( $type_name, $label, $current_type );
-		}
+		Admin::render_snippet_type_tabs( $types, $current_type );
 
 		if ( ! $licensed && ! get_setting( 'general', 'hide_upgrade_menu' ) ) {
 			?>
