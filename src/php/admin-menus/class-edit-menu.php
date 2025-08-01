@@ -110,7 +110,7 @@ class Edit_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
-		echo '<div id="edit-snippet-form-container"></div>';
+		echo '<div id="edit-snippet-container"></div>';
 	}
 
 	/**

@@ -81,11 +81,11 @@ export default eslintTs.config(
 				objectLiteralTypeAssertions: 'never'
 			}],
 			'@typescript-eslint/consistent-type-imports': 'error',
-			'@typescript-eslint/consistent-type-exports': 'error',
 			'@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
 			'@typescript-eslint/no-for-in-array': 'error',
 			'@typescript-eslint/no-import-type-side-effects': 'error',
 			'@typescript-eslint/no-inferrable-types': ['error', { ignoreProperties: true, ignoreParameters: false }],
+			'@typescript-eslint/no-magic-numbers': ['error', { ignore: [-1, 0, 1], ignoreEnums: true }],
 			'@typescript-eslint/no-unused-vars': ['error', {
 				argsIgnorePattern: '^_',
 				varsIgnorePattern: '^_',
@@ -117,7 +117,6 @@ export default eslintTs.config(
 			}],
 			'max-lines-per-function': ['warn', { skipBlankLines: true, skipComments: true }],
 			'no-invalid-this': 'error',
-			'no-magic-numbers': ['error', { ignore: [-1, 0, 1] }],
 			'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
 			'no-ternary': 'off',
 			'one-var': ['error', 'never'],

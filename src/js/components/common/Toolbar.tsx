@@ -1,11 +1,12 @@
 import { __ } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useState } from 'react'
+import { addQueryArgs } from '@wordpress/url'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
 import { fetchQueryParam } from '../../utils/urls'
 import { CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon, TeamsIcon } from './icons/ToolbarIcons'
 import { UpsellDialog } from './UpsellDialog'
-import type { ReactNode } from 'react'
+import type { ReactNode} from 'react'
 
 interface NavLink {
 	name: string
@@ -52,7 +53,7 @@ const LOWER_NAV_LINKS: NavLink[] = [
 	},
 	{
 		name: 'cloud-community',
-		url: undefined,
+		url: addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { subpage: 'cloud-community' }),
 		label: __('Community Cloud', 'code-snippets'),
 		icon: <CommunityIcon />
 	},
@@ -118,7 +119,7 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 		</nav>
 	</div>
 
-const currentPage = fetchQueryParam('page')
+const currentPage = fetchQueryParam('subpage') ?? fetchQueryParam('page')
 
 const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 	<div className="code-snippets-toolbar-lower">

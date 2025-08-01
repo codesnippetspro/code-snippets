@@ -1,4 +1,4 @@
-import { SnippetsTable } from '../components/SnippetsTable'
+import { ManageMenu } from '../components/ManageMenu'
 import { loadComponent } from '../utils/bootstrap'
 
-loadComponent('snippets-table-container', SnippetsTable)
+loadComponent('manage-snippets-container', ManageMenu)

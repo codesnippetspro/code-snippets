@@ -5,6 +5,7 @@ export const REST_API_NAMESPACE = 'code-snippets'
 
 export const REST_BASE = trimTrailingChar(window.CODE_SNIPPETS?.restAPI.base ?? '', '/')
 export const REST_SNIPPETS_BASE = trimTrailingChar(window.CODE_SNIPPETS?.restAPI.snippets ?? '', '/')
+export const REST_CLOUD_SEARCH_BASE = trimTrailingChar(window.CODE_SNIPPETS?.restAPI.cloudSearch ?? '', '/')
 
 export const REST_API_AXIOS_CONFIG: AxiosRequestConfig = {
 	headers: {

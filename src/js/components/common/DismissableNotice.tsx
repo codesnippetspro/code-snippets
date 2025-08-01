@@ -10,10 +10,10 @@ export interface DismissibleNoticeProps {
 }
 
 export const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ className, onDismiss, children }) =>
-	<div id="message" className={classnames('notice fade is-dismissible', className)}>
+	<div id="message" className={classnames('banner fade is-dismissible', className)}>
 		<>{children}</>
 
-		<button type="button" className="notice-dismiss" onClick={event => {
+		<button type="button" className="banner-dismiss" onClick={event => {
 			event.preventDefault()
 			onDismiss()
 		}}>

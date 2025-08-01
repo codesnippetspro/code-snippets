@@ -26,6 +26,7 @@ declare global {
 				base: string
 				snippets: string
 				conditions: string
+				cloudSearch: string
 				cloud: string
 				nonce: string
 				localToken: string

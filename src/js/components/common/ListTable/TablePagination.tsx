@@ -56,7 +56,7 @@ const BackwardNavigationButtons: React.FC<NavigationButtonsProps> = ({ currentPa
 				/* translators: Hidden accessibility text. */
 				helperText={__('First page', 'code-snippets')}
 				{...buttonProps}
-			/>
+			/>{'\n'}
 			<NavigationButton
 				icon={<>&lsaquo;</>}
 				newPage={Math.max(1, currentPage - 1)}
@@ -64,7 +64,7 @@ const BackwardNavigationButtons: React.FC<NavigationButtonsProps> = ({ currentPa
 				/* translators: Hidden accessibility text. */
 				helperText={__('Previous page', 'code-snippets')}
 				{...buttonProps}
-			/>
+			/>{'\n'}
 		</>
 
 interface ForwardNavigationButtonsProps extends NavigationButtonsProps {
@@ -220,25 +220,23 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 		</span>
 	</form>
 
-export interface TablePaginationProps extends Omit<ListTablePaginationProps, 'itemsPerPage'>,
-	Required<Pick<ListTablePaginationProps, 'itemsPerPage'>> {
-	items: unknown[]
+export interface TablePaginationProps extends Omit<ListTablePaginationProps, 'totalPages'>,
+	Required<Pick<ListTablePaginationProps, 'totalPages'>> {
 	which: 'top' | 'bottom'
+	totalItems: number
 	currentPage: number
 	setCurrentPage: (page: number) => void
 }
 
 export const TablePagination: React.FC<TablePaginationProps> = ({
-	items,
 	which,
+	totalItems,
 	currentPage,
-	itemsPerPage,
+	totalPages,
 	useQueryVars,
 	setCurrentPage
 }) => {
 	const [inputValue, setInputValue] = useState(currentPage)
-	const totalItems = items.length
-	const totalPages = Math.ceil(totalItems / itemsPerPage)
 
 	const setCurrentPageSafe = (page: number) => {
 		if (page) {
@@ -255,6 +253,7 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
 	return (
 		<PaginationControls
 			which={which}
+			useQueryVars
 			currentPage={currentPage}
 			totalItems={totalItems}
 			totalPages={totalPages}

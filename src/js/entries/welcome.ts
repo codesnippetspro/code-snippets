@@ -1,4 +1,4 @@
-import { WelcomePage } from '../components/WelcomePage'
+import { WelcomeMenu } from '../components/WelcomeMenu'
 import { loadComponent } from '../utils/bootstrap'
 
-loadComponent('code-snippets-welcome-container', WelcomePage)
+loadComponent('code-snippets-welcome-container', WelcomeMenu)

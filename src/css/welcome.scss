@@ -74,13 +74,13 @@ $breakpoint: 1060px;
 	figure {
 		margin: 0;
 		padding: 0;
-	}
 
-	img {
-		inline-size: 100%;
-		block-size: 220px;
-		overflow: hidden;
-		object-fit: cover;
+		img {
+			inline-size: 100%;
+			block-size: 220px;
+			overflow: hidden;
+			object-fit: cover;
+		}
 	}
 }
 

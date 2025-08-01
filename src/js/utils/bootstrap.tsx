@@ -4,7 +4,6 @@ import type { Context, FunctionComponent } from 'react'
 
 export const loadComponent = (containerId: string, Component: FunctionComponent): void => {
 	const container = document.getElementById(containerId)
-	console.log('loading on', container)
 
 	if (container) {
 		const root = createRoot(container)

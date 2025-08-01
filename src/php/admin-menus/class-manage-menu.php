@@ -244,7 +244,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
-		echo '<div id="snippets-table-container"></div>';
+		echo '<div id="manage-snippets-container"></div>';
 	}
 
 	/**

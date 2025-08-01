@@ -85,26 +85,26 @@ const BulkActions = <K extends Key>({ which, actions, applyAction }: BulkActions
 	)
 }
 
-export interface TableNavProps<K extends Key> extends ListTableNavProps<K>, Omit<TablePaginationProps, 'itemsPerPage'> {
+export interface TableNavProps<K extends Key> extends ListTableNavProps<K>, Omit<TablePaginationProps, 'totalPages'> {
 	which: 'top' | 'bottom'
-	items: unknown[]
 	selected: Set<K>
-	itemsPerPage: number | undefined
+	totalItems: number
+	totalPages: number | undefined
 }
 
 export const TableNav = <K extends Key>({
 	which,
-	items,
 	actions,
 	selected,
+	totalItems,
+	totalPages,
 	extraTableNav,
-	itemsPerPage,
 	...paginationProps
 }: TableNavProps<K>) =>
-	extraTableNav || 0 < items.length && actions
+	extraTableNav || 0 < totalItems && actions
 		? <div className={`tablenav ${which}`}>
 
-			{0 < items.length && actions
+			{0 < totalItems && actions
 				? <BulkActions
 					which={which}
 					actions={actions}
@@ -113,7 +113,7 @@ export const TableNav = <K extends Key>({
 				: null}
 
 			{extraTableNav?.(which)}
-			{itemsPerPage && <TablePagination {...{ itemsPerPage, items, which, ...paginationProps }} />}
+			{totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
 
 			<br className="clear" />
 		</div>

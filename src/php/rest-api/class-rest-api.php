@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Cloud\Cloud_API;
+use Code_Snippets\REST_API\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -42,7 +44,10 @@ class Rest_API {
 	 */
 	public function init() {
 		$snippets_controller = new Snippets_REST_Controller();
+		$cloud_snippets_controller = new Cloud_Snippets_REST_Controller();
+
 		$snippets_controller->register_routes();
+		$cloud_snippets_controller->register_routes();
 		$this->register_routes();
 	}
 

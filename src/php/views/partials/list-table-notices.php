@@ -16,7 +16,7 @@ namespace Code_Snippets;
 
 if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 	?>
-	<div id="message" class="notice notice-error fade is-dismissible">
+	<div id="message" class="banner notice-error fade is-dismissible">
 		<p>
 			<strong><?php esc_html_e( 'Warning:', 'code-snippets' ); ?></strong>
 			<?php
@@ -61,7 +61,7 @@ if ( isset( $result_messages[ $result ] ) ) {
 	];
 
 	printf(
-		'<div id="message" class="notice notice-success fade is-dismissible"><p>%s</p></div>',
+		'<div id="message" class="banner notice-success fade is-dismissible"><p>%s</p></div>',
 		wp_kses( $result_messages[ $result ], $result_kses )
 	);
 }

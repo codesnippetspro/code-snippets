@@ -15,7 +15,7 @@
 @use 'edit/conditions';
 @use 'edit/gpt';
 
-.notice.error blockquote {
+.banner.error blockquote {
 	margin-block-end: 0;
 }
 

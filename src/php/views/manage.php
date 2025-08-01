@@ -24,7 +24,7 @@ $types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin
 $current_type = $this->get_current_type();
 
 if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
-	echo '<div class="notice beta-test-notice"><p id="beta-testing">';
+	echo '<div class="banner beta-test-notice"><p id="beta-testing">';
 	echo wp_kses(
 		__( 'Thank you for testing this <span class="highlight-yellow">beta version of Code Snippets</span>. We would love to hear your feedback.', 'code-snippets' ),
 		[ 'span' => [ 'class' => [ 'highlight-yellow' ] ] ]

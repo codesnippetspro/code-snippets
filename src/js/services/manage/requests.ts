@@ -42,11 +42,14 @@ export const updateSnippet = (field: keyof Snippet, row: Element, snippet: Parti
 		return
 	}
 
-	snippet.id = parseInt(columnId.textContent, 10)
-	snippet.shared_network = null !== /\bshared-network-snippet\b/.exec(row.className)
-	snippet.network = snippet.shared_network || isNetworkAdmin()
-	snippet.scope = <SnippetScope | null> row.getAttribute('data-snippet-scope') ?? snippet.scope
+	const updatedSnippet: Partial<Snippet> = {
+		...snippet,
+		id: parseInt(columnId.textContent, 10),
+		shared_network: null !== /\bshared-network-snippet\b/.exec(row.className),
+		network: snippet.shared_network ?? isNetworkAdmin(),
+		scope: (<SnippetScope | null> row.getAttribute('data-snippet-scope')) ?? snippet.scope
+	}
 
-	const queryString = `action=update_code_snippet&_ajax_nonce=${nonce.value}&field=${field}&snippet=${JSON.stringify(snippet)}`
+	const queryString = `action=update_code_snippet&_ajax_nonce=${nonce.value}&field=${field}&snippet=${JSON.stringify(updatedSnippet)}`
 	sendSnippetRequest(queryString, successCallback)
 }

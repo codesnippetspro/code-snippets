@@ -15,6 +15,7 @@ export interface RestAPIContext {
 
 export interface RestAPI {
 	get: <T>(url: string) => Promise<T>
+	getResponse: <T>(url: string) => Promise<AxiosResponse<T>>
 	post: <T>(url: string, data?: object) => Promise<T>
 	put: <T>(url: string, data?: object) => Promise<T>
 	del: <T>(url: string) => Promise<T>
@@ -25,29 +26,36 @@ const debugRequest = async <T, D = never>(
 	url: string,
 	doRequest: Promise<AxiosResponse<T, D>>,
 	data?: D
-): Promise<T> => {
+): Promise<AxiosResponse<T>> => {
 	if (window.CODE_SNIPPETS?.debug) {
 		console.debug(`${method} ${url}`, ...data ? [data] : [])
 		const response = await doRequest
 		console.debug('Response', response)
-		return response.data
+		return response
 	} else {
-		return (await doRequest).data
+		return await doRequest
 	}
 }
 
 const buildRestAPI = (axiosInstance: AxiosInstance): RestAPI => ({
-	get: <T, >(url: string): Promise<T> =>
+	getResponse: <T, >(url: string): Promise<AxiosResponse<T>> =>
 		debugRequest('GET', url, axiosInstance.get<T, AxiosResponse<T, never>, never>(url)),
 
+	get: <T, >(url: string): Promise<T> =>
+		debugRequest('GET', url, axiosInstance.get<T, AxiosResponse<T, never>, never>(url))
+			.then(response => response.data),
+
 	post: <T, >(url: string, data?: object): Promise<T> =>
-		debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T>>(url, data), data),
+		debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T>>(url, data), data)
+			.then(response => response.data),
 
 	del: <T, >(url: string): Promise<T> =>
-		debugRequest('DELETE', url, axiosInstance.delete<T, AxiosResponse<T, never>, never>(url)),
+		debugRequest('DELETE', url, axiosInstance.delete<T, AxiosResponse<T, never>, never>(url))
+			.then(response => response.data),
 
 	put: <T, >(url: string, data?: object): Promise<T> =>
 		debugRequest('PUT', url, axiosInstance.put<T, AxiosResponse<T>>(url, data), data)
+			.then(response => response.data),
 })
 
 export const [RestAPIContext, useRestAPI] = createContextHook<RestAPIContext>('useRestAPI')

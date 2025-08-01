@@ -4,6 +4,24 @@
 @use 'common/select';
 @use 'common/upsell';
 @use 'common/toolbar';
+@use 'prism';
+@use 'manage/snippets-table';
+@use 'manage/cloud-community';
+
+.snippets-page-heading {
+	display: flex;
+	align-items: center;
+	margin-block: 50px 1.4rem;
+
+	h1 {
+		font-size: 1.6rem;
+		padding: 0;
+	}
+
+	.button-primary {
+		margin-inline-start: auto;
+	}
+}
 
 .nav-tab {
 	display: flex;

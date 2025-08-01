@@ -3,8 +3,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_API;
-use Code_Snippets\REST_API\Cloud_REST_API;
-use Code_Snippets\REST_API\Conditions_REST_API;
+use Code_Snippets\REST_API\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use Evaluation\Evaluate_Content;
 use Evaluation\Evaluate_Functions;
@@ -359,10 +358,11 @@ class Plugin {
 				'isCloudConnected' => Cloud_API::is_cloud_connection_available(),
 				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
 				'restAPI'          => [
-					'base'       => esc_url_raw( rest_url() ),
-					'snippets'   => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
-					'nonce'      => wp_create_nonce( 'wp_rest' ),
-					'localToken' => $this->cloud_api->get_local_token(),
+					'base'        => esc_url_raw( rest_url() ),
+					'snippets'    => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
+					'cloudSearch' => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
+					'nonce'       => wp_create_nonce( 'wp_rest' ),
+					'localToken'  => $this->cloud_api->get_local_token(),
 				],
 				'urls'             => [
 					'plugin'   => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),

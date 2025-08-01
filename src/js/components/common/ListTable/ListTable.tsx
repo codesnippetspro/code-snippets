@@ -46,7 +46,7 @@ export interface ListTableItemsProps<T, K extends Key> {
 }
 
 export interface ListTablePaginationProps {
-	itemsPerPage?: number
+	totalPages?: number
 	useQueryVars?: boolean
 }
 
@@ -82,10 +82,10 @@ const sortItems = <T, >(
 
 const pageItems = <T, >(
 	items: T[],
-	currentPage = 1,
-	itemsPerPage?: number
+	{ currentPage, totalPages }: { currentPage: number; totalPages?: number }
 ): T[] => {
-	if (itemsPerPage) {
+	if (totalPages) {
+		const itemsPerPage = Math.ceil(items.length / totalPages)
 		const start = (currentPage - 1) * itemsPerPage
 		const end = start + itemsPerPage
 		return items.slice(start, end)
@@ -103,8 +103,8 @@ export const ListTable = <T, K extends Key>({
 	actions,
 	noItems,
 	className,
+	totalPages,
 	rowClassName,
-	itemsPerPage,
 	extraTableNav,
 	useQueryVars = true,
 	isDisabled = false
@@ -115,11 +115,11 @@ export const ListTable = <T, K extends Key>({
 	const [sortDirection, setSortDirection] = useState<ListTableSortDirection>('asc')
 
 	const visibleItems: T[] = useMemo(
-		() => pageItems(sortItems(items, sortColumn, sortDirection), currentPage, itemsPerPage),
-		[items, sortColumn, sortDirection, currentPage, itemsPerPage])
+		() => pageItems(sortItems(items, sortColumn, sortDirection), { currentPage, totalPages }),
+		[items, sortColumn, sortDirection, currentPage, totalPages])
 
 	const tableNavProps: Omit<TableNavProps<K>, 'which'> =
-		{ items, actions, extraTableNav, selected, isDisabled, currentPage, itemsPerPage, setCurrentPage, useQueryVars }
+		{ totalItems: items.length, actions, extraTableNav, selected, isDisabled, currentPage, totalPages, setCurrentPage, useQueryVars }
 
 	const tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'> =
 		{ items: visibleItems, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }
