@@ -622,7 +622,6 @@ class Command extends WP_CLI_Command {
 
 		WP_CLI::log( 'Activating license key...' );
 
-		// Use Licensing class for activation
 		$result = code_snippets()->licensing->activate_license_key( $license_key, $options );
 
 		if ( $result['success'] ) {
@@ -658,10 +657,8 @@ class Command extends WP_CLI_Command {
 	 * @subcommand license-status
 	 */
 	public function license_status( array $args, array $assoc_args ) {
-		// Use Licensing class for status information
 		$status_info = code_snippets()->licensing->get_license_status();
 
-		// Create a custom formatter for license status fields
 		$license_fields = [ 'is_licensed', 'license_key', 'is_expired', 'expires', 'activations' ];
 		$formatter = new Formatter( $assoc_args, $license_fields, 'license' );
 		$formatter->display_item( $status_info );

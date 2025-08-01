@@ -123,7 +123,6 @@ class Licensing {
 	 * @return array Activation result with 'success' boolean and 'message' string.
 	 */
 	public function activate_license_key( string $license_key, array $options = [] ): array {
-		// Trim and validate license key
 		$license_key = trim( $license_key );
 		if ( empty( $license_key ) ) {
 			return [
@@ -134,7 +133,6 @@ class Licensing {
 
 		$fs = $this->sdk;
 
-		// Check if already licensed
 		if ( $fs->can_use_premium_code() ) {
 			return [
 				'success' => false,
@@ -143,14 +141,11 @@ class Licensing {
 			];
 		}
 
-		// Parse options
 		$is_network = $options['network'] ?? false;
 		$is_marketing_allowed = $options['marketing'] ?? false;
 
-		// Prepare sites array for network activation
 		$sites = $this->prepare_network_sites( $is_network );
 
-		// Use Freemius opt_in method with license key
 		$result = $fs->opt_in(
 			false, // email (will use current user)
 			false, // first name
@@ -321,17 +316,14 @@ class Licensing {
 
 		$status_info['license_key'] = $this->get_masked_license_key( $license );
 
-		// Check if expired
 		$status_info['is_expired'] = $license->is_expired() ? 'Yes' : 'No';
 
-		// Get expiration date
 		if ( $license->is_lifetime() ) {
 			$status_info['expires'] = 'Never';
 		} elseif ( isset( $license->expiration ) ) {
 			$status_info['expires'] = $license->expiration;
 		}
 
-		// Get activation count
 		if ( isset( $license->activated ) ) {
 			if ( $license->is_unlimited() ) {
 				$status_info['activations'] = $license->activated . '/∞';
@@ -352,7 +344,6 @@ class Licensing {
 	 * @return string Masked license key.
 	 */
 	private function get_masked_license_key( object $license ): string {
-		// For CLI commands, we only need plain text masked key
 		if ( method_exists( $license, 'get_masked_secret_key' ) ) {
 			return $license->get_masked_secret_key();
 		}
@@ -368,7 +359,6 @@ class Licensing {
 	private function get_license_object(): ?object {
 		$fs = $this->sdk;
 
-		// Try methods in order of preference
 		$methods = ['_get_license', 'get_license', 'get_user_license'];
 
 		foreach ( $methods as $method ) {
