@@ -33,7 +33,7 @@ class Evaluate_Content {
 	 */
 	public function __construct( DB $db ) {
 		$this->db = $db;
-		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', [ $this, 'init' ] );
 	}
 
 	/**

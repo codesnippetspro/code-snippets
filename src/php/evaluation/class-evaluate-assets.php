@@ -38,6 +38,7 @@ class Evaluate_Assets {
 	 */
 	public function __construct( DB $db ) {
 		$this->db = $db;
+		add_action( 'init', [ $this, 'init' ] );
 	}
 
 	/**
