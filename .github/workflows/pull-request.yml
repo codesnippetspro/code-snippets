@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Comment
         id: comment
-        uses: peter-evans/create-or-update-comment@v4
+        uses: codesnippetspro/create-or-update-comment@v4
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: Publish comment
         if: ${{ needs.install.outputs.artifact_name && needs.install.outputs.artifact_url }}
-        uses: peter-evans/create-or-update-comment@v4
+        uses: codesnippetspro/create-or-update-comment@v4
         with:
           edit-mode: replace
           comment-id: ${{ needs.comment.outputs.comment_id }}
