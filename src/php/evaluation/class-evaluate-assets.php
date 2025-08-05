@@ -340,7 +340,7 @@ class Evaluate_Assets {
 	 * @return string Code ready for output.
 	 */
 	private function build_inline_code( string $scope ): string {
-		$snippets = code_snippets()->db->fetch_active_snippets( [ $scope, 'condition' ] );
+		$snippets = $this->db->fetch_active_snippets( [ $scope, 'condition' ] );
 		$conditions = [];
 
 		foreach ( $snippets as $snippet ) {

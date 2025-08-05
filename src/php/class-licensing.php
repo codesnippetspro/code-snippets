@@ -36,7 +36,6 @@ class Licensing {
 	 * @throws Freemius_Exception Freemius fails to initialise.
 	 */
 	public function __construct() {
-		$plugin = code_snippets();
 		$this->enable_multisite_support();
 
 		require_once dirname( CODE_SNIPPETS_FILE ) . '/vendor/freemius/wordpress-sdk/start.php';
@@ -58,7 +57,7 @@ class Licensing {
 				'has_affiliation'     => 'selected',
 				'secret_key'          => defined( 'CODE_SNIPPETS_SECRET_KEY' ) ? CODE_SNIPPETS_SECRET_KEY : null,
 				'menu'                => array(
-					'slug'        => $plugin->get_menu_slug(),
+					'slug'        => code_snippets()->get_menu_slug(),
 					'contact'     => false,
 					'support'     => false,
 					'pricing'     => false,
