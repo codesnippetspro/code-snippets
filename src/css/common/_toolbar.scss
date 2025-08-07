@@ -94,6 +94,10 @@ $wpbody-block-indent: 20px;
 		}
 	}
 
+	li:last-of-type {
+		margin-inline-start: auto;
+	}
+
 	.pro-chip {
 		color: #d46f4d;
 		text-transform: uppercase;

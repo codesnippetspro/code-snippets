@@ -45,17 +45,17 @@ const LOWER_NAV_LINKS: NavLink[] = [
 		icon: <SnippetsIcon />
 	},
 	{
+		name: 'cloud-community',
+		url: addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { subpage: 'cloud-community' }),
+		label: __('Community Cloud', 'code-snippets'),
+		icon: <CommunityIcon />
+	},
+	{
 		name: 'cloud-library',
 		url: undefined,
 		label: __('My Library', 'code-snippets'),
 		icon: <LibraryIcon />,
 		pro: true
-	},
-	{
-		name: 'cloud-community',
-		url: addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { subpage: 'cloud-community' }),
-		label: __('Community Cloud', 'code-snippets'),
-		icon: <CommunityIcon />
 	},
 	{
 		name: 'cloud-teams',
