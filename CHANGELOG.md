@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.7.0] (beta release)
+
+### Added
+* New 'conditions' feature: control where and when snippets execute with a powerful logic builder. (PRO)
+
+### Changed
+* Redesigned edit menu with refreshed look and functionality.
+
+### Fixed
+* Fetching active snippets on a multisite network now respects the 'priority' field above all else when ordering snippets.
+* Cloud search appears correctly and allows downloading snippets in the free version of Code Snippets.
+
 ## [3.6.9] (2025-02-17)
 
 ### Changed

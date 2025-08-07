@@ -11,7 +11,7 @@ export type SuccessCallback = (response: ResponseData) => void
 const sendSnippetRequest = (query: string, onSuccess?: SuccessCallback) => {
 	const request = new XMLHttpRequest()
 	request.open('POST', window.ajaxurl, true)
-	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded charset=UTF-8')
+	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
 
 	request.onload = () => {
 		const success = 200

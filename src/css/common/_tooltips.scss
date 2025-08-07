@@ -19,12 +19,20 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 }
 
 .tooltip {
-	cursor: help;
+	cursor: help !important;
 	position: relative;
 	display: inline-block;
 
 	.dashicons {
 		color: lightslategrey;
+	}
+
+	&.badge {
+		display: inline-flex;
+
+		.dashicons {
+			color: inherit;
+		}
 	}
 }
 
