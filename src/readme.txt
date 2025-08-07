@@ -31,6 +31,7 @@ https://youtu.be/uzND-wdSCMQ
 
 * [Support Forum](https://wordpress.org/support/plugin/code-snippets)
 * [Facebook Community](https://facebook.com/groups/codesnippetsplugin)
+* [Discord Community](https://snipco.de/discord)
 * [GitHub Repository](https://github.com/codesnippetspro/code-snippets)
 
 🌟 Like our plugin? Find it useful? Please consider sharing your experience by [leaving a review on WordPress.org](https://wordpress.org/support/view/plugin-reviews/code-snippets). Your feedback is instrumental to shaping our future growth!
