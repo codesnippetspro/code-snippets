@@ -318,6 +318,20 @@ class Front_End {
 	}
 
 	/**
+	 * Build the file path for a snippet's flat file.
+	 *
+	 * @param string          $table_name Table name for the snippet.
+	 * @param Snippet         $snippet    Snippet object.
+	 *
+	 * @return string Full file path for the snippet.
+	 */
+	private function build_snippet_flat_file_path( string $table_name, Snippet $snippet ): string {
+		$handler = code_snippets()->snippet_handler_registry->get_handler( $snippet->get_type() );
+
+		return Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/' . $snippet->id . '.' . $handler->get_file_extension();
+	}
+
+	/**
 	 * Evaluate the code from a content shortcode.
 	 *
 	 * @param Snippet              $snippet Snippet.
@@ -330,6 +344,22 @@ class Front_End {
 			return $snippet->code;
 		}
 
+		$flat_files_enabled = Settings\get_setting( 'general', 'enable_flat_files' );
+
+		if ( ! $flat_files_enabled ) {
+			return $this->evaluate_shortcode_from_db( $snippet, $atts );
+		}
+
+		$network = DB::validate_network_param( $snippet->network );
+		$table_name = code_snippets()->db->get_table_name( $network );
+		$filepath = $this->build_snippet_flat_file_path( $table_name, $snippet );
+
+		return file_exists( $filepath )
+			? $this->evaluate_shortcode_from_flat_file( $filepath, $atts )
+			: $this->evaluate_shortcode_from_db( $snippet, $atts );
+	}
+
+	private function evaluate_shortcode_from_db( Snippet $snippet, array $atts ): string {
 		/**
 		 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
 		 * authors to use custom attributes.
@@ -340,6 +370,23 @@ class Front_End {
 
 		ob_start();
 		eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
+
+		return ob_get_clean();
+	}
+
+	private function evaluate_shortcode_from_flat_file( $filepath, array $atts ): string {
+		ob_start();
+
+		( function( $atts ) use ( $filepath ) {
+			/**
+			 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
+			 * authors to use custom attributes.
+			 *
+			 * @phpcs:disable WordPress.PHP.DontExtract.extract_extract
+			 */
+			extract( $atts );
+			require_once $filepath;
+		} )( $atts );
 
 		return ob_get_clean();
 	}

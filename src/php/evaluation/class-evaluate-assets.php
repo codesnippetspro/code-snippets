@@ -9,6 +9,8 @@ use WP_Exception;
 use Code_Snippets\Conditions;
 use Code_Snippets\Settings;
 use function Code_Snippets\code_snippets;
+use Code_Snippets\Snippet_Files;
+use function Code_Snippets\cs_sort_snippets_by_priority;
 
 /**
  * Class for loading active snippets of various types.
@@ -49,18 +51,26 @@ class Evaluate_Assets {
 			return;
 		}
 
-		if ( isset( $_GET['code-snippets-css'] ) ) {
-			$this->print_external_code( 'css' );
-			exit;
-		}
+		$flat_files_enabled = Settings\get_setting( 'general', 'enable_flat_files' );
 
-		if ( isset( $_GET['code-snippets-js-snippets'] ) && ! is_admin() ) {
-			$this->print_external_code( 'js' );
-			exit;
+		if ( $flat_files_enabled ) {
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_js_flat_files' ], 15 );
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_css_flat_files' ], 15 );
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_css_flat_files' ], 15 );
+		} else {
+			if ( isset( $_GET['code-snippets-css'] ) ) {
+				$this->print_external_code( 'css' );
+				exit;
+			}
+	
+			if ( isset( $_GET['code-snippets-js-snippets'] ) && ! is_admin() ) {
+				$this->print_external_code( 'js' );
+				exit;
+			}
+	
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend' ), 15 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ), 15 );
 		}
-
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend' ), 15 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ), 15 );
 	}
 
 	/**
@@ -361,5 +371,60 @@ class Evaluate_Assets {
 		}
 
 		return self::process_code( $code, $scope );
+	}
+
+	public function enqueue_js_flat_files() {
+		$handler = code_snippets()->snippet_handler_registry->get_handler( 'js' );
+		$dir_name = $handler->get_dir_name();
+		$ext = $handler->get_file_extension();
+		$snippets = Snippet_Files::get_active_snippets_from_flat_files( [ 'site-head-js', 'site-footer-js' ], $dir_name );
+
+		foreach ( $snippets as $table_name => $active_snippets ) {
+			$active_snippets = cs_sort_snippets_by_priority( $active_snippets );
+			$base_url = Snippet_Files::get_base_url( $table_name, $dir_name );
+			$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+
+			foreach ( $active_snippets as $snippet ) {
+				$path = $base_path . '/' . $snippet['id'] . '.' . $ext;
+				$uri = $base_url . '/' . $snippet['id'] . '.' . $ext;
+				$handle = 'site-head-js' === $snippet['scope'] ? 'code-snippets-site-head-' : 'code-snippets-site-footer-';
+				$in_footer = 'site-footer-js' === $snippet['scope'];
+
+				wp_enqueue_script(
+					$handle . $snippet['id'],
+					$uri,
+					[],
+					filemtime( $path ),
+					$in_footer,
+				);
+			}
+		}
+	}
+
+	public function enqueue_css_flat_files() {
+		$handler = code_snippets()->snippet_handler_registry->get_handler( 'css' );
+		$dir_name = $handler->get_dir_name();
+		$ext = $handler->get_file_extension();
+		$scope = is_admin() ? 'admin' : 'site';
+		$snippets = Snippet_Files::get_active_snippets_from_flat_files( [ $scope . '-' . $dir_name ], $dir_name );
+
+		foreach ( $snippets as $table_name => $active_snippets ) {
+			$active_snippets = cs_sort_snippets_by_priority( $active_snippets );
+			$base_url = Snippet_Files::get_base_url( $table_name, $dir_name );
+			$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+
+			foreach ( $active_snippets as $snippet ) {
+				$path = $base_path . '/' . $snippet['id'] . '.' . $ext;
+				$uri = $base_url . '/' . $snippet['id'] . '.' . $ext;
+				$handle = 'code-snippets-' . $scope . '-styles-';
+
+				wp_enqueue_style(
+					$handle . $snippet['id'],
+					$uri,
+					[],
+					filemtime( $path ),
+				);
+			}
+		}
 	}
 }
