@@ -2,10 +2,10 @@ import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { useRestAPI } from '../../../../hooks/useRestAPI'
 import { useSnippetForm } from '../../../../hooks/useSnippetForm'
-import { SnippetsExport } from '../../../../types/schema/SnippetsExport'
-import { Snippet } from '../../../../types/Snippet'
 import { downloadSnippetExportFile } from '../../../../utils/files'
 import { Button } from '../../../common/Button'
+import type { SnippetsExport } from '../../../../types/schema/SnippetsExport'
+import type { Snippet } from '../../../../types/Snippet'
 
 interface ExportButtonProps {
 	name: string

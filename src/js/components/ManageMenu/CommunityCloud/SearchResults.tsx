@@ -8,9 +8,50 @@ import { getSnippetType } from '../../../utils/snippets/snippets'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { STATUS_LABELS } from './SearchFilters'
-import type { CloudSnippetSchema} from '../../../types/schema/CloudSnippetSchema'
+import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 
 const MAX_DESCRIPTION_LENGTH = 150
+
+interface CloudSnippetDetailsProps {
+	snippet: CloudSnippetSchema
+	setIsPreviewOpen: (isOpen: boolean) => void
+}
+
+const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setIsPreviewOpen }) =>
+	<div className="cloud-snippet">
+		<h3>
+			<a
+				href="#"
+				title={__('Preview this snippet', 'code-snippets')}
+				onClick={() => setIsPreviewOpen(true)}
+			>
+				{snippet.name}
+			</a>
+		</h3>
+		<div className="cloud-snippet-meta">
+			<Badge name={getSnippetType(snippet)} />
+			<span className="cloud-snippet-votes">
+				<span className="dashicons dashicons-thumbs-up"></span>
+				<span>{snippet.vote_count}</span>
+			</span>
+			{0 < snippet.tags.length
+				? <span className="cloud-snippet-category">
+					<strong>{__('Category: ', 'code-snippets')}</strong>
+					{snippet.tags[0]}
+				</span> : null}
+		</div>
+		<p className="cloud-snippet-description">
+			{snippet.description.length > MAX_DESCRIPTION_LENGTH
+				? `${snippet.description.slice(0, MAX_DESCRIPTION_LENGTH)}…`
+				: snippet.description}
+		</p>
+		<p className="cloud-snippet-author">
+			{__('by ', 'code-snippets')}
+			<a href={`https://codesnippets.cloud/codevault/${snippet.codevault}`} target="_blank" rel="noopener noreferrer">
+				{snippet.codevault}
+			</a>
+		</p>
+	</div>
 
 interface SearchResultProps {
 	snippet: CloudSnippetSchema
@@ -28,40 +69,8 @@ const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 
 	return (
 		<div className="cloud-search-result">
-			<div className="cloud-snippet">
-				<h3>
-					<a
-						href="#"
-						title={__('Preview this snippet', 'code-snippets')}
-						onClick={() => setIsPreviewOpen(true)}
-					>
-						{snippet.name}
-					</a>
-				</h3>
-				<div className="cloud-snippet-meta">
-					<Badge name={snippetType} />
-					<span className="cloud-snippet-votes">
-						<span className="dashicons dashicons-thumbs-up"></span>
-						<span>{snippet.vote_count}</span>
-					</span>
-					{0 < snippet.tags.length
-						? <span className="cloud-snippet-category">
-							<strong>{__('Category: ', 'code-snippets')}</strong>
-							{snippet.tags[0]}
-						</span> : null}
-				</div>
-				<p className="cloud-snippet-description">
-					{snippet.description.length > MAX_DESCRIPTION_LENGTH
-						? `${snippet.description.slice(0, MAX_DESCRIPTION_LENGTH)  }…`
-						: snippet.description}
-				</p>
-				<p className="cloud-snippet-author">
-					{__('by ', 'code-snippets')}
-					<a href={`https://codesnippets.cloud/codevault/${snippet.codevault}`} target="_blank" rel="noopener noreferrer">
-						{snippet.codevault}
-					</a>
-				</p>
-			</div>
+			<CloudSnippetDetails snippet={snippet} setIsPreviewOpen={setIsPreviewOpen} />
+
 			<footer>
 				<span className={classnames(
 					'cloud-snippet-status',

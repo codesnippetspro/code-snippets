@@ -1,14 +1,15 @@
 import { __ } from '@wordpress/i18n'
 import React, { useMemo, useState } from 'react'
+import { Spinner } from '@wordpress/components'
 import { useCloudSearch } from '../../../hooks/useCloudSearch'
 import { fetchQueryParam } from '../../../utils/urls'
 import { TablePagination } from '../../common/ListTable/TablePagination'
 import { SubmitButton } from '../../common/SubmitButton'
 import { SearchFilters } from './SearchFilters'
 import { SearchResults } from './SearchResults'
+import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { CloudSearchFilters } from './SearchFilters'
-import type { FormEventHandler } from 'react'
-import { Spinner } from '@wordpress/components'
+import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
 
 const SearchBox = () => {
 	const { query, searchByCodevault, setPage, setQuery, setSearchByCodevault, isSearching } = useCloudSearch()
@@ -51,8 +52,46 @@ const SearchBox = () => {
 	)
 }
 
+interface SearchResultsTableProps {
+	filters: CloudSearchFilters
+	setFilters: Dispatch<SetStateAction<CloudSearchFilters>>
+	filteredSearchResults: CloudSnippetSchema[]
+}
+
+const SearchResultsTable: React.FC<SearchResultsTableProps> = ({ filters, setFilters, filteredSearchResults }) => {
+	const { page, totalItems, totalPages, setPage } = useCloudSearch()
+
+	return (
+		<>
+			<div className="tablenav top">
+				<SearchFilters filters={filters} setFilters={setFilters} />
+
+				<TablePagination
+					which="top"
+					totalItems={totalItems}
+					totalPages={totalPages}
+					currentPage={page}
+					setCurrentPage={setPage}
+				/>
+			</div>
+
+			<SearchResults results={filteredSearchResults} />
+
+			<div className="tablenav bottom">
+				<TablePagination
+					which="bottom"
+					totalItems={totalItems}
+					totalPages={totalPages}
+					currentPage={page}
+					setCurrentPage={setPage}
+				/>
+			</div>
+		</>
+	)
+}
+
 export const CloudSearch = () => {
-	const { searchResults, error, page, totalItems, totalPages, setPage } = useCloudSearch()
+	const { searchResults, error, page } = useCloudSearch()
 
 	const [filters, setFilters] = useState<CloudSearchFilters>(() => {
 		const tags = fetchQueryParam('tags') ?? ''
@@ -65,7 +104,7 @@ export const CloudSearch = () => {
 			console.log(snippet.status, filters.status)
 
 			return (!filters.tags || snippet.tags.includes(filters.tags)) &&
-				(!filters.status || snippet.status === filters.status)
+				(!filters.status || snippet.status.valueOf() === filters.status.valueOf())
 		}),
 		[searchResults, filters])
 
@@ -78,40 +117,12 @@ export const CloudSearch = () => {
 					<p>{__('An error occurred while fetching search results. Please try again.')}</p>
 				</div> : null}
 
-			{page > 0 && searchResults && searchResults.length === 0
+			{0 < page && searchResults && 0 === searchResults.length
 				? <div className="banner banner-neutral no-results">
 					<p>{__('No snippets or codevault could be found with that search term. Please try again.', 'code-snippets')}</p>
 				</div>
 				: searchResults && filteredSearchResults
-					? <>
-						<div className="tablenav top">
-							<SearchFilters
-								snippets={searchResults}
-								filters={filters}
-								setFilters={setFilters}
-							/>
-
-							<TablePagination
-								which="top"
-								totalItems={totalItems}
-								totalPages={totalPages}
-								currentPage={page}
-								setCurrentPage={setPage}
-							/>
-						</div>
-
-						<SearchResults results={filteredSearchResults} />
-
-						<div className="tablenav bottom">
-							<TablePagination
-								which="bottom"
-								totalItems={totalItems}
-								totalPages={totalPages}
-								currentPage={page}
-								setCurrentPage={setPage}
-							/>
-						</div>
-					</>
+					? <SearchResultsTable {...{ filters, setFilters, filteredSearchResults }} />
 					: null}
 		</div>
 	)

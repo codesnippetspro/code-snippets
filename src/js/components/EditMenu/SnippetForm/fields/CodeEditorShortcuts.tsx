@@ -1,9 +1,9 @@
 import { __, _x } from '@wordpress/i18n'
 import { getKeyMap } from 'codemirror/src/input/keymap'
+import React, { Fragment, useMemo } from 'react'
 import { useSnippetForm } from '../../../../hooks/useSnippetForm'
 import { isMacOS } from '../../../../utils/screen'
-import { KeyMap } from 'codemirror'
-import React, { Fragment, useMemo } from 'react'
+import type { KeyMap } from 'codemirror'
 
 const KEYBOARD_KEYS = {
 	'Fn': _x('Fn', 'keyboard key', 'code-snippets'),
@@ -146,22 +146,22 @@ export const CodeEditorShortcuts: React.FC<CodeEditorShortcutsProps> = ({ editor
 	const { codeEditorInstance } = useSnippetForm()
 
 	const shortcutKeys: Map<string, string[]> | undefined = useMemo(() => {
-			if (codeEditorInstance) {
-				const extraKeys = codeEditorInstance.codemirror.getOption('extraKeys')
-				const keyMapName = codeEditorInstance.codemirror.getOption('keyMap')
+		if (codeEditorInstance) {
+			const extraKeys = codeEditorInstance.codemirror.getOption('extraKeys')
+			const keyMapName = codeEditorInstance.codemirror.getOption('keyMap')
 
-				const combinedKeyMap: KeyMap = {
-					...isMacOS() ? fallbackKeyMapMac : fallbackKeyMap,
-					...keyMapName && getKeyMap(keyMapName),
-					...'object' === typeof extraKeys ? extraKeys : undefined
-				}
-
-				return unpackKeyMap(combinedKeyMap)
+			const combinedKeyMap: KeyMap = {
+				...isMacOS() ? fallbackKeyMapMac : fallbackKeyMap,
+				...keyMapName && getKeyMap(keyMapName),
+				...'object' === typeof extraKeys ? extraKeys : undefined
 			}
 
-			return undefined
-		},
-		[codeEditorInstance]
+			return unpackKeyMap(combinedKeyMap)
+		}
+
+		return undefined
+	},
+	[codeEditorInstance]
 	)
 
 	return shortcutKeys

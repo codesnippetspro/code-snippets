@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
 import { __ } from '@wordpress/i18n'
+import { useCloudSearch } from '../../../hooks/useCloudSearch'
 import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
 import { updateQueryParam } from '../../../utils/urls'
-import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 import type { Dispatch, SetStateAction } from 'react'
 
 export const STATUS_LABELS: Record<CloudStatus, string> = {
@@ -40,7 +40,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ options, filter, filters, s
 			onChange={event => {
 				setFilters(previous => ({
 					...previous,
-					[filter]: typeof filters[filter] === 'number'
+					[filter]: 'number' === typeof filters[filter]
 						? Number(event.target.value)
 						: event.target.value
 				}))
@@ -54,18 +54,19 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ options, filter, filters, s
 	</>
 
 export interface SearchFiltersProps {
-	snippets: CloudSnippetSchema[]
 	filters: CloudSearchFilters
 	setFilters: Dispatch<SetStateAction<CloudSearchFilters>>
 }
 
-export const SearchFilters: React.FC<SearchFiltersProps> = ({ snippets, filters, setFilters }) => {
+export const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, setFilters }) => {
+	const { searchResults: snippets } = useCloudSearch()
+
 	const options: { [K in keyof CloudSearchFilters]: [CloudSearchFilters[K], string][] } = useMemo(
 		() => {
 			const tags = new Set<string>()
 			const statuses = new Set<CloudStatus>()
 
-			snippets.forEach(snippet => {
+			snippets?.forEach(snippet => {
 				snippet.tags.forEach(tag => tags.add(tag))
 				statuses.add(snippet.status)
 			})
