@@ -352,8 +352,7 @@ class Front_End {
 		}
 
 		$network = DB::validate_network_param( $snippet->network );
-		$table_name = code_snippets()->db->get_table_name( $network );
-		$filepath = $this->build_snippet_flat_file_path( $table_name, $snippet );
+		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
 
 		return file_exists( $filepath )
 			? $this->evaluate_shortcode_from_flat_file( $filepath, $atts )
@@ -402,6 +401,28 @@ class Front_End {
 		return $screen && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor();
 	}
 
+	private function get_snippet( int $id, bool $network, string $snippet_type ): Snippet {
+		$flat_files_enabled = Settings\get_setting( 'general', 'enable_flat_files' );
+
+		if ( ! $flat_files_enabled ) {
+			return get_snippet( $id, $network );
+		}
+
+		$network = DB::validate_network_param( $network );
+		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
+		$handler = code_snippets()->snippet_handler_registry->get_handler( $snippet_type );
+		$filepath = Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/' . $id . '.' . $handler->get_file_extension();
+		$snippet_data = file_exists( $filepath ) ? require_once $filepath : null;
+
+		if ( ! $snippet_data ) {
+			return get_snippet( $id, $network );
+		}
+
+		$snippet = new Snippet( $snippet_data );
+
+		return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $network );		
+	}
+
 	/**
 	 * Render the value of a content shortcode
 	 *
@@ -432,7 +453,7 @@ class Front_End {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = get_snippet( $id, (bool) $atts['network'] );
+		$snippet = $this->get_snippet( $id, (bool) $atts['network'], 'html' );
 
 		// Render the source code if this is not a shortcode snippet.
 		if ( 'content' !== $snippet->scope ) {
@@ -464,7 +485,7 @@ class Front_End {
 		}
 
 		if ( $snippet->condition_id && ! $this->is_block_editor() ) {
-			$condition = get_snippet( $snippet->condition_id, $snippet->network );
+			$condition = $this->get_snippet( $snippet->condition_id, $snippet->network, 'cond' );
 
 			if ( $condition && ! evaluate_condition( $condition->code ) ) {
 				return '';
@@ -584,7 +605,7 @@ class Front_End {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = get_snippet( $id, (bool) $atts['network'] );
+		$snippet = $this->get_snippet( $id, (bool) $atts['network'], 'html' );
 
 		return $this->render_snippet_source( $snippet, $atts );
 	}
