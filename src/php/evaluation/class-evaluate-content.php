@@ -135,13 +135,11 @@ class Evaluate_Content {
 		$ext = $handler->get_file_extension();
 		$snippets = Snippet_Files::get_active_snippets_from_flat_files( [ $scope ], $dir_name );
 
-		foreach ( $snippets as $table_name => $active_snippets ) {
-			$active_snippets = cs_sort_snippets_by_priority( $active_snippets );
+		foreach ( $snippets as $snippet ) {
+			$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
 			$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
 
-			foreach ( $active_snippets as $snippet ) {
-				require_once $base_path . '/' . $snippet['id'] . '.' . $ext;
-			}
+			require_once $base_path . '/' . $snippet['id'] . '.' . $ext;
 		}
 	}
 }

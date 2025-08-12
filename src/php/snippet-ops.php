@@ -729,45 +729,41 @@ function execute_active_snippets_from_flat_files(): bool {
 		}
 	}
 
-	foreach ( $data as $table_name => $active_snippets ) {
+	// Loop through the returned snippets and execute the PHP code.
+	foreach ( $data as $snippet ) {
+		$snippet_id = intval( $snippet['id'] );
+		$code = $snippet['code'];
+		$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
 		$base_dir = Snippet_Files::get_base_dir( $table_name, 'php' );
-		$active_snippets = cs_sort_snippets_by_priority( $active_snippets );
 
-		// Loop through the returned snippets and execute the PHP code.
-		foreach ( $active_snippets as $snippet ) {
-			$snippet_id = intval( $snippet['id'] );
-			$code = $snippet['code'];
+		// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
+		if ( 'single-use' === $snippet['scope'] ) {
+			$table_to_update = $snippet['table'];
+			$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
 
-			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
-			if ( 'single-use' === $snippet['scope'] ) {
-				$table_to_update = Snippet_Files::get_hashed_table_name( $db->table ) === $table_name ? $db->table : $db->ms_table;
-				$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
+			if ( $snippet['network'] && is_array( $active_shared_ids ) && in_array( $snippet_id, $active_shared_ids, true ) ) {
+				unset( $active_shared_ids[ array_search( $snippet_id, $active_shared_ids, true ) ] );
+				$active_shared_ids = array_values( $active_shared_ids );
+				update_option( 'active_shared_network_snippets', $active_shared_ids );
+				clean_active_snippets_cache( $table_to_update );
+			} else {
+				$wpdb->update(
+					$table_to_update,
+					array( 'active' => '0' ),
+					array( 'id' => $snippet_id ),
+					array( '%d' ),
+					array( '%d' )
+				);
+				clean_snippets_cache( $table_to_update );
 
-				if ( Snippet_Files::get_hashed_table_name( $db->ms_table ) === $table_name && is_array( $active_shared_ids ) && in_array( $snippet_id, $active_shared_ids, true ) ) {
-					unset( $active_shared_ids[ array_search( $snippet_id, $active_shared_ids, true ) ] );
-					$active_shared_ids = array_values( $active_shared_ids );
-					update_option( 'active_shared_network_snippets', $active_shared_ids );
-					clean_active_snippets_cache( $table_to_update );
-				} else {
-					$wpdb->update(
-						$table_to_update,
-						array( 'active' => '0' ),
-						array( 'id' => $snippet_id ),
-						array( '%d' ),
-						array( '%d' )
-					);
-					clean_snippets_cache( $table_to_update );
-
-					$network = Snippet_Files::get_hashed_table_name( $db->ms_table ) === $table_name;
-					do_action( 'code_snippets/deactivate_snippet', $snippet_id, $network );
-				}
+				do_action( 'code_snippets/deactivate_snippet', $snippet_id, $snippet['network'] );
 			}
+		}
 
-			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
-			! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
-				$file = $base_dir . '/' . $snippet_id . '.php';
-				execute_snippet_from_flat_file( $code, $file, $snippet_id );
-			}
+		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
+		! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
+			$file = $base_dir . '/' . $snippet_id . '.php';
+			execute_snippet_from_flat_file( $code, $file, $snippet_id );
 		}
 	}
 

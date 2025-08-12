@@ -208,17 +208,32 @@ class Snippet_Files {
 		array $scopes = [],
 		$snippet_type = 'php'
 	): array {
-		$snippets = [];
+		$active_snippets = [];
+		$db = code_snippets()->db;
 
-		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name() );
-		$snippets[ $table ] = self::load_active_snippets_from_file(
+		$table = self::get_hashed_table_name( $db->get_table_name() );
+		$snippets = self::load_active_snippets_from_file(
 			$table,
 			$snippet_type,
 			$scopes
 		);
 
+		if ( $snippets ) {
+			foreach ( $snippets as $snippet ) {
+				$active_snippets[] = [
+					'id'           => intval( $snippet['id'] ),
+					'code'         => $snippet['code'],
+					'scope'        => $snippet['scope'],
+					'table'        => $db->table,
+					'network'      => false,
+					'priority'     => intval( $snippet['priority'] ),
+					'condition_id' => intval( $snippet['condition_id'] ),
+				];
+			}
+		}
+
 		if ( is_multisite() ) {
-			$ms_table = self::get_hashed_table_name( code_snippets()->db->get_table_name( true ) );
+			$ms_table = self::get_hashed_table_name( $db->get_table_name( true ) );
 
 			$root_base_dir = self::get_base_dir( $table );
 			$active_shared_ids_file_path = $root_base_dir . '/active-shared-network-snippets.php';
@@ -226,15 +241,71 @@ class Snippet_Files {
 				? require $active_shared_ids_file_path
 				: [];
 
-			$snippets[ $ms_table ] = self::load_active_snippets_from_file(
+			$ms_snippets = self::load_active_snippets_from_file(
 				$ms_table,
 				$snippet_type,
 				$scopes,
 				$active_shared_ids
 			);
+
+			if ( $ms_snippets ) {
+				$active_shared_ids = is_array( $active_shared_ids )
+					? array_map( 'intval', $active_shared_ids )
+					: [];
+
+				foreach ( $ms_snippets as $snippet ) {
+					$id = intval( $snippet['id'] );
+
+					if ( ! $snippet['active'] && ! in_array( $id, $active_shared_ids, true ) ) {
+						continue;
+					}
+
+					$active_snippets[] = [
+						'id'           => $id,
+						'code'         => $snippet['code'],
+						'scope'        => $snippet['scope'],
+						'table'        => $db->ms_table,
+						'network'      => true,
+						'priority'     => intval( $snippet['priority'] ),
+						'condition_id' => intval( $snippet['condition_id'] ),
+					];
+				}
+
+				self::sort_active_snippets( $active_snippets, $db );
+			}
 		}
 
-		return $snippets;
+		return $active_snippets;
+	}
+
+	private static function sort_active_snippets( array &$active_snippets, $db ): void {
+		$comparisons = [
+			function ( array $a, array $b ) {
+				return $a['priority'] <=> $b['priority'];
+			},
+			function ( array $a, array $b ) use ( $db ) {
+				$a_table = $a['table'] === $db->ms_table ? 0 : 1;
+				$b_table = $b['table'] === $db->ms_table ? 0 : 1;
+				return $a_table <=> $b_table;
+			},
+			function ( array $a, array $b ) {
+				return $a['id'] <=> $b['id'];
+			},
+		];
+
+		usort(
+			$active_snippets,
+			static function ( $a, $b ) use ( $comparisons ) {
+				foreach ( $comparisons as $comparison ) {
+					$result = $comparison( $a, $b );
+					if ( 0 !== $result ) {
+						return $result;
+					}
+				}
+
+				return 0;
+			}
+		);
 	}
 
 	private static function load_active_snippets_from_file(
@@ -323,11 +394,9 @@ class Snippet_Files {
 
 		$data = $db->fetch_active_snippets( $scopes );
 
-		foreach ( $data as $table_name => $active_snippets ) {
-			foreach ( $active_snippets as $snippet ) {
-				$snippet_obj = get_snippet( $snippet['id'], $db->ms_table === $table_name );
-				$this->handle_snippet( $snippet_obj, $table_name );
-			}
+		foreach ( $data as $snippet ) {
+			$snippet_obj = get_snippet( $snippet['id'], $db->ms_table === $snippet['table'] );
+			$this->handle_snippet( $snippet_obj, $snippet['table'] );
 		}
 
 		if ( is_multisite() ) {

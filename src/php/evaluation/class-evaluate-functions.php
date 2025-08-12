@@ -4,6 +4,7 @@ namespace Evaluation;
 
 use Code_Snippets\DB;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
+use Code_Snippets\Settings;
 use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\Conditions\evaluate_condition;
@@ -36,6 +37,13 @@ class Evaluate_Functions {
 	 * @var array[]
 	 */
 	private array $conditions = [];
+
+	/**
+	 * Whether flat files are enabled.
+	 *
+	 * @var ?bool
+	 */
+	private ?bool $flat_files_enabled = null;
 
 	/**
 	 * Class constructor.
@@ -144,7 +152,11 @@ class Evaluate_Functions {
 		}
 
 		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
-			execute_snippet( $code, $snippet_id );
+			if ( $this->flat_files_enabled ) {
+				execute_snippet_from_flat_file( $code, $snippet_id );
+			} else {
+				execute_snippet( $code, $snippet_id );
+			}
 		}
 	}
 
@@ -158,6 +170,18 @@ class Evaluate_Functions {
 			return false;
 		}
 
+		if ( is_null( $this->flat_files_enabled ) ) {
+			$this->flat_files_enabled = Settings\get_setting( 'general', 'enable_flat_files' );
+		}
+
+		if ( $this->flat_files_enabled ) {
+			return $this->evaluate_file_snippets_without_conditions();
+		}
+
+		return $this->evaluate_db_snippets_without_conditions();
+	}
+
+	private function evaluate_db_snippets_without_conditions(): bool {
 		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
 		$active_snippets = $this->db->fetch_active_snippets( $scopes );
 		$edit_snippet = $this->get_currently_editing_snippet();
@@ -172,6 +196,10 @@ class Evaluate_Functions {
 			}
 		}
 
+		return true;
+	}
+
+	private function evaluate_file_snippets_without_conditions(): bool {
 		return true;
 	}
 
