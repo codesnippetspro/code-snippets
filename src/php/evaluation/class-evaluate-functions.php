@@ -26,14 +26,14 @@ class Evaluate_Functions {
 	/**
 	 * Snippets with an attached condition that should be evaluated later.
 	 *
-	 * @var array
+	 * @var array[]
 	 */
 	private array $snippets_with_condition = [];
 
 	/**
 	 * List of conditions that should be evaluated later.
 	 *
-	 * @var array
+	 * @var array[]
 	 */
 	private array $conditions = [];
 

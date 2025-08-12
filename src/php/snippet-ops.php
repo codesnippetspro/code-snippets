@@ -174,11 +174,11 @@ function code_snippets_build_tags_array( $tags ): array {
  * @param int       $id      The ID of the snippet to retrieve. 0 to build a new snippet.
  * @param bool|null $network Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
  *
- * @return Snippet A single snippet object.
+ * @return ?Snippet A single snippet object.
  *
  * @since 2.0.0
  */
-function get_snippet( int $id = 0, ?bool $network = null ): Snippet {
+function get_snippet( int $id = 0, ?bool $network = null ): ?Snippet {
 	global $wpdb;
 
 	$id = absint( $id );
@@ -623,107 +623,6 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 
 	do_action( 'code_snippets/after_execute_snippet', $code, $id, $result );
 	return $result;
-}
-
-/**
-<<<<<<< HEAD
- * Run the active snippets.
- * Read-write-execute operation.
- *
- * @return bool true on success, false on failure.
- *
- * @since 2.0.0
- */
-function execute_active_snippets(): bool {
-	global $wpdb;
-
-	// Bail early if safe mode is active.
-	if ( ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ||
-	     ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
-		return false;
-	}
-
-	$db = code_snippets()->db;
-	$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end', 'condition' ];
-	$data = $db->fetch_active_snippets( $scopes );
-
-	// Detect if a snippet is currently being edited, and if so, spare it from execution.
-	$edit_id = 0;
-	$edit_table = $db->table;
-
-	if ( wp_is_json_request() && ! empty( $_SERVER['REQUEST_URI'] ) ) {
-		$url = wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
-
-		if ( isset( $url['path'] ) && false !== strpos( $url['path'], Snippets_REST_Controller::get_prefixed_base_route() ) ) {
-			$path_parts = explode( '/', $url['path'] );
-			$edit_id = intval( end( $path_parts ) );
-
-			if ( ! empty( $url['query'] ) ) {
-				wp_parse_str( $url['query'], $path_params );
-				$edit_table = isset( $path_params['network'] ) && rest_sanitize_boolean( $path_params['network'] ) ?
-					$db->ms_table : $db->table;
-			}
-		}
-	}
-
-	foreach ( $data as $table_name => $active_snippets ) {
-		$conditions = [];
-
-		foreach ( $active_snippets as $snippet ) {
-			if ( 'condition' === $snippet['scope'] ) {
-				$snippet_id = intval( $snippet['id'] );
-				$conditions[ $snippet_id ] = Conditions\evaluate_condition( $snippet['code'] );
-			}
-		}
-
-		// Loop through the returned snippets and execute the PHP code.
-		foreach ( $active_snippets as $snippet ) {
-			$snippet_id = intval( $snippet['id'] );
-			$code = $snippet['code'];
-
-			if ( 'condition' === $snippet['scope'] ) {
-				continue;
-			}
-
-			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
-			if ( 'single-use' === $snippet['scope'] ) {
-				$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
-
-				if ( $table_name === $db->ms_table && is_array( $active_shared_ids ) && in_array( $snippet_id, $active_shared_ids, true ) ) {
-					unset( $active_shared_ids[ array_search( $snippet_id, $active_shared_ids, true ) ] );
-					$active_shared_ids = array_values( $active_shared_ids );
-					update_option( 'active_shared_network_snippets', $active_shared_ids );
-					clean_active_snippets_cache( $table_name );
-				} else {
-					$wpdb->update(
-						$table_name,
-						array( 'active' => '0' ),
-						array( 'id' => $snippet_id ),
-						array( '%d' ),
-						array( '%d' )
-					);
-					clean_snippets_cache( $table_name );
-				}
-			}
-
-			if ( ! apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ||
-			     ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
-				continue;
-			}
-
-			if ( $snippet['condition_id'] ) {
-				$condition_id = intval( $snippet['condition_id'] );
-
-				if ( isset( $conditions[ $condition_id ] ) && ! $conditions[ $condition_id ] ) {
-					continue;
-				}
-			}
-
-			execute_snippet( $code, $snippet_id );
-		}
-	}
-
-	return true;
 }
 
 /**
