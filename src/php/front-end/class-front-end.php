@@ -6,6 +6,7 @@ use Code_Snippets\Elementor\Elementor;
 use WP_Post;
 use WP_REST_Response;
 use WP_REST_Server;
+use function Code_Snippets\Conditions\evaluate_condition;
 
 /**
  * This class manages the shortcodes included with the plugin,
@@ -392,6 +393,16 @@ class Front_End {
 	}
 
 	/**
+	 * Check if being rendered within the block editor.
+	 *
+	 * @return bool True if in the block editor, false otherwise.
+	 */
+	private function is_block_editor(): bool {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		return $screen && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor();
+	}
+
+	/**
 	 * Render the value of a content shortcode
 	 *
 	 * @param array<string, mixed> $atts Shortcode attributes.
@@ -410,7 +421,7 @@ class Front_End {
 				'php'        => false,
 				'format'     => false,
 				'shortcodes' => false,
-				'debug'      => false,
+				'debug'      => $this->is_block_editor(),
 			],
 			$atts,
 			self::CONTENT_SHORTCODE
@@ -430,24 +441,34 @@ class Front_End {
 
 		// If the snippet is inactive, either display a message or render nothing.
 		if ( ! $snippet->active ) {
-			if ( ! $atts['debug'] ) {
+			if ( $atts['debug'] ) {
+				/* translators: 1: snippet name, 2: snippet edit link */
+				$text = __( '%1$s is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
+				$snippet_name = '<strong>' . $snippet->name . '</strong>';
+				$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
+
+				$message = wp_kses(
+					sprintf( $text, $snippet_name, $edit_url ),
+					[
+						'strong' => [],
+						'a'      => [
+							'href' => [],
+						],
+					]
+				);
+
+				return "<p>$message</p><p>" . esc_html__( 'This message will not appear in the published post.', 'code-snippets' ) . '</p>';
+			} else {
 				return '';
 			}
+		}
 
-			/* translators: 1: snippet name, 2: snippet edit link */
-			$text = __( '%1$s is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
-			$snippet_name = '<strong>' . $snippet->name . '</strong>';
-			$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
+		if ( $snippet->condition_id && ! $this->is_block_editor() ) {
+			$condition = get_snippet( $snippet->condition_id, $snippet->network );
 
-			return wp_kses(
-				sprintf( $text, $snippet_name, $edit_url ),
-				[
-					'strong' => [],
-					'a'      => [
-						'href' => [],
-					],
-				]
-			);
+			if ( $condition && ! evaluate_condition( $condition->code ) ) {
+				return '';
+			}
 		}
 
 		$content = $this->evaluate_shortcode_content( $snippet, $original_atts );

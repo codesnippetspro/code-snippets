@@ -5,7 +5,6 @@ namespace Evaluation;
 use Code_Snippets\DB;
 use Code_Snippets\Snippet;
 use MatthiasMullie\Minify;
-use WP_Exception;
 use Code_Snippets\Conditions;
 use Code_Snippets\Settings;
 use function Code_Snippets\code_snippets;
@@ -29,7 +28,7 @@ class Evaluate_Assets {
 	/**
 	 * Cached list of active snippets.
 	 *
-	 * @var Snippet[]
+	 * @var array[]
 	 */
 	private array $active_snippets = [];
 
