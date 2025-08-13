@@ -373,53 +373,91 @@ class Evaluate_Assets {
 	}
 
 	public function enqueue_js_flat_files() {
+		$conditions = [];
 		$handler = code_snippets()->snippet_handler_registry->get_handler( 'js' );
 		$dir_name = $handler->get_dir_name();
 		$ext = $handler->get_file_extension();
-		$snippets = Snippet_Files::get_active_snippets_from_flat_files( [ 'site-head-js', 'site-footer-js' ], $dir_name );
 
-		foreach ( $snippets as $snippet ) {
-			$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
-			$base_url = Snippet_Files::get_base_url( $table_name, $dir_name );
-			$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+		$snippets = $this->get_snippets_by_scope( [ 'site-head-js', 'site-footer-js' ], $dir_name );
+		$conditions = $this->get_snippets_by_scope( [ 'condition' ], 'cond' );
+		$active_snippets = array_merge( $snippets, $conditions );
 
-			$path = $base_path . '/' . $snippet['id'] . '.' . $ext;
-			$uri = $base_url . '/' . $snippet['id'] . '.' . $ext;
-			$handle = 'site-head-js' === $snippet['scope'] ? 'code-snippets-site-head-' : 'code-snippets-site-footer-';
-			$in_footer = 'site-footer-js' === $snippet['scope'];
+		foreach ( $active_snippets as $snippet ) {
+			if ( 'condition' === $snippet['scope'] ) {
+				$condition_id = intval( $snippet['id'] );
+				$conditions[ $condition_id ] = Conditions\evaluate_condition( $snippet['code'] );
+			}
+		}
 
-			wp_enqueue_script(
-				$handle . $snippet['id'],
-				$uri,
-				[],
-				filemtime( $path ),
-				$in_footer,
-			);
+		foreach ( $active_snippets as $snippet ) {
+			$condition_id = intval( $snippet['condition_id'] );
+			if ( 'condition' !== $snippet['scope'] &&
+			     ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) ) {
+				$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
+				$base_url = Snippet_Files::get_base_url( $table_name, $dir_name );
+				$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+	
+				$path = $base_path . '/' . $snippet['id'] . '.' . $ext;
+				$uri = $base_url . '/' . $snippet['id'] . '.' . $ext;
+				$handle = 'site-head-js' === $snippet['scope'] ? 'code-snippets-site-head-' : 'code-snippets-site-footer-';
+				$in_footer = 'site-footer-js' === $snippet['scope'];
+	
+				wp_enqueue_script(
+					$handle . $snippet['id'],
+					$uri,
+					[],
+					filemtime( $path ),
+					$in_footer,
+				);
+			}
 		}
 	}
 
 	public function enqueue_css_flat_files() {
+		$conditions = [];
 		$handler = code_snippets()->snippet_handler_registry->get_handler( 'css' );
 		$dir_name = $handler->get_dir_name();
 		$ext = $handler->get_file_extension();
+
 		$scope = is_admin() ? 'admin' : 'site';
-		$snippets = Snippet_Files::get_active_snippets_from_flat_files( [ $scope . '-' . $dir_name ], $dir_name );
 
-		foreach ( $snippets as $snippet ) {
-			$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
-			$base_url = Snippet_Files::get_base_url( $table_name, $dir_name );
-			$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+		$snippets = $this->get_snippets_by_scope( [ $scope . '-' . $dir_name ], $dir_name );
+		$conditions = $this->get_snippets_by_scope( [ 'condition' ], 'cond' );
+		$active_snippets = array_merge( $snippets, $conditions );
 
-			$path = $base_path . '/' . $snippet['id'] . '.' . $ext;
-			$uri = $base_url . '/' . $snippet['id'] . '.' . $ext;
-			$handle = 'code-snippets-' . $scope . '-styles-';
-
-			wp_enqueue_style(
-				$handle . $snippet['id'],
-				$uri,
-				[],
-				filemtime( $path ),
-			);
+		foreach ( $active_snippets as $snippet ) {
+			if ( 'condition' === $snippet['scope'] ) {
+				$condition_id = intval( $snippet['id'] );
+				$conditions[ $condition_id ] = Conditions\evaluate_condition( $snippet['code'] );
+			}
 		}
+
+		foreach ( $active_snippets as $snippet ) {
+			$condition_id = intval( $snippet['condition_id'] );
+			if ( 'condition' !== $snippet['scope'] &&
+			     ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) ) {
+				$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
+				$base_url = Snippet_Files::get_base_url( $table_name, $dir_name );
+				$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+
+				$path = $base_path . '/' . $snippet['id'] . '.' . $ext;
+				$uri = $base_url . '/' . $snippet['id'] . '.' . $ext;
+				$handle = 'code-snippets-' . $scope . '-styles-';
+
+				wp_enqueue_style(
+					$handle . $snippet['id'],
+					$uri,
+					[],
+					filemtime( $path ),
+				);
+			}
+		}
+	}
+
+	private function get_snippets_by_scope( array $scopes, string $type ): array {
+		$handler = code_snippets()->snippet_handler_registry->get_handler( $type );
+		$dir_name = $handler->get_dir_name();
+
+		return Snippet_Files::get_active_snippets_from_flat_files( $scopes, $dir_name );
 	}
 }
