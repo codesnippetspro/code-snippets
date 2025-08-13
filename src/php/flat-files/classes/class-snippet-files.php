@@ -351,7 +351,7 @@ class Snippet_Files {
 					);
 				}
 
-				return $is_active && in_array( $snippet['scope'], $scopes, true );
+				return ( $is_active || 'condition' === $snippet['scope'] ) && in_array( $snippet['scope'], $scopes, true );
 			}
 		);
 

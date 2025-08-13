@@ -5,7 +5,9 @@ namespace Evaluation;
 use Code_Snippets\DB;
 use Code_Snippets\Snippet;
 use Code_Snippets\Settings;
+use Code_Snippets\Snippet_Files;
 use function Code_Snippets\Conditions\evaluate_condition;
+use function Code_Snippets\code_snippets;
 
 /**
  * Class for evaluating content snippets.

@@ -5,10 +5,12 @@ namespace Evaluation;
 use Code_Snippets\DB;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use Code_Snippets\Settings;
+use Code_Snippets\Snippet_Files;
 use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\Conditions\evaluate_condition;
 use function Code_Snippets\execute_snippet;
+use function Code_Snippets\code_snippets;
 
 /**
  * Class for evaluating functions snippets.
@@ -152,11 +154,26 @@ class Evaluate_Functions {
 		}
 
 		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
-			if ( $this->flat_files_enabled ) {
-				execute_snippet_from_flat_file( $code, $snippet_id );
-			} else {
-				execute_snippet( $code, $snippet_id );
-			}
+			execute_snippet( $code, $snippet_id );
+		}
+	}
+
+	private function evaluate_snippet_flat_file( array $snippet, string $file_path, ?array $edit_snippet = null ) {
+		$snippet_id = $snippet['id'];
+		$code = $snippet['code'];
+		$table_name = $snippet['table'];
+
+		// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
+		if ( 'single-use' === $snippet['scope'] ) {
+			$this->quick_deactivate_snippet( $snippet_id, $table_name );
+		}
+
+		if ( ! is_null( $edit_snippet ) && $edit_snippet['id'] === $snippet_id && $edit_snippet['table'] === $table_name ) {
+			return;
+		}
+
+		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
+			execute_snippet_from_flat_file( $code, $snippet_id, $file_path );
 		}
 	}
 
@@ -200,7 +217,33 @@ class Evaluate_Functions {
 	}
 
 	private function evaluate_file_snippets_without_conditions(): bool {
+		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
+		$snippets = $this->get_snippets_by_scope( $scopes, 'php' );
+		$conditions = $this->get_snippets_by_scope( [ 'condition' ], 'cond' );
+		$active_snippets = array_merge( $snippets, $conditions );
+
+		foreach ( $active_snippets as $snippet ) {
+			if ( 'condition' === $snippet['scope'] ) {
+				$this->conditions[] = $snippet;
+			} elseif ( 0 !== $snippet['condition_id'] ) {
+				$this->snippets_with_condition[] = $snippet;
+			} else {
+				$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
+				$base_path = Snippet_Files::get_base_dir( $table_name, 'php' );
+				$file = $base_path . '/' . $snippet['id'] . '.php';
+
+				$this->evaluate_snippet_flat_file( $snippet, $file, $edit_snippet );
+			}
+		}
+
 		return true;
+	}
+
+	private function get_snippets_by_scope( array $scopes, string $type ): array {
+		$handler = code_snippets()->snippet_handler_registry->get_handler( $type );
+		$dir_name = $handler->get_dir_name();
+
+		return Snippet_Files::get_active_snippets_from_flat_files( $scopes, $dir_name );
 	}
 
 	/**
