@@ -158,7 +158,7 @@ class Evaluate_Functions {
 			return false;
 		}
 
-		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
+		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end', 'condition' ];
 		$active_snippets = $this->db->fetch_active_snippets( $scopes );
 		$edit_snippet = $this->get_currently_editing_snippet();
 
