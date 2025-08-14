@@ -90,6 +90,16 @@ const SearchResultsTable: React.FC<SearchResultsTableProps> = ({ filters, setFil
 	)
 }
 
+const ErrorBanner = () =>
+	<div className="banner banner-error">
+		<p>{__('An error occurred while fetching search results. Please try again.')}</p>
+	</div>
+
+const NoSearchResultsBanner = () =>
+	<div className="banner banner-neutral no-results">
+		<p>{__('No snippets or codevault could be found with that search term. Please try again.', 'code-snippets')}</p>
+	</div>
+
 export const CloudSearch = () => {
 	const { searchResults, error, page } = useCloudSearch()
 
@@ -100,30 +110,21 @@ export const CloudSearch = () => {
 	})
 
 	const filteredSearchResults = useMemo(
-		() => searchResults?.filter(snippet => {
-			console.log(snippet.status, filters.status)
-
-			return (!filters.tags || snippet.tags.includes(filters.tags)) &&
-				(!filters.status || snippet.status.valueOf() === filters.status.valueOf())
-		}),
+		() =>
+			searchResults?.filter(snippet =>
+				(!filters.tags || snippet.tags.includes(filters.tags)) &&
+				(!filters.status || snippet.status.valueOf() === filters.status)),
 		[searchResults, filters])
 
 	return (
 		<div className="cloud-search">
 			<SearchBox />
 
-			{error
-				? <div className="banner banner-error">
-					<p>{__('An error occurred while fetching search results. Please try again.')}</p>
-				</div> : null}
+			{error && <ErrorBanner />}
 
 			{0 < page && searchResults && 0 === searchResults.length
-				? <div className="banner banner-neutral no-results">
-					<p>{__('No snippets or codevault could be found with that search term. Please try again.', 'code-snippets')}</p>
-				</div>
-				: searchResults && filteredSearchResults
-					? <SearchResultsTable {...{ filters, setFilters, filteredSearchResults }} />
-					: null}
+				? <NoSearchResultsBanner />
+				: filteredSearchResults && <SearchResultsTable {...{ filters, setFilters, filteredSearchResults }} />}
 		</div>
 	)
 }

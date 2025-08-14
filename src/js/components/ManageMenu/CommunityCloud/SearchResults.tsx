@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
-import { __ } from '@wordpress/i18n'
+import { __, _x } from '@wordpress/i18n'
 import { Modal } from '@wordpress/components'
 import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
 import { Prism } from '../../../utils/Prism'
@@ -28,6 +28,7 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 				{snippet.name}
 			</a>
 		</h3>
+
 		<div className="cloud-snippet-meta">
 			<Badge name={getSnippetType(snippet)} />
 			<span className="cloud-snippet-votes">
@@ -38,20 +39,44 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 				? <span className="cloud-snippet-category">
 					<strong>{__('Category: ', 'code-snippets')}</strong>
 					{snippet.tags[0]}
-				</span> : null}
+				</span>
+				: null}
 		</div>
+
 		<p className="cloud-snippet-description">
 			{snippet.description.length > MAX_DESCRIPTION_LENGTH
 				? `${snippet.description.slice(0, MAX_DESCRIPTION_LENGTH)}…`
 				: snippet.description}
 		</p>
+
 		<p className="cloud-snippet-author">
-			{__('by ', 'code-snippets')}
+			{_x('by ', 'snippet author', 'code-snippets')}
 			<a href={`https://codesnippets.cloud/codevault/${snippet.codevault}`} target="_blank" rel="noopener noreferrer">
 				{snippet.codevault}
 			</a>
 		</p>
 	</div>
+
+interface PreviewModalProps {
+	isOpen: boolean
+	snippet: CloudSnippetSchema
+	setIsOpen: (isOpen: boolean) => void
+}
+
+const PreviewModal: React.FC<PreviewModalProps> = ({ snippet, isOpen, setIsOpen }) => {
+	const snippetType = getSnippetType(snippet)
+
+	return isOpen
+		? <Modal onRequestClose={() => setIsOpen(false)} title={snippet.name}>
+					<pre className="line-numbers">
+						<code className={`language-${snippetType}`}>
+							{'php' === snippetType ? '<?php\n\n' : ''}
+							{snippet.code}
+						</code>
+					</pre>
+		</Modal>
+		: null
+}
 
 interface SearchResultProps {
 	snippet: CloudSnippetSchema
@@ -59,7 +84,6 @@ interface SearchResultProps {
 
 const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
-	const snippetType = getSnippetType(snippet)
 
 	useEffect(() => {
 		if (isPreviewOpen) {
@@ -84,16 +108,7 @@ const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 				</Button>
 			</footer>
 
-			{isPreviewOpen
-				? <Modal onRequestClose={() => setIsPreviewOpen(false)} title={snippet.name}>
-					<pre className="line-numbers">
-						<code className={`language-${snippetType}`}>
-							{'php' === snippetType ? '<?php\n\n' : ''}
-							{snippet.code}
-						</code>
-					</pre>
-				</Modal>
-				: null}
+			<PreviewModal snippet={snippet} isOpen={isPreviewOpen} setIsOpen={setIsPreviewOpen} />
 		</div>
 	)
 }
