@@ -353,6 +353,7 @@ class Front_End {
 
 		$network = DB::validate_network_param( $snippet->network );
 		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
+		$filepath = $this->build_snippet_flat_file_path( $table_name, $snippet );
 
 		return file_exists( $filepath )
 			? $this->evaluate_shortcode_from_flat_file( $filepath, $atts )
@@ -402,25 +403,26 @@ class Front_End {
 	}
 
 	private function get_snippet( int $id, bool $network, string $snippet_type ): Snippet {
-		$flat_files_enabled = Settings\get_setting( 'general', 'enable_flat_files' );
-
-		if ( ! $flat_files_enabled ) {
+		if ( ! Settings\get_setting( 'general', 'enable_flat_files' ) ) {
 			return get_snippet( $id, $network );
 		}
 
-		$network = DB::validate_network_param( $network );
-		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
+		$validated_network = DB::validate_network_param( $network );
+		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $validated_network ) );
 		$handler = code_snippets()->snippet_handler_registry->get_handler( $snippet_type );
-		$filepath = Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/' . $id . '.' . $handler->get_file_extension();
-		$snippet_data = file_exists( $filepath ) ? require_once $filepath : null;
+		$config_filepath = Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/index.php';
 
-		if ( ! $snippet_data ) {
-			return get_snippet( $id, $network );
+		if ( file_exists( $config_filepath ) ) {
+			$config = require_once $config_filepath;
+			$snippet_data = $config[ $id ] ?? null;
+			
+			if ( $snippet_data ) {
+				$snippet = new Snippet( $snippet_data );
+				return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $network );
+			}
 		}
 
-		$snippet = new Snippet( $snippet_data );
-
-		return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $network );		
+		return get_snippet( $id, $network );
 	}
 
 	/**

@@ -189,7 +189,7 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string The snippet type – will be a filename extension.
 	 */
-	protected function get_type(): string {
+	public function get_type(): string {
 		return self::get_type_from_scope( $this->scope );
 	}
 
