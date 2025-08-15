@@ -56,7 +56,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.4', 
 	 * @since 3.0.0
 	 * @onst  boolean
 	 */
-	define( 'CODE_SNIPPETS_PRO', true );
+	define( 'CODE_SNIPPETS_PRO', false );
 
 	require_once dirname( __FILE__ ) . '/php/load.php';
 } else {
