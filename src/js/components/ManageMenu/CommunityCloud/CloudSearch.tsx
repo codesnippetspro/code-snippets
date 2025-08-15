@@ -1,22 +1,20 @@
 import { __ } from '@wordpress/i18n'
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { useCloudSearch } from '../../../hooks/useCloudSearch'
-import { fetchQueryParam } from '../../../utils/urls'
+import { useCloudSearchFilters, WithCloudSearchFiltersContext } from '../../../hooks/useCloudSearchFilters'
 import { TablePagination } from '../../common/ListTable/TablePagination'
 import { SubmitButton } from '../../common/SubmitButton'
 import { SearchFilters } from './SearchFilters'
 import { SearchResults } from './SearchResults'
-import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
-import type { CloudSearchFilters } from './SearchFilters'
-import type { Dispatch, FormEventHandler, SetStateAction } from 'react'
+import type { FormEventHandler } from 'react'
 
 const SearchBox = () => {
-	const { query, searchByCodevault, setPage, setQuery, setSearchByCodevault, isSearching } = useCloudSearch()
+	const { query, searchByCodevault, setQuery, setSearchByCodevault, isSearching, doSearch } = useCloudSearch()
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
 		event.preventDefault()
-		setPage(1)
+		doSearch()
 	}
 
 	return (
@@ -52,19 +50,14 @@ const SearchBox = () => {
 	)
 }
 
-interface SearchResultsTableProps {
-	filters: CloudSearchFilters
-	setFilters: Dispatch<SetStateAction<CloudSearchFilters>>
-	filteredSearchResults: CloudSnippetSchema[]
-}
-
-const SearchResultsTable: React.FC<SearchResultsTableProps> = ({ filters, setFilters, filteredSearchResults }) => {
+const SearchResultsTable = () => {
 	const { page, totalItems, totalPages, setPage } = useCloudSearch()
+	const { filteredSearchResults } = useCloudSearchFilters()
 
-	return (
+	return filteredSearchResults ?
 		<>
 			<div className="tablenav top">
-				<SearchFilters filters={filters} setFilters={setFilters} />
+				<SearchFilters />
 
 				<TablePagination
 					which="top"
@@ -87,7 +80,7 @@ const SearchResultsTable: React.FC<SearchResultsTableProps> = ({ filters, setFil
 				/>
 			</div>
 		</>
-	)
+	: null
 }
 
 const ErrorBanner = () =>
@@ -103,19 +96,6 @@ const NoSearchResultsBanner = () =>
 export const CloudSearch = () => {
 	const { searchResults, error, page } = useCloudSearch()
 
-	const [filters, setFilters] = useState<CloudSearchFilters>(() => {
-		const tags = fetchQueryParam('tags') ?? ''
-		const status = fetchQueryParam('status') ?? 0
-		return { tags, status: Number(status) }
-	})
-
-	const filteredSearchResults = useMemo(
-		() =>
-			searchResults?.filter(snippet =>
-				(!filters.tags || snippet.tags.includes(filters.tags)) &&
-				(!filters.status || snippet.status.valueOf() === filters.status)),
-		[searchResults, filters])
-
 	return (
 		<div className="cloud-search">
 			<SearchBox />
@@ -124,7 +104,9 @@ export const CloudSearch = () => {
 
 			{0 < page && searchResults && 0 === searchResults.length
 				? <NoSearchResultsBanner />
-				: filteredSearchResults && <SearchResultsTable {...{ filters, setFilters, filteredSearchResults }} />}
+				: <WithCloudSearchFiltersContext>
+					<SearchResultsTable />
+				</WithCloudSearchFiltersContext>}
 		</div>
 	)
 }

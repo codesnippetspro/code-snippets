@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { __ } from '@wordpress/i18n'
 import { useCloudSearch } from '../../../hooks/useCloudSearch'
+import { useCloudSearchFilters } from '../../../hooks/useCloudSearchFilters'
 import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
 import { updateQueryParam } from '../../../utils/urls'
 import type { Dispatch, SetStateAction } from 'react'
@@ -53,13 +54,9 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ options, filter, filters, s
 		</select>
 	</>
 
-export interface SearchFiltersProps {
-	filters: CloudSearchFilters
-	setFilters: Dispatch<SetStateAction<CloudSearchFilters>>
-}
-
-export const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, setFilters }) => {
+export const SearchFilters = () => {
 	const { searchResults: snippets } = useCloudSearch()
+	const { filters, setFilters } = useCloudSearchFilters()
 
 	const options: { [K in keyof CloudSearchFilters]: [CloudSearchFilters[K], string][] } = useMemo(
 		() => {

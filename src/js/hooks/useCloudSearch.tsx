@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { addQueryArgs } from '@wordpress/url'
 import { createContextHook } from '../utils/bootstrap'
 import { REST_CLOUD_SEARCH_BASE } from '../utils/restAPI'
 import { useRestAPI } from './useRestAPI'
-import type { Dispatch, PropsWithChildren, SetStateAction} from 'react'
+import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { CloudSnippetSchema } from '../types/schema/CloudSnippetSchema'
 
 interface CloudSearchContext {
 	page: number
 	error: boolean
 	query: string
+	doSearch: VoidFunction
 	totalItems: number
 	totalPages: number
 	isSearching: boolean
@@ -24,35 +25,36 @@ export const [CloudSearchContext, useCloudSearch] = createContextHook<CloudSearc
 
 export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const { api } = useRestAPI()
-	const [page, setPage] = useState(0)
+	const [page, setPage] = useState(1)
 	const [query, setQuery] = useState('')
 	const [searchByCodevault, setSearchByCodevault] = useState(false)
 
 	const [totalItems, setTotalItems] = useState(0)
 	const [totalPages, setTotalPages] = useState(0)
 
-	const [searchResults, setSearchResults] = useState<CloudSnippetSchema[]>()
+	const [searchResults, setSearchResults] = useState<CloudSnippetSchema[]>(() =>
+		window.localStorage.getItem('code-snippets-cloud-search') ? JSON.parse(window.localStorage.getItem('code-snippets-cloud-search')!) : undefined)
 	const [isSearching, setIsSearching] = useState(false)
 	const [error, setError] = useState(false)
 
-	useEffect(() => {
-		if (0 < page) {
-			setIsSearching(true)
+	const doSearch = useCallback(() => {
+		setIsSearching(true)
 
-			api
-				.getResponse<CloudSnippetSchema[]>(addQueryArgs(REST_CLOUD_SEARCH_BASE, { query, searchByCodevault, page }))
-				.then(response => {
-					setTotalItems(Number(response.headers['x-wp-total']))
-					setTotalPages(Number(response.headers['x-wp-totalpages']))
-					setSearchResults(response.data)
-					setIsSearching(false)
-				})
-				.catch((error: unknown) => {
-					console.error(error)
-					setIsSearching(false)
-					setError(true)
-				})
-		}
+		api
+			.getResponse<CloudSnippetSchema[]>(addQueryArgs(REST_CLOUD_SEARCH_BASE, { query, searchByCodevault, page }))
+			.then(response => {
+				setTotalItems(Number(response.headers['x-wp-total']))
+				setTotalPages(Number(response.headers['x-wp-totalpages']))
+				setSearchResults(response.data)
+				setIsSearching(false)
+
+				window.localStorage.setItem('code-snippets-cloud-search', JSON.stringify(response.data))
+			})
+			.catch((error: unknown) => {
+				console.error(error)
+				setIsSearching(false)
+				setError(true)
+			})
 	}, [api, page, query, searchByCodevault, setError, setSearchResults, setTotalItems, setTotalPages])
 
 	const value: CloudSearchContext = {
@@ -61,6 +63,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		query,
 		setPage,
 		setQuery,
+		doSearch,
 		totalItems,
 		totalPages,
 		isSearching,
