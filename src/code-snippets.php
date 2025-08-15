@@ -10,7 +10,7 @@
  * Text Domain:  code-snippets
  * Version:      3.8.0-dev.1
  * Requires PHP: 7.4
- * Requires at least: 5.0
+ * Requires at least: 5.5
  *
  * @version   3.8.0-dev.1
  * @package   Code_Snippets

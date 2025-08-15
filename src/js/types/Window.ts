@@ -56,6 +56,7 @@ declare global {
 			snippetsList: Snippet[]
 			hasNetworkCap: boolean
 			snippetsPerPage: number
+			isSafeModeActive: boolean
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet

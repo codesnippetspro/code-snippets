@@ -8,19 +8,15 @@
 @use 'manage/snippets-table';
 @use 'manage/cloud-community';
 
-.snippets-page-heading {
-	display: flex;
-	align-items: center;
+.wrap h1:first-of-type {
+	font-size: 1.6rem;
+	padding: 0;
 	margin-block: 50px 1.4rem;
+}
 
-	h1 {
-		font-size: 1.6rem;
-		padding: 0;
-	}
-
-	.button-primary {
-		margin-inline-start: auto;
-	}
+.create-snippet-button {
+	margin-inline-start: auto;
+	float: inline-end;
 }
 
 .nav-tab {

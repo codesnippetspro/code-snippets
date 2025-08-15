@@ -174,10 +174,6 @@ class Plugin {
 		$cloud = array( 'cloud', 'cloud-snippets' );
 		$welcome = array( 'welcome', 'getting-started', 'code-snippets' );
 
-		if ( 'manage-legacy' === $menu ) {
-			return 'snippets-legacy';
-		}
-
 		if ( in_array( $menu, $edit, true ) ) {
 			return 'edit-snippet';
 		} elseif ( in_array( $menu, $add, true ) ) {
@@ -187,7 +183,7 @@ class Plugin {
 		} elseif ( in_array( $menu, $settings, true ) ) {
 			return 'snippets-settings';
 		} elseif ( in_array( $menu, $cloud, true ) ) {
-			return 'snippets&type=cloud';
+			return 'snippets&subpage=cloud';
 		} elseif ( in_array( $menu, $welcome, true ) ) {
 			return 'code-snippets-welcome';
 		} else {

@@ -130,21 +130,9 @@ abstract class Admin_Menu {
 	}
 
 	/**
-	 * Render the content of a vew template
-	 *
-	 * @param string $name Name of view template to render.
-	 */
-	protected function render_view( string $name ) {
-		include dirname( PLUGIN_FILE ) . '/php/views/' . $name . '.php';
-	}
-
-	/**
 	 * Render the menu
 	 */
-	public function render() {
-		$this->render_navigation();
-		$this->render_view( $this->name );
-	}
+	abstract public function render();
 
 	/**
 	 * Print the status and error messages
@@ -223,16 +211,5 @@ abstract class Admin_Menu {
 		}
 
 		return $links;
-	}
-
-	/**
-	 * Render a list of links to other pages in the page title
-	 *
-	 * @param array<string> $actions List of actions to render as links, as array values.
-	 */
-	public function render_page_title_actions( array $actions ) {
-		foreach ( $this->page_title_action_links( $actions ) as $label => $url ) {
-			printf( '<a href="%s" class="page-title-action">%s</a>', esc_url( $url ), esc_html( $label ) );
-		}
 	}
 }

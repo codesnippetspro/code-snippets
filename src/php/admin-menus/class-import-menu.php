@@ -43,6 +43,15 @@ class Import_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Empty implementation for enqueue_assets.
+	 *
+	 * @return void
+	 */
+	public function enqueue_assets() {
+		// none required.
+	}
+
+	/**
 	 * Process the uploaded import files
 	 */
 	private function process_import_files() {
@@ -138,14 +147,10 @@ class Import_Menu extends Admin_Menu {
 
 			} else {
 				/* translators: %d: amount of snippets imported */
+				$text = _n( 'Successfully imported %d snippet.', 'Successfully imported %d snippets.', $imported, 'code-snippets' );
 				printf(
-					_n(
-						'Successfully imported %d snippet.',
-						'Successfully imported %d snippets.',
-						$imported,
-						'code-snippets'
-					),
-					'<strong>' . number_format_i18n( $imported ) . '</strong>',
+					esc_html( $text ),
+					'<strong>' . esc_html( number_format_i18n( $imported ) ) . '</strong>',
 				);
 
 				printf(
@@ -160,11 +165,133 @@ class Import_Menu extends Admin_Menu {
 	}
 
 	/**
-	 * Empty implementation for enqueue_assets.
+	 * Render the page title.
+	 */
+	private function render_page_title() {
+		echo '<h1>';
+		esc_html_e( 'Import Snippets', 'code-snippets' );
+
+		if ( code_snippets()->is_compact_menu() ) {
+			foreach ( $this->page_title_action_links( [ 'manage', 'add', 'settings' ] ) as $label => $url ) {
+				printf( '<a href="%s" class="page-title-action">%s</a>', esc_url( $url ), esc_html( $label ) );
+			}
+		}
+
+		echo '</h1>';
+	}
+
+	/**
+	 * Render the introduction text for the import form.
 	 *
 	 * @return void
 	 */
-	public function enqueue_assets() {
-		// none required.
+	private function render_form_introduction() {
+		echo '<p>', esc_html__( 'Upload one or more Code Snippets export files and the snippets will be imported.', 'code-snippets' ), '</p>';
+
+		echo '<p>';
+		/* translators: %s: link to snippets admin menu */
+		$text = __( 'Afterward, you will need to visit the <a href="%s" >All Snippets</a> page to activate the imported snippets.', 'code-snippets' );
+		$url = esc_url( code_snippets()->get_menu_url( 'manage' ) );
+
+		echo wp_kses(
+			sprintf( $text, $url ),
+			array(
+				'a' => array(
+					'href'   => array(),
+					'target' => array(),
+				),
+			)
+		);
+
+		echo '</p>';
+	}
+
+	/**
+	 * Render the options for handling duplicate snippets during import.
+	 *
+	 * @return void
+	 */
+	private function render_duplicate_snippets_options() {
+		echo '<h2>', esc_html__( 'Duplicate Snippets', 'code-snippets' ), '</h2>';
+
+		echo '<p class="description">',
+		esc_html__( 'What should happen if an existing snippet is found with an identical name to an imported snippet?', 'code-snippets' ),
+		'</p>';
+
+		$options = [
+			'ignore'  => __( 'Ignore any duplicate snippets: import all snippets from the file regardless and leave all existing snippets unchanged.', 'code-snippets' ),
+			'replace' => __( 'Replace any existing snippets with a newly imported snippet of the same name.', 'code-snippets' ),
+			'skip'    => __( 'Do not import any duplicate snippets; leave all existing snippets unchanged.', 'code-snippets' ),
+		];
+
+		echo '<fieldset>';
+
+		foreach ( $options as $value => $label ) {
+			printf(
+				'<p><label><input type="radio" name="duplicate_action" value="%s"%s>%s</label></p>',
+				esc_attr( $value ),
+				checked( 'ignore', $value, false ),
+				esc_html( $label )
+			);
+		}
+
+		echo '</fieldset>';
+	}
+
+	/**
+	 * Render the import file uploader.
+	 *
+	 * @return void
+	 */
+	private function render_file_upload() {
+		echo '<h2>', esc_html__( 'Upload Files', 'code-snippets' ), '</h2>';
+
+		echo '<p class="description">',
+		esc_html__( 'Choose one or more Code Snippets (.xml or .json) files to upload, then click "Upload files and import".', 'code-snippets' ),
+		'</p>';
+
+
+		echo '<fieldset><p>';
+		printf( '<label for="upload">%s</label>', esc_html__( 'Choose files from your computer:', 'code-snippets' ) );
+
+		$max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size() );
+
+		/* translators: %s: size in bytes */
+		printf( esc_html__( '(Maximum size: %s)', 'code-snippets' ), esc_html( size_format( $max_size_bytes ) ) );
+
+		echo '<input type="file" id="upload" name="code_snippets_import_files[]" size="25" accept="application/json,.json,text/xml" multiple="multiple">';
+		echo '<input type="hidden" name="action" value="save">';
+
+		printf( '<input type="hidden" name="max_file_size" value="%s">', esc_attr( $max_size_bytes ) );
+		echo '</p></fieldset>';
+	}
+
+	/**
+	 * Render the import menu interface.
+	 *
+	 * @return void
+	 */
+	public function render() {
+		$this->render_navigation();
+
+		echo '<div class="wrap">';
+		$this->render_page_title();
+		$this->print_messages();
+
+		echo '<div class="narrow">';
+		$this->render_form_introduction();
+
+		echo '<form enctype="multipart/form-data" id="import-upload-form" method="post" class="wp-upload-form" name="code_snippets_import">';
+		wp_nonce_field( 'import_code_snippets_file' );
+
+		$this->render_duplicate_snippets_options();
+		$this->render_file_upload();
+
+		do_action( 'code_snippets/admin/import_form' );
+		submit_button( __( 'Upload files and import', 'code-snippets' ) );
+		echo '</form>';
+
+		echo '</div>';
+		echo '</div>';
 	}
 }

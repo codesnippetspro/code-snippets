@@ -42,9 +42,7 @@ export const CommunityCloud = () => {
 
 	return (
 		<div className="wrap">
-			<div className="snippets-page-heading">
-				<h1>{__('Community Cloud', 'code-snippets')}</h1>
-			</div>
+			<h1>{__('Community Cloud', 'code-snippets')}</h1>
 
 			<NavTabs currentTab={currentTab} setCurrentTab={setCurrentTab} />
 

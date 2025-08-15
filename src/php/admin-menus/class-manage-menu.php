@@ -211,9 +211,10 @@ class Manage_Menu extends Admin_Menu {
 			self::JS_HANDLE,
 			'CODE_SNIPPETS_MANAGE',
 			[
-				'hasNetworkCap'   => current_user_can( code_snippets()->get_network_cap_name() ),
-				'snippetsPerPage' => $this->get_snippets_per_page(),
-				'snippetsList'    => array_map(
+				'hasNetworkCap'    => current_user_can( code_snippets()->get_network_cap_name() ),
+				'snippetsPerPage'  => $this->get_snippets_per_page(),
+				'isSafeModeActive' => code_snippets()->evaluate_functions->is_safe_mode_active(),
+				'snippetsList'     => array_map(
 					function ( $snippet ) {
 						return $snippet->get_fields();
 					},
