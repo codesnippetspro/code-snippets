@@ -1191,13 +1191,16 @@ class List_Table extends WP_List_Table {
 	 */
 	private function search_callback( Snippet $snippet ): bool {
 		global $s;
-		$fields = array( 'name', 'desc', 'code', 'tags_list' );
+
+		$query = sanitize_text_field( wp_unslash( $s ) );
+		$fields = [ 'name', 'desc', 'code', 'tags_list' ];
 
 		foreach ( $fields as $field ) {
-			if ( false !== stripos( $snippet->$field, $s ) ) {
+			if ( false !== stripos( $snippet->$field, $query ) ) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
