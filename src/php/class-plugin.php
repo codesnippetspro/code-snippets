@@ -2,11 +2,17 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_API;
+use Code_Snippets\Admin\Bootstrap_Admin;
+use Code_Snippets\Client\Cloud_API;
+use Code_Snippets\Core\DB;
+use Code_Snippets\Core\Licensing;
+use Code_Snippets\Core\Upgrade;
+use Code_Snippets\Integration\Evaluate_Content;
+use Code_Snippets\Integration\Evaluate_Functions;
+use Code_Snippets\Integration\MCE_Plugin;
+use Code_Snippets\Integration\Shortcodes;
 use Code_Snippets\REST_API\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
-use Evaluation\Evaluate_Content;
-use Evaluation\Evaluate_Functions;
 
 /**
  * The main plugin class
@@ -41,28 +47,21 @@ class Plugin {
 	 *
 	 * @var Evaluate_Functions
 	 */
-	public $evaluate_functions;
+	public Evaluate_Functions $evaluate_functions;
 
 	/**
 	 * Class for evaluating content snippets.
 	 *
 	 * @var Evaluate_Content
 	 */
-	public $evaluate_content;
+	public Evaluate_Content $evaluate_content;
 
 	/**
 	 * Administration area class
 	 *
-	 * @var Admin
+	 * @var Bootstrap_Admin
 	 */
-	public Admin $admin;
-
-	/**
-	 * Front-end functionality class
-	 *
-	 * @var Front_End
-	 */
-	public Front_End $front_end;
+	public Bootstrap_Admin $admin;
 
 	/**
 	 * Class for managing cloud API actions.
@@ -101,42 +100,23 @@ class Plugin {
 	}
 
 	/**
-	 * Initialise classes and include files
+	 * Initialise the plugin and load all necessary classes.
 	 */
 	public function load_plugin() {
-		$includes_path = __DIR__;
-
-		// Database operation functions.
 		$this->db = new DB();
-
-		// Snippet operation functions.
-		require_once $includes_path . '/snippet-ops.php';
+		$this->cloud_api = new Cloud_API();
+		$this->licensing = new Licensing();
 		$this->evaluate_content = new Evaluate_Content( $this->db );
 		$this->evaluate_functions = new Evaluate_Functions( $this->db );
 
-		// CodeMirror editor functions.
-		require_once $includes_path . '/editor.php';
-
-		// General Administration functions.
 		if ( is_admin() ) {
-			$this->admin = new Admin();
+			$this->admin = new Bootstrap_Admin();
 		}
 
-		// Settings component.
-		require_once $includes_path . '/settings/settings-fields.php';
-		require_once $includes_path . '/settings/editor-preview.php';
-		require_once $includes_path . '/settings/settings.php';
-
-		// Cloud List Table shared functions.
-		require_once $includes_path . '/cloud/list-table-shared-ops.php';
-
-		$this->front_end = new Front_End();
-		$this->cloud_api = new Cloud_API();
+		new Shortcodes();
 		new Rest_API();
-
-		$upgrade = new Upgrade( $this->version, $this->db );
-		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
-		$this->licensing = new Licensing();
+		new MCE_Plugin();
+		new Upgrade( $this->version, $this->db );
 	}
 
 	/**
@@ -183,7 +163,7 @@ class Plugin {
 		} elseif ( in_array( $menu, $settings, true ) ) {
 			return 'snippets-settings';
 		} elseif ( in_array( $menu, $cloud, true ) ) {
-			return 'snippets&subpage=cloud';
+			return 'snippets&subpage=cloud-community';
 		} elseif ( in_array( $menu, $welcome, true ) ) {
 			return 'code-snippets-welcome';
 		} else {
@@ -220,22 +200,6 @@ class Plugin {
 		} else {
 			return self_admin_url( $url );
 		}
-	}
-
-	/**
-	 * Fetch the admin menu slug for a snippets admin menu.
-	 *
-	 * @param integer $snippet_id Snippet ID.
-	 * @param string  $context    URL scheme to use.
-	 *
-	 * @return string The URL to the edit snippet page for that snippet.
-	 */
-	public function get_snippet_edit_url( int $snippet_id, string $context = 'self' ): string {
-		return add_query_arg(
-			'id',
-			absint( $snippet_id ),
-			$this->get_menu_url( 'edit', $context )
-		);
 	}
 
 	/**
@@ -315,26 +279,6 @@ class Plugin {
 		return isset( $_REQUEST['snippets-safe-mode'] ) ?
 			add_query_arg( 'snippets-safe-mode', (bool) $_REQUEST['snippets-safe-mode'], $url ) :
 			$url;
-	}
-
-	/**
-	 * Retrieve a list of available snippet types and their labels.
-	 *
-	 * @return array<string, string> Snippet types.
-	 */
-	public static function get_types(): array {
-		return apply_filters(
-			'code_snippets_types',
-			array(
-				'php'          => __( 'Functions', 'code-snippets' ),
-				'html'         => __( 'Content', 'code-snippets' ),
-				'css'          => __( 'Styles', 'code-snippets' ),
-				'js'           => __( 'Scripts', 'code-snippets' ),
-				'cloud'        => __( 'Codevault', 'code-snippets' ),
-				'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
-				'bundles'      => __( 'Bundles', 'code-snippets' ),
-			)
-		);
 	}
 
 	/**

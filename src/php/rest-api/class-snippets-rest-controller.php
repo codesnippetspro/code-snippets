@@ -2,8 +2,10 @@
 
 namespace Code_Snippets\REST_API;
 
-use Code_Snippets\Export;
-use Code_Snippets\Snippet;
+use Code_Snippets\Export\Export;
+use Code_Snippets\Export\Export_Code;
+use Code_Snippets\Export\Export_JSON;
+use Code_Snippets\Model\Snippet;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -16,7 +18,6 @@ use function Code_Snippets\delete_snippet;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
-use function Code_Snippets\update_snippet_fields;
 use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
@@ -30,12 +31,12 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Current API version.
 	 */
-	const VERSION = 1;
+	public const VERSION = 1;
 
 	/**
 	 * The base of this controller's route.
 	 */
-	const BASE_ROUTE = 'snippets';
+	public const BASE_ROUTE = 'snippets';
 
 	/**
 	 * The namespace of this controller's route.
@@ -345,13 +346,14 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Prepare an instance of the Export class from a request.
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param Export $export Instance of Export class to use for generating response.
 	 *
-	 * @return Export
+	 * @return WP_REST_Response
 	 */
-	protected function build_export( WP_REST_Request $request ): Export {
-		$item = $this->prepare_item_for_database( $request );
-		return new Export( [ $item->id ], $item->network );
+	protected function build_export_response( Export $export ): WP_REST_Response {
+		$response = rest_ensure_response( $export->generate_export() );
+		$response->header( 'X-Suggested-Filename', $export->build_filename() );
+		return $response;
 	}
 
 	/**
@@ -359,12 +361,13 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return WP_Error|WP_REST_Response
+	 * @return WP_REST_Response
 	 */
-	public function export_item( WP_REST_Request $request ) {
-		$export = $this->build_export( $request );
-		$result = $export->create_export_object();
-		return rest_ensure_response( $result );
+	public function export_item( WP_REST_Request $request ): WP_REST_Response {
+		$item = $this->prepare_item_for_database( $request );
+		$export = new Export_JSON( [ $item->id ], $item->network );
+
+		return $this->build_export_response( $export );
 	}
 
 	/**
@@ -372,13 +375,13 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return WP_Error|WP_REST_Response
+	 * @return WP_REST_Response
 	 */
-	public function export_item_code( WP_REST_Request $request ) {
-		$export = $this->build_export( $request );
-		$result = $export->export_snippets_code();
+	public function export_item_code( WP_REST_Request $request ): WP_REST_Response {
+		$item = $this->prepare_item_for_database( $request );
+		$export = new Export_Code( [ $item->id ], $item->network );
 
-		return rest_ensure_response( $result );
+		return $this->build_export_response( $export );
 	}
 
 	/**

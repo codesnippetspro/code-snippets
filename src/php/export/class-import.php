@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use Code_Snippets\Core\DB;
+use Code_Snippets\Model\Snippet;
 use DOMDocument;
 
 /**

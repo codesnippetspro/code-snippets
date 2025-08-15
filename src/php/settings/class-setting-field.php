@@ -1,16 +1,9 @@
 <?php
-/**
- * This file handles rendering the settings fields
- *
- * @since      2.0.0
- * @package    Code_Snippets
- * @subpackage Settings
- */
 
 namespace Code_Snippets\Settings;
 
 /**
- * Represents a single setting field
+ * Represents a single setting field.
  *
  * @property-read string                $desc               Field description.
  * @property-read string                $label              Field label.
@@ -98,26 +91,45 @@ class Setting_Field {
 	 * Render the setting field
 	 */
 	public function render() {
-		$method_name = 'render_' . $this->type . '_field';
+		switch ( $this->type ) {
+			case 'callback':
+				call_user_func( $this->render_callback );
+				break;
 
-		if ( method_exists( $this, $method_name ) ) {
-			call_user_func( array( $this, $method_name ) );
-		} else {
-			// Error message, not necessary to translate.
-			printf( 'Cannot render a %s field.', esc_html( $this->type ) );
-			return;
+			case 'checkbox':
+				$this->render_checkbox( $this->input_name, $this->label, $this->get_saved_value() ?? false );
+				break;
+
+			case 'checkboxes':
+				$this->render_checkboxes_field();
+				break;
+
+			case 'text':
+				$this->render_text_field();
+				break;
+
+			case 'number':
+				$this->render_number_field();
+				break;
+
+			case 'select':
+				$this->render_select_field();
+				break;
+
+			case 'action':
+				$this->render_action_field();
+				break;
+
+			default:
+				// Error message, not necessary to translate.
+				printf( 'Cannot render a %s field.', esc_html( $this->type ) );
+				return;
+
 		}
 
 		if ( $this->desc ) {
 			echo '<p class="description">', wp_kses_post( $this->desc ), '</p>';
 		}
-	}
-
-	/**
-	 * Render a callback field.
-	 */
-	public function render_callback_field() {
-		call_user_func( $this->render_callback );
 	}
 
 	/**
@@ -128,14 +140,13 @@ class Setting_Field {
 	 * @param boolean $checked    Whether the checkbox should be checked.
 	 */
 	private static function render_checkbox( string $input_name, string $label, bool $checked ) {
-
 		$checkbox = sprintf(
-			'<input type="checkbox" name="%s"%s>',
+			'<input type="checkbox" name="%s" %s>',
 			esc_attr( $input_name ),
 			checked( $checked, true, false )
 		);
 
-		$kses = [
+		$allowed_html = [
 			'input' => [
 				'type'    => [],
 				'name'    => [],
@@ -146,22 +157,12 @@ class Setting_Field {
 		if ( $label ) {
 			printf(
 				'<label>%s %s</label>',
-				wp_kses( $checkbox, $kses ),
+				wp_kses( $checkbox, $allowed_html ),
 				wp_kses_post( $label )
 			);
 		} else {
-			echo wp_kses( $checkbox, $kses );
+			echo wp_kses( $checkbox, $allowed_html );
 		}
-	}
-
-	/**
-	 * Render a checkbox field for a setting
-	 *
-	 * @return void
-	 * @since 2.0.0
-	 */
-	public function render_checkbox_field() {
-		$this->render_checkbox( $this->input_name, $this->label, $this->get_saved_value() ?? false );
 	}
 
 	/**
@@ -242,7 +243,7 @@ class Setting_Field {
 
 		foreach ( $this->options as $option => $option_label ) {
 			printf(
-				'<option value="%s"%s>%s</option>',
+				'<option value="%s" %s>%s</option>',
 				esc_attr( $option ),
 				selected( $option, $saved_value, false ),
 				esc_html( $option_label )

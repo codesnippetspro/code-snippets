@@ -1,58 +1,22 @@
 <?php
 /**
- * This file registers the settings
+ * This file registers the settings.
  *
- * @package    Code_Snippets
- * @subpackage Settings
+ * @package Code_Snippets
  */
 
 namespace Code_Snippets\Settings;
 
-use Code_Snippets\Welcome_API;
+use Code_Snippets\Client\Welcome_API;
+use function add_action;
 use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\Utils\add_self_option;
+use function Code_Snippets\Utils\get_self_option;
 
 const CACHE_KEY = 'code_snippets_settings';
 const OPTION_GROUP = 'code-snippets';
 const OPTION_NAME = 'code_snippets_settings';
-
-/**
- * Retrieves an option value based on an option name from either the current site or the current network
- *
- * @param bool   $network       Whether to get a network-wide option.
- * @param string $option        Name of option to retrieve. Expected to not be SQL-escaped.
- * @param mixed  $default_value Optional value to return if option doesn't exist. Default false.
- *
- * @return mixed Value set for the option.
- */
-function get_self_option( bool $network, string $option, $default_value = false ) {
-	return $network ? get_site_option( $option, $default_value ) : get_option( $option, $default_value );
-}
-
-/**
- * Update the value of an option that was already added on the current site or the current network.
- *
- * @param bool   $network Whether to update a network-wide option.
- * @param string $option  Name of option. Expected to not be SQL-escaped.
- * @param mixed  $value   Option value. Expected to not be SQL-escaped.
- *
- * @return bool False if value was not updated. True if value was updated.
- */
-function update_self_option( bool $network, string $option, $value ): bool {
-	return $network ? update_site_option( $option, $value ) : update_option( $option, $value );
-}
-
-/**
- * Remove an option on th current site or the current network.
- *
- * @param bool   $network Whether to delete a network-wide option.
- * @param string $option  Name of option. Expected to not be SQL-escaped.
- *
- * @return bool False if value was not deleted. True if value was deleted.
- */
-function delete_self_option( bool $network, string $option ): bool {
-	return $network ? delete_site_option( $option ) : delete_option( $option );
-}
 
 /**
  * Returns 'true' if plugin settings are unified on a multisite installation
@@ -67,12 +31,13 @@ function are_settings_unified(): bool {
 		return false;
 	}
 
-	$menu_perms = get_site_option( 'menu_items', array() );
+	$menu_perms = get_site_option( 'menu_items', [] );
 	return empty( $menu_perms['snippets_settings'] );
 }
 
 /**
  * Retrieve the setting values from the database.
+ *
  * If a setting does not exist in the database, the default value will be returned.
  *
  * @return array<string, array<string, mixed>>
@@ -83,12 +48,13 @@ function get_settings_values(): array {
 		return $settings;
 	}
 
-	$settings = get_default_settings();
-	$saved = get_self_option( are_settings_unified(), OPTION_NAME, array() );
+	$settings = Settings_Fields::get_default_values();
+	$saved = get_self_option( are_settings_unified(), OPTION_NAME, [] );
 
-	foreach ( $settings as $section => $fields ) {
+	// Deep merge the saved settings with the default values.
+	foreach ( $settings as $section => $section_fields ) {
 		if ( isset( $saved[ $section ] ) ) {
-			$settings[ $section ] = array_replace( $fields, $saved[ $section ] );
+			$settings[ $section ] = array_replace( $section_fields, $saved[ $section ] );
 		}
 	}
 
@@ -111,24 +77,6 @@ function get_setting( string $section, string $field ) {
 }
 
 /**
- * Update a single setting to a new value.
- *
- * @param string $section   ID of the section the setting belongs to.
- * @param string $field     ID of the setting field.
- * @param mixed  $new_value Setting value. Expected to not be SQL-escaped.
- *
- * @return bool False if value was not updated. True if value was updated.
- */
-function update_setting( string $section, string $field, $new_value ): bool {
-	$settings = get_settings_values();
-
-	$settings[ $section ][ $field ] = $new_value;
-
-	wp_cache_set( CACHE_KEY, $settings );
-	return update_self_option( are_settings_unified(), OPTION_NAME, $settings );
-}
-
-/**
  * Retrieve the settings sections
  *
  * @return array<string, string> Settings sections.
@@ -147,12 +95,8 @@ function get_settings_sections(): array {
  * Register settings sections, fields, etc
  */
 function register_plugin_settings() {
-	if ( are_settings_unified() ) {
-		if ( ! get_site_option( OPTION_NAME ) ) {
-			add_site_option( OPTION_NAME, get_default_settings() );
-		}
-	} elseif ( ! get_option( OPTION_NAME ) ) {
-		add_option( OPTION_NAME, get_default_settings() );
+	if ( ! get_self_option( are_settings_unified(), OPTION_NAME ) ) {
+		add_self_option( are_settings_unified(), OPTION_NAME, Settings_Fields::get_default_values() );
 	}
 
 	// Register the setting.
@@ -168,18 +112,20 @@ function register_plugin_settings() {
 	}
 
 	// Register settings fields.
-	foreach ( get_settings_fields() as $section_id => $fields ) {
+	foreach ( Settings_Fields::get_field_definitions() as $section_id => $fields ) {
 		foreach ( $fields as $field_id => $field ) {
 			$field_object = new Setting_Field( $section_id, $field_id, $field );
 			add_settings_field( $field_id, $field['name'], [ $field_object, 'render' ], 'code-snippets', $section_id );
 		}
 	}
 
+	$editor_preview = new Editor_Preview();
+
 	// Add editor preview as a field.
 	add_settings_field(
 		'editor_preview',
 		__( 'Editor Preview', 'code-snippets' ),
-		__NAMESPACE__ . '\\render_editor_preview',
+		[ $editor_preview, 'render' ],
 		'code-snippets',
 		'editor'
 	);
@@ -305,7 +251,7 @@ function sanitize_settings( array $input ): array {
 	$updated = false;
 
 	// Don't directly loop through $input as it does not include as deselected checkboxes.
-	foreach ( get_settings_fields() as $section_id => $fields ) {
+	foreach ( Settings_Fields::get_field_definitions() as $section_id => $fields ) {
 		foreach ( $fields as $field_id => $field ) {
 
 			// Fetch the corresponding input value from the posted data.

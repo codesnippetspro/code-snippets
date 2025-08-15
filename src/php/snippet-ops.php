@@ -7,10 +7,12 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\REST_API\Snippets_REST_Controller;
+use Code_Snippets\Core\DB;
 use ParseError;
-use function Code_Snippets\Settings\get_self_option;
-use function Code_Snippets\Settings\update_self_option;
+use Code_Snippets\Model\Snippet;
+use Code_Snippets\Utils\Validator;
+use function Code_Snippets\Utils\get_self_option;
+use function Code_Snippets\Utils\update_self_option;
 
 /**
  * Clean the cache where active snippets are stored.
@@ -602,6 +604,7 @@ function save_snippet( $snippet ): ?Snippet {
  * @return ParseError|mixed Code error if encountered during execution, or result of snippet execution otherwise.
  *
  * @since 2.0.0
+ * @noinspection PhpUndefinedConstantInspection
  */
 function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 	if ( empty( $code ) || ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ) {

@@ -2,14 +2,13 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use function Code_Snippets\Settings\delete_self_option;
-use function Code_Snippets\Settings\get_self_option;
+use function Code_Snippets\Utils\delete_self_option;
+use function Code_Snippets\Utils\get_self_option;
 
 /**
  * Class for managing the REST API functionality of the plugin.
@@ -21,14 +20,14 @@ class Rest_API {
 	/**
 	 * Current API version.
 	 */
-	const VERSION = 1;
+	public const VERSION = 1;
 
 	/**
 	 * The namespace of this controller's route.
 	 *
 	 * @var string
 	 */
-	protected $namespace = REST_API_NAMESPACE . self::VERSION;
+	protected string $namespace = REST_API_NAMESPACE . self::VERSION;
 
 	/**
 	 * Class constrictor.

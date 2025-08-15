@@ -2,7 +2,7 @@
 
 namespace Code_Snippets\REST_API;
 
-use Code_Snippets\Cloud\Cloud_API;
+use Code_Snippets\Client\Cloud_API;
 use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -20,12 +20,12 @@ final class Cloud_Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Current API version.
 	 */
-	const VERSION = 1;
+	public const VERSION = 1;
 
 	/**
 	 * The base of this controller's route.
 	 */
-	const BASE_ROUTE = 'cloud/search';
+	public const BASE_ROUTE = 'cloud/search';
 
 	/**
 	 * The namespace of this controller's route.
