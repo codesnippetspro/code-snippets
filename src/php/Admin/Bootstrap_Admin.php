@@ -3,11 +3,11 @@
 namespace Code_Snippets\Admin;
 
 use Code_Snippets\Admin\Menus\Admin_Menu;
-use Code_Snippets\Admin\Menus\Edit_Admin_Menu;
-use Code_Snippets\Admin\Menus\Import_Admin_Menu;
-use Code_Snippets\Admin\Menus\Manage_Admin_Menu;
-use Code_Snippets\Admin\Menus\Settings_Admin_Menu;
-use Code_Snippets\Admin\Menus\Welcome_Admin_Menu;
+use Code_Snippets\Admin\Menus\Edit_Menu;
+use Code_Snippets\Admin\Menus\Import_Menu;
+use Code_Snippets\Admin\Menus\Manage_Menu;
+use Code_Snippets\Admin\Menus\Settings_Menu;
+use Code_Snippets\Admin\Menus\Welcome_Menu;
 use Code_Snippets\Client\Welcome_API;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -60,15 +60,15 @@ class Bootstrap_Admin {
 	 * Initialise classes
 	 */
 	public function load_classes() {
-		$this->menus['manage'] = new Manage_Admin_Menu();
-		$this->menus['edit'] = new Edit_Admin_Menu();
-		$this->menus['import'] = new Import_Admin_Menu();
+		$this->menus['manage'] = new Manage_Menu();
+		$this->menus['edit'] = new Edit_Menu();
+		$this->menus['import'] = new Import_Menu();
 
 		if ( is_network_admin() === are_settings_unified() ) {
-			$this->menus['settings'] = new Settings_Admin_Menu();
+			$this->menus['settings'] = new Settings_Menu();
 		}
 
-		$this->menus['welcome'] = new Welcome_Admin_Menu( $this->welcome_api );
+		$this->menus['welcome'] = new Welcome_Menu( $this->welcome_api );
 	}
 
 	/**

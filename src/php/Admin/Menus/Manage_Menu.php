@@ -2,8 +2,8 @@
 
 namespace Code_Snippets\Admin\Menus;
 
-use Code_Snippets\Integration\Code_Highlighter;
-use Contextual_Help;
+use Code_Snippets\Admin\Contextual_Help;
+use Code_Snippets\Utils\Code_Highlighter;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\Settings\get_setting;
@@ -16,7 +16,7 @@ use const Code_Snippets\PLUGIN_VERSION;
  * @since   2.4.0
  * @package Code_Snippets
  */
-class Manage_Admin_Menu extends Admin_Menu {
+class Manage_Menu extends Admin_Menu {
 
 	/**
 	 * Handle for JavaScript asset file.

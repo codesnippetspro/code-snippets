@@ -21,15 +21,9 @@
         "source": "https://github.com/codesnippetspro/code-snippets"
     },
     "autoload": {
-        "classmap": [
-            "php/"
-        ],
-        "files": [
-            "php/snippet-ops.php",
-            "php/utils/editor.php",
-            "php/utils/options.php",
-            "php/settings/settings.php"
-        ]
+        "psr-4": {
+            "Code_Snippets\\": "php/"
+        }
     },
     "require": {
         "php": ">=7.4",

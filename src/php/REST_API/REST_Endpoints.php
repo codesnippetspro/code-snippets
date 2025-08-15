@@ -1,21 +1,20 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\REST_API;
 
-use Code_Snippets\REST_API\Cloud_Snippets_REST_Controller;
-use Code_Snippets\REST_API\Snippets_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use function Code_Snippets\Utils\delete_self_option;
 use function Code_Snippets\Utils\get_self_option;
+use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
  * Class for managing the REST API functionality of the plugin.
  *
  * @package Code_Snippets
  */
-class Rest_API {
+class REST_Endpoints {
 
 	/**
 	 * Current API version.
@@ -33,21 +32,7 @@ class Rest_API {
 	 * Class constrictor.
 	 */
 	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'init' ] );
-	}
-
-	/**
-	 * Register custom REST API controllers.
-	 *
-	 * @return void
-	 */
-	public function init() {
-		$snippets_controller = new Snippets_REST_Controller();
-		$cloud_snippets_controller = new Cloud_Snippets_REST_Controller();
-
-		$snippets_controller->register_routes();
-		$cloud_snippets_controller->register_routes();
-		$this->register_routes();
+		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
 
 	/**

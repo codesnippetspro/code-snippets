@@ -6,6 +6,7 @@ use Code_Snippets\REST_API\Snippets_REST_Controller;
 use Code_Snippets\Core\DB;
 use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\clean_snippets_cache;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\execute_snippet;
 
 /**
@@ -30,6 +31,25 @@ class Evaluate_Functions {
 	public function __construct( DB $db ) {
 		$this->db = $db;
 		add_action( 'plugins_loaded', [ $this, 'evaluate_early' ], 1 );
+		add_filter( 'code_snippets/execute_snippets', [ $this, 'disable_snippet_execution' ], 5 );
+
+		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
+			add_filter( 'home_url', [ $this, 'add_safe_mode_query_var' ] );
+			add_filter( 'admin_url', [ $this, 'add_safe_mode_query_var' ] );
+		}
+	}
+
+	/**
+	 * Inject the safe mode query var into URLs
+	 *
+	 * @param string $url Original URL.
+	 *
+	 * @return string Modified URL.
+	 */
+	public function add_safe_mode_query_var( string $url ): string {
+		return isset( $_REQUEST['snippets-safe-mode'] ) ?
+			add_query_arg( 'snippets-safe-mode', (bool) $_REQUEST['snippets-safe-mode'], $url ) :
+			$url;
 	}
 
 	/**
@@ -71,6 +91,17 @@ class Evaluate_Functions {
 	public function is_safe_mode_active(): bool {
 		return ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ||
 		       ! apply_filters( 'code_snippets/execute_snippets', true );
+	}
+
+	/**
+	 * Disable snippet execution if the necessary query var is set.
+	 *
+	 * @param bool $execute_snippets Current filter value.
+	 *
+	 * @return bool New filter value.
+	 */
+	public function disable_snippet_execution( bool $execute_snippets ): bool {
+		return ! empty( $_REQUEST['snippets-safe-mode'] ) && code_snippets()->current_user_can() ? false : $execute_snippets;
 	}
 
 	/**

@@ -13,7 +13,7 @@ use const Code_Snippets\PLUGIN_VERSION;
  * @since   3.7.0
  * @package Code_Snippets
  */
-class Welcome_Admin_Menu extends Admin_Menu {
+class Welcome_Menu extends Admin_Menu {
 
 	/**
 	 * Instance of Welcome_API class.

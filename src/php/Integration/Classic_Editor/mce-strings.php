@@ -5,7 +5,7 @@
  * @package Code_Snippets
  */
 
-namespace Code_Snippets\Integration;
+namespace Code_Snippets\Integration\Classic_Editor;
 
 use _WP_Editors;
 use Code_Snippets\Model\Snippet;

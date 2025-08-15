@@ -2,17 +2,16 @@
 
 namespace Code_Snippets\Admin\Menus;
 
+use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Import;
-use Contextual_Help;
 use function Code_Snippets\code_snippets;
 
 /**
  * This class handles the import admin menu.
  *
- * @since   2.4.0
  * @package Code_Snippets
  */
-class Import_Admin_Menu extends Admin_Menu {
+class Import_Menu extends Admin_Menu {
 
 	/**
 	 * Class constructor

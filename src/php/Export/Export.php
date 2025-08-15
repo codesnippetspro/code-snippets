@@ -6,10 +6,9 @@ use Code_Snippets\Model\Snippet;
 use function Code_Snippets\get_snippets;
 
 /**
- * Handles exporting snippets from the site in various downloadable formats
+ * Handles exporting snippets from the site in a downloadable format.
  *
  * @package Code_Snippets
- * @since   3.0.0
  */
 abstract class Export {
 
@@ -64,5 +63,10 @@ abstract class Export {
 		return apply_filters( 'code_snippets/export/filename', $filename, $title, $this->snippets_list );
 	}
 
+	/**
+	 * Generate the export data in the specified format.
+	 *
+	 * @return mixed
+	 */
 	abstract public function generate_export();
 }

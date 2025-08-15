@@ -6,12 +6,13 @@ use Code_Snippets\Admin\Bootstrap_Admin;
 use Code_Snippets\Client\Cloud_API;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
-use Code_Snippets\Core\Upgrade;
+use Code_Snippets\Core\Upgrader;
+use Code_Snippets\Integration\Classic_Editor\MCE_Plugin;
 use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
-use Code_Snippets\Integration\MCE_Plugin;
 use Code_Snippets\Integration\Shortcodes;
 use Code_Snippets\REST_API\Cloud_Snippets_REST_Controller;
+use Code_Snippets\REST_API\REST_Endpoints;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 
 /**
@@ -24,16 +25,20 @@ class Plugin {
 	/**
 	 * Current plugin version number
 	 *
+	 * @deprecated Use the PLUGIN_VERSION constant instead.
+	 *
 	 * @var string
 	 */
-	public string $version;
+	public string $version = PLUGIN_VERSION;
 
 	/**
 	 * Filesystem path to the main plugin file
 	 *
+	 * @deprecated Use the PLUGIN_FILE constant instead.
+	 *
 	 * @var string
 	 */
-	public string $file;
+	public string $file = PLUGIN_FILE;
 
 	/**
 	 * Database class
@@ -79,30 +84,28 @@ class Plugin {
 
 	/**
 	 * Class constructor
-	 *
-	 * @param string $version Current plugin version.
-	 * @param string $file    Path to main plugin file.
 	 */
-	public function __construct( string $version, string $file ) {
-		$this->version = $version;
-		$this->file = $file;
-
+	public function __construct(  ) {
 		wp_cache_add_global_groups( CACHE_GROUP );
-
-		add_filter( 'code_snippets/execute_snippets', array( $this, 'disable_snippet_execution' ), 5 );
-
-		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
-			add_filter( 'home_url', array( $this, 'add_safe_mode_query_var' ) );
-			add_filter( 'admin_url', array( $this, 'add_safe_mode_query_var' ) );
-		}
-
 		add_action( 'allowed_redirect_hosts', [ $this, 'allow_code_snippets_redirect' ] );
+	}
+
+	/**
+	 * Load the plugin utilities.
+	 */
+	private function load_utilities() {
+		require_once __DIR__ . '/snippet-ops.php';
+		require_once __DIR__ . '/Utils/editor.php';
+		require_once __DIR__ . '/Utils/options.php';
+		require_once __DIR__ . '/Settings/settings.php';
 	}
 
 	/**
 	 * Initialise the plugin and load all necessary classes.
 	 */
 	public function load_plugin() {
+		$this->load_utilities();
+
 		$this->db = new DB();
 		$this->cloud_api = new Cloud_API();
 		$this->licensing = new Licensing();
@@ -113,21 +116,13 @@ class Plugin {
 			$this->admin = new Bootstrap_Admin();
 		}
 
-		new Shortcodes();
-		new Rest_API();
-		new MCE_Plugin();
-		new Upgrade( $this->version, $this->db );
-	}
+		new REST_Endpoints();
+		new Snippets_REST_Controller();
+		new Cloud_Snippets_REST_Controller();
 
-	/**
-	 * Disable snippet execution if the necessary query var is set.
-	 *
-	 * @param bool $execute_snippets Current filter value.
-	 *
-	 * @return bool New filter value.
-	 */
-	public function disable_snippet_execution( bool $execute_snippets ): bool {
-		return ! empty( $_REQUEST['snippets-safe-mode'] ) && $this->current_user_can() ? false : $execute_snippets;
+		new Shortcodes();
+		new MCE_Plugin();
+		new Upgrader( PLUGIN_VERSION, $this->db );
 	}
 
 	/**
@@ -266,19 +261,6 @@ class Plugin {
 		}
 
 		return $this->get_cap_name();
-	}
-
-	/**
-	 * Inject the safe mode query var into URLs
-	 *
-	 * @param string $url Original URL.
-	 *
-	 * @return string Modified URL.
-	 */
-	public function add_safe_mode_query_var( string $url ): string {
-		return isset( $_REQUEST['snippets-safe-mode'] ) ?
-			add_query_arg( 'snippets-safe-mode', (bool) $_REQUEST['snippets-safe-mode'], $url ) :
-			$url;
 	}
 
 	/**

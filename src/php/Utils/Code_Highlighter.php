@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\Integration;
+namespace Code_Snippets\Utils;
 
 use function Code_Snippets\code_snippets;
 

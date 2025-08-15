@@ -19,7 +19,7 @@ use const Code_Snippets\Settings\CACHE_KEY;
  * @since   2.4.0
  * @package Code_Snippets
  */
-class Settings_Admin_Menu extends Admin_Menu {
+class Settings_Menu extends Admin_Menu {
 
 	/**
 	 * Settings page name as registered with the Settings API.

@@ -15,7 +15,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) || ( defined( 'CODE_SNIPPETS_PRO' ) && C
 	return;
 }
 
-require_once __DIR__ . '/php/core/class-uninstaller.php';
+require_once __DIR__ . '/php/Core/Uninstaller.php';
 
 $uninstaller = new Uninstaller();
 $uninstaller->uninstall_plugin();

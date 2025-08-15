@@ -12,7 +12,7 @@ use function Code_Snippets\save_snippet;
 /**
  * Manages upgrade tasks such as deleting and updating options
  */
-class Upgrade {
+class Upgrader {
 
 	/**
 	 * Instance of database class

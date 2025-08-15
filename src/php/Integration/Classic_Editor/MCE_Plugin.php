@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\Integration;
+namespace Code_Snippets\Integration\Classic_Editor;
 
 use function Code_Snippets\code_snippets;
 use const Code_Snippets\PLUGIN_FILE;

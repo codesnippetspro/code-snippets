@@ -56,7 +56,7 @@ function code_snippets(): Plugin {
 	static $plugin;
 
 	if ( is_null( $plugin ) ) {
-		$plugin = new Plugin( PLUGIN_VERSION, PLUGIN_FILE );
+		$plugin = new Plugin();
 	}
 
 	return $plugin;

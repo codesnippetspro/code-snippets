@@ -58,7 +58,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.4', 
 	 */
 	define( 'CODE_SNIPPETS_PRO', false );
 
-	require_once dirname( __FILE__ ) . '/php/core/load.php';
+	require_once dirname( __FILE__ ) . '/php/Core/load.php';
 } else {
-	require_once dirname( __FILE__ ) . '/php/core/deactivation-notice.php';
+	require_once dirname( __FILE__ ) . '/php/Core/deactivation-notice.php';
 }

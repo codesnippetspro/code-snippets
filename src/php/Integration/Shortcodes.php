@@ -3,6 +3,7 @@
 namespace Code_Snippets\Integration;
 
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\Utils\Code_Highlighter;
 use WP_Post;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippet;

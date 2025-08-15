@@ -71,6 +71,13 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Class constrictor.
+	 */
+	public function __construct() {
+		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
+	}
+
+	/**
 	 * Register REST routes.
 	 */
 	public function register_routes() {

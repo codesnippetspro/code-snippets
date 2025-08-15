@@ -1,7 +1,9 @@
 <?php
 
-use function Code_Snippets\code_snippets;
+namespace Code_Snippets\Admin;
 
+use WP_Screen;
+use function Code_Snippets\code_snippets;
 
 /**
  * This file holds all the content for the contextual help screens.
