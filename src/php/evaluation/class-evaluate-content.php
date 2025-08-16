@@ -70,7 +70,7 @@ class Evaluate_Content {
 			if ( 'condition' === $scope ) {
 				$this->conditions[ $id ] = evaluate_condition( $snippet['code'] );
 			} else {
-				$this->active_snippets[ $scope ] = $snippet;
+				$this->active_snippets[ $scope ][] = $snippet;
 			}
 		}
 	}
