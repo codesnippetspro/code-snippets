@@ -49,9 +49,7 @@ class Evaluate_Assets {
 			return;
 		}
 
-		$flat_files_enabled = Settings\get_setting( 'general', 'enable_flat_files' );
-
-		if ( $flat_files_enabled ) {
+		if ( Snippet_Files::is_active() ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_js_flat_files' ], 15 );
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_css_flat_files' ], 15 );
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_css_flat_files' ], 15 );

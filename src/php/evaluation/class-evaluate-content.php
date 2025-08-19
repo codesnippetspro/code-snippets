@@ -51,9 +51,7 @@ class Evaluate_Content {
 	 * Initialise class functions.
 	 */
 	public function init() {
-		$flat_files_enabled = Settings\get_setting( 'general', 'enable_flat_files' );
-		
-		if ( $flat_files_enabled ) {
+		if ( Snippet_Files::is_active() ) {
 			add_action( 'wp_head', [ $this, 'load_head_content_from_flat_files' ] );
 			add_action( 'wp_footer', [ $this, 'load_footer_content_from_flat_files' ] );
 		} else {

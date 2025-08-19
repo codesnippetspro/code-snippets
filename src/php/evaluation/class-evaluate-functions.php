@@ -41,13 +41,6 @@ class Evaluate_Functions {
 	private array $conditions = [];
 
 	/**
-	 * Whether flat files are enabled.
-	 *
-	 * @var ?bool
-	 */
-	private ?bool $flat_files_enabled = null;
-
-	/**
 	 * Class constructor.
 	 *
 	 * @param DB $db Database class instance.
@@ -128,6 +121,9 @@ class Evaluate_Functions {
 				[ '%d' ]
 			);
 			clean_snippets_cache( $table_name );
+
+			$network = $table_name === $this->db->ms_table;
+			do_action( 'code_snippets/deactivate_snippet', $snippet_id, $network );
 		}
 	}
 
@@ -187,11 +183,7 @@ class Evaluate_Functions {
 			return false;
 		}
 
-		if ( is_null( $this->flat_files_enabled ) ) {
-			$this->flat_files_enabled = Settings\get_setting( 'general', 'enable_flat_files' );
-		}
-
-		if ( $this->flat_files_enabled ) {
+		if ( Snippet_Files::is_active() ) {
 			return $this->evaluate_file_snippets_without_conditions();
 		}
 
@@ -217,8 +209,9 @@ class Evaluate_Functions {
 	}
 
 	private function evaluate_file_snippets_without_conditions(): bool {
+		$type = 'php';
 		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
-		$snippets = Snippet_Files::get_active_snippets_from_flat_files( $scopes, 'php' );
+		$snippets = Snippet_Files::get_active_snippets_from_flat_files( $scopes, $type );
 		$conditions = Snippet_Files::get_active_snippets_from_flat_files( [ 'condition' ], 'cond' );
 		$active_snippets = array_merge( $snippets, $conditions );
 
@@ -229,8 +222,8 @@ class Evaluate_Functions {
 				$this->snippets_with_condition[] = $snippet;
 			} else {
 				$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
-				$base_path = Snippet_Files::get_base_dir( $table_name, 'php' );
-				$file = $base_path . '/' . $snippet['id'] . '.php';
+				$base_path = Snippet_Files::get_base_dir( $table_name, $type );
+				$file = $base_path . '/' . $snippet['id'] . '.' . $type;
 
 				$this->evaluate_snippet_flat_file( $snippet, $file, $edit_snippet );
 			}

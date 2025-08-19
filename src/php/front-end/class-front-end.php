@@ -345,9 +345,7 @@ class Front_End {
 			return $snippet->code;
 		}
 
-		$flat_files_enabled = Settings\get_setting( 'general', 'enable_flat_files' );
-
-		if ( ! $flat_files_enabled ) {
+		if ( ! Snippet_Files::is_active() ) {
 			return $this->evaluate_shortcode_from_db( $snippet, $atts );
 		}
 
@@ -403,7 +401,7 @@ class Front_End {
 	}
 
 	private function get_snippet( int $id, bool $network, string $snippet_type ): Snippet {
-		if ( ! Settings\get_setting( 'general', 'enable_flat_files' ) ) {
+		if ( ! Snippet_Files::is_active() ) {
 			return get_snippet( $id, $network );
 		}
 

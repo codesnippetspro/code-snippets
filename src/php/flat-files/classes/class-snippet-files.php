@@ -4,6 +4,11 @@ namespace Code_Snippets;
 
 class Snippet_Files {
 
+	/**
+	 * Flag file name that indicates flat files are enabled.
+	 */
+	private const ENABLED_FLAG_FILE = 'flat-files-enabled.flag';
+
 	private Snippet_Handler_Registry $handler_registry;
 
 	private File_System_Interface $fs;
@@ -20,12 +25,53 @@ class Snippet_Files {
 		$this->config_repo = $config_repo;
 	}
 
+	/**
+	 * Check if flat files are enabled by checking for the flag file.
+	 * This avoids database calls for better performance.
+	 *
+	 * @return bool True if flat files are enabled, false otherwise.
+	 */
+	public static function is_active(): bool {
+		$flag_file_path = self::get_flag_file_path();
+		return file_exists( $flag_file_path );
+	}
+
+	/**
+	 * Get the path to the enabled flag file.
+	 *
+	 * @return string Path to the flag file.
+	 */
+	private static function get_flag_file_path(): string {
+		return self::get_base_dir() . '/' . self::ENABLED_FLAG_FILE;
+	}
+
+	/**
+	 * Handle the enabled flag file creation/deletion when the setting changes.
+	 *
+	 * @param bool $enabled Whether flat files are enabled.
+	 */
+	private function handle_enabled_file_flag( bool $enabled ): void {
+		$flag_file_path = self::get_flag_file_path();
+
+		if ( $enabled ) {
+			// Create the base directory if it doesn't exist
+			$base_dir = self::get_base_dir();
+			$this->maybe_create_directory( $base_dir );
+
+			// Create the flag file
+			$this->fs->put_contents( $flag_file_path, '', FS_CHMOD_FILE );
+		} else {
+			// Delete the flag file if it exists
+			$this->delete_file( $flag_file_path );
+		}
+	}
+
 	public function register_hooks(): void {
 		if ( ! $this->fs->is_writable( WP_CONTENT_DIR ) ) {
 			return;
 		}
 
-		if ( Settings\get_setting( 'general', 'enable_flat_files' ) ) {
+		if ( self::is_active() ) {
 			add_action( 'code_snippets/create_snippet', [ $this, 'handle_snippet' ], 10, 2 );
 			add_action( 'code_snippets/update_snippet', [ $this, 'handle_snippet' ], 10, 2 );
 			add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
@@ -378,6 +424,8 @@ class Snippet_Files {
 		if ( ! isset( $settings['general']['enable_flat_files'] ) ) {
 			return;
 		}
+
+		$this->handle_enabled_file_flag( $settings['general']['enable_flat_files'] );
 
 		if ( ! $settings['general']['enable_flat_files'] ) {
 			return;
