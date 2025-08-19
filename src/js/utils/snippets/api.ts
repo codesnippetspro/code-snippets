@@ -58,11 +58,11 @@ export const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI 
 			.then(createSnippetObject),
 
 	create: snippet =>
-		post<SnippetSchema, WritableSnippetSchema>(REST_SNIPPETS_BASE, mapToSchema(snippet))
+		post<SnippetSchema>(REST_SNIPPETS_BASE, mapToSchema(snippet))
 			.then(createSnippetObject),
 
 	update: snippet =>
-		post<SnippetSchema, WritableSnippetSchema>(snippet.id ? buildURL(snippet) : REST_SNIPPETS_BASE, mapToSchema(snippet))
+		post<SnippetSchema>(snippet.id ? buildURL(snippet) : REST_SNIPPETS_BASE, mapToSchema(snippet))
 			.then(createSnippetObject),
 
 	delete: snippet =>

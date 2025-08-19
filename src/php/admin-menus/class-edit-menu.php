@@ -177,6 +177,7 @@ class Edit_Menu extends Admin_Menu {
 				'react-dom',
 				'wp-url',
 				'wp-i18n',
+				'wp-elements',
 				'wp-components',
 			],
 			$plugin->version,

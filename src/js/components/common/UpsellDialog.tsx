@@ -1,3 +1,4 @@
+import { createInterpolateElement } from '@wordpress/element'
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { Modal } from '@wordpress/components'
@@ -23,16 +24,17 @@ export const UpsellDialog: React.FC<UpsellDialogProps> = ({ isOpen, setIsOpen })
 			/>
 
 			<h1>
-				{__('Unlock all cloud sync features and many more, with ', 'code-snippets')}
-				<span>{__('Code Snippets Pro', 'code-snippets')}</span>
+				{createInterpolateElement(
+					__('Unlock all cloud sync features and many more, with <span>Code Snippets Pro</span>', 'code-snippets'),
+					{ span: <span /> }
+				)}
 			</h1>
 
 			<p>
-				{__('With Code Snippets Pro you can ', 'code-snippets')}
-				<strong>{__('connect your WordPress sites', 'code-snippets')}</strong>
-				{__(' to the code snippets cloud platform and be able to ', 'code-snippets')}
-				<strong>{__('backup, synchronise, collaborate, and deploy', 'code-snippets')}</strong>
-				{__(' your snippets from one central location.', 'code-snippets')}
+				{createInterpolateElement(
+					__('With Code Snippets Pro you can connect your WordPress sites to the code snippets cloud platform and be able to <strong>backup, synchronise, collaborate, and deploy</strong> your snippets from one central location.', 'code-snippets'),
+					{ strong: <strong /> }
+				)}
 			</p>
 
 			<a

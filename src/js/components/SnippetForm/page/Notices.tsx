@@ -1,3 +1,4 @@
+import { createInterpolateElement } from '@wordpress/element'
 import React from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
@@ -9,7 +10,7 @@ export const Notices: React.FC = () => {
 	return <>
 		{currentNotice
 			? <DismissibleNotice className={currentNotice[0]} onDismiss={() => setCurrentNotice(undefined)}>
-				<p>{currentNotice[1]}</p>
+				<p>{createInterpolateElement(currentNotice[1], { strong: <strong /> })}</p>
 			</DismissibleNotice>
 			: null}
 

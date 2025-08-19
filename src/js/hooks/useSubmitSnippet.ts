@@ -10,25 +10,28 @@ import type { Snippet } from '../types/Snippet'
 const snippetMessages = <const> {
 	addNew: __('Add New Snippet', 'code-snippets'),
 	edit: __('Edit Snippet', 'code-snippets'),
-	created: __('Snippet created.', 'code-snippets'),
-	updated: __('Snippet updated.', 'code-snippets'),
-	createdActivated: __('Snippet created and activated.', 'code-snippets'),
-	updatedActivated: __('Snippet updated and activated.', 'code-snippets'),
-	updatedDeactivated: __('Snippet updated and deactivated'),
-	updatedExecuted: __('Snippet updated and executed.', 'code-snippets'),
+	created: __('Snippet <strong>created</strong>.', 'code-snippets'),
+	updated: __('Snippet <strong>updated</strong>.', 'code-snippets'),
+	createdActivated: __('Snippet <strong>created</strong> and <strong>activated</strong>.', 'code-snippets'),
+	updatedActivated: __('Snippet <strong>updated</strong> and <strong>activated</strong>.', 'code-snippets'),
+	updatedDeactivated: __('Snippet <strong>updated</strong> and <strong>deactivated</strong>'),
+	updatedExecuted: __('Snippet <strong>updated</strong> and <strong>executed</strong>.', 'code-snippets'),
 	failedCreate: __('Could not create snippet.', 'code-snippets'),
 	failedUpdate: __('Could not update snippet.', 'code-snippets')
 }
 
+const conditionCreated = __('Condition <strong>created</strong>.', 'code-snippets')
+const conditionUpdated = __('Condition <strong>updated</strong>.', 'code-snippets')
+
 const conditionMessages: typeof snippetMessages = {
 	addNew: __('Add New Condition', 'code-snippets'),
 	edit: __('Edit Condition', 'code-snippets'),
-	created: __('Condition created.', 'code-snippets'),
-	updated: __('Condition updated.', 'code-snippets'),
-	createdActivated: __('Condition created and activated', 'code-snippets'),
-	updatedActivated: __('Condition updated and activated.', 'code-snippets'),
-	updatedDeactivated: __('Condition updated and deactivated'),
-	updatedExecuted: snippetMessages.updatedExecuted,
+	created: conditionCreated,
+	updated: conditionUpdated,
+	createdActivated: conditionCreated,
+	updatedActivated: conditionUpdated,
+	updatedDeactivated: conditionUpdated,
+	updatedExecuted: conditionUpdated,
 	failedCreate: __('Could not create condition.', 'code-snippets'),
 	failedUpdate: __('Could not update condition.', 'code-snippets')
 }
