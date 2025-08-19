@@ -129,6 +129,13 @@ p.submit {
 		font-size: 18px;
 	}
 
+	.spinner-wrapper {
+		block-size: 18px;
+		inline-size: 18px;
+		display: flex;
+		align-items: center;
+	}
+
 	.components-spinner {
 		block-size: 12px;
 	}

@@ -22,7 +22,7 @@ const StatusIcon: React.FC<StatusIconProps> = ({ status }) => {
 		case Status.INITIAL:
 			return <CopyIcon />
 		case Status.PROGRESSING:
-			return <Spinner />
+			return <span className="spinner-wrapper"><Spinner /></span>
 		case Status.SUCCESS:
 			return <span className="dashicons dashicons-yes"></span>
 		case Status.ERROR:
