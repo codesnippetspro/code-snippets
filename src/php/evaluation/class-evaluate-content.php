@@ -131,13 +131,6 @@ class Evaluate_Content {
 		$this->load_content_snippets_from_flat_files( 'footer-content' );
 	}
 
-	/**
-	 * Populate the active snippets cache from flat files.
-	 *
-	 * This function fetches active snippets from flat files and stores them in the
-	 * $active_snippets property. It also evaluates conditions and stores them in the
-	 * $conditions property.
-	 */
 	private function populate_active_snippets_from_flat_files() {
 		$handler = code_snippets()->snippet_handler_registry->get_handler( 'html' );
 		$dir_name = $handler->get_dir_name();

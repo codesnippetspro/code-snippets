@@ -9,7 +9,6 @@ use Code_Snippets\Conditions;
 use Code_Snippets\Settings;
 use function Code_Snippets\code_snippets;
 use Code_Snippets\Snippet_Files;
-use function Code_Snippets\cs_sort_snippets_by_priority;
 
 /**
  * Class for loading active snippets of various types.
