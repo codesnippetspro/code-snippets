@@ -12,6 +12,7 @@ import { ConfirmDialog } from '../common/ConfirmDialog'
 import { UpsellDialog } from '../common/UpsellDialog'
 import { EditorSidebar } from '../EditorSidebar'
 import { UpsellBanner } from '../common/UpsellBanner'
+import { TagsEditor } from './fields/TagsEditor'
 import { CodeEditor } from './fields/CodeEditor'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
@@ -165,6 +166,7 @@ const EditFormWrap: React.FC = () => {
 				<div className="snippet-form-lower">
 					<UpsellBanner />
 					<DescriptionEditor />
+					<TagsEditor />
 				</div>
 
 				<EditorSidebar setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />

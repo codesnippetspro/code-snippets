@@ -49,7 +49,7 @@ export const SnippetLocationInput: React.FC = () => {
 	return isCondition(snippet)
 		? null
 		: <div className="block-form-field">
-			<h4><label htmlFor="snippet-location">{__('Snippet location', 'code-snippets')}</label></h4>
+			<h4><label htmlFor="snippet-location">{__('Location', 'code-snippets')}</label></h4>
 			<Select
 				inputId="snippet-location"
 				className="code-snippets-select"

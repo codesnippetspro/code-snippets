@@ -43,6 +43,15 @@
 	}
 }
 
+.components-form-token-field__input-container {
+	background: #fff;
+	border-color: #c3c4c7;
+
+	> .components-flex {
+		padding: 12px;
+	}
+}
+
 #titlediv,
 .snippet-type-container {
 	margin-block-end: 24px;

@@ -16,7 +16,6 @@ import { ActivationSwitch } from './controls/ActivationSwitch'
 import { DeleteButton } from './actions/DeleteButton'
 import { PriorityInput } from './controls/PriorityInput'
 import { RTLControl } from './controls/RTLControl'
-import { TagsInput } from './controls/TagsInput'
 
 export interface EditorSidebarProps {
 	setIsUpgradeDialogOpen: Dispatch<SetStateAction<boolean>>
@@ -40,8 +39,6 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 				<SnippetLocationInput />
 				<ShortcodeInfo />
 				<PriorityInput />
-
-				{window.CODE_SNIPPETS_EDIT?.tagOptions.enabled ? <TagsInput /> : null}
 
 				{snippet.id
 					? <div className="row-actions visible inline-form-field">

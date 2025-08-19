@@ -104,12 +104,7 @@ const ModalContent = () => {
 
 			<p className="shortcode-tag-wrapper">
 				<code className="shortcode-tag">{shortcodeTag}</code>
-
-				<CopyToClipboardButton
-					primary
-					title={__('Copy shortcode to clipboard', 'code-snippets')}
-					text={shortcodeTag}
-				/>
+				<CopyToClipboardButton primary text={shortcodeTag} />
 			</p>
 
 			<p>
@@ -136,7 +131,7 @@ export const ShortcodeInfo: React.FC = () => {
 		? <div className="inline-form-field">
 			<h4>{__('Shortcode', 'code-snippets')}</h4>
 			<Button onClick={() => setIsModalOpen(true)} disabled={isReadOnly}>
-				{__('Use Shortcode', 'code-snippets')}
+				{__('See Options', 'code-snippets')}
 			</Button>
 
 			{isModalOpen
