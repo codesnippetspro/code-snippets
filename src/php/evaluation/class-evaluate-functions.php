@@ -218,8 +218,8 @@ class Evaluate_Functions {
 
 	private function evaluate_file_snippets_without_conditions(): bool {
 		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
-		$snippets = $this->get_snippets_by_scope( $scopes, 'php' );
-		$conditions = $this->get_snippets_by_scope( [ 'condition' ], 'cond' );
+		$snippets = Snippet_Files::get_active_snippets_from_flat_files( $scopes, 'php' );
+		$conditions = Snippet_Files::get_active_snippets_from_flat_files( [ 'condition' ], 'cond' );
 		$active_snippets = array_merge( $snippets, $conditions );
 
 		foreach ( $active_snippets as $snippet ) {
@@ -237,13 +237,6 @@ class Evaluate_Functions {
 		}
 
 		return true;
-	}
-
-	private function get_snippets_by_scope( array $scopes, string $type ): array {
-		$handler = code_snippets()->snippet_handler_registry->get_handler( $type );
-		$dir_name = $handler->get_dir_name();
-
-		return Snippet_Files::get_active_snippets_from_flat_files( $scopes, $dir_name );
 	}
 
 	/**

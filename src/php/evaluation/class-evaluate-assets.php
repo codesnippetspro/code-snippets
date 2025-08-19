@@ -374,12 +374,10 @@ class Evaluate_Assets {
 
 	public function enqueue_js_flat_files() {
 		$conditions = [];
-		$handler = code_snippets()->snippet_handler_registry->get_handler( 'js' );
-		$dir_name = $handler->get_dir_name();
-		$ext = $handler->get_file_extension();
+		$type = 'js';
 
-		$snippets = $this->get_snippets_by_scope( [ 'site-head-js', 'site-footer-js' ], $dir_name );
-		$conditions = $this->get_snippets_by_scope( [ 'condition' ], 'cond' );
+		$snippets = Snippet_Files::get_active_snippets_from_flat_files( [ 'site-head-js', 'site-footer-js' ], $type );
+		$conditions = Snippet_Files::get_active_snippets_from_flat_files( [ 'condition' ], 'cond' );
 		$active_snippets = array_merge( $snippets, $conditions );
 
 		foreach ( $active_snippets as $snippet ) {
@@ -394,11 +392,11 @@ class Evaluate_Assets {
 			if ( 'condition' !== $snippet['scope'] &&
 			     ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) ) {
 				$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
-				$base_url = Snippet_Files::get_base_url( $table_name, $dir_name );
-				$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+				$base_url = Snippet_Files::get_base_url( $table_name, $type );
+				$base_path = Snippet_Files::get_base_dir( $table_name, $type );
 	
-				$path = $base_path . '/' . $snippet['id'] . '.' . $ext;
-				$uri = $base_url . '/' . $snippet['id'] . '.' . $ext;
+				$path = $base_path . '/' . $snippet['id'] . '.' . $type;
+				$uri = $base_url . '/' . $snippet['id'] . '.' . $type;
 				$handle = 'site-head-js' === $snippet['scope'] ? 'code-snippets-site-head-' : 'code-snippets-site-footer-';
 				$in_footer = 'site-footer-js' === $snippet['scope'];
 	
@@ -415,14 +413,12 @@ class Evaluate_Assets {
 
 	public function enqueue_css_flat_files() {
 		$conditions = [];
-		$handler = code_snippets()->snippet_handler_registry->get_handler( 'css' );
-		$dir_name = $handler->get_dir_name();
-		$ext = $handler->get_file_extension();
+		$type = 'css';
 
 		$scope = is_admin() ? 'admin' : 'site';
 
-		$snippets = $this->get_snippets_by_scope( [ $scope . '-' . $dir_name ], $dir_name );
-		$conditions = $this->get_snippets_by_scope( [ 'condition' ], 'cond' );
+		$snippets = Snippet_Files::get_active_snippets_from_flat_files( [ $scope . '-' . $type ], $type );
+		$conditions = Snippet_Files::get_active_snippets_from_flat_files( [ 'condition' ], 'cond' );
 		$active_snippets = array_merge( $snippets, $conditions );
 
 		foreach ( $active_snippets as $snippet ) {
@@ -437,11 +433,11 @@ class Evaluate_Assets {
 			if ( 'condition' !== $snippet['scope'] &&
 			     ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) ) {
 				$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
-				$base_url = Snippet_Files::get_base_url( $table_name, $dir_name );
-				$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+				$base_url = Snippet_Files::get_base_url( $table_name, $type );
+				$base_path = Snippet_Files::get_base_dir( $table_name, $type );
 
-				$path = $base_path . '/' . $snippet['id'] . '.' . $ext;
-				$uri = $base_url . '/' . $snippet['id'] . '.' . $ext;
+				$path = $base_path . '/' . $snippet['id'] . '.' . $type;
+				$uri = $base_url . '/' . $snippet['id'] . '.' . $type;
 				$handle = 'code-snippets-' . $scope . '-styles-';
 
 				wp_enqueue_style(
@@ -452,12 +448,5 @@ class Evaluate_Assets {
 				);
 			}
 		}
-	}
-
-	private function get_snippets_by_scope( array $scopes, string $type ): array {
-		$handler = code_snippets()->snippet_handler_registry->get_handler( $type );
-		$dir_name = $handler->get_dir_name();
-
-		return Snippet_Files::get_active_snippets_from_flat_files( $scopes, $dir_name );
 	}
 }
