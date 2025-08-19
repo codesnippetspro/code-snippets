@@ -79,7 +79,7 @@ class Evaluate_Assets {
 	 *
 	 * @return array[][]
 	 */
-	protected function fetch_active_snippets( $scope ) {
+	protected function fetch_active_snippets( $scope ): array {
 		$scope_key = is_array( $scope ) ? implode( '|', $scope ) : $scope;
 
 		if ( ! isset( $this->active_snippets[ $scope_key ] ) ) {

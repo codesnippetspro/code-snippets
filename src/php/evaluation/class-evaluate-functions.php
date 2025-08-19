@@ -199,7 +199,7 @@ class Evaluate_Functions {
 	}
 
 	private function evaluate_db_snippets_without_conditions(): bool {
-		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
+		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end', 'condition' ];
 		$active_snippets = $this->db->fetch_active_snippets( $scopes );
 		$edit_snippet = $this->get_currently_editing_snippet();
 

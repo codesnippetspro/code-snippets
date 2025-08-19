@@ -80,7 +80,7 @@ class Evaluate_Content {
 			if ( 'condition' === $scope ) {
 				$this->conditions[ $id ] = evaluate_condition( $snippet['code'] );
 			} else {
-				$this->active_snippets[ $scope ] = $snippet;
+				$this->active_snippets[ $scope ][] = $snippet;
 			}
 		}
 	}
@@ -131,27 +131,55 @@ class Evaluate_Content {
 		$this->load_content_snippets_from_flat_files( 'footer-content' );
 	}
 
-	private function load_content_snippets_from_flat_files( string $scope ) {
+	/**
+	 * Populate the active snippets cache from flat files.
+	 *
+	 * This function fetches active snippets from flat files and stores them in the
+	 * $active_snippets property. It also evaluates conditions and stores them in the
+	 * $conditions property.
+	 */
+	private function populate_active_snippets_from_flat_files() {
 		$handler = code_snippets()->snippet_handler_registry->get_handler( 'html' );
 		$dir_name = $handler->get_dir_name();
 		$ext = $handler->get_file_extension();
-		$conditions = [];
-
-		$snippets = Snippet_Files::get_active_snippets_from_flat_files( [ $scope ], $dir_name );
+		
+		$scopes = [ 'head-content', 'footer-content', 'condition' ];
+		$all_snippets = Snippet_Files::get_active_snippets_from_flat_files( $scopes, $dir_name );
 		$condition_snippets = Snippet_Files::get_active_snippets_from_flat_files( [ 'condition' ], 'cond' );
 
 		foreach ( $condition_snippets as $snippet ) {
 			$condition_id = intval( $snippet['id'] );
-			$conditions[ $condition_id ] = evaluate_condition( $snippet['code'] );
+			$this->conditions[ $condition_id ] = evaluate_condition( $snippet['code'] );
 		}
 
-		foreach ( $snippets as $snippet ) {
-			$condition_id = intval( $snippet['condition_id'] );
-			if ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) {
+		foreach ( $all_snippets as $snippet ) {
+			$scope = $snippet['scope'];
+			
+			if ( 'condition' !== $scope ) {
+				// Add file path information to the snippet for later use
 				$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
 				$base_path = Snippet_Files::get_base_dir( $table_name, $dir_name );
+				$snippet['file_path'] = $base_path . '/' . $snippet['id'] . '.' . $ext;
+				
+				$this->active_snippets[ $scope ][] = $snippet;
+			}
+		}
+	}
 
-				require_once $base_path . '/' . $snippet['id'] . '.' . $ext;
+	private function load_content_snippets_from_flat_files( string $scope ) {
+		if ( is_null( $this->active_snippets ) ) {
+			$this->populate_active_snippets_from_flat_files();
+		}
+
+		if ( ! isset( $this->active_snippets[ $scope ] ) ) {
+			return;
+		}
+
+		foreach ( $this->active_snippets[ $scope ] as $snippet ) {
+			$condition_id = intval( $snippet['condition_id'] );
+			
+			if ( ! $condition_id || ! isset( $this->conditions[ $condition_id ] ) || $this->conditions[ $condition_id ] ) {
+				require_once $snippet['file_path'];
 			}
 		}
 	}

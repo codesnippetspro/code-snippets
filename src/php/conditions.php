@@ -48,7 +48,7 @@ function is_within_date_range( DateTimeImmutable $date, ?string $operator, array
 		case 'between':
 			$start = isset( $objects[0] ) ? safe_parse_datetime( $objects[0] ) : null;
 			$end = isset( $objects[1] ) ? safe_parse_datetime( $objects[1] ) : null;
-			return $start && $end && $start <= $date && $date <= end;
+			return $start && $end && $start <= $date && $date <= $end;
 	}
 
 	return false;

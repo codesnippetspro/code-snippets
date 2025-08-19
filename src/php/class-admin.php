@@ -282,7 +282,7 @@ class Admin {
 			$now = $welcome['start_datetime'];
 		}
 
-		if ( isset( $welcome['key'] ) && ! in_array( $welcome['key'], $dismissed, true ) &&
+		if ( ! empty( $welcome['key'] ) && ! in_array( $welcome['key'], $dismissed, true ) &&
 		     ( empty( $welcome['start_datetime'] ) || $now >= $welcome['start_datetime'] ) &&
 		     ( empty( $welcome['end_datetime'] ) || $now <= $welcome['end_datetime'] ) ) {
 			$notice = $welcome['key'];
@@ -322,6 +322,11 @@ class Admin {
 		echo '</p></div>';
 	}
 
+	/**
+	 * Render a badge for a snippet type in the nav tabs.
+	 *
+	 * @param string $type_name Identifier of the snippet type.
+	 */
 	private static function render_snippet_tab_badge( string $type_name ) {
 		if ( 'all' !== $type_name ) {
 			printf( '<span class="badge %s-badge">', esc_attr( $type_name ) );
