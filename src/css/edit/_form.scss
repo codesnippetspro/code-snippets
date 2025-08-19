@@ -1,7 +1,13 @@
 @use '../common/theme';
 
-$sidebar-width: 280px;
+$sidebar-width: 321px;
 $sidebar-gap: 30px;
+
+.snippet-form #titlediv #title,
+.snippet-type-container {
+	border-color: #ccc;
+	block-size: 45px
+}
 
 .snippet-type-option {
 	display: flex;
@@ -19,52 +25,39 @@ $sidebar-gap: 30px;
 }
 
 
-.conditions-editor-open .button.button-large {
-	font-weight: bold;
-	block-size: 100%;
-	display: flex;
-	align-items: center;
-	min-block-size: 45px;
-	gap: 5px;
-	overflow: hidden;
-
-	&.no-condition {
+.conditions-editor-open {
+	.button.button-large {
+		block-size: 100%;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		overflow: hidden;
 		border-color: #ccc;
-		background-color: #fff;;
-	}
+		padding-block: 6px;
+		padding-inline: 12px;
 
-	.badge {
-		margin-block: 3px;
-		margin-inline: 0;
-	}
-
-	.beta-badge {
-		margin-inline-start: auto;
-		border: 1px solid currentcolor;
-	}
-
-	.pro-badge {
-		color: currentcolor;
-		border: 1px solid currentcolor;
-		background: transparent;
-
-		@media screen and (width >= 1080px) and (width <= 1250px) {
-			display: none;
+		.pro-badge {
+			margin-inline-start: auto;
 		}
+	}
+
+	&.no-condition .cond-badge {
+		background: transparent;
+		color: inherit;
+		border: 1px solid currentcolor;
 	}
 }
 
 .snippet-form {
 	margin-block-start: 10px;
-	max-inline-size: 1440px;
 	display: grid;
 	gap: $sidebar-gap;
 	grid-template-columns: 1fr $sidebar-width;
-	grid-template-areas: "upper sidebar" "lower sidebar";
+	grid-template-areas: 'upper sidebar' 'lower sidebar';
 	transition: all 700ms;
 
 	&.snippet-form-expanded {
-		grid-template-areas: "upper upper" "lower sidebar";
+		grid-template-areas: 'upper upper' 'lower sidebar';
 	}
 
 	.snippet-form-upper {
@@ -76,16 +69,12 @@ $sidebar-gap: 30px;
 	}
 
 	.snippet-editor-sidebar {
-		grid-area: sidebar;
+		grid-area: span 3 / sidebar;
 		max-inline-size: $sidebar-width;
 	}
 
 	@media (width <= 1024px) {
 		grid-template-columns: 1fr;
-	}
-
-	#titlediv #title {
-		block-size: 45px
 	}
 
 	h2, h3 {
@@ -100,18 +89,5 @@ $sidebar-gap: 30px;
 		.button {
 			font-weight: normal;
 		}
-	}
-}
-
-.above-editor-container {
-	display: flex;
-	flex-flow: row wrap;
-	gap: 1em;
-
-	> * {
-		flex: 1;
-		display: flex;
-		flex-flow: column;
-		min-inline-size: 180px;
 	}
 }

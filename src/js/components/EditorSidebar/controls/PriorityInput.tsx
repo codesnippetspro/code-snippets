@@ -7,7 +7,7 @@ export const PriorityInput = () => {
 	const { snippet, isReadOnly, setSnippet } = useSnippetForm()
 
 	return (
-		<div className="snippet-priority">
+		<div className="snippet-priority inline-form-field">
 			<h4>
 				<label htmlFor="snippet-priority">
 					{__('Priority', 'code-snippets')}

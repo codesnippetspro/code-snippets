@@ -48,22 +48,27 @@
 	}
 }
 
+#titlediv,
+.snippet-type-container {
+	margin-block-end: 24px;
+}
+
 .above-snippet-code {
+	margin-block: 0 15px;
 	display: flex;
 	align-items: center;
-	margin-block: 25px 15px;
 	margin-inline: 0;
 	gap: 8px;
 
 	h2 {
 		margin: 0;
-		margin-inline-end: auto;
 	}
 
 	.expand-editor-button {
 		display: flex;
 		gap: 5px;
 		align-items: center;
+		margin-inline-end: auto;
 
 		.dashicons {
 			inline-size: 18px;

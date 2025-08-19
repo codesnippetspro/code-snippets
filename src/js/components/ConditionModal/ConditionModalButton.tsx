@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { isLicensed } from '../../utils/screen'
 import { isCondition } from '../../utils/snippets/snippets'
+import { Badge } from '../common/Badge'
 import { Button } from '../common/Button'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import type { Dispatch, SetStateAction } from 'react'
@@ -17,24 +18,20 @@ export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setI
 	const hasCondition = 0 !== snippet.conditionId
 
 	return (
-		<div className={classnames('conditions-editor-open', hasCondition ? 'has-condition' : 'no-condition')}>
+		<div className={classnames('conditions-editor-open block-form-field', hasCondition ? 'has-condition' : 'no-condition')}>
 			{isCondition(snippet) ? null
 				: <>
-					<h3>{__('Conditions', 'code-snippets')}</h3>
+					<h4>
+						{__('Conditions', 'code-snippets')}
+						<Badge name="beta" small>{__('beta', 'code-snippets')}</Badge>
+						{!isLicensed() && <Badge name="pro" small>{__('Pro', 'code-snippets')}</Badge>}
+					</h4>
 
-					<Button
-						large
-						primary={hasCondition}
-						disabled={isReadOnly}
-						onClick={() => setIsDialogOpen(true)}
-					>
-						<span className="dashicons dashicons-randomize"></span>
+					<Button large disabled={isReadOnly} onClick={() => setIsDialogOpen(true)}>
+						<Badge name="cond" small />
 						{hasCondition
-							? __('Conditions', 'code-snippets')
-							: __('Set Conditions', 'code-snippets')}
-
-						<span className="badge beta-badge small-badge">{__('beta', 'code-snippets')}</span>
-						{!isLicensed() && <span className="badge pro-badge small-badge">{__('Pro', 'code-snippets')}</span>}
+							? __('Edit Conditions', 'code-snippets')
+							: __('Add Conditions', 'code-snippets')}
 					</Button>
 				</>}
 		</div>

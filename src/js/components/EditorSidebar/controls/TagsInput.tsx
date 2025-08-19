@@ -10,7 +10,7 @@ export const TagsInput: React.FC = () => {
 
 	return options?.enabled
 		? <div className="snippet-tags-container">
-			<h4><label>{__('Tags', 'code-snippets')}</label></h4>
+			<h4><label htmlFor="components-form-token-input-0">{__('Tags', 'code-snippets')}</label></h4>
 
 			<FormTokenField
 				label=""
