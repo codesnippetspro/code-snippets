@@ -103,7 +103,39 @@ p.submit {
 }
 
 .shortcode-tag-wrapper {
-	.code-snippets-copy-text {
-		vertical-align: middle;
+	background: #fff;
+	min-block-size: 54px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
+	box-sizing: border-box;
+
+	code {
+		background: transparent;
+		padding-inline: 0.5em;
+		text-indent: -0.5em;
+	}
+}
+
+.code-snippets-copy-text.button {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+
+	.dashicons {
+		block-size: 18px;
+		inline-size: 18px;
+		font-size: 18px;
+	}
+
+	.components-spinner {
+		block-size: 12px;
+	}
+}
+
+.code-snippets-modal {
+	p h4 {
+		margin-block-start: 0;
 	}
 }

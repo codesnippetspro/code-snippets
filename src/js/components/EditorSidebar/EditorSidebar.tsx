@@ -3,7 +3,7 @@ import { Spinner } from '@wordpress/components'
 import { isRTL } from '@wordpress/i18n'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { isNetworkAdmin } from '../../utils/screen'
-import { getSnippetType, isCondition } from '../../utils/snippets/snippets'
+import { isCondition } from '../../utils/snippets/snippets'
 import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
 import { SnippetLocationInput } from '../SnippetForm/fields/SnippetLocationInput'
 import { SnippetTypeInput } from '../SnippetForm/fields/SnippetTypeInput'
@@ -38,6 +38,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 
 				<ConditionModalButton setIsDialogOpen={setIsUpgradeDialogOpen} />
 				<SnippetLocationInput />
+				<ShortcodeInfo />
 				<PriorityInput />
 
 				{window.CODE_SNIPPETS_EDIT?.tagOptions.enabled ? <TagsInput /> : null}
@@ -55,8 +56,6 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 			</p>
 
 			<Notices />
-
-			{'html' === getSnippetType(snippet) ? <ShortcodeInfo /> : null}
 		</div>
 	)
 }
