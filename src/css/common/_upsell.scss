@@ -125,6 +125,7 @@
 		line-height: inherit;
 		margin-block: 16px 24px;
 		margin-inline: auto;
+		border-color: currentcolor;
 
 		&:hover {
 			background-color: color.adjust(#d46f4d, $lightness: -10%);
