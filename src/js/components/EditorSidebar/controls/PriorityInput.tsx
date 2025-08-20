@@ -1,5 +1,5 @@
 import React from 'react'
-import { __, _x } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { Tooltip } from '../../common/Tooltip'
 

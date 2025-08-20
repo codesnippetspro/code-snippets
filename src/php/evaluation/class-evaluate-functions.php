@@ -66,6 +66,8 @@ class Evaluate_Functions {
 	 * Check if the plugin is running in safe mode.
 	 *
 	 * @return bool
+	 *
+	 * @noinspection PhpUndefinedConstantInspection
 	 */
 	public function is_safe_mode_active(): bool {
 		return ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ||

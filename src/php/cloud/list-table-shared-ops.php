@@ -30,16 +30,15 @@ function cloud_lts_display_column_hidden_input( string $column_name, Cloud_Snipp
 /**
  * Process the download snippet action
  *
- * @param string $action         Action - 'download' or 'update'.
- * @param string $source         Source - 'search' or 'cloud'.
- * @param string $snippet        Snippet ID.
- * @param int    $codevault_page The current page of the codevault.
+ * @param string $action  Action - 'download' or 'update'.
+ * @param string $source  Source - 'search' or 'cloud'.
+ * @param string $snippet Snippet ID.
  *
  * @return void
  */
-function cloud_lts_process_download_action( string $action, string $source, string $snippet, int $codevault_page = 0 ) {
+function cloud_lts_process_download_action( string $action, string $source, string $snippet ) {
 	if ( 'download' === $action || 'update' === $action ) {
-		$result = code_snippets()->cloud_api->download_or_update_snippet( $snippet, $source, $action, $codevault_page );
+		$result = code_snippets()->cloud_api->download_or_update_snippet( $snippet, $source, $action );
 
 		if ( $result['success'] ) {
 			$redirect_uri = $result['snippet_id'] ?

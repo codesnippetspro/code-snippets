@@ -7,7 +7,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\REST_API\Snippets_REST_Controller;
 use ParseError;
 use function Code_Snippets\Settings\get_self_option;
 use function Code_Snippets\Settings\update_self_option;
@@ -581,6 +580,11 @@ function save_snippet( $snippet ) {
  * @since 2.0.0
  */
 function execute_snippet( string $code, int $id = 0, bool $force = false ) {
+	/**
+	 * Do not continue if safe mode is active.
+	 *
+	 * @noinspection PhpUndefinedConstantInspection
+	 */
 	if ( empty( $code ) || ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ) {
 		return false;
 	}

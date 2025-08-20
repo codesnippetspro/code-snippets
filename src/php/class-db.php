@@ -12,12 +12,12 @@ class DB {
 	/**
 	 * Unprefixed site-wide table name.
 	 */
-	const TABLE_NAME = 'snippets';
+	public const TABLE_NAME = 'snippets';
 
 	/**
 	 * Unprefixed network-wide table name.
 	 */
-	const MS_TABLE_NAME = 'ms_snippets';
+	public const MS_TABLE_NAME = 'ms_snippets';
 
 	/**
 	 * Side-wide table name.

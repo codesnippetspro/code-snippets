@@ -43,12 +43,12 @@ class Snippet extends Data_Item {
 	/**
 	 * MySQL datetime format (YYYY-MM-DD hh:mm:ss).
 	 */
-	const DATE_FORMAT = 'Y-m-d H:i:s';
+	public const DATE_FORMAT = 'Y-m-d H:i:s';
 
 	/**
 	 * Default value used for a datetime variable.
 	 */
-	const DEFAULT_DATE = '0000-00-00 00:00:00';
+	public const DEFAULT_DATE = '0000-00-00 00:00:00';
 
 	/**
 	 * Constructor function.

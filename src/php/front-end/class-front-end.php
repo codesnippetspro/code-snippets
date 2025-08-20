@@ -16,22 +16,17 @@ class Front_End {
 	/**
 	 * Name of the shortcode tag for rendering the code source
 	 */
-	const SOURCE_SHORTCODE = 'code_snippet_source';
+	public const SOURCE_SHORTCODE = 'code_snippet_source';
 
 	/**
 	 * Name of the shortcode tag for rendering content snippets
 	 */
-	const CONTENT_SHORTCODE = 'code_snippet';
+	public const CONTENT_SHORTCODE = 'code_snippet';
 
 	/**
 	 * Handle to use for front-end scripts and styles.
 	 */
-	const PRISM_HANDLE = 'code-snippets-prism';
-
-	/**
-	 * Maximum depth for shortcode recursion.
-	 */
-	const MAX_SHORTCODE_DEPTH = 5;
+	public const PRISM_HANDLE = 'code-snippets-prism';
 
 	/**
 	 * Class constructor

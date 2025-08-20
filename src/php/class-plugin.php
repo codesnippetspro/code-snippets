@@ -3,8 +3,6 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_API;
-use Code_Snippets\REST_API\Cloud_REST_API;
-use Code_Snippets\REST_API\Conditions_REST_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 use Evaluation\Evaluate_Content;
 use Evaluation\Evaluate_Functions;
@@ -42,14 +40,14 @@ class Plugin {
 	 *
 	 * @var Evaluate_Functions
 	 */
-	public $evaluate_functions;
+	public Evaluate_Functions $evaluate_functions;
 
 	/**
 	 * Class for evaluating content snippets.
 	 *
 	 * @var Evaluate_Content
 	 */
-	public $evaluate_content;
+	public Evaluate_Content $evaluate_content;
 
 	/**
 	 * Administration area class

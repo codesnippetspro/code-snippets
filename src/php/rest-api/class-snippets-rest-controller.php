@@ -16,7 +16,6 @@ use function Code_Snippets\delete_snippet;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
-use function Code_Snippets\update_snippet_fields;
 use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
@@ -30,12 +29,12 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Current API version.
 	 */
-	const VERSION = 1;
+	public const VERSION = 1;
 
 	/**
 	 * The base of this controller's route.
 	 */
-	const BASE_ROUTE = 'snippets';
+	public const BASE_ROUTE = 'snippets';
 
 	/**
 	 * The namespace of this controller's route.

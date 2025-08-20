@@ -1,5 +1,5 @@
-import { SnippetSchema } from '../../types/schema/SnippetSchema'
 import { isNetworkAdmin } from '../../utils/screen'
+import type { SnippetSchema } from '../../types/schema/SnippetSchema'
 import type { Snippet, SnippetScope } from '../../types/Snippet'
 
 export interface ResponseData<T = unknown> {
@@ -46,7 +46,7 @@ export const updateSnippet = (field: keyof Snippet, row: Element, snippet: Parti
 	const updatedSnippet: Partial<SnippetSchema> = {
 		id: parseInt(columnId.textContent, 10),
 		shared_network: null !== /\bshared-network-snippet\b/.exec(row.className),
-		network: snippet.shared_network || isNetworkAdmin(),
+		network: snippet.shared_network ?? isNetworkAdmin(),
 		scope: <SnippetScope | null> row.getAttribute('data-snippet-scope') ?? snippet.scope,
 		...snippet
 	}

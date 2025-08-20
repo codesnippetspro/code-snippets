@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { isRTL } from '@wordpress/i18n'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
@@ -16,6 +16,7 @@ import { ActivationSwitch } from './controls/ActivationSwitch'
 import { DeleteButton } from './actions/DeleteButton'
 import { PriorityInput } from './controls/PriorityInput'
 import { RTLControl } from './controls/RTLControl'
+import type { Dispatch, SetStateAction } from 'react'
 
 export interface EditorSidebarProps {
 	setIsUpgradeDialogOpen: Dispatch<SetStateAction<boolean>>
