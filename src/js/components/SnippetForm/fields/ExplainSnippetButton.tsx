@@ -1,5 +1,5 @@
 import { Spinner } from '@wordpress/components'
-import { __, _x } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
 import React, { useState } from 'react'
 import { useGenerativeAPI } from '../../../hooks/useGenerativeAPI'

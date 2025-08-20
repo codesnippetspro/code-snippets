@@ -132,7 +132,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @return bool
 	 */
-	protected function is_condition_active( Snippet $condition ) {
+	protected function is_condition_active( Snippet $condition ): bool {
 		return $condition->is_condition()
 		       && isset( $this->active_by_condition[ $condition->id ] )
 		       && count( $this->active_by_condition[ $condition->id ] ) > 0;

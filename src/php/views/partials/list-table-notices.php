@@ -16,6 +16,11 @@ use Code_Snippets\Cloud\Cloud_API;
  * @var Manage_Menu $this
  */
 
+/**
+ * Constant existence is checked with defined().
+ *
+ * @noinspection PhpUndefinedConstantInspection
+ */
 if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 	?>
 	<div id="message" class="notice notice-error fade is-dismissible">

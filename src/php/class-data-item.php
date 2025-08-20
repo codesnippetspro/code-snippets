@@ -226,12 +226,19 @@ abstract class Data_Item {
 	 * @param mixed  $value The field value.
 	 *
 	 * @return bool true if the field was set successfully, false if the field name is invalid.
+	 *
+	 * @noinspection PhpDocMissingThrowsInspection
 	 */
 	public function set_field( string $field, $value ): bool {
 		if ( ! $this->is_allowed_field( $field ) ) {
 			return false;
 		}
 
+		/**
+		 * Above is_allowed_field check should bypass exception.
+		 *
+		 * @noinspection PhpUnhandledExceptionInspection
+		 */
 		$this->__set( $field, $value );
 
 		return true;

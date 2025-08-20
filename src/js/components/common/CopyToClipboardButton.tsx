@@ -1,8 +1,9 @@
 import { Spinner } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
-import { Button, ButtonProps } from './Button'
+import { Button } from './Button'
 import { CopyIcon } from './icons/CopyIcon'
+import type { ButtonProps } from './Button'
 
 const TIMEOUT = 1500
 

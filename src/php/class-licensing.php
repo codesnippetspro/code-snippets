@@ -40,6 +40,13 @@ class Licensing {
 
 		require_once dirname( CODE_SNIPPETS_FILE ) . '/vendor/freemius/wordpress-sdk/start.php';
 
+		/**
+		 * Check for constant defined in wp-config.php.
+		 *
+		 * @noinspection PhpUndefinedConstantInspection
+		 */
+		$secret_key = defined( 'CODE_SNIPPETS_SECRET_KEY' ) ? CODE_SNIPPETS_SECRET_KEY : null;
+
 		$this->sdk = fs_dynamic_init(
 			array(
 				'id'                  => self::PRODUCT_ID,
@@ -55,7 +62,7 @@ class Licensing {
 				'has_paid_plans'      => true,
 				'is_org_compliant'    => true,
 				'has_affiliation'     => 'selected',
-				'secret_key'          => defined( 'CODE_SNIPPETS_SECRET_KEY' ) ? CODE_SNIPPETS_SECRET_KEY : null,
+				'secret_key'          => $secret_key,
 				'menu'                => array(
 					'slug'        => code_snippets()->get_menu_slug(),
 					'contact'     => false,

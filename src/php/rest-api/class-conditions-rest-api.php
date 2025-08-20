@@ -20,12 +20,12 @@ final class Conditions_REST_API {
 	/**
 	 * Current API version.
 	 */
-	const VERSION = 1;
+	public const VERSION = 1;
 
 	/**
 	 * The base route for these API endpoints.
 	 */
-	const BASE_ROUTE = 'conditions';
+	public const BASE_ROUTE = 'conditions';
 
 	/**
 	 * Retrieve this controller's REST API base path, including namespace.

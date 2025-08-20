@@ -67,6 +67,7 @@ class Manage_Menu extends Admin_Menu {
 
 		add_action( 'admin_menu', array( $this, 'register_upgrade_menu' ), 500 );
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
 		add_action( 'wp_ajax_update_code_snippet', array( $this, 'ajax_callback' ) );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
 	}
