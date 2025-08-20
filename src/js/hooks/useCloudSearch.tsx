@@ -32,8 +32,10 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 	const [totalItems, setTotalItems] = useState(0)
 	const [totalPages, setTotalPages] = useState(0)
 
-	const [searchResults, setSearchResults] = useState<CloudSnippetSchema[]>(() =>
-		window.localStorage.getItem('code-snippets-cloud-search') ? JSON.parse(window.localStorage.getItem('code-snippets-cloud-search')!) : undefined)
+	const [searchResults, setSearchResults] = useState<CloudSnippetSchema[] | undefined>(() => {
+		const results = window.localStorage.getItem('code-snippets-cloud-search') // TODO remove this.
+		return results ? JSON.parse(results) as CloudSnippetSchema[] : undefined
+	})
 	const [isSearching, setIsSearching] = useState(false)
 	const [error, setError] = useState(false)
 

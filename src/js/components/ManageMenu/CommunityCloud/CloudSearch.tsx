@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n'
 import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { useCloudSearch } from '../../../hooks/useCloudSearch'
-import { useCloudSearchFilters, WithCloudSearchFiltersContext } from '../../../hooks/useCloudSearchFilters'
+import { WithCloudSearchFiltersContext, useCloudSearchFilters } from '../../../hooks/useCloudSearchFilters'
 import { TablePagination } from '../../common/ListTable/TablePagination'
 import { SubmitButton } from '../../common/SubmitButton'
 import { SearchFilters } from './SearchFilters'
@@ -54,8 +54,8 @@ const SearchResultsTable = () => {
 	const { page, totalItems, totalPages, setPage } = useCloudSearch()
 	const { filteredSearchResults } = useCloudSearchFilters()
 
-	return filteredSearchResults ?
-		<>
+	return filteredSearchResults
+		? <>
 			<div className="tablenav top">
 				<SearchFilters />
 
@@ -80,7 +80,7 @@ const SearchResultsTable = () => {
 				/>
 			</div>
 		</>
-	: null
+		: null
 }
 
 const ErrorBanner = () =>

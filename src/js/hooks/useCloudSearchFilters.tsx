@@ -1,16 +1,15 @@
-import React, { Dispatch, SetStateAction, useMemo, useState } from 'react'
-import { PropsWithChildren } from 'react'
-import type { CloudSearchFilters } from '../components/ManageMenu/CommunityCloud/SearchFilters'
-import type { CloudSnippetSchema } from '../types/schema/CloudSnippetSchema'
+import React, { useMemo , useState } from 'react'
 import { createContextHook } from '../utils/bootstrap'
 import { fetchQueryParam } from '../utils/urls'
 import { useCloudSearch } from './useCloudSearch'
+import type { CloudSearchFilters } from '../components/ManageMenu/CommunityCloud/SearchFilters'
+import type { Dispatch, PropsWithChildren, SetStateAction} from 'react'
+import type { CloudSnippetSchema } from '../types/schema/CloudSnippetSchema'
 
 interface CloudSearchFiltersContext {
 	filters: CloudSearchFilters
 	setFilters: Dispatch<SetStateAction<CloudSearchFilters>>
-	hasSearchResults: boolean
-	filteredSearchResults: CloudSnippetSchema[]
+	filteredSearchResults?: CloudSnippetSchema[]
 }
 
 export const [CloudSearchFiltersContext, useCloudSearchFilters] = createContextHook<CloudSearchFiltersContext>('useCloudSearchFilters')
@@ -34,8 +33,7 @@ export const WithCloudSearchFiltersContext: React.FC<PropsWithChildren> = ({ chi
 	const value: CloudSearchFiltersContext = {
 		filters,
 		setFilters,
-		hasSearchResults: undefined !== filteredSearchResults,
-		filteredSearchResults: filteredSearchResults ?? []
+		filteredSearchResults
 	}
 
 	return <CloudSearchFiltersContext.Provider value={value}>{children}</CloudSearchFiltersContext.Provider>

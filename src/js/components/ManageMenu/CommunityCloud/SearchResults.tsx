@@ -68,12 +68,12 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ snippet, isOpen, setIsOpen 
 
 	return isOpen
 		? <Modal onRequestClose={() => setIsOpen(false)} title={snippet.name}>
-					<pre className="line-numbers">
-						<code className={`language-${snippetType}`}>
-							{'php' === snippetType ? '<?php\n\n' : ''}
-							{snippet.code}
-						</code>
-					</pre>
+			<pre className="line-numbers">
+				<code className={`language-${snippetType}`}>
+					{'php' === snippetType ? '<?php\n\n' : ''}
+					{snippet.code}
+				</code>
+			</pre>
 		</Modal>
 		: null
 }

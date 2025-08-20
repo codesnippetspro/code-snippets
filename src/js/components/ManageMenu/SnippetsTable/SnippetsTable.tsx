@@ -65,7 +65,7 @@ const PageHeading = () => {
 
 				{searchQueryText || currentTag
 					? <span className="subtitle">
-					{__('Search results', 'code-snippets')}
+						{__('Search results', 'code-snippets')}
 
 						{/* translators: %s: search query. */}
 						{searchQueryText && sprintf(__(' for “%s”', 'code-snippets'), searchQueryText)}
@@ -81,9 +81,9 @@ const PageHeading = () => {
 							setSearchQuery()
 							setCurrentTag()
 						}}>
-						{__('Clear Filters', 'code-snippets')}
-					</Button>
-				</span>
+							{__('Clear Filters', 'code-snippets')}
+						</Button>
+					</span>
 					: null}
 			</h1>
 
@@ -106,7 +106,7 @@ const SafeModeNotice = () =>
 					}
 				)}{'\n'}
 
-				<a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank">
+				<a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank" rel="noreferrer">
 					{__('Read more', 'code-snippets')}
 				</a>
 			</p>
