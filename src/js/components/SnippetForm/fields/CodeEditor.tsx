@@ -7,7 +7,7 @@ import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { Button } from '../../common/Button'
 import { ExpandIcon } from '../../common/icons/ExpandIcon'
 import { MinimiseIcon } from '../../common/icons/MinimiseIcon'
-import { ExplainSnippetButton } from '../../EditorSidebar/actions/ExplainSnippetButton'
+import { ExplainSnippetButton } from './ExplainSnippetButton'
 import { CloudAIButton } from '../../EditorSidebar/actions/CloudAIButton'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
 import type { LineWidget } from 'codemirror'
@@ -149,13 +149,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 			<div className="above-snippet-code">
 				<h2><label htmlFor="snippet-code">{__('Snippet Content', 'code-snippets')}</label></h2>
 
-				<ExplainCodeButton />
-				<GenerateCodeButton setShowCreateModal={setIsGenerateModalOpen} />
-
 				<Button small className="expand-editor-button" onClick={() => setIsExpanded(current => !current)}>
 					{isExpanded ? <MinimiseIcon /> : <ExpandIcon />}
-					{isExpanded ? __('Minimise', 'code-snippets') : __('Expand', 'code-snippets')}
+					{isExpanded ? __('Minimize', 'code-snippets') : __('Expand', 'code-snippets')}
 				</Button>
+
+				<ExplainCodeButton />
+				<GenerateCodeButton setShowCreateModal={setIsGenerateModalOpen} />
 			</div>
 
 			<EditorTextarea textareaRef={textareaRef} />

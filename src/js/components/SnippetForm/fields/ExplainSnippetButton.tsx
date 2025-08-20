@@ -7,7 +7,7 @@ import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { isCondition } from '../../../utils/snippets/snippets'
 import { trimTrailingChar } from '../../../utils/text'
 import { Tooltip } from '../../common/Tooltip'
-import { CloudAIButton } from './CloudAIButton'
+import { CloudAIButton } from '../../EditorSidebar/actions/CloudAIButton'
 import type { ButtonProps } from '../../common/Button'
 import type { ExplainSnippetFields, ExplainedSnippet } from '../../../hooks/useGenerativeAPI'
 

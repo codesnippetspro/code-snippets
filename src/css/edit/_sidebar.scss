@@ -1,3 +1,5 @@
+@use '../common/theme';
+
 .snippet-editor-sidebar {
 	.button-large {
 		block-size: 48px;
@@ -44,7 +46,7 @@
 			margin-inline: 0;
 		}
 
-		> div {
+		.inline-form-field {
 			display: flex;
 			flex-flow: row wrap;
 			align-items: center;
@@ -54,6 +56,29 @@
 				margin-inline-start: auto;
 			}
 		}
+
+		.block-form-field {
+			display: flex;
+			flex-flow: column;
+			gap: 4px;
+
+			h4 {
+				margin-block-end: 0;
+			}
+		}
+	}
+
+	h4 .badge {
+		float: inline-end;
+
+		+ .badge {
+			margin-inline-end: 5px;
+		}
+	}
+
+	.beta-badge {
+		color: theme.$accent;
+		border: 1px solid currentcolor;
 	}
 
 	.components-form-token-field {
@@ -78,7 +103,46 @@ p.submit {
 }
 
 .shortcode-tag-wrapper {
-	.code-snippets-copy-text {
-		vertical-align: middle;
+	background: #fff;
+	min-block-size: 54px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
+	box-sizing: border-box;
+
+	code {
+		background: transparent;
+		padding-inline: 0.5em;
+		text-indent: -0.5em;
+	}
+}
+
+.code-snippets-copy-text.button {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+
+	.dashicons {
+		block-size: 18px;
+		inline-size: 18px;
+		font-size: 18px;
+	}
+
+	.spinner-wrapper {
+		block-size: 18px;
+		inline-size: 18px;
+		display: flex;
+		align-items: center;
+	}
+
+	.components-spinner {
+		block-size: 12px;
+	}
+}
+
+.code-snippets-modal {
+	p h4 {
+		margin-block-start: 0;
 	}
 }

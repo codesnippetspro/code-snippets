@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import classnames from 'classnames'
 import type { SnippetType } from '../../types/Snippet'
 
-export type BadgeName = SnippetType | 'core' | 'pro' | 'ai' | 'cloud' | 'bundles' | 'cloud_search'
+export type BadgeName = SnippetType | 'core' | 'pro' | 'ai' | 'cloud' | 'bundles' | 'cloud_search' | 'beta'
 
 const badgeIcons: Partial<Record<BadgeName, string>> = {
 	cond: 'randomize',
@@ -15,12 +15,14 @@ export interface BadgeProps {
 	name: BadgeName
 	small?: boolean
 	inverted?: boolean
-	content?: boolean
+	children?: ReactNode
 }
 
-export const Badge: React.FC<BadgeProps> = ({ name, small, inverted }) =>
+export const Badge: React.FC<BadgeProps> = ({ name, small, inverted, children }) =>
 	<span className={classnames('badge', `${name}-badge`, { 'small-badge': small, 'inverted-badge': inverted })}>
 		{badgeIcons[name]
 			? <span className={`dashicons dashicons-${badgeIcons[name]}`} />
-			: name}
+			: children ?
+				children
+				: name}
 	</span>

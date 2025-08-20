@@ -40,6 +40,7 @@
         "@wordpress/blocks": "^14.9.0",
         "@wordpress/components": "^29.3.0",
         "@wordpress/dom-ready": "^4.17.0",
+        "@wordpress/element": "^6.28.0",
         "@wordpress/i18n": "^5.17.0",
         "@wordpress/server-side-render": "^5.17.0",
         "@wordpress/url": "^4.20.0",
