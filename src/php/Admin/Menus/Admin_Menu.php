@@ -56,6 +56,7 @@ abstract class Admin_Menu {
 		'wp-url',
 		'wp-i18n',
 		'wp-date',
+		'wp-element',
 		'wp-components',
 	];
 

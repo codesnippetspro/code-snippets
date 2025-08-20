@@ -57,8 +57,8 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgrade
 
 	return (
 		<div className="snippet-type-container">
-			<label htmlFor="snippet-type-select-input">
-				<h3>{__('Snippet Type', 'code-snippets')}</h3>
+			<label htmlFor="snippet-type-select-input" className="screen-reader-text">
+				{__('Snippet Type', 'code-snippets')}
 			</label>
 			<Select
 				inputId="snippet-type-select-input"

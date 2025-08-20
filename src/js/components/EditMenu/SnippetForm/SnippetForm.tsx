@@ -11,14 +11,12 @@ import { WithSnippetFormContext, useSnippetForm } from '../../../hooks/useSnippe
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { Toolbar } from '../../common/Toolbar'
 import { UpsellDialog } from '../../common/UpsellDialog'
-import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
 import { EditorSidebar } from '../EditorSidebar'
 import { UpsellBanner } from '../../common/UpsellBanner'
 import { CodeEditor } from './fields/CodeEditor'
-import { SnippetLocationInput } from './fields/SnippetLocationInput'
-import { SnippetTypeInput } from './fields/SnippetTypeInput'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
+import { TagsEditor } from './fields/TagsEditor'
 import { PageHeading } from './page/PageHeading'
 import type { PropsWithChildren } from 'react'
 import type { Snippet } from '../../../types/Snippet'
@@ -162,15 +160,6 @@ const EditFormWrap: React.FC = () => {
 			<EditForm className={editFormClassName({ snippet, isReadOnly, isExpanded })}>
 				<main className="snippet-form-upper">
 					<NameInput />
-
-					{!isCondition(snippet) || 0 === snippet.id
-						? <div className="above-editor-container">
-							<SnippetTypeInput setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
-							<SnippetLocationInput />
-							<ConditionModalButton setIsDialogOpen={setIsUpgradeDialogOpen} />
-						</div>
-						: null}
-
 					<CodeEditor {...{ isExpanded, setIsExpanded }} />
 					<ConditionsEditor />
 				</main>
@@ -178,9 +167,10 @@ const EditFormWrap: React.FC = () => {
 				<div className="snippet-form-lower">
 					<UpsellBanner />
 					<DescriptionEditor />
+					<TagsEditor />
 				</div>
 
-				<EditorSidebar />
+				<EditorSidebar setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
 			</EditForm>
 
 			<UpsellDialog isOpen={isUpgradeDialogOpen} setIsOpen={setIsUpgradeDialogOpen} />

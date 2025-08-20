@@ -265,7 +265,7 @@ class Bootstrap_Admin {
 			$now = $welcome['start_datetime'];
 		}
 
-		if ( isset( $welcome['key'] ) && ! in_array( $welcome['key'], $dismissed, true ) &&
+		if ( ! empty( $welcome['key'] ) && ! in_array( $welcome['key'], $dismissed, true ) &&
 		     ( empty( $welcome['start_datetime'] ) || $now >= $welcome['start_datetime'] ) &&
 		     ( empty( $welcome['end_datetime'] ) || $now <= $welcome['end_datetime'] ) ) {
 			$notice = $welcome['key'];

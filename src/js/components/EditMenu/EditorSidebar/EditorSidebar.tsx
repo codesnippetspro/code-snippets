@@ -4,8 +4,11 @@ import { __, isRTL } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
 import { isNetworkAdmin } from '../../../utils/screen'
-import { getSnippetType, isCondition } from '../../../utils/snippets/snippets'
+import { isCondition } from '../../../utils/snippets/snippets'
 import { DeleteButton } from '../../common/DeleteButton'
+import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
+import { SnippetLocationInput } from '../SnippetForm/fields/SnippetLocationInput'
+import { SnippetTypeInput } from '../SnippetForm/fields/SnippetTypeInput'
 import { Notices } from '../SnippetForm/page/Notices'
 import { ShortcodeInfo } from './actions/ShortcodeInfo'
 import { MultisiteSharingSettings } from './controls/MultisiteSharingSettings'
@@ -14,13 +17,19 @@ import { SubmitButtons } from './actions/SubmitButtons'
 import { ActivationSwitch } from './controls/ActivationSwitch'
 import { PriorityInput } from './controls/PriorityInput'
 import { RTLControl } from './controls/RTLControl'
-import { TagsInput } from './controls/TagsInput'
+import type { Dispatch, SetStateAction } from 'react'
 
-export const EditorSidebar = () => {
+export interface EditorSidebarProps {
+	setIsUpgradeDialogOpen: Dispatch<SetStateAction<boolean>>
+}
+
+export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialogOpen }) => {
 	const { snippet, isWorking, setIsWorking, handleRequestError } = useSnippetForm()
 
 	return (
 		<div className="snippet-editor-sidebar">
+			<SnippetTypeInput setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
+
 			<div className="box">
 				{snippet.id && !isCondition(snippet) ? <ActivationSwitch /> : null}
 
@@ -28,12 +37,13 @@ export const EditorSidebar = () => {
 
 				{isRTL() ? <RTLControl /> : null}
 
+				<ConditionModalButton setIsDialogOpen={setIsUpgradeDialogOpen} />
+				<SnippetLocationInput />
+				<ShortcodeInfo />
 				<PriorityInput />
 
-				{window.CODE_SNIPPETS_EDIT?.tagOptions.enabled ? <TagsInput /> : null}
-
 				{snippet.id
-					? <div className="row-actions visible">
+					? <div className="row-actions visible inline-form-field">
 						<ExportButtons />
 						<DeleteButton
 							snippet={snippet}
@@ -53,8 +63,6 @@ export const EditorSidebar = () => {
 			</p>
 
 			<Notices />
-
-			{'html' === getSnippetType(snippet) ? <ShortcodeInfo /> : null}
 		</div>
 	)
 }

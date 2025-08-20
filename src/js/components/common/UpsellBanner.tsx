@@ -1,4 +1,5 @@
 import { ExternalLink } from '@wordpress/components'
+import { createInterpolateElement } from '@wordpress/element'
 import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
 import { shouldShowUpsell } from '../../utils/screen'
@@ -16,9 +17,10 @@ export const UpsellBanner = () => {
 				height="34"
 			/>
 			<p>
-				{__('Unlock ', 'code-snippets')}
-				<strong>{__('cloud sync, snippet conditions, AI features', 'code-snippets')}</strong>
-				{__(' and much more with Code Snippets Pro.', 'code-snippets')}
+				{createInterpolateElement(
+					__('Unlock <strong>cloud sync, snippet conditions, AI features</strong> and much more with Code Snippets Pro.', 'code-snippets'),
+					{ strong: <strong /> }
+				)}
 			</p>
 
 			<ExternalLink

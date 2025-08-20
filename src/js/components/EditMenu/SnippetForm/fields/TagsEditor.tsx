@@ -1,16 +1,16 @@
 import React from 'react'
-import { __, _x } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import { FormTokenField } from '@wordpress/components'
 import { useSnippetForm } from '../../../../hooks/useSnippetForm'
 
 const options = window.CODE_SNIPPETS_EDIT?.tagOptions
 
-export const TagsInput: React.FC = () => {
+export const TagsEditor: React.FC = () => {
 	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
 
 	return options?.enabled
 		? <div className="snippet-tags-container">
-			<h4><label>{__('Tags', 'code-snippets')}</label></h4>
+			<h3><label htmlFor="components-form-token-input-0">{__('Snippet Tags', 'code-snippets')}</label></h3>
 
 			<FormTokenField
 				label=""

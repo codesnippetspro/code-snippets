@@ -9,10 +9,12 @@ export const ActivationSwitch = () => {
 	const { submitSnippet } = useSubmitSnippet()
 
 	return (
-		<div>
+		<div className="inline-form-field">
 			<h4>
 				<label htmlFor="activation-switch">
-					{__('Is Active', 'code-snippets')}
+					{snippet.active
+						? __('Deactivate snippet', 'code-snippets')
+						: __('Activate snippet', 'code-snippets')}
 				</label>
 			</h4>
 

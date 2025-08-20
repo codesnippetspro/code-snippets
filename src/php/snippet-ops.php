@@ -607,6 +607,11 @@ function save_snippet( $snippet ): ?Snippet {
  * @noinspection PhpUndefinedConstantInspection
  */
 function execute_snippet( string $code, int $id = 0, bool $force = false ) {
+	/**
+	 * Do not continue if safe mode is active.
+	 *
+	 * @noinspection PhpUndefinedConstantInspection
+	 */
 	if ( empty( $code ) || ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ) {
 		return false;
 	}
