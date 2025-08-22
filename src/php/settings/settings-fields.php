@@ -46,6 +46,9 @@ function get_default_settings(): array {
 			'keymap'                      => 'default',
 			'theme'                       => 'default',
 		],
+		'version-switch' => [
+			'selected_version'  => '',
+		],
 	];
 
 	$defaults = apply_filters( 'code_snippets_settings_defaults', $defaults );
@@ -78,6 +81,19 @@ function get_settings_fields(): array {
 			'name' => __( 'Reset Caches', 'code-snippets' ),
 			'type' => 'action',
 			'desc' => __( 'Use this button to manually clear snippets caches.', 'code-snippets' ),
+		],
+	];
+
+	$fields['version-switch'] = [
+		'version_switcher'  => [
+			'name' => __( 'Switch Version', 'code-snippets' ),
+			'type' => 'callback',
+			'render_callback' => 'Code_Snippets\Settings\VersionSwitch\render_version_switch_field',
+		],
+		'refresh_versions'  => [
+			'name' => __( 'Refresh Versions', 'code-snippets' ),
+			'type' => 'callback',
+			'render_callback' => 'Code_Snippets\Settings\VersionSwitch\render_refresh_versions_field',
 		],
 	];
 
