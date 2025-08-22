@@ -26,14 +26,14 @@ $current_type = $this->get_current_type();
 if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 	echo '<div class="notice beta-test-notice"><p id="beta-testing">';
 	echo wp_kses(
-		__( 'Thank you for testing this <span class="highlight-yellow">beta version of Code Snippets</span>. We would love to hear your feedback.', 'code-snippets' ),
+		__( 'Thank you for testing this <span class="highlight-yellow">beta version of Code Snippets</span>. We would love to hear your thoughts.', 'code-snippets' ),
 		[ 'span' => [ 'class' => [ 'highlight-yellow' ] ] ]
 	);
 
 	printf(
-		' <a href="%s">%s</a>',
-		esc_url( __( 'mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback', 'code-snippets' ) ),
-		esc_html__( 'Please let us know!', 'code-snippets' )
+		' <a href="%s" class="button button-secondary" target="_blank">%s</a>',
+		esc_url( __( 'https://codesnippets.pro/beta-testing/feedback/', 'code-snippets' ) ),
+		esc_html__( 'Share feedback', 'code-snippets' )
 	);
 	echo '</p></div>';
 }
