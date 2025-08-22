@@ -378,32 +378,44 @@ function render_version_switch_field( array $args ): void {
 			</p>
 
 			<p>
-				<button type="button" id="switch-version-btn" class="button button-secondary" 
+				<button type="button" id="switch-version-btn" class="button button-secondary" disabled
 						<?php disabled( empty( $available_versions ) ); ?>>
 					<?php esc_html_e( 'Switch Version', 'code-snippets' ); ?>
 				</button>
 			</p>
 
 			<div id="version-switch-result" class="notice" style="display: none;"></div>
-
-			<p class="description">
-				<?php
-				esc_html_e( 'Warning: Switching versions may cause compatibility issues. Always backup your site before switching versions. This feature allows you to install different versions of the Code Snippets plugin.', 'code-snippets' );
-				?>
-			</p>
 		<?php endif; ?>
 	</div>
 
 	<script type="text/javascript">
 	jQuery(document).ready(function($) {
-		$('#switch-version-btn').on('click', function() {
-			var targetVersion = $('#target_version').val();
-			var $button = $(this);
-			var $result = $('#version-switch-result');
+		var currentVersion = '<?php echo esc_js( $current_version ); ?>';
+		var $button = $('#switch-version-btn');
+		var $dropdown = $('#target_version');
+		var $result = $('#version-switch-result');
+		
+		// Handle dropdown changes - enable/disable button and show/hide warning
+		$dropdown.on('change', function() {
+			var selectedVersion = $(this).val();
 			
-			if (!targetVersion) {
+			if (!selectedVersion || selectedVersion === currentVersion) {
+				// Current version or no selection - disable button and hide warning
+				$button.prop('disabled', true);
+				$('#version-switch-warning').hide();
+			} else {
+				// Different version selected - enable button and show warning
+				$button.prop('disabled', false);
+				$('#version-switch-warning').show();
+			}
+		});
+		
+		$button.on('click', function() {
+			var targetVersion = $dropdown.val();
+			
+			if (!targetVersion || targetVersion === currentVersion) {
 				$result.removeClass('notice-success notice-error').addClass('notice-warning')
-					.html('<p><?php esc_html_e( 'Please select a version to switch to.', 'code-snippets' ); ?></p>')
+					.html('<p><?php esc_html_e( 'Please select a different version to switch to.', 'code-snippets' ); ?></p>')
 					.show();
 				return;
 			}
@@ -493,7 +505,7 @@ function render_refresh_versions_field( array $args ): void {
 		<?php esc_html_e( 'Refresh Available Versions', 'code-snippets' ); ?>
 	</button>
 	<p class="description">
-		<?php esc_html_e( 'Clear the cached list of available versions and fetch the latest from WordPress.org.', 'code-snippets' ); ?>
+		<?php esc_html_e( 'Check for the latest available plugin versions from WordPress.org.', 'code-snippets' ); ?>
 	</p>
 
 	<script type="text/javascript">
@@ -546,9 +558,24 @@ function ajax_refresh_versions(): void {
 	get_available_versions();
 
 	wp_send_json_success( [
-		'message' => __( 'Versions cache refreshed successfully.', 'code-snippets' ),
+		'message' => __( 'Available versions updated successfully.', 'code-snippets' ),
 	] );
 }
 
 // Register AJAX handler
 add_action( 'wp_ajax_code_snippets_refresh_versions', __NAMESPACE__ . '\\ajax_refresh_versions' );
+
+/**
+ * Render the version switch warning that appears at the bottom
+ * This should be called after all other version-related fields
+ */
+function render_version_switch_warning(): void {
+	?>
+	<div id="version-switch-warning" class="notice notice-warning" style="display: none; margin-top: 20px;">
+		<p>
+			<strong><?php esc_html_e( 'Warning:', 'code-snippets' ); ?></strong>
+			<?php esc_html_e( 'Switching versions may cause compatibility issues. Always backup your site before switching versions.', 'code-snippets' ); ?>
+		</p>
+	</div>
+	<?php
+}
