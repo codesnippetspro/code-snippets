@@ -249,7 +249,7 @@ class Front_End {
 		extract( $atts );
 
 		ob_start();
-		eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
+		eval( "?>\n\n" . $snippet->code );
 
 		return ob_get_clean();
 	}
