@@ -1,6 +1,6 @@
 @use 'common/editor';
 
-$sections: general, editor, debug;
+$sections: general, editor, debug, version-switch;
 
 p.submit {
 	display: flex;
@@ -127,4 +127,77 @@ body.js {
 
 .cloud-settings tbody tr:nth-child(n+5) {
     display: none;
+}
+
+// Version Switch Styles
+.code-snippets-version-switch {
+	.current-version {
+		font-family: monospace;
+		font-size: 1.1em;
+		font-weight: bold;
+		color: #0073aa;
+		background: #f0f6fc;
+		padding: 2px 8px;
+		border-radius: 3px;
+		border: 1px solid #c3c4c7;
+	}
+
+	#target_version {
+		min-width: 200px;
+		margin-inline-start: 8px;
+	}
+
+	#switch-version-btn {
+		margin-inline-start: 8px;
+		
+		&[disabled] {
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
+	}
+
+	#version-switch-result {
+		margin-block-start: 12px;
+		
+		&.notice {
+			padding: 8px 12px;
+			border-radius: 4px;
+		}
+	}
+
+	p.description {
+		font-style: italic;
+		color: #d63638;
+		background: #fcf0f1;
+		padding: 8px 12px;
+		border-radius: 4px;
+		border-left: 4px solid #d63638;
+		margin-block-start: 16px;
+	}
+
+	.notice {
+		&.notice-success {
+			border-left-color: #00a32a;
+		}
+		
+		&.notice-error {
+			border-left-color: #d63638;
+		}
+		
+		&.notice-warning {
+			border-left-color: #dba617;
+		}
+		
+		&.notice-info {
+			border-left-color: #72aee6;
+		}
+	}
+}
+
+.version-switch-settings {
+	.form-table {
+		th {
+			width: 180px;
+		}
+	}
 }
