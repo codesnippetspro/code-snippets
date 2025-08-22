@@ -5,6 +5,7 @@ namespace Code_Snippets\REST_API;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\Utils\delete_self_option;
 use function Code_Snippets\Utils\get_self_option;
 use const Code_Snippets\REST_API_NAMESPACE;
