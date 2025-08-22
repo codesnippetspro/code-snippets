@@ -14,8 +14,6 @@
 
 namespace Code_Snippets\Settings\VersionSwitch;
 
-use function Code_Snippets\code_snippets;
-
 // Configuration constants for version switching
 const VERSION_CACHE_KEY = 'code_snippets_available_versions';
 const PROGRESS_KEY = 'code_snippets_version_switch_progress';
