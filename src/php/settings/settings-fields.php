@@ -95,6 +95,11 @@ function get_settings_fields(): array {
 			'type' => 'callback',
 			'render_callback' => 'Code_Snippets\Settings\VersionSwitch\render_refresh_versions_field',
 		],
+		'version_warning'   => [
+			'name' => '',
+			'type' => 'callback',
+			'render_callback' => 'Code_Snippets\Settings\VersionSwitch\render_version_switch_warning',
+		],
 	];
 
 	$fields['general'] = [
