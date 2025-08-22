@@ -35,16 +35,18 @@ $sidebar-gap: 30px;
 		border-color: #ccc;
 		padding-block: 6px;
 		padding-inline: 12px;
-
-		.pro-badge {
-			margin-inline-start: auto;
-		}
 	}
 
 	&.no-condition .cond-badge {
 		background: transparent;
 		color: inherit;
 		border: 1px solid currentcolor;
+	}
+
+	&.no-condition:hover .cond-badge {
+		color: #fff;
+		background: theme.$accent;
+		border-color: theme.$accent;
 	}
 }
 

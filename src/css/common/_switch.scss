@@ -1,14 +1,16 @@
 @use 'theme';
 
+$off-color: #789;
+
 .snippet-execution-button,
 .snippet-activation-switch,
-input[type="checkbox"].switch {
+input[type='checkbox'].switch {
 	display: block;
 	position: relative;
 }
 
 .snippet-activation-switch,
-input[type="checkbox"].switch {
+input[type='checkbox'].switch {
 	appearance: none;
 	outline: 0;
 	cursor: pointer;
@@ -17,23 +19,23 @@ input[type="checkbox"].switch {
 	block-size: 19px;
 	border-radius: 34px;
 	text-align: start;
-	border: 1px solid theme.$accent;
+	border: 1px solid $off-color;
 	box-sizing: border-box;
 
 	&::before {
-		transition: all .4s;
+		transition: all .1s;
 		content: '';
 		block-size: 13px;
 		inline-size: 13px;
 		display: inline-block;
-		background-color: theme.$accent;
+		background-color: $off-color;
 		border-radius: 50%;
 		margin: 2px;
 	}
 }
 
 .active-snippet .snippet-activation-switch,
-input[type="checkbox"].switch:checked {
+input[type='checkbox'].switch:checked {
 	background-color: #0073aa;
 
 	&::before {

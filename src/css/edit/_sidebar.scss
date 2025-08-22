@@ -102,6 +102,13 @@ p.submit {
 	padding-block-start: 0;
 }
 
+.activation-switch-container label {
+	display: flex;
+	flex-flow: row;
+	gap: 5px;
+	justify-content: center;
+}
+
 .shortcode-tag-wrapper {
 	background: #fff;
 	min-block-size: 54px;
