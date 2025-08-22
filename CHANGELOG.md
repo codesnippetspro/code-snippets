@@ -7,6 +7,12 @@
 
 ### Changed
 * Redesigned edit menu with refreshed look and functionality.
+* Updated snippet type badges to be more visually distinct.
+* Redesigned tooltips used throughout the plugin.
+* Moved content snippet shortcode options into separate modal window.
+* Updated snippet tag editor to use built-in WordPress tag editor.
+* Created proper form for sharing beta feedback.
+* Improved UX of snippet activation toggle.
 
 ### Fixed
 * Fetching active snippets on a multisite network now respects the 'priority' field above all else when ordering snippets.
