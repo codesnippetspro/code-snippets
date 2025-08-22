@@ -177,7 +177,7 @@ const EditFormWrap: React.FC = () => {
 
 				<EditorSidebar
 					setIsUpgradeDialogOpen={setIsUpgradeDialogOpen}
-					setIsConditionModalOpen={setIsGenerateModalOpen}
+					setIsConditionModalOpen={setIsConditionModalOpen}
 				/>
 			</EditForm>
 

@@ -241,9 +241,9 @@ class Evaluate_Assets {
 			wp_enqueue_script(
 				$handle,
 				$this->get_asset_url( $scope ),
-				array(),
+				[],
 				$rev,
-				'site-footer-js' === $scope
+				[ 'in_footer' => 'site-footer-js' === $scope ]
 			);
 
 			wp_add_inline_script( $handle, $this->build_inline_code( $scope ) );
@@ -264,17 +264,18 @@ class Evaluate_Assets {
 	/**
 	 * Output the code from a list of snippets
 	 *
-	 * @param string $code  Snippet code.
-	 * @param string $scope Snippet scope.
+	 * @param string $code          Snippet code.
+	 * @param string $type_or_scope Snippet type or scope.
 	 *
 	 * @return string Processed code.
 	 *
 	 * @noinspection PhpDocMissingThrowsInspection
 	 */
-	private static function process_code( string $code, string $scope ): string {
+	private static function process_code( string $code, string $type_or_scope ): string {
 		$minify_types = Settings\get_setting( 'general', 'minify_output' );
 
-		switch ( $scope ) {
+		switch ( $type_or_scope ) {
+			case 'css':
 			case 'site-css':
 			case 'admin-css':
 				if ( in_array( 'css', $minify_types, true ) ) {
@@ -283,6 +284,7 @@ class Evaluate_Assets {
 				}
 				break;
 
+			case 'js':
 			case 'site-head-js':
 			case 'site-footer-js':
 				if ( in_array( 'js', $minify_types, true ) ) {

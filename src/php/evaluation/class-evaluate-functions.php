@@ -45,7 +45,7 @@ class Evaluate_Functions {
 	public function __construct( DB $db ) {
 		$this->db = $db;
 		add_action( 'plugins_loaded', [ $this, 'evaluate_early' ], 1 );
-		add_action( 'wp', [ $this, 'evaluate_conditional_snippets' ], 1 );
+		add_action( 'init', [ $this, 'evaluate_conditional_snippets' ], 1 );
 	}
 
 	/**
@@ -181,8 +181,6 @@ class Evaluate_Functions {
 	 * Evaluate conditional snippets on the 'wp' action.
 	 *
 	 * @return void
-	 *
-	 * @noinspection PhpDocMissingThrowsInspection
 	 */
 	public function evaluate_conditional_snippets() {
 		if ( $this->is_safe_mode_active() ) {
@@ -202,13 +200,6 @@ class Evaluate_Functions {
 				if ( $condition_results[ $condition_id ] ) {
 					$this->evaluate_snippet( $snippet );
 				}
-			} elseif ( function_exists( 'wp_trigger_error' ) ) {
-				/* @noinspection PhpUnhandledExceptionInspection E_USER_WARNING does not throw an exception. */
-				wp_trigger_error(
-					__FUNCTION__,
-					sprintf( 'Could not find condition %d for snippet %d.', $condition_id, $snippet['id'] ),
-					E_USER_WARNING
-				);
 			}
 		}
 	}
