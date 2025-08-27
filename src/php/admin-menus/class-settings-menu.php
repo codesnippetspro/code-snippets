@@ -17,7 +17,7 @@ class Settings_Menu extends Admin_Menu {
 	/**
 	 * Settings page name as registered with the Settings API.
 	 */
-	const SETTINGS_PAGE = 'code-snippets';
+	public const SETTINGS_PAGE = 'code-snippets';
 
 	/**
 	 * Constructor
@@ -175,6 +175,9 @@ class Settings_Menu extends Admin_Menu {
 		echo '</h2>';
 
 		foreach ( $sections as $section ) {
+			if ( 'license' === $section['id'] ) {
+				continue;
+			}
 
 			if ( $section['title'] ) {
 				printf(

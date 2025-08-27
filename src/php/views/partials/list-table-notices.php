@@ -14,21 +14,20 @@ namespace Code_Snippets;
  * @var Manage_Menu $this
  */
 
+/**
+ * Constant existence is checked with defined().
+ *
+ * @noinspection PhpUndefinedConstantInspection
+ */
 if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 	?>
 	<div id="message" class="notice notice-error fade is-dismissible">
 		<p>
+			<strong><?php esc_html_e( 'Warning:', 'code-snippets' ); ?></strong>
 			<?php
-			printf(
-				'<strong>%s</strong> %s',
-				esc_html__( 'Warning:', 'code-snippets' ),
-				sprintf(
-					// translators: 1: constant name, 2: file name.
-					esc_html__( 'Safe mode is active and snippets will not execute! Remove the %1$s constant from %2$s file to turn off safe mode.', 'code-snippets' ),
-					'<code>CODE_SNIPPETS_SAFE_MODE</code>',
-					'<code>wp-config.php</code>',
-				)
-			);
+			// translators: 1: constant name, 2: file name.
+			$text = __( 'Safe mode is active and snippets will not execute! Remove the %1$s constant from %2$s file to turn off safe mode.', 'code-snippets' );
+			printf( esc_html( $text ), '<code>CODE_SNIPPETS_SAFE_MODE</code>', '<code>wp-config.php</code>' );
 			?>
 
 			<a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank">

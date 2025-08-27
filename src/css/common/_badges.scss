@@ -1,0 +1,85 @@
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:color';
+@use 'theme';
+
+.badge {
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	border-radius: 3px;
+	text-align: center;
+	min-inline-size: 43px;
+	min-block-size: 24px;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	padding-block: 0;
+	padding-inline: 3px;
+	box-sizing: border-box;
+	gap: 5px;
+	line-height: 1;
+
+	.dashicons {
+		font-size: 18px;
+		inline-size: 18px;
+		block-size: 18px;
+	}
+}
+
+.small-badge {
+	block-size: auto;
+	inline-size: auto;
+	font-size: smaller;
+	padding-block: 0;
+	padding-inline: 0.5em;
+}
+
+.wp-core-ui .button.nav-tab-button {
+	margin-inline-start: 0.5em;
+	float: inline-end;
+	color: #a7aaad;
+	background: #f6f7f7;
+	border-color: #f6f7f7;
+	align-self: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 2px;
+}
+
+@each $name, $colors in theme.$badges {
+	$text-color: #fff;
+	$background-color: list.nth($colors, 1);
+
+	@if list.length($colors) > 1 {
+		$text-color: list.nth($colors, 2);
+	}
+
+	.badge.#{$name}-badge,
+	.nav-tab-inactive:hover .badge.#{$name}-badge,
+	:hover > .inverted-badges .#{$name}-badge {
+		color: $text-color;
+		background-color: $background-color;
+	}
+
+	.badge.#{$name}-badge:hover {
+		color: $text-color;
+		background-color: color.adjust($background-color, $lightness: -5%);
+	}
+}
+
+.nav-tab-inactive .badge,
+.inverted-badges .badge {
+	color: #fff;
+	background-color: #a7aaad;
+}
+
+.nav-tab-inactive {
+	background: transparent;
+}
+
+.nav-tab-button .dashicons-external {
+	font-size: 15px;
+	color: #666;
+}

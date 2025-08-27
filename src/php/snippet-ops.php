@@ -7,7 +7,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\REST_API\Snippets_REST_Controller;
 use ParseError;
 use function Code_Snippets\Settings\get_self_option;
 use function Code_Snippets\Settings\update_self_option;
@@ -94,11 +93,13 @@ function get_snippets( array $ids = array(), ?bool $network = null ): array {
 	// If a list of IDs are provided, narrow down the snippets list.
 	if ( $ids_count > 0 ) {
 		$ids = array_map( 'intval', $ids );
-		return array_filter(
-			$snippets,
-			function ( Snippet $snippet ) use ( $ids ) {
-				return in_array( $snippet->id, $ids, true );
-			}
+		return array_values(
+			array_filter(
+				$snippets,
+				function ( Snippet $snippet ) use ( $ids ) {
+					return in_array( $snippet->id, $ids, true );
+				}
+			)
 		);
 	}
 
@@ -500,7 +501,6 @@ function save_snippet( $snippet ) {
 
 	// Update the last modification date if necessary.
 	$snippet->update_modified();
-	$snippet->increment_revision();
 
 	if ( 'php' === $snippet->type ) {
 		// Remove tags from beginning and end of snippet.
@@ -517,21 +517,27 @@ function save_snippet( $snippet ) {
 		}
 	}
 
+	// Increment the revision number unless revision = 1 or revision is not set.
+	if ( $snippet->revision && $snippet->revision > 1 ) {
+		$snippet->increment_revision();
+	}
+
 	// Shared network snippets are always considered inactive.
 	$snippet->active = $snippet->active && ! $snippet->shared_network;
 
 	// Build the list of data to insert.
 	$data = [
-		'name'        => $snippet->name,
-		'description' => $snippet->desc,
-		'code'        => $snippet->code,
-		'tags'        => $snippet->tags_list,
-		'scope'       => $snippet->scope,
-		'priority'    => $snippet->priority,
-		'active'      => intval( $snippet->active ),
-		'modified'    => $snippet->modified,
-		'revision'    => $snippet->revision,
-		'cloud_id'    => $snippet->cloud_id ? $snippet->cloud_id : null,
+		'name'         => $snippet->name,
+		'description'  => $snippet->desc,
+		'code'         => $snippet->code,
+		'tags'         => $snippet->tags_list,
+		'scope'        => $snippet->scope,
+		'condition_id' => intval( $snippet->condition_id ),
+		'priority'     => $snippet->priority,
+		'active'       => intval( $snippet->active ),
+		'modified'     => $snippet->modified,
+		'revision'     => $snippet->revision,
+		'cloud_id'     => $snippet->cloud_id ? $snippet->cloud_id : null,
 	];
 
 	// Create a new snippet if the ID is not set.
@@ -574,6 +580,11 @@ function save_snippet( $snippet ) {
  * @since 2.0.0
  */
 function execute_snippet( string $code, int $id = 0, bool $force = false ) {
+	/**
+	 * Do not continue if safe mode is active.
+	 *
+	 * @noinspection PhpUndefinedConstantInspection
+	 */
 	if ( empty( $code ) || ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ) {
 		return false;
 	}
@@ -590,84 +601,6 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 
 	do_action( 'code_snippets/after_execute_snippet', $code, $id, $result );
 	return $result;
-}
-
-/**
- * Run the active snippets.
- * Read-write-execute operation.
- *
- * @return bool true on success, false on failure.
- *
- * @since 2.0.0
- */
-function execute_active_snippets(): bool {
-	global $wpdb;
-
-	// Bail early if safe mode is active.
-	if ( ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ||
-	     ! apply_filters( 'code_snippets/execute_snippets', true ) ) {
-		return false;
-	}
-
-	$db = code_snippets()->db;
-	$scopes = array( 'global', 'single-use', is_admin() ? 'admin' : 'front-end' );
-	$data = $db->fetch_active_snippets( $scopes );
-
-	// Detect if a snippet is currently being edited, and if so, spare it from execution.
-	$edit_id = 0;
-	$edit_table = $db->table;
-
-	if ( wp_is_json_request() && ! empty( $_SERVER['REQUEST_URI'] ) ) {
-		$url = wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
-
-		if ( isset( $url['path'] ) && false !== strpos( $url['path'], Snippets_REST_Controller::get_prefixed_base_route() ) ) {
-			$path_parts = explode( '/', $url['path'] );
-			$edit_id = intval( end( $path_parts ) );
-
-			if ( ! empty( $url['query'] ) ) {
-				wp_parse_str( $url['query'], $path_params );
-				$edit_table = isset( $path_params['network'] ) && rest_sanitize_boolean( $path_params['network'] ) ?
-					$db->ms_table : $db->table;
-			}
-		}
-	}
-
-	foreach ( $data as $table_name => $active_snippets ) {
-
-		// Loop through the returned snippets and execute the PHP code.
-		foreach ( $active_snippets as $snippet ) {
-			$snippet_id = intval( $snippet['id'] );
-			$code = $snippet['code'];
-
-			// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
-			if ( 'single-use' === $snippet['scope'] ) {
-				$active_shared_ids = get_option( 'active_shared_network_snippets', array() );
-
-				if ( $table_name === $db->ms_table && is_array( $active_shared_ids ) && in_array( $snippet_id, $active_shared_ids, true ) ) {
-					unset( $active_shared_ids[ array_search( $snippet_id, $active_shared_ids, true ) ] );
-					$active_shared_ids = array_values( $active_shared_ids );
-					update_option( 'active_shared_network_snippets', $active_shared_ids );
-					clean_active_snippets_cache( $table_name );
-				} else {
-					$wpdb->update(
-						$table_name,
-						array( 'active' => '0' ),
-						array( 'id' => $snippet_id ),
-						array( '%d' ),
-						array( '%d' )
-					);
-					clean_snippets_cache( $table_name );
-				}
-			}
-
-			if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) &&
-			     ! ( $edit_id === $snippet_id && $table_name === $edit_table ) ) {
-				execute_snippet( $code, $snippet_id );
-			}
-		}
-	}
-
-	return true;
 }
 
 /**

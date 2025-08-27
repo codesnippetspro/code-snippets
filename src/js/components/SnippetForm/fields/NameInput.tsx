@@ -18,7 +18,7 @@ export const NameInput: React.FC = () => {
 					autoComplete="off"
 					value={snippet.name}
 					disabled={isReadOnly}
-					placeholder={__('Enter title here', 'code-snippets')}
+					placeholder={__('Enter snippet title', 'code-snippets')}
 					onChange={event =>
 						setSnippet(previous => ({ ...previous, name: event.target.value }))}
 				/>

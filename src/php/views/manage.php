@@ -8,6 +8,8 @@
 
 namespace Code_Snippets;
 
+use function Code_Snippets\Settings\get_setting;
+
 /**
  * Loaded from the manage menu class.
  *
@@ -24,14 +26,14 @@ $current_type = $this->get_current_type();
 if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 	echo '<div class="notice beta-test-notice"><p id="beta-testing">';
 	echo wp_kses(
-		__( 'Thank you for testing this <span class="highlight-yellow">beta version of Code Snippets</span>. We would love to hear your feedback.', 'code-snippets' ),
+		__( 'Thank you for testing this <span class="highlight-yellow">beta version of Code Snippets</span>. We would love to hear your thoughts.', 'code-snippets' ),
 		[ 'span' => [ 'class' => [ 'highlight-yellow' ] ] ]
 	);
 
 	printf(
-		' <a href="%s">%s</a>',
-		esc_url( __( 'mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback', 'code-snippets' ) ),
-		esc_html__( 'Click here to submit your feedback', 'code-snippets' )
+		' <a href="%s" class="button button-secondary" target="_blank">%s</a>',
+		esc_url( __( 'https://codesnippets.pro/beta-testing/feedback/', 'code-snippets' ) ),
+		esc_html__( 'Share feedback', 'code-snippets' )
 	);
 	echo '</p></div>';
 }
@@ -54,17 +56,16 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 	<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
 		<?php
 
-		foreach ( $types as $type_name => $label ) {
-			Admin::render_snippet_type_tab( $type_name, $label, $current_type );
-		}
+		Admin::render_snippet_type_tabs( $types, $current_type );
 
-		?>
-		<a class="button button-large nav-tab-button nav-tab-inactive go-pro-button"
-		   href="https://codesnippets.pro/pricing/" target="_blank"
-		   aria-label="<?php esc_attr_e( 'Find more about Pro (opens in external tab)', 'code-snippets' ); ?>">
-			<?php echo wp_kses( __( 'Upgrade to <span class="badge">Pro</span>', 'code-snippets' ), [ 'span' => [ 'class' => 'badge' ] ] ); ?>
-			<span class="dashicons dashicons-external"></span>
-		</a>
+		if ( ! get_setting( 'general', 'hide_upgrade_menu' ) ) { ?>
+			<a class="button button-large nav-tab-button nav-tab-inactive"
+			   href="https://codesnippets.pro/pricing/" target="_blank"
+			   aria-label="<?php esc_attr_e( 'Find more about Pro (opens in external tab)', 'code-snippets' ); ?>">
+				<?php echo wp_kses( __( 'Upgrade to <span class="badge pro-badge small-badge">Pro</span>', 'code-snippets' ), [ 'span' => [ 'class' => true ] ] ); ?>
+				<span class="dashicons dashicons-external"></span>
+			</a>
+		<?php } ?>
 	</h2>
 
 	<?php

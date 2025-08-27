@@ -1,5 +1,34 @@
 # Changelog
 
+## [3.7.0] (beta release)
+
+### Added
+* New 'conditions' feature: control where and when snippets execute with a powerful logic builder. (PRO)
+
+### Changed
+* Redesigned edit menu with refreshed look and functionality.
+* Updated snippet type badges to be more visually distinct.
+* Redesigned tooltips used throughout the plugin.
+* Moved content snippet shortcode options into separate modal window.
+* Updated snippet tag editor to use built-in WordPress tag editor.
+* Created proper form for sharing beta feedback.
+* Improved UX of snippet activation toggle.
+
+### Fixed
+* Fetching active snippets on a multisite network now respects the 'priority' field above all else when ordering snippets.
+* Cloud search appears correctly and allows downloading snippets in the free version of Code Snippets.
+* Improved performance of loading admin menu icon.
+
+## [3.6.9] (2025-02-17)
+
+### Changed
+* Updated `Cloud_API::get_bundles()` to properly check bundle data and return an empty array if no valid bundles are present.
+* Refactored `Cloud_List_Table::fetch_snippets()` to always return a valid `Cloud_Snippets` instance.
+* Cleaned up bundle iteration code and improved translation handling in the bundles view.
+
+### Fixed
+* Fixed errors in bundle iteration by adding a check for the bundles array before iterating.
+
 ## [3.6.8] (2025-02-14)
 
 ### Added

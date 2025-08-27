@@ -4,6 +4,8 @@ namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
+use Evaluation\Evaluate_Content;
+use Evaluation\Evaluate_Functions;
 
 /**
  * The main plugin class
@@ -34,6 +36,20 @@ class Plugin {
 	public DB $db;
 
 	/**
+	 * Class for evaluating function snippets.
+	 *
+	 * @var Evaluate_Functions
+	 */
+	public Evaluate_Functions $evaluate_functions;
+
+	/**
+	 * Class for evaluating content snippets.
+	 *
+	 * @var Evaluate_Content
+	 */
+	public Evaluate_Content $evaluate_content;
+
+	/**
 	 * Administration area class
 	 *
 	 * @var Admin
@@ -53,13 +69,6 @@ class Plugin {
 	 * @var Cloud_API
 	 */
 	public Cloud_API $cloud_api;
-
-	/**
-	 * Class for managing active snippets
-	 *
-	 * @var Active_Snippets
-	 */
-	public Active_Snippets $active_snippets;
 
 	/**
 	 * Handles licensing and plugin updates.
@@ -102,6 +111,8 @@ class Plugin {
 
 		// Snippet operation functions.
 		require_once $includes_path . '/snippet-ops.php';
+		$this->evaluate_content = new Evaluate_Content( $this->db );
+		$this->evaluate_functions = new Evaluate_Functions( $this->db );
 
 		// CodeMirror editor functions.
 		require_once $includes_path . '/editor.php';
@@ -119,7 +130,6 @@ class Plugin {
 		// Cloud List Table shared functions.
 		require_once $includes_path . '/cloud/list-table-shared-ops.php';
 
-		$this->active_snippets = new Active_Snippets();
 		$this->front_end = new Front_End();
 		$this->cloud_api = new Cloud_API();
 
@@ -212,7 +222,7 @@ class Plugin {
 			$url = 'admin.php?page=' . $slug;
 		}
 
-		if ( 'network' === $context || 'snippets-settings' === $slug ) {
+		if ( 'network' === $context ) {
 			return network_admin_url( $url );
 		} elseif ( 'admin' === $context ) {
 			return admin_url( $url );
@@ -337,17 +347,6 @@ class Plugin {
 	}
 
 	/**
-	 * Determine whether a snippet type is Pro-only.
-	 *
-	 * @param string $type Snippet type name.
-	 *
-	 * @return bool
-	 */
-	public static function is_pro_type( string $type ): bool {
-		return 'css' === $type || 'js' === $type || 'cloud' === $type || 'bundles' === $type;
-	}
-
-	/**
 	 * Localise a plugin script to provide the CODE_SNIPPETS object.
 	 *
 	 * @param string $handle Script handle.
@@ -368,10 +367,10 @@ class Plugin {
 					'localToken' => $this->cloud_api->get_local_token(),
 				],
 				'urls'             => [
-					'plugin'       => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
-					'manage'       => esc_url_raw( $this->get_menu_url() ),
-					'edit'         => esc_url_raw( $this->get_menu_url( 'edit' ) ),
-					'addNew'       => esc_url_raw( $this->get_menu_url( 'add' ) ),
+					'plugin' => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
+					'manage' => esc_url_raw( $this->get_menu_url() ),
+					'edit'   => esc_url_raw( $this->get_menu_url( 'edit' ) ),
+					'addNew' => esc_url_raw( $this->get_menu_url( 'add' ) ),
 				],
 			]
 		);

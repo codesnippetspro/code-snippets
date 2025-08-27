@@ -1,33 +1,29 @@
 export interface Snippet {
-	id: number
-	name: string
-	desc: string
-	code: string
-	tags: string[]
-	scope: SnippetScope
-	priority: number
-	active: boolean
-	network?: boolean
-	shared_network?: boolean | null
-	modified?: string
-	code_error?: [string, number] | null
+	readonly id: number
+	readonly name: string
+	readonly desc: string
+	readonly code: string
+	readonly tags: string[]
+	readonly scope: SnippetScope
+	readonly priority: number
+	readonly active: boolean
+	readonly network: boolean
+	readonly shared_network?: boolean | null
+	readonly modified?: string
+	readonly conditionId: number
+	readonly code_error?: readonly [string, number] | null
 }
 
-export type SnippetType = typeof SNIPPET_TYPES[number]
-export type SnippetScope = typeof SNIPPET_SCOPES[number]
+export type SnippetCodeType = 'php' | 'html' | 'css' | 'js'
+export type SnippetType = SnippetCodeType | 'cond'
 
-export const SNIPPET_SCOPES = <const> [
-	'global', 'admin', 'front-end', 'single-use',
-	'content', 'head-content', 'footer-content',
-	'admin-css', 'site-css',
-	'site-head-js', 'site-footer-js'
-]
+export type SnippetCodeScope = typeof SNIPPET_TYPE_SCOPES[SnippetCodeType][number]
+export type SnippetScope = typeof SNIPPET_TYPE_SCOPES[SnippetType][number]
 
-export const SNIPPET_TYPES = <const> ['php', 'html', 'css', 'js']
-
-export const SNIPPET_TYPE_SCOPES: Record<SnippetType, SnippetScope[]> = {
+export const SNIPPET_TYPE_SCOPES = <const> {
 	php: ['global', 'admin', 'front-end', 'single-use'],
 	html: ['content', 'head-content', 'footer-content'],
 	css: ['admin-css', 'site-css'],
-	js: ['site-head-js', 'site-footer-js']
+	js: ['site-head-js', 'site-footer-js'],
+	cond: ['condition']
 }

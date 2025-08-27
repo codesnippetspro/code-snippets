@@ -1,0 +1,96 @@
+@use '../common/theme';
+
+$sidebar-width: 321px;
+$sidebar-gap: 30px;
+
+.snippet-form #titlediv #title,
+.snippet-type-container {
+	border-color: #ccc;
+	block-size: 45px
+}
+
+.snippet-type-option {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-flow: row;
+	gap: 2em;
+
+	.small-badge {
+		margin-inline-start: 0.5em;
+	}
+
+	.badge {
+		float: inline-end;
+	}
+}
+
+
+.conditions-editor-open {
+	.button.button-large {
+		block-size: 100%;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		overflow: hidden;
+		border-color: #ccc;
+		padding-block: 6px;
+		padding-inline: 12px;
+	}
+
+	&.no-condition .cond-badge {
+		background: transparent;
+		color: inherit;
+		border: 1px solid currentcolor;
+	}
+
+	&.no-condition:hover .cond-badge {
+		color: #fff;
+		background: theme.$accent;
+		border-color: theme.$accent;
+	}
+}
+
+.snippet-form {
+	margin-block-start: 10px;
+	display: grid;
+	gap: $sidebar-gap;
+	grid-template-columns: 1fr $sidebar-width;
+	grid-template-areas: 'upper sidebar' 'lower sidebar';
+	transition: all 700ms;
+
+	&.snippet-form-expanded {
+		grid-template-areas: 'upper upper' 'lower sidebar';
+	}
+
+	.snippet-form-upper {
+		grid-area: upper;
+	}
+
+	.snippet-form-lower {
+		grid-area: lower;
+	}
+
+	.snippet-editor-sidebar {
+		grid-area: span 3 / sidebar;
+		max-inline-size: $sidebar-width;
+	}
+
+	@media (width <= 1024px) {
+		grid-template-columns: 1fr;
+	}
+
+	h2, h3 {
+		margin-block: 25px 15px;
+		margin-inline: 0;
+		font-size: 1.16em;
+
+		label {
+			cursor: auto;
+		}
+
+		.button {
+			font-weight: normal;
+		}
+	}
+}
