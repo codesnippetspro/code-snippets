@@ -1,0 +1,145 @@
+@use '../common/notices';
+
+.code-snippets-condition-modal {
+	@include notices.notices;
+
+	overflow: initial;
+
+	.components-modal__content {
+		padding: 0;
+		min-block-size: 450px;
+		display: flex;
+		flex-flow: column;
+		background: #f6f7f7;
+		overflow: initial;
+		max-inline-size: 100%;
+	}
+
+	.components-modal__header {
+		padding-block: 0;
+
+		h1 {
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	.components-modal__header-heading::after {
+		content: 'beta';
+		text-transform: uppercase;
+		border: 1px solid currentcolor;
+		border-radius: 3px;
+		padding: 3px 5px;
+		margin-inline-start: 0.5em;
+		font-size: small;
+	}
+
+	.components-modal__header + div {
+		display: flex;
+		flex-flow: column;
+		flex: 1;
+		overflow-y: auto;
+	}
+
+	.wp-core-ui & .button-link {
+		text-decoration: none;
+		appearance: none;
+		min-block-size: auto;
+		display: inline;
+		font-size: inherit;
+		line-height: normal;
+	}
+
+	.modal-splash {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-flow: column;
+		flex: 1;
+	}
+
+	.modal-splash-buttons {
+		display: flex;
+		gap: 8px;
+	}
+
+	.modal-footer, .modal-content {
+		padding: 21px 28px;
+	}
+
+	.modal-form {
+		flex: 1;
+		display: flex;
+		flex-flow: column;
+	}
+
+	.modal-content {
+		flex: 1;
+	}
+
+	.modal-content-top {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		label {
+			font-weight: bold;
+			display: flex;
+		}
+
+		a {
+			text-decoration: none;
+		}
+	}
+
+	.condition-name-input,
+	.condition-select {
+		margin: 16px 0;
+	}
+
+	.condition-name-input,
+	.condition-select > div[class$='-control'] {
+		inline-size: 100%;
+		block-size: 45px;
+	}
+
+	.condition-name-input {
+		border-radius: 5px;
+		border: 1px solid #c3c4c7;
+	}
+
+
+	.snippet-condition-editor {
+		padding-block-start: 24px;
+		margin-block-start: 24px;
+		border-block-start: 1px solid #e2e2e4;
+	}
+
+	.notice-error {
+		margin-block-start: 2em;
+	}
+
+	.modal-footer {
+		border-block-start: 1px solid #e2e2e4;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		inset-block-end: 0;
+		background: #f6f7f7;
+		inline-size: 100%;
+
+		> div {
+			display: flex;
+			gap: 8px;
+			align-items: center;
+		}
+
+		.button-large {
+			block-size: 45px;
+
+			&.button-primary {
+				padding: 0 30px;
+			}
+		}
+	}
+}

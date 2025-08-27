@@ -26,12 +26,12 @@ final class Cloud_REST_API {
 	/**
 	 * Current API version.
 	 */
-	const VERSION = 1;
+	public const VERSION = 1;
 
 	/**
 	 * The base route for these API endpoints.
 	 */
-	const BASE_ROUTE = 'cloud';
+	public const BASE_ROUTE = 'cloud';
 
 	/**
 	 * Instance of Cloud API class.

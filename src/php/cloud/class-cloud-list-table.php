@@ -127,12 +127,11 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Fetch the snippets used to populate the table.
 	 *
-	 * @return Cloud_Snippets
+	 * @return Cloud_Snippets|null
 	 */
 	protected function fetch_snippets(): Cloud_Snippets {
-    $remote_snippets = $this->cloud_api->get_codevault_snippets( $this->get_current_page_number() );
-    return is_null( $remote_snippets ) ? new Cloud_Snippets() : $remote_snippets;
-
+		$remote_snippets = $this->cloud_api->get_codevault_snippets( $this->get_current_page_number() );
+		return is_null( $remote_snippets ) ? new Cloud_Snippets() : $remote_snippets;
 	}
 
 	/**
@@ -272,18 +271,17 @@ class Cloud_List_Table extends WP_List_Table {
 				return $item->$column_name . cloud_lts_build_column_hidden_input( $column_name, $item );
 			case 'status':
 				return sprintf(
-					'<a class="snippet-type-badge snippet-status" data-type="%s">%s</a>',
-					esc_attr( strtolower( Cloud_API::get_status_name_from_status( $item->status ) ) ),
-					esc_html( Cloud_API::get_status_name_from_status( $item->status ) )
+					'<a class="badge %s-badge snippet-status">%s</a>',
+					esc_attr( $this->cloud_api->get_status_badge( $item->status ) ),
+					esc_html( $this->cloud_api->get_status_label( $item->status ) ),
 				);
 
 			case 'scope':
 				$type = Cloud_API::get_type_from_scope( $item->scope );
 
 				return sprintf(
-					'<a id="snippet-type-%s" class="snippet-type-badge snippet-type" data-type="%s">%s</a>',
+					'<a class="badge %s-badge snippet-type">%s</a>',
 					esc_attr( $type ),
-					esc_attr( strtolower( $type ) ),
 					esc_html( $type )
 				);
 
@@ -372,13 +370,11 @@ class Cloud_List_Table extends WP_List_Table {
 	 */
 	public function single_row( $item ) {
 		$type = Cloud_API::get_type_from_scope( $item->scope );
-		$status_name = strtolower( Cloud_API::get_status_name_from_status( $item->status ) );
-		$row_class = "snippet $status_name-snippet $type-snippet";
 
 		printf(
-			'<tr id="snippet-%s" class="%s" data-snippet-scope="%s">',
+			'<tr id="snippet-%s" class="snippet %s-snippet %s-snippet">',
 			esc_attr( $item->id ),
-			esc_attr( $row_class ),
+			esc_attr( $type ),
 			esc_attr( $item->scope )
 		);
 

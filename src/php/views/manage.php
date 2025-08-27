@@ -9,6 +9,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Cloud\Cloud_API;
+use function Code_Snippets\Settings\get_setting;
 
 /**
  * Loaded from the manage menu class.
@@ -36,7 +37,7 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 	printf(
 		' <a href="%s">%s</a>',
 		esc_url( __( 'mailto:team@codesnippets.pro?subject=Code Snippet Beta Test Feedback', 'code-snippets' ) ),
-		esc_html__( 'Click here to submit your feedback', 'code-snippets' )
+		esc_html__( 'Please let us know!', 'code-snippets' )
 	);
 	echo '</p></div>';
 }
@@ -59,11 +60,9 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 	<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
 		<?php
 
-		foreach ( $types as $type_name => $label ) {
-			Admin::render_snippet_type_tab( $type_name, $label, $current_type );
-		}
+		Admin::render_snippet_type_tabs( $types, $current_type );
 
-		if ( ! $licensed ) {
+		if ( ! $licensed && ! get_setting( 'general', 'hide_upgrade_menu' ) ) {
 			?>
 			<a class="button button-large nav-tab-button nav-tab-inactive go-pro-button"
 			   href="https://codesnippets.pro/pricing/" target="_blank"

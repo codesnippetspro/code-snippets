@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.6.8
+Stable tag: 3.7.0-beta.6
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -104,28 +104,49 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+= 3.7.0 (beta release) =
+
+__Added__
+
+* New 'conditions' feature: control where and when snippets execute with a powerful logic builder. (PRO)
+
+__Changed__
+
+* Redesigned edit menu with refreshed look and functionality.
+
+__Fixed__
+
+* Fetching active snippets on a multisite network now respects the 'priority' field above all else when ordering snippets.
+* Cloud search appears correctly and allows downloading snippets in the free version of Code Snippets.
+
 = 3.6.9 (2025-02-17) =
 
 __Changed__
+
 * Updated `Cloud_API::get_bundles()` to properly check bundle data and return an empty array if no valid bundles are present.
 * Refactored `Cloud_List_Table::fetch_snippets()` to always return a valid `Cloud_Snippets` instance.
 * Cleaned up bundle iteration code and improved translation handling in the bundles view.
 
 __Fixed__
+
 * Fixed errors in bundle iteration by adding a check for the bundles array before iterating.
 
 = 3.6.8 (2025-02-14) =
 
 __Added__
+
 * `code_snippets/hide_welcome_banner` filter hook for hiding welcome banner in dashboard.
 
 __Changed__
+
 * Updated Freemius SDK to the latest version. (PRO)
 
 __Removed__
+
 * Functionality allowing `[code_snippet]` shortcodes to be embedded recursively – it will be re-added in a future version.
 
 __Fixed__
+
 * Shortcodes embedded within `[code_snippet]` shortcodes not evaluating correctly.
 * Translation functions being called too early in some instances when loading plugin settings.
 * 'Generate' button not appearing on some sites. (PRO)
@@ -135,15 +156,18 @@ __Fixed__
 = 3.6.7 (2025-01-24) =
 
 __Added__
+
 * Generated snippet shortcode tags will include the snippet name, for easier identification.
 * Admin notices will dismiss automatically after five seconds. ([#208](https://github.com/codesnippetspro/code-snippets/issues/208))
 
 __Changed__
+
 * Updated CSS to use latest Sass features.
 * Moved theme selector to just above editor preview on settings page (thanks to brandonjp). ([#206](https://github.com/codesnippetspro/code-snippets/issues/206))
 * `[code_snippet]` shortcodes can now be nested within each other. ([#198](https://github.com/codesnippetspro/code-snippets/issues/198))
 
 __Fixed__
+
 * Save buttons above editor did not follow usual validation process in Pro. (PRO) ([#197](https://github.com/codesnippetspro/code-snippets/issues/197))
 * Minor inconsistencies in consistent UI elements between Core and Pro.
 * Tags input not allowing input. ([#211](https://github.com/codesnippetspro/code-snippets/issues/211))
@@ -344,19 +368,5 @@ __Fixed__
 
 * Issue preventing editor colorpicker from loading correctly. (PRO)
 * Issue preventing linting libraries from loading correctly in the code editor.
-
-= 3.3.0 (2023-03-09) =
-
-__Added__
-
-* Added additional editor shortcuts to list in tooltip.
-* Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
-* Ability to filter shortcode output. Thanks to contributions from [Jack Szwergold](https://github.com/JackSzwergold).
-
-__Fixed__
-
-* Do not enqueue CSS or JS snippet file if no snippets exist. (PRO)
-* Bug causing all snippets to show in site health information instead of those active.
-* Unnecessary sanitization of file upload data causing import process to fail on Windows systems.
 
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/core/CHANGELOG.md)**

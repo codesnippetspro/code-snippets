@@ -25,6 +25,7 @@ declare global {
 			restAPI: {
 				base: string
 				snippets: string
+				conditions: string
 				cloud: string
 				nonce: string
 				localToken: string
@@ -43,10 +44,9 @@ declare global {
 			isPreview: boolean
 			isLicensed: boolean
 			enableDownloads: boolean
-			scrollToNotices: boolean
-			extraSaveButtons: boolean
 			activateByDefault: boolean
 			enableDescription: boolean
+			hideUpsell: boolean
 			editorTheme: string
 			tagOptions: {
 				enabled: boolean

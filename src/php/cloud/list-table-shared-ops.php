@@ -51,11 +51,11 @@ function cloud_lts_build_column_hidden_input( string $column_name, Cloud_Snippet
  * @param string $action         Action - 'download' or 'update'.
  * @param string $source         Source - 'search' or 'cloud'.
  * @param string $snippet        Snippet ID.
- * @param int    $codevault_page The current page of the codevault.
+ * @param int    $codevault_page Page number for Codevault pagination.
  *
  * @return void
  */
-function cloud_lts_process_download_action( string $action, string $source, string $snippet, int $codevault_page = 0 ) {
+function cloud_lts_process_download_action( string $action, string $source, string $snippet, int $codevault_page ) {
 	if ( 'download' === $action || 'update' === $action ) {
 		$result = code_snippets()->cloud_api->download_or_update_snippet( $snippet, $source, $action, $codevault_page );
 
@@ -76,23 +76,16 @@ function cloud_lts_process_download_action( string $action, string $source, stri
  * @param Cloud_Snippet $cloud_snippet Snippet/Column item.
  * @param string        $source        Source - 'search' or 'codevault'.
  *
- * @return string
+ * @return string Action link HTML.
  */
 function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $source ): string {
 	$lang = Cloud_API::get_type_from_scope( $cloud_snippet->scope );
 	$link = code_snippets()->cloud_api->get_link_for_cloud_snippet( $cloud_snippet );
-	$additional_classes = 'search' === $source ? 'action-button-link' : '';
 	$is_licensed = code_snippets()->licensing->is_licensed();
-	$download = true;
-	$action_link = '';
-
-	if ( ! $is_licensed && in_array( $lang, [ 'css', 'js' ], true ) ) {
-		$download = false;
-	}
+	$download = $is_licensed || ! in_array( $lang, [ 'css', 'js' ], true );
 
 	if ( $link ) {
 		if ( $is_licensed && $link->update_available ) {
-			$download = false;
 			$update_url = add_query_arg(
 				[
 					'action'  => 'update',
@@ -100,17 +93,15 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 					'source'  => $source,
 				]
 			);
-			$action_link = sprintf(
-				'<a class="cloud-snippet-update %s" href="%s">%s</a>',
-				$additional_classes,
+			return sprintf(
+				'<li><a class="button button-primary" href="%s">%s</a></li>',
 				esc_url( $update_url ),
 				esc_html__( 'Update Available', 'code-snippets' )
 			);
 		} else {
 			return sprintf(
-				'<a href="%s" class="cloud-snippet-downloaded %s">%s</a>',
+				'<li><a class="button" href="%s">%s</a></li>',
 				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
-				$additional_classes,
 				esc_html__( 'View', 'code-snippets' )
 			);
 		}
@@ -125,34 +116,31 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 			]
 		);
 
-		$action_link = $is_licensed ?
-			sprintf(
-				'<a class="cloud-snippet-download %s" href="%s">%s</a>',
-				$additional_classes,
-				esc_url( $download_url ),
-				esc_html__( 'Download', 'code-snippets' )
-			) :
-			sprintf(
-				'<a class="cloud-snippet-download %s" href="%s" target="_blank">%s</a>',
-				$additional_classes,
-				'https://codesnippets.pro/pricing/',
-				__( '<span class="go-pro-badge">Pro</span> Only', 'code-snippets' ),
-			);
+		$download_button = sprintf(
+			'<li><a class="button button-primary" href="%s">%s</a></li>',
+			esc_url( $download_url ),
+			esc_html__( 'Download', 'code-snippets' )
+		);
+	} else {
+		$download_button = sprintf(
+			'<li><span class="%s">%s <span class="tooltip-content">%s</span></span></li>',
+			'button button-primary button-disabled tooltip tooltip-block tooltip-end',
+			esc_html__( 'Download', 'code-snippets' ),
+			esc_html__( 'This snippet type is only available in Code Snippets Pro', 'code-snippets' )
+		);
 	}
 
-	$thickbox_url = '#TB_inline?&width=700&height=500&inlineId=show-code-preview';
-
-	$thickbox_link = sprintf(
-		'<a href="%s" aria-label="%s" class="cloud-snippet-preview cloud-snippet-preview-style thickbox %s" data-snippet="%s" data-lang="%s">%s</a>',
-		esc_url( $thickbox_url ),
+	$preview_button = sprintf(
+		'<li><a href="%s" aria-label="%s" class="%s" data-snippet="%s" data-lang="%s">%s</a></li>',
+		'#TB_inline?&width=700&height=500&inlineId=show-code-preview',
 		esc_attr( $cloud_snippet->name ),
-		$additional_classes,
+		'cloud-snippet-preview thickbox',
 		esc_attr( $cloud_snippet->id ),
 		esc_attr( $lang ),
 		esc_html__( 'Preview', 'code-snippets' )
 	);
 
-	return $action_link . $thickbox_link;
+	return $download_button . $preview_button;
 }
 
 /**

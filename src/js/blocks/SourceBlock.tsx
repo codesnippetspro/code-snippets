@@ -1,41 +1,33 @@
 import classnames from 'classnames'
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import { __ } from '@wordpress/i18n'
 import { PanelBody, Spinner, TextControl, ToggleControl } from '@wordpress/components'
-import { BlockConfiguration, BlockEditProps } from '@wordpress/blocks'
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor'
 import { shortcode } from '@wordpress/icons'
-import { Snippet, SnippetType } from '../types/Snippet'
-import { useSnippets } from '../hooks/useSnippets'
-import { getSnippetType } from '../utils/snippets'
-import { SnippetSelectGroup, SnippetSelector } from './SnippetSelector'
+import { WithRestAPIContext } from '../hooks/useRestAPI'
+import { WithSnippetsListContext } from '../hooks/useSnippetsList'
+import { buildSnippetSelectOptionGroups, getSnippetType, isCondition } from '../utils/snippets/snippets'
+import { SnippetSelector } from './SnippetSelector'
+import type { SelectGroup } from '../types/SelectOption'
+import type { Snippet, SnippetType } from '../types/Snippet'
+import type { BlockConfiguration, BlockEditProps } from '@wordpress/blocks'
 
 export const SOURCE_BLOCK = 'code-snippets/source'
 
-const buildOptions = (snippets: Snippet[]): SnippetSelectGroup[] => {
-	const categories: Partial<Record<SnippetType, SnippetSelectGroup>> = {
-		php: { label: __('Functions (PHP)', 'code-snippets'), options: [] },
-		html: { label: __('Content (Mixed)', 'code-snippets'), options: [] },
-		css: { label: __('Styles (CSS)', 'code-snippets'), options: [] },
-		js: { label: __('Scripts (JS)', 'code-snippets'), options: [] }
-	}
-
-	for (const snippet of snippets) {
-		categories[getSnippetType(snippet)]?.options.push({
-			value: snippet.id,
-			label: snippet.name
-		})
-	}
-
-	return Object.values(categories)
-}
-
-interface SourceBlockAttributes {
-	snippet_id: number
+export interface SourceBlockAttributes {
 	network: boolean
+	className?: string
+	snippet_id: number
 	line_numbers: boolean
 	highlight_lines: string
-	className: string
+}
+
+const typeLanguageMap: Record<SnippetType, string> = {
+	php: 'php',
+	html: 'php',
+	css: 'css',
+	js: 'js',
+	cond: 'json'
 }
 
 interface SnippetSourceCodeProps {
@@ -47,8 +39,7 @@ const SnippetSourceCode: React.FC<SnippetSourceCodeProps> = ({
 	snippet: { code, id, scope },
 	attributes: { className, line_numbers, highlight_lines }
 }) => {
-	const type = getSnippetType(scope)
-	const language = 'css' === type ? 'css' : 'js' === type ? 'js' : 'php'
+	const type = getSnippetType({ scope })
 
 	useEffect(() => {
 		window.CODE_SNIPPETS_PRISM?.highlightAll()
@@ -58,10 +49,10 @@ const SnippetSourceCode: React.FC<SnippetSourceCodeProps> = ({
 		<div className={className}>
 			<pre
 				id={`code-snippets-source-${id}`}
-				className={line_numbers ? 'linkable-line-numbers' : ''}
-				data-line={highlight_lines}
+				className={line_numbers ? 'linkable-line-numbers' : undefined}
+				data-line={'' === highlight_lines ? undefined : highlight_lines}
 			>
-				<code className={classnames(`language-${language}`, { 'line-numbers': line_numbers })}>
+				<code className={classnames(`language-${typeLanguageMap[type]}`, { 'line-numbers': line_numbers })}>
 					{'php' === type ? `<?php\n\n${code}` : code}
 				</code>
 			</pre>
@@ -69,19 +60,11 @@ const SnippetSourceCode: React.FC<SnippetSourceCodeProps> = ({
 	)
 }
 
+const buildSnippetListOptions = (snippets: Snippet[]): SelectGroup<Snippet>[] =>
+	buildSnippetSelectOptionGroups(snippets.filter(snippet => !isCondition(snippet)))
+
 const Edit: React.FC<BlockEditProps<SourceBlockAttributes>> = ({ attributes, setAttributes }) => {
-	const snippets = useSnippets()
 	const blockProps = useBlockProps()
-
-	const snippet = useMemo<Snippet | undefined>(
-		() => 0 === attributes.snippet_id ? undefined : snippets?.find(({ id }) => id === attributes.snippet_id),
-		[attributes.snippet_id, snippets]
-	)
-
-	const options = useMemo<SnippetSelectGroup[]>(
-		() => snippets ? buildOptions(snippets) : [],
-		[snippets]
-	)
 
 	return (
 		<div {...blockProps}>
@@ -90,25 +73,31 @@ const Edit: React.FC<BlockEditProps<SourceBlockAttributes>> = ({ attributes, set
 					<ToggleControl
 						label={__('Show line numbers', 'code-snippets')}
 						checked={attributes.line_numbers}
-						onChange={isChecked => setAttributes({ ...attributes, line_numbers: isChecked })} />
+						onChange={isChecked => setAttributes({ line_numbers: isChecked })} />
 					<TextControl
 						label={__('Highlight lines', 'code-snippets')}
 						value={attributes.highlight_lines}
 						placeholder="1, 3-6"
-						onChange={value => setAttributes({ ...attributes, highlight_lines: value })} />
+						onChange={value => setAttributes({ highlight_lines: value })} />
 				</PanelBody>
 			</InspectorControls>
 
-			<SnippetSelector
-				icon={shortcode}
-				label={__('Snippet Source Code', 'code-snippets')}
-				className="code-snippets-source-block"
-				options={options}
-				attributes={attributes}
-				setAttributes={setAttributes}
-				renderContent={() => snippet ?
-					<SnippetSourceCode snippet={snippet} attributes={attributes} /> : <Spinner />}
-			/>
+			<WithRestAPIContext>
+				<WithSnippetsListContext>
+					<SnippetSelector
+						icon={shortcode}
+						label={__('Snippet Source Code', 'code-snippets')}
+						onChange={snippet => setAttributes({ snippet_id: snippet?.id ?? 0 })}
+						className="code-snippets-source-block"
+						buildOptions={buildSnippetListOptions}
+						selectedId={attributes.snippet_id}
+						renderContent={snippet =>
+							snippet
+								? <SnippetSourceCode snippet={snippet} attributes={attributes} />
+								: <Spinner />}
+					/>
+				</WithSnippetsListContext>
+			</WithRestAPIContext>
 		</div>
 	)
 }

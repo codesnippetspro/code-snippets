@@ -2,19 +2,17 @@
  * The following styles get applied inside the block editor only.
  */
 
-.code-snippets-large-select {
-	width: 100%;
-	margin-top: 1em;
+@use 'common/select';
 
-	input[type="text"]:focus {
-		box-shadow: none;
-	}
+.code-snippets-select {
+	inline-size: 100%;
+	margin-block-start: 1em;
 }
 
 .code-snippets-content-block,
 .code-snippets-source-block {
 	.components-placeholder__label svg {
-		width: 24px;
-		height: 24px;
+		inline-size: 24px;
+		block-size: 24px;
 	}
 }

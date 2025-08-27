@@ -16,6 +16,7 @@ use function Code_Snippets\delete_snippet;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
+use function Code_Snippets\update_snippet_fields;
 use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
@@ -29,12 +30,12 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Current API version.
 	 */
-	const VERSION = 1;
+	public const VERSION = 1;
 
 	/**
 	 * The base of this controller's route.
 	 */
-	const BASE_ROUTE = 'snippets';
+	public const BASE_ROUTE = 'snippets';
 
 	/**
 	 * The namespace of this controller's route.
@@ -179,6 +180,30 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'export_item_code' ],
 				'permission_callback' => [ $this, 'get_item_permissions_check' ],
+				'schema'              => [ $this, 'get_item_schema' ],
+				'args'                => $network_args,
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$id_route . '/attach',
+			[
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => [ $this, 'attach_condition' ],
+				'permission_callback' => [ $this, 'update_item_permissions_check' ],
+				'schema'              => [ $this, 'get_item_schema' ],
+				'args'                => $network_args + [ 'condition_id' => [ 'required' => true ] ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$id_route . '/detach',
+			[
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => [ $this, 'detach_condition' ],
+				'permission_callback' => [ $this, 'update_item_permissions_check' ],
 				'schema'              => [ $this, 'get_item_schema' ],
 				'args'                => $network_args,
 			]
@@ -381,6 +406,37 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Attach a condition to a snippet.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function attach_condition( WP_REST_Request $request ) {
+		$snippet_id = $request->get_param( 'id' );
+		$condition_id = $request->get_param( 'condition_id' );
+
+		$fields = [ 'condition_id' => $condition_id ];
+		update_snippet_fields( $snippet_id, $fields );
+		return rest_ensure_response( $fields );
+	}
+
+	/**
+	 * Detach a condition from a snippet.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function detach_condition( WP_REST_Request $request ): WP_REST_Response {
+		$snippet_id = $request->get_param( 'id' );
+
+		$fields = [ 'condition_id' => 0 ];
+		update_snippet_fields( $snippet_id, $fields );
+		return rest_ensure_response( $fields );
+	}
+
+	/**
 	 * Prepares one item for create or update operation.
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -511,10 +567,17 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 				'tags'           => [
 					'description' => esc_html__( 'List of tag categories the snippet belongs to.', 'code-snippets' ),
 					'type'        => 'array',
+					'items'       => [
+						'type' => 'string',
+					],
 				],
 				'scope'          => [
 					'description' => esc_html__( 'Context in which the snippet is executable.', 'code-snippets' ),
 					'type'        => 'string',
+				],
+				'condition_id'   => [
+					'description' => esc_html__( 'Identifier of condition linked to this snippet.', 'code-snippets' ),
+					'type'        => 'integer',
 				],
 				'active'         => [
 					'description' => esc_html__( 'Snippet activation status.', 'code-snippets' ),
@@ -526,16 +589,23 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 				],
 				'network'        => [
 					'description' => esc_html__( 'Whether the snippet is network-wide instead of site-wide.', 'code-snippets' ),
-					'type'        => 'boolean',
+					'type'        => [ 'boolean', 'null' ],
 					'default'     => null,
 				],
 				'shared_network' => [
 					'description' => esc_html__( 'If a network snippet, whether can be activated on discrete sites instead of network-wide.', 'code-snippets' ),
-					'type'        => 'boolean',
+					'type'        => [ 'boolean', 'null' ],
 				],
 				'modified'       => [
 					'description' => esc_html__( 'Date and time when the snippet was last modified, in ISO format.', 'code-snippets' ),
 					'type'        => 'string',
+					'format'      => 'date-time',
+					'readonly'    => true,
+				],
+				'code_error'     => [
+					'description' => esc_html__( 'Error message if the snippet code could not be parsed.', 'code-snippets' ),
+					'type'        => 'string',
+					'readonly'    => true,
 				],
 			],
 		];

@@ -63,6 +63,13 @@ class List_Table extends WP_List_Table {
 	protected string $order_dir;
 
 	/**
+	 * List of active snippets indexed by attached condition ID.
+	 *
+	 * @var array <int, Snippet[]>
+	 */
+	protected array $active_by_condition = [];
+
+	/**
 	 * The constructor function for our class.
 	 * Registers hooks, initializes variables, setups class.
 	 *
@@ -116,6 +123,19 @@ class List_Table extends WP_List_Table {
 				'singular' => 'snippet',
 			)
 		);
+	}
+
+	/**
+	 * Determine if a condition is considered 'active' by checking if it is attached to any active snippets.
+	 *
+	 * @param Snippet $condition Condition snippet to check.
+	 *
+	 * @return bool
+	 */
+	protected function is_condition_active( Snippet $condition ): bool {
+		return $condition->is_condition()
+		       && isset( $this->active_by_condition[ $condition->id ] )
+		       && count( $this->active_by_condition[ $condition->id ] ) > 0;
 	}
 
 	/**
@@ -180,10 +200,10 @@ class List_Table extends WP_List_Table {
 				$url = add_query_arg( 'type', $type );
 
 				return sprintf(
-					'<a class="snippet-type-badge" href="%s" data-snippet-type="%s">%s</a>',
-					esc_url( $url ),
+					'<a class="badge %s-badge" href="%s">%s</a>',
 					esc_attr( $type ),
-					esc_html( $type )
+					esc_url( $url ),
+					'cond' === $type ? '<span class="dashicons dashicons-randomize"></span>' : esc_html( $type )
 				);
 
 			case 'date':
@@ -228,6 +248,56 @@ class List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Build the cloud action links for a snippet.
+	 *
+	 * @param Snippet         $snippet    Current snippet.
+	 * @param Cloud_Link|null $cloud_link Snippet cloud link, if available.
+	 *
+	 * @return array <string, string> The action links HTML.
+	 */
+	private function get_cloud_action_links( Snippet $snippet, ?Cloud_Link $cloud_link ): array {
+		if ( $snippet->is_condition() ) {
+			return [];
+		}
+
+		if ( ! $this->is_cloud_connected ) {
+			return [
+				'cloud' => sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( add_query_arg( 'connect-authorise-cloud', true, code_snippets()->get_menu_url( 'settings' ) ) ),
+					esc_html__( 'Set up cloud', 'code-snippets' )
+				),
+			];
+		}
+
+		if ( ! $cloud_link || ! $cloud_link->in_codevault ) {
+			return [
+				'cloud' => sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( $this->get_action_link( 'cloud', $snippet ) ),
+					esc_html__( 'Sync to Codevault', 'code-snippets' )
+				),
+			];
+		}
+
+		$unlink_action = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( $this->get_action_link( 'unsync-cloud', $snippet ) ),
+			esc_html__( 'Unlink from Cloud', 'code-snippets' )
+		);
+
+		return $cloud_link->update_available
+			? [
+				'cloud'        => $unlink_action,
+				'cloud_update' => sprintf(
+					'<a>%s</a>',
+					esc_html__( 'Update Available', 'code-snippets' )
+				),
+			]
+			: [ 'cloud' => $unlink_action ];
+	}
+
+	/**
 	 * Build a list of action links for individual snippets
 	 *
 	 * @param Snippet         $snippet    The current snippet.
@@ -258,36 +328,7 @@ class List_Table extends WP_List_Table {
 				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', esc_url( $this->get_action_link( $action, $snippet ) ), $label );
 			}
 
-			$actions['cloud'] = sprintf(
-				'<a href="%s">%s</a>',
-				esc_url( add_query_arg( 'connect-authorise-cloud', true, code_snippets()->get_menu_url( 'settings' ) ) ),
-				esc_html__( 'Set up cloud', 'code-snippets' )
-			);
-
-			if ( $this->is_cloud_connected ) {
-				$actions['cloud'] = sprintf(
-					'<a href="%s">%s</a>',
-					esc_url( $this->get_action_link( 'cloud', $snippet ) ),
-					esc_html__( 'Sync to Codevault', 'code-snippets' )
-				);
-
-				// Check this snippet is linked or originated from the cloud.
-				if ( $cloud_link && $cloud_link->in_codevault ) {
-					$actions['cloud'] = sprintf(
-						'<a href="%s">%s</a>',
-						esc_url( $this->get_action_link( 'unsync-cloud', $snippet ) ),
-						esc_html__( 'Unlink from Cloud', 'code-snippets' )
-					);
-
-					// Check if an update is available only in users codevault.
-					if ( $cloud_link->update_available ) {
-						$actions['cloud_update'] = sprintf(
-							'<a>%s</a>',
-							esc_html__( 'Update Available', 'code-snippets' )
-						);
-					}
-				}
-			}
+			$actions = array_merge( $actions, $this->get_cloud_action_links( $snippet, $cloud_link ) );
 
 			$actions['delete'] = sprintf(
 				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
@@ -318,28 +359,45 @@ class List_Table extends WP_List_Table {
 			return '';
 		}
 
-		if ( 'single-use' === $snippet->scope ) {
-			$class = 'snippet-execution-button';
-			$action = 'run-once';
-			$label = esc_html__( 'Run Once', 'code-snippets' );
-		} else {
-			$class = 'snippet-activation-switch';
-			$action = $snippet->active ? 'deactivate' : 'activate';
-			$label = $snippet->network && ! $snippet->shared_network ?
-				( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
-				( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
+		switch ( $snippet->scope ) {
+			case 'single-use':
+				$class = 'snippet-execution-button';
+				$action = 'run-once';
+				$label = esc_html__( 'Run Once', 'code-snippets' );
+				break;
+
+			case 'condition':
+				$edit_url = code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' );
+
+				return sprintf(
+					'<a href="%s" class="snippet-condition-count">%s</a>',
+					esc_url( $edit_url ),
+					isset( $this->active_by_condition[ $snippet->id ] )
+						? esc_html( count( $this->active_by_condition[ $snippet->id ] ) )
+						: 0
+				);
+
+			default:
+				$class = 'snippet-activation-switch';
+				$action = $snippet->active ? 'deactivate' : 'activate';
+				$label = $snippet->network && ! $snippet->shared_network ?
+					( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
+					( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
+				break;
 		}
 
 		if ( $snippet->shared_network ) {
 			$action .= '-shared';
 		}
 
-		return sprintf(
-			'<a class="%1$s" href="%2$s" title="%3$s" aria-label="%3$s">&nbsp;</a> ',
-			esc_attr( $class ),
-			esc_url( $this->get_action_link( $action, $snippet ) ),
-			esc_attr( $label )
-		);
+		return $action && $label
+			? sprintf(
+				'<a class="%1$s" href="%2$s" title="%3$s" aria-label="%3$s">&nbsp;</a> ',
+				esc_attr( $class ),
+				esc_url( $this->get_action_link( $action, $snippet ) ),
+				esc_attr( $label )
+			)
+			: '';
 	}
 
 	/**
@@ -350,7 +408,7 @@ class List_Table extends WP_List_Table {
 	 * @return string The content of the column to output.
 	 */
 	protected function column_name( Snippet $snippet ): string {
-		$cloud_link = $this->is_cloud_connected ?
+		$cloud_link = $this->is_cloud_connected && ! $snippet->is_condition() ?
 			code_snippets()->cloud_api->get_link_for_snippet( $snippet ) :
 			null;
 
@@ -360,10 +418,6 @@ class List_Table extends WP_List_Table {
 		);
 
 		$out = esc_html( $snippet->display_name );
-
-		if ( 'global' !== $snippet->scope ) {
-			$out .= sprintf( ' <span class="dashicons dashicons-%s"></span>', $snippet->scope_icon );
-		}
 
 		// Add a link to the snippet if it isn't an unreadable network-only snippet.
 		if ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
@@ -468,10 +522,6 @@ class List_Table extends WP_List_Table {
 			'priority'    => __( 'Priority', 'code-snippets' ),
 			'id'          => __( 'ID', 'code-snippets' ),
 		);
-
-		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
-			unset( $columns['type'] );
-		}
 
 		if ( ! get_setting( 'general', 'enable_description' ) ) {
 			unset( $columns['description'] );
@@ -1026,6 +1076,12 @@ class List_Table extends WP_List_Table {
 		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets() );
 		$this->fetch_shared_network_snippets();
 
+		foreach ( $snippets['all'] as $snippet ) {
+			if ( $snippet->active ) {
+				$this->active_by_condition[ $snippet->condition_id ][] = $snippet;
+			}
+		}
+
 		// Filter snippets by type.
 		$type = sanitize_key( wp_unslash( $_GET['type'] ?? '' ) );
 
@@ -1076,8 +1132,7 @@ class List_Table extends WP_List_Table {
 		 * @var Snippet $snippet
 		 */
 		foreach ( $snippets['all'] as $snippet ) {
-
-			if ( $snippet->active ) {
+			if ( $snippet->active || $this->is_condition_active( $snippet ) ) {
 				$snippets['active'][] = $snippet;
 			} else {
 				$snippets['inactive'][] = $snippet;
@@ -1231,13 +1286,16 @@ class List_Table extends WP_List_Table {
 	 */
 	private function search_callback( Snippet $snippet ): bool {
 		global $s;
-		$fields = array( 'name', 'desc', 'code', 'tags_list' );
+
+		$query = sanitize_text_field( wp_unslash( $s ) );
+		$fields = [ 'name', 'desc', 'code', 'tags_list' ];
 
 		foreach ( $fields as $field ) {
-			if ( false !== stripos( $snippet->$field, $s ) ) {
+			if ( false !== stripos( $snippet->$field, $query ) ) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -1346,7 +1404,7 @@ class List_Table extends WP_List_Table {
 	 * @param Snippet $item The snippet being used for the current row.
 	 */
 	public function single_row( $item ) {
-		$status = $item->active ? 'active' : 'inactive';
+		$status = $item->active || $this->is_condition_active( $item ) ? 'active' : 'inactive';
 
 		$row_class = "snippet $status-snippet $item->type-snippet $item->scope-scope";
 

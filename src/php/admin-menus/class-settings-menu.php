@@ -17,7 +17,7 @@ class Settings_Menu extends Admin_Menu {
 	/**
 	 * Settings page name as registered with the Settings API.
 	 */
-	const SETTINGS_PAGE = 'code-snippets';
+	public const SETTINGS_PAGE = 'code-snippets';
 
 	/**
 	 * Constructor

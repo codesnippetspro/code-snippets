@@ -1,0 +1,43 @@
+@use '../common/theme';
+@use 'sass:map';
+@use 'sass:list';
+
+@mixin notices {
+	.notice {
+		border: 0;
+		border-radius: 5px;
+		display: flex;
+		align-items: center;
+		padding: 6px 10px;
+		gap: 8px;
+		margin: 0;
+
+		.notice-dismiss {
+			position: unset;
+			margin-inline-start: auto;
+			padding: 0;
+
+			&, &::before {
+				color: inherit;
+			}
+		}
+
+		.wp-core-ui &.is-dismissible {
+			position: unset;
+			padding-inline-end: 10px;
+		}
+	}
+
+	@each $name, $colors in theme.$notices {
+		.notice-#{$name} {
+			color: list.nth($colors, 2);
+			background-color: list.nth($colors, 1);
+		}
+	}
+
+	.notice-success::before {
+		content: '✓';
+		font-weight: bold;
+		font-size: 16px;
+	}
+}

@@ -18,7 +18,7 @@ if ( 'cloud' === $this->get_current_type() ) {
 	printf(
 		'<div class="refresh-button-container"><a id="refresh-button" class="button dashicons dashicons-update-alt" href="%s"></a><span>%s</span></div>',
 		esc_url( add_query_arg( 'refresh', 'true', code_snippets()->get_menu_url( 'cloud' ) ) ),
-		esc_html__( 'Synchronise snippets and refresh your codevault.', 'code-snippets' ),
+		esc_html__( 'Synchronise snippets and refresh codevault.', 'code-snippets' ),
 	);
 }
 ?>

@@ -1,0 +1,203 @@
+@use 'condition-modal';
+
+.snippet-condition-editor-container {
+	margin-block-start: 33px;
+	padding: 32px;
+	border: 1px solid #c3c4c7;
+	background: #f6f7f7;
+
+	h2:first-of-type {
+		margin-block-start: 0;
+	}
+}
+
+.condition-rule-sep {
+	text-transform: uppercase;
+	place-self: center center;
+}
+
+.snippet-condition-editor {
+	flex-flow: column;
+	align-items: flex-start;
+
+	h4 {
+		margin-block-end: 0;
+	}
+
+	input[type='text']:focus {
+		box-shadow: none;
+	}
+
+	.condition-add-group-button {
+		align-self: center;
+	}
+
+	.condition-remove-rule-button {
+		border: none;
+		background: none;
+		padding: 0;
+		line-height: 1;
+		color: #646970;
+	}
+
+	.condition-remove-rule-button:hover {
+		color: #b32d2e
+	}
+
+	.code-snippets-select {
+		div[aria-disabled="true"] {
+			background-color: #fff;
+			border-color: #ccc;
+
+			div[class$='singleValue'] {
+				color: #333 !important;
+			}
+		}
+	}
+
+	&.is-read-only {
+		.snippet-condition-rule:last-of-type .condition-rule-sep {
+			display: none;
+		}
+
+		.snippet-condition-rule + .snippet-condition-rule:last-of-type .condition-rule-sep {
+			display: block;
+			visibility: hidden;
+		}
+	}
+}
+
+.snippet-condition-groups {
+	display: flex;
+	flex-flow: column;
+	gap: 24px;
+
+	.code-snippets-condition-modal & {
+		gap: 16px;
+	}
+}
+
+.snippet-condition-group {
+	background-color: #f0f0f0;
+	border-radius: 8px;
+	padding: 16px;
+	display: flex;
+	flex-flow: column;
+	gap: 8px;
+}
+
+.condition-group-sep {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-transform: uppercase;
+	font-weight: 700;
+
+	&::before, &::after {
+		content: '';
+		flex: 1;
+		border-block-end: 1px solid #e2e2e4;
+	}
+
+	&:not(:empty)::before {
+		margin-inline-end: 8px;
+	}
+
+	&:not(:empty)::after {
+		margin-inline-start: 8px;
+	}
+}
+
+.snippet-condition-rule {
+	display: flex;
+	flex-flow: row;
+	gap: 8px;
+	justify-content: space-between;
+}
+
+.snippet-condition-subject {
+	inline-size: 256px;
+}
+
+.snippet-condition-operator {
+	inline-size: 128px;
+	text-transform: uppercase;
+}
+
+.snippet-condition-object {
+	flex: 1 1 200px;
+}
+
+.snippet-condition-rule input[type='time'],
+.snippet-condition-rule input[type='datetime-local'] {
+	inline-size: 100%;
+	block-size: 100%;
+	background-color: #fff;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+
+	&[disabled] {
+		color: #333 !important;
+
+		&::-webkit-outer-spin-button,
+		&::-webkit-inner-spin-button {
+			appearance: none;
+			margin: 0;
+		}
+	}
+}
+
+.snippet-condition-actions {
+	display: flex;
+	gap: 8px;
+}
+
+.code-snippets-date-range {
+	display: flex;
+	align-items: stretch;
+	flex-flow: row;
+	block-size: 100%;
+
+	.code-snippets-condition-modal & {
+		flex-flow: column;
+	}
+
+	input {
+		flex: 1;
+	}
+
+	.sep {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: x-small;
+		font-style: italic;
+		color: #bbb;
+
+		&::before, &::after {
+			content: '';
+			border-block-end: 1px solid #e2e2e4;
+			margin: 0 3px;
+		}
+	}
+}
+
+.condition-snippets-table {
+	.wp-list-table th {
+		vertical-align: top;
+	}
+
+	.snippet-selector {
+		display: flex;
+		margin: 1em 0;
+		gap: 1em;
+
+		.code-snippets-select {
+			flex: 1;
+		}
+
+		.button {
+			min-inline-size: 7em;
+		}
+	}
+}

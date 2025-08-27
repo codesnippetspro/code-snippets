@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect } from 'react'
-import { __ } from '@wordpress/i18n'
+import { __, _x } from '@wordpress/i18n'
 import domReady from '@wordpress/dom-ready'
-import { ExplainSnippetButton } from '../buttons/ExplainSnippetButton'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { ExplainSnippetButton } from './ExplainSnippetButton'
 
 export const EDITOR_ID = 'snippet_description'
 
@@ -49,36 +49,55 @@ const initializeEditor = (onChange: (content: string) => void) => {
 	})
 }
 
-export const DescriptionEditor: React.FC = () => {
-	const { snippet, setSnippet, updateSnippet, isReadOnly } = useSnippetForm()
+const GenerateDescriptionButton = () => {
+	const { updateSnippet } = useSnippetForm()
 
-	const onChange = useCallback(
+	return (
+		<ExplainSnippetButton
+			field="desc"
+			onResponse={generated => {
+				updateSnippet(previous => ({
+					...previous,
+					name: generated.name && '' === previous.name.trim() ? generated.name : previous.name,
+					desc: `${previous.desc}${generated.desc ? `\n<p>${generated.desc}</p>` : ''}`
+				}))
+			}}
+		>
+			{_x('Generate', 'generate snippet content', 'code-snippets')}
+		</ExplainSnippetButton>
+	)
+}
+
+const DescriptionEditorTextarea: React.FC = () => {
+	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
+
+	const handleChange = useCallback(
 		(desc: string) => setSnippet(previous => ({ ...previous, desc })),
 		[setSnippet]
 	)
 
 	useEffect(() => {
-		domReady(() => initializeEditor(onChange))
-	}, [onChange])
+		domReady(() => initializeEditor(handleChange))
+	}, [handleChange])
 
-	return window.CODE_SNIPPETS_EDIT?.enableDescription
+	return (
+		<textarea
+			id={EDITOR_ID}
+			className="wp-editor-area"
+			onChange={event => handleChange(event.target.value)}
+			autoComplete="off"
+			disabled={isReadOnly}
+			rows={window.CODE_SNIPPETS_EDIT?.descEditorOptions.rows}
+			cols={40}
+			value={snippet.desc}
+		/>
+	)
+}
+
+export const DescriptionEditor: React.FC = () =>
+	window.CODE_SNIPPETS_EDIT?.enableDescription
 		? <div className="snippet-description-container">
-			{'' === snippet.code.trim()
-				? null
-				: <ExplainSnippetButton
-					field="desc"
-					snippet={snippet}
-					disabled={isReadOnly}
-					onResponse={generated => {
-						updateSnippet(previous => ({
-							...previous,
-							name: generated.name && '' === previous.name.trim() ? generated.name : previous.name,
-							desc: `${previous.desc}${generated.desc ? `\n<p>${generated.desc}</p>` : ''}`
-						}))
-					}}
-				>
-					{__('Add Description', 'code-snippets')}
-				</ExplainSnippetButton>}
+			<GenerateDescriptionButton />
 
 			<h2>
 				<label htmlFor={EDITOR_ID}>
@@ -86,15 +105,6 @@ export const DescriptionEditor: React.FC = () => {
 				</label>
 			</h2>
 
-			<textarea
-				id={EDITOR_ID}
-				className="wp-editor-area"
-				onChange={event => onChange(event.target.value)}
-				autoComplete="off"
-				disabled={isReadOnly}
-				rows={window.CODE_SNIPPETS_EDIT.descEditorOptions.rows}
-				cols={40}
-			>{snippet.desc}</textarea>
+			<DescriptionEditorTextarea />
 		</div>
 		: null
-}

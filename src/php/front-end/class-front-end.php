@@ -6,6 +6,7 @@ use Code_Snippets\Elementor\Elementor;
 use WP_Post;
 use WP_REST_Response;
 use WP_REST_Server;
+use function Code_Snippets\Conditions\evaluate_condition;
 
 /**
  * This class manages the shortcodes included with the plugin,
@@ -17,17 +18,17 @@ class Front_End {
 	/**
 	 * Name of the shortcode tag for rendering the code source
 	 */
-	const SOURCE_SHORTCODE = 'code_snippet_source';
+	public const SOURCE_SHORTCODE = 'code_snippet_source';
 
 	/**
 	 * Name of the shortcode tag for rendering content snippets
 	 */
-	const CONTENT_SHORTCODE = 'code_snippet';
+	public const CONTENT_SHORTCODE = 'code_snippet';
 
 	/**
 	 * Handle to use for front-end scripts and styles.
 	 */
-	const PRISM_HANDLE = 'code-snippets-prism';
+	public const PRISM_HANDLE = 'code-snippets-prism';
 
 	/**
 	 * Class for managing integration with the Elementor plugin.
@@ -42,11 +43,6 @@ class Front_End {
 	 * @var Block_Editor
 	 */
 	public Block_Editor $block_editor;
-
-	/**
-	 * Maximum depth for shortcode recursion.
-	 */
-	const MAX_SHORTCODE_DEPTH = 5;
 
 	/**
 	 * Class constructor
@@ -252,6 +248,13 @@ class Front_End {
 			true
 		);
 
+		wp_register_style(
+			self::PRISM_HANDLE,
+			plugins_url( 'dist/prism.css', $plugin->file ),
+			array(),
+			$plugin->version
+		);
+
 		foreach ( self::get_prism_themes() as $theme => $label ) {
 			wp_register_style(
 				self::get_prism_theme_style_handle( $theme ),
@@ -260,13 +263,6 @@ class Front_End {
 				$plugin->version
 			);
 		}
-
-		wp_register_style(
-			self::PRISM_HANDLE,
-			plugins_url( 'dist/prism.css', $plugin->file ),
-			array(),
-			$plugin->version
-		);
 	}
 
 	/**
@@ -339,9 +335,19 @@ class Front_End {
 		extract( $atts );
 
 		ob_start();
-		eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
+		eval( "?>\n\n" . $snippet->code );
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Check if being rendered within the block editor.
+	 *
+	 * @return bool True if in the block editor, false otherwise.
+	 */
+	private function is_block_editor(): bool {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		return $screen && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor();
 	}
 
 	/**
@@ -363,7 +369,7 @@ class Front_End {
 				'php'        => false,
 				'format'     => false,
 				'shortcodes' => false,
-				'debug'      => false,
+				'debug'      => $this->is_block_editor(),
 			],
 			$atts,
 			self::CONTENT_SHORTCODE
@@ -383,24 +389,34 @@ class Front_End {
 
 		// If the snippet is inactive, either display a message or render nothing.
 		if ( ! $snippet->active ) {
-			if ( ! $atts['debug'] ) {
+			if ( $atts['debug'] ) {
+				/* translators: 1: snippet name, 2: snippet edit link */
+				$text = __( '%1$s is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
+				$snippet_name = '<strong>' . $snippet->name . '</strong>';
+				$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
+
+				$message = wp_kses(
+					sprintf( $text, $snippet_name, $edit_url ),
+					[
+						'strong' => [],
+						'a'      => [
+							'href' => [],
+						],
+					]
+				);
+
+				return "<p>$message</p><p>" . esc_html__( 'This message will not appear in the published post.', 'code-snippets' ) . '</p>';
+			} else {
 				return '';
 			}
+		}
 
-			/* translators: 1: snippet name, 2: snippet edit link */
-			$text = __( '%1$s is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
-			$snippet_name = '<strong>' . $snippet->name . '</strong>';
-			$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
+		if ( $snippet->condition_id && ! $this->is_block_editor() ) {
+			$condition = get_snippet( $snippet->condition_id, $snippet->network );
 
-			return wp_kses(
-				sprintf( $text, $snippet_name, $edit_url ),
-				[
-					'strong' => [],
-					'a'      => [
-						'href' => [],
-					],
-				]
-			);
+			if ( $condition && ! evaluate_condition( $condition->code ) ) {
+				return '';
+			}
 		}
 
 		$content = $this->evaluate_shortcode_content( $snippet, $original_atts );

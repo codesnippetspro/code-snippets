@@ -1,61 +1,68 @@
-import React, { ReactElement } from 'react'
+import React, { useEffect, useState } from 'react'
+import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { BlockControls } from '@wordpress/block-editor'
-import { Placeholder, ToolbarGroup, ToolbarButton, IconType } from '@wordpress/components'
+import { Placeholder, ToolbarButton, ToolbarGroup } from '@wordpress/components'
 import { undo } from '@wordpress/icons'
-import Select, { OptionsOrGroups } from 'react-select'
-
-export interface SnippetSelectOption {
-	value: number
-	label: string
-}
-
-export interface SnippetSelectGroup {
-	label: string
-	options: SnippetSelectOption[]
-}
+import { Select } from '../components/common/Select'
+import { useSnippetsList } from '../hooks/useSnippetsList'
+import type { ReactNode} from 'react'
+import type { Snippet } from '../types/Snippet'
+import type { SelectGroups } from '../types/SelectOption'
+import type { IconType } from '@wordpress/components'
 
 export interface SnippetSelectorProps {
-	label: string
-	className: string
 	icon: IconType
-	options: OptionsOrGroups<SnippetSelectOption, SnippetSelectGroup>
-	attributes: { snippet_id: number }
-	setAttributes: (attributes: SnippetSelectorProps['attributes']) => void
-	renderContent: () => ReactElement
+	label: string
+	selectedId: number
+	onChange: (snippet: Snippet | undefined) => void
+	className: string
+	buildOptions: (snippets: Snippet[]) => SelectGroups<Snippet>
+	renderContent: (selectedSnippet?: Snippet) => ReactNode
 }
 
 export const SnippetSelector: React.FC<SnippetSelectorProps> = ({
-	label,
-	className,
 	icon,
-	options,
-	attributes,
-	setAttributes,
+	label,
+	onChange,
+	className,
+	selectedId,
+	buildOptions,
 	renderContent
-}) =>
-	<>
-		<BlockControls controls={undefined}>
-			<ToolbarGroup>
-				<ToolbarButton
-					icon={undo}
-					label={__('Choose a different snippet', 'code-snippets')}
-					onClick={() => setAttributes({ snippet_id: 0 })}
-				/>
-			</ToolbarGroup>
-		</BlockControls>
+}) => {
+	const { snippetsList } = useSnippetsList()
+	const [options, setOptions] = useState<SelectGroups<Snippet>>()
 
-		{0 === attributes.snippet_id ?
-			<Placeholder className={`code-snippet-selector ${className}`} icon={icon} label={label}>
-				<form>
-					<Select
-						name="snippet-select"
-						className="code-snippets-large-select"
-						options={options}
-						onChange={option => setAttributes({ snippet_id: option && 'value' in option ? option.value : 0 })}
-						placeholder={__('Select a snippet to insert…', 'code-snippets')}
+	useEffect(() => {
+		if (snippetsList) {
+			setOptions(buildOptions([...snippetsList]))
+		}
+	}, [snippetsList, buildOptions])
+
+	return (
+		<>
+			<BlockControls controls={undefined}>
+				<ToolbarGroup>
+					<ToolbarButton
+						icon={undo}
+						label={__('Choose a different snippet', 'code-snippets')}
+						onClick={() => onChange(undefined)}
 					/>
-				</form>
-			</Placeholder> :
-			renderContent()}
-	</>
+				</ToolbarGroup>
+			</BlockControls>
+
+			{selectedId
+				? renderContent(snippetsList?.find(snippet => snippet.id === selectedId))
+				: <Placeholder className={classnames('code-snippet-selector', className)} icon={icon} label={label}>
+					<form>
+						<Select
+							name="snippet-select"
+							options={options ?? []}
+							placeholder={__('Select a snippet to insert…', 'code-snippets')}
+							onSelect={value => onChange(value)}
+						/>
+					</form>
+				</Placeholder>}
+		</>
+	)
+}
