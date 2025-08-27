@@ -131,7 +131,7 @@ export const ShortcodeInfo: React.FC = () => {
 		? <div className="inline-form-field">
 			<h4>{__('Shortcode', 'code-snippets')}</h4>
 			<Button onClick={() => setIsModalOpen(true)} disabled={isReadOnly}>
-				{__('See Options', 'code-snippets')}
+				{__('See options', 'code-snippets')}
 			</Button>
 
 			{isModalOpen

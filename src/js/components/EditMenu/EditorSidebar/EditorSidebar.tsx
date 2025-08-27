@@ -8,7 +8,6 @@ import { isCondition } from '../../../utils/snippets/snippets'
 import { DeleteButton } from '../../common/DeleteButton'
 import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
 import { SnippetLocationInput } from '../SnippetForm/fields/SnippetLocationInput'
-import { SnippetTypeInput } from '../SnippetForm/fields/SnippetTypeInput'
 import { Notices } from '../SnippetForm/page/Notices'
 import { ShortcodeInfo } from './actions/ShortcodeInfo'
 import { MultisiteSharingSettings } from './controls/MultisiteSharingSettings'
@@ -28,8 +27,6 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 
 	return (
 		<div className="snippet-editor-sidebar">
-			<SnippetTypeInput setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
-
 			<div className="box">
 				{snippet.id && !isCondition(snippet) ? <ActivationSwitch /> : null}
 

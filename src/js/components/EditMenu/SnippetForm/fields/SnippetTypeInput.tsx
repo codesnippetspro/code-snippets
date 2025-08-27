@@ -7,6 +7,7 @@ import { SNIPPET_TYPES, SNIPPET_TYPE_SCOPES } from '../../../../types/Snippet'
 import { isLicensed } from '../../../../utils/screen'
 import { SNIPPET_TYPE_LABELS, getSnippetType, isProType } from '../../../../utils/snippets/snippets'
 import { Badge } from '../../../common/Badge'
+import type { FormatOptionLabelContext } from 'react-select'
 import type { Dispatch, SetStateAction } from 'react'
 import type { SnippetCodeType, SnippetType } from '../../../../types/Snippet'
 import type { SelectOption } from '../../../../types/SelectOption'
@@ -27,14 +28,21 @@ const OPTIONS: SelectOption<SnippetType>[] =
 	SNIPPET_TYPES.map(type =>
 		({ value: type, label: SNIPPET_TYPE_LABELS[type] }))
 
-const SnippetTypeOption: React.FC<SelectOption<SnippetType>> = ({ label, value }) =>
+interface SnippetTypeOptionProps {
+	option: SelectOption<SnippetType>
+	context: FormatOptionLabelContext
+}
+
+const SnippetTypeOption: React.FC<SnippetTypeOptionProps> = ({ option: { value, label }, context }) =>
 	<div className={classnames('snippet-type-option', { 'inverted-badges': isProType(value) && !isLicensed() })}>
-		<div>
-			{label}
-			{isProType(value) && !isLicensed()
-				? <span className="badge pro-badge small-badge">{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</span>
-				: null}
-		</div>
+		{'menu' === context
+			? <div>
+				{label}
+				{isProType(value) && !isLicensed()
+					? <Badge name="pro" small>{_x('Pro', 'Upgrade to Pro', 'code-snippets')}</Badge>
+					: null}
+			</div>
+			: null}
 		<Badge name={value} />
 	</div>
 
@@ -65,12 +73,19 @@ export const SnippetTypeInput: React.FC<SnippetTypeInputProps> = ({ setIsUpgrade
 				className="code-snippets-select"
 				isDisabled={isReadOnly}
 				options={0 === snippet.id ? OPTIONS : OPTIONS.filter(option => 'cond' !== option.value)}
+				menuPlacement="bottom"
 				styles={{
-					menu: provided => ({ ...provided, zIndex: 9999 }),
+					menu: provided => ({
+						...provided,
+						zIndex: 9999,
+						width: 'max-content',
+						minWidth: '100%'
+					}),
 					input: provided => ({ ...provided, boxShadow: 'none' })
 				}}
 				value={OPTIONS.find(option => option.value === snippetType)}
-				formatOptionLabel={SnippetTypeOption}
+				formatOptionLabel={(data, meta) =>
+					<SnippetTypeOption option={data} context={meta.context} />}
 				onChange={option => {
 					if (option && isProType(option.value) && !isLicensed()) {
 						setIsUpgradeDialogOpen(true)

@@ -10,13 +10,14 @@ import { createSnippetObject, getSnippetType, isCondition, validateSnippet } fro
 import { WithSnippetFormContext, useSnippetForm } from '../../../hooks/useSnippetForm'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { Toolbar } from '../../common/Toolbar'
+import { UpsellBanner } from '../../common/UpsellBanner'
 import { UpsellDialog } from '../../common/UpsellDialog'
 import { EditorSidebar } from '../EditorSidebar'
-import { UpsellBanner } from '../../common/UpsellBanner'
+import { SnippetTypeInput } from './fields/SnippetTypeInput'
+import { TagsEditor } from './fields/TagsEditor'
 import { CodeEditor } from './fields/CodeEditor'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
-import { TagsEditor } from './fields/TagsEditor'
 import { PageHeading } from './page/PageHeading'
 import type { PropsWithChildren } from 'react'
 import type { Snippet } from '../../../types/Snippet'
@@ -159,7 +160,11 @@ const EditFormWrap: React.FC = () => {
 
 			<EditForm className={editFormClassName({ snippet, isReadOnly, isExpanded })}>
 				<main className="snippet-form-upper">
-					<NameInput />
+					<div className="snippet-name-wrapper">
+						<NameInput />
+						<SnippetTypeInput setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
+					</div>
+
 					<CodeEditor {...{ isExpanded, setIsExpanded }} />
 					<ConditionsEditor />
 				</main>
