@@ -82,6 +82,15 @@
 	}
 }
 
+.snippet-name-wrapper {
+	display: flex;
+	gap: 0.5em;
+
+	> :first-child {
+		flex: 1;
+	}
+}
+
 form.condition-snippet .snippet-code-container {
 	display: none;
 }

@@ -130,6 +130,7 @@ __Fixed__
 >>>>>>> edit-refresh/core
 * Fetching active snippets on a multisite network now respects the 'priority' field above all else when ordering snippets.
 * Cloud search appears correctly and allows downloading snippets in the free version of Code Snippets.
+* Improved performance of loading admin menu icon.
 
 = 3.6.9 (2025-02-17) =
 

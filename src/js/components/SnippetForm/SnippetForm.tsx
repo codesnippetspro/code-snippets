@@ -14,6 +14,7 @@ import { ConditionModal } from '../ConditionModal/ConditionModal'
 import { UpsellDialog } from '../common/UpsellDialog'
 import { EditorSidebar } from '../EditorSidebar'
 import { UpsellBanner } from '../common/UpsellBanner'
+import { SnippetTypeInput } from './fields/SnippetTypeInput'
 import { TagsEditor } from './fields/TagsEditor'
 import { CodeEditor } from './fields/CodeEditor'
 import { ConditionTable } from './page/ConditionTable'
@@ -164,7 +165,11 @@ const EditFormWrap: React.FC = () => {
 
 			<EditForm className={editFormClassName({ snippet, isReadOnly, isExpanded })}>
 				<main className="snippet-form-upper">
-					<NameInput />
+					<div className="snippet-name-wrapper">
+						<NameInput />
+						<SnippetTypeInput setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
+					</div>
+
 					<CodeEditor {...{ isExpanded, setIsExpanded, setIsGenerateModalOpen }} />
 					<ConditionsEditor />
 				</main>
