@@ -1,0 +1,155 @@
+@use '../common/theme';
+
+.snippet-editor-sidebar {
+	.button-large {
+		block-size: 48px;
+	}
+
+	.row-actions {
+		display: flex;
+
+		.button {
+			background: none;
+			border: none;
+		}
+	}
+
+	.delete-button {
+		color: #cc1818;
+
+		&:hover {
+			color: #9e1313;
+		}
+
+		&:focus {
+			color: #710d0d;
+			border-color: #710d0d;
+		}
+	}
+
+	.help-tooltip {
+		margin-block: 0;
+		margin-inline: 5px auto;
+	}
+
+	.box {
+		background-color: #fff;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding: 1.5em;
+		display: flex;
+		flex-flow: column;
+		gap: 1em;
+
+		h4 {
+			margin-block: 0.5em;
+			margin-inline: 0;
+		}
+
+		.inline-form-field {
+			display: flex;
+			flex-flow: row wrap;
+			align-items: center;
+			gap: 5px;
+
+			> :last-child {
+				margin-inline-start: auto;
+			}
+		}
+
+		.block-form-field {
+			display: flex;
+			flex-flow: column;
+			gap: 4px;
+
+			h4 {
+				margin-block-end: 0;
+			}
+		}
+	}
+
+	h4 .badge {
+		float: inline-end;
+
+		+ .badge {
+			margin-inline-end: 5px;
+		}
+	}
+
+	.beta-badge {
+		color: theme.$accent;
+		border: 1px solid currentcolor;
+	}
+
+	.components-form-token-field {
+		inline-size: 100%;
+	}
+
+	.generate-button {
+		margin-inline-start: auto;
+	}
+}
+
+.snippet-priority input {
+	inline-size: 4em;
+}
+
+p.submit {
+	display: flex;
+	flex-flow: column;
+	gap: 8px;
+	margin-block-start: 17px;
+	padding-block-start: 0;
+}
+
+.activation-switch-container label {
+	display: flex;
+	flex-flow: row;
+	gap: 5px;
+	justify-content: center;
+}
+
+.shortcode-tag-wrapper {
+	background: #fff;
+	min-block-size: 54px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
+	box-sizing: border-box;
+
+	code {
+		background: transparent;
+		padding-inline: 0.5em;
+		text-indent: -0.5em;
+	}
+}
+
+.code-snippets-copy-text.button {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+
+	.dashicons {
+		block-size: 18px;
+		inline-size: 18px;
+		font-size: 18px;
+	}
+
+	.spinner-wrapper {
+		block-size: 18px;
+		inline-size: 18px;
+		display: flex;
+		align-items: center;
+	}
+
+	.components-spinner {
+		block-size: 12px;
+	}
+}
+
+.code-snippets-modal {
+	p h4 {
+		margin-block-start: 0;
+	}
+}

@@ -16,22 +16,17 @@ class Front_End {
 	/**
 	 * Name of the shortcode tag for rendering the code source
 	 */
-	const SOURCE_SHORTCODE = 'code_snippet_source';
+	public const SOURCE_SHORTCODE = 'code_snippet_source';
 
 	/**
 	 * Name of the shortcode tag for rendering content snippets
 	 */
-	const CONTENT_SHORTCODE = 'code_snippet';
+	public const CONTENT_SHORTCODE = 'code_snippet';
 
 	/**
 	 * Handle to use for front-end scripts and styles.
 	 */
-	const PRISM_HANDLE = 'code-snippets-prism';
-
-	/**
-	 * Maximum depth for shortcode recursion.
-	 */
-	const MAX_SHORTCODE_DEPTH = 5;
+	public const PRISM_HANDLE = 'code-snippets-prism';
 
 	/**
 	 * Class constructor
@@ -172,19 +167,19 @@ class Front_End {
 	public static function register_prism_assets() {
 		$plugin = code_snippets();
 
-		wp_register_style(
-			self::PRISM_HANDLE,
-			plugins_url( 'dist/prism.css', $plugin->file ),
-			array(),
-			$plugin->version
-		);
-
 		wp_register_script(
 			self::PRISM_HANDLE,
 			plugins_url( 'dist/prism.js', $plugin->file ),
 			array(),
 			$plugin->version,
 			true
+		);
+
+		wp_register_style(
+			self::PRISM_HANDLE,
+			plugins_url( 'dist/prism.css', $plugin->file ),
+			array(),
+			$plugin->version
 		);
 	}
 
@@ -254,7 +249,7 @@ class Front_End {
 		extract( $atts );
 
 		ob_start();
-		eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
+		eval( "?>\n\n" . $snippet->code );
 
 		return ob_get_clean();
 	}

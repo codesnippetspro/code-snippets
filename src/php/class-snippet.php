@@ -18,13 +18,13 @@ use Exception;
  * @property string                 $code               The executable code.
  * @property array<string>          $tags               An array of the tags.
  * @property string                 $scope              The scope name.
+ * @property int                    $condition_id       ID of the condition this snippet is linked to.
  * @property int                    $priority           Execution priority.
  * @property bool                   $active             The active status.
  * @property bool                   $network            true if is multisite-wide snippet, false if site-wide.
  * @property bool                   $shared_network     Whether the snippet is a shared network snippet.
  * @property string                 $modified           The date and time when the snippet data was most recently saved to the database.
  * @property array{string,int}|null $code_error         Code error encountered when last testing snippet code.
- * @property object|null            $conditions         Snippet conditionals
  * @property int                    $revision           Revision or version number of snippet.
  * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
  *
@@ -36,7 +36,6 @@ use Exception;
  * @property-read string            $lang               The language that the snippet code is written in.
  * @property-read int               $modified_timestamp The last modification date in Unix timestamp format.
  * @property-read DateTime          $modified_local     The last modification date in the local timezone.
- * @property-read string            $type_desc          Human-readable description of the snippet type.
  * @property-read boolean           $is_pro             Whether the snippet type is pro-only.
  */
 class Snippet extends Data_Item {
@@ -44,12 +43,12 @@ class Snippet extends Data_Item {
 	/**
 	 * MySQL datetime format (YYYY-MM-DD hh:mm:ss).
 	 */
-	const DATE_FORMAT = 'Y-m-d H:i:s';
+	public const DATE_FORMAT = 'Y-m-d H:i:s';
 
 	/**
 	 * Default value used for a datetime variable.
 	 */
-	const DEFAULT_DATE = '0000-00-00 00:00:00';
+	public const DEFAULT_DATE = '0000-00-00 00:00:00';
 
 	/**
 	 * Constructor function.
@@ -64,6 +63,7 @@ class Snippet extends Data_Item {
 			'code'           => '',
 			'tags'           => array(),
 			'scope'          => 'global',
+			'condition_id'   => 0,
 			'active'         => false,
 			'priority'       => 10,
 			'network'        => null,
@@ -77,6 +77,7 @@ class Snippet extends Data_Item {
 		$field_aliases = array(
 			'description' => 'desc',
 			'language'    => 'lang',
+			'conditionId' => 'condition_id',
 		);
 
 		parent::__construct( $default_values, $initial_data, $field_aliases );
@@ -92,6 +93,15 @@ class Snippet extends Data_Item {
 	}
 
 	/**
+	 * Determine if the snippet is a condition.
+	 *
+	 * @return bool
+	 */
+	public function is_condition(): bool {
+		return 'condition' === $this->scope;
+	}
+
+	/**
 	 * Prepare a value before it is stored.
 	 *
 	 * @param mixed  $value Value to prepare.
@@ -103,13 +113,14 @@ class Snippet extends Data_Item {
 		switch ( $field ) {
 			case 'id':
 			case 'priority':
+			case 'condition_id':
 				return absint( $value );
 
 			case 'tags':
 				return code_snippets_build_tags_array( $value );
 
 			case 'active':
-				return is_bool( $value ) ? $value : (bool) $value;
+				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition();
 
 			default:
 				return $value;
@@ -153,20 +164,33 @@ class Snippet extends Data_Item {
 	}
 
 	/**
+	 * Determine the type of code a given scope will produce.
+	 *
+	 * @param string $scope Scope name.
+	 *
+	 * @return string The snippet type – will be a filename extension.
+	 */
+	public static function get_type_from_scope( string $scope ): string {
+		if ( '-css' === substr( $scope, -4 ) ) {
+			return 'css';
+		} elseif ( '-js' === substr( $scope, -3 ) ) {
+			return 'js';
+		} elseif ( 'content' === substr( $scope, -7 ) ) {
+			return 'html';
+		} elseif ( 'condition' === $scope ) {
+			return 'cond';
+		} else {
+			return 'php';
+		}
+	}
+
+	/**
 	 * Determine the type of code this snippet is, based on its scope
 	 *
 	 * @return string The snippet type – will be a filename extension.
 	 */
 	protected function get_type(): string {
-		if ( '-css' === substr( $this->scope, -4 ) ) {
-			return 'css';
-		} elseif ( '-js' === substr( $this->scope, -3 ) ) {
-			return 'js';
-		} elseif ( 'content' === substr( $this->scope, -7 ) ) {
-			return 'html';
-		} else {
-			return 'php';
-		}
+		return self::get_type_from_scope( $this->scope );
 	}
 
 	/**
@@ -175,23 +199,7 @@ class Snippet extends Data_Item {
 	 * @return string[]
 	 */
 	public static function get_types(): array {
-		return [ 'php', 'html', 'css', 'js' ];
-	}
-
-	/**
-	 * Retrieve description of snippet type.
-	 *
-	 * @return string
-	 */
-	protected function get_type_desc(): string {
-		$labels = [
-			'php'  => __( 'Functions', 'code-snippets' ),
-			'html' => __( 'Content', 'code-snippets' ),
-			'css'  => __( 'Styles', 'code-snippets' ),
-			'js'   => __( 'Scripts', 'code-snippets' ),
-		];
-
-		return isset( $labels[ $this->type ] ) ? $labels[ $this->type ] : strtoupper( $this->type );
+		return [ 'php', 'html', 'css', 'js', 'cond' ];
 	}
 
 	/**
@@ -200,7 +208,7 @@ class Snippet extends Data_Item {
 	 * @return string The name of a language filename extension.
 	 */
 	protected function get_lang(): string {
-		return $this->type;
+		return 'cond' === $this->type ? 'json' : $this->type;
 	}
 
 	/**
@@ -246,8 +254,8 @@ class Snippet extends Data_Item {
 	 * @return string
 	 */
 	protected function get_display_name(): string {
-		// translators: %d: snippet ID.
-		return empty( $this->name ) ? sprintf( esc_html__( 'Untitled #%d', 'code-snippets' ), $this->id ) : $this->name;
+		// translators: %s: snippet identifier.
+		return empty( $this->name ) ? sprintf( esc_html__( 'Snippet #%d', 'code-snippets' ), $this->id ) : $this->name;
 	}
 
 	/**
@@ -272,6 +280,7 @@ class Snippet extends Data_Item {
 			'content', 'head-content', 'footer-content',
 			'admin-css', 'site-css',
 			'site-head-js', 'site-footer-js',
+			'condition',
 		);
 	}
 
@@ -293,6 +302,7 @@ class Snippet extends Data_Item {
 			'site-css'       => 'admin-customizer',
 			'site-head-js'   => 'media-code',
 			'site-footer-js' => 'media-code',
+			'condition'      => 'randomize',
 		);
 	}
 
@@ -322,9 +332,9 @@ class Snippet extends Data_Item {
 			case 'site-css':
 				return __( 'Front-end styles', 'code-snippets' );
 			case 'site-head-js':
-				return __( 'Head styles', 'code-snippets' );
+				return __( 'Head scripts', 'code-snippets' );
 			case 'site-footer-js':
-				return __( 'Footer styles', 'code-snippets' );
+				return __( 'Footer scripts', 'code-snippets' );
 		}
 
 		return '';
@@ -444,7 +454,7 @@ class Snippet extends Data_Item {
 	 * Determine whether the current snippet type is pro-only.
 	 */
 	private function get_is_pro(): bool {
-		return 'css' === $this->type || 'js' === $this->type;
+		return 'css' === $this->type || 'js' === $this->type || 'cond' === $this->type;
 	}
 
 	/**

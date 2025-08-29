@@ -1,20 +1,12 @@
-import axios from 'axios'
-import { trimLeadingChar, trimTrailingChar } from './text'
-import type { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { trimTrailingChar } from './text'
+import type { AxiosRequestConfig } from 'axios'
 
-const REST_BASE = window.CODE_SNIPPETS?.restAPI.base ?? ''
+export const REST_BASE = trimTrailingChar(window.CODE_SNIPPETS?.restAPI.base ?? '', '/')
+export const REST_SNIPPETS_BASE = trimTrailingChar(window.CODE_SNIPPETS?.restAPI.snippets ?? '', '/')
 
-const getRestUrl = (endpoint: string): string =>
-	`${trimTrailingChar(REST_BASE, '/')}/${trimLeadingChar(endpoint, '/')}`
-
-const GET_CACHE: Record<string, AxiosResponse<unknown> | undefined> = {}
-
-export const getCached = <T, D>(endpoint: string, refresh = false, config?: AxiosRequestConfig<D>): Promise<AxiosResponse<T, D>> =>
-	!refresh && GET_CACHE[endpoint]
-		? Promise.resolve(<AxiosResponse<T, D>> GET_CACHE[endpoint])
-		: axios
-			.get<T, AxiosResponse<T, D>, D>(getRestUrl(endpoint), config)
-			.then(response => {
-				GET_CACHE[endpoint] = response
-				return response
-			})
+export const REST_API_AXIOS_CONFIG: AxiosRequestConfig = {
+	headers: {
+		'X-WP-Nonce': window.CODE_SNIPPETS?.restAPI.nonce,
+		'Access-Control': window.CODE_SNIPPETS?.restAPI.localToken
+	}
+}

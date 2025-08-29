@@ -1,0 +1,53 @@
+.code-snippets-modal {
+	.components-modal__header {
+		padding-block-end: 24px;
+	}
+
+	.components-modal__content {
+		padding: 0;
+		display: flex;
+		flex-flow: column;
+		background: #f6f7f7;
+		overflow: initial;
+		max-inline-size: 100%;
+	}
+
+	.modal-content {
+		flex: 1;
+		padding-block: 36px;
+		padding-inline: 45px;
+		display: flex;
+		flex-flow: column;
+	}
+
+	.components-modal__header + div {
+		display: flex;
+		flex-flow: column;
+		flex: 1;
+		overflow-y: auto;
+	}
+
+	.modal-footer {
+		border-block-start: 1px solid #e2e2e4;
+		display: flex;
+		flex-flow: row-reverse;
+		justify-content: space-between;
+		align-items: center;
+		inset-block-end: 0;
+		background: #f6f7f7;
+		inline-size: 100%;
+		padding: 11px 19px;
+
+		.button-link {
+			text-decoration: none;
+		}
+
+		.button-large {
+			block-size: 45px;
+
+			&.button-primary {
+				padding: 0 30px;
+			}
+		}
+	}
+}

@@ -1,0 +1,134 @@
+@use 'sass:color';
+@use 'theme';
+
+.code-snippets-upsell-banner {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 12px;
+	gap: 10px;
+	background: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+
+	p {
+		margin: 0;
+	}
+
+	.components-external-link__contents {
+		text-decoration: none;
+	}
+
+	.button-primary {
+		background-color: theme.$secondary;
+		border: 0;
+		font-weight: bold;
+		margin-inline-start: auto;
+
+		&:hover, &:focus {
+			background-color: color.adjust(theme.$secondary, $lightness: -10%);
+		}
+	}
+
+	.button-link.button-small {
+		text-decoration: none;
+		font-weight: normal;
+		padding: 0;
+		color: #a7aaad;
+		line-height: 1;
+	}
+}
+
+.code-snippets-upsell-dialog {
+	background: linear-gradient(116.04deg, #edfcff -0.75%, #fcdfd4 93.04%);
+	inline-size: 794px;
+	box-shadow: 0 4px 80px rgb(0 0 0 / 10%);
+	border-radius: 8px;
+	font-family: 'SF Pro', sans-serif;
+	color: #1c3f41;
+	line-height: 1.5;
+	max-block-size: unset;
+
+	.components-modal__content {
+		margin: 0;
+		padding-block: 48px;
+		padding-inline: 80px;
+	}
+
+	.components-modal__content > div:last-child {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		gap: 18px;
+		overflow: auto;
+	}
+
+	h1 {
+		font-size: 32px;
+		margin: 0;
+
+		span {
+			color: #d46f4d;
+		}
+	}
+
+	p {
+		margin-block: 0;
+		margin-inline: 2em;
+	}
+
+	h1 + p {
+		font-size: 16px;
+	}
+
+	img {
+		inline-size: 82px;
+	}
+
+	h2 {
+		text-transform: uppercase;
+		font-size: 12px;
+	}
+
+	ul {
+		display: grid;
+		inline-size: 100%;
+		grid-auto-flow: column;
+		grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+	}
+
+	li {
+		display: flex;
+		flex-flow: row;
+		gap: 11px;
+		font-size: 14px;
+	}
+
+	li::before {
+		content: '✓';
+		color: #fff;
+		inline-size: 24px;
+		block-size: 24px;
+		border-radius: 50%;
+		background-color: #0ca0a9;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.button.button-large {
+		background-color: #d46f4d;
+		padding-block: 15px;
+		padding-inline: 20px;
+		font-size: 16px;
+		line-height: inherit;
+		margin-block: 16px 24px;
+		margin-inline: auto;
+		border-color: currentcolor;
+
+		&:hover {
+			background-color: color.adjust(#d46f4d, $lightness: -10%);
+		}
+	}
+}
