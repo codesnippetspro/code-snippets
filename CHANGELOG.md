@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.7.0] (beta release)
+## [3.7.0] (2025-08-29)
 
 ### Added
 * New 'conditions' feature: control where and when snippets execute with a powerful logic builder. (PRO)
@@ -1210,6 +1210,7 @@
 [brandonjp]: https://github.com/brandonjp
 
 [unreleased]: https://github.com/codesnippetspro/code-snippets/tree/core
+[3.7.0]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.7.0
 [3.6.7]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.7
 [3.6.6.1]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.6.1
 [3.6.6]: https://github.com/codesnippetspro/code-snippets/releases/tag/v3.6.6
