@@ -28,8 +28,6 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 
 	return (
 		<div className="snippet-editor-sidebar">
-			<SnippetTypeInput setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
-
 			<div className="box">
 				{snippet.id && !isCondition(snippet) ? <ActivationSwitch /> : null}
 
