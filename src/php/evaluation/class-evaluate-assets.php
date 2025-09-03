@@ -278,7 +278,7 @@ class Evaluate_Assets {
 			case 'css':
 			case 'site-css':
 			case 'admin-css':
-				if ( in_array( 'css', $minify_types, true ) ) {
+				if ( is_array( $minify_types ) && in_array( 'css', $minify_types, true ) ) {
 					$minifier = new Minify\CSS( $code );
 					$code = $minifier->minify();
 				}
@@ -287,7 +287,7 @@ class Evaluate_Assets {
 			case 'js':
 			case 'site-head-js':
 			case 'site-footer-js':
-				if ( in_array( 'js', $minify_types, true ) ) {
+				if ( is_array( $minify_types ) && in_array( 'js', $minify_types, true ) ) {
 					$minifier = new Minify\JS( $code );
 					$code = $minifier->minify();
 				}
@@ -295,7 +295,7 @@ class Evaluate_Assets {
 
 			default:
 				if ( function_exists( 'wp_trigger_error' ) ) {
-					$message = sprintf( 'Cannot process code for snippet scope: %s', esc_html( $scope ) );
+					$message = sprintf( 'Cannot process code for snippet scope: %s', esc_html( $type_or_scope ) );
 					/* @noinspection PhpUnhandledExceptionInspection E_USER_NOTICE level does not throw an error. */
 					wp_trigger_error( __FUNCTION__, $message );
 				}
