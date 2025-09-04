@@ -4,7 +4,7 @@ namespace Evaluation;
 
 use Code_Snippets\DB;
 use Code_Snippets\Snippet;
-use MatthiasMullie\Minify;
+use Code_Snippets\Vendor\MatthiasMullie\Minify;
 use Code_Snippets\Conditions;
 use Code_Snippets\Settings;
 use function Code_Snippets\code_snippets;
