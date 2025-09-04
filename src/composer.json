@@ -29,7 +29,8 @@
         "php": ">=7.4",
         "ext-dom": "*",
         "ext-json": "*",
-        "composer/installers": "^2.3"
+        "composer/installers": "^2.3",
+        "typisttech/imposter-plugin": "^0.6.2"
     },
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.1",
@@ -42,7 +43,13 @@
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "composer/installers": true
+            "composer/installers": true,
+            "typisttech/imposter-plugin": true
+        }
+    },
+    "extra": {
+        "imposter": {
+            "namespace": "Code_Snippets\\Vendor"
         }
     }
 }
