@@ -477,6 +477,16 @@ function test_snippet_code( Snippet $snippet ) {
 				ucfirst( rtrim( $result->getMessage(), '.' ) ) . '.',
 				$result->getLine(),
 			];
+		} elseif ( $result instanceof Error ) {
+			$snippet->code_error = [
+				ucfirst( rtrim( $result->getMessage(), '.' ) ) . '.',
+				$result->getLine(),
+			];
+		} elseif ( is_object( $result ) && isset( $result->type ) && $result->type === 'fatal_error' ) {
+			$snippet->code_error = [
+				ucfirst( rtrim( $result->message, '.' ) ) . '.',
+				$result->line,
+			];
 		}
 	}
 }
@@ -507,10 +517,11 @@ function save_snippet( $snippet ) {
 		$snippet->code = preg_replace( '|^\s*<\?(php)?|', '', $snippet->code );
 		$snippet->code = preg_replace( '|\?>\s*$|', '', $snippet->code );
 
-		// Deactivate snippet if code contains errors.
+		// Test snippet code when user is trying to activate it
 		if ( $snippet->active && 'single-use' !== $snippet->scope ) {
 			test_snippet_code( $snippet );
 
+			// Deactivate snippet if code contains errors
 			if ( $snippet->code_error ) {
 				$snippet->active = 0;
 			}
@@ -589,18 +600,60 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 		return false;
 	}
 
+	// Since fatal errors cannot be caught with error handlers
+	// Try to detect function redeclaration by parsing the code
+	$function_redeclaration_error = detect_function_redeclaration( $code );
+	if ( $function_redeclaration_error ) {
+		return $function_redeclaration_error;
+	}
+
 	ob_start();
 
 	try {
 		$result = eval( $code );
 	} catch ( ParseError $parse_error ) {
 		$result = $parse_error;
+	} catch ( Error $error ) {
+		// Catch other fatal errors
+		$result = $error;
 	}
 
 	ob_end_clean();
 
 	do_action( 'code_snippets/after_execute_snippet', $code, $id, $result );
 	return $result;
+}
+
+/**
+ * Detect function redeclaration errors by checking if functions already exist
+ *
+ * @param string $code The code to check
+ * @return object|null Error object if redeclaration detected, null otherwise
+ */
+function detect_function_redeclaration( string $code ) {
+	// Extract function names from the code
+	preg_match_all( '/function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/', $code, $matches );
+	
+	if ( empty( $matches[1] ) ) {
+		return null; // No functions found
+	}
+	
+	$function_names = $matches[1];
+	
+	// Check if any of these functions already exist
+	foreach ( $function_names as $function_name ) {
+		if ( function_exists( $function_name ) ) {
+		// Create a custom error object that mimics ParseError
+		$error = new \stdClass();
+		$error->type = 'fatal_error';
+		$error->message = "Cannot redeclare {$function_name}() (previously declared)";
+		$error->line = 1; // We can't determine the exact line easily
+		$error->file = '';
+		return $error;
+		}
+	}
+	
+	return null; // No redeclaration detected
 }
 
 /**

@@ -47,5 +47,13 @@ export const parseSnippetObject = (fields: unknown): Snippet => {
 		...'shared_network' in fields && 'boolean' === typeof fields.shared_network && { shared_network: fields.shared_network },
 		...'priority' in fields && 'number' === typeof fields.priority && { priority: fields.priority },
 		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id }
+    ...('code_error' in fields &&
+      Array.isArray(fields.code_error) &&
+      fields.code_error.length === 2 &&
+      'string' === typeof fields.code_error[0] &&
+      'number' === typeof fields.code_error[1] && {
+        code_error: fields.code_error as readonly [string, number],
+      }),
 	}
+  
 }
