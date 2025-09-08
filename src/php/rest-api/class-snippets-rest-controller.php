@@ -270,8 +270,8 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		$result = save_snippet( $item );
 
 		if ( $result ) {
-			$request->set_param( 'id', $result->id );
-			return $this->get_item( $request );
+			$data = $this->prepare_item_for_response( $result, $request );
+			return rest_ensure_response( $data );
 		}
 
 		return new WP_Error(
