@@ -6,9 +6,65 @@ test.describe('Code Snippets Admin Page @admin', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/wp-admin/admin.php?page=snippets');
 		await page.waitForLoadState('networkidle');
+		
+		// Debug: Check if we're actually logged in and on the right page
+		const currentUrl = page.url();
+		console.log('Current URL:', currentUrl);
+		
+		// If we're redirected to login, something is wrong with auth
+		if (currentUrl.includes('wp-login.php')) {
+			throw new Error('Authentication failed - redirected to login page');
+		}
+	});
+
+	test('Can access admin page', async ({ page }) => {
+		// Simple test to verify we can access the admin
+		const title = await page.title();
+		console.log('Page title:', title);
+		
+		// Check if we're actually on the snippets page
+		const url = page.url();
+		console.log('Current URL:', url);
+		
+		// Verify the page has some expected content
+		const bodyText = await page.textContent('body');
+		const hasSnippetsContent = bodyText?.includes('Snippets') || bodyText?.includes('snippet');
+		console.log('Has snippets content:', hasSnippetsContent);
+		
+		expect(url).toContain('page=snippets');
 	});
 
   	test('Can add a new snippet', async ({ page }) => {
+		// Debug: Check what's actually on the page
+		const pageContent = await page.textContent('body');
+		console.log('Page content preview:', pageContent?.substring(0, 500));
+		
+		// Check if Add New button exists
+		const addNewButton = page.locator('text=Add New');
+		const buttonCount = await addNewButton.count();
+		console.log('Add New button count:', buttonCount);
+		
+		// Also check for alternative button text
+		const addNewVariants = [
+			'text=Add New',
+			'text=Add New Snippet', 
+			'text=New Snippet',
+			'[href*="action=add"]',
+			'button:has-text("Add")',
+			'button:has-text("New")'
+		];
+		
+		for (const selector of addNewVariants) {
+			const count = await page.locator(selector).count();
+			console.log(`Selector "${selector}" count:`, count);
+		}
+		
+		if (buttonCount === 0) {
+			// Take a screenshot for debugging
+			await page.screenshot({ path: 'debug-no-add-new.png' });
+			throw new Error('Add New button not found on page');
+		}
+		
 		await page.click('text=Add New');
 		await page.waitForLoadState('networkidle');
 		
