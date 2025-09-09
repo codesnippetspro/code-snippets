@@ -517,11 +517,10 @@ function save_snippet( $snippet ) {
 		$snippet->code = preg_replace( '|^\s*<\?(php)?|', '', $snippet->code );
 		$snippet->code = preg_replace( '|\?>\s*$|', '', $snippet->code );
 
-		// Test snippet code when user is trying to activate it
+		// Deactivate snippet if code contains errors.
 		if ( $snippet->active && 'single-use' !== $snippet->scope ) {
 			test_snippet_code( $snippet );
 
-			// Deactivate snippet if code contains errors
 			if ( $snippet->code_error ) {
 				$snippet->active = 0;
 			}
@@ -600,8 +599,7 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 		return false;
 	}
 
-	// Since fatal errors cannot be caught with error handlers
-	// Try to detect function redeclaration by parsing the code
+  // Fatal errors - try to detect function redeclaration by parsing the code
 	$function_redeclaration_error = detect_function_redeclaration( $code );
 	if ( $function_redeclaration_error ) {
 		return $function_redeclaration_error;
@@ -614,7 +612,6 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 	} catch ( ParseError $parse_error ) {
 		$result = $parse_error;
 	} catch ( Error $error ) {
-		// Catch other fatal errors
 		$result = $error;
 	}
 
@@ -643,7 +640,6 @@ function detect_function_redeclaration( string $code ) {
 	// Check if any of these functions already exist
 	foreach ( $function_names as $function_name ) {
 		if ( function_exists( $function_name ) ) {
-		// Create a custom error object that mimics ParseError
 		$error = new \stdClass();
 		$error->type = 'fatal_error';
 		$error->message = "Cannot redeclare {$function_name}() (previously declared)";
