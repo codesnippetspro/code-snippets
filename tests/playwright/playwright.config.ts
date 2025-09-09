@@ -1,5 +1,6 @@
 /// <reference types="node" />
 import { defineConfig, devices } from '@playwright/test';
+import * as path from 'path';
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -24,10 +25,17 @@ export default defineConfig({
 
   projects: [
     {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+    
+    {
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
+        storageState: path.join(__dirname, '../e2e/.auth/user.json'),
       },
+      dependencies: ['setup'],
     },
   ],
 
