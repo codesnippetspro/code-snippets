@@ -36,47 +36,47 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-      
+
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: |
           npm run prepare-environment:ci
           cd src && composer install
-      
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
-      
+
       - name: Start WordPress environment
         run: |
           npm run wp-env:start
-      
+
       - name: Setup test data
         run: npm run test:setup:playwright
-      
+
       - name: WordPress debug information
         run: |
           wp-env run cli wp core version
           wp-env run cli wp --info
-      
+
       - name: Install playwright/test
         run: |
           npx playwright install chromium
-      
+
       - name: Run Playwright tests
         run: npm run test:playwright
-      
+
       - name: Stop WordPress environment
         if: always()
         run: npm run wp-env:stop
-      
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
