@@ -54,6 +54,11 @@ jobs:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
 
+      - name: Copy built plugin to source directory
+        run: |
+          rm -rf ./src
+          cp -r ./build/code-snippets ./src
+
       - name: Start WordPress environment
         run: |
           npx wp-env start
