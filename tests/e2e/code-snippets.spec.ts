@@ -7,6 +7,9 @@ test.describe('Code Snippets Admin Page @admin', () => {
 		await page.goto('/wp-admin/admin.php?page=snippets');
 		await page.waitForLoadState('networkidle');
 		
+		// Wait for WordPress admin content to be fully loaded
+		await page.waitForSelector('#wpbody-content, .wrap, #wpcontent', { timeout: 10000 });
+		
 		// Debug: Check if we're actually logged in and on the right page
 		const currentUrl = page.url();
 		console.log('Current URL:', currentUrl);
@@ -35,35 +38,19 @@ test.describe('Code Snippets Admin Page @admin', () => {
 	});
 
   	test('Can add a new snippet', async ({ page }) => {
+		// Wait for the actual snippets page content to load
+		await page.waitForSelector('.wrap h1, .page-title, .wp-heading-inline', { timeout: 10000 });
+		
 		// Debug: Check what's actually on the page
 		const pageContent = await page.textContent('body');
 		console.log('Page content preview:', pageContent?.substring(0, 500));
 		
-		// Check if Add New button exists
-		const addNewButton = page.locator('text=Add New');
-		const buttonCount = await addNewButton.count();
+		// Check if Add New button exists and is visible
+		const addNewButton = page.locator('text=Add New').first();
+		await addNewButton.waitFor({ state: 'visible', timeout: 10000 });
+		
+		const buttonCount = await page.locator('text=Add New').count();
 		console.log('Add New button count:', buttonCount);
-		
-		// Also check for alternative button text
-		const addNewVariants = [
-			'text=Add New',
-			'text=Add New Snippet', 
-			'text=New Snippet',
-			'[href*="action=add"]',
-			'button:has-text("Add")',
-			'button:has-text("New")'
-		];
-		
-		for (const selector of addNewVariants) {
-			const count = await page.locator(selector).count();
-			console.log(`Selector "${selector}" count:`, count);
-		}
-		
-		if (buttonCount === 0) {
-			// Take a screenshot for debugging
-			await page.screenshot({ path: 'debug-no-add-new.png' });
-			throw new Error('Add New button not found on page');
-		}
 		
 		await page.click('text=Add New');
 		await page.waitForLoadState('networkidle');
