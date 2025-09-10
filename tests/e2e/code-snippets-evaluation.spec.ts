@@ -1,81 +1,42 @@
 import { test, expect } from '@playwright/test';
+import { SnippetsTestHelper } from './helpers/SnippetsTestHelper';
+import { SELECTORS } from './helpers/constants';
 
 const TEST_SNIPPET_NAME = 'E2E Admin Bar Hide Test';
 
 test.describe('Code Snippets Evaluation', () => {
+	let helper: SnippetsTestHelper;
+
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/wp-admin/admin.php?page=snippets');
-		await page.waitForLoadState('networkidle');
-		await page.waitForSelector('#wpbody-content, .wrap, #wpcontent', { timeout: 10000 });
+		helper = new SnippetsTestHelper(page);
+		await helper.navigateToSnippetsAdmin();
 	});
 
 	test('PHP snippet is evaluating correctly', async ({ page }) => {
-		await page.waitForSelector('h1, .page-title', { timeout: 10000 });
-		await page.click('.page-title-action');
-		await page.waitForLoadState('networkidle');
+		await helper.createAndActivateSnippet({
+			name: TEST_SNIPPET_NAME,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		});
 
-		await page.waitForSelector('#title');
-		await page.fill('#title', TEST_SNIPPET_NAME);
-
-		await page.waitForSelector('.CodeMirror textarea');
-		await page.fill('.CodeMirror textarea', "add_filter('show_admin_bar', '__return_false');");
-
-		await page.click('text=Save and Activate');
-		await expect(page.locator('#message.notice')).toContainText('Snippet created and activated');
-
-		await page.goto('/');
-		await page.waitForLoadState('networkidle');
-
-		await expect(page.locator('#wpadminbar')).not.toBeVisible();
-
-		const adminBarCount = await page.locator('#wpadminbar').count();
-		expect(adminBarCount).toBe(0);
+		await helper.navigateToFrontend();
+		await helper.expectElementNotVisible(SELECTORS.ADMIN_BAR);
+		await helper.expectElementCount(SELECTORS.ADMIN_BAR, 0);
 	});
 
-    test('HTML snippet is evaluating correctly', async ({ page }) => {
-		await page.waitForSelector('h1, .page-title', { timeout: 10000 });
-		await page.click('.page-title-action');
-		await page.waitForLoadState('networkidle');
+	test('HTML snippet is evaluating correctly', async ({ page }) => {
+		await helper.createAndActivateSnippet({
+			name: TEST_SNIPPET_NAME,
+			code: "<p>Hello World HTML snippet!</p>",
+			type: 'HTML',
+			location: 'SITE_FOOTER'
+		});
 
-		await page.waitForSelector('#title');
-		await page.fill('#title', TEST_SNIPPET_NAME);
-
-        await page.click('#snippet-type-select-input');
-        await page.click('text=HTML');
-
-		await page.waitForSelector('.CodeMirror textarea');
-		await page.fill('.CodeMirror textarea', "<p>Hello World HTML snippet!</p>");
-
-        await page.waitForSelector('.code-snippets-select-location', { timeout: 5000 });
-        await page.click('.code-snippets-select-location');
-        
-        await page.waitForSelector('text=In site footer', { timeout: 5000 });
-        await page.click('text=In site footer');
-
-		await page.click('text=Save and Activate');
-		await expect(page.locator('#message.notice')).toContainText('Snippet created and activated');
-
-		await page.goto('/');
-		await page.waitForLoadState('networkidle');
-
-		await expect(page.locator('text=Hello World HTML snippet!')).toBeVisible();
-
-		const helloWorldCount = await page.locator('text=Hello World HTML snippet!').count();
-		expect(helloWorldCount).toBe(1);
+		await helper.navigateToFrontend();
+		await helper.expectTextVisible('Hello World HTML snippet!');
+		await helper.expectElementCount('text=Hello World HTML snippet!', 1);
 	});
 
 	test.afterEach(async ({ page }) => {
-		// Clean up
-		await page.goto('/wp-admin/admin.php?page=snippets');
-		await page.waitForLoadState('networkidle');
-
-		const snippetExists = await page.locator(`text=${TEST_SNIPPET_NAME}`).count();
-		if (snippetExists > 0) {
-			await page.click(`text=${TEST_SNIPPET_NAME}`);
-			await page.waitForLoadState('networkidle');
-
-			await page.click('text=Delete');
-			await page.click('button.components-button.is-destructive.is-primary');
-		}
+		await helper.cleanupSnippet(TEST_SNIPPET_NAME);
 	});
 });

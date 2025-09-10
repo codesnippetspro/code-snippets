@@ -1,55 +1,41 @@
 import { test, expect } from '@playwright/test';
+import { SnippetsTestHelper } from './helpers/SnippetsTestHelper';
+import { MESSAGES } from './helpers/constants';
 
 const TEST_SNIPPET_NAME = 'E2E Test Snippet';
 
 test.describe('Code Snippets Admin', () => {
+	let helper: SnippetsTestHelper;
+
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/wp-admin/admin.php?page=snippets');
-		await page.waitForLoadState('networkidle');
-		await page.waitForSelector('#wpbody-content, .wrap, #wpcontent', { timeout: 10000 });
+		helper = new SnippetsTestHelper(page);
+		await helper.navigateToSnippetsAdmin();
 	});
 
 	test('Can access snippets admin page', async ({ page }) => {
-		const currentUrl = page.url();
-		expect(currentUrl).toContain('page=snippets');
-
-		await expect(page.locator('h1, .page-title')).toBeVisible();
+		await helper.expectToBeOnSnippetsAdminPage();
 	});
 
 	test('Can add a new snippet', async ({ page }) => {
-		await page.waitForSelector('h1, .page-title', { timeout: 10000 });
-		await page.click('.page-title-action');
-		await page.waitForLoadState('networkidle');
-
-		await page.waitForSelector('#title');
-		await page.fill('#title', TEST_SNIPPET_NAME);
-
-		await page.waitForSelector('.CodeMirror textarea');
-		await page.fill('.CodeMirror textarea', 'echo "Hello World!";');
-
-		await page.click('text=Save Snippet');
-		await expect(page.locator('#message.notice')).toContainText('Snippet created');
+		await helper.createSnippet({
+			name: TEST_SNIPPET_NAME,
+			code: 'echo "Hello World!";'
+		});
 	});
 
 	test('Can activate and deactivate a snippet', async ({ page }) => {
-		await page.waitForSelector(`text=${TEST_SNIPPET_NAME}`);
-		await page.click(`text=${TEST_SNIPPET_NAME}`);
-		await page.waitForLoadState('networkidle');
+		await helper.openSnippet(TEST_SNIPPET_NAME);
 
-		await page.click('text=Save and Activate');
-		await expect(page.locator('#message.notice p')).toContainText('Snippet updated and activated');
+		await helper.saveSnippet('save_and_activate');
+		await helper.expectSuccessMessageInParagraph(MESSAGES.SNIPPET_UPDATED_AND_ACTIVATED);
 
-		await page.click('text=Save and Deactivate');
-		await expect(page.locator('#message.notice p')).toContainText('Snippet updated and deactivated');
+		await helper.saveSnippet('save_and_deactivate');
+		await helper.expectSuccessMessageInParagraph(MESSAGES.SNIPPET_UPDATED_AND_DEACTIVATED);
 	});
 
 	test('Can delete a snippet', async ({ page }) => {
-		await page.waitForSelector(`text=${TEST_SNIPPET_NAME}`);
-		await page.click(`text=${TEST_SNIPPET_NAME}`);
-		await page.waitForLoadState('networkidle');
-
-		await page.click('text=Delete');
-		await page.click('button.components-button.is-destructive.is-primary');
-		await expect(page.locator('body')).not.toContainText(TEST_SNIPPET_NAME);
+		await helper.openSnippet(TEST_SNIPPET_NAME);
+		await helper.deleteSnippet();
+		await helper.expectTextNotVisible(TEST_SNIPPET_NAME);
 	});
 });
