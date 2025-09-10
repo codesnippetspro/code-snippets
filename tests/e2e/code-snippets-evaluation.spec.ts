@@ -9,7 +9,7 @@ test.describe('Code Snippets Evaluation', () => {
 		await page.waitForSelector('#wpbody-content, .wrap, #wpcontent', { timeout: 10000 });
 	});
 
-	test('Can hide admin bar with activated snippet', async ({ page }) => {
+	test('PHP snippet is evaluating correctly', async ({ page }) => {
 		await page.waitForSelector('h1, .page-title', { timeout: 10000 });
 		await page.click('.page-title-action');
 		await page.waitForLoadState('networkidle');
@@ -27,7 +27,7 @@ test.describe('Code Snippets Evaluation', () => {
 		await page.waitForLoadState('networkidle');
 
 		await expect(page.locator('#wpadminbar')).not.toBeVisible();
-		
+
 		const adminBarCount = await page.locator('#wpadminbar').count();
 		expect(adminBarCount).toBe(0);
 	});
@@ -36,12 +36,12 @@ test.describe('Code Snippets Evaluation', () => {
 		// Clean up
 		await page.goto('/wp-admin/admin.php?page=snippets');
 		await page.waitForLoadState('networkidle');
-		
+
 		const snippetExists = await page.locator(`text=${TEST_SNIPPET_NAME}`).count();
 		if (snippetExists > 0) {
 			await page.click(`text=${TEST_SNIPPET_NAME}`);
 			await page.waitForLoadState('networkidle');
-			
+
 			await page.click('text=Delete');
 			await page.click('button.components-button.is-destructive.is-primary');
 		}
