@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const TEST_SNIPPET_NAME = 'E2E Test Snippet';
 
-test.describe('Code Snippets Plugin', () => {
+test.describe('Code Snippets Admin', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/wp-admin/admin.php?page=snippets');
 		await page.waitForLoadState('networkidle');

@@ -32,6 +32,38 @@ test.describe('Code Snippets Evaluation', () => {
 		expect(adminBarCount).toBe(0);
 	});
 
+    test('HTML snippet is evaluating correctly', async ({ page }) => {
+		await page.waitForSelector('h1, .page-title', { timeout: 10000 });
+		await page.click('.page-title-action');
+		await page.waitForLoadState('networkidle');
+
+		await page.waitForSelector('#title');
+		await page.fill('#title', TEST_SNIPPET_NAME);
+
+        await page.click('#snippet-type-select-input');
+        await page.click('text=HTML');
+
+		await page.waitForSelector('.CodeMirror textarea');
+		await page.fill('.CodeMirror textarea', "<p>Hello World HTML snippet!</p>");
+
+        await page.waitForSelector('.code-snippets-select-location', { timeout: 5000 });
+        await page.click('.code-snippets-select-location');
+        
+        await page.waitForSelector('text=In site footer', { timeout: 5000 });
+        await page.click('text=In site footer');
+
+		await page.click('text=Save and Activate');
+		await expect(page.locator('#message.notice')).toContainText('Snippet created and activated');
+
+		await page.goto('/');
+		await page.waitForLoadState('networkidle');
+
+		await expect(page.locator('text=Hello World HTML snippet!')).toBeVisible();
+
+		const helloWorldCount = await page.locator('text=Hello World HTML snippet!').count();
+		expect(helloWorldCount).toBe(1);
+	});
+
 	test.afterEach(async ({ page }) => {
 		// Clean up
 		await page.goto('/wp-admin/admin.php?page=snippets');
