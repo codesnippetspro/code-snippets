@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n'
-import { updateSnippet } from './requests'
 import type { Snippet } from '../../types/Snippet'
+import { updateSnippet } from './requests'
 
 /**
  * Update the snippet count of a specific view
@@ -65,9 +65,21 @@ export const toggleSnippetActive = (link: HTMLAnchorElement, event: Event) => {
 		} else {
 			row.className += ' erroneous-snippet'
 
-			if (button) {
-				button.title = __('An error occurred when attempting to activate', 'code-snippets')
+			// Handle different types of errors
+			const errorData = <{ type?: string; message?: string } | undefined>response.data
+			const errorType = errorData?.type ?? 'action_error'
+			let errorMessage = __('An error occurred when attempting to activate', 'code-snippets')
+			
+			if ('validation_error' === errorType && errorData?.message) {
+				errorMessage = errorData.message
 			}
+
+			if (button) {
+				button.title = errorMessage
+			}
+			
+			// Show error message to user
+			console.error('Snippet activation failed:', errorMessage)
 		}
 	})
 }

@@ -310,15 +310,23 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	public function activate_item( WP_REST_Request $request ) {
 		$item = $this->prepare_item_for_database( $request );
+		
+		// DEBUG: Log REST API activation request
+		error_log( "Code Snippets DEBUG: REST API activation request - ID: {$item->id}, Network: " . ( $item->network ? 'true' : 'false' ) );
+		
 		$result = activate_snippet( $item->id, $item->network );
 
-		return $result instanceof Snippet ?
-			rest_ensure_response( $result ) :
-			new WP_Error(
+		if ( $result instanceof Snippet ) {
+			error_log( "Code Snippets DEBUG: REST API activation successful" );
+			return rest_ensure_response( $result );
+		} else {
+			error_log( "Code Snippets DEBUG: REST API activation failed - Error: $result" );
+			return new WP_Error(
 				'rest_cannot_activate',
 				$result,
 				[ 'status' => 500 ]
 			);
+		}
 	}
 
 	/**

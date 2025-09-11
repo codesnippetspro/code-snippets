@@ -321,9 +321,10 @@ class Manage_Menu extends Admin_Menu {
 			} elseif ( $snippet->active ) {
 				$result = activate_snippet( $snippet->id, $snippet->network );
 				if ( is_string( $result ) ) {
+					// Return validation error with proper error type
 					wp_send_json_error(
 						array(
-							'type'    => 'action_error',
+							'type'    => 'validation_error',
 							'message' => $result,
 						)
 					);

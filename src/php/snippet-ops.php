@@ -297,9 +297,16 @@ function activate_snippet( int $id, ?bool $network = null ) {
 		return sprintf( __( 'Could not locate snippet with ID %d.', 'code-snippets' ), $id );
 	}
 
-	$validator = new Validator( $snippet->code );
-	if ( $validator->validate() ) {
-		return __( 'Could not activate snippet: code did not pass validation.', 'code-snippets' );
+	// Use the same comprehensive validation as the edit page
+	if ( 'php' === $snippet->type ) {
+		test_snippet_code( $snippet );
+		
+		if ( $snippet->code_error ) {
+			return sprintf( 
+				__( 'Could not activate snippet: %s', 'code-snippets' ), 
+				$snippet->code_error[0] 
+			);
+		}
 	}
 
 	$result = $wpdb->update(
@@ -342,15 +349,21 @@ function activate_snippets( array $ids, ?bool $network = null ): ?array {
 		return null;
 	}
 
-	// Loop through each snippet code and validate individually.
+	// Loop through each snippet code and validate individually using comprehensive validation
 	$valid_ids = [];
 	$valid_snippets = [];
 
 	foreach ( $snippets as $snippet ) {
-		$validator = new Validator( $snippet->code );
-		$code_error = $validator->validate();
+		// Use the same comprehensive validation as single snippet activation
+		if ( 'php' === $snippet->type ) {
+			test_snippet_code( $snippet );
 
-		if ( ! $code_error ) {
+			if ( ! $snippet->code_error ) {
+				$valid_ids[] = $snippet->id;
+				$valid_snippets[] = $snippet;
+			}
+		} else {
+			// Non-PHP snippets can be activated without validation
 			$valid_ids[] = $snippet->id;
 			$valid_snippets[] = $snippet;
 		}
@@ -459,17 +472,23 @@ function test_snippet_code( Snippet $snippet ) {
 	$snippet->code_error = null;
 
 	if ( 'php' !== $snippet->type ) {
+		error_log( "Code Snippets DEBUG: Skipping validation for non-PHP snippet type: {$snippet->type}" );
 		return;
 	}
 
+	error_log( "Code Snippets DEBUG: Running Validator on snippet ID {$snippet->id}" );
 	$validator = new Validator( $snippet->code );
 	$result = $validator->validate();
 
 	if ( $result ) {
+		error_log( "Code Snippets DEBUG: Validator found error: " . $result['message'] );
 		$snippet->code_error = [ $result['message'], $result['line'] ];
+	} else {
+		error_log( "Code Snippets DEBUG: Validator passed, running execute_snippet" );
 	}
 
-	if ( ! $snippet->code_error && 'single-use' !== $snippet->scope ) {
+	if ( ! $snippet->code_error ) {
+		error_log( "Code Snippets DEBUG: Calling execute_snippet for redeclaration check" );
 		$result = execute_snippet( $snippet->code, $snippet->id, true );
 
 		if ( $result instanceof ParseError ) {
@@ -599,11 +618,14 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 		return false;
 	}
 
-  // Fatal errors - try to detect function redeclaration by parsing the code
-	$function_redeclaration_error = detect_function_redeclaration( $code );
-	if ( $function_redeclaration_error ) {
-		return $function_redeclaration_error;
-	}
+	// Set up error handling for fatal errors
+	$old_error_handler = set_error_handler( function( $severity, $message, $file, $line ) {
+		// Convert fatal errors to exceptions
+		if ( $severity & ( E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR ) ) {
+			throw new Error( $message, 0, $severity, $file, $line );
+		}
+		return false; // Let other errors be handled normally
+	});
 
 	ob_start();
 
@@ -613,44 +635,39 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 		$result = $parse_error;
 	} catch ( Error $error ) {
 		$result = $error;
+	} catch ( Throwable $throwable ) {
+		// Handle function redeclaration and other fatal errors
+		if ( strpos( $throwable->getMessage(), 'Cannot redeclare' ) !== false ) {
+			$error = new \stdClass();
+			$error->type = 'fatal_error';
+			$error->message = $throwable->getMessage();
+			$error->line = $throwable->getLine();
+			$error->file = $throwable->getFile();
+			$result = $error;
+		} else {
+			$result = $throwable;
+		}
 	}
 
-	ob_end_clean();
+	$output = ob_get_clean();
+	
+	// Restore original error handler
+	restore_error_handler();
+	
+	// If we have output but no result, it might be a fatal error that wasn't caught
+	if ( ! empty( $output ) && null === $result ) {
+		$error = new \stdClass();
+		$error->type = 'fatal_error';
+		$error->message = 'Fatal error during execution';
+		$error->line = 1;
+		$error->file = '';
+		$result = $error;
+	}
 
 	do_action( 'code_snippets/after_execute_snippet', $code, $id, $result );
 	return $result;
 }
 
-/**
- * Detect function redeclaration errors by checking if functions already exist
- *
- * @param string $code The code to check
- * @return object|null Error object if redeclaration detected, null otherwise
- */
-function detect_function_redeclaration( string $code ) {
-	// Extract function names from the code
-	preg_match_all( '/function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/', $code, $matches );
-	
-	if ( empty( $matches[1] ) ) {
-		return null; // No functions found
-	}
-	
-	$function_names = $matches[1];
-	
-	// Check if any of these functions already exist
-	foreach ( $function_names as $function_name ) {
-		if ( function_exists( $function_name ) ) {
-		$error = new \stdClass();
-		$error->type = 'fatal_error';
-		$error->message = "Cannot redeclare {$function_name}() (previously declared)";
-		$error->line = 1; // We can't determine the exact line easily
-		$error->file = '';
-		return $error;
-		}
-	}
-	
-	return null; // No redeclaration detected
-}
 
 /**
  * Retrieve a single snippets from the database using its cloud ID.
