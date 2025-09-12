@@ -472,24 +472,26 @@ function test_snippet_code( Snippet $snippet ) {
 	$snippet->code_error = null;
 
 	if ( 'php' !== $snippet->type ) {
-		error_log( "Code Snippets DEBUG: Skipping validation for non-PHP snippet type: {$snippet->type}" );
 		return;
 	}
 
-	error_log( "Code Snippets DEBUG: Running Validator on snippet ID {$snippet->id}" );
 	$validator = new Validator( $snippet->code );
 	$result = $validator->validate();
 
 	if ( $result ) {
-		error_log( "Code Snippets DEBUG: Validator found error: " . $result['message'] );
 		$snippet->code_error = [ $result['message'], $result['line'] ];
-	} else {
-		error_log( "Code Snippets DEBUG: Validator passed, running execute_snippet" );
 	}
 
 	if ( ! $snippet->code_error ) {
-		error_log( "Code Snippets DEBUG: Calling execute_snippet for redeclaration check" );
-		$result = execute_snippet( $snippet->code, $snippet->id, true );
+		// First check for conflicts with other active snippets
+		$conflict_error = detect_function_redeclaration_with_active_snippets( $snippet->code, $snippet->id );
+		if ( $conflict_error ) {
+			$snippet->code_error = [
+				ucfirst( rtrim( $conflict_error->message, '.' ) ) . '.',
+				$conflict_error->line,
+			];
+		} else {
+			$result = execute_snippet( $snippet->code, $snippet->id, true );
 
 		if ( $result instanceof ParseError ) {
 			$snippet->code_error = [
@@ -506,6 +508,7 @@ function test_snippet_code( Snippet $snippet ) {
 				ucfirst( rtrim( $result->message, '.' ) ) . '.',
 				$result->line,
 			];
+		}
 		}
 	}
 }
@@ -668,6 +671,55 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 	return $result;
 }
 
+
+/**
+ * Check for function redeclaration conflicts with other active snippets
+ *
+ * @param string $code The code to check
+ * @param int $current_snippet_id The ID of the current snippet being validated
+ * @return object|null Error object if redeclaration detected, null otherwise
+ */
+function detect_function_redeclaration_with_active_snippets( string $code, int $current_snippet_id ) {
+	// Extract function names from the current code
+	preg_match_all( '/function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/', $code, $matches );
+	
+	if ( empty( $matches[1] ) ) {
+		return null; // No functions found
+	}
+	
+	$current_functions = $matches[1];
+	
+	// Get all active snippets except the current one
+	$active_snippets = get_snippets( [], null );
+	$active_snippets = array_filter( $active_snippets, function( $snippet ) use ( $current_snippet_id ) {
+		return $snippet->active && $snippet->id !== $current_snippet_id && 'php' === $snippet->type;
+	});
+	
+	// Check each active snippet for function conflicts
+	foreach ( $active_snippets as $snippet ) {
+		// Extract function names from the active snippet
+		preg_match_all( '/function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/', $snippet->code, $active_matches );
+		
+		if ( ! empty( $active_matches[1] ) ) {
+			$active_functions = $active_matches[1];
+			
+			// Check for conflicts
+			$conflicts = array_intersect( $current_functions, $active_functions );
+			if ( ! empty( $conflicts ) ) {
+				$conflict_function = reset( $conflicts );
+				
+				$error = new \stdClass();
+				$error->type = 'fatal_error';
+				$error->message = "Cannot redeclare {$conflict_function}() (already declared in snippet ID {$snippet->id})";
+				$error->line = 1;
+				$error->file = '';
+				return $error;
+			}
+		}
+	}
+	
+	return null; // No conflicts detected
+}
 
 /**
  * Retrieve a single snippets from the database using its cloud ID.
