@@ -1,6 +1,6 @@
 <?php
 
-namespace Evaluation;
+namespace Code_Snippets\Evaluation;
 
 use Code_Snippets\DB;
 use Code_Snippets\REST_API\Snippets_REST_Controller;

@@ -57,5 +57,9 @@
         "imposter": {
             "namespace": "Code_Snippets\\Vendor"
         }
+    },
+    "scripts": {
+        "post-install-cmd": "ts-node ../scripts/composer-fix-autoload.ts",
+        "post-update-cmd": "ts-node ../scripts/composer-fix-autoload.ts"
     }
 }

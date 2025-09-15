@@ -19,7 +19,8 @@
         "version-dev": "npm version --git-tag-version=false --preid=dev",
         "version-alpha": "npm version --git-tag-version=false --preid=alpha",
         "version-beta": "npm version --git-tag-version=false --preid=beta",
-        "version-rc": "npm version --git-tag-version=false --preid=rc"
+        "version-rc": "npm version --git-tag-version=false --preid=rc",
+        "composer-fix-autoload": "ts-node scripts/composer-fix-autoload.ts"
     },
     "repository": {
         "type": "git",

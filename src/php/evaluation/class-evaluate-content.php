@@ -1,9 +1,8 @@
 <?php
 
-namespace Evaluation;
+namespace Code_Snippets\Evaluation;
 
 use Code_Snippets\DB;
-use Code_Snippets\Snippet;
 use function Code_Snippets\Conditions\evaluate_condition;
 
 /**

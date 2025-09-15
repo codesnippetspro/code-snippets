@@ -1,12 +1,13 @@
 <?php
 
-namespace Evaluation;
+namespace Code_Snippets\Evaluation;
 
 use Code_Snippets\DB;
 use Code_Snippets\Snippet;
-use Code_Snippets\Vendor\MatthiasMullie\Minify;
 use Code_Snippets\Conditions;
 use Code_Snippets\Settings;
+use Code_Snippets\Vendor\MatthiasMullie\Minify\CSS;
+use Code_Snippets\Vendor\MatthiasMullie\Minify\JS;
 use function Code_Snippets\code_snippets;
 
 /**
@@ -279,7 +280,7 @@ class Evaluate_Assets {
 			case 'site-css':
 			case 'admin-css':
 				if ( is_array( $minify_types ) && in_array( 'css', $minify_types, true ) ) {
-					$minifier = new Minify\CSS( $code );
+					$minifier = new CSS( $code );
 					$code = $minifier->minify();
 				}
 				break;
@@ -288,7 +289,7 @@ class Evaluate_Assets {
 			case 'site-head-js':
 			case 'site-footer-js':
 				if ( is_array( $minify_types ) && in_array( 'js', $minify_types, true ) ) {
-					$minifier = new Minify\JS( $code );
+					$minifier = new JS( $code );
 					$code = $minifier->minify();
 				}
 				break;
