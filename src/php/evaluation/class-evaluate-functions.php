@@ -45,7 +45,8 @@ class Evaluate_Functions {
 	public function __construct( DB $db ) {
 		$this->db = $db;
 		add_action( 'plugins_loaded', [ $this, 'evaluate_early' ], 1 );
-		add_action( 'init', [ $this, 'evaluate_conditional_snippets' ], 1 );
+		add_action( 'wp', [ $this, 'evaluate_conditional_snippets' ], 1 );
+		add_action( 'admin_init', [ $this, 'evaluate_conditional_snippets' ], 1 );
 	}
 
 	/**
