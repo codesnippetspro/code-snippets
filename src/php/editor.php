@@ -42,7 +42,7 @@ function enqueue_code_editor( string $type, array $extra_atts = [] ) {
 			'Alt-Down'   => 'swapLineDown',
 		],
 		'gutters'       => [ 'CodeMirror-lint-markers', 'CodeMirror-foldgutter' ],
-		'lint'          => 'css' === $type || 'php' === $type,
+		'lint'          => 'php' === $type,
 		'direction'     => 'ltr',
 		'colorpicker'   => [ 'mode' => 'edit' ],
 		'foldOptions'   => [ 'widget' => '...' ],
