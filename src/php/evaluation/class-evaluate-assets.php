@@ -68,7 +68,14 @@ class Evaluate_Assets {
 	 *
 	 * @param string|string[] $scope Snippet scope.
 	 *
-	 * @return array[][]
+	 * @return array{
+	 * *     id: int,
+	 * *     code: string,
+	 * *     scope: string,
+	 * *     table: string,
+	 * *     network: bool,
+	 * *     priority: int,
+	 * * } List of active snippets.
 	 */
 	protected function fetch_active_snippets( $scope ): array {
 		$scope_key = is_array( $scope ) ? implode( '|', $scope ) : $scope;
@@ -325,12 +332,18 @@ class Evaluate_Assets {
 			$current_scope = "site-$current_scope-js";
 		}
 
-		// Concatenate all fetched code together into a single string.
-		$active_snippets = $this->db->fetch_active_snippets( [ $current_scope ] );
-		$code = implode( "\n\n", array_column( $active_snippets, 'code' ) );
+		// Concatenate all fetched code together into a single string, excluding snippets that rely on conditional context.
+		$active_snippets = $this->fetch_active_snippets( [ $current_scope ] );
+		$combined_code = '';
+
+		foreach ( $active_snippets as $snippet ) {
+			if ( 0 === intval( $snippet['condition_id'] ) ) {
+				$combined_code .= $snippet['code'] . "\n\n";
+			}
+		}
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo self::process_code( $code, $type );
+		echo self::process_code( $combined_code, $type );
 		exit;
 	}
 
@@ -352,16 +365,15 @@ class Evaluate_Assets {
 			}
 		}
 
-		$code = '';
+		$combined_code = '';
 
 		foreach ( $snippets as $snippet ) {
 			$condition_id = intval( $snippet['condition_id'] );
-			if ( 'condition' !== $snippet['scope'] &&
-			     ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) ) {
-				$code .= $snippet['code'] . "\n\n";
+			if ( 'condition' !== $snippet['scope'] && $condition_id && isset( $conditions[ $condition_id ] ) && $conditions[ $condition_id ] ) {
+				$combined_code .= $snippet['code'] . "\n\n";
 			}
 		}
 
-		return self::process_code( $code, $scope );
+		return self::process_code( $combined_code, $scope );
 	}
 }
