@@ -1,23 +1,18 @@
 export const SELECTORS = {
-  // Page elements
   WPBODY_CONTENT: '#wpbody-content, .wrap, #wpcontent',
   PAGE_TITLE: 'h1, .page-title',
   ADD_NEW_BUTTON: '.page-title-action',
   
-  // Form elements
   TITLE_INPUT: '#title',
   CODE_MIRROR_TEXTAREA: '.CodeMirror textarea',
   SNIPPET_TYPE_SELECT: '#snippet-type-select-input',
   LOCATION_SELECT: '.code-snippets-select-location',
   
-  // Messages
   SUCCESS_MESSAGE: '#message.notice',
   SUCCESS_MESSAGE_P: '#message.notice p',
   
-  // Buttons
   DELETE_CONFIRM_BUTTON: 'button.components-button.is-destructive.is-primary',
   
-  // Admin bar
   ADMIN_BAR: '#wpadminbar',
 } as const;
 

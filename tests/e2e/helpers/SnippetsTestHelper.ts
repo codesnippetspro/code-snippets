@@ -49,21 +49,17 @@ export class SnippetsTestHelper {
    * Fill the snippet form with the provided options
    */
   async fillSnippetForm(options: SnippetFormOptions): Promise<void> {
-    // Fill title
     await this.page.waitForSelector(SELECTORS.TITLE_INPUT);
     await this.page.fill(SELECTORS.TITLE_INPUT, options.name);
 
-    // Select snippet type
     if (options.type && options.type !== 'PHP') {
       await this.page.click(SELECTORS.SNIPPET_TYPE_SELECT);
       await this.page.click(`text=${SNIPPET_TYPES[options.type]}`);
     }
 
-    // Fill code
     await this.page.waitForSelector(SELECTORS.CODE_MIRROR_TEXTAREA);
     await this.page.fill(SELECTORS.CODE_MIRROR_TEXTAREA, options.code);
 
-    // Select location
     if (options.location) {
       await this.page.waitForSelector(SELECTORS.LOCATION_SELECT, { timeout: TIMEOUTS.SHORT });
       await this.page.click(SELECTORS.LOCATION_SELECT);
