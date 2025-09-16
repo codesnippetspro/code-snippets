@@ -54,23 +54,6 @@ jobs:
           rm -rf ./src
           cp -r ./build/code-snippets ./src
 
-      - name: Verify build contents
-        run: |
-          echo "=== Verifying build artifact structure ==="
-          echo "Main plugin file:"
-          ls -la ./src/code-snippets.php || echo "❌ No main plugin file found"
-          echo ""
-          echo "Compiled JavaScript:"
-          ls -la ./src/dist/ || echo "❌ No dist directory found"
-          echo ""
-          echo "Assets:"
-          ls -la ./src/assets/ || echo "❌ No assets directory found"
-          echo ""
-          echo "PHP files:"
-          ls -la ./src/php/ || echo "❌ No php directory found"
-          echo ""
-          echo "=== wp-env will map ./src to wp-content/plugins/code-snippets ==="
-
       - name: Install workflow dependencies (wp-env, playwright)
         run: npm run prepare-environment:ci
           
