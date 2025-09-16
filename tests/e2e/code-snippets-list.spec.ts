@@ -63,6 +63,16 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(page).toHaveURL(/page=snippets/);
 		
 		await expect(page.locator(`tr:has-text("${TEST_SNIPPET_NAME} [CLONE]")`)).toBeVisible();
+
+		const clonedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME} [CLONE]")`);
+
+		page.on('dialog', dialog => {
+			expect(dialog.type()).toBe('confirm');
+			dialog.accept();
+		});
+
+		await clonedRow.locator(SELECTORS.DELETE_ACTION).click();
+		await page.waitForLoadState('networkidle');
 	});
 
 	test('Can delete snippet from list page', async ({ page }) => {
@@ -77,7 +87,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		await page.waitForLoadState('networkidle');
 
 		await expect(page).toHaveURL(/page=snippets/);
-		await expect(page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)).not.toBeVisible();
+		await expect(page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)).toHaveCount(0);
 	});
 
 	test('Can export snippet from list page', async ({ page }) => {
