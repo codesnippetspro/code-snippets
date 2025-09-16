@@ -23,17 +23,76 @@ test.describe('Code Snippets Evaluation', () => {
 		await helper.expectElementCount(SELECTORS.ADMIN_BAR, 0);
 	});
 
-	test('HTML snippet is evaluating correctly', async ({ page }) => {
+	test('PHP Snippet runs only in Admin', async ({ page }) => {
+		await helper.createAndActivateSnippet({
+		  name: 'Admin Only Body Class Test',
+		  location: 'ADMIN_ONLY',
+		  code: `
+			add_filter('admin_body_class', function($classes) {
+			  return $classes . ' custom-admin-class';
+			});
+
+			add_filter('body_class', function($classes) {
+			  $classes[] = 'custom-frontend-class';
+			  return $classes;
+			});
+		  `
+		});
+
+		await page.goto('/wp-admin/');
+		await expect(page.locator('body')).toHaveClass(/custom-admin-class/);
+
+		await helper.navigateToFrontend();
+		await expect(page.locator('body')).not.toHaveClass(/custom-frontend-class/);
+	});
+
+	test('PHP Snippet runs only in Frontend', async ({ page }) => {
+		await helper.createAndActivateSnippet({
+		  name: 'Frontend Only Body Class Test',
+		  location: 'FRONTEND_ONLY',
+		  code: `
+			add_filter('admin_body_class', function($classes) {
+			  return $classes . ' custom-admin-class';
+			});
+
+			add_filter('body_class', function($classes) {
+			  $classes[] = 'custom-frontend-class';
+			  return $classes;
+			});
+		  `
+		});
+
+		await page.goto('/wp-admin/');
+		await expect(page.locator('body')).not.toHaveClass(/custom-admin-class/);
+
+		await helper.navigateToFrontend();
+		await expect(page.locator('body')).toHaveClass(/custom-frontend-class/);
+	});
+
+	test('HTML snippet is evaluating correctly in footer', async ({ page }) => {
 		await helper.createAndActivateSnippet({
 			name: TEST_SNIPPET_NAME,
-			code: "<p>Hello World HTML snippet!</p>",
+			code: "<p>Hello World HTML snippet in footer!</p>",
 			type: 'HTML',
 			location: 'SITE_FOOTER'
 		});
 
 		await helper.navigateToFrontend();
-		await helper.expectTextVisible('Hello World HTML snippet!');
-		await helper.expectElementCount('text=Hello World HTML snippet!', 1);
+		await helper.expectTextVisible('Hello World HTML snippet in footer!');
+		await helper.expectElementCount('text=Hello World HTML snippet in footer!', 1);
+	});
+
+	test('HTML snippet is evaluating correctly in header', async ({ page }) => {
+		await helper.createAndActivateSnippet({
+			name: TEST_SNIPPET_NAME,
+			code: "<p>Hello World HTML snippet in header!</p>",
+			type: 'HTML',
+			location: 'SITE_HEADER'
+		});
+
+		await helper.navigateToFrontend();
+		await helper.expectTextVisible('Hello World HTML snippet in header!');
+		await helper.expectElementCount('text=Hello World HTML snippet in header!', 1);
 	});
 
 	test.afterEach(async ({ page }) => {
