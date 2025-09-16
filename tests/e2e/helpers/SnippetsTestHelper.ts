@@ -69,7 +69,7 @@ export class SnippetsTestHelper {
       await this.page.click(SELECTORS.LOCATION_SELECT);
       
       await this.page.waitForSelector(`text=${SNIPPET_LOCATIONS[options.location]}`, { timeout: TIMEOUTS.SHORT });
-      await this.page.click(`text=${SNIPPET_LOCATIONS[options.location]}`);
+      await this.page.click(`text=${SNIPPET_LOCATIONS[options.location]}`, { force: true });
     }
   }
 
