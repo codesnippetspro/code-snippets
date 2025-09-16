@@ -102,6 +102,65 @@ test.describe('Code Snippets Evaluation', () => {
 		await helper.expectElementCount('text=Hello World HTML snippet in header!', 1);
 	});
 
+	test('HTML snippet works with shortcode in editor', async ({ page }) => {
+		const snippetId = await createHtmlSnippetForEditor();
+		
+		const pageUrl = await createPageWithShortcode(snippetId);
+		
+		await verifyShortcodeRendersCorrectly(page, pageUrl);
+		
+		async function createHtmlSnippetForEditor(): Promise<string> {
+			await helper.createAndActivateSnippet({
+				name: TEST_SNIPPET_NAME,
+				code: "<div class='custom-snippet-content'><h3>Custom HTML Content</h3><p>This content was inserted via shortcode!</p></div>",
+				type: 'HTML',
+				location: 'IN_EDITOR'
+			});
+
+			const currentUrl = page.url();
+			const urlMatch = currentUrl.match(/[?&]id=(\d+)/);
+			expect(urlMatch).toBeTruthy();
+			return urlMatch![1];
+		}
+
+		async function createPageWithShortcode(snippetId: string): Promise<string> {
+			const { exec } = require('child_process');
+			const util = require('util');
+			const execAsync = util.promisify(exec);
+
+			const shortcode = `[code_snippet id=${snippetId} format name="${TEST_SNIPPET_NAME}"]`;
+			const pageContent = `<p>Page content before shortcode.</p>
+
+${shortcode}
+
+<p>Page content after shortcode.</p>`;
+
+			try {
+				const createPageCmd = `npx wp-env run cli wp post create --post_type=page --post_title="Test Page for Snippet Shortcode" --post_content='${pageContent}' --post_status=publish --porcelain`;
+				const { stdout } = await execAsync(createPageCmd);
+				const pageId = stdout.trim();
+				
+				const getUrlCmd = `npx wp-env run cli wp post url ${pageId}`;
+				const { stdout: pageUrl } = await execAsync(getUrlCmd);
+				return pageUrl.trim();
+			} catch (error) {
+				console.error('Failed to create page via WP-CLI:', error);
+				throw error;
+			}
+		}
+
+		async function verifyShortcodeRendersCorrectly(page: any, pageUrl: string): Promise<void> {
+			await page.goto(pageUrl);
+
+			await expect(page.locator('.custom-snippet-content')).toBeVisible();
+			await expect(page.locator('.custom-snippet-content h3')).toContainText('Custom HTML Content');
+			await expect(page.locator('.custom-snippet-content p')).toContainText('This content was inserted via shortcode!');
+			
+			await expect(page.locator('text=Page content before shortcode.')).toBeVisible();
+			await expect(page.locator('text=Page content after shortcode.')).toBeVisible();
+		}
+	});
+
 	test.afterEach(async ({ page }) => {
 		await helper.cleanupSnippet(TEST_SNIPPET_NAME);
 	});
