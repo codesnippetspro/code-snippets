@@ -2,7 +2,18 @@ import { test, expect } from '@playwright/test';
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper';
 import { SELECTORS } from './helpers/constants';
 
-const TEST_SNIPPET_NAME = 'E2E Admin Bar Hide Test';
+const TEST_SNIPPET_NAME = 'E2E Snippet Test';
+
+const BODY_CLASS_TEST_CODE = `
+	add_filter('admin_body_class', function($classes) {
+		return $classes . ' custom-admin-class';
+	});
+
+	add_filter('body_class', function($classes) {
+		$classes[] = 'custom-frontend-class';
+		return $classes;
+	});
+`;
 
 test.describe('Code Snippets Evaluation', () => {
 	let helper: SnippetsTestHelper;
@@ -23,20 +34,25 @@ test.describe('Code Snippets Evaluation', () => {
 		await helper.expectElementCount(SELECTORS.ADMIN_BAR, 0);
 	});
 
+	test('PHP Snippet runs everywhere', async ({ page }) => {
+		await helper.createAndActivateSnippet({
+		  name: TEST_SNIPPET_NAME,
+		  location: 'EVERYWHERE',
+		  code: BODY_CLASS_TEST_CODE
+		});
+
+		await page.goto('/wp-admin/');
+		await expect(page.locator('body')).toHaveClass(/custom-admin-class/);
+
+		await helper.navigateToFrontend();
+		await expect(page.locator('body')).toHaveClass(/custom-frontend-class/);
+	});
+
 	test('PHP Snippet runs only in Admin', async ({ page }) => {
 		await helper.createAndActivateSnippet({
-		  name: 'Admin Only Body Class Test',
+		  name: TEST_SNIPPET_NAME,
 		  location: 'ADMIN_ONLY',
-		  code: `
-			add_filter('admin_body_class', function($classes) {
-			  return $classes . ' custom-admin-class';
-			});
-
-			add_filter('body_class', function($classes) {
-			  $classes[] = 'custom-frontend-class';
-			  return $classes;
-			});
-		  `
+		  code: BODY_CLASS_TEST_CODE
 		});
 
 		await page.goto('/wp-admin/');
@@ -48,18 +64,9 @@ test.describe('Code Snippets Evaluation', () => {
 
 	test('PHP Snippet runs only in Frontend', async ({ page }) => {
 		await helper.createAndActivateSnippet({
-		  name: 'Frontend Only Body Class Test',
+		  name: TEST_SNIPPET_NAME,
 		  location: 'FRONTEND_ONLY',
-		  code: `
-			add_filter('admin_body_class', function($classes) {
-			  return $classes . ' custom-admin-class';
-			});
-
-			add_filter('body_class', function($classes) {
-			  $classes[] = 'custom-frontend-class';
-			  return $classes;
-			});
-		  `
+		  code: BODY_CLASS_TEST_CODE
 		});
 
 		await page.goto('/wp-admin/');

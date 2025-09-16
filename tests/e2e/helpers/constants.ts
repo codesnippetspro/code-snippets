@@ -49,6 +49,7 @@ export const SNIPPET_LOCATIONS = {
   IN_EDITOR: 'Where inserted in editor',
   ADMIN_ONLY: 'Only run in administration area',
   FRONTEND_ONLY: 'Only run on site front-end',
+  EVERYWHERE: 'Run everywhere',
 } as const;
 
 export const BUTTONS = {
