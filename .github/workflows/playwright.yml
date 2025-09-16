@@ -71,6 +71,9 @@ jobs:
           echo ""
           echo "=== wp-env will map ./src to wp-content/plugins/code-snippets ==="
 
+      - name: Install workflow dependencies (wp-env, playwright)
+        run: npm run prepare-environment:ci
+          
       - name: Start WordPress environment
         run: |
           npx wp-env start
