@@ -13,6 +13,16 @@ export const SELECTORS = {
   
   DELETE_CONFIRM_BUTTON: 'button.components-button.is-destructive.is-primary',
   
+  SNIPPETS_TABLE: '.wp-list-table',
+  SNIPPET_ROW: '.wp-list-table tbody tr',
+  SNIPPET_TOGGLE: '.snippet-activation-switch input[type="checkbox"]',
+  SNIPPET_NAME_LINK: '.row-title',
+  
+  EDIT_ACTION: '.row-actions .edit a',
+  CLONE_ACTION: '.row-actions .clone a',
+  DELETE_ACTION: '.row-actions .delete a',
+  EXPORT_ACTION: '.row-actions .export a',
+  
   ADMIN_BAR: '#wpadminbar',
 } as const;
 
