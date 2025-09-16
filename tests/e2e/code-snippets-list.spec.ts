@@ -62,7 +62,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		
 		await expect(page).toHaveURL(/page=snippets/);
 		
-		await expect(page.locator(`tr:has-text("${TEST_SNIPPET_NAME} [CLONE]")`)).toBeVisible();
+		await helper.expectTextVisible(`${TEST_SNIPPET_NAME} [CLONE]`);
 
 		const clonedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME} [CLONE]")`);
 
@@ -87,7 +87,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		await page.waitForLoadState('networkidle');
 
 		await expect(page).toHaveURL(/page=snippets/);
-		await expect(page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)).toHaveCount(0);
+		await helper.expectElementCount(`tr:has-text("${TEST_SNIPPET_NAME}")`, 0);
 	});
 
 	test('Can export snippet from list page', async ({ page }) => {

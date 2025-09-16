@@ -156,8 +156,8 @@ ${shortcode}
 			await expect(page.locator('.custom-snippet-content h3')).toContainText('Custom HTML Content');
 			await expect(page.locator('.custom-snippet-content p')).toContainText('This content was inserted via shortcode!');
 			
-			await expect(page.locator('text=Page content before shortcode.')).toBeVisible();
-			await expect(page.locator('text=Page content after shortcode.')).toBeVisible();
+			await helper.expectTextVisible('Page content before shortcode.');
+			await helper.expectTextVisible('Page content after shortcode.');
 		}
 	});
 
