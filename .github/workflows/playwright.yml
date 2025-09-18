@@ -52,7 +52,7 @@ jobs:
       - name: Copy built plugin to source directory
         run: |
           rm -rf ./src
-          cp -r ./build/code-snippets-pro ./src
+          cp -r ./build/code-snippets ./src
 
       - name: Install workflow dependencies (wp-env, playwright)
         run: npm run prepare-environment:ci
