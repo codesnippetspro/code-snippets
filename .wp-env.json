@@ -1,0 +1,17 @@
+{
+    "core": null,
+    "phpVersion": "8.1",
+    "mappings": {
+      "wp-content/plugins/code-snippets-pro": "./src"
+    },
+    "themes": ["WordPress/twentytwentyfour"],
+    "port": 8888,
+    "testsPort": 8889,
+    "config": {
+      "WP_DEBUG": true,
+      "WP_DEBUG_LOG": true,
+      "WP_DEBUG_DISPLAY": false,
+      "SCRIPT_DEBUG": true,
+      "WP_ENVIRONMENT_TYPE": "local"
+    }
+  }
