@@ -16,7 +16,7 @@
         "wp-env:start": "wp-env start",
         "wp-env:stop": "wp-env stop",
         "wp-env:clean": "wp-env clean all",
-        "test:setup:playwright": "wp-env run cli wp plugin activate code-snippets",
+        "test:setup:playwright": "wp-env run cli wp plugin activate code-snippets-pro",
         "build": "webpack",
         "watch": "webpack --watch",
         "bundle": "ts-node scripts/bundle.ts",
