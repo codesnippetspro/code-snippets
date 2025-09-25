@@ -68,7 +68,7 @@ jobs:
 
       - name: Add key to activate Pro
         run: |
-          npx wp-env run cli wp snippet activate_license --license_key="$CODE_SNIPPETS_LICENSE"
+          npx wp-env run cli bash -c 'export HTTP_HOST=localhost:8888 && wp snippet activate_license --license_key="'"$CODE_SNIPPETS_LICENSE"'"'
 
       - name: WordPress debug information
         run: |
