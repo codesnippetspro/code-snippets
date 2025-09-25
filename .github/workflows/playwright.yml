@@ -63,7 +63,7 @@ jobs:
         run: |
           npx wp-env start
 
-      - name: Add CODE_SNIPPETS_SECRET_KEY to wp-config.php
+      - name: Add key to activate Pro
         run: |
           npx wp-env run cli wp config set CODE_SNIPPETS_SECRET_KEY "$CODE_SNIPPETS_LICENSE" --type=constant
 

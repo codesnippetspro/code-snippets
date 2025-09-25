@@ -197,4 +197,65 @@ export class SnippetsTestHelper {
     await this.saveSnippet('save');
     await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED);
   }
+
+  // CSS Testing Helpers
+
+  /**
+   * Create a test DOM element for CSS testing
+   */
+  async createTestElement(className: string, textContent: string = 'Test Element'): Promise<void> {
+    await this.page.evaluate(({ className, textContent }: { className: string; textContent: string }) => {
+      const testElement = document.createElement('div');
+      testElement.className = className;
+      testElement.textContent = textContent;
+      document.body.appendChild(testElement);
+    }, { className, textContent });
+  }
+
+  /**
+   * Get computed CSS style property from an element
+   */
+  async getComputedStyle(selector: string, property: string): Promise<string> {
+    return await this.page.locator(selector).evaluate((el: Element, prop: string) => 
+      window.getComputedStyle(el as HTMLElement)[prop as any], property
+    );
+  }
+
+  /**
+   * Verify that CSS styles are applied to an element
+   */
+  async verifyStylesApplied(selector: string, expectedStyles: Record<string, string>): Promise<void> {
+    for (const [property, expectedValue] of Object.entries(expectedStyles)) {
+      const actualValue = await this.getComputedStyle(selector, property);
+      expect(actualValue).toBe(expectedValue);
+    }
+  }
+
+  /**
+   * Verify that CSS styles are NOT applied to an element
+   */
+  async verifyStylesNotApplied(selector: string, unexpectedStyles: Record<string, string>): Promise<void> {
+    for (const [property, unexpectedValue] of Object.entries(unexpectedStyles)) {
+      const actualValue = await this.getComputedStyle(selector, property);
+      expect(actualValue).not.toBe(unexpectedValue);
+    }
+  }
+
+  // JavaScript Testing Helpers
+
+  /**
+   * Verify that a global variable has the expected value
+   */
+  async verifyGlobalVariable(variableName: string, expectedValue: any): Promise<void> {
+    const actualValue = await this.page.evaluate((varName: string) => (window as any)[varName], variableName);
+    expect(actualValue).toBe(expectedValue);
+  }
+
+  /**
+   * Verify that a global function returns the expected result
+   */
+  async verifyGlobalFunction(functionName: string, expectedResult: any): Promise<void> {
+    const result = await this.page.evaluate((funcName: string) => (window as any)[funcName]?.(), functionName);
+    expect(result).toBe(expectedResult);
+  }
 }

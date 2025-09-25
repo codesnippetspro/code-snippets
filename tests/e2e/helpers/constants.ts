@@ -46,6 +46,8 @@ export const SELECTORS = {
   export const SNIPPET_TYPES = {
     PHP: 'PHP',
     HTML: 'HTML',
+    CSS: 'CSS',
+    JS: 'JavaScript',
   } as const;
   
   export const SNIPPET_LOCATIONS = {
