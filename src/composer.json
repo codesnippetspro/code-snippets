@@ -59,7 +59,7 @@
         }
     },
     "scripts": {
-        "post-install-cmd": "ts-node ../scripts/composer-fix-autoload.ts",
-        "post-update-cmd": "ts-node ../scripts/composer-fix-autoload.ts"
+        "post-install-cmd": "node ../node_modules/ts-node/dist/bin.js ../scripts/composer-fix-autoload.ts",
+        "post-update-cmd": "node ../node_modules/ts-node/dist/bin.js ../scripts/composer-fix-autoload.ts"
     }
 }
