@@ -280,7 +280,7 @@ class Evaluate_Assets {
 	 * @noinspection PhpDocMissingThrowsInspection
 	 */
 	private static function process_code( string $code, string $type_or_scope ): string {
-		$minify_types = Settings\get_setting( 'general', 'minify_output' );
+		$minify_types = Settings\get_setting( 'general', 'minify_output' ) ?? [];
 
 		switch ( $type_or_scope ) {
 			case 'css':
