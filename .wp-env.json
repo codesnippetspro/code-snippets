@@ -13,5 +13,10 @@
       "WP_DEBUG_DISPLAY": false,
       "SCRIPT_DEBUG": true,
       "WP_ENVIRONMENT_TYPE": "local"
+    },
+    "env": {
+      "cli": {
+        "HTTP_HOST": "localhost:8888"
+      }
     }
   }
