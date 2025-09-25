@@ -10,7 +10,6 @@ test.describe('Code Snippets List Page Actions', () => {
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page);
 		await helper.navigateToSnippetsAdmin();
-
 		await helper.createAndActivateSnippet({
 			name: TEST_SNIPPET_NAME,
 			code: 'echo "Test snippet for list actions";'
@@ -77,12 +76,10 @@ test.describe('Code Snippets List Page Actions', () => {
 
 	test('Can delete snippet from list page', async ({ page }) => {
 		const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`);
-
 		page.on('dialog', dialog => {
 			expect(dialog.type()).toBe('confirm');
 			dialog.accept();
 		});
-
 		await snippetRow.locator(SELECTORS.DELETE_ACTION).click();
 		await page.waitForLoadState('networkidle');
 

@@ -2,7 +2,7 @@
     "name": "code-snippets-pro",
     "description": "Manage code snippets running on a WordPress-powered site through a graphical interface.",
     "homepage": "https://codesnippets.pro",
-    "version": "3.7.0-beta.7",
+    "version": "3.7.0",
     "main": "src/dist/edit.js",
     "directories": {
         "test": "tests"
@@ -123,9 +123,6 @@
         "webpack": "^5.97.1",
         "webpack-cli": "^6.0.1",
         "webpack-merge": "^6.0.1",
-        "webpack-remove-empty-scripts": "^1.0.4",
-        "@playwright/test": "^1.48.0",
-        "@wordpress/env": "^9.0.0"
     },
     "overrides": {
         "eslint": "^9.20.1",

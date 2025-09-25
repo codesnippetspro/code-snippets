@@ -63,7 +63,6 @@ export class SnippetsTestHelper {
     if (options.location) {
       await this.page.waitForSelector(SELECTORS.LOCATION_SELECT, { timeout: TIMEOUTS.SHORT });
       await this.page.click(SELECTORS.LOCATION_SELECT);
-
       await this.page.waitForSelector(`text=${SNIPPET_LOCATIONS[options.location]}`, { timeout: TIMEOUTS.SHORT });
       await this.page.click(`text=${SNIPPET_LOCATIONS[options.location]}`, { force: true });
     }
@@ -126,7 +125,6 @@ export class SnippetsTestHelper {
    */
   async cleanupSnippet(snippetName: string): Promise<void> {
     await this.navigateToSnippetsAdmin();
-
     if (await this.snippetExists(snippetName)) {
       await this.openSnippet(snippetName);
       await this.deleteSnippet();

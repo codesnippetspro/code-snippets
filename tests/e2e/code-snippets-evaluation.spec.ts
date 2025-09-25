@@ -18,6 +18,7 @@ const BODY_CLASS_TEST_CODE = `
 	add_filter('admin_body_class', function($classes) {
 		return $classes . ' custom-admin-class';
 	});
+
 	add_filter('body_class', function($classes) {
 		$classes[] = 'custom-frontend-class';
 		return $classes;
@@ -147,7 +148,6 @@ ${shortcode}
 				const createPageCmd = `npx wp-env run cli wp post create --post_type=page --post_title="Test Page for Snippet Shortcode" --post_content='${pageContent}' --post_status=publish --porcelain`;
 				const { stdout } = await execAsync(createPageCmd);
 				const pageId = stdout.trim();
-
 				const getUrlCmd = `npx wp-env run cli wp post url ${pageId}`;
 				const { stdout: pageUrl } = await execAsync(getUrlCmd);
 				return pageUrl.trim();
@@ -163,7 +163,6 @@ ${shortcode}
 			await expect(page.locator('.custom-snippet-content')).toBeVisible();
 			await expect(page.locator('.custom-snippet-content h3')).toContainText('Custom HTML Content');
 			await expect(page.locator('.custom-snippet-content p')).toContainText('This content was inserted via shortcode!');
-
 			await helper.expectTextVisible('Page content before shortcode.');
 			await helper.expectTextVisible('Page content after shortcode.');
 		}
