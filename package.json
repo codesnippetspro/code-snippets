@@ -123,6 +123,7 @@
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
     "webpack-merge": "^6.0.1",
+    "webpack-remove-empty-scripts": "^1.0.4",
     "@playwright/test": "^1.48.0",
     "@wordpress/env": "^9.0.0"
   },
