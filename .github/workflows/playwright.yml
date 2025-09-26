@@ -58,87 +58,10 @@ jobs:
 
       - name: Install workflow dependencies (wp-env, playwright)
         run: npm run prepare-environment:ci
-          
+
       - name: Start WordPress environment
         run: |
           npx wp-env start
-
-      - name: Create CI licensing stub
-        run: |
-          echo "📝 Creating CI licensing stub to bypass Freemius API calls..."
-          cat > ./src/php/class-licensing-ci-stub.php << 'EOF'
-          <?php
-          namespace Code_Snippets;
-          
-          /**
-           * CI/Testing stub for the Licensing class that bypasses Freemius API calls.
-           * This file is dynamically created during CI and should not be committed.
-           */
-          class Licensing_CI_Stub extends Licensing {
-              private const MOCK_LICENSE_KEY = 'ci-test-license-key-mock';
-          
-          public function __construct() {
-              // Skip parent constructor to avoid Freemius SDK initialization
-              // Add hooks to prevent Freemius admin interface from showing
-              add_action('admin_menu', [$this, 'hide_freemius_menus'], 999);
-              add_action('network_admin_menu', [$this, 'hide_freemius_menus'], 999);
-          }
-          
-          /**
-           * Hide Freemius admin menus and pages since we're in stub mode
-           */
-          public function hide_freemius_menus() {
-              // Remove any Freemius-related admin pages
-              remove_menu_page('code-snippets-account');
-              remove_submenu_page('code-snippets', 'code-snippets-account');
-          }
-          
-              public function is_licensed(): bool {
-                  return true;
-              }
-          
-              public function was_licensed(): bool {
-                  return true;
-              }
-          
-              public function get_license_key(): ?string {
-                  return self::MOCK_LICENSE_KEY;
-              }
-          
-              public function activate_license_key( string $license_key, array $options = [] ): array {
-                  if ( empty( trim( $license_key ) ) ) {
-                      return [
-                          'success' => false,
-                          'message' => 'License key cannot be empty.'
-                      ];
-                  }
-                  return [
-                      'success' => true,
-                      'message' => 'License activated successfully (CI mode - mocked response).'
-                  ];
-              }
-          
-              public function get_license_status(): array {
-                  return [
-                      'is_licensed' => 'Yes',
-                      'license_key' => 'ci-****-****-****-mock',
-                      'is_expired'  => 'No',
-                      'expires'     => 'Never',
-                      'activations' => '1/∞',
-                  ];
-              }
-          
-              public function register_hooks() {}
-              public function plugin_icon(): string {
-                  return dirname( CODE_SNIPPETS_FILE ) . '/assets/icon.svg';
-              }
-              public function is_submenu_visible( bool $is_visible, string $submenu_id ): bool {
-                  return 'account' === $submenu_id ? $is_visible : false;
-              }
-              public function uninstall_hook() {}
-              public function override_strings() {}
-          }
-          EOF
 
       - name: Activate code-snippets-pro plugin
         run: npx wp-env run cli wp plugin activate code-snippets-pro
@@ -146,47 +69,35 @@ jobs:
       - name: Create CI licensing stub and modify Plugin class
         run: |
           echo "🔧 Creating CI licensing stub and modifying Plugin class..."
-          
+
           # Create the CI stub class file
           cat > ./src/php/class-licensing-ci-stub.php << 'EOF'
           <?php
           namespace Code_Snippets;
-          
+
           /**
            * CI/Testing stub for the Licensing class that bypasses Freemius API calls.
            * This file is dynamically created during CI and should not be committed.
            */
           class Licensing_CI_Stub extends Licensing {
               private const MOCK_LICENSE_KEY = 'ci-test-license-key-mock';
-          
+
               public function __construct() {
                   // Skip parent constructor to avoid Freemius SDK initialization
-                  // Add hooks to prevent Freemius admin interface from showing
-                  add_action('admin_menu', [$this, 'hide_freemius_menus'], 999);
-                  add_action('network_admin_menu', [$this, 'hide_freemius_menus'], 999);
               }
-              
-              /**
-               * Hide Freemius admin menus and pages since we're in stub mode
-               */
-              public function hide_freemius_menus() {
-                  // Remove any Freemius-related admin pages
-                  remove_menu_page('code-snippets-account');
-                  remove_submenu_page('code-snippets', 'code-snippets-account');
-              }
-          
+
               public function is_licensed(): bool {
                   return true;
               }
-          
+
               public function was_licensed(): bool {
                   return true;
               }
-          
+
               public function get_license_key(): ?string {
                   return self::MOCK_LICENSE_KEY;
               }
-          
+
               public function activate_license_key( string $license_key, array $options = [] ): array {
                   if ( empty( trim( $license_key ) ) ) {
                       return [
@@ -199,7 +110,7 @@ jobs:
                       'message' => 'License activated successfully (CI mode - mocked response).'
                   ];
               }
-          
+
               public function get_license_status(): array {
                   return [
                       'is_licensed' => 'Yes',
@@ -209,7 +120,7 @@ jobs:
                       'activations' => '1/∞',
                   ];
               }
-          
+
               public function register_hooks() {}
               public function plugin_icon(): string {
                   return dirname( CODE_SNIPPETS_FILE ) . '/assets/icon.svg';
