@@ -33,8 +33,6 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [build-plugin]
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    env:
-      CODE_SNIPPETS_LICENSE: ${{ secrets.CODE_SNIPPETS_LICENSE }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
