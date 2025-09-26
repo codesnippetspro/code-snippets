@@ -180,7 +180,7 @@ ${shortcode}
 				}
 			`,
 			type: 'CSS',
-			location: 'FRONTEND_ONLY'
+			location: 'CSS_FRONTEND_ONLY'
 		});
 
 		await helper.navigateToFrontend();
@@ -212,7 +212,7 @@ ${shortcode}
 				}
 			`,
 			type: 'CSS',
-			location: 'ADMIN_ONLY'
+			location: 'CSS_ADMIN_ONLY'
 		});
 
 		await page.goto('/wp-admin/');

@@ -47,7 +47,7 @@ export const SELECTORS = {
     PHP: 'PHP',
     HTML: 'HTML',
     CSS: 'CSS',
-    JS: 'JavaScript',
+    JS: 'JS',
   } as const;
   
   export const SNIPPET_LOCATIONS = {
@@ -55,7 +55,9 @@ export const SELECTORS = {
     SITE_HEADER: 'In site <head> section',
     IN_EDITOR: 'Where inserted in editor',
     ADMIN_ONLY: 'Only run in administration area',
+    CSS_ADMIN_ONLY: 'Administration area',
     FRONTEND_ONLY: 'Only run on site front-end',
+    CSS_FRONTEND_ONLY: 'Site front-end',
     EVERYWHERE: 'Run everywhere',
   } as const;
   
