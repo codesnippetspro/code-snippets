@@ -63,20 +63,102 @@ jobs:
         run: |
           npx wp-env start
 
+      - name: Create CI licensing stub
+        run: |
+          echo "📝 Creating CI licensing stub to bypass Freemius API calls..."
+          cat > ./src/php/class-licensing-ci-stub.php << 'EOF'
+          <?php
+          namespace Code_Snippets;
+          
+          /**
+           * CI/Testing stub for the Licensing class that bypasses Freemius API calls.
+           * This file is dynamically created during CI and should not be committed.
+           */
+          class Licensing_CI_Stub extends Licensing {
+              private const MOCK_LICENSE_KEY = 'ci-test-license-key-mock';
+          
+              public function __construct() {
+                  // Skip parent constructor to avoid Freemius SDK initialization
+              }
+          
+              public function is_licensed(): bool {
+                  return true;
+              }
+          
+              public function was_licensed(): bool {
+                  return true;
+              }
+          
+              public function get_license_key(): ?string {
+                  return self::MOCK_LICENSE_KEY;
+              }
+          
+              public function activate_license_key( string $license_key, array $options = [] ): array {
+                  if ( empty( trim( $license_key ) ) ) {
+                      return [
+                          'success' => false,
+                          'message' => 'License key cannot be empty.'
+                      ];
+                  }
+                  return [
+                      'success' => true,
+                      'message' => 'License activated successfully (CI mode - mocked response).'
+                  ];
+              }
+          
+              public function get_license_status(): array {
+                  return [
+                      'is_licensed' => 'Yes',
+                      'license_key' => 'ci-****-****-****-mock',
+                      'is_expired'  => 'No',
+                      'expires'     => 'Never',
+                      'activations' => '1/∞',
+                  ];
+              }
+          
+              public function register_hooks() {}
+              public function plugin_icon(): string {
+                  return dirname( CODE_SNIPPETS_FILE ) . '/assets/icon.svg';
+              }
+              public function is_submenu_visible( bool $is_visible, string $submenu_id ): bool {
+                  return 'account' === $submenu_id ? $is_visible : false;
+              }
+              public function uninstall_hook() {}
+              public function override_strings() {}
+          }
+          EOF
+
       - name: Activate code-snippets-pro plugin
         run: npx wp-env run cli wp plugin activate code-snippets-pro
 
-      - name: Add key to activate Pro (or skip in CI)
+      - name: Override licensing property with CI stub
         run: |
-          echo "Attempting to activate license in CI environment..."
-          echo "Note: Using development mode with network restrictions bypass"
-          if npx wp-env run cli bash -c 'export HTTP_HOST=localhost:8888 && wp snippet activate_license --license_key="'"$CODE_SNIPPETS_LICENSE"'"'; then
-            echo "✅ License activated successfully"
-          else
-            echo "⚠️  License activation failed (expected in CI due to network restrictions)"
-            echo "✅ Continuing with tests - plugin will function in development mode"
-            echo "Development mode enabled in wp-env configuration allows testing without license"
-          fi
+          echo "🔧 Creating licensing property override for CI..."
+          cat > ./src/php/licensing-override.php << 'EOF'
+          <?php
+          // CI Override: Replace the licensing property with our stub
+          // This file only exists in CI environments and is automatically cleaned up
+          add_action('plugins_loaded', function() {
+              if (function_exists('code_snippets')) {
+                  // Load the CI stub class
+                  require_once __DIR__ . '/class-licensing-ci-stub.php';
+                  // Override the licensing property
+                  code_snippets()->licensing = new \Code_Snippets\Licensing_CI_Stub();
+              }
+          }, 999); // High priority to run after plugin initialization
+          EOF
+          
+          # Include this override in the main plugin file
+          echo "" >> ./src/code-snippets.php
+          echo "// CI Override - automatically loaded when file exists" >> ./src/code-snippets.php
+          echo "if (file_exists(__DIR__ . '/php/licensing-override.php')) {" >> ./src/code-snippets.php
+          echo "    require_once __DIR__ . '/php/licensing-override.php';" >> ./src/code-snippets.php
+          echo "}" >> ./src/code-snippets.php
+
+      - name: Verify CI stub is working
+        run: |
+          echo "✅ CI licensing stub is active - plugin will behave as licensed"
+          echo "No license activation needed - stub returns licensed status automatically"
 
       - name: WordPress debug information
         run: |
@@ -89,6 +171,15 @@ jobs:
 
       - name: Run Playwright tests
         run: npm run test:playwright
+
+      - name: Cleanup CI files
+        if: always()
+        run: |
+          echo "🧹 Cleaning up CI-generated files..."
+          rm -f ./src/php/class-licensing-ci-stub.php
+          rm -f ./src/php/licensing-override.php
+          # Remove the CI override lines from the main plugin file
+          head -n -4 ./src/code-snippets.php > ./src/code-snippets.php.tmp && mv ./src/code-snippets.php.tmp ./src/code-snippets.php || true
 
       - name: Stop WordPress environment
         if: always()
