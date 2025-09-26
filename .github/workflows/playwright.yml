@@ -96,9 +96,6 @@ jobs:
               public function plugin_icon(): string {
                   return dirname( CODE_SNIPPETS_FILE ) . '/assets/icon.svg';
               }
-              public function is_submenu_visible( bool $is_visible, string $submenu_id ): bool {
-                  return 'account' === $submenu_id ? $is_visible : false;
-              }
               public function uninstall_hook() {}
               public function override_strings() {}
           }
