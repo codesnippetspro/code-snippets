@@ -62,7 +62,8 @@ jobs:
       - name: Start WordPress environment
         run: |
           npx wp-env start
-
+          npx wp-env run cli curl -I https://api.freemius.com || echo "API not reachable"
+          npx wp-env run cli curl -I https://wp.freemius.com || echo "WP Freemius not reachable"
       - name: Activate code-snippets-pro plugin
         run: |
           npx wp-env run cli wp plugin activate code-snippets-pro
