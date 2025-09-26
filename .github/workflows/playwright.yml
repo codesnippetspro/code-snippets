@@ -55,7 +55,9 @@ jobs:
           cp -r ./build/code-snippets ./src
 
       - name: Install workflow dependencies (wp-env, playwright)
-        run: npm run prepare-environment:ci
+        run: |
+          docker network create wp-env-network --driver bridge
+          npm run prepare-environment:ci
 
       - name: Start WordPress environment
         run: |
