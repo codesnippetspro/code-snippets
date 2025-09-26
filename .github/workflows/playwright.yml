@@ -134,7 +134,14 @@ jobs:
           EOF
           
           # Directly modify the Plugin class to use the CI stub instead of the real Licensing class
-          sed -i.bak 's/\$this->licensing = new Licensing();/\$this->licensing = new Licensing_CI_Stub();/' ./src/php/class-plugin.php
+          # First, add the require_once for the CI stub file
+          sed -i.bak '/\$this->licensing = new Licensing();/i\
+          \t\t\t// CI Override: Load the licensing stub\
+          \t\t\trequire_once __DIR__ . "/class-licensing-ci-stub.php";\
+          ' ./src/php/class-plugin.php
+          
+          # Then change the class instantiation
+          sed -i 's/\$this->licensing = new Licensing();/\$this->licensing = new Licensing_CI_Stub();/' ./src/php/class-plugin.php
           
           echo "✅ Plugin class modified to use CI licensing stub"
 
