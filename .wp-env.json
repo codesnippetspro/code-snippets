@@ -12,6 +12,9 @@
     "WP_DEBUG_LOG": true,
     "WP_DEBUG_DISPLAY": false,
     "SCRIPT_DEBUG": true,
-    "WP_ENVIRONMENT_TYPE": "local"
+    "WP_ENVIRONMENT_TYPE": "local",
+    "WP_HTTP_BLOCK_EXTERNAL": false,
+    "WP_ACCESSIBLE_HOSTS": "api.freemius.com,wp.freemius.com,*.freemius.com",
+    "WP_HTTP_TIMEOUT": 30
   }
 }
