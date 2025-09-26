@@ -16,5 +16,9 @@
     "WP_HTTP_BLOCK_EXTERNAL": false,
     "WP_ACCESSIBLE_HOSTS": "api.freemius.com,wp.freemius.com,*.freemius.com",
     "WP_HTTP_TIMEOUT": 30
+  },
+  "env": {
+    "HTTP_HOST": "localhost:8888",
+    "SERVER_NAME": "localhost"
   }
 }
