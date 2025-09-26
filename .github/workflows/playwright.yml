@@ -68,17 +68,11 @@ jobs:
 
       - name: Create CI licensing stub and modify Plugin class
         run: |
-          echo "🔧 Creating CI licensing stub and modifying Plugin class..."
-
           # Create the CI stub class file
           cat > ./src/php/class-licensing-ci-stub.php << 'EOF'
           <?php
           namespace Code_Snippets;
 
-          /**
-           * CI/Testing stub for the Licensing class that bypasses Freemius API calls.
-           * This file is dynamically created during CI and should not be committed.
-           */
           class Licensing_CI_Stub extends Licensing {
               private const MOCK_LICENSE_KEY = 'ci-test-license-key-mock';
 
@@ -98,29 +92,6 @@ jobs:
                   return self::MOCK_LICENSE_KEY;
               }
 
-              public function activate_license_key( string $license_key, array $options = [] ): array {
-                  if ( empty( trim( $license_key ) ) ) {
-                      return [
-                          'success' => false,
-                          'message' => 'License key cannot be empty.'
-                      ];
-                  }
-                  return [
-                      'success' => true,
-                      'message' => 'License activated successfully (CI mode - mocked response).'
-                  ];
-              }
-
-              public function get_license_status(): array {
-                  return [
-                      'is_licensed' => 'Yes',
-                      'license_key' => 'ci-****-****-****-mock',
-                      'is_expired'  => 'No',
-                      'expires'     => 'Never',
-                      'activations' => '1/∞',
-                  ];
-              }
-
               public function register_hooks() {}
               public function plugin_icon(): string {
                   return dirname( CODE_SNIPPETS_FILE ) . '/assets/icon.svg';
@@ -133,22 +104,13 @@ jobs:
           }
           EOF
           
-          # Directly modify the Plugin class to use the CI stub instead of the real Licensing class
-          # First, add the require_once for the CI stub file
+          # Directly modify class-plugin.php to use the CI stub instead of the real Licensing class
           sed -i.bak '/\$this->licensing = new Licensing();/i\
           \t\t\t// CI Override: Load the licensing stub\
           \t\t\trequire_once __DIR__ . "/class-licensing-ci-stub.php";\
           ' ./src/php/class-plugin.php
           
-          # Then change the class instantiation
           sed -i 's/\$this->licensing = new Licensing();/\$this->licensing = new Licensing_CI_Stub();/' ./src/php/class-plugin.php
-          
-          echo "✅ Plugin class modified to use CI licensing stub"
-
-      - name: Verify CI stub is working
-        run: |
-          echo "✅ CI licensing stub is active - plugin will behave as licensed"
-          echo "No license activation needed - stub returns licensed status automatically"
 
       - name: WordPress debug information
         run: |
@@ -161,22 +123,6 @@ jobs:
 
       - name: Run Playwright tests
         run: npm run test:playwright
-
-      - name: Cleanup CI files
-        if: always()
-        run: |
-          echo "🧹 Cleaning up CI-generated files..."
-          # Remove the dynamically created CI stub file
-          rm -f ./src/php/class-licensing-ci-stub.php
-          
-          # Restore the original Plugin class (revert the licensing class change)
-          if [ -f ./src/php/class-plugin.php.bak ]; then
-            mv ./src/php/class-plugin.php.bak ./src/php/class-plugin.php
-          else
-            # Fallback: revert the licensing class change
-            sed -i 's/\$this->licensing = new Licensing_CI_Stub();/\$this->licensing = new Licensing();/' ./src/php/class-plugin.php
-          fi
-          echo "✅ All CI modifications cleaned up"
 
       - name: Stop WordPress environment
         if: always()
