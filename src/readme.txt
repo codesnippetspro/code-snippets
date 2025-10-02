@@ -104,6 +104,16 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+= 3.7.1 (2025-10-02) =
+
+__Added__
+* Improvements to changelog generation and version tagging workflows.
+* Enhanced cloud sync interface for more intuitive user interactions.
+
+__Fixed__
+* Resolved issues with multi-network snippet management and execution discrepancies.
+
+
 = 3.7.0 (beta release) =
 
 __Added__
