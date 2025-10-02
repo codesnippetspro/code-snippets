@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.7.1] - 2025-10-02
+
+### Added
+* Playwright integration for enhanced automated testing
+* GitHub Actions for build, tag creation, and release processes
+* Support for Composer package prefixing to prevent conflicts
+
+### Changed
+* Improved CI/CD workflows for automated testing and deployment
+* Enhanced code snippet evaluation to handle edge cases more effectively
+* Updated UI components for better performance and user experience
+
+### Removed
+* Deprecated methods for snippet management
+
+### Fixed
+* Typographical error in configuration files
+* Issue with event pointer intercepts on snippet UI elements
+* Workflows to handle edge cases in deployment processes
+* Corrected artifact organization in build process to ensure clean deployments
+
+## 3.7.1 ([unreleased])
+
 ## 3.7.1 ([unreleased])
 
 ### Fixed
