@@ -66,7 +66,7 @@ jobs:
       - name: Validate repository access
         id: validate
         env:
-          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           target_repo="codesnippetspro/.github-private"
           workflow_file="changelog.yml"
@@ -96,7 +96,7 @@ jobs:
       - name: Dispatch changelog workflow
         id: dispatch
         env:
-          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           target_repo="${{ steps.validate.outputs.target_repo }}"
           workflow_file="${{ steps.validate.outputs.workflow_file }}"
@@ -136,7 +136,7 @@ jobs:
 
       - name: Monitor workflow completion
         env:
-          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           target_repo="${{ steps.validate.outputs.target_repo }}"
           workflow_file="${{ steps.validate.outputs.workflow_file }}"
