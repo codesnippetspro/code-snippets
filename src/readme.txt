@@ -113,7 +113,6 @@ __Added__
 __Fixed__
 * Resolved issues with multi-network snippet management and execution discrepancies.
 
-
 = 3.7.0 (beta release) =
 
 __Added__

@@ -21,7 +21,6 @@
 * Workflows to handle edge cases in deployment processes
 * Corrected artifact organization in build process to ensure clean deployments
 
-## 3.7.1 ([unreleased])
 
 ## 3.7.1 ([unreleased])
 
