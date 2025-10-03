@@ -40,9 +40,13 @@ jobs:
         id: build
         run: |
           npm install && npm run bundle
+
           echo "name=$(jq -r .name package.json)" >> $GITHUB_OUTPUT
           echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
-
+          
+          mkdir -p ./bundle/code-snippets
+          mv ./bundle/* ./bundle/code-snippets/ 2>/dev/null || true
+          
       - name: Upload
         id: artifacts
         uses: actions/upload-artifact@v4

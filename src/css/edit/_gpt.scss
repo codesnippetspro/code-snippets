@@ -20,9 +20,15 @@
 .generate-button {
 	display: flex;
 	align-items: center;
+	gap: 5px;
 
 	.dashicons-warning {
 		color: #b32d2e;
+	}
+
+	.snippet-tags-container &,
+	.snippet-description-container & {
+		float: inline-end;
 	}
 }
 

@@ -1,4 +1,4 @@
-import { __, _x } from '@wordpress/i18n'
+import { _x } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { Fragment } from 'react'
 import { addConditionGroup } from '../../utils/conditions/rules'

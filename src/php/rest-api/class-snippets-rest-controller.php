@@ -30,12 +30,12 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Current API version.
 	 */
-	const VERSION = 1;
+	public const VERSION = 1;
 
 	/**
 	 * The base of this controller's route.
 	 */
-	const BASE_ROUTE = 'snippets';
+	public const BASE_ROUTE = 'snippets';
 
 	/**
 	 * The namespace of this controller's route.
@@ -408,7 +408,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Attach a condition to a snippet.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
@@ -424,7 +424,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Detach a condition from a snippet.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return WP_REST_Response
 	 */

@@ -2,10 +2,10 @@
 
 namespace Code_Snippets\Cloud;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Exception;
 use WP_Error;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
+use Code_Snippets\Vendor\GuzzleHttp\Client;
+use Code_Snippets\Vendor\GuzzleHttp\Psr7\Request;
 use function Code_Snippets\code_snippets;
 
 /**
@@ -16,27 +16,27 @@ class Cloud_GPT_API {
 	/**
 	 * Base URL for the API.
 	 */
-	const API_PATH = 'gpt';
+	public const API_PATH = 'gpt';
 
 	/**
 	 * Path for prompt endpoint.
 	 */
-	const PROMPT_PATH = '/prompt';
+	public const PROMPT_PATH = '/prompt';
 
 	/**
 	 * Path for explain endpoint.
 	 */
-	const EXPLAIN_PATH = '/explain';
+	public const EXPLAIN_PATH = '/explain';
 
 	/**
 	 * Snippet types which can be used with prompts to generate code.
 	 */
-	const VALID_PROMPT_TYPES = [ 'php', 'css', 'js', 'html' ];
+	public const VALID_PROMPT_TYPES = [ 'php', 'css', 'js', 'html' ];
 
 	/**
 	 * Snippet fields which can be used to generate explanations.
 	 */
-	const VALID_EXPLAIN_FIELDS = [ 'code', 'desc', 'tags' ];
+	public const VALID_EXPLAIN_FIELDS = [ 'code', 'desc', 'tags' ];
 
 	/**
 	 * Cloud API instance.
@@ -102,7 +102,7 @@ class Cloud_GPT_API {
 		try {
 			$promise = $client->sendAsync( $request, [ 'multipart' => $multipart_data ] );
 			$response = $promise->wait();
-		} catch ( GuzzleException $exception ) {
+		} catch ( Exception $exception ) {
 			return new WP_Error(
 				'cloud_ai_request_error',
 				__( 'Failed to send request to Cloud API', 'code-snippets' ),

@@ -102,6 +102,8 @@ class Cloud_API {
 	 * Retrieve the Cloud URL from wp-config or fallback to default.
 	 *
 	 * @return string
+	 *
+	 * @noinspection PhpUndefinedConstantInspection
 	 */
 	public static function get_cloud_url(): string {
 		return defined( 'CS_CLOUD_URL' )
@@ -113,6 +115,8 @@ class Cloud_API {
 	 * Retrieve the Cloud API URL from wp-config or fallback to default.
 	 *
 	 * @return string
+	 *
+	 * @noinspection PhpUndefinedConstantInspection
 	 */
 	public static function get_cloud_api_url(): string {
 		return defined( 'CS_CLOUD_API_URL' )

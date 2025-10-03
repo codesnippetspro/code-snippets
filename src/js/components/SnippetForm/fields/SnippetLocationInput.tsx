@@ -26,7 +26,7 @@ const SCOPE_DESCRIPTIONS: Record<SnippetCodeScope, string> = {
 	'admin': __('Only run in administration area', 'code-snippets'),
 	'front-end': __('Only run on site front-end', 'code-snippets'),
 	'single-use': __('Only run once', 'code-snippets'),
-	'content': __('Where inserted into a post or page', 'code-snippets'),
+	'content': __('Where inserted in editor', 'code-snippets'),
 	'head-content': __('In site <head> section', 'code-snippets'),
 	'footer-content': __('In site footer (end of <body>)', 'code-snippets'),
 	'site-css': __('Site front-end', 'code-snippets'),
@@ -46,30 +46,27 @@ export const SnippetLocationInput: React.FC = () => {
 			label: SCOPE_DESCRIPTIONS[scope]
 		}))
 
-	return (
-		<div className="snippet-location-container">
-			{isCondition(snippet) ? null
-				: <>
-					<h3><label htmlFor="snippet-location">{__('Snippet Location', 'code-snippets')}</label></h3>
-					<Select
-						id="snippet-location"
-						className="code-snippets-select"
-						options={options}
-						isDisabled={isReadOnly}
-						styles={{
-							menu: provided => ({ ...provided, zIndex: 9999 }),
-							input: provided => ({ ...provided, ':focus': { boxShadow: 'none' } })
-						}}
-						value={options.find(option => option.value === snippet.scope)}
-						formatOptionLabel={({ label, value }) =>
-							<>
-								<span className={`dashicons dashicons-${SCOPE_ICONS[value]}`}></span>{` ${label}`}
-							</>
-						}
-						onChange={option =>
-							option?.value && setSnippet(previous => ({ ...previous, scope: option.value }))}
-					/>
-				</>}
+	return isCondition(snippet)
+		? null
+		: <div className="block-form-field">
+			<h4><label htmlFor="snippet-location">{__('Location', 'code-snippets')}</label></h4>
+			<Select
+				inputId="snippet-location"
+				className="code-snippets-select code-snippets-select-location"
+				options={options}
+				isDisabled={isReadOnly}
+				styles={{
+					menu: provided => ({ ...provided, zIndex: 9999 }),
+					input: provided => ({ ...provided, ':focus': { boxShadow: 'none' } })
+				}}
+				value={options.find(option => option.value === snippet.scope)}
+				formatOptionLabel={({ label, value }) =>
+					<>
+						<span className={`dashicons dashicons-${SCOPE_ICONS[value]}`}></span>{` ${label}`}
+					</>
+				}
+				onChange={option =>
+					option?.value && setSnippet(previous => ({ ...previous, scope: option.value }))}
+			/>
 		</div>
-	)
 }

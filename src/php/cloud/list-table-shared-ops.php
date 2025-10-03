@@ -51,11 +51,11 @@ function cloud_lts_build_column_hidden_input( string $column_name, Cloud_Snippet
  * @param string $action         Action - 'download' or 'update'.
  * @param string $source         Source - 'search' or 'cloud'.
  * @param string $snippet        Snippet ID.
- * @param int    $codevault_page The current page of the codevault.
+ * @param int    $codevault_page Page number for Codevault pagination.
  *
  * @return void
  */
-function cloud_lts_process_download_action( string $action, string $source, string $snippet, int $codevault_page = 0 ) {
+function cloud_lts_process_download_action( string $action, string $source, string $snippet, int $codevault_page ) {
 	if ( 'download' === $action || 'update' === $action ) {
 		$result = code_snippets()->cloud_api->download_or_update_snippet( $snippet, $source, $action, $codevault_page );
 
@@ -76,9 +76,9 @@ function cloud_lts_process_download_action( string $action, string $source, stri
  * @param Cloud_Snippet $cloud_snippet Snippet/Column item.
  * @param string        $source        Source - 'search' or 'codevault'.
  *
- * @return void
+ * @return string Action link HTML.
  */
-function cloud_lts_render_action_buttons( Cloud_Snippet $cloud_snippet, string $source ) {
+function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $source ): string {
 	$lang = Cloud_API::get_type_from_scope( $cloud_snippet->scope );
 	$link = code_snippets()->cloud_api->get_link_for_cloud_snippet( $cloud_snippet );
 	$is_licensed = code_snippets()->licensing->is_licensed();
@@ -93,20 +93,18 @@ function cloud_lts_render_action_buttons( Cloud_Snippet $cloud_snippet, string $
 					'source'  => $source,
 				]
 			);
-			printf(
+			return sprintf(
 				'<li><a class="button button-primary" href="%s">%s</a></li>',
 				esc_url( $update_url ),
 				esc_html__( 'Update Available', 'code-snippets' )
 			);
 		} else {
-			printf(
+			return sprintf(
 				'<li><a class="button" href="%s">%s</a></li>',
 				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
 				esc_html__( 'View', 'code-snippets' )
 			);
 		}
-
-		return;
 	}
 
 	if ( $download ) {
@@ -118,13 +116,13 @@ function cloud_lts_render_action_buttons( Cloud_Snippet $cloud_snippet, string $
 			]
 		);
 
-		printf(
+		$download_button = sprintf(
 			'<li><a class="button button-primary" href="%s">%s</a></li>',
 			esc_url( $download_url ),
 			esc_html__( 'Download', 'code-snippets' )
 		);
 	} else {
-		printf(
+		$download_button = sprintf(
 			'<li><span class="%s">%s <span class="tooltip-content">%s</span></span></li>',
 			'button button-primary button-disabled tooltip tooltip-block tooltip-end',
 			esc_html__( 'Download', 'code-snippets' ),
@@ -132,7 +130,7 @@ function cloud_lts_render_action_buttons( Cloud_Snippet $cloud_snippet, string $
 		);
 	}
 
-	printf(
+	$preview_button = sprintf(
 		'<li><a href="%s" aria-label="%s" class="%s" data-snippet="%s" data-lang="%s">%s</a></li>',
 		'#TB_inline?&width=700&height=500&inlineId=show-code-preview',
 		esc_attr( $cloud_snippet->name ),
@@ -141,6 +139,8 @@ function cloud_lts_render_action_buttons( Cloud_Snippet $cloud_snippet, string $
 		esc_attr( $lang ),
 		esc_html__( 'Preview', 'code-snippets' )
 	);
+
+	return $download_button . $preview_button;
 }
 
 /**

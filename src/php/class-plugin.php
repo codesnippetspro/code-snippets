@@ -6,9 +6,9 @@ use Code_Snippets\Cloud\Cloud_API;
 use Code_Snippets\REST_API\Cloud_REST_API;
 use Code_Snippets\REST_API\Conditions_REST_API;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
-use Evaluation\Evaluate_Assets;
-use Evaluation\Evaluate_Content;
-use Evaluation\Evaluate_Functions;
+use Code_Snippets\Evaluation\Evaluate_Assets;
+use Code_Snippets\Evaluation\Evaluate_Content;
+use Code_Snippets\Evaluation\Evaluate_Functions;
 
 /**
  * The main plugin class
@@ -279,8 +279,8 @@ class Plugin {
 	/**
 	 * Fetch the admin menu slug for a snippets admin menu.
 	 *
-	 * @param integer $snippet_id Snippet ID.
-	 * @param string  $context    URL scheme to use.
+	 * @param int    $snippet_id Snippet ID.
+	 * @param string $context    URL scheme to use.
 	 *
 	 * @return string The URL to the edit snippet page for that snippet.
 	 */
