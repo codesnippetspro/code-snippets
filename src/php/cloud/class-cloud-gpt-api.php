@@ -3,10 +3,9 @@
 namespace Code_Snippets\Cloud;
 
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
 use WP_Error;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
+use Code_Snippets\Vendor\GuzzleHttp\Client;
+use Code_Snippets\Vendor\GuzzleHttp\Psr7\Request;
 use function Code_Snippets\code_snippets;
 
 /**

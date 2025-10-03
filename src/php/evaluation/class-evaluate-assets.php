@@ -1,12 +1,13 @@
 <?php
 
-namespace Evaluation;
+namespace Code_Snippets\Evaluation;
 
 use Code_Snippets\DB;
 use Code_Snippets\Snippet;
-use MatthiasMullie\Minify;
 use Code_Snippets\Conditions;
 use Code_Snippets\Settings;
+use Code_Snippets\Vendor\MatthiasMullie\Minify\CSS;
+use Code_Snippets\Vendor\MatthiasMullie\Minify\JS;
 use function Code_Snippets\code_snippets;
 
 /**
@@ -67,7 +68,14 @@ class Evaluate_Assets {
 	 *
 	 * @param string|string[] $scope Snippet scope.
 	 *
-	 * @return array[][]
+	 * @return array{
+	 * *     id: int,
+	 * *     code: string,
+	 * *     scope: string,
+	 * *     table: string,
+	 * *     network: bool,
+	 * *     priority: int,
+	 * * } List of active snippets.
 	 */
 	protected function fetch_active_snippets( $scope ): array {
 		$scope_key = is_array( $scope ) ? implode( '|', $scope ) : $scope;
@@ -272,14 +280,14 @@ class Evaluate_Assets {
 	 * @noinspection PhpDocMissingThrowsInspection
 	 */
 	private static function process_code( string $code, string $type_or_scope ): string {
-		$minify_types = Settings\get_setting( 'general', 'minify_output' );
+		$minify_types = Settings\get_setting( 'general', 'minify_output' ) ?? [];
 
 		switch ( $type_or_scope ) {
 			case 'css':
 			case 'site-css':
 			case 'admin-css':
-				if ( in_array( 'css', $minify_types, true ) ) {
-					$minifier = new Minify\CSS( $code );
+				if ( is_array( $minify_types ) && in_array( 'css', $minify_types, true ) ) {
+					$minifier = new CSS( $code );
 					$code = $minifier->minify();
 				}
 				break;
@@ -287,15 +295,15 @@ class Evaluate_Assets {
 			case 'js':
 			case 'site-head-js':
 			case 'site-footer-js':
-				if ( in_array( 'js', $minify_types, true ) ) {
-					$minifier = new Minify\JS( $code );
+				if ( is_array( $minify_types ) && in_array( 'js', $minify_types, true ) ) {
+					$minifier = new JS( $code );
 					$code = $minifier->minify();
 				}
 				break;
 
 			default:
 				if ( function_exists( 'wp_trigger_error' ) ) {
-					$message = sprintf( 'Cannot process code for snippet scope: %s', esc_html( $scope ) );
+					$message = sprintf( 'Cannot process code for snippet scope: %s', esc_html( $type_or_scope ) );
 					/* @noinspection PhpUnhandledExceptionInspection E_USER_NOTICE level does not throw an error. */
 					wp_trigger_error( __FUNCTION__, $message );
 				}
@@ -324,12 +332,18 @@ class Evaluate_Assets {
 			$current_scope = "site-$current_scope-js";
 		}
 
-		// Concatenate all fetched code together into a single string.
-		$active_snippets = $this->db->fetch_active_snippets( [ $current_scope ] );
-		$code = implode( "\n\n", array_column( $active_snippets, 'code' ) );
+		// Concatenate all fetched code together into a single string, excluding snippets that rely on conditional context.
+		$active_snippets = $this->fetch_active_snippets( [ $current_scope ] );
+		$combined_code = '';
+
+		foreach ( $active_snippets as $snippet ) {
+			if ( 0 === intval( $snippet['condition_id'] ) ) {
+				$combined_code .= $snippet['code'] . "\n\n";
+			}
+		}
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo self::process_code( $code, $type );
+		echo self::process_code( $combined_code, $type );
 		exit;
 	}
 
@@ -351,16 +365,15 @@ class Evaluate_Assets {
 			}
 		}
 
-		$code = '';
+		$combined_code = '';
 
 		foreach ( $snippets as $snippet ) {
 			$condition_id = intval( $snippet['condition_id'] );
-			if ( 'condition' !== $snippet['scope'] &&
-			     ( ! $condition_id || ! isset( $conditions[ $condition_id ] ) || $conditions[ $condition_id ] ) ) {
-				$code .= $snippet['code'] . "\n\n";
+			if ( 'condition' !== $snippet['scope'] && $condition_id && isset( $conditions[ $condition_id ] ) && $conditions[ $condition_id ] ) {
+				$combined_code .= $snippet['code'] . "\n\n";
 			}
 		}
 
-		return self::process_code( $code, $scope );
+		return self::process_code( $combined_code, $scope );
 	}
 }

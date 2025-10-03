@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.7.1 ([unreleased])
+
+### Fixed
+* Prefixed Composer packages to reduce collisions with other plugins, especially those using Guzzle.
+* Functions conditions were loading before loop setup, resulting in some conditions not working. (PRO)
+* JavaScript and CSS snippets loading twice due to a conditions bug. (PRO)
+
+### Removed
+* Removed CSS linting within the editor until a modern replacement can be implemented.
+
 ## [3.7.0] (2025-08-29)
 
 ### Added

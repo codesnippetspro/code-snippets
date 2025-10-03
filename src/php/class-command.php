@@ -588,4 +588,82 @@ class Command extends WP_CLI_Command {
 			}
 		}
 	}
+
+	/**
+	 * Activates a license key for the Code Snippets Pro plugin.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --license_key=<string>
+	 * : The license key to activate.
+	 *
+	 * [--network]
+	 * : Activate the license network-wide instead of site-wide.
+	 *
+	 * [--marketing=<bool>]
+	 * : Allow marketing communications. Defaults to false.
+	 *
+	 * @param array $args       Indexed array of positional arguments.
+	 * @param array $assoc_args Associative array of associative arguments.
+	 *
+	 * @throws ExitException If license key is missing or activation fails.
+	 */
+	public function activate_license( array $args, array $assoc_args ) {
+
+		if ( empty( $assoc_args['license_key'] ) ) {
+			WP_CLI::error( 'License key is required. Use --license_key=<your-license-key>' );
+		}
+
+		$license_key = trim( $assoc_args['license_key'] );
+
+		$is_network = $this->parse_network_arg( $assoc_args );
+
+		$options = [
+			'network' => $is_network,
+			'marketing' => isset( $assoc_args['marketing'] ) ? filter_var( $assoc_args['marketing'], FILTER_VALIDATE_BOOLEAN ) : false,
+		];
+
+		WP_CLI::log( 'Activating license key...' );
+
+		$result = code_snippets()->licensing->activate_license_key( $license_key, $options );
+
+		if ( $result['success'] ) {
+			WP_CLI::success( $result['message'] );
+		} else {
+			if ( isset( $result['type'] ) && $result['type'] === 'warning' ) {
+				WP_CLI::warning( $result['message'] );
+			} else {
+				WP_CLI::error( $result['message'] );
+			}
+		}
+	}
+
+	/**
+	 * Gets the current license status and information.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - json
+	 *   - yaml
+	 * ---
+	 *
+	 *
+	 * @param array $args       Indexed array of positional arguments.
+	 * @param array $assoc_args Associative array of associative arguments.
+	 *
+	 * @subcommand license-status
+	 */
+	public function license_status( array $args, array $assoc_args ) {
+		$status_info = code_snippets()->licensing->get_license_status();
+
+		$license_fields = [ 'is_licensed', 'license_key', 'is_expired', 'expires', 'activations' ];
+		$formatter = new Formatter( $assoc_args, $license_fields, 'license' );
+		$formatter->display_item( $status_info );
+	}
 }

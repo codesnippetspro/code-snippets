@@ -237,7 +237,7 @@ function evaluate_condition_rule( array $rule ): bool {
  *
  * @param string $condition_json Conditional code, in JSON string format.
  *
- * @return boolean Result of evaluating the condition.
+ * @return bool Result of evaluating the condition.
  */
 function evaluate_condition( string $condition_json ): bool {
 	$groups = json_decode( $condition_json, false );
