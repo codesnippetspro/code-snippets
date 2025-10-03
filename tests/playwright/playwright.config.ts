@@ -28,7 +28,6 @@ export default defineConfig({
       name: 'setup',
       testMatch: /.*\.setup\.ts/,
     },
-    
     {
       name: 'chromium',
       use: { 
@@ -40,7 +39,6 @@ export default defineConfig({
   ],
 
   timeout: 30000,
-  
   expect: {
     timeout: 10000,
   },
