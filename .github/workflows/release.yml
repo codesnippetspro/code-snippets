@@ -20,7 +20,6 @@ jobs:
     permissions:
       contents: write
     outputs:
-      artifact_url: ${{ steps.get_url.outputs.url }}
       artifact_name: ${{ needs.install.outputs.artifact_name }}
     steps:
       - name: Get artifact url
@@ -54,27 +53,6 @@ jobs:
         with:
           files: ${{ steps.zip.outputs.path }}
 
-      - name: Get release asset URL
-        id: get_url
-        env:
-          GH_TOKEN: ${{ github.token }}
-          ARTIFACT_NAME: ${{ needs.install.outputs.artifact_name }}
-          TAG_NAME: ${{ github.event.release.tag_name }}
-          REPO: ${{ github.repository }}
-        run: |
-          # Wait for release asset to be fully uploaded
-          sleep 5
-          
-          # Get the release asset download URL
-          asset_url=$(gh api \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "/repos/${REPO}/releases/tags/${TAG_NAME}" \
-            --jq ".assets[] | select(.name == \"${ARTIFACT_NAME}.zip\") | .browser_download_url")
-          
-          echo "url=$asset_url" >> $GITHUB_OUTPUT
-          echo "::notice::Release asset URL: $asset_url"
-
   deploy:
     needs: [install, upload]
     runs-on: ubuntu-latest
@@ -91,7 +69,6 @@ jobs:
           echo "   Source Repo: ${{ github.repository }}"
           echo "   Branch: ${{ github.ref_name }}"
           echo "   Tag: ${{ needs.install.outputs.version }}"
-          echo "   Artifact URL: ${{ needs.upload.outputs.artifact_url }}"
           echo "   Artifact Name: ${{ needs.upload.outputs.artifact_name }}"
           
           # Dispatch the workflow with required parameters
@@ -101,7 +78,6 @@ jobs:
             --field repo="${{ github.repository }}" \
             --field branch="${{ github.ref_name }}" \
             --field tag="${{ needs.install.outputs.version }}" \
-            --field artifact_url="${{ needs.upload.outputs.artifact_url }}" \
             --field artifact_name="${{ needs.upload.outputs.artifact_name }}"; then
             echo "::error::Failed to dispatch publish workflow in $target_repo"
             exit 1
