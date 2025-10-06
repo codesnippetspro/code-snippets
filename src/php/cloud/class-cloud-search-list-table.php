@@ -94,13 +94,16 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 
 		// Check request is coming form the cloud search page.
 		if ( isset( $_REQUEST['type'] ) && 'cloud_search' === $_REQUEST['type'] ) {
-			if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
-				cloud_lts_process_download_action(
-					sanitize_key( wp_unslash( $_REQUEST['action'] ) ),
-					sanitize_key( wp_unslash( $_REQUEST['source'] ) ),
-					sanitize_key( wp_unslash( $_REQUEST['snippet'] ) )
-				);
-			}
+				if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+					$action = sanitize_key( wp_unslash( $_REQUEST['action'] ) );
+					$source = sanitize_key( wp_unslash( $_REQUEST['source'] ) );
+					$snippet = sanitize_key( wp_unslash( $_REQUEST['snippet'] ) );
+
+					// Pass cloud_page if present to provide pagination context for codevault snippets.
+					$codevault_page = isset( $_REQUEST['cloud_page'] ) ? (int) wp_unslash( $_REQUEST['cloud_page'] ) : 0;
+
+					cloud_lts_process_download_action( $action, $source, $snippet, $codevault_page );
+				}
 		}
 	}
 

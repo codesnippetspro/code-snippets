@@ -55,7 +55,7 @@ function cloud_lts_build_column_hidden_input( string $column_name, Cloud_Snippet
  *
  * @return void
  */
-function cloud_lts_process_download_action( string $action, string $source, string $snippet, int $codevault_page ) {
+function cloud_lts_process_download_action( string $action, string $source, string $snippet, int $codevault_page = 0 ) {
 	if ( 'download' === $action || 'update' === $action ) {
 		$result = code_snippets()->cloud_api->download_or_update_snippet( $snippet, $source, $action, $codevault_page );
 
@@ -108,13 +108,18 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 	}
 
 	if ( $download ) {
-		$download_url = add_query_arg(
-			[
+			$download_query = [
 				'action'  => 'download',
 				'snippet' => $cloud_snippet->id,
 				'source'  => $source,
-			]
-		);
+			];
+
+			// Preserve current cloud page if present so downstream handlers receive pagination context.
+			if ( isset( $_REQUEST['cloud_page'] ) ) {
+				$download_query['cloud_page'] = (int) wp_unslash( $_REQUEST['cloud_page'] );
+			}
+
+			$download_url = add_query_arg( $download_query );
 
 		$download_button = sprintf(
 			'<li><a class="button button-primary" href="%s">%s</a></li>',
