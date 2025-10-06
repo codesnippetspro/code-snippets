@@ -969,7 +969,7 @@ class Cloud_API {
 	 *
 	 * @return array<string, string|bool> Result of operation: an array with `success` and `error_message` keys.
 	 */
-	public function download_or_update_snippet( int $cloud_id, string $source, string $action, int $codevault_page ): array {
+	public function download_or_update_snippet( int $cloud_id, string $source, string $action, int $codevault_page = 0 ): array {
 		$cloud_id = intval( $cloud_id );
 
 		switch ( $source ) {
