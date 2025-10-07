@@ -217,6 +217,7 @@ class Evaluate_Functions {
 		$snippets = Snippet_Files::get_active_snippets_from_flat_files( $scopes, $type );
 		$conditions = Snippet_Files::get_active_snippets_from_flat_files( [ 'condition' ], 'cond' );
 		$active_snippets = array_merge( $snippets, $conditions );
+		$edit_snippet = $this->get_currently_editing_snippet();
 
 		foreach ( $active_snippets as $snippet ) {
 			if ( 'condition' === $snippet['scope'] ) {
