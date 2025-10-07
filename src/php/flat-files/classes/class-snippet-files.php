@@ -4,6 +4,11 @@ namespace Code_Snippets;
 
 class Snippet_Files {
 
+	/**
+	 * Flag file name that indicates flat files are enabled.
+	 */
+	private const ENABLED_FLAG_FILE = 'flat-files-enabled.flag';
+
 	private Snippet_Handler_Registry $handler_registry;
 
 	private File_System_Interface $fs;
@@ -20,16 +25,44 @@ class Snippet_Files {
 		$this->config_repo = $config_repo;
 	}
 
+	/**
+	 * Check if flat files are enabled by checking for the flag file.
+	 * This avoids database calls for better performance.
+	 *
+	 * @return bool True if flat files are enabled, false otherwise.
+	 */
+	public static function is_active(): bool {
+		$flag_file_path = self::get_flag_file_path();
+		return file_exists( $flag_file_path );
+	}
+
+	private static function get_flag_file_path(): string {
+		return self::get_base_dir() . '/' . self::ENABLED_FLAG_FILE;
+	}
+
+	private function handle_enabled_file_flag( bool $enabled ): void {
+		$flag_file_path = self::get_flag_file_path();
+
+		if ( $enabled ) {
+			$base_dir = self::get_base_dir();
+			$this->maybe_create_directory( $base_dir );
+
+			$this->fs->put_contents( $flag_file_path, '', FS_CHMOD_FILE );
+		} else {
+			$this->delete_file( $flag_file_path );
+		}
+	}
+
 	public function register_hooks(): void {
 		if ( ! $this->fs->is_writable( WP_CONTENT_DIR ) ) {
 			return;
 		}
 
-		if ( Settings\get_setting( 'general', 'enable_flat_files' ) ) {
+		if ( self::is_active() ) {
 			add_action( 'code_snippets/create_snippet', [ $this, 'handle_snippet' ], 10, 2 );
 			add_action( 'code_snippets/update_snippet', [ $this, 'handle_snippet' ], 10, 2 );
 			add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
-			add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 2 );
+			add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 1 );
 			add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
 			add_action( 'code_snippets/activate_snippets', [ $this, 'activate_snippets' ], 10, 2 );
 
@@ -53,8 +86,7 @@ class Snippet_Files {
 			return;
 		}
 
-		$snippet_type = $snippet->get_type();
-		$handler = $this->handler_registry->get_handler( $snippet_type );
+		$handler = $this->handler_registry->get_handler( $snippet->type );
 
 		if ( ! $handler ) {
 			return;
@@ -74,8 +106,7 @@ class Snippet_Files {
 	}
 
 	public function delete_snippet( Snippet $snippet, bool $network ): void {
-		$snippet_type = $snippet->get_type();
-		$handler = $this->handler_registry->get_handler( $snippet_type );
+		$handler = $this->handler_registry->get_handler( $snippet->type );
 
 		if ( ! $handler ) {
 			return;
@@ -90,16 +121,15 @@ class Snippet_Files {
 		$this->config_repo->update( $base_dir, $snippet, true );
 	}
 
-	public function activate_snippet( Snippet $snippet, bool $network ): void {
-		$snippet = get_snippet( $snippet->id, $network );
-		$snippet_type = $snippet->get_type();
-		$handler = $this->handler_registry->get_handler( $snippet_type );
+	public function activate_snippet( Snippet $snippet ): void {
+		$snippet = get_snippet( $snippet->id, $snippet->network );
+		$handler = $this->handler_registry->get_handler( $snippet->type );
 
 		if ( ! $handler ) {
 			return;
 		}
 
-		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
+		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name( $snippet->network ) );
 		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
 		$this->maybe_create_directory( $base_dir );
@@ -115,8 +145,7 @@ class Snippet_Files {
 
 	public function deactivate_snippet( int $snippet_id, bool $network ): void {
 		$snippet = get_snippet( $snippet_id, $network );
-		$snippet_type = $snippet->get_type();
-		$handler = $this->handler_registry->get_handler( $snippet_type );
+		$handler = $this->handler_registry->get_handler( $snippet->type );
 
 		if ( ! $handler ) {
 			return;
@@ -212,17 +241,32 @@ class Snippet_Files {
 		array $scopes = [],
 		$snippet_type = 'php'
 	): array {
-		$snippets = [];
+		$active_snippets = [];
+		$db = code_snippets()->db;
 
-		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name() );
-		$snippets[ $table ] = self::load_active_snippets_from_file(
+		$table = self::get_hashed_table_name( $db->get_table_name() );
+		$snippets = self::load_active_snippets_from_file(
 			$table,
 			$snippet_type,
 			$scopes
 		);
 
+		if ( $snippets ) {
+			foreach ( $snippets as $snippet ) {
+				$active_snippets[] = [
+					'id'           => intval( $snippet['id'] ),
+					'code'         => $snippet['code'],
+					'scope'        => $snippet['scope'],
+					'table'        => $db->table,
+					'network'      => false,
+					'priority'     => intval( $snippet['priority'] ),
+					'condition_id' => intval( $snippet['condition_id'] ),
+				];
+			}
+		}
+
 		if ( is_multisite() ) {
-			$ms_table = self::get_hashed_table_name( code_snippets()->db->get_table_name( true ) );
+			$ms_table = self::get_hashed_table_name( $db->get_table_name( true ) );
 
 			$root_base_dir = self::get_base_dir( $table );
 			$active_shared_ids_file_path = $root_base_dir . '/active-shared-network-snippets.php';
@@ -230,15 +274,71 @@ class Snippet_Files {
 				? require $active_shared_ids_file_path
 				: [];
 
-			$snippets[ $ms_table ] = self::load_active_snippets_from_file(
+			$ms_snippets = self::load_active_snippets_from_file(
 				$ms_table,
 				$snippet_type,
 				$scopes,
 				$active_shared_ids
 			);
+
+			if ( $ms_snippets ) {
+				$active_shared_ids = is_array( $active_shared_ids )
+					? array_map( 'intval', $active_shared_ids )
+					: [];
+
+				foreach ( $ms_snippets as $snippet ) {
+					$id = intval( $snippet['id'] );
+
+					if ( ! $snippet['active'] && ! in_array( $id, $active_shared_ids, true ) ) {
+						continue;
+					}
+
+					$active_snippets[] = [
+						'id'           => $id,
+						'code'         => $snippet['code'],
+						'scope'        => $snippet['scope'],
+						'table'        => $db->ms_table,
+						'network'      => true,
+						'priority'     => intval( $snippet['priority'] ),
+						'condition_id' => intval( $snippet['condition_id'] ),
+					];
+				}
+
+				self::sort_active_snippets( $active_snippets, $db );
+			}
 		}
 
-		return $snippets;
+		return $active_snippets;
+	}
+
+	private static function sort_active_snippets( array &$active_snippets, $db ): void {
+		$comparisons = [
+			function ( array $a, array $b ) {
+				return $a['priority'] <=> $b['priority'];
+			},
+			function ( array $a, array $b ) use ( $db ) {
+				$a_table = $a['table'] === $db->ms_table ? 0 : 1;
+				$b_table = $b['table'] === $db->ms_table ? 0 : 1;
+				return $a_table <=> $b_table;
+			},
+			function ( array $a, array $b ) {
+				return $a['id'] <=> $b['id'];
+			},
+		];
+
+		usort(
+			$active_snippets,
+			static function ( $a, $b ) use ( $comparisons ) {
+				foreach ( $comparisons as $comparison ) {
+					$result = $comparison( $a, $b );
+					if ( 0 !== $result ) {
+						return $result;
+					}
+				}
+
+				return 0;
+			}
+		);
 	}
 
 	private static function load_active_snippets_from_file(
@@ -284,7 +384,7 @@ class Snippet_Files {
 					);
 				}
 
-				return $is_active && in_array( $snippet['scope'], $scopes, true );
+				return ( $is_active || 'condition' === $snippet['scope'] ) && in_array( $snippet['scope'], $scopes, true );
 			}
 		);
 
@@ -312,6 +412,8 @@ class Snippet_Files {
 			return;
 		}
 
+		$this->handle_enabled_file_flag( $settings['general']['enable_flat_files'] );
+
 		if ( ! $settings['general']['enable_flat_files'] ) {
 			return;
 		}
@@ -327,11 +429,9 @@ class Snippet_Files {
 
 		$data = $db->fetch_active_snippets( $scopes );
 
-		foreach ( $data as $table_name => $active_snippets ) {
-			foreach ( $active_snippets as $snippet ) {
-				$snippet_obj = get_snippet( $snippet['id'], $db->ms_table === $table_name );
-				$this->handle_snippet( $snippet_obj, $table_name );
-			}
+		foreach ( $data as $snippet ) {
+			$snippet_obj = get_snippet( $snippet['id'], $db->ms_table === $snippet['table'] );
+			$this->handle_snippet( $snippet_obj, $snippet['table'] );
 		}
 
 		if ( is_multisite() ) {

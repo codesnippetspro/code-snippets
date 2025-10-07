@@ -137,24 +137,18 @@ class Plugin {
 		// Cloud List Table shared functions.
 		require_once $includes_path . '/cloud/list-table-shared-ops.php';
 
-<<<<<<< HEAD
 		// Snippet files.
-		require_once $includes_path . '/flat-files/load.php';
-
 		$this->snippet_handler_registry = new Snippet_Handler_Registry( [
 			'php'  => new Php_Snippet_Handler(),
 			'html' => new Html_Snippet_Handler(),
 		] );
 
-		$fs = new WordPress_Filesystem_Adapter();
+		$fs = new WordPress_File_System_Adapter();
 
 		$config_repo = new Snippet_Config_Repository( $fs );
 
 		( new Snippet_Files( $this->snippet_handler_registry, $fs, $config_repo ) )->register_hooks();
 
-		$this->active_snippets = new Active_Snippets();
-=======
->>>>>>> core
 		$this->front_end = new Front_End();
 		$this->cloud_api = new Cloud_API();
 

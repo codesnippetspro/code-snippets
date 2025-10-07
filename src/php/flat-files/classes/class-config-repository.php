@@ -38,10 +38,10 @@ class Snippet_Config_Repository implements Snippet_Config_Repository_Interface {
 	public function update( string $base_dir, Snippet $snippet, ?bool $remove = false ): void {
 		$active_snippets = $this->load( $base_dir );
 
-		if ( ! $remove ) {
-			$active_snippets[ $snippet->id ] = $snippet->get_fields();
-		} else {
+		if ( $remove ) {
 			unset( $active_snippets[ $snippet->id ] );
+		} else {
+			$active_snippets[ $snippet->id ] = $snippet->get_fields();
 		}
 
 		$this->save( $base_dir, $active_snippets );

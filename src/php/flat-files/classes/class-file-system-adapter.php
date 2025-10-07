@@ -1,7 +1,7 @@
 <?php
 namespace Code_Snippets;
 
-class WordPress_Filesystem_Adapter implements File_System_Interface {
+class WordPress_File_System_Adapter implements File_System_Interface {
 	private $fs;
 
 	public function __construct() {

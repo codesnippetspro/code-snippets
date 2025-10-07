@@ -189,21 +189,8 @@ class Snippet extends Data_Item {
 	 *
 	 * @return string The snippet type – will be a filename extension.
 	 */
-<<<<<<< HEAD
 	public function get_type(): string {
-		if ( '-css' === substr( $this->scope, -4 ) ) {
-			return 'css';
-		} elseif ( '-js' === substr( $this->scope, -3 ) ) {
-			return 'js';
-		} elseif ( 'content' === substr( $this->scope, -7 ) ) {
-			return 'html';
-		} else {
-			return 'php';
-		}
-=======
-	protected function get_type(): string {
 		return self::get_type_from_scope( $this->scope );
->>>>>>> core
 	}
 
 	/**
