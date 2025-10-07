@@ -699,7 +699,7 @@ function update_snippet_fields( int $snippet_id, array $fields, ?bool $network =
 
 function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force = false ) {
 	if ( ! is_file( $file ) ) {
-		execute_snippet( $code, $id, $force );
+		return execute_snippet( $code, $id, $force );
 	}
 
 	if ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {

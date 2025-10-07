@@ -169,7 +169,7 @@ class Evaluate_Functions {
 		}
 
 		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
-			execute_snippet_from_flat_file( $code, $snippet_id, $file_path );
+			execute_snippet_from_flat_file( $code, $file_path, $snippet_id );
 		}
 	}
 

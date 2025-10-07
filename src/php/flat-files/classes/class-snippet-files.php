@@ -129,7 +129,7 @@ class Snippet_Files {
 			return;
 		}
 
-		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
+		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name( $snippet->network ) );
 		$base_dir = self::get_base_dir( $table, $handler->get_dir_name() );
 
 		$this->maybe_create_directory( $base_dir );
