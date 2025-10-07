@@ -104,7 +104,7 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-= 3.7.0 (2025-08-29) =
+= 3.7.0 (beta release) =
 
 __Added__
 
