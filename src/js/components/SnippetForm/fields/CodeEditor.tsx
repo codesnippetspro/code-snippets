@@ -63,7 +63,6 @@ const ExplainCodeButton: React.FC = () => {
 					const entries = Object.entries(generated.lines ?? {}) as [string, string][]
 
 					return entries.map(([line, message]: [string, string]) => {
-						// Parse the line string into a number and convert to zero-based index.
 						const lineNumber = parseInt(line, 10) - 1
 
 						const widget = document.createElement('div')
