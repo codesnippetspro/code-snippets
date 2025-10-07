@@ -2,7 +2,7 @@
 
 namespace Code_Snippets;
 
-use MatthiasMullie\Minify;
+use Code_Snippets\Vendor\MatthiasMullie\Minify;
 
 class Js_Snippet_Handler implements Snippet_Type_Handler_Interface {
 	public function get_file_extension(): string {

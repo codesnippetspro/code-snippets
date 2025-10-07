@@ -11,6 +11,7 @@ use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\Conditions\evaluate_condition;
 use function Code_Snippets\execute_snippet;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\execute_snippet_from_flat_file;
 
 /**
  * Class for evaluating functions snippets.
