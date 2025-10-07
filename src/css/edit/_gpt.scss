@@ -46,11 +46,34 @@
 	color: #666;
 	font-style: italic;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  gap: 5px;
 
 	img {
 		block-size: 1rem;
-		padding-inline-end: 5px;
 	}
+
+  .code-line-actions {
+    margin-left: 5px;
+    display: inline-flex;
+    gap: 5px;
+
+    .commit {
+      color: #3d9970;
+    }
+
+    .remove {
+      color: #b32d2e
+    }
+
+    .action {
+      cursor: pointer;
+      opacity: 0.6;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
 }
 
 .cloud-connect-modal {
