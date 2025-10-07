@@ -139,7 +139,7 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 		'<li><a href="%s" aria-label="%s" class="%s" data-snippet="%s" data-lang="%s">%s</a></li>',
 		'#TB_inline?&width=700&height=500&inlineId=show-code-preview',
 		esc_attr( $cloud_snippet->name ),
-		'cloud-snippet-preview thickbox',
+		'cloud-snippet-preview thickbox button',
 		esc_attr( $cloud_snippet->id ),
 		esc_attr( $lang ),
 		esc_html__( 'Preview', 'code-snippets' )
@@ -164,7 +164,8 @@ function cloud_lts_pagination( string $which, string $source, int $total_items, 
 	$num = sprintf( _n( '%s item', '%s items', $total_items, 'code-snippets' ), number_format_i18n( $total_items ) );
 	$output = '<span class="displaying-num">' . $num . '</span>';
 
-	$current = isset( $_REQUEST['cloud_page'] ) ? (int) $_REQUEST['cloud_page'] : $pagenum;
+	$param_key = $source . '_page';
+	$current = isset( $_REQUEST[ $param_key ] ) ? (int) $_REQUEST[ $param_key ] : $pagenum;
 	$current_url = remove_query_arg( wp_removable_query_args() ) . '#' . $source;
 
 	$page_links = array();
@@ -258,8 +259,10 @@ function cloud_lts_pagination( string $which, string $source, int $total_items, 
 
 	$output .= "\n<span class='$pagination_links_class'>" . implode( "\n", $page_links ) . '</span>';
 
+	$page_class = $total_pages ? '' : ' no-pages';
+
 	return [
 		'output'     => $output,
-		'page_class' => $total_pages ? ( $total_pages < 2 ? ' one-page' : '' ) : ' no-pages',
+		'page_class' => $page_class,
 	];
 }
