@@ -29,9 +29,11 @@ class Cloud_Bundles extends Cloud_Search_List_Table {
 	/**
 	 * Fetch the snippets used to populate the table.
 	 *
+	 * @param int $per_page Items per page.
+	 *
 	 * @return Cloud_Snippets
 	 */
-	public function fetch_snippets(): Cloud_Snippets {
+	public function fetch_snippets( int $per_page = 10, int $page_index = 0 ): Cloud_Snippets {
 		$bundle = intval( $_REQUEST['cloud_bundles'] ?? 0 );
 		$bundle_share_name = sanitize_text_field( wp_unslash( $_REQUEST['bundle_share_name'] ?? '' ) );
 
