@@ -7,6 +7,7 @@
 @use 'common/switch';
 @use 'common/select';
 @use 'common/tooltips';
+@use 'common/modal';
 @use 'common/upsell';
 @use 'edit/form';
 @use 'edit/sidebar';
@@ -18,10 +19,6 @@
 	margin-block-end: 0;
 }
 
-.code-snippets-copy-text {
-	color: inherit;
-}
-
 .button svg {
 	block-size: 1rem;
 	vertical-align: middle;
@@ -30,8 +27,6 @@
 }
 
 .snippet-description-container {
-	margin-block-start: 25px;
-
 	.wp-editor-tools {
 		padding-block-start: 5px;
 	}
@@ -41,35 +36,58 @@
 	}
 
 	.generate-button {
-		float: inline-end;
-		margin-block-start: 37px;
 		z-index: 99;
 		position: relative;
 	}
 }
 
+.snippet-tags-container {
+	.components-form-token-field__input-container {
+		background: #fff;
+		border-color: #c3c4c7;
+
+		> .components-flex {
+			padding: 12px;
+		}
+	}
+}
+
+#titlediv,
+.snippet-type-container {
+	margin-block-end: 24px;
+}
+
 .above-snippet-code {
+	margin-block: 0 15px;
 	display: flex;
 	align-items: center;
-	margin-block: 25px 15px;
 	margin-inline: 0;
 	gap: 8px;
 
 	h2 {
 		margin: 0;
-		margin-inline-end: auto;
 	}
 
 	.expand-editor-button {
 		display: flex;
-		gap: 5px;
 		align-items: center;
+		margin-inline-end: auto;
+		gap: 5px;
 
 		.dashicons {
 			inline-size: 18px;
 			block-size: 18px;
 			font-size: 18px;
 		}
+	}
+}
+
+.snippet-name-wrapper {
+	display: flex;
+	gap: 0.5em;
+
+	> :first-child {
+		flex: 1;
 	}
 }
 

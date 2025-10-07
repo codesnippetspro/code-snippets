@@ -12,12 +12,12 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Handle for JavaScript asset file.
 	 */
-	const JS_HANDLE = 'code-snippets-edit-menu';
+	public const JS_HANDLE = 'code-snippets-edit-menu';
 
 	/**
 	 * Handle for CSS asset file.
 	 */
-	const CSS_HANDLE = 'code-snippets-edit';
+	public const CSS_HANDLE = 'code-snippets-edit';
 
 	/**
 	 * The snippet object currently being edited
@@ -177,6 +177,7 @@ class Edit_Menu extends Admin_Menu {
 				'react-dom',
 				'wp-url',
 				'wp-i18n',
+				'wp-element',
 				'wp-components',
 			],
 			$plugin->version,

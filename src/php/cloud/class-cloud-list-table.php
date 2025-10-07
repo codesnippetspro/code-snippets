@@ -127,7 +127,7 @@ class Cloud_List_Table extends WP_List_Table {
 	/**
 	 * Fetch the snippets used to populate the table.
 	 *
-	 * @return Cloud_Snippets
+	 * @return Cloud_Snippets|null
 	 */
 	protected function fetch_snippets(): Cloud_Snippets {
 		$remote_snippets = $this->cloud_api->get_codevault_snippets( $this->get_current_page_number() );

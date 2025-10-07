@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.7.0-beta.6
+Stable tag: 3.7.0
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -104,7 +104,7 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-= 3.7.0 (beta release) =
+= 3.7.0 (2025-08-29) =
 
 __Added__
 
@@ -113,11 +113,24 @@ __Added__
 __Changed__
 
 * Redesigned edit menu with refreshed look and functionality.
+<<<<<<< HEAD
 
 __Fixed__
 
+=======
+* Updated snippet type badges to be more visually distinct.
+* Redesigned tooltips used throughout the plugin.
+* Moved content snippet shortcode options into separate modal window.
+* Updated snippet tag editor to use built-in WordPress tag editor.
+* Created proper form for sharing beta feedback.
+* Improved UX of snippet activation toggle.
+
+__Fixed__
+
+>>>>>>> edit-refresh/core
 * Fetching active snippets on a multisite network now respects the 'priority' field above all else when ordering snippets.
 * Cloud search appears correctly and allows downloading snippets in the free version of Code Snippets.
+* Improved performance of loading admin menu icon.
 
 = 3.6.9 (2025-02-17) =
 
@@ -312,61 +325,5 @@ __Changed__
 __Fixed__
 
 * Error when attempting to update network shared snippets after saving. [[#](https://wordpress.org/support/topic/activating-snippets-breaks-on-wordpress-6-3/)]
-
-= 3.4.2 (2023-07-05) =
-
-__Fixed__
-
-* Issue causing export process to fail with fatal error. [[#](https://wordpress.org/support/topic/critical-error-on-exporting-snippets/)]
-* Type issue on `the_posts` filter when no posts available. [[#](https://wordpress.org/support/topic/collision-with-plugin-xml-sitemap-google-news/)]
-
-= 3.4.1 (2023-06-29) =
-
-__Added__
-
-* Added better debugging when calling REST API methods from the edit menu.
-
-__Changed__
-
-* Escape special characters when sending snippet code through AJAX to avoid false-positives from security modules. [[#](https://wordpress.org/support/topic/latest-3-4-0-ajax-bug-cannot-save-snippets-403-error/)]
-* Only display the latest update or error notice on the edit page, instead of allowing them to stack.
-
-__Fixed__
-
-* Undefined array key error. [[#](https://wordpress.org/support/topic/after-updating-occasionally-getting-undefined-array-key-query/)]
-* Potential type issue when loading Prism. [[#](https://wordpress.org/support/topic/code-snippets-fatal-error-breaking-xml-sitemaps/)]
-* Potential type issue when sorting snippets. [[#](https://github.com/codesnippetspro/code-snippets/issues/166)]
-* Issue preventing asset revision numbers from updating correctly. (PRO) [[#](https://github.com/codesnippetspro/code-snippets/issues/166)]
-
-= 3.4.0 (2023-05-17) =
-
-__Added__
-
-* Proper WordPress REST API support for retrieving and modifying snippets.
-* Added help links to content snippet options.
-
-__Changed__
-
-* Better compatibility with modern versions of PHP (7.0+).
-* Converted Edit/Add New Snippet page to use React.
-  * Converted action buttons to asynchronously use REST API endpoints through AJAX.
-  * Load page components dynamically through React.
-  * Added action notice queue system.
-  * Replaced native alert dialog with proper React modal.
-* Catch snippet execution errors to prevent site from crashing.
-* Display recent snippet errors in admin dashboard instead.
-* Updated editor block to use new REST API endpoints. (PRO)
-* Change colour of upgrade notice in Pro plugin. (PRO)
-* All available snippet data is included in export files.
-* Only import specific fields from export file, even if additional fields specified.
-* Pass additional attributes specified in `[code_snippet]` content shortcode to shortcode content.
-* Make shortcode attributes available as individual variables.
-* Allow boolean attributes to be passed to code snippets shortcodes without specifying a value.
-* Replace external links to Pro pricing page with an upgrade modal.
-
-__Fixed__
-
-* Issue preventing editor colorpicker from loading correctly. (PRO)
-* Issue preventing linting libraries from loading correctly in the code editor.
 
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/core/CHANGELOG.md)**

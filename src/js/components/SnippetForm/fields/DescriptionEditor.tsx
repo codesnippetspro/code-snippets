@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react'
 import { __, _x } from '@wordpress/i18n'
 import domReady from '@wordpress/dom-ready'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { ExplainSnippetButton } from '../../EditorSidebar/actions/ExplainSnippetButton'
+import { ExplainSnippetButton } from './ExplainSnippetButton'
 
 export const EDITOR_ID = 'snippet_description'
 

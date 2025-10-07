@@ -33,7 +33,8 @@
         "freemius/wordpress-sdk": "^2.11",
         "guzzlehttp/guzzle": "^7.9",
         "matthiasmullie/minify": "^1.3",
-        "symfony/deprecation-contracts": "^2.5"
+        "symfony/deprecation-contracts": "^2.5",
+        "typisttech/imposter-plugin": "^0.6.2"
     },
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.1",
@@ -48,7 +49,17 @@
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "composer/installers": true
+            "composer/installers": true,
+            "typisttech/imposter-plugin": true
         }
+    },
+    "extra": {
+        "imposter": {
+            "namespace": "Code_Snippets\\Vendor"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": "node ../node_modules/ts-node/dist/bin.js ../scripts/composer-fix-autoload.ts",
+        "post-update-cmd": "node ../node_modules/ts-node/dist/bin.js ../scripts/composer-fix-autoload.ts"
     }
 }

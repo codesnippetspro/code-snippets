@@ -166,7 +166,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 					</div>
 					<div class="action-links">
 						<ul class="plugin-action-buttons">
-							<?php cloud_lts_render_action_buttons( $item, 'search' ); ?>
+							<?php echo cloud_lts_build_action_links( $item, 'search' ); ?>
 						</ul>
 					</div>
 					<div class="desc column-description">

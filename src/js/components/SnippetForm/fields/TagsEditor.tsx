@@ -2,35 +2,30 @@ import React from 'react'
 import { __, _x } from '@wordpress/i18n'
 import { FormTokenField } from '@wordpress/components'
 import { useSnippetForm } from '../../../hooks/useSnippetForm'
-import { isCondition } from '../../../utils/snippets/snippets'
-import { ExplainSnippetButton } from '../actions/ExplainSnippetButton'
+import { ExplainSnippetButton } from './ExplainSnippetButton'
 
 const options = window.CODE_SNIPPETS_EDIT?.tagOptions
 
-export const TagsInput: React.FC = () => {
+export const TagsEditor: React.FC = () => {
 	const { snippet, setSnippet, isReadOnly } = useSnippetForm()
 
 	return options?.enabled
 		? <div className="snippet-tags-container">
-			<h4>
-				<label>
-					{isCondition(snippet)
-						? __('Condition Tags', 'code-snippets')
-						: __('Tags', 'code-snippets')}
-				</label>
-			</h4>
+			<h3>
+				<label htmlFor="components-form-token-input-0">{__('Snippet Tags', 'code-snippets')}</label>
 
-			<ExplainSnippetButton
-				field="tags"
-				onResponse={generated => {
-					setSnippet(previous => ({
-						...previous,
-						tags: [...new Set([...previous.tags, ...generated.tags ?? []])]
-					}))
-				}}
-			>
-				{_x('Add', 'generate snippet tags', 'code-snippets')}
-			</ExplainSnippetButton>
+				<ExplainSnippetButton
+					field="tags"
+					onResponse={generated => {
+						setSnippet(previous => ({
+							...previous,
+							tags: [...new Set([...previous.tags, ...generated.tags ?? []])]
+						}))
+					}}
+				>
+					{_x('Add', 'generate snippet tags', 'code-snippets')}
+				</ExplainSnippetButton>
+			</h3>
 
 			<FormTokenField
 				label=""

@@ -3,7 +3,10 @@ import { Spinner } from '@wordpress/components'
 import { isRTL } from '@wordpress/i18n'
 import { useSnippetForm } from '../../hooks/useSnippetForm'
 import { isNetworkAdmin } from '../../utils/screen'
-import { getSnippetType, isCondition } from '../../utils/snippets/snippets'
+import { isCondition } from '../../utils/snippets/snippets'
+import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
+import { SnippetLocationInput } from '../SnippetForm/fields/SnippetLocationInput'
+import { SnippetTypeInput } from '../SnippetForm/fields/SnippetTypeInput'
 import { Notices } from '../SnippetForm/page/Notices'
 import { ShortcodeInfo } from './actions/ShortcodeInfo'
 import { MultisiteSharingSettings } from './controls/MultisiteSharingSettings'
@@ -13,9 +16,14 @@ import { ActivationSwitch } from './controls/ActivationSwitch'
 import { DeleteButton } from './actions/DeleteButton'
 import { PriorityInput } from './controls/PriorityInput'
 import { RTLControl } from './controls/RTLControl'
-import { TagsInput } from './controls/TagsInput'
+import type { Dispatch, SetStateAction } from 'react'
 
-export const EditorSidebar = () => {
+export interface EditorSidebarProps {
+	setIsUpgradeDialogOpen: Dispatch<SetStateAction<boolean>>
+	setIsConditionModalOpen: Dispatch<SetStateAction<boolean>>
+}
+
+export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialogOpen, setIsConditionModalOpen }) => {
 	const { snippet, isWorking } = useSnippetForm()
 
 	return (
@@ -27,12 +35,13 @@ export const EditorSidebar = () => {
 
 				{isRTL() ? <RTLControl /> : null}
 
+				<ConditionModalButton setIsModalOpen={setIsConditionModalOpen} />
+				<SnippetLocationInput />
+				<ShortcodeInfo />
 				<PriorityInput />
 
-				{window.CODE_SNIPPETS_EDIT?.tagOptions.enabled ? <TagsInput /> : null}
-
 				{snippet.id
-					? <div className="row-actions visible">
+					? <div className="row-actions visible inline-form-field">
 						<ExportButtons />
 						<DeleteButton />
 					</div> : null}
@@ -44,8 +53,6 @@ export const EditorSidebar = () => {
 			</p>
 
 			<Notices />
-
-			{'html' === getSnippetType(snippet) ? <ShortcodeInfo /> : null}
 		</div>
 	)
 }

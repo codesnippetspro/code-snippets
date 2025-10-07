@@ -18,17 +18,17 @@ class Front_End {
 	/**
 	 * Name of the shortcode tag for rendering the code source
 	 */
-	const SOURCE_SHORTCODE = 'code_snippet_source';
+	public const SOURCE_SHORTCODE = 'code_snippet_source';
 
 	/**
 	 * Name of the shortcode tag for rendering content snippets
 	 */
-	const CONTENT_SHORTCODE = 'code_snippet';
+	public const CONTENT_SHORTCODE = 'code_snippet';
 
 	/**
 	 * Handle to use for front-end scripts and styles.
 	 */
-	const PRISM_HANDLE = 'code-snippets-prism';
+	public const PRISM_HANDLE = 'code-snippets-prism';
 
 	/**
 	 * Class for managing integration with the Elementor plugin.
@@ -43,11 +43,6 @@ class Front_End {
 	 * @var Block_Editor
 	 */
 	public Block_Editor $block_editor;
-
-	/**
-	 * Maximum depth for shortcode recursion.
-	 */
-	const MAX_SHORTCODE_DEPTH = 5;
 
 	/**
 	 * Class constructor
@@ -368,7 +363,7 @@ class Front_End {
 		extract( $atts );
 
 		ob_start();
-		eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
+		eval( "?>\n\n" . $snippet->code );
 
 		return ob_get_clean();
 	}
