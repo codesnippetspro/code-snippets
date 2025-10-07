@@ -1,4 +1,5 @@
-import { isNetworkAdmin } from '../../utils/general'
+import { isNetworkAdmin } from '../../utils/screen'
+import type { SnippetSchema } from '../../types/schema/SnippetSchema'
 import type { Snippet, SnippetScope } from '../../types/Snippet'
 
 export interface ResponseData<T = unknown> {
@@ -11,7 +12,7 @@ export type SuccessCallback = (response: ResponseData) => void
 const sendSnippetRequest = (query: string, onSuccess?: SuccessCallback) => {
 	const request = new XMLHttpRequest()
 	request.open('POST', window.ajaxurl, true)
-	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded charset=UTF-8')
+	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
 
 	request.onload = () => {
 		const success = 200
@@ -42,11 +43,14 @@ export const updateSnippet = (field: keyof Snippet, row: Element, snippet: Parti
 		return
 	}
 
-	snippet.id = parseInt(columnId.textContent, 10)
-	snippet.shared_network = null !== /\bshared-network-snippet\b/.exec(row.className)
-	snippet.network = snippet.shared_network || isNetworkAdmin()
-	snippet.scope = <SnippetScope | null> row.getAttribute('data-snippet-scope') ?? snippet.scope
+	const updatedSnippet: Partial<SnippetSchema> = {
+		id: parseInt(columnId.textContent, 10),
+		shared_network: null !== /\bshared-network-snippet\b/.exec(row.className),
+		network: snippet.shared_network ?? isNetworkAdmin(),
+		scope: <SnippetScope | null> row.getAttribute('data-snippet-scope') ?? snippet.scope,
+		...snippet
+	}
 
-	const queryString = `action=update_code_snippet&_ajax_nonce=${nonce.value}&field=${field}&snippet=${JSON.stringify(snippet)}`
+	const queryString = `action=update_code_snippet&_ajax_nonce=${nonce.value}&field=${field}&snippet=${JSON.stringify(updatedSnippet)}`
 	sendSnippetRequest(queryString, successCallback)
 }

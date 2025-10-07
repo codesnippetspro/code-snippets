@@ -1,0 +1,184 @@
+$bg-color: hsl(0deg 0% 20% / 90%);
+
+.help-tooltip {
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	border-block-end: 1px dotted;
+	position: relative;
+	vertical-align: middle;
+}
+
+.help-tooltip-anchor {
+	cursor: help;
+	padding-block: 0.3em 0;
+	padding-inline: 0.3em;
+	display: inline-block;
+	font-size: 10px;
+	background: transparent !important;
+}
+
+.tooltip {
+	cursor: help !important;
+	position: relative;
+	display: inline-block;
+
+	.dashicons {
+		color: lightslategrey;
+	}
+
+	&.badge {
+		display: inline-flex;
+
+		.dashicons {
+			color: inherit;
+		}
+	}
+}
+
+.tooltip::before,
+.tooltip-content {
+	position: absolute;
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out,
+		visibility 0.2s ease-in-out,
+		transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24);
+	transform: translate3d(0, 0, 0);
+	pointer-events: none;
+}
+
+.tooltip::before {
+	z-index: 1001;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+}
+
+.tooltip-inline::before {
+	inset-block-start: 4px;
+}
+
+.tooltip-content {
+	z-index: 1000;
+	padding: 8px;
+	background-color: $bg-color;
+	color: #fff;
+	border-radius: 6px;
+	position: absolute;
+	font-size: small;
+	font-weight: normal;
+	text-transform: none;
+	min-inline-size: 200px;
+	backdrop-filter: blur(3px);
+
+	.tooltip-block & {
+		margin-inline-start: -80px;
+	}
+
+	.tooltip-inline & {
+		margin-inline-start: 0;
+		margin-block-end: -16px;
+	}
+
+	.tooltip-inline.tooltip-start & {
+		inset-block-start: -50%;
+	}
+}
+
+.tooltip-block.tooltip-start {
+	&::before {
+		margin-inline-start: -6px;
+		margin-block-end: -12px;
+		border-block-start-color: $bg-color;
+	}
+
+	&::before, .tooltip-content {
+		inset-block-end: 100%;
+		inset-inline-start: 50%;
+	}
+}
+
+.tooltip-block.tooltip-end {
+	&::before {
+		margin-block: -12px 0;
+		border-block-start-color: transparent;
+		border-block-end-color: $bg-color;
+	}
+
+	&::before, .tooltip-content {
+		inset-block: 100% auto;
+		margin-inline-start: 25%;
+	}
+
+	.tooltip-content {
+		inset-inline-end: -70%;
+	}
+}
+
+.tooltip-inline.tooltip-start {
+	&::before {
+		inset-block-end: 50%;
+		margin-inline: 0 -12px;
+		margin-block-end: 0;
+		border-block-start-color: transparent;
+		border-inline-start-color: $bg-color;
+	}
+
+	&::before, .tooltip-content {
+		inset-inline: auto 100%;
+	}
+}
+
+.tooltip-inline.tooltip-end {
+	&::before {
+		margin-block-end: 0;
+		margin-inline-start: -12px;
+		border-block-start-color: transparent;
+		border-inline-end-color: $bg-color;
+	}
+
+	&::before, .tooltip-content {
+		inset-inline-start: 100%;
+	}
+
+	.tooltip-content {
+		inset-block-start: -50%;
+	}
+}
+
+.tooltip:hover,
+.tooltip:focus {
+	&::before, .tooltip-content {
+		visibility: visible;
+		opacity: 1;
+	}
+}
+
+.tooltip-block.tooltip-start:hover,
+.tooltip-block.tooltip-start:focus {
+	&::before, .tooltip-content {
+		transform: translateY(-10px);
+	}
+}
+
+.tooltip-block.tooltip-end:hover,
+.tooltip-block.tooltip-end:focus {
+	&::before, .tooltip-content {
+		transform: translateY(10px);
+	}
+}
+
+.tooltip-inline.tooltip-end:hover,
+.tooltip-inline.tooltip-end:focus {
+	&::before, .tooltip-content {
+		transform: translateX(10px);
+	}
+}
+
+.tooltip-inline.tooltip-start:hover,
+.tooltip-inline.tooltip-start:focus {
+	&::before, .tooltip-content {
+		transform: translateX(-10px);
+	}
+}

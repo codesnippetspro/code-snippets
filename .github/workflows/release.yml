@@ -1,0 +1,97 @@
+name: "(Release): Build"
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  install:
+    uses: ./.github/workflows/build.yml
+    with:
+      ref: ${{ github.event.release.tag_name }}
+
+  upload:
+    needs: install
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      artifact_name: ${{ needs.install.outputs.artifact_name }}
+    steps:
+      - name: Get artifact url
+        id: artifact
+        run: |
+          url="${{ needs.install.outputs.artifact_url }}"
+          id="${url##*/}"
+          echo "id=$id" >> $GITHUB_OUTPUT
+
+      - name: Download built zip
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ steps.artifact.outputs.id }}
+          path: ./bundle
+
+      - name: Create zip archive
+        id: zip
+        run: |
+          zip_name="${{ needs.install.outputs.artifact_name }}.zip"
+
+          cd ./bundle/${{ needs.install.outputs.artifact_name }}
+          zip -r "../$zip_name" .
+          cd ..
+
+          echo "path=$(pwd)/$zip_name" >> $GITHUB_OUTPUT
+
+      - name: Upload release asset
+        id: upload
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.zip.outputs.path }}
+
+  deploy:
+    needs: [install, upload]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch publish workflow
+        env:
+          GH_TOKEN: ${{ secrets.CHANGELOG_PAT }}
+        run: |
+          target_repo="codesnippetspro/.github-private"
+          workflow_file="publish.yml"
+          
+          echo "::notice::Dispatching publish workflow..."
+          echo "   Repository: $target_repo"
+          echo "   Source Repo: ${{ github.repository }}"
+          echo "   Branch: ${{ github.ref_name }}"
+          echo "   Tag: ${{ needs.install.outputs.version }}"
+          echo "   Artifact Name: ${{ needs.upload.outputs.artifact_name }}"
+          
+          # Dispatch the workflow with required parameters
+          if ! gh workflow run "$workflow_file" \
+            --repo "$target_repo" \
+            --ref main \
+            --field repo="${{ github.repository }}" \
+            --field branch="${{ github.ref_name }}" \
+            --field tag="${{ needs.install.outputs.version }}" \
+            --field artifact_name="${{ needs.upload.outputs.artifact_name }}"; then
+            echo "::error::Failed to dispatch publish workflow in $target_repo"
+            exit 1
+          fi
+          
+          echo "::notice::Successfully dispatched publish workflow"
+          
+          # Wait a moment for the run to be created
+          echo "Waiting for workflow run to be created..."
+          sleep 10
+          
+          # Get the workflow run URL for monitoring
+          if run_url=$(gh run list --repo "$target_repo" --workflow "$workflow_file" --limit 1 --json url -q '.[0].url' 2>/dev/null); then
+            echo "::notice::Monitor workflow progress at: $run_url"
+            echo "workflow_url=$run_url" >> $GITHUB_OUTPUT
+          fi
+

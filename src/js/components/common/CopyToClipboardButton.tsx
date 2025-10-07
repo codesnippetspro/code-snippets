@@ -1,42 +1,71 @@
+import { Spinner } from '@wordpress/components'
+import { __ } from '@wordpress/i18n'
 import React, { useState } from 'react'
-import { handleUnknownError } from '../../utils/errors'
-import type { HTMLAttributes, MouseEventHandler } from 'react'
+import { Button } from './Button'
+import { CopyIcon } from './icons/CopyIcon'
+import type { ButtonProps } from './Button'
 
-const TIMEOUT = 3000
+const TIMEOUT = 1500
 
-export interface CopyToClipboardButtonProps extends HTMLAttributes<HTMLAnchorElement> {
+enum Status {
+	INITIAL,
+	PROGRESSING,
+	SUCCESS,
+	ERROR
+}
+
+interface StatusIconProps {
+	status: Status
+}
+
+const StatusIcon: React.FC<StatusIconProps> = ({ status }) => {
+	switch (status) {
+		case Status.INITIAL:
+			return <CopyIcon />
+		case Status.PROGRESSING:
+			return <span className="spinner-wrapper"><Spinner /></span>
+		case Status.SUCCESS:
+			return <span className="dashicons dashicons-yes"></span>
+		case Status.ERROR:
+			return <span className="dashicons dashicons-warning"></span>
+	}
+}
+
+export interface CopyToClipboardButtonProps extends ButtonProps {
 	text: string
-	copyIcon?: string
-	successIcon?: string
 	timeout?: number
 }
 
 export const CopyToClipboardButton: React.FC<CopyToClipboardButtonProps> = ({
 	text,
-	copyIcon = 'clipboard',
-	successIcon = 'yes',
+	timeout = TIMEOUT,
 	...props
 }) => {
-	const [isSuccess, setIsSuccess] = useState(false)
+	const [status, setStatus] = useState(Status.INITIAL)
 	const clipboard = window.navigator.clipboard as Clipboard | undefined
 
-	const clickHandler: MouseEventHandler<HTMLAnchorElement> = event => {
-		event.preventDefault()
+	const handleClick = () => {
+		setStatus(Status.PROGRESSING)
 
 		clipboard?.writeText(text)
 			.then(() => {
-				setIsSuccess(true)
-				setTimeout(() => setIsSuccess(false), TIMEOUT)
+				setStatus(Status.SUCCESS)
+				setTimeout(() => setStatus(Status.INITIAL), timeout)
 			})
-			.catch(handleUnknownError)
+			.catch((error: unknown) => {
+				console.error('Failed to copy text to clipboard.', error)
+				setStatus(Status.ERROR)
+			})
 	}
 
-	return clipboard
-		? <a
-			href="#"
-			className={`code-snippets-copy-text dashicons dashicons-${isSuccess ? successIcon : copyIcon}`}
-			onClick={clickHandler}
+	return clipboard && window.isSecureContext
+		? <Button
+			className="code-snippets-copy-text"
+			onClick={handleClick}
 			{...props}
-		></a>
+		>
+			<StatusIcon status={status} />
+			{__('Copy', 'code-snippets')}
+		</Button>
 		: null
 }

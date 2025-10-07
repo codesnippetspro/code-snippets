@@ -1,32 +1,49 @@
 @use 'sass:color';
 
+$accent: #2271b1;
 $primary: #03c7d2;
 $secondary: #d46f4d;
 $outline: #9e9e9e;
-
-$core: #0073aa;
-$pro: #ce0000;
-
-$php-active: #0073aa;
-$php-inactive: #579;
-$php-background: #78c8e6;
-
-$css-inactive: #b452cd;
-$css-active: #7d26cd;
-$css-background: #551a8b;
-$css-highlight: #8000ff;
-
-$html-active: #548b54;
-$html-background: #548b54;
-$html-highlight: $html-active;
-
-$js-inactive: #cd6600;
-$js-active: #d44500;
-$js-background: #cd6600;
-$js-highlight: #cd6600;
-
 $brand-discord: #5865f2;
 $brand-facebook: #3b5998;
+$cloud: #00bcd4;
+$cloud-update: #ff9800;
+
+/* format: background-color [color] */
+$badges: (
+	php: #1d97c6,
+	html: #ef6a36,
+	css: #9b59b6,
+	js: #ffeb3b #1c1f20,
+	cond: #2eae95,
+	core: #61c5cb,
+	pro: #f7e8e3 #df9279,
+	cloud: $cloud,
+	bundles: #50575e,
+	cloud_search: #ff9800,
+	private: #f7e6be #ca961b,
+	public: #dbebf7 $accent,
+	success: #d3e8d1 #447340,
+	failure: #fad7c1 #a24b16,
+	info: #d2e6f4 #2b71a3,
+	neutral: #e2e5e5 #6c7e7e,
+	special: #dfc5ef #6e249c
+);
+$notices: (
+	success: #d3e9d3 #377a37,
+	warning: #f2ebc3 #b0730a,
+	error: #f8d7da #721c24,
+);
+
+@function contrasting-text-color($bg-color) {
+	$sum: 0;
+
+	@each $color, $multiplier in (red 0.299, green 0.587, blue 0.114) {
+		$sum: $sum + color.channel($bg-color, $color, $space: rgb) * $multiplier;
+	}
+
+	@return if ($sum > 186, #1c1f20, #fff)
+}
 
 @mixin link-colors($color, $lightness: 15%) {
 	a {

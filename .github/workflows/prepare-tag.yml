@@ -1,0 +1,188 @@
+name: "(Tag): Prepare"
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to create the tag for (e.g. 3.6.9) or `next`'
+        required: true
+        type: string
+        default: next
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout branch for release
+        uses: actions/checkout@v4
+
+      - name: Get tag version from package.json
+        id: version
+        run: |
+          INPUT_VERSION=${{ github.event.inputs.version }} 
+          if [ -z "$INPUT_VERSION" ]; then
+            echo "::info:: No version input provided, defaulting to 'next'."
+            INPUT_VERSION="next"
+          fi
+
+          if [ $INPUT_VERSION = "next" ]; then
+            CURR=$(jq -r .version package.json)
+            MAJOR=$(echo $CURR | cut -d. -f1)
+            MINOR=$(echo $CURR | cut -d. -f2)
+            PATCH=$(echo $CURR | cut -d. -f3)
+            NEW_PATCH=$((PATCH+1))
+            NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+            VERSION="$NEW_VERSION"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          
+          if [ -z "$VERSION" ]; then
+            echo "::error::Version is empty. Failing job."
+            exit 1
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  changelog:
+    runs-on: ubuntu-latest
+    needs: version
+    strategy:
+      matrix:
+        include:
+          - target-file: "CHANGELOG.md"
+            template: "changelog"
+            name: "github-changelog"
+          - target-file: "src/readme.txt"
+            template: "readme"
+            name: "wordpress-readme"
+    steps:
+      - name: Validate repository access
+        id: validate
+        env:
+          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+        run: |
+          target_repo="codesnippetspro/.github-private"
+          workflow_file="changelog.yml"
+          
+          echo "::notice::Validating access to $target_repo..."
+          
+          # Test repository access
+          if ! gh repo view "$target_repo" >/dev/null 2>&1; then
+            echo "::error::Cannot access repository $target_repo"
+            echo "::error::Please ensure CHANGELOG_PAT secret is configured with access to private repositories"
+            exit 1
+          fi
+          
+          echo "::notice::Repository access confirmed"
+          
+          # Verify workflow file exists
+          if ! gh workflow view "$workflow_file" --repo "$target_repo" >/dev/null 2>&1; then
+            echo "::error::Workflow file '$workflow_file' not found in $target_repo"
+            echo "::error::Expected: https://github.com/$target_repo/blob/main/.github/workflows/$workflow_file"
+            exit 1
+          fi
+          
+          echo "::notice::Workflow file '$workflow_file' found"
+          echo "target_repo=$target_repo" >> $GITHUB_OUTPUT
+          echo "workflow_file=$workflow_file" >> $GITHUB_OUTPUT
+
+      - name: Dispatch changelog workflow
+        id: dispatch
+        env:
+          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+        run: |
+          target_repo="${{ steps.validate.outputs.target_repo }}"
+          workflow_file="${{ steps.validate.outputs.workflow_file }}"
+          
+          echo "::notice::Dispatching workflow '$workflow_file' for ${{ matrix.name }}..."
+          echo "   Repository: $target_repo"
+          echo "   Version: ${{ needs.version.outputs.tag }}"
+          echo "   Template: ${{ matrix.template }}"
+          echo "   Target file: ${{ matrix.target-file }}"
+          
+          # Dispatch the workflow with required parameters
+          if ! gh workflow run "$workflow_file" \
+            --repo "$target_repo" \
+            --ref main \
+            --field repo="${{ github.repository }}" \
+            --field branch="${{ github.ref_name }}" \
+            --field version="${{ needs.version.outputs.tag }}" \
+            --field template="${{ matrix.template }}" \
+            --field target-file="./${{ matrix.target-file }}"; then
+            echo "::error::Failed to dispatch workflow '$workflow_file' in $target_repo"
+            exit 1
+          fi
+          
+          echo "::notice::Successfully dispatched changelog generation"
+          
+          # Wait a moment for the run to be created
+          echo "Waiting for workflow run to be created..."
+          sleep 10
+          
+          # Get the workflow run URL for monitoring
+          if run_url=$(gh run list --repo "$target_repo" --workflow "$workflow_file" --limit 1 --json url -q '.[0].url' 2>/dev/null); then
+            if [ -n "$run_url" ] && [ "$run_url" != "null" ]; then
+              echo "::notice::Workflow run: $run_url"
+              echo "run_url=$run_url" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Monitor workflow completion
+        env:
+          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+        run: |
+          target_repo="${{ steps.validate.outputs.target_repo }}"
+          workflow_file="${{ steps.validate.outputs.workflow_file }}"
+          max_attempts=30
+          attempt=0
+          
+          echo "::notice::Monitoring workflow completion..."
+          
+          while [ $attempt -lt $max_attempts ]; do
+            attempt=$((attempt + 1))
+            
+            # Get latest run status
+            run_data=$(gh run list \
+              --repo "$target_repo" \
+              --workflow "$workflow_file" \
+              --limit 1 \
+              --json status,conclusion,url \
+              -q '.[0] | [.status, .conclusion, .url] | @tsv' 2>/dev/null)
+            
+            if [ -n "$run_data" ]; then
+              status=$(echo "$run_data" | cut -f1)
+              conclusion=$(echo "$run_data" | cut -f2)
+              url=$(echo "$run_data" | cut -f3)
+              
+              if [ "$status" = "completed" ]; then
+                if [ "$conclusion" = "success" ]; then
+                  echo "::notice::Workflow completed successfully!"
+                  echo "::notice::Run details: $url"
+                  break
+                else
+                  echo "::error::Workflow failed with conclusion: $conclusion"
+                  echo "::error::Run details: $url"
+                  exit 1
+                fi
+              else
+                echo "Attempt $attempt/$max_attempts: Workflow status: $status"
+              fi
+            else
+              echo "Attempt $attempt/$max_attempts: Waiting for workflow run data..."
+            fi
+            
+            if [ $attempt -eq $max_attempts ]; then
+              echo "::warning::Timeout reached after $max_attempts attempts"
+              echo "::warning::Workflow may still be running. Check manually: ${{ steps.dispatch.outputs.run_url }}"
+              exit 0
+            fi
+            
+            sleep 10
+          done

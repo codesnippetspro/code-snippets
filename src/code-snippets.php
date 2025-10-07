@@ -8,14 +8,14 @@
  * License:      GPL-2.0-or-later
  * License URI:  license.txt
  * Text Domain:  code-snippets
- * Version:      3.6.8
+ * Version:      3.7.0
  * Requires PHP: 7.4
  * Requires at least: 5.0
  *
- * @version   3.6.8
+ * @version   3.7.0
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@codesnippets.pro>
- * @copyright 2012-2023 Code Snippets Pro
+ * @copyright 2012-2024 Code Snippets Pro
  * @license   GPL-2.0-or-later https://spdx.org/licenses/GPL-2.0-or-later.html
  * @link      https://github.com/codesnippetspro/code-snippets
  *
@@ -37,7 +37,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.4', 
 	 *
 	 * @const string
 	 */
-	define( 'CODE_SNIPPETS_VERSION', '3.6.8' );
+	define( 'CODE_SNIPPETS_VERSION', '3.7.0' );
 
 	/**
 	 * The full path to the main file of this plugin.
@@ -56,7 +56,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.4', 
 	 * @since 3.0.0
 	 * @onst  boolean
 	 */
-	define( 'CODE_SNIPPETS_PRO', true );
+	define( 'CODE_SNIPPETS_PRO', false );
 
 	require_once dirname( __FILE__ ) . '/php/load.php';
 } else {

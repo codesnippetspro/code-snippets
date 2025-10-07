@@ -7,7 +7,6 @@
 
 namespace Code_Snippets;
 
-use Code_Snippets\REST_API\Snippets_REST_Controller;
 use ParseError;
 use function Code_Snippets\Settings\get_self_option;
 use function Code_Snippets\Settings\update_self_option;
@@ -94,11 +93,13 @@ function get_snippets( array $ids = array(), ?bool $network = null ): array {
 	// If a list of IDs are provided, narrow down the snippets list.
 	if ( $ids_count > 0 ) {
 		$ids = array_map( 'intval', $ids );
-		return array_filter(
-			$snippets,
-			function ( Snippet $snippet ) use ( $ids ) {
-				return in_array( $snippet->id, $ids, true );
-			}
+		return array_values(
+			array_filter(
+				$snippets,
+				function ( Snippet $snippet ) use ( $ids ) {
+					return in_array( $snippet->id, $ids, true );
+				}
+			)
 		);
 	}
 
@@ -502,7 +503,6 @@ function save_snippet( $snippet ) {
 
 	// Update the last modification date if necessary.
 	$snippet->update_modified();
-	$snippet->increment_revision();
 
 	if ( 'php' === $snippet->type ) {
 		// Remove tags from beginning and end of snippet.
@@ -519,21 +519,27 @@ function save_snippet( $snippet ) {
 		}
 	}
 
+	// Increment the revision number unless revision = 1 or revision is not set.
+	if ( $snippet->revision && $snippet->revision > 1 ) {
+		$snippet->increment_revision();
+	}
+
 	// Shared network snippets are always considered inactive.
 	$snippet->active = $snippet->active && ! $snippet->shared_network;
 
 	// Build the list of data to insert.
 	$data = [
-		'name'        => $snippet->name,
-		'description' => $snippet->desc,
-		'code'        => $snippet->code,
-		'tags'        => $snippet->tags_list,
-		'scope'       => $snippet->scope,
-		'priority'    => $snippet->priority,
-		'active'      => intval( $snippet->active ),
-		'modified'    => $snippet->modified,
-		'revision'    => $snippet->revision,
-		'cloud_id'    => $snippet->cloud_id ? $snippet->cloud_id : null,
+		'name'         => $snippet->name,
+		'description'  => $snippet->desc,
+		'code'         => $snippet->code,
+		'tags'         => $snippet->tags_list,
+		'scope'        => $snippet->scope,
+		'condition_id' => intval( $snippet->condition_id ),
+		'priority'     => $snippet->priority,
+		'active'       => intval( $snippet->active ),
+		'modified'     => $snippet->modified,
+		'revision'     => $snippet->revision,
+		'cloud_id'     => $snippet->cloud_id ? $snippet->cloud_id : null,
 	];
 
 	// Create a new snippet if the ID is not set.
@@ -576,6 +582,11 @@ function save_snippet( $snippet ) {
  * @since 2.0.0
  */
 function execute_snippet( string $code, int $id = 0, bool $force = false ) {
+	/**
+	 * Do not continue if safe mode is active.
+	 *
+	 * @noinspection PhpUndefinedConstantInspection
+	 */
 	if ( empty( $code ) || ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) ) {
 		return false;
 	}
@@ -595,6 +606,7 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 }
 
 /**
+<<<<<<< HEAD
  * Run the active snippets.
  * Read-write-execute operation.
  *
@@ -775,6 +787,8 @@ function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force 
 }
 
 /**
+=======
+>>>>>>> core
  * Retrieve a single snippets from the database using its cloud ID.
  *
  * Read operation.

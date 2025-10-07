@@ -124,9 +124,9 @@ function get_settings_fields(): array {
 
 	if ( ! code_snippets()->licensing->is_licensed() ) {
 		$fields['general']['hide_upgrade_menu'] = [
-			'name'  => __( 'Hide Upgrade Menu', 'code-snippets' ),
+			'name'  => __( 'Hide Upgrade Notices', 'code-snippets' ),
 			'type'  => 'checkbox',
-			'label' => __( 'Hide the Upgrade button from the admin menu.', 'code-snippets' ),
+			'label' => __( 'Hide notices inviting you to upgrade to Code Snippets Pro.', 'code-snippets' ),
 		];
 	}
 
