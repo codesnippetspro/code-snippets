@@ -56,9 +56,12 @@ const ExplainCodeButton: React.FC = () => {
 				const doc = codeEditorInstance?.codemirror.getDoc()
 				console.info('lines', generated.lines)
 
-				setWidgets(() => doc && generated.lines
-					? Object.values(generated.lines).map(generatedLine => {
-						const [line, message] = Object.entries(generatedLine)[0]
+				setWidgets(() => {
+					if (!doc || !generated.lines) {
+						return []
+					}
+          
+					return Object.entries(generated.lines).map(([line, message]) => {
 						const lineNumber = parseInt(line, 10) - 1
 
 						const widget = document.createElement('div')
@@ -71,7 +74,8 @@ const ExplainCodeButton: React.FC = () => {
 						widget.appendChild(document.createTextNode(message))
 
 						return doc.addLineWidget(lineNumber, widget, { above: true })
-					}) : [])
+					})
+				})
 			}}
 		>
 			{__('Explain', 'code-snippets')}
