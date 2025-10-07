@@ -188,13 +188,13 @@ class Evaluate_Functions {
 		}
 
 		if ( Snippet_Files::is_active() ) {
-			return $this->evaluate_file_snippets_without_conditions();
+			return $this->evaluate_file_snippets();
 		}
 
-		return $this->evaluate_db_snippets_without_conditions();
+		return $this->evaluate_db_snippets();
 	}
 
-	private function evaluate_db_snippets_without_conditions(): bool {
+	private function evaluate_db_snippets(): bool {
 		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end', 'condition' ];
 		$active_snippets = $this->db->fetch_active_snippets( $scopes );
 		$edit_snippet = $this->get_currently_editing_snippet();
@@ -212,7 +212,7 @@ class Evaluate_Functions {
 		return true;
 	}
 
-	private function evaluate_file_snippets_without_conditions(): bool {
+	private function evaluate_file_snippets(): bool {
 		$type = 'php';
 		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
 		$snippets = Snippet_Files::get_active_snippets_from_flat_files( $scopes, $type );

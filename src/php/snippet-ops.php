@@ -315,7 +315,7 @@ function activate_snippet( int $id, ?bool $network = null ) {
 	}
 
 	update_shared_network_snippets( [ $snippet ] );
-	do_action( 'code_snippets/activate_snippet', $snippet );
+	do_action( 'code_snippets/activate_snippet', $snippet, $network );
 	clean_snippets_cache( $table_name );
 	code_snippets()->evaluate_assets->increment_snippet_rev( $snippet );
 
