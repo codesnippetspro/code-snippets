@@ -1,23 +1,20 @@
 # Changelog
 
-## [3.7.1-beta.1] - 2025-10-08
+## [3.7.1-beta.1] (2025-10-08)
 
 ### Added
-* Implemented new feature allowing increased precision in snippet timing control
-* Added OAuth handshake compatibility with newer cryptographic standards
+* Implemented new feature allowing file-based execution of snippets for faster load times and improved debugging workflows
+* Added registry, handlers, and settings toggle to manage multi-type (PHP/HTML/CSS/JS/Condition) flat-file snippets
 
 ### Changed
-* Improved the snippet handling logic to speed up processing under high load
-* Updated localization files for improved multilingual support
+* Improved the evaluation and asset loading logic to bypass database queries when flat-file mode is enabled, boosting performance under high load
+* Updated pro badge styling and shortcode/activation hooks for better multisite support and UI consistency
 
 ### Fixed
-* Resolved issue where snippet activation could fail silently under specific conditions
-* Fixed a bug in dashboard analytics that miscalculated usage stats
+* Resolved issue where snippet activation/deactivation context (network flag) wasn’t passed to related hooks
+* Fixed conditional and content snippet execution edge cases when switching between database and file-based modes
 
-### Security
-* Patched XSS vulnerability in the snippet editor affecting certain configurations
-
-## 3.7.1 ([unreleased])
+## 3.7.1 (2025-08-29)
 
 ### Fixed
 * Prefixed Composer packages to reduce collisions with other plugins, especially those using Guzzle.

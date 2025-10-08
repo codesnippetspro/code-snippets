@@ -107,13 +107,16 @@ You can report security bugs found in the source code of this plugin through the
 = 3.7.1-beta.1 (2025-10-08) =
 
 __Added__
-* Enhanced cloud synchronization performance with new backend optimizations.
-* Expanded AI features for snippet generation and management. (PRO)
+* Implemented new feature allowing file-based execution of snippets for faster load times and improved debugging workflows
+* Added registry, handlers, and settings toggle to manage multi-type (PHP/HTML/CSS/JS/Condition) flat-file snippets
 
 __Changed__
-* Improved UI consistency across all admin pages.
-* Updated local caching mechanisms to enhance plugin performance on multisite networks.
+* Improved the evaluation and asset loading logic to bypass database queries when flat-file mode is enabled, boosting performance under high load
+* Updated pro badge styling and shortcode/activation hooks for better multisite support and UI consistency
 
+__Fixed__
+* Resolved issue where snippet activation/deactivation context (network flag) wasn’t passed to related hooks
+* Fixed conditional and content snippet execution edge cases when switching between database and file-based modes
 
 = 3.7.0 (2025-08-29) =
 
