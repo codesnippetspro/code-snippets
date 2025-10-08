@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.7.1-beta.2] - 2025-10-08
+
+### Added
+* Enable deploy job in release workflow (6aac6b27)
+
+### Changed
+* Enhanced versioning logic for beta and regular releases (62109a80, cba6203a)
+
+### Fixed
+* Removed inappropriate artifact URLs and updated release workflow (41624945, 9a9a45b8)
+
 ## [3.7.1-beta.1] (2025-10-08)
 
 ### Added
