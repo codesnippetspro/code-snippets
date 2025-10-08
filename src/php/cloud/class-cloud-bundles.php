@@ -30,6 +30,7 @@ class Cloud_Bundles extends Cloud_Search_List_Table {
 	 * Fetch the snippets used to populate the table.
 	 *
 	 * @param int $per_page Items per page.
+	 * @param int $page_index Page index.
 	 *
 	 * @return Cloud_Snippets
 	 */
