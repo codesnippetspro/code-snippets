@@ -104,6 +104,17 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+= 3.7.1-beta.1 (2025-10-08) =
+
+__Added__
+* Enhanced cloud synchronization performance with new backend optimizations.
+* Expanded AI features for snippet generation and management. (PRO)
+
+__Changed__
+* Improved UI consistency across all admin pages.
+* Updated local caching mechanisms to enhance plugin performance on multisite networks.
+
+
 = 3.7.0 (2025-08-29) =
 
 __Added__
