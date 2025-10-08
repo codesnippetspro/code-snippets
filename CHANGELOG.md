@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.7.1-beta.2] - (2025-10-08)
+
+### Added
+* Make sidebar sticky [#259](https://github.com/codesnippetspro/code-snippets/issues/259)
+
 ## [3.7.1-beta.1] (2025-10-08)
 
 ### Added

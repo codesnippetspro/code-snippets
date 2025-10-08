@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.7.1-beta.1
+Stable tag: 3.7.1-beta.2
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -103,6 +103,12 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+ = 3.7.1-beta.2 (2025-10-08) =
+
+ __Added__
+* Make sidebar sticky [#259](https://github.com/codesnippetspro/code-snippets/issues/259)
+
 
 = 3.7.1-beta.1 (2025-10-08) =
 
