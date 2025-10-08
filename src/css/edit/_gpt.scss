@@ -33,54 +33,54 @@
 }
 
 .code-line-explanation {
-  display: flex;
-  cursor: default;
-  font-size: inherit;
-  margin: 0;
-  padding-inline: 6px;
-  border-left: none;
-  border-right: none;
-  border-top: 1px solid rgba(0, 0, 0, 0.15);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  border-image-slice: 1;
-  border-image-width: 1;
-  border-image-repeat: stretch;
-  color: #666;
-  font-style: italic;
-  font-family: monospace;
-  gap: 5px;
-  align-items: center;
+	display: flex;
+	cursor: default;
+	font-size: inherit;
+	margin: 0;
+	padding-inline: 6px;
+	border-left: none;
+	border-right: none;
+	border-top: 1px solid rgba(0, 0, 0, 0.15);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+	border-image-slice: 1;
+	border-image-width: 1;
+	border-image-repeat: stretch;
+	color: #666;
+	font-style: italic;
+	font-family: monospace;
+	gap: 5px;
+	align-items: center;
 
 	img {
 		block-size: 1rem;
-    opacity: 0.7;
+		opacity: 0.7;
 	}
 
-  .code-line-actions {
-    cursor: default;
-    gap: 7px;
-    display: inline-flex;
-    margin-left: 5px;
-    font-family: system-ui;
-    font-style: normal;
+	.code-line-actions {
+		cursor: default;
+		gap: 7px;
+		display: inline-flex;
+		margin-left: 5px;
+		font-family: system-ui;
+		font-style: normal;
 
-    .commit {
-      color: #3d9970;
-    }
+		.commit {
+			color: #3d9970;
+		}
 
-    .remove {
-      color: #b32d2e;
-    }
+		.remove {
+			color: #b32d2e;
+		}
 
-    .action {
-      cursor: pointer;
-      opacity: 0.6;
+		.action {
+			cursor: pointer;
+			opacity: 0.6;
 
-      &:hover {
-        opacity: 1;
-      }
-    }
-  }
+			&:hover {
+				opacity: 1;
+			}
+		}
+	}
 }
 
 .cloud-connect-modal {
