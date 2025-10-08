@@ -111,7 +111,7 @@ class Edit_Menu extends Admin_Menu {
 	 */
 	public function render() {
 		printf(
-			'<div id="edit-snippet-form-container">%s</div>',
+			'<div id="edit-snippet-form-container"><small style="position: relative; top: 14px;">%s</small></div>',
 			esc_html__( 'Loading edit page…', 'code-snippets' )
 		);
 	}
