@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.7.1-beta.1] - 2025-10-08
+
+### Added
+* Implemented new feature allowing increased precision in snippet timing control
+* Added OAuth handshake compatibility with newer cryptographic standards
+
+### Changed
+* Improved the snippet handling logic to speed up processing under high load
+* Updated localization files for improved multilingual support
+
+### Fixed
+* Resolved issue where snippet activation could fail silently under specific conditions
+* Fixed a bug in dashboard analytics that miscalculated usage stats
+
+### Security
+* Patched XSS vulnerability in the snippet editor affecting certain configurations
+
 ## 3.7.1 ([unreleased])
 
 ### Fixed
