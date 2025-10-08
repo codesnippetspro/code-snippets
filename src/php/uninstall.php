@@ -72,6 +72,25 @@ function uninstall_multisite() {
 	delete_site_option( 'recently_activated_snippets' );
 }
 
+function delete_flat_files_directory() {
+	$flat_files_dir = WP_CONTENT_DIR . '/code-snippets';
+
+	if ( ! is_dir( $flat_files_dir ) ) {
+		return;
+	}
+
+	if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+
+	global $wp_filesystem;
+	WP_Filesystem();
+
+	if ( $wp_filesystem && $wp_filesystem->is_dir( $flat_files_dir ) ) {
+		$wp_filesystem->delete( $flat_files_dir, true );
+	}
+}
+
 /**
  * Uninstall the Code Snippets plugin.
  *
@@ -86,4 +105,6 @@ function uninstall_plugin() {
 			uninstall_current_site();
 		}
 	}
+
+	delete_flat_files_directory();
 }

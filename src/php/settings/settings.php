@@ -345,6 +345,8 @@ function sanitize_settings( array $input ): array {
 			__( 'Settings saved.', 'code-snippets' ),
 			'updated'
 		);
+
+		do_action( 'code_snippets/settings_updated', $settings, $input );
 	}
 
 	return $settings;
