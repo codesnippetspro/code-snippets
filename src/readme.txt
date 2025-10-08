@@ -107,11 +107,7 @@ You can report security bugs found in the source code of this plugin through the
  = 3.7.1-beta.2 (2025-10-08) =
 
  __Added__
- * Enhancements in versioning logic for beta and regular releases
- * New sticky sidebar feature in edit forms
-
- __Fixed__
- * Artifact URL removal and update in release workflows
+* Make sidebar sticky [#259](https://github.com/codesnippetspro/code-snippets/issues/259)
 
 
 = 3.7.1-beta.1 (2025-10-08) =
