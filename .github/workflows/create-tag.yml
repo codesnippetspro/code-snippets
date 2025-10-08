@@ -26,3 +26,4 @@ jobs:
           git config user.email "sre@codesnippets.pro"
           git tag "${{ steps.version.outputs.version }}"
           git push origin "${{ steps.version.outputs.version }}"
+
