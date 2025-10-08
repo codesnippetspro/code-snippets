@@ -104,7 +104,7 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-= 3.7.0 (beta release) =
+= 3.7.0 (2025-08-29) =
 
 __Added__
 
@@ -113,11 +113,6 @@ __Added__
 __Changed__
 
 * Redesigned edit menu with refreshed look and functionality.
-<<<<<<< HEAD
-
-__Fixed__
-
-=======
 * Updated snippet type badges to be more visually distinct.
 * Redesigned tooltips used throughout the plugin.
 * Moved content snippet shortcode options into separate modal window.
@@ -127,7 +122,6 @@ __Fixed__
 
 __Fixed__
 
->>>>>>> edit-refresh/core
 * Fetching active snippets on a multisite network now respects the 'priority' field above all else when ordering snippets.
 * Cloud search appears correctly and allows downloading snippets in the free version of Code Snippets.
 * Improved performance of loading admin menu icon.
