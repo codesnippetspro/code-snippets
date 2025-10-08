@@ -109,7 +109,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 						sanitize_key( wp_unslash( $_REQUEST['snippet'] ) ),
 						$this->get_pagenum()
 					);
-        }
+				}
 		}
 	}
 
@@ -175,12 +175,11 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 							echo '</a>';
 							?>
 						</h3>
-            <ul class="action-buttons">
-              <?php echo cloud_lts_build_action_links( $item, 'search' ); ?>
-            </ul>
+						<ul class="action-buttons">
+							<?php echo cloud_lts_build_action_links( $item, 'search' ); ?>
+						</ul>
 					</div>
-					
-					<div class="column-description">
+						<div class="column-description">
 						<p><?php echo wp_kses_post( $this->process_description( $item->description ) ); ?></p>
 						<p class="authors">
 							<cite>
@@ -198,7 +197,7 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 				</div>
 				<div class="plugin-card-bottom cloud-search-card-bottom">
 					<div class="cloud-meta-row">
-            <div class="column-downloaded">
+						<div class="column-downloaded">
 							<div class="badge <?php echo esc_attr( $this->cloud_api->get_status_badge( $item->status ) ); ?>-badge tooltip tooltip-block tooltip-end">
 								<?php
 
@@ -232,8 +231,6 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 							echo esc_html( sprintf( __( '%s ago', 'code-snippets' ), human_time_diff( strtotime( $item->updated ) ) ) );
 							?>
 						</div>
-
-
 					</div>
 				</div>
 			</div>
@@ -274,12 +271,12 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 	 * @return Cloud_Snippets
 	 */
 	public function fetch_snippets( int $per_page = 10, int $page_index = 0 ): Cloud_Snippets {
-    // Check if search term has been entered.
-    if ( isset( $_REQUEST['type'], $_REQUEST['cloud_search'], $_REQUEST['cloud_select'] ) &&
-		     'cloud_search' === sanitize_key( wp_unslash( $_REQUEST['type'] ) )
+		// Check if search term has been entered.
+		if ( isset( $_REQUEST['type'], $_REQUEST['cloud_search'], $_REQUEST['cloud_select'] ) &&
+				 'cloud_search' === sanitize_key( wp_unslash( $_REQUEST['type'] ) )
 		) {
-      // If we have a search query, then send a search request to cloud server API search endpoint.
-      $search_query = sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) );
+			// If we have a search query, then send a search request to cloud server API search endpoint.
+			$search_query = sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) );
 			$search_by = sanitize_text_field( wp_unslash( $_REQUEST['cloud_select'] ) );
 
 			// Pass the provided 0-based page index to the API.

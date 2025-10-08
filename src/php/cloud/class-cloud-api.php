@@ -730,7 +730,6 @@ class Cloud_API {
 
 		$raw = self::unpack_request_json( wp_remote_get( $api_url ) );
 
-
 		$results = new Cloud_Snippets( $raw );
 		$results->page = $page;
 

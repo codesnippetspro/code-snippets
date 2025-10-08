@@ -78,7 +78,6 @@ class Cloud_GPT_API {
 			);
 		}
 
-
 		// Build form body using WP HTTP API. Include Freemius license as fs_key.
 		$body = array_merge( [ 'fs_key' => $freemius_license ], $data );
 
