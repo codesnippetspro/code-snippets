@@ -104,6 +104,16 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+ = 3.7.1-beta.2 (2025-10-08) =
+
+ __Added__
+ * Enhancements in versioning logic for beta and regular releases
+ * New sticky sidebar feature in edit forms
+
+ __Fixed__
+ * Artifact URL removal and update in release workflows
+
+
 = 3.7.1-beta.1 (2025-10-08) =
 
 __Added__
