@@ -96,10 +96,10 @@ form.condition-snippet .snippet-code-container {
 }
 
 .cs-back {
-  cursor: pointer;
-  &::before {
-    content: '<';
-    color: #2271b1;
-    margin-right: 3px;
-  }
+	cursor: pointer;
+	&::before {
+		content: '<';
+		color: #2271b1;
+		margin-right: 3px;
+	}
 }

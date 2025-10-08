@@ -212,67 +212,67 @@ td.column-name {
 	flex-wrap: wrap;
 	justify-content: center;
 
-  .plugin-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+	.plugin-card {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 
-    .cloud-meta-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-grow: 1;
-    }
+		.cloud-meta-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-grow: 1;
+		}
 
-    .column-name {
-      display: flex;
+		.column-name {
+			display: flex;
 
-      h3 {
-        display: inline-flex;
-        flex-shrink: 1;
-      }
+			h3 {
+				display: inline-flex;
+				flex-shrink: 1;
+			}
 
-      .title-icon {
-        height: 90px;
-        margin-top: -7px;
-      }
-    }
+			.title-icon {
+				height: 90px;
+				margin-top: -7px;
+			}
+		}
 
-    .column-votes {
-      display: inline-flex;
-      gap: 3px;
+		.column-votes {
+			display: inline-flex;
+			gap: 3px;
 
-      &:hover {
-        .thumbs-up {
-          stroke: #059669;
-          fill: #6ee7b7;
-          animation: thumb 1s ease-in-out infinite;
-        }
-      }
+			&:hover {
+				.thumbs-up {
+					stroke: #059669;
+					fill: #6ee7b7;
+					animation: thumb 1s ease-in-out infinite;
+				}
+			}
 
-      .num-votes {
-        display: inline-flex;
-        align-items: flex-end;
-      }
-    }
+			.num-votes {
+				display: inline-flex;
+				align-items: flex-end;
+			}
+		}
 
-    .column-download {
-      display: flex;
-      gap: 0.5em;
-      flex-flow: column;
-      text-align: center;
-    }
+		.column-download {
+			display: flex;
+			gap: 0.5em;
+			flex-flow: column;
+			text-align: center;
+		}
 
-  }
+	}
 
-  .action-buttons {
-    margin: 0;
+	.action-buttons {
+		margin: 0;
 
-    .button {
-      width: 100%;
-      text-align: center;
-    }
-  }
+		.button {
+			width: 100%;
+			text-align: center;
+		}
+	}
 
 
 }
@@ -343,8 +343,8 @@ td.column-name {
 
 .plugin-card-bottom {
 	overflow: visible !important;
-  display: flex;
-  align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .beta-test-notice {
