@@ -18,7 +18,7 @@ jobs:
       - name: Get version from package.json
         id: version
         run: |
-          echo "tag=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+          echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
 
       - name: Create tag
         run: |
