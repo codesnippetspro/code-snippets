@@ -33,6 +33,12 @@ class Snippet_Config_Repository implements Snippet_Config_Repository_Interface {
 			";\n";
 
 		$this->fs->put_contents( $config_file_path, $file_content, FS_CHMOD_FILE );
+
+		if ( is_file( $config_file_path ) ) {
+			if ( function_exists( 'opcache_invalidate' ) ) {
+				opcache_invalidate( $config_file_path, true );
+			}
+		}
 	}
 
 	public function update( string $base_dir, Snippet $snippet, ?bool $remove = false ): void {
