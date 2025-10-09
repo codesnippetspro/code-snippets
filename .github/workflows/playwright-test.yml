@@ -12,10 +12,6 @@ on:
         type: string
         description: 'Playwright project name to run'
 
-permissions:
-  contents: read
-  actions: write
-
 jobs:
   playwright-test:
     name: Playwright tests (${{ inputs.test-mode == 'default' && 'Default Mode' || 'File-based Execution' }})
