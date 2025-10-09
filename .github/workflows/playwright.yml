@@ -100,7 +100,7 @@ jobs:
           npx playwright install chromium
 
       - name: Run Playwright tests (Default Mode)
-        run: npx playwright test --project=chromium-db-snippets
+        run: npm run test:playwright -- --project=chromium-db-snippets
 
       - name: Stop WordPress environment
         if: always()
@@ -191,7 +191,7 @@ jobs:
           npx playwright install chromium
 
       - name: Run Playwright tests (File-based Execution)
-        run: npx playwright test --project=chromium-file-based-snippets
+        run: npm run test:playwright -- --project=chromium-file-based-snippets
 
       - name: Verify file-based execution enabled
         if: always()
