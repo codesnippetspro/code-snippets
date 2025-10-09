@@ -40,9 +40,14 @@ const createPageWithShortcode = async (snippetId: string): Promise<string> => {
 	const pageContent = `<p>Page content before shortcode.</p>\n\n${shortcode}\n\n<p>Page content after shortcode.</p>`
 
 	try {
-		const createPageCmd = 'npx wp-env run cli wp post create' +
-			'--post_type=page --post_title="Test Page for Snippet Shortcode"' +
-			`--post_content='${pageContent}' --post_status=publish --porcelain`
+		const createPageCmd = [
+			'npx wp-env run cli wp post create',
+			'--post_type=page',
+			'--post_title="Test Page for Snippet Shortcode"',
+			`--post_content='${pageContent}'`,
+			'--post_status=publish',
+			'--porcelain'
+		].join(' ')
 
 		const { stdout } = await execAsync(createPageCmd)
 		const pageId = stdout.trim()
