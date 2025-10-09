@@ -7,6 +7,11 @@ on:
         required: false
         type: string
         default: ${{ inputs.ref }}
+      php:
+        required: false
+        type: number
+        default: 8.3
+
     outputs:
       version:
         value: ${{ jobs.build.outputs.version }}
@@ -14,13 +19,16 @@ on:
         value: ${{ jobs.build.outputs.artifact_name }}
       artifact_url:
         value: ${{ jobs.build.outputs.artifact_url }}
+      artifact_id:
+        value: ${{ jobs.build.outputs.artifact_id }}
 jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
+      version: ${{ steps.build.outputs.version }}
       artifact_name: ${{ steps.build.outputs.name }}
       artifact_url: ${{ steps.artifacts.outputs.artifact-url }}
-      version: ${{ steps.build.outputs.version }}
+      artifact_id: ${{ steps.artifacts.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,7 +37,7 @@ jobs:
       - name: Set up PHP
         uses: codesnippetspro/setup-php@v2
         with:
-          php-version: "8.3"
+          php-version: ${{ inputs.php }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
