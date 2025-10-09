@@ -16,8 +16,8 @@ setup('enable flat files', async ({ page }) => {
 
 	await page.click('input[type="submit"][name="submit"]');
 	
-	await page.waitForSelector('.notice-success, .updated', { timeout: 10000 });
-	await expect(page.locator('.notice-success, .updated')).toContainText('Settings saved');
+	await page.waitForSelector('.notice-success', { timeout: 10000 });
+	await expect(page.locator('.notice-success')).toContainText('Settings saved');
 
 	await page.reload();
 	await page.waitForSelector('input[name="code_snippets_settings[general][enable_flat_files]"]');

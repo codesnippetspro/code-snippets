@@ -35,6 +35,10 @@ export default defineConfig({
 		{
 			name: 'flat-files-setup',
 			testMatch: /flat-files\.setup\.ts/,
+			use: {
+				...devices['Desktop Chrome'],
+				storageState: join(__dirname, '../e2e/.auth/user.json')
+			},
 			dependencies: ['setup']
 		},
 
