@@ -88,20 +88,8 @@ jobs:
         run: |
           npx playwright install chromium
 
-      - name: Restart WordPress environment for file-based execution
-        if: inputs.test-mode == 'file-based-execution'
-        run: |
-          echo "Restarting WordPress to clear opcache..."
-          npx wp-env stop
-          npx wp-env start
-
       - name: Run Playwright tests
         run: npm run test:playwright -- --project=${{ inputs.project-name }}
-
-      - name: Verify file-based execution enabled
-        if: always() && inputs.test-mode == 'file-based-execution'
-        run: |
-          npx wp-env run cli wp eval 'echo file_exists(WP_CONTENT_DIR . "/code-snippets/flat-files-enabled.flag") ? "ENABLED" : "DISABLED";'
 
       - name: Stop WordPress environment
         if: always()

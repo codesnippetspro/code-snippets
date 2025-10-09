@@ -47,7 +47,7 @@ jobs:
         run: |
           echo "Default Mode: ${{ needs.playwright-default.result }}"
           echo "File-based Execution: ${{ needs.playwright-file-based-execution.result }}"
-      
+
       - name: Check overall status
         if: ${{ (needs.playwright-default.result != 'success' && needs.playwright-default.result != 'skipped') || (needs.playwright-file-based-execution.result != 'success' && needs.playwright-file-based-execution.result != 'skipped') }}
         run: exit 1
