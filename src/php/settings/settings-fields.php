@@ -37,6 +37,7 @@ function get_default_settings(): array {
 			'indent_with_tabs'            => true,
 			'tab_size'                    => 4,
 			'indent_unit'                 => 4,
+			'font_size'                   => 14,
 			'wrap_lines'                  => true,
 			'code_folding'                => true,
 			'line_numbers'                => true,
@@ -161,12 +162,21 @@ function get_settings_fields(): array {
 			'codemirror' => 'indentUnit',
 			'min'        => 0,
 		],
+		'font_size'                   => [
+			'name'       => __( 'Font Size', 'code-snippets' ),
+			'type'       => 'number',
+			'label'      => _x( 'px', 'unit', 'code-snippets' ),
+			'codemirror' => 'fontSize',
+			'min'        => 8,
+			'max'        => 28,
+		],
 		'wrap_lines'                  => [
 			'name'       => __( 'Wrap Lines', 'code-snippets' ),
 			'type'       => 'checkbox',
 			'label'      => __( 'Soft-wrap long lines of code instead of horizontally scrolling.', 'code-snippets' ),
 			'codemirror' => 'lineWrapping',
 		],
+
 		'code_folding'                => [
 			'name'       => __( 'Code Folding', 'code-snippets' ),
 			'type'       => 'checkbox',

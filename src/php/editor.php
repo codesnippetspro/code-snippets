@@ -66,6 +66,13 @@ function enqueue_code_editor( string $type, array $extra_atts = [] ) {
 		$atts[ $number_att ] = intval( $atts[ $number_att ] );
 	}
 
+	// Remove fontSize from the options and add it as an inline style.
+	if ( isset( $atts['fontSize'] ) ) {
+		$font_size = intval( $atts['fontSize'] );
+		unset( $atts['fontSize'] );
+		wp_add_inline_style( 'code-editor', ".CodeMirror { font-size: {$font_size}px !important; }" );
+	}
+
 	wp_enqueue_code_editor(
 		[
 			'type'       => $modes[ $type ],
