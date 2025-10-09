@@ -23,15 +23,9 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # build-plugin:
-  #   if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-  #   name: Build plugin
-  #   uses: ./.github/workflows/build.yml
-
   Playwright:
     name: Playwright test on PHP 8.1
     runs-on: ubuntu-22.04
-    # needs: [build-plugin]
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     steps:
       - name: Checkout source code
@@ -43,13 +37,48 @@ jobs:
           node-version: 20.x
           cache: 'npm'
 
-      - name: Install & Build
-        id: build
+      - name: Compute dependency hash
+        id: deps-hash
         run: |
-          npm install && npm run bundle
+          set -euo pipefail
+          # concatenate existing lock files (src/composer.lock and package-lock.json)
+          tmpfile=$(mktemp)
+          for f in src/composer.lock package-lock.json; do
+            if [ -f "$f" ]; then
+              cat "$f" >> "$tmpfile"
+            fi
+          done
+          if [ -s "$tmpfile" ]; then
+            deps_hash=$(shasum -a 1 "$tmpfile" | awk '{print $1}' | cut -c1-8)
+          else
+            # no lock files found, fall back to short commit sha
+            deps_hash=$(echo "${GITHUB_SHA:-unknown}" | cut -c1-8)
+          fi
+          echo "deps_hash=$deps_hash" >> "$GITHUB_OUTPUT"
+
+      - name: Get build cache
+        id: deps-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            src/vendor
+          key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
 
       - name: Install workflow dependencies (wp-env, playwright)
-        run: npm run prepare-environment:ci
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        run: npm run prepare-environment:ci && npm run bundle
+
+      - name: Save vendor and node_modules cache
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            vendor
+            node_modules
+          key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
           
       - name: Start WordPress environment
         run: |
