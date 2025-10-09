@@ -26,6 +26,10 @@ jobs:
   playwright-default:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     uses: ./.github/workflows/playwright-test.yml
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
     with:
       test-mode: 'default'
       project-name: 'chromium-db-snippets'
@@ -33,6 +37,10 @@ jobs:
   playwright-file-based-execution:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     uses: ./.github/workflows/playwright-test.yml
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
     with:
       test-mode: 'file-based-execution'
       project-name: 'chromium-file-based-snippets'
