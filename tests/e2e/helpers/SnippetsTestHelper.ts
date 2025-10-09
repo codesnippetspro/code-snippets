@@ -3,10 +3,10 @@ import { BUTTONS, MESSAGES, SELECTORS, SNIPPET_LOCATIONS, SNIPPET_TYPES, TIMEOUT
 import type { Page } from '@playwright/test'
 
 export interface SnippetFormOptions {
-	name: string;
-	code: string;
-	type?: keyof typeof SNIPPET_TYPES;
-	location?: keyof typeof SNIPPET_LOCATIONS;
+	name: string
+	code: string
+	type?: keyof typeof SNIPPET_TYPES
+	location?: keyof typeof SNIPPET_LOCATIONS
 }
 
 export class SnippetsTestHelper {
@@ -208,18 +208,19 @@ export class SnippetsTestHelper {
 	/**
 	 * Get computed CSS style property from an element
 	 */
-	async getComputedStyle(selector: string, property: string): Promise<string> {
-		return await this.page.locator(selector).evaluate((el: Element, prop: string) =>
-			window.getComputedStyle(el as HTMLElement)[prop as any], property
+	async getComputedStyle(selector: string, property: keyof CSSStyleDeclaration) {
+		return await this.page.locator(selector).evaluate(
+			(element, prop) => window.getComputedStyle(element)[prop],
+			property
 		)
 	}
 
 	/**
 	 * Verify that CSS styles are applied to an element
 	 */
-	async verifyStylesApplied(selector: string, expectedStyles: Record<string, string>): Promise<void> {
+	async verifyStylesApplied(selector: string, expectedStyles: Partial<CSSStyleDeclaration>): Promise<void> {
 		for (const [property, expectedValue] of Object.entries(expectedStyles)) {
-			const actualValue = await this.getComputedStyle(selector, property)
+			const actualValue = await this.getComputedStyle(selector, <keyof CSSStyleDeclaration> property)
 			expect(actualValue).toBe(expectedValue)
 		}
 	}
@@ -227,9 +228,9 @@ export class SnippetsTestHelper {
 	/**
 	 * Verify that CSS styles are NOT applied to an element
 	 */
-	async verifyStylesNotApplied(selector: string, unexpectedStyles: Record<string, string>): Promise<void> {
+	async verifyStylesNotApplied(selector: string, unexpectedStyles: Partial<CSSStyleDeclaration>): Promise<void> {
 		for (const [property, unexpectedValue] of Object.entries(unexpectedStyles)) {
-			const actualValue = await this.getComputedStyle(selector, property)
+			const actualValue = await this.getComputedStyle(selector, <keyof CSSStyleDeclaration> property)
 			expect(actualValue).not.toBe(unexpectedValue)
 		}
 	}
@@ -239,16 +240,23 @@ export class SnippetsTestHelper {
 	/**
 	 * Verify that a global variable has the expected value
 	 */
-	async verifyGlobalVariable(variableName: string, expectedValue: any): Promise<void> {
-		const actualValue = await this.page.evaluate((varName: string) => (window as any)[varName], variableName)
+	async verifyGlobalVariable(variableName: keyof Window, expectedValue: unknown): Promise<void> {
+		const actualValue = await this.page.evaluate<typeof expectedValue, keyof Window>(
+			varName => window[varName],
+			variableName
+		)
 		expect(actualValue).toBe(expectedValue)
 	}
 
 	/**
 	 * Verify that a global function returns the expected result
 	 */
-	async verifyGlobalFunction(functionName: string, expectedResult: any): Promise<void> {
-		const result = await this.page.evaluate((funcName: string) => (window as any)[funcName]?.(), functionName)
+	async verifyGlobalFunction(functionName: keyof Window, expectedResult: unknown): Promise<void> {
+		const result = await this.page.evaluate<typeof expectedResult, keyof Window>(
+			funcName => (<(() => unknown) | undefined> window[funcName])?.(),
+			functionName
+		)
+
 		expect(result).toBe(expectedResult)
 	}
 }

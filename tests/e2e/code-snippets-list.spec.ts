@@ -82,7 +82,7 @@ test.describe('Code Snippets List Page Actions', () => {
 
 	test('Can delete snippet from list page', async ({ page }) => {
 		const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
-		page.on('dialog', async (dialog) => {
+		page.on('dialog', async dialog => {
 			expect(dialog.type()).toBe('confirm')
 			await dialog.accept()
 		})
