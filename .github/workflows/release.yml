@@ -20,7 +20,7 @@ jobs:
     permissions:
       contents: write
     outputs:
-      artifact_name: ${{ needs.install.outputs.artifact_name }}
+      artifact_name: ${{ steps.zip.outputs.name }}
     steps:
       - name: Get artifact url
         id: artifact
@@ -39,12 +39,14 @@ jobs:
       - name: Create zip archive
         id: zip
         run: |
-          zip_name="${{ needs.install.outputs.artifact_name }}.zip"
+          # zip filename format: <artifact_name>.<tag_name>.zip
+          zip_name="${{ needs.install.outputs.artifact_name }}.${{ github.event.release.tag_name }}.zip"
 
           cd ./bundle/${{ needs.install.outputs.artifact_name }}
           zip -r "../$zip_name" .
           cd ..
 
+          echo "zip_name=$zip_name" >> $GITHUB_OUTPUT
           echo "path=$(pwd)/$zip_name" >> $GITHUB_OUTPUT
 
       - name: Upload release asset
