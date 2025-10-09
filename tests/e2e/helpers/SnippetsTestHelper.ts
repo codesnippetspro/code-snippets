@@ -1,259 +1,254 @@
-import { Page, expect } from '@playwright/test';
-import { 
-  SELECTORS, 
-  TIMEOUTS, 
-  URLS, 
-  MESSAGES, 
-  SNIPPET_TYPES, 
-  SNIPPET_LOCATIONS, 
-  BUTTONS 
-} from './constants';
+import { expect } from '@playwright/test'
+import { BUTTONS, MESSAGES, SELECTORS, SNIPPET_LOCATIONS, SNIPPET_TYPES, TIMEOUTS, URLS } from './constants'
+import type { Page } from '@playwright/test'
 
 export interface SnippetFormOptions {
-  name: string;
-  code: string;
-  type?: keyof typeof SNIPPET_TYPES;
-  location?: keyof typeof SNIPPET_LOCATIONS;
+	name: string;
+	code: string;
+	type?: keyof typeof SNIPPET_TYPES;
+	location?: keyof typeof SNIPPET_LOCATIONS;
 }
 
 export class SnippetsTestHelper {
-  constructor(private page: Page) {}
+	constructor(private page: Page) {
 
-  /**
-   * Navigate to the Code Snippets admin page
-   */
-  async navigateToSnippetsAdmin(): Promise<void> {
-    await this.page.goto(URLS.SNIPPETS_ADMIN);
-    await this.page.waitForLoadState('networkidle');
-    await this.page.waitForSelector(SELECTORS.WPBODY_CONTENT, { timeout: TIMEOUTS.DEFAULT });
-  }
+	}
 
-  /**
-   * Navigate to frontend
-   */
-  async navigateToFrontend(): Promise<void> {
-    await this.page.goto(URLS.FRONTEND);
-    await this.page.waitForLoadState('networkidle');
-  }
+	/**
+	 * Navigate to the Code Snippets admin page
+	 */
+	async navigateToSnippetsAdmin(): Promise<void> {
+		await this.page.goto(URLS.SNIPPETS_ADMIN)
+		await this.page.waitForLoadState('networkidle')
+		await this.page.waitForSelector(SELECTORS.WPBODY_CONTENT, { timeout: TIMEOUTS.DEFAULT })
+	}
 
-  /**
-   * Click the "Add New" button to start creating a snippet
-   */
-  async clickAddNewSnippet(): Promise<void> {
-    await this.page.waitForSelector(SELECTORS.PAGE_TITLE, { timeout: TIMEOUTS.DEFAULT });
-    await this.page.click(SELECTORS.ADD_NEW_BUTTON);
-    await this.page.waitForLoadState('networkidle');
-  }
+	/**
+	 * Navigate to frontend
+	 */
+	async navigateToFrontend(): Promise<void> {
+		await this.page.goto(URLS.FRONTEND)
+		await this.page.waitForLoadState('networkidle')
+	}
 
-  /**
-   * Fill the snippet form with the provided options
-   */
-  async fillSnippetForm(options: SnippetFormOptions): Promise<void> {
-    await this.page.waitForSelector(SELECTORS.TITLE_INPUT);
-    await this.page.fill(SELECTORS.TITLE_INPUT, options.name);
+	/**
+	 * Click the "Add New" button to start creating a snippet
+	 */
+	async clickAddNewSnippet(): Promise<void> {
+		await this.page.waitForSelector(SELECTORS.PAGE_TITLE, { timeout: TIMEOUTS.DEFAULT })
+		await this.page.click(SELECTORS.ADD_NEW_BUTTON)
+		await this.page.waitForLoadState('networkidle')
+	}
 
-    if (options.type && options.type !== 'PHP') {
-      await this.page.click(SELECTORS.SNIPPET_TYPE_SELECT);
-      await this.page.click(`text=${SNIPPET_TYPES[options.type]}`);
-    }
+	/**
+	 * Fill the snippet form with the provided options
+	 */
+	async fillSnippetForm(options: SnippetFormOptions): Promise<void> {
+		await this.page.waitForSelector(SELECTORS.TITLE_INPUT)
+		await this.page.fill(SELECTORS.TITLE_INPUT, options.name)
 
-    await this.page.waitForSelector(SELECTORS.CODE_MIRROR_TEXTAREA);
-    await this.page.fill(SELECTORS.CODE_MIRROR_TEXTAREA, options.code);
+		if (options.type && 'PHP' !== options.type) {
+			await this.page.click(SELECTORS.SNIPPET_TYPE_SELECT)
+			await this.page.click(`text=${SNIPPET_TYPES[options.type]}`)
+		}
 
-    if (options.location) {
-      await this.page.waitForSelector(SELECTORS.LOCATION_SELECT, { timeout: TIMEOUTS.SHORT });
-      await this.page.click(SELECTORS.LOCATION_SELECT);
-      await this.page.waitForSelector(`text=${SNIPPET_LOCATIONS[options.location]}`, { timeout: TIMEOUTS.SHORT });
-      await this.page.click(`text=${SNIPPET_LOCATIONS[options.location]}`, { force: true });
-    }
-  }
+		await this.page.waitForSelector(SELECTORS.CODE_MIRROR_TEXTAREA)
+		await this.page.fill(SELECTORS.CODE_MIRROR_TEXTAREA, options.code)
 
-  /**
-   * Save the snippet with the specified action
-   */
-  async saveSnippet(action: 'save' | 'save_and_activate' | 'save_and_deactivate' = 'save'): Promise<void> {
-    const buttonMap = {
-      save: BUTTONS.SAVE,
-      save_and_activate: BUTTONS.SAVE_AND_ACTIVATE,
-      save_and_deactivate: BUTTONS.SAVE_AND_DEACTIVATE,
-    };
+		if (options.location) {
+			await this.page.waitForSelector(SELECTORS.LOCATION_SELECT, { timeout: TIMEOUTS.SHORT })
+			await this.page.click(SELECTORS.LOCATION_SELECT)
+			await this.page.waitForSelector(`text=${SNIPPET_LOCATIONS[options.location]}`, { timeout: TIMEOUTS.SHORT })
+			await this.page.click(`text=${SNIPPET_LOCATIONS[options.location]}`, { force: true })
+		}
+	}
 
-    await this.page.click(buttonMap[action]);
-  }
+	/**
+	 * Save the snippet with the specified action
+	 */
+	async saveSnippet(action: 'save' | 'save_and_activate' | 'save_and_deactivate' = 'save'): Promise<void> {
+		const buttonMap = {
+			save: BUTTONS.SAVE,
+			save_and_activate: BUTTONS.SAVE_AND_ACTIVATE,
+			save_and_deactivate: BUTTONS.SAVE_AND_DEACTIVATE
+		}
 
-  /**
-   * Expect a success message with the specified text
-   */
-  async expectSuccessMessage(expectedMessage: string): Promise<void> {
-    await expect(this.page.locator(SELECTORS.SUCCESS_MESSAGE)).toContainText(expectedMessage);
-  }
+		await this.page.click(buttonMap[action])
+	}
 
-  /**
-   * Expect a success message in paragraph element
-   */
-  async expectSuccessMessageInParagraph(expectedMessage: string): Promise<void> {
-    await expect(this.page.locator(SELECTORS.SUCCESS_MESSAGE_P)).toContainText(expectedMessage);
-  }
+	/**
+	 * Expect a success message with the specified text
+	 */
+	async expectSuccessMessage(expectedMessage: string): Promise<void> {
+		await expect(this.page.locator(SELECTORS.SUCCESS_MESSAGE)).toContainText(expectedMessage)
+	}
 
-  /**
-   * Open an existing snippet by name
-   */
-  async openSnippet(snippetName: string): Promise<void> {
-    await this.page.waitForSelector(`text=${snippetName}`);
-    await this.page.click(`text=${snippetName}`);
-    await this.page.waitForLoadState('networkidle');
-  }
+	/**
+	 * Expect a success message in paragraph element
+	 */
+	async expectSuccessMessageInParagraph(expectedMessage: string): Promise<void> {
+		await expect(this.page.locator(SELECTORS.SUCCESS_MESSAGE_P)).toContainText(expectedMessage)
+	}
 
-  /**
-   * Delete a snippet (assumes you're already on the snippet edit page)
-   */
-  async deleteSnippet(): Promise<void> {
-    await this.page.click(BUTTONS.DELETE);
-    await this.page.click(SELECTORS.DELETE_CONFIRM_BUTTON);
-  }
+	/**
+	 * Open an existing snippet by name
+	 */
+	async openSnippet(snippetName: string): Promise<void> {
+		await this.page.waitForSelector(`text=${snippetName}`)
+		await this.page.click(`text=${snippetName}`)
+		await this.page.waitForLoadState('networkidle')
+	}
 
-  /**
-   * Check if a snippet exists on the snippets list page
-   */
-  async snippetExists(snippetName: string): Promise<boolean> {
-    const count = await this.page.locator(`text=${snippetName}`).count();
-    return count > 0;
-  }
+	/**
+	 * Delete a snippet (assumes you're already on the snippet edit page)
+	 */
+	async deleteSnippet(): Promise<void> {
+		await this.page.click(BUTTONS.DELETE)
+		await this.page.click(SELECTORS.DELETE_CONFIRM_BUTTON)
+	}
 
-  /**
-   * Clean up a snippet by name (navigate to admin, find snippet, delete it)
-   */
-  async cleanupSnippet(snippetName: string): Promise<void> {
-    await this.navigateToSnippetsAdmin();
-    if (await this.snippetExists(snippetName)) {
-      await this.openSnippet(snippetName);
-      await this.deleteSnippet();
-    }
-  }
+	/**
+	 * Check if a snippet exists on the snippets list page
+	 */
+	async snippetExists(snippetName: string): Promise<boolean> {
+		const count = await this.page.locator(`text=${snippetName}`).count()
+		return 0 < count
+	}
 
-  /**
-   * Verify the current URL contains the snippets admin page
-   */
-  async expectToBeOnSnippetsAdminPage(): Promise<void> {
-    const currentUrl = this.page.url();
-    expect(currentUrl).toContain('page=snippets');
-    await expect(this.page.locator(SELECTORS.PAGE_TITLE)).toBeVisible();
-  }
+	/**
+	 * Clean up a snippet by name (navigate to admin, find snippet, delete it)
+	 */
+	async cleanupSnippet(snippetName: string): Promise<void> {
+		await this.navigateToSnippetsAdmin()
+		if (await this.snippetExists(snippetName)) {
+			await this.openSnippet(snippetName)
+			await this.deleteSnippet()
+		}
+	}
 
-  /**
-   * Expect an element to be visible
-   */
-  async expectElementVisible(selector: string): Promise<void> {
-    await expect(this.page.locator(selector)).toBeVisible();
-  }
+	/**
+	 * Verify the current URL contains the snippets admin page
+	 */
+	async expectToBeOnSnippetsAdminPage(): Promise<void> {
+		const currentUrl = this.page.url()
+		expect(currentUrl).toContain('page=snippets')
+		await expect(this.page.locator(SELECTORS.PAGE_TITLE)).toBeVisible()
+	}
 
-  /**
-   * Expect an element to not be visible
-   */
-  async expectElementNotVisible(selector: string): Promise<void> {
-    await expect(this.page.locator(selector)).not.toBeVisible();
-  }
+	/**
+	 * Expect an element to be visible
+	 */
+	async expectElementVisible(selector: string): Promise<void> {
+		await expect(this.page.locator(selector)).toBeVisible()
+	}
 
-  /**
-   * Expect an element to have a specific count
-   */
-  async expectElementCount(selector: string, expectedCount: number): Promise<void> {
-    const count = await this.page.locator(selector).count();
-    expect(count).toBe(expectedCount);
-  }
+	/**
+	 * Expect an element to not be visible
+	 */
+	async expectElementNotVisible(selector: string): Promise<void> {
+		await expect(this.page.locator(selector)).not.toBeVisible()
+	}
 
-  /**
-   * Expect text to be visible on the page
-   */
-  async expectTextVisible(text: string): Promise<void> {
-    await expect(this.page.locator(`text=${text}`)).toBeVisible();
-  }
+	/**
+	 * Expect an element to have a specific count
+	 */
+	async expectElementCount(selector: string, expectedCount: number): Promise<void> {
+		const count = await this.page.locator(selector).count()
+		expect(count).toBe(expectedCount)
+	}
 
-  /**
-   * Expect text to not be visible on the page
-   */
-  async expectTextNotVisible(text: string): Promise<void> {
-    await expect(this.page.locator('body')).not.toContainText(text);
-  }
+	/**
+	 * Expect text to be visible on the page
+	 */
+	async expectTextVisible(text: string): Promise<void> {
+		await expect(this.page.locator(`text=${text}`)).toBeVisible()
+	}
 
-  /**
-   * Create a complete snippet with save and activate
-   */
-  async createAndActivateSnippet(options: SnippetFormOptions): Promise<void> {
-    await this.clickAddNewSnippet();
-    await this.fillSnippetForm(options);
-    await this.saveSnippet('save_and_activate');
-    await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED_AND_ACTIVATED);
-  }
+	/**
+	 * Expect text to not be visible on the page
+	 */
+	async expectTextNotVisible(text: string): Promise<void> {
+		await expect(this.page.locator('body')).not.toContainText(text)
+	}
 
-  /**
-   * Create a snippet without activating
-   */
-  async createSnippet(options: SnippetFormOptions): Promise<void> {
-    await this.clickAddNewSnippet();
-    await this.fillSnippetForm(options);
-    await this.saveSnippet('save');
-    await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED);
-  }
+	/**
+	 * Create a complete snippet with save and activate
+	 */
+	async createAndActivateSnippet(options: SnippetFormOptions): Promise<void> {
+		await this.clickAddNewSnippet()
+		await this.fillSnippetForm(options)
+		await this.saveSnippet('save_and_activate')
+		await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED_AND_ACTIVATED)
+	}
 
-  // CSS Testing Helpers
+	/**
+	 * Create a snippet without activating
+	 */
+	async createSnippet(options: SnippetFormOptions): Promise<void> {
+		await this.clickAddNewSnippet()
+		await this.fillSnippetForm(options)
+		await this.saveSnippet('save')
+		await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED)
+	}
 
-  /**
-   * Create a test DOM element for CSS testing
-   */
-  async createTestElement(className: string, textContent: string = 'Test Element'): Promise<void> {
-    await this.page.evaluate(({ className, textContent }: { className: string; textContent: string }) => {
-      const testElement = document.createElement('div');
-      testElement.className = className;
-      testElement.textContent = textContent;
-      document.body.appendChild(testElement);
-    }, { className, textContent });
-  }
+	// CSS Testing Helpers
 
-  /**
-   * Get computed CSS style property from an element
-   */
-  async getComputedStyle(selector: string, property: string): Promise<string> {
-    return await this.page.locator(selector).evaluate((el: Element, prop: string) => 
-      window.getComputedStyle(el as HTMLElement)[prop as any], property
-    );
-  }
+	/**
+	 * Create a test DOM element for CSS testing
+	 */
+	async createTestElement(className: string, textContent = 'Test Element'): Promise<void> {
+		await this.page.evaluate(({ className, textContent }: { className: string; textContent: string }) => {
+			const testElement = document.createElement('div')
+			testElement.className = className
+			testElement.textContent = textContent
+			document.body.appendChild(testElement)
+		}, { className, textContent })
+	}
 
-  /**
-   * Verify that CSS styles are applied to an element
-   */
-  async verifyStylesApplied(selector: string, expectedStyles: Record<string, string>): Promise<void> {
-    for (const [property, expectedValue] of Object.entries(expectedStyles)) {
-      const actualValue = await this.getComputedStyle(selector, property);
-      expect(actualValue).toBe(expectedValue);
-    }
-  }
+	/**
+	 * Get computed CSS style property from an element
+	 */
+	async getComputedStyle(selector: string, property: string): Promise<string> {
+		return await this.page.locator(selector).evaluate((el: Element, prop: string) =>
+			window.getComputedStyle(el as HTMLElement)[prop as any], property
+		)
+	}
 
-  /**
-   * Verify that CSS styles are NOT applied to an element
-   */
-  async verifyStylesNotApplied(selector: string, unexpectedStyles: Record<string, string>): Promise<void> {
-    for (const [property, unexpectedValue] of Object.entries(unexpectedStyles)) {
-      const actualValue = await this.getComputedStyle(selector, property);
-      expect(actualValue).not.toBe(unexpectedValue);
-    }
-  }
+	/**
+	 * Verify that CSS styles are applied to an element
+	 */
+	async verifyStylesApplied(selector: string, expectedStyles: Record<string, string>): Promise<void> {
+		for (const [property, expectedValue] of Object.entries(expectedStyles)) {
+			const actualValue = await this.getComputedStyle(selector, property)
+			expect(actualValue).toBe(expectedValue)
+		}
+	}
 
-  // JavaScript Testing Helpers
+	/**
+	 * Verify that CSS styles are NOT applied to an element
+	 */
+	async verifyStylesNotApplied(selector: string, unexpectedStyles: Record<string, string>): Promise<void> {
+		for (const [property, unexpectedValue] of Object.entries(unexpectedStyles)) {
+			const actualValue = await this.getComputedStyle(selector, property)
+			expect(actualValue).not.toBe(unexpectedValue)
+		}
+	}
 
-  /**
-   * Verify that a global variable has the expected value
-   */
-  async verifyGlobalVariable(variableName: string, expectedValue: any): Promise<void> {
-    const actualValue = await this.page.evaluate((varName: string) => (window as any)[varName], variableName);
-    expect(actualValue).toBe(expectedValue);
-  }
+	// JavaScript Testing Helpers
 
-  /**
-   * Verify that a global function returns the expected result
-   */
-  async verifyGlobalFunction(functionName: string, expectedResult: any): Promise<void> {
-    const result = await this.page.evaluate((funcName: string) => (window as any)[funcName]?.(), functionName);
-    expect(result).toBe(expectedResult);
-  }
+	/**
+	 * Verify that a global variable has the expected value
+	 */
+	async verifyGlobalVariable(variableName: string, expectedValue: any): Promise<void> {
+		const actualValue = await this.page.evaluate((varName: string) => (window as any)[varName], variableName)
+		expect(actualValue).toBe(expectedValue)
+	}
+
+	/**
+	 * Verify that a global function returns the expected result
+	 */
+	async verifyGlobalFunction(functionName: string, expectedResult: any): Promise<void> {
+		const result = await this.page.evaluate((funcName: string) => (window as any)[funcName]?.(), functionName)
+		expect(result).toBe(expectedResult)
+	}
 }
