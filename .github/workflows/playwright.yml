@@ -23,15 +23,15 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  build-plugin:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    name: Build plugin
-    uses: ./.github/workflows/build.yml
+  # build-plugin:
+  #   if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+  #   name: Build plugin
+  #   uses: ./.github/workflows/build.yml
 
   Playwright:
     name: Playwright test on PHP 8.1
     runs-on: ubuntu-22.04
-    needs: [build-plugin]
+    # needs: [build-plugin]
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     steps:
       - name: Checkout source code
@@ -43,16 +43,10 @@ jobs:
           node-version: 20.x
           cache: 'npm'
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          artifact-ids: ${{ needs.build-plugin.outputs.artifact_id }}
-          path: ./build
-
-      - name: Copy built plugin to source directory
+      - name: Install & Build
+        id: build
         run: |
-          rm -rf ./src
-          cp -r ./build/code-snippets ./src
+          npm install && npm run bundle
 
       - name: Install workflow dependencies (wp-env, playwright)
         run: npm run prepare-environment:ci
