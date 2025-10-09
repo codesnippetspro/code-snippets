@@ -81,7 +81,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: |
-            vendor
+            src/vendor
             node_modules
           key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
           
