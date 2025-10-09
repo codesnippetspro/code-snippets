@@ -46,7 +46,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          artifact-ids: ${{ needs.build-plugin.outputs.artifact_id }}
           path: ./build
 
       - name: Copy built plugin to source directory
