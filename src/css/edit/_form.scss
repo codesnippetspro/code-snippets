@@ -75,7 +75,7 @@ $sidebar-gap: 30px;
 		grid-area: span 3 / sidebar;
 		max-inline-size: $sidebar-width;
 		position: sticky;
-		top: 32px;
+		inset-block-start: 32px;
 		align-self: start;
 	}
 
