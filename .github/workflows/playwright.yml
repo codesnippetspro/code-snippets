@@ -1,4 +1,4 @@
-name: Playwright
+name: "(Test): Playwright"
 
 on:
   pull_request:
@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - 'core'
+      - 'pro'
     paths-ignore:
       - '**.md'
       - '**.txt'
