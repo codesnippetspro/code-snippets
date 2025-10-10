@@ -13,21 +13,6 @@ on:
         required: true
         type: string
         default: next
-      changelog_path:
-        description: 'Relative path to changelog in calling repo'
-        required: false
-        type: string
-        default: ./CHANGELOG.md
-      readme_path:
-        description: 'Relative path to readme file in calling repo'
-        required: false
-        type: string
-        default: ./src/readme.txt
-      model:
-        description: 'LLM model to use for generation'
-        required: false
-        type: string
-        default: gpt-5-mini
 
 jobs:
   version:
@@ -98,9 +83,7 @@ jobs:
             --field repo="${{ github.repository }}" \
             --field branch="${{ github.ref_name }}" \
             --field version="${{ needs.version.outputs.tag }}" \
-            --field changelog_path="${{ github.event.inputs.changelog_path || './CHANGELOG.md' }}" \
-            --field readme_path="${{ github.event.inputs.readme_path || './src/readme.txt' }}" \
-            --field model="${{ github.event.inputs.model || 'gpt-5-mini' }}"; then
+            --field readme_path="./src/readme.txt" \
             echo "::error::Failed to dispatch workflow '$workflow_file' in $target_repo"
             exit 1
           fi
