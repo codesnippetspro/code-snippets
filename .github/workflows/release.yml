@@ -9,43 +9,37 @@ permissions:
   actions: read
 
 jobs:
-  install:
+  build:
     uses: ./.github/workflows/build.yml
     with:
       ref: ${{ github.event.release.tag_name }}
 
   upload:
-    needs: install
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
-      artifact_name: ${{ needs.install.outputs.artifact_name }}
+      zip_name: ${{ steps.zip.outputs.zip_name }}
     steps:
-      - name: Get artifact url
-        id: artifact
-        run: |
-          url="${{ needs.install.outputs.artifact_url }}"
-          id="${url##*/}"
-          echo "id=$id" >> $GITHUB_OUTPUT
-
       - name: Download built zip
         id: download
         uses: actions/download-artifact@v4
         with:
-          artifact-ids: ${{ steps.artifact.outputs.id }}
+          artifact-ids: ${{ needs.build.outputs.artifact_id }}
           path: ./bundle
 
       - name: Create zip archive
         id: zip
         run: |
           # zip filename format: <artifact_name>.<tag_name>.zip
-          zip_name="${{ needs.install.outputs.artifact_name }}.${{ github.event.release.tag_name }}.zip"
+          zip_name="${{ needs.build.outputs.artifact_name }}.${{ github.event.release.tag_name }}.zip"
 
-          cd ./bundle/${{ needs.install.outputs.artifact_name }}
+          cd ./bundle/${{ needs.build.outputs.artifact_name }}
           zip -r "../$zip_name" .
           cd ..
 
+          echo "zip_name=$zip_name" >> $GITHUB_OUTPUT
           echo "path=$(pwd)/$zip_name" >> $GITHUB_OUTPUT
 
       - name: Upload release asset
@@ -55,7 +49,7 @@ jobs:
           files: ${{ steps.zip.outputs.path }}
 
   deploy:
-    needs: [install, upload]
+    needs: [build, upload]
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch publish workflow
@@ -69,8 +63,8 @@ jobs:
           echo "   Repository: $target_repo"
           echo "   Source Repo: ${{ github.repository }}"
           echo "   Branch: ${{ github.ref_name }}"
-          echo "   Tag: ${{ needs.install.outputs.version }}"
-          echo "   Artifact Name: ${{ needs.upload.outputs.artifact_name }}"
+          echo "   Tag: ${{ github.event.release.tag_name }}"
+          echo "   Artifact Name: ${{ needs.build.outputs.artifact_name }}"
           
           # Dispatch the workflow with required parameters
           if ! gh workflow run "$workflow_file" \
@@ -78,8 +72,8 @@ jobs:
             --ref main \
             --field repo="${{ github.repository }}" \
             --field branch="${{ github.ref_name }}" \
-            --field tag="${{ needs.install.outputs.version }}" \
-            --field artifact_name="${{ needs.upload.outputs.artifact_name }}"; then
+            --field tag="${{ github.event.release.tag_name }}" \
+            --field zip_name="${{ needs.upload.outputs.zip_name }}"; then
             echo "::error::Failed to dispatch publish workflow in $target_repo"
             exit 1
           fi
@@ -95,3 +89,4 @@ jobs:
             echo "::notice::Monitor workflow progress at: $run_url"
             echo "workflow_url=$run_url" >> $GITHUB_OUTPUT
           fi
+
