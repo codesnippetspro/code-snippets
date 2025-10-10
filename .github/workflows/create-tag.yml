@@ -4,9 +4,10 @@ on:
   pull_request:
     types: [closed]
     branches:
+      - core
+      - core-beta
       - pro
       - pro-beta
-
 jobs:
   create-tag:
     if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'tag/v')
@@ -26,4 +27,3 @@ jobs:
           git config user.email "sre@codesnippets.pro"
           git tag "${{ steps.version.outputs.version }}"
           git push origin "${{ steps.version.outputs.version }}"
-
