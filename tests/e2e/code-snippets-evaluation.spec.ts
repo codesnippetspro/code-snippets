@@ -52,9 +52,14 @@ ${shortcode}
 <p>Page content after shortcode.</p>`
 
 	try {
-		const createPageCmd = 'npx wp-env run cli wp post create' +
-			' --post_type=page --post_title="Test Page for Snippet Shortcode"' +
-			` --post_content='${pageContent}' --post_status=publish --porcelain`
+		const createPageCmd = [
+			'npx wp-env run cli wp post create',
+			'--post_type=page',
+			'--post_title="Test Page for Snippet Shortcode"',
+			`--post_content='${pageContent}'`,
+			'--post_status=publish',
+			'--porcelain'
+		].join(' ')
 
 		const { stdout } = await execAsync(createPageCmd)
 		const pageId = stdout.trim()
