@@ -4,7 +4,7 @@ import { replaceInFile } from './utils/files'
 replaceInFile(
 	'src/code-snippets.php',
 	contents => contents
-		.replace(/(?<prefix>Version:\s+|@version\s+)\d+\.\d+[\w-.]+$/mg, `$1${plugin.version}`)
+		.replace(/(?<prefix>Version:\s+|@version\s+)\d+\.\d+\.\d+[\w-.]*$/mg, `$1${plugin.version}`)
 		.replace(/(?<prefix>'CODE_SNIPPETS_VERSION',\s+)'[\w-.]+'/, `$1'${plugin.version}'`)
 )
 
