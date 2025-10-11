@@ -16,17 +16,10 @@ on:
 
 jobs:
   version:
-    runs-on: ubuntu-latest
-    outputs:
-      tag: ${{ steps.compute.outputs.version || github.event.inputs.version }}
-    steps:
-      - name: Compute tag when input is 'next'
-        if: ${{ github.event.inputs.version == 'next' }}
-        id: compute
-        uses: codesnippetspro/.github/workflows/next_version.yml
-        with:
-          file_path: package.json
-          ref_name: ${{ github.ref_name }}
+    uses: codesnippetspro/.github/.github/workflows/next_version.yml@main
+    with:
+      file_path: composer.json
+      ref_name: ${{ github.ref_name }}
 
   changelog:
     runs-on: ubuntu-latest
@@ -69,10 +62,11 @@ jobs:
         run: |
           target_repo="${{ steps.validate.outputs.target_repo }}"
           workflow_file="${{ steps.validate.outputs.workflow_file }}"
+          version="${{ needs.version.outputs.version }}"
           
           echo "::notice::Dispatching workflow '$workflow_file' to generate changelog and readme entries..."
           echo "   Calling repo: $target_repo"
-          echo "   Version: ${{ needs.version.outputs.tag }}"
+          echo "   Version: $version"
           echo "   Changelog path: ${GITHUB_EVENT_INPUTS_CHANGELOG_PATH:-./CHANGELOG.md}"
           echo "   Readme path: ${GITHUB_EVENT_INPUTS_README_PATH:-./src/readme.txt}"
 
@@ -82,8 +76,8 @@ jobs:
             --ref main \
             --field repo="${{ github.repository }}" \
             --field branch="${{ github.ref_name }}" \
-            --field version="${{ needs.version.outputs.tag }}" \
-            --field readme_path="./src/readme.txt" \
+            --field version="$version" \
+            --field readme_path="./src/readme.txt" ; then
             echo "::error::Failed to dispatch workflow '$workflow_file' in $target_repo"
             exit 1
           fi
