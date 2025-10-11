@@ -16,6 +16,7 @@ on:
 
 jobs:
   version:
+    if: github.event.inputs.version == 'next'
     uses: codesnippetspro/.github/.github/workflows/next_version.yml@main
     with:
       file_path: package.json
@@ -62,7 +63,7 @@ jobs:
         run: |
           target_repo="${{ steps.validate.outputs.target_repo }}"
           workflow_file="${{ steps.validate.outputs.workflow_file }}"
-          version="${{ needs.version.outputs.version }}"
+          version="${{ needs.version.outputs.version || github.event.inputs.version }}"
           
           echo "::notice::Dispatching workflow '$workflow_file' to generate changelog and readme entries..."
           echo "   Calling repo: $target_repo"
