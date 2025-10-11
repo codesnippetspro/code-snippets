@@ -18,7 +18,7 @@ jobs:
   version:
     uses: codesnippetspro/.github/.github/workflows/next_version.yml@main
     with:
-      file_path: composer.json
+      file_path: package.json
       ref_name: ${{ github.ref_name }}
 
   changelog:
