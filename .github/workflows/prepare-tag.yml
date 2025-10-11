@@ -23,6 +23,7 @@ jobs:
       ref_name: ${{ github.ref_name }}
 
   changelog:
+    if: always()
     runs-on: ubuntu-latest
     needs: version
     steps:
