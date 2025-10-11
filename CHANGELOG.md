@@ -1,6 +1,25 @@
 # Changelog
 
-## 3.7.1 ([unreleased])
+## [3.7.1-beta.2] - (2025-10-08)
+
+### Added
+* Make sidebar sticky [#259](https://github.com/codesnippetspro/code-snippets/issues/259)
+
+## [3.7.1-beta.1] (2025-10-08)
+
+### Added
+* Implemented new feature allowing file-based execution of snippets for faster load times and improved debugging workflows
+* Added registry, handlers, and settings toggle to manage multi-type (PHP/HTML/CSS/JS/Condition) flat-file snippets
+
+### Changed
+* Improved the evaluation and asset loading logic to bypass database queries when flat-file mode is enabled, boosting performance under high load
+* Updated pro badge styling and shortcode/activation hooks for better multisite support and UI consistency
+
+### Fixed
+* Resolved issue where snippet activation/deactivation context (network flag) wasn’t passed to related hooks
+* Fixed conditional and content snippet execution edge cases when switching between database and file-based modes
+
+## 3.7.1 (2025-08-29)
 
 ### Fixed
 * Prefixed Composer packages to reduce collisions with other plugins, especially those using Guzzle.

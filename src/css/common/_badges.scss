@@ -76,6 +76,28 @@
 }
 
 .nav-tab-inactive {
+	$colors: map.get(theme.$badges, 'pro');
+	$text-color: list.nth($colors, 2);
+	$background-color: list.nth($colors, 1);
+
+	.badge.pro-badge {
+		color: $text-color;
+		background-color: $background-color;
+	}
+
+	&:hover {
+		&.button, .dashicons-external {
+			color: #3c434a;
+		}
+
+		.badge.pro-badge {
+			color: $background-color;
+			background-color: $text-color;
+		}
+	}
+}
+
+.nav-tab-inactive {
 	background: transparent;
 }
 

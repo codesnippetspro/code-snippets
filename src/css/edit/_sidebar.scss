@@ -1,5 +1,11 @@
 @use '../common/theme';
 
+.code-snippets-modal {
+	p h4 {
+		margin-block-start: 0;
+	}
+}
+
 .snippet-editor-sidebar {
 	.button-large {
 		block-size: 48px;
@@ -145,11 +151,5 @@ p.submit {
 
 	.components-spinner {
 		block-size: 12px;
-	}
-}
-
-.code-snippets-modal {
-	p h4 {
-		margin-block-start: 0;
 	}
 }

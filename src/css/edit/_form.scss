@@ -74,6 +74,9 @@ $sidebar-gap: 30px;
 	.snippet-editor-sidebar {
 		grid-area: span 3 / sidebar;
 		max-inline-size: $sidebar-width;
+		position: sticky;
+		inset-block-start: 32px;
+		align-self: start;
 	}
 
 	@media (width <= 1024px) {

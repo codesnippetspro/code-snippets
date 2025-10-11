@@ -16,52 +16,16 @@ on:
 
 jobs:
   version:
-    runs-on: ubuntu-latest
-    outputs:
-      tag: ${{ steps.version.outputs.version }}
-    steps:
-      - name: Checkout branch for release
-        uses: actions/checkout@v4
-
-      - name: Get tag version from package.json
-        id: version
-        run: |
-          INPUT_VERSION=${{ github.event.inputs.version }} 
-          if [ -z "$INPUT_VERSION" ]; then
-            echo "::info:: No version input provided, defaulting to 'next'."
-            INPUT_VERSION="next"
-          fi
-
-          if [ $INPUT_VERSION = "next" ]; then
-            CURR=$(jq -r .version package.json)
-            MAJOR=$(echo $CURR | cut -d. -f1)
-            MINOR=$(echo $CURR | cut -d. -f2)
-            PATCH=$(echo $CURR | cut -d. -f3)
-            NEW_PATCH=$((PATCH+1))
-            NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-            VERSION="$NEW_VERSION"
-          else
-            VERSION="${{ github.event.inputs.version }}"
-          fi
-          
-          if [ -z "$VERSION" ]; then
-            echo "::error::Version is empty. Failing job."
-            exit 1
-          fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+    if: github.event.inputs.version == 'next'
+    uses: codesnippetspro/.github/.github/workflows/next_version.yml@main
+    with:
+      file_path: package.json
+      ref_name: ${{ github.ref_name }}
 
   changelog:
+    if: always()
     runs-on: ubuntu-latest
     needs: version
-    strategy:
-      matrix:
-        include:
-          - target-file: "CHANGELOG.md"
-            template: "changelog"
-            name: "github-changelog"
-          - target-file: "src/readme.txt"
-            template: "readme"
-            name: "wordpress-readme"
     steps:
       - name: Validate repository access
         id: validate
@@ -100,22 +64,22 @@ jobs:
         run: |
           target_repo="${{ steps.validate.outputs.target_repo }}"
           workflow_file="${{ steps.validate.outputs.workflow_file }}"
+          version="${{ needs.version.outputs.version || github.event.inputs.version }}"
           
-          echo "::notice::Dispatching workflow '$workflow_file' for ${{ matrix.name }}..."
-          echo "   Repository: $target_repo"
-          echo "   Version: ${{ needs.version.outputs.tag }}"
-          echo "   Template: ${{ matrix.template }}"
-          echo "   Target file: ${{ matrix.target-file }}"
-          
+          echo "::notice::Dispatching workflow '$workflow_file' to generate changelog and readme entries..."
+          echo "   Calling repo: $target_repo"
+          echo "   Version: $version"
+          echo "   Changelog path: ${GITHUB_EVENT_INPUTS_CHANGELOG_PATH:-./CHANGELOG.md}"
+          echo "   Readme path: ${GITHUB_EVENT_INPUTS_README_PATH:-./src/readme.txt}"
+
           # Dispatch the workflow with required parameters
           if ! gh workflow run "$workflow_file" \
             --repo "$target_repo" \
             --ref main \
             --field repo="${{ github.repository }}" \
             --field branch="${{ github.ref_name }}" \
-            --field version="${{ needs.version.outputs.tag }}" \
-            --field template="${{ matrix.template }}" \
-            --field target-file="./${{ matrix.target-file }}"; then
+            --field version="$version" \
+            --field readme_path="./src/readme.txt" ; then
             echo "::error::Failed to dispatch workflow '$workflow_file' in $target_repo"
             exit 1
           fi

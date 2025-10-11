@@ -6,7 +6,6 @@ import { isNetworkAdmin } from '../../utils/screen'
 import { isCondition } from '../../utils/snippets/snippets'
 import { ConditionModalButton } from '../ConditionModal/ConditionModalButton'
 import { SnippetLocationInput } from '../SnippetForm/fields/SnippetLocationInput'
-import { SnippetTypeInput } from '../SnippetForm/fields/SnippetTypeInput'
 import { Notices } from '../SnippetForm/page/Notices'
 import { ShortcodeInfo } from './actions/ShortcodeInfo'
 import { MultisiteSharingSettings } from './controls/MultisiteSharingSettings'
@@ -23,7 +22,7 @@ export interface EditorSidebarProps {
 	setIsConditionModalOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialogOpen, setIsConditionModalOpen }) => {
+export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsConditionModalOpen }) => {
 	const { snippet, isWorking } = useSnippetForm()
 
 	return (

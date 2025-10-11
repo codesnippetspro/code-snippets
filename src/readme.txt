@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.7.0
+Stable tag: 3.7.1-beta.1
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -104,7 +104,27 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-= 3.7.0 (beta release) =
+ = 3.7.1-beta.2 (2025-10-08) =
+
+ __Added__
+* Make sidebar sticky [#259](https://github.com/codesnippetspro/code-snippets/issues/259)
+
+
+= 3.7.1-beta.1 (2025-10-08) =
+
+__Added__
+* Implemented new feature allowing file-based execution of snippets for faster load times and improved debugging workflows
+* Added registry, handlers, and settings toggle to manage multi-type (PHP/HTML/CSS/JS/Condition) flat-file snippets
+
+__Changed__
+* Improved the evaluation and asset loading logic to bypass database queries when flat-file mode is enabled, boosting performance under high load
+* Updated pro badge styling and shortcode/activation hooks for better multisite support and UI consistency
+
+__Fixed__
+* Resolved issue where snippet activation/deactivation context (network flag) wasn’t passed to related hooks
+* Fixed conditional and content snippet execution edge cases when switching between database and file-based modes
+
+= 3.7.0 (2025-08-29) =
 
 __Added__
 
@@ -113,11 +133,6 @@ __Added__
 __Changed__
 
 * Redesigned edit menu with refreshed look and functionality.
-<<<<<<< HEAD
-
-__Fixed__
-
-=======
 * Updated snippet type badges to be more visually distinct.
 * Redesigned tooltips used throughout the plugin.
 * Moved content snippet shortcode options into separate modal window.
@@ -127,7 +142,6 @@ __Fixed__
 
 __Fixed__
 
->>>>>>> edit-refresh/core
 * Fetching active snippets on a multisite network now respects the 'priority' field above all else when ordering snippets.
 * Cloud search appears correctly and allows downloading snippets in the free version of Code Snippets.
 * Improved performance of loading admin menu icon.
