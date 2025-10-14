@@ -167,7 +167,9 @@ function evaluate_condition_clause( ?string $subject, ?string $operator, array $
 
 		/* User conditions. */
 		case 'authenticated':
-			return is_user_logged_in();
+			$object = $objects[0] ?? null;
+
+			return $object ? is_user_logged_in() : ! is_user_logged_in();
 
 		case 'user':
 			$user = wp_get_current_user();
