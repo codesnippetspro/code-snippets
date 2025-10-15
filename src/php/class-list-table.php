@@ -1395,7 +1395,11 @@ class List_Table extends WP_List_Table {
 	 * @param Snippet $item The snippet being used for the current row.
 	 */
 	public function single_row( $item ) {
-		$status = $item->active || $this->is_condition_active( $item ) ? 'active' : 'inactive';
+		if ( $item->is_trashed() ) {
+			$status = 'trashed';
+		} else {
+			$status = $item->active || $this->is_condition_active( $item ) ? 'active' : 'inactive';
+		}
 
 		$row_class = "snippet $status-snippet $item->type-snippet $item->scope-scope";
 
