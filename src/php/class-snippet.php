@@ -142,7 +142,7 @@ class Snippet extends Data_Item {
 				return code_snippets_build_tags_array( $value );
 
 			case 'active':
-				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition();
+				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition() && (int) $value != -1;
 
 			default:
 				return $value;
