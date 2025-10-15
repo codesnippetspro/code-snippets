@@ -494,14 +494,23 @@ class List_Table extends WP_List_Table {
 	 * @return array<string, string> An array of menu items with the ID paired to the label
 	 */
 	public function get_bulk_actions(): array {
-		$actions = [
-			'activate-selected'   => $this->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
-			'deactivate-selected' => $this->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
-			'clone-selected'      => __( 'Clone', 'code-snippets' ),
-			'download-selected'   => __( 'Export Code', 'code-snippets' ),
-			'export-selected'     => __( 'Export', 'code-snippets' ),
-			'delete-selected'     => __( 'Delete', 'code-snippets' ),
-		];
+		global $status;
+
+		if ( 'trashed' === $status ) {
+			$actions = [
+				'restore-selected'           => __( 'Restore', 'code-snippets' ),
+				'delete-permanently-selected' => __( 'Delete Permanently', 'code-snippets' ),
+			];
+		} else {
+			$actions = [
+				'activate-selected'   => $this->is_network ? __( 'Network Activate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ),
+				'deactivate-selected' => $this->is_network ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Deactivate', 'code-snippets' ),
+				'clone-selected'      => __( 'Clone', 'code-snippets' ),
+				'download-selected'   => __( 'Export Code', 'code-snippets' ),
+				'export-selected'     => __( 'Export', 'code-snippets' ),
+				'delete-selected'     => __( 'Delete', 'code-snippets' ),
+			];
+		}
 
 		return apply_filters( 'code_snippets/list_table/bulk_actions', $actions );
 	}
@@ -891,6 +900,20 @@ class List_Table extends WP_List_Table {
 					soft_delete_snippet( $id, $this->is_network );
 				}
 				$result = 'deleted-multi';
+				break;
+
+			case 'restore-selected':
+				foreach ( $ids as $id ) {
+					restore_snippet( $id, $this->is_network );
+				}
+				$result = 'restored-multi';
+				break;
+
+			case 'delete-permanently-selected':
+				foreach ( $ids as $id ) {
+					delete_snippet( $id, $this->is_network );
+				}
+				$result = 'deleted-permanently-multi';
 				break;
 		}
 
