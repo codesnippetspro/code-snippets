@@ -303,6 +303,10 @@ class List_Table extends WP_List_Table {
 	 * @return string Output for activation switch.
 	 */
 	protected function column_activate( Snippet $snippet ): string {
+		if ( $snippet->is_trashed() ) {
+			return '';
+		}
+
 		if ( $this->is_network && ( $snippet->shared_network || ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) ) ) {
 			return '';
 		}
