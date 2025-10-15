@@ -12,7 +12,7 @@ use WP_REST_Server;
 use function Code_Snippets\activate_snippet;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\deactivate_snippet;
-use function Code_Snippets\delete_snippet;
+use function Code_Snippets\soft_delete_snippet;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
@@ -282,7 +282,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Delete one item from the collection
+	 * Delete one item from the collection (soft delete)
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
@@ -290,7 +290,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	public function delete_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
-		$result = delete_snippet( $item->id, $item->network );
+		$result = soft_delete_snippet( $item->id, $item->network );
 
 		return $result ?
 			new WP_REST_Response( null, 204 ) :

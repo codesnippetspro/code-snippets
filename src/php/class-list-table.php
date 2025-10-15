@@ -37,7 +37,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var array<string>
 	 */
-	public array $statuses = [ 'all', 'active', 'inactive', 'recently_activated' ];
+	public array $statuses = [ 'all', 'active', 'inactive', 'recently_activated', 'trashed' ];
 
 	/**
 	 * Column name to use when ordering the snippets list.
@@ -246,7 +246,26 @@ class List_Table extends WP_List_Table {
 	private function get_snippet_action_links( Snippet $snippet ): array {
 		$actions = array();
 
-		if ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) {
+		if ( $snippet->is_trashed() ) {
+			$actions['restore'] = sprintf(
+				'<a href="%s">%s</a>',
+				esc_url( $this->get_action_link( 'restore', $snippet ) ),
+				esc_html__( 'Restore', 'code-snippets' )
+			);
+
+			$actions['delete_permanently'] = sprintf(
+				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
+				esc_html__( 'Delete Permanently', 'code-snippets' ),
+				esc_url( $this->get_action_link( 'delete_permanently', $snippet ) ),
+				esc_js(
+					sprintf(
+						'return confirm("%s");',
+						esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
+						esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
+					)
+				)
+			);
+		} elseif ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) {
 			// Display special links if on a subsite and dealing with a network-active snippet.
 			if ( $snippet->active ) {
 				$actions['network_active'] = esc_html__( 'Network Active', 'code-snippets' );
@@ -267,16 +286,9 @@ class List_Table extends WP_List_Table {
 			}
 
 			$actions['delete'] = sprintf(
-				'<a href="%2$s" class="delete" onclick="%3$s">%1$s</a>',
+				'<a href="%2$s" class="delete">%1$s</a>',
 				esc_html__( 'Delete', 'code-snippets' ),
-				esc_url( $this->get_action_link( 'delete', $snippet ) ),
-				esc_js(
-					sprintf(
-						'return confirm("%s");',
-						esc_html__( 'You are about to permanently delete the selected item.', 'code-snippets' ) . "\n" .
-						esc_html__( "'Cancel' to stop, 'OK' to delete.", 'code-snippets' )
-					)
-				)
+				esc_url( $this->get_action_link( 'delete', $snippet ) )
 			);
 		}
 
@@ -558,6 +570,14 @@ class List_Table extends WP_List_Table {
 				'code-snippets'
 			);
 
+			// translators: %s: total number of trashed snippets.
+			$labels['trashed'] = _n(
+				'Trashed <span class="count">(%s)</span>',
+				'Trashed <span class="count">(%s)</span>',
+				$count,
+				'code-snippets'
+			);
+
 			// The page URL with the status parameter.
 			$url = esc_url( add_query_arg( 'status', $type ) );
 
@@ -737,8 +757,16 @@ class List_Table extends WP_List_Table {
 				return 'cloned';
 
 			case 'delete':
-				delete_snippet( $id, $this->is_network );
+				soft_delete_snippet( $id, $this->is_network );
 				return 'deleted';
+
+			case 'restore':
+				restore_snippet( $id, $this->is_network );
+				return 'restored';
+
+			case 'delete_permanently':
+				delete_snippet( $id, $this->is_network );
+				return 'deleted_permanently';
 
 			case 'export':
 				$export = new Export_Attachment( [ $id ], $this->is_network );
@@ -860,7 +888,7 @@ class List_Table extends WP_List_Table {
 
 			case 'delete-selected':
 				foreach ( $ids as $id ) {
-					delete_snippet( $id, $this->is_network );
+					soft_delete_snippet( $id, $this->is_network );
 				}
 				$result = 'deleted-multi';
 				break;
@@ -978,8 +1006,18 @@ class List_Table extends WP_List_Table {
 		$this->process_requested_actions();
 		$snippets = array_fill_keys( $this->statuses, array() );
 
-		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets() );
+		$all_snippets = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets() );
 		$this->fetch_shared_network_snippets();
+
+		// Separate trashed snippets from the main collection
+		$snippets['trashed'] = array_filter( $all_snippets, function( $snippet ) {
+			return $snippet->is_trashed();
+		});
+
+		// Filter out trashed snippets from the 'all' collection
+		$snippets['all'] = array_filter( $all_snippets, function( $snippet ) {
+			return ! $snippet->is_trashed();
+		});
 
 		foreach ( $snippets['all'] as $snippet ) {
 			if ( $snippet->active ) {
@@ -997,10 +1035,24 @@ class List_Table extends WP_List_Table {
 					return $type === $snippet->type;
 				}
 			);
+
+			// Filter trashed snippets by type
+			$snippets['trashed'] = array_filter(
+				$snippets['trashed'],
+				function ( Snippet $snippet ) use ( $type ) {
+					return $type === $snippet->type;
+				}
+			);
 		}
 
-		// Add scope tags.
+		// Add scope tags to all snippets (including trashed).
 		foreach ( $snippets['all'] as $snippet ) {
+			if ( 'global' !== $snippet->scope ) {
+				$snippet->add_tag( $snippet->scope );
+			}
+		}
+		
+		foreach ( $snippets['trashed'] as $snippet ) {
 			if ( 'global' !== $snippet->scope ) {
 				$snippet->add_tag( $snippet->scope );
 			}
@@ -1009,11 +1061,13 @@ class List_Table extends WP_List_Table {
 		// Filter snippets by tag.
 		if ( ! empty( $_GET['tag'] ) ) {
 			$snippets['all'] = array_filter( $snippets['all'], array( $this, 'tags_filter_callback' ) );
+			$snippets['trashed'] = array_filter( $snippets['trashed'], array( $this, 'tags_filter_callback' ) );
 		}
 
 		// Filter snippets based on search query.
 		if ( $s ) {
 			$snippets['all'] = array_filter( $snippets['all'], array( $this, 'search_by_line_callback' ) );
+			$snippets['trashed'] = array_filter( $snippets['trashed'], array( $this, 'search_by_line_callback' ) );
 		}
 
 		// Clear recently activated snippets older than a week.
@@ -1037,6 +1091,11 @@ class List_Table extends WP_List_Table {
 		 * @var Snippet $snippet
 		 */
 		foreach ( $snippets['all'] as $snippet ) {
+			// Skip trashed snippets (they're already in their own section)
+			if ( $snippet->is_trashed() ) {
+				continue;
+			}
+
 			if ( $snippet->active || $this->is_condition_active( $snippet ) ) {
 				$snippets['active'][] = $snippet;
 			} else {
