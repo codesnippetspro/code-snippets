@@ -11,6 +11,20 @@ import { CloudAIButton } from '../../EditorSidebar/actions/CloudAIButton'
 import type { ButtonProps } from '../../common/Button'
 import type { ExplainSnippetFields, ExplainedSnippet } from '../../../hooks/useGenerativeAPI'
 import type { LineWidget } from 'codemirror'
+import type { Dispatch, SetStateAction } from 'react'
+
+// Minimal CodeMirror types used here to avoid unsafe `any` usage in this file.
+interface CodeMirrorDoc {
+	getLine(n: number): string
+	addLineWidget(line: number, node: HTMLElement, opts?: Record<string, unknown>): LineWidget
+	replaceRange(text: string, pos: { line: number; ch: number }): void
+}
+
+interface CodeEditorInstance {
+	codemirror: {
+		getDoc: () => CodeMirrorDoc
+	}
+}
 
 const createWidgetElements = (message: string) => {
 	const widgetEl = document.createElement('div')
@@ -113,11 +127,11 @@ const getIndentForLine = (doc: unknown, lineIndex: number): string => {
 const processExplainResponse = (
 	response: ExplainedSnippet,
 	snippet: unknown,
-	codeEditorInstance: unknown,
-	setWidgets: (w: LineWidget[]) => void
+	codeEditorInstance: CodeEditorInstance | undefined,
+	setWidgets: Dispatch<SetStateAction<LineWidget[]>>
 ) => {
 	try {
-		const doc = (codeEditorInstance as any)?.codemirror?.getDoc()
+		const doc = codeEditorInstance?.codemirror.getDoc()
 		if (!doc || !response.lines) {
 			return
 		}
@@ -139,7 +153,7 @@ const processExplainResponse = (
 				doc.replaceRange(comment, { line: safeLine, ch: 0 })
 
 				lineWidget.clear()
-				setWidgets((prev: any[]) => prev.filter(w => w !== lineWidget))
+				setWidgets(prev => prev.filter(w => w !== lineWidget))
 			})
 
 			removeBtn.addEventListener('click', () => {
@@ -160,12 +174,12 @@ const handleExplainClick = async (params: {
 	snippet: unknown
 	field: ExplainSnippetFields
 	explainSnippet: (code: string, field: ExplainSnippetFields) => Promise<ExplainedSnippet>
-	codeEditorInstance: unknown
+	codeEditorInstance?: CodeEditorInstance
 	onRequest?: VoidFunction
 	onResponse?: (generated: ExplainedSnippet) => void
 	setIsWorking: (v: boolean) => void
 	setErrorMessage: (m?: string) => void
-	setWidgets: (w: LineWidget[]) => void
+	setWidgets: Dispatch<SetStateAction<LineWidget[]>>
 }) => {
 	const { snippet, field, explainSnippet, codeEditorInstance, onRequest, onResponse, setIsWorking, setErrorMessage, setWidgets } = params
 
@@ -182,8 +196,9 @@ const handleExplainClick = async (params: {
 		onResponse?.(response)
 	} catch (error: unknown) {
 		setIsWorking(false)
-		if (isAxiosError(error) && 'message' in error) {
-			setErrorMessage((error as any).message)
+		if (isAxiosError(error)) {
+			// Axios error is narrowed by isAxiosError
+			setErrorMessage((error as unknown as { message?: string }).message)
 		} else {
 			setErrorMessage(__('An unknown error occurred.', 'code-snippets'))
 		}
