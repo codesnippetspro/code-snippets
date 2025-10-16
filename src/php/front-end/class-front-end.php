@@ -16,22 +16,17 @@ class Front_End {
 	/**
 	 * Name of the shortcode tag for rendering the code source
 	 */
-	const SOURCE_SHORTCODE = 'code_snippet_source';
+	public const SOURCE_SHORTCODE = 'code_snippet_source';
 
 	/**
 	 * Name of the shortcode tag for rendering content snippets
 	 */
-	const CONTENT_SHORTCODE = 'code_snippet';
+	public const CONTENT_SHORTCODE = 'code_snippet';
 
 	/**
 	 * Handle to use for front-end scripts and styles.
 	 */
-	const PRISM_HANDLE = 'code-snippets-prism';
-
-	/**
-	 * Maximum depth for shortcode recursion.
-	 */
-	const MAX_SHORTCODE_DEPTH = 5;
+	public const PRISM_HANDLE = 'code-snippets-prism';
 
 	/**
 	 * Class constructor
@@ -172,19 +167,19 @@ class Front_End {
 	public static function register_prism_assets() {
 		$plugin = code_snippets();
 
-		wp_register_style(
-			self::PRISM_HANDLE,
-			plugins_url( 'dist/prism.css', $plugin->file ),
-			array(),
-			$plugin->version
-		);
-
 		wp_register_script(
 			self::PRISM_HANDLE,
 			plugins_url( 'dist/prism.js', $plugin->file ),
 			array(),
 			$plugin->version,
 			true
+		);
+
+		wp_register_style(
+			self::PRISM_HANDLE,
+			plugins_url( 'dist/prism.css', $plugin->file ),
+			array(),
+			$plugin->version
 		);
 	}
 
@@ -233,6 +228,20 @@ class Front_End {
 	}
 
 	/**
+	 * Build the file path for a snippet's flat file.
+	 *
+	 * @param string          $table_name Table name for the snippet.
+	 * @param Snippet         $snippet    Snippet object.
+	 *
+	 * @return string Full file path for the snippet.
+	 */
+	private function build_snippet_flat_file_path( string $table_name, Snippet $snippet ): string {
+		$handler = code_snippets()->snippet_handler_registry->get_handler( $snippet->get_type() );
+
+		return Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/' . $snippet->id . '.' . $handler->get_file_extension();
+	}
+
+	/**
 	 * Evaluate the code from a content shortcode.
 	 *
 	 * @param Snippet              $snippet Snippet.
@@ -245,6 +254,20 @@ class Front_End {
 			return $snippet->code;
 		}
 
+		if ( ! Snippet_Files::is_active() ) {
+			return $this->evaluate_shortcode_from_db( $snippet, $atts );
+		}
+
+		$network = DB::validate_network_param( $snippet->network );
+		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
+		$filepath = $this->build_snippet_flat_file_path( $table_name, $snippet );
+
+		return file_exists( $filepath )
+			? $this->evaluate_shortcode_from_flat_file( $filepath, $atts )
+			: $this->evaluate_shortcode_from_db( $snippet, $atts );
+	}
+
+	private function evaluate_shortcode_from_db( Snippet $snippet, array $atts ): string {
 		/**
 		 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
 		 * authors to use custom attributes.
@@ -254,9 +277,49 @@ class Front_End {
 		extract( $atts );
 
 		ob_start();
-		eval( "?>\n\n" . $snippet->code . "\n\n<?php" );
+		eval( "?>\n\n" . $snippet->code );
 
 		return ob_get_clean();
+	}
+
+	private function evaluate_shortcode_from_flat_file( $filepath, array $atts ): string {
+		ob_start();
+
+		( function( $atts ) use ( $filepath ) {
+			/**
+			 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
+			 * authors to use custom attributes.
+			 *
+			 * @phpcs:disable WordPress.PHP.DontExtract.extract_extract
+			 */
+			extract( $atts );
+			require_once $filepath;
+		} )( $atts );
+
+		return ob_get_clean();
+	}
+
+	private function get_snippet( int $id, bool $network, string $snippet_type ): Snippet {
+		if ( ! Snippet_Files::is_active() ) {
+			return get_snippet( $id, $network );
+		}
+
+		$validated_network = DB::validate_network_param( $network );
+		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $validated_network ) );
+		$handler = code_snippets()->snippet_handler_registry->get_handler( $snippet_type );
+		$config_filepath = Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/index.php';
+
+		if ( file_exists( $config_filepath ) ) {
+			$config = require_once $config_filepath;
+			$snippet_data = $config[ $id ] ?? null;
+			
+			if ( $snippet_data ) {
+				$snippet = new Snippet( $snippet_data );
+				return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $network );
+			}
+		}
+
+		return get_snippet( $id, $network );
 	}
 
 	/**
@@ -289,7 +352,7 @@ class Front_End {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = get_snippet( $id, (bool) $atts['network'] );
+		$snippet = $this->get_snippet( $id, (bool) $atts['network'], 'html' );
 
 		// Render the source code if this is not a shortcode snippet.
 		if ( 'content' !== $snippet->scope ) {
@@ -303,11 +366,12 @@ class Front_End {
 			}
 
 			/* translators: 1: snippet name, 2: snippet edit link */
-			$text = __( '<strong>%1$s</strong> is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
-
+			$text = __( '%1$s is currently inactive. You can <a href="%2$s">edit this snippet</a> to activate it and make it visible. This message will not appear in the published post.', 'code-snippets' );
+			$snippet_name = '<strong>' . $snippet->name . '</strong>';
 			$edit_url = add_query_arg( 'id', $snippet->id, code_snippets()->get_menu_url( 'edit' ) );
+
 			return wp_kses(
-				sprintf( $text, $snippet->name, $edit_url ),
+				sprintf( $text, $snippet_name, $edit_url ),
 				[
 					'strong' => [],
 					'a'      => [
@@ -430,7 +494,7 @@ class Front_End {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = get_snippet( $id, (bool) $atts['network'] );
+		$snippet = $this->get_snippet( $id, (bool) $atts['network'], 'html' );
 
 		return $this->render_snippet_source( $snippet, $atts );
 	}

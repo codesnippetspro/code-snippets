@@ -2,19 +2,20 @@
  * Custom styling for the snippets table
  */
 
-$active-color: #2196f3;
-$inactive-color: #ccc;
-
+@use 'sass:map';
+@use 'sass:color';
 @use 'common/theme';
-@use 'common/type-badges';
+@use 'common/badges';
+@use 'common/switch';
+@use 'common/select';
 @use 'manage/cloud';
 
 .column-name,
 .column-type {
 	.dashicons {
 		font-size: 16px;
-		width: 16px;
-		height: 16px;
+		inline-size: 16px;
+		block-size: 16px;
 		vertical-align: middle;
 	}
 
@@ -27,19 +28,29 @@ $inactive-color: #ccc;
 	font-weight: 600;
 }
 
+.active-snippet {
+	td, th {
+		background-color: rgba(#78c8e6, 0.06);
+	}
+
+	th.check-column {
+		border-inline-start: 2px solid #2ea2cc;
+	}
+}
+
 .column-priority input {
 	appearance: none;
 	background: none;
 	border: none;
 	box-shadow: none;
-	width: 4em;
+	inline-size: 4em;
 	color: #666;
 	text-align: center;
 
 	&:hover, &:focus, &:active {
 		color: #000;
 		background-color: #f5f5f5;
-		background-color: rgba(0, 0, 0, 0.1);
+		background-color: rgb(0 0 0 / 10%);
 		border-radius: 6px;
 	}
 
@@ -48,93 +59,22 @@ $inactive-color: #ccc;
 	}
 }
 
-.snippet-execution-button,
-.snippet-activation-switch {
-	display: block;
-	position: relative;
-}
-
-.snippet-activation-switch {
-	margin-top: 5px;
-	width: 30px;
-	height: 17px;
-	border-radius: 34px;
-	background-color: #ccc;
-
-	&::before {
-		transition: all .4s;
-		content: '';
-		height: 13px;
-		width: 13px;
-		display: inline-block;
-		margin: 2px;
-		background-color: white;
-		border-radius: 50%;
-	}
-
-	.snippets .active-snippet & {
-		background-color: $active-color;
-
-		&::before {
-			transform: translateX(100%);
-		}
-	}
-
-	.snippets .erroneous-snippet &::before {
-		content: '!';
-		transform: translateX(50%);
-		text-align: center;
-		font-weight: bold;
-		line-height: 1;
-		color: #bbb;
-	}
-}
-
-.snippet-execution-button {
-	margin-left: 10px;
-	margin-top: 9px;
-	width: 0;
-	height: 0;
-	border-top: 9px solid transparent;
-	border-bottom: 9px solid transparent;
-	border-left: 10px solid $inactive-color;
-	transition: all 0.3s;
-
-	&::before {
-		content: '';
-		position: absolute;
-		top: -14px;
-		left: -21px;
-		bottom: -14px;
-		right: -8px;
-		border-radius: 50%;
-		border: 1.8px solid $inactive-color;
-		z-index: 2;
-		transition: all .3s;
-	}
-
-	&:hover, &:focus {
-		border-left-color: #579;
-
-		&::before {
-			transform: scale(1.1);
-			border-color: #579;
-		}
-	}
-}
-
 .clear-filters {
 	vertical-align: baseline !important;
 }
 
 .snippets {
+	td.column-id {
+		text-align: center;
+	}
 
 	tr {
 		background: #fff;
 	}
 
 	ol, ul {
-		margin: 0 0 1.5em 1.5em;
+		margin-block: 0 1.5em;
+		margin-inline: 1.5em 0;
 	}
 
 	ul {
@@ -149,11 +89,11 @@ $inactive-color: #ccc;
 	.row-actions {
 		color: #ddd;
 		position: relative;
-		left: 0;
+		inset-inline-start: 0;
 	}
 
 	.column-activate {
-		padding-right: 0 !important;
+		padding-inline-end: 0 !important;
 	}
 
 	.clear-filters {
@@ -161,53 +101,34 @@ $inactive-color: #ccc;
 	}
 
 	tfoot th.check-column {
-		padding: 13px 0 0 3px;
+		padding-block: 13px 0;
+		padding-inline: 3px 0;
 	}
 
 	thead th.check-column,
 	tfoot th.check-column,
 	.inactive-snippet th.check-column {
-		padding-left: 5px;
-	}
-
-	td.column-description {
-		max-width: 700px;
+		padding-inline-start: 5px;
 	}
 
 	.active-snippet, .inactive-snippet {
 		td, th {
-			padding: 10px 9px;
+			padding-block: 10px;
+			padding-inline: 9px;
 			border: none;
-			box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-		}
-	}
-
-	.badge {
-		margin-left: 4px;
-		padding: 3px 6px;
-		text-decoration: none;
-		border: medium none;
-		border-radius: 2px;
-		background-color: #e0e0e0;
-		background-color: rgba(0, 0, 0, 0.08);
-		font-size: smaller;
-		line-height: 1.2;
-
-		/* rtl:ignore */
-		.rtl & {
-			float: left;
+			box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
 		}
 	}
 
 	tr.active-snippet + tr.inactive-snippet th,
 	tr.active-snippet + tr.inactive-snippet td {
-		border-top: 1px solid rgba(0, 0, 0, 0.03);
-		box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.02), inset 0 -1px 0 #e1e1e1;
+		border-block-start: 1px solid rgb(0 0 0 / 3%);
+		box-shadow: inset 0 1px 0 rgb(0 0 0 / 2%), inset 0 -1px 0 #e1e1e1;
 	}
 
 	&, #all-snippets-table, #search-snippets-table {
 		a.delete:hover {
-			border-bottom: 1px solid #f00;
+			border-block-end: 1px solid #f00;
 			color: #f00;
 		}
 	}
@@ -217,57 +138,25 @@ $inactive-color: #ccc;
 	}
 }
 
+td.column-description {
+	max-inline-size: 700px;
+
+	pre {
+		white-space: unset;
+	}
+}
+
 .inactive-snippet {
-	@include theme.link-colors(theme.$php-inactive);
+	@include theme.link-colors(#579);
 }
 
-.active-snippet {
-
-	td, th {
-		background-color: rgba(theme.$php-background, 0.06);
-	}
-
-	th.check-column {
-		border-left: 2px solid #2ea2cc;
-	}
-
-	.snippet-activation-switch {
-		background-color: $active-color;
-	}
-}
-
-@mixin snippet-type-colors($type, $active, $inactive, $background, $highlight) {
-	.#{$type}-snippet {
-		@include theme.link-colors($inactive);
-	}
-
-	.#{$type}-snippet.active-snippet {
-		@include theme.link-colors($active);
-
-		td, th {
-			background-color: rgba($background, 0.06);
-		}
-
-		.snippet-activation-switch {
-			background-color: $highlight;
-		}
-
-		th.check-column {
-			border-left-color: $highlight;
-		}
-	}
-}
-
-@include snippet-type-colors(css, theme.$css-active, theme.$css-inactive, theme.$css-background, theme.$css-highlight);
-@include snippet-type-colors(html, theme.$html-active, theme.$html-active, theme.$html-background, theme.$html-highlight);
-@include snippet-type-colors(js, theme.$js-active, theme.$js-inactive, theme.$js-background, theme.$js-highlight);
-
-@media screen and (max-width: 782px) {
+@media screen and (width <= 782px) {
 	p.search-box {
-		float: left;
+		float: inline-start;
 		position: initial;
-		margin: 1em 0 0 0;
-		height: auto;
+		margin-block: 1em 0;
+		margin-inline: 0;
+		block-size: auto;
 	}
 }
 
@@ -277,13 +166,15 @@ $inactive-color: #ccc;
 }
 
 .nav-tab-wrapper + .subsubsub, p.search-box {
-	margin: 10px 0 0 0;
+	margin-block: 10px 0;
+	margin-inline: 0;
 }
 
 .snippet-type-description {
-	border-bottom: 1px solid #ccc;
+	border-block-end: 1px solid #ccc;
 	margin: 0;
-	padding: 1em 0;
+	padding-block: 1em;
+	padding-inline: 0;
 }
 
 .code-snippets-notice a.notice-dismiss {
@@ -293,26 +184,31 @@ $inactive-color: #ccc;
 .refresh-button-container {
 	display: flex;
 	align-items: center;
-    justify-content: flex-start;
-	margin-top: 15px;
-	margin-bottom: -39px;
+	justify-content: flex-start;
+	margin-block: 15px -39px;
 	gap: 7px;
 }
 
 #refresh-button {
-	width: 30px;
+	inline-size: 30px;
 	padding: 0;
 	font-size: 20px;
 	line-height: 1.4;
 }
 
-@media screen and (max-width: 1190px) {
+.wrap h2.nav-tab-wrapper {
+	.nav-tab {
+		display: flex;
+		flex-flow: row wrap;
+		align-items: center;
+		gap: 8px;
+	}
+}
+
+@media screen and (width <= 1190px) {
 	.nav-tab {
 		.snippet-label {
 			display: none;
-		}
-		.cloud-badge{
-			margin-right: 10px;
 		}
 	}
 }

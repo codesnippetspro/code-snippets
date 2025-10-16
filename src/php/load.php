@@ -63,6 +63,3 @@ function code_snippets(): Plugin {
 }
 
 code_snippets()->load_plugin();
-
-// Execute the snippets once the plugins are loaded.
-add_action( 'plugins_loaded', __NAMESPACE__ . '\execute_active_snippets', 1 );

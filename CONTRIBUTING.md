@@ -1,6 +1,15 @@
 # Contributing to Code Snippets
 
-## Setting things up
+## Project structure
+
+The base plugin folder is not the root of repository – instead, files to be loaded into WordPress as a plugin are
+located in `src/`. You should copy or symlink this folder into your WordPress `wp-content/plugins` folder as
+`code-snippets`.
+
+Keep in mind that you will need to follow the steps below to populate files under `src/dist/` and`src/vendor/`, which
+are required for the plugin to function correctly.
+
+## Required software
 
 In order to build a copy of Code Snippets from the files in this repository, you will need to prepare a few tools
 locally, and be comfortable running commands from a terminal or command line interface.
@@ -14,11 +23,18 @@ The following tools will need to be installed.
 Once Node.js and npm are installed, run the following command from inside the plugin directory to install the required
 node packages:
 
-    npm install
+```shell
+npm install
+```
 
 Additionally, run the following command to install the required Composer packages and generate autoload files:
 
-    composer install
+```shell
+npm run bundle
+```
+
+If you want to interface with Composer directly, you will need to run commands under the `src/` directory, as that is
+where `composer.json`, `composer.lock`, and the `vendor/` directory are located.
 
 ## Building the plugin
 
@@ -29,7 +45,9 @@ plugin can be loaded into WordPress.
 
 In order to get things built from the source files, the following command can be used:
 
-    npm run build
+```shell
+npm run build
+```
 
 This will run the basic Webpack configuration, which will:
 
@@ -47,7 +65,9 @@ than running the entire build script, there is an alternative command available 
 for changes and run only the necessary tasks when changes are detected. This can be begun by running the following
 command:
 
-    npm run watch
+```shell
+npm run watch
+```
 
 ## Preparing for release
 
@@ -58,7 +78,9 @@ In order to simplify things and reduce the file size of the distributed plugin p
 generating these distribution files separately from the plugin source. Running the following command will commence this
 process:
 
-    npm run bundle
+```shell
+npm run bundle
+```
 
 This command will regenerate all processed files and copy those to be distributed to the `bundle/` directory, where they
 can be copied directly into a Subversion repository or similar for distribution.

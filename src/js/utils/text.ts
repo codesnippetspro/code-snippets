@@ -14,3 +14,8 @@ export const truncateWords = (text: string, wordCount: number): string => {
 		? `${words.slice(0, wordCount).join(' ')}…`
 		: text
 }
+
+export const stripTags = (text: string): string =>
+	text
+		.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '')
+		.replace(/<\/?[a-z][a-z0-9]*\b[^>]*>/gi, '')

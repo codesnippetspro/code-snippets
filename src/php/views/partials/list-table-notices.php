@@ -14,11 +14,21 @@ namespace Code_Snippets;
  * @var Manage_Menu $this
  */
 
+/**
+ * Constant existence is checked with defined().
+ *
+ * @noinspection PhpUndefinedConstantInspection
+ */
 if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 	?>
 	<div id="message" class="notice notice-error fade is-dismissible">
 		<p>
-			<?php echo wp_kses_post( __( '<strong>Warning:</strong> Safe mode is active and snippets will not execute! Remove the <code>CODE_SNIPPETS_SAFE_MODE</code> constant from <code>wp-config.php</code> to turn off safe mode.', 'code-snippets' ) ); ?>
+			<strong><?php esc_html_e( 'Warning:', 'code-snippets' ); ?></strong>
+			<?php
+			// translators: 1: constant name, 2: file name.
+			$text = __( 'Safe mode is active and snippets will not execute! Remove the %1$s constant from %2$s file to turn off safe mode.', 'code-snippets' );
+			printf( esc_html( $text ), '<code>CODE_SNIPPETS_SAFE_MODE</code>', '<code>wp-config.php</code>' );
+			?>
 
 			<a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank">
 				<?php esc_html_e( 'Help', 'code-snippets' ); ?>
@@ -51,8 +61,12 @@ $result_messages = apply_filters(
 );
 
 if ( isset( $result_messages[ $result ] ) ) {
+	$result_kses = [
+		'strong' => [],
+	];
+
 	printf(
 		'<div id="message" class="notice notice-success fade is-dismissible"><p>%s</p></div>',
-		wp_kses_post( $result_messages[ $result ] )
+		wp_kses( $result_messages[ $result ], $result_kses )
 	);
 }

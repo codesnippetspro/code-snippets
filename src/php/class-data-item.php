@@ -2,6 +2,8 @@
 
 namespace Code_Snippets;
 
+use WP_Exception;
+
 /**
  * Base class for representing an item of data without needing to use direct access or individual getter and setter functions.
  *
@@ -134,6 +136,8 @@ abstract class Data_Item {
 	 * @param string $field The field name.
 	 *
 	 * @return mixed The field value
+	 *
+	 * @throws WP_Exception If the field name is not allowed.
 	 */
 	public function __get( string $field ) {
 		$field = $this->resolve_field_name( $field );
@@ -143,10 +147,10 @@ abstract class Data_Item {
 		}
 
 		if ( ! $this->is_allowed_field( $field ) ) {
-			if ( WP_DEBUG ) {
-				$message = sprintf( 'Trying to access invalid property on "%s" class: %s', get_class( $this ), $field );
-				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( esc_html( $message ), E_USER_WARNING );
+			if ( function_exists( 'wp_trigger_error' ) ) {
+				// translators: 1: class name, 2: field name.
+				$message = sprintf( 'Trying to access invalid property on "%1$s" class: %2$s', get_class( $this ), $field );
+				wp_trigger_error( __FUNCTION__, $message, E_USER_WARNING );
 			}
 
 			return null;
@@ -160,15 +164,17 @@ abstract class Data_Item {
 	 *
 	 * @param string $field The field name.
 	 * @param mixed  $value The field value.
+	 *
+	 * @throws WP_Exception If the field name is not allowed.
 	 */
 	public function __set( string $field, $value ) {
 		$field = $this->resolve_field_name( $field );
 
 		if ( ! $this->is_allowed_field( $field ) ) {
-			if ( WP_DEBUG ) {
+			if ( function_exists( 'wp_trigger_error' ) ) {
+				// translators: 1: class name, 2: field name.
 				$message = sprintf( 'Trying to set invalid property on "%s" class: %s', get_class( $this ), $field );
-				// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				trigger_error( esc_html( $message ), E_USER_ERROR );
+				wp_trigger_error( __FUNCTION__, $message, E_USER_ERROR );
 			}
 
 			return;
@@ -220,12 +226,19 @@ abstract class Data_Item {
 	 * @param mixed  $value The field value.
 	 *
 	 * @return bool true if the field was set successfully, false if the field name is invalid.
+	 *
+	 * @noinspection PhpDocMissingThrowsInspection
 	 */
 	public function set_field( string $field, $value ): bool {
 		if ( ! $this->is_allowed_field( $field ) ) {
 			return false;
 		}
 
+		/**
+		 * Above is_allowed_field check should bypass exception.
+		 *
+		 * @noinspection PhpUnhandledExceptionInspection
+		 */
 		$this->__set( $field, $value );
 
 		return true;

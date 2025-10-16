@@ -1,107 +1,83 @@
+@use '../common/theme';
+@use '../common/tooltips';
+
+.cloud-legend-tooltip {
+	h3 {
+		font-size: 16px;
+		color: #fff;
+		text-align: center;
+	}
+
+	td {
+		vertical-align: top;
+	}
+}
 
 .cloud-search-info {
 	text-align: justify;
 
 	small {
 		color: #646970;
-		float: right;
+		float: inline-end;
 	}
 }
 
 .thickbox-code-viewer {
-	min-height: 250px;
-	background-color: hsl(0, 0%, 96.5%);
+	min-block-size: 250px;
+	background-color: hsl(0deg 0% 96.5%);
 	padding: 20px;
 	border-radius: 10px;
 }
 
 #snippet-code-thickbox {
 	display: block;
-	width: 100%;
+	inline-size: 100%;
 }
 
-.cloud-icon {
-	margin-right: 3px;
+.no-results {
+	font-size: 15px;
 }
 
-.nav-tab-inactive .cloud-badge {
-    color: #a7aaad;
+.dashicons.cloud-synced {
+	color: theme.$cloud;
 }
 
-.nav-tab-inactive[data-snippet-type=cloud]:hover .cloud-badge {
-	color: #00bcd4;
-}
-
-.cloud-synced-legend {
-	color: #00bcd4;
-}
-
-.cloud-synced {
-	color: #00bcd4;
-}
-
-.cloud-downloaded {
+.dashicons.cloud-downloaded {
 	color: #e91e63;
 }
 
-.nav-tab-inactive[data-snippet-type=cloud_search]:hover .cloud-badge {
-	color: #e91e63;
+.dashicons.cloud-not-downloaded {
+	color: theme.$outline;
 }
 
-.nav-tab-inactive[data-snippet-type=bundles]:hover .cloud-badge {
-	color: #50575e;
-}
-
-.cloud-not-downloaded {
-	color: #9e9e9e;
-}
-
-.cloud-update {
-	color: #ff9800 !important;
+.dashicons.cloud-update {
+	color: theme.$cloud-update;
 }
 
 .cloud_update a {
-	color: #ff9800 !important;
+	color: theme.$cloud-update !important;
 	text-decoration: underline;
-}
-
-.cloud-table > tbody > tr {
-	height: 80px;
-	box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
-}
-
-.cloud-table > tbody > tr > td {
-	max-width: 250px;
-}
-
-.cloud-table tbody .active-snippet .column-name {
-	font-weight: 400;
-	max-width: 400px;
-	white-space: normal !important;
-}
-
-.cloud-table td .no-results {
-	margin-top: 15px;
-	color: #e32121;
-	text-align: center;
 }
 
 .updated.column-updated span {
 	text-decoration: dotted underline;
 }
 
-.column-download a, .action-button-link {
-	border: 1px solid;
-	border-radius: 5px;
-	padding: 5px;
-	margin-bottom: 5px;
-	display: block;
+td.column-name {
+	.cloud-icon {
+		margin-inline-end: 3px;
+	}
+}
+
+td.column-download {
+	display: flex;
+	gap: 0.5em;
+	flex-flow: column;
 	text-align: center;
-	background: transparent;
 }
 
 .cloud-snippet-download {
-	color: #2271b1 !important;
+	color: theme.$accent !important;
 }
 
 .cloud-snippet-downloaded, .cloud-snippet-preview-style {
@@ -109,55 +85,37 @@
 }
 
 .cloud-snippet-update {
-	color: #ff9800 !important;
-}
-
-.snippet-type-badge {
-	white-space: nowrap;
-}
-
-.cloud-badge {
-	margin-left: 10px;
-	border: 1px solid;
-	border-radius: 5px;
-	font-size: 15px;
-	line-height: 19px;
+	color: theme.$cloud-update !important;
 }
 
 #cloud-search-form {
-	margin-top: 30px;
-	margin-bottom: 30px;
+	margin-block: 30px;
 	text-align: center;
 }
 
 .input-group {
 	position: relative;
-	display: -webkit-box;
-	display: -ms-flexbox;
 	display: flex;
-	-ms-flex-wrap: wrap;
 	flex-wrap: wrap;
-	-webkit-box-align: stretch;
-	-ms-flex-align: stretch;
 	align-items: stretch;
-	max-width: 900px;
-	margin: 0 auto;
+	max-inline-size: 900px;
+	margin-block: 0;
+	margin-inline: auto;
 }
 
 #cloud_search {
 	display: block;
-	padding: 0.375rem 0.75rem;
+	padding-block: 0.375rem;
+	padding-inline: 0.75rem;
 	font-size: 1rem;
 	color: #495057;
 	background-clip: padding-box;
 	border-radius: 0;
 	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 	position: relative;
-	-webkit-box-flex: 1;
-	-ms-flex: 1 1 auto;
 	flex: 1 1 auto;
-	width: 1%;
-	margin-bottom: 0;
+	inline-size: 1%;
+	margin-block-end: 0;
 
 	&:focus {
 		outline: 0;
@@ -167,13 +125,13 @@
 }
 
 #cloud-select-prepend {
-	margin-right: -3px;
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
+	margin-inline-end: -3px;
+	border-start-end-radius: 0;
+	border-end-end-radius: 0;
 	position: relative;
 	z-index: 2;
-	color: #2271b1;
-	border-color: #2271b1;
+	color: theme.$accent;
+	border-color: theme.$accent;
 	background-color: #f6f7f7;
 
 	&:hover {
@@ -184,19 +142,20 @@
 }
 
 #cloud-search-submit {
-	padding: 0 15px;
-	margin-left: -3px;
+	padding-block: 0;
+	padding-inline: 15px;
+	margin-inline-start: -3px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
 .cloud-search {
-	margin-left: 5px;
+	margin-inline-start: 5px;
 }
 
 .bundle-group {
-	margin-top: 10px;
+	margin-block-start: 10px;
 	justify-content: space-between;
 	display: flex;
 	gap: 5px;
@@ -208,49 +167,51 @@
 	display: flex;
 	flex: 1 1 auto;
 	font-size: 1rem;
-	padding: 0.375rem 0.75rem;
+	padding-block: 0.375rem;
+	padding-inline: 0.75rem;
 	position: relative;
-	width: 50%;
+	inline-size: 50%;
 }
 
 #cloud-bundle-show {
-	width: 10%;
+	inline-size: 10%;
 }
 
 #cloud-bundle-run {
-	width: 15%;
+	inline-size: 15%;
 }
 
 #bundle_share_name {
 	color: #495057;
 	font-size: 1rem;
-	width: 25%;
+	inline-size: 25%;
 }
 
 .heading-box {
-	max-width: 900px;
+	max-inline-size: 900px;
 	margin: auto;
-	padding-bottom: 1rem;
+	padding-block-end: 1rem;
 }
 
 .cloud-search-heading {
 	font-size: 23px;
 	font-weight: 400;
-	padding: 9px 0 4px;
+	padding-block: 9px 4px;
+	padding-inline: 0;
 	line-height: 1.3;
 	text-align: center;
-	margin-bottom: 0;
+	margin-block-end: 0;
 }
 
 .cloud-badge.ai-icon {
 	font-size: 12px;
 	padding: 3px;
-	margin-left: 5px;
+	margin-inline-start: 5px;
 	color: #b22222;
 }
 
 .cloud-search-card-bottom {
-	min-height: 40px;
+	min-block-size: 40px;
 }
 
 #cloud-search-results .cloud-snippets #the-list {
@@ -269,15 +230,38 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	max-height: 35px;
-	margin: 0 3px;
-	float: right;
+	max-block-size: 35px;
+	margin-block: 0;
+	margin-inline: 3px;
+	float: inline-end;
 	gap: 5px;
 }
 
+
+.cloud-table > tbody > tr {
+	block-size: 80px;
+	box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
+}
+
+.cloud-table > tbody > tr > td {
+	max-inline-size: 250px;
+}
+
+.cloud-table tbody .active-snippet .column-name {
+	font-weight: 400;
+	max-inline-size: 400px;
+	white-space: normal !important;
+}
+
+.cloud-table td .no-results {
+	margin-block-start: 15px;
+	color: #e32121;
+	text-align: center;
+}
+
 .cloud-status-dot {
-	height: 10px;
-	width: 10px;
+	block-size: 10px;
+	inline-size: 10px;
 	background-color: #ce0000;
 	border-radius: 50%;
 
@@ -295,11 +279,22 @@
 	}
 }
 
+.thumbs-up {
+	inline-size: 1.25rem; /* 20px */
+	block-size: 1.25rem; /* 20px */
+	transform-origin: bottom left;
+
+	&:hover {
+		stroke: #059669;
+		fill: #6ee7b7;
+	}
+}
+
 .voted-info {
 	display: inline-flex;
 	gap: 3px;
 	align-items: center;
-	margin-bottom: 6px !important;
+	margin-block-end: 6px !important;
 
 	&:hover {
 		.thumbs-up {
@@ -310,114 +305,16 @@
 	}
 }
 
-.thumbs-up {
-	width: 1.25rem; /* 20px */
-	height: 1.25rem; /* 20px */
-	transform-origin: bottom left;
-
-	&:hover {
-		stroke: #059669;
-		fill: #6ee7b7;
-	}
-}
-
-.ai-verified-snippet .badge, .snippet-type-badge[data-type=ai-verified] {
-	background-color: #ccfbf1;
-	color: #0f766e;
-}
-
-.private-snippet .badge, .snippet-type-badge[data-type=private] {
-	background-color: #eff6ff;
-	color: #1d4ed8;
-}
-
-.public-snippet .badge, .snippet-type-badge[data-type=public] {
-	background-color: #fefce8;
-	color: #a16207;
-}
-
-.unverified-snippet .badge, .snippet-type-badge[data-type=unverified] {
-	background-color: #fff1f2;
-	color: #be123c;
-
-	&:hover {
-		background-color: #fde2e4;
-		color: #be123c;
-	}
-}
-
-.no-results {
-	font-size: 15px;
-}
-
-.css-badge {
-	color: #8000ff !important;
-}
-
-.js-badge {
-	color: #cd6600 !important;
-}
-
-.php-badge {
-	color: #0073aa !important;
-}
-
-.html-badge {
-	color: #548b54 !important;
-}
-
-.tooltip-box {
-	position: relative;
-	display: inline-block;
-}
-
-.tooltip-box .tooltip-text {
-	visibility: hidden;
-	width: 400px;
-	background-color: rgba(0, 0, 0, 0.7);
-	backdrop-filter: blur(3px);
-	padding: 6px;
-	position: absolute;
-	z-index: 5;
-	border-radius: 5px;
-}
-
-.tooltip-box:hover .tooltip-text {
-	visibility: visible;
-}
-
-.tooltip-text-item, .tooltip-text-link {
-	color: #fff !important;
-	text-align: center;
-}
-
-.tooltip-text-title {
-	font-weight: bold;
-	text-decoration: underline;
-	color: #fff !important;
-	text-align: center;
-}
-
-.tooltip-text-link {
-	text-decoration: underline;
-}
-
-.tooltip-box .cloud-key {
-    right: 0;
-    color: white;
-    width: 450px;
-}
-
 .plugin-card-bottom {
 	overflow: visible !important;
 }
 
 .beta-test-notice {
-	margin-top: 20px;
+	margin-block-start: 20px;
 }
 
 .highlight-yellow {
-	background: #ffee58;
+	background: #fefdba;
 	padding: 3px;
 	border-radius: 3px;
 }
@@ -426,16 +323,20 @@
 	0% {
 		transform: rotate(0)
 	}
+
 	33% {
 		transform: rotate(7deg)
 	}
+
 	66% {
 		transform: rotate(-15deg)
 	}
+
 	90% {
 		transform: rotate(5deg)
 	}
-	to {
+
+	100% {
 		transform: rotate(0)
 	}
 }

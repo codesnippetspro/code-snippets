@@ -1,160 +1,96 @@
-@use 'common/editor';
-@use 'common/type-badges';
-@use 'edit/tooltips';
-@use 'edit/types';
-@use 'edit/tags';
-@use 'edit/upgrade-dialog';
-@use 'edit/gpt';
-
 /**
- * Custom styling for the single snippet admin page
+ * Styles for the edit snippet admin page.
  */
 
-.form-table th {
-	width: auto;
-}
+@use 'common/codemirror';
+@use 'common/badges';
+@use 'common/switch';
+@use 'common/select';
+@use 'common/tooltips';
+@use 'common/modal';
+@use 'common/upsell';
+@use 'edit/form';
+@use 'edit/sidebar';
+@use 'edit/editor';
+@use 'edit/conditions';
+@use 'edit/gpt';
 
 .notice.error blockquote {
-	margin-bottom: 0;
-}
-
-h2 {
-	/* Provide some decent space between the fields and titles. */
-	margin: 25px 0 15px;
-
-	label {
-		cursor: auto;
-	}
-}
-
-h2:first-of-type, .submit-inline {
-	margin: 20px 0 10px;
-}
-
-.saved-snippet {
-	&.inactive-snippet, &.active-snippet {
-		#title {
-			border-left-width: 4px;
-		}
-	}
-
-	&.active-snippet #title {
-		border-left-color: #46b450;
-	}
-
-	&.inactive-snippet #title {
-		border-left-color: #bbb;
-	}
-
-	&.erroneous-snippet #title {
-		border-left-color: #dc3232;
-	}
-}
-
-#snippet-form {
-	margin-top: 10px;
-
-	#snippet-tags, textarea {
-		width: 100%;
-		font-family: monospace;
-	}
-}
-
-/* Position the description heading on the same level as the editor buttons */
-label[for='snippet_description'] h3 div {
-	position: absolute;
-}
-
-/* Add spacing in between the action buttons */
-.button + .button,
-.generate-button + .button {
-	margin-left: .5em;
-}
-
-h2 .button {
-	font-weight: normal;
+	margin-block-end: 0;
 }
 
 .button svg {
-	height: 1rem;
+	block-size: 1rem;
 	vertical-align: middle;
 	line-height: 1;
-	margin: -2px 3px 0 0;
-}
-
-.submit, .submit-inline {
-	display: flex;
-}
-
-.submit-inline {
-	float: right;
-	margin-bottom: 0;
-}
-
-p.snippet-scope, .snippet-scope p {
-	margin-top: 15px;
+	margin: 0;
 }
 
 .snippet-description-container {
-	margin-top: 25px;
-
 	.wp-editor-tools {
-		padding-top: 5px;
+		padding-block-start: 5px;
 	}
 
 	.wp-editor-tabs {
-		float: left;
+		float: inline-start;
+	}
+
+	.generate-button {
+		float: inline-end;
+		margin-block-start: 37px;
+		z-index: 99;
+		position: relative;
 	}
 }
 
-.snippet-scope label,
-.html-shortcode-options strong {
-	display: inline-block;
-	margin-right: 1.5em;
+.components-form-token-field__input-container {
+	background: #fff;
+	border-color: #c3c4c7;
+
+	> .components-flex {
+		padding: 12px;
+	}
 }
 
-.below-snippet-editor {
+#titlediv,
+.snippet-type-container {
+	margin-block-end: 24px;
+}
+
+.above-snippet-code {
+	margin-block: 0 15px;
 	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-between;
-	padding-top: 1px;
-}
+	align-items: center;
+	margin-inline: 0;
+	gap: 8px;
 
-.snippet-priority {
-	label {
-		font-weight: bold;
-		cursor: help;
-		font-size: 1.1em;
-		padding-right: 0.5em;
+	h2 {
+		margin: 0;
 	}
 
-	input {
-		width: 4em;
+	.expand-editor-button {
+		display: flex;
+		gap: 5px;
+		align-items: center;
+		margin-inline-end: auto;
+
+		.dashicons {
+			inline-size: 18px;
+			block-size: 18px;
+			font-size: 18px;
+		}
 	}
 }
 
-.snippet-editor {
-	position: relative;
+.snippet-name-wrapper {
+	display: flex;
+	gap: 0.5em;
+
+	> :first-child {
+		flex: 1;
+	}
 }
 
-.CodeMirror {
-	width: 100%;
-}
-
-.wrap h2.nav-tab-wrapper {
-	border-bottom: none;
-}
-
-.code-snippets-copy-text {
-	color: inherit;
-}
-
-.wrap .notice {
-	scroll-margin: 0.75em;
-}
-
-#edit-snippet-form-container .cs-sticky-notice {
-	position: sticky;
-	top: 40px;
-	z-index: 100;
+form.condition-snippet .snippet-code-container {
+	display: none;
 }

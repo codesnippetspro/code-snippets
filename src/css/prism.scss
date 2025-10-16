@@ -10,17 +10,17 @@ complaining about deprecated syntax. Ideally, they can be removed if the file in
 
 pre[data-line] {
 	position: relative;
-	padding: 1em 0 1em 3em;
+	padding-block: 1em;
+	padding-inline: 3em 0;
 }
 
 .line-highlight {
 	position: absolute;
-	left: 0;
-	right: 0;
+	inset-inline: 0;
 	padding: inherit;
-	margin-top: 1em;
-	background: hsla(24, 20%, 50%, .08);
-	background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+	margin-block-start: 1em;
+	background: hsl(24deg 20% 50% / 8%);
+	background: linear-gradient(to right, hsl(24deg 20% 50% / 10%) 70%, hsl(24deg 20% 50% / 0%));
 	pointer-events: none;
 	line-height: inherit;
 	white-space: pre;
@@ -29,15 +29,16 @@ pre[data-line] {
 		print-color-adjust: exact;
 	}
 
-	&:before, &[data-end]:after {
+	&::before, &[data-end]::after {
 		content: attr(data-start);
 		position: absolute;
-		top: .4em;
-		left: .6em;
-		min-width: 1em;
-		padding: 0 .5em;
-		background-color: hsla(24, 20%, 50%, .4);
-		color: hsl(24, 20%, 95%);
+		inset-block-start: .4em;
+		inset-inline-start: .6em;
+		min-inline-size: 1em;
+		padding-block: 0;
+		padding-inline: .5em;
+		background-color: hsl(24deg 20% 50% / 40%);
+		color: hsl(24deg 20% 95%);
 		font: bold 65%/1.5 sans-serif;
 		text-align: center;
 		vertical-align: .3em;
@@ -46,37 +47,37 @@ pre[data-line] {
 		box-shadow: 0 1px white;
 	}
 
-	&[data-end]:after {
+	&[data-end]::after {
 		content: attr(data-end);
-		top: auto;
-		bottom: .4em;
+		inset-block: auto .4em;
 	}
 
-	.line-numbers &:before, .line-numbers &:after {
+	.line-numbers &::before, .line-numbers &::after {
 		content: none;
 	}
 
 	/* Additional fixes to the behaviour of line highlighting with certain themes. */
 
-	:not(.is-style-prism-shades-of-purple) pre[class*=language-].line-numbers & {
-		box-sizing: border-box;
-		padding: 0;
-		margin: 1em 0 0;
+	.is-style-prism-coy-without-shadows pre[class*="language-"] & {
+		margin-block-start: 0;
 	}
 
-	.is-style-prism-coy-without-shadows pre[class*=language-] & {
-		margin-top: 0;
+	:not(.is-style-prism-shades-of-purple) pre[class*="language-"].line-numbers & {
+		box-sizing: border-box;
+		padding: 0;
+		margin-block: 1em 0;
+		margin-inline: 0;
 	}
 }
 
 pre[id].linkable-line-numbers span.line-numbers-rows {
 	pointer-events: all;
 
-	> span:before {
+	> span::before {
 		cursor: pointer;
 	}
 
-	> span:hover:before {
-		background-color: rgba(128, 128, 128, .2);
+	> span:hover::before {
+		background-color: rgb(128 128 128 / 20%);
 	}
 }

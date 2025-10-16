@@ -1,4 +1,4 @@
-@use 'common/editor';
+@use 'common/codemirror';
 
 $sections: general, editor, debug;
 
@@ -9,21 +9,21 @@ p.submit {
 
 .settings-section,
 p.submit {
-	max-width: 1020px;
+	max-inline-size: 1020px;
 }
 
 .nav-tab-wrapper {
-	margin-bottom: 1em;
+	margin-block-end: 1em;
 }
 
-input[type=number] {
-	width: 4em;
+input[type="number"] {
+	inline-size: 4em;
 }
 
 .CodeMirror {
-	max-width: 800px;
-	width: 100%;
-	padding-right: 1em;
+	max-inline-size: 800px;
+	inline-size: 100%;
+	padding-inline-end: 1em;
 }
 
 .CodeMirror-sizer::before {
@@ -41,17 +41,16 @@ body.no-js {
 }
 
 body.js {
-
 	.settings-section-title {
 		border: 0;
 		clip: rect(1px, 1px, 1px, 1px);
 		clip-path: inset(50%);
-		height: 1px;
+		block-size: 1px;
 		margin: -1px;
 		overflow: hidden;
 		padding: 0;
 		position: absolute;
-		width: 1px;
+		inline-size: 1px;
 		word-wrap: normal !important;
 	}
 
@@ -72,7 +71,7 @@ body.js {
 
 .license-status {
 	display: inline-block;
-	padding-right: 2em;
+	padding-inline-end: 2em;
 	line-height: 2;
 	color: #aaa;
 }
@@ -85,7 +84,7 @@ body.js {
 	color: #dc3232;
 }
 
-.wrap[data-active-tab=license] .submit {
+.wrap[data-active-tab="license"] .submit {
 	display: none;
 }
 
@@ -99,20 +98,20 @@ body.js {
 }
 
 #cloud_token {
-	max-width: 450px;
-    width: 90vw;
+	max-inline-size: 450px;
+	inline-size: 90vw;
 }
 
 .cloud-message {
-	width: fit-content;
-    padding: 5px;
-    border-radius: 5px;
-    font-weight: 600;
+	inline-size: fit-content;
+	padding: 5px;
+	border-radius: 5px;
+	font-weight: 600;
 }
 
 .cloud-error {
-    background: #e53935;
-    color: #ffebee;
+	background: #e53935;
+	color: #ffebee;
 }
 
 .cloud-success {
@@ -121,10 +120,10 @@ body.js {
 }
 
 .refresh-success {
-    background: #2271b1;
-    color: #ffeb3b;
+	background: #2271b1;
+	color: #ffeb3b;
 }
 
 .cloud-settings tbody tr:nth-child(n+5) {
-    display: none;
+	display: none;
 }

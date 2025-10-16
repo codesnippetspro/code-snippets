@@ -54,6 +54,13 @@ class List_Table extends WP_List_Table {
 	protected string $order_dir;
 
 	/**
+	 * List of active snippets indexed by attached condition ID.
+	 *
+	 * @var array <int, Snippet[]>
+	 */
+	protected array $active_by_condition = [];
+
+	/**
 	 * The constructor function for our class.
 	 * Registers hooks, initializes variables, setups class.
 	 *
@@ -105,6 +112,19 @@ class List_Table extends WP_List_Table {
 				'singular' => 'snippet',
 			)
 		);
+	}
+
+	/**
+	 * Determine if a condition is considered 'active' by checking if it is attached to any active snippets.
+	 *
+	 * @param Snippet $condition Condition snippet to check.
+	 *
+	 * @return bool
+	 */
+	protected function is_condition_active( Snippet $condition ): bool {
+		return $condition->is_condition()
+		       && isset( $this->active_by_condition[ $condition->id ] )
+		       && count( $this->active_by_condition[ $condition->id ] ) > 0;
 	}
 
 	/**
@@ -169,10 +189,10 @@ class List_Table extends WP_List_Table {
 				$url = add_query_arg( 'type', $type );
 
 				return sprintf(
-					'<a class="snippet-type-badge" href="%s" data-snippet-type="%s">%s</a>',
-					esc_url( $url ),
+					'<a class="badge %s-badge" href="%s">%s</a>',
 					esc_attr( $type ),
-					esc_html( $type )
+					esc_url( $url ),
+					'cond' === $type ? '<span class="dashicons dashicons-randomize"></span>' : esc_html( $type )
 				);
 
 			case 'date':
@@ -275,28 +295,45 @@ class List_Table extends WP_List_Table {
 			return '';
 		}
 
-		if ( 'single-use' === $snippet->scope ) {
-			$class = 'snippet-execution-button';
-			$action = 'run-once';
-			$label = esc_html__( 'Run Once', 'code-snippets' );
-		} else {
-			$class = 'snippet-activation-switch';
-			$action = $snippet->active ? 'deactivate' : 'activate';
-			$label = $snippet->network && ! $snippet->shared_network ?
-				( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
-				( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
+		switch ( $snippet->scope ) {
+			case 'single-use':
+				$class = 'snippet-execution-button';
+				$action = 'run-once';
+				$label = esc_html__( 'Run Once', 'code-snippets' );
+				break;
+
+			case 'condition':
+				$edit_url = code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' );
+
+				return sprintf(
+					'<a href="%s" class="snippet-condition-count">%s</a>',
+					esc_url( $edit_url ),
+					isset( $this->active_by_condition[ $snippet->id ] )
+						? esc_html( count( $this->active_by_condition[ $snippet->id ] ) )
+						: 0
+				);
+
+			default:
+				$class = 'snippet-activation-switch';
+				$action = $snippet->active ? 'deactivate' : 'activate';
+				$label = $snippet->network && ! $snippet->shared_network ?
+					( $snippet->active ? __( 'Network Deactivate', 'code-snippets' ) : __( 'Network Activate', 'code-snippets' ) ) :
+					( $snippet->active ? __( 'Deactivate', 'code-snippets' ) : __( 'Activate', 'code-snippets' ) );
+				break;
 		}
 
 		if ( $snippet->shared_network ) {
 			$action .= '-shared';
 		}
 
-		return sprintf(
-			'<a class="%s" href="%s" title="%s">&nbsp;</a> ',
-			esc_attr( $class ),
-			esc_url( $this->get_action_link( $action, $snippet ) ),
-			esc_attr( $label )
-		);
+		return $action && $label
+			? sprintf(
+				'<a class="%1$s" href="%2$s" title="%3$s" aria-label="%3$s">&nbsp;</a> ',
+				esc_attr( $class ),
+				esc_url( $this->get_action_link( $action, $snippet ) ),
+				esc_attr( $label )
+			)
+			: '';
 	}
 
 	/**
@@ -315,10 +352,6 @@ class List_Table extends WP_List_Table {
 
 		$out = esc_html( $snippet->display_name );
 
-		if ( 'global' !== $snippet->scope ) {
-			$out .= sprintf( ' <span class="dashicons dashicons-%s"></span>', $snippet->scope_icon );
-		}
-
 		// Add a link to the snippet if it isn't an unreadable network-only snippet.
 		if ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) {
 			$out = sprintf(
@@ -332,9 +365,7 @@ class List_Table extends WP_List_Table {
 			$out .= ' <span class="badge">' . esc_html__( 'Shared on Network', 'code-snippets' ) . '</span>';
 		}
 
-		// Return the name contents.
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
-
 		return $out . $row_actions;
 	}
 
@@ -411,10 +442,6 @@ class List_Table extends WP_List_Table {
 			'priority'    => __( 'Priority', 'code-snippets' ),
 			'id'          => __( 'ID', 'code-snippets' ),
 		);
-
-		if ( isset( $_GET['type'] ) && 'all' !== $_GET['type'] ) {
-			unset( $columns['type'] );
-		}
 
 		if ( ! get_setting( 'general', 'enable_description' ) ) {
 			unset( $columns['description'] );
@@ -759,7 +786,7 @@ class List_Table extends WP_List_Table {
 			$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'id', 'scope', '_wpnonce' ) );
 
 			// If so, then perform the requested action and inform the user of the result.
-			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ), $scope );
+			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ) );
 
 			if ( $result ) {
 				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
@@ -954,6 +981,12 @@ class List_Table extends WP_List_Table {
 		$snippets['all'] = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets() );
 		$this->fetch_shared_network_snippets();
 
+		foreach ( $snippets['all'] as $snippet ) {
+			if ( $snippet->active ) {
+				$this->active_by_condition[ $snippet->condition_id ][] = $snippet;
+			}
+		}
+
 		// Filter snippets by type.
 		$type = sanitize_key( wp_unslash( $_GET['type'] ?? '' ) );
 
@@ -1004,8 +1037,7 @@ class List_Table extends WP_List_Table {
 		 * @var Snippet $snippet
 		 */
 		foreach ( $snippets['all'] as $snippet ) {
-
-			if ( $snippet->active ) {
+			if ( $snippet->active || $this->is_condition_active( $snippet ) ) {
 				$snippets['active'][] = $snippet;
 			} else {
 				$snippets['inactive'][] = $snippet;
@@ -1159,13 +1191,16 @@ class List_Table extends WP_List_Table {
 	 */
 	private function search_callback( Snippet $snippet ): bool {
 		global $s;
-		$fields = array( 'name', 'desc', 'code', 'tags_list' );
+
+		$query = sanitize_text_field( wp_unslash( $s ) );
+		$fields = [ 'name', 'desc', 'code', 'tags_list' ];
 
 		foreach ( $fields as $field ) {
-			if ( false !== stripos( $snippet->$field, $s ) ) {
+			if ( false !== stripos( $snippet->$field, $query ) ) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -1274,7 +1309,7 @@ class List_Table extends WP_List_Table {
 	 * @param Snippet $item The snippet being used for the current row.
 	 */
 	public function single_row( $item ) {
-		$status = $item->active ? 'active' : 'inactive';
+		$status = $item->active || $this->is_condition_active( $item ) ? 'active' : 'inactive';
 
 		$row_class = "snippet $status-snippet $item->type-snippet $item->scope-scope";
 

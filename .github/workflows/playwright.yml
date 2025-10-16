@@ -1,0 +1,54 @@
+name: "(Test): Playwright"
+
+on:
+  pull_request:
+    types: [labeled, synchronize, opened, reopened]
+  push:
+    branches:
+      - 'core'
+      - 'pro'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.gitignore'
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+concurrency:
+  group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  playwright-default:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    uses: ./.github/workflows/playwright-test.yml
+    with:
+      test-mode: 'default'
+      project-name: 'chromium-db-snippets'
+
+  playwright-file-based-execution:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    uses: ./.github/workflows/playwright-test.yml
+    with:
+      test-mode: 'file-based-execution'
+      project-name: 'chromium-file-based-snippets'
+
+  test-result:
+    needs: [playwright-default, playwright-file-based-execution]
+    if: always() && (needs.playwright-default.result != 'skipped' || needs.playwright-file-based-execution.result != 'skipped')
+    runs-on: ubuntu-22.04
+    name: Playwright - Test Results Summary
+    steps:
+      - name: Test status summary
+        run: |
+          echo "Default Mode: ${{ needs.playwright-default.result }}"
+          echo "File-based Execution: ${{ needs.playwright-file-based-execution.result }}"
+
+      - name: Check overall status
+        if: ${{ (needs.playwright-default.result != 'success' && needs.playwright-default.result != 'skipped') || (needs.playwright-file-based-execution.result != 'success' && needs.playwright-file-based-execution.result != 'skipped') }}
+        run: exit 1

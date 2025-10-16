@@ -16,7 +16,9 @@
         "src/js",
         "config",
         "scripts",
-        "eslint.config.mjs"
+        "tests",
+        "*.config.mjs",
+        "*.config.js"
     ],
     "ts-node": {
         "files": true,

@@ -53,7 +53,7 @@ $cloud_select = sanitize_key( wp_unslash( $_REQUEST['cloud_select'] ?? '' ) );
 		</select>
 		<input type="text" id="cloud_search" name="cloud_search" class="cloud_search"
 		       value="<?php echo esc_html( $search_query ); ?>"
-		       placeholder="<?php esc_html_e( 'e.g. Remove unused javascript…', 'code-snippets' ); ?>">
+		       placeholder="<?php esc_attr_e( 'e.g. Remove unused javascript…', 'code-snippets' ); ?>">
 
 		<button type="submit" id="cloud-search-submit" class="button">
 			<?php esc_html_e( 'Search Cloud', 'code-snippets' ); ?>

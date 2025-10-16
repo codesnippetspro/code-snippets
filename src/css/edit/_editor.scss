@@ -1,0 +1,89 @@
+
+.CodeMirror,
+.snippet-form textarea {
+	inline-size: 100%;
+	font-family: monospace;
+}
+
+.CodeMirror-sizer {
+	min-block-size: 300px !important;
+	box-sizing: border-box;
+	padding-block-end: 1.5em !important;
+
+	&::after {
+		position: absolute;
+		inset-block-end: 0;
+	}
+
+	.snippet-form.php-snippet & {
+		padding-block-end: 0 !important;
+
+		&::before {
+			content: '<?php';
+		}
+	}
+
+	.snippet-form.css-snippet & {
+		&::before {
+			content: '<style>';
+		}
+
+		&::after {
+			content: '</style>';
+		}
+	}
+
+	.snippet-form.js-snippet & {
+		&::before {
+			content: '<script>';
+		}
+
+		&::after {
+			content: '</script>';
+		}
+	}
+
+	.snippet-form.html-snippet & {
+		&::before {
+			content: '<!-- begin content -->';
+		}
+
+		&::after {
+			content: '<!-- end content -->';
+		}
+	}
+}
+
+.snippet-editor {
+	position: relative;
+}
+
+.snippet-editor-help {
+	position: absolute;
+	inset-inline-end: 5px;
+	inset-block-start: 5px;
+
+	td {
+		&:first-child {
+			padding-inline-end: 0.5em;
+		}
+
+		@media screen and (width >= 512px) {
+			white-space: nowrap;
+		}
+	}
+
+	.mac-key {
+		display: none;
+	}
+
+	.platform-mac {
+		.mac-key {
+			display: inline;
+		}
+
+		.pc-key {
+			display: none;
+		}
+	}
+}
