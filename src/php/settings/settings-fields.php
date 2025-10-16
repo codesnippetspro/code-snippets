@@ -50,6 +50,9 @@ function get_default_settings(): array {
 		'version-switch' => [
 			'selected_version'  => '',
 		],
+		'debug' => [
+			'enable_version_change' => false,
+		],
 	];
 
 	$defaults = apply_filters( 'code_snippets_settings_defaults', $defaults );
@@ -82,6 +85,11 @@ function get_settings_fields(): array {
 			'name' => __( 'Reset Caches', 'code-snippets' ),
 			'type' => 'action',
 			'desc' => __( 'Use this button to manually clear snippets caches.', 'code-snippets' ),
+		],
+    	'enable_version_change' => [
+			'name'  => __( 'Version Change', 'code-snippets' ),
+			'type'  => 'checkbox',
+			'label' => __( 'Enable the ability to switch or rollback versions of the Code Snippets core plugin.', 'code-snippets' ),
 		],
 	];
 
