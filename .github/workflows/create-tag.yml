@@ -15,13 +15,13 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
-        with:
-          ref: core
 
       - name: Get version from package.json
         id: version
         run: |
-          echo "tag=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+          tag=$(jq -r .version package.json) 
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "::info::Creating git tag [$tag]"
 
       - name: Create tag
         run: |
