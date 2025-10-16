@@ -286,12 +286,11 @@ function log_version_switch_attempt( string $target_version, $result, string $de
  * @return array Result array with success status and message
  */
 function handle_version_switch( string $target_version ): array {
-	// Check user capabilities
+
 	if ( ! current_user_can( 'update_plugins' ) ) {
 		return create_error_response( __( 'You do not have permission to update plugins.', 'code-snippets' ) );
 	}
 
-	// Validate target version
 	$available_versions = get_available_versions();
 	$validation = validate_target_version( $target_version, $available_versions );
 	
@@ -299,27 +298,21 @@ function handle_version_switch( string $target_version ): array {
 		return create_error_response( $validation['message'] );
 	}
 
-	// Check if already on target version
 	if ( get_current_version() === $target_version ) {
 		return create_error_response( __( 'Already on the specified version.', 'code-snippets' ) );
 	}
 
-	// Set switch in progress
 	set_transient( PROGRESS_KEY, $target_version, PROGRESS_TIMEOUT );
 
-	// Perform the version installation
 	$install_result = perform_version_install( $validation['download_url'] );
 
-	// Clear progress transient
 	delete_transient( PROGRESS_KEY );
 
-	// Handle the result
 	if ( is_wp_error( $install_result ) ) {
 		return create_error_response( $install_result->get_error_message() );
 	}
 
 	if ( $install_result ) {
-		// Clear version cache on success
 		delete_transient( VERSION_CACHE_KEY );
 
 		return [
@@ -331,7 +324,6 @@ function handle_version_switch( string $target_version ): array {
 		];
 	}
 
-	// If we get here, the installation failed but didn't return a WP_Error
 	return handle_installation_failure( $target_version, $validation['download_url'], $install_result );
 }
 
@@ -384,76 +376,7 @@ function render_version_switch_field( array $args ): void {
 
 			<div id="version-switch-result" class="notice" style="display: none;"></div>
 		<?php endif; ?>
-	</div>
-
-	<script type="text/javascript">
-	jQuery(document).ready(function($) {
-		var currentVersion = '<?php echo esc_js( $current_version ); ?>';
-		var $button = $('#switch-version-btn');
-		var $dropdown = $('#target_version');
-		var $result = $('#version-switch-result');
-		
-		// Handle dropdown changes - enable/disable button and show/hide warning
-		$dropdown.on('change', function() {
-			var selectedVersion = $(this).val();
-			
-			if (!selectedVersion || selectedVersion === currentVersion) {
-				// Current version or no selection - disable button and hide warning
-				$button.prop('disabled', true);
-				$('#version-switch-warning').hide();
-			} else {
-				// Different version selected - enable button and show warning
-				$button.prop('disabled', false);
-				$('#version-switch-warning').show();
-			}
-		});
-		
-		$button.on('click', function() {
-			var targetVersion = $dropdown.val();
-			
-			if (!targetVersion || targetVersion === currentVersion) {
-				$result.removeClass('notice-success notice-error').addClass('notice-warning')
-					.html('<p><?php esc_html_e( 'Please select a different version to switch to.', 'code-snippets' ); ?></p>')
-					.show();
-				return;
-			}
-
-			// Disable button and show loading
-			$button.prop('disabled', true).text('<?php esc_html_e( 'Switching...', 'code-snippets' ); ?>');
-			$result.removeClass('notice-success notice-error notice-warning').addClass('notice-info')
-				.html('<p><?php esc_html_e( 'Processing version switch. Please wait...', 'code-snippets' ); ?></p>')
-				.show();
-
-			// Make AJAX request
-			$.post(ajaxurl, {
-				action: 'code_snippets_switch_version',
-				target_version: targetVersion,
-				nonce: '<?php echo esc_js( wp_create_nonce( 'code_snippets_version_switch' ) ); ?>'
-			})
-			.done(function(response) {
-				if (response.success) {
-					$result.removeClass('notice-info notice-error').addClass('notice-success')
-						.html('<p>' + response.data.message + '</p>');
-					
-					// Refresh page after 3 seconds
-					setTimeout(function() {
-						window.location.reload();
-					}, 3000);
-				} else {
-					$result.removeClass('notice-info notice-success').addClass('notice-error')
-						.html('<p>' + response.data.message + '</p>');
-					$button.prop('disabled', false).text('<?php esc_html_e( 'Switch Version', 'code-snippets' ); ?>');
-				}
-			})
-			.fail(function() {
-				$result.removeClass('notice-info notice-success').addClass('notice-error')
-					.html('<p><?php esc_html_e( 'An error occurred while switching versions. Please try again.', 'code-snippets' ); ?></p>');
-				$button.prop('disabled', false).text('<?php esc_html_e( 'Switch Version', 'code-snippets' ); ?>');
-			});
-		});
-	});
-	</script>
-	<?php
+	</div><?php
 }
 
 /**
@@ -504,33 +427,7 @@ function render_refresh_versions_field( array $args ): void {
 	</button>
 	<p class="description">
 		<?php esc_html_e( 'Check for the latest available plugin versions from WordPress.org.', 'code-snippets' ); ?>
-	</p>
-
-	<script type="text/javascript">
-	jQuery(document).ready(function($) {
-		$('#refresh-versions-btn').on('click', function() {
-			var $button = $(this);
-			$button.prop('disabled', true).text('<?php esc_html_e( 'Refreshing...', 'code-snippets' ); ?>');
-
-			$.post(ajaxurl, {
-				action: 'code_snippets_refresh_versions',
-				nonce: '<?php echo esc_js( wp_create_nonce( 'code_snippets_refresh_versions' ) ); ?>'
-			})
-			.done(function(response) {
-				$button.text('<?php esc_html_e( 'Refreshed!', 'code-snippets' ); ?>');
-				setTimeout(function() {
-					$button.prop('disabled', false).text('<?php esc_html_e( 'Refresh Available Versions', 'code-snippets' ); ?>');
-					// Reload page to show updated versions
-					window.location.reload();
-				}, 1000);
-			})
-			.fail(function() {
-				$button.prop('disabled', false).text('<?php esc_html_e( 'Refresh Available Versions', 'code-snippets' ); ?>');
-			});
-		});
-	});
-	</script>
-	<?php
+	</p><?php
 }
 
 /**
