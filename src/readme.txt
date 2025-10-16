@@ -104,6 +104,12 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.7.1-beta.1 2025-10-16 =
+
+__Changed__
+* 54 files modified across 140 commits
+
 = 3.7.0 (beta release) =
 
 __Added__
