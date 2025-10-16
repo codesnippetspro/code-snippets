@@ -26,6 +26,6 @@ jobs:
       - name: Create tag
         run: |
           git config user.name "code-snippets-bot"
-          git config user.email "sre@codesnippets.pro"
+          git config user.email "139164393+code-snippets-bot@users.noreply.github.com"
           git tag "v${{ steps.version.outputs.tag }}"
           git push origin "v${{ steps.version.outputs.tag }}"
