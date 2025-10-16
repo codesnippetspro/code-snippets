@@ -183,23 +183,25 @@ body.js {
 		}
 	}
 
-	.notice {
-		&.notice-success {
-			border-left-color: #00a32a;
-		}
-		
-		&.notice-error {
-			border-left-color: #d63638;
-		}
-		
-		&.notice-warning {
-			border-left-color: #dba617;
-		}
-		
-		&.notice-info {
-			border-left-color: #72aee6;
-		}
-	}
+  .notice {
+    &.notice {
+      &-success {
+        border-left-color: #00a32a;
+      }
+
+      &-error {
+        border-left-color: #d63638;
+      }
+
+      &-warning {
+        border-left-color: #dba617;
+      }
+
+      &-info {
+        border-left-color: #72aee6;
+      }
+    }
+  }
 }
 
 .version-switch-settings {
