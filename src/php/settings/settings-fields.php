@@ -86,7 +86,7 @@ function get_settings_fields(): array {
 			'type' => 'action',
 			'desc' => __( 'Use this button to manually clear snippets caches.', 'code-snippets' ),
 		],
-    	'enable_version_change' => [
+    'enable_version_change' => [
 			'name'  => __( 'Version Change', 'code-snippets' ),
 			'type'  => 'checkbox',
 			'label' => __( 'Enable the ability to switch or rollback versions of the Code Snippets core plugin.', 'code-snippets' ),
@@ -97,17 +97,17 @@ function get_settings_fields(): array {
 		'version_switcher'  => [
 			'name' => __( 'Switch Version', 'code-snippets' ),
 			'type' => 'callback',
-			'render_callback' => 'Code_Snippets\Settings\VersionSwitch\render_version_switch_field',
+			'render_callback' => [ '\\Code_Snippets\\Settings\\Version_Switch', 'render_version_switch_field' ],
 		],
 		'refresh_versions'  => [
 			'name' => __( 'Refresh Versions', 'code-snippets' ),
 			'type' => 'callback',
-			'render_callback' => 'Code_Snippets\Settings\VersionSwitch\render_refresh_versions_field',
+			'render_callback' => [ '\\Code_Snippets\\Settings\\Version_Switch', 'render_refresh_versions_field' ],
 		],
 		'version_warning'   => [
 			'name' => '',
 			'type' => 'callback',
-			'render_callback' => 'Code_Snippets\Settings\VersionSwitch\render_version_switch_warning',
+			'render_callback' => [ '\\Code_Snippets\\Settings\\Version_Switch', 'render_version_switch_warning' ],
 		],
 	];
 
