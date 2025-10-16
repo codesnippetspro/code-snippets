@@ -12,6 +12,12 @@ node_modules/
 npm-debug.log
 .sass-cache/
 
+# Playwright
+playwright-report/
+test-results/
+tests/e2e/.auth/
+auth.json
+
 # Local files (ideally, should be in a global .gitignore)
 .idea/
 Thumbs.db
