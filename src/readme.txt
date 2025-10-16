@@ -104,6 +104,20 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.7.1-beta.1 2025-10-16 =
+
+__Added__
+* Optional flat-file storage mode for snippets with HTML/PHP handlers and a file-based repository, configurable in settings with uninstall cleanup.
+* Added Carolina and Louis as plugin contributors (visible in plugin metadata/readme).
+
+__Changed__
+* Minor UI/UX tweaks to the editor form and sidebar; improved editor preview behavior.
+
+__Fixed__
+* Improved reliability of snippet evaluation and front-end integration.
+* Stabilized release/version automation (prepare-tag, changelog job, version regex/outputs).
+
 = 3.7.0 (beta release) =
 
 __Added__
