@@ -1,13 +1,5 @@
 # Changelog
 
-
-## [3.7.1-beta.1] - 2025-10-16
-
-### Changed
-* 54 files modified across 140 commits
-* 19 PHP files updated
-* 13 JavaScript files updated
-
 ## 3.7.1 ([unreleased])
 
 ### Fixed
