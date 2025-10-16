@@ -29,16 +29,37 @@ export default defineConfig({
 	projects: [
 		{
 			name: 'setup',
-			testMatch: /.*\.setup\.ts/
+			testMatch: /auth\.setup\.ts/
 		},
 
 		{
-			name: 'chromium',
+			name: 'flat-files-setup',
+			testMatch: /flat-files\.setup\.ts/,
 			use: {
 				...devices['Desktop Chrome'],
 				storageState: join(__dirname, '../e2e/.auth/user.json')
 			},
 			dependencies: ['setup']
+		},
+
+		{
+			name: 'chromium-db-snippets',
+			use: {
+				...devices['Desktop Chrome'],
+				storageState: join(__dirname, '../e2e/.auth/user.json')
+			},
+			dependencies: ['setup'],
+			testIgnore: /.*\.setup\.ts/
+		},
+
+		{
+			name: 'chromium-file-based-snippets',
+			use: {
+				...devices['Desktop Chrome'],
+				storageState: join(__dirname, '../e2e/.auth/user.json')
+			},
+			dependencies: ['setup', 'flat-files-setup'],
+			testIgnore: /.*\.setup\.ts/
 		}
 	],
 

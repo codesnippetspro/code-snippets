@@ -4,9 +4,13 @@ namespace Evaluation;
 
 use Code_Snippets\DB;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
+use Code_Snippets\Settings;
+use Code_Snippets\Snippet_Files;
 use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\execute_snippet;
+use function Code_Snippets\code_snippets;
+use function Code_Snippets\execute_snippet_from_flat_file;
 
 /**
  * Class for evaluating functions snippets.
@@ -104,6 +108,28 @@ class Evaluate_Functions {
 				[ '%d' ]
 			);
 			clean_snippets_cache( $table_name );
+
+			$network = $table_name === $this->db->ms_table;
+			do_action( 'code_snippets/deactivate_snippet', $snippet_id, $network );
+		}
+	}
+
+	private function evaluate_snippet_flat_file( array $snippet, string $file_path, ?array $edit_snippet = null ) {
+		$snippet_id = $snippet['id'];
+		$code = $snippet['code'];
+		$table_name = $snippet['table'];
+
+		// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
+		if ( 'single-use' === $snippet['scope'] ) {
+			$this->quick_deactivate_snippet( $snippet_id, $table_name );
+		}
+
+		if ( ! is_null( $edit_snippet ) && $edit_snippet['id'] === $snippet_id && $edit_snippet['table'] === $table_name ) {
+			return;
+		}
+
+		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
+			execute_snippet_from_flat_file( $code, $file_path, $snippet_id );
 		}
 	}
 
@@ -117,6 +143,14 @@ class Evaluate_Functions {
 			return false;
 		}
 
+		if ( Snippet_Files::is_active() ) {
+			return $this->evaluate_file_snippets();
+		}
+
+		return $this->evaluate_db_snippets();
+	}
+
+	public function evaluate_db_snippets(): bool {
 		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
 		$active_snippets = $this->db->fetch_active_snippets( $scopes );
 		$edit_snippet = $this->get_currently_editing_snippet();
@@ -135,6 +169,23 @@ class Evaluate_Functions {
 			     ( is_null( $edit_snippet ) || $edit_snippet['id'] !== $snippet_id || $edit_snippet['table'] !== $table_name ) ) {
 				execute_snippet( $code, $snippet_id );
 			}
+		}
+
+		return true;
+	}
+
+	private function evaluate_file_snippets(): bool {
+		$type = 'php';
+		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
+		$snippets = Snippet_Files::get_active_snippets_from_flat_files( $scopes, $type );
+		$edit_snippet = $this->get_currently_editing_snippet();
+
+		foreach ( $snippets as $snippet ) {
+			$table_name = Snippet_Files::get_hashed_table_name( $snippet['table'] );
+			$base_path = Snippet_Files::get_base_dir( $table_name, $type );
+			$file = $base_path . '/' . $snippet['id'] . '.' . $type;
+
+			$this->evaluate_snippet_flat_file( $snippet, $file, $edit_snippet );
 		}
 
 		return true;
