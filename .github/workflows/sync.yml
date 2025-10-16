@@ -1,0 +1,41 @@
+name: "(Sync): Core to Beta and Pro"
+
+on:
+  push:
+    branches:
+      - core
+      - pro
+
+jobs:
+  check-sync:
+    runs-on: ubuntu-latest
+    outputs:
+      should_sync: ${{ steps.check.outputs.should_sync }}
+    steps:
+      - name: Check if sync is required
+        id: check
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          if [[ "$COMMIT_MSG" == *"(sync):"* ]]; then
+            echo "should_sync=true" >> $GITHUB_OUTPUT
+            echo "::notice::Commit message contains (sync): - triggering sync workflow"
+          else
+            echo "should_sync=false" >> $GITHUB_OUTPUT
+            echo "::notice::Commit message does not contain (sync): - skipping sync"
+          fi
+
+  sync:
+    needs: check-sync
+    if: needs.check-sync.outputs.should_sync == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger downstream workflow via gh
+        env:
+          GH_TOKEN: ${{ secrets.CHANGELOG_PAT }}
+        run: |
+          gh workflow run sync-code-snippets.yml \
+            --repo codesnippetspro/.github-private --ref main \
+            --field caller_repo="${{ github.repository }}" \
+            --field caller_ref="${{ github.ref_name }}" \
+            --field commit_sha="${{ github.sha }}"
+          echo "::notice::Dispatched sync workflow"
