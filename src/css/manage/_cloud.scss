@@ -233,8 +233,8 @@ td.column-name {
 			}
 
 			.title-icon {
-				height: 90px;
-				margin-top: -7px;
+				block-size: 90px;
+				margin-block-start: -7px;
 			}
 		}
 
@@ -269,7 +269,7 @@ td.column-name {
 		margin: 0;
 
 		.button {
-			width: 100%;
+			inline-size: 100%;
 			text-align: center;
 		}
 	}

@@ -38,10 +38,10 @@
 	font-size: inherit;
 	margin: 0;
 	padding-inline: 6px;
-	border-left: none;
-	border-right: none;
-	border-top: 1px solid rgba(0, 0, 0, 0.15);
-	border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+	border-inline-start: none;
+	border-inline-end: none;
+	border-block-start: 1px solid rgb(0 0 0 / 15%);
+	border-block-end: 1px solid rgb(0 0 0 / 15%);
 	border-image-slice: 1;
 	border-image-width: 1;
 	border-image-repeat: stretch;
@@ -60,7 +60,7 @@
 		cursor: default;
 		gap: 7px;
 		display: inline-flex;
-		margin-left: 5px;
+		margin-inline-start: 5px;
 		font-family: system-ui;
 		font-style: normal;
 
