@@ -139,7 +139,7 @@ const processExplainResponse = (
 				doc.replaceRange(comment, { line: safeLine, ch: 0 })
 
 				lineWidget.clear()
-				setWidgets(prev => prev.filter(w => w !== lineWidget))
+				setWidgets((prev: any[]) => prev.filter(w => w !== lineWidget))
 			})
 
 			removeBtn.addEventListener('click', () => {
@@ -208,8 +208,6 @@ export const ExplainSnippetButton: React.FC<ExplainSnippetButtonProps> = ({
 	const [errorMessage, setErrorMessage] = useState<string>()
 	const { explainSnippet } = useGenerativeAPI()
 	const [, setWidgets] = useState<LineWidget[]>([])
-
-	// Module-scope helper functions are used; nothing additional needed here
 
 	return '' !== snippet.code.trim() || isCondition(snippet)
 		? <div className="generate-button">
