@@ -78,6 +78,13 @@ class Plugin {
 	public Licensing $licensing;
 
 	/**
+	 * Handles snippet handler registration.
+	 *
+	 * @var Snippet_Handler_Registry
+	 */
+	public Snippet_Handler_Registry $snippet_handler_registry;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $version Current plugin version.
@@ -129,6 +136,18 @@ class Plugin {
 
 		// Cloud List Table shared functions.
 		require_once $includes_path . '/cloud/list-table-shared-ops.php';
+
+		// Snippet files.
+		$this->snippet_handler_registry = new Snippet_Handler_Registry( [
+			'php'  => new Php_Snippet_Handler(),
+			'html' => new Html_Snippet_Handler(),
+		] );
+
+		$fs = new WordPress_File_System_Adapter();
+
+		$config_repo = new Snippet_Config_Repository( $fs );
+
+		( new Snippet_Files( $this->snippet_handler_registry, $fs, $config_repo ) )->register_hooks();
 
 		$this->front_end = new Front_End();
 		$this->cloud_api = new Cloud_API();
