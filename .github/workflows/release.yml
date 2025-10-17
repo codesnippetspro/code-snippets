@@ -44,7 +44,7 @@ jobs:
 
       - name: Upload release asset
         id: upload
-        uses: softprops/action-gh-release@v2
+        uses: codesnippetspro/action-gh-release@master
         with:
           files: ${{ steps.zip.outputs.path }}
 
