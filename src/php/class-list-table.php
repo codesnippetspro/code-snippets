@@ -512,7 +512,7 @@ class List_Table extends WP_List_Table {
 				'clone-selected'      => __( 'Clone', 'code-snippets' ),
 				'download-selected'   => __( 'Export Code', 'code-snippets' ),
 				'export-selected'     => __( 'Export', 'code-snippets' ),
-				'delete-selected'     => __( 'Delete', 'code-snippets' ),
+				'delete-selected'     => __( 'Trash', 'code-snippets' ),
 			];
 		}
 
