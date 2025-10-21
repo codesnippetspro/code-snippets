@@ -467,6 +467,8 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
 	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
+	$snippet = get_snippet( $id, $network );
+
 	$result = $wpdb->update(
 		$table,
 		array( 'active' => '-1' ),
@@ -475,7 +477,7 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
 	);
 
 	if ( $result ) {
-		do_action( 'code_snippets/trash_snippet', $id, $network );
+		do_action( 'code_snippets/trash_snippet', $snippet, $network );
 		clean_snippets_cache( $table );
 		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 	}
