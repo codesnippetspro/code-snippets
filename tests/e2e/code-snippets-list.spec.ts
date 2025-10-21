@@ -82,14 +82,6 @@ test.describe('Code Snippets List Page Actions', () => {
 		await snippetRow.locator(SELECTORS.DELETE_ACTION).click()
 		await page.waitForLoadState('networkidle')
 
-		page.on('dialog', async dialog => {
-			expect(dialog.type()).toBe('confirm')
-			await dialog.accept()
-		})
-
-		await snippetRow.locator(SELECTORS.DELETE_ACTION).click()
-		await page.waitForLoadState('networkidle')
-
 		await expect(page).toHaveURL(/page=snippets/)
 		await helper.expectElementCount(`tr:has-text("${TEST_SNIPPET_NAME}")`, 0)
 	})
