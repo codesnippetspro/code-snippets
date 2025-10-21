@@ -106,7 +106,6 @@ You can report security bugs found in the source code of this plugin through the
 
 = 3.7.1-beta.1 (2025-10-16) =
 
-
 __Added__
 
 * Added @CarolinaOP and @louiswol94 as plugin contributors
