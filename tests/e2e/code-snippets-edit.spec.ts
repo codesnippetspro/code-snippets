@@ -2,11 +2,7 @@ import { test } from '@playwright/test'
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { MESSAGES } from './helpers/constants'
 
-const generateTestSnippetName = (prefix: string): string => {
-	// eslint-disable-next-line no-magic-numbers
-	return `${prefix}-${Math.random().toString(36).substring(2, 11)}`
-}
-const TEST_SNIPPET_NAME = generateTestSnippetName('E2E Test Snippet')
+const TEST_SNIPPET_NAME = 'E2E Test Snippet'
 
 test.describe('Code Snippets Admin', () => {
 	let helper: SnippetsTestHelper

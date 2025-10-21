@@ -20,7 +20,7 @@ export default defineConfig({
 		['junit', { outputFile: 'test-results/results.xml' }]
 	],
 	use: {
-		baseURL: 'http://localhost:8889',
+		baseURL: 'http://localhost:8888',
 		trace: 'on-first-retry',
 		screenshot: 'only-on-failure',
 		video: 'retain-on-failure'
