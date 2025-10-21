@@ -24,107 +24,31 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  Playwright:
-    name: Playwright test on PHP 8.1
-    runs-on: ubuntu-22.04
+  playwright-default:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+    uses: ./.github/workflows/playwright-test.yml
+    with:
+      test-mode: 'default'
+      project-name: 'chromium-db-snippets'
 
-      - name: Set up PHP
-        uses: codesnippetspro/setup-php@v2
-        with:
-          php-version: "8.1"
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-          cache: 'npm'
-
-      - name: Compute dependency hash
-        id: deps-hash
-        run: |
-          set -euo pipefail
-          # concatenate existing lock files (src/composer.lock and package-lock.json)
-          tmpfile=$(mktemp)
-          for f in src/composer.lock package-lock.json; do
-            if [ -f "$f" ]; then
-              cat "$f" >> "$tmpfile"
-            fi
-          done
-          if [ -s "$tmpfile" ]; then
-            deps_hash=$(shasum -a 1 "$tmpfile" | awk '{print $1}' | cut -c1-8)
-          else
-            # no lock files found, fall back to short commit sha
-            deps_hash=$(echo "${GITHUB_SHA:-unknown}" | cut -c1-8)
-          fi
-          echo "deps_hash=$deps_hash" >> "$GITHUB_OUTPUT"
-
-      - name: Get build cache
-        id: deps-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            node_modules
-            src/vendor
-          key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
-
-      - name: Install workflow dependencies (wp-env, playwright)
-        if: steps.deps-cache.outputs.cache-hit != 'true'
-        run: npm run prepare-environment:ci && npm run bundle
-
-      - name: Save vendor and node_modules cache
-        if: steps.deps-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            src/vendor
-            node_modules
-          key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
-          
-      - name: Start WordPress environment
-        run: |
-          npx wp-env start
-
-      - name: Activate code-snippets plugin
-        run: npx wp-env run cli wp plugin activate code-snippets
-
-      - name: WordPress debug information
-        run: |
-          npx wp-env run cli wp core version
-          npx wp-env run cli wp --info
-
-      - name: Install playwright/test
-        run: |
-          npx playwright install chromium
-
-      - name: Run Playwright tests
-        run: npm run test:playwright
-
-      - name: Stop WordPress environment
-        if: always()
-        run: npx wp-env stop
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-test-results
-          path: test-results/
-          if-no-files-found: ignore
-          retention-days: 2
+  playwright-file-based-execution:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    uses: ./.github/workflows/playwright-test.yml
+    with:
+      test-mode: 'file-based-execution'
+      project-name: 'chromium-file-based-snippets'
 
   test-result:
-    needs: [Playwright]
-    if: always() && (needs.Playwright.result != 'skipped')
+    needs: [playwright-default, playwright-file-based-execution]
+    if: always() && (needs.playwright-default.result != 'skipped' || needs.playwright-file-based-execution.result != 'skipped')
     runs-on: ubuntu-22.04
-    name: Playwright - Test Results
+    name: Playwright - Test Results Summary
     steps:
-      - name: Test status
-        run: echo "Test status is - ${{ needs.Playwright.result }}"
-      - name: Check Playwright status
-        if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
+      - name: Test status summary
+        run: |
+          echo "Default Mode: ${{ needs.playwright-default.result }}"
+          echo "File-based Execution: ${{ needs.playwright-file-based-execution.result }}"
+
+      - name: Check overall status
+        if: ${{ (needs.playwright-default.result != 'success' && needs.playwright-default.result != 'skipped') || (needs.playwright-file-based-execution.result != 'success' && needs.playwright-file-based-execution.result != 'skipped') }}
         run: exit 1
