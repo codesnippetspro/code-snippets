@@ -109,9 +109,7 @@ You can report security bugs found in the source code of this plugin through the
 __Added__
 
 * Added @CarolinaOP and @louiswol94 as plugin contributors
-* File-based execution mode for snippets (Activate in Plugin Settings)
-* Playwright integration for automated testing
-* Support for Composer package prefixing to prevent conflicts
+* File-based execution mode for snippets (Optional in Plugin Settings)
 
 __Changed__
 
