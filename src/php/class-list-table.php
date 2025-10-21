@@ -287,7 +287,7 @@ class List_Table extends WP_List_Table {
 
 			$actions['delete'] = sprintf(
 				'<a href="%2$s" class="delete">%1$s</a>',
-				esc_html__( 'Delete', 'code-snippets' ),
+				esc_html__( 'Trash', 'code-snippets' ),
 				esc_url( $this->get_action_link( 'delete', $snippet ) )
 			);
 		}
@@ -830,7 +830,28 @@ class List_Table extends WP_List_Table {
 			$result = $this->perform_action( $id, sanitize_key( $_GET['action'] ) );
 
 			if ( $result ) {
-				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
+				$redirect_args = array( 'result' => $result );
+
+				if ( 'deleted' === $result ) {
+					$redirect_args['ids'] = $id;
+				}
+
+				wp_safe_redirect( esc_url_raw( add_query_arg( $redirect_args ) ) );
+				exit;
+			}
+		}
+
+		if ( isset( $_GET['action'] ) && 'restore' === $_GET['action'] && isset( $_GET['ids'] ) ) {
+			$ids = array_map( 'intval', explode( ',', sanitize_text_field( $_GET['ids'] ) ) );
+
+			if ( ! empty( $ids ) ) {
+				check_admin_referer( 'bulk-' . $this->_args['plural'] );
+
+				foreach ( $ids as $id ) {
+					restore_snippet( $id, $this->is_network );
+				}
+
+				wp_safe_redirect( esc_url_raw( add_query_arg( 'result', 'restored' ) ) );
 				exit;
 			}
 		}
@@ -922,7 +943,14 @@ class List_Table extends WP_List_Table {
 		}
 
 		if ( isset( $result ) ) {
-			wp_safe_redirect( esc_url_raw( add_query_arg( 'result', $result ) ) );
+			$redirect_args = array( 'result' => $result );
+
+			// Add snippet IDs for undo functionality on bulk delete
+			if ( 'deleted-multi' === $result && ! empty( $ids ) ) {
+				$redirect_args['ids'] = implode( ',', $ids );
+			}
+
+			wp_safe_redirect( esc_url_raw( add_query_arg( $redirect_args ) ) );
 			exit;
 		}
 	}

@@ -282,7 +282,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Delete one item from the collection (soft delete)
+	 * Delete one item from the collection (trash)
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
