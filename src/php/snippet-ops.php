@@ -450,17 +450,17 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 }
 
 /**
- * Soft deletes a snippet from the database.
+ * Trashes a snippet from the database.
  * Write operation.
  *
- * @param int       $id      ID of the snippet to soft delete.
- * @param bool|null $network Soft delete from network-wide (true) or site-wide (false) table.
+ * @param int       $id      ID of the snippet to trash.
+ * @param bool|null $network Trash from network-wide (true) or site-wide (false) table.
  *
- * @return bool Whether the snippet was soft deleted successfully.
+ * @return bool Whether the snippet was trashed successfully.
  *
  * @since 3.8.0
  */
-function soft_delete_snippet( int $id, ?bool $network = null ): bool {
+function trash_snippet( int $id, ?bool $network = null ): bool {
 	global $wpdb;
 	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
@@ -473,7 +473,7 @@ function soft_delete_snippet( int $id, ?bool $network = null ): bool {
 	);
 
 	if ( $result ) {
-		do_action( 'code_snippets/soft_delete_snippet', $id, $network );
+		do_action( 'code_snippets/trash_snippet', $id, $network );
 		clean_snippets_cache( $table );
 		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 	}

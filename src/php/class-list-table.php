@@ -770,7 +770,7 @@ class List_Table extends WP_List_Table {
 				return 'cloned';
 
 			case 'delete':
-				soft_delete_snippet( $id, $this->is_network );
+				trash_snippet( $id, $this->is_network );
 				return 'deleted';
 
 			case 'restore':
@@ -901,7 +901,7 @@ class List_Table extends WP_List_Table {
 
 			case 'delete-selected':
 				foreach ( $ids as $id ) {
-					soft_delete_snippet( $id, $this->is_network );
+					trash_snippet( $id, $this->is_network );
 				}
 				$result = 'deleted-multi';
 				break;

@@ -120,7 +120,7 @@ class Snippet extends Data_Item {
 	 * @return bool
 	 */
 	public function is_trashed(): bool {
-		return '-1' === (string) $this->raw_active_value || -1 === (int) $this->raw_active_value;
+		return -1 === (int) $this->raw_active_value;
 	}
 
 	/**
