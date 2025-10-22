@@ -104,6 +104,13 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.7.1-beta.2 (2025-10-22) =
+
+__Added__
+
+* Implemented version switching with a new 'Version Switch' section in Settings
+
 = 3.7.1-beta.1 (2025-10-16) =
 
 __Added__
