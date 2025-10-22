@@ -105,6 +105,14 @@ You can report security bugs found in the source code of this plugin through the
 == Changelog ==
 
 
+
+= 3.7.1-beta.3 (2025-10-22) =
+
+__Added__
+
+* Snippets REST API now supports pagination via page and per_page query parameters.
+
+
 = 3.7.1-beta.2 (2025-10-22) =
 
 __Added__

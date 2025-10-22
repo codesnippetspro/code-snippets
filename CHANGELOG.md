@@ -2,6 +2,13 @@
 
 
 
+
+## [3.7.1-beta.3] (2025-10-22)
+
+### Added
+* Snippets REST API now supports pagination via page and per_page query parameters.
+
+
 ## [3.7.1-beta.2] (2025-10-22)
 
 ### Added
