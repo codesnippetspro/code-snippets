@@ -199,7 +199,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		$network = $request->get_param( 'network' );
 		$all_snippets = get_snippets( [], $network );
 
-		// Collection params (page, per_page) 
+		// Collection params (page, per_page).
 		$collection_params = $this->get_collection_params();
 		$per_page = (int) $request->get_param( 'per_page' );
 		if ( ! $per_page ) {
