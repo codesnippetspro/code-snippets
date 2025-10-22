@@ -111,16 +111,7 @@ You can report security bugs found in the source code of this plugin through the
 __Added__
 
 * Snippets REST API now supports pagination via page and per_page query parameters.
-* Collection responses include pagination metadata headers for total items and total pages.
 
-__Changed__
-
-* Settings UI CSS switched to logical properties for better RTL support and consistent layout.
-
-__Fixed__
-
-* Snippets REST API now correctly respects the network parameter when listing snippets.
-* Pagination logic corrected to reliably slice results and return stable pages.
 
 = 3.7.1-beta.2 (2025-10-22) =
 
