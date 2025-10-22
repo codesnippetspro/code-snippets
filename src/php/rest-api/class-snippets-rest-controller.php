@@ -189,19 +189,17 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Retrieves a collection of snippets.
+	 * Retrieves a collection of snippets, with pagination.
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 *
 	 * @return WP_REST_Response Response object on success.
 	 */
 	public function get_items( $request ): WP_REST_Response {
-		// Respect the optional 'network' param when fetching snippets.
 		$network = $request->get_param( 'network' );
 		$all_snippets = get_snippets( [], $network );
 
-		// Collection params (page, per_page) are provided via route args. Use defaults
-		// from get_collection_params() when not present on the request.
+		// Collection params (page, per_page) 
 		$collection_params = $this->get_collection_params();
 		$per_page = (int) $request->get_param( 'per_page' );
 		if ( ! $per_page ) {
@@ -229,7 +227,6 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		}
 
 		$response = rest_ensure_response( $snippets_data );
-		// Provide total counts in the response headers like WP core REST responses do.
 		$response->header( 'X-WP-Total', (string) $total_items );
 		$response->header( 'X-WP-TotalPages', (string) $total_pages );
 
