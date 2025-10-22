@@ -1,6 +1,21 @@
 # Changelog
 
 
+
+## [3.7.1-beta.2] (2025-10-22)
+
+### Added
+* Implemented version switching with a new 'Version Switch' section in Settings
+* Added warning and confirmation UI with styled notices and button state management
+
+### Changed
+* Improved error handling and user feedback during version switching
+* Refined button and notice styling for clearer status visibility
+
+### Fixed
+* Fixed admin notice styles to align with WordPress notice behavior
+* Stabilized version switching by moving to a class-based integration and resolving related JS issues
+
 ## [3.7.1-beta.1] (2025-10-16)
 
 ### Added
