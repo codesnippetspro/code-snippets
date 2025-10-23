@@ -10,12 +10,14 @@ import { Tooltip } from '../../common/Tooltip'
 import { CloudAIButton } from '../../EditorSidebar/actions/CloudAIButton'
 import type { ButtonProps } from '../../common/Button'
 import type { ExplainSnippetFields, ExplainedSnippet } from '../../../hooks/useGenerativeAPI'
-import type { LineWidget } from 'codemirror'
+import type { LineHandle, LineWidget } from 'codemirror'
 import type { Dispatch, SetStateAction } from 'react'
 
-// Minimal CodeMirror types used here to avoid unsafe `any` usage in this file.
+interface DocumentLike { getLine: (n: number) => string | undefined }
+
 interface CodeMirrorDoc {
 	getLine(n: number): string
+	getLineNumber(handle: LineHandle): number | null
 	addLineWidget(line: number, node: HTMLElement, opts?: Record<string, unknown>): LineWidget
 	replaceRange(text: string, pos: { line: number; ch: number }): void
 }
@@ -93,36 +95,46 @@ const extractSnippetLanguage = (snippetObj: unknown): string => {
 	return 'php'
 }
 
-const getIndentForLine = (doc: unknown, lineIndex: number): string => {
-	if (!doc || 'object' !== typeof doc) {
-		return ''
-	}
+const isDocumentLike = (doc: unknown): doc is DocumentLike =>
+	'object' === typeof doc && null !== doc && 'function' === typeof (doc as DocumentLike).getLine
 
-	const d = doc as { getLine: (n: number) => string }
-	const safeLine = Math.max(0, lineIndex)
+const INDENT_REGEX = /^[\t ]*/
+
+export const getIndentForLine = (doc: unknown, lineIndex: number): string => {
+	if (!isDocumentLike(doc)) {return ''}
+
+	const lineNumber = Math.max(0, lineIndex)
+	const getLineText = (index: number): string => doc.getLine(index) ?? ''
 
 	try {
-		const targetText = String(d.getLine(safeLine) || '')
-		if ('' === targetText.trim() && 0 < safeLine) {
-			let p = safeLine - 1
-			while (0 <= p) {
-				const prev = String(d.getLine(p) || '')
-				if ('' !== prev.trim()) {
-					const m = /^[\t ]*/.exec(prev)
-					return m ? m[0] : ''
-				}
-				p -= 1
-			}
+		const currentLine = getLineText(lineNumber)
 
-			return ''
+		// If the current line is blank (only whitespace), look upwards for the nearest non-blank line
+		if (!currentLine.trim() && 0 < lineNumber) {
+			return findIndentFromPreviousLines(lineNumber, getLineText)
 		}
 
-		const m = /^[\t ]*/.exec(targetText)
-		return m ? m[0] : ''
-	} catch (_err) {
+		// Otherwise, return the indentation of the current line
+		return extractIndent(currentLine)
+	} catch {
 		return ''
 	}
 }
+
+const findIndentFromPreviousLines = (
+	startIndex: number,
+	getLineText: (index: number) => string
+): string => {
+	for (let i = startIndex - 1; 0 <= i; i--) {
+		const previousLine = getLineText(i)
+		if (previousLine.trim()) {
+			return extractIndent(previousLine)
+		}
+	}
+	return ''
+}
+
+const extractIndent = (line: string): string => INDENT_REGEX.exec(line)?.[0] ?? ''
 
 const processExplainResponse = (
 	response: ExplainedSnippet,
@@ -144,10 +156,19 @@ const processExplainResponse = (
 			const lineWidget = doc.addLineWidget(lineNumber, widgetEl, { above: true })
 
 			commitBtn.addEventListener('click', () => {
+				// Get the widget's current line position, which updates as other insertions happen
+				const widgetWithLine = lineWidget as LineWidget & { line?: LineHandle }
+				const widgetLine = widgetWithLine.line
+				const currentLineNumber = widgetLine ? doc.getLineNumber(widgetLine) : null
+
+				if (null === currentLineNumber) {
+					return
+				}
+
 				const language = extractSnippetLanguage(snippet)
 				const rawComment = getCommentForLanguage(message, language)
 
-				const safeLine = Math.max(0, lineNumber)
+				const safeLine = Math.max(0, currentLineNumber)
 				const indent = getIndentForLine(doc, safeLine)
 				const comment = `${indent}${rawComment}`
 				doc.replaceRange(comment, { line: safeLine, ch: 0 })
