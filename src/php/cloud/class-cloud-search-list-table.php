@@ -324,10 +324,10 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 			return;
 		}
 
-	$total_items = $this->_pagination_args['total_items'] ?? 0;
-	$total_pages = $this->_pagination_args['total_pages'] ?? 0;
-	// get_pagenum already returns a 1-based page number used for display.
-	$pagenum_display = $this->get_pagenum();
+		$total_items = $this->_pagination_args['total_items'] ?? 0;
+		$total_pages = $this->_pagination_args['total_pages'] ?? 0;
+		// get_pagenum already returns a 1-based page number used for display.
+		$pagenum_display = $this->get_pagenum();
 
 		if ( 'top' === $which && $total_pages >= 1 ) {
 			$this->screen->render_screen_reader_content( 'heading_pagination' );
