@@ -1,27 +1,28 @@
 # Changelog
 
-
-
-
-
 ## [3.8.0] (2025-10-24)
 
 ### Added
-* Optional flat-file storage backend for snippets (with HTML/PHP handlers), configurable via the new Version Switch setting.
-* Editor preview capability and settings UI enhancements for snippet creation and editing.
+* @CarolinaOP and @louiswol94 join the team as plugin contributors.
+* File-based execution mode for snippets (Optional in Plugin Settings).
+* Version switch option, to help easily rollback the plugin to an earlier release.
+* Minor UI improvements to the editor and sidebar.
 
 ### Changed
-* Snippets REST API now supports pagination (e.g., page/per_page) with accompanying tests to improve reliability and scalability.
+* Prefixed Composer packages to reduce collisions with other plugins.
+* Snippets REST API now supports pagination via page and per_page query parameters.
+* Improved editor preview behavior.
 
 ### Fixed
-* Fixed get_items and REST API pagination to return correct pages and counts.
-* Addressed snippet evaluation and front-end initialization issues that could prevent snippets from executing in some cases.
+* Fixed issues with snippet evaluation and front-end initialization in edge cases.
+* Improved reliability of snippet evaluation.
+* JavaScript and CSS snippets loading twice due to a conditions bug. (PRO)
+* Fixed issue where some conditions didn’t work due to loading before the loop. (PRO)
 
 ## [3.7.1-beta.3] (2025-10-22)
 
 ### Added
 * Snippets REST API now supports pagination via page and per_page query parameters.
-
 
 ## [3.7.1-beta.2] (2025-10-22)
 
