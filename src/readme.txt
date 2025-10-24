@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.7.0
+Stable tag: 3.8.0
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -106,41 +106,28 @@ You can report security bugs found in the source code of this plugin through the
 
 
 
-= 3.7.1-beta.3 (2025-10-22) =
+
+= 3.8.0 (2025-10-24) =
 
 __Added__
 
-* Snippets REST API now supports pagination via page and per_page query parameters.
-
-
-= 3.7.1-beta.2 (2025-10-22) =
-
-__Added__
-
-* Implemented version switching with a new 'Version Switch' section in Settings
-
-= 3.7.1-beta.1 (2025-10-16) =
-
-__Added__
-
-* Added @CarolinaOP and @louiswol94 as plugin contributors
-* File-based execution mode for snippets (Optional in Plugin Settings)
+* @CarolinaOP and @louiswol94 join the team as plugin contributors.
+* File-based execution mode for snippets (Optional in Plugin Settings).
+* Version switch option, to help easily rollback the plugin to an earlier release.
+* Minor UI improvements to the editor and sidebar.
 
 __Changed__
 
-* Minor UI/UX tweaks to the editor form and sidebar
+* Prefixed Composer packages to reduce collisions with other plugins.
+* Snippets REST API now supports pagination via page and per_page query parameters.
 * Improved editor preview behavior.
 
 __Fixed__
 
-* Improved reliability of snippet evaluation and front-end integration.
-* Prefixed Composer packages to reduce collisions with other plugins, especially those using Guzzle.
-* Functions conditions were loading before loop setup, resulting in some conditions not working. (PRO)
+* Fixed issues with snippet evaluation and front-end initialization in edge cases.
+* Improved reliability of snippet evaluation.
 * JavaScript and CSS snippets loading twice due to a conditions bug. (PRO)
-
-__Removed__
-
-* Removed CSS linting within the editor until a modern replacement can be implemented.
+* Fixed issue where some conditions didn’t work due to loading before the loop. (PRO)
 
 = 3.7.0 (2025-08-29) =
 
