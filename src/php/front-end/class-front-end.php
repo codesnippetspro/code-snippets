@@ -228,6 +228,20 @@ class Front_End {
 	}
 
 	/**
+	 * Build the file path for a snippet's flat file.
+	 *
+	 * @param string          $table_name Table name for the snippet.
+	 * @param Snippet         $snippet    Snippet object.
+	 *
+	 * @return string Full file path for the snippet.
+	 */
+	private function build_snippet_flat_file_path( string $table_name, Snippet $snippet ): string {
+		$handler = code_snippets()->snippet_handler_registry->get_handler( $snippet->get_type() );
+
+		return Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/' . $snippet->id . '.' . $handler->get_file_extension();
+	}
+
+	/**
 	 * Evaluate the code from a content shortcode.
 	 *
 	 * @param Snippet              $snippet Snippet.
@@ -240,6 +254,20 @@ class Front_End {
 			return $snippet->code;
 		}
 
+		if ( ! Snippet_Files::is_active() ) {
+			return $this->evaluate_shortcode_from_db( $snippet, $atts );
+		}
+
+		$network = DB::validate_network_param( $snippet->network );
+		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $network ) );
+		$filepath = $this->build_snippet_flat_file_path( $table_name, $snippet );
+
+		return file_exists( $filepath )
+			? $this->evaluate_shortcode_from_flat_file( $filepath, $atts )
+			: $this->evaluate_shortcode_from_db( $snippet, $atts );
+	}
+
+	private function evaluate_shortcode_from_db( Snippet $snippet, array $atts ): string {
 		/**
 		 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
 		 * authors to use custom attributes.
@@ -252,6 +280,46 @@ class Front_End {
 		eval( "?>\n\n" . $snippet->code );
 
 		return ob_get_clean();
+	}
+
+	private function evaluate_shortcode_from_flat_file( $filepath, array $atts ): string {
+		ob_start();
+
+		( function( $atts ) use ( $filepath ) {
+			/**
+			 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
+			 * authors to use custom attributes.
+			 *
+			 * @phpcs:disable WordPress.PHP.DontExtract.extract_extract
+			 */
+			extract( $atts );
+			require_once $filepath;
+		} )( $atts );
+
+		return ob_get_clean();
+	}
+
+	private function get_snippet( int $id, bool $network, string $snippet_type ): Snippet {
+		if ( ! Snippet_Files::is_active() ) {
+			return get_snippet( $id, $network );
+		}
+
+		$validated_network = DB::validate_network_param( $network );
+		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $validated_network ) );
+		$handler = code_snippets()->snippet_handler_registry->get_handler( $snippet_type );
+		$config_filepath = Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/index.php';
+
+		if ( file_exists( $config_filepath ) ) {
+			$config = require_once $config_filepath;
+			$snippet_data = $config[ $id ] ?? null;
+			
+			if ( $snippet_data ) {
+				$snippet = new Snippet( $snippet_data );
+				return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $network );
+			}
+		}
+
+		return get_snippet( $id, $network );
 	}
 
 	/**
@@ -284,7 +352,7 @@ class Front_End {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = get_snippet( $id, (bool) $atts['network'] );
+		$snippet = $this->get_snippet( $id, (bool) $atts['network'], 'html' );
 
 		// Render the source code if this is not a shortcode snippet.
 		if ( 'content' !== $snippet->scope ) {
@@ -426,7 +494,7 @@ class Front_End {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = get_snippet( $id, (bool) $atts['network'] );
+		$snippet = $this->get_snippet( $id, (bool) $atts['network'], 'html' );
 
 		return $this->render_snippet_source( $snippet, $atts );
 	}

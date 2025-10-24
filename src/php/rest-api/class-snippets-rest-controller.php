@@ -80,6 +80,9 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 			[ 'network' ]
 		);
 
+		// Allow standard collection parameters (page, per_page, etc.) on the collection route.
+		$collection_args = array_merge( $network_args, $this->get_collection_params() );
+
 		register_rest_route(
 			$this->namespace,
 			$route,
@@ -88,7 +91,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-					'args'                => $network_args,
+					'args'                => $collection_args,
 				],
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
@@ -186,14 +189,32 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Retrieves a collection of snippets.
+	 * Retrieves a collection of snippets, with pagination.
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 *
 	 * @return WP_REST_Response Response object on success.
 	 */
 	public function get_items( $request ): WP_REST_Response {
-		$snippets = get_snippets();
+		$network = $request->get_param( 'network' );
+		$all_snippets = get_snippets( [], $network );
+
+		// Get collection params (page, per_page).
+		$collection_params = $this->get_collection_params();
+		$per_page_request = (int) $request->get_param( 'per_page' );
+    $per_page = max( 1, $per_page_request ? $per_page_request : (int) $collection_params['per_page']['default'] );
+
+		$page_request = (int) $request->get_param( 'page' );
+		$page = max( 1, $page_request ? $page_request : (int) $collection_params['page']['default'] );
+
+    // Count total items
+		$total_items = count( $all_snippets );
+		$total_pages = (int) ceil( $total_items / $per_page );
+
+		// Slice the full list to the requested page.
+		$offset = ( $page - 1 ) * $per_page;
+		$snippets = array_slice( $all_snippets, $offset, $per_page );
+
 		$snippets_data = [];
 
 		foreach ( $snippets as $snippet ) {
@@ -201,7 +222,11 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 			$snippets_data[] = $this->prepare_response_for_collection( $snippet_data );
 		}
 
-		return rest_ensure_response( $snippets_data );
+		$response = rest_ensure_response( $snippets_data );
+		$response->header( 'X-WP-Total', (string) $total_items );
+		$response->header( 'X-WP-TotalPages', (string) $total_pages );
+
+		return $response;
 	}
 
 	/**

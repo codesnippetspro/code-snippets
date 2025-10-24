@@ -1,8 +1,31 @@
 # Changelog
 
-## 3.7.1 ([unreleased])
+
+
+
+## [3.7.1-beta.3] (2025-10-22)
+
+### Added
+* Snippets REST API now supports pagination via page and per_page query parameters.
+
+
+## [3.7.1-beta.2] (2025-10-22)
+
+### Added
+* Implemented version switching with a new 'Version Switch' section in Settings
+
+## [3.7.1-beta.1] (2025-10-16)
+
+### Added
+* Added @CarolinaOP and @louiswol94 as plugin contributors
+* File-based execution mode for snippets (Optional in Plugin Settings)
+
+### Changed
+* Minor UI/UX tweaks to the editor form and sidebar
+* Improved editor preview behavior.
 
 ### Fixed
+* Improved reliability of snippet evaluation and front-end integration.
 * Prefixed Composer packages to reduce collisions with other plugins, especially those using Guzzle.
 * Functions conditions were loading before loop setup, resulting in some conditions not working. (PRO)
 * JavaScript and CSS snippets loading twice due to a conditions bug. (PRO)
