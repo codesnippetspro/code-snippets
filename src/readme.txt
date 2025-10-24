@@ -106,6 +106,23 @@ You can report security bugs found in the source code of this plugin through the
 
 
 
+
+= 3.8.0 (2025-10-24) =
+
+__Added__
+
+* Optional flat-file storage backend for snippets (with HTML/PHP handlers), configurable via the new Version Switch setting.
+* Editor preview capability and settings UI enhancements for snippet creation and editing.
+
+__Changed__
+
+* Snippets REST API now supports pagination (e.g., page/per_page) with accompanying tests to improve reliability and scalability.
+
+__Fixed__
+
+* Fixed get_items and REST API pagination to return correct pages and counts.
+* Addressed snippet evaluation and front-end initialization issues that could prevent snippets from executing in some cases.
+
 = 3.7.1-beta.3 (2025-10-22) =
 
 __Added__
