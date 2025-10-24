@@ -4,20 +4,20 @@
 
 ### Added
 * @CarolinaOP and @louiswol94 join the team as plugin contributors.
-* File-based execution mode for snippets (Optional in Plugin Settings).
-* Version switch option, to help easily rollback the plugin to an earlier release.
-* Minor UI improvements to the editor and sidebar.
+* File-based execution mode for snippets (optional in plugin settings).
+* Version switch option for easily rolling back the plugin to an earlier release.
 
 ### Changed
 * Prefixed Composer packages to reduce collisions with other plugins.
 * Snippets REST API now supports pagination via page and per_page query parameters.
 * Improved editor preview behavior.
+* Minor UI improvements to the editor and sidebar.
 
 ### Fixed
-* Fixed issues with snippet evaluation and front-end initialization in edge cases.
+* Issues with snippet evaluation and front-end initialization in edge cases.
 * Improved reliability of snippet evaluation.
 * JavaScript and CSS snippets loading twice due to a conditions bug. (PRO)
-* Fixed issue where some conditions didn’t work due to loading before the loop. (PRO)
+* Issue where some conditions didn’t work due to loading before the loop. (PRO)
 
 ## [3.7.1-beta.3] (2025-10-22)
 
