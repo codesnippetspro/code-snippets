@@ -1,27 +1,46 @@
 # Changelog
 
-## [3.7.1-beta.2] - (2025-10-08)
+## [3.8.0] (2025-10-24)
 
 ### Added
-* Make sidebar sticky [#259](https://github.com/codesnippetspro/code-snippets/issues/259)
-
-## [3.7.1-beta.1] (2025-10-08)
-
-### Added
-* Implemented new feature allowing file-based execution of snippets for faster load times and improved debugging workflows
-* Added registry, handlers, and settings toggle to manage multi-type (PHP/HTML/CSS/JS/Condition) flat-file snippets
+* @CarolinaOP and @louiswol94 join the team as plugin contributors.
+* File-based execution mode for snippets (optional in plugin settings).
+* Version switch option for easily rolling back the plugin to an earlier release.
 
 ### Changed
-* Improved the evaluation and asset loading logic to bypass database queries when flat-file mode is enabled, boosting performance under high load
-* Updated pro badge styling and shortcode/activation hooks for better multisite support and UI consistency
+* Prefixed Composer packages to reduce collisions with other plugins.
+* Snippets REST API now supports pagination via page and per_page query parameters.
+* Improved editor preview behavior.
+* Minor UI improvements to the editor and sidebar.
 
 ### Fixed
-* Resolved issue where snippet activation/deactivation context (network flag) wasn’t passed to related hooks
-* Fixed conditional and content snippet execution edge cases when switching between database and file-based modes
+* Issues with snippet evaluation and front-end initialization in edge cases.
+* Improved reliability of snippet evaluation.
+* JavaScript and CSS snippets loading twice due to a conditions bug. (PRO)
+* Issue where some conditions didn’t work due to loading before the loop. (PRO)
 
-## 3.7.1 (2025-08-29)
+## [3.7.1-beta.3] (2025-10-22)
+
+### Added
+* Snippets REST API now supports pagination via page and per_page query parameters.
+
+## [3.7.1-beta.2] (2025-10-22)
+
+### Added
+* Implemented version switching with a new 'Version Switch' section in Settings
+
+## [3.7.1-beta.1] (2025-10-16)
+
+### Added
+* Added @CarolinaOP and @louiswol94 as plugin contributors
+* File-based execution mode for snippets (Optional in Plugin Settings)
+
+### Changed
+* Minor UI/UX tweaks to the editor form and sidebar
+* Improved editor preview behavior.
 
 ### Fixed
+* Improved reliability of snippet evaluation and front-end integration.
 * Prefixed Composer packages to reduce collisions with other plugins, especially those using Guzzle.
 * Functions conditions were loading before loop setup, resulting in some conditions not working. (PRO)
 * JavaScript and CSS snippets loading twice due to a conditions bug. (PRO)

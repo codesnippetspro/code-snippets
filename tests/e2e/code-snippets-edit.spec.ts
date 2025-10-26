@@ -19,7 +19,7 @@ test.describe('Code Snippets Admin', () => {
 	test('Can add a new snippet', async () => {
 		await helper.createSnippet({
 			name: TEST_SNIPPET_NAME,
-			code: 'echo "Hello World!";'
+			code: "add_filter('show_admin_bar', '__return_false');"
 		})
 	})
 

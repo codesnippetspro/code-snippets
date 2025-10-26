@@ -117,7 +117,11 @@ class Setting_Field {
 	 * Render a callback field.
 	 */
 	public function render_callback_field() {
-		call_user_func( $this->render_callback );
+		if ( ! is_callable( $this->render_callback ) ) {
+			return;
+		}
+		
+		call_user_func( $this->render_callback, $this->args );
 	}
 
 	/**

@@ -1,6 +1,6 @@
 @use 'common/codemirror';
 
-$sections: general, editor, debug;
+$sections: general, editor, debug, version-switch;
 
 p.submit {
 	display: flex;
@@ -126,4 +126,88 @@ body.js {
 
 .cloud-settings tbody tr:nth-child(n+5) {
 	display: none;
+}
+
+// Version Switch Styles
+.code-snippets-version-switch {
+	.current-version {
+		font-family: monospace;
+		font-size: 1.1em;
+		font-weight: bold;
+		color: #0073aa;
+		background: #f0f6fc;
+		padding: 2px 8px;
+		border-radius: 3px;
+		border: 1px solid #c3c4c7;
+	}
+
+	#target_version {
+		min-inline-size: 200px;
+		margin-inline-start: 8px;
+	}
+
+	#switch-version-btn {
+		&[disabled] {
+			opacity: 0.6;
+			cursor: not-allowed;
+			background-color: #f0f0f1 !important;
+			color: #a7aaad !important;
+			border-color: #dcdcde !important;
+		}
+	}
+	
+	// Warning box styling
+	#version-switch-warning {
+		margin-block-start: 20px !important;
+		padding: 12px 16px;
+		border-inline-start: 4px solid #dba617;
+		background: #fff8e5;
+		border-radius: 4px;
+		
+		p {
+			margin: 0;
+			color: #8f6914;
+			
+			strong {
+				color: #8f6914;
+			}
+		}
+	}
+
+	#version-switch-result {
+		margin-block-start: 12px;
+		
+		&.notice {
+			padding: 8px 12px;
+			border-radius: 4px;
+		}
+	}
+
+	.notice {
+		&.notice {
+			&-success {
+				border-inline-start-color: #00a32a;
+			}
+
+			&-error {
+				border-inline-start-color: #d63638;
+			}
+
+			&-warning {
+				border-inline-start-color: #dba617;
+			}
+
+			&-info {
+				border-inline-start-color: #72aee6;
+			}
+		}
+	}
+}
+
+.version-switch-settings {
+	.form-table {
+		th {
+			inline-size: 180px;
+		}
+	}
 }

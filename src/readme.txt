@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.7.1-beta.2
+Stable tag: 3.8.0
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -104,25 +104,30 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
- = 3.7.1-beta.2 (2025-10-08) =
-
- __Added__
-* Make sidebar sticky [#259](https://github.com/codesnippetspro/code-snippets/issues/259)
 
 
-= 3.7.1-beta.1 (2025-10-08) =
+
+= 3.8.0 (2025-10-24) =
 
 __Added__
-* Implemented new feature allowing file-based execution of snippets for faster load times and improved debugging workflows
-* Added registry, handlers, and settings toggle to manage multi-type (PHP/HTML/CSS/JS/Condition) flat-file snippets
+
+* @CarolinaOP and @louiswol94 join the team as plugin contributors.
+* File-based execution mode for snippets (Optional in Plugin Settings).
+* Version switch option, to help easily rollback the plugin to an earlier release.
+* Minor UI improvements to the editor and sidebar.
 
 __Changed__
-* Improved the evaluation and asset loading logic to bypass database queries when flat-file mode is enabled, boosting performance under high load
-* Updated pro badge styling and shortcode/activation hooks for better multisite support and UI consistency
+
+* Prefixed Composer packages to reduce collisions with other plugins.
+* Snippets REST API now supports pagination via page and per_page query parameters.
+* Improved editor preview behavior.
 
 __Fixed__
-* Resolved issue where snippet activation/deactivation context (network flag) wasn’t passed to related hooks
-* Fixed conditional and content snippet execution edge cases when switching between database and file-based modes
+
+* Fixed issues with snippet evaluation and front-end initialization in edge cases.
+* Improved reliability of snippet evaluation.
+* JavaScript and CSS snippets loading twice due to a conditions bug. (PRO)
+* Fixed issue where some conditions didn’t work due to loading before the loop. (PRO)
 
 = 3.7.0 (2025-08-29) =
 

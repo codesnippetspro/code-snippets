@@ -13,7 +13,7 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		await helper.createAndActivateSnippet({
 			name: TEST_SNIPPET_NAME,
-			code: 'echo "Test snippet for list actions";'
+			code: "add_filter('show_admin_bar', '__return_false');"
 		})
 		await helper.navigateToSnippetsAdmin()
 	})
