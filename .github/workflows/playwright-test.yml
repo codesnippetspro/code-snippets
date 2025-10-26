@@ -76,8 +76,8 @@ jobs:
         run: |
           npx wp-env start
 
-      - name: Activate code-snippets plugin
-        run: npx wp-env run cli wp plugin activate code-snippets
+      - name: Activate code-snippets-pro plugin
+        run: npx wp-env run cli wp plugin activate code-snippets-pro
 
       - name: WordPress debug information
         run: |
