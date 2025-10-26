@@ -131,6 +131,33 @@ class Evaluate_Functions {
 		}
 	}
 
+	/**
+	 * Evaluate a snippet.
+	 *
+	 * @param array  $snippet      Snippet data.
+	 * @param ?array $edit_snippet Snippet being edited, if any.
+	 *
+	 * @return void
+	 */
+	private function evaluate_snippet( array $snippet, ?array $edit_snippet = null ) {
+		$snippet_id = $snippet['id'];
+		$code = $snippet['code'];
+		$table_name = $snippet['table'];
+
+		// If the snippet is a single-use snippet, deactivate it before execution to ensure that the process always happens.
+		if ( 'single-use' === $snippet['scope'] ) {
+			$this->quick_deactivate_snippet( $snippet_id, $table_name );
+		}
+
+		if ( ! is_null( $edit_snippet ) && $edit_snippet['id'] === $snippet_id && $edit_snippet['table'] === $table_name ) {
+			return;
+		}
+
+		if ( apply_filters( 'code_snippets/allow_execute_snippet', true, $snippet_id, $table_name ) ) {
+			execute_snippet( $code, $snippet_id );
+		}
+	}
+
 	private function evaluate_snippet_flat_file( array $snippet, string $file_path, ?array $edit_snippet = null ) {
 		$snippet_id = $snippet['id'];
 		$code = $snippet['code'];
