@@ -136,10 +136,16 @@ function update_setting( string $section, string $field, $new_value ): bool {
  */
 function get_settings_sections(): array {
 	$sections = array(
-		'general' => __( 'General', 'code-snippets' ),
-		'editor'  => __( 'Code Editor', 'code-snippets' ),
-		'debug'   => __( 'Debug', 'code-snippets' ),
+		'general'        => __( 'General', 'code-snippets' ),
+		'editor'         => __( 'Code Editor', 'code-snippets' ),
+		'debug'          => __( 'Debug', 'code-snippets' ),
 	);
+
+	// Only show the Version section when the debug setting to enable version changes is enabled.
+	$enable_version = get_setting( 'debug', 'enable_version_change' );
+	if ( $enable_version ) {
+		$sections['version-switch'] = __( 'Version', 'code-snippets' );
+	}
 
 	return apply_filters( 'code_snippets_settings_sections', $sections );
 }
@@ -168,8 +174,13 @@ function register_plugin_settings() {
 		add_settings_section( $section_id, $section_name, '__return_empty_string', 'code-snippets' );
 	}
 
-	// Register settings fields.
+	// Register settings fields. Only register fields for sections that exist (some sections may be gated by settings).
+	$registered_sections = get_settings_sections();
 	foreach ( get_settings_fields() as $section_id => $fields ) {
+		if ( ! isset( $registered_sections[ $section_id ] ) ) {
+			continue;
+		}
+
 		foreach ( $fields as $field_id => $field ) {
 			$field_object = new Setting_Field( $section_id, $field_id, $field );
 			add_settings_field( $field_id, $field['name'], [ $field_object, 'render' ], 'code-snippets', $section_id );

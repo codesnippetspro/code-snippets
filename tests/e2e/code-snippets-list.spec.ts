@@ -13,7 +13,7 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		await helper.createAndActivateSnippet({
 			name: TEST_SNIPPET_NAME,
-			code: 'echo "Test snippet for list actions";'
+			code: "add_filter('show_admin_bar', '__return_false');"
 		})
 		await helper.navigateToSnippetsAdmin()
 	})
@@ -62,13 +62,6 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		await helper.expectTextVisible(`${TEST_SNIPPET_NAME} [CLONE]`)
 
-		await snippetRow.locator(SELECTORS.CLONE_ACTION).click()
-		await page.waitForLoadState('networkidle')
-
-		await expect(page).toHaveURL(/page=snippets/)
-
-		await helper.expectTextVisible(`${TEST_SNIPPET_NAME} [CLONE]`)
-
 		const clonedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME} [CLONE]")`)
 
 		page.on('dialog', async dialog => {
@@ -86,14 +79,6 @@ test.describe('Code Snippets List Page Actions', () => {
 			expect(dialog.type()).toBe('confirm')
 			await dialog.accept()
 		})
-		await snippetRow.locator(SELECTORS.DELETE_ACTION).click()
-		await page.waitForLoadState('networkidle')
-
-		page.on('dialog', async dialog => {
-			expect(dialog.type()).toBe('confirm')
-			await dialog.accept()
-		})
-
 		await snippetRow.locator(SELECTORS.DELETE_ACTION).click()
 		await page.waitForLoadState('networkidle')
 

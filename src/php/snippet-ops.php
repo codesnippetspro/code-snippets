@@ -296,10 +296,12 @@ function activate_snippet( int $id, ?bool $network = null ) {
 		// translators: %d: snippet identifier.
 		return sprintf( __( 'Could not locate snippet with ID %d.', 'code-snippets' ), $id );
 	}
-
-	$validator = new Validator( $snippet->code );
-	if ( $validator->validate() ) {
-		return __( 'Could not activate snippet: code did not pass validation.', 'code-snippets' );
+	
+	if('php' == $snippet->type ){
+		$validator = new Validator( $snippet->code );
+		if ( $validator->validate() ) {
+			return __( 'Could not activate snippet: code did not pass validation.', 'code-snippets' );
+		}
 	}
 
 	$result = $wpdb->update(

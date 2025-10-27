@@ -1,0 +1,147 @@
+name: Playwright Test Runner
+
+on:
+  workflow_call:
+    inputs:
+      test-mode:
+        required: true
+        type: string
+        description: 'Test mode: default or file-based-execution'
+      project-name:
+        required: true
+        type: string
+        description: 'Playwright project name to run'
+
+jobs:
+  playwright-test:
+    name: Playwright tests (${{ inputs.test-mode == 'default' && 'Default Mode' || 'File-based Execution' }})
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: codesnippetspro/setup-php@v2
+        with:
+          php-version: "8.1"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: 'npm'
+
+      - name: Compute dependency hash
+        id: deps-hash
+        run: |
+          set -euo pipefail
+          tmpfile=$(mktemp)
+          for f in src/composer.lock package-lock.json; do
+            if [ -f "$f" ]; then
+              cat "$f" >> "$tmpfile"
+            fi
+          done
+          if [ -s "$tmpfile" ]; then
+            deps_hash=$(shasum -a 1 "$tmpfile" | awk '{print $1}' | cut -c1-8)
+          else
+            deps_hash=$(echo "${GITHUB_SHA:-unknown}" | cut -c1-8)
+          fi
+          echo "deps_hash=$deps_hash" >> "$GITHUB_OUTPUT"
+
+      - name: Get build cache
+        id: deps-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            src/vendor
+          key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+      - name: Install workflow dependencies (wp-env, playwright)
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        run: npm run prepare-environment:ci && npm run bundle
+
+      - name: Save vendor and node_modules cache
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            src/vendor
+            node_modules
+          key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          
+      - name: Start WordPress environment
+        run: |
+          npx wp-env start
+
+      - name: Activate code-snippets-pro plugin
+        run: npx wp-env run cli wp plugin activate code-snippets-pro
+      
+      - name: Create CI licensing stub and modify Plugin class
+        run: |
+          # Create the CI stub class file
+          cat > ./src/php/class-licensing-ci-stub.php << 'EOF'
+          <?php
+          namespace Code_Snippets;
+
+          class Licensing_CI_Stub extends Licensing {
+              private const MOCK_LICENSE_KEY = 'ci-test-license-key-mock';
+
+              public function __construct() {
+                  // Skip parent constructor to avoid Freemius SDK initialization
+              }
+
+              public function is_licensed(): bool {
+                  return true;
+              }
+
+              public function was_licensed(): bool {
+                  return true;
+              }
+
+              public function get_license_key(): ?string {
+                  return self::MOCK_LICENSE_KEY;
+              }
+
+              public function register_hooks() {}
+              public function plugin_icon(): string {
+                  return dirname( CODE_SNIPPETS_FILE ) . '/assets/icon.svg';
+              }
+              public function uninstall_hook() {}
+              public function override_strings() {}
+          }
+          EOF
+          
+          # Directly modify class-plugin.php to use the CI stub instead of the real Licensing class
+          sed -i.bak '/\$this->licensing = new Licensing();/i\
+          \t\t\t// CI Override: Load the licensing stub\
+          \t\t\trequire_once __DIR__ . "/class-licensing-ci-stub.php";\
+          ' ./src/php/class-plugin.php
+          
+          sed -i 's/\$this->licensing = new Licensing();/\$this->licensing = new Licensing_CI_Stub();/' ./src/php/class-plugin.php
+
+      - name: WordPress debug information
+        run: |
+          npx wp-env run cli wp core version
+          npx wp-env run cli wp --info
+
+      - name: Install playwright/test
+        run: |
+          npx playwright install chromium
+
+      - name: Run Playwright tests
+        run: npm run test:playwright -- --project=${{ inputs.project-name }}
+
+      - name: Stop WordPress environment
+        if: always()
+        run: npx wp-env stop
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-test-results-${{ inputs.test-mode }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 2
