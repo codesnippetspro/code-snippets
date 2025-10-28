@@ -1,5 +1,15 @@
 # Changelog
 
+
+## [3.8.1] (2025-10-28)
+
+### Changed
+* Improved file-based snippet handling for multisite installations to correctly map snippets to their site/table during flat-file sync.
+
+### Fixed
+* Fixed multisite flat-file synchronization that could skip or mis-handle active snippets due to incorrect nested iteration.
+* Ensured correct table detection when processing active snippets so they are written to the correct location on multisite setups.
+
 ## [3.8.0] (2025-10-24)
 
 ### Added
