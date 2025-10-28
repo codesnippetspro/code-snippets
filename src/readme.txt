@@ -105,19 +105,11 @@ You can report security bugs found in the source code of this plugin through the
 == Changelog ==
 
 
-
-
-
 = 3.8.1 (2025-10-28) =
-
-__Changed__
-
-* Improved file-based snippet handling for multisite installations to correctly map snippets to their site/table during flat-file sync.
 
 __Fixed__
 
-* Fixed multisite flat-file synchronization that could skip or mis-handle active snippets due to incorrect nested iteration.
-* Ensured correct table detection when processing active snippets so they are written to the correct location on multisite setups.
+* Improved file-based snippet handling for multisite installations.
 
 = 3.8.0 (2025-10-24) =
 
