@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.8.0
+Stable tag: 3.8.1
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -105,7 +105,11 @@ You can report security bugs found in the source code of this plugin through the
 == Changelog ==
 
 
+= 3.8.1 (2025-10-28) =
 
+__Fixed__
+
+* Improved file-based snippet handling for multisite installations.
 
 = 3.8.0 (2025-10-24) =
 
