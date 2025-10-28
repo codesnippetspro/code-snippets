@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.8.0
+Stable tag: 3.8.1
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -106,6 +106,19 @@ You can report security bugs found in the source code of this plugin through the
 
 
 = 3.8.1 (2025-10-28) =
+
+__Added__
+
+* Code line explanation widget with apply and remove actions for AI-generated comments. (PRO)
+
+__Changed__
+
+* Improved pagination handling and display structure for cloud search results. (PRO)
+* Enhanced styling for codevault rows and inactive tabs in cloud interface. (PRO)
+
+__Removed__
+
+* Removed `guzzlehttp/guzzle` dependency to reduce package conflicts. (PRO)
 
 __Fixed__
 
