@@ -443,11 +443,10 @@ class Snippet_Files {
 				$db->set_table_vars();
 
 				$site_data = $db->fetch_active_snippets( $scopes );
-				foreach ( $site_data as $table_name => $active_snippets ) {
-					foreach ( $active_snippets as $snippet ) {
-						$snippet_obj = get_snippet( $snippet['id'], false );
-						$this->handle_snippet( $snippet_obj, $table_name );
-					}
+				foreach ( $site_data as $snippet ) {
+					$table_name = $snippet['table'];
+					$snippet_obj = get_snippet( $snippet['id'], false );
+					$this->handle_snippet( $snippet_obj, $table_name );
 				}
 
 				restore_current_blog();
