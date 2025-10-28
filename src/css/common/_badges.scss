@@ -24,6 +24,7 @@
 		font-size: 18px;
 		inline-size: 18px;
 		block-size: 18px;
+		color: #fff; // Added color rule
 	}
 }
 
@@ -73,6 +74,7 @@
 .inverted-badges .badge {
 	color: #fff;
 	background-color: #a7aaad;
+	border-color: #fff !important;
 }
 
 .nav-tab-inactive {
