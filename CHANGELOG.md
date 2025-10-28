@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.8.1] (2025-10-28)
+
+### Fixed
+* Improved file-based snippet handling for multisite installations.
+
 ## [3.8.0] (2025-10-24)
 
 ### Added
