@@ -255,14 +255,6 @@ td.column-name {
 				align-items: flex-end;
 			}
 		}
-
-		.column-download {
-			display: flex;
-			gap: 0.5em;
-			flex-flow: column;
-			text-align: center;
-		}
-
 	}
 
 	.action-buttons {
@@ -273,8 +265,18 @@ td.column-name {
 			text-align: center;
 		}
 	}
+}
 
-
+.cloud-snippets #the-list{
+  .column-download {
+    display: flex;
+    flex-flow: column;
+    text-align: right;
+    
+    li {
+      list-style: none;
+    }
+  }
 }
 
 .cloud-connect-wrap {
