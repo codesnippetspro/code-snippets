@@ -4,8 +4,6 @@ namespace Code_Snippets\Cloud;
 
 use Exception;
 use WP_Error;
-use Code_Snippets\Vendor\GuzzleHttp\Client;
-use Code_Snippets\Vendor\GuzzleHttp\Psr7\Request;
 use function Code_Snippets\code_snippets;
 
 /**
@@ -80,45 +78,43 @@ class Cloud_GPT_API {
 			);
 		}
 
-		$multipart_data = [
-			[
-				'name'     => 'fs_key',
-				'contents' => $freemius_license,
-			],
-		];
-
-		foreach ( $data as $name => $contents ) {
-			$multipart_data[] = [
-				'name'     => $name,
-				'contents' => $contents,
-			];
-		}
+		// Build form body using WP HTTP API. Include Freemius license as fs_key.
+		$body = array_merge( [ 'fs_key' => $freemius_license ], $data );
 
 		$url = $this->cloud_api->get_cloud_api_url() . sprintf( '%s/%s', self::API_PATH, ltrim( $endpoint, '/\\' ) );
 
-		$client = new Client();
-		$request = new Request( 'POST', $url, $this->cloud_api->build_request_headers() );
+		$args = [
+			'headers' => $this->cloud_api->build_request_headers(),
+			'body'    => $body,
+			'timeout' => 30,
+		];
 
-		try {
-			$promise = $client->sendAsync( $request, [ 'multipart' => $multipart_data ] );
-			$response = $promise->wait();
-		} catch ( Exception $exception ) {
+		$response = wp_remote_post( $url, $args );
+
+		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
 				'cloud_ai_request_error',
 				__( 'Failed to send request to Cloud API', 'code-snippets' ),
-				$exception->getMessage()
+				$response->get_error_message()
 			);
 		}
 
-		$body = json_decode( $response->getBody(), true );
+		$resp_body = wp_remote_retrieve_body( $response );
+		$decoded = json_decode( $resp_body, true );
 
-		return $body['response'] && is_array( $body['response'] ) ?
-			$body['response'] :
-			new WP_Error(
+		if ( ! is_array( $decoded ) ) {
+			return new WP_Error(
 				'cloud_ai_response_error',
 				__( 'Did not receive a valid response from the Cloud API.', 'code-snippets' ),
-				$body
+				$resp_body
 			);
+		}
+
+		return isset( $decoded['response'] ) && is_array( $decoded['response'] ) ? $decoded['response'] : new WP_Error(
+			'cloud_ai_response_error',
+			__( 'Did not receive a valid response from the Cloud API.', 'code-snippets' ),
+			$decoded
+		);
 	}
 
 	/**

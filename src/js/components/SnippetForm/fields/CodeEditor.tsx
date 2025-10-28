@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
 import { useSubmitSnippet } from '../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../utils/errors'
@@ -10,9 +10,7 @@ import { MinimiseIcon } from '../../common/icons/MinimiseIcon'
 import { CloudAIButton } from '../../EditorSidebar/actions/CloudAIButton'
 import { ExplainSnippetButton } from './ExplainSnippetButton'
 import { CodeEditorShortcuts } from './CodeEditorShortcuts'
-import type { LineWidget } from 'codemirror'
 import type { Dispatch, RefObject, SetStateAction } from 'react'
-
 interface EditorTextareaProps {
 	textareaRef: RefObject<HTMLTextAreaElement>
 }
@@ -39,41 +37,8 @@ const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
 }
 
 const ExplainCodeButton: React.FC = () => {
-	const { codeEditorInstance } = useSnippetForm()
-	const [, setWidgets] = useState<LineWidget[]>([])
-
 	return (
-		<ExplainSnippetButton
-			field="code"
-			title={__('Explain this snippet with AI.', 'code-snippets')}
-			onRequest={() => {
-				setWidgets(widgets => {
-					widgets.forEach(widget => widget.clear())
-					return []
-				})
-			}}
-			onResponse={generated => {
-				const doc = codeEditorInstance?.codemirror.getDoc()
-				console.info('lines', generated.lines)
-
-				setWidgets(() => doc && generated.lines
-					? Object.values(generated.lines).map(generatedLine => {
-						const [line, message] = Object.entries(generatedLine)[0]
-						const lineNumber = parseInt(line, 10) - 1
-
-						const widget = document.createElement('div')
-						widget.className = 'code-line-explanation'
-
-						const icon = document.createElement('img')
-						icon.setAttribute('src', `${window.CODE_SNIPPETS?.urls.plugin}/assets/generate.svg`)
-
-						widget.appendChild(icon)
-						widget.appendChild(document.createTextNode(message))
-
-						return doc.addLineWidget(lineNumber, widget, { above: true })
-					}) : [])
-			}}
-		>
+		<ExplainSnippetButton field="code" title={__('Explain this snippet with AI.', 'code-snippets')}>
 			{__('Explain', 'code-snippets')}
 		</ExplainSnippetButton>
 	)
