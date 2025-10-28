@@ -728,9 +728,9 @@ class Cloud_API {
 			self::get_cloud_api_url() . 'public/search'
 		);
 
-		$results = self::unpack_request_json( wp_remote_get( $api_url ) );
+		$raw = self::unpack_request_json( wp_remote_get( $api_url ) );
 
-		$results = new Cloud_Snippets( $results );
+		$results = new Cloud_Snippets( $raw );
 		$results->page = $page;
 
 		return $results;
@@ -969,7 +969,7 @@ class Cloud_API {
 	 *
 	 * @return array<string, string|bool> Result of operation: an array with `success` and `error_message` keys.
 	 */
-	public function download_or_update_snippet( int $cloud_id, string $source, string $action, int $codevault_page ): array {
+	public function download_or_update_snippet( int $cloud_id, string $source, string $action, int $codevault_page = 0 ): array {
 		$cloud_id = intval( $cloud_id );
 
 		switch ( $source ) {

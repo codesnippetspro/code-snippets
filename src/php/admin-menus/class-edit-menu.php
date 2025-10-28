@@ -97,8 +97,11 @@ class Edit_Menu extends Admin_Menu {
 		$edit_hook .= $screen->in_admin( 'network' ) ? '-network' : '';
 
 		// Disallow visiting the edit snippet page without a valid ID.
-		if ( $screen->base === $edit_hook && ( empty( $_REQUEST['id'] ) || 0 === $this->snippet->id || null === $this->snippet->id ) &&
-		     ! isset( $_REQUEST['preview'] ) ) {
+		if ( 
+			$screen->base === $edit_hook 
+			&& ( empty( $_REQUEST['id'] ) || 0 === $this->snippet->id || null === $this->snippet->id ) 
+			&& ! isset( $_REQUEST['preview'] ) 
+		) {
 			wp_safe_redirect( code_snippets()->get_menu_url( 'add' ) );
 			exit;
 		}
@@ -111,7 +114,7 @@ class Edit_Menu extends Admin_Menu {
 	 */
 	public function render() {
 		printf(
-			'<div id="edit-snippet-form-container">%s</div>',
+			'<div id="edit-snippet-form-container"><small style="position: relative; top: 14px;">%s</small></div>',
 			esc_html__( 'Loading edit page…', 'code-snippets' )
 		);
 	}
