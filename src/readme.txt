@@ -107,6 +107,19 @@ You can report security bugs found in the source code of this plugin through the
 
 = 3.8.1 (2025-10-28) =
 
+__Added__
+
+* Code line explanation widget with apply and remove actions for AI-generated comments. (PRO)
+
+__Changed__
+
+* Improved pagination handling and display structure for cloud search results. (PRO)
+* Enhanced styling for codevault rows and inactive tabs in cloud interface. (PRO)
+
+__Removed__
+
+* Removed `guzzlehttp/guzzle` dependency to reduce package conflicts. (PRO)
+
 __Fixed__
 
 * Improved file-based snippet handling for multisite installations.
