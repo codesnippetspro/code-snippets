@@ -12,6 +12,7 @@ class Php_Snippet_Handler implements Snippet_Type_Handler_Interface {
 	}
 
 	public function wrap_code( string $code ): string {
-		return "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\n" . $code;
+		$output = "<?php\n\n" . apply_filters( 'code_snippets_php_snippet_file_code', $code );
+		return $output;
 	}
 }
