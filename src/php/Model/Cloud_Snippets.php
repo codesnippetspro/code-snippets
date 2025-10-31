@@ -9,11 +9,11 @@ namespace Code_Snippets\Model;
  * @package Code_Snippets
  *
  * @property Cloud_Snippet $snippets        List of snippet items for the current page.
- * @property integer        $page            Page of data that this data belongs to.
- * @property integer        $total_pages     Total number of available pages of items.
- * @property integer        $total_snippets  Total number of available snippet items.
- * @property array          $cloud_id_rev    An array of all cloud snippet IDs and their revision numbers.
- * @property bool           $success         If the request has any results.
+ * @property int           $page            Page of data that this data belongs to.
+ * @property int           $total_pages     Total number of available pages of items.
+ * @property int           $total_snippets  Total number of available snippet items.
+ * @property array         $cloud_id_rev    An array of all cloud snippet IDs and their revision numbers.
+ * @property bool          $success         If the request has any results.
  */
 class Cloud_Snippets extends Model {
 
@@ -67,6 +67,7 @@ class Cloud_Snippets extends Model {
 	 * @param mixed $snippets The field as provided.
 	 *
 	 * @return Cloud_Snippets[] The field in the correct format.
+	 * @noinspection PhpUnused
 	 */
 	protected function prepare_snippets( $snippets ): array {
 		$result = [];

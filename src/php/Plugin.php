@@ -7,6 +7,9 @@ use Code_Snippets\Client\Cloud_API;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
 use Code_Snippets\Core\Upgrader;
+use Code_Snippets\Flat_Files\Flat_File_Config_Repository;
+use Code_Snippets\Flat_Files\Handler_Registry;
+use Code_Snippets\Flat_Files\WP_Filesystem_Adapter;
 use Code_Snippets\Integration\Classic_Editor\MCE_Plugin;
 use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
@@ -85,9 +88,9 @@ class Plugin {
 	/**
 	 * Handles snippet handler registration.
 	 *
-	 * @var Snippet_Handler_Registry
+	 * @var Flat_Files\Handler_Registry
 	 */
-	public Snippet_Handler_Registry $snippet_handler_registry;
+	public Flat_Files\Handler_Registry $snippet_handler_registry;
 
 	/**
 	 * Class constructor
@@ -105,7 +108,6 @@ class Plugin {
 		require_once __DIR__ . '/Utils/editor.php';
 		require_once __DIR__ . '/Utils/options.php';
 		require_once __DIR__ . '/Settings/settings.php';
-		require_once __DIR__ . '/Settings/class-version-switch.php';
 	}
 
 	/**
@@ -141,17 +143,17 @@ class Plugin {
 	 * @return void
 	 */
 	private function init_snippet_files() {
-		$this->snippet_handler_registry = new Snippet_Handler_Registry(
+		$this->snippet_handler_registry = new Handler_Registry(
 			[
-				'php'  => new Php_Snippet_Handler(),
-				'html' => new Html_Snippet_Handler(),
+				'php'  => new Flat_Files\Handlers\Functions_Snippet_Handler(),
+				'html' => new Flat_Files\Handlers\Content_Snippet_Handler(),
 			]
 		);
 
-		$fs = new WordPress_File_System_Adapter();
-		$config_repo = new Snippet_Config_Repository( $fs );
+		$fs = new WP_Filesystem_Adapter();
+		$config_repo = new Flat_File_Config_Repository( $fs );
 
-		$snippet_files = new Snippet_Files( $this->snippet_handler_registry, $fs, $config_repo );
+		$snippet_files = new Flat_Files\Snippet_Files( $this->snippet_handler_registry, $fs, $config_repo );
 		$snippet_files->register_hooks();
 	}
 
@@ -243,7 +245,7 @@ class Plugin {
 	/**
 	 * Determine whether the current user can perform actions on snippets.
 	 *
-	 * @return boolean Whether the current user has the required capability.
+	 * @return bool Whether the current user has the required capability.
 	 *
 	 * @since 2.8.6
 	 */

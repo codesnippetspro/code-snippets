@@ -83,9 +83,9 @@ function get_setting( string $section, string $field ) {
  */
 function get_settings_sections(): array {
 	$sections = array(
-		'general'        => __( 'General', 'code-snippets' ),
-		'editor'         => __( 'Code Editor', 'code-snippets' ),
-		'debug'          => __( 'Debug', 'code-snippets' ),
+		'general' => __( 'General', 'code-snippets' ),
+		'editor'  => __( 'Code Editor', 'code-snippets' ),
+		'debug'   => __( 'Debug', 'code-snippets' ),
 	);
 
 	// Only show the Version section when the debug setting to enable version changes is enabled.
@@ -140,6 +140,8 @@ function register_plugin_settings() {
 		'code-snippets',
 		'editor'
 	);
+
+	Version_Switch::init();
 }
 
 add_action( 'admin_init', __NAMESPACE__ . '\\register_plugin_settings' );
@@ -267,11 +269,12 @@ function sanitize_settings( array $input ): array {
 
 			// Fetch the corresponding input value from the posted data.
 			$input_value = $input[ $section_id ][ $field_id ] ?? null;
+			$stored_value = $settings[ $section_id ][ $field_id ] ?? null;
 
 			// Attempt to sanitize the setting value.
 			$sanitized_value = sanitize_setting_value( $field, $input_value );
 
-			if ( ! is_null( $sanitized_value ) && $settings[ $section_id ][ $field_id ] !== $sanitized_value ) {
+			if ( ! is_null( $sanitized_value ) && $stored_value !== $sanitized_value ) {
 				$settings[ $section_id ][ $field_id ] = $sanitized_value;
 				$updated = true;
 			}

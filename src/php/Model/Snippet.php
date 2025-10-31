@@ -30,16 +30,16 @@ use function Code_Snippets\Utils\get_self_option;
  * @property int                    $revision           Revision or version number of snippet.
  * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
  *
- * @property-read int               $last_active        Timestamp of when the snippet was last active, if available.
- * @property-read string            $display_name       The snippet name if it exists or a placeholder if it does not.
- * @property-read string            $tags_list          The tags in string list format.
- * @property-read string            $scope_icon         The dashicon used to represent the current scope.
- * @property-read string            $scope_name         Human-readable description of the snippet type.
- * @property-read string            $type               The type of snippet.
- * @property-read string            $lang               The language that the snippet code is written in.
- * @property-read int               $modified_timestamp The last modification date in Unix timestamp format.
- * @property-read DateTime          $modified_local     The last modification date in the local timezone.
- * @property-read boolean           $is_pro             Whether the snippet type is pro-only.
+ * @property-read int      $last_active        Timestamp of when the snippet was last active, if available.
+ * @property-read string   $display_name       The snippet name if it exists or a placeholder if it does not.
+ * @property-read string   $tags_list          The tags in string list format.
+ * @property-read string   $scope_icon         The dashicon used to represent the current scope.
+ * @property-read string   $scope_name         Human-readable description of the snippet type.
+ * @property-read string   $type               The type of snippet.
+ * @property-read string   $lang               The language that the snippet code is written in.
+ * @property-read int      $modified_timestamp The last modification date in Unix timestamp format.
+ * @property-read DateTime $modified_local     The last modification date in the local timezone.
+ * @property-read bool     $is_pro             Whether the snippet type is pro-only.
  */
 class Snippet extends Model {
 
@@ -136,6 +136,7 @@ class Snippet extends Model {
 	 * @param int|string $scope The field as provided.
 	 *
 	 * @return string The field in the correct format.
+	 * @noinspection PhpUnused
 	 */
 	protected function prepare_scope( $scope ) {
 		$scopes = self::get_all_scopes();
@@ -157,6 +158,7 @@ class Snippet extends Model {
 	 * @param bool $network The field as provided.
 	 *
 	 * @return bool The field in the correct format.
+	 * @noinspection PhpUnused
 	 */
 	protected function prepare_network( bool $network ): bool {
 		if ( null === $network && function_exists( 'is_network_admin' ) ) {
@@ -209,6 +211,7 @@ class Snippet extends Model {
 	 * Retrieve the timestamp of when the snippet was last active, if available.
 	 *
 	 * @return string
+	 * @noinspection PhpUnused
 	 */
 	protected function get_last_active(): string {
 		$recently_active = get_self_option( $this->network, 'recently_activated_snippets', [] );
@@ -219,6 +222,7 @@ class Snippet extends Model {
 	 * Determine the language that the snippet code is written in, based on the scope
 	 *
 	 * @return string The name of a language filename extension.
+	 * @noinspection PhpUnused
 	 */
 	protected function get_lang(): string {
 		return 'cond' === $this->type ? 'json' : $this->type;
@@ -230,6 +234,7 @@ class Snippet extends Model {
 	 * @param DateTime|string $modified Snippet modification date.
 	 *
 	 * @return string
+	 * @noinspection PhpUnused
 	 */
 	protected function prepare_modified( $modified ): ?string {
 
@@ -265,6 +270,7 @@ class Snippet extends Model {
 	 * Retrieve the snippet title if set or a placeholder title if not.
 	 *
 	 * @return string
+	 * @noinspection PhpUnused
 	 */
 	protected function get_display_name(): string {
 		// translators: %s: snippet identifier.
@@ -275,6 +281,7 @@ class Snippet extends Model {
 	 * Retrieve the tags in list format
 	 *
 	 * @return string The tags separated by a comma and a space.
+	 * @noinspection PhpUnused
 	 */
 	protected function get_tags_list(): string {
 		return implode( ', ', $this->tags );
@@ -323,6 +330,7 @@ class Snippet extends Model {
 	 * Retrieve the string representation of the scope
 	 *
 	 * @return string The name of the scope.
+	 * @noinspection PhpUnused
 	 */
 	protected function get_scope_name(): string {
 		switch ( $this->scope ) {
@@ -357,6 +365,7 @@ class Snippet extends Model {
 	 * Retrieve the icon used for the current scope
 	 *
 	 * @return string A dashicon name.
+	 * @noinspection PhpUnused
 	 */
 	protected function get_scope_icon(): string {
 		$icons = self::get_scope_icons();
@@ -368,6 +377,7 @@ class Snippet extends Model {
 	 * Determine if the snippet is a shared network snippet
 	 *
 	 * @return bool Whether the snippet is a shared network snippet.
+	 * @noinspection PhpUnused
 	 */
 	protected function get_shared_network(): bool {
 		if ( isset( $this->fields['shared_network'] ) ) {
@@ -387,7 +397,8 @@ class Snippet extends Model {
 	/**
 	 * Retrieve the snippet modification date as a timestamp.
 	 *
-	 * @return integer Timestamp value.
+	 * @return int Timestamp value.
+	 * @noinspection PhpUnused
 	 */
 	protected function get_modified_timestamp(): int {
 		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
@@ -399,6 +410,7 @@ class Snippet extends Model {
 	 * Retrieve the modification time in the local timezone.
 	 *
 	 * @return DateTime
+	 * @noinspection PhpUnused
 	 */
 	protected function get_modified_local(): DateTime {
 		$datetime = DateTime::createFromFormat( self::DATE_FORMAT, $this->modified, new DateTimeZone( 'UTC' ) );
@@ -432,7 +444,7 @@ class Snippet extends Model {
 	/**
 	 * Retrieve the last modified time, nicely formatted for readability.
 	 *
-	 * @param boolean $include_html Whether to include HTML in the output.
+	 * @param bool $include_html Whether to include HTML in the output.
 	 *
 	 * @return string
 	 */
@@ -465,6 +477,8 @@ class Snippet extends Model {
 
 	/**
 	 * Determine whether the current snippet type is pro-only.
+	 *
+	 * @noinspection PhpUnused
 	 */
 	private function get_is_pro(): bool {
 		return 'css' === $this->type || 'js' === $this->type || 'cond' === $this->type;

@@ -7,11 +7,11 @@ namespace Code_Snippets\Model;
  *
  * @package Code_Snippets
  *
- * @property integer $local_id         ID of local snippet as stored in WordPress database, if applicable.
- * @property integer $cloud_id         ID of remote snippet on cloud platform, if applicable.
- * @property boolean $is_owner         Ownership status of remote snippet on cloud platform.
- * @property boolean $in_codevault     Whether the remote snippet is stored in the users' codevault.
- * @property boolean $update_available If synchronised, whether there is an update available on the cloud platform.
+ * @property int  $local_id         ID of local snippet as stored in WordPress database, if applicable.
+ * @property int  $cloud_id         ID of remote snippet on cloud platform, if applicable.
+ * @property bool $is_owner         Ownership status of remote snippet on cloud platform.
+ * @property bool $in_codevault     Whether the remote snippet is stored in the users' codevault.
+ * @property bool $update_available If synchronised, whether there is an update available on the cloud platform.
  */
 class Cloud_Link extends Model {
 

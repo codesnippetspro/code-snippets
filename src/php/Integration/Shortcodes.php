@@ -2,6 +2,8 @@
 
 namespace Code_Snippets\Integration;
 
+use Code_Snippets\Core\DB;
+use Code_Snippets\Flat_Files\Snippet_Files;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Code_Highlighter;
 use WP_Post;
@@ -81,7 +83,7 @@ class Shortcodes {
 	/**
 	 * Print a message to the user if the snippet ID attribute is invalid.
 	 *
-	 * @param integer $id Snippet ID.
+	 * @param int $id Snippet ID.
 	 *
 	 * @return string Warning message.
 	 */
@@ -113,8 +115,8 @@ class Shortcodes {
 	/**
 	 * Build the file path for a snippet's flat file.
 	 *
-	 * @param string          $table_name Table name for the snippet.
-	 * @param Snippet         $snippet    Snippet object.
+	 * @param string  $table_name Table name for the snippet.
+	 * @param Snippet $snippet    Snippet object.
 	 *
 	 * @return string Full file path for the snippet.
 	 */
@@ -150,6 +152,16 @@ class Shortcodes {
 			: $this->evaluate_shortcode_from_db( $snippet, $atts );
 	}
 
+	/**
+	 * Evaluate a snippet by evaluating its code as a string.
+	 *
+	 * @param Snippet $snippet Snippet to execute.
+	 * @param array   $atts    Shortcode attributes.
+	 *
+	 * @return string Snippet output.
+	 *
+	 * phpcs:disable Squiz.PHP.Eval.Discouraged
+	 */
 	private function evaluate_shortcode_from_db( Snippet $snippet, array $atts ): string {
 		/**
 		 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
@@ -165,10 +177,18 @@ class Shortcodes {
 		return ob_get_clean();
 	}
 
-	private function evaluate_shortcode_from_flat_file( $filepath, array $atts ): string {
+	/**
+	 * Evaluate a snippet by loading its code from the filesystem.
+	 *
+	 * @param string $filepath Path to file to evaluate.
+	 * @param array  $atts     Shortcode attributes.
+	 *
+	 * @return string Snippet output.
+	 */
+	private function evaluate_shortcode_from_flat_file( string $filepath, array $atts ): string {
 		ob_start();
 
-		( function( $atts ) use ( $filepath ) {
+		( function ( $atts ) use ( $filepath ) {
 			/**
 			 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
 			 * authors to use custom attributes.
@@ -182,20 +202,28 @@ class Shortcodes {
 		return ob_get_clean();
 	}
 
-	private function get_snippet( int $id, bool $network, string $snippet_type ): Snippet {
+	/**
+	 * Retrieve a content snippet from the filesystem or the database.
+	 *
+	 * @param int  $id      Snippet identifier.
+	 * @param bool $network Whether the snippet is network-wide.
+	 *
+	 * @return Snippet
+	 */
+	private function get_content_snippet( int $id, bool $network ): Snippet {
 		if ( ! Snippet_Files::is_active() ) {
 			return get_snippet( $id, $network );
 		}
 
 		$validated_network = DB::validate_network_param( $network );
 		$table_name = Snippet_Files::get_hashed_table_name( code_snippets()->db->get_table_name( $validated_network ) );
-		$handler = code_snippets()->snippet_handler_registry->get_handler( $snippet_type );
+		$handler = code_snippets()->snippet_handler_registry->get_handler( 'html' );
 		$config_filepath = Snippet_Files::get_base_dir( $table_name, $handler->get_dir_name() ) . '/index.php';
 
 		if ( file_exists( $config_filepath ) ) {
 			$config = require_once $config_filepath;
 			$snippet_data = $config[ $id ] ?? null;
-			
+
 			if ( $snippet_data ) {
 				$snippet = new Snippet( $snippet_data );
 				return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $network );
@@ -235,7 +263,7 @@ class Shortcodes {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = $this->get_snippet( $id, (bool) $atts['network'], 'html' );
+		$snippet = $this->get_content_snippet( $id, (bool) $atts['network'] );
 
 		// Render the source code if this is not a shortcode snippet.
 		if ( 'content' !== $snippet->scope ) {
@@ -377,8 +405,7 @@ class Shortcodes {
 			return $this->invalid_id_warning( $id );
 		}
 
-		$snippet = $this->get_snippet( $id, (bool) $atts['network'], 'html' );
-
+		$snippet = $this->get_content_snippet( $id, (bool) $atts['network'] );
 		return $this->render_snippet_source( $snippet, $atts );
 	}
 }

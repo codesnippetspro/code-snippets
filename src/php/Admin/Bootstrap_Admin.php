@@ -241,6 +241,7 @@ class Bootstrap_Admin {
 	 * Print any admin notices that have not been dismissed.
 	 *
 	 * @return void
+	 * @noinspection PhpRedundantOptionalArgumentInspection
 	 */
 	public function print_notices() {
 		global $current_user;

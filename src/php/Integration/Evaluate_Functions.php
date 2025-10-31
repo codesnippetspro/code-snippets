@@ -2,9 +2,9 @@
 
 namespace Code_Snippets\Integration;
 
-use Code_Snippets\REST_API\Snippets_REST_Controller;
 use Code_Snippets\Core\DB;
-use Code_Snippets\Snippet_Files;
+use Code_Snippets\Flat_Files\Snippet_Files;
+use Code_Snippets\REST_API\Snippets_REST_Controller;
 use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\code_snippets;

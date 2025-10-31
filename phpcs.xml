@@ -8,8 +8,10 @@
 		<!-- allow hooks containing forward slashes -->
 		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
 
-		<!-- necessary for core plugin function -->
-		<exclude name="Squiz.PHP.Eval.Discouraged" />
+		<!-- PSR-4 -->
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+		<exclude name="Squiz.Commenting.FileComment.Missing" />
 
 		<!-- allow embedding PHP within HTML attribute values -->
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
@@ -34,7 +36,7 @@
 		<exclude name="WordPress.PHP.DisallowShortTernary.Found" />
 		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound" />
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
-    </rule>
+	</rule>
 
 	<rule ref="PHPCompatibilityWP">
 		<include-pattern>*\.php$</include-pattern>

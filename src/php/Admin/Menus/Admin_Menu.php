@@ -2,7 +2,6 @@
 
 namespace Code_Snippets\Admin\Menus;
 
-use Code_Snippets\Model\Snippet;
 use function Code_Snippets\code_snippets;
 
 /**

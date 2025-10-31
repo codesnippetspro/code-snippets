@@ -81,7 +81,7 @@ class Cloud_API {
 	/**
 	 * Check if the API key is set and verified.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function is_cloud_connection_available(): bool {
 		return false;
@@ -174,9 +174,9 @@ class Cloud_API {
 	/**
 	 * Search Code Snippets Cloud -> Static Function
 	 *
-	 * @param string  $search_method Search by name of codevault or keyword(s).
-	 * @param string  $search        Search query.
-	 * @param integer $page          Search result page to retrieve. Defaults to '0'.
+	 * @param string $search_method Search by name of codevault or keyword(s).
+	 * @param string $search        Search query.
+	 * @param int    $page          Search result page to retrieve. Defaults to '0'.
 	 *
 	 * @return Cloud_Snippets Result of search query.
 	 */

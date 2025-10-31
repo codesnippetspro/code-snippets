@@ -1,10 +1,12 @@
 <?php
 
-namespace Code_Snippets;
+namespace Code_Snippets\Export;
 
 use Code_Snippets\Core\DB;
 use Code_Snippets\Model\Snippet;
 use DOMDocument;
+use function Code_Snippets\get_snippets;
+use function Code_Snippets\save_snippet;
 
 /**
  * Handles importing snippets from export files into the site
@@ -54,7 +56,7 @@ class Import {
 	/**
 	 * Imports snippets from a JSON file.
 	 *
-	 * @return array<integer>|bool An array of imported snippet IDs on success, false on failure
+	 * @return array<int>|bool An array of imported snippet IDs on success, false on failure
 	 */
 	public function import_json() {
 		if ( ! file_exists( $this->file ) || ! is_file( $this->file ) ) {
@@ -101,7 +103,7 @@ class Import {
 	/**
 	 * Imports snippets from an XML file
 	 *
-	 * @return array<integer>|bool An array of imported snippet IDs on success, false on failure
+	 * @return array<int>|bool An array of imported snippet IDs on success, false on failure
 	 */
 	public function import_xml() {
 		if ( ! file_exists( $this->file ) || ! is_file( $this->file ) ) {
@@ -150,7 +152,7 @@ class Import {
 	/**
 	 * Fetch a list of existing snippets for checking duplicates.
 	 *
-	 * @return array<string, integer>
+	 * @return array<string, int>
 	 */
 	private function fetch_existing_snippets(): array {
 		$existing_snippets = array();
@@ -175,7 +177,7 @@ class Import {
 	 *
 	 * @param array<Snippet> $snippets List of snippets to save.
 	 *
-	 * @return array<integer> IDs of imported snippets.
+	 * @return array<int> IDs of imported snippets.
 	 */
 	private function save_snippets( array $snippets ): array {
 		$existing_snippets = $this->fetch_existing_snippets();

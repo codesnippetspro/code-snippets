@@ -462,7 +462,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function get_items_permissions_check( $request ): bool {
 		return code_snippets()->current_user_can();
@@ -473,7 +473,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function get_item_permissions_check( $request ): bool {
 		return $this->get_items_permissions_check( $request );
@@ -484,7 +484,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function create_item_permissions_check( $request ): bool {
 		return code_snippets()->current_user_can();
@@ -495,7 +495,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function update_item_permissions_check( $request ): bool {
 		return $this->create_item_permissions_check( $request );
@@ -506,7 +506,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function delete_item_permissions_check( $request ): bool {
 		return $this->create_item_permissions_check( $request );

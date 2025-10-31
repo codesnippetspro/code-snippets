@@ -2,7 +2,8 @@
 
 namespace Code_Snippets\Utils;
 
-use function Code_Snippets\code_snippets;
+use const Code_Snippets\PLUGIN_FILE;
+use const Code_Snippets\PLUGIN_VERSION;
 
 /**
  * This class handles the integration of the PrismJS syntax highlighter.
@@ -22,21 +23,19 @@ class Code_Highlighter {
 	 * @return void
 	 */
 	public static function register_prism_assets() {
-		$plugin = code_snippets();
-
 		wp_register_script(
 			self::PRISM_HANDLE,
-			plugins_url( 'dist/prism.js', $plugin->file ),
-			array(),
-			$plugin->version,
-			true
+			plugins_url( 'dist/prism.js', PLUGIN_FILE ),
+			[],
+			PLUGIN_VERSION,
+			[ 'in_footer' => true ]
 		);
 
 		wp_register_style(
 			self::PRISM_HANDLE,
-			plugins_url( 'dist/prism.css', $plugin->file ),
-			array(),
-			$plugin->version
+			plugins_url( 'dist/prism.css', PLUGIN_FILE ),
+			[],
+			PLUGIN_VERSION
 		);
 	}
 

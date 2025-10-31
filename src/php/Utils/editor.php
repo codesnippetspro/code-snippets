@@ -12,6 +12,7 @@ use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\get_setting;
 use function Code_Snippets\Settings\get_settings_values;
 use const Code_Snippets\PLUGIN_FILE;
+use const Code_Snippets\PLUGIN_VERSION;
 
 /**
  * Register and load the CodeMirror library.
@@ -20,8 +21,6 @@ use const Code_Snippets\PLUGIN_FILE;
  * @param array<string, mixed> $extra_atts Pass a list of attributes to override the saved ones.
  */
 function enqueue_code_editor( string $type, array $extra_atts = [] ) {
-	$plugin = code_snippets();
-
 	$modes = [
 		'css'  => 'text/css',
 		'php'  => 'php-snippet',
@@ -90,10 +89,10 @@ function enqueue_code_editor( string $type, array $extra_atts = [] ) {
 
 	wp_enqueue_script(
 		'code-snippets-code-editor',
-		plugins_url( 'dist/editor.js', $plugin->file ),
+		plugins_url( 'dist/editor.js', PLUGIN_FILE ),
 		[ 'code-editor' ],
-		$plugin->version,
-		true
+		PLUGIN_VERSION,
+		[ 'in_footer' => true ]
 	);
 
 	// CodeMirror Theme.
@@ -102,9 +101,9 @@ function enqueue_code_editor( string $type, array $extra_atts = [] ) {
 	if ( 'default' !== $theme ) {
 		wp_enqueue_style(
 			'code-snippets-editor-theme-' . $theme,
-			plugins_url( "dist/editor-themes/$theme.css", $plugin->file ),
+			plugins_url( "dist/editor-themes/$theme.css", PLUGIN_FILE ),
 			[ 'code-editor' ],
-			$plugin->version
+			PLUGIN_VERSION
 		);
 	}
 }

@@ -99,8 +99,8 @@ class DB {
 	/**
 	 * Determine whether a database table exists.
 	 *
-	 * @param string  $table_name Name of database table to check.
-	 * @param boolean $refresh    Rerun the query, instead of using a cached value.
+	 * @param string $table_name Name of database table to check.
+	 * @param bool   $refresh    Rerun the query, instead of using a cached value.
 	 *
 	 * @return bool Whether the database table exists.
 	 */
@@ -188,7 +188,7 @@ class DB {
 	 *
 	 * @param string        $table_name  Name of table to fetch snippets from.
 	 * @param array<string> $scopes      List of scopes to include in query.
-	 * @param boolean       $active_only Whether to only fetch active snippets from the table.
+	 * @param bool          $active_only Whether to only fetch active snippets from the table.
 	 *
 	 * @return array<string, array<string, mixed>>|false List of active snippets, if any could be retrieved.
 	 *
@@ -280,6 +280,8 @@ class DB {
 	 *     network: bool,
 	 *     priority: int,
 	 * } List of active snippets.
+	 *
+	 * @noinspection PhpRedundantOptionalArgumentInspection
 	 */
 	public function fetch_active_snippets( array $scopes ): array {
 		$active_snippets = [];

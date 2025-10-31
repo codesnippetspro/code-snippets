@@ -10,6 +10,8 @@ use function Code_Snippets\get_snippet;
 use function Code_Snippets\Settings\get_setting;
 use function Code_Snippets\Settings\get_settings_values;
 use function Code_Snippets\Utils\enqueue_code_editor;
+use const Code_Snippets\PLUGIN_FILE;
+use const Code_Snippets\PLUGIN_VERSION;
 
 /**
  * This class handles the add/edit menu.
@@ -145,7 +147,6 @@ class Edit_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function enqueue_assets() {
-		$plugin = code_snippets();
 		$rtl = is_rtl() ? '-rtl' : '';
 
 		$settings = get_settings_values();
@@ -156,20 +157,20 @@ class Edit_Menu extends Admin_Menu {
 
 		wp_enqueue_style(
 			self::CSS_HANDLE,
-			plugins_url( "dist/edit$rtl.css", $plugin->file ),
+			plugins_url( "dist/edit$rtl.css", PLUGIN_FILE ),
 			[
 				'code-editor',
 				'wp-components',
 			],
-			$plugin->version
+			PLUGIN_VERSION
 		);
 
 		wp_enqueue_script(
 			self::JS_HANDLE,
-			plugins_url( 'dist/edit.js', $plugin->file ),
+			plugins_url( 'dist/edit.js', PLUGIN_FILE ),
 			[ 'code-snippets-code-editor' ] + self::$script_deps,
-			$plugin->version,
-			true
+			PLUGIN_VERSION,
+			[ 'in_footer' => true ]
 		);
 
 		wp_set_script_translations( self::JS_HANDLE, 'code-snippets' );
@@ -179,7 +180,7 @@ class Edit_Menu extends Admin_Menu {
 			wp_enqueue_editor();
 		}
 
-		$plugin->localize_script( self::JS_HANDLE );
+		code_snippets()->localize_script( self::JS_HANDLE );
 
 		wp_localize_script(
 			self::JS_HANDLE,

@@ -3,8 +3,8 @@
 namespace Code_Snippets\Integration;
 
 use Code_Snippets\Core\DB;
+use Code_Snippets\Flat_Files\Snippet_Files;
 use Code_Snippets\Model\Snippet;
-use Code_Snippets\Snippet_Files;
 use function Code_Snippets\code_snippets;
 
 /**

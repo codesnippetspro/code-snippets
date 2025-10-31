@@ -184,12 +184,10 @@ abstract class Model {
 
 		if ( $this->is_allowed_field( $resolved_field ) ) {
 			$this->set_value_internal( $resolved_field, $value );
-		} else {
-			if ( function_exists( 'wp_trigger_error' ) ) {
-				// translators: 1: class name, 2: field name.
-				$message = sprintf( 'Trying to set invalid property on "%s" class: %s', get_class( $this ), $field );
-				wp_trigger_error( __FUNCTION__, $message, E_USER_ERROR );
-			}
+		} elseif ( function_exists( 'wp_trigger_error' ) ) {
+			// translators: 1: class name, 2: field name.
+			$message = sprintf( 'Trying to set invalid property on "%s" class: %s', get_class( $this ), $field );
+			wp_trigger_error( __FUNCTION__, $message, E_USER_ERROR );
 		}
 	}
 

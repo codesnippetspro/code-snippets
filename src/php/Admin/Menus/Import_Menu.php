@@ -3,7 +3,7 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Admin\Contextual_Help;
-use Code_Snippets\Import;
+use Code_Snippets\Export\Import;
 use function Code_Snippets\code_snippets;
 
 /**

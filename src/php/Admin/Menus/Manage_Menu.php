@@ -183,17 +183,17 @@ class Manage_Menu extends Admin_Menu {
 
 		wp_enqueue_style(
 			self::CSS_HANDLE,
-			plugins_url( "dist/manage$rtl.css", $plugin->file ),
+			plugins_url( "dist/manage$rtl.css", PLUGIN_FILE ),
 			self::$style_deps,
-			$plugin->version
+			PLUGIN_VERSION
 		);
 
 		wp_enqueue_script(
 			self::JS_HANDLE,
-			plugins_url( 'dist/manage.js', $plugin->file ),
+			plugins_url( 'dist/manage.js', PLUGIN_FILE ),
 			self::$script_deps,
-			$plugin->version,
-			true
+			PLUGIN_VERSION,
+			[ 'in_footer' => true ]
 		);
 
 		Code_Highlighter::enqueue_all_prism_themes();

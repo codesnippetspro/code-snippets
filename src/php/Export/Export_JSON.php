@@ -3,7 +3,7 @@
 namespace Code_Snippets\Export;
 
 use Code_Snippets\Model\Snippet;
-use function Code_Snippets\code_snippets;
+use const Code_Snippets\PLUGIN_VERSION;
 
 /**
  * Handles exporting snippets from the site in various downloadable formats
@@ -41,7 +41,7 @@ class Export_JSON extends Export {
 		}
 
 		return [
-			'generator'    => 'Code Snippets v' . code_snippets()->version,
+			'generator'    => 'Code Snippets v' . PLUGIN_VERSION,
 			'date_created' => gmdate( 'Y-m-d H:i' ),
 			'snippets'     => $snippets,
 		];

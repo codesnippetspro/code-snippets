@@ -26,14 +26,14 @@ class Validator {
 	/**
 	 * The index of the token currently being examined.
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	private int $current;
 
 	/**
 	 * The total number of tokens.
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	private int $length;
 

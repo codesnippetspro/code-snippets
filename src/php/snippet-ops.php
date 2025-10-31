@@ -222,7 +222,7 @@ function get_snippet( int $id = 0, ?bool $network = null ): Snippet {
  *
  * @param Snippet[] $snippets Snippets that was recently updated.
  *
- * @return boolean Whether an update was performed.
+ * @return bool Whether an update was performed.
  */
 function update_shared_network_snippets( array $snippets ): bool {
 	$shared_ids = [];
@@ -299,8 +299,8 @@ function activate_snippet( int $id, ?bool $network = null ) {
 		// translators: %d: snippet identifier.
 		return sprintf( __( 'Could not locate snippet with ID %d.', 'code-snippets' ), $id );
 	}
-	
-	if('php' == $snippet->type ){
+
+	if ( 'php' === $snippet->type ) {
 		$validator = new Validator( $snippet->code );
 		if ( $validator->validate() ) {
 			return __( 'Could not activate snippet: code did not pass validation.', 'code-snippets' );
@@ -329,8 +329,8 @@ function activate_snippet( int $id, ?bool $network = null ) {
  * Activates multiple snippets.
  * Write operation.
  *
- * @param array<integer> $ids     The IDs of the snippets to activate.
- * @param bool|null      $network Whether the snippets are multisite-wide (true) or site-wide (false).
+ * @param array<int> $ids     The IDs of the snippets to activate.
+ * @param bool|null  $network Whether the snippets are multisite-wide (true) or site-wide (false).
  *
  * @return Snippet[]|null Snippets which were successfully activated, or null on failure.
  *
@@ -601,14 +601,16 @@ function save_snippet( $snippet ): ?Snippet {
  *
  * Code must NOT be escaped, as it will be executed directly.
  *
- * @param string  $code  Snippet code to execute.
- * @param integer $id    Snippet ID.
- * @param boolean $force Force snippet execution, even if save mode is active.
+ * @param string $code  Snippet code to execute.
+ * @param int    $id    Snippet ID.
+ * @param bool   $force Force snippet execution, even if save mode is active.
  *
  * @return ParseError|mixed Code error if encountered during execution, or result of snippet execution otherwise.
  *
- * @since 2.0.0
+ * @since        2.0.0
  * @noinspection PhpUndefinedConstantInspection
+ *
+ * phpcs:disable Squiz.PHP.Eval.Discouraged
  */
 function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 	/**
@@ -639,8 +641,8 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
  *
  * Read operation.
  *
- * @param string       $cloud_id  The Cloud ID of the snippet to retrieve.
- * @param boolean|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
+ * @param string    $cloud_id  The Cloud ID of the snippet to retrieve.
+ * @param bool|null $multisite Retrieve a multisite-wide snippet (true) or site-wide snippet (false).
  *
  * @return Snippet|null A single snippet object or null if no snippet was found.
  *
@@ -704,11 +706,23 @@ function update_snippet_fields( int $snippet_id, array $fields, ?bool $network =
 	clean_snippets_cache( $table );
 }
 
-function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force = false ) {
+/**
+ *  Evaluate a snippet by loading it from the filesystem.
+ *
+ * @param      $code
+ * @param      $file
+ * @param int  $id
+ * @param bool $force
+ *
+ * @return bool
+ */
+function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force = false ): bool {
 	if ( ! is_file( $file ) ) {
-		return execute_snippet( $code, $id, $force );
+		execute_snippet( $code, $id, $force );
+		return true;
 	}
 
+	/* @noinspection PhpUndefinedConstantInspection */
 	if ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 		return false;
 	}
@@ -716,4 +730,5 @@ function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force 
 	require_once $file;
 
 	do_action( 'code_snippets/after_execute_snippet_from_flat_file', $file, $id );
+	return true;
 }

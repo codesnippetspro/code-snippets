@@ -23,7 +23,7 @@ use function Code_Snippets\code_snippets_build_tags_array;
  * @property string        $status           Snippet Status ID.
  * @property string        $created          The date and time when the snippet data was first created, in ISO format.
  * @property string        $updated          When the snippet was last updated, in ISO format.
- * @property integer       $revision         The update revision number.
+ * @property int           $revision         The update revision number.
  * @property bool          $is_owner         If user is owner or author of snippet.
  */
 class Cloud_Snippet extends Model {

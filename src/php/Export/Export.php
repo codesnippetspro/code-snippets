@@ -22,8 +22,8 @@ abstract class Export {
 	/**
 	 * Class constructor
 	 *
-	 * @param array<int>   $ids     List of snippet IDs to export.
-	 * @param boolean|null $network Whether to fetch snippets from local or network table.
+	 * @param array<int> $ids     List of snippet IDs to export.
+	 * @param bool|null  $network Whether to fetch snippets from local or network table.
 	 */
 	public function __construct( array $ids, ?bool $network = null ) {
 		$this->snippets_list = get_snippets( $ids, $network );
