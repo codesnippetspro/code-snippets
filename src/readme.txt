@@ -105,6 +105,22 @@ You can report security bugs found in the source code of this plugin through the
 == Changelog ==
 
 
+
+= 3.8.2 (2025-10-31) =
+
+__Added__
+
+* Introduced 'code_snippets_php_snippet_file_code' filter to customize snippet file content before execution.
+
+__Changed__
+
+* Applied filters before wrapping/concatenation in wrap_code for more predictable behavior and compatibility.
+
+__Fixed__
+
+* Fixed file-based execution of namespaced PHP snippets so they run correctly.
+* Removed ABSPATH guard in snippet wrapper to prevent premature early return in certain execution contexts.
+
 = 3.8.1 (2025-10-28) =
 
 __Added__
