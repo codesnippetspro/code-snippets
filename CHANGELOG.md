@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.8.2] (2025-10-31)
+
+### Fixed
+* Improved namespaced PHP snippet handling with file based execution.
+
 ## [3.8.1] (2025-10-28)
 
 ### Added
