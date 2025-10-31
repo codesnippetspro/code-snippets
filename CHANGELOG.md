@@ -1,5 +1,20 @@
 # Changelog
 
+
+## [3.9.0] (2025-10-31)
+
+### Added
+* Introduce Trash workflow for snippets with options to Restore or Delete Permanently
+* Add 'Trashed' status/filter in the snippets list with context-aware actions
+
+### Changed
+* Refine deletion UX: change dialog/title to 'Delete', remove irreversible warning, update bulk action labels and result messages
+* Improve trashed-item UI: hide activation switch, remove background highlight, and make titles non-clickable
+
+### Fixed
+* Improve flat files handling on multisite installations
+* Prevent editing links on trashed snippets to avoid unintended edits
+
 ## [3.8.2] (2025-10-31)
 
 ### Fixed
