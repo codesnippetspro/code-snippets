@@ -1,10 +1,10 @@
 === Code Snippets ===
-Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle
+Contributors: bungeshea, ver3, lightbulbman, 0aksmith, johnpixle, louiswol94, carolinaop
 Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.8.0-dev.1
+Stable tag: 3.8.1
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -104,7 +104,49 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-= 3.7.0 (beta release) =
+
+= 3.8.1 (2025-10-28) =
+
+__Added__
+
+* Code line explanation widget with apply and remove actions for AI-generated comments. (PRO)
+
+__Changed__
+
+* Improved pagination handling and display structure for cloud search results. (PRO)
+* Enhanced styling for codevault rows and inactive tabs in cloud interface. (PRO)
+
+__Removed__
+
+* Removed `guzzlehttp/guzzle` dependency to reduce package conflicts. (PRO)
+
+__Fixed__
+
+* Improved file-based snippet handling for multisite installations.
+
+= 3.8.0 (2025-10-24) =
+
+__Added__
+
+* @CarolinaOP and @louiswol94 join the team as plugin contributors.
+* File-based execution mode for snippets (Optional in Plugin Settings).
+* Version switch option, to help easily rollback the plugin to an earlier release.
+* Minor UI improvements to the editor and sidebar.
+
+__Changed__
+
+* Prefixed Composer packages to reduce collisions with other plugins.
+* Snippets REST API now supports pagination via page and per_page query parameters.
+* Improved editor preview behavior.
+
+__Fixed__
+
+* Fixed issues with snippet evaluation and front-end initialization in edge cases.
+* Improved reliability of snippet evaluation.
+* JavaScript and CSS snippets loading twice due to a conditions bug. (PRO)
+* Fixed issue where some conditions didn’t work due to loading before the loop. (PRO)
+
+= 3.7.0 (2025-08-29) =
 
 __Added__
 

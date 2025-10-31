@@ -52,7 +52,7 @@ export const SnippetLocationInput: React.FC = () => {
 			<h4><label htmlFor="snippet-location">{__('Location', 'code-snippets')}</label></h4>
 			<Select
 				inputId="snippet-location"
-				className="code-snippets-select"
+				className="code-snippets-select code-snippets-select-location"
 				options={options}
 				isDisabled={isReadOnly}
 				styles={{

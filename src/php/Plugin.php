@@ -83,9 +83,16 @@ class Plugin {
 	public Licensing $licensing;
 
 	/**
+	 * Handles snippet handler registration.
+	 *
+	 * @var Snippet_Handler_Registry
+	 */
+	public Snippet_Handler_Registry $snippet_handler_registry;
+
+	/**
 	 * Class constructor
 	 */
-	public function __construct(  ) {
+	public function __construct() {
 		wp_cache_add_global_groups( CACHE_GROUP );
 		add_action( 'allowed_redirect_hosts', [ $this, 'allow_code_snippets_redirect' ] );
 	}
@@ -98,6 +105,7 @@ class Plugin {
 		require_once __DIR__ . '/Utils/editor.php';
 		require_once __DIR__ . '/Utils/options.php';
 		require_once __DIR__ . '/Settings/settings.php';
+		require_once __DIR__ . '/Settings/class-version-switch.php';
 	}
 
 	/**
@@ -123,6 +131,28 @@ class Plugin {
 		new Shortcodes();
 		new MCE_Plugin();
 		new Upgrader( PLUGIN_VERSION, $this->db );
+
+		$this->init_snippet_files();
+	}
+
+	/**
+	 * Initialises the snippet files component.
+	 *
+	 * @return void
+	 */
+	private function init_snippet_files() {
+		$this->snippet_handler_registry = new Snippet_Handler_Registry(
+			[
+				'php'  => new Php_Snippet_Handler(),
+				'html' => new Html_Snippet_Handler(),
+			]
+		);
+
+		$fs = new WordPress_File_System_Adapter();
+		$config_repo = new Snippet_Config_Repository( $fs );
+
+		$snippet_files = new Snippet_Files( $this->snippet_handler_registry, $fs, $config_repo );
+		$snippet_files->register_hooks();
 	}
 
 	/**

@@ -16,6 +16,7 @@
         "src/js",
         "config",
         "scripts",
+        "tests",
         "*.config.mjs",
         "*.config.js"
     ],

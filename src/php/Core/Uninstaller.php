@@ -25,19 +25,23 @@ class Uninstaller {
 	 * @return void
 	 */
 	public function uninstall_plugin() {
-		if ( $this->is_complete_uninstall_enabled() ) {
-			if ( is_multisite() ) {
-				$this->uninstall_multisite();
-			} else {
-				$this->uninstall_current_site();
-			}
+		if ( ! $this->is_complete_uninstall_enabled() ) {
+			return;
 		}
+
+		if ( is_multisite() ) {
+			$this->uninstall_multisite();
+		} else {
+			$this->uninstall_current_site();
+		}
+
+		$this->delete_flat_files_directory();
 	}
 
 	/**
 	 * Determine whether the option for allowing a complete uninstallation is enabled.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function is_complete_uninstall_enabled(): bool {
 		$unified = false;
@@ -95,5 +99,29 @@ class Uninstaller {
 		// Remove saved options.
 		delete_site_option( 'code_snippets_version' );
 		delete_site_option( 'recently_activated_snippets' );
+	}
+
+	/**
+	 * Clean up directory used to store snippet flat files.
+	 *
+	 * @return void
+	 */
+	private function delete_flat_files_directory() {
+		$flat_files_dir = WP_CONTENT_DIR . '/code-snippets';
+
+		if ( ! is_dir( $flat_files_dir ) ) {
+			return;
+		}
+
+		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		global $wp_filesystem;
+		WP_Filesystem();
+
+		if ( $wp_filesystem && $wp_filesystem->is_dir( $flat_files_dir ) ) {
+			$wp_filesystem->delete( $flat_files_dir, true );
+		}
 	}
 }

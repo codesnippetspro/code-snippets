@@ -7,6 +7,11 @@ on:
         required: false
         type: string
         default: ${{ inputs.ref }}
+      php:
+        required: false
+        type: number
+        default: 8.3
+
     outputs:
       version:
         value: ${{ jobs.build.outputs.version }}
@@ -14,13 +19,16 @@ on:
         value: ${{ jobs.build.outputs.artifact_name }}
       artifact_url:
         value: ${{ jobs.build.outputs.artifact_url }}
+      artifact_id:
+        value: ${{ jobs.build.outputs.artifact_id }}
 jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
+      version: ${{ steps.build.outputs.version }}
       artifact_name: ${{ steps.build.outputs.name }}
       artifact_url: ${{ steps.artifacts.outputs.artifact-url }}
-      version: ${{ steps.build.outputs.version }}
+      artifact_id: ${{ steps.artifacts.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,23 +37,29 @@ jobs:
       - name: Set up PHP
         uses: codesnippetspro/setup-php@v2
         with:
-          php-version: "8.3"
+          php-version: "${{ inputs.php }}" 
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
+          cache: 'npm'
 
       - name: Install & Build
         id: build
         run: |
           npm install && npm run bundle
-          echo "name=$(jq -r .name package.json)" >> $GITHUB_OUTPUT
-          echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
 
+          name=$(jq -r .name package.json)
+          echo "name=$name" >> $GITHUB_OUTPUT
+          echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+          
+          mkdir -p ./upload/$name
+          mv ./bundle/* ./upload/$name/ 2>/dev/null || true
+          
       - name: Upload
         id: artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build.outputs.name }}
-          path: ./bundle
+          path: ./upload

@@ -41,7 +41,14 @@ export const handleEditorPreviewUpdates = () => {
 			})()
 
 			if (null !== value) {
-				editor?.setOption(opt, value)
+				if ('font_size' === setting.name) {
+					const codeElement = document.querySelector('.CodeMirror-code')
+					if (codeElement && codeElement instanceof HTMLElement) {
+						codeElement.style.fontSize = `${value}px`
+					}
+				} else {
+					editor?.setOption(opt, value)
+				}
 			}
 		})
 	}

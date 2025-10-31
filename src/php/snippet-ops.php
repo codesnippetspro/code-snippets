@@ -299,10 +299,12 @@ function activate_snippet( int $id, ?bool $network = null ) {
 		// translators: %d: snippet identifier.
 		return sprintf( __( 'Could not locate snippet with ID %d.', 'code-snippets' ), $id );
 	}
-
-	$validator = new Validator( $snippet->code );
-	if ( $validator->validate() ) {
-		return __( 'Could not activate snippet: code did not pass validation.', 'code-snippets' );
+	
+	if('php' == $snippet->type ){
+		$validator = new Validator( $snippet->code );
+		if ( $validator->validate() ) {
+			return __( 'Could not activate snippet: code did not pass validation.', 'code-snippets' );
+		}
 	}
 
 	$result = $wpdb->update(
@@ -318,7 +320,7 @@ function activate_snippet( int $id, ?bool $network = null ) {
 	}
 
 	update_shared_network_snippets( [ $snippet ] );
-	do_action( 'code_snippets/activate_snippet', $snippet );
+	do_action( 'code_snippets/activate_snippet', $snippet, $network );
 	clean_snippets_cache( $table_name );
 	return $snippet;
 }
@@ -396,7 +398,7 @@ function deactivate_snippet( int $id, ?bool $network = null ): ?Snippet {
 	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
-	// Set the snippet to active.
+	// Set the snippet to inactive.
 	$result = $wpdb->update(
 		$table,
 		array( 'active' => '0' ),
@@ -437,6 +439,8 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
+	$snippet = get_snippet( $id, $network );
+
 	$result = $wpdb->delete(
 		$table,
 		array( 'id' => $id ),
@@ -444,7 +448,7 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 	);
 
 	if ( $result ) {
-		do_action( 'code_snippets/delete_snippet', $id, $network );
+		do_action( 'code_snippets/delete_snippet', $snippet, $network );
 		clean_snippets_cache( $table );
 		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 
@@ -698,4 +702,18 @@ function update_snippet_fields( int $snippet_id, array $fields, ?bool $network =
 
 	do_action( 'code_snippets/update_snippet', $snippet->id, $table );
 	clean_snippets_cache( $table );
+}
+
+function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force = false ) {
+	if ( ! is_file( $file ) ) {
+		return execute_snippet( $code, $id, $force );
+	}
+
+	if ( ! $force && defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
+		return false;
+	}
+
+	require_once $file;
+
+	do_action( 'code_snippets/after_execute_snippet_from_flat_file', $file, $id );
 }

@@ -93,7 +93,9 @@ class Setting_Field {
 	public function render() {
 		switch ( $this->type ) {
 			case 'callback':
-				call_user_func( $this->render_callback );
+				if ( is_callable( $this->render_callback ) ) {
+					call_user_func( $this->render_callback, $this->args );
+				}
 				break;
 
 			case 'checkbox':
@@ -135,9 +137,9 @@ class Setting_Field {
 	/**
 	 * Render a single checkbox field.
 	 *
-	 * @param string  $input_name Input name.
-	 * @param string  $label      Input label.
-	 * @param boolean $checked    Whether the checkbox should be checked.
+	 * @param string $input_name Input name.
+	 * @param string $label      Input label.
+	 * @param bool   $checked    Whether the checkbox should be checked.
 	 */
 	private static function render_checkbox( string $input_name, string $label, bool $checked ) {
 		$checkbox = sprintf(

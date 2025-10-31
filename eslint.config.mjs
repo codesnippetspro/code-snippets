@@ -134,5 +134,11 @@ export default eslintTs.config(
 				objectLiteralTypeAssertions: 'never'
 			}],
 		}
+	},
+	{
+		files: ['test/**', '**/*.test.*', '**/*.spec.*'],
+		rules: {
+			'max-lines-per-function': 'off'
+		}
 	}
 )

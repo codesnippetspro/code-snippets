@@ -83,7 +83,7 @@ class Settings_Fields {
 	 */
 	private function init_defaults() {
 		$this->defaults = [
-			'general' => [
+			'general'        => [
 				'activate_by_default' => true,
 				'enable_tags'         => true,
 				'enable_description'  => true,
@@ -93,10 +93,11 @@ class Settings_Fields {
 				'hide_upgrade_menu'   => false,
 				'complete_uninstall'  => false,
 			],
-			'editor'  => [
+			'editor'         => [
 				'indent_with_tabs'            => true,
 				'tab_size'                    => 4,
 				'indent_unit'                 => 4,
+				'font_size'                   => 14,
 				'wrap_lines'                  => true,
 				'code_folding'                => true,
 				'line_numbers'                => true,
@@ -105,6 +106,12 @@ class Settings_Fields {
 				'highlight_active_line'       => true,
 				'keymap'                      => 'default',
 				'theme'                       => 'default',
+			],
+			'version-switch' => [
+				'selected_version' => '',
+			],
+			'debug'          => [
+				'enable_version_change' => false,
 			],
 		];
 
@@ -120,16 +127,39 @@ class Settings_Fields {
 		$this->fields = [];
 
 		$this->fields['debug'] = [
-			'database_update' => [
+			'database_update'       => [
 				'name'  => __( 'Database Table Upgrade', 'code-snippets' ),
 				'type'  => 'action',
 				'label' => __( 'Upgrade Database Table', 'code-snippets' ),
 				'desc'  => __( 'Use this button to manually upgrade the Code Snippets database table. This action will only affect the snippets table and should be used only when necessary.', 'code-snippets' ),
 			],
-			'reset_caches'    => [
+			'reset_caches'          => [
 				'name' => __( 'Reset Caches', 'code-snippets' ),
 				'type' => 'action',
 				'desc' => __( 'Use this button to manually clear snippets caches.', 'code-snippets' ),
+			],
+			'enable_version_change' => [
+				'name'  => __( 'Version Change', 'code-snippets' ),
+				'type'  => 'checkbox',
+				'label' => __( 'Enable the ability to switch or rollback versions of the Code Snippets core plugin.', 'code-snippets' ),
+			],
+		];
+
+		$this->fields['version-switch'] = [
+			'version_switcher' => [
+				'name'            => __( 'Switch Version', 'code-snippets' ),
+				'type'            => 'callback',
+				'render_callback' => [ '\\Code_Snippets\\Settings\\Version_Switch', 'render_version_switch_field' ],
+			],
+			'refresh_versions' => [
+				'name'            => __( 'Refresh Versions', 'code-snippets' ),
+				'type'            => 'callback',
+				'render_callback' => [ '\\Code_Snippets\\Settings\\Version_Switch', 'render_refresh_versions_field' ],
+			],
+			'version_warning'  => [
+				'name'            => '',
+				'type'            => 'callback',
+				'render_callback' => [ '\\Code_Snippets\\Settings\\Version_Switch', 'render_version_switch_warning' ],
 			],
 		];
 
@@ -212,6 +242,14 @@ class Settings_Fields {
 				'label'      => _x( 'spaces', 'unit', 'code-snippets' ),
 				'codemirror' => 'indentUnit',
 				'min'        => 0,
+			],
+			'font_size'                   => [
+				'name'       => __( 'Font Size', 'code-snippets' ),
+				'type'       => 'number',
+				'label'      => _x( 'px', 'unit', 'code-snippets' ),
+				'codemirror' => 'fontSize',
+				'min'        => 8,
+				'max'        => 28,
 			],
 			'wrap_lines'                  => [
 				'name'       => __( 'Wrap Lines', 'code-snippets' ),

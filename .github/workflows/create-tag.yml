@@ -5,7 +5,9 @@ on:
     types: [closed]
     branches:
       - core
-
+      - core-beta
+      - pro
+      - pro-beta
 jobs:
   create-tag:
     if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'tag/v')
@@ -13,17 +15,17 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
-        with:
-          ref: core
 
       - name: Get version from package.json
         id: version
         run: |
-          echo "tag=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+          tag=$(jq -r .version package.json) 
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "::info::Creating git tag [$tag]"
 
       - name: Create tag
         run: |
           git config user.name "code-snippets-bot"
-          git config user.email "sre@codesnippets.pro"
+          git config user.email "139164393+code-snippets-bot@users.noreply.github.com"
           git tag "v${{ steps.version.outputs.tag }}"
           git push origin "v${{ steps.version.outputs.tag }}"

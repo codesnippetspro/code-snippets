@@ -1,5 +1,5 @@
 #adminmenu {
-	.toplevel_page_snippets div.wp-menu-image:before {
+	.toplevel_page_snippets div.wp-menu-image::before {
 		content: '';
 		mask-image: url('../assets/menu-icon.svg');
 		mask-repeat: no-repeat;
