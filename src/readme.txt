@@ -104,6 +104,24 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.9.0 (2025-10-31) =
+
+__Added__
+
+* Introduce Trash workflow for snippets with options to Restore or Delete Permanently
+* Add 'Trashed' status/filter in the snippets list with context-aware actions
+
+__Changed__
+
+* Refine deletion UX: change dialog/title to 'Delete', remove irreversible warning, update bulk action labels and result messages
+* Improve trashed-item UI: hide activation switch, remove background highlight, and make titles non-clickable
+
+__Fixed__
+
+* Improve flat files handling on multisite installations
+* Prevent editing links on trashed snippets to avoid unintended edits
+
 = 3.8.2 (2025-10-31) =
 
 __Fixed__
