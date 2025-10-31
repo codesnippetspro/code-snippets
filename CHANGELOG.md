@@ -1,5 +1,18 @@
 # Changelog
 
+
+## [3.8.2] (2025-10-31)
+
+### Added
+* Introduced 'code_snippets_php_snippet_file_code' filter to customize snippet file content before execution.
+
+### Changed
+* Applied filters before wrapping/concatenation in wrap_code for more predictable behavior and compatibility.
+
+### Fixed
+* Fixed file-based execution of namespaced PHP snippets so they run correctly.
+* Removed ABSPATH guard in snippet wrapper to prevent premature early return in certain execution contexts.
+
 ## [3.8.1] (2025-10-28)
 
 ### Added
