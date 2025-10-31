@@ -62,6 +62,7 @@ class Snippet_Files {
 			add_action( 'code_snippets/create_snippet', [ $this, 'handle_snippet' ], 10, 2 );
 			add_action( 'code_snippets/update_snippet', [ $this, 'handle_snippet' ], 10, 2 );
 			add_action( 'code_snippets/delete_snippet', [ $this, 'delete_snippet' ], 10, 2 );
+			add_action( 'code_snippets/trash_snippet', [ $this, 'delete_snippet' ], 10, 2 );
 			add_action( 'code_snippets/activate_snippet', [ $this, 'activate_snippet' ], 10, 1 );
 			add_action( 'code_snippets/deactivate_snippet', [ $this, 'deactivate_snippet' ], 10, 2 );
 			add_action( 'code_snippets/activate_snippets', [ $this, 'activate_snippets' ], 10, 2 );
