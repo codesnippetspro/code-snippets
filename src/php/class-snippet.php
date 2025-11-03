@@ -51,11 +51,24 @@ class Snippet extends Data_Item {
 	public const DEFAULT_DATE = '0000-00-00 00:00:00';
 
 	/**
+	 * Raw active value from database before processing.
+	 *
+	 * @var mixed
+	 */
+	private $raw_active_value;
+
+	/**
 	 * Constructor function.
 	 *
 	 * @param array<string, mixed>|object $initial_data Initial snippet data.
 	 */
 	public function __construct( $initial_data = null ) {
+		if ( is_array( $initial_data ) && isset( $initial_data['active'] ) ) {
+			$this->raw_active_value = $initial_data['active'];
+		} elseif ( is_object( $initial_data ) && isset( $initial_data->active ) ) {
+			$this->raw_active_value = $initial_data->active;
+		}
+
 		$default_values = array(
 			'id'             => 0,
 			'name'           => '',
@@ -102,6 +115,15 @@ class Snippet extends Data_Item {
 	}
 
 	/**
+	 * Determine if the snippet is trashed (soft deleted).
+	 *
+	 * @return bool
+	 */
+	public function is_trashed(): bool {
+		return -1 === (int) $this->raw_active_value;
+	}
+
+	/**
 	 * Prepare a value before it is stored.
 	 *
 	 * @param mixed  $value Value to prepare.
@@ -120,7 +142,7 @@ class Snippet extends Data_Item {
 				return code_snippets_build_tags_array( $value );
 
 			case 'active':
-				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition();
+				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition() && (int) $value != -1;
 
 			default:
 				return $value;

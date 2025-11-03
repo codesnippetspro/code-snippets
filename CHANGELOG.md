@@ -1,5 +1,18 @@
 # Changelog
 
+
+## [3.9.0-beta.1] (2025-11-03)
+
+### Added
+* Soft delete (Trash) functionality for snippets with ability to undo, restore or permanently delete.
+* Bulk actions for trashing, restoring, and permanently deleting multiple snippets.
+* Separate filtered view to manage trashed snippets.
+
+## [3.8.2] (2025-10-31)
+
+### Fixed
+* Improved namespaced PHP snippet handling with file based execution.
+
 ## [3.8.1] (2025-10-28)
 
 ### Added
