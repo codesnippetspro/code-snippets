@@ -104,6 +104,32 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.9.0-beta.1 (2025-11-03) =
+
+__Added__
+
+* File-based execution mode for snippets (optional in plugin settings)
+* Version switch option to roll back the plugin to an earlier release
+* Code line explanation widget with apply/remove for AI-generated comments (PRO)
+* Snippets REST API pagination support via page and per_page
+
+__Changed__
+
+* Prefixed Composer packages to reduce collisions with other plugins
+* Improved editor preview behavior and minor UI enhancements in the editor and sidebar
+* Better pagination handling and display structure for cloud search results (PRO)
+* Enhanced styling for codevault rows and inactive tabs in the cloud interface (PRO)
+* Applied filters before concatenation in wrap_code for more predictable snippet processing
+
+__Fixed__
+
+* Improved file-based snippet handling for multisite installations
+* Improved handling of namespaced PHP snippets in file-based execution
+* Resolved issues with snippet evaluation and front-end initialization in edge cases
+* Fixed JavaScript and CSS snippets loading twice due to a conditions bug (PRO)
+* Fixed conditions that didn’t work due to loading before the loop (PRO)
+
 = 3.8.2 (2025-10-31) =
 
 __Fixed__
