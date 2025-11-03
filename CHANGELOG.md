@@ -4,24 +4,9 @@
 ## [3.9.0-beta.1] (2025-11-03)
 
 ### Added
-* File-based execution mode for snippets (optional in plugin settings)
-* Version switch option to roll back the plugin to an earlier release
-* Code line explanation widget with apply/remove for AI-generated comments (PRO)
-* Snippets REST API pagination support via page and per_page
-
-### Changed
-* Prefixed Composer packages to reduce collisions with other plugins
-* Improved editor preview behavior and minor UI enhancements in the editor and sidebar
-* Better pagination handling and display structure for cloud search results (PRO)
-* Enhanced styling for codevault rows and inactive tabs in the cloud interface (PRO)
-* Applied filters before concatenation in wrap_code for more predictable snippet processing
-
-### Fixed
-* Improved file-based snippet handling for multisite installations
-* Improved handling of namespaced PHP snippets in file-based execution
-* Resolved issues with snippet evaluation and front-end initialization in edge cases
-* Fixed JavaScript and CSS snippets loading twice due to a conditions bug (PRO)
-* Fixed conditions that didn’t work due to loading before the loop (PRO)
+* Soft delete (Trash) functionality for snippets with ability to undo, restore or permanently delete.
+* Bulk actions for trashing, restoring, and permanently deleting multiple snippets.
+* Separate filtered view to manage trashed snippets.
 
 ## [3.8.2] (2025-10-31)
 
