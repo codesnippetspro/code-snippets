@@ -104,23 +104,6 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-
-= 3.9.0-beta.1 (2025-11-03) =
-
-__Added__
-
-* Added AI-powered 'Explain Snippet' button in the snippet editor to generate code explanations.
-* Introduced a Settings Version switch with editor preview to manage and toggle settings versions.
-
-__Changed__
-
-* Improved cloud library and list table UX with clearer notices, actions, and search, and updated styles to use CSS logical properties for better RTL/layout consistency.
-
-__Fixed__
-
-* Corrected displayed version numbers and release metadata.
-* Resolved layout and spacing issues in settings and editor screens.
-
 = 3.8.2 (2025-10-31) =
 
 __Fixed__
