@@ -35,6 +35,7 @@ const mapToSchema = ({
 	priority,
 	active,
 	network,
+	shared_network,
 	conditionId
 }: Partial<Snippet>): WritableSnippetSchema => ({
 	name,
@@ -45,6 +46,7 @@ const mapToSchema = ({
 	priority,
 	active,
 	network,
+	shared_network,
 	condition_id: conditionId
 })
 
