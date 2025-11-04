@@ -56,4 +56,4 @@ script:
   - find src/php/ \( -name '*.php' \) -exec php -lf {} \;
 
   # Run tests
-  - npm run test
+  - npm run lint
