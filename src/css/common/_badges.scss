@@ -18,13 +18,20 @@
 	padding-inline: 3px;
 	box-sizing: border-box;
 	gap: 5px;
-	line-height: 1;
+
 
 	.dashicons {
 		font-size: 18px;
 		inline-size: 18px;
 		block-size: 18px;
 	}
+}
+
+.network-shared {
+  color: #2271b1; 
+  font-size: 22px;
+  width: 100%;
+  cursor: help;
 }
 
 .small-badge {

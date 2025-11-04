@@ -307,7 +307,14 @@ class List_Table extends WP_List_Table {
 			return '';
 		}
 
-		if ( $this->is_network && ( $snippet->shared_network || ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) ) ) {
+		// Show icon for shared network snippets on network admin.
+		if ( $snippet->shared_network && $this->is_network ) {
+			return '<span class="dashicons dashicons-networking network-shared" title="' . 
+				esc_attr__( 'Shared with Subsites', 'code-snippets' ) . 
+				'"></span>';
+		}
+
+		if ( $this->is_network && ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) ) {
 			return '';
 		}
 
@@ -375,10 +382,6 @@ class List_Table extends WP_List_Table {
 				esc_attr( code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ) ),
 				$out
 			);
-		}
-
-		if ( $snippet->shared_network ) {
-			$out .= ' <span class="badge">' . esc_html__( 'Shared on Network', 'code-snippets' ) . '</span>';
 		}
 
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
@@ -986,46 +989,43 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Fetch all shared network snippets for the current site.
 	 *
-	 * @return void
+	 * @param array<Snippet> $all_snippets List of snippets to merge with.
+	 *
+	 * @return array<Snippet> Updated list of snippets.
 	 */
-	private function fetch_shared_network_snippets() {
-		/**
-		 * Table data.
-		 *
-		 * @var $snippets array<string, Snippet[]>
-		 */
-		global $snippets;
+	private function fetch_shared_network_snippets( array $all_snippets ): array {
+		if ( ! is_multisite() ) {
+			return $all_snippets;
+		}
 
-		$ids = get_site_option( 'shared_network_snippets' );
+		$shared_ids = get_site_option( 'shared_network_snippets' );
 
-		if ( ! is_multisite() || ! $ids ) {
-			return;
+		if ( ! $shared_ids || ! is_array( $shared_ids ) ) {
+			return $all_snippets;
 		}
 
 		if ( $this->is_network ) {
-			$limit = count( $snippets['all'] );
-
-			for ( $i = 0; $i < $limit; $i++ ) {
-				$snippet = &$snippets['all'][ $i ];
-
-				if ( in_array( $snippet->id, $ids, true ) ) {
+			// Mark shared network snippets on the network admin page.
+			foreach ( $all_snippets as $snippet ) {
+				if ( in_array( $snippet->id, $shared_ids, true ) ) {
 					$snippet->shared_network = true;
-					$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
 					$snippet->active = false;
 				}
 			}
 		} else {
+			// Fetch shared network snippets for subsites.
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
-			$shared_snippets = get_snippets( $ids, true );
+			$shared_snippets = get_snippets( $shared_ids, true );
 
 			foreach ( $shared_snippets as $snippet ) {
 				$snippet->shared_network = true;
-				$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
 				$snippet->active = in_array( $snippet->id, $active_shared_snippets, true );
 			}
 
-			$snippets['all'] = array_merge( $snippets['all'], $shared_snippets );
+			$all_snippets = array_merge( $all_snippets, $shared_snippets );
 		}
+
+		return $all_snippets;
 	}
 
 	/**
@@ -1062,7 +1062,7 @@ class List_Table extends WP_List_Table {
 		$snippets = array_fill_keys( $this->statuses, array() );
 
 		$all_snippets = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets() );
-		$this->fetch_shared_network_snippets();
+		$all_snippets = $this->fetch_shared_network_snippets( $all_snippets );
 
 		// Separate trashed snippets from the main collection
 		$snippets['trashed'] = array_filter( $all_snippets, function( $snippet ) {
