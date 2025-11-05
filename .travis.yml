@@ -55,5 +55,5 @@ script:
   - find . -maxdepth 1 \( -name '*.php' \) -exec php -lf {} \;
   - find src/php/ \( -name '*.php' \) -exec php -lf {} \;
 
-  # Run tests
+  # Run linters
   - npm run lint
