@@ -314,7 +314,7 @@ class List_Table extends WP_List_Table {
 				'"></span>';
 		}
 
-		if ( $this->is_network && ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) ) {
+		if ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) {
 			return '';
 		}
 
@@ -1061,8 +1061,7 @@ class List_Table extends WP_List_Table {
 		$this->process_requested_actions();
 		$snippets = array_fill_keys( $this->statuses, array() );
 
-		$all_snippets = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets() );
-		$all_snippets = $this->fetch_shared_network_snippets( $all_snippets );
+		$all_snippets = apply_filters( 'code_snippets/list_table/get_snippets', $this->fetch_shared_network_snippets( get_snippets() ) );
 
 		// Separate trashed snippets from the main collection
 		$snippets['trashed'] = array_filter( $all_snippets, function( $snippet ) {
