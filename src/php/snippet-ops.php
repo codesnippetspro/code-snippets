@@ -750,7 +750,22 @@ function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force 
 		return false;
 	}
 
-	require_once $file;
+	ob_start();
+
+	try {
+		require_once $file;
+		$result = null;
+	} catch ( ParseError $parse_error ) {
+		$result = $parse_error;
+	} catch ( Error $error ) {
+		$result = $error;
+	} catch ( Throwable $throwable ) {
+		$result = $throwable;
+	}
+
+	ob_end_clean();
 
 	do_action( 'code_snippets/after_execute_snippet_from_flat_file', $file, $id );
+
+	return $result ?? null;
 }
