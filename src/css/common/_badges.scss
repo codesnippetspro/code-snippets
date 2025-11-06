@@ -20,6 +20,11 @@
 	gap: 5px;
 	line-height: 1;
 
+  @at-root .row-actions & {
+    color: #8c8c8c;
+    padding-inline: 0px;
+  }
+
 	.dashicons {
 		font-size: 18px;
 		inline-size: 18px;

@@ -248,7 +248,7 @@ class List_Table extends WP_List_Table {
 
 		if ( $snippet->shared_network && ! $this->is_network ) {
 	       $actions['network_shared'] = sprintf(
-				'<span class="network-shared-note">%s</span>',
+				'<span class="badge">%s</span>',
 				esc_html__( 'Network Snippet', 'code-snippets' )
 	       );
 
