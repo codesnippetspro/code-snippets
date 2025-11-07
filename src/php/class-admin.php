@@ -63,6 +63,7 @@ class Admin {
 		add_action( 'init', array( $this, 'load_classes' ), 11 );
 
 		add_filter( 'mu_menu_items', array( $this, 'mu_menu_items' ) );
+		add_filter( 'manage_sites_action_links', array( $this, 'add_sites_row_action' ), 10, 2 );
 		add_filter( 'plugin_action_links_' . plugin_basename( PLUGIN_FILE ), array( $this, 'plugin_action_links' ), 10, 2 );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'debug_information', array( $this, 'debug_information' ) );
@@ -87,6 +88,29 @@ class Admin {
 		$menu_items['snippets_settings'] = __( 'Snippets &raquo; Settings', 'code-snippets' );
 
 		return $menu_items;
+	}
+
+	/**
+	 * Add a "Snippets" row action to the Network Sites table.
+	 *
+	 * @param array<string, string> $actions Existing row actions.
+	 * @param int                   $site_id Current site ID.
+	 *
+	 * @return array<string, string>
+	 */
+	public function add_sites_row_action( array $actions, int $site_id ): array {
+		if ( ! is_multisite() || ! current_user_can( code_snippets()->get_network_cap_name() ) ) {
+			return $actions;
+		}
+
+		$menu_slug = code_snippets()->get_menu_slug();
+		$actions['code_snippets'] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( get_admin_url( $site_id, 'admin.php?page=' . $menu_slug ) ),
+			esc_html__( 'Snippets', 'code-snippets' )
+		);
+
+		return $actions;
 	}
 
 	/**
