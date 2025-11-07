@@ -391,14 +391,17 @@ class List_Table extends WP_List_Table {
 		);
 
 		$out = esc_html( $snippet->display_name );
+		$user_can_manage_network = current_user_can( code_snippets()->get_network_cap_name() );
 
 		// Add a link to the snippet if it isn't an unreadable network-only snippet and isn't trashed.
-		if ( ! $snippet->is_trashed() && ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) ) {
+		if ( ! $snippet->is_trashed() && ( $this->is_network || ! $snippet->network || $user_can_manage_network ) ) {
 			$out = sprintf(
 				'<a href="%s" class="snippet-name">%s</a>',
 				esc_attr( code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ) ),
 				$out
 			);
+		} else {
+			$out = sprintf( '<span class="snippet-name">%s</span>', $out );
 		}
 
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
