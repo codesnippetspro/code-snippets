@@ -20,11 +20,25 @@
 	gap: 5px;
 	line-height: 1;
 
+  @at-root .row-actions & {
+    color: #8c8c8c;
+    padding-inline: 0px;
+    text-transform: capitalize;
+    font-weight: 500;
+  }
+
 	.dashicons {
 		font-size: 18px;
 		inline-size: 18px;
 		block-size: 18px;
 	}
+}
+
+.network-shared {
+	color: #2271b1; 
+	font-size: 22px;
+	width: 100%;
+	cursor: help;
 }
 
 .small-badge {
@@ -73,6 +87,33 @@
 .inverted-badges .badge {
 	color: #fff;
 	background-color: #a7aaad;
+	border-color: #fff !important;
+
+  .dashicons {
+    color: #fff;
+  }
+}
+
+.nav-tab-inactive {
+	$colors: map.get(theme.$badges, 'pro');
+	$text-color: list.nth($colors, 2);
+	$background-color: list.nth($colors, 1);
+
+	.badge.pro-badge {
+		color: $text-color;
+		background-color: $background-color;
+	}
+
+	&:hover {
+		&.button, .dashicons-external {
+			color: #3c434a;
+		}
+
+		.badge.pro-badge {
+			color: $background-color;
+			background-color: $text-color;
+		}
+	}
 }
 
 .nav-tab-inactive {

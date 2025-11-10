@@ -37,7 +37,7 @@ class List_Table extends WP_List_Table {
 	 *
 	 * @var array<string>
 	 */
-	public array $statuses = [ 'all', 'active', 'inactive', 'recently_activated', 'trashed' ];
+	public array $statuses = [ 'all', 'active', 'inactive', 'recently_activated', 'shared_network', 'trashed' ];
 
 	/**
 	 * Column name to use when ordering the snippets list.
@@ -246,6 +246,23 @@ class List_Table extends WP_List_Table {
 	private function get_snippet_action_links( Snippet $snippet ): array {
 		$actions = array();
 
+		if ( $snippet->shared_network && ! $this->is_network ) {
+	       $actions['network_shared'] = sprintf(
+				'<span class="badge">%s</span>',
+				esc_html__( 'Network Snippet', 'code-snippets' )
+	       );
+
+			if ( is_multisite() && is_super_admin() ) {
+				$actions['edit'] = sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( $this->get_action_link( 'edit', $snippet ) ),
+					esc_html__( 'Edit', 'code-snippets' )
+				);
+			}
+
+			return apply_filters( 'code_snippets/list_table/row_actions', $actions, $snippet );
+		}
+
 		if ( $snippet->is_trashed() ) {
 			$actions['restore'] = sprintf(
 				'<a href="%s">%s</a>',
@@ -307,7 +324,14 @@ class List_Table extends WP_List_Table {
 			return '';
 		}
 
-		if ( $this->is_network && ( $snippet->shared_network || ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) ) ) {
+		// Show icon for shared network snippets on network admin.
+		if ( $snippet->shared_network && $this->is_network ) {
+			return '<span class="dashicons dashicons-networking network-shared" title="' . 
+				esc_attr__( 'Shared with Subsites', 'code-snippets' ) . 
+				'"></span>';
+		}
+
+		if ( ! $this->is_network && $snippet->network && ! $snippet->shared_network ) {
 			return '';
 		}
 
@@ -367,18 +391,17 @@ class List_Table extends WP_List_Table {
 		);
 
 		$out = esc_html( $snippet->display_name );
+		$user_can_manage_network = current_user_can( code_snippets()->get_network_cap_name() );
 
 		// Add a link to the snippet if it isn't an unreadable network-only snippet and isn't trashed.
-		if ( ! $snippet->is_trashed() && ( $this->is_network || ! $snippet->network || current_user_can( code_snippets()->get_network_cap_name() ) ) ) {
+		if ( ! $snippet->is_trashed() && ( $this->is_network || ! $snippet->network || $user_can_manage_network ) ) {
 			$out = sprintf(
 				'<a href="%s" class="snippet-name">%s</a>',
 				esc_attr( code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ) ),
 				$out
 			);
-		}
-
-		if ( $snippet->shared_network ) {
-			$out .= ' <span class="badge">' . esc_html__( 'Shared on Network', 'code-snippets' ) . '</span>';
+		} else {
+			$out = sprintf( '<span class="snippet-name">%s</span>', $out );
 		}
 
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
@@ -545,60 +568,88 @@ class List_Table extends WP_List_Table {
 
 		// Loop through the view counts.
 		foreach ( $totals as $type => $count ) {
-			$labels = [];
-
 			if ( ! $count ) {
 				continue;
 			}
 
-			// translators: %s: total number of snippets.
-			$labels['all'] = _n(
-				'All <span class="count">(%s)</span>',
-				'All <span class="count">(%s)</span>',
-				$count,
-				'code-snippets'
-			);
+			switch ( $type ) {
+				case 'all':
+					// translators: %s: total number of snippets.
+					$template = _n(
+						'All <span class="count">(%s)</span>',
+						'All <span class="count">(%s)</span>',
+						$count,
+						'code-snippets'
+					);
+					break;
 
-			// translators: %s: total number of active snippets.
-			$labels['active'] = _n(
-				'Active <span class="count">(%s)</span>',
-				'Active <span class="count">(%s)</span>',
-				$count,
-				'code-snippets'
-			);
+				case 'active':
+					// translators: %s: total number of active snippets.
+					$template = _n(
+						'Active <span class="count">(%s)</span>',
+						'Active <span class="count">(%s)</span>',
+						$count,
+						'code-snippets'
+					);
+					break;
 
-			// translators: %s: total number of inactive snippets.
-			$labels['inactive'] = _n(
-				'Inactive <span class="count">(%s)</span>',
-				'Inactive <span class="count">(%s)</span>',
-				$count,
-				'code-snippets'
-			);
+				case 'inactive':
+					// translators: %s: total number of inactive snippets.
+					$template = _n(
+						'Inactive <span class="count">(%s)</span>',
+						'Inactive <span class="count">(%s)</span>',
+						$count,
+						'code-snippets'
+					);
+					break;
 
-			// translators: %s: total number of recently activated snippets.
-			$labels['recently_activated'] = _n(
-				'Recently Active <span class="count">(%s)</span>',
-				'Recently Active <span class="count">(%s)</span>',
-				$count,
-				'code-snippets'
-			);
+				case 'recently_activated':
+					// translators: %s: total number of recently activated snippets.
+					$template = _n(
+						'Recently Active <span class="count">(%s)</span>',
+						'Recently Active <span class="count">(%s)</span>',
+						$count,
+						'code-snippets'
+					);
+					break;
 
-			// translators: %s: total number of trashed snippets.
-			$labels['trashed'] = _n(
-				'Trashed <span class="count">(%s)</span>',
-				'Trashed <span class="count">(%s)</span>',
-				$count,
-				'code-snippets'
-			);
+				case 'shared_network':
+					if ( ! is_multisite() ) {
+						continue 2;
+					}
 
-			// The page URL with the status parameter.
+					$shared_label_template = $this->is_network
+						? _n_noop(
+							'Shared with Subsites <span class="count">(%s)</span>',
+							'Shared with Subsites <span class="count">(%s)</span>',
+							'code-snippets'
+						)
+						: _n_noop(
+							'Network Snippets <span class="count">(%s)</span>',
+							'Network Snippets <span class="count">(%s)</span>',
+							'code-snippets'
+						);
+
+					$template = translate_nooped_plural( $shared_label_template, $count, 'code-snippets' );
+					break;
+
+				case 'trashed':
+					// translators: %s: total number of trashed snippets.
+					$template = _n(
+						'Trashed <span class="count">(%s)</span>',
+						'Trashed <span class="count">(%s)</span>',
+						$count,
+						'code-snippets'
+					);
+					break;
+
+				default:
+					continue 2;
+			}
+
 			$url = esc_url( add_query_arg( 'status', $type ) );
-
-			// Add a class if this view is currently being viewed.
 			$class = $type === $status ? ' class="current"' : '';
-
-			// Add the view count to the label.
-			$text = sprintf( $labels[ $type ], number_format_i18n( $count ) );
+			$text = sprintf( $template, number_format_i18n( $count ) );
 
 			$status_links[ $type ] = sprintf( '<a href="%s"%s>%s</a>', $url, $class, $text );
 		}
@@ -986,46 +1037,43 @@ class List_Table extends WP_List_Table {
 	/**
 	 * Fetch all shared network snippets for the current site.
 	 *
-	 * @return void
+	 * @param array<Snippet> $all_snippets List of snippets to merge with.
+	 *
+	 * @return array<Snippet> Updated list of snippets.
 	 */
-	private function fetch_shared_network_snippets() {
-		/**
-		 * Table data.
-		 *
-		 * @var $snippets array<string, Snippet[]>
-		 */
-		global $snippets;
+	private function fetch_shared_network_snippets( array $all_snippets ): array {
+		if ( ! is_multisite() ) {
+			return $all_snippets;
+		}
 
-		$ids = get_site_option( 'shared_network_snippets' );
+		$shared_ids = get_site_option( 'shared_network_snippets' );
 
-		if ( ! is_multisite() || ! $ids ) {
-			return;
+		if ( ! $shared_ids || ! is_array( $shared_ids ) ) {
+			return $all_snippets;
 		}
 
 		if ( $this->is_network ) {
-			$limit = count( $snippets['all'] );
-
-			for ( $i = 0; $i < $limit; $i++ ) {
-				$snippet = &$snippets['all'][ $i ];
-
-				if ( in_array( $snippet->id, $ids, true ) ) {
+			// Mark shared network snippets on the network admin page.
+			foreach ( $all_snippets as $snippet ) {
+				if ( in_array( $snippet->id, $shared_ids, true ) ) {
 					$snippet->shared_network = true;
-					$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
 					$snippet->active = false;
 				}
 			}
 		} else {
+			// Fetch shared network snippets for subsites.
 			$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
-			$shared_snippets = get_snippets( $ids, true );
+			$shared_snippets = get_snippets( $shared_ids, true );
 
 			foreach ( $shared_snippets as $snippet ) {
 				$snippet->shared_network = true;
-				$snippet->tags = array_merge( $snippet->tags, array( 'shared on network' ) );
 				$snippet->active = in_array( $snippet->id, $active_shared_snippets, true );
 			}
 
-			$snippets['all'] = array_merge( $snippets['all'], $shared_snippets );
+			$all_snippets = array_merge( $all_snippets, $shared_snippets );
 		}
+
+		return $all_snippets;
 	}
 
 	/**
@@ -1061,8 +1109,7 @@ class List_Table extends WP_List_Table {
 		$this->process_requested_actions();
 		$snippets = array_fill_keys( $this->statuses, array() );
 
-		$all_snippets = apply_filters( 'code_snippets/list_table/get_snippets', get_snippets() );
-		$this->fetch_shared_network_snippets();
+		$all_snippets = apply_filters( 'code_snippets/list_table/get_snippets', $this->fetch_shared_network_snippets( get_snippets() ) );
 
 		// Separate trashed snippets from the main collection
 		$snippets['trashed'] = array_filter( $all_snippets, function( $snippet ) {
@@ -1123,6 +1170,19 @@ class List_Table extends WP_List_Table {
 		if ( $s ) {
 			$snippets['all'] = array_filter( $snippets['all'], array( $this, 'search_by_line_callback' ) );
 			$snippets['trashed'] = array_filter( $snippets['trashed'], array( $this, 'search_by_line_callback' ) );
+		}
+
+		if ( is_multisite() ) {
+			$snippets['shared_network'] = array_values(
+				array_filter(
+					$snippets['all'],
+					static function ( Snippet $snippet ) {
+						return $snippet->shared_network;
+					}
+				)
+			);
+		} else {
+			$snippets['shared_network'] = array();
 		}
 
 		// Clear recently activated snippets older than a week.
