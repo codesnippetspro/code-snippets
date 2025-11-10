@@ -104,6 +104,23 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.9.0-beta.2 (2025-11-10) =
+
+__Added__
+
+* Added 'Snippets' row action to the Network Sites table for quicker snippet management
+* Implemented network-wide snippets management with subsite menu permission checks
+
+__Changed__
+
+* Enhanced UI: refined badge and hover styles, improved snippet name visibility, updated icon colors, and defined modern browser support targets
+
+__Fixed__
+
+* Fixed network condition and permission checks, improved snippet fetching logic, and corrected status labels for shared snippets
+* Prevented fatal errors in file-based snippets and fixed active snippet name selector rendering issues
+
 = 3.8.2 (2025-10-31) =
 
 __Fixed__
