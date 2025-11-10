@@ -223,6 +223,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	public function get_items( $request ): WP_REST_Response {
 		$network = $request->get_param( 'network' );
 		$all_snippets = get_snippets( [], $network );
+		$all_snippets = $this->get_network_items( $all_snippets, $network );
 
 		// Get collection params (page, per_page).
 		$collection_params = $this->get_collection_params();
@@ -252,6 +253,36 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		$response->header( 'X-WP-TotalPages', (string) $total_pages );
 
 		return $response;
+	}
+
+	/**
+	 * Retrieve and merge shared network snippets.
+	 *
+	 * @param array<Snippet> $all_snippets List of snippets to merge with.
+	 * @param bool|null      $network      Whether fetching network snippets.
+	 *
+	 * @return array<Snippet> Modified list of snippets.
+	 */
+	private function get_network_items( array $all_snippets, $network ): array {
+		if ( ! is_multisite() || $network ) {
+			return $all_snippets;
+		}
+
+		$shared_ids = get_site_option( 'shared_network_snippets' );
+
+		if ( ! $shared_ids || ! is_array( $shared_ids ) ) {
+			return $all_snippets;
+		}
+
+		$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
+		$shared_snippets = get_snippets( $shared_ids, true );
+
+		foreach ( $shared_snippets as $snippet ) {
+			$snippet->shared_network = true;
+			$snippet->active = in_array( $snippet->id, $active_shared_snippets, true );
+		}
+
+		return array_merge( $all_snippets, $shared_snippets );
 	}
 
 	/**

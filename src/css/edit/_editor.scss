@@ -68,7 +68,7 @@
 			padding-inline-end: 0.5em;
 		}
 
-		@media screen and (width >= 512px) {
+		@media (width >= 512px) {
 			white-space: nowrap;
 		}
 	}

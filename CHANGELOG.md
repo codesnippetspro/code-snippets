@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.9.0-beta.2] (2025-11-10)
+
+### Added
+* Added 'Snippets' row action to the Network Sites table
+* Improved snippet name visibility for network users
+
+### Changed
+* Refined badge styling and hover effects for row actions and badges
+* Impoved icon style and color usage for network snippets for clearer differentiation
+
+### Fixed
+* Improved network snippets management with better subsite menu permission checks
+* Fixed status labels for shared network snippets
+* Corrected network condition checks and improved snippet fetching logic
+* Handled fatal errors in file-based snippets to prevent crashes
 
 ## [3.9.0-beta.1] (2025-11-03)
 
