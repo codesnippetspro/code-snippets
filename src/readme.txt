@@ -104,30 +104,6 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-
-= 3.9.0-beta.2 (2025-11-10) =
-
-__Added__
-
-* Added 'Snippets' row action to the Network Sites table
-* Introduced network snippets management with subsite menu permission checks
-* Added support for shared network snippets across multisite networks
-
-__Changed__
-
-* Updated browser support targets (.browserslistrc added for modern browsers)
-* Refined badge styling and hover effects for row actions and pro badges
-* Improved snippet name visibility for network users
-* Adjusted badge styles and color usage for network snippets for clearer differentiation
-
-__Fixed__
-
-* Corrected selector for active snippet name styling
-* Fixed status labels for shared network snippets
-* Corrected network condition checks and streamlined snippet fetching logic
-* Handled fatal errors in file-based snippets to prevent crashes
-* Reverted badge line-height to fix visual alignment issues
-
 = 3.8.2 (2025-10-31) =
 
 __Fixed__

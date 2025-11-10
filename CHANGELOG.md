@@ -20,7 +20,6 @@
 * Fixed status labels for shared network snippets
 * Corrected network condition checks and streamlined snippet fetching logic
 * Handled fatal errors in file-based snippets to prevent crashes
-* Reverted badge line-height to fix visual alignment issues
 
 ## [3.9.0-beta.1] (2025-11-03)
 
