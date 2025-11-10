@@ -6,19 +6,16 @@
 
 ### Added
 * Added 'Snippets' row action to the Network Sites table
-* Introduced network snippets management with subsite menu permission checks
-* Added support for shared network snippets across multisite networks
+* Improved snippet name visibility for network users
 
 ### Changed
-* Updated browser support targets (.browserslistrc added for modern browsers)
-* Refined badge styling and hover effects for row actions and pro badges
-* Improved snippet name visibility for network users
-* Adjusted badge styles and color usage for network snippets for clearer differentiation
+* Refined badge styling and hover effects for row actions and badges
+* Impoved icon style and color usage for network snippets for clearer differentiation
 
 ### Fixed
-* Corrected selector for active snippet name styling
+* Improved network snippets management with better subsite menu permission checks
 * Fixed status labels for shared network snippets
-* Corrected network condition checks and streamlined snippet fetching logic
+* Corrected network condition checks and improved snippet fetching logic
 * Handled fatal errors in file-based snippets to prevent crashes
 
 ## [3.9.0-beta.1] (2025-11-03)
