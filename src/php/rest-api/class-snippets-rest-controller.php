@@ -202,14 +202,16 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 
 		$total_items = count( $all_snippets );
 		$query_params = $request->get_query_params();
-		
-		if ( isset( $query_params['per_page'] ) ) {
+
+		if ( isset( $query_params['per_page'] ) || isset( $query_params['page'] ) ) {
 			$collection_params = $this->get_collection_params();
-			$per_page = max( 1, (int) $query_params['per_page'] );
+			$per_page = isset( $query_params['per_page'] ) 
+				? max( 1, (int) $query_params['per_page'] )
+				: (int) $collection_params['per_page']['default'];
 			$page_request = (int) $request->get_param( 'page' );
 			$page = max( 1, $page_request ? $page_request : (int) $collection_params['page']['default'] );
 			$total_pages = (int) ceil( $total_items / $per_page );
-			
+
 			$offset = ( $page - 1 ) * $per_page;
 			$snippets = array_slice( $all_snippets, $offset, $per_page );
 		} else {
