@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [labeled]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   comment:
     if: contains(github.event.pull_request.labels.*.name, 'build')
@@ -37,4 +41,4 @@ jobs:
           comment-id: ${{ needs.comment.outputs.comment_id }}
           body: |
             ### Download and install
-            📦 [${{ needs.install.outputs.artifact_name }}.zip](${{ needs.install.outputs.artifact_url }})
+            📦 [${{ needs.install.outputs.artifact_name }}.${{ needs.install.outputs.version }}.zip](${{ needs.install.outputs.artifact_url }})
