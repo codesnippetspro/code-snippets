@@ -104,6 +104,23 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.9.0 (2025-11-13) =
+
+__Added__
+
+* Enhanced snippet list table with clearer notices and action controls
+* Added status badge styling across the UI for improved visibility
+
+__Changed__
+
+* Refined Multisite Sharing settings and general UI polish (switches, editor, and management screens)
+
+__Fixed__
+
+* Fixed pagination behavior in the REST API
+* Corrected version display/inconsistencies across the app and documentation
+
 = 3.8.2 (2025-10-31) =
 
 __Fixed__
