@@ -1,18 +1,17 @@
 # Changelog
 
-
 ## [3.9.0] (2025-11-13)
 
 ### Added
-* Enhanced snippet list table with clearer notices and action controls
-* Added status badge styling across the UI for improved visibility
+* Added contextual notices in the Snippets list table to surface action results and warnings in the UI
+* Expanded Multisite Sharing settings for clearer control over network-wide snippet sharing
 
 ### Changed
-* Refined Multisite Sharing settings and general UI polish (switches, editor, and management screens)
+* Modernized browser support targets and polished admin UI (clearer row-action badges, improved Pro badge hover, refined active snippet name styling)
 
 ### Fixed
-* Fixed pagination behavior in the REST API
-* Corrected version display/inconsistencies across the app and documentation
+* Fixed REST API pagination to return correct results and page counts
+* Resolved styling selector so the active snippet name highlights reliably
 
 ## [3.9.0-beta.2] (2025-11-10)
 
