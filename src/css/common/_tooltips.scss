@@ -172,13 +172,13 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 .tooltip-inline.tooltip-end:hover,
 .tooltip-inline.tooltip-end:focus {
 	&::before, .tooltip-content {
-		transform: translateX(10px);
+		transform: translateX(calc(10px * var(--cs-direction-multiplier)));
 	}
 }
 
 .tooltip-inline.tooltip-start:hover,
 .tooltip-inline.tooltip-start:focus {
 	&::before, .tooltip-content {
-		transform: translateX(-10px);
+		transform: translateX(calc(-10px * var(--cs-direction-multiplier)));
 	}
 }

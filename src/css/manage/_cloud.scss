@@ -237,7 +237,6 @@ td.column-download {
 	gap: 5px;
 }
 
-
 .cloud-table > tbody > tr {
 	block-size: 80px;
 	box-shadow: inset 0 -1px 0 rgb(0 0 0 / 10%);
@@ -265,7 +264,6 @@ td.column-download {
 	background-color: #ce0000;
 	border-radius: 50%;
 
-
 	.cloud-connect-active & {
 		background-color: #25a349;
 	}
@@ -283,6 +281,10 @@ td.column-download {
 	inline-size: 1.25rem; /* 20px */
 	block-size: 1.25rem; /* 20px */
 	transform-origin: bottom left;
+
+	[dir="rtl"] & {
+		transform-origin: bottom right;
+	}
 
 	&:hover {
 		stroke: #059669;
@@ -325,15 +327,15 @@ td.column-download {
 	}
 
 	33% {
-		transform: rotate(7deg)
+		transform: rotate(calc(7deg * var(--cs-direction-multiplier)));
 	}
 
 	66% {
-		transform: rotate(-15deg)
+		transform: rotate(calc(-15deg * var(--cs-direction-multiplier)));
 	}
 
 	90% {
-		transform: rotate(5deg)
+		transform: rotate(calc(5deg * var(--cs-direction-multiplier)));
 	}
 
 	100% {
