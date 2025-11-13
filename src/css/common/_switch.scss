@@ -40,13 +40,13 @@ input[type='checkbox'].switch:checked {
 
 	&::before {
 		background-color: white;
-		transform: translateX(100%);
+		transform: translateX(calc(100% * var(--cs-direction-multiplier)));
 	}
 }
 
 .erroneous-snippet .snippet-activation-switch::before {
 	content: '!';
-	transform: translateX(50%);
+	transform: translateX(calc(50% * var(--cs-direction-multiplier)));
 	text-align: center;
 	font-weight: bold;
 	line-height: 1;
