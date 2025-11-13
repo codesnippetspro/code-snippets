@@ -24,7 +24,7 @@
 	}
 }
 
-.active-snippet .column-name > a {
+.active-snippet .column-name > .snippet-name {
 	font-weight: 600;
 }
 
@@ -150,7 +150,7 @@ td.column-description {
 	@include theme.link-colors(#579);
 }
 
-@media screen and (width <= 782px) {
+@media (width <= 782px) {
 	p.search-box {
 		float: inline-start;
 		position: initial;
@@ -205,7 +205,7 @@ td.column-description {
 	}
 }
 
-@media screen and (width <= 1190px) {
+@media (width <= 1190px) {
 	.nav-tab {
 		.snippet-label {
 			display: none;

@@ -348,7 +348,7 @@ class Version_Switch {
 
 	public static function render_version_switch_warning(): void {
 		?>
-		<div id="version-switch-warning" class="notice notice-warning" style="display: none; margin-top: 20px;">
+		<div id="version-switch-warning" class="notice notice-warning" style="display: none; margin-block-start: 20px;">
 			<p>
 				<strong><?php esc_html_e( 'Warning:', 'code-snippets' ); ?></strong>
 				<?php esc_html_e( 'Switching versions may cause compatibility issues. Always backup your site before switching versions.', 'code-snippets' ); ?>
