@@ -93,12 +93,16 @@ export const insertSourceMenu = (editor: Editor, ed: LocalisedEditor) => ({
 	}
 })
 
-tinymce.PluginManager.add('code_snippets', editor => {
+tinymce.PluginManager.add('code_snippets', function (editor) {
 	const activeEditor = <LocalisedEditor> tinymce.activeEditor
 
+	// Create the menu button with inline menu items
 	editor.addButton('code_snippets', {
 		icon: 'code',
-		menu: [insertContentMenu(editor, activeEditor), insertSourceMenu(editor, activeEditor)],
-		type: 'menubutton'
+		type: 'menubutton',
+		menu: [
+			insertContentMenu(editor, activeEditor),
+			insertSourceMenu(editor, activeEditor)
+		]
 	})
 })
