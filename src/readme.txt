@@ -104,6 +104,19 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.9.1 (2025-11-14) =
+
+__Changed__
+
+* Migrated to native CSS direction handling (RTL/LTR) for improved compatibility and simpler styling
+* Updated dependencies to the latest compatible versions
+
+__Fixed__
+
+* Fixed TinyMCE menu button registration to prevent initialization failure (see: https://wordpress.org/support/topic/failed-to-initialize-plugin-code_snippets/)
+* Fixed the position of the 'code direction' control in the editor
+
 = 3.9.0 (2025-11-13) =
 
 __Added__
