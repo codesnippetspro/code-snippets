@@ -1,6 +1,5 @@
 # Changelog
 
-
 ## [3.9.1] (2025-11-14)
 
 ### Changed
@@ -8,7 +7,7 @@
 * Updated dependencies to the latest compatible versions
 
 ### Fixed
-* Fixed TinyMCE menu button registration to prevent initialization failure (see: https://wordpress.org/support/topic/failed-to-initialize-plugin-code_snippets/)
+* Fixed TinyMCE menu button registration to prevent initialization failure
 * Fixed the position of the 'code direction' control in the editor
 
 ## [3.9.0] (2025-11-13)

@@ -104,7 +104,6 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-
 = 3.9.1 (2025-11-14) =
 
 __Changed__
@@ -114,7 +113,7 @@ __Changed__
 
 __Fixed__
 
-* Fixed TinyMCE menu button registration to prevent initialization failure (see: https://wordpress.org/support/topic/failed-to-initialize-plugin-code_snippets/)
+* Fixed TinyMCE menu button registration to prevent initialization failure
 * Fixed the position of the 'code direction' control in the editor
 
 = 3.9.0 (2025-11-13) =
