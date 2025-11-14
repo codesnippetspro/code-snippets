@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.9.0
+Stable tag: 3.9.1
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -103,6 +103,18 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.9.1 (2025-11-14) =
+
+__Changed__
+
+* Migrated to native CSS direction handling (RTL/LTR) for improved compatibility and simpler styling
+* Updated dependencies to the latest compatible versions
+
+__Fixed__
+
+* Fixed TinyMCE menu button registration to prevent initialization failure
+* Fixed the position of the 'code direction' control in the editor
 
 = 3.9.0 (2025-11-13) =
 
