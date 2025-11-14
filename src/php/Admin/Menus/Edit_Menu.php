@@ -147,7 +147,6 @@ class Edit_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function enqueue_assets() {
-		$rtl = is_rtl() ? '-rtl' : '';
 
 		$settings = get_settings_values();
 		$tags_enabled = $settings['general']['enable_tags'];
@@ -157,7 +156,7 @@ class Edit_Menu extends Admin_Menu {
 
 		wp_enqueue_style(
 			self::CSS_HANDLE,
-			plugins_url( "dist/edit$rtl.css", PLUGIN_FILE ),
+			plugins_url( 'dist/edit.css', PLUGIN_FILE ),
 			[
 				'code-editor',
 				'wp-components',

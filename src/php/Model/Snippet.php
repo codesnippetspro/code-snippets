@@ -30,16 +30,16 @@ use function Code_Snippets\Utils\get_self_option;
  * @property int                    $revision           Revision or version number of snippet.
  * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
  *
- * @property-read int      $last_active        Timestamp of when the snippet was last active, if available.
- * @property-read string   $display_name       The snippet name if it exists or a placeholder if it does not.
- * @property-read string   $tags_list          The tags in string list format.
- * @property-read string   $scope_icon         The dashicon used to represent the current scope.
- * @property-read string   $scope_name         Human-readable description of the snippet type.
- * @property-read string   $type               The type of snippet.
- * @property-read string   $lang               The language that the snippet code is written in.
- * @property-read int      $modified_timestamp The last modification date in Unix timestamp format.
- * @property-read DateTime $modified_local     The last modification date in the local timezone.
- * @property-read bool     $is_pro             Whether the snippet type is pro-only.
+ * @property-read int               $last_active        Timestamp of when the snippet was last active, if available.
+ * @property-read string            $display_name       The snippet name if it exists or a placeholder if it does not.
+ * @property-read string            $tags_list          The tags in string list format.
+ * @property-read string            $scope_icon         The dashicon used to represent the current scope.
+ * @property-read string            $scope_name         Human-readable description of the snippet type.
+ * @property-read string            $type               The type of snippet.
+ * @property-read string            $lang               The language that the snippet code is written in.
+ * @property-read int               $modified_timestamp The last modification date in Unix timestamp format.
+ * @property-read DateTime          $modified_local     The last modification date in the local timezone.
+ * @property-read bool              $is_pro             Whether the snippet type is pro-only.
  */
 class Snippet extends Model {
 
@@ -54,11 +54,24 @@ class Snippet extends Model {
 	public const DEFAULT_DATE = '0000-00-00 00:00:00';
 
 	/**
+	 * Raw active value from database before processing.
+	 *
+	 * @var mixed
+	 */
+	private $raw_active_value;
+
+	/**
 	 * Constructor function.
 	 *
 	 * @param array<string, mixed>|object $initial_data Initial snippet data.
 	 */
 	public function __construct( $initial_data = null ) {
+		if ( is_array( $initial_data ) && isset( $initial_data['active'] ) ) {
+			$this->raw_active_value = $initial_data['active'];
+		} elseif ( is_object( $initial_data ) && isset( $initial_data->active ) ) {
+			$this->raw_active_value = $initial_data->active;
+		}
+
 		$default_values = [
 			'id'             => 0,
 			'name'           => '',
@@ -105,6 +118,15 @@ class Snippet extends Model {
 	}
 
 	/**
+	 * Determine if the snippet is trashed (soft deleted).
+	 *
+	 * @return bool
+	 */
+	public function is_trashed(): bool {
+		return -1 === (int) $this->raw_active_value;
+	}
+
+	/**
 	 * Prepare a value before it is stored.
 	 *
 	 * @param mixed  $value Value to prepare.
@@ -123,7 +145,7 @@ class Snippet extends Model {
 				return code_snippets_build_tags_array( $value );
 
 			case 'active':
-				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition();
+				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition() && -1 !== (int) $value;
 
 			default:
 				return $value;

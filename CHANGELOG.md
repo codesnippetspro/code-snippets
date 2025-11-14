@@ -1,5 +1,56 @@
 # Changelog
 
+## [3.9.1] (2025-11-14)
+
+### Changed
+* Migrated to native CSS direction handling (RTL/LTR) for improved compatibility and simpler styling
+* Updated dependencies to the latest compatible versions
+
+### Fixed
+* Fixed TinyMCE menu button registration to prevent initialization failure
+* Fixed the position of the 'code direction' control in the editor
+
+## [3.9.0] (2025-11-13)
+
+### Added
+* Added contextual notices in the Snippets list table to surface action results and warnings in the UI
+* Expanded Multisite Sharing settings for clearer control over network-wide snippet sharing
+
+### Changed
+* Modernized browser support targets and polished admin UI (clearer row-action badges, improved Pro badge hover, refined active snippet name styling)
+
+### Fixed
+* Fixed REST API pagination to return correct results and page counts
+* Resolved styling selector so the active snippet name highlights reliably
+
+## [3.9.0-beta.2] (2025-11-10)
+
+### Added
+* Added 'Snippets' row action to the Network Sites table
+* Improved snippet name visibility for network users
+
+### Changed
+* Refined badge styling and hover effects for row actions and badges
+* Impoved icon style and color usage for network snippets for clearer differentiation
+
+### Fixed
+* Improved network snippets management with better subsite menu permission checks
+* Fixed status labels for shared network snippets
+* Corrected network condition checks and improved snippet fetching logic
+* Handled fatal errors in file-based snippets to prevent crashes
+
+## [3.9.0-beta.1] (2025-11-03)
+
+### Added
+* Soft delete (Trash) functionality for snippets with ability to undo, restore or permanently delete.
+* Bulk actions for trashing, restoring, and permanently deleting multiple snippets.
+* Separate filtered view to manage trashed snippets.
+
+## [3.8.2] (2025-10-31)
+
+### Fixed
+* Improved namespaced PHP snippet handling with file based execution.
+
 ## [3.8.1] (2025-10-28)
 
 ### Added

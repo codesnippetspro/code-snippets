@@ -179,11 +179,10 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function enqueue_assets() {
 		$plugin = code_snippets();
-		$rtl = is_rtl() ? '-rtl' : '';
 
 		wp_enqueue_style(
 			self::CSS_HANDLE,
-			plugins_url( "dist/manage$rtl.css", PLUGIN_FILE ),
+			plugins_url( 'dist/manage.css', PLUGIN_FILE ),
 			self::$style_deps,
 			PLUGIN_VERSION
 		);

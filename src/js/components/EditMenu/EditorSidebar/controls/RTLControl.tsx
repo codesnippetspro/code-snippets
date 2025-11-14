@@ -6,7 +6,7 @@ export const RTLControl: React.FC = () => {
 	const { codeEditorInstance } = useSnippetForm()
 
 	return (
-		<div>
+		<div className="inline-form-field">
 			<h4>
 				<label htmlFor="snippet-code-direction">
 					{__('Code Direction', 'code-snippets')}

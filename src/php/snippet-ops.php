@@ -8,9 +8,11 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Core\DB;
+use Error;
 use ParseError;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Validator;
+use Throwable;
 use function Code_Snippets\Utils\get_self_option;
 use function Code_Snippets\Utils\update_self_option;
 
@@ -54,7 +56,7 @@ function clean_snippets_cache( string $table_name ) {
  * @param array<string> $ids     The IDs of the snippets to fetch.
  * @param bool|null     $network Retrieve multisite-wide snippets (true) or site-wide snippets (false).
  *
- * @return array<Snippet> List of Snippet objects.
+ * @return Snippet[] List of Snippet objects.
  *
  * @since 2.0
  */
@@ -463,6 +465,70 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 	return (bool) $result;
 }
 
+/**
+ * Trashes a snippet from the database.
+ * Write operation.
+ *
+ * @param int       $id      ID of the snippet to trash.
+ * @param bool|null $network Trash from network-wide (true) or site-wide (false) table.
+ *
+ * @return bool Whether the snippet was trashed successfully.
+ *
+ * @since 3.8.0
+ */
+function trash_snippet( int $id, ?bool $network = null ): bool {
+	global $wpdb;
+	$network = DB::validate_network_param( $network );
+	$table = code_snippets()->db->get_table_name( $network );
+
+	$snippet = get_snippet( $id, $network );
+
+	$result = $wpdb->update(
+		$table,
+		array( 'active' => '-1' ),
+		array( 'id' => $id ),
+		array( '%d' )
+	);
+
+	if ( $result ) {
+		do_action( 'code_snippets/trash_snippet', $snippet, $network );
+		clean_snippets_cache( $table );
+		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
+	}
+
+	return (bool) $result;
+}
+
+/**
+ * Restore a trashed snippet by setting its active status back to 0 (inactive).
+ * Write operation.
+ *
+ * @param int       $id      Snippet ID to restore.
+ * @param bool|null $network Whether the snippet is multisite-wide (true) or site-wide (false).
+ *
+ * @return bool Whether the restore was successful.
+ *
+ * @since 3.8.0
+ */
+function restore_snippet( int $id, ?bool $network = null ): bool {
+	global $wpdb;
+	$network = DB::validate_network_param( $network );
+	$table = code_snippets()->db->get_table_name( $network );
+
+	$result = $wpdb->update(
+		$table,
+		array( 'active' => '0' ),
+		array( 'id' => $id ),
+		array( '%d' )
+	);
+
+	if ( $result ) {
+		do_action( 'code_snippets/restore_snippet', $id, $network );
+		clean_snippets_cache( $table );
+	}
+
+	return (bool) $result;
+}
 
 /**
  * Test snippet code for errors, augmenting the snippet object.
@@ -714,9 +780,9 @@ function update_snippet_fields( int $snippet_id, array $fields, ?bool $network =
  * @param int  $id
  * @param bool $force
  *
- * @return bool
+ * @return bool|Throwable|null
  */
-function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force = false ): bool {
+function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force = false ) {
 	if ( ! is_file( $file ) ) {
 		execute_snippet( $code, $id, $force );
 		return true;
@@ -727,8 +793,22 @@ function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force 
 		return false;
 	}
 
-	require_once $file;
+	ob_start();
+
+	try {
+		require_once $file;
+		$result = null;
+	} catch ( ParseError $parse_error ) {
+		$result = $parse_error;
+	} catch ( Error $error ) {
+		$result = $error;
+	} catch ( Throwable $throwable ) {
+		$result = $throwable;
+	}
+
+	ob_end_clean();
 
 	do_action( 'code_snippets/after_execute_snippet_from_flat_file', $file, $id );
-	return true;
+
+	return $result ?? null;
 }

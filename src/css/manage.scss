@@ -51,7 +51,7 @@
 	}
 }
 
-.active-snippet .name-column > a {
+.active-snippet .name-column > .snippet-name {
 	font-weight: 600;
 }
 
@@ -194,4 +194,67 @@
 
 .inactive-snippet {
 	@include theme.link-colors(#579);
+}
+
+@media (width <= 782px) {
+	p.search-box {
+		float: inline-start;
+		position: initial;
+		margin-block: 1em 0;
+		margin-inline: 0;
+		block-size: auto;
+	}
+}
+
+.wp-list-table .is-expanded td.column-activate.activate {
+	/* fix for mobile layout */
+	display: table-cell !important;
+}
+
+.nav-tab-wrapper + .subsubsub, p.search-box {
+	margin-block: 10px 0;
+	margin-inline: 0;
+}
+
+.snippet-type-description {
+	border-block-end: 1px solid #ccc;
+	margin: 0;
+	padding-block: 1em;
+	padding-inline: 0;
+}
+
+.code-snippets-notice a.notice-dismiss {
+	text-decoration: none;
+}
+
+.refresh-button-container {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	margin-block: 15px -39px;
+	gap: 7px;
+}
+
+#refresh-button {
+	inline-size: 30px;
+	padding: 0;
+	font-size: 20px;
+	line-height: 1.4;
+}
+
+.wrap h2.nav-tab-wrapper {
+	.nav-tab {
+		display: flex;
+		flex-flow: row wrap;
+		align-items: center;
+		gap: 8px;
+	}
+}
+
+@media (width <= 1190px) {
+	.nav-tab {
+		.snippet-label {
+			display: none;
+		}
+	}
 }

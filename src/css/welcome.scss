@@ -238,6 +238,6 @@ $breakpoint: 1060px;
 
 @keyframes loading-rotate {
 	100% {
-		transform: rotate(360deg);
+		transform: rotate(calc(360deg * var(--cs-direction-multiplier)));
 	}
 }

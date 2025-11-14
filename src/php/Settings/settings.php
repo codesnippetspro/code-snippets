@@ -13,6 +13,8 @@ use function Code_Snippets\clean_snippets_cache;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\Utils\add_self_option;
 use function Code_Snippets\Utils\get_self_option;
+use function Code_Snippets\Utils\update_self_option;
+use const Code_Snippets\CACHE_GROUP;
 
 const CACHE_KEY = 'code_snippets_settings';
 const OPTION_GROUP = 'code-snippets';
@@ -43,7 +45,7 @@ function are_settings_unified(): bool {
  * @return array<string, array<string, mixed>>
  */
 function get_settings_values(): array {
-	$settings = wp_cache_get( CACHE_KEY );
+	$settings = wp_cache_get( CACHE_KEY, CACHE_GROUP );
 	if ( $settings ) {
 		return $settings;
 	}
@@ -58,7 +60,7 @@ function get_settings_values(): array {
 		}
 	}
 
-	wp_cache_set( CACHE_KEY, $settings );
+	wp_cache_set( CACHE_KEY, $settings, CACHE_GROUP );
 	return $settings;
 }
 
@@ -74,6 +76,24 @@ function get_setting( string $section, string $field ) {
 	$settings = get_settings_values();
 
 	return $settings[ $section ][ $field ] ?? null;
+}
+
+/**
+ * Update a single setting to a new value.
+ *
+ * @param string $section   ID of the section the setting belongs to.
+ * @param string $field     ID of the setting field.
+ * @param mixed  $new_value Setting value. Expected to not be SQL-escaped.
+ *
+ * @return bool False if value was not updated. True if value was updated.
+ */
+function update_setting( string $section, string $field, $new_value ): bool {
+	$settings = get_settings_values();
+
+	$settings[ $section ][ $field ] = $new_value;
+
+	wp_cache_set( CACHE_KEY, $settings, CACHE_GROUP );
+	return update_self_option( are_settings_unified(), OPTION_NAME, $settings );
 }
 
 /**
@@ -253,7 +273,7 @@ function process_settings_actions( array $input ): ?array {
  * @return array<string, array<string, mixed>> The validated settings.
  */
 function sanitize_settings( array $input ): array {
-	wp_cache_delete( CACHE_KEY );
+	wp_cache_delete( CACHE_KEY, CACHE_GROUP );
 	$result = process_settings_actions( $input );
 
 	if ( ! is_null( $result ) ) {

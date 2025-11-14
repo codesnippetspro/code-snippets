@@ -4,7 +4,7 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.8.1
+Stable tag: 3.9.1
 Tested up to: 6.8.2
 
 An easy, clean and simple way to enhance your site with code snippets.
@@ -104,6 +104,39 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+= 3.9.1 (2025-11-14) =
+
+__Changed__
+
+* Migrated to native CSS direction handling (RTL/LTR) for improved compatibility and simpler styling
+* Updated dependencies to the latest compatible versions
+
+__Fixed__
+
+* Fixed TinyMCE menu button registration to prevent initialization failure
+* Fixed the position of the 'code direction' control in the editor
+
+= 3.9.0 (2025-11-13) =
+
+__Added__
+
+* Added contextual notices in the Snippets list table to surface action results and warnings in the UI
+* Expanded Multisite Sharing settings for clearer control over network-wide snippet sharing
+
+__Changed__
+
+* Modernized browser support targets and polished admin UI (clearer row-action badges, improved Pro badge hover, refined active snippet name styling)
+
+__Fixed__
+
+* Fixed REST API pagination to return correct results and page counts
+* Resolved styling selector so the active snippet name highlights reliably
+
+= 3.8.2 (2025-10-31) =
+
+__Fixed__
+
+* Improved namespaced PHP snippet handling with file based execution.
 
 = 3.8.1 (2025-10-28) =
 

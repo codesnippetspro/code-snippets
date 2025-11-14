@@ -38,7 +38,7 @@ export const DeleteButton: React.FC<DeleteButtonProps> = ({
 
 			<ConfirmDialog
 				open={isDialogOpen}
-				title={__('Permanently delete?', 'code-snippets')}
+				title={__('Delete?', 'code-snippets')}
 				confirmLabel={__('Delete', 'code-snippets')}
 				confirmButtonClassName="is-destructive"
 				onCancel={() => setIsDialogOpen(false)}
@@ -58,10 +58,9 @@ export const DeleteButton: React.FC<DeleteButtonProps> = ({
 				}}
 			>
 				<p style={{ marginBlockStart: 0 }}>
-					{__('You are about to permanently delete this snippet.', 'code-snippets')}{' '}
+					{__('You are about to delete this snippet.', 'code-snippets')}{' '}
 					{__('Are you sure?', 'code-snippets')}
 				</p>
-				<p><strong>{__('This action cannot be undone.', 'code-snippets')}</strong></p>
 			</ConfirmDialog>
 		</>
 	)
