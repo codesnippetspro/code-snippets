@@ -100,3 +100,30 @@ a.snippet-condition-count {
 		}
 	}
 }
+
+// Single-use execution counter styling (dashicon-like circle)
+.single-use-counter-display {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.single-use-count-icon {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	inline-size: 0.9rem;
+	block-size: 0.9rem;
+  font-size: 0.7rem;
+	border-radius: 50%;
+	background: #789;
+	font-weight: 600;
+	color: #f0f0f1;
+	user-select: none;
+  cursor: help;
+}
+
+.single-use-counter .single-use-count-label {
+	font-size: 12px;
+	color: #555;
+}
