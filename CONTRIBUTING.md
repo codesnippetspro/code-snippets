@@ -69,6 +69,45 @@ command:
 npm run watch
 ```
 
+## Managing Composer dependencies
+
+Code Snippets uses the [Imposter plugin](https://github.com/TypistTech/imposter) to namespace-prefix all vendor
+dependencies under `Code_Snippets\Vendor\`. This prevents conflicts with other WordPress plugins that might use the
+same libraries (e.g., Guzzle, Minify, Monolog).
+
+### Adding a new dependency
+
+When adding a new Composer dependency that might exist in other plugins:
+
+1. Add the package to `src/composer.json` as usual:
+   ```shell
+   cd src
+   composer require vendor/package
+   ```
+
+2. Add corresponding PSR-4 autoload entries for the prefixed namespace in `src/composer.json`:
+   ```json
+   "autoload": {
+       "psr-4": {
+           "Code_Snippets\\Vendor\\OriginalVendor\\PackageName\\": "vendor/vendor-name/package-name/src/"
+       }
+   }
+   ```
+
+3. Run `composer dump-autoload -o` to regenerate autoload files.
+
+4. The Imposter plugin will automatically rewrite the namespaces during `post-install-cmd` and `post-update-cmd` hooks.
+
+5. Our autoloader in `src/php/load.php` automatically removes original (non-prefixed) namespace mappings to prevent
+   collisions, so no code changes are needed.
+
+### How it works
+
+- Imposter rewrites all vendor code from `Vendor\Package\Class` to `Code_Snippets\Vendor\Vendor\Package\Class`
+- The `load.php` file dynamically detects and removes original namespace PSR-4 mappings at runtime
+- Other plugins can load their own versions of the same libraries without conflicts
+- Your code should always use the prefixed namespace: `use Code_Snippets\Vendor\Vendor\Package\Class;`
+
 ## Preparing for release
 
 The plugin repository includes a number of files that are unnecessary when distributing the plugin files for
