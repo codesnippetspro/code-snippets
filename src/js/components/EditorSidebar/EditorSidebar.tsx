@@ -12,8 +12,10 @@ import { MultisiteSharingSettings } from './controls/MultisiteSharingSettings'
 import { ExportButtons } from './actions/ExportButtons'
 import { SubmitButtons } from './actions/SubmitButtons'
 import { ActivationSwitch } from './controls/ActivationSwitch'
+import { SingleUseExecutionCounter } from './controls/SingleUseExecutionCounter'
 import { DeleteButton } from './actions/DeleteButton'
 import { PriorityInput } from './controls/PriorityInput'
+import { ExecutionStatus } from './controls/ExecutionStatus'
 import { RTLControl } from './controls/RTLControl'
 import type { Dispatch, SetStateAction } from 'react'
 
@@ -27,7 +29,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 	return (
 		<div className="snippet-editor-sidebar">
 			<div className="box">
-				{snippet.id && !isCondition(snippet) ? <ActivationSwitch /> : null}
+				{snippet.id && !isCondition(snippet) ? (snippet.scope === 'single-use' ? <SingleUseExecutionCounter /> : <ActivationSwitch />) : null}
 
 				{isNetworkAdmin() ? <MultisiteSharingSettings /> : null}
 
