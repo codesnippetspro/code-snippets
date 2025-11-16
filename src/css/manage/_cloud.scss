@@ -226,6 +226,7 @@ td.column-name {
 
 		.column-name {
 			display: flex;
+      justify-content: space-between;
 
 			h3 {
 				display: inline-flex;
@@ -259,6 +260,7 @@ td.column-name {
 
 	.action-buttons {
 		margin: 0;
+    align-items: flex-end;
 
 		.button {
 			inline-size: 100%;
@@ -267,7 +269,7 @@ td.column-name {
 	}
 }
 
-.cloud-snippets #the-list{
+.cloud-snippets #the-list {
   .column-download {
     display: flex;
     flex-flow: column;
@@ -289,7 +291,6 @@ td.column-name {
 	float: inline-end;
 	gap: 5px;
 }
-
 
 .cloud-table > tbody > tr {
 	block-size: 80px;
@@ -361,22 +362,22 @@ td.column-name {
 
 @keyframes thumb {
 	0% {
-		transform: rotate(0)
+		transform: rotate(0);
 	}
 
 	33% {
-		transform: rotate(7deg)
+		transform: rotate(7deg);
 	}
 
 	66% {
-		transform: rotate(-15deg)
+		transform: rotate(-15deg);
 	}
 
 	90% {
-		transform: rotate(5deg)
+		transform: rotate(5deg);
 	}
 
 	100% {
-		transform: rotate(0)
+		transform: rotate(0);
 	}
 }
