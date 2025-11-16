@@ -297,10 +297,20 @@ function activate_snippet( int $id, ?bool $network = null ) {
 		return sprintf( __( 'Could not locate snippet with ID %d.', 'code-snippets' ), $id );
 	}
 	
-	if('php' == $snippet->type ){
-		$validator = new Validator( $snippet->code );
-		if ( $validator->validate() ) {
-			return __( 'Could not activate snippet: code did not pass validation.', 'code-snippets' );
+	if ( 'php' === $snippet->type ) {
+		// For single-use snippets, perform full validation including execution test.
+		if ( 'single-use' === $snippet->scope ) {
+			test_snippet_code( $snippet );
+			if ( $snippet->code_error ) {
+				$error_message = is_array( $snippet->code_error ) ? $snippet->code_error[0] : $snippet->code_error;
+				return $error_message;
+			}
+		} else {
+			// For other snippets, only validate syntax.
+			$validator = new Validator( $snippet->code );
+			if ( $validator->validate() ) {
+				return __( 'Could not activate snippet: code did not pass validation.', 'code-snippets' );
+			}
 		}
 	}
 
@@ -537,7 +547,8 @@ function test_snippet_code( Snippet $snippet ) {
 		$snippet->code_error = [ $result['message'], $result['line'] ];
 	}
 
-	if ( ! $snippet->code_error && 'single-use' !== $snippet->scope ) {
+	// Also validate single-use snippets by attempting execution.
+	if ( ! $snippet->code_error ) {
 		$result = execute_snippet( $snippet->code, $snippet->id, true );
 
 		if ( $result instanceof ParseError ) {
@@ -575,11 +586,12 @@ function save_snippet( $snippet ) {
 		$snippet->code = preg_replace( '|^\s*<\?(php)?|', '', $snippet->code );
 		$snippet->code = preg_replace( '|\?>\s*$|', '', $snippet->code );
 
-		// Deactivate snippet if code contains errors.
-		if ( $snippet->active && 'single-use' !== $snippet->scope ) {
+		// Validate snippet code if active.
+		if ( $snippet->active ) {
 			test_snippet_code( $snippet );
 
-			if ( $snippet->code_error ) {
+			// Deactivate snippet if code contains errors (except for single-use which stays active).
+			if ( $snippet->code_error && 'single-use' !== $snippet->scope ) {
 				$snippet->active = 0;
 			}
 		}
