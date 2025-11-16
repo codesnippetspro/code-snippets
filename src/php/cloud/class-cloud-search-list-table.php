@@ -100,14 +100,13 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 			[ 'action', 'snippet', '_wpnonce', 'source', 'cloud-bundle-run', 'cloud-bundle-show', 'bundle_share_name', 'cloud_bundles' ]
 		);
 
-		// Check request is coming form the cloud search page.
+		// Check request is coming from the cloud search page.
 		if ( isset( $_REQUEST['type'] ) && 'cloud_search' === $_REQUEST['type'] ) {
 				if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
 					cloud_lts_process_download_action(
 						sanitize_key( wp_unslash( $_REQUEST['action'] ) ),
 						sanitize_key( wp_unslash( $_REQUEST['source'] ) ),
 						sanitize_key( wp_unslash( $_REQUEST['snippet'] ) ),
-						$this->get_pagenum()
 					);
 				}
 		}
@@ -339,6 +338,6 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 
 		$this->_pagination = "<div class='tablenav-pages$page_class'>$output</div>";
 
-		echo $this->_pagination;
+		echo wp_kses_post( $this->_pagination );
 	}
 }
