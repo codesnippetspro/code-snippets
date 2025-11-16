@@ -783,23 +783,32 @@ class List_Table extends WP_List_Table {
 	private function perform_action( int $id, string $action ) {
 		switch ( $action ) {
 
-			case 'activate':
-				activate_snippet( $id, $this->is_network );
-				return 'activated';
+		case 'activate':
+			activate_snippet( $id, $this->is_network );
+			return 'activated';
 
-			case 'deactivate':
-				deactivate_snippet( $id, $this->is_network );
-				return 'deactivated';
+		case 'deactivate':
+			deactivate_snippet( $id, $this->is_network );
+			return 'deactivated';
 
-			case 'run-once':
-				$this->perform_action( $id, 'activate' );
-				return 'executed';
+		case 'run-once':
+			$result = activate_snippet( $id, $this->is_network );
+			// If activation failed or returned an error message, return it.
+			if ( is_string( $result ) ) {
+				return $result;
+			}
+			// Otherwise, it succeeded and returned a Snippet object.
+			return 'executed';
 
-			case 'run-once-shared':
-				$this->perform_action( $id, 'activate-shared' );
-				return 'executed';
-
-			case 'activate-shared':
+		case 'run-once-shared':
+			$result = $this->perform_action( $id, 'activate-shared' );
+			// If result is an error message, return it.
+			if ( is_string( $result ) && 'activated' !== $result ) {
+				return $result;
+			}
+			return 'executed';			
+    
+    case 'activate-shared':
 				$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
 
 				if ( ! in_array( $id, $active_shared_snippets, true ) ) {

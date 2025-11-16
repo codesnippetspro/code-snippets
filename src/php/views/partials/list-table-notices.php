@@ -109,4 +109,10 @@ if ( isset( $result_messages[ $result ] ) ) {
 		'<div id="message" class="notice notice-success fade is-dismissible"><p>%s</p></div>',
 		wp_kses( $result_messages[ $result ], $result_kses )
 	);
+} elseif ( ! empty( $result ) ) {
+	// If result is not a known success message, treat it as an error message.
+	printf(
+		'<div id="message" class="notice notice-error fade is-dismissible"><p>%s</p></div>',
+		esc_html( urldecode( $result ) )
+	);
 }
