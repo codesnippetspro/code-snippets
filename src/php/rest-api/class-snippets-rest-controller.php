@@ -329,6 +329,16 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		$result = save_snippet( $item );
 
 		if ( $result ) {
+			// Check if the snippet has execution errors after saving.
+			if ( $result->code_error ) {
+				$error_message = is_array( $result->code_error ) ? $result->code_error[0] : $result->code_error;
+				return new WP_Error(
+					'rest_snippet_execution_error',
+					$error_message,
+					[ 'status' => 400 ]
+				);
+			}
+
 			$request->set_param( 'id', $result->id );
 			return $this->get_item( $request );
 		}
