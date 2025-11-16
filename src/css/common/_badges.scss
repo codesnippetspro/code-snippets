@@ -20,12 +20,12 @@
 	gap: 5px;
 	line-height: 1;
 
-  @at-root .row-actions & {
-    color: #8c8c8c;
-    padding-inline: 0px;
-    text-transform: capitalize;
-    font-weight: 500;
-  }
+	@at-root .row-actions & {
+		color: #8c8c8c;
+		padding-inline: 0;
+		text-transform: capitalize;
+		font-weight: 500;
+	}
 
 	.dashicons {
 		font-size: 18px;
@@ -37,7 +37,7 @@
 .network-shared {
 	color: #2271b1; 
 	font-size: 22px;
-	width: 100%;
+	inline-size: 100%;
 	cursor: help;
 }
 
@@ -89,9 +89,9 @@
 	background-color: #a7aaad;
 	border-color: #fff !important;
 
-  .dashicons {
-    color: #fff;
-  }
+	.dashicons {
+		color: #fff;
+	}
 }
 
 .nav-tab-inactive {
