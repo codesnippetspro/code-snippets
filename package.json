@@ -2,10 +2,10 @@
   "name": "code-snippets",
   "description": "Manage code snippets running on a WordPress-powered site through a graphical interface.",
   "homepage": "https://codesnippets.pro",
-  "version": "3.9.1",
+  "version": "3.9.2",
   "main": "src/dist/edit.js",
   "directories": {
-  "test": "tests"
+    "test": "tests"
   },
   "scripts": {
     "test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
