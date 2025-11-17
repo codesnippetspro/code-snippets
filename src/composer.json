@@ -25,6 +25,8 @@
             "php/"
         ],
         "psr-4": {
+            "Code_Snippets\\Vendor\\MatthiasMullie\\Minify\\": "vendor/matthiasmullie/minify/src/",
+            "Code_Snippets\\Vendor\\MatthiasMullie\\PathConverter\\": "vendor/matthiasmullie/path-converter/src/"
         }
     },
     "require": {
