@@ -1,5 +1,23 @@
 # Changelog
 
+
+## [3.9.2] (2025-11-17)
+
+### Added
+* Added custom scissors icon and button title to the code snippets plugin
+* Added back navigation styling on the edit page
+
+### Changed
+* Refined layout for column names and action buttons in the Cloud Snippets list
+* Enhanced styling for cloud-related UI elements
+* More efficient pagination and snippet fetching in cloud search
+
+### Fixed
+* Sanitized pagination output to prevent unsafe rendering
+* Normalized Cloud API payloads for consistent behavior
+* Prevented vendor namespace collisions by removing non-prefixed mappings
+* Improved settings sanitization and included the 'enable_flat_files' setting in defaults
+
 ## [3.9.1] (2025-11-14)
 
 ### Changed
