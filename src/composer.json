@@ -23,7 +23,9 @@
     "autoload": {
         "classmap": [
             "php/"
-        ]
+        ],
+        "psr-4": {
+        }
     },
     "require": {
         "php": ">=7.4",

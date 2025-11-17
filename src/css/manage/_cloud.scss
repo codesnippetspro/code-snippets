@@ -69,13 +69,6 @@ td.column-name {
 	}
 }
 
-td.column-download {
-	display: flex;
-	gap: 0.5em;
-	flex-flow: column;
-	text-align: center;
-}
-
 .cloud-snippet-download {
 	color: theme.$accent !important;
 }
@@ -218,12 +211,74 @@ td.column-download {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
+
+	.plugin-card {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		.cloud-meta-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-grow: 1;
+		}
+
+		.column-name {
+			display: flex;
+			justify-content: space-between;
+
+			h3 {
+				display: inline-flex;
+				flex-shrink: 1;
+			}
+
+			.title-icon {
+				block-size: 90px;
+				margin-block-start: -7px;
+			}
+		}
+
+		.column-votes {
+			display: inline-flex;
+			gap: 3px;
+
+			&:hover {
+				.thumbs-up {
+					stroke: #059669;
+					fill: #6ee7b7;
+					animation: thumb 1s ease-in-out infinite;
+				}
+			}
+
+			.num-votes {
+				display: inline-flex;
+				align-items: flex-end;
+			}
+		}
+	}
+
+	.action-buttons {
+		margin: 0;
+		align-items: flex-end;
+
+		.button {
+			inline-size: 100%;
+			text-align: center;
+		}
+	}
 }
 
-.cloud-snippets .plugin-card {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+.cloud-snippets #the-list {
+	.column-download {
+		display: flex;
+		flex-flow: column;
+		text-align: end;
+    
+		li {
+			list-style: none;
+		}
+	}
 }
 
 .cloud-connect-wrap {
@@ -264,6 +319,7 @@ td.column-download {
 	background-color: #ce0000;
 	border-radius: 50%;
 
+
 	.cloud-connect-active & {
 		background-color: #25a349;
 	}
@@ -282,33 +338,16 @@ td.column-download {
 	block-size: 1.25rem; /* 20px */
 	transform-origin: bottom left;
 
-	[dir="rtl"] & {
-		transform-origin: bottom right;
-	}
-
 	&:hover {
 		stroke: #059669;
 		fill: #6ee7b7;
 	}
 }
 
-.voted-info {
-	display: inline-flex;
-	gap: 3px;
-	align-items: center;
-	margin-block-end: 6px !important;
-
-	&:hover {
-		.thumbs-up {
-			stroke: #059669;
-			fill: #6ee7b7;
-			animation: thumb 1s ease-in-out infinite;
-		}
-	}
-}
-
 .plugin-card-bottom {
 	overflow: visible !important;
+	display: flex;
+	align-items: center;
 }
 
 .beta-test-notice {
@@ -323,22 +362,22 @@ td.column-download {
 
 @keyframes thumb {
 	0% {
-		transform: rotate(0)
+		transform: rotate(0);
 	}
 
 	33% {
-		transform: rotate(calc(7deg * var(--cs-direction-multiplier)));
+		transform: rotate(7deg);
 	}
 
 	66% {
-		transform: rotate(calc(-15deg * var(--cs-direction-multiplier)));
+		transform: rotate(-15deg);
 	}
 
 	90% {
-		transform: rotate(calc(5deg * var(--cs-direction-multiplier)));
+		transform: rotate(5deg);
 	}
 
 	100% {
-		transform: rotate(0)
+		transform: rotate(0);
 	}
 }

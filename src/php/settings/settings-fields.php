@@ -32,6 +32,7 @@ function get_default_settings(): array {
 			'disable_prism'       => false,
 			'hide_upgrade_menu'   => false,
 			'complete_uninstall'  => false,
+      'enable_flat_files'   => false,
 		],
 		'editor'  => [
 			'indent_with_tabs'            => true,

@@ -145,7 +145,7 @@ const EditFormWrap: React.FC = () => {
 
 	return (
 		<div className="wrap">
-			<p><small>
+			<p><small className="cs-back">
 				{isCondition(snippet)
 					? <a href={addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { type: 'cond' })}>
 						{__('Back to all conditions', 'code-snippets')}

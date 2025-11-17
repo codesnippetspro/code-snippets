@@ -25,6 +25,7 @@ class Cloud_Snippets extends Data_Item {
 	 * @param array<string, Cloud_Snippet[]|integer> $initial_data Initial data.
 	 */
 	public function __construct( $initial_data = null ) {
+		$initial_data = $this->normalize_cloud_api( $initial_data );
 		parent::__construct(
 			[
 				'snippets'       => [],
@@ -79,5 +80,28 @@ class Cloud_Snippets extends Data_Item {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Normalize payloads returned by the cloud API into the shape expected by this class.
+	 *
+	 * @param mixed $initial_data Raw data passed into the constructor.
+	 *
+	 * @return mixed Normalized data array or original value when no normalization is required.
+	 */
+	private function normalize_cloud_api( $initial_data ) {
+		// pagination metadata is nested under a 'meta' key.
+		if ( is_array( $initial_data ) && isset( $initial_data['meta'] ) ) {
+			$meta = $initial_data['meta'];
+			$normalized = [];
+			$normalized['snippets'] = $initial_data['snippets'] ?? $initial_data['data'] ?? [];
+			$normalized['total_snippets'] = isset( $meta['total'] ) ? (int) $meta['total'] : 0;
+			$normalized['total_pages'] = isset( $meta['total_pages'] ) ? (int) $meta['total_pages'] : 0;
+			$normalized['page'] = isset( $meta['page'] ) ? max( 0, (int) $meta['page'] - 1 ) : 0;
+			$normalized['cloud_id_rev'] = $initial_data['cloud_id_rev'] ?? [];
+			$initial_data = $normalized;
+		}
+
+		return $initial_data;
 	}
 }

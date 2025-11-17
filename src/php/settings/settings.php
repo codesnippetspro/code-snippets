@@ -327,7 +327,8 @@ function sanitize_settings( array $input ): array {
 			// Attempt to sanitize the setting value.
 			$sanitized_value = sanitize_setting_value( $field, $input_value );
 
-			if ( ! is_null( $sanitized_value ) && $settings[ $section_id ][ $field_id ] !== $sanitized_value ) {
+			$current_value = $settings[ $section_id ][ $field_id ] ?? null;
+			if ( ! is_null( $sanitized_value ) && $current_value !== $sanitized_value ) {
 				$settings[ $section_id ][ $field_id ] = $sanitized_value;
 				$updated = true;
 			}
