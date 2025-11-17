@@ -33,6 +33,7 @@ function get_default_settings(): array {
 			'minify_output'       => [ 'css', 'js' ],
 			'hide_upgrade_menu'   => false,
 			'complete_uninstall'  => false,
+      'enable_flat_files'   => false,
 		],
 		'editor'  => [
 			'indent_with_tabs'            => true,

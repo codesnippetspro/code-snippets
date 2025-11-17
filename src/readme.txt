@@ -4,8 +4,8 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.9.1
-Tested up to: 6.8.2
+Stable tag: 3.9.2
+Tested up to: 6.8
 
 An easy, clean and simple way to enhance your site with code snippets.
 
@@ -103,6 +103,22 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.9.2 (2025-11-17) =
+
+__Changed__
+
+* Introduced a custom scissors icon and updated button title for the TinyMCE extension.
+* Improved back-navigation styling on the edit page.
+* Refined layout for column names and action buttons in the Cloud Snippets list.
+* Enhanced overall styling of cloud-related UI components.
+* Optimized cloud search with more efficient pagination and snippet retrieval.
+* Introduced groundwork to prevent Composer dependency collisions with other plugins.
+
+__Fixed__
+
+* Improved sanitization and normalization across Cloud API and pagination outputs.
+* Resolved various TinyMCE issues reported in the WordPress support forum.
 
 = 3.9.1 (2025-11-14) =
 
