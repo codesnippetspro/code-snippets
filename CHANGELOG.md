@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.9.3] (2025-11-18)
+
+### Fixed
+* Fixed issue where Pro users were shown the free-tier welcome message.
+
 ## [3.9.2] (2025-11-17)
 
 ### Changed
