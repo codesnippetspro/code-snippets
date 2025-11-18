@@ -1,14 +1,9 @@
 # Changelog
 
-
 ## [3.9.3] (2025-11-18)
-
-### Changed
-* Improved onboarding notice for Pro users by using Pro-specific text, action URL, and label.
 
 ### Fixed
 * Fixed issue where Pro users were shown the free-tier welcome message.
-* Corrected action button to point to the Pro-specific URL and label instead of free-tier values.
 
 ## [3.9.2] (2025-11-17)
 
