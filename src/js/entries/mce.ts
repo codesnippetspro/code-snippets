@@ -93,16 +93,40 @@ export const insertSourceMenu = (editor: Editor, ed: LocalisedEditor) => ({
 	}
 })
 
-tinymce.PluginManager.add('code_snippets', function (editor) {
+// Custom scissors icon as base64-encoded SVG (same as used in WP admin menu)
+// Base64-encoded version of menu-icon.svg
+const scissorsIcon =
+	'data:image/svg+xml;base64,' +
+	'PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZX' + 
+  'dCb3g9IjAgMCAyNiAyNSI+PHBhdGggZmlsbD0iIzUxNTc1ZiIgZD0iTTYuMTI3IDExLjk2Nmgz' + 
+  'LjQxNGEuOTEuOTEgMCAwIDEgLjg0NC41NjMuOTMuOTMgMCAwIDEtLjE4NSAxLjAwNGwuMDA1Lj' + 
+  'AxLTIuMzM4IDIuMzU1YTQuMTkgNC4xOSAwIDAgMCAwIDUuODg1QTQuMTEgNC4xMSAwIDAgMCAx' + 
+  'MC43ODQgMjNhNC4xMSA0LjExIDAgMCAwIDIuOTE3LTEuMjE3IDQuMiA0LjIgMCAwIDAgMS4wND' + 
+  'gtMS44MDIgNC4yIDQuMiAwIDAgMC0uOTE1LTMuOTQgNC4xIDQuMSAwIDAgMC0xLjczMi0xLjE0' + 
+  'NWwuNjE0LS42MTloNy44NDZjMS44NyAwIDMuMzkxLTEuNjA0IDMuNDM2LTMuNjA2IDAtLjAzMy' + 
+  '4wMDQtLjA2IDAtLjA5MmExLjAyIDEuMDIgMCAwIDAtLjMyNi0uNjYgMSAxIDAgMCAwLS42ODEt' + 
+  'LjI2NmgtNS42OTJsNC4xMS00LjE0NWExLjAyNSAxLjAyNSAwIDAgMCAuMDY4LTEuMzc0Yy0uMD' + 
+  'IyLS4wMjctLjA0NC0uMDQ2LS4wNjgtLjA2OC0xLjQzLTEuMzc4LTMuNjM0LTEuNDMtNC45NTMt' + 
+  'LjA5OGwtNS42MzUgNS42ODVIOS44MmMuMzk4LS44MS41MjQtMS43My4zNTgtMi42MTlhNC4xNy' + 
+  'A0LjE3IDAgMCAwLTEuMjc5LTIuMzA4IDQuMDk2IDQuMDk2IDAgMCAwLTQuOTUtLjQ1NyA0LjE1' + 
+  'IDQuMTUgMCAwIDAtMS42NzIgMi4wMzYgNC4yIDQuMiAwIDAgMC0uMTE5IDIuNjQyYy4yNDYuOD' + 
+  'cuNzY3IDEuNjM1IDEuNDgzIDIuMThzMS41OS44NCAyLjQ4Ni44MzlNNy45NiA3LjgwNWMwIC40' + 
+  'OS0uMTkzLjk2LS41MzYgMS4zMDhhMS44MjUgMS44MjUgMCAwIDEtMi41OTIuMDAxQTEuODU3ID' + 
+  'EuODU3IDAgMCAxIDQuODMgNi41YTEuODI1IDEuODI1IDAgMCAxIDIuNTkzIDBjLjM0My4zNDYu' + 
+  'NTM3LjgxNi41MzcgMS4zMDZtNC4xMTkgOS43MzNhMS44NiAxLjg2IDAgMCAxLS41OTUgMy4wMT' + 
+  'QgMS44MSAxLjgxIDAgMCAxLTEuOTk5LS40MDIgMS44NSAxLjg1IDAgMCAxLS41MzYtMS4zMDYg' + 
+  'MS44NiAxLjg2IDAgMCAxIDEuMTMtMS43MSAxLjgxIDEuODEgMCAwIDEgMiAuNDA0Ii8+PC9zdmc+'
+
+tinymce.PluginManager.add('code_snippets', editor => {
 	const activeEditor = <LocalisedEditor> tinymce.activeEditor
 
-	// Create the menu button with inline menu items
 	editor.addButton('code_snippets', {
-		icon: 'code',
 		type: 'menubutton',
+		title: 'Code Snippets',
+		image: scissorsIcon,
 		menu: [
-			insertContentMenu(editor, activeEditor),
+			insertContentMenu(editor, activeEditor), 
 			insertSourceMenu(editor, activeEditor)
-		]
+		],
 	})
 })

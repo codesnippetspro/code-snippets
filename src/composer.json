@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Code_Snippets\\": "php/"
+          "Code_Snippets\\": "php/"
         }
     },
     "require": {

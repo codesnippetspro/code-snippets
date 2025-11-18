@@ -8,11 +8,19 @@
  * License:      GPL-2.0-or-later
  * License URI:  license.txt
  * Text Domain:  code-snippets
+<<<<<<< HEAD
  * Version:      3.10.0-dev.1
+=======
+ * Version:      3.9.2
+>>>>>>> core
  * Requires PHP: 7.4
  * Requires at least: 5.5
  *
+<<<<<<< HEAD
  * @version   3.10.0-dev.1
+=======
+ * @version   3.9.2
+>>>>>>> core
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2024 Code Snippets Pro

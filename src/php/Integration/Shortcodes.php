@@ -169,7 +169,7 @@ class Shortcodes {
 		 *
 		 * @phpcs:disable WordPress.PHP.DontExtract.extract_extract
 		 */
-		extract( $atts );
+		extract( $atts, EXTR_SKIP );
 
 		ob_start();
 		eval( "?>\n\n" . $snippet->code );
@@ -195,7 +195,7 @@ class Shortcodes {
 			 *
 			 * @phpcs:disable WordPress.PHP.DontExtract.extract_extract
 			 */
-			extract( $atts );
+			extract( $atts, EXTR_SKIP );
 			require_once $filepath;
 		} )( $atts );
 
