@@ -311,9 +311,9 @@ class Admin {
 		     ( empty( $welcome['end_datetime'] ) || $now <= $welcome['end_datetime'] ) ) {
 			$notice = $welcome['key'];
 
-			$text = $welcome['text_free'];
-			$action_url = $welcome['action_url_free'];
-			$action_label = $welcome['action_label_free'];
+			$text = $welcome['text_pro'];
+			$action_url = $welcome['action_url_pro'];
+			$action_label = $welcome['action_label_pro'];
 
 		} elseif ( ! in_array( 'survey', $dismissed, true ) && ! in_array( 'true', $dismissed, true ) ) {
 			$notice = 'survey';
