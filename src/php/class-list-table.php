@@ -618,6 +618,7 @@ class List_Table extends WP_List_Table {
 						continue 2;
 					}
 
+					// translators: %s: Websites count.
 					$shared_label_template = $this->is_network
 						? _n_noop(
 							'Shared with Subsites <span class="count">(%s)</span>',

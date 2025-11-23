@@ -137,8 +137,8 @@ class Import_Menu extends Admin_Menu {
 				esc_html_e( 'No snippets were imported.', 'code-snippets' );
 
 			} else {
-				/* translators: %d: amount of snippets imported */
 				printf(
+					// translators: %d: amount of snippets imported.
 					_n(
 						'Successfully imported %d snippet.',
 						'Successfully imported %d snippets.',
