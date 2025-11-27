@@ -1,0 +1,79 @@
+name: "(Test): PHPUnit"
+
+on:
+  pull_request:
+    types: [labeled, synchronize, opened, reopened]
+  push:
+    branches:
+      - 'core'
+      - 'pro'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.gitignore'
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+
+concurrency:
+  group: phpunit-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  phpunit-php-7-4:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    uses: ./.github/workflows/phpunit-test.yml
+    with:
+      php-version: '7.4'
+
+  phpunit-php-8-0:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    uses: ./.github/workflows/phpunit-test.yml
+    with:
+      php-version: '8.0'
+
+  phpunit-php-8-1:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    uses: ./.github/workflows/phpunit-test.yml
+    with:
+      php-version: '8.1'
+
+  phpunit-php-8-2:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    uses: ./.github/workflows/phpunit-test.yml
+    with:
+      php-version: '8.2'
+
+  phpunit-php-8-3:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    uses: ./.github/workflows/phpunit-test.yml
+    with:
+      php-version: '8.3'
+
+  test-result:
+    needs: [phpunit-php-7-4, phpunit-php-8-0, phpunit-php-8-1, phpunit-php-8-2, phpunit-php-8-3]
+    if: always() && (needs.phpunit-php-7-4.result != 'skipped' || needs.phpunit-php-8-0.result != 'skipped' || needs.phpunit-php-8-1.result != 'skipped' || needs.phpunit-php-8-2.result != 'skipped' || needs.phpunit-php-8-3.result != 'skipped')
+    runs-on: ubuntu-22.04
+    name: PHPUnit - Test Results Summary
+    steps:
+      - name: Test status summary
+        run: |
+          echo "PHP 7.4: ${{ needs.phpunit-php-7-4.result }}"
+          echo "PHP 8.0: ${{ needs.phpunit-php-8-0.result }}"
+          echo "PHP 8.1: ${{ needs.phpunit-php-8-1.result }}"
+          echo "PHP 8.2: ${{ needs.phpunit-php-8-2.result }}"
+          echo "PHP 8.3: ${{ needs.phpunit-php-8-3.result }}"
+
+      - name: Check overall status
+        if: |
+          (needs.phpunit-php-7-4.result != 'success' && needs.phpunit-php-7-4.result != 'skipped') ||
+          (needs.phpunit-php-8-0.result != 'success' && needs.phpunit-php-8-0.result != 'skipped') ||
+          (needs.phpunit-php-8-1.result != 'success' && needs.phpunit-php-8-1.result != 'skipped') ||
+          (needs.phpunit-php-8-2.result != 'success' && needs.phpunit-php-8-2.result != 'skipped') ||
+          (needs.phpunit-php-8-3.result != 'success' && needs.phpunit-php-8-3.result != 'skipped')
+        run: exit 1
+
