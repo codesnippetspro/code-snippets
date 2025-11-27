@@ -6,7 +6,6 @@ use Code_Snippets\Snippet;
 use WP_REST_Request;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;
-use function Code_Snippets\delete_snippet;
 
 /**
  * Tests for the Snippets REST API endpoint.
@@ -14,13 +13,6 @@ use function Code_Snippets\delete_snippet;
  * @group rest-api
  */
 class REST_API_Snippets_Test extends TestCase {
-
-	/**
-	 * Array of created snippet IDs for cleanup.
-	 *
-	 * @var int[]
-	 */
-	protected $created_snippet_ids = [];
 
 	/**
 	 * REST API namespace and base route.
@@ -53,28 +45,10 @@ class REST_API_Snippets_Test extends TestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
-		
-		// Set current user as admin for REST API permissions.
+
 		wp_set_current_user( self::$admin_user_id );
-
-		// Clear all existing snippets first for clean testing environment.
 		$this->clear_all_snippets();
-
-		// Seed 25 test snippets.
 		$this->seed_test_snippets( 25 );
-	}
-
-	/**
-	 * Clean up after each test.
-	 */
-	public function tear_down() {
-		// Delete all created snippets.
-		foreach ( $this->created_snippet_ids as $snippet_id ) {
-			delete_snippet( $snippet_id );
-		}
-		$this->created_snippet_ids = [];
-
-		parent::tear_down();
 	}
 
 	/**
@@ -102,11 +76,7 @@ class REST_API_Snippets_Test extends TestCase {
 				'tags'   => [ 'test', "batch-{$i}" ],
 			] );
 
-			$saved_snippet = save_snippet( $snippet );
-
-			if ( $saved_snippet && $saved_snippet->id ) {
-				$this->created_snippet_ids[] = $saved_snippet->id;
-			}
+			save_snippet( $snippet );
 		}
 	}
 
@@ -132,14 +102,16 @@ class REST_API_Snippets_Test extends TestCase {
 	 * Test that we can retrieve all snippets without pagination.
 	 */
 	public function test_get_all_snippets_without_pagination() {
+		// Arrange.
 		$endpoint = "/{$this->namespace}/{$this->base_route}";
+
+		// Act.
 		$response = $this->make_request( $endpoint, [ 'network' => false ] );
 
-		// Should return all 25 snippets.
+		// Assert.
 		$this->assertIsArray( $response );
 		$this->assertCount( 25, $response, 'Should return all 25 snippets when no pagination params are provided' );
 
-		// Verify first snippet structure.
 		$this->assertArrayHasKey( 'id', $response[0] );
 		$this->assertArrayHasKey( 'name', $response[0] );
 		$this->assertArrayHasKey( 'code', $response[0] );
@@ -149,17 +121,19 @@ class REST_API_Snippets_Test extends TestCase {
 	 * Test pagination with per_page parameter only (first page).
 	 */
 	public function test_get_snippets_with_per_page() {
+		// Arrange.
 		$endpoint = "/{$this->namespace}/{$this->base_route}";
+
+		// Act.
 		$response = $this->make_request( $endpoint, [
 			'network'  => false,
 			'per_page' => 2,
 		] );
 
-		// Should return only 2 snippets (first page).
+		// Assert.
 		$this->assertIsArray( $response );
 		$this->assertCount( 2, $response, 'Should return exactly 2 snippets when per_page=2' );
 
-		// Verify we got the first 2 snippets.
 		$this->assertStringContainsString( 'Test Snippet 1', $response[0]['name'] );
 		$this->assertStringContainsString( 'Test Snippet 2', $response[1]['name'] );
 	}
@@ -168,19 +142,20 @@ class REST_API_Snippets_Test extends TestCase {
 	 * Test pagination with per_page and page parameters.
 	 */
 	public function test_get_snippets_with_per_page_and_page() {
+		// Arrange.
 		$endpoint = "/{$this->namespace}/{$this->base_route}";
+
+		// Act.
 		$response = $this->make_request( $endpoint, [
 			'network'  => false,
 			'per_page' => 2,
 			'page'     => 3,
 		] );
 
-		// Should return 2 snippets from page 3.
-		// Page 1: snippets 1-2, Page 2: snippets 3-4, Page 3: snippets 5-6.
+		// Assert.
 		$this->assertIsArray( $response );
 		$this->assertCount( 2, $response, 'Should return exactly 2 snippets for page 3 with per_page=2' );
 
-		// Verify we got snippets 5 and 6.
 		$this->assertStringContainsString( 'Test Snippet 5', $response[0]['name'] );
 		$this->assertStringContainsString( 'Test Snippet 6', $response[1]['name'] );
 	}
@@ -189,27 +164,27 @@ class REST_API_Snippets_Test extends TestCase {
 	 * Test pagination with page parameter only (should use default per_page).
 	 */
 	public function test_get_snippets_with_page_only() {
+		// Arrange.
 		$endpoint = "/{$this->namespace}/{$this->base_route}";
 
-		// First, let's get page 1 to see the default per_page behavior.
+		// Act.
 		$page_1_response = $this->make_request( $endpoint, [
 			'network' => false,
 			'page'    => 1,
 		] );
 
-		// WordPress REST API default per_page is typically 10.
+		// Assert.
 		$this->assertIsArray( $page_1_response );
 		$this->assertGreaterThan( 0, count( $page_1_response ), 'Page 1 should have snippets' );
 
-		// Now get page 2.
+		// Act.
 		$page_2_response = $this->make_request( $endpoint, [
 			'network' => false,
 			'page'    => 2,
 		] );
 
+		// Assert.
 		$this->assertIsArray( $page_2_response );
-
-		// With 25 snippets and default per_page of 10, page 2 should have 10 snippets.
 		$this->assertCount( 10, $page_2_response, 'Page 2 with default per_page should have 10 snippets' );
 	}
 
@@ -217,17 +192,18 @@ class REST_API_Snippets_Test extends TestCase {
 	 * Test that headers contain correct pagination metadata.
 	 */
 	public function test_pagination_headers() {
+		// Arrange.
 		$endpoint = "/{$this->namespace}/{$this->base_route}";
 		$request = new WP_REST_Request( 'GET', $endpoint );
 		$request->set_param( 'network', false );
 		$request->set_param( 'per_page', 5 );
 		$request->set_param( 'page', 1 );
 
+		// Act.
 		$response = rest_do_request( $request );
-
-		// Check headers.
 		$headers = $response->get_headers();
 
+		// Assert.
 		$this->assertEquals( 25, $headers['X-WP-Total'], 'X-WP-Total header should show 25 total snippets' );
 		$this->assertEquals( 5, $headers['X-WP-TotalPages'], 'X-WP-TotalPages should be 5 (25 snippets / 5 per_page)' );
 	}
@@ -236,15 +212,17 @@ class REST_API_Snippets_Test extends TestCase {
 	 * Test that last page returns correct number of snippets.
 	 */
 	public function test_last_page_with_partial_results() {
+		// Arrange.
 		$endpoint = "/{$this->namespace}/{$this->base_route}";
 
-		// With 25 snippets and per_page=10, page 3 should have 5 snippets.
+		// Act.
 		$response = $this->make_request( $endpoint, [
 			'network'  => false,
 			'per_page' => 10,
 			'page'     => 3,
 		] );
 
+		// Assert.
 		$this->assertIsArray( $response );
 		$this->assertCount( 5, $response, 'Last page should have only 5 remaining snippets (25 % 10)' );
 	}
@@ -253,15 +231,17 @@ class REST_API_Snippets_Test extends TestCase {
 	 * Test that requesting a page beyond available pages returns empty array.
 	 */
 	public function test_page_beyond_available_returns_empty() {
+		// Arrange.
 		$endpoint = "/{$this->namespace}/{$this->base_route}";
 
-		// Request page 100 (way beyond our 25 snippets).
+		// Act.
 		$response = $this->make_request( $endpoint, [
 			'network'  => false,
 			'per_page' => 10,
 			'page'     => 100,
 		] );
 
+		// Assert.
 		$this->assertIsArray( $response );
 		$this->assertCount( 0, $response, 'Requesting page beyond available should return empty array' );
 	}
@@ -270,13 +250,17 @@ class REST_API_Snippets_Test extends TestCase {
 	 * Test per_page with value of 1.
 	 */
 	public function test_per_page_one() {
+		// Arrange.
 		$endpoint = "/{$this->namespace}/{$this->base_route}";
+
+		// Act.
 		$response = $this->make_request( $endpoint, [
 			'network'  => false,
 			'per_page' => 1,
 			'page'     => 5,
 		] );
 
+		// Assert.
 		$this->assertIsArray( $response );
 		$this->assertCount( 1, $response, 'Should return exactly 1 snippet when per_page=1' );
 		$this->assertStringContainsString( 'Test Snippet 5', $response[0]['name'] );
@@ -286,13 +270,17 @@ class REST_API_Snippets_Test extends TestCase {
 	 * Test that per_page larger than total returns all snippets.
 	 */
 	public function test_per_page_larger_than_total() {
+		// Arrange.
 		$endpoint = "/{$this->namespace}/{$this->base_route}";
+
+		// Act.
 		$response = $this->make_request( $endpoint, [
 			'network'  => false,
 			'per_page' => 100,
 			'page'     => 1,
 		] );
 
+		// Assert.
 		$this->assertIsArray( $response );
 		$this->assertCount( 25, $response, 'Should return all 25 snippets when per_page exceeds total' );
 	}
@@ -301,24 +289,26 @@ class REST_API_Snippets_Test extends TestCase {
 	 * Test that snippet data structure is correct.
 	 */
 	public function test_snippet_data_structure() {
+		// Arrange.
 		$endpoint = "/{$this->namespace}/{$this->base_route}";
+
+		// Act.
 		$response = $this->make_request( $endpoint, [
 			'network'  => false,
 			'per_page' => 1,
 		] );
 
+		// Assert.
 		$this->assertIsArray( $response );
 		$this->assertCount( 1, $response );
 
 		$snippet = $response[0];
 
-		// Check required fields exist.
 		$required_fields = [ 'id', 'name', 'desc', 'code', 'scope', 'active', 'tags' ];
 		foreach ( $required_fields as $field ) {
 			$this->assertArrayHasKey( $field, $snippet, "Snippet should have '{$field}' field" );
 		}
 
-		// Verify field types.
 		$this->assertIsInt( $snippet['id'] );
 		$this->assertIsString( $snippet['name'] );
 		$this->assertIsString( $snippet['code'] );
