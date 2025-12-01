@@ -32,7 +32,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		const activeTransform = await toggleSwitch.evaluate(el => {
 			return window.getComputedStyle(el, '::before').transform
 		})
-		expect(activeTransform).not.toBe('none')
+		expect(activeTransform).toBe('matrix(1, 0, 0, 1, 13, 0)')
 
 		await toggleSwitch.click()
 		await page.waitForLoadState('networkidle')
