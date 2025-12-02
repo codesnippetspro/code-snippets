@@ -29,10 +29,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(toggleSwitch).toHaveAttribute('title', 'Deactivate')
 
 		// Check that the toggle is rendered to the right (active)
-		const activeTransform = await toggleSwitch.evaluate(el => {
-			return window.getComputedStyle(el, '::before').transform
-		})
-		expect(activeTransform).toBe('matrix(1, 0, 0, 1, 13, 0)')
+		await expect(snippetRow).toHaveScreenshot('snippet-row-active.png')
 
 		await toggleSwitch.click()
 		await page.waitForLoadState('networkidle')
@@ -42,10 +39,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(updatedToggle).toHaveAttribute('title', 'Activate')
 
 		// Check that the toggle is rendered to the left (inactive)
-		const inactiveTransform = await updatedToggle.evaluate(el => {
-			return window.getComputedStyle(el, '::before').transform
-		})
-		expect(inactiveTransform).toBe('none')
+		await expect(updatedRow).toHaveScreenshot('snippet-row-inactive.png')
 
 		await updatedToggle.click()
 		await page.waitForLoadState('networkidle')
