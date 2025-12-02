@@ -10,6 +10,7 @@ const WORKERS = 1
  */
 export default defineConfig({
 	testDir: '../e2e',
+	snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? RETRIES : 0,
