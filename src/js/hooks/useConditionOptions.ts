@@ -7,7 +7,7 @@ import type { RestAPI} from './useRestAPI'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ConditionSubjectDefinitions } from '../types/ConditionSubjectDefinitions'
 import type { ConditionSubject, ConditionSubjects } from '../types/ConditionSubject'
-import type { SelectGroups } from '../types/SelectOption'
+import type { SelectGroups, SelectOption } from '../types/SelectOption'
 
 type ConditionSubjectOptions = { [S in ConditionSubject]?: SelectGroups<ConditionSubjects[S]> }
 
@@ -69,6 +69,9 @@ export interface UseConditionOptions<S extends ConditionSubject> {
 	objectOptions: SelectGroups<ConditionSubjects[S]> | undefined
 	loadMoreOptions: VoidFunction
 	clearObjectOptions: VoidFunction
+	searchOptions: (searchTerm: string) => Promise<SelectGroups<ConditionSubjects[S]>>
+	fetchSelectedOption: (value: ConditionSubjects[S]) => Promise<SelectOption<ConditionSubjects[S]> | null>
+	hasSearchSupport: boolean
 }
 
 export const useConditionOptions = <S extends ConditionSubject>(selectedSubject: S | undefined): UseConditionOptions<S> => {
@@ -104,6 +107,66 @@ export const useConditionOptions = <S extends ConditionSubject>(selectedSubject:
 		}
 	}, [handleOptionsLoaded, loadingOptions, api])
 
+	// Search options from the server
+	const searchOptions = useCallback(async (searchTerm: string): Promise<SelectGroups<ConditionSubjects[S]>> => {
+		if (selectedSubject === undefined) {
+			return []
+		}
+
+		const { definition } = findSubjectDefinition(selectedSubject)
+
+		if (definition?.searchOptions) {
+			try {
+				return await definition.searchOptions(api, searchTerm)
+			} catch (error) {
+				console.error('Error searching options:', error)
+				return []
+			}
+		}
+
+		// If no server search, filter local options
+		if (objectOptions) {
+			const lowerSearch = searchTerm.toLowerCase()
+			return objectOptions.map(group => {
+				if ('options' in group) {
+					return {
+						...group,
+						options: group.options.filter(option =>
+							option.label.toLowerCase().includes(lowerSearch)
+						)
+					}
+				}
+				return group.label.toLowerCase().includes(lowerSearch) ? group : null
+			}).filter((group): group is NonNullable<typeof group> => group !== null)
+		}
+
+		return []
+	}, [api, selectedSubject, objectOptions])
+
+	// Fetch a specific option by its value (for displaying selected values not in initial load)
+	const fetchSelectedOption = useCallback(async (value: ConditionSubjects[S]): Promise<SelectOption<ConditionSubjects[S]> | null> => {
+		if (selectedSubject === undefined) {
+			return null
+		}
+
+		const { definition } = findSubjectDefinition(selectedSubject)
+
+		if (definition?.fetchOptionByValue) {
+			try {
+				return await definition.fetchOptionByValue(api, value)
+			} catch (error) {
+				console.error('Error fetching option by value:', error)
+				return null
+			}
+		}
+
+		return null
+	}, [api, selectedSubject])
+
+	// Check if the subject supports server-side search
+	const hasSearchSupport = selectedSubject !== undefined &&
+		findSubjectDefinition(selectedSubject).definition?.searchOptions !== undefined
+
 	useEffect(() => {
 		if (objectOptions === undefined && selectedSubject !== undefined) {
 			const { subject, definition } = findSubjectDefinition(selectedSubject)
@@ -127,5 +190,5 @@ export const useConditionOptions = <S extends ConditionSubject>(selectedSubject:
 		setObjectOptions(undefined)
 	}, [])
 
-	return { clearObjectOptions, loadMoreOptions, loadedSubject, objectOptions }
+	return { clearObjectOptions, loadMoreOptions, loadedSubject, objectOptions, searchOptions, fetchSelectedOption, hasSearchSupport }
 }
