@@ -19,10 +19,34 @@ class Cloud_Bundles extends Cloud_Search_List_Table {
 	 * @return void
 	 */
 	public function process_actions() {
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array( '_wpnonce', 'cloud-bundle-run', 'cloud-bundle-show', 'bundle_share_name', 'cloud_bundles' ) );
+		$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'action', 'snippet', '_wpnonce', 'source', 'cloud-bundle-run', 'cloud-bundle-show', 'bundle_share_name', 'cloud_bundles' ) );
 
 		if ( isset( $_REQUEST['cloud-bundle-run'] ) && sanitize_key( wp_unslash( $_REQUEST['cloud-bundle-run'] ) ) ) {
 			$this->run_bundle_action( $this->items );
+		}
+
+		// Handle individual snippet download from bundle view.
+		if ( isset( $_REQUEST['action'], $_REQUEST['snippet'] ) && 'download' === $_REQUEST['action'] ) {
+			$snippet_id = intval( wp_unslash( $_REQUEST['snippet'] ) );
+
+			// Find the snippet in the already-fetched bundle items (which includes full data for private snippets).
+			$snippet_to_store = null;
+			foreach ( $this->items as $item ) {
+				if ( $item->id === $snippet_id ) {
+					$snippet_to_store = $item;
+					break;
+				}
+			}
+
+			if ( $snippet_to_store ) {
+				$api = code_snippets()->cloud_api;
+				$result = $api->store_snippets_from_cloud_to_local( [ $snippet_to_store ], $snippet_to_store->is_owner );
+
+				if ( $result['success'] && ! empty( $result['snippet_id'] ) ) {
+					wp_safe_redirect( esc_url_raw( code_snippets()->get_snippet_edit_url( (int) $result['snippet_id'] ) ) );
+					exit;
+				}
+			}
 		}
 	}
 
