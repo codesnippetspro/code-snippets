@@ -104,6 +104,23 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.9.3 (2025-12-03) =
+
+__Added__
+
+* Add visual regression screenshots for the Code Snippets list (captures active and inactive toggle states)
+* Update Playwright configuration with a snapshotPathTemplate and a maxDiffPixels threshold to improve screenshot management and allow small diffs
+
+__Changed__
+
+* Enhanced end-to-end tests to verify the toggle visual state in the snippets list page, improving UI verification and test reliability
+
+__Fixed__
+
+* Fix missing import of common/direction in src/css/manage.scss to restore correct styling and direction-aware layout
+* Fix toggle activation check to ensure the correct transformation value is used when detecting active/inactive state
+
 = 3.9.2 (2025-11-17) =
 
 __Changed__
