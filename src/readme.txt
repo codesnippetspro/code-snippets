@@ -109,11 +109,6 @@ You can report security bugs found in the source code of this plugin through the
 
 __Added__
 
-* Add visual regression screenshots for the Code Snippets list (captures active and inactive toggle states)
-* Update Playwright configuration with a snapshotPathTemplate and a maxDiffPixels threshold to improve screenshot management and allow small diffs
-
-__Changed__
-
 * Enhanced end-to-end tests to verify the toggle visual state in the snippets list page, improving UI verification and test reliability
 
 __Fixed__
