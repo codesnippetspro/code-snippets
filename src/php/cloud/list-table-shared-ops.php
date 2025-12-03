@@ -119,6 +119,14 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 				$download_query['cloud_page'] = (int) wp_unslash( $_REQUEST['cloud_page'] );
 			}
 
+			// Preserve bundle context for bundle downloads.
+			if ( isset( $_REQUEST['cloud_bundles'] ) ) {
+				$download_query['cloud_bundles'] = (int) wp_unslash( $_REQUEST['cloud_bundles'] );
+			}
+			if ( isset( $_REQUEST['bundle_share_name'] ) ) {
+				$download_query['bundle_share_name'] = sanitize_text_field( wp_unslash( $_REQUEST['bundle_share_name'] ) );
+			}
+
 			$download_url = add_query_arg( $download_query );
 
 		$download_button = sprintf(
