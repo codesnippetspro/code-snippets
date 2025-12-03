@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n'
 import type { ConditionSubjects } from './ConditionSubject'
 import type { RestAPI } from '../hooks/useRestAPI'
 import type { ConditionOperator } from './ConditionGroups'
-import type { SelectGroups } from './SelectOption'
+import type { SelectGroups, SelectOption } from './SelectOption'
 import type { Snippet } from './Snippet'
 
 export interface ConditionSubjectDefinition<T> {
@@ -12,6 +12,8 @@ export interface ConditionSubjectDefinition<T> {
 	options?: SelectGroups<T>
 	fetchAllOptions?: (restAPI: RestAPI) => Promise<SelectGroups<T>>
 	fetchPagedOptions?: (restAPI: RestAPI, page: number) => Promise<SelectGroups<T>>
+	searchOptions?: (restAPI: RestAPI, searchTerm: string) => Promise<SelectGroups<T>>
+	fetchOptionByValue?: (restAPI: RestAPI, value: T) => Promise<SelectOption<T> | null>
 	deriveOptions?: (snippet: Snippet, snippets: readonly Snippet[]) => SelectGroups<T>
 	useSubjectOptions?: keyof { [A in keyof ConditionSubjects as ConditionSubjects[A] extends T ? A : never]: A }
 }
