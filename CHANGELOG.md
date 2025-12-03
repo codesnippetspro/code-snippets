@@ -1,5 +1,19 @@
 # Changelog
 
+
+## [3.9.3] (2025-12-03)
+
+### Added
+* Add visual regression screenshots for the Code Snippets list (captures active and inactive toggle states)
+* Update Playwright configuration with a snapshotPathTemplate and a maxDiffPixels threshold to improve screenshot management and allow small diffs
+
+### Changed
+* Enhanced end-to-end tests to verify the toggle visual state in the snippets list page, improving UI verification and test reliability
+
+### Fixed
+* Fix missing import of common/direction in src/css/manage.scss to restore correct styling and direction-aware layout
+* Fix toggle activation check to ensure the correct transformation value is used when detecting active/inactive state
+
 ## [3.9.2] (2025-11-17)
 
 ### Changed
