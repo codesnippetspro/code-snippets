@@ -5,7 +5,7 @@ import { Select } from '../common/Select'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ConditionOperator } from '../../types/ConditionGroups'
 import type { ConditionSubject, ConditionSubjects } from '../../types/ConditionSubject'
-import type { SelectGroups, SelectOptions } from '../../types/SelectOption'
+import type { SelectGroups, SelectOption, SelectOptions } from '../../types/SelectOption'
 import type { Snippet } from '../../types/Snippet'
 import type { ConditionRuleEditorProps } from './ConditionRuleEditor'
 
@@ -14,6 +14,8 @@ interface ObjectSelectProps<S extends ConditionSubject> extends ConditionRuleEdi
 	options: SelectGroups<ConditionSubjects[S]>
 	optionsLoaded: boolean
 	onLoadMore: VoidFunction
+	searchOptions?: (searchTerm: string) => Promise<SelectGroups<ConditionSubjects[S]>>
+	fetchSelectedOption?: (value: ConditionSubjects[S]) => Promise<SelectOption<ConditionSubjects[S]> | null>
 }
 
 const ObjectSelect = <S extends ConditionSubject>({
@@ -24,7 +26,9 @@ const ObjectSelect = <S extends ConditionSubject>({
 	onLoadMore,
 	setCondition,
 	optionsLoaded,
-	isMulti = false
+	isMulti = false,
+	searchOptions,
+	fetchSelectedOption
 }: ObjectSelectProps<S>) => {
 	const rule = getConditionRule(condition, groupId, ruleId)
 
@@ -32,12 +36,14 @@ const ObjectSelect = <S extends ConditionSubject>({
 		<Select
 			required
 			className="snippet-condition-field snippet-condition-object"
-			isDisabled={setCondition === undefined}
+			isDisabled={undefined === setCondition}
 			isMulti={isMulti}
 			options={options}
 			currentValue={isMulti ? rule?.object : rule?.object?.[0]}
 			isLoading={!optionsLoaded}
 			onMenuScrollToBottom={onLoadMore}
+			searchOptions={searchOptions}
+			fetchSelectedOption={fetchSelectedOption}
 			onSelect={value => {
 				setCondition?.(previous =>
 					updateConditionRule(previous, groupId, ruleId, { object: undefined === value ? [] : [value] }))
@@ -124,6 +130,8 @@ export interface ConditionObjectEditorProps<S extends ConditionSubject> extends 
 	operatorOptions: SelectOptions<ConditionOperator>
 	objectOptionsLoaded: boolean
 	loadMoreOptions: VoidFunction
+	searchOptions?: (searchTerm: string) => Promise<SelectGroups<ConditionSubjects[S]>>
+	fetchSelectedOption?: (value: ConditionSubjects[S]) => Promise<SelectOption<ConditionSubjects[S]> | null>
 }
 
 export const ConditionObjectEditor = <S extends ConditionSubject>({
@@ -132,6 +140,8 @@ export const ConditionObjectEditor = <S extends ConditionSubject>({
 	operatorOptions,
 	loadMoreOptions,
 	objectOptionsLoaded,
+	searchOptions,
+	fetchSelectedOption,
 	...ruleProps
 }: ConditionObjectEditorProps<S>) => {
 	const operatorSelectProps: OperatorSelectProps = { ...ruleProps, currentOperator, options: operatorOptions }
@@ -155,6 +165,8 @@ export const ConditionObjectEditor = <S extends ConditionSubject>({
 					optionsLoaded={objectOptionsLoaded}
 					isMulti={isMultiOperator}
 					onLoadMore={loadMoreOptions}
+					searchOptions={searchOptions}
+					fetchSelectedOption={fetchSelectedOption}
 				/>
 				: null}
 
