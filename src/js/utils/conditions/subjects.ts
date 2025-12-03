@@ -101,7 +101,14 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		fetchPagedOptions: (api, page) =>
 			api.get<PostsSchema>(`${REST_BASE}/wp/v2/posts?page=${page}`).then(posts =>
 				posts.map(post =>
-					({ value: post.id, label: post.title.rendered })))
+					({ value: post.id, label: post.title.rendered }))),
+		searchOptions: (api, searchTerm) =>
+			api.get<PostsSchema>(`${REST_BASE}/wp/v2/posts?search=${encodeURIComponent(searchTerm)}`).then(posts =>
+				posts.map(post =>
+					({ value: post.id, label: post.title.rendered }))),
+		fetchOptionByValue: (api, value) =>
+			api.get<PostsSchema>(`${REST_BASE}/wp/v2/posts?include=${value}`).then(posts =>
+				posts[0] ? { value: posts[0].id, label: posts[0].title.rendered } : null)
 	},
 	page: {
 		group: 'posts',
@@ -110,7 +117,14 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		fetchPagedOptions: (api, page) =>
 			api.get<PagesSchema>(`${REST_BASE}/wp/v2/pages?page=${page}`).then(pages =>
 				pages.map(page =>
-					({ value: page.id, label: page.title.rendered })))
+					({ value: page.id, label: page.title.rendered }))),
+		searchOptions: (api, searchTerm) =>
+			api.get<PagesSchema>(`${REST_BASE}/wp/v2/pages?search=${encodeURIComponent(searchTerm)}`).then(pages =>
+				pages.map(page =>
+					({ value: page.id, label: page.title.rendered }))),
+		fetchOptionByValue: (api, value) =>
+			api.get<PagesSchema>(`${REST_BASE}/wp/v2/pages?include=${value}`).then(pages =>
+				pages[0] ? { value: pages[0].id, label: pages[0].title.rendered } : null)
 	},
 	postType: {
 		group: 'posts',
@@ -128,7 +142,14 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		fetchPagedOptions: (api, page) =>
 			api.get<Categories>(`${REST_BASE}/wp/v2/categories?page=${page}`).then(categories =>
 				categories.map(category =>
-					({ value: category.id, label: category.name })))
+					({ value: category.id, label: category.name }))),
+		searchOptions: (api, searchTerm) =>
+			api.get<Categories>(`${REST_BASE}/wp/v2/categories?search=${encodeURIComponent(searchTerm)}`).then(categories =>
+				categories.map(category =>
+					({ value: category.id, label: category.name }))),
+		fetchOptionByValue: (api, value) =>
+			api.get<Categories>(`${REST_BASE}/wp/v2/categories?include=${value}`).then(categories =>
+				categories[0] ? { value: categories[0].id, label: categories[0].name } : null)
 	},
 	tag: {
 		group: 'posts',
@@ -137,7 +158,14 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		fetchPagedOptions: (api, page) =>
 			api.get<PostTags>(`${REST_BASE}/wp/v2/tags?page=${page}`).then(tags =>
 				tags.map(tag =>
-					({ value: tag.id, label: tag.name })))
+					({ value: tag.id, label: tag.name }))),
+		searchOptions: (api, searchTerm) =>
+			api.get<PostTags>(`${REST_BASE}/wp/v2/tags?search=${encodeURIComponent(searchTerm)}`).then(tags =>
+				tags.map(tag =>
+					({ value: tag.id, label: tag.name }))),
+		fetchOptionByValue: (api, value) =>
+			api.get<PostTags>(`${REST_BASE}/wp/v2/tags?include=${value}`).then(tags =>
+				tags[0] ? { value: tags[0].id, label: tags[0].name } : null)
 	},
 	author: {
 		group: 'posts',
@@ -145,7 +173,13 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		operators: CONDITION_OPERATORS.multiple,
 		fetchPagedOptions: (api, page) =>
 			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&page=${page}`)
-				.then(users => users.map(user => ({ value: user.id, label: user.name })))
+				.then(users => users.map(user => ({ value: user.id, label: user.name }))),
+		searchOptions: (api, searchTerm) =>
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&search=${encodeURIComponent(searchTerm)}`)
+				.then(users => users.map(user => ({ value: user.id, label: user.name }))),
+		fetchOptionByValue: (api, value) =>
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?include=${value}`)
+				.then(users => users[0] ? { value: users[0].id, label: users[0].name } : null)
 	},
 	postStatus: {
 		group: 'posts',
@@ -183,7 +217,15 @@ const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects
 			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?page=${page}&orderby=id`).then(users => [{
 				label: __('User ID', 'code-snippets'),
 				options: users.map(user => ({ value: user.id, label: `${user.id} (${user.name})` }))
-			}])
+			}]),
+		searchOptions: (api, searchTerm) =>
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?search=${encodeURIComponent(searchTerm)}&orderby=id`).then(users => [{
+				label: __('User ID', 'code-snippets'),
+				options: users.map(user => ({ value: user.id, label: `${user.id} (${user.name})` }))
+			}]),
+		fetchOptionByValue: (api, value) =>
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?include=${value}`)
+				.then(users => users[0] ? { value: users[0].id, label: `${users[0].id} (${users[0].name})` } : null)
 	},
 	userRole: {
 		group: 'users',
