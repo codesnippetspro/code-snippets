@@ -26,7 +26,7 @@ export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ result
 					alignItems: 'center', 
 					justifyContent: 'center',
 					flexShrink: 0,
-					marginTop: '2px'
+					marginBlockStart: '2px'
 				}}>
 					<span style={{ color: 'white', fontSize: '14px', fontWeight: 'bold' }}>
 						{result.success ? '✓' : '✕'}
