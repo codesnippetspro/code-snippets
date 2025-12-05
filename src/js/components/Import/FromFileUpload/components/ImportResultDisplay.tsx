@@ -54,7 +54,7 @@ export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ result
 					)}
 
 					{result.warnings && result.warnings.length > 0 && (
-						<div style={{ marginTop: '12px' }}>
+						<div style={{ marginBlockStart: '12px' }}>
 							<h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#d63638' }}>
 								{__('Warnings:', 'code-snippets')}
 							</h4>
