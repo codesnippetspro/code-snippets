@@ -43,7 +43,7 @@ export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = (
 							value="replace"
 							checked={value === 'replace'}
 							onChange={(e) => onChange(e.target.value as DuplicateAction)}
-							style={{ marginTop: '2px' }}
+							style={{ marginBlockStart: '2px' }}
 						/>
 						<span>
 							{__('Replace any existing snippets with a newly imported snippet of the same name.', 'code-snippets')}
