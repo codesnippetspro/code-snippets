@@ -58,7 +58,7 @@ export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ result
 							<h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#d63638' }}>
 								{__('Warnings:', 'code-snippets')}
 							</h4>
-							<ul style={{ margin: '0', paddingLeft: '20px' }}>
+							<ul style={{ margin: '0', paddingInlineStart: '20px' }}>
 								{result.warnings.map((warning, index) => (
 									<li key={index} style={{ color: '#666', fontSize: '14px' }}>
 										{warning}
