@@ -17,7 +17,7 @@ export const ImportSection: React.FC<ImportSectionProps> = ({
 }) => {
 	const sectionStyle: React.CSSProperties = {
 		display: active ? 'block' : 'none',
-		paddingTop: 0,
+		paddingBlockStart: 0,
 		...style
 	}
 
