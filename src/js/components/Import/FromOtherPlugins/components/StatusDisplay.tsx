@@ -28,7 +28,7 @@ export const StatusDisplay: React.FC<StatusDisplayProps> = ({
 				alignItems: 'center', 
 				justifyContent: 'center',
 				flexShrink: 0,
-				marginTop: '2px'
+				marginBlockStart: '2px'
 			}}>
 				<span style={{ color: 'white', fontSize: '14px', fontWeight: 'bold' }}>
 					{isError ? '✕' : '✓'}
