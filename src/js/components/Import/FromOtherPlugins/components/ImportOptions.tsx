@@ -34,7 +34,7 @@ export const ImportOptions: React.FC<ImportOptionsProps> = ({
 						</span>
 					</div>
 					{autoAddTags && (
-						<div style={{ marginTop: '12px' }}>
+						<div style={{ marginBlockStart: '12px' }}>
 							<input
 								type="text"
 								value={tagValue}
