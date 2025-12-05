@@ -12,7 +12,7 @@ export const SelectedFilesList: React.FC<SelectedFilesListProps> = ({
 	onRemoveFile
 }) => {
 	return (
-		<div className="selected-files" style={{ marginBottom: '20px' }}>
+		<div className="selected-files" style={{ marginBlockEnd: '20px' }}>
 			<h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600' }}>
 				{__('Selected Files:', 'code-snippets')} ({files.length})
 			</h3>
