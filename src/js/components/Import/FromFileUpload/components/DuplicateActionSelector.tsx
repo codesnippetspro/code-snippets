@@ -29,7 +29,7 @@ export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = (
 							value="ignore"
 							checked={value === 'ignore'}
 							onChange={(e) => onChange(e.target.value as DuplicateAction)}
-							style={{ marginTop: '2px' }}
+							style={{ marginBlockStart: '2px' }}
 						/>
 						<span>
 							{__('Ignore any duplicate snippets: import all snippets from the file regardless and leave all existing snippets unchanged.', 'code-snippets')}
