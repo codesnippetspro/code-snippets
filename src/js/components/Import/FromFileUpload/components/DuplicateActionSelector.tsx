@@ -57,7 +57,7 @@ export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = (
 							value="skip"
 							checked={value === 'skip'}
 							onChange={(e) => onChange(e.target.value as DuplicateAction)}
-							style={{ marginTop: '2px' }}
+							style={{ marginBlockStart: '2px' }}
 						/>
 						<span>
 							{__('Do not import any duplicate snippets; leave all existing snippets unchanged.', 'code-snippets')}
