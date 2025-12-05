@@ -38,7 +38,7 @@ export const DragDropUploadArea: React.FC<DragDropUploadAreaProps> = ({
 					textAlign: 'center',
 					cursor: disabled ? 'not-allowed' : 'pointer',
 					backgroundColor: dragOver ? '#f0f6fc' : disabled ? '#f6f7f7' : '#fafafa',
-					marginBottom: '20px',
+					marginBlockEnd: '20px',
 					transition: 'all 0.3s ease',
 					opacity: disabled ? 0.6 : 1
 				}}
