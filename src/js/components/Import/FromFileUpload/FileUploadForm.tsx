@@ -146,7 +146,7 @@ export const FileUploadForm: React.FC = () => {
 								</p>
 							</div>
 							<div>
-								<Button onClick={snippetSelection.handleSelectAll} style={{ marginRight: '10px' }}>
+								<Button onClick={snippetSelection.handleSelectAll} style={{ marginInlineEnd: '10px' }}>
 									{snippetSelection.isAllSelected 
 										? __('Deselect All', 'code-snippets')
 										: __('Select All', 'code-snippets')
