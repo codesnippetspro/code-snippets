@@ -16,7 +16,7 @@ export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = (
 	return (
 		<ImportCard>
 			<h2 style={{ margin: '0 0 1em 0' }}>{__('Duplicate Snippets', 'code-snippets')}</h2>
-			<p className="description" style={{ marginBottom: '1em' }}>
+			<p className="description" style={{ marginBlockEnd: '1em' }}>
 				{__('What should happen if an existing snippet is found with an identical name to an imported snippet?', 'code-snippets')}
 			</p>
 			
