@@ -95,7 +95,7 @@ export const FileUploadForm: React.FC = () => {
 
 								<ImportCard>
 									<h2 style={{ margin: '0 0 1em 0' }}>{__('Choose Files', 'code-snippets')}</h2>
-									<p className="description" style={{ marginBottom: '1em' }}>
+									<p className="description" style={{ marginBlockEnd: '1em' }}>
 										{__('Choose one or more Code Snippets (.xml or .json) files to parse and preview.', 'code-snippets')}
 									</p>
 
