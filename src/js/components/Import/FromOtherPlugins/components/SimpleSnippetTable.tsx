@@ -81,7 +81,7 @@ export const SimpleSnippetTable: React.FC<SimpleSnippetTableProps> = ({
 			</table>
 			
 			<div style={{ textAlign: 'end', marginTop: '1em' }}>
-				<Button onClick={onSelectAll} style={{ marginRight: '10px' }}>
+				<Button onClick={onSelectAll} style={{ marginInlineEnd: '10px' }}>
 					{isAllSelected
 						? __('Deselect All', 'code-snippets')
 						: __('Select All', 'code-snippets')
