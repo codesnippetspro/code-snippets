@@ -172,7 +172,7 @@ export const FileUploadForm: React.FC = () => {
 							onSelectAll={snippetSelection.handleSelectAll}
 						/>
 						
-						<div style={{ textAlign: 'end', marginTop: '1em' }}>
+						<div style={{ textAlign: 'end', marginBlockStart: '1em' }}>
 							<Button onClick={snippetSelection.handleSelectAll} style={{ marginInlineEnd: '10px' }}>
 								{snippetSelection.isAllSelected 
 									? __('Deselect All', 'code-snippets')
