@@ -27,27 +27,20 @@ class Elementor_Pro {
 		if ( ! $this->is_custom_code_screen() ) {
 			return;
 		}
-
 		?>
-		<div class="notice notice-info is-dismissibleX">
+		<div class="notice notice-info is-dismissible">
 			<p>
-				<strong><?php esc_html_e( '💡 Looking for a better way to manage custom code?', 'code-snippets' ); ?></strong>
+				<strong><?php esc_html_e( 'Looking for a better way to manage your custom code?', 'code-snippets' ); ?></strong>
 			</p>
 			<p>
-				<?php
-				printf(
-					/* translators: %s: Code Snippets plugin name */
-					esc_html__( '%s provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ),
-					'<strong>Code Snippets Pro</strong>'
-				);
-				?>
+				<?php esc_html_e( 'Code Snippets Pro provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ); ?>
 			</p>
 			<p>
-				<a href="<?php echo esc_url( 'https://codesnippets.pro/pricing/?utm_source=elementor&utm_medium=banner&utm_campaign=custom-code' ); ?>" class="button button-primary" target="_blank">
-					<?php esc_html_e( 'Learn More', 'code-snippets' ); ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=snippets' ) ); ?>" class="button button-primary">
+					<?php esc_html_e( 'Manage your snippets', 'code-snippets' ); ?>
 				</a>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=snippets' ) ); ?>" class="button button-secondary">
-					<?php esc_html_e( 'Try Code Snippets', 'code-snippets' ); ?>
+				<a href="https://codesnippets.pro/pricing/?utm_source=elementor&utm_medium=banner&utm_campaign=custom-code" class="button button-secondary" target="_blank">
+					<?php esc_html_e( 'Learn More', 'code-snippets' ); ?>
 				</a>
 			</p>
 		</div>
@@ -101,13 +94,37 @@ class Elementor_Pro {
 				'type' => \Elementor\Controls_Manager::NOTICE,
 				'notice_type' => 'info',
 				'dismissible' => true,
-				'heading' => esc_html__( 'Manage your custom code', 'code-snippets' ),
-				'content' => sprintf(
-					/* translators: %s: Code Snippets plugin name */
-					esc_html__( '%s provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ),
-					'<strong>Code Snippets Pro</strong>'
-				),
+				'heading' => esc_html__( 'Manage your custom styles', 'code-snippets' ),
+				'content' => $this->get_promotion_content(),
 			]
 		);
+	}
+
+	/**
+	 * Get the promotion content with appropriate link.
+	 *
+	 * @return string
+	 */
+	private function get_promotion_content(): string {
+		$message = esc_html__( 'Code Snippets Pro provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, conditional logic, and advanced features.', 'code-snippets' );
+
+		if ( $this->is_pro() ) {
+			$link_text = esc_html__( 'Manage CSS snippets', 'code-snippets' );
+			$url = admin_url( 'admin.php?page=snippets&type=css' );
+		} else {
+			$link_text = esc_html__( 'Learn More', 'code-snippets' );
+			$url = 'https://codesnippets.pro/pricing/?utm_source=elementor&utm_medium=banner&utm_campaign=elementor-addon-custom-code';
+		}
+
+		return sprintf( '%s <br><br><a href="%s" target="_blank" class="e-btn e-info" style="color:#fff;">%s</a>', $message, $url, $link_text );
+	}
+
+	/**
+	 * Check if pro version is installed and active.
+	 *
+	 * @return bool
+	 */
+	private function is_pro(): bool {
+		return defined( 'CODE_SNIPPETS_PRO' ) && CODE_SNIPPETS_PRO;
 	}
 }
