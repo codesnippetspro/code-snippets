@@ -95,58 +95,18 @@ class Elementor_Pro {
 	 * @param \Elementor\Widget_Base|\Elementor\Element_Base $element The Elementor element.
 	 */
 	public function add_promotion_to_custom_css_section( $element ) {
-
-		$element->add_control(
-			'code_snippets_promotion_alert',
-			[
-				'type' => \Elementor\Controls_Manager::ALERT,
-				'alert_type' => 'warning',
-				'content' => esc_html__( 'Set locations and angle for each breakpoint to ensure the gradient adapts to different screen sizes.', 'code-snippets' ),
-				'render_type' => 'ui',
-			]
-		);
-
 		$element->add_control(
 			'code_snippets_promotion_notice',
 			[
 				'type' => \Elementor\Controls_Manager::NOTICE,
 				'notice_type' => 'info',
 				'dismissible' => true,
-				'heading' => esc_html__( '💡 Looking for a better way to manage custom code?', 'code-snippets' ),
+				'heading' => esc_html__( 'Manage your custom code', 'code-snippets' ),
 				'content' => sprintf(
 					/* translators: %s: Code Snippets plugin name */
 					esc_html__( '%s provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ),
 					'<strong>Code Snippets Pro</strong>'
 				),
-			]
-		);
-
-		$element->add_control(
-			'code_snippets_promotion_raw_html',
-			[
-				'type'    => \Elementor\Controls_Manager::RAW_HTML,
-				'raw'     => sprintf(
-					'<div style="padding:12px;">
-						<h3 style="margin-top:0; margin-bottom:8px; font-size:15px;">
-							%s
-						</h3>
-						<p style="margin: 0 0 10px;">
-							%s
-						</p>
-						<a href="%s" target="_blank" style="display:inline-block; padding:8px 14px; border-radius:4px; text-decoration:none; font-weight:500; border:1px solid #d33;">
-							%s
-						</a>
-					</div>',
-					esc_html__( '💡 Looking for a better way to manage custom code?', 'code-snippets' ),
-					sprintf(
-						/* translators: %s: Code Snippets plugin name */
-						esc_html__( '%s provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ),
-						'<strong>Code Snippets Pro</strong>'
-					),
-					esc_url( 'https://example.com/promo' ), // <-- Change to your promo URL.
-					esc_html__( 'Learn More', 'code-snippets' )
-				),
-				'content_classes' => 'your-promo-class',
 			]
 		);
 	}
