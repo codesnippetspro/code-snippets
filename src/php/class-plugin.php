@@ -156,6 +156,9 @@ class Plugin {
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 		$this->licensing = new Licensing();
+
+		// Initialize promotions.
+		new Promotions\Elementor_Pro();
 	}
 
 	/**
