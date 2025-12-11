@@ -230,17 +230,18 @@ class Version_Switch {
 			return self::create_error_response( $install_result->get_error_message() );
 		}
 
-		if ( $install_result ) {
-			delete_transient( VERSION_CACHE_KEY );
+			if ( $install_result ) {
+				delete_transient( VERSION_CACHE_KEY );
 
-			return [
-				'success' => true,
-				'message' => sprintf( __( 'Successfully switched to version %s. Please refresh the page to see changes.', 'code-snippets' ), $target_version ),
-			];
+				return [
+					'success' => true,
+					/* translators: %s: the version number that was switched to. */
+					'message' => sprintf( __( 'Successfully switched to version %s. Please refresh the page to see changes.', 'code-snippets' ), $target_version ),
+				];
+			}
+
+			return self::handle_installation_failure( $target_version, $validation['download_url'], $install_result );
 		}
-
-		return self::handle_installation_failure( $target_version, $validation['download_url'], $install_result );
-	}
 
 	public static function render_version_switch_field( array $args ): void {
 		$current_version = self::get_current_version();
@@ -291,7 +292,7 @@ class Version_Switch {
 
 	public static function ajax_switch_version(): void {
 		if ( ! wp_verify_nonce( $_POST['nonce'] ?? '', 'code_snippets_version_switch' ) ) {
-			wp_die( __( 'Security check failed.', 'code-snippets' ) );
+			wp_die( esc_html__( 'Security check failed.', 'code-snippets' ) );
 		}
 
 		if ( ! current_user_can( 'update_plugins' ) ) {
@@ -329,7 +330,7 @@ class Version_Switch {
 
 	public static function ajax_refresh_versions(): void {
 		if ( ! wp_verify_nonce( $_POST['nonce'] ?? '', 'code_snippets_refresh_versions' ) ) {
-			wp_die( __( 'Security check failed.', 'code-snippets' ) );
+			wp_die( esc_html__( 'Security check failed.', 'code-snippets' ) );
 		}
 
 		if ( ! current_user_can( 'manage_options' ) ) {

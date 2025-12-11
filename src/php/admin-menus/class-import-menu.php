@@ -128,30 +128,36 @@ class Import_Menu extends Admin_Menu {
 			echo '</p></div>';
 		}
 
-		if ( isset( $_REQUEST['imported'] ) ) {
-			echo '<div id="message" class="updated fade"><p>';
+			if ( isset( $_REQUEST['imported'] ) ) {
+				echo '<div id="message" class="updated fade"><p>';
 
-			$imported = intval( $_REQUEST['imported'] );
+				$imported = intval( $_REQUEST['imported'] );
 
-			if ( 0 === $imported ) {
-				esc_html_e( 'No snippets were imported.', 'code-snippets' );
+				if ( 0 === $imported ) {
+					esc_html_e( 'No snippets were imported.', 'code-snippets' );
 
-			} else {
-				/* translators: %d: amount of snippets imported */
-				printf(
-					_n(
-						'Successfully imported %d snippet.',
-						'Successfully imported %d snippets.',
-						$imported,
-						'code-snippets'
-					),
-					'<strong>' . number_format_i18n( $imported ) . '</strong>',
-				);
+				} else {
+					$imported_count = sprintf( '<strong>%s</strong>', esc_html( number_format_i18n( $imported ) ) );
+					printf(
+						'%s',
+						wp_kses_post(
+							sprintf(
+								/* translators: %s: number of snippets imported. */
+								_n(
+									'Successfully imported %s snippet.',
+									'Successfully imported %s snippets.',
+									$imported,
+									'code-snippets'
+								),
+								$imported_count
+							)
+						)
+					);
 
-				printf(
-					' <a href="%s">%s</a>',
-					esc_url( code_snippets()->get_menu_url( 'manage' ) ),
-					esc_html__( 'Have fun!', 'code-snippets' )
+					printf(
+						' <a href="%s">%s</a>',
+						esc_url( code_snippets()->get_menu_url( 'manage' ) ),
+						esc_html__( 'Have fun!', 'code-snippets' )
 				);
 			}
 
