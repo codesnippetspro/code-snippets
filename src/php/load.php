@@ -50,15 +50,15 @@ $code_snippets_autoloader = require dirname( __DIR__ ) . '/vendor/autoload.php';
 // Since Imposter rewrites namespaces to Code_Snippets\Vendor\*, we need to remove the original PSR-4
 // mappings that Composer generates so other plugins can load their own copies of these libraries.
 if ( $code_snippets_autoloader instanceof \Composer\Autoload\ClassLoader ) {
-	$prefixes = $code_snippets_autoloader->getPrefixesPsr4();
-	$our_prefix = 'Code_Snippets\\Vendor\\';
+	$code_snippets_prefixes = $code_snippets_autoloader->getPrefixesPsr4();
+	$code_snippets_vendor_prefix = 'Code_Snippets\\Vendor\\';
 	
-	foreach ( $prefixes as $namespace => $paths ) {
+	foreach ( $code_snippets_prefixes as $code_snippets_namespace => $code_snippets_paths ) {
 		// Remove any non-Code_Snippets namespace that has a corresponding prefixed version
-		if ( strpos( $namespace, $our_prefix ) === false ) {
-			$prefixed_namespace = $our_prefix . $namespace;
-			if ( isset( $prefixes[ $prefixed_namespace ] ) ) {
-				$code_snippets_autoloader->setPsr4( $namespace, [] );
+		if ( strpos( $code_snippets_namespace, $code_snippets_vendor_prefix ) === false ) {
+			$code_snippets_prefixed_namespace = $code_snippets_vendor_prefix . $code_snippets_namespace;
+			if ( isset( $code_snippets_prefixes[ $code_snippets_prefixed_namespace ] ) ) {
+				$code_snippets_autoloader->setPsr4( $code_snippets_namespace, [] );
 			}
 		}
 	}

@@ -20,8 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-$types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin::get_types() );
-$current_type = $this->get_current_type();
+$code_snippets_types = array_merge( [ 'all' => __( 'All Snippets', 'code-snippets' ) ], Plugin::get_types() );
+$code_snippets_current_type = $this->get_current_type();
 
 if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 	echo '<div class="notice beta-test-notice"><p id="beta-testing">';
@@ -54,9 +54,9 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 	<?php $this->print_messages(); ?>
 
 	<h2 class="nav-tab-wrapper" id="snippet-type-tabs">
-		<?php
+			<?php
 
-		Admin::render_snippet_type_tabs( $types, $current_type );
+			Admin::render_snippet_type_tabs( $code_snippets_types, $code_snippets_current_type );
 
 		if ( ! get_setting( 'general', 'hide_upgrade_menu' ) ) { ?>
 			<a class="button button-large nav-tab-button nav-tab-inactive"
@@ -70,12 +70,12 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 
 	<?php
 
-	$type_info = [
-		'php'   => [
-			__( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
-			__( 'Learn more about function snippets &rarr;', 'code-snippets' ),
-			'https://codesnippets.pro/learn-php/',
-		],
+		$code_snippets_type_info = [
+			'php'   => [
+				__( 'Function snippets are run on your site as if there were in a plugin or theme functions.php file.', 'code-snippets' ),
+				__( 'Learn more about function snippets &rarr;', 'code-snippets' ),
+				'https://codesnippets.pro/learn-php/',
+			],
 		'html'  => [
 			__( 'Content snippets are bits of reusable PHP and HTML content that can be inserted into posts and pages.', 'code-snippets' ),
 			__( 'Learn more about content snippets &rarr;', 'code-snippets' ),
@@ -95,35 +95,35 @@ if ( false !== strpos( code_snippets()->version, 'beta' ) ) {
 			__( 'See all your public and private snippets that are stored in your Code Snippet Cloud codevault.', 'code-snippets' ),
 			__( 'Learn more about Code Snippets Cloud &rarr;', 'code-snippets' ),
 			'https://codesnippets.cloud/getstarted/',
-		],
-	];
+			],
+		];
 
 
-	if ( isset( $type_info[ $current_type ] ) ) {
-		$info = $type_info[ $current_type ];
+		if ( isset( $code_snippets_type_info[ $code_snippets_current_type ] ) ) {
+			$code_snippets_current_type_info = $code_snippets_type_info[ $code_snippets_current_type ];
 
-		printf(
-			'<p class="snippet-type-description">%s <a href="%s" target="_blank">%s</a></p>',
-			esc_html( $info[0] ),
-			esc_url( $info[2] ),
-			esc_html( $info[1] )
-		);
-	}
+			printf(
+				'<p class="snippet-type-description">%s <a href="%s" target="_blank">%s</a></p>',
+				esc_html( $code_snippets_current_type_info[0] ),
+				esc_url( $code_snippets_current_type_info[2] ),
+				esc_html( $code_snippets_current_type_info[1] )
+			);
+		}
 
 	do_action( 'code_snippets/admin/manage/before_list_table' );
 	$this->list_table->views();
 
-	switch ( $current_type ) {
-		case 'cloud_search':
-			include_once 'partials/cloud-search.php';
-			break;
+		switch ( $code_snippets_current_type ) {
+			case 'cloud_search':
+				include_once 'partials/cloud-search.php';
+				break;
 
-		default:
-			include_once 'partials/list-table.php';
-			break;
-	}
+			default:
+				include_once 'partials/list-table.php';
+				break;
+		}
 
-	do_action( 'code_snippets/admin/manage', $current_type );
+		do_action( 'code_snippets/admin/manage', $code_snippets_current_type );
 
 	?>
 </div>
