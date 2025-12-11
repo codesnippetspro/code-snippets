@@ -18,7 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-$max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size() );
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook name expected by WordPress importers.
+$code_snippets_max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size() );
 
 ?>
 <div class="wrap">
@@ -40,18 +41,18 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 
 		<p><?php esc_html_e( 'Upload one or more Code Snippets export files and the snippets will be imported.', 'code-snippets' ); ?></p>
 
-		<p>
-			<?php
-			/* translators: %s: link to snippets admin menu */
-			$text = __( 'Afterward, you will need to visit the <a href="%s" >All Snippets</a> page to activate the imported snippets.', 'code-snippets' );
-			$url = esc_url( code_snippets()->get_menu_url( 'manage' ) );
+			<p>
+				<?php
+				/* translators: %s: link to snippets admin menu */
+				$code_snippets_import_notice = __( 'Afterward, you will need to visit the <a href="%s" >All Snippets</a> page to activate the imported snippets.', 'code-snippets' );
+				$code_snippets_manage_url = esc_url( code_snippets()->get_menu_url( 'manage' ) );
 
-			echo wp_kses(
-				sprintf( $text, $url ),
-				array(
-					'a' => array(
-						'href'   => array(),
-						'target' => array(),
+				echo wp_kses(
+					sprintf( $code_snippets_import_notice, $code_snippets_manage_url ),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
 					),
 				)
 			);
@@ -98,17 +99,17 @@ $max_size_bytes = apply_filters( 'import_upload_size_limit', wp_max_upload_size(
 			</p>
 
 			<fieldset>
-				<p>
-					<label for="upload"><?php esc_html_e( 'Choose files from your computer:', 'code-snippets' ); ?></label>
-					<?php
-					/* translators: %s: size in bytes */
-					printf( esc_html__( '(Maximum size: %s)', 'code-snippets' ), esc_html( size_format( $max_size_bytes ) ) ); ?>
-					<input type="file" id="upload" name="code_snippets_import_files[]" size="25"
-					       accept="application/json,.json,text/xml" multiple="multiple">
-					<input type="hidden" name="action" value="save">
-					<input type="hidden" name="max_file_size" value="<?php echo esc_attr( $max_size_bytes ); ?>">
-				</p>
-			</fieldset>
+					<p>
+						<label for="upload"><?php esc_html_e( 'Choose files from your computer:', 'code-snippets' ); ?></label>
+						<?php
+						/* translators: %s: size in bytes */
+						printf( esc_html__( '(Maximum size: %s)', 'code-snippets' ), esc_html( size_format( $code_snippets_max_size_bytes ) ) ); ?>
+						<input type="file" id="upload" name="code_snippets_import_files[]" size="25"
+						       accept="application/json,.json,text/xml" multiple="multiple">
+						<input type="hidden" name="action" value="save">
+						<input type="hidden" name="max_file_size" value="<?php echo esc_attr( $code_snippets_max_size_bytes ); ?>">
+					</p>
+				</fieldset>
 
 			<?php
 

@@ -14,8 +14,8 @@ namespace Code_Snippets;
  * @var Manage_Menu $this
  */
 
-$search_query = isset( $_REQUEST['cloud_search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) ) : '';
-$cloud_select = sanitize_key( wp_unslash( $_REQUEST['cloud_select'] ?? '' ) );
+$code_snippets_search_query = isset( $_REQUEST['cloud_search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cloud_search'] ) ) : '';
+$code_snippets_cloud_select = sanitize_key( wp_unslash( $_REQUEST['cloud_select'] ?? '' ) );
 
 ?>
 
@@ -30,32 +30,32 @@ $cloud_select = sanitize_key( wp_unslash( $_REQUEST['cloud_select'] ?? '' ) );
 <form method="get" action="" id="cloud-search-form">
 	<?php List_Table::required_form_fields( 'search_box' ); ?>
 	<label class="screen-reader-text" for="cloud_search">
-		<?php esc_html_e( 'Search cloud snippets', 'code-snippets' ); ?>
-	</label>
-	<?php
-	if ( isset( $_REQUEST['type'] ) ) {
-		printf( '<input type="hidden" name="type" value="%s">', esc_attr( sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) ) );
+			<?php esc_html_e( 'Search cloud snippets', 'code-snippets' ); ?>
+		</label>
+		<?php
+		if ( isset( $_REQUEST['type'] ) ) {
+			printf( '<input type="hidden" name="type" value="%s">', esc_attr( sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) ) );
 	}
 	?>
 	<div class="heading-box">
 		<p class="cloud-search-heading">
 			<label for="cloud-select-prepend"><?php esc_html_e( 'Search Cloud', 'code-snippets' ); ?></label>
 		</p>
-	</div>
-	<div class="input-group">
-		<select id="cloud-select-prepend" class="select-prepend" name="cloud_select">
-			<option value="term"<?php selected( $cloud_select, 'term' ); ?>>
-				<?php esc_html_e( 'Search by keyword(s)', 'code-snippets' ); ?>
-			</option>
-			<option value="codevault"<?php selected( $cloud_select, 'codevault' ); ?>>
-				<?php esc_html_e( 'Name of codevault', 'code-snippets' ); ?>
-			</option>
-		</select>
-		<input type="text" id="cloud_search" name="cloud_search" class="cloud_search"
-		       value="<?php echo esc_html( $search_query ); ?>"
-		       placeholder="<?php esc_attr_e( 'e.g. Remove unused javascript…', 'code-snippets' ); ?>">
+		</div>
+		<div class="input-group">
+			<select id="cloud-select-prepend" class="select-prepend" name="cloud_select">
+				<option value="term"<?php selected( $code_snippets_cloud_select, 'term' ); ?>>
+					<?php esc_html_e( 'Search by keyword(s)', 'code-snippets' ); ?>
+				</option>
+				<option value="codevault"<?php selected( $code_snippets_cloud_select, 'codevault' ); ?>>
+					<?php esc_html_e( 'Name of codevault', 'code-snippets' ); ?>
+				</option>
+			</select>
+			<input type="text" id="cloud_search" name="cloud_search" class="cloud_search"
+			       value="<?php echo esc_html( $code_snippets_search_query ); ?>"
+			       placeholder="<?php esc_attr_e( 'e.g. Remove unused javascript…', 'code-snippets' ); ?>">
 
-		<button type="submit" id="cloud-search-submit" class="button">
+			<button type="submit" id="cloud-search-submit" class="button">
 			<?php esc_html_e( 'Search Cloud', 'code-snippets' ); ?>
 			<span class="dashicons dashicons-search cloud-search"></span>
 		</button>
@@ -68,7 +68,7 @@ $cloud_select = sanitize_key( wp_unslash( $_REQUEST['cloud_select'] ?? '' ) );
 	<?php
 	List_Table::required_form_fields();
 
-	if ( $search_query ) {
+	if ( $code_snippets_search_query ) {
 		$this->cloud_search_list_table->display();
 	}
 
