@@ -618,17 +618,21 @@ class List_Table extends WP_List_Table {
 						continue 2;
 					}
 
-					$shared_label_template = $this->is_network
-						? _n_noop(
+					if ( $this->is_network ) {
+						/* translators: %s: total number of snippets shared with subsites. */
+						$shared_label_template = _n_noop(
 							'Shared with Subsites <span class="count">(%s)</span>',
 							'Shared with Subsites <span class="count">(%s)</span>',
 							'code-snippets'
-						)
-						: _n_noop(
+						);
+					} else {
+						/* translators: %s: total number of network snippets. */
+						$shared_label_template = _n_noop(
 							'Network Snippets <span class="count">(%s)</span>',
 							'Network Snippets <span class="count">(%s)</span>',
 							'code-snippets'
 						);
+					}
 
 					$template = translate_nooped_plural( $shared_label_template, $count, 'code-snippets' );
 					break;
@@ -663,16 +667,16 @@ class List_Table extends WP_List_Table {
 	 * @since 2.0
 	 */
 	public function get_current_tags() {
-		global $snippets, $status;
+		global $code_snippets_snippets, $status;
 
 		// If we're not viewing a snippets table, get all used tags instead.
-		if ( ! isset( $snippets, $status ) ) {
+		if ( ! isset( $code_snippets_snippets, $status ) ) {
 			$tags = get_all_snippet_tags();
 		} else {
 			$tags = array();
 
 			// Merge all tags into a single array.
-			foreach ( $snippets[ $status ] as $snippet ) {
+			foreach ( $code_snippets_snippets[ $status ] as $snippet ) {
 				$tags = array_merge( $snippet->tags, $tags );
 			}
 
@@ -1088,12 +1092,12 @@ class List_Table extends WP_List_Table {
 		/**
 		 * Global variables.
 		 *
-		 * @var string                   $status   Current status view.
-		 * @var array<string, Snippet[]> $snippets List of snippets for views.
-		 * @var array<string, integer>   $totals   List of total items for views.
-		 * @var string                   $s        Current search term.
+		 * @var string                   $status                 Current status view.
+		 * @var array<string, Snippet[]> $code_snippets_snippets List of snippets for views.
+		 * @var array<string, integer>   $totals                 List of total items for views.
+		 * @var string                   $s                      Current search term.
 		 */
-		global $status, $snippets, $totals, $s;
+		global $status, $code_snippets_snippets, $totals, $s;
 
 		wp_reset_vars( array( 'orderby', 'order', 's' ) );
 
@@ -1107,21 +1111,21 @@ class List_Table extends WP_List_Table {
 		}
 
 		$this->process_requested_actions();
-		$snippets = array_fill_keys( $this->statuses, array() );
+		$code_snippets_snippets = array_fill_keys( $this->statuses, array() );
 
 		$all_snippets = apply_filters( 'code_snippets/list_table/get_snippets', $this->fetch_shared_network_snippets( get_snippets() ) );
 
 		// Separate trashed snippets from the main collection
-		$snippets['trashed'] = array_filter( $all_snippets, function( $snippet ) {
+		$code_snippets_snippets['trashed'] = array_filter( $all_snippets, function( $snippet ) {
 			return $snippet->is_trashed();
 		});
 
 		// Filter out trashed snippets from the 'all' collection
-		$snippets['all'] = array_filter( $all_snippets, function( $snippet ) {
+		$code_snippets_snippets['all'] = array_filter( $all_snippets, function( $snippet ) {
 			return ! $snippet->is_trashed();
 		});
 
-		foreach ( $snippets['all'] as $snippet ) {
+		foreach ( $code_snippets_snippets['all'] as $snippet ) {
 			if ( $snippet->active ) {
 				$this->active_by_condition[ $snippet->condition_id ][] = $snippet;
 			}
@@ -1131,16 +1135,16 @@ class List_Table extends WP_List_Table {
 		$type = sanitize_key( wp_unslash( $_GET['type'] ?? '' ) );
 
 		if ( $type && 'all' !== $type ) {
-			$snippets['all'] = array_filter(
-				$snippets['all'],
+			$code_snippets_snippets['all'] = array_filter(
+				$code_snippets_snippets['all'],
 				function ( Snippet $snippet ) use ( $type ) {
 					return $type === $snippet->type;
 				}
 			);
 
 			// Filter trashed snippets by type
-			$snippets['trashed'] = array_filter(
-				$snippets['trashed'],
+			$code_snippets_snippets['trashed'] = array_filter(
+				$code_snippets_snippets['trashed'],
 				function ( Snippet $snippet ) use ( $type ) {
 					return $type === $snippet->type;
 				}
@@ -1148,13 +1152,13 @@ class List_Table extends WP_List_Table {
 		}
 
 		// Add scope tags to all snippets (including trashed).
-		foreach ( $snippets['all'] as $snippet ) {
+		foreach ( $code_snippets_snippets['all'] as $snippet ) {
 			if ( 'global' !== $snippet->scope ) {
 				$snippet->add_tag( $snippet->scope );
 			}
 		}
 		
-		foreach ( $snippets['trashed'] as $snippet ) {
+		foreach ( $code_snippets_snippets['trashed'] as $snippet ) {
 			if ( 'global' !== $snippet->scope ) {
 				$snippet->add_tag( $snippet->scope );
 			}
@@ -1162,27 +1166,27 @@ class List_Table extends WP_List_Table {
 
 		// Filter snippets by tag.
 		if ( ! empty( $_GET['tag'] ) ) {
-			$snippets['all'] = array_filter( $snippets['all'], array( $this, 'tags_filter_callback' ) );
-			$snippets['trashed'] = array_filter( $snippets['trashed'], array( $this, 'tags_filter_callback' ) );
+			$code_snippets_snippets['all'] = array_filter( $code_snippets_snippets['all'], array( $this, 'tags_filter_callback' ) );
+			$code_snippets_snippets['trashed'] = array_filter( $code_snippets_snippets['trashed'], array( $this, 'tags_filter_callback' ) );
 		}
 
 		// Filter snippets based on search query.
 		if ( $s ) {
-			$snippets['all'] = array_filter( $snippets['all'], array( $this, 'search_by_line_callback' ) );
-			$snippets['trashed'] = array_filter( $snippets['trashed'], array( $this, 'search_by_line_callback' ) );
+			$code_snippets_snippets['all'] = array_filter( $code_snippets_snippets['all'], array( $this, 'search_by_line_callback' ) );
+			$code_snippets_snippets['trashed'] = array_filter( $code_snippets_snippets['trashed'], array( $this, 'search_by_line_callback' ) );
 		}
 
 		if ( is_multisite() ) {
-			$snippets['shared_network'] = array_values(
+			$code_snippets_snippets['shared_network'] = array_values(
 				array_filter(
-					$snippets['all'],
+					$code_snippets_snippets['all'],
 					static function ( Snippet $snippet ) {
 						return $snippet->shared_network;
 					}
 				)
 			);
 		} else {
-			$snippets['shared_network'] = array();
+			$code_snippets_snippets['shared_network'] = array();
 		}
 
 		// Clear recently activated snippets older than a week.
@@ -1205,20 +1209,20 @@ class List_Table extends WP_List_Table {
 		 *
 		 * @var Snippet $snippet
 		 */
-		foreach ( $snippets['all'] as $snippet ) {
+		foreach ( $code_snippets_snippets['all'] as $snippet ) {
 			// Skip trashed snippets (they're already in their own section)
 			if ( $snippet->is_trashed() ) {
 				continue;
 			}
 
 			if ( $snippet->active || $this->is_condition_active( $snippet ) ) {
-				$snippets['active'][] = $snippet;
+				$code_snippets_snippets['active'][] = $snippet;
 			} else {
-				$snippets['inactive'][] = $snippet;
+				$code_snippets_snippets['inactive'][] = $snippet;
 
 				// Was the snippet recently deactivated?
 				if ( isset( $recently_activated[ $snippet->id ] ) ) {
-					$snippets['recently_activated'][] = $snippet;
+					$code_snippets_snippets['recently_activated'][] = $snippet;
 				}
 			}
 		}
@@ -1228,16 +1232,16 @@ class List_Table extends WP_List_Table {
 			function ( $section_snippets ) {
 				return count( $section_snippets );
 			},
-			$snippets
+			$code_snippets_snippets
 		);
 
 		// If the current status is empty, default to all.
-		if ( empty( $snippets[ $status ] ) ) {
+		if ( empty( $code_snippets_snippets[ $status ] ) ) {
 			$status = 'all';
 		}
 
 		// Get the current data.
-		$data = $snippets[ $status ];
+		$data = $code_snippets_snippets[ $status ];
 
 		// Decide how many records per page to show by getting the user's setting in the Screen Options panel.
 		$sort_by = $this->screen->get_option( 'per_page', 'option' );

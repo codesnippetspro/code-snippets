@@ -21,14 +21,14 @@ namespace Code_Snippets;
  */
 if ( defined( 'CODE_SNIPPETS_SAFE_MODE' ) && CODE_SNIPPETS_SAFE_MODE ) {
 	?>
-	<div id="message" class="notice notice-error fade is-dismissible">
-		<p>
-			<strong><?php esc_html_e( 'Warning:', 'code-snippets' ); ?></strong>
-			<?php
-			// translators: 1: constant name, 2: file name.
-			$text = __( 'Safe mode is active and snippets will not execute! Remove the %1$s constant from %2$s file to turn off safe mode.', 'code-snippets' );
-			printf( esc_html( $text ), '<code>CODE_SNIPPETS_SAFE_MODE</code>', '<code>wp-config.php</code>' );
-			?>
+		<div id="message" class="notice notice-error fade is-dismissible">
+			<p>
+				<strong><?php esc_html_e( 'Warning:', 'code-snippets' ); ?></strong>
+				<?php
+				// translators: 1: constant name, 2: file name.
+				$code_snippets_safe_mode_text = __( 'Safe mode is active and snippets will not execute! Remove the %1$s constant from %2$s file to turn off safe mode.', 'code-snippets' );
+				printf( esc_html( $code_snippets_safe_mode_text ), '<code>CODE_SNIPPETS_SAFE_MODE</code>', '<code>wp-config.php</code>' );
+				?>
 
 			<a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank">
 				<?php esc_html_e( 'Help', 'code-snippets' ); ?>
@@ -42,9 +42,9 @@ if ( empty( $_REQUEST['result'] ) ) {
 	return;
 }
 
-$result = sanitize_key( $_REQUEST['result'] );
+$code_snippets_result = sanitize_key( $_REQUEST['result'] );
 
-$result_messages = [
+$code_snippets_result_messages = [
 	'executed'          => __( 'Snippet <strong>executed</strong>.', 'code-snippets' ),
 	'activated'         => __( 'Snippet <strong>activated</strong>.', 'code-snippets' ),
 	'activated-multi'   => __( 'Selected snippets <strong>activated</strong>.', 'code-snippets' ),
@@ -62,43 +62,45 @@ $result_messages = [
 ];
 
 // Add undo link for single snippet trash action
-if ( 'deleted' === $result && ! empty( $_REQUEST['ids'] ) ) {
-	$deleted_ids = sanitize_text_field( $_REQUEST['ids'] );
-	$undo_url = wp_nonce_url( 
+if ( 'deleted' === $code_snippets_result && ! empty( $_REQUEST['ids'] ) ) {
+	$code_snippets_deleted_ids = sanitize_text_field( $_REQUEST['ids'] );
+	$code_snippets_undo_url = wp_nonce_url( 
 		add_query_arg( array( 
 			'action' => 'restore', 
-			'ids' => $deleted_ids 
+			'ids' => $code_snippets_deleted_ids 
 		) ), 
 		'bulk-snippets'
 	);
 
-	$result_messages['deleted'] = sprintf(
+	$code_snippets_result_messages['deleted'] = sprintf(
+		/* translators: %s: URL to undo snippet deletion. */
 		__( 'Snippet <strong>trashed</strong>. <a href="%s">Undo</a>', 'code-snippets' ),
-		esc_url( $undo_url )
+		esc_url( $code_snippets_undo_url )
 	);
 }
 
 // Add undo link for bulk snippet trash action
-if ( 'deleted-multi' === $result && ! empty( $_REQUEST['ids'] ) ) {
-	$deleted_ids = sanitize_text_field( $_REQUEST['ids'] );
-	$undo_url = wp_nonce_url( 
+if ( 'deleted-multi' === $code_snippets_result && ! empty( $_REQUEST['ids'] ) ) {
+	$code_snippets_deleted_ids = sanitize_text_field( $_REQUEST['ids'] );
+	$code_snippets_undo_url = wp_nonce_url( 
 		add_query_arg( array( 
 			'action' => 'restore', 
-			'ids' => $deleted_ids 
+			'ids' => $code_snippets_deleted_ids 
 		) ), 
 		'bulk-snippets'
 	);
 
-	$result_messages['deleted-multi'] = sprintf(
+	$code_snippets_result_messages['deleted-multi'] = sprintf(
+		/* translators: %s: URL to undo snippet deletion. */
 		__( 'Selected snippets <strong>trashed</strong>. <a href="%s">Undo</a>', 'code-snippets' ),
-		esc_url( $undo_url )
+		esc_url( $code_snippets_undo_url )
 	);
 }
 
-$result_messages = apply_filters( 'code_snippets/manage/result_messages', $result_messages );
+$code_snippets_result_messages = apply_filters( 'code_snippets/manage/result_messages', $code_snippets_result_messages );
 
-if ( isset( $result_messages[ $result ] ) ) {
-	$result_kses = [
+if ( isset( $code_snippets_result_messages[ $code_snippets_result ] ) ) {
+	$code_snippets_result_kses = [
 		'strong' => [],
 		'a' => [
 			'href' => [],
@@ -107,6 +109,6 @@ if ( isset( $result_messages[ $result ] ) ) {
 
 	printf(
 		'<div id="message" class="notice notice-success fade is-dismissible"><p>%s</p></div>',
-		wp_kses( $result_messages[ $result ], $result_kses )
+		wp_kses( $code_snippets_result_messages[ $code_snippets_result ], $code_snippets_result_kses )
 	);
 }
