@@ -137,6 +137,15 @@
 	#wpbody-content & .column-name {
 		white-space: nowrap; /* prevents wrapping of snippet title */
 	}
+
+	td.column-date, th.column-date {
+		white-space: nowrap;
+		min-inline-size: 110px;
+		max-inline-size: 200px;
+		text-align: right;
+		padding-inline-start: 8px;
+		padding-inline-end: 8px;
+	}
 }
 
 td.column-description {
