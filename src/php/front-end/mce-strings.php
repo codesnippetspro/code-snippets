@@ -9,6 +9,7 @@ namespace Code_Snippets;
 
 use _WP_Editors;
 
+/* phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound */
 /**
  * Variable types.
  *
@@ -53,3 +54,4 @@ asort( $strings['content_snippets'], SORT_STRING | SORT_FLAG_CASE );
 $strings = [ _WP_Editors::$mce_locale => [ 'code_snippets' => $strings ] ];
 /** $strings is used by outer file. @noinspection PhpUnusedLocalVariableInspection */
 $strings = 'tinyMCE.addI18n(' . wp_json_encode( $strings ) . ');';
+/* phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound */

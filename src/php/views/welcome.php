@@ -18,9 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-$hero = $this->api->get_hero_item();
+$code_snippets_hero = $this->api->get_hero_item();
 
-$changelog_sections = [
+$code_snippets_changelog_sections = [
 	'Added'    => [
 		'title' => __( 'New features', 'code-snippets' ),
 		'icon'  => 'lightbulb',
@@ -39,7 +39,7 @@ $changelog_sections = [
 	],
 ];
 
-$plugin_types = [
+$code_snippets_plugin_types = [
 	'core' => __( 'Core', 'code-snippets' ),
 	'pro'  => __( 'Pro', 'code-snippets' ),
 ];
@@ -78,50 +78,50 @@ $plugin_types = [
 		</nav>
 	</div>
 
-	<section class="csp-section-changes">
-		<h1>📰 <?php esc_html_e( 'Latest news', 'code-snippets' ); ?></h1>
-		<div class="csp-cards">
-			<a class="csp-card" href="<?php echo esc_url( $hero['follow_url'] ); ?>" target="_blank"
-			   title="<?php esc_attr_e( 'Read more', 'code-snippets' ); ?>">
-				<header>
-					<span class="dashicons dashicons-external"></span>
-					<h2><?php echo esc_html( $hero['name'] ); ?></h2>
-				</header>
-				<figure>
-					<div id="csp-loading-spinner" class="csp-loading-spinner"></div>
-					<img id="csp-changes-img"
-					     onload="hideLoadingAnimation()"
-					     src="<?php echo esc_url( $hero['image_url'] ); ?>"
-					     alt="<?php esc_attr_e( 'Latest news image', 'code-snippets' ); ?>);">
-				</figure>
-			</a>
+		<section class="csp-section-changes">
+			<h1>📰 <?php esc_html_e( 'Latest news', 'code-snippets' ); ?></h1>
+			<div class="csp-cards">
+				<a class="csp-card" href="<?php echo esc_url( $code_snippets_hero['follow_url'] ); ?>" target="_blank"
+				   title="<?php esc_attr_e( 'Read more', 'code-snippets' ); ?>">
+					<header>
+						<span class="dashicons dashicons-external"></span>
+						<h2><?php echo esc_html( $code_snippets_hero['name'] ); ?></h2>
+					</header>
+					<figure>
+						<div id="csp-loading-spinner" class="csp-loading-spinner"></div>
+						<img id="csp-changes-img"
+						     onload="hideLoadingAnimation()"
+						     src="<?php echo esc_url( $code_snippets_hero['image_url'] ); ?>"
+						     alt="<?php esc_attr_e( 'Latest news image', 'code-snippets' ); ?>);">
+					</figure>
+				</a>
 
 			<a class="csp-card csp-changelog-wrapper" href="https://wordpress.org/plugins/code-snippets/changelog" target="_blank"
 			   title="<?php esc_attr_e( 'Read the full changelog', 'code-snippets' ); ?>">
-				<header>
-					<span class="dashicons dashicons-external"></span>
-					<h2><?php esc_html_e( 'Latest changes', 'code-snippets' ); ?></h2>
-				</header>
-				<div class="csp-section-changelog">
-					<?php foreach ( $this->api->get_changelog() as $version => $version_changes ) { ?>
-						<h3><?php echo esc_html( $version ); ?></h3>
-						<article>
-							<?php
-							foreach ( $changelog_sections as $section_key => $section ) {
-								if ( empty( $version_changes[ $section_key ] ) ) {
-									continue;
-								}
-								?>
-								<h4>
-									<span class="dashicons dashicons-<?php echo esc_attr( $section['icon'] ); ?>"></span>
-									<?php echo esc_html( $section['title'] ); ?>
-								</h4>
-								<ul>
-									<?php
-									foreach ( $plugin_types as $plugin_type => $type_label ) {
-										if ( empty( $version_changes[ $section_key ][ $plugin_type ] ) ) {
-											continue;
-										}
+					<header>
+						<span class="dashicons dashicons-external"></span>
+						<h2><?php esc_html_e( 'Latest changes', 'code-snippets' ); ?></h2>
+					</header>
+					<div class="csp-section-changelog">
+						<?php foreach ( $this->api->get_changelog() as $version => $version_changes ) { ?>
+							<h3><?php echo esc_html( $version ); ?></h3>
+							<article>
+								<?php
+								foreach ( $code_snippets_changelog_sections as $section_key => $section ) {
+									if ( empty( $version_changes[ $section_key ] ) ) {
+										continue;
+									}
+									?>
+									<h4>
+										<span class="dashicons dashicons-<?php echo esc_attr( $section['icon'] ); ?>"></span>
+										<?php echo esc_html( $section['title'] ); ?>
+									</h4>
+									<ul>
+										<?php
+										foreach ( $code_snippets_plugin_types as $plugin_type => $type_label ) {
+											if ( empty( $version_changes[ $section_key ][ $plugin_type ] ) ) {
+												continue;
+											}
 
 										foreach ( $version_changes[ $section_key ][ $plugin_type ] as $change ) {
 											?>
