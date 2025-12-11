@@ -173,11 +173,11 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 
 							echo '</a>';
 							?>
-						</h3>
-						<ul class="action-buttons">
-							<?php echo cloud_lts_build_action_links( $item, 'search' ); ?>
-						</ul>
-					</div>
+							</h3>
+							<ul class="action-buttons">
+								<?php echo wp_kses_post( cloud_lts_build_action_links( $item, 'search' ) ); ?>
+							</ul>
+						</div>
 						<div class="column-description">
 						<p><?php echo wp_kses_post( $this->process_description( $item->description ) ); ?></p>
 						<p class="authors">
