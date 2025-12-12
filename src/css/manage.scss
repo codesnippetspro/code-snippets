@@ -140,11 +140,22 @@
 
 	td.column-date, th.column-date {
 		white-space: nowrap;
-		min-inline-size: 110px;
-		max-inline-size: 200px;
+		inline-size: 130px; /* fixed column width */
+		min-inline-size: 130px;
+		max-inline-size: 130px;
 		text-align: right;
 		padding-inline-start: 8px;
 		padding-inline-end: 8px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* Ensure the name column can shrink/ellipsis instead of pushing the date. */
+	td.column-name, th.column-name {
+		max-inline-size: calc(100% - 140px);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 }
 
