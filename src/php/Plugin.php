@@ -135,6 +135,9 @@ class Plugin {
 		new Upgrader( PLUGIN_VERSION, $this->db );
 
 		$this->init_snippet_files();
+
+		// Initialize promotions.
+		new Promotions\Elementor_Pro();
 	}
 
 	/**

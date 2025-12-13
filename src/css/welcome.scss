@@ -41,6 +41,18 @@ $breakpoint: 1060px;
 	}
 }
 
+.csp-welcome-header nav {
+	column-gap: 15px;
+
+	ul {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-evenly;
+		gap: 5px;
+		margin: 0;
+	}
+}
+
 .code-snippets-hero {
 	display: flex;
 	flex-flow: column;
