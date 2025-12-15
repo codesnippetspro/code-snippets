@@ -197,104 +197,20 @@ class DB {
 		return $success;
 	}
 
-	/**
-	 * Fetch a list of active snippets from a database table.
-	 *
-	 * @param string        $table_name  Name of table to fetch snippets from.
-	 * @param array<string> $scopes      List of scopes to include in query.
-	 * @param boolean       $active_only Whether to only fetch active snippets from the table.
-	 *
-	 * @return array<string, array<string, mixed>>|false List of active snippets, if any could be retrieved.
-	 *
-	 * @phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-	 */
-	private static function fetch_snippets_from_table( string $table_name, array $scopes, bool $active_only = true ) {
-		global $wpdb;
-
-		$cache_key = sprintf( 'active_snippets_%s_%s', sanitize_key( join( '_', $scopes ) ), $table_name );
-		$cached_snippets = wp_cache_get( $cache_key, CACHE_GROUP );
-
-		if ( is_array( $cached_snippets ) ) {
-			return $cached_snippets;
-		}
-
-		if ( ! self::table_exists( $table_name ) ) {
-			return false;
-		}
-
-		$scopes_format = implode( ',', array_fill( 0, count( $scopes ), '%s' ) );
-		$extra_where = $active_only ? 'AND active=1' : '';
-
-		$snippets = $wpdb->get_results(
-			$wpdb->prepare(
-				"
-				SELECT id, code, scope, active, priority
-				FROM $table_name
-				WHERE scope IN ($scopes_format) $extra_where
-				ORDER BY priority, id",
-				$scopes
-			),
-			'ARRAY_A'
-		);
-
-		// Cache the full list of snippets.
-		if ( is_array( $snippets ) ) {
-			wp_cache_set( $cache_key, $snippets, CACHE_GROUP );
-			return $snippets;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Sort the active snippets by priority, table, and ID.
-	 *
-	 * @param array $active_snippets List of active snippets to sort.
-	 */
-	private function sort_active_snippets( array &$active_snippets ): void {
-		$comparisons = [
-			function ( array $a, array $b ) {
-				return $a['priority'] <=> $b['priority'];
-			},
-			function ( array $a, array $b ) {
-				$a_table = $a['table'] === $this->ms_table ? 0 : 1;
-				$b_table = $b['table'] === $this->ms_table ? 0 : 1;
-				return $a_table <=> $b_table;
-			},
-			function ( array $a, array $b ) {
-				return $a['id'] <=> $b['id'];
-			},
-		];
-
-		usort(
-			$active_snippets,
-			static function ( $a, $b ) use ( $comparisons ) {
-				foreach ( $comparisons as $comparison ) {
-					$result = $comparison( $a, $b );
-					if ( 0 !== $result ) {
-						return $result;
-					}
-				}
-
-				return 0;
-			}
-		);
-	}
-
-	/**
-	 * Generate the SQL for fetching active snippets from the database.
-	 *
-	 * @param string[] $scopes List of scopes to retrieve in.
-	 *
-	 * @return array{
-	 *     id: int,
-	 *     code: string,
-	 *     scope: string,
-	 *     table: string,
-	 *     network: bool,
-	 *     priority: int,
-	 * } List of active snippets.
-	 */
+		/**
+		 * Generate the SQL for fetching active snippets from the database.
+		 *
+		 * @param string[] $scopes List of scopes to retrieve in.
+         *
+         * @return array{
+         *     id: int,
+         *     code: string,
+         *     scope: string,
+         *     table: string,
+         *     network: bool,
+         *     priority: int,
+         * } List of active snippets.
+         */
 	public function fetch_active_snippets( array $scopes ): array {
 		$active_snippets = [];
 
@@ -370,5 +286,89 @@ class DB {
 		}
 
 		return in_array( $snippet_id, $active_shared_ids, true );
+	}
+
+	/**
+	 * Sort the active snippets by priority, table, and ID.
+	 *
+	 * @param array $active_snippets List of active snippets to sort.
+	 */
+	private function sort_active_snippets( array &$active_snippets ): void {
+		$comparisons = [
+			function ( array $a, array $b ) {
+				return $a['priority'] <=> $b['priority'];
+			},
+			function ( array $a, array $b ) {
+				$a_table = $a['table'] === $this->ms_table ? 0 : 1;
+				$b_table = $b['table'] === $this->ms_table ? 0 : 1;
+				return $a_table <=> $b_table;
+			},
+			function ( array $a, array $b ) {
+				return $a['id'] <=> $b['id'];
+			},
+		];
+
+		usort(
+			$active_snippets,
+			static function ( $a, $b ) use ( $comparisons ) {
+				foreach ( $comparisons as $comparison ) {
+					$result = $comparison( $a, $b );
+					if ( 0 !== $result ) {
+						return $result;
+					}
+				}
+
+				return 0;
+			}
+		);
+	}
+
+	/**
+	 * Fetch a list of active snippets from a database table.
+	 *
+	 * @param string        $table_name  Name of table to fetch snippets from.
+	 * @param array<string> $scopes      List of scopes to include in query.
+	 * @param boolean       $active_only Whether to only fetch active snippets from the table.
+	 *
+	 * @return array<string, array<string, mixed>>|false List of active snippets, if any could be retrieved.
+	 *
+	 * @phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+	 */
+	private static function fetch_snippets_from_table( string $table_name, array $scopes, bool $active_only = true ) {
+		global $wpdb;
+
+		$cache_key = sprintf( 'active_snippets_%s_%s', sanitize_key( join( '_', $scopes ) ), $table_name );
+		$cached_snippets = wp_cache_get( $cache_key, CACHE_GROUP );
+
+		if ( is_array( $cached_snippets ) ) {
+			return $cached_snippets;
+		}
+
+		if ( ! self::table_exists( $table_name ) ) {
+			return false;
+		}
+
+		$scopes_format = implode( ',', array_fill( 0, count( $scopes ), '%s' ) );
+		$extra_where = $active_only ? 'AND active=1' : '';
+
+		$snippets = $wpdb->get_results(
+			$wpdb->prepare(
+				"
+				SELECT id, code, scope, active, priority
+				FROM $table_name
+				WHERE scope IN ($scopes_format) $extra_where
+				ORDER BY priority, id",
+				$scopes
+			),
+			'ARRAY_A'
+		);
+
+		// Cache the full list of snippets.
+		if ( is_array( $snippets ) ) {
+			wp_cache_set( $cache_key, $snippets, CACHE_GROUP );
+			return $snippets;
+		}
+
+		return false;
 	}
 }
