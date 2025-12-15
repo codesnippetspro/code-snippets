@@ -326,7 +326,7 @@ class DB {
 				foreach ( $ms_snippets as $snippet ) {
 					$id = intval( $snippet['id'] );
 
-					if ( ! $snippet['active'] && ! in_array( $id, $active_shared_ids, true ) ) {
+					if ( ( ! $snippet['active'] || '-1' === $snippet['active'] ) && ! in_array( $id, $active_shared_ids, true ) ) {
 						continue;
 					}
 
