@@ -325,8 +325,15 @@ class DB {
 
 				foreach ( $ms_snippets as $snippet ) {
 					$id = intval( $snippet['id'] );
+					$active_value = intval( $snippet['active'] );
 
-					if ( ! $snippet['active'] && ! in_array( $id, $active_shared_ids, true ) ) {
+					// Skip if snippet is trashed.
+					if ( -1 === $active_value ) {
+						continue;
+					}
+
+          // Skip if snippet is not active and not in the list of active shared snippets.
+					if ( 1 !== $active_value && ! in_array( $id, $active_shared_ids, true ) ) {
 						continue;
 					}
 
