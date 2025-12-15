@@ -132,7 +132,7 @@ class Plugin {
 		// Settings component.
 		require_once $includes_path . '/settings/settings-fields.php';
 		require_once $includes_path . '/settings/editor-preview.php';
-	require_once $includes_path . '/settings/class-version-switch.php';
+		require_once $includes_path . '/settings/class-version-switch.php';
 		require_once $includes_path . '/settings/settings.php';
 
 		// Cloud List Table shared functions.
@@ -354,6 +354,10 @@ class Plugin {
 	 */
 	public function get_cap(): string {
 		if ( is_multisite() && $this->is_network_context() ) {
+			return $this->get_network_cap_name();
+		}
+
+		if ( is_multisite() && ! $this->is_subsite_menu_enabled() ) {
 			return $this->get_network_cap_name();
 		}
 
