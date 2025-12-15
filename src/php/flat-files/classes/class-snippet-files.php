@@ -245,7 +245,8 @@ class Snippet_Files {
 		$active_snippets = [];
 		$db = code_snippets()->db;
 
-		$table = self::get_hashed_table_name( $db->get_table_name() );
+		// Always use the site table for "local" snippets, even in Network Admin.
+		$table = self::get_hashed_table_name( $db->get_table_name( false ) );
 		$snippets = self::load_active_snippets_from_file(
 			$table,
 			$snippet_type,
@@ -289,8 +290,14 @@ class Snippet_Files {
 
 				foreach ( $ms_snippets as $snippet ) {
 					$id = intval( $snippet['id'] );
+					$active_value = intval( $snippet['active'] );
 
-					if ( ! $snippet['active'] && ! in_array( $id, $active_shared_ids, true ) ) {
+					// Never execute trashed snippets (active = -1).
+					if ( -1 === $active_value ) {
+						continue;
+					}
+
+					if ( 1 !== $active_value && ! in_array( $id, $active_shared_ids, true ) ) {
 						continue;
 					}
 
@@ -375,7 +382,14 @@ class Snippet_Files {
 		$filtered_snippets = array_filter(
 			$file_snippets,
 			function ( $snippet ) use ( $scopes, $active_shared_ids ) {
-				$is_active = $snippet['active'];
+				$active_value = isset( $snippet['active'] ) ? intval( $snippet['active'] ) : 0;
+
+				// Never treat trashed snippets as active.
+				if ( -1 === $active_value ) {
+					return false;
+				}
+
+				$is_active = 1 === $active_value;
 
 				if ( null !== $active_shared_ids ) {
 					$is_active = $is_active || in_array(
