@@ -292,12 +292,7 @@ class Snippet_Files {
 					$id = intval( $snippet['id'] );
 					$active_value = intval( $snippet['active'] );
 
-					// Never execute trashed snippets (active = -1).
-					if ( -1 === $active_value ) {
-						continue;
-					}
-
-					if ( 1 !== $active_value && ! in_array( $id, $active_shared_ids, true ) ) {
+					if ( ! DB::is_network_snippet_enabled( $active_value, $id, $active_shared_ids ) ) {
 						continue;
 					}
 
@@ -378,26 +373,16 @@ class Snippet_Files {
 		}
 
 		$file_snippets = require $snippets_file_path;
+		$shared_ids = is_array( $active_shared_ids )
+			? array_map( 'intval', $active_shared_ids )
+			: [];
 
 		$filtered_snippets = array_filter(
 			$file_snippets,
-			function ( $snippet ) use ( $scopes, $active_shared_ids ) {
+			function ( $snippet ) use ( $scopes, $shared_ids ) {
 				$active_value = isset( $snippet['active'] ) ? intval( $snippet['active'] ) : 0;
 
-				// Never treat trashed snippets as active.
-				if ( -1 === $active_value ) {
-					return false;
-				}
-
-				$is_active = 1 === $active_value;
-
-				if ( null !== $active_shared_ids ) {
-					$is_active = $is_active || in_array(
-						intval( $snippet['id'] ),
-						$active_shared_ids,
-						true
-					);
-				}
+				$is_active = DB::is_network_snippet_enabled( $active_value, intval( $snippet['id'] ), $shared_ids );
 
 				return ( $is_active || 'condition' === $snippet['scope'] ) && in_array( $snippet['scope'], $scopes, true );
 			}

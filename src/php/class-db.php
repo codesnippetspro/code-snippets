@@ -327,13 +327,7 @@ class DB {
 					$id = intval( $snippet['id'] );
 					$active_value = intval( $snippet['active'] );
 
-					// Skip if snippet is trashed.
-					if ( -1 === $active_value ) {
-						continue;
-					}
-
-          // Skip if snippet is not active and not in the list of active shared snippets.
-					if ( 1 !== $active_value && ! in_array( $id, $active_shared_ids, true ) ) {
+					if ( ! self::is_network_snippet_enabled( $active_value, $id, $active_shared_ids ) ) {
 						continue;
 					}
 
@@ -352,5 +346,29 @@ class DB {
 		}
 
 		return $active_snippets;
+	}
+
+	/**
+	 * Determine whether a network snippet should execute on the current site.
+	 *
+	 * Network snippets execute when active=1, or when the snippet is listed as active-shared for the site.
+	 * Trashed snippets (active=-1) never execute.
+	 *
+	 * @param int   $active_value      Raw active value from the snippet record.
+	 * @param int   $snippet_id        Snippet ID.
+	 * @param int[] $active_shared_ids Active shared network snippet IDs for the current site.
+	 *
+	 * @return bool
+	 */
+	public static function is_network_snippet_enabled( int $active_value, int $snippet_id, array $active_shared_ids ): bool {
+		if ( -1 === $active_value ) {
+			return false;
+		}
+
+		if ( 1 === $active_value ) {
+			return true;
+		}
+
+		return in_array( $snippet_id, $active_shared_ids, true );
 	}
 }
