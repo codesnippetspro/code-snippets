@@ -25,7 +25,7 @@ export const SimpleSnippetTable: React.FC<SimpleSnippetTableProps> = ({
 
 	return (
 		<ImportCard className="snippets-table-container">
-			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBlockEnd: '10px' }}>
 				<div>
 					<h2 style={{ margin: '0' }}>{__('Available Snippets', 'code-snippets')} ({snippets.length})</h2>
 					<p style={{ margin: '0.5em 0 1em 0' }}>{__('We found the following snippets.', 'code-snippets')}</p>
