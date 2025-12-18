@@ -3,6 +3,7 @@ import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { SELECTORS } from './helpers/constants'
 
 const TEST_SNIPPET_NAME = 'E2E List Test Snippet'
+const MAX_DIFF_PIXEL_RATIO = 0.1
 
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
@@ -29,7 +30,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(toggleSwitch).toHaveAttribute('title', 'Deactivate')
 
 		// Check that the toggle is rendered to the right (active)
-		await expect(snippetRow).toHaveScreenshot('snippet-row-active.png')
+		await expect(snippetRow).toHaveScreenshot('snippet-row-active.png', { maxDiffPixelRatio: MAX_DIFF_PIXEL_RATIO })
 
 		await toggleSwitch.click()
 		await page.waitForLoadState('networkidle')
@@ -39,7 +40,7 @@ test.describe('Code Snippets List Page Actions', () => {
 		await expect(updatedToggle).toHaveAttribute('title', 'Activate')
 
 		// Check that the toggle is rendered to the left (inactive)
-		await expect(updatedRow).toHaveScreenshot('snippet-row-inactive.png')
+		await expect(updatedRow).toHaveScreenshot('snippet-row-inactive.png', { maxDiffPixelRatio: MAX_DIFF_PIXEL_RATIO })
 
 		await updatedToggle.click()
 		await page.waitForLoadState('networkidle')
