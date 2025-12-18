@@ -133,7 +133,7 @@ export const FileUploadForm: React.FC = () => {
 
 				{currentStep === 'select' && importWorkflow.availableSnippets.length > 0 && !importWorkflow.uploadResult?.success && (
 					<ImportCard ref={selectSectionRef}>
-						<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+						<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBlockEnd: '20px' }}>
 							<Button onClick={handleBackToUpload} className="button-link">
 								{__('← Upload Different Files', 'code-snippets')}
 							</Button>
