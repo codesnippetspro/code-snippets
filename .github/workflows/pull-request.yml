@@ -158,7 +158,7 @@ jobs:
           body="$(cat <<EOF
           ${marker}
           ### Build
-          Build started… a link to the built zip file will appear here soon.
+          ⌛️ Build started… a link to the built zip file will appear here soon.
           EOF
           )"
 
