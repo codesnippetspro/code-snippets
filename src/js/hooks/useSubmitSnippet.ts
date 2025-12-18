@@ -86,7 +86,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 	const submitSnippet = useCallback(async (action: SubmitSnippetAction = SubmitSnippetAction.SAVE) => {
 		setCurrentNotice(undefined)
 
-		const rawResult = await (async (): Promise<Snippet | string | undefined> => {
+		const result = await (async (): Promise<Snippet | string | undefined> => {
 			try {
 				const request: Snippet = { ...snippet, ...SUBMIT_ACTION_DELTA[action] }
 				const response = await (0 === request.id ? snippetsAPI.create(request) : snippetsAPI.update(request))
@@ -100,17 +100,17 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 
 		const messages = isCondition(snippet) ? conditionMessages : snippetMessages
 
-		if (undefined === rawResult || 'string' === typeof rawResult) {
+		if (undefined === result || 'string' === typeof result) {
 			const message = [
 				snippet.id ? messages.failedUpdate : messages.failedCreate,
-				rawResult ?? __('The server did not send a valid response.', 'code-snippets')
+				result ?? __('The server did not send a valid response.', 'code-snippets')
 			]
 
 			setCurrentNotice(['error', message.filter(Boolean).join(' ')])
 			return undefined
 		}
 
-		const updatedSnippet = createSnippetObject(rawResult)
+		const updatedSnippet = createSnippetObject(result)
 		setSnippet(updatedSnippet)
 
 		if (updatedSnippet.code_error) {
