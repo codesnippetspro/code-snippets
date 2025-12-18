@@ -27,7 +27,7 @@ export const ImportApp: React.FC = () => {
 
 	return (
 		<div className="narrow" style={{ maxWidth: '800px' }}>
-			<h2 className="nav-tab-wrapper" style={{ marginBottom: '20px' }}>
+			<h2 className="nav-tab-wrapper" style={{ marginBlockEnd: '20px' }}>
 				<a
 					className={`nav-tab${activeTab === 'upload' ? ' nav-tab-active' : ''}`}
 					href="#"
