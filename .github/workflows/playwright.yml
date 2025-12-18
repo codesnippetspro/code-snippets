@@ -19,13 +19,12 @@ permissions:
   pull-requests: write
   actions: read
 
-concurrency:
-  group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}-${{ (github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite'))) && 'tests' || 'noop' }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite')) }}
-
 jobs:
   playwright-default:
     if: github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite'))
+    concurrency:
+      group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}-${{ github.job }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     uses: ./.github/workflows/playwright-test.yml
     with:
       test-mode: 'default'
@@ -34,6 +33,9 @@ jobs:
 
   playwright-file-based-execution:
     if: github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite'))
+    concurrency:
+      group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}-${{ github.job }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     uses: ./.github/workflows/playwright-test.yml
     with:
       test-mode: 'file-based-execution'
