@@ -193,7 +193,7 @@ class Manage_Menu extends Admin_Menu {
 		wp_enqueue_script(
 			'code-snippets-manage-js',
 			plugins_url( 'dist/manage.js', $plugin->file ),
-			[ 'jquery-ui-sortable', 'wp-i18n' ],
+			[ 'wp-i18n' ],
 			$plugin->version,
 			true
 		);
