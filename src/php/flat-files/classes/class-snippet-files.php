@@ -117,7 +117,7 @@ class Snippet_Files {
 		}
 
 		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ], 10, 1 );
-		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ], 10, 2 );
+		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ], 10, 1 );
 	}
 
 	/**
@@ -599,13 +599,10 @@ class Snippet_Files {
 	 * Recreate all flat files when file-based execution settings are updated.
 	 *
 	 * @param array<string, mixed> $settings Settings data.
-	 * @param array<string, mixed> $input    Raw input data.
 	 *
 	 * @return void
 	 */
-	public function create_all_flat_files( array $settings, array $input ): void {
-		unset( $input );
-
+	public function create_all_flat_files( array $settings ): void {
 		if ( ! isset( $settings['general']['enable_flat_files'] ) ) {
 			return;
 		}
