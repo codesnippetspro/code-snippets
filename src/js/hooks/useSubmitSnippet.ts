@@ -86,7 +86,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 	const submitSnippet = useCallback(async (action: SubmitSnippetAction = SubmitSnippetAction.SAVE) => {
 		setCurrentNotice(undefined)
 
-		const result = await (async (): Promise<Snippet | string | undefined> => {
+		const rawResult = await (async (): Promise<Snippet | string | undefined> => {
 			try {
 				const request: Snippet = { ...snippet, ...SUBMIT_ACTION_DELTA[action] }
 				const response = await (0 === request.id ? snippetsAPI.create(request) : snippetsAPI.update(request))
@@ -100,25 +100,38 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 
 		const messages = isCondition(snippet) ? conditionMessages : snippetMessages
 
-		if (undefined === result || 'string' === typeof result) {
+		if (undefined === rawResult || 'string' === typeof rawResult) {
 			const message = [
 				snippet.id ? messages.failedUpdate : messages.failedCreate,
-				result ?? __('The server did not send a valid response.', 'code-snippets')
+				rawResult ?? __('The server did not send a valid response.', 'code-snippets')
 			]
 
 			setCurrentNotice(['error', message.filter(Boolean).join(' ')])
 			return undefined
-		} else {
-			setSnippet(createSnippetObject(result))
-			setCurrentNotice(['updated', getSuccessNotice(snippet, result, action)])
-
-			if (snippet.id && result.id) {
-				window.document.title = window.document.title.replace(snippetMessages.addNew, messages.edit)
-				window.history.replaceState({}, '', addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: result.id }))
-			}
-
-			return result
 		}
+
+		const updatedSnippet = createSnippetObject(rawResult)
+		setSnippet(updatedSnippet)
+
+		if (updatedSnippet.code_error) {
+			setCurrentNotice([
+				'error',
+				__('Snippet could not be activated because the code contains an error. See details below.', 'code-snippets')
+			])
+		} else {
+			setCurrentNotice(['updated', getSuccessNotice(snippet, updatedSnippet, action)])
+		}
+
+		if (snippet.id && updatedSnippet.id) {
+			window.document.title = window.document.title.replace(snippetMessages.addNew, messages.edit)
+			window.history.replaceState(
+				{},
+				'',
+				addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: updatedSnippet.id })
+			)
+		}
+
+		return updatedSnippet
 	}, [snippetsAPI, setIsWorking, setCurrentNotice, snippet, setSnippet])
 
 	return { submitSnippet }

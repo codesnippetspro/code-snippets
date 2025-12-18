@@ -13,7 +13,8 @@ const defaults: Omit<Snippet, 'tags'> = {
 	network: isNetworkAdmin(),
 	shared_network: null,
 	priority: 10,
-	conditionId: 0
+	conditionId: 0,
+	code_error: null
 }
 
 const isAbsInt = (value: unknown): value is number =>
@@ -33,6 +34,15 @@ export const parseSnippetObject = (fields: unknown): Snippet => {
 		return result
 	}
 
+	const codeError =
+		'code_error' in fields &&
+		Array.isArray(fields.code_error) &&
+		2 === fields.code_error.length &&
+		'string' === typeof fields.code_error[0] &&
+		'number' === typeof fields.code_error[1]
+			? (fields.code_error as readonly [string, number])
+			: undefined
+
 	return {
 		...result,
 		...'id' in fields && isAbsInt(fields.id) && { id: fields.id },
@@ -46,6 +56,7 @@ export const parseSnippetObject = (fields: unknown): Snippet => {
 		...'network' in fields && 'boolean' === typeof fields.network && { network: fields.network },
 		...'shared_network' in fields && 'boolean' === typeof fields.shared_network && { shared_network: fields.shared_network },
 		...'priority' in fields && 'number' === typeof fields.priority && { priority: fields.priority },
-		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id }
+		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id },
+		...('code_error' in fields && { code_error: codeError ?? result.code_error })
 	}
 }
