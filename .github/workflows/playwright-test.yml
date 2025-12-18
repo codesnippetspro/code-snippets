@@ -11,11 +11,46 @@ on:
         required: true
         type: string
         description: 'Playwright project name to run'
+      multisite:
+        required: false
+        type: boolean
+        default: false
+        description: 'If true, convert the site to multisite and create a subsite.'
 
 jobs:
   playwright-test:
     name: Playwright tests (${{ inputs.test-mode == 'default' && 'Default Mode' || 'File-based Execution' }})
     runs-on: ubuntu-22.04
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: wordpress
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
+          MYSQL_ROOT_PASSWORD: root
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+      wordpress:
+        image: wordpress:php8.1-apache
+        env:
+          WORDPRESS_DB_HOST: mysql:3306
+          WORDPRESS_DB_USER: wordpress
+          WORDPRESS_DB_PASSWORD: wordpress
+          WORDPRESS_DB_NAME: wordpress
+          WORDPRESS_DEBUG: 1
+          WORDPRESS_CONFIG_EXTRA: |
+            define( 'FS_METHOD', 'direct' );
+            define( 'WP_DEBUG_LOG', true );
+            define( 'WP_DEBUG_DISPLAY', false );
+            define( 'SCRIPT_DEBUG', true );
+            define( 'WP_ENVIRONMENT_TYPE', 'local' );
+        ports:
+          - 8888:80
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -59,7 +94,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-deps-
 
-      - name: Install workflow dependencies (wp-env, playwright)
+      - name: Install workflow dependencies
         if: steps.deps-cache.outputs.cache-hit != 'true'
         run: npm run prepare-environment:ci && npm run bundle
 
@@ -72,17 +107,97 @@ jobs:
             node_modules
           key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
           
-      - name: Start WordPress environment
+      - name: Wait for WordPress to be reachable
         run: |
-          npx wp-env start
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8888/wp-login.php >/dev/null; then
+              echo "WordPress is reachable."
+              exit 0
+            fi
+            echo "Waiting for WordPress... ($i/60)"
+            sleep 2
+          done
+
+          echo "WordPress did not start in time."
+          echo "::group::WordPress container logs"
+          docker logs "${{ job.services.wordpress.id }}" || true
+          echo "::endgroup::"
+          exit 1
+
+      - name: Download WP-CLI
+        run: |
+          curl -fsSL -o "${RUNNER_TEMP}/wp-cli.phar" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+      - name: Install WordPress (and optionally multisite)
+        env:
+          WP_CONTAINER: ${{ job.services.wordpress.id }}
+          WP_URL: http://localhost:8888
+          WP_ADMIN_USER: admin
+          WP_ADMIN_PASSWORD: password
+          WP_ADMIN_EMAIL: admin@example.org
+        run: |
+          set -euo pipefail
+
+          docker cp "${RUNNER_TEMP}/wp-cli.phar" "$WP_CONTAINER:/tmp/wp-cli.phar"
+
+          # Install WordPress if it isn't already installed.
+          if ! docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core is-installed --allow-root >/dev/null 2>&1; then
+            docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core install \
+              --url="$WP_URL" \
+              --title="Test Blog" \
+              --admin_user="$WP_ADMIN_USER" \
+              --admin_password="$WP_ADMIN_PASSWORD" \
+              --admin_email="$WP_ADMIN_EMAIL" \
+              --skip-email \
+              --allow-root
+          fi
+
+          if [ "${{ inputs.multisite }}" = "true" ]; then
+            # Convert single site -> multisite (subdirectory). Subdomains don't work with localhost.
+            if ! docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core is-installed --network --allow-root >/dev/null 2>&1; then
+              docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core multisite-convert \
+                --title="Test Network" \
+                --base=/ \
+                --allow-root
+            fi
+
+            # Create a subsite for future multisite test coverage.
+            if ! docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar site list --field=path --allow-root | grep -qx "/subsite/"; then
+              docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar site create \
+                --slug=subsite \
+                --title="Subsite" \
+                --email="$WP_ADMIN_EMAIL" \
+                --allow-root
+            fi
+          fi
+
+      - name: Install plugin into WordPress container
+        env:
+          WP_CONTAINER: ${{ job.services.wordpress.id }}
+        run: |
+          set -euo pipefail
+
+          docker exec -u root -w /var/www/html "$WP_CONTAINER" rm -rf wp-content/plugins/code-snippets
+          docker cp src "$WP_CONTAINER:/var/www/html/wp-content/plugins/code-snippets"
+          docker exec -u root -w /var/www/html "$WP_CONTAINER" chown -R www-data:www-data wp-content/plugins/code-snippets
 
       - name: Activate code-snippets plugin
-        run: npx wp-env run cli wp plugin activate code-snippets
+        env:
+          WP_CONTAINER: ${{ job.services.wordpress.id }}
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.multisite }}" = "true" ]; then
+            docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar plugin activate code-snippets --network --allow-root
+          else
+            docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar plugin activate code-snippets --allow-root
+          fi
 
       - name: WordPress debug information
+        env:
+          WP_CONTAINER: ${{ job.services.wordpress.id }}
         run: |
-          npx wp-env run cli wp core version
-          npx wp-env run cli wp --info
+          docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core version --allow-root
+          docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar --allow-root --info
 
       - name: Install playwright/test
         run: |
@@ -90,10 +205,13 @@ jobs:
 
       - name: Run Playwright tests
         run: npm run test:playwright -- --project=${{ inputs.project-name }}
-
-      - name: Stop WordPress environment
-        if: always()
-        run: npx wp-env stop
+        
+      - name: Print WordPress logs on failure
+        if: failure()
+        run: |
+          echo "::group::WordPress container logs"
+          docker logs "${{ job.services.wordpress.id }}" || true
+          echo "::endgroup::"
 
       - uses: actions/upload-artifact@v4
         if: always()
