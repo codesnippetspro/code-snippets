@@ -213,3 +213,15 @@ td.column-description {
 		}
 	}
 }
+
+/* Drag and Drop Sorting */
+
+.sortable-placeholder {
+	background-color: #f9f9f9;
+	border: 1px dashed #ccc;
+	block-size: 50px;
+}
+
+.wp-list-table tbody tr {
+	cursor: move;
+}
