@@ -204,6 +204,11 @@ jobs:
           npx playwright install chromium
 
       - name: Run Playwright tests
+        env:
+          WP_E2E_WPCLI_MODE: gh-actions-ci
+          WP_E2E_WP_CONTAINER: ${{ job.services.wordpress.id }}
+          WP_E2E_WPCLI_PHAR: /tmp/wp-cli.phar
+          WP_E2E_WPCLI_URL: http://localhost:8888
         run: npm run test:playwright -- --project=${{ inputs.project-name }}
         
       - name: Print WordPress logs on failure
