@@ -106,7 +106,7 @@ export const ImportForm: React.FC = () => {
 				 snippetImport.importSuccess.length === 0 && (
 					<ImportCard>
 						<div style={{ textAlign: 'center', padding: '40px 20px', color: '#666' }}>
-							<div style={{ fontSize: '48px', marginBottom: '16px' }}>📭</div>
+							<div style={{ fontSize: '48px', marginBlockEnd: '16px' }}>📭</div>
 							<h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#333' }}>
 								{__('No snippets found', 'code-snippets')}
 							</h3>

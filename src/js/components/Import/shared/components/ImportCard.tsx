@@ -20,7 +20,7 @@ export const ImportCard = React.forwardRef<HTMLDivElement, ImportCardProps>(({
 		padding: '25px',
 		borderRadius: '5px',
 		border: '1px solid #e0e0e0',
-		marginBottom: '10px',
+		marginBlockEnd: '10px',
 		width: '100%',
 		...style
 	}

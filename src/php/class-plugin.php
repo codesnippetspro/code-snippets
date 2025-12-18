@@ -160,6 +160,7 @@ class Plugin {
 		// Importers.
 		new Plugins_Import_Manager();
 		new Files_Import_Manager();
+
 		// Initialize promotions.
 		new Promotions\Elementor_Pro();
 	}
