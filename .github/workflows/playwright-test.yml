@@ -55,6 +55,9 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      - name: WordPress mode
+        run: echo "multisite=${{ inputs.multisite }}"
+
       - name: Set up PHP
         uses: codesnippetspro/setup-php@v2
         with:
@@ -90,9 +93,9 @@ jobs:
           path: |
             node_modules
             src/vendor
-          key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
           restore-keys: |
-            ${{ runner.os }}-deps-
+            ${{ runner.os }}-${{ inputs.test-mode }}-deps-
 
       - name: Install workflow dependencies
         if: steps.deps-cache.outputs.cache-hit != 'true'
@@ -105,7 +108,7 @@ jobs:
           path: |
             src/vendor
             node_modules
-          key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
           
       - name: Wait for WordPress to be reachable
         run: |
@@ -128,7 +131,7 @@ jobs:
         run: |
           curl -fsSL -o "${RUNNER_TEMP}/wp-cli.phar" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 
-      - name: Install WordPress (and optionally multisite)
+      - name: "Install WordPress: ${{ inputs.multisite && 'Multisite' || 'Single Site' }}"
         env:
           WP_CONTAINER: ${{ job.services.wordpress.id }}
           WP_URL: http://localhost:8888
