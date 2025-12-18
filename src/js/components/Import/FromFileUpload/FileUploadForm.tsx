@@ -138,7 +138,7 @@ export const FileUploadForm: React.FC = () => {
 								{__('← Upload Different Files', 'code-snippets')}
 							</Button>
 						</div>
-						<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+						<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBlockEnd: '10px' }}>
 							<div>
 								<h3 style={{ margin: '0' }}>{__('Available Snippets', 'code-snippets')} ({importWorkflow.availableSnippets.length})</h3>
 								<p style={{ margin: '0.5em 0 1em 0', color: '#666' }}>
