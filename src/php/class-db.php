@@ -268,9 +268,9 @@ class DB {
 	 * Determine whether a network snippet should execute on the current site.
 	 *
 	 * Network snippets execute when active=1, or when the snippet is listed as active-shared for the site.
-	 * Trashed snippets (active=-1) never execute.
+	 * Trashed snippets (active=-1) should never execute.
 	 *
-	 * @param int   $active_value      Raw active value from the snippet record.
+	 * @param int   $active_value      Raw active value: 1=active, 0=inactive, -1=trashed (can be stored as a string in the database).
 	 * @param int   $snippet_id        Snippet ID.
 	 * @param int[] $active_shared_ids Active shared network snippet IDs for the current site.
 	 *
