@@ -18,7 +18,7 @@ export const StatusDisplay: React.FC<StatusDisplayProps> = ({
 	const isError = type === 'error'
 	
 	return (
-		<ImportCard variant="controls" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '20px' }}>
+		<ImportCard variant="controls" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBlockEnd: '20px' }}>
 			<div style={{ 
 				backgroundColor: isError ? '#d63638' : '#00a32a', 
 				borderRadius: '50%', 
