@@ -26,6 +26,7 @@ export const jsWebpackConfig: Configuration = {
 	entry: {
 		edit: { import: `${SOURCE_DIR}/edit.tsx`, dependOn: 'editor' },
 		editor: `${SOURCE_DIR}/editor.ts`,
+		import: `${SOURCE_DIR}/import.tsx`,
 		manage: `${SOURCE_DIR}/manage.ts`,
 		mce: `${SOURCE_DIR}/mce.ts`,
 		prism: `${SOURCE_DIR}/prism.ts`,

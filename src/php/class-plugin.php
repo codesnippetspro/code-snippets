@@ -156,6 +156,10 @@ class Plugin {
 		$upgrade = new Upgrade( $this->version, $this->db );
 		add_action( 'plugins_loaded', array( $upgrade, 'run' ), 0 );
 		$this->licensing = new Licensing();
+
+		// Importers.
+		new Plugins_Import_Manager();
+		new Files_Import_Manager();
 	}
 
 	/**
