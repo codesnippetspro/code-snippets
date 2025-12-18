@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   playwright-default:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    if: github.event_name != 'pull_request' || ((github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run-tests')) || (github.event.action == 'labeled' && (github.event.label.name == 'run-tests' || (github.event.label.name == 'multisite' && contains(github.event.pull_request.labels.*.name, 'run-tests')))))
     uses: ./.github/workflows/playwright-test.yml
     with:
       test-mode: 'default'
@@ -33,7 +33,7 @@ jobs:
       multisite: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-tests') && contains(github.event.pull_request.labels.*.name, 'multisite') }}
 
   playwright-file-based-execution:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    if: github.event_name != 'pull_request' || ((github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run-tests')) || (github.event.action == 'labeled' && (github.event.label.name == 'run-tests' || (github.event.label.name == 'multisite' && contains(github.event.pull_request.labels.*.name, 'run-tests')))))
     uses: ./.github/workflows/playwright-test.yml
     with:
       test-mode: 'file-based-execution'
