@@ -19,7 +19,7 @@ jobs:
       - name: Check for in-progress build runs
         id: gate
         env:
-          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+          GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
@@ -46,7 +46,7 @@ jobs:
     if: github.event.action == 'unlabeled' && github.event.label.name == 'build'
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+      GH_TOKEN: ${{ github.token }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
       - name: Cancel running build workflows for this PR
@@ -112,7 +112,7 @@ jobs:
     outputs:
       comment_id: ${{ steps.comment.outputs.comment_id }}
     env:
-      GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+      GH_TOKEN: ${{ github.token }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
       - name: Delete previous build comments
@@ -174,7 +174,7 @@ jobs:
       - name: Publish comment
         if: ${{ needs.install.outputs.artifact_name && needs.install.outputs.artifact_url }}
         env:
-          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+          GH_TOKEN: ${{ github.token }}
           COMMENT_ID: ${{ needs.comment.outputs.comment_id }}
         run: |
           set -euo pipefail
