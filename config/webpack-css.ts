@@ -7,7 +7,6 @@ import hslCompat from 'postcss-color-hsl'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import RemoveEmptyScriptsPlugin from 'webpack-remove-empty-scripts'
 import { glob } from 'glob'
-import { RtlCssPlugin } from './RtlCssPlugin'
 import type { Configuration, EntryObject } from 'webpack'
 import type { Config as PostCssConfig } from 'postcss-load-config'
 
@@ -103,9 +102,6 @@ export const cssWebpackConfig: Configuration = {
 						.replace(/^codemirror-theme-/, 'editor-themes/')
 						.replace(/-css\.css$/, '.css')
 					: '[name].css'
-		}),
-		new RtlCssPlugin({
-			entries: new Set(['manage-css', 'edit-css'])
 		})
 	]
 }

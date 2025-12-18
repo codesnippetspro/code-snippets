@@ -223,9 +223,9 @@ class Cloud_API {
 			self::get_cloud_api_url() . 'public/search'
 		);
 
-		$results = self::unpack_request_json( wp_remote_get( $api_url ) );
+		$raw = self::unpack_request_json( wp_remote_get( $api_url ) );
 
-		$results = new Cloud_Snippets( $results );
+		$results = new Cloud_Snippets( $raw );
 		$results->page = $page;
 
 		return $results;

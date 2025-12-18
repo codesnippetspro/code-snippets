@@ -28,6 +28,24 @@ function cloud_lts_display_column_hidden_input( string $column_name, Cloud_Snipp
 }
 
 /**
+ * Display a hidden input field for a certain column and snippet value.
+ *
+ * @param string        $column_name Column name.
+ * @param Cloud_Snippet $snippet     Column item.
+ *
+ * @return string HTML
+ */
+function cloud_lts_build_column_hidden_input( string $column_name, Cloud_Snippet $snippet ): string {
+	return sprintf(
+		'<input id="cloud-snippet-%s-%s" class="cloud-snippet-item" type="hidden" name="%s" value="%s" />',
+		esc_attr( $column_name ),
+		esc_attr( $snippet->id ),
+		esc_attr( $column_name ),
+		esc_attr( $snippet->$column_name )
+	);
+}
+
+/**
  * Process the download snippet action
  *
  * @param string $action  Action - 'download' or 'update'.
@@ -57,9 +75,9 @@ function cloud_lts_process_download_action( string $action, string $source, stri
  * @param Cloud_Snippet $cloud_snippet Snippet/Column item.
  * @param string        $source        Source - 'search' or 'codevault'.
  *
- * @return void
+ * @return string Action link HTML.
  */
-function cloud_lts_render_action_buttons( Cloud_Snippet $cloud_snippet, string $source ) {
+function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $source ): string {
 	$lang = Cloud_API::get_type_from_scope( $cloud_snippet->scope );
 	$link = code_snippets()->cloud_api->get_link_for_cloud_snippet( $cloud_snippet );
 	$is_licensed = code_snippets()->licensing->is_licensed();
@@ -74,38 +92,41 @@ function cloud_lts_render_action_buttons( Cloud_Snippet $cloud_snippet, string $
 					'source'  => $source,
 				]
 			);
-			printf(
+			return sprintf(
 				'<li><a class="button button-primary" href="%s">%s</a></li>',
 				esc_url( $update_url ),
 				esc_html__( 'Update Available', 'code-snippets' )
 			);
 		} else {
-			printf(
+			return sprintf(
 				'<li><a class="button" href="%s">%s</a></li>',
 				esc_url( code_snippets()->get_snippet_edit_url( $link->local_id ) ),
 				esc_html__( 'View', 'code-snippets' )
 			);
 		}
-
-		return;
 	}
 
 	if ( $download ) {
-		$download_url = add_query_arg(
-			[
+			$download_query = [
 				'action'  => 'download',
 				'snippet' => $cloud_snippet->id,
 				'source'  => $source,
-			]
-		);
+			];
 
-		printf(
+			// Preserve current cloud page if present so downstream handlers receive pagination context.
+			if ( isset( $_REQUEST['cloud_page'] ) ) {
+				$download_query['cloud_page'] = (int) wp_unslash( $_REQUEST['cloud_page'] );
+			}
+
+			$download_url = add_query_arg( $download_query );
+
+		$download_button = sprintf(
 			'<li><a class="button button-primary" href="%s">%s</a></li>',
 			esc_url( $download_url ),
 			esc_html__( 'Download', 'code-snippets' )
 		);
 	} else {
-		printf(
+		$download_button = sprintf(
 			'<li><span class="%s">%s <span class="tooltip-content">%s</span></span></li>',
 			'button button-primary button-disabled tooltip tooltip-block tooltip-end',
 			esc_html__( 'Download', 'code-snippets' ),
@@ -113,15 +134,17 @@ function cloud_lts_render_action_buttons( Cloud_Snippet $cloud_snippet, string $
 		);
 	}
 
-	printf(
+	$preview_button = sprintf(
 		'<li><a href="%s" aria-label="%s" class="%s" data-snippet="%s" data-lang="%s">%s</a></li>',
 		'#TB_inline?&width=700&height=500&inlineId=show-code-preview',
 		esc_attr( $cloud_snippet->name ),
-		'cloud-snippet-preview thickbox',
+		'cloud-snippet-preview thickbox button',
 		esc_attr( $cloud_snippet->id ),
 		esc_attr( $lang ),
 		esc_html__( 'Preview', 'code-snippets' )
 	);
+
+	return $download_button . $preview_button;
 }
 
 /**
@@ -140,7 +163,8 @@ function cloud_lts_pagination( string $which, string $source, int $total_items, 
 	$num = sprintf( _n( '%s item', '%s items', $total_items, 'code-snippets' ), number_format_i18n( $total_items ) );
 	$output = '<span class="displaying-num">' . $num . '</span>';
 
-	$current = isset( $_REQUEST['cloud_page'] ) ? (int) $_REQUEST['cloud_page'] : $pagenum;
+	$param_key = $source . '_page';
+	$current = isset( $_REQUEST[ $param_key ] ) ? (int) $_REQUEST[ $param_key ] : $pagenum;
 	$current_url = remove_query_arg( wp_removable_query_args() ) . '#' . $source;
 
 	$page_links = array();
@@ -234,8 +258,10 @@ function cloud_lts_pagination( string $which, string $source, int $total_items, 
 
 	$output .= "\n<span class='$pagination_links_class'>" . implode( "\n", $page_links ) . '</span>';
 
+	$page_class = $total_pages ? '' : ' no-pages';
+
 	return [
 		'output'     => $output,
-		'page_class' => $total_pages ? ( $total_pages < 2 ? ' one-page' : '' ) : ' no-pages',
+		'page_class' => $page_class,
 	];
 }

@@ -182,11 +182,10 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function enqueue_assets() {
 		$plugin = code_snippets();
-		$rtl = is_rtl() ? '-rtl' : '';
 
 		wp_enqueue_style(
 			'code-snippets-manage',
-			plugins_url( "dist/manage$rtl.css", $plugin->file ),
+			plugins_url( 'dist/manage.css', $plugin->file ),
 			[],
 			$plugin->version
 		);

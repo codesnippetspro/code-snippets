@@ -30,10 +30,10 @@ export default eslintTs.config(
 	},
 	{
 		languageOptions: {
-			ecmaVersion: 2018,
+			ecmaVersion: 2022,
 			globals: { ...globals.browser },
 			parserOptions: {
-				ecmaVersion: 2018,
+				ecmaVersion: 2022,
 				ecmaFeatures: { jsx: true },
 				tsconfigRootDir: import.meta.dirname,
 				projectService: { allowDefaultProject: ['eslint.config.mjs'] }

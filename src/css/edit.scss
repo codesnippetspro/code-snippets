@@ -2,6 +2,7 @@
  * Styles for the edit snippet admin page.
  */
 
+@use 'common/direction';
 @use 'common/codemirror';
 @use 'common/badges';
 @use 'common/switch';
@@ -93,4 +94,14 @@
 
 form.condition-snippet .snippet-code-container {
 	display: none;
+}
+
+.cs-back {
+	cursor: pointer;
+
+	&::before {
+		content: '<';
+		color: #2271b1;
+		margin-inline-end: 3px;
+	}
 }
