@@ -2,27 +2,165 @@ name: "(Pull Request): Build"
 
 on:
   pull_request:
-    types: [labeled]
+    types: [labeled, unlabeled]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+permissions:
+  contents: read
+  issues: write
+  actions: write
 
 jobs:
-  comment:
-    if: contains(github.event.pull_request.labels.*.name, 'build')
+  gate:
+    if: github.event.action == 'labeled' && github.event.label.name == 'build'
     runs-on: ubuntu-latest
-    outputs: 
-      comment_id: ${{ steps.comment.outputs.comment-id }}
+    outputs:
+      should_build: ${{ steps.gate.outputs.should_build }}
     steps:
-      - name: Comment
+      - name: Check for in-progress build runs
+        id: gate
+        env:
+          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+
+          workflow_file="pull-request.yml"
+          other_run_ids="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_file}/runs?per_page=100" --paginate \
+            | jq -r --argjson pr "${PR_NUMBER}" --argjson current "${GITHUB_RUN_ID}" '
+              .workflow_runs[]
+              | select(.status != "completed")
+              | select(.id != $current)
+              | select(any(.pull_requests[]?; .number == $pr))
+              | .id
+            ')"
+
+          if [ -n "${other_run_ids}" ]; then
+            echo "::notice::Another build workflow run is already in progress; ignoring this trigger."
+            echo "::notice::In-progress run ids: ${other_run_ids//$'\n'/, }"
+            echo "should_build=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "should_build=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+  cleanup:
+    if: github.event.action == 'unlabeled' && github.event.label.name == 'build'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Cancel running build workflows for this PR
+        run: |
+          set -euo pipefail
+
+          workflow_file="pull-request.yml"
+          run_ids="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_file}/runs?per_page=100" --paginate \
+            | jq -r --argjson pr "${PR_NUMBER}" --argjson current "${GITHUB_RUN_ID}" '
+              .workflow_runs[]
+              | select(.status != "completed")
+              | select(.id != $current)
+              | select(any(.pull_requests[]?; .number == $pr))
+              | .id
+            ')"
+
+          if [ -z "${run_ids}" ]; then
+            echo "::notice::No in-progress build workflow runs to cancel."
+            exit 0
+          fi
+
+          echo "::group::Canceling build workflow runs"
+          for run_id in ${run_ids}; do
+            echo "Canceling run ${run_id}"
+            gh api -X POST "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/cancel" || true
+          done
+          echo "::endgroup::"
+
+      - name: Delete build comments
+        run: |
+          set -euo pipefail
+
+          marker="<!-- code-snippets-build-comment -->"
+          legacy_prefixes_regex='Build started.. a link to the built zip file will appear here soon..|### Download and install'
+          bot_logins_regex='^(code-snippets-bot|github-actions\\[bot\\])$'
+
+          comment_ids="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --paginate \
+            | jq -r --arg marker "${marker}" \
+              --arg legacy_prefixes_regex "${legacy_prefixes_regex}" \
+              --arg bot_logins_regex "${bot_logins_regex}" '
+              .[]
+              | select(.user.login | test($bot_logins_regex))
+              | select(.body | contains($marker) or test($legacy_prefixes_regex))
+              | .id
+            ')"
+
+          if [ -z "${comment_ids}" ]; then
+            echo "::notice::No build comments found to delete."
+            exit 0
+          fi
+
+          echo "::group::Deleting build comments"
+          for comment_id in ${comment_ids}; do
+            echo "Deleting comment ${comment_id}"
+            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" || true
+          done
+          echo "::endgroup::"
+
+  comment:
+    needs: gate
+    if: needs.gate.outputs.should_build == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      comment_id: ${{ steps.comment.outputs.comment_id }}
+    env:
+      GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Delete previous build comments
+        run: |
+          set -euo pipefail
+
+          marker="<!-- code-snippets-build-comment -->"
+          legacy_prefixes_regex='Build started.. a link to the built zip file will appear here soon..|### Download and install'
+          bot_logins_regex='^(code-snippets-bot|github-actions\\[bot\\])$'
+
+          comment_ids="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --paginate \
+            | jq -r --arg marker "${marker}" \
+              --arg legacy_prefixes_regex "${legacy_prefixes_regex}" \
+              --arg bot_logins_regex "${bot_logins_regex}" '
+              .[]
+              | select(.user.login | test($bot_logins_regex))
+              | select(.body | contains($marker) or test($legacy_prefixes_regex))
+              | .id
+            ')"
+
+          if [ -z "${comment_ids}" ]; then
+            echo "::notice::No previous build comments found."
+            exit 0
+          fi
+
+          echo "::group::Deleting previous build comments"
+          for comment_id in ${comment_ids}; do
+            echo "Deleting comment ${comment_id}"
+            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" || true
+          done
+          echo "::endgroup::"
+
+      - name: Create build comment
         id: comment
-        uses: codesnippetspro/create-or-update-comment@v4
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            👌 Build started.. a link to the built zip file will appear here soon..
-  
+        run: |
+          set -euo pipefail
+
+          marker="<!-- code-snippets-build-comment -->"
+          body="$(cat <<EOF
+          ${marker}
+          ### Build
+          Build started… a link to the built zip file will appear here soon.
+          EOF
+          )"
+
+          comment_id="$(gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -f body="${body}" --jq '.id')"
+          echo "comment_id=${comment_id}" >> "${GITHUB_OUTPUT}"
+
   install:
     needs: comment
     uses: ./.github/workflows/build.yml
@@ -35,10 +173,18 @@ jobs:
     steps:
       - name: Publish comment
         if: ${{ needs.install.outputs.artifact_name && needs.install.outputs.artifact_url }}
-        uses: codesnippetspro/create-or-update-comment@v4
-        with:
-          edit-mode: replace
-          comment-id: ${{ needs.comment.outputs.comment_id }}
-          body: |
-            ### Download and install
-            📦 [${{ needs.install.outputs.artifact_name }}.${{ needs.install.outputs.version }}.zip](${{ needs.install.outputs.artifact_url }})
+        env:
+          GH_TOKEN: ${{ secrets.CHANGELOG_PAT || github.token }}
+          COMMENT_ID: ${{ needs.comment.outputs.comment_id }}
+        run: |
+          set -euo pipefail
+
+          marker="<!-- code-snippets-build-comment -->"
+          body="$(cat <<EOF
+          ${marker}
+          ### Download and install
+          📦 [${{ needs.install.outputs.artifact_name }}.zip](${{ needs.install.outputs.artifact_url }})
+          EOF
+          )"
+
+          gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${COMMENT_ID}" -f body="${body}"
