@@ -438,6 +438,11 @@ function delete_snippet( int $id, ?bool $network = null ): bool {
 
 	$snippet = get_snippet( $id, $network );
 
+	// Prevent deletion of locked snippets.
+	if ( $snippet->locked ) {
+		return false;
+	}
+
 	$result = $wpdb->delete(
 		$table,
 		array( 'id' => $id ),
@@ -470,6 +475,11 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
 	$table = code_snippets()->db->get_table_name( $network );
 
 	$snippet = get_snippet( $id, $network );
+
+	// Prevent trashing of locked snippets.
+	if ( $snippet->locked ) {
+		return false;
+	}
 
 	$result = $wpdb->update(
 		$table,
@@ -567,6 +577,18 @@ function save_snippet( $snippet ) {
 		$snippet = new Snippet( $snippet );
 	}
 
+	// Prevent modification of locked snippets (allow unlocking itself).
+	if ( 0 !== $snippet->id ) {
+		$old_snippet = get_snippet( $snippet->id, $snippet->network );
+
+		if ( $old_snippet->locked && $snippet->locked ) {
+			// If it was locked and the new request still wants it locked,
+			// prevent changes to sensitive fields (code and name).
+			$snippet->code = $old_snippet->code;
+			$snippet->name = $old_snippet->name;
+		}
+	}
+
 	// Update the last modification date if necessary.
 	$snippet->update_modified();
 
@@ -603,6 +625,7 @@ function save_snippet( $snippet ) {
 		'condition_id' => intval( $snippet->condition_id ),
 		'priority'     => $snippet->priority,
 		'active'       => intval( $snippet->active ),
+		'locked'       => intval( $snippet->locked ),
 		'modified'     => $snippet->modified,
 		'revision'     => $snippet->revision,
 		'cloud_id'     => $snippet->cloud_id ? $snippet->cloud_id : null,

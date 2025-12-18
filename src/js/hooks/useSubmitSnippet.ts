@@ -76,48 +76,56 @@ const SUBMIT_ACTION_DELTA: Record<SubmitSnippetAction, Partial<Snippet>> = {
 }
 
 export interface UseSubmitSnippet {
-	submitSnippet: (action?: SubmitSnippetAction) => Promise<Snippet | undefined>
+	submitSnippet: (action?: SubmitSnippetAction, snippetOverride?: Snippet) => Promise<Snippet | undefined>
 }
 
 export const useSubmitSnippet = (): UseSubmitSnippet => {
 	const { snippetsAPI } = useRestAPI()
 	const { setIsWorking, setCurrentNotice, snippet, setSnippet } = useSnippetForm()
 
-	const submitSnippet = useCallback(async (action: SubmitSnippetAction = SubmitSnippetAction.SAVE) => {
+	const submitSnippet = useCallback(async (
+		action: SubmitSnippetAction = SubmitSnippetAction.SAVE,
+		snippetOverride?: Snippet
+	) => {
 		setCurrentNotice(undefined)
+		setIsWorking(true)
+
+		// Use the override if provided (prevents stale state issues), otherwise use current context state
+		const activeSnippet = snippetOverride ?? snippet
 
 		const result = await (async (): Promise<Snippet | string | undefined> => {
 			try {
-				const request: Snippet = { ...snippet, ...SUBMIT_ACTION_DELTA[action] }
+				const request: Snippet = { ...activeSnippet, ...SUBMIT_ACTION_DELTA[action] }
 				const response = await (0 === request.id ? snippetsAPI.create(request) : snippetsAPI.update(request))
-				setIsWorking(false)
 				return response.id ? response : undefined
 			} catch (error) {
-				setIsWorking(false)
 				return isAxiosError(error) ? error.message : undefined
+			} finally {
+				setIsWorking(false)
 			}
 		})()
 
-		const messages = isCondition(snippet) ? conditionMessages : snippetMessages
+		const messages = isCondition(activeSnippet) ? conditionMessages : snippetMessages
 
 		if (undefined === result || 'string' === typeof result) {
 			const message = [
-				snippet.id ? messages.failedUpdate : messages.failedCreate,
+				activeSnippet.id ? messages.failedUpdate : messages.failedCreate,
 				result ?? __('The server did not send a valid response.', 'code-snippets')
 			]
 
 			setCurrentNotice(['error', message.filter(Boolean).join(' ')])
 			return undefined
 		} else {
-			setSnippet(createSnippetObject(result))
-			setCurrentNotice(['updated', getSuccessNotice(snippet, result, action)])
+			const updatedSnippet = createSnippetObject(result)
+			setSnippet(updatedSnippet)
+			setCurrentNotice(['updated', getSuccessNotice(activeSnippet, updatedSnippet, action)])
 
-			if (snippet.id && result.id) {
+			if (activeSnippet.id && updatedSnippet.id) {
 				window.document.title = window.document.title.replace(snippetMessages.addNew, messages.edit)
-				window.history.replaceState({}, '', addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: result.id }))
+				window.history.replaceState({}, '', addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: updatedSnippet.id }))
 			}
 
-			return result
+			return updatedSnippet
 		}
 	}, [snippetsAPI, setIsWorking, setCurrentNotice, snippet, setSnippet])
 

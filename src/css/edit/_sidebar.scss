@@ -23,13 +23,18 @@
 	.delete-button {
 		color: #cc1818;
 
-		&:hover {
+		&:hover:not(:disabled) {
 			color: #9e1313;
 		}
 
-		&:focus {
+		&:focus:not(:disabled) {
 			color: #710d0d;
 			border-color: #710d0d;
+		}
+
+		&:disabled {
+			color: #a7aaad;
+			cursor: not-allowed;
 		}
 	}
 
@@ -60,6 +65,19 @@
 
 			> :last-child {
 				margin-inline-start: auto;
+			}
+
+			&.lock-control-container {
+				border-block-start: 1px solid #eee;
+				padding-block-start: 1em;
+				margin-block-start: 0.5em;
+
+				.description {
+					flex-basis: 100%;
+					margin-block-start: 4px;
+					color: #646970;
+					font-style: italic;
+				}
 			}
 		}
 
@@ -108,11 +126,15 @@ p.submit {
 	padding-block-start: 0;
 }
 
-.activation-switch-container label {
-	display: flex;
-	flex-flow: row;
-	gap: 5px;
-	justify-content: center;
+.activation-switch-container,
+.lock-control-container {
+	label {
+		display: flex;
+		flex-flow: row;
+		gap: 5px;
+		justify-content: center;
+		align-items: center;
+	}
 }
 
 .shortcode-tag-wrapper {

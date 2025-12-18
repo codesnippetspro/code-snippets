@@ -177,6 +177,7 @@ class DB {
 				condition_id BIGINT(20)   NOT NULL DEFAULT 0,
 				priority     SMALLINT     NOT NULL DEFAULT 10,
 				active       TINYINT(1)   NOT NULL DEFAULT 0,
+				locked       TINYINT(1)   NOT NULL DEFAULT 0,
 				modified     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				revision     BIGINT(20)   NOT NULL DEFAULT 1,
 				cloud_id     VARCHAR(255) NULL,
@@ -228,7 +229,7 @@ class DB {
 		$snippets = $wpdb->get_results(
 			$wpdb->prepare(
 				"
-				SELECT id, code, scope, active, priority
+				SELECT id, code, scope, active, locked, priority
 				FROM $table_name
 				WHERE scope IN ($scopes_format) $extra_where
 				ORDER BY priority, id",
@@ -293,6 +294,7 @@ class DB {
 	 *     table: string,
 	 *     network: bool,
 	 *     priority: int,
+	 *     locked: bool,
 	 * } List of active snippets.
 	 */
 	public function fetch_active_snippets( array $scopes ): array {
@@ -309,6 +311,7 @@ class DB {
 					'table'    => $this->table,
 					'network'  => false,
 					'priority' => intval( $snippet['priority'] ),
+					'locked'   => (bool) $snippet['locked'],
 				];
 			}
 		}
@@ -337,6 +340,7 @@ class DB {
 						'table'    => $this->ms_table,
 						'network'  => true,
 						'priority' => intval( $snippet['priority'] ),
+						'locked'   => (bool) $snippet['locked'],
 					];
 				}
 
