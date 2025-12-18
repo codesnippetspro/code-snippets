@@ -55,9 +55,6 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: WordPress mode
-        run: echo "multisite=${{ inputs.multisite }}"
-
       - name: Set up PHP
         uses: codesnippetspro/setup-php@v2
         with:
