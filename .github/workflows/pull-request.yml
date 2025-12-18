@@ -9,6 +9,10 @@ permissions:
   issues: write
   actions: write
 
+concurrency:
+  group: pr-build-${{ github.workflow }}-${{ github.event.pull_request.number }}-${{ github.event.label.name == 'build' && 'build' || github.run_id }}
+  cancel-in-progress: ${{ github.event.label.name == 'build' && github.event.action == 'unlabeled' }}
+
 jobs:
   gate:
     if: github.event.action == 'labeled' && github.event.label.name == 'build'
