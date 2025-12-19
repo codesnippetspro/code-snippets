@@ -90,22 +90,22 @@ jobs:
           path: |
             node_modules
             src/vendor
-          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-${{ github.run_id }}-${{ github.job }}
           restore-keys: |
-            ${{ runner.os }}-${{ inputs.test-mode }}-deps-
+            ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-
 
       - name: Install workflow dependencies
-        if: steps.deps-cache.outputs.cache-hit != 'true'
+        if: steps.deps-cache.outputs.cache-matched-key == ''
         run: npm run prepare-environment:ci && npm run bundle
 
       - name: Save vendor and node_modules cache
-        if: steps.deps-cache.outputs.cache-hit != 'true'
+        if: steps.deps-cache.outputs.cache-matched-key == ''
         uses: actions/cache/save@v4
         with:
           path: |
             src/vendor
             node_modules
-          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          key: ${{ steps.deps-cache.outputs.cache-primary-key }}
           
       - name: Wait for WordPress to be reachable
         run: |
@@ -199,9 +199,28 @@ jobs:
           docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core version --allow-root
           docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar --allow-root --info
 
+      - name: Restore Playwright browsers cache
+        id: playwright-browsers-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('package-lock.json') }}-${{ github.run_id }}-${{ github.job }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-${{ hashFiles('package-lock.json') }}-
+
       - name: Install playwright/test
+        if: steps.playwright-browsers-cache.outputs.cache-matched-key == ''
         run: |
           npx playwright install chromium
+
+      - name: Save Playwright browsers cache
+        if: steps.playwright-browsers-cache.outputs.cache-matched-key == ''
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ steps.playwright-browsers-cache.outputs.cache-primary-key }}
 
       - name: Run Playwright tests
         env:
