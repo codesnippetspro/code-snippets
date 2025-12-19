@@ -90,10 +90,9 @@ jobs:
           path: |
             node_modules
             src/vendor
-          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-${{ github.run_id }}-${{ github.job }}
           restore-keys: |
             ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-
-            ${{ runner.os }}-${{ inputs.test-mode }}-deps-
 
       - name: Install workflow dependencies
         if: steps.deps-cache.outputs.cache-matched-key == ''
@@ -106,7 +105,7 @@ jobs:
           path: |
             src/vendor
             node_modules
-          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          key: ${{ steps.deps-cache.outputs.cache-primary-key }}
           
       - name: Wait for WordPress to be reachable
         run: |
@@ -206,10 +205,9 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('package-lock.json') }}-${{ github.run_id }}-${{ github.job }}
           restore-keys: |
             ${{ runner.os }}-playwright-browsers-${{ hashFiles('package-lock.json') }}-
-            ${{ runner.os }}-playwright-browsers-
 
       - name: Install playwright/test
         if: steps.playwright-browsers-cache.outputs.cache-matched-key == ''
@@ -222,7 +220,7 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('package-lock.json') }}
+          key: ${{ steps.playwright-browsers-cache.outputs.cache-primary-key }}
 
       - name: Run Playwright tests
         env:
