@@ -361,6 +361,10 @@ class Plugin {
 			return $this->get_network_cap_name();
 		}
 
+		if ( is_multisite() && ! $this->is_subsite_menu_enabled() ) {
+			return $this->get_network_cap_name();
+		}
+
 		return $this->get_cap_name();
 	}
 
