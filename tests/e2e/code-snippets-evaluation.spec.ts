@@ -1,8 +1,7 @@
-import util from 'util'
-import { exec } from 'child_process'
 import { expect, test } from '@playwright/test'
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { SELECTORS } from './helpers/constants'
+import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
 const TEST_SNIPPET_NAME = 'E2E Snippet Test'
@@ -34,27 +33,22 @@ const verifyShortcodeRendersCorrectly = async (
 }
 
 const createPageWithShortcode = async (snippetId: string): Promise<string> => {
-	const execAsync = util.promisify(exec)
-
 	const shortcode = `[code_snippet id=${snippetId} format name="${TEST_SNIPPET_NAME}"]`
 	const pageContent = `<p>Page content before shortcode.</p>\n\n${shortcode}\n\n<p>Page content after shortcode.</p>`
 
 	try {
-		const createPageCmd = [
-			'npx wp-env run cli wp post create',
+		const pageId = (await wpCli([
+			'post',
+			'create',
 			'--post_type=page',
-			'--post_title="Test Page for Snippet Shortcode"',
-			`--post_content='${pageContent}'`,
+			'--post_title=Test Page for Snippet Shortcode',
+			`--post_content=${pageContent}`,
 			'--post_status=publish',
 			'--porcelain'
-		].join(' ')
+		])).trim()
 
-		const { stdout } = await execAsync(createPageCmd)
-		const pageId = stdout.trim()
-
-		const getUrlCmd = `npx wp-env run cli wp post url ${pageId}`
-		const { stdout: pageUrl } = await execAsync(getUrlCmd)
-		return pageUrl.trim()
+		const pageUrl = (await wpCli(['post', 'url', pageId])).trim()
+		return pageUrl
 	} catch (error) {
 		console.error('Failed to create page via WP-CLI:', error)
 		throw error

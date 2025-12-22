@@ -2,6 +2,12 @@
 
 namespace Code_Snippets;
 
+/**
+ * Manage file-based snippet execution.
+ *
+ * Responsible for writing snippet code to disk, maintaining per-table config indexes,
+ * and retrieving the active snippet list from those config files.
+ */
 class Snippet_Files {
 
 	/**
@@ -9,12 +15,34 @@ class Snippet_Files {
 	 */
 	private const ENABLED_FLAG_FILE = 'flat-files-enabled.flag';
 
+	/**
+	 * Snippet handler registry.
+	 *
+	 * @var Snippet_Handler_Registry
+	 */
 	private Snippet_Handler_Registry $handler_registry;
 
+	/**
+	 * File system adapter.
+	 *
+	 * @var File_System_Interface
+	 */
 	private File_System_Interface $fs;
 
+	/**
+	 * Config repository.
+	 *
+	 * @var Snippet_Config_Repository_Interface
+	 */
 	private Snippet_Config_Repository_Interface $config_repo;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param Snippet_Handler_Registry            $handler_registry Handler registry instance.
+	 * @param File_System_Interface               $fs               File system adapter.
+	 * @param Snippet_Config_Repository_Interface $config_repo      Config repository instance.
+	 */
 	public function __construct(
 		Snippet_Handler_Registry $handler_registry,
 		File_System_Interface $fs,
@@ -36,10 +64,22 @@ class Snippet_Files {
 		return file_exists( $flag_file_path );
 	}
 
+	/**
+	 * Get the full path to the flat-file enabled flag.
+	 *
+	 * @return string
+	 */
 	private static function get_flag_file_path(): string {
 		return self::get_base_dir() . '/' . self::ENABLED_FLAG_FILE;
 	}
 
+	/**
+	 * Create or delete the enabled flag file.
+	 *
+	 * @param bool $enabled Whether file-based execution is enabled.
+	 *
+	 * @return void
+	 */
 	private function handle_enabled_file_flag( bool $enabled ): void {
 		$flag_file_path = self::get_flag_file_path();
 
@@ -53,6 +93,11 @@ class Snippet_Files {
 		}
 	}
 
+	/**
+	 * Register WordPress hooks used by file-based execution.
+	 *
+	 * @return void
+	 */
 	public function register_hooks(): void {
 		if ( ! $this->fs->is_writable( WP_CONTENT_DIR ) ) {
 			return;
@@ -72,9 +117,17 @@ class Snippet_Files {
 		}
 
 		add_filter( 'code_snippets_settings_fields', [ $this, 'add_settings_fields' ], 10, 1 );
-		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ], 10, 2 );
+		add_action( 'code_snippets/settings_updated', [ $this, 'create_all_flat_files' ], 10, 1 );
 	}
 
+	/**
+	 * Activate multiple snippets and regenerate their flat files.
+	 *
+	 * @param Snippet[] $valid_snippets Snippets to activate.
+	 * @param string    $table         Table name.
+	 *
+	 * @return void
+	 */
 	public function activate_snippets( $valid_snippets, $table ): void {
 		foreach ( $valid_snippets as $snippet ) {
 			$snippet->active = true;
@@ -82,6 +135,14 @@ class Snippet_Files {
 		}
 	}
 
+	/**
+	 * Write a snippet file and update its config index entry.
+	 *
+	 * @param Snippet $snippet Snippet object.
+	 * @param string  $table   Table name.
+	 *
+	 * @return void
+	 */
 	public function handle_snippet( Snippet $snippet, string $table ): void {
 		if ( 0 === $snippet->id ) {
 			return;
@@ -106,6 +167,14 @@ class Snippet_Files {
 		$this->config_repo->update( $base_dir, $snippet );
 	}
 
+	/**
+	 * Delete a snippet file and remove it from the config index.
+	 *
+	 * @param Snippet $snippet  Snippet object.
+	 * @param bool    $network  Whether the snippet is network-wide.
+	 *
+	 * @return void
+	 */
 	public function delete_snippet( Snippet $snippet, bool $network ): void {
 		$handler = $this->handler_registry->get_handler( $snippet->type );
 
@@ -122,6 +191,13 @@ class Snippet_Files {
 		$this->config_repo->update( $base_dir, $snippet, true );
 	}
 
+	/**
+	 * Activate a snippet by writing its code file and updating config.
+	 *
+	 * @param Snippet $snippet Snippet object.
+	 *
+	 * @return void
+	 */
 	public function activate_snippet( Snippet $snippet ): void {
 		$snippet = get_snippet( $snippet->id, $snippet->network );
 		$handler = $this->handler_registry->get_handler( $snippet->type );
@@ -144,6 +220,14 @@ class Snippet_Files {
 		$this->config_repo->update( $base_dir, $snippet );
 	}
 
+	/**
+	 * Deactivate a snippet by updating its config entry.
+	 *
+	 * @param int  $snippet_id Snippet ID.
+	 * @param bool $network    Whether the snippet is network-wide.
+	 *
+	 * @return void
+	 */
 	public function deactivate_snippet( int $snippet_id, bool $network ): void {
 		$snippet = get_snippet( $snippet_id, $network );
 		$handler = $this->handler_registry->get_handler( $snippet->type );
@@ -158,6 +242,14 @@ class Snippet_Files {
 		$this->config_repo->update( $base_dir, $snippet );
 	}
 
+	/**
+	 * Get the base directory for flat files.
+	 *
+	 * @param string $table       Optional hashed table name.
+	 * @param string $snippet_type Optional snippet type directory.
+	 *
+	 * @return string
+	 */
 	public static function get_base_dir( string $table = '', string $snippet_type = '' ): string {
 		$base_dir = WP_CONTENT_DIR . '/code-snippets';
 
@@ -172,6 +264,14 @@ class Snippet_Files {
 		return $base_dir;
 	}
 
+	/**
+	 * Get the base URL for flat files.
+	 *
+	 * @param string $table       Optional hashed table name.
+	 * @param string $snippet_type Optional snippet type directory.
+	 *
+	 * @return string
+	 */
 	public static function get_base_url( string $table = '', string $snippet_type = '' ): string {
 		$base_url = WP_CONTENT_URL . '/code-snippets';
 
@@ -186,6 +286,13 @@ class Snippet_Files {
 		return $base_url;
 	}
 
+	/**
+	 * Create a directory if it does not exist.
+	 *
+	 * @param string $dir Directory path.
+	 *
+	 * @return void
+	 */
 	private function maybe_create_directory( string $dir ): void {
 		if ( ! $this->fs->is_dir( $dir ) ) {
 			$result = wp_mkdir_p( $dir );
@@ -196,16 +303,41 @@ class Snippet_Files {
 		}
 	}
 
+	/**
+	 * Build the file path for a snippet's code file.
+	 *
+	 * @param string $base_dir    Base directory path.
+	 * @param int    $snippet_id  Snippet ID.
+	 * @param string $ext         File extension.
+	 *
+	 * @return string
+	 */
 	private function get_snippet_file_path( string $base_dir, int $snippet_id, string $ext ): string {
 		return trailingslashit( $base_dir ) . $snippet_id . '.' . $ext;
 	}
 
+	/**
+	 * Delete a file if it exists.
+	 *
+	 * @param string $file_path File path.
+	 *
+	 * @return void
+	 */
 	private function delete_file( string $file_path ): void {
 		if ( $this->fs->exists( $file_path ) ) {
 			$this->fs->delete( $file_path );
 		}
 	}
 
+	/**
+	 * Sync the active shared network snippets list to a config file.
+	 *
+	 * @param string $option    Option name.
+	 * @param mixed  $old_value Previous value.
+	 * @param mixed  $value     New value.
+	 *
+	 * @return void
+	 */
 	public function sync_active_shared_network_snippets( $option, $old_value, $value ): void {
 		if ( 'active_shared_network_snippets' !== $option ) {
 			return;
@@ -214,6 +346,14 @@ class Snippet_Files {
 		$this->create_active_shared_network_snippets_file( $value );
 	}
 
+	/**
+	 * Sync the active shared network snippets list to a config file when first added.
+	 *
+	 * @param string $option Option name.
+	 * @param mixed  $value  Option value.
+	 *
+	 * @return void
+	 */
 	public function sync_active_shared_network_snippets_add( $option, $value ): void {
 		if ( 'active_shared_network_snippets' !== $option ) {
 			return;
@@ -222,6 +362,13 @@ class Snippet_Files {
 		$this->create_active_shared_network_snippets_file( $value );
 	}
 
+	/**
+	 * Create or update the active shared network snippets config file.
+	 *
+	 * @param mixed $value Option value.
+	 *
+	 * @return void
+	 */
 	private function create_active_shared_network_snippets_file( $value ): void {
 		$table = self::get_hashed_table_name( code_snippets()->db->get_table_name( false ) );
 		$base_dir = self::get_base_dir( $table );
@@ -229,15 +376,31 @@ class Snippet_Files {
 		$this->maybe_create_directory( $base_dir );
 
 		$file_path = trailingslashit( $base_dir ) . 'active-shared-network-snippets.php';
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export -- var_export is required for writing PHP config files.
 		$file_content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn " . var_export( $value, true ) . ";\n";
 
 		$this->fs->put_contents( $file_path, $file_content, FS_CHMOD_FILE );
 	}
 
+	/**
+	 * Hash a table name for file system usage.
+	 *
+	 * @param string $table Table name.
+	 *
+	 * @return string
+	 */
 	public static function get_hashed_table_name( string $table ): string {
 		return wp_hash( $table );
 	}
 
+	/**
+	 * Get a list of active snippets from flat file config.
+	 *
+	 * @param array<string> $scopes      Scopes to include.
+	 * @param string        $snippet_type Snippet type directory.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
 	public static function get_active_snippets_from_flat_files(
 		array $scopes = [],
 		$snippet_type = 'php'
@@ -245,7 +408,8 @@ class Snippet_Files {
 		$active_snippets = [];
 		$db = code_snippets()->db;
 
-		$table = self::get_hashed_table_name( $db->get_table_name() );
+		// Always use the site table for "local" snippets, even in Network Admin.
+		$table = self::get_hashed_table_name( $db->get_table_name( false ) );
 		$snippets = self::load_active_snippets_from_file(
 			$table,
 			$snippet_type,
@@ -289,8 +453,9 @@ class Snippet_Files {
 
 				foreach ( $ms_snippets as $snippet ) {
 					$id = intval( $snippet['id'] );
+					$active_value = intval( $snippet['active'] );
 
-					if ( ! $snippet['active'] && ! in_array( $id, $active_shared_ids, true ) ) {
+					if ( ! DB::is_network_snippet_enabled( $active_value, $id, $active_shared_ids ) ) {
 						continue;
 					}
 
@@ -312,7 +477,15 @@ class Snippet_Files {
 		return $active_snippets;
 	}
 
-	private static function sort_active_snippets( array &$active_snippets, $db ): void {
+		/**
+		 * Sort active snippet entries for execution order.
+		 *
+		 * @param array<int, array<string, mixed>> $active_snippets Active snippets list.
+		 * @param DB                               $db Database instance.
+		 *
+		 * @return void
+		 */
+	private static function sort_active_snippets( array &$active_snippets, DB $db ): void {
 		$comparisons = [
 			function ( array $a, array $b ) {
 				return $a['priority'] <=> $b['priority'];
@@ -342,6 +515,16 @@ class Snippet_Files {
 		);
 	}
 
+	/**
+	 * Load active snippets from a flat file config index.
+	 *
+	 * @param string     $table            Hashed table directory name.
+	 * @param string     $snippet_type      Snippet type directory.
+	 * @param string[]   $scopes           Scopes to include.
+	 * @param int[]|null $active_shared_ids Optional list of active shared network snippet IDs.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
 	private static function load_active_snippets_from_file(
 		string $table,
 		string $snippet_type,
@@ -371,19 +554,16 @@ class Snippet_Files {
 		}
 
 		$file_snippets = require $snippets_file_path;
+		$shared_ids = is_array( $active_shared_ids )
+			? array_map( 'intval', $active_shared_ids )
+			: [];
 
 		$filtered_snippets = array_filter(
 			$file_snippets,
-			function ( $snippet ) use ( $scopes, $active_shared_ids ) {
-				$is_active = $snippet['active'];
+			function ( $snippet ) use ( $scopes, $shared_ids ) {
+				$active_value = isset( $snippet['active'] ) ? intval( $snippet['active'] ) : 0;
 
-				if ( null !== $active_shared_ids ) {
-					$is_active = $is_active || in_array(
-						intval( $snippet['id'] ),
-						$active_shared_ids,
-						true
-					);
-				}
+				$is_active = DB::is_network_snippet_enabled( $active_value, intval( $snippet['id'] ), $shared_ids );
 
 				return ( $is_active || 'condition' === $snippet['scope'] ) && in_array( $snippet['scope'], $scopes, true );
 			}
@@ -394,6 +574,13 @@ class Snippet_Files {
 		return $filtered_snippets;
 	}
 
+	/**
+	 * Add file-based execution settings fields.
+	 *
+	 * @param array<string, mixed> $fields Settings fields.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public function add_settings_fields( array $fields ): array {
 		$fields['general']['enable_flat_files'] = [
 			'name'  => __( 'Enable file-based execution', 'code-snippets' ),
@@ -408,7 +595,14 @@ class Snippet_Files {
 		return $fields;
 	}
 
-	public function create_all_flat_files( array $settings, array $input ): void {
+	/**
+	 * Recreate all flat files when file-based execution settings are updated.
+	 *
+	 * @param array<string, mixed> $settings Settings data.
+	 *
+	 * @return void
+	 */
+	public function create_all_flat_files( array $settings ): void {
 		if ( ! isset( $settings['general']['enable_flat_files'] ) ) {
 			return;
 		}
@@ -423,6 +617,11 @@ class Snippet_Files {
 		$this->create_active_shared_network_snippets_config_file();
 	}
 
+	/**
+	 * Create snippet code files and config indexes for all active snippets.
+	 *
+	 * @return void
+	 */
 	private function create_snippet_flat_files(): void {
 		$db = code_snippets()->db;
 
@@ -457,6 +656,11 @@ class Snippet_Files {
 		}
 	}
 
+	/**
+	 * Create active shared network snippet config files for each site (multisite) or the current site.
+	 *
+	 * @return void
+	 */
 	private function create_active_shared_network_snippets_config_file(): void {
 		if ( is_multisite() ) {
 			$current_blog_id = get_current_blog_id();
