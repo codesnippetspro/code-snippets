@@ -160,6 +160,9 @@ class Plugin {
 		// Importers.
 		new Plugins_Import_Manager();
 		new Files_Import_Manager();
+		
+		// Initialize promotions.
+		new Promotions\Elementor_Pro();
 	}
 
 	/**
@@ -358,6 +361,10 @@ class Plugin {
 	 */
 	public function get_cap(): string {
 		if ( is_multisite() && $this->is_network_context() ) {
+			return $this->get_network_cap_name();
+		}
+
+		if ( is_multisite() && ! $this->is_subsite_menu_enabled() ) {
 			return $this->get_network_cap_name();
 		}
 

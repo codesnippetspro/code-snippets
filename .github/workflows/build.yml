@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.build.outputs.version }}
-      artifact_name: ${{ steps.build.outputs.name }}
+      artifact_name: ${{ steps.build.outputs.artifact_name }}
       artifact_url: ${{ steps.artifacts.outputs.artifact-url }}
       artifact_id: ${{ steps.artifacts.outputs.artifact-id }}
     steps:
@@ -51,8 +51,12 @@ jobs:
           npm install && npm run bundle
 
           name=$(jq -r .name package.json)
+          version=$(jq -r .version package.json)
+          artifact_name="${name}.${version}"
+
           echo "name=$name" >> $GITHUB_OUTPUT
-          echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "artifact_name=$artifact_name" >> $GITHUB_OUTPUT
           
           mkdir -p ./upload/$name
           mv ./bundle/* ./upload/$name/ 2>/dev/null || true
@@ -61,5 +65,5 @@ jobs:
         id: artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.build.outputs.name }}
+          name: ${{ steps.build.outputs.artifact_name }}
           path: ./upload

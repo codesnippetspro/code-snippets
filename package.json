@@ -8,6 +8,8 @@
     "test": "tests"
   },
   "scripts": {
+    "test:php": "cd src && vendor/bin/phpunit -c ../phpunit.xml",
+    "test:php:watch": "npm run test:php -- --testdox",
     "test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
     "test:playwright:debug": "npm run test:playwright -- --debug",
     "test:playwright:ui": "npm run test:playwright -- --ui",

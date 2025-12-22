@@ -198,53 +198,95 @@ class DB {
 		return $success;
 	}
 
-	/**
-	 * Fetch a list of active snippets from a database table.
-	 *
-	 * @param string        $table_name  Name of table to fetch snippets from.
-	 * @param array<string> $scopes      List of scopes to include in query.
-	 * @param boolean       $active_only Whether to only fetch active snippets from the table.
-	 *
-	 * @return array<string, array<string, mixed>>|false List of active snippets, if any could be retrieved.
-	 *
-	 * @phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-	 */
-	private static function fetch_snippets_from_table( string $table_name, array $scopes, bool $active_only = true ) {
-		global $wpdb;
+		/**
+		 * Generate the SQL for fetching active snippets from the database.
+		 *
+		 * @param string[] $scopes List of scopes to retrieve in.
+         *
+         * @return array{
+         *     id: int,
+         *     code: string,
+         *     scope: string,
+         *     table: string,
+         *     network: bool,
+         *     priority: int,
+         * } List of active snippets.
+         */
+	public function fetch_active_snippets( array $scopes ): array {
+		$active_snippets = [];
 
-		$cache_key = sprintf( 'active_snippets_%s_%s', sanitize_key( join( '_', $scopes ) ), $table_name );
-		$cached_snippets = wp_cache_get( $cache_key, CACHE_GROUP );
-
-		if ( is_array( $cached_snippets ) ) {
-			return $cached_snippets;
+		// Fetch the active snippets for the current site, if there are any.
+		$snippets = $this->fetch_snippets_from_table( $this->table, $scopes, true );
+		if ( $snippets ) {
+			foreach ( $snippets as $snippet ) {
+				$active_snippets[] = [
+					'id'       => intval( $snippet['id'] ),
+					'code'     => $snippet['code'],
+					'scope'    => $snippet['scope'],
+					'table'    => $this->table,
+					'network'  => false,
+					'priority' => intval( $snippet['priority'] ),
+				];
+			}
 		}
 
-		if ( ! self::table_exists( $table_name ) ) {
+		// If multisite is enabled, fetch all snippets from the network table, and filter down to only active snippets.
+		if ( is_multisite() ) {
+			$ms_snippets = $this->fetch_snippets_from_table( $this->ms_table, $scopes, false );
+
+			if ( $ms_snippets ) {
+				$active_shared_ids = get_option( 'active_shared_network_snippets', [] );
+				$active_shared_ids = is_array( $active_shared_ids )
+					? array_map( 'intval', $active_shared_ids )
+					: [];
+
+				foreach ( $ms_snippets as $snippet ) {
+					$id = intval( $snippet['id'] );
+					$active_value = intval( $snippet['active'] );
+
+					if ( ! self::is_network_snippet_enabled( $active_value, $id, $active_shared_ids ) ) {
+						continue;
+					}
+
+					$active_snippets[] = [
+						'id'       => $id,
+						'code'     => $snippet['code'],
+						'scope'    => $snippet['scope'],
+						'table'    => $this->ms_table,
+						'network'  => true,
+						'priority' => intval( $snippet['priority'] ),
+					];
+				}
+
+				$this->sort_active_snippets( $active_snippets );
+			}
+		}
+
+		return $active_snippets;
+	}
+
+	/**
+	 * Determine whether a network snippet should execute on the current site.
+	 *
+	 * Network snippets execute when active=1, or when the snippet is listed as active-shared for the site.
+	 * Trashed snippets (active=-1) should never execute.
+	 *
+	 * @param int   $active_value      Raw active value: 1=active, 0=inactive, -1=trashed (can be stored as a string in the database).
+	 * @param int   $snippet_id        Snippet ID.
+	 * @param int[] $active_shared_ids Active shared network snippet IDs for the current site.
+	 *
+	 * @return bool
+	 */
+	public static function is_network_snippet_enabled( int $active_value, int $snippet_id, array $active_shared_ids ): bool {
+		if ( -1 === $active_value ) {
 			return false;
 		}
 
-		$scopes_format = implode( ',', array_fill( 0, count( $scopes ), '%s' ) );
-		$extra_where = $active_only ? 'AND active=1' : '';
-
-		$snippets = $wpdb->get_results(
-			$wpdb->prepare(
-				"
-				SELECT id, code, scope, active, locked, priority
-				FROM $table_name
-				WHERE scope IN ($scopes_format) $extra_where
-				ORDER BY priority, id",
-				$scopes
-			),
-			'ARRAY_A'
-		);
-
-		// Cache the full list of snippets.
-		if ( is_array( $snippets ) ) {
-			wp_cache_set( $cache_key, $snippets, CACHE_GROUP );
-			return $snippets;
+		if ( 1 === $active_value ) {
+			return true;
 		}
 
-		return false;
+		return in_array( $snippet_id, $active_shared_ids, true );
 	}
 
 	/**
@@ -283,71 +325,51 @@ class DB {
 	}
 
 	/**
-	 * Generate the SQL for fetching active snippets from the database.
+	 * Fetch a list of active snippets from a database table.
 	 *
-	 * @param string[] $scopes List of scopes to retrieve in.
+	 * @param string        $table_name  Name of table to fetch snippets from.
+	 * @param array<string> $scopes      List of scopes to include in query.
+	 * @param boolean       $active_only Whether to only fetch active snippets from the table.
 	 *
-	 * @return array{
-	 *     id: int,
-	 *     code: string,
-	 *     scope: string,
-	 *     table: string,
-	 *     network: bool,
-	 *     priority: int,
-	 *     locked: bool,
-	 * } List of active snippets.
+	 * @return array<string, array<string, mixed>>|false List of active snippets, if any could be retrieved.
+	 *
+	 * @phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	 */
-	public function fetch_active_snippets( array $scopes ): array {
-		$active_snippets = [];
+	private static function fetch_snippets_from_table( string $table_name, array $scopes, bool $active_only = true ) {
+		global $wpdb;
 
-		// Fetch the active snippets for the current site, if there are any.
-		$snippets = $this->fetch_snippets_from_table( $this->table, $scopes, true );
-		if ( $snippets ) {
-			foreach ( $snippets as $snippet ) {
-				$active_snippets[] = [
-					'id'       => intval( $snippet['id'] ),
-					'code'     => $snippet['code'],
-					'scope'    => $snippet['scope'],
-					'table'    => $this->table,
-					'network'  => false,
-					'priority' => intval( $snippet['priority'] ),
-					'locked'   => (bool) $snippet['locked'],
-				];
-			}
+		$cache_key = sprintf( 'active_snippets_%s_%s', sanitize_key( join( '_', $scopes ) ), $table_name );
+		$cached_snippets = wp_cache_get( $cache_key, CACHE_GROUP );
+
+		if ( is_array( $cached_snippets ) ) {
+			return $cached_snippets;
 		}
 
-		// If multisite is enabled, fetch all snippets from the network table, and filter down to only active snippets.
-		if ( is_multisite() ) {
-			$ms_snippets = $this->fetch_snippets_from_table( $this->ms_table, $scopes, false );
-
-			if ( $ms_snippets ) {
-				$active_shared_ids = get_option( 'active_shared_network_snippets', [] );
-				$active_shared_ids = is_array( $active_shared_ids )
-					? array_map( 'intval', $active_shared_ids )
-					: [];
-
-				foreach ( $ms_snippets as $snippet ) {
-					$id = intval( $snippet['id'] );
-
-					if ( ! $snippet['active'] && ! in_array( $id, $active_shared_ids, true ) ) {
-						continue;
-					}
-
-					$active_snippets[] = [
-						'id'       => $id,
-						'code'     => $snippet['code'],
-						'scope'    => $snippet['scope'],
-						'table'    => $this->ms_table,
-						'network'  => true,
-						'priority' => intval( $snippet['priority'] ),
-						'locked'   => (bool) $snippet['locked'],
-					];
-				}
-
-				$this->sort_active_snippets( $active_snippets );
-			}
+		if ( ! self::table_exists( $table_name ) ) {
+			return false;
 		}
 
-		return $active_snippets;
+		$scopes_format = implode( ',', array_fill( 0, count( $scopes ), '%s' ) );
+		$extra_where = $active_only ? 'AND active=1' : '';
+
+		$snippets = $wpdb->get_results(
+			$wpdb->prepare(
+				"
+				SELECT id, code, scope, active, priority
+				FROM $table_name
+				WHERE scope IN ($scopes_format) $extra_where
+				ORDER BY priority, id",
+				$scopes
+			),
+			'ARRAY_A'
+		);
+
+		// Cache the full list of snippets.
+		if ( is_array( $snippets ) ) {
+			wp_cache_set( $cache_key, $snippets, CACHE_GROUP );
+			return $snippets;
+		}
+
+		return false;
 	}
 }

@@ -73,6 +73,7 @@ if ( 'deleted' === $result && ! empty( $_REQUEST['ids'] ) ) {
 	);
 
 	$result_messages['deleted'] = sprintf(
+		// translators: %s: Undo URL.
 		__( 'Snippet <strong>trashed</strong>. <a href="%s">Undo</a>', 'code-snippets' ),
 		esc_url( $undo_url )
 	);
@@ -90,6 +91,7 @@ if ( 'deleted-multi' === $result && ! empty( $_REQUEST['ids'] ) ) {
 	);
 
 	$result_messages['deleted-multi'] = sprintf(
+		// translators: %s: Undo URL.
 		__( 'Selected snippets <strong>trashed</strong>. <a href="%s">Undo</a>', 'code-snippets' ),
 		esc_url( $undo_url )
 	);

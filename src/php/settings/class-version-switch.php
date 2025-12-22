@@ -235,7 +235,11 @@ class Version_Switch {
 
 			return [
 				'success' => true,
-				'message' => sprintf( __( 'Successfully switched to version %s. Please refresh the page to see changes.', 'code-snippets' ), $target_version ),
+				'message' => sprintf(
+					// translators: %s: Version number.
+					__( 'Successfully switched to version %s. Please refresh the page to see changes.', 'code-snippets' ),
+					$target_version
+				),
 			];
 		}
 
