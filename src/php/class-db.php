@@ -177,7 +177,6 @@ class DB {
 				condition_id BIGINT(20)   NOT NULL DEFAULT 0,
 				priority     SMALLINT     NOT NULL DEFAULT 10,
 				active       TINYINT(1)   NOT NULL DEFAULT 0,
-				locked       TINYINT(1)   NOT NULL DEFAULT 0,
 				modified     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				revision     BIGINT(20)   NOT NULL DEFAULT 1,
 				cloud_id     VARCHAR(255) NULL,
@@ -352,7 +351,7 @@ class DB {
 		$scopes_format = implode( ',', array_fill( 0, count( $scopes ), '%s' ) );
 		$extra_where = $active_only ? 'AND active=1' : '';
 
-		$snippets = $wpdb->get_results(
+			$snippets = $wpdb->get_results(
 			$wpdb->prepare(
 				"
 				SELECT id, code, scope, active, priority
