@@ -351,7 +351,7 @@ class DB {
 		$scopes_format = implode( ',', array_fill( 0, count( $scopes ), '%s' ) );
 		$extra_where = $active_only ? 'AND active=1' : '';
 
-			$snippets = $wpdb->get_results(
+		$snippets = $wpdb->get_results(
 			$wpdb->prepare(
 				"
 				SELECT id, code, scope, active, priority
