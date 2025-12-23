@@ -194,7 +194,8 @@ jobs:
           docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar snippet activate_license --license_key='${{ secrets.CODE_SNIPPETS_LICENSE }}' --allow-root
 
       - name: Create CI licensing stub and modify Plugin class
-        if: false #temporary disabled
+        #temporary disabled, to be removed if the plugin activation with license key works reliably
+        if: false 
         run: |
           # Create the CI stub class file
           cat > ./src/php/class-licensing-ci-stub.php << 'EOF'
