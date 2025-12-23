@@ -187,9 +187,9 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ inputs.multisite }}" = "true" ]; then
-            docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar plugin activate code-snippets --network --allow-root
+            docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar plugin activate code-snippets-pro --network --allow-root
           else
-            docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar plugin activate code-snippets --allow-root
+            docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar plugin activate code-snippets-pro --allow-root
           fi
           docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar snippet activate_license --license_key='${{ secrets.CODE_SNIPPETS_LICENSE }}' --allow-root
 
