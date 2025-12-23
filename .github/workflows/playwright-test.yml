@@ -16,6 +16,10 @@ on:
         type: boolean
         default: false
         description: 'If true, convert the site to multisite and create a subsite.'
+    secrets:
+      CS_LICENSE_KEY:
+        required: true
+        description: 'License key used to activate plugin in CI'
 
 jobs:
   playwright-test:
@@ -52,6 +56,7 @@ jobs:
         ports:
           - 8888:80
     steps:
+
       - name: Checkout source code
         uses: actions/checkout@v4
 
@@ -180,7 +185,6 @@ jobs:
           docker exec -u root -w /var/www/html "$WP_CONTAINER" rm -rf wp-content/plugins/code-snippets-pro
           docker cp src "$WP_CONTAINER:/var/www/html/wp-content/plugins/code-snippets-pro"
           docker exec -u root -w /var/www/html "$WP_CONTAINER" chown -R www-data:www-data wp-content/plugins/code-snippets-pro
-
       - name: Activate code-snippets-pro plugin
         env:
           WP_CONTAINER: ${{ job.services.wordpress.id }}
