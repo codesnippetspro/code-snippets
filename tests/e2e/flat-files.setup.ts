@@ -1,7 +1,8 @@
 import { expect, test as setup } from '@playwright/test'
 
 setup('enable flat files', async ({ page }) => {
-	const wpAdminbase = process.env.WP_E2E_MULTISITE_MODE ? '/wp-admin/network' : '/wp-admin'
+	const isMultisite = 'true' === process.env.WP_E2E_MULTISITE_MODE || '1' === process.env.WP_E2E_MULTISITE_MODE
+	const wpAdminbase = isMultisite ? '/wp-admin/network' : '/wp-admin'
   
 	await page.goto(`${wpAdminbase}/admin.php?page=snippets-settings`)
 	await page.waitForSelector('#wpbody-content')
