@@ -131,9 +131,21 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		label: __('Post', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
 		fetchPagedOptions: (api, page) =>
-			api.get<PostsSchema>(`${REST_BASE}/wp/v2/posts?page=${page}`).then(posts =>
+			api.get<PostsSchema>(`${REST_BASE}/wp/v2/posts?page=${page}&per_page=100&_fields=id,title`).then(posts =>
 				posts.map(post =>
-					({ value: post.id, label: post.title.rendered })))
+					({ value: post.id, label: post.title.rendered }))),
+		fetchSearchOptions: (api, query) =>
+			api.get<PostsSchema>(`${REST_BASE}/wp/v2/posts?search=${encodeURIComponent(query)}&per_page=100&_fields=id,title`).then(posts =>
+				posts.map(post =>
+					({ value: post.id, label: post.title.rendered }))),
+		fetchSelectedOptions: (api, values) => {
+			const ids = values.filter((value): value is number => 'number' === typeof value)
+			return 0 === ids.length
+				? Promise.resolve([])
+				: api.get<PostsSchema>(`${REST_BASE}/wp/v2/posts?include=${ids.join(',')}&per_page=100&_fields=id,title`).then(posts =>
+					posts.map(post =>
+						({ value: post.id, label: post.title.rendered })))
+		}
 	},
 	page: {
 		group: 'posts',
@@ -164,26 +176,60 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		label: __('Post category', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
 		fetchPagedOptions: (api, page) =>
-			api.get<Categories>(`${REST_BASE}/wp/v2/categories?page=${page}`).then(categories =>
+			api.get<Categories>(`${REST_BASE}/wp/v2/categories?page=${page}&per_page=100&_fields=id,name`).then(categories =>
 				categories.map(category =>
-					({ value: category.id, label: category.name })))
+					({ value: category.id, label: category.name }))),
+		fetchSearchOptions: (api, query) =>
+			api.get<Categories>(`${REST_BASE}/wp/v2/categories?search=${encodeURIComponent(query)}&per_page=100&_fields=id,name`).then(categories =>
+				categories.map(category =>
+					({ value: category.id, label: category.name }))),
+		fetchSelectedOptions: (api, values) => {
+			const ids = values.filter((value): value is number => 'number' === typeof value)
+			return 0 === ids.length
+				? Promise.resolve([])
+				: api.get<Categories>(`${REST_BASE}/wp/v2/categories?include=${ids.join(',')}&per_page=100&_fields=id,name`).then(categories =>
+					categories.map(category =>
+						({ value: category.id, label: category.name })))
+		}
 	},
 	tag: {
 		group: 'posts',
 		label: __('Post tag', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
 		fetchPagedOptions: (api, page) =>
-			api.get<PostTags>(`${REST_BASE}/wp/v2/tags?page=${page}`).then(tags =>
+			api.get<PostTags>(`${REST_BASE}/wp/v2/tags?page=${page}&per_page=100&_fields=id,name`).then(tags =>
 				tags.map(tag =>
-					({ value: tag.id, label: tag.name })))
+					({ value: tag.id, label: tag.name }))),
+		fetchSearchOptions: (api, query) =>
+			api.get<PostTags>(`${REST_BASE}/wp/v2/tags?search=${encodeURIComponent(query)}&per_page=100&_fields=id,name`).then(tags =>
+				tags.map(tag =>
+					({ value: tag.id, label: tag.name }))),
+		fetchSelectedOptions: (api, values) => {
+			const ids = values.filter((value): value is number => 'number' === typeof value)
+			return 0 === ids.length
+				? Promise.resolve([])
+				: api.get<PostTags>(`${REST_BASE}/wp/v2/tags?include=${ids.join(',')}&per_page=100&_fields=id,name`).then(tags =>
+					tags.map(tag =>
+						({ value: tag.id, label: tag.name })))
+		}
 	},
 	author: {
 		group: 'posts',
 		label: __('Post author', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
 		fetchPagedOptions: (api, page) =>
-			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&page=${page}`)
-				.then(users => users.map(user => ({ value: user.id, label: user.name })))
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&page=${page}&per_page=100&_fields=id,name`)
+				.then(users => users.map(user => ({ value: user.id, label: user.name }))),
+		fetchSearchOptions: (api, query) =>
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?who=authors&has_published_posts=true&search=${encodeURIComponent(query)}&per_page=100&_fields=id,name`)
+				.then(users => users.map(user => ({ value: user.id, label: user.name }))),
+		fetchSelectedOptions: (api, values) => {
+			const ids = values.filter((value): value is number => 'number' === typeof value)
+			return 0 === ids.length
+				? Promise.resolve([])
+				: api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?include=${ids.join(',')}&per_page=100&_fields=id,name`)
+					.then(users => users.map(user => ({ value: user.id, label: user.name })))
+		}
 	},
 	postStatus: {
 		group: 'posts',
@@ -218,10 +264,24 @@ const USER_CONDITION_SUBJECTS: ConditionSubjectDefinitions<UserConditionSubjects
 		label: __('Current user', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
 		fetchPagedOptions: (api, page) =>
-			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?page=${page}&orderby=id`).then(users => [{
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?page=${page}&orderby=id&per_page=100&_fields=id,name`).then(users => [{
 				label: __('User ID', 'code-snippets'),
 				options: users.map(user => ({ value: user.id, label: `${user.id} (${user.name})` }))
-			}])
+			}]),
+		fetchSearchOptions: (api, query) =>
+			api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?search=${encodeURIComponent(query)}&orderby=id&per_page=100&_fields=id,name`).then(users => [{
+				label: __('User ID', 'code-snippets'),
+				options: users.map(user => ({ value: user.id, label: `${user.id} (${user.name})` }))
+			}]),
+		fetchSelectedOptions: (api, values) => {
+			const ids = values.filter((value): value is number => 'number' === typeof value)
+			return 0 === ids.length
+				? Promise.resolve([])
+				: api.get<UsersSchema>(`${REST_BASE}/wp/v2/users?include=${ids.join(',')}&per_page=100&_fields=id,name`).then(users => [{
+					label: __('User ID', 'code-snippets'),
+					options: users.map(user => ({ value: user.id, label: `${user.id} (${user.name})` }))
+				}])
+		}
 	},
 	userRole: {
 		group: 'users',
