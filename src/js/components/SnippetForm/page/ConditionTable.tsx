@@ -79,7 +79,7 @@ const SnippetSelector: React.FC = () => {
 		() =>
 			snippetsList &&
 			buildSnippetSelectOptionGroups(snippetsList.filter(snippet =>
-				!isCondition(snippet) && snippet.conditionId !== condition.id)),
+				!isCondition(snippet) && !snippet.trashed && snippet.conditionId !== condition.id)),
 		[snippetsList, condition.id]
 	)
 
