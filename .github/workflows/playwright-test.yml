@@ -52,6 +52,28 @@ jobs:
         ports:
           - 8888:80
     steps:
+      - name: Validate CS_LICENSE_KEY
+        run: |
+          set -euo pipefail
+          CS_LICENSE_KEY="${{ secrets.CS_LICENSE_KEY }}"
+
+          if [ -z "$CS_LICENSE_KEY" ]; then
+            echo "Error: CS_LICENSE_KEY is not set"
+            exit 1
+          fi
+
+          # Must start with "sk_"
+          if [ "${CS_LICENSE_KEY#sk_}" = "$CS_LICENSE_KEY" ]; then
+            echo "Error: CS_LICENSE_KEY must start with 'sk_'"
+            exit 1
+          fi
+
+          # Must be at least 30 characters long
+          if [ "${#CS_LICENSE_KEY}" -lt 30 ]; then
+            echo "Error: CS_LICENSE_KEY must be at least 30 characters long"
+            exit 1
+          fi
+
       - name: Checkout source code
         uses: actions/checkout@v4
 
