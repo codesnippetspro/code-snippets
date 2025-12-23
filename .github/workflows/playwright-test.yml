@@ -11,11 +11,46 @@ on:
         required: true
         type: string
         description: 'Playwright project name to run'
+      multisite:
+        required: false
+        type: boolean
+        default: false
+        description: 'If true, convert the site to multisite and create a subsite.'
 
 jobs:
   playwright-test:
     name: Playwright tests (${{ inputs.test-mode == 'default' && 'Default Mode' || 'File-based Execution' }})
     runs-on: ubuntu-22.04
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: wordpress
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
+          MYSQL_ROOT_PASSWORD: root
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+      wordpress:
+        image: wordpress:php8.1-apache
+        env:
+          WORDPRESS_DB_HOST: mysql:3306
+          WORDPRESS_DB_USER: wordpress
+          WORDPRESS_DB_PASSWORD: wordpress
+          WORDPRESS_DB_NAME: wordpress
+          WORDPRESS_DEBUG: 1
+          WORDPRESS_CONFIG_EXTRA: |
+            define( 'FS_METHOD', 'direct' );
+            define( 'WP_DEBUG_LOG', true );
+            define( 'WP_DEBUG_DISPLAY', false );
+            define( 'SCRIPT_DEBUG', true );
+            define( 'WP_ENVIRONMENT_TYPE', 'local' );
+        ports:
+          - 8888:80
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -55,31 +90,113 @@ jobs:
           path: |
             node_modules
             src/vendor
-          key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-${{ github.run_id }}-${{ github.job }}
           restore-keys: |
-            ${{ runner.os }}-deps-
+            ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-
 
-      - name: Install workflow dependencies (wp-env, playwright)
-        if: steps.deps-cache.outputs.cache-hit != 'true'
+      - name: Install workflow dependencies
+        if: steps.deps-cache.outputs.cache-matched-key == ''
         run: npm run prepare-environment:ci && npm run bundle
 
       - name: Save vendor and node_modules cache
-        if: steps.deps-cache.outputs.cache-hit != 'true'
+        if: steps.deps-cache.outputs.cache-matched-key == ''
         uses: actions/cache/save@v4
         with:
           path: |
             src/vendor
             node_modules
-          key: ${{ runner.os }}-deps-${{ steps.deps-hash.outputs.deps_hash }}
+          key: ${{ steps.deps-cache.outputs.cache-primary-key }}
           
-      - name: Start WordPress environment
+      - name: Wait for WordPress to be reachable
         run: |
-          npx wp-env start
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8888/wp-login.php >/dev/null; then
+              echo "WordPress is reachable."
+              exit 0
+            fi
+            echo "Waiting for WordPress... ($i/60)"
+            sleep 2
+          done
+
+          echo "WordPress did not start in time."
+          echo "::group::WordPress container logs"
+          docker logs "${{ job.services.wordpress.id }}" || true
+          echo "::endgroup::"
+          exit 1
+
+      - name: Download WP-CLI
+        run: |
+          curl -fsSL -o "${RUNNER_TEMP}/wp-cli.phar" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+      - name: "Install WordPress: ${{ inputs.multisite && 'Multisite' || 'Single Site' }}"
+        env:
+          WP_CONTAINER: ${{ job.services.wordpress.id }}
+          WP_URL: http://localhost:8888
+          WP_ADMIN_USER: admin
+          WP_ADMIN_PASSWORD: password
+          WP_ADMIN_EMAIL: admin@example.org
+        run: |
+          set -euo pipefail
+
+          docker cp "${RUNNER_TEMP}/wp-cli.phar" "$WP_CONTAINER:/tmp/wp-cli.phar"
+
+          # Install WordPress if it isn't already installed.
+          if ! docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core is-installed --allow-root >/dev/null 2>&1; then
+            docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core install \
+              --url="$WP_URL" \
+              --title="Test Blog" \
+              --admin_user="$WP_ADMIN_USER" \
+              --admin_password="$WP_ADMIN_PASSWORD" \
+              --admin_email="$WP_ADMIN_EMAIL" \
+              --skip-email \
+              --allow-root
+          fi
+
+          if [ "${{ inputs.multisite }}" = "true" ]; then
+            # Convert single site -> multisite (subdirectory). Subdomains don't work with localhost.
+            if ! docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core is-installed --network --allow-root >/dev/null 2>&1; then
+              docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core multisite-convert \
+                --title="Test Network" \
+                --base=/ \
+                --allow-root
+            fi
+
+            # Create a subsite for future multisite test coverage.
+            if ! docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar site list --field=path --allow-root | grep -qx "/subsite/"; then
+              docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar site create \
+                --slug=subsite \
+                --title="Subsite" \
+                --email="$WP_ADMIN_EMAIL" \
+                --allow-root
+            fi
+          fi
+
+      - name: Install plugin into WordPress container
+        env:
+          WP_CONTAINER: ${{ job.services.wordpress.id }}
+        run: |
+          set -euo pipefail
+
+          docker exec -u root -w /var/www/html "$WP_CONTAINER" rm -rf wp-content/plugins/code-snippets-pro
+          docker cp src "$WP_CONTAINER:/var/www/html/wp-content/plugins/code-snippets-pro"
+          docker exec -u root -w /var/www/html "$WP_CONTAINER" chown -R www-data:www-data wp-content/plugins/code-snippets-pro
 
       - name: Activate code-snippets-pro plugin
-        run: npx wp-env run cli wp plugin activate code-snippets-pro
-      
+        env:
+          WP_CONTAINER: ${{ job.services.wordpress.id }}
+          CS_LICENSE_KEY: ${{ secrets.CS_LICENSE_KEY }}
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.multisite }}" = "true" ]; then
+            docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar plugin activate code-snippets-pro --network --allow-root
+          else
+            docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar plugin activate code-snippets-pro --allow-root
+          fi
+          docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar snippet activate_license --license_key="$CS_LICENSE_KEY" --allow-root
+
       - name: Create CI licensing stub and modify Plugin class
+        #temporary disabled, to be removed if the plugin activation with license key works reliably
+        if: false 
         run: |
           # Create the CI stub class file
           cat > ./src/php/class-licensing-ci-stub.php << 'EOF'
@@ -123,20 +240,50 @@ jobs:
           sed -i 's/\$this->licensing = new Licensing();/\$this->licensing = new Licensing_CI_Stub();/' ./src/php/class-plugin.php
 
       - name: WordPress debug information
+        env:
+          WP_CONTAINER: ${{ job.services.wordpress.id }}
         run: |
-          npx wp-env run cli wp core version
-          npx wp-env run cli wp --info
+          docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar core version --allow-root
+          docker exec -u root -w /var/www/html "$WP_CONTAINER" php /tmp/wp-cli.phar --allow-root --info
+
+      - name: Restore Playwright browsers cache
+        id: playwright-browsers-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('package-lock.json') }}-${{ github.run_id }}-${{ github.job }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-${{ hashFiles('package-lock.json') }}-
 
       - name: Install playwright/test
+        if: steps.playwright-browsers-cache.outputs.cache-matched-key == ''
         run: |
           npx playwright install chromium
 
-      - name: Run Playwright tests
-        run: npm run test:playwright -- --project=${{ inputs.project-name }}
+      - name: Save Playwright browsers cache
+        if: steps.playwright-browsers-cache.outputs.cache-matched-key == ''
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ steps.playwright-browsers-cache.outputs.cache-primary-key }}
 
-      - name: Stop WordPress environment
-        if: always()
-        run: npx wp-env stop
+      - name: Run Playwright tests
+        env:
+          WP_E2E_WPCLI_MODE: gh-actions-ci
+          WP_E2E_WPCLI_PHAR: /tmp/wp-cli.phar
+          WP_E2E_WPCLI_URL: http://localhost:8888
+          WP_E2E_WP_CONTAINER: ${{ job.services.wordpress.id }}
+          WP_E2E_MULTISITE_MODE: ${{ inputs.multisite }}
+        run: npm run test:playwright -- --project=${{ inputs.project-name }}
+        
+      - name: Print WordPress logs on failure
+        if: failure()
+        run: |
+          echo "::group::WordPress container logs"
+          docker logs "${{ job.services.wordpress.id }}" || true
+          echo "::endgroup::"
 
       - uses: actions/upload-artifact@v4
         if: always()

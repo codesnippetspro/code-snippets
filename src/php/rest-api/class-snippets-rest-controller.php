@@ -230,7 +230,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 
 		if ( isset( $query_params['per_page'] ) || isset( $query_params['page'] ) ) {
 			$collection_params = $this->get_collection_params();
-			$per_page = isset( $query_params['per_page'] ) 
+			$per_page = isset( $query_params['per_page'] )
 				? max( 1, (int) $query_params['per_page'] )
 				: (int) $collection_params['per_page']['default'];
 			$page_request = (int) $request->get_param( 'page' );
@@ -641,6 +641,11 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 				'active'         => [
 					'description' => esc_html__( 'Snippet activation status.', 'code-snippets' ),
 					'type'        => 'boolean',
+				],
+				'trashed'        => [
+					'description' => esc_html__( 'Whether the snippet has been trashed (soft deleted).', 'code-snippets' ),
+					'type'        => 'boolean',
+					'readonly'    => true,
 				],
 				'priority'       => [
 					'description' => esc_html__( 'Relative priority in which the snippet is executed.', 'code-snippets' ),

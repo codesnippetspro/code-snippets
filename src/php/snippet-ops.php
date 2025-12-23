@@ -21,9 +21,25 @@ use function Code_Snippets\Settings\update_self_option;
  */
 function clean_active_snippets_cache( string $table_name, $scopes = false ) {
 	$scope_groups = $scopes ? [ $scopes ] : [
+		// Content snippets.
 		[ 'head-content', 'footer-content' ],
+		[ 'head-content', 'footer-content', 'condition' ],
+
+		// Function snippets.
 		[ 'global', 'single-use', 'front-end' ],
 		[ 'global', 'single-use', 'admin' ],
+		[ 'global', 'single-use', 'front-end', 'condition' ],
+		[ 'global', 'single-use', 'admin', 'condition' ],
+
+		// Asset snippets.
+		[ 'site-css' ],
+		[ 'admin-css' ],
+		[ 'site-head-js' ],
+		[ 'site-footer-js' ],
+		[ 'site-css', 'condition' ],
+		[ 'admin-css', 'condition' ],
+		[ 'site-head-js', 'condition' ],
+		[ 'site-footer-js', 'condition' ],
 	];
 
 	foreach ( $scope_groups as $scopes ) {
@@ -296,8 +312,8 @@ function activate_snippet( int $id, ?bool $network = null ) {
 		// translators: %d: snippet identifier.
 		return sprintf( __( 'Could not locate snippet with ID %d.', 'code-snippets' ), $id );
 	}
-	
-	if('php' == $snippet->type ){
+
+	if ( 'php' === $snippet->type ) {
 		$validator = new Validator( $snippet->code );
 		if ( $validator->validate() ) {
 			return __( 'Could not activate snippet: code did not pass validation.', 'code-snippets' );
@@ -486,6 +502,23 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
 	);
 
 	if ( $result ) {
+		if ( $snippet instanceof Snippet && $snippet->is_condition() ) {
+			$consumer_ids = $wpdb->get_col( $wpdb->prepare( "SELECT id FROM $table WHERE condition_id = %d", $id ) ); // cache pass, db call ok.
+			$consumer_ids = is_array( $consumer_ids ) ? array_map( 'intval', $consumer_ids ) : [];
+
+			if ( $consumer_ids ) {
+				$wpdb->query( $wpdb->prepare( "UPDATE $table SET condition_id = 0 WHERE condition_id = %d", $id ) ); // cache pass, db call ok.
+
+				if ( Snippet_Files::is_active() ) {
+					foreach ( get_snippets( $consumer_ids, $network ) as $consumer_snippet ) {
+						do_action( 'code_snippets/update_snippet', $consumer_snippet, $table );
+					}
+				}
+
+				code_snippets()->evaluate_assets->increment_rev( 'all', $network );
+			}
+		}
+
 		do_action( 'code_snippets/trash_snippet', $snippet, $network );
 		clean_snippets_cache( $table );
 		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
@@ -744,6 +777,7 @@ function get_snippet_by_cloud_id( string $cloud_id, ?bool $multisite = null ): ?
 function update_snippet_fields( int $snippet_id, array $fields, ?bool $network = null ) {
 	global $wpdb;
 
+	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
 	// Build a new snippet object for the validation.
@@ -763,10 +797,21 @@ function update_snippet_fields( int $snippet_id, array $fields, ?bool $network =
 	// Update the snippet in the database.
 	$wpdb->update( $table, $clean_fields, array( 'id' => $snippet->id ), null, array( '%d' ) );
 
-	do_action( 'code_snippets/update_snippet', $snippet->id, $table );
 	clean_snippets_cache( $table );
+	$updated_snippet = get_snippet( $snippet_id, $network );
+	do_action( 'code_snippets/update_snippet', $updated_snippet, $table );
 }
 
+/**
+ * Execute a snippet from a flat file, if available.
+ *
+ * @param string $code  Snippet code.
+ * @param string $file  Snippet file path.
+ * @param int    $id    Snippet ID.
+ * @param bool   $force Force snippet execution, even if save mode is active.
+ *
+ * @return ParseError|mixed Code error if encountered during execution, or result of snippet execution otherwise.
+ */
 function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force = false ) {
 	if ( ! is_file( $file ) ) {
 		return execute_snippet( $code, $id, $force );
