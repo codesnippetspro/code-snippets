@@ -99,6 +99,7 @@ const SnippetSelector: React.FC = () => {
 			<Select
 				options={options}
 				currentValue={currentValue}
+				menuShouldBlockScroll={true}
 				onSelect={selectedValue => setCurrentValue(selectedValue)}
 			/>
 
