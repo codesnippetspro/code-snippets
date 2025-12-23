@@ -16,6 +16,10 @@ on:
         type: boolean
         default: false
         description: 'If true, convert the site to multisite and create a subsite.'
+    secrets:
+      CS_LICENSE_KEY:
+        required: true
+        description: 'License key used to activate plugin in CI'
 
 jobs:
   playwright-test:

@@ -31,6 +31,8 @@ jobs:
       test-mode: 'default'
       project-name: 'chromium-db-snippets'
       multisite: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-tests') && contains(github.event.pull_request.labels.*.name, 'multisite') }}
+    secrets:
+      CS_LICENSE_KEY: ${{ secrets.CS_LICENSE_KEY }}
 
   playwright-file-based-execution:
     if: github.event_name != 'pull_request' || (contains(github.event.pull_request.labels.*.name, 'run-tests') && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'multisite'))
@@ -39,6 +41,8 @@ jobs:
       test-mode: 'file-based-execution'
       project-name: 'chromium-file-based-snippets'
       multisite: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-tests') && contains(github.event.pull_request.labels.*.name, 'multisite') }}
+    secrets:
+      CS_LICENSE_KEY: ${{ secrets.CS_LICENSE_KEY }}
 
   test-result:
     needs: [playwright-default, playwright-file-based-execution]
