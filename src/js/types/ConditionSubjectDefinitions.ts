@@ -12,6 +12,8 @@ export interface ConditionSubjectDefinition<T> {
 	options?: SelectGroups<T>
 	fetchAllOptions?: (restAPI: RestAPI) => Promise<SelectGroups<T>>
 	fetchPagedOptions?: (restAPI: RestAPI, page: number) => Promise<SelectGroups<T>>
+	fetchSearchOptions?: (restAPI: RestAPI, query: string) => Promise<SelectGroups<T>>
+	fetchSelectedOptions?: (restAPI: RestAPI, values: readonly T[]) => Promise<SelectGroups<T>>
 	deriveOptions?: (snippet: Snippet, snippets: readonly Snippet[]) => SelectGroups<T>
 	useSubjectOptions?: keyof { [A in keyof ConditionSubjects as ConditionSubjects[A] extends T ? A : never]: A }
 }

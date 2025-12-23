@@ -54,7 +54,14 @@ export interface ConditionRuleEditorProps {
 
 export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId, groupId, condition, setCondition }) => {
 	const rule = getConditionRule(condition, groupId, ruleId)
-	const { objectOptions, loadedSubject, clearObjectOptions, loadMoreOptions } = useConditionOptions(rule?.subject)
+	const {
+		objectOptions,
+		loadedSubject,
+		clearObjectOptions,
+		loadMoreOptions,
+		setSearchQuery,
+		searchingOptions
+	} = useConditionOptions(rule?.subject, rule?.object ?? [])
 
 	const isReadOnly = setCondition === undefined
 	const allowedOperators: ConditionOperator[] = (rule?.subject && CONDITION_SUBJECTS[rule.subject].operators) ?? []
@@ -73,6 +80,8 @@ export const ConditionRuleEditor: React.FC<ConditionRuleEditorProps> = ({ ruleId
 				operatorOptions={allowedOperators.map(operator =>
 					({ value: operator, label: CONDITION_OPERATOR_LABELS[operator] }))}
 				objectOptionsLoaded={loadedSubject === rule?.subject}
+				searchingOptions={searchingOptions}
+				setSearchQuery={setSearchQuery}
 			/>
 
 			<div className="snippet-condition-actions">

@@ -14,6 +14,7 @@ import type { Categories, PostTags } from '../../types/schema/TermSchema'
 import type { PostTypesSchema } from '../../types/schema/PostTypeSchema'
 import type { PostsSchema } from '../../types/schema/PostSchema'
 import type { PagesSchema } from '../../types/schema/PageSchema'
+import type { RestAPI } from '../../hooks/useRestAPI'
 
 export const CONDITION_OPERATORS = (() => {
 	const date: ConditionOperator[] = ['between', 'before', 'after']
@@ -34,6 +35,37 @@ const ENABLED_OPTIONS: SelectOptions<boolean> = [
 	{ value: true, label: __('Enabled', 'code-snippets') },
 	{ value: false, label: __('Disabled', 'code-snippets') }
 ]
+
+const MAX_PAGE_OPTIONS_REQUESTS = 50
+const pageOptionsRequestCache = new Map<string, Promise<SelectOptions<number>>>()
+
+const fetchPageOptions = (api: RestAPI, url: string): Promise<SelectOptions<number>> => {
+	const cached = pageOptionsRequestCache.get(url)
+	if (cached) {
+		return cached
+	}
+
+	const request = api.get<PagesSchema>(url)
+		.then(pages =>
+			pages.map(page =>
+				({ value: page.id, label: page.title.rendered })))
+		.catch((error: unknown) => {
+			pageOptionsRequestCache.delete(url)
+			const rejection = error instanceof Error ? error : new Error(String(error))
+			return Promise.reject(rejection)
+		})
+
+	pageOptionsRequestCache.set(url, request)
+
+	if (pageOptionsRequestCache.size > MAX_PAGE_OPTIONS_REQUESTS) {
+		const oldestKey = pageOptionsRequestCache.keys().next().value
+		if (oldestKey) {
+			pageOptionsRequestCache.delete(oldestKey)
+		}
+	}
+
+	return request
+}
 
 const SITE_CONDITION_SUBJECTS: ConditionSubjectDefinitions<SiteConditionSubjects> = {
 	siteArea: {
@@ -108,9 +140,15 @@ const POSTS_CONDITION_SUBJECTS: ConditionSubjectDefinitions<PostConditionSubject
 		label: __('Page', 'code-snippets'),
 		operators: CONDITION_OPERATORS.multiple,
 		fetchPagedOptions: (api, page) =>
-			api.get<PagesSchema>(`${REST_BASE}/wp/v2/pages?page=${page}`).then(pages =>
-				pages.map(page =>
-					({ value: page.id, label: page.title.rendered })))
+			fetchPageOptions(api, `${REST_BASE}/wp/v2/pages?page=${page}&per_page=100&_fields=id,title`),
+		fetchSearchOptions: (api, query) =>
+			fetchPageOptions(api, `${REST_BASE}/wp/v2/pages?search=${encodeURIComponent(query)}&per_page=100&_fields=id,title`),
+		fetchSelectedOptions: (api, values) => {
+			const ids = values.filter((value): value is number => 'number' === typeof value)
+			return 0 === ids.length
+				? Promise.resolve([])
+				: fetchPageOptions(api, `${REST_BASE}/wp/v2/pages?include=${ids.join(',')}&per_page=100&_fields=id,title`)
+		}
 	},
 	postType: {
 		group: 'posts',
