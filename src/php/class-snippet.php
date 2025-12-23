@@ -124,6 +124,17 @@ class Snippet extends Data_Item {
 	}
 
 	/**
+	 * Retrieve whether the snippet has been trashed (soft deleted).
+	 *
+	 * Exposed via REST by `Snippets_REST_Controller::prepare_item_for_response()`.
+	 *
+	 * @return bool
+	 */
+	public function get_trashed(): bool {
+		return $this->is_trashed();
+	}
+
+	/**
 	 * Prepare a value before it is stored.
 	 *
 	 * @param mixed  $value Value to prepare.
