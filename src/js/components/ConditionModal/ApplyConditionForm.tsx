@@ -103,7 +103,7 @@ export const ApplyConditionForm: React.FC<ApplyConditionFormProps> = ({
 
 	useEffect(() => {
 		if (!options && snippetsList) {
-			setOptions(snippetsList.filter(isCondition).map(snippet =>
+			setOptions(snippetsList.filter(snippet => isCondition(snippet) && !snippet.trashed).map(snippet =>
 				({ key: snippet.id, value: snippet.id, label: getSnippetDisplayName(snippet) })))
 		}
 	}, [snippetsList, options])

@@ -9,6 +9,7 @@ export interface Snippet {
 	readonly scope: SnippetScope
 	readonly priority: number
 	readonly active: boolean
+	readonly trashed: boolean
 	readonly network: boolean
 	readonly shared_network?: boolean | null
 	readonly modified?: string
