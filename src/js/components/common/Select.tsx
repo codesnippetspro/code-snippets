@@ -48,6 +48,7 @@ const buildSelectStyles = <T, IsMulti extends boolean>({
 	isDisabled
 }: Pick<SelectProps<T, IsMulti>, 'isDisabled'>): StylesConfig<SelectOption<T>, IsMulti, SelectGroup<T>> => ({
 	menu: base => ({ ...base, zIndex: 9999 }),
+	menuPortal: base => ({ ...base, zIndex: 1000000 }),
 	control: base => ({ ...base, flexWrap: 'nowrap' }),
 	singleValue: base => ({ ...base, overflow: 'visible' }),
 	indicatorSeparator: () => ({ display: 'none' }),
@@ -76,6 +77,8 @@ export const Select = <T, IsMulti extends boolean = false>({
 	const [selectedOptions, setSelectedOptions] = useState<readonly SelectOption<T>[]>(
 		() => findSelectOptions(options, currentValue))
 
+	const menuPortalTarget = 'undefined' === typeof document ? undefined : document.body
+
 	useEffect(() => {
 		setSelectedOptions(findSelectOptions(options, currentValue))
 	}, [options, currentValue, isMulti])
@@ -88,6 +91,8 @@ export const Select = <T, IsMulti extends boolean = false>({
 			options={options}
 			className={classnames('code-snippets-select', className)}
 			isDisabled={isDisabled}
+			menuPortalTarget={menuPortalTarget}
+			menuPosition={'fixed'}
 			getOptionLabel={option => option.label}
 			getOptionValue={getOptionValue}
 			onChange={(selected, actionMeta) => {
