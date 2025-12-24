@@ -503,11 +503,10 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
 
 	if ( $result ) {
 		if ( $snippet instanceof Snippet && $snippet->is_condition() ) {
-			$consumer_ids = $wpdb->get_col( $wpdb->prepare( "SELECT id FROM $table WHERE condition_id = %d", $id ) ); // cache pass, db call ok.
-			$consumer_ids = is_array( $consumer_ids ) ? array_map( 'intval', $consumer_ids ) : [];
+			$consumer_ids = code_snippets()->db->fetch_condition_consumer_ids( $id, $network );
 
 			if ( $consumer_ids ) {
-				$wpdb->query( $wpdb->prepare( "UPDATE $table SET condition_id = 0 WHERE condition_id = %d", $id ) ); // cache pass, db call ok.
+				code_snippets()->db->detach_condition_consumers( $id, $network );
 
 				if ( Snippet_Files::is_active() ) {
 					foreach ( get_snippets( $consumer_ids, $network ) as $consumer_snippet ) {
