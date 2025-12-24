@@ -376,4 +376,56 @@ class DB {
 
 		return false;
 	}
+
+	/**
+	 * Fetch IDs of snippets attached to a specific condition snippet.
+	 *
+	 * @param int       $condition_id Condition snippet ID.
+	 * @param bool|null $network      Whether to query the network table (true) or site table (false).
+	 *
+	 * @return int[] List of consumer snippet IDs.
+	 *
+	 * @since 3.9.2
+	 */
+	public function fetch_condition_consumer_ids( int $condition_id, ?bool $network = null ): array {
+		global $wpdb;
+		$network = self::validate_network_param( $network );
+		$table_name = $this->get_table_name( $network );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, consumer IDs are only needed transiently for detaching and file updates.
+		$ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT id FROM {$table_name} WHERE condition_id = %d",
+				absint( $condition_id )
+			)
+		);
+
+		return is_array( $ids ) ? array_map( 'intval', $ids ) : [];
+	}
+
+	/**
+	 * Detach a condition from any consumer snippets by clearing their condition_id.
+	 *
+	 * @param int       $condition_id Condition snippet ID.
+	 * @param bool|null $network      Whether to update the network table (true) or site table (false).
+	 *
+	 * @return int Number of rows affected.
+	 *
+	 * @since 3.9.2
+	 */
+	public function detach_condition_consumers( int $condition_id, ?bool $network = null ): int {
+		global $wpdb;
+		$network = self::validate_network_param( $network );
+		$table_name = $this->get_table_name( $network );
+
+		$result = $wpdb->update(
+			$table_name,
+			array( 'condition_id' => 0 ),
+			array( 'condition_id' => absint( $condition_id ) ),
+			array( '%d' ),
+			array( '%d' )
+		);
+
+		return false === $result ? 0 : (int) $result;
+	}
 }
