@@ -85,6 +85,13 @@ class Plugin {
 	public Snippet_Handler_Registry $snippet_handler_registry;
 
 	/**
+	 * Admin bar integration class.
+	 *
+	 * @var Admin_Bar
+	 */
+	public Admin_Bar $admin_bar;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $version Current plugin version.
@@ -120,6 +127,11 @@ class Plugin {
 		require_once $includes_path . '/snippet-ops.php';
 		$this->evaluate_content = new Evaluate_Content( $this->db );
 		$this->evaluate_functions = new Evaluate_Functions( $this->db );
+
+		// Admin bar integration.
+		require_once $includes_path . '/class-admin-bar.php';
+		$this->admin_bar = new Admin_Bar();
+		$this->admin_bar->register_hooks();
 
 		// CodeMirror editor functions.
 		require_once $includes_path . '/editor.php';
