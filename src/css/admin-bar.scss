@@ -1,31 +1,24 @@
 #wpadminbar {
 	#wp-admin-bar-code-snippets > .ab-item {
 		.code-snippets-admin-bar-icon {
-      display: inline-block;
-      top: 5px;
-      position: relative;
-      padding-right: 10px;
-      line-height: 1;
-			color: rgba(240, 245, 250, 0.6);
+			width: 16px;
+			height: 16px;
+			top: 5px;
 
-			svg {
+			&::before {
+				content: '';
+				display: block;
 				width: 16px;
 				height: 16px;
-				display: block;
-				fill: currentColor;
+				mask-image: url('../assets/menu-icon.svg');
+				mask-repeat: no-repeat;
+				mask-position: center;
+				mask-size: contain;
+				background-color: rgba(240, 245, 250, 0.6);
 			}
 		}
-
-		&:hover .code-snippets-admin-bar-icon,
-		&:focus .code-snippets-admin-bar-icon {
-			color: inherit;
-		}
 	}
-
-	#wp-admin-bar-code-snippets.hover > .ab-item .code-snippets-admin-bar-icon {
-		color: inherit;
-	}
-
+  
 	.code-snippets-safe-mode-active {
 		> .ab-item,
 		&.ab-item {
@@ -46,15 +39,12 @@
 	}
 
 	.code-snippets-safe-mode .code-snippets-external-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		margin-left: 4px;
-		opacity: 0.8;
-		font-size: 14px;
-		width: 14px;
-		height: 14px;
-		line-height: 1;
+    font-family: dashicons;
+    display: inline-block;
+    position: relative;
+    line-height: 1;
+    opacity: .8;
+    top: 6px;
 	}
 
 	.code-snippets-safe-mode:hover .code-snippets-external-icon,
