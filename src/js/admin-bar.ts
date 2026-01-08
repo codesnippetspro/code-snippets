@@ -3,7 +3,7 @@ type PaginationAction = 'first' | 'prev' | 'next' | 'last'
 
 type SnippetResponseItem = {
 	id: number
-	type: string
+	scope: string
 	name?: string
 }
 
@@ -113,8 +113,16 @@ const buildSnippetPlaceholder = (snippetId: number): string => {
 	return config.snippetPlaceholder.replace(/%(\d+\$)?d/, String(snippetId))
 }
 
+const getTypeFromScope = (scope: string): string => {
+	if (scope.endsWith('-css')) return 'css'
+	if (scope.endsWith('-js')) return 'js'
+	if (scope.endsWith('content')) return 'html'
+	if (scope === 'condition') return 'cond'
+	return 'php'
+}
+
 const formatSnippetTitle = (snippet: SnippetResponseItem): string => {
-	const typeLabel = (snippet.type || '').toUpperCase()
+	const typeLabel = getTypeFromScope(snippet.scope).toUpperCase()
 	const name = snippet.name?.trim()
 	const title = name ? name : buildSnippetPlaceholder(snippet.id)
 	return `(${typeLabel}) ${title}`
