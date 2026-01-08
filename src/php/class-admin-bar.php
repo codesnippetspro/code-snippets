@@ -123,15 +123,21 @@ class Admin_Bar {
 			return;
 		}
 
-		if ( ! apply_filters( 'code_snippets/admin_bar/enabled', true ) ) {
-			return;
-		}
-
 		if ( ! code_snippets()->current_user_can() ) {
 			return;
 		}
 
 		$is_safe_mode_active = code_snippets()->evaluate_functions->is_safe_mode_active();
+
+		// Always show safe mode indicator regardless of setting.
+		$this->add_safe_mode_nodes( $wp_admin_bar, $is_safe_mode_active );
+
+		// Check if admin bar menu is enabled via settings.
+		$is_enabled = Settings\get_setting( 'general', 'enable_admin_bar' );
+
+		if ( ! $is_enabled && ! apply_filters( 'code_snippets/admin_bar/enabled', false ) ) {
+			return;
+		}
 
 		$title = sprintf(
 			'<span class="ab-icon code-snippets-admin-bar-icon" aria-hidden="true"></span><span class="ab-label">%s</span>',
@@ -146,7 +152,6 @@ class Admin_Bar {
 			]
 		);
 
-		$this->add_safe_mode_nodes( $wp_admin_bar, $is_safe_mode_active );
 		$this->add_quick_links( $wp_admin_bar );
 		$this->add_snippet_listings( $wp_admin_bar );
 		$this->add_safe_mode_link( $wp_admin_bar );
@@ -258,9 +263,9 @@ class Admin_Bar {
 		$types = [
 			'php'  => _x( 'Functions (PHP)', 'snippet type', 'code-snippets' ),
 			'html' => _x( 'Content (HTML)', 'snippet type', 'code-snippets' ),
-			'css'  => _x( 'Style (CSS)', 'snippet type', 'code-snippets' ),
-			'js'   => _x( 'Script (JS)', 'snippet type', 'code-snippets' ),
-			'cond' => _x( 'Condition (COND)', 'snippet type', 'code-snippets' ),
+			'css'  => _x( 'Styles (CSS)', 'snippet type', 'code-snippets' ),
+			'js'   => _x( 'Scripts (JS)', 'snippet type', 'code-snippets' ),
+			'cond' => _x( 'Conditions (COND)', 'snippet type', 'code-snippets' ),
 		];
 
 		$types = array_intersect_key( $types, array_flip( Snippet::get_types() ) );

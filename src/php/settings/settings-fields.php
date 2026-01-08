@@ -29,11 +29,12 @@ function get_default_settings(): array {
 			'enable_description'  => true,
 			'visual_editor_rows'  => 5,
 			'list_order'          => 'priority-asc',
-			'admin_bar_snippet_limit' => 20,
 			'disable_prism'       => false,
 			'hide_upgrade_menu'   => false,
 			'complete_uninstall'  => false,
-      'enable_flat_files'   => false,
+			'enable_flat_files'   => false,
+			'enable_admin_bar'    => false,
+			'admin_bar_snippet_limit' => 20,
 		],
 		'editor'  => [
 			'indent_with_tabs'            => true,
@@ -147,14 +148,7 @@ function get_settings_fields(): array {
 				'modified-asc'  => __( 'Modified (oldest first)', 'code-snippets' ),
 			],
 		],
-		'admin_bar_snippet_limit' => [
-			'name'  => __( 'Admin Bar Snippets Per Page', 'code-snippets' ),
-			'type'  => 'number',
-			'desc'  => __( 'Number of snippets to show in the admin bar Active/Inactive menus before paginating.', 'code-snippets' ),
-			'label' => __( 'snippets', 'code-snippets' ),
-			'min'   => 1,
-			'max'   => 100,
-		],
+
 		'disable_prism'       => [
 			'name'  => __( 'Disable Syntax Highlighter', 'code-snippets' ),
 			'type'  => 'checkbox',
@@ -267,6 +261,25 @@ function get_settings_fields(): array {
 	];
 
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );
+
+	// Add Admin Bar settings after plugin-provided fields (e.g., file-based execution).
+	$fields['general']['enable_admin_bar'] = [
+		'name'  => __( 'Enable Admin Bar Menu', 'code-snippets' ),
+		'type'  => 'checkbox',
+		'label' => __( 'Show a Snippets menu in the admin bar for quick access to snippets.', 'code-snippets' ),
+	];
+
+	// Only show per-page control if admin bar menu is enabled in settings.
+	if ( get_setting( 'general', 'enable_admin_bar' ) ) {
+		$fields['general']['admin_bar_snippet_limit'] = [
+			'name'  => __( 'Admin Bar Snippets Per Page', 'code-snippets' ),
+			'type'  => 'number',
+			'desc'  => __( 'Number of snippets to show in the admin bar Active/Inactive menus before paginating.', 'code-snippets' ),
+			'label' => __( 'snippets', 'code-snippets' ),
+			'min'   => 1,
+			'max'   => 100,
+		];
+	}
 
 	return $fields;
 }
