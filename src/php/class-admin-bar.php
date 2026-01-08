@@ -133,10 +133,8 @@ class Admin_Bar {
 
 		$is_safe_mode_active = code_snippets()->evaluate_functions->is_safe_mode_active();
 
-		$icon = '<span class="ab-icon code-snippets-admin-bar-icon" aria-hidden="true">' . $this->get_scissors_svg() . '</span>';
 		$title = sprintf(
-			'%s<span class="ab-label">%s</span>',
-			$icon,
+			'<span class="ab-icon code-snippets-admin-bar-icon" aria-hidden="true"></span><span class="ab-label">%s</span>',
 			esc_html__( 'Snippets', 'code-snippets' )
 		);
 
@@ -152,15 +150,6 @@ class Admin_Bar {
 		$this->add_quick_links( $wp_admin_bar );
 		$this->add_snippet_listings( $wp_admin_bar );
 		$this->add_safe_mode_link( $wp_admin_bar );
-	}
-
-	/**
-	 * Retrieve the Code Snippets scissors SVG icon markup.
-	 *
-	 * @return string
-	 */
-	private function get_scissors_svg(): string {
-		return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18.025" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3.718 58.581h3.104a.833.833 0 0 1 .599 1.412l.004.009L5.3 62.125a3.747 3.747 0 0 0 0 5.304 3.755 3.755 0 0 0 5.304 0 3.755 3.755 0 0 0-1.454-6.207l.558-.558h7.134c1.7 0 3.083-1.446 3.124-3.25 0-.03.004-.054 0-.083a.92.92 0 0 0-.916-.834h-5.175l3.737-3.736a.92.92 0 0 0 .062-1.238c-.02-.025-.04-.042-.062-.062-1.3-1.242-3.304-1.288-4.503-.088l-5.124 5.124h-.91a3.75 3.75 0 1 0-3.358 2.084m1.667-3.75a1.666 1.666 0 1 1-3.333.002 1.666 1.666 0 0 1 3.333-.001m3.745 8.771c.65.65.65 1.704 0 2.354a1.663 1.663 0 0 1-2.358 0 1.664 1.664 0 0 1 0-2.354 1.66 1.66 0 0 1 2.358 0" transform="translate(.032 -50.5)"/></svg>';
 	}
 
 	/**
@@ -200,7 +189,7 @@ class Admin_Bar {
 	 */
 	private function add_safe_mode_link( WP_Admin_Bar $wp_admin_bar ): void {
 		$title = sprintf(
-			'<span class="dashicons dashicons-external"></span> %s',
+			'%s <span class="code-snippets-external-icon dashicons dashicons-external"></span>',
 			esc_html__( 'Safe Mode', 'code-snippets' )
 		);
 
