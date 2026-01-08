@@ -24,6 +24,7 @@ const babelConfig = {
 
 export const jsWebpackConfig: Configuration = {
 	entry: {
+		'admin-bar': `${SOURCE_DIR}/admin-bar.ts`,
 		edit: { import: `${SOURCE_DIR}/edit.tsx`, dependOn: 'editor' },
 		editor: `${SOURCE_DIR}/editor.ts`,
 		import: `${SOURCE_DIR}/import.tsx`,
