@@ -29,6 +29,7 @@ function get_default_settings(): array {
 			'enable_description'  => true,
 			'visual_editor_rows'  => 5,
 			'list_order'          => 'priority-asc',
+			'admin_bar_snippet_limit' => 20,
 			'disable_prism'       => false,
 			'hide_upgrade_menu'   => false,
 			'complete_uninstall'  => false,
@@ -145,6 +146,14 @@ function get_settings_fields(): array {
 				'modified-desc' => __( 'Modified (latest first)', 'code-snippets' ),
 				'modified-asc'  => __( 'Modified (oldest first)', 'code-snippets' ),
 			],
+		],
+		'admin_bar_snippet_limit' => [
+			'name'  => __( 'Admin Bar Snippets Per Page', 'code-snippets' ),
+			'type'  => 'number',
+			'desc'  => __( 'Number of snippets to show in the admin bar Active/Inactive menus before paginating.', 'code-snippets' ),
+			'label' => __( 'snippets', 'code-snippets' ),
+			'min'   => 1,
+			'max'   => 100,
 		],
 		'disable_prism'       => [
 			'name'  => __( 'Disable Syntax Highlighter', 'code-snippets' ),
