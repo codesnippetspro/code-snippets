@@ -191,11 +191,11 @@ class Admin_Bar {
 		);
 
 		$types = [
-			'php'  => _x( 'Function', 'snippet type', 'code-snippets' ),
-			'html' => _x( 'Content', 'snippet type', 'code-snippets' ),
-			'css'  => _x( 'Style', 'snippet type', 'code-snippets' ),
-			'js'   => _x( 'Script', 'snippet type', 'code-snippets' ),
-			'cond' => _x( 'Condition', 'snippet type', 'code-snippets' ),
+			'php'  => _x( 'Functions (PHP)', 'snippet type', 'code-snippets' ),
+			'html' => _x( 'Content (HTML)', 'snippet type', 'code-snippets' ),
+			'css'  => _x( 'Style (CSS)', 'snippet type', 'code-snippets' ),
+			'js'   => _x( 'Script (JS)', 'snippet type', 'code-snippets' ),
+			'cond' => _x( 'Condition (COND)', 'snippet type', 'code-snippets' ),
 		];
 
 		$types = array_intersect_key( $types, array_flip( Snippet::get_types() ) );
