@@ -83,6 +83,42 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		// Allow standard collection parameters (page, per_page, etc.) on the collection route.
 		$collection_args = array_merge( $network_args, $this->get_collection_params() );
 
+		$collection_args['status'] = [
+			'description'       => esc_html__( 'Filter snippets by activation status.', 'code-snippets' ),
+			'type'              => 'string',
+			'enum'              => [ 'all', 'active', 'inactive' ],
+			'default'           => 'all',
+			'sanitize_callback' => 'sanitize_key',
+		];
+
+		$collection_args['exclude_types'] = [
+			'description'       => esc_html__( 'List of snippet types to exclude from the response.', 'code-snippets' ),
+			'type'              => 'array',
+			'items'             => [
+				'type' => 'string',
+			],
+			'default'           => [],
+			'sanitize_callback' => static function ( $value ): array {
+				$values = is_array( $value ) ? $value : [ $value ];
+				return array_values( array_filter( array_map( 'sanitize_key', $values ) ) );
+			},
+		];
+
+		$collection_args['orderby'] = [
+			'description'       => esc_html__( 'Sort collection by object attribute.', 'code-snippets' ),
+			'type'              => 'string',
+			'enum'              => [ 'id', 'name', 'display_name' ],
+			'sanitize_callback' => 'sanitize_key',
+		];
+
+		$collection_args['order'] = [
+			'description'       => esc_html__( 'Sort direction.', 'code-snippets' ),
+			'type'              => 'string',
+			'enum'              => [ 'asc', 'desc' ],
+			'default'           => 'asc',
+			'sanitize_callback' => 'sanitize_key',
+		];
+
 		register_rest_route(
 			$this->namespace,
 			$route,
@@ -199,6 +235,72 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		$network = $request->get_param( 'network' );
 		$all_snippets = get_snippets( [], $network );
 		$all_snippets = $this->get_network_items( $all_snippets, $network );
+
+		$status = sanitize_key( (string) $request->get_param( 'status' ) );
+
+		if ( in_array( $status, [ 'active', 'inactive' ], true ) ) {
+			$all_snippets = array_filter(
+				$all_snippets,
+				static function ( Snippet $snippet ): bool {
+					return ! $snippet->is_trashed();
+				}
+			);
+		}
+
+		$exclude_types = $request->get_param( 'exclude_types' );
+		$exclude_types = is_array( $exclude_types ) ? array_map( 'sanitize_key', $exclude_types ) : [];
+
+		if ( $exclude_types ) {
+			$all_snippets = array_filter(
+				$all_snippets,
+				static function ( Snippet $snippet ) use ( $exclude_types ): bool {
+					return ! in_array( $snippet->type, $exclude_types, true );
+				}
+			);
+		}
+
+		if ( 'active' === $status ) {
+			$all_snippets = array_filter(
+				$all_snippets,
+				static function ( Snippet $snippet ): bool {
+					return $snippet->active;
+				}
+			);
+		} elseif ( 'inactive' === $status ) {
+			$all_snippets = array_filter(
+				$all_snippets,
+				static function ( Snippet $snippet ): bool {
+					return ! $snippet->active;
+				}
+			);
+		}
+
+		$orderby = sanitize_key( (string) $request->get_param( 'orderby' ) );
+		$order = sanitize_key( (string) $request->get_param( 'order' ) );
+
+		if ( $orderby ) {
+			$direction = 'desc' === $order ? -1 : 1;
+
+			usort(
+				$all_snippets,
+				static function ( Snippet $a, Snippet $b ) use ( $orderby, $direction ): int {
+					switch ( $orderby ) {
+						case 'display_name':
+							$cmp = strcasecmp( $a->display_name, $b->display_name );
+							break;
+						case 'name':
+							$cmp = strcasecmp( (string) $a->name, (string) $b->name );
+							break;
+						case 'id':
+						default:
+							$cmp = $a->id <=> $b->id;
+							break;
+					}
+
+					return 0 === $cmp ? ( $a->id <=> $b->id ) * $direction : $cmp * $direction;
+				}
+			);
+		}
 
 		$total_items = count( $all_snippets );
 		$query_params = $request->get_query_params();
@@ -559,14 +661,14 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 					'description' => esc_html__( 'Descriptive title for the snippet.', 'code-snippets' ),
 					'type'        => 'string',
 				],
-				'desc'           => [
-					'description' => esc_html__( 'Descriptive text associated with snippet.', 'code-snippets' ),
-					'type'        => 'string',
-				],
-				'code'           => [
-					'description' => esc_html__( 'Executable snippet code.', 'code-snippets' ),
-					'type'        => 'string',
-				],
+					'desc'           => [
+						'description' => esc_html__( 'Descriptive text associated with snippet.', 'code-snippets' ),
+						'type'        => 'string',
+					],
+					'code'           => [
+						'description' => esc_html__( 'Executable snippet code.', 'code-snippets' ),
+						'type'        => 'string',
+					],
 				'tags'           => [
 					'description' => esc_html__( 'List of tag categories the snippet belongs to.', 'code-snippets' ),
 					'type'        => 'array',
