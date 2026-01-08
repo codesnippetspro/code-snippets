@@ -406,6 +406,7 @@ class Plugin {
 				'html'         => __( 'Content', 'code-snippets' ),
 				'css'          => __( 'Styles', 'code-snippets' ),
 				'js'           => __( 'Scripts', 'code-snippets' ),
+				'cond'         => __( 'Conditions', 'code-snippets' ),
 				'cloud'        => __( 'Codevault', 'code-snippets' ),
 				'cloud_search' => __( 'Cloud Search', 'code-snippets' ),
 				'bundles'      => __( 'Bundles', 'code-snippets' ),
