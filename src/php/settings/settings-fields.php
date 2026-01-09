@@ -33,7 +33,7 @@ function get_default_settings(): array {
 			'hide_upgrade_menu'   => false,
 			'complete_uninstall'  => false,
 			'enable_flat_files'   => false,
-			'enable_admin_bar'    => false,
+			'enable_admin_bar'    => true,
 			'admin_bar_snippet_limit' => 20,
 		],
 		'editor'  => [
