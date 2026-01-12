@@ -5,15 +5,72 @@ import { Select } from '../common/Select'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ConditionOperator } from '../../types/ConditionGroups'
 import type { ConditionSubject, ConditionSubjects } from '../../types/ConditionSubject'
-import type { SelectGroups, SelectOptions } from '../../types/SelectOption'
+import type { SelectGroups, SelectOption, SelectOptions } from '../../types/SelectOption'
 import type { Snippet } from '../../types/Snippet'
 import type { ConditionRuleEditorProps } from './ConditionRuleEditor'
+import type { InputActionMeta } from 'react-select'
 
 interface ObjectSelectProps<S extends ConditionSubject> extends ConditionRuleEditorProps {
 	isMulti?: boolean
 	options: SelectGroups<ConditionSubjects[S]>
 	optionsLoaded: boolean
 	onLoadMore: VoidFunction
+	onSearch?: (query: string) => void
+	searchingOptions?: boolean
+}
+
+const getValueKey = (value: unknown): string => {
+	if ('string' === typeof value) {
+		return value
+	}
+
+	if ('number' === typeof value) {
+		return value.toString()
+	}
+
+	return JSON.stringify(value)
+}
+
+const getOptionKey = <T, >(option: SelectOption<T>): string =>
+	getValueKey(option.key ?? option.value)
+
+const prioritizeSelectedOptions = <T, >(options: SelectGroups<T>, selectedValues: readonly T[]): SelectGroups<T> => {
+	if (0 === selectedValues.length) {
+		return options
+	}
+
+	const selectedKeys = new Set<string>(selectedValues.map(getValueKey))
+	const selectedOptions: SelectOption<T>[] = []
+	const selectedSeen = new Set<string>()
+	const remaining: ((typeof options)[number])[] = []
+
+	const shouldKeepOption = (option: SelectOption<T>): boolean => {
+		const optionKey = getOptionKey(option)
+		if (!selectedKeys.has(optionKey)) {
+			return true
+		}
+
+		if (!selectedSeen.has(optionKey)) {
+			selectedSeen.add(optionKey)
+			selectedOptions.push(option)
+		}
+
+		return false
+	}
+
+	for (const entry of options) {
+		if ('options' in entry) {
+			const filteredOptions = entry.options.filter(shouldKeepOption)
+
+			if (0 < filteredOptions.length) {
+				remaining.push({ ...entry, options: filteredOptions })
+			}
+		} else if (shouldKeepOption(entry)) {
+			remaining.push(entry)
+		}
+	}
+
+	return [...selectedOptions, ...remaining]
 }
 
 const ObjectSelect = <S extends ConditionSubject>({
@@ -24,9 +81,24 @@ const ObjectSelect = <S extends ConditionSubject>({
 	onLoadMore,
 	setCondition,
 	optionsLoaded,
-	isMulti = false
+	isMulti = false,
+	onSearch,
+	searchingOptions
 }: ObjectSelectProps<S>) => {
 	const rule = getConditionRule(condition, groupId, ruleId)
+
+	const prioritizedOptions = React.useMemo(
+		() => {
+			const selectedValues = isMulti
+				? rule?.object ?? []
+				: rule?.object?.[0] !== undefined
+					? [rule.object[0]]
+					: []
+
+			return prioritizeSelectedOptions(options, selectedValues)
+		},
+		[isMulti, options, rule?.object]
+	)
 
 	return (
 		<Select
@@ -34,10 +106,26 @@ const ObjectSelect = <S extends ConditionSubject>({
 			className="snippet-condition-field snippet-condition-object"
 			isDisabled={setCondition === undefined}
 			isMulti={isMulti}
-			options={options}
+			menuShouldBlockScroll={true}
+			options={prioritizedOptions}
 			currentValue={isMulti ? rule?.object : rule?.object?.[0]}
-			isLoading={!optionsLoaded}
-			onMenuScrollToBottom={onLoadMore}
+			isLoading={!optionsLoaded || !!searchingOptions}
+			onMenuScrollToBottom={searchingOptions ? undefined : onLoadMore}
+			onInputChange={(value, actionMeta: InputActionMeta) => {
+				switch (actionMeta.action) {
+					case 'input-change':
+						onSearch?.(value)
+						break
+
+					case 'input-blur':
+					case 'menu-close':
+						onSearch?.('')
+						break
+				}
+
+				return value
+			}}
+			onMenuClose={() => onSearch?.('')}
 			onSelect={value => {
 				setCondition?.(previous =>
 					updateConditionRule(previous, groupId, ruleId, { object: undefined === value ? [] : [value] }))
@@ -124,6 +212,8 @@ export interface ConditionObjectEditorProps<S extends ConditionSubject> extends 
 	operatorOptions: SelectOptions<ConditionOperator>
 	objectOptionsLoaded: boolean
 	loadMoreOptions: VoidFunction
+	setSearchQuery: (query: string) => void
+	searchingOptions: boolean
 }
 
 export const ConditionObjectEditor = <S extends ConditionSubject>({
@@ -132,6 +222,8 @@ export const ConditionObjectEditor = <S extends ConditionSubject>({
 	operatorOptions,
 	loadMoreOptions,
 	objectOptionsLoaded,
+	setSearchQuery,
+	searchingOptions,
 	...ruleProps
 }: ConditionObjectEditorProps<S>) => {
 	const operatorSelectProps: OperatorSelectProps = { ...ruleProps, currentOperator, options: operatorOptions }
@@ -155,6 +247,8 @@ export const ConditionObjectEditor = <S extends ConditionSubject>({
 					optionsLoaded={objectOptionsLoaded}
 					isMulti={isMultiOperator}
 					onLoadMore={loadMoreOptions}
+					onSearch={setSearchQuery}
+					searchingOptions={searchingOptions}
 				/>
 				: null}
 
