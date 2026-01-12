@@ -5,7 +5,7 @@ Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
 Stable tag: 3.9.3
-Tested up to: 6.8
+Tested up to: 6.9
 
 An easy, clean and simple way to enhance your site with code snippets.
 
