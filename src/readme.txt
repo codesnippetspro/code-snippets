@@ -119,6 +119,7 @@ __Changed__
 * Improved multisite snippet handling with correct wpAdminbase path resolution
 * Enhanced test infrastructure with multisite support and WP-CLI helpers
 * Enhanced documentation and PHPDoc comments for Snippet_Files class
+
 __Fixed__
 
 * Fixed multisite capability checks in Plugin class
