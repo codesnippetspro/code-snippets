@@ -118,19 +118,12 @@ __Changed__
 
 * Improved multisite snippet handling with correct wpAdminbase path resolution
 * Enhanced test infrastructure with multisite support and WP-CLI helpers
-* Optimized Playwright test caching strategy to avoid collisions in concurrent runs
-* Better workflow configuration with improved concurrency settings and build management
 * Enhanced documentation and PHPDoc comments for Snippet_Files class
-
 __Fixed__
 
-* Fixed wpAdminbase path for multisite mode in flat files setup
 * Fixed multisite capability checks in Plugin class
 * Fixed snippet execution logic for multisite support by centralizing trashed snippet handling
 * Fixed multisite snippet handling to ensure local snippets use correct table and filter out trashed snippets
-* Fixed GitHub Actions workflow artifact naming and zip filename format in release workflow
-* Fixed pull request workflow to properly handle labeled/unlabeled events and improve build comment management
-* Fixed commit message handling in sync CI to prevent quoted content from breaking the workflow
 
 = 3.9.3 (2025-12-03) =
 
