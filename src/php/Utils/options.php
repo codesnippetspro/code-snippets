@@ -34,7 +34,7 @@ function get_self_option( bool $network, string $option, $default_value = false 
 function add_self_option( bool $network, string $option, $value ): bool {
 	return $network
 		? add_site_option( $option, $value )
-		: get_option( $option, $value );
+		: add_option( $option, $value );
 }
 
 /**

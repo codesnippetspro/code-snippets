@@ -8,7 +8,6 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Core\DB;
-use Error;
 use ParseError;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Validator;
@@ -25,11 +24,13 @@ use function Code_Snippets\Utils\update_self_option;
  * @return void
  */
 function clean_active_snippets_cache( string $table_name, $scopes = false ) {
-	$scope_groups = $scopes ? [ $scopes ] : [
-		[ 'head-content', 'footer-content' ],
-		[ 'global', 'single-use', 'front-end' ],
-		[ 'global', 'single-use', 'admin' ],
-	];
+	$scope_groups = $scopes
+		? [ $scopes ]
+		: [
+			[ 'head-content', 'footer-content' ],
+			[ 'global', 'single-use', 'front-end' ],
+			[ 'global', 'single-use', 'admin' ],
+		];
 
 	foreach ( $scope_groups as $scopes ) {
 		wp_cache_delete( sprintf( 'active_snippets_%s_%s', sanitize_key( join( '_', $scopes ) ), $table_name ), CACHE_GROUP );
@@ -78,15 +79,15 @@ function get_snippets( array $ids = array(), ?bool $network = null ): array {
 	if ( ! is_array( $snippets ) ) {
 		$results = $wpdb->get_results( "SELECT * FROM $table_name", ARRAY_A );
 
-		$snippets = $results ?
-			array_map(
+		$snippets = $results
+			? array_map(
 				function ( $snippet_data ) use ( $network ) {
 					$snippet_data['network'] = $network;
 					return new Snippet( $snippet_data );
 				},
 				$results
-			) :
-			array();
+			)
+			: [];
 
 		$snippets = apply_filters( 'code_snippets/get_snippets', $snippets, $network );
 
@@ -800,8 +801,6 @@ function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force 
 		$result = null;
 	} catch ( ParseError $parse_error ) {
 		$result = $parse_error;
-	} catch ( Error $error ) {
-		$result = $error;
 	} catch ( Throwable $throwable ) {
 		$result = $throwable;
 	}

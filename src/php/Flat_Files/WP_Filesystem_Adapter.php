@@ -113,7 +113,7 @@ class WP_Filesystem_Adapter implements Filesystem_Adapter {
 	 * Changes filesystem permissions.
 	 *
 	 * @param string    $path  Path to the file.
-	 * @param int|false $chmod Optional. The permissions as octal number, usually 0644 for files,
+	 * @param int|false $chmod Optional. The permissions as octal number, usually 0644 for files.
 	 *
 	 * @return bool True on success, false on failure.
 	 */

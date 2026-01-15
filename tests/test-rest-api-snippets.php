@@ -1,8 +1,8 @@
 <?php
 
-namespace Code_Snippets\Tests;
+namespace Code_Snippets\Code_Snippets\AdminTests;
 
-use Code_Snippets\Snippet;
+use Code_Snippets\Model\Snippet;
 use WP_REST_Request;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;

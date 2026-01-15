@@ -23,7 +23,10 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 			<a
 				href="#"
 				title={__('Preview this snippet', 'code-snippets')}
-				onClick={() => setIsPreviewOpen(true)}
+				onClick={event => {
+					event.preventDefault()
+					setIsPreviewOpen(true)
+				}}
 			>
 				{snippet.name}
 			</a>

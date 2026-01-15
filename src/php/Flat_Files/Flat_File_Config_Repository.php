@@ -2,7 +2,6 @@
 
 namespace Code_Snippets\Flat_Files;
 
-
 use Code_Snippets\Flat_Files\Interfaces\Filesystem_Adapter;
 use Code_Snippets\Flat_Files\Interfaces\Snippet_Config_Repository;
 use Code_Snippets\Model\Snippet;
@@ -27,7 +26,7 @@ class Flat_File_Config_Repository implements Snippet_Config_Repository {
 	/**
 	 * Constructor.
 	 *
-	 * @param Filesystem_Adapter $fs Adapter to use for connecting to the filesystem
+	 * @param Filesystem_Adapter $fs Adapter to use for connecting to the filesystem.
 	 */
 	public function __construct( Filesystem_Adapter $fs ) {
 		$this->fs = $fs;
@@ -36,7 +35,7 @@ class Flat_File_Config_Repository implements Snippet_Config_Repository {
 	/**
 	 * Load configuration from a directory.
 	 *
-	 * @param string $base_dir Full filesystem path to directory,
+	 * @param string $base_dir Full filesystem path to directory.
 	 *
 	 * @return array Loaded configuration.
 	 */
@@ -55,19 +54,22 @@ class Flat_File_Config_Repository implements Snippet_Config_Repository {
 	/**
 	 * Store configuration.
 	 *
-	 * @param string $base_dir        Full filesystem path to configuration directory,
+	 * @param string $base_dir        Full filesystem path to configuration directory.
 	 * @param array  $active_snippets List of active snippets.
 	 *
 	 * @return void
+	 *
+	 * phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_var_export
 	 */
 	public function save( string $base_dir, array $active_snippets ): void {
 		$config_file_path = trailingslashit( $base_dir ) . static::CONFIG_FILE_NAME;
 
 		ksort( $active_snippets );
 
-		$file_content = "<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn " .
-		                var_export( $active_snippets, true ) .
-		                ";\n";
+		$file_content = sprintf(
+			"<?php\n\nif ( ! defined( 'ABSPATH' ) ) { return; }\n\nreturn %s;\n",
+			var_export( $active_snippets, true )
+		);
 
 		$this->fs->put_contents( $config_file_path, $file_content, FS_CHMOD_FILE );
 
@@ -81,7 +83,7 @@ class Flat_File_Config_Repository implements Snippet_Config_Repository {
 	/**
 	 * Update stored configuration for a snippet.
 	 *
-	 * @param string    $base_dir Full filesystem path to configuration directory,
+	 * @param string    $base_dir Full filesystem path to configuration directory.
 	 * @param Snippet   $snippet  Snippet to update.
 	 * @param bool|null $remove   Whether to remove the snippet from the configuration.
 	 *

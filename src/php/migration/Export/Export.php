@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\Export;
+namespace Code_Snippets\Migration\Export;
 
 use Code_Snippets\Model\Snippet;
 use function Code_Snippets\get_snippets;

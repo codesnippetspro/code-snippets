@@ -3,8 +3,8 @@
 namespace Code_Snippets\REST_API;
 
 use Code_Snippets\Export\Export;
-use Code_Snippets\Export\Export_Code;
-use Code_Snippets\Export\Export_JSON;
+use Code_Snippets\Migration\Export\Export_Code;
+use Code_Snippets\Migration\Export\Export_JSON;
 use Code_Snippets\Model\Snippet;
 use WP_Error;
 use WP_REST_Controller;
@@ -14,10 +14,10 @@ use WP_REST_Server;
 use function Code_Snippets\activate_snippet;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\deactivate_snippet;
-use function Code_Snippets\trash_snippet;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
+use function Code_Snippets\trash_snippet;
 use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
@@ -214,7 +214,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 
 		if ( isset( $query_params['per_page'] ) || isset( $query_params['page'] ) ) {
 			$collection_params = $this->get_collection_params();
-			$per_page = isset( $query_params['per_page'] ) 
+			$per_page = isset( $query_params['per_page'] )
 				? max( 1, (int) $query_params['per_page'] )
 				: (int) $collection_params['per_page']['default'];
 			$page_request = (int) $request->get_param( 'page' );

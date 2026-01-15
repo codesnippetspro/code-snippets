@@ -1,9 +1,6 @@
 <?php
-namespace Code_Snippets\Promotions;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+namespace Code_Snippets\Integration\Promotions;
 
 /**
  * Elementor Pro promotion class.
@@ -36,10 +33,13 @@ class Elementor_Pro {
 				<?php esc_html_e( 'Code Snippets Pro provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ); ?>
 			</p>
 			<p>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=snippets' ) ); ?>" class="button button-primary">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=snippets' ) ); ?>"
+				   class="button button-primary">
 					<?php esc_html_e( 'Manage your snippets', 'code-snippets' ); ?>
 				</a>
-				<a href="https://codesnippets.pro/pricing/?utm_source=elementor&utm_medium=banner&utm_campaign=custom-code" class="button button-secondary" target="_blank">
+				<a href="https://codesnippets.pro/pricing/?utm_source=elementor&utm_medium=banner&utm_campaign=custom-code"
+				   class="button button-secondary"
+				   target="_blank">
 					<?php esc_html_e( 'Learn More', 'code-snippets' ); ?>
 				</a>
 			</p>
@@ -91,11 +91,11 @@ class Elementor_Pro {
 		$element->add_control(
 			'code_snippets_promotion_notice',
 			[
-				'type' => \Elementor\Controls_Manager::NOTICE,
+				'type'        => \Elementor\Controls_Manager::NOTICE,
 				'notice_type' => 'info',
 				'dismissible' => true,
-				'heading' => esc_html__( 'Manage your custom styles', 'code-snippets' ),
-				'content' => $this->get_promotion_content(),
+				'heading'     => esc_html__( 'Manage your custom styles', 'code-snippets' ),
+				'content'     => $this->get_promotion_content(),
 			]
 		);
 	}

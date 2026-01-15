@@ -3,6 +3,7 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Admin\Contextual_Help;
+use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Code_Highlighter;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;

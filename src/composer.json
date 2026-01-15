@@ -21,6 +21,7 @@
         "source": "https://github.com/codesnippetspro/code-snippets"
     },
     "autoload": {
+        "files": ["php/Admin/Menus/Manage_Menu.php"],
         "psr-4": {
           "Code_Snippets\\": "php/"
         }

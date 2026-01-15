@@ -21,7 +21,7 @@ class Handler_Registry {
 	/**
 	 * Constructor.
 	 *
-	 * @param Snippet_Type_Handler[] $handlers
+	 * @param Snippet_Type_Handler[] $handlers Snippet type handlers to register.
 	 */
 	public function __construct( array $handlers ) {
 		foreach ( $handlers as $type => $handler ) {
@@ -32,8 +32,8 @@ class Handler_Registry {
 	/**
 	 * Registers a handler for a snippet type.
 	 *
-	 * @param string               $type
-	 * @param Snippet_Type_Handler $handler
+	 * @param string               $type    Handler key.
+	 * @param Snippet_Type_Handler $handler Handler class.
 	 *
 	 * @return void
 	 */
@@ -44,7 +44,7 @@ class Handler_Registry {
 	/**
 	 * Gets the handler for a snippet type.
 	 *
-	 * @param string $type
+	 * @param string $type Handler key.
 	 *
 	 * @return Snippet_Type_Handler|null
 	 */

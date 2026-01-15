@@ -12,7 +12,11 @@ use function Code_Snippets\get_snippet;
 use const Code_Snippets\CACHE_GROUP;
 
 /**
- * Manages the snippet flat file operations.
+/**
+ * Manage file-based snippet execution.
+ *
+ * Responsible for writing snippet code to disk, maintaining per-table config indexes,
+ * and retrieving the active snippet list from those config files.
  */
 class Snippet_Files {
 
@@ -79,9 +83,9 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Synchronise the presence of the 'enabled' flag file with the actual configuration.
+	 * Create or delete the enabled flag file.
 	 *
-	 * @param bool $enabled Configuration value.
+	 * @param bool $enabled Whether file-based execution is enabled.
 	 *
 	 * @return void
 	 */
@@ -99,7 +103,7 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Register hooks that interface with snippet update functions to keep filesystem storage in sync.
+	 * Register WordPress hooks used by file-based execution.
 	 *
 	 * @return void
 	 * @noinspection PhpRedundantOptionalArgumentInspection
@@ -142,7 +146,7 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Write a snippet to the filesystem storage
+	 * Write a snippet file and update its config index entry.
 	 *
 	 * @param Snippet              $snippet Snippet to write.
 	 * @param string               $table   Snippet database table name.
@@ -185,7 +189,7 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Delete a snippet from the filesystem storage.
+	 * Delete a snippet file and remove it from the config index.
 	 *
 	 * @param Snippet $snippet Snippet to delete.
 	 * @param bool    $network Whether this is a network-level snippet.
@@ -209,9 +213,9 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Activate a snippet within the filesystem storage.
+	 * Activate a snippet by writing its code file and updating config.
 	 *
-	 * @param Snippet $snippet Snippet to activate.
+	 * @param Snippet $snippet Snippet object.
 	 *
 	 * @return void
 	 */
@@ -226,10 +230,10 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Deactivate a snippet within the filesystem storage.
+	 * Deactivate a snippet by updating its config entry.
 	 *
-	 * @param int  $snippet_id Identifier of snippet to deactivate.
-	 * @param bool $network    Whether snippet is network-wide.
+	 * @param int  $snippet_id Snippet ID.
+	 * @param bool $network    Whether the snippet is network-wide.
 	 *
 	 * @return void
 	 */
@@ -270,12 +274,12 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Determine the base URL for storing a snippet given its database table and type.
+	 * Get the base URL for flat files.
 	 *
-	 * @param string $table        Database table name (can be empty).
-	 * @param string $snippet_type Snippet type (can be empty).
+	 * @param string $table       Optional hashed table name.
+	 * @param string $snippet_type Optional snippet type directory.
 	 *
-	 * @return string Full URI base.
+	 * @return string
 	 */
 	public static function get_base_url( string $table = '', string $snippet_type = '' ): string {
 		$base_url = WP_CONTENT_URL . '/code-snippets';
@@ -335,16 +339,16 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Handler for 'update_option' to ensure that the stored active network snippet statuses match that in the database.
+	 * Sync the active shared network snippets list to a config file.
 	 *
-	 * @param string|mixed $option    Name of option being updated.
-	 * @param mixed        $old_value Current value of option.
-	 * @param mixed        $value     Updated value of option.
+	 * @param string $option    Option name.
+	 * @param mixed  $old_value Previous value.
+	 * @param mixed  $value     New value.
 	 *
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function sync_active_shared_network_snippets( $option, $old_value, $value ): void {
+	public function sync_active_shared_network_snippets( string $option, $old_value, $value ): void {
 		if ( 'active_shared_network_snippets' === $option ) {
 			$this->create_active_shared_network_snippets_file( $value );
 		}
@@ -365,12 +369,11 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Create a file for storing active shared network snippet data.
+	 * Create or update the active shared network snippets config file.
 	 *
-	 * @param mixed $value File contents.
+	 * @param mixed $value Option value.
 	 *
 	 * @return void
-	 *
 	 * phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_var_export
 	 */
 	private function create_active_shared_network_snippets_file( $value ): void {
@@ -400,19 +403,27 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Retrieve a list of active snippets from flat file storage.
+	 * Get a list of active snippets from flat file config.
 	 *
-	 * @param array  $scopes       Scopes to retrieve.
-	 * @param string $snippet_type Snippet type to retrieve.
+	 * @param array<string> $scopes       Scopes to include.
+	 * @param string        $snippet_type Snippet type directory.
 	 *
-	 * @return array
+	 * @return array<int, array<string, mixed>>
 	 */
-	public static function get_active_snippets_from_flat_files( array $scopes = [], string $snippet_type = 'php' ): array {
+	public static function get_active_snippets_from_flat_files(
+		array $scopes = [],
+		string $snippet_type = 'php'
+	): array {
 		$active_snippets = [];
 		$db = code_snippets()->db;
 
-		$table = self::get_hashed_table_name( $db->get_table_name() );
-		$snippets = self::load_active_snippets_from_file( $table, $snippet_type, $scopes );
+		// Always use the site table for "local" snippets, even in Network Admin.
+		$table = self::get_hashed_table_name( $db->get_table_name( false ) );
+		$snippets = self::load_active_snippets_from_file(
+			$table,
+			$snippet_type,
+			$scopes
+		);
 
 		if ( $snippets ) {
 			foreach ( $snippets as $snippet ) {
@@ -451,8 +462,9 @@ class Snippet_Files {
 
 				foreach ( $ms_snippets as $snippet ) {
 					$id = intval( $snippet['id'] );
+					$active_value = intval( $snippet['active'] );
 
-					if ( ! $snippet['active'] && ! in_array( $id, $active_shared_ids, true ) ) {
+					if ( ! DB::is_network_snippet_enabled( $active_value, $id, $active_shared_ids ) ) {
 						continue;
 					}
 
@@ -513,14 +525,14 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Load active snippets from flat files.
+	 * Load active snippets from a flat file config index.
 	 *
-	 * @param string     $table             Database table name.
-	 * @param string     $snippet_type      Snippet type subdirectory name.
-	 * @param array      $scopes            List of snippet scopes.
-	 * @param array|null $active_shared_ids List of IDs of active network shared snippets.
+	 * @param string     $table            Hashed table directory name.
+	 * @param string     $snippet_type      Snippet type directory.
+	 * @param string[]   $scopes           Scopes to include.
+	 * @param int[]|null $active_shared_ids Optional list of active shared network snippet IDs.
 	 *
-	 * @return array
+	 * @return array<int, array<string, mixed>>
 	 */
 	private static function load_active_snippets_from_file(
 		string $table,
@@ -551,16 +563,17 @@ class Snippet_Files {
 		}
 
 		$file_snippets = require $snippets_file_path;
+		$shared_ids = is_array( $active_shared_ids )
+			? array_map( 'intval', $active_shared_ids )
+			: [];
 
 		$filtered_snippets = array_filter(
 			$file_snippets,
-			function ( $snippet ) use ( $scopes, $active_shared_ids ) {
-				$is_active = $snippet['active'];
+			function ( $snippet ) use ( $scopes, $shared_ids ) {
+				$active_value = isset( $snippet['active'] ) ? intval( $snippet['active'] ) : 0;
 
-				if ( null !== $active_shared_ids ) {
-					$is_active = $is_active ||
-					             in_array( intval( $snippet['id'] ), $active_shared_ids, true );
-				}
+
+				$is_active = DB::is_network_snippet_enabled( $active_value, intval( $snippet['id'] ), $shared_ids );
 
 				return ( $is_active || 'condition' === $snippet['scope'] ) &&
 				       in_array( $snippet['scope'], $scopes, true );
@@ -573,11 +586,11 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Add flat files setting field.
+	 * Add file-based execution settings fields.
 	 *
-	 * @param array $fields Settings fields.
+	 * @param array<string, mixed> $fields Settings fields.
 	 *
-	 * @return array Settings fields with flat file setting added.
+	 * @return array<string, mixed> Settings fields with flat file setting added.
 	 */
 	public function add_settings_fields( array $fields ): array {
 
@@ -588,7 +601,7 @@ class Snippet_Files {
 		);
 
 		$fields['general']['enable_flat_files'] = [
-			'name'  => __( 'Enable file-based execution', 'code-snippets' ),
+			'name'  => __( 'Enable File-Based Execution', 'code-snippets' ),
 			'type'  => 'checkbox',
 			'label' => __( 'Snippets will be executed directly from files instead of the database.', 'code-snippets' ) . $learn_more_link,
 		];
@@ -599,7 +612,7 @@ class Snippet_Files {
 	/**
 	 * Create necessary flat files, if the option is enabled.
 	 *
-	 * @param array $settings Snippet settings.
+	 * @param array<string, mixed> $settings Settings data.
 	 *
 	 * @return void
 	 */
@@ -619,7 +632,7 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Create flat files for active snippets.
+	 * Create snippet code files and config indexes for all active snippets.
 	 *
 	 * @return void
 	 */
@@ -656,7 +669,7 @@ class Snippet_Files {
 	}
 
 	/**
-	 * Create flat files for active shared network snippets.
+	 * Create active shared network snippet config files for each site (multisite) or the current site.
 	 *
 	 * @return void
 	 */
@@ -680,7 +693,7 @@ class Snippet_Files {
 			$db->set_table_vars();
 		} else {
 			$active_shared_network_snippets = get_option( 'active_shared_network_snippets' );
-			if ( false !== $active_shared_network_snippets ) {
+			if ( f≈alse !== $active_shared_network_snippets ) {
 				$this->create_active_shared_network_snippets_file( $active_shared_network_snippets );
 			}
 		}

@@ -3,17 +3,17 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Admin\Bootstrap_Admin;
+
 use Code_Snippets\Client\Cloud_API;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
 use Code_Snippets\Core\Upgrader;
-use Code_Snippets\Flat_Files\Flat_File_Config_Repository;
-use Code_Snippets\Flat_Files\Handler_Registry;
-use Code_Snippets\Flat_Files\WP_Filesystem_Adapter;
 use Code_Snippets\Integration\Classic_Editor\MCE_Plugin;
 use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Integration\Shortcodes;
+use Code_Snippets\Migration\Importers\Files\Files_Import_Manager;
+use Code_Snippets\Migration\Importers\Plugins\Plugins_Import_Manager;
 use Code_Snippets\REST_API\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\REST_Endpoints;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
@@ -136,8 +136,12 @@ class Plugin {
 
 		$this->init_snippet_files();
 
+		// Importers.
+		new Plugins_Import_Manager();
+		new Files_Import_Manager();
+
 		// Initialize promotions.
-		new Promotions\Elementor_Pro();
+		new Integration\Promotions\Elementor_Pro();
 	}
 
 	/**
@@ -146,15 +150,15 @@ class Plugin {
 	 * @return void
 	 */
 	private function init_snippet_files() {
-		$this->snippet_handler_registry = new Handler_Registry(
+		$this->snippet_handler_registry = new Flat_Files\Handler_Registry(
 			[
 				'php'  => new Flat_Files\Handlers\Functions_Snippet_Handler(),
 				'html' => new Flat_Files\Handlers\Content_Snippet_Handler(),
 			]
 		);
 
-		$fs = new WP_Filesystem_Adapter();
-		$config_repo = new Flat_File_Config_Repository( $fs );
+		$fs = new Flat_Files\WP_Filesystem_Adapter();
+		$config_repo = new Flat_Files\Flat_File_Config_Repository( $fs );
 
 		$snippet_files = new Flat_Files\Snippet_Files( $this->snippet_handler_registry, $fs, $config_repo );
 		$snippet_files->register_hooks();
@@ -177,12 +181,12 @@ class Plugin {
 	 * @return string The menu's slug.
 	 */
 	public function get_menu_slug( string $menu = '' ): string {
-		$add = array( 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' );
-		$edit = array( 'edit', 'edit-snippet' );
-		$import = array( 'import', 'import-snippets', 'import-code-snippets' );
-		$settings = array( 'settings', 'snippets-settings' );
-		$cloud = array( 'cloud', 'cloud-snippets' );
-		$welcome = array( 'welcome', 'getting-started', 'code-snippets' );
+		$add = [ 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' ];
+		$edit = [ 'edit', 'edit-snippet' ];
+		$import = [ 'import', 'import-snippets', 'import-code-snippets' ];
+		$settings = [ 'settings', 'snippets-settings' ];
+		$cloud = [ 'cloud', 'cloud-snippets' ];
+		$welcome = [ 'welcome', 'getting-started', 'code-snippets' ];
 
 		if ( in_array( $menu, $edit, true ) ) {
 			return 'edit-snippet';
@@ -319,6 +323,10 @@ class Plugin {
 	 */
 	public function get_cap(): string {
 		if ( is_multisite() && $this->is_network_context() ) {
+			return $this->get_network_cap_name();
+		}
+
+		if ( is_multisite() && ! $this->is_subsite_menu_enabled() ) {
 			return $this->get_network_cap_name();
 		}
 
