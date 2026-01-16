@@ -63,10 +63,10 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 
 == Frequently Asked Questions ==
 
-A full list of our Frequently Asked Questions can be found at [help.codesnippets.pro](https://help.codesnippets.pro/collection/3-faq).
+A full list of our Frequently Asked Questions can be found at [codesnippets.pro](https://codesnippets.pro/docs/faq/).
 
 = How can I recover my site if it is crashed by a buggy snippet? =
-You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: <https://help.codesnippets.pro/article/12-safe-mode>.
+You can recover your site by enabling the Code Snippets safe mode feature. Instructions for how to turn it on are available here: <https://codesnippets.pro/doc/safe-mode/>.
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database, independent of the theme and unaffected by WordPress upgrades.

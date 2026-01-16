@@ -396,7 +396,7 @@
 
 ### Added
 * Added additional editor shortcuts to list in tooltip.
-* Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
+* Filter for changing Snippets admin menu position. [See this help article for more information.](https://codesnippets.pro/doc/snippets-menu-location/)
 * Ability to filter shortcode output. Thanks to contributions from [Jack Szwergold](https://github.com/JackSzwergold).
 
 ### Fixed
