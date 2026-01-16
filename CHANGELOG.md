@@ -9,6 +9,8 @@
 
 ### Changed
 * Updated links to more recent documentation pages 
+* Improved multisite condition handling in flat files setup (pro)
+* Streamlined condition consumer ID handling for trash snippet operations (pro)
 
 ### Fixed
 * Fixed multisite capability checks in Plugin class
