@@ -104,21 +104,17 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
-
-
 = 3.9.4 (2026-01-14) =
 
 __Added__
 
 * New import functionality to migrate snippets from file uploads with drag-and-drop interface
 * Support for importing snippets from other popular plugins (Header Footer Code Manager, Insert Headers and Footers, Insert PHP Code Snippet)
-* Enhanced flat files support with improved multisite mode compatibility
+* Enhanced file based execution support with improved multisite mode compatibility
 
 __Changed__
 
-* Improved multisite snippet handling with correct wpAdminbase path resolution
-* Enhanced test infrastructure with multisite support and WP-CLI helpers
-* Enhanced documentation and PHPDoc comments for Snippet_Files class
+* Updated links to more recent documentation pages 
 
 __Fixed__
 
