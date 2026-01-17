@@ -661,14 +661,14 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 					'description' => esc_html__( 'Descriptive title for the snippet.', 'code-snippets' ),
 					'type'        => 'string',
 				],
-					'desc'           => [
-						'description' => esc_html__( 'Descriptive text associated with snippet.', 'code-snippets' ),
-						'type'        => 'string',
-					],
-					'code'           => [
-						'description' => esc_html__( 'Executable snippet code.', 'code-snippets' ),
-						'type'        => 'string',
-					],
+				'desc'           => [
+					'description' => esc_html__( 'Descriptive text associated with snippet.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'code'           => [
+					'description' => esc_html__( 'Executable snippet code.', 'code-snippets' ),
+					'type'        => 'string',
+				],
 				'tags'           => [
 					'description' => esc_html__( 'List of tag categories the snippet belongs to.', 'code-snippets' ),
 					'type'        => 'array',

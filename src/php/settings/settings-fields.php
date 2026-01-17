@@ -148,7 +148,6 @@ function get_settings_fields(): array {
 				'modified-asc'  => __( 'Modified (oldest first)', 'code-snippets' ),
 			],
 		],
-
 		'disable_prism'       => [
 			'name'  => __( 'Disable Syntax Highlighter', 'code-snippets' ),
 			'type'  => 'checkbox',
@@ -262,14 +261,12 @@ function get_settings_fields(): array {
 
 	$fields = apply_filters( 'code_snippets_settings_fields', $fields );
 
-	// Add Admin Bar settings after plugin-provided fields (e.g., file-based execution).
 	$fields['general']['enable_admin_bar'] = [
 		'name'  => __( 'Enable Admin Bar Menu', 'code-snippets' ),
 		'type'  => 'checkbox',
 		'label' => __( 'Show a Snippets menu in the admin bar for quick access to snippets.', 'code-snippets' ),
 	];
 
-	// Only show per-page control if admin bar menu is enabled in settings.
 	if ( get_setting( 'general', 'enable_admin_bar' ) ) {
 		$fields['general']['admin_bar_snippet_limit'] = [
 			'name'  => __( 'Admin Bar Snippets Per Page', 'code-snippets' ),
