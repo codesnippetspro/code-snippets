@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.9.4] (2026-01-14)
+
+### Added
+* New import functionality to migrate snippets from file uploads with drag-and-drop interface
+* Support for importing snippets from other popular plugins (Header Footer Code Manager, Insert Headers and Footers, Insert PHP Code Snippet)
+* Enhanced file based execution support with improved multisite mode compatibility
+
+### Changed
+* Updated links to more recent documentation pages 
+
+### Fixed
+* Fixed multisite capability checks in Plugin class
+* Fixed snippet execution logic for multisite support by centralizing trashed snippet handling
+* Fixed multisite snippet handling to ensure local snippets use correct table and filter out trashed snippets
 
 ## [3.9.3] (2025-12-03)
 
