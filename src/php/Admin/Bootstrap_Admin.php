@@ -182,7 +182,7 @@ class Bootstrap_Admin {
 			array(
 				sprintf(
 					$format,
-					'https://help.codesnippets.pro/',
+					'https://codesnippets.pro/support/',
 					esc_attr__( 'Find out how to get support with Code Snippets', 'code-snippets' ),
 					esc_html__( 'Docs and Support', 'code-snippets' )
 				),
