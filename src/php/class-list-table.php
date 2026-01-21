@@ -421,13 +421,13 @@ class List_Table extends WP_List_Table {
 	protected function column_locked( Snippet $snippet ): string {
 		if ( $snippet->locked ) {
 			return sprintf(
-				'<span class="dashicons dashicons-yes" style="color: #2271b1;" title="%s"></span>',
+				'<span class="dashicons dashicons-lock" style="color: #2271b1;" title="%s"></span>',
 				esc_attr__( 'This snippet is locked.', 'code-snippets' )
 			);
 		}
 
 		return sprintf(
-			'<span class="dashicons dashicons-no-alt" style="color: #646970; opacity: 0.5;" title="%s"></span>',
+			'<span class="dashicons dashicons-unlock" style="color: #646970; opacity: 0.5;" title="%s"></span>',
 			esc_attr__( 'This snippet is unlocked.', 'code-snippets' )
 		);
 	}
