@@ -238,39 +238,26 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 
 		$status = sanitize_key( (string) $request->get_param( 'status' ) );
 
-		if ( in_array( $status, [ 'active', 'inactive' ], true ) ) {
-			$all_snippets = array_filter(
-				$all_snippets,
-				static function ( Snippet $snippet ): bool {
-					return ! $snippet->is_trashed();
-				}
-			);
-		}
-
 		$exclude_types = $request->get_param( 'exclude_types' );
 		$exclude_types = is_array( $exclude_types ) ? array_map( 'sanitize_key', $exclude_types ) : [];
 
-		if ( $exclude_types ) {
+		if ( $exclude_types || 'all' !== $status ) {
 			$all_snippets = array_filter(
 				$all_snippets,
-				static function ( Snippet $snippet ) use ( $exclude_types ): bool {
-					return ! in_array( $snippet->type, $exclude_types, true );
-				}
-			);
-		}
+				static function ( Snippet $snippet ) use ( $exclude_types, $status ): bool {
+					if ( $exclude_types && in_array( $snippet->type, $exclude_types, true ) ) {
+						return false;
+					}
 
-		if ( 'active' === $status ) {
-			$all_snippets = array_filter(
-				$all_snippets,
-				static function ( Snippet $snippet ): bool {
-					return $snippet->active;
-				}
-			);
-		} elseif ( 'inactive' === $status ) {
-			$all_snippets = array_filter(
-				$all_snippets,
-				static function ( Snippet $snippet ): bool {
-					return ! $snippet->active;
+					if ( 'active' === $status ) {
+						return ! $snippet->is_trashed() && (bool) $snippet->active;
+					}
+
+					if ( 'inactive' === $status ) {
+						return ! $snippet->is_trashed() && ! $snippet->active;
+					}
+
+					return true;
 				}
 			);
 		}
