@@ -77,6 +77,13 @@ class Import_Menu extends Admin_Menu {
 			true
 		);
 
+		wp_enqueue_style(
+			'code-snippets-import',
+			plugins_url( 'dist/import.css', PLUGIN_FILE ),
+			[],
+			PLUGIN_VERSION
+		);
+
 		code_snippets()->localize_script( 'code-snippets-import' );
 	}
 
@@ -86,9 +93,6 @@ class Import_Menu extends Admin_Menu {
 	 * @return void
 	 */
 	public function render() {
-		echo '<div class="wrap">', '<h1>';
-		esc_html_e( 'Import Snippets', 'code-snippets' );
-
-		echo '</h1>', '<div id="import-container"></div>', '</div>';
+		echo '<div id="import-container"></div>';
 	}
 }

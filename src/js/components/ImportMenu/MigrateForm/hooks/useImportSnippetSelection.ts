@@ -1,7 +1,16 @@
 import { useState } from 'react'
 import type { ImportableSnippet } from '../../../../hooks/useImportersAPI'
 
-export const useImportSnippetSelection = (availableSnippets: ImportableSnippet[]) => {
+export interface UseImportSnippetSelection {
+	selectedSnippets: Set<number>
+	handleSnippetToggle: (snippetId: number) => void
+	handleSelectAll: VoidFunction
+	clearSelection: VoidFunction
+	getSelectedSnippets: () => ImportableSnippet[]
+	isAllSelected: boolean
+}
+
+export const useImportSnippetSelection = (availableSnippets: ImportableSnippet[]): UseImportSnippetSelection => {
 	const [selectedSnippets, setSelectedSnippets] = useState<Set<number>>(new Set())
 
 	const handleSnippetToggle = (snippetId: number) => {
@@ -27,7 +36,7 @@ export const useImportSnippetSelection = (availableSnippets: ImportableSnippet[]
 	}
 
 	const getSelectedSnippets = () => {
-		return availableSnippets.filter(snippet => 
+		return availableSnippets.filter(snippet =>
 			selectedSnippets.has(snippet.table_data.id)
 		)
 	}

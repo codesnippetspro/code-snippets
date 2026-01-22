@@ -1,29 +1,49 @@
-import React, { useState } from 'react'
-import { __ } from '@wordpress/i18n'
-import { ImportCard } from '../common/components/ImportCard'
+import React, { ReactNode, useEffect, useState } from 'react'
+import { __, sprintf } from '@wordpress/i18n'
+import { ImportCard } from '../common/ImportCard'
 import { ImporterSelector } from './components/ImporterSelector'
 import { ImportOptions } from './components/ImportOptions'
 import { SimpleSnippetTable } from './components/SimpleSnippetTable'
-import { StatusDisplay } from './components/StatusDisplay'
 import { useImporterSelection } from './hooks/useImporterSelection'
 import { useImportSnippetSelection } from './hooks/useImportSnippetSelection'
 import { useSnippetImport } from './hooks/useSnippetImport'
+import { createInterpolateElement } from '@wordpress/element'
 
-export const ImportForm: React.FC = () => {
+interface StatusDisplayProps {
+	type: 'error' | 'success'
+	title: string
+	message: ReactNode
+}
+
+const StatusDisplay: React.FC<StatusDisplayProps> = ({ type, title, message }) =>
+	<ImportCard variant="controls" className="import-section-status">
+		{'error' === type
+			? <div className="error"><span>✕</span></div>
+			: <div className="success"><span>✓</span></div>}
+
+		<div>
+			<h3>{title}</h3>
+			<p>{message}</p>
+		</div>
+	</ImportCard>
+
+export const MigrateForm: React.FC = () => {
 	const [autoAddTags, setAutoAddTags] = useState(false)
 
 	const importerSelection = useImporterSelection()
 	const snippetImport = useSnippetImport()
 	const snippetSelection = useImportSnippetSelection(snippetImport.snippets)
 
+	useEffect(() => {
+		if (importerSelection.selectedImporter) {
+			void snippetImport.loadSnippets(importerSelection.selectedImporter)
+		}
+	}, [importerSelection.selectedImporter])
+
 	const handleImporterChange = async (newImporter: string) => {
 		importerSelection.handleImporterChange(newImporter)
 		snippetSelection.clearSelection()
 		snippetImport.resetAll()
-
-		if (newImporter) {
-			await snippetImport.loadSnippets(newImporter)
-		}
 	}
 
 	const handleImport = async () => {
@@ -43,7 +63,7 @@ export const ImportForm: React.FC = () => {
 	if (importerSelection.isLoading) {
 		return (
 			<div className="wrap">
-				<p>{__('Loading importers...', 'code-snippets')}</p>
+				<p>{__('Loading importers…', 'code-snippets')}</p>
 			</div>
 		)
 	}
@@ -60,8 +80,8 @@ export const ImportForm: React.FC = () => {
 
 	return (
 		<div className="wrap">
-			<div className="import-form-container" style={{ maxWidth: '800px' }}>
-				<p>{__('If you are using another Snippets plugin, you can import all existing snippets to your Code Snippets library.', 'code-snippets')}</p>
+			<div className="migrate-form-container">
+				<p>{__('If you are using another snippets plugin, you can import those existing snippets to your Code Snippets library.', 'code-snippets')}</p>
 
 				<ImporterSelector
 					importers={importerSelection.importers}
@@ -70,50 +90,49 @@ export const ImportForm: React.FC = () => {
 					isLoading={snippetImport.isLoadingSnippets}
 				/>
 
-				{snippetImport.snippetsError &&
+				{snippetImport.snippetsError && (
 					<StatusDisplay
 						type="error"
 						title={__('Error loading snippets', 'code-snippets')}
 						message={snippetImport.snippetsError}
-					/>
-				}
+					/>)}
 
-				{snippetImport.importError &&
+				{snippetImport.importError && (
 					<StatusDisplay
 						type="error"
 						title={__('Error importing snippets', 'code-snippets')}
 						message={snippetImport.importError}
-					/>
-				}
+					/>)}
 
-				{0 < snippetImport.importSuccess.length &&
+				{0 < snippetImport.importSuccess.length && (
 					<StatusDisplay
 						type="success"
-						title={`${snippetImport.importSuccess.length} ${__('Snippets imported!', 'code-snippets')}`}
-						message={__('We successfully imported all snippets to your library. Go to ', 'code-snippets')}
-						showSnippetsLink
-					/>
-				}
+						title={sprintf(
+							// translators: %d: nimber of imported snippets.
+							__('%d Snippets imported!', 'code-snippets'),
+							snippetImport.importSuccess.length
+						)}
+						message={
+							createInterpolateElement(
+								__('We successfully imported all snippets to your library. Go to <a>Code Snippets Library</a>.', 'code-snippets'),
+								{ a: <a href={window.CODE_SNIPPETS?.urls?.manage} /> }
+							)}
+					/>)}
 
 				{importerSelection.selectedImporter &&
 					!snippetImport.isLoadingSnippets &&
 					!snippetImport.snippetsError &&
 					0 === snippetImport.snippets.length &&
-					0 === snippetImport.importSuccess.length &&
-						<ImportCard>
-							<div style={{ textAlign: 'center', padding: '40px 20px', color: '#666' }}>
-								<div style={{ fontSize: '48px', marginBottom: '16px' }}>📭</div>
-								<h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#333' }}>
-									{__('No snippets found', 'code-snippets')}
-								</h3>
-								<p style={{ margin: '0', fontSize: '14px' }}>
-									{__('No snippets were found for the selected plugin. Make sure the plugin is installed and has snippets configured.', 'code-snippets')}
-								</p>
+					0 === snippetImport.importSuccess.length && (
+						<ImportCard className="no-snippets-card">
+							<div className="card-inner">
+								<div className="card-icon">📭</div>
+								<h3>{__('No snippets found', 'code-snippets')}</h3>
+								<p>{__('No snippets were found for the selected plugin. Make sure the plugin is installed and has snippets configured.', 'code-snippets')}</p>
 							</div>
-						</ImportCard>
-				}
+						</ImportCard>)}
 
-				{0 < snippetImport.snippets.length &&
+				{0 < snippetImport.snippets.length && (
 					<>
 						<ImportOptions
 							autoAddTags={autoAddTags}
@@ -131,7 +150,7 @@ export const ImportForm: React.FC = () => {
 							isImporting={snippetImport.isImporting}
 						/>
 					</>
-				}
+				)}
 			</div>
 		</div>
 	)

@@ -1,65 +1,61 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactNode, useState } from 'react'
+import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import { FileUploadForm } from './FromFileUpload/FileUploadForm'
-import { ImportForm } from './FromOtherPlugins/ImportForm'
-import { ImportSection } from './common/components/ImportSection'
+import { fetchQueryParam, updateQueryParam } from '../../utils/urls'
+import { UploadForm } from './UploadForm/UploadForm'
+import { MigrateForm } from './MigrateForm/MigrateForm'
 
-type TabType = 'upload' | 'plugins'
+const TABS = ['upload', 'migrate'] as const
 
-const isTabType = (value: string): value is TabType =>
-	'upload' === value || 'plugins' === value
+type TabType = typeof TABS[number]
+
+const TAB_CONTENT: Record<TabType, ReactNode> = {
+	upload: <UploadForm />,
+	migrate: <MigrateForm />
+}
+
+const TAB_LABELS: Record<TabType, string> = {
+	upload: __('Upload snippets', 'code-snippets'),
+	migrate: __('Migrate from other plugins', 'code-snippets')
+}
+
+const isValidTab = (value: string): value is TabType =>
+	TABS.includes(value as TabType)
+
+const getDefaultTab = (): TabType => {
+	const tabParam = fetchQueryParam('tab')
+	return tabParam && isValidTab(tabParam) ? tabParam : TABS[0]
+}
 
 export const ImportMenu: React.FC = () => {
-	const [activeTab, setActiveTab] = useState<TabType>('upload')
-
-	useEffect(() => {
-		const urlParams = new URLSearchParams(window.location.search)
-		const tabParam = urlParams.get('tab')
-		if (tabParam && isTabType(tabParam)) {
-			setActiveTab(tabParam)
-		}
-	}, [])
-
-	const handleTabChange = (tab: TabType) => {
-		setActiveTab(tab)
-
-		const url = new URL(window.location.href)
-		url.searchParams.set('tab', tab)
-		window.history.replaceState({}, '', url)
-	}
+	const [activeTab, setActiveTab] = useState<TabType>(getDefaultTab)
 
 	return (
-		<div className="narrow" style={{ maxWidth: '800px' }}>
-			<h2 className="nav-tab-wrapper" style={{ marginBottom: '20px' }}>
-				<a
-					className={`nav-tab${'upload' === activeTab ? ' nav-tab-active' : ''}`}
-					href="#"
-					onClick={e => {
-						e.preventDefault()
-						handleTabChange('upload')
-					}}
-				>
-					{__('Import Snippets', 'code-snippets')}
-				</a>
-				<a
-					className={`nav-tab${'plugins' === activeTab ? ' nav-tab-active' : ''}`}
-					href="#"
-					onClick={e => {
-						e.preventDefault()
-						handleTabChange('plugins')
-					}}
-				>
-					{__('Import from other plugins', 'code-snippets')}
-				</a>
-			</h2>
+		<div className="import-snippets-menu wrap">
+			<h1>{__('Import Snippets', 'code-snippets')}</h1>
 
-			<ImportSection active={'upload' === activeTab}>
-				<FileUploadForm />
-			</ImportSection>
+			<div className="narrow">
+				<h2 className="nav-tab-wrapper">
+					{TABS.map(tab =>
+						<a
+							key={tab}
+							href="#"
+							className={classnames('nav-tab', { 'nav-tab-active': tab === activeTab })}
+							onClick={event => {
+								event.preventDefault()
+								setActiveTab(tab)
+								updateQueryParam('tab', tab)
+							}}
+						>
+							{TAB_LABELS[tab]}
+						</a>)}
+				</h2>
 
-			<ImportSection active={'plugins' === activeTab}>
-				<ImportForm />
-			</ImportSection>
+				{TABS.map(tab =>
+					<div key={tab} className={classnames('import-snippets-section', { 'active-section': tab === activeTab })}>
+						{TAB_CONTENT[tab]}
+					</div>)}
+			</div>
 		</div>
 	)
 }

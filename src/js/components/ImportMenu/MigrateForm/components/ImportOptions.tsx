@@ -1,10 +1,10 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { ImportCard } from '../../common/components/ImportCard'
+import { ImportCard } from '../../common/ImportCard'
 
 export interface ImportOptionsProps {
-	autoAddTags: boolean
 	tagValue: string
+	autoAddTags: boolean
 	onAutoAddTagsChange: (enabled: boolean) => void
 	onTagValueChange: (value: string) => void
 }
@@ -15,32 +15,30 @@ export const ImportOptions: React.FC<ImportOptionsProps> = ({
 	onAutoAddTagsChange,
 	onTagValueChange
 }) =>
-	<ImportCard>
-		<h2 style={{ margin: '0 0 1em 0' }}>{__('Import options', 'code-snippets')}</h2>
-		<label style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer' }}>
+	<ImportCard className="import-options-card">
+		<h2>{__('Import options', 'code-snippets')}</h2>
+		<label>
 			<input
 				type="checkbox"
 				checked={autoAddTags}
 				onChange={event => onAutoAddTagsChange(event.target.checked)}
-				style={{ marginTop: '2px' }}
 			/>
-			<div style={{ flex: 1 }}>
+			<div>
 				<div>
 					<strong>{__('Add tag automatically', 'code-snippets')}</strong>
 					<br />
-					<span style={{ color: '#666', fontSize: '0.9em' }}>
+					<span className="description">
 						{__('For your convenience, we can add a tag on every imported snippet.', 'code-snippets')}
 					</span>
 				</div>
 				{autoAddTags &&
-					<div style={{ marginTop: '12px' }}>
+					<div className="import-tag-entry">
 						<input
 							type="text"
 							value={tagValue}
-							onChange={e => onTagValueChange(e.target.value)}
-							placeholder={__('Add tag...', 'code-snippets')}
+							onChange={event => onTagValueChange(event.target.value)}
+							placeholder={__('Add tag…', 'code-snippets')}
 							className="regular-text"
-							style={{ width: '100%', maxWidth: '300px' }}
 						/>
 					</div>}
 			</div>

@@ -97,23 +97,22 @@ export const TableNav = <K extends Key>({
 	actions,
 	selected,
 	totalItems,
-	totalPages,
+	totalPages = 0,
 	extraTableNav,
 	...paginationProps
 }: TableNavProps<K>) =>
 	extraTableNav || 0 < totalItems && actions
 		? <div className={`tablenav ${which}`}>
 
-			{0 < totalItems && actions
-				? <BulkActions
+			{0 < totalItems && actions && (
+				<BulkActions
 					which={which}
 					actions={actions}
 					applyAction={action => action.apply(selected)}
-				/>
-				: null}
+				/>)}
 
 			{extraTableNav?.(which)}
-			{totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
+			{totalPages > 0 && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
 
 			<br className="clear" />
 		</div>
