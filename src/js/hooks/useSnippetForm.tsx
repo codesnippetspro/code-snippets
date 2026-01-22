@@ -34,7 +34,10 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 	const [currentNotice, setCurrentNotice] = useState<ScreenNotice>()
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
 
-	const isReadOnly = useMemo(() => !isLicensed() && isProSnippet({ scope: snippet.scope }), [snippet.scope])
+	const isReadOnly = useMemo(
+		() => snippet.locked || (!isLicensed() && isProSnippet({ scope: snippet.scope })),
+		[snippet.locked, snippet.scope]
+	)
 
 	const handleRequestError = useCallback((error: unknown, message?: string) => {
 		console.error('Request failed', error)
