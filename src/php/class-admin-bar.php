@@ -55,11 +55,9 @@ class Admin_Bar {
 	private const STYLE_HANDLE = 'code-snippets-admin-bar';
 
 	/**
-	 * Register WordPress hooks.
-	 *
-	 * @return void
+	 * Class constructor.
 	 */
-	public function register_hooks(): void {
+	public function __construct() {
 		add_action( 'admin_bar_menu', [ $this, 'register_nodes' ], 80 );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
