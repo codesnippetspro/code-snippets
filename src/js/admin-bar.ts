@@ -1,13 +1,13 @@
-type PaginationStatus = 'active' | 'inactive'
-type PaginationAction = 'first' | 'prev' | 'next' | 'last'
+export type PaginationStatus = 'active' | 'inactive'
+export type PaginationAction = 'first' | 'prev' | 'next' | 'last'
 
-type SnippetResponseItem = {
+export interface SnippetResponseItem {
 	id: number
 	scope: string
 	name?: string
 }
 
-type AdminBarConfig = {
+export interface AdminBarConfig {
 	restUrl: string
 	nonce: string
 	perPage: number
@@ -21,17 +21,22 @@ type AdminBarConfig = {
 
 declare const CODE_SNIPPETS_ADMIN_BAR: AdminBarConfig | undefined
 
-const config = typeof CODE_SNIPPETS_ADMIN_BAR !== 'undefined' ? CODE_SNIPPETS_ADMIN_BAR : undefined
+const config = 'undefined' === typeof CODE_SNIPPETS_ADMIN_BAR ? undefined : CODE_SNIPPETS_ADMIN_BAR
 
 const getMenuNode = (status: PaginationStatus): HTMLElement | null => {
-	if (!config) return null
-	const nodeId = status === 'active' ? config.activeNodeId : config.inactiveNodeId
+	if (!config) {
+		return null
+	}
+
+	const nodeId = 'active' === status ? config.activeNodeId : config.inactiveNodeId
 	return document.getElementById(nodeId)
 }
 
 const getPaginationControls = (status: PaginationStatus): HTMLElement | null => {
 	const menuNode = getMenuNode(status)
-	if (!menuNode) return null
+	if (!menuNode) {
+		return null
+	}
 
 	return menuNode.querySelector<HTMLElement>(`.code-snippets-pagination-controls[data-status="${status}"]`)
 }
@@ -41,8 +46,8 @@ const getPaginationState = (controls: HTMLElement): { page: number; totalPages: 
 	const totalPages = Number.parseInt(controls.dataset.totalPages ?? '1', 10)
 
 	return {
-		page: Number.isFinite(page) && page > 0 ? page : 1,
-		totalPages: Number.isFinite(totalPages) && totalPages > 0 ? totalPages : 1
+		page: Number.isFinite(page) && 0 < page ? page : 1,
+		totalPages: Number.isFinite(totalPages) && 0 < totalPages ? totalPages : 1
 	}
 }
 
@@ -51,7 +56,9 @@ const setLoading = (controls: HTMLElement, loading: boolean) => {
 }
 
 const buildRequestUrl = (status: PaginationStatus, page: number): string => {
-	if (!config) return ''
+	if (!config) {
+		return ''
+	}
 
 	const url = new URL(config.restUrl)
 	url.searchParams.set('status', status)
@@ -64,7 +71,7 @@ const buildRequestUrl = (status: PaginationStatus, page: number): string => {
 		url.searchParams.set('network', '1')
 	}
 
-	for (const excluded of config.excludeTypes ?? []) {
+	for (const excluded of config.excludeTypes) {
 		url.searchParams.append('exclude_types[]', excluded)
 	}
 
@@ -90,13 +97,15 @@ const fetchSnippetsPage = async (status: PaginationStatus, page: number) => {
 	const totalPagesHeader = response.headers.get('X-WP-TotalPages') ?? '1'
 	const totalPages = Number.parseInt(totalPagesHeader, 10) || 1
 
-	const snippets = (await response.json()) as SnippetResponseItem[]
+	const snippets = <SnippetResponseItem[]>await response.json()
 
 	return { snippets, totalPages }
 }
 
 const buildEditUrl = (snippetId: number): string => {
-	if (!config) return '#'
+	if (!config) {
+		return '#'
+	}
 
 	try {
 		const url = new URL(config.editUrlBase, window.location.href)
@@ -108,23 +117,36 @@ const buildEditUrl = (snippetId: number): string => {
 }
 
 const buildSnippetPlaceholder = (snippetId: number): string => {
-	if (!config?.snippetPlaceholder) return `Snippet #${snippetId}`
+	if (!config?.snippetPlaceholder) {
+		return `Snippet #${snippetId}`
+	}
 
-	return config.snippetPlaceholder.replace(/%(\d+\$)?d/, String(snippetId))
+	return config.snippetPlaceholder.replace(/%(?:\d+\$)?d/, String(snippetId))
 }
 
 const getTypeFromScope = (scope: string): string => {
-	if (scope.endsWith('-css')) return 'css'
-	if (scope.endsWith('-js')) return 'js'
-	if (scope.endsWith('content')) return 'html'
-	if (scope === 'condition') return 'cond'
-	return 'php'
+	switch (true) {
+		case scope.endsWith('-css'):
+			return 'css'
+
+		case scope.endsWith('-js'):
+			return 'js'
+
+		case scope.endsWith('content'):
+			return 'html'
+
+		case 'condition' === scope:
+			return 'cond'
+
+		default:
+			return 'php'
+	}
 }
 
 const formatSnippetTitle = (snippet: SnippetResponseItem): string => {
 	const typeLabel = getTypeFromScope(snippet.scope).toUpperCase()
 	const name = snippet.name?.trim()
-	const title = name ? name : buildSnippetPlaceholder(snippet.id)
+	const title = ('' === name ? undefined : name) ?? buildSnippetPlaceholder(snippet.id)
 	return `(${typeLabel}) ${title}`
 }
 
@@ -137,7 +159,7 @@ const updatePaginationControls = (controls: HTMLElement, page: number, totalPage
 		pageLabel.textContent = pageLabel.textContent?.replace(/\(\d+\/\d+\)/, `(${page}/${totalPages})`) ?? pageLabel.textContent
 	}
 
-	const disableFirstPrev = page <= 1
+	const disableFirstPrev = 1 >= page
 	const disableNextLast = page >= totalPages
 
 	const setDisabled = (action: PaginationAction, disabled: boolean) => {
@@ -161,7 +183,7 @@ const updatePaginationControls = (controls: HTMLElement, page: number, totalPage
 			const buildHref = (targetPage: number) => {
 				const url = new URL(baseHref)
 
-				if (targetPage <= 1) {
+				if (1 >= targetPage) {
 					url.searchParams.delete(queryArg)
 				} else {
 					url.searchParams.set(queryArg, String(targetPage))
@@ -174,30 +196,42 @@ const updatePaginationControls = (controls: HTMLElement, page: number, totalPage
 				controls.querySelector<HTMLAnchorElement>(`a[data-action="${action}"]`)
 
 			const first = getLink('first')
-			if (first) first.href = buildHref(1)
+			if (first) {
+				first.href = buildHref(1)
+			}
 
 			const prev = getLink('prev')
-			if (prev) prev.href = buildHref(Math.max(1, page - 1))
+			if (prev) {
+				prev.href = buildHref(Math.max(1, page - 1))
+			}
 
 			const next = getLink('next')
-			if (next) next.href = buildHref(Math.min(totalPages, page + 1))
+			if (next) {
+				next.href = buildHref(Math.min(totalPages, page + 1))
+			}
 
 			const last = getLink('last')
-			if (last) last.href = buildHref(totalPages)
+			if (last) {
+				last.href = buildHref(totalPages)
+			}
 		}
 	}
 }
 
 const replaceSnippetItems = (status: PaginationStatus, snippets: SnippetResponseItem[]) => {
 	const menuNode = getMenuNode(status)
-	if (!menuNode) return
+	if (!menuNode) {
+		return
+	}
 
 	const subMenu = menuNode.querySelector<HTMLUListElement>('ul.ab-submenu')
-	if (!subMenu) return
+	if (!subMenu) {
+		return
+	}
 
 	subMenu.querySelectorAll('li.code-snippets-snippet-item').forEach(node => node.remove())
 
-	const insertAfterId = status === 'active'
+	const insertAfterId = 'active' === status
 		? 'wp-admin-bar-code-snippets-active-pagination'
 		: 'wp-admin-bar-code-snippets-inactive-pagination'
 
@@ -227,7 +261,9 @@ const replaceSnippetItems = (status: PaginationStatus, snippets: SnippetResponse
 
 const navigateToPage = async (status: PaginationStatus, targetPage: number) => {
 	const controls = getPaginationControls(status)
-	if (!controls) return
+	if (!controls) {
+		return
+	}
 
 	const { totalPages: currentTotalPages } = getPaginationState(controls)
 	const page = Math.max(1, Math.min(targetPage, currentTotalPages))
@@ -239,7 +275,6 @@ const navigateToPage = async (status: PaginationStatus, targetPage: number) => {
 		updatePaginationControls(controls, page, totalPages)
 		replaceSnippetItems(status, snippets)
 	} catch (error) {
-		// eslint-disable-next-line no-console
 		console.error(error)
 	} finally {
 		setLoading(controls, false)
@@ -247,20 +282,31 @@ const navigateToPage = async (status: PaginationStatus, targetPage: number) => {
 }
 
 const handlePaginationClick = (event: MouseEvent) => {
-	const target = event.target as Element | null
-	if (!target) return
+	const target = <Element | null>event.target
+	if (!target) {
+		return
+	}
 
 	const link = target.closest<HTMLAnchorElement>('.code-snippets-pagination-controls a[data-action]')
-	if (!link) return
+	if (!link) {
+		return
+	}
 
 	const controls = link.closest<HTMLElement>('.code-snippets-pagination-controls')
-	if (!controls) return
-	if (controls.dataset.loading === 'true') return
+	if (!controls) {
+		return
+	}
 
-	const status = controls.dataset.status as PaginationStatus | undefined
-	const action = link.dataset.action as PaginationAction | undefined
+	if ('true' === controls.dataset.loading) {
+		return
+	}
 
-	if (!status || !action) return
+	const status = <PaginationStatus | undefined>controls.dataset.status
+	const action = <PaginationAction | undefined>link.dataset.action
+
+	if (!status || !action) {
+		return
+	}
 
 	event.preventDefault()
 	event.stopPropagation()
@@ -284,7 +330,7 @@ const handlePaginationClick = (event: MouseEvent) => {
 			break
 	}
 
-	if (targetPage === page || targetPage < 1 || targetPage > totalPages) {
+	if (targetPage === page || 1 > targetPage || targetPage > totalPages) {
 		return
 	}
 
