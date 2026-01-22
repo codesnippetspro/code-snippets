@@ -1,10 +1,10 @@
 import { addQueryArgs } from '@wordpress/url'
-import { REST_SNIPPETS_BASE } from '../restAPI'
-import { createSnippetObject } from './snippets'
 import type { RestAPI } from '../../hooks/useRestAPI'
 import type { SnippetSchema, WritableSnippetSchema } from '../../types/schema/SnippetSchema'
-import type { Snippet } from '../../types/Snippet'
 import type { SnippetsExport } from '../../types/schema/SnippetsExport'
+import type { Snippet } from '../../types/Snippet'
+import { REST_SNIPPETS_BASE } from '../restAPI'
+import { createSnippetObject } from './snippets'
 
 export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<Snippet[]>
@@ -52,7 +52,7 @@ const mapToSchema = ({
 
 export const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
 	fetchAll: network =>
-		get<SnippetSchema[]>(addQueryArgs(REST_SNIPPETS_BASE, { network }))
+		get<SnippetSchema[]>(addQueryArgs(REST_SNIPPETS_BASE, { network: network ? true : undefined }))
 			.then(response => response.map(createSnippetObject)),
 
 	fetch: (snippetId, network) =>

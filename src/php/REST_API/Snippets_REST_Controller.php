@@ -2,7 +2,7 @@
 
 namespace Code_Snippets\REST_API;
 
-use Code_Snippets\Export\Export;
+use Code_Snippets\Migration\Export\Export;
 use Code_Snippets\Migration\Export\Export_Code;
 use Code_Snippets\Migration\Export\Export_JSON;
 use Code_Snippets\Model\Snippet;
@@ -250,7 +250,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return array<Snippet> Modified list of snippets.
 	 */
-	private function get_network_items( array $all_snippets, $network ): array {
+	private function get_network_items( array $all_snippets, ?bool $network ): array {
 		if ( ! is_multisite() || $network ) {
 			return $all_snippets;
 		}
@@ -261,7 +261,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 			return $all_snippets;
 		}
 
-		$active_shared_snippets = get_option( 'active_shared_network_snippets', array() );
+		$active_shared_snippets = get_option( 'active_shared_network_snippets', [] );
 		$shared_snippets = get_snippets( $shared_ids, true );
 
 		foreach ( $shared_snippets as $snippet ) {
