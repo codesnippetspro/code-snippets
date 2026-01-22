@@ -129,9 +129,7 @@ class Plugin {
 		$this->evaluate_functions = new Evaluate_Functions( $this->db );
 
 		// Admin bar integration.
-		require_once $includes_path . '/class-admin-bar.php';
 		$this->admin_bar = new Admin_Bar();
-		$this->admin_bar->register_hooks();
 
 		// CodeMirror editor functions.
 		require_once $includes_path . '/editor.php';
