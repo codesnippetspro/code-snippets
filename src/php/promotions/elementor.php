@@ -1,9 +1,8 @@
 <?php
 namespace Code_Snippets\Promotions;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+use function Code_Snippets\code_snippets;
+use function Code_Snippets\Settings\get_setting;
 
 /**
  * Elementor promotion class.
@@ -25,6 +24,10 @@ class Elementor {
 	 */
 	public function promotion_in_custom_code_screen() {
 		if ( ! $this->is_custom_code_screen() ) {
+			return;
+		}
+
+		if ( get_setting( 'general', 'hide_upgrade_menu' ) ) {
 			return;
 		}
 		?>
@@ -63,7 +66,7 @@ class Elementor {
 					<?php esc_html_e( 'Code Snippets Pro provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ); ?>
 				</p>
 				<p>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=snippets' ) ); ?>" class="button button-primary">
+					<a href="<?php echo esc_url( code_snippets()->get_menu_url() ); ?>" class="button button-primary">
 						<?php esc_html_e( 'Manage your snippets', 'code-snippets' ); ?>
 					</a>
 					<a href="https://codesnippets.pro/pricing/?utm_source=elementor&utm_medium=banner&utm_campaign=custom-code" class="button button-secondary" target="_blank">
@@ -167,7 +170,7 @@ class Elementor {
 
 		if ( $this->is_code_snippets_pro() ) {
 			$link_text = esc_html__( 'Manage CSS snippets', 'code-snippets' );
-			$url = admin_url( 'admin.php?page=snippets&type=css' );
+			$url = add_query_arg( 'type', 'css', code_snippets()->get_menu_url() );
 		} else {
 			$link_text = esc_html__( 'Learn More', 'code-snippets' );
 			$url = 'https://codesnippets.pro/pricing/?utm_source=elementor&utm_medium=banner&utm_campaign=elementor-addon-custom-code';
@@ -182,6 +185,6 @@ class Elementor {
 	 * @return bool
 	 */
 	private function is_code_snippets_pro(): bool {
-		return defined( 'CODE_SNIPPETS_PRO' ) && CODE_SNIPPETS_PRO;
+		return code_snippets()->licensing->is_licensed();
 	}
 }

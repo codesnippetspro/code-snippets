@@ -1,10 +1,6 @@
 <?php
 namespace Code_Snippets;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
-
 /**
  * Promotions manager class.
  */
