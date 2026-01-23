@@ -16,7 +16,7 @@ export const DeleteButton: React.FC = () => {
 			<Button
 				id="delete-snippet"
 				className="delete-button"
-				disabled={isWorking}
+				disabled={isWorking || snippet.locked}
 				onClick={() => {
 					setIsDialogOpen(true)
 				}}

@@ -34,6 +34,7 @@ const mapToSchema = ({
 	scope,
 	priority,
 	active,
+	locked,
 	network,
 	shared_network,
 	conditionId
@@ -45,6 +46,7 @@ const mapToSchema = ({
 	scope,
 	priority,
 	active,
+	locked,
 	network,
 	shared_network,
 	condition_id: conditionId

@@ -67,15 +67,15 @@ class Contextual_Help {
 	private function load_help_sidebar() {
 		$sidebar_links = [
 			'https://wordpress.org/plugins/code-snippets'        => __( 'About Plugin', 'code-snippets' ),
-			'https://help.codesnippets.pro/collection/3-faq'     => __( 'FAQ', 'code-snippets' ),
+			'https://codesnippets.pro/docs/faq/'                 => __( 'FAQ', 'code-snippets' ),
 			'https://wordpress.org/support/plugin/code-snippets' => __( 'Support Forum', 'code-snippets' ),
 			'https://codesnippets.pro'                           => __( 'Plugin Website', 'code-snippets' ),
 		];
 
 		$kses = [
-			'p' => [],
+			'p'      => [],
 			'strong' => [],
-			'a' => [ 'href'  => [] ],
+			'a'      => [ 'href' => [] ],
 		];
 
 		$contents = sprintf( "<p><strong>%s</strong></p>\n", esc_html__( 'For more information:', 'code-snippets' ) );
@@ -143,7 +143,7 @@ class Contextual_Help {
 				__( 'Be sure to check your snippets for errors before you activate them, as a faulty snippet could bring your whole blog down. If your site starts doing strange things, deactivate all your snippets and activate them one at a time.', 'code-snippets' ),
 				__( "If something goes wrong with a snippet, and you can't use WordPress, you can cause all snippets to stop executing by turning on <strong>safe mode</strong>.", 'code-snippets' ),
 				/* translators: %s: URL to Code Snippets Pro Docs */
-				sprintf( __( 'You can find out how to enable safe mode in the <a href="%s">Code Snippets Pro Docs</a>.', 'code-snippets' ), 'https://help.codesnippets.pro/article/12-safe-mode' )
+				sprintf( __( 'You can find out how to enable safe mode in the <a href="%s">Code Snippets Pro Docs</a>.', 'code-snippets' ), 'https://codesnippets.pro/doc/safe-mode/' ),
 			]
 		);
 	}
@@ -159,7 +159,7 @@ class Contextual_Help {
 				$this->get_intro_text() .
 				__( 'Here you can add a new snippet, or edit an existing one.', 'code-snippets' ),
 				/* translators: %s: URL to Code Snippets Pro Docs */
-				sprintf( __( "If you're not sure about the types of snippets you can add, take a look at the <a href=\"%s\">Code Snippets Pro Docs</a> for inspiration.", 'code-snippets' ), 'https://help.codesnippets.pro/collection/2-adding-snippets' ),
+				sprintf( __( "If you're not sure about the types of snippets you can add, take a look at the <a href=\"%s\">Code Snippets Pro Docs</a> for inspiration.", 'code-snippets' ), 'https://codesnippets.pro/docs/adding-snippets/' ),
 			]
 		);
 

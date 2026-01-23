@@ -302,11 +302,14 @@ class List_Table extends WP_List_Table {
 				$actions[ $action ] = sprintf( '<a href="%s">%s</a>', esc_url( $this->get_action_link( $action, $snippet ) ), $label );
 			}
 
-			$actions['delete'] = sprintf(
-				'<a href="%2$s" class="delete">%1$s</a>',
-				esc_html__( 'Trash', 'code-snippets' ),
-				esc_url( $this->get_action_link( 'delete', $snippet ) )
-			);
+			// Do not allow trashing/deleting locked snippets.
+			if ( ! $snippet->locked ) {
+				$actions['delete'] = sprintf(
+					'<a href="%2$s" class="delete">%1$s</a>',
+					esc_html__( 'Trash', 'code-snippets' ),
+					esc_url( $this->get_action_link( 'delete', $snippet ) )
+				);
+			}
 		}
 
 		return apply_filters( 'code_snippets/list_table/row_actions', $actions, $snippet );
@@ -390,7 +393,7 @@ class List_Table extends WP_List_Table {
 			apply_filters( 'code_snippets/list_table/row_actions_always_visible', true )
 		);
 
-		$out = esc_html( $snippet->display_name );
+		$display_name = esc_html( $snippet->display_name );
 		$user_can_manage_network = current_user_can( code_snippets()->get_network_cap_name() );
 
 		// Add a link to the snippet if it isn't an unreadable network-only snippet and isn't trashed.
@@ -398,14 +401,35 @@ class List_Table extends WP_List_Table {
 			$out = sprintf(
 				'<a href="%s" class="snippet-name">%s</a>',
 				esc_attr( code_snippets()->get_snippet_edit_url( $snippet->id, $snippet->network ? 'network' : 'admin' ) ),
-				$out
+				$display_name
 			);
 		} else {
-			$out = sprintf( '<span class="snippet-name">%s</span>', $out );
+			$out = sprintf( '<span class="snippet-name">%s</span>', $display_name );
 		}
 
 		$out = apply_filters( 'code_snippets/list_table/column_name', $out, $snippet );
 		return $out . $row_actions;
+	}
+
+	/**
+	 * Render the dedicated Locked column.
+	 *
+	 * @param Snippet $snippet Snippet object.
+	 *
+	 * @return string Column output.
+	 */
+	protected function column_locked( Snippet $snippet ): string {
+		if ( $snippet->locked ) {
+			return sprintf(
+				'<span class="dashicons dashicons-lock" style="color: #2271b1;" title="%s"></span>',
+				esc_attr__( 'This snippet is locked.', 'code-snippets' )
+			);
+		}
+
+		return sprintf(
+			'<span class="dashicons dashicons-unlock" style="color: #646970; opacity: 0.5;" title="%s"></span>',
+			esc_attr__( 'This snippet is unlocked.', 'code-snippets' )
+		);
 	}
 
 	/**
@@ -474,6 +498,7 @@ class List_Table extends WP_List_Table {
 			'cb'          => '<input type="checkbox">',
 			'activate'    => '',
 			'name'        => __( 'Name', 'code-snippets' ),
+			'locked'      => __( 'Locked', 'code-snippets' ),
 			'type'        => __( 'Type', 'code-snippets' ),
 			'description' => __( 'Description', 'code-snippets' ),
 			'tags'        => __( 'Tags', 'code-snippets' ),
@@ -507,6 +532,7 @@ class List_Table extends WP_List_Table {
 		$sortable_columns = [
 			'id'       => [ 'id', true ],
 			'name'     => 'name',
+			'locked'   => 'locked',
 			'type'     => [ 'type', true ],
 			'date'     => [ 'modified', true ],
 			'priority' => [ 'priority', true ],
@@ -1316,7 +1342,7 @@ class List_Table extends WP_List_Table {
 			$this->order_by = sanitize_key( wp_unslash( $_REQUEST['orderby'] ) );
 		} else {
 			// otherwise, fetch the order from the setting, ensuring it is valid.
-			$valid_fields = [ 'id', 'name', 'type', 'modified', 'priority' ];
+			$valid_fields = [ 'id', 'name', 'locked', 'type', 'modified', 'priority' ];
 			$order_parts = explode( '-', $order, 2 );
 
 			$this->order_by = in_array( $order_parts[0], $valid_fields, true ) ? $order_parts[0] :

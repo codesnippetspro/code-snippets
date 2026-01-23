@@ -8,6 +8,7 @@ export interface WritableSnippetSchema {
 	scope?: SnippetScope
 	condition_id?: number
 	active?: boolean
+	locked?: boolean
 	priority?: number
 	network?: boolean | null
 	shared_network?: boolean | null
