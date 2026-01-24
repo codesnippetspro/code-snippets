@@ -1,6 +1,8 @@
 <?php
 namespace Code_Snippets\Promotions;
 
+use function Code_Snippets\code_snippets;
+
 class Elementor extends Promotion_Base {
 
 	public function get_plugin_slug(): string {
@@ -26,5 +28,21 @@ class Elementor extends Promotion_Base {
 
 	public function get_promotion_message(): string {
 		return esc_html__( 'Code Snippets Pro provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' );
+	}
+
+	public function get_promotion_buttons(): array {
+		return [
+			[
+				'url'    => code_snippets()->get_menu_url(),
+				'text'   => esc_html__( 'Manage your snippets', 'code-snippets' ),
+				'class'  => 'button button-primary',
+			],
+			[
+				'url'    => 'https://codesnippets.pro/pricing/?utm_source=' . $this->get_plugin_slug() . '&utm_medium=promotion&utm_campaign=custom-code',
+				'text'   => esc_html__( 'Learn More', 'code-snippets' ),
+				'class'  => 'button button-secondary',
+				'target' => '_blank',
+			],
+		];
 	}
 }

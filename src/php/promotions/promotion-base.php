@@ -2,8 +2,6 @@
 
 namespace Code_Snippets\Promotions;
 
-use function Code_Snippets\code_snippets;
-
 abstract class Promotion_Base {
 
 	const AJAX_ACTION = 'code_snippets_dismiss_promotion';
@@ -16,6 +14,8 @@ abstract class Promotion_Base {
 	abstract public function get_promotion_heading(): string;
 
 	abstract public function get_promotion_message(): string;
+
+	abstract public function get_promotion_buttons(): array;
 
 	public function is_plugin_admin_screen(): bool {
 		if ( ! is_admin() ) {
@@ -74,8 +74,7 @@ abstract class Promotion_Base {
 				padding: 10px;
 			}
 			.code-snippets-promotion-content p {
-				margin-block-start: 0;
-				margin-block-end: 0.5em;
+				margin-block: 0 .5em;
 			}
 		</style>
 		<div
@@ -98,12 +97,24 @@ abstract class Promotion_Base {
 					<?php echo $this->get_promotion_message(); ?>
 				</p>
 				<p>
-					<a href="<?php echo esc_url( code_snippets()->get_menu_url() ); ?>" class="button button-primary">
-						<?php esc_html_e( 'Manage your snippets', 'code-snippets' ); ?>
-					</a>
-					<a href="https://codesnippets.pro/pricing/?utm_source=<?php echo $this->get_plugin_slug(); ?>&utm_medium=promotion&utm_campaign=custom-code" class="button button-secondary" target="_blank">
-						<?php esc_html_e( 'Learn More', 'code-snippets' ); ?>
-					</a>
+					<?php
+					$buttons = $this->get_promotion_buttons();
+
+					foreach ( $buttons as $button ) {
+						$url = isset( $button['url'] ) ? esc_url( $button['url'] ) : '';
+						$text = isset( $button['text'] ) ? $button['text'] : '';
+						$class = isset( $button['class'] ) ? esc_attr( $button['class'] ) : 'button';
+						$target = isset( $button['target'] ) ? esc_attr( $button['target'] ) : '';
+						
+						printf(
+							'<a href="%s" class="%s"%s>%s</a> ',
+							$url,
+							$class,
+							$target ? ' target="' . $target . '"' : '',
+							$text
+						);
+					}
+					?>
 				</p>
 			</div>
 		</div>
