@@ -18,16 +18,11 @@ use const Code_Snippets\REST_API_NAMESPACE;
 class REST_Endpoints {
 
 	/**
-	 * Current API version.
-	 */
-	public const VERSION = 1;
-
-	/**
 	 * The namespace of this controller's route.
 	 *
 	 * @var string
 	 */
-	protected string $namespace = REST_API_NAMESPACE . self::VERSION;
+	protected string $namespace_v1 = REST_API_NAMESPACE . 1;
 
 	/**
 	 * Class constrictor.
@@ -41,7 +36,7 @@ class REST_Endpoints {
 	 */
 	public function register_routes() {
 		register_rest_route(
-			$this->namespace,
+			$this->namespace_v1,
 			'recently-active',
 			[
 				[
@@ -60,7 +55,7 @@ class REST_Endpoints {
 		);
 
 		register_rest_route(
-			$this->namespace,
+			$this->namespace_v1,
 			'recently-active',
 			[
 				[

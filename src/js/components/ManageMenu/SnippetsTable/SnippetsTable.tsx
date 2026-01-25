@@ -77,7 +77,7 @@ const PageHeading = () => {
 						{currentTag && sprintf(__(' in tag “%s”', 'code-snippets'), currentTag)}
 
 						{' '}
-						<Button className="clear-filters" onClick={() => {
+						<Button small className="clear-filters" onClick={() => {
 							setSearchQuery()
 							setCurrentTag()
 						}}>

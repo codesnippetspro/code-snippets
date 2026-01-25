@@ -2,7 +2,7 @@ import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { Button } from '../../../common/Button'
 import { ImportCard } from '../../common/ImportCard'
-import type { ImportableSnippet } from '../../../../hooks/useImportersAPI'
+import type { ImportableSnippet } from '../hooks/useSnippetImport'
 
 interface TableNavProps {
 	which: 'top' | 'bottom'

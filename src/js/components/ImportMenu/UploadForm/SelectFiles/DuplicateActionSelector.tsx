@@ -28,7 +28,7 @@ export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = (
 		<fieldset>
 			<div>
 				{ACTIONS.map(action =>
-					<label>
+					<label key={action}>
 						<input
 							type="radio"
 							name="duplicate_action"

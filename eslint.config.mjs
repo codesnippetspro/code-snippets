@@ -65,7 +65,7 @@ export default eslintTs.config(
 			'@stylistic/linebreak-style': ['error', 'unix'],
 			'@stylistic/max-len': ['warn', 140, { ignorePattern: 'd="(.*?)"|_[_xn]\\(|import .+ from .+' }],
 			'@stylistic/multiline-ternary': 'off',
-			'@stylistic/no-extra-parens': ['error', 'all'],
+			'@stylistic/no-extra-parens': ['error', 'all', { ignoreJSX: 'multi-line' }],
 			'@stylistic/no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
 			'@stylistic/no-tabs': ['error', { allowIndentationTabs: true }],
 			'@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],

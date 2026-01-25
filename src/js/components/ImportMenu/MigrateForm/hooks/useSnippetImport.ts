@@ -1,7 +1,34 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import { type ImportableSnippet, useImportersAPI } from '../../../../hooks/useImportersAPI'
+import { useRestAPI } from '../../../../hooks/useRestAPI'
+import { REST_NAMESPACED } from '../../../../utils/restAPI'
 import { isNetworkAdmin } from '../../../../utils/screen'
+
+export interface Importer {
+	name: string
+	title: string
+	is_active: boolean
+}
+
+export interface ImportableSnippet {
+	id: number
+	title: string
+	table_data: {
+		id: number
+		title: string
+	}
+}
+
+export interface ImportRequest {
+	ids: number[]
+	network?: boolean
+	auto_add_tags?: boolean
+	tag_value?: string
+}
+
+export interface ImportResponse {
+	imported: number[]
+}
 
 export const useSnippetImport = () => {
 	const [snippets, setSnippets] = useState<ImportableSnippet[]>([])
@@ -10,10 +37,10 @@ export const useSnippetImport = () => {
 	const [isImporting, setIsImporting] = useState(false)
 	const [importError, setImportError] = useState<string | null>(null)
 	const [importSuccess, setImportSuccess] = useState<number[]>([])
-	
-	const importersAPI = useImportersAPI()
 
-	const loadSnippets = async (importerName: string): Promise<boolean> => {
+	const { api } = useRestAPI()
+
+	const loadSnippets = useCallback(async (importerName: string): Promise<boolean> => {
 		if (!importerName) {
 			alert(__('Please select an importer.', 'code-snippets'))
 			return false
@@ -25,16 +52,16 @@ export const useSnippetImport = () => {
 		clearResults()
 
 		try {
-			const response = await importersAPI.fetchSnippets(importerName)
-			setSnippets(response.data)
+			const response = await api.get<ImportableSnippet[]>(`${REST_NAMESPACED}1/${importerName}`)
+			setSnippets(response)
 			return true
-		} catch (err) {
-			setSnippetsError(err instanceof Error ? err.message : 'Unknown error')
+		} catch (error) {
+			setSnippetsError(error instanceof Error ? error.message : 'Unknown error')
 			return false
 		} finally {
 			setIsLoadingSnippets(false)
 		}
-	}
+	}, [api])
 
 	const importSnippets = async (
 		importerName: string,
@@ -57,16 +84,18 @@ export const useSnippetImport = () => {
 		setImportSuccess([])
 
 		try {
-			const response = await importersAPI.importSnippets(importerName, {
+			const request: ImportRequest = {
 				ids: selectedSnippetIds,
 				network: isNetworkAdmin(),
 				auto_add_tags: autoAddTags,
 				tag_value: autoAddTags ? tagValue : undefined
-			})
+			}
 
-			setImportSuccess(response.data.imported)
-			
-			if (0 < response.data.imported.length) {
+			const response = await api.post<ImportResponse, ImportRequest>(`${REST_NAMESPACED}1/${importerName}/import`, request)
+
+			setImportSuccess(response.imported)
+
+			if (0 < response.imported.length) {
 				setSnippets([])
 				return true
 			} else {

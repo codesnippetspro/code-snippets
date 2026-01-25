@@ -112,7 +112,7 @@ export const TableNav = <K extends Key>({
 				/>)}
 
 			{extraTableNav?.(which)}
-			{totalPages > 0 && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
+			{0 < totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
 
 			<br className="clear" />
 		</div>

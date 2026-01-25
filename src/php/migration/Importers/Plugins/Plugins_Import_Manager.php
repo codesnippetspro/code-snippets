@@ -3,6 +3,7 @@
 namespace Code_Snippets\Migration\Importers\Plugins;
 
 use WP_REST_Server;
+use function Code_Snippets\code_snippets;
 use const Code_Snippets\REST_API_NAMESPACE;
 
 /*
@@ -52,6 +53,11 @@ class Plugins_Import_Manager {
 		return $plugins_list;
 	}
 
+	/**
+	 * Register REST API route for fetching available importers.
+	 *
+	 * @return void
+	 */
 	public function register_rest_routes() {
 		$namespace = REST_API_NAMESPACE . self::VERSION;
 
@@ -61,9 +67,7 @@ class Plugins_Import_Manager {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_importers' ],
-				'permission_callback' => function () {
-					return current_user_can( 'manage_options' );
-				},
+				'permission_callback' => [ code_snippets(), 'current_user_can' ],
 			]
 		);
 	}

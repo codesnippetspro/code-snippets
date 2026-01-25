@@ -351,6 +351,7 @@ class Plugin {
 				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
 				'restAPI'          => [
 					'base'        => esc_url_raw( rest_url() ),
+					'namespaced'  => esc_url_raw( rest_url( REST_API_NAMESPACE ) ),
 					'snippets'    => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
 					'cloudSearch' => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
 					'nonce'       => wp_create_nonce( 'wp_rest' ),

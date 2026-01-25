@@ -5,7 +5,7 @@ import { REST_API_AXIOS_CONFIG } from '../utils/restAPI'
 import { buildSnippetsAPI } from '../utils/snippets/api'
 import type { SnippetsAPI } from '../utils/snippets/api'
 import type { PropsWithChildren } from 'react'
-import type { AxiosInstance, AxiosResponse } from 'axios'
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 export interface RestAPIContext {
 	api: RestAPI
@@ -16,7 +16,7 @@ export interface RestAPIContext {
 export interface RestAPI {
 	get: <T>(url: string) => Promise<T>
 	getResponse: <T>(url: string) => Promise<AxiosResponse<T>>
-	post: <T>(url: string, data?: object) => Promise<T>
+	post: <T, D = never>(url: string, data?: D, config?: AxiosRequestConfig<D>) => Promise<T>
 	put: <T>(url: string, data?: object) => Promise<T>
 	del: <T>(url: string) => Promise<T>
 }
@@ -45,8 +45,8 @@ const buildRestAPI = (axiosInstance: AxiosInstance): RestAPI => ({
 		debugRequest('GET', url, axiosInstance.get<T, AxiosResponse<T, never>, never>(url))
 			.then(response => response.data),
 
-	post: <T, >(url: string, data?: object): Promise<T> =>
-		debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T>>(url, data), data)
+	post: <T, D = never>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<T> =>
+		debugRequest('POST', url, axiosInstance.post<T, AxiosResponse<T>>(url, data, config), data)
 			.then(response => response.data),
 
 	del: <T, >(url: string): Promise<T> =>

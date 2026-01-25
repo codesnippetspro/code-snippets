@@ -24,6 +24,7 @@ declare global {
 			hideUpsell: boolean
 			restAPI: {
 				base: string
+				namespaced: string
 				snippets: string
 				conditions: string
 				cloudSearch: string

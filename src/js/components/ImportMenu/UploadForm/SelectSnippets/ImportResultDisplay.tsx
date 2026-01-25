@@ -1,7 +1,15 @@
-import React, { ReactNode } from 'react'
+import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { ImportCard } from '../../common/ImportCard'
 import { createInterpolateElement } from '@wordpress/element'
+import { ImportCard } from '../../common/ImportCard'
+import type { ReactNode } from 'react'
+
+export interface ImportResult {
+	success: boolean
+	message: string
+	imported?: number
+	warnings?: string[]
+}
 
 export interface ImportResultDisplayProps {
 	success: boolean
@@ -23,21 +31,21 @@ export const ImportResultDisplay: React.FC<ImportResultDisplayProps> = ({ succes
 
 				<p className="import-result-message">{message}</p>
 
-				{success && (
+				{success &&
 					<p className="import-result-link">
 						{createInterpolateElement(
 							__('Go to <a>All Snippets</a> to activate your imported snippets.', 'code-snippets'),
-							{ a: <a href={window.CODE_SNIPPETS?.urls?.manage} /> }
+							{ a: <a href={window.CODE_SNIPPETS?.urls.manage} /> }
 						)}
-					</p>)}
+					</p>}
 
-				{warnings && 0 < warnings.length && (
+				{warnings && 0 < warnings.length &&
 					<div className="import-result-warnings">
 						<h4>{__('Warnings:', 'code-snippets')}</h4>
 						<ul>
 							{warnings.map(warning => <li key={warning}>{warning}</li>)}
 						</ul>
-					</div>)}
+					</div>}
 			</div>
 		</div>
 	</ImportCard>

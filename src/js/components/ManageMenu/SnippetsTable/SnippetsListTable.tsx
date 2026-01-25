@@ -6,7 +6,7 @@ import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsFilters } from '../../../hooks/useSnippetsFilters'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
-import { REST_API_NAMESPACE, REST_BASE } from '../../../utils/restAPI'
+import { REST_NAMESPACED } from '../../../utils/restAPI'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { ListTable } from '../../common/ListTable'
 import { SubmitButton } from '../../common/SubmitButton'
@@ -92,7 +92,7 @@ const ClearRecentlyActiveButton: React.FC = () => {
 				text={__('Clear List', 'code-snippets')}
 				onClick={event => {
 					event.preventDefault()
-					api.del(`${REST_BASE}/${REST_API_NAMESPACE}/v1/recently-active`)
+					api.del(`${REST_NAMESPACED}1/recently-active`)
 						.then(refreshSnippetsList)
 						.catch(handleUnknownError)
 				}}
@@ -160,10 +160,10 @@ const NoItemsMessage = () => {
 			? __("It looks like you don't have any snippets of this type.", 'code-snippets')
 			: __("It looks like you don't have any snippets.", 'code-snippets')}
 
-		{' '}
-		<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.addNew, currentType ? { type: currentType } : {})}>
-			{__('Perhaps you would like to add a new one?', 'code-snippets')}
-		</a>
+			{' '}
+			<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.addNew, currentType ? { type: currentType } : {})}>
+				{__('Perhaps you would like to add a new one?', 'code-snippets')}
+			</a>
 		</>
 }
 

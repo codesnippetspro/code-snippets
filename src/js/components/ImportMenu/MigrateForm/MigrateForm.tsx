@@ -1,13 +1,15 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
+import { createInterpolateElement } from '@wordpress/element'
 import { ImportCard } from '../common/ImportCard'
+import { useSelection } from '../../../hooks/useSelection'
 import { ImporterSelector } from './components/ImporterSelector'
 import { ImportOptions } from './components/ImportOptions'
 import { SimpleSnippetTable } from './components/SimpleSnippetTable'
 import { useImporterSelection } from './hooks/useImporterSelection'
-import { useImportSnippetSelection } from './hooks/useImportSnippetSelection'
 import { useSnippetImport } from './hooks/useSnippetImport'
-import { createInterpolateElement } from '@wordpress/element'
+import type { ImportableSnippet } from './hooks/useSnippetImport'
+import type { ReactNode } from 'react'
 
 interface StatusDisplayProps {
 	type: 'error' | 'success'
@@ -32,32 +34,33 @@ export const MigrateForm: React.FC = () => {
 
 	const importerSelection = useImporterSelection()
 	const snippetImport = useSnippetImport()
-	const snippetSelection = useImportSnippetSelection(snippetImport.snippets)
+	const snippetSelection = useSelection<ImportableSnippet, number>(snippetImport.snippets, snippet => snippet.table_data.id)
 
 	useEffect(() => {
 		if (importerSelection.selectedImporter) {
 			void snippetImport.loadSnippets(importerSelection.selectedImporter)
 		}
-	}, [importerSelection.selectedImporter])
+	}, [importerSelection.selectedImporter, snippetImport.loadSnippets])
 
-	const handleImporterChange = async (newImporter: string) => {
+	const handleImporterChange = (newImporter: string) => {
 		importerSelection.handleImporterChange(newImporter)
 		snippetSelection.clearSelection()
 		snippetImport.resetAll()
 	}
 
-	const handleImport = async () => {
-		const selectedIds = Array.from(snippetSelection.selectedSnippets)
-		const success = await snippetImport.importSnippets(
+	const handleImport = () => {
+		const selectedIds = Array.from(snippetSelection.selectedItems)
+
+		snippetImport.importSnippets(
 			importerSelection.selectedImporter,
 			selectedIds,
 			autoAddTags,
 			importerSelection.tagValue
-		)
-
-		if (success) {
-			snippetSelection.clearSelection()
-		}
+		).then(success => {
+			if (success) {
+				snippetSelection.clearSelection()
+			}
+		})
 	}
 
 	if (importerSelection.isLoading) {
@@ -72,7 +75,11 @@ export const MigrateForm: React.FC = () => {
 		return (
 			<div className="wrap">
 				<div className="notice notice-error">
-					<p>{__('Error loading importers:', 'code-snippets')} {importerSelection.error}</p>
+					<p>{sprintf(
+						// translators: %s: error message.
+						__('Error loading importers: %s', 'code-snippets'),
+						importerSelection.error
+					)}</p>
 				</div>
 			</div>
 		)
@@ -86,7 +93,7 @@ export const MigrateForm: React.FC = () => {
 				<ImporterSelector
 					importers={importerSelection.importers}
 					selectedImporter={importerSelection.selectedImporter}
-					onImporterChange={newImporter => void handleImporterChange(newImporter)}
+					onImporterChange={handleImporterChange}
 					isLoading={snippetImport.isLoadingSnippets}
 				/>
 
@@ -108,14 +115,14 @@ export const MigrateForm: React.FC = () => {
 					<StatusDisplay
 						type="success"
 						title={sprintf(
-							// translators: %d: nimber of imported snippets.
+							// translators: %d: number of imported snippets.
 							__('%d Snippets imported!', 'code-snippets'),
 							snippetImport.importSuccess.length
 						)}
 						message={
 							createInterpolateElement(
 								__('We successfully imported all snippets to your library. Go to <a>Code Snippets Library</a>.', 'code-snippets'),
-								{ a: <a href={window.CODE_SNIPPETS?.urls?.manage} /> }
+								{ a: <a href={window.CODE_SNIPPETS?.urls.manage} /> }
 							)}
 					/>)}
 
@@ -143,8 +150,8 @@ export const MigrateForm: React.FC = () => {
 
 						<SimpleSnippetTable
 							snippets={snippetImport.snippets}
-							selectedSnippets={snippetSelection.selectedSnippets}
-							onSnippetToggle={snippetSelection.handleSnippetToggle}
+							selectedSnippets={snippetSelection.selectedItems}
+							onSnippetToggle={snippetSelection.handleItemToggle}
 							onSelectAll={snippetSelection.handleSelectAll}
 							onImport={() => void handleImport()}
 							isImporting={snippetImport.isImporting}

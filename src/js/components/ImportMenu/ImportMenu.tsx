@@ -1,9 +1,11 @@
-import React, { ReactNode, useState } from 'react'
+import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
+import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { fetchQueryParam, updateQueryParam } from '../../utils/urls'
 import { UploadForm } from './UploadForm/UploadForm'
 import { MigrateForm } from './MigrateForm/MigrateForm'
+import type { ReactNode } from 'react'
 
 const TABS = ['upload', 'migrate'] as const
 
@@ -51,10 +53,12 @@ export const ImportMenu: React.FC = () => {
 						</a>)}
 				</h2>
 
-				{TABS.map(tab =>
-					<div key={tab} className={classnames('import-snippets-section', { 'active-section': tab === activeTab })}>
-						{TAB_CONTENT[tab]}
-					</div>)}
+				<WithRestAPIContext>
+					{TABS.map(tab =>
+						<div key={tab} className={classnames('import-snippets-section', { 'active-section': tab === activeTab })}>
+							{TAB_CONTENT[tab]}
+						</div>)}
+				</WithRestAPIContext>
 			</div>
 		</div>
 	)

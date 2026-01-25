@@ -1,7 +1,7 @@
 import React from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { ImportCard } from '../../common/ImportCard'
-import type { Importer } from '../../../../hooks/useImportersAPI'
+import type { Importer } from '../hooks/useSnippetImport'
 
 export interface ImporterSelectorProps {
 	importers: Importer[]

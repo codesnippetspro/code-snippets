@@ -1,10 +1,10 @@
 import { addQueryArgs } from '@wordpress/url'
+import { REST_SNIPPETS_BASE } from '../restAPI'
+import { createSnippetObject } from './snippets'
 import type { RestAPI } from '../../hooks/useRestAPI'
 import type { SnippetSchema, WritableSnippetSchema } from '../../types/schema/SnippetSchema'
 import type { SnippetsExport } from '../../types/schema/SnippetsExport'
 import type { Snippet } from '../../types/Snippet'
-import { REST_SNIPPETS_BASE } from '../restAPI'
-import { createSnippetObject } from './snippets'
 
 export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<Snippet[]>
@@ -60,11 +60,11 @@ export const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI 
 			.then(createSnippetObject),
 
 	create: snippet =>
-		post<SnippetSchema>(REST_SNIPPETS_BASE, mapToSchema(snippet))
+		post<SnippetSchema, WritableSnippetSchema>(REST_SNIPPETS_BASE, mapToSchema(snippet))
 			.then(createSnippetObject),
 
 	update: snippet =>
-		post<SnippetSchema>(snippet.id ? buildURL(snippet) : REST_SNIPPETS_BASE, mapToSchema(snippet))
+		post<SnippetSchema, WritableSnippetSchema>(snippet.id ? buildURL(snippet) : REST_SNIPPETS_BASE, mapToSchema(snippet))
 			.then(createSnippetObject),
 
 	delete: snippet =>
