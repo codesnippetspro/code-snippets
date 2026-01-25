@@ -2,6 +2,7 @@
 namespace Code_Snippets\Promotions;
 
 use function Code_Snippets\code_snippets;
+use Code_Snippets\Insert_PHP_Code_Snippet_Importer;
 
 class Insert_PHP_Code_Snippet extends Promotion_Base {
 
@@ -27,18 +28,35 @@ class Insert_PHP_Code_Snippet extends Promotion_Base {
 	}
 
 	public function get_promotion_buttons(): array {
-		return [
-			[
+		$buttons = [];
+
+		if ( $this->has_snippets() ) {
+			$buttons[] = [
+				'url'    => add_query_arg( 'tab', 'plugins', code_snippets()->get_menu_url( 'import' ) ),
+				'text'   => esc_html__( 'Migrate to Code Snippets', 'code-snippets' ),
+				'class'  => 'button button-primary',
+			];
+		} else {
+			$buttons[] = [
 				'url'    => code_snippets()->get_menu_url(),
 				'text'   => esc_html__( 'Manage your snippets', 'code-snippets' ),
 				'class'  => 'button button-primary',
-			],
-			[
-				'url'    => 'https://codesnippets.pro/pricing/?utm_source=' . $this->get_plugin_slug() . '&utm_medium=promotion&utm_campaign=custom-code',
-				'text'   => esc_html__( 'Learn More', 'code-snippets' ),
-				'class'  => 'button button-secondary',
-				'target' => '_blank',
-			],
+			];
+		}
+
+		$buttons[] = [
+			'url'    => 'https://codesnippets.pro/pricing/?utm_source=' . $this->get_plugin_slug() . '&utm_medium=promotion&utm_campaign=custom-code',
+			'text'   => esc_html__( 'Learn More', 'code-snippets' ),
+			'class'  => 'button button-secondary',
+			'target' => '_blank',
 		];
+		
+		return $buttons;
+	}
+
+	protected function has_snippets(): bool {
+		$importer = new Insert_PHP_Code_Snippet_Importer();
+		$data = $importer->get_data();
+		return ! empty( $data );
 	}
 }
