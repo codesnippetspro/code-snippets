@@ -9,9 +9,10 @@ class Promotion_Manager {
 		$this->plugin_promotions = [
 			// Notices in admin screens.
 			'elementor' => Promotions\Elementor::class,
-			'insert-headers-and-footers' => Promotions\Insert_Headers_And_Footers::class,
+			'head-footer-code' => Promotions\Header_Footer_Code::class,
 			'header-footer-code-manager' => Promotions\Header_Footer_Code_Manager::class,
 			'insert-php-code-snippet' => Promotions\Insert_PHP_Code_Snippet::class,
+			'wp-headers-and-footers' => Promotions\WP_Headers_And_Footers::class,
 
 			// Other Promotions.
 			'elementor-editor' => Promotions\Elementor_Editor::class,

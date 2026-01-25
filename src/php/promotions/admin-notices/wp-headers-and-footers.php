@@ -3,14 +3,14 @@ namespace Code_Snippets\Promotions;
 
 use function Code_Snippets\code_snippets;
 
-class Insert_Headers_And_Footers extends Promotion_Base {
+class WP_Headers_And_Footers extends Promotion_Base {
 
 	public function get_plugin_name(): string {
 		return esc_html__( 'Insert Headers and Footers', 'code-snippets' );
 	}
 
 	public function get_plugin_slug(): string {
-		return 'insert-headers-and-footers';
+		return 'wp-headers-and-footers';
 	}
 
 	public function get_plugin_admin_screens(): array {
