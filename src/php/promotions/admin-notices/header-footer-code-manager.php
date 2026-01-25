@@ -6,6 +6,10 @@ use Code_Snippets\Header_Footer_Code_Manager_Importer;
 
 class Header_Footer_Code_Manager extends Promotion_Base {
 
+	public function get_plugin_name(): string {
+		return esc_html__( 'Header Footer Code Manager', 'code-snippets' );
+	}
+
 	public function get_plugin_slug(): string {
 		return 'header-footer-code-manager';
 	}
@@ -24,7 +28,10 @@ class Header_Footer_Code_Manager extends Promotion_Base {
 	}
 
 	public function get_promotion_message(): string {
-		return esc_html__( 'Code Snippets Pro provides a powerful and user-friendly alternative to Header Footer Code Manager, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' );
+		return sprintf(
+			esc_html__( 'Code Snippets provides a powerful and user-friendly alternative to "%s", with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ),
+			$this->get_plugin_name()
+		);
 	}
 
 	public function get_promotion_buttons(): array {

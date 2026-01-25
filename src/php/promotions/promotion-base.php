@@ -7,6 +7,8 @@ abstract class Promotion_Base {
 	const AJAX_ACTION = 'code_snippets_dismiss_promotion';
 	const USER_META_KEY = 'code_snippets_dismissed_promotions';
 
+	abstract public function get_plugin_name(): string;
+
 	abstract public function get_plugin_slug(): string;
 
 	abstract public function get_plugin_admin_screens(): array;

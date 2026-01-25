@@ -61,7 +61,10 @@ class Elementor_Editor {
 	 * @return string
 	 */
 	private function get_promotion_content(): string {
-		$message = esc_html__( 'Code Snippets Pro provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, conditional logic, and advanced features.', 'code-snippets' );
+		$message = sprintf(
+			esc_html__( 'Code Snippets provides a powerful and user-friendly alternative to "%s", with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ),
+			esc_html__( 'Elementor Custom Code', 'code-snippets' )
+		);
 
 		if ( $this->is_code_snippets_pro() ) {
 			$link_text = esc_html__( 'Manage CSS snippets', 'code-snippets' );

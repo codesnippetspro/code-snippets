@@ -5,6 +5,10 @@ use function Code_Snippets\code_snippets;
 
 class Insert_Headers_And_Footers extends Promotion_Base {
 
+	public function get_plugin_name(): string {
+		return esc_html__( 'Insert Headers and Footers', 'code-snippets' );
+	}
+
 	public function get_plugin_slug(): string {
 		return 'insert-headers-and-footers';
 	}
@@ -20,7 +24,10 @@ class Insert_Headers_And_Footers extends Promotion_Base {
 	}
 
 	public function get_promotion_message(): string {
-		return esc_html__( 'Code Snippets Pro provides a powerful and user-friendly alternative to Header Footer Code Manager, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' );
+		return sprintf(
+			esc_html__( 'Code Snippets provides a powerful and user-friendly alternative to "%s", with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ),
+			$this->get_plugin_name()
+		);
 	}
 
 	public function get_promotion_buttons(): array {
