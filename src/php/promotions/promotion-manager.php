@@ -12,6 +12,7 @@ class Promotion_Manager {
 			'head-footer-code' => Promotions\Header_Footer_Code::class,
 			'header-footer-code-manager' => Promotions\Header_Footer_Code_Manager::class,
 			'insert-php-code-snippet' => Promotions\Insert_PHP_Code_Snippet::class,
+			'insert-php' => Promotions\Insert_PHP::class,
 			'wp-headers-and-footers' => Promotions\WP_Headers_And_Footers::class,
 
 			// Other Promotions.
