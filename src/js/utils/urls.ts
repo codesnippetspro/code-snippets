@@ -14,7 +14,23 @@ export const updateQueryParam = (name: string, value?: string | number) => {
 		}
 
 		const newUrl = window.location.toString().replace(window.location.search, `?${searchParams.toString()}`)
-		console.log(window.location.search, searchParams.toString(), newUrl)
 		window.history.replaceState({}, document.title, newUrl)
 	}
 }
+
+const sanitizeQueryArg = (value: unknown): string => {
+	if (typeof value === 'boolean') {
+		return value ? '1' : '0'
+	}
+
+	return String(value)
+}
+
+export const buildUrl = <K extends PropertyKey, V>(
+	base: string | undefined = '',
+	queryArgs: { [P in K]?: V }
+): string =>
+	`${base}?` + Object.entries(queryArgs)
+		.filter(([, value]) => value !== undefined && value !== null)
+		.map(([queryArg, value]) => `${queryArg}=${encodeURIComponent(sanitizeQueryArg(value))}`)
+		.join('&')

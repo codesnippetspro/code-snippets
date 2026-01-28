@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from 'react'
-import { addQueryArgs } from '@wordpress/url'
 import { createContextHook } from '../../../utils/bootstrap'
 import { REST_CLOUD_SEARCH_BASE } from '../../../utils/restAPI'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
+import { buildUrl } from '../../../utils/urls'
 
 interface CloudSearchContext {
 	page: number
@@ -43,7 +43,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		setIsSearching(true)
 
 		api
-			.getResponse<CloudSnippetSchema[]>(addQueryArgs(REST_CLOUD_SEARCH_BASE, { query, searchByCodevault, page }))
+			.getResponse<CloudSnippetSchema[]>(buildUrl(REST_CLOUD_SEARCH_BASE, { query, searchByCodevault, page }))
 			.then(response => {
 				setTotalItems(Number(response.headers['x-wp-total']))
 				setTotalPages(Number(response.headers['x-wp-totalpages']))

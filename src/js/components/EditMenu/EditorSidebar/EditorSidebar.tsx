@@ -1,7 +1,7 @@
 import React from 'react'
 import { Spinner } from '@wordpress/components'
 import { __, isRTL } from '@wordpress/i18n'
-import { addQueryArgs } from '@wordpress/url'
+import { buildUrl } from '../../../utils/urls'
 import { useSnippetForm } from '../SnippetForm/WithSnippetFormContext'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { isCondition } from '../../../utils/snippets/snippets'
@@ -47,7 +47,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 							disabled={isWorking}
 							setIsWorking={setIsWorking}
 							onSuccess={() =>
-								window.location.replace(addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { result: 'deleted' }))}
+								window.location.replace(buildUrl(window.CODE_SNIPPETS?.urls.manage, { result: 'deleted' }))}
 							onError={error =>
 								handleRequestError(error, __('Could not delete snippet.', 'code-snippets'))}
 						/>

@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n'
-import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
 import { useSnippetForm } from '../components/EditMenu/SnippetForm/WithSnippetFormContext'
 import { createSnippetObject, isCondition } from '../utils/snippets/snippets'
+import { buildUrl } from '../utils/urls'
 import { useSnippetsAPI } from './useSnippetsAPI'
 import type { Snippet } from '../types/Snippet'
 
@@ -114,7 +114,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 
 			if (snippet.id && result.id) {
 				window.document.title = window.document.title.replace(snippetMessages.addNew, messages.edit)
-				window.history.replaceState({}, '', addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: result.id }))
+				window.history.replaceState({}, '', buildUrl(window.CODE_SNIPPETS?.urls.edit, { id: result.id }))
 			}
 
 			return result

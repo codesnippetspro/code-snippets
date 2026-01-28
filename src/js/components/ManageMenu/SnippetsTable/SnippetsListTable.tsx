@@ -1,11 +1,11 @@
 import { __, _x, sprintf } from '@wordpress/i18n'
 import React, { Fragment, useMemo } from 'react'
-import { addQueryArgs } from '@wordpress/url'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { REST_NAMESPACED } from '../../../utils/restAPI'
 import { getSnippetType } from '../../../utils/snippets/snippets'
+import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
 import { SubmitButton } from '../../common/SubmitButton'
 import { useSnippetsFilters } from './WithSnippetsTableFiltersContext'
@@ -59,7 +59,7 @@ const SnippetStatusCounts = () => {
 				<Fragment key={label}>
 					<li className={status ?? 'all'}>
 						<a
-							href={addQueryArgs(window.location.href, { status })}
+							href={buildUrl(window.location.href, { status })}
 							className={currentStatus === status ? 'current' : undefined}
 							onClick={event => {
 								event.preventDefault()
@@ -161,7 +161,7 @@ const NoItemsMessage = () => {
 			: __("It looks like you don't have any snippets.", 'code-snippets')}
 
 		{' '}
-		<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.addNew, currentType ? { type: currentType } : {})}>
+		<a href={buildUrl(window.CODE_SNIPPETS?.urls.addNew, { type: currentType })}>
 			{__('Perhaps you would like to add a new one?', 'code-snippets')}
 		</a>
 		</>

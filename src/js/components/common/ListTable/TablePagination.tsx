@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __, _n, _x, sprintf } from '@wordpress/i18n'
-import { addQueryArgs } from '@wordpress/url'
-import { updateQueryParam } from '../../../utils/urls'
+import { buildUrl, updateQueryParam } from '../../../utils/urls'
 import { Button } from '../Button'
 import type { ListTablePaginationProps } from './ListTable'
 import type { ReactNode } from 'react'
@@ -21,7 +20,7 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({ icon, newPage, clas
 		? <>
 			<a
 				className={`${className} button`}
-				href={addQueryArgs(window.location.href, { paged: 1 === newPage ? undefined : newPage })}
+				href={buildUrl(window.location.href, { paged: 1 === newPage ? undefined : newPage })}
 				onClick={event => {
 					event.preventDefault()
 					setCurrentPage(newPage)

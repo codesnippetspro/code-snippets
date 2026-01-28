@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
-import { addQueryArgs } from '@wordpress/url'
 import { createContextHook } from '../utils/bootstrap'
 import { REST_SNIPPETS_BASE } from '../utils/restAPI'
 import { createSnippetObject } from '../utils/snippets/snippets'
+import { buildUrl } from '../utils/urls'
 import { useRestAPI } from './useRestAPI'
 import type { Snippet } from '../types/Snippet'
 import type { SnippetsExport } from '../types/schema/SnippetsExport'
@@ -24,11 +24,8 @@ export interface SnippetsAPI {
 	detach: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<void>
 }
 
-const buildURL = ({ id, network }: Pick<Snippet, 'id' | 'network'>, action?: string) =>
-	addQueryArgs(
-		[REST_SNIPPETS_BASE, id, action].filter(Boolean).join('/'),
-		{ network: network ? true : undefined }
-	)
+const buildSnippetUrl = ({ id, network }: Pick<Snippet, 'id' | 'network'>, action?: string) =>
+	buildUrl([REST_SNIPPETS_BASE, id, action].filter(Boolean).join('/'), { network })
 
 const mapToSchema = ({
 	name,
@@ -56,11 +53,11 @@ const mapToSchema = ({
 
 const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
 	fetchAll: network =>
-		get<SnippetSchema[]>(addQueryArgs(REST_SNIPPETS_BASE, { network: network ? true : undefined }))
+		get<SnippetSchema[]>(buildUrl(REST_SNIPPETS_BASE, { network }))
 			.then(response => response.map(createSnippetObject)),
 
 	fetch: (snippetId, network) =>
-		get<SnippetSchema>(addQueryArgs(`${REST_SNIPPETS_BASE}/${snippetId}`, { network }))
+		get<SnippetSchema>(buildUrl(`${REST_SNIPPETS_BASE}/${snippetId}`, { network }))
 			.then(createSnippetObject),
 
 	create: snippet =>
@@ -68,31 +65,31 @@ const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
 			.then(createSnippetObject),
 
 	update: snippet =>
-		post<SnippetSchema, WritableSnippetSchema>(snippet.id ? buildURL(snippet) : REST_SNIPPETS_BASE, mapToSchema(snippet))
+		post<SnippetSchema, WritableSnippetSchema>(snippet.id ? buildSnippetUrl(snippet) : REST_SNIPPETS_BASE, mapToSchema(snippet))
 			.then(createSnippetObject),
 
 	delete: snippet =>
-		del(buildURL(snippet)),
+		del(buildSnippetUrl(snippet)),
 
 	activate: snippet =>
-		post<SnippetSchema>(buildURL(snippet, 'activate'))
+		post<SnippetSchema>(buildSnippetUrl(snippet, 'activate'))
 			.then(createSnippetObject),
 
 	deactivate: snippet =>
-		post<SnippetSchema>(buildURL(snippet, 'deactivate'))
+		post<SnippetSchema>(buildSnippetUrl(snippet, 'deactivate'))
 			.then(createSnippetObject),
 
 	export: snippet =>
-		get<SnippetsExport>(buildURL(snippet, 'export')),
+		get<SnippetsExport>(buildSnippetUrl(snippet, 'export')),
 
 	exportCode: snippet =>
-		get<string>(buildURL(snippet, 'export-code')),
+		get<string>(buildSnippetUrl(snippet, 'export-code')),
 
 	attach: snippet =>
-		put(buildURL(snippet, 'attach'), { condition_id: snippet.conditionId }),
+		put(buildSnippetUrl(snippet, 'attach'), { condition_id: snippet.conditionId }),
 
 	detach: snippet =>
-		put(buildURL(snippet, 'detach'))
+		put(buildSnippetUrl(snippet, 'detach'))
 })
 
 

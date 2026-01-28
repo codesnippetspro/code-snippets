@@ -2,13 +2,13 @@ import { __, sprintf } from '@wordpress/i18n'
 import { createInterpolateElement } from '@wordpress/element'
 import React, { useState } from 'react'
 import classnames from 'classnames'
-import { addQueryArgs } from '@wordpress/url'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
 import { WithSnippetsListContext } from '../../../hooks/useSnippetsList'
 import { SNIPPET_TYPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
 import { SNIPPET_TYPE_LABELS, getSnippetEditUrl, isProType } from '../../../utils/snippets/snippets'
+import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { Notice } from '../../common/Notice'
@@ -29,7 +29,7 @@ const SnippetTypeTab: React.FC<SnippetTypeTabProps> = ({ type, setIsUpgradeDialo
 
 	return (
 		<a
-			href={addQueryArgs(window.location.href, { type: tabName })}
+			href={buildUrl(window.location.href, { type: tabName })}
 			className={classnames('nav-tab', `${tabName}-tab`, {
 				'nav-tab-active': type === currentType,
 				'nav-tab-inactive': type && type !== currentType && !isLicensed() && isProType(type)
@@ -71,7 +71,7 @@ const PageHeading = () => {
 						{/* translators: %s: search query. */}
 						{searchQueryText && sprintf(__(' for “%s”', 'code-snippets'), searchQueryText)}
 
-						{/* translators: %s: search query. */}
+						{/* translators: %d: code line number. */}
 						{searchLineNumber && sprintf(__(' on line “%d”', 'code-snippets'), searchLineNumber)}
 
 						{/* translators: %s: tag name. */}

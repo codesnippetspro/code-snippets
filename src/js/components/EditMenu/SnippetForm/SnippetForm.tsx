@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import { addQueryArgs } from '@wordpress/url'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
 import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
 import { WithSnippetsListContext, useSnippetsList } from '../../../hooks/useSnippetsList'
 import { SubmitSnippetAction, useSubmitSnippet } from '../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../utils/errors'
 import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../../utils/snippets/snippets'
+import { buildUrl } from '../../../utils/urls'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
 import { Toolbar } from '../../common/Toolbar'
 import { UpsellBanner } from '../../common/UpsellBanner'
@@ -94,7 +94,7 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 							.replace(__('Create New Snippet', 'code-snippets'), __('Edit Snippet', 'code-snippets'))
 							.replace(__('Create New Condition', 'code-snippets'), __('Edit Condition', 'code-snippets'))
 
-						const newUrl = addQueryArgs(window.CODE_SNIPPETS.urls.edit, { id: response.id })
+						const newUrl = buildUrl(window.CODE_SNIPPETS.urls.edit, { id: response.id })
 						window.history.pushState({}, document.title, newUrl)
 					}
 				}
@@ -149,7 +149,7 @@ const EditFormWrap: React.FC = () => {
 		<div className="wrap">
 			<p><small className="cs-back">
 				{isCondition(snippet)
-					? <a href={addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { type: 'cond' })}>
+					? <a href={buildUrl(window.CODE_SNIPPETS?.urls.manage, { type: 'cond' })}>
 						{__('Back to all conditions', 'code-snippets')}
 					</a>
 					: <a href={window.CODE_SNIPPETS?.urls.manage}>

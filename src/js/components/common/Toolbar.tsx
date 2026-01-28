@@ -1,9 +1,8 @@
 import { __ } from '@wordpress/i18n'
 import classnames from 'classnames'
 import React, { useState } from 'react'
-import { addQueryArgs } from '@wordpress/url'
 import { isLicensed, shouldShowUpsell } from '../../utils/screen'
-import { fetchQueryParam } from '../../utils/urls'
+import { buildUrl, fetchQueryParam } from '../../utils/urls'
 import { CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon, TeamsIcon } from './icons/ToolbarIcons'
 import { UpsellDialog } from './UpsellDialog'
 import type { ReactNode} from 'react'
@@ -46,7 +45,7 @@ const LOWER_NAV_LINKS: NavLink[] = [
 	},
 	{
 		name: 'cloud-community',
-		url: addQueryArgs(window.CODE_SNIPPETS?.urls.manage, { subpage: 'cloud-community' }),
+		url: buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: 'cloud-community' }),
 		label: __('Community Cloud', 'code-snippets'),
 		icon: <CommunityIcon />
 	},

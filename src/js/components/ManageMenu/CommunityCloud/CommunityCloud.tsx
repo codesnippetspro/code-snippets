@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import classnames from 'classnames'
-import { addQueryArgs } from '@wordpress/url'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
-import { fetchQueryParam, updateQueryParam } from '../../../utils/urls'
+import { buildUrl, fetchQueryParam, updateQueryParam } from '../../../utils/urls'
 import { WithCloudSearchContext } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
 
@@ -25,7 +24,7 @@ const NavTabs: React.FC<NavTabsProps> = ({ currentTab, setCurrentTab }) =>
 		{TABS.map(tab =>
 			<a
 				key={tab}
-				href={addQueryArgs(window.location.href, { type: tab })}
+				href={buildUrl(window.location.href, { type: tab })}
 				className={classnames('nav-tab', `${tab}-tab`, { 'nav-tab-active': tab === currentTab })}
 				onClick={event => {
 					event.preventDefault()

@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Spinner } from '@wordpress/components'
 import { TablePagination } from '../../common/ListTable/TablePagination'
 import { SubmitButton } from '../../common/SubmitButton'

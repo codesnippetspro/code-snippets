@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
-import { addQueryArgs } from '@wordpress/url'
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
 import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
@@ -9,6 +8,7 @@ import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { getSnippetDisplayName, getSnippetEditUrl, getSnippetType } from '../../../utils/snippets/snippets'
+import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { DeleteButton } from '../../common/DeleteButton'
@@ -32,7 +32,7 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 				<a
 					className="snippet-execution-button"
 					title={__('Run Once', 'code-snippets')}
-					href={addQueryArgs(window.location.href, { action: 'run-once', snippet: snippet.id })}
+					href={buildUrl(window.location.href, { action: 'run-once', snippet: snippet.id })}
 				>
 					&nbsp;
 				</a>
@@ -140,7 +140,7 @@ const TypeColumn: React.FC<ColumnProps> = ({ snippet }) => {
 
 	return (
 		<a
-			href={addQueryArgs(window.location.href, { type })}
+			href={buildUrl(window.location.href, { type })}
 			onClick={event => {
 				event.preventDefault()
 				setCurrentType(type)
@@ -154,7 +154,7 @@ const TypeColumn: React.FC<ColumnProps> = ({ snippet }) => {
 const TagsColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	snippet.tags.map((tag, index) =>
 		<Fragment key={tag}>
-			<a key={tag} href={addQueryArgs(window.location.href, { tag })}>
+			<a key={tag} href={buildUrl(window.location.href, { tag })}>
 				{tag}
 			</a>
 			{index < snippet.tags.length - 1 ? ', ' : ''}

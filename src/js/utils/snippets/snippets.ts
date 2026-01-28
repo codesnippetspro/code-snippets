@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n'
-import { addQueryArgs } from '@wordpress/url'
+import { buildUrl } from '../urls'
 import { parseSnippetObject } from './objects'
 import type { Snippet, SnippetType } from '../../types/Snippet'
 
@@ -37,7 +37,7 @@ export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType =
 
 export const getSnippetEditUrl = (snippet?: Pick<Snippet, 'id'>): string | undefined =>
 	snippet?.id
-		? addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: snippet.id })
+		? buildUrl(window.CODE_SNIPPETS?.urls.edit, { id: snippet.id })
 		: window.CODE_SNIPPETS?.urls.addNew
 
 export const getSnippetDisplayName = (snippet: Pick<Snippet, 'name' | 'id' | 'scope'>): string =>
