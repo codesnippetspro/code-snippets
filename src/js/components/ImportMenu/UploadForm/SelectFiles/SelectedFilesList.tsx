@@ -1,6 +1,6 @@
 import React from 'react'
 import { __, sprintf } from '@wordpress/i18n'
-import { UploadedFile } from './UploadButton'
+import type { UploadedFile } from './UploadButton'
 
 const FILE_SIZE_FRACTION_DIGITS = 2
 

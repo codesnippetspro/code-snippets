@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react'
 import { __ } from '@wordpress/i18n'
 import domReady from '@wordpress/dom-ready'
-import { useSnippetForm } from '../../../../hooks/useSnippetForm'
+import { useSnippetForm } from '../WithSnippetFormContext'
 
 export const EDITOR_ID = 'snippet_description'
 

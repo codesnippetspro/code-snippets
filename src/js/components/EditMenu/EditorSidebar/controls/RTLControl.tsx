@@ -1,6 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { useSnippetForm } from '../../../../hooks/useSnippetForm'
+import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
 
 export const RTLControl: React.FC = () => {
 	const { codeEditorInstance } = useSnippetForm()

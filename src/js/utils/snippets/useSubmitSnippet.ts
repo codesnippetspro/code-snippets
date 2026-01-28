@@ -2,10 +2,10 @@ import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
-import { createSnippetObject, isCondition } from '../utils/snippets/snippets'
-import { useRestAPI } from './useRestAPI'
-import { useSnippetForm } from './useSnippetForm'
-import type { Snippet } from '../types/Snippet'
+import { useRestAPI } from '../../components/common/contexts/WithRestAPIContext'
+import { useSnippetForm } from '../../components/EditMenu/SnippetForm/WithSnippetFormContext'
+import { createSnippetObject, isCondition } from './snippets'
+import type { Snippet } from '../../types/Snippet'
 
 const snippetMessages = <const> {
 	addNew: __('Create New Snippet', 'code-snippets'),

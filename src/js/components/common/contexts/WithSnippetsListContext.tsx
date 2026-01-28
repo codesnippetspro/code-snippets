@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { createContextHook } from '../utils/bootstrap'
-import { isNetworkAdmin } from '../utils/screen'
-import { useRestAPI } from './useRestAPI'
+import { createContextHook } from '../../../utils/bootstrap'
+import { isNetworkAdmin } from '../../../utils/screen'
+import { useRestAPI } from './WithRestAPIContext'
 import type { PropsWithChildren } from 'react'
-import type { Snippet } from '../types/Snippet'
+import type { Snippet } from '../../../types/Snippet'
 
 export interface SnippetsListContext {
 	snippetsList: readonly Snippet[] | undefined

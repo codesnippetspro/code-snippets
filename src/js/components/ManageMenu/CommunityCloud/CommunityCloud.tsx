@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import classnames from 'classnames'
 import { addQueryArgs } from '@wordpress/url'
-import { WithCloudSearchContext } from '../../../hooks/useCloudSearch'
-import { WithRestAPIContext } from '../../../hooks/useRestAPI'
+import { WithRestAPIContext } from '../../common/contexts/WithRestAPIContext'
 import { fetchQueryParam, updateQueryParam } from '../../../utils/urls'
+import { WithCloudSearchContext } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
 
 const TABS = ['snippets', 'bundles'] as const

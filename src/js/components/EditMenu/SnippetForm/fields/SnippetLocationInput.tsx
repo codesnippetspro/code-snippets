@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import React from 'react'
 import Select from 'react-select'
-import { useSnippetForm } from '../../../../hooks/useSnippetForm'
+import { useSnippetForm } from '../WithSnippetFormContext'
 import { SNIPPET_TYPE_SCOPES } from '../../../../types/Snippet'
 import { getSnippetType, isCondition } from '../../../../utils/snippets/snippets'
 import type { SnippetCodeScope } from '../../../../types/Snippet'

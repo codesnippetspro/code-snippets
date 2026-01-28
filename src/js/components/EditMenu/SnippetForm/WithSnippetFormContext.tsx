@@ -1,12 +1,12 @@
 import { isAxiosError } from 'axios'
 import React, { useCallback, useMemo, useState } from 'react'
-import { createContextHook } from '../utils/bootstrap'
-import { isLicensed } from '../utils/screen'
-import { isProSnippet } from '../utils/snippets/snippets'
+import { createContextHook } from '../../../utils/bootstrap'
+import { isLicensed } from '../../../utils/screen'
+import { isProSnippet } from '../../../utils/snippets/snippets'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
-import type { ScreenNotice } from '../types/ScreenNotice'
-import type { Snippet } from '../types/Snippet'
-import type { CodeEditorInstance } from '../types/WordPressCodeEditor'
+import type { ScreenNotice } from '../../../types/ScreenNotice'
+import type { Snippet } from '../../../types/Snippet'
+import type { CodeEditorInstance } from '../../../types/WordPressCodeEditor'
 
 export interface SnippetFormContext {
 	snippet: Snippet

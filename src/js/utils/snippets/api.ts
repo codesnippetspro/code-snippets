@@ -1,7 +1,7 @@
 import { addQueryArgs } from '@wordpress/url'
 import { REST_SNIPPETS_BASE } from '../restAPI'
 import { createSnippetObject } from './snippets'
-import type { RestAPI } from '../../hooks/useRestAPI'
+import type { RestAPI } from '../../components/common/contexts/WithRestAPIContext'
 import type { SnippetSchema, WritableSnippetSchema } from '../../types/schema/SnippetSchema'
 import type { SnippetsExport } from '../../types/schema/SnippetsExport'
 import type { Snippet } from '../../types/Snippet'

@@ -2,7 +2,7 @@ import React from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
 import { ImportCard } from '../common/ImportCard'
-import type { UseSelection } from '../../../hooks/useSelection'
+import type { UseSelection } from '../../../utils/useSelection'
 import type { ImportableSnippet } from './WithMigrationContext'
 
 interface TableNavProps extends SimpleSnippetTableProps {

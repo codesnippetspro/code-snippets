@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
 import axios from 'axios'
-import { createContextHook } from '../utils/bootstrap'
-import { REST_API_AXIOS_CONFIG } from '../utils/restAPI'
-import { buildSnippetsAPI } from '../utils/snippets/api'
-import type { SnippetsAPI } from '../utils/snippets/api'
+import { createContextHook } from '../../../utils/bootstrap'
+import { REST_API_AXIOS_CONFIG } from '../../../utils/restAPI'
+import { buildSnippetsAPI } from '../../../utils/snippets/api'
+import type { SnippetsAPI } from '../../../utils/snippets/api'
 import type { PropsWithChildren } from 'react'
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 

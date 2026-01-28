@@ -1,7 +1,7 @@
 import { __, _x } from '@wordpress/i18n'
 import { getKeyMap } from 'codemirror/src/input/keymap'
 import React, { Fragment, useMemo } from 'react'
-import { useSnippetForm } from '../../../../hooks/useSnippetForm'
+import { useSnippetForm } from '../WithSnippetFormContext'
 import { isMacOS } from '../../../../utils/screen'
 import type { KeyMap } from 'codemirror'
 

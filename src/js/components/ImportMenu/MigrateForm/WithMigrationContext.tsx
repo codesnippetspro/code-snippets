@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import { useRestAPI } from '../../../hooks/useRestAPI'
-import { useSelection } from '../../../hooks/useSelection'
+import { useRestAPI } from '../../common/contexts/WithRestAPIContext'
+import { useSelection } from '../../../utils/useSelection'
 import { createContextHook } from '../../../utils/bootstrap'
 import { REST_NAMESPACED } from '../../../utils/restAPI'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { useMigrationOptions } from './WithMigrationOptions'
-import type { RestAPI } from '../../../hooks/useRestAPI'
-import type { UseSelection } from '../../../hooks/useSelection'
+import type { RestAPI } from '../../common/contexts/WithRestAPIContext'
+import type { UseSelection } from '../../../utils/useSelection'
 import type { PropsWithChildren } from 'react'
 
 export enum MigrationStep {

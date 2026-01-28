@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n'
 import React from 'react'
-import { useRestAPI } from '../../../../hooks/useRestAPI'
+import { useRestAPI } from '../../../common/contexts/WithRestAPIContext'
 import { REST_NAMESPACED } from '../../../../utils/restAPI'
 import { Button } from '../../../common/Button'
 import type { Dispatch, SetStateAction } from 'react'

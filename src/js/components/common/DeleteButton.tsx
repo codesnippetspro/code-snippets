@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import { useRestAPI } from '../../hooks/useRestAPI'
+import { useRestAPI } from './contexts/WithRestAPIContext'
 import { Button } from './Button'
 import { ConfirmDialog } from './ConfirmDialog'
 import type { Snippet } from '../../types/Snippet'

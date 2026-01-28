@@ -1,10 +1,10 @@
 import React, { useMemo , useState } from 'react'
-import { createContextHook } from '../utils/bootstrap'
-import { fetchQueryParam } from '../utils/urls'
-import { useCloudSearch } from './useCloudSearch'
-import type { CloudSearchFilters } from '../components/ManageMenu/CommunityCloud/SearchFilters'
+import { createContextHook } from '../../../utils/bootstrap'
+import { fetchQueryParam } from '../../../utils/urls'
+import { useCloudSearch } from './WithCloudSearchContext'
+import type { CloudSearchFilters } from './SearchFilters'
 import type { Dispatch, PropsWithChildren, SetStateAction} from 'react'
-import type { CloudSnippetSchema } from '../types/schema/CloudSnippetSchema'
+import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 
 interface CloudSearchFiltersContext {
 	filters: CloudSearchFilters

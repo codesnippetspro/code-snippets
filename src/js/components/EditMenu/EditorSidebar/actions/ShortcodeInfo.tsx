@@ -1,7 +1,7 @@
 import  React, { useState } from 'react'
 import { CheckboxControl, ExternalLink, Modal } from '@wordpress/components'
 import { __ } from '@wordpress/i18n'
-import { useSnippetForm } from '../../../../hooks/useSnippetForm'
+import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
 import { Button } from '../../../common/Button'
 import { CopyToClipboardButton } from '../../../common/CopyToClipboardButton'
 import type { Dispatch, SetStateAction} from 'react'

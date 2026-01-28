@@ -5,7 +5,7 @@ import { isLicensed } from '../../../utils/screen'
 import { isCondition } from '../../../utils/snippets/snippets'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
-import { useSnippetForm } from '../../../hooks/useSnippetForm'
+import { useSnippetForm } from '../SnippetForm/WithSnippetFormContext'
 import type { Dispatch, SetStateAction } from 'react'
 
 export interface ConditionModalButtonProps {

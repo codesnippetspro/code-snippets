@@ -1,7 +1,7 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { FormTokenField } from '@wordpress/components'
-import { useSnippetForm } from '../../../../hooks/useSnippetForm'
+import { useSnippetForm } from '../WithSnippetFormContext'
 
 const options = window.CODE_SNIPPETS_EDIT?.tagOptions
 

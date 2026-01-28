@@ -1,6 +1,6 @@
 import { __, _x } from '@wordpress/i18n'
 import React from 'react'
-import { useSnippetForm } from '../../../../hooks/useSnippetForm'
+import { useSnippetForm } from '../WithSnippetFormContext'
 import { createSnippetObject } from '../../../../utils/snippets/snippets'
 import type { Snippet } from '../../../../types/Snippet'
 

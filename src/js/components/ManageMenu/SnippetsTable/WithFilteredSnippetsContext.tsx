@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react'
-import { createContextHook } from '../utils/bootstrap'
-import { parseSnippetObject } from '../utils/snippets/objects'
-import { getSnippetType } from '../utils/snippets/snippets'
-import { useSnippetsList } from './useSnippetsList'
-import { useSnippetsFilters } from './useSnippetsFilters'
+import { createContextHook } from '../../../utils/bootstrap'
+import { parseSnippetObject } from '../../../utils/snippets/objects'
+import { getSnippetType } from '../../../utils/snippets/snippets'
+import { useSnippetsList } from '../../common/contexts/WithSnippetsListContext'
+import { useSnippetsFilters } from './WithSnippetsTableFiltersContext'
 import type { PropsWithChildren} from 'react'
-import type { Snippet, SnippetStatus } from '../types/Snippet'
+import type { Snippet, SnippetStatus } from '../../../types/Snippet'
 
 const partitionSnippetsByStatus = (snippets: Snippet[]): Map<SnippetStatus | undefined, Snippet[]> =>
 	snippets.reduce((acc, snippet) => {

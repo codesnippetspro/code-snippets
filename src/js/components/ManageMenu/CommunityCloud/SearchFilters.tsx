@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
 import { __ } from '@wordpress/i18n'
-import { useCloudSearch } from '../../../hooks/useCloudSearch'
-import { useCloudSearchFilters } from '../../../hooks/useCloudSearchFilters'
 import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
 import { updateQueryParam } from '../../../utils/urls'
+import { useCloudSearch } from './WithCloudSearchContext'
+import { useCloudSearchFilters } from './WithCloudSearchFiltersContext'
 import type { Dispatch, SetStateAction } from 'react'
 
 export const STATUS_LABELS: Record<CloudStatus, string> = {

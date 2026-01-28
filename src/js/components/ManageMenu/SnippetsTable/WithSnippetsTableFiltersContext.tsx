@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { SNIPPET_STATUSES, SNIPPET_TYPES } from '../types/Snippet'
-import { createContextHook } from '../utils/bootstrap'
-import { fetchQueryParam, updateQueryParam } from '../utils/urls'
-import type { SnippetStatus, SnippetType } from '../types/Snippet'
+import { SNIPPET_STATUSES, SNIPPET_TYPES } from '../../../types/Snippet'
+import { createContextHook } from '../../../utils/bootstrap'
+import { fetchQueryParam, updateQueryParam } from '../../../utils/urls'
+import type { SnippetStatus, SnippetType } from '../../../types/Snippet'
 import type { PropsWithChildren } from 'react'
 
 const isSnippetType = (type: unknown): type is SnippetType =>
