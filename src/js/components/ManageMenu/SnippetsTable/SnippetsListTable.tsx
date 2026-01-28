@@ -160,10 +160,10 @@ const NoItemsMessage = () => {
 			? __("It looks like you don't have any snippets of this type.", 'code-snippets')
 			: __("It looks like you don't have any snippets.", 'code-snippets')}
 
-			{' '}
-			<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.addNew, currentType ? { type: currentType } : {})}>
-				{__('Perhaps you would like to add a new one?', 'code-snippets')}
-			</a>
+		{' '}
+		<a href={addQueryArgs(window.CODE_SNIPPETS?.urls.addNew, currentType ? { type: currentType } : {})}>
+			{__('Perhaps you would like to add a new one?', 'code-snippets')}
+		</a>
 		</>
 }
 

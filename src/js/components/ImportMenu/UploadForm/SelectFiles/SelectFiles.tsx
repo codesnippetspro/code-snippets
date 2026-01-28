@@ -1,21 +1,13 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import { useRestAPI } from '../../../../hooks/useRestAPI'
-import { REST_NAMESPACED } from '../../../../utils/restAPI'
-import { Button } from '../../../common/Button'
 import { ImportCard } from '../../common/ImportCard'
 import { DragDropUploadArea } from './DragDropUploadArea'
 import { SelectedFilesList } from './SelectedFilesList'
+import { UploadButton } from './UploadButton'
+import type { UploadedFile } from './UploadButton'
 import type { ImportResult } from '../SelectSnippets/ImportResultDisplay'
 import type { ImportableSnippetSchema } from '../../../../types/schema/ImportableSnippetSchema'
-import type { Dispatch, RefObject, SetStateAction} from 'react'
-
-interface FileParseResponse {
-	snippets: ImportableSnippetSchema[]
-	total_count: number
-	message: string
-	warnings?: string[]
-}
+import type { Dispatch, RefObject, SetStateAction } from 'react'
 
 const processFileList = (fileList: FileList): UploadedFile[] => {
 	const uuids = new Uint32Array(fileList.length)
@@ -34,12 +26,6 @@ const buildFileList = (files: UploadedFile[]): FileList => {
 	return dataTransfer.files
 }
 
-export interface UploadedFile {
-	id: string
-	name: string
-	file: File
-}
-
 export interface SelectFilesProps {
 	onSuccess: (snippets: ImportableSnippetSchema[]) => void
 	fileInputRef: RefObject<HTMLInputElement>
@@ -55,44 +41,7 @@ export const SelectFiles: React.FC<SelectFilesProps> = ({
 	setImportResult,
 	setSelectedFiles
 }) => {
-	const { api } = useRestAPI()
 	const [isUploading, setIsUploading] = useState(false)
-
-	const handleUpload = () => {
-		if (!selectedFiles || 0 === selectedFiles.length) {
-			alert(__('Please select files to upload.', 'code-snippets'))
-			return
-		}
-
-		setIsUploading(true)
-		setImportResult(undefined)
-
-		const formData = new FormData()
-
-		for (const selectedFile of selectedFiles) {
-			formData.append('files[]', selectedFile.file)
-		}
-
-		api.post<FileParseResponse, FormData>(
-			`${REST_NAMESPACED}1/file-upload/parse`,
-			formData,
-			{ headers: { 'Content-Type': 'multipart/form-data' } })
-			.then(({ snippets, message, warnings }) => {
-				onSuccess(snippets)
-
-				if (warnings && 0 < warnings.length) {
-					setImportResult({ success: true, message, warnings })
-				}
-			})
-			.catch((error: unknown) => {
-				console.error('Parse error:', error)
-				setImportResult({
-					success: false,
-					message: error instanceof Error ? error.message : __('An unknown error occurred.', 'code-snippets')
-				})
-			})
-			.finally(() => setIsUploading(false))
-	}
 
 	const handleRemoveFile = (file: UploadedFile) => {
 		setSelectedFiles(previous => {
@@ -122,19 +71,14 @@ export const SelectFiles: React.FC<SelectFilesProps> = ({
 				}}
 			/>
 
-			{selectedFiles && 0 < selectedFiles.length &&
-				<SelectedFilesList files={selectedFiles} onRemoveFile={handleRemoveFile} />}
+			{selectedFiles && 0 < selectedFiles.length && (
+				<SelectedFilesList
+					files={selectedFiles}
+					onRemoveFile={handleRemoveFile}
+				/>)}
 
 			<footer>
-				<Button
-					primary
-					onClick={handleUpload}
-					disabled={!selectedFiles || 0 === selectedFiles.length || isUploading}
-				>
-					{isUploading
-						? __('Uploading files…', 'code-snippets')
-						: __('Upload files', 'code-snippets')}
-				</Button>
+				<UploadButton {...{ isUploading, setIsUploading, onSuccess, selectedFiles, setImportResult }} />
 			</footer>
 		</ImportCard>
 	)

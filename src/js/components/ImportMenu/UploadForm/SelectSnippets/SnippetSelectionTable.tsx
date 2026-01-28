@@ -1,6 +1,6 @@
 import React from 'react'
 import { __, _x, sprintf } from '@wordpress/i18n'
-import type { useSelection } from '../../../../hooks/useSelection'
+import type { UseSelection } from '../../../../hooks/useSelection'
 import type { ImportableSnippetSchema } from '../../../../types/schema/ImportableSnippetSchema'
 
 const DESC_MAX_LENGTH = 50
@@ -18,19 +18,19 @@ const truncateDescription = (description: string | undefined): string => {
 
 export interface SnippetSelectionTableProps {
 	snippets: ImportableSnippetSchema[]
-	selection: ReturnType<typeof useSelection<ImportableSnippetSchema>>
+	selection: UseSelection<ImportableSnippetSchema, ImportableSnippetSchema['table_data']['id']>
 }
 
 export const SnippetSelectionTable: React.FC<SnippetSelectionTableProps> = ({
 	snippets,
-	selection: { selectedItems, isAllSelected, handleItemToggle, handleSelectAll }
+	selection: { selectedItems, isAllSelected, toggleItem, selectAll }
 }) =>
 	<>
 		<table className="wp-list-table widefat fixed striped">
 			<thead>
 				<tr>
 					<th scope="col" className="check-column">
-						<input type="checkbox" checked={isAllSelected} onChange={handleSelectAll} />
+						<input type="checkbox" checked={isAllSelected} onChange={selectAll} />
 					</th>
 					<th scope="col" className="column-name">{__('Name', 'code-snippets')}</th>
 					<th scope="col" className="column-type">{__('Type', 'code-snippets')}</th>
@@ -45,7 +45,7 @@ export const SnippetSelectionTable: React.FC<SnippetSelectionTableProps> = ({
 							<input
 								type="checkbox"
 								checked={selectedItems.has(snippet.table_data.id)}
-								onChange={() => handleItemToggle(snippet.table_data.id)}
+								onChange={() => toggleItem(snippet.table_data.id)}
 							/>
 						</th>
 						<td className="column-name">

@@ -1,9 +1,19 @@
 import { useState } from 'react'
 
-export const useSelection = <T, K extends string | number = string | number>(availableItems: T[], getKey: (item: T) => K) => {
+export interface UseSelection<T, K> {
+	selectAll: VoidFunction
+	toggleItem: (itemKey: K) => void
+	selectedItems: Set<K>
+	isAllSelected: boolean
+	availableItems: T[]
+	clearSelection: VoidFunction
+	getSelectedItems: () => T[]
+}
+
+export const useSelection = <T, K>(availableItems: T[], getKey: (item: T) => K): UseSelection<T, K> => {
 	const [selectedItems, setSelectedItems] = useState<Set<K>>(new Set())
 
-	const handleItemToggle = (itemKey: K) => {
+	const toggleItem = (itemKey: K) => {
 		const newSelected = new Set(selectedItems)
 
 		if (newSelected.has(itemKey)) {
@@ -15,9 +25,9 @@ export const useSelection = <T, K extends string | number = string | number>(ava
 		setSelectedItems(newSelected)
 	}
 
-	const handleSelectAll = () => {
+	const selectAll = () => {
 		if (selectedItems.size === availableItems.length) {
-			setSelectedItems(new Set())
+			clearSelection()
 		} else {
 			setSelectedItems(new Set(availableItems.map(getKey)))
 		}
@@ -34,9 +44,10 @@ export const useSelection = <T, K extends string | number = string | number>(ava
 	const isAllSelected = selectedItems.size === availableItems.length && 0 < availableItems.length
 
 	return {
+		availableItems,
 		selectedItems,
-		handleItemToggle,
-		handleSelectAll,
+		toggleItem,
+		selectAll,
 		clearSelection,
 		getSelectedItems,
 		isAllSelected

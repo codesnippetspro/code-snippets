@@ -7,6 +7,8 @@ import { Button } from '../../../common/Button'
 import { ImportCard } from '../../common/ImportCard'
 import { useSelection } from '../../../../hooks/useSelection'
 import { SnippetSelectionTable } from './SnippetSelectionTable'
+import type { ReactNode} from 'react'
+import type { UseSelection } from '../../../../hooks/useSelection'
 import type { ImportResult } from './ImportResultDisplay'
 import type { ImportableSnippetSchema } from '../../../../types/schema/ImportableSnippetSchema'
 import type { DuplicateAction } from '../SelectFiles/DuplicateActionSelector'
@@ -41,12 +43,12 @@ const ReturnLink: React.FC<ReturnLinkProps> = ({ onCancel, clearSelection }) =>
 interface SelectSnippetsFormProps {
 	isImporting: boolean
 	availableSnippets: ImportableSnippetSchema[]
-	snippetSelection: ReturnType<typeof useSelection<ImportableSnippetSchema>>
+	snippetSelection: UseSelection<ImportableSnippetSchema, ImportableSnippetSchema['table_data']['id']>
 }
 
 const SelectSnippetsForm: React.FC<SelectSnippetsFormProps> = ({ availableSnippets, snippetSelection, isImporting }) => {
 	const SelectAllButton = () =>
-		<Button onClick={snippetSelection.handleSelectAll}>
+		<Button onClick={snippetSelection.selectAll}>
 			{snippetSelection.isAllSelected
 				? __('Deselect All', 'code-snippets')
 				: __('Select All', 'code-snippets')}
@@ -87,30 +89,16 @@ const SelectSnippetsForm: React.FC<SelectSnippetsFormProps> = ({ availableSnippe
 	)
 }
 
-export interface SelectSnippetsStepProps {
-	onCancel: VoidFunction
+interface SubmitFormProps {
+	children: ReactNode
 	duplicateAction: DuplicateAction
 	setImportResult: (result: ImportResult | undefined) => void
-	availableSnippets: ImportableSnippetSchema[]
+	snippetSelection: UseSelection<ImportableSnippetSchema, ImportableSnippetSchema['table_data']['id']>
+	setIsImporting: (isImporting: boolean) => void
 }
 
-export const SelectSnippets: React.FC<SelectSnippetsStepProps> = ({
-	onCancel,
-	setImportResult,
-	duplicateAction,
-	availableSnippets
-}) => {
+const SubmitForm: React.FC<SubmitFormProps> = ({ children, duplicateAction, setImportResult, setIsImporting, snippetSelection }) => {
 	const { api } = useRestAPI()
-	const snippetSelection = useSelection<ImportableSnippetSchema>(availableSnippets, snippet => snippet.table_data.id)
-	const [isImporting, setIsImporting] = useState(false)
-
-	const selectSectionRef = useRef<HTMLDivElement>(null)
-
-	useEffect(() => {
-		if (selectSectionRef.current) {
-			selectSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-		}
-	}, [selectSectionRef])
 
 	const buildRequest = (): SnippetImportRequest | undefined => {
 		const snippetsToImport = snippetSelection.getSelectedItems()
@@ -150,12 +138,39 @@ export const SelectSnippets: React.FC<SelectSnippetsStepProps> = ({
 		}
 	}
 
+	return <form onSubmit={handleImportSelected}>{children}</form>
+}
+
+export interface SelectSnippetsStepProps {
+	onCancel: VoidFunction
+	duplicateAction: DuplicateAction
+	setImportResult: (result: ImportResult | undefined) => void
+	availableSnippets: ImportableSnippetSchema[]
+}
+
+export const SelectSnippets: React.FC<SelectSnippetsStepProps> = ({
+	onCancel,
+	setImportResult,
+	duplicateAction,
+	availableSnippets
+}) => {
+	const snippetSelection = useSelection(availableSnippets, snippet => snippet.table_data.id)
+	const [isImporting, setIsImporting] = useState(false)
+
+	const selectSectionRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		if (selectSectionRef.current) {
+			selectSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+		}
+	}, [selectSectionRef])
+
 	return (
 		<ImportCard ref={selectSectionRef} className="import-select-card snippets-table-card">
-			<form onSubmit={handleImportSelected}>
+			<SubmitForm {...{ duplicateAction, snippetSelection, setImportResult, setIsImporting }}>
 				<ReturnLink onCancel={onCancel} clearSelection={snippetSelection.clearSelection} />
 				<SelectSnippetsForm isImporting={isImporting} snippetSelection={snippetSelection} availableSnippets={availableSnippets} />
-			</form>
+			</SubmitForm>
 		</ImportCard>
 	)
 }
