@@ -1,6 +1,6 @@
 import React from 'react'
 import { __, _x, sprintf } from '@wordpress/i18n'
-import type { UseSelection } from '../../../../utils/useSelection'
+import type { UseSelection } from '../../../../hooks/useSelection'
 import type { ImportableSnippetSchema } from '../../../../types/schema/ImportableSnippetSchema'
 
 const DESC_MAX_LENGTH = 50

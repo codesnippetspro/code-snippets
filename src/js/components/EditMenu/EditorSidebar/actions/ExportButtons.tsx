@@ -1,6 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { useRestAPI } from '../../../common/contexts/WithRestAPIContext'
+import { useSnippetsAPI } from '../../../../hooks/useSnippetsAPI'
 import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
 import { downloadSnippetExportFile } from '../../../../utils/files'
 import { Button } from '../../../common/Button'
@@ -34,21 +34,21 @@ const ExportButton: React.FC<ExportButtonProps> = ({ name, label, makeRequest })
 }
 
 export const ExportButtons: React.FC = () => {
-	const { snippetsAPI } = useRestAPI()
+	const api = useSnippetsAPI()
 
 	return (
 		<div className="snippet-export-buttons">
 			<ExportButton
 				name="export_snippet"
 				label={__('Export', 'code-snippets')}
-				makeRequest={snippetsAPI.export}
+				makeRequest={api.export}
 			/>
 
 			{window.CODE_SNIPPETS_EDIT?.enableDownloads
 				? <ExportButton
 					name="export_snippet_code"
 					label={__('Export Code', 'code-snippets')}
-					makeRequest={snippetsAPI.exportCode}
+					makeRequest={api.exportCode}
 				/>
 				: null}
 		</div>

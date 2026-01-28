@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react'
 import { addQueryArgs } from '@wordpress/url'
 import { createContextHook } from '../../../utils/bootstrap'
 import { REST_CLOUD_SEARCH_BASE } from '../../../utils/restAPI'
-import { useRestAPI } from '../../common/contexts/WithRestAPIContext'
+import { useRestAPI } from '../../../hooks/useRestAPI'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 

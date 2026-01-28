@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
-import { WithRestAPIContext } from '../common/contexts/WithRestAPIContext'
+import { WithRestAPIContext } from '../../hooks/useRestAPI'
 import { fetchQueryParam, updateQueryParam } from '../../utils/urls'
 import { UploadForm } from './UploadForm/UploadForm'
 import { MigrateForm } from './MigrateForm/MigrateForm'

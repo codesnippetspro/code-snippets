@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { createContextHook } from '../../../utils/bootstrap'
-import { isNetworkAdmin } from '../../../utils/screen'
-import { useRestAPI } from './WithRestAPIContext'
+import { createContextHook } from '../utils/bootstrap'
+import { isNetworkAdmin } from '../utils/screen'
+import { useSnippetsAPI } from './useSnippetsAPI'
 import type { PropsWithChildren } from 'react'
-import type { Snippet } from '../../../types/Snippet'
+import type { Snippet } from '../types/Snippet'
 
 export interface SnippetsListContext {
 	snippetsList: readonly Snippet[] | undefined
@@ -13,7 +13,7 @@ export interface SnippetsListContext {
 const [SnippetsListContext, useSnippetsList] = createContextHook<SnippetsListContext>('useSnippetsList')
 
 export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children }) => {
-	const { snippetsAPI: { fetchAll } } = useRestAPI()
+	const { fetchAll } = useSnippetsAPI()
 	const [snippetsList, setSnippetsList] = useState<Snippet[]>()
 
 	const refreshSnippetsList = useCallback(async (): Promise<void> => {

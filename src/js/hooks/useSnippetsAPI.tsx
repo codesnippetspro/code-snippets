@@ -1,10 +1,14 @@
+import React, { useMemo } from 'react'
 import { addQueryArgs } from '@wordpress/url'
-import { REST_SNIPPETS_BASE } from '../restAPI'
-import { createSnippetObject } from './snippets'
-import type { RestAPI } from '../../components/common/contexts/WithRestAPIContext'
-import type { SnippetSchema, WritableSnippetSchema } from '../../types/schema/SnippetSchema'
-import type { SnippetsExport } from '../../types/schema/SnippetsExport'
-import type { Snippet } from '../../types/Snippet'
+import { createContextHook } from '../utils/bootstrap'
+import { REST_SNIPPETS_BASE } from '../utils/restAPI'
+import { createSnippetObject } from '../utils/snippets/snippets'
+import { useRestAPI } from './useRestAPI'
+import type { Snippet } from '../types/Snippet'
+import type { SnippetsExport } from '../types/schema/SnippetsExport'
+import type { SnippetSchema, WritableSnippetSchema } from '../types/schema/SnippetSchema'
+import type { RestAPI} from './useRestAPI'
+import type { PropsWithChildren} from 'react'
 
 export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<Snippet[]>
@@ -50,7 +54,7 @@ const mapToSchema = ({
 	condition_id: conditionId
 })
 
-export const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
+const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
 	fetchAll: network =>
 		get<SnippetSchema[]>(addQueryArgs(REST_SNIPPETS_BASE, { network: network ? true : undefined }))
 			.then(response => response.map(createSnippetObject)),
@@ -90,3 +94,14 @@ export const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI 
 	detach: snippet =>
 		put(buildURL(snippet, 'detach'))
 })
+
+
+export const [SnippetsAPIContext, useSnippetsAPI] = createContextHook<SnippetsAPI>('useSnippetsAPI')
+
+export const WithSnippetsAPIContext: React.FC<PropsWithChildren> = ({ children }) => {
+	const { api } = useRestAPI()
+
+	const value: SnippetsAPI = useMemo(() => buildSnippetsAPI(api), [api])
+
+	return <SnippetsAPIContext.Provider value={value}>{children}</SnippetsAPIContext.Provider>
+}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
-import { useRestAPI } from './contexts/WithRestAPIContext'
+import { useSnippetsAPI } from '../../hooks/useSnippetsAPI'
 import { Button } from './Button'
 import { ConfirmDialog } from './ConfirmDialog'
 import type { Snippet } from '../../types/Snippet'
@@ -21,7 +21,7 @@ export const DeleteButton: React.FC<DeleteButtonProps> = ({
 	setIsWorking,
 	...buttonProps
 }) => {
-	const { snippetsAPI } = useRestAPI()
+	const snippetsAPI = useSnippetsAPI()
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
 
 	return (

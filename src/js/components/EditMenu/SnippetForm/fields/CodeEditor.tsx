@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { __ } from '@wordpress/i18n'
-import { useSubmitSnippet } from '../../../../utils/snippets/useSubmitSnippet'
+import { useSubmitSnippet } from '../../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../../utils/errors'
 import { isMacOS } from '../../../../utils/screen'
 import { useSnippetForm } from '../WithSnippetFormContext'

@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import classnames from 'classnames'
 import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
-import { WithRestAPIContext } from '../../common/contexts/WithRestAPIContext'
-import { WithSnippetsListContext, useSnippetsList } from '../../common/contexts/WithSnippetsListContext'
-import { SubmitSnippetAction, useSubmitSnippet } from '../../../utils/snippets/useSubmitSnippet'
+import { WithRestAPIContext } from '../../../hooks/useRestAPI'
+import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
+import { WithSnippetsListContext, useSnippetsList } from '../../../hooks/useSnippetsList'
+import { SubmitSnippetAction, useSubmitSnippet } from '../../../hooks/useSubmitSnippet'
 import { handleUnknownError } from '../../../utils/errors'
 import { createSnippetObject, getSnippetType, isCondition, validateSnippet } from '../../../utils/snippets/snippets'
 import { ConfirmDialog } from '../../common/ConfirmDialog'
@@ -185,10 +186,12 @@ const EditFormWrap: React.FC = () => {
 
 export const SnippetForm: React.FC = () =>
 	<WithRestAPIContext>
-		<WithSnippetsListContext>
-			<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
-				<Toolbar />
-				<EditFormWrap />
-			</WithSnippetFormContext>
-		</WithSnippetsListContext>
+		<WithSnippetsAPIContext>
+			<WithSnippetsListContext>
+				<WithSnippetFormContext initialSnippet={() => createSnippetObject(window.CODE_SNIPPETS_EDIT?.snippet)}>
+					<Toolbar />
+					<EditFormWrap />
+				</WithSnippetFormContext>
+			</WithSnippetsListContext>
+		</WithSnippetsAPIContext>
 	</WithRestAPIContext>

@@ -3,8 +3,8 @@ import { __, sprintf } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
-import { useRestAPI } from '../../common/contexts/WithRestAPIContext'
-import { useSnippetsList } from '../../common/contexts/WithSnippetsListContext'
+import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
+import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
 import { downloadSnippetExportFile } from '../../../utils/files'
 import { isNetworkAdmin } from '../../../utils/screen'
@@ -22,7 +22,7 @@ interface ColumnProps {
 }
 
 const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
-	const { snippetsAPI: { activate, deactivate } } = useRestAPI()
+	const { activate, deactivate } = useSnippetsAPI()
 	const { activeByCondition } = useFilteredSnippets()
 	const { refreshSnippetsList } = useSnippetsList()
 
@@ -75,7 +75,7 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 }
 
 const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
-	const { snippetsAPI } = useRestAPI()
+	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 
 	if (!isNetworkAdmin() && snippet.network && !snippet.shared_network) {
@@ -97,7 +97,7 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 			<a href={getSnippetEditUrl(snippet)}>{__('Edit', 'code-snippets')}</a>{' | '}
 
 			<Button link onClick={() => {
-				snippetsAPI.create({
+				api.create({
 					...snippet,
 					id: 0,
 					active: false,
@@ -111,7 +111,7 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 			</Button>{' | '}
 
 			<Button link onClick={() => {
-				snippetsAPI.export(snippet)
+				api.export(snippet)
 					.then(response => downloadSnippetExportFile(response, snippet))
 					.catch(handleUnknownError)
 			}}>
@@ -171,7 +171,7 @@ const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
 
 const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	const [value, setValue] = useState(snippet.priority)
-	const { snippetsAPI } = useRestAPI()
+	const snippetsAPI = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
 	const id = `snippet-${snippet.id}-priority`
 

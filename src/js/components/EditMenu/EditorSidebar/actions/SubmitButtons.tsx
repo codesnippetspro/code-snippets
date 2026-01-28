@@ -1,6 +1,6 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { SubmitSnippetAction } from '../../../../utils/snippets/useSubmitSnippet'
+import { SubmitSnippetAction } from '../../../../hooks/useSubmitSnippet'
 import { isCondition } from '../../../../utils/snippets/snippets'
 import { isNetworkAdmin } from '../../../../utils/screen'
 import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'

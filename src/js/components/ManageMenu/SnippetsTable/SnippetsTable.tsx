@@ -3,8 +3,9 @@ import { createInterpolateElement } from '@wordpress/element'
 import React, { useState } from 'react'
 import classnames from 'classnames'
 import { addQueryArgs } from '@wordpress/url'
-import { WithRestAPIContext } from '../../common/contexts/WithRestAPIContext'
-import { WithSnippetsListContext } from '../../common/contexts/WithSnippetsListContext'
+import { WithRestAPIContext } from '../../../hooks/useRestAPI'
+import { WithSnippetsAPIContext } from '../../../hooks/useSnippetsAPI'
+import { WithSnippetsListContext } from '../../../hooks/useSnippetsList'
 import { SNIPPET_TYPES } from '../../../types/Snippet'
 import { isLicensed } from '../../../utils/screen'
 import { SNIPPET_TYPE_LABELS, getSnippetEditUrl, isProType } from '../../../utils/snippets/snippets'
@@ -137,9 +138,11 @@ const SnippetsTableInner = () => {
 
 export const SnippetsTable: React.FC = () =>
 	<WithRestAPIContext>
-		<WithSnippetsListContext>
-			<WithSnippetsTableFiltersContext>
-				<SnippetsTableInner />
-			</WithSnippetsTableFiltersContext>
-		</WithSnippetsListContext>
+		<WithSnippetsAPIContext>
+			<WithSnippetsListContext>
+				<WithSnippetsTableFiltersContext>
+					<SnippetsTableInner />
+				</WithSnippetsTableFiltersContext>
+			</WithSnippetsListContext>
+		</WithSnippetsAPIContext>
 	</WithRestAPIContext>

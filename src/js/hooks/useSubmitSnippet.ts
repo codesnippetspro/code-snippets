@@ -2,10 +2,10 @@ import { __ } from '@wordpress/i18n'
 import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
-import { useRestAPI } from '../../components/common/contexts/WithRestAPIContext'
-import { useSnippetForm } from '../../components/EditMenu/SnippetForm/WithSnippetFormContext'
-import { createSnippetObject, isCondition } from './snippets'
-import type { Snippet } from '../../types/Snippet'
+import { useSnippetForm } from '../components/EditMenu/SnippetForm/WithSnippetFormContext'
+import { createSnippetObject, isCondition } from '../utils/snippets/snippets'
+import { useSnippetsAPI } from './useSnippetsAPI'
+import type { Snippet } from '../types/Snippet'
 
 const snippetMessages = <const> {
 	addNew: __('Create New Snippet', 'code-snippets'),
@@ -80,7 +80,7 @@ export interface UseSubmitSnippet {
 }
 
 export const useSubmitSnippet = (): UseSubmitSnippet => {
-	const { snippetsAPI } = useRestAPI()
+	const api = useSnippetsAPI()
 	const { setIsWorking, setCurrentNotice, snippet, setSnippet } = useSnippetForm()
 
 	const submitSnippet = useCallback(async (action: SubmitSnippetAction = SubmitSnippetAction.SAVE) => {
@@ -89,7 +89,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 		const result = await (async (): Promise<Snippet | string | undefined> => {
 			try {
 				const request: Snippet = { ...snippet, ...SUBMIT_ACTION_DELTA[action] }
-				const response = await (0 === request.id ? snippetsAPI.create(request) : snippetsAPI.update(request))
+				const response = await (0 === request.id ? api.create(request) : api.update(request))
 				setIsWorking(false)
 				return response.id ? response : undefined
 			} catch (error) {
@@ -119,7 +119,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 
 			return result
 		}
-	}, [snippetsAPI, setIsWorking, setCurrentNotice, snippet, setSnippet])
+	}, [api, setIsWorking, setCurrentNotice, snippet, setSnippet])
 
 	return { submitSnippet }
 }

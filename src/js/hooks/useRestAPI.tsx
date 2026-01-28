@@ -1,15 +1,12 @@
 import React, { useMemo } from 'react'
 import axios from 'axios'
-import { createContextHook } from '../../../utils/bootstrap'
-import { REST_API_AXIOS_CONFIG } from '../../../utils/restAPI'
-import { buildSnippetsAPI } from '../../../utils/snippets/api'
-import type { SnippetsAPI } from '../../../utils/snippets/api'
+import { createContextHook } from '../utils/bootstrap'
+import { REST_API_AXIOS_CONFIG } from '../utils/restAPI'
 import type { PropsWithChildren } from 'react'
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 export interface RestAPIContext {
 	api: RestAPI
-	snippetsAPI: SnippetsAPI
 	axiosInstance: AxiosInstance
 }
 
@@ -64,9 +61,7 @@ export const WithRestAPIContext: React.FC<PropsWithChildren> = ({ children }) =>
 	const axiosInstance = useMemo(() => axios.create(REST_API_AXIOS_CONFIG), [])
 
 	const api = useMemo(() => buildRestAPI(axiosInstance), [axiosInstance])
-	const snippetsAPI = useMemo(() => buildSnippetsAPI(api), [api])
-
-	const value: RestAPIContext = { api, snippetsAPI, axiosInstance }
+	const value: RestAPIContext = { api, axiosInstance }
 
 	return <RestAPIContext.Provider value={value}>{children}</RestAPIContext.Provider>
 }
