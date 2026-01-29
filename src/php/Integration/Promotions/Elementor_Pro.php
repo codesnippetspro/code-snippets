@@ -2,6 +2,12 @@
 
 namespace Code_Snippets\Integration\Promotions;
 
+use Elementor\Controls_Manager;
+use Elementor\Element_Base;
+use Elementor\Widget_Base;
+use function Code_Snippets\code_snippets;
+use function Code_Snippets\Settings\get_setting;
+
 /**
  * Elementor Pro promotion class.
  */
@@ -11,8 +17,10 @@ class Elementor_Pro {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		add_action( 'admin_notices', [ $this, 'promotion_in_custom_code_screen' ] );
-		add_action( 'elementor/init', [ $this, 'promotion_in_custom_css_section' ] );
+		if ( ! get_setting( 'general', 'hide_upgrade_menu' ) ) {
+			add_action( 'admin_notices', [ $this, 'promotion_in_custom_code_screen' ] );
+			add_action( 'elementor/init', [ $this, 'promotion_in_custom_css_section' ] );
+		}
 	}
 
 	/**
@@ -33,7 +41,7 @@ class Elementor_Pro {
 				<?php esc_html_e( 'Code Snippets Pro provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ); ?>
 			</p>
 			<p>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=snippets' ) ); ?>"
+				<a href="<?php echo esc_url( code_snippets()->get_menu_url() ); ?>"
 				   class="button button-primary">
 					<?php esc_html_e( 'Manage your snippets', 'code-snippets' ); ?>
 				</a>
@@ -58,19 +66,7 @@ class Elementor_Pro {
 		}
 
 		$current_screen = get_current_screen();
-
-		if ( ! $current_screen ) {
-			return false;
-		}
-
-		return in_array(
-			$current_screen->id,
-			[
-				'edit-elementor_snippet',
-				'elementor_snippet',
-			],
-			true
-		);
+		return $current_screen && in_array( $current_screen->id, [ 'edit-elementor_snippet', 'elementor_snippet' ], true );
 	}
 
 	/**
@@ -85,13 +81,13 @@ class Elementor_Pro {
 	/**
 	 * Register promotion section after the Custom CSS section.
 	 *
-	 * @param \Elementor\Widget_Base|\Elementor\Element_Base $element The Elementor element.
+	 * @param Widget_Base|Element_Base $element The Elementor element.
 	 */
 	public function add_promotion_to_custom_css_section( $element ) {
 		$element->add_control(
 			'code_snippets_promotion_notice',
 			[
-				'type'        => \Elementor\Controls_Manager::NOTICE,
+				'type'        => Controls_Manager::NOTICE,
 				'notice_type' => 'info',
 				'dismissible' => true,
 				'heading'     => esc_html__( 'Manage your custom styles', 'code-snippets' ),
@@ -108,23 +104,14 @@ class Elementor_Pro {
 	private function get_promotion_content(): string {
 		$message = esc_html__( 'Code Snippets Pro provides a powerful and user-friendly alternative to Elementor Custom Code, with cloud sync, conditional logic, and advanced features.', 'code-snippets' );
 
-		if ( $this->is_pro() ) {
+		if ( code_snippets()->licensing->is_licensed() ) {
 			$link_text = esc_html__( 'Manage CSS snippets', 'code-snippets' );
-			$url = admin_url( 'admin.php?page=snippets&type=css' );
+			$url = add_query_arg( 'type', 'css', code_snippets()->get_menu_url( 'manage' ) );
 		} else {
 			$link_text = esc_html__( 'Learn More', 'code-snippets' );
 			$url = 'https://codesnippets.pro/pricing/?utm_source=elementor&utm_medium=banner&utm_campaign=elementor-addon-custom-code';
 		}
 
-		return sprintf( '%s <br><br><a href="%s" target="_blank" class="e-btn e-info" style="color:#fff;">%s</a>', $message, $url, $link_text );
-	}
-
-	/**
-	 * Check if pro version is installed and active.
-	 *
-	 * @return bool
-	 */
-	private function is_pro(): bool {
-		return defined( 'CODE_SNIPPETS_PRO' ) && CODE_SNIPPETS_PRO;
+		return sprintf( '%s <br><br><a href="%s" target="_blank" class="e-btn e-info" style="color: #fff;">%s</a>', $message, $url, $link_text );
 	}
 }
