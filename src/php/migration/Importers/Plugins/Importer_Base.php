@@ -4,6 +4,7 @@ namespace Code_Snippets\Migration\Importers\Plugins;
 
 use Code_Snippets\Model\Snippet;
 use WP_REST_Server;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;
 use const Code_Snippets\REST_API_NAMESPACE;
 
@@ -57,7 +58,7 @@ abstract class Importer_Base {
 		return $snippets;
 	}
 
-	public function import( $request ) {
+	public function import( $request ): array {
 		$ids_to_import = $request->get_param( 'ids' ) ?? [];
 		$multisite = $request->get_param( 'network' ) ?? false;
 		$auto_add_tags = $request->get_param( 'auto_add_tags' ) ?? false;
@@ -69,12 +70,10 @@ abstract class Importer_Base {
 
 		$imported = $this->save_snippets( $snippets );
 
-		return [
-			'imported' => $imported,
-		];
+		return [ 'imported' => $imported ];
 	}
 
-	public function get_items( $request ) {
+	public function get_items() {
 		return $this->get_data();
 	}
 
@@ -103,9 +102,7 @@ abstract class Importer_Base {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_items' ],
-				'permission_callback' => function () {
-					return current_user_can( 'manage_options' );
-				},
+				'permission_callback' => [ code_snippets(), 'current_user_can' ],
 			]
 		);
 
@@ -115,9 +112,7 @@ abstract class Importer_Base {
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'import' ],
-				'permission_callback' => function () {
-					return current_user_can( 'manage_options' );
-				},
+				'permission_callback' => [ code_snippets(), 'current_user_can' ],
 				'args'                => [
 					'ids'           => [
 						'type'     => 'array',

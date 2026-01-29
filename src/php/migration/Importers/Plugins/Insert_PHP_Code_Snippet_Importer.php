@@ -28,11 +28,11 @@ class Insert_PHP_Code_Snippet_Importer extends Importer_Base {
 		3 => 'content',
 	];
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'insert-php-code-snippet';
 	}
 
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Insert PHP Code Snippet', 'code-snippets' );
 	}
 
@@ -44,9 +44,14 @@ class Insert_PHP_Code_Snippet_Importer extends Importer_Base {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'xyz_ips_short_code';
 
-		$snippets = empty( $ids_to_import )
-			? $wpdb->get_results( "SELECT * FROM `{$table_name}`" )
-			: $wpdb->get_results( "SELECT * FROM `{$table_name}` WHERE id IN (" . implode( ',', $ids_to_import ) . ")" );
+		if ( empty( $ids_to_import ) ) {
+			$snippets = $wpdb->get_results( "SELECT * FROM `{$table_name}`" );
+		} else {
+			$ids_format = implode( ',', array_fill( 0, count( $ids_to_import ), '%d' ) );
+
+			// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			$snippets = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$table_name}` WHERE if IN ($ids_format)", $ids_to_import ) );
+		}
 
 		foreach ( $snippets as $snippet ) {
 			$snippet->table_data = [
@@ -59,8 +64,6 @@ class Insert_PHP_Code_Snippet_Importer extends Importer_Base {
 	}
 
 	public function create_snippet( $snippet_data, bool $multisite ): ?Snippet {
-		$code_type = $snippet_data->snippet_type ?? '';
-
 		$snippet = new Snippet();
 		$snippet->network = $multisite;
 
@@ -86,7 +89,7 @@ class Insert_PHP_Code_Snippet_Importer extends Importer_Base {
 		return $snippet;
 	}
 
-	private function transform_field_value( string $target_field, $value, $snippet_data ) {
+	private function transform_field_value( string $target_field, $value, $snippet_data ): ?string {
 		if ( 'scope' === $target_field ) {
 			return $this->transform_scope_value( $value, $snippet_data );
 		}
@@ -123,6 +126,6 @@ class Insert_PHP_Code_Snippet_Importer extends Importer_Base {
 	}
 
 	private function strip_wrapper_tags( string $code ): string {
-		return preg_replace( '/^\s*<\?\s*(php)?\s*|\?\>\s*$/i', '', $code );
+		return preg_replace( '/^\s*<\?\s*(php)?\s*|\?>\s*$/i', '', $code );
 	}
 }

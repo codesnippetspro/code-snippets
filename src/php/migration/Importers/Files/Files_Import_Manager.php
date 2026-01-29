@@ -9,9 +9,11 @@ namespace Code_Snippets\Migration\Importers\Files;
  */
 
 use Code_Snippets\Model\Snippet;
+use DOMDocument;
 use WP_REST_Server;
 use WP_REST_Request;
 use WP_Error;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 use const Code_Snippets\REST_API_NAMESPACE;
@@ -26,6 +28,7 @@ class Files_Import_Manager {
 
 	public function register_rest_routes() {
 		$namespace = REST_API_NAMESPACE . self::VERSION;
+		$plugin = code_snippets();
 
 		register_rest_route(
 			$namespace,
@@ -33,9 +36,7 @@ class Files_Import_Manager {
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'parse_uploaded_files' ],
-				'permission_callback' => function () {
-					return current_user_can( 'manage_options' );
-				},
+				'permission_callback' => [ $plugin, 'current_user_can' ],
 			]
 		);
 
@@ -45,12 +46,10 @@ class Files_Import_Manager {
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'import_selected_snippets' ],
-				'permission_callback' => function () {
-					return current_user_can( 'manage_options' );
-				},
+				'permission_callback' => [ $plugin, 'current_user_can' ],
 				'args'                => [
 					'snippets'         => [
-						'description' => __( 'Array of snippet data to import', 'code-snippets' ),
+						'description' => __( 'Snippet data to import', 'code-snippets' ),
 						'type'        => 'array',
 						'required'    => true,
 					],
@@ -113,12 +112,9 @@ class Files_Import_Manager {
 			$file_error = is_array( $files['error'] ) ? $files['error'][ $i ] : $files['error'];
 
 			if ( UPLOAD_ERR_OK !== $file_error ) {
-				$errors[] = sprintf(
 				/* translators: %1$s: file name, %2$s: error message */
-					__( 'Upload error for file %1$s: %2$s', 'code-snippets' ),
-					$file_name,
-					$this->get_upload_error_message( $file_error )
-				);
+				$error_message = __( 'Upload error for file %1$s: %2$s', 'code-snippets' );
+				$errors[] = sprintf( $error_message, $file_name, $this->get_upload_error_message( $file_error ) );
 				continue;
 			}
 
@@ -127,23 +123,18 @@ class Files_Import_Manager {
 			$mime_type = sanitize_mime_type( $file_type );
 
 			if ( ! $this->is_valid_file_type( $extension, $mime_type ) ) {
-				$errors[] = sprintf(
 				/* translators: %s: file name */
-					__( 'Invalid file type for %s. Only JSON and XML files are allowed.', 'code-snippets' ),
-					$file_name,
-				);
+				$error_message = __( 'Invalid file type for %s. Only JSON and XML files are allowed.', 'code-snippets' );
+				$errors[] = sprintf( $error_message, $file_name );
 				continue;
 			}
 
 			$snippets = $this->parse_file_content( $file_tmp, $extension, $mime_type, $file_name );
 
 			if ( is_wp_error( $snippets ) ) {
-				$errors[] = sprintf(
 				/* translators: %1$s: file name, %2$s: error message */
-					__( 'Error parsing %1$s: %2$s', 'code-snippets' ),
-					$file_name,
-					$snippets->get_error_message(),
-				);
+				$error_message = __( 'Error parsing %1$s: %2$s', 'code-snippets' );
+				$errors[] = sprintf( $error_message, $file_name, $snippets->get_error_message() );
 			} else {
 				$all_snippets = array_merge( $all_snippets, $snippets );
 			}
@@ -223,19 +214,18 @@ class Files_Import_Manager {
 
 		$imported = $this->save_snippets( $snippets, $duplicate_action, $network );
 
+		/* translators: %d: number of snippets */
+		$message = _n(
+			'Successfully imported %d snippet.',
+			'Successfully imported %d snippets.',
+			count( $imported ),
+			'code-snippets',
+		);
+
 		$response = [
 			'imported'     => count( $imported ),
 			'imported_ids' => $imported,
-			'message'      => sprintf(
-			/* translators: %d: number of snippets */
-				_n(
-					'Successfully imported %d snippet.',
-					'Successfully imported %d snippets.',
-					count( $imported ),
-					'code-snippets',
-				),
-				count( $imported )
-			),
+			'message'      => sprintf( $message, count( $imported ) ),
 		];
 
 		return rest_ensure_response( $response );
@@ -278,14 +268,9 @@ class Files_Import_Manager {
 		}
 
 		if ( ! isset( $data['snippets'] ) || ! is_array( $data['snippets'] ) ) {
-			return new WP_Error(
-				'no_snippets_in_file',
-				sprintf(
-				/* translators: %s: file name */
-					__( 'No snippets found in file %s', 'code-snippets' ),
-					$file_name
-				)
-			);
+			/* translators: %s: file name */
+			$message = __( 'No snippets found in file %s', 'code-snippets' );
+			return new WP_Error( 'no_snippets_in_file', sprintf( $message, $file_name ) );
 		}
 
 		$snippets = [];
@@ -293,11 +278,11 @@ class Files_Import_Manager {
 			$snippet_data['source_file'] = $file_name;
 
 			$snippet_data['table_data'] = [
-				'id'          => $snippet_data['id'] ?? uniqid(),
-				'title'       => $snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' ),
-				'scope'       => $snippet_data['scope'] ?? 'global',
-				'tags'        => is_array( $snippet_data['tags'] ?? [] ) ? implode( ', ', $snippet_data['tags'] ) : '',				'description' => $snippet_data['desc'] ?? $snippet_data['description'] ?? '',
-				'type'        => Snippet::get_type_from_scope( $snippet_data['scope'] ?? 'global' ),
+				'id'    => $snippet_data['id'] ?? uniqid(),
+				'title' => $snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' ),
+				'scope' => $snippet_data['scope'] ?? 'global',
+				'tags'  => is_array( $snippet_data['tags'] ?? [] ) ? implode( ', ', $snippet_data['tags'] ) : '', 'description' => $snippet_data['desc'] ?? $snippet_data['description'] ?? '',
+				'type'  => Snippet::get_type_from_scope( $snippet_data['scope'] ?? 'global' ),
 			];
 
 			$snippets[] = $snippet_data;
@@ -307,17 +292,12 @@ class Files_Import_Manager {
 	}
 
 	private function parse_xml_file( string $file_path, string $file_name ) {
-		$dom = new \DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$dom = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 
 		if ( ! $dom->load( $file_path ) ) {
-			return new WP_Error(
-				'invalid_xml',
-				sprintf(
-				/* translators: %s: file name */
-					__( 'Invalid XML in file %s', 'code-snippets' ),
-					$file_name
-				)
-			);
+			/* translators: %s: file name */
+			$message = __( 'Invalid XML in file %s', 'code-snippets' );
+			return new WP_Error( 'invalid_xml', sprintf( $message, $file_name ) );
 		}
 
 		$snippets_xml = $dom->getElementsByTagName( 'snippet' );

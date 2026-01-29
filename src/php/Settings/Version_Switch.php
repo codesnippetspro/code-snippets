@@ -6,6 +6,7 @@ use Plugin_Upgrader;
 use WP_Ajax_Upgrader_Skin;
 use WP_Error;
 use WP_Upgrader_Skin;
+use function Code_Snippets\code_snippets;
 
 /**
  * Version switching functionality for the Code Snippets plugin.
@@ -468,7 +469,7 @@ class Version_Switch {
 	public static function ajax_refresh_versions(): void {
 		check_ajax_referer( 'code_snippets_refresh_versions', sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) ) );
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! code_snippets()->current_user_can() ) {
 			wp_send_json_error( [ 'message' => __( 'You do not have permission to manage options.', 'code-snippets' ) ] );
 		}
 
