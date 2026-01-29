@@ -693,7 +693,7 @@ class Snippet_Files {
 			$db->set_table_vars();
 		} else {
 			$active_shared_network_snippets = get_option( 'active_shared_network_snippets' );
-			if ( f≈alse !== $active_shared_network_snippets ) {
+			if ( false !== $active_shared_network_snippets ) {
 				$this->create_active_shared_network_snippets_file( $active_shared_network_snippets );
 			}
 		}

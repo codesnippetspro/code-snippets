@@ -79,6 +79,31 @@ class Settings_Menu extends Admin_Menu {
 		code_snippets()->localize_script( $handle );
 
 		$this->add_codemirror_settings_script( $handle );
+
+		// Provide configuration and simple i18n for the version switch JS module.
+		wp_localize_script(
+			$handle,
+			'code_snippets_version_switch',
+			[
+				'ajaxurl'       => admin_url( 'admin-ajax.php' ),
+				'nonce_switch'  => wp_create_nonce( 'code_snippets_version_switch' ),
+				'nonce_refresh' => wp_create_nonce( 'code_snippets_refresh_versions' ),
+			]
+		);
+
+		wp_localize_script(
+			$handle,
+			'__code_snippets_i18n',
+			[
+				'selectDifferent' => esc_html__( 'Please select a different version to switch to.', 'code-snippets' ),
+				'switching'       => esc_html__( 'Switching…', 'code-snippets' ),
+				'processing'      => esc_html__( 'Processing version switch. Please wait…', 'code-snippets' ),
+				'error'           => esc_html__( 'An error occurred.', 'code-snippets' ),
+				'errorSwitch'     => esc_html__( 'An error occurred while switching versions. Please try again.', 'code-snippets' ),
+				'refreshing'      => esc_html__( 'Refreshing…', 'code-snippets' ),
+				'refreshed'       => esc_html__( 'Refreshed!', 'code-snippets' ),
+			]
+		);
 	}
 
 	/**
@@ -127,25 +152,6 @@ class Settings_Menu extends Admin_Menu {
 		$inline_script = 'var code_snippets_editor_settings = ' . wp_json_encode( $editor_fields ) . ';';
 
 		wp_add_inline_script( $handle, $inline_script, 'before' );
-
-		// Provide configuration and simple i18n for the version switch JS module.
-		$version_switch = [
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'nonce_switch' => wp_create_nonce( 'code_snippets_version_switch' ),
-			'nonce_refresh' => wp_create_nonce( 'code_snippets_refresh_versions' ),
-		];
-
-		$strings = [
-			'selectDifferent' => esc_html__( 'Please select a different version to switch to.', 'code-snippets' ),
-			'switching' => esc_html__( 'Switching...', 'code-snippets' ),
-			'processing' => esc_html__( 'Processing version switch. Please wait...', 'code-snippets' ),
-			'error' => esc_html__( 'An error occurred.', 'code-snippets' ),
-			'errorSwitch' => esc_html__( 'An error occurred while switching versions. Please try again.', 'code-snippets' ),
-			'refreshing' => esc_html__( 'Refreshing...', 'code-snippets' ),
-			'refreshed' => esc_html__( 'Refreshed!', 'code-snippets' ),
-		];
-
-		wp_add_inline_script( 'code-snippets-settings-menu', 'var code_snippets_version_switch = ' . wp_json_encode( $version_switch ) . '; var __code_snippets_i18n = ' . wp_json_encode( $strings ) . ';', 'before' );
 	}
 
 	/**
