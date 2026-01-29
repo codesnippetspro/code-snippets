@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import classnames from 'classnames'
 import { WithRestAPIContext } from '../../../hooks/useRestAPI'
+import { isLicensed } from '../../../utils/screen'
 import { buildUrl, fetchQueryParam, updateQueryParam } from '../../../utils/urls'
+import { UpsellDialog } from '../../common/UpsellDialog'
 import { WithCloudSearchContext } from './WithCloudSearchContext'
 import { CloudSearch } from './CloudSearch'
 
@@ -14,36 +16,37 @@ const TAB_LABELS: Record<TabName, string> = {
 	bundles: __('Bundles', 'code-snippets')
 }
 
-interface NavTabsProps {
-	currentTab: TabName
-	setCurrentTab: (tab: TabName) => void
-}
-
-const NavTabs: React.FC<NavTabsProps> = ({ currentTab, setCurrentTab }) =>
-	<h2 className="nav-tab-wrapper">
-		{TABS.map(tab =>
-			<a
-				key={tab}
-				href={buildUrl(window.location.href, { type: tab })}
-				className={classnames('nav-tab', `${tab}-tab`, { 'nav-tab-active': tab === currentTab })}
-				onClick={event => {
-					event.preventDefault()
-					updateQueryParam('tab', tab)
-					setCurrentTab(tab)
-				}}
-			>
-				{TAB_LABELS[tab]}
-			</a>)}
-	</h2>
+const PRO_TABS: TabName[] = ['bundles']
 
 export const CommunityCloud = () => {
 	const [currentTab, setCurrentTab] = useState(() => fetchQueryParam('tab') as TabName | null ?? TABS[0])
+	const [isUpsellDialogOpen, setIsUpsellDialogOpen] = useState(false)
 
 	return (
 		<div className="wrap">
 			<h1>{__('Community Cloud', 'code-snippets')}</h1>
 
-			<NavTabs currentTab={currentTab} setCurrentTab={setCurrentTab} />
+			<h2 className="nav-tab-wrapper">
+				{TABS.map(tab =>
+					<a
+						key={tab}
+						href={buildUrl(window.location.href, { type: tab })}
+						className={classnames('nav-tab', `${tab}-tab`, { 'nav-tab-active': tab === currentTab })}
+						onClick={event => {
+							event.preventDefault()
+
+							if (PRO_TABS.includes(tab) && !isLicensed()) {
+								setIsUpsellDialogOpen(true)
+							} else {
+								updateQueryParam('tab', tab)
+								setCurrentTab(tab)
+							}
+						}}
+					>
+						{TAB_LABELS[tab]}
+						{PRO_TABS.includes(tab) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+					</a>)}
+			</h2>
 
 			{'snippets' === currentTab
 				? <WithRestAPIContext>
@@ -52,6 +55,8 @@ export const CommunityCloud = () => {
 					</WithCloudSearchContext>
 				</WithRestAPIContext>
 				: null}
+
+			<UpsellDialog isOpen={isUpsellDialogOpen} setIsOpen={setIsUpsellDialogOpen} />
 		</div>
 	)
 }

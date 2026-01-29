@@ -46,10 +46,12 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 							snippet={snippet}
 							disabled={isWorking}
 							setIsWorking={setIsWorking}
-							onSuccess={() =>
-								window.location.replace(buildUrl(window.CODE_SNIPPETS?.urls.manage, { result: 'deleted' }))}
-							onError={error =>
-								handleRequestError(error, __('Could not delete snippet.', 'code-snippets'))}
+							onSuccess={() => {
+								window.location.replace(buildUrl(window.CODE_SNIPPETS?.urls.manage, { result: 'deleted' }))
+							}}
+							onError={error => {
+								handleRequestError(error, __('Could not delete snippet.', 'code-snippets'))
+							}}
 						/>
 					</div> : null}
 			</div>

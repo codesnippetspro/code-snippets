@@ -97,17 +97,27 @@ $wpbody-block-indent: 20px;
 	li:last-of-type {
 		margin-inline-start: auto;
 	}
+}
 
-	.pro-chip {
-		color: #d46f4d;
-		text-transform: uppercase;
-		border: 2px solid currentcolor;
-		border-radius: 999px;
-		font-size: 12px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		box-sizing: border-box;
-		padding: 3px 9px;
-	}
+.code-snippets-toolbar-lower .pro-chip,
+.nav-tab .pro-chip {
+	color: #d46f4d;
+	text-transform: uppercase;
+	border: 2px solid currentcolor;
+	border-radius: 999px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 3px 9px;
+}
+
+
+.code-snippets-toolbar-lower .pro-chip {
+	font-size: 12px;
+}
+
+.nav-tab .pro-chip {
+	font-size: 10px;
+	padding: 0 6px;
 }

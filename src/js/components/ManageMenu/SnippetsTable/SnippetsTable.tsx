@@ -107,7 +107,7 @@ const SafeModeNotice = () =>
 					}
 				)}{'\n'}
 
-				<a href="https://help.codesnippets.pro/article/12-safe-mode" target="_blank" rel="noreferrer">
+				<a href="https://codesnippets.pro/doc/safe-mode" target="_blank" rel="noreferrer">
 					{__('Read more', 'code-snippets')}
 				</a>
 			</p>

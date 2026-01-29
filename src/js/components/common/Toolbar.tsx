@@ -19,7 +19,7 @@ interface NavLink {
 const UPPER_NAV_LINKS: NavLink[] = [
 	{
 		name: 'docs',
-		url: 'https://help.codesnippets.pro/',
+		url: 'https://codesnippets.pro/docs',
 		label: __('Docs', 'code-snippets'),
 		external: true
 	},
