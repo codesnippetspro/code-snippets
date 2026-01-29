@@ -14,6 +14,7 @@ import { MultisiteSharingSettings } from './controls/MultisiteSharingSettings'
 import { ExportButtons } from './actions/ExportButtons'
 import { SubmitButtons } from './actions/SubmitButtons'
 import { ActivationSwitch } from './controls/ActivationSwitch'
+import { LockControl } from './controls/LockControl'
 import { PriorityInput } from './controls/PriorityInput'
 import { RTLControl } from './controls/RTLControl'
 import type { Dispatch, SetStateAction } from 'react'
@@ -29,6 +30,8 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 		<div className="snippet-editor-sidebar">
 			<div className="box">
 				{snippet.id && !isCondition(snippet) ? <ActivationSwitch /> : null}
+
+				{snippet.id ? <LockControl /> : null}
 
 				{isNetworkAdmin() ? <MultisiteSharingSettings /> : null}
 

@@ -45,8 +45,8 @@
 	margin-inline: 0;
 }
 
-.name-column,
-.type-column {
+.column-name,
+.column-type {
 	.dashicons {
 		font-size: 16px;
 		inline-size: 16px;
@@ -56,6 +56,17 @@
 
 	.dashicons-clock {
 		vertical-align: middle;
+	}
+
+	.dashicons-lock {
+		color: #646970;
+		margin-inline-start: 4px;
+		opacity: 0.7;
+		cursor: help;
+
+		&:hover {
+			opacity: 1;
+		}
 	}
 }
 
@@ -145,6 +156,14 @@
 				background: none;
 			}
 		}
+
+		.delete {
+			&.disabled {
+				color: #a7aaad;
+				cursor: not-allowed;
+				pointer-events: none;
+			}
+		}
 	}
 
 	.column-activate {
@@ -183,7 +202,9 @@
 
 	.delete {
 		color: #b32d2e;
+	}
 
+	a.delete:not(.disabled) {
 		&:hover, &:focus, &:active {
 			border-block-end: 1px solid #f00;
 			color: #f00;

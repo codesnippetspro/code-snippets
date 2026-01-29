@@ -23,6 +23,7 @@ use function Code_Snippets\Utils\get_self_option;
  * @property int                    $condition_id       ID of the condition this snippet is linked to.
  * @property int                    $priority           Execution priority.
  * @property bool                   $active             The active status.
+ * @property bool                   $locked             Whether the snippet is locked from modification or deletion.
  * @property bool                   $network            true if is multisite-wide snippet, false if site-wide.
  * @property bool                   $shared_network     Whether the snippet is a shared network snippet.
  * @property string                 $modified           The date and time when the snippet data was most recently saved to the database.
@@ -81,6 +82,7 @@ class Snippet extends Model {
 			'scope'          => 'global',
 			'condition_id'   => 0,
 			'active'         => false,
+			'locked'         => false,
 			'priority'       => 10,
 			'network'        => null,
 			'shared_network' => null,
@@ -146,6 +148,9 @@ class Snippet extends Model {
 
 			case 'active':
 				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition() && -1 !== (int) $value;
+
+			case 'locked':
+				return is_bool( $value ) ? $value : (bool) $value;
 
 			default:
 				return $value;

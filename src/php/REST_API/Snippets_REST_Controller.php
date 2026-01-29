@@ -597,6 +597,10 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 					'description' => esc_html__( 'Snippet activation status.', 'code-snippets' ),
 					'type'        => 'boolean',
 				],
+				'locked'         => [
+					'description' => esc_html__( 'Whether the snippet is locked from modification or deletion.', 'code-snippets' ),
+					'type'        => 'boolean',
+				],
 				'priority'       => [
 					'description' => esc_html__( 'Relative priority in which the snippet is executed.', 'code-snippets' ),
 					'type'        => 'integer',
