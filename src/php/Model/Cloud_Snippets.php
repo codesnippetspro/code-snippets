@@ -93,7 +93,7 @@ class Cloud_Snippets extends Model {
 		if ( is_array( $initial_data ) && isset( $initial_data['meta'] ) ) {
 			$meta = $initial_data['meta'];
 			$normalized = [];
-			$normalized['snippets'] = $initial_data['snippets'] ?? $initial_data['data'] ?? [];
+			$normalized['snippets'] = $initial_data['data'] ?? $initial_data['snippets'] ?? [];
 			$normalized['total_snippets'] = isset( $meta['total'] ) ? (int) $meta['total'] : 0;
 			$normalized['total_pages'] = isset( $meta['total_pages'] ) ? (int) $meta['total_pages'] : 0;
 			$normalized['page'] = isset( $meta['page'] ) ? max( 0, (int) $meta['page'] - 1 ) : 0;

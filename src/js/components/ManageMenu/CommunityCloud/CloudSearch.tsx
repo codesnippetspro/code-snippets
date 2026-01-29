@@ -51,8 +51,12 @@ const SearchBox = () => {
 }
 
 const SearchResultsTable = () => {
-	const { page, totalItems, totalPages, setPage } = useCloudSearch()
+	const { page, totalItems, totalPages, setPage, doSearch } = useCloudSearch()
 	const { filteredSearchResults } = useCloudSearchFilters()
+
+	useEffect(() => {
+		doSearch()
+	}, [page])
 
 	return filteredSearchResults
 		? <>

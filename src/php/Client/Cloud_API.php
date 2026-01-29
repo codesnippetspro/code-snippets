@@ -176,16 +176,16 @@ class Cloud_API {
 	 *
 	 * @param string $search_method Search by name of codevault or keyword(s).
 	 * @param string $search        Search query.
-	 * @param int    $page          Search result page to retrieve. Defaults to '0'.
+	 * @param int    $page          Search result page to retrieve. Defaults to '1'.
 	 *
 	 * @return Cloud_Snippets Result of search query.
 	 */
-	public static function fetch_search_results( string $search_method, string $search, int $page = 0 ): Cloud_Snippets {
+	public static function fetch_search_results( string $search_method, string $search, int $page = 1 ): Cloud_Snippets {
 		$api_url = add_query_arg(
 			[
 				's_method'   => $search_method,
 				's'          => $search,
-				'page'       => $page,
+				'page'       => max( 0, $page - 1 ),
 				'site_token' => self::get_local_token(),
 				'site_host'  => wp_parse_url( get_site_url(), PHP_URL_HOST ),
 			],

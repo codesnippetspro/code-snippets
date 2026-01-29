@@ -13,6 +13,13 @@
 	font-size: 1.6rem;
 	padding: 0;
 	margin-block: 50px 1.4rem;
+
+	.subtitle {
+		vertical-align: middle;
+		display: inline-flex;
+		align-items: center;
+		gap: 1em;
+	}
 }
 
 .create-snippet-button {
