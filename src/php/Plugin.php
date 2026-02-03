@@ -12,10 +12,10 @@ use Code_Snippets\Integration\Classic_Editor\MCE_Plugin;
 use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Integration\Shortcodes;
-use Code_Snippets\Migration\Importers\Files\Files_Import_Manager;
-use Code_Snippets\Migration\Importers\Plugins\Plugins_Import_Manager;
 use Code_Snippets\REST_API\Cloud_Snippets_REST_Controller;
-use Code_Snippets\REST_API\REST_Endpoints;
+use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
+use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
+use Code_Snippets\REST_API\Recently_Active_REST_Controller;
 use Code_Snippets\REST_API\Snippets_REST_Controller;
 
 /**
@@ -126,9 +126,11 @@ class Plugin {
 			$this->admin = new Bootstrap_Admin();
 		}
 
-		new REST_Endpoints();
 		new Snippets_REST_Controller();
 		new Cloud_Snippets_REST_Controller();
+		new Recently_Active_REST_Controller();
+		new Plugins_Import_REST_Controller();
+		new File_Import_REST_Controller();
 
 		new Shortcodes();
 		new MCE_Plugin();
@@ -136,11 +138,6 @@ class Plugin {
 
 		$this->init_snippet_files();
 
-		// Importers.
-		new Plugins_Import_Manager();
-		new Files_Import_Manager();
-
-		// Initialize promotions.
 		new Integration\Promotions\Elementor_Pro();
 	}
 
@@ -302,15 +299,6 @@ class Plugin {
 	}
 
 	/**
-	 * Determine whether the current request originates in the network admin.
-	 *
-	 * @return bool
-	 */
-	public function is_network_context(): bool {
-		return is_network_admin();
-	}
-
-	/**
 	 * Get the required capability to perform a certain action on snippets.
 	 * Does not check if the user has this capability or not.
 	 *
@@ -322,15 +310,9 @@ class Plugin {
 	 * @since 2.0
 	 */
 	public function get_cap(): string {
-		if ( is_multisite() && $this->is_network_context() ) {
-			return $this->get_network_cap_name();
-		}
-
-		if ( is_multisite() && ! $this->is_subsite_menu_enabled() ) {
-			return $this->get_network_cap_name();
-		}
-
-		return $this->get_cap_name();
+		return is_multisite() && ( is_network_admin() || ! $this->is_subsite_menu_enabled() )
+			? $this->get_network_cap_name()
+			: $this->get_cap_name();
 	}
 
 	/**

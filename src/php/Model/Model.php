@@ -23,40 +23,30 @@ abstract class Model {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $default_values;
+	protected static array $default_values = [];
 
 	/**
 	 * Optional list of field name aliases to map when resolving a field name.
 	 *
 	 * @var array<string, string> Field alias names keyed to actual field names.
 	 */
-	protected array $field_aliases;
+	protected static array $field_aliases = [];
 
 	/**
 	 * Class constructor.
 	 *
-	 * @param array<string, mixed>       $default_values List of valid fields mapped to their default values.
-	 * @param array<string, mixed>|Model $initial_data   Optional initial data to populate fields.
-	 * @param array<string, string>      $field_aliases  Optional list of field name aliases to map when resolving a field name.
+	 * @param array<string, mixed>|Model $initial_data Optional initial data to populate fields.
 	 */
-	public function __construct( array $default_values, $initial_data = null, array $field_aliases = [] ) {
-		$this->fields = $default_values;
-		$this->default_values = $default_values;
-		$this->field_aliases = $field_aliases;
-
-		// If we've accidentally passed an existing object, then fetch its fields before constructing the new object.
-		if ( is_object( $initial_data ) && method_exists( $initial_data, 'get_fields' ) ) {
-			$initial_data = $initial_data->get_fields();
-		}
-
+	public function __construct( $initial_data = null ) {
+		assert( static::$default_values, get_class( $this ) . '::$default_values not set' );
+		$this->fields = static::$default_values;
 		$this->set_fields( $initial_data );
 	}
-
 
 	/**
 	 * Set all data fields from an array or object. Invalid fields will be ignored.
 	 *
-	 * @param array<string, mixed>|mixed $data List of data.
+	 * @param array<string, mixed>|Model|mixed $data List of data.
 	 */
 	public function set_fields( $data ) {
 		// Only accept arrays or objects.
@@ -66,7 +56,9 @@ abstract class Model {
 
 		// Convert objects into arrays.
 		if ( is_object( $data ) ) {
-			$data = get_object_vars( $data );
+			$data = method_exists( $data, 'get_fields' )
+				? $data->get_fields()
+				: get_object_vars( $data );
 		}
 
 		// Loop through the provided fields and set their values.
@@ -99,7 +91,7 @@ abstract class Model {
 		return array_filter(
 			$this->get_fields(),
 			function ( $value, $field ) {
-				return $value && $value !== $this->default_values[ $field ];
+				return $value && $value !== static::$default_values[ $field ];
 			},
 			ARRAY_FILTER_USE_BOTH
 		);
@@ -112,8 +104,8 @@ abstract class Model {
 	 *
 	 * @return string The resolved field name.
 	 */
-	protected function resolve_field_name( string $field ): string {
-		return $this->field_aliases[ $field ] ?? $field;
+	protected static function resolve_field_name( string $field ): string {
+		return self::$field_aliases[ $field ] ?? $field;
 	}
 
 	/**
@@ -124,7 +116,7 @@ abstract class Model {
 	 * @return bool Whether the field is set.
 	 */
 	public function __isset( string $field ) {
-		$field = $this->resolve_field_name( $field );
+		$field = self::resolve_field_name( $field );
 		return isset( $this->fields[ $field ] ) || method_exists( $this, 'get_' . $field );
 	}
 
@@ -138,7 +130,7 @@ abstract class Model {
 	 * @throws WP_Exception If the field name is not allowed.
 	 */
 	public function __get( string $field ) {
-		$field = $this->resolve_field_name( $field );
+		$field = self::resolve_field_name( $field );
 
 		if ( method_exists( $this, 'get_' . $field ) ) {
 			return call_user_func( array( $this, 'get_' . $field ) );
@@ -207,7 +199,7 @@ abstract class Model {
 	 * @return array<string> List of field names.
 	 */
 	public function get_allowed_fields(): array {
-		return array_keys( $this->fields ) + array_keys( $this->field_aliases );
+		return array_keys( $this->fields ) + array_keys( static::$field_aliases );
 	}
 
 	/**
@@ -219,7 +211,7 @@ abstract class Model {
 	 */
 	public function is_allowed_field( string $field ): bool {
 		return ( $this->fields && array_key_exists( $field, $this->fields ) ) ||
-		       ( $this->field_aliases && array_key_exists( $field, $this->field_aliases ) );
+		       ( static::$field_aliases && array_key_exists( $field, static::$field_aliases ) );
 	}
 
 	/**

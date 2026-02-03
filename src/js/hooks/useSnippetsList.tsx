@@ -10,7 +10,7 @@ export interface SnippetsListContext {
 	refreshSnippetsList: () => Promise<void>
 }
 
-const [SnippetsListContext, useSnippetsList] = createContextHook<SnippetsListContext>('useSnippetsList')
+const [Context, useSnippetsList] = createContextHook<SnippetsListContext>('useSnippetsList')
 
 export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const { fetchAll } = useSnippetsAPI()
@@ -36,7 +36,7 @@ export const WithSnippetsListContext: React.FC<PropsWithChildren> = ({ children 
 		refreshSnippetsList
 	}
 
-	return <SnippetsListContext.Provider value={value}>{children}</SnippetsListContext.Provider>
+	return <Context.Provider value={value}>{children}</Context.Provider>
 }
 
 export { useSnippetsList }

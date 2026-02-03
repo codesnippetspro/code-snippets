@@ -317,8 +317,6 @@ class DB {
 	 * @param bool          $active_only Whether to only fetch active snippets from the table.
 	 *
 	 * @return array<string, array<string, mixed>>|false List of active snippets, if any could be retrieved.
-	 *
-	 * @phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	 */
 	private static function fetch_snippets_from_table( string $table_name, array $scopes, bool $active_only = true ) {
 		global $wpdb;
@@ -338,6 +336,7 @@ class DB {
 		$extra_where = $active_only ? 'AND active=1' : '';
 
 		$snippets = $wpdb->get_results(
+			// phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$wpdb->prepare(
 				"
 				SELECT id, code, scope, active, priority

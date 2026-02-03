@@ -55,7 +55,7 @@ const buildRestAPI = (axiosInstance: AxiosInstance): RestAPI => ({
 			.then(response => response.data),
 })
 
-export const [RestAPIContext, useRestAPI] = createContextHook<RestAPIContext>('useRestAPI')
+const [Context, useRestAPI] = createContextHook<RestAPIContext>('useRestAPI')
 
 export const WithRestAPIContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const axiosInstance = useMemo(() => axios.create(REST_API_AXIOS_CONFIG), [])
@@ -63,5 +63,7 @@ export const WithRestAPIContext: React.FC<PropsWithChildren> = ({ children }) =>
 	const api = useMemo(() => buildRestAPI(axiosInstance), [axiosInstance])
 	const value: RestAPIContext = { api, axiosInstance }
 
-	return <RestAPIContext.Provider value={value}>{children}</RestAPIContext.Provider>
+	return <Context.Provider value={value}>{children}</Context.Provider>
 }
+
+export { useRestAPI }

@@ -1,38 +1,63 @@
 <?php
 
-namespace Code_Snippets\Migration\Importers\Files;
-
-/*
- * TODO: Add comments.
- *
- * phpcs:disable Squiz.Commenting
- */
+namespace Code_Snippets\REST_API\Import;
 
 use Code_Snippets\Model\Snippet;
 use DOMDocument;
-use WP_REST_Server;
-use WP_REST_Request;
 use WP_Error;
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_REST_Server;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\save_snippet;
 use const Code_Snippets\REST_API_NAMESPACE;
 
-class Files_Import_Manager {
+/**
+ * Manages the import of code snippets from uploaded files via REST API.
+ */
+class File_Import_REST_Controller {
 
+	/**
+	 * Current API version.
+	 */
 	public const VERSION = 1;
 
+	/**
+	 * The base of this controller's route.
+	 */
+	public const BASE_ROUTE = 'file-upload';
+
+	/**
+	 * The namespace of this controller's route.
+	 *
+	 * @var string
+	 */
+	protected string $namespace = REST_API_NAMESPACE . self::VERSION;
+
+	/**
+	 * The base of this controller's route.
+	 *
+	 * @var string
+	 */
+	protected string $rest_base = self::BASE_ROUTE;
+
+	/**
+	 * Constructor to initialize REST routes.
+	 */
 	public function __construct() {
 		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 	}
 
+	/**
+	 * Registers REST API routes for file import.
+	 */
 	public function register_rest_routes() {
-		$namespace = REST_API_NAMESPACE . self::VERSION;
 		$plugin = code_snippets();
 
 		register_rest_route(
-			$namespace,
-			'file-upload/parse',
+			$this->namespace,
+			$this->rest_base . '/parse',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'parse_uploaded_files' ],
@@ -41,8 +66,8 @@ class Files_Import_Manager {
 		);
 
 		register_rest_route(
-			$namespace,
-			'file-upload/import',
+			$this->namespace,
+			$this->rest_base . '/import',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'import_selected_snippets' ],
@@ -69,6 +94,13 @@ class Files_Import_Manager {
 		);
 	}
 
+	/**
+	 * Parses uploaded files and extracts code snippets.
+	 *
+	 * @param WP_REST_Request $request The REST request.
+	 *
+	 * @return WP_Error|WP_REST_Response Parsed snippets or error.
+	 */
 	public function parse_uploaded_files( WP_REST_Request $request ) {
 		$nonce = $request->get_header( 'X-WP-Nonce' );
 
@@ -80,17 +112,15 @@ class Files_Import_Manager {
 			);
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above via REST API header
-		if ( empty( $_FILES['files'] ) ) {
+		$files = $request->get_file_params();
+
+		if ( empty( $files ) ) {
 			return new WP_Error(
 				'no_files',
 				__( 'No files were uploaded.', 'code-snippets' ),
 				[ 'status' => 400 ]
 			);
 		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Nonce verified above, file data validated below
-		$files = $_FILES['files'];
 
 		if ( ! isset( $files['name'], $files['type'], $files['tmp_name'], $files['error'] ) ) {
 			return new WP_Error(
@@ -172,6 +202,13 @@ class Files_Import_Manager {
 		return rest_ensure_response( $response );
 	}
 
+	/**
+	 * Imports selected snippets into the system.
+	 *
+	 * @param WP_REST_Request $request The REST request.
+	 *
+	 * @return WP_Error|WP_REST_Response Import result or error.
+	 */
 	public function import_selected_snippets( WP_REST_Request $request ) {
 		$snippets_data = $request->get_param( 'snippets' );
 		$duplicate_action = $request->get_param( 'duplicate_action' ) ?? 'ignore';
@@ -231,6 +268,16 @@ class Files_Import_Manager {
 		return rest_ensure_response( $response );
 	}
 
+	/**
+	 * Parses the content of a file based on its type.
+	 *
+	 * @param string $file_path The path to the file.
+	 * @param string $extension The file extension.
+	 * @param string $mime_type The MIME type of the file.
+	 * @param string $file_name The original file name.
+	 *
+	 * @return array|WP_Error Parsed snippets or error.
+	 */
 	private function parse_file_content( string $file_path, string $extension, string $mime_type, string $file_name ) {
 		if ( ! file_exists( $file_path ) || ! is_file( $file_path ) ) {
 			return new WP_Error(
@@ -251,8 +298,20 @@ class Files_Import_Manager {
 		);
 	}
 
+	/**
+	 * Parses a JSON file to extract snippets.
+	 *
+	 * @param string $file_path The path to the JSON file.
+	 * @param string $file_name The original file name.
+	 *
+	 * @return array|WP_Error Parsed snippets or error.
+	 */
 	private function parse_json_file( string $file_path, string $file_name ) {
+
+		// TODO: replace this with use of WordPress Filesystem API.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$raw_data = file_get_contents( $file_path );
+
 		$data = json_decode( $raw_data, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
@@ -278,11 +337,12 @@ class Files_Import_Manager {
 			$snippet_data['source_file'] = $file_name;
 
 			$snippet_data['table_data'] = [
-				'id'    => $snippet_data['id'] ?? uniqid(),
-				'title' => $snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' ),
-				'scope' => $snippet_data['scope'] ?? 'global',
-				'tags'  => is_array( $snippet_data['tags'] ?? [] ) ? implode( ', ', $snippet_data['tags'] ) : '', 'description' => $snippet_data['desc'] ?? $snippet_data['description'] ?? '',
-				'type'  => Snippet::get_type_from_scope( $snippet_data['scope'] ?? 'global' ),
+				'id'          => $snippet_data['id'] ?? uniqid(),
+				'title'       => $snippet_data['name'] ?? __( 'Untitled Snippet', 'code-snippets' ),
+				'scope'       => $snippet_data['scope'] ?? 'global',
+				'tags'        => is_array( $snippet_data['tags'] ?? [] ) ? implode( ', ', $snippet_data['tags'] ) : '',
+				'description' => $snippet_data['desc'] ?? $snippet_data['description'] ?? '',
+				'type'        => Snippet::get_type_from_scope( $snippet_data['scope'] ?? 'global' ),
 			];
 
 			$snippets[] = $snippet_data;
@@ -291,6 +351,16 @@ class Files_Import_Manager {
 		return $snippets;
 	}
 
+	/**
+	 * Parse snippets from XML file for importing.
+	 *
+	 * @param string $file_path Path to file.
+	 * @param string $file_name Name of file.
+	 *
+	 * @return array|WP_Error
+	 *
+	 * phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+	 */
 	private function parse_xml_file( string $file_path, string $file_name ) {
 		$dom = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
 
@@ -339,6 +409,15 @@ class Files_Import_Manager {
 		return $snippets;
 	}
 
+	/**
+	 * Saves snippets to the database, handling duplicates based on the specified action.
+	 *
+	 * @param array  $snippets         Array of Snippet objects to save.
+	 * @param string $duplicate_action Action to take on duplicates: 'ignore', 'replace', or 'skip'.
+	 * @param bool   $network          Whether to save to the network table.
+	 *
+	 * @return array Array of imported snippet IDs.
+	 */
 	private function save_snippets( array $snippets, string $duplicate_action, bool $network ): array {
 		$existing_snippets = [];
 
@@ -375,6 +454,14 @@ class Files_Import_Manager {
 		return $imported;
 	}
 
+	/**
+	 * Determines if the file type is valid for import.
+	 *
+	 * @param string $extension File extension, without leading dot.
+	 * @param string $mime_type MIME type of the file.
+	 *
+	 * @return bool
+	 */
 	private function is_valid_file_type( string $extension, string $mime_type ): bool {
 		$valid_extensions = [ 'json', 'xml' ];
 		$valid_mime_types = [ 'application/json', 'text/xml', 'application/xml' ];
@@ -384,6 +471,13 @@ class Files_Import_Manager {
 	}
 
 
+	/**
+	 * Convert upload error code into a human-readable message.
+	 *
+	 * @param int $error_code Error code.
+	 *
+	 * @return string Translated error message.
+	 */
 	private function get_upload_error_message( int $error_code ): string {
 		$error_messages = [
 			UPLOAD_ERR_INI_SIZE   => __( 'File exceeds the upload_max_filesize directive.', 'code-snippets' ),

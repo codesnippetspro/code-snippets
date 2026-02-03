@@ -13,7 +13,7 @@ import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { Notice } from '../../common/Notice'
 import { UpsellDialog } from '../../common/UpsellDialog'
-import { WithSnippetsTableFiltersContext, useSnippetsFilters } from './WithSnippetsTableFiltersContext'
+import { WithSnippetsTableFilters, useSnippetsFilters } from './WithSnippetsTableFilters'
 import { WithFilteredSnippetsContext } from './WithFilteredSnippetsContext'
 import { SnippetsListTable } from './SnippetsListTable'
 import type { SnippetType } from '../../../types/Snippet'
@@ -140,9 +140,9 @@ export const SnippetsTable: React.FC = () =>
 	<WithRestAPIContext>
 		<WithSnippetsAPIContext>
 			<WithSnippetsListContext>
-				<WithSnippetsTableFiltersContext>
+				<WithSnippetsTableFilters>
 					<SnippetsTableInner />
-				</WithSnippetsTableFiltersContext>
+				</WithSnippetsTableFilters>
 			</WithSnippetsListContext>
 		</WithSnippetsAPIContext>
 	</WithRestAPIContext>

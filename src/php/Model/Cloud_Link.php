@@ -16,22 +16,17 @@ namespace Code_Snippets\Model;
 class Cloud_Link extends Model {
 
 	/**
-	 * Constructor function
+	 * List of default values provided for fields.
 	 *
-	 * @param array<string, mixed>|object $data Initial data fields.
+	 * @var array<string, mixed>
 	 */
-	public function __construct( $data = null ) {
-		parent::__construct(
-			[
-				'local_id'         => 0,
-				'cloud_id'         => 0,
-				'is_owner'         => false,
-				'in_codevault'     => false,
-				'update_available' => false,
-			],
-			$data
-		);
-	}
+	protected static array $default_values = [
+		'local_id'         => 0,
+		'cloud_id'         => 0,
+		'is_owner'         => false,
+		'in_codevault'     => false,
+		'update_available' => false,
+	];
 
 	/**
 	 * Prepare a value before it is stored.

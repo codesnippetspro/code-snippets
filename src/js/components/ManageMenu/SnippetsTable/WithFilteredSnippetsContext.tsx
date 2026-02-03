@@ -3,23 +3,42 @@ import { createContextHook } from '../../../utils/bootstrap'
 import { parseSnippetObject } from '../../../utils/snippets/objects'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
-import { useSnippetsFilters } from './WithSnippetsTableFiltersContext'
-import type { PropsWithChildren} from 'react'
+import { useSnippetsFilters } from './WithSnippetsTableFilters'
+import type { PropsWithChildren } from 'react'
 import type { Snippet, SnippetStatus } from '../../../types/Snippet'
+
+const pushToMapArray = <K, V>(map: Map<K, V[]>, key: K, value: V) => {
+	if (!map.get(key)?.push(value)) {
+		map.set(key, [value])
+	}
+}
+
+const getSnippetStatus = (snippet: Snippet): SnippetStatus => {
+	if (snippet.trashed) {
+		return 'trashed'
+	}
+
+	if (snippet.active) {
+		return 'active'
+	}
+
+	if (snippet.lastActive) {
+		return 'recently_activated'
+	}
+
+	return 'inactive'
+}
 
 const partitionSnippetsByStatus = (snippets: Snippet[]): Map<SnippetStatus | undefined, Snippet[]> =>
 	snippets.reduce((acc, snippet) => {
-		if (!acc.get(undefined)?.push(snippet)) {
-			acc.set(undefined, [snippet])
+		const status = getSnippetStatus(snippet)
+		pushToMapArray(acc, status, snippet)
+
+		if ('trashed' !== status) {
+			pushToMapArray(acc, undefined, snippet)
 		}
 
-		const status = snippet.lastActive
-			? 'recently_activated'
-			: snippet.active ? 'active' : 'inactive'
-
-		if (!acc.get(status)?.push(snippet)) {
-			acc.set(status, [snippet])
-		}
+		pushToMapArray(acc, snippet.locked ? 'locked' : 'unlocked', snippet)
 
 		return acc
 	}, new Map<SnippetStatus | undefined, Snippet[]>())
@@ -27,28 +46,26 @@ const partitionSnippetsByStatus = (snippets: Snippet[]): Map<SnippetStatus | und
 const partitionActiveSnippetsByCondition = (snippets: readonly Snippet[]): Map<Snippet['conditionId'], Snippet[]> =>
 	snippets.reduce((acc, snippet) => {
 		if (snippet.active) {
-			if (!acc.get(snippet.conditionId)?.push(snippet)) {
-				acc.set(snippet.conditionId, [snippet])
-			}
+			pushToMapArray(acc, snippet.conditionId, snippet)
 		}
 
 		return acc
 	}, new Map<Snippet['conditionId'], Snippet[]>())
-
-export const [FilteredSnippetsContext, useFilteredSnippets] = createContextHook<FilteredSnippetsContext>('useFilteredSnippets')
 
 export interface FilteredSnippetsContext {
 	snippetsByStatus: Map<SnippetStatus | undefined, Snippet[]>
 	activeByCondition: Map<Snippet['conditionId'], Snippet[]>
 }
 
+const [Context, useFilteredSnippets] = createContextHook<FilteredSnippetsContext>('useFilteredSnippets')
+
 export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const { snippetsList } = useSnippetsList()
 	const { currentType, currentTag, searchLineNumber, searchQueryText } = useSnippetsFilters()
 
 	const snippets = useMemo(() =>
-		snippetsList ?? window.CODE_SNIPPETS_MANAGE?.snippetsList.map(parseSnippetObject) ?? [],
-	[snippetsList])
+			snippetsList ?? window.CODE_SNIPPETS_MANAGE?.snippetsList.map(parseSnippetObject) ?? [],
+		[snippetsList])
 
 	const visibleSnippets = useMemo(() => {
 		const searchFields = ['name', 'desc', 'code', 'tags'] as const
@@ -76,8 +93,8 @@ export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ child
 	}, [snippets, currentTag, currentType, searchQueryText, searchLineNumber])
 
 	const snippetsByStatus = useMemo(() =>
-		partitionSnippetsByStatus(visibleSnippets),
-	[visibleSnippets])
+			partitionSnippetsByStatus(visibleSnippets),
+		[visibleSnippets])
 
 	const activeByCondition = useMemo(
 		() => partitionActiveSnippetsByCondition(snippets),
@@ -88,5 +105,7 @@ export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ child
 		activeByCondition
 	}
 
-	return <FilteredSnippetsContext.Provider value={value}>{children}</FilteredSnippetsContext.Provider>
+	return <Context.Provider value={value}>{children}</Context.Provider>
 }
+
+export { useFilteredSnippets }

@@ -1,9 +1,9 @@
-import React, { useMemo , useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
 import { fetchQueryParam } from '../../../utils/urls'
 import { useCloudSearch } from './WithCloudSearchContext'
 import type { CloudSearchFilters } from './SearchFilters'
-import type { Dispatch, PropsWithChildren, SetStateAction} from 'react'
+import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 
 interface CloudSearchFiltersContext {
@@ -12,7 +12,7 @@ interface CloudSearchFiltersContext {
 	filteredSearchResults?: CloudSnippetSchema[]
 }
 
-export const [CloudSearchFiltersContext, useCloudSearchFilters] = createContextHook<CloudSearchFiltersContext>('useCloudSearchFilters')
+const [Context, useCloudSearchFilters] = createContextHook<CloudSearchFiltersContext>('useCloudSearchFilters')
 
 export const WithCloudSearchFiltersContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const { searchResults } = useCloudSearch()
@@ -36,5 +36,7 @@ export const WithCloudSearchFiltersContext: React.FC<PropsWithChildren> = ({ chi
 		filteredSearchResults
 	}
 
-	return <CloudSearchFiltersContext.Provider value={value}>{children}</CloudSearchFiltersContext.Provider>
+	return <Context.Provider value={value}>{children}</Context.Provider>
 }
+
+export { useCloudSearchFilters }

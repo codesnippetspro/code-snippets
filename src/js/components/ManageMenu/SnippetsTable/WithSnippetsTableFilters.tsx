@@ -20,7 +20,7 @@ const parseSearchQuery = (query?: string): [string | undefined, number | undefin
 		: [query, undefined]
 }
 
-export interface SnippetsFiltersContext {
+export interface SnippetsTableFiltersContext {
 	currentTag: string | undefined
 	currentType: SnippetType | undefined
 	searchQuery: string | undefined
@@ -33,9 +33,9 @@ export interface SnippetsFiltersContext {
 	searchQueryText?: string
 }
 
-export const [SnippetsFiltersContext, useSnippetsFilters] = createContextHook<SnippetsFiltersContext>('useSnippetsFilters')
+const [Context, useSnippetsFilters] = createContextHook<SnippetsTableFiltersContext>('useSnippetsFilters')
 
-export const WithSnippetsTableFiltersContext: React.FC<PropsWithChildren> = ({ children }) => {
+export const WithSnippetsTableFilters: React.FC<PropsWithChildren> = ({ children }) => {
 	const [currentTag, setTag] = useState(() => fetchQueryParam('tag'))
 	const [searchQuery, setSearch] = useState(() => fetchQueryParam('s'))
 
@@ -72,7 +72,7 @@ export const WithSnippetsTableFiltersContext: React.FC<PropsWithChildren> = ({ c
 		() => parseSearchQuery(searchQuery),
 		[searchQuery])
 
-	const value: SnippetsFiltersContext = {
+	const value: SnippetsTableFiltersContext = {
 		currentTag,
 		currentType,
 		searchQuery,
@@ -82,5 +82,7 @@ export const WithSnippetsTableFiltersContext: React.FC<PropsWithChildren> = ({ c
 		...setters
 	}
 
-	return <SnippetsFiltersContext.Provider value={value}>{children}</SnippetsFiltersContext.Provider>
+	return <Context.Provider value={value}>{children}</Context.Provider>
 }
+
+export { useSnippetsFilters }

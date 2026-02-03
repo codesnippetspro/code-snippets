@@ -24,7 +24,7 @@ export interface CloudSearchContext {
 	setSearchByCodevault: Dispatch<SetStateAction<boolean>>
 }
 
-export const [CloudSearchContext, useCloudSearch] = createContextHook<CloudSearchContext>('useCloudSearch')
+const [Context, useCloudSearch] = createContextHook<CloudSearchContext>('useCloudSearch')
 
 export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const { api } = useRestAPI()
@@ -76,5 +76,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		setSearchByCodevault
 	}
 
-	return <CloudSearchContext.Provider value={value}>{children}</CloudSearchContext.Provider>
+	return <Context.Provider value={value}>{children}</Context.Provider>
 }
+
+export { useCloudSearch }

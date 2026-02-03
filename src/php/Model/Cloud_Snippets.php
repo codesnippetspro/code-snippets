@@ -18,28 +18,38 @@ namespace Code_Snippets\Model;
 class Cloud_Snippets extends Model {
 
 	/**
+	 * List of default values provided for fields.
+	 *
+	 * @var array<string, mixed>
+	 */
+	protected static array $default_values = [
+		'snippets'       => [],
+		'total_snippets' => 0,
+		'total_pages'    => 0,
+		'page'           => 0,
+		'cloud_id_rev'   => [],
+	];
+
+	/**
+	 * List of field name aliases to map when resolving a field name.
+	 *
+	 * @var array<string, string> Field alias names keyed to actual field names.
+	 */
+	protected static array $field_aliases = [
+		'items'        => 'snippets',
+		'total_items'  => 'total_snippets',
+		'page'         => 'page',
+		'cloud_id_rev' => 'cloud_id_rev',
+	];
+
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param Cloud_Snippet $initial_data Initial data.
 	 */
 	public function __construct( $initial_data = null ) {
-		$initial_data = $this->normalize_cloud_api( $initial_data );
-		parent::__construct(
-			[
-				'snippets'       => [],
-				'total_snippets' => 0,
-				'total_pages'    => 0,
-				'page'           => 0,
-				'cloud_id_rev'   => [],
-			],
-			$initial_data,
-			[
-				'items'        => 'snippets',
-				'total_items'  => 'total_snippets',
-				'page'         => 'page',
-				'cloud_id_rev' => 'cloud_id_rev',
-			]
-		);
+		parent::__construct( $this->normalize_cloud_api( $initial_data ) );
 	}
 
 	/**

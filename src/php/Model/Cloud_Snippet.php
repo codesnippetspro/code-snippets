@@ -29,34 +29,29 @@ use function Code_Snippets\code_snippets_build_tags_array;
 class Cloud_Snippet extends Model {
 
 	/**
-	 * Constructor function.
+	 * List of default values provided for fields.
 	 *
-	 * @param array<string, mixed>|null $initial_data Initial snippet data.
+	 * @var array<string, mixed>
 	 */
-	public function __construct( ?array $initial_data = null ) {
-		parent::__construct(
-			[
-				'id'             => '',
-				'cloud_id'       => '',
-				'name'           => '',
-				'description'    => '',
-				'code'           => '',
-				'tags'           => [],
-				'scope'          => '',
-				'status'         => '',
-				'codevault'      => '',
-				'total_votes'    => '',
-				'vote_count'     => '',
-				'wp_tested'      => '',
-				'created'        => '',
-				'updated'        => '',
-				'revision'       => 0,
-				'is_owner'       => false,
-				'shared_network' => false,
-			],
-			$initial_data
-		);
-	}
+	protected static array $default_values = [
+		'id'             => '',
+		'cloud_id'       => '',
+		'name'           => '',
+		'description'    => '',
+		'code'           => '',
+		'tags'           => [],
+		'scope'          => '',
+		'status'         => '',
+		'codevault'      => '',
+		'total_votes'    => '',
+		'vote_count'     => '',
+		'wp_tested'      => '',
+		'created'        => '',
+		'updated'        => '',
+		'revision'       => 0,
+		'is_owner'       => false,
+		'shared_network' => false,
+	];
 
 	/**
 	 * Prepare a value before it is stored.

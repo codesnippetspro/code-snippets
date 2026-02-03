@@ -17,10 +17,10 @@ export const createContextHook = <T, >(hookName: string): [
 	Context<T | undefined>,
 	() => T
 ] => {
-	const contextValue = createContext<T | undefined>(undefined)
+	const Context = createContext<T | undefined>(undefined)
 
 	const useContextHook = (): T => {
-		const value = useContext(contextValue)
+		const value = useContext(Context)
 
 		if (value === undefined) {
 			throw Error(`${hookName} can only be used within a corresponding context provider.`)
@@ -29,5 +29,5 @@ export const createContextHook = <T, >(hookName: string): [
 		return value
 	}
 
-	return [contextValue, useContextHook]
+	return [Context, useContextHook]
 }

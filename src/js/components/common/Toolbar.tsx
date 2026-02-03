@@ -5,11 +5,11 @@ import { isLicensed, shouldShowUpsell } from '../../utils/screen'
 import { buildUrl, fetchQueryParam } from '../../utils/urls'
 import { CommunityIcon, LibraryIcon, SettingsIcon, SnippetsIcon, TeamsIcon } from './icons/ToolbarIcons'
 import { UpsellDialog } from './UpsellDialog'
-import type { ReactNode} from 'react'
+import type { ReactNode } from 'react'
 
 interface NavLink {
 	name: string
-	url: string | undefined
+	url?: string
 	label: string
 	external?: boolean
 	icon?: ReactNode
@@ -45,20 +45,17 @@ const LOWER_NAV_LINKS: NavLink[] = [
 	},
 	{
 		name: 'cloud-community',
-		url: buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: 'cloud-community' }),
 		label: __('Community Cloud', 'code-snippets'),
 		icon: <CommunityIcon />
 	},
 	{
 		name: 'cloud-library',
-		url: undefined,
 		label: __('My Library', 'code-snippets'),
 		icon: <LibraryIcon />,
 		pro: true
 	},
 	{
 		name: 'cloud-teams',
-		url: undefined,
 		label: __('My Teams', 'code-snippets'),
 		icon: <TeamsIcon />,
 		pro: true
@@ -126,7 +123,7 @@ const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 			{LOWER_NAV_LINKS.map(({ name, url, label, pro, icon }) =>
 				<li key={name}>
 					<a
-						href={url}
+						href={url ?? buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: name })}
 						className={classnames(`${name}-link`, { 'active-link': currentPage?.endsWith(name) })}
 						onClick={event => {
 							if (pro && !isLicensed()) {

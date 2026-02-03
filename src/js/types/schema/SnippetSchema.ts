@@ -9,6 +9,7 @@ export interface WritableSnippetSchema {
 	condition_id?: number
 	active?: boolean
 	locked?: boolean
+	trashed?: boolean
 	priority?: number
 	network?: boolean | null
 	shared_network?: boolean | null

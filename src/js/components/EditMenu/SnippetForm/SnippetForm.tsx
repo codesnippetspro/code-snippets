@@ -86,7 +86,7 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 	const [submitAction, setSubmitAction] = useState<SubmitSnippetAction | undefined>()
 
 	const doSubmit = (action?: SubmitSnippetAction) => {
-		submitSnippet(action)
+		submitSnippet(snippet, action)
 			.then(response => {
 				if (response && 0 !== response.id && window.CODE_SNIPPETS) {
 					if (window.location.href.toString().includes(window.CODE_SNIPPETS.urls.addNew)) {

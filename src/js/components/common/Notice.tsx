@@ -24,7 +24,7 @@ export const DismissibleNotice: React.FC<DismissibleNoticeProps> = ({ className,
 	<Notice className={classnames('is-dismissible', className)} {...noticeProps}>
 		{children}
 
-		<button type="button" className="banner-dismiss" onClick={event => {
+		<button type="button" className="notice-dismiss" onClick={event => {
 			event.preventDefault()
 			onDismiss()
 		}}>

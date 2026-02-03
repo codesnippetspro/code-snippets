@@ -3,7 +3,7 @@ import { __, sprintf } from '@wordpress/i18n'
 import { Button } from '../../common/Button'
 import { ImportCard } from '../common/ImportCard'
 import type { UseSelection } from '../../../hooks/useSelection'
-import type { ImportableSnippet } from './WithMigrationContext'
+import type { ImportableSnippet } from './WithMigrationData'
 
 interface TableNavProps extends SimpleSnippetTableProps {
 	which: 'top' | 'bottom'

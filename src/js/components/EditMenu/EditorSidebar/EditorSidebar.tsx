@@ -31,8 +31,6 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 			<div className="box">
 				{snippet.id && !isCondition(snippet) ? <ActivationSwitch /> : null}
 
-				{snippet.id ? <LockControl /> : null}
-
 				{isNetworkAdmin() ? <MultisiteSharingSettings /> : null}
 
 				{isRTL() ? <RTLControl /> : null}
@@ -42,12 +40,14 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 				<ShortcodeInfo />
 				<PriorityInput />
 
+				{snippet.id ? <LockControl /> : null}
+
 				{snippet.id
 					? <div className="row-actions visible inline-form-field">
 						<ExportButtons />
 						<DeleteButton
 							snippet={snippet}
-							disabled={isWorking}
+							disabled={isWorking || snippet.locked}
 							setIsWorking={setIsWorking}
 							onSuccess={() => {
 								window.location.replace(buildUrl(window.CODE_SNIPPETS?.urls.manage, { result: 'deleted' }))

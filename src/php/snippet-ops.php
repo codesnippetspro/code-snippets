@@ -23,15 +23,9 @@ use function Code_Snippets\Utils\update_self_option;
  *
  * @return bool Whether the snippet is locked.
  */
-function get_snippet_locked( int $snippet_id, ?bool $network = null ): bool {
+function is_snippet_locked( int $snippet_id, ?bool $network = null ): bool {
 	$network = DB::validate_network_param( $network );
-	$option_name = 'code_snippets_locked';
-
-	if ( $network && is_multisite() ) {
-		$locked_snippets = get_site_option( $option_name, array() );
-	} else {
-		$locked_snippets = get_option( $option_name, array() );
-	}
+	$locked_snippets = get_self_option( $network, 'code_snippets_locked', [] );
 
 	return isset( $locked_snippets[ $snippet_id ] ) && $locked_snippets[ $snippet_id ];
 }
@@ -40,20 +34,14 @@ function get_snippet_locked( int $snippet_id, ?bool $network = null ): bool {
  * Set the locked status for a snippet in wp_options.
  *
  * @param int       $snippet_id Snippet ID.
- * @param bool       $locked     Whether the snippet should be locked.
- * @param bool|null  $network    Whether the snippet is network-wide (true) or site-wide (false).
+ * @param bool      $locked     Whether the snippet should be locked.
+ * @param bool|null $network    Whether the snippet is network-wide (true) or site-wide (false).
  *
  * @return void
  */
 function set_snippet_locked( int $snippet_id, bool $locked, ?bool $network = null ): void {
 	$network = DB::validate_network_param( $network );
-	$option_name = 'code_snippets_locked';
-
-	if ( $network && is_multisite() ) {
-		$locked_snippets = get_site_option( $option_name, array() );
-	} else {
-		$locked_snippets = get_option( $option_name, array() );
-	}
+	$locked_snippets = get_self_option( $network, 'code_snippets_locked', [] );
 
 	if ( $locked ) {
 		$locked_snippets[ $snippet_id ] = true;
@@ -61,11 +49,7 @@ function set_snippet_locked( int $snippet_id, bool $locked, ?bool $network = nul
 		unset( $locked_snippets[ $snippet_id ] );
 	}
 
-	if ( $network && is_multisite() ) {
-		update_site_option( $option_name, $locked_snippets );
-	} else {
-		update_option( $option_name, $locked_snippets );
-	}
+	update_self_option( $network, 'code_snippets_locked', $locked_snippets );
 }
 
 /**
@@ -139,7 +123,7 @@ function get_snippets( array $ids = array(), ?bool $network = null ): array {
 					$snippet = new Snippet( $snippet_data );
 					// Load locked from wp_options.
 					if ( $snippet->id > 0 ) {
-						$snippet->locked = get_snippet_locked( $snippet->id, $network );
+						$snippet->locked = is_snippet_locked( $snippet->id, $network );
 					}
 					return $snippet;
 				},
@@ -274,7 +258,7 @@ function get_snippet( int $id = 0, ?bool $network = null ): Snippet {
 
 	// Load locked from wp_options if snippet has an ID.
 	if ( $snippet->id > 0 ) {
-		$snippet->locked = get_snippet_locked( $snippet->id, $network );
+		$snippet->locked = is_snippet_locked( $snippet->id, $network );
 	}
 
 	return apply_filters( 'code_snippets/get_snippet', $snippet, $id, $network );
@@ -558,20 +542,13 @@ function trash_snippet( int $id, ?bool $network = null ): bool {
 		return false;
 	}
 
-	$result = $wpdb->update(
-		$table,
-		array( 'active' => '-1' ),
-		array( 'id' => $id ),
-		array( '%d' )
-	);
+	$wpdb->update( $table, [ 'active' => '-1' ], [ 'id' => $id ], [ '%d' ] );
 
-	if ( $result ) {
-		do_action( 'code_snippets/trash_snippet', $snippet, $network );
-		clean_snippets_cache( $table );
-		code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
-	}
+	do_action( 'code_snippets/trash_snippet', $snippet, $network );
+	clean_snippets_cache( $table );
+	code_snippets()->cloud_api->delete_snippet_from_transient_data( $id );
 
-	return (bool) $result;
+	return true;
 }
 
 /**
@@ -590,12 +567,7 @@ function restore_snippet( int $id, ?bool $network = null ): bool {
 	$network = DB::validate_network_param( $network );
 	$table = code_snippets()->db->get_table_name( $network );
 
-	$result = $wpdb->update(
-		$table,
-		array( 'active' => '0' ),
-		array( 'id' => $id ),
-		array( '%d' )
-	);
+	$result = $wpdb->update( $table, [ 'active' => '0' ], [ 'id' => $id ], [ '%d' ] );
 
 	if ( $result ) {
 		do_action( 'code_snippets/restore_snippet', $id, $network );
@@ -717,18 +689,20 @@ function save_snippet( $snippet ): ?Snippet {
 		$snippet->id = $wpdb->insert_id;
 		$updated = get_snippet( $snippet->id );
 		do_action( 'code_snippets/create_snippet', $updated, $table );
+
+		if ( $updated->id > 0 ) {
+			set_snippet_locked( $updated->id, $updated->locked, $updated->network );
+		}
 	} else {
+		// Otherwise, update the snippet data.
 		$existing = get_snippet( $snippet->id, $snippet->network );
 
-		// Otherwise, update the snippet data.
-		$result = $wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
-
-		if ( false === $result ) {
-			return null;
-		}
+		set_snippet_locked( $snippet->id, $snippet->locked, $snippet->network );
+		$wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
 
 		$updated = get_snippet( $snippet->id, $snippet->network );
-		do_action( 'code_snippets/update_snippet', $updated, $table, $existing );
+
+		do_action( 'code_snippets/update_snippet', $updated, $table, $existing, $snippet );
 
 		if ( ! $updated->active && $existing->active ) {
 			$recently_active = [ $updated->id => time() ] + get_self_option( $updated->network, 'recently_activated_snippets', [] );
@@ -741,11 +715,6 @@ function save_snippet( $snippet ): ?Snippet {
 				update_self_option( $updated->network, 'recently_activated_snippets', $recently_active );
 			}
 		}
-	}
-
-	// Save locked to wp_options.
-	if ( $updated->id > 0 ) {
-		set_snippet_locked( $updated->id, $updated->locked, $updated->network );
 	}
 
 	update_shared_network_snippets( [ $updated ] );
@@ -830,7 +799,7 @@ function get_snippet_by_cloud_id( string $cloud_id, ?bool $multisite = null ): ?
 	// Load locked from wp_options if snippet exists.
 	if ( $snippet && $snippet->id > 0 ) {
 		$snippet->network = $multisite;
-		$snippet->locked = get_snippet_locked( $snippet->id, $multisite );
+		$snippet->locked = is_snippet_locked( $snippet->id, $multisite );
 	}
 
 	return apply_filters( 'code_snippets/get_snippet_by_cloud_id', $snippet, $cloud_id, $multisite );

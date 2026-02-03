@@ -1,7 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n'
 import { buildUrl } from '../urls'
 import { parseSnippetObject } from './objects'
-import type { Snippet, SnippetType } from '../../types/Snippet'
+import type { Snippet, SnippetScope, SnippetType } from '../../types/Snippet'
 
 export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
 	php: __('Functions', 'code-snippets'),
@@ -65,7 +65,7 @@ export const validateSnippet = (snippet: Snippet): undefined | string => {
 	}
 }
 
-export const isCondition = (snippet: Pick<Snippet, 'scope'>): boolean =>
+export const isCondition = (snippet: { scope?: SnippetScope }): boolean =>
 	'condition' === snippet.scope
 
 export const isProSnippet = (snippet: Pick<Snippet, 'scope'>): boolean =>

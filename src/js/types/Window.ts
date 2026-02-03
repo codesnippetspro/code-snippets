@@ -62,7 +62,6 @@ declare global {
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet
 			pageTitleActions: Record<string, string>
-			isPreview: boolean
 			isLicensed: boolean
 			enableDownloads: boolean
 			activateByDefault: boolean

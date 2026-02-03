@@ -14,8 +14,10 @@ use WP_REST_Server;
 use function Code_Snippets\activate_snippet;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\deactivate_snippet;
+use function Code_Snippets\delete_snippet;
 use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
+use function Code_Snippets\restore_snippet;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\trash_snippet;
 use const Code_Snippets\REST_API_NAMESPACE;
@@ -46,13 +48,6 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	protected $namespace = REST_API_NAMESPACE . self::VERSION;
 
 	/**
-	 * The base of this controller's route.
-	 *
-	 * @var string
-	 */
-	protected $rest_base = self::BASE_ROUTE;
-
-	/**
 	 * Retrieve this controller's REST API base path, including namespace.
 	 *
 	 * @return string
@@ -81,7 +76,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 * Register REST routes.
 	 */
 	public function register_routes() {
-		$route = '/' . $this->rest_base;
+		$route = '/' . self::BASE_ROUTE;
 		$id_route = $route . '/(?P<id>[\d]+)';
 
 		$network_args = array_intersect_key(
@@ -135,6 +130,17 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 					'args'                => $network_args,
 				],
 				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$id_route . '/restore',
+			[
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => [ $this, 'restore_item' ],
+				'permission_callback' => [ $this, 'update_item_permissions_check' ],
+				'args'                => $network_args,
 			]
 		);
 
@@ -304,11 +310,11 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	public function create_item( $request ) {
 		$snippet = $this->prepare_item_for_database( $request );
-		$result = $snippet ? save_snippet( $snippet ) : null;
+		$result = save_snippet( $snippet );
 
-		return $result ?
-			$this->prepare_item_for_response( $result, $request ) :
-			new WP_Error(
+		return $result
+			? $this->prepare_item_for_response( $result, $request )
+			: new WP_Error(
 				'rest_cannot_create',
 				__( 'The snippet could not be created.', 'code-snippets' ),
 				[ 'status' => 500 ]
@@ -350,7 +356,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Delete one item from the collection (trash)
+	 * Delete one item from the collection, or trash it if not already trashed.
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
@@ -358,13 +364,49 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 */
 	public function delete_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
-		$result = trash_snippet( $item->id, $item->network );
 
-		return $result ?
-			new WP_REST_Response( null, 204 ) :
-			new WP_Error(
-				'rest_cannot_delete',
-				__( 'The snippet could not be deleted.', 'code-snippets' ),
+		if ( $item->trashed ) {
+			return delete_snippet( $item->id, $item->network )
+				? new WP_REST_Response( null, 204 )
+				: new WP_Error(
+					'rest_cannot_delete',
+					__( 'The snippet could not be deleted.', 'code-snippets' ),
+					[ 'status' => 500 ]
+				);
+		} else {
+			return trash_snippet( $item->id, $item->network )
+				? $this->get_item( $request )
+				: new WP_Error(
+					'rest_cannot_trash',
+					__( 'The snippet could not be trashed.', 'code-snippets' ),
+					[ 'status' => 500 ]
+				);
+		}
+	}
+
+	/**
+	 * Restore a deleted item from the trash.
+	 *
+	 * @param WP_REST_Request $request Snippet information.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function restore_item( WP_REST_Request $request ) {
+		$item = $this->prepare_item_for_database( $request );
+
+		if ( ! $item->trashed ) {
+			return new WP_Error(
+				'rest_bad_restore_request',
+				__( 'Snippet is not in the trash.', 'code-snippets' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		return restore_snippet( $item->id, $item->network )
+			? new WP_REST_Response( null, 204 )
+			: new WP_Error(
+				'rest_cannot_restore',
+				__( 'The snippet could not be restored.', 'code-snippets' ),
 				[ 'status' => 500 ]
 			);
 	}
@@ -380,9 +422,9 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		$item = $this->prepare_item_for_database( $request );
 		$result = activate_snippet( $item->id, $item->network );
 
-		return $result instanceof Snippet ?
-			rest_ensure_response( $result ) :
-			new WP_Error(
+		return $result instanceof Snippet
+			? rest_ensure_response( $result )
+			: new WP_Error(
 				'rest_cannot_activate',
 				$result,
 				[ 'status' => 500 ]
@@ -400,9 +442,9 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		$item = $this->prepare_item_for_database( $request );
 		$result = deactivate_snippet( $item->id, $item->network );
 
-		return $result instanceof Snippet ?
-			rest_ensure_response( $result ) :
-			new WP_Error(
+		return $result instanceof Snippet
+			? rest_ensure_response( $result )
+			: new WP_Error(
 				'rest_cannot_activate',
 				__( 'The snippet could not be deactivated.', 'code-snippets' ),
 				[ 'status' => 500 ]
@@ -458,14 +500,14 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 *
 	 * @return Snippet The prepared item.
 	 */
-	protected function prepare_item_for_database( $request, ?Snippet $item = null ): ?Snippet {
+	protected function prepare_item_for_database( $request, ?Snippet $item = null ): Snippet {
 		if ( ! $item instanceof Snippet ) {
 			$item = new Snippet();
 		}
 
 		foreach ( $item->get_allowed_fields() as $field ) {
-			if ( isset( $request[ $field ] ) ) {
-				$item->set_field( $field, $request[ $field ] );
+			if ( $request->has_param( $field ) ) {
+				$item->set_field( $field, $request->get_param( $field ) );
 			}
 		}
 
@@ -595,6 +637,10 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 				],
 				'active'         => [
 					'description' => esc_html__( 'Snippet activation status.', 'code-snippets' ),
+					'type'        => 'boolean',
+				],
+				'trashed'        => [
+					'description' => esc_html__( 'Whether the snippet is marked as deleted.', 'code-snippets' ),
 					'type'        => 'boolean',
 				],
 				'locked'         => [

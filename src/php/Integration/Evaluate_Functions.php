@@ -35,10 +35,20 @@ class Evaluate_Functions {
 		add_action( 'plugins_loaded', [ $this, 'evaluate_early' ], 1 );
 		add_filter( 'code_snippets/execute_snippets', [ $this, 'disable_snippet_execution' ], 5 );
 
-		if ( isset( $_REQUEST['snippets-safe-mode'] ) ) {
+		if ( $this->is_safe_mode_requested() ) {
 			add_filter( 'home_url', [ $this, 'add_safe_mode_query_var' ] );
 			add_filter( 'admin_url', [ $this, 'add_safe_mode_query_var' ] );
 		}
+	}
+
+	/**
+	 * Check if safe mode has been requested via query var.
+	 *
+	 * @return bool
+	 */
+	public function is_safe_mode_requested(): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return ! empty( $_REQUEST['snippets-safe-mode'] ) && code_snippets()->current_user_can();
 	}
 
 	/**
@@ -49,8 +59,8 @@ class Evaluate_Functions {
 	 * @return string Modified URL.
 	 */
 	public function add_safe_mode_query_var( string $url ): string {
-		return isset( $_REQUEST['snippets-safe-mode'] ) ?
-			add_query_arg( 'snippets-safe-mode', (bool) $_REQUEST['snippets-safe-mode'], $url ) :
+		return $this->is_safe_mode_requested() ?
+			add_query_arg( 'snippets-safe-mode', true, $url ) :
 			$url;
 	}
 
@@ -104,7 +114,7 @@ class Evaluate_Functions {
 	 * @return bool New filter value.
 	 */
 	public function disable_snippet_execution( bool $execute_snippets ): bool {
-		return ! empty( $_REQUEST['snippets-safe-mode'] ) && code_snippets()->current_user_can() ? false : $execute_snippets;
+		return $execute_snippets && ! $this->is_safe_mode_requested();
 	}
 
 	/**
@@ -143,6 +153,15 @@ class Evaluate_Functions {
 		}
 	}
 
+	/**
+	 * Evaluate a snippet stored in a flat file.
+	 *
+	 * @param array      $snippet      Snippet data.
+	 * @param string     $file_path    Path to the snippet file.
+	 * @param array|null $edit_snippet Data of snippet currently being edited, if applicable.
+	 *
+	 * @return void
+	 */
 	private function evaluate_snippet_flat_file( array $snippet, string $file_path, ?array $edit_snippet = null ) {
 		$snippet_id = $snippet['id'];
 		$code = $snippet['code'];
@@ -179,6 +198,11 @@ class Evaluate_Functions {
 		return $this->evaluate_db_snippets();
 	}
 
+	/**
+	 * Evaluate active snippets stored in the database.
+	 *
+	 * @return bool True on completion.
+	 */
 	public function evaluate_db_snippets(): bool {
 		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];
 		$active_snippets = $this->db->fetch_active_snippets( $scopes );
@@ -203,6 +227,11 @@ class Evaluate_Functions {
 		return true;
 	}
 
+	/**
+	 * Evaluate active snippets stored in flat files.
+	 *
+	 * @return bool True on completion.
+	 */
 	private function evaluate_file_snippets(): bool {
 		$type = 'php';
 		$scopes = [ 'global', 'single-use', is_admin() ? 'admin' : 'front-end' ];

@@ -11,18 +11,28 @@ use function Code_Snippets\Utils\get_self_option;
 use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
- * Class for managing the REST API functionality of the plugin.
+ * Controller for fetching and clearing list of recently active snippets.
  *
  * @package Code_Snippets
  */
-class REST_Endpoints {
+final class Recently_Active_REST_Controller {
+
+	/**
+	 * Current API version.
+	 */
+	public const VERSION = 1;
+
+	/**
+	 * The base of this controller's route.
+	 */
+	public const BASE_ROUTE = 'recently-active';
 
 	/**
 	 * The namespace of this controller's route.
 	 *
 	 * @var string
 	 */
-	protected string $namespace_v1 = REST_API_NAMESPACE . 1;
+	protected string $namespace = REST_API_NAMESPACE . self::VERSION;
 
 	/**
 	 * Class constrictor.
@@ -35,14 +45,16 @@ class REST_Endpoints {
 	 * Register REST routes.
 	 */
 	public function register_routes() {
+		$permission_callback = [ code_snippets(), 'current_user_can' ];
+
 		register_rest_route(
-			$this->namespace_v1,
-			'recently-active',
+			$this->namespace,
+			self::BASE_ROUTE,
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_recent_list_callback' ],
-					'permission_callback' => [ code_snippets(), 'current_user_can' ],
+					'permission_callback' => $permission_callback,
 					'args'                => [
 						'network' => [
 							'description' => esc_html__( 'Fetch the recent list for network-wide snippets instead of site-wide.', 'code-snippets' ),
@@ -55,13 +67,13 @@ class REST_Endpoints {
 		);
 
 		register_rest_route(
-			$this->namespace_v1,
-			'recently-active',
+			$this->namespace,
+			self::BASE_ROUTE,
 			[
 				[
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => [ $this, 'clear_recent_list_callback' ],
-					'permission_callback' => [ code_snippets(), 'current_user_can' ],
+					'permission_callback' => $permission_callback,
 					'args'                => [
 						'network' => [
 							'description' => esc_html__( 'Clear the recent list for network-wide snippets instead of site-wide.', 'code-snippets' ),

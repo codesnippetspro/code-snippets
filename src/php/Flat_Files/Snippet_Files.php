@@ -374,6 +374,7 @@ class Snippet_Files {
 	 * @param mixed $value Option value.
 	 *
 	 * @return void
+	 *
 	 * phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_var_export
 	 */
 	private function create_active_shared_network_snippets_file( $value ): void {

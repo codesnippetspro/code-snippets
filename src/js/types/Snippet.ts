@@ -8,6 +8,7 @@ export interface Snippet {
 	readonly priority: number
 	readonly active: boolean
 	readonly locked: boolean
+	readonly trashed: boolean
 	readonly network: boolean
 	readonly shared_network?: boolean | null
 	readonly modified?: string
@@ -17,7 +18,7 @@ export interface Snippet {
 }
 
 export const SNIPPET_TYPES = <const> ['php', 'html', 'css', 'js', 'cond']
-export const SNIPPET_STATUSES = <const> ['active', 'inactive', 'recently_activated']
+export const SNIPPET_STATUSES = <const> ['active', 'inactive', 'recently_activated', 'locked', 'unlocked', 'trashed']
 
 export type SnippetType = typeof SNIPPET_TYPES[number]
 export type SnippetStatus = typeof SNIPPET_STATUSES[number]

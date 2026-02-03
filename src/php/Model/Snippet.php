@@ -23,6 +23,7 @@ use function Code_Snippets\Utils\get_self_option;
  * @property int                    $condition_id       ID of the condition this snippet is linked to.
  * @property int                    $priority           Execution priority.
  * @property bool                   $active             The active status.
+ * @property bool                   $trashed            Whether the snippet is marked as 'deleted'.
  * @property bool                   $locked             Whether the snippet is locked from modification or deletion.
  * @property bool                   $network            true if is multisite-wide snippet, false if site-wide.
  * @property bool                   $shared_network     Whether the snippet is a shared network snippet.
@@ -55,78 +56,40 @@ class Snippet extends Model {
 	public const DEFAULT_DATE = '0000-00-00 00:00:00';
 
 	/**
-	 * Raw active value from database before processing.
+	 * Default values for snippet fields.
 	 *
-	 * @var mixed
+	 * @var array<string, mixed>
 	 */
-	private $raw_active_value;
+	protected static array $default_values = [
+		'id'             => 0,
+		'name'           => '',
+		'desc'           => '',
+		'code'           => '',
+		'tags'           => [],
+		'scope'          => 'global',
+		'condition_id'   => 0,
+		'active'         => false,
+		'trashed'        => false,
+		'locked'         => false,
+		'priority'       => 10,
+		'network'        => null,
+		'shared_network' => null,
+		'modified'       => null,
+		'code_error'     => null,
+		'revision'       => 1,
+		'cloud_id'       => '',
+	];
 
 	/**
-	 * Constructor function.
+	 * Field name aliases.
 	 *
-	 * @param array<string, mixed>|object $initial_data Initial snippet data.
+	 * @var array<string, string>
 	 */
-	public function __construct( $initial_data = null ) {
-		if ( is_array( $initial_data ) && isset( $initial_data['active'] ) ) {
-			$this->raw_active_value = $initial_data['active'];
-		} elseif ( is_object( $initial_data ) && isset( $initial_data->active ) ) {
-			$this->raw_active_value = $initial_data->active;
-		}
-
-		$default_values = [
-			'id'             => 0,
-			'name'           => '',
-			'desc'           => '',
-			'code'           => '',
-			'tags'           => [],
-			'scope'          => 'global',
-			'condition_id'   => 0,
-			'active'         => false,
-			'locked'         => false,
-			'priority'       => 10,
-			'network'        => null,
-			'shared_network' => null,
-			'modified'       => null,
-			'code_error'     => null,
-			'revision'       => 1,
-			'cloud_id'       => '',
-		];
-
-		$field_aliases = [
-			'description' => 'desc',
-			'language'    => 'lang',
-			'conditionId' => 'condition_id',
-		];
-
-		parent::__construct( $default_values, $initial_data, $field_aliases );
-	}
-
-	/**
-	 * Add a new tag
-	 *
-	 * @param string $tag Tag content to add to list.
-	 */
-	public function add_tag( string $tag ) {
-		$this->fields['tags'][] = $tag;
-	}
-
-	/**
-	 * Determine if the snippet is a condition.
-	 *
-	 * @return bool
-	 */
-	public function is_condition(): bool {
-		return 'condition' === $this->scope;
-	}
-
-	/**
-	 * Determine if the snippet is trashed (soft deleted).
-	 *
-	 * @return bool
-	 */
-	public function is_trashed(): bool {
-		return -1 === (int) $this->raw_active_value;
-	}
+	protected static array $field_aliases = [
+		'description' => 'desc',
+		'language'    => 'lang',
+		'conditionId' => 'condition_id',
+	];
 
 	/**
 	 * Prepare a value before it is stored.
@@ -147,7 +110,12 @@ class Snippet extends Model {
 				return code_snippets_build_tags_array( $value );
 
 			case 'active':
-				return ( is_bool( $value ) ? $value : (bool) $value ) && ! $this->is_condition() && -1 !== (int) $value;
+				if ( -1 === intval( $value ) ) {
+					$this->trashed = true;
+					return false;
+				}
+
+				return 1 === intval( $value ) && ! $this->trashed && ! $this->is_condition();
 
 			case 'locked':
 				return is_bool( $value ) ? $value : (bool) $value;
@@ -193,6 +161,24 @@ class Snippet extends Model {
 		}
 
 		return true === $network;
+	}
+
+	/**
+	 * Add a new tag
+	 *
+	 * @param string $tag Tag content to add to list.
+	 */
+	public function add_tag( string $tag ) {
+		$this->fields['tags'][] = $tag;
+	}
+
+	/**
+	 * Determine if the snippet is a condition.
+	 *
+	 * @return bool
+	 */
+	public function is_condition(): bool {
+		return 'condition' === $this->scope;
 	}
 
 	/**
@@ -319,7 +305,7 @@ class Snippet extends Model {
 	 *
 	 * @return array<string> List of scope names.
 	 *
-	 * @phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine
+	 * phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.ArrayItemNoNewLine
 	 */
 	public static function get_all_scopes(): array {
 		return array(

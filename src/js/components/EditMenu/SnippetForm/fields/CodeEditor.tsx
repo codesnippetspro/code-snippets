@@ -64,7 +64,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 			const extraKeys = codeEditorInstance.codemirror.getOption('extraKeys') ?? {}
 			const controlKey = isMacOS() ? 'Cmd' : 'Ctrl'
 			const onSave = () => {
-				submitSnippet()
+				submitSnippet(snippet)
 					.then(() => undefined)
 					.catch(handleUnknownError)
 			}

@@ -24,9 +24,10 @@ export const ActivationSwitch = () => {
 					disabled={isWorking || !!snippet.shared_network}
 					className="switch"
 					onChange={() => {
-						submitSnippet(snippet.active
-							? SubmitSnippetAction.SAVE_AND_DEACTIVATE
-							: SubmitSnippetAction.SAVE_AND_ACTIVATE)
+						submitSnippet(
+							{ id: snippet.id, network: snippet.network, active: !snippet.active },
+							snippet.active ? SubmitSnippetAction.SAVE_AND_DEACTIVATE : SubmitSnippetAction.SAVE_AND_ACTIVATE
+						)
 							.then(() => undefined)
 							.catch(handleUnknownError)
 					}}

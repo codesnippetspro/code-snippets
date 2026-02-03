@@ -1,39 +1,38 @@
 import React from 'react'
 import { __ } from '@wordpress/i18n'
-import { SubmitSnippetAction, useSubmitSnippet } from '../../../../hooks/useSubmitSnippet'
-import { handleUnknownError } from '../../../../utils/errors'
+import { useSnippetsAPI } from '../../../../hooks/useSnippetsAPI'
+import { Tooltip } from '../../../common/Tooltip'
 import { useSnippetForm } from '../../SnippetForm/WithSnippetFormContext'
 
 export const LockControl: React.FC = () => {
-	const { snippet, setSnippet, isWorking } = useSnippetForm()
-	const { submitSnippet } = useSubmitSnippet()
+	const { snippet, setSnippet, isWorking, setIsWorking, setCurrentNotice } = useSnippetForm()
+	const { update } = useSnippetsAPI()
 
 	const handleToggle = () => {
-		const newLockedStatus = !snippet.locked
+		setSnippet(previous => ({ ...previous, locked: !previous.locked }))
+		setIsWorking(true)
 
-		// Create the updated snippet object immediately
-		const updatedSnippet = {
-			...snippet,
-			locked: newLockedStatus
-		}
+		update({ id: snippet.id, network: snippet.network, locked: !snippet.locked })
+			.then(result => {
+				setSnippet(result)
 
-		// Update local state for immediate UI response
-		setSnippet(updatedSnippet)
-
-		// Submit to the server using the override to prevent stale state issues
-		submitSnippet(SubmitSnippetAction.SAVE, updatedSnippet)
-			.then(() => undefined)
-			.catch(handleUnknownError)
+				setCurrentNotice(['updated', result.locked
+					? __('Snippet <strong>locked</strong>.', 'code-snippets')
+					: __('Snippet <strong>unlocked</strong>.', 'code-snippets')])
+			})
+			.finally(() => setIsWorking(false))
 	}
 
 	return (
 		<div className="inline-form-field lock-control-container">
-			<h4>{__('Lock Snippet', 'code-snippets')}</h4>
+			<h4>{__('Lock snippet', 'code-snippets')}</h4>
+
+			<Tooltip block end>
+				{__('Mark this snippet as read-only to prevent accidental changes or deletion.', 'code-snippets')}
+			</Tooltip>
 
 			<label>
-				{snippet.locked
-					? __('Locked', 'code-snippets')
-					: __('Unlocked', 'code-snippets')}
+				{snippet.locked ? __('Locked', 'code-snippets') : __('Unlocked', 'code-snippets')}
 
 				<input
 					id="snippet-lock"
@@ -44,9 +43,6 @@ export const LockControl: React.FC = () => {
 					onChange={handleToggle}
 				/>
 			</label>
-			<p className="description">
-				{__('Prevent accidental changes or deletion.', 'code-snippets')}
-			</p>
 		</div>
 	)
 }

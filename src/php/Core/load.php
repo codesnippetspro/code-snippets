@@ -7,6 +7,9 @@
 
 namespace Code_Snippets;
 
+use Composer\Autoload\ClassLoader;
+use function Code_Snippets\Utils\update_self_option;
+
 /**
  * The version number for this release of the plugin.
  * This will later be used for upgrades and enqueuing files.
@@ -50,7 +53,7 @@ $code_snippets_autoloader = require dirname( __DIR__, 2 ) . '/vendor/autoload.ph
 // Remove all original (non-prefixed) vendor namespace mappings to prevent collisions with other plugins.
 // Since Imposter rewrites namespaces to Code_Snippets\Vendor\*, we need to remove the original PSR-4
 // mappings that Composer generates so other plugins can load their own copies of these libraries.
-if ( $code_snippets_autoloader instanceof \Composer\Autoload\ClassLoader ) {
+if ( $code_snippets_autoloader instanceof ClassLoader ) {
 	$prefixes = $code_snippets_autoloader->getPrefixesPsr4();
 	$our_prefix = 'Code_Snippets\\Vendor\\';
 

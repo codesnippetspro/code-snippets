@@ -167,7 +167,7 @@ class Shortcodes {
 		 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
 		 * authors to use custom attributes.
 		 *
-		 * @phpcs:disable WordPress.PHP.DontExtract.extract_extract
+		 * phpcs:disable WordPress.PHP.DontExtract.extract_extract
 		 */
 		extract( $atts, EXTR_SKIP );
 
@@ -193,7 +193,7 @@ class Shortcodes {
 			 * Avoiding extract is typically recommended, however in this situation we want to make it easy for snippet
 			 * authors to use custom attributes.
 			 *
-			 * @phpcs:disable WordPress.PHP.DontExtract.extract_extract
+			 * phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 			 */
 			extract( $atts, EXTR_SKIP );
 			require_once $filepath;

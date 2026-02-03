@@ -7,15 +7,16 @@ import { useRestAPI } from './useRestAPI'
 import type { Snippet } from '../types/Snippet'
 import type { SnippetsExport } from '../types/schema/SnippetsExport'
 import type { SnippetSchema, WritableSnippetSchema } from '../types/schema/SnippetSchema'
-import type { RestAPI} from './useRestAPI'
-import type { PropsWithChildren} from 'react'
+import type { RestAPI } from './useRestAPI'
+import type { PropsWithChildren } from 'react'
 
 export interface SnippetsAPI {
 	fetchAll: (network?: boolean | null) => Promise<Snippet[]>
 	fetch: (snippetId: number, network?: boolean | null) => Promise<Snippet>
-	create: (snippet: Snippet) => Promise<Snippet>
+	create: (snippet: Partial<Snippet>) => Promise<Snippet>
 	update: (snippet: Pick<Snippet, 'id' | 'network'> & Partial<Snippet>) => Promise<Snippet>
 	delete: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<void>
+	restore: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<void>
 	activate: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<Snippet>
 	deactivate: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<Snippet>
 	export: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<SnippetsExport>
@@ -36,6 +37,8 @@ const mapToSchema = ({
 	priority,
 	active,
 	network,
+	locked,
+	trashed,
 	shared_network,
 	conditionId
 }: Partial<Snippet>): WritableSnippetSchema => ({
@@ -47,6 +50,8 @@ const mapToSchema = ({
 	priority,
 	active,
 	network,
+	locked,
+	trashed,
 	shared_network,
 	condition_id: conditionId
 })
@@ -71,6 +76,9 @@ const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
 	delete: snippet =>
 		del(buildSnippetUrl(snippet)),
 
+	restore: snippet =>
+		post(buildSnippetUrl(snippet, 'restore')),
+
 	activate: snippet =>
 		post<SnippetSchema>(buildSnippetUrl(snippet, 'activate'))
 			.then(createSnippetObject),
@@ -92,13 +100,14 @@ const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
 		put(buildSnippetUrl(snippet, 'detach'))
 })
 
-
-export const [SnippetsAPIContext, useSnippetsAPI] = createContextHook<SnippetsAPI>('useSnippetsAPI')
+const [Context, useSnippetsAPI] = createContextHook<SnippetsAPI>('useSnippetsAPI')
 
 export const WithSnippetsAPIContext: React.FC<PropsWithChildren> = ({ children }) => {
 	const { api } = useRestAPI()
 
 	const value: SnippetsAPI = useMemo(() => buildSnippetsAPI(api), [api])
 
-	return <SnippetsAPIContext.Provider value={value}>{children}</SnippetsAPIContext.Provider>
+	return <Context.Provider value={value}>{children}</Context.Provider>
 }
+
+export { useSnippetsAPI }

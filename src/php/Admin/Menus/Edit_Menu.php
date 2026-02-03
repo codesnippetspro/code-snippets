@@ -60,6 +60,7 @@ class Edit_Menu extends Admin_Menu {
 		parent::register();
 
 		// Only preserve the edit menu if we are currently editing a snippet.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_REQUEST['page'] ) || $_REQUEST['page'] !== $this->slug ) {
 			remove_submenu_page( $this->base_slug, $this->slug );
 		}
@@ -100,7 +101,9 @@ class Edit_Menu extends Admin_Menu {
 		// Disallow visiting the edit snippet page without a valid ID.
 		if (
 			$screen->base === $edit_hook
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			&& ( empty( $_REQUEST['id'] ) || 0 === $this->snippet->id || null === $this->snippet->id )
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			&& ! isset( $_REQUEST['preview'] )
 		) {
 			wp_safe_redirect( code_snippets()->get_menu_url( 'add' ) );
@@ -121,13 +124,15 @@ class Edit_Menu extends Admin_Menu {
 	 * Load the data for the snippet currently being edited.
 	 */
 	public function load_snippet_data() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$edit_id = isset( $_REQUEST['id'] ) ? absint( $_REQUEST['id'] ) : 0;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$edit_type = isset( $_REQUEST['type'] ) ? sanitize_key( wp_unslash( $_REQUEST['type'] ) ) : '';
 
 		$this->snippet = get_snippet( $edit_id );
 
-		if ( 0 === $edit_id && isset( $_GET['type'] ) && sanitize_key( $_GET['type'] ) !== $this->snippet->type ) {
-			$type = sanitize_key( $_GET['type'] );
-
+		if ( 0 === $edit_id && $edit_type !== $this->snippet->type ) {
 			$default_scopes = [
 				'php'  => 'global',
 				'css'  => 'site-css',
@@ -136,8 +141,8 @@ class Edit_Menu extends Admin_Menu {
 				'cond' => 'condition',
 			];
 
-			if ( isset( $default_scopes[ $type ] ) ) {
-				$this->snippet->scope = $default_scopes[ $type ];
+			if ( isset( $default_scopes[ $edit_type ] ) ) {
+				$this->snippet->scope = $default_scopes[ $edit_type ];
 			}
 		}
 
@@ -189,7 +194,6 @@ class Edit_Menu extends Admin_Menu {
 			'CODE_SNIPPETS_EDIT',
 			[
 				'snippet'           => $this->snippet->get_fields(),
-				'isPreview'         => isset( $_REQUEST['preview'] ),
 				'activateByDefault' => get_setting( 'general', 'activate_by_default' ),
 				'editorTheme'       => get_setting( 'editor', 'theme' ),
 				'enableDownloads'   => apply_filters( 'code_snippets/enable_downloads', true ),
@@ -213,11 +217,14 @@ class Edit_Menu extends Admin_Menu {
 	 * Remove the old CodeMirror version used by the Debug Bar Console plugin that is messing up the snippet editor.
 	 */
 	public function remove_debug_bar_codemirror() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
 		// Try to discern if we are on the single snippet page as good as we can at this early time.
 		$is_codemirror_page =
-			is_admin() && 'admin.php' === $GLOBALS['pagenow'] && isset( $_GET['page'] ) && (
-				code_snippets()->get_menu_slug( 'edit' ) === $_GET['page'] ||
-				code_snippets()->get_menu_slug( 'settings' ) === $_GET['page']
+			is_admin() && 'admin.php' === $GLOBALS['pagenow'] && $current_page && (
+				code_snippets()->get_menu_slug( 'edit' ) === $current_page ||
+				code_snippets()->get_menu_slug( 'settings' ) === $current_page
 			);
 
 		if ( $is_codemirror_page ) {

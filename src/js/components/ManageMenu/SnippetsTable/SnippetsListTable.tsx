@@ -8,11 +8,12 @@ import { getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
 import { SubmitButton } from '../../common/SubmitButton'
-import { useSnippetsFilters } from './WithSnippetsTableFiltersContext'
+import { useSnippetsFilters } from './WithSnippetsTableFilters'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
 import { TableColumns } from './TableColumns'
 import type { ListTableBulkAction } from '../../common/ListTable'
 import type { Snippet, SnippetStatus } from '../../../types/Snippet'
+import { createInterpolateElement } from '@wordpress/element'
 
 const actions: ListTableBulkAction<Snippet['id']>[] = [
 	{
@@ -36,7 +37,7 @@ const actions: ListTableBulkAction<Snippet['id']>[] = [
 		apply: () => Promise.resolve()
 	},
 	{
-		name: __('Delete', 'code-snippets'),
+		name: __('Trash', 'code-snippets'),
 		apply: () => Promise.resolve()
 	}
 ]
@@ -45,13 +46,18 @@ const STATUS_LABELS: [SnippetStatus | undefined, string][] = [
 	[undefined, __('All', 'code-snippets')],
 	['active', __('Active', 'code-snippets')],
 	['inactive', __('Inactive', 'code-snippets')],
-	['recently_activated', __('Recently Activated', 'code-snippets')]
+	['recently_activated', __('Recently Activated', 'code-snippets')],
+	['locked', __('Locked', 'code-snippets')],
+	['unlocked', __('Unlocked', 'code-snippets')],
+	['trashed', __('Trashed', 'code-snippets')]
 ]
 
 const SnippetStatusCounts = () => {
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { snippetsByStatus } = useFilteredSnippets()
-	const visibleStatuses = STATUS_LABELS.filter(([status]) => snippetsByStatus.has(status))
+
+	const visibleStatuses = STATUS_LABELS.filter(([status]) =>
+		snippetsByStatus.has(status) && ('unlocked' !== status || snippetsByStatus.has('locked')))
 
 	return (
 		<ul className="subsubsub">
@@ -122,7 +128,7 @@ const FilterByTagControl: React.FC<ExtraTableNavProps> = ({ visibleSnippets }) =
 				value={currentTag}
 				onChange={event => setCurrentTag(event.target.value)}
 			>
-				<option>{__('Show all tags', 'code-snippets')}</option>
+				<option value="">{__('Show all tags', 'code-snippets')}</option>
 				{[...tagsList].map(tag =>
 					<option key={tag} value={tag}>{tag}</option>)}
 			</select>
@@ -156,14 +162,12 @@ const NoItemsMessage = () => {
 			{__('No snippets were found matching the current search query.', 'code-snippets')}
 			{__(' Please enter a new query or use the "Clear Filters" button above.', 'code-snippets')}
 		</>
-		: <>{currentType
-			? __("It looks like you don't have any snippets of this type.", 'code-snippets')
-			: __("It looks like you don't have any snippets.", 'code-snippets')}
-
-		{' '}
-		<a href={buildUrl(window.CODE_SNIPPETS?.urls.addNew, { type: currentType })}>
-			{__('Perhaps you would like to add a new one?', 'code-snippets')}
-		</a>
+		: <>{createInterpolateElement(
+			currentType
+				? __("It looks like you don't have any snippets of this type. <a>Perhaps you would like to add a new one?</a>", 'code-snippets')
+				: __("It looks like you don't have any snippets. <a>Perhaps you would like to add a new one?</a>", 'code-snippets'),
+			{ a: <a href={buildUrl(window.CODE_SNIPPETS?.urls.addNew, { type: currentType })} /> }
+		)}
 		</>
 }
 

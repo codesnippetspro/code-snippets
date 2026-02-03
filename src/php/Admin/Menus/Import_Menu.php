@@ -43,13 +43,10 @@ class Import_Menu extends Admin_Menu {
 	 * Add the importer to the Tools > Import menu
 	 */
 	public function register_importer() {
-
-		/* Only register the importer if the current user can manage snippets */
 		if ( ! defined( 'WP_LOAD_IMPORTERS' ) || ! code_snippets()->current_user_can() ) {
 			return;
 		}
 
-		/* Register the Code Snippets importer with WordPress */
 		register_importer(
 			'code-snippets',
 			__( 'Code Snippets', 'code-snippets' ),

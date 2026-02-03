@@ -65,7 +65,7 @@ const makeMigrationRequest = async (api: RestAPI, importer: string, request: Imp
 	return response.imported
 }
 
-const useRemoteData = <T, >(
+const useRemoteRequest = <T, >(
 	step: MigrationStep,
 	setError: (error: MigrationError | undefined) => void,
 	setIsWorking: (step: MigrationStep | undefined) => void
@@ -93,7 +93,7 @@ const useRemoteData = <T, >(
 	return [data, requestData, clearData]
 }
 
-export interface MigrationContext {
+export interface MigrationDataContext {
 	error: MigrationError | undefined
 	importSnippets: VoidFunction
 	importers: Importer[]
@@ -103,18 +103,18 @@ export interface MigrationContext {
 	importedIds: number[]
 }
 
-export const [MigrationContext, useMigrationContext] = createContextHook<MigrationContext>('useMigrationContext')
+const [Context, useMigrationData] = createContextHook<MigrationDataContext>('useMigrationData')
 
-export const WithMigrationContext: React.FC<PropsWithChildren> = ({ children }) => {
+export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => {
 	const { api } = useRestAPI()
 	const { selectedImporter, setSelectedImporter, autoAddTags, tagValue } = useMigrationOptions()
 
 	const [error, setError] = useState<MigrationError>()
 	const [isWorking, setIsWorking] = useState<MigrationStep>()
 
-	const [importers, fetchImporters] = useRemoteData<Importer>(MigrationStep.LoadImporters, setError, setIsWorking)
-	const [snippets, fetchSnippets, resetSnippets] = useRemoteData<ImportableSnippet>(MigrationStep.FetchSnippets, setError, setIsWorking)
-	const [importedIds, doImport] = useRemoteData<number>(MigrationStep.MigrateSnippets, setError, setIsWorking)
+	const [snippets, fetchSnippets, resetSnippets] = useRemoteRequest<ImportableSnippet>(MigrationStep.FetchSnippets, setError, setIsWorking)
+	const [importers, fetchImporters] = useRemoteRequest<Importer>(MigrationStep.LoadImporters, setError, setIsWorking)
+	const [importedIds, doImport] = useRemoteRequest<number>(MigrationStep.MigrateSnippets, setError, setIsWorking)
 
 	const snippetSelection = useSelection(snippets, snippet => snippet.table_data.id)
 
@@ -136,13 +136,12 @@ export const WithMigrationContext: React.FC<PropsWithChildren> = ({ children }) 
 			tag_value: autoAddTags ? tagValue : undefined
 		}
 
-		doImport(
-			() => makeMigrationRequest(api, selectedImporter, request),
-			() => {
-				resetSnippets()
-				snippetSelection.clearSelection()
-			}
-		)
+		const handleImportSuccess = () => {
+			resetSnippets()
+			snippetSelection.clearSelection()
+		}
+
+		doImport(() => makeMigrationRequest(api, selectedImporter, request), handleImportSuccess)
 	}
 
 	const changeSelectedImporter = (newImporter: string) => {
@@ -152,7 +151,7 @@ export const WithMigrationContext: React.FC<PropsWithChildren> = ({ children }) 
 		resetSnippets()
 	}
 
-	const value: MigrationContext = {
+	const value: MigrationDataContext = {
 		error,
 		snippetSelection,
 		importSnippets,
@@ -162,5 +161,7 @@ export const WithMigrationContext: React.FC<PropsWithChildren> = ({ children }) 
 		importedIds
 	}
 
-	return <MigrationContext.Provider value={value}>{children}</MigrationContext.Provider>
+	return <Context.Provider value={value}>{children}</Context.Provider>
 }
+
+export { useMigrationData }

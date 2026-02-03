@@ -1,42 +1,87 @@
 <?php
 
-namespace Code_Snippets\Migration\Importers\Plugins;
+namespace Code_Snippets\REST_API\Import\Plugins;
 
 use Code_Snippets\Model\Snippet;
+use WP_REST_Request;
+use WP_REST_Response;
 use WP_REST_Server;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;
 use const Code_Snippets\REST_API_NAMESPACE;
 
-/*
- * TODO: Add comments.
- *
- * phpcs:disable Squiz.Commenting
+/**
+ * Base class for registering plugin importers.
  */
+abstract class Importer_REST_Controller {
 
-abstract class Importer_Base {
-
+	/**
+	 * REST API version.
+	 */
 	public const VERSION = 1;
 
+	/**
+	 * Class constructor.
+	 */
 	public function __construct() {
 		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 	}
 
-	abstract public function get_name();
+	/**
+	 * Get the unique name of the importer.
+	 *
+	 * @return string
+	 */
+	abstract public function get_name(): string;
 
-	abstract public function get_title();
+	/**
+	 * Get the human-readable title of the importer.
+	 *
+	 * @return string
+	 */
+	abstract public function get_title(): string;
 
-	abstract public function get_data( array $ids_to_import = [] );
+	/**
+	 * Retrieve snippet data from the source plugin's database table.
+	 *
+	 * @param array $ids_to_import Optional array of snippet IDs to import.
+	 *
+	 * @return array
+	 */
+	abstract public function get_data( array $ids_to_import = [] ): array;
 
-	abstract public function create_snippet( $snippet_data, bool $multisite ): ?Snippet;
+	/**
+	 * Create a Snippet object from the source plugin's snippet data.
+	 *
+	 * @param array $snippet_data Source plugin's snippet data.
+	 * @param bool  $multisite    Whether to create a multisite snippet.
+	 *
+	 * @return Snippet|null
+	 */
+	abstract public function create_snippet( array $snippet_data, bool $multisite ): ?Snippet;
 
+	/**
+	 * Check if the source plugin is active.
+	 *
+	 * @return bool
+	 */
 	abstract public static function is_active(): bool;
 
+	/**
+	 * Transform raw snippet data into Snippet objects.
+	 *
+	 * @param array  $data          Raw snippet data.
+	 * @param bool   $multisite     Whether to create multisite snippets.
+	 * @param bool   $auto_add_tags Whether to automatically add tags.
+	 * @param string $tag_value     The tag value to add if auto_add_tags is true.
+	 *
+	 * @return array
+	 */
 	public function transform( array $data, bool $multisite, bool $auto_add_tags = false, string $tag_value = '' ): array {
 		$snippets = [];
 
 		foreach ( $data as $snippet_item ) {
-			if ( ! is_array( $snippet_item ) && ! is_object( $snippet_item ) ) {
+			if ( ! is_array( $snippet_item ) ) {
 				continue;
 			}
 
@@ -58,7 +103,14 @@ abstract class Importer_Base {
 		return $snippets;
 	}
 
-	public function import( $request ): array {
+	/**
+	 * Import snippets via REST API.
+	 *
+	 * @param WP_REST_Request $request The REST request.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function import( WP_REST_Request $request ): array {
 		$ids_to_import = $request->get_param( 'ids' ) ?? [];
 		$multisite = $request->get_param( 'network' ) ?? false;
 		$auto_add_tags = $request->get_param( 'auto_add_tags' ) ?? false;
@@ -70,13 +122,25 @@ abstract class Importer_Base {
 
 		$imported = $this->save_snippets( $snippets );
 
-		return [ 'imported' => $imported ];
+		return rest_ensure_response( [ 'imported' => $imported ] );
 	}
 
-	public function get_items() {
+	/**
+	 * Retrieve all snippet data via REST API.
+	 *
+	 * @return array
+	 */
+	public function get_items(): array {
 		return $this->get_data();
 	}
 
+	/**
+	 * Save snippets to the database.
+	 *
+	 * @param array $snippets Array of Snippet objects.
+	 *
+	 * @return array
+	 */
 	protected function save_snippets( array $snippets ): array {
 		$imported = [];
 
@@ -93,6 +157,9 @@ abstract class Importer_Base {
 		return $imported;
 	}
 
+	/**
+	 * Register REST API routes for the importer.
+	 */
 	public function register_rest_routes() {
 		$namespace = REST_API_NAMESPACE . self::VERSION;
 
