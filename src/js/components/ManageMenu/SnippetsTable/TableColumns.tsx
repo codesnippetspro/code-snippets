@@ -13,6 +13,7 @@ import { buildUrl } from '../../../utils/urls'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
 import { DeleteButton } from '../../common/DeleteButton'
+import { Tooltip } from '../../common/Tooltip'
 import { useSnippetsFilters } from './WithSnippetsTableFilters'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
 import type { ReactNode } from 'react'
@@ -85,17 +86,19 @@ const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
 	const { refreshSnippetsList } = useSnippetsList()
 
 	const Edit = !snippet.trashed && (() =>
-		<a href={getSnippetEditUrl(snippet)}>{__('Edit', 'code-snippets')}</a>)
+		<a href={getSnippetEditUrl(snippet)}>
+			{snippet.locked ? __('View', 'code-snippets') : __('Edit', 'code-snippets')}
+		</a>)
 
 	const Clone = !snippet.trashed && (() =>
 		<Button link onClick={() => {
 			api.create(createSnippetObject({
-				...snippet,
-				id: 0,
-				active: false,
-				// translators: %s: snippet title.
-				name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
-			}))
+					...snippet,
+					id: 0,
+					active: false,
+					// translators: %s: snippet title.
+					name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
+				}))
 				.then(refreshSnippetsList)
 				.catch(handleUnknownError)
 		}}>
@@ -159,6 +162,11 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 
 const NameColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
+		{snippet.locked && (
+			<Tooltip inline end icon={<span className="dashicons dashicons-lock"></span>}>
+				{__('This snippet is locked and cannot be modified.', 'code-snippets')}
+			</Tooltip>)}
+
 		{!snippet.trashed && (isNetworkAdmin() || !snippet.network || window.CODE_SNIPPETS_MANAGE?.hasNetworkCap)
 			? <a href={getSnippetEditUrl(snippet)} className="snippet-name">{getSnippetDisplayName(snippet)}</a>
 			: getSnippetDisplayName(snippet)}
@@ -250,18 +258,6 @@ export const TableColumns: ListTableColumn<Snippet>[] = [
 		isPrimary: true,
 		sortedValue: snippet => getSnippetDisplayName(snippet).toLowerCase(),
 		render: snippet => <NameColumn snippet={snippet} />
-	},
-	{
-		id: 'locked',
-		title: __('Locked', 'code-snippets'),
-		sortedValue: snippet => snippet.locked ? 1 : 0,
-		render: snippet =>
-			<span
-				className={`dashicons dashicons-${snippet.locked ? '' : 'un'}lock`}
-				title={snippet.locked
-					? __('This snippet is locked.', 'code-snippets')
-					: __('This snippet is unlocked.', 'code-snippets')}
-			></span>
 	},
 	{
 		id: 'type',

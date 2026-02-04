@@ -1,6 +1,7 @@
 @use 'common/theme';
 @use 'common/badges';
 @use 'common/switch';
+@use 'common/tooltips';
 @use 'common/direction';
 @use 'common/select';
 @use 'common/upsell';
@@ -57,12 +58,14 @@
 	.dashicons-clock {
 		vertical-align: middle;
 	}
+}
+
+.column-name .tooltip {
+	float: right;
 
 	.dashicons-lock {
 		color: #646970;
-		margin-inline-start: 4px;
 		opacity: 0.7;
-		cursor: help;
 
 		&:hover {
 			opacity: 1;

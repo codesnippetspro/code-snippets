@@ -31,13 +31,11 @@ const getSnippetStatus = (snippet: Snippet): SnippetStatus => {
 
 const partitionSnippetsByStatus = (snippets: Snippet[]): Map<SnippetStatus | undefined, Snippet[]> =>
 	snippets.reduce((acc, snippet) => {
-		const status = getSnippetStatus(snippet)
-		pushToMapArray(acc, status, snippet)
-
-		if ('trashed' !== status) {
+		if (!snippet.trashed) {
 			pushToMapArray(acc, undefined, snippet)
 		}
 
+		pushToMapArray(acc, getSnippetStatus(snippet), snippet)
 		pushToMapArray(acc, snippet.locked ? 'locked' : 'unlocked', snippet)
 
 		return acc

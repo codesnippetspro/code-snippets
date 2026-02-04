@@ -1,15 +1,27 @@
 import { __, _x } from '@wordpress/i18n'
 import React from 'react'
 import { useSnippetForm } from '../WithSnippetFormContext'
-import { createSnippetObject } from '../../../../utils/snippets/snippets'
+import { createSnippetObject, isCondition } from '../../../../utils/snippets/snippets'
 import type { Snippet } from '../../../../types/Snippet'
 
 const OPTIONS = window.CODE_SNIPPETS_EDIT
 
 const getAddNewHeading = (snippet: Snippet): string =>
-	'condition' === snippet.scope
+	isCondition(snippet)
 		? __('Add New Condition', 'code-snippets')
 		: __('Create New Snippet', 'code-snippets')
+
+const getPageHeading = (snippet: Snippet): string => {
+	if (isCondition(snippet)) {
+		return snippet.locked
+			? __('View Condition', 'code-snippets')
+			: __('Edit Condition', 'code-snippets')
+	}
+
+	return snippet.locked
+		? __('View Snippet', 'code-snippets')
+		: __('Edit Snippet', 'code-snippets')
+}
 
 export const PageHeading: React.FC = () => {
 	const { snippet, updateSnippet, setCurrentNotice } = useSnippetForm()
@@ -18,9 +30,7 @@ export const PageHeading: React.FC = () => {
 		<h1>
 			{snippet.id
 				? <>
-					{`${'condition' === snippet.scope
-						? __('Edit Condition', 'code-snippets')
-						: __('Edit Snippet', 'code-snippets')} `}
+					{`${getPageHeading(snippet)} `}
 
 					<a
 						href={window.CODE_SNIPPETS?.urls.addNew}
