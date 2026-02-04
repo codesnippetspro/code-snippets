@@ -65,16 +65,20 @@ class Elementor_Editor {
 			esc_html__( 'Code Snippets provides a powerful and user-friendly alternative to "%s", with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ),
 			esc_html__( 'Elementor Custom Code', 'code-snippets' )
 		);
-
+		$link_text = esc_html__( 'Learn more', 'code-snippets' );
+		$link_url = 'https://codesnippets.pro/pricing/?utm_source=elementor&utm_medium=banner&utm_campaign=elementor-addon-custom-code';
+		
 		if ( $this->is_code_snippets_pro() ) {
 			$link_text = esc_html__( 'Manage CSS snippets', 'code-snippets' );
-			$url = add_query_arg( 'type', 'css', code_snippets()->get_menu_url() );
-		} else {
-			$link_text = esc_html__( 'Learn More', 'code-snippets' );
-			$url = 'https://codesnippets.pro/pricing/?utm_source=elementor&utm_medium=banner&utm_campaign=elementor-addon-custom-code';
+			$link_url = add_query_arg( 'type', 'css', code_snippets()->get_menu_url() );
 		}
-
-		return sprintf( '%s <br><br><a href="%s" target="_blank" class="e-btn e-info" style="color:#fff;">%s</a>', $message, $url, $link_text );
+		
+		return sprintf(
+			'%s <br><br><a href="%s" target="_blank" rel="noopener noreferrer" class="e-btn e-info" style="color:#fff;">%s</a>',
+			esc_html( $message ),
+			esc_url( $link_url ),
+			esc_html( $link_text )
+		);
 	}
 
 	/**

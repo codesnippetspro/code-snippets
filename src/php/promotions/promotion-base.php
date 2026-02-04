@@ -19,6 +19,11 @@ abstract class Promotion_Base {
 
 	abstract public function get_promotion_buttons(): array;
 
+	public function __construct() {
+		add_action( 'admin_notices', [ $this, 'display_promotion' ] );
+		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'dismiss_promotion_ajax_handler' ] );
+	}
+
 	public function is_plugin_admin_screen(): bool {
 		if ( ! is_admin() ) {
 			return false;
@@ -93,10 +98,10 @@ abstract class Promotion_Base {
 			</div>
 			<div class="code-snippets-promotion-content">
 				<p>
-					<strong><?php echo $this->get_promotion_heading(); ?></strong>
+					<strong><?php echo wp_kses_post( $this->get_promotion_heading() ); ?></strong>
 				</p>
 				<p>
-					<?php echo $this->get_promotion_message(); ?>
+					<?php echo wp_kses_post( $this->get_promotion_message() ); ?>
 				</p>
 				<p>
 					<?php
@@ -104,7 +109,7 @@ abstract class Promotion_Base {
 
 					foreach ( $buttons as $button ) {
 						$url = isset( $button['url'] ) ? esc_url( $button['url'] ) : '';
-						$text = isset( $button['text'] ) ? $button['text'] : '';
+						$text = isset( $button['text'] ) ? esc_html( $button['text'] ) : '';
 						$class = isset( $button['class'] ) ? esc_attr( $button['class'] ) : 'button';
 						$target = isset( $button['target'] ) ? esc_attr( $button['target'] ) : '';
 						
@@ -163,10 +168,5 @@ abstract class Promotion_Base {
 		}
 
 		wp_send_json_success();
-	}
-
-	public function __construct() {
-		add_action( 'admin_notices', [ $this, 'display_promotion' ] );
-		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'dismiss_promotion_ajax_handler' ] );
 	}
 }

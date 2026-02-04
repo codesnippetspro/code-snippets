@@ -53,7 +53,7 @@ class Insert_PHP_Code_Snippet extends Promotion_Base {
 
 		$buttons[] = [
 			'url'    => 'https://codesnippets.pro/pricing/?utm_source=' . $this->get_plugin_slug() . '&utm_medium=promotion&utm_campaign=custom-code',
-			'text'   => esc_html__( 'Learn More', 'code-snippets' ),
+			'text'   => esc_html__( 'Learn more', 'code-snippets' ),
 			'class'  => 'button button-secondary',
 			'target' => '_blank',
 		];
