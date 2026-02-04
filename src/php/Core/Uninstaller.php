@@ -67,6 +67,7 @@ class Uninstaller {
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}snippets" );
 
 		delete_option( 'code_snippets_version' );
+		delete_option( 'recently_active_snippets' );
 		delete_option( 'recently_activated_snippets' );
 		delete_option( 'code_snippets_settings' );
 
@@ -98,6 +99,7 @@ class Uninstaller {
 
 		// Remove saved options.
 		delete_site_option( 'code_snippets_version' );
+		delete_site_option( 'recently_active_snippets' );
 		delete_site_option( 'recently_activated_snippets' );
 	}
 

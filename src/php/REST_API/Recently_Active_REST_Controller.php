@@ -87,38 +87,38 @@ final class Recently_Active_REST_Controller {
 	}
 
 	/**
-	 * Callback for retrieving the recently activated snippets list.
+	 * Callback for retrieving the recently active snippets list.
 	 *
-	 * This will return the list of recently activated snippets, either site-wide or network-wide,
+	 * This will return the list of recently active snippets, either site-wide or network-wide,
 	 * depending on the 'network' parameter.
 	 *
 	 * @param WP_REST_Request $request The REST request object.
 	 *
-	 * @return WP_REST_Response The recently activated snippets list.
+	 * @return WP_REST_Response The recently active snippets list.
 	 */
 	public function get_recent_list_callback( WP_REST_Request $request ): WP_REST_Response {
 		return rest_ensure_response(
 			$request->get_param( 'network' )
-				? get_site_option( 'recently_activated_snippets', [] )
-				: get_option( 'recently_activated_snippets', [] )
+				? get_site_option( 'recently_active_snippets', [] )
+				: get_option( 'recently_active_snippets', [] )
 		);
 	}
 
 	/**
-	 * Callback for clearing the recently activated snippets list.
+	 * Callback for clearing the recently active snippets list.
 	 *
-	 * This will clear the list of recently activated snippets, either site-wide or network-wide,
+	 * This will clear the list of recently active snippets, either site-wide or network-wide,
 	 * depending on the 'network' parameter.
 	 *
 	 * @param WP_REST_Request $request The REST request object.
 	 *
-	 * @return WP_REST_Response The recently activated snippets list prior to clearing it.
+	 * @return WP_REST_Response The recently active snippets list prior to clearing it.
 	 */
 	public function clear_recent_list_callback( WP_REST_Request $request ): WP_REST_Response {
 		$network = $request->get_param( 'network' );
 
-		$current = get_self_option( $network, 'recently_activated_snippets', [] );
-		delete_self_option( $network, 'recently_activated_snippets' );
+		$current = get_self_option( $network, 'recently_active_snippets', [] );
+		delete_self_option( $network, 'recently_active_snippets' );
 
 		return rest_ensure_response( $current );
 	}

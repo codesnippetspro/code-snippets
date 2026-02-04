@@ -227,7 +227,7 @@ class Snippet extends Model {
 	 * @noinspection PhpUnused
 	 */
 	protected function get_last_active(): string {
-		$recently_active = get_self_option( $this->network, 'recently_activated_snippets', [] );
+		$recently_active = get_self_option( $this->network, 'recently_active_snippets', [] );
 		return $recently_active[ (string) $this->id ] ?? 0;
 	}
 

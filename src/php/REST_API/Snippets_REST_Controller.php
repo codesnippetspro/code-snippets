@@ -394,14 +394,6 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	public function restore_item( WP_REST_Request $request ) {
 		$item = $this->prepare_item_for_database( $request );
 
-		if ( ! $item->trashed ) {
-			return new WP_Error(
-				'rest_bad_restore_request',
-				__( 'Snippet is not in the trash.', 'code-snippets' ),
-				[ 'status' => 400 ]
-			);
-		}
-
 		return restore_snippet( $item->id, $item->network )
 			? new WP_REST_Response( null, 204 )
 			: new WP_Error(

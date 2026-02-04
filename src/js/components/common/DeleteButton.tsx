@@ -68,7 +68,7 @@ export const DeleteButton: React.FC<DeleteButtonProps> = ({
 
 	return (
 		<>
-			<Button className={className} {...buttonProps} onClick={() => handleButtonClick}>
+			<Button className={className} {...buttonProps} onClick={handleButtonClick}>
 				{snippet.trashed ? __('Delete Permanently', 'code-snippets') : __('Trash', 'code-snippets')}
 			</Button>
 

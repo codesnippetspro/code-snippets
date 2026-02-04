@@ -18,7 +18,7 @@ export interface Snippet {
 }
 
 export const SNIPPET_TYPES = <const> ['php', 'html', 'css', 'js', 'cond']
-export const SNIPPET_STATUSES = <const> ['active', 'inactive', 'recently_activated', 'locked', 'unlocked', 'trashed']
+export const SNIPPET_STATUSES = <const> ['active', 'inactive', 'recently_active', 'locked', 'unlocked', 'trashed']
 
 export type SnippetType = typeof SNIPPET_TYPES[number]
 export type SnippetStatus = typeof SNIPPET_STATUSES[number]

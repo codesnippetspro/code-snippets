@@ -1,5 +1,5 @@
 import { __, _x, sprintf } from '@wordpress/i18n'
-import React, { Fragment, useMemo } from 'react'
+import React, { Fragment, useEffect, useMemo } from 'react'
 import { createInterpolateElement } from '@wordpress/element'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
@@ -46,7 +46,7 @@ const STATUS_LABELS: [SnippetStatus | undefined, string][] = [
 	[undefined, __('All', 'code-snippets')],
 	['active', __('Active', 'code-snippets')],
 	['inactive', __('Inactive', 'code-snippets')],
-	['recently_activated', __('Recently Activated', 'code-snippets')],
+	['recently_active', __('Recently Active', 'code-snippets')],
 	['locked', __('Locked', 'code-snippets')],
 	['unlocked', __('Unlocked', 'code-snippets')],
 	['trashed', __('Trashed', 'code-snippets')]
@@ -90,7 +90,7 @@ const ClearRecentlyActiveButton: React.FC = () => {
 	const { refreshSnippetsList } = useSnippetsList()
 	const { currentStatus } = useSnippetsFilters()
 
-	return 'recently_activated' === currentStatus
+	return 'recently_active' === currentStatus
 		? <div className="alignleft actions">
 			<SubmitButton
 				secondary
@@ -172,11 +172,17 @@ const NoItemsMessage = () => {
 }
 
 export const SnippetsListTable: React.FC = () => {
-	const { currentStatus } = useSnippetsFilters()
+	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { snippetsByStatus } = useFilteredSnippets()
 
 	const totalItems = snippetsByStatus.get(currentStatus)?.length ?? 0
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
+
+	useEffect(() => {
+		if (undefined !== currentStatus && !snippetsByStatus.has(currentStatus)) {
+			setCurrentStatus(undefined)
+		}
+	}, [currentStatus, setCurrentStatus, snippetsByStatus])
 
 	return (
 		<>
