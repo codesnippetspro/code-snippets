@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
 import { REST_CLOUD_SEARCH_BASE } from '../../../utils/restAPI'
 import { useRestAPI } from '../../../hooks/useRestAPI'
+import { buildUrl, fetchQueryParam, updateQueryParam } from '../../../utils/urls'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
-import { buildUrl, fetchQueryParam, updateQueryParam } from '../../../utils/urls'
 
 const SEARCH_PARAM = 's'
 const SEARCH_METHOD_PARAM = 'by'
@@ -30,7 +30,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 	const { api } = useRestAPI()
 	const [page, setPage] = useState(1)
 	const [query, setQuery] = useState(() => fetchQueryParam(SEARCH_PARAM) ?? '')
-	const [searchByCodevault, setSearchByCodevault] = useState(() => fetchQueryParam(SEARCH_METHOD_PARAM) === 'codevault')
+	const [searchByCodevault, setSearchByCodevault] = useState(() => 'codevault' === fetchQueryParam(SEARCH_METHOD_PARAM))
 
 	const [totalItems, setTotalItems] = useState(0)
 	const [totalPages, setTotalPages] = useState(0)

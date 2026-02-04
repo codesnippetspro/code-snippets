@@ -63,8 +63,8 @@ export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ child
 	const { snippetsList } = useSnippetsList()
 	const { currentType, currentTag, searchLineNumber, searchQueryText } = useSnippetsFilters()
 
-	const snippets = useMemo(() =>
-			snippetsList ?? window.CODE_SNIPPETS_MANAGE?.snippetsList.map(parseSnippetObject) ?? [],
+	const snippets = useMemo(
+		() => snippetsList ?? window.CODE_SNIPPETS_MANAGE?.snippetsList.map(parseSnippetObject) ?? [],
 		[snippetsList])
 
 	const visibleSnippets = useMemo(() => {
@@ -92,8 +92,8 @@ export const WithFilteredSnippetsContext: React.FC<PropsWithChildren> = ({ child
 		})
 	}, [snippets, currentTag, currentType, searchQueryText, searchLineNumber])
 
-	const snippetsByStatus = useMemo(() =>
-			partitionSnippetsByStatus(visibleSnippets),
+	const snippetsByStatus = useMemo(
+		() => partitionSnippetsByStatus(visibleSnippets),
 		[visibleSnippets])
 
 	const activeByCondition = useMemo(

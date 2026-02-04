@@ -1,5 +1,6 @@
 import { __, _x, sprintf } from '@wordpress/i18n'
 import React, { Fragment, useMemo } from 'react'
+import { createInterpolateElement } from '@wordpress/element'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
@@ -13,7 +14,6 @@ import { useFilteredSnippets } from './WithFilteredSnippetsContext'
 import { TableColumns } from './TableColumns'
 import type { ListTableBulkAction } from '../../common/ListTable'
 import type { Snippet, SnippetStatus } from '../../../types/Snippet'
-import { createInterpolateElement } from '@wordpress/element'
 
 const actions: ListTableBulkAction<Snippet['id']>[] = [
 	{

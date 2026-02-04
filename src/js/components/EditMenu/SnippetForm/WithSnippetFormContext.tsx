@@ -35,7 +35,7 @@ export const WithSnippetFormContext: React.FC<WithSnippetFormContextProps> = ({ 
 	const [codeEditorInstance, setCodeEditorInstance] = useState<CodeEditorInstance>()
 
 	const isReadOnly = useMemo(
-		() => snippet.locked || (!isLicensed() && isProSnippet({ scope: snippet.scope })),
+		() => snippet.locked || !isLicensed() && isProSnippet({ scope: snippet.scope }),
 		[snippet.locked, snippet.scope]
 	)
 

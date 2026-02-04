@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import React, { Fragment, ReactNode, useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { humanTimeDiff } from '@wordpress/date'
 import { RawHTML } from '@wordpress/element'
@@ -15,6 +15,7 @@ import { Button } from '../../common/Button'
 import { DeleteButton } from '../../common/DeleteButton'
 import { useSnippetsFilters } from './WithSnippetsTableFilters'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
+import type { ReactNode } from 'react'
 import type { Snippet } from '../../../types/Snippet'
 import type { ListTableColumn } from '../../common/ListTable'
 
@@ -28,7 +29,7 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	const { refreshSnippetsList } = useSnippetsList()
 
 	if (snippet.trashed) {
-		return '';
+		return ''
 	}
 
 	switch (snippet.scope) {
@@ -79,23 +80,9 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	}
 }
 
-const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
+const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
 	const api = useSnippetsAPI()
 	const { refreshSnippetsList } = useSnippetsList()
-
-	if (!isNetworkAdmin() && snippet.network && !snippet.shared_network) {
-		return (
-			<div className="row-actions visible">
-				{snippet.active
-					? <span className="network-active">{__('Network Active', 'code-snippets')}</span>
-					: <span className="network-only">{__('Network Only', 'code-snippets')}</span>}
-			</div>
-		)
-	}
-
-	if (snippet.shared_network && !window.CODE_SNIPPETS_MANAGE?.hasNetworkCap) {
-		return undefined
-	}
 
 	const Edit = !snippet.trashed && (() =>
 		<a href={getSnippetEditUrl(snippet)}>{__('Edit', 'code-snippets')}</a>)
@@ -103,12 +90,12 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 	const Clone = !snippet.trashed && (() =>
 		<Button link onClick={() => {
 			api.create(createSnippetObject({
-					...snippet,
-					id: 0,
-					active: false,
-					// translators: %s: snippet title.
-					name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
-				}))
+				...snippet,
+				id: 0,
+				active: false,
+				// translators: %s: snippet title.
+				name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
+			}))
 				.then(refreshSnippetsList)
 				.catch(handleUnknownError)
 		}}>
@@ -133,18 +120,39 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 			{__('Restore', 'code-snippets')}
 		</Button>)
 
-
 	const Delete = (!snippet.locked || snippet.trashed) && (() =>
 		<DeleteButton link className="delete" snippet={snippet} onSuccess={refreshSnippetsList} />)
 
 	return (
-		<div className={classnames('row-actions', {visible: !snippet.trashed})}>
+		<>
 			{[Edit, Clone, Restore, Export, Delete]
-				.filter(Action => Action !== false)
+				.filter(Action => false !== Action)
 				.reduce<ReactNode>(
 					(Actions, Action) =>
-						Actions === null ? <Action /> : <>{Actions} | <Action /></>,
+						null === Actions ? <Action /> : <>{Actions} | <Action /></>,
 					null)}
+		</>
+	)
+}
+
+const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
+	if (!isNetworkAdmin() && snippet.network && !snippet.shared_network) {
+		return (
+			<div className="row-actions visible">
+				{snippet.active
+					? <span className="network-active">{__('Network Active', 'code-snippets')}</span>
+					: <span className="network-only">{__('Network Only', 'code-snippets')}</span>}
+			</div>
+		)
+	}
+
+	if (snippet.shared_network && !window.CODE_SNIPPETS_MANAGE?.hasNetworkCap) {
+		return undefined
+	}
+
+	return (
+		<div className={classnames('row-actions', { visible: !snippet.trashed })}>
+			<ActionLinks snippet={snippet} />
 		</div>
 	)
 }

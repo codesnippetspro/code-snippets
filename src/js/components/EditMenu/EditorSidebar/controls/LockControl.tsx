@@ -20,6 +20,7 @@ export const LockControl: React.FC = () => {
 					? __('Snippet <strong>locked</strong>.', 'code-snippets')
 					: __('Snippet <strong>unlocked</strong>.', 'code-snippets')])
 			})
+			.catch(() => setCurrentNotice(['error', __('Unable to lock snippet.', 'code-snippets')]))
 			.finally(() => setIsWorking(false))
 	}
 

@@ -6,7 +6,7 @@ import { ImporterSelector } from './ImporterSelector'
 import { ImportOptions } from './ImportOptions'
 import { SimpleSnippetTable } from './SimpleSnippetTable'
 import { MigrationStep, WithMigrationData, useMigrationData } from './WithMigrationData'
-import { useMigrationOptions, WithMigrationOptions } from './WithMigrationOptions'
+import { WithMigrationOptions, useMigrationOptions } from './WithMigrationOptions'
 import type { ReactNode } from 'react'
 
 interface StatusDisplayProps {
@@ -40,25 +40,25 @@ const StatusMessages: React.FC = () => {
 					{error.message}
 				</StatusDisplay>)}
 
-				{0 < importedIds.length && (
-					// translators: %d: number of imported snippets.
-					<StatusDisplay type="success" title={sprintf(__('%d snippets imported!', 'code-snippets'), importedIds.length)}>
-						{createInterpolateElement(
-							__('Selected snippets have been successfully imported to your <a>Code Snippets library</a>.', 'code-snippets'),
-							{ a: <a href={window.CODE_SNIPPETS?.urls.manage} /> }
-						)}
-					</StatusDisplay>)}
+			{0 < importedIds.length && (
+			// translators: %d: number of imported snippets.
+				<StatusDisplay type="success" title={sprintf(__('%d snippets imported!', 'code-snippets'), importedIds.length)}>
+					{createInterpolateElement(
+						__('Selected snippets have been successfully imported to your <a>Code Snippets library</a>.', 'code-snippets'),
+						{ a: <a href={window.CODE_SNIPPETS?.urls.manage} /> }
+					)}
+				</StatusDisplay>)}
 
-				{selectedImporter &&
+			{selectedImporter &&
 					isWorking !== MigrationStep.FetchSnippets && error?.step !== MigrationStep.FetchSnippets &&
 					0 === snippetSelection.availableItems.length && 0 === importedIds.length && (
-						<ImportCard className="no-snippets-card">
-							<div className="card-inner">
-								<div className="card-icon">📭</div>
-								<h3>{__('No snippets found', 'code-snippets')}</h3>
-								<p>{__('No snippets were found for the selected plugin. Make sure the plugin is installed and has snippets configured.', 'code-snippets')}</p>
-							</div>
-						</ImportCard>)}
+				<ImportCard className="no-snippets-card">
+					<div className="card-inner">
+						<div className="card-icon">📭</div>
+						<h3>{__('No snippets found', 'code-snippets')}</h3>
+						<p>{__('No snippets were found for the selected plugin. Make sure the plugin is installed and has snippets configured.', 'code-snippets')}</p>
+					</div>
+				</ImportCard>)}
 		</>
 	)
 }

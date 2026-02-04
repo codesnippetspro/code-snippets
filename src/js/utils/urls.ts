@@ -22,20 +22,24 @@ export const updateQueryParam = (name: string, value?: string | number) => {
 
 const normaliseQueryArg = (value: unknown): string | undefined => {
 	switch (true) {
-		case value === undefined || value === null:
+		case value === undefined || null === value:
 			return undefined
 
-		case typeof value === 'boolean':
+		case 'boolean' === typeof value:
 			return value ? '1' : '0'
 
-		default:
+		case 'number' === typeof value:
+		case 'string' === typeof value:
 			return String(value)
+
+		default:
+			throw new Error(`Unsupported query arg type: ${typeof value}`)
 	}
 }
 
-export const buildUrl = <K extends PropertyKey, V>(
+export const buildUrl = (
 	base: string | undefined,
-	queryArgs: { [P in K]?: V }
+	queryArgs: Record<string, boolean | number | string | undefined | null>
 ): string => {
 	const processedArgs: Record<string, string> = {}
 

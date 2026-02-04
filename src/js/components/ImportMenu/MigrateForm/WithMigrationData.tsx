@@ -112,9 +112,10 @@ export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => 
 	const [error, setError] = useState<MigrationError>()
 	const [isWorking, setIsWorking] = useState<MigrationStep>()
 
-	const [snippets, fetchSnippets, resetSnippets] = useRemoteRequest<ImportableSnippet>(MigrationStep.FetchSnippets, setError, setIsWorking)
-	const [importers, fetchImporters] = useRemoteRequest<Importer>(MigrationStep.LoadImporters, setError, setIsWorking)
 	const [importedIds, doImport] = useRemoteRequest<number>(MigrationStep.MigrateSnippets, setError, setIsWorking)
+	const [importers, fetchImporters] = useRemoteRequest<Importer>(MigrationStep.LoadImporters, setError, setIsWorking)
+	const [snippets, fetchSnippets, resetSnippets] =
+		useRemoteRequest<ImportableSnippet>(MigrationStep.FetchSnippets, setError, setIsWorking)
 
 	const snippetSelection = useSelection(snippets, snippet => snippet.table_data.id)
 

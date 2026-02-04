@@ -56,7 +56,7 @@ const SearchResultsTable = () => {
 
 	useEffect(() => {
 		doSearch()
-	}, [page])
+	}, [doSearch, page])
 
 	return filteredSearchResults
 		? <>
