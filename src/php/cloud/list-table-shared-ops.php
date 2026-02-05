@@ -10,6 +10,19 @@ namespace Code_Snippets\Cloud;
 use function Code_Snippets\code_snippets;
 
 /**
+ * Build the nonce action string for cloud snippet state-changing operations.
+ *
+ * @param string $action    Action - 'download' or 'update'.
+ * @param int    $snippet_id Cloud snippet ID.
+ * @param string $source    Source - 'search' or 'cloud'.
+ *
+ * @return string
+ */
+function cloud_lts_get_snippet_action_nonce_action( string $action, int $snippet_id, string $source ): string {
+	return sprintf( 'cloud-snippet-action|%s|%s|%d', $action, $source, $snippet_id );
+}
+
+/**
  * Display a hidden input field for a certain column and snippet value.
  *
  * @param string        $column_name Column name.
@@ -83,15 +96,19 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 	$link = code_snippets()->cloud_api->get_link_for_cloud_snippet( $cloud_snippet );
 	$is_licensed = code_snippets()->licensing->is_licensed();
 	$download = $is_licensed || ! in_array( $lang, [ 'css', 'js' ], true );
+	$snippet_id = (int) $cloud_snippet->id;
 
 	if ( $link ) {
 		if ( $is_licensed && $link->update_available ) {
-			$update_url = add_query_arg(
-				[
-					'action'  => 'update',
-					'snippet' => $cloud_snippet->id,
-					'source'  => $source,
-				]
+			$update_url = wp_nonce_url(
+				add_query_arg(
+					[
+						'action'  => 'update',
+						'snippet' => $snippet_id,
+						'source'  => $source,
+					]
+				),
+				cloud_lts_get_snippet_action_nonce_action( 'update', $snippet_id, $source )
 			);
 			return sprintf(
 				'<li><a class="button button-primary" href="%s">%s</a></li>',
@@ -110,7 +127,7 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 	if ( $download ) {
 			$download_query = [
 				'action'  => 'download',
-				'snippet' => $cloud_snippet->id,
+				'snippet' => $snippet_id,
 				'source'  => $source,
 			];
 
@@ -127,7 +144,10 @@ function cloud_lts_build_action_links( Cloud_Snippet $cloud_snippet, string $sou
 				$download_query['bundle_share_name'] = sanitize_text_field( wp_unslash( $_REQUEST['bundle_share_name'] ) );
 			}
 
-			$download_url = add_query_arg( $download_query );
+			$download_url = wp_nonce_url(
+				add_query_arg( $download_query ),
+				cloud_lts_get_snippet_action_nonce_action( 'download', $snippet_id, $source )
+			);
 
 		$download_button = sprintf(
 			'<li><a class="button button-primary" href="%s">%s</a></li>',

@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.9.5] (2026-02-05)
+
+### Added
+* Confirmed WordPress 6.9 compatability
+
+### Fixed
+* Improved nonce handling for cloud snippet download and update actions to for enhanced security
+
 ## [3.9.4] (2026-01-14)
 
 ### Added
