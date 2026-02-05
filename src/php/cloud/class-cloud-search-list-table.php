@@ -101,15 +101,33 @@ class Cloud_Search_List_Table extends WP_Plugin_Install_List_Table {
 		);
 
 		// Check request is coming from the cloud search page.
-		if ( isset( $_REQUEST['type'] ) && 'cloud_search' === $_REQUEST['type'] ) {
-				if ( isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
-					cloud_lts_process_download_action(
-						sanitize_key( wp_unslash( $_REQUEST['action'] ) ),
-						sanitize_key( wp_unslash( $_REQUEST['source'] ) ),
-						sanitize_key( wp_unslash( $_REQUEST['snippet'] ) ),
-					);
-				}
+		if ( ! isset( $_REQUEST['type'] ) || 'cloud_search' !== sanitize_key( wp_unslash( $_REQUEST['type'] ) ) ) {
+			return;
 		}
+
+		if ( ! isset( $_REQUEST['action'], $_REQUEST['snippet'], $_REQUEST['source'] ) ) {
+			return;
+		}
+
+		$action = sanitize_key( wp_unslash( $_REQUEST['action'] ) );
+		$source = sanitize_key( wp_unslash( $_REQUEST['source'] ) );
+		$snippet_id = absint( wp_unslash( $_REQUEST['snippet'] ) );
+
+		if ( ! in_array( $action, [ 'download', 'update' ], true ) ) {
+			return;
+		}
+
+		if ( ! $snippet_id ) {
+			return;
+		}
+
+		check_admin_referer( cloud_lts_get_snippet_action_nonce_action( $action, $snippet_id, $source ) );
+
+		cloud_lts_process_download_action(
+			$action,
+			$source,
+			(string) $snippet_id,
+		);
 	}
 
 	/**
