@@ -1,15 +1,25 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { SNIPPET_STATUSES, SNIPPET_TYPES } from '../../../types/Snippet'
+import { SNIPPET_TYPES } from '../../../types/Snippet'
 import { createContextHook } from '../../../utils/bootstrap'
 import { fetchQueryParam, updateQueryParam } from '../../../utils/urls'
-import type { SnippetStatus, SnippetType } from '../../../types/Snippet'
+import type { SnippetType } from '../../../types/Snippet'
 import type { PropsWithChildren } from 'react'
 
-const isSnippetType = (type: unknown): type is SnippetType =>
-	SNIPPET_TYPES.includes(type as SnippetType)
+export const SNIPPET_STATUSES = [
+	'all',
+	'active', 'inactive', 'recently_active',
+	'locked', 'unlocked',
+	'trashed'
+] as const
+
+export type SnippetStatus = typeof SNIPPET_STATUSES[number]
+export const INDEX_STATUS: SnippetStatus = 'all'
 
 const isSnippetStatus = (status: unknown): status is SnippetStatus =>
 	SNIPPET_STATUSES.includes(status as SnippetStatus)
+
+const isSnippetType = (type: unknown): type is SnippetType =>
+	SNIPPET_TYPES.includes(type as SnippetType)
 
 const parseSearchQuery = (query?: string): [string | undefined, number | undefined] => {
 	const lineMatch = query?.trim().match(/@line:(?<line>\d+)/)
@@ -24,11 +34,11 @@ export interface SnippetsTableFiltersContext {
 	currentTag: string | undefined
 	currentType: SnippetType | undefined
 	searchQuery: string | undefined
-	currentStatus: SnippetStatus | undefined
+	currentStatus: SnippetStatus
 	setCurrentTag: (tag?: string) => void
 	setCurrentType: (type?: SnippetType) => void
 	setSearchQuery: (query?: string) => void
-	setCurrentStatus: (status?: SnippetStatus) => void
+	setCurrentStatus: (status: SnippetStatus) => void
 	searchLineNumber?: number
 	searchQueryText?: string
 }
@@ -46,27 +56,8 @@ export const WithSnippetsTableFilters: React.FC<PropsWithChildren> = ({ children
 
 	const [currentStatus, setCurrentStatus] = useState(() => {
 		const status = fetchQueryParam('status')
-		return isSnippetStatus(status) ? status : undefined
+		return isSnippetStatus(status) ? status : INDEX_STATUS
 	})
-
-	const setters = {
-		setCurrentType: useCallback((type?: SnippetType) => {
-			setCurrentType(type)
-			updateQueryParam('type', type)
-		}, [setCurrentType]),
-		setCurrentStatus: useCallback((status?: SnippetStatus) => {
-			setCurrentStatus(status)
-			updateQueryParam('status', status)
-		}, [setCurrentStatus]),
-		setCurrentTag: useCallback((tag?: string) => {
-			setTag(tag)
-			updateQueryParam('tag', tag)
-		}, [setTag]),
-		setSearchQuery: useCallback((query?: string) => {
-			setSearch(query)
-			updateQueryParam('s', query)
-		}, [setSearch])
-	}
 
 	const [searchQueryText, searchLineNumber] = useMemo(
 		() => parseSearchQuery(searchQuery),
@@ -79,7 +70,26 @@ export const WithSnippetsTableFilters: React.FC<PropsWithChildren> = ({ children
 		currentStatus,
 		searchQueryText,
 		searchLineNumber,
-		...setters
+
+		setCurrentType: useCallback(type => {
+			setCurrentType(type)
+			updateQueryParam('type', type)
+		}, []),
+
+		setCurrentStatus: useCallback(status => {
+			setCurrentStatus(status)
+			updateQueryParam('status', INDEX_STATUS === status ? '' : status)
+		}, []),
+
+		setCurrentTag: useCallback(tag => {
+			setTag(tag)
+			updateQueryParam('tag', tag)
+		}, []),
+
+		setSearchQuery: useCallback(query => {
+			setSearch(query)
+			updateQueryParam('s', query)
+		}, [])
 	}
 
 	return <Context.Provider value={value}>{children}</Context.Provider>

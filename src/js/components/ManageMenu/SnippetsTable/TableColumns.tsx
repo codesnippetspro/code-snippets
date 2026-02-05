@@ -93,12 +93,12 @@ const ActionLinks = ({ snippet }: { snippet: Snippet }) => {
 	const Clone = !snippet.trashed && (() =>
 		<Button link onClick={() => {
 			api.create(createSnippetObject({
-					...snippet,
-					id: 0,
-					active: false,
-					// translators: %s: snippet title.
-					name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
-				}))
+				...snippet,
+				id: 0,
+				active: false,
+				// translators: %s: snippet title.
+				name: sprintf(__('%s [CLONE]', 'code-snippets'), snippet.name)
+			}))
 				.then(refreshSnippetsList)
 				.catch(handleUnknownError)
 		}}>

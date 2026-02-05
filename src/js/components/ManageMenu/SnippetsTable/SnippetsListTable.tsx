@@ -9,11 +9,12 @@ import { getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
 import { SubmitButton } from '../../common/SubmitButton'
-import { useSnippetsFilters } from './WithSnippetsTableFilters'
+import { INDEX_STATUS, useSnippetsFilters } from './WithSnippetsTableFilters'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
 import { TableColumns } from './TableColumns'
+import type { SnippetStatus} from './WithSnippetsTableFilters'
 import type { ListTableBulkAction } from '../../common/ListTable'
-import type { Snippet, SnippetStatus } from '../../../types/Snippet'
+import type { Snippet } from '../../../types/Snippet'
 
 const actions: ListTableBulkAction<Snippet['id']>[] = [
 	{
@@ -42,8 +43,8 @@ const actions: ListTableBulkAction<Snippet['id']>[] = [
 	}
 ]
 
-const STATUS_LABELS: [SnippetStatus | undefined, string][] = [
-	[undefined, __('All', 'code-snippets')],
+const STATUS_LABELS: [SnippetStatus, string][] = [
+	['all', __('All', 'code-snippets')],
 	['active', __('Active', 'code-snippets')],
 	['inactive', __('Inactive', 'code-snippets')],
 	['recently_active', __('Recently Active', 'code-snippets')],
@@ -62,10 +63,10 @@ const SnippetStatusCounts = () => {
 	return (
 		<ul className="subsubsub">
 			{visibleStatuses.map(([status, label], index) =>
-				<Fragment key={label}>
-					<li className={status ?? 'all'}>
+				<Fragment key={status}>
+					<li className={status}>
 						<a
-							href={buildUrl(window.location.href, { status })}
+							href={buildUrl(window.location.href, { status: INDEX_STATUS === status ? undefined : status })}
 							className={currentStatus === status ? 'current' : undefined}
 							onClick={event => {
 								event.preventDefault()
@@ -179,8 +180,8 @@ export const SnippetsListTable: React.FC = () => {
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
 
 	useEffect(() => {
-		if (undefined !== currentStatus && !snippetsByStatus.has(currentStatus)) {
-			setCurrentStatus(undefined)
+		if (INDEX_STATUS !== currentStatus && !snippetsByStatus.has(currentStatus)) {
+			setCurrentStatus(INDEX_STATUS)
 		}
 	}, [currentStatus, setCurrentStatus, snippetsByStatus])
 
@@ -197,7 +198,7 @@ export const SnippetsListTable: React.FC = () => {
 				totalPages={itemsPerPage && Math.ceil(totalItems / itemsPerPage)}
 				extraTableNav={which =>
 					<>
-						{'top' === which && <FilterByTagControl visibleSnippets={snippetsByStatus.get(undefined) ?? []} />}
+						{'top' === which && <FilterByTagControl visibleSnippets={snippetsByStatus.get('all') ?? []} />}
 						<ClearRecentlyActiveButton />
 					</>}
 				rowClassName={snippet =>

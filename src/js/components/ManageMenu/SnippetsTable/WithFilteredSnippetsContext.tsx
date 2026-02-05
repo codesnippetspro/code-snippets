@@ -4,8 +4,9 @@ import { parseSnippetObject } from '../../../utils/snippets/objects'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { useSnippetsFilters } from './WithSnippetsTableFilters'
+import type { SnippetStatus} from './WithSnippetsTableFilters'
 import type { PropsWithChildren } from 'react'
-import type { Snippet, SnippetStatus } from '../../../types/Snippet'
+import type { Snippet } from '../../../types/Snippet'
 
 const pushToMapArray = <K, V>(map: Map<K, V[]>, key: K, value: V) => {
 	if (!map.get(key)?.push(value)) {
@@ -13,9 +14,9 @@ const pushToMapArray = <K, V>(map: Map<K, V[]>, key: K, value: V) => {
 	}
 }
 
-const partitionSnippetsByStatus = (snippets: Snippet[]): Map<SnippetStatus | undefined, Snippet[]> =>
+const partitionSnippetsByStatus = (snippets: Snippet[]): Map<SnippetStatus, Snippet[]> =>
 	snippets.reduce((acc, snippet) => {
-		pushToMapArray(acc, snippet.trashed ? 'trashed' : undefined, snippet)
+		pushToMapArray(acc, snippet.trashed ? 'trashed' : 'all', snippet)
 		pushToMapArray(acc, snippet.active ? 'active' : 'inactive', snippet)
 		pushToMapArray(acc, snippet.locked ? 'locked' : 'unlocked', snippet)
 
@@ -24,7 +25,7 @@ const partitionSnippetsByStatus = (snippets: Snippet[]): Map<SnippetStatus | und
 		}
 
 		return acc
-	}, new Map<SnippetStatus | undefined, Snippet[]>())
+	}, new Map<SnippetStatus, Snippet[]>())
 
 const partitionActiveSnippetsByCondition = (snippets: readonly Snippet[]): Map<Snippet['conditionId'], Snippet[]> =>
 	snippets.reduce((acc, snippet) => {
@@ -36,7 +37,7 @@ const partitionActiveSnippetsByCondition = (snippets: readonly Snippet[]): Map<S
 	}, new Map<Snippet['conditionId'], Snippet[]>())
 
 export interface FilteredSnippetsContext {
-	snippetsByStatus: Map<SnippetStatus | undefined, Snippet[]>
+	snippetsByStatus: Map<SnippetStatus, Snippet[]>
 	activeByCondition: Map<Snippet['conditionId'], Snippet[]>
 }
 
