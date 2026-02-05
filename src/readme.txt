@@ -104,6 +104,21 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.9.5 (2026-02-05) =
+
+__Changed__
+
+* Enhanced nonce handling for cloud snippet download and update actions to improve security
+* Improved input validation and sanitization for cloud search download actions with early returns for invalid requests
+* Added type safety improvements for cloud snippet IDs with proper integer conversion
+
+__Fixed__
+
+* Fixed security vulnerability by implementing proper nonce verification for state-changing cloud snippet operations
+* Fixed validation logic to only accept 'download' and 'update' actions for cloud snippet operations
+* Improved request validation to prevent processing of incomplete or malformed cloud search requests
+
 = 3.9.4 (2026-01-14) =
 
 __Added__
