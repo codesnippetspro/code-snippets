@@ -29,11 +29,14 @@ final class Recently_Active_REST_Controller extends REST_Controller {
 	public const BASE_ROUTE = 'recently-active';
 
 	/**
+	 * The name of the option used to store the recently active snippets list.
+	 */
+	private const OPTION_NAME = 'recently_active_snippets';
+
+	/**
 	 * Register REST routes.
 	 */
 	public function register_routes() {
-		$permission_callback = [ code_snippets(), 'current_user_can' ];
-
 		register_rest_route(
 			$this->namespace,
 			self::BASE_ROUTE,
@@ -41,7 +44,7 @@ final class Recently_Active_REST_Controller extends REST_Controller {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_recent_list_callback' ],
-					'permission_callback' => $permission_callback,
+					'permission_callback' => [ $this, 'permission_callback' ],
 					'args'                => [
 						'network' => [
 							'description' => esc_html__( 'Fetch the recent list for network-wide snippets instead of site-wide.', 'code-snippets' ),
@@ -60,7 +63,7 @@ final class Recently_Active_REST_Controller extends REST_Controller {
 				[
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => [ $this, 'clear_recent_list_callback' ],
-					'permission_callback' => $permission_callback,
+					'permission_callback' => [ $this, 'permission_callback' ],
 					'args'                => [
 						'network' => [
 							'description' => esc_html__( 'Clear the recent list for network-wide snippets instead of site-wide.', 'code-snippets' ),
@@ -84,11 +87,8 @@ final class Recently_Active_REST_Controller extends REST_Controller {
 	 * @return WP_REST_Response The recently active snippets list.
 	 */
 	public function get_recent_list_callback( WP_REST_Request $request ): WP_REST_Response {
-		return rest_ensure_response(
-			$request->get_param( 'network' )
-				? get_site_option( 'recently_active_snippets', [] )
-				: get_option( 'recently_active_snippets', [] )
-		);
+		$network = boolval( $request->get_param( 'network' ) );
+		return rest_ensure_response( get_self_option( $network, self::OPTION_NAME, [] ) );
 	}
 
 	/**
@@ -102,10 +102,10 @@ final class Recently_Active_REST_Controller extends REST_Controller {
 	 * @return WP_REST_Response The recently active snippets list prior to clearing it.
 	 */
 	public function clear_recent_list_callback( WP_REST_Request $request ): WP_REST_Response {
-		$network = $request->get_param( 'network' );
+		$network = boolval( $request->get_param( 'network' ) );
 
-		$current = get_self_option( $network, 'recently_active_snippets', [] );
-		delete_self_option( $network, 'recently_active_snippets' );
+		$current = get_self_option( $network, self::OPTION_NAME, [] );
+		delete_self_option( $network, self::OPTION_NAME );
 
 		return rest_ensure_response( $current );
 	}

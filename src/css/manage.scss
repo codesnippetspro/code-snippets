@@ -96,15 +96,20 @@
 	color: #666;
 	text-align: center;
 
+	&:disabled {
+		color: inherit;
+	}
+
 	&:hover, &:focus, &:active {
 		color: #000;
 		background-color: rgb(0 0 0 / 10%);
 		border-radius: 6px;
 		appearance: unset;
-	}
 
-	&:disabled {
-		color: inherit;
+		&:disabled {
+			color: inherit;
+			background-color: transparent;
+		}
 	}
 }
 
