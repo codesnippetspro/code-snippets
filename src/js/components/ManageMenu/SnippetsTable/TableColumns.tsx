@@ -242,6 +242,7 @@ const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
 				step="1"
 				onBlur={handleUpdate}
 				onChange={event => setValue(Number(event.target.value))}
+				disabled={snippet.locked || snippet.trashed}
 			/>
 		</form>
 	)
