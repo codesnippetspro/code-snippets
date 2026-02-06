@@ -8,7 +8,7 @@ use WPCode_Snippet;
 /**
  * Importer for the 'Insert Headers and Footers' plugin.
  */
-class Insert_Headers_And_Footers_Importer extends Importer_REST_Controller {
+class Insert_Headers_And_Footers_Plugin_Importer extends Plugin_Importer {
 
 	private const FIELD_MAPPINGS = [
 		'title'    => 'name',

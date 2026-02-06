@@ -4,7 +4,7 @@ import { createInterpolateElement } from '@wordpress/element'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
-import { REST_NAMESPACED } from '../../../utils/restAPI'
+import { REST_BASES } from '../../../utils/restAPI'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
 import { ListTable } from '../../common/ListTable'
@@ -99,7 +99,7 @@ const ClearRecentlyActiveButton: React.FC = () => {
 				text={__('Clear List', 'code-snippets')}
 				onClick={event => {
 					event.preventDefault()
-					api.del(`${REST_NAMESPACED}1/recently-active`)
+					api.del(REST_BASES.recentlyActive)
 						.then(refreshSnippetsList)
 						.catch(handleUnknownError)
 				}}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\REST_API;
+namespace Code_Snippets\REST_API\Cloud;
 
 use Code_Snippets\Client\Cloud_API;
 use WP_REST_Controller;

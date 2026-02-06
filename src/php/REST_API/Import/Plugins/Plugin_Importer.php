@@ -5,30 +5,39 @@ namespace Code_Snippets\REST_API\Import\Plugins;
 use Code_Snippets\Model\Snippet;
 use WP_REST_Request;
 use WP_REST_Response;
-use WP_REST_Server;
-use function Code_Snippets\code_snippets;
 use function Code_Snippets\save_snippet;
-use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
- * Base class for registering plugin importers.
+ * Base class for representing a plugin importer.
  */
-abstract class Importer_REST_Controller {
+abstract class Plugin_Importer {
 
 	/**
-	 * REST API version.
+	 * REST API arguments for the import endpoint.
+	 *
+	 * @var array
 	 */
-	public const VERSION = 1;
+	public const REST_ARGS = [
+		'ids'           => [
+			'type'     => 'array',
+			'required' => false,
+		],
+		'network'       => [
+			'type'     => 'boolean',
+			'required' => false,
+		],
+		'auto_add_tags' => [
+			'type'     => 'boolean',
+			'required' => false,
+		],
+		'tag_value'     => [
+			'type'     => 'string',
+			'required' => false,
+		],
+	];
 
 	/**
-	 * Class constructor.
-	 */
-	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
-	}
-
-	/**
-	 * Get the unique name of the importer.
+	 * Get the name of the importer, used in REST API routes.
 	 *
 	 * @return string
 	 */
@@ -117,9 +126,7 @@ abstract class Importer_REST_Controller {
 		$tag_value = $request->get_param( 'tag_value' ) ?? '';
 
 		$data = $this->get_data( $ids_to_import );
-
 		$snippets = $this->transform( $data, $multisite, $auto_add_tags, $tag_value );
-
 		$imported = $this->save_snippets( $snippets );
 
 		return rest_ensure_response( [ 'imported' => $imported ] );
@@ -155,50 +162,5 @@ abstract class Importer_REST_Controller {
 		}
 
 		return $imported;
-	}
-
-	/**
-	 * Register REST API routes for the importer.
-	 */
-	public function register_rest_routes() {
-		$namespace = REST_API_NAMESPACE . self::VERSION;
-
-		register_rest_route(
-			$namespace,
-			$this->get_name(),
-			[
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_items' ],
-				'permission_callback' => [ code_snippets(), 'current_user_can' ],
-			]
-		);
-
-		register_rest_route(
-			$namespace,
-			"{$this->get_name()}/import",
-			[
-				'methods'             => WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'import' ],
-				'permission_callback' => [ code_snippets(), 'current_user_can' ],
-				'args'                => [
-					'ids'           => [
-						'type'     => 'array',
-						'required' => false,
-					],
-					'network'       => [
-						'type'     => 'boolean',
-						'required' => false,
-					],
-					'auto_add_tags' => [
-						'type'     => 'boolean',
-						'required' => false,
-					],
-					'tag_value'     => [
-						'type'     => 'string',
-						'required' => false,
-					],
-				],
-			]
-		);
 	}
 }

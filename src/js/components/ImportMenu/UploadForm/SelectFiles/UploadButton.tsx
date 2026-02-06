@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import React from 'react'
 import { useRestAPI } from '../../../../hooks/useRestAPI'
-import { REST_NAMESPACED } from '../../../../utils/restAPI'
+import { REST_BASES } from '../../../../utils/restAPI'
 import { Button } from '../../../common/Button'
 import type { Dispatch, SetStateAction } from 'react'
 import type { ImportableSnippetSchema } from '../../../../types/schema/ImportableSnippetSchema'
@@ -47,7 +47,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ isUploading, setIsUp
 		}
 
 		api.post<FileParseResponse, FormData>(
-			`${REST_NAMESPACED}1/file-upload/parse`,
+			`${REST_BASES.importFiles}/parse`,
 			formData,
 			{ headers: { 'Content-Type': 'multipart/form-data' } })
 			.then(({ snippets, message, warnings }) => {

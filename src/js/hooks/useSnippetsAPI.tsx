@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { createContextHook } from '../utils/bootstrap'
-import { REST_SNIPPETS_BASE } from '../utils/restAPI'
+import { REST_BASES } from '../utils/restAPI'
 import { createSnippetObject } from '../utils/snippets/snippets'
 import { buildUrl } from '../utils/urls'
 import { useRestAPI } from './useRestAPI'
@@ -26,7 +26,7 @@ export interface SnippetsAPI {
 }
 
 const buildSnippetUrl = ({ id, network }: Pick<Snippet, 'id' | 'network'>, action?: string) =>
-	buildUrl([REST_SNIPPETS_BASE, id, action].filter(Boolean).join('/'), { network })
+	buildUrl([REST_BASES.snippets, id, action].filter(Boolean).join('/'), { network })
 
 const mapToSchema = ({
 	name,
@@ -58,19 +58,19 @@ const mapToSchema = ({
 
 const buildSnippetsAPI = ({ get, post, del, put }: RestAPI): SnippetsAPI => ({
 	fetchAll: network =>
-		get<SnippetSchema[]>(buildUrl(REST_SNIPPETS_BASE, { network }))
+		get<SnippetSchema[]>(buildUrl(REST_BASES.snippets, { network }))
 			.then(response => response.map(createSnippetObject)),
 
 	fetch: (snippetId, network) =>
-		get<SnippetSchema>(buildUrl(`${REST_SNIPPETS_BASE}/${snippetId}`, { network }))
+		get<SnippetSchema>(buildUrl(`${REST_BASES.snippets}/${snippetId}`, { network }))
 			.then(createSnippetObject),
 
 	create: snippet =>
-		post<SnippetSchema, WritableSnippetSchema>(REST_SNIPPETS_BASE, mapToSchema(snippet))
+		post<SnippetSchema, WritableSnippetSchema>(REST_BASES.snippets, mapToSchema(snippet))
 			.then(createSnippetObject),
 
 	update: snippet =>
-		post<SnippetSchema, WritableSnippetSchema>(snippet.id ? buildSnippetUrl(snippet) : REST_SNIPPETS_BASE, mapToSchema(snippet))
+		post<SnippetSchema, WritableSnippetSchema>(snippet.id ? buildSnippetUrl(snippet) : REST_BASES.snippets, mapToSchema(snippet))
 			.then(createSnippetObject),
 
 	delete: snippet =>

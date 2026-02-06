@@ -7,7 +7,7 @@ use Code_Snippets\Model\Snippet;
 /**
  * Importer for the 'Insert PHP Code Snippet' plugin.
  */
-class Insert_PHP_Code_Snippet_Importer extends Importer_REST_Controller {
+class Insert_PHP_Code_Snippet_Plugin_Importer extends Plugin_Importer {
 
 	private const FIELD_MAPPINGS = [
 		'title'                 => 'name',

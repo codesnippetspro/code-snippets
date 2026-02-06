@@ -1,11 +1,12 @@
 <?php
 
-namespace Code_Snippets\REST_API;
+namespace Code_Snippets\REST_API\Snippets;
 
 use Code_Snippets\Migration\Export\Export;
 use Code_Snippets\Migration\Export\Export_Code;
 use Code_Snippets\Migration\Export\Export_JSON;
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\REST_API\REST_Collection_Controller;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -28,7 +29,7 @@ use const Code_Snippets\REST_API_NAMESPACE;
  * @since   3.4.0
  * @package Code_Snippets
  */
-final class Snippets_REST_Controller extends WP_REST_Controller {
+final class Snippets_REST_Controller extends REST_Collection_Controller {
 
 	/**
 	 * Current API version.
@@ -39,38 +40,6 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 * The base of this controller's route.
 	 */
 	public const BASE_ROUTE = 'snippets';
-
-	/**
-	 * The namespace of this controller's route.
-	 *
-	 * @var string
-	 */
-	protected $namespace = REST_API_NAMESPACE . self::VERSION;
-
-	/**
-	 * Retrieve this controller's REST API base path, including namespace.
-	 *
-	 * @return string
-	 */
-	public static function get_base_route(): string {
-		return REST_API_NAMESPACE . self::VERSION . '/' . self::BASE_ROUTE;
-	}
-
-	/**
-	 * Retrieve the full base route including the REST API prefix.
-	 *
-	 * @return string
-	 */
-	public static function get_prefixed_base_route(): string {
-		return '/' . rtrim( rest_get_url_prefix(), '/\\' ) . '/' . self::get_base_route();
-	}
-
-	/**
-	 * Class constrictor.
-	 */
-	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
-	}
 
 	/**
 	 * Register REST routes.
@@ -523,61 +492,6 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 		}
 
 		return rest_ensure_response( $response );
-	}
-
-	/**
-	 * Check if a given request has access to get items.
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 *
-	 * @return bool
-	 */
-	public function get_items_permissions_check( $request ): bool {
-		return code_snippets()->current_user_can();
-	}
-
-	/**
-	 * Check if a given request has access to get a specific item.
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 *
-	 * @return bool
-	 */
-	public function get_item_permissions_check( $request ): bool {
-		return $this->get_items_permissions_check( $request );
-	}
-
-	/**
-	 * Check if a given request has access to create items.
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 *
-	 * @return bool
-	 */
-	public function create_item_permissions_check( $request ): bool {
-		return code_snippets()->current_user_can();
-	}
-
-	/**
-	 * Check if a given request has access to update a specific item.
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 *
-	 * @return bool
-	 */
-	public function update_item_permissions_check( $request ): bool {
-		return $this->create_item_permissions_check( $request );
-	}
-
-	/**
-	 * Check if a given request has access to delete a specific item.
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 *
-	 * @return bool
-	 */
-	public function delete_item_permissions_check( $request ): bool {
-		return $this->create_item_permissions_check( $request );
 	}
 
 	/**

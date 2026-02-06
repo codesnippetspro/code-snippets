@@ -2,20 +2,20 @@
 
 namespace Code_Snippets\REST_API\Import;
 
-use Code_Snippets\REST_API\Import\Plugins\Header_Footer_Code_Manager_Importer;
-use Code_Snippets\REST_API\Import\Plugins\Insert_Headers_And_Footers_Importer;
-use Code_Snippets\REST_API\Import\Plugins\Insert_PHP_Code_Snippet_Importer;
+use Code_Snippets\REST_API\Import\Plugins\Header_Footer_Code_Manager_Plugin_Importer;
+use Code_Snippets\REST_API\Import\Plugins\Insert_Headers_And_Footers_Plugin_Importer;
+use Code_Snippets\REST_API\Import\Plugins\Insert_PHP_Code_Snippet_Plugin_Importer;
+use Code_Snippets\REST_API\Import\Plugins\Plugin_Importer;
+use Code_Snippets\REST_API\REST_Controller;
 use WP_REST_Response;
 use WP_REST_Server;
-use function Code_Snippets\code_snippets;
-use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
  * REST API controller for plugin importers.
  *
  * Handles registering REST API routes and providing information about available plugin importers.
  */
-class Plugins_Import_REST_Controller {
+class Plugins_Import_REST_Controller extends REST_Controller {
 
 	/**
 	 * Current API version.
@@ -23,16 +23,14 @@ class Plugins_Import_REST_Controller {
 	public const VERSION = 1;
 
 	/**
-	 * The namespace of this controller's route.
-	 *
-	 * @var string
+	 * Base route for this controller.
 	 */
-	protected string $namespace = REST_API_NAMESPACE . self::VERSION;
+	public const BASE_ROUTE = 'import/plugins';
 
 	/**
 	 * List of plugin importer instances.
 	 *
-	 * @var array Importer_REST_Controller[]
+	 * @var array Plugin_Importer[]
 	 */
 	private array $plugin_importers;
 
@@ -40,13 +38,13 @@ class Plugins_Import_REST_Controller {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		$this->plugin_importers = [
-			'insert-headers-and-footers' => new Insert_Headers_And_Footers_Importer(),
-			'header-footer-code-manager' => new Header_Footer_Code_Manager_Importer(),
-			'insert-php-code-snippet'    => new Insert_PHP_Code_Snippet_Importer(),
-		];
+		parent::__construct();
 
-		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
+		$this->plugin_importers = [
+			'insert-headers-and-footers' => new Insert_Headers_And_Footers_Plugin_Importer(),
+			'header-footer-code-manager' => new Header_Footer_Code_Manager_Plugin_Importer(),
+			'insert-php-code-snippet'    => new Insert_PHP_Code_Snippet_Plugin_Importer(),
+		];
 	}
 
 	/**
@@ -74,15 +72,40 @@ class Plugins_Import_REST_Controller {
 	 *
 	 * @return void
 	 */
-	public function register_rest_routes() {
+	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			'importers',
+			self::BASE_ROUTE,
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_importer_details' ],
-				'permission_callback' => [ code_snippets(), 'current_user_can' ],
+				'permission_callback' => [ $this, 'permission_callback' ],
 			]
 		);
+
+		foreach ( $this->plugin_importers as $importer ) {
+			$route = self::BASE_ROUTE . '/' . $importer->get_name();
+
+			register_rest_route(
+				$this->namespace,
+				$route,
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $importer, 'get_items' ],
+					'permission_callback' => [ $this, 'permission_callback' ],
+				]
+			);
+
+			register_rest_route(
+				$this->namespace,
+				"$route/import",
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $importer, 'import' ],
+					'permission_callback' => [ $this, 'permission_callback' ],
+					'args'                => Plugin_Importer::REST_ARGS,
+				]
+			);
+		}
 	}
 }

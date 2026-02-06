@@ -7,7 +7,7 @@ use Code_Snippets\Model\Snippet;
 /**
  * Importer for the 'Header Footer Code Manager' plugin.
  */
-class Header_Footer_Code_Manager_Importer extends Importer_REST_Controller {
+class Header_Footer_Code_Manager_Plugin_Importer extends Plugin_Importer {
 
 	private const FIELD_MAPPINGS = [
 		'name'     => 'name',

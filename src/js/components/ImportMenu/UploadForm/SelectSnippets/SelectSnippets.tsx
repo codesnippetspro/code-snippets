@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { useRestAPI } from '../../../../hooks/useRestAPI'
-import { REST_NAMESPACED } from '../../../../utils/restAPI'
+import { REST_BASES } from '../../../../utils/restAPI'
 import { isNetworkAdmin } from '../../../../utils/screen'
 import { Button } from '../../../common/Button'
 import { ImportCard } from '../../common/ImportCard'
@@ -123,7 +123,7 @@ const SubmitForm: React.FC<SubmitFormProps> = ({ children, duplicateAction, setI
 			setImportResult(undefined)
 
 			api
-				.post<SnippetImportResponse, SnippetImportRequest>(`${REST_NAMESPACED}1/file-upload/import`, request)
+				.post<SnippetImportResponse, SnippetImportRequest>(`${REST_BASES.importFiles}/import`, request)
 				.then(({ message, imported }) => {
 					setImportResult({ success: true, message, imported })
 				})

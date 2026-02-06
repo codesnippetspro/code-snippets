@@ -3,7 +3,6 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Admin\Bootstrap_Admin;
-
 use Code_Snippets\Client\Cloud_API;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
@@ -12,11 +11,11 @@ use Code_Snippets\Integration\Classic_Editor\MCE_Plugin;
 use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Integration\Shortcodes;
-use Code_Snippets\REST_API\Cloud_Snippets_REST_Controller;
+use Code_Snippets\REST_API\Cloud\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
 use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
-use Code_Snippets\REST_API\Recently_Active_REST_Controller;
-use Code_Snippets\REST_API\Snippets_REST_Controller;
+use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
+use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
 
 /**
  * The main plugin class
@@ -332,12 +331,14 @@ class Plugin {
 				'isCloudConnected' => Cloud_API::is_cloud_connection_available(),
 				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
 				'restAPI'          => [
-					'base'        => esc_url_raw( rest_url() ),
-					'namespaced'  => esc_url_raw( rest_url( REST_API_NAMESPACE ) ),
-					'snippets'    => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
-					'cloudSearch' => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
-					'nonce'       => wp_create_nonce( 'wp_rest' ),
-					'localToken'  => $this->cloud_api->get_local_token(),
+					'base'           => esc_url_raw( rest_url() ),
+					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
+					'recentlyActive' => esc_url_raw( rest_url( Recently_Active_REST_Controller::get_base_route() ) ),
+					'cloudSearch'    => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
+					'importPlugins'  => esc_url_raw( rest_url( Plugins_Import_REST_Controller::get_base_route() ) ),
+					'importFiles'    => esc_url_raw( rest_url( File_Import_REST_Controller::get_base_route() ) ),
+					'nonce'          => wp_create_nonce( 'wp_rest' ),
+					'localToken'     => $this->cloud_api->get_local_token(),
 				],
 				'urls'             => [
 					'plugin'   => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),

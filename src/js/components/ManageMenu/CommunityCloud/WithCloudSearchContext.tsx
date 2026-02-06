@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
-import { REST_CLOUD_SEARCH_BASE } from '../../../utils/restAPI'
 import { useRestAPI } from '../../../hooks/useRestAPI'
+import { REST_BASES } from '../../../utils/restAPI'
 import { buildUrl, fetchQueryParam, updateQueryParam } from '../../../utils/urls'
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
@@ -45,7 +45,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 			updateQueryParam(SEARCH_METHOD_PARAM, searchByCodevault ? 'codevault' : 'term')
 			setIsSearching(true)
 
-			api.getResponse<CloudSnippetSchema[]>(buildUrl(REST_CLOUD_SEARCH_BASE, { query, searchByCodevault, page }))
+			api.getResponse<CloudSnippetSchema[]>(buildUrl(REST_BASES.cloudSearch, { query, searchByCodevault, page }))
 				.then(response => {
 					console.log(response.headers)
 					setTotalItems(Number(response.headers['x-wp-total']))

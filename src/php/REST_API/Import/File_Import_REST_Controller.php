@@ -3,6 +3,7 @@
 namespace Code_Snippets\REST_API\Import;
 
 use Code_Snippets\Model\Snippet;
+use Code_Snippets\REST_API\REST_Controller;
 use DOMDocument;
 use WP_Error;
 use WP_REST_Request;
@@ -16,7 +17,7 @@ use const Code_Snippets\REST_API_NAMESPACE;
 /**
  * Manages the import of code snippets from uploaded files via REST API.
  */
-class File_Import_REST_Controller {
+class File_Import_REST_Controller extends REST_Controller {
 
 	/**
 	 * Current API version.
@@ -26,52 +27,29 @@ class File_Import_REST_Controller {
 	/**
 	 * The base of this controller's route.
 	 */
-	public const BASE_ROUTE = 'file-upload';
-
-	/**
-	 * The namespace of this controller's route.
-	 *
-	 * @var string
-	 */
-	protected string $namespace = REST_API_NAMESPACE . self::VERSION;
-
-	/**
-	 * The base of this controller's route.
-	 *
-	 * @var string
-	 */
-	protected string $rest_base = self::BASE_ROUTE;
-
-	/**
-	 * Constructor to initialize REST routes.
-	 */
-	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
-	}
+	public const BASE_ROUTE = 'import/file-upload';
 
 	/**
 	 * Registers REST API routes for file import.
 	 */
-	public function register_rest_routes() {
-		$plugin = code_snippets();
-
+	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/parse',
+			self::BASE_ROUTE . '/parse',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'parse_uploaded_files' ],
-				'permission_callback' => [ $plugin, 'current_user_can' ],
+				'permission_callback' => [ $this, 'permission_callback' ],
 			]
 		);
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/import',
+			self::BASE_ROUTE . '/import',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'import_selected_snippets' ],
-				'permission_callback' => [ $plugin, 'current_user_can' ],
+				'permission_callback' => [ $this, 'permission_callback' ],
 				'args'                => [
 					'snippets'         => [
 						'description' => __( 'Snippet data to import', 'code-snippets' ),

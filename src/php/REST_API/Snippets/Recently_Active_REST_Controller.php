@@ -1,7 +1,8 @@
 <?php
 
-namespace Code_Snippets\REST_API;
+namespace Code_Snippets\REST_API\Snippets;
 
+use Code_Snippets\REST_API\REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -15,7 +16,7 @@ use const Code_Snippets\REST_API_NAMESPACE;
  *
  * @package Code_Snippets
  */
-final class Recently_Active_REST_Controller {
+final class Recently_Active_REST_Controller extends REST_Controller {
 
 	/**
 	 * Current API version.
@@ -26,20 +27,6 @@ final class Recently_Active_REST_Controller {
 	 * The base of this controller's route.
 	 */
 	public const BASE_ROUTE = 'recently-active';
-
-	/**
-	 * The namespace of this controller's route.
-	 *
-	 * @var string
-	 */
-	protected string $namespace = REST_API_NAMESPACE . self::VERSION;
-
-	/**
-	 * Class constrictor.
-	 */
-	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
-	}
 
 	/**
 	 * Register REST routes.

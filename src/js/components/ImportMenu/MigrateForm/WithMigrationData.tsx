@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSelection } from '../../../hooks/useSelection'
 import { createContextHook } from '../../../utils/bootstrap'
-import { REST_NAMESPACED } from '../../../utils/restAPI'
+import { REST_BASES } from '../../../utils/restAPI'
 import { isNetworkAdmin } from '../../../utils/screen'
 import { useMigrationOptions } from './WithMigrationOptions'
 import type { RestAPI } from '../../../hooks/useRestAPI'
@@ -56,7 +56,7 @@ const makeMigrationRequest = async (api: RestAPI, importer: string, request: Imp
 		throw new Error(__('Please select an importer.', 'code-snippets'))
 	}
 
-	const response = await api.post<ImportResponse, ImportRequest>(`${REST_NAMESPACED}1/${importer}/import`, request)
+	const response = await api.post<ImportResponse, ImportRequest>(`${REST_BASES.importPlugins}/${importer}/import`, request)
 
 	if (1 > response.imported.length) {
 		throw new Error(__('No snippets were imported.', 'code-snippets'))
@@ -120,12 +120,12 @@ export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => 
 	const snippetSelection = useSelection(snippets, snippet => snippet.table_data.id)
 
 	useEffect(() => {
-		fetchImporters(() => api.get<Importer[]>(`${REST_NAMESPACED}1/importers`))
+		fetchImporters(() => api.get<Importer[]>(REST_BASES.importPlugins))
 	}, [api, fetchImporters])
 
 	useEffect(() => {
 		if (selectedImporter) {
-			fetchSnippets(() => api.get<ImportableSnippet[]>(`${REST_NAMESPACED}1/${selectedImporter}`))
+			fetchSnippets(() => api.get<ImportableSnippet[]>(`${REST_BASES.importPlugins}/${selectedImporter}`))
 		}
 	}, [api, selectedImporter, fetchSnippets])
 
