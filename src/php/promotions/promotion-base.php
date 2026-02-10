@@ -2,6 +2,8 @@
 
 namespace Code_Snippets\Promotions;
 
+use function Code_Snippets\code_snippets;
+
 abstract class Promotion_Base {
 
 	const AJAX_ACTION = 'code_snippets_dismiss_promotion';
@@ -168,5 +170,28 @@ abstract class Promotion_Base {
 		}
 
 		wp_send_json_success();
+	}
+
+	protected function get_default_buttons( bool $show_migrate = false ): array {
+		$primary_button = [
+			'url'   => code_snippets()->get_menu_url(),
+			'text'  => esc_html__( 'Manage your snippets', 'code-snippets' ),
+			'class' => 'button button-primary',
+		];
+
+		if ( $show_migrate ) {
+			$primary_button['url']  = add_query_arg( 'tab', 'plugins', code_snippets()->get_menu_url( 'import' ) );
+			$primary_button['text'] = esc_html__( 'Migrate to Code Snippets', 'code-snippets' );
+		}
+
+		$secondary_button = [
+			'url'    => 'https://codesnippets.pro/pricing/?utm_source=' . $this->get_plugin_slug() . '&utm_medium=promotion&utm_campaign=custom-code',
+			'text'   => esc_html__( 'Learn more', 'code-snippets' ),
+			'class'  => 'button button-secondary',
+			'target' => '_blank',
+			'rel'    => 'noopener noreferrer',
+		];
+
+		return [ $primary_button, $secondary_button ];
 	}
 }
