@@ -89,6 +89,8 @@ abstract class Promotion_Base {
 		<div
 			class="notice notice-info is-dismissible code-snippets-promotion"
 			data-promotion-id="<?php echo esc_attr( $this->get_plugin_slug() ); ?>"
+			role="region"
+			aria-label="<?php esc_attr_e( 'Code Snippets Promotion', 'code-snippets' ); ?>"
 		>
 			<div class="code-snippets-promotion-icon">
 				<img
