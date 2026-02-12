@@ -212,21 +212,21 @@ abstract class Promotion_Base {
 	}
 
 	/**
-	 * Check if the user has any snippets in the promoted plugin.
+	 * Check if the user should see the migration button.
 	 *
-	 * @return bool True if the user has snippets, false otherwise.
+	 * @return bool Whether the user should see the migration button.
 	 */
-	protected function has_snippets(): bool {
+	public function show_migration_button(): bool {
 		return false;
 	}
 
 	/**
 	 * Render buttons for the promotion notice.
 	 *
-	 * @uses has_snippets() to determine which buttons to show.
+	 * @uses show_migration_button() to determine which buttons to show.
 	 */
 	protected function print_promotion_buttons() {
-		if ( $this->has_snippets() ) {
+		if ( $this->show_migration_button() ) {
 			printf(
 				'<a href="%s" class="button button-primary">%s</a>',
 				esc_url( add_query_arg( 'tab', 'plugins', code_snippets()->get_menu_url( 'import' ) ) ),
