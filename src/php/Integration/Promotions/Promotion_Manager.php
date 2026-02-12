@@ -2,33 +2,22 @@
 
 namespace Code_Snippets\Integration\Promotions;
 
+/**
+ * Manager class to handle all plugin promotions.
+ */
 class Promotion_Manager {
 
-	private array $plugin_promotions = [];
-
-	private function init_plugin_promotions() {
-		$this->plugin_promotions = [
-			// Notices in admin screens.
-			'elementor'                  => Notices\Elementor::class,
-			'head-footer-code'           => Notices\Header_Footer_Code::class,
-			'header-footer-code-manager' => Notices\Header_Footer_Code_Manager::class,
-			'insert-html-snippet'        => Notices\Insert_HTML_Snippet::class,
-			'insert-php-code-snippet'    => Notices\Insert_PHP_Code_Snippet::class,
-			'insert-php'                 => Notices\Insert_PHP::class,
-			'wp-headers-and-footers'     => Notices\WP_Headers_And_Footers::class,
-
-			// Other Promotions.
-			'elementor-editor'           => Other\Elementor_Editor::class,
-		];
-	}
-
+	/**
+	 * Constructor to initialize and display promotions.
+	 */
 	public function __construct() {
-		if ( empty( $this->plugin_promotions ) ) {
-			$this->init_plugin_promotions();
-		}
-
-		foreach ( $this->plugin_promotions as $plugin_slug => $promotion_class ) {
-			new $promotion_class();
-		}
+		new Notices\Elementor();
+		new Notices\Header_Footer_Code();
+		new Notices\Header_Footer_Code_Manager();
+		new Notices\Insert_HTML_Snippet();
+		new Notices\Insert_PHP_Code_Snippet();
+		new Notices\Insert_PHP();
+		new Notices\WP_Headers_And_Footers();
+		new Other\Elementor_Editor();
 	}
 }

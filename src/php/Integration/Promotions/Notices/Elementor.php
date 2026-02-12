@@ -2,40 +2,64 @@
 
 namespace Code_Snippets\Integration\Promotions\Notices;
 
-use Code_Snippets\Integration\Promotions\Promotion_Base;
-
+/**
+ * Promotion class for Elementor Custom Code.
+ *
+ * @link https://elementor.com/help/custom-code-pro/
+ */
 class Elementor extends Promotion_Base {
 
+	/**
+	 * Get the name of the plugin being promoted.
+	 *
+	 * @return string The name of the plugin.
+	 */
 	public function get_plugin_name(): string {
-		return esc_html__( 'Elementor Custom Code', 'code-snippets' );
+		return __( 'Elementor Custom Code', 'code-snippets' );
 	}
 
+	/**
+	 * Get the slug of the plugin being promoted.
+	 *
+	 * @return string The slug of the plugin.
+	 */
 	public function get_plugin_slug(): string {
 		return 'elementor';
 	}
 
+	/**
+	 * Get the admin screens where the promotion should be displayed.
+	 *
+	 * @return array An array of admin screen IDs.
+	 */
 	public function get_plugin_admin_screens(): array {
 		return [
-			// Elementor Core
+			// Elementor Core.
 			'elementor_custom_code',
 			'elementor_page_elementor_custom_code',
-			// Elementor Pro
+			// Elementor Pro.
 			'edit-elementor_snippet',
 			'elementor_snippet',
-			// New Elementor One
+			// New Elementor One.
 			'elementor_page_e-custom-code',
 		];
 	}
 
+	/**
+	 * Get the heading text for the promotion notice.
+	 *
+	 * @return string The promotion heading.
+	 */
 	public function get_promotion_heading(): string {
-		return esc_html__( 'Upgrade to the Industry Standard for Code Management', 'code-snippets' );
+		return __( 'Upgrade to the industry standard for code management', 'code-snippets' );
 	}
 
+	/**
+	 * Get the message text for the promotion notice.
+	 *
+	 * @return string The promotion message.
+	 */
 	public function get_promotion_message(): string {
-		return esc_html__( 'Move your custom logic into a dedicated dashboard built for professionals. Experience a cleaner workflow with advanced security and global organization.', 'code-snippets' );
-	}
-
-	public function get_promotion_buttons(): array {
-		return $this->get_default_buttons();
+		return __( 'Move your custom logic into a dedicated dashboard built for professionals. Experience a cleaner workflow with advanced security and global organization.', 'code-snippets' );
 	}
 }

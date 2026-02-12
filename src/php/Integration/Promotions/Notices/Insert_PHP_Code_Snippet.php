@@ -2,19 +2,38 @@
 
 namespace Code_Snippets\Integration\Promotions\Notices;
 
-use Code_Snippets\Integration\Promotions\Promotion_Base;
 use Code_Snippets\REST_API\Import\Plugins\Insert_PHP_Code_Snippet_Plugin_Importer;
 
+/**
+ * Promotion class for Insert PHP Code Snippet plugin.
+ *
+ * @link https://wordpress.org/plugins/insert-php-code-snippet/
+ */
 class Insert_PHP_Code_Snippet extends Promotion_Base {
 
+	/**
+	 * Get the name of the plugin being promoted.
+	 *
+	 * @return string The plugin name.
+	 */
 	public function get_plugin_name(): string {
-		return esc_html__( 'Insert PHP Code Snippet', 'code-snippets' );
+		return __( 'Insert PHP Code Snippet', 'code-snippets' );
 	}
 
+	/**
+	 * Get the slug of the plugin being promoted.
+	 *
+	 * @return string The plugin slug.
+	 */
 	public function get_plugin_slug(): string {
 		return 'insert-php-code-snippet';
 	}
 
+	/**
+	 * Get the admin screens where the promotion should be displayed.
+	 *
+	 * @return array An array of admin screen IDs.
+	 */
 	public function get_plugin_admin_screens(): array {
 		return [
 			'toplevel_page_insert-php-code-snippet-manage',
@@ -24,21 +43,20 @@ class Insert_PHP_Code_Snippet extends Promotion_Base {
 		];
 	}
 
+	/**
+	 * Get the heading text for the promotion notice.
+	 *
+	 * @return string The promotion heading.
+	 */
 	public function get_promotion_heading(): string {
-		return esc_html__( 'Looking for a better way to manage your custom code?', 'code-snippets' );
+		return __( 'Looking for a better way to manage your custom code?', 'code-snippets' );
 	}
 
-	public function get_promotion_message(): string {
-		return sprintf(
-			esc_html__( 'Code Snippets provides a powerful and user-friendly alternative to "%s", with cloud sync, advanced features, and an intuitive interface.', 'code-snippets' ),
-			$this->get_plugin_name()
-		);
-	}
-
-	public function get_promotion_buttons(): array {
-		return $this->get_default_buttons( $this->has_snippets() );
-	}
-
+	/**
+	 * Check if the user has any snippets in the Insert PHP Code Snippet plugin.
+	 *
+	 * @return bool True if the user has snippets, false otherwise.
+	 */
 	protected function has_snippets(): bool {
 		$importer = new Insert_PHP_Code_Snippet_Plugin_Importer();
 		$data = $importer->get_data();

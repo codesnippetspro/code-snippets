@@ -2,18 +2,36 @@
 
 namespace Code_Snippets\Integration\Promotions\Notices;
 
-use Code_Snippets\Integration\Promotions\Promotion_Base;
-
+/**
+ * Promotion class for Insert HTML Snippet.
+ *
+ * @link https://wordpress.org/plugins/insert-html-snippet/
+ */
 class Insert_HTML_Snippet extends Promotion_Base {
 
+	/**
+	 * Get the name of the plugin being promoted.
+	 *
+	 * @return string The plugin name.
+	 */
 	public function get_plugin_name(): string {
-		return esc_html__( 'Insert HTML Snippet', 'code-snippets' );
+		return __( 'Insert HTML Snippet', 'code-snippets' );
 	}
 
+	/**
+	 * Get the slug of the plugin being promoted.
+	 *
+	 * @return string The plugin slug.
+	 */
 	public function get_plugin_slug(): string {
 		return 'insert-html-snippet';
 	}
 
+	/**
+	 * Get the admin screens where the promotion should be displayed.
+	 *
+	 * @return array An array of admin screen IDs.
+	 */
 	public function get_plugin_admin_screens(): array {
 		return [
 			'toplevel_page_insert-html-snippet-manage',
@@ -23,15 +41,12 @@ class Insert_HTML_Snippet extends Promotion_Base {
 		];
 	}
 
-	public function get_promotion_heading(): string {
-		return esc_html__( 'Clean up your plugin list today', 'code-snippets' );
-	}
-
+	/**
+	 * Get the message text for the promotion notice.
+	 *
+	 * @return string The promotion message.
+	 */
 	public function get_promotion_message(): string {
-		return esc_html__( 'Move your functionality to Code Snippets Pro and reduce your dependency on third-party plugins. A leaner dashboard is a more secure dashboard.', 'code-snippets' );
-	}
-
-	public function get_promotion_buttons(): array {
-		return $this->get_default_buttons();
+		return __( 'Move your functionality to Code Snippets Pro and reduce your dependency on third-party plugins. A leaner dashboard is a more secure dashboard.', 'code-snippets' );
 	}
 }
