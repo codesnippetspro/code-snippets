@@ -10,6 +10,8 @@ const defaults: Omit<Snippet, 'tags'> = {
 	scope: 'global',
 	modified: '',
 	active: false,
+	locked: false,
+	trashed: false,
 	network: isNetworkAdmin(),
 	shared_network: null,
 	priority: 10,
@@ -27,21 +29,18 @@ export const isValidScope = (scope: unknown): scope is SnippetScope =>
 	'string' === typeof scope && Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
 		typeScopes.some(typeScope => typeScope === scope))
 
+export const isCodeError = (value: unknown): value is readonly [string, number] =>
+	Array.isArray(value) &&
+	2 === value.length &&
+	'string' === typeof value[0] &&
+	'number' === typeof value[1]
+
 export const parseSnippetObject = (fields: unknown): Snippet => {
 	const result: { -readonly [F in keyof Snippet]: Snippet[F] } = { ...defaults, tags: [] }
 
 	if ('object' !== typeof fields || null === fields) {
 		return result
 	}
-
-	const codeError =
-		'code_error' in fields &&
-		Array.isArray(fields.code_error) &&
-		2 === fields.code_error.length &&
-		'string' === typeof fields.code_error[0] &&
-		'number' === typeof fields.code_error[1]
-			? (fields.code_error as readonly [string, number])
-			: undefined
 
 	return {
 		...result,
@@ -53,10 +52,13 @@ export const parseSnippetObject = (fields: unknown): Snippet => {
 		...'scope' in fields && isValidScope(fields.scope) && { scope: fields.scope },
 		...'modified' in fields && 'string' === typeof fields.modified && { modified: fields.modified },
 		...'active' in fields && 'boolean' === typeof fields.active && { active: fields.active },
+		...'locked' in fields && 'boolean' === typeof fields.locked && { locked: fields.locked },
+		...'trashed' in fields && 'boolean' === typeof fields.trashed && { trashed: fields.trashed },
 		...'network' in fields && 'boolean' === typeof fields.network && { network: fields.network },
 		...'shared_network' in fields && 'boolean' === typeof fields.shared_network && { shared_network: fields.shared_network },
 		...'priority' in fields && 'number' === typeof fields.priority && { priority: fields.priority },
 		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id },
-		...('code_error' in fields && { code_error: codeError ?? result.code_error })
+		...'code_error' in fields && isCodeError(fields.code_error) && { code_error: fields.code_error },
+		...'last_active' in fields && { lastActive: Number(fields.last_active) }
 	}
 }

@@ -1,3 +1,4 @@
+import type { ChangelogSchema, ImageLinkSchema } from './schema/WelcomeSchema'
 import type Prism from 'prismjs'
 import type tinymce from 'tinymce'
 import type { Snippet } from './Snippet'
@@ -18,12 +19,18 @@ declare global {
 		readonly code_snippets_editor_settings: EditorOption[]
 		CODE_SNIPPETS_PRISM?: typeof Prism
 		readonly CODE_SNIPPETS?: {
+			debug: boolean
 			isLicensed: boolean
+			hideUpsell: boolean
 			restAPI: {
 				base: string
 				snippets: string
+				recentlyActive: string
 				conditions: string
+				cloudSearch: string
 				cloud: string
+				importPlugins: string
+				importFiles: string
 				nonce: string
 				localToken: string
 			}
@@ -32,18 +39,35 @@ declare global {
 				manage: string
 				addNew: string
 				edit: string
+				welcome: string
+				settings: string
 				connectCloud: string
 			}
+			banner: {
+				key: string
+				start_datetime: { date: string, timezone_type: number, timezone: string }
+				end_datetime: { date: string, timezone_type: number, timezone: string }
+				text_free: string
+				action_url_free: string
+				action_label_free: string
+				text_pro: string
+				action_url_pro: string
+				action_label_pro: string
+			}
+		}
+		readonly CODE_SNIPPETS_MANAGE?: {
+			snippetsList: Snippet[]
+			hasNetworkCap: boolean
+			snippetsPerPage: number
+			isSafeModeActive: boolean
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet
 			pageTitleActions: Record<string, string>
-			isPreview: boolean
 			isLicensed: boolean
 			enableDownloads: boolean
 			activateByDefault: boolean
 			enableDescription: boolean
-			hideUpsell: boolean
 			editorTheme: string
 			tagOptions: {
 				enabled: boolean
@@ -54,6 +78,16 @@ declare global {
 				rows: number
 				mediaButtons: boolean
 			}
+		}
+		readonly CODE_SNIPPETS_WELCOME?: {
+			hero: {
+				name: string
+				follow_url: string
+				image_url: string
+			}
+			changelog: ChangelogSchema[]
+			features: ImageLinkSchema[]
+			partners: ImageLinkSchema[]
 		}
 	}
 }

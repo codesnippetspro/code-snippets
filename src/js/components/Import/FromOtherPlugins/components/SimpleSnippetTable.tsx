@@ -25,13 +25,13 @@ export const SimpleSnippetTable: React.FC<SimpleSnippetTableProps> = ({
 
 	return (
 		<ImportCard className="snippets-table-container">
-			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBlockEnd: '10px' }}>
 				<div>
 					<h2 style={{ margin: '0' }}>{__('Available Snippets', 'code-snippets')} ({snippets.length})</h2>
 					<p style={{ margin: '0.5em 0 1em 0' }}>{__('We found the following snippets.', 'code-snippets')}</p>
 				</div>
 				<div>
-					<Button onClick={onSelectAll} style={{ marginRight: '10px' }}>
+					<Button onClick={onSelectAll} style={{ marginInlineEnd: '10px' }}>
 						{isAllSelected
 							? __('Deselect All', 'code-snippets')
 							: __('Select All', 'code-snippets')
@@ -80,8 +80,8 @@ export const SimpleSnippetTable: React.FC<SimpleSnippetTableProps> = ({
 				</tbody>
 			</table>
 			
-			<div style={{ textAlign: 'end', marginTop: '1em' }}>
-				<Button onClick={onSelectAll} style={{ marginRight: '10px' }}>
+			<div style={{ textAlign: 'end', marginBlockStart: '1em' }}>
+				<Button onClick={onSelectAll} style={{ marginInlineEnd: '10px' }}>
 					{isAllSelected
 						? __('Deselect All', 'code-snippets')
 						: __('Select All', 'code-snippets')

@@ -95,7 +95,7 @@ export const FileUploadForm: React.FC = () => {
 
 								<ImportCard>
 									<h2 style={{ margin: '0 0 1em 0' }}>{__('Choose Files', 'code-snippets')}</h2>
-									<p className="description" style={{ marginBottom: '1em' }}>
+									<p className="description" style={{ marginBlockEnd: '1em' }}>
 										{__('Choose one or more Code Snippets (.xml or .json) files to parse and preview.', 'code-snippets')}
 									</p>
 
@@ -133,12 +133,12 @@ export const FileUploadForm: React.FC = () => {
 
 				{currentStep === 'select' && importWorkflow.availableSnippets.length > 0 && !importWorkflow.uploadResult?.success && (
 					<ImportCard ref={selectSectionRef}>
-						<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+						<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBlockEnd: '20px' }}>
 							<Button onClick={handleBackToUpload} className="button-link">
 								{__('← Upload Different Files', 'code-snippets')}
 							</Button>
 						</div>
-						<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+						<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBlockEnd: '10px' }}>
 							<div>
 								<h3 style={{ margin: '0' }}>{__('Available Snippets', 'code-snippets')} ({importWorkflow.availableSnippets.length})</h3>
 								<p style={{ margin: '0.5em 0 1em 0', color: '#666' }}>
@@ -146,7 +146,7 @@ export const FileUploadForm: React.FC = () => {
 								</p>
 							</div>
 							<div>
-								<Button onClick={snippetSelection.handleSelectAll} style={{ marginRight: '10px' }}>
+								<Button onClick={snippetSelection.handleSelectAll} style={{ marginInlineEnd: '10px' }}>
 									{snippetSelection.isAllSelected 
 										? __('Deselect All', 'code-snippets')
 										: __('Select All', 'code-snippets')
@@ -172,8 +172,8 @@ export const FileUploadForm: React.FC = () => {
 							onSelectAll={snippetSelection.handleSelectAll}
 						/>
 						
-						<div style={{ textAlign: 'end', marginTop: '1em' }}>
-							<Button onClick={snippetSelection.handleSelectAll} style={{ marginRight: '10px' }}>
+						<div style={{ textAlign: 'end', marginBlockStart: '1em' }}>
+							<Button onClick={snippetSelection.handleSelectAll} style={{ marginInlineEnd: '10px' }}>
 								{snippetSelection.isAllSelected 
 									? __('Deselect All', 'code-snippets')
 									: __('Select All', 'code-snippets')

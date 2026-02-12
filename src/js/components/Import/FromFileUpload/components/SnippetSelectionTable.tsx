@@ -61,7 +61,7 @@ export const SnippetSelectionTable: React.FC<SnippetSelectionTableProps> = ({
 						<td>
 							<strong>{snippet.table_data.title}</strong>
 							{snippet.source_file && (
-								<div style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>
+								<div style={{ fontSize: '12px', color: '#666', marginBlockStart: '2px' }}>
 									from {snippet.source_file}
 								</div>
 							)}

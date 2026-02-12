@@ -35,7 +35,6 @@ test.describe('Code Snippets List Page Actions', () => {
 		const updatedToggle = updatedRow.locator('a.snippet-activation-switch')
 		await expect(updatedToggle).toHaveAttribute('title', 'Activate')
 
-
 		await updatedToggle.click()
 		await page.waitForLoadState('networkidle')
 
