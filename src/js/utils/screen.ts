@@ -6,3 +6,6 @@ export const isMacOS = (): boolean =>
 
 export const isLicensed = (): boolean =>
 	!!window.CODE_SNIPPETS?.isLicensed
+
+export const shouldShowUpsell = () =>
+	!isLicensed() && !window.CODE_SNIPPETS?.hideUpsell

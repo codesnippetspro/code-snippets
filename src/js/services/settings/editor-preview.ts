@@ -1,4 +1,4 @@
-import '../../editor'
+import '../../entries/editor'
 
 const parseSelect = (select: HTMLSelectElement) => select.options[select.selectedIndex].value
 const parseCheckbox = (checkbox: HTMLInputElement) => checkbox.checked

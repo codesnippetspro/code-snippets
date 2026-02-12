@@ -4,8 +4,8 @@ Donate link: https://codesnippets.pro
 Tags: code, snippets, multisite, php, css
 License: GPL-2.0-or-later
 License URI: license.txt
-Stable tag: 3.9.4
-Tested up to: 6.8
+Stable tag: 3.9.5
+Tested up to: 6.9
 
 An easy, clean and simple way to enhance your site with code snippets.
 
@@ -103,6 +103,16 @@ You can report security bugs found in the source code of this plugin through the
 4. Importing snippets from an export file
 
 == Changelog ==
+
+= 3.9.5 (2026-02-05) =
+
+__Added__
+
+* Confirmed WordPress 6.9 compatability
+
+__Changed__
+
+* Improved nonce handling for cloud snippet download and update actions to for enhanced security
 
 = 3.9.4 (2026-01-14) =
 

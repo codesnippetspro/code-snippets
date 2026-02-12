@@ -1,8 +1,16 @@
 import { trimTrailingChar } from './text'
 import type { AxiosRequestConfig } from 'axios'
 
-export const REST_BASE = trimTrailingChar(window.CODE_SNIPPETS?.restAPI.base ?? '', '/')
-export const REST_SNIPPETS_BASE = trimTrailingChar(window.CODE_SNIPPETS?.restAPI.snippets ?? '', '/')
+const normalizeUrl = (url: string | undefined) =>
+	trimTrailingChar(url ?? '', '/')
+
+export const REST_BASES = {
+	snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.snippets),
+	recentlyActive: normalizeUrl(window.CODE_SNIPPETS?.restAPI.recentlyActive),
+	cloudSearch: normalizeUrl(window.CODE_SNIPPETS?.restAPI.cloudSearch),
+	importPlugins: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importPlugins),
+	importFiles: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importFiles)
+}
 
 export const REST_API_AXIOS_CONFIG: AxiosRequestConfig = {
 	headers: {

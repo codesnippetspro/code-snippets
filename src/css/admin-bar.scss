@@ -18,7 +18,7 @@
 			}
 		}
 	}
-  
+
 	.code-snippets-safe-mode-active {
 		> .ab-item,
 		&.ab-item {
@@ -39,12 +39,12 @@
 	}
 
 	.code-snippets-safe-mode .code-snippets-external-icon {
-    font-family: dashicons;
-    display: inline-block;
-    position: relative;
-    line-height: 1;
-    opacity: .8;
-    top: 6px;
+		font-family: dashicons;
+		display: inline-block;
+		position: relative;
+		line-height: 1;
+		opacity: .8;
+		top: 6px;
 	}
 
 	.code-snippets-safe-mode:hover .code-snippets-external-icon,
@@ -68,7 +68,7 @@
 
 	.code-snippets-pagination-node > .ab-item {
 		padding: 0;
-    margin-bottom: 6px;
+		margin-bottom: 6px;
 	}
 
 	.code-snippets-pagination-controls {

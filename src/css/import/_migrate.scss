@@ -1,0 +1,148 @@
+
+.importer-selector-card {
+	h2 {
+		margin: 0 0 1em 0;
+	}
+
+	select {
+		display: block;
+		margin-top: 5px;
+		width: 100%;
+		max-width: 300px;
+	}
+
+	p {
+		margin: 10px 0 0 0;
+		color: #666;
+		font-size: 14px;
+	}
+}
+
+.import-options-card {
+	h2 {
+		margin: 0 0 1em 0;
+	}
+
+	label {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		cursor: pointer;
+
+		.description {
+			color: #666;
+			font-size: 0.9em;
+		}
+	}
+
+	input {
+		margin-top: 2px;
+	}
+
+	> div {
+		flex: 1;
+	}
+
+	.import-tag-entry {
+		margin-top: 12px;
+
+		input {
+			width: 100%;
+			max-width: 300px;
+		}
+	}
+}
+
+
+.import-section-status {
+	.error, .success {
+		border-radius: 50%;
+		width: 24px;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		margin-top: 2px;
+
+		span {
+			color: white;
+			font-size: 14px;
+			font-weight: bold;
+		}
+	}
+
+	.success {
+		background-color: #00a32a;
+	}
+
+	.error {
+		background-color: #d63638;
+	}
+
+	h3 {
+		margin: 0 0 8px 0;
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	p {
+		margin: 0;
+		color: #666;
+	}
+
+	a {
+		color: #2271b1;
+		text-decoration: none;
+	}
+}
+
+.migrate-snippets-table-card {
+	> div:first-child {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 10px;
+
+		h2 {
+			margin: 0;
+		}
+
+		p {
+			margin: 0.5em 0 1em 0;
+		}
+	}
+
+	.column-id {
+		text-align: end;
+		width: 50px;
+	}
+}
+
+.migrate-form-container {
+	max-width: 800px;
+}
+
+.no-snippets-card {
+	.card-inner {
+		text-align: center;
+		padding: 40px 20px;
+		color: #666;
+	}
+
+	.card-icon {
+		font-size: 48px;
+		margin-bottom: 16px;
+	}
+
+	h3 {
+		margin: 0 0 8px 0;
+		font-size: 18px;
+		color: #333;
+	}
+
+	p {
+		margin: 0;
+		font-size: 14px;
+	}
+}

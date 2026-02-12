@@ -2,12 +2,14 @@
   "name": "code-snippets",
   "description": "Manage code snippets running on a WordPress-powered site through a graphical interface.",
   "homepage": "https://codesnippets.pro",
-  "version": "3.9.4",
+  "version": "3.10.0-dev.1",
   "main": "src/dist/edit.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
+    "test:php": "cd src && vendor/bin/phpunit -c ../phpunit.xml",
+    "test:php:watch": "npm run test:php -- --testdox",
     "test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
     "test:playwright:debug": "npm run test:playwright -- --debug",
     "test:playwright:ui": "npm run test:playwright -- --ui",

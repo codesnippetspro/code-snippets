@@ -12,6 +12,10 @@ node_modules/
 npm-debug.log
 .sass-cache/
 
+# PHPUnit
+.phpunit.result.cache
+/coverage/
+
 # Playwright
 playwright-report/
 test-results/

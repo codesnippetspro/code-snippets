@@ -1,0 +1,18 @@
+.import-snippets-menu {
+	.narrow {
+		max-width: 800px;
+	}
+
+	h2.nav-tab-wrapper {
+		margin-bottom: 20px;
+	}
+}
+
+.import-snippets-section {
+	padding-top: 0;
+	display: none;
+
+	&.active-section {
+		display: block;
+	}
+}
