@@ -11,6 +11,7 @@ const defaults: Omit<Snippet, 'tags'> = {
 	modified: '',
 	active: false,
 	locked: false,
+	trashed: false,
 	network: isNetworkAdmin(),
 	shared_network: null,
 	priority: 10,
@@ -45,9 +46,11 @@ export const parseSnippetObject = (fields: unknown): Snippet => {
 		...'modified' in fields && 'string' === typeof fields.modified && { modified: fields.modified },
 		...'active' in fields && 'boolean' === typeof fields.active && { active: fields.active },
 		...'locked' in fields && 'boolean' === typeof fields.locked && { locked: fields.locked },
+		...'trashed' in fields && 'boolean' === typeof fields.trashed && { trashed: fields.trashed },
 		...'network' in fields && 'boolean' === typeof fields.network && { network: fields.network },
 		...'shared_network' in fields && 'boolean' === typeof fields.shared_network && { shared_network: fields.shared_network },
 		...'priority' in fields && 'number' === typeof fields.priority && { priority: fields.priority },
-		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id }
+		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id },
+		...'last_active' in fields && { lastActive: Number(fields.last_active) }
 	}
 }

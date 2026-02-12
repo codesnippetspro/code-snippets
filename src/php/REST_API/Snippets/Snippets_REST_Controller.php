@@ -1,0 +1,587 @@
+<?php
+
+namespace Code_Snippets\REST_API\Snippets;
+
+use Code_Snippets\Migration\Export\Export;
+use Code_Snippets\Migration\Export\Export_Code;
+use Code_Snippets\Migration\Export\Export_JSON;
+use Code_Snippets\Model\Snippet;
+use Code_Snippets\REST_API\REST_Collection_Controller;
+use WP_Error;
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_REST_Server;
+use function Code_Snippets\activate_snippet;
+use function Code_Snippets\deactivate_snippet;
+use function Code_Snippets\delete_snippet;
+use function Code_Snippets\get_snippet;
+use function Code_Snippets\get_snippets;
+use function Code_Snippets\restore_snippet;
+use function Code_Snippets\save_snippet;
+use function Code_Snippets\trash_snippet;
+
+/**
+ * Allows fetching snippet data through the WordPress REST API.
+ *
+ * @since   3.4.0
+ * @package Code_Snippets
+ */
+final class Snippets_REST_Controller extends REST_Collection_Controller {
+
+	/**
+	 * Current API version.
+	 */
+	public const VERSION = 1;
+
+	/**
+	 * The base of this controller's route.
+	 */
+	public const BASE_ROUTE = 'snippets';
+
+	/**
+	 * Register REST routes.
+	 */
+	public function register_routes() {
+		$route = '/' . self::BASE_ROUTE;
+		$id_route = $route . '/(?P<id>[\d]+)';
+
+		$network_args = array_intersect_key(
+			$this->get_endpoint_args_for_item_schema(),
+			[ 'network' ]
+		);
+
+		// Allow standard collection parameters (page, per_page, etc.) on the collection route.
+		$collection_args = array_merge( $network_args, $this->get_collection_params() );
+
+		register_rest_route(
+			$this->namespace,
+			$route,
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_items' ],
+					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'args'                => $collection_args,
+				],
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'create_item' ],
+					'permission_callback' => [ $this, 'create_item_permissions_check' ],
+					'args'                => $this->get_endpoint_args_for_item_schema( true ),
+				],
+				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$id_route,
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_item' ],
+					'permission_callback' => [ $this, 'get_item_permissions_check' ],
+					'args'                => $network_args,
+				],
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'update_item' ],
+					'permission_callback' => [ $this, 'update_item_permissions_check' ],
+					'args'                => $this->get_endpoint_args_for_item_schema( false ),
+				],
+				[
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => [ $this, 'delete_item' ],
+					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
+					'args'                => $network_args,
+				],
+				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$id_route . '/restore',
+			[
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => [ $this, 'restore_item' ],
+				'permission_callback' => [ $this, 'update_item_permissions_check' ],
+				'args'                => $network_args,
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$route . '/schema',
+			[
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'get_public_item_schema' ],
+				'permission_callback' => '__return_true',
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$id_route . '/activate',
+			[
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => [ $this, 'activate_item' ],
+				'permission_callback' => [ $this, 'update_item_permissions_check' ],
+				'schema'              => [ $this, 'get_item_schema' ],
+				'args'                => $network_args,
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$id_route . '/deactivate',
+			[
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => [ $this, 'deactivate_item' ],
+				'permission_callback' => [ $this, 'update_item_permissions_check' ],
+				'schema'              => [ $this, 'get_item_schema' ],
+				'args'                => $network_args,
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$id_route . '/export',
+			[
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'export_item' ],
+				'permission_callback' => [ $this, 'get_item_permissions_check' ],
+				'schema'              => [ $this, 'get_item_schema' ],
+				'args'                => $network_args,
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$id_route . '/export-code',
+			[
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'export_item_code' ],
+				'permission_callback' => [ $this, 'get_item_permissions_check' ],
+				'schema'              => [ $this, 'get_item_schema' ],
+				'args'                => $network_args,
+			]
+		);
+	}
+
+	/**
+	 * Retrieves a collection of snippets, with pagination.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 *
+	 * @return WP_REST_Response Response object on success.
+	 */
+	public function get_items( $request ): WP_REST_Response {
+		$network = $request->get_param( 'network' );
+		$all_snippets = get_snippets( [], $network );
+		$all_snippets = $this->get_network_items( $all_snippets, $network );
+
+		$total_items = count( $all_snippets );
+		$query_params = $request->get_query_params();
+
+		if ( isset( $query_params['per_page'] ) || isset( $query_params['page'] ) ) {
+			$collection_params = $this->get_collection_params();
+			$per_page = isset( $query_params['per_page'] )
+				? max( 1, (int) $query_params['per_page'] )
+				: (int) $collection_params['per_page']['default'];
+			$page_request = (int) $request->get_param( 'page' );
+			$page = max( 1, $page_request ? $page_request : (int) $collection_params['page']['default'] );
+			$total_pages = (int) ceil( $total_items / $per_page );
+
+			$offset = ( $page - 1 ) * $per_page;
+			$snippets = array_slice( $all_snippets, $offset, $per_page );
+		} else {
+			$snippets = $all_snippets;
+			$total_pages = 1;
+		}
+
+		$snippets_data = [];
+
+		foreach ( $snippets as $snippet ) {
+			$snippet_data = $this->prepare_item_for_response( $snippet, $request );
+			$snippets_data[] = $this->prepare_response_for_collection( $snippet_data );
+		}
+
+		$response = rest_ensure_response( $snippets_data );
+		$response->header( 'X-WP-Total', (string) $total_items );
+		$response->header( 'X-WP-TotalPages', (string) $total_pages );
+
+		return $response;
+	}
+
+	/**
+	 * Retrieve and merge shared network snippets.
+	 *
+	 * @param array<Snippet> $all_snippets List of snippets to merge with.
+	 * @param bool|null      $network      Whether fetching network snippets.
+	 *
+	 * @return array<Snippet> Modified list of snippets.
+	 */
+	private function get_network_items( array $all_snippets, ?bool $network ): array {
+		if ( ! is_multisite() || $network ) {
+			return $all_snippets;
+		}
+
+		$shared_ids = get_site_option( 'shared_network_snippets' );
+
+		if ( ! $shared_ids || ! is_array( $shared_ids ) ) {
+			return $all_snippets;
+		}
+
+		$active_shared_snippets = get_option( 'active_shared_network_snippets', [] );
+		$shared_snippets = get_snippets( $shared_ids, true );
+
+		foreach ( $shared_snippets as $snippet ) {
+			$snippet->shared_network = true;
+			$snippet->active = in_array( $snippet->id, $active_shared_snippets, true );
+		}
+
+		return array_merge( $all_snippets, $shared_snippets );
+	}
+
+	/**
+	 * Retrieves one item from the collection.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 *
+	 * @return WP_REST_Response|WP_Error Response object on success.
+	 */
+	public function get_item( $request ) {
+		$snippet_id = $request->get_param( 'id' );
+		$item = get_snippet( $snippet_id, $request->get_param( 'network' ) );
+
+		if ( ! $item->id && 0 !== $snippet_id && '0' !== $snippet_id ) {
+			return new WP_Error(
+				'rest_cannot_get',
+				__( 'The snippet could not be found.', 'code-snippets' ),
+				[ 'status' => 500 ]
+			);
+		}
+
+		$data = $this->prepare_item_for_response( $item, $request );
+		return rest_ensure_response( $data );
+	}
+
+	/**
+	 * Create one item from the collection
+	 *
+	 * @param WP_REST_Request|array $request Full data about the request.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function create_item( $request ) {
+		$snippet = $this->prepare_item_for_database( $request );
+		$result = save_snippet( $snippet );
+
+		return $result
+			? $this->prepare_item_for_response( $result, $request )
+			: new WP_Error(
+				'rest_cannot_create',
+				__( 'The snippet could not be created.', 'code-snippets' ),
+				[ 'status' => 500 ]
+			);
+	}
+
+	/**
+	 * Update one item from the collection
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function update_item( $request ) {
+		$snippet_id = absint( $request->get_param( 'id' ) );
+		$snippet = $snippet_id ? get_snippet( $snippet_id, $request->get_param( 'network' ) ) : null;
+
+		if ( ! $snippet_id || ! $snippet || ! $snippet->id ) {
+			return new WP_Error(
+				'rest_cannot_update',
+				__( 'Cannot update a snippet without a valid ID.', 'code-snippets' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$item = $this->prepare_item_for_database( $request, $snippet );
+		$result = save_snippet( $item );
+
+		if ( $result ) {
+			$request->set_param( 'id', $result->id );
+			return $this->get_item( $request );
+		}
+
+		return new WP_Error(
+			'rest_cannot_update',
+			__( 'The snippet could not be updated.', 'code-snippets' ),
+			[ 'status' => 500 ]
+		);
+	}
+
+	/**
+	 * Delete one item from the collection, or trash it if not already trashed.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function delete_item( $request ) {
+		$item = $this->prepare_item_for_database( $request );
+
+		if ( $item->trashed ) {
+			return delete_snippet( $item->id, $item->network )
+				? new WP_REST_Response( null, 204 )
+				: new WP_Error(
+					'rest_cannot_delete',
+					__( 'The snippet could not be deleted.', 'code-snippets' ),
+					[ 'status' => 500 ]
+				);
+		} else {
+			return trash_snippet( $item->id, $item->network )
+				? $this->get_item( $request )
+				: new WP_Error(
+					'rest_cannot_trash',
+					__( 'The snippet could not be trashed.', 'code-snippets' ),
+					[ 'status' => 500 ]
+				);
+		}
+	}
+
+	/**
+	 * Restore a deleted item from the trash.
+	 *
+	 * @param WP_REST_Request $request Snippet information.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function restore_item( WP_REST_Request $request ) {
+		$item = $this->prepare_item_for_database( $request );
+
+		return restore_snippet( $item->id, $item->network )
+			? new WP_REST_Response( null, 204 )
+			: new WP_Error(
+				'rest_cannot_restore',
+				__( 'The snippet could not be restored.', 'code-snippets' ),
+				[ 'status' => 500 ]
+			);
+	}
+
+	/**
+	 * Activate one item in the collection.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function activate_item( WP_REST_Request $request ) {
+		$item = $this->prepare_item_for_database( $request );
+		$result = activate_snippet( $item->id, $item->network );
+
+		return $result instanceof Snippet
+			? rest_ensure_response( $result )
+			: new WP_Error(
+				'rest_cannot_activate',
+				$result,
+				[ 'status' => 500 ]
+			);
+	}
+
+	/**
+	 * Deactivate one item in the collection.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function deactivate_item( WP_REST_Request $request ) {
+		$item = $this->prepare_item_for_database( $request );
+		$result = deactivate_snippet( $item->id, $item->network );
+
+		return $result instanceof Snippet
+			? rest_ensure_response( $result )
+			: new WP_Error(
+				'rest_cannot_activate',
+				__( 'The snippet could not be deactivated.', 'code-snippets' ),
+				[ 'status' => 500 ]
+			);
+	}
+
+	/**
+	 * Prepare an instance of the Export class from a request.
+	 *
+	 * @param Export $export Instance of Export class to use for generating response.
+	 *
+	 * @return WP_REST_Response
+	 */
+	protected function build_export_response( Export $export ): WP_REST_Response {
+		$response = rest_ensure_response( $export->generate_export() );
+		$response->header( 'X-Suggested-Filename', $export->build_filename() );
+		return $response;
+	}
+
+	/**
+	 * Retrieve one item in the collection in JSON export format.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function export_item( WP_REST_Request $request ): WP_REST_Response {
+		$item = $this->prepare_item_for_database( $request );
+		$export = new Export_JSON( [ $item->id ], $item->network );
+
+		return $this->build_export_response( $export );
+	}
+
+	/**
+	 * Retrieve one item in the collection in the code export format.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function export_item_code( WP_REST_Request $request ): WP_REST_Response {
+		$item = $this->prepare_item_for_database( $request );
+		$export = new Export_Code( [ $item->id ], $item->network );
+
+		return $this->build_export_response( $export );
+	}
+
+	/**
+	 * Prepares one item for create or update operation.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @param Snippet|null    $item    Existing item to augment.
+	 *
+	 * @return Snippet The prepared item.
+	 */
+	protected function prepare_item_for_database( $request, ?Snippet $item = null ): Snippet {
+		if ( ! $item instanceof Snippet ) {
+			$item = new Snippet();
+		}
+
+		foreach ( $item->get_allowed_fields() as $field ) {
+			if ( $request->has_param( $field ) ) {
+				$item->set_field( $field, $request->get_param( $field ) );
+			}
+		}
+
+		return $item;
+	}
+
+	/**
+	 * Prepare the item for the REST response.
+	 *
+	 * @param Snippet         $item    Snippet object.
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function prepare_item_for_response( $item, $request ) {
+		$schema = $this->get_item_schema();
+		$response = [];
+
+		foreach ( array_keys( $schema['properties'] ) as $property ) {
+			$response[ $property ] = $item->$property;
+		}
+
+		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Get our sample schema for a post.
+	 *
+	 * @return array<string, mixed> The sample schema for a post
+	 */
+	public function get_item_schema(): array {
+		if ( $this->schema ) {
+			return $this->schema;
+		}
+
+		$this->schema = [
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'snippet',
+			'type'       => 'object',
+			'properties' => [
+				'id'             => [
+					'description' => esc_html__( 'Unique identifier for the snippet.', 'code-snippets' ),
+					'type'        => 'integer',
+					'readonly'    => true,
+				],
+				'name'           => [
+					'description' => esc_html__( 'Descriptive title for the snippet.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'desc'           => [
+					'description' => esc_html__( 'Descriptive text associated with snippet.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'code'           => [
+					'description' => esc_html__( 'Executable snippet code.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'tags'           => [
+					'description' => esc_html__( 'List of tag categories the snippet belongs to.', 'code-snippets' ),
+					'type'        => 'array',
+					'items'       => [
+						'type' => 'string',
+					],
+				],
+				'scope'          => [
+					'description' => esc_html__( 'Context in which the snippet is executable.', 'code-snippets' ),
+					'type'        => 'string',
+				],
+				'condition_id'   => [
+					'description' => esc_html__( 'Identifier of condition linked to this snippet.', 'code-snippets' ),
+					'type'        => 'integer',
+				],
+				'active'         => [
+					'description' => esc_html__( 'Snippet activation status.', 'code-snippets' ),
+					'type'        => 'boolean',
+				],
+				'trashed'        => [
+					'description' => esc_html__( 'Whether the snippet is marked as deleted.', 'code-snippets' ),
+					'type'        => 'boolean',
+				],
+				'locked'         => [
+					'description' => esc_html__( 'Whether the snippet is locked from modification or deletion.', 'code-snippets' ),
+					'type'        => 'boolean',
+				],
+				'priority'       => [
+					'description' => esc_html__( 'Relative priority in which the snippet is executed.', 'code-snippets' ),
+					'type'        => 'integer',
+				],
+				'network'        => [
+					'description' => esc_html__( 'Whether the snippet is network-wide instead of site-wide.', 'code-snippets' ),
+					'type'        => [ 'boolean', 'null' ],
+					'default'     => null,
+				],
+				'shared_network' => [
+					'description' => esc_html__( 'If a network snippet, whether can be activated on discrete sites instead of network-wide.', 'code-snippets' ),
+					'type'        => [ 'boolean', 'null' ],
+				],
+				'modified'       => [
+					'description' => esc_html__( 'Date and time when the snippet was last modified, in ISO format.', 'code-snippets' ),
+					'type'        => 'string',
+					'format'      => 'date-time',
+					'readonly'    => true,
+				],
+				'last_active'    => [
+					'description' => esc_html__( 'Timestamp of when the snippet was last active, if available.', 'code-snippets' ),
+					'type'        => 'integer',
+					'readonly'    => true,
+				],
+				'code_error'     => [
+					'description' => esc_html__( 'Error message if the snippet code could not be parsed.', 'code-snippets' ),
+					'type'        => 'string',
+					'readonly'    => true,
+				],
+			],
+		];
+
+		return $this->schema;
+	}
+}

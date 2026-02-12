@@ -63,7 +63,7 @@
 			align-items: center;
 			gap: 5px;
 
-			> :last-child {
+			label:last-of-type, input:last-of-type {
 				margin-inline-start: auto;
 			}
 

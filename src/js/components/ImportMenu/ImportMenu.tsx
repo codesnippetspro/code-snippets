@@ -1,0 +1,65 @@
+import React, { useState } from 'react'
+import classnames from 'classnames'
+import { __ } from '@wordpress/i18n'
+import { WithRestAPIContext } from '../../hooks/useRestAPI'
+import { fetchQueryParam, updateQueryParam } from '../../utils/urls'
+import { UploadForm } from './UploadForm/UploadForm'
+import { MigrateForm } from './MigrateForm/MigrateForm'
+import type { ReactNode } from 'react'
+
+const TABS = ['upload', 'migrate'] as const
+
+type TabType = typeof TABS[number]
+
+const TAB_CONTENT: Record<TabType, ReactNode> = {
+	upload: <UploadForm />,
+	migrate: <MigrateForm />
+}
+
+const TAB_LABELS: Record<TabType, string> = {
+	upload: __('Upload snippets', 'code-snippets'),
+	migrate: __('Migrate from other plugins', 'code-snippets')
+}
+
+const isValidTab = (value: string): value is TabType =>
+	TABS.includes(value as TabType)
+
+const getDefaultTab = (): TabType => {
+	const tabParam = fetchQueryParam('tab')
+	return tabParam && isValidTab(tabParam) ? tabParam : TABS[0]
+}
+
+export const ImportMenu: React.FC = () => {
+	const [activeTab, setActiveTab] = useState<TabType>(getDefaultTab)
+
+	return (
+		<div className="import-snippets-menu wrap">
+			<h1>{__('Import Snippets', 'code-snippets')}</h1>
+
+			<div className="narrow">
+				<h2 className="nav-tab-wrapper">
+					{TABS.map(tab =>
+						<a
+							key={tab}
+							href="#"
+							className={classnames('nav-tab', { 'nav-tab-active': tab === activeTab })}
+							onClick={event => {
+								event.preventDefault()
+								setActiveTab(tab)
+								updateQueryParam('tab', tab)
+							}}
+						>
+							{TAB_LABELS[tab]}
+						</a>)}
+				</h2>
+
+				<WithRestAPIContext>
+					{TABS.map(tab =>
+						<div key={tab} className={classnames('import-snippets-section', { 'active-section': tab === activeTab })}>
+							{TAB_CONTENT[tab]}
+						</div>)}
+				</WithRestAPIContext>
+			</div>
+		</div>
+	)
+}

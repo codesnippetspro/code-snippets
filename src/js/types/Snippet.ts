@@ -8,15 +8,19 @@ export interface Snippet {
 	readonly priority: number
 	readonly active: boolean
 	readonly locked: boolean
+	readonly trashed: boolean
 	readonly network: boolean
 	readonly shared_network?: boolean | null
 	readonly modified?: string
 	readonly conditionId: number
+	readonly lastActive?: number
 	readonly code_error?: readonly [string, number] | null
 }
 
+export const SNIPPET_TYPES = <const> ['php', 'html', 'css', 'js', 'cond']
+export type SnippetType = typeof SNIPPET_TYPES[number]
+
 export type SnippetCodeType = 'php' | 'html' | 'css' | 'js'
-export type SnippetType = SnippetCodeType | 'cond'
 
 export type SnippetCodeScope = typeof SNIPPET_TYPE_SCOPES[SnippetCodeType][number]
 export type SnippetScope = typeof SNIPPET_TYPE_SCOPES[SnippetType][number]

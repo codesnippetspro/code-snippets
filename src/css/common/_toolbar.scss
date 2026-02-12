@@ -1,0 +1,123 @@
+@use 'upsell';
+
+$toolbar-block-size: 150px;
+$wpbody-block-indent: 20px;
+
+#wpbody {
+	padding-block-start: $toolbar-block-size;
+}
+
+.code-snippets-toolbar {
+	color: #2c3337;
+	background: #fff;
+	font-family: 'SF Pro', sans-serif;
+	margin-inline-start: -$wpbody-block-indent;
+	position: absolute;
+	inline-size: calc(100% + $wpbody-block-indent);
+	block-size: $toolbar-block-size;
+	inset-block-start: 0;
+	display: flex;
+	flex-direction: column;
+
+	ul, li {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+}
+
+.code-snippets-toolbar-upper {
+	justify-content: space-between;
+	block-size: 77px;
+	padding-inline: 35px;
+	display: flex;
+	align-items: center;
+
+	.logo {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		img {
+			block-size: 42px;
+		}
+	}
+
+	h1 {
+		font-size: 18px;
+		font-weight: 700;
+		line-height: 1.5;
+	}
+
+	ul {
+		display: flex;
+		gap: 22px;
+		align-items: center;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+
+		&.active-link, &:hover, &:focus, &:active {
+			color: #2271b1;
+		}
+	}
+}
+
+.code-snippets-toolbar-lower {
+	border: 1px solid #c3c4c7;
+
+	ul {
+		display: flex;
+		align-items: end;
+	}
+
+	li a {
+		display: flex;
+		margin: 0;
+		padding: 24px 24px 20px;
+		color: inherit;
+		gap: 12px;
+		align-items: center;
+		font-size: 16px;
+		text-decoration: none;
+		font-weight: bold;
+		box-sizing: border-box;
+		transition: border unset;
+		border-block-end: 4px solid transparent;
+		cursor: pointer;
+
+		&.active-link, &:hover, &:focus, &:active {
+			color: #2271b1;
+			border-block-end-color: currentcolor;
+		}
+	}
+
+	li:last-of-type {
+		margin-inline-start: auto;
+	}
+}
+
+.code-snippets-toolbar-lower .pro-chip,
+.nav-tab .pro-chip {
+	color: #d46f4d;
+	text-transform: uppercase;
+	border: 2px solid currentcolor;
+	border-radius: 999px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 3px 9px;
+}
+
+
+.code-snippets-toolbar-lower .pro-chip {
+	font-size: 12px;
+}
+
+.nav-tab .pro-chip {
+	font-size: 10px;
+	padding: 0 6px;
+}
