@@ -8,11 +8,11 @@
  * License:      GPL-2.0-or-later
  * License URI:  license.txt
  * Text Domain:  code-snippets
- * Version:      3.9.4
+ * Version:      3.10.0-dev.1
  * Requires PHP: 7.4
- * Requires at least: 5.0
+ * Requires at least: 5.5
  *
- * @version   3.9.4
+ * @version   3.10.0-dev.1
  * @package   Code_Snippets
  * @author    Shea Bunge <shea@codesnippets.pro>
  * @copyright 2012-2024 Code Snippets Pro
@@ -37,7 +37,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.4', 
 	 *
 	 * @const string
 	 */
-	define( 'CODE_SNIPPETS_VERSION', '3.9.4' );
+	define( 'CODE_SNIPPETS_VERSION', '3.10.0-dev.1' );
 
 	/**
 	 * The full path to the main file of this plugin.
@@ -58,7 +58,7 @@ if ( ! defined( 'CODE_SNIPPETS_FILE' ) && version_compare( phpversion(), '7.4', 
 	 */
 	define( 'CODE_SNIPPETS_PRO', false );
 
-	require_once dirname( __FILE__ ) . '/php/load.php';
+	require_once dirname( __FILE__ ) . '/php/Core/load.php';
 } else {
-	require_once dirname( __FILE__ ) . '/php/deactivation-notice.php';
+	require_once dirname( __FILE__ ) . '/php/Core/deactivation-notice.php';
 }

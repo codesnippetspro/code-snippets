@@ -1,0 +1,38 @@
+
+.snippets-table-card {
+	.wp-list-table {
+		border-radius: 5px;
+	}
+
+	th.check-column {
+		padding: 8px 0;
+	}
+
+	.tablenav {
+		display: flex;
+		gap: 10px;
+		height: auto;
+		padding: 0;
+	}
+
+	.tablenav.bottom {
+		justify-content: flex-end;
+		margin-top: 1em;
+	}
+}
+
+.import-snippets-card {
+	background-color: #fff;
+	padding: 25px;
+	border-radius: 5px;
+	border: 1px solid #e0e0e0;
+	margin-bottom: 10px;
+	width: 100%;
+
+	&.status-display {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		margin-bottom: 20px;
+	}
+}

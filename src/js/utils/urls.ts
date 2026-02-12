@@ -1,0 +1,55 @@
+import { addQueryArgs } from '@wordpress/url'
+
+export const fetchQueryParam = (name: string): string | undefined => {
+	const urlParams = new URLSearchParams(window.location.search)
+	return urlParams.get(name) ?? undefined
+}
+
+export const updateQueryParam = (name: string, value?: string | number) => {
+	if ('URLSearchParams' in window) {
+		const searchParams = new URLSearchParams(window.location.search)
+
+		if (value) {
+			searchParams.set(name, String(value))
+		} else {
+			searchParams.delete(name)
+		}
+
+		const newUrl = window.location.toString().replace(window.location.search, `?${searchParams.toString()}`)
+		window.history.replaceState({}, document.title, newUrl)
+	}
+}
+
+const normaliseQueryArg = (value: unknown): string | undefined => {
+	switch (true) {
+		case value === undefined || null === value:
+			return undefined
+
+		case 'boolean' === typeof value:
+			return value ? '1' : '0'
+
+		case 'number' === typeof value:
+		case 'string' === typeof value:
+			return String(value)
+
+		default:
+			throw new Error(`Unsupported query arg type: ${typeof value}`)
+	}
+}
+
+export const buildUrl = (
+	base: string | undefined,
+	queryArgs: Record<string, boolean | number | string | undefined | null>
+): string => {
+	const processedArgs: Record<string, string> = {}
+
+	for (const [key, value] of Object.entries(queryArgs)) {
+		const processedArg = normaliseQueryArg(value)
+
+		if (processedArg !== undefined) {
+			processedArgs[key] = processedArg
+		}
+	}
+
+	return addQueryArgs(base, processedArgs)
+}

@@ -23,7 +23,7 @@ export const ImportOptions: React.FC<ImportOptionsProps> = ({
 					type="checkbox"
 					checked={autoAddTags}
 					onChange={(e) => onAutoAddTagsChange(e.target.checked)}
-					style={{ marginTop: '2px' }}
+					style={{ marginBlockStart: '2px' }}
 				/>
 				<div style={{ flex: 1 }}>
 					<div>
@@ -34,7 +34,7 @@ export const ImportOptions: React.FC<ImportOptionsProps> = ({
 						</span>
 					</div>
 					{autoAddTags && (
-						<div style={{ marginTop: '12px' }}>
+						<div style={{ marginBlockStart: '12px' }}>
 							<input
 								type="text"
 								value={tagValue}

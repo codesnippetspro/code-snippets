@@ -44,7 +44,7 @@ $sidebar-gap: 30px;
 		border: 1px solid currentcolor;
 	}
 
-	&.no-condition:hover .cond-badge {
+	&.no-condition:hover :not([disabled]) .cond-badge {
 		color: #fff;
 		background: theme.$accent;
 		border-color: theme.$accent;

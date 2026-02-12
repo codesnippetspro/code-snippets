@@ -1,14 +1,14 @@
 import { __ } from '@wordpress/i18n'
-import { addQueryArgs } from '@wordpress/url'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
+import { useSnippetForm } from '../components/EditMenu/SnippetForm/WithSnippetFormContext'
 import { createSnippetObject, isCondition } from '../utils/snippets/snippets'
-import { useRestAPI } from './useRestAPI'
-import { useSnippetForm } from './useSnippetForm'
+import { buildUrl } from '../utils/urls'
+import { useSnippetsAPI } from './useSnippetsAPI'
 import type { Snippet } from '../types/Snippet'
 
 const snippetMessages = <const> {
-	addNew: __('Add New Snippet', 'code-snippets'),
+	addNew: __('Create New Snippet', 'code-snippets'),
 	edit: __('Edit Snippet', 'code-snippets'),
 	created: __('Snippet <strong>created</strong>.', 'code-snippets'),
 	updated: __('Snippet <strong>updated</strong>.', 'code-snippets'),
@@ -24,7 +24,7 @@ const conditionCreated = __('Condition <strong>created</strong>.', 'code-snippet
 const conditionUpdated = __('Condition <strong>updated</strong>.', 'code-snippets')
 
 const conditionMessages: typeof snippetMessages = {
-	addNew: __('Add New Condition', 'code-snippets'),
+	addNew: __('Create New Condition', 'code-snippets'),
 	edit: __('Edit Condition', 'code-snippets'),
 	created: conditionCreated,
 	updated: conditionUpdated,
@@ -43,7 +43,11 @@ export enum SubmitSnippetAction {
 	SAVE_AND_DEACTIVATE = 'save_snippet_deactivate'
 }
 
-const getSuccessNotice = (request: Snippet, response: Snippet, action: SubmitSnippetAction): string => {
+const getSuccessNotice = (
+	request: Partial<Snippet>,
+	response: Snippet,
+	action: SubmitSnippetAction = SubmitSnippetAction.SAVE
+): string => {
 	const messages = 'condition' === request.scope ? conditionMessages : snippetMessages
 	const wasCreated = 0 === request.id
 
@@ -68,33 +72,31 @@ const getSuccessNotice = (request: Snippet, response: Snippet, action: SubmitSni
 	}
 }
 
-const SUBMIT_ACTION_DELTA: Record<SubmitSnippetAction, Partial<Snippet>> = {
-	[SubmitSnippetAction.SAVE]: {},
-	[SubmitSnippetAction.SAVE_AND_ACTIVATE]: { active: true },
-	[SubmitSnippetAction.SAVE_AND_DEACTIVATE]: { active: false },
-	[SubmitSnippetAction.SAVE_AND_EXECUTE]: { active: true }
-}
-
 export interface UseSubmitSnippet {
-	submitSnippet: (action?: SubmitSnippetAction) => Promise<Snippet | undefined>
+	submitSnippet: (snippet: Partial<Snippet> & Pick<Snippet, 'network'>, action?: SubmitSnippetAction) => Promise<Snippet | undefined>
 }
 
 export const useSubmitSnippet = (): UseSubmitSnippet => {
-	const { snippetsAPI } = useRestAPI()
-	const { setIsWorking, setCurrentNotice, snippet, setSnippet } = useSnippetForm()
+	const api = useSnippetsAPI()
+	const { setIsWorking, setCurrentNotice, setSnippet } = useSnippetForm()
 
-	const submitSnippet = useCallback(async (action: SubmitSnippetAction = SubmitSnippetAction.SAVE) => {
+	const submitSnippet: UseSubmitSnippet['submitSnippet'] = useCallback(async (snippet, action) => {
 		setCurrentNotice(undefined)
+		setIsWorking(true)
 
 		const result = await (async (): Promise<Snippet | string | undefined> => {
 			try {
-				const request: Snippet = { ...snippet, ...SUBMIT_ACTION_DELTA[action] }
-				const response = await (0 === request.id ? snippetsAPI.create(request) : snippetsAPI.update(request))
-				setIsWorking(false)
-				return response.id ? response : undefined
+				const { id } = snippet
+
+				const response = await (undefined === id || 0 === id
+					? api.create(snippet)
+					: api.update({ ...snippet, id }))
+
+				return response.id ? createSnippetObject(response) : undefined
 			} catch (error) {
-				setIsWorking(false)
 				return isAxiosError(error) ? error.message : undefined
+			} finally {
+				setIsWorking(false)
 			}
 		})()
 
@@ -109,17 +111,17 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 			setCurrentNotice(['error', message.filter(Boolean).join(' ')])
 			return undefined
 		} else {
-			setSnippet(createSnippetObject(result))
+			setSnippet(result)
 			setCurrentNotice(['updated', getSuccessNotice(snippet, result, action)])
 
 			if (snippet.id && result.id) {
 				window.document.title = window.document.title.replace(snippetMessages.addNew, messages.edit)
-				window.history.replaceState({}, '', addQueryArgs(window.CODE_SNIPPETS?.urls.edit, { id: result.id }))
+				window.history.replaceState({}, '', buildUrl(window.CODE_SNIPPETS?.urls.edit, { id: result.id }))
 			}
 
 			return result
 		}
-	}, [snippetsAPI, setIsWorking, setCurrentNotice, snippet, setSnippet])
+	}, [api, setIsWorking, setCurrentNotice, setSnippet])
 
 	return { submitSnippet }
 }

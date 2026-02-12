@@ -21,10 +21,9 @@
         "source": "https://github.com/codesnippetspro/code-snippets"
     },
     "autoload": {
-        "classmap": [
-            "php/"
-        ],
+        "files": ["php/Admin/Menus/Manage_Menu.php"],
         "psr-4": {
+          "Code_Snippets\\": "php/"
         }
     },
     "require": {

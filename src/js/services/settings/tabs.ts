@@ -16,7 +16,7 @@ const refreshEditorPreview = (section: string) => {
 
 // Update the http referer value so that any redirections lead back to this tab.
 const updateHttpReferer = (section: string) => {
-	const httpReferer = document.querySelector<HTMLInputElement>('input[name=_wp_http_referer]')
+	const httpReferer: HTMLInputElement | null = document.querySelector('input[name=_wp_http_referer]')
 	if (!httpReferer) {
 		console.error('could not find http referer')
 		return

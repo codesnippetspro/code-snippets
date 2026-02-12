@@ -26,7 +26,7 @@ export const ImporterSelector: React.FC<ImporterSelectorProps> = ({
 				value={selectedImporter}
 				onChange={(event) => onImporterChange(event.target.value)}
 				className="regular-text"
-				style={{ display: 'block', marginTop: '5px', width: '100%', maxWidth: '300px' }}
+				style={{ display: 'block', marginBlockStart: '5px', width: '100%', maxWidth: '300px' }}
 				disabled={isLoading}
 			>
 				<option value="">{__('-- Select an importer --', 'code-snippets')}</option>

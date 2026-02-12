@@ -16,7 +16,7 @@ export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = (
 	return (
 		<ImportCard>
 			<h2 style={{ margin: '0 0 1em 0' }}>{__('Duplicate Snippets', 'code-snippets')}</h2>
-			<p className="description" style={{ marginBottom: '1em' }}>
+			<p className="description" style={{ marginBlockEnd: '1em' }}>
 				{__('What should happen if an existing snippet is found with an identical name to an imported snippet?', 'code-snippets')}
 			</p>
 			
@@ -29,7 +29,7 @@ export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = (
 							value="ignore"
 							checked={value === 'ignore'}
 							onChange={(e) => onChange(e.target.value as DuplicateAction)}
-							style={{ marginTop: '2px' }}
+							style={{ marginBlockStart: '2px' }}
 						/>
 						<span>
 							{__('Ignore any duplicate snippets: import all snippets from the file regardless and leave all existing snippets unchanged.', 'code-snippets')}
@@ -43,7 +43,7 @@ export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = (
 							value="replace"
 							checked={value === 'replace'}
 							onChange={(e) => onChange(e.target.value as DuplicateAction)}
-							style={{ marginTop: '2px' }}
+							style={{ marginBlockStart: '2px' }}
 						/>
 						<span>
 							{__('Replace any existing snippets with a newly imported snippet of the same name.', 'code-snippets')}
@@ -57,7 +57,7 @@ export const DuplicateActionSelector: React.FC<DuplicateActionSelectorProps> = (
 							value="skip"
 							checked={value === 'skip'}
 							onChange={(e) => onChange(e.target.value as DuplicateAction)}
-							style={{ marginTop: '2px' }}
+							style={{ marginBlockStart: '2px' }}
 						/>
 						<span>
 							{__('Do not import any duplicate snippets; leave all existing snippets unchanged.', 'code-snippets')}
