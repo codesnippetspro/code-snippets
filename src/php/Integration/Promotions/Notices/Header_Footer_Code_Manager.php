@@ -47,7 +47,7 @@ class Header_Footer_Code_Manager extends Promotion_Base {
 	 * @return string The promotion message.
 	 */
 	public function get_promotion_message(): string {
-		return __( 'Move your functionality to Code Snippets Pro and reduce your dependency on third-party plugins. A leaner dashboard is a more secure dashboard.', 'code-snippets' );
+		return __( 'Move your functionality to Code Snippets and reduce your dependency on third-party plugins.', 'code-snippets' );
 	}
 
 	/**
