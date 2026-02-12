@@ -223,6 +223,26 @@
 		white-space: nowrap; /* prevents wrapping of snippet title */
 		vertical-align: top;
 	}
+
+	td.column-date, th.column-date {
+		white-space: nowrap;
+		inline-size: 130px; /* fixed column width */
+		min-inline-size: 130px;
+		max-inline-size: 130px;
+		text-align: right;
+		padding-inline-start: 8px;
+		padding-inline-end: 8px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* Ensure the name column can shrink/ellipsis instead of pushing the date. */
+	td.column-name, th.column-name {
+		max-inline-size: calc(100% - 140px);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 }
 
 .wp-core-ui .button.clear-filters {
