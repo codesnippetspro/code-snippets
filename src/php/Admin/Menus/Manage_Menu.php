@@ -3,7 +3,6 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Admin\Contextual_Help;
-use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Code_Highlighter;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_snippets;
@@ -130,6 +129,7 @@ class Manage_Menu extends Admin_Menu {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is matched to known classes.
 		$sub = code_snippets()->get_menu_slug( isset( $_GET['sub'] ) ? sanitize_key( $_GET['sub'] ) : 'snippets' );
 
 		$classmap = array(

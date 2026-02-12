@@ -491,7 +491,7 @@ class Snippet extends Model {
 	/**
 	 * Determine whether the current snippet type is pro-only.
 	 *
-	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function get_is_pro(): bool {
 		return 'css' === $this->type || 'js' === $this->type || 'cond' === $this->type;

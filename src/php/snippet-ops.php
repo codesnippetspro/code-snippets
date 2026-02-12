@@ -857,14 +857,14 @@ function update_snippet_fields( int $snippet_id, array $fields, ?bool $network =
 /**
  *  Evaluate a snippet by loading it from the filesystem.
  *
- * @param      $code
- * @param      $file
- * @param int  $id
- * @param bool $force
+ * @param string $code  Snippet code.
+ * @param string $file  Snippet filename.
+ * @param int    $id    Snippet ID.
+ * @param bool   $force Force snippet execution, even if save mode is active.
  *
  * @return bool|Throwable|null
  */
-function execute_snippet_from_flat_file( $code, $file, int $id = 0, bool $force = false ) {
+function execute_snippet_from_flat_file( string $code, string $file, int $id = 0, bool $force = false ) {
 	if ( ! is_file( $file ) ) {
 		execute_snippet( $code, $id, $force );
 		return true;

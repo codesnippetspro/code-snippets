@@ -10,7 +10,7 @@ use WPCode_Snippet;
  */
 class Insert_Headers_And_Footers_Plugin_Importer extends Plugin_Importer {
 
-	private const FIELD_MAPPINGS = [
+	protected const FIELD_MAPPINGS = [
 		'title'    => 'name',
 		'note'     => 'desc',
 		'code'     => 'code',
@@ -112,33 +112,10 @@ class Insert_Headers_And_Footers_Plugin_Importer extends Plugin_Importer {
 	public function create_snippet( array $snippet_data, bool $multisite ): ?Snippet {
 		$code_type = $snippet_data['code_type'] ?? '';
 		$is_supported_code_type = in_array( $code_type, [ 'php', 'css', 'html', 'js' ], true );
-		if ( ! $is_supported_code_type ) {
-			return null;
-		}
 
-		$snippet = new Snippet();
-		$snippet->network = $multisite;
-
-		foreach ( self::FIELD_MAPPINGS as $source_field => $target_field ) {
-			if ( ! isset( $snippet_data[ $source_field ] ) ) {
-				continue;
-			}
-
-			$value = $this->transform_field_value(
-				$target_field,
-				$snippet_data[ $source_field ],
-				$snippet_data
-			);
-
-			$scope_not_supported = 'scope' === $target_field && null === $value;
-			if ( $scope_not_supported ) {
-				return null;
-			}
-
-			$snippet->set_field( $target_field, $value );
-		}
-
-		return $snippet;
+		return $is_supported_code_type
+			? parent::create_snippet( $snippet_data, $multisite )
+			: null;
 	}
 
 	/**
@@ -150,7 +127,7 @@ class Insert_Headers_And_Footers_Plugin_Importer extends Plugin_Importer {
 	 *
 	 * @return mixed
 	 */
-	private function transform_field_value( string $target_field, $value, array $snippet_data ) {
+	protected function transform_field_value( string $target_field, $value, array $snippet_data ) {
 		if ( 'scope' === $target_field ) {
 			return $this->transform_scope_value( $value, $snippet_data );
 		}

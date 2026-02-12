@@ -8,7 +8,6 @@
 namespace Code_Snippets;
 
 use Composer\Autoload\ClassLoader;
-use function Code_Snippets\Utils\update_self_option;
 
 /**
  * The version number for this release of the plugin.
@@ -46,23 +45,25 @@ const CACHE_GROUP = 'code_snippets';
  */
 const REST_API_NAMESPACE = 'code-snippets/v';
 
-// Load dependencies with Composer.
+/**
+ * Load the Composer autoloader.
+ *
+ * After loading, remove any PSR-4 namespace mappings that do not start with our vendor prefix but have a corresponding
+ * prefixed version, as these are not removed by Imposter and would cause collisions with other plugins that use the same
+ * libraries.
+ *
+ * @var ClassLoader $autoloader Composer autoloader instance.
+ */
+$autoloader = require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
 
-$code_snippets_autoloader = require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
+if ( $autoloader instanceof ClassLoader ) {
+	$vendor_prefix = __NAMESPACE__ . '\\Vendor\\';
 
-// Remove all original (non-prefixed) vendor namespace mappings to prevent collisions with other plugins.
-// Since Imposter rewrites namespaces to Code_Snippets\Vendor\*, we need to remove the original PSR-4
-// mappings that Composer generates so other plugins can load their own copies of these libraries.
-if ( $code_snippets_autoloader instanceof ClassLoader ) {
-	$prefixes = $code_snippets_autoloader->getPrefixesPsr4();
-	$our_prefix = 'Code_Snippets\\Vendor\\';
-
-	foreach ( $prefixes as $namespace => $paths ) {
+	foreach ( $autoloader->getPrefixesPsr4() as $namespace => $paths ) {
 		// Remove any non-Code_Snippets namespace that has a corresponding prefixed version.
-		if ( strpos( $namespace, $our_prefix ) === false ) {
-			$prefixed_namespace = $our_prefix . $namespace;
-			if ( isset( $prefixes[ $prefixed_namespace ] ) ) {
-				$code_snippets_autoloader->setPsr4( $namespace, [] );
+		if ( false === strpos( $namespace, $vendor_prefix ) ) {
+			if ( isset( $prefixes[ $vendor_prefix . $namespace ] ) ) {
+				$autoloader->setPsr4( $namespace, [] );
 			}
 		}
 	}

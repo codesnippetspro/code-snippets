@@ -228,7 +228,7 @@ class Version_Switch {
 	 *
 	 * phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_print_r
 	 */
-	public static function extract_handler_messages( $update_handler, $upgrader ): string {
+	public static function extract_handler_messages( ?WP_Upgrader_Skin $update_handler, ?Plugin_Upgrader $upgrader ): string {
 		$handler_messages = '';
 
 		if ( isset( $update_handler ) ) {

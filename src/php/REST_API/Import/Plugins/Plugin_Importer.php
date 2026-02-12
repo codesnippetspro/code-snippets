@@ -37,6 +37,13 @@ abstract class Plugin_Importer {
 	];
 
 	/**
+	 * Mapping of source plugin fields to Snippet object fields.
+	 *
+	 * @var array
+	 */
+	protected const FIELD_MAPPINGS = [];
+
+	/**
 	 * Get the name of the importer, used in REST API routes.
 	 *
 	 * @return string
@@ -67,7 +74,50 @@ abstract class Plugin_Importer {
 	 *
 	 * @return Snippet|null
 	 */
-	abstract public function create_snippet( array $snippet_data, bool $multisite ): ?Snippet;
+	/**
+	 * Create a new snippet from the provided snippet data.
+	 *
+	 * @param array $snippet_data Snippet data.
+	 * @param bool  $multisite    Whether to create a network-wide snippet.
+	 *
+	 * @return Snippet|null
+	 */
+	public function create_snippet( array $snippet_data, bool $multisite ): ?Snippet {
+		$snippet = new Snippet();
+		$snippet->network = $multisite;
+
+		foreach ( self::FIELD_MAPPINGS as $source_field => $target_field ) {
+			if ( ! isset( $snippet_data[ $source_field ] ) ) {
+				continue;
+			}
+
+			$value = $this->transform_field_value(
+				$target_field,
+				$snippet_data[ $source_field ],
+				$snippet_data
+			);
+
+			$scope_not_supported = 'scope' === $target_field && null === $value;
+			if ( $scope_not_supported ) {
+				return null;
+			}
+
+			$snippet->set_field( $target_field, $value );
+		}
+
+		return $snippet;
+	}
+
+	/**
+	 * Transform field value based on the target field.
+	 *
+	 * @param string $target_field Target field name.
+	 * @param mixed  $value        Original value.
+	 * @param array  $snippet_data Snippet data.
+	 *
+	 * @return mixed|null
+	 */
+	abstract protected function transform_field_value( string $target_field, $value, array $snippet_data );
 
 	/**
 	 * Check if the source plugin is active.
@@ -119,7 +169,7 @@ abstract class Plugin_Importer {
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function import( WP_REST_Request $request ): array {
+	public function import( WP_REST_Request $request ): WP_REST_Response {
 		$ids_to_import = $request->get_param( 'ids' ) ?? [];
 		$multisite = $request->get_param( 'network' ) ?? false;
 		$auto_add_tags = $request->get_param( 'auto_add_tags' ) ?? false;

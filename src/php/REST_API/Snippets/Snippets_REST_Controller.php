@@ -8,12 +8,10 @@ use Code_Snippets\Migration\Export\Export_JSON;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\REST_API\REST_Collection_Controller;
 use WP_Error;
-use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use function Code_Snippets\activate_snippet;
-use function Code_Snippets\code_snippets;
 use function Code_Snippets\deactivate_snippet;
 use function Code_Snippets\delete_snippet;
 use function Code_Snippets\get_snippet;
@@ -21,7 +19,6 @@ use function Code_Snippets\get_snippets;
 use function Code_Snippets\restore_snippet;
 use function Code_Snippets\save_snippet;
 use function Code_Snippets\trash_snippet;
-use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
  * Allows fetching snippet data through the WordPress REST API.

@@ -2,14 +2,12 @@
 
 namespace Code_Snippets\REST_API\Import\Plugins;
 
-use Code_Snippets\Model\Snippet;
-
 /**
  * Importer for the 'Header Footer Code Manager' plugin.
  */
 class Header_Footer_Code_Manager_Plugin_Importer extends Plugin_Importer {
 
-	private const FIELD_MAPPINGS = [
+	protected const FIELD_MAPPINGS = [
 		'name'     => 'name',
 		'snippet'  => 'code',
 		'location' => 'scope',
@@ -85,40 +83,6 @@ class Header_Footer_Code_Manager_Plugin_Importer extends Plugin_Importer {
 	}
 
 	/**
-	 * Create a Snippet object from the source plugin's snippet data.
-	 *
-	 * @param array $snippet_data Source plugin's snippet data.
-	 * @param bool  $multisite    Whether to create a multisite snippet.
-	 *
-	 * @return Snippet|null
-	 */
-	public function create_snippet( array $snippet_data, bool $multisite ): ?Snippet {
-		$snippet = new Snippet();
-		$snippet['network'] = $multisite;
-
-		foreach ( self::FIELD_MAPPINGS as $source_field => $target_field ) {
-			if ( ! isset( $snippet_data[ $source_field ] ) ) {
-				continue;
-			}
-
-			$value = $this->transform_field_value(
-				$target_field,
-				$snippet_data[ $source_field ],
-				$snippet_data
-			);
-
-			$scope_not_supported = 'scope' === $target_field && null === $value;
-			if ( $scope_not_supported ) {
-				return null;
-			}
-
-			$snippet->set_field( $target_field, $value );
-		}
-
-		return $snippet;
-	}
-
-	/**
 	 * Transform field value based on the target field.
 	 *
 	 * @param string $target_field Target field name.
@@ -127,7 +91,7 @@ class Header_Footer_Code_Manager_Plugin_Importer extends Plugin_Importer {
 	 *
 	 * @return string|null
 	 */
-	private function transform_field_value( string $target_field, $value, array $snippet_data ): ?string {
+	protected function transform_field_value( string $target_field, $value, array $snippet_data ): ?string {
 		if ( 'scope' === $target_field ) {
 			return $this->transform_scope_value( $value, $snippet_data );
 		}

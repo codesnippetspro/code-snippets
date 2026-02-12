@@ -183,6 +183,7 @@ class Settings_Menu extends Admin_Menu {
 			return $default_section;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is matched to registered sections.
 		$active_tab = isset( $_REQUEST['section'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['section'] ) ) : $default_section;
 		return isset( $sections[ $active_tab ] ) ? $active_tab : $default_section;
 	}

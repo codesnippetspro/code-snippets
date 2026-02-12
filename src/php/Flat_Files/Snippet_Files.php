@@ -573,7 +573,6 @@ class Snippet_Files {
 			function ( $snippet ) use ( $scopes, $shared_ids ) {
 				$active_value = isset( $snippet['active'] ) ? intval( $snippet['active'] ) : 0;
 
-
 				$is_active = DB::is_network_snippet_enabled( $active_value, intval( $snippet['id'] ), $shared_ids );
 
 				return ( $is_active || 'condition' === $snippet['scope'] ) &&

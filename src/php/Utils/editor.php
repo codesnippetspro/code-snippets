@@ -8,7 +8,6 @@
 namespace Code_Snippets\Utils;
 
 use Code_Snippets\Settings\Settings_Fields;
-use function Code_Snippets\code_snippets;
 use function Code_Snippets\Settings\get_setting;
 use function Code_Snippets\Settings\get_settings_values;
 use const Code_Snippets\PLUGIN_FILE;

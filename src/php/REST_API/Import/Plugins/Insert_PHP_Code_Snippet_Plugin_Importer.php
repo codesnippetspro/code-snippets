@@ -2,14 +2,12 @@
 
 namespace Code_Snippets\REST_API\Import\Plugins;
 
-use Code_Snippets\Model\Snippet;
-
 /**
  * Importer for the 'Insert PHP Code Snippet' plugin.
  */
 class Insert_PHP_Code_Snippet_Plugin_Importer extends Plugin_Importer {
 
-	private const FIELD_MAPPINGS = [
+	protected const FIELD_MAPPINGS = [
 		'title'                 => 'name',
 		'content'               => 'code',
 		'insertionLocationType' => 'scope',
@@ -85,40 +83,6 @@ class Insert_PHP_Code_Snippet_Plugin_Importer extends Plugin_Importer {
 	}
 
 	/**
-	 * Create a new snippet from the provided snippet data.
-	 *
-	 * @param array $snippet_data Snippet data.
-	 * @param bool  $multisite    Whether to create a network-wide snippet.
-	 *
-	 * @return Snippet|null
-	 */
-	public function create_snippet( array $snippet_data, bool $multisite ): ?Snippet {
-		$snippet = new Snippet();
-		$snippet->network = $multisite;
-
-		foreach ( self::FIELD_MAPPINGS as $source_field => $target_field ) {
-			if ( ! isset( $snippet_data[ $source_field ] ) ) {
-				continue;
-			}
-
-			$value = $this->transform_field_value(
-				$target_field,
-				$snippet_data[ $source_field ],
-				$snippet_data
-			);
-
-			$scope_not_supported = 'scope' === $target_field && null === $value;
-			if ( $scope_not_supported ) {
-				return null;
-			}
-
-			$snippet->set_field( $target_field, $value );
-		}
-
-		return $snippet;
-	}
-
-	/**
 	 * Transform field value to match Code Snippets format.
 	 *
 	 * @param string $target_field Name of field.
@@ -127,7 +91,7 @@ class Insert_PHP_Code_Snippet_Plugin_Importer extends Plugin_Importer {
 	 *
 	 * @return string|null
 	 */
-	private function transform_field_value( string $target_field, $value, array $snippet_data ): ?string {
+	protected function transform_field_value( string $target_field, $value, array $snippet_data ): ?string {
 		if ( 'scope' === $target_field ) {
 			return $this->transform_scope_value( $value, $snippet_data );
 		}
