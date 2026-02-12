@@ -10,6 +10,7 @@ use Code_Snippets\Core\Upgrader;
 use Code_Snippets\Integration\Classic_Editor\MCE_Plugin;
 use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
+use Code_Snippets\Integration\Promotions\Promotion_Manager;
 use Code_Snippets\Integration\Shortcodes;
 use Code_Snippets\REST_API\Cloud\Cloud_Snippets_REST_Controller;
 use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
@@ -134,10 +135,9 @@ class Plugin {
 		new Shortcodes();
 		new MCE_Plugin();
 		new Upgrader( PLUGIN_VERSION, $this->db );
+		new Promotion_Manager();
 
 		$this->init_snippet_files();
-
-		new Integration\Promotions\Elementor_Pro();
 	}
 
 	/**
