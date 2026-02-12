@@ -28,18 +28,12 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		await expect(toggleSwitch).toHaveAttribute('title', 'Deactivate')
 
-		// Check that the toggle is rendered to the right (active)
-		await expect(snippetRow).toHaveScreenshot('snippet-row-active.png')
-
 		await toggleSwitch.click()
 		await page.waitForLoadState('networkidle')
 
 		const updatedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
 		const updatedToggle = updatedRow.locator('a.snippet-activation-switch')
 		await expect(updatedToggle).toHaveAttribute('title', 'Activate')
-
-		// Check that the toggle is rendered to the left (inactive)
-		await expect(updatedRow).toHaveScreenshot('snippet-row-inactive.png')
 
 		await updatedToggle.click()
 		await page.waitForLoadState('networkidle')

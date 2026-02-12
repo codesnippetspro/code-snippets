@@ -1,0 +1,310 @@
+$type-colors: (
+	css: #9b59b6,
+	js: #ffeb3b,
+	html: #ef6a36
+);
+
+.upload-form-container {
+	max-width: 800px;
+}
+
+.import-upload-card {
+	h2 {
+		margin: 0 0 1em 0;
+	}
+
+	p.description {
+		margin-bottom: 1em;
+	}
+
+	footer {
+		text-align: center;
+
+		.button {
+			min-width: 200px;
+		}
+	}
+}
+
+.import-select-card {
+	.return-link {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 20px;
+	}
+
+	.tablenav.top {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 10px;
+
+		h3 {
+			margin: 0;
+		}
+
+		p {
+			margin: 0.5em 0 1em 0;
+			color: #666;
+		}
+	}
+
+	.table-actions .button {
+		margin-right: 10px;
+	}
+
+	.wp-list-table {
+		table-layout: fixed;
+	}
+
+	th.check-column {
+		width: 40px;
+	}
+
+	th.column-name {
+		width: 200px;
+	}
+
+	td.column-name div {
+		font-size: 12px;
+		color: #666;
+		margin-top: 2px;
+	}
+
+	.column-type {
+		width: 90px;
+		text-align: center;
+
+		span {
+			background-color: #1d97c6;
+			color: white;
+			padding: 3px 6px;
+			font-size: 10px;
+			text-transform: uppercase;
+			border-radius: 3px;
+
+			@each $type, $color in $type-colors {
+				@at-root .import-select-card .#{$type}-snippet & {
+					background-color: $color;
+				}
+			}
+		}
+	}
+
+	th.column-desc {
+		width: auto;
+	}
+
+	th.column-tags {
+		width: 120px;
+	}
+}
+
+.upload-drop-zone {
+	border: 2px dashed #ccd0d4;
+	border-radius: 4px;
+	padding: 40px 20px;
+	text-align: center;
+	cursor: pointer;
+	background-color: #fafafa;
+	margin-bottom: 20px;
+	transition: all 0.3s ease;
+	opacity: 1;
+
+	&.drag-over {
+		border-color: #0073aa;
+		background-color: #f0f6fc;
+	}
+
+	&.disabled {
+		cursor: not-allowed;
+		background-color: #f6f7f7;
+		opacity: 0.6;
+	}
+
+	.drop-zone-icon {
+		font-size: 48px;
+		margin-bottom: 10px;
+		color: #666;
+	}
+
+	p:first-of-type {
+		margin: 0 0 8px 0;
+		font-size: 16px;
+		font-weight: 500;
+	}
+
+	p:last-of-type {
+		margin: 0;
+		color: #666;
+		font-size: 14px;
+	}
+
+	+ input[type='file'] {
+		display: none;
+	}
+}
+
+.duplicate-action-selector-card {
+	h2 {
+		margin: 0 0 1em 0;
+	}
+
+	p.description {
+		margin-bottom: 1em;
+	}
+
+	fieldset {
+		> div {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		label {
+			display: flex;
+			align-items: flex-start;
+			gap: 8px;
+			cursor: pointer;
+		}
+
+		input {
+			margin-top: 2px
+		}
+	}
+}
+
+.import-result-display-card {
+	> div {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+	}
+}
+
+.import-result {
+	> div:last-child {
+		flex: 1;
+	}
+
+	h3 {
+		margin: 0 0 8px 0;
+		font-size: 16px;
+		font-weight: 600
+	}
+
+	p.import-result-message {
+		margin: 0 0 8px 0;
+		color: #666;
+	}
+
+	p.import-result-link {
+		margin: 0;
+		color: #666;
+
+		a {
+			color: #2271b1;
+			text-decoration: none;
+		}
+	}
+
+	p.import-result-warnings {
+		margin-top: 12px;
+
+		h4 {
+			margin: 0 0 8px 0;
+			font-size: 14px;
+			color: #d63638;
+		}
+
+		ul {
+			margin: 0;
+			padding-left: 20px;
+		}
+
+		li {
+			color: #666;
+			font-size: 14px;
+		}
+	}
+}
+
+.import-result-icon {
+	border-radius: 50%;
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin-top: 2px;
+
+	.import-result-success & {
+		background-color: #00a32a;
+	}
+
+	.import-result-failure & {
+		background-color: #d63638;
+	}
+
+	span {
+		color: white;
+		font-size: 14px;
+		font-weight: bold;
+	}
+}
+
+.selected-files {
+	margin-bottom: 20px;
+
+	h3 {
+		margin: 0 0 12px 0;
+		font-size: 14px;
+		font-weight: 600;
+	}
+}
+
+.selected-files-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	> div {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 8px 12px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		background-color: #f9f9f9;
+	}
+
+	button {
+		background: none;
+		border: none;
+		color: #d63638;
+		cursor: pointer;
+		font-size: 16px;
+		padding: 4px;
+	}
+
+	.selected-file-details {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		strong {
+			font-weight: 500;
+		}
+
+		.file-icon {
+			font-size: 16px;
+		}
+
+		.file-size {
+			font-size: 12px;
+			color: #666;
+		}
+	}
+}

@@ -7,6 +7,7 @@ export interface SubmitButtonProps extends Omit<InputHTMLAttributes<HTMLInputEle
 	id?: string
 	name?: string
 	primary?: boolean
+	secondary?: boolean
 	small?: boolean
 	large?: boolean
 	wrap?: boolean
@@ -18,6 +19,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
 	text,
 	name = 'submit',
 	primary,
+	secondary,
 	small,
 	large,
 	wrap,
@@ -34,6 +36,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
 				'button',
 				{
 					'button-primary': primary,
+					'button-secondary': secondary,
 					'button-small': small,
 					'button-large': large
 				},

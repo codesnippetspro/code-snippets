@@ -32,8 +32,8 @@ jobs:
       - name: Create zip archive
         id: zip
         run: |
-          # zip filename format: <artifact_name>.<tag_name>.zip
-          zip_name="${{ needs.build.outputs.artifact_name }}.${{ github.event.release.tag_name }}.zip"
+          # zip filename format: <artifact_name>.zip
+          zip_name="${{ needs.build.outputs.artifact_name }}.zip"
 
           cd ./bundle/${{ needs.build.outputs.artifact_name }}
           zip -r "../$zip_name" .
@@ -89,4 +89,3 @@ jobs:
             echo "::notice::Monitor workflow progress at: $run_url"
             echo "workflow_url=$run_url" >> $GITHUB_OUTPUT
           fi
-

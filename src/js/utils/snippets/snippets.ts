@@ -1,6 +1,15 @@
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
+import { buildUrl } from '../urls'
 import { parseSnippetObject } from './objects'
-import type { Snippet, SnippetType } from '../../types/Snippet'
+import type { Snippet, SnippetScope, SnippetType } from '../../types/Snippet'
+
+export const SNIPPET_TYPE_LABELS: Record<SnippetType, string> = {
+	php: __('Functions', 'code-snippets'),
+	html: __('Content', 'code-snippets'),
+	css: __('Styles', 'code-snippets'),
+	js: __('Scripts', 'code-snippets'),
+	cond: __('Conditions', 'code-snippets')
+}
 
 const PRO_TYPES = new Set<SnippetType>(['css', 'js', 'cond'])
 
@@ -26,6 +35,17 @@ export const getSnippetType = ({ scope }: Pick<Snippet, 'scope'>): SnippetType =
 	}
 }
 
+export const getSnippetEditUrl = (snippet?: Pick<Snippet, 'id'>): string | undefined =>
+	snippet?.id
+		? buildUrl(window.CODE_SNIPPETS?.urls.edit, { id: snippet.id })
+		: window.CODE_SNIPPETS?.urls.addNew
+
+export const getSnippetDisplayName = (snippet: Pick<Snippet, 'name' | 'id' | 'scope'>): string =>
+	'' === snippet.name.trim()
+		// translators: %s: snippet identifier.
+		? sprintf(isCondition(snippet) ? __('Condition #%d', 'code-snippets') : __('Snippet #%d', 'code-snippets'), snippet.id)
+		: snippet.name
+
 export const validateSnippet = (snippet: Snippet): undefined | string => {
 	const missingTitle = '' === snippet.name.trim()
 	const missingCode = '' === snippet.code.trim()
@@ -45,7 +65,7 @@ export const validateSnippet = (snippet: Snippet): undefined | string => {
 	}
 }
 
-export const isCondition = (snippet: Pick<Snippet, 'scope'>): boolean =>
+export const isCondition = (snippet: { scope?: SnippetScope }): boolean =>
 	'condition' === snippet.scope
 
 export const isProSnippet = (snippet: Pick<Snippet, 'scope'>): boolean =>

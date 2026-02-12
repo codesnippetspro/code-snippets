@@ -1,5 +1,27 @@
 # Changelog
 
+## [3.9.5] (2026-02-05)
+
+### Added
+* Confirmed WordPress 6.9 compatability
+
+### Fixed
+* Improved nonce handling for cloud snippet download and update actions to for enhanced security
+
+## [3.9.4] (2026-01-14)
+
+### Added
+* New import functionality to migrate snippets from file uploads with drag-and-drop interface
+* Support for importing snippets from other popular plugins (Header Footer Code Manager, Insert Headers and Footers, Insert PHP Code Snippet)
+* Enhanced file based execution support with improved multisite mode compatibility
+
+### Changed
+* Updated links to more recent documentation pages 
+
+### Fixed
+* Fixed multisite capability checks in Plugin class
+* Fixed snippet execution logic for multisite support by centralizing trashed snippet handling
+* Fixed multisite snippet handling to ensure local snippets use correct table and filter out trashed snippets
 
 ## [3.9.3] (2025-12-03)
 
@@ -378,7 +400,7 @@
 
 ### Added
 * Added additional editor shortcuts to list in tooltip.
-* Filter for changing Snippets admin menu position. [See this help article for more information.](https://help.codesnippets.pro/article/61-how-can-i-change-the-location-of-the-snippets-admin-menu)
+* Filter for changing Snippets admin menu position. [See this help article for more information.](https://codesnippets.pro/doc/snippets-menu-location/)
 * Ability to filter shortcode output. Thanks to contributions from [Jack Szwergold](https://github.com/JackSzwergold).
 
 ### Fixed

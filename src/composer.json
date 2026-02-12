@@ -21,10 +21,9 @@
         "source": "https://github.com/codesnippetspro/code-snippets"
     },
     "autoload": {
-        "classmap": [
-            "php/"
-        ],
+        "files": ["php/Admin/Menus/Manage_Menu.php"],
         "psr-4": {
+          "Code_Snippets\\": "php/"
         }
     },
     "require": {
@@ -37,7 +36,9 @@
     "require-dev": {
         "wp-coding-standards/wpcs": "^3.1",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpunit/phpunit": "^9.6",
+        "yoast/phpunit-polyfills": "^2.0"
     },
     "config": {
         "platform": {
