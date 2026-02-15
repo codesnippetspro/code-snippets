@@ -31,8 +31,9 @@ declare global {
 				cloud: string
 				importPlugins: string
 				importFiles: string
-				nonce: string
+				rest_nonce: string
 				localToken: string
+				piToken: string
 			}
 			urls: {
 				plugin: string

@@ -11,7 +11,10 @@ use Code_Snippets\Integration\Classic_Editor\MCE_Plugin;
 use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
 use Code_Snippets\Integration\Shortcodes;
+use Code_Snippets\Settings\Plugin_Installation_Token;
 use Code_Snippets\REST_API\Cloud\Cloud_Snippets_REST_Controller;
+use Code_Snippets\REST_API\Cloud\Install_Pro_Plugin_REST_Controller;
+use Code_Snippets\REST_API\Cloud\Verify_Pre_Installation_REST_Controller;
 use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
 use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
@@ -22,7 +25,8 @@ use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
  *
  * @package Code_Snippets
  */
-class Plugin {
+class Plugin
+{
 
 	/**
 	 * Current plugin version number
@@ -94,15 +98,17 @@ class Plugin {
 	/**
 	 * Class constructor
 	 */
-	public function __construct() {
-		wp_cache_add_global_groups( CACHE_GROUP );
-		add_action( 'allowed_redirect_hosts', [ $this, 'allow_code_snippets_redirect' ] );
+	public function __construct()
+	{
+		wp_cache_add_global_groups(CACHE_GROUP);
+		add_action('allowed_redirect_hosts', [$this, 'allow_code_snippets_redirect']);
 	}
 
 	/**
 	 * Load the plugin utilities.
 	 */
-	private function load_utilities() {
+	private function load_utilities()
+	{
 		require_once __DIR__ . '/snippet-ops.php';
 		require_once __DIR__ . '/Utils/editor.php';
 		require_once __DIR__ . '/Utils/options.php';
@@ -112,28 +118,31 @@ class Plugin {
 	/**
 	 * Initialise the plugin and load all necessary classes.
 	 */
-	public function load_plugin() {
+	public function load_plugin()
+	{
 		$this->load_utilities();
 
 		$this->db = new DB();
 		$this->cloud_api = new Cloud_API();
 		$this->licensing = new Licensing();
-		$this->evaluate_content = new Evaluate_Content( $this->db );
-		$this->evaluate_functions = new Evaluate_Functions( $this->db );
+		$this->evaluate_content = new Evaluate_Content($this->db);
+		$this->evaluate_functions = new Evaluate_Functions($this->db);
 
-		if ( is_admin() ) {
+		if (is_admin()) {
 			$this->admin = new Bootstrap_Admin();
 		}
 
 		new Snippets_REST_Controller();
 		new Cloud_Snippets_REST_Controller();
+		new Install_Pro_Plugin_REST_Controller();
+		new Verify_Pre_Installation_REST_Controller();
 		new Recently_Active_REST_Controller();
 		new Plugins_Import_REST_Controller();
 		new File_Import_REST_Controller();
 
 		new Shortcodes();
 		new MCE_Plugin();
-		new Upgrader( PLUGIN_VERSION, $this->db );
+		new Upgrader(PLUGIN_VERSION, $this->db);
 
 		$this->init_snippet_files();
 
@@ -145,18 +154,19 @@ class Plugin {
 	 *
 	 * @return void
 	 */
-	private function init_snippet_files() {
+	private function init_snippet_files()
+	{
 		$this->snippet_handler_registry = new Flat_Files\Handler_Registry(
 			[
-				'php'  => new Flat_Files\Handlers\Functions_Snippet_Handler(),
+				'php' => new Flat_Files\Handlers\Functions_Snippet_Handler(),
 				'html' => new Flat_Files\Handlers\Content_Snippet_Handler(),
 			]
 		);
 
 		$fs = new Flat_Files\WP_Filesystem_Adapter();
-		$config_repo = new Flat_Files\Flat_File_Config_Repository( $fs );
+		$config_repo = new Flat_Files\Flat_File_Config_Repository($fs);
 
-		$snippet_files = new Flat_Files\Snippet_Files( $this->snippet_handler_registry, $fs, $config_repo );
+		$snippet_files = new Flat_Files\Snippet_Files($this->snippet_handler_registry, $fs, $config_repo);
 		$snippet_files->register_hooks();
 	}
 
@@ -165,8 +175,9 @@ class Plugin {
 	 *
 	 * @return bool
 	 */
-	public function is_compact_menu(): bool {
-		return ! is_network_admin() && apply_filters( 'code_snippets_compact_menu', false );
+	public function is_compact_menu(): bool
+	{
+		return !is_network_admin() && apply_filters('code_snippets_compact_menu', false);
 	}
 
 	/**
@@ -176,25 +187,26 @@ class Plugin {
 	 *
 	 * @return string The menu's slug.
 	 */
-	public function get_menu_slug( string $menu = '' ): string {
-		$add = [ 'single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet' ];
-		$edit = [ 'edit', 'edit-snippet' ];
-		$import = [ 'import', 'import-snippets', 'import-code-snippets' ];
-		$settings = [ 'settings', 'snippets-settings' ];
-		$cloud = [ 'cloud', 'cloud-snippets' ];
-		$welcome = [ 'welcome', 'getting-started', 'code-snippets' ];
+	public function get_menu_slug(string $menu = ''): string
+	{
+		$add = ['single', 'add', 'add-new', 'add-snippet', 'new-snippet', 'add-new-snippet'];
+		$edit = ['edit', 'edit-snippet'];
+		$import = ['import', 'import-snippets', 'import-code-snippets'];
+		$settings = ['settings', 'snippets-settings'];
+		$cloud = ['cloud', 'cloud-snippets'];
+		$welcome = ['welcome', 'getting-started', 'code-snippets'];
 
-		if ( in_array( $menu, $edit, true ) ) {
+		if (in_array($menu, $edit, true)) {
 			return 'edit-snippet';
-		} elseif ( in_array( $menu, $add, true ) ) {
+		} elseif (in_array($menu, $add, true)) {
 			return 'add-snippet';
-		} elseif ( in_array( $menu, $import, true ) ) {
+		} elseif (in_array($menu, $import, true)) {
 			return 'import-code-snippets';
-		} elseif ( in_array( $menu, $settings, true ) ) {
+		} elseif (in_array($menu, $settings, true)) {
 			return 'snippets-settings';
-		} elseif ( in_array( $menu, $cloud, true ) ) {
+		} elseif (in_array($menu, $cloud, true)) {
 			return 'snippets&subpage=cloud-community';
-		} elseif ( in_array( $menu, $welcome, true ) ) {
+		} elseif (in_array($menu, $welcome, true)) {
 			return 'code-snippets-welcome';
 		} else {
 			return 'snippets';
@@ -209,26 +221,27 @@ class Plugin {
 	 *
 	 * @return string The menu's URL.
 	 */
-	public function get_menu_url( string $menu = '', string $context = 'self' ): string {
-		$slug = $this->get_menu_slug( $menu );
+	public function get_menu_url(string $menu = '', string $context = 'self'): string
+	{
+		$slug = $this->get_menu_slug($menu);
 
-		if ( $this->is_compact_menu() && 'network' !== $context ) {
+		if ($this->is_compact_menu() && 'network' !== $context) {
 			$base_slug = $this->get_menu_slug();
 			$url = 'tools.php?page=' . $base_slug;
 
-			if ( $slug !== $base_slug ) {
+			if ($slug !== $base_slug) {
 				$url .= '&sub=' . $slug;
 			}
 		} else {
 			$url = 'admin.php?page=' . $slug;
 		}
 
-		if ( 'network' === $context ) {
-			return network_admin_url( $url );
-		} elseif ( 'admin' === $context ) {
-			return admin_url( $url );
+		if ('network' === $context) {
+			return network_admin_url($url);
+		} elseif ('admin' === $context) {
+			return admin_url($url);
 		} else {
-			return self_admin_url( $url );
+			return self_admin_url($url);
 		}
 	}
 
@@ -239,7 +252,8 @@ class Plugin {
 	 *
 	 * @return array Modified allowed hosts.
 	 */
-	public function allow_code_snippets_redirect( array $hosts ): array {
+	public function allow_code_snippets_redirect(array $hosts): array
+	{
 		$hosts[] = 'codesnippets.pro';
 		$hosts[] = 'snipco.de';
 		return $hosts;
@@ -252,8 +266,9 @@ class Plugin {
 	 *
 	 * @since 2.8.6
 	 */
-	public function current_user_can(): bool {
-		return current_user_can( $this->get_cap() );
+	public function current_user_can(): bool
+	{
+		return current_user_can($this->get_cap());
 	}
 
 	/**
@@ -261,8 +276,9 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function get_cap_name(): string {
-		return apply_filters( 'code_snippets_cap', 'manage_options' );
+	public function get_cap_name(): string
+	{
+		return apply_filters('code_snippets_cap', 'manage_options');
 	}
 
 	/**
@@ -270,8 +286,9 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	public function get_network_cap_name(): string {
-		return apply_filters( 'code_snippets_network_cap', 'manage_network_options' );
+	public function get_network_cap_name(): string
+	{
+		return apply_filters('code_snippets_network_cap', 'manage_network_options');
 	}
 
 	/**
@@ -279,13 +296,14 @@ class Plugin {
 	 *
 	 * @return bool
 	 */
-	public function is_subsite_menu_enabled(): bool {
-		if ( ! is_multisite() ) {
+	public function is_subsite_menu_enabled(): bool
+	{
+		if (!is_multisite()) {
 			return true;
 		}
 
-		$menu_perms = get_site_option( 'menu_items', array() );
-		return ! empty( $menu_perms['snippets'] );
+		$menu_perms = get_site_option('menu_items', array());
+		return !empty($menu_perms['snippets']);
 	}
 
 	/**
@@ -293,8 +311,9 @@ class Plugin {
 	 *
 	 * @return bool
 	 */
-	public function user_can_manage_network_snippets(): bool {
-		return is_super_admin() || current_user_can( $this->get_network_cap_name() );
+	public function user_can_manage_network_snippets(): bool
+	{
+		return is_super_admin() || current_user_can($this->get_network_cap_name());
 	}
 
 	/**
@@ -308,8 +327,9 @@ class Plugin {
 	 *
 	 * @since 2.0
 	 */
-	public function get_cap(): string {
-		return is_multisite() && ( is_network_admin() || ! $this->is_subsite_menu_enabled() )
+	public function get_cap(): string
+	{
+		return is_multisite() && (is_network_admin() || !$this->is_subsite_menu_enabled())
 			? $this->get_network_cap_name()
 			: $this->get_cap_name();
 	}
@@ -321,32 +341,33 @@ class Plugin {
 	 *
 	 * @return void
 	 */
-	public function localize_script( string $handle ) {
+	public function localize_script(string $handle)
+	{
 		wp_localize_script(
 			$handle,
 			'CODE_SNIPPETS',
 			[
-				'debug'            => defined( 'WP_DEBUG' ) && WP_DEBUG,
-				'isLicensed'       => $this->licensing->is_licensed(),
+				'debug' => defined('WP_DEBUG') && WP_DEBUG,
+				'isLicensed' => $this->licensing->is_licensed(),
 				'isCloudConnected' => Cloud_API::is_cloud_connection_available(),
-				'hideUpsell'       => Settings\get_setting( 'general', 'hide_upgrade_menu' ),
-				'restAPI'          => [
-					'base'           => esc_url_raw( rest_url() ),
-					'snippets'       => esc_url_raw( rest_url( Snippets_REST_Controller::get_base_route() ) ),
-					'recentlyActive' => esc_url_raw( rest_url( Recently_Active_REST_Controller::get_base_route() ) ),
-					'cloudSearch'    => esc_url_raw( rest_url( Cloud_Snippets_REST_Controller::get_base_route() ) ),
-					'importPlugins'  => esc_url_raw( rest_url( Plugins_Import_REST_Controller::get_base_route() ) ),
-					'importFiles'    => esc_url_raw( rest_url( File_Import_REST_Controller::get_base_route() ) ),
-					'nonce'          => wp_create_nonce( 'wp_rest' ),
-					'localToken'     => $this->cloud_api->get_local_token(),
+				'hideUpsell' => Settings\get_setting('general', 'hide_upgrade_menu'),
+				'restAPI' => [
+					'base' => esc_url_raw(rest_url()),
+					'snippets' => esc_url_raw(rest_url(Snippets_REST_Controller::get_base_route())),
+					'recentlyActive' => esc_url_raw(rest_url(Recently_Active_REST_Controller::get_base_route())),
+					'cloudSearch' => esc_url_raw(rest_url(Cloud_Snippets_REST_Controller::get_base_route())),
+					'importPlugins' => esc_url_raw(rest_url(Plugins_Import_REST_Controller::get_base_route())),
+					'importFiles' => esc_url_raw(rest_url(File_Import_REST_Controller::get_base_route())),
+					'localToken' => $this->cloud_api->get_local_token(),
+					'piToken' => (new Plugin_Installation_Token())->get_token(),
 				],
-				'urls'             => [
-					'plugin'   => esc_url_raw( plugins_url( '', PLUGIN_FILE ) ),
-					'manage'   => esc_url_raw( $this->get_menu_url() ),
-					'edit'     => esc_url_raw( $this->get_menu_url( 'edit' ) ),
-					'addNew'   => esc_url_raw( $this->get_menu_url( 'add' ) ),
-					'welcome'  => esc_url_raw( $this->get_menu_url( 'welcome' ) ),
-					'settings' => esc_url_raw( $this->get_menu_url( 'settings' ) ),
+				'urls' => [
+					'plugin' => esc_url_raw(plugins_url('', PLUGIN_FILE)),
+					'manage' => esc_url_raw($this->get_menu_url()),
+					'edit' => esc_url_raw($this->get_menu_url('edit')),
+					'addNew' => esc_url_raw($this->get_menu_url('add')),
+					'welcome' => esc_url_raw($this->get_menu_url('welcome')),
+					'settings' => esc_url_raw($this->get_menu_url('settings')),
 				],
 			]
 		);

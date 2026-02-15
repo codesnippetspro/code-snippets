@@ -3,6 +3,7 @@ import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { Modal } from '@wordpress/components'
 import type { Dispatch, SetStateAction } from 'react'
+import { CloudCheckoutButton } from './CloudCheckoutButton'
 
 export interface UpsellDialogProps {
 	isOpen: boolean
@@ -37,13 +38,11 @@ export const UpsellDialog: React.FC<UpsellDialogProps> = ({ isOpen, setIsOpen })
 				)}
 			</p>
 
-			<a
-				href="https://codesnippets.pro/pricing/"
-				className="button button-primary button-large"
-				rel="noreferrer" target="_blank"
+			<CloudCheckoutButton
+				className="button-primary button-large"
 			>
 				{__('Explore Code Snippets Pro', 'code-snippets')}
-			</a>
+			</CloudCheckoutButton>
 
 			<h2>{__("Here's what else you get with Pro:", 'code-snippets')}</h2>
 			<ul>

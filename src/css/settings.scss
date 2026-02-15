@@ -212,3 +212,15 @@ body.js {
 		}
 	}
 }
+
+// Plugin Token Styles
+.button-plugin-token {
+	font-size: 13px !important;
+	display: inline-flex !important;
+    align-items: center;
+    gap: 5px;
+}
+
+.code-snippets-copy-text > svg > path {
+	stroke: #2271b1;
+}

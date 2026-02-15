@@ -60,7 +60,7 @@ export const CopyToClipboardButton: React.FC<CopyToClipboardButtonProps> = ({
 
 	return clipboard && window.isSecureContext
 		? <Button
-			className="code-snippets-copy-text"
+			className="code-snippets-copy-text button-plugin-token"
 			onClick={handleClick}
 			{...props}
 		>
