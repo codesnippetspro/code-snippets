@@ -229,16 +229,19 @@ class Settings_Fields {
 			'label' => __( 'Show a Snippets menu in the admin bar for quick access to snippets.', 'code-snippets' ),
 		];
 
-		if ( get_setting( 'general', 'enable_admin_bar' ) ) {
-			$this->fields['general']['admin_bar_snippet_limit'] = [
-				'name'  => __( 'Admin Bar Snippets Per Page', 'code-snippets' ),
-				'type'  => 'number',
-				'desc'  => __( 'Number of snippets to show in the admin bar Active/Inactive menus before paginating.', 'code-snippets' ),
-				'label' => __( 'snippets', 'code-snippets' ),
-				'min'   => 1,
-				'max'   => 100,
-			];
-		}
+		$this->fields['general']['admin_bar_snippet_limit'] = [
+			'name'  => __( 'Admin Bar Snippets Per Page', 'code-snippets' ),
+			'type'  => 'number',
+			'desc'  => __( 'Number of snippets to show in the admin bar Active/Inactive menus before paginating.', 'code-snippets' ),
+			'label' => __( 'snippets', 'code-snippets' ),
+			'min'   => 1,
+			'max'   => 100,
+			'show_if' => [
+				'section' => 'general',
+				'field'   => 'enable_admin_bar',
+				'value'   => true,
+			],
+		];
 
 		$this->fields['editor'] = [
 			'indent_with_tabs'            => [
