@@ -182,18 +182,21 @@ jobs:
               return 'all'
             return ', '.join(affected) if affected else 'unknown'
 
+          items = sorted(grouped.items(), key=lambda kv: (-len(kv[1]['versions']), kv[0]))
           blocks = []
-          for key, info in sorted(grouped.items(), key=lambda kv: (-len(kv[1]['versions']), kv[0])):
+          for idx, (key, info) in enumerate(items):
             affected = versions_label(info['versions'])
             message = info['message']
-            blocks.append(
+            block = (
               "-----\n"
               f"Affected PHP version: `{affected}`\n"
               "```php\n"
               f"{message}\n"
-              "```\n"
-              "-----"
+              "```"
             )
+            if idx == len(items) - 1:
+              block += "\n-----"
+            blocks.append(block)
 
           if blocks:
             details = "\n\n".join(blocks)
