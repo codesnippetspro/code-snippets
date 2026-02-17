@@ -14,8 +14,8 @@ jobs:
     name: PHPUnit tests (PHP ${{ inputs.php-version }})
     runs-on: ubuntu-22.04
     env:
-      WP_CORE_DIR: ${{ runner.temp }}/wordpress
-      WP_TESTS_DIR: ${{ runner.temp }}/wordpress-tests-lib
+      WP_CORE_DIR: /tmp/wordpress
+      WP_TESTS_DIR: /tmp/wordpress-tests-lib
 
     services:
       mysql:
