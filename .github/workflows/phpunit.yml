@@ -106,7 +106,9 @@ jobs:
             if not message.strip():
               return
             grouped[key]['versions'].add(version)
-            grouped[key]['message'] = message.strip()
+            # Keep the first representative message we see for this key.
+            if not grouped[key]['message']:
+              grouped[key]['message'] = message.strip()
 
           grouped = defaultdict(lambda: {'versions': set(), 'message': ''})
           versions_seen = set()
@@ -129,10 +131,32 @@ jobs:
                   combined = f"{etype}: {msg}".strip(': ')
                   if details:
                     combined = combined + "\n" + details
-                  # Key by type+message first line to dedupe across versions.
-                  key = (etype + "\n" + msg).strip()
-                  if not key:
-                    key = combined.splitlines()[0] if combined else 'unknown'
+
+                  testcase_id = (
+                    (testcase.attrib.get('classname') or '').strip() +
+                    '::' +
+                    (testcase.attrib.get('name') or '').strip()
+                  ).strip(':')
+
+                  extracted = ''
+                  if not msg and details:
+                    for line in details.splitlines():
+                      line = line.strip()
+                      if line.startswith('CI demo:'):
+                        extracted = line
+                        break
+                    if not extracted:
+                      extracted = details.splitlines()[0].strip()
+
+                  # Dedupe key: prefer explicit message; otherwise use extracted details + testcase id.
+                  key_parts = [etype]
+                  if msg:
+                    key_parts.append(msg)
+                  elif extracted:
+                    key_parts.append(extracted)
+                  if testcase_id:
+                    key_parts.append(testcase_id)
+                  key = "\n".join([p for p in key_parts if p]).strip() or (combined.splitlines()[0] if combined else 'unknown')
                   add_entry(grouped, key, version, combined)
 
           # Fallback: scan logs for fatals if XML missing.
@@ -164,7 +188,7 @@ jobs:
             message = info['message']
             blocks.append(
               "-----\n"
-              f"Affected PHP version: `{affected}` | `all`\n"
+              f"Affected PHP version: `{affected}`\n"
               "```php\n"
               f"{message}\n"
               "```\n"
@@ -174,11 +198,11 @@ jobs:
           if blocks:
             details = "\n\n".join(blocks)
           else:
-            details = "No distinct PHPUnit error details could be parsed from artifacts."
+            details = "No PHPUnit error details could be parsed from artifacts."
 
           md = "\n".join([
             "<details>",
-            "<summary>Distinct PHPUnit errors (click to expand)</summary>",
+            "<summary>See all PHPUnit errors (click to expand)</summary>",
             "",
             details,
             "",
