@@ -93,11 +93,6 @@ export class SnippetsTestHelper {
 	/**
    * Expect a success message in paragraph element
    */
-	async expectSuccessMessageInParagraph(expectedMessage: string): Promise<void> {
-		await expect(this.page.locator(SELECTORS.SUCCESS_MESSAGE_P)).toContainText(expectedMessage)
-	}
-
-	/**
    * Open an existing snippet by name
    */
 	async openSnippet(snippetName: string): Promise<void> {
