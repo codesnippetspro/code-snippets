@@ -125,6 +125,8 @@ function register_plugin_settings() {
 		add_self_option( are_settings_unified(), OPTION_NAME, Settings_Fields::get_default_values() );
 	}
 
+	$current_settings = get_settings_values();
+
 	// Register the setting.
 	register_setting(
 		OPTION_GROUP,
@@ -145,6 +147,10 @@ function register_plugin_settings() {
 		}
 
 		foreach ( $fields as $field_id => $field ) {
+			if ( ! should_render_setting_field( $field, $current_settings ) ) {
+				continue;
+			}
+
 			$field_object = new Setting_Field( $section_id, $field_id, $field );
 			add_settings_field( $field_id, $field['name'], [ $field_object, 'render' ], 'code-snippets', $section_id );
 		}
@@ -165,6 +171,56 @@ function register_plugin_settings() {
 }
 
 add_action( 'admin_init', __NAMESPACE__ . '\\register_plugin_settings' );
+
+/**
+ * Determine whether a setting field should be rendered.
+ *
+ * @param array<string, mixed>              $field    Field definition.
+ * @param array<string, array<string,mixed>> $settings Current settings values.
+ * @param array<string, array<string,mixed>>|null $input Optional raw input values.
+ *
+ * @return bool
+ */
+function should_render_setting_field( array $field, array $settings, ?array $input = null ): bool {
+	if ( empty( $field['show_if'] ) || ! is_array( $field['show_if'] ) ) {
+		return true;
+	}
+
+	$show_if = array_merge(
+		[
+			'section' => '',
+			'field'   => '',
+			'value'   => true,
+		],
+		$field['show_if']
+	);
+
+	$section = is_string( $show_if['section'] ) ? $show_if['section'] : '';
+	$field_id = is_string( $show_if['field'] ) ? $show_if['field'] : '';
+	$expected = $show_if['value'];
+
+	if ( '' === $section || '' === $field_id ) {
+		return true;
+	}
+
+	$actual = null;
+
+	if ( is_array( $input ) && isset( $input[ $section ] ) && is_array( $input[ $section ] ) && array_key_exists( $field_id, $input[ $section ] ) ) {
+		$actual = $input[ $section ][ $field_id ];
+	} elseif ( isset( $settings[ $section ] ) && array_key_exists( $field_id, $settings[ $section ] ) ) {
+		$actual = $settings[ $section ][ $field_id ];
+	}
+
+	if ( is_bool( $expected ) ) {
+		if ( is_bool( $actual ) ) {
+			return $actual === $expected;
+		}
+
+		return ( 'on' === $actual ) === $expected;
+	}
+
+	return $actual === $expected;
+}
 
 /**
  * Sanitize a single setting value.
@@ -286,6 +342,9 @@ function sanitize_settings( array $input ): array {
 	// Don't directly loop through $input as it does not include as deselected checkboxes.
 	foreach ( Settings_Fields::get_field_definitions() as $section_id => $fields ) {
 		foreach ( $fields as $field_id => $field ) {
+			if ( ! should_render_setting_field( $field, $settings, $input ) ) {
+				continue;
+			}
 
 			// Fetch the corresponding input value from the posted data.
 			$input_value = $input[ $section_id ][ $field_id ] ?? null;
