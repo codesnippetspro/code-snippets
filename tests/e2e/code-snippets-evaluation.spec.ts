@@ -32,7 +32,7 @@ const verifyShortcodeRendersCorrectly = async (
 	await helper.expectTextVisible('Page content after shortcode.')
 }
 
-const createPageWithShortcode = async (snippetId: string): Promise<string> => {
+const createPageWithShortcode = async (page: Page, snippetId: string): Promise<string> => {
 	const shortcode = `[code_snippet id=${snippetId} format name="${TEST_SNIPPET_NAME}"]`
 	const pageContent = `<p>Page content before shortcode.</p>\n\n${shortcode}\n\n<p>Page content after shortcode.</p>`
 
@@ -50,8 +50,59 @@ const createPageWithShortcode = async (snippetId: string): Promise<string> => {
 		const pageUrl = (await wpCli(['post', 'url', pageId])).trim()
 		return pageUrl
 	} catch (error) {
-		console.error('Failed to create page via WP-CLI:', error)
-		throw error
+		console.error('Failed to create page via WP-CLI. Falling back to UI/API creation.', error)
+
+		try {
+			// Fallback: create a published page via WP REST API from within WP Admin (uses nonce + cookies).
+			// This avoids direct Gutenberg UI interactions while still exercising shortcode rendering on the front-end.
+			const pageUrl = await page.evaluate(
+				async ({ title, content }) => {
+					const apiFetch = (window as any)?.wp?.apiFetch
+					const nonce = (window as any)?.wpApiSettings?.nonce
+
+					if (apiFetch) {
+						const created = await apiFetch({
+							path: '/wp/v2/pages',
+							method: 'POST',
+							data: { title, content, status: 'publish' }
+						})
+						return created?.link ?? ''
+					}
+
+					if (!nonce) {
+						throw new Error('Missing wpApiSettings.nonce for REST fallback.')
+					}
+
+					const response = await fetch('/wp-json/wp/v2/pages', {
+						method: 'POST',
+						credentials: 'same-origin',
+						headers: {
+							'Content-Type': 'application/json',
+							'X-WP-Nonce': nonce
+						},
+						body: JSON.stringify({ title, content, status: 'publish' })
+					})
+
+					if (!response.ok) {
+						const text = await response.text().catch(() => '')
+						throw new Error(`REST create page failed: ${response.status} ${response.statusText} ${text}`)
+					}
+
+					const created = await response.json()
+					return created?.link ?? ''
+				},
+				{ title: 'Test Page for Snippet Shortcode', content: pageContent }
+			)
+
+			if (!pageUrl) {
+				throw new Error('REST fallback returned empty page URL.')
+			}
+
+			return pageUrl
+		} catch (fallbackError) {
+			console.error('Failed to create page via REST fallback:', fallbackError)
+			throw error
+		}
 	}
 }
 
@@ -85,7 +136,6 @@ test.describe('Code Snippets Evaluation', () => {
 		})
 
 		await helper.navigateToFrontend()
-		await helper.expectElementNotVisible(SELECTORS.ADMIN_BAR)
 		await helper.expectElementCount(SELECTORS.ADMIN_BAR, 0)
 	})
 
@@ -159,7 +209,7 @@ test.describe('Code Snippets Evaluation', () => {
 
 	test('HTML snippet works with shortcode in editor', async ({ page }) => {
 		const snippetId = await createHtmlSnippetForEditor(helper, page)
-		const pageUrl = await createPageWithShortcode(snippetId)
+		const pageUrl = await createPageWithShortcode(page, snippetId)
 
 		await verifyShortcodeRendersCorrectly(helper, page, pageUrl)
 	})
