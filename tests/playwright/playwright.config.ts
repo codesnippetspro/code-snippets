@@ -17,8 +17,8 @@ export default defineConfig({
 	workers: process.env.CI ? WORKERS : undefined,
 	reporter: [
 		['html'],
-		['json', { outputFile: 'test-results/results.json' }],
-		['junit', { outputFile: 'test-results/results.xml' }]
+		['json', { outputFile: join(process.cwd(), 'test-results', 'results.json') }],
+		['junit', { outputFile: join(process.cwd(), 'test-results', 'results.xml') }]
 	],
 	use: {
 		baseURL: 'http://localhost:8888',
