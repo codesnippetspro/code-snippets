@@ -41,6 +41,7 @@ jobs:
     name: PHPUnit - Test Results Summary
     permissions:
       pull-requests: write
+      issues: write
     steps:
       - name: Test status summary
         run: |
@@ -65,25 +66,25 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
+              per_page: 100,
             });
 
-            const existing = comments.find(c => c.body.startsWith(marker));
+            const existing = comments.filter(c => typeof c.body === 'string' && c.body.startsWith(marker));
 
-            if (existing) {
-              await github.rest.issues.updateComment({
+            for (const comment of existing) {
+              await github.rest.issues.deleteComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                comment_id: existing.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body,
+                comment_id: comment.id,
               });
             }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
 
       - name: Check overall status
         if: needs.phpunit.result != 'success'
