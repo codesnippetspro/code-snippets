@@ -13,7 +13,10 @@ jobs:
   phpunit-test:
     name: PHPUnit tests (PHP ${{ inputs.php-version }})
     runs-on: ubuntu-22.04
-    
+    env:
+      WP_CORE_DIR: ${{ runner.temp }}/wordpress
+      WP_TESTS_DIR: ${{ runner.temp }}/wordpress-tests-lib
+
     services:
       mysql:
         image: mysql:8.0
@@ -70,9 +73,37 @@ jobs:
           path: src/vendor
           key: ${{ runner.os }}-php-${{ inputs.php-version }}-composer-${{ steps.deps-hash.outputs.deps_hash }}
 
+      - name: Resolve WordPress version metadata
+        id: wp-meta
+        run: |
+          set -euo pipefail
+          wp_version=$(curl -s http://api.wordpress.org/core/version-check/1.7/ | grep -o '"version":"[^"]*' | head -1 | sed 's/"version":"//')
+          if [ -z "$wp_version" ]; then
+            wp_version="latest-unknown"
+          fi
+          echo "wp_version=$wp_version" >> "$GITHUB_OUTPUT"
+
+      - name: Get WordPress test suite cache
+        id: wp-tests-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ env.WP_CORE_DIR }}
+            ${{ env.WP_TESTS_DIR }}
+          key: ${{ runner.os }}-php-${{ inputs.php-version }}-wp-tests-${{ hashFiles('tests/install-wp-tests.sh') }}-wp-${{ steps.wp-meta.outputs.wp_version }}
+
       - name: Install WordPress test suite
         run: |
           bash tests/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 latest true
+
+      - name: Save WordPress test suite cache
+        if: steps.wp-tests-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ${{ env.WP_CORE_DIR }}
+            ${{ env.WP_TESTS_DIR }}
+          key: ${{ steps.wp-tests-cache.outputs.cache-primary-key }}
 
       - name: Run PHPUnit tests
         run: |

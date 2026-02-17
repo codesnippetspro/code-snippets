@@ -24,64 +24,68 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  phpunit-php-7-4:
+  phpunit:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
     uses: ./.github/workflows/phpunit-test.yml
     with:
-      php-version: '7.4'
-
-  phpunit-php-8-0:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    uses: ./.github/workflows/phpunit-test.yml
-    with:
-      php-version: '8.0'
-
-  phpunit-php-8-1:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    uses: ./.github/workflows/phpunit-test.yml
-    with:
-      php-version: '8.1'
-
-  phpunit-php-8-2:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    uses: ./.github/workflows/phpunit-test.yml
-    with:
-      php-version: '8.2'
-
-  phpunit-php-8-3:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    uses: ./.github/workflows/phpunit-test.yml
-    with:
-      php-version: '8.3'
-
-  phpunit-php-8-4:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    uses: ./.github/workflows/phpunit-test.yml
-    with:
-      php-version: '8.4'
+      php-version: ${{ matrix.php-version }}
 
   test-result:
-    needs: [phpunit-php-7-4, phpunit-php-8-0, phpunit-php-8-1, phpunit-php-8-2, phpunit-php-8-3, phpunit-php-8-4]
-    if: always() && (needs.phpunit-php-7-4.result != 'skipped' || needs.phpunit-php-8-0.result != 'skipped' || needs.phpunit-php-8-1.result != 'skipped' || needs.phpunit-php-8-2.result != 'skipped' || needs.phpunit-php-8-3.result != 'skipped' || needs.phpunit-php-8-4.result != 'skipped')
+    needs: [phpunit]
+    if: always() && needs.phpunit.result != 'skipped'
     runs-on: ubuntu-22.04
     name: PHPUnit - Test Results Summary
+    permissions:
+      pull-requests: write
     steps:
       - name: Test status summary
         run: |
-          echo "PHP 7.4: ${{ needs.phpunit-php-7-4.result }}"
-          echo "PHP 8.0: ${{ needs.phpunit-php-8-0.result }}"
-          echo "PHP 8.1: ${{ needs.phpunit-php-8-1.result }}"
-          echo "PHP 8.2: ${{ needs.phpunit-php-8-2.result }}"
-          echo "PHP 8.3: ${{ needs.phpunit-php-8-3.result }}"
-          echo "PHP 8.4: ${{ needs.phpunit-php-8-4.result }}"
+          echo "PHPUnit matrix result: ${{ needs.phpunit.result }}"
+
+      - name: Post PR comment on failure
+        if: github.event_name == 'pull_request' && needs.phpunit.result == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- phpunit-result-comment -->';
+            const body = [
+              marker,
+              '## PHPUnit Test Failure',
+              '',
+              `One or more PHP version targets failed in [this workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`,
+              '',
+              'Please review the failing jobs and fix the issues before merging.',
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.startsWith(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
 
       - name: Check overall status
-        if: |
-          (needs.phpunit-php-7-4.result != 'success' && needs.phpunit-php-7-4.result != 'skipped') ||
-          (needs.phpunit-php-8-0.result != 'success' && needs.phpunit-php-8-0.result != 'skipped') ||
-          (needs.phpunit-php-8-1.result != 'success' && needs.phpunit-php-8-1.result != 'skipped') ||
-          (needs.phpunit-php-8-2.result != 'success' && needs.phpunit-php-8-2.result != 'skipped') ||
-          (needs.phpunit-php-8-3.result != 'success' && needs.phpunit-php-8-3.result != 'skipped') ||
-          (needs.phpunit-php-8-4.result != 'success' && needs.phpunit-php-8-4.result != 'skipped')
+        if: needs.phpunit.result != 'success'
         run: exit 1
 
