@@ -25,8 +25,7 @@ export class SnippetsTestHelper {
    */
 	async navigateToSnippetsAdmin(): Promise<void> {
 		await this.page.goto(URLS.SNIPPETS_ADMIN)
-		await this.page.waitForLoadState('networkidle')
-		await this.page.waitForSelector(SELECTORS.WPBODY_CONTENT, { timeout: TIMEOUTS.DEFAULT })
+		await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
 	}
 
 	/**
@@ -34,16 +33,15 @@ export class SnippetsTestHelper {
    */
 	async navigateToFrontend(): Promise<void> {
 		await this.page.goto(URLS.FRONTEND)
-		await this.page.waitForLoadState('networkidle')
+		await this.page.waitForSelector('body', { timeout: TIMEOUTS.DEFAULT })
 	}
 
 	/**
    * Click the "Add New" button to start creating a snippet
    */
 	async clickAddNewSnippet(): Promise<void> {
-		await this.page.waitForSelector(SELECTORS.PAGE_TITLE, { timeout: TIMEOUTS.DEFAULT })
-		await this.page.click(SELECTORS.ADD_NEW_BUTTON)
-		await this.page.waitForLoadState('networkidle')
+		await this.page.goto(URLS.ADD_SNIPPET)
+		await this.page.waitForSelector(SELECTORS.TITLE_INPUT, { timeout: TIMEOUTS.DEFAULT })
 	}
 
 	/**
@@ -67,6 +65,8 @@ export class SnippetsTestHelper {
       
 			await this.page.waitForSelector(`text=${SNIPPET_LOCATIONS[options.location]}`, { timeout: TIMEOUTS.SHORT })
 			await this.page.click(`text=${SNIPPET_LOCATIONS[options.location]}`, { force: true })
+
+			await expect(this.page.locator(SELECTORS.LOCATION_SELECT)).toContainText(SNIPPET_LOCATIONS[options.location])
 		}
 	}
 
@@ -101,9 +101,14 @@ export class SnippetsTestHelper {
    * Open an existing snippet by name
    */
 	async openSnippet(snippetName: string): Promise<void> {
-		await this.page.waitForSelector(`text=${snippetName}`)
-		await this.page.click(`text=${snippetName}`)
-		await this.page.waitForLoadState('networkidle')
+		await this.page.goto(URLS.SNIPPETS_ADMIN)
+		await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
+
+		const row = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+
+		await row.locator(SELECTORS.SNIPPET_NAME_LINK).click()
+		await this.page.waitForSelector(SELECTORS.TITLE_INPUT, { timeout: TIMEOUTS.DEFAULT })
 	}
 
 	/**
@@ -111,7 +116,13 @@ export class SnippetsTestHelper {
    */
 	async deleteSnippet(): Promise<void> {
 		await this.page.click(BUTTONS.DELETE)
-		await this.page.click(SELECTORS.DELETE_CONFIRM_BUTTON)
+		const dialog = this.page.locator('[role="dialog"]').filter({ hasText: 'Delete?' })
+		await expect(dialog).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+
+		await dialog.locator('button:has-text("Delete")').click()
+
+		await expect(this.page).toHaveURL(/page=snippets/)
+		await expect(this.page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 	}
 
 	/**
@@ -140,7 +151,7 @@ export class SnippetsTestHelper {
 	async expectToBeOnSnippetsAdminPage(): Promise<void> {
 		const currentUrl = this.page.url()
 		expect(currentUrl).toContain('page=snippets')
-		await expect(this.page.locator(SELECTORS.PAGE_TITLE)).toBeVisible()
+		await expect(this.page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 	}
 
 	/**
