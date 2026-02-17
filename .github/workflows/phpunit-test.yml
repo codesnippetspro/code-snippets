@@ -62,9 +62,7 @@ jobs:
 
       - name: Install Composer dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
-        run: |
-          cd src
-          composer install --no-progress --prefer-dist --optimize-autoloader
+        run: composer install -d src --no-progress --prefer-dist --optimize-autoloader
 
       - name: Save Composer cache
         if: steps.composer-cache.outputs.cache-hit != 'true'
