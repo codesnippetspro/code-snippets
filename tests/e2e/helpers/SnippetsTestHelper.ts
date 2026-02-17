@@ -1,223 +1,236 @@
 import { expect } from '@playwright/test'
-import { 
-	BUTTONS, 
-	MESSAGES, 
-	SELECTORS, 
-	SNIPPET_LOCATIONS, 
-	SNIPPET_TYPES, 
-	TIMEOUTS, 
-	URLS 
+import {
+  BUTTONS,
+  MESSAGES,
+  SELECTORS,
+  SNIPPET_LOCATIONS,
+  SNIPPET_TYPES,
+  TIMEOUTS,
+  URLS
 } from './constants'
-import type { Page} from '@playwright/test'
+import type { Page } from '@playwright/test'
 
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 export interface SnippetFormOptions {
-	name: string;
-	code: string;
-	type?: keyof typeof SNIPPET_TYPES;
-	location?: keyof typeof SNIPPET_LOCATIONS;
+  name: string;
+  code: string;
+  type?: keyof typeof SNIPPET_TYPES;
+  location?: keyof typeof SNIPPET_LOCATIONS;
 }
 
 export class SnippetsTestHelper {
-	constructor(private page: Page) {}
+  constructor(private page: Page) { }
 
-	/**
+  /**
    * Navigate to the Code Snippets admin page
    */
-	async navigateToSnippetsAdmin(): Promise<void> {
-		await this.page.goto(URLS.SNIPPETS_ADMIN)
-		await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
-	}
+  async navigateToSnippetsAdmin(): Promise<void> {
+    await this.page.goto(URLS.SNIPPETS_ADMIN)
+    await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
+  }
 
-	/**
+  /**
    * Navigate to frontend
    */
-	async navigateToFrontend(): Promise<void> {
-		await this.page.goto(URLS.FRONTEND)
-		await this.page.waitForSelector('body', { timeout: TIMEOUTS.DEFAULT })
-	}
+  async navigateToFrontend(): Promise<void> {
+    await this.page.goto(URLS.FRONTEND)
+    await this.page.waitForSelector('body', { timeout: TIMEOUTS.DEFAULT })
+  }
 
-	/**
+  /**
    * Click the "Add New" button to start creating a snippet
    */
-	async clickAddNewSnippet(): Promise<void> {
-		await this.page.goto(URLS.ADD_SNIPPET)
-		await this.page.waitForSelector(SELECTORS.TITLE_INPUT, { timeout: TIMEOUTS.DEFAULT })
-	}
+  async clickAddNewSnippet(): Promise<void> {
+    await this.page.goto(URLS.ADD_SNIPPET)
+    await this.page.waitForSelector(SELECTORS.TITLE_INPUT, { timeout: TIMEOUTS.DEFAULT })
+  }
 
-	/**
+  /**
    * Fill the snippet form with the provided options
    */
-	async fillSnippetForm(options: SnippetFormOptions): Promise<void> {
-		await this.page.waitForSelector(SELECTORS.TITLE_INPUT)
-		await this.page.fill(SELECTORS.TITLE_INPUT, options.name)
+  async fillSnippetForm(options: SnippetFormOptions): Promise<void> {
+    await this.page.waitForSelector(SELECTORS.TITLE_INPUT)
+    await this.page.fill(SELECTORS.TITLE_INPUT, options.name)
 
-		if (options.type && 'PHP' !== options.type) {
-			const snippetTypeInput = this.page.locator(SELECTORS.SNIPPET_TYPE_SELECT)
-			await snippetTypeInput.click()
+    if (options.type && 'PHP' !== options.type) {
+      const snippetTypeInput = this.page.locator(SELECTORS.SNIPPET_TYPE_SELECT)
+      await snippetTypeInput.click()
 
-			// React Select renders options in a listbox; scope the click to options to avoid matching
-			// other UI strings like "Skip to main content".
-			const listboxId = await snippetTypeInput.getAttribute('aria-controls')
-			const listbox = listboxId ? this.page.locator(`#${listboxId}`) : this.page.getByRole('listbox')
-			const optionLabel = SNIPPET_TYPES[options.type]
-	
-			await listbox.getByRole('option', { name: new RegExp(escapeRegExp(optionLabel), 'i') }).click()
-		}
+      // React Select renders options in a listbox; scope the click to options to avoid matching
+      // other UI strings like "Skip to main content".
+      const listboxId = await snippetTypeInput.getAttribute('aria-controls')
+      const listbox = listboxId ? this.page.locator(`#${listboxId}`) : this.page.getByRole('listbox')
+      const optionLabel = SNIPPET_TYPES[options.type]
 
-		await this.page.waitForSelector(SELECTORS.CODE_MIRROR_TEXTAREA)
-		await this.page.fill(SELECTORS.CODE_MIRROR_TEXTAREA, options.code)
+      await listbox.getByRole('option', { name: new RegExp(escapeRegExp(optionLabel), 'i') }).click()
+    }
 
-		if (options.location) {
-			await this.page.waitForSelector(SELECTORS.LOCATION_SELECT, { timeout: TIMEOUTS.SHORT })
-			// Await this.page.click(SELECTORS.LOCATION_SELECT)
-			await this.page.click(SELECTORS.LOCATION_SELECT)
-	      
-			const locationLabel = SNIPPET_LOCATIONS[options.location]
-			await this.page.getByRole('option', { name: new RegExp(escapeRegExp(locationLabel), 'i') }).click()
-     
-			// Await this.page.waitForSelector(`text=${SNIPPET_LOCATIONS[options.location]}`, { timeout: TIMEOUTS.SHORT })
-			// await this.page.click(`text=${SNIPPET_LOCATIONS[options.location]}`, { force: true })
+    await this.page.waitForSelector(SELECTORS.CODE_MIRROR_TEXTAREA)
+    await this.page.fill(SELECTORS.CODE_MIRROR_TEXTAREA, options.code)
 
-			await expect(this.page.locator(SELECTORS.LOCATION_SELECT)).toContainText(SNIPPET_LOCATIONS[options.location])
-		}
-	}
+    if (options.location) {
+      await this.page.waitForSelector(SELECTORS.LOCATION_SELECT, { timeout: TIMEOUTS.SHORT })
+      // Await this.page.click(SELECTORS.LOCATION_SELECT)
+      await this.page.click(SELECTORS.LOCATION_SELECT)
 
-	/**
+      const locationLabel = SNIPPET_LOCATIONS[options.location]
+      await this.page.getByRole('option', { name: new RegExp(escapeRegExp(locationLabel), 'i') }).click()
+
+      // Await this.page.waitForSelector(`text=${SNIPPET_LOCATIONS[options.location]}`, { timeout: TIMEOUTS.SHORT })
+      // await this.page.click(`text=${SNIPPET_LOCATIONS[options.location]}`, { force: true })
+
+      await expect(this.page.locator(SELECTORS.LOCATION_SELECT)).toContainText(SNIPPET_LOCATIONS[options.location])
+    }
+  }
+
+  /**
    * Save the snippet with the specified action
    */
-	async saveSnippet(action: 'save' | 'save_and_activate' | 'save_and_deactivate' = 'save'): Promise<void> {
-		const buttonMap = {
-			save: BUTTONS.SAVE,
-			save_and_activate: BUTTONS.SAVE_AND_ACTIVATE,
-			save_and_deactivate: BUTTONS.SAVE_AND_DEACTIVATE,
-		}
+  async saveSnippet(action: 'save' | 'save_and_activate' | 'save_and_deactivate' = 'save'): Promise<void> {
+    const buttonMap = {
+      save: BUTTONS.SAVE,
+      save_and_activate: BUTTONS.SAVE_AND_ACTIVATE,
+      save_and_deactivate: BUTTONS.SAVE_AND_DEACTIVATE,
+    }
 
-		await this.page.click(buttonMap[action])
-	}
+    await this.page.click(buttonMap[action])
+  }
 
-	/**
+  /**
    * Expect a success message with the specified text
    */
-	async expectSuccessMessage(expectedMessage: string): Promise<void> {
-		await expect(this.page.locator(SELECTORS.SUCCESS_MESSAGE)).toContainText(expectedMessage)
-	}
+  async expectSuccessMessage(expectedMessage: string): Promise<void> {
+    await expect(this.page.locator(SELECTORS.SUCCESS_MESSAGE)).toContainText(expectedMessage)
+  }
 
-	/**
+  /**
    * Open an existing snippet by name
    */
-	async openSnippet(snippetName: string): Promise<void> {
-		await this.page.goto(URLS.SNIPPETS_ADMIN)
-		await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
+  async openSnippet(snippetName: string): Promise<void> {
+    await this.page.goto(URLS.SNIPPETS_ADMIN)
+    await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
 
-		const row = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
-		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+    const row = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
+    await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
-		await row.locator(SELECTORS.SNIPPET_NAME_LINK).click()
-		await this.page.waitForSelector(SELECTORS.TITLE_INPUT, { timeout: TIMEOUTS.DEFAULT })
-	}
+    await row.locator(SELECTORS.SNIPPET_NAME_LINK).click()
+    await this.page.waitForSelector(SELECTORS.TITLE_INPUT, { timeout: TIMEOUTS.DEFAULT })
+  }
 
-	/**
+  /**
    * Delete a snippet (assumes you're already on the snippet edit page)
    */
-	async deleteSnippet(): Promise<void> {
-		// Await this.page.click(BUTTONS.DELETE)
-		// const dialog = this.page.locator('[role="dialog"]').filter({ hasText: 'Delete?' })
-		// await expect(dialog).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+  async deleteSnippet(): Promise<void> {
+    // Click the sidebar "Trash" button to open the confirmation dialog
+    await this.page.locator(BUTTONS.DELETE).first().click()
 
-		// await dialog.locator('button:has-text("Delete")').click()
-		await Promise.all([
-			this.page.waitForURL(/page=snippets/, { timeout: TIMEOUTS.DEFAULT }),
-			this.page.click(BUTTONS.DELETE)
-		])
+    // Wait for the React confirmation dialog to appear
+    const dialog = this.page.locator('[role="dialog"]').filter({ hasText: 'Are you sure?' })
+    await expect(dialog).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
-		await expect(this.page).toHaveURL(/page=snippets/)
-		await expect(this.page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-	}
+    // Click "Trash" in the dialog to confirm
+    await Promise.all([
+      this.page.waitForURL(/page=snippets/, { timeout: TIMEOUTS.DEFAULT }),
+      dialog.locator('button:has-text("Trash")').click()
+    ])
 
-	/**
+    await expect(this.page).toHaveURL(/page=snippets/)
+    await expect(this.page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+  }
+
+  /**
    * Check if a snippet exists on the snippets list page
    */
-	async snippetExists(snippetName: string): Promise<boolean> {
-		const count = await this.page.locator(`text=${snippetName}`).count()
-		return 0 < count
-	}
+  async snippetExists(snippetName: string): Promise<boolean> {
+    const count = await this.page.locator(`text=${snippetName}`).count()
+    return 0 < count
+  }
 
-	/**
-   * Clean up a snippet by name (navigate to admin, find snippet, delete it)
+  /**
+   * Clean up all snippets by name (navigate to admin, find snippets, delete them)
    */
-	async cleanupSnippet(snippetName: string): Promise<void> {
-		await this.navigateToSnippetsAdmin()
-    
-		if (await this.snippetExists(snippetName)) {
-			await this.openSnippet(snippetName)
-			await this.deleteSnippet()
-		}
-	}
+  async cleanupSnippet(snippetName: string): Promise<void> {
+    // Keep deleting snippets with this name until none remain
+    for (let i = 0; i < 10; i++) {
+      try {
+        await this.navigateToSnippetsAdmin()
 
-	/**
+        if (!(await this.snippetExists(snippetName))) {
+          break
+        }
+
+        await this.openSnippet(snippetName)
+        await this.deleteSnippet()
+      } catch {
+        // If cleanup fails, try to navigate back and continue
+        break
+      }
+    }
+  }
+
+  /**
    * Verify the current URL contains the snippets admin page
    */
-	async expectToBeOnSnippetsAdminPage(): Promise<void> {
-		const currentUrl = this.page.url()
-		expect(currentUrl).toContain('page=snippets')
-		await expect(this.page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
-	}
+  async expectToBeOnSnippetsAdminPage(): Promise<void> {
+    const currentUrl = this.page.url()
+    expect(currentUrl).toContain('page=snippets')
+    await expect(this.page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
+  }
 
-	/**
+  /**
    * Expect an element to be visible
    */
-	async expectElementVisible(selector: string): Promise<void> {
-		await expect(this.page.locator(selector)).toBeVisible()
-	}
+  async expectElementVisible(selector: string): Promise<void> {
+    await expect(this.page.locator(selector)).toBeVisible()
+  }
 
-	/**
+  /**
    * Expect an element to not be visible
    */
-	async expectElementNotVisible(selector: string): Promise<void> {
-		await expect(this.page.locator(selector)).not.toBeVisible()
-	}
+  async expectElementNotVisible(selector: string): Promise<void> {
+    await expect(this.page.locator(selector)).not.toBeVisible()
+  }
 
-	/**
+  /**
    * Expect an element to have a specific count
    */
-	async expectElementCount(selector: string, expectedCount: number): Promise<void> {
-		const count = await this.page.locator(selector).count()
-		expect(count).toBe(expectedCount)
-	}
+  async expectElementCount(selector: string, expectedCount: number): Promise<void> {
+    const count = await this.page.locator(selector).count()
+    expect(count).toBe(expectedCount)
+  }
 
-	/**
+  /**
    * Expect text to be visible on the page
    */
-	async expectTextVisible(text: string): Promise<void> {
-		await expect(this.page.locator(`text=${text}`)).toBeVisible()
-	}
+  async expectTextVisible(text: string): Promise<void> {
+    await expect(this.page.locator(`text=${text}`)).toBeVisible()
+  }
 
-	/**
+  /**
    * Expect text to not be visible on the page
    */
-	async expectTextNotVisible(text: string): Promise<void> {
-		await expect(this.page.locator('body')).not.toContainText(text)
-	}
+  async expectTextNotVisible(text: string): Promise<void> {
+    await expect(this.page.locator('body')).not.toContainText(text)
+  }
 
-	/**
+  /**
    * Create a complete snippet with save and activate
    */
-	async createAndActivateSnippet(options: SnippetFormOptions): Promise<void> {
-		await this.clickAddNewSnippet()
-		await this.fillSnippetForm(options)
-		await this.saveSnippet('save_and_activate')
-		await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED_AND_ACTIVATED)
-	}
+  async createAndActivateSnippet(options: SnippetFormOptions): Promise<void> {
+    await this.clickAddNewSnippet()
+    await this.fillSnippetForm(options)
+    await this.saveSnippet('save_and_activate')
+    await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED_AND_ACTIVATED)
+  }
 
-	/**
+  /**
    * Create a snippet without activating
    */
-	async createSnippet(options: SnippetFormOptions): Promise<void> {
-		await this.clickAddNewSnippet()
-		await this.fillSnippetForm(options)
-		await this.saveSnippet('save')
-		await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED)
-	}
+  async createSnippet(options: SnippetFormOptions): Promise<void> {
+    await this.clickAddNewSnippet()
+    await this.fillSnippetForm(options)
+    await this.saveSnippet('save')
+    await this.expectSuccessMessage(MESSAGES.SNIPPET_CREATED)
+  }
 }
