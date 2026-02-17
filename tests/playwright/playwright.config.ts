@@ -15,11 +15,18 @@ export default defineConfig({
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? RETRIES : 0,
 	workers: process.env.CI ? WORKERS : undefined,
-	reporter: [
-		['html'],
-		['json', { outputFile: join(process.cwd(), 'test-results', 'results.json') }],
-		['junit', { outputFile: join(process.cwd(), 'test-results', 'results.xml') }]
-	],
+	reporter: process.env.CI
+		? [
+			['line'],
+			['html'],
+			['json', { outputFile: join(process.cwd(), 'test-results', 'results.json') }],
+			['junit', { outputFile: join(process.cwd(), 'test-results', 'results.xml') }]
+		]
+		: [
+			['html'],
+			['json', { outputFile: join(process.cwd(), 'test-results', 'results.json') }],
+			['junit', { outputFile: join(process.cwd(), 'test-results', 'results.xml') }]
+		],
 	use: {
 		baseURL: 'http://localhost:8888',
 		trace: 'on-first-retry',
