@@ -91,8 +91,6 @@ export class SnippetsTestHelper {
 	}
 
 	/**
-   * Expect a success message in paragraph element
-   */
    * Open an existing snippet by name
    */
 	async openSnippet(snippetName: string): Promise<void> {
