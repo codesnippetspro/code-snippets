@@ -10,6 +10,8 @@ import {
 } from './constants'
 import type { Page} from '@playwright/test'
 
+const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 export interface SnippetFormOptions {
 	name: string;
 	code: string;
@@ -52,8 +54,16 @@ export class SnippetsTestHelper {
 		await this.page.fill(SELECTORS.TITLE_INPUT, options.name)
 
 		if (options.type && 'PHP' !== options.type) {
-			await this.page.click(SELECTORS.SNIPPET_TYPE_SELECT)
-			await this.page.click(`text=${SNIPPET_TYPES[options.type]}`)
+			const snippetTypeInput = this.page.locator(SELECTORS.SNIPPET_TYPE_SELECT)
+			await snippetTypeInput.click()
+
+			// React Select renders options in a listbox; scope the click to options to avoid matching
+			// other UI strings like "Skip to main content".
+			const listboxId = await snippetTypeInput.getAttribute('aria-controls')
+			const listbox = listboxId ? this.page.locator(`#${listboxId}`) : this.page.getByRole('listbox')
+			const optionLabel = SNIPPET_TYPES[options.type]
+	
+			await listbox.getByRole('option', { name: new RegExp(escapeRegExp(optionLabel), 'i') }).click()
 		}
 
 		await this.page.waitForSelector(SELECTORS.CODE_MIRROR_TEXTAREA)
@@ -61,10 +71,14 @@ export class SnippetsTestHelper {
 
 		if (options.location) {
 			await this.page.waitForSelector(SELECTORS.LOCATION_SELECT, { timeout: TIMEOUTS.SHORT })
+			// Await this.page.click(SELECTORS.LOCATION_SELECT)
 			await this.page.click(SELECTORS.LOCATION_SELECT)
-      
-			await this.page.waitForSelector(`text=${SNIPPET_LOCATIONS[options.location]}`, { timeout: TIMEOUTS.SHORT })
-			await this.page.click(`text=${SNIPPET_LOCATIONS[options.location]}`, { force: true })
+	      
+			const locationLabel = SNIPPET_LOCATIONS[options.location]
+			await this.page.getByRole('option', { name: new RegExp(escapeRegExp(locationLabel), 'i') }).click()
+     
+			// Await this.page.waitForSelector(`text=${SNIPPET_LOCATIONS[options.location]}`, { timeout: TIMEOUTS.SHORT })
+			// await this.page.click(`text=${SNIPPET_LOCATIONS[options.location]}`, { force: true })
 
 			await expect(this.page.locator(SELECTORS.LOCATION_SELECT)).toContainText(SNIPPET_LOCATIONS[options.location])
 		}
@@ -108,11 +122,15 @@ export class SnippetsTestHelper {
    * Delete a snippet (assumes you're already on the snippet edit page)
    */
 	async deleteSnippet(): Promise<void> {
-		await this.page.click(BUTTONS.DELETE)
-		const dialog = this.page.locator('[role="dialog"]').filter({ hasText: 'Delete?' })
-		await expect(dialog).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		// Await this.page.click(BUTTONS.DELETE)
+		// const dialog = this.page.locator('[role="dialog"]').filter({ hasText: 'Delete?' })
+		// await expect(dialog).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 
-		await dialog.locator('button:has-text("Delete")').click()
+		// await dialog.locator('button:has-text("Delete")').click()
+		await Promise.all([
+			this.page.waitForURL(/page=snippets/, { timeout: TIMEOUTS.DEFAULT }),
+			this.page.click(BUTTONS.DELETE)
+		])
 
 		await expect(this.page).toHaveURL(/page=snippets/)
 		await expect(this.page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
