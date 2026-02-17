@@ -1,21 +1,21 @@
 export const SELECTORS = <const>{
-  TITLE_INPUT: '#title',
-  CODE_MIRROR_TEXTAREA: '.CodeMirror textarea',
-  SNIPPET_TYPE_SELECT: '#snippet-type-select-input',
-  LOCATION_SELECT: '.code-snippets-select-location',
+	TITLE_INPUT: '#title',
+	CODE_MIRROR_TEXTAREA: '.CodeMirror textarea',
+	SNIPPET_TYPE_SELECT: '#snippet-type-select-input',
+	LOCATION_SELECT: '.code-snippets-select-location',
 
-  SUCCESS_MESSAGE: '.snippet-editor-sidebar > #message.notice.updated',
+	SUCCESS_MESSAGE: '.snippet-editor-sidebar .notice.updated',
 
-  SNIPPETS_TABLE: '.wp-list-table',
-  SNIPPET_ROW: '.wp-list-table tbody tr',
-  SNIPPET_TOGGLE: 'a.snippet-activation-switch',
-  SNIPPET_NAME_LINK: '.snippet-name',
+	SNIPPETS_TABLE: '.wp-list-table',
+	SNIPPET_ROW: '.wp-list-table tbody tr',
+	SNIPPET_TOGGLE: 'input.switch',
+	SNIPPET_NAME_LINK: '.snippet-name',
 
-  CLONE_ACTION: '.row-actions a[href*="action=clone"]',
-  DELETE_ACTION: '.row-actions a.delete:has-text("Trash")',
-  EXPORT_ACTION: '.row-actions a[href*="action=export"]',
+	CLONE_ACTION: '.row-actions button:has-text("Clone")',
+	DELETE_ACTION: '.row-actions button:has-text("Clone")',
+	EXPORT_ACTION: '.row-actions button:has-text("Export")',
 
-  ADMIN_BAR: '#wpadminbar'
+	ADMIN_BAR: '#wpadminbar'
 }
 
 export const TIMEOUTS = <const>{
@@ -24,9 +24,9 @@ export const TIMEOUTS = <const>{
 }
 
 export const URLS = <const>{
-  SNIPPETS_ADMIN: '/wp-admin/admin.php?page=snippets',
-  ADD_SNIPPET: '/wp-admin/admin.php?page=add-snippet',
-  FRONTEND: '/'
+	SNIPPETS_ADMIN: '/wp-admin/admin.php?page=snippets',
+	ADD_SNIPPET: '/wp-admin/admin.php?page=add-snippet',
+	FRONTEND: '/'
 }
 
 export const MESSAGES = <const>{
@@ -54,5 +54,5 @@ export const BUTTONS = <const>{
 	SAVE: 'text=Save Snippet',
 	SAVE_AND_ACTIVATE: 'text=Save and Activate',
 	SAVE_AND_DEACTIVATE: 'text=Save and Deactivate',
-	DELETE: 'text=Delete'
+	DELETE: 'button.delete-button:has-text("Trash")'
 }
