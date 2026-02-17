@@ -68,9 +68,13 @@ test.describe('Code Snippets List Page Actions', () => {
     await expect(page).toHaveURL(/page=snippets/)
     await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
-    await helper.expectTextVisible(`${TEST_SNIPPET_NAME} [CLONE]`)
+    // Verify that a cloned snippet exists in the table (use table-scoped check to avoid admin bar matches)
+    const clonedRow = page
+      .locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${TEST_SNIPPET_NAME} [CLONE]"))`)
+      .first()
+    await expect(clonedRow).toBeVisible()
 
-    const clonedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME} [CLONE]")`)
+    // Clean up the clone by trashing it
     await clonedRow.locator(SELECTORS.DELETE_ACTION).click()
     await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
   })
@@ -80,12 +84,14 @@ test.describe('Code Snippets List Page Actions', () => {
       .locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${TEST_SNIPPET_NAME}"))`)
       .first()
 
+    // Click "Trash" in row actions — in the new React UI, this moves to trash immediately (no dialog)
     await snippetRow.locator(SELECTORS.DELETE_ACTION).click()
 
     await expect(page).toHaveURL(/page=snippets/)
     await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
-    const trashedLink = page.locator('ul.subsubsub li.trashed a').first()
+    // Navigate to the trash view using the new filter link format
+    const trashedLink = page.locator('a[href*="status=trashed"]').first()
     await expect(trashedLink).toBeVisible()
     await trashedLink.click()
 
@@ -97,13 +103,14 @@ test.describe('Code Snippets List Page Actions', () => {
       .first()
     await expect(trashedRow).toBeVisible()
 
-    page.once('dialog', async dialog => {
-      expect(dialog.type()).toBe('confirm')
-      expect(dialog.message()).toContain('permanently delete')
-      await dialog.accept()
-    })
+    // Click "Delete Permanently" — now a <button>, not an <a> tag
+    await trashedRow.locator('button:has-text("Delete Permanently")').click()
 
-    await trashedRow.locator('.delete_permanently a.delete').click()
+    // The new React UI shows a confirmation dialog instead of a native browser dialog
+    const dialog = page.locator('[role="dialog"]').filter({ hasText: 'Are you sure?' })
+    await expect(dialog).toBeVisible()
+    await dialog.locator('button:has-text("Delete")').click()
+
     await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
     const remainingCount = await page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`).count()
