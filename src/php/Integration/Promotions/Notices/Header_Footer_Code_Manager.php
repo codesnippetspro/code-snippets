@@ -2,8 +2,6 @@
 
 namespace Code_Snippets\Integration\Promotions\Notices;
 
-use Code_Snippets\REST_API\Import\Plugins\Header_Footer_Code_Manager_Plugin_Importer;
-
 /**
  * Promotion class for Header Footer Code Manager.
  *
@@ -49,17 +47,15 @@ class Header_Footer_Code_Manager extends Promotion_Base {
 	 * @return string The promotion message.
 	 */
 	public function get_promotion_message(): string {
-		return __( 'Move your functionality to Code Snippets Pro and reduce your dependency on third-party plugins. A leaner dashboard is a more secure dashboard.', 'code-snippets' );
+		return __( 'Move your functionality to Code Snippets and reduce your dependency on third-party plugins.', 'code-snippets' );
 	}
 
 	/**
-	 * Check if the Header Footer Code Manager plugin has any snippets.
+	 * Check if the user should see the migration button.
 	 *
-	 * @return bool True if there are snippets, false otherwise.
+	 * @return bool Whether the user should see the migration button.
 	 */
-	protected function has_snippets(): bool {
-		$importer = new Header_Footer_Code_Manager_Plugin_Importer();
-		$data = $importer->get_data();
-		return ! empty( $data );
+	public function show_migration_button(): bool {
+		return true;
 	}
 }

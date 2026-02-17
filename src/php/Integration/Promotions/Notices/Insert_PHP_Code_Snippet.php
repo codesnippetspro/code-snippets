@@ -2,8 +2,6 @@
 
 namespace Code_Snippets\Integration\Promotions\Notices;
 
-use Code_Snippets\REST_API\Import\Plugins\Insert_PHP_Code_Snippet_Plugin_Importer;
-
 /**
  * Promotion class for Insert PHP Code Snippet plugin.
  *
@@ -53,13 +51,11 @@ class Insert_PHP_Code_Snippet extends Promotion_Base {
 	}
 
 	/**
-	 * Check if the user has any snippets in the Insert PHP Code Snippet plugin.
+	 * Check if the user should see the migration button.
 	 *
-	 * @return bool True if the user has snippets, false otherwise.
+	 * @return bool Whether the user should see the migration button.
 	 */
-	protected function has_snippets(): bool {
-		$importer = new Insert_PHP_Code_Snippet_Plugin_Importer();
-		$data = $importer->get_data();
-		return ! empty( $data );
+	public function show_migration_button(): bool {
+		return true;
 	}
 }
