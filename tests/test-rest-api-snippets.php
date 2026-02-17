@@ -1,6 +1,6 @@
 <?php
 
-namespace Code_Snippets\Code_Snippets\AdminTests;
+namespace Code_Snippets\Tests;
 
 use Code_Snippets\Model\Snippet;
 use WP_REST_Request;
