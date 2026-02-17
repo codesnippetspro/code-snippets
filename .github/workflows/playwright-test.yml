@@ -230,6 +230,21 @@ jobs:
           WP_E2E_WP_CONTAINER: ${{ job.services.wordpress.id }}
           WP_E2E_MULTISITE_MODE: ${{ inputs.multisite }}
         run: npm run test:playwright -- --project=${{ inputs.project-name }}
+
+      - name: Normalize Playwright report filenames
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p test-results/ci
+          suffix="${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}"
+
+          if [ -f test-results/results.xml ]; then
+            mv test-results/results.xml "test-results/ci/results-${suffix}.xml"
+          fi
+
+          if [ -f test-results/results.json ]; then
+            mv test-results/results.json "test-results/ci/results-${suffix}.json"
+          fi
         
       - name: Print WordPress logs on failure
         if: failure()
@@ -241,7 +256,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-test-results-${{ inputs.test-mode }}
+          name: playwright-test-results-${{ inputs.test-mode }}-${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}
           path: test-results/
           if-no-files-found: ignore
           retention-days: 2
