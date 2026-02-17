@@ -45,13 +45,16 @@ jobs:
           WORDPRESS_DEBUG: 1
           WORDPRESS_CONFIG_EXTRA: |
             define( 'FS_METHOD', 'direct' );
-            define( 'WP_MEMORY_LIMIT', '256M' );
-            define( 'WP_MAX_MEMORY_LIMIT', '512M' );
-            @ini_set( 'memory_limit', '512M' );
+            define( 'WP_DEBUG', true );
             define( 'WP_DEBUG_LOG', true );
-            define( 'WP_DEBUG_DISPLAY', false );
+            define( 'WP_DEBUG_DISPLAY', true );
+            define( 'WP_DISABLE_FATAL_ERROR_HANDLER', true );
             define( 'SCRIPT_DEBUG', true );
             define( 'WP_ENVIRONMENT_TYPE', 'local' );
+            @ini_set( 'display_errors', '1' );
+            @ini_set( 'display_startup_errors', '1' );
+            @ini_set( 'log_errors', '1' );
+            @ini_set( 'error_reporting', (string) E_ALL );
         ports:
           - 8888:80
     steps:
