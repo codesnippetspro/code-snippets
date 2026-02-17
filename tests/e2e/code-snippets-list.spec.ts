@@ -23,73 +23,97 @@ test.describe('Code Snippets List Page Actions', () => {
   })
 
   test('Can toggle snippet activation from list page', async ({ page }) => {
-    const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
-    const toggleSwitch = snippetRow.locator(SELECTORS.SNIPPET_TOGGLE)
+    const snippetRow = page
+      .locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${TEST_SNIPPET_NAME}"))`)
+      .first()
+    const toggleSwitch = snippetRow.locator(SELECTORS.SNIPPET_TOGGLE).first()
 
     await expect(toggleSwitch).toHaveAttribute('title', 'Deactivate')
 
     await toggleSwitch.click()
-    await page.waitForLoadState('networkidle')
 
-    const updatedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
-    const updatedToggle = updatedRow.locator(SELECTORS.SNIPPET_TOGGLE)
+    const updatedRow = page
+      .locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${TEST_SNIPPET_NAME}"))`)
+      .first()
+    const updatedToggle = updatedRow.locator(SELECTORS.SNIPPET_TOGGLE).first()
     await expect(updatedToggle).toHaveAttribute('title', 'Activate')
 
     await updatedToggle.click()
-    await page.waitForLoadState('networkidle')
 
-    const reactivatedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
-    const reactivatedToggle = reactivatedRow.locator(SELECTORS.SNIPPET_TOGGLE)
+    const reactivatedRow = page
+      .locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${TEST_SNIPPET_NAME}"))`)
+      .first()
+    const reactivatedToggle = reactivatedRow.locator(SELECTORS.SNIPPET_TOGGLE).first()
     await expect(reactivatedToggle).toHaveAttribute('title', 'Deactivate')
   })
 
   test('Can access edit from list page', async ({ page }) => {
-    const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
+    const snippetRow = page
+      .locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${TEST_SNIPPET_NAME}"))`)
+      .first()
 
-    await snippetRow.locator(SELECTORS.EDIT_ACTION).click()
+    await snippetRow.locator(SELECTORS.SNIPPET_NAME_LINK).first().click()
 
     await expect(page).toHaveURL(/page=edit-snippet/)
     await expect(page.locator('#title')).toHaveValue(TEST_SNIPPET_NAME)
   })
 
   test('Can clone snippet from list page', async ({ page }) => {
-    const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
+    const snippetRow = page
+      .locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${TEST_SNIPPET_NAME}"))`)
+      .first()
 
     await snippetRow.locator(SELECTORS.CLONE_ACTION).click()
-    await page.waitForLoadState('networkidle')
 
     await expect(page).toHaveURL(/page=snippets/)
+    await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
     await helper.expectTextVisible(`${TEST_SNIPPET_NAME} [CLONE]`)
 
     const clonedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME} [CLONE]")`)
-
-    page.on('dialog', async dialog => {
-      expect(dialog.type()).toBe('confirm')
-      await dialog.accept()
-    })
-
     await clonedRow.locator(SELECTORS.DELETE_ACTION).click()
-    await page.waitForLoadState('networkidle')
+    await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
   })
 
   test('Can delete snippet from list page', async ({ page }) => {
-    const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
+    const snippetRow = page
+      .locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${TEST_SNIPPET_NAME}"))`)
+      .first()
 
-    page.on('dialog', async dialog => {
+    await snippetRow.locator(SELECTORS.DELETE_ACTION).click()
+
+    await expect(page).toHaveURL(/page=snippets/)
+    await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
+
+    const trashedLink = page.locator('ul.subsubsub li.trashed a').first()
+    await expect(trashedLink).toBeVisible()
+    await trashedLink.click()
+
+    await expect(page).toHaveURL(/status=trashed/)
+    await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
+
+    const trashedRow = page
+      .locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${TEST_SNIPPET_NAME}"))`)
+      .first()
+    await expect(trashedRow).toBeVisible()
+
+    page.once('dialog', async dialog => {
       expect(dialog.type()).toBe('confirm')
+      expect(dialog.message()).toContain('permanently delete')
       await dialog.accept()
     })
 
-    await snippetRow.locator(SELECTORS.DELETE_ACTION).click()
-    await page.waitForLoadState('networkidle')
+    await trashedRow.locator('.delete_permanently a.delete').click()
+    await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
-    await expect(page).toHaveURL(/page=snippets/)
-    await helper.expectElementCount(`tr:has-text("${TEST_SNIPPET_NAME}")`, 0)
+    const remainingCount = await page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`).count()
+    expect(remainingCount).toBe(0)
   })
 
   test('Can export snippet from list page', async ({ page }) => {
-    const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
+    const snippetRow = page
+      .locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${TEST_SNIPPET_NAME}"))`)
+      .first()
 
     const downloadPromise = page.waitForEvent('download')
 
