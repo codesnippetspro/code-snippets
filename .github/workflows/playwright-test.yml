@@ -229,7 +229,11 @@ jobs:
           WP_E2E_WPCLI_URL: http://localhost:8888
           WP_E2E_WP_CONTAINER: ${{ job.services.wordpress.id }}
           WP_E2E_MULTISITE_MODE: ${{ inputs.multisite }}
-        run: npm run test:playwright -- --project=${{ inputs.project-name }}
+        run: |
+          set -euo pipefail
+          mkdir -p test-results/ci
+          suffix="${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}"
+          npm run test:playwright -- --project=${{ inputs.project-name }} 2>&1 | tee "test-results/ci/playwright-${suffix}.log"
 
       - name: Normalize Playwright report filenames
         if: always()
