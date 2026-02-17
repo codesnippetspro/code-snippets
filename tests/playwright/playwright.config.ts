@@ -2,7 +2,6 @@
 import { join } from 'path'
 import { defineConfig, devices } from '@playwright/test'
 
-const RETRIES = 2
 const WORKERS = 1
 
 /**
@@ -13,7 +12,7 @@ export default defineConfig({
 	snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
-	retries: process.env.CI ? RETRIES : 0,
+	retries: 0,
 	workers: process.env.CI ? WORKERS : undefined,
 	reporter: process.env.CI
 		? [
@@ -29,7 +28,7 @@ export default defineConfig({
 		],
 	use: {
 		baseURL: 'http://localhost:8888',
-		trace: 'on-first-retry',
+		trace: 'retain-on-failure',
 		screenshot: 'only-on-failure',
 		video: 'retain-on-failure'
 	},
@@ -71,7 +70,7 @@ export default defineConfig({
 		}
 	],
 
-	timeout: 30000,
+	timeout: 5000, //
 
 	expect: {
 		timeout: 10000,
