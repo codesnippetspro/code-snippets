@@ -96,9 +96,9 @@ jobs:
           path: |
             node_modules
             src/vendor
-          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-${{ github.run_id }}-${{ github.job }}
+          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-
           restore-keys: |
-            ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-
+            ${{ runner.os }}-${{ inputs.test-mode }}-deps-
 
       - name: Install workflow dependencies
         if: steps.deps-cache.outputs.cache-matched-key == ''
@@ -111,7 +111,7 @@ jobs:
           path: |
             src/vendor
             node_modules
-          key: ${{ steps.deps-cache.outputs.cache-primary-key }}
+          key: ${{ runner.os }}-${{ inputs.test-mode }}-deps-${{ steps.deps-hash.outputs.deps_hash }}-${{ github.run_id }}-${{ github.job }}
           
       - name: Wait for WordPress to be reachable
         run: |
