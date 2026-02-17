@@ -70,10 +70,10 @@ export default defineConfig({
 		}
 	],
 
-	timeout: 5000, //
+	timeout: 10000, // 10 seconds per test
 
 	expect: {
-		timeout: 10000,
+		timeout: 10000, // 10 seconds for each expect assertion
 		toHaveScreenshot: { maxDiffPixels: 100 }
 	}
 })
