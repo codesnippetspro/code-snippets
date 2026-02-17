@@ -105,15 +105,18 @@ jobs:
 
       - name: Run PHPUnit tests
         run: |
+          set -euo pipefail
+          mkdir -p test-results/phpunit
           cd src
-          vendor/bin/phpunit -c ../phpunit.xml --testdox
+          vendor/bin/phpunit -c ../phpunit.xml --testdox --log-junit ../test-results/phpunit/phpunit-${{ inputs.php-version }}.xml 2>&1 | tee ../test-results/phpunit/phpunit-${{ inputs.php-version }}.log
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: phpunit-test-results-php-${{ inputs.php-version }}
           path: |
-            .phpunit.result.cache
+            src/.phpunit.result.cache
+            test-results/phpunit/
           if-no-files-found: ignore
           retention-days: 2
 
