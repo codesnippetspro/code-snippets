@@ -45,6 +45,9 @@ jobs:
           WORDPRESS_DEBUG: 1
           WORDPRESS_CONFIG_EXTRA: |
             define( 'FS_METHOD', 'direct' );
+            define( 'WP_MEMORY_LIMIT', '256M' );
+            define( 'WP_MAX_MEMORY_LIMIT', '512M' );
+            @ini_set( 'memory_limit', '512M' );
             define( 'WP_DEBUG_LOG', true );
             define( 'WP_DEBUG_DISPLAY', false );
             define( 'SCRIPT_DEBUG', true );
@@ -233,7 +236,8 @@ jobs:
           set -euo pipefail
           mkdir -p test-results/ci
           suffix="${{ inputs.project-name }}${{ inputs.multisite && '-multisite' || '' }}"
-          npm run test:playwright -- --project=${{ inputs.project-name }} 2>&1 | tee "test-results/ci/playwright-${suffix}.log"
+          : > "test-results/ci/playwright-${suffix}.log"
+          npm run test:playwright -- --project=${{ inputs.project-name }} 2>&1 | tee -a "test-results/ci/playwright-${suffix}.log"
 
       - name: Normalize Playwright report filenames
         if: always()
@@ -244,10 +248,14 @@ jobs:
 
           if [ -f test-results/results.xml ]; then
             mv test-results/results.xml "test-results/ci/results-${suffix}.xml"
+          elif [ -f tests/playwright/test-results/results.xml ]; then
+            mv tests/playwright/test-results/results.xml "test-results/ci/results-${suffix}.xml"
           fi
 
           if [ -f test-results/results.json ]; then
             mv test-results/results.json "test-results/ci/results-${suffix}.json"
+          elif [ -f tests/playwright/test-results/results.json ]; then
+            mv tests/playwright/test-results/results.json "test-results/ci/results-${suffix}.json"
           fi
         
       - name: Print WordPress logs on failure
