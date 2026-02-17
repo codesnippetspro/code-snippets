@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n'
 import React from 'react'
 import { useRestAPI } from '../../../../hooks/useRestAPI'
+import { unpackErrorResponse } from '../../../../utils/errors'
 import { REST_BASES } from '../../../../utils/restAPI'
 import { Button } from '../../../common/Button'
 import type { Dispatch, SetStateAction } from 'react'
@@ -54,15 +55,12 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ isUploading, setIsUp
 				onSuccess(snippets)
 
 				if (warnings && 0 < warnings.length) {
-					setImportResult({ success: true, message, warnings })
+					setImportResult({ step: 'upload', success: true, message, warnings })
 				}
 			})
 			.catch((error: unknown) => {
 				console.error('Parse error:', error)
-				setImportResult({
-					success: false,
-					message: error instanceof Error ? error.message : __('An unknown error occurred.', 'code-snippets')
-				})
+				setImportResult({ step: 'upload', success: false, message: unpackErrorResponse(error) })
 			})
 			.finally(() => setIsUploading(false))
 	}

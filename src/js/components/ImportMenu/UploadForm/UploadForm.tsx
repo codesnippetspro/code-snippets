@@ -5,10 +5,10 @@ import { ImportResultDisplay } from './SelectSnippets/ImportResultDisplay'
 import { SelectSnippets } from './SelectSnippets/SelectSnippets'
 import { SelectFiles } from './SelectFiles/SelectFiles'
 import { DuplicateActionSelector } from './SelectFiles/DuplicateActionSelector'
+import type { UploadedFile } from './SelectFiles/UploadButton'
 import type { ImportableSnippetSchema } from '../../../types/schema/ImportableSnippetSchema'
-import type { ImportResult} from './SelectSnippets/ImportResultDisplay'
-import type { UploadedFile} from './SelectFiles/SelectFiles'
-import type { DuplicateAction} from './SelectFiles/DuplicateActionSelector'
+import type { ImportResult } from './SelectSnippets/ImportResultDisplay'
+import type { DuplicateAction } from './SelectFiles/DuplicateActionSelector'
 
 type Step = 'upload' | 'select'
 

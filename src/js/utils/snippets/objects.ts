@@ -2,6 +2,8 @@ import { SNIPPET_TYPE_SCOPES } from '../../types/Snippet'
 import { isNetworkAdmin } from '../screen'
 import type { Snippet, SnippetScope } from '../../types/Snippet'
 
+const TUPLE_SIZE = 2
+
 const defaults: Omit<Snippet, 'tags'> = {
 	id: 0,
 	name: '',
@@ -25,15 +27,13 @@ const isAbsInt = (value: unknown): value is number =>
 const parseStringArray = (value: unknown): string[] | undefined =>
 	Array.isArray(value) ? value.filter(entry => 'string' === typeof entry) : undefined
 
+const isCodeError = (value: unknown): value is readonly [string, number] =>
+	Array.isArray(value) && TUPLE_SIZE === value.length &&
+	'string' === typeof value[0] && 'number' === typeof value[1]
+
 export const isValidScope = (scope: unknown): scope is SnippetScope =>
 	'string' === typeof scope && Object.values(SNIPPET_TYPE_SCOPES).some(typeScopes =>
 		typeScopes.some(typeScope => typeScope === scope))
-
-export const isCodeError = (value: unknown): value is readonly [string, number] =>
-	Array.isArray(value) &&
-	2 === value.length &&
-	'string' === typeof value[0] &&
-	'number' === typeof value[1]
 
 export const parseSnippetObject = (fields: unknown): Snippet => {
 	const result: { -readonly [F in keyof Snippet]: Snippet[F] } = { ...defaults, tags: [] }

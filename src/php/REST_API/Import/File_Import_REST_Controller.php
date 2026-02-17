@@ -88,15 +88,17 @@ class File_Import_REST_Controller extends REST_Controller {
 			);
 		}
 
-		$files = $request->get_file_params();
+		$file_params = $request->get_file_params();
 
-		if ( empty( $files ) ) {
+		if ( empty( $file_params ) || empty( $file_params['files'] ) ) {
 			return new WP_Error(
 				'no_files',
 				__( 'No files were uploaded.', 'code-snippets' ),
 				[ 'status' => 400 ]
 			);
 		}
+
+		$files = $file_params['files'];
 
 		if ( ! isset( $files['name'], $files['type'], $files['tmp_name'], $files['error'] ) ) {
 			return new WP_Error(
