@@ -3,6 +3,8 @@
  * For some reason, WordPress requires that TinyMCE translations be hosted in an external file. So that's what this is.
  *
  * @package Code_Snippets
+ *
+ * phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
  */
 
 namespace Code_Snippets\Integration\Classic_Editor;

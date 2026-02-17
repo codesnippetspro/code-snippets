@@ -120,7 +120,9 @@ export const WithMigrationData: React.FC<PropsWithChildren> = ({ children }) => 
 	const snippetSelection = useSelection(snippets, snippet => snippet.table_data.id)
 
 	useEffect(() => {
-		fetchImporters(() => api.get<Importer[]>(REST_BASES.importPlugins))
+		fetchImporters(() => api
+			.get<Record<string, Importer>>(REST_BASES.importPlugins)
+			.then(response => Object.values(response)))
 	}, [api, fetchImporters])
 
 	useEffect(() => {

@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { useRestAPI } from '../../../../hooks/useRestAPI'
+import { unpackErrorResponse } from '../../../../utils/errors'
 import { REST_BASES } from '../../../../utils/restAPI'
 import { isNetworkAdmin } from '../../../../utils/screen'
 import { Button } from '../../../common/Button'
 import { ImportCard } from '../../common/ImportCard'
 import { useSelection } from '../../../../hooks/useSelection'
 import { SnippetSelectionTable } from './SnippetSelectionTable'
-import type { ReactNode} from 'react'
+import type { FormEventHandler, ReactNode} from 'react'
 import type { UseSelection } from '../../../../hooks/useSelection'
 import type { ImportResult } from './ImportResultDisplay'
 import type { ImportableSnippetSchema } from '../../../../types/schema/ImportableSnippetSchema'
@@ -115,7 +116,8 @@ const SubmitForm: React.FC<SubmitFormProps> = ({ children, duplicateAction, setI
 		}
 	}
 
-	const handleImportSelected = () => {
+	const handleImportSelected: FormEventHandler<HTMLFormElement> = event => {
+		event.preventDefault()
 		const request = buildRequest()
 
 		if (request) {
@@ -125,14 +127,11 @@ const SubmitForm: React.FC<SubmitFormProps> = ({ children, duplicateAction, setI
 			api
 				.post<SnippetImportResponse, SnippetImportRequest>(`${REST_BASES.importFiles}/import`, request)
 				.then(({ message, imported }) => {
-					setImportResult({ success: true, message, imported })
+					setImportResult({ step: 'select', success: true, message, imported })
 				})
 				.catch((error: unknown) => {
 					console.error('Import error:', error)
-					setImportResult({
-						success: false,
-						message: error instanceof Error ? error.message : __('An unknown error occurred.', 'code-snippets')
-					})
+					setImportResult({ step: 'select', success: false, message: unpackErrorResponse(error) })
 				})
 				.finally(() => setIsImporting(false))
 		}
