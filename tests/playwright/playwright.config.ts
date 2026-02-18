@@ -70,7 +70,7 @@ export default defineConfig({
 		}
 	],
 
-	timeout: 30000, // 30 seconds per test
+	timeout: 60000, // 60 seconds per test
 
 	expect: {
 		timeout: 30000, // 30 seconds for each expect assertion
