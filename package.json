@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "scripts": {
+    "prepare": "husky install",
     "test:php": "WP_TESTS_DIR=./.wp-tests-lib WP_DEVELOP_DIR=./.wp-core src/vendor/bin/phpunit -c phpunit.xml",
     "test:php:watch": "npm run test:php -- --testdox",
     "test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
@@ -29,6 +30,8 @@
     "lint:js:fix": "eslint --fix",
     "lint:php": "src/vendor/bin/phpcs -s --colors --standard=phpcs.xml src/php tests",
     "lint:php:fix": "src/vendor/bin/phpcbf --standard=phpcs.xml src/php tests",
+    "lint:readme": "ts-node scripts/linters/lint-readme.ts",
+    "lint:changelog": "ts-node scripts/linters/lint-changelog.ts",
     "version": "ts-node scripts/version.ts",
     "version-dev": "npm version --git-tag-version=false --preid=dev",
     "version-alpha": "npm version --git-tag-version=false --preid=alpha",
@@ -54,7 +57,7 @@
     "@wordpress/element": "^6.28.0",
     "@wordpress/i18n": "^5.17.0",
     "@wordpress/url": "^4.20.0",
-    "axios": "^1.7.9",
+    "axios": "^1.13.5",
     "classnames": "^2.5.1",
     "codemirror": "^5.29",
     "php-parser": "^3.2.2",
@@ -64,7 +67,7 @@
     "react-select": "^5.10.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.20.0",
     "@stylistic/eslint-plugin": "^3.1.0",
     "@stylistic/stylelint-plugin": "^3.1.2",
@@ -93,11 +96,10 @@
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-webpack-plugin": "^4.2.0",
-    "glob": "^11.0.1",
+    "glob": "^11.1.0",
     "globals": "^15.14.0",
     "mini-css-extract-plugin": "^2.9.2",
     "postcss": "^8.5.2",
-    "postcss-color-hsl": "^2.0.0",
     "postcss-hexrgba": "^2.1.0",
     "postcss-load-config": "^6.0.1",
     "postcss-loader": "^8.1.1",
@@ -119,10 +121,32 @@
     "webpack-merge": "^6.0.1",
     "webpack-remove-empty-scripts": "^1.0.4",
     "@playwright/test": "^1.48.0",
-    "@wordpress/env": "^9.0.0"
+    "@wordpress/env": "^9.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.5.2"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": "npm run lint:js:fix --",
+    "*.{css,scss}": "npm run lint:styles:fix --",
+    "*.php": "npm run lint:php:fix --",
+    "src/readme.txt": "ts-node scripts/linters/lint-readme.ts",
+    "CHANGELOG.md": "ts-node scripts/linters/lint-changelog.ts"
   },
   "overrides": {
-    "eslint": "^9.20.1",
+    "@eslint/eslintrc": {
+      "ajv": "6.12.6"
+    },
+    "eslint": {
+      "ajv": "6.12.6"
+    },
+    "@babel/runtime": "7.28.6",
+    "js-yaml": "4.1.1",
+    "lodash": "4.17.23",
+    "brace-expansion": "1.1.12",
+    "form-data": "4.0.5",
+    "tmp": "0.2.5",
+    "eslint-visitor-keys": "4.2.1",
+    "@typescript-eslint/visitor-keys": "8.55.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }

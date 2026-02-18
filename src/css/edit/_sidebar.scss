@@ -1,5 +1,20 @@
 @use '../common/theme';
 
+.snippet-priority input {
+	inline-size: 4em;
+}
+
+.activation-switch-container,
+.lock-control-container {
+	label {
+		display: flex;
+		flex-flow: row;
+		gap: 5px;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
 .code-snippets-modal {
 	p h4 {
 		margin-block-start: 0;
@@ -23,6 +38,11 @@
 	.delete-button {
 		color: #cc1818;
 
+		&:disabled {
+			color: #a7aaad;
+			cursor: not-allowed;
+		}
+
 		&:hover:not(:disabled) {
 			color: #9e1313;
 		}
@@ -30,11 +50,6 @@
 		&:focus:not(:disabled) {
 			color: #710d0d;
 			border-color: #710d0d;
-		}
-
-		&:disabled {
-			color: #a7aaad;
-			cursor: not-allowed;
 		}
 	}
 
@@ -114,27 +129,12 @@
 	}
 }
 
-.snippet-priority input {
-	inline-size: 4em;
-}
-
 p.submit {
 	display: flex;
 	flex-flow: column;
 	gap: 8px;
 	margin-block-start: 17px;
 	padding-block-start: 0;
-}
-
-.activation-switch-container,
-.lock-control-container {
-	label {
-		display: flex;
-		flex-flow: row;
-		gap: 5px;
-		justify-content: center;
-		align-items: center;
-	}
 }
 
 .shortcode-tag-wrapper {

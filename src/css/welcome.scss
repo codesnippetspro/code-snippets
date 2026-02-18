@@ -41,18 +41,6 @@ $breakpoint: 1060px;
 	}
 }
 
-.csp-welcome-header nav {
-	column-gap: 15px;
-
-	ul {
-		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-evenly;
-		gap: 5px;
-		margin: 0;
-	}
-}
-
 .code-snippets-hero {
 	display: flex;
 	flex-flow: column;
@@ -246,6 +234,18 @@ $breakpoint: 1060px;
 	position: absolute;
 	inset-inline-start: 47%;
 	inset-block-start: 45%;
+}
+
+.csp-welcome-header nav {
+	column-gap: 15px;
+
+	ul {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-evenly;
+		gap: 5px;
+		margin: 0;
+	}
 }
 
 @keyframes loading-rotate {

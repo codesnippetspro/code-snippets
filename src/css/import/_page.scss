@@ -1,15 +1,15 @@
 .import-snippets-menu {
 	.narrow {
-		max-width: 800px;
+		max-inline-size: 800px;
 	}
 
 	h2.nav-tab-wrapper {
-		margin-bottom: 20px;
+		margin-block-end: 20px;
 	}
 }
 
 .import-snippets-section {
-	padding-top: 0;
+	padding-block-start: 0;
 	display: none;
 
 	&.active-section {

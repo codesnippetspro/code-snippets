@@ -1,18 +1,18 @@
 
 .importer-selector-card {
 	h2 {
-		margin: 0 0 1em 0;
+		margin: 0 0 1em;
 	}
 
 	select {
 		display: block;
-		margin-top: 5px;
-		width: 100%;
-		max-width: 300px;
+		margin-block-start: 5px;
+		inline-size: 100%;
+		max-inline-size: 300px;
 	}
 
 	p {
-		margin: 10px 0 0 0;
+		margin: 10px 0 0;
 		color: #666;
 		font-size: 14px;
 	}
@@ -20,7 +20,7 @@
 
 .import-options-card {
 	h2 {
-		margin: 0 0 1em 0;
+		margin: 0 0 1em;
 	}
 
 	label {
@@ -36,7 +36,7 @@
 	}
 
 	input {
-		margin-top: 2px;
+		margin-block-start: 2px;
 	}
 
 	> div {
@@ -44,11 +44,11 @@
 	}
 
 	.import-tag-entry {
-		margin-top: 12px;
+		margin-block-start: 12px;
 
 		input {
-			width: 100%;
-			max-width: 300px;
+			inline-size: 100%;
+			max-inline-size: 300px;
 		}
 	}
 }
@@ -57,13 +57,13 @@
 .import-section-status {
 	.error, .success {
 		border-radius: 50%;
-		width: 24px;
-		height: 24px;
+		inline-size: 24px;
+		block-size: 24px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex-shrink: 0;
-		margin-top: 2px;
+		margin-block-start: 2px;
 
 		span {
 			color: white;
@@ -81,7 +81,7 @@
 	}
 
 	h3 {
-		margin: 0 0 8px 0;
+		margin: 0 0 8px;
 		font-size: 16px;
 		font-weight: 600;
 	}
@@ -97,52 +97,53 @@
 	}
 }
 
+.no-snippets-card {
+	.card-inner {
+		text-align: center;
+		padding: 40px 20px;
+		color: #666;
+
+		p {
+			margin: 0;
+			font-size: 14px;
+		}
+	}
+
+	.card-icon {
+		font-size: 48px;
+		margin-block-end: 16px;
+	}
+
+	h3 {
+		margin: 0 0 8px;
+		font-size: 18px;
+		color: #333;
+	}
+
+}
+
 .migrate-snippets-table-card {
 	> div:first-child {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 10px;
+		margin-block-end: 10px;
 
 		h2 {
 			margin: 0;
 		}
 
 		p {
-			margin: 0.5em 0 1em 0;
+			margin: 0.5em 0 1em;
 		}
 	}
 
 	.column-id {
 		text-align: end;
-		width: 50px;
+		inline-size: 50px;
 	}
 }
 
 .migrate-form-container {
-	max-width: 800px;
-}
-
-.no-snippets-card {
-	.card-inner {
-		text-align: center;
-		padding: 40px 20px;
-		color: #666;
-	}
-
-	.card-icon {
-		font-size: 48px;
-		margin-bottom: 16px;
-	}
-
-	h3 {
-		margin: 0 0 8px 0;
-		font-size: 18px;
-		color: #333;
-	}
-
-	p {
-		margin: 0;
-		font-size: 14px;
-	}
+	max-inline-size: 800px;
 }

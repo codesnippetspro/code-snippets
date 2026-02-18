@@ -11,13 +11,13 @@
 	.tablenav {
 		display: flex;
 		gap: 10px;
-		height: auto;
+		block-size: auto;
 		padding: 0;
 	}
 
 	.tablenav.bottom {
 		justify-content: flex-end;
-		margin-top: 1em;
+		margin-block-start: 1em;
 	}
 }
 
@@ -26,13 +26,13 @@
 	padding: 25px;
 	border-radius: 5px;
 	border: 1px solid #e0e0e0;
-	margin-bottom: 10px;
-	width: 100%;
+	margin-block-end: 10px;
+	inline-size: 100%;
 
 	&.status-display {
 		display: flex;
 		align-items: flex-start;
 		gap: 12px;
-		margin-bottom: 20px;
+		margin-block-end: 20px;
 	}
 }

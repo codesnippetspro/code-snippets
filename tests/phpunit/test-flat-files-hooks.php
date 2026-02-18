@@ -42,4 +42,3 @@ class Flat_Files_Hooks_Test extends TestCase {
 		$this->assertSame( $saved->id, $observed->id );
 	}
 }
-

@@ -58,10 +58,6 @@ $wpbody-block-indent: 20px;
 	a {
 		color: inherit;
 		text-decoration: none;
-
-		&.active-link, &:hover, &:focus, &:active {
-			color: #2271b1;
-		}
 	}
 }
 
@@ -97,6 +93,13 @@ $wpbody-block-indent: 20px;
 	li:last-of-type {
 		margin-inline-start: auto;
 	}
+}
+
+.code-snippets-toolbar-upper li a.active-link,
+.code-snippets-toolbar-upper li a:hover,
+.code-snippets-toolbar-upper li a:focus,
+.code-snippets-toolbar-upper li a:active {
+	color: #2271b1;
 }
 
 .code-snippets-toolbar-lower .pro-chip,

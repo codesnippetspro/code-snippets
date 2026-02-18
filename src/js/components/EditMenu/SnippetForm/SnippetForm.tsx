@@ -89,7 +89,7 @@ const EditForm: React.FC<EditFormProps> = ({ children, className }) => {
 		submitSnippet(snippet, action)
 			.then(response => {
 				if (response && 0 !== response.id && window.CODE_SNIPPETS) {
-					if (window.location.href.toString().includes(window.CODE_SNIPPETS.urls.addNew)) {
+					if (window.location.href.includes(window.CODE_SNIPPETS.urls.addNew)) {
 						document.title = document.title
 							.replace(__('Create New Snippet', 'code-snippets'), __('Edit Snippet', 'code-snippets'))
 							.replace(__('Create New Condition', 'code-snippets'), __('Edit Condition', 'code-snippets'))

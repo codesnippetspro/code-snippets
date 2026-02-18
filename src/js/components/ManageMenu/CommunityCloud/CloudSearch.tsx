@@ -106,7 +106,7 @@ export const CloudSearch = () => {
 
 			{error && <ErrorBanner />}
 
-			{0 < page && searchResults && 0 === searchResults.length
+			{0 < page && 0 === searchResults?.length
 				? <NoSearchResultsBanner />
 				: <WithCloudSearchFiltersContext>
 					<SearchResultsTable />

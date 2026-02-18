@@ -238,7 +238,7 @@ const replaceSnippetItems = (status: PaginationStatus, snippets: SnippetResponse
 		fragment.appendChild(li)
 	}
 
-	if (insertAfter && insertAfter.parentNode === subMenu) {
+	if (insertAfter?.parentNode === subMenu) {
 		subMenu.insertBefore(fragment, insertAfter.nextSibling)
 	} else {
 		subMenu.appendChild(fragment)
