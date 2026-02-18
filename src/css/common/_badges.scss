@@ -62,6 +62,11 @@
 	gap: 2px;
 }
 
+.nav-tab-button .dashicons-external {
+	font-size: 15px;
+	color: #666;
+}
+
 @each $name, $colors in theme.$badges {
 	$text-color: #fff;
 	$background-color: list.nth($colors, 1);
@@ -99,6 +104,8 @@
 	$text-color: list.nth($colors, 2);
 	$background-color: list.nth($colors, 1);
 
+	background: transparent;
+
 	.badge.pro-badge {
 		color: $text-color;
 		background-color: $background-color;
@@ -114,13 +121,4 @@
 			background-color: $text-color;
 		}
 	}
-}
-
-.nav-tab-inactive {
-	background: transparent;
-}
-
-.nav-tab-button .dashicons-external {
-	font-size: 15px;
-	color: #666;
 }
