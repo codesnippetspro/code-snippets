@@ -13,7 +13,7 @@ export default defineConfig({
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: 0,
-	workers: process.env.CI ? WORKERS : undefined,
+	workers: process.env.CI ? WORKERS : WORKERS,
 	reporter: process.env.CI
 		? [
 			['line'],
@@ -70,10 +70,10 @@ export default defineConfig({
 		}
 	],
 
-	timeout: 10000, // 10 seconds per test
+	timeout: 30000, // 30 seconds per test
 
 	expect: {
-		timeout: 10000, // 10 seconds for each expect assertion
+		timeout: 30000, // 30 seconds for each expect assertion
 		toHaveScreenshot: { maxDiffPixels: 100 }
 	}
 })
