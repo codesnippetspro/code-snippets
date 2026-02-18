@@ -16,7 +16,7 @@
 * Enhanced file based execution support with improved multisite mode compatibility
 
 ### Changed
-* Updated links to more recent documentation pages 
+* Updated links to more recent documentation pages
 
 ### Fixed
 * Fixed multisite capability checks in Plugin class
@@ -215,10 +215,10 @@
 
 ### Changed
 * Updated CSS to use latest Sass features.
-* Moved theme selector to just above editor preview on settings page (thanks to [brandonjp]). ([#206](https://github.com/codesnippetspro/code-snippets/issues/206)) 
+* Moved theme selector to just above editor preview on settings page (thanks to [brandonjp]). ([#206](https://github.com/codesnippetspro/code-snippets/issues/206))
 * `[code_snippet]` shortcodes can now be nested within each other. ([#198](https://github.com/codesnippetspro/code-snippets/issues/198))
 
-### Fixed 
+### Fixed
 * Save buttons above editor did not follow usual validation process in Pro. (PRO) ([#197](https://github.com/codesnippetspro/code-snippets/issues/197))
 * Minor inconsistencies in consistent UI elements between Core and Pro.
 * Tags input not allowing input. ([#211](https://github.com/codesnippetspro/code-snippets/issues/211))
@@ -242,13 +242,13 @@
 * Action hook `code_snippets/admin/manage` now includes the currently viewed type.
 
 ### Fixed
-* Memory issue from checking aggregate posts while loading front-end syntax highlighter. 
+* Memory issue from checking aggregate posts while loading front-end syntax highlighter.
 * Translation functions being called too early on upgrade, resulting in localisation loading errors.
 * Bug preventing the 'share on network' status of network snippets from correctly updating.
 * Incorrect logic controlling when to display 'Save Changes' or 'Save Changes and Activate' buttons.
 * Old notices persisting when switching between editing and creating snippets.
 
-## 3.6.5.1 (2024-05-24)
+## [3.6.5.1] (2024-05-24)
 
 * Redeployment of [v3.6.5](#365-2024-05-24) to overcome issue with initial build.
 
@@ -376,11 +376,11 @@
 
 ### Changed
 * Better compatibility with modern versions of PHP (7.0+).
-* Converted Edit/Add New Snippet page to use React.
-  * Converted action buttons to asynchronously use REST API endpoints through AJAX.
-  * Load page components dynamically through React.
-  * Added action notice queue system.
-  * Replaced native alert dialog with proper React modal.
+* Converted Edit/Add New Snippet page to use React:
+  - Converted action buttons to asynchronously use REST API endpoints through AJAX.
+  - Load page components dynamically through React.
+  - Added action notice queue system
+  - Replaced native alert dialog with proper React modal.
 * Catch snippet execution errors to prevent site from crashing.
 * Display recent snippet errors in admin dashboard instead.
 * Updated editor block to use new REST API endpoints. (PRO)
@@ -564,9 +564,9 @@
 
 ### Added
 * Added translations:
-  * Spanish by [Ibidem Group](https://www.ibidemgroup.com)
-  * Urdu by [Samuel Badree](https://mobilemall.pk/)
-  * Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
+  - Spanish by [Ibidem Group](https://www.ibidemgroup.com)
+  - Urdu by [Samuel Badree](https://mobilemall.pk/)
+  - Greek by [Toni Bishop from Jrop](https://www.jrop.com/)
 * Support for `:class` syntax to the code validator.
 * PHP8 support to the code linter.
 * Color picker feature to the code editor.
@@ -1307,12 +1307,12 @@
 
 ### Changed
 * Updated CodeMirror to version 2.33.
-* Updated the 'Manage Snippets' page to use the WP_List_Table class.
-  * Added 'Screen Options' tab to 'Manage Snippets' page.
-  * Added search capability to 'Manage Snippets' page.
-  * Added views to easily filter activated, deactivated and recently activated snippets.
-  * Added ID column to 'Manage Snippets' page.
-  * Added sortable name and ID column on 'Manage Snippets' page ([#](https://wordpress.org/support/topic/plugin-code-snippets-suggestion-sort-by-snippet-name))
+* Updated the 'Manage Snippets' page to use the WP_List_Table class:
+  - Added 'Screen Options' tab to 'Manage Snippets' page.
+  - Added search capability to 'Manage Snippets' page.
+  - Added views to easily filter activated, deactivated and recently activated snippets.
+  - Added ID column to 'Manage Snippets' page.
+  - Added sortable name and ID column on 'Manage Snippets' page ([#](https://wordpress.org/support/topic/plugin-code-snippets-suggestion-sort-by-snippet-name))
 * Improved API.
 * Lengthened snippet name field to 64 characters. ([#](https://wordpress.org/support/topic/plugin-code-snippets-snippet-title-limited-to-36-characters))
 
