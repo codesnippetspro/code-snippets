@@ -12,6 +12,8 @@ if ( getenv( 'WP_TESTS_DIR' ) ) {
 	$_tests_dir = getenv( 'WP_DEVELOP_DIR' ) . '/tests/phpunit';
 } elseif ( getenv( 'WP_PHPUNIT__DIR' ) ) {
 	$_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
+} elseif ( file_exists( dirname( __DIR__ ) . '/.wp-tests-lib/includes/functions.php' ) ) {
+	$_tests_dir = dirname( __DIR__ ) . '/.wp-tests-lib';
 } elseif ( file_exists( '/tmp/wordpress-tests-lib/includes/functions.php' ) ) {
 	$_tests_dir = '/tmp/wordpress-tests-lib';
 } else {
@@ -24,9 +26,12 @@ if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
 
 require_once $_tests_dir . '/includes/functions.php';
 
-tests_add_filter( 'muplugins_loaded', function() {
-	require dirname( __DIR__ ) . '/src/code-snippets.php';
-} );
+tests_add_filter(
+    'muplugins_loaded',
+    function () {
+		require dirname( __DIR__ ) . '/src/code-snippets.php';
+	}
+);
 
 require $_tests_dir . '/includes/bootstrap.php';
 
