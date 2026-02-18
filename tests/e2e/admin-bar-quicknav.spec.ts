@@ -14,9 +14,9 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 	let inactiveC: string
 	let inactiveA: string
 
-	test.beforeAll(async () => {
-		await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: QUICKNAV_PER_PAGE })
-		await SnippetsTestHelper.truncateAllSnippetsViaCli()
+		test.beforeAll(async () => {
+			await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: QUICKNAV_PER_PAGE })
+			await SnippetsTestHelper.deleteAllSnippetsViaCli()
 
 		activeA = `${QUICKNAV_PREFIX} Active A`
 		activeB = `${QUICKNAV_PREFIX} Active B`
@@ -33,10 +33,10 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 		await SnippetsTestHelper.createSnippetViaCli({ name: inactiveC, active: false, type: 'html' })
 	})
 
-	test.afterAll(async () => {
-		await SnippetsTestHelper.truncateAllSnippetsViaCli()
-		await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: QUICKNAV_PER_PAGE })
-	})
+		test.afterAll(async () => {
+			await SnippetsTestHelper.deleteAllSnippetsViaCli()
+			await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: QUICKNAV_PER_PAGE })
+		})
 
 	test('Menu structure, gating, and pagination work', async ({ page }) => {
 		test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
