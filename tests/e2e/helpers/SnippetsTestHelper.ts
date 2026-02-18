@@ -108,47 +108,8 @@ export class SnippetsTestHelper {
 			}
 		`
 
-		await wpCli(['eval', php])
-	}
-
-	static async truncateAllSnippetsViaCli(): Promise<void> {
-		const php = `
-			global $wpdb;
-			$targets = [ [ false, \\Code_Snippets\\code_snippets()->db->get_table_name( false ) ] ];
-
-			if ( is_multisite() ) {
-				$targets[] = [ true, \\Code_Snippets\\code_snippets()->db->get_table_name( true ) ];
-			}
-
-			foreach ( $targets as $target ) {
-				[ $network, $table ] = $target;
-				$wpdb->query( "TRUNCATE TABLE {$table}" );
-			}
-		`
-
-		await wpCli(['eval', php])
-	}
-
-	static async deleteAllSnippetsViaCli(): Promise<void> {
-		const php = `
-			global $wpdb;
-			$targets = [ [ false, \\Code_Snippets\\code_snippets()->db->get_table_name( false ) ] ];
-
-			if ( is_multisite() ) {
-				$targets[] = [ true, \\Code_Snippets\\code_snippets()->db->get_table_name( true ) ];
-			}
-
-			foreach ( $targets as $target ) {
-				[ $network, $table ] = $target;
-				$ids = $wpdb->get_col( "SELECT id FROM {$table}" );
-				foreach ( $ids as $id ) {
-					\\Code_Snippets\\delete_snippet( intval( $id ), (bool) $network );
-				}
-			}
-		`
-
-		await wpCli(['eval', php])
-	}
+			await wpCli(['eval', php])
+		}
 
 	private async clickButton(name: RegExp, options: { force?: boolean } = {}): Promise<void> {
 		const force = options.force ?? true

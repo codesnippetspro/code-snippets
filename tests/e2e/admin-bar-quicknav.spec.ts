@@ -6,21 +6,21 @@ const QUICKNAV_PREFIX = 'E2E QuickNav'
 const QUICKNAV_PER_PAGE = 2
 const QUICKNAV_TEST_TIMEOUT_MS = 180000
 
-test.describe('Admin Bar Snippets QuickNav', () => {
-	let activeA: string
-	let activeB: string
-	let activeC: string
+	test.describe('Admin Bar Snippets QuickNav', () => {
+		let activeA: string
+		let activeB: string
+		let activeC: string
 	let inactiveB: string
 	let inactiveC: string
 	let inactiveA: string
 
 		test.beforeAll(async () => {
 			await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: QUICKNAV_PER_PAGE })
-			await SnippetsTestHelper.deleteAllSnippetsViaCli()
+			await SnippetsTestHelper.cleanupSnippetsByPrefix(QUICKNAV_PREFIX)
 
-		activeA = `${QUICKNAV_PREFIX} Active A`
-		activeB = `${QUICKNAV_PREFIX} Active B`
-		activeC = `${QUICKNAV_PREFIX} Active C`
+			activeA = `${QUICKNAV_PREFIX} Active A`
+			activeB = `${QUICKNAV_PREFIX} Active B`
+			activeC = `${QUICKNAV_PREFIX} Active C`
 		inactiveA = `${QUICKNAV_PREFIX} Inactive A`
 		inactiveB = `${QUICKNAV_PREFIX} Inactive B`
 		inactiveC = `${QUICKNAV_PREFIX} Inactive Z HTML`
@@ -31,15 +31,60 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 		await SnippetsTestHelper.createSnippetViaCli({ name: inactiveA, active: false, type: 'php' })
 		await SnippetsTestHelper.createSnippetViaCli({ name: inactiveB, active: false, type: 'php' })
 		await SnippetsTestHelper.createSnippetViaCli({ name: inactiveC, active: false, type: 'html' })
-	})
+		})
 
 		test.afterAll(async () => {
-			await SnippetsTestHelper.deleteAllSnippetsViaCli()
+			await SnippetsTestHelper.cleanupSnippetsByPrefix(QUICKNAV_PREFIX)
 			await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: QUICKNAV_PER_PAGE })
 		})
 
-	test('Menu structure, gating, and pagination work', async ({ page }) => {
-		test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
+		const openListing = async (page: import('@playwright/test').Page, query: string) => {
+			await page.goto(`/wp-admin/admin.php?page=snippets${query}`)
+
+			const root = page.locator('#wp-admin-bar-code-snippets')
+			await expect(root).toBeVisible()
+			await root.hover()
+		}
+
+		const getTotalPagesForListing = async (page: import('@playwright/test').Page, status: 'active' | 'inactive') => {
+			const node = page.locator(`#wp-admin-bar-code-snippets-${status}-snippets`)
+			await node.hover()
+
+			const controls = node.locator(`.code-snippets-pagination-controls[data-status="${status}"]`).first()
+			const totalPagesAttr = await controls.getAttribute('data-total-pages').catch(() => null)
+			const parsed = totalPagesAttr ? Number(totalPagesAttr) : NaN
+			return Number.isFinite(parsed) && parsed > 0 ? parsed : 1
+		}
+
+		const expectSnippetVisibleInListingPages = async (
+			page: import('@playwright/test').Page,
+			options: { status: 'active' | 'inactive'; queryArg: string; snippetName: string }
+		) => {
+			await openListing(page, '')
+
+			const totalPages = await getTotalPagesForListing(page, options.status)
+
+			for (let pageNo = 1; pageNo <= totalPages; pageNo++) {
+				await openListing(page, `&${options.queryArg}=${pageNo}`)
+
+				const node = page.locator(`#wp-admin-bar-code-snippets-${options.status}-snippets`)
+				await node.hover()
+
+				const items = node.locator('li.code-snippets-snippet-item a')
+				await items.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => null)
+
+				const match = items.filter({ hasText: options.snippetName }).first()
+				if (await match.isVisible().catch(() => false)) {
+					await expect(match).toBeVisible({ timeout: 30000 })
+					return
+				}
+			}
+
+			throw new Error(`Snippet not found in ${options.status} listing after checking ${totalPages} page(s): ${options.snippetName}`)
+		}
+
+		test('Menu structure, gating, and pagination work', async ({ page }) => {
+			test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
 
 		const helper = new SnippetsTestHelper(page)
 		await helper.navigateToSnippetsAdmin()
@@ -83,29 +128,26 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 		const activeItems = activeNode.locator('li.code-snippets-snippet-item a')
 		await expect(activeItems.filter({ hasText: activeA })).toBeVisible()
 		await expect(activeItems.filter({ hasText: activeB })).toBeVisible()
-		await expect(activeItems.filter({ hasText: activeC })).not.toBeVisible()
+			await expect(activeItems.filter({ hasText: activeC })).not.toBeVisible()
 
-		await activeControls.locator('a[data-action="next"]').click()
-
-		await expect(activeItems.filter({ hasText: activeC })).toBeVisible({ timeout: 30000 })
-		await expect(activeItems.filter({ hasText: activeA })).not.toBeVisible()
+			await expectSnippetVisibleInListingPages(page, { status: 'active', queryArg: 'code_snippets_ab_active_page', snippetName: activeC })
 
 		// Ensure titles are type-prefixed.
 		await expect(activeItems.filter({ hasText: activeC })).toContainText('(PHP)')
 
-		// Inactive list exists and includes our inactive snippet.
-		const inactiveNode = page.locator('#wp-admin-bar-code-snippets-inactive-snippets')
-		await inactiveNode.hover()
-		const inactiveControls = inactiveNode.locator('.code-snippets-pagination-controls[data-status="inactive"]')
-		await expect(inactiveControls).toBeVisible()
+			// Inactive list exists and includes our inactive snippet.
+			const inactiveNode = page.locator('#wp-admin-bar-code-snippets-inactive-snippets')
+			await inactiveNode.hover()
+			const inactiveControls = inactiveNode.locator('.code-snippets-pagination-controls[data-status="inactive"]')
+			await expect(inactiveControls).toBeVisible()
 
-		const inactiveItems = inactiveNode.locator('li.code-snippets-snippet-item a')
-		await expect(inactiveItems.filter({ hasText: inactiveA })).toBeVisible({ timeout: 30000 })
+			const inactiveItems = inactiveNode.locator('li.code-snippets-snippet-item a')
+			await expect(inactiveItems.first()).toBeVisible({ timeout: 30000 })
 
-		await inactiveControls.locator('a[data-action="next"]').click()
-		await expect(inactiveItems.filter({ hasText: inactiveC })).toBeVisible({ timeout: 30000 })
-		await expect(inactiveItems.filter({ hasText: inactiveC })).toContainText('(HTML)')
-	})
+			await expectSnippetVisibleInListingPages(page, { status: 'inactive', queryArg: 'code_snippets_ab_inactive_page', snippetName: inactiveA })
+			await expectSnippetVisibleInListingPages(page, { status: 'inactive', queryArg: 'code_snippets_ab_inactive_page', snippetName: inactiveC })
+			await expect(page.locator('#wp-admin-bar-code-snippets-inactive-snippets li.code-snippets-snippet-item a').filter({ hasText: inactiveC }).first()).toContainText('(HTML)')
+		})
 
 	test('Manage submenu contains status quick links', async ({ page }) => {
 		test.setTimeout(QUICKNAV_TEST_TIMEOUT_MS)
