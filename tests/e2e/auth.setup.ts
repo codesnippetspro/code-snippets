@@ -1,16 +1,39 @@
 import { join } from 'path'
 import { expect, test as setup } from '@playwright/test'
+import { wpCli } from './helpers/wpCli'
 
 const authFile = join(__dirname, '.auth/user.json')
 
 setup('authenticate', async ({ page }) => {
+	setup.setTimeout(120000)
+
+	// CI sometimes boots with WordPress already installed (so the workflow's
+	// `wp core install --admin_password=...` step is skipped). Ensure the admin
+	// credentials are set to the expected values before logging in via UI.
+	try {
+		await wpCli(['user', 'update', 'admin', '--user_pass=password'])
+	} catch {
+		// If the user doesn't exist, create it (local/wp-env + CI both support this).
+		await wpCli([
+			'user',
+			'create',
+			'admin',
+			'admin@example.org',
+			'--user_pass=password',
+			'--role=administrator'
+		])
+	}
+
 	await page.goto('/wp-login.php')
 	await page.waitForSelector('#user_login')
 
 	await page.fill('#user_login', 'admin')
 	await page.fill('#user_pass', 'password')
 
-	await page.click('#wp-submit')
+	await Promise.all([
+		page.waitForLoadState('domcontentloaded'),
+		page.click('#wp-submit')
+	])
 
 	// If WordPress shows the DB upgrade interstitial it includes a link to
 	// `upgrade.php`. In that case navigate back to `/wp-admin` (the upgrade
