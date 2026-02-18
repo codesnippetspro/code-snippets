@@ -44,6 +44,73 @@ export class SnippetsTestHelper {
 		return `${baseName} ${Date.now()}-${Math.random().toString(RANDOM_RADIX).slice(RANDOM_SLICE_START, RANDOM_SLICE_END)}`
 	}
 
+	static async setAdminBarQuickNavSettings(options: { enabled: boolean; perPage: number }): Promise<void> {
+		const php = `
+			\\Code_Snippets\\Settings\\update_setting('general', 'enable_admin_bar', ${options.enabled ? 'true' : 'false'});
+			\\Code_Snippets\\Settings\\update_setting('general', 'admin_bar_snippet_limit', ${options.perPage});
+		`
+
+		await wpCli(['eval', php])
+	}
+
+	static async createSnippetViaCli(options: { name: string; active: boolean; type?: 'php' | 'html' | 'css' | 'js' | 'cond' }): Promise<void> {
+		const type = options.type ?? 'php'
+		let scope = 'global'
+		switch (type) {
+			case 'html':
+				scope = 'content'
+				break
+			case 'css':
+				scope = 'site-css'
+				break
+			case 'js':
+				scope = 'site-footer-js'
+				break
+			case 'cond':
+				scope = 'condition'
+				break
+		}
+
+		const code = 'html' === type ? `<p>${options.name}</p>\n` : `// ${options.name}\n`
+
+		const php = `
+			$snippet = new \\Code_Snippets\\Model\\Snippet([
+				'name' => ${JSON.stringify(options.name)},
+				'desc' => '',
+				'code' => ${JSON.stringify(code)},
+				'scope' => ${JSON.stringify(scope)},
+				'active' => ${options.active ? 'true' : 'false'},
+				'tags' => [],
+			]);
+			\\Code_Snippets\\save_snippet($snippet);
+		`
+
+		await wpCli(['eval', php])
+	}
+
+	static async cleanupSnippetsByPrefix(prefix: string): Promise<void> {
+		const php = `
+			global $wpdb;
+			$prefix = ${JSON.stringify(prefix)};
+			$like = $wpdb->esc_like( $prefix ) . '%';
+			$targets = [ [ false, \\Code_Snippets\\code_snippets()->db->get_table_name( false ) ] ];
+
+			if ( is_multisite() ) {
+				$targets[] = [ true, \\Code_Snippets\\code_snippets()->db->get_table_name( true ) ];
+			}
+
+			foreach ( $targets as $target ) {
+				[ $network, $table ] = $target;
+				$ids = $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$table} WHERE name LIKE %s", $like ) );
+				foreach ( $ids as $id ) {
+					\\Code_Snippets\\delete_snippet( intval( $id ), (bool) $network );
+				}
+			}
+		`
+
+		await wpCli(['eval', php])
+	}
+
 	private async clickButton(name: RegExp, options: { force?: boolean } = {}): Promise<void> {
 		const force = options.force ?? true
 
@@ -344,26 +411,7 @@ export class SnippetsTestHelper {
 		// Prefer WP-CLI cleanup for speed and determinism. Use plugin operations so
 		// file-based execution stays in sync (flat files update via hooks).
 		try {
-			const php = `
-				global $wpdb;
-				$name = ${JSON.stringify(snippetName)};
-				$like = $wpdb->esc_like( $name ) . '%';
-				$targets = [ [ false, code_snippets()->db->get_table_name( false ) ] ];
-
-				if ( is_multisite() ) {
-					$targets[] = [ true, code_snippets()->db->get_table_name( true ) ];
-				}
-
-				foreach ( $targets as $target ) {
-					[ $network, $table ] = $target;
-					$ids = $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$table} WHERE name LIKE %s", $like ) );
-					foreach ( $ids as $id ) {
-						\\Code_Snippets\\delete_snippet( intval( $id ), (bool) $network );
-					}
-				}
-			`
-
-			await wpCli(['eval', php])
+			await SnippetsTestHelper.cleanupSnippetsByPrefix(snippetName)
 		} catch {
 			// Cleanup should never fail the test run.
 		}
