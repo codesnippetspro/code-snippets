@@ -103,7 +103,10 @@ jobs:
 
       - name: Install workflow dependencies
         if: steps.deps-cache.outputs.cache-hit != 'true'
-        run: npm run prepare-environment:ci && npm run bundle
+        run: npm run prepare-environment:ci
+
+      - name: Build plugin assets
+        run: npm run bundle
 
       - name: Save vendor and node_modules cache
         if: steps.deps-cache.outputs.cache-hit != 'true'
