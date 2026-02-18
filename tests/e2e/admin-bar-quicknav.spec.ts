@@ -16,7 +16,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 
 	test.beforeAll(async () => {
 		await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: QUICKNAV_PER_PAGE })
-		await SnippetsTestHelper.cleanupSnippetsByPrefix(QUICKNAV_PREFIX)
+		await SnippetsTestHelper.truncateAllSnippetsViaCli()
 
 		activeA = `${QUICKNAV_PREFIX} Active A`
 		activeB = `${QUICKNAV_PREFIX} Active B`
@@ -34,7 +34,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 	})
 
 	test.afterAll(async () => {
-		await SnippetsTestHelper.cleanupSnippetsByPrefix(QUICKNAV_PREFIX)
+		await SnippetsTestHelper.truncateAllSnippetsViaCli()
 		await SnippetsTestHelper.setAdminBarQuickNavSettings({ enabled: true, perPage: QUICKNAV_PER_PAGE })
 	})
 
