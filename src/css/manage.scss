@@ -10,19 +10,6 @@
 @use 'manage/snippets-table';
 @use 'manage/cloud-community';
 
-.wrap h1:first-of-type {
-	font-size: 1.6rem;
-	padding: 0;
-	margin-block: 50px 1.4rem;
-
-	.subtitle {
-		vertical-align: middle;
-		display: inline-flex;
-		align-items: center;
-		gap: 1em;
-	}
-}
-
 .create-snippet-button {
 	margin-inline-start: auto;
 	float: inline-end;
@@ -61,7 +48,7 @@
 }
 
 .column-name .tooltip {
-	float: right;
+	float: inline-end;
 
 	.dashicons-lock {
 		color: #646970;
@@ -125,6 +112,19 @@
 
 	.button-primary {
 		margin-inline-start: auto;
+	}
+}
+
+.wrap > h1:first-of-type {
+	font-size: 1.6rem;
+	padding: 0;
+	margin-block: 50px 1.4rem;
+
+	.subtitle {
+		vertical-align: middle;
+		display: inline-flex;
+		align-items: center;
+		gap: 1em;
 	}
 }
 
@@ -229,9 +229,8 @@
 		inline-size: 130px; /* fixed column width */
 		min-inline-size: 130px;
 		max-inline-size: 130px;
-		text-align: right;
-		padding-inline-start: 8px;
-		padding-inline-end: 8px;
+		text-align: end;
+		padding-inline: 8px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
@@ -266,11 +265,6 @@
 .wp-list-table .is-expanded td.column-activate.activate {
 	/* fix for mobile layout */
 	display: table-cell !important;
-}
-
-.nav-tab-wrapper + .subsubsub, p.search-box {
-	margin-block: 10px 0;
-	margin-inline: 0;
 }
 
 .snippet-type-description {
