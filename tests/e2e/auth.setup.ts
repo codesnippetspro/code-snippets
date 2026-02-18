@@ -3,9 +3,19 @@ import { expect, test as setup } from '@playwright/test'
 import { wpCli } from './helpers/wpCli'
 
 const authFile = join(__dirname, '.auth/user.json')
+const AUTH_SETUP_TIMEOUT_MS = 120000
 
 setup('authenticate', async ({ page }) => {
-	setup.setTimeout(120000)
+	setup.setTimeout(AUTH_SETUP_TIMEOUT_MS)
+
+	// Ensure a clean environment across local runs / retries.
+	// If Safe Mode is enabled via `wp-config.php` it disables snippet execution and can
+	// break unrelated tests (e.g., those expecting snippets to run).
+	try {
+		await wpCli(['config', 'delete', 'CODE_SNIPPETS_SAFE_MODE'])
+	} catch {
+		// Ignore if the constant isn't present.
+	}
 
 	// CI sometimes boots with WordPress already installed (so the workflow's
 	// `wp core install --admin_password=...` step is skipped). Ensure the admin
