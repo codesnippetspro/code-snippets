@@ -21,7 +21,18 @@ export const downloadAsFile = (content: BlobPart, filename: string, type: string
 	link.href = URL.createObjectURL(new Blob([content], { type }))
 
 	setTimeout(() => URL.revokeObjectURL(link.href), TIMEOUT_SECONDS * SECOND_IN_MS)
-	setTimeout(() => link.click(), 0)
+
+	// Some browsers (notably headless Chromium) can ignore programmatic clicks on detached anchors.
+	// Appending the link to the DOM before clicking improves reliability.
+	if (document.body) {
+		link.style.display = 'none'
+		document.body.appendChild(link)
+	}
+
+	setTimeout(() => {
+		link.click()
+		link.remove()
+	}, 0)
 }
 
 export const downloadSnippetExportFile = (
