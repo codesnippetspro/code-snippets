@@ -27,9 +27,9 @@
  *
  * Spacing
  *   - Exactly 1 blank line before every ## heading (not before the first one)
- *   - Exactly 1 blank line after every ## heading
+ *   - Exactly 1 blank line after every # and ## headings
+ *   - No blank lines after ### headings
  *   - Exactly 1 blank line before every ### heading (not immediately after ##)
- *   - Exactly 1 blank line after every ### heading
  *   - No consecutive blank lines (max 1)
  *   - File ends with exactly one newline
  */
@@ -114,6 +114,24 @@ function normaliseBlankAfter(lines: string[], headingRe: RegExp): string[] {
 	return out;
 }
 
+/** Remove any blank lines immediately after lines matching `headingRe`. */
+function removeBlankAfter(lines: string[], headingRe: RegExp): string[] {
+	const out: string[] = [];
+	let i = 0;
+	while (i < lines.length) {
+		const line = lines[i];
+		out.push(line);
+		if (headingRe.test(line)) {
+			i++;
+			// skip all blank lines following the heading
+			while (i < lines.length && lines[i].trim() === '') i++;
+			continue;
+		}
+		i++;
+	}
+	return out;
+}
+
 /* ── linter ─────────────────────────────────────────────────────────── */
 
 export function lintChangelog(src: string): { fixed: string; errors: string[] } {
@@ -147,6 +165,10 @@ export function lintChangelog(src: string): { fixed: string; errors: string[] } 
 		const bracketed = line.match(/^## \[([^\]]+)\]\s*\((\d{4}-\d{2}-\d{2})\)/);
 		if (bracketed) return `## [${bracketed[1]}] (${bracketed[2]})`;
 
+		// Bracketed with date but missing closing paren (e.g. "## [1.2.3] (2021-01-01")
+		const bracketedMissingClose = line.match(/^## \[([^\]]+)\]\s*\((\d{4}-\d{2}-\d{2})$/);
+		if (bracketedMissingClose) return `## [${bracketedMissingClose[1]}] (${bracketedMissingClose[2]})`;
+
 		// Bracketed but missing / malformed date
 		const bracketedNoDate = line.match(/^## \[([^\]]+)\]/);
 		if (bracketedNoDate) {
@@ -169,22 +191,76 @@ export function lintChangelog(src: string): { fixed: string; errors: string[] } 
 	lines = lines.map(line => {
 		const m = line.match(/^###\s+(.+)$/);
 		if (!m) return line;
-		const n = KNOWN_CHANGE_TYPES.find(t => t.toLowerCase() === m[1].trim().toLowerCase());
-		return n ? `### ${n}` : `### ${m[1].trim()}`;
+	let key = m[1].trim();
+	let n = KNOWN_CHANGE_TYPES.find(t => t.toLowerCase() === key.toLowerCase());
+	// tolerate accidental plural: Fixeds -> Fixed
+	if (!n && /s$/i.test(key)) {
+		const singular = key.replace(/s$/i, '');
+		n = KNOWN_CHANGE_TYPES.find(t => t.toLowerCase() === singular.toLowerCase());
+		if (n) key = singular;
+	}
+	return n ? `### ${n}` : `### ${key}`;
 	});
 
-	/* 5. List items: "- " → "* " */
-	lines = lines.map(line => (/^- /.test(line) ? '* ' + line.slice(2) : line));
+	/* 5. Handle indented sub-list items ("  * ..." or "  - ...") BEFORE normalising
+	 *    top-level bullets, so we can still detect the indentation.
+	 *   - If the nearest preceding unindented `* ` line ends with `:`, convert to `  - `
+	 *   - If that parent line does NOT end with `:`, append `:` to it, then convert
+	 *   - If no unindented `* ` parent found in the same block → simple indent error,
+	 *     de-indent to `* `
+	 * A blank line breaks the parent–child relationship.
+	 */
+	{
+		const out: string[] = [];
+		for (let i = 0; i < lines.length; i++) {
+			const line = lines[i];
+			const indented = line.match(/^  [*-] (.*)$/);
+			if (!indented) {
+				out.push(line);
+				continue;
+			}
+			const text = indented[1].trimEnd();
+			// Scan backwards through out[] for nearest unindented `* ` parent (stop at blank line)
+			let parentIdx = -1;
+			for (let j = out.length - 1; j >= 0; j--) {
+				if (out[j].trim() === '') break;
+				if (/^\* /.test(out[j])) { parentIdx = j; break; }
+			}
+			if (parentIdx !== -1) {
+				// Ensure parent ends with ':' (replace trailing '.' or ',' if present)
+				const parentTrimmed = out[parentIdx].trimEnd();
+				if (!parentTrimmed.endsWith(':')) {
+					out[parentIdx] = parentTrimmed.replace(/[.,;]$/, '') + ':';
+				}
+				out.push(`  - ${text}`);
+			} else {
+				// No valid parent – simple indentation error, promote to top-level
+				out.push(`* ${text}`);
+			}
+		}
+		lines = out;
+	}
+
+	/* 5b. Normalise remaining top-level bullet markers to "* " */
+	lines = lines.map(line => {
+		const m = line.match(/^([*-]) (.*)$/);
+		if (m) return `* ${m[2].trimEnd()}`;
+		return line;
+	});
 
 	/* 6. Spacing rules */
 	const RELEASE_RE = /^## /;
 	const SECTION_RE = /^### /;
 	const TITLE_RE = /^# Changelog/;
 
+	// Ensure one blank line after the main title and after each release header
+	lines = normaliseBlankAfter(lines, TITLE_RE);
 	lines = normaliseBlanksBefore(lines, RELEASE_RE, 1, TITLE_RE);
 	lines = normaliseBlankAfter(lines, RELEASE_RE);
+	// Ensure exactly one blank before each section (###) but remove any blank lines
+	// immediately after a section heading (we require no blank-after for ###).
 	lines = normaliseBlanksBefore(lines, SECTION_RE, 1, RELEASE_RE);
-	lines = normaliseBlankAfter(lines, SECTION_RE);
+	lines = removeBlankAfter(lines, SECTION_RE);
 
 	/* 7. Collapse multiple blank lines, trailing newline */
 	lines = collapseBlankLines(lines);
