@@ -14,6 +14,8 @@ npm-debug.log
 
 # PHPUnit
 .phpunit.result.cache
+.wp-core
+.wp-tests-lib
 /coverage/
 
 # Playwright
@@ -29,3 +31,7 @@ Thumbs.db
 
 # storyman
 .story
+.tmp
+tmp
+.continue
+.codex

@@ -1,8 +1,6 @@
 import { test } from '@playwright/test'
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
-import { MESSAGES } from './helpers/constants'
-
-const TEST_SNIPPET_NAME = 'E2E Test Snippet'
+import { MESSAGES, SELECTORS } from './helpers/constants'
 
 test.describe('Code Snippets Admin', () => {
 	let helper: SnippetsTestHelper
@@ -17,25 +15,41 @@ test.describe('Code Snippets Admin', () => {
 	})
 
 	test('Can add a new snippet', async () => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.createSnippet({
-			name: TEST_SNIPPET_NAME,
+			name: snippetName,
 			code: "add_filter('show_admin_bar', '__return_false');"
 		})
 	})
 
 	test('Can activate and deactivate a snippet', async () => {
-		await helper.openSnippet(TEST_SNIPPET_NAME)
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.createSnippet({
+			name: snippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
 
+		await helper.openSnippet(snippetName)
+
+		// Activate it.
 		await helper.saveSnippet('save_and_activate')
-		await helper.expectSuccessMessageInParagraph(MESSAGES.SNIPPET_UPDATED_AND_ACTIVATED)
+		await helper.expectSuccessMessage(MESSAGES.SNIPPET_UPDATED_AND_ACTIVATED)
 
+		// Deactivate it (Status toggle + save in the new UI).
 		await helper.saveSnippet('save_and_deactivate')
-		await helper.expectSuccessMessageInParagraph(MESSAGES.SNIPPET_UPDATED_AND_DEACTIVATED)
+		await helper.expectSuccessMessage(MESSAGES.SNIPPET_UPDATED_AND_DEACTIVATED)
 	})
 
 	test('Can delete a snippet', async () => {
-		await helper.openSnippet(TEST_SNIPPET_NAME)
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.createSnippet({
+			name: snippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
+
+		await helper.openSnippet(snippetName)
 		await helper.deleteSnippet()
-		await helper.expectTextNotVisible(TEST_SNIPPET_NAME)
+		await helper.deleteSnippetFromList(snippetName)
+		await helper.expectElementCount(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`, 0)
 	})
 })

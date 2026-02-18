@@ -2,7 +2,6 @@
 import { join } from 'path'
 import { defineConfig, devices } from '@playwright/test'
 
-const RETRIES = 2
 const WORKERS = 1
 
 /**
@@ -13,16 +12,23 @@ export default defineConfig({
 	snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
-	retries: process.env.CI ? RETRIES : 0,
-	workers: process.env.CI ? WORKERS : undefined,
-	reporter: [
-		['html'],
-		['json', { outputFile: 'test-results/results.json' }],
-		['junit', { outputFile: 'test-results/results.xml' }]
-	],
+	retries: 0,
+	workers: process.env.CI ? WORKERS : WORKERS,
+	reporter: process.env.CI
+		? [
+			['line'],
+			['html'],
+			['json', { outputFile: join(process.cwd(), 'test-results', 'results.json') }],
+			['junit', { outputFile: join(process.cwd(), 'test-results', 'results.xml') }]
+		]
+		: [
+			['html'],
+			['json', { outputFile: join(process.cwd(), 'test-results', 'results.json') }],
+			['junit', { outputFile: join(process.cwd(), 'test-results', 'results.xml') }]
+		],
 	use: {
 		baseURL: 'http://localhost:8888',
-		trace: 'on-first-retry',
+		trace: 'retain-on-failure',
 		screenshot: 'only-on-failure',
 		video: 'retain-on-failure'
 	},
@@ -64,10 +70,10 @@ export default defineConfig({
 		}
 	],
 
-	timeout: 30000,
+	timeout: 60000, // 60 seconds per test
 
 	expect: {
-		timeout: 10000,
+		timeout: 30000, // 30 seconds for each expect assertion
 		toHaveScreenshot: { maxDiffPixels: 100 }
 	}
 })

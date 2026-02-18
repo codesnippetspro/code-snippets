@@ -24,14 +24,15 @@ const babelConfig = {
 
 export const jsWebpackConfig: Configuration = {
 	entry: {
-		edit: { import: `${SOURCE_DIR}/edit.ts`, dependOn: 'editor' },
-		editor: `${SOURCE_DIR}/editor.ts`,
-		import: `${SOURCE_DIR}/import.ts`,
-		manage: `${SOURCE_DIR}/manage.ts`,
-		mce: `${SOURCE_DIR}/mce.ts`,
-		prism: `${SOURCE_DIR}/prism.ts`,
-		settings: { import: `${SOURCE_DIR}/settings.ts`, dependOn: 'editor' },
-		welcome: `${SOURCE_DIR}/welcome.ts`,
+		'admin-bar': `${SOURCE_DIR}/admin-bar.ts`,
+		'edit': { import: `${SOURCE_DIR}/edit.ts`, dependOn: 'editor' },
+		'editor': `${SOURCE_DIR}/editor.ts`,
+		'import': `${SOURCE_DIR}/import.ts`,
+		'manage': `${SOURCE_DIR}/manage.ts`,
+		'mce': `${SOURCE_DIR}/mce.ts`,
+		'prism': `${SOURCE_DIR}/prism.ts`,
+		'settings': { import: `${SOURCE_DIR}/settings.ts`, dependOn: 'editor' },
+		'welcome': `${SOURCE_DIR}/welcome.ts`
 	},
 	output: {
 		path: join(resolve(__dirname), '..', DEST_DIR),

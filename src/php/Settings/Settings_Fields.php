@@ -84,14 +84,17 @@ class Settings_Fields {
 	private function init_defaults() {
 		$this->defaults = [
 			'general'        => [
-				'activate_by_default' => true,
-				'enable_tags'         => true,
-				'enable_description'  => true,
-				'visual_editor_rows'  => 5,
-				'list_order'          => 'priority-asc',
-				'disable_prism'       => false,
-				'hide_upgrade_menu'   => false,
-				'complete_uninstall'  => false,
+				'activate_by_default'     => true,
+				'enable_tags'             => true,
+				'enable_description'      => true,
+				'visual_editor_rows'      => 5,
+				'list_order'              => 'priority-asc',
+				'disable_prism'           => false,
+				'hide_upgrade_menu'       => false,
+				'complete_uninstall'      => false,
+				'enable_flat_files'       => false,
+				'enable_admin_bar'        => true,
+				'admin_bar_snippet_limit' => 20,
 			],
 			'editor'         => [
 				'indent_with_tabs'            => true,
@@ -219,6 +222,26 @@ class Settings_Fields {
 				'label' => __( 'When the plugin is deleted from the Plugins menu, also delete all snippets and plugin settings.', 'code-snippets' ),
 			];
 		}
+
+		$this->fields['general']['enable_admin_bar'] = [
+			'name'  => __( 'Enable Admin Bar Menu', 'code-snippets' ),
+			'type'  => 'checkbox',
+			'label' => __( 'Show a Snippets menu in the admin bar for quick access to snippets.', 'code-snippets' ),
+		];
+
+		$this->fields['general']['admin_bar_snippet_limit'] = [
+			'name'  => __( 'Admin Bar Snippets Per Page', 'code-snippets' ),
+			'type'  => 'number',
+			'desc'  => __( 'Number of snippets to show in the admin bar Active/Inactive menus before paginating.', 'code-snippets' ),
+			'label' => __( 'snippets', 'code-snippets' ),
+			'min'   => 1,
+			'max'   => 100,
+			'show_if' => [
+				'section' => 'general',
+				'field'   => 'enable_admin_bar',
+				'value'   => true,
+			],
+		];
 
 		$this->fields['editor'] = [
 			'indent_with_tabs'            => [

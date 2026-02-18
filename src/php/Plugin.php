@@ -7,6 +7,7 @@ use Code_Snippets\Client\Cloud_API;
 use Code_Snippets\Core\DB;
 use Code_Snippets\Core\Licensing;
 use Code_Snippets\Core\Upgrader;
+use Code_Snippets\Integration\Admin_Bar;
 use Code_Snippets\Integration\Classic_Editor\MCE_Plugin;
 use Code_Snippets\Integration\Evaluate_Content;
 use Code_Snippets\Integration\Evaluate_Functions;
@@ -135,6 +136,7 @@ class Plugin {
 		new Shortcodes();
 		new MCE_Plugin();
 		new Upgrader( PLUGIN_VERSION, $this->db );
+		new Admin_Bar();
 		new Promotion_Manager();
 
 		$this->init_snippet_files();

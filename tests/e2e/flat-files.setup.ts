@@ -7,7 +7,7 @@ setup('enable flat files', async ({ page }) => {
 	await page.goto(`${wpAdminbase}/admin.php?page=snippets-settings`)
 	await page.waitForSelector('#wpbody-content')
 
-	await page.waitForSelector('form')
+	// Await page.waitForSelector('form')
 
 	const flatFilesCheckbox = page.locator('input[name="code_snippets_settings[general][enable_flat_files]"]')
 	await expect(flatFilesCheckbox).toBeVisible()
@@ -17,10 +17,17 @@ setup('enable flat files', async ({ page }) => {
 		await flatFilesCheckbox.check()
 	}
 
-	await page.click('input[type="submit"][name="submit"]')
+	// Await page.click('input[type="submit"][name="submit"]')
 	
-	await page.waitForSelector('.notice-success', { timeout: 10000 })
-	await expect(page.locator('.notice-success')).toContainText('Settings saved')
+	// await page.waitForSelector('.notice-success', { timeout: 10000 })
+	// await expect(page.locator('.notice-success')).toContainText('Settings saved')
+	const saveButton = page.getByRole('button', { name: 'Save Changes' })
+
+	await Promise.all([
+		page.waitForURL(/settings-updated=true/, { timeout: 10000 }),
+		saveButton.click()
+	])
+
 
 	await page.reload()
 	await page.waitForSelector('input[name="code_snippets_settings[general][enable_flat_files]"]')

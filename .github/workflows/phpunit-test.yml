@@ -13,7 +13,10 @@ jobs:
   phpunit-test:
     name: PHPUnit tests (PHP ${{ inputs.php-version }})
     runs-on: ubuntu-22.04
-    
+    env:
+      WP_CORE_DIR: /tmp/wordpress
+      WP_TESTS_DIR: /tmp/wordpress-tests-lib
+
     services:
       mysql:
         image: mysql:8.0
@@ -59,9 +62,7 @@ jobs:
 
       - name: Install Composer dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
-        run: |
-          cd src
-          composer install --no-progress --prefer-dist --optimize-autoloader
+        run: composer install -d src --no-progress --prefer-dist --optimize-autoloader
 
       - name: Save Composer cache
         if: steps.composer-cache.outputs.cache-hit != 'true'
@@ -70,21 +71,52 @@ jobs:
           path: src/vendor
           key: ${{ runner.os }}-php-${{ inputs.php-version }}-composer-${{ steps.deps-hash.outputs.deps_hash }}
 
+      - name: Resolve WordPress version metadata
+        id: wp-meta
+        run: |
+          set -euo pipefail
+          wp_version=$(curl -s http://api.wordpress.org/core/version-check/1.7/ | grep -o '"version":"[^"]*' | head -1 | sed 's/"version":"//')
+          if [ -z "$wp_version" ]; then
+            wp_version="latest-unknown"
+          fi
+          echo "wp_version=$wp_version" >> "$GITHUB_OUTPUT"
+
+      - name: Get WordPress test suite cache
+        id: wp-tests-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ env.WP_CORE_DIR }}
+            ${{ env.WP_TESTS_DIR }}
+          key: ${{ runner.os }}-php-${{ inputs.php-version }}-wp-tests-${{ hashFiles('tests/install-wp-tests.sh') }}-wp-${{ steps.wp-meta.outputs.wp_version }}
+
       - name: Install WordPress test suite
         run: |
           bash tests/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 latest true
 
+      - name: Save WordPress test suite cache
+        if: steps.wp-tests-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ${{ env.WP_CORE_DIR }}
+            ${{ env.WP_TESTS_DIR }}
+          key: ${{ steps.wp-tests-cache.outputs.cache-primary-key }}
+
       - name: Run PHPUnit tests
         run: |
+          set -euo pipefail
+          mkdir -p test-results/phpunit
           cd src
-          vendor/bin/phpunit -c ../phpunit.xml --testdox
+          vendor/bin/phpunit -c ../phpunit.xml --testdox --log-junit ../test-results/phpunit/phpunit-${{ inputs.php-version }}.xml 2>&1 | tee ../test-results/phpunit/phpunit-${{ inputs.php-version }}.log
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: phpunit-test-results-php-${{ inputs.php-version }}
           path: |
-            .phpunit.result.cache
+            src/.phpunit.result.cache
+            test-results/phpunit/
           if-no-files-found: ignore
           retention-days: 2
 

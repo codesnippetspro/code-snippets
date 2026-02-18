@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test'
-import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
+import { DEFAULT_E2E_SNIPPET_BASE_NAME, SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { SELECTORS } from './helpers/constants'
 import { wpCli } from './helpers/wpCli'
 import type { Page } from '@playwright/test'
 
-const TEST_SNIPPET_NAME = 'E2E Snippet Test'
+const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 const BODY_CLASS_TEST_CODE = `
 	add_filter('admin_body_class', function($classes) {
@@ -32,8 +32,8 @@ const verifyShortcodeRendersCorrectly = async (
 	await helper.expectTextVisible('Page content after shortcode.')
 }
 
-const createPageWithShortcode = async (snippetId: string): Promise<string> => {
-	const shortcode = `[code_snippet id=${snippetId} format name="${TEST_SNIPPET_NAME}"]`
+const createPageWithShortcode = async (page: Page, snippetId: string, snippetName: string): Promise<string> => {
+	const shortcode = `[code_snippet id=${snippetId} format name="${snippetName}"]`
 	const pageContent = `<p>Page content before shortcode.</p>\n\n${shortcode}\n\n<p>Page content after shortcode.</p>`
 
 	try {
@@ -50,48 +50,78 @@ const createPageWithShortcode = async (snippetId: string): Promise<string> => {
 		const pageUrl = (await wpCli(['post', 'url', pageId])).trim()
 		return pageUrl
 	} catch (error) {
-		console.error('Failed to create page via WP-CLI:', error)
+		console.error('Failed to create page via WP-CLI.', error)
+		// The suite depends on WP-CLI in local/wp-env mode; keep failures explicit to avoid
+		// silently exercising a different creation path.
 		throw error
 	}
 }
 
-const createHtmlSnippetForEditor = async (helper: SnippetsTestHelper, page: Page): Promise<string> => {
+const createHtmlSnippetForEditor = async (
+	helper: SnippetsTestHelper,
+	page: Page,
+	snippetName: string
+): Promise<string> => {
 	await helper.createAndActivateSnippet({
-		name: TEST_SNIPPET_NAME,
+		name: snippetName,
 		code: '<div class="custom-snippet-content">' +
 			'<h3>Custom HTML Content</h3><p>This content was inserted via shortcode!</p></div>',
 		type: 'HTML',
 		location: 'IN_EDITOR'
 	})
 
-	const currentUrl = page.url()
-	const urlMatch = /[?&]id=(?<id>\d+)/.exec(currentUrl)
+	// `createAndActivateSnippet` ends on the list screen; pull the ID from the edit link.
+	await helper.navigateToSnippetsAdmin()
+	const row = page
+		.locator(`${SELECTORS.SNIPPET_ROW}:has(${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+		.first()
+	await expect(row).toBeVisible()
+
+	const nameLink = row.getByRole('link', { name: new RegExp(escapeRegExp(snippetName)) }).first()
+	const editHref = await nameLink.evaluate(el => el.getAttribute('href') ?? '')
+
+	const urlMatch = /[?&]id=(?<id>\d+)/.exec(editHref)
 	expect(urlMatch).toBeTruthy()
 	return urlMatch?.groups?.id ?? '0'
 }
 
 test.describe('Code Snippets Evaluation', () => {
 	let helper: SnippetsTestHelper
+	let snippetName: string
 
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
+		snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.navigateToSnippetsAdmin()
+
+		// Ensure isolation: file-based execution runs from flat files, so we must delete old snippets
+		// via plugin operations (to keep flat files in sync), not via direct SQL.
+		await wpCli([
+			'eval',
+			`
+					global $wpdb;
+					$table = $wpdb->prefix . 'snippets';
+					$ids = $wpdb->get_col(
+						$wpdb->prepare( "SELECT id FROM {$table} WHERE name LIKE %s", "${DEFAULT_E2E_SNIPPET_BASE_NAME}%" )
+					);
+					foreach ( $ids as $id ) { \\Code_Snippets\\delete_snippet( intval( $id ), false ); }
+				`
+		])
 	})
 
 	test('PHP snippet is evaluating correctly', async () => {
 		await helper.createAndActivateSnippet({
-			name: TEST_SNIPPET_NAME,
+			name: snippetName,
 			code: "add_filter('show_admin_bar', '__return_false');"
 		})
 
 		await helper.navigateToFrontend()
-		await helper.expectElementNotVisible(SELECTORS.ADMIN_BAR)
 		await helper.expectElementCount(SELECTORS.ADMIN_BAR, 0)
 	})
 
 	test('PHP Snippet runs everywhere', async ({ page }) => {
 		await helper.createAndActivateSnippet({
-			name: TEST_SNIPPET_NAME,
+			name: snippetName,
 			location: 'EVERYWHERE',
 			code: BODY_CLASS_TEST_CODE
 		})
@@ -105,7 +135,7 @@ test.describe('Code Snippets Evaluation', () => {
 
 	test('PHP Snippet runs only in Admin', async ({ page }) => {
 		await helper.createAndActivateSnippet({
-			name: TEST_SNIPPET_NAME,
+			name: snippetName,
 			location: 'ADMIN_ONLY',
 			code: BODY_CLASS_TEST_CODE
 		})
@@ -119,7 +149,7 @@ test.describe('Code Snippets Evaluation', () => {
 
 	test('PHP Snippet runs only in Frontend', async ({ page }) => {
 		await helper.createAndActivateSnippet({
-			name: TEST_SNIPPET_NAME,
+			name: snippetName,
 			location: 'FRONTEND_ONLY',
 			code: BODY_CLASS_TEST_CODE
 		})
@@ -133,7 +163,7 @@ test.describe('Code Snippets Evaluation', () => {
 
 	test('HTML snippet is evaluating correctly in footer', async () => {
 		await helper.createAndActivateSnippet({
-			name: TEST_SNIPPET_NAME,
+			name: snippetName,
 			code: '<p>Hello World HTML snippet in footer!</p>',
 			type: 'HTML',
 			location: 'SITE_FOOTER'
@@ -146,7 +176,7 @@ test.describe('Code Snippets Evaluation', () => {
 
 	test('HTML snippet is evaluating correctly in header', async () => {
 		await helper.createAndActivateSnippet({
-			name: TEST_SNIPPET_NAME,
+			name: snippetName,
 			code: '<p>Hello World HTML snippet in header!</p>',
 			type: 'HTML',
 			location: 'SITE_HEADER'
@@ -158,13 +188,13 @@ test.describe('Code Snippets Evaluation', () => {
 	})
 
 	test('HTML snippet works with shortcode in editor', async ({ page }) => {
-		const snippetId = await createHtmlSnippetForEditor(helper, page)
-		const pageUrl = await createPageWithShortcode(snippetId)
+		const snippetId = await createHtmlSnippetForEditor(helper, page, snippetName)
+		const pageUrl = await createPageWithShortcode(page, snippetId, snippetName)
 
 		await verifyShortcodeRendersCorrectly(helper, page, pageUrl)
 	})
 
 	test.afterEach(async () => {
-		await helper.cleanupSnippet(TEST_SNIPPET_NAME)
+		await helper.cleanupSnippet(snippetName)
 	})
 })

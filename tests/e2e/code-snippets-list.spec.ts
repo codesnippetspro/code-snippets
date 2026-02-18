@@ -2,100 +2,134 @@ import { expect, test } from '@playwright/test'
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
 import { SELECTORS } from './helpers/constants'
 
-const TEST_SNIPPET_NAME = 'E2E List Test Snippet'
-
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
+	let snippetName: string
+	const EXPORT_TEST_TIMEOUT_MS = 60000
 
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
+		snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.navigateToSnippetsAdmin()
 
 		await helper.createAndActivateSnippet({
-			name: TEST_SNIPPET_NAME,
+			name: snippetName,
 			code: "add_filter('show_admin_bar', '__return_false');"
 		})
 		await helper.navigateToSnippetsAdmin()
 	})
 
 	test.afterEach(async () => {
-		await helper.cleanupSnippet(TEST_SNIPPET_NAME)
+		await helper.cleanupSnippet(snippetName)
 	})
 
 	test('Can toggle snippet activation from list page', async ({ page }) => {
-		const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
-		const toggleSwitch = snippetRow.locator('a.snippet-activation-switch')
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
 
-		await expect(toggleSwitch).toHaveAttribute('title', 'Deactivate')
+		const toggleCell = snippetRow.locator('td').first()
+		const toggleCheckbox = toggleCell.getByRole('checkbox').first()
 
-		await toggleSwitch.click()
-		await page.waitForLoadState('networkidle')
+		const initialChecked = await toggleCheckbox.isChecked()
+		await expect(toggleCell).toContainText(initialChecked ? 'Deactivate' : 'Activate')
 
-		const updatedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
-		const updatedToggle = updatedRow.locator('a.snippet-activation-switch')
-		await expect(updatedToggle).toHaveAttribute('title', 'Activate')
+		await toggleCheckbox.click({ force: true })
+		if (initialChecked) {
+			await expect(toggleCheckbox).not.toBeChecked()
+		} else {
+			await expect(toggleCheckbox).toBeChecked()
+		}
+		await expect(toggleCell).toContainText(!initialChecked ? 'Deactivate' : 'Activate')
 
-		await updatedToggle.click()
-		await page.waitForLoadState('networkidle')
-
-		const reactivatedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
-		const reactivatedToggle = reactivatedRow.locator('a.snippet-activation-switch')
-		await expect(reactivatedToggle).toHaveAttribute('title', 'Deactivate')
+		await toggleCheckbox.click({ force: true })
+		if (initialChecked) {
+			await expect(toggleCheckbox).toBeChecked()
+		} else {
+			await expect(toggleCheckbox).not.toBeChecked()
+		}
+		await expect(toggleCell).toContainText(initialChecked ? 'Deactivate' : 'Activate')
 	})
 
 	test('Can access edit from list page', async ({ page }) => {
-		const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
 
-		await snippetRow.locator(SELECTORS.EDIT_ACTION).click()
+		await snippetRow.locator(SELECTORS.SNIPPET_NAME_LINK).first().click()
 
 		await expect(page).toHaveURL(/page=edit-snippet/)
-		await expect(page.locator('#title')).toHaveValue(TEST_SNIPPET_NAME)
+		await expect(page.locator('#title')).toHaveValue(snippetName)
 	})
 
 	test('Can clone snippet from list page', async ({ page }) => {
-		const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
 
 		await snippetRow.locator(SELECTORS.CLONE_ACTION).click()
-		await page.waitForLoadState('networkidle')
 
 		await expect(page).toHaveURL(/page=snippets/)
+		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 
-		await helper.expectTextVisible(`${TEST_SNIPPET_NAME} [CLONE]`)
+		// Verify that a cloned snippet exists in the table (use table-scoped check to avoid admin bar matches)
+		const clonedRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName} [CLONE]"))`)
+			.first()
+		await expect(clonedRow).toBeVisible()
 
-		const clonedRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME} [CLONE]")`)
-
-		page.on('dialog', async dialog => {
-			expect(dialog.type()).toBe('confirm')
-			await dialog.accept()
-		})
-
+		// Clean up the clone by trashing it
 		await clonedRow.locator(SELECTORS.DELETE_ACTION).click()
-		await page.waitForLoadState('networkidle')
+		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
 	})
 
 	test('Can delete snippet from list page', async ({ page }) => {
-		const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
 
-		page.on('dialog', async dialog => {
-			expect(dialog.type()).toBe('confirm')
-			await dialog.accept()
-		})
-
+		// Click "Trash" in row actions — in the new React UI, this moves to trash immediately (no dialog)
 		await snippetRow.locator(SELECTORS.DELETE_ACTION).click()
-		await page.waitForLoadState('networkidle')
+
+		// Some implementations show a confirmation modal that must be dismissed.
+		const confirmDialog = page.locator('[role="dialog"]').filter({ hasText: /Are you sure\\?/i })
+		const dialogVisible = await confirmDialog
+			.waitFor({ state: 'visible', timeout: 2000 })
+			.then(() => true)
+			.catch(() => false)
+
+		if (dialogVisible) {
+			await confirmDialog.locator('button:has-text("Trash"), button:has-text("Delete")').first().click()
+			await confirmDialog.waitFor({ state: 'hidden', timeout: 30000 }).catch(() => undefined)
+		}
 
 		await expect(page).toHaveURL(/page=snippets/)
-		await helper.expectElementCount(`tr:has-text("${TEST_SNIPPET_NAME}")`, 0)
+		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
+
+		// Navigate to the trash view using the new filter link format
+		const trashedLink = page.locator('a[href*="status=trashed"]').first()
+		await expect(trashedLink).toBeVisible()
+		await trashedLink.click()
+
+		await expect(page).toHaveURL(/status=trashed/, { timeout: 30000 })
+		await expect(page.locator(SELECTORS.SNIPPETS_TABLE)).toBeVisible()
+
+		const trashedRow = page.locator(`${SELECTORS.SNIPPET_ROW}:has-text("${snippetName}")`).first()
+		await expect(trashedRow).toBeVisible({ timeout: 30000 })
+		await expect(trashedRow).toContainText(/Restore/i)
 	})
 
 	test('Can export snippet from list page', async ({ page }) => {
-		const snippetRow = page.locator(`tr:has-text("${TEST_SNIPPET_NAME}")`)
+		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
 
-		const downloadPromise = page.waitForEvent('download')
+		const download = await Promise.all([
+			page.waitForEvent('download'),
+			snippetRow.locator(SELECTORS.EXPORT_ACTION).click()
+		]).then(([downloadEvent]) => downloadEvent)
 
-		await snippetRow.locator(SELECTORS.EXPORT_ACTION).click()
-
-		const download = await downloadPromise
 		expect(download.suggestedFilename()).toMatch(/\.json$/)
 	})
 })
