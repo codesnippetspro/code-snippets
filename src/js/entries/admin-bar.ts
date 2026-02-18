@@ -130,6 +130,60 @@ const formatSnippetTitle = (snippet: SnippetResponseItem): string => {
 	return `(${typeLabel}) ${title}`
 }
 
+const setControlsLinkDisabled = (controls: HTMLElement, action: PaginationAction, disabled: boolean): void => {
+	const link = controls.querySelector<HTMLAnchorElement>(`a[data-action="${action}"]`)
+	if (link) {
+		link.setAttribute('aria-disabled', disabled ? 'true' : 'false')
+	}
+}
+
+const updatePaginationHrefs = (controls: HTMLElement, page: number, totalPages: number, queryArg?: string): void => {
+	if (!queryArg) {
+		return
+	}
+
+	const firstLink = controls.querySelector<HTMLAnchorElement>('a[data-action="first"]')
+	const baseHref = firstLink?.href
+	if (!baseHref) {
+		return
+	}
+
+	const buildHref = (targetPage: number) => {
+		const url = new URL(baseHref)
+
+		if (1 >= targetPage) {
+			url.searchParams.delete(queryArg)
+		} else {
+			url.searchParams.set(queryArg, String(targetPage))
+		}
+
+		return url.toString()
+	}
+
+	const getLink = (action: PaginationAction) =>
+		controls.querySelector<HTMLAnchorElement>(`a[data-action="${action}"]`)
+
+	const first = getLink('first')
+	if (first) {
+		first.href = buildHref(1)
+	}
+
+	const prev = getLink('prev')
+	if (prev) {
+		prev.href = buildHref(Math.max(1, page - 1))
+	}
+
+	const next = getLink('next')
+	if (next) {
+		next.href = buildHref(Math.min(totalPages, page + 1))
+	}
+
+	const last = getLink('last')
+	if (last) {
+		last.href = buildHref(totalPages)
+	}
+}
+
 const updatePaginationControls = (controls: HTMLElement, page: number, totalPages: number) => {
 	controls.dataset.page = String(page)
 	controls.dataset.totalPages = String(totalPages)
@@ -142,60 +196,12 @@ const updatePaginationControls = (controls: HTMLElement, page: number, totalPage
 	const disableFirstPrev = 1 >= page
 	const disableNextLast = page >= totalPages
 
-	const setDisabled = (action: PaginationAction, disabled: boolean) => {
-		const link = controls.querySelector<HTMLAnchorElement>(`a[data-action="${action}"]`)
-		if (link) {
-			link.setAttribute('aria-disabled', disabled ? 'true' : 'false')
-		}
-	}
+	setControlsLinkDisabled(controls, 'first', disableFirstPrev)
+	setControlsLinkDisabled(controls, 'prev', disableFirstPrev)
+	setControlsLinkDisabled(controls, 'next', disableNextLast)
+	setControlsLinkDisabled(controls, 'last', disableNextLast)
 
-	setDisabled('first', disableFirstPrev)
-	setDisabled('prev', disableFirstPrev)
-	setDisabled('next', disableNextLast)
-	setDisabled('last', disableNextLast)
-
-	const queryArg = controls.dataset.queryArg
-	if (queryArg) {
-		const firstLink = controls.querySelector<HTMLAnchorElement>('a[data-action="first"]')
-		const baseHref = firstLink?.href
-
-		if (baseHref) {
-			const buildHref = (targetPage: number) => {
-				const url = new URL(baseHref)
-
-				if (1 >= targetPage) {
-					url.searchParams.delete(queryArg)
-				} else {
-					url.searchParams.set(queryArg, String(targetPage))
-				}
-
-				return url.toString()
-			}
-
-			const getLink = (action: PaginationAction) =>
-				controls.querySelector<HTMLAnchorElement>(`a[data-action="${action}"]`)
-
-			const first = getLink('first')
-			if (first) {
-				first.href = buildHref(1)
-			}
-
-			const prev = getLink('prev')
-			if (prev) {
-				prev.href = buildHref(Math.max(1, page - 1))
-			}
-
-			const next = getLink('next')
-			if (next) {
-				next.href = buildHref(Math.min(totalPages, page + 1))
-			}
-
-			const last = getLink('last')
-			if (last) {
-				last.href = buildHref(totalPages)
-			}
-		}
-	}
+	updatePaginationHrefs(controls, page, totalPages, controls.dataset.queryArg)
 }
 
 const replaceSnippetItems = (status: PaginationStatus, snippets: SnippetResponseItem[]) => {

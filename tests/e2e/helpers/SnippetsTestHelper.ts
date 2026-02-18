@@ -35,6 +35,12 @@ export interface SnippetFormOptions {
 	location?: keyof typeof SNIPPET_LOCATIONS;
 }
 
+export interface CreateSnippetCliOptions {
+	name: string;
+	active: boolean;
+	type?: 'php' | 'html' | 'css' | 'js' | 'cond';
+}
+
 export const DEFAULT_E2E_SNIPPET_BASE_NAME = 'E2E Snippet Test'
 
 export class SnippetsTestHelper {
@@ -53,7 +59,7 @@ export class SnippetsTestHelper {
 		await wpCli(['eval', php])
 	}
 
-	static async createSnippetViaCli(options: { name: string; active: boolean; type?: 'php' | 'html' | 'css' | 'js' | 'cond' }): Promise<void> {
+	static async createSnippetViaCli(options: CreateSnippetCliOptions): Promise<void> {
 		const type = options.type ?? 'php'
 		let scope = 'global'
 		switch (type) {
@@ -108,8 +114,8 @@ export class SnippetsTestHelper {
 			}
 		`
 
-			await wpCli(['eval', php])
-		}
+		await wpCli(['eval', php])
+	}
 
 	private async clickButton(name: RegExp, options: { force?: boolean } = {}): Promise<void> {
 		const force = options.force ?? true
