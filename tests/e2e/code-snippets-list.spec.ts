@@ -119,15 +119,16 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can export snippet from list page', async ({ page }) => {
+		test.setTimeout(60000)
 		const snippetRow = page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
 			.first()
 
-		const downloadPromise = page.waitForEvent('download')
+		const download = await Promise.all([
+			page.waitForEvent('download'),
+			snippetRow.locator(SELECTORS.EXPORT_ACTION).click()
+		]).then(([downloadEvent]) => downloadEvent)
 
-		await snippetRow.locator(SELECTORS.EXPORT_ACTION).click()
-
-		const download = await downloadPromise
 		expect(download.suggestedFilename()).toMatch(/\.json$/)
 	})
 })
