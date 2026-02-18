@@ -26,7 +26,7 @@ export default eslintTs.config(
 		rules: reactHooks.configs.recommended.rules,
 	},
 	{
-		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', '*.config.mjs', '*.config.js']
+		ignores: ['bundle/*', 'src/dist/*', 'src/vendor/*', 'svn/*', '*.config.mjs', '*.config.js', '.*/*', 'tmp/*']
 	},
 	{
 		languageOptions: {
@@ -136,8 +136,9 @@ export default eslintTs.config(
 		}
 	},
 	{
-		files: ['test/**', '**/*.test.*', '**/*.spec.*'],
+		files: ['tests/**', '**/*.test.*', '**/*.spec.*'],
 		rules: {
+			'@typescript-eslint/no-magic-numbers': 'off',
 			'max-lines-per-function': 'off'
 		}
 	}
