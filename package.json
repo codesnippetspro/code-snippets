@@ -30,6 +30,8 @@
     "lint:js:fix": "eslint --fix",
     "lint:php": "src/vendor/bin/phpcs -s --colors --standard=phpcs.xml src/php tests",
     "lint:php:fix": "src/vendor/bin/phpcbf --standard=phpcs.xml src/php tests",
+    "lint:readme": "ts-node scripts/linters/lint-readme.ts",
+    "lint:changelog": "ts-node scripts/linters/lint-changelog.ts",
     "version": "ts-node scripts/version.ts",
     "version-dev": "npm version --git-tag-version=false --preid=dev",
     "version-alpha": "npm version --git-tag-version=false --preid=alpha",
@@ -127,7 +129,9 @@
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": "npm run lint:js:fix --",
     "*.{css,scss}": "npm run lint:styles:fix --",
-    "*.php": "npm run lint:php:fix --"
+    "*.php": "npm run lint:php:fix --",
+    "src/readme.txt": "ts-node scripts/linters/lint-readme.ts",
+    "CHANGELOG.md": "ts-node scripts/linters/lint-changelog.ts"
   },
   "overrides": {
     "ajv": "8.18.0",
