@@ -5,6 +5,7 @@ import { SELECTORS } from './helpers/constants'
 test.describe('Code Snippets List Page Actions', () => {
 	let helper: SnippetsTestHelper
 	let snippetName: string
+	const EXPORT_TEST_TIMEOUT_MS = 60000
 
 	test.beforeEach(async ({ page }) => {
 		helper = new SnippetsTestHelper(page)
@@ -119,7 +120,7 @@ test.describe('Code Snippets List Page Actions', () => {
 	})
 
 	test('Can export snippet from list page', async ({ page }) => {
-		test.setTimeout(60000)
+		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
 		const snippetRow = page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
 			.first()

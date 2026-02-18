@@ -24,10 +24,8 @@ export const downloadAsFile = (content: BlobPart, filename: string, type: string
 
 	// Some browsers (notably headless Chromium) can ignore programmatic clicks on detached anchors.
 	// Appending the link to the DOM before clicking improves reliability.
-	if (document.body) {
-		link.style.display = 'none'
-		document.body.appendChild(link)
-	}
+	link.style.display = 'none'
+	document.body.appendChild(link)
 
 	setTimeout(() => {
 		link.click()
