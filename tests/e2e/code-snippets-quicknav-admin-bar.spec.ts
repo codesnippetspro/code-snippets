@@ -217,10 +217,7 @@ test.describe('Admin Bar Snippets QuickNav', () => {
 					wp_mkdir_p( dirname( $path ) );
 					file_put_contents(
 						$path,
-						"<?php\\n" +
-					"if ( ! defined( 'CODE_SNIPPETS_SAFE_MODE' ) ) {\\n" +
-					"\\tdefine( 'CODE_SNIPPETS_SAFE_MODE', true );\\n" +
-					"}\\n"
+						"<?php\\nif ( ! defined( 'CODE_SNIPPETS_SAFE_MODE' ) ) {\\n\\tdefine( 'CODE_SNIPPETS_SAFE_MODE', true );\\n}\\n"
 					);
 				`
 			])
