@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "scripts": {
+    "prepare": "husky install",
     "test:php": "WP_TESTS_DIR=./.wp-tests-lib WP_DEVELOP_DIR=./.wp-core src/vendor/bin/phpunit -c phpunit.xml",
     "test:php:watch": "npm run test:php -- --testdox",
     "test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
@@ -119,7 +120,14 @@
     "webpack-merge": "^6.0.1",
     "webpack-remove-empty-scripts": "^1.0.4",
     "@playwright/test": "^1.48.0",
-    "@wordpress/env": "^9.0.0"
+    "@wordpress/env": "^9.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.5.2"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": "npm run lint:js:fix --",
+    "*.{css,scss}": "npm run lint:styles:fix --",
+    "*.php": "npm run lint:php:fix --"
   },
   "overrides": {
     "eslint": "^9.20.1",
