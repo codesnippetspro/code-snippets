@@ -42,7 +42,7 @@ https://youtu.be/uzND-wdSCMQ
 
 == Installation ==
 
-= Automatic installation =
+= Automatic Installation =
 
 1. Log into your WordPress admin
 2. Click __Plugins__
@@ -54,7 +54,7 @@ https://youtu.be/uzND-wdSCMQ
 5. Click __Install Now__ under "Code Snippets"
 6. Activate the plugin
 
-= Manual installation =
+= Manual Installation =
 
 1. Download the plugin
 2. Extract the contents of the zip file
@@ -126,7 +126,7 @@ __Added__
 
 __Changed__
 
-* Updated links to more recent documentation pages 
+* Updated links to more recent documentation pages
 
 __Fixed__
 
