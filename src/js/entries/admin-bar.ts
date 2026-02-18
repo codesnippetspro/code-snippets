@@ -1,5 +1,5 @@
-import { SnippetScope } from '../types/Snippet'
 import { getSnippetType } from '../utils/snippets/snippets'
+import type { SnippetScope } from '../types/Snippet'
 
 export type PaginationStatus = 'active' | 'inactive'
 export type PaginationAction = 'first' | 'prev' | 'next' | 'last'
@@ -120,8 +120,8 @@ const buildEditUrl = (snippetId: number): string => {
 }
 
 const buildSnippetPlaceholder = (snippetId: number): string =>
-	config?.snippetPlaceholder?.replace(/%(?:\d+\$)?d/, String(snippetId))
-	?? `Snippet #${snippetId}`
+	config?.snippetPlaceholder.replace(/%(?:\d+\$)?d/, String(snippetId)) ??
+	`Snippet #${snippetId}`
 
 const formatSnippetTitle = (snippet: SnippetResponseItem): string => {
 	const typeLabel = getSnippetType(snippet).toUpperCase()

@@ -175,8 +175,8 @@ add_action( 'admin_init', __NAMESPACE__ . '\\register_plugin_settings' );
 /**
  * Determine whether a setting field should be rendered.
  *
- * @param array<string, mixed>              $field    Field definition.
- * @param array<string, array<string,mixed>> $settings Current settings values.
+ * @param array<string, mixed>                    $field    Field definition.
+ * @param array<string, array<string,mixed>>      $settings Current settings values.
  * @param array<string, array<string,mixed>>|null $input Optional raw input values.
  *
  * @return bool
