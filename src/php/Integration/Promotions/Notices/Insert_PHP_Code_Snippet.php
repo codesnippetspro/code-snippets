@@ -2,6 +2,8 @@
 
 namespace Code_Snippets\Integration\Promotions\Notices;
 
+use Code_Snippets\REST_API\Import\Plugins\Insert_PHP_Code_Snippet_Plugin_Importer;
+
 /**
  * Promotion class for Insert PHP Code Snippet plugin.
  *
@@ -56,6 +58,8 @@ class Insert_PHP_Code_Snippet extends Promotion_Base {
 	 * @return bool Whether the user should see the migration button.
 	 */
 	public function show_migration_button(): bool {
-		return true;
+		$importer = new Insert_PHP_Code_Snippet_Plugin_Importer();
+		$data = $importer->get_data();
+		return ! empty( $data );
 	}
 }

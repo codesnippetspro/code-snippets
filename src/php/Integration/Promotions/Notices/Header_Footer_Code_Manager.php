@@ -2,6 +2,8 @@
 
 namespace Code_Snippets\Integration\Promotions\Notices;
 
+use Code_Snippets\REST_API\Import\Plugins\Header_Footer_Code_Manager_Plugin_Importer;
+
 /**
  * Promotion class for Header Footer Code Manager.
  *
@@ -56,6 +58,8 @@ class Header_Footer_Code_Manager extends Promotion_Base {
 	 * @return bool Whether the user should see the migration button.
 	 */
 	public function show_migration_button(): bool {
-		return true;
+		$importer = new Header_Footer_Code_Manager_Plugin_Importer();
+		$data = $importer->get_data();
+		return ! empty( $data );
 	}
 }

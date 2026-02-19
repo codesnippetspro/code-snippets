@@ -851,7 +851,7 @@ function update_snippet_fields( int $snippet_id, array $fields, ?bool $network =
 	}
 
 	$updated = get_snippet( $snippet->id, $network );
-	if ( $updated && $updated->id ) {
+	if ( $updated->id ) {
 		do_action( 'code_snippets/update_snippet', $updated, $table );
 	}
 

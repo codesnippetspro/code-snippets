@@ -3,6 +3,7 @@
 namespace Code_Snippets\Integration\Promotions\Notices;
 
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\Settings\get_setting;
 use const Code_Snippets\PLUGIN_FILE;
 
 /**
@@ -65,8 +66,19 @@ abstract class Promotion_Base {
 	 * Constructor to initialize the promotion notice.
 	 */
 	public function __construct() {
-		add_action( 'admin_notices', [ $this, 'display_promotion' ] );
+		add_action( 'current_screen', [ $this, 'register_promotion_hooks' ] );
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'dismiss_promotion_ajax_handler' ] );
+	}
+
+	/**
+	 * Register hooks to display the promotion notice if conditions are met.
+	 */
+	public function register_promotion_hooks() {
+		if ( $this->is_plugin_admin_screen() && ! $this->is_promotion_dismissed() ) {
+			add_action( 'admin_notices', [ $this, 'display_promotion' ], 1 );
+			add_action( 'admin_print_styles', [ $this, 'print_promotion_styles' ] );
+			add_action( 'admin_print_footer_scripts', [ $this, 'print_dismiss_script' ], 99 );
+		}
 	}
 
 	/**
@@ -75,21 +87,12 @@ abstract class Promotion_Base {
 	 * @return bool True if it's a plugin admin screen, false otherwise.
 	 */
 	public function is_plugin_admin_screen(): bool {
-		if ( ! is_admin() ) {
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
 			return false;
 		}
 
 		$current_screen = get_current_screen();
-
-		if ( ! $current_screen ) {
-			return false;
-		}
-
-		return in_array(
-			$current_screen->id,
-			$this->get_plugin_admin_screens() ?? [],
-			true
-		);
+		return $current_screen && in_array( $current_screen->id, $this->get_plugin_admin_screens(), true );
 	}
 
 	/**
@@ -98,30 +101,24 @@ abstract class Promotion_Base {
 	 * @return bool True if the promotion is dismissed, false otherwise.
 	 */
 	public function is_promotion_dismissed(): bool {
+		if ( get_setting( 'general', 'hide_upgrade_menu' ) ) {
+			return true;
+		}
+
 		$user_id = get_current_user_id();
+
 		if ( ! $user_id ) {
 			return false;
 		}
 
 		$dismissed_promotions = get_user_meta( $user_id, self::USER_META_KEY, true );
-		if ( ! is_array( $dismissed_promotions ) ) {
-			$dismissed_promotions = [];
-		}
-
-		return in_array( $this->get_plugin_slug(), $dismissed_promotions, true );
+		return is_array( $dismissed_promotions ) && in_array( $this->get_plugin_slug(), $dismissed_promotions, true );
 	}
 
 	/**
-	 * Display the promotion notice in the admin area.
+	 * Print the CSS styles for the promotion notice.
 	 */
-	public function display_promotion() {
-		if ( ! $this->is_plugin_admin_screen() ) {
-			return;
-		}
-
-		if ( $this->is_promotion_dismissed() ) {
-			return;
-		}
+	public function print_promotion_styles() {
 		?>
 		<style>
             .code-snippets-promotion {
@@ -143,11 +140,38 @@ abstract class Promotion_Base {
                 margin-block: 0 .5em;
             }
 		</style>
+		<?php
+	}
+
+	/**
+	 * Print the JavaScript to handle dismissing the promotion notice.
+	 */
+	public function print_dismiss_script() {
+		?>
+		<script>
+			jQuery(document).ready(function ($) {
+				$('.code-snippets-promotion').on('click', '.notice-dismiss', function () {
+					$.post(ajaxurl, {
+						action: '<?php echo esc_attr( self::AJAX_ACTION ); ?>',
+						nonce: '<?php echo esc_attr( wp_create_nonce( self::AJAX_ACTION ) ); ?>',
+						promotion_id: $(this).closest('.code-snippets-promotion').data('promotion-id')
+					})
+				})
+			})
+		</script>
+		<?php
+	}
+
+	/**
+	 * Display the promotion notice in the admin area.
+	 */
+	public function display_promotion() {
+		?>
 		<div
 			class="notice notice-info is-dismissible code-snippets-promotion"
 			data-promotion-id="<?php echo esc_attr( $this->get_plugin_slug() ); ?>"
-			role="region"
 			aria-label="<?php esc_attr_e( 'Code Snippets Promotion', 'code-snippets' ); ?>"
+			role="region"
 		>
 			<div class="code-snippets-promotion-icon">
 				<img
@@ -163,20 +187,6 @@ abstract class Promotion_Base {
 				<p><?php $this->print_promotion_buttons(); ?></p>
 			</div>
 		</div>
-		<script>
-			jQuery(document).ready(function ($) {
-				$('.code-snippets-promotion').on('click', '.notice-dismiss', function () {
-					const $notice = $(this).closest('.code-snippets-promotion')
-					const promotionId = $notice.data('promotion-id')
-
-					$.post(ajaxurl, {
-						action: '<?php echo esc_attr( self::AJAX_ACTION ); ?>',
-						nonce: '<?php echo esc_attr( wp_create_nonce( self::AJAX_ACTION ) ); ?>',
-						promotion_id: promotionId
-					})
-				})
-			})
-		</script>
 		<?php
 	}
 

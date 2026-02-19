@@ -4,12 +4,9 @@ namespace Code_Snippets\REST_API\Cloud;
 
 use Code_Snippets\Client\Cloud_API;
 use Code_Snippets\REST_API\REST_Collection_Controller;
-use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use function Code_Snippets\code_snippets;
-use const Code_Snippets\REST_API_NAMESPACE;
 
 /**
  * Allows fetching cloud snippets through the WordPress REST API.
