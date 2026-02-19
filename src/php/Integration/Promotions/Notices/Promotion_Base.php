@@ -237,22 +237,37 @@ abstract class Promotion_Base {
 	 */
 	protected function print_promotion_buttons() {
 		if ( $this->show_migration_button() ) {
-			printf(
-				'<a href="%s" class="button button-primary">%s</a>',
-				esc_url( add_query_arg( 'tab', 'plugins', code_snippets()->get_menu_url( 'import' ) ) ),
-				esc_html__( 'Migrate to Code Snippets', 'code-snippets' )
+			$primary_text = __( 'Migrate to Code Snippets', 'code-snippets' );
+			$primary_url = add_query_arg(
+				[
+					'tab'  => 'migrate',
+					'from' => $this->get_plugin_slug(),
+				],
+				code_snippets()->get_menu_url( 'import' )
 			);
 		} else {
-			printf(
-				'<a href="%s" class="button button-primary">%s</a>',
-				esc_url( code_snippets()->get_menu_url() ),
-				esc_html__( 'Manage your snippets', 'code-snippets' )
-			);
+			$primary_text = __( 'Manage your snippets', 'code-snippets' );
+			$primary_url = code_snippets()->get_menu_url();
 		}
 
 		printf(
+			'<a href="%s" class="button button-primary">%s</a>',
+			esc_url( $primary_url ),
+			esc_html( $primary_text )
+		);
+
+		$secondary_url = add_query_arg(
+			[
+				'utm_source'   => $this->get_plugin_slug(),
+				'utm_medium'   => 'promotion',
+				'utm_campaign' => 'custom-code',
+			],
+			'https://codesnippets.pro/pricing'
+		);
+
+		printf(
 			' <a href="%s" class="button button-secondary" target="_blank" rel="noopener noreferrer">%s</a> ',
-			esc_url( sprintf( 'https://codesnippets.pro/pricing/?utm_source=%s&utm_medium=promotion&utm_campaign=custom-code', $this->get_plugin_slug() ) ),
+			esc_url( $secondary_url ),
 			esc_html__( 'Learn more', 'code-snippets' )
 		);
 	}
