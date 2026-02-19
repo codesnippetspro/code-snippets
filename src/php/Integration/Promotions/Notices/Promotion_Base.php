@@ -197,13 +197,13 @@ abstract class Promotion_Base {
 		check_ajax_referer( self::AJAX_ACTION, 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( 'Unauthorized' );
+			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
 		$promotion_id = isset( $_POST['promotion_id'] ) ? sanitize_text_field( wp_unslash( $_POST['promotion_id'] ) ) : '';
 
 		if ( empty( $promotion_id ) ) {
-			wp_send_json_error( 'Invalid promotion id.' );
+			wp_send_json_error( 'Invalid promotion id.', 400 );
 		}
 
 		$user_id = get_current_user_id();
@@ -252,7 +252,7 @@ abstract class Promotion_Base {
 
 		printf(
 			' <a href="%s" class="button button-secondary" target="_blank" rel="noopener noreferrer">%s</a> ',
-			esc_url( 'https://codesnippets.pro/pricing/?utm_source=' . $this->get_plugin_slug() . '&utm_medium=promotion&utm_campaign=custom-code' ),
+			esc_url( sprintf( 'https://codesnippets.pro/pricing/?utm_source=%s&utm_medium=promotion&utm_campaign=custom-code', $this->get_plugin_slug() ) ),
 			esc_html__( 'Learn more', 'code-snippets' )
 		);
 	}
