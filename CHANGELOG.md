@@ -2,35 +2,29 @@
 
 ## [3.9.5] (2026-02-05)
 
-### Added
-* Confirmed WordPress 6.9 compatability
-
 ### Fixed
-* Improved nonce handling for cloud snippet download and update actions to for enhanced security
+* Improved security when handling actions for downloading and updating cloud snippets.
 
 ## [3.9.4] (2026-01-14)
 
 ### Added
-* New import functionality to migrate snippets from file uploads with drag-and-drop interface
-* Support for importing snippets from other popular plugins (Header Footer Code Manager, Insert Headers and Footers, Insert PHP Code Snippet)
-* Enhanced file based execution support with improved multisite mode compatibility
-
-### Changed
-* Updated links to more recent documentation pages
+* New import functionality to migrate snippets from file uploads with drag-and-drop interface.
+* Support for importing snippets from other popular plugins (Header Footer Code Manager, Insert Headers and Footers, Insert PHP Code Snippet).
+* Enhanced file based execution support with improved multisite mode compatibility.
 
 ### Fixed
-* Fixed multisite capability checks in Plugin class
-* Fixed snippet execution logic for multisite support by centralizing trashed snippet handling
-* Fixed multisite snippet handling to ensure local snippets use correct table and filter out trashed snippets
+* Fixed multisite capability checks in Plugin class.
+* Fixed snippet execution logic for multisite support by centralizing trashed snippet handling.
+* Fixed multisite snippet handling to ensure local snippets use correct table and filter out trashed snippets.
 
 ## [3.9.3] (2025-12-03)
 
 ### Added
-* end-to-end tests to verify the toggle visual state in the snippets list page, improving UI verification and test reliability
+* End-to-end tests to verify the toggle visual state in the snippets list page, improving UI verification and test reliability.
 
 ### Fixed
-* Fix missing import of common/direction in src/css/manage.scss to restore correct styling and direction-aware layout
-* Fix toggle activation check to ensure the correct transformation value is used when detecting active/inactive state
+* Restored missing styles styling and direction-aware layout from Manage menu.
+* Ensure correct transformation value is used when detecting state of activation toggle.
 
 ## [3.9.2] (2025-11-17)
 

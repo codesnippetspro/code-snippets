@@ -108,42 +108,34 @@ You can report security bugs found in the source code of this plugin through the
 
 = 3.9.5 (2026-02-05) =
 
-__Added__
+__Fixed__
 
-* Confirmed WordPress 6.9 compatability
-
-__Changed__
-
-* Improved nonce handling for cloud snippet download and update actions to for enhanced security
+* Improved security when handling actions for downloading and updating cloud snippets.
 
 = 3.9.4 (2026-01-14) =
 
 __Added__
 
-* New import functionality to migrate snippets from file uploads with drag-and-drop interface
-* Support for importing snippets from other popular plugins (Header Footer Code Manager, Insert Headers and Footers, Insert PHP Code Snippet)
-* Enhanced file based execution support with improved multisite mode compatibility
-
-__Changed__
-
-* Updated links to more recent documentation pages
+* New import functionality to migrate snippets from file uploads with drag-and-drop interface.
+* Support for importing snippets from other popular plugins (Header Footer Code Manager, Insert Headers and Footers, Insert PHP Code Snippet).
+* Enhanced file based execution support with improved multisite mode compatibility.
 
 __Fixed__
 
-* Fixed multisite capability checks in Plugin class
-* Fixed snippet execution logic for multisite support by centralizing trashed snippet handling
-* Fixed multisite snippet handling to ensure local snippets use correct table and filter out trashed snippets
+* Fixed multisite capability checks in Plugin class.
+* Fixed snippet execution logic for multisite support by centralizing trashed snippet handling.
+* Fixed multisite snippet handling to ensure local snippets use correct table and filter out trashed snippets.
 
 = 3.9.3 (2025-12-03) =
 
 __Added__
 
-* Enhanced end-to-end tests to verify the toggle visual state in the snippets list page, improving UI verification and test reliability
+* End-to-end tests to verify the toggle visual state in the snippets list page, improving UI verification and test reliability.
 
 __Fixed__
 
-* Fix missing import of common/direction in src/css/manage.scss to restore correct styling and direction-aware layout
-* Fix toggle activation check to ensure the correct transformation value is used when detecting active/inactive state
+* Restored missing styles styling and direction-aware layout from Manage menu.
+* Ensure correct transformation value is used when detecting state of activation toggle.
 
 = 3.9.2 (2025-11-17) =
 
@@ -269,187 +261,5 @@ __Changed__
 __Fixed__
 
 * Fixed errors in bundle iteration by adding a check for the bundles array before iterating.
-
-= 3.6.8 (2025-02-14) =
-
-__Added__
-
-* `code_snippets/hide_welcome_banner` filter hook for hiding welcome banner in dashboard.
-
-__Changed__
-
-* Updated Freemius SDK to the latest version. (PRO)
-
-__Removed__
-
-* Functionality allowing `[code_snippet]` shortcodes to be embedded recursively – it will be re-added in a future version.
-
-__Fixed__
-
-* Shortcodes embedded within `[code_snippet]` shortcodes not evaluating correctly.
-* Translation functions being called too early in some instances when loading plugin settings.
-* 'Generate' button not appearing on some sites. (PRO)
-* Incorrect arrow entity used in cloud list table (props to [brandonjp]).
-* Removed reference to missing plugins.css file in core plugin version.
-
-= 3.6.7 (2025-01-24) =
-
-__Added__
-
-* Generated snippet shortcode tags will include the snippet name, for easier identification.
-* Admin notices will dismiss automatically after five seconds. ([#208](https://github.com/codesnippetspro/code-snippets/issues/208))
-
-__Changed__
-
-* Updated CSS to use latest Sass features.
-* Moved theme selector to just above editor preview on settings page (thanks to brandonjp). ([#206](https://github.com/codesnippetspro/code-snippets/issues/206))
-* `[code_snippet]` shortcodes can now be nested within each other. ([#198](https://github.com/codesnippetspro/code-snippets/issues/198))
-
-__Fixed__
-
-* Save buttons above editor did not follow usual validation process in Pro. (PRO) ([#197](https://github.com/codesnippetspro/code-snippets/issues/197))
-* Minor inconsistencies in consistent UI elements between Core and Pro.
-* Tags input not allowing input. ([#211](https://github.com/codesnippetspro/code-snippets/issues/211))
-* Issue with Elementor source code widget. (PRO) ([#205](https://github.com/codesnippetspro/code-snippets/issues/205))
-* Snippet descriptions not visible when viewing cloud search results.
-* Snippet import page not displaying number of successfully imported snippets.
-* Use UTC time when deciding when to display campaign notices.
-
-= 3.6.6.1 (2024-11-27) =
-
-__Fixed__
-
-* Redeployment of v3.6.6 to overcome issue with initial build.
-* Type issue when caching cloud links. (PRO)
-
-= 3.6.6 (2024-11-27) =
-
-__Changed__
-
-* Improved compatability with modern versions of PHP.
-* Extended welcome API to include admin notices.
-
-__Fixed__
-
-* Memory issue from checking aggregate posts while loading front-end syntax highlighter.
-* Translation functions being called too early on upgrade, resulting in localisation loading errors.
-* Bug preventing the 'share on network' status of network snippets from correctly updating.
-* Incorrect logic controlling when to display 'Save Changes' or 'Save Changes and Activate' buttons.
-* Old notices persisting when switching between editing and creating snippets.
-
-= 3.6.5.1 (2024-05-24) =
-
-* Redeployment of v3.6.5 to overcome issue with initial build.
-
-= 3.6.5 (2024-05-24) =
-
-__Added__
-
-* New admin menu providing useful resources and updates on the Code Snippets plugin and community.
-
-= 3.6.4 (2024-03-15) =
-
-__Added__
-
-* AI generation for all snippet types: HTML, CSS, JS. (PRO)
-* Button to create a cloud connection directly from the Snippets menu when disconnected. (PRO)
-
-__Changed__
-
-* Increment the revision number of CSS and JS snippet when using the 'Reset Caches' debug action. (PRO)
-* UX in generate dialog, such as allowing 'Enter' to submit the form. (PRO)
-
-__Fixed__
-
-* Minor type compatability issue with newer versions of PHP.
-* Undefined array key issue when initiating cloud sync. (PRO)
-* Bug preventing downloading a single snippet from a bundle. (PRO)
-* Translations not loading for strings in JavaScript files.
-
-= 3.6.3 (2023-11-13) =
-
-__Added__
-
-* Added debug action for resetting snippets caches.
-
-__Fixed__
-
-* Import error when initialising cloud sync configuration. (PRO)
-
-= 3.6.2 (2023-11-11) =
-
-__Removed__
-
-* Removed automatic encoding of code content.
-
-__Fixed__
-
-* Error when attempting to save shared network snippets marked as active.
-* Type error when rendering checkbox fields without a stored or default value.
-* Label for snippet sharing input incorrectly linked to input field.
-* Error when attempting to download export files from Edit menu.
-* Issue loading Freemius string overrides too early. (PRO)
-* Fix redirect URL when connecting with OAuth on subdirectory or HTTPS sites. (PRO)
-* Import error when attempting to completely uninstall the plugin.
-
-= 3.6.1 (2023-11-07) =
-
-__Fixed__
-
-* Issue accessing fields on Snippets class.
-
-= 3.6.0 (2023-11-07) =
-
-__Added__
-
-* Ability to authenticate with Code Snippets Cloud using OAuth. (PRO)
-* Integration with GPT AI for generating snippets. (PRO)
-* Ability to generate line-by-line descriptions of snippet code with GPT AI. (PRO)
-* Ability to generate tags and description text from existing snippet code with GPT AI. (PRO)
-* Added debug settings menu for manually performing problem-solving actions.
-* Filter to disable scroll-into-view functionality for edit page notices.
-
-__Changed__
-
-* Updated minimum PHP requirement to 7.4.
-* Ensure that the URL of the edit snippet page changes when adding a new snippet.
-* Snippet tags will automatically be added when focus is lost on the tags field.
-
-__Fixed__
-
-* Moved active status border on edit name field to left-hand side.
-* New notices will not scroll if already at top of page.
-* Potential CSRF vulnerability allowing an authenticated user to reset settings.
-
-= 3.5.1 (2023-09-15) =
-
-__Fixed__
-
-* Undefined array key error when accessing plugin settings page. (PRO)
-* Issue registering API endpoints affecting edit post screen. (PRO)
-* Snippet ID instead of snippet object being passed to `code_snippets/update_snippet` action hook.
-
-= 3.5.0 (2023-09-13) =
-
-__Added__
-
-* Support for the Code Snippets Cloud API.
-* Search and download public snippets.
-* Codevault back-up and synchronisation. (PRO)
-* Synchronised local snippets are automatically updated in Cloud. (PRO)
-* Bulk actions - 'update' and 'download'.
-* Download snippets from public and private codevaults. (PRO)
-* Search and download any publicly viewable snippet in Code Snippet Cloud by keyword or name of codevault. (PRO)
-* Deploy snippets to plugin from Code Snippets Cloud app. (PRO)
-* Bundles of Joy! Search and download Snippet Bundles in one go direct from Code Snippets Cloud. (PRO)
-
-__Changed__
-
-* Redirect to snippets table when deleting snippet from the edit menu.
-* Scroll new notices into view on edit menu.
-
-__Fixed__
-
-* Error when attempting to update network shared snippets after saving. [[#](https://wordpress.org/support/topic/activating-snippets-breaks-on-wordpress-6-3/)]
 
 **[The full changelog is available on GitHub](https://github.com/codesnippetspro/code-snippets/blob/core/CHANGELOG.md)**
