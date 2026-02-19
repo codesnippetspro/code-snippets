@@ -33,7 +33,7 @@ export type ListTableSortDirection = 'asc' | 'desc'
 
 export interface ListTableNavProps<K extends Key> {
 	actions?: readonly (ListTableBulkAction<K> | ListTableBulkActionGroup<K>)[]
-	isDisabled?: boolean
+	disabled?: boolean
 	extraTableNav?: (which: 'top' | 'bottom') => ReactNode
 }
 
@@ -106,8 +106,8 @@ export const ListTable = <T, K extends Key>({
 	totalPages,
 	rowClassName,
 	extraTableNav,
+	disabled = false,
 	useQueryVars = true,
-	isDisabled = false
 }: ListTableProps<T, K>) => {
 	const [selected, setSelected] = useState(new Set<K>())
 	const [sortColumn, setSortColumn] = useState<ListTableColumn<T>>()
@@ -119,7 +119,7 @@ export const ListTable = <T, K extends Key>({
 		[items, sortColumn, sortDirection, currentPage, totalPages])
 
 	const tableNavProps: Omit<TableNavProps<K>, 'which'> =
-		{ totalItems: items.length, actions, extraTableNav, selected, isDisabled, currentPage, totalPages, setCurrentPage, useQueryVars }
+		{ totalItems: items.length, actions, extraTableNav, selected, disabled, currentPage, totalPages, setCurrentPage, useQueryVars }
 
 	const tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'> =
 		{ items: visibleItems, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }

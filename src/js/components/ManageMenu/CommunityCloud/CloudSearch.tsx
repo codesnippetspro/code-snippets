@@ -45,13 +45,13 @@ const SearchBox = () => {
 				{isSearching && <Spinner />}
 			</div>
 
-			<SubmitButton primary text={__('Search Cloud Library', 'code-snippets')} />
+			<SubmitButton primary disabled={isSearching} text={__('Search Cloud Library', 'code-snippets')} />
 		</form>
 	)
 }
 
 const SearchResultsTable = () => {
-	const { page, totalItems, totalPages, setPage, doSearch } = useCloudSearch()
+	const { page, totalItems, totalPages, setPage, doSearch, isSearching } = useCloudSearch()
 	const { filteredSearchResults } = useCloudSearchFilters()
 
 	useEffect(() => {
@@ -67,6 +67,7 @@ const SearchResultsTable = () => {
 					which="top"
 					totalItems={totalItems}
 					totalPages={totalPages}
+					disabled={isSearching}
 					currentPage={page}
 					setCurrentPage={setPage}
 				/>
@@ -79,6 +80,7 @@ const SearchResultsTable = () => {
 					which="bottom"
 					totalItems={totalItems}
 					totalPages={totalPages}
+					disabled={isSearching}
 					currentPage={page}
 					setCurrentPage={setPage}
 				/>

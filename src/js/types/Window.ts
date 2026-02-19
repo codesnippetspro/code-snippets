@@ -27,7 +27,6 @@ declare global {
 				snippets: string
 				recentlyActive: string
 				conditions: string
-				cloudSearch: string
 				cloud: string
 				importPlugins: string
 				importFiles: string

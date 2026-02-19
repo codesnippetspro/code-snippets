@@ -1,5 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
+import { __ } from '@wordpress/i18n'
+import { trimTrailingChar } from '../../utils/text'
 import type { ReactNode } from 'react'
 
 export interface TooltipProps {
@@ -23,3 +25,8 @@ export const Tooltip: React.FC<TooltipProps> = ({ block, inline, start, end, ico
 			{children}
 		</div>
 	</div>
+
+export const ErrorTooltip: React.FC<{ message: string }> = ({ message }) =>
+	<Tooltip block end icon={<span className="dashicons dashicons-warning"></span>}>
+		{`${trimTrailingChar(message, '.!?')}. ${__('Please try again.', 'code-snippets')}`}
+	</Tooltip>

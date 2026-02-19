@@ -282,34 +282,6 @@ class Cloud_API {
 	/**
 	 * Download a snippet from the cloud.
 	 *
-	 * @param int|string $cloud_id The cloud ID of the snippet as string from query args.
-	 * @param string     $source   Unused in Core.
-	 * @param string     $action   The action to be performed: 'download' or 'update'.
-	 *
-	 * @return array<string, string|bool> Result of operation: an array with `success` and `error_message` keys.
-	 *
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function download_or_update_snippet( int $cloud_id, string $source, string $action ): array {
-		$cloud_id = intval( $cloud_id );
-		$snippet_to_store = $this->get_single_snippet_from_cloud( $cloud_id );
-
-		switch ( $action ) {
-			case 'download':
-				return $this->download_snippet_from_cloud( $snippet_to_store );
-			case 'update':
-				return $this->update_snippet_from_cloud( $snippet_to_store );
-			default:
-				return [
-					'success' => false,
-					'error'   => __( 'Invalid action.', 'code-snippets' ),
-				];
-		}
-	}
-
-	/**
-	 * Download a snippet from the cloud.
-	 *
 	 * @param Cloud_Snippet $snippet_to_store The snippet to be downloaded.
 	 *
 	 * @return array The result of the download.
@@ -318,10 +290,9 @@ class Cloud_API {
 		$snippet = new Snippet( $snippet_to_store );
 
 		// Set the snippet id to 0 to ensure that the snippet is saved as a new snippet.
-		$ownership = $snippet_to_store->is_owner ? '1' : '0';
 		$snippet->id = 0;
 		$snippet->active = 0;
-		$snippet->cloud_id = $snippet_to_store->id . '_' . $ownership;
+		$snippet->cloud_id = sprintf( '%d_%d', $snippet_to_store->id, $snippet_to_store->is_owner ? '1' : '0' );
 		$snippet->desc = $snippet_to_store->description ? $snippet_to_store->description : '';
 
 		// Save the snippet to the database.

@@ -44,9 +44,10 @@ const BulkActionSelect = <K extends Key>({ which, actions, setSelectedAction }: 
 
 interface BulkActionsProps<K extends Key> extends Required<Pick<TableNavProps<K>, 'which' | 'actions'>> {
 	applyAction: (action: ListTableBulkAction<K>) => Promise<void>
+	disabled?: boolean
 }
 
-const BulkActions = <K extends Key>({ which, actions, applyAction }: BulkActionsProps<K>) => {
+const BulkActions = <K extends Key>({ which, actions, applyAction, disabled }: BulkActionsProps<K>) => {
 	const [selectedAction, setSelectedAction] = useState<ListTableBulkAction<K>>()
 	const [isPerformingAction, setIsPerformingAction] = useState(false)
 
@@ -64,7 +65,7 @@ const BulkActions = <K extends Key>({ which, actions, applyAction }: BulkActions
 				name="bulk_action"
 				text={__('Apply', 'code-snippets')}
 				className="action"
-				disabled={isPerformingAction}
+				disabled={disabled ?? isPerformingAction}
 				onClick={event => {
 					event.preventDefault()
 
@@ -108,6 +109,7 @@ export const TableNav = <K extends Key>({
 				<BulkActions
 					which={which}
 					actions={actions}
+					disabled={paginationProps.disabled}
 					applyAction={action => action.apply(selected)}
 				/>)}
 

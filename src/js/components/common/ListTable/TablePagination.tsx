@@ -10,12 +10,21 @@ interface NavigationButtonProps {
 	icon: ReactNode
 	newPage: number
 	className?: string
+	disabled?: boolean
 	helperText?: string
 	renderAsLinks?: boolean
 	setCurrentPage: (page: number) => void
 }
 
-const NavigationButton: React.FC<NavigationButtonProps> = ({ icon, newPage, className, helperText, renderAsLinks, setCurrentPage }) =>
+const NavigationButton: React.FC<NavigationButtonProps> = ({
+	icon,
+	newPage,
+	disabled,
+	className,
+	helperText,
+	renderAsLinks,
+	setCurrentPage
+}) =>
 	renderAsLinks
 		? <>
 			<a
@@ -30,13 +39,14 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({ icon, newPage, clas
 				<span aria-hidden>{icon}</span>
 			</a>{'\n'}
 		</>
-		: <Button className={className} onClick={() => setCurrentPage(newPage)}>
+		: <Button className={className} onClick={() => setCurrentPage(newPage)} disabled={disabled}>
 			<span className="screen-reader-text">{helperText}</span>
 			<span aria-hidden>{icon}</span>
 		</Button>
 
 interface NavigationButtonsProps {
 	currentPage: number
+	disabled?: boolean
 	renderAsLinks?: boolean
 	setCurrentPage: (page: number) => void
 }
@@ -98,12 +108,13 @@ const ForwardNavigationButtons: React.FC<ForwardNavigationButtonsProps> = ({ cur
 interface PagingInputProps {
 	which: 'top' | 'bottom'
 	totalPages: number
+	disabled?: boolean
 	inputValue: number
 	setInputValue: (value: number) => void
 	confirmInputValue: VoidFunction
 }
 
-const PagingInput: React.FC<PagingInputProps> = ({ which, totalPages, inputValue, setInputValue, confirmInputValue }) =>
+const PagingInput: React.FC<PagingInputProps> = ({ which, totalPages, disabled, inputValue, setInputValue, confirmInputValue }) =>
 	<>
 		<label htmlFor={`current-page-selector-${which}`} className="screen-reader-text">
 			{/* translators: Hidden accessibility text. */
@@ -116,6 +127,7 @@ const PagingInput: React.FC<PagingInputProps> = ({ which, totalPages, inputValue
 			name="paged"
 			value={inputValue}
 			size={totalPages.toString().length}
+			disabled={disabled}
 			aria-describedby="table-paging"
 			onBlur={confirmInputValue}
 			onChange={event => {
@@ -146,11 +158,7 @@ const CurrentPage: React.FC<CurrentPageProps> = ({ which, totalPages, currentPag
 			</span>
 		</>
 		: <span className="paging-input">
-			<PagingInput
-				which={which}
-				totalPages={totalPages}
-				{...inputProps}
-			/>
+			<PagingInput which={which} totalPages={totalPages} {...inputProps} />
 			<span className="tablenav-paging-text">
 				{/* translators: 1: Current page. */
 					_x(' of ', 'paging', 'code-snippets')}
@@ -164,6 +172,7 @@ interface PaginationControlsProps {
 	totalPages: number
 	totalItems: number
 	currentPage: number
+	disabled?: boolean
 	useQueryVars?: boolean
 	setInputValue: (value: number) => void
 	setCurrentPage: (page: number) => void
@@ -171,6 +180,7 @@ interface PaginationControlsProps {
 
 const PaginationControls: React.FC<PaginationControlsProps> = ({
 	which,
+	disabled,
 	totalPages,
 	totalItems,
 	inputValue,
@@ -196,6 +206,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 
 		<span className="pagination-links">
 			<BackwardNavigationButtons
+				disabled={disabled}
 				currentPage={currentPage}
 				renderAsLinks={useQueryVars}
 				setCurrentPage={setCurrentPage}
@@ -203,6 +214,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 
 			<CurrentPage
 				which={which}
+				disabled={disabled}
 				totalPages={totalPages}
 				currentPage={currentPage}
 				inputValue={inputValue}
@@ -211,6 +223,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 			/>{'\n'}
 
 			<ForwardNavigationButtons
+				disabled={disabled}
 				totalPages={totalPages}
 				currentPage={currentPage}
 				renderAsLinks={useQueryVars}
@@ -223,12 +236,14 @@ export interface TablePaginationProps extends Omit<ListTablePaginationProps, 'to
 	Required<Pick<ListTablePaginationProps, 'totalPages'>> {
 	which: 'top' | 'bottom'
 	totalItems: number
+	disabled?: boolean
 	currentPage: number
 	setCurrentPage: (page: number) => void
 }
 
 export const TablePagination: React.FC<TablePaginationProps> = ({
 	which,
+	disabled,
 	totalItems,
 	currentPage,
 	totalPages,
@@ -251,13 +266,7 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
 
 	return (
 		<PaginationControls
-			which={which}
-			useQueryVars
-			currentPage={currentPage}
-			totalItems={totalItems}
-			totalPages={totalPages}
-			inputValue={inputValue}
-			setInputValue={setInputValue}
+			{...{ which, inputValue, currentPage, totalItems, totalPages, disabled, setInputValue }}
 			setCurrentPage={setCurrentPageSafe}
 		/>
 	)

@@ -6,8 +6,8 @@ const normalizeUrl = (url: string | undefined) =>
 
 export const REST_BASES = {
 	snippets: normalizeUrl(window.CODE_SNIPPETS?.restAPI.snippets),
+	cloud: normalizeUrl(window.CODE_SNIPPETS?.restAPI.cloud),
 	recentlyActive: normalizeUrl(window.CODE_SNIPPETS?.restAPI.recentlyActive),
-	cloudSearch: normalizeUrl(window.CODE_SNIPPETS?.restAPI.cloudSearch),
 	importPlugins: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importPlugins),
 	importFiles: normalizeUrl(window.CODE_SNIPPETS?.restAPI.importFiles)
 }

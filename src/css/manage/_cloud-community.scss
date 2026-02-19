@@ -98,8 +98,16 @@
 		padding-block: 12px;
 		align-items: center;
 
-		.button:first-of-type {
-			margin-inline-start: auto;
+		.components-spinner {
+			margin: 0;
+		}
+
+		.dashicons-warning {
+			color: #b32d2e;
+		}
+
+		.cloud-snippet-status {
+			margin-inline-end: auto;
 		}
 	}
 

@@ -3,6 +3,7 @@
 namespace Code_Snippets\REST_API\Cloud;
 
 use Code_Snippets\Client\Cloud_API;
+use Code_Snippets\REST_API\REST_Collection_Controller;
 use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -15,7 +16,7 @@ use const Code_Snippets\REST_API_NAMESPACE;
  *
  * @package Code_Snippets
  */
-final class Cloud_Snippets_REST_Controller extends WP_REST_Controller {
+final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 
 	/**
 	 * Current API version.
@@ -25,47 +26,32 @@ final class Cloud_Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * The base of this controller's route.
 	 */
-	public const BASE_ROUTE = 'cloud/search';
+	public const BASE_ROUTE = 'cloud';
 
 	/**
-	 * The namespace of this controller's route.
+	 * Cloud API instance.
 	 *
-	 * @var string
+	 * @var Cloud_API
 	 */
-	protected $namespace = REST_API_NAMESPACE . self::VERSION;
+	private Cloud_API $api;
 
 	/**
-	 * The base of this controller's route.
+	 * Class constructor.
 	 *
-	 * @var string
+	 * @param Cloud_API $api Cloud API instance.
 	 */
-	protected $rest_base = self::BASE_ROUTE;
-
-	/**
-	 * Retrieve this controller's REST API base path, including namespace.
-	 *
-	 * @return string
-	 */
-	public static function get_base_route(): string {
-		return REST_API_NAMESPACE . self::VERSION . '/' . self::BASE_ROUTE;
-	}
-
-	/**
-	 * Class constrictor.
-	 */
-	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
+	public function __construct( Cloud_API $api ) {
+		$this->api = $api;
+		parent::__construct();
 	}
 
 	/**
 	 * Register REST routes.
 	 */
 	public function register_routes() {
-		$route = '/' . $this->rest_base;
-
 		register_rest_route(
 			$this->namespace,
-			$route,
+			$this->rest_base,
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
@@ -92,17 +78,25 @@ final class Cloud_Snippets_REST_Controller extends WP_REST_Controller {
 				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
-	}
 
-	/**
-	 * Check if a given request has permission to view cloud snippets.
-	 *
-	 * @param WP_REST_Request $request The request object.
-	 *
-	 * @return bool Whether the request has permission to view cloud snippets.
-	 */
-	public function get_items_permissions_check( $request ): bool {
-		return code_snippets()->current_user_can();
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/(?P<id>\d+)/download',
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'download_item' ],
+					'permission_callback' => [ $this, 'create_item_permissions_check' ],
+					'args'                => [
+						'id' => [
+							'description' => esc_html__( 'Cloud snippet ID.', 'code-snippets' ),
+							'type'        => 'number',
+							'required'    => true,
+						],
+					],
+				],
+			]
+		);
 	}
 
 	/**
@@ -131,5 +125,19 @@ final class Cloud_Snippets_REST_Controller extends WP_REST_Controller {
 		$response->header( 'X-WP-TotalPages', $cloud_snippets->total_pages );
 
 		return $response;
+	}
+
+	/**
+	 * Retrieve cloud snippets using a search query.
+	 *
+	 * @param WP_REST_Request $request The request object containing the search parameters.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function download_item( WP_REST_Request $request ): WP_REST_Response {
+		$id = $request->get_param( 'id' );
+
+		$cloud_snippet = $this->api->get_single_snippet_from_cloud( $id );
+		return rest_ensure_response( $this->api->download_snippet_from_cloud( $cloud_snippet ) );
 	}
 }

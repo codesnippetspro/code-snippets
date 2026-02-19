@@ -1,16 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import classnames from 'classnames'
 import { __, _x } from '@wordpress/i18n'
-import { Modal } from '@wordpress/components'
+import { Modal, Spinner } from '@wordpress/components'
+import { useRestAPI } from '../../../hooks/useRestAPI'
 import { CloudStatus } from '../../../types/schema/CloudSnippetSchema'
 import { Prism } from '../../../utils/Prism'
-import { getSnippetType } from '../../../utils/snippets/snippets'
+import { REST_BASES } from '../../../utils/restAPI'
+import { isLicensed } from '../../../utils/screen'
+import { getSnippetEditUrl, getSnippetType, isProSnippet } from '../../../utils/snippets/snippets'
 import { Badge } from '../../common/Badge'
 import { Button } from '../../common/Button'
+import { ErrorTooltip } from '../../common/Tooltip'
 import { STATUS_LABELS } from './SearchFilters'
 import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchema'
 
 const MAX_DESCRIPTION_LENGTH = 150
+
+interface DownloadSnippetResponse {
+	success: boolean
+	snippet_id: number
+	link_id: number
+}
 
 interface CloudSnippetDetailsProps {
 	snippet: CloudSnippetSchema
@@ -81,6 +91,63 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ snippet, isOpen, setIsOpen 
 		: null
 }
 
+interface DownloadButtonProps {
+	snippet: CloudSnippetSchema
+}
+
+const DownloadButton: React.FC<DownloadButtonProps> = ({ snippet }) => {
+	const { api } = useRestAPI()
+	const [isWorking, setIsWorking] = useState(false)
+	const [errorMessage, setErrorMessage] = useState<string>()
+	const [localSnippetId, setLocalSnippetId] = useState<number>()
+
+	const handleDownload = () => {
+		setIsWorking(true)
+		setErrorMessage(undefined)
+
+		api.post<DownloadSnippetResponse>(`${REST_BASES.cloud}/${snippet.id}/download`)
+			.then(response => {
+				setLocalSnippetId(response.snippet_id)
+			})
+			.catch((error: unknown) => {
+				setErrorMessage('string' === typeof error
+					? error
+					: __('An error occurred while trying to download the snippet. Please try again later.', 'code-snippets'))
+			})
+			.finally(() => setIsWorking(false))
+	}
+
+	const DownloadOrViewButton = () => {
+		if (localSnippetId) {
+			return (
+				<a className="button button-primary" href={getSnippetEditUrl({ id: localSnippetId })} target="_blank" rel="noreferrer">
+					{__('View', 'code-snippets')}
+				</a>
+			)
+		}
+
+		if (isProSnippet(snippet) && !isLicensed()) {
+			return (
+				<Button primary disabled>{__('Pro only', 'code-snippets')}</Button>
+			)
+		}
+
+		return (
+			<Button primary onClick={handleDownload} disabled={isWorking}>
+				{__('Download', 'code-snippets')}
+			</Button>
+		)
+	}
+
+	return (
+		<>
+			{isWorking && <Spinner />}
+			{errorMessage && <ErrorTooltip message={errorMessage} />}
+			<DownloadOrViewButton />
+		</>
+	)
+}
+
 interface SearchResultProps {
 	snippet: CloudSnippetSchema
 }
@@ -106,9 +173,12 @@ const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 					{STATUS_LABELS[snippet.status]}
 				</span>
 
+				<DownloadButton snippet={snippet} />
+
 				<Button secondary onClick={() => setIsPreviewOpen(true)}>
 					{__('Preview', 'code-snippets')}
 				</Button>
+
 			</footer>
 
 			<PreviewModal snippet={snippet} isOpen={isPreviewOpen} setIsOpen={setIsPreviewOpen} />
