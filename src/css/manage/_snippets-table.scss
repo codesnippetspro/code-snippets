@@ -1,7 +1,7 @@
 @use '../common/theme';
 
-.name-column,
-.type-column {
+.column-name,
+.column-type {
 	.dashicons {
 		font-size: 16px;
 		inline-size: 16px;
@@ -14,18 +14,20 @@
 	}
 }
 
-.column-locked {
-	.dashicons-lock {
-		color: #2271b1
-	}
+.column-name .tooltip {
+	float: inline-end;
 
-	.dashicons-unlock {
+	.dashicons-lock {
 		color: #646970;
-		opacity: 0.5;
+		opacity: 0.7;
+
+		&:hover {
+			opacity: 1;
+		}
 	}
 }
 
-.active-snippet .name-column > a {
+.active-snippet .column-name > .snippet-name {
 	font-weight: 600;
 }
 
@@ -48,15 +50,20 @@
 	color: #666;
 	text-align: center;
 
+	&:disabled {
+		color: inherit;
+	}
+
 	&:hover, &:focus, &:active {
 		color: #000;
 		background-color: rgb(0 0 0 / 10%);
 		border-radius: 6px;
 		appearance: unset;
-	}
 
-	&:disabled {
-		color: inherit;
+		&:disabled {
+			color: inherit;
+			background-color: transparent;
+		}
 	}
 }
 
@@ -91,10 +98,17 @@
 		.button-link {
 			min-block-size: unset;
 			line-height: unset;
+			border: none;
 
 			&:hover {
 				background: none;
 			}
+		}
+
+		.delete.disabled {
+			color: #a7aaad;
+			cursor: not-allowed;
+			pointer-events: none;
 		}
 	}
 
@@ -132,7 +146,9 @@
 
 	.delete {
 		color: #b32d2e;
+	}
 
+	a.delete:not(.disabled) {
 		&:hover, &:focus, &:active {
 			border-block-end: 1px solid #f00;
 			color: #f00;
@@ -143,6 +159,17 @@
 		white-space: nowrap; /* prevents wrapping of snippet title */
 		vertical-align: top;
 	}
+
+	td.column-date, th.column-date {
+		white-space: nowrap;
+		inline-size: 130px; /* fixed column width */
+		min-inline-size: 130px;
+		max-inline-size: 130px;
+		text-align: end;
+		padding-inline: 8px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 }
 
 .wp-core-ui .button.clear-filters {
@@ -151,4 +178,28 @@
 
 .inactive-snippet {
 	@include theme.link-colors(#579);
+}
+
+
+@media (width <= 782px) {
+	p.search-box {
+		float: inline-start;
+		position: initial;
+		margin-block: 1em 0;
+		margin-inline: 0;
+		block-size: auto;
+	}
+}
+
+
+.wp-list-table .is-expanded td.column-activate.activate {
+	/* fix for mobile layout */
+	display: table-cell !important;
+}
+
+.snippet-type-description {
+	border-block-end: 1px solid #ccc;
+	margin: 0;
+	padding-block: 1em;
+	padding-inline: 0;
 }
