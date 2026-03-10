@@ -363,7 +363,7 @@ class Snippet_Files {
 	 * @return void
 	 */
 	public function sync_active_shared_network_snippets_add( $option, $value ): void {
-		if ( 'active_shared_network_snippets' !== $option ) {
+		if ( 'active_shared_network_snippets' === $option ) {
 			$this->create_active_shared_network_snippets_file( $value );
 		}
 	}
@@ -400,7 +400,7 @@ class Snippet_Files {
 	 * @return string Hashed table name.
 	 */
 	public static function get_hashed_table_name( string $table ): string {
-		return wp_hash( $table );
+		return function_exists( 'wp_hash' ) ? wp_hash( $table ) : md5( $table );
 	}
 
 	/**
