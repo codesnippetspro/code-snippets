@@ -162,6 +162,12 @@ class Manage_Menu extends Admin_Menu {
 	public function load() {
 		parent::load();
 
+		$screen = get_current_screen();
+
+		if ( $screen ) {
+			add_filter( "manage_{$screen->id}_columns", array( $this, 'get_screen_columns' ) );
+		}
+
 		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
 
@@ -206,6 +212,7 @@ class Manage_Menu extends Admin_Menu {
 			'CODE_SNIPPETS_MANAGE',
 			[
 				'hasNetworkCap'    => current_user_can( code_snippets()->get_network_cap_name() ),
+				'hiddenColumns'    => $this->get_hidden_manage_columns(),
 				'snippetsPerPage'  => $this->get_snippets_per_page(),
 				'isSafeModeActive' => code_snippets()->evaluate_functions->is_safe_mode_active(),
 				'snippetsList'     => array_map(
@@ -240,6 +247,40 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function render() {
 		echo '<div id="manage-snippets-container"></div>';
+	}
+
+	/**
+	 * Return the columns available in Screen Options for the snippets table.
+	 *
+	 * @param string[] $columns Existing columns.
+	 *
+	 * @return string[]
+	 */
+	public function get_screen_columns( array $columns = array() ): array {
+		return array_merge(
+			$columns,
+			array(
+				'_title'   => __( 'Columns', 'code-snippets' ),
+				'activate' => __( 'Active', 'code-snippets' ),
+				'name'     => __( 'Name', 'code-snippets' ),
+				'type'     => __( 'Type', 'code-snippets' ),
+				'desc'     => __( 'Description', 'code-snippets' ),
+				'tags'     => __( 'Tags', 'code-snippets' ),
+				'date'     => __( 'Modified', 'code-snippets' ),
+				'priority' => __( 'Priority', 'code-snippets' ),
+			)
+		);
+	}
+
+	/**
+	 * Get the list of columns hidden for the current user on the snippets screen.
+	 *
+	 * @return string[]
+	 */
+	protected function get_hidden_manage_columns(): array {
+		$screen = get_current_screen();
+
+		return $screen ? get_hidden_columns( $screen ) : array();
 	}
 
 	/**

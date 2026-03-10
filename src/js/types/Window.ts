@@ -57,6 +57,7 @@ declare global {
 		readonly CODE_SNIPPETS_MANAGE?: {
 			snippetsList: Snippet[]
 			hasNetworkCap: boolean
+			hiddenColumns: string[]
 			snippetsPerPage: number
 			isSafeModeActive: boolean
 		}

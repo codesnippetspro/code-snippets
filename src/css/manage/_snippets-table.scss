@@ -170,6 +170,11 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
+
+	td.column-date .modified-column-content {
+		display: block;
+		text-align: end;
+	}
 }
 
 .wp-core-ui .button.clear-filters {

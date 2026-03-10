@@ -34,7 +34,9 @@ interface TableCellProps<T> {
 }
 
 const TableCell = <T, >({ item, column }: TableCellProps<T>) => {
-	const className = `${column.id}-column column-${column.id}`
+	const className = [ `${column.id}-column`, `column-${column.id}`, column.isHidden ? 'hidden' : '' ]
+		.filter(Boolean)
+		.join(' ')
 
 	return column.isHeading
 		? <th className={className}>{column.render(item)}</th>

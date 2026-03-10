@@ -1,5 +1,5 @@
 import { __, _x, sprintf } from '@wordpress/i18n'
-import React, { Fragment, useEffect, useMemo } from 'react'
+import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { createInterpolateElement } from '@wordpress/element'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
@@ -12,7 +12,7 @@ import { ListTable } from '../../common/ListTable'
 import { SubmitButton } from '../../common/SubmitButton'
 import { INDEX_STATUS, useSnippetsFilters } from './WithSnippetsTableFilters'
 import { useFilteredSnippets } from './WithFilteredSnippetsContext'
-import { TableColumns } from './TableColumns'
+import { getTableColumns } from './TableColumns'
 import type { SnippetStatus} from './WithSnippetsTableFilters'
 import type { ListTableBulkAction } from '../../common/ListTable'
 import type { Snippet } from '../../../types/Snippet'
@@ -86,6 +86,34 @@ interface ExtraTableNavProps {
 	visibleSnippets: Snippet[]
 }
 
+const useHiddenColumns = (): string[] => {
+	const [hiddenColumns, setHiddenColumns] = useState<string[]>(() => window.CODE_SNIPPETS_MANAGE?.hiddenColumns ?? [])
+
+	useEffect(() => {
+		const screenOptions = document.getElementById('adv-settings')
+
+		if (!screenOptions) {
+			return
+		}
+
+		const updateHiddenColumns = () => {
+			setHiddenColumns(
+				Array.from(screenOptions.querySelectorAll<HTMLInputElement>('.hide-column-tog:not(:checked)'))
+					.map(toggle => toggle.value)
+			)
+		}
+
+		updateHiddenColumns()
+		screenOptions.addEventListener('change', updateHiddenColumns)
+
+		return () => {
+			screenOptions.removeEventListener('change', updateHiddenColumns)
+		}
+	}, [])
+
+	return hiddenColumns
+}
+
 const FilterByTagControl: React.FC<ExtraTableNavProps> = ({ visibleSnippets }) => {
 	const { currentTag, setCurrentTag } = useSnippetsFilters()
 
@@ -146,14 +174,8 @@ const NoItemsMessage = () => {
 		</>
 }
 
-export const SnippetsListTable: React.FC = () => {
-	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
-	const { snippetsByStatus } = useFilteredSnippets()
-
-	const allSnippets = useMemo(() => snippetsByStatus.get('all') ?? [], [snippetsByStatus])
-	const totalItems = snippetsByStatus.get(currentStatus)?.length ?? 0
-	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
-	const actions: ListTableBulkAction<Snippet['id']>[] = useMemo(
+const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] =>
+	useMemo(
 		() => [
 			{
 				name: __('Activate', 'code-snippets'),
@@ -188,6 +210,17 @@ export const SnippetsListTable: React.FC = () => {
 		[allSnippets]
 	)
 
+export const SnippetsListTable: React.FC = () => {
+	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
+	const { snippetsByStatus } = useFilteredSnippets()
+
+	const hiddenColumns = useHiddenColumns()
+	const allSnippets = useMemo(() => snippetsByStatus.get('all') ?? [], [snippetsByStatus])
+	const totalItems = snippetsByStatus.get(currentStatus)?.length ?? 0
+	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
+	const columns = useMemo(() => getTableColumns(hiddenColumns), [hiddenColumns])
+	const actions = useBulkActions(allSnippets)
+
 	useEffect(() => {
 		if (INDEX_STATUS !== currentStatus && !snippetsByStatus.has(currentStatus)) {
 			setCurrentStatus(INDEX_STATUS)
@@ -202,7 +235,7 @@ export const SnippetsListTable: React.FC = () => {
 			<ListTable
 				items={snippetsByStatus.get(currentStatus) ?? []}
 				getKey={snippet => snippet.id}
-				columns={TableColumns}
+				columns={columns}
 				actions={actions}
 				totalPages={itemsPerPage && Math.ceil(totalItems / itemsPerPage)}
 				extraTableNav={which =>
