@@ -115,7 +115,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 		$query_params = $request->get_query_params();
 		$page = max( 1, (int) $request->get_param( 'page' ) );
 		$per_page = isset( $query_params['per_page'] )
-			? max( 1, (int) $request->get_param( 'per_page' ) )
+			? min( Cloud_API::MAX_RESULTS_PER_PAGE, max( 1, (int) $request->get_param( 'per_page' ) ) )
 			: $this->get_snippets_per_page();
 
 		$cloud_snippets = Cloud_API::fetch_search_results( $method, $query, $page, $per_page );
@@ -142,7 +142,7 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	private function get_snippets_per_page(): int {
 		$per_page = (int) get_user_option( 'snippets_per_page' );
 
-		return $per_page > 0 ? $per_page : 10;
+		return $per_page > 0 ? min( Cloud_API::MAX_RESULTS_PER_PAGE, $per_page ) : 10;
 	}
 
 	/**

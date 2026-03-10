@@ -9,6 +9,7 @@ import type { CloudSnippetSchema } from '../../../types/schema/CloudSnippetSchem
 const SEARCH_PARAM = 's'
 const SEARCH_METHOD_PARAM = 'by'
 const DEFAULT_SNIPPETS_PER_PAGE = 10
+const MAX_CLOUD_RESULTS_PER_PAGE = 100
 
 export interface CloudSearchContext {
 	page: number
@@ -32,7 +33,10 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 	const [page, setPage] = useState(1)
 	const [query, setQuery] = useState(() => fetchQueryParam(SEARCH_PARAM) ?? '')
 	const [searchByCodevault, setSearchByCodevault] = useState(() => 'codevault' === fetchQueryParam(SEARCH_METHOD_PARAM))
-	const snippetsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage ?? DEFAULT_SNIPPETS_PER_PAGE
+	const snippetsPerPage = Math.min(
+		window.CODE_SNIPPETS_MANAGE?.snippetsPerPage ?? DEFAULT_SNIPPETS_PER_PAGE,
+		MAX_CLOUD_RESULTS_PER_PAGE
+	)
 
 	const [totalItems, setTotalItems] = useState(0)
 	const [totalPages, setTotalPages] = useState(0)

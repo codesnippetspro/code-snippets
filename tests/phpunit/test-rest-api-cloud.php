@@ -179,6 +179,28 @@ class REST_API_Cloud_Test extends TestCase {
 	}
 
 	/**
+	 * Screen Options values above the cloud API limit are capped before the request is sent.
+	 *
+	 * @return void
+	 */
+	public function test_get_items_caps_snippets_per_page_user_option_at_one_hundred(): void {
+		update_user_option( self::$admin_user_id, 'snippets_per_page', 250 );
+
+		$response = $this->make_request(
+			[
+				'query' => 'test',
+				'page'  => 2,
+			]
+		);
+
+		parse_str( (string) wp_parse_url( $this->requested_url, PHP_URL_QUERY ), $query_args );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '100', $query_args['per_page'] ?? null );
+		$this->assertSame( '1', $query_args['page'] ?? null );
+	}
+
+	/**
 	 * Explicit per_page requests override the snippets Screen Options value.
 	 *
 	 * @return void
