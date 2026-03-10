@@ -309,7 +309,7 @@ class Manage_Menu extends Admin_Menu {
 		ob_start();
 		?>
 		<fieldset class="metabox-prefs">
-			<legend><?php esc_html_e( 'Row values', 'code-snippets' ); ?></legend>
+			<legend><?php esc_html_e( 'Table options', 'code-snippets' ); ?></legend>
 			<div class="metabox-prefs-container">
 				<label for="snippets-table-truncate-row-values">
 					<input
@@ -321,9 +321,6 @@ class Manage_Menu extends Admin_Menu {
 					/>
 					<?php esc_html_e( 'Truncate long row values', 'code-snippets' ); ?>
 				</label>
-				<p class="description">
-					<?php esc_html_e( 'Prevent long snippet titles and descriptions from stretching the table off screen.', 'code-snippets' ); ?>
-				</p>
 			</div>
 		</fieldset>
 		<?php
