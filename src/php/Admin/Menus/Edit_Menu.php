@@ -58,12 +58,7 @@ class Edit_Menu extends Admin_Menu {
 	 */
 	public function register() {
 		parent::register();
-
-		// Only preserve the edit menu if we are currently editing a snippet.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_REQUEST['page'] ) || $_REQUEST['page'] !== $this->slug ) {
-			remove_submenu_page( $this->base_slug, $this->slug );
-		}
+		remove_submenu_page( $this->base_slug, $this->slug );
 
 		// Create New Snippet menu.
 		$this->add_menu(
