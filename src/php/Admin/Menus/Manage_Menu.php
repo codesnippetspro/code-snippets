@@ -309,7 +309,7 @@ class Manage_Menu extends Admin_Menu {
 		ob_start();
 		?>
 		<fieldset class="metabox-prefs">
-			<legend><?php esc_html_e( 'Table options', 'code-snippets' ); ?></legend>
+			<legend><?php esc_html_e( 'Table Options', 'code-snippets' ); ?></legend>
 			<div class="metabox-prefs-container">
 				<label for="snippets-table-truncate-row-values">
 					<input
