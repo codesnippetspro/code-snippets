@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
 import { useSnippetForm } from '../components/EditMenu/SnippetForm/WithSnippetFormContext'
@@ -72,6 +72,14 @@ const getSuccessNotice = (
 	}
 }
 
+const getActivationErrorNotice = (snippet: Snippet): ['error', string, string, string?] => [
+	'error',
+	__('Snippet could not be activated.', 'code-snippets'),
+	// translators: %s: single-line PHP error message.
+	sprintf(__('The snippet was saved, but remains inactive due to this error: %s', 'code-snippets'), snippet.code_error?.[0] ?? ''),
+	snippet.code_error_trace ?? undefined
+]
+
 export interface UseSubmitSnippet {
 	submitSnippet: (snippet: Partial<Snippet> & Pick<Snippet, 'network'>, action?: SubmitSnippetAction) => Promise<Snippet | undefined>
 }
@@ -123,14 +131,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 		setSnippet(result)
 
 		if (result.code_error && SubmitSnippetAction.SAVE_AND_ACTIVATE === action) {
-			setCurrentNotice([
-				'error',
-				__('Snippet could not be activated.', 'code-snippets'),
-				result.code_error_trace
-					? __('The snippet was saved, but remains inactive.', 'code-snippets')
-					: result.code_error[0],
-				result.code_error_trace ?? undefined
-			])
+			setCurrentNotice(getActivationErrorNotice(result))
 		} else {
 			setCurrentNotice(['updated', getSuccessNotice(snippet, result, action)])
 		}
