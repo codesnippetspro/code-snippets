@@ -48,6 +48,9 @@ class Edit_Menu extends Admin_Menu {
 			__( 'Edit Snippet', 'code-snippets' )
 		);
 
+		add_action( 'admin_print_footer_scripts', array( $this, 'disable_menu_link' ) );
+		add_action( 'network_admin_print_footer_scripts', array( $this, 'disable_menu_link' ) );
+
 		$this->remove_debug_bar_codemirror();
 	}
 
@@ -58,7 +61,6 @@ class Edit_Menu extends Admin_Menu {
 	 */
 	public function register() {
 		parent::register();
-		remove_submenu_page( $this->base_slug, $this->slug );
 
 		// Create New Snippet menu.
 		$this->add_menu(
@@ -113,6 +115,33 @@ class Edit_Menu extends Admin_Menu {
 	 */
 	public function render() {
 		echo '<div id="edit-snippet-container"></div>';
+	}
+
+	/**
+	 * Prevent the static Edit Snippet menu item from navigating away from the current editor state.
+	 *
+	 * @return void
+	 */
+	public function disable_menu_link() {
+		?>
+		<script>
+			document.querySelectorAll( '#adminmenu a' ).forEach( ( menuLink ) => {
+				const url = new URL( menuLink.href, window.location.origin );
+
+				if ( '<?php echo esc_js( $this->slug ); ?>' !== url.searchParams.get( 'page' ) ) {
+					return;
+				}
+
+				menuLink.dataset.codeSnippetsDisabled = 'true';
+				menuLink.setAttribute( 'aria-disabled', 'true' );
+				menuLink.removeAttribute( 'href' );
+				menuLink.addEventListener( 'click', ( event ) => {
+					event.preventDefault();
+					window.dispatchEvent( new CustomEvent( 'code_snippets_focus_editor' ) );
+				} );
+			} );
+		</script>
+		<?php
 	}
 
 	/**

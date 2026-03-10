@@ -47,18 +47,36 @@ class Edit_Menu_Test extends TestCase {
 	}
 
 	/**
-	 * The edit submenu item is removed after registration.
+	 * The edit submenu item remains registered so the page stays directly accessible.
 	 *
 	 * @return void
 	 */
-	public function test_register_hides_edit_submenu_item(): void {
+	public function test_register_keeps_edit_submenu_item(): void {
 		$menu = new Edit_Menu();
 		$menu->register();
 
 		$submenu = $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] ?? [];
 		$submenu_slugs = array_column( $submenu, 2 );
 
-		$this->assertNotContains( code_snippets()->get_menu_slug( 'edit' ), $submenu_slugs );
+		$this->assertContains( code_snippets()->get_menu_slug( 'edit' ), $submenu_slugs );
 		$this->assertContains( code_snippets()->get_menu_slug( 'add' ), $submenu_slugs );
+	}
+
+	/**
+	 * The admin footer script disables the static Edit Snippet menu link.
+	 *
+	 * @return void
+	 */
+	public function test_disable_menu_link_outputs_inline_script(): void {
+		$menu = new Edit_Menu();
+
+		ob_start();
+		$menu->disable_menu_link();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'aria-disabled', $output );
+		$this->assertStringContainsString( code_snippets()->get_menu_slug( 'edit' ), $output );
+		$this->assertStringContainsString( "removeAttribute( 'href' )", $output );
+		$this->assertStringContainsString( 'code_snippets_focus_editor', $output );
 	}
 }
