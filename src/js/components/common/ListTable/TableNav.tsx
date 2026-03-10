@@ -9,10 +9,18 @@ import type { ListTableBulkAction, ListTableNavProps } from './ListTable'
 import type { Key } from 'react'
 
 interface BulkActionSelectProps<K extends Key> extends Required<Pick<TableNavProps<K>, 'which' | 'actions'>> {
+	selectedActionName: string
+	setSelectedActionName: (value: string) => void
 	setSelectedAction: (action: ListTableBulkAction<K> | undefined) => void
 }
 
-const BulkActionSelect = <K extends Key>({ which, actions, setSelectedAction }: BulkActionSelectProps<K>) => {
+const BulkActionSelect = <K extends Key>({
+	which,
+	actions,
+	selectedActionName,
+	setSelectedActionName,
+	setSelectedAction
+}: BulkActionSelectProps<K>) => {
 	const actionsMap: Map<string, ListTableBulkAction<K>> = useMemo(
 		() => new Map(
 			actions
@@ -25,7 +33,9 @@ const BulkActionSelect = <K extends Key>({ which, actions, setSelectedAction }: 
 		<select
 			name={`action${'bottom' === which ? '-2' : ''}`}
 			id={`bulk-action-selector-${which}`}
+			value={selectedActionName}
 			onChange={event => {
+				setSelectedActionName(event.target.value)
 				setSelectedAction(actionsMap.get(event.target.value))
 			}}
 		>
@@ -49,6 +59,7 @@ interface BulkActionsProps<K extends Key> extends Required<Pick<TableNavProps<K>
 
 const BulkActions = <K extends Key>({ which, actions, applyAction, disabled }: BulkActionsProps<K>) => {
 	const [selectedAction, setSelectedAction] = useState<ListTableBulkAction<K>>()
+	const [selectedActionName, setSelectedActionName] = useState('-1')
 	const [isPerformingAction, setIsPerformingAction] = useState(false)
 
 	return (
@@ -58,7 +69,9 @@ const BulkActions = <K extends Key>({ which, actions, applyAction, disabled }: B
 				{__('Select bulk action', 'code-snippets')}
 			</label>
 
-			<BulkActionSelect {...{ which, actions, setSelectedAction }} />
+			<BulkActionSelect
+				{...{ which, actions, selectedActionName, setSelectedActionName, setSelectedAction }}
+			/>
 
 			<SubmitButton
 				id={`doaction${'bottom' === which ? '-2' : ''}`}
@@ -75,6 +88,7 @@ const BulkActions = <K extends Key>({ which, actions, applyAction, disabled }: B
 							.catch(handleUnknownError)
 							.finally(() => {
 								setSelectedAction(undefined)
+								setSelectedActionName('-1')
 								setIsPerformingAction(false)
 							})
 					}

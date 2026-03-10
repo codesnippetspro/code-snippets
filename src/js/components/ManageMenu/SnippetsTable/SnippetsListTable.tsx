@@ -29,24 +29,7 @@ const STATUS_LABELS: [SnippetStatus, string][] = [
 ]
 
 const BULK_DOWNLOAD_ACTION = 'bulk-download'
-const BULK_DOWNLOAD_FRAME_NAME = 'code-snippets-bulk-download-frame'
 const INDIVIDUAL_DOWNLOAD_DELAY_MS = 200
-
-const getBulkDownloadFrame = (): HTMLIFrameElement => {
-	const existingFrame = document.getElementById(BULK_DOWNLOAD_FRAME_NAME)
-
-	if (existingFrame instanceof HTMLIFrameElement) {
-		return existingFrame
-	}
-
-	const frame = document.createElement('iframe')
-	frame.id = BULK_DOWNLOAD_FRAME_NAME
-	frame.name = BULK_DOWNLOAD_FRAME_NAME
-	frame.hidden = true
-	document.body.appendChild(frame)
-
-	return frame
-}
 
 const appendHiddenField = (form: HTMLFormElement, name: string, value: string) => {
 	const input = document.createElement('input')
@@ -61,12 +44,10 @@ const submitBulkSnippetDownload = (snippets: readonly Snippet[]): Promise<void> 
 		return Promise.resolve()
 	}
 
-	const frame = getBulkDownloadFrame()
 	const form = document.createElement('form')
 
 	form.method = 'post'
 	form.action = window.location.href
-	form.target = frame.name
 	form.hidden = true
 
 	appendHiddenField(form, 'code_snippets_action', BULK_DOWNLOAD_ACTION)
