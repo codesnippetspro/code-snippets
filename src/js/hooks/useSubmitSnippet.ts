@@ -76,7 +76,10 @@ const getActivationErrorNotice = (snippet: Snippet): ['error', string, string, s
 	'error',
 	__('Snippet could not be activated.', 'code-snippets'),
 	// translators: %s: single-line PHP error message.
-	sprintf(__('The snippet was saved, but remains inactive due to this error: %s', 'code-snippets'), snippet.code_error?.[0] ?? ''),
+	sprintf(
+		__('The snippet was saved, but remains inactive due to this error: <strong>%s</strong>', 'code-snippets'),
+		snippet.code_error?.[0] ?? ''
+	),
 	snippet.code_error_trace ?? undefined
 ]
 
