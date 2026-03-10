@@ -101,20 +101,25 @@ class Validator {
 	 * @return bool true if the identifier is not unique.
 	 */
 	private function check_duplicate_identifier( string $type, string $identifier ): bool {
+		$identifier = strtolower( $identifier );
+		$namespaced_identifier = 'code_snippets\\' . ltrim( $identifier, '\\' );
 
 		if ( ! isset( $this->defined_identifiers[ $type ] ) ) {
 			switch ( $type ) {
 				case T_FUNCTION:
 					$defined_functions = get_defined_functions();
-					$this->defined_identifiers[ T_FUNCTION ] = array_merge( $defined_functions['internal'], $defined_functions['user'] );
+					$this->defined_identifiers[ T_FUNCTION ] = array_map(
+						'strtolower',
+						array_merge( $defined_functions['internal'], $defined_functions['user'] )
+					);
 					break;
 
 				case T_CLASS:
-					$this->defined_identifiers[ T_CLASS ] = get_declared_classes();
+					$this->defined_identifiers[ T_CLASS ] = array_map( 'strtolower', get_declared_classes() );
 					break;
 
 				case T_INTERFACE:
-					$this->defined_identifiers[ T_INTERFACE ] = get_declared_interfaces();
+					$this->defined_identifiers[ T_INTERFACE ] = array_map( 'strtolower', get_declared_interfaces() );
 					break;
 
 				default:
@@ -122,7 +127,8 @@ class Validator {
 			}
 		}
 
-		$duplicate = in_array( $identifier, $this->defined_identifiers[ $type ], true );
+		$duplicate = in_array( $identifier, $this->defined_identifiers[ $type ], true ) ||
+			in_array( $namespaced_identifier, $this->defined_identifiers[ $type ], true );
 		array_unshift( $this->defined_identifiers[ $type ], $identifier );
 
 		return $duplicate && ! ( isset( $this->exceptions[ $type ] ) && in_array( $identifier, $this->exceptions[ $type ], true ) );

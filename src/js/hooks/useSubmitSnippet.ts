@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
 import { useCallback } from 'react'
 import { useSnippetForm } from '../components/EditMenu/SnippetForm/WithSnippetFormContext'
@@ -122,10 +122,13 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 
 		setSnippet(result)
 
-		if (result.code_error) {
+		if (result.code_error && SubmitSnippetAction.SAVE_AND_ACTIVATE === action) {
 			setCurrentNotice([
 				'error',
-				__('Snippet could not be activated because the code contains an error. See details below.', 'code-snippets')
+				// translators: %s: single-line PHP error message.
+				sprintf(__('Snippet could not be activated: %s', 'code-snippets'), result.code_error[0]),
+				__('The snippet was saved, but remains inactive.', 'code-snippets'),
+				result.code_error_trace ?? undefined
 			])
 		} else {
 			setCurrentNotice(['updated', getSuccessNotice(snippet, result, action)])

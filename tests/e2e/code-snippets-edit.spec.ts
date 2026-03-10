@@ -63,6 +63,38 @@ test.describe('Code Snippets Admin', () => {
 		await helper.cleanupSnippet(snippetName)
 	})
 
+	test('Shows an error notice when activation fails after saving', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.clickAddNewSnippet()
+		await helper.fillSnippetForm({
+			name: snippetName,
+			code: 'missing_runtime_function_call();'
+		})
+
+		await helper.saveSnippet('save_and_activate')
+
+		const errorNotice = page.locator('.snippet-editor-sidebar .notice.error').first()
+		await expect(errorNotice).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await expect(errorNotice).toContainText('Snippet could not be activated:')
+		await expect(errorNotice).toContainText('Call to undefined function missing_runtime_function_call()')
+		await expect(errorNotice).toContainText('The snippet was saved, but remains inactive.')
+
+		const traceDetails = errorNotice.locator('details').first()
+		await expect(traceDetails).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await expect(traceDetails.locator('summary')).toContainText('View stack trace')
+
+		await helper.navigateToSnippetsAdmin()
+
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+
+		await expect(snippetRow).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await expect(snippetRow.locator(SELECTORS.SNIPPET_TOGGLE).first()).not.toBeChecked({ timeout: TIMEOUTS.DEFAULT })
+
+		await helper.cleanupSnippet(snippetName)
+	})
+
 	test('Can delete a snippet', async () => {
 		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
 		await helper.createSnippet({

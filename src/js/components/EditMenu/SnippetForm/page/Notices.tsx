@@ -4,6 +4,9 @@ import { __, sprintf } from '@wordpress/i18n'
 import { useSnippetForm } from '../WithSnippetFormContext'
 import { DismissibleNotice } from '../../../common/Notice'
 
+const DESCRIPTION_INDEX = 2
+const DETAILS_INDEX = 3
+
 export const Notices: React.FC = () => {
 	const { currentNotice, setCurrentNotice, snippet, setSnippet } = useSnippetForm()
 
@@ -11,13 +14,22 @@ export const Notices: React.FC = () => {
 		{currentNotice
 			? <DismissibleNotice className={currentNotice[0]} onDismiss={() => setCurrentNotice(undefined)}>
 				<p>{createInterpolateElement(currentNotice[1], { strong: <strong /> })}</p>
+				{currentNotice[DESCRIPTION_INDEX]
+					? <p>{createInterpolateElement(currentNotice[DESCRIPTION_INDEX], { strong: <strong /> })}</p>
+					: null}
+				{currentNotice[DETAILS_INDEX]
+					? <details>
+						<summary>{__('View stack trace', 'code-snippets')}</summary>
+						<pre>{currentNotice[DETAILS_INDEX]}</pre>
+					</details>
+					: null}
 			</DismissibleNotice>
 			: null}
 
-		{snippet.code_error
+		{!currentNotice && snippet.code_error
 			? <DismissibleNotice
 				className="notice-error"
-				onDismiss={() => setSnippet(previous => ({ ...previous, code_error: null }))}
+				onDismiss={() => setSnippet(previous => ({ ...previous, code_error: null, code_error_trace: null }))}
 			>
 				<p>
 					<strong>{sprintf(

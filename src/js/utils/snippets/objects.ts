@@ -18,7 +18,8 @@ const defaults: Omit<Snippet, 'tags'> = {
 	shared_network: null,
 	priority: 10,
 	conditionId: 0,
-	code_error: null
+	code_error: null,
+	code_error_trace: null
 }
 
 const isAbsInt = (value: unknown): value is number =>
@@ -59,6 +60,8 @@ export const parseSnippetObject = (fields: unknown): Snippet => {
 		...'priority' in fields && 'number' === typeof fields.priority && { priority: fields.priority },
 		...'condition_id' in fields && isAbsInt(fields.condition_id) && { conditionId: fields.condition_id },
 		...'code_error' in fields && isCodeError(fields.code_error) && { code_error: fields.code_error },
+		...'code_error_trace' in fields && ('string' === typeof fields.code_error_trace || null === fields.code_error_trace) &&
+			{ code_error_trace: fields.code_error_trace },
 		...'last_active' in fields && { lastActive: Number(fields.last_active) }
 	}
 }

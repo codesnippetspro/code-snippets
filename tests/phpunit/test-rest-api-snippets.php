@@ -110,6 +110,26 @@ class REST_API_Snippets_Test extends TestCase {
 	}
 
 	/**
+	 * Helper method to make a writable REST API request.
+	 *
+	 * @param string $method   HTTP method.
+	 * @param string $endpoint Endpoint to request.
+	 * @param array  $params   Request params.
+	 *
+	 * @return array<string, mixed>
+	 */
+	protected function make_mutating_request( string $method, string $endpoint, array $params ): array {
+		$request = new WP_REST_Request( $method, $endpoint );
+
+		foreach ( $params as $key => $value ) {
+			$request->set_param( $key, $value );
+		}
+
+		$response = rest_do_request( $request );
+		return rest_get_server()->response_to_data( $response, false );
+	}
+
+	/**
 	 * Test that we can retrieve all snippets without pagination.
 	 */
 	public function test_get_all_snippets_without_pagination() {
@@ -343,5 +363,31 @@ class REST_API_Snippets_Test extends TestCase {
 		$loaded = get_snippet( $saved->id );
 
 		$this->assertSame( 'Persisted description text', $loaded->desc );
+	}
+
+	/**
+	 * Test that activation failures return the PHP error and stack trace while keeping the snippet saved.
+	 */
+	public function test_create_active_snippet_returns_runtime_error_details() {
+		$response = $this->make_mutating_request(
+			'POST',
+			"/{$this->namespace}/{$this->base_route}",
+			[
+				'name'    => 'Activation Error Fixture',
+				'code'    => 'function code_snippets_build_tags_array() {}',
+				'scope'   => 'global',
+				'active'  => true,
+				'network' => false,
+			]
+		);
+
+		$this->assertArrayHasKey( 'id', $response );
+		$this->assertGreaterThan( 0, $response['id'] );
+		$this->assertFalse( $response['active'] );
+		$this->assertIsArray( $response['code_error'] );
+		$this->assertStringContainsString( 'Cannot redeclare', $response['code_error'][0] );
+		$this->assertArrayHasKey( 'code_error_trace', $response );
+		$this->assertIsString( $response['code_error_trace'] );
+		$this->assertNotSame( '', $response['code_error_trace'] );
 	}
 }
