@@ -223,6 +223,7 @@ class Manage_Menu extends Admin_Menu {
 				'hiddenColumns'        => $this->get_hidden_manage_columns(),
 				'truncateRowValues'    => (int) $this->truncate_row_values(),
 				'snippetsPerPage'      => $this->get_snippets_per_page(),
+				'cloudSearchPerPage'   => $this->get_cloud_search_per_page(),
 				'isSafeModeActive'     => code_snippets()->evaluate_functions->is_safe_mode_active(),
 				'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
 				'supportsZipDownloads' => class_exists( 'ZipArchive' ),
@@ -245,10 +246,22 @@ class Manage_Menu extends Admin_Menu {
 		$per_page = (int) get_user_option( 'snippets_per_page' );
 
 		if ( empty( $per_page ) || $per_page < 1 ) {
-			$per_page = 999;
+			$per_page = 100;
 		}
 
 		return (int) apply_filters( 'snippets_per_page', $per_page );
+	}
+
+	/**
+	 * Get the number of snippets to show per page in the cloud search.
+	 *
+	 * The value defaults to the user's local snippets-per-page preference but can
+	 * be overridden independently via the `code_snippets/cloud_search/per_page` filter.
+	 *
+	 * @return int
+	 */
+	protected function get_cloud_search_per_page(): int {
+		return (int) apply_filters( 'code_snippets/cloud_search/per_page', $this->get_snippets_per_page() );
 	}
 
 	/**
@@ -429,10 +442,12 @@ class Manage_Menu extends Admin_Menu {
 		if ( $snippets instanceof WP_Error ) {
 			$status = $snippets->get_error_data( 'status' );
 			$this->send_download_error( $snippets->get_error_message(), is_numeric( $status ) ? (int) $status : 403 );
+			return;
 		}
 
 		if ( empty( $snippets ) ) {
 			$this->send_download_error( __( 'No snippets were selected for download.', 'code-snippets' ) );
+			return;
 		}
 
 		$download = 1 === count( $snippets )
@@ -442,6 +457,7 @@ class Manage_Menu extends Admin_Menu {
 		if ( $download instanceof WP_Error ) {
 			$status = $download->get_error_data( 'status' );
 			$this->send_download_error( $download->get_error_message(), is_numeric( $status ) ? (int) $status : 500 );
+			return;
 		}
 
 		$this->send_download_response( $download );
