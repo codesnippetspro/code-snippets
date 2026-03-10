@@ -147,6 +147,23 @@ class Manage_Menu_Test extends TestCase {
 	}
 
 	/**
+	 * The Community Cloud view still registers the shared pagination Screen Option.
+	 *
+	 * @return void
+	 */
+	public function test_load_registers_per_page_screen_option_on_cloud_community_view(): void {
+		$_REQUEST['subpage'] = 'cloud-community';
+
+		$menu = new Manage_Menu();
+		$menu->load();
+
+		$screen = get_current_screen();
+
+		$this->assertSame( 'snippets_per_page', $screen->get_option( 'per_page', 'option' ) );
+		$this->assertSame( 100, $screen->get_option( 'per_page', 'default' ) );
+	}
+
+	/**
 	 * The truncation preference is saved from the Screen Options form.
 	 *
 	 * @return void

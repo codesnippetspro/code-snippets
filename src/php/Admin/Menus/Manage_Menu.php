@@ -174,19 +174,17 @@ class Manage_Menu extends Admin_Menu {
 			add_filter( 'screen_settings', array( $this, 'render_screen_settings' ), 10, 2 );
 		}
 
+		add_screen_option(
+			'per_page',
+			array(
+				'label'   => __( 'Snippets per page', 'code-snippets' ),
+				'default' => 100,
+				'option'  => 'snippets_per_page',
+			)
+		);
+
 		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
-
-		if ( ! $this->is_cloud_community_view() ) {
-			add_screen_option(
-				'per_page',
-				array(
-					'label'   => __( 'Snippets per page', 'code-snippets' ),
-					'default' => 100,
-					'option'  => 'snippets_per_page',
-				)
-			);
-		}
 	}
 
 	/**
