@@ -8,7 +8,6 @@ interface EditMenuLinkBinding {
 	originalHref: string | null
 	originalRole: string | null
 	originalTabIndex: string | null
-	originalAriaDisabled: string | null
 	handleClick: (event: MouseEvent) => void
 	handleKeyDown: (event: KeyboardEvent) => void
 }
@@ -58,13 +57,11 @@ const bindEditMenuLink = (menuLink: HTMLAnchorElement, page: string): EditMenuLi
 		originalHref: menuLink.getAttribute('href'),
 		originalRole: menuLink.getAttribute('role'),
 		originalTabIndex: menuLink.getAttribute('tabindex'),
-		originalAriaDisabled: menuLink.getAttribute('aria-disabled'),
 		handleClick,
 		handleKeyDown
 	}
 
 	menuLink.dataset.codeSnippetsDisabled = 'true'
-	menuLink.setAttribute('aria-disabled', 'true')
 	menuLink.setAttribute('role', 'button')
 	menuLink.setAttribute('tabindex', '0')
 	menuLink.classList.add('code-snippets-edit-menu-link')
@@ -80,7 +77,6 @@ const unbindEditMenuLink = ({
 	originalHref,
 	originalRole,
 	originalTabIndex,
-	originalAriaDisabled,
 	handleClick,
 	handleKeyDown
 }: EditMenuLinkBinding) => {
@@ -92,7 +88,6 @@ const unbindEditMenuLink = ({
 	restoreAttribute(menuLink, 'href', originalHref)
 	restoreAttribute(menuLink, 'role', originalRole)
 	restoreAttribute(menuLink, 'tabindex', originalTabIndex)
-	restoreAttribute(menuLink, 'aria-disabled', originalAriaDisabled)
 }
 
 const useEditMenuLinkFocus = () => {
