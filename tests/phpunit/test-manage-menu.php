@@ -44,8 +44,16 @@ class Manage_Menu_Test extends TestCase {
 
 		wp_set_current_user( self::$admin_user_id );
 		set_current_screen( 'toplevel_page_' . code_snippets()->get_menu_slug() );
+		remove_all_filters( 'manage_' . get_current_screen()->id . '_columns' );
+		remove_all_filters( 'screen_settings' );
 		delete_user_option( self::$admin_user_id, 'snippets_table_truncate_row_values' );
-		unset( $_POST['wp_screen_options'], $_POST['screenoptionnonce'], $_POST['snippets_table_truncate_row_values'], $_REQUEST['page'] );
+		unset(
+			$_POST['wp_screen_options'],
+			$_POST['screenoptionnonce'],
+			$_POST['snippets_table_truncate_row_values'],
+			$_REQUEST['page'],
+			$_REQUEST['subpage']
+		);
 	}
 
 	/**
@@ -95,7 +103,38 @@ class Manage_Menu_Test extends TestCase {
 		$output = $menu->render_screen_settings( '', get_current_screen() );
 
 		$this->assertStringContainsString( 'snippets-table-truncate-row-values', $output );
-		$this->assertStringContainsString( 'Truncate long row values', $output );
+		$this->assertStringContainsString( 'Truncate long snippet names and descriptions', $output );
+	}
+
+	/**
+	 * The Community Cloud view does not render snippet-only Screen Options controls.
+	 *
+	 * @return void
+	 */
+	public function test_render_screen_settings_skips_truncation_toggle_on_cloud_community_view(): void {
+		$_REQUEST['subpage'] = 'cloud-community';
+
+		$menu = new Manage_Menu();
+		$output = $menu->render_screen_settings( '', get_current_screen() );
+
+		$this->assertSame( '', $output );
+	}
+
+	/**
+	 * The Community Cloud view does not register snippet table columns in Screen Options.
+	 *
+	 * @return void
+	 */
+	public function test_load_skips_screen_option_columns_on_cloud_community_view(): void {
+		$_REQUEST['subpage'] = 'cloud-community';
+
+		$menu = new Manage_Menu();
+		$menu->load();
+
+		$screen = get_current_screen();
+
+		$this->assertFalse( has_filter( "manage_{$screen->id}_columns", array( $menu, 'get_screen_columns' ) ) );
+		$this->assertFalse( has_filter( 'screen_settings', array( $menu, 'render_screen_settings' ) ) );
 	}
 
 	/**
