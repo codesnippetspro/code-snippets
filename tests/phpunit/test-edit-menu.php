@@ -76,6 +76,7 @@ class Edit_Menu_Test extends TestCase {
 
 		$this->assertStringContainsString( 'aria-disabled', $output );
 		$this->assertStringContainsString( code_snippets()->get_menu_slug( 'edit' ), $output );
+		$this->assertStringContainsString( "style.cursor = 'pointer'", $output );
 		$this->assertStringContainsString( "removeAttribute( 'href' )", $output );
 		$this->assertStringContainsString( 'code_snippets_focus_editor', $output );
 	}

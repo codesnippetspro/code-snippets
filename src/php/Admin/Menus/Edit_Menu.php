@@ -134,6 +134,7 @@ class Edit_Menu extends Admin_Menu {
 
 				menuLink.dataset.codeSnippetsDisabled = 'true';
 				menuLink.setAttribute( 'aria-disabled', 'true' );
+				menuLink.style.cursor = 'pointer';
 				menuLink.removeAttribute( 'href' );
 				menuLink.addEventListener( 'click', ( event ) => {
 					event.preventDefault();
