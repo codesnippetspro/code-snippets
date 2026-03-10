@@ -1,0 +1,203 @@
+<?php
+
+namespace Code_Snippets\Tests;
+
+use WP_REST_Request;
+
+/**
+ * Tests for the Cloud REST API endpoint.
+ *
+ * @group rest-api
+ */
+class REST_API_Cloud_Test extends TestCase {
+
+	/**
+	 * Default per-page value used when none is configured.
+	 */
+	private const DEFAULT_PER_PAGE = 10;
+
+	/**
+	 * REST API namespace and base route.
+	 *
+	 * @var string
+	 */
+	protected string $endpoint = '/code-snippets/v1/cloud';
+
+	/**
+	 * Administrator user ID.
+	 *
+	 * @var int
+	 */
+	protected static int $admin_user_id;
+
+	/**
+	 * Most recent outbound cloud search URL.
+	 *
+	 * @var string
+	 */
+	private string $requested_url = '';
+
+	/**
+	 * Set up fixtures before any tests run.
+	 *
+	 * @param mixed $factory Factory object.
+	 *
+	 * @return void
+	 */
+	public static function wpSetUpBeforeClass( $factory ) {
+		self::$admin_user_id = $factory->user->create(
+			[
+				'role' => 'administrator',
+			]
+		);
+	}
+
+	/**
+	 * Set up before each test.
+	 *
+	 * @return void
+	 */
+	public function set_up() {
+		parent::set_up();
+
+		wp_set_current_user( self::$admin_user_id );
+		$this->requested_url = '';
+		delete_user_option( self::$admin_user_id, 'snippets_per_page' );
+		add_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ], 10, 3 );
+	}
+
+	/**
+	 * Tear down after each test.
+	 *
+	 * @return void
+	 */
+	public function tear_down() {
+		remove_filter( 'pre_http_request', [ $this, 'mock_cloud_search_request' ], 10 );
+		delete_user_option( self::$admin_user_id, 'snippets_per_page' );
+
+		parent::tear_down();
+	}
+
+	/**
+	 * Mock the outbound cloud search request.
+	 *
+	 * @param mixed        $preempt     Existing preempted value.
+	 * @param array<mixed> $parsed_args Parsed HTTP request arguments.
+	 * @param string       $url         Requested URL.
+	 *
+	 * @return mixed
+	 */
+	public function mock_cloud_search_request( $preempt, array $parsed_args, string $url ) {
+		if ( false === strpos( $url, 'public/search' ) ) {
+			return $preempt;
+		}
+
+		$this->requested_url = $url;
+
+		parse_str( (string) wp_parse_url( $url, PHP_URL_QUERY ), $query_args );
+
+		$per_page = isset( $query_args['per_page'] ) ? (int) $query_args['per_page'] : self::DEFAULT_PER_PAGE;
+		$page = isset( $query_args['page'] ) ? (int) $query_args['page'] : 0;
+		$total_items = 12;
+		$total_pages = (int) ceil( $total_items / max( 1, $per_page ) );
+		$items_to_return = min( $per_page, $total_items );
+
+		$snippets = [];
+
+		for ( $index = 0; $index < $items_to_return; $index++ ) {
+			$snippets[] = [
+				'id'          => ( $page * $per_page ) + $index + 1,
+				'name'        => 'Cloud Snippet ' . ( $index + 1 ),
+				'description' => 'Test description',
+				'code'        => '<?php echo "test";',
+				'tags'        => [],
+				'scope'       => 'global',
+				'status'      => 4,
+				'codevault'   => 'General',
+				'vote_count'  => '0',
+				'updated'     => '2026-03-10 12:00:00',
+			];
+		}
+
+		return [
+			'headers'  => [],
+			'body'     => wp_json_encode(
+				[
+					'data' => $snippets,
+					'meta' => [
+						'total'       => $total_items,
+						'total_pages' => $total_pages,
+						'page'        => $page + 1,
+					],
+				]
+			),
+			'response' => [
+				'code'    => 200,
+				'message' => 'OK',
+			],
+			'cookies'  => [],
+		];
+	}
+
+	/**
+	 * Make a REST API request to the cloud endpoint.
+	 *
+	 * @param array<string, bool|int|string> $params Request params.
+	 *
+	 * @return \WP_REST_Response
+	 */
+	private function make_request( array $params ) {
+		$request = new WP_REST_Request( 'GET', $this->endpoint );
+
+		foreach ( $params as $key => $value ) {
+			$request->set_param( $key, $value );
+		}
+
+		return rest_do_request( $request );
+	}
+
+	/**
+	 * The cloud REST endpoint uses the snippets Screen Options value when per_page is omitted.
+	 *
+	 * @return void
+	 */
+	public function test_get_items_uses_snippets_per_page_user_option(): void {
+		update_user_option( self::$admin_user_id, 'snippets_per_page', 7 );
+
+		$response = $this->make_request(
+			[
+				'query' => 'test',
+				'page'  => 2,
+			]
+		);
+
+		parse_str( (string) wp_parse_url( $this->requested_url, PHP_URL_QUERY ), $query_args );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '7', $query_args['per_page'] ?? null );
+		$this->assertSame( '1', $query_args['page'] ?? null );
+	}
+
+	/**
+	 * Explicit per_page requests override the snippets Screen Options value.
+	 *
+	 * @return void
+	 */
+	public function test_get_items_respects_explicit_per_page_request(): void {
+		update_user_option( self::$admin_user_id, 'snippets_per_page', 7 );
+
+		$response = $this->make_request(
+			[
+				'query'    => 'test',
+				'page'     => 2,
+				'per_page' => 3,
+			]
+		);
+
+		parse_str( (string) wp_parse_url( $this->requested_url, PHP_URL_QUERY ), $query_args );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '3', $query_args['per_page'] ?? null );
+		$this->assertSame( '1', $query_args['page'] ?? null );
+	}
+}
