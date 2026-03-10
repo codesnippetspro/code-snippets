@@ -57,6 +57,9 @@ export const downloadSnippetExportFile = (
 
 const isDefaultExportValue = (field: string, value: unknown): boolean => {
 	switch (field) {
+		case 'id':
+			return 0 === value
+
 		case 'desc':
 		case 'name':
 		case 'code':
@@ -79,6 +82,12 @@ const isDefaultExportValue = (field: string, value: unknown): boolean => {
 		case 'priority':
 			return DEFAULT_PRIORITY === value
 
+		case 'modified':
+			return '' === value || undefined === value || null === value
+
+		case 'last_active':
+			return 0 === value || undefined === value || null === value
+
 		case 'network':
 		case 'shared_network':
 		case 'code_error':
@@ -91,6 +100,7 @@ const isDefaultExportValue = (field: string, value: unknown): boolean => {
 }
 
 const buildExportSnippet = ({
+	id,
 	name,
 	desc,
 	code,
@@ -101,13 +111,16 @@ const buildExportSnippet = ({
 	trashed,
 	network,
 	shared_network,
+	modified,
 	priority,
 	conditionId,
+	lastActive,
 	code_error,
 	code_error_trace
 }: Snippet): SnippetsExport['snippets'][number] => {
 	const exportSnippet: SnippetsExport['snippets'][number] = Object.fromEntries(
 		Object.entries({
+			id,
 			name,
 			desc,
 			code,
@@ -118,8 +131,10 @@ const buildExportSnippet = ({
 			trashed,
 			network,
 			shared_network,
+			modified,
 			priority,
 			condition_id: conditionId,
+			last_active: lastActive,
 			code_error,
 			code_error_trace
 		}).filter(([field, value]) => !isDefaultExportValue(field, value))

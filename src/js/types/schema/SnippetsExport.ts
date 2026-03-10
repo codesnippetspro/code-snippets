@@ -1,7 +1,7 @@
-import type { Snippet } from '../Snippet'
+import type { SnippetSchema } from './SnippetSchema'
 
 export interface SnippetsExport {
 	generator: string
 	date_created: string
-	snippets: Snippet[]
+	snippets: Partial<SnippetSchema>[]
 }
