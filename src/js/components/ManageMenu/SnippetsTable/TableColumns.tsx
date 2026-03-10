@@ -277,7 +277,7 @@ const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'desc',
 		title: __('Description', 'code-snippets'),
-		render: snippet => <RawHTML>{snippet.desc}</RawHTML>
+		render: snippet => <div className="snippet-description-content"><RawHTML>{snippet.desc}</RawHTML></div>
 	},
 	{
 		id: 'tags',

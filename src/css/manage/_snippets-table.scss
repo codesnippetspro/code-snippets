@@ -177,6 +177,22 @@
 	}
 }
 
+.wp-list-table.truncate-row-values {
+	table-layout: fixed;
+
+	td.column-desc {
+		overflow: hidden;
+	}
+
+	#wpbody-content td.column-name > .snippet-name,
+	td.column-desc .snippet-description-content {
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
 .wp-core-ui .button.clear-filters {
 	vertical-align: baseline;
 }

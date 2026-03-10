@@ -44,6 +44,7 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		add_action( 'admin_menu', array( $this, 'register_upgrade_menu' ), 500 );
+		add_action( 'admin_init', array( $this, 'save_truncation_preference' ) );
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
 		add_action( 'wp_ajax_update_code_snippet', array( $this, 'ajax_callback' ) );
@@ -166,6 +167,7 @@ class Manage_Menu extends Admin_Menu {
 
 		if ( $screen ) {
 			add_filter( "manage_{$screen->id}_columns", array( $this, 'get_screen_columns' ) );
+			add_filter( 'screen_settings', array( $this, 'render_screen_settings' ), 10, 2 );
 		}
 
 		$contextual_help = new Contextual_Help( 'edit' );
@@ -212,7 +214,8 @@ class Manage_Menu extends Admin_Menu {
 			'CODE_SNIPPETS_MANAGE',
 			[
 				'hasNetworkCap'    => current_user_can( code_snippets()->get_network_cap_name() ),
-				'hiddenColumns'    => $this->get_hidden_manage_columns(),
+				'hiddenColumns'     => $this->get_hidden_manage_columns(),
+				'truncateRowValues' => (int) $this->truncate_row_values(),
 				'snippetsPerPage'  => $this->get_snippets_per_page(),
 				'isSafeModeActive' => code_snippets()->evaluate_functions->is_safe_mode_active(),
 				'snippetsList'     => array_map(
@@ -281,6 +284,84 @@ class Manage_Menu extends Admin_Menu {
 		$screen = get_current_screen();
 
 		return $screen ? get_hidden_columns( $screen ) : array();
+	}
+
+	/**
+	 * Whether to truncate long row values in the snippets table.
+	 *
+	 * @return bool
+	 */
+	protected function truncate_row_values(): bool {
+		$setting = get_user_option( 'snippets_table_truncate_row_values' );
+
+		return false === $setting ? true : (bool) $setting;
+	}
+
+	/**
+	 * Render extra Screen Options controls for the snippets table.
+	 *
+	 * @param string     $screen_settings Existing screen settings HTML.
+	 * @param \WP_Screen $screen          Current screen object.
+	 *
+	 * @return string
+	 */
+	public function render_screen_settings( string $screen_settings, \WP_Screen $screen ): string {
+		ob_start();
+		?>
+		<fieldset class="metabox-prefs">
+			<legend><?php esc_html_e( 'Row values', 'code-snippets' ); ?></legend>
+			<div class="metabox-prefs-container">
+				<label for="snippets-table-truncate-row-values">
+					<input
+						id="snippets-table-truncate-row-values"
+						name="snippets_table_truncate_row_values"
+						type="checkbox"
+						value="1"
+						<?php checked( $this->truncate_row_values() ); ?>
+					/>
+					<?php esc_html_e( 'Truncate long row values', 'code-snippets' ); ?>
+				</label>
+				<p class="description">
+					<?php esc_html_e( 'Prevent long snippet titles and descriptions from stretching the table off screen.', 'code-snippets' ); ?>
+				</p>
+			</div>
+		</fieldset>
+		<?php
+
+		return $screen_settings . ob_get_clean();
+	}
+
+	/**
+	 * Persist the snippets table truncation preference from Screen Options.
+	 *
+	 * @return void
+	 */
+	public function save_truncation_preference(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified below before persisting the option.
+		if ( empty( $_POST['wp_screen_options'] ) || ! is_array( $_POST['wp_screen_options'] ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Sanitized and matched to a known admin page.
+		$page = isset( $_REQUEST['page'] ) ? sanitize_key( wp_unslash( $_REQUEST['page'] ) ) : '';
+
+		if ( code_snippets()->get_menu_slug() !== $page || ! current_user_can( code_snippets()->get_cap() ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified here before persisting the option.
+		$nonce = isset( $_POST['screenoptionnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['screenoptionnonce'] ) ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, 'screen-options-nonce' ) ) {
+			return;
+		}
+
+		update_user_option(
+			get_current_user_id(),
+			'snippets_table_truncate_row_values',
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified above before reading the checkbox state.
+			isset( $_POST['snippets_table_truncate_row_values'] ) ? 1 : 0
+		);
 	}
 
 	/**

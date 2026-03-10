@@ -58,6 +58,7 @@ declare global {
 			snippetsList: Snippet[]
 			hasNetworkCap: boolean
 			hiddenColumns: string[]
+			truncateRowValues: number | string
 			snippetsPerPage: number
 			isSafeModeActive: boolean
 		}

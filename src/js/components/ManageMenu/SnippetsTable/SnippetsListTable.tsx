@@ -1,5 +1,6 @@
 import { __, _x, sprintf } from '@wordpress/i18n'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import classnames from 'classnames'
 import { createInterpolateElement } from '@wordpress/element'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
@@ -86,8 +87,11 @@ interface ExtraTableNavProps {
 	visibleSnippets: Snippet[]
 }
 
-const useHiddenColumns = (): string[] => {
+const useManageTableSettings = (): { hiddenColumns: string[], truncateRowValues: boolean } => {
 	const [hiddenColumns, setHiddenColumns] = useState<string[]>(() => window.CODE_SNIPPETS_MANAGE?.hiddenColumns ?? [])
+	const [truncateRowValues, setTruncateRowValues] = useState(
+		() => 0 !== Number(window.CODE_SNIPPETS_MANAGE?.truncateRowValues ?? 1)
+	)
 
 	useEffect(() => {
 		const screenOptions = document.getElementById('adv-settings')
@@ -101,6 +105,10 @@ const useHiddenColumns = (): string[] => {
 				Array.from(screenOptions.querySelectorAll<HTMLInputElement>('.hide-column-tog:not(:checked)'))
 					.map(toggle => toggle.value)
 			)
+
+			setTruncateRowValues(
+				screenOptions.querySelector<HTMLInputElement>('#snippets-table-truncate-row-values')?.checked ?? true
+			)
 		}
 
 		updateHiddenColumns()
@@ -111,7 +119,7 @@ const useHiddenColumns = (): string[] => {
 		}
 	}, [])
 
-	return hiddenColumns
+	return { hiddenColumns, truncateRowValues }
 }
 
 const FilterByTagControl: React.FC<ExtraTableNavProps> = ({ visibleSnippets }) => {
@@ -214,7 +222,7 @@ export const SnippetsListTable: React.FC = () => {
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { snippetsByStatus } = useFilteredSnippets()
 
-	const hiddenColumns = useHiddenColumns()
+	const { hiddenColumns, truncateRowValues } = useManageTableSettings()
 	const allSnippets = useMemo(() => snippetsByStatus.get('all') ?? [], [snippetsByStatus])
 	const totalItems = snippetsByStatus.get(currentStatus)?.length ?? 0
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
@@ -235,6 +243,7 @@ export const SnippetsListTable: React.FC = () => {
 			<ListTable
 				items={snippetsByStatus.get(currentStatus) ?? []}
 				getKey={snippet => snippet.id}
+				className={classnames({ 'truncate-row-values': truncateRowValues })}
 				columns={columns}
 				actions={actions}
 				totalPages={itemsPerPage && Math.ceil(totalItems / itemsPerPage)}

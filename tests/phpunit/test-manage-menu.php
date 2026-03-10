@@ -44,6 +44,8 @@ class Manage_Menu_Test extends TestCase {
 
 		wp_set_current_user( self::$admin_user_id );
 		set_current_screen( 'toplevel_page_' . code_snippets()->get_menu_slug() );
+		delete_user_option( self::$admin_user_id, 'snippets_table_truncate_row_values' );
+		unset( $_POST['wp_screen_options'], $_POST['screenoptionnonce'], $_POST['snippets_table_truncate_row_values'], $_REQUEST['page'] );
 	}
 
 	/**
@@ -70,6 +72,7 @@ class Manage_Menu_Test extends TestCase {
 	public function test_enqueue_assets_localizes_hidden_columns(): void {
 		$screen = get_current_screen();
 		update_user_option( self::$admin_user_id, 'manage' . $screen->id . 'columnshidden', array( 'desc', 'date' ) );
+		update_user_option( self::$admin_user_id, 'snippets_table_truncate_row_values', 0 );
 
 		$menu = new Manage_Menu();
 		$menu->enqueue_assets();
@@ -78,5 +81,44 @@ class Manage_Menu_Test extends TestCase {
 
 		$this->assertIsString( $data );
 		$this->assertStringContainsString( '"hiddenColumns":["desc","date"]', $data );
+		$this->assertStringContainsString( '"truncateRowValues":"0"', $data );
+	}
+
+	/**
+	 * The manage screen renders a truncation toggle in Screen Options.
+	 *
+	 * @return void
+	 */
+	public function test_render_screen_settings_adds_truncation_toggle(): void {
+		$menu = new Manage_Menu();
+
+		$output = $menu->render_screen_settings( '', get_current_screen() );
+
+		$this->assertStringContainsString( 'snippets-table-truncate-row-values', $output );
+		$this->assertStringContainsString( 'Truncate long row values', $output );
+	}
+
+	/**
+	 * The truncation preference is saved from the Screen Options form.
+	 *
+	 * @return void
+	 */
+	public function test_save_truncation_preference_updates_user_option(): void {
+		$_REQUEST['page'] = code_snippets()->get_menu_slug();
+		$_POST['wp_screen_options'] = array(
+			'option' => 'snippets_per_page',
+			'value'  => '20',
+		);
+		$_POST['screenoptionnonce'] = wp_create_nonce( 'screen-options-nonce' );
+
+		$menu = new Manage_Menu();
+		$menu->save_truncation_preference();
+
+		$this->assertFalse( (bool) get_user_option( 'snippets_table_truncate_row_values', self::$admin_user_id ) );
+
+		$_POST['snippets_table_truncate_row_values'] = '1';
+		$menu->save_truncation_preference();
+
+		$this->assertTrue( (bool) get_user_option( 'snippets_table_truncate_row_values', self::$admin_user_id ) );
 	}
 }
