@@ -34,7 +34,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 	const [query, setQuery] = useState(() => fetchQueryParam(SEARCH_PARAM) ?? '')
 	const [searchByCodevault, setSearchByCodevault] = useState(() => 'codevault' === fetchQueryParam(SEARCH_METHOD_PARAM))
 	const snippetsPerPage = Math.min(
-		window.CODE_SNIPPETS_MANAGE?.snippetsPerPage ?? DEFAULT_SNIPPETS_PER_PAGE,
+		window.CODE_SNIPPETS_MANAGE?.cloudSearchPerPage ?? window.CODE_SNIPPETS_MANAGE?.snippetsPerPage ?? DEFAULT_SNIPPETS_PER_PAGE,
 		MAX_CLOUD_RESULTS_PER_PAGE
 	)
 
