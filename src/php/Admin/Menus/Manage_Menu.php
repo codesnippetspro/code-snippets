@@ -368,6 +368,10 @@ class Manage_Menu extends Admin_Menu {
 			return;
 		}
 
+		if ( $this->is_cloud_community_view() ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified here before persisting the option.
 		$nonce = isset( $_POST['screenoptionnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['screenoptionnonce'] ) ) : '';
 

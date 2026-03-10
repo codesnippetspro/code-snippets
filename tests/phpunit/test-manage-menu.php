@@ -171,6 +171,28 @@ class Manage_Menu_Test extends TestCase {
 	}
 
 	/**
+	 * The Community Cloud screen does not overwrite the snippets-table truncation preference.
+	 *
+	 * @return void
+	 */
+	public function test_save_truncation_preference_ignores_cloud_community_view(): void {
+		update_user_option( self::$admin_user_id, 'snippets_table_truncate_row_values', 1 );
+
+		$_REQUEST['page'] = code_snippets()->get_menu_slug();
+		$_REQUEST['subpage'] = 'cloud-community';
+		$_POST['wp_screen_options'] = array(
+			'option' => 'snippets_per_page',
+			'value'  => '20',
+		);
+		$_POST['screenoptionnonce'] = wp_create_nonce( 'screen-options-nonce' );
+
+		$menu = new Manage_Menu();
+		$menu->save_truncation_preference();
+
+		$this->assertTrue( (bool) get_user_option( 'snippets_table_truncate_row_values', self::$admin_user_id ) );
+	}
+
+	/**
 	 * Subsite admins cannot request downloads from the network snippets table.
 	 *
 	 * @return void
