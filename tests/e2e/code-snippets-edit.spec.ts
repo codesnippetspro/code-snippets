@@ -94,9 +94,9 @@ test.describe('Code Snippets Admin', () => {
 
 		const errorNotice = page.locator('.wrap > .notice.error').first()
 		await expect(errorNotice).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
-		await expect(errorNotice).toContainText('Snippet could not be activated:')
+		await expect(errorNotice).toContainText('Snippet could not be activated.')
 		await expect(errorNotice).toContainText('Call to undefined function missing_runtime_function_call()')
-		await expect(errorNotice).toContainText('The snippet was saved, but remains inactive.')
+		await expect(errorNotice).toContainText('The snippet was saved, but remains inactive due to this error:')
 
 		const traceDetails = errorNotice.locator('details').first()
 		await expect(traceDetails).toBeVisible({ timeout: TIMEOUTS.DEFAULT })

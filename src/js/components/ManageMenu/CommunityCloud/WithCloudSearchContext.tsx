@@ -55,14 +55,12 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 				buildUrl(REST_BASES.cloud, { query, searchByCodevault, page, per_page: snippetsPerPage })
 			)
 				.then(response => {
-					console.log(response.headers)
 					setTotalItems(Number(response.headers['x-wp-total']))
 					setTotalPages(Number(response.headers['x-wp-totalpages']))
 					setSearchResults(response.data)
 					setIsSearching(false)
 				})
-				.catch((error: unknown) => {
-					console.error(error)
+				.catch(() => {
 					setIsSearching(false)
 					setError(true)
 				})
