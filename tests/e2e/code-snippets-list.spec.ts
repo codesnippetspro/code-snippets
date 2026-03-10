@@ -132,4 +132,35 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		expect(download.suggestedFilename()).toMatch(/\.json$/)
 	})
+
+	test('Can export multiple snippets from bulk actions', async ({ page }) => {
+		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		const secondSnippetName = SnippetsTestHelper.makeUniqueSnippetName()
+
+		await helper.createAndActivateSnippet({
+			name: secondSnippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
+		await helper.navigateToSnippetsAdmin()
+
+		const firstRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		const secondRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${secondSnippetName}"))`)
+			.first()
+
+		await firstRow.locator('input[name="checked[]"]').check({ force: true })
+		await secondRow.locator('input[name="checked[]"]').check({ force: true })
+		await page.locator('select[name="action"]').first().selectOption({ label: 'Export' })
+
+		const download = await Promise.all([
+			page.waitForEvent('download'),
+			page.locator('#doaction').click()
+		]).then(([downloadEvent]) => downloadEvent)
+
+		expect(download.suggestedFilename()).toBe('snippets.code-snippets.json')
+
+		await helper.cleanupSnippet(secondSnippetName)
+	})
 })

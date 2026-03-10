@@ -4,6 +4,7 @@ import { createInterpolateElement } from '@wordpress/element'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
+import { downloadBulkSnippetExportFile } from '../../../utils/files'
 import { REST_BASES } from '../../../utils/restAPI'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
@@ -15,33 +16,6 @@ import { TableColumns } from './TableColumns'
 import type { SnippetStatus} from './WithSnippetsTableFilters'
 import type { ListTableBulkAction } from '../../common/ListTable'
 import type { Snippet } from '../../../types/Snippet'
-
-const actions: ListTableBulkAction<Snippet['id']>[] = [
-	{
-		name: __('Activate', 'code-snippets'),
-		apply: () => Promise.resolve()
-	},
-	{
-		name: __('Deactivate', 'code-snippets'),
-		apply: () => Promise.resolve()
-	},
-	{
-		name: __('Clone', 'code-snippets'),
-		apply: () => Promise.resolve()
-	},
-	{
-		name: __('Export', 'code-snippets'),
-		apply: () => Promise.resolve()
-	},
-	{
-		name: __('Export code', 'code-snippets'),
-		apply: () => Promise.resolve()
-	},
-	{
-		name: __('Trash', 'code-snippets'),
-		apply: () => Promise.resolve()
-	}
-]
 
 const STATUS_LABELS: [SnippetStatus, string][] = [
 	['all', __('All', 'code-snippets')],
@@ -176,8 +150,43 @@ export const SnippetsListTable: React.FC = () => {
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { snippetsByStatus } = useFilteredSnippets()
 
+	const allSnippets = useMemo(() => snippetsByStatus.get('all') ?? [], [snippetsByStatus])
 	const totalItems = snippetsByStatus.get(currentStatus)?.length ?? 0
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
+	const actions: ListTableBulkAction<Snippet['id']>[] = useMemo(
+		() => [
+			{
+				name: __('Activate', 'code-snippets'),
+				apply: () => Promise.resolve()
+			},
+			{
+				name: __('Deactivate', 'code-snippets'),
+				apply: () => Promise.resolve()
+			},
+			{
+				name: __('Clone', 'code-snippets'),
+				apply: () => Promise.resolve()
+			},
+			{
+				name: __('Export', 'code-snippets'),
+				apply: (selected: Set<Snippet['id']>) => {
+					downloadBulkSnippetExportFile(
+						allSnippets.filter(snippet => selected.has(snippet.id))
+					)
+					return Promise.resolve()
+				}
+			},
+			{
+				name: __('Export code', 'code-snippets'),
+				apply: () => Promise.resolve()
+			},
+			{
+				name: __('Trash', 'code-snippets'),
+				apply: () => Promise.resolve()
+			}
+		],
+		[allSnippets]
+	)
 
 	useEffect(() => {
 		if (INDEX_STATUS !== currentStatus && !snippetsByStatus.has(currentStatus)) {
