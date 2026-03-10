@@ -61,7 +61,7 @@ const BulkActions = function BulkActions<K extends Key>({ which, actions, applyA
 	const [selectedAction, setSelectedAction] = useState<ListTableBulkAction<K>>()
 	const [selectedActionName, setSelectedActionName] = useState('-1')
 	const [isPerformingAction, setIsPerformingAction] = useState(false)
-	const isApplyDisabled = disabled ?? (isPerformingAction || !selectedAction)
+	const isApplyDisabled = !!disabled || isPerformingAction || !selectedAction
 
 	return (
 		<div className="alignleft actions bulkactions">
