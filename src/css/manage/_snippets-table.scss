@@ -178,18 +178,20 @@
 }
 
 .wp-list-table.truncate-row-values {
-	table-layout: fixed;
-
-	td.column-desc {
-		overflow: hidden;
-	}
-
 	#wpbody-content td.column-name > .snippet-name,
 	td.column-desc .snippet-description-content {
 		display: block;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	#wpbody-content td.column-name > .snippet-name {
+		max-inline-size: min(24rem, 30vw);
+	}
+
+	td.column-desc .snippet-description-content {
+		max-inline-size: min(36rem, 45vw);
 	}
 }
 
