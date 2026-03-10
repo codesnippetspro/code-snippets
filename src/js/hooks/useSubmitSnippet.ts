@@ -84,13 +84,21 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 		setCurrentNotice(undefined)
 		setIsWorking(true)
 
+		const request = { ...snippet }
+
+		if (SubmitSnippetAction.SAVE_AND_ACTIVATE === action) {
+			request.active = true
+		} else if (SubmitSnippetAction.SAVE_AND_DEACTIVATE === action) {
+			request.active = false
+		}
+
 		const result = await (async (): Promise<Snippet | string | undefined> => {
 			try {
-				const { id } = snippet
+				const { id } = request
 
 				const response = await (undefined === id || 0 === id
-					? api.create(snippet)
-					: api.update({ ...snippet, id }))
+					? api.create(request)
+					: api.update({ ...request, id }))
 
 				return response.id ? createSnippetObject(response) : undefined
 			} catch (error) {
@@ -104,7 +112,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 
 		if (undefined === result || 'string' === typeof result) {
 			const message = [
-				snippet.id ? messages.failedUpdate : messages.failedCreate,
+				request.id ? messages.failedUpdate : messages.failedCreate,
 				result ?? __('The server did not send a valid response.', 'code-snippets')
 			]
 
@@ -123,7 +131,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 			setCurrentNotice(['updated', getSuccessNotice(snippet, result, action)])
 		}
 
-		if (snippet.id && result.id) {
+		if (request.id && result.id) {
 			window.document.title = window.document.title.replace(snippetMessages.addNew, messages.edit)
 			window.history.replaceState({}, '', buildUrl(window.CODE_SNIPPETS?.urls.edit, { id: result.id }))
 		}
