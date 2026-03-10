@@ -322,6 +322,30 @@ class Admin_Bar_Test extends TestCase {
 	}
 
 	/**
+	 * Snippet listing links use the edit screen ID query arg.
+	 *
+	 * @return void
+	 */
+	public function test_snippet_listing_links_use_id_query_arg(): void {
+		$active = $this->create_snippet( 'QuickNav Edit Link Active', true );
+		$inactive = $this->create_snippet( 'QuickNav Edit Link Inactive', false );
+
+		$wp_admin_bar = $this->build_admin_bar();
+		$admin_bar = new Admin_Bar();
+		$admin_bar->register_nodes( $wp_admin_bar );
+
+		$active_node = $wp_admin_bar->get_node( 'code-snippets-snippet-' . $active->id );
+		$inactive_node = $wp_admin_bar->get_node( 'code-snippets-snippet-' . $inactive->id );
+
+		$this->assertNotNull( $active_node );
+		$this->assertNotNull( $inactive_node );
+		$this->assertStringContainsString( 'id=' . $active->id, $active_node->href );
+		$this->assertStringNotContainsString( 'edit=' . $active->id, $active_node->href );
+		$this->assertStringContainsString( 'id=' . $inactive->id, $inactive_node->href );
+		$this->assertStringNotContainsString( 'edit=' . $inactive->id, $inactive_node->href );
+	}
+
+	/**
 	 * Safe mode documentation link is registered under the Snippets root node.
 	 *
 	 * @return void

@@ -403,7 +403,7 @@ class Admin_Bar {
 				[
 					'id'     => self::ROOT_NODE_ID . '-snippet-' . $snippet->id,
 					'title'  => esc_html( $this->format_snippet_title( $snippet ) ),
-					'href'   => esc_url( add_query_arg( 'edit', $snippet->id, $plugin->get_menu_url( 'edit' ) ) ),
+					'href'   => esc_url( add_query_arg( 'id', $snippet->id, $plugin->get_menu_url( 'edit' ) ) ),
 					'parent' => self::ROOT_NODE_ID . '-active-snippets',
 					'meta'   => [ 'class' => 'code-snippets-snippet-item' ],
 				]
@@ -436,7 +436,7 @@ class Admin_Bar {
 				[
 					'id'     => self::ROOT_NODE_ID . '-snippet-' . $snippet->id,
 					'title'  => esc_html( $this->format_snippet_title( $snippet ) ),
-					'href'   => esc_url( add_query_arg( 'edit', $snippet->id, $plugin->get_menu_url( 'edit' ) ) ),
+					'href'   => esc_url( add_query_arg( 'id', $snippet->id, $plugin->get_menu_url( 'edit' ) ) ),
 					'parent' => self::ROOT_NODE_ID . '-inactive-snippets',
 					'meta'   => [ 'class' => 'code-snippets-snippet-item' ],
 				]
