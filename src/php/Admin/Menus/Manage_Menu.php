@@ -3,8 +3,11 @@
 namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Admin\Contextual_Help;
+use Code_Snippets\Migration\Export\Download_Code;
 use Code_Snippets\Utils\Code_Highlighter;
+use WP_Error;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\get_snippet;
 use function Code_Snippets\get_snippets;
 use function Code_Snippets\Settings\get_setting;
 use const Code_Snippets\PLUGIN_FILE;
@@ -44,6 +47,7 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		add_action( 'admin_menu', array( $this, 'register_upgrade_menu' ), 500 );
+		add_action( 'admin_init', [ $this, 'handle_bulk_download_request' ] );
 		add_action( 'admin_init', array( $this, 'save_truncation_preference' ) );
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
@@ -213,12 +217,14 @@ class Manage_Menu extends Admin_Menu {
 			self::JS_HANDLE,
 			'CODE_SNIPPETS_MANAGE',
 			[
-				'hasNetworkCap'    => current_user_can( code_snippets()->get_network_cap_name() ),
+				'hasNetworkCap'      => current_user_can( code_snippets()->get_network_cap_name() ),
 				'hiddenColumns'     => $this->get_hidden_manage_columns(),
 				'truncateRowValues' => (int) $this->truncate_row_values(),
-				'snippetsPerPage'  => $this->get_snippets_per_page(),
-				'isSafeModeActive' => code_snippets()->evaluate_functions->is_safe_mode_active(),
-				'snippetsList'     => array_map(
+				'snippetsPerPage'    => $this->get_snippets_per_page(),
+				'isSafeModeActive'   => code_snippets()->evaluate_functions->is_safe_mode_active(),
+				'bulkDownloadNonce'  => wp_create_nonce( 'code_snippets_bulk_download' ),
+				'supportsZipDownloads' => class_exists( 'ZipArchive' ),
+				'snippetsList'       => array_map(
 					function ( $snippet ) {
 						return $snippet->get_fields();
 					},
@@ -388,5 +394,139 @@ class Manage_Menu extends Admin_Menu {
 	 */
 	public function save_screen_option( $status, string $option, $value ) {
 		return 'snippets_per_page' === $option ? $value : $status;
+	}
+
+	/**
+	 * Handle bulk snippet code downloads from the manage screen.
+	 *
+	 * @return void
+	 */
+	public function handle_bulk_download_request(): void {
+		if ( ! $this->is_bulk_download_request() ) {
+			return;
+		}
+
+		if ( ! current_user_can( code_snippets()->get_cap() ) ) {
+			$this->send_download_error( __( 'You are not allowed to download these snippets.', 'code-snippets' ), 403 );
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified below before serving the download.
+		$nonce = isset( $_POST['code_snippets_bulk_download_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['code_snippets_bulk_download_nonce'] ) ) : '';
+
+		if ( ! wp_verify_nonce( $nonce, 'code_snippets_bulk_download' ) ) {
+			$this->send_download_error( __( 'The download request is no longer valid. Please refresh and try again.', 'code-snippets' ), 403 );
+		}
+
+		$snippets = $this->get_requested_download_snippets();
+
+		if ( empty( $snippets ) ) {
+			$this->send_download_error( __( 'No snippets were selected for download.', 'code-snippets' ) );
+		}
+
+		$download = 1 === count( $snippets )
+			? Download_Code::build_snippet_download( $snippets[0] )
+			: Download_Code::build_archive_download( $snippets );
+
+		if ( $download instanceof WP_Error ) {
+			$status = $download->get_error_data( 'status' );
+			$this->send_download_error( $download->get_error_message(), is_numeric( $status ) ? (int) $status : 500 );
+		}
+
+		$this->send_download_response( $download );
+	}
+
+	/**
+	 * Determine whether the current request is a bulk download request.
+	 *
+	 * @return bool
+	 */
+	private function is_bulk_download_request(): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing parameter.
+		$page = isset( $_REQUEST['page'] ) ? sanitize_key( wp_unslash( $_REQUEST['page'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only action routing parameter.
+		$action = isset( $_POST['code_snippets_action'] ) ? sanitize_key( wp_unslash( $_POST['code_snippets_action'] ) ) : '';
+
+		return code_snippets()->get_menu_slug() === $page && 'bulk-download' === $action;
+	}
+
+	/**
+	 * Resolve the snippets requested for download.
+	 *
+	 * @return array<\Code_Snippets\Model\Snippet>
+	 */
+	private function get_requested_download_snippets(): array {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Verified before this method is called and parsed below.
+		$payload = isset( $_POST['snippets'] ) ? json_decode( wp_unslash( $_POST['snippets'] ), true ) : [];
+
+		if ( ! is_array( $payload ) ) {
+			return [];
+		}
+
+		$snippets = [];
+
+		foreach ( $payload as $snippet_data ) {
+			if ( ! is_array( $snippet_data ) || empty( $snippet_data['id'] ) ) {
+				continue;
+			}
+
+			$snippet = get_snippet(
+				absint( $snippet_data['id'] ),
+				! empty( $snippet_data['network'] )
+			);
+
+			if ( $snippet->id ) {
+				$snippets[] = $snippet;
+			}
+		}
+
+		return $snippets;
+	}
+
+	/**
+	 * Send a download file response and end execution.
+	 *
+	 * @param array{filename:string, content_type:string, content:string} $download Download data.
+	 *
+	 * @return void
+	 */
+	private function send_download_response( array $download ): void {
+		while ( ob_get_level() ) {
+			ob_end_clean();
+		}
+
+		nocache_headers();
+		send_nosniff_header();
+
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Type: ' . $download['content_type'] );
+		header( 'Content-Disposition: attachment; filename="' . $download['filename'] . '"' );
+		header( 'Content-Length: ' . strlen( $download['content'] ) );
+		header( 'X-Suggested-Filename: ' . $download['filename'] );
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary download payload.
+		echo $download['content'];
+		exit;
+	}
+
+	/**
+	 * Send a plain text download error response and end execution.
+	 *
+	 * @param string $message Error message.
+	 * @param int    $status  HTTP status code.
+	 *
+	 * @return void
+	 */
+	private function send_download_error( string $message, int $status = 400 ): void {
+		while ( ob_get_level() ) {
+			ob_end_clean();
+		}
+
+		status_header( $status );
+		nocache_headers();
+		send_nosniff_header();
+		header( 'Content-Type: text/plain; charset=' . get_option( 'blog_charset' ) );
+
+		echo esc_html( $message );
+		exit;
 	}
 }

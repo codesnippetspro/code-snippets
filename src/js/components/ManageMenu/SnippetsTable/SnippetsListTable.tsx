@@ -3,9 +3,10 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { createInterpolateElement } from '@wordpress/element'
 import { useRestAPI } from '../../../hooks/useRestAPI'
+import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
-import { downloadBulkSnippetExportFile } from '../../../utils/files'
+import { downloadAsFile, downloadBulkSnippetExportFile, downloadSnippetExportFile } from '../../../utils/files'
 import { REST_BASES } from '../../../utils/restAPI'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
@@ -27,6 +28,53 @@ const STATUS_LABELS: [SnippetStatus, string][] = [
 	['unlocked', __('Unlocked', 'code-snippets')],
 	['trashed', __('Trashed', 'code-snippets')]
 ]
+
+const BULK_DOWNLOAD_ACTION = 'bulk-download'
+const BULK_DOWNLOAD_FILENAME = 'snippets.code-snippets.zip'
+
+const downloadSnippetFilesIndividually = (
+	snippets: readonly Snippet[],
+	exportCode: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<string>
+) =>
+	snippets.reduce(
+		(promise, snippet) =>
+			promise.then(() =>
+				exportCode(snippet)
+					.then(response => downloadSnippetExportFile(response, snippet))
+			),
+		Promise.resolve()
+	)
+
+const downloadBulkSnippetArchive = async (snippets: readonly Snippet[]): Promise<void> => {
+	const body = new URLSearchParams({
+		code_snippets_action: BULK_DOWNLOAD_ACTION,
+		code_snippets_bulk_download_nonce: window.CODE_SNIPPETS_MANAGE?.bulkDownloadNonce ?? '',
+		snippets: JSON.stringify(
+			snippets.map(({ id, network }) => ({ id, network }))
+		)
+	})
+
+	const response = await fetch(window.location.href, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+		},
+		body: body.toString(),
+		credentials: 'same-origin'
+	})
+
+	if (!response.ok) {
+		throw new Error(await response.text())
+	}
+
+	const blob = await response.blob()
+	const filename = response.headers.get('X-Suggested-Filename') ?? BULK_DOWNLOAD_FILENAME
+	const mimeType = '' === blob.type
+		? response.headers.get('Content-Type') ?? 'application/zip'
+		: blob.type
+
+	downloadAsFile(blob, filename, mimeType)
+}
 
 const SnippetStatusCounts = () => {
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
@@ -183,7 +231,10 @@ const NoItemsMessage = () => {
 }
 
 const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] =>
-	useMemo(
+{
+	const api = useSnippetsAPI()
+
+	return useMemo(
 		() => [
 			{
 				name: __('Activate', 'code-snippets'),
@@ -207,16 +258,29 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 				}
 			},
 			{
-				name: __('Export code', 'code-snippets'),
-				apply: () => Promise.resolve()
+				name: __('Download', 'code-snippets'),
+				apply: (selected: Set<Snippet['id']>) => {
+					const selectedSnippets = allSnippets.filter(snippet => selected.has(snippet.id))
+
+					if (0 === selectedSnippets.length) {
+						return Promise.resolve()
+					}
+
+					if (1 === selectedSnippets.length || !window.CODE_SNIPPETS_MANAGE?.supportsZipDownloads) {
+						return downloadSnippetFilesIndividually(selectedSnippets, api.exportCode)
+					}
+
+					return downloadBulkSnippetArchive(selectedSnippets)
+				}
 			},
 			{
 				name: __('Trash', 'code-snippets'),
 				apply: () => Promise.resolve()
 			}
 		],
-		[allSnippets]
+		[allSnippets, api.exportCode]
 	)
+}
 
 export const SnippetsListTable: React.FC = () => {
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()

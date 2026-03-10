@@ -163,4 +163,53 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		await helper.cleanupSnippet(secondSnippetName)
 	})
+
+	test('Can download a single snippet from bulk actions', async ({ page }) => {
+		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+
+		await snippetRow.locator('input[name="checked[]"]').check({ force: true })
+		await page.locator('select[name="action"]').first().selectOption({ label: 'Download' })
+
+		const download = await Promise.all([
+			page.waitForEvent('download'),
+			page.locator('#doaction').click()
+		]).then(([downloadEvent]) => downloadEvent)
+
+		expect(download.suggestedFilename()).toMatch(/\.code-snippets\.php$/)
+	})
+
+	test('Can download multiple snippets from bulk actions as a zip archive', async ({ page }) => {
+		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		const secondSnippetName = SnippetsTestHelper.makeUniqueSnippetName('E2E Download CSS')
+
+		await SnippetsTestHelper.createSnippetViaCli({
+			name: secondSnippetName,
+			active: false,
+			type: 'css'
+		})
+		await helper.navigateToSnippetsAdmin()
+
+		const firstRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+		const secondRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${secondSnippetName}"))`)
+			.first()
+
+		await firstRow.locator('input[name="checked[]"]').check({ force: true })
+		await secondRow.locator('input[name="checked[]"]').check({ force: true })
+		await page.locator('select[name="action"]').first().selectOption({ label: 'Download' })
+
+		const download = await Promise.all([
+			page.waitForEvent('download'),
+			page.locator('#doaction').click()
+		]).then(([downloadEvent]) => downloadEvent)
+
+		expect(download.suggestedFilename()).toBe('snippets.code-snippets.zip')
+
+		await helper.cleanupSnippet(secondSnippetName)
+	})
 })

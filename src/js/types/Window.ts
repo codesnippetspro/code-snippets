@@ -61,6 +61,8 @@ declare global {
 			truncateRowValues: number | string
 			snippetsPerPage: number
 			isSafeModeActive: boolean
+			bulkDownloadNonce: string
+			supportsZipDownloads: boolean
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet

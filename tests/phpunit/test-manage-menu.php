@@ -49,6 +49,9 @@ class Manage_Menu_Test extends TestCase {
 		delete_user_option( self::$admin_user_id, 'snippets_table_truncate_row_values' );
 		unset(
 			$_POST['wp_screen_options'],
+			$_POST['code_snippets_action'],
+			$_POST['code_snippets_bulk_download_nonce'],
+			$_POST['snippets'],
 			$_POST['screenoptionnonce'],
 			$_POST['snippets_table_truncate_row_values'],
 			$_REQUEST['page'],
@@ -90,6 +93,8 @@ class Manage_Menu_Test extends TestCase {
 		$this->assertIsString( $data );
 		$this->assertStringContainsString( '"hiddenColumns":["desc","date"]', $data );
 		$this->assertStringContainsString( '"truncateRowValues":"0"', $data );
+		$this->assertStringContainsString( '"bulkDownloadNonce":"', $data );
+		$this->assertStringContainsString( '"supportsZipDownloads":', $data );
 	}
 
 	/**
