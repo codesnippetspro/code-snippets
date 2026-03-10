@@ -1,5 +1,123 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { SnippetForm } from './SnippetForm'
 
-export const EditMenu = () =>
-	<SnippetForm />
+const EVENT_NAME = 'code_snippets_focus_editor'
+
+interface EditMenuLinkBinding {
+	menuLink: HTMLAnchorElement
+	originalHref: string | null
+	originalRole: string | null
+	originalTabIndex: string | null
+	originalAriaDisabled: string | null
+	handleClick: (event: MouseEvent) => void
+	handleKeyDown: (event: KeyboardEvent) => void
+}
+
+const focusCodeEditor = () => {
+	window.dispatchEvent(new CustomEvent(EVENT_NAME))
+}
+
+const restoreAttribute = (menuLink: HTMLAnchorElement, name: string, value: string | null) => {
+	if (value) {
+		menuLink.setAttribute(name, value)
+		return
+	}
+
+	menuLink.removeAttribute(name)
+}
+
+const getEditPage = (): string | null => {
+	const editUrl = window.CODE_SNIPPETS?.urls.edit
+
+	return editUrl ? new URL(editUrl, window.location.origin).searchParams.get('page') : null
+}
+
+const bindEditMenuLink = (menuLink: HTMLAnchorElement, page: string): EditMenuLinkBinding | undefined => {
+	const menuUrl = new URL(menuLink.href, window.location.origin)
+
+	if (page !== menuUrl.searchParams.get('page')) {
+		return undefined
+	}
+
+	const handleClick = (event: MouseEvent) => {
+		event.preventDefault()
+		focusCodeEditor()
+	}
+
+	const handleKeyDown = (event: KeyboardEvent) => {
+		if ('Enter' !== event.key && ' ' !== event.key) {
+			return
+		}
+
+		event.preventDefault()
+		focusCodeEditor()
+	}
+
+	const binding = {
+		menuLink,
+		originalHref: menuLink.getAttribute('href'),
+		originalRole: menuLink.getAttribute('role'),
+		originalTabIndex: menuLink.getAttribute('tabindex'),
+		originalAriaDisabled: menuLink.getAttribute('aria-disabled'),
+		handleClick,
+		handleKeyDown
+	}
+
+	menuLink.dataset.codeSnippetsDisabled = 'true'
+	menuLink.setAttribute('aria-disabled', 'true')
+	menuLink.setAttribute('role', 'button')
+	menuLink.setAttribute('tabindex', '0')
+	menuLink.classList.add('code-snippets-edit-menu-link')
+	menuLink.removeAttribute('href')
+	menuLink.addEventListener('click', handleClick)
+	menuLink.addEventListener('keydown', handleKeyDown)
+
+	return binding
+}
+
+const unbindEditMenuLink = ({
+	menuLink,
+	originalHref,
+	originalRole,
+	originalTabIndex,
+	originalAriaDisabled,
+	handleClick,
+	handleKeyDown
+}: EditMenuLinkBinding) => {
+	menuLink.removeEventListener('click', handleClick)
+	menuLink.removeEventListener('keydown', handleKeyDown)
+	menuLink.classList.remove('code-snippets-edit-menu-link')
+	delete menuLink.dataset.codeSnippetsDisabled
+
+	restoreAttribute(menuLink, 'href', originalHref)
+	restoreAttribute(menuLink, 'role', originalRole)
+	restoreAttribute(menuLink, 'tabindex', originalTabIndex)
+	restoreAttribute(menuLink, 'aria-disabled', originalAriaDisabled)
+}
+
+const useEditMenuLinkFocus = () => {
+	useEffect(() => {
+		const page = getEditPage()
+
+		if (!page) {
+			return
+		}
+
+		const editMenuLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('#adminmenu a[href]'))
+			.flatMap(menuLink => {
+				const binding = bindEditMenuLink(menuLink, page)
+
+				return binding ? [binding] : []
+			})
+
+		return () => {
+			editMenuLinks.forEach(unbindEditMenuLink)
+		}
+	}, [])
+}
+
+export const EditMenu = () => {
+	useEditMenuLinkFocus()
+
+	return <SnippetForm />
+}

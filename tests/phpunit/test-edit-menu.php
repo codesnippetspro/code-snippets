@@ -63,21 +63,14 @@ class Edit_Menu_Test extends TestCase {
 	}
 
 	/**
-	 * The admin footer script disables the static Edit Snippet menu link.
+	 * The edit menu no longer injects inline JavaScript in the admin footer.
 	 *
 	 * @return void
 	 */
-	public function test_disable_menu_link_outputs_inline_script(): void {
+	public function test_edit_menu_does_not_use_footer_inline_script(): void {
 		$menu = new Edit_Menu();
 
-		ob_start();
-		$menu->disable_menu_link();
-		$output = ob_get_clean();
-
-		$this->assertStringContainsString( 'aria-disabled', $output );
-		$this->assertStringContainsString( code_snippets()->get_menu_slug( 'edit' ), $output );
-		$this->assertStringContainsString( "style.cursor = 'pointer'", $output );
-		$this->assertStringContainsString( "removeAttribute( 'href' )", $output );
-		$this->assertStringContainsString( 'code_snippets_focus_editor', $output );
+		$this->assertFalse( has_action( 'admin_print_footer_scripts', [ $menu, 'disable_menu_link' ] ) );
+		$this->assertFalse( has_action( 'network_admin_print_footer_scripts', [ $menu, 'disable_menu_link' ] ) );
 	}
 }

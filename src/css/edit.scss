@@ -29,6 +29,10 @@
 	margin: 0;
 }
 
+#adminmenu a.code-snippets-edit-menu-link {
+	cursor: pointer;
+}
+
 .snippet-description-container {
 	.wp-editor-tools {
 		padding-block-start: 5px;
