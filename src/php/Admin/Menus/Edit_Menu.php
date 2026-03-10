@@ -4,6 +4,7 @@ namespace Code_Snippets\Admin\Menus;
 
 use Code_Snippets\Admin\Contextual_Help;
 use Code_Snippets\Model\Snippet;
+use WP_Screen;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\get_all_snippet_tags;
 use function Code_Snippets\get_snippet;
@@ -48,8 +49,7 @@ class Edit_Menu extends Admin_Menu {
 			__( 'Edit Snippet', 'code-snippets' )
 		);
 
-		add_action( 'admin_menu', array( $this, 'maybe_hide_menu_item' ), 20 );
-		add_action( 'network_admin_menu', array( $this, 'maybe_hide_menu_item' ), 20 );
+		add_action( 'current_screen', array( $this, 'maybe_hide_menu_item' ) );
 
 		$this->remove_debug_bar_codemirror();
 	}
@@ -73,16 +73,17 @@ class Edit_Menu extends Admin_Menu {
 	/**
 	 * Hide the static Edit Snippet menu item unless a specific snippet is being edited.
 	 *
+	 * @param WP_Screen $screen Current admin screen.
+	 *
 	 * @return void
 	 */
-	public function maybe_hide_menu_item() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin menu context.
-		$current_page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
-
+	public function maybe_hide_menu_item( WP_Screen $screen ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin menu context.
 		$current_id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
+		$edit_hook  = get_plugin_page_hookname( $this->slug, $this->base_slug );
+		$edit_hook .= $screen->in_admin( 'network' ) ? '-network' : '';
 
-		if ( $this->slug === $current_page && 0 < $current_id ) {
+		if ( ( $screen->id === $edit_hook || $screen->base === $edit_hook ) && 0 < $current_id ) {
 			return;
 		}
 

@@ -43,8 +43,9 @@ class Edit_Menu_Test extends TestCase {
 		parent::set_up();
 
 		wp_set_current_user( self::$admin_user_id );
+		set_current_screen( 'toplevel_page_' . code_snippets()->get_menu_slug() );
 		unset( $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] );
-		unset( $_GET['page'], $_GET['id'] );
+		unset( $_GET['id'] );
 	}
 
 	/**
@@ -72,9 +73,7 @@ class Edit_Menu_Test extends TestCase {
 		$menu = new Edit_Menu();
 		$menu->register();
 
-		$_GET['page'] = code_snippets()->get_menu_slug();
-
-		$menu->maybe_hide_menu_item();
+		$menu->maybe_hide_menu_item( get_current_screen() );
 
 		$submenu = $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] ?? [];
 		$submenu_slugs = array_column( $submenu, 2 );
@@ -92,10 +91,17 @@ class Edit_Menu_Test extends TestCase {
 		$menu = new Edit_Menu();
 		$menu->register();
 
-		$_GET['page'] = code_snippets()->get_menu_slug( 'edit' );
-		$_GET['id']   = '11';
+		$screen = get_current_screen();
+		$hook = get_plugin_page_hookname(
+			code_snippets()->get_menu_slug( 'edit' ),
+			code_snippets()->get_menu_slug()
+		);
 
-		$menu->maybe_hide_menu_item();
+		$screen->id   = $hook;
+		$screen->base = $hook;
+		$_GET['id'] = '11';
+
+		$menu->maybe_hide_menu_item( $screen );
 
 		$submenu = $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] ?? [];
 		$submenu_slugs = array_column( $submenu, 2 );
@@ -113,5 +119,16 @@ class Edit_Menu_Test extends TestCase {
 
 		$this->assertFalse( has_action( 'admin_print_footer_scripts', [ $menu, 'disable_menu_link' ] ) );
 		$this->assertFalse( has_action( 'network_admin_print_footer_scripts', [ $menu, 'disable_menu_link' ] ) );
+	}
+
+	/**
+	 * The edit menu hides its submenu item using the current_screen hook.
+	 *
+	 * @return void
+	 */
+	public function test_edit_menu_uses_current_screen_to_hide_menu_item(): void {
+		$menu = new Edit_Menu();
+
+		$this->assertNotFalse( has_action( 'current_screen', [ $menu, 'maybe_hide_menu_item' ] ) );
 	}
 }
