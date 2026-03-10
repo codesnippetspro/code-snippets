@@ -56,9 +56,33 @@ class Download_Code_Test extends TestCase {
 
 		$download = Download_Code::build_snippet_download( $snippet );
 
-		$this->assertSame( 'my-html-snippet.code-snippets.php', $download['filename'] );
+		$this->assertSame( 'my-html-snippet.code-snippets.html', $download['filename'] );
+		$this->assertSame( 'text/html', $download['content_type'] );
+		$this->assertSame( "<p>Hello world</p>\n", $download['content'] );
+	}
+
+	/**
+	 * Downloading a single PHP snippet adds a PHP opening tag.
+	 *
+	 * @return void
+	 */
+	public function test_build_snippet_download_wraps_php_snippets(): void {
+		$snippet = save_snippet(
+			new Snippet(
+				[
+					'name'  => 'My PHP Snippet',
+					'code'  => 'echo "Hello world";',
+					'scope' => 'global',
+				]
+			)
+		);
+
+		$download = Download_Code::build_snippet_download( $snippet );
+
+		$this->assertSame( 'my-php-snippet.code-snippets.php', $download['filename'] );
 		$this->assertSame( 'text/php', $download['content_type'] );
-		$this->assertStringContainsString( '<p>Hello world</p>', $download['content'] );
+		$this->assertStringStartsWith( "<?php\n", $download['content'] );
+		$this->assertStringContainsString( 'echo "Hello world";', $download['content'] );
 	}
 
 	/**
@@ -97,7 +121,7 @@ class Download_Code_Test extends TestCase {
 		}
 
 		$this->assertIsArray( $download );
-		$this->assertSame( 'snippets.code-snippets.zip', $download['filename'] );
+		$this->assertMatchesRegularExpression( '/^code-snippets-\d+\.zip$/', $download['filename'] );
 		$this->assertSame( 'application/zip', $download['content_type'] );
 
 		$upload = wp_upload_bits( $download['filename'], null, $download['content'] );

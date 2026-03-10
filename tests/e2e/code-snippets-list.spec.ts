@@ -208,7 +208,7 @@ test.describe('Code Snippets List Page Actions', () => {
 			page.locator('#doaction').click()
 		]).then(([downloadEvent]) => downloadEvent)
 
-		expect(download.suggestedFilename()).toBe('snippets.code-snippets.zip')
+		expect(download.suggestedFilename()).toMatch(/^code-snippets-\d+\.zip$/)
 
 		await helper.cleanupSnippet(secondSnippetName)
 	})

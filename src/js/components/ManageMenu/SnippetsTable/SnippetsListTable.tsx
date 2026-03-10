@@ -3,10 +3,9 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import classnames from 'classnames'
 import { createInterpolateElement } from '@wordpress/element'
 import { useRestAPI } from '../../../hooks/useRestAPI'
-import { useSnippetsAPI } from '../../../hooks/useSnippetsAPI'
 import { useSnippetsList } from '../../../hooks/useSnippetsList'
 import { handleUnknownError } from '../../../utils/errors'
-import { downloadAsFile, downloadBulkSnippetExportFile, downloadSnippetExportFile } from '../../../utils/files'
+import { downloadBulkSnippetExportFile } from '../../../utils/files'
 import { REST_BASES } from '../../../utils/restAPI'
 import { getSnippetType } from '../../../utils/snippets/snippets'
 import { buildUrl } from '../../../utils/urls'
@@ -30,51 +29,76 @@ const STATUS_LABELS: [SnippetStatus, string][] = [
 ]
 
 const BULK_DOWNLOAD_ACTION = 'bulk-download'
-const BULK_DOWNLOAD_FILENAME = 'snippets.code-snippets.zip'
+const BULK_DOWNLOAD_FRAME_NAME = 'code-snippets-bulk-download-frame'
+const INDIVIDUAL_DOWNLOAD_DELAY_MS = 200
 
-const downloadSnippetFilesIndividually = (
-	snippets: readonly Snippet[],
-	exportCode: (snippet: Pick<Snippet, 'id' | 'network'>) => Promise<string>
-) =>
+const getBulkDownloadFrame = (): HTMLIFrameElement => {
+	const existingFrame = document.getElementById(BULK_DOWNLOAD_FRAME_NAME)
+
+	if (existingFrame instanceof HTMLIFrameElement) {
+		return existingFrame
+	}
+
+	const frame = document.createElement('iframe')
+	frame.id = BULK_DOWNLOAD_FRAME_NAME
+	frame.name = BULK_DOWNLOAD_FRAME_NAME
+	frame.hidden = true
+	document.body.appendChild(frame)
+
+	return frame
+}
+
+const appendHiddenField = (form: HTMLFormElement, name: string, value: string) => {
+	const input = document.createElement('input')
+	input.type = 'hidden'
+	input.name = name
+	input.value = value
+	form.appendChild(input)
+}
+
+const submitBulkSnippetDownload = (snippets: readonly Snippet[]): Promise<void> => {
+	if (0 === snippets.length) {
+		return Promise.resolve()
+	}
+
+	const frame = getBulkDownloadFrame()
+	const form = document.createElement('form')
+
+	form.method = 'post'
+	form.action = window.location.href
+	form.target = frame.name
+	form.hidden = true
+
+	appendHiddenField(form, 'code_snippets_action', BULK_DOWNLOAD_ACTION)
+	appendHiddenField(form, 'code_snippets_bulk_download_nonce', window.CODE_SNIPPETS_MANAGE?.bulkDownloadNonce ?? '')
+	appendHiddenField(
+		form,
+		'snippets',
+		JSON.stringify(snippets.map(({ id, network }) => ({ id, network })))
+	)
+
+	document.body.appendChild(form)
+	form.submit()
+
+	window.setTimeout(() => {
+		form.remove()
+	}, 0)
+
+	return Promise.resolve()
+}
+
+const submitBulkSnippetDownloadsIndividually = (snippets: readonly Snippet[]): Promise<void> =>
 	snippets.reduce(
 		(promise, snippet) =>
-			promise.then(() =>
-				exportCode(snippet)
-					.then(response => downloadSnippetExportFile(response, snippet))
+			promise.then(
+				() =>
+					new Promise<void>(resolve => {
+						void submitBulkSnippetDownload([snippet])
+						window.setTimeout(resolve, INDIVIDUAL_DOWNLOAD_DELAY_MS)
+					})
 			),
 		Promise.resolve()
 	)
-
-const downloadBulkSnippetArchive = async (snippets: readonly Snippet[]): Promise<void> => {
-	const body = new URLSearchParams({
-		code_snippets_action: BULK_DOWNLOAD_ACTION,
-		code_snippets_bulk_download_nonce: window.CODE_SNIPPETS_MANAGE?.bulkDownloadNonce ?? '',
-		snippets: JSON.stringify(
-			snippets.map(({ id, network }) => ({ id, network }))
-		)
-	})
-
-	const response = await fetch(window.location.href, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-		},
-		body: body.toString(),
-		credentials: 'same-origin'
-	})
-
-	if (!response.ok) {
-		throw new Error(await response.text())
-	}
-
-	const blob = await response.blob()
-	const filename = response.headers.get('X-Suggested-Filename') ?? BULK_DOWNLOAD_FILENAME
-	const mimeType = '' === blob.type
-		? response.headers.get('Content-Type') ?? 'application/zip'
-		: blob.type
-
-	downloadAsFile(blob, filename, mimeType)
-}
 
 const SnippetStatusCounts = () => {
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
@@ -232,8 +256,6 @@ const NoItemsMessage = () => {
 
 const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id']>[] =>
 {
-	const api = useSnippetsAPI()
-
 	return useMemo(
 		() => [
 			{
@@ -262,15 +284,11 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 				apply: (selected: Set<Snippet['id']>) => {
 					const selectedSnippets = allSnippets.filter(snippet => selected.has(snippet.id))
 
-					if (0 === selectedSnippets.length) {
-						return Promise.resolve()
+					if (1 < selectedSnippets.length && !window.CODE_SNIPPETS_MANAGE?.supportsZipDownloads) {
+						return submitBulkSnippetDownloadsIndividually(selectedSnippets)
 					}
 
-					if (1 === selectedSnippets.length || !window.CODE_SNIPPETS_MANAGE?.supportsZipDownloads) {
-						return downloadSnippetFilesIndividually(selectedSnippets, api.exportCode)
-					}
-
-					return downloadBulkSnippetArchive(selectedSnippets)
+					return submitBulkSnippetDownload(selectedSnippets)
 				}
 			},
 			{
@@ -278,7 +296,7 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 				apply: () => Promise.resolve()
 			}
 		],
-		[allSnippets, api.exportCode]
+		[allSnippets]
 	)
 }
 
