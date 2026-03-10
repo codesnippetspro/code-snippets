@@ -48,6 +48,9 @@ class Edit_Menu extends Admin_Menu {
 			__( 'Edit Snippet', 'code-snippets' )
 		);
 
+		add_action( 'admin_menu', array( $this, 'maybe_hide_menu_item' ), 20 );
+		add_action( 'network_admin_menu', array( $this, 'maybe_hide_menu_item' ), 20 );
+
 		$this->remove_debug_bar_codemirror();
 	}
 
@@ -65,6 +68,25 @@ class Edit_Menu extends Admin_Menu {
 			_x( 'Add New', 'menu label', 'code-snippets' ),
 			__( 'Create New Snippet', 'code-snippets' )
 		);
+	}
+
+	/**
+	 * Hide the static Edit Snippet menu item unless a specific snippet is being edited.
+	 *
+	 * @return void
+	 */
+	public function maybe_hide_menu_item() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin menu context.
+		$current_page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin menu context.
+		$current_id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
+
+		if ( $this->slug === $current_page && 0 < $current_id ) {
+			return;
+		}
+
+		remove_submenu_page( $this->base_slug, $this->slug );
 	}
 
 	/**

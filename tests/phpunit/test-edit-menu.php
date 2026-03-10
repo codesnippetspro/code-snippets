@@ -44,6 +44,7 @@ class Edit_Menu_Test extends TestCase {
 
 		wp_set_current_user( self::$admin_user_id );
 		unset( $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] );
+		unset( $_GET['page'], $_GET['id'] );
 	}
 
 	/**
@@ -60,6 +61,46 @@ class Edit_Menu_Test extends TestCase {
 
 		$this->assertContains( code_snippets()->get_menu_slug( 'edit' ), $submenu_slugs );
 		$this->assertContains( code_snippets()->get_menu_slug( 'add' ), $submenu_slugs );
+	}
+
+	/**
+	 * Hide the edit submenu item outside the snippet edit screen.
+	 *
+	 * @return void
+	 */
+	public function test_maybe_hide_menu_item_removes_edit_submenu_outside_edit_screen(): void {
+		$menu = new Edit_Menu();
+		$menu->register();
+
+		$_GET['page'] = code_snippets()->get_menu_slug();
+
+		$menu->maybe_hide_menu_item();
+
+		$submenu = $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] ?? [];
+		$submenu_slugs = array_column( $submenu, 2 );
+
+		$this->assertNotContains( code_snippets()->get_menu_slug( 'edit' ), $submenu_slugs );
+		$this->assertContains( code_snippets()->get_menu_slug( 'add' ), $submenu_slugs );
+	}
+
+	/**
+	 * Keep the edit submenu item visible while editing a specific snippet.
+	 *
+	 * @return void
+	 */
+	public function test_maybe_hide_menu_item_keeps_edit_submenu_on_edit_screen(): void {
+		$menu = new Edit_Menu();
+		$menu->register();
+
+		$_GET['page'] = code_snippets()->get_menu_slug( 'edit' );
+		$_GET['id']   = '11';
+
+		$menu->maybe_hide_menu_item();
+
+		$submenu = $GLOBALS['submenu'][ code_snippets()->get_menu_slug() ] ?? [];
+		$submenu_slugs = array_column( $submenu, 2 );
+
+		$this->assertContains( code_snippets()->get_menu_slug( 'edit' ), $submenu_slugs );
 	}
 
 	/**
