@@ -15,11 +15,11 @@ interface NoticesProps {
 export const Notices: React.FC<NoticesProps> = ({ placement }) => {
 	const { currentNotice, setCurrentNotice, snippet, setSnippet } = useSnippetForm()
 	const showCurrentNotice = 'above-form' === placement ? hasStackTrace(currentNotice) : !hasStackTrace(currentNotice)
-	const showCodeErrorNotice = 'sidebar' === placement
+	const showCodeErrorNotice = 'sidebar' === placement && !snippet.code_error_trace
 
 	return <>
 		{showCurrentNotice && currentNotice
-			? <DismissibleNotice className={currentNotice[0]} onDismiss={() => setCurrentNotice(undefined)}>
+			? <DismissibleNotice className={`${currentNotice[0]} code-snippets-notice`} onDismiss={() => setCurrentNotice(undefined)}>
 				<p>{createInterpolateElement(currentNotice[1], { strong: <strong /> })}</p>
 				{currentNotice[DESCRIPTION_INDEX]
 					? <p>{createInterpolateElement(currentNotice[DESCRIPTION_INDEX], { strong: <strong /> })}</p>
