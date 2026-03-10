@@ -178,7 +178,7 @@
 }
 
 .wp-list-table.truncate-row-values {
-	#wpbody-content td.column-name > .snippet-name,
+	td.column-name > .snippet-name,
 	td.column-desc .snippet-description-content {
 		display: block;
 		overflow: hidden;
@@ -186,7 +186,7 @@
 		white-space: nowrap;
 	}
 
-	#wpbody-content td.column-name > .snippet-name {
+	td.column-name > .snippet-name {
 		max-inline-size: min(24rem, 30vw);
 	}
 
