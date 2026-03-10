@@ -78,7 +78,7 @@ const BulkActions = <K extends Key>({ which, actions, applyAction, disabled }: B
 				name="bulk_action"
 				text={__('Apply', 'code-snippets')}
 				className="action"
-				disabled={disabled ?? isPerformingAction}
+				disabled={disabled ?? isPerformingAction || !selectedAction}
 				onClick={event => {
 					event.preventDefault()
 
