@@ -7,6 +7,24 @@
 	.banner {
 		justify-content: center;
 	}
+
+  .tablenav.top {
+    display: flex;
+    gap: 20px;
+    block-size: 40px;
+    margin-block-end: 31px;
+    align-items: center;
+
+    select {
+      inline-size: 245px;
+      block-size: 100%;
+    }
+
+    .tablenav-pages {
+      margin: 0;
+      margin-inline-start: auto;
+    }
+  }
 }
 
 .cloud-search-results {
@@ -128,23 +146,5 @@
 			inset-inline-end: 1.5em;
 			inset-block-start: 25%;
 		}
-	}
-}
-
-.tablenav.top {
-	display: flex;
-	gap: 20px;
-	block-size: 40px;
-	margin-block-end: 31px;
-	align-items: center;
-
-	select {
-		inline-size: 245px;
-		block-size: 100%;
-	}
-
-	.tablenav-pages {
-		margin: 0;
-		margin-inline-start: auto;
 	}
 }
