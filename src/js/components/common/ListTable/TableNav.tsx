@@ -87,8 +87,6 @@ const BulkActions = <K extends Key>({ which, actions, applyAction, disabled }: B
 						applyAction(selectedAction)
 							.catch(handleUnknownError)
 							.finally(() => {
-								setSelectedAction(undefined)
-								setSelectedActionName('-1')
 								setIsPerformingAction(false)
 							})
 					}
