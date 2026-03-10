@@ -532,7 +532,7 @@ class Manage_Menu extends Admin_Menu {
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: ' . $download['content_type'] );
 		header( 'Content-Disposition: attachment; filename="' . $download['filename'] . '"' );
-		header( 'Content-Length: ' . mb_strlen( $download['content'], '8bit' ) );
+		header( 'Content-Length: ' . strlen( $download['content'] ) );
 		header( 'X-Suggested-Filename: ' . $download['filename'] );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary download payload.
