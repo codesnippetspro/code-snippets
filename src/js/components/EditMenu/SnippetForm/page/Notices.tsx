@@ -3,10 +3,15 @@ import React, { useEffect, useRef, useState } from 'react'
 import { __, sprintf } from '@wordpress/i18n'
 import { useSnippetForm } from '../WithSnippetFormContext'
 import { DismissibleNotice } from '../../../common/Notice'
+import type { ReactNode } from 'react'
 
 const DESCRIPTION_INDEX = 2
 const DETAILS_INDEX = 3
 const hasStackTrace = (notice?: readonly unknown[]): boolean => Boolean(notice?.[DETAILS_INDEX])
+const renderNoticeLine = (line: ReactNode): ReactNode =>
+	'string' === typeof line
+		? createInterpolateElement(line, { strong: <strong /> })
+		: line
 
 interface NoticesProps {
 	placement: 'above-form' | 'sidebar'
@@ -57,9 +62,9 @@ export const Notices: React.FC<NoticesProps> = ({ placement }) => {
 	return <>
 		{showCurrentNotice && currentNotice
 			? <DismissibleNotice className={`${currentNotice[0]} code-snippets-notice`} onDismiss={() => setCurrentNotice(undefined)}>
-				<p>{createInterpolateElement(currentNotice[1], { strong: <strong /> })}</p>
+				<p>{renderNoticeLine(currentNotice[1])}</p>
 				{currentNotice[DESCRIPTION_INDEX]
-					? <p>{createInterpolateElement(currentNotice[DESCRIPTION_INDEX], { strong: <strong /> })}</p>
+					? <p>{renderNoticeLine(currentNotice[DESCRIPTION_INDEX])}</p>
 					: null}
 				{currentNotice[DETAILS_INDEX]
 					? <StackTraceDetails trace={currentNotice[DETAILS_INDEX]} />

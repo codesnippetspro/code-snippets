@@ -1,11 +1,12 @@
-import { __, sprintf } from '@wordpress/i18n'
+import { __ } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
-import { useCallback } from 'react'
+import { createElement , useCallback } from 'react'
 import { useSnippetForm } from '../components/EditMenu/SnippetForm/WithSnippetFormContext'
 import { createSnippetObject, isCondition } from '../utils/snippets/snippets'
 import { buildUrl } from '../utils/urls'
 import { useSnippetsAPI } from './useSnippetsAPI'
 import type { Snippet } from '../types/Snippet'
+import type { ScreenNotice } from '../types/ScreenNotice'
 
 const snippetMessages = <const> {
 	addNew: __('Create New Snippet', 'code-snippets'),
@@ -72,13 +73,15 @@ const getSuccessNotice = (
 	}
 }
 
-const getActivationErrorNotice = (snippet: Snippet): ['error', string, string, string?] => [
+const getActivationErrorNotice = (snippet: Snippet): ScreenNotice => [
 	'error',
 	__('Snippet could not be activated.', 'code-snippets'),
-	// translators: %s: single-line PHP error message.
-	sprintf(
-		__('The snippet was saved, but remains inactive due to this error: %s', 'code-snippets'),
-		snippet.code_error?.[0] ?? ''
+	createElement(
+		'span',
+		null,
+		__('The snippet was saved, but remains inactive due to this error:', 'code-snippets'),
+		' ',
+		createElement('strong', null, snippet.code_error?.[0] ?? '')
 	),
 	snippet.code_error_trace ?? undefined
 ]
