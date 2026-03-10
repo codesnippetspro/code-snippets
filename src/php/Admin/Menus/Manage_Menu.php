@@ -47,10 +47,10 @@ class Manage_Menu extends Admin_Menu {
 		}
 
 		add_action( 'admin_menu', array( $this, 'register_upgrade_menu' ), 500 );
-		add_action( 'admin_init', [ $this, 'handle_bulk_download_request' ] );
+		add_action( 'admin_init', array( $this, 'handle_bulk_download_request' ) );
 		add_action( 'admin_init', array( $this, 'save_truncation_preference' ) );
 		add_filter( 'set-screen-option', array( $this, 'save_screen_option' ), 10, 3 );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_css' ] );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_menu_css' ) );
 		add_action( 'wp_ajax_update_code_snippet', array( $this, 'ajax_callback' ) );
 	}
 
@@ -177,14 +177,16 @@ class Manage_Menu extends Admin_Menu {
 		$contextual_help = new Contextual_Help( 'edit' );
 		$contextual_help->load();
 
-		add_screen_option(
-			'per_page',
-			array(
-				'label'   => __( 'Snippets per page', 'code-snippets' ),
-				'default' => 999,
-				'option'  => 'snippets_per_page',
-			)
-		);
+		if ( ! $this->is_cloud_community_view() ) {
+			add_screen_option(
+				'per_page',
+				array(
+					'label'   => __( 'Snippets per page', 'code-snippets' ),
+					'default' => 100,
+					'option'  => 'snippets_per_page',
+				)
+			);
+		}
 	}
 
 	/**
@@ -217,14 +219,14 @@ class Manage_Menu extends Admin_Menu {
 			self::JS_HANDLE,
 			'CODE_SNIPPETS_MANAGE',
 			[
-				'hasNetworkCap'      => current_user_can( code_snippets()->get_network_cap_name() ),
-				'hiddenColumns'     => $this->get_hidden_manage_columns(),
-				'truncateRowValues' => (int) $this->truncate_row_values(),
-				'snippetsPerPage'    => $this->get_snippets_per_page(),
-				'isSafeModeActive'   => code_snippets()->evaluate_functions->is_safe_mode_active(),
-				'bulkDownloadNonce'  => wp_create_nonce( 'code_snippets_bulk_download' ),
+				'hasNetworkCap'        => current_user_can( code_snippets()->get_network_cap_name() ),
+				'hiddenColumns'        => $this->get_hidden_manage_columns(),
+				'truncateRowValues'    => (int) $this->truncate_row_values(),
+				'snippetsPerPage'      => $this->get_snippets_per_page(),
+				'isSafeModeActive'     => code_snippets()->evaluate_functions->is_safe_mode_active(),
+				'bulkDownloadNonce'    => wp_create_nonce( 'code_snippets_bulk_download' ),
 				'supportsZipDownloads' => class_exists( 'ZipArchive' ),
-				'snippetsList'       => array_map(
+				'snippetsList'         => array_map(
 					function ( $snippet ) {
 						return $snippet->get_fields();
 					},
@@ -412,12 +414,14 @@ class Manage_Menu extends Admin_Menu {
 
 		if ( ! current_user_can( code_snippets()->get_cap() ) ) {
 			$this->send_download_error( __( 'You are not allowed to download these snippets.', 'code-snippets' ), 403 );
+			return;
 		}
 
 		$nonce = filter_input( INPUT_POST, 'code_snippets_bulk_download_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
 		if ( ! wp_verify_nonce( $nonce, 'code_snippets_bulk_download' ) ) {
 			$this->send_download_error( __( 'The download request is no longer valid. Please refresh and try again.', 'code-snippets' ), 403 );
+			return;
 		}
 
 		$snippets = $this->get_requested_download_snippets();
@@ -449,8 +453,8 @@ class Manage_Menu extends Admin_Menu {
 	 * @return bool
 	 */
 	private function is_bulk_download_request(): bool {
-		$page = sanitize_key( filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '' );
-		$action = sanitize_key( filter_input( INPUT_POST, 'code_snippets_action', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '' );
+		$page = sanitize_key( filter_input( INPUT_GET, 'page' ) ?? '' );
+		$action = sanitize_key( filter_input( INPUT_POST, 'code_snippets_action' ) ?? '' );
 
 		return code_snippets()->get_menu_slug() === $page && 'bulk-download' === $action;
 	}
@@ -461,8 +465,7 @@ class Manage_Menu extends Admin_Menu {
 	 * @return array<\Code_Snippets\Model\Snippet>|WP_Error
 	 */
 	private function get_requested_download_snippets() {
-		$snippets_json = filter_input( INPUT_POST, 'snippets', FILTER_DEFAULT ) ?? '';
-		$snippets_json = sanitize_textarea_field( $snippets_json );
+		$snippets_json = wp_unslash( filter_input( INPUT_POST, 'snippets', FILTER_DEFAULT ) ?? '' );
 		$payload = '' === $snippets_json ? [] : json_decode( $snippets_json, true );
 
 		if ( ! is_array( $payload ) ) {
@@ -515,7 +518,7 @@ class Manage_Menu extends Admin_Menu {
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: ' . $download['content_type'] );
 		header( 'Content-Disposition: attachment; filename="' . $download['filename'] . '"' );
-		header( 'Content-Length: ' . strlen( $download['content'] ) );
+		header( 'Content-Length: ' . mb_strlen( $download['content'], '8bit' ) );
 		header( 'X-Suggested-Filename: ' . $download['filename'] );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary download payload.
