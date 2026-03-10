@@ -105,7 +105,7 @@ abstract class Model {
 	 * @return string The resolved field name.
 	 */
 	protected static function resolve_field_name( string $field ): string {
-		return self::$field_aliases[ $field ] ?? $field;
+		return static::$field_aliases[ $field ] ?? $field;
 	}
 
 	/**
@@ -199,7 +199,7 @@ abstract class Model {
 	 * @return array<string> List of field names.
 	 */
 	public function get_allowed_fields(): array {
-		return array_keys( $this->fields ) + array_keys( static::$field_aliases );
+		return array_merge( array_keys( $this->fields ), array_keys( static::$field_aliases ) );
 	}
 
 	/**

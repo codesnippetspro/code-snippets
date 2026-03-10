@@ -5,6 +5,7 @@ namespace Code_Snippets\Tests;
 use Code_Snippets\Model\Snippet;
 use WP_REST_Request;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\get_snippet;
 use function Code_Snippets\save_snippet;
 
 /**
@@ -318,5 +319,29 @@ class REST_API_Snippets_Test extends TestCase {
 		$this->assertIsString( $snippet['code'] );
 		$this->assertIsBool( $snippet['active'] );
 		$this->assertIsArray( $snippet['tags'] );
+	}
+
+	/**
+	 * Test that the snippet description is loaded from the database.
+	 */
+	public function test_snippet_description_is_loaded_from_database() {
+		$snippet = new Snippet(
+			[
+				'name'   => 'Description Fixture',
+				'desc'   => 'Persisted description text',
+				'code'   => '// Description fixture',
+				'scope'  => 'global',
+				'active' => false,
+			]
+		);
+
+		$saved = save_snippet( $snippet );
+
+		$this->assertInstanceOf( Snippet::class, $saved );
+		$this->assertGreaterThan( 0, $saved->id );
+
+		$loaded = get_snippet( $saved->id );
+
+		$this->assertSame( 'Persisted description text', $loaded->desc );
 	}
 }
