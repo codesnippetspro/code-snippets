@@ -4,6 +4,7 @@
 @use 'common/tooltips';
 @use 'common/direction';
 @use 'common/select';
+@use 'common/notices';
 @use 'common/upsell';
 @use 'common/toolbar';
 @use 'prism';
@@ -59,10 +60,6 @@
 		align-items: center;
 		gap: 1em;
 	}
-}
-
-.code-snippets-notice a.notice-dismiss {
-	text-decoration: none;
 }
 
 .refresh-button-container {

@@ -1,0 +1,11 @@
+.code-snippets-notice {
+	a.notice-dismiss {
+		text-decoration: none;
+	}
+
+	details pre {
+		max-inline-size: 100%;
+		overflow: auto hidden;
+		white-space: pre;
+	}
+}

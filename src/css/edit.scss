@@ -9,6 +9,7 @@
 @use 'common/select';
 @use 'common/tooltips';
 @use 'common/modal';
+@use 'common/notices';
 @use 'common/upsell';
 @use 'common/toolbar';
 @use 'edit/form';
@@ -104,13 +105,5 @@ form.condition-snippet .snippet-code-container {
 		content: '<';
 		color: #2271b1;
 		margin-inline-end: 3px;
-	}
-}
-
-.code-snippets-notice {
-	details pre {
-		max-inline-size: 100%;
-		overflow: auto hidden;
-		white-space: pre;
 	}
 }
