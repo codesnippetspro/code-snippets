@@ -28,6 +28,9 @@ export const Notices: React.FC<NoticesProps> = ({ placement }) => {
 					? <details>
 						<summary>{__('View stack trace', 'code-snippets')}</summary>
 						<pre>{currentNotice[DETAILS_INDEX]}</pre>
+						<p className="stack-trace-hint">
+							<em>{__('Scroll horizontally if the trace is cut off.', 'code-snippets')}</em>
+						</p>
 					</details>
 					: null}
 			</DismissibleNotice>

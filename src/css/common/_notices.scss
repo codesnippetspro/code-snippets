@@ -6,12 +6,6 @@
 		inset-block-start: 0;
 	}
 
-	details[open]::after{
-		content: "Scroll horizontally if the trace is cut off";
-		font-style: italic;
-		opacity: 0.5;
-	}
-
 	details {
 		margin: .5em 0;
 		padding: 2px;
@@ -24,6 +18,10 @@
 			max-inline-size: 100%;
 			overflow: auto hidden;
 			white-space: pre;
+		}
+
+		.stack-trace-hint {
+			opacity: 0.5;
 		}
 	}
 }
