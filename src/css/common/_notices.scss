@@ -1,11 +1,29 @@
 .code-snippets-notice {
-	a.notice-dismiss {
-		text-decoration: none;
+	.notice-dismiss {
+		position: absolute;
+		transform: initial;
+		inset-inline-end: 0;
+		inset-block-start: 0;
 	}
 
-	details pre {
-		max-inline-size: 100%;
-		overflow: auto hidden;
-		white-space: pre;
+	details[open]::after{
+		content: "Scroll horizontally if the trace is cut off";
+		font-style: italic;
+		opacity: 0.5;
+	}
+
+	details {
+		margin: .5em 0;
+		padding: 2px;
+
+		summary {
+			cursor: pointer;
+		}
+
+		pre {
+			max-inline-size: 100%;
+			overflow: auto hidden;
+			white-space: pre;
+		}
 	}
 }
