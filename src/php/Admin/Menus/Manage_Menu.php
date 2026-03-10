@@ -165,7 +165,7 @@ class Manage_Menu extends Admin_Menu {
 
 		$screen = get_current_screen();
 
-		if ( $screen ) {
+		if ( $screen && ! $this->is_cloud_community_view() ) {
 			add_filter( "manage_{$screen->id}_columns", array( $this, 'get_screen_columns' ) );
 			add_filter( 'screen_settings', array( $this, 'render_screen_settings' ), 10, 2 );
 		}
@@ -298,6 +298,18 @@ class Manage_Menu extends Admin_Menu {
 	}
 
 	/**
+	 * Whether the current manage subpage is the Community Cloud view.
+	 *
+	 * @return bool
+	 */
+	protected function is_cloud_community_view(): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing parameter.
+		$subpage = isset( $_REQUEST['subpage'] ) ? sanitize_key( wp_unslash( $_REQUEST['subpage'] ) ) : '';
+
+		return 'cloud-community' === $subpage;
+	}
+
+	/**
 	 * Render extra Screen Options controls for the snippets table.
 	 *
 	 * @param string     $screen_settings Existing screen settings HTML.
@@ -306,9 +318,13 @@ class Manage_Menu extends Admin_Menu {
 	 * @return string
 	 */
 	public function render_screen_settings( string $screen_settings, \WP_Screen $screen ): string {
+		if ( $this->is_cloud_community_view() ) {
+			return $screen_settings;
+		}
+
 		ob_start();
 		?>
-		<fieldset class="metabox-prefs">
+		<fieldset class="metabox-prefs table-options-prefs">
 			<legend><?php esc_html_e( 'Table Options', 'code-snippets' ); ?></legend>
 			<div class="metabox-prefs-container">
 				<label for="snippets-table-truncate-row-values">
@@ -319,7 +335,7 @@ class Manage_Menu extends Admin_Menu {
 						value="1"
 						<?php checked( $this->truncate_row_values() ); ?>
 					/>
-					<?php esc_html_e( 'Truncate long row values', 'code-snippets' ); ?>
+					<?php esc_html_e( 'Truncate long snippet names and descriptions', 'code-snippets' ); ?>
 				</label>
 			</div>
 		</fieldset>
