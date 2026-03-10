@@ -23,16 +23,22 @@ const SortableHeading = <T, >({
 }: SortableHeadingProps<T>) => {
 	const isCurrent = column.id === sortColumn?.id
 
-	const newSortDirection = isCurrent
+	const nextSortDirection = isCurrent
 		? 'asc' === sortDirection ? 'desc' : 'asc'
 		: column.defaultSortDirection ?? 'asc'
+	const classDirection = isCurrent ? sortDirection : 'asc' === nextSortDirection ? 'desc' : 'asc'
+	const ariaSort = isCurrent ? 'asc' === sortDirection ? 'ascending' : 'descending' : undefined
 
 	return (
-		<th {...cellProps} className={classnames(cellProps.className, isCurrent ? 'sorted' : 'sortable')}>
+		<th
+			{...cellProps}
+			aria-sort={ariaSort}
+			className={classnames(cellProps.className, isCurrent ? 'sorted' : 'sortable', classDirection)}
+		>
 			<a href="#" onClick={event => {
 				event.preventDefault()
 				setSortColumn(column)
-				setSortDirection(newSortDirection)
+				setSortDirection(nextSortDirection)
 			}}>
 				<span>{column.title}</span>
 				<span className="sorting-indicators">
@@ -42,7 +48,7 @@ const SortableHeading = <T, >({
 				{isCurrent ? null
 					: <span className="screen-reader-text">
 						{/* translators: Hidden accessibility text. */}
-						{'asc' === newSortDirection ? __('Sort ascending.', 'code-snippets') : __('Sort descending.', 'code-snippets')}
+						{'asc' === nextSortDirection ? __('Sort ascending.', 'code-snippets') : __('Sort descending.', 'code-snippets')}
 					</span>}
 			</a>
 		</th>
