@@ -100,12 +100,8 @@ class Download_Code_Test extends TestCase {
 		$this->assertSame( 'snippets.code-snippets.zip', $download['filename'] );
 		$this->assertSame( 'application/zip', $download['content_type'] );
 
-		$temp_file = wp_tempnam( $download['filename'] );
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fopen,WordPress.WP.AlternativeFunctions.file_system_operations_fwrite,WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Writing a local temporary archive for ZipArchive inspection.
-		$file_handle = fopen( $temp_file, 'wb' );
-		fwrite( $file_handle, $download['content'] );
-		fclose( $file_handle );
-		// phpcs:enable
+		$upload = wp_upload_bits( $download['filename'], null, $download['content'] );
+		$temp_file = $upload['file'];
 
 		$zip = new ZipArchive();
 		$this->assertTrue( $zip->open( $temp_file ) );

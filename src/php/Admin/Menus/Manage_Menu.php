@@ -410,8 +410,7 @@ class Manage_Menu extends Admin_Menu {
 			$this->send_download_error( __( 'You are not allowed to download these snippets.', 'code-snippets' ), 403 );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified below before serving the download.
-		$nonce = isset( $_POST['code_snippets_bulk_download_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['code_snippets_bulk_download_nonce'] ) ) : '';
+		$nonce = filter_input( INPUT_POST, 'code_snippets_bulk_download_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
 		if ( ! wp_verify_nonce( $nonce, 'code_snippets_bulk_download' ) ) {
 			$this->send_download_error( __( 'The download request is no longer valid. Please refresh and try again.', 'code-snippets' ), 403 );
@@ -441,10 +440,8 @@ class Manage_Menu extends Admin_Menu {
 	 * @return bool
 	 */
 	private function is_bulk_download_request(): bool {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing parameter.
-		$page = isset( $_REQUEST['page'] ) ? sanitize_key( wp_unslash( $_REQUEST['page'] ) ) : '';
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only action routing parameter.
-		$action = isset( $_POST['code_snippets_action'] ) ? sanitize_key( wp_unslash( $_POST['code_snippets_action'] ) ) : '';
+		$page = sanitize_key( filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '' );
+		$action = sanitize_key( filter_input( INPUT_POST, 'code_snippets_action', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '' );
 
 		return code_snippets()->get_menu_slug() === $page && 'bulk-download' === $action;
 	}
@@ -455,8 +452,9 @@ class Manage_Menu extends Admin_Menu {
 	 * @return array<\Code_Snippets\Model\Snippet>
 	 */
 	private function get_requested_download_snippets(): array {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Verified before this method is called and parsed below.
-		$payload = isset( $_POST['snippets'] ) ? json_decode( wp_unslash( $_POST['snippets'] ), true ) : [];
+		$snippets_json = filter_input( INPUT_POST, 'snippets', FILTER_DEFAULT ) ?? '';
+		$snippets_json = sanitize_textarea_field( $snippets_json );
+		$payload = '' === $snippets_json ? [] : json_decode( $snippets_json, true );
 
 		if ( ! is_array( $payload ) ) {
 			return [];

@@ -4,6 +4,7 @@ namespace Code_Snippets\Migration\Export;
 
 use Code_Snippets\Model\Snippet;
 use WP_Error;
+use WP_Filesystem_Direct;
 use ZipArchive;
 use function sanitize_title;
 use function wp_delete_file;
@@ -115,8 +116,8 @@ class Download_Code {
 
 		$zip->close();
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading a local temporary archive before deleting it.
-		$content = file_get_contents( $temp_file );
+		$filesystem = new WP_Filesystem_Direct( null );
+		$content = $filesystem->get_contents( $temp_file );
 		wp_delete_file( $temp_file );
 
 		if ( ! is_string( $content ) ) {
