@@ -119,6 +119,10 @@ class Download_Code {
 
 		$zip->close();
 
+		// WP_Filesystem_Direct is used intentionally here: the temp file was just created by
+		// wp_tempnam() on the local server filesystem, so the request filesystem context
+		// (FTP, SSH) is irrelevant. Using direct access avoids WP Filesystem bootstrapping
+		// overhead for a file we created and will immediately delete.
 		$filesystem = new WP_Filesystem_Direct( null );
 		$content = $filesystem->get_contents( $temp_file );
 		wp_delete_file( $temp_file );
