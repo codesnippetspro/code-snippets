@@ -64,7 +64,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({ setIsUpgradeDialog
 				{isWorking ? <Spinner /> : ''}
 			</p>
 
-			<Notices />
+			<Notices placement="sidebar" />
 		</div>
 	)
 }

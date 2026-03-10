@@ -73,7 +73,7 @@ test.describe('Code Snippets Admin', () => {
 
 		await helper.saveSnippet('save_and_activate')
 
-		const errorNotice = page.locator('.snippet-editor-sidebar .notice.error').first()
+		const errorNotice = page.locator('.wrap > .notice.error').first()
 		await expect(errorNotice).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
 		await expect(errorNotice).toContainText('Snippet could not be activated:')
 		await expect(errorNotice).toContainText('Call to undefined function missing_runtime_function_call()')

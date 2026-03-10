@@ -19,6 +19,7 @@ import { TagsEditor } from './fields/TagsEditor'
 import { CodeEditor } from './fields/CodeEditor'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
+import { Notices } from './page/Notices'
 import { PageHeading } from './page/PageHeading'
 import type { PropsWithChildren } from 'react'
 import type { Snippet } from '../../../types/Snippet'
@@ -158,6 +159,7 @@ const EditFormWrap: React.FC = () => {
 			</small></p>
 
 			<PageHeading />
+			<Notices placement="above-form" />
 
 			<EditForm className={editFormClassName({ snippet, isReadOnly, isExpanded })}>
 				<main className="snippet-form-upper">
