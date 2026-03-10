@@ -60,6 +60,7 @@ declare global {
 			hiddenColumns: string[]
 			truncateRowValues: number | string
 			snippetsPerPage: number
+			cloudSearchPerPage: number
 			isSafeModeActive: boolean
 			bulkDownloadNonce: string
 			supportsZipDownloads: boolean
