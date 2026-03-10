@@ -126,7 +126,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 			setCurrentNotice([
 				'error',
 				// translators: %s: single-line PHP error message.
-				sprintf(__('Snippet could not be activated: %s', 'code-snippets'), result.code_error[0]),
+				sprintf(__('Snippet could not be activated: <strong>%s</strong>', 'code-snippets'), result.code_error[0]),
 				__('The snippet was saved, but remains inactive.', 'code-snippets'),
 				result.code_error_trace ?? undefined
 			])
