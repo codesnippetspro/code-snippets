@@ -166,7 +166,6 @@
 		min-inline-size: 130px;
 		max-inline-size: 130px;
 		text-align: end;
-		padding-inline: 8px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
@@ -183,15 +182,14 @@
 		display: block;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 
 	td.column-name > .snippet-name {
-		max-inline-size: min(24rem, 30vw);
+		max-inline-size: min(15rem, 30vw);
 	}
 
 	td.column-desc .snippet-description-content {
-		max-inline-size: min(36rem, 45vw);
+		max-inline-size: min(25rem, 45vw);
 	}
 }
 
