@@ -418,6 +418,11 @@ class Manage_Menu extends Admin_Menu {
 
 		$snippets = $this->get_requested_download_snippets();
 
+		if ( $snippets instanceof WP_Error ) {
+			$status = $snippets->get_error_data( 'status' );
+			$this->send_download_error( $snippets->get_error_message(), is_numeric( $status ) ? (int) $status : 403 );
+		}
+
 		if ( empty( $snippets ) ) {
 			$this->send_download_error( __( 'No snippets were selected for download.', 'code-snippets' ) );
 		}
@@ -449,9 +454,9 @@ class Manage_Menu extends Admin_Menu {
 	/**
 	 * Resolve the snippets requested for download.
 	 *
-	 * @return array<\Code_Snippets\Model\Snippet>
+	 * @return array<\Code_Snippets\Model\Snippet>|WP_Error
 	 */
-	private function get_requested_download_snippets(): array {
+	private function get_requested_download_snippets() {
 		$snippets_json = filter_input( INPUT_POST, 'snippets', FILTER_DEFAULT ) ?? '';
 		$snippets_json = sanitize_textarea_field( $snippets_json );
 		$payload = '' === $snippets_json ? [] : json_decode( $snippets_json, true );
@@ -465,6 +470,14 @@ class Manage_Menu extends Admin_Menu {
 		foreach ( $payload as $snippet_data ) {
 			if ( ! is_array( $snippet_data ) || empty( $snippet_data['id'] ) ) {
 				continue;
+			}
+
+			if ( ! empty( $snippet_data['network'] ) && ! current_user_can( code_snippets()->get_network_cap_name() ) ) {
+				return new WP_Error(
+					'code_snippets_forbidden_network_download',
+					__( 'You are not allowed to download network snippets.', 'code-snippets' ),
+					[ 'status' => 403 ]
+				);
 			}
 
 			$snippet = get_snippet(

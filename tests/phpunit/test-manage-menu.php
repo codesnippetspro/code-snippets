@@ -3,7 +3,11 @@
 namespace Code_Snippets\Tests;
 
 use Code_Snippets\Admin\Menus\Manage_Menu;
+use Code_Snippets\Model\Snippet;
+use ReflectionMethod;
+use WP_Error;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\save_snippet;
 
 /**
  * Tests for the manage menu registration.
@@ -164,5 +168,44 @@ class Manage_Menu_Test extends TestCase {
 		$menu->save_truncation_preference();
 
 		$this->assertTrue( (bool) get_user_option( 'snippets_table_truncate_row_values', self::$admin_user_id ) );
+	}
+
+	/**
+	 * Subsite admins cannot request downloads from the network snippets table.
+	 *
+	 * @return void
+	 */
+	public function test_network_bulk_download_requires_network_cap(): void {
+		if ( ! is_multisite() ) {
+			$this->markTestSkipped( 'Network snippet downloads only apply on multisite.' );
+		}
+
+		$snippet = save_snippet(
+			new Snippet(
+				array(
+					'name'    => 'Network Download Fixture',
+					'code'    => '<?php echo "network";',
+					'scope'   => 'global',
+					'network' => true,
+				)
+			)
+		);
+
+		$_POST['snippets'] = wp_json_encode(
+			array(
+				array(
+					'id'      => $snippet->id,
+					'network' => true,
+				),
+			)
+		);
+
+		$menu = new Manage_Menu();
+		$method = new ReflectionMethod( $menu, 'get_requested_download_snippets' );
+		$method->setAccessible( true );
+		$result = $method->invoke( $menu );
+
+		$this->assertInstanceOf( WP_Error::class, $result );
+		$this->assertSame( 'code_snippets_forbidden_network_download', $result->get_error_code() );
 	}
 }
