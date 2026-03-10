@@ -94,6 +94,76 @@ const pageItems = <T, >(
 	}
 }
 
+const getVisibleSelected = <T, K extends Key>(visibleItems: T[], getKey: (item: T) => K, selected: Set<K>): Set<K> =>
+	new Set(visibleItems.map(getKey).filter(key => selected.has(key)))
+
+const buildTableNavProps = <K extends Key>({
+	totalItems,
+	actions,
+	extraTableNav,
+	selected,
+	disabled,
+	currentPage,
+	totalPages,
+	setCurrentPage,
+	useQueryVars
+}: Omit<TableNavProps<K>, 'which'>): Omit<TableNavProps<K>, 'which'> => ({
+	totalItems,
+	actions,
+	extraTableNav,
+	selected,
+	disabled,
+	currentPage,
+	totalPages,
+	setCurrentPage,
+	useQueryVars
+})
+
+interface ListTableMarkupProps<T, K extends Key> {
+	className?: string
+	fixed?: boolean
+	striped?: boolean
+	getKey: (item: T) => K
+	columns: ListTableColumn<T>[]
+	noItems?: ReactNode
+	rowClassName?: (item: T) => string
+	tableNavProps: Omit<TableNavProps<K>, 'which'>
+	tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'>
+	visibleItems: T[]
+}
+
+const ListTableMarkup = <T, K extends Key>({
+	fixed,
+	striped,
+	getKey,
+	columns,
+	noItems,
+	className,
+	rowClassName,
+	tableNavProps,
+	tableHeadingsProps,
+	visibleItems
+}: ListTableMarkupProps<T, K>) => (
+	<>
+		<TableNav which="top" {...tableNavProps} />
+		<table className={classnames('wp-list-table widefat', { striped, fixed }, className)}>
+			<thead>
+				<TableHeadings which="head" {...tableHeadingsProps} />
+			</thead>
+			<tbody>
+				<TableItems
+					items={visibleItems}
+					{...{ getKey, columns, noItems, setSelected: tableHeadingsProps.setSelected, rowClassName }}
+				/>
+			</tbody>
+			<tfoot>
+				<TableHeadings which="foot" {...tableHeadingsProps} />
+			</tfoot>
+		</table>
+		<TableNav which="bottom" {...tableNavProps} />
+	</>
+)
+
 export const ListTable = <T, K extends Key>({
 	items,
 	fixed,
@@ -117,28 +187,33 @@ export const ListTable = <T, K extends Key>({
 	const visibleItems: T[] = useMemo(
 		() => pageItems(sortItems(items, sortColumn, sortDirection), { currentPage, totalPages }),
 		[items, sortColumn, sortDirection, currentPage, totalPages])
-
-	const tableNavProps: Omit<TableNavProps<K>, 'which'> =
-		{ totalItems: items.length, actions, extraTableNav, selected, disabled, currentPage, totalPages, setCurrentPage, useQueryVars }
+	const tableNavProps = buildTableNavProps<K>({
+		totalItems: items.length,
+		actions,
+		extraTableNav,
+		selected: getVisibleSelected(visibleItems, getKey, selected),
+		disabled,
+		currentPage,
+		totalPages,
+		setCurrentPage,
+		useQueryVars
+	})
 
 	const tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'> =
 		{ items: visibleItems, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }
 
-	return (
-		<>
-			<TableNav which="top" {...tableNavProps} />
-			<table className={classnames('wp-list-table widefat', { striped, fixed }, className)}>
-				<thead>
-					<TableHeadings which="head" {...tableHeadingsProps} />
-				</thead>
-				<tbody>
-					<TableItems items={visibleItems} {...{ getKey, columns, noItems, setSelected, rowClassName }} />
-				</tbody>
-				<tfoot>
-					<TableHeadings which="foot" {...tableHeadingsProps} />
-				</tfoot>
-			</table>
-			<TableNav which="bottom" {...tableNavProps} />
-		</>
-	)
+	return <ListTableMarkup
+		{...{
+			fixed,
+			striped,
+			getKey,
+			columns,
+			noItems,
+			className,
+			rowClassName,
+			tableNavProps,
+			tableHeadingsProps,
+			visibleItems
+		}}
+	/>
 }

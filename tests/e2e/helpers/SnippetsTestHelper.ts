@@ -59,6 +59,26 @@ export class SnippetsTestHelper {
 		await wpCli(['eval', php])
 	}
 
+	static async setSnippetsPerPage(perPage: number): Promise<void> {
+		const php = `
+			$user = get_user_by('login', 'admin');
+			$user_id = $user ? $user->ID : 1;
+			update_user_option($user_id, 'snippets_per_page', ${perPage});
+		`
+
+		await wpCli(['eval', php])
+	}
+
+	static async resetSnippetsPerPage(): Promise<void> {
+		const php = `
+			$user = get_user_by('login', 'admin');
+			$user_id = $user ? $user->ID : 1;
+			delete_user_option($user_id, 'snippets_per_page');
+		`
+
+		await wpCli(['eval', php])
+	}
+
 	static async createSnippetViaCli(options: CreateSnippetCliOptions): Promise<void> {
 		const type = options.type ?? 'php'
 		let scope = 'global'

@@ -212,4 +212,49 @@ test.describe('Code Snippets List Page Actions', () => {
 
 		await helper.cleanupSnippet(secondSnippetName)
 	})
+
+	test('Bulk download stays scoped to the current page selection', async ({ page }) => {
+		test.setTimeout(EXPORT_TEST_TIMEOUT_MS)
+		const bulkScopeBaseName = 'E2E Bulk Scope'
+		const firstScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
+		const secondScopedSnippetName = SnippetsTestHelper.makeUniqueSnippetName(bulkScopeBaseName)
+
+		await SnippetsTestHelper.setSnippetsPerPage(1)
+
+		try {
+			await helper.createAndActivateSnippet({
+				name: firstScopedSnippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+			await helper.createAndActivateSnippet({
+				name: secondScopedSnippetName,
+				code: "add_filter('show_admin_bar', '__return_false');"
+			})
+			await helper.navigateToSnippetsAdmin()
+
+			await page.locator('#snippets_search').fill(bulkScopeBaseName)
+
+			const firstPageRow = page.locator(SELECTORS.SNIPPET_ROW).first()
+			await expect(firstPageRow).toBeVisible()
+			await firstPageRow.locator('input[name="checked[]"]').check({ force: true })
+
+			await page.locator('.next-page').first().click()
+
+			const secondPageRow = page.locator(SELECTORS.SNIPPET_ROW).first()
+			await expect(secondPageRow).toBeVisible()
+			await secondPageRow.locator('input[name="checked[]"]').check({ force: true })
+			await page.locator('select[name="action"]').first().selectOption({ label: 'Download' })
+
+			const download = await Promise.all([
+				page.waitForEvent('download'),
+				page.locator('#doaction').click()
+			]).then(([downloadEvent]) => downloadEvent)
+
+			expect(download.suggestedFilename()).toMatch(/\.code-snippets\.php$/)
+		} finally {
+			await SnippetsTestHelper.resetSnippetsPerPage()
+			await helper.cleanupSnippet(firstScopedSnippetName)
+			await helper.cleanupSnippet(secondScopedSnippetName)
+		}
+	})
 })
