@@ -55,49 +55,32 @@ export const downloadSnippetExportFile = (
 	}
 }
 
-const isDefaultExportValue = (field: string, value: unknown): boolean => {
-	switch (field) {
-		case 'id':
-			return 0 === value
+type DefaultExportValueCheck = (value: unknown) => boolean
 
-		case 'desc':
-		case 'name':
-		case 'code':
-			return '' === value
+const isNullish = (value: unknown): value is undefined | null => undefined === value || null === value
 
-		case 'tags':
-			return Array.isArray(value) && 0 === value.length
-
-		case 'scope':
-			return 'global' === value
-
-		case 'condition_id':
-			return 0 === value
-
-		case 'active':
-		case 'locked':
-		case 'trashed':
-			return false === value
-
-		case 'priority':
-			return DEFAULT_PRIORITY === value
-
-		case 'modified':
-			return '' === value || undefined === value || null === value
-
-		case 'last_active':
-			return 0 === value || undefined === value || null === value
-
-		case 'network':
-		case 'shared_network':
-		case 'code_error':
-		case 'code_error_trace':
-			return null === value || false === value
-
-		default:
-			return undefined === value || null === value
-	}
+const DEFAULT_EXPORT_VALUE_CHECKS: Record<string, DefaultExportValueCheck> = {
+	id: value => 0 === value,
+	desc: value => '' === value,
+	name: value => '' === value,
+	code: value => '' === value,
+	tags: value => Array.isArray(value) && 0 === value.length,
+	scope: value => 'global' === value,
+	condition_id: value => 0 === value,
+	active: value => false === value,
+	locked: value => false === value,
+	trashed: value => false === value,
+	priority: value => DEFAULT_PRIORITY === value,
+	modified: value => '' === value || isNullish(value),
+	last_active: value => 0 === value || isNullish(value),
+	network: value => null === value || false === value,
+	shared_network: value => null === value || false === value,
+	code_error: value => null === value || false === value,
+	code_error_trace: value => null === value || false === value
 }
+
+const isDefaultExportValue = (field: string, value: unknown): boolean =>
+	(DEFAULT_EXPORT_VALUE_CHECKS[field] ?? isNullish)(value)
 
 const buildExportSnippet = ({
 	id,
