@@ -404,7 +404,8 @@ class Snippet_Files {
 	 * @return string Hashed table name.
 	 */
 	public static function get_hashed_table_name( string $table ): string {
-		return function_exists( 'wp_hash' ) ? wp_hash( $table ) : md5( $table );
+		// wp_hash() is pluggable and may not be available during early bootstrap.
+		return function_exists( 'wp_hash' ) ? \wp_hash( $table ) : md5( $table );
 	}
 
 	/**
