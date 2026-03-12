@@ -97,28 +97,6 @@ const pageItems = <T, >(
 const getVisibleSelected = <T, K extends Key>(visibleItems: T[], getKey: (item: T) => K, selected: Set<K>): Set<K> =>
 	new Set(visibleItems.map(getKey).filter(key => selected.has(key)))
 
-const buildTableNavProps = <K extends Key>({
-	totalItems,
-	actions,
-	extraTableNav,
-	selected,
-	disabled,
-	currentPage,
-	totalPages,
-	setCurrentPage,
-	useQueryVars
-}: Omit<TableNavProps<K>, 'which'>): Omit<TableNavProps<K>, 'which'> => ({
-	totalItems,
-	actions,
-	extraTableNav,
-	selected,
-	disabled,
-	currentPage,
-	totalPages,
-	setCurrentPage,
-	useQueryVars
-})
-
 interface ListTableMarkupProps<T, K extends Key> {
 	className?: string
 	fixed?: boolean
@@ -187,7 +165,7 @@ export const ListTable = <T, K extends Key>({
 	const visibleItems: T[] = useMemo(
 		() => pageItems(sortItems(items, sortColumn, sortDirection), { currentPage, totalPages }),
 		[items, sortColumn, sortDirection, currentPage, totalPages])
-	const tableNavProps = buildTableNavProps<K>({
+	const tableNavProps = {
 		totalItems: items.length,
 		actions,
 		extraTableNav,
@@ -197,7 +175,7 @@ export const ListTable = <T, K extends Key>({
 		totalPages,
 		setCurrentPage,
 		useQueryVars
-	})
+	}
 
 	const tableHeadingsProps: Omit<TableHeadingsProps<T, K>, 'which'> =
 		{ items: visibleItems, setSelected, columns, getKey, sortColumn, setSortColumn, sortDirection, setSortDirection }
