@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
-import { createElement , useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useSnippetForm } from '../components/EditMenu/SnippetForm/WithSnippetFormContext'
 import { createSnippetObject, isCondition } from '../utils/snippets/snippets'
 import { buildUrl } from '../utils/urls'
@@ -8,7 +8,7 @@ import { useSnippetsAPI } from './useSnippetsAPI'
 import type { Snippet } from '../types/Snippet'
 import type { ScreenNotice } from '../types/ScreenNotice'
 
-const snippetMessages = <const> {
+const snippetMessages = {
 	addNew: __('Create New Snippet', 'code-snippets'),
 	edit: __('Edit Snippet', 'code-snippets'),
 	created: __('Snippet <strong>created</strong>.', 'code-snippets'),
@@ -19,7 +19,7 @@ const snippetMessages = <const> {
 	updatedExecuted: __('Snippet <strong>updated</strong> and <strong>executed</strong>.', 'code-snippets'),
 	failedCreate: __('Could not create snippet.', 'code-snippets'),
 	failedUpdate: __('Could not update snippet.', 'code-snippets')
-}
+} as const
 
 const conditionCreated = __('Condition <strong>created</strong>.', 'code-snippets')
 const conditionUpdated = __('Condition <strong>updated</strong>.', 'code-snippets')
@@ -76,13 +76,11 @@ const getSuccessNotice = (
 const getActivationErrorNotice = (snippet: Snippet): ScreenNotice => [
 	'error',
 	__('Snippet could not be activated.', 'code-snippets'),
-	createElement(
-		'span',
-		null,
-		__('The snippet was saved, but remains inactive due to this error:', 'code-snippets'),
-		' ',
-		createElement('strong', null, snippet.code_error?.[0] ?? '')
-	),
+	<span key="code-snippets-activation-error">
+		{__('The snippet was saved, but remains inactive due to this error:', 'code-snippets')}
+		{' '}
+		<strong>{snippet.code_error?.[0] ?? ''}</strong>
+	</span>,
 	snippet.code_error_trace ?? undefined
 ]
 
