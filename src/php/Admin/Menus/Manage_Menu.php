@@ -32,6 +32,11 @@ class Manage_Menu extends Admin_Menu {
 	public const CSS_HANDLE = 'code-snippets-manage';
 
 	/**
+	 * Default number of snippets shown per page in the manage table.
+	 */
+	public const DEFAULT_SNIPPETS_PER_PAGE = 100;
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
@@ -178,7 +183,7 @@ class Manage_Menu extends Admin_Menu {
 			'per_page',
 			array(
 				'label'   => __( 'Snippets per page', 'code-snippets' ),
-				'default' => 100,
+				'default' => $this->get_default_snippets_per_page(),
 				'option'  => 'snippets_per_page',
 			)
 		);
@@ -244,10 +249,21 @@ class Manage_Menu extends Admin_Menu {
 		$per_page = (int) get_user_option( 'snippets_per_page' );
 
 		if ( empty( $per_page ) || $per_page < 1 ) {
-			$per_page = 100;
+			$per_page = $this->get_default_snippets_per_page();
 		}
 
 		return (int) apply_filters( 'snippets_per_page', $per_page );
+	}
+
+	/**
+	 * Get the default number of snippets to show per page.
+	 *
+	 * @return int
+	 */
+	protected function get_default_snippets_per_page(): int {
+		$default = (int) apply_filters( 'code_snippets/snippets_per_page_default', self::DEFAULT_SNIPPETS_PER_PAGE );
+
+		return max( 1, $default );
 	}
 
 	/**
