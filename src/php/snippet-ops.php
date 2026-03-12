@@ -9,7 +9,6 @@ namespace Code_Snippets;
 
 use Code_Snippets\Core\DB;
 use Exception;
-use ParseError;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Validator;
 use Throwable;
@@ -761,8 +760,6 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 
 	try {
 		$result = eval( $code );
-	} catch ( ParseError $parse_error ) {
-		$result = $parse_error;
 	} catch ( Throwable $throwable ) {
 		$result = $throwable;
 	}
@@ -894,8 +891,6 @@ function execute_snippet_from_flat_file( string $code, string $file, int $id = 0
 	try {
 		require_once $file;
 		$result = null;
-	} catch ( ParseError $parse_error ) {
-		$result = $parse_error;
 	} catch ( Throwable $throwable ) {
 		$result = $throwable;
 	}
