@@ -6,21 +6,21 @@ import { SubmitButton } from '../SubmitButton'
 import { TablePagination } from './TablePagination'
 import type { TablePaginationProps } from './TablePagination'
 import type { ListTableBulkAction, ListTableNavProps } from './ListTable'
-import type { Key } from 'react'
+import type { Dispatch, Key, SetStateAction } from 'react'
 
 interface BulkActionSelectProps<K extends Key> extends Required<Pick<TableNavProps<K>, 'which' | 'actions'>> {
 	selectedActionName: string
-	setSelectedActionName: (value: string) => void
-	setSelectedAction: (action: ListTableBulkAction<K> | undefined) => void
+	setSelectedActionName: Dispatch<SetStateAction<string>>
+	setSelectedAction: Dispatch<SetStateAction<ListTableBulkAction<K> | undefined>>
 }
 
-const BulkActionSelect = function BulkActionSelect<K extends Key>({
+const BulkActionSelect = <K extends Key,>({
 	which,
 	actions,
 	selectedActionName,
 	setSelectedActionName,
 	setSelectedAction
-}: BulkActionSelectProps<K>) {
+}: BulkActionSelectProps<K>) => {
 	const actionsMap: Map<string, ListTableBulkAction<K>> = useMemo(
 		() => new Map(
 			actions
@@ -61,7 +61,6 @@ const BulkActions = function BulkActions<K extends Key>({ which, actions, applyA
 	const [selectedAction, setSelectedAction] = useState<ListTableBulkAction<K>>()
 	const [selectedActionName, setSelectedActionName] = useState('-1')
 	const [isPerformingAction, setIsPerformingAction] = useState(false)
-	const isApplyDisabled = !!disabled || isPerformingAction || !selectedAction
 
 	return (
 		<div className="alignleft actions bulkactions">
@@ -79,7 +78,7 @@ const BulkActions = function BulkActions<K extends Key>({ which, actions, applyA
 				name="bulk_action"
 				text={__('Apply', 'code-snippets')}
 				className="action"
-				disabled={isApplyDisabled}
+				disabled={!!disabled || isPerformingAction || !selectedAction}
 				onClick={event => {
 					event.preventDefault()
 
@@ -106,7 +105,7 @@ export interface TableNavProps<K extends Key> extends ListTableNavProps<K>, Omit
 	totalPages: number | undefined
 }
 
-export const TableNav = function TableNav<K extends Key>({
+export const TableNav = <K extends Key,>({
 	which,
 	actions,
 	selected,
@@ -114,24 +113,21 @@ export const TableNav = function TableNav<K extends Key>({
 	totalPages = 0,
 	extraTableNav,
 	...paginationProps
-}: TableNavProps<K>) {
-	return (
-		extraTableNav || 0 < totalItems && actions
-			? <div className={`tablenav ${which}`}>
+}: TableNavProps<K>) =>
+	extraTableNav || 0 < totalItems && actions
+		? <div className={`tablenav ${which}`}>
 
-				{0 < totalItems && actions && (
-					<BulkActions
-						which={which}
-						actions={actions}
-						disabled={paginationProps.disabled}
-						applyAction={action => action.apply(selected)}
-					/>)}
+			{0 < totalItems && actions && (
+				<BulkActions
+					which={which}
+					actions={actions}
+					disabled={paginationProps.disabled}
+					applyAction={action => action.apply(selected)}
+				/>)}
 
-				{extraTableNav?.(which)}
-				{0 < totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
+			{extraTableNav?.(which)}
+			{0 < totalPages && <TablePagination {...{ totalPages, totalItems, which, ...paginationProps }} />}
 
-				<br className="clear" />
-			</div>
-			: null
-	)
-}
+			<br className="clear" />
+		</div>
+		: null
