@@ -15,9 +15,10 @@ interface EditorTextareaProps {
 }
 
 const useFocusEditorShortcut = (
-	codeEditorInstance: ReturnType<typeof useSnippetForm>['codeEditorInstance'],
 	textareaRef: RefObject<HTMLTextAreaElement>
 ) => {
+	const { codeEditorInstance } = useSnippetForm()
+
 	useEffect(() => {
 		const focusEditor = () => {
 			if (codeEditorInstance) {
@@ -99,7 +100,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 		}
 	}, [submitSnippet, codeEditorInstance, snippet])
 
-	useFocusEditorShortcut(codeEditorInstance, textareaRef)
+	useFocusEditorShortcut(textareaRef)
 
 	return (
 		<div className="snippet-code-container">
