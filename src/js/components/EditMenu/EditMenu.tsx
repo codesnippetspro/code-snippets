@@ -5,9 +5,9 @@ const EVENT_NAME = 'code_snippets_focus_editor'
 
 interface EditMenuLinkBinding {
 	menuLink: HTMLAnchorElement
-	originalHref: string | null
-	originalRole: string | null
-	originalTabIndex: string | null
+	originalHref: string | undefined
+	originalRole: string | undefined
+	originalTabIndex: string | undefined
 	handleClick: (event: MouseEvent) => void
 	handleKeyDown: (event: KeyboardEvent) => void
 }
@@ -16,8 +16,8 @@ const focusCodeEditor = () => {
 	window.dispatchEvent(new CustomEvent(EVENT_NAME))
 }
 
-const restoreAttribute = (menuLink: HTMLAnchorElement, name: string, value: string | null) => {
-	if (value) {
+const restoreAttribute = (menuLink: HTMLAnchorElement, name: string, value: string | undefined) => {
+	if (undefined !== value) {
 		menuLink.setAttribute(name, value)
 		return
 	}
@@ -25,10 +25,10 @@ const restoreAttribute = (menuLink: HTMLAnchorElement, name: string, value: stri
 	menuLink.removeAttribute(name)
 }
 
-const getEditPage = (): string | null => {
+const getEditPage = (): string | undefined => {
 	const editUrl = window.CODE_SNIPPETS?.urls.edit
 
-	return editUrl ? new URL(editUrl, window.location.origin).searchParams.get('page') : null
+	return editUrl ? new URL(editUrl, window.location.origin).searchParams.get('page') ?? undefined : undefined
 }
 
 const bindEditMenuLink = (menuLink: HTMLAnchorElement, page: string): EditMenuLinkBinding | undefined => {
@@ -54,9 +54,9 @@ const bindEditMenuLink = (menuLink: HTMLAnchorElement, page: string): EditMenuLi
 
 	const binding = {
 		menuLink,
-		originalHref: menuLink.getAttribute('href'),
-		originalRole: menuLink.getAttribute('role'),
-		originalTabIndex: menuLink.getAttribute('tabindex'),
+		originalHref: menuLink.getAttribute('href') ?? undefined,
+		originalRole: menuLink.getAttribute('role') ?? undefined,
+		originalTabIndex: menuLink.getAttribute('tabindex') ?? undefined,
 		handleClick,
 		handleKeyDown
 	}
