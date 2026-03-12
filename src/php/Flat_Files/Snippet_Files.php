@@ -349,9 +349,11 @@ class Snippet_Files {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function sync_active_shared_network_snippets( string $option, $old_value, $value ): void {
-		if ( 'active_shared_network_snippets' === $option ) {
-			$this->create_active_shared_network_snippets_file( $value );
+		if ( 'active_shared_network_snippets' !== $option ) {
+			return;
 		}
+
+		$this->create_active_shared_network_snippets_file( $value );
 	}
 
 	/**
@@ -363,9 +365,11 @@ class Snippet_Files {
 	 * @return void
 	 */
 	public function sync_active_shared_network_snippets_add( $option, $value ): void {
-		if ( 'active_shared_network_snippets' === $option ) {
-			$this->create_active_shared_network_snippets_file( $value );
+		if ( 'active_shared_network_snippets' !== $option ) {
+			return;
 		}
+
+		$this->create_active_shared_network_snippets_file( $value );
 	}
 
 	/**
