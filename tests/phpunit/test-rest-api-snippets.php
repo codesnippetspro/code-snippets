@@ -5,6 +5,7 @@ namespace Code_Snippets\Tests;
 use Code_Snippets\Model\Snippet;
 use WP_REST_Request;
 use function Code_Snippets\code_snippets;
+use function Code_Snippets\get_snippet;
 use function Code_Snippets\save_snippet;
 
 /**
@@ -99,6 +100,26 @@ class REST_API_Snippets_Test extends TestCase {
 	 */
 	protected function make_request( $endpoint, $params = [] ) {
 		$request = new WP_REST_Request( 'GET', $endpoint );
+
+		foreach ( $params as $key => $value ) {
+			$request->set_param( $key, $value );
+		}
+
+		$response = rest_do_request( $request );
+		return rest_get_server()->response_to_data( $response, false );
+	}
+
+	/**
+	 * Helper method to make a writable REST API request.
+	 *
+	 * @param string $method   HTTP method.
+	 * @param string $endpoint Endpoint to request.
+	 * @param array  $params   Request params.
+	 *
+	 * @return array<string, mixed>
+	 */
+	protected function make_mutating_request( string $method, string $endpoint, array $params ): array {
+		$request = new WP_REST_Request( $method, $endpoint );
 
 		foreach ( $params as $key => $value ) {
 			$request->set_param( $key, $value );
@@ -318,5 +339,55 @@ class REST_API_Snippets_Test extends TestCase {
 		$this->assertIsString( $snippet['code'] );
 		$this->assertIsBool( $snippet['active'] );
 		$this->assertIsArray( $snippet['tags'] );
+	}
+
+	/**
+	 * Test that the snippet description is loaded from the database.
+	 */
+	public function test_snippet_description_is_loaded_from_database() {
+		$snippet = new Snippet(
+			[
+				'name'   => 'Description Fixture',
+				'desc'   => 'Persisted description text',
+				'code'   => '// Description fixture',
+				'scope'  => 'global',
+				'active' => false,
+			]
+		);
+
+		$saved = save_snippet( $snippet );
+
+		$this->assertInstanceOf( Snippet::class, $saved );
+		$this->assertGreaterThan( 0, $saved->id );
+
+		$loaded = get_snippet( $saved->id );
+
+		$this->assertSame( 'Persisted description text', $loaded->desc );
+	}
+
+	/**
+	 * Test that activation failures return the PHP error and stack trace while keeping the snippet saved.
+	 */
+	public function test_create_active_snippet_returns_runtime_error_details() {
+		$response = $this->make_mutating_request(
+			'POST',
+			"/{$this->namespace}/{$this->base_route}",
+			[
+				'name'    => 'Activation Error Fixture',
+				'code'    => 'function code_snippets_build_tags_array() {}',
+				'scope'   => 'global',
+				'active'  => true,
+				'network' => false,
+			]
+		);
+
+		$this->assertArrayHasKey( 'id', $response );
+		$this->assertGreaterThan( 0, $response['id'] );
+		$this->assertFalse( $response['active'] );
+		$this->assertIsArray( $response['code_error'] );
+		$this->assertStringContainsString( 'Cannot redeclare', $response['code_error'][0] );
+		$this->assertArrayHasKey( 'code_error_trace', $response );
+		$this->assertIsString( $response['code_error_trace'] );
+		$this->assertNotSame( '', $response['code_error_trace'] );
 	}
 }

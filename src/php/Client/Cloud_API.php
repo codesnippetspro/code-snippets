@@ -20,6 +20,11 @@ use function Code_Snippets\update_snippet_fields;
 class Cloud_API {
 
 	/**
+	 * Maximum number of cloud search results allowed per page.
+	 */
+	public const MAX_RESULTS_PER_PAGE = 100;
+
+	/**
 	 * Key used to access the local-to-cloud map transient data.
 	 */
 	private const CLOUD_MAP_TRANSIENT_KEY = 'cs_local_to_cloud_map';
@@ -177,15 +182,19 @@ class Cloud_API {
 	 * @param string $search_method Search by name of codevault or keyword(s).
 	 * @param string $search        Search query.
 	 * @param int    $page          Search result page to retrieve. Defaults to '1'.
+	 * @param int    $per_page      Number of search results to retrieve per page.
 	 *
 	 * @return Cloud_Snippets Result of search query.
 	 */
-	public static function fetch_search_results( string $search_method, string $search, int $page = 1 ): Cloud_Snippets {
+	public static function fetch_search_results( string $search_method, string $search, int $page = 1, int $per_page = 10 ): Cloud_Snippets {
+		$per_page = min( self::MAX_RESULTS_PER_PAGE, max( 1, $per_page ) );
+
 		$api_url = add_query_arg(
 			[
 				's_method'   => $search_method,
 				's'          => $search,
 				'page'       => max( 0, $page - 1 ),
+				'per_page'   => $per_page,
 				'site_token' => self::get_local_token(),
 				'site_host'  => wp_parse_url( get_site_url(), PHP_URL_HOST ),
 			],

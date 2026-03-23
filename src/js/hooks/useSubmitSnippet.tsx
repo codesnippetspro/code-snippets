@@ -1,13 +1,14 @@
 import { __ } from '@wordpress/i18n'
 import { isAxiosError } from 'axios'
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useSnippetForm } from '../components/EditMenu/SnippetForm/WithSnippetFormContext'
 import { createSnippetObject, isCondition } from '../utils/snippets/snippets'
 import { buildUrl } from '../utils/urls'
 import { useSnippetsAPI } from './useSnippetsAPI'
 import type { Snippet } from '../types/Snippet'
+import type { ScreenNotice } from '../types/ScreenNotice'
 
-const snippetMessages = <const> {
+const snippetMessages = {
 	addNew: __('Create New Snippet', 'code-snippets'),
 	edit: __('Edit Snippet', 'code-snippets'),
 	created: __('Snippet <strong>created</strong>.', 'code-snippets'),
@@ -18,7 +19,7 @@ const snippetMessages = <const> {
 	updatedExecuted: __('Snippet <strong>updated</strong> and <strong>executed</strong>.', 'code-snippets'),
 	failedCreate: __('Could not create snippet.', 'code-snippets'),
 	failedUpdate: __('Could not update snippet.', 'code-snippets')
-}
+} as const
 
 const conditionCreated = __('Condition <strong>created</strong>.', 'code-snippets')
 const conditionUpdated = __('Condition <strong>updated</strong>.', 'code-snippets')
@@ -72,6 +73,17 @@ const getSuccessNotice = (
 	}
 }
 
+const getActivationErrorNotice = (snippet: Snippet): ScreenNotice => [
+	'error',
+	__('Snippet could not be activated.', 'code-snippets'),
+	<span key="code-snippets-activation-error">
+		{__('The snippet was saved, but remains inactive due to this error:', 'code-snippets')}
+		{' '}
+		<strong>{snippet.code_error?.[0] ?? ''}</strong>
+	</span>,
+	snippet.code_error_trace ?? undefined
+]
+
 export interface UseSubmitSnippet {
 	submitSnippet: (snippet: Partial<Snippet> & Pick<Snippet, 'network'>, action?: SubmitSnippetAction) => Promise<Snippet | undefined>
 }
@@ -84,13 +96,21 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 		setCurrentNotice(undefined)
 		setIsWorking(true)
 
+		const request = { ...snippet }
+
+		if (SubmitSnippetAction.SAVE_AND_ACTIVATE === action) {
+			request.active = true
+		} else if (SubmitSnippetAction.SAVE_AND_DEACTIVATE === action) {
+			request.active = false
+		}
+
 		const result = await (async (): Promise<Snippet | string | undefined> => {
 			try {
-				const { id } = snippet
+				const { id } = request
 
 				const response = await (undefined === id || 0 === id
-					? api.create(snippet)
-					: api.update({ ...snippet, id }))
+					? api.create(request)
+					: api.update({ ...request, id }))
 
 				return response.id ? createSnippetObject(response) : undefined
 			} catch (error) {
@@ -104,7 +124,7 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 
 		if (undefined === result || 'string' === typeof result) {
 			const message = [
-				snippet.id ? messages.failedUpdate : messages.failedCreate,
+				request.id ? messages.failedUpdate : messages.failedCreate,
 				result ?? __('The server did not send a valid response.', 'code-snippets')
 			]
 
@@ -114,16 +134,13 @@ export const useSubmitSnippet = (): UseSubmitSnippet => {
 
 		setSnippet(result)
 
-		if (result.code_error) {
-			setCurrentNotice([
-				'error',
-				__('Snippet could not be activated because the code contains an error. See details below.', 'code-snippets')
-			])
+		if (result.code_error && SubmitSnippetAction.SAVE_AND_ACTIVATE === action) {
+			setCurrentNotice(getActivationErrorNotice(result))
 		} else {
 			setCurrentNotice(['updated', getSuccessNotice(snippet, result, action)])
 		}
 
-		if (snippet.id && result.id) {
+		if (request.id && result.id) {
 			window.document.title = window.document.title.replace(snippetMessages.addNew, messages.edit)
 			window.history.replaceState({}, '', buildUrl(window.CODE_SNIPPETS?.urls.edit, { id: result.id }))
 		}

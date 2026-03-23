@@ -29,6 +29,7 @@ use function Code_Snippets\Utils\get_self_option;
  * @property bool                   $shared_network     Whether the snippet is a shared network snippet.
  * @property string                 $modified           The date and time when the snippet data was most recently saved to the database.
  * @property array{string,int}|null $code_error         Code error encountered when last testing snippet code.
+ * @property string|null            $code_error_trace   Stack trace captured when last testing snippet code.
  * @property int                    $revision           Revision or version number of snippet.
  * @property string                 $cloud_id           Cloud ID and ownership status of snippet.
  *
@@ -76,6 +77,7 @@ class Snippet extends Model {
 		'shared_network' => null,
 		'modified'       => null,
 		'code_error'     => null,
+		'code_error_trace' => null,
 		'revision'       => 1,
 		'cloud_id'       => '',
 	];

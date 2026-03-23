@@ -349,9 +349,11 @@ class Snippet_Files {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function sync_active_shared_network_snippets( string $option, $old_value, $value ): void {
-		if ( 'active_shared_network_snippets' === $option ) {
-			$this->create_active_shared_network_snippets_file( $value );
+		if ( 'active_shared_network_snippets' !== $option ) {
+			return;
 		}
+
+		$this->create_active_shared_network_snippets_file( $value );
 	}
 
 	/**
@@ -364,8 +366,10 @@ class Snippet_Files {
 	 */
 	public function sync_active_shared_network_snippets_add( $option, $value ): void {
 		if ( 'active_shared_network_snippets' !== $option ) {
-			$this->create_active_shared_network_snippets_file( $value );
+			return;
 		}
+
+		$this->create_active_shared_network_snippets_file( $value );
 	}
 
 	/**
@@ -400,7 +404,8 @@ class Snippet_Files {
 	 * @return string Hashed table name.
 	 */
 	public static function get_hashed_table_name( string $table ): string {
-		return wp_hash( $table );
+		// wp_hash() is pluggable and may not be available during early bootstrap.
+		return function_exists( 'wp_hash' ) ? \wp_hash( $table ) : md5( $table );
 	}
 
 	/**

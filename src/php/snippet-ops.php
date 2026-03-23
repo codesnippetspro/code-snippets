@@ -8,7 +8,7 @@
 namespace Code_Snippets;
 
 use Code_Snippets\Core\DB;
-use ParseError;
+use Exception;
 use Code_Snippets\Model\Snippet;
 use Code_Snippets\Utils\Validator;
 use Throwable;
@@ -584,6 +584,7 @@ function restore_snippet( int $id, ?bool $network = null ): bool {
  */
 function test_snippet_code( Snippet $snippet ) {
 	$snippet->code_error = null;
+	$snippet->code_error_trace = null;
 
 	if ( 'php' !== $snippet->type ) {
 		return;
@@ -594,16 +595,18 @@ function test_snippet_code( Snippet $snippet ) {
 
 	if ( $result ) {
 		$snippet->code_error = [ $result['message'], $result['line'] ];
+		$snippet->code_error_trace = ( new Exception() )->getTraceAsString();
 	}
 
 	if ( ! $snippet->code_error && 'single-use' !== $snippet->scope ) {
 		$result = execute_snippet( $snippet->code, $snippet->id, true );
 
-		if ( $result instanceof ParseError ) {
+		if ( $result instanceof Throwable ) {
 			$snippet->code_error = [
 				ucfirst( rtrim( $result->getMessage(), '.' ) ) . '.',
 				$result->getLine(),
 			];
+			$snippet->code_error_trace = $result->getTraceAsString();
 		}
 	}
 }
@@ -688,6 +691,8 @@ function save_snippet( $snippet ): ?Snippet {
 
 		$snippet->id = $wpdb->insert_id;
 		$updated = get_snippet( $snippet->id );
+		$updated->code_error = $snippet->code_error;
+		$updated->code_error_trace = $snippet->code_error_trace;
 		do_action( 'code_snippets/create_snippet', $updated, $table );
 
 		if ( $updated->id > 0 ) {
@@ -701,6 +706,8 @@ function save_snippet( $snippet ): ?Snippet {
 		$wpdb->update( $table, $data, [ 'id' => $snippet->id ], null, [ '%d' ] );
 
 		$updated = get_snippet( $snippet->id, $snippet->network );
+		$updated->code_error = $snippet->code_error;
+		$updated->code_error_trace = $snippet->code_error_trace;
 
 		do_action( 'code_snippets/update_snippet', $updated, $table, $existing, $snippet );
 
@@ -732,7 +739,7 @@ function save_snippet( $snippet ): ?Snippet {
  * @param int    $id    Snippet ID.
  * @param bool   $force Force snippet execution, even if save mode is active.
  *
- * @return ParseError|mixed Code error if encountered during execution, or result of snippet execution otherwise.
+ * @return Throwable|mixed Code error if encountered during execution, or result of snippet execution otherwise.
  *
  * @since        2.0.0
  * @noinspection PhpUndefinedConstantInspection
@@ -753,8 +760,8 @@ function execute_snippet( string $code, int $id = 0, bool $force = false ) {
 
 	try {
 		$result = eval( $code );
-	} catch ( ParseError $parse_error ) {
-		$result = $parse_error;
+	} catch ( Throwable $throwable ) {
+		$result = $throwable;
 	}
 
 	ob_end_clean();
@@ -884,8 +891,6 @@ function execute_snippet_from_flat_file( string $code, string $file, int $id = 0
 	try {
 		require_once $file;
 		$result = null;
-	} catch ( ParseError $parse_error ) {
-		$result = $parse_error;
 	} catch ( Throwable $throwable ) {
 		$result = $throwable;
 	}

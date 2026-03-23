@@ -1,4 +1,5 @@
 import React from 'react'
+import classnames from 'classnames'
 import type { Dispatch, Key, SetStateAction } from 'react'
 import type { ListTableColumn, ListTableItemsProps } from './ListTable'
 
@@ -34,7 +35,7 @@ interface TableCellProps<T> {
 }
 
 const TableCell = <T, >({ item, column }: TableCellProps<T>) => {
-	const className = `${column.id}-column column-${column.id}`
+	const className = classnames(`${column.id}-column`, `column-${column.id}`, { hidden: column.isHidden })
 
 	return column.isHeading
 		? <th className={className}>{column.render(item)}</th>

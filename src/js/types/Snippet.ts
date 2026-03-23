@@ -15,6 +15,7 @@ export interface Snippet {
 	readonly conditionId: number
 	readonly lastActive?: number
 	readonly code_error?: readonly [string, number] | null
+	readonly code_error_trace?: string | null
 }
 
 export const SNIPPET_TYPES = <const> ['php', 'html', 'css', 'js', 'cond']

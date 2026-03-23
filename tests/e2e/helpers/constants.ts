@@ -10,6 +10,7 @@ export const SELECTORS = <const>{
 	SNIPPET_ROW: '.wp-list-table tbody tr',
 	SNIPPET_TOGGLE: 'input.switch',
 	SNIPPET_NAME_LINK: '.snippet-name',
+	SNIPPET_SEARCH_INPUT: '#snippets_search',
 
 	CLONE_ACTION: '.row-actions button:has-text("Clone")',
 	DELETE_ACTION: '.row-actions button:has-text("Trash")',

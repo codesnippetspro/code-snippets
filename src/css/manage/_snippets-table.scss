@@ -166,9 +166,30 @@
 		min-inline-size: 130px;
 		max-inline-size: 130px;
 		text-align: end;
-		padding-inline: 8px;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	td.column-date .modified-column-content {
+		display: block;
+		text-align: start;
+	}
+}
+
+.wp-list-table.truncate-row-values {
+	td.column-name > .snippet-name,
+	td.column-desc .snippet-description-content {
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	td.column-name > .snippet-name {
+		max-inline-size: min(15rem, 30vw);
+	}
+
+	td.column-desc .snippet-description-content {
+		max-inline-size: min(25rem, 45vw);
 	}
 }
 

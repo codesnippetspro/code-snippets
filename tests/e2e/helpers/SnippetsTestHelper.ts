@@ -59,6 +59,26 @@ export class SnippetsTestHelper {
 		await wpCli(['eval', php])
 	}
 
+	static async setSnippetsPerPage(perPage: number): Promise<void> {
+		const php = `
+			$user = get_user_by('login', 'admin');
+			$user_id = $user ? $user->ID : 1;
+			update_user_option($user_id, 'snippets_per_page', ${perPage});
+		`
+
+		await wpCli(['eval', php])
+	}
+
+	static async resetSnippetsPerPage(): Promise<void> {
+		const php = `
+			$user = get_user_by('login', 'admin');
+			$user_id = $user ? $user->ID : 1;
+			delete_user_option($user_id, 'snippets_per_page');
+		`
+
+		await wpCli(['eval', php])
+	}
+
 	static async createSnippetViaCli(options: CreateSnippetCliOptions): Promise<void> {
 		const type = options.type ?? 'php'
 		let scope = 'global'
@@ -211,6 +231,13 @@ export class SnippetsTestHelper {
 	}
 
 	/**
+   * Filter the snippets table to a specific snippet name.
+   */
+	async filterSnippetsByName(snippetName: string): Promise<void> {
+		await this.page.fill(SELECTORS.SNIPPET_SEARCH_INPUT, snippetName)
+	}
+
+	/**
    * Navigate to frontend
    */
 	async navigateToFrontend(): Promise<void> {
@@ -305,6 +332,7 @@ export class SnippetsTestHelper {
 	async openSnippet(snippetName: string): Promise<void> {
 		await this.page.goto(URLS.SNIPPETS_ADMIN)
 		await this.page.waitForSelector(SELECTORS.SNIPPETS_TABLE, { timeout: TIMEOUTS.DEFAULT })
+		await this.filterSnippetsByName(snippetName)
 
 		const row = this.page.locator(SELECTORS.SNIPPET_ROW).filter({ hasText: snippetName }).first()
 		await expect(row).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
@@ -344,6 +372,7 @@ export class SnippetsTestHelper {
    */
 	async deleteSnippetFromList(snippetName: string): Promise<void> {
 		await this.navigateToSnippetsAdmin()
+		await this.filterSnippetsByName(snippetName)
 
 		const row = this.page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
@@ -479,6 +508,7 @@ export class SnippetsTestHelper {
 
 		// Ensure activation is actually persisted by toggling from the list screen.
 		await this.navigateToSnippetsAdmin()
+		await this.filterSnippetsByName(options.name)
 		const row = this.page
 			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${options.name}"))`)
 			.first()

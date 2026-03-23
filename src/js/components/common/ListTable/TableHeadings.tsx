@@ -4,51 +4,6 @@ import { __ } from '@wordpress/i18n'
 import type { ListTableColumn, ListTableProps, ListTableSortDirection } from './ListTable'
 import type { Dispatch, Key, SetStateAction, ThHTMLAttributes } from 'react'
 
-interface SortableHeadingProps<T> {
-	column: ListTableColumn<T>
-	cellProps: ThHTMLAttributes<HTMLTableCellElement>
-	sortColumn: ListTableColumn<T> | undefined
-	sortDirection: ListTableSortDirection
-	setSortColumn: Dispatch<SetStateAction<ListTableColumn<T> | undefined>>
-	setSortDirection: Dispatch<SetStateAction<ListTableSortDirection>>
-}
-
-const SortableHeading = <T, >({
-	column,
-	cellProps,
-	sortColumn,
-	setSortColumn,
-	sortDirection,
-	setSortDirection
-}: SortableHeadingProps<T>) => {
-	const isCurrent = column.id === sortColumn?.id
-
-	const newSortDirection = isCurrent
-		? 'asc' === sortDirection ? 'desc' : 'asc'
-		: column.defaultSortDirection ?? 'asc'
-
-	return (
-		<th {...cellProps} className={classnames(cellProps.className, isCurrent ? 'sorted' : 'sortable')}>
-			<a href="#" onClick={event => {
-				event.preventDefault()
-				setSortColumn(column)
-				setSortDirection(newSortDirection)
-			}}>
-				<span>{column.title}</span>
-				<span className="sorting-indicators">
-					<span className="sorting-indicator asc" aria-hidden="true"></span>
-					<span className="sorting-indicator desc" aria-hidden="true"></span>
-				</span>
-				{isCurrent ? null
-					: <span className="screen-reader-text">
-						{/* translators: Hidden accessibility text. */}
-						{'asc' === newSortDirection ? __('Sort ascending.', 'code-snippets') : __('Sort descending.', 'code-snippets')}
-					</span>}
-			</a>
-		</th>
-	)
-}
-
 export interface TableHeadingsProps<T, K extends Key> extends Pick<ListTableProps<T, K>, 'columns' | 'getKey' | 'items'> {
 	which: 'head' | 'foot'
 	sortColumn: ListTableColumn<T> | undefined
@@ -76,7 +31,7 @@ export const TableHeadings = <T, K extends Key>({
 				type="checkbox"
 				name="checked[]"
 				onChange={event => {
-					setSelected(new Set(event.target.checked ? items.map(getKey) : null))
+					setSelected(new Set(event.target.checked ? items.map(getKey) : []))
 				}}
 			/>
 			<label htmlFor={`cb-select-all-${which}`}>
@@ -95,8 +50,42 @@ export const TableHeadings = <T, K extends Key>({
 				)
 			}
 
-			return column.sortedValue
-				? <SortableHeading key={column.id} {...{ column, sortColumn, setSortColumn, sortDirection, setSortDirection, cellProps }} />
-				: <th key={column.id} {...cellProps}>{column.title}</th>
+			if (!column.sortedValue) {
+				return <th key={column.id} {...cellProps}>{column.title}</th>
+			}
+
+			const isCurrent = column.id === sortColumn?.id
+
+			const nextSortDirection = isCurrent
+				? 'asc' === sortDirection ? 'desc' : 'asc'
+				: column.defaultSortDirection ?? 'asc'
+			const classDirection = isCurrent ? sortDirection : 'asc' === nextSortDirection ? 'desc' : 'asc'
+			const ariaSort = isCurrent ? 'asc' === sortDirection ? 'ascending' : 'descending' : undefined
+
+			return (
+				<th
+					key={column.id}
+					{...cellProps}
+					aria-sort={ariaSort}
+					className={classnames(cellProps.className, isCurrent ? 'sorted' : 'sortable', classDirection)}
+				>
+					<a href="#" onClick={event => {
+						event.preventDefault()
+						setSortColumn(column)
+						setSortDirection(nextSortDirection)
+					}}>
+						<span>{column.title}</span>
+						<span className="sorting-indicators">
+							<span className="sorting-indicator asc" aria-hidden="true"></span>
+							<span className="sorting-indicator desc" aria-hidden="true"></span>
+						</span>
+						{isCurrent ? null
+							: <span className="screen-reader-text">
+								{/* translators: Hidden accessibility text. */}
+								{'asc' === nextSortDirection ? __('Sort ascending.', 'code-snippets') : __('Sort descending.', 'code-snippets')}
+							</span>}
+					</a>
+				</th>
+			)
 		})}
 	</tr>

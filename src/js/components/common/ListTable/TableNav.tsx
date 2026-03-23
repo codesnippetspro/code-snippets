@@ -6,13 +6,21 @@ import { SubmitButton } from '../SubmitButton'
 import { TablePagination } from './TablePagination'
 import type { TablePaginationProps } from './TablePagination'
 import type { ListTableBulkAction, ListTableNavProps } from './ListTable'
-import type { Key } from 'react'
+import type { Dispatch, Key, SetStateAction } from 'react'
 
 interface BulkActionSelectProps<K extends Key> extends Required<Pick<TableNavProps<K>, 'which' | 'actions'>> {
-	setSelectedAction: (action: ListTableBulkAction<K> | undefined) => void
+	selectedActionName: string
+	setSelectedActionName: Dispatch<SetStateAction<string>>
+	setSelectedAction: Dispatch<SetStateAction<ListTableBulkAction<K> | undefined>>
 }
 
-const BulkActionSelect = <K extends Key>({ which, actions, setSelectedAction }: BulkActionSelectProps<K>) => {
+const BulkActionSelect = <K extends Key,>({
+	which,
+	actions,
+	selectedActionName,
+	setSelectedActionName,
+	setSelectedAction
+}: BulkActionSelectProps<K>) => {
 	const actionsMap: Map<string, ListTableBulkAction<K>> = useMemo(
 		() => new Map(
 			actions
@@ -25,7 +33,9 @@ const BulkActionSelect = <K extends Key>({ which, actions, setSelectedAction }: 
 		<select
 			name={`action${'bottom' === which ? '-2' : ''}`}
 			id={`bulk-action-selector-${which}`}
+			value={selectedActionName}
 			onChange={event => {
+				setSelectedActionName(event.target.value)
 				setSelectedAction(actionsMap.get(event.target.value))
 			}}
 		>
@@ -47,8 +57,9 @@ interface BulkActionsProps<K extends Key> extends Required<Pick<TableNavProps<K>
 	disabled?: boolean
 }
 
-const BulkActions = <K extends Key>({ which, actions, applyAction, disabled }: BulkActionsProps<K>) => {
+const BulkActions = function BulkActions<K extends Key>({ which, actions, applyAction, disabled }: BulkActionsProps<K>) {
 	const [selectedAction, setSelectedAction] = useState<ListTableBulkAction<K>>()
+	const [selectedActionName, setSelectedActionName] = useState('-1')
 	const [isPerformingAction, setIsPerformingAction] = useState(false)
 
 	return (
@@ -58,14 +69,16 @@ const BulkActions = <K extends Key>({ which, actions, applyAction, disabled }: B
 				{__('Select bulk action', 'code-snippets')}
 			</label>
 
-			<BulkActionSelect {...{ which, actions, setSelectedAction }} />
+			<BulkActionSelect
+				{...{ which, actions, selectedActionName, setSelectedActionName, setSelectedAction }}
+			/>
 
 			<SubmitButton
 				id={`doaction${'bottom' === which ? '-2' : ''}`}
 				name="bulk_action"
 				text={__('Apply', 'code-snippets')}
 				className="action"
-				disabled={disabled ?? isPerformingAction}
+				disabled={!!disabled || isPerformingAction || !selectedAction}
 				onClick={event => {
 					event.preventDefault()
 
@@ -74,7 +87,6 @@ const BulkActions = <K extends Key>({ which, actions, applyAction, disabled }: B
 						applyAction(selectedAction)
 							.catch(handleUnknownError)
 							.finally(() => {
-								setSelectedAction(undefined)
 								setIsPerformingAction(false)
 							})
 					}
@@ -93,7 +105,7 @@ export interface TableNavProps<K extends Key> extends ListTableNavProps<K>, Omit
 	totalPages: number | undefined
 }
 
-export const TableNav = <K extends Key>({
+export const TableNav = <K extends Key,>({
 	which,
 	actions,
 	selected,

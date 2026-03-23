@@ -204,7 +204,7 @@ const TagsColumn: React.FC<ColumnProps> = ({ snippet }) =>
 
 const DateColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	snippet.modified
-		? <span title={snippet.modified}>
+		? <span className="modified-column-content" title={snippet.modified}>
 			<time dateTime={snippet.modified}>
 				{humanTimeDiff(snippet.modified, undefined)}
 			</time>
@@ -248,7 +248,15 @@ const PriorityColumn: React.FC<ColumnProps> = ({ snippet }) => {
 	)
 }
 
-export const TableColumns: ListTableColumn<Snippet>[] = [
+const withHiddenState = (
+	column: ListTableColumn<Snippet>,
+	hiddenColumns: readonly string[]
+): ListTableColumn<Snippet> => ({
+	...column,
+	isHidden: hiddenColumns.includes(column.id.toString())
+})
+
+const baseTableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'activate',
 		render: snippet => <ActivateColumn snippet={snippet} />
@@ -269,7 +277,7 @@ export const TableColumns: ListTableColumn<Snippet>[] = [
 	{
 		id: 'desc',
 		title: __('Description', 'code-snippets'),
-		render: snippet => <RawHTML>{snippet.desc}</RawHTML>
+		render: snippet => <div className="snippet-description-content"><RawHTML>{snippet.desc}</RawHTML></div>
 	},
 	{
 		id: 'tags',
@@ -289,3 +297,6 @@ export const TableColumns: ListTableColumn<Snippet>[] = [
 		render: snippet => <PriorityColumn snippet={snippet} />
 	}
 ]
+
+export const getTableColumns = (hiddenColumns: readonly string[] = []): ListTableColumn<Snippet>[] =>
+	baseTableColumns.map(column => withHiddenState(column, hiddenColumns))

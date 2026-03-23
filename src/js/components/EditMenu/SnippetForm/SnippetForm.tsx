@@ -19,6 +19,7 @@ import { TagsEditor } from './fields/TagsEditor'
 import { CodeEditor } from './fields/CodeEditor'
 import { DescriptionEditor } from './fields/DescriptionEditor'
 import { NameInput } from './fields/NameInput'
+import { Notices } from './page/Notices'
 import { PageHeading } from './page/PageHeading'
 import type { PropsWithChildren } from 'react'
 import type { Snippet } from '../../../types/Snippet'
@@ -147,17 +148,8 @@ const EditFormWrap: React.FC = () => {
 
 	return (
 		<div className="wrap">
-			<p><small className="cs-back">
-				{isCondition(snippet)
-					? <a href={buildUrl(window.CODE_SNIPPETS?.urls.manage, { type: 'cond' })}>
-						{__('Back to all conditions', 'code-snippets')}
-					</a>
-					: <a href={window.CODE_SNIPPETS?.urls.manage}>
-						{__('Back to all snippets', 'code-snippets')}
-					</a>}
-			</small></p>
-
 			<PageHeading />
+			<Notices placement="above-form" />
 
 			<EditForm className={editFormClassName({ snippet, isReadOnly, isExpanded })}>
 				<main className="snippet-form-upper">

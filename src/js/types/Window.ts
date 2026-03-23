@@ -57,8 +57,13 @@ declare global {
 		readonly CODE_SNIPPETS_MANAGE?: {
 			snippetsList: Snippet[]
 			hasNetworkCap: boolean
+			hiddenColumns: string[]
+			truncateRowValues: number | string
 			snippetsPerPage: number
+			cloudSearchPerPage: number
 			isSafeModeActive: boolean
+			bulkDownloadNonce: string
+			supportsZipDownloads: boolean
 		}
 		readonly CODE_SNIPPETS_EDIT?: {
 			snippet: Snippet

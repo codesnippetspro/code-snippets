@@ -15,6 +15,20 @@ Severity labels used in this file:
 - **MUST** — Flag as a blocking issue; must be resolved before merge.
 - **SHOULD** — Flag as a recommendation; resolve before merge unless a risk-aware rationale is provided.
 
+## Practical Reviewer Checks
+
+- Don't silently widen types or drop generics when refactoring. If typing gets weaker, require a clear reason. [MUST]
+- In namespaced PHP, call WordPress globals with `\function_name()` and do not assume pluggable/core functions exist on very early execution paths. If a callback can run during early bootstrap, guard availability appropriately. [MUST]
+- Ensure hook callbacks that respond to options/actions are tightly gated to the intended option/action. Be suspicious of inverted or overly broad conditionals that can be triggered by other plugins. [MUST]
+- Avoid no-op abstractions (pass-through helpers, one-liner wrappers) unless they materially improve readability, reuse, or testability. [SHOULD]
+- Inline single-use extractions that do not clarify intent (local functions/variables used once). [SHOULD]
+- Prefer `undefined` for absent optional values in TypeScript/React unless `null` has explicit semantics in that API. [SHOULD]
+- For conditional class names, prefer the repository `classnames.classnames` helper over manual array filtering and joining. [SHOULD]
+- Prefer JSX for React markup. If a hook/util needs to render elements, suggest moving the markup into a `.tsx` component instead of using `createElement` in a `.ts` file. [SHOULD]
+- For simple key-to-value parsing/transforms, prefer a literal object/record map over a loop + `switch` when it improves clarity. [SHOULD]
+- Do not stack redundant `catch` blocks (e.g., `ParseError` plus `Throwable`) unless the handlers differ. [SHOULD]
+- When a screen is React-driven, question heavy PHP view logic. If PHP is used due to WordPress admin primitives (e.g., Screen Options, non-REST file streaming), require a short rationale. [SHOULD]
+
 ## Scope and Diff Hygiene
 
 - Flag PRs that mix behavior changes with refactors, renames, or formatting-only edits. Each change should be single-purpose. [MUST]

@@ -1,6 +1,6 @@
-import { test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { SnippetsTestHelper } from './helpers/SnippetsTestHelper'
-import { MESSAGES, SELECTORS } from './helpers/constants'
+import { MESSAGES, SELECTORS, TIMEOUTS } from './helpers/constants'
 
 test.describe('Code Snippets Admin', () => {
 	let helper: SnippetsTestHelper
@@ -38,6 +38,80 @@ test.describe('Code Snippets Admin', () => {
 		// Deactivate it (Status toggle + save in the new UI).
 		await helper.saveSnippet('save_and_deactivate')
 		await helper.expectSuccessMessage(MESSAGES.SNIPPET_UPDATED_AND_DEACTIVATED)
+	})
+
+	test('Can activate a new snippet on the first save attempt', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.clickAddNewSnippet()
+		await helper.fillSnippetForm({
+			name: snippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
+
+		await helper.saveSnippet('save_and_activate')
+		await helper.expectSuccessMessage(MESSAGES.SNIPPET_CREATED_AND_ACTIVATED)
+
+		await helper.navigateToSnippetsAdmin()
+
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+
+		await expect(snippetRow).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await expect(snippetRow.locator(SELECTORS.SNIPPET_TOGGLE).first()).toBeChecked({ timeout: TIMEOUTS.DEFAULT })
+
+		await helper.cleanupSnippet(snippetName)
+	})
+
+	test('Edit menu shortcut keeps operable button semantics', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.createSnippet({
+			name: snippetName,
+			code: "add_filter('show_admin_bar', '__return_false');"
+		})
+
+		await helper.openSnippet(snippetName)
+
+		const editMenuLink = page.locator('#adminmenu a.code-snippets-edit-menu-link').first()
+
+		await expect(editMenuLink).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await expect(editMenuLink).toHaveAttribute('role', 'button')
+		await expect(editMenuLink).toHaveAttribute('tabindex', '0')
+		await expect(editMenuLink).not.toHaveAttribute('aria-disabled', /true/)
+
+		await helper.cleanupSnippet(snippetName)
+	})
+
+	test('Shows an error notice when activation fails after saving', async ({ page }) => {
+		const snippetName = SnippetsTestHelper.makeUniqueSnippetName()
+		await helper.clickAddNewSnippet()
+		await helper.fillSnippetForm({
+			name: snippetName,
+			code: 'missing_runtime_function_call();'
+		})
+
+		await helper.saveSnippet('save_and_activate')
+
+		const errorNotice = page.locator('.wrap > .notice.error').first()
+		await expect(errorNotice).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await expect(errorNotice).toContainText('Snippet could not be activated.')
+		await expect(errorNotice).toContainText('Call to undefined function missing_runtime_function_call()')
+		await expect(errorNotice).toContainText('The snippet was saved, but remains inactive due to this error:')
+
+		const traceDetails = errorNotice.locator('details').first()
+		await expect(traceDetails).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await expect(traceDetails.locator('summary')).toContainText('View stack trace')
+
+		await helper.navigateToSnippetsAdmin()
+
+		const snippetRow = page
+			.locator(`${SELECTORS.SNIPPET_ROW}:has(a${SELECTORS.SNIPPET_NAME_LINK}:has-text("${snippetName}"))`)
+			.first()
+
+		await expect(snippetRow).toBeVisible({ timeout: TIMEOUTS.DEFAULT })
+		await expect(snippetRow.locator(SELECTORS.SNIPPET_TOGGLE).first()).not.toBeChecked({ timeout: TIMEOUTS.DEFAULT })
+
+		await helper.cleanupSnippet(snippetName)
 	})
 
 	test('Can delete a snippet', async () => {

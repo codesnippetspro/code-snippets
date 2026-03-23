@@ -9,6 +9,7 @@
 @use 'common/select';
 @use 'common/tooltips';
 @use 'common/modal';
+@use 'common/notices';
 @use 'common/upsell';
 @use 'common/toolbar';
 @use 'edit/form';
@@ -26,6 +27,10 @@
 	vertical-align: middle;
 	line-height: 1;
 	margin: 0;
+}
+
+#adminmenu a.code-snippets-edit-menu-link {
+	cursor: pointer;
 }
 
 .snippet-description-container {
@@ -95,14 +100,4 @@
 
 form.condition-snippet .snippet-code-container {
 	display: none;
-}
-
-.cs-back {
-	cursor: pointer;
-
-	&::before {
-		content: '<';
-		color: #2271b1;
-		margin-inline-end: 3px;
-	}
 }

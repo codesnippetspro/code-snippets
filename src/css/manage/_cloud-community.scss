@@ -1,11 +1,60 @@
 @use '../common/theme';
 @use '../common/banners';
 
+.cloud-search-form {
+	display: flex;
+	gap: 8px;
+	margin-block: 31px 47px;
+	block-size: 54px;
+
+	> select {
+		flex: 0 0 250px;
+	}
+
+	.button {
+		flex: 0 0 165px;
+	}
+
+	.cloud-search-query {
+		flex: 1;
+		position: relative;
+
+		input {
+			inline-size: 100%;
+			block-size: 100%;
+		}
+
+		> .components-spinner {
+			position: absolute;
+			inset-inline-end: 1.5em;
+			inset-block-start: 25%;
+		}
+	}
+}
+
 .cloud-search {
 	@include banners.banners;
 
 	.banner {
 		justify-content: center;
+	}
+
+	.tablenav.top {
+		display: flex;
+		gap: 20px;
+		block-size: 40px;
+		margin-block-end: 31px;
+		align-items: center;
+
+		select {
+			inline-size: 245px;
+			block-size: 100%;
+		}
+
+		.tablenav-pages {
+			margin: 0;
+			margin-inline-start: auto;
+		}
 	}
 }
 
@@ -79,10 +128,6 @@
 		padding-block: 12px;
 		align-items: center;
 
-		.components-spinner {
-			margin: 0;
-		}
-
 		.dashicons-warning {
 			color: #b32d2e;
 		}
@@ -100,51 +145,6 @@
 	}
 }
 
-.cloud-search-form {
-	display: flex;
-	gap: 8px;
-	margin-block: 31px 47px;
-	block-size: 54px;
-
-	select {
-		flex: 0 0 250px;
-	}
-
-	.button {
-		flex: 0 0 165px;
-	}
-
-	.cloud-search-query {
-		flex: 1;
-		position: relative;
-
-		input {
-			inline-size: 100%;
-			block-size: 100%;
-		}
-
-		.components-spinner {
-			position: absolute;
-			inset-inline-end: 1.5em;
-			inset-block-start: 25%;
-		}
-	}
-}
-
-.tablenav.top {
-	display: flex;
-	gap: 20px;
-	block-size: 40px;
-	margin-block-end: 31px;
-	align-items: center;
-
-	select {
-		inline-size: 245px;
-		block-size: 100%;
-	}
-
-	.tablenav-pages {
-		margin: 0;
-		margin-inline-start: auto;
-	}
+.cloud-search-results .cloud-search-result footer > .components-spinner {
+	margin: 0;
 }

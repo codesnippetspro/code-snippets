@@ -664,7 +664,15 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 				],
 				'code_error'     => [
 					'description' => esc_html__( 'Error message if the snippet code could not be parsed.', 'code-snippets' ),
-					'type'        => 'string',
+					'type'        => [ 'array', 'null' ],
+					'items'       => [
+						'type' => [ 'string', 'integer' ],
+					],
+					'readonly'    => true,
+				],
+				'code_error_trace' => [
+					'description' => esc_html__( 'Stack trace for the most recent snippet code error.', 'code-snippets' ),
+					'type'        => [ 'string', 'null' ],
 					'readonly'    => true,
 				],
 			],
