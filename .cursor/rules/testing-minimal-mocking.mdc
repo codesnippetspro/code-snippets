@@ -1,0 +1,120 @@
+---
+description: Client-side testing guidelines emphasizing minimal mocking, real component rendering, and behavior-focused tests
+globs: ["**/*.spec.tsx", "**/*.spec.ts", "**/*.test.tsx", "**/*.test.ts"]
+alwaysApply: false
+---
+
+# Client-Side Testing — Minimal Mocking
+
+## Core Principles
+
+1. **Test user behavior, not implementation details**
+2. **Mock only external APIs and complex third-party libraries**
+3. **Let React components render naturally**
+
+## What to Mock
+
+- **API calls**: `fetch`, `axios`, HTTP requests
+- **External services**: Analytics, payment processors
+- **Browser APIs**: When they don't exist in test environment
+- **Heavy third-party libraries**: Charts, editors, complex widgets
+
+## What NOT to Mock
+
+- **React components**: Let them render with real props and state
+- **Hooks**: Test actual behavior, not mock calls
+- **Utils/helpers**: Test the real logic
+- **State management**: Redux, Context, etc.
+
+## Testing Patterns
+
+### Component tests — focus on user behavior
+
+**Avoid:**
+
+```typescript
+it('should call validation function', () => {
+  const mockValidate = jest.fn();
+  render(<LoginForm validate={mockValidate} />);
+  expect(mockValidate).toHaveBeenCalled();
+});
+```
+
+**Prefer:**
+
+```typescript
+it('should show error when form is invalid', () => {
+  render(<LoginForm />);
+  fireEvent.click(screen.getByText('Submit'));
+  expect(screen.getByText('Email is required')).toBeVisible();
+});
+```
+
+### Hook tests — test real state changes
+
+```typescript
+it('should update form state when input changes', () => {
+  const { result } = renderHook(() => useForm());
+  act(() => {
+    result.current.updateField('email', 'test@example.com');
+  });
+  expect(result.current.values.email).toBe('test@example.com');
+});
+```
+
+### API integration — mock only external calls
+
+```typescript
+it('should display success message after form submission', async () => {
+  jest.spyOn(global, 'fetch').mockResolvedValue({
+    ok: true,
+    json: () => Promise.resolve({ success: true })
+  });
+  
+  render(<ContactForm />);
+  fireEvent.change(screen.getByLabelText('Email'), { 
+    target: { value: 'test@example.com' } 
+  });
+  fireEvent.click(screen.getByText('Submit'));
+  
+  expect(await screen.findByText('Message sent!')).toBeVisible();
+});
+```
+
+## Browser APIs — Use Explicit Window References
+
+Always use explicit `window.` prefix when accessing browser APIs to make testing easier:
+
+**Avoid:**
+
+```typescript
+const data = localStorage.getItem('key');
+sessionStorage.setItem('token', value);
+const url = location.href;
+```
+
+**Prefer:**
+
+```typescript
+const data = window.localStorage.getItem('key');
+window.sessionStorage.setItem('token', value);
+const url = window.location.href;
+```
+
+### Mocking browser APIs in tests
+
+```typescript
+beforeEach(() => {
+  jest.spyOn(window.localStorage, 'getItem').mockReturnValue('mock-value');
+  jest.spyOn(window.localStorage, 'setItem').mockImplementation();
+});
+```
+
+## Quick Guidelines
+
+- **Focus on user interactions**: clicks, typing, seeing results
+- **Mock only at system boundaries**: APIs, external services
+- **Let components render normally**: Don't mock child components
+- **Test error states**: Use real error objects, not mock rejections
+- **Keep it simple**: Avoid complex mock setups
+- **Use explicit window references**: `window.localStorage`, `window.location` for easier mocking
