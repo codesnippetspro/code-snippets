@@ -47,7 +47,7 @@ export const ExportButtons: React.FC = () => {
 			{window.CODE_SNIPPETS_EDIT?.enableDownloads
 				? <ExportButton
 					name="export_snippet_code"
-					label={__('Export Code', 'code-snippets')}
+					label={__('Download Code', 'code-snippets')}
 					makeRequest={api.exportCode}
 				/>
 				: null}
