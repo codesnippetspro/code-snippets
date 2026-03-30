@@ -21,6 +21,7 @@ class Pro_Plugin_Installer
     protected string $temp_dir;
     protected string $pro_plugin_path;
     protected string $pro_full_path;
+    protected string $cloud_api_status_url;
 
     public function __construct()
     {
@@ -28,6 +29,8 @@ class Pro_Plugin_Installer
         $this->temp_dir = WP_CONTENT_DIR . '/code-snippets-pro-temp';
         $this->pro_plugin_path = 'code-snippets-pro/code-snippets.php';
         $this->pro_full_path = WP_PLUGIN_DIR . '/' . $this->pro_plugin_path;
+        //$this->cloud_api_status_url = 'https://codesnippets.cloud/api/v1/external/update-installation-status';
+        $this->cloud_api_status_url = 'http://localhost/api/v1/freemius/update-installation-status';
     }
 
     /**
@@ -51,26 +54,37 @@ class Pro_Plugin_Installer
             error_log('CS Installer: Starting PRO plugin installation');
         }
 
+        // Delete any existing temp files from potential previous failed attempts
+        $this->cleanup_temp_files();
+
         $zip_file = $this->download_plugin($installation_data);
 
 
         if (!$zip_file) {
             $this->log('[Installer] Error: Download returned empty filename.');
+            $this->cleanup_temp_files();
             return false;
         }
 
         $this->log('[Installer] Downloaded PRO plugin: ' . $zip_file);
 
         if (!$this->install_plugin($zip_file)) {
+            $this->send_update_to_cloud('failed', 'Pro plugin Installation failed');
+            //$this->cleanup_temp_files();
             return false;
         }
 
         if (!$this->activate_plugin()) {
+            $this->cleanup_temp_files();
             return false;
         }
 
         //Clean up temp files
-        $this->cleanup_temp_files($zip_file);
+        $this->cleanup_temp_files();
+
+        $this->send_update_to_cloud('completed', 'PRO plugin installed and activated successfully.');
+
+        $this->delete_installation_data();
 
         return true;
     }
@@ -108,8 +122,10 @@ class Pro_Plugin_Installer
         ]);
 
         if (is_wp_error($response)) {
-            $this->log('[Installer] Download Failed: WP_Error - ' . $response->get_error_message());
-            error_log('Premium plugin download failed: ' . $response->get_error_message());
+            $message = $response->get_error_message();
+            $this->log('[Installer] Download Failed: WP_Error - ' . $message);
+            error_log('Premium plugin download failed: ' . $message);
+            $this->send_update_to_cloud('failed', $message);
             return null;
         }
 
@@ -121,15 +137,21 @@ class Pro_Plugin_Installer
         $status_code = wp_remote_retrieve_response_code($response);
 
         if ($status_code !== 200) {
-            $body = json_decode(wp_remote_retrieve_body($response), true);
-            $error_message = $body['error'] ?? 'Unknown error';
-            $this->log('[Installer] Download Failed: HTTP ' . $status_code . ' - ' . $error_message);
-            error_log('Premium plugin download failed: ' . $error_message);
+            // wp_remote_retrieve_body() returns empty string when stream:true is set
+            // because the response body was written directly to disk, not held in memory
+            $error_body = file_exists($target_file) ? file_get_contents($target_file) : '';
+            $decoded = json_decode($error_body, true);
+            $error_message = $decoded['error'] ?? ('HTTP ' . $status_code);
+            $this->log('[Installer] Download Failed: ' . $error_message);
+            if (file_exists($target_file))
+                unlink($target_file);
+            $this->send_update_to_cloud('failed', $error_message);
             return null;
         }
 
         $this->log('Downloaded file not found at ' . $target_file);
         error_log('Downloaded file not found at ' . $target_file);
+        $this->send_update_to_cloud('failed', 'Downloaded file not found at ' . $target_file);
         return null;
     }
 
@@ -151,6 +173,7 @@ class Pro_Plugin_Installer
         if (is_wp_error($result)) {
             $this->log('[Installer] Unzip Failed: ' . $result->get_error_message());
             error_log('Premium plugin unzip failed: ' . $result->get_error_message());
+            $this->send_update_to_cloud('failed', 'PRO plugin unzip failed: ' . $result->get_error_message());
             return false;
         }
 
@@ -160,6 +183,9 @@ class Pro_Plugin_Installer
         set_transient('code_snippets_pro_pending_automated_activation', [
             'pro_plugin_not_activated' => true
         ], 1800); // 30 minutes
+
+        // Send update to cloud that installation is done
+        $this->send_update_to_cloud('installed', 'PRO plugin installed successfully.');
 
         return true;
     }
@@ -203,8 +229,12 @@ class Pro_Plugin_Installer
             $this->log('Error message: ' . $result->get_error_message());
             $this->log('Error code: ' . $result->get_error_code());
             $this->log('Error data: ' . print_r($result->get_error_data(), true));
+            $this->send_update_to_cloud('failed', 'PRO plugin activation failed: ' . $result->get_error_message());
             return false;
         }
+
+        // Send update to cloud that activation is done
+        $this->send_update_to_cloud('activated', 'PRO plugin activated successfully.');
 
         return true;
     }
@@ -222,6 +252,16 @@ class Pro_Plugin_Installer
     }
 
     /**
+     * Delete the installation data from the transient
+     *
+     * @return void
+     */
+    private function delete_installation_data(): void
+    {
+        delete_transient('code_snippets_installation_data');
+    }
+
+    /**
      * Log a message to the debug log
      *
      * @param string $message The message to log.
@@ -235,5 +275,32 @@ class Pro_Plugin_Installer
         }
         $current_log[] = $message;
         update_option('cs_debug_log', $current_log);
+    }
+
+    /**
+     * Send update to cloud that installation is done
+     *
+     * @param string $status The status to send to the cloud.
+     * @param string $statusDescription The description of the status.
+     * @return void
+     */
+    private function send_update_to_cloud(string $status, string $statusDescription = ''): void
+    {
+        $installation_data = get_transient('code_snippets_installation_data');
+        $site_token = $installation_data['site_token'] ?? '';
+        $cloud_token = $installation_data['cloud_token'] ?? '';
+
+        $response = wp_remote_post($this->cloud_api_status_url, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $cloud_token,
+                'Accept' => 'application/json',
+            ],
+            'body' => [
+                'site_url' => get_site_url(),
+                'site_token' => $site_token,
+                'status' => $status,
+                'status_description' => $statusDescription,
+            ]
+        ]);
     }
 }

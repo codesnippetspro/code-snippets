@@ -1,6 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 
+//const CLOUD_CHECKOUT_URL = 'https://codesnippets.cloud/api/v1/public/plugin/checkout-init'
 const CLOUD_CHECKOUT_URL = 'http://localhost/api/v1/public/plugin/checkout-init'
 
 interface CloudCheckoutButtonProps

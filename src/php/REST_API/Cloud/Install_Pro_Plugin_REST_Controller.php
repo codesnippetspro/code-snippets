@@ -129,11 +129,6 @@ class Install_Pro_Plugin_REST_Controller extends WP_REST_Controller
             return false;
         }
 
-        // Reject requests older than 60 seconds
-        // if (abs(time() - (int) $timestamp) > 60) {
-        //     return false;
-        // }
-
         // Generate expected signature using WordPress auth key
         $secret = defined('AUTH_KEY') ? AUTH_KEY : '';
         $expected = hash_hmac('sha256', $timestamp, $secret);
