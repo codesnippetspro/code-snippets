@@ -84,6 +84,19 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 
 		register_rest_route(
 			$this->namespace,
+			$this->rest_base . '/featured',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_featured_items' ],
+					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+				],
+				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
 			$this->rest_base . '/(?P<id>\d+)/download',
 			[
 				[
@@ -119,6 +132,32 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 			: $this->get_snippets_per_page();
 
 		$cloud_snippets = Cloud_API::fetch_search_results( $method, $query, $page, $per_page );
+
+		$results = [];
+
+		foreach ( $cloud_snippets->snippets as $snippet ) {
+			$results[] = $snippet->get_fields();
+		}
+
+		$response = rest_ensure_response( $results );
+
+		$response->header( 'X-WP-Total', $cloud_snippets->total_snippets );
+		$response->header( 'X-WP-TotalPages', $cloud_snippets->total_pages );
+
+		return $response;
+	}
+
+	/**
+	 * Retrieve featured snippets from the cloud API.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_featured_items(): WP_REST_Response {
+		$cloud_snippets = Cloud_API::get_featured_snippets();
+
+		if ( ! $cloud_snippets ) {
+			return rest_ensure_response( [] );
+		}
 
 		$results = [];
 
