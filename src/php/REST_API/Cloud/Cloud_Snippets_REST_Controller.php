@@ -155,10 +155,6 @@ final class Cloud_Snippets_REST_Controller extends REST_Collection_Controller {
 	public function get_featured_items(): WP_REST_Response {
 		$cloud_snippets = Cloud_API::get_featured_snippets();
 
-		if ( ! $cloud_snippets ) {
-			return rest_ensure_response( [] );
-		}
-
 		$results = [];
 
 		foreach ( $cloud_snippets->snippets as $snippet ) {

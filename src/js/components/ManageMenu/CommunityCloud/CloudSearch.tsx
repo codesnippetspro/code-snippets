@@ -99,8 +99,13 @@ const NoSearchResultsBanner = () =>
 		<p>{__('No snippets or codevault could be found with that search term. Please try again.', 'code-snippets')}</p>
 	</div>
 
+const FeaturedHeading = () =>
+	<h3 className="cloud-featured-heading">
+		{__('Featured Snippets', 'code-snippets')}
+	</h3>
+
 export const CloudSearch = () => {
-	const { searchResults, error, page } = useCloudSearch()
+	const { searchResults, error, page, isFeatured } = useCloudSearch()
 
 	return (
 		<div className="cloud-search">
@@ -108,11 +113,18 @@ export const CloudSearch = () => {
 
 			{error && <ErrorBanner />}
 
-			{0 < page && 0 === searchResults?.length
-				? <NoSearchResultsBanner />
-				: <WithCloudSearchFiltersContext>
-					<SearchResultsTable />
-				</WithCloudSearchFiltersContext>}
+			{isFeatured && searchResults && 0 < searchResults.length
+				? <>
+					<FeaturedHeading />
+					<WithCloudSearchFiltersContext>
+						<SearchResultsTable />
+					</WithCloudSearchFiltersContext>
+				</>
+				: 0 < page && 0 === searchResults?.length
+					? <NoSearchResultsBanner />
+					: <WithCloudSearchFiltersContext>
+						<SearchResultsTable />
+					</WithCloudSearchFiltersContext>}
 		</div>
 	)
 }

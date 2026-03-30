@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { REST_BASES } from '../../../utils/restAPI'
@@ -19,6 +19,7 @@ export interface CloudSearchContext {
 	totalItems: number
 	totalPages: number
 	isSearching: boolean
+	isFeatured: boolean
 	searchResults: CloudSnippetSchema[] | undefined
 	setPage: Dispatch<SetStateAction<number>>
 	setQuery: Dispatch<SetStateAction<string>>
@@ -44,9 +45,11 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 	const [searchResults, setSearchResults] = useState<CloudSnippetSchema[] | undefined>()
 	const [isSearching, setIsSearching] = useState(false)
 	const [error, setError] = useState(false)
+	const [isFeatured, setIsFeatured] = useState(false)
 
 	const doSearch = useCallback(() => {
 		if (query) {
+			setIsFeatured(false)
 			updateQueryParam(SEARCH_PARAM, query)
 			updateQueryParam(SEARCH_METHOD_PARAM, searchByCodevault ? 'codevault' : 'term')
 			setIsSearching(true)
@@ -67,6 +70,27 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		}
 	}, [api, page, query, searchByCodevault, snippetsPerPage])
 
+	// Load featured snippets when no search query is active on initial mount.
+	useEffect(() => {
+		if (query) {
+			return
+		}
+
+		setIsSearching(true)
+
+		api.getResponse<CloudSnippetSchema[]>(`${REST_BASES.cloud}/featured`)
+			.then(response => {
+				setTotalItems(Number(response.headers['x-wp-total']))
+				setTotalPages(Number(response.headers['x-wp-totalpages']))
+				setSearchResults(response.data)
+				setIsFeatured(true)
+				setIsSearching(false)
+			})
+			.catch(() => {
+				setIsSearching(false)
+			})
+	}, [api, query])
+
 	const value: CloudSearchContext = {
 		page,
 		error,
@@ -77,6 +101,7 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 		totalItems,
 		totalPages,
 		isSearching,
+		isFeatured,
 		searchResults,
 		searchByCodevault,
 		setSearchByCodevault
