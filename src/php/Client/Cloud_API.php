@@ -30,11 +30,6 @@ class Cloud_API {
 	private const CLOUD_MAP_TRANSIENT_KEY = 'cs_local_to_cloud_map';
 
 	/**
-	 * Key used to cache featured snippets.
-	 */
-	private const FEATURED_TRANSIENT_KEY = 'cs_featured_snippets';
-
-	/**
 	 * Days to cache data retrieved from API.
 	 */
 	private const DAYS_TO_STORE_CS = 1;
@@ -179,80 +174,6 @@ class Cloud_API {
 	private static function unpack_request_json( $response ): ?array {
 		$body = wp_remote_retrieve_body( $response );
 		return $body ? json_decode( $body, true ) : null;
-	}
-
-	/**
-	 * Retrieve featured snippets from the cloud API, using a transient cache.
-	 *
-	 * @return Cloud_Snippets|null Featured snippets on success, null on failure.
-	 */
-	public static function get_featured_snippets(): ?Cloud_Snippets {
-		$cached = get_transient( self::FEATURED_TRANSIENT_KEY );
-
-		if ( false !== $cached ) {
-			return $cached instanceof Cloud_Snippets ? $cached : new Cloud_Snippets( $cached );
-		}
-
-		$api_url = add_query_arg(
-			[
-				'site_token' => self::get_local_token(),
-				'site_host'  => wp_parse_url( get_site_url(), PHP_URL_HOST ),
-			],
-			self::get_cloud_api_url() . 'featured'
-		);
-
-		$response = wp_remote_get( $api_url );
-
-		if ( is_wp_error( $response ) ) {
-			return null;
-		}
-
-		$body = self::unpack_request_json( $response );
-
-		if ( ! is_array( $body ) || ! isset( $body['data'] ) ) {
-			return null;
-		}
-
-		$snippets_data = $body['data'];
-		$cached_until = $body['cached_until'] ?? '';
-
-		$ttl = self::compute_featured_ttl( $cached_until );
-
-		$cloud_snippets = new Cloud_Snippets(
-			[
-				'snippets'       => $snippets_data,
-				'total_snippets' => count( $snippets_data ),
-				'total_pages'    => 1,
-				'page'           => 1,
-			]
-		);
-
-		set_transient( self::FEATURED_TRANSIENT_KEY, $cloud_snippets, $ttl );
-
-		return $cloud_snippets;
-	}
-
-	/**
-	 * Compute the TTL in seconds from a cached_until ISO timestamp.
-	 *
-	 * @param string $cached_until ISO 8601 timestamp.
-	 *
-	 * @return int TTL in seconds, minimum 60, default 1 hour.
-	 */
-	private static function compute_featured_ttl( string $cached_until ): int {
-		if ( empty( $cached_until ) ) {
-			return HOUR_IN_SECONDS;
-		}
-
-		$expires = strtotime( $cached_until );
-
-		if ( false === $expires ) {
-			return HOUR_IN_SECONDS;
-		}
-
-		$ttl = $expires - time();
-
-		return max( MINUTE_IN_SECONDS, $ttl );
 	}
 
 	/**
