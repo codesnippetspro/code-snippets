@@ -224,4 +224,68 @@ class Cloud_API_Featured_Test extends TestCase {
 		$this->assertInstanceOf( Cloud_Snippets::class, $result );
 		$this->assertCount( 0, $result->snippets );
 	}
+
+	/**
+	 * Transient TTL respects cached_until when it exceeds the minimum.
+	 *
+	 * @return void
+	 */
+	public function test_ttl_respects_cached_until(): void {
+		// Response with cached_until 2 hours from now.
+		$two_hours_from_now = gmdate( 'Y-m-d\TH:i:s\Z', time() + 7200 );
+		$this->mock_response = $this->build_success_response( 2, $two_hours_from_now );
+
+		Cloud_API::get_featured_snippets();
+
+		// Transient should exist after the call.
+		$cached = get_transient( self::TRANSIENT_KEY );
+		$this->assertInstanceOf( Cloud_Snippets::class, $cached );
+
+		// Now test fallback: response without cached_until uses minimum TTL (3600).
+		delete_transient( self::TRANSIENT_KEY );
+		$this->mock_response = $this->build_success_response( 2, '' );
+
+		Cloud_API::get_featured_snippets();
+
+		$cached_fallback = get_transient( self::TRANSIENT_KEY );
+		$this->assertInstanceOf( Cloud_Snippets::class, $cached_fallback );
+	}
+
+	/**
+	 * Response missing the data key returns an empty Cloud_Snippets.
+	 *
+	 * @return void
+	 */
+	public function test_returns_empty_on_missing_data_key(): void {
+		$this->mock_response = [
+			'headers'  => [],
+			'body'     => wp_json_encode( [ 'status' => 'ok' ] ),
+			'response' => [
+				'code'    => 200,
+				'message' => 'OK',
+			],
+			'cookies'  => [],
+		];
+
+		$result = Cloud_API::get_featured_snippets();
+
+		$this->assertInstanceOf( Cloud_Snippets::class, $result );
+		$this->assertCount( 0, $result->snippets );
+		$this->assertSame( 0, $result->total_snippets );
+	}
+
+	/**
+	 * Transient stores an actual Cloud_Snippets instance, not a plain array.
+	 *
+	 * @return void
+	 */
+	public function test_transient_stores_cloud_snippets_instance(): void {
+		Cloud_API::get_featured_snippets();
+
+		$raw_transient = get_transient( self::TRANSIENT_KEY );
+
+		$this->assertInstanceOf( Cloud_Snippets::class, $raw_transient );
+		$this->assertNotIsArray( $raw_transient );
+		$this->assertCount( 3, $raw_transient->snippets );
+	}
 }
