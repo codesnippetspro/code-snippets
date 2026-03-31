@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { createContextHook } from '../../../utils/bootstrap'
 import { useRestAPI } from '../../../hooks/useRestAPI'
 import { REST_BASES } from '../../../utils/restAPI'
@@ -10,6 +10,7 @@ const SEARCH_PARAM = 's'
 const SEARCH_METHOD_PARAM = 'by'
 const DEFAULT_SNIPPETS_PER_PAGE = 10
 const MAX_CLOUD_RESULTS_PER_PAGE = 100
+const SEARCH_DEBOUNCE_MS = 500
 
 export interface CloudSearchContext {
 	page: number
@@ -47,8 +48,24 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 	const [error, setError] = useState(false)
 	const [isFeatured, setIsFeatured] = useState(false)
 
+	const searchTimerRef = useRef<ReturnType<typeof setTimeout>>()
+	const activeRequestRef = useRef(0)
+
+	const nextRequestId = useCallback(() => {
+		activeRequestRef.current += 1
+		return activeRequestRef.current
+	}, [])
+
 	const doSearch = useCallback(() => {
-		if (query) {
+		if (!query) {
+			return
+		}
+
+		clearTimeout(searchTimerRef.current)
+
+		searchTimerRef.current = setTimeout(() => {
+			const requestId = nextRequestId()
+
 			setIsFeatured(false)
 			updateQueryParam(SEARCH_PARAM, query)
 			updateQueryParam(SEARCH_METHOD_PARAM, searchByCodevault ? 'codevault' : 'term')
@@ -58,17 +75,23 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 				buildUrl(REST_BASES.cloud, { query, searchByCodevault, page, per_page: snippetsPerPage })
 			)
 				.then(response => {
+					if (requestId !== activeRequestRef.current) {
+						return
+					}
 					setTotalItems(Number(response.headers['x-wp-total']))
 					setTotalPages(Number(response.headers['x-wp-totalpages']))
 					setSearchResults(response.data)
 					setIsSearching(false)
 				})
 				.catch(() => {
+					if (requestId !== activeRequestRef.current) {
+						return
+					}
 					setIsSearching(false)
 					setError(true)
 				})
-		}
-	}, [api, page, query, searchByCodevault, snippetsPerPage])
+		}, SEARCH_DEBOUNCE_MS)
+	}, [api, nextRequestId, page, query, searchByCodevault, snippetsPerPage])
 
 	// Load featured snippets when no search query is active on initial mount.
 	useEffect(() => {
@@ -76,10 +99,14 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 			return
 		}
 
+		const requestId = nextRequestId()
 		setIsSearching(true)
 
 		api.getResponse<CloudSnippetSchema[]>(`${REST_BASES.cloud}/featured`)
 			.then(response => {
+				if (requestId !== activeRequestRef.current) {
+					return
+				}
 				setTotalItems(Number(response.headers['x-wp-total']))
 				setTotalPages(Number(response.headers['x-wp-totalpages']))
 				setSearchResults(response.data)
@@ -87,9 +114,15 @@ export const WithCloudSearchContext: React.FC<PropsWithChildren> = ({ children }
 				setIsSearching(false)
 			})
 			.catch(() => {
+				if (requestId !== activeRequestRef.current) {
+					return
+				}
 				setIsSearching(false)
 			})
-	}, [api, query])
+	}, [api, nextRequestId, query])
+
+	// Cleanup debounce timer on unmount.
+	useEffect(() => () => clearTimeout(searchTimerRef.current), [])
 
 	const value: CloudSearchContext = {
 		page,
