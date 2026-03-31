@@ -374,7 +374,7 @@ class Cloud_API {
 			return $cached;
 		}
 
-		$url = self::get_cloud_api_url() . 'featured';
+		$url = self::get_cloud_api_url() . 'public/featured';
 
 		$response = wp_remote_get(
 			$url,
