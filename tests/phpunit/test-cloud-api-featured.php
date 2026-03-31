@@ -27,9 +27,9 @@ class Cloud_API_Featured_Test extends TestCase {
 	/**
 	 * Response to return from the mock HTTP filter.
 	 *
-	 * @var array|null
+	 * @var array|\WP_Error|null
 	 */
-	private ?array $mock_response = null;
+	private $mock_response = null;
 
 	/**
 	 * Set up before each test.
@@ -111,11 +111,11 @@ class Cloud_API_Featured_Test extends TestCase {
 	 * @return mixed
 	 */
 	public function mock_featured_request( $preempt, array $parsed_args, string $url ) {
-		if ( false === strpos( $url, 'api/v1/featured' ) ) {
+		if ( false === strpos( $url, 'public/featured' ) ) {
 			return $preempt;
 		}
 
-		++$this->http_request_count;
+		$this->http_request_count += 1;
 
 		if ( null !== $this->mock_response ) {
 			return $this->mock_response;
@@ -285,7 +285,7 @@ class Cloud_API_Featured_Test extends TestCase {
 		$raw_transient = get_transient( self::TRANSIENT_KEY );
 
 		$this->assertInstanceOf( Cloud_Snippets::class, $raw_transient );
-		$this->assertNotIsArray( $raw_transient );
+		$this->assertFalse( is_array( $raw_transient ) );
 		$this->assertCount( 3, $raw_transient->snippets );
 	}
 }
