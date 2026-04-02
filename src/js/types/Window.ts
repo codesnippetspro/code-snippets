@@ -34,6 +34,7 @@ declare global {
 				rest_nonce: string
 				localToken: string
 				piToken: string
+				cloudUrl?: string
 			}
 			urls: {
 				plugin: string

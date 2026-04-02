@@ -360,6 +360,7 @@ class Plugin
 					'importFiles' => esc_url_raw(rest_url(File_Import_REST_Controller::get_base_route())),
 					'localToken' => $this->cloud_api->get_local_token(),
 					'piToken' => (new Plugin_Installation_Token())->get_token(),
+					'cloudUrl' => Cloud_API::get_cloud_url(),
 				],
 				'urls' => [
 					'plugin' => esc_url_raw(plugins_url('', PLUGIN_FILE)),

@@ -1,8 +1,11 @@
 import React from 'react'
 import classnames from 'classnames'
 
-//const CLOUD_CHECKOUT_URL = 'https://codesnippets.cloud/api/v1/public/plugin/checkout-init'
-const CLOUD_CHECKOUT_URL = 'http://localhost/api/v1/public/plugin/checkout-init'
+const getCloudCheckoutUrl = () => {
+	const cloudUrl = window.CODE_SNIPPETS?.restAPI?.cloudUrl || 'https://codesnippets.cloud'
+	const baseUrl = cloudUrl.replace(/\/$/, '')
+	return `${baseUrl}/api/v1/public/plugin/checkout-init`
+}
 
 interface CloudCheckoutButtonProps
 	extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -16,7 +19,7 @@ interface CloudCheckoutButtonProps
 
 export const CloudCheckoutButton: React.FC<CloudCheckoutButtonProps> = ({
 	children,
-	to = CLOUD_CHECKOUT_URL,
+	to,
 	className,
 	primary,
 	secondary,
@@ -28,10 +31,11 @@ export const CloudCheckoutButton: React.FC<CloudCheckoutButtonProps> = ({
 }) => {
 	// Function to construct the URL with query parameters
 	const getCheckoutUrl = () => {
+		const targetUrl = to || getCloudCheckoutUrl()
 		const piToken = window.CODE_SNIPPETS?.restAPI?.piToken || ''
 		const hostUrl = window.location.origin
 
-		const url = new URL(to)
+		const url = new URL(targetUrl)
 		url.searchParams.append('pi_token', piToken)
 		url.searchParams.append('host_url', hostUrl)
 

@@ -98,13 +98,20 @@ class Verify_Pre_Installation_REST_Controller extends WP_REST_Controller
 
         // Verify the request is from cloud domain
         $referer = $request->get_header('referer');
-        $allowed_domains = ['codesnippets.cloud', 'localhost'];
+        $origin = $request->get_header('origin');
 
-        if ($referer) {
-            $referer_host = parse_url($referer, PHP_URL_HOST);
-            if (!in_array($referer_host, $allowed_domains)) {
+        $cloud_url = \Code_Snippets\Client\Cloud_API::get_cloud_url();
+        $cloud_host = parse_url($cloud_url, PHP_URL_HOST);
+        $allowed_domains = [$cloud_host, 'codesnippets.cloud', 'localhost'];
+
+        // Prefer Origin over Referer for API requests
+        $source_url = $origin ?: $referer;
+
+        if ($source_url) {
+            $source_host = parse_url($source_url, PHP_URL_HOST);
+            if (!in_array($source_host, $allowed_domains, true)) {
                 return new \WP_Error(
-                    'invalid_referer',
+                    'invalid_origin',
                     __('Request must originate from Code Snippets Cloud.', 'code-snippets'),
                     ['status' => 403]
                 );

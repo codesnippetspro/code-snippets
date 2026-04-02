@@ -29,8 +29,9 @@ class Pro_Plugin_Installer
         $this->temp_dir = WP_CONTENT_DIR . '/code-snippets-pro-temp';
         $this->pro_plugin_path = 'code-snippets-pro/code-snippets.php';
         $this->pro_full_path = WP_PLUGIN_DIR . '/' . $this->pro_plugin_path;
-        //$this->cloud_api_status_url = 'https://codesnippets.cloud/api/v1/external/update-installation-status';
-        $this->cloud_api_status_url = 'http://localhost/api/v1/freemius/update-installation-status';
+
+        $cloud_url = defined('CS_CLOUD_URL') ? CS_CLOUD_URL : 'https://codesnippets.cloud';
+        $this->cloud_api_status_url = rtrim($cloud_url, '/') . '/api/v1/external/update-installation-status';
     }
 
     /**
