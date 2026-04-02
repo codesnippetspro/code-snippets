@@ -1,6 +1,8 @@
 {
     "extends": "@tsconfig/node18/tsconfig.json",
     "compilerOptions": {
+        "module": "CommonJS",
+        "moduleResolution": "Node",
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": true,
         "forceConsistentCasingInFileNames": true,
@@ -21,6 +23,10 @@
         "*.config.js"
     ],
     "ts-node": {
+        "compilerOptions": {
+            "module": "CommonJS",
+            "moduleResolution": "Node"
+        },
         "files": true,
         "require": [
             "tsconfig-paths/register"
