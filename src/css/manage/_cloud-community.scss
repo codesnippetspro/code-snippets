@@ -81,6 +81,25 @@
 
 	.cloud-snippet {
 		padding: 24px;
+
+		h3 .cloud-snippet-title-button {
+			display: inline;
+			margin: 0;
+			padding: 0;
+			border: none;
+			background: none;
+			font: inherit;
+			color: #2271b1;
+			cursor: pointer;
+			text-align: start;
+			text-decoration: underline;
+		}
+
+		h3 .cloud-snippet-title-button:focus-visible {
+			outline: 2px solid #2271b1;
+			outline-offset: 2px;
+			border-radius: 2px;
+		}
 	}
 
 	.cloud-snippet-meta {

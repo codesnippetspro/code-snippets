@@ -30,16 +30,16 @@ interface CloudSnippetDetailsProps {
 const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setIsPreviewOpen }) =>
 	<div className="cloud-snippet">
 		<h3>
-			<a
-				href="#"
+			<button
+				type="button"
+				className="cloud-snippet-title-button"
 				title={__('Preview this snippet', 'code-snippets')}
-				onClick={event => {
-					event.preventDefault()
+				onClick={() => {
 					setIsPreviewOpen(true)
 				}}
 			>
 				{snippet.name}
-			</a>
+			</button>
 		</h3>
 
 		<div className="cloud-snippet-meta">
