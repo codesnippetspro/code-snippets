@@ -39,18 +39,17 @@ export const ImportMenu: React.FC = () => {
 			<div className="narrow">
 				<h2 className="nav-tab-wrapper">
 					{TABS.map(tab =>
-						<a
+						<button
 							key={tab}
-							href="#"
+							type="button"
 							className={classnames('nav-tab', { 'nav-tab-active': tab === activeTab })}
-							onClick={event => {
-								event.preventDefault()
+							onClick={() => {
 								setActiveTab(tab)
 								updateQueryParam('tab', tab)
 							}}
 						>
 							{TAB_LABELS[tab]}
-						</a>)}
+						</button>)}
 				</h2>
 
 				<WithRestAPIContext>
