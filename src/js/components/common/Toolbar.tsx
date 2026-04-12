@@ -84,7 +84,7 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 			<h1>{__('Code Snippets', 'code-snippets')}</h1>
 		</div>
 
-		<nav aria-label={__('Navigation links', 'code-snippets')}>
+		<nav aria-label={__('Main links', 'code-snippets')}>
 			<ul>
 				{UPPER_NAV_LINKS.map(({ name, url, label, external }) =>
 					<li key={name}>
@@ -120,7 +120,7 @@ const currentPage = fetchQueryParam('subpage') ?? fetchQueryParam('page')
 
 const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 	<div className="code-snippets-toolbar-lower">
-		<nav aria-label={__('Code snippets navigation', 'code-snippets')}>
+		<nav aria-label={__('Main features', 'code-snippets')}>
 			<ul>
 				{LOWER_NAV_LINKS.map(({ name, url, label, pro, icon }) =>
 					<li key={name}>
