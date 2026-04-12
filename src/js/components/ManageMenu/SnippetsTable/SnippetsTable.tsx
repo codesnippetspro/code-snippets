@@ -121,11 +121,14 @@ const SnippetsTableInner = () => {
 		<div className="wrap">
 			<PageHeading />
 
-			<h2 className="nav-tab-wrapper snippet-type-tabs">
+			<nav
+				className="nav-tab-wrapper snippet-type-tabs"
+				aria-label={__('Snippet types', 'code-snippets')}
+			>
 				<SnippetTypeTab setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
 				{SNIPPET_TYPES.map(type =>
 					<SnippetTypeTab key={type} type={type} setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />)}
-			</h2>
+			</nav>
 
 			<WithFilteredSnippetsContext>
 				<SnippetsListTable />
