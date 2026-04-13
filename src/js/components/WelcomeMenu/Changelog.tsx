@@ -38,7 +38,7 @@ interface ChangelogSectionProps {
 const ChangelogSection: React.FC<ChangelogSectionProps> = ({ section, entries }) =>
 	<>
 		<h4>
-			<span className={`dashicons dashicons-${CHANGELOG_ICONS[section]}`}></span>
+			<span className={`dashicons dashicons-${CHANGELOG_ICONS[section]}`} aria-hidden="true"></span>
 			{CHANGELOG_LABELS[section]}
 		</h4>
 		<ul>

@@ -21,13 +21,13 @@ interface StatusIconProps {
 const StatusIcon: React.FC<StatusIconProps> = ({ status }) => {
 	switch (status) {
 		case Status.INITIAL:
-			return <CopyIcon />
+			return <CopyIcon aria-hidden="true" />
 		case Status.PROGRESSING:
-			return <span className="spinner-wrapper"><Spinner /></span>
+			return <span className="spinner-wrapper" aria-hidden="true"><Spinner /></span>
 		case Status.SUCCESS:
-			return <span className="dashicons dashicons-yes"></span>
+			return <span className="dashicons dashicons-yes" aria-hidden="true"></span>
 		case Status.ERROR:
-			return <span className="dashicons dashicons-warning"></span>
+			return <span className="dashicons dashicons-warning" aria-hidden="true"></span>
 	}
 }
 

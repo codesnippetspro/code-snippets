@@ -41,30 +41,30 @@ const LOWER_NAV_LINKS: NavLink[] = [
 		name: 'snippets',
 		url: window.CODE_SNIPPETS?.urls.manage,
 		label: __('Snippets', 'code-snippets'),
-		icon: <SnippetsIcon />
+		icon: <SnippetsIcon aria-hidden="true" />
 	},
 	{
 		name: 'cloud-community',
 		label: __('Community Cloud', 'code-snippets'),
-		icon: <CommunityIcon />
+		icon: <CommunityIcon aria-hidden="true" />
 	},
 	{
 		name: 'cloud-library',
 		label: __('My Library', 'code-snippets'),
-		icon: <LibraryIcon />,
+		icon: <LibraryIcon aria-hidden="true" />,
 		pro: true
 	},
 	{
 		name: 'cloud-teams',
 		label: __('My Teams', 'code-snippets'),
-		icon: <TeamsIcon />,
+		icon: <TeamsIcon aria-hidden="true" />,
 		pro: true
 	},
 	{
 		name: 'settings',
 		url: window.CODE_SNIPPETS?.urls.settings,
 		label: __('Settings', 'code-snippets'),
-		icon: <SettingsIcon />
+		icon: <SettingsIcon aria-hidden="true" />
 	}
 ]
 
