@@ -39,6 +39,7 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 				<a
 					className="snippet-execution-button"
 					title={__('Run Once', 'code-snippets')}
+					aria-label={__('Run Once', 'code-snippets')}
 					href={buildUrl(window.location.href, { action: 'run-once', snippet: snippet.id })}
 				>
 					&nbsp;
