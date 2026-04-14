@@ -204,17 +204,19 @@ const SearchBox = () => {
 	const { searchQuery, setSearchQuery } = useSnippetsFilters()
 
 	return (
-		<p className="search-box">
-			<label className="screen-reader-text" htmlFor="snippets_search">{__('Search Snippets:', 'code-snippets')}</label>
-			<input
-				type="search"
-				id="snippets_search"
-				name="s"
-				value={searchQuery ?? ''}
-				onChange={event => setSearchQuery(event.target.value)}
-				placeholder={__('Search snippets', 'code-snippets')}
-			/>
-		</p>
+		<search aria-label={__('Search Snippets', 'code-snippets')}>
+			<p className="search-box">
+				<label className="screen-reader-text" htmlFor="snippets_search">{__('Search Snippets:', 'code-snippets')}</label>
+				<input
+					type="search"
+					id="snippets_search"
+					name="s"
+					value={searchQuery ?? ''}
+					onChange={event => setSearchQuery(event.target.value)}
+					placeholder={__('Search snippets', 'code-snippets')}
+				/>
+			</p>
+		</search>
 	)
 }
 
