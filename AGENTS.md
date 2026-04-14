@@ -1,113 +1,192 @@
-# AGENTS.md — AI Agent Instructions
+# Code Snippets
 
-This file directs all non-Copilot AI agents (Claude, Gemini, Cursor, Aider, GPT-based tools, and any other
-coding assistant) operating in this repository.
+This file is the single source of truth for project standards, coding conventions, and development workflows in this repository. All contributors — human or automated — should follow these rules.
+
+Tool-specific configuration lives in dedicated locations:
+
+- **GitHub Copilot:** `.github/copilot-instructions.md` and `.github/instructions/*.instructions.md`
+- **Cursor:** `.cursor/rules/*.mdc`
+- **Claude:** `claude.md`
 
 ---
 
-## Canonical instruction source
+## Project Overview
 
-**All AI agent behavior for this repository is governed by a single canonical file:**
+**Code Snippets** is a WordPress plugin that lets site owners manage and execute PHP, HTML, CSS, and JavaScript code snippets through a graphical interface — replacing the need to edit `functions.php` or maintain multiple single-purpose plugins.
+
+---
+
+## Repository Structure
 
 ```
-.github/copilot-instructions.md
+<root>/
+├── src/                   # Shipped plugin root
+│   ├── code-snippets.php  # Plugin bootstrap
+│   ├── php/               # PHP application code (PSR-4: Code_Snippets\)
+│   │   ├── Plugin.php     # Main orchestrator
+│   │   ├── Admin/         # Admin UI, menus
+│   │   ├── Core/          # Bootstrap, safe mode
+│   │   ├── REST_API/      # REST endpoint controllers
+│   │   ├── Model/         # Snippet data model
+│   │   ├── Flat_Files/    # File-based snippet storage
+│   │   ├── Integration/   # Third-party integrations
+│   │   ├── Migration/     # Data migration logic
+│   │   ├── Settings/      # Plugin settings
+│   │   └── Utils/         # Shared utilities
+│   ├── js/                # TypeScript / React source
+│   │   ├── entries/       # Webpack entrypoints
+│   │   ├── components/    # Feature-grouped React UI
+│   │   ├── hooks/         # Custom React hooks
+│   │   ├── services/      # API service layer
+│   │   ├── types/         # TypeScript type definitions
+│   │   └── utils/         # JS utilities
+│   ├── css/               # SCSS source files
+│   ├── dist/              # Webpack output (built assets, not committed)
+│   ├── vendor/            # Composer dependencies
+│   └── composer.json      # PHP dependency management
+├── config/                # Webpack and PostCSS configuration
+├── scripts/               # Release, versioning, and linter scripts
+├── tests/                 # PHPUnit suites, Playwright E2E specs
+├── assets/                # WordPress.org screenshots, icons, and banners
+└── .github/               # CI workflows, issue templates, Copilot instructions
 ```
 
-You MUST read, parse, and follow `.github/copilot-instructions.md` in full before performing any task in this
-repository. That file is the authoritative source of truth for:
+---
 
-- Project overview, architecture, and repository structure
-- Tech stack and minimum requirements
-- Coding standards (PHP, TypeScript/React, SCSS)
-- Branching strategy and Git workflow
-- Security checklist
-- Testing requirements
-- What to do and what never to do
+## Tech Stack
 
-Do not rely on your training-data assumptions about this project. Always read the instructions file first.
+| Layer         | Technology                                                     |
+|---------------|----------------------------------------------------------------|
+| Backend       | PHP 7.4+, WordPress APIs, PSR-4 via Composer                   |
+| Frontend      | TypeScript, React 18, `@wordpress/components`, CodeMirror 5    |
+| Styling       | SCSS (PostCSS, logical properties via `stylelint-use-logical`) |
+| Build         | Webpack 5, Babel, `ts-loader`, `sass-loader`                   |
+| PHP linting   | PHPCS + WPCS (`npm run lint:php`)                              |
+| JS/TS linting | ESLint 9 flat config (`npm run lint:js`)                       |
+| CSS linting   | Stylelint (`npm run lint:styles`)                              |
+| PHP tests     | PHPUnit (`npm run test:php`)                                   |
+| E2E tests     | Playwright (`npm run test:playwright`)                         |
+| WP dev env    | `@wordpress/env` / `wp-env` (`npm run wp-env:start`)           |
+| Pre-commit    | Husky + lint-staged (auto-fix on commit)                       |
+| PHP deps      | Composer with Imposter (namespace-prefixing)                   |
 
 ---
 
-## Instruction centralization policy
+## Coding Standards
 
-Custom instructions for this repository are **defined once, for GitHub Copilot, in `.github/copilot-instructions.md`
-and `.github/instructions/*.instructions.md`**. They are not duplicated in agent-specific config files
-(`.cursorrules`, `claude.md`, `aider.conf`, or similar).
+### General
 
-If you are an agent that supports agent-specific instruction files:
-- Do **not** create a separate instructions file with overlapping rules.
-- Do **not** override or contradict the rules in `.github/copilot-instructions.md`.
-- **Do** read `.github/copilot-instructions.md` as your primary prompt context before each session.
+- Follow the **WordPress Coding Standards** for PHP, JS, CSS, and HTML.
+- `strict_types=1` is not enforced project-wide — match the style of the file being edited.
+- Keep lines under 120 characters for PHP; 100 for JS/TS.
+- All user-visible strings must be wrapped in a WordPress i18n function with the text domain `code-snippets`.
+- Use `__()`, `_e()`, `esc_html__()`, `esc_attr__()`, `_x()`, `_n()` as appropriate — never echo raw translatable strings.
+- Do not load translations before `init` or `plugins_loaded`.
 
-Path-specific instruction files in `.github/instructions/` also apply when working on files that match their
-`applyTo` glob. Read all relevant `*.instructions.md` files alongside the root instructions.
+### PHP
 
----
+- Namespace: `Code_Snippets\` — all new classes must live under this namespace and be PSR-4 autoloaded.
+- Vendor dependencies: always use the prefixed namespace `Code_Snippets\Vendor\…` (Imposter-prefixed).
+- Guard direct execution at the top of every standalone file: `defined('ABSPATH') || exit;`
+- Use `wp_die()` for fatal admin errors; never `die()` or `exit` with user-facing output.
+- In `src/php/Plugin.php` (and Core bootstrap), rely on `autoload.php`; avoid manual `require_once` chains.
+- Avoid creating custom database tables. Prefer WordPress-native storage: `wp_options` for settings/flags, transients for cached/temporary data, or hidden custom post types for structured content. Custom tables require manual schema management, migration, and uninstall logic — only justify them when native storage genuinely cannot meet the requirement.
 
-## MCP Tools — required setup check
+### TypeScript / React
 
-This repository's workflows rely on two MCP tool servers. Before starting work, check whether they are available
-and, if not, ask the user to set them up.
+- Export types that appear in exported function signatures — do not leak unexported shapes.
+- Use `@wordpress/api-fetch` or the service layer in `src/js/services/` for all WP REST calls.
+- Prefer `@wordpress/components` for UI; avoid reimplementing existing WP admin patterns.
 
-### Context7
+### SCSS
 
-Context7 provides up-to-date, version-specific documentation for every library used in this project
-(WordPress APIs, React, TypeScript, Playwright, CodeMirror, etc.).
-
-**Check:** Try to call `mcp_context7_resolve-library-id`. If the tool is unavailable, notify the user:
-
-> "The Context7 MCP server is not available in this session. It provides accurate library docs that prevent
-> outdated API usage. To set it up, run:
-> `npx -y @upstash/context7-mcp@latest`
-> then add it to your MCP config (VS Code `mcp.json` or equivalent). Please set it up and restart the session
-> so I can use it for accurate documentation lookups."
-
-**When to use (once available):**
-- Before writing any code that calls a WordPress hook, REST API endpoint, or `@wordpress/*` package method.
-- Before using any Playwright, React, or TypeScript API you are not 100% certain about.
-- Use `resolve-library-id` → `query-docs` workflow for all library lookups.
-
-### Chrome DevTools
-
-Chrome DevTools MCP (`mcp_chrome-devtoo_*`) enables live browser inspection: DOM snapshots, console errors,
-network request inspection, accessibility audits, and performance traces.
-
-**Check:** Try to call `mcp_chrome-devtoo_list_pages`. If the tool is unavailable, notify the user:
-
-> "The Chrome DevTools MCP server is not available in this session. It lets me inspect the live WordPress admin
-> UI, verify REST API responses, and check accessibility. To set it up, install the Chrome DevTools MCP
-> extension in VS Code or add `@modelcontextprotocol/server-chrome` to your MCP config, then restart the session."
-
-**When to use (once available):**
-- Debugging UI regressions, layout issues, or JS errors in the WP admin.
-- Verifying REST API call payloads and responses.
-- Validating keyboard navigation, ARIA attributes, and WCAG contrast for UI changes.
-- Running performance traces on frontend pages.
+- Use logical CSS properties (e.g., `margin-inline-start` not `margin-left`) — enforced by stylelint.
 
 ---
 
-## Quick-start checklist for agents
+## Architecture Patterns
 
-Before writing or modifying any code in this repository:
-
-1. Read `.github/copilot-instructions.md` completely.
-2. Read any `.github/instructions/*.instructions.md` file whose `applyTo` pattern matches the files you will touch.
-3. Check that Context7 MCP is available; if not, ask the user to set it up before proceeding.
-4. Check that Chrome DevTools MCP is available when your task involves browser/UI work; if not, ask the user.
-5. Follow the branching strategy: branch from `core-beta` for all feature and fix work.
-6. Apply the security checklist to every change before submitting.
-7. Ensure tests (PHPUnit / Playwright) cover any new or changed behaviour.
-8. Never ship `src/dist/` or `bundle/` build artifacts in a feature branch.
+- **PSR-4 autoloading via Composer** — class files are discovered automatically; do not `require` them manually.
+- **Imposter prefixing** — all `vendor/` code is rewritten to `Code_Snippets\Vendor\…` to prevent conflicts with other plugins using the same libraries.
+- **Snippet model** — core data unit is `Code_Snippets\Model\Snippet`; use its API for reading/writing snippet data, not raw DB access.
+- **Hook-driven extensibility** — use WordPress filters and actions as the primary extension mechanism; expose a filter before changing any default behaviour that may be preference-driven.
+- **Safe mode** — `src/php/Core/load.php` boots a recovery path when safe mode is active; any change to snippet execution must preserve this path.
 
 ---
 
-## Why this structure exists
+## Branching & Git Workflow
 
-GitHub Copilot is the primary AI assistant for this repository. Its instruction format
-(`.github/copilot-instructions.md` + `.github/instructions/*.instructions.md`) is the most
-expressive and maintainable way to encode project-wide and path-specific rules. Centralizing
-all instructions here — and pointing other agents at these files — ensures:
+- **Production branch:** `core`
+- **Pre-release branch:** `core-beta`
+- **Development branches:** `feat/…`, `fix/…`, `chore/…`, `hotfix/…`
+- Branch from `core-beta` for all feature and fix work.
+- Open PRs back into `core-beta`.
+- Use **merge commits** (not squash/rebase) when merging dev branches into `core-beta`.
+- Hotfixes branch from `core` and merge directly back into `core`.
 
-- A single source of truth that is easy to review and update.
-- Consistent behaviour across all AI tools without duplicating rules.
-- Clear ownership: Copilot instructions define the standard; other agents follow it.
+---
+
+## Development Commands
+
+```bash
+# Install dependencies
+npm install                  # Node deps + Husky hooks
+cd src && composer install   # PHP deps (or: npm run bundle)
+
+# WordPress environment
+npm run wp-env:start         # Start local WP instance
+npm run wp-env:stop
+npm run wp-env:clean         # Reset all data
+
+# Build
+npm run build                # Webpack build (JS + CSS → src/dist/)
+npm run watch                # Webpack watch mode
+npm run bundle               # Full distribution build → bundle/
+
+# Lint
+npm run lint                 # All: PHP + JS + CSS
+npm run lint:php             # PHPCS with WPCS
+npm run lint:js              # ESLint
+npm run lint:styles          # Stylelint
+
+# Tests
+npm run test:php             # PHPUnit
+npm run test:playwright      # Playwright E2E (requires wp-env running)
+./test-playwright.sh         # Helper script for Playwright
+```
+
+---
+
+## Security Checklist
+
+Apply to every change:
+
+- Sanitize all user inputs server-side before use.
+- Escape all outputs at the correct boundary (HTML, attribute, JS, URL).
+- Verify a WordPress nonce on every state-changing request.
+- Verify `current_user_can()` alongside nonce checks.
+- Never use `eval`, `create_function`, or `call_user_func` with untrusted input.
+- Apply `rel="noopener noreferrer"` to every `target="_blank"` link.
+- Use `$wpdb->prepare()` for every dynamic SQL value.
+- Any feature fetching remote content must document its trust model.
+
+---
+
+## Testing Requirements
+
+- **Unit tests** (PHPUnit) — required for all PHP logic changes.
+- **Integration tests** (PHPUnit) — required when changing DB schema, REST endpoints, or hook behaviour.
+- **E2E tests** (Playwright) — required for changes affecting snippet create/edit/execute flows.
+- **Minimum requirements** - Tests must be compatible with the minimum supported PHP 7.4 and WordPress 5.5.
+- **Build** - Generated build artifacts (`src/dist/`, Composer autoload maps) must be regenerated when source changes.
+
+---
+
+## Do Not
+
+- Do not create custom database tables without strong justification — use `wp_options`, transients, or custom post types instead.
+- Do not echo raw user input — always escape at output.
+- Do not concatenate translated string fragments — translate full sentences.
+- Do not place HTML markup inside translated strings.
+- Do not rely on "deactivate the plugin" as a recovery path — safe mode must remain functional.
+- Do not ship build artifacts to feature branches — `src/dist/` and `bundle/` are built in CI.
