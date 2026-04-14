@@ -1,0 +1,52 @@
+---
+description: Development workflow guidelines for before, during, and after implementation
+alwaysApply: true
+---
+
+# Development Workflow
+
+## Before Starting Work
+
+1. **Search First**: Use codebase_search to find existing functionality
+2. **Understand Architecture**: Know if it's main repo or turbo-repo work
+3. **Check Dependencies**: Understand package relationships
+4. **Plan API Design**: Design interfaces before implementation
+
+## During Development
+
+1. **Follow Patterns**: Use existing patterns and conventions
+2. **Write Tests**: Add tests for critical paths
+3. **Type Safety**: Use TypeScript strictly
+4. **Document APIs**: Document all public interfaces
+
+## After Implementation
+
+1. **Run Tests**: Ensure all tests pass
+2. **Lint Code**: Fix any linting issues
+3. **Check Dependencies**: Verify no circular dependencies
+4. **Test Integration**: Verify with other packages
+
+## Performance Considerations
+
+### Bundle size
+
+- Monitor bundle size changes
+- Use dynamic imports for large components
+- Optimize images and assets
+- Remove unused dependencies
+
+### Runtime performance
+
+- Profile React components
+- Optimize re-renders
+- Use proper memoization
+- Monitor memory usage
+
+## Security Guidelines
+
+- Sanitize all user inputs
+- Validate data types and ranges
+- Use proper escaping
+- Check user permissions
+- Keep dependencies updated
+- Audit for vulnerabilities

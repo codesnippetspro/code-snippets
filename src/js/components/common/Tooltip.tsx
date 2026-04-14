@@ -20,13 +20,13 @@ export const Tooltip: React.FC<TooltipProps> = ({ block, inline, start, end, ico
 		{ 'tooltip-block': block, 'tooltip-inline': inline, 'tooltip-start': start, 'tooltip-end': end },
 		className
 	)}>
-		{icon ?? <span className="dashicons dashicons-editor-help"></span>}
+		{icon ?? <span className="dashicons dashicons-editor-help" aria-hidden="true"></span>}
 		<div className="tooltip-content">
 			{children}
 		</div>
 	</div>
 
 export const ErrorTooltip: React.FC<{ message: string }> = ({ message }) =>
-	<Tooltip block end icon={<span className="dashicons dashicons-warning"></span>}>
+	<Tooltip block end icon={<span className="dashicons dashicons-warning" aria-hidden="true"></span>}>
 		{`${trimTrailingChar(message, '.!?')}. ${__('Please try again.', 'code-snippets')}`}
 	</Tooltip>

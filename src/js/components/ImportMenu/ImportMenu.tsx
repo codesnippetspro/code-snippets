@@ -42,18 +42,17 @@ export const ImportMenu: React.FC = () => {
 					aria-label={__('Import sources', 'code-snippets')}
 				>
 					{TABS.map(tab =>
-						<a
+						<button
 							key={tab}
-							href="#"
+							type="button"
 							className={classnames('nav-tab', { 'nav-tab-active': tab === activeTab })}
-							onClick={event => {
-								event.preventDefault()
+							onClick={() => {
 								setActiveTab(tab)
 								updateQueryParam('tab', tab)
 							}}
 						>
 							{TAB_LABELS[tab]}
-						</a>)}
+						</button>)}
 				</nav>
 
 				<WithRestAPIContext>

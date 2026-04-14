@@ -41,30 +41,30 @@ const LOWER_NAV_LINKS: NavLink[] = [
 		name: 'snippets',
 		url: window.CODE_SNIPPETS?.urls.manage,
 		label: __('Snippets', 'code-snippets'),
-		icon: <SnippetsIcon />
+		icon: <SnippetsIcon aria-hidden="true" />
 	},
 	{
 		name: 'cloud-community',
 		label: __('Community Cloud', 'code-snippets'),
-		icon: <CommunityIcon />
+		icon: <CommunityIcon aria-hidden="true" />
 	},
 	{
 		name: 'cloud-library',
 		label: __('My Library', 'code-snippets'),
-		icon: <LibraryIcon />,
+		icon: <LibraryIcon aria-hidden="true" />,
 		pro: true
 	},
 	{
 		name: 'cloud-teams',
 		label: __('My Teams', 'code-snippets'),
-		icon: <TeamsIcon />,
+		icon: <TeamsIcon aria-hidden="true" />,
 		pro: true
 	},
 	{
 		name: 'settings',
 		url: window.CODE_SNIPPETS?.urls.settings,
 		label: __('Settings', 'code-snippets'),
-		icon: <SettingsIcon />
+		icon: <SettingsIcon aria-hidden="true" />
 	}
 ]
 
@@ -78,12 +78,13 @@ const UpperNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 			<img
 				src={`${window.CODE_SNIPPETS?.urls.plugin}/assets/icon.svg`}
 				alt={__('Code Snippets logo', 'code-snippets')}
+				aria-hidden="true"
 			/>
 
 			<h1>{__('Code Snippets', 'code-snippets')}</h1>
 		</div>
 
-		<nav>
+		<nav aria-label={__('Main links', 'code-snippets')}>
 			<ul>
 				{UPPER_NAV_LINKS.map(({ name, url, label, external }) =>
 					<li key={name}>
@@ -119,25 +120,27 @@ const currentPage = fetchQueryParam('subpage') ?? fetchQueryParam('page')
 
 const LowerNav: React.FC<NavProps> = ({ setIsUpsellDialogOpen }) =>
 	<div className="code-snippets-toolbar-lower">
-		<ul>
-			{LOWER_NAV_LINKS.map(({ name, url, label, pro, icon }) =>
-				<li key={name}>
-					<a
-						href={url ?? buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: name })}
-						className={classnames(`${name}-link`, { 'active-link': currentPage?.endsWith(name) })}
-						onClick={event => {
-							if (pro && !isLicensed()) {
-								event.preventDefault()
-								setIsUpsellDialogOpen(true)
-							}
-						}}
-					>
-						{icon}
-						<span>{label}</span>
-						{pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
-					</a>
-				</li>)}
-		</ul>
+		<nav aria-label={__('Main features', 'code-snippets')}>
+			<ul>
+				{LOWER_NAV_LINKS.map(({ name, url, label, pro, icon }) =>
+					<li key={name}>
+						<a
+							href={url ?? buildUrl(window.CODE_SNIPPETS?.urls.manage, { subpage: name })}
+							className={classnames(`${name}-link`, { 'active-link': currentPage?.endsWith(name) })}
+							onClick={event => {
+								if (pro && !isLicensed()) {
+									event.preventDefault()
+									setIsUpsellDialogOpen(true)
+								}
+							}}
+						>
+							{icon}
+							<span>{label}</span>
+							{pro && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
+						</a>
+					</li>)}
+			</ul>
+		</nav>
 	</div>
 
 export const Toolbar = () => {

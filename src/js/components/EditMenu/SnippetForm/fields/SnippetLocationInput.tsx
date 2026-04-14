@@ -62,7 +62,7 @@ export const SnippetLocationInput: React.FC = () => {
 				value={options.find(option => option.value === snippet.scope)}
 				formatOptionLabel={({ label, value }) =>
 					<>
-						<span className={`dashicons dashicons-${SCOPE_ICONS[value]}`}></span>{` ${label}`}
+						<span className={`dashicons dashicons-${SCOPE_ICONS[value]}`} aria-hidden="true"></span>{` ${label}`}
 					</>
 				}
 				onChange={option =>

@@ -39,6 +39,7 @@ const ActivateColumn: React.FC<ColumnProps> = ({ snippet }) => {
 				<a
 					className="snippet-execution-button"
 					title={__('Run Once', 'code-snippets')}
+					aria-label={__('Run Once', 'code-snippets')}
 					href={buildUrl(window.location.href, { action: 'run-once', snippet: snippet.id })}
 				>
 					&nbsp;
@@ -163,7 +164,7 @@ const RowActions: React.FC<ColumnProps> = ({ snippet }) => {
 const NameColumn: React.FC<ColumnProps> = ({ snippet }) =>
 	<>
 		{snippet.locked && (
-			<Tooltip inline end icon={<span className="dashicons dashicons-lock"></span>}>
+			<Tooltip inline end icon={<span className="dashicons dashicons-lock" aria-hidden="true"></span>}>
 				{__('This snippet is locked and cannot be modified.', 'code-snippets')}
 			</Tooltip>)}
 

@@ -15,6 +15,7 @@ export const UpsellBanner = () => {
 				src={`${window.CODE_SNIPPETS?.urls.plugin}/assets/icon.svg`}
 				alt={__('Code Snippets logo', 'code-snippets')}
 				height="34"
+				aria-hidden="true"
 			/>
 			<p>
 				{createInterpolateElement(
@@ -31,7 +32,7 @@ export const UpsellBanner = () => {
 			</ExternalLink>
 
 			<Button small link onClick={() => setIsDismissed(true)}>
-				<span className="dashicons dashicons-no-alt"></span>
+				<span className="dashicons dashicons-no-alt" aria-hidden="true"></span>
 			</Button>
 		</div>
 }
