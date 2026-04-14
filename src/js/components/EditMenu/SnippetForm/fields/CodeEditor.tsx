@@ -41,7 +41,12 @@ const EditorTextarea: React.FC<EditorTextareaProps> = ({ textareaRef }) => {
 	const { snippet, setSnippet } = useSnippetForm()
 
 	return (
-		<div className="snippet-editor">
+		<div
+			className="snippet-editor"
+			role="application"
+			aria-label={__('Code editor', 'code-snippets')}
+			aria-description={__('In the editing area, the Tab key enters a tab character. To exit the code editor, press the Escape key and then the Tab key.', 'code-snippets')}
+		>
 			<textarea
 				ref={textareaRef}
 				id="snippet-code"

@@ -152,7 +152,7 @@ const EditFormWrap: React.FC = () => {
 			<Notices placement="above-form" />
 
 			<EditForm className={editFormClassName({ snippet, isReadOnly, isExpanded })}>
-				<main className="snippet-form-upper">
+				<div className="snippet-form-upper">
 					<div className="snippet-name-wrapper">
 						<NameInput />
 						<SnippetTypeInput setIsUpgradeDialogOpen={setIsUpgradeDialogOpen} />
@@ -160,7 +160,7 @@ const EditFormWrap: React.FC = () => {
 
 					<CodeEditor {...{ isExpanded, setIsExpanded }} />
 					<ConditionsEditor />
-				</main>
+				</div>
 
 				<div className="snippet-form-lower">
 					<UpsellBanner />
