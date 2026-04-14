@@ -254,7 +254,7 @@ class Settings_Menu extends Admin_Menu {
 		$sections = $this->get_sections();
 		$active_tab = $this->get_current_section();
 
-		echo '<h2 class="nav-tab-wrapper" id="settings-sections-tabs">';
+		echo '<nav class="nav-tab-wrapper" id="settings-sections-tabs" aria-label="' . esc_attr__( 'Settings tabs', 'code-snippets' ) . '">';
 
 		foreach ( $sections as $section ) {
 			printf(
@@ -266,7 +266,7 @@ class Settings_Menu extends Admin_Menu {
 			);
 		}
 
-		echo '</h2>';
+		echo '</nav>';
 
 		foreach ( $sections as $section ) {
 			if ( 'license' === $section['id'] ) {

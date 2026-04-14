@@ -37,7 +37,10 @@ export const ImportMenu: React.FC = () => {
 			<h1>{__('Import Snippets', 'code-snippets')}</h1>
 
 			<div className="narrow">
-				<h2 className="nav-tab-wrapper">
+				<nav
+					className="nav-tab-wrapper"
+					aria-label={__('Import sources', 'code-snippets')}
+				>
 					{TABS.map(tab =>
 						<button
 							key={tab}
@@ -50,7 +53,7 @@ export const ImportMenu: React.FC = () => {
 						>
 							{TAB_LABELS[tab]}
 						</button>)}
-				</h2>
+				</nav>
 
 				<WithRestAPIContext>
 					{TABS.map(tab =>

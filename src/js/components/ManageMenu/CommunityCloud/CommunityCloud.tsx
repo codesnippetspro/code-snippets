@@ -26,7 +26,10 @@ export const CommunityCloud = () => {
 		<div className="wrap">
 			<h1>{__('Community Cloud', 'code-snippets')}</h1>
 
-			<h2 className="nav-tab-wrapper">
+			<nav
+				className="nav-tab-wrapper"
+				aria-label={__('Community Cloud types', 'code-snippets')}
+			>
 				{TABS.map(tab =>
 					<a
 						key={tab}
@@ -46,7 +49,7 @@ export const CommunityCloud = () => {
 						{TAB_LABELS[tab]}
 						{PRO_TABS.includes(tab) && !isLicensed() && <span className="pro-chip">{__('Pro', 'code-snippets')}</span>}
 					</a>)}
-			</h2>
+			</nav>
 
 			{'snippets' === currentTab
 				? <WithRestAPIContext>
