@@ -45,7 +45,7 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 		<div className="cloud-snippet-meta">
 			<Badge name={getSnippetType(snippet)} />
 			<span className="cloud-snippet-votes">
-				<span className="dashicons dashicons-thumbs-up"></span>
+				<span className="dashicons dashicons-thumbs-up" aria-hidden="true"></span>
 				<span>{snippet.vote_count}</span>
 			</span>
 			{0 < snippet.tags.length
