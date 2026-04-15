@@ -140,8 +140,13 @@ interface ExtraTableNavProps {
 	visibleSnippets: Snippet[]
 }
 
-const useManageTableSettings = (): { hiddenColumns: string[], truncateRowValues: boolean } => {
-	const [hiddenColumns, setHiddenColumns] = useState<string[]>(() => window.CODE_SNIPPETS_MANAGE?.hiddenColumns ?? [])
+interface ManageTableSettings {
+	hiddenColumns: Set<string>
+	truncateRowValues: boolean
+}
+
+const useManageTableSettings = (): ManageTableSettings => {
+	const [hiddenColumns, setHiddenColumns] = useState(() => new Set(window.CODE_SNIPPETS_MANAGE?.hiddenColumns ?? []))
 	const [truncateRowValues, setTruncateRowValues] = useState(
 		() => 0 !== Number(window.CODE_SNIPPETS_MANAGE?.truncateRowValues ?? 1)
 	)
@@ -155,8 +160,8 @@ const useManageTableSettings = (): { hiddenColumns: string[], truncateRowValues:
 
 		const updateHiddenColumns = () => {
 			setHiddenColumns(
-				Array.from(screenOptions.querySelectorAll<HTMLInputElement>('.hide-column-tog:not(:checked)'))
-					.map(toggle => toggle.value)
+				new Set(Array.from(screenOptions.querySelectorAll<HTMLInputElement>('.hide-column-tog:not(:checked)'))
+					.map(toggle => toggle.value))
 			)
 
 			setTruncateRowValues(
@@ -286,11 +291,12 @@ const useBulkActions = (allSnippets: Snippet[]): ListTableBulkAction<Snippet['id
 export const SnippetsListTable: React.FC = () => {
 	const { currentStatus, setCurrentStatus } = useSnippetsFilters()
 	const { snippetsByStatus } = useFilteredSnippets()
-
 	const { hiddenColumns, truncateRowValues } = useManageTableSettings()
+
 	const allSnippets = useMemo(() => snippetsByStatus.get('all') ?? [], [snippetsByStatus])
 	const totalItems = snippetsByStatus.get(currentStatus)?.length ?? 0
 	const itemsPerPage = window.CODE_SNIPPETS_MANAGE?.snippetsPerPage
+
 	const columns = useMemo(() => getTableColumns(hiddenColumns), [hiddenColumns])
 	const actions = useBulkActions(allSnippets)
 
