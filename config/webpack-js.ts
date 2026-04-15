@@ -43,6 +43,8 @@ export const jsWebpackConfig: Configuration = {
 	externals: {
 		'react': 'React',
 		'react-dom': 'ReactDOM',
+		'react-dom/client': 'ReactDOM',
+		'react/jsx-runtime': 'ReactJSXRuntime',
 		'jquery': 'jQuery',
 		'tinymce': 'tinymce',
 		'codemirror': ['wp', 'CodeMirror'],
