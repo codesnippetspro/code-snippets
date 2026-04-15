@@ -56,11 +56,13 @@ const CloudSnippetDetails: React.FC<CloudSnippetDetailsProps> = ({ snippet, setI
 				: null}
 		</div>
 
-		<p className="cloud-snippet-description">
-			{snippet.description.length > MAX_DESCRIPTION_LENGTH
-				? `${snippet.description.slice(0, MAX_DESCRIPTION_LENGTH)}…`
-				: snippet.description}
-		</p>
+		{snippet.description && (
+			<p className="cloud-snippet-description">
+				{snippet.description.length > MAX_DESCRIPTION_LENGTH
+					? `${snippet.description.slice(0, MAX_DESCRIPTION_LENGTH)}…`
+					: snippet.description}
+			</p>
+		)}
 
 		<p className="cloud-snippet-author">
 			{_x('by ', 'snippet author', 'code-snippets')}
