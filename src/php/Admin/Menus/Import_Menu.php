@@ -67,6 +67,7 @@ class Import_Menu extends Admin_Menu {
 			[
 				'react',
 				'react-dom',
+				'react-jsx-runtime',
 				'wp-i18n',
 				'wp-components',
 			],
