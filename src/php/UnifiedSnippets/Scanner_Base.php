@@ -75,15 +75,6 @@ abstract class Scanner_Base {
 	}
 
 	/**
-	 * Get the scanner tier (1 = generic, 2 = DB-aware, 3 = builder-specific).
-	 *
-	 * @return int
-	 */
-	public function get_tier(): int {
-		return 1;
-	}
-
-	/**
 	 * Build a Discovered_Snippet with common fields pre-filled from this scanner's defaults.
 	 *
 	 * Scanners should use this helper instead of constructing Discovered_Snippet directly

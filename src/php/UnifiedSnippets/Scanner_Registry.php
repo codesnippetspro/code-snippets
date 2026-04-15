@@ -91,20 +91,6 @@ class Scanner_Registry {
 	}
 
 	/**
-	 * Retrieve scanners filtered by tier.
-	 *
-	 * @param int $tier The tier number (1, 2, or 3).
-	 *
-	 * @return array<string, Scanner_Base> Matching scanners keyed by ID.
-	 */
-	public function get_by_tier( int $tier ): array {
-		return array_filter(
-			$this->get_available(),
-			static fn( Scanner_Base $scanner ) => $scanner->get_tier() === $tier
-		);
-	}
-
-	/**
 	 * Get a summary of all registered scanners for REST API responses.
 	 *
 	 * @return array<array<string, mixed>> List of scanner info arrays.
@@ -117,7 +103,6 @@ class Scanner_Registry {
 				'id'               => $scanner->get_id(),
 				'label'            => $scanner->get_label(),
 				'available'        => $scanner->is_available(),
-				'tier'             => $scanner->get_tier(),
 				'risk_level'       => $scanner->get_risk_level(),
 				'supports_import'  => $scanner->supports_import(),
 				'supports_editing' => $scanner->supports_editing(),
