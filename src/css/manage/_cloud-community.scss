@@ -62,11 +62,13 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
 	gap: 20px;
+	margin: 0;
 }
 
 .cloud-search-result {
 	background: #fff;
 	border: 1px solid #c3c4c7;
+	margin: 0;
 	display: flex;
 	flex-flow: column;
 	box-sizing: border-box;

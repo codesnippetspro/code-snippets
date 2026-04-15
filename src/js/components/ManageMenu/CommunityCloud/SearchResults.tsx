@@ -164,7 +164,7 @@ const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 	}, [isPreviewOpen])
 
 	return (
-		<div className="cloud-search-result">
+		<li className="cloud-search-result">
 			<CloudSnippetDetails snippet={snippet} setIsPreviewOpen={setIsPreviewOpen} />
 
 			<footer>
@@ -184,7 +184,7 @@ const SearchResult: React.FC<SearchResultProps> = ({ snippet }) => {
 			</footer>
 
 			<PreviewModal snippet={snippet} isOpen={isPreviewOpen} setIsOpen={setIsPreviewOpen} />
-		</div>
+		</li>
 	)
 }
 
@@ -193,7 +193,7 @@ interface SearchResultsProps {
 }
 
 export const SearchResults: React.FC<SearchResultsProps> = ({ results }) =>
-	<div className="cloud-search-results">
+	<ul className="cloud-search-results">
 		{results.map(result =>
 			<SearchResult key={result.id} snippet={result} />)}
-	</div>
+	</ul>
