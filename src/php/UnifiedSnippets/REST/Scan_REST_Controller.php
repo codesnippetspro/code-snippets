@@ -4,7 +4,6 @@ namespace Code_Snippets\UnifiedSnippets\REST;
 
 use Code_Snippets\REST_API\REST_Controller;
 use Code_Snippets\UnifiedSnippets\Scan_Results_Store;
-use Code_Snippets\UnifiedSnippets\Scanner_Base;
 use Code_Snippets\UnifiedSnippets\Scanner_Registry;
 use WP_Error;
 use WP_REST_Request;
