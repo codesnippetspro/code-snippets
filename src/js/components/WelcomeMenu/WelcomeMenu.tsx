@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n'
+import { __, sprintf } from '@wordpress/i18n'
 import React, { useState } from 'react'
 import { Toolbar } from '../common/Toolbar'
 import { Changelog } from './Changelog'
@@ -49,7 +49,7 @@ const Partners: React.FC<PartnersProps> = ({ partners }) =>
 					</figure>
 					<div className="code-snippets-header-wrapper">
 						<h3>{title}</h3>
-						<a href={follow_url} target="_blank" rel="noopener noreferrer">
+						<a href={follow_url} target="_blank" rel="noopener noreferrer" aria-label={sprintf( /* translators: %s: partner name. */ __('Visit %s', 'code-snippets'), title)}>
 							{__('Visit', 'code-snippets')}
 						</a>
 					</div>
