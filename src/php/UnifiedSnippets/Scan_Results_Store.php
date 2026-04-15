@@ -11,6 +11,13 @@ use Code_Snippets\UnifiedSnippets\Model\Discovered_Snippet;
  * with autoload disabled. The option contains the discovered snippets plus metadata about
  * the scan (date, which scanners ran, total counts).
  *
+ * **Previous snapshot (`code_snippets_scan_results_previous`):** Each call to {@see self::save()}
+ * copies the current option to `…_previous` before overwriting. That means the “previous”
+ * snapshot is always the state immediately before the last save — including incremental
+ * per-scanner merges via {@see self::merge_scanner_results()}. It is not a dedicated
+ * “last full-site scan only” baseline; API clients should assume change detection compares
+ * consecutive persisted snapshots unless a separate baseline is introduced later.
+ *
  * @package Code_Snippets
  */
 class Scan_Results_Store {
@@ -28,7 +35,9 @@ class Scan_Results_Store {
 	/**
 	 * Save a complete set of scan results, replacing any existing data.
 	 *
-	 * Automatically archives the current results as the previous scan before overwriting.
+	 * If there is already stored data, it is copied to `code_snippets_scan_results_previous`
+	 * before this write. Any caller that replaces the main option (including
+	 * {@see self::merge_scanner_results()}) therefore advances “previous” by one save.
 	 *
 	 * @param Discovered_Snippet[] $snippets    The discovered snippets.
 	 * @param string[]             $scanner_ids IDs of scanners that ran in this scan.
@@ -59,7 +68,8 @@ class Scan_Results_Store {
 	 * Merge results from a single scanner into the existing scan results.
 	 *
 	 * Replaces any existing snippets from the same scanner (by scanner_id),
-	 * leaving snippets from other scanners untouched.
+	 * leaving snippets from other scanners untouched. Persists via {@see self::save()},
+	 * so the pre-merge snapshot becomes `code_snippets_scan_results_previous` (see class doc).
 	 *
 	 * @param string               $scanner_id The scanner that produced these results.
 	 * @param Discovered_Snippet[] $snippets   The newly discovered snippets.
@@ -163,7 +173,12 @@ class Scan_Results_Store {
 	}
 
 	/**
-	 * Detect changes between the current and previous scans.
+	 * Detect changes between the current and previous persisted snapshots.
+	 *
+	 * Identity is by {@see Discovered_Snippet::generate_hash()} (location: scanner, path,
+	 * line range, etc.); “modified” is same hash with different {@see Discovered_Snippet::$checksum}.
+	 * Scanner authors: if `line_start` / `line_end` participate in the hash, an edit that only
+	 * shifts lines but leaves the same code can appear as removed + new instead of unchanged.
 	 *
 	 * @return array{new: Discovered_Snippet[], modified: Discovered_Snippet[], removed: Discovered_Snippet[]}
 	 */

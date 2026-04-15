@@ -12,7 +12,7 @@ use Code_Snippets\Model\Model;
  *
  * @package Code_Snippets
  *
- * @property string $hash          Deterministic hash of source + location for deduplication.
+ * @property string $hash          Deterministic hash of source + location for deduplication (includes line range; see {@see self::generate_hash()}).
  * @property string $name          Human-readable name (auto-generated or parsed).
  * @property string $code          The discovered code content.
  * @property string $type          php, css, js, html, config, or mixed.
@@ -136,6 +136,12 @@ class Discovered_Snippet extends Model {
 
 	/**
 	 * Generate a deterministic hash for deduplication based on source and location.
+	 *
+	 * Includes `line_start` and `line_end`. If those change but the extracted code does not
+	 * (e.g. lines shifted above the block), the hash changes while the checksum may not;
+	 * change detection may then report removed + new instead of unchanged. Scanners can avoid
+	 * that by using a stable location key (path + anchor) and omitting volatile line numbers
+	 * from the hash when appropriate.
 	 *
 	 * @return string SHA-256 hash.
 	 */

@@ -3,11 +3,12 @@
 namespace Code_Snippets\UnifiedSnippets;
 
 /**
- * Registry for managing site scanners.
+ * Registry of Unified Snippets scanners.
  *
- * Scanners are registered by ID and can be queried by availability and tier.
- * Third-party developers can register their own scanners via the
- * 'code_snippets/scanning/register_scanners' action hook.
+ * Scanners are registered by ID. Use {@see self::get_all()} for every registered
+ * scanner, {@see self::get_available()} for those that can run in the current
+ * environment, and {@see self::get_scanner_info()} for REST summaries.
+ * Third-party code can register scanners on the `code_snippets/scanning/register_scanners` action.
  *
  * @package Code_Snippets
  */

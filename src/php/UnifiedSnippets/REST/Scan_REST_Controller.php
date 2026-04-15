@@ -288,7 +288,9 @@ class Scan_REST_Controller extends REST_Controller {
 	}
 
 	/**
-	 * Detect changes between the current and previous scans.
+	 * Detect changes between the current and previous persisted snapshots.
+	 *
+	 * “Previous” is updated on every save that archives (see {@see Scan_Results_Store}).
 	 *
 	 * @return WP_REST_Response
 	 */
