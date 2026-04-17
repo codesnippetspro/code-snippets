@@ -8,7 +8,7 @@ $breakpoint: 1060px;
 .code-snippets-welcome {
 	padding: 25px;
 
-	h1 {
+	h2 {
 		font-size: 32px;
 		margin-block: 48px 32px;
 	}
@@ -25,7 +25,7 @@ $breakpoint: 1060px;
 		padding: 32px;
 	}
 
-	header {
+	.code-snippets-header-wrapper {
 		display: flex;
 		flex-flow: row;
 		justify-content: space-between;
@@ -35,7 +35,7 @@ $breakpoint: 1060px;
 		padding-block-end: 20px;
 	}
 
-	h2 {
+	h3 {
 		font-size: 18px;
 		margin: 0;
 	}
@@ -68,8 +68,9 @@ $breakpoint: 1060px;
 .code-snippets-partners,
 .code-snippets-articles {
 	display: flex;
-	flex-direction: row;;
+	flex-direction: row;
 	gap: 16px;
+	margin: 0;
 
 	figure {
 		margin: 0;
@@ -89,6 +90,7 @@ $breakpoint: 1060px;
 	background: #fff;
 	border-radius: 8px;
 	display: flex;
+	margin: 0;
 	flex-flow: column;
 	color: #2c3337;
 
@@ -99,7 +101,7 @@ $breakpoint: 1060px;
 }
 
 .code-snippets-partners {
-	header {
+	.code-snippets-header-wrapper {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
@@ -109,7 +111,7 @@ $breakpoint: 1060px;
 }
 
 .code-snippets-articles {
-	header {
+	.code-snippets-header-wrapper {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
@@ -122,7 +124,7 @@ $breakpoint: 1060px;
 		margin-block-start: auto;
 	}
 
-	h2 {
+	h3 {
 		font-size: 18px;
 		margin: 0;
 	}
@@ -154,21 +156,27 @@ $breakpoint: 1060px;
 	color: #2c3337;
 	padding-inline-end: 1em;
 
-	header {
-		border: 0;
-		margin: 0;
-		padding: 0;
+	h3 {
+		font-size: 16px;
+		display: flex;
 
-		p {
+		&:not(:first-of-type) {
+			margin-block-start: 100px;
+		}
+
+		span {
 			font-size: 14px;
+			font-weight: normal;
+			margin-inline-start: auto;
 		}
 	}
 
-	h3 {
-		font-size: 16px;
+	h4 {
+		font-size: 14px;
+		margin: 1em 0;
 	}
 
-	h4 {
+	h5 {
 		font-size: 12px;
 		text-transform: uppercase;
 		margin: 0 0 16px;
@@ -187,23 +195,6 @@ $breakpoint: 1060px;
 		grid-template-rows: 1fr;
 		align-items: baseline;
 		gap: 10px;
-	}
-
-	> article::after {
-		border-block-end: 1px solid #666;
-		content: ' ';
-		display: block;
-		inline-size: 50%;
-		margin-block: 3em;
-		margin-inline: auto;
-	}
-
-	> article:last-child {
-		padding-block-end: 1px;
-
-		&::after {
-			border: 0;
-		}
 	}
 
 	$icon-colors: (
