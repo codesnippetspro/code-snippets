@@ -10,10 +10,8 @@ export const TagsEditor: React.FC = () => {
 
 	return options?.enabled
 		? <div className="snippet-tags-container">
-			<h3><label htmlFor="components-form-token-input-0">{__('Snippet Tags', 'code-snippets')}</label></h3>
-
 			<FormTokenField
-				label=""
+				label={__('Snippet Tags', 'code-snippets')}
 				value={snippet.tags}
 				disabled={isReadOnly}
 				suggestions={options.availableTags}

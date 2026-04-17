@@ -9,8 +9,9 @@ export const NameInput: React.FC = () => {
 		<div id="titlediv">
 			<div id="titlewrap">
 				<label htmlFor="title" className="screen-reader-text">
-					{__('Name', 'code-snippets')}
+					{__('Snippet Name', 'code-snippets')}
 				</label>
+
 				<input
 					id="title"
 					type="text"

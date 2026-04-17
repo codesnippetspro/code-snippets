@@ -1,23 +1,30 @@
 @use '../common/theme';
 
-.snippet-priority input {
-	inline-size: 4em;
+.snippet-priority {
+	.priority-input-tooltip {
+		margin-inline-end: auto;
+	}
+	
+	input {
+		inline-size: 4em;
+	}
 }
 
 .activation-switch-container,
 .lock-control-container {
-	label {
-		display: flex;
-		flex-flow: row;
-		gap: 5px;
-		justify-content: center;
-		align-items: center;
-	}
-}
+	inline-size: 100%;
+	display: flex;
+	flex-flow: row;
+	gap: 5px;
+	justify-content: center;
+	align-items: center;
 
-.code-snippets-modal {
-	p h4 {
-		margin-block-start: 0;
+	label {
+		font-weight: 600;
+	}
+
+	span:first-of-type {
+		margin-inline-start: auto;
 	}
 }
 
@@ -67,20 +74,12 @@
 		flex-flow: column;
 		gap: 1em;
 
-		h4 {
-			margin-block: 0.5em;
-			margin-inline: 0;
-		}
-
 		.inline-form-field {
 			display: flex;
 			flex-flow: row wrap;
+			justify-content: space-between;
 			align-items: center;
 			gap: 5px;
-
-			label:last-of-type, input:last-of-type {
-				margin-inline-start: auto;
-			}
 
 			&.lock-control-container {
 				border-block-start: 1px solid #eee;
@@ -101,23 +100,17 @@
 			flex-flow: column;
 			gap: 4px;
 
-			h4 {
-				margin-block-end: 0;
-			}
 		}
 	}
 
-	h4 .badge {
-		float: inline-end;
-
-		+ .badge {
-			margin-inline-end: 5px;
-		}
+	label {
+		font-weight: 600;
 	}
 
 	.beta-badge {
 		color: theme.$accent;
 		border: 1px solid currentcolor;
+		margin-inline-start: auto;
 	}
 
 	.components-form-token-field {

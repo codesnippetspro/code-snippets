@@ -7,11 +7,9 @@ export const RTLControl: React.FC = () => {
 
 	return (
 		<div className="inline-form-field">
-			<h4>
-				<label htmlFor="snippet-code-direction">
-					{__('Code Direction', 'code-snippets')}
-				</label>
-			</h4>
+			<label htmlFor="snippet-code-direction">
+				{__('Code Direction', 'code-snippets')}
+			</label>
 
 			<select id="snippet-code-direction" onChange={event =>
 				codeEditorInstance?.codemirror.setOption('direction', 'rtl' === event.target.value ? 'rtl' : 'ltr')
