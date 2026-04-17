@@ -10,7 +10,7 @@ export const ActivationSwitch = () => {
 
 	return (
 		<div className="inline-form-field activation-switch-container">
-			<label htmlFor="activation-switch">{__('Status')}</label>
+			<label htmlFor="activation-switch">{__('Status', 'code-snippets')}</label>
 
 			<span className="status-text">
 				{snippet.active
