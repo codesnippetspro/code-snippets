@@ -227,7 +227,7 @@ $breakpoint: 1060px;
 	inset-block-start: 45%;
 
 	@media (prefers-reduced-motion: reduce) {
-		animation-duration: 0.01s;
+		animation: none;
 	}
 }
 
