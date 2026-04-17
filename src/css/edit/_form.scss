@@ -59,6 +59,10 @@ $sidebar-gap: 30px;
 	grid-template-areas: 'upper sidebar' 'lower sidebar';
 	transition: all 700ms;
 
+	@media (prefers-reduced-motion: reduce) {
+		transition-duration: 0.01s;
+	}
+
 	&.snippet-form-expanded {
 		grid-template-areas: 'upper upper' 'lower sidebar';
 	}
