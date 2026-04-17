@@ -30,11 +30,6 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 			onRequestClose={onCancel}
 			closeButtonLabel={cancelLabel}
 			isDismissible={true}
-			onKeyDown={event => {
-				if ('Enter' === event.key) {
-					onConfirm?.()
-				}
-			}}
 		>
 			{children}
 			<Flex direction="row" justify="flex-end">
