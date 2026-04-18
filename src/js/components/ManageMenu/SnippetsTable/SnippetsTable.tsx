@@ -61,7 +61,7 @@ const PageHeading = () => {
 				{__('Create new snippet', 'code-snippets')}
 			</a>
 
-			<h1>
+			<h2>
 				{__('Manage Code Snippets', 'code-snippets')}
 
 				{searchQueryText || currentTag
@@ -86,7 +86,7 @@ const PageHeading = () => {
 						</Button>
 					</span>
 					: null}
-			</h1>
+			</h2>
 
 			<SafeModeNotice />
 		</>
