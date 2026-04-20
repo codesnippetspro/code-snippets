@@ -72,6 +72,8 @@ class Uninstaller {
 		delete_option( 'code_snippets_settings' );
 
 		delete_option( 'code_snippets_cloud_settings' );
+		delete_option( 'code_snippets_scan_results' );
+		delete_option( 'code_snippets_scan_results_previous' );
 		delete_transient( 'cs_codevault_snippets' );
 		delete_transient( 'cs_local_to_cloud_map' );
 	}

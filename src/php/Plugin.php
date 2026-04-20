@@ -18,6 +18,9 @@ use Code_Snippets\REST_API\Import\File_Import_REST_Controller;
 use Code_Snippets\REST_API\Import\Plugins_Import_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Recently_Active_REST_Controller;
 use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
+use Code_Snippets\UnifiedSnippets\Scanner_Registry;
+use Code_Snippets\UnifiedSnippets\Scan_Results_Store;
+use Code_Snippets\UnifiedSnippets\REST\Scan_REST_Controller;
 
 /**
  * The main plugin class
@@ -94,6 +97,20 @@ class Plugin {
 	public Flat_Files\Handler_Registry $snippet_handler_registry;
 
 	/**
+	 * Unified Snippets scanner registry — discovers code across the WordPress installation.
+	 *
+	 * @var Scanner_Registry
+	 */
+	public Scanner_Registry $unified_snippets;
+
+	/**
+	 * Unified Snippets scan results store.
+	 *
+	 * @var Scan_Results_Store
+	 */
+	public Scan_Results_Store $unified_snippets_store;
+
+	/**
 	 * Class constructor
 	 */
 	public function __construct() {
@@ -139,7 +156,20 @@ class Plugin {
 		new Admin_Bar();
 		new Promotion_Manager();
 
+		$this->init_unified_snippets();
 		$this->init_snippet_files();
+	}
+
+	/**
+	 * Initialises the Unified Snippets subsystem: scanner registry, results store, and REST endpoints.
+	 *
+	 * @return void
+	 */
+	private function init_unified_snippets(): void {
+		$this->unified_snippets       = new Scanner_Registry();
+		$this->unified_snippets_store = new Scan_Results_Store();
+
+		new Scan_REST_Controller( $this->unified_snippets, $this->unified_snippets_store );
 	}
 
 	/**
@@ -339,6 +369,7 @@ class Plugin {
 					'recentlyActive' => esc_url_raw( rest_url( Recently_Active_REST_Controller::get_base_route() ) ),
 					'importPlugins'  => esc_url_raw( rest_url( Plugins_Import_REST_Controller::get_base_route() ) ),
 					'importFiles'    => esc_url_raw( rest_url( File_Import_REST_Controller::get_base_route() ) ),
+					'scan'           => esc_url_raw( rest_url( Scan_REST_Controller::get_base_route() ) ),
 					'nonce'          => wp_create_nonce( 'wp_rest' ),
 					'localToken'     => $this->cloud_api->get_local_token(),
 				],
