@@ -22,6 +22,8 @@ class Functions_Php_Scanner extends Scanner_Base {
 	 */
 	private array $path_overrides;
 
+	private const DEFINITION_TOKENS = [ T_FUNCTION, T_CLASS, T_TRAIT, T_INTERFACE ];
+
 	/**
 	 * Class constructor.
 	 *
@@ -119,8 +121,6 @@ class Functions_Php_Scanner extends Scanner_Base {
 
 		return $targets;
 	}
-
-	private const DEFINITION_TOKENS = [ T_FUNCTION, T_CLASS, T_TRAIT, T_INTERFACE ];
 
 	/**
 	 * Scan a single functions.php file, extracting top-level symbols.
