@@ -58,7 +58,7 @@ class Scan_REST_Controller extends REST_Controller {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			'/' . static::BASE_ROUTE,
+			static::BASE_ROUTE,
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'run_scan' ],
@@ -76,7 +76,7 @@ class Scan_REST_Controller extends REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
-			'/' . static::BASE_ROUTE . '/(?P<scanner_id>[a-z0-9-]+)',
+			static::BASE_ROUTE . '/(?P<scanner_id>[a-z0-9-]+)',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'run_single_scanner' ],
@@ -92,7 +92,7 @@ class Scan_REST_Controller extends REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
-			'/' . static::BASE_ROUTE . '/results',
+			static::BASE_ROUTE . '/results',
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
@@ -119,7 +119,7 @@ class Scan_REST_Controller extends REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
-			'/' . static::BASE_ROUTE . '/scanners',
+			static::BASE_ROUTE . '/scanners',
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'list_scanners' ],
@@ -129,7 +129,7 @@ class Scan_REST_Controller extends REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
-			'/' . static::BASE_ROUTE . '/changes',
+			static::BASE_ROUTE . '/changes',
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_changes' ],
