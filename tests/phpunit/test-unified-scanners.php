@@ -110,16 +110,35 @@ PHP;
 
 		$this->assertCount( 2, $results );
 
-		$names = array_map( static fn( $s ) => $s->name, $results );
-		$this->assertContains( 'my_custom_function', $names );
-		$this->assertContains( 'My_Plugin_Helper', $names );
+		$by_name = [];
+		foreach ( $results as $snippet ) {
+			$by_name[ $snippet->name ] = $snippet;
+		}
+
+		$this->assertArrayHasKey( 'my_custom_function', $by_name );
+		$this->assertArrayHasKey( 'My_Plugin_Helper', $by_name );
+
+		// Fixture layout:
+		// L1:  <?php
+		// L2:  blank
+		// L3:  function my_custom_function() {
+		// L4:      return 42;
+		// L5:  }
+		// L6:  blank
+		// L7:  class My_Plugin_Helper {
+		// L8:      public function run() {
+		// L9:          return true;
+		// L10:     }
+		// L11: }.
+		$this->assertSame( 3, $by_name['my_custom_function']->line_start );
+		$this->assertSame( 5, $by_name['my_custom_function']->line_end );
+		$this->assertSame( 7, $by_name['My_Plugin_Helper']->line_start );
+		$this->assertSame( 11, $by_name['My_Plugin_Helper']->line_end );
 
 		foreach ( $results as $snippet ) {
 			$this->assertSame( 'php', $snippet->type );
 			$this->assertSame( 'theme', $snippet->source_type );
 			$this->assertSame( 'Fixture Theme', $snippet->source_name );
-			$this->assertGreaterThan( 0, $snippet->line_start );
-			$this->assertGreaterThanOrEqual( $snippet->line_start, $snippet->line_end );
 			$this->assertTrue( $snippet->is_active );
 		}
 	}
@@ -277,8 +296,56 @@ PHP;
 		$this->assertSame( 'php', $snippet->type );
 		$this->assertSame( 'mu-plugin', $snippet->source_type );
 		$this->assertSame( $file, $snippet->source_path );
+		$this->assertSame( 'Site Helper', $snippet->name );
 		$this->assertStringContainsString( 'return true;', $snippet->code );
 		$this->assertSame( 1, $snippet->line_start );
 		$this->assertGreaterThan( 1, $snippet->line_end );
+	}
+
+	/**
+	 * The .htaccess classifier uses first-match-wins: a section containing both a
+	 * high-risk server-only directive and a convertible one is marked server-only.
+	 */
+	public function test_htaccess_scanner_first_match_wins() {
+		$htaccess = <<<'TXT'
+# BEGIN Mixed
+Redirect 301 /old /new
+php_value upload_max_filesize 64M
+# END Mixed
+TXT;
+
+		$path = $this->tmp_dir . '/.htaccess';
+		$this->write_fixture( $path, $htaccess );
+
+		$results = ( new Htaccess_Scanner( $path ) )->scan();
+
+		$this->assertCount( 1, $results );
+		$this->assertSame( 'Mixed', $results[0]->name );
+		$this->assertSame( 'high', $results[0]->risk_level );
+		$this->assertFalse( $results[0]->is_importable );
+		$this->assertStringStartsWith( '[server-only]', $results[0]->import_notes );
+	}
+
+	/**
+	 * An unmatched BEGIN marker is reported as a high-risk server-only section
+	 * instead of silently swallowing the rest of the file.
+	 */
+	public function test_htaccess_scanner_reports_unmatched_begin() {
+		$htaccess = <<<'TXT'
+# BEGIN Orphan
+RewriteEngine On
+RewriteRule ^foo$ /bar [L]
+TXT;
+
+		$path = $this->tmp_dir . '/.htaccess';
+		$this->write_fixture( $path, $htaccess );
+
+		$results = ( new Htaccess_Scanner( $path ) )->scan();
+
+		$this->assertCount( 1, $results );
+		$this->assertSame( 'Orphan', $results[0]->name );
+		$this->assertSame( 'high', $results[0]->risk_level );
+		$this->assertFalse( $results[0]->is_importable );
+		$this->assertStringContainsString( 'Unclosed BEGIN marker', $results[0]->import_notes );
 	}
 }

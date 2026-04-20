@@ -35,6 +35,15 @@ class Additional_CSS_Scanner extends Scanner_Base {
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * Customizer CSS is always low-risk regardless of the base default.
+	 */
+	public function get_risk_level(): string {
+		return 'low';
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	public function scan(): array {
 		$post = wp_get_custom_css_post();

@@ -120,7 +120,7 @@ class Htaccess_Scanner extends Scanner_Base {
 	 *
 	 * @param string[] $lines The file lines (without trailing newlines).
 	 *
-	 * @return array<int, array{marker: string, line_start: int, line_end: int, code: string}>
+	 * @return array<int, array{marker: string, unmatched: bool, line_start: int, line_end: int, code: string}>
 	 */
 	private function split_into_sections( array $lines ): array {
 		$sections          = [];
@@ -134,6 +134,7 @@ class Htaccess_Scanner extends Scanner_Base {
 			if ( null !== $custom_start && $custom_has_body ) {
 				$sections[] = [
 					'marker'     => '',
+					'unmatched'  => false,
 					'line_start' => $custom_start,
 					'line_end'   => $custom_start + count( $custom_buffer ) - 1,
 					'code'       => implode( "\n", $custom_buffer ),
@@ -153,17 +154,28 @@ class Htaccess_Scanner extends Scanner_Base {
 				$marker    = trim( $matches[1] );
 				$start_idx = $i;
 				$end_idx   = $i;
+				$matched   = false;
 
 				for ( $j = $i + 1; $j < $n; $j++ ) {
 					if ( preg_match( '/^# END (.+)$/', $lines[ $j ], $em ) && trim( $em[1] ) === $marker ) {
 						$end_idx = $j;
+						$matched = true;
 						break;
 					}
+
+					// If another BEGIN appears before our END, stop the search at the line before it
+					// so the orphan section ends cleanly instead of swallowing the next block.
+					if ( preg_match( '/^# BEGIN /', $lines[ $j ] ) ) {
+						$end_idx = $j - 1;
+						break;
+					}
+
 					$end_idx = $j;
 				}
 
 				$sections[] = [
 					'marker'     => $marker,
+					'unmatched'  => ! $matched,
 					'line_start' => $start_idx + 1,
 					'line_end'   => $end_idx + 1,
 					'code'       => implode( "\n", array_slice( $lines, $start_idx, ( $end_idx - $start_idx ) + 1 ) ),
@@ -194,13 +206,13 @@ class Htaccess_Scanner extends Scanner_Base {
 	/**
 	 * Build a Discovered_Snippet for a single parsed section.
 	 *
-	 * @param array{marker: string, line_start: int, line_end: int, code: string} $section Section data.
+	 * @param array{marker: string, unmatched: bool, line_start: int, line_end: int, code: string} $section Section data.
 	 *
 	 * @return Discovered_Snippet
 	 */
 	private function build_section_snippet( array $section ): Discovered_Snippet {
 		$marker          = $section['marker'];
-		$classification  = $this->classify_section( $marker, $section['code'] );
+		$classification  = $this->classify_section( $marker, $section['code'], ! empty( $section['unmatched'] ) );
 		$default_name    = '' === $marker ? __( 'Custom', 'code-snippets' ) : $marker;
 
 		return $this->build_snippet(
@@ -224,12 +236,26 @@ class Htaccess_Scanner extends Scanner_Base {
 	/**
 	 * Classify a section by marker and directive content.
 	 *
-	 * @param string $marker Section marker name (empty for custom/unattributed).
-	 * @param string $body   Section body text.
+	 * @param string $marker    Section marker name (empty for custom/unattributed).
+	 * @param string $body      Section body text.
+	 * @param bool   $unmatched Whether the BEGIN marker was not closed by a matching END.
 	 *
 	 * @return array{category: string, risk: string, importable: bool, note: string}
 	 */
-	private function classify_section( string $marker, string $body ): array {
+	private function classify_section( string $marker, string $body, bool $unmatched = false ): array {
+		if ( $unmatched ) {
+			return [
+				'category'   => 'server-only',
+				'risk'       => 'high',
+				'importable' => false,
+				'note'       => sprintf(
+					/* translators: %s: section marker name */
+					__( 'Unclosed BEGIN marker for "%s"; review .htaccess manually.', 'code-snippets' ),
+					$marker
+				),
+			];
+		}
+
 		if ( 'WordPress' === $marker ) {
 			return [
 				'category'   => 'core',
@@ -276,7 +302,7 @@ class Htaccess_Scanner extends Scanner_Base {
 			'category'   => 'convertible',
 			'risk'       => 'medium',
 			'importable' => false,
-			'note'       => __( 'Unrecognised directive; review manually before importing.', 'code-snippets' ),
+			'note'       => __( 'Unrecognized directive; review manually before importing.', 'code-snippets' ),
 		];
 	}
 }

@@ -137,7 +137,12 @@ class Functions_Php_Scanner extends Scanner_Base {
 		}
 
 		try {
-			$tokens = token_get_all( $code, TOKEN_PARSE );
+			// TOKEN_PARSE was added in PHP 8.0. It makes token_get_all() throw on parse errors
+			// instead of silently returning a partial stream; on 7.4 we fall back to a plain call
+			// and accept that broken files may yield partial results rather than skipping cleanly.
+			$tokens = PHP_VERSION_ID >= 80000
+				? token_get_all( $code, TOKEN_PARSE )
+				: token_get_all( $code );
 		} catch ( ParseError $e ) {
 			return [];
 		}
