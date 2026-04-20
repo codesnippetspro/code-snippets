@@ -51,7 +51,15 @@ class Unified_Scanners_Test extends TestCase {
 			return;
 		}
 
-		foreach ( (array) glob( $dir . '/*' ) as $path ) {
+		// scandir() returns dotfiles (e.g. .htaccess fixtures); glob('*') would skip them
+		// and leave the directory non-empty so rmdir() fails.
+		foreach ( (array) scandir( $dir ) as $entry ) {
+			if ( '.' === $entry || '..' === $entry ) {
+				continue;
+			}
+
+			$path = $dir . '/' . $entry;
+
 			if ( is_dir( $path ) ) {
 				$this->rrmdir( $path );
 			} else {
