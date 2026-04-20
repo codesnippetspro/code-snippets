@@ -63,7 +63,8 @@ class Unified_Scanners_Test extends TestCase {
 			if ( is_dir( $path ) ) {
 				$this->rrmdir( $path );
 			} else {
-				wp_delete_file( $path );
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+				unlink( $path );
 			}
 		}
 
