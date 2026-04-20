@@ -120,6 +120,8 @@ class Functions_Php_Scanner extends Scanner_Base {
 		return $targets;
 	}
 
+	private const DEFINITION_TOKENS = [ T_FUNCTION, T_CLASS, T_TRAIT, T_INTERFACE ];
+
 	/**
 	 * Scan a single functions.php file, extracting top-level symbols.
 	 *
@@ -136,51 +138,20 @@ class Functions_Php_Scanner extends Scanner_Base {
 			return [];
 		}
 
-		try {
-			// TOKEN_PARSE was added in PHP 8.0. It makes token_get_all() throw on parse errors
-			// instead of silently returning a partial stream; on 7.4 we fall back to a plain call
-			// and accept that broken files may yield partial results rather than skipping cleanly.
-			$tokens = PHP_VERSION_ID >= 80000
-				? token_get_all( $code, TOKEN_PARSE )
-				: token_get_all( $code );
-		} catch ( ParseError $e ) {
+		$tokens = $this->tokenize( $code );
+
+		if ( null === $tokens ) {
 			return [];
 		}
 
 		$lines    = explode( "\n", $code );
 		$snippets = [];
-		$depth    = 0;
 
-		for ( $i = 0, $n = count( $tokens ); $i < $n; $i++ ) {
-			$token = $tokens[ $i ];
-
-			if ( is_string( $token ) ) {
-				if ( '{' === $token ) {
-					++$depth;
-				} elseif ( '}' === $token ) {
-					$depth = max( 0, $depth - 1 );
-				}
-				continue;
-			}
-
-			if ( 0 !== $depth ) {
-				continue;
-			}
-
-			if ( ! in_array( $token[0], [ T_FUNCTION, T_CLASS, T_TRAIT, T_INTERFACE ], true ) ) {
-				continue;
-			}
-
-			$symbol = $this->extract_symbol( $tokens, $i, $lines );
-
-			if ( null === $symbol ) {
-				continue;
-			}
-
+		foreach ( $this->find_top_level_symbols( $tokens ) as $symbol ) {
 			$snippets[] = $this->build_snippet(
 				[
 					'name'        => $symbol['name'],
-					'code'        => $symbol['code'],
+					'code'        => $this->slice_source( $lines, $symbol['line_start'], $symbol['line_end'] ),
 					'type'        => 'php',
 					'source_type' => $source_type,
 					'source_name' => $source_name,
@@ -196,78 +167,153 @@ class Functions_Php_Scanner extends Scanner_Base {
 	}
 
 	/**
-	 * Extract a single top-level symbol starting at the given token index.
+	 * Tokenize PHP source, returning null if the file cannot be parsed.
 	 *
-	 * Advances $i past the symbol's closing brace (or semicolon).
+	 * TOKEN_PARSE (PHP 8.0+) makes token_get_all() throw ParseError on invalid source
+	 * instead of silently returning a partial stream. On 7.4 we accept partial results.
 	 *
-	 * @param array<int, array{0: int, 1: string, 2: int}|string> $tokens Full token stream.
-	 * @param int                                                 $i      Current index (by reference).
-	 * @param string[]                                            $lines  Original source split by newline.
+	 * @param string $code Source code.
 	 *
-	 * @return array{name: string, code: string, line_start: int, line_end: int}|null
+	 * @return array<int, array{0: int, 1: string, 2: int}|string>|null
 	 */
-	private function extract_symbol( array $tokens, int &$i, array $lines ): ?array {
-		$start_token = $tokens[ $i ];
-		$line_start  = $start_token[2];
-		$type_id     = $start_token[0];
-		$n           = count( $tokens );
-		$name        = '';
+	private function tokenize( string $code ): ?array {
+		try {
+			return PHP_VERSION_ID >= 80000
+				? token_get_all( $code, TOKEN_PARSE )
+				: token_get_all( $code );
+		} catch ( ParseError $e ) {
+			return null;
+		}
+	}
 
-		for ( $j = $i + 1; $j < $n; $j++ ) {
-			$inner = $tokens[ $j ];
+	/**
+	 * Yield each top-level function/class/trait/interface definition as {name, line_start, line_end}.
+	 *
+	 * @param array<int, array{0: int, 1: string, 2: int}|string> $tokens Token stream.
+	 *
+	 * @return \Generator<int, array{name: string, line_start: int, line_end: int}>
+	 */
+	private function find_top_level_symbols( array $tokens ): \Generator {
+		$depth = 0;
+		$count = count( $tokens );
 
-			if ( is_string( $inner ) ) {
-				// Anonymous function definitions never reach here at top level without a T_STRING.
-				if ( '(' === $inner || ';' === $inner || '{' === $inner ) {
-					break;
+		for ( $i = 0; $i < $count; $i++ ) {
+			$token = $tokens[ $i ];
+
+			if ( '{' === $token ) {
+				++$depth;
+				continue;
+			}
+
+			if ( '}' === $token ) {
+				$depth = max( 0, $depth - 1 );
+				continue;
+			}
+
+			if ( 0 !== $depth || ! is_array( $token ) ) {
+				continue;
+			}
+
+			if ( ! in_array( $token[0], self::DEFINITION_TOKENS, true ) ) {
+				continue;
+			}
+
+			$name = $this->read_symbol_name( $tokens, $i );
+
+			if ( '' === $name ) {
+				continue;
+			}
+
+			$end_index = $this->find_symbol_end( $tokens, $i, $token[0] );
+
+			yield [
+				'name'       => $name,
+				'line_start' => $token[2],
+				'line_end'   => $this->token_line( $tokens, $end_index ),
+			];
+
+			$i = $end_index;
+		}
+	}
+
+	/**
+	 * Read the T_STRING name that follows a definition token (function foo, class Bar, etc.).
+	 *
+	 * @param array<int, array{0: int, 1: string, 2: int}|string> $tokens Token stream.
+	 * @param int                                                 $start  Index of the definition keyword.
+	 *
+	 * @return string Empty string if no name is present (e.g. an anonymous class).
+	 */
+	private function read_symbol_name( array $tokens, int $start ): string {
+		for ( $i = $start + 1, $n = count( $tokens ); $i < $n; $i++ ) {
+			$token = $tokens[ $i ];
+
+			if ( is_array( $token ) && T_STRING === $token[0] ) {
+				return $token[1];
+			}
+
+			// Reached the parameter list or body without seeing a name: it's anonymous.
+			if ( '(' === $token || '{' === $token || ';' === $token ) {
+				return '';
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Find the index of the token that closes a symbol's body (the matching `}` or, for
+	 * interface/abstract declarations, the terminating `;`).
+	 *
+	 * @param array<int, array{0: int, 1: string, 2: int}|string> $tokens  Token stream.
+	 * @param int                                                 $start   Index of the definition keyword.
+	 * @param int                                                 $type_id The definition token id (T_FUNCTION etc).
+	 *
+	 * @return int Index of the closing token. Falls back to the last token if unmatched.
+	 */
+	private function find_symbol_end( array $tokens, int $start, int $type_id ): int {
+		$depth      = 0;
+		$seen_brace = false;
+		$count      = count( $tokens );
+
+		for ( $i = $start + 1; $i < $count; $i++ ) {
+			$token = $tokens[ $i ];
+
+			if ( '{' === $token ) {
+				++$depth;
+				$seen_brace = true;
+				continue;
+			}
+
+			if ( '}' === $token ) {
+				--$depth;
+				if ( $seen_brace && 0 === $depth ) {
+					return $i;
 				}
 				continue;
 			}
 
-			if ( T_STRING === $inner[0] ) {
-				$name = $inner[1];
-				break;
+			// A `;` before any body closes declarations that have no body (e.g. abstract method).
+			// Functions always have a body in a functions.php top-level context, so ignore `;` for them.
+			if ( ';' === $token && ! $seen_brace && T_FUNCTION !== $type_id ) {
+				return $i;
 			}
 		}
 
-		if ( '' === $name ) {
-			return null;
-		}
+		return $count - 1;
+	}
 
-		$depth      = 0;
-		$seen_brace = false;
-		$line_end   = $line_start;
-
-		for ( $j = $i + 1; $j < $n; $j++ ) {
-			$inner = $tokens[ $j ];
-
-			if ( is_string( $inner ) ) {
-				if ( '{' === $inner ) {
-					++$depth;
-					$seen_brace = true;
-				} elseif ( '}' === $inner ) {
-					--$depth;
-					if ( 0 === $depth && $seen_brace ) {
-						$line_end = $this->token_line( $tokens, $j );
-						$i        = $j;
-						break;
-					}
-				} elseif ( ';' === $inner && ! $seen_brace && T_FUNCTION !== $type_id ) {
-					$line_end = $this->token_line( $tokens, $j );
-					$i        = $j;
-					break;
-				}
-			}
-		}
-
-		$snippet_lines = array_slice( $lines, $line_start - 1, ( $line_end - $line_start ) + 1 );
-
-		return [
-			'name'       => $name,
-			'code'       => implode( "\n", $snippet_lines ),
-			'line_start' => $line_start,
-			'line_end'   => $line_end,
-		];
+	/**
+	 * Join a 1-indexed inclusive line range from an array of source lines.
+	 *
+	 * @param string[] $lines      Source lines.
+	 * @param int      $line_start First line (1-indexed).
+	 * @param int      $line_end   Last line (1-indexed, inclusive).
+	 *
+	 * @return string
+	 */
+	private function slice_source( array $lines, int $line_start, int $line_end ): string {
+		return implode( "\n", array_slice( $lines, $line_start - 1, ( $line_end - $line_start ) + 1 ) );
 	}
 
 	/**
