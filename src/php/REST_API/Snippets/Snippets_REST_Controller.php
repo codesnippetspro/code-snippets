@@ -12,6 +12,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use function Code_Snippets\activate_snippet;
+use function Code_Snippets\code_snippets;
 use function Code_Snippets\deactivate_snippet;
 use function Code_Snippets\delete_snippet;
 use function Code_Snippets\get_snippet;
@@ -203,6 +204,115 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 				'args'                => $network_args,
 			]
 		);
+	}
+
+	/**
+	 * Determine whether a request targets network-scoped snippets.
+	 *
+	 * Only the literal boolean `true` (or its common string/integer equivalents)
+	 * is treated as a network-scoped request. A missing or null `network` param
+	 * means "site-scoped", and must not be escalated to the network capability.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	private function is_network_scoped_request( $request ): bool {
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
+		if ( ! $request instanceof WP_REST_Request || ! $request->has_param( 'network' ) ) {
+			return false;
+		}
+
+		$network = $request->get_param( 'network' );
+
+		if ( is_bool( $network ) ) {
+			return $network;
+		}
+
+		if ( is_string( $network ) ) {
+			return in_array( strtolower( $network ), [ '1', 'true', 'yes' ], true );
+		}
+
+		return (bool) $network;
+	}
+
+	/**
+	 * Verify the current user has permission for the scope implied by the request.
+	 *
+	 * When the request payload sets `network=true`, the user must hold the network
+	 * capability (e.g. `manage_network_options`) regardless of whether the request
+	 * originated from the network admin context. This closes a privilege-escalation
+	 * vector where a subsite administrator could forge `network=true` to operate
+	 * on network-scoped snippets.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	private function check_request_capability( $request ): bool {
+		if ( $this->is_network_scoped_request( $request ) ) {
+			return code_snippets()->user_can_manage_network_snippets();
+		}
+
+		return code_snippets()->current_user_can();
+	}
+
+	/**
+	 * Check if a given request has access to get items.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function get_items_permissions_check( $request ): bool {
+		return $this->check_request_capability( $request );
+	}
+
+	/**
+	 * Check if a given request has access to get a specific item.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function get_item_permissions_check( $request ): bool {
+		return $this->check_request_capability( $request );
+	}
+
+	/**
+	 * Check if a given request has access to create items.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function create_item_permissions_check( $request ): bool {
+		return $this->check_request_capability( $request );
+	}
+
+	/**
+	 * Check if a given request has access to update a specific item.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function update_item_permissions_check( $request ): bool {
+		return $this->check_request_capability( $request );
+	}
+
+	/**
+	 * Check if a given request has access to delete a specific item.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function delete_item_permissions_check( $request ): bool {
+		return $this->check_request_capability( $request );
 	}
 
 	/**
