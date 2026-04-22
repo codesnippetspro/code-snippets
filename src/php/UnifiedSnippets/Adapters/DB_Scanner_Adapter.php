@@ -9,36 +9,18 @@ use Code_Snippets\UnifiedSnippets\Scanner_Base;
 /**
  * Adapts an existing {@see Plugin_Importer} into a Unified Snippets scanner.
  *
- * Concrete adapters supply the backing importer and a per-row field mapping;
- * this base handles availability, iteration, and Discovered_Snippet assembly.
- *
  * @package Code_Snippets
  */
 abstract class DB_Scanner_Adapter extends Scanner_Base {
 
-	/**
-	 * Backing plugin importer used to read raw snippet rows.
-	 *
-	 * @var Plugin_Importer
-	 */
 	protected Plugin_Importer $importer;
 
 	public function __construct( ?Plugin_Importer $importer = null ) {
 		$this->importer = $importer ?? $this->create_importer();
 	}
 
-	/**
-	 * Create the default importer instance for this adapter.
-	 *
-	 * @return Plugin_Importer
-	 */
 	abstract protected function create_importer(): Plugin_Importer;
 
-	/**
-	 * Name of the source plugin's database table, used to build synthetic URIs.
-	 *
-	 * @return string e.g. 'hfcm_scripts'.
-	 */
 	abstract protected function get_table_name(): string;
 
 	/**
