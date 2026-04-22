@@ -23,11 +23,6 @@ abstract class DB_Scanner_Adapter extends Scanner_Base {
 	 */
 	protected Plugin_Importer $importer;
 
-	/**
-	 * Class constructor.
-	 *
-	 * @param Plugin_Importer|null $importer Optional importer override, useful for tests.
-	 */
 	public function __construct( ?Plugin_Importer $importer = null ) {
 		$this->importer = $importer ?? $this->create_importer();
 	}
@@ -57,16 +52,10 @@ abstract class DB_Scanner_Adapter extends Scanner_Base {
 	 */
 	abstract protected function map_row( array $row ): ?array;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function is_available(): bool {
 		return (bool) call_user_func( [ get_class( $this->importer ), 'is_active' ] );
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function scan(): array {
 		if ( ! $this->is_available() ) {
 			return [];
@@ -88,13 +77,6 @@ abstract class DB_Scanner_Adapter extends Scanner_Base {
 		return $snippets;
 	}
 
-	/**
-	 * Fill in common Discovered_Snippet fields that are shared by all DB-backed adapters.
-	 *
-	 * @param array<string, mixed> $fields Adapter-supplied field overrides.
-	 *
-	 * @return array<string, mixed>
-	 */
 	private function with_defaults( array $fields ): array {
 		return array_merge(
 			[
@@ -120,8 +102,6 @@ abstract class DB_Scanner_Adapter extends Scanner_Base {
 
 	/**
 	 * Derive a {@see Discovered_Snippet} `type` from the source plugin's code-type value.
-	 *
-	 * Unknown or empty types fall back to 'php' to satisfy the model's allow-list.
 	 *
 	 * @param string $code_type Source-plugin code type, e.g. 'html', 'universal'.
 	 *
