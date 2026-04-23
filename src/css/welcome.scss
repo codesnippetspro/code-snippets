@@ -217,6 +217,10 @@ $breakpoint: 1060px;
 	position: absolute;
 	inset-inline-start: 47%;
 	inset-block-start: 45%;
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
 }
 
 .csp-welcome-header nav {

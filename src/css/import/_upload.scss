@@ -37,6 +37,10 @@ $type-colors: (
 	transition: all 0.3s ease;
 	opacity: 1;
 
+	@media (prefers-reduced-motion: reduce) {
+		transition-duration: 0.01s;
+	}
+
 	&.drag-over {
 		border-color: #0073aa;
 		background-color: #f0f6fc;

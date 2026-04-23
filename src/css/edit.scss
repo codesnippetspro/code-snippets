@@ -34,6 +34,12 @@
 }
 
 .snippet-description-container {
+	label {
+		font-size: 1.16em;
+		font-weight: 600;
+		text-transform: unset;
+	}
+
 	.wp-editor-tools {
 		padding-block-start: 5px;
 	}
@@ -59,11 +65,6 @@
 	}
 }
 
-#titlediv,
-.snippet-type-container {
-	margin-block-end: 24px;
-}
-
 .above-snippet-code {
 	margin-block: 0 15px;
 	display: flex;
@@ -71,8 +72,9 @@
 	margin-inline: 0;
 	gap: 8px;
 
-	h2 {
-		margin: 0;
+	label {
+		font-size: 1.16em;
+		font-weight: 600;
 	}
 
 	.expand-editor-button {
