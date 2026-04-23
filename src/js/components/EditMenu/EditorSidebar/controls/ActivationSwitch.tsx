@@ -10,29 +10,29 @@ export const ActivationSwitch = () => {
 
 	return (
 		<div className="inline-form-field activation-switch-container">
-			<h4>{__('Status')}</h4>
+			<label htmlFor="activation-switch">{__('Status', 'code-snippets')}</label>
 
-			<label>
+			<span className="status-text">
 				{snippet.active
 					? __('Active', 'code-snippets')
 					: __('Inactive', 'code-snippets')}
+			</span>
 
-				<input
-					id="activation-switch"
-					type="checkbox"
-					checked={snippet.active}
-					disabled={isWorking || !!snippet.shared_network}
-					className="switch"
-					onChange={() => {
-						submitSnippet(
-							{ id: snippet.id, network: snippet.network, active: !snippet.active },
-							snippet.active ? SubmitSnippetAction.SAVE_AND_DEACTIVATE : SubmitSnippetAction.SAVE_AND_ACTIVATE
-						)
-							.then(() => undefined)
-							.catch(handleUnknownError)
-					}}
-				/>
-			</label>
+			<input
+				id="activation-switch"
+				type="checkbox"
+				checked={snippet.active}
+				disabled={isWorking || !!snippet.shared_network}
+				className="switch"
+				onChange={() => {
+					submitSnippet(
+						{ id: snippet.id, network: snippet.network, active: !snippet.active },
+						snippet.active ? SubmitSnippetAction.SAVE_AND_DEACTIVATE : SubmitSnippetAction.SAVE_AND_ACTIVATE
+					)
+						.then(() => undefined)
+						.catch(handleUnknownError)
+				}}
+			/>
 		</div>
 	)
 }

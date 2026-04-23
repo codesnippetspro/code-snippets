@@ -19,10 +19,6 @@ $sidebar-gap: 30px;
 	.small-badge {
 		margin-inline-start: 0.5em;
 	}
-
-	.badge {
-		float: inline-end;
-	}
 }
 
 
@@ -32,7 +28,7 @@ $sidebar-gap: 30px;
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		overflow: hidden;
+		flex: 1;
 		border-color: #ccc;
 		padding-block: 6px;
 		padding-inline: 12px;
@@ -73,6 +69,13 @@ $sidebar-gap: 30px;
 
 	.snippet-form-lower {
 		grid-area: lower;
+	}
+
+	.snippet-form-upper,
+	.snippet-form-lower {
+		display: flex;
+		flex-flow: column;
+		gap: 24px;
 	}
 
 	.snippet-editor-sidebar {
