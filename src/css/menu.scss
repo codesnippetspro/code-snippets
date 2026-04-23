@@ -20,6 +20,10 @@
 		justify-content: center;
 		align-items: center;
 
+		@media (prefers-reduced-motion: reduce) {
+			transition-duration: 0.01s;
+		}
+
 		&:hover {
 			background-color: #08c5d1;
 		}

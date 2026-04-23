@@ -64,6 +64,10 @@ $bg-color: hsl(0deg 0% 20% / 90%);
 		transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24);
 	transform: translate3d(0, 0, 0);
 	pointer-events: none;
+
+	@media (prefers-reduced-motion: reduce) {
+		transition-duration: 0.01s;
+	}
 }
 
 .tooltip::before {
