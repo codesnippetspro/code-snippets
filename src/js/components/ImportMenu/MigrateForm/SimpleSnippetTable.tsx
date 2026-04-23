@@ -45,11 +45,11 @@ export const SimpleSnippetTable: React.FC<SimpleSnippetTableProps> = props => {
 		<ImportCard className="migrate-snippets-table-card snippets-table-card">
 			<div>
 				<header>
-					<h2>{sprintf(
+					<h3>{sprintf(
 						// translators: %d: number of available snippets.
 						__('Available snippets (%d)', 'code-snippets'),
 						availableItems.length
-					)}</h2>
+					)}</h3>
 					<p>{__('We found the following snippets:', 'code-snippets')}</p>
 				</header>
 

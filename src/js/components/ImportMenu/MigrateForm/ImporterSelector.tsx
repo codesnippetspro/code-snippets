@@ -13,7 +13,7 @@ export interface ImporterSelectorProps {
 export const ImporterSelector: React.FC<ImporterSelectorProps> = ({ value, onChange, options, isLoading }) =>
 	<ImportCard variant="controls" className="importer-selector-card">
 		<label htmlFor="importer-select">
-			<h2>{__('Select plugin', 'code-snippets')}</h2>
+			<h3>{__('Select plugin', 'code-snippets')}</h3>
 		</label>
 
 		<select

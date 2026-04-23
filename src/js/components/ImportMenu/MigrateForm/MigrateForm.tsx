@@ -19,7 +19,7 @@ const StatusDisplay: React.FC<StatusDisplayProps> = ({ type, title, children }) 
 	<ImportCard variant="controls" className="import-section-status">
 		<div className={type}><span>{'error' === type ? '✕' : '✓'}</span></div>
 		<div>
-			<h3>{title}</h3>
+			<h4>{title}</h4>
 			<p>{children}</p>
 		</div>
 	</ImportCard>
@@ -55,7 +55,7 @@ const StatusMessages: React.FC = () => {
 				<ImportCard className="no-snippets-card">
 					<div className="card-inner">
 						<div className="card-icon">📭</div>
-						<h3>{__('No snippets found', 'code-snippets')}</h3>
+						<h4>{__('No snippets found', 'code-snippets')}</h4>
 						<p>{__('No snippets were found for the selected plugin. Make sure the plugin is installed and has snippets configured.', 'code-snippets')}</p>
 					</div>
 				</ImportCard>)}
