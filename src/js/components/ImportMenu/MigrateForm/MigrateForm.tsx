@@ -81,7 +81,7 @@ const MigrateFormInner: React.FC = () => {
 	}
 
 	return (
-		<div className="migrate-form-container">
+		<>
 			<p>{__('If you are using another snippets plugin, you can import those existing snippets to your Code Snippets library.', 'code-snippets')}</p>
 
 			<ImporterSelector
@@ -103,15 +103,13 @@ const MigrateFormInner: React.FC = () => {
 						isImporting={isWorking === MigrationStep.MigrateSnippets}
 					/>
 				</>)}
-		</div>
+		</>
 	)
 }
 
 export const MigrateForm: React.FC = () =>
 	<WithMigrationOptions>
 		<WithMigrationData>
-			<div className="wrap">
-				<MigrateFormInner />
-			</div>
+			<MigrateFormInner />
 		</WithMigrationData>
 	</WithMigrationOptions>

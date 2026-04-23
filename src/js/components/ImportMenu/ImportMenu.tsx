@@ -39,32 +39,30 @@ export const ImportMenu: React.FC = () => {
 			<div className="import-snippets-menu wrap">
 				<h2>{__('Import Snippets', 'code-snippets')}</h2>
 
-				<div className="narrow">
-					<nav
-						className="nav-tab-wrapper"
-						aria-label={__('Import sources', 'code-snippets')}
-					>
-						{TABS.map(tab =>
-							<button
-								key={tab}
-								type="button"
-								className={classnames('nav-tab', { 'nav-tab-active': tab === activeTab })}
-								onClick={() => {
-									setActiveTab(tab)
-									updateQueryParam('tab', tab)
-								}}
-							>
-								{TAB_LABELS[tab]}
-							</button>)}
-					</nav>
+				<nav
+					className="nav-tab-wrapper"
+					aria-label={__('Import sources', 'code-snippets')}
+				>
+					{TABS.map(tab =>
+						<button
+							key={tab}
+							type="button"
+							className={classnames('nav-tab', { 'nav-tab-active': tab === activeTab })}
+							onClick={() => {
+								setActiveTab(tab)
+								updateQueryParam('tab', tab)
+							}}
+						>
+							{TAB_LABELS[tab]}
+						</button>)}
+				</nav>
 
-					<WithRestAPIContext>
-						{TABS.map(tab =>
-							<div key={tab} className={classnames('import-snippets-section', { 'active-section': tab === activeTab })}>
-								{TAB_CONTENT[tab]}
-							</div>)}
-					</WithRestAPIContext>
-				</div>
+				<WithRestAPIContext>
+					{TABS.map(tab =>
+						<div key={tab} className={classnames('import-snippets-section', { 'active-section': tab === activeTab })}>
+							{TAB_CONTENT[tab]}
+						</div>)}
+				</WithRestAPIContext>
 			</div>
 		</>
 	)

@@ -6,19 +6,14 @@
 	padding: 0;
 }
 
-.import-snippets-menu {
-	.narrow {
-		max-inline-size: 800px;
-	}
-
-	.nav-tab-wrapper {
-		margin-block-end: 20px;
-	}
+.nav-tab-wrapper {
+	margin-block-end: 20px;
 }
 
 .import-snippets-section {
 	padding-block-start: 0;
 	display: none;
+	max-inline-size: 800px;
 
 	&.active-section {
 		display: block;
