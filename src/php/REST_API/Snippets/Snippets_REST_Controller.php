@@ -164,7 +164,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 			[
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => [ $this, 'activate_item' ],
-				'permission_callback' => [ $this, 'update_item_permissions_check' ],
+				'permission_callback' => [ $this, 'toggle_item_permissions_check' ],
 				'schema'              => [ $this, 'get_item_schema' ],
 				'args'                => $network_args,
 			]
@@ -176,7 +176,7 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 			[
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => [ $this, 'deactivate_item' ],
-				'permission_callback' => [ $this, 'update_item_permissions_check' ],
+				'permission_callback' => [ $this, 'toggle_item_permissions_check' ],
 				'schema'              => [ $this, 'get_item_schema' ],
 				'args'                => $network_args,
 			]
@@ -256,6 +256,34 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	}
 
 	/**
+	 * Determine whether the request targets a shared network snippet.
+	 *
+	 * Shared network snippets are stored network-wide but each site decides whether
+	 * to activate them via the per-site `active_shared_network_snippets` option. The
+	 * `id` route parameter is used to look up the snippet so the result reflects the
+	 * actual stored row rather than a value supplied in the request payload.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	private function is_shared_network_snippet_request( $request ): bool {
+		if ( ! is_multisite() || ! $request instanceof WP_REST_Request ) {
+			return false;
+		}
+
+		$snippet_id = absint( $request->get_param( 'id' ) );
+
+		if ( ! $snippet_id ) {
+			return false;
+		}
+
+		$snippet = get_snippet( $snippet_id, true );
+
+		return $snippet && $snippet->id && $snippet->shared_network;
+	}
+
+	/**
 	 * Check if a given request has access to get items.
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
@@ -269,11 +297,18 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	/**
 	 * Check if a given request has access to get a specific item.
 	 *
+	 * Shared network snippets are readable by any user who can manage snippets on
+	 * the current site, since the snippet is intentionally exposed to subsites.
+	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
 	 * @return bool
 	 */
 	public function get_item_permissions_check( $request ): bool {
+		if ( $this->is_shared_network_snippet_request( $request ) ) {
+			return code_snippets()->current_user_can();
+		}
+
 		return $this->check_request_capability( $request );
 	}
 
@@ -307,6 +342,27 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	 * @return bool
 	 */
 	public function delete_item_permissions_check( $request ): bool {
+		return $this->check_request_capability( $request );
+	}
+
+	/**
+	 * Check if a given request has access to toggle a snippet's activation.
+	 *
+	 * For shared network snippets the activation toggle only writes to the
+	 * per-site `active_shared_network_snippets` option, so the site capability
+	 * is sufficient. For all other snippets we keep the strict capability check
+	 * that prevents a subsite admin from forging `network=true` to operate on
+	 * exclusive network-scoped snippets.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	public function toggle_item_permissions_check( $request ): bool {
+		if ( $this->is_shared_network_snippet_request( $request ) ) {
+			return code_snippets()->current_user_can();
+		}
+
 		return $this->check_request_capability( $request );
 	}
 
