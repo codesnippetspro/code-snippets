@@ -243,12 +243,6 @@ final class Snippets_REST_Controller extends REST_Collection_Controller {
 	/**
 	 * Verify the current user has permission for the scope implied by the request.
 	 *
-	 * When the request payload sets `network=true`, the user must hold the network
-	 * capability (e.g. `manage_network_options`) regardless of whether the request
-	 * originated from the network admin context. This closes a privilege-escalation
-	 * vector where a subsite administrator could forge `network=true` to operate
-	 * on network-scoped snippets.
-	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
 	 * @return bool
