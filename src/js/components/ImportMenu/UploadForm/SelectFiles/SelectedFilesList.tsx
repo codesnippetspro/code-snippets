@@ -59,7 +59,7 @@ export const SelectedFilesList: React.FC<SelectedFilesListProps> = ({ files, onR
 			{files.map(file =>
 				<div key={file.id}>
 					<div className="selected-file-details">
-						<span className="file-icon">📄</span>
+						<span className="file-icon" aria-hidden="true">📄</span>
 						<div>
 							<div><strong>{file.name}</strong></div>
 							<div className="file-size">{formatFileSize(file.file.size)}</div>
@@ -68,13 +68,19 @@ export const SelectedFilesList: React.FC<SelectedFilesListProps> = ({ files, onR
 
 					<button
 						type="button"
-						title={__('Remove file', 'code-snippets')}
+						aria-label={
+							sprintf(
+								// translators: %s: file name.
+								__('Remove file %s', 'code-snippets'),
+								file.name
+							)
+						}
 						onClick={event => {
 							event.stopPropagation()
 							onRemoveFile(file)
 						}}
 					>
-						✕
+						<span aria-hidden="true">✕</span>
 					</button>
 				</div>
 			)}
