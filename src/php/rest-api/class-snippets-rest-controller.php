@@ -364,12 +364,6 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Activate one item in the collection.
 	 *
-	 * Shared network snippets are tracked per-site via the `active_shared_network_snippets`
-	 * option rather than the global `active` column on `ms_snippets`, so that activation
-	 * by a site administrator only takes effect on the current site. Non-shared snippets
-	 * (regular site snippets and exclusive network snippets) continue to use the
-	 * underlying `activate_snippet()` helper.
-	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
 	 * @return WP_Error|WP_REST_Response
@@ -406,10 +400,6 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Deactivate one item in the collection.
 	 *
-	 * Shared network snippets are tracked per-site via the `active_shared_network_snippets`
-	 * option, so deactivation here only removes the snippet from the current site's active
-	 * list rather than disabling it globally on `ms_snippets`.
-	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
 	 * @return WP_Error|WP_REST_Response
@@ -445,11 +435,6 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 
 	/**
 	 * Toggle a shared network snippet's active state for the current site only.
-	 *
-	 * Shared network snippets live in the network-wide `ms_snippets` table but are
-	 * activated on a per-site basis via the `active_shared_network_snippets` site option.
-	 * Mutating the option here keeps activation state isolated to the current site and
-	 * avoids accidentally enabling the snippet for the entire network.
 	 *
 	 * @param int  $snippet_id Snippet identifier.
 	 * @param bool $active     Whether the snippet should be active on the current site.
@@ -592,12 +577,6 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 
 	/**
 	 * Verify the current user has permission for the scope implied by the request.
-	 *
-	 * When the request payload sets `network=true`, the user must hold the network
-	 * capability (e.g. `manage_network_options`) regardless of whether the request
-	 * originated from the network admin context. This closes a privilege-escalation
-	 * vector where a subsite administrator could forge `network=true` to operate
-	 * on network-scoped snippets.
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
