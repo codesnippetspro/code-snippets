@@ -36,7 +36,7 @@ export const ImportMenu: React.FC = () => {
 	return (
 		<>
 			<Toolbar />
-			<div className="import-snippets-menu wrap">
+			<>
 				<h2>{__('Import Snippets', 'code-snippets')}</h2>
 
 				<nav
@@ -63,7 +63,7 @@ export const ImportMenu: React.FC = () => {
 							{TAB_CONTENT[tab]}
 						</div>)}
 				</WithRestAPIContext>
-			</div>
+			</>
 		</>
 	)
 }
