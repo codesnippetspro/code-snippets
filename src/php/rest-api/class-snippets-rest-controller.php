@@ -10,6 +10,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use function Code_Snippets\activate_snippet;
+use function Code_Snippets\clean_active_snippets_cache;
 use function Code_Snippets\code_snippets;
 use function Code_Snippets\deactivate_snippet;
 use function Code_Snippets\trash_snippet;
@@ -363,13 +364,35 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Activate one item in the collection.
 	 *
+	 * Shared network snippets are tracked per-site via the `active_shared_network_snippets`
+	 * option rather than the global `active` column on `ms_snippets`, so that activation
+	 * by a site administrator only takes effect on the current site. Non-shared snippets
+	 * (regular site snippets and exclusive network snippets) continue to use the
+	 * underlying `activate_snippet()` helper.
+	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function activate_item( WP_REST_Request $request ) {
 		$item = $this->prepare_item_for_database( $request );
-		$result = activate_snippet( $item->id, $item->network );
+		$snippet = $item ? get_snippet( $item->id, $item->network ) : null;
+
+		if ( ! $snippet || ! $snippet->id ) {
+			return new WP_Error(
+				'rest_cannot_activate',
+				__( 'The snippet could not be found.', 'code-snippets' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		if ( $snippet->shared_network ) {
+			$this->set_shared_network_active( $snippet->id, true );
+			$snippet->active = true;
+			return rest_ensure_response( $snippet );
+		}
+
+		$result = activate_snippet( $snippet->id, $snippet->network );
 
 		return $result instanceof Snippet ?
 			rest_ensure_response( $result ) :
@@ -383,13 +406,33 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	/**
 	 * Deactivate one item in the collection.
 	 *
+	 * Shared network snippets are tracked per-site via the `active_shared_network_snippets`
+	 * option, so deactivation here only removes the snippet from the current site's active
+	 * list rather than disabling it globally on `ms_snippets`.
+	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function deactivate_item( WP_REST_Request $request ) {
 		$item = $this->prepare_item_for_database( $request );
-		$result = deactivate_snippet( $item->id, $item->network );
+		$snippet = $item ? get_snippet( $item->id, $item->network ) : null;
+
+		if ( ! $snippet || ! $snippet->id ) {
+			return new WP_Error(
+				'rest_cannot_activate',
+				__( 'The snippet could not be found.', 'code-snippets' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		if ( $snippet->shared_network ) {
+			$this->set_shared_network_active( $snippet->id, false );
+			$snippet->active = false;
+			return rest_ensure_response( $snippet );
+		}
+
+		$result = deactivate_snippet( $snippet->id, $snippet->network );
 
 		return $result instanceof Snippet ?
 			rest_ensure_response( $result ) :
@@ -398,6 +441,40 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 				__( 'The snippet could not be deactivated.', 'code-snippets' ),
 				[ 'status' => 500 ]
 			);
+	}
+
+	/**
+	 * Toggle a shared network snippet's active state for the current site only.
+	 *
+	 * Shared network snippets live in the network-wide `ms_snippets` table but are
+	 * activated on a per-site basis via the `active_shared_network_snippets` site option.
+	 * Mutating the option here keeps activation state isolated to the current site and
+	 * avoids accidentally enabling the snippet for the entire network.
+	 *
+	 * @param int  $snippet_id Snippet identifier.
+	 * @param bool $active     Whether the snippet should be active on the current site.
+	 *
+	 * @return void
+	 */
+	private function set_shared_network_active( int $snippet_id, bool $active ): void {
+		$active_shared_snippets = get_option( 'active_shared_network_snippets', [] );
+
+		if ( ! is_array( $active_shared_snippets ) ) {
+			$active_shared_snippets = [];
+		}
+
+		$already_active = in_array( $snippet_id, $active_shared_snippets, true );
+
+		if ( $active === $already_active ) {
+			return;
+		}
+
+		$active_shared_snippets = $active ?
+			array_merge( $active_shared_snippets, [ $snippet_id ] ) :
+			array_values( array_diff( $active_shared_snippets, [ $snippet_id ] ) );
+
+		update_option( 'active_shared_network_snippets', $active_shared_snippets );
+		clean_active_snippets_cache( code_snippets()->db->ms_table );
 	}
 
 	/**
@@ -481,6 +558,60 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Determine whether a request targets network-scoped snippets.
+	 *
+	 * Only the literal boolean `true` (or its common string/integer equivalents)
+	 * is treated as a network-scoped request. A missing or null `network` param
+	 * means "site-scoped", and must not be escalated to the network capability.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	private function is_network_scoped_request( $request ): bool {
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
+		if ( ! $request instanceof WP_REST_Request || ! $request->has_param( 'network' ) ) {
+			return false;
+		}
+
+		$network = $request->get_param( 'network' );
+
+		if ( is_bool( $network ) ) {
+			return $network;
+		}
+
+		if ( is_string( $network ) ) {
+			return in_array( strtolower( $network ), [ '1', 'true', 'yes' ], true );
+		}
+
+		return (bool) $network;
+	}
+
+	/**
+	 * Verify the current user has permission for the scope implied by the request.
+	 *
+	 * When the request payload sets `network=true`, the user must hold the network
+	 * capability (e.g. `manage_network_options`) regardless of whether the request
+	 * originated from the network admin context. This closes a privilege-escalation
+	 * vector where a subsite administrator could forge `network=true` to operate
+	 * on network-scoped snippets.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	private function check_request_capability( $request ): bool {
+		if ( $this->is_network_scoped_request( $request ) ) {
+			return code_snippets()->user_can_manage_network_snippets();
+		}
+
+		return code_snippets()->current_user_can();
+	}
+
+	/**
 	 * Check if a given request has access to get items.
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
@@ -488,7 +619,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function get_items_permissions_check( $request ): bool {
-		return code_snippets()->current_user_can();
+		return $this->check_request_capability( $request );
 	}
 
 	/**
@@ -499,7 +630,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function get_item_permissions_check( $request ): bool {
-		return $this->get_items_permissions_check( $request );
+		return $this->check_request_capability( $request );
 	}
 
 	/**
@@ -510,7 +641,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function create_item_permissions_check( $request ): bool {
-		return code_snippets()->current_user_can();
+		return $this->check_request_capability( $request );
 	}
 
 	/**
@@ -521,7 +652,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function update_item_permissions_check( $request ): bool {
-		return $this->create_item_permissions_check( $request );
+		return $this->check_request_capability( $request );
 	}
 
 	/**
@@ -532,7 +663,7 @@ final class Snippets_REST_Controller extends WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function delete_item_permissions_check( $request ): bool {
-		return $this->create_item_permissions_check( $request );
+		return $this->check_request_capability( $request );
 	}
 
 	/**
