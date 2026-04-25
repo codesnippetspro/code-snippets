@@ -199,7 +199,7 @@ class Settings_Menu extends Admin_Menu {
 
 		?>
 		<div class="code-snippets-settings wrap" data-active-tab="<?php echo esc_attr( $current_section ); ?>">
-			<h1>
+			<h2>
 				<?php
 				esc_html_e( 'Settings', 'code-snippets' );
 
@@ -219,7 +219,7 @@ class Settings_Menu extends Admin_Menu {
 					}
 				}
 				?>
-			</h1>
+			</h2>
 
 			<?php settings_errors( OPTION_NAME ); ?>
 
@@ -275,7 +275,7 @@ class Settings_Menu extends Admin_Menu {
 
 			if ( $section['title'] ) {
 				printf(
-					'<h2 id="%s-settings" class="settings-section-title">%s</h2>' . "\n",
+					'<h3 id="%s-settings" class="settings-section-title">%s</h3>' . "\n",
 					esc_attr( $section['id'] ),
 					esc_html( $section['title'] )
 				);

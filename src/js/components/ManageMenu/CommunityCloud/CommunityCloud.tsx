@@ -24,7 +24,7 @@ export const CommunityCloud = () => {
 
 	return (
 		<div className="wrap">
-			<h1>{__('Community Cloud', 'code-snippets')}</h1>
+			<h2>{__('Community Cloud', 'code-snippets')}</h2>
 
 			<nav
 				className="nav-tab-wrapper"
