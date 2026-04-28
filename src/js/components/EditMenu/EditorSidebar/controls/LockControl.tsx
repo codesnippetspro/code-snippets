@@ -26,24 +26,24 @@ export const LockControl: React.FC = () => {
 
 	return (
 		<div className="inline-form-field lock-control-container">
-			<h4>{__('Lock snippet', 'code-snippets')}</h4>
+			<label htmlFor="snippet-lock">{__('Lock snippet', 'code-snippets')}</label>
 
 			<Tooltip block end>
 				{__('Mark this snippet as read-only to prevent accidental changes or deletion.', 'code-snippets')}
 			</Tooltip>
 
-			<label>
+			<span className="lock-status-text">
 				{snippet.locked ? __('Locked', 'code-snippets') : __('Unlocked', 'code-snippets')}
+			</span>
 
-				<input
-					id="snippet-lock"
-					type="checkbox"
-					checked={snippet.locked}
-					disabled={isWorking}
-					className="switch"
-					onChange={handleToggle}
-				/>
-			</label>
+			<input
+				id="snippet-lock"
+				type="checkbox"
+				checked={snippet.locked}
+				disabled={isWorking}
+				className="switch"
+				onChange={handleToggle}
+			/>
 		</div>
 	)
 }

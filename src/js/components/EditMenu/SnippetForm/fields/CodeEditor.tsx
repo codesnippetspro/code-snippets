@@ -110,7 +110,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ isExpanded, setIsExpande
 	return (
 		<div className="snippet-code-container">
 			<div className="above-snippet-code">
-				<h2><label htmlFor="snippet-code">{__('Snippet Content', 'code-snippets')}</label></h2>
+				<label htmlFor="snippet-code">
+					{__('Snippet Content', 'code-snippets')}
+				</label>
 
 				<Button small className="expand-editor-button" onClick={() => setIsExpanded(current => !current)}>
 					{isExpanded ? <MinimiseIcon aria-hidden="true" /> : <ExpandIcon aria-hidden="true" />}

@@ -45,7 +45,7 @@ export const UpsellDialog: React.FC<UpsellDialogProps> = ({ isOpen, setIsOpen })
 				{__('Explore Code Snippets Pro', 'code-snippets')}
 			</a>
 
-			<h2>{__("Here's what else you get with Pro:", 'code-snippets')}</h2>
+			<p>{__("Here's what else you get with Pro:", 'code-snippets')}</p>
 			<ul>
 				<li>{__('Create, explain and verify snippets with AI', 'code-snippets')}</li>
 				<li>{__('Control when snippets run with Conditions', 'code-snippets')}</li>

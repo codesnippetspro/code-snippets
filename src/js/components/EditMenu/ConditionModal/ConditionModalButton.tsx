@@ -18,14 +18,14 @@ export const ConditionModalButton: React.FC<ConditionModalButtonProps> = ({ setI
 	const hasCondition = 0 !== snippet.conditionId
 
 	return (
-		<div className={classnames('conditions-editor-open block-form-field', hasCondition ? 'has-condition' : 'no-condition')}>
+		<div className={classnames('conditions-editor-open inline-form-field', hasCondition ? 'has-condition' : 'no-condition')}>
 			{isCondition(snippet) ? null
 				: <>
-					<h4>
-						{__('Conditions', 'code-snippets')}
-						<Badge name="beta" small>{__('beta', 'code-snippets')}</Badge>
-						{!isLicensed() && <Badge name="pro" small>{__('Pro', 'code-snippets')}</Badge>}
-					</h4>
+					<strong>{__('Conditions', 'code-snippets')}</strong>
+
+					<Badge name="beta" small>{__('beta', 'code-snippets')}</Badge>
+
+					{!isLicensed() && <Badge name="pro" small>{__('Pro', 'code-snippets')}</Badge>}
 
 					<Button large disabled={isReadOnly} onClick={() => setIsDialogOpen(true)}>
 						<Badge name="cond" small />

@@ -77,11 +77,9 @@ const DescriptionEditorTextarea: React.FC = () => {
 export const DescriptionEditor: React.FC = () =>
 	window.CODE_SNIPPETS_EDIT?.enableDescription
 		? <div className="snippet-description-container">
-			<h2>
-				<label htmlFor={EDITOR_ID}>
-					{__('Description', 'code-snippets')}
-				</label>
-			</h2>
+			<label htmlFor={EDITOR_ID}>
+				{__('Description', 'code-snippets')}
+			</label>
 
 			<DescriptionEditorTextarea />
 		</div>
