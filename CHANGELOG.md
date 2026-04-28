@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.9.6] (2026-04-28)
+
+### Changed
+* tweak: improve snippets rest api
+
+### Removed
+* remove redundant comments
+
+### Fixed
+* site admin cannot toggle shared network snippets status
+
 ## [3.9.5] (2026-02-05)
 
 ### Added
