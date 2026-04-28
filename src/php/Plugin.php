@@ -21,6 +21,14 @@ use Code_Snippets\REST_API\Snippets\Snippets_REST_Controller;
 use Code_Snippets\UnifiedSnippets\Scanner_Registry;
 use Code_Snippets\UnifiedSnippets\Scan_Results_Store;
 use Code_Snippets\UnifiedSnippets\REST\Scan_REST_Controller;
+use Code_Snippets\UnifiedSnippets\Scanners\Additional_CSS_Scanner;
+use Code_Snippets\UnifiedSnippets\Scanners\Functions_Php_Scanner;
+use Code_Snippets\UnifiedSnippets\Scanners\Header_Footer_Code_Manager_Scanner;
+use Code_Snippets\UnifiedSnippets\Scanners\Htaccess_Scanner;
+use Code_Snippets\UnifiedSnippets\Scanners\Insert_Headers_And_Footers_Scanner;
+use Code_Snippets\UnifiedSnippets\Scanners\Insert_PHP_Code_Snippet_Scanner;
+use Code_Snippets\UnifiedSnippets\Scanners\Mu_Plugins_Scanner;
+use Code_Snippets\UnifiedSnippets\Scanners\Wp_Config_Scanner;
 
 /**
  * The main plugin class
@@ -168,6 +176,15 @@ class Plugin {
 	private function init_unified_snippets(): void {
 		$this->unified_snippets       = new Scanner_Registry();
 		$this->unified_snippets_store = new Scan_Results_Store();
+
+		$this->unified_snippets->register( new Functions_Php_Scanner() );
+		$this->unified_snippets->register( new Additional_CSS_Scanner() );
+		$this->unified_snippets->register( new Htaccess_Scanner() );
+		$this->unified_snippets->register( new Wp_Config_Scanner() );
+		$this->unified_snippets->register( new Mu_Plugins_Scanner() );
+		$this->unified_snippets->register( new Insert_Headers_And_Footers_Scanner() );
+		$this->unified_snippets->register( new Header_Footer_Code_Manager_Scanner() );
+		$this->unified_snippets->register( new Insert_PHP_Code_Snippet_Scanner() );
 
 		new Scan_REST_Controller( $this->unified_snippets, $this->unified_snippets_store );
 	}
