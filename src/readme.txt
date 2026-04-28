@@ -104,6 +104,21 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.9.6 (2026-04-28) =
+
+__Changed__
+
+* tweak: improve snippets rest api
+
+__Removed__
+
+* remove redundant comments
+
+__Fixed__
+
+* site admin cannot toggle shared network snippets status
+
 = 3.9.5 (2026-02-05) =
 
 __Added__
