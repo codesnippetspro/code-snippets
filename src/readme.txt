@@ -104,6 +104,13 @@ You can report security bugs found in the source code of this plugin through the
 
 == Changelog ==
 
+
+= 3.9.7 (2026-04-30) =
+
+__Changed__
+
+* Maintenance updates and improvements
+
 = 3.9.6 (2026-04-28) =
 
 __Changed__
