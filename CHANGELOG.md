@@ -1,5 +1,11 @@
 # Changelog
 
+
+## [3.9.7] (2026-04-30)
+
+### Changed
+* Maintenance updates and improvements
+
 ## [3.9.6] (2026-04-28)
 
 ### Changed
